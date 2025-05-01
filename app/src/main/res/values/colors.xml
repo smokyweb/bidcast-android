@@ -1,0 +1,48 @@
+<resources>
+    <color name="primary">#1E3A8A</color>
+    <color name="onPrimary">#FFFFFF</color>
+    <color name="primaryContainer">#DCE1FF</color>
+    <color name="onPrimaryContainer">#344479</color>
+
+    <color name="secondary">#F59E0B</color>
+    <color name="onSecondary">#FFFFFF</color>
+    <color name="secondaryContainer">#FFDDB8</color>
+    <color name="onSecondaryContainer">#653E00</color>
+
+    <color name="tertiary">#0D9488</color>
+    <color name="onTertiary">#FFFFFF</color>
+    <color name="tertiaryContainer">#9EF2E6</color>
+    <color name="onTertiaryContainer">#005049</color>
+
+    <color name="error">#FF164C</color>
+    <color name="onError">#FFFFFF</color>
+    <color name="errorContainer">#FFDADB</color>
+    <color name="onErrorContainer">#740C27</color>
+
+    <color name="background">#FAF8FF</color>
+    <color name="onBackground">#1A1B21</color>
+    <color name="surface">#FAF8FF</color>
+    <color name="onSurface">#1A1B21</color>
+    <color name="surfaceVariant">#DDE3EA</color>
+    <color name="onSurfaceVariant">#41474D</color>
+
+    <color name="outline">#71787E</color>
+    <color name="outlineVariant">#E5E7EB</color>
+
+    <color name="scrim">#000000</color>
+    <color name="inverseSurface">#2F3036</color>
+    <color name="inverseOnSurface">#F1F0F7</color>
+    <color name="inversePrimary">#B6C4FF</color>
+
+
+    <color name="transparent">#00FFFFFF</color>
+
+    <color name = "success" >#1DBC64</color >
+    <color name = "onSuccess" >#FFFFFF</color >
+    <color name = "successContainer" >#2BC36C</color >
+    <color name = "onSuccessContainer" >#00270F</color >
+
+    <color name="warningClr">#ED8430</color>
+    <color name="onSecWarning">#DDD0C3</color>
+
+</resources>

@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">Base Project</string>
+    <string name="no_data_found">No Data Found</string>
+    <string name="no_internet">There is no internet connection.\\nPlease connect to the internet and try again</string>
+    <string name="retry">Retry</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+</resources>

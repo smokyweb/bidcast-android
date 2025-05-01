@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<set xmlns:android="http://schemas.android.com/apk/res/android"
+	android:fillAfter = "true"
+	android:fillBefore = "true"
+	android:shareInterpolator = "true" >
+	<translate
+		android:duration = "@integer/anim_dur"
+		android:interpolator = "@android:anim/linear_interpolator"
+		android:fromYDelta="5"
+		android:toYDelta="90%" />
+</set>

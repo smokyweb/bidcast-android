@@ -1,0 +1,373 @@
+<resources xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:tools="http://schemas.android.com/tools">
+
+	<style name="CustomActivityAnimation" parent="@android:style/Animation.Activity">
+		<item name="android:activityOpenEnterAnimation">@anim/slide_in_right</item>
+		<item name="android:activityOpenExitAnimation">@anim/slide_out_left</item>
+
+		<item name="android:activityCloseEnterAnimation">@anim/slide_in_left</item>
+		<item name="android:activityCloseExitAnimation">@anim/slide_out_right</item>
+	</style>
+
+	<style name="inputBoxStyle" parent="Widget.Material3.TextInputLayout.OutlinedBox">
+		<!--TEXT STYLE-->
+		<item name="android:textAppearance">@style/BodyMedium</item>
+		<item name="android:textColor">@color/onBackground</item>
+		<!--        <item name="android:maxLines">5</item>-->
+		<!--        <item name="android:minLines">4</item>-->
+		<!--        <item name="maxLines">5</item>-->
+
+		<!--TEXT BOX STYLE-->
+		<item name="boxStrokeColor">@color/input_box_stroke_color_state</item>
+		<item name="boxBackgroundColor">@color/inverseSurface</item>
+		<item name="errorEnabled">false</item>
+		<item name="hintEnabled">false</item>
+		<item name="thumbColor">@color/onBackground</item>
+		<item name="colorAccent">@color/primary</item>
+		<item name="expandedHintEnabled">false</item>
+		<item name="boxStrokeWidth">1dp</item>
+		<item name="boxStrokeWidthFocused">1dp</item>
+		<item name="boxCornerRadiusBottomStart">6dp</item>
+		<item name="boxCornerRadiusBottomEnd">6dp</item>
+		<item name="boxCornerRadiusTopStart">6dp</item>
+		<item name="boxCornerRadiusTopEnd">6dp</item>
+
+		<!--MISC. COLOR-->
+		<item name="hintTextColor">@color/outline</item>
+		<item name="startIconTint">@color/outlineVariant</item>
+		<item name="endIconTint">@color/outlineVariant</item>
+		<item name="passwordToggleTint">@color/outlineVariant</item>
+		<item name="hintTextAppearance">@style/BodyMedium</item>
+		<item name="counterTextAppearance">@style/LabelMedium</item>
+		<item name="counterOverflowTextAppearance">@style/LabelMedium</item>
+
+		<!--TEXT CONTROLLER COLOR-->
+		<item name="colorControlActivated">@color/primary</item>
+		<item name="colorControlNormal">@color/primary</item>
+		<item name="colorControlHighlight">@color/primary</item>
+		<item name="android:colorControlActivated">@color/primary</item>
+		<item name="android:colorControlNormal">@color/primary</item>
+		<item name="android:colorControlHighlight">@color/primary</item>
+
+	</style>
+
+	<style name = "inputText"  parent="BodyMedium">
+		<item name="android:paddingVertical">18dp</item>
+		<item name="android:paddingHorizontal">12dp</item>
+		<item name="android:textAppearance">@style/BodyLarge</item>
+		<item name="android:textColor">@color/onPrimary</item>
+		<item name="android:textColorHint">@color/outline</item>
+		<item name="thumbColor">@color/primary</item>
+	</style>
+
+	<style name="textBoxFillDropDown" parent="Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
+		<!--TEXT STYLE-->
+		<item name="android:textAppearance">@style/BodyMedium</item>
+		<item name="android:textColor">@color/onBackground</item>
+
+		<!--TEXT BOX STYLE-->
+		<item name="boxStrokeColor">@color/input_box_stroke_color_state</item>
+		<item name="boxBackgroundColor">@color/surface</item>
+		<item name="errorEnabled">false</item>
+		<item name="hintEnabled">false</item>
+		<item name="boxStrokeWidth">1dp</item>
+		<item name="boxStrokeWidthFocused">1dp</item>
+		<item name="boxCornerRadiusBottomStart">24dp</item>
+		<item name="boxCornerRadiusBottomEnd">24dp</item>
+		<item name="boxCornerRadiusTopStart">24dp</item>
+		<item name="boxCornerRadiusTopEnd">24dp</item>
+
+		<!--MISC. COLOR-->
+		<item name="endIconTint">@color/primary</item>
+		<item name="errorTextAppearance">@style/BodyMedium</item>
+		<item name="android:textColorHint">@color/onBackground</item>
+		<item name="boxStrokeErrorColor">@color/error</item>
+		<item name="hintTextColor">@color/onBackground</item>
+		<item name="startIconTint">@color/primary</item>
+		<item name="passwordToggleTint">@color/onBackground</item>
+		<item name="hintTextAppearance">@style/BodyMedium</item>
+		<item name="counterTextAppearance">@style/LabelMedium</item>
+		<item name="counterOverflowTextAppearance">@style/LabelMedium</item>
+
+		<!--TEXT CONTROLLER COLOR-->
+		<item name="colorControlActivated">@color/primary</item>
+		<item name="colorControlNormal">@color/primary</item>
+		<item name="colorControlHighlight">@color/primary</item>
+		<item name="android:colorControlActivated">@color/primary</item>
+		<item name="android:colorControlNormal">@color/primary</item>
+		<item name="android:colorControlHighlight">@color/primary</item>
+	</style>
+
+	<!--BUTTON STYLES-->
+	<style name="appBtn" parent="Widget.Material3.Button.UnelevatedButton">
+		<item name="cornerRadius">4dp</item>
+		<item name="backgroundTint">@color/primary</item>
+		<item name="rippleColor">@color/outline</item>
+		<item name="android:textColor">@color/onPrimary</item>
+		<item name="textAllCaps">false</item>
+		<item name="android:textAllCaps">false</item>
+		<item name="android:elevation">0dp</item>
+		<item name="android:textAppearance">@style/Button</item>
+		<item name="android:paddingVertical">12dp</item>
+		<item name="android:paddingHorizontal">64dp</item>
+		<item name="elevation">4dp</item>
+		<item name="iconSize">24dp</item>
+		<item name="android:insetTop">0dp</item>
+		<item name="android:insetBottom">0dp</item>
+	</style>
+
+	<style name="appTonalBtn" parent="appBtn">
+		<item name="backgroundTint">@color/onPrimaryContainer</item>
+		<item name="rippleColor">@color/onPrimary</item>
+		<item name="android:textColor">@color/onPrimary</item>
+	</style>
+
+	<style name="appBtnOutline" parent="appBtn">
+		<item name="backgroundTint">@color/surface</item>
+		<item name="android:backgroundTint">@color/surface</item>
+		<item name="rippleColor">@color/primaryContainer</item>
+		<item name="android:textColor">@color/primary</item>
+		<item name="strokeColor">@color/primary</item>
+		<item name="strokeWidth">2dp</item>
+	</style>
+
+	<style name="appBtnTrans" parent="appBtn">
+		<item name="backgroundTint">@color/surface</item>
+		<item name="rippleColor">@color/outline</item>
+		<item name="strokeColor">@color/background</item>
+		<item name="strokeWidth">2dp</item>
+		<item name="android:textColor">@color/background</item>
+	</style>
+
+	<!--BOTTOM-SHEET STYLE-->
+	<style name="BottomSheetDialogStyle" parent="@style/Theme.Material3.DayNight.BottomSheetDialog">
+		<item name="bottomSheetStyle">@style/BottomSheetAppearance</item>
+		<item name="background">@android:color/transparent</item>
+		<item name="android:windowBackground">@android:color/transparent</item>
+		<item name="android:windowIsFloating">false</item>
+		<item name="android:windowLightStatusBar">false</item>
+		<item name="android:windowLightNavigationBar" tools:targetApi="o_mr1">true</item>
+		<item name="android:statusBarColor">@color/surface</item>
+		<item name="android:navigationBarColor">@color/surface</item>
+	</style>
+
+	<style name="BottomSheetAppearance" parent="Widget.Material3.BottomSheet">
+		<item name="shapeAppearanceOverlay">@style/largeShape</item>
+		<item name="background">@android:color/transparent</item>
+		<item name="android:backgroundTint">@android:color/transparent</item>
+		<item name="android:elevation" app:ignore="NewApi">0dp</item>
+	</style>
+
+	<style name="shadowStyle">
+		<item name="android:elevation">2dp</item>
+		<item name="cardBackgroundColor">@color/background</item>
+		<item name="android:outlineSpotShadowColor" tools:targetApi="p">@color/inverseSurface</item>
+		<item name="android:outlineAmbientShadowColor" tools:targetApi="p">@color/inverseSurface
+		</item>
+	</style>
+
+	<!--CARD STYLE-->
+	<style name="cardStyle" parent="Widget.Material3.CardView.Filled">
+		<item name="cardElevation">2dp</item>
+		<item name="cardMaxElevation">1dp</item>
+		<item name="cardCornerRadius">6dp</item>
+		<item name="android:outlineProvider">background</item>
+		<item name="cardBackgroundColor">@color/onSurfaceVariant</item>
+		<item name="rippleColor">@color/onSurface</item>
+		<item name="android:outlineSpotShadowColor" tools:targetApi="p">@color/inverseSurface
+		</item>
+		<item name="android:outlineAmbientShadowColor" tools:targetApi="p">
+			@color/inverseSurface
+		</item>
+	</style>
+
+	<style name="appLoader">
+		<item name="SpinKit_Color">@color/primary</item>
+		<item name="SpinKit_Style">ThreeBounce</item>
+	</style>
+
+	<style name="swipeStyle">
+		<item name="preview">none</item>
+		<item name="autoClose">true</item>
+		<item name="designer">@string/parallax_designer</item>
+	</style>
+
+	<style name="tabStyle" parent="Widget.Material3.TabLayout">
+		<item name="enforceTextAppearance">false</item>
+<!--		<item name="android:background">@drawable/tab_indicator_background</item>-->
+		<item name="tabIndicatorAnimationDuration">500</item>
+<!--		<item name="tabIndicator">@drawable/tab_indicator_outline</item>-->
+		<item name="tabIndicatorColor">@null</item>
+		<item name="tabTextAppearance">@style/TitleMedium</item>
+		<item name="tabTextColor">@color/outlineVariant</item>
+		<item name="tabSelectedTextColor">@color/onPrimary</item>
+		<item name="tabIndicatorGravity">stretch</item>
+		<item name="tabIndicatorAnimationMode">elastic</item>
+		<item name="tabIndicatorFullWidth">true</item>
+		<item name="elevation">0dp</item>
+	</style>
+
+<style name="timerTabStyle" parent="Widget.Material3.TabLayout">
+		<item name="enforceTextAppearance">false</item>
+		<item name="android:background">@color/transparent</item>
+		<item name="tabIndicatorAnimationDuration">500</item>
+		<item name="tabIndicator">@color/transparent</item>
+		<item name="tabIndicatorColor">@null</item>
+		<item name="tabTextAppearance">@style/TitleMedium</item>
+		<item name="tabTextColor">@color/outlineVariant</item>
+		<item name="tabSelectedTextColor">@color/primary</item>
+		<item name="tabIndicatorGravity">stretch</item>
+		<item name="tabIndicatorAnimationMode">elastic</item>
+		<item name="tabIndicatorFullWidth">false</item>
+	</style>
+
+	<style name="tabStyle2" parent="Widget.Material3.TabLayout">
+		<item name="enforceTextAppearance">false</item>
+		<item name="android:backgroundTint">@color/transparent</item>
+		<item name="tabIndicatorAnimationDuration">500</item>
+		<item name="tabBackground">@drawable/card_4</item>
+		<item name="tabIndicator">@drawable/card_4</item>
+		<item name="tabIndicatorColor">@color/primary</item>
+		<item name="tabTextAppearance">@style/TitleSmall</item>
+		<item name="tabTextColor">@color/outlineVariant</item>
+		<item name="tabSelectedTextColor">@color/onPrimary</item>
+		<item name="tabIndicatorGravity">stretch</item>
+		<item name="tabIndicatorAnimationMode">elastic</item>
+		<item name="tabIndicatorFullWidth">true</item>
+		<item name="tabIconTint">@color/tab_icon_color</item>
+		<item name="tabInlineLabel">true</item>
+		<item name="elevation">0dp</item>
+	</style>
+
+	<style name="callFabStyle" parent="ThemeOverlay.Material3.FloatingActionButton.Primary">
+		<item name="backgroundTint">@color/primary</item>
+		<item name="elevation">2dp</item>
+		<item name="tint">@color/onPrimary</item>
+		<item name="android:layout_margin">8dp</item>
+		<item name="android:layout_width">wrap_content</item>
+		<item name="android:layout_height">wrap_content</item>
+		<item name="shapeAppearanceOverlay">@style/largeShape</item>
+	</style>
+
+	<!--MISC. STYLE-->
+
+	<style name="appSwitch" parent="Widget.Material3.CompoundButton.MaterialSwitch">
+		<item name="thumbTint">@color/surface</item>
+		<item name="trackDecorationTint">@color/switch_track_deco_color</item>
+		<item name="trackTint">@color/switch_track_color</item>
+		<item name="android:textAppearance">@style/TitleMedium</item>
+		<item name="android:textColor">@color/onSurface</item>
+	</style>
+
+	<style name="noInternetStyle">
+<!--		<item name="icon">@drawable/no_result</item>-->
+<!--		<item name="title_text">@string/oops</item>-->
+<!--		<item name="desc_text">@string/no_internet</item>-->
+<!--		<item name="btn_title">@string/retry</item>-->
+<!--		<item name="show_button">true</item>-->
+	</style>
+
+	<!--NAVIGATION BARs STYLES-->
+	<style name="navStyle" parent="Widget.Design.NavigationView">
+		<item name="android:layout_gravity">end|bottom</item>
+		<item name="android:layout_marginBottom">0dp</item>
+		<item name="itemIconTint">@color/menu_item_color_state</item>
+		<item name="itemRippleColor">@color/onPrimaryContainer</item>
+		<item name="itemTextColor">@color/menu_item_color_state</item>
+		<item name="itemBackground">@drawable/menu_background_color_state</item>
+		<item name="itemTextAppearance">@style/TitleMedium</item>
+		<item name="itemHorizontalPadding">32dp</item>
+		<!--        <item name = "itemShapeAppearanceOverlay" >@style/noShape</item >-->
+		<item name="itemShapeInsetBottom">0dp</item>
+		<item name="itemShapeInsetEnd">0dp</item>
+		<item name="itemShapeInsetStart">0dp</item>
+		<item name="itemShapeInsetTop">0dp</item>
+		<item name="itemVerticalPadding">@dimen/margin</item>
+	</style>
+
+	<style name="popupMenuStyle" parent="Widget.Material3.PopupMenu">
+		<item name="actionMenuTextColor">@color/primary</item>
+		<item name="colorControlNormal">@color/surface</item>
+	</style>
+
+	<style name="toolTipStyle" parent="Widget.Material3.Tooltip">
+		<item name="android:textAppearance">@style/LabelMedium</item>
+		<item name="android:textColor">@color/onPrimary</item>
+		<item name="backgroundTint">@color/primary</item>
+		<item name="android:padding">8dp</item>
+		<item name="android:minWidth">28dp</item>
+		<item name="android:minHeight">28dp</item>
+		<item name="shapeAppearance">@style/ShapeAppearance.Material3.Tooltip</item>
+	</style>
+
+	<style name="sliderStyle" parent="Widget.Material3.Slider">
+		<item name="thumbColor">@color/primary</item>
+		<item name="trackHeight">10dp</item>
+		<item name="thumbRadius">12dp</item>
+		<item name="thumbStrokeColor">@color/surface</item>
+		<item name="thumbStrokeWidth">2dp</item>
+		<item name="trackColorActive">@color/primary</item>
+		<item name="trackColorInactive">@color/primaryContainer</item>
+		<!--        <item name="labelStyle">@style/MyTooltip</item>-->
+	</style>
+
+	<style name="MyTooltip" parent="Widget.MaterialComponents.Tooltip">
+		<item name="backgroundTint">@color/primary</item>
+	</style>
+
+	<style name="progressStyle" parent="Widget.Material3.LinearProgressIndicator">
+		<item name="android:progressTint">@color/primary</item>
+		<item name="indicatorColor">@color/primary</item>
+		<item name="trackColor">@color/primaryContainer</item>
+		<item name="trackCornerRadius">20dp</item>
+		<item name="trackThickness">12dp</item>
+		<item name="android:progress">0</item>
+		<item name="android:max">100</item>
+	</style>
+
+	<style name="calenderRangeStyle" parent="ThemeOverlay.MaterialComponents.MaterialCalendar">
+		<item name="materialCalendarStyle">@style/calendarStyle</item>
+		<item name="materialCalendarYearNavigationButton">@style/calendarYearButton</item>
+		<item name="materialCalendarMonthNavigationButton">@style/calendarYearButton</item>
+		<item name="materialCalendarHeaderToggleButton">@style/calendarToggleButton</item>
+	</style>
+
+	<style name="calendarStyle" parent="Widget.MaterialComponents.MaterialCalendar">
+		<item name="android:windowFullscreen">false</item>
+		<item name="backgroundTint">@color/surface</item>
+		<item name="elevation">0dp</item>
+<!--		<item name="rangeFillColor">@color/primaryContainer</item>-->
+	</style>
+
+	<style name="calendarYearButton" parent="Widget.MaterialComponents.Button.TextButton.Dialog.Flush">
+		<item name="android:textColor">@color/onBackground</item>
+		<item name="android:textAppearance">@style/BodyLarge</item>
+		<item name="iconTint">@color/onBackground</item>
+	</style>
+
+	<style name="calendarToggleButton" parent="Base.Widget.MaterialComponents.MaterialCalendar.HeaderToggleButton">
+		<item name="android:visibility">gone</item>
+	</style>
+
+	<style name="bottomNavigationStyle" parent="Widget.Material3.BottomNavigationView">
+		<item name="itemRippleColor">@color/primary</item>
+		<item name="itemActiveIndicatorStyle">@style/bottomNavIndicator</item>
+		<item name="android:elevation">0dp</item>
+		<item name="elevation">0dp</item>
+		<item name="labelVisibilityMode">labeled</item>
+		<item name="itemTextAppearanceInactive">@style/BodySmall</item>
+		<item name="itemTextAppearanceActive">@style/BodySmall</item>
+		<item name="itemIconTint">@color/bottom_nav_color</item>
+		<item name="itemTextColor">@color/bottom_nav_color</item>
+		<item name="itemIconSize">22dp</item>
+		<item name="android:background">@color/onSurfaceVariant</item>
+	</style>
+
+	<style name="bottomNavIndicator" parent="@style/Widget.Material3.BottomNavigationView.ActiveIndicator">
+		<item name="android:width">0dp</item>
+		<item name="android:height">0dp</item>
+		<item name="marginHorizontal">0dp</item>
+		<!--        <item name="shapeAppearance">@style/navIndicatorShape</item>-->
+		<item name="android:color">@color/transparent</item>
+	</style>
+
+</resources>

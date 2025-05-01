@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources >
+
+	<declare-styleable name = "LoaderView" >
+		<attr name = "loaderStyle" format = "reference" />
+		<attr name = "loaderColor" format = "color" />
+		<attr name = "showBack" format = "boolean" />
+	</declare-styleable >
+
+	<declare-styleable name = "NoDataView" >
+		<attr name = "desc_text" format = "string" />
+		<attr name = "title_text" format = "string" />
+		<attr name = "icon" format = "reference" />
+		<attr name = "iconVisible" format = "boolean" />
+		<attr name = "btn_title" format = "string" />
+		<attr name = "show_button" format = "boolean" />
+	</declare-styleable >
+
+
+	<declare-styleable name = "Header">
+	<attr name="back_icon" format="reference" />
+	<attr name="more_icon" format="reference" />
+	<attr name="show_more" format="boolean" />
+	<attr name="show_back" format="boolean" />
+	<attr name="header_title" format="string" />
+	<attr name="show_divider" format="boolean" />
+	<attr name="is_transparent" format="boolean" />
+
+	</declare-styleable>
+
+	<declare-styleable name = "Heading" >
+		<attr name = "title" format = "string" />
+		<attr name = "style" format = "reference" />
+	</declare-styleable >
+
+</resources >
