@@ -36,6 +36,7 @@ import androidx.viewbinding.ViewBinding
 import com.bumptech.glide.Glide
 import com.rubensousa.decorator.LinearDividerDecoration
 import com.squareup.picasso.Picasso
+import com.squareup.picasso.Target
 import io.bidcast.app.R
 import io.bidcast.app.interfaces.AlertClicks
 import io.bidcast.app.network.Resource

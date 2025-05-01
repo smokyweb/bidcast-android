@@ -27,11 +27,9 @@ class Header @JvmOverloads constructor(
 		context.theme.obtainStyledAttributes(attrs , styleable.Header , 0 , 0).use {
 			bind.backIcon.isVisible = it.getBoolean(styleable.Header_back_icon , true)
 
-			bind.bottomDivider.isVisible = it.getBoolean(styleable.Header_show_divider, true)
-
 			setBackIcon(it.getResourceId(styleable.Header_back_icon , draw.ic_back))
 			setMoreIcon(it.getResourceId(styleable.Header_more_icon , draw.ic_delete))
-		//	setHeaderText(it.getString(styleable.Header_header_title) ?: "")
+			setHeaderText(it.getString(styleable.Header_header_title) ?: "")
 			showMore(it.getBoolean(styleable.Header_show_more , false))
 			showBack(it.getBoolean(styleable.Header_show_back , true))
 
@@ -42,8 +40,8 @@ class Header @JvmOverloads constructor(
 		}
 	}
 
-/*	fun setHeaderText(title : String) { bind.header.text = title
-	}*/
+	fun setHeaderText(title : String) { bind.text.text = title
+	}
 
 	fun onBackClick(click : OnClickListener) {
 		bind.backIcon.setOnClickListener(click)
@@ -80,6 +78,8 @@ class Header @JvmOverloads constructor(
 			bind.backIcon.visibility = INVISIBLE
 		}
 	}
+
+
 //	fun setMoreIcon(@DrawableRes id: Int) = bind.moreIcon.setImageResource(id)
 
 	fun background(color:Int){

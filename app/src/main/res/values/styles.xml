@@ -24,7 +24,7 @@
 		<item name="thumbColor">@color/onBackground</item>
 		<item name="colorAccent">@color/primary</item>
 		<item name="expandedHintEnabled">false</item>
-		<item name="boxStrokeWidth">1dp</item>
+		<item name="boxStrokeWidth">0dp</item>
 		<item name="boxStrokeWidthFocused">1dp</item>
 		<item name="boxCornerRadiusBottomStart">6dp</item>
 		<item name="boxCornerRadiusBottomEnd">6dp</item>
@@ -51,12 +51,19 @@
 	</style>
 
 	<style name = "inputText"  parent="BodyMedium">
-		<item name="android:paddingVertical">18dp</item>
-		<item name="android:paddingHorizontal">12dp</item>
+<!--		<item name="android:paddingVertical">18dp</item>-->
+<!--		<item name="android:paddingHorizontal">12dp</item>-->
 		<item name="android:textAppearance">@style/BodyLarge</item>
 		<item name="android:textColor">@color/onPrimary</item>
 		<item name="android:textColorHint">@color/outline</item>
 		<item name="thumbColor">@color/primary</item>
+	</style>
+
+	<style name="inputTextStyle" parent="BodyMedium">
+		<item name="android:padding">16dp</item>
+		<item name="android:textAppearance">@style/BodySmall</item>
+		<item name="android:textColor">@color/onSurface</item>
+		<item name="android:textColorHint">@color/outline</item>
 	</style>
 
 	<style name="textBoxFillDropDown" parent="Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
@@ -185,11 +192,11 @@
 		<item name="SpinKit_Style">ThreeBounce</item>
 	</style>
 
-	<style name="swipeStyle">
+	<!--<style name="swipeStyle">
 		<item name="preview">none</item>
 		<item name="autoClose">true</item>
 		<item name="designer">@string/parallax_designer</item>
-	</style>
+	</style>-->
 
 	<style name="tabStyle" parent="Widget.Material3.TabLayout">
 		<item name="enforceTextAppearance">false</item>

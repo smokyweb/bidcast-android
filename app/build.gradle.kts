@@ -10,7 +10,7 @@ import java.util.Date
             alias(libs.plugins.devtools)
         }
 
-fun getAPKName() = "well_genius_${SimpleDateFormat("dd-MM-yyyy").format(Date())}"
+fun getAPKName() = "Bid_Cast_${SimpleDateFormat("dd-MM-yyyy").format(Date())}"
 
 
 android {
@@ -97,9 +97,6 @@ dependencies {
     //GOOGLE DEPENDENCIES
     implementation(libs.hilt.android)
     implementation(libs.material)
-    implementation(libs.play.services.location)
-    implementation(libs.play.services.maps)
-    implementation (libs.places)
     implementation(libs.navigation.fragment.ktx)
     implementation(libs.navigation.ui.ktx)
     ksp(libs.hilt.compiler)
@@ -118,46 +115,16 @@ dependencies {
     implementation(libs.glide)
     ksp(libs.compiler)
 
-    //MAPS DEPENDENCIES
-    implementation (libs.play.services.location)
-    implementation(libs.play.services.maps)
-    implementation (libs.locus.android)
+
 
     //THIRD PARTY DEPENDENCIES
-    implementation(libs.kevinschildhorn.otpview)
     implementation(libs.recyclerview.animators)
     implementation(libs.material.calendar.view)
-    implementation(libs.swipeMenuRecyclerView)
     implementation(libs.android.image.cropper)
-    implementation(libs.easyvalidation.core)
-    implementation(libs.expandableLayout)
-    implementation(libs.immersionbar.ktx)
-    implementation(libs.roundedimageview)
-    implementation (libs.colorpickerview)
-    implementation(libs.arindicatorview)
     implementation(libs.android.spinKit)
-    implementation(libs.immersionbar)
     implementation(libs.permissionx)
-    implementation(libs.pdf.viewer)
-    implementation(libs.decorator)
-    implementation(libs.onesignal)
-    implementation(libs.picasso)
-    implementation(libs.flexbox)
-    implementation(libs.otpView)
     implementation(libs.toasty)
-    implementation(libs.axEmojiView)
+    implementation(libs.decorator)
+    implementation(libs.picasso)
 
-    implementation(libs.sandwich.retrofit.serialization)
-    implementation(libs.sandwich.retrofit)
-    implementation(libs.sandwich)
-
-    //Exo player
-    implementation(libs.androidx.media3.exoplayer.dash)
-    implementation(libs.androidx.media3.exoplayer)
-    implementation(libs.androidx.media3.common)
-    implementation(libs.androidx.media3.ui)
-
-    implementation (libs.stripe.android)
-
-    implementation(libs.agora.rtc.sdk)
 }
