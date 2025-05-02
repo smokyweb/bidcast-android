@@ -1,7 +1,6 @@
 package io.bidcast.app.ui.custom
 
 import android.content.Context
-import android.content.res.ColorStateList
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.widget.LinearLayout
@@ -10,89 +9,164 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.res.use
 import androidx.core.view.isVisible
 import io.bidcast.app.databinding.HeaderViewBinding
-import io.bidcast.app.utils.clr
 import io.bidcast.app.utils.draw
 import io.bidcast.app.utils.styleable
 
 class Header @JvmOverloads constructor(
-	context : Context ,
-	attrs : AttributeSet? = null ,
-	defStyleAttr : Int = 0
-) : LinearLayout(context , attrs , defStyleAttr) {
+    context: Context,
+    attrs: AttributeSet? = null,
+    defStyleAttr: Int = 0
+) : LinearLayout(context, attrs, defStyleAttr) {
 
-	private val bind = HeaderViewBinding.inflate(LayoutInflater.from(context) , this , true)
+    private val bind = HeaderViewBinding.inflate(LayoutInflater.from(context), this, true)
 
-	init {
+    init {
+        context.theme.obtainStyledAttributes(attrs, styleable.Header, 0, 0).use {
 
-		context.theme.obtainStyledAttributes(attrs , styleable.Header , 0 , 0).use {
-			bind.backIcon.isVisible = it.getBoolean(styleable.Header_back_icon , true)
+            setHeaderText(it.getString(styleable.Header_headerTitle) ?: "")
 
-			setBackIcon(it.getResourceId(styleable.Header_back_icon , draw.ic_back))
-			setMoreIcon(it.getResourceId(styleable.Header_more_icon , draw.ic_delete))
-			setHeaderText(it.getString(styleable.Header_header_title) ?: "")
-			showMore(it.getBoolean(styleable.Header_show_more , false))
-			showBack(it.getBoolean(styleable.Header_show_back , true))
-			showAppText(it.getBoolean(styleable.Header_show_app_text , true))
+            // Configure the header mode (back button, app text, icons, etc.)
+            configureHeaderMode(it.getInt(styleable.Header_headerMode, 0))
 
+            // Set icons
+            setBackIcon(it.getResourceId(styleable.Header_backIconDrawable, draw.ic_back))
+            setPrimaryIcon(it.getResourceId(styleable.Header_primaryIconDrawable, draw.ic_delete))
+            setSecondaryIcon(
+                it.getResourceId(
+                    styleable.Header_secondaryIconDrawable,
+                    draw.ic_delete
+                )
+            )
 
-			if (it.getBoolean(styleable.Header_is_transparent, false)) {
-				bind.root.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(context, clr.transparent))
-			}
-		}
-	}
+            // Set visibility of icons
+            showPrimaryIcon(it.getBoolean(styleable.Header_showPrimaryIcon, false))
+            showSecondaryIcon(it.getBoolean(styleable.Header_showSecondaryIcon, false))
+            showBackButton(
+                it.getBoolean(
+                    styleable.Header_showBackButton,
+                    true
+                )
+            )  // Adjust visibility of back button
+        }
+    }
 
-	fun setHeaderText(title : String) { bind.text.text = title
-	}
+    private fun configureHeaderMode(headerMode: Int) {
+        when (headerMode) {
+            0 -> { // BACK_BUTTON_WITH_TITLE_AND_ACTION_BUTTONS
+                bind.back.isVisible = true
+                bind.title.isVisible = true
+                bind.appText.alpha = 0F
+                bind.secondaryIcon.isVisible = true
+                bind.secondary.isVisible = true
+                bind.primaryIcon.isVisible = true // Include primary icon
+                bind.primary.isVisible = true   // Include primary button
+            }
 
-	fun onBackClick(click : OnClickListener) {
-		bind.backIcon.setOnClickListener(click)
-	}
+            1 -> { // APP_TEXT_WITH_ACTION_BUTTONS
+                bind.back.isVisible = false
+                bind.appText.isVisible = true
+                bind.secondaryIcon.isVisible = true
+                bind.secondary.isVisible = true
+                bind.primaryIcon.isVisible = true // Include primary icon
+                bind.primary.isVisible = true   // Include primary button
+            }
 
-	fun onMoreClick(click : OnClickListener) {
-		bind.moreIcon.setOnClickListener(click)
-	}
+            2 -> { // APP_TEXT_WITH_BACK_AND_ACTION_BUTTONS
+                bind.back.isVisible = true
+                bind.appText.isVisible = true
+                bind.secondaryIcon.isVisible = true
+                bind.secondary.isVisible = true
+                bind.primaryIcon.isVisible = true // Include primary icon
+                bind.primary.isVisible = true   // Include primary button
+            }
+        }
+    }
 
-	fun setMoreIcon(@DrawableRes id : Int) = bind.moreIcon.setImageResource(id)
+    fun setHeaderText(title: String) {
+        bind.title.text = title
+    }
 
-	fun setBackIcon(@DrawableRes id : Int) = bind.backIcon.setImageResource(id)
+    fun setBackIcon(@DrawableRes id: Int) {
+        bind.backIcon.setImageResource(id)
+    }
 
-	fun showMore(state : Boolean) {
-		if (state) {
-			bind.moreIcon.isEnabled = true
-			bind.moreSection.visibility = VISIBLE
-			bind.moreIcon.visibility = VISIBLE
-		} else {
-			bind.moreIcon.isEnabled = false
-			bind.moreSection.visibility = INVISIBLE
-			bind.moreIcon.visibility = INVISIBLE
-		}
-	}
+    fun setPrimaryIcon(@DrawableRes id: Int) {
+        bind.primaryIcon.setImageResource(id)
+    }
 
-	fun showBack(state : Boolean) {
-		if (state) {
-			bind.back.isEnabled = true
-			bind.back.visibility = VISIBLE
-			bind.back.visibility = VISIBLE
-		} else {
-			bind.backIcon.isEnabled = false
-			bind.back.visibility = INVISIBLE
-			bind.backIcon.visibility = INVISIBLE
-		}
-	}
+    fun setSecondaryIcon(@DrawableRes id: Int) {
+        bind.secondaryIcon.setImageResource(id)
+    }
 
-	fun showAppText(state : Boolean) {
-		if (state) {
-			bind.appText.visibility = VISIBLE
-		} else {
-			bind.appText.visibility = INVISIBLE
-		}
-	}
+    fun onBackClick(click: OnClickListener) {
+        bind.backIcon.setOnClickListener(click)
+    }
 
+    fun onMoreClick(click: OnClickListener) {
+        bind.secondaryIcon.setOnClickListener(click)
+    }
 
-//	fun setMoreIcon(@DrawableRes id: Int) = bind.moreIcon.setImageResource(id)
+    fun showSecondaryIcon(state: Boolean) {
+        if (state) {
+            bind.secondaryIcon.isEnabled = true
+            bind.secondary.visibility = VISIBLE
+            bind.secondaryIcon.visibility = VISIBLE
+        } else {
+            bind.secondaryIcon.isEnabled = false
+            bind.secondary.visibility = INVISIBLE
+            bind.secondaryIcon.visibility = INVISIBLE
+        }
+    }
 
-	fun background(color:Int){
-		bind.header.setBackgroundColor(resources.getColor(clr.primary))
-	}
+    fun showPrimaryIcon(state: Boolean) {
+        if (state) {
+            bind.primaryIcon.isEnabled = true
+            bind.primary.visibility = VISIBLE
+            bind.primaryIcon.visibility = VISIBLE
+        } else {
+            bind.primaryIcon.isEnabled = false
+            bind.primary.visibility = INVISIBLE
+            bind.primaryIcon.visibility = INVISIBLE
+        }
+    }
 
+    fun showBackButton(state: Boolean) {
+        if (state) {
+            bind.back.isEnabled = true
+            bind.back.visibility = VISIBLE
+            bind.backIcon.visibility = VISIBLE
+        } else {
+            bind.backIcon.isEnabled = false
+            bind.back.visibility = INVISIBLE
+            bind.backIcon.visibility = INVISIBLE
+        }
+    }
+
+    fun showPrimaryButton(state: Boolean) {
+        if (state) {
+            bind.primary.isEnabled = true
+            bind.primary.visibility = VISIBLE
+            bind.primaryIcon.visibility = VISIBLE
+        } else {
+            bind.primary.isEnabled = false
+            bind.primary.visibility = INVISIBLE
+            bind.primaryIcon.visibility = INVISIBLE
+        }
+    }
+
+    fun showSecondaryButton(state: Boolean) {
+        if (state) {
+            bind.secondary.isEnabled = true
+            bind.secondary.visibility = VISIBLE
+            bind.secondaryIcon.visibility = VISIBLE
+        } else {
+            bind.secondary.isEnabled = false
+            bind.secondary.visibility = INVISIBLE
+            bind.secondaryIcon.visibility = INVISIBLE
+        }
+    }
+
+    fun background(color: Int) {
+        bind.header.setBackgroundColor(ContextCompat.getColor(context, color))
+    }
 }

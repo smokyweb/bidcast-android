@@ -1,6 +1,6 @@
 [versions]
 activity = "1.9.3"
-agp = "8.7.2"
+agp = "8.9.2"
 axemojiview = "1.5.2"
 androidImageCropper = "4.5.0"
 arindicatorview = "2.0.0"
