@@ -32,6 +32,7 @@ class Header @JvmOverloads constructor(
 			setHeaderText(it.getString(styleable.Header_header_title) ?: "")
 			showMore(it.getBoolean(styleable.Header_show_more , false))
 			showBack(it.getBoolean(styleable.Header_show_back , true))
+			showAppText(it.getBoolean(styleable.Header_show_app_text , true))
 
 
 			if (it.getBoolean(styleable.Header_is_transparent, false)) {
@@ -76,6 +77,14 @@ class Header @JvmOverloads constructor(
 			bind.backIcon.isEnabled = false
 			bind.back.visibility = INVISIBLE
 			bind.backIcon.visibility = INVISIBLE
+		}
+	}
+
+	fun showAppText(state : Boolean) {
+		if (state) {
+			bind.appText.visibility = VISIBLE
+		} else {
+			bind.appText.visibility = INVISIBLE
 		}
 	}
 

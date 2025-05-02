@@ -9,7 +9,9 @@ import androidx.navigation.fragment.findNavController
 import io.bidcast.app.R
 import io.bidcast.app.base.BaseFragment
 import io.bidcast.app.databinding.FragmentLoginBinding
+import io.bidcast.app.utils.finish
 import io.bidcast.app.utils.ids
+import io.bidcast.app.utils.toDash
 
 class LoginFragment : BaseFragment<AuthViewModel, FragmentLoginBinding>() {
     override fun getModel(): Class<AuthViewModel> = AuthViewModel::class.java
@@ -28,6 +30,11 @@ class LoginFragment : BaseFragment<AuthViewModel, FragmentLoginBinding>() {
         bind.forgot.setOnClickListener {
 
             findNavController().navigate(ids.goToForgotPassword)
+        }
+
+        bind.loginBtn.setOnClickListener {
+            startActivity(mCtx.toDash())
+            finish()
         }
 
 

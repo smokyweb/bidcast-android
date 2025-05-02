@@ -9,12 +9,9 @@ class AuthActivity : BaseActivity() {
 
     private val bind by bind(ActivityAuthBinding::inflate)
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(bind.root)
-
-
         
     }
 

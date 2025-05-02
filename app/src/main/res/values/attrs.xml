@@ -22,6 +22,7 @@
 	<attr name="more_icon" format="reference" />
 	<attr name="show_more" format="boolean" />
 	<attr name="show_back" format="boolean" />
+	<attr name="show_app_text" format="boolean" />
 	<attr name="header_title" format="string" />
 	<attr name="show_divider" format="boolean" />
 	<attr name="is_transparent" format="boolean" />
