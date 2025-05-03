@@ -5,56 +5,135 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.view.isVisible
+import com.google.android.gms.common.internal.Constants
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import io.bidcast.app.R
+import io.bidcast.app.base.BaseFragment
+import io.bidcast.app.controller.ExploreAdapter
+import io.bidcast.app.databinding.FragmentSellBinding
+import io.bidcast.app.databinding.SellBottomSheetBinding
+import io.bidcast.app.interfaces.RecyclerClicks
+import io.bidcast.app.utils.Alerts
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
+class SellFragment : BaseFragment<DashViewModel,FragmentSellBinding>() {
+    override fun getModel(): Class<DashViewModel> = DashViewModel::class.java
 
-/**
- * A simple [Fragment] subclass.
- * Use the [SellFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
-class SellFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
+    override fun getBind(inflater: LayoutInflater, view: ViewGroup?) = FragmentSellBinding.inflate(inflater,view, false)
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
+    private lateinit var imageSheet: BottomSheetBehavior<ConstraintLayout>
+    private lateinit var exploreAdapter : ExploreAdapter
+    private var exploreList = mutableListOf<String>()
+
+    private lateinit var sellBottomSheetBind : SellBottomSheetBinding
+    private lateinit var selectLocationSheet: BottomSheetDialog
+
+    private val mClick = object : RecyclerClicks{
+        override fun viewClick(pos: Int) {
+
+        }
+
+        override fun itemClick(pos: Int, status: String) {
+
         }
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_sell, container, false)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        sellBottomSheetBind = SellBottomSheetBinding.bind(layoutInflater.inflate(R.layout.sell_bottom_sheet, null, false))
+        selectLocationSheet = Alerts.appBottomSheet(mCtx, true, sellBottomSheetBind)
+
+        repeat(5){
+            exploreList.add("")
+        }
+
+        exploreAdapter = ExploreAdapter(exploreList,mClick)
+
+        sellBottomSheetBind.recycler.adapter = exploreAdapter
+
+        selectLocationSheet.show()
+
+
+
+
+        /*bind.recycler.adapter = exploreAdapter
+
+
+        setupImageSheet()*/
+
+
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment SellFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            SellFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
+
+    /*private fun setupImageSheet() {
+        BottomSheetBehavior.from(bind.imageSheet)
+
+        imageSheet = BottomSheetBehavior.from(bind.imageSheet).also {
+            it.peekHeight = 0
+            it.isHideable = true
+            it.isDraggable = false
+            it.isFitToContents = false
+        }
+
+        imageSheet.addBottomSheetCallback(mSheetCallback)
+
+        imageSheet.state = BottomSheetBehavior.STATE_EXPANDED
+
+        bind.close.setOnClickListener {
+            imageSheet.state = BottomSheetBehavior.STATE_COLLAPSED
+        }
+
+
+    }*/
+
+    private val mSheetCallback = object : BottomSheetBehavior.BottomSheetCallback() {
+        override fun onStateChanged(bottomSheet: View, newState: Int) {
+            when (newState) {
+                BottomSheetBehavior.STATE_EXPANDED -> {
+                    /*val params = CoordinatorLayout.LayoutParams(
+                        CoordinatorLayout.LayoutParams.MATCH_PARENT,
+                        CoordinatorLayout.LayoutParams.WRAP_CONTENT
+                    )
+                    params.setMargins(0, 0, 0, 0)
+                    bind.coOrdinate.setLayoutParams(params)*/
+
+                }
+
+                BottomSheetBehavior.STATE_HIDDEN -> {
+                }
+
+                BottomSheetBehavior.STATE_DRAGGING -> {
+                }
+
+                BottomSheetBehavior.STATE_HALF_EXPANDED -> {
+
+                }
+
+                BottomSheetBehavior.STATE_SETTLING -> {
+
+                }
+
+                BottomSheetBehavior.STATE_COLLAPSED -> {
+
+//                    bind.imageSheet.isVisible =false
+
                 }
             }
+        }
+
+        override fun onSlide(bottomSheet: View, slideOffset: Float) {
+            if (slideOffset > 0) {
+                try {
+//						bind.commentSheet.sheetRoot.itemClick.alpha = slideOffset
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+            }
+        }
     }
+
 }

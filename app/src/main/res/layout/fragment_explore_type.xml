@@ -31,6 +31,7 @@
         app:startIconDrawable="@drawable/search"
         app:startIconTint="@color/scrim"
         app:boxStrokeWidth="2dp"
+        app:boxBackgroundColor="@color/surface"
         app:layout_constraintTop_toBottomOf="@id/header"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">

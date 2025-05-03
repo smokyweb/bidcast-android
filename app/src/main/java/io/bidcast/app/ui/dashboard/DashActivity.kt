@@ -1,18 +1,33 @@
 package io.bidcast.app.ui.dashboard
 
 import android.os.Bundle
+import android.view.View
+import androidx.activity.viewModels
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.lifecycle.Lifecycle
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
 import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.setupWithNavController
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import io.bidcast.app.R
 import io.bidcast.app.base.BaseActivity
+import io.bidcast.app.controller.ExploreAdapter
+import io.bidcast.app.controller.SellAdapter
 import io.bidcast.app.databinding.ActivityDashBinding
+import io.bidcast.app.interfaces.RecyclerClicks
+import io.bidcast.app.model.SellModel
 import io.bidcast.app.utils.bind
 import io.bidcast.app.utils.ids
 
-class DashActivity : BaseActivity() , NavController.OnDestinationChangedListener {
+class DashActivity : BaseActivity(), NavController.OnDestinationChangedListener {
 
     private val bind by bind(ActivityDashBinding::inflate)
+    private val viewModel by viewModels<DashViewModel>()
+
+    private lateinit var imageSheet: BottomSheetBehavior<ConstraintLayout>
+    private var exploreList = mutableListOf<SellModel>()
 
     private lateinit var navController: NavController
     private lateinit var navHostFragment: NavHostFragment
@@ -27,8 +42,30 @@ class DashActivity : BaseActivity() , NavController.OnDestinationChangedListener
 
         navController.addOnDestinationChangedListener(this)
         bind.bottomBar.setupWithNavController(navController)
+        setupImageSheet()
+        bind.bottomBar.setOnItemSelectedListener { menuItem ->
+            if (menuItem.itemId != ids.sellFragment) viewModel.lastIndex.value = menuItem.itemId
+            when (menuItem.itemId) {
+                ids.sellFragment -> {
+                    imageSheet.state=BottomSheetBehavior.STATE_EXPANDED
+                    return@setOnItemSelectedListener true
+                }
 
-
+                else -> {
+                    imageSheet.state=BottomSheetBehavior.STATE_COLLAPSED
+                    try {
+                        navController?.let { ctrl ->
+                            NavigationUI.onNavDestinationSelected(menuItem, ctrl)
+                            ctrl.popBackStack(menuItem.itemId, false)
+                        }
+                        return@setOnItemSelectedListener true
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                        return@setOnItemSelectedListener false
+                    }
+                }
+            }
+        }
     }
 
     override fun onDestinationChanged(
@@ -37,5 +74,93 @@ class DashActivity : BaseActivity() , NavController.OnDestinationChangedListener
         arguments: Bundle?
     ) {
 
+    }
+
+    private fun setupImageSheet() {
+        BottomSheetBehavior.from(bind.imageSheet)
+
+        imageSheet = BottomSheetBehavior.from(bind.imageSheet).also {
+            it.peekHeight = 0
+            it.isHideable = true
+            it.isDraggable = false
+            it.isFitToContents = false
+        }
+
+        imageSheet.addBottomSheetCallback(mSheetCallback)
+
+        imageSheet.state = BottomSheetBehavior.STATE_COLLAPSED
+
+        exploreList.clear()
+        exploreList.addAll(
+            listOf(
+                SellModel(R.drawable.ic_tag,R.color.secondaryContainer,"List a Product","Create listing for your item"),
+                SellModel(R.drawable.ic_video,R.color.tertiaryContainer,"Schedule a Show","Go live and sell to your audience"),
+                SellModel(R.drawable.ic_shop,R.color.successContainer,"Seller Hub","Manage your store and listings")
+            )
+        )
+
+       val exploreAdapter = SellAdapter(exploreList,object:RecyclerClicks{
+           override fun viewClick(pos: Int) {
+
+           }
+
+           override fun itemClick(pos: Int, status: String) {
+
+           }
+
+       })
+
+        bind.sellSheet.recycler.adapter = exploreAdapter
+
+        bind.sellSheet.close.setOnClickListener {
+            imageSheet.state = BottomSheetBehavior.STATE_COLLAPSED
+        }
+
+    }
+
+    private val mSheetCallback = object : BottomSheetBehavior.BottomSheetCallback() {
+        override fun onStateChanged(bottomSheet: View, newState: Int) {
+            when (newState) {
+                BottomSheetBehavior.STATE_EXPANDED -> {
+                    /*val params = CoordinatorLayout.LayoutParams(
+                        CoordinatorLayout.LayoutParams.MATCH_PARENT,
+                        CoordinatorLayout.LayoutParams.WRAP_CONTENT
+                    )
+                    params.setMargins(0, 0, 0, 0)
+                    bind.coOrdinate.setLayoutParams(params)*/
+
+                }
+
+                BottomSheetBehavior.STATE_HIDDEN -> {
+                }
+
+                BottomSheetBehavior.STATE_DRAGGING -> {
+                }
+
+                BottomSheetBehavior.STATE_HALF_EXPANDED -> {
+
+                }
+
+                BottomSheetBehavior.STATE_SETTLING -> {
+
+                }
+
+                BottomSheetBehavior.STATE_COLLAPSED -> {
+//bind.bottomBar.selectedItemId=viewModel.lastIndex.value?:0
+//                    bind.imageSheet.isVisible =false
+
+                }
+            }
+        }
+
+        override fun onSlide(bottomSheet: View, slideOffset: Float) {
+            if (slideOffset > 0) {
+                try {
+//						bind.commentSheet.sheetRoot.itemClick.alpha = slideOffset
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+            }
+        }
     }
 }

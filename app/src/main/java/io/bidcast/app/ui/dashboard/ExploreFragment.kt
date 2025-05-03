@@ -25,6 +25,7 @@ class ExploreFragment : BaseFragment<DashViewModel,FragmentExploreBinding>() {
         }
 
         override fun itemClick(pos: Int, status: String) {
+
         }
     }
 

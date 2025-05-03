@@ -5,7 +5,7 @@ import android.os.Build
 
 object Const {
 
-	const val BASE_URL = ""
+	const val BASE_URL = "https://example.com"
 	
 	//NOTIFICATION CONST
 	const val CHANNEL_NAME = "Base Project"

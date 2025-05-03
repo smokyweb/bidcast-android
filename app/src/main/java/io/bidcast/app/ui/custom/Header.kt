@@ -137,8 +137,9 @@ class Header @JvmOverloads constructor(
             bind.backIcon.visibility = VISIBLE
         } else {
             bind.backIcon.isEnabled = false
-            bind.back.visibility = INVISIBLE
-            bind.backIcon.visibility = INVISIBLE
+            bind.back.visibility = GONE
+            bind.backIcon.visibility = GONE
+            bind.appText.setPadding(20,0,0,0)
         }
     }
 
