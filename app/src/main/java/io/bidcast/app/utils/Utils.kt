@@ -15,6 +15,8 @@ import androidx.core.content.ContextCompat
 import com.canhub.cropper.CropImageContractOptions
 import com.canhub.cropper.CropImageOptions
 import com.canhub.cropper.CropImageView
+import com.google.android.material.chip.Chip
+import io.bidcast.app.R
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
@@ -222,4 +224,15 @@ object Utils {
         }
         return fileName
     }
+
+    fun makeAChip(mCtx: Context, text: String, selected: Boolean) =
+        Chip(mCtx, null, R.attr.entryChipStyleNew).apply {
+            setText(text)
+            id = text.hashCode()
+            isClickable = true
+            isCheckable = true
+            chipStrokeWidth = 2f
+            isChecked = selected // Set the checked state
+            isCheckedIconVisible = false
+        }
 }

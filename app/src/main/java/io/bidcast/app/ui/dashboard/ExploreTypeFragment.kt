@@ -8,21 +8,24 @@ import android.view.ViewGroup
 import io.bidcast.app.R
 import io.bidcast.app.base.BaseFragment
 import io.bidcast.app.controller.HomeAdapter
-import io.bidcast.app.databinding.FragmentHomeBinding
+import io.bidcast.app.databinding.FragmentExploreBinding
+import io.bidcast.app.databinding.FragmentExploreTypeBinding
 import io.bidcast.app.utils.Utils
 import io.bidcast.app.utils.runSafe
 
-class HomeFragment : BaseFragment<DashViewModel,FragmentHomeBinding>() {
 
+class ExploreTypeFragment : BaseFragment<DashViewModel,FragmentExploreTypeBinding>() {
     override fun getModel(): Class<DashViewModel> = DashViewModel::class.java
 
-    override fun getBind(inflater: LayoutInflater, view: ViewGroup?) = FragmentHomeBinding.inflate(inflater,view,false)
+    override fun getBind(inflater: LayoutInflater, view: ViewGroup?) = FragmentExploreTypeBinding.inflate(inflater,view,false)
 
     private lateinit var homeAdapter: HomeAdapter
     private var itemList = mutableListOf<String>()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+
 
         homeAdapter = HomeAdapter(itemList)
 
@@ -36,12 +39,12 @@ class HomeFragment : BaseFragment<DashViewModel,FragmentHomeBinding>() {
         homeAdapter.notifyDataSetChanged()
 
 
-        repeat(5){
+        repeat(1){
             bind.chipGroup.addView(
                 Utils.makeAChip(
                     mCtx = mCtx,
-                    text = "For You",
-                    selected = false
+                    text = "Gaming",
+                    selected = true
                 )
             )
         }
@@ -54,7 +57,6 @@ class HomeFragment : BaseFragment<DashViewModel,FragmentHomeBinding>() {
                 val index = chipGroup.indexOfChild(chipGroup.findViewById(chipId))
             }
         }
-
 
     }
 

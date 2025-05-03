@@ -15,5 +15,4 @@ class AuthActivity : BaseActivity() {
         
     }
 
-
 }

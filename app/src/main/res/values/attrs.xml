@@ -37,4 +37,6 @@
         <attr name="style" format="reference" />
     </declare-styleable>
 
+	<attr name="entryChipStyleNew" format="reference" />
+
 </resources>

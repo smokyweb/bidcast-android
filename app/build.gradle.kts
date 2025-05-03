@@ -100,6 +100,7 @@ dependencies {
     implementation(libs.navigation.fragment.ktx)
     implementation(libs.navigation.ui.ktx)
     ksp(libs.hilt.compiler)
+    implementation(libs.flexbox)
 
     //KOTLIN DEPENDENCIES
     implementation(libs.kotlinx.coroutines.core)
@@ -126,5 +127,6 @@ dependencies {
     implementation(libs.toasty)
     implementation(libs.decorator)
     implementation(libs.picasso)
+    implementation(libs.roundedimageview)
 
 }

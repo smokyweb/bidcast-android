@@ -13,6 +13,7 @@ converterGson = "2.11.0"
 coreKtx = "1.15.0"
 coreSplashscreen = "1.0.1"
 decorator = "2.1.0"
+flexbox = "3.0.0"
 #agora-rtc-sdk = "4.2.1"
 glide = "4.16.0"
 glideTransformations = "4.3.0"
@@ -33,6 +34,7 @@ permissionx = "1.8.1"
 picasso = "2.71828"
 recyclerviewAnimators = "4.0.2"
 retrofit = "2.11.0"
+roundedimageview = "2.3.0"
 swipemenurecyclerview = "2.1.5"
 toasty = "1.5.2"
 annotation = "1.6.0"
@@ -70,6 +72,7 @@ recyclerview-animators = { module = "jp.wasabeef:recyclerview-animators", versio
 retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
 permissionx = { module = "com.guolindev.permissionx:permissionx", version.ref = "permissionx" }
 picasso = { module = "com.squareup.picasso:picasso", version.ref = "picasso" }
+roundedimageview = { module = "com.makeramen:roundedimageview", version.ref = "roundedimageview" }
 swipeMenuRecyclerView = { module = "com.github.aitsuki:SwipeMenuRecyclerView", version.ref = "swipemenurecyclerview" }
 toasty = { module = "com.github.GrenderG:Toasty", version.ref = "toasty" }
 androidx-annotation = { group = "androidx.annotation", name = "annotation", version.ref = "annotation" }
@@ -77,6 +80,7 @@ androidx-annotation = { group = "androidx.annotation", name = "annotation", vers
 billing-ktx = { module = "com.android.billingclient:billing-ktx", version.ref = "billingKtx" }
 navigation-fragment-ktx = { group = "androidx.navigation", name = "navigation-fragment-ktx", version.ref = "navigationFragmentKtx" }
 navigation-ui-ktx = { group = "androidx.navigation", name = "navigation-ui-ktx", version.ref = "navigationUiKtx" }
+flexbox = { module = "com.google.android.flexbox:flexbox", version.ref = "flexbox" }
 
 
 [plugins]

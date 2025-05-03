@@ -14,7 +14,15 @@
         android:id="@+id/exploreFragment"
         android:name="io.bidcast.app.ui.dashboard.ExploreFragment"
         android:label="fragment_explore"
-        tools:layout="@layout/fragment_explore" />
+        tools:layout="@layout/fragment_explore" >
+        <action
+            android:id="@+id/goTopExploreType"
+            app:destination="@id/exploreTypeFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"/>
+    </fragment>
     <fragment
         android:id="@+id/sellFragment"
         android:name="io.bidcast.app.ui.dashboard.SellFragment"
@@ -30,5 +38,10 @@
         android:name="io.bidcast.app.ui.dashboard.AccountFragment"
         android:label="fragment_account"
         tools:layout="@layout/fragment_account" />
+    <fragment
+        android:id="@+id/exploreTypeFragment"
+        android:name="io.bidcast.app.ui.dashboard.ExploreTypeFragment"
+        android:label="fragment_explore_type"
+        tools:layout="@layout/fragment_explore_type" />
 
 </navigation>
