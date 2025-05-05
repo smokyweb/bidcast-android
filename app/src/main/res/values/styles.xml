@@ -50,9 +50,9 @@
 
 	</style>
 
-	<style name = "inputText"  parent="BodyMedium">
-<!--		<item name="android:paddingVertical">18dp</item>-->
-<!--		<item name="android:paddingHorizontal">12dp</item>-->
+	<style name="inputText" parent="BodyMedium">
+		<!--		<item name="android:paddingVertical">18dp</item>-->
+		<!--		<item name="android:paddingHorizontal">12dp</item>-->
 		<item name="android:textAppearance">@style/BodyLarge</item>
 		<item name="android:textColor">@color/onPrimary</item>
 		<item name="android:textColorHint">@color/outline</item>
@@ -178,13 +178,10 @@
 		<item name="cardMaxElevation">1dp</item>
 		<item name="cardCornerRadius">8dp</item>
 		<item name="android:outlineProvider">background</item>
-		<item name="cardBackgroundColor">@color/outlineVariant</item>
-		<item name="rippleColor">@color/outline</item>
-		<item name="android:outlineSpotShadowColor" tools:targetApi="p">@color/inverseSurface
-		</item>
-		<item name="android:outlineAmbientShadowColor" tools:targetApi="p">
-			@color/inverseSurface
-		</item>
+		<item name="cardBackgroundColor">@color/surface</item>
+		<item name="rippleColor">@color/onSurface</item>
+		<item name="android:outlineSpotShadowColor" tools:targetApi="p">@color/tertiary</item>
+		<item name="android:outlineAmbientShadowColor" tools:targetApi="p">@color/tertiary</item>
 	</style>
 
 	<style name="appLoader">
@@ -200,48 +197,17 @@
 
 	<style name="tabStyle" parent="Widget.Material3.TabLayout">
 		<item name="enforceTextAppearance">false</item>
-<!--		<item name="android:background">@drawable/tab_indicator_background</item>-->
+		<item name="android:background">@drawable/card_8</item>
+		<item name="android:backgroundTint">@color/surface</item>
 		<item name="tabIndicatorAnimationDuration">500</item>
-<!--		<item name="tabIndicator">@drawable/tab_indicator_outline</item>-->
-		<item name="tabIndicatorColor">@null</item>
+		<item name="tabIndicator">@drawable/card_8</item>
+		<item name="tabIndicatorColor">@color/background</item>
 		<item name="tabTextAppearance">@style/TitleMedium</item>
 		<item name="tabTextColor">@color/outlineVariant</item>
-		<item name="tabSelectedTextColor">@color/onPrimary</item>
+		<item name="tabSelectedTextColor">@color/onBackground</item>
 		<item name="tabIndicatorGravity">stretch</item>
 		<item name="tabIndicatorAnimationMode">elastic</item>
 		<item name="tabIndicatorFullWidth">true</item>
-		<item name="elevation">0dp</item>
-	</style>
-
-<style name="timerTabStyle" parent="Widget.Material3.TabLayout">
-		<item name="enforceTextAppearance">false</item>
-		<item name="android:background">@color/transparent</item>
-		<item name="tabIndicatorAnimationDuration">500</item>
-		<item name="tabIndicator">@color/transparent</item>
-		<item name="tabIndicatorColor">@null</item>
-		<item name="tabTextAppearance">@style/TitleMedium</item>
-		<item name="tabTextColor">@color/outlineVariant</item>
-		<item name="tabSelectedTextColor">@color/primary</item>
-		<item name="tabIndicatorGravity">stretch</item>
-		<item name="tabIndicatorAnimationMode">elastic</item>
-		<item name="tabIndicatorFullWidth">false</item>
-	</style>
-
-	<style name="tabStyle2" parent="Widget.Material3.TabLayout">
-		<item name="enforceTextAppearance">false</item>
-		<item name="android:backgroundTint">@color/transparent</item>
-		<item name="tabIndicatorAnimationDuration">500</item>
-		<item name="tabBackground">@drawable/card_4</item>
-		<item name="tabIndicator">@drawable/card_4</item>
-		<item name="tabIndicatorColor">@color/primary</item>
-		<item name="tabTextAppearance">@style/TitleSmall</item>
-		<item name="tabTextColor">@color/outlineVariant</item>
-		<item name="tabSelectedTextColor">@color/onPrimary</item>
-		<item name="tabIndicatorGravity">stretch</item>
-		<item name="tabIndicatorAnimationMode">elastic</item>
-		<item name="tabIndicatorFullWidth">true</item>
-		<item name="tabIconTint">@color/tab_icon_color</item>
-		<item name="tabInlineLabel">true</item>
 		<item name="elevation">0dp</item>
 	</style>
 
@@ -260,17 +226,17 @@
 	<style name="appSwitch" parent="Widget.Material3.CompoundButton.MaterialSwitch">
 		<item name="thumbTint">@color/surface</item>
 		<item name="trackDecorationTint">@color/switch_track_deco_color</item>
-		<item name="trackTint">@color/switch_track_color</item>
+		<item name="trackTint">@color/switch_track_deco_color</item>
 		<item name="android:textAppearance">@style/TitleMedium</item>
 		<item name="android:textColor">@color/onSurface</item>
 	</style>
 
 	<style name="noInternetStyle">
-<!--		<item name="icon">@drawable/no_result</item>-->
-<!--		<item name="title_text">@string/oops</item>-->
-<!--		<item name="desc_text">@string/no_internet</item>-->
-<!--		<item name="btn_title">@string/retry</item>-->
-<!--		<item name="show_button">true</item>-->
+		<!--		<item name="icon">@drawable/no_result</item>-->
+		<!--		<item name="title_text">@string/oops</item>-->
+		<!--		<item name="desc_text">@string/no_internet</item>-->
+		<!--		<item name="btn_title">@string/retry</item>-->
+		<!--		<item name="show_button">true</item>-->
 	</style>
 
 	<!--NAVIGATION BARs STYLES-->
@@ -342,7 +308,7 @@
 		<item name="android:windowFullscreen">false</item>
 		<item name="backgroundTint">@color/surface</item>
 		<item name="elevation">0dp</item>
-<!--		<item name="rangeFillColor">@color/primaryContainer</item>-->
+		<!--		<item name="rangeFillColor">@color/primaryContainer</item>-->
 	</style>
 
 	<style name="calendarYearButton" parent="Widget.MaterialComponents.Button.TextButton.Dialog.Flush">
@@ -374,7 +340,8 @@
 		<item name="strokeWidth">0dp</item>
 		<item name="chipEndPadding">6dp</item>
 		<item name="chipStartPadding">6dp</item>
-z		<item name="chipCornerRadius">@dimen/padding</item>
+		z
+		<item name="chipCornerRadius">@dimen/padding</item>
 		<item name="android:textColor">@color/chip_text_color_state</item>
 		<item name="android:textAppearance">@style/BodyMedium</item>
 	</style>

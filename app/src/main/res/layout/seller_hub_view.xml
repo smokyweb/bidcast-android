@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:background="@color/surface"
+	android:orientation="vertical">
+
+	<LinearLayout
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:orientation="vertical">
+
+		<LinearLayout
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:baselineAligned="false"
+			android:paddingHorizontal="@dimen/margin"
+			android:paddingVertical="8dp"
+			android:weightSum="3">
+
+			<LinearLayout
+				style="@style/shadowStyle"
+				android:layout_width="0dp"
+				android:layout_height="wrap_content"
+				android:layout_marginEnd="8dp"
+				android:layout_weight="1"
+				android:background="@drawable/card_8"
+				android:orientation="vertical"
+				android:padding="@dimen/margin">
+
+				<TextView
+					android:id="@+id/item_count"
+					style="@style/TitleLarge"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:gravity="center"
+					android:text="@string/app_name"
+					android:textStyle="bold"
+					app:layout_constraintBottom_toTopOf="@+id/view"
+					app:layout_constraintEnd_toEndOf="@+id/view"
+					app:layout_constraintStart_toStartOf="@+id/view" />
+
+				<TextView
+					style="@style/TitleSmall"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:gravity="center"
+					android:text="@string/items"
+					android:textColor="@color/tertiary"
+					app:layout_constraintEnd_toEndOf="@+id/view"
+					app:layout_constraintStart_toStartOf="@+id/view"
+					app:layout_constraintTop_toBottomOf="@+id/view" />
+
+			</LinearLayout>
+
+			<LinearLayout
+				style="@style/shadowStyle"
+				android:layout_width="0dp"
+				android:layout_height="wrap_content"
+				android:layout_marginHorizontal="@dimen/half_margin"
+				android:layout_weight="1"
+				android:background="@drawable/card_8"
+				android:orientation="vertical"
+				android:padding="@dimen/margin">
+
+				<TextView
+					android:id="@+id/revenue"
+					style="@style/TitleLarge"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:gravity="center"
+					android:text="@string/_117_00"
+					android:textStyle="bold"
+					app:layout_constraintBottom_toTopOf="@+id/view"
+					app:layout_constraintEnd_toEndOf="@+id/view"
+					app:layout_constraintStart_toStartOf="@+id/view" />
+
+				<TextView
+					style="@style/TitleSmall"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:gravity="center"
+					android:text="@string/revenue"
+					android:textColor="@color/tertiary"
+					app:layout_constraintEnd_toEndOf="@+id/view"
+					app:layout_constraintStart_toStartOf="@+id/view"
+					app:layout_constraintTop_toBottomOf="@+id/view" />
+
+			</LinearLayout>
+
+			<LinearLayout
+				style="@style/shadowStyle"
+				android:layout_width="0dp"
+				android:layout_height="wrap_content"
+				android:layout_marginStart="8dp"
+				android:layout_weight="1"
+				android:background="@drawable/card_8"
+				android:orientation="vertical"
+				android:padding="@dimen/margin">
+
+				<TextView
+					android:id="@+id/rating"
+					style="@style/TitleLarge"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:gravity="center"
+					android:text="4.5"
+					android:textStyle="bold"
+					app:layout_constraintBottom_toTopOf="@+id/view"
+					app:layout_constraintEnd_toEndOf="@+id/view"
+					app:layout_constraintStart_toStartOf="@+id/view" />
+
+				<TextView
+					style="@style/TitleSmall"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:gravity="center"
+					android:text="@string/rating"
+					android:textColor="@color/tertiary"
+					app:layout_constraintEnd_toEndOf="@+id/view"
+					app:layout_constraintStart_toStartOf="@+id/view"
+					app:layout_constraintTop_toBottomOf="@+id/view" />
+
+			</LinearLayout>
+
+		</LinearLayout>
+
+		<androidx.recyclerview.widget.RecyclerView
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:padding="8dp"
+			app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+			app:spanCount="2"
+			tools:itemCount="20"
+			tools:listitem="@layout/grid_item" />
+
+		<LinearLayout
+			style="@style/shadowStyle"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_margin="@dimen/margin"
+			android:background="@drawable/card_16"
+			android:gravity="center"
+			android:paddingHorizontal="@dimen/margin"
+			android:paddingVertical="8dp">
+
+			<ImageView
+				android:layout_width="28dp"
+				android:layout_height="28dp"
+				android:layout_marginEnd="12dp"
+				android:contentDescription="@string/vacation_mode"
+				android:src="@drawable/ic_vacation" />
+
+			<com.google.android.material.materialswitch.MaterialSwitch
+				style="@style/appSwitch"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:text="@string/vacation_mode"
+				android:textAppearance="@style/TitleMedium"
+				android:textStyle="bold" />
+
+		</LinearLayout>
+
+	</LinearLayout>
+
+</androidx.core.widget.NestedScrollView>

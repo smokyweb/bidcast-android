@@ -1,18 +1,19 @@
 <resources>
     <color name="primary">#FF6666</color>
     <color name="onPrimary">#FFFFFF</color>
-    <color name="primaryContainer">#DCE1FF</color>
-    <color name="onPrimaryContainer">#DDC3C3</color>
+	<color name="primaryContainer">#FFD1D1</color>
+	<color name="onPrimaryContainer">#D44848</color>
+	<color name="inversePrimary">#DF8282</color>
 
-    <color name="secondary">#2563EB</color>
+	<color name="secondary">#3B82F6</color>
     <color name="onSecondary">#FFFFFF</color>
-    <color name="secondaryContainer">#DBEAFE</color>
-    <color name="onSecondaryContainer">#C1D0F1</color>
+	<color name="secondaryContainer">#D0E7FF</color>
+	<color name="onSecondaryContainer">#2B5DAF</color>
 
-    <color name="tertiary">#7C3AED</color>
+	<color name="tertiary">#4B5563</color>
     <color name="onTertiary">#FFFFFF</color>
-    <color name="tertiaryContainer">#EDE9FE</color>
-    <color name="onTertiaryContainer">#22025F</color>
+	<color name="tertiaryContainer">#D2E7FF</color>
+	<color name="onTertiaryContainer">#313740</color>
 
     <color name="error">#FF164C</color>
     <color name="onError">#FFFFFF</color>
@@ -20,21 +21,18 @@
     <color name="onErrorContainer">#740C27</color>
 
     <color name="background">#FFFFFF</color>
-    <color name="onBackground">#1A1B21</color>
-    <color name="surface">#FAF8FF</color>
-    <color name="onSurface">#1A1B21</color>
-    <color name="surfaceVariant">#DDE3EA</color>
-    <color name="onSurfaceVariant">#41474D</color>
+	<color name="onBackground">#191919</color>
 
-    <color name="outline">#71787E</color>
-    <color name="outlineVariant">#E5E7EB</color>
-
-    <color name="scrim">#000000</color>
+	<color name="surface">#F6F8FB</color>
+	<color name="onSurface">#151515</color>
+	<color name="surfaceVariant">#E5E7EB</color>
+	<color name="onSurfaceVariant">#4B5563</color>
     <color name="inverseSurface">#D9D9D9</color>
     <color name="inverseOnSurface">#F1F0F7</color>
-    <color name="inversePrimary">#B6C4FF</color>
 
-
+	<color name="outline">#E5E7EB</color>
+	<color name="outlineVariant">#B2B4B8</color>
+	<color name="scrim">#000000</color>
     <color name="transparent">#00FFFFFF</color>
 
     <color name = "success" >#1DBC64</color >

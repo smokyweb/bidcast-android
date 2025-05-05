@@ -12,4 +12,10 @@
     <string name="sell">Sell</string>
     <string name="account">Account</string>
     <string name="activity">Activity</string>
+    <string name="items">Items</string>
+    <string name="_117_00">$117.00</string>
+    <string name="revenue">Revenue</string>
+    <string name="rating">Rating</string>
+    <string name="vacation_mode">Vacation Mode</string>
+    <string name="about_us">About Us</string>
 </resources>

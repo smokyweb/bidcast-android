@@ -64,6 +64,7 @@ class Header @JvmOverloads constructor(
 
             1 -> { // APP_TEXT_WITH_ACTION_BUTTONS
                 bind.back.isVisible = false
+	            bind.title.isVisible = true
                 bind.appText.isVisible = true
                 bind.secondaryIcon.isVisible = true
                 bind.secondary.isVisible = true
