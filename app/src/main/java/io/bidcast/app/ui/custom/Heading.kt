@@ -24,8 +24,8 @@ class Heading @JvmOverloads constructor(
 			orientation = VERTICAL
 			val title = TextView(context).apply {
 				text =  it.getString(styleable.Heading_title)
-				setTextAppearance(style.HeadlineMedium)
-				isAllCaps = true
+				setTextAppearance(style.TitleLarge)
+				isAllCaps = false
 				setTextColor(ContextCompat.getColor(context, clr.scrim))
 				setPadding(0,0,0,context.resources.dpToPx(4))
 				layoutParams = ViewGroup.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT)

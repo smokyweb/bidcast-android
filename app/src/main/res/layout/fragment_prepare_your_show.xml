@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".ui.dashboard.tutorials.PrepareYourShowFragment">
+
+
+    <io.bidcast.app.ui.custom.Header
+        android:id="@+id/header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:headerMode="BACK_BUTTON_TITLE_ACTION"
+        app:layout_constraintTop_toTopOf="parent"
+        app:primaryIconDrawable="@drawable/close_ic"
+        app:secondaryIconDrawable="@drawable/search"
+        app:showBackButton="true"
+        app:showPrimaryIcon="false"
+        app:showSecondaryIcon="false"
+        app:headerTitle="Let's Prepare Your Show"
+        />
+
+
+        <com.google.android.material.progressindicator.LinearProgressIndicator
+            android:id="@+id/stepProgress"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:progress="15"
+            app:trackThickness="8dp"
+            android:padding="@dimen/margin"
+            android:progressTint="@color/secondary"
+            app:trackCornerRadius="6dp"
+            app:layout_constraintTop_toBottomOf="@id/header"/>
+
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        android:layout_marginHorizontal="@dimen/half_margin"
+        android:nestedScrollingEnabled="false"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        tools:itemCount="5"
+        tools:listitem="@layout/show_item"
+        app:layout_constraintTop_toBottomOf="@id/stepProgress"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -14,6 +14,7 @@
         app:showBackButton="false"
         app:showPrimaryIcon="true"
         app:showSecondaryIcon="true"
+        android:orientation="horizontal"
         app:primaryIconDrawable="@drawable/notification"
         app:secondaryIconDrawable="@drawable/search"
         app:layout_constraintTop_toTopOf="parent"

@@ -20,6 +20,8 @@ import io.bidcast.app.interfaces.RecyclerClicks
 import io.bidcast.app.model.SellModel
 import io.bidcast.app.utils.bind
 import io.bidcast.app.utils.ids
+import io.bidcast.app.utils.toListProduct
+import io.bidcast.app.utils.toTutorials
 
 class DashActivity : BaseActivity(), NavController.OnDestinationChangedListener {
 
@@ -99,8 +101,18 @@ class DashActivity : BaseActivity(), NavController.OnDestinationChangedListener 
             )
         )
 
-       val exploreAdapter = SellAdapter(exploreList,object:RecyclerClicks{
+       val exploreAdapter = SellAdapter(exploreList,"explore",object:RecyclerClicks{
            override fun viewClick(pos: Int) {
+
+               when(pos){
+                   0->{
+                       startActivity(this@DashActivity.toListProduct())
+                   }
+                   1->{
+                       startActivity(this@DashActivity.toTutorials())
+                   }
+
+               }
 
            }
 
@@ -146,9 +158,7 @@ class DashActivity : BaseActivity(), NavController.OnDestinationChangedListener 
                 }
 
                 BottomSheetBehavior.STATE_COLLAPSED -> {
-//bind.bottomBar.selectedItemId=viewModel.lastIndex.value?:0
-//                    bind.imageSheet.isVisible =false
-
+                    bind.bottomBar.selectedItemId=viewModel.lastIndex.value?:0
                 }
             }
         }

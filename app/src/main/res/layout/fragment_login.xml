@@ -56,7 +56,8 @@
                         android:id="@+id/email"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:inputType="textEmailAddress" />
+                        android:inputType="textEmailAddress"
+                        android:hint="Enter Your Email"/>
 
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -74,14 +75,17 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="@dimen/margin"
-                    android:layout_marginBottom="@dimen/margin">
+                    android:layout_marginBottom="@dimen/margin"
+                    app:endIconMode="password_toggle">
 
                     <com.google.android.material.textfield.MaterialAutoCompleteTextView
                         style="@style/inputTextStyle"
                         android:id="@+id/password"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:inputType="textEmailAddress" />
+                        android:inputType="textPassword"
+                        android:hint="***********"
+                        />
 
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -128,8 +132,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginVertical="@dimen/padding"
-                    android:backgroundTint="@color/inverseSurface"
-                    android:textColor="@color/scrim"
                     android:text="Login" />
 
 

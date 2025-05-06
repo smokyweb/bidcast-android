@@ -90,7 +90,8 @@ class SellFragment : BaseFragment<DashViewModel,FragmentSellBinding>() {
 
     }*/
 
-    private val mSheetCallback = object : BottomSheetBehavior.BottomSheetCallback() {
+    private val mSheetCallback = object : BottomSheetBehavior.BottomSheetCallback()
+    {
         override fun onStateChanged(bottomSheet: View, newState: Int) {
             when (newState) {
                 BottomSheetBehavior.STATE_EXPANDED -> {

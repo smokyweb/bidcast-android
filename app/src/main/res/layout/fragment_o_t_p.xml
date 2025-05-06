@@ -50,7 +50,8 @@
                 android:id="@+id/email"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="textEmailAddress" />
+                android:inputType="text"
+                android:hint="Enter code"/>
 
         </com.google.android.material.textfield.TextInputLayout>
 

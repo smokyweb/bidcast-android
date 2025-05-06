@@ -3,6 +3,7 @@ package io.bidcast.app.controller
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import io.bidcast.app.R
 import io.bidcast.app.base.BaseAdapter
 import io.bidcast.app.base.BaseAdapter.BaseViewHolder
@@ -13,7 +14,7 @@ import io.bidcast.app.interfaces.AlertClicks
 import io.bidcast.app.interfaces.RecyclerClicks
 import io.bidcast.app.model.SellModel
 
-class SellAdapter(mList: MutableList<SellModel>, val mClicks: RecyclerClicks
+class SellAdapter(mList: MutableList<SellModel>, val type : String, val mClicks: RecyclerClicks
 ) : BaseAdapter<SellModel, SellSheetItemBinding>(mList) {
 
     override fun bindView(inflater: LayoutInflater, parent: ViewGroup) =
@@ -28,6 +29,10 @@ class SellAdapter(mList: MutableList<SellModel>, val mClicks: RecyclerClicks
 
             bind.root.setOnClickListener {
                 mClicks.viewClick(position)
+            }
+
+            if (type =="getStarted"){
+                bind.next.isVisible = false
             }
 
             bind.icon.setImageDrawable(ContextCompat.getDrawable(mCtx,item?.icon?: R.drawable.notification))

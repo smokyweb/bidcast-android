@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/onSurface"
+    android:layout_gravity="bottom"
+    android:orientation="vertical">
+
+    <androidx.media3.ui.DefaultTimeBar
+        android:id="@id/exo_progress"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <LinearLayout
+        android:id="@+id/buttonLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/margin"
+        android:gravity="center_vertical"
+        android:weightSum="3"
+        android:orientation="horizontal">
+
+        <ImageButton
+            android:id="@id/exo_play_pause"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@null"
+            android:layout_weight="1"
+            android:src="@drawable/exo_icon_play" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:drawablePadding="@dimen/half_margin"
+            android:drawableStart="@drawable/ic_sound"
+            android:text="Sound"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:drawablePadding="@dimen/half_margin"
+            android:drawableStart="@drawable/ic_cc"
+            android:text="Sound"/>
+
+
+
+
+
+
+    </LinearLayout>
+
+</LinearLayout>

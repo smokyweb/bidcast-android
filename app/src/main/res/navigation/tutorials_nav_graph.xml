@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/tutorials_nav_graph"
+    app:startDestination="@id/getStartedFragment">
+
+    <fragment
+        android:id="@+id/getStartedFragment"
+        android:name="io.bidcast.app.ui.dashboard.tutorials.GetStartedFragment"
+        android:label="fragment_get_started"
+        tools:layout="@layout/fragment_get_started" >
+        <action
+            android:id="@+id/goToPlayerFragment"
+            app:destination="@id/playerFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"/>
+    </fragment>
+    <fragment
+        android:id="@+id/playerFragment"
+        android:name="io.bidcast.app.ui.dashboard.tutorials.PlayerFragment"
+        android:label="fragment_player"
+        tools:layout="@layout/fragment_player" >
+        <action
+            android:id="@+id/goToSellFragment"
+            app:destination="@id/howToSellFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"/>
+    </fragment>
+    <fragment
+        android:id="@+id/howToSellFragment"
+        android:name="io.bidcast.app.ui.dashboard.tutorials.HowToSellFragment"
+        android:label="fragment_how_to_sell"
+        tools:layout="@layout/fragment_how_to_sell" >
+        <action
+            android:id="@+id/goToPrepareYourShowFragment"
+            app:destination="@id/prepareYourShowFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"/>
+    </fragment>
+    <fragment
+        android:id="@+id/prepareYourShowFragment"
+        android:name="io.bidcast.app.ui.dashboard.tutorials.PrepareYourShowFragment"
+        android:label="fragment_prepare_your_show"
+        tools:layout="@layout/fragment_prepare_your_show" />
+</navigation>

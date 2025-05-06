@@ -29,6 +29,8 @@ import java.util.Date
 import java.util.Locale
 import java.util.TimeZone
 import java.util.concurrent.TimeUnit
+import java.util.regex.Matcher
+import java.util.regex.Pattern
 
 
 object Utils {
@@ -235,4 +237,12 @@ object Utils {
             isChecked = selected // Set the checked state
             isCheckedIconVisible = false
         }
+
+    fun validateEmail(email: String?): Boolean {
+        val emailRegex = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$"
+        val pattern: Pattern = Pattern.compile(emailRegex)
+        val matcher: Matcher = pattern.matcher(email)
+
+        return matcher.matches()
+    }
 }
