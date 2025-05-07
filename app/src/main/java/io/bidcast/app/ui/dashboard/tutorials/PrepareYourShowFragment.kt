@@ -1,20 +1,18 @@
 package io.bidcast.app.ui.dashboard.tutorials
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.fragment.findNavController
-import io.bidcast.app.R
 import io.bidcast.app.base.BaseFragment
-import io.bidcast.app.controller.SellAdapter
 import io.bidcast.app.controller.ShowAdapter
 import io.bidcast.app.databinding.FragmentPrepareYourShowBinding
 import io.bidcast.app.interfaces.RecyclerClicks
-import io.bidcast.app.model.SellModel
 import io.bidcast.app.model.ShowModel
 import io.bidcast.app.ui.dashboard.DashViewModel
+import io.bidcast.app.utils.ids
+import io.bidcast.app.utils.toScheduleShow
 
 class PrepareYourShowFragment : BaseFragment<DashViewModel,FragmentPrepareYourShowBinding>() {
     override fun getModel(): Class<DashViewModel> = DashViewModel::class.java
@@ -48,10 +46,28 @@ class PrepareYourShowFragment : BaseFragment<DashViewModel,FragmentPrepareYourSh
         val adapter = ShowAdapter(mList = showList, "getStarted",object: RecyclerClicks {
             override fun viewClick(pos: Int) {
                 bind.stepProgress.setProgress(pos)
-                showList[pos].selected=true
+
+                showList.forEachIndexed { index, showModel ->
+                    showModel.selected = index == pos
+                }
+
+                bind.recycler.adapter?.notifyDataSetChanged()
             }
 
             override fun itemClick(pos: Int, status: String) {
+                when(pos){
+
+                    0->{
+                        startActivity(mCtx.toScheduleShow(from = "tutorial"))
+                    }
+                    1->{
+                        findNavController().navigate(ids.goToShowTipsFragment)
+                    }
+
+                }
+
+
+
 
             }
 

@@ -31,7 +31,7 @@ class SellAdapter(mList: MutableList<SellModel>, val type : String, val mClicks:
                 mClicks.viewClick(position)
             }
 
-            if (type =="getStarted"){
+            if (type =="getStarted" || type =="tips"){
                 bind.next.isVisible = false
             }
 

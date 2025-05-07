@@ -17,6 +17,9 @@
         android:theme="@style/Theme.BidCast"
         tools:targetApi="31">
         <activity
+            android:name=".ui.dashboard.scheduleShow.ScheduleShowActivity"
+            android:exported="false" />
+        <activity
             android:name=".ui.dashboard.tutorials.TutorialsActivity"
             android:exported="false" />
         <activity

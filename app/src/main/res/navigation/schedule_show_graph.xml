@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/schedule_show_graph"
+    app:startDestination="@id/showTitleFragment">
+
+    <fragment
+        android:id="@+id/showTitleFragment"
+        android:name="io.bidcast.app.ui.dashboard.scheduleShow.ShowTitleFragment"
+        android:label="fragment_show_title"
+        tools:layout="@layout/fragment_show_title" >
+        <action
+            android:id="@+id/goToSelectShowTimeFragment"
+            app:destination="@id/selectShowTimeFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"/>
+        <action
+            android:id="@+id/goToSelectCategoryFragment"
+            app:destination="@id/selectCategoryFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/selectShowTimeFragment"
+        android:name="io.bidcast.app.ui.dashboard.scheduleShow.SelectShowTimeFragment"
+        android:label="fragment_select_show_time"
+        tools:layout="@layout/fragment_select_show_time" />
+    <fragment
+        android:id="@+id/selectCategoryFragment"
+        android:name="io.bidcast.app.ui.dashboard.scheduleShow.SelectCategoryFragment"
+        android:label="fragment_select_category"
+        tools:layout="@layout/fragment_select_category" >
+        <action
+            android:id="@+id/goToSelectThumbnailFragment"
+            app:destination="@id/selectThumbnailFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"/>
+    </fragment>
+    <fragment
+        android:id="@+id/selectThumbnailFragment"
+        android:name="io.bidcast.app.ui.dashboard.scheduleShow.SelectThumbnailFragment"
+        android:label="fragment_select_thumbnail"
+        tools:layout="@layout/fragment_select_thumbnail" />
+</navigation>

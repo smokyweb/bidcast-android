@@ -48,5 +48,18 @@
         android:id="@+id/prepareYourShowFragment"
         android:name="io.bidcast.app.ui.dashboard.tutorials.PrepareYourShowFragment"
         android:label="fragment_prepare_your_show"
-        tools:layout="@layout/fragment_prepare_your_show" />
+        tools:layout="@layout/fragment_prepare_your_show" >
+        <action
+            android:id="@+id/goToShowTipsFragment"
+            app:destination="@id/showTipsFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"/>
+    </fragment>
+    <fragment
+        android:id="@+id/showTipsFragment"
+        android:name="io.bidcast.app.ui.dashboard.tutorials.ShowTipsFragment"
+        android:label="fragment_show_tips"
+        tools:layout="@layout/fragment_show_tips" />
 </navigation>

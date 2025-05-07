@@ -234,7 +234,10 @@ object Utils {
             isClickable = true
             isCheckable = true
             chipStrokeWidth = 2f
-            isChecked = selected // Set the checked state
+            chipStartPadding=48f
+            chipEndPadding = 48f
+            chipMinHeight= 120f
+            isChecked = selected // Set the chfecked state
             isCheckedIconVisible = false
         }
 

@@ -76,6 +76,7 @@
                 android:layout_height="wrap_content"
                 android:src="@drawable/tutorial"
                 android:scaleType="centerCrop"/>
+
         </com.google.android.material.card.MaterialCardView>
 
         <TextView

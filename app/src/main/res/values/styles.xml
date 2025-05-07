@@ -304,12 +304,31 @@
 		<item name="materialCalendarHeaderToggleButton">@style/calendarToggleButton</item>
 	</style>
 
-	<style name="calendarStyle" parent="Widget.MaterialComponents.MaterialCalendar">
+	<style name="calendarStyle">
+		<item name="headerColor">@color/onPrimary</item>
+		<item name = "headerLabelColor" >@color/scrim</item >
+		<item name = "todayLabelColor" >@color/scrim</item >
+		<item name = "selectionColor" >@color/secondary</item >
+		<item name = "selectionLabelColor" >@color/surface</item >
+		<item name = "highlightedDaysLabelsColor" >@color/primary</item >
+		<item name = "abbreviationsBarColor" >@android:color/transparent</item >
+		<item name = "eventsEnabled" >false</item >
+		<item name = "swipeEnabled" >true</item >
+		<item name = "type" >one_day_picker</item >
+		<item name = "firstDayOfWeek" >sunday</item >
+		<item name = "background" >@drawable/card_16</item >
+	</style >
+
+	<!--<style name="calendarStyle">
+		<item name="headerLabelColor">@color/scrim</item>
 		<item name="android:windowFullscreen">false</item>
+		<item name="headerColor">@color/background</item>
 		<item name="backgroundTint">@color/surface</item>
+		<item name = "selectionColor" >@color/errorContainer</item >
+		<item name = "selectionLabelColor" >@color/secondary</item >
 		<item name="elevation">0dp</item>
-		<!--		<item name="rangeFillColor">@color/primaryContainer</item>-->
-	</style>
+		&lt;!&ndash;		<item name="rangeFillColor">@color/primaryContainer</item>&ndash;&gt;
+	</style>-->
 
 	<style name="calendarYearButton" parent="Widget.MaterialComponents.Button.TextButton.Dialog.Flush">
 		<item name="android:textColor">@color/onBackground</item>
@@ -340,7 +359,6 @@
 		<item name="strokeWidth">0dp</item>
 		<item name="chipEndPadding">6dp</item>
 		<item name="chipStartPadding">6dp</item>
-		z
 		<item name="chipCornerRadius">@dimen/padding</item>
 		<item name="android:textColor">@color/chip_text_color_state</item>
 		<item name="android:textAppearance">@style/BodyMedium</item>

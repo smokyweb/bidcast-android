@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".ui.dashboard.scheduleShow.ShowTitleFragment">
+
+
+    <io.bidcast.app.ui.custom.Header
+        android:id="@+id/header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:headerMode="BACK_BUTTON_TITLE_ACTION"
+        app:layout_constraintTop_toTopOf="parent"
+        app:primaryIconDrawable="@drawable/close_ic"
+        app:secondaryIconDrawable="@drawable/search"
+        app:showBackButton="true"
+        app:showPrimaryIcon="false"
+        app:showSecondaryIcon="false"
+        app:headerTitle="Show Title"
+        />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        android:layout_margin="@dimen/half_margin"
+        app:layout_constraintTop_toBottomOf="@id/header"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <TextView
+            style="@style/TitleSmall"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/half_margin"
+            android:layout_marginBottom="@dimen/half_margin"
+            android:text="Show Title" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/inputBoxStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/half_margin"
+            android:layout_marginBottom="@dimen/margin"
+            app:counterEnabled="true"
+            app:counterMaxLength="100"
+           >
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/last_name"
+                style="@style/inputTextStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Enter your show title"/>
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.card.MaterialCardView
+            style="@style/cardStyle"
+            android:layout_width="match_parent"
+            android:layout_margin="@dimen/half_margin"
+            android:backgroundTint="@color/secondaryContainer"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    style="@style/TitleLarge"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/margin"
+                    android:layout_marginStart="@dimen/margin"
+                    android:layout_gravity="center"
+                    android:text="Tips for a Great Title" />
+
+                <TextView
+                    style="@style/BodyLarge"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/margin"
+                    android:layout_marginBottom="@dimen/half_margin"
+                    android:layout_gravity="center"
+                    android:drawablePadding="@dimen/half_margin"
+                    android:drawableStart="@drawable/ic_bulb"
+                    android:text="Be specific about what you're auctioning (e.g., &quot;Vintage Jewelry Collection&quot;)"/>
+
+                <TextView
+                    style="@style/BodyLarge"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/margin"
+                    android:layout_marginBottom="@dimen/half_margin"
+                    android:layout_gravity="center"
+                    android:drawablePadding="@dimen/half_margin"
+                    android:drawableStart="@drawable/ic_star"
+                    android:text="Include key details like brand names or unique features" />
+
+                <TextView
+                    style="@style/BodyLarge"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/margin"
+                    android:layout_gravity="center"
+                    android:layout_marginBottom="@dimen/half_margin"
+                    android:drawablePadding="@dimen/half_margin"
+                    android:drawableStart="@drawable/ic_timer"
+                    android:text="Mention if it's a special event (e.g., &quot;Holiday Special&quot;)"/>
+
+                <TextView
+                    style="@style/BodyLarge"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/margin"
+                    android:layout_gravity="center"
+                    android:drawablePadding="@dimen/half_margin"
+                    android:drawableTint="@color/secondary"
+                    android:drawableStart="@drawable/ic_tag"
+                    android:text="Add starting price range if applicable"
+                    android:layout_marginBottom="@dimen/margin"/>
+
+
+            </LinearLayout>
+
+
+        </com.google.android.material.card.MaterialCardView>
+
+
+        <TextView
+            style="@style/TitleLarge"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin"
+            android:layout_marginStart="@dimen/half_margin"
+            android:layout_gravity="center"
+            android:text="Good Examples" />
+
+        <TextView
+            style="@style/BodyLarge"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/margin"
+            android:layout_marginBottom="@dimen/half_margin"
+            android:layout_gravity="center"
+            android:drawablePadding="@dimen/half_margin"
+            android:text= '\"Luxury Watch Collection - Starting at $500\"'  />
+
+        <TextView
+            style="@style/BodyLarge"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/margin"
+            android:layout_gravity="center"
+            android:layout_marginBottom="@dimen/half_margin"
+            android:drawablePadding="@dimen/half_margin"
+            android:text='\"Rare Comic Books Auction - Marvel Collection\"' />
+
+        <TextView
+            style="@style/BodyLarge"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/margin"
+            android:layout_gravity="center"
+            android:drawablePadding="@dimen/half_margin"
+            android:text='\"Antique Furniture Special - Victorian Era\"' />
+
+    </LinearLayout>
+
+    <com.google.android.material.button.MaterialButton
+        style="@style/appBtn"
+        android:id="@+id/continueBtn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Continue"
+        android:layout_margin="@dimen/margin"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

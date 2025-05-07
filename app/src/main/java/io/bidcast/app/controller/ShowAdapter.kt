@@ -28,6 +28,10 @@ class ShowAdapter(
             bind.root.setOnClickListener {
                 mClicks.viewClick(position)
             }
+
+            bind.setSchedule.setOnClickListener {
+                mClicks.itemClick(position,"schedule")
+            }
             bind.step.text = "${position + 1}"
 
             if (item?.selected == true) {
@@ -50,7 +54,7 @@ class ShowAdapter(
                 bind.icon.setImageDrawable(
                     ContextCompat.getDrawable(
                         mCtx,
-                        item?.icon ?: R.drawable.ic_lock
+                        item.icon ?: R.drawable.ic_lock
                     )
                 )
 
