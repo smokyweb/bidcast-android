@@ -288,9 +288,9 @@
 	</style>
 
 	<style name="progressStyle" parent="Widget.Material3.LinearProgressIndicator">
-		<item name="android:progressTint">@color/primary</item>
-		<item name="indicatorColor">@color/primary</item>
-		<item name="trackColor">@color/primaryContainer</item>
+		<item name="android:progressTint">@color/secondary</item>
+		<item name="indicatorColor">@color/secondary</item>
+		<item name="trackColor">@color/onSecondary</item>
 		<item name="trackCornerRadius">20dp</item>
 		<item name="trackThickness">12dp</item>
 		<item name="android:progress">0</item>

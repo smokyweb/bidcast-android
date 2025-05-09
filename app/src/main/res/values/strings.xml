@@ -1,5 +1,5 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <string name="app_name">BidCast</string>
+    <string name="app_name">Bidswipe</string>
     <string name="no_data_found">No Data Found</string>
     <string name="no_internet">There is no internet connection.\\nPlease connect to the internet and try again</string>
     <string name="retry">Retry</string>
@@ -19,6 +19,7 @@
     <string name="vacation_mode">Vacation Mode</string>
     <string name="about_us">About Us</string>
     <string name="conitnue">Conitnue</string>
+    <string name="cancel">Cancel</string>
     <!--  <string name="be_specific_about_what_you_re_auctioning_e_g" tools:ignore="StringEscaping">Be specific about what you're auctioning (e.g., "Vintage Jewelry Collection")</string>
     <string name="mention_if_it_s_a_special_event_e_g" tools:ignore="StringEscaping">Mention if it's a special event (e.g., "Holiday Special")</string>-->
 </resources>

@@ -7,7 +7,7 @@
     android:orientation="vertical"
     tools:context=".ui.dashboard.sell.ListAProductFragment">
 
-    <io.bidcast.app.ui.custom.Header
+    <io.bidswipe.app.ui.custom.Header
         android:id="@+id/header"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -40,7 +40,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
 
-                <io.bidcast.app.ui.custom.Heading
+                <io.bidswipe.app.ui.custom.Heading
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -96,7 +96,7 @@
 
             </LinearLayout>
 
-            <io.bidcast.app.ui.custom.Heading
+            <io.bidswipe.app.ui.custom.Heading
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/margin"
@@ -225,7 +225,7 @@
             </com.google.android.material.card.MaterialCardView>
 
 
-            <io.bidcast.app.ui.custom.Heading
+            <io.bidswipe.app.ui.custom.Heading
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/margin"
@@ -322,7 +322,7 @@
             </LinearLayout>
 
 
-            <io.bidcast.app.ui.custom.Heading
+            <io.bidswipe.app.ui.custom.Heading
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/margin"

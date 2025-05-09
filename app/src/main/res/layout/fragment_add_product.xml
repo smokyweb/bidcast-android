@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".ui.dashboard.scheduleShow.SelectThumbnailFragment">
+    tools:context=".ui.dashboard.scheduleShow.AddProductFragment">
 
     <io.bidswipe.app.ui.custom.Header
         android:id="@+id/header"
@@ -17,26 +17,26 @@
         app:showBackButton="true"
         app:showPrimaryIcon="false"
         app:showSecondaryIcon="false"
-        app:headerTitle="Select Thumbnail" />
+        app:headerTitle="Add Products" />
 
     <TextView
         style="@style/TitleSmall"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Done"
+        android:text="@string/cancel"
         android:textColor="@color/secondary"
         android:layout_marginEnd="@dimen/margin"
         android:layout_marginTop="@dimen/margin"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         />
-    
+
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:fillViewport="true"
         app:layout_constraintTop_toBottomOf="@id/header"
-        app:layout_constraintBottom_toTopOf="@id/buttonLayout"
-        >
+        app:layout_constraintBottom_toTopOf="@id/buttonLayout">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -44,9 +44,42 @@
             android:layout_margin="@dimen/half_margin"
             android:orientation="vertical">
 
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycler"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                tools:listitem="@layout/product_list_item"/>
+
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="240dp"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/half_margin"
+                android:orientation="horizontal">
+
+                <TextView
+                    style="@style/TitleLarge"
+                    android:id="@+id/title"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Add More Products"
+                    />
+
+                <TextView
+                    style="@style/BodyMedium"
+                    android:id="@+id/exSpace"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0/100"
+                    />
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
                 android:background="@drawable/dashed_card_8_white"
                 android:gravity="center"
                 android:layout_margin="@dimen/half_margin"
@@ -57,67 +90,24 @@
                 <androidx.appcompat.widget.AppCompatImageView
                     android:layout_width="42dp"
                     android:layout_height="42dp"
-                    android:tint="@color/onSurfaceVariant"
-                    android:src="@drawable/ic_image" />
+                    android:tint="@color/outlineVariant"
+                    android:src="@drawable/ic_add" />
 
                 <TextView
-                    style="@style/BodyLarge"
+                    style="@style/TitleMedium"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text= "Tap to upload thumbnail"  />
-
-                <TextView
-                    style="@style/BodySmall"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="@dimen/half_margin"
-                    android:text= "Recommended size: 1280 x 720px"  />
-
+                    android:textColor="@color/outlineVariant"
+                    android:text= "Add another roduct"  />
 
             </LinearLayout>
 
-            <TextView
-                style="@style/TitleMedium"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/half_margin"
-                android:text= "Tips for a Great Thumbnail"  />
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recycler"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_marginHorizontal="@dimen/half_margin"
-                android:nestedScrollingEnabled="false"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                tools:itemCount="5"
-                tools:listitem="@layout/show_item"
-                app:layout_constraintTop_toBottomOf="@id/stepProgress" />
-
-            <TextView
-                style="@style/TitleMedium"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/half_margin"
-                android:text= "Goods Examples"  />
-
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/goodsRecycler"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_marginHorizontal="@dimen/half_margin"
-                android:nestedScrollingEnabled="false"
-                app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-                app:spanCount="2"
-                tools:itemCount="5"
-                tools:listitem="@layout/goods_item"
-                app:layout_constraintTop_toBottomOf="@id/stepProgress" />
 
 
         </LinearLayout>
+
+
+
 
 
     </androidx.core.widget.NestedScrollView>
@@ -131,17 +121,14 @@
         app:layout_constraintBottom_toBottomOf="parent">
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/continueBtn"
+            android:id="@+id/finishBtn"
             style="@style/appBtn"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/margin"
             android:paddingHorizontal="@dimen/margin"
-            android:text="Continue" />
+            android:text="Finish" />
 
     </LinearLayout>
-
-
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>
