@@ -6,7 +6,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".ui.dashboard.tutorials.HowToSellFragment">
 
-    <io.bidcast.app.ui.custom.Header
+    <io.bidswipe.app.ui.custom.Header
         android:id="@+id/header"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -64,7 +64,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginHorizontal="@dimen/half_margin"
-        android:text="Become a Bidcast Seller" />
+        android:text="Become a Bidswipe Seller" />
 
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
@@ -85,7 +85,7 @@
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="@dimen/half_margin"
             android:layout_gravity="center"
-            android:text="Start your selling journey on Bidcast! Learn how to list products, manage your store, and connect with buyers." />
+            android:text="Start your selling journey on Bidswipe! Learn how to list products, manage your store, and connect with buyers." />
 
 
         <TextView

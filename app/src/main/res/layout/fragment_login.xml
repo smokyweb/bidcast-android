@@ -193,7 +193,7 @@
 
     </ScrollView>
 
-    <io.bidcast.app.ui.custom.LoaderView
+    <io.bidswipe.app.ui.custom.LoaderView
         android:id="@+id/loader"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

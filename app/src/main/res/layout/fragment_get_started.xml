@@ -6,7 +6,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".ui.dashboard.tutorials.GetStartedFragment">
 
-    <io.bidcast.app.ui.custom.Header
+    <io.bidswipe.app.ui.custom.Header
         android:id="@+id/header"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -38,7 +38,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginHorizontal="@dimen/half_margin"
-                android:text="Become a Bidcast Seller" />
+                android:text="Become a Bidswipe Seller" />
 
             <TextView
                 style="@style/BodyLarge"

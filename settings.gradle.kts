@@ -21,5 +21,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "BidCast"
+rootProject.name = "Bidswipe"
 include(":app")

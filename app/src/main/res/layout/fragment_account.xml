@@ -15,7 +15,7 @@
 		android:orientation="vertical"
 		tools:context=".ui.dashboard.AccountFragment">
 
-		<io.bidcast.app.ui.custom.Header
+		<io.bidswipe.app.ui.custom.Header
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
 			app:headerMode="APP_TEXT_ACTION"

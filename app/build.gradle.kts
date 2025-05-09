@@ -14,11 +14,11 @@ fun getAPKName() = "Bid_Cast_${SimpleDateFormat("dd-MM-yyyy").format(Date())}"
 
 
 android {
-    namespace = "io.bidcast.app"
+    namespace = "io.bidswipe.app"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "io.bidcast.app"
+        applicationId = "io.bidswipe.app"
         minSdk = 25
         targetSdk = 35
         versionCode = 1
