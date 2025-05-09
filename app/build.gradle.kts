@@ -10,7 +10,7 @@ import java.util.Date
             alias(libs.plugins.devtools)
         }
 
-fun getAPKName() = "Bid_Cast_${SimpleDateFormat("dd-MM-yyyy").format(Date())}"
+fun getAPKName() = "Bid_Swipe_${SimpleDateFormat("dd-MM-yyyy").format(Date())}"
 
 
 android {
@@ -132,5 +132,7 @@ dependencies {
     implementation(libs.decorator)
     implementation(libs.picasso)
     implementation(libs.roundedimageview)
+    implementation(libs.cameraview)
+
 
 }

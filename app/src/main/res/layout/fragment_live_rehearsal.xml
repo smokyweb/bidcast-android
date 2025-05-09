@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".ui.dashboard.tutorials.LiveRehearsalFragment">
+
+    <com.otaliastudios.cameraview.CameraView
+    android:id = "@+id/camera"
+    android:layout_width = "match_parent"
+    android:layout_height = "0dp"
+    android:layout_marginTop = "@dimen/margin"
+    android:keepScreenOn = "true"
+    app:layout_constraintTop_toTopOf="parent"
+    app:layout_constraintBottom_toBottomOf = "parent"
+    />
+
+    <LinearLayout
+        android:id="@+id/profileLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:layout_marginStart="@dimen/margin"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/icon_card"
+            style="@style/cardStyle"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            app:cardCornerRadius="100dp"
+            app:cardElevation="0dp">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/icon"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/user_image" />
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/half_margin"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/title"
+                style="@style/TitleLarge"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/surface"
+                android:textSize="16dp"
+                android:text="swiftbid" />
+
+            <TextView
+                android:id="@+id/sub_title"
+                style="@style/BodySmall"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/surface"
+                android:text="Show Time: 00:00:01" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/detail"
+        style="@style/cardStyle"
+        app:layout_constraintTop_toBottomOf="@id/profileLayout"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginStart="@dimen/margin"
+        android:layout_marginTop="32dp"
+        android:backgroundTint="@color/onSecWarning"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:cardElevation="0dp">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/margin"
+            android:orientation="vertical">
+
+            <TextView
+                style="@style/TitleLarge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="16dp"
+                android:text="Show Details" />
+
+            <TextView
+                style="@style/BodySmall"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="No Cancell.." />
+
+        </LinearLayout>
+
+    </com.google.android.material.card.MaterialCardView>
+
+    <LinearLayout
+        android:id="@+id/rehearsalLayout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/half_margin"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:gravity="center_vertical"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="@dimen/margin"
+        android:orientation="horizontal">
+
+        <com.google.android.material.button.MaterialButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/half_margin"
+            app:cornerRadius="8dp"
+            android:text="Rehearsal"/>
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/rehearsal"
+            style="@style/cardStyle"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            app:cardCornerRadius="100dp"
+            app:cardElevation="0dp">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/cutButton"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="12dp"
+                android:src="@drawable/close_ic" />
+
+        </com.google.android.material.card.MaterialCardView>
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:gravity="center_horizontal"
+        android:layout_marginEnd="@dimen/margin"
+        app:layout_constraintTop_toBottomOf="@id/rehearsalLayout"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:orientation="vertical">
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/mic"
+            style="@style/cardStyle"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            app:cardCornerRadius="100dp"
+            app:cardElevation="0dp">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:tint="@color/scrim"
+                android:padding="12dp"
+                android:src="@drawable/ic_mic" />
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <TextView
+            style="@style/BodySmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/half_margin"
+            android:textColor="@color/surface"
+            android:text="Mic Test" />
+
+        <com.google.android.material.card.MaterialCardView
+            style="@style/cardStyle"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            app:cardCornerRadius="100dp"
+            app:cardElevation="0dp">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:tint="@color/scrim"
+                android:padding="12dp"
+                android:src="@drawable/ic_calender" />
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <TextView
+            style="@style/BodySmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/half_margin"
+            android:textColor="@color/surface"
+            android:text="Switch" />
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/shop"
+            style="@style/cardStyle"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            app:cardCornerRadius="100dp"
+            app:cardElevation="0dp">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="12dp"
+                android:src="@drawable/ic_shop" />
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <TextView
+            style="@style/BodySmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/surface"
+
+            android:text="Shop" />
+
+
+    </LinearLayout>
+
+
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/continueBtn"
+        style="@style/appBtn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/margin"
+        android:paddingHorizontal="@dimen/margin"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:text="Add Product" />
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

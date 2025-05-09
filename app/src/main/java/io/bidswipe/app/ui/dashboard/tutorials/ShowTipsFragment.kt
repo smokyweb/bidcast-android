@@ -1,15 +1,19 @@
 package io.bidswipe.app.ui.dashboard.tutorials
 
+import android.R.color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.navigation.fragment.findNavController
 import androidx.viewpager2.widget.ViewPager2
+import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseFragment
 import io.bidswipe.app.controller.ProductTipsPagerAdapter
 import io.bidswipe.app.databinding.FragmentShowTipsBinding
 import io.bidswipe.app.ui.dashboard.DashViewModel
+import io.bidswipe.app.utils.ids
 import io.bidswipe.app.utils.toScheduleShow
 
 class ShowTipsFragment : BaseFragment<DashViewModel, FragmentShowTipsBinding>() {
@@ -31,6 +35,9 @@ class ShowTipsFragment : BaseFragment<DashViewModel, FragmentShowTipsBinding>() 
 
         if (type == "liveTips") {
             bind.header.setHeaderText("Going Live Tips")
+        }else if (type == "bringInBuyers"){
+            bind.header.setHeaderText("Bring In Buyers")
+            bind.continueBtn.setBackgroundColor(ContextCompat.getColor(mCtx,R.color.secondary))
         }
 
         bind.header.onBackClick {
@@ -68,8 +75,16 @@ class ShowTipsFragment : BaseFragment<DashViewModel, FragmentShowTipsBinding>() 
 
         bind.continueBtn.setOnClickListener {
             if (bind.pager.currentItem == productTipList.size - 1) {
-                if (type == "showTips") {
-                    startActivity(mCtx.toScheduleShow("tips"))
+                when (type) {
+                    "showTips" -> {
+                        startActivity(mCtx.toScheduleShow("tips"))
+                    }
+                    "liveTips" -> {
+                        findNavController().navigate(ids.goToLiveRehearsalFragment)
+                    }
+                    else -> {
+
+                    }
                 }
 
             } else {

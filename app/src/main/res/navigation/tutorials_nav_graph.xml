@@ -61,5 +61,18 @@
         android:id="@+id/showTipsFragment"
         android:name="io.bidswipe.app.ui.dashboard.tutorials.ShowTipsFragment"
         android:label="fragment_show_tips"
-        tools:layout="@layout/fragment_show_tips" />
+        tools:layout="@layout/fragment_show_tips" >
+        <action
+            android:id="@+id/goToLiveRehearsalFragment"
+            app:destination="@id/liveRehearsalFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"/>
+    </fragment>
+    <fragment
+        android:id="@+id/liveRehearsalFragment"
+        android:name="io.bidswipe.app.ui.dashboard.tutorials.LiveRehearsalFragment"
+        android:label="fragment_live_rehearsal"
+        tools:layout="@layout/fragment_live_rehearsal" />
 </navigation>

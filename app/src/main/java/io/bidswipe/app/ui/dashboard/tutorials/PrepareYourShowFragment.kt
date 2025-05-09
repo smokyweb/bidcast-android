@@ -37,16 +37,21 @@ class PrepareYourShowFragment : BaseFragment<DashViewModel,FragmentPrepareYourSh
         showList.addAll(
             listOf(
                 ShowModel("Schedule your first show",true,false,"Pick a date and time for your live show"),
-                ShowModel("Schedule your first show",false,false,"Pick a date and time for your live show"),
-                ShowModel("Schedule your first show",false,false,"Pick a date and time for your live show"),
-                ShowModel("Schedule your first show",false,true,"Pick a date and time for your live show")
+                ShowModel("Add Products to your show",false,false,"Select products you'll be featuring"),
+                ShowModel("Rehearse going live",false,false,"Practice with our simulator"),
+                ShowModel("Bring in buyers",false,false,"Share your show with potential buyer"),
+                ShowModel("Preview show and go live",false,true,"Final check and start streaming")
             )
 
         )
 
+        bind.stepProgress.max = showList.size
+        bind.stepProgress.setProgress(1)
+
         val adapter = ShowAdapter(mList = showList, "getStarted",object: RecyclerClicks {
             override fun viewClick(pos: Int) {
-                bind.stepProgress.setProgress(pos)
+
+                bind.stepProgress.setProgress(pos+1)
 
                 showList.forEachIndexed { index, showModel ->
                     showModel.selected = index == pos
@@ -68,6 +73,12 @@ class PrepareYourShowFragment : BaseFragment<DashViewModel,FragmentPrepareYourSh
 
                     2 -> {
                         findNavController().navigate(ids.goToShowTipsFragment, bundleOf("type" to "liveTips"))
+                    }
+                    3 -> {
+                        findNavController().navigate(
+                            ids.goToShowTipsFragment,
+                            bundleOf("type" to "bringInBuyers")
+                        )
                     }
 
                 }

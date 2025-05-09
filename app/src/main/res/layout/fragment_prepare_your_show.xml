@@ -45,8 +45,27 @@
         tools:itemCount="5"
         tools:listitem="@layout/show_item"
         app:layout_constraintTop_toBottomOf="@id/stepProgress"
-        app:layout_constraintBottom_toBottomOf="parent"/>
+        app:layout_constraintBottom_toTopOf="@id/textLayout"/>
 
+    <LinearLayout
+        android:id="@+id/textLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <TextView
+            android:id="@+id/sub_title"
+            style="@style/BodyLarge"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/margin"
+            android:drawableTint="@color/secondary"
+            android:drawableStart="@drawable/ic_question"
+            android:drawablePadding="@dimen/half_margin"
+            android:text="Need help? Contact our support team" />
+
+
+    </LinearLayout>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
