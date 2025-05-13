@@ -6,7 +6,9 @@ import android.os.Looper
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import io.bidswipe.app.R
+import io.bidswipe.app.utils.Prefs
 import io.bidswipe.app.utils.toAuth
+import io.bidswipe.app.utils.toDash
 
 class SplashActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -15,7 +17,14 @@ class SplashActivity : AppCompatActivity() {
         setContentView(R.layout.activity_splash)
 
         Handler(Looper.getMainLooper()).postDelayed({
-            startActivity(this.toAuth())
+
+            if (Prefs(this@SplashActivity).token().isNotEmpty()) {
+
+                startActivity(this.toDash())
+
+            } else {
+                startActivity(this.toAuth())
+            }
 
             finishAfterTransition()
         }, 1500)

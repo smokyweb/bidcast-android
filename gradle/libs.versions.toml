@@ -11,6 +11,7 @@ coreKtx = "1.15.0"
 coreSplashscreen = "1.0.1"
 cameraview = "2.7.2"
 decorator = "2.1.0"
+easyvalidationCore = "1.0.4"
 flexbox = "3.0.0"
 #agora-rtc-sdk = "4.2.1"
 glide = "4.16.0"
@@ -35,6 +36,7 @@ recyclerviewAnimators = "4.0.2"
 retrofit = "2.11.0"
 roundedimageview = "2.3.0"
 swipemenurecyclerview = "2.1.5"
+singledateandtimepicker = "2.2.7"
 toasty = "1.5.2"
 annotation = "1.6.0"
 billingKtx = "7.0.0"
@@ -62,6 +64,7 @@ compiler = { module = "com.github.bumptech.glide:compiler", version.ref = "compi
 converter-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "converterGson" }
 cameraview = { module = "com.otaliastudios:cameraview", version.ref = "cameraview" }
 decorator = { module = "com.rubensousa:decorator", version.ref = "decorator" }
+easyvalidation-core = { module = "com.wajahatkarim:easyvalidation-core", version.ref = "easyvalidationCore" }
 glide = { module = "com.github.bumptech.glide:glide", version.ref = "glide" }
 glide-transformations = { module = "jp.wasabeef:glide-transformations", version.ref = "glideTransformations" }
 hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hiltAndroid" }
@@ -77,6 +80,7 @@ permissionx = { module = "com.guolindev.permissionx:permissionx", version.ref = 
 picasso = { module = "com.squareup.picasso:picasso", version.ref = "picasso" }
 roundedimageview = { module = "com.makeramen:roundedimageview", version.ref = "roundedimageview" }
 swipeMenuRecyclerView = { module = "com.github.aitsuki:SwipeMenuRecyclerView", version.ref = "swipemenurecyclerview" }
+singledateandtimepicker = { module = "com.github.florent37:singledateandtimepicker", version.ref = "singledateandtimepicker" }
 toasty = { module = "com.github.GrenderG:Toasty", version.ref = "toasty" }
 androidx-annotation = { group = "androidx.annotation", name = "annotation", version.ref = "annotation" }
 

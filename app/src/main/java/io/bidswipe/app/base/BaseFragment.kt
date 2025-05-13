@@ -14,6 +14,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.viewbinding.ViewBinding
 import com.permissionx.guolindev.PermissionX
 import io.bidswipe.app.utils.Alerts
+import io.bidswipe.app.utils.Prefs
 
 
 abstract class BaseFragment<VM : ViewModel , BIND : ViewBinding> : Fragment() {
@@ -37,9 +38,9 @@ abstract class BaseFragment<VM : ViewModel , BIND : ViewBinding> : Fragment() {
 			"FRAGMENT_$tag"
 		}
 
-/*		userId = Prefs(mCtx).getUserData()?.id.toString()
-		authUserData = Prefs(mCtx).getUserData()
-		viewModel = ViewModelProvider(requireActivity())[getModel()]*/
+//		userId = Prefs(mCtx).getUserData()?.id.toString()
+//		authUserData = Prefs(mCtx).getUserData()
+		viewModel = ViewModelProvider(requireActivity())[getModel()]
 
 		return bind.root
 	}

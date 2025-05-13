@@ -133,6 +133,9 @@ dependencies {
     implementation(libs.picasso)
     implementation(libs.roundedimageview)
     implementation(libs.cameraview)
+    implementation(libs.easyvalidation.core)
+
+
 
 
 }
