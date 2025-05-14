@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:headerMode="BACK_BUTTON_TITLE_ACTION"
-        app:headerTitle="Create Account"
+        app:headerTitle="@string/create_account"
         app:layout_constraintTop_toTopOf="parent" />
 
     <ScrollView
@@ -48,7 +48,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginVertical="@dimen/half_margin"
-                    android:text="First Name" />
+                    android:text="@string/first_name" />
 
                 <com.google.android.material.textfield.TextInputLayout
                     style="@style/inputBoxStyle"
@@ -62,7 +62,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:inputType="text"
-                        android:hint="Enter Your First Name"/>
+                        android:hint="@string/enter_your_first_name"/>
 
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -71,7 +71,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginVertical="@dimen/half_margin"
-                    android:text="Last Name" />
+                    android:text="@string/last_name" />
 
                 <com.google.android.material.textfield.TextInputLayout
                     style="@style/inputBoxStyle"
@@ -85,7 +85,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:inputType="text"
-                        android:hint="Enter Your Last Name"/>
+                        android:hint="@string/enter_your_last_name"/>
 
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -95,7 +95,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginVertical="@dimen/half_margin"
-                    android:text="Email" />
+                    android:text="@string/email" />
 
                 <com.google.android.material.textfield.TextInputLayout
                     style="@style/inputBoxStyle"
@@ -109,7 +109,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:inputType="textEmailAddress"
-                        android:hint="Enter Your Email"/>
+                        android:hint="@string/enter_your_email"/>
 
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -118,7 +118,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginVertical="@dimen/half_margin"
-                    android:text="Password" />
+                    android:text="@string/password" />
 
                 <com.google.android.material.textfield.TextInputLayout
                     style="@style/inputBoxStyle"
@@ -132,7 +132,8 @@
                         style="@style/inputTextStyle"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:inputType="textPassword" />
+                        android:inputType="textPassword"
+                        android:hint="@string/enter_your_password"/>
 
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -141,7 +142,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginVertical="@dimen/half_margin"
-                    android:text="Confirm Password" />
+                    android:text="@string/confirm_password" />
 
                 <com.google.android.material.textfield.TextInputLayout
                     style="@style/inputBoxStyle"
@@ -155,7 +156,8 @@
                         style="@style/inputTextStyle"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:inputType="textPassword" />
+                        android:inputType="textPassword"
+                        android:hint="@string/enter_your_confirm_password"/>
 
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -166,7 +168,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginVertical="@dimen/padding"
-                    android:text="Create Account" />
+                    android:text="@string/create_account" />
 
             </LinearLayout>
 

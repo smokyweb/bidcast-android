@@ -42,7 +42,7 @@
         android:layout_gravity="center_vertical"
         android:layout_marginHorizontal="@dimen/margin"
         android:layout_marginVertical="@dimen/half_margin"
-        android:text="Live Now"
+        android:text="@string/live_now"
         app:layout_constraintTop_toBottomOf="@id/chipGroup"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

@@ -1,42 +1,37 @@
 package io.bidswipe.app.ui.auth
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.navigation.fragment.findNavController
-import com.google.gson.Gson
 import com.wajahatkarim3.easyvalidation.core.view_ktx.validator
 import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseFragment
 import io.bidswipe.app.databinding.FragmentCreateAccountBinding
 import io.bidswipe.app.interfaces.AlertClicks
 import io.bidswipe.app.network.Resource
-import io.bidswipe.app.network.repository.AuthRepository
 import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.utils.Alerts
-import io.bidswipe.app.utils.Prefs
 import io.bidswipe.app.utils.hideKeyboard
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request
 import io.bidswipe.app.utils.showKeyboard
 import io.bidswipe.app.utils.value
 
-class CreateAccountFragment : BaseFragment<AuthViewModel,FragmentCreateAccountBinding>() {
+class CreateAccountFragment : BaseFragment<AuthViewModel, FragmentCreateAccountBinding>() {
     override fun getModel(): Class<AuthViewModel> = AuthViewModel::class.java
 
-    override fun getBind(inflater: LayoutInflater, view: ViewGroup?) = FragmentCreateAccountBinding.inflate(inflater, view, false)
+    override fun getBind(inflater: LayoutInflater, view: ViewGroup?) =
+        FragmentCreateAccountBinding.inflate(inflater, view, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        bind.header.onBackClick{
+        bind.header.onBackClick {
             findNavController().popBackStack()
         }
-
 
         bind.createAccountBtn.setOnClickListener {
             when {
@@ -47,13 +42,11 @@ class CreateAccountFragment : BaseFragment<AuthViewModel,FragmentCreateAccountBi
                     showKeyboard(bind.firstName)
                 }
 
-
                 bind.lastName.value().isEmpty() -> {
                     Alerts.error(mCtx, "Name can not be empty")
                     bind.lastName.requestFocus()
                     showKeyboard(bind.lastName)
                 }
-
 
                 bind.email.value().isEmpty() -> {
                     Alerts.error(mCtx, "Email can not be empty")
@@ -106,40 +99,40 @@ class CreateAccountFragment : BaseFragment<AuthViewModel,FragmentCreateAccountBi
             }
         }
 
-      viewModel.signUpRepo.observe(viewLifecycleOwner){
-          when(it){
-              is Resource.Success ->{
-                  viewModel.signUpRepo.value = null
-                  bind.loader.isVisible = false
-                  successToast(it.value.message.toString())
+        viewModel.signUpRepo.observe(viewLifecycleOwner) {
+            when (it) {
+                is Resource.Success -> {
+                    viewModel.signUpRepo.value = null
+                    bind.loader.isVisible = false
+                    successToast(it.value.message.toString())
 //                  Prefs(mCtx).putString(Prefs.USER, Gson().toJson(it.value.data).toString())
-                  findNavController().popBackStack()
-              }
+                    findNavController().popBackStack()
+                }
 
-              is Resource.Error ->{
-                  bind.loader.isVisible = false
-                  viewModel.signUpRepo.value = null
-                  if (it.isNetworkError) {
-                      errorToast(getString(R.string.no_internet))
-                  } else {
-                      it.parse(mCtx, TAG, object : AlertClicks {
-                          override fun primaryClick(dialog: AppBottomSheet) {
-                              dialog.dismiss()
+                is Resource.Error -> {
+                    bind.loader.isVisible = false
+                    viewModel.signUpRepo.value = null
+                    if (it.isNetworkError) {
+                        errorToast(getString(R.string.no_internet))
+                    } else {
+                        it.parse(mCtx, TAG, object : AlertClicks {
+                            override fun primaryClick(dialog: AppBottomSheet) {
+                                dialog.dismiss()
 
-                          }
+                            }
 
-                          override fun secondaryClick(dialog: AppBottomSheet) {
-                              dialog.dismiss()
+                            override fun secondaryClick(dialog: AppBottomSheet) {
+                                dialog.dismiss()
 
-                          }
-                      })
-                  }
-              }
+                            }
+                        })
+                    }
+                }
 
-              else->{}
+                else -> {}
 
-          }
-      }
+            }
+        }
 
     }
 

@@ -14,7 +14,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:headerTitle="Verify Code" />
+        app:headerTitle="@string/verify_code" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -30,14 +30,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/margin"
-            android:text="Success! Please enter the code that was sent to the email associated with your account." />
+            android:text="@string/success_please_enter_the_code_that_was_sent_to_the_email_associated_with_your_account" />
 
         <TextView
             style="@style/TitleSmall"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginVertical="@dimen/half_margin"
-            android:text="Enter Code" />
+            android:text="@string/enter_code" />
 
         <com.google.android.material.textfield.TextInputLayout
             style="@style/inputBoxStyle"
@@ -47,11 +47,11 @@
 
             <com.google.android.material.textfield.MaterialAutoCompleteTextView
                 style="@style/inputTextStyle"
-                android:id="@+id/email"
+                android:id="@+id/otp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="text"
-                android:hint="Enter code"/>
+                android:inputType="number"
+                android:hint="@string/enter_code"/>
 
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -61,14 +61,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginVertical="@dimen/margin"
-            android:text="Submit" />
+            android:text="@string/submit" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/exit"
             style="@style/appBtnOutline"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Exit"
+            android:text="@string/exit"
             android:visibility="gone" />
 
     </LinearLayout>

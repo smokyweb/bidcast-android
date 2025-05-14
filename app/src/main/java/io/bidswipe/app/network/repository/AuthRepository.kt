@@ -24,4 +24,23 @@ class AuthRepository @Inject constructor(private val api: ApiInterface) : BaseRe
         api.login(email , password )
     }
 
+    suspend fun forgotPassword(
+        email : RequestBody
+    ) = call {
+        api.forgotPassword(email )
+    }
+
+    suspend fun verifyOtp(
+        email : RequestBody,
+        code : RequestBody
+    ) = call {
+        api.verifyOtp(email, code)
+    }
+
+    suspend fun resetPassword(
+        email: RequestBody,
+        password: RequestBody,
+        confirmPassword: RequestBody
+    ) = call { api.resetPassword(email, password, confirmPassword) }
+
 }

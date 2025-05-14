@@ -35,14 +35,13 @@
                 android:orientation="vertical"
                 android:padding="@dimen/padding">
 
-
                 <TextView
                     style="@style/TitleSmall"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginVertical="@dimen/half_margin"
                     android:layout_marginHorizontal="@dimen/margin"
-                    android:text="Email" />
+                    android:text="@string/email" />
 
                 <com.google.android.material.textfield.TextInputLayout
                     style="@style/inputBoxStyle"
@@ -57,7 +56,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:inputType="textEmailAddress"
-                        android:hint="Enter Your Email"/>
+                        android:hint="@string/enter_your_email"/>
 
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -68,7 +67,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="@dimen/margin"
                     android:layout_marginVertical="@dimen/half_margin"
-                    android:text="Password" />
+                    android:text="@string/password" />
 
                 <com.google.android.material.textfield.TextInputLayout
                     style="@style/inputBoxStyle"
@@ -104,7 +103,7 @@
                         style="@style/BodyMedium"
                         android:layout_width="wrap_content"
                         android:layout_height="20dp"
-                        android:text="Remember Me"
+                        android:text="@string/remember_me"
                         app:buttonTint="@color/tertiary" />
 
                     <View
@@ -120,7 +119,7 @@
                         android:background="?selectableItemBackground"
                         android:gravity="end"
                         android:padding="8dp"
-                        android:text="Forgot Password"
+                        android:text="@string/forgot_password"
                         android:textColor="@color/primary"
                         android:textStyle="bold" />
 
@@ -132,7 +131,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginVertical="@dimen/padding"
-                    android:text="Login" />
+                    android:text="@string/login" />
 
 
                 <LinearLayout
@@ -147,7 +146,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
-                        android:text="New User?" />
+                        android:text="@string/new_user" />
 
                     <TextView
                         android:id="@+id/createAccount"
@@ -155,7 +154,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
-                        android:text=" Create Account" />
+                        android:text="@string/create_account" />
 
                 </LinearLayout>
 
@@ -176,14 +175,14 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
-                        android:text="Privacy Policy " />
+                        android:text="@string/privacy_policy" />
 
                     <TextView
                         style="@style/BodyMedium"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
-                        android:text="| Terms of Service" />
+                        android:text="@string/terms_of_service" />
 
                 </LinearLayout>
 

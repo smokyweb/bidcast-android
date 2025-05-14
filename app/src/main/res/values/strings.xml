@@ -20,6 +20,32 @@
     <string name="about_us">About Us</string>
     <string name="conitnue">Conitnue</string>
     <string name="cancel">Cancel</string>
+    <string name="email">Email</string>
+    <string name="enter_your_email">Enter Your Email</string>
+    <string name="password">Password</string>
+    <string name="remember_me">Remember Me</string>
+    <string name="forgot_password">Forgot Password</string>
+    <string name="login">Login</string>
+    <string name="new_user">New User?</string>
+    <string name="create_account">Create Account</string>
+    <string name="privacy_policy">Privacy Policy</string>
+    <string name="terms_of_service">| Terms of Service</string>
+    <string name="first_name">First Name</string>
+    <string name="last_name">Last Name</string>
+    <string name="enter_your_first_name">Enter Your First Name</string>
+    <string name="enter_your_last_name">Enter Your Last Name</string>
+    <string name="enter_your_password">Enter Your Password</string>
+    <string name="confirm_password">Confirm Password</string>
+    <string name="enter_your_confirm_password">Enter Your Confirm Password</string>
+    <string name="please_enter_the_email_address_associated_with_your_account">Please enter the email address associated with your account.</string>
+    <string name="submit">Submit</string>
+    <string name="exit">Exit</string>
+    <string name="verify_code">Verify Code</string>
+    <string name="success_please_enter_the_code_that_was_sent_to_the_email_associated_with_your_account">Success! Please enter the code that was sent to the email associated with your account.</string>
+    <string name="enter_code">Enter Code</string>
+    <string name="reset_password">Reset Password</string>
+    <string name="success_please_enter_your_new_password_below">Success! Please enter your new password below.</string>
+    <string name="live_now">Live Now</string>
     <!--  <string name="be_specific_about_what_you_re_auctioning_e_g" tools:ignore="StringEscaping">Be specific about what you're auctioning (e.g., "Vintage Jewelry Collection")</string>
     <string name="mention_if_it_s_a_special_event_e_g" tools:ignore="StringEscaping">Mention if it's a special event (e.g., "Holiday Special")</string>-->
 </resources>

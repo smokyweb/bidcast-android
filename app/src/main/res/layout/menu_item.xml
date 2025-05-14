@@ -19,6 +19,7 @@
 			android:src="@drawable/ic_vacation" />
 
 		<TextView
+			android:id="@+id/title"
 			style="@style/TitleSmall"
 			android:layout_width="0dp"
 			android:layout_height="wrap_content"

@@ -5,8 +5,7 @@ import android.view.ViewGroup
 import io.bidswipe.app.base.BaseAdapter
 import io.bidswipe.app.databinding.HomeItemBinding
 
-class HomeAdapter (
-    val mList: MutableList<String>,
+class HomeAdapter (val mList: MutableList<String>,
 ) : BaseAdapter<String, HomeItemBinding>(mList) {
 
     override fun bindView(inflater: LayoutInflater, parent: ViewGroup) =

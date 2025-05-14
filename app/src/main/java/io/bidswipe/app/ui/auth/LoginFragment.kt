@@ -29,10 +29,10 @@ import io.bidswipe.app.utils.toDash
 import io.bidswipe.app.utils.value
 
 class LoginFragment : BaseFragment<AuthViewModel, FragmentLoginBinding>() {
+
     override fun getModel(): Class<AuthViewModel> = AuthViewModel::class.java
 
-    override fun getBind(inflater: LayoutInflater, view: ViewGroup?) =
-        FragmentLoginBinding.inflate(inflater, view, false)
+    override fun getBind(inflater: LayoutInflater, view: ViewGroup?) = FragmentLoginBinding.inflate(inflater, view, false)
 
     private val remList = mutableListOf<RememberModel>()
 
@@ -44,13 +44,12 @@ class LoginFragment : BaseFragment<AuthViewModel, FragmentLoginBinding>() {
         }
 
         bind.forgot.setOnClickListener {
-
             findNavController().navigate(ids.goToForgotPassword)
         }
 
         bind.loginBtn.setOnClickListener {
-
             when {
+
                 bind.email.value().isEmpty() -> {
                     Alerts.error(mCtx, "Please enter email address")
                     bind.email.requestFocus()
@@ -72,19 +71,13 @@ class LoginFragment : BaseFragment<AuthViewModel, FragmentLoginBinding>() {
                 else -> {
                     hideKeyboard(it)
                     bind.loader.isVisible = true
-
                     viewModel.login(
                         bind.email.text.toString().request(),
                         bind.password.text.toString().request()
                     )
-
-
                 }
 
-
             }
-
-
         }
 
         viewModel.loginRepo.observe(viewLifecycleOwner) {
@@ -122,7 +115,6 @@ class LoginFragment : BaseFragment<AuthViewModel, FragmentLoginBinding>() {
 
                         it.parse(mCtx, TAG, mClicks = object : AlertClicks {
 
-
                             override fun primaryClick(dialog: AppBottomSheet) {
                                 dialog.dismiss()
                             }
@@ -130,13 +122,15 @@ class LoginFragment : BaseFragment<AuthViewModel, FragmentLoginBinding>() {
                             override fun secondaryClick(dialog: AppBottomSheet) {
                                 dialog.dismiss()
                             }
+
                         })
+
                     }
                 }
-                else->{}
+
+                else -> {}
             }
         }
-
 
     }
 
@@ -185,7 +179,6 @@ class LoginFragment : BaseFragment<AuthViewModel, FragmentLoginBinding>() {
         } catch (e: Exception) {
             e.printStackTrace()
         }
-
     }
 
     private fun fetchRem() {
@@ -219,7 +212,7 @@ class LoginFragment : BaseFragment<AuthViewModel, FragmentLoginBinding>() {
                 }
             }
         }
-    }
 
+    }
 
 }

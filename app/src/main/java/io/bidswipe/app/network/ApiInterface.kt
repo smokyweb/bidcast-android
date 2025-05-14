@@ -1,5 +1,6 @@
 package io.bidswipe.app.network
 
+import io.bidswipe.app.network.response.CommonResponse
 import io.bidswipe.app.network.response.LoginResponse
 import io.bidswipe.app.network.response.SignUpResponse
 import okhttp3.MultipartBody
@@ -26,5 +27,31 @@ interface ApiInterface{
         @Part("email") email: RequestBody,
         @Part("password") password: RequestBody
     ): LoginResponse
+
+    @POST("api/logout")
+    suspend fun logout(): CommonResponse
+
+    @Multipart
+    @POST("api/forgot-password")
+    suspend fun forgotPassword(
+        @Part("email") email: RequestBody
+    ): CommonResponse
+
+    @Multipart
+    @POST("api/verify-otp")
+    suspend fun verifyOtp(
+        @Part("email") email : RequestBody,
+        @Part("code") code : RequestBody
+    ): CommonResponse
+
+    @Multipart
+    @POST("api/reset-password")
+    suspend fun resetPassword(
+        @Part("email") email : RequestBody,
+        @Part("password") password: RequestBody,
+        @Part("password_confirmation") confirmPassword: RequestBody
+    ): CommonResponse
+
+
 
 }
