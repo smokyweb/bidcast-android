@@ -45,7 +45,7 @@
 				android:layout_height="wrap_content"
 				android:layout_gravity="center"
 				android:layout_marginHorizontal="@dimen/half_margin"
-				android:text="@string/before_you_start_selling_please_review_and_agree_to_our_sellers_guidelines" />
+				android:text="before_you_start_selling_please_review_and_agree_to_our_sellers_guidelines" />
 
 			<androidx.recyclerview.widget.RecyclerView
 				android:id="@+id/recycler"

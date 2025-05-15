@@ -55,7 +55,7 @@
 						android:layout_width="match_parent"
 						android:layout_height="wrap_content"
 						android:layout_marginStart="@dimen/half_margin"
-						android:text="@string/detailed_product_listings_help_buyers_make_informed_decisions_and_increase_your_chances_of_making_a_sale"
+						android:text="detailed_product_listings_help_buyers_make_informed_decisions_and_increase_your_chances_of_making_a_sale"
 						android:textColor="@color/secondary" />
 
 				</LinearLayout>

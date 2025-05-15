@@ -17,6 +17,8 @@ class Prefs(ctx : Context) {
 		const val REFRESH_TOKEN = "refreshToken"
 		const val USER = "user"
 		const val REM_NODE = "rem_node"
+		const val LANGUAGE = "Locale.Helper.Selected.Language"
+		const val LOCALE_LANGUAGE = "en"
 
 	}
 
@@ -59,5 +61,8 @@ class Prefs(ctx : Context) {
 	fun saveUsers(list: MutableList<RememberModel>) {
 		rememberPrefs.edit().putString(REM_NODE, Gson().toJson(list)).apply()
 	}
+
+	fun localeLanguage() = mPrefs.getString(LOCALE_LANGUAGE , "").toString()
+
 
 }

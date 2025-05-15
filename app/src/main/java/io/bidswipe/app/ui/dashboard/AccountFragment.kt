@@ -1,5 +1,6 @@
 package io.bidswipe.app.ui.dashboard
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -55,6 +56,11 @@ class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
 
                 }
 
+                "language" -> {
+
+                    startActivity(Intent(mCtx , LanguageActivity::class.java))
+                }
+
                 "contactUs" ->{
 
                 }
@@ -96,6 +102,7 @@ class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
 
         moreList.add(MoreModel(R.drawable.ic_vacation,"About Us","aboutUs"))
         moreList.add(MoreModel(R.drawable.ic_vacation,"Contact Us", "contactUs"))
+        moreList.add(MoreModel(R.drawable.ic_vacation,"Change Language", "language"))
         moreList.add(MoreModel(R.drawable.ic_vacation,"Sales Tax Exemption", "salesTax"))
         moreList.add(MoreModel(R.drawable.ic_vacation,"Terms & Conditions", "termsCondition"))
         moreList.add(MoreModel(R.drawable.ic_vacation,"Privacy Policy","privacyPolicy"))

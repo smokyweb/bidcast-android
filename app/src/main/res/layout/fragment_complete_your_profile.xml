@@ -104,7 +104,7 @@
 				android:layout_height="wrap_content"
 				android:layout_gravity="center_horizontal"
 				android:layout_margin="@dimen/margin"
-				android:text="@string/upload_photo"
+				android:text="Upload Photo"
 				android:textAlignment="center"
 				android:textColor="@color/secondary" />
 

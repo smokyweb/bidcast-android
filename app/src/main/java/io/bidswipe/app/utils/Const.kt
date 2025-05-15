@@ -2,6 +2,9 @@ package io.bidswipe.app.utils
 
 import android.Manifest
 import android.os.Build
+import com.zeugmasolutions.localehelper.Locales
+import io.bidswipe.app.model.LangModel
+import java.util.Locale
 
 object Const {
 
@@ -61,5 +64,20 @@ object Const {
 	)
 	
 	val PERMISSIONS = COMMON_PERMS + VERSION_PERMS + STR_PERMS
+
+	val languages = listOf(
+		LangModel("English" , Locales.English) ,
+		LangModel("Chinese" , Locale("zh", "")) ,
+		LangModel("Spanish" , Locales.Spanish) ,
+		LangModel("Hindi" , Locales.Hindi) ,
+		LangModel("Portuguese" , Locales.Portuguese) ,
+		LangModel("Arabic" , Locales.Arabic) ,
+		LangModel("Russian" , Locales.Russian) ,
+		LangModel("Japanese" , Locales.Japanese) ,
+		LangModel("Vietnamese" , Locales.Vietnamese) ,
+		LangModel("Korean" , Locales.Korean)
+
+
+		).sortedBy { it.title }
 	
 }

@@ -20,7 +20,6 @@
 		app:showPrimaryIcon="true"
 		app:showSecondaryIcon="true" />
 
-
 	<com.google.android.material.textfield.TextInputLayout
 		android:id="@+id/searchLayout"
 		style="@style/inputBoxStyle"

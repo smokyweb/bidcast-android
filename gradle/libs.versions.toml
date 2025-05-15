@@ -24,6 +24,7 @@ kotlinStdlib = "2.0.20"
 kotlinxCoroutinesCore = "1.9.0"
 ksp = "2.0.20-1.0.25"
 legacySupportV4 = "1.0.0"
+localeHelperAndroid = "1.5.1"
 lifecycleKtx = "2.8.7"
 loggingInterceptor = "5.0.0-alpha.14"
 material = "1.11.0" # Don't change it
@@ -71,6 +72,7 @@ hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hiltA
 hilt-compiler = { module = "com.google.dagger:hilt-compiler", version.ref = "hiltCompiler" }
 kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "kotlinStdlib" }
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinxCoroutinesCore" }
+locale-helper-android = { module = "com.zeugmasolutions.localehelper:locale-helper-android", version.ref = "localeHelperAndroid" }
 logging-interceptor = { module = "com.squareup.okhttp3:logging-interceptor", version.ref = "loggingInterceptor" }
 material = { module = "com.google.android.material:material", version.ref = "material" }
 material-calendar-view = { module = "com.applandeo:material-calendar-view", version.ref = "materialCalendarView" }

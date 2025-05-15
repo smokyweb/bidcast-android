@@ -103,7 +103,7 @@
 						android:layout_height="wrap_content"
 						android:enabled="false"
 						android:maxLines="1"
-						android:text="@string/https_app_domain_com_ref_user123" />
+						android:text="https_app_domain_com_ref_user123" />
 
 				</com.google.android.material.textfield.TextInputLayout>
 

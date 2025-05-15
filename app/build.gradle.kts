@@ -134,8 +134,6 @@ dependencies {
     implementation(libs.roundedimageview)
     implementation(libs.cameraview)
     implementation(libs.easyvalidation.core)
-
-
-
+    implementation(libs.locale.helper.android)
 
 }

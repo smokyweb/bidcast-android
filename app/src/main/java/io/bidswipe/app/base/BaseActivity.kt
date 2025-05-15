@@ -4,12 +4,13 @@ import android.os.Bundle
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import com.permissionx.guolindev.PermissionX
+import com.zeugmasolutions.localehelper.LocaleAwareCompatActivity
 import io.bidswipe.app.utils.Alerts
 import dagger.hilt.android.AndroidEntryPoint
 
 @Suppress("PropertyName")
 @AndroidEntryPoint
-abstract class BaseActivity : AppCompatActivity() {
+abstract class BaseActivity : LocaleAwareCompatActivity() {
 	
 	protected var TAG = javaClass.simpleName.toString()
 	protected var token = ""

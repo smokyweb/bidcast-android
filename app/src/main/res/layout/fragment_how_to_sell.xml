@@ -103,7 +103,7 @@
 				android:layout_gravity="center"
 				android:layout_marginStart="@dimen/margin"
 				android:drawablePadding="@dimen/half_margin"
-				android:text="@string/creating_product_listings"
+				android:text="Creating Product Listing"
 				app:drawableStartCompat="@drawable/ic_tick" />
 
 			<TextView

@@ -69,7 +69,7 @@
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
 					android:layout_marginBottom="@dimen/half_margin"
-					android:text="@string/recommended_size_1280_x_720px" />
+					android:text="recommended_size_1280_x_720px" />
 
 
 			</LinearLayout>

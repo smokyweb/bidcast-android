@@ -84,7 +84,7 @@
 					android:layout_marginBottom="@dimen/half_margin"
 					android:drawablePadding="@dimen/half_margin"
 					android:text="@string/be_specific_about_what_you_re_auctioning_e_g_quot_vintage_jewelry_collection_quot"
-					app:drawableStartCompat="@drawable/ic_bulb" />
+					app:drawableStartCompat="@drawable/ic_bulb"/>
 
 				<TextView
 					style="@style/BodyLarge"
@@ -95,7 +95,7 @@
 					android:layout_marginBottom="@dimen/half_margin"
 					android:drawablePadding="@dimen/half_margin"
 					android:text="@string/include_key_details_like_brand_names_or_unique_features"
-					app:drawableStart="@drawable/ic_star" />
+					app:drawableStartCompat="@drawable/ic_star"/>
 
 				<TextView
 					style="@style/BodyLarge"

@@ -16,11 +16,11 @@
     <string name="add_variants">Add Variants</string>
     <string name="added_product">Added Product</string>
     <string name="allow_offers">Allow Offers</string>
-    <string name="app_name" translatable="false">Bidswipe</string>
+    <string name="app_name">Bidswipe</string>
     <string name="auction">Auction</string>
     <string name="auction_type">Auction Type</string>
     <string name="back">Back</string>
-    <string name="be_specific_about_what_you_re_auctioning_e_g_quot_vintage_jewelry_collection_quot">Be specific about what you&#39;re auctioning (e.g., &quot;Vintage Jewelry Collection&quot;)</string>
+    <string name="be_specific_about_what_you_re_auctioning_e_g_quot_vintage_jewelry_collection_quot">Be specific about what you\'re auctioning (e.g., &quot;Vintage Jewelry Collection&quot;)</string>
     <string name="become_a_bidswipe_seller">Become a Bidswipe Seller</string>
     <string name="better_promotion_opportunities">Better promotion opportunities</string>
     <string name="bids">Bids</string>
@@ -74,7 +74,7 @@
     <string name="live_now">Live Now</string>
     <string name="login">Login</string>
     <string name="managing_orders_amp_shipping"><![CDATA[Managing orders & shipping]]></string>
-    <string name="mention_if_it_s_a_special_event_e_g_quot_holiday_special_quot">Mention if it&#39;s a special event (e.g., &quot;Holiday Special&quot;)</string>
+    <string name="mention_if_it_s_a_special_event_e_g_quot_holiday_special_quot">Mention if it\'s a special event (e.g., &quot;Holiday Special&quot;)</string>
     <string name="messages">Messages</string>
     <string name="mic_test">Mic Test</string>
     <string name="minimum_starting_bid_is_1_00">Minimum starting bid is $1.00</string>
@@ -147,8 +147,8 @@
     <string name="verify_code">Verify Code</string>
     <string name="weight_0_00">0.00</string>
     <string name="what_are_you_looking_for">What are you looking for?</string>
-    <string name="what_you_ll_learn">What you&#39;ll learn:</string>
-    <string name="why_scedule_in_advance">Why Scedule in Advance?</string>
+    <string name="what_you_ll_learn">What you\'ll learn:</string>
+    <string name="why_scedule_in_advance">Why Schedule in Advance?</string>
     <string name="yes">Yes</string>
     <string name="your_referral_link">Your Referral Link</string>
 
