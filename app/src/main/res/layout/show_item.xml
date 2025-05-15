@@ -1,83 +1,83 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    style="@style/cardStyle"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_margin="@dimen/half_margin"
-    app:strokeColor="@color/secondary">
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	style="@style/cardStyle"
+	android:layout_width="match_parent"
+	android:layout_height="wrap_content"
+	android:layout_margin="@dimen/half_margin"
+	app:strokeColor="@color/secondary">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/surface"
-        android:orientation="horizontal"
-        android:padding="@dimen/margin">
+	<LinearLayout
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:background="@color/surface"
+		android:orientation="horizontal"
+		android:padding="@dimen/margin">
 
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/icon_card"
-            style="@style/cardStyle"
-            android:layout_width="36dp"
-            android:layout_height="36dp"
-            app:cardBackgroundColor="@color/outlineVariant"
-            app:cardCornerRadius="100dp"
-            app:cardElevation="0dp">
+		<com.google.android.material.card.MaterialCardView
+			android:id="@+id/icon_card"
+			style="@style/cardStyle"
+			android:layout_width="36dp"
+			android:layout_height="36dp"
+			app:cardBackgroundColor="@color/outlineVariant"
+			app:cardCornerRadius="100dp"
+			app:cardElevation="0dp">
 
-            <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/icon"
-                android:layout_width="16dp"
-                android:layout_height="16dp"
-                android:layout_gravity="center"
-                android:src="@drawable/ic_lock" />
+			<androidx.appcompat.widget.AppCompatImageView
+				android:id="@+id/icon"
+				android:layout_width="16dp"
+				android:layout_height="16dp"
+				android:layout_gravity="center"
+				android:src="@drawable/ic_lock" />
 
-            <TextView
-                android:id="@+id/step"
-                style="@style/BodyMedium"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center"
-                android:text="1"
-                android:textColor="@color/onSecondary"
-                android:visibility="gone" />
+			<TextView
+				android:id="@+id/step"
+				style="@style/BodyMedium"
+				android:layout_width="match_parent"
+				android:layout_height="match_parent"
+				android:gravity="center"
+				android:text="1"
+				android:textColor="@color/onSecondary"
+				android:visibility="gone" />
 
-        </com.google.android.material.card.MaterialCardView>
+		</com.google.android.material.card.MaterialCardView>
 
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="@dimen/half_margin"
-            android:layout_weight="1"
-            android:orientation="vertical">
+		<LinearLayout
+			android:layout_width="0dp"
+			android:layout_height="wrap_content"
+			android:layout_marginHorizontal="@dimen/half_margin"
+			android:layout_weight="1"
+			android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/title"
-                style="@style/TitleLarge"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Schedule your first show" />
+			<TextView
+				android:id="@+id/title"
+				style="@style/TitleLarge"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:text="@string/schedule_your_first_show" />
 
-            <TextView
-                android:id="@+id/sub_title"
-                style="@style/BodySmall"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginVertical="@dimen/half_margin"
-                android:text="Pick a date and time for your live show" />
+			<TextView
+				android:id="@+id/sub_title"
+				style="@style/BodySmall"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:layout_marginVertical="@dimen/half_margin"
+				android:text="@string/pick_a_date_and_time_for_your_live_show" />
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/set_schedule"
-                style="@style/appBtn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:minHeight="0dp"
-                android:paddingHorizontal="@dimen/padding"
-                android:paddingVertical="4dp"
-                android:text="Set Schedule"
-                android:textAppearance="@style/TitleMedium" />
+			<com.google.android.material.button.MaterialButton
+				android:id="@+id/set_schedule"
+				style="@style/appBtn"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:minHeight="0dp"
+				android:paddingHorizontal="@dimen/padding"
+				android:paddingVertical="4dp"
+				android:text="@string/set_schedule"
+				android:textAppearance="@style/TitleMedium" />
 
-        </LinearLayout>
+		</LinearLayout>
 
-    </LinearLayout>
+	</LinearLayout>
 
 
 </com.google.android.material.card.MaterialCardView>

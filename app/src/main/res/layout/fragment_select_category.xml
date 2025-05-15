@@ -1,99 +1,98 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".ui.dashboard.scheduleShow.SelectCategoryFragment">
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	tools:context=".ui.dashboard.scheduleShow.SelectCategoryFragment">
 
-    <io.bidswipe.app.ui.custom.Header
-        android:id="@+id/header"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:headerMode="BACK_BUTTON_TITLE_ACTION"
-        app:layout_constraintTop_toTopOf="parent"
-        app:primaryIconDrawable="@drawable/notification"
-        app:secondaryIconDrawable="@drawable/search"
-        app:showBackButton="true"
-        app:showPrimaryIcon="false"
-        app:showSecondaryIcon="false"
-        app:headerTitle="Select Category"
-        />
+	<io.bidswipe.app.ui.custom.Header
+		android:id="@+id/header"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		app:headerMode="BACK_BUTTON_TITLE_ACTION"
+		app:headerTitle="Select Category"
+		app:layout_constraintTop_toTopOf="parent"
+		app:primaryIconDrawable="@drawable/notification"
+		app:secondaryIconDrawable="@drawable/search"
+		app:showBackButton="true"
+		app:showPrimaryIcon="false"
+		app:showSecondaryIcon="false" />
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_marginHorizontal="@dimen/margin"
-        android:layout_marginVertical="@dimen/half_margin"
-        android:orientation="vertical"
-        app:layout_constraintTop_toBottomOf="@id/header">
+	<LinearLayout
+		android:layout_width="match_parent"
+		android:layout_height="0dp"
+		android:layout_marginHorizontal="@dimen/margin"
+		android:layout_marginVertical="@dimen/half_margin"
+		android:orientation="vertical"
+		app:layout_constraintTop_toBottomOf="@id/header">
 
 
-    <TextView
-        style="@style/BodyLarge"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:text="Select the category the most accurately describes your show, and how you would like to sell." />
+		<TextView
+			style="@style/BodyLarge"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_gravity="center"
+			android:text="@string/select_the_category_the_most_accurately_describes_your_show_and_how_you_would_like_to_sell" />
 
-        <TextView
-            style="@style/TitleSmall"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/margin"
-            android:layout_marginBottom="@dimen/half_margin"
-            android:text="Show Category" />
+		<TextView
+			style="@style/TitleSmall"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_marginTop="@dimen/margin"
+			android:layout_marginBottom="@dimen/half_margin"
+			android:text="@string/show_category" />
 
-        <com.google.android.material.textfield.TextInputLayout
-            style="@style/inputBoxStyle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/margin"
-            app:endIconDrawable="@drawable/ic_forward"
-            app:endIconMode="custom">
+		<com.google.android.material.textfield.TextInputLayout
+			style="@style/inputBoxStyle"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_marginBottom="@dimen/margin"
+			app:endIconDrawable="@drawable/ic_forward"
+			app:endIconMode="custom">
 
-            <androidx.appcompat.widget.AppCompatAutoCompleteTextView
-                style="@style/inputTextStyle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Select a Category" />
+			<androidx.appcompat.widget.AppCompatAutoCompleteTextView
+				style="@style/inputTextStyle"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:hint="@string/select_a_category" />
 
-        </com.google.android.material.textfield.TextInputLayout>
+		</com.google.android.material.textfield.TextInputLayout>
 
-        <TextView
-            style="@style/TitleSmall"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/half_margin"
-            android:text="Auction Type" />
+		<TextView
+			style="@style/TitleSmall"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_marginBottom="@dimen/half_margin"
+			android:text="@string/auction_type" />
 
-        <com.google.android.material.textfield.TextInputLayout
-            style="@style/inputBoxStyle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/margin"
-            app:endIconDrawable="@drawable/ic_forward"
-            app:endIconMode="custom">
+		<com.google.android.material.textfield.TextInputLayout
+			style="@style/inputBoxStyle"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_marginBottom="@dimen/margin"
+			app:endIconDrawable="@drawable/ic_forward"
+			app:endIconMode="custom">
 
-            <androidx.appcompat.widget.AppCompatAutoCompleteTextView
-                android:id="@+id/last_name"
-                style="@style/inputTextStyle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Select auction type" />
+			<androidx.appcompat.widget.AppCompatAutoCompleteTextView
+				android:id="@+id/last_name"
+				style="@style/inputTextStyle"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:hint="@string/select_auction_type" />
 
-        </com.google.android.material.textfield.TextInputLayout>
+		</com.google.android.material.textfield.TextInputLayout>
 
-    </LinearLayout>
+	</LinearLayout>
 
-    <com.google.android.material.button.MaterialButton
-        style="@style/appBtn"
-        android:id="@+id/continueBtn"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Continue"
-        android:layout_margin="@dimen/margin"
-        app:layout_constraintBottom_toBottomOf="parent"/>
+	<com.google.android.material.button.MaterialButton
+		android:id="@+id/continueBtn"
+		style="@style/appBtn"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_margin="@dimen/margin"
+		android:text="@string/_continue"
+		app:layout_constraintBottom_toBottomOf="parent" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

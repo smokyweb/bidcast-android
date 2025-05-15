@@ -1,65 +1,63 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".ui.dashboard.HomeFragment">
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	tools:context=".ui.dashboard.HomeFragment">
 
-    <io.bidswipe.app.ui.custom.Header
-        android:id="@+id/header"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:headerMode="APP_TEXT_ACTION"
-        app:showBackButton="false"
-        app:showPrimaryIcon="true"
-        app:showSecondaryIcon="true"
-        android:orientation="horizontal"
-        app:primaryIconDrawable="@drawable/notification"
-        app:secondaryIconDrawable="@drawable/search"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        />
+	<io.bidswipe.app.ui.custom.Header
+		android:id="@+id/header"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:orientation="horizontal"
+		app:headerMode="APP_TEXT_ACTION"
+		app:layout_constraintEnd_toEndOf="parent"
+		app:layout_constraintStart_toStartOf="parent"
+		app:layout_constraintTop_toTopOf="parent"
+		app:primaryIconDrawable="@drawable/notification"
+		app:secondaryIconDrawable="@drawable/search"
+		app:showBackButton="false"
+		app:showPrimaryIcon="true"
+		app:showSecondaryIcon="true" />
 
-        <com.google.android.material.chip.ChipGroup
-            android:id = "@+id/chipGroup"
-            android:layout_width = "match_parent"
-            android:layout_height = "wrap_content"
-            app:alignContent = "space_around"
-            app:singleLine="true"
-            app:singleSelection = "true"
-            android:layout_marginHorizontal="@dimen/margin"
-            app:layout_constraintTop_toBottomOf="@id/header"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"/>
+	<com.google.android.material.chip.ChipGroup
+		android:id="@+id/chipGroup"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_marginHorizontal="@dimen/margin"
+		app:alignContent="space_around"
+		app:layout_constraintEnd_toEndOf="parent"
+		app:layout_constraintStart_toStartOf="parent"
+		app:layout_constraintTop_toBottomOf="@id/header"
+		app:singleLine="true"
+		app:singleSelection="true" />
 
-    <TextView
-        android:id="@+id/heading"
-        style="@style/HeadlineSmall"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
-        android:layout_marginHorizontal="@dimen/margin"
-        android:layout_marginVertical="@dimen/half_margin"
-        android:text="@string/live_now"
-        app:layout_constraintTop_toBottomOf="@id/chipGroup"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        />
+	<TextView
+		android:id="@+id/heading"
+		style="@style/HeadlineSmall"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_gravity="center_vertical"
+		android:layout_marginHorizontal="@dimen/margin"
+		android:layout_marginVertical="@dimen/half_margin"
+		android:text="@string/live_now"
+		app:layout_constraintEnd_toEndOf="parent"
+		app:layout_constraintStart_toStartOf="parent"
+		app:layout_constraintTop_toBottomOf="@id/chipGroup" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recycler"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_margin="@dimen/half_margin"
-        app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-        tools:itemCount="6"
-        app:spanCount="2"
-        android:orientation="vertical"
-        tools:listitem="@layout/home_item"
-        app:layout_constraintTop_toBottomOf="@id/heading"
-        app:layout_constraintBottom_toBottomOf="parent"/>
+	<androidx.recyclerview.widget.RecyclerView
+		android:id="@+id/recycler"
+		android:layout_width="match_parent"
+		android:layout_height="0dp"
+		android:layout_margin="@dimen/half_margin"
+		android:orientation="vertical"
+		app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+		app:layout_constraintBottom_toBottomOf="parent"
+		app:layout_constraintTop_toBottomOf="@id/heading"
+		app:spanCount="2"
+		tools:itemCount="6"
+		tools:listitem="@layout/home_item" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

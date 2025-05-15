@@ -1,35 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="160dp"
-    android:gravity="center"
-    android:layout_margin="@dimen/half_margin"
-    app:cardBackgroundColor="@color/background"
-    app:strokeWidth="2dp"
-    style="@style/cardStyle"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	style="@style/cardStyle"
+	android:layout_width="match_parent"
+	android:layout_height="160dp"
+	android:layout_margin="@dimen/half_margin"
+	android:gravity="center"
+	app:cardBackgroundColor="@color/background"
+	app:strokeWidth="2dp">
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:orientation="vertical">
+	<LinearLayout
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:gravity="center"
+		android:orientation="vertical">
 
-            <ImageView
-                android:id="@+id/icon"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:src="@drawable/ic_hammer" />
+		<ImageView
+			android:id="@+id/icon"
+			android:layout_width="32dp"
+			android:layout_height="32dp"
+			android:src="@drawable/ic_hammer" />
 
-            <TextView
-                android:id="@+id/title"
-                style="@style/TitleMedium"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/half_margin"
-                android:gravity="center"
-                android:text="Auction" />
+		<TextView
+			android:id="@+id/title"
+			style="@style/TitleMedium"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_marginTop="@dimen/half_margin"
+			android:gravity="center"
+			android:text="@string/auction" />
 
-        </LinearLayout>
+	</LinearLayout>
 
 </com.google.android.material.card.MaterialCardView>

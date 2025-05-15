@@ -13,6 +13,7 @@ import io.bidswipe.app.controller.ProductTipsPagerAdapter
 import io.bidswipe.app.databinding.FragmentProductTipsBinding
 import io.bidswipe.app.utils.finish
 import io.bidswipe.app.utils.ids
+import io.bidswipe.app.utils.string
 
 class ProductTipsFragment : BaseFragment<ScheduleShowViewModel,FragmentProductTipsBinding>() {
     override fun getModel(): Class<ScheduleShowViewModel> = ScheduleShowViewModel::class.java
@@ -65,9 +66,9 @@ class ProductTipsFragment : BaseFragment<ScheduleShowViewModel,FragmentProductTi
                 }
 
                 if (position == 2){
-                    bind.continueBtn.text = "Continue"
+                    bind.continueBtn.text = resources.getString(string._continue)
                 }else{
-                    bind.continueBtn.text = "Continue to Next Step"
+                    bind.continueBtn.text = resources.getString(string.continue_to_next_step)
                 }
 
             }

@@ -1,69 +1,69 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    style="@style/cardStyle"
-    android:layout_margin="@dimen/half_margin">
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	style="@style/cardStyle"
+	android:layout_width="match_parent"
+	android:layout_height="wrap_content"
+	android:layout_margin="@dimen/half_margin">
 
-    <LinearLayout
-        android:id="@+id/click"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingStart="12dp"
-        android:paddingTop="16dp"
-        android:background="@color/surface"
-        android:paddingBottom="16dp"
-        android:paddingEnd="@dimen/half_margin"
-        android:gravity="center_vertical">
+	<LinearLayout
+		android:id="@+id/click"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:background="@color/surface"
+		android:gravity="center_vertical"
+		android:paddingStart="12dp"
+		android:paddingTop="16dp"
+		android:paddingEnd="@dimen/half_margin"
+		android:paddingBottom="16dp">
 
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/icon_card"
-            style="@style/cardStyle"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            app:cardBackgroundColor="@color/tertiaryContainer"
-            app:cardElevation="0dp">
+		<com.google.android.material.card.MaterialCardView
+			android:id="@+id/icon_card"
+			style="@style/cardStyle"
+			android:layout_width="48dp"
+			android:layout_height="48dp"
+			app:cardBackgroundColor="@color/tertiaryContainer"
+			app:cardElevation="0dp">
 
-            <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/icon"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:padding="10dp"
-                android:src="@drawable/ic_video" />
+			<androidx.appcompat.widget.AppCompatImageView
+				android:id="@+id/icon"
+				android:layout_width="match_parent"
+				android:layout_height="match_parent"
+				android:padding="10dp"
+				android:src="@drawable/ic_video" />
 
-        </com.google.android.material.card.MaterialCardView>
+		</com.google.android.material.card.MaterialCardView>
 
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_marginHorizontal="@dimen/half_margin"
-            android:layout_weight="1"
-            android:orientation="vertical">
+		<LinearLayout
+			android:layout_width="0dp"
+			android:layout_height="match_parent"
+			android:layout_marginHorizontal="@dimen/half_margin"
+			android:layout_weight="1"
+			android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/title"
-                style="@style/TitleLarge"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textSize="16dp"
-                android:text="@string/app_name" />
+			<TextView
+				android:id="@+id/title"
+				style="@style/TitleLarge"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:text="@string/app_name"
+				android:textSize="16dp" />
 
-            <TextView
-                android:id="@+id/sub_title"
-                style="@style/BodySmall"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/app_name" />
+			<TextView
+				android:id="@+id/sub_title"
+				style="@style/BodySmall"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:text="@string/app_name" />
 
-        </LinearLayout>
+		</LinearLayout>
 
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/next"
-            android:layout_width="18dp"
-            android:layout_height="18dp"
-            android:src="@drawable/ic_forward" />
+		<androidx.appcompat.widget.AppCompatImageView
+			android:id="@+id/next"
+			android:layout_width="18dp"
+			android:layout_height="18dp"
+			android:src="@drawable/ic_forward" />
 
-    </LinearLayout>
+	</LinearLayout>
 
 </com.google.android.material.card.MaterialCardView>

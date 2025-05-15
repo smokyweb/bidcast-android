@@ -14,6 +14,7 @@ import io.bidswipe.app.controller.ProductTipsPagerAdapter
 import io.bidswipe.app.databinding.FragmentShowTipsBinding
 import io.bidswipe.app.ui.dashboard.DashViewModel
 import io.bidswipe.app.utils.ids
+import io.bidswipe.app.utils.string
 import io.bidswipe.app.utils.toScheduleShow
 
 class ShowTipsFragment : BaseFragment<DashViewModel, FragmentShowTipsBinding>() {
@@ -64,10 +65,10 @@ class ShowTipsFragment : BaseFragment<DashViewModel, FragmentShowTipsBinding>() 
                     append(" of ${productTipList.size}")
                 }
 
-                if (position == 2) {
-                    bind.continueBtn.text = "Continue"
-                } else {
-                    bind.continueBtn.text = "Continue to Next Step"
+                if (position == 2){
+                    bind.continueBtn.text = resources.getString(string._continue)
+                }else{
+                    bind.continueBtn.text = resources.getString(string.continue_to_next_step)
                 }
 
             }

@@ -14,15 +14,15 @@
 		android:layout_height="wrap_content"
 		app:headerMode="APP_TEXT_ACTION"
 		app:headerTitle="@string/account"
-		app:showBackButton="false"
+		app:layout_constraintStart_toStartOf="parent"
 		app:layout_constraintTop_toTopOf="parent"
-		app:layout_constraintStart_toStartOf="parent"/>
+		app:showBackButton="false" />
 
 	<androidx.core.widget.NestedScrollView
 		android:layout_width="match_parent"
 		android:layout_height="0dp"
-		app:layout_constraintTop_toBottomOf="@id/header"
-		app:layout_constraintBottom_toBottomOf="parent">
+		app:layout_constraintBottom_toBottomOf="parent"
+		app:layout_constraintTop_toBottomOf="@id/header">
 
 		<LinearLayout
 			android:layout_width="match_parent"
@@ -50,6 +50,7 @@
 					<ImageView
 						android:layout_width="64dp"
 						android:layout_height="64dp"
+						android:contentDescription="@string/app_name"
 						android:scaleType="centerCrop"
 						android:src="@drawable/avatar" />
 
@@ -120,12 +121,12 @@
 						<com.google.android.material.tabs.TabItem
 							android:layout_width="wrap_content"
 							android:layout_height="wrap_content"
-							android:text="Seller Hub" />
+							android:text="@string/seller_hub" />
 
 						<com.google.android.material.tabs.TabItem
 							android:layout_width="wrap_content"
 							android:layout_height="wrap_content"
-							android:text="My Account" />
+							android:text="@string/my_account" />
 					</com.google.android.material.tabs.TabLayout>
 
 				</com.google.android.material.card.MaterialCardView>
@@ -155,6 +156,6 @@
 		android:id="@+id/loader"
 		android:layout_width="match_parent"
 		android:layout_height="match_parent"
-		android:visibility="gone"/>
+		android:visibility="gone" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

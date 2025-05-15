@@ -1,206 +1,203 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".ui.dashboard.tutorials.CompleteYourProfileFragment">
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	tools:context=".ui.dashboard.tutorials.CompleteYourProfileFragment">
 
-    <io.bidswipe.app.ui.custom.Header
-        android:id="@+id/header"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:headerMode="BACK_BUTTON_TITLE_ACTION"
-        app:layout_constraintTop_toTopOf="parent"
-        app:primaryIconDrawable="@drawable/ic_question"
-        app:showBackButton="false"
-        app:showPrimaryIcon="false"
-        app:showSecondaryIcon="false"
-        app:headerTitle="Complete Your Profile"
-        />
+	<io.bidswipe.app.ui.custom.Header
+		android:id="@+id/header"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		app:headerMode="BACK_BUTTON_TITLE_ACTION"
+		app:headerTitle="Complete Your Profile"
+		app:layout_constraintTop_toTopOf="parent"
+		app:primaryIconDrawable="@drawable/ic_question"
+		app:showBackButton="false"
+		app:showPrimaryIcon="false"
+		app:showSecondaryIcon="false" />
 
-    <androidx.core.widget.NestedScrollView
-        android:id="@+id/scroll"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        app:layout_constraintTop_toBottomOf="@id/header"
-        app:layout_constraintBaseline_toBottomOf="parent">
-
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_marginHorizontal="@dimen/half_margin"
-            app:layout_constraintTop_toBottomOf="@id/header"
-            app:layout_constraintBottom_toTopOf="@id/buttonLayout"
-            app:layout_constraintStart_toStartOf="parent"
-            android:orientation="vertical">
-
-            <TextView
-                style="@style/BodyMedium"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:textAlignment="center"
-                android:layout_marginHorizontal="@dimen/margin"
-                android:text="Let others know who you are?" />
-
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <com.google.android.material.card.MaterialCardView
-                    android:id="@+id/materialCardView"
-                    style="@style/cardStyle"
-                    android:layout_width="120dp"
-                    android:layout_height="120dp"
-                    android:layout_marginTop="@dimen/margin"
-                    android:layout_gravity="center_horizontal"
-                    android:backgroundTint="@color/outline"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:cardCornerRadius="100dp">
-
-                    <androidx.appcompat.widget.AppCompatImageView
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_gravity="center"
-                        android:scaleType="centerInside"
-                        android:tint="@color/outlineVariant"
-                        android:src="@drawable/ic_person_outlined" />
-
-                </com.google.android.material.card.MaterialCardView>
-
-                <com.google.android.material.card.MaterialCardView
-                    android:id="@+id/selectImgCard"
-                    style="@style/cardStyle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    app:cardCornerRadius="100dp"
-                    app:cardElevation="4dp"
-                    app:layout_constraintEnd_toEndOf="@+id/materialCardView"
-                    app:layout_constraintBottom_toBottomOf="@id/materialCardView"
-                    app:strokeColor="@color/onSecondary"
-                    android:backgroundTint="@color/secondary"
-                    app:strokeWidth="0dp">
-
-                    <androidx.appcompat.widget.AppCompatImageView
-                        android:id="@+id/selectImg"
-                        android:layout_width="32dp"
-                        android:layout_height="32dp"
-                        android:padding="8dp"
-                        android:src="@drawable/camera"
-                        app:tint="@color/onPrimary" />
-
-                </com.google.android.material.card.MaterialCardView>
+	<androidx.core.widget.NestedScrollView
+		android:id="@+id/scroll"
+		android:layout_width="match_parent"
+		android:layout_height="0dp"
+		app:layout_constraintBaseline_toBottomOf="parent"
+		app:layout_constraintTop_toBottomOf="@id/header">
 
 
+		<LinearLayout
+			android:layout_width="match_parent"
+			android:layout_height="0dp"
+			android:layout_marginHorizontal="@dimen/half_margin"
+			android:orientation="vertical"
+			app:layout_constraintBottom_toTopOf="@id/buttonLayout"
+			app:layout_constraintStart_toStartOf="parent"
+			app:layout_constraintTop_toBottomOf="@id/header">
 
-            </androidx.constraintlayout.widget.ConstraintLayout>
+			<TextView
+				style="@style/BodyMedium"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_gravity="center_horizontal"
+				android:layout_marginHorizontal="@dimen/margin"
+				android:text="@string/let_others_know_who_you_are"
+				android:textAlignment="center" />
 
+			<androidx.constraintlayout.widget.ConstraintLayout
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content">
 
-            <TextView
-                style="@style/BodyLarge"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:textAlignment="center"
-                android:layout_margin="@dimen/margin"
-                android:text="Upload Photo"
-                android:textColor="@color/secondary"/>
+				<com.google.android.material.card.MaterialCardView
+					android:id="@+id/materialCardView"
+					style="@style/cardStyle"
+					android:layout_width="120dp"
+					android:layout_height="120dp"
+					android:layout_gravity="center_horizontal"
+					android:layout_marginTop="@dimen/margin"
+					android:backgroundTint="@color/outline"
+					app:cardCornerRadius="100dp"
+					app:layout_constraintEnd_toEndOf="parent"
+					app:layout_constraintStart_toStartOf="parent"
+					app:layout_constraintTop_toTopOf="parent">
 
-            <TextView
-                style="@style/TitleSmall"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginVertical="@dimen/half_margin"
-                android:layout_marginHorizontal="@dimen/half_margin"
-                android:text="Full Name" />
+					<androidx.appcompat.widget.AppCompatImageView
+						android:layout_width="match_parent"
+						android:layout_height="match_parent"
+						android:layout_gravity="center"
+						android:scaleType="centerInside"
+						android:src="@drawable/ic_person_outlined"
+						android:tint="@color/outlineVariant" />
 
-            <com.google.android.material.textfield.TextInputLayout
-                style="@style/inputBoxStyle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/half_margin"
-                app:startIconDrawable="@drawable/ic_person_outlined">
+				</com.google.android.material.card.MaterialCardView>
 
-                <com.google.android.material.textfield.MaterialAutoCompleteTextView
-                    android:id="@+id/name"
-                    style="@style/inputTextStyle"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="@dimen/half_margin"
-                    android:inputType="text"
-                    android:hint="Enter Your Full Name"/>
+				<com.google.android.material.card.MaterialCardView
+					android:id="@+id/selectImgCard"
+					style="@style/cardStyle"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:backgroundTint="@color/secondary"
+					app:cardCornerRadius="100dp"
+					app:cardElevation="4dp"
+					app:layout_constraintBottom_toBottomOf="@id/materialCardView"
+					app:layout_constraintEnd_toEndOf="@+id/materialCardView"
+					app:strokeColor="@color/onSecondary"
+					app:strokeWidth="0dp">
 
-            </com.google.android.material.textfield.TextInputLayout>
+					<androidx.appcompat.widget.AppCompatImageView
+						android:id="@+id/selectImg"
+						android:layout_width="32dp"
+						android:layout_height="32dp"
+						android:padding="8dp"
+						android:src="@drawable/camera"
+						app:tint="@color/onPrimary" />
 
-
-            <TextView
-                style="@style/TitleSmall"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginVertical="@dimen/half_margin"
-                android:layout_marginHorizontal="@dimen/half_margin"
-                android:text="Username" />
-
-            <com.google.android.material.textfield.TextInputLayout
-                style="@style/inputBoxStyle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="@dimen/half_margin"
-                android:layout_marginBottom="@dimen/half_margin">
-
-                <com.google.android.material.textfield.MaterialAutoCompleteTextView
-                    android:id="@+id/email"
-                    style="@style/inputTextStyle"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inputType="textEmailAddress"
-                    android:hint="Enter Your Email"/>
-
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <TextView
-                style="@style/TitleSmall"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="@dimen/half_margin"
-                android:layout_marginVertical="@dimen/half_margin"
-                android:text="Bio" />
-
-            <com.google.android.material.textfield.TextInputLayout
-                style="@style/inputBoxStyle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="@dimen/half_margin"
-                android:layout_marginBottom="@dimen/half_margin">
-
-                <com.google.android.material.textfield.MaterialAutoCompleteTextView
-                    android:id="@+id/password"
-                    style="@style/inputTextStyle"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:minLines="4"
-                    android:gravity="top"
-                    android:hint="Tell us about ypurself"/>
-
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/continueBtn"
-                style="@style/appBtn"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginVertical="@dimen/margin"
-                android:backgroundTint="@color/secondary"
-                android:text="Continue" />
+				</com.google.android.material.card.MaterialCardView>
 
 
-        </LinearLayout>
+			</androidx.constraintlayout.widget.ConstraintLayout>
 
-    </androidx.core.widget.NestedScrollView>
+
+			<TextView
+				style="@style/BodyLarge"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_gravity="center_horizontal"
+				android:layout_margin="@dimen/margin"
+				android:text="@string/upload_photo"
+				android:textAlignment="center"
+				android:textColor="@color/secondary" />
+
+			<TextView
+				style="@style/TitleSmall"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:layout_marginHorizontal="@dimen/half_margin"
+				android:layout_marginVertical="@dimen/half_margin"
+				android:text="@string/full_name" />
+
+			<com.google.android.material.textfield.TextInputLayout
+				style="@style/inputBoxStyle"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:layout_marginBottom="@dimen/half_margin"
+				app:startIconDrawable="@drawable/ic_person_outlined">
+
+				<com.google.android.material.textfield.MaterialAutoCompleteTextView
+					android:id="@+id/name"
+					style="@style/inputTextStyle"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:layout_marginHorizontal="@dimen/half_margin"
+					android:hint="@string/enter_your_full_name"
+					android:inputType="text" />
+
+			</com.google.android.material.textfield.TextInputLayout>
+
+			<TextView
+				style="@style/TitleSmall"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:layout_marginHorizontal="@dimen/half_margin"
+				android:layout_marginVertical="@dimen/half_margin"
+				android:text="@string/username" />
+
+			<com.google.android.material.textfield.TextInputLayout
+				style="@style/inputBoxStyle"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:layout_marginHorizontal="@dimen/half_margin"
+				android:layout_marginBottom="@dimen/half_margin">
+
+				<com.google.android.material.textfield.MaterialAutoCompleteTextView
+					android:id="@+id/email"
+					style="@style/inputTextStyle"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:hint="@string/enter_your_email"
+					android:inputType="textEmailAddress" />
+
+			</com.google.android.material.textfield.TextInputLayout>
+
+			<TextView
+				style="@style/TitleSmall"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:layout_marginHorizontal="@dimen/half_margin"
+				android:layout_marginVertical="@dimen/half_margin"
+				android:text="@string/bio" />
+
+			<com.google.android.material.textfield.TextInputLayout
+				style="@style/inputBoxStyle"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:layout_marginHorizontal="@dimen/half_margin"
+				android:layout_marginBottom="@dimen/half_margin">
+
+				<com.google.android.material.textfield.MaterialAutoCompleteTextView
+					android:id="@+id/password"
+					style="@style/inputTextStyle"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:gravity="top"
+					android:hint="@string/tell_us_about_yourself"
+					android:minLines="4" />
+
+			</com.google.android.material.textfield.TextInputLayout>
+
+			<com.google.android.material.button.MaterialButton
+				android:id="@+id/continueBtn"
+				style="@style/appBtn"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:layout_marginVertical="@dimen/margin"
+				android:backgroundTint="@color/secondary"
+				android:text="@string/_continue" />
+
+
+		</LinearLayout>
+
+	</androidx.core.widget.NestedScrollView>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

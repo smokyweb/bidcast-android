@@ -1,125 +1,122 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".ui.dashboard.scheduleShow.SelectShowTimeFragment">
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	tools:context=".ui.dashboard.scheduleShow.SelectShowTimeFragment">
 
-    <io.bidswipe.app.ui.custom.Header
-        android:id="@+id/header"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:headerMode="BACK_BUTTON_TITLE_ACTION"
-        app:primaryIconDrawable="@drawable/close_ic"
-        app:secondaryIconDrawable="@drawable/search"
-        app:showBackButton="true"
-        app:showPrimaryIcon="false"
-        app:showSecondaryIcon="false"
-        app:headerTitle="Select Show Time"
-        app:layout_constraintTop_toTopOf="parent"
-        />
+	<io.bidswipe.app.ui.custom.Header
+		android:id="@+id/header"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		app:headerMode="BACK_BUTTON_TITLE_ACTION"
+		app:headerTitle="Select Show Time"
+		app:layout_constraintTop_toTopOf="parent"
+		app:primaryIconDrawable="@drawable/close_ic"
+		app:secondaryIconDrawable="@drawable/search"
+		app:showBackButton="true"
+		app:showPrimaryIcon="false"
+		app:showSecondaryIcon="false" />
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:orientation="vertical"
-        app:layout_constraintTop_toBottomOf="@id/header"
-        app:layout_constraintBottom_toBottomOf="parent">
+	<LinearLayout
+		android:layout_width="match_parent"
+		android:layout_height="0dp"
+		android:orientation="vertical"
+		app:layout_constraintBottom_toBottomOf="parent"
+		app:layout_constraintTop_toBottomOf="@id/header">
 
-        <com.applandeo.materialcalendarview.CalendarView
-            android:id="@+id/calenderView"
-            style="@style/calendarStyle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            />
+		<com.applandeo.materialcalendarview.CalendarView
+			android:id="@+id/calenderView"
+			style="@style/calendarStyle"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content" />
 
-        <TextView
-            style="@style/TitleMedium"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/margin"
-            android:layout_marginStart="@dimen/margin"
-            android:layout_gravity="center"
-            android:text="Select Time" />
+		<TextView
+			style="@style/TitleMedium"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_gravity="center"
+			android:layout_marginStart="@dimen/margin"
+			android:layout_marginTop="@dimen/margin"
+			android:text="@string/select_time" />
 
-        <com.google.android.material.chip.ChipGroup
-            android:id = "@+id/chipGroup"
-            android:layout_width = "match_parent"
-            android:layout_height = "wrap_content"
-            app:alignContent = "stretch"
-            app:singleSelection = "true"
-            android:layout_marginHorizontal="@dimen/margin"
-            app:layout_constraintTop_toBottomOf="@id/header"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"/>
+		<com.google.android.material.chip.ChipGroup
+			android:id="@+id/chipGroup"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_marginHorizontal="@dimen/margin"
+			app:alignContent="stretch"
+			app:layout_constraintEnd_toEndOf="parent"
+			app:layout_constraintStart_toStartOf="parent"
+			app:layout_constraintTop_toBottomOf="@id/header"
+			app:singleSelection="true" />
 
-        <TextView
-            style="@style/TitleLarge"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/margin"
-            android:layout_marginStart="@dimen/margin"
-            android:layout_gravity="center"
-            android:drawableStart="@drawable/ic_bulb"
-            android:drawablePadding="@dimen/half_margin"
-            android:drawableTint="@color/warningClr"
-            android:text="Why Scedule in Advance?" />
+		<TextView
+			style="@style/TitleLarge"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_gravity="center"
+			android:layout_marginStart="@dimen/margin"
+			android:layout_marginTop="@dimen/margin"
+			android:drawablePadding="@dimen/half_margin"
+			android:text="@string/why_scedule_in_advance"
+			app:drawableStartCompat="@drawable/ic_bulb"
+			app:drawableTint="@color/warningClr" />
 
-        <TextView
-            style="@style/BodyLarge"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="32dp"
-            android:layout_gravity="center"
-            android:drawablePadding="@dimen/half_margin"
-            android:drawableStart="@drawable/ic_tick"
-            android:drawableTint="@color/success"
-            android:text="More potential buyers can plan to attend" />
+		<TextView
+			style="@style/BodyLarge"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_gravity="center"
+			android:layout_marginStart="32dp"
+			android:drawablePadding="@dimen/half_margin"
+			android:text="@string/more_potential_buyers_can_plan_to_attend"
+			app:drawableStartCompat="@drawable/ic_tick"
+			app:drawableTint="@color/success" />
 
-        <TextView
-            style="@style/BodyLarge"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="32dp"
-            android:layout_gravity="center"
-            android:drawablePadding="@dimen/half_margin"
-            android:drawableStart="@drawable/ic_tick"
-            android:drawableTint="@color/success"
-            android:text="Better promotion opportunities" />
+		<TextView
+			style="@style/BodyLarge"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_gravity="center"
+			android:layout_marginStart="32dp"
+			android:drawablePadding="@dimen/half_margin"
+			android:text="@string/better_promotion_opportunities"
+			app:drawableStartCompat="@drawable/ic_tick"
+			app:drawableTint="@color/success" />
 
-        <TextView
-            style="@style/BodyLarge"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="32dp"
-            android:layout_gravity="center"
-            android:drawablePadding="@dimen/half_margin"
-            android:drawableStart="@drawable/ic_tick"
-            android:drawableTint="@color/success"
-            android:text="Time to prepare your items properly" />
+		<TextView
+			style="@style/BodyLarge"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_gravity="center"
+			android:layout_marginStart="32dp"
+			android:drawablePadding="@dimen/half_margin"
+			android:text="@string/time_to_prepare_your_items_properly"
+			app:drawableStartCompat="@drawable/ic_tick"
+			app:drawableTint="@color/success" />
 
-    </LinearLayout>
+	</LinearLayout>
 
-    <LinearLayout
-        android:id="@+id/buttonLayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:visibility="visible"
-        app:layout_constraintBottom_toBottomOf="parent">
+	<LinearLayout
+		android:id="@+id/buttonLayout"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:orientation="horizontal"
+		android:visibility="visible"
+		app:layout_constraintBottom_toBottomOf="parent">
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/continueBtn"
-            style="@style/appBtn"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/margin"
-            android:paddingHorizontal="@dimen/margin"
-            android:text="Continue to Next Step" />
+		<com.google.android.material.button.MaterialButton
+			android:id="@+id/continueBtn"
+			style="@style/appBtn"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_margin="@dimen/margin"
+			android:paddingHorizontal="@dimen/margin"
+			android:text="@string/continue_to_next_step" />
 
-    </LinearLayout>
-
+	</LinearLayout>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

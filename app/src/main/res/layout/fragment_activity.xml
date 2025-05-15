@@ -1,79 +1,78 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".ui.dashboard.ActivityFragment">
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	tools:context=".ui.dashboard.ActivityFragment">
 
-    <io.bidswipe.app.ui.custom.Header
-        android:id="@+id/header"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:headerMode="APP_TEXT_ACTION"
-        app:headerTitle="@string/activity"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:primaryIconDrawable="@drawable/notification"
-        app:secondaryIconDrawable="@drawable/search"
-        app:showAppTitle="true"
-        app:showBackButton="false"
-        app:showPrimaryIcon="true" />
+	<io.bidswipe.app.ui.custom.Header
+		android:id="@+id/header"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		app:headerMode="APP_TEXT_ACTION"
+		app:headerTitle="@string/activity"
+		app:layout_constraintEnd_toEndOf="parent"
+		app:layout_constraintStart_toStartOf="parent"
+		app:layout_constraintTop_toTopOf="parent"
+		app:primaryIconDrawable="@drawable/notification"
+		app:secondaryIconDrawable="@drawable/search"
+		app:showAppTitle="true"
+		app:showBackButton="false"
+		app:showPrimaryIcon="true" />
 
-    <com.google.android.material.tabs.TabLayout
-        android:id="@+id/tab_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/transparent"
-        app:layout_constraintTop_toBottomOf="@id/header"
-        app:tabIndicatorColor="@color/secondary"
-        app:tabMode="scrollable"
-        app:tabSelectedTextAppearance="@style/TitleMedium"
-        app:tabSelectedTextColor="@color/secondary"
-        app:tabTextAppearance="@style/TitleSmall">
+	<com.google.android.material.tabs.TabLayout
+		android:id="@+id/tab_layout"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:background="@color/transparent"
+		app:layout_constraintTop_toBottomOf="@id/header"
+		app:tabIndicatorColor="@color/secondary"
+		app:tabMode="scrollable"
+		app:tabSelectedTextAppearance="@style/TitleMedium"
+		app:tabSelectedTextColor="@color/secondary"
+		app:tabTextAppearance="@style/TitleSmall">
 
-        <com.google.android.material.tabs.TabItem
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Messages" />
+		<com.google.android.material.tabs.TabItem
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="@string/messages" />
 
-        <com.google.android.material.tabs.TabItem
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Bids" />
+		<com.google.android.material.tabs.TabItem
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="@string/bids" />
 
-        <com.google.android.material.tabs.TabItem
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Offers" />
+		<com.google.android.material.tabs.TabItem
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="@string/offers" />
 
-        <com.google.android.material.tabs.TabItem
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Purchases" />
+		<com.google.android.material.tabs.TabItem
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="@string/purchases" />
 
-        <com.google.android.material.tabs.TabItem
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Saved Items" />
+		<com.google.android.material.tabs.TabItem
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="@string/saved_items" />
 
-    </com.google.android.material.tabs.TabLayout>
+	</com.google.android.material.tabs.TabLayout>
 
-    <View
-        android:id="@+id/view"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/outlineVariant"
-        app:layout_constraintTop_toBottomOf="@id/tab_layout"
-        />
+	<View
+		android:id="@+id/view"
+		android:layout_width="match_parent"
+		android:layout_height="1dp"
+		android:background="@color/outlineVariant"
+		app:layout_constraintTop_toBottomOf="@id/tab_layout" />
 
-    <androidx.viewpager2.widget.ViewPager2
-        android:id="@+id/pager"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        app:layout_constraintTop_toBottomOf="@id/view"
-        app:layout_constraintBottom_toBottomOf="parent"/>
+	<androidx.viewpager2.widget.ViewPager2
+		android:id="@+id/pager"
+		android:layout_width="match_parent"
+		android:layout_height="0dp"
+		app:layout_constraintBottom_toBottomOf="parent"
+		app:layout_constraintTop_toBottomOf="@id/view" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

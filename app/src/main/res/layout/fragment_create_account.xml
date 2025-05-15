@@ -1,186 +1,186 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".ui.auth.CreateAccountFragment">
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	tools:context=".ui.auth.CreateAccountFragment">
 
-    <io.bidswipe.app.ui.custom.Header
-        android:id="@+id/header"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:headerMode="BACK_BUTTON_TITLE_ACTION"
-        app:headerTitle="@string/create_account"
-        app:layout_constraintTop_toTopOf="parent" />
+	<io.bidswipe.app.ui.custom.Header
+		android:id="@+id/header"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		app:headerMode="BACK_BUTTON_TITLE_ACTION"
+		app:headerTitle="@string/create_account"
+		app:layout_constraintTop_toTopOf="parent" />
 
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/header">
+	<ScrollView
+		android:layout_width="match_parent"
+		android:layout_height="0dp"
+		app:layout_constraintBottom_toBottomOf="parent"
+		app:layout_constraintTop_toBottomOf="@id/header">
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
+		<LinearLayout
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:orientation="vertical">
 
-            <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/signInBg"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginTop="60dp"
-                android:scaleType="fitXY"
-                android:src="@drawable/app_icon"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+			<androidx.appcompat.widget.AppCompatImageView
+				android:id="@+id/signInBg"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_gravity="center"
+				android:layout_marginTop="60dp"
+				android:scaleType="fitXY"
+				android:src="@drawable/app_icon"
+				app:layout_constraintEnd_toEndOf="parent"
+				app:layout_constraintStart_toStartOf="parent"
+				app:layout_constraintTop_toTopOf="parent" />
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="@dimen/padding">
+			<LinearLayout
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:orientation="vertical"
+				android:padding="@dimen/padding">
 
-                <TextView
-                    style="@style/TitleSmall"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginVertical="@dimen/half_margin"
-                    android:text="@string/first_name" />
+				<TextView
+					style="@style/TitleSmall"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:layout_marginVertical="@dimen/half_margin"
+					android:text="@string/first_name" />
 
-                <com.google.android.material.textfield.TextInputLayout
-                    style="@style/inputBoxStyle"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="@dimen/half_margin">
+				<com.google.android.material.textfield.TextInputLayout
+					style="@style/inputBoxStyle"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:layout_marginBottom="@dimen/half_margin">
 
-                    <com.google.android.material.textfield.MaterialAutoCompleteTextView
-                        android:id="@+id/firstName"
-                        style="@style/inputTextStyle"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:inputType="text"
-                        android:hint="@string/enter_your_first_name"/>
+					<com.google.android.material.textfield.MaterialAutoCompleteTextView
+						android:id="@+id/firstName"
+						style="@style/inputTextStyle"
+						android:layout_width="match_parent"
+						android:layout_height="wrap_content"
+						android:hint="@string/enter_your_first_name"
+						android:inputType="text" />
 
-                </com.google.android.material.textfield.TextInputLayout>
+				</com.google.android.material.textfield.TextInputLayout>
 
-                <TextView
-                    style="@style/TitleSmall"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginVertical="@dimen/half_margin"
-                    android:text="@string/last_name" />
+				<TextView
+					style="@style/TitleSmall"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:layout_marginVertical="@dimen/half_margin"
+					android:text="@string/last_name" />
 
-                <com.google.android.material.textfield.TextInputLayout
-                    style="@style/inputBoxStyle"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="@dimen/half_margin">
+				<com.google.android.material.textfield.TextInputLayout
+					style="@style/inputBoxStyle"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:layout_marginBottom="@dimen/half_margin">
 
-                    <com.google.android.material.textfield.MaterialAutoCompleteTextView
-                        android:id="@+id/last_name"
-                        style="@style/inputTextStyle"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:inputType="text"
-                        android:hint="@string/enter_your_last_name"/>
+					<com.google.android.material.textfield.MaterialAutoCompleteTextView
+						android:id="@+id/last_name"
+						style="@style/inputTextStyle"
+						android:layout_width="match_parent"
+						android:layout_height="wrap_content"
+						android:hint="@string/enter_your_last_name"
+						android:inputType="text" />
 
-                </com.google.android.material.textfield.TextInputLayout>
-
-
-                <TextView
-                    style="@style/TitleSmall"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginVertical="@dimen/half_margin"
-                    android:text="@string/email" />
-
-                <com.google.android.material.textfield.TextInputLayout
-                    style="@style/inputBoxStyle"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="@dimen/half_margin">
-
-                    <com.google.android.material.textfield.MaterialAutoCompleteTextView
-                        android:id="@+id/email"
-                        style="@style/inputTextStyle"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:inputType="textEmailAddress"
-                        android:hint="@string/enter_your_email"/>
-
-                </com.google.android.material.textfield.TextInputLayout>
-
-                <TextView
-                    style="@style/TitleSmall"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginVertical="@dimen/half_margin"
-                    android:text="@string/password" />
-
-                <com.google.android.material.textfield.TextInputLayout
-                    style="@style/inputBoxStyle"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="@dimen/half_margin"
-                    app:endIconMode="password_toggle">
-
-                    <com.google.android.material.textfield.MaterialAutoCompleteTextView
-                        android:id="@+id/password"
-                        style="@style/inputTextStyle"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:inputType="textPassword"
-                        android:hint="@string/enter_your_password"/>
-
-                </com.google.android.material.textfield.TextInputLayout>
-
-                <TextView
-                    style="@style/TitleSmall"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginVertical="@dimen/half_margin"
-                    android:text="@string/confirm_password" />
-
-                <com.google.android.material.textfield.TextInputLayout
-                    style="@style/inputBoxStyle"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="@dimen/half_margin"
-                    app:endIconMode="password_toggle">
-
-                    <com.google.android.material.textfield.MaterialAutoCompleteTextView
-                        android:id="@+id/cPassword"
-                        style="@style/inputTextStyle"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:inputType="textPassword"
-                        android:hint="@string/enter_your_confirm_password"/>
-
-                </com.google.android.material.textfield.TextInputLayout>
+				</com.google.android.material.textfield.TextInputLayout>
 
 
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/createAccountBtn"
-                    style="@style/appBtn"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginVertical="@dimen/padding"
-                    android:text="@string/create_account" />
+				<TextView
+					style="@style/TitleSmall"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:layout_marginVertical="@dimen/half_margin"
+					android:text="@string/email" />
 
-            </LinearLayout>
+				<com.google.android.material.textfield.TextInputLayout
+					style="@style/inputBoxStyle"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:layout_marginBottom="@dimen/half_margin">
 
-        </LinearLayout>
+					<com.google.android.material.textfield.MaterialAutoCompleteTextView
+						android:id="@+id/email"
+						style="@style/inputTextStyle"
+						android:layout_width="match_parent"
+						android:layout_height="wrap_content"
+						android:hint="@string/enter_your_email"
+						android:inputType="textEmailAddress" />
 
-    </ScrollView>
+				</com.google.android.material.textfield.TextInputLayout>
 
-    <io.bidswipe.app.ui.custom.LoaderView
-        android:id="@+id/loader"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:visibility="gone" />
+				<TextView
+					style="@style/TitleSmall"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:layout_marginVertical="@dimen/half_margin"
+					android:text="@string/password" />
+
+				<com.google.android.material.textfield.TextInputLayout
+					style="@style/inputBoxStyle"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:layout_marginBottom="@dimen/half_margin"
+					app:endIconMode="password_toggle">
+
+					<com.google.android.material.textfield.MaterialAutoCompleteTextView
+						android:id="@+id/password"
+						style="@style/inputTextStyle"
+						android:layout_width="match_parent"
+						android:layout_height="wrap_content"
+						android:hint="@string/enter_your_password"
+						android:inputType="textPassword" />
+
+				</com.google.android.material.textfield.TextInputLayout>
+
+				<TextView
+					style="@style/TitleSmall"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:layout_marginVertical="@dimen/half_margin"
+					android:text="@string/confirm_password" />
+
+				<com.google.android.material.textfield.TextInputLayout
+					style="@style/inputBoxStyle"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:layout_marginBottom="@dimen/half_margin"
+					app:endIconMode="password_toggle">
+
+					<com.google.android.material.textfield.MaterialAutoCompleteTextView
+						android:id="@+id/cPassword"
+						style="@style/inputTextStyle"
+						android:layout_width="match_parent"
+						android:layout_height="wrap_content"
+						android:hint="@string/enter_your_confirm_password"
+						android:inputType="textPassword" />
+
+				</com.google.android.material.textfield.TextInputLayout>
+
+
+				<com.google.android.material.button.MaterialButton
+					android:id="@+id/createAccountBtn"
+					style="@style/appBtn"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:layout_marginVertical="@dimen/padding"
+					android:text="@string/create_account" />
+
+			</LinearLayout>
+
+		</LinearLayout>
+
+	</ScrollView>
+
+	<io.bidswipe.app.ui.custom.LoaderView
+		android:id="@+id/loader"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:visibility="gone" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

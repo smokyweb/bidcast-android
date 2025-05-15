@@ -1,302 +1,299 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".ui.dashboard.scheduleShow.CreateProductFragment">
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	tools:context=".ui.dashboard.scheduleShow.CreateProductFragment">
 
-    <io.bidswipe.app.ui.custom.Header
-        android:id="@+id/header"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:headerMode="BACK_BUTTON_TITLE_ACTION"
-        app:layout_constraintTop_toTopOf="parent"
-        app:primaryIconDrawable="@drawable/notification"
-        app:secondaryIconDrawable="@drawable/search"
-        app:showBackButton="true"
-        app:showPrimaryIcon="false"
-        app:showSecondaryIcon="false"
-        app:headerTitle="Create a Product"
-        />
+	<io.bidswipe.app.ui.custom.Header
+		android:id="@+id/header"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		app:headerMode="BACK_BUTTON_TITLE_ACTION"
+		app:headerTitle="Create a Product"
+		app:layout_constraintTop_toTopOf="parent"
+		app:primaryIconDrawable="@drawable/notification"
+		app:secondaryIconDrawable="@drawable/search"
+		app:showBackButton="true"
+		app:showPrimaryIcon="false"
+		app:showSecondaryIcon="false" />
 
-    <ScrollView
-        android:id="@+id/scroll"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@id/buttonLayout"
-        app:layout_constraintTop_toBottomOf="@id/header">
+	<ScrollView
+		android:id="@+id/scroll"
+		android:layout_width="match_parent"
+		android:layout_height="0dp"
+		app:layout_constraintBottom_toTopOf="@id/buttonLayout"
+		app:layout_constraintTop_toBottomOf="@id/header">
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="@dimen/margin"
-            android:orientation="vertical">
+		<LinearLayout
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_marginHorizontal="@dimen/margin"
+			android:orientation="vertical">
 
-            <com.google.android.material.card.MaterialCardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                style="@style/cardStyle"
-                android:backgroundTint="@color/secondaryContainer"
-                app:contentPadding="@dimen/margin">
+			<com.google.android.material.card.MaterialCardView
+				style="@style/cardStyle"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:backgroundTint="@color/secondaryContainer"
+				app:contentPadding="@dimen/margin">
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
+				<LinearLayout
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:orientation="horizontal">
 
-                    <androidx.appcompat.widget.AppCompatImageView
-                        android:id="@+id/imageIcon"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/ic_info"
-                        />
+					<androidx.appcompat.widget.AppCompatImageView
+						android:id="@+id/imageIcon"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:src="@drawable/ic_info" />
 
-                    <TextView
-                        style="@style/BodyMedium"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="@dimen/half_margin"
-                        android:textColor="@color/secondary"
-                        android:text="Detailed product listings help buyers make informed decisions and increase your chances of making a sale."
-                         />
+					<TextView
+						style="@style/BodyMedium"
+						android:layout_width="match_parent"
+						android:layout_height="wrap_content"
+						android:layout_marginStart="@dimen/half_margin"
+						android:text="@string/detailed_product_listings_help_buyers_make_informed_decisions_and_increase_your_chances_of_making_a_sale"
+						android:textColor="@color/secondary" />
 
-                </LinearLayout>
+				</LinearLayout>
 
 
-            </com.google.android.material.card.MaterialCardView>
+			</com.google.android.material.card.MaterialCardView>
 
-            <io.bidswipe.app.ui.custom.Heading
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/half_margin"
-                app:title="Photos" />
+			<io.bidswipe.app.ui.custom.Heading
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_marginTop="@dimen/half_margin"
+				app:title="Photos" />
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
+			<LinearLayout
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:orientation="horizontal">
 
-                <LinearLayout
-                    android:layout_width="120dp"
-                    android:layout_height="120dp"
-                    android:background="@drawable/dashed_card_8_white"
-                    android:gravity="center"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/headingView">
+				<LinearLayout
+					android:layout_width="120dp"
+					android:layout_height="120dp"
+					android:background="@drawable/dashed_card_8_white"
+					android:gravity="center"
+					app:layout_constraintStart_toStartOf="parent"
+					app:layout_constraintTop_toBottomOf="@id/headingView">
 
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        app:tint="@color/outlineVariant"
-                        android:src="@drawable/camera" />
+					<ImageView
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_gravity="center"
+						android:contentDescription="@string/app_name"
+						android:src="@drawable/camera"
+						app:tint="@color/outlineVariant" />
 
-                </LinearLayout>
+				</LinearLayout>
 
-                <LinearLayout
-                    android:layout_width="120dp"
-                    android:layout_height="120dp"
-                    android:layout_marginStart="@dimen/margin"
-                    android:background="@drawable/dashed_card_8_white"
-                    android:gravity="center"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/headingView">
+				<LinearLayout
+					android:layout_width="120dp"
+					android:layout_height="120dp"
+					android:layout_marginStart="@dimen/margin"
+					android:background="@drawable/dashed_card_8_white"
+					android:gravity="center"
+					app:layout_constraintStart_toStartOf="parent"
+					app:layout_constraintTop_toBottomOf="@id/headingView">
 
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        app:tint="@color/outlineVariant"
-                        android:src="@drawable/ic_add" />
+					<ImageView
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_gravity="center"
+						android:contentDescription="@string/app_name"
+						android:src="@drawable/ic_add"
+						app:tint="@color/outlineVariant" />
 
-                </LinearLayout>
+				</LinearLayout>
 
-                <LinearLayout
-                    android:layout_width="120dp"
-                    android:layout_height="120dp"
-                    android:layout_marginStart="@dimen/margin"
-                    android:background="@drawable/dashed_card_8_white"
-                    android:gravity="center"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/headingView">
+				<LinearLayout
+					android:layout_width="120dp"
+					android:layout_height="120dp"
+					android:layout_marginStart="@dimen/margin"
+					android:background="@drawable/dashed_card_8_white"
+					android:gravity="center"
+					app:layout_constraintStart_toStartOf="parent"
+					app:layout_constraintTop_toBottomOf="@id/headingView">
 
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        app:tint="@color/outlineVariant"
-                        android:src="@drawable/ic_add" />
+					<ImageView
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_gravity="center"
+						android:contentDescription="@string/app_name"
+						android:src="@drawable/ic_add"
+						app:tint="@color/outlineVariant" />
 
-                </LinearLayout>
-
-
-            </LinearLayout>
-
-            <TextView
-                style="@style/BodyMedium"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Add up to 8 photos"
-                />
-
-            <TextView
-                style="@style/TitleSmall"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/margin"
-                android:layout_marginBottom="@dimen/half_margin"
-                android:text="Category" />
-
-            <com.google.android.material.textfield.TextInputLayout
-                style="@style/inputBoxStyle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/margin"
-                app:endIconDrawable="@drawable/ic_forward"
-                app:endIconMode="custom">
-
-                <androidx.appcompat.widget.AppCompatAutoCompleteTextView
-                    android:id="@+id/last_name"
-                    style="@style/inputTextStyle"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="Select Category" />
-
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <TextView
-                style="@style/TitleSmall"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/half_margin"
-                android:text="Title" />
-
-            <com.google.android.material.textfield.TextInputLayout
-                style="@style/inputBoxStyle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/margin">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/product_title"
-                    style="@style/inputTextStyle"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="Enter product title" />
-
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <TextView
-                style="@style/TitleSmall"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/half_margin"
-                android:text="Description" />
-
-            <com.google.android.material.textfield.TextInputLayout
-                style="@style/inputBoxStyle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/margin">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/description"
-                    style="@style/inputTextStyle"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="top"
-                    android:hint="Describe your product"
-                    android:minLines="4" />
-
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <TextView
-                style="@style/TitleSmall"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Quantity Available" />
+				</LinearLayout>
 
 
+			</LinearLayout>
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
+			<TextView
+				style="@style/BodyMedium"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:text="@string/add_up_to_8_photos" />
 
-                <com.google.android.material.card.MaterialCardView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    app:strokeWidth="2dp">
+			<TextView
+				style="@style/TitleSmall"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:layout_marginTop="@dimen/margin"
+				android:layout_marginBottom="@dimen/half_margin"
+				android:text="@string/category" />
 
-                        <androidx.appcompat.widget.AppCompatImageView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:paddingVertical="28dp"
-                            android:paddingHorizontal="@dimen/margin"
+			<com.google.android.material.textfield.TextInputLayout
+				style="@style/inputBoxStyle"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:layout_marginBottom="@dimen/margin"
+				app:endIconDrawable="@drawable/ic_forward"
+				app:endIconMode="custom">
 
-                            android:src="@drawable/ic_minus" />
+				<androidx.appcompat.widget.AppCompatAutoCompleteTextView
+					android:id="@+id/last_name"
+					style="@style/inputTextStyle"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:hint="@string/select_category" />
+
+			</com.google.android.material.textfield.TextInputLayout>
+
+			<TextView
+				style="@style/TitleSmall"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:layout_marginBottom="@dimen/half_margin"
+				android:text="@string/title" />
+
+			<com.google.android.material.textfield.TextInputLayout
+				style="@style/inputBoxStyle"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:layout_marginBottom="@dimen/margin">
+
+				<com.google.android.material.textfield.TextInputEditText
+					android:id="@+id/product_title"
+					style="@style/inputTextStyle"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:hint="@string/enter_product_title" />
+
+			</com.google.android.material.textfield.TextInputLayout>
+
+			<TextView
+				style="@style/TitleSmall"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:layout_marginBottom="@dimen/half_margin"
+				android:text="@string/description" />
+
+			<com.google.android.material.textfield.TextInputLayout
+				style="@style/inputBoxStyle"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:layout_marginBottom="@dimen/margin">
+
+				<com.google.android.material.textfield.TextInputEditText
+					android:id="@+id/description"
+					style="@style/inputTextStyle"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:gravity="top"
+					android:hint="@string/describe_your_product"
+					android:minLines="4" />
+
+			</com.google.android.material.textfield.TextInputLayout>
+
+			<TextView
+				style="@style/TitleSmall"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:text="@string/quantity_available" />
 
 
-                </com.google.android.material.card.MaterialCardView>
+			<LinearLayout
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:orientation="horizontal">
 
-                <com.google.android.material.textfield.TextInputLayout
-                    style="@style/inputBoxStyle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    app:boxStrokeWidth="2dp"
-                    android:layout_marginHorizontal="@dimen/margin">
+				<com.google.android.material.card.MaterialCardView
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					app:strokeWidth="2dp">
 
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/quantity"
-                        style="@style/inputTextStyle"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:textAlignment="center"
-                        android:textSize="18dp"
-                        android:text="1"/>
+					<androidx.appcompat.widget.AppCompatImageView
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:paddingHorizontal="@dimen/margin"
+						android:paddingVertical="28dp"
 
-                </com.google.android.material.textfield.TextInputLayout>
-
-                <com.google.android.material.card.MaterialCardView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    app:strokeWidth="2dp">
-
-                    <androidx.appcompat.widget.AppCompatImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:padding="@dimen/margin"
-                        android:tint="@color/outlineVariant"
-                        android:src="@drawable/ic_add" />
+						android:src="@drawable/ic_minus" />
 
 
-                </com.google.android.material.card.MaterialCardView>
+				</com.google.android.material.card.MaterialCardView>
 
-            </LinearLayout>
+				<com.google.android.material.textfield.TextInputLayout
+					style="@style/inputBoxStyle"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_marginHorizontal="@dimen/margin"
+					app:boxStrokeWidth="2dp">
 
-        </LinearLayout>
+					<com.google.android.material.textfield.TextInputEditText
+						android:id="@+id/quantity"
+						style="@style/inputTextStyle"
+						android:layout_width="match_parent"
+						android:layout_height="wrap_content"
+						android:text="1"
+						android:textAlignment="center"
+						android:textSize="18sp" />
 
-    </ScrollView>
+				</com.google.android.material.textfield.TextInputLayout>
 
-    <LinearLayout
-        android:id="@+id/buttonLayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:visibility="visible"
-        app:layout_constraintBottom_toBottomOf="parent">
+				<com.google.android.material.card.MaterialCardView
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					app:strokeWidth="2dp">
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/continueBtn"
-            style="@style/appBtn"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/margin"
-            android:paddingHorizontal="@dimen/margin"
-            android:text="Continue" />
+					<androidx.appcompat.widget.AppCompatImageView
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:padding="@dimen/margin"
+						android:src="@drawable/ic_add"
+						android:tint="@color/outlineVariant" />
 
-    </LinearLayout>
+				</com.google.android.material.card.MaterialCardView>
+
+			</LinearLayout>
+
+		</LinearLayout>
+
+	</ScrollView>
+
+	<LinearLayout
+		android:id="@+id/buttonLayout"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:orientation="horizontal"
+		android:visibility="visible"
+		app:layout_constraintBottom_toBottomOf="parent">
+
+		<com.google.android.material.button.MaterialButton
+			android:id="@+id/continueBtn"
+			style="@style/appBtn"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_margin="@dimen/margin"
+			android:paddingHorizontal="@dimen/margin"
+			android:text="@string/_continue" />
+
+	</LinearLayout>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
