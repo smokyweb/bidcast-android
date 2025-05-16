@@ -135,5 +135,6 @@ dependencies {
     implementation(libs.cameraview)
     implementation(libs.easyvalidation.core)
     implementation(libs.locale.helper.android)
+    implementation(libs.yuanwenhai.html.textview)
 
 }

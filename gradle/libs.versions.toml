@@ -43,6 +43,7 @@ annotation = "1.6.0"
 billingKtx = "7.0.0"
 navigationFragmentKtx = "2.8.9"
 navigationUiKtx = "2.8.9"
+htmlTextviewVersion = "1.6"
 
 [libraries]
 android-image-cropper = { module = "com.vanniktech:android-image-cropper", version.ref = "androidImageCropper" }
@@ -81,6 +82,7 @@ retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit
 permissionx = { module = "com.guolindev.permissionx:permissionx", version.ref = "permissionx" }
 picasso = { module = "com.squareup.picasso:picasso", version.ref = "picasso" }
 roundedimageview = { module = "com.makeramen:roundedimageview", version.ref = "roundedimageview" }
+yuanwenhai-html-textview = { module = "com.github.YuanWenHai:html-textview", version.ref = "htmlTextviewVersion" }
 swipeMenuRecyclerView = { module = "com.github.aitsuki:SwipeMenuRecyclerView", version.ref = "swipemenurecyclerview" }
 singledateandtimepicker = { module = "com.github.florent37:singledateandtimepicker", version.ref = "singledateandtimepicker" }
 toasty = { module = "com.github.GrenderG:Toasty", version.ref = "toasty" }

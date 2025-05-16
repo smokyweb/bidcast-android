@@ -1,10 +1,13 @@
 package io.bidswipe.app.network
 
+import io.bidswipe.app.network.response.AboutUsResponse
 import io.bidswipe.app.network.response.CommonResponse
 import io.bidswipe.app.network.response.LoginResponse
 import io.bidswipe.app.network.response.SignUpResponse
+import io.bidswipe.app.network.response.TermsConditionResponse
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
+import retrofit2.http.GET
 import retrofit2.http.Multipart
 import retrofit2.http.POST
 import retrofit2.http.Part
@@ -52,6 +55,13 @@ interface ApiInterface{
         @Part("password_confirmation") confirmPassword: RequestBody
     ): CommonResponse
 
+    @GET("api/about-us")
+    suspend fun aboutUs(): AboutUsResponse
 
+    @GET("api/terms-conditions")
+    suspend fun getTermsConditions(): TermsConditionResponse
+
+    @GET("api/privacy-policy")
+    suspend fun getPrivacyPolicy(): TermsConditionResponse
 
 }

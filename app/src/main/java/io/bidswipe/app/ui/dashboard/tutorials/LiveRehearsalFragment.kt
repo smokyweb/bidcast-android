@@ -1,11 +1,13 @@
 package io.bidswipe.app.ui.dashboard.tutorials
 
+import android.content.pm.PackageManager
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
+import androidx.navigation.fragment.findNavController
 import com.otaliastudios.cameraview.CameraException
 import com.otaliastudios.cameraview.CameraListener
 import com.otaliastudios.cameraview.VideoResult
@@ -15,6 +17,7 @@ import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseFragment
 import io.bidswipe.app.databinding.FragmentLiveRehearsalBinding
 import io.bidswipe.app.ui.dashboard.DashViewModel
+import io.bidswipe.app.utils.finish
 
 class LiveRehearsalFragment : BaseFragment<DashViewModel,FragmentLiveRehearsalBinding>() {
     override fun getModel(): Class<DashViewModel> = DashViewModel::class.java
@@ -54,6 +57,23 @@ class LiveRehearsalFragment : BaseFragment<DashViewModel,FragmentLiveRehearsalBi
             it.mode = Mode.VIDEO
         }
 
+        bind.cameraSwitch.setOnClickListener {
+
+            if (bind.camera.facing == Facing.FRONT){
+                bind.camera.facing = Facing.BACK
+            }else{
+                bind.camera.facing = Facing.FRONT
+            }
+
+        }
+        bind.cutButton.setOnClickListener{
+            findNavController().popBackStack()
+        }
+
+        bind.continueBtn.setOnClickListener {
+            findNavController().popBackStack()
+        }
+
 
     }
 
@@ -70,6 +90,10 @@ class LiveRehearsalFragment : BaseFragment<DashViewModel,FragmentLiveRehearsalBi
     override fun onDestroy() {
         super.onDestroy()
         bind.camera.destroy()
+    }
+
+    fun hasMicrophone(): Boolean {
+        return this.mCtx.packageManager?.hasSystemFeature(PackageManager.FEATURE_MICROPHONE) == true
     }
 
 }

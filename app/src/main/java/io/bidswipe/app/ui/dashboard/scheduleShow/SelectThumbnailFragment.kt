@@ -32,6 +32,8 @@ class SelectThumbnailFragment : BaseFragment<ScheduleShowViewModel,FragmentSelec
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        val from = activity?.intent?.getStringExtra("from").toString()
+
         bind.header.onBackClick{
             findNavController().popBackStack()
         }
@@ -64,7 +66,12 @@ class SelectThumbnailFragment : BaseFragment<ScheduleShowViewModel,FragmentSelec
         bind.goodsRecycler.adapter = gAdapter
 
         bind.continueBtn.setOnClickListener {
-            findNavController().navigate(ids.goToProductTipsFragment)
+            if (from == "dash"){
+                findNavController().navigate(ids.selectThumbnail_to_createProductFragment)
+            } else {
+                findNavController().navigate(ids.goToProductTipsFragment)
+            }
+
         }
 
 

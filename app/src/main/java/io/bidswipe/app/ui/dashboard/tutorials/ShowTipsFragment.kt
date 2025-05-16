@@ -79,12 +79,13 @@ class ShowTipsFragment : BaseFragment<DashViewModel, FragmentShowTipsBinding>() 
                 when (type) {
                     "showTips" -> {
                         startActivity(mCtx.toScheduleShow("tips"))
+                        findNavController().popBackStack()
                     }
                     "liveTips" -> {
                         findNavController().navigate(ids.goToLiveRehearsalFragment)
                     }
                     else -> {
-
+                        findNavController().navigate(ids.goToReferFriendFragment)
                     }
                 }
 

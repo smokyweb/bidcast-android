@@ -54,6 +54,12 @@ class SelectShowTimeFragment : BaseFragment<ScheduleShowViewModel,FragmentSelect
             }
         }
 
+        bind.continueBtn.setOnClickListener {
+
+            if (from =="dash") findNavController().navigate(R.id.ShowTimeFragment_to_selectCategoryFragment)
+
+        }
+
 
     }
 

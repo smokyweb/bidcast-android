@@ -6,7 +6,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
-import androidx.navigation.fragment.findNavController
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayout.OnTabSelectedListener
 import io.bidswipe.app.R
@@ -19,6 +18,7 @@ import io.bidswipe.app.model.MoreModel
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.ui.custom.AlertType
 import io.bidswipe.app.ui.custom.AppBottomSheet
+import io.bidswipe.app.ui.dashboard.more.MoreActivity
 import io.bidswipe.app.utils.Prefs
 import io.bidswipe.app.utils.finish
 import io.bidswipe.app.utils.parse
@@ -58,7 +58,7 @@ class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
 
                 "language" -> {
 
-                    startActivity(Intent(mCtx , LanguageActivity::class.java))
+//                    startActivity(Intent(mCtx , LanguageActivity::class.java))
                 }
 
                 "contactUs" ->{
@@ -70,11 +70,11 @@ class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
                 }
 
                 "termsCondition" ->{
-
+                    startActivity(Intent(mCtx , MoreActivity::class.java).putExtra("to",moreList[pos].slug))
                 }
 
                 "privacyPolicy" ->{
-
+                    startActivity(Intent(mCtx , MoreActivity::class.java).putExtra("to",moreList[pos].slug))
                 }
 
                 "faq" ->{

@@ -7,8 +7,10 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.network.repository.AuthRepository
 import io.bidswipe.app.network.repository.DashRepository
+import io.bidswipe.app.network.response.AboutUsResponse
 import io.bidswipe.app.network.response.CommonResponse
 import io.bidswipe.app.network.response.LoginResponse
+import io.bidswipe.app.network.response.TermsConditionResponse
 import kotlinx.coroutines.launch
 import okhttp3.RequestBody
 import javax.inject.Inject
@@ -26,5 +28,7 @@ class DashViewModel @Inject constructor(val repo: DashRepository) : ViewModel() 
     ) = viewModelScope.launch {
         _logoutResponse.value = repo.logout()
     }
+
+
 
 }

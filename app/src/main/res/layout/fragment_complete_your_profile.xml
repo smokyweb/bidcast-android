@@ -14,7 +14,7 @@
 		app:headerTitle="Complete Your Profile"
 		app:layout_constraintTop_toTopOf="parent"
 		app:primaryIconDrawable="@drawable/ic_question"
-		app:showBackButton="false"
+		app:showBackButton="true"
 		app:showPrimaryIcon="false"
 		app:showSecondaryIcon="false" />
 

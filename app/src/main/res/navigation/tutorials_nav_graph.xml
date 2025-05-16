@@ -69,10 +69,35 @@
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@anim/slide_in_left"
             app:popExitAnim="@anim/slide_out_right"/>
+        <action
+            android:id="@+id/goToReferFriendFragment"
+            app:destination="@id/referFriendFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"/>
     </fragment>
     <fragment
         android:id="@+id/liveRehearsalFragment"
         android:name="io.bidswipe.app.ui.dashboard.tutorials.LiveRehearsalFragment"
         android:label="fragment_live_rehearsal"
         tools:layout="@layout/fragment_live_rehearsal" />
+    <fragment
+        android:id="@+id/referFriendFragment"
+        android:name="io.bidswipe.app.ui.dashboard.tutorials.ReferFriendFragment"
+        android:label="fragment_refer_friend"
+        tools:layout="@layout/fragment_refer_friend" >
+        <action
+            android:id="@+id/goToCompleteYourProfileFragment"
+            app:destination="@id/completeYourProfileFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"/>
+    </fragment>
+    <fragment
+        android:id="@+id/completeYourProfileFragment"
+        android:name="io.bidswipe.app.ui.dashboard.tutorials.CompleteYourProfileFragment"
+        android:label="fragment_complete_your_profile"
+        tools:layout="@layout/fragment_complete_your_profile" />
 </navigation>

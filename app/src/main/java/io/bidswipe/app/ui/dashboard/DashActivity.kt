@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.View
 import androidx.activity.viewModels
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.lifecycle.Lifecycle
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
 import androidx.navigation.fragment.NavHostFragment
@@ -13,7 +12,6 @@ import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseActivity
-import io.bidswipe.app.controller.ExploreAdapter
 import io.bidswipe.app.controller.SellAdapter
 import io.bidswipe.app.databinding.ActivityDashBinding
 import io.bidswipe.app.interfaces.RecyclerClicks
@@ -21,6 +19,7 @@ import io.bidswipe.app.model.SellModel
 import io.bidswipe.app.utils.bind
 import io.bidswipe.app.utils.ids
 import io.bidswipe.app.utils.toListProduct
+import io.bidswipe.app.utils.toScheduleShow
 import io.bidswipe.app.utils.toTutorials
 
 class DashActivity : BaseActivity(), NavController.OnDestinationChangedListener {
@@ -56,7 +55,7 @@ class DashActivity : BaseActivity(), NavController.OnDestinationChangedListener 
                 else -> {
                     imageSheet.state=BottomSheetBehavior.STATE_COLLAPSED
                     try {
-                        navController?.let { ctrl ->
+                        navController.let { ctrl ->
                             NavigationUI.onNavDestinationSelected(menuItem, ctrl)
                             ctrl.popBackStack(menuItem.itemId, false)
                         }
@@ -110,6 +109,8 @@ class DashActivity : BaseActivity(), NavController.OnDestinationChangedListener 
                    }
                    1->{
                        startActivity(this@DashActivity.toTutorials())
+//                       startActivity(this@DashActivity.toScheduleShow(from = "dash"))
+
                    }
 
                }
