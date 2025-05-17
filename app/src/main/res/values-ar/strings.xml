@@ -158,4 +158,17 @@
     <string name="shows">Shows</string>
 	<string name="reviews">Reviews</string>
 	<string name="clips">Clips</string>
+	<string name="listed_price">Listed Price</string>
+	<string name="custom_offer">Custom Offer</string>
+	<string name="enter_your_own_amount">Enter your own amount</string>
+	<string name="make_an_offer">Make an Offer</string>
+	<string name="send_offer">Send Offer</string>
+	<string name="you_won_t_be_charged_unless_the_seller_accepts_your_offer">You won\'t be charged unless the seller accepts your offer</string>
+	<string name="verified_seller">Verified Seller</string>
+	<string name="buy_now">Buy Now</string>
+	<string name="make_offer">Make Offer</string>
+	<string name="condition">Condition</string>
+	<string name="location">Location</string>
+	<string name="posted">Posted</string>
+	<string name="confirm_purchase">Confirm Purchase</string>
 </resources>

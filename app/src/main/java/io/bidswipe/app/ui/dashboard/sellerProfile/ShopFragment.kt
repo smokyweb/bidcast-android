@@ -1,5 +1,6 @@
 package io.bidswipe.app.ui.dashboard.sellerProfile
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -12,6 +13,7 @@ import io.bidswipe.app.controller.ShopAdapter
 import io.bidswipe.app.controller.ViewPagerAdapter
 import io.bidswipe.app.databinding.FragmentShopBinding
 import io.bidswipe.app.interfaces.RecyclerClicks
+import io.bidswipe.app.ui.dashboard.product.ProductDetailsActivity
 import io.bidswipe.app.utils.Utils
 import io.bidswipe.app.utils.runSafe
 
@@ -26,6 +28,7 @@ class ShopFragment : BaseFragment<SellerViewModel,FragmentShopBinding>() {
 
     private val mClick = object : RecyclerClicks{
         override fun viewClick(pos: Int) {
+            startActivity(Intent(mCtx, ProductDetailsActivity::class.java))
         }
 
         override fun itemClick(pos: Int, status: String) {
