@@ -154,4 +154,8 @@
 	<string name="your_referral_link">Liên kết giới thiệu của bạn</string>
     <string name="obs_open_broadcast_software_is_a_free_streaming_and_recording_program_that_lets_you_share_your_live_content_with_your_audience">OBS (Open Broadcast Software) is a free streaming and recording program that lets you share your live content with your audience.</string>
 	<string name="more_info">More Info</string>
+    <string name="professional_photographer_specializing_in_portrait_and_wedding_photography_available_for_bookings_worldwide">Professional photographer specializing in portrait and wedding photography. Available for bookings worldwide.</string>
+    <string name="shows">Shows</string>
+	<string name="reviews">Reviews</string>
+	<string name="clips">Clips</string>
 </resources>

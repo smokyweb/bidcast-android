@@ -1,7 +1,6 @@
 package io.bidswipe.app.ui.dashboard.more
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,7 +14,6 @@ import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.utils.finish
 import io.bidswipe.app.utils.parse
 
-
 class TermsConditionFragment : BaseFragment<MoreViewModel,FragmentTermsConditionBinding>() {
     override fun getModel(): Class<MoreViewModel> = MoreViewModel::class.java
 
@@ -26,7 +24,6 @@ class TermsConditionFragment : BaseFragment<MoreViewModel,FragmentTermsCondition
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
 
         bind.header.onBackClick {
             finish()

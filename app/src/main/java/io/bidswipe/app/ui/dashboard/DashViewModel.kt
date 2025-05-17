@@ -9,6 +9,7 @@ import io.bidswipe.app.network.repository.AuthRepository
 import io.bidswipe.app.network.repository.DashRepository
 import io.bidswipe.app.network.response.AboutUsResponse
 import io.bidswipe.app.network.response.CommonResponse
+import io.bidswipe.app.network.response.GetCategoryResponse
 import io.bidswipe.app.network.response.LoginResponse
 import io.bidswipe.app.network.response.TermsConditionResponse
 import kotlinx.coroutines.launch
@@ -27,6 +28,15 @@ class DashViewModel @Inject constructor(val repo: DashRepository) : ViewModel() 
     fun logout(
     ) = viewModelScope.launch {
         _logoutResponse.value = repo.logout()
+    }
+
+    private var _getCategoryResponse = MutableLiveData<Resource<GetCategoryResponse>>()
+    val getCategoryRepo: MutableLiveData<Resource<GetCategoryResponse>>
+        get() = _getCategoryResponse
+
+    fun getCategory(
+    ) = viewModelScope.launch {
+        _getCategoryResponse.value = repo.getCategory()
     }
 
 

@@ -73,11 +73,7 @@
 			android:padding="4dp"
 			android:text="@string/app_name"
 			android:textAllCaps="false"
-			android:textColor="@color/scrim"
-			app:layout_constraintBottom_toBottomOf="parent"
-			app:layout_constraintEnd_toEndOf="parent"
-			app:layout_constraintStart_toStartOf="@+id/back"
-			app:layout_constraintTop_toTopOf="parent" />
+			android:textColor="@color/scrim" />
 
 		<TextView
 			android:id="@+id/exSpace"

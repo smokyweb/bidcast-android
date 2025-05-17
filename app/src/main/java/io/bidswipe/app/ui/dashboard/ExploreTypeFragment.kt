@@ -10,6 +10,7 @@ import io.bidswipe.app.base.BaseFragment
 import io.bidswipe.app.controller.HomeAdapter
 import io.bidswipe.app.databinding.FragmentExploreBinding
 import io.bidswipe.app.databinding.FragmentExploreTypeBinding
+import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.utils.Utils
 import io.bidswipe.app.utils.runSafe
 
@@ -22,12 +23,21 @@ class ExploreTypeFragment : BaseFragment<DashViewModel,FragmentExploreTypeBindin
     private lateinit var homeAdapter: HomeAdapter
     private var itemList = mutableListOf<String>()
 
+    private val mClick  = object : RecyclerClicks {
+        override fun viewClick(pos: Int) {
+
+        }
+
+        override fun itemClick(pos: Int, status: String) {
+
+
+        }
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-
-
-        homeAdapter = HomeAdapter(itemList)
+        homeAdapter = HomeAdapter(itemList, mClick)
 
         bind.recycler.adapter = homeAdapter
 

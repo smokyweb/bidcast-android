@@ -110,7 +110,9 @@ class DashActivity : BaseActivity(), NavController.OnDestinationChangedListener 
                    1->{
                        startActivity(this@DashActivity.toTutorials())
 //                       startActivity(this@DashActivity.toScheduleShow(from = "dash"))
-
+                   }
+                   2 -> {
+                      bind.bottomBar.selectedItemId = ids.accountFragment
                    }
 
                }

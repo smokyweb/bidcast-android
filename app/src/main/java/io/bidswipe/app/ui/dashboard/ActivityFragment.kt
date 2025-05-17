@@ -25,7 +25,7 @@ class ActivityFragment : BaseFragment<DashViewModel, FragmentActivityBinding>() 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val adapter = ViewPagerAdapter(requireActivity())
+        val adapter = ViewPagerAdapter(requireActivity(),"Activity")
         bind.pager.adapter = adapter
 
         TabLayoutMediator(bind.tabLayout, bind.pager) { tab, position ->

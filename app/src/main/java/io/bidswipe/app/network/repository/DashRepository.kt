@@ -16,5 +16,6 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
 
     suspend fun getPrivacyPolicy() = call { api.getPrivacyPolicy() }
 
+    suspend fun getCategory() = call { api.getCategory() }
 
 }

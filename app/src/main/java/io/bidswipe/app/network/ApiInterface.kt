@@ -2,6 +2,7 @@ package io.bidswipe.app.network
 
 import io.bidswipe.app.network.response.AboutUsResponse
 import io.bidswipe.app.network.response.CommonResponse
+import io.bidswipe.app.network.response.GetCategoryResponse
 import io.bidswipe.app.network.response.LoginResponse
 import io.bidswipe.app.network.response.SignUpResponse
 import io.bidswipe.app.network.response.TermsConditionResponse
@@ -63,5 +64,8 @@ interface ApiInterface{
 
     @GET("api/privacy-policy")
     suspend fun getPrivacyPolicy(): TermsConditionResponse
+
+    @GET("api/get-category")
+    suspend fun getCategory(): GetCategoryResponse
 
 }
