@@ -55,7 +55,6 @@ class HomeFragment : BaseFragment<DashViewModel,FragmentHomeBinding>() {
 
         homeAdapter.notifyDataSetChanged()
 
-
         repeat(5){
             bind.chipGroup.addView(
                 Utils.makeAChip(
@@ -66,15 +65,12 @@ class HomeFragment : BaseFragment<DashViewModel,FragmentHomeBinding>() {
             )
         }
 
-
-
         bind.chipGroup.setOnCheckedStateChangeListener { chipGroup, _ ->
             runSafe {
                 val chipId = chipGroup.checkedChipId
                 val index = chipGroup.indexOfChild(chipGroup.findViewById(chipId))
             }
         }
-
 
     }
 

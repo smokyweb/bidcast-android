@@ -10,6 +10,7 @@ import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayout.OnTabSelectedListener
 import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseFragment
+import io.bidswipe.app.controller.GridAdapter
 import io.bidswipe.app.controller.MoreAdapter
 import io.bidswipe.app.databinding.FragmentAccountBinding
 import io.bidswipe.app.interfaces.AlertClicks
@@ -19,6 +20,7 @@ import io.bidswipe.app.network.Resource
 import io.bidswipe.app.ui.custom.AlertType
 import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.ui.dashboard.more.MoreActivity
+import io.bidswipe.app.ui.dashboard.sellerHub.SellerHubActivity
 import io.bidswipe.app.utils.Prefs
 import io.bidswipe.app.utils.finish
 import io.bidswipe.app.utils.parse
@@ -31,8 +33,10 @@ class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
     override fun getBind(inflater : LayoutInflater , view : ViewGroup?) = FragmentAccountBinding.inflate(inflater , view , false)
 
     private var moreList = mutableListOf<MoreModel>()
+    private var gridList = mutableListOf<MoreModel>()
 
     private lateinit var moreAdapter: MoreAdapter
+    private lateinit var gridAdapter: GridAdapter
 
     private val onTabSelectedListener = object : OnTabSelectedListener {
         override fun onTabSelected(tab : TabLayout.Tab?) {
@@ -95,6 +99,24 @@ class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
 
     }
 
+    private val gridClick = object : RecyclerClicks {
+        override fun viewClick(pos: Int) {
+            when(gridList[pos].slug){
+
+                "inventory" ->{
+                    startActivity(Intent(mCtx , SellerHubActivity::class.java))
+                }
+
+            }
+        }
+
+        override fun itemClick(pos: Int, status: String) {
+
+
+        }
+
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -112,6 +134,23 @@ class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
         moreAdapter = MoreAdapter(moreList, mClicks)
 
         bind.accountView.moreRecycler.adapter = moreAdapter
+
+
+        gridList.add(MoreModel(R.drawable.ic_box,"Inventory","inventory"))
+        gridList.add(MoreModel(R.drawable.ic_mic,"Shows", "Shows"))
+        gridList.add(MoreModel(R.drawable.ic_order,"My Order", "order"))
+        gridList.add(MoreModel(R.drawable.ic_walllet,"Wallet", "wallet"))
+        gridList.add(MoreModel(R.drawable.ic_tag,"Offers", "offers"))
+        gridList.add(MoreModel(R.drawable.ic_tag,"Tips","tips"))
+        gridList.add(MoreModel(R.drawable.ic_vehicle,"Shipping", "shipping"))
+        gridList.add(MoreModel(R.drawable.ic_people,"Affiliate Program","program"))
+        gridList.add(MoreModel(R.drawable.ic_vacation,"Seller Training","training"))
+        gridList.add(MoreModel(R.drawable.ic_vacation,"Premier Shop","shop"))
+        gridList.add(MoreModel(R.drawable.ic_vacation,"Seller Status","sellerStatus"))
+        gridList.add(MoreModel(R.drawable.ic_vacation,"Seller Analytics","sellerAnalytics"))
+
+        gridAdapter= GridAdapter(gridList,gridClick)
+        bind.sellerHub.gridRecycler.adapter = gridAdapter
 
         viewModel.logoutRepo.observe(viewLifecycleOwner) {
             when (it) {

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/seller_hub_nav_graph"
+    app:startDestination="@id/inventoryFragment">
+
+    <fragment
+        android:id="@+id/inventoryFragment"
+        android:name="io.bidswipe.app.ui.dashboard.sellerHub.InventoryFragment"
+        android:label="fragment_inventory"
+        tools:layout="@layout/fragment_inventory" />
+</navigation>

@@ -171,4 +171,7 @@
 	<string name="location">Location</string>
 	<string name="posted">Posted</string>
 	<string name="confirm_purchase">Confirm Purchase</string>
+    <string name="active">Active</string>
+	<string name="draft">Draft</string>
+	<string name="inactive">Inactive</string>
 </resources>

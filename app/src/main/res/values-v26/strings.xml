@@ -4,4 +4,7 @@
     <string name="shows">Shows</string>
     <string name="reviews">Reviews</string>
     <string name="clips">Clips</string>
+    <string name="active">Active</string>
+    <string name="draft">Draft</string>
+    <string name="inactive">Inactive</string>
 </resources>
