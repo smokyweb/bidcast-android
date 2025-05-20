@@ -10,4 +10,20 @@
         android:name="io.bidswipe.app.ui.dashboard.sellerHub.InventoryFragment"
         android:label="fragment_inventory"
         tools:layout="@layout/fragment_inventory" />
+    <fragment
+        android:id="@+id/myOrdersFragment"
+        android:name="io.bidswipe.app.ui.dashboard.sellerHub.MyOrdersFragment"
+        android:label="fragment_my_orders"
+        tools:layout="@layout/fragment_my_orders" />
+    <fragment
+        android:id="@+id/sellerOffersFragment"
+        android:name="io.bidswipe.app.ui.dashboard.sellerHub.SellerOffersFragment"
+        android:label="fragment_seller_offers"
+        tools:layout="@layout/fragment_seller_offers" />
+    <fragment
+        android:id="@+id/walletFragment"
+        android:name="io.bidswipe.app.ui.dashboard.sellerHub.WalletFragment"
+        android:label="fragment_wallet"
+        tools:layout="@layout/fragment_wallet" />
+
 </navigation>

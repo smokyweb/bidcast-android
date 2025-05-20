@@ -81,7 +81,7 @@
 			android:layout_height="wrap_content"
 			android:alpha="0"
 			android:fontFamily="@font/poppins_extra_bold"
-			android:text="@string/app_name"
+			android:text="  "
 			android:textColor="@color/primary"
 			android:textSize="20sp" />
 
