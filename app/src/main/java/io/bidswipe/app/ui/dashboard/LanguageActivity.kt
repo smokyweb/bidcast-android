@@ -20,10 +20,8 @@ class LanguageActivity : BaseActivity() {
     private var selectedLang = Const.languages.find { it.locale == Locales.English }!!
 
     private val mClick = object : RecyclerClicks {
-        override fun viewClick(pos : Int) {
-        }
-
-        override fun itemClick(pos : Int , status : String) {
+       
+        override fun itemClick(pos : Int , status : String?) {
             selectedLang = Const.languages[pos]
             updateLocale(selectedLang.locale)
             Prefs(this@LanguageActivity).putString(Prefs.LANGUAGE , selectedLang.title)

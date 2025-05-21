@@ -21,7 +21,7 @@ class ProductAdapter (  val mList: MutableList<String>,val mClicks: RecyclerClic
         with(holder) {
 
             bind.root.setOnClickListener {
-                mClicks.viewClick(position)
+                mClicks.itemClick(position)
             }
 
 

@@ -24,10 +24,8 @@ class WalletFragment : BaseFragment<SellerHubViewModel, FragmentWalletBinding>()
 	private lateinit var adapter: PayoutAdapter
 	
 	private val mClick = object : RecyclerClicks {
-		override fun viewClick(pos: Int) {
-		}
 		
-		override fun itemClick(pos: Int, status: String) {
+		override fun itemClick(pos: Int, status: String?) {
 		}
 	}
 	

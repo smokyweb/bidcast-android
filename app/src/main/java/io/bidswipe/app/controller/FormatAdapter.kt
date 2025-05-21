@@ -26,7 +26,7 @@ class FormatAdapter (mList: MutableList<FormatModel>, val mClicks: RecyclerClick
         with(holder) {
 
             bind.root.setOnClickListener {
-                mClicks.viewClick(position)
+                mClicks.itemClick(position)
             }
 
             bind.icon.setImageDrawable(ContextCompat.getDrawable(mCtx,item?.icon?: R.drawable.notification))

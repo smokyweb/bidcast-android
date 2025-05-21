@@ -208,5 +208,8 @@
     <string name="new_product">+ New Product</string>
     <string name="past_shows">Past Shows</string>
     <string name="new_show">New Show</string>
+    <string name="delivered">Delivered</string>
+    <string name="returns">Returns</string>
+    <string name="shipping">Shipping</string>
 
 </resources>

@@ -56,7 +56,6 @@ class Header @JvmOverloads constructor(
                 bind.back.isVisible = true
                 bind.title.isVisible = true
                 bind.appText.isVisible = false
-                bind.exSpace.isVisible = false
                 bind.secondaryIcon.isVisible = true
                 bind.secondary.isVisible = true
                 bind.primaryIcon.isVisible = true // Include primary icon

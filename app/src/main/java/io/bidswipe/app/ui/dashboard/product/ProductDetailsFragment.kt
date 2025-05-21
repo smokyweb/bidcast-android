@@ -57,11 +57,8 @@ class ProductDetailsFragment : BaseFragment<DashViewModel, FragmentProductDetail
 			var makeOfferSheet = Alerts.appBottomSheet(mCtx, true, makeOfferSheetBind)
 
 			makeOfferSheetBind.offerRecycler.adapter = MakeOfferAdapter(mutableListOf("1,039","1,104","1,169","1,234"),object : RecyclerClicks{
-				override fun viewClick(pos: Int) {
-				
-				}
-				
-				override fun itemClick(pos: Int, status: String) {
+			
+				override fun itemClick(pos: Int, status: String?) {
 				
 				}
 				

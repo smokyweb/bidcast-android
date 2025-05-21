@@ -94,26 +94,7 @@ class ShowTipsFragment : BaseFragment<DashViewModel, FragmentShowTipsBinding>() 
             }
 
         }
-
-
-        /* val adapter = SellAdapter(mList = tipsList, "getStarted",object: RecyclerClicks {
-             override fun viewClick(pos: Int) {
-
-             }
-
-             override fun itemClick(pos: Int, status: String) {
-
-             }
-
-         })
-
-         bind.recycler.adapter = adapter*/
-
-        /* bind.continueBtn.setOnClickListener {
-             startActivity(mCtx.toScheduleShow("tips"))
-         }*/
-
-
+        
     }
 
 }

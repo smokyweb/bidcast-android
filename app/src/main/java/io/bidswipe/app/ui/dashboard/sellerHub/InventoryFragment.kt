@@ -24,10 +24,8 @@ class InventoryFragment : BaseFragment<SellerHubViewModel,FragmentInventoryBindi
     private lateinit var adapter : InventoryAdapter
 
     private val mClick = object : RecyclerClicks{
-        override fun viewClick(pos: Int) {
-        }
-
-        override fun itemClick(pos: Int, status: String) {
+     
+        override fun itemClick(pos: Int, status: String?) {
         }
     }
 

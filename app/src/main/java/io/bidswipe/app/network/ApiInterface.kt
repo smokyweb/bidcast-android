@@ -13,59 +13,83 @@ import retrofit2.http.Multipart
 import retrofit2.http.POST
 import retrofit2.http.Part
 
-interface ApiInterface{
-
-    @Multipart
-    @POST("api/register")
-    suspend fun signUp(
-        @Part("first_name") firstName: RequestBody,
-        @Part("last_name") lastName: RequestBody,
-        @Part("email") email: RequestBody,
-        @Part("password") password: RequestBody,
-        @Part("password_confirmation") passwordConfirmation: RequestBody
-    ): SignUpResponse
-
-    @Multipart
-    @POST("api/login")
-    suspend fun login(
-        @Part("email") email: RequestBody,
-        @Part("password") password: RequestBody
-    ): LoginResponse
-
-    @POST("api/logout")
-    suspend fun logout(): CommonResponse
-
-    @Multipart
-    @POST("api/forgot-password")
-    suspend fun forgotPassword(
-        @Part("email") email: RequestBody
-    ): CommonResponse
-
-    @Multipart
-    @POST("api/verify-otp")
-    suspend fun verifyOtp(
-        @Part("email") email : RequestBody,
-        @Part("code") code : RequestBody
-    ): CommonResponse
-
-    @Multipart
-    @POST("api/reset-password")
-    suspend fun resetPassword(
-        @Part("email") email : RequestBody,
-        @Part("password") password: RequestBody,
-        @Part("password_confirmation") confirmPassword: RequestBody
-    ): CommonResponse
-
-    @GET("api/about-us")
-    suspend fun aboutUs(): AboutUsResponse
-
-    @GET("api/terms-conditions")
-    suspend fun getTermsConditions(): TermsConditionResponse
-
-    @GET("api/privacy-policy")
-    suspend fun getPrivacyPolicy(): TermsConditionResponse
-
-    @GET("api/get-category")
-    suspend fun getCategory(): GetCategoryResponse
-
+interface ApiInterface {
+	
+	@Multipart
+	@POST("api/register")
+	suspend fun signUp(
+		@Part("first_name") firstName: RequestBody,
+		@Part("last_name") lastName: RequestBody,
+		@Part("email") email: RequestBody,
+		@Part("password") password: RequestBody,
+		@Part("password_confirmation") passwordConfirmation: RequestBody
+	): SignUpResponse
+	
+	@Multipart
+	@POST("api/login")
+	suspend fun login(
+		@Part("email") email: RequestBody,
+		@Part("password") password: RequestBody
+	): LoginResponse
+	
+	@POST("api/logout")
+	suspend fun logout(): CommonResponse
+	
+	@Multipart
+	@POST("api/forgot-password")
+	suspend fun forgotPassword(
+		@Part("email") email: RequestBody
+	): CommonResponse
+	
+	@Multipart
+	@POST("api/verify-otp")
+	suspend fun verifyOtp(
+		@Part("email") email: RequestBody,
+		@Part("code") code: RequestBody
+	): CommonResponse
+	
+	@Multipart
+	@POST("api/reset-password")
+	suspend fun resetPassword(
+		@Part("email") email: RequestBody,
+		@Part("password") password: RequestBody,
+		@Part("password_confirmation") confirmPassword: RequestBody
+	): CommonResponse
+	
+	@GET("api/about-us")
+	suspend fun aboutUs(): AboutUsResponse
+	
+	@GET("api/terms-conditions")
+	suspend fun getTermsConditions(): TermsConditionResponse
+	
+	@GET("api/privacy-policy")
+	suspend fun getPrivacyPolicy(): TermsConditionResponse
+	
+	@GET("api/get-category")
+	suspend fun getCategory(): GetCategoryResponse
+	
+	@GET("api/get-lesson")
+	suspend fun getLesson(): CommonResponse
+	
+	@GET("api/get-product")
+	suspend fun getProduct(
+		@Part("category_id") categoryId: RequestBody?
+	): CommonResponse
+	
+	@Multipart
+	@POST("api/store-product")
+	suspend fun storeProduct(
+		@Part("category_id") categoryId: RequestBody?,
+		@Part("title") title: RequestBody?,
+		@Part("description") description: RequestBody?,
+		@Part("quantity") quantity: RequestBody?,
+		@Part("pricing") pricing: RequestBody?,
+		@Part("flash_sale") flashSale: RequestBody?,
+		@Part("accept_offers") acceptOffers: RequestBody?,
+		@Part("reserve_for_live") reserveForLive: RequestBody?,
+		@Part("shipping_profile_id") shippingProfileId: RequestBody?,
+		@Part("status") status: RequestBody?,
+		@Part productImages: List<MultipartBody.Part>?
+	): CommonResponse
+	
 }

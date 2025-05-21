@@ -22,7 +22,7 @@ class MakeOfferAdapter(
 		with(holder) {
 			
 			bind.root.setOnClickListener {
-				mClicks.viewClick(position)
+				mClicks.itemClick(position)
 			}
 			bind.amount.text = item?.asMoney()
 		}

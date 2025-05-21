@@ -27,7 +27,7 @@ class GridAdapter (mList: MutableList<MoreModel>, val mClicks: RecyclerClicks
             bind.image.setImageDrawable(ContextCompat.getDrawable(mCtx,item?.icon?: R.drawable.notification))
 
             bind.root.setOnClickListener {
-                mClicks.viewClick(position)
+                mClicks.itemClick(position)
             }
 
         }

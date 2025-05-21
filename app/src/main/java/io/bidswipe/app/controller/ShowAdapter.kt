@@ -26,12 +26,13 @@ class ShowAdapter(
         with(holder) {
 
             bind.root.setOnClickListener {
-                mClicks.viewClick(position)
+                mClicks.itemClick(position)
             }
 
             bind.setSchedule.setOnClickListener {
                 mClicks.itemClick(position,"schedule")
             }
+            
             bind.step.text = "${position + 1}"
 
             if (item?.selected == true) {

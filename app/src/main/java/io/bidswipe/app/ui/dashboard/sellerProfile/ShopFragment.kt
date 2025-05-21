@@ -27,11 +27,10 @@ class ShopFragment : BaseFragment<SellerViewModel,FragmentShopBinding>() {
     private lateinit var shopAdapter: ShopAdapter
 
     private val mClick = object : RecyclerClicks{
-        override fun viewClick(pos: Int) {
+      
+        override fun itemClick(pos: Int, status: String?) {
             startActivity(Intent(mCtx, ProductDetailsActivity::class.java))
-        }
-
-        override fun itemClick(pos: Int, status: String) {
+            
         }
     }
 

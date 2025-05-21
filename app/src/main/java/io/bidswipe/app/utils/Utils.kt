@@ -104,11 +104,11 @@ object Utils {
     fun initCrop(mCtx: Context, isCamera: Boolean = false, isGallery: Boolean = false) = CropImageContractOptions(
         null, CropImageOptions(
             activityBackgroundColor = ContextCompat.getColor(mCtx, clr.background),
-            toolbarBackButtonColor = ContextCompat.getColor(mCtx, clr.onPrimary),
+            toolbarBackButtonColor = ContextCompat.getColor(mCtx, clr.onSurface),
             toolbarColor = ContextCompat.getColor(mCtx, clr.surface),
-            activityMenuTextColor = ContextCompat.getColor(mCtx, clr.onPrimary),
-            activityMenuIconColor = ContextCompat.getColor(mCtx, clr.onPrimary),
-            toolbarTitleColor = ContextCompat.getColor(mCtx, clr.onPrimary),
+            activityMenuTextColor = ContextCompat.getColor(mCtx, clr.onSurface),
+            activityMenuIconColor = ContextCompat.getColor(mCtx, clr.onSurface),
+            toolbarTitleColor = ContextCompat.getColor(mCtx, clr.onSurface),
             borderCornerColor = ContextCompat.getColor(mCtx, clr.primary),
             borderLineColor = ContextCompat.getColor(mCtx, clr.primary),
             guidelinesColor = ContextCompat.getColor(mCtx, clr.primary),
@@ -233,11 +233,12 @@ object Utils {
             id = text.hashCode()
             isClickable = true
             isCheckable = true
-            chipStrokeWidth = 2f
-            chipStartPadding=48f
-            chipEndPadding = 48f
-            chipMinHeight= 120f
-            isChecked = selected // Set the chfecked state
+            chipCornerRadius=mCtx.resources.dpToPx(50).toFloat()
+            chipStrokeWidth = mCtx.resources.dpToPx(2).toFloat()
+            chipStartPadding=mCtx.resources.dpToPx(18).toFloat()
+            chipEndPadding = mCtx.resources.dpToPx(18).toFloat()
+            chipMinHeight= mCtx.resources.dpToPx(44).toFloat()
+            isChecked = selected // Set the checked state
             isCheckedIconVisible = false
         }
 

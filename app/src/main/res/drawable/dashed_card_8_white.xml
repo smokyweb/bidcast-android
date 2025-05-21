@@ -4,7 +4,7 @@
         <ripple android:color = "@color/background" >
             <item >
                 <shape >
-                    <stroke android:width = "3dp" android:color = "@color/outline" android:dashWidth = "8dp" android:dashGap = "3dp" />
+                    <stroke android:width = "3dp" android:color = "@color/outline" android:dashWidth = "4dp" android:dashGap = "2dp" />
                     <solid android:color = "@color/background" />
                     <corners android:radius = "6dp" />
                 </shape >

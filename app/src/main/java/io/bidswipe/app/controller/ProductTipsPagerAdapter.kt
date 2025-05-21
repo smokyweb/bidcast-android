@@ -68,19 +68,13 @@ class ProductTipsPagerAdapter (mList: MutableList<String>,val type : String?) : 
                 }
             }
 
-            bind.recycler.adapter = SellAdapter(mList = tipsList, "getStarted",object:
-                RecyclerClicks {
-                override fun viewClick(pos: Int) {
-
+            bind.recycler.adapter = SellAdapter(mList = tipsList, "getStarted",object: RecyclerClicks {
+                
+                override fun itemClick(pos: Int, status: String?) {
+                   
                 }
-
-                override fun itemClick(pos: Int, status: String) {
-
-                }
-
             })
-
-
+            
         }
     }
 }

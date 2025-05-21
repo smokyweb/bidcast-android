@@ -24,11 +24,7 @@ class ExploreTypeFragment : BaseFragment<DashViewModel,FragmentExploreTypeBindin
     private var itemList = mutableListOf<String>()
 
     private val mClick  = object : RecyclerClicks {
-        override fun viewClick(pos: Int) {
-
-        }
-
-        override fun itemClick(pos: Int, status: String) {
+        override fun itemClick(pos: Int, status: String?) {
 
 
         }

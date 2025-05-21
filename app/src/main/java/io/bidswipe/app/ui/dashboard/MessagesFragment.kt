@@ -24,10 +24,8 @@ class MessagesFragment : BaseFragment<DashViewModel,FragmentMessagesBinding>() {
 
 
     private var mClick = object : RecyclerClicks{
-        override fun viewClick(pos: Int) {
-        }
-
-        override fun itemClick(pos: Int, status: String) {
+       
+        override fun itemClick(pos: Int, status: String?) {
         }
     }
 

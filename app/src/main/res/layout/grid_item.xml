@@ -5,8 +5,10 @@
 	android:layout_height="wrap_content"
 	android:layout_margin="8dp"
 	android:gravity="center"
+	android:background="@drawable/card_8"
+	style="@style/shadowStyle"
 	android:orientation="vertical"
-	android:padding="@dimen/half_margin">
+	android:padding="@dimen/margin">
 
 		<ImageView
 			android:id="@+id/image"

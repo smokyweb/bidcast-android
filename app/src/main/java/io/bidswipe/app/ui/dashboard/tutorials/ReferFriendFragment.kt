@@ -42,11 +42,8 @@ class ReferFriendFragment : BaseFragment<DashViewModel,FragmentReferFriendBindin
 
         bind.recycler.adapter = SellAdapter(mList = tipsList, "getStarted",object:
             RecyclerClicks {
-            override fun viewClick(pos: Int) {
-
-            }
-
-            override fun itemClick(pos: Int, status: String) {
+         
+            override fun itemClick(pos: Int, status: String?) {
 
             }
 

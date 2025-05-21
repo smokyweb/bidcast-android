@@ -191,4 +191,7 @@
 	<string name="available_for_payout">Available for Payout</string>
 	<string name="early_payout">Early Payout</string>
 	<string name="you_re_eligible_for_early_payout">You\'re eligible for early payout</string>
+    <string name="delivered">Delivered</string>
+	<string name="returns">Returns</string>
+    <string name="shipping">Shipping</string>
 </resources>

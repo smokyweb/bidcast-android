@@ -45,7 +45,7 @@
 
 		</androidx.constraintlayout.widget.ConstraintLayout>
 
-		<TextView
+	<!--	<TextView
 			android:id="@+id/appText"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
@@ -53,14 +53,15 @@
 			android:text="@string/app_name"
 			android:textAllCaps="false"
 			android:textColor="@color/primary"
-			android:textSize="24sp" />
+			android:textSize="24sp" />-->
 
-		<View
-			android:layout_width="32dp"
-			android:layout_height="32dp"
-			app:layout_constraintBottom_toBottomOf="parent"
-			app:layout_constraintStart_toStartOf="parent"
-			app:layout_constraintTop_toTopOf="parent" />
+		<androidx.appcompat.widget.AppCompatImageView
+			android:layout_width="wrap_content"
+			android:layout_height="38dp"
+			android:src="@drawable/app_icon"
+			android:adjustViewBounds="true"
+			android:layout_marginEnd="@dimen/half_margin"
+			android:id="@+id/appText"/>
 
 		<TextView
 			android:id="@+id/title"
@@ -75,20 +76,11 @@
 			android:textAllCaps="false"
 			android:textColor="@color/scrim" />
 
-		<TextView
-			android:id="@+id/exSpace"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:alpha="0"
-			android:fontFamily="@font/poppins_extra_bold"
-			android:text="  "
-			android:textColor="@color/primary"
-			android:textSize="20sp" />
-
 		<androidx.constraintlayout.widget.ConstraintLayout
 			android:id="@+id/secondary"
 			android:layout_width="32dp"
 			android:layout_height="32dp"
+			android:layout_marginStart="@dimen/half_margin"
 			app:layout_constraintBottom_toBottomOf="parent"
 			app:layout_constraintStart_toStartOf="parent"
 			app:layout_constraintTop_toTopOf="parent">
@@ -111,6 +103,7 @@
 			android:id="@+id/primary"
 			android:layout_width="32dp"
 			android:layout_height="32dp"
+			android:layout_marginStart="@dimen/half_margin"
 			app:layout_constraintBottom_toBottomOf="parent"
 			app:layout_constraintEnd_toEndOf="parent">
 

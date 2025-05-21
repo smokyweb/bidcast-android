@@ -53,65 +53,55 @@ class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
     }
 
     private val mClicks = object : RecyclerClicks {
-        override fun viewClick(pos: Int) {
+              override fun itemClick(pos: Int, status: String?) {
             when(moreList[pos].slug){
-
+                
                 "aboutUs" ->{
-
+                
                 }
-
+                
                 "language" -> {
 
 //                    startActivity(Intent(mCtx , LanguageActivity::class.java))
                 }
-
+                
                 "contactUs" ->{
-
+                
                 }
-
+                
                 "salesTax" ->{
-
+                
                 }
-
+                
                 "termsCondition" ->{
                     startActivity(Intent(mCtx , MoreActivity::class.java).putExtra("to",moreList[pos].slug))
                 }
-
+                
                 "privacyPolicy" ->{
                     startActivity(Intent(mCtx , MoreActivity::class.java).putExtra("to",moreList[pos].slug))
                 }
-
+                
                 "faq" ->{
-
+                
                 }
-
+                
                 "logout" -> {
                     logoutDialog()
                 }
-
+                
             }
-        }
-
-        override fun itemClick(pos: Int, status: String) {
-
-
         }
 
     }
 
     private val gridClick = object : RecyclerClicks {
-        override fun viewClick(pos: Int) {
+              override fun itemClick(pos: Int, status: String?) {
             startActivity(
                 Intent(mCtx, SellerHubActivity::class.java).putExtra(
                     "slug",
                     gridList[pos].slug
                 )
             )
-
-        }
-
-        override fun itemClick(pos: Int, status: String) {
-
         }
 
     }
@@ -141,7 +131,7 @@ class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
         gridList.add(MoreModel(R.drawable.ic_walllet,"Wallet", "wallet"))
         gridList.add(MoreModel(R.drawable.ic_tag,"Offers", "offers"))
         gridList.add(MoreModel(R.drawable.ic_tag,"Tips","tips"))
-        gridList.add(MoreModel(R.drawable.ic_vehicle,"Shipping", "shipping"))
+        gridList.add(MoreModel(R.drawable.ic_shipping,"Shipping", "shipping"))
         gridList.add(MoreModel(R.drawable.ic_people,"Affiliate Program","program"))
         gridList.add(MoreModel(R.drawable.ic_vacation,"Seller Training","training"))
         gridList.add(MoreModel(R.drawable.ic_vacation,"Premier Shop","shop"))

@@ -49,11 +49,7 @@ class SelectThumbnailFragment : BaseFragment<ScheduleShowViewModel,FragmentSelec
         )
 
         val adapter = SellAdapter(mList = tipsList, "getStarted",object: RecyclerClicks {
-            override fun viewClick(pos: Int) {
-
-            }
-
-            override fun itemClick(pos: Int, status: String) {
+                     override fun itemClick(pos: Int, status: String?) {
 
             }
 

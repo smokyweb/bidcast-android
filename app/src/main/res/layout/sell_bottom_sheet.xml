@@ -9,14 +9,15 @@
 	<View
 		android:id="@+id/bottomSheetBackgroundLayer"
 		android:layout_width="match_parent"
-		android:layout_height="match_parent"
-		android:background="@color/outline" />
+		android:layout_height="match_parent" />
 
 	<LinearLayout
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:layout_weight="1"
 		android:background="@drawable/top_curve"
+		android:elevation="4dp"
+		android:backgroundTint="@android:color/white"
 		android:orientation="vertical"
 		app:layout_constraintBottom_toBottomOf="parent">
 
@@ -59,12 +60,12 @@
 			android:id="@+id/recycler"
 			android:layout_width="match_parent"
 			android:layout_height="0dp"
-			android:layout_marginHorizontal="@dimen/margin"
+			android:layout_marginHorizontal="@dimen/half_margin"
 			android:layout_weight="1"
 			android:nestedScrollingEnabled="false"
 			android:orientation="vertical"
 			app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-			tools:itemCount="5"
+			tools:itemCount="3"
 			tools:listitem="@layout/sell_sheet_item" />
 
 	</LinearLayout>

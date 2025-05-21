@@ -22,10 +22,8 @@ class MyOrdersFragment : BaseFragment<SellerHubViewModel, FragmentMyOrdersBindin
 	private lateinit var adapter: OrdersAdapter
 	
 	private val mClick = object : RecyclerClicks {
-		override fun viewClick(pos: Int) {
-		}
 		
-		override fun itemClick(pos: Int, status: String) {
+		override fun itemClick(pos: Int, status: String?) {
 		}
 	}
 	

@@ -30,20 +30,18 @@ class ChooseSalesFormatFragment : BaseFragment<ScheduleShowViewModel,FragmentCho
     private lateinit var adapter : FormatAdapter
 
     private val mClick = object : RecyclerClicks{
-        override fun viewClick(pos: Int) {
 
+        override fun itemClick(pos: Int, status: String?) {
+            
             formatList.forEachIndexed { index, formatModel ->
                 formatModel.selected = index == pos
             }
-
+            
             bind.offerLayout.isVisible = pos == 1
-
+            
             adapter.notifyDataSetChanged()
-
-        }
-
-        override fun itemClick(pos: Int, status: String) {
-
+            
+            
         }
     }
 

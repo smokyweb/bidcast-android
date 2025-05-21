@@ -25,7 +25,7 @@ class OffersAdapter(mList: MutableList<String>, val mClicks: RecyclerClicks
             bind.buttonLayout.isVisible = true
 
             bind.root.setOnClickListener {
-                mClicks.viewClick(position)
+                mClicks.itemClick(position)
             }
 
             bind.subTitle.text = buildSpannedString {

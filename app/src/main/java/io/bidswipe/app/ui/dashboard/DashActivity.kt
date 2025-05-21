@@ -19,7 +19,6 @@ import io.bidswipe.app.model.SellModel
 import io.bidswipe.app.utils.bind
 import io.bidswipe.app.utils.ids
 import io.bidswipe.app.utils.toListProduct
-import io.bidswipe.app.utils.toScheduleShow
 import io.bidswipe.app.utils.toTutorials
 
 class DashActivity : BaseActivity(), NavController.OnDestinationChangedListener {
@@ -28,7 +27,7 @@ class DashActivity : BaseActivity(), NavController.OnDestinationChangedListener 
     private val viewModel by viewModels<DashViewModel>()
 
     private lateinit var imageSheet: BottomSheetBehavior<ConstraintLayout>
-    private var exploreList = mutableListOf<SellModel>()
+    private var sellList = mutableListOf<SellModel>()
 
     private lateinit var navController: NavController
     private lateinit var navHostFragment: NavHostFragment
@@ -91,18 +90,19 @@ class DashActivity : BaseActivity(), NavController.OnDestinationChangedListener 
 
         imageSheet.state = BottomSheetBehavior.STATE_COLLAPSED
 
-        exploreList.clear()
-        exploreList.addAll(
+        sellList.clear()
+        sellList.addAll(
             listOf(
-                SellModel(R.drawable.ic_tag,R.color.secondaryContainer,"List a Product","Create listing for your item"),
+                SellModel(R.drawable.ic_tag,R.color.primaryContainer,"List a Product","Create listing for your item"),
                 SellModel(R.drawable.ic_video,R.color.tertiaryContainer,"Schedule a Show","Go live and sell to your audience"),
                 SellModel(R.drawable.ic_shop,R.color.successContainer,"Seller Hub","Manage your store and listings")
             )
         )
 
-       val exploreAdapter = SellAdapter(exploreList,"explore",object:RecyclerClicks{
-           override fun viewClick(pos: Int) {
-
+       val exploreAdapter = SellAdapter(sellList,"explore",object:RecyclerClicks{
+   
+           override fun itemClick(pos: Int, status: String?) {
+               
                when(pos){
                    0->{
                        startActivity(this@DashActivity.toListProduct())
@@ -112,15 +112,10 @@ class DashActivity : BaseActivity(), NavController.OnDestinationChangedListener 
 //                       startActivity(this@DashActivity.toScheduleShow(from = "dash"))
                    }
                    2 -> {
-                      bind.bottomBar.selectedItemId = ids.accountFragment
+                       bind.bottomBar.selectedItemId = ids.accountFragment
                    }
-
+                   
                }
-
-           }
-
-           override fun itemClick(pos: Int, status: String) {
-
            }
 
        })

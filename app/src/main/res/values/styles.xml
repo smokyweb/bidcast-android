@@ -209,6 +209,9 @@
 		<item name="tabIndicatorAnimationMode">elastic</item>
 		<item name="tabIndicatorFullWidth">true</item>
 		<item name="elevation">0dp</item>
+		<item name="tabMode">fixed</item>
+		<item name="tabMaxWidth">0dp</item>
+		<item name="tabGravity">fill</item>
 	</style>
 
 	<style name="callFabStyle" parent="ThemeOverlay.Material3.FloatingActionButton.Primary">

@@ -43,11 +43,8 @@ class GetStartedFragment : BaseFragment<DashViewModel,FragmentGetStartedBinding>
         )
 
         val adapter = SellAdapter(mList = exploreList, "getStarted",object: RecyclerClicks {
-            override fun viewClick(pos: Int) {
-
-            }
-
-            override fun itemClick(pos: Int, status: String) {
+         
+            override fun itemClick(pos: Int, status: String?) {
 
             }
 

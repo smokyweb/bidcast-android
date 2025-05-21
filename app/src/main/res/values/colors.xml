@@ -1,19 +1,19 @@
 <resources>
-    <color name="primary">#FF6666</color>
+    <color name="primary">#0058BD</color>
     <color name="onPrimary">#FFFFFF</color>
-	<color name="primaryContainer">#FFD1D1</color>
-	<color name="onPrimaryContainer">#D44848</color>
-	<color name="inversePrimary">#DF8282</color>
+	<color name="primaryContainer">#D2E4FD</color>
+	<color name="onPrimaryContainer">#2871DF</color>
+	<color name="inversePrimary">#ADC6FF</color>
 
-	<color name="secondary">#3B82F6</color>
+	<color name="secondary">#4D661A</color>
     <color name="onSecondary">#FFFFFF</color>
-	<color name="secondaryContainer">#D0E7FF</color>
-	<color name="onSecondaryContainer">#2B5DAF</color>
+	<color name="secondaryContainer">#DAFA9C</color>
+	<color name="onSecondaryContainer">#5A7427</color>
 
-	<color name="tertiary">#4B5563</color>
+	<color name="tertiary">#0B0E0F</color>
     <color name="onTertiary">#FFFFFF</color>
-	<color name="tertiaryContainer">#D2E7FF</color>
-	<color name="onTertiaryContainer">#313740</color>
+	<color name="tertiaryContainer">#C9A9A8A8</color>
+	<color name="onTertiaryContainer">#212425</color>
 
     <color name="error">#FF164C</color>
     <color name="onError">#FFFFFF</color>

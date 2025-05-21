@@ -21,7 +21,7 @@ class PurchasesAdapter(mList: MutableList<String>, val mClicks: RecyclerClicks, 
         with(holder) {
 
             bind.root.setOnClickListener {
-                mClicks.viewClick(position)
+                mClicks.itemClick(position)
             }
 
             if (type == "saved"){
