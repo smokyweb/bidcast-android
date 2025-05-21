@@ -10,22 +10,22 @@ import io.bidswipe.app.databinding.ActivitySellerHubBinding
 import io.bidswipe.app.utils.bind
 
 class SellerHubActivity : BaseActivity() {
-	
+
 	private val bind by bind(ActivitySellerHubBinding::inflate)
-	
+
 	private lateinit var navHostFragment: NavHostFragment
 	private lateinit var navController: NavController
-	
+
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
 		setContentView(bind.root)
-		
+
 		navHostFragment = supportFragmentManager.findFragmentById(R.id.fragmentContainer) as NavHostFragment
 		navController = navHostFragment.findNavController()
 		val navGraph = navController.navInflater.inflate(R.navigation.seller_hub_nav_graph)
-		
+
 		val slug = intent.getStringExtra("slug").toString()
-		
+
 		when (slug) {
 			"inventory" -> {
 				navGraph.setStartDestination(R.id.inventoryFragment)
@@ -39,13 +39,16 @@ class SellerHubActivity : BaseActivity() {
 			"wallet" -> {
 				navGraph.setStartDestination(R.id.walletFragment)
 			}
+            "show" -> {
+                navGraph.setStartDestination(R.id.showsFragment)
+            }
 			else -> {
 				navGraph.setStartDestination(R.id.inventoryFragment)
 			}
-			
+
 		}
-		
+
 		navController.graph = navGraph
-		
+
 	}
 }

@@ -26,4 +26,11 @@
         android:label="fragment_wallet"
         tools:layout="@layout/fragment_wallet" />
 
+
+    <fragment
+        android:id="@+id/showsFragment"
+        android:name="io.bidswipe.app.ui.dashboard.sellerHub.ShowsFragment"
+        android:label="fragment_shows"
+        tools:layout="@layout/fragment_shows" />
+
 </navigation>

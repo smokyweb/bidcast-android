@@ -10,7 +10,9 @@ import io.bidswipe.app.base.BaseFragment
 import io.bidswipe.app.controller.InventoryAdapter
 import io.bidswipe.app.databinding.FragmentInventoryBinding
 import io.bidswipe.app.interfaces.RecyclerClicks
+import io.bidswipe.app.ui.dashboard.DashActivity
 import io.bidswipe.app.utils.finish
+import io.bidswipe.app.utils.toListProduct
 
 class InventoryFragment : BaseFragment<SellerHubViewModel,FragmentInventoryBinding>() {
     override fun getModel(): Class<SellerHubViewModel> = SellerHubViewModel::class.java
@@ -39,6 +41,10 @@ class InventoryFragment : BaseFragment<SellerHubViewModel,FragmentInventoryBindi
         adapter = InventoryAdapter(itemList,mClick)
 
         bind.recycler.adapter = adapter
+
+        bind.addNewProduct.setOnClickListener {
+            startActivity(mCtx.toListProduct())
+        }
 
 
     }

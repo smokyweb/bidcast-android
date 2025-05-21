@@ -1,0 +1,367 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".ui.dashboard.product.OrderStatusFragment">
+
+    <io.bidswipe.app.ui.custom.Header
+        android:id="@+id/header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:headerMode="BACK_BUTTON_TITLE_ACTION"
+        app:layout_constraintTop_toTopOf="parent"
+        app:primaryIconDrawable="@drawable/close_ic"
+        app:showBackButton="true"
+        app:showPrimaryIcon="false"
+        app:showSecondaryIcon="false"
+        app:headerTitle="Order Status"/>
+
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/scroll"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@id/buttonLayout"
+        app:layout_constraintTop_toBottomOf="@id/header">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginHorizontal="@dimen/half_margin"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toTopOf="@id/buttonLayout"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/header">
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/materialCardView"
+        style="@style/cardStyle"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_gravity="center_horizontal"
+        android:backgroundTint="@color/background"
+        android:layout_marginTop="@dimen/margin"
+        app:cardCornerRadius="100dp">
+
+        <ImageView
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_gravity="center"
+            android:contentDescription="@string/app_name"
+            android:scaleType="centerCrop"
+            app:tint="@color/primary"
+            android:src="@drawable/ic_box" />
+
+    </com.google.android.material.card.MaterialCardView>
+
+    <TextView
+        style="@style/HeadlineMedium"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginHorizontal="@dimen/half_margin"
+        android:layout_marginTop="@dimen/margin"
+        android:text="Preparing Your Order" />
+
+    <TextView
+        style="@style/BodyMedium"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginHorizontal="@dimen/margin"
+        android:text="@string/send_this_purchase_as_a_gift_to_someone_special"
+        android:textAlignment="center" />
+
+        <LinearLayout
+            android:id="@+id/click"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:layout_margin="@dimen/margin">
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/icon_card"
+                style="@style/cardStyle"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                app:cardBackgroundColor="@color/tertiaryContainer"
+                app:cardElevation="0dp">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/icon"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/shoe" />
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginHorizontal="@dimen/half_margin"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/title"
+                    style="@style/TitleLarge"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Premium Wireless Headphones" />
+
+                <TextView
+                    android:id="@+id/sub_title"
+                    style="@style/BodyLarge"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:alpha="0.8"
+                    android:text="White" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/half_margin"
+            android:orientation="horizontal">
+
+            <TextView
+                style="@style/BodyLarge"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/margin"
+                android:layout_marginEnd="@dimen/margin"
+                android:layout_weight="1"
+                android:alpha="0.7"
+                android:text="@string/order_id" />
+
+            <TextView
+                style="@style/TitleMedium"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/margin"
+                android:background="?selectableItemBackground"
+                android:text="#48643546" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/half_margin"
+            android:orientation="horizontal">
+
+            <TextView
+                style="@style/BodyLarge"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/margin"
+                android:layout_marginEnd="@dimen/margin"
+                android:alpha="0.7"
+                android:layout_weight="1"
+                android:text="@string/order_date" />
+
+            <TextView
+                style="@style/TitleMedium"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/margin"
+                android:background="?selectableItemBackground"
+                android:text="Jan 15, 2025" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="@dimen/half_margin"
+            android:orientation="horizontal">
+
+            <TextView
+                style="@style/TitleMedium"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/margin"
+                android:layout_marginEnd="@dimen/margin"
+                android:alpha="0.7"
+                android:layout_weight="1"
+                android:text="@string/sold_by" />
+
+            <TextView
+                style="@style/BodyLarge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/margin"
+                android:background="?selectableItemBackground"
+                android:text="TechGear Pro" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/half_margin"
+            android:orientation="horizontal">
+
+            <TextView
+                style="@style/BodyLarge"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/margin"
+                android:layout_marginEnd="@dimen/margin"
+                android:layout_weight="1"
+                android:alpha="0.7"
+                android:text="@string/quantity" />
+
+            <TextView
+                style="@style/TitleMedium"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/margin"
+                android:background="?selectableItemBackground"
+                android:text="1" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/half_margin"
+            android:orientation="horizontal">
+
+            <TextView
+                style="@style/BodyLarge"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/margin"
+                android:layout_marginEnd="@dimen/margin"
+                android:alpha="0.7"
+                android:layout_weight="1"
+                android:text="@string/category" />
+
+            <TextView
+                style="@style/TitleMedium"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/margin"
+                android:background="?selectableItemBackground"
+                android:text="Electronics" />
+
+        </LinearLayout>
+
+        <TextView
+            style="@style/TitleLarge"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin"
+            android:layout_marginHorizontal="@dimen/half_margin"
+            app:drawableTint="@color/primary"
+            android:drawableStart="@drawable/ic_vehicle"
+            android:drawablePadding="@dimen/half_margin"
+            android:text="Shipping Updates" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/shippingRecycler"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:listitem="@layout/shipping_update_item"
+            tools:itemCount="2"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            />
+
+
+            <TextView
+                style="@style/TitleLarge"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margin"
+                android:drawableStart="@drawable/ic_location_marker"
+                android:drawablePadding="@dimen/half_margin"
+                android:layout_marginHorizontal="@dimen/half_margin"
+                android:text="@string/delivery_address" />
+
+        <TextView
+            android:id="@+id/address"
+            style="@style/BodyLarge"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/margin"
+            android:layout_marginHorizontal="@dimen/half_margin"
+            android:alpha="0.8"
+            android:text="12 Main Road Enginnering Churaha" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:weightSum="2">
+
+            <com.google.android.material.button.MaterialButton
+                style="@style/appBtnOutline"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_margin="@dimen/half_margin"
+                app:cornerRadius="32dp"
+                android:paddingHorizontal="@dimen/margin"
+                android:text="Reciept" />
+
+            <com.google.android.material.button.MaterialButton
+                style="@style/appBtnOutline"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_margin="@dimen/half_margin"
+                app:cornerRadius="32dp"
+                android:paddingHorizontal="@dimen/margin"
+                android:text="Shipping Details" />
+
+        </LinearLayout>
+
+        <TextView
+            style="@style/TitleLarge"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin"
+            android:drawableStart="@drawable/ic_shield"
+            android:drawablePadding="@dimen/half_margin"
+            android:layout_marginHorizontal="@dimen/half_margin"
+            android:text="@string/swiftbid_buyer_protection" />
+
+        <TextView
+            style="@style/BodyLarge"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/margin"
+            android:layout_marginHorizontal="@dimen/half_margin"
+            android:alpha="0.8"
+            android:text="Get full refund if the item is not as described or if is not delivered" />
+
+    </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+
+    <LinearLayout
+        android:id="@+id/buttonLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/homeBtn"
+            style="@style/appBtn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/margin"
+            android:paddingHorizontal="@dimen/margin"
+            android:text="@string/home" />
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -9,6 +9,34 @@
         android:id="@+id/productDetailsFragment"
         android:name="io.bidswipe.app.ui.dashboard.product.ProductDetailsFragment"
         android:label="fragment_product_details"
-        tools:layout="@layout/fragment_product_details" />
+        tools:layout="@layout/fragment_product_details" >
+        <action
+            android:id="@+id/goToSendGiftFragment"
+            app:destination="@id/sendGiftFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"
+            />
+    </fragment>
+    <fragment
+        android:id="@+id/sendGiftFragment"
+        android:name="io.bidswipe.app.ui.dashboard.product.SendGiftFragment"
+        android:label="fragment_send_gift"
+        tools:layout="@layout/fragment_send_gift" >
+        <action
+            android:id="@+id/goToOrderStatusFragment"
+            app:destination="@id/orderStatusFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"/>
+    </fragment>
+    <fragment
+        android:id="@+id/orderStatusFragment"
+        android:name="io.bidswipe.app.ui.dashboard.product.OrderStatusFragment"
+        android:label="fragment_order_status"
+        tools:layout="@layout/fragment_order_status" />
+
 
 </navigation>

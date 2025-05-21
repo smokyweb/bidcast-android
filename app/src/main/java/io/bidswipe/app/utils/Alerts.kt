@@ -7,6 +7,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.viewbinding.ViewBinding
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import es.dmoral.toasty.Toasty
 import io.bidswipe.app.BuildConfig
@@ -54,6 +55,7 @@ object Alerts {
 			setContentView(view.root)
 			dismissWithAnimation = true
 			setCancelable(isCancelable)
+			behavior.state = BottomSheetBehavior.STATE_EXPANDED
 		}
 
 	fun showBottomSheet(

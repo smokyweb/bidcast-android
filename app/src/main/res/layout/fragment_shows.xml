@@ -4,17 +4,18 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".ui.dashboard.sellerHub.InventoryFragment">
+    tools:context=".ui.dashboard.sellerHub.ShowsFragment">
 
     <io.bidswipe.app.ui.custom.Header
         android:id="@+id/header"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:headerMode="BACK_BUTTON_TITLE_ACTION"
-        app:headerTitle="Inventory"
+        app:headerMode="APP_TEXT_ACTION"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:primaryIconDrawable="@drawable/notification"
-        app:secondaryIconDrawable="@drawable/ic_filter"
+        app:primaryIconDrawable="@drawable/permissionx_ic_setting"
+        app:secondaryIconDrawable="@drawable/notification"
         app:showBackButton="true"
         app:showPrimaryIcon="true"
         app:showSecondaryIcon="true" />
@@ -41,7 +42,7 @@
                 style="@style/tabStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="5dp"
+                android:layout_margin="@dimen/half_margin"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -51,62 +52,16 @@
                 <com.google.android.material.tabs.TabItem
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/active" />
+                    android:text="@string/shows" />
 
                 <com.google.android.material.tabs.TabItem
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/draft" />
-
-                <com.google.android.material.tabs.TabItem
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/inactive" />
-
+                    android:text="@string/past_shows" />
 
             </com.google.android.material.tabs.TabLayout>
 
         </com.google.android.material.card.MaterialCardView>
-
-        <View
-            android:id="@+id/view"
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/surfaceVariant"
-           android:layout_marginVertical="@dimen/margin"
-            />
-
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/searchLayout"
-            style="@style/inputBoxStyle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="@dimen/margin"
-            app:boxBackgroundColor="@color/surface"
-            app:boxStrokeWidth="2dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/header"
-            app:startIconDrawable="@drawable/search"
-            app:startIconTint="@color/scrim">
-
-            <com.google.android.material.textfield.MaterialAutoCompleteTextView
-                android:id="@+id/email"
-                style="@style/inputTextStyle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="@string/what_are_you_looking_for"
-                android:inputType="textEmailAddress" />
-
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/surfaceVariant"
-            android:layout_marginVertical="@dimen/margin"
-            />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycler"
@@ -117,10 +72,9 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toBottomOf="@id/heading"
             tools:itemCount="6"
-            tools:listitem="@layout/inventory_item" />
+            tools:listitem="@layout/show_listing_item" />
 
     </LinearLayout>
-
 
     <LinearLayout
         android:id="@+id/buttonLayout"
@@ -137,7 +91,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/margin"
             android:paddingHorizontal="@dimen/margin"
-            android:text="@string/new_product" />
+            android:text="@string/new_show" />
 
     </LinearLayout>
 
