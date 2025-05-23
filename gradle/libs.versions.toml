@@ -12,6 +12,7 @@ coreSplashscreen = "1.0.1"
 cameraview = "2.7.2"
 decorator = "2.1.0"
 easyvalidationCore = "1.0.4"
+expandablelayout = "2.9.2"
 flexbox = "3.0.0"
 #agora-rtc-sdk = "4.2.1"
 glide = "4.16.0"
@@ -67,6 +68,7 @@ converter-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref
 cameraview = { module = "com.otaliastudios:cameraview", version.ref = "cameraview" }
 decorator = { module = "com.rubensousa:decorator", version.ref = "decorator" }
 easyvalidation-core = { module = "com.wajahatkarim:easyvalidation-core", version.ref = "easyvalidationCore" }
+expandableLayout = { module = "com.github.cachapa:ExpandableLayout", version.ref = "expandablelayout" }
 glide = { module = "com.github.bumptech.glide:glide", version.ref = "glide" }
 glide-transformations = { module = "jp.wasabeef:glide-transformations", version.ref = "glideTransformations" }
 hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hiltAndroid" }

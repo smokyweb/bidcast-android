@@ -37,7 +37,7 @@ class MoreActivity : BaseActivity() {
             }
 
             "contactUs" ->{
-
+                navGraph.setStartDestination(R.id.contactUsFragment)
             }
 
             "salesTax" ->{
@@ -53,7 +53,7 @@ class MoreActivity : BaseActivity() {
             }
 
             "faq" ->{
-
+                navGraph.setStartDestination(R.id.FAQFragment)
             }
 
         }

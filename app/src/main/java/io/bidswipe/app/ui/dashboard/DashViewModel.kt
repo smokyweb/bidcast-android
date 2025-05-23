@@ -7,7 +7,11 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.network.repository.DashRepository
 import io.bidswipe.app.network.response.CommonResponse
+import io.bidswipe.app.network.response.FAQResponse
 import io.bidswipe.app.network.response.GetCategoryResponse
+import io.bidswipe.app.network.response.GetHowToSellResponse
+import io.bidswipe.app.network.response.GetLessonsResponse
+import io.bidswipe.app.network.response.GetPrepareStepResponse
 import kotlinx.coroutines.launch
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -36,8 +40,8 @@ class DashViewModel @Inject constructor(val repo: DashRepository) : ViewModel() 
 		_getCategoryResponse.value = repo.getCategory()
 	}
 	
-	private var _getLessonResponse = MutableLiveData<Resource<CommonResponse>>()
-	val getLessonRepo: MutableLiveData<Resource<CommonResponse>>
+	private var _getLessonResponse = MutableLiveData<Resource<GetLessonsResponse>>()
+	val getLessonRepo: MutableLiveData<Resource<GetLessonsResponse>>
 		get() = _getLessonResponse
 	
 	fun getLesson() = viewModelScope.launch {
@@ -71,6 +75,23 @@ class DashViewModel @Inject constructor(val repo: DashRepository) : ViewModel() 
 	) = viewModelScope.launch {
 		_storeProductResponse.value = repo.storeProduct(categoryId, title, description, quantity, pricing, flashSale, acceptOffers, reserveForLive, shippingProfileId, status, productImages)
 	}
-	
+
+	private var _getHowToSellStepResponse = MutableLiveData<Resource<GetHowToSellResponse>>()
+	val getHowToSellStepRepo: MutableLiveData<Resource<GetHowToSellResponse>>
+		get() = _getHowToSellStepResponse
+
+	fun getHowToSellStep() = viewModelScope.launch {
+		_getHowToSellStepResponse.value = repo.getHowToSellStep()
+	}
+
+	private var _getPrepareStepResponse = MutableLiveData<Resource<GetPrepareStepResponse>>()
+	val getPrepareStepRepo: MutableLiveData<Resource<GetPrepareStepResponse>>
+		get() = _getPrepareStepResponse
+
+	fun getPrepareStep() = viewModelScope.launch {
+		_getPrepareStepResponse.value = repo.getPrepareStep()
+	}
+
+
 	
 }

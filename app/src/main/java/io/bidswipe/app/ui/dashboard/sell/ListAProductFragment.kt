@@ -137,7 +137,16 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
 			
 			when (it) {
 				is Resource.Success -> {
-					Alerts.showBottomSheet(mCtx, it.value.message ?: "Product added successfully", "Success", false)
+					Alerts.showBottomSheet(mCtx, it.value.message ?: "Product added successfully", "Success", false,object : AlertClicks{
+						override fun primaryClick(dialog: AppBottomSheet) {
+							finish()
+							dialog.dismiss()
+						}
+
+						override fun secondaryClick(dialog: AppBottomSheet) {
+							dialog.dismiss()
+						}
+					})
 				}
 				
 				is Resource.Error -> {

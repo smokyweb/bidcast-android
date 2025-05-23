@@ -38,4 +38,12 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
         productImages: List<MultipartBody.Part>?
     ) = call { api.storeProduct(categoryId, title, description, quantity, pricing, flashSale, acceptOffers, reserveForLive, shippingProfileId, status, productImages) }
 
+    suspend fun getHowToSellStep() = call { api.getHowToSellStep() }
+
+
+    suspend fun getPrepareStep() = call { api.getPrepareStep() }
+
+    suspend fun getFAQ() = call { api.getFAQ() }
+
+
 }

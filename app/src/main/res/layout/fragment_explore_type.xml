@@ -45,11 +45,29 @@
 
 	</com.google.android.material.textfield.TextInputLayout>
 
+<!--	<HorizontalScrollView
+		android:id="@+id/chipGroupScroll"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:scrollbars="none"
+		app:layout_constraintTop_toBottomOf="@id/header"
+		android:layout_marginHorizontal="@dimen/half_margin">
+
+		<com.google.android.material.chip.ChipGroup
+			android:id="@+id/chipGroup"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_margin="@dimen/margin"
+			app:singleLine="true"
+			app:singleSelection="true" />
+
+	</HorizontalScrollView>-->
+
 	<com.google.android.material.chip.ChipGroup
 		android:id="@+id/chipGroup"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:layout_marginHorizontal="@dimen/margin"
+		android:layout_margin="@dimen/margin"
 		app:alignContent="space_around"
 		app:layout_constraintEnd_toEndOf="parent"
 		app:layout_constraintStart_toStartOf="parent"
@@ -64,7 +82,6 @@
 		android:layout_height="wrap_content"
 		android:layout_gravity="center_vertical"
 		android:layout_marginHorizontal="@dimen/margin"
-		android:layout_marginVertical="@dimen/half_margin"
 		android:text="@string/live_now"
 		app:layout_constraintEnd_toEndOf="parent"
 		app:layout_constraintStart_toStartOf="parent"

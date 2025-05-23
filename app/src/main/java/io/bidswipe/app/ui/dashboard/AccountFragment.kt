@@ -56,37 +56,12 @@ class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
               override fun itemClick(pos: Int, status: String?) {
             when(moreList[pos].slug){
                 
-                "aboutUs" ->{
-                
-                }
-                
-                "language" -> {
-
-//                    startActivity(Intent(mCtx , LanguageActivity::class.java))
-                }
-                
-                "contactUs" ->{
-                
-                }
-                
-                "salesTax" ->{
-                
-                }
-                
-                "termsCondition" ->{
-                    startActivity(Intent(mCtx , MoreActivity::class.java).putExtra("to",moreList[pos].slug))
-                }
-                
-                "privacyPolicy" ->{
-                    startActivity(Intent(mCtx , MoreActivity::class.java).putExtra("to",moreList[pos].slug))
-                }
-                
-                "faq" ->{
-                
-                }
-                
                 "logout" -> {
                     logoutDialog()
+                }
+
+                else -> {
+                    startActivity(Intent(mCtx , MoreActivity::class.java).putExtra("to",moreList[pos].slug))
                 }
                 
             }
@@ -113,7 +88,7 @@ class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
 
         moreList.add(MoreModel(R.drawable.ic_vacation,"About Us","aboutUs"))
         moreList.add(MoreModel(R.drawable.ic_vacation,"Contact Us", "contactUs"))
-        moreList.add(MoreModel(R.drawable.ic_vacation,"Change Language", "language"))
+//        moreList.add(MoreModel(R.drawable.ic_vacation,"Change Language", "language"))
         moreList.add(MoreModel(R.drawable.ic_vacation,"Sales Tax Exemption", "salesTax"))
         moreList.add(MoreModel(R.drawable.ic_vacation,"Terms & Conditions", "termsCondition"))
         moreList.add(MoreModel(R.drawable.ic_vacation,"Privacy Policy","privacyPolicy"))
@@ -126,7 +101,7 @@ class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
 
 
         gridList.add(MoreModel(R.drawable.ic_box,"Inventory","inventory"))
-        gridList.add(MoreModel(R.drawable.ic_mic,"Shows", "Shows"))
+        gridList.add(MoreModel(R.drawable.ic_mic,"Shows", "shows"))
         gridList.add(MoreModel(R.drawable.ic_order,"My Order", "order"))
         gridList.add(MoreModel(R.drawable.ic_walllet,"Wallet", "wallet"))
         gridList.add(MoreModel(R.drawable.ic_tag,"Offers", "offers"))

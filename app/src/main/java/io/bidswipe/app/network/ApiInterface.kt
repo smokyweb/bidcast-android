@@ -2,7 +2,11 @@ package io.bidswipe.app.network
 
 import io.bidswipe.app.network.response.AboutUsResponse
 import io.bidswipe.app.network.response.CommonResponse
+import io.bidswipe.app.network.response.FAQResponse
 import io.bidswipe.app.network.response.GetCategoryResponse
+import io.bidswipe.app.network.response.GetHowToSellResponse
+import io.bidswipe.app.network.response.GetLessonsResponse
+import io.bidswipe.app.network.response.GetPrepareStepResponse
 import io.bidswipe.app.network.response.LoginResponse
 import io.bidswipe.app.network.response.SignUpResponse
 import io.bidswipe.app.network.response.TermsConditionResponse
@@ -69,7 +73,7 @@ interface ApiInterface {
 	suspend fun getCategory(): GetCategoryResponse
 	
 	@GET("api/get-lesson")
-	suspend fun getLesson(): CommonResponse
+	suspend fun getLesson(): GetLessonsResponse
 	
 	@GET("api/get-product")
 	suspend fun getProduct(
@@ -91,5 +95,14 @@ interface ApiInterface {
 		@Part("status") status: RequestBody?,
 		@Part productImages: List<MultipartBody.Part>?
 	): CommonResponse
-	
+
+	@GET("api/how-to-sell")
+	suspend fun getHowToSellStep(): GetHowToSellResponse
+
+	@GET("api/get-prepare")
+	suspend fun getPrepareStep() : GetPrepareStepResponse
+
+	@GET("api/get-FAQ")
+	suspend fun getFAQ() : FAQResponse
 }
+

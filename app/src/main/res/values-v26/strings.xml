@@ -40,4 +40,9 @@
     <string name="delivered">Delivered</string>
     <string name="returns">Returns</string>
     <string name="shipping">Shipping</string>
+    <string name="before_you_start_selling_please_review_and_agree_to_our_seller_guidelines">Before you start selling, please review and agree to our seller guidelines.</string>
+    <string name="we_re_here_to_help_send_us_your_queries_and_we_ll_get_back_to_you_soon">We\'re here to help! Send us your queries and we\'ll get back to you soon.</string>
+    <string name="subject">Subject</string>
+    <string name="enter_subject">Enter Subject</string>
+    <string name="enter_your_message_here">Enter your message here..</string>
 </resources>

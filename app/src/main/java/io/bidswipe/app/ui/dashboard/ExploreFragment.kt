@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.navigation.fragment.findNavController
 import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseFragment
@@ -39,11 +40,14 @@ class ExploreFragment : BaseFragment<DashViewModel,FragmentExploreBinding>() {
 
        exploreAdapter = ExploreAdapter(exploreList,mClick)
         bind.recycler.adapter = exploreAdapter
-        
+
+        bind.loader.isVisible = true
         viewModel.getCategory()
         viewModel.getCategoryRepo.observe (viewLifecycleOwner){
             when (it) {
                 is Resource.Success -> {
+                    bind.loader.isVisible = false
+
                     if(it.value.data?.isNotEmpty()==true){
                         exploreList.clear()
                         exploreList.addAll(it.value.data)
@@ -52,6 +56,7 @@ class ExploreFragment : BaseFragment<DashViewModel,FragmentExploreBinding>() {
                 }
                 
                 is Resource.Error -> {
+                    bind.loader.isVisible = false
                     if (it.isNetworkError) {
                         errorToast(getString(R.string.no_internet))
                     } else {

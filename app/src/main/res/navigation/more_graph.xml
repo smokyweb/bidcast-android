@@ -22,6 +22,16 @@
         android:name="io.bidswipe.app.ui.dashboard.more.PrivacyPolicyFragment"
         android:label="fragment_privacy_policy"
         tools:layout="@layout/fragment_privacy_policy" />
+    <fragment
+        android:id="@+id/contactUsFragment"
+        android:name="io.bidswipe.app.ui.dashboard.more.ContactUsFragment"
+        android:label="fragment_contact_us"
+        tools:layout="@layout/fragment_contact_us" />
+    <fragment
+        android:id="@+id/FAQFragment"
+        android:name="io.bidswipe.app.ui.dashboard.more.FAQFragment"
+        android:label="fragment_f_a_q"
+        tools:layout="@layout/fragment_f_a_q" />
 
 
 </navigation>

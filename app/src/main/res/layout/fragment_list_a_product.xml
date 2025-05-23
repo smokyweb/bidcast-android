@@ -194,6 +194,7 @@ android:focusableInTouchMode="false"
 					style="@style/inputTextStyle"
 					android:layout_width="match_parent"
 					android:layout_height="wrap_content"
+					android:inputType="number"
 					android:hint="@string/enter_quantity" />
 
 			</com.google.android.material.textfield.TextInputLayout>

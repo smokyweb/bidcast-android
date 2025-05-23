@@ -8,6 +8,7 @@ import io.bidswipe.app.network.Resource
 import io.bidswipe.app.network.repository.AuthRepository
 import io.bidswipe.app.network.repository.DashRepository
 import io.bidswipe.app.network.response.AboutUsResponse
+import io.bidswipe.app.network.response.FAQResponse
 import io.bidswipe.app.network.response.TermsConditionResponse
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -41,6 +42,14 @@ class MoreViewModel @Inject constructor(val repo: DashRepository) : ViewModel() 
     fun getPrivacyPolicy(
     ) = viewModelScope.launch {
         _getPrivacyPolicyResponse.value = repo.getPrivacyPolicy()
+    }
+
+    private var _getFAQResponse = MutableLiveData<Resource<FAQResponse>>()
+    val getFAQRepo: MutableLiveData<Resource<FAQResponse>>
+        get() = _getFAQResponse
+
+    fun getFAQ() = viewModelScope.launch {
+        _getFAQResponse.value = repo.getFAQ()
     }
 
 }

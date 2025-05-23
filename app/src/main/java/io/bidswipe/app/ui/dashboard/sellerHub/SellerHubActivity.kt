@@ -39,7 +39,7 @@ class SellerHubActivity : BaseActivity() {
 			"wallet" -> {
 				navGraph.setStartDestination(R.id.walletFragment)
 			}
-            "show" -> {
+            "shows" -> {
                 navGraph.setStartDestination(R.id.showsFragment)
             }
 			 "shipping" -> {

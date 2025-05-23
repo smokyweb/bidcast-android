@@ -27,12 +27,13 @@
 		android:layout_height="wrap_content"
 		android:scrollbars="none"
 		app:layout_constraintTop_toBottomOf="@id/header"
-		android:layout_marginHorizontal="@dimen/margin">
+		android:layout_marginHorizontal="@dimen/half_margin">
 
 		<com.google.android.material.chip.ChipGroup
 			android:id="@+id/chipGroup"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
+			android:layout_margin="@dimen/margin"
 			app:singleLine="true"
 			app:singleSelection="true" />
 
@@ -45,7 +46,6 @@
 		android:layout_height="wrap_content"
 		android:layout_gravity="center_vertical"
 		android:layout_marginHorizontal="@dimen/margin"
-		android:layout_marginVertical="@dimen/half_margin"
 		android:text="@string/live_now"
 		app:layout_constraintEnd_toEndOf="parent"
 		app:layout_constraintStart_toStartOf="parent"

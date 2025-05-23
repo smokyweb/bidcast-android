@@ -136,5 +136,7 @@ dependencies {
     implementation(libs.easyvalidation.core)
     implementation(libs.locale.helper.android)
     implementation(libs.yuanwenhai.html.textview)
+    implementation(libs.expandableLayout)
+
 
 }

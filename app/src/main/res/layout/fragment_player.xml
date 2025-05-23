@@ -30,7 +30,6 @@
 		app:layout_constraintTop_toBottomOf="@id/header"
 		app:use_controller="true" />
 
-
 	<com.google.android.material.button.MaterialButton
 		android:id="@+id/nextButton"
 		style="@style/appBtn"
@@ -40,7 +39,13 @@
 		android:layout_marginBottom="120dp"
 		android:text="@string/next"
 		app:layout_constraintBottom_toBottomOf="parent"
-		app:layout_constraintEnd_toEndOf="parent" />
+		app:layout_constraintEnd_toEndOf="parent"/>
+
+	<io.bidswipe.app.ui.custom.LoaderView
+		android:id="@+id/loader"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:visibility="gone"/>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
