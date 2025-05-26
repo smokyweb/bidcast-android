@@ -3,6 +3,8 @@ package io.bidswipe.app.network
 import io.bidswipe.app.network.response.AboutUsResponse
 import io.bidswipe.app.network.response.CommonResponse
 import io.bidswipe.app.network.response.FAQResponse
+import io.bidswipe.app.network.response.GetAllTipsResponse
+import io.bidswipe.app.network.response.GetAuctionTypeResponse
 import io.bidswipe.app.network.response.GetCategoryResponse
 import io.bidswipe.app.network.response.GetHowToSellResponse
 import io.bidswipe.app.network.response.GetLessonsResponse
@@ -104,5 +106,26 @@ interface ApiInterface {
 
 	@GET("api/get-FAQ")
 	suspend fun getFAQ() : FAQResponse
+
+	@Multipart
+	@POST("api/store-schedule-show")
+	suspend fun storeScheduleShow(
+		@Part("title") title: RequestBody?,
+		@Part("date") date: RequestBody?,
+		@Part("time") time: RequestBody?,
+		@Part("category_id") categoryId : RequestBody?,
+		@Part("auction_type_id")  auctionTypeId : RequestBody?,
+		@Part thumbnails: List<MultipartBody.Part>?,
+		@Part("product_ids[]") productIds: List<Int?>
+	): CommonResponse
+
+	@GET("api/get-auction-type")
+	suspend fun getAuctionType(): GetAuctionTypeResponse
+
+	@Multipart
+	@POST("api/get-all-tips")
+	suspend fun getAllTips(
+		@Part("type") type: RequestBody?
+		): GetAllTipsResponse
 }
 

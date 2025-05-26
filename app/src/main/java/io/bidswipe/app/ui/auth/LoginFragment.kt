@@ -47,6 +47,10 @@ class LoginFragment : BaseFragment<AuthViewModel, FragmentLoginBinding>() {
             findNavController().navigate(ids.goToForgotPassword)
         }
 
+        bind.layout.setOnClickListener {
+            hideKeyboard(it)
+        }
+
         bind.loginBtn.setOnClickListener {
             when {
 

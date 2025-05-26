@@ -25,18 +25,10 @@
 		app:layout_constraintTop_toTopOf="parent"
 		app:layout_constraintBottom_toTopOf="@id/bottomBar">
 
-		<androidx.constraintlayout.widget.ConstraintLayout
-			android:id="@+id/imageSheet"
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:orientation="vertical"
-			app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
-
 			<include
 				android:id="@+id/sell_sheet"
 				layout="@layout/sell_bottom_sheet" />
 
-		</androidx.constraintlayout.widget.ConstraintLayout>
 
 	</androidx.coordinatorlayout.widget.CoordinatorLayout>
 

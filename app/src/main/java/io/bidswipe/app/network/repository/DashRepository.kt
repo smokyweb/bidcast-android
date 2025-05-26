@@ -4,6 +4,7 @@ import io.bidswipe.app.base.BaseRepository
 import io.bidswipe.app.network.ApiInterface
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
+import retrofit2.http.Part
 import javax.inject.Inject
 
 class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRepository(){
@@ -45,5 +46,22 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
 
     suspend fun getFAQ() = call { api.getFAQ() }
 
+
+    suspend fun storeScheduleShow(
+        title: RequestBody?,
+        date: RequestBody?,
+        time: RequestBody?,
+        categoryId: RequestBody?,
+        auctionTypeId : RequestBody?,
+        thumbnails: List<MultipartBody.Part>?,
+        productIds: List<Int?>
+    ) = call { api.storeScheduleShow(title,date,time,categoryId,auctionTypeId,thumbnails,productIds) }
+
+    suspend fun getAuctionType() = call { api.getAuctionType() }
+
+
+    suspend fun getAllTips(
+        type : RequestBody?,
+    ) = call { api.getAllTips(type) }
 
 }

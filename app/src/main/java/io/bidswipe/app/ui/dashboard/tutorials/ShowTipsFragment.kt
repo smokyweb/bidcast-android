@@ -1,6 +1,5 @@
 package io.bidswipe.app.ui.dashboard.tutorials
 
-import android.R.color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View

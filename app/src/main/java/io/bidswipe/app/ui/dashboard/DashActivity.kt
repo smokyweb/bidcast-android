@@ -10,16 +10,19 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseActivity
 import io.bidswipe.app.controller.SellAdapter
 import io.bidswipe.app.databinding.ActivityDashBinding
+import io.bidswipe.app.databinding.SellBottomSheetBinding
 import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.model.SellModel
+import io.bidswipe.app.utils.Alerts
 import io.bidswipe.app.utils.bind
 import io.bidswipe.app.utils.ids
 import io.bidswipe.app.utils.toListProduct
-import io.bidswipe.app.utils.toTutorials
+import io.bidswipe.app.utils.toScheduleShow
 
 class DashActivity : BaseActivity(), NavController.OnDestinationChangedListener {
 
@@ -77,9 +80,9 @@ class DashActivity : BaseActivity(), NavController.OnDestinationChangedListener 
     }
 
     private fun setupImageSheet() {
-        BottomSheetBehavior.from(bind.imageSheet)
+        BottomSheetBehavior.from(bind.sellSheet.root)
 
-        imageSheet = BottomSheetBehavior.from(bind.imageSheet).also {
+        imageSheet = BottomSheetBehavior.from(bind.sellSheet.root).also {
             it.peekHeight = 0
             it.isHideable = true
             it.isDraggable = false
@@ -108,8 +111,8 @@ class DashActivity : BaseActivity(), NavController.OnDestinationChangedListener 
                        startActivity(this@DashActivity.toListProduct())
                    }
                    1->{
-                       startActivity(this@DashActivity.toTutorials())
-//                       startActivity(this@DashActivity.toScheduleShow(from = "dash"))
+//                       startActivity(this@DashActivity.toTutorials())
+                       startActivity(this@DashActivity.toScheduleShow(from = "dash"))
                    }
                    2 -> {
                        bind.bottomBar.selectedItemId = ids.accountFragment
@@ -121,6 +124,10 @@ class DashActivity : BaseActivity(), NavController.OnDestinationChangedListener 
        })
 
         bind.sellSheet.recycler.adapter = exploreAdapter
+
+        bind.sellSheet.root.setOnClickListener {
+            imageSheet.state = BottomSheetBehavior.STATE_COLLAPSED
+        }
 
         bind.sellSheet.close.setOnClickListener {
             imageSheet.state = BottomSheetBehavior.STATE_COLLAPSED
@@ -170,5 +177,8 @@ class DashActivity : BaseActivity(), NavController.OnDestinationChangedListener 
                 }
             }
         }
+
+
     }
+
 }
