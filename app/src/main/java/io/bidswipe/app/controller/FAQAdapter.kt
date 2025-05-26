@@ -54,7 +54,7 @@ class FAQAdapter (mList: MutableList<FAQResponse.Data?>, private val mClicks: Re
 
                 bind.expandView.setOnExpansionUpdateListener { expantionFraction, state ->
                     if (item?.selected == true){
-                        bind.view.rotation = expantionFraction * 180F
+                        bind.view.rotation = expantionFraction * 90F
                     }else{
                         bind.view.rotation = expantionFraction * 0F
                     }

@@ -32,7 +32,7 @@
     <item name="colorSurfaceInverse">@color/inverseSurface</item>
     <item name="colorOnSurfaceInverse">@color/inverseOnSurface</item>
 
-    <item name="android:windowBackground">@color/surface</item>
+    <item name="android:windowBackground">@color/background</item>
     <item name="android:windowLightStatusBar">true</item>
     <item name="android:statusBarColor">@color/background</item>
     <item name="android:navigationBarColor">@color/background</item>

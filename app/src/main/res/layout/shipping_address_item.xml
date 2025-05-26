@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:id="@+id/click"
+    android:gravity="center_vertical"
+    android:padding="@dimen/margin"
+    android:layout_margin="@dimen/half_margin"
+    style="@style/shadowStyle"
+    android:background="@drawable/card_8">
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/half_margin"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                style="@style/TitleLarge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/home" />
+
+            <com.google.android.material.card.MaterialCardView
+                style="@style/cardStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/half_margin"
+                app:cardCornerRadius="100dp"
+                app:cardBackgroundColor="@color/primaryContainer">
+
+                <TextView
+                    android:id="@+id/status"
+                    style="@style/BodyMedium"
+                    android:textColor="@color/primary"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginVertical="6dp"
+                    android:layout_marginHorizontal="@dimen/margin"
+                    android:text="Default" />
+
+            </com.google.android.material.card.MaterialCardView>
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/sub_title"
+            style="@style/BodyLarge"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:alpha="0.7"
+            android:text="John Smith" />
+
+        <TextView
+            android:id="@+id/address"
+            style="@style/BodyLarge"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/margin"
+            android:alpha="0.7"
+            android:text="465 Bussiness Ave , Suit 200 New York" />
+
+
+    </LinearLayout>
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/next"
+        android:layout_width="18dp"
+        android:layout_height="18dp"
+        android:rotation="90"
+        android:alpha="0.7"
+        android:src="@drawable/ic_detail" />
+</LinearLayout>

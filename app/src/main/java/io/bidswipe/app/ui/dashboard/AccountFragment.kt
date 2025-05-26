@@ -35,8 +35,11 @@ class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
     private var moreList = mutableListOf<MoreModel>()
     private var gridList = mutableListOf<MoreModel>()
 
+    private var accountGridList = mutableListOf<MoreModel>()
+
     private lateinit var moreAdapter: MoreAdapter
     private lateinit var gridAdapter: GridAdapter
+    private lateinit var accountGridAdapter : GridAdapter
 
     private val onTabSelectedListener = object : OnTabSelectedListener {
         override fun onTabSelected(tab : TabLayout.Tab?) {
@@ -61,10 +64,17 @@ class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
                 }
 
                 else -> {
-                    startActivity(Intent(mCtx , MoreActivity::class.java).putExtra("to",moreList[pos].slug))
+                    startActivity(Intent(mCtx , MoreActivity::class.java).putExtra("slug",moreList[pos].slug))
                 }
                 
             }
+        }
+
+    }
+
+    private val accountGridClick = object : RecyclerClicks{
+        override fun itemClick(pos: Int, status: String?) {
+            startActivity(Intent(mCtx , MoreActivity::class.java).putExtra("slug",accountGridList[pos].slug))
         }
 
     }
@@ -99,7 +109,6 @@ class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
 
         bind.accountView.moreRecycler.adapter = moreAdapter
 
-
         gridList.add(MoreModel(R.drawable.ic_box,"Inventory","inventory"))
         gridList.add(MoreModel(R.drawable.ic_mic,"Shows", "shows"))
         gridList.add(MoreModel(R.drawable.ic_order,"My Order", "order"))
@@ -115,6 +124,16 @@ class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
 
         gridAdapter= GridAdapter(gridList,gridClick)
         bind.sellerHub.gridRecycler.adapter = gridAdapter
+
+
+        accountGridList.add(MoreModel(R.drawable.ic_box,"Payment & Shipping","paymentShipping"))
+        accountGridList.add(MoreModel(R.drawable.ic_mic,"Addresses", "address"))
+        accountGridList.add(MoreModel(R.drawable.ic_order,"Trusted Buyer", "buyer"))
+        accountGridList.add(MoreModel(R.drawable.ic_walllet,"Notifications", "notification"))
+        accountGridList.add(MoreModel(R.drawable.ic_tag,"Preferences", "preferences"))
+
+        accountGridAdapter= GridAdapter(accountGridList,accountGridClick)
+        bind.accountView.gridRecycler.adapter = accountGridAdapter
 
         viewModel.logoutRepo.observe(viewLifecycleOwner) {
             when (it) {

@@ -24,7 +24,7 @@ class MoreActivity : BaseActivity() {
         navController = navHostFragment.findNavController()
         val navGraph=navController.navInflater.inflate(R.navigation.more_graph)
 
-        val slug = intent.getStringExtra("to").toString()
+        val slug = intent.getStringExtra("slug").toString()
 
         when (slug) {
 
@@ -41,7 +41,7 @@ class MoreActivity : BaseActivity() {
             }
 
             "salesTax" ->{
-
+                navGraph.setStartDestination(R.id.salesTaxExemptionFragment)
             }
 
             "termsCondition" ->{
@@ -54,6 +54,25 @@ class MoreActivity : BaseActivity() {
 
             "faq" ->{
                 navGraph.setStartDestination(R.id.FAQFragment)
+            }
+
+            "paymentShipping"->{
+                navGraph.setStartDestination(R.id.paymentShippingFragment)
+            }
+
+            "address"->{
+                navGraph.setStartDestination(R.id.addressesFragment)
+            }
+
+            "buyer"->{
+                navGraph.setStartDestination(R.id.trustedBuyerFragment)
+            }
+
+            "notification"->{
+
+            }
+            "preferences"->{
+                navGraph.setStartDestination(R.id.preferencesFragment)
             }
 
         }

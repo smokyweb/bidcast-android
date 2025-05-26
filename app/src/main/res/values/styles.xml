@@ -18,14 +18,14 @@
 
 		<!--TEXT BOX STYLE-->
 		<item name="boxStrokeColor">@color/input_box_stroke_color_state</item>
-		<item name="boxBackgroundColor">@color/surface</item>
+		<item name="boxBackgroundColor">@color/inverseOnSurface</item>
 		<item name="errorEnabled">false</item>
 		<item name="hintEnabled">false</item>
 		<item name="thumbColor">@color/onBackground</item>
 		<item name="colorAccent">@color/primary</item>
 		<item name="expandedHintEnabled">false</item>
-		<item name="boxStrokeWidth">1dp</item>
-		<item name="boxStrokeWidthFocused">1dp</item>
+		<item name="boxStrokeWidth">2dp</item>
+		<item name="boxStrokeWidthFocused">2dp</item>
 		<item name="boxCornerRadiusBottomStart">6dp</item>
 		<item name="boxCornerRadiusBottomEnd">6dp</item>
 		<item name="boxCornerRadiusTopStart">6dp</item>
@@ -63,7 +63,7 @@
 		<item name="android:padding">16dp</item>
 		<item name="android:textAppearance">@style/BodySmall</item>
 		<item name="android:textColor">@color/onSurface</item>
-		<item name="android:textColorHint">@color/outline</item>
+		<item name="android:textColorHint">@color/outlineVariant</item>
 	</style>
 
 	<style name="textBoxFillDropDown" parent="Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu">

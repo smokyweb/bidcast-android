@@ -32,6 +32,31 @@
         android:name="io.bidswipe.app.ui.dashboard.more.FAQFragment"
         android:label="fragment_f_a_q"
         tools:layout="@layout/fragment_f_a_q" />
+    <fragment
+        android:id="@+id/salesTaxExemptionFragment"
+        android:name="io.bidswipe.app.ui.dashboard.more.SalesTaxExemptionFragment"
+        android:label="fragment_sales_tax_exemption"
+        tools:layout="@layout/fragment_sales_tax_exemption" />
+    <fragment
+        android:id="@+id/paymentShippingFragment"
+        android:name="io.bidswipe.app.ui.dashboard.more.PaymentShippingFragment"
+        android:label="fragment_payment_shipping"
+        tools:layout="@layout/fragment_payment_shipping" />
+    <fragment
+        android:id="@+id/addressesFragment"
+        android:name="io.bidswipe.app.ui.dashboard.more.AddressesFragment"
+        android:label="fragment_addresses"
+        tools:layout="@layout/fragment_addresses" />
+    <fragment
+        android:id="@+id/trustedBuyerFragment"
+        android:name="io.bidswipe.app.ui.dashboard.more.TrustedBuyerFragment"
+        android:label="fragment_trusted_buyer"
+        tools:layout="@layout/fragment_trusted_buyer" />
+    <fragment
+        android:id="@+id/preferencesFragment"
+        android:name="io.bidswipe.app.ui.dashboard.more.PreferencesFragment"
+        android:label="fragment_preferences"
+        tools:layout="@layout/fragment_preferences" />
 
 
 </navigation>

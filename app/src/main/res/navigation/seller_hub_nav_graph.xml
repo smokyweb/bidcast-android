@@ -37,5 +37,10 @@
         android:name="io.bidswipe.app.ui.dashboard.sellerHub.ShippingFragment"
         android:label="fragment_shipping"
         tools:layout="@layout/fragment_shipping" />
+    <fragment
+        android:id="@+id/tipsFragment"
+        android:name="io.bidswipe.app.ui.dashboard.sellerHub.TipsFragment"
+        android:label="fragment_tips"
+        tools:layout="@layout/fragment_tips" />
 
 </navigation>

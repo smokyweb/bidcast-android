@@ -45,6 +45,9 @@ class SellerHubActivity : BaseActivity() {
 			 "shipping" -> {
                 navGraph.setStartDestination(R.id.shippingFragment)
             }
+			"tips" -> {
+                navGraph.setStartDestination(R.id.tipsFragment)
+            }
 			else -> {
 				navGraph.setStartDestination(R.id.inventoryFragment)
 			}

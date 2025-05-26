@@ -40,7 +40,6 @@
         android:layout_height="1dp"
         app:dividerColor="@color/outline" />
 
-
     <LinearLayout
         android:id="@+id/click"
         android:layout_width="match_parent"
