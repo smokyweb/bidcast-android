@@ -1,0 +1,55 @@
+package io.bidswipe.app.network.response
+
+
+import com.google.gson.annotations.SerializedName
+import androidx.annotation.Keep
+
+@Keep
+data class GetProductsResponse(
+    @SerializedName("currentPage")
+    val currentPage: Int?,
+    @SerializedName("data")
+    val `data`: List<Data?>?,
+    @SerializedName("error_type")
+    val errorType: String?,
+    @SerializedName("message")
+    val message: String?,
+    @SerializedName("perPage")
+    val perPage: Int?,
+    @SerializedName("status")
+    val status: String?,
+    @SerializedName("total")
+    val total: Int?,
+    @SerializedName("totalPage")
+    val totalPage: Int?
+) {
+    @Keep
+    data class Data(
+        @SerializedName("accept_offers")
+        val acceptOffers: Boolean?,
+        @SerializedName("category_id")
+        val categoryId: Int?,
+        @SerializedName("description")
+        val description: String?,
+        @SerializedName("flash_sale")
+        val flashSale: Boolean?,
+        @SerializedName("id")
+        val id: Int?,
+        @SerializedName("images")
+        val images: List<String?>?,
+        @SerializedName("pricing")
+        val pricing: Int?,
+        @SerializedName("quantity")
+        val quantity: Int?,
+        @SerializedName("reserve_for_live")
+        val reserveForLive: Boolean?,
+        @SerializedName("shipping_profile_id")
+        val shippingProfileId: Int?,
+        @SerializedName("status")
+        val status: String?,
+        @SerializedName("title")
+        val title: String?,
+        @SerializedName("user_id")
+        val userId: Int?
+    )
+}

@@ -81,4 +81,25 @@
     <string name="become_a_trusted_buyer">Become a Trusted Buyer</string>
     <string name="expiration_date">Expiration Date</string>
     <string name="issue_date">Issue Date</string>
+    <string name="recommended">Recommended</string>
+    <string name="popular">Popular</string>
+    <string name="all">All</string>
+    <string name="choose_sales_format">Choose Sales Format</string>
+    <string name="affiliate_program">Affiliate Program</string>
+    <string name="share_your_link">Share Your Link</string>
+    <string name="share_invite_link">Share Invite Link</string>
+    <string name="your_referral_stats">Your Referral Stats</string>
+    <string name="tips">Tips</string>
+    <string name="seller_status">Seller Status</string>
+    <string name="contact_support">Contact Support</string>
+    <string name="premier_shop">Premier Shop</string>
+    <string name="review_process">Review Process</string>
+    <string name="promote_tools">Promote Tools</string>
+    <string name="promote_your_shows">Promote Your Shows</string>
+    <string name="learn_how_to_promote">Learn How to Promote</string>
+    <string name="get_tips_and_strategies_to_grow_your_live_shows">Get tips and strategies to grow your live shows</string>
+    <string name="start_learning">Start Learning</string>
+    <string name="analytics">Analytics</string>
+    <string name="sales_performance">Sales Performance</string>
+    <string name="visitor_analytics">Visitor Analytics</string>
 </resources>

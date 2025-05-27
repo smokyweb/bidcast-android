@@ -9,6 +9,7 @@ import io.bidswipe.app.network.response.GetCategoryResponse
 import io.bidswipe.app.network.response.GetHowToSellResponse
 import io.bidswipe.app.network.response.GetLessonsResponse
 import io.bidswipe.app.network.response.GetPrepareStepResponse
+import io.bidswipe.app.network.response.GetProductsResponse
 import io.bidswipe.app.network.response.LoginResponse
 import io.bidswipe.app.network.response.SignUpResponse
 import io.bidswipe.app.network.response.TermsConditionResponse
@@ -127,5 +128,11 @@ interface ApiInterface {
 	suspend fun getAllTips(
 		@Part("type") type: RequestBody?
 		): GetAllTipsResponse
+
+
+	@POST("api/get-user-product")
+	suspend fun getUserProducts(
+	): GetProductsResponse
+
 }
 

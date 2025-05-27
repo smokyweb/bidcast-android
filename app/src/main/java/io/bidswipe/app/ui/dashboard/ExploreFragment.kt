@@ -1,10 +1,13 @@
 package io.bidswipe.app.ui.dashboard
 
 import android.annotation.SuppressLint
+import android.graphics.Typeface
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.navigation.fragment.findNavController
 import io.bidswipe.app.R
@@ -40,6 +43,12 @@ class ExploreFragment : BaseFragment<DashViewModel,FragmentExploreBinding>() {
 
        exploreAdapter = ExploreAdapter(exploreList,mClick)
         bind.recycler.adapter = exploreAdapter
+
+        selectTab(bind.recommended)
+
+        bind.recommended.setOnClickListener { selectTab(it as TextView) }
+        bind.popular.setOnClickListener { selectTab(it as TextView) }
+        bind.all.setOnClickListener { selectTab(it as TextView) }
 
         bind.loader.isVisible = true
         viewModel.getCategory()
@@ -80,5 +89,16 @@ class ExploreFragment : BaseFragment<DashViewModel,FragmentExploreBinding>() {
         }
         
     }
+
+    fun selectTab(selectedTab: TextView) {
+        val tabs = listOf(bind.recommended, bind.popular, bind.all)
+        tabs.forEach {
+            it.setTextColor(ContextCompat.getColor(mCtx, R.color.outlineVariant))
+            it.setTypeface(null, Typeface.NORMAL)
+        }
+        selectedTab.setTextColor(ContextCompat.getColor(mCtx, R.color.scrim))
+        selectedTab.setTypeface(null, Typeface.BOLD)
+    }
+
 
 }

@@ -48,6 +48,25 @@ class SellerHubActivity : BaseActivity() {
 			"tips" -> {
                 navGraph.setStartDestination(R.id.tipsFragment)
             }
+			"program" -> {
+				navGraph.setStartDestination(R.id.affiliateProgramFragment)
+			}
+			"training" -> {
+				navGraph.setStartDestination(R.id.howToSellFragment2)
+			}
+			"sellerStatus" -> {
+				navGraph.setStartDestination(R.id.sellerStatusFragment)
+			}
+
+			"shop" -> {
+				navGraph.setStartDestination(R.id.premierShopFragment)
+			}
+			"promote" -> {
+				navGraph.setStartDestination(R.id.promoteToolsFragment)
+			}
+			"sellerAnalytics" -> {
+				navGraph.setStartDestination(R.id.analyticsFragment)
+			}
 			else -> {
 				navGraph.setStartDestination(R.id.inventoryFragment)
 			}

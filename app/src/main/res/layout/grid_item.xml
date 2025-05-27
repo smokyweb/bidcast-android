@@ -23,7 +23,6 @@
 			app:layout_constraintStart_toStartOf="@+id/view" />
 
 		<TextView
-
 			android:id="@+id/title"
 			style="@style/BodyLarge"
 			android:layout_width="match_parent"

@@ -10,6 +10,7 @@ import io.bidswipe.app.network.response.CommonResponse
 import io.bidswipe.app.network.response.GetAllTipsResponse
 import io.bidswipe.app.network.response.GetAuctionTypeResponse
 import io.bidswipe.app.network.response.GetCategoryResponse
+import io.bidswipe.app.network.response.GetProductsResponse
 import kotlinx.coroutines.launch
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -23,6 +24,8 @@ class ScheduleShowViewModel @Inject constructor(val repo: DashRepository) : View
     var time = ""
     var categoryId =""
     var auctionId =""
+    var thumbnail =""
+
 
     private var _storeScheduleShowResponse = MutableLiveData<Resource<CommonResponse>>()
     val storeScheduleShowRepo: MutableLiveData<Resource<CommonResponse>>
@@ -67,6 +70,15 @@ class ScheduleShowViewModel @Inject constructor(val repo: DashRepository) : View
         type : RequestBody?
     ) = viewModelScope.launch {
         _getAllTipsResponse.value = repo.getAllTips(type)
+    }
+
+    private var _getUserProductsResponse = MutableLiveData<Resource<GetProductsResponse>>()
+    val getUserProductsRepo: MutableLiveData<Resource<GetProductsResponse>>
+        get() = _getUserProductsResponse
+
+    fun getUserProducts(
+    ) = viewModelScope.launch {
+        _getUserProductsResponse.value = repo.getUserProducts()
     }
 
 }

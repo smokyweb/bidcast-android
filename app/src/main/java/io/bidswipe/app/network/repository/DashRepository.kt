@@ -64,4 +64,8 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
         type : RequestBody?,
     ) = call { api.getAllTips(type) }
 
+
+    suspend fun getUserProducts(
+    ) = call { api.getUserProducts() }
+
 }

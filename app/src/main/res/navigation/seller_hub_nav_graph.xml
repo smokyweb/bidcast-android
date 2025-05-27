@@ -42,5 +42,35 @@
         android:name="io.bidswipe.app.ui.dashboard.sellerHub.TipsFragment"
         android:label="fragment_tips"
         tools:layout="@layout/fragment_tips" />
+    <fragment
+        android:id="@+id/affiliateProgramFragment"
+        android:name="io.bidswipe.app.ui.dashboard.sellerHub.AffiliateProgramFragment"
+        android:label="fragment_affiliate_program"
+        tools:layout="@layout/fragment_affiliate_program" />
+    <fragment
+        android:id="@+id/howToSellFragment2"
+        android:name="io.bidswipe.app.ui.dashboard.tutorials.HowToSellFragment"
+        android:label="fragment_how_to_sell"
+        tools:layout="@layout/fragment_how_to_sell" />
+    <fragment
+        android:id="@+id/sellerStatusFragment"
+        android:name="io.bidswipe.app.ui.dashboard.sellerHub.SellerStatusFragment"
+        android:label="fragment_seller_status"
+        tools:layout="@layout/fragment_seller_status" />
+    <fragment
+        android:id="@+id/premierShopFragment"
+        android:name="io.bidswipe.app.ui.dashboard.sellerHub.PremierShopFragment"
+        android:label="fragment_premier_shop"
+        tools:layout="@layout/fragment_premier_shop" />
+    <fragment
+        android:id="@+id/promoteToolsFragment"
+        android:name="io.bidswipe.app.ui.dashboard.sellerHub.PromoteToolsFragment"
+        android:label="fragment_promote_tools"
+        tools:layout="@layout/fragment_promote_tools" />
+    <fragment
+        android:id="@+id/analyticsFragment"
+        android:name="io.bidswipe.app.ui.dashboard.sellerHub.AnalyticsFragment"
+        android:label="fragment_analytics"
+        tools:layout="@layout/fragment_analytics" />
 
 </navigation>

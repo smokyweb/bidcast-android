@@ -48,6 +48,8 @@ class SelectThumbnailFragment :
             val imagePath = result.getUriFilePath(mCtx, true)
             if (imagePath != null) {
 
+                viewModel.thumbnail = imagePath
+
 
             }
         }
@@ -94,11 +96,15 @@ class SelectThumbnailFragment :
         bind.goodsRecycler.adapter = gAdapter
 
         bind.continueBtn.setOnClickListener {
-            if (from == "dash") {
-                findNavController().navigate(ids.selectThumbnail_to_createProductFragment)
-            } else {
-                findNavController().navigate(ids.goToProductTipsFragment)
-            }
+
+//            if (from == "dash") {
+//                findNavController().navigate(ids.selectThumbnail_to_createProductFragment)
+//            } else {
+//                findNavController().navigate(ids.goToProductTipsFragment)
+//            }
+
+            findNavController().navigate(ids.thumbnailToAddProductFragment)
+
 
         }
 

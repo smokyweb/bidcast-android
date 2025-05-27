@@ -19,6 +19,7 @@ import io.bidswipe.app.network.Resource
 import io.bidswipe.app.network.response.GetHowToSellResponse
 import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.ui.dashboard.DashViewModel
+import io.bidswipe.app.utils.finish
 import io.bidswipe.app.utils.ids
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.string
@@ -33,13 +34,23 @@ class HowToSellFragment : BaseFragment<DashViewModel,FragmentHowToSellBinding>()
     private var tipList = mutableListOf<GetHowToSellResponse.Data?>()
     private lateinit var pagerAdapter: HowToSellPagerAdapter
 
+    private var type =""
+
     private var tipPos = 1
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        type = activity?.intent?.getStringExtra("slug") ?:""
+
+
         bind.header.onBackClick{
-            findNavController().popBackStack()
+            if (type.isEmpty()){
+                findNavController().popBackStack()
+            }else{
+                finish()
+            }
+
         }
 
 //        bind.next.setOnClickListener {
@@ -77,7 +88,11 @@ class HowToSellFragment : BaseFragment<DashViewModel,FragmentHowToSellBinding>()
 
             log("ITEM : ${bind.pager.currentItem}")
             if (bind.pager.currentItem == tipList.size -1 ) {
-                findNavController().navigate(ids.prepareYourShowFragment)
+                if (type.isEmpty()){
+                    findNavController().navigate(ids.prepareYourShowFragment)
+                }else{
+                    finish()
+                }
             } else {
                 bind.pager.currentItem += 1
             }

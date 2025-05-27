@@ -12,6 +12,7 @@ import io.bidswipe.app.ui.dashboard.MessagesFragment
 import io.bidswipe.app.ui.dashboard.OfferFragment
 import io.bidswipe.app.ui.dashboard.PurchasesFragment
 import io.bidswipe.app.ui.dashboard.SavedItemsFragment
+import io.bidswipe.app.ui.dashboard.sellerHub.OverAllFragment
 import io.bidswipe.app.ui.dashboard.sellerProfile.ShopFragment
 
 class ViewPagerAdapter(fragmentActivity: FragmentActivity , type : String) : FragmentStateAdapter(fragmentActivity) {
@@ -23,7 +24,15 @@ class ViewPagerAdapter(fragmentActivity: FragmentActivity , type : String) : Fra
             PurchasesFragment(),
             SavedItemsFragment()
         )
-    } else {
+    }else if(type == "Analytics"){
+
+        listOf(
+            OverAllFragment(),
+            BidsFragment(),
+            OfferFragment(),
+            PurchasesFragment()
+        )
+    }else {
         listOf(
            ShopFragment(),
             BidsFragment(),

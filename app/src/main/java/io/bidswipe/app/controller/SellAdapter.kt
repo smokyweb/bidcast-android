@@ -28,7 +28,7 @@ class SellAdapter(
 				mClicks.itemClick(position)
 			}
 			
-			if (type == "getStarted" || type == "tips") {
+			if (type == "getStarted" || type == "tips" || type == "affiliate") {
 				bind.next.isVisible = false
 			}
 			
