@@ -1,18 +1,15 @@
 package io.bidswipe.app.ui.dashboard.tutorials
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
-import androidx.media3.common.MediaItem
 import androidx.navigation.fragment.findNavController
 import androidx.viewpager2.widget.ViewPager2
 import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseFragment
 import io.bidswipe.app.controller.HowToSellPagerAdapter
-import io.bidswipe.app.controller.ProductTipsPagerAdapter
 import io.bidswipe.app.databinding.FragmentHowToSellBinding
 import io.bidswipe.app.interfaces.AlertClicks
 import io.bidswipe.app.network.Resource
@@ -22,8 +19,6 @@ import io.bidswipe.app.ui.dashboard.DashViewModel
 import io.bidswipe.app.utils.finish
 import io.bidswipe.app.utils.ids
 import io.bidswipe.app.utils.parse
-import io.bidswipe.app.utils.string
-import io.bidswipe.app.utils.toScheduleShow
 
 class HowToSellFragment : BaseFragment<DashViewModel,FragmentHowToSellBinding>() {
 
@@ -42,7 +37,6 @@ class HowToSellFragment : BaseFragment<DashViewModel,FragmentHowToSellBinding>()
         super.onViewCreated(view, savedInstanceState)
 
         type = activity?.intent?.getStringExtra("slug") ?:""
-
 
         bind.header.onBackClick{
             if (type.isEmpty()){
@@ -79,8 +73,6 @@ class HowToSellFragment : BaseFragment<DashViewModel,FragmentHowToSellBinding>()
                     append(position + 1)
                     append(" of ${tipList.size}")
                 }
-
-
             }
         })
 

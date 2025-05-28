@@ -36,7 +36,7 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
         reserveForLive: RequestBody?,
         shippingProfileId: RequestBody?,
         status: RequestBody?,
-        productImages: List<MultipartBody.Part>?
+        productImages: List<MultipartBody.Part?>?
     ) = call { api.storeProduct(categoryId, title, description, quantity, pricing, flashSale, acceptOffers, reserveForLive, shippingProfileId, status, productImages) }
 
     suspend fun getHowToSellStep() = call { api.getHowToSellStep() }
@@ -53,7 +53,7 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
         time: RequestBody?,
         categoryId: RequestBody?,
         auctionTypeId : RequestBody?,
-        thumbnails: List<MultipartBody.Part>?,
+        thumbnails: List<MultipartBody.Part?>?,
         productIds: List<Int?>
     ) = call { api.storeScheduleShow(title,date,time,categoryId,auctionTypeId,thumbnails,productIds) }
 
@@ -67,5 +67,29 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
 
     suspend fun getUserProducts(
     ) = call { api.getUserProducts() }
+
+    suspend fun getMyScheduledShow(
+        type : RequestBody?,
+    ) = call { api.getMyScheduledShow(type) }
+
+    suspend fun getProfileById(
+        userId : RequestBody?
+    ) = call { api.getProfileById(userId) }
+
+    suspend fun followUser(
+        userId : RequestBody?
+    ) = call { api.followUser(userId) }
+
+    suspend fun makeOffer(
+        amount : RequestBody?,
+        productId : RequestBody?
+    ) = call { api.makeOffer(amount, productId) }
+
+    suspend fun getLiveShow(
+    ) = call { api.getLiveShow() }
+
+    suspend fun notifyLiveUser(
+        liveUserId : RequestBody?
+    ) = call { api.notifyLiveUser(liveUserId) }
 
 }

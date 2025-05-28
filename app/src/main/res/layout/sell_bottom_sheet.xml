@@ -10,7 +10,8 @@
 	<View
 		android:id="@+id/bottomSheetBackgroundLayer"
 		android:layout_width="match_parent"
-		android:background="@color/transparent"
+		android:background="@color/onSurface"
+		android:alpha="0.7"
 		android:layout_height="match_parent" />
 
 	<LinearLayout

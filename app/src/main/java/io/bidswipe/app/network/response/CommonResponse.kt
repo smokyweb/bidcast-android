@@ -7,14 +7,11 @@ import androidx.annotation.Keep
 @Keep
 data class CommonResponse(
     @SerializedName("data")
-    val `data`: Data?,
+    val `data`: Any?,
     @SerializedName("error_type")
     val errorType: String?,
     @SerializedName("message")
     val message: String?,
     @SerializedName("status")
     val status: String?
-) {
-    @Keep
-    class Data
-}
+)

@@ -1,5 +1,6 @@
 package io.bidswipe.app.ui.dashboard.scheduleShow
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -15,9 +16,15 @@ import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.network.response.GetProductsResponse
 import io.bidswipe.app.ui.custom.AppBottomSheet
+import io.bidswipe.app.utils.Alerts
+import io.bidswipe.app.utils.Utils
 import io.bidswipe.app.utils.finish
 import io.bidswipe.app.utils.parse
+import io.bidswipe.app.utils.request
+import okhttp3.MultipartBody
+import java.io.File
 
+@SuppressLint("NotifyDataSetChanged")
 class AddProductFragment : BaseFragment<ScheduleShowViewModel,FragmentAddProductBinding>() {
     override fun getModel(): Class<ScheduleShowViewModel> = ScheduleShowViewModel::class.java
 
@@ -25,9 +32,15 @@ class AddProductFragment : BaseFragment<ScheduleShowViewModel,FragmentAddProduct
 
     private lateinit var productAdapter :ProductAdapter
     private var productList = mutableListOf<GetProductsResponse.Data?>()
+    private var imagePartList = mutableListOf<MultipartBody.Part?>()
 
     private var mClick = object : RecyclerClicks {
         override fun itemClick(pos: Int, status: String?) {
+
+            productList[pos]?.selected = true
+
+            productAdapter.notifyItemChanged(pos)
+
         }
 
     }
@@ -44,7 +57,43 @@ class AddProductFragment : BaseFragment<ScheduleShowViewModel,FragmentAddProduct
         bind.recycler.adapter = productAdapter
 
         bind.finishBtn.setOnClickListener {
-            finish()
+
+            bind.loader.isVisible = true
+           var imagePartList = mutableListOf<MultipartBody.Part?>()
+           var productIdList = mutableListOf<Int>()
+
+            productList.forEach {
+
+                if (it?.selected == true){
+
+                    productIdList.add(it.id?.toInt() ?:0 )
+                }
+
+            }
+
+            if (productIdList.isEmpty()){
+
+                Alerts.error(mCtx,"Please select product")
+
+            }
+
+            imagePartList.add(Utils.imagePart(
+                "thumbnail[]",
+                viewModel.thumbnail,
+                 File(viewModel.thumbnail)
+            ))
+
+
+            viewModel.storeScheduleShow(
+                title = viewModel.showTitle.request(),
+                date = viewModel.date.request(),
+                time = viewModel.time.request(),
+                categoryId = viewModel.categoryId.request(),
+                auctionTypeId = viewModel.auctionId.request(),
+                thumbnails = imagePartList,
+                productIds = productIdList
+            )
+
         }
 
         bind.loader.isVisible = true
@@ -65,6 +114,43 @@ class AddProductFragment : BaseFragment<ScheduleShowViewModel,FragmentAddProduct
                     }
 
                     productAdapter.notifyDataSetChanged()
+
+                }
+
+                is Resource.Error -> {
+                    bind.loader.isVisible = false
+
+                    if (it.isNetworkError) {
+                        errorToast(getString(R.string.no_internet))
+                    } else {
+                        it.parse(mCtx, TAG, object : AlertClicks {
+                            override fun primaryClick(dialog: AppBottomSheet) {
+                                dialog.dismiss()
+
+                            }
+
+                            override fun secondaryClick(dialog: AppBottomSheet) {
+                                dialog.dismiss()
+
+                            }
+                        })
+                    }
+                }
+
+                else -> {}
+
+            }
+        }
+
+        viewModel.storeScheduleShowRepo.observe(viewLifecycleOwner) {
+            when (it) {
+                is Resource.Success -> {
+                    bind.loader.isVisible = false
+
+                    val mData = it.value.data
+
+                   finish()
+
 
                 }
 

@@ -33,7 +33,7 @@ class ExploreTypeFragment : BaseFragment<DashViewModel,FragmentExploreTypeBindin
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        homeAdapter = HomeAdapter(itemList, mClick)
+//        homeAdapter = HomeAdapter(itemList, mClick)
 
         bind.recycler.adapter = homeAdapter
 

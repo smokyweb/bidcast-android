@@ -29,22 +29,29 @@
 				android:orientation="horizontal">
 
 				<com.makeramen.roundedimageview.RoundedImageView
+					android:id="@+id/userImage"
 					android:layout_width="32dp"
 					android:layout_height="32dp"
+					app:riv_corner_radius="100dp"
+					android:scaleType="centerCrop"
 					android:src="@drawable/user_image" />
 
 				<TextView
+					android:id="@+id/userName"
 					style="@style/TitleMedium"
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
 					android:layout_gravity="center_vertical"
 					android:layout_marginStart="@dimen/half_margin"
 					android:text="@string/username" />
+
 			</LinearLayout>
 
 			<androidx.appcompat.widget.AppCompatImageView
+				android:id="@+id/thumnail"
 				android:layout_width="match_parent"
 				android:layout_height="200dp"
+				android:scaleType="centerCrop"
 				android:background="@color/outline"
 				android:src="@drawable/dummy_image" />
 
@@ -63,6 +70,7 @@
 		app:layout_constraintTop_toBottomOf="@id/cardView" />
 
 	<TextView
+		android:id="@+id/category"
 		style="@style/BodyMedium"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"

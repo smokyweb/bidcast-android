@@ -2,6 +2,8 @@ package io.bidswipe.app.controller
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
+import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseAdapter
 import io.bidswipe.app.databinding.ProductListItemBinding
 import io.bidswipe.app.interfaces.RecyclerClicks
@@ -22,7 +24,14 @@ class ProductAdapter (val mList: MutableList<GetProductsResponse.Data?>, val mCl
         with(holder) {
 
             bind.root.setOnClickListener {
-                mClicks.itemClick(position)
+                mClicks.itemClick(position,"select")
+            }
+
+            if (item?.selected == true){
+                bind.root.strokeWidth = 2
+                bind.root.strokeColor = ContextCompat.getColor(mCtx, R.color.primary)
+            }else{
+                bind.root.strokeWidth = 0
             }
 
             bind.productName.text = item?.title

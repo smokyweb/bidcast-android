@@ -50,6 +50,7 @@ data class GetProductsResponse(
         @SerializedName("title")
         val title: String?,
         @SerializedName("user_id")
-        val userId: Int?
+        val userId: Int?,
+        var selected: Boolean? = false
     )
 }

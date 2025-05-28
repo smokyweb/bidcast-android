@@ -8,8 +8,10 @@ import io.bidswipe.app.network.response.GetAuctionTypeResponse
 import io.bidswipe.app.network.response.GetCategoryResponse
 import io.bidswipe.app.network.response.GetHowToSellResponse
 import io.bidswipe.app.network.response.GetLessonsResponse
+import io.bidswipe.app.network.response.GetMyShowResponse
 import io.bidswipe.app.network.response.GetPrepareStepResponse
 import io.bidswipe.app.network.response.GetProductsResponse
+import io.bidswipe.app.network.response.GetUserProfileResponse
 import io.bidswipe.app.network.response.LoginResponse
 import io.bidswipe.app.network.response.SignUpResponse
 import io.bidswipe.app.network.response.TermsConditionResponse
@@ -96,7 +98,7 @@ interface ApiInterface {
 		@Part("reserve_for_live") reserveForLive: RequestBody?,
 		@Part("shipping_profile_id") shippingProfileId: RequestBody?,
 		@Part("status") status: RequestBody?,
-		@Part productImages: List<MultipartBody.Part>?
+		@Part productImages: List<MultipartBody.Part?>?
 	): CommonResponse
 
 	@GET("api/how-to-sell")
@@ -116,7 +118,7 @@ interface ApiInterface {
 		@Part("time") time: RequestBody?,
 		@Part("category_id") categoryId : RequestBody?,
 		@Part("auction_type_id")  auctionTypeId : RequestBody?,
-		@Part thumbnails: List<MultipartBody.Part>?,
+		@Part thumbnails: List<MultipartBody.Part?>?,
 		@Part("product_ids[]") productIds: List<Int?>
 	): CommonResponse
 
@@ -133,6 +135,42 @@ interface ApiInterface {
 	@POST("api/get-user-product")
 	suspend fun getUserProducts(
 	): GetProductsResponse
+
+	@Multipart
+	@POST("api/get-my-schedule-show")
+	suspend fun getMyScheduledShow(
+		@Part("type") type: RequestBody?
+	): GetMyShowResponse
+
+	@Multipart
+	@POST("api/get-profile-by-id")
+	suspend fun getProfileById(
+		@Part("id") userId: RequestBody?
+	): GetUserProfileResponse
+
+	@Multipart
+	@POST("api/follow-unfollow")
+	suspend fun followUser(
+		@Part("following_id") userId: RequestBody?
+	): CommonResponse
+
+	@Multipart
+	@POST("api/offer/make")
+	suspend fun makeOffer(
+		@Part("amount") amount: RequestBody?,
+		@Part("product_id") productId: RequestBody?
+	): CommonResponse
+
+
+	@POST("api/get-live-show")
+	suspend fun getLiveShow(
+	): GetMyShowResponse
+
+	@Multipart
+	@POST("api/notify-live-user")
+	suspend fun notifyLiveUser(
+		@Part("live_user_id") userId: RequestBody?
+	): CommonResponse
 
 }
 

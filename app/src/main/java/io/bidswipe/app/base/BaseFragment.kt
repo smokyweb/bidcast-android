@@ -38,7 +38,7 @@ abstract class BaseFragment<VM : ViewModel , BIND : ViewBinding> : Fragment() {
 			"FRAGMENT_$tag"
 		}
 
-//		userId = Prefs(mCtx).getUserData()?.id.toString()
+		userId = Prefs(mCtx).getUserData()?.id.toString()
 //		authUserData = Prefs(mCtx).getUserData()
 		viewModel = ViewModelProvider(requireActivity())[getModel()]
 

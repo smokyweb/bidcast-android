@@ -161,7 +161,7 @@
 		android:weightSum="2"
 		app:layout_constraintBottom_toBottomOf="parent">
 
-		<com.google.android.material.button.MaterialButton
+	<!--	<com.google.android.material.button.MaterialButton
 			android:id="@+id/useProduct"
 			style="@style/appBtn"
 			android:layout_width="match_parent"
@@ -169,7 +169,7 @@
 			android:layout_margin="@dimen/margin"
 			android:paddingHorizontal="@dimen/margin"
 			android:layout_weight="1"
-			android:text="Use Product Library" />
+			android:text="Use Product Library" />-->
 
 		<com.google.android.material.button.MaterialButton
 			android:id="@+id/continueBtn"
@@ -179,7 +179,7 @@
 			android:layout_margin="@dimen/margin"
 			android:layout_weight="1"
 			android:paddingHorizontal="@dimen/margin"
-			android:text="@string/_continue" />
+			android:text="@string/finish" />
 
 	</LinearLayout>
 

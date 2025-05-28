@@ -272,4 +272,7 @@
     <string name="analytics">Analytics</string>
     <string name="sales_performance">Sales Performance</string>
 	<string name="visitor_analytics">Visitor Analytics</string>
+	<string name="use_product_library">Use Product Library</string>
+    <string name="follow">Follow</string>
+    <string name="comming_soon">Comming Soon</string>
 </resources>

@@ -8,9 +8,11 @@ import io.bidswipe.app.network.Resource
 import io.bidswipe.app.network.repository.DashRepository
 import io.bidswipe.app.network.response.CommonResponse
 import io.bidswipe.app.network.response.FAQResponse
+import io.bidswipe.app.network.response.GetAllTipsResponse
 import io.bidswipe.app.network.response.GetCategoryResponse
 import io.bidswipe.app.network.response.GetHowToSellResponse
 import io.bidswipe.app.network.response.GetLessonsResponse
+import io.bidswipe.app.network.response.GetMyShowResponse
 import io.bidswipe.app.network.response.GetPrepareStepResponse
 import kotlinx.coroutines.launch
 import okhttp3.MultipartBody
@@ -92,6 +94,25 @@ class DashViewModel @Inject constructor(val repo: DashRepository) : ViewModel() 
 		_getPrepareStepResponse.value = repo.getPrepareStep()
 	}
 
+
+	private var _getMyScheduledShowResponse = MutableLiveData<Resource<GetMyShowResponse>>()
+	val getMyScheduledShowRepo: MutableLiveData<Resource<GetMyShowResponse>>
+		get() = _getMyScheduledShowResponse
+
+	fun getMyScheduledShow(
+		type : RequestBody? = null
+	) = viewModelScope.launch {
+		_getMyScheduledShowResponse.value = repo.getMyScheduledShow(type)
+	}
+
+	private var _getLiveShowResponse = MutableLiveData<Resource<GetMyShowResponse>>()
+	val getLiveShowRepo: MutableLiveData<Resource<GetMyShowResponse>>
+		get() = _getLiveShowResponse
+
+	fun getLiveShow(
+	) = viewModelScope.launch {
+		_getLiveShowResponse.value = repo.getLiveShow()
+	}
 
 	
 }

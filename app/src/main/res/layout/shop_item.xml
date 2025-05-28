@@ -16,12 +16,13 @@
 
         <com.google.android.material.card.MaterialCardView
             style="@style/cardStyle"
-            android:layout_width="120dp"
-            android:layout_height="120dp"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
             app:cardCornerRadius="10dp"
             app:cardElevation="0dp">
 
             <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/productImage"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:scaleType="fitXY"
@@ -38,20 +39,21 @@
             android:orientation="vertical">
 
             <TextView
+                android:id="@+id/productName"
                 style="@style/TitleLarge"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Product Name" />
 
             <TextView
-                android:id="@+id/prod_sub_title"
+                android:id="@+id/category"
                 style="@style/BodyMedium"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Category - Condition" />
 
             <TextView
-                android:id="@+id/date"
+                android:id="@+id/price"
                 style="@style/BodyMedium"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

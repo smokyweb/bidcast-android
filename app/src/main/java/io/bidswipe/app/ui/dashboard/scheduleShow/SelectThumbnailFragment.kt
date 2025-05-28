@@ -22,6 +22,7 @@ import io.bidswipe.app.utils.Utils
 import io.bidswipe.app.utils.ids
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request
+import java.io.File
 
 class SelectThumbnailFragment :
     BaseFragment<ScheduleShowViewModel, FragmentSelectThumbnailBinding>() {
@@ -45,7 +46,11 @@ class SelectThumbnailFragment :
             bind.pickImageLayout.isVisible = false
 
             bind.img.setImageURI(imageUri)
+
+
             val imagePath = result.getUriFilePath(mCtx, true)
+
+
             if (imagePath != null) {
 
                 viewModel.thumbnail = imagePath
@@ -97,22 +102,17 @@ class SelectThumbnailFragment :
 
         bind.continueBtn.setOnClickListener {
 
-//            if (from == "dash") {
-//                findNavController().navigate(ids.selectThumbnail_to_createProductFragment)
-//            } else {
-//                findNavController().navigate(ids.goToProductTipsFragment)
-//            }
-
-            findNavController().navigate(ids.thumbnailToAddProductFragment)
-
-
-        }
-
-        bind.useProduct.setOnClickListener {
+            if (from == "dash") {
+                findNavController().navigate(ids.selectThumbnail_to_createProductFragment)
+            } else {
+                findNavController().navigate(ids.goToProductTipsFragment)
+            }
 
 
 
         }
+
+
 
         bind.loader.isVisible = true
 
