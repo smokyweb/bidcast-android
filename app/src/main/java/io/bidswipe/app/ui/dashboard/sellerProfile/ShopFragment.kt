@@ -51,9 +51,7 @@ class ShopFragment : BaseFragment<SellerViewModel,FragmentShopBinding>() {
                 )
             )
         }
-
-
-
+        
         bind.chipGroup.setOnCheckedStateChangeListener { chipGroup, _ ->
             runSafe {
                 val chipId = chipGroup.checkedChipId

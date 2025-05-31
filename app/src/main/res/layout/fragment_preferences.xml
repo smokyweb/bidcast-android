@@ -55,6 +55,7 @@
                     android:text="@string/country_of_residence"/>
 
                 <TextView
+                    android:id="@+id/country"
                     style="@style/TitleMedium"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -84,9 +85,8 @@
                 android:alpha="0.7"
                 android:text="@string/privacy"/>
 
-
             <com.google.android.material.materialswitch.MaterialSwitch
-                android:id="@+id/flashSell"
+                android:id="@+id/direct_messages"
                 style="@style/appSwitch"
                 android:layout_width="match_parent"
                 android:layout_marginHorizontal="@dimen/margin"
@@ -101,6 +101,7 @@
 
             <com.google.android.material.materialswitch.MaterialSwitch
                 style="@style/appSwitch"
+                android:id="@+id/receive_gifts"
                 android:layout_width="match_parent"
                 android:layout_marginHorizontal="@dimen/margin"
                 android:layout_height="wrap_content"
@@ -114,6 +115,7 @@
 
             <com.google.android.material.materialswitch.MaterialSwitch
                 style="@style/appSwitch"
+                android:id="@+id/private_entry"
                 android:layout_width="match_parent"
                 android:layout_marginHorizontal="@dimen/margin"
                 android:layout_height="wrap_content"
@@ -138,6 +140,7 @@
 
             <com.google.android.material.materialswitch.MaterialSwitch
                 style="@style/appSwitch"
+                android:id="@+id/reward_status"
                 android:layout_width="match_parent"
                 android:layout_marginHorizontal="@dimen/margin"
                 android:layout_height="wrap_content"
@@ -151,6 +154,7 @@
 
             <com.google.android.material.materialswitch.MaterialSwitch
                 style="@style/appSwitch"
+                android:id="@+id/seller_tools"
                 android:layout_width="match_parent"
                 android:layout_marginHorizontal="@dimen/margin"
                 android:layout_height="wrap_content"
@@ -162,8 +166,6 @@
                 android:layout_marginVertical="@dimen/half_margin"
                 app:dividerColor="@color/outline" />
 
-
-
             <TextView
                 style="@style/TitleSmall"
                 android:layout_width="match_parent"
@@ -173,9 +175,9 @@
                 android:alpha="0.7"
                 android:text="@string/content"/>
 
-
             <com.google.android.material.materialswitch.MaterialSwitch
                 style="@style/appSwitch"
+                android:id="@+id/enable_clips"
                 android:layout_width="match_parent"
                 android:layout_marginHorizontal="@dimen/margin"
                 android:layout_height="wrap_content"
@@ -189,6 +191,7 @@
 
             <com.google.android.material.materialswitch.MaterialSwitch
                 style="@style/appSwitch"
+                android:id="@+id/save_past_shows"
                 android:layout_width="match_parent"
                 android:layout_marginHorizontal="@dimen/margin"
                 android:layout_height="wrap_content"
@@ -200,7 +203,6 @@
                 android:layout_marginVertical="@dimen/half_margin"
                 app:dividerColor="@color/outline" />
 
-
             <TextView
                 style="@style/TitleSmall"
                 android:layout_width="match_parent"
@@ -210,9 +212,9 @@
                 android:alpha="0.7"
                 android:text="@string/other_settings"/>
 
-
             <com.google.android.material.materialswitch.MaterialSwitch
                 style="@style/appSwitch"
+                android:id="@+id/activity_status"
                 android:layout_width="match_parent"
                 android:layout_marginHorizontal="@dimen/margin"
                 android:layout_height="wrap_content"
@@ -226,6 +228,7 @@
 
             <com.google.android.material.materialswitch.MaterialSwitch
                 style="@style/appSwitch"
+                android:id="@+id/sync_phone_contact"
                 android:layout_width="match_parent"
                 android:layout_marginHorizontal="@dimen/margin"
                 android:layout_height="wrap_content"
@@ -239,6 +242,7 @@
 
             <com.google.android.material.materialswitch.MaterialSwitch
                 style="@style/appSwitch"
+                android:id="@+id/suggest_account"
                 android:layout_width="match_parent"
                 android:layout_marginHorizontal="@dimen/margin"
                 android:layout_height="wrap_content"
@@ -252,6 +256,7 @@
 
             <com.google.android.material.materialswitch.MaterialSwitch
                 style="@style/appSwitch"
+                android:id="@+id/haptic_feedback"
                 android:layout_width="match_parent"
                 android:layout_marginHorizontal="@dimen/margin"
                 android:layout_height="wrap_content"
@@ -263,12 +268,14 @@
                 android:layout_marginVertical="@dimen/half_margin"
                 app:dividerColor="@color/outline" />
 
-
         </LinearLayout>
-
 
     </androidx.core.widget.NestedScrollView>
 
-
+<io.bidswipe.app.ui.custom.LoaderView
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/loader"
+    android:visibility="gone"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
