@@ -119,8 +119,9 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="center"
+                        android:textAlignment="center"
                         android:hint="@string/enter_your_own_amount"
-                        android:inputType="textEmailAddress"
+                        android:inputType="number"
                         app:hintTextAppearance="@style/BodyLarge"
                         app:hintTextColor="@color/onSurface" />
 

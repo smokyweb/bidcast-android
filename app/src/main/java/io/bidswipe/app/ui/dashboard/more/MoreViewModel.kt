@@ -8,9 +8,13 @@ import io.bidswipe.app.network.Resource
 import io.bidswipe.app.network.repository.AuthRepository
 import io.bidswipe.app.network.repository.DashRepository
 import io.bidswipe.app.network.response.AboutUsResponse
+import io.bidswipe.app.network.response.CommonResponse
 import io.bidswipe.app.network.response.FAQResponse
+import io.bidswipe.app.network.response.GetPaymentCardsResponse
+import io.bidswipe.app.network.response.GetShippingAddressResponse
 import io.bidswipe.app.network.response.TermsConditionResponse
 import kotlinx.coroutines.launch
+import okhttp3.RequestBody
 import javax.inject.Inject
 
 @HiltViewModel
@@ -50,6 +54,36 @@ class MoreViewModel @Inject constructor(val repo: DashRepository) : ViewModel() 
 
     fun getFAQ() = viewModelScope.launch {
         _getFAQResponse.value = repo.getFAQ()
+    }
+
+    private var _addShippingAddressResponse = MutableLiveData<Resource<CommonResponse>>()
+    val addShippingAddressRepo: MutableLiveData<Resource<CommonResponse>>
+        get() = _addShippingAddressResponse
+
+    fun addShippingAddress(
+        type : RequestBody?,
+        name : RequestBody?,
+        phoneNumber : RequestBody?,
+        streetAddress : RequestBody?,
+        pinCode : RequestBody?
+    ) = viewModelScope.launch {
+        _addShippingAddressResponse.value = repo.addShippingAddress(type, name,phoneNumber,streetAddress,pinCode)
+    }
+
+    private var _getShippingAddressResponse = MutableLiveData<Resource<GetShippingAddressResponse>>()
+    val getShippingAddressRepo: MutableLiveData<Resource<GetShippingAddressResponse>>
+        get() = _getShippingAddressResponse
+
+    fun getShippingAddress() = viewModelScope.launch {
+        _getShippingAddressResponse.value = repo.getShippingAddress()
+    }
+    private var _getPaymentCardResponse = MutableLiveData<Resource<GetPaymentCardsResponse>>()
+    val getPaymentCardRepo: MutableLiveData<Resource<GetPaymentCardsResponse>>
+        get() = _getPaymentCardResponse
+
+    fun getPaymentCard(
+    ) = viewModelScope.launch {
+        _getPaymentCardResponse.value = repo.getPaymentCard()
     }
 
 }

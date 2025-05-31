@@ -25,9 +25,12 @@
         android:theme="@style/Theme.Bidswipe"
         tools:targetApi="31">
         <activity
-            android:name=".ui.dashboard.sellerProfile.SellerProfileActivity"
-            android:windowSoftInputMode="adjustResize"
+            android:name=".ui.dashboard.AddPaymentCardActivity"
             android:exported="false" />
+        <activity
+            android:name=".ui.dashboard.sellerProfile.SellerProfileActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".ui.dashboard.product.ProductDetailsActivity"
             android:exported="false" />

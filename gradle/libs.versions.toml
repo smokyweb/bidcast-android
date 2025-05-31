@@ -39,6 +39,7 @@ retrofit = "2.11.0"
 roundedimageview = "2.3.0"
 swipemenurecyclerview = "2.1.5"
 singledateandtimepicker = "2.2.7"
+stripeAndroid = "20.48.6"
 toasty = "1.5.2"
 annotation = "1.6.0"
 billingKtx = "7.0.0"
@@ -84,6 +85,7 @@ retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit
 permissionx = { module = "com.guolindev.permissionx:permissionx", version.ref = "permissionx" }
 picasso = { module = "com.squareup.picasso:picasso", version.ref = "picasso" }
 roundedimageview = { module = "com.makeramen:roundedimageview", version.ref = "roundedimageview" }
+stripe-android = { module = "com.stripe:stripe-android", version.ref = "stripeAndroid" }
 yuanwenhai-html-textview = { module = "com.github.YuanWenHai:html-textview", version.ref = "htmlTextviewVersion" }
 swipeMenuRecyclerView = { module = "com.github.aitsuki:SwipeMenuRecyclerView", version.ref = "swipemenurecyclerview" }
 singledateandtimepicker = { module = "com.github.florent37:singledateandtimepicker", version.ref = "singledateandtimepicker" }

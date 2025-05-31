@@ -41,11 +41,9 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
 
     suspend fun getHowToSellStep() = call { api.getHowToSellStep() }
 
-
     suspend fun getPrepareStep() = call { api.getPrepareStep() }
 
     suspend fun getFAQ() = call { api.getFAQ() }
-
 
     suspend fun storeScheduleShow(
         title: RequestBody?,
@@ -91,5 +89,26 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
     suspend fun notifyLiveUser(
         liveUserId : RequestBody?
     ) = call { api.notifyLiveUser(liveUserId) }
+
+    suspend fun getProductDetails(
+        productId : RequestBody?
+    ) = call { api.getProductDetails(productId) }
+
+    suspend fun addShippingAddress(
+        type : RequestBody?,
+        name : RequestBody?,
+        phoneNumber : RequestBody?,
+        streetAddress : RequestBody?,
+        pinCode : RequestBody?
+    ) = call { api.addShippingAddress(type,name,phoneNumber,streetAddress,pinCode) }
+
+    suspend fun getShippingAddress() = call { api.getShippingAddress() }
+
+    suspend fun addPaymentCard(
+        cardToken : RequestBody?
+    ) = call { api.addPaymentCard(cardToken) }
+
+    suspend fun getPaymentCard(
+    ) = call { api.getPaymentCard() }
 
 }

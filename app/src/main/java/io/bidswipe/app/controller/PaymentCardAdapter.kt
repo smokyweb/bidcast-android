@@ -2,15 +2,13 @@ package io.bidswipe.app.controller
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.core.net.toUri
 import io.bidswipe.app.base.BaseAdapter
-import io.bidswipe.app.base.BaseAdapter.BaseViewHolder
 import io.bidswipe.app.databinding.PaymentCardItemBinding
-import io.bidswipe.app.databinding.UploadImageItemBinding
 import io.bidswipe.app.interfaces.RecyclerClicks
+import io.bidswipe.app.network.response.GetPaymentCardsResponse
 
-class PaymentCardAdapter(mList: MutableList<String>, val mClicks: RecyclerClicks
-) : BaseAdapter<String?, PaymentCardItemBinding>(mList) {
+class PaymentCardAdapter(mList: MutableList<GetPaymentCardsResponse.Data?>, val mClicks: RecyclerClicks
+) : BaseAdapter<GetPaymentCardsResponse.Data?, PaymentCardItemBinding>(mList) {
 
     override fun bindView(inflater: LayoutInflater, parent: ViewGroup) =
         PaymentCardItemBinding.inflate(inflater, parent, false)
@@ -18,7 +16,7 @@ class PaymentCardAdapter(mList: MutableList<String>, val mClicks: RecyclerClicks
     override fun onBind(
         holder: BaseViewHolder<PaymentCardItemBinding>,
         position: Int,
-        item: String?
+        item: GetPaymentCardsResponse.Data?
     ) {
         with(holder) {
 
@@ -26,6 +24,16 @@ class PaymentCardAdapter(mList: MutableList<String>, val mClicks: RecyclerClicks
                 mClicks.itemClick(position)
             }
 
+            bind.cardNumber.text = buildString {
+                append("XXXX-XXXX-XXXX-")
+                append(item?.last4)
+            }
+
+            bind.expiryDate.text = buildString {
+                append(item?.expMonth)
+                append("/")
+                append(item?.expYear.toString().drop(2))
+            }
 
 
         }

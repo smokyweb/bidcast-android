@@ -48,8 +48,15 @@
                 tools:itemCount="3"
                 tools:listitem="@layout/payment_card_item" />
 
+            <io.bidswipe.app.ui.custom.NoDataView
+                android:id="@+id/noCardsData"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:title_text="No Cards Found"
+                android:visibility="gone"/>
+
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/save_draft"
+                android:id="@+id/addPaymentCard"
                 style="@style/appBtnOutline"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -73,6 +80,13 @@
                 tools:itemCount="3"
                 tools:listitem="@layout/shipping_address_item" />
 
+            <io.bidswipe.app.ui.custom.NoDataView
+                android:id="@+id/noAddressData"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:title_text="No Addresses Found"
+                android:visibility="gone"/>
+
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/addNewAddress"
                 style="@style/appBtnOutline"
@@ -84,5 +98,11 @@
         </LinearLayout>
 
     </androidx.core.widget.NestedScrollView>
+
+    <io.bidswipe.app.ui.custom.LoaderView
+        android:id="@+id/loader"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

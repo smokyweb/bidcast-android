@@ -103,7 +103,11 @@ class Header @JvmOverloads constructor(
         bind.backIcon.setOnClickListener(click)
     }
 
-    fun onMoreClick(click: OnClickListener) {
+    fun onMorePrimaryClick(click: OnClickListener) {
+        bind.primaryIcon.setOnClickListener(click)
+    }
+
+    fun onMoreSecondaryClick(click: OnClickListener) {
         bind.secondaryIcon.setOnClickListener(click)
     }
 

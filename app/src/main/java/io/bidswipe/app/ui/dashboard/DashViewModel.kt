@@ -13,7 +13,9 @@ import io.bidswipe.app.network.response.GetCategoryResponse
 import io.bidswipe.app.network.response.GetHowToSellResponse
 import io.bidswipe.app.network.response.GetLessonsResponse
 import io.bidswipe.app.network.response.GetMyShowResponse
+import io.bidswipe.app.network.response.GetPaymentCardsResponse
 import io.bidswipe.app.network.response.GetPrepareStepResponse
+import io.bidswipe.app.network.response.GetProductDetailsResponse
 import kotlinx.coroutines.launch
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -113,6 +115,40 @@ class DashViewModel @Inject constructor(val repo: DashRepository) : ViewModel() 
 	) = viewModelScope.launch {
 		_getLiveShowResponse.value = repo.getLiveShow()
 	}
+
+	private var _getProductDetailsResponse = MutableLiveData<Resource<GetProductDetailsResponse>>()
+	val getProductDetailsRepo: MutableLiveData<Resource<GetProductDetailsResponse>>
+		get() = _getProductDetailsResponse
+
+	fun getProductDetails(
+		productId : RequestBody?
+	) = viewModelScope.launch {
+		_getProductDetailsResponse.value = repo.getProductDetails(productId)
+	}
+
+	private var _makeOfferResponse = MutableLiveData<Resource<CommonResponse>>()
+	val makeOfferRepo: MutableLiveData<Resource<CommonResponse>>
+		get() = _makeOfferResponse
+
+	fun makeOffer(
+		amount : RequestBody?,
+		productId : RequestBody?
+	) = viewModelScope.launch {
+		_makeOfferResponse.value = repo.makeOffer(amount,productId)
+	}
+
+	private var _addPaymentCardResponse = MutableLiveData<Resource<CommonResponse>>()
+	val addPaymentCardRepo: MutableLiveData<Resource<CommonResponse>>
+		get() = _addPaymentCardResponse
+
+	fun addPaymentCard(
+		cardToken : RequestBody?
+	) = viewModelScope.launch {
+		_addPaymentCardResponse.value = repo.addPaymentCard(cardToken)
+	}
+
+
+
 
 	
 }

@@ -34,14 +34,14 @@
         android:orientation="vertical">
 
         <TextView
-            android:id="@+id/title"
+            android:id="@+id/cardNumber"
             style="@style/TitleLarge"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="**** **** 4242" />
 
         <TextView
-            android:id="@+id/sub_title"
+            android:id="@+id/expiryDate"
             style="@style/BodyLarge"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

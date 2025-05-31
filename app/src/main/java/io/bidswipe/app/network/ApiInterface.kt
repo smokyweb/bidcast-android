@@ -9,8 +9,11 @@ import io.bidswipe.app.network.response.GetCategoryResponse
 import io.bidswipe.app.network.response.GetHowToSellResponse
 import io.bidswipe.app.network.response.GetLessonsResponse
 import io.bidswipe.app.network.response.GetMyShowResponse
+import io.bidswipe.app.network.response.GetPaymentCardsResponse
 import io.bidswipe.app.network.response.GetPrepareStepResponse
+import io.bidswipe.app.network.response.GetProductDetailsResponse
 import io.bidswipe.app.network.response.GetProductsResponse
+import io.bidswipe.app.network.response.GetShippingAddressResponse
 import io.bidswipe.app.network.response.GetUserProfileResponse
 import io.bidswipe.app.network.response.LoginResponse
 import io.bidswipe.app.network.response.SignUpResponse
@@ -171,6 +174,37 @@ interface ApiInterface {
 	suspend fun notifyLiveUser(
 		@Part("live_user_id") userId: RequestBody?
 	): CommonResponse
+
+	@Multipart
+	@POST("api/fetch-product")
+	suspend fun getProductDetails(
+		@Part("product_id") productId: RequestBody?
+	): GetProductDetailsResponse
+
+	@Multipart
+	@POST("api/upsert-shipping-address")
+	suspend fun addShippingAddress(
+		@Part("type") type: RequestBody?,
+		@Part("name") name: RequestBody?,
+		@Part("phone_number") phoneNumber: RequestBody?,
+		@Part("street_address") streetAddress : RequestBody?,
+		@Part("pincode")  pinCode : RequestBody?
+	): CommonResponse
+
+	@GET("api/get-shipping-address")
+	suspend fun getShippingAddress(
+	): GetShippingAddressResponse
+
+	@Multipart
+	@POST("api/add-card")
+	suspend fun addPaymentCard(
+		@Part("card_token") cardToken: RequestBody?,
+	): CommonResponse
+
+	@GET("api/get-card")
+	suspend fun getPaymentCard(
+	): GetPaymentCardsResponse
+
 
 }
 
