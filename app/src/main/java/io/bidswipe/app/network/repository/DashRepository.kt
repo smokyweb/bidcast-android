@@ -45,6 +45,14 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
 
     suspend fun getFAQ() = call { api.getFAQ() }
 
+
+    suspend fun contactUs(
+        name : RequestBody?,
+        email: RequestBody?,
+        subject: RequestBody?,
+        message : RequestBody?
+    ) = call { api.contactUs(name,email,subject,message) }
+
     suspend fun storeScheduleShow(
         title: RequestBody?,
         date: RequestBody?,

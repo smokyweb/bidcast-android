@@ -67,7 +67,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/half_margin"
-                android:layout_marginVertical="@dimen/half_margin"
+                android:layout_marginTop="@dimen/margin"
                 android:text="@string/full_name" />
 
             <com.google.android.material.textfield.TextInputLayout
@@ -75,7 +75,7 @@
                 android:layout_width="match_parent"
                 android:layout_marginHorizontal="@dimen/half_margin"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/half_margin">
+                android:layout_marginBottom="@dimen/margin">
 
                 <com.google.android.material.textfield.MaterialAutoCompleteTextView
                     android:id="@+id/firstName"
@@ -92,7 +92,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/half_margin"
-                android:layout_marginVertical="@dimen/half_margin"
                 android:text="@string/email" />
 
             <com.google.android.material.textfield.TextInputLayout
@@ -100,13 +99,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/half_margin"
-                android:layout_marginBottom="@dimen/half_margin">
+                android:layout_marginBottom="@dimen/margin">
 
                 <com.google.android.material.textfield.MaterialAutoCompleteTextView
                     android:id="@+id/email"
                     style="@style/inputTextStyle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:enabled="false"
                     android:hint="@string/enter_your_email"
                     android:inputType="textEmailAddress" />
 
@@ -117,7 +117,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/half_margin"
-                android:layout_marginVertical="@dimen/half_margin"
                 android:text="@string/subject" />
 
             <com.google.android.material.textfield.TextInputLayout
@@ -125,10 +124,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/half_margin"
-                android:layout_marginBottom="@dimen/half_margin">
+                android:layout_marginBottom="@dimen/margin">
 
                 <com.google.android.material.textfield.MaterialAutoCompleteTextView
-                    android:id="@+id/password"
+                    android:id="@+id/subject"
                     style="@style/inputTextStyle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -142,7 +141,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/half_margin"
-                android:layout_marginVertical="@dimen/half_margin"
                 android:text="@string/messages" />
 
         <com.google.android.material.textfield.TextInputLayout
@@ -220,21 +218,23 @@
 
             </LinearLayout>
 
-
-
-
         </com.google.android.material.card.MaterialCardView>
-
 
     </LinearLayout>
 
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/continueBtn"
+        android:id="@+id/sendMessage"
         style="@style/appBtn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/margin"
         android:text="Send Message"
         app:layout_constraintBottom_toBottomOf="parent" />
+
+    <io.bidswipe.app.ui.custom.LoaderView
+        android:id="@+id/loader"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

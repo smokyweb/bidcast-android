@@ -114,7 +114,16 @@ interface ApiInterface {
 	
 	@GET("api/get-FAQ")
 	suspend fun getFAQ(): FAQResponse
-	
+
+	@Multipart
+	@POST("api/contact-us")
+	suspend fun contactUs(
+		@Part("name") name: RequestBody?,
+		@Part("email") email: RequestBody?,
+		@Part("subject") subject : RequestBody?,
+		@Part("message") message : RequestBody?
+	): CommonResponse
+
 	@Multipart
 	@POST("api/store-schedule-show")
 	suspend fun storeScheduleShow(
@@ -218,7 +227,7 @@ interface ApiInterface {
 	@GET("api/get-card")
 	suspend fun getPaymentCard(
 	): GetPaymentCardsResponse
-	
+
 	
 }
 

@@ -77,6 +77,7 @@ class FAQFragment : BaseFragment<MoreViewModel, FragmentFAQBinding>() {
         bind.loader.isVisible = true
 
         viewModel.getFAQ()
+
         viewModel.getFAQRepo.observe (viewLifecycleOwner){
             when (it) {
                 is Resource.Success -> {
@@ -119,7 +120,6 @@ class FAQFragment : BaseFragment<MoreViewModel, FragmentFAQBinding>() {
 
             }
         }
-
 
     }
 

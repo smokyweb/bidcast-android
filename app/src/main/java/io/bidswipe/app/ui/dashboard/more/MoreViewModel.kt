@@ -56,6 +56,19 @@ class MoreViewModel @Inject constructor(val repo: DashRepository) : ViewModel() 
         _getFAQResponse.value = repo.getFAQ()
     }
 
+    private var _contactUsResponse = MutableLiveData<Resource<CommonResponse>>()
+    val contactUsRepo: MutableLiveData<Resource<CommonResponse>>
+        get() = _contactUsResponse
+
+    fun contactUs(
+        name : RequestBody?,
+        email: RequestBody?,
+        subject: RequestBody?,
+        message : RequestBody?
+    ) = viewModelScope.launch {
+        _contactUsResponse.value = repo.contactUs(name,email,subject,message)
+    }
+
     private var _addShippingAddressResponse = MutableLiveData<Resource<CommonResponse>>()
     val addShippingAddressRepo: MutableLiveData<Resource<CommonResponse>>
         get() = _addShippingAddressResponse
