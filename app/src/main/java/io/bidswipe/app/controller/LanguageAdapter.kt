@@ -23,7 +23,7 @@ class LanguageAdapter(private val languages: List<LangModel?>,
             bind.root.isChecked = isSelected
 
             bind.root.addOnCheckedStateChangedListener { _, _ ->
-                mClicks.itemClick(position, "")
+                mClicks.itemClick(position)
             }
         }
     }

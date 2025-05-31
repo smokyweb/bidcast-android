@@ -39,9 +39,7 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
 		override fun itemClick(pos: Int, status: String?) {
 			
 			when (status) {
-				
 				"user" -> {
-					
 					startActivity(Intent(mCtx, SellerProfileActivity::class.java).putExtra("userId",
 						showList[pos]?.userId.toString()
 					))

@@ -9,6 +9,7 @@ import io.bidswipe.app.network.response.GetCategoryResponse
 import io.bidswipe.app.network.response.GetHowToSellResponse
 import io.bidswipe.app.network.response.GetLessonsResponse
 import io.bidswipe.app.network.response.GetMyShowResponse
+import io.bidswipe.app.network.response.GetOffersResponse
 import io.bidswipe.app.network.response.GetPaymentCardsResponse
 import io.bidswipe.app.network.response.GetPrepareStepResponse
 import io.bidswipe.app.network.response.GetProductDetailsResponse
@@ -18,6 +19,7 @@ import io.bidswipe.app.network.response.GetUserProfileResponse
 import io.bidswipe.app.network.response.LoginResponse
 import io.bidswipe.app.network.response.SignUpResponse
 import io.bidswipe.app.network.response.TermsConditionResponse
+import io.bidswipe.app.network.response.UpdateOfferResponse
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.http.GET
@@ -103,108 +105,120 @@ interface ApiInterface {
 		@Part("status") status: RequestBody?,
 		@Part productImages: List<MultipartBody.Part?>?
 	): CommonResponse
-
+	
 	@GET("api/how-to-sell")
 	suspend fun getHowToSellStep(): GetHowToSellResponse
-
+	
 	@GET("api/get-prepare")
-	suspend fun getPrepareStep() : GetPrepareStepResponse
-
+	suspend fun getPrepareStep(): GetPrepareStepResponse
+	
 	@GET("api/get-FAQ")
-	suspend fun getFAQ() : FAQResponse
-
+	suspend fun getFAQ(): FAQResponse
+	
 	@Multipart
 	@POST("api/store-schedule-show")
 	suspend fun storeScheduleShow(
 		@Part("title") title: RequestBody?,
 		@Part("date") date: RequestBody?,
 		@Part("time") time: RequestBody?,
-		@Part("category_id") categoryId : RequestBody?,
-		@Part("auction_type_id")  auctionTypeId : RequestBody?,
+		@Part("category_id") categoryId: RequestBody?,
+		@Part("auction_type_id") auctionTypeId: RequestBody?,
 		@Part thumbnails: List<MultipartBody.Part?>?,
 		@Part("product_ids[]") productIds: List<Int?>
 	): CommonResponse
-
+	
 	@GET("api/get-auction-type")
 	suspend fun getAuctionType(): GetAuctionTypeResponse
-
+	
 	@Multipart
 	@POST("api/get-all-tips")
 	suspend fun getAllTips(
 		@Part("type") type: RequestBody?
-		): GetAllTipsResponse
-
-
+	): GetAllTipsResponse
+	
+	
 	@POST("api/get-user-product")
 	suspend fun getUserProducts(
 	): GetProductsResponse
-
+	
 	@Multipart
 	@POST("api/get-my-schedule-show")
 	suspend fun getMyScheduledShow(
 		@Part("type") type: RequestBody?
 	): GetMyShowResponse
-
+	
 	@Multipart
 	@POST("api/get-profile-by-id")
 	suspend fun getProfileById(
 		@Part("id") userId: RequestBody?
 	): GetUserProfileResponse
-
+	
 	@Multipart
 	@POST("api/follow-unfollow")
 	suspend fun followUser(
 		@Part("following_id") userId: RequestBody?
 	): CommonResponse
-
+	
 	@Multipart
 	@POST("api/offer/make")
 	suspend fun makeOffer(
 		@Part("amount") amount: RequestBody?,
 		@Part("product_id") productId: RequestBody?
 	): CommonResponse
-
-
+	
+	@Multipart
+	@POST("api/offer/lists")
+	suspend fun offerList(
+		@Part("page") page: Int
+	): GetOffersResponse
+	
+	@Multipart
+	@POST("api/offer/update-status")
+	suspend fun offerUpdateStatus(
+		@Part("offer_id") offerId: RequestBody?,
+		@Part("status") status: RequestBody?
+	): UpdateOfferResponse
+	
 	@POST("api/get-live-show")
 	suspend fun getLiveShow(
 	): GetMyShowResponse
-
+	
 	@Multipart
 	@POST("api/notify-live-user")
 	suspend fun notifyLiveUser(
 		@Part("live_user_id") userId: RequestBody?
 	): CommonResponse
-
+	
 	@Multipart
 	@POST("api/fetch-product")
 	suspend fun getProductDetails(
 		@Part("product_id") productId: RequestBody?
 	): GetProductDetailsResponse
-
+	
 	@Multipart
 	@POST("api/upsert-shipping-address")
 	suspend fun addShippingAddress(
 		@Part("type") type: RequestBody?,
 		@Part("name") name: RequestBody?,
 		@Part("phone_number") phoneNumber: RequestBody?,
-		@Part("street_address") streetAddress : RequestBody?,
-		@Part("pincode")  pinCode : RequestBody?
+		@Part("street_address") streetAddress: RequestBody?,
+		@Part("pincode") pinCode: RequestBody?
 	): CommonResponse
-
+	
 	@GET("api/get-shipping-address")
 	suspend fun getShippingAddress(
 	): GetShippingAddressResponse
-
+	
 	@Multipart
 	@POST("api/add-card")
 	suspend fun addPaymentCard(
 		@Part("card_token") cardToken: RequestBody?,
 	): CommonResponse
-
+	
 	@GET("api/get-card")
 	suspend fun getPaymentCard(
 	): GetPaymentCardsResponse
-
-
+	
+	
 }
 

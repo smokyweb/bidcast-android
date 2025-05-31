@@ -252,9 +252,11 @@
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/follow"
                     style="@style/appBtn"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
                     android:layout_height="wrap_content"
                     android:paddingHorizontal="32dp"
+                    app:cornerRadius="50dp"
                     android:text="@string/follow" />
 
                 <com.google.android.material.button.MaterialButton
@@ -267,17 +269,17 @@
                     android:backgroundTint="@color/secondary"
                     android:paddingHorizontal="@dimen/padding"
                     android:text="@string/messages"
-                    app:cornerRadius="18dp" />
+                    app:cornerRadius="50dp" />
 
                 <com.google.android.material.card.MaterialCardView
                     android:id="@+id/icon_card"
                     style="@style/cardStyle"
                     android:layout_width="48dp"
                     android:layout_height="48dp"
-                    android:backgroundTint="@color/background"
+                    android:backgroundTint="@color/outline"
                     app:cardCornerRadius="100dp"
                     app:cardElevation="0dp"
-                    app:strokeWidth="1dp">
+                    app:strokeWidth="1.5dp">
 
                     <TextView
                         android:id="@+id/icon"

@@ -75,7 +75,7 @@ class SellerProfileFragment : BaseFragment<SellerViewModel,FragmentSellerProfile
                     bind.bio.text = mData?.bio ?:""
 
                     if (mData?.isFollowing == true){
-                        bind.follow.setBackgroundColor(ContextCompat.getColor(mCtx,R.color.background))
+                        bind.follow.setBackgroundColor(ContextCompat.getColor(mCtx,R.color.outline))
                         bind.follow.setTextColor(ContextCompat.getColor(mCtx,R.color.onSurface))
                         bind.follow.text = "Unfollow"
                     }else{

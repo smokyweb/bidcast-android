@@ -29,9 +29,10 @@
 				app:cardElevation="0dp">
 
 				<androidx.appcompat.widget.AppCompatImageView
-					android:id="@+id/icon"
+					android:id="@+id/user_image"
 					android:layout_width="match_parent"
 					android:layout_height="match_parent"
+					android:scaleType="centerCrop"
 					android:src="@drawable/user_image" />
 
 			</com.google.android.material.card.MaterialCardView>
@@ -44,7 +45,7 @@
 				android:orientation="vertical">
 
 				<TextView
-					android:id="@+id/title"
+					android:id="@+id/user_name"
 					style="@style/TitleLarge"
 					android:layout_width="match_parent"
 					android:layout_height="wrap_content"
@@ -60,7 +61,7 @@
 			</LinearLayout>
 
 			<TextView
-				android:id="@+id/next"
+				android:id="@+id/offer_price"
 				style="@style/TitleLarge"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
@@ -85,9 +86,10 @@
 				app:cardElevation="0dp">
 
 				<androidx.appcompat.widget.AppCompatImageView
+					android:id="@+id/productImage"
 					android:layout_width="match_parent"
 					android:layout_height="match_parent"
-					android:scaleType="fitXY"
+					android:scaleType="centerCrop"
 					android:src="@drawable/product_img" />
 
 			</com.google.android.material.card.MaterialCardView>
@@ -101,6 +103,7 @@
 				android:orientation="vertical">
 
 				<TextView
+					android:id="@+id/product_nmae"
 					style="@style/TitleLarge"
 					android:layout_width="match_parent"
 					android:layout_height="wrap_content"
@@ -147,8 +150,19 @@
 				android:paddingHorizontal="@dimen/margin"
 				android:text="Accept" />
 
-
 		</LinearLayout>
+
+		<com.google.android.material.button.MaterialButton
+			android:id="@+id/status"
+			style="@style/appBtn"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_margin="@dimen/margin"
+			android:backgroundTint="@color/successContainer"
+			android:textColor="@color/success"
+			android:paddingHorizontal="@dimen/margin"
+			android:visibility="gone"
+			android:text="Accepted" />
 
 	</LinearLayout>
 

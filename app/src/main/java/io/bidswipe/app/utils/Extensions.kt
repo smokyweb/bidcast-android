@@ -172,7 +172,7 @@ fun Fragment.intent(): Intent {
 fun Resource.Error.parse(
 	mCtx : Context,
 	tag : String,
-	mClicks : AlertClicks,
+	mClicks : AlertClicks?=null,
 	showSecondary : Boolean = false,
 	title : String = "Error",
 	showAlert : Boolean = true,
@@ -189,7 +189,7 @@ fun Resource.Error.parse(
 		e.localizedMessage?.asCapital() ?: "No Data Found"
 	}
 
-	if (this.isNetworkError) Alerts.log(tag , "ERROR : \n${this.errorCode}")
+	if (this.isNetworkError) Alerts.log(tag, "ERROR : \n${this.errorCode}")
 
 	val clicks = if (this.errorResponse?.errorType == "unauthorized" || this.errorResponse?.errorType == "token_invalid") {
 		object : AlertClicks {
@@ -208,7 +208,16 @@ fun Resource.Error.parse(
 			}
 		}
 	} else {
-		mClicks
+			mClicks?:object : AlertClicks {
+				override fun primaryClick(dialog: AppBottomSheet) {
+					dialog.dismiss()
+				}
+				
+				override fun secondaryClick(dialog: AppBottomSheet) {
+					dialog.dismiss()
+					
+				}
+			}
 	}
 
 	if (showAlert) {

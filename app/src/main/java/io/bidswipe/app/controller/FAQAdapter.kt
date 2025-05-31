@@ -31,7 +31,7 @@ class FAQAdapter (mList: MutableList<FAQResponse.Data?>, private val mClicks: Re
                 bind.answer.text = Html.fromHtml(item?.answer)
 
                 bind.root.setOnClickListener {
-                    mClicks.itemClick(position , "")
+                    mClicks.itemClick(position )
                 }
 
                 if (item?.selected == true) {

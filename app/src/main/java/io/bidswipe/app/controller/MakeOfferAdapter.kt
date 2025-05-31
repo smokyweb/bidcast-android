@@ -23,7 +23,11 @@ class MakeOfferAdapter(
 		item: OfferModel?
 	) {
 		with(holder) {
-
+			
+			bind.root.setOnClickListener {
+				mClicks.itemClick(position)
+			}
+			
 			if (item?.selected == true){
 				bind.root.strokeWidth = 2
                 bind.root.strokeColor = ContextCompat.getColor(mCtx,R.color.primary)
@@ -31,9 +35,6 @@ class MakeOfferAdapter(
 				bind.root.strokeWidth = 0
 			}
 			
-			bind.root.setOnClickListener {
-				mClicks.itemClick(position)
-			}
 			bind.amount.text = item?.amount?.asMoney()
 			bind.discount.text = item?.percent
 		}

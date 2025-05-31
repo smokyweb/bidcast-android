@@ -48,7 +48,9 @@ data class GetProductDetailsResponse(
         @SerializedName("user")
         val user: User?,
         @SerializedName("user_id")
-        val userId: Int?
+        val userId: Int?,
+        @SerializedName("created_at")
+        val createdAt: String?,
     ) {
         @Keep
         data class Offer(

@@ -23,9 +23,7 @@ class HomeAdapter (val mList: MutableList<GetMyShowResponse.Data?>, val mClick: 
         with(holder) {
 
             bind.userInfo.setOnClickListener{
-
                 mClick.itemClick(position,"user")
-
             }
 
             bind.userName.text = item?.user?.name.toString()

@@ -109,7 +109,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:layout_marginStart="@dimen/half_margin"
-                    android:text="$1,299" />
+                    android:text="--" />
             </LinearLayout>
 
             <LinearLayout
@@ -136,7 +136,7 @@
                     android:layout_marginStart="@dimen/half_margin"
                     android:layout_weight="1"
                     android:gravity="end"
-                    android:text="Like New" />
+                    android:text="--" />
             </LinearLayout>
 
             <LinearLayout
@@ -163,7 +163,7 @@
                     android:layout_marginStart="@dimen/half_margin"
                     android:layout_weight="1"
                     android:gravity="end"
-                    android:text="New York, NY" />
+                    android:text="--" />
             </LinearLayout>
 
             <LinearLayout
@@ -190,7 +190,7 @@
                     android:layout_marginStart="@dimen/half_margin"
                     android:layout_weight="1"
                     android:gravity="end"
-                    android:text="2 days ago" />
+                    android:text="--" />
             </LinearLayout>
 
 
