@@ -4,7 +4,6 @@ import io.bidswipe.app.base.BaseRepository
 import io.bidswipe.app.network.ApiInterface
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
-import retrofit2.http.Part
 import javax.inject.Inject
 
 class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRepository(){
@@ -94,12 +93,12 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
     suspend fun offerList(
         page: Int
     ) = call { api.offerList(page) }
-    
+
     suspend fun offerUpdateStatus(
         offerId : RequestBody?,
         status : RequestBody?
     ) = call { api.offerUpdateStatus(offerId,status) }
-    
+
  suspend fun getLiveShow(
     ) = call { api.getLiveShow() }
 
@@ -127,5 +126,36 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
 
     suspend fun getPaymentCard(
     ) = call { api.getPaymentCard() }
+suspend fun settingsList() = call { api.settingsList() }
+
+	suspend fun settingsStore(
+		countryOfResidence: RequestBody?,
+		directMessage: RequestBody?,
+		receiveGifts: RequestBody?,
+		enablePrivateEntry: RequestBody?,
+		showRewardStatus: RequestBody?,
+		showSellerTools: RequestBody?,
+		enableClips: RequestBody?,
+		savePastShows: RequestBody?,
+		activityStatus: RequestBody?,
+		syncPhoneContacts: RequestBody?,
+		suggestMyAccount: RequestBody?,
+		hapticFeedback: RequestBody?,
+	) = call {
+		api.settingsStore(
+			countryOfResidence,
+			directMessage,
+			receiveGifts,
+			enablePrivateEntry,
+			showRewardStatus,
+			showSellerTools,
+			enableClips,
+			savePastShows,
+			activityStatus,
+			syncPhoneContacts,
+			suggestMyAccount,
+			hapticFeedback
+		)
+	}
 
 }

@@ -2,17 +2,414 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
     tools:context=".ui.dashboard.sellerProfile.SellerProfileActivity">
 
-    <androidx.fragment.app.FragmentContainerView
-        android:id="@+id/fragmentContainer"
-        android:name="androidx.navigation.fragment.NavHostFragment"
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:defaultNavHost="true"
-        app:navGraph="@navigation/seller_nav_graph" />
+        android:fitsSystemWindows="true"
+        tools:context=".ui.dashboard.sellerProfile.SellerProfileActivity">
+
+        <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/app_bar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fitsSystemWindows="true">
+
+            <com.google.android.material.appbar.CollapsingToolbarLayout
+                android:id="@+id/toolbar_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fitsSystemWindows="true"
+                app:layout_scrollFlags="scroll|exitUntilCollapsed"
+                app:toolbarId="@+id/toolbar"
+                app:contentScrim="@color/surface"
+                app:statusBarScrim="@color/surface"
+                >
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:elevation="2dp">
+
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="75dp"
+                            android:orientation="vertical"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent">
+
+                            <androidx.appcompat.widget.AppCompatImageView
+                                android:id="@+id/appCompatImageView"
+                                android:layout_width="match_parent"
+                                android:layout_height="0dp"
+                                android:scaleType="fitXY"
+                                android:src="@drawable/studio"
+                                app:layout_constraintDimensionRatio="7:4"
+                                app:layout_constraintTop_toTopOf="parent" />
+
+                        </androidx.constraintlayout.widget.ConstraintLayout>
+
+                        <com.google.android.material.card.MaterialCardView
+                            android:id="@+id/backBtnCard"
+                            style="@style/cardStyle"
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
+                            android:layout_marginStart="@dimen/margin"
+                            android:layout_marginTop="32dp"
+                            android:alpha="0.7"
+                            android:backgroundTint="@color/background"
+                            app:cardCornerRadius="100dp"
+                            app:cardElevation="0dp"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:strokeWidth="1dp">
+
+                            <androidx.appcompat.widget.AppCompatImageView
+                                android:id="@+id/backBtn"
+                                style="@style/TitleLarge"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:gravity="center"
+                                android:padding="@dimen/half_margin"
+                                android:src="@drawable/ic_back" />
+
+                        </com.google.android.material.card.MaterialCardView>
+
+                        <com.google.android.material.card.MaterialCardView
+                            android:id="@+id/materialCardView"
+                            style="@style/cardStyle"
+                            android:layout_width="120dp"
+                            android:layout_height="120dp"
+                            android:layout_margin="@dimen/margin"
+                            app:cardBackgroundColor="@color/onPrimary"
+                            app:cardCornerRadius="120dp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:strokeColor="@color/background"
+                            app:strokeWidth="4dp">
+
+                            <androidx.appcompat.widget.AppCompatImageView
+                                android:id="@+id/userImage"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_gravity="center"
+                                android:scaleType="centerCrop"
+                                android:src="@drawable/user_image" />
+
+                        </com.google.android.material.card.MaterialCardView>
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="@dimen/margin"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:id="@+id/name"
+                                style="@style/TitleLarge"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="Sarah Wlliams"
+                                android:textStyle="bold"
+                                app:layout_constraintBottom_toTopOf="@+id/view"
+                                app:layout_constraintEnd_toEndOf="@+id/view"
+                                app:layout_constraintStart_toStartOf="@+id/view" />
+
+                            <TextView
+                                android:id="@+id/userName"
+                                style="@style/TitleSmall"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="\@sarahwilliams"
+                                android:textColor="@color/tertiary"
+                                app:layout_constraintEnd_toEndOf="@+id/view"
+                                app:layout_constraintStart_toStartOf="@+id/view"
+                                app:layout_constraintTop_toBottomOf="@+id/view" />
+
+                        </LinearLayout>
+
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:id="@+id/secondary"
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:layout_margin="@dimen/half_margin"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent">
+
+                            <androidx.appcompat.widget.AppCompatImageView
+                                android:id="@+id/notificationIcon"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:background="?selectableItemBackgroundBorderless"
+                                android:padding="4dp"
+                                android:src="@drawable/notification"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent"
+                                app:tint="@color/onBackground" />
+
+                        </androidx.constraintlayout.widget.ConstraintLayout>
+
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:id="@+id/primary"
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:layout_margin="@dimen/half_margin"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent">
+
+                            <androidx.appcompat.widget.AppCompatImageView
+                                android:id="@+id/primaryIcon"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:padding="4dp"
+                                android:src="@drawable/ic_share"
+                                android:visibility="visible"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintTop_toTopOf="parent"
+                                app:tint="@color/onBackground" />
+
+                        </androidx.constraintlayout.widget.ConstraintLayout>
+
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:layout_margin="@dimen/half_margin"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent">
+
+                            <androidx.appcompat.widget.AppCompatImageView
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:padding="4dp"
+                                android:src="@drawable/ic_detail"
+                                android:visibility="visible"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintTop_toTopOf="parent"
+                                app:tint="@color/onBackground" />
+
+                        </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="@dimen/margin"
+                        android:layout_marginTop="@dimen/half_margin"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/followers"
+                            style="@style/BodyLarge"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="24k Followers"
+                            app:layout_constraintBottom_toTopOf="@+id/view"
+                            app:layout_constraintEnd_toEndOf="@+id/view"
+                            app:layout_constraintStart_toStartOf="@+id/view" />
+
+                        <TextView
+                            android:id="@+id/following"
+                            style="@style/BodyLarge"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/margin"
+                            android:text="856 Following"
+                            app:layout_constraintEnd_toEndOf="@+id/view"
+                            app:layout_constraintStart_toStartOf="@+id/view"
+                            app:layout_constraintTop_toBottomOf="@+id/view" />
+
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/bio"
+                        style="@style/BodyMedium"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/margin"
+                        android:text="@string/professional_photographer_specializing_in_portrait_and_wedding_photography_available_for_bookings_worldwide"
+                        app:layout_constraintEnd_toEndOf="@+id/view"
+                        app:layout_constraintStart_toStartOf="@+id/view"
+                        app:layout_constraintTop_toBottomOf="@+id/view" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/margin"
+                        android:orientation="horizontal">
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/follow"
+                            style="@style/appBtn"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:paddingHorizontal="32dp"
+                            android:text="@string/follow"
+                            app:cornerRadius="50dp" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/accept"
+                            style="@style/appBtn"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginHorizontal="@dimen/half_margin"
+                            android:layout_weight="1"
+                            android:backgroundTint="@color/secondary"
+                            android:paddingHorizontal="@dimen/padding"
+                            android:text="@string/messages"
+                            app:cornerRadius="50dp" />
+
+                        <com.google.android.material.card.MaterialCardView
+                            android:id="@+id/icon_card"
+                            style="@style/cardStyle"
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
+                            android:backgroundTint="@color/outline"
+                            app:cardCornerRadius="100dp"
+                            app:cardElevation="0dp"
+                            app:strokeWidth="1.5dp">
+
+                            <TextView
+                                android:id="@+id/icon"
+                                style="@style/TitleLarge"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:gravity="center"
+                                android:text="$" />
+
+                        </com.google.android.material.card.MaterialCardView>
+
+                    </LinearLayout>
+                </LinearLayout>
+
+                <com.google.android.material.appbar.MaterialToolbar
+                    android:id="@+id/toolbar"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_collapseMode="pin"
+                    app:navigationIcon="@null"
+                    android:visibility="gone"
+                    app:popupTheme="@style/Theme.Bidswipe.PopupOverlay">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:orientation="horizontal"
+                        android:padding="@dimen/half_margin"
+                        android:layout_height="wrap_content">
+
+                        <androidx.appcompat.widget.AppCompatImageView
+                            android:id="@+id/backButton"
+                            android:layout_width="38dp"
+                            android:layout_height="38dp"
+                            android:scaleType="centerCrop"
+                            app:tint="@color/onSurface"
+                            android:src="@drawable/ic_back" />
+
+                        <com.makeramen.roundedimageview.RoundedImageView
+                            android:id="@+id/userImage2"
+                            android:layout_width="38dp"
+                            android:layout_height="38dp"
+                            android:layout_gravity="center"
+                            android:scaleType="centerCrop"
+                            android:layout_marginHorizontal="@dimen/half_margin"
+                            app:riv_corner_radius="50dp"
+                            android:src="@drawable/user_image" />
+                        <TextView
+                            android:id="@+id/name1"
+                            style="@style/TitleLarge"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:text="Sarah Wlliams"
+                            android:textStyle="bold"
+                            android:layout_weight="1"
+                           />
+                    </LinearLayout>
+
+                </com.google.android.material.appbar.MaterialToolbar>
+
+            </com.google.android.material.appbar.CollapsingToolbarLayout>
+
+            <com.google.android.material.tabs.TabLayout
+                android:id="@+id/tab_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/surface"
+                app:tabIndicatorColor="@color/secondary"
+                app:tabMode="fixed"
+                app:tabSelectedTextAppearance="@style/TitleMedium"
+                app:tabSelectedTextColor="@color/secondary"
+                app:tabTextAppearance="@style/TitleSmall">
+
+                <com.google.android.material.tabs.TabItem
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/shop" />
+
+                <com.google.android.material.tabs.TabItem
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/shows" />
+
+                <com.google.android.material.tabs.TabItem
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/reviews" />
+
+                <com.google.android.material.tabs.TabItem
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/clips" />
+
+            </com.google.android.material.tabs.TabLayout>
+
+            <View
+                android:id="@+id/view"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/outlineVariant"
+                app:layout_constraintTop_toBottomOf="@id/tab_layout" />
+
+        </com.google.android.material.appbar.AppBarLayout>
+
+        <androidx.viewpager2.widget.ViewPager2
+            android:id="@+id/pager"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+    <io.bidswipe.app.ui.custom.LoaderView
+        android:id="@+id/loader"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

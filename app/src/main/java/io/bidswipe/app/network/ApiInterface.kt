@@ -17,6 +17,7 @@ import io.bidswipe.app.network.response.GetProductsResponse
 import io.bidswipe.app.network.response.GetShippingAddressResponse
 import io.bidswipe.app.network.response.GetUserProfileResponse
 import io.bidswipe.app.network.response.LoginResponse
+import io.bidswipe.app.network.response.SettingListResponse
 import io.bidswipe.app.network.response.SignUpResponse
 import io.bidswipe.app.network.response.TermsConditionResponse
 import io.bidswipe.app.network.response.UpdateOfferResponse
@@ -227,7 +228,26 @@ interface ApiInterface {
 	@GET("api/get-card")
 	suspend fun getPaymentCard(
 	): GetPaymentCardsResponse
+@GET("api/setting/list")
+	suspend fun settingsList(
+	): SettingListResponse
 
+	@Multipart
+	@POST("api/setting/store")
+	suspend fun settingsStore(
+		@Part("country_of_residence")countryOfResidence:RequestBody?,
+		@Part("direct_message")directMessage:RequestBody?,
+		@Part("receive_gifts")receiveGifts:RequestBody?,
+		@Part("enable_private_entry")enablePrivateEntry:RequestBody?,
+		@Part("show_reward_status")showRewardStatus:RequestBody?,
+		@Part("show_seller_tools")showSellerTools:RequestBody?,
+		@Part("enable_clips")enableClips:RequestBody?,
+		@Part("save_past_shows")savePastShows:RequestBody?,
+		@Part("activity_status")activityStatus:RequestBody?,
+		@Part("sync_phone_contacts")syncPhoneContacts:RequestBody?,
+		@Part("suggest_my_account")suggestMyAccount:RequestBody?,
+		@Part("haptic_feedback")hapticFeedback:RequestBody?,
+	): CommonResponse
 	
 }
 

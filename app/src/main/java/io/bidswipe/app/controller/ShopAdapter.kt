@@ -8,6 +8,7 @@ import io.bidswipe.app.databinding.MessagesItemsBinding
 import io.bidswipe.app.databinding.ShopItemBinding
 import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.network.response.GetProductsResponse
+import io.bidswipe.app.utils.asMoney
 import io.bidswipe.app.utils.loadUrl
 
 class ShopAdapter(mList: MutableList<GetProductsResponse.Data?>, val mClicks: RecyclerClicks
@@ -34,10 +35,8 @@ class ShopAdapter(mList: MutableList<GetProductsResponse.Data?>, val mClicks: Re
                 append(item?.description)
             }
 
-            bind.price.text = buildSpannedString {
-                append("$")
-                append(item?.pricing.toString())
-            }
+            bind.price.text = item?.pricing.toString().asMoney()
+            
         }
     }
 }
