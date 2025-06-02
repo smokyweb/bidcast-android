@@ -106,7 +106,6 @@ class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
         moreList.add(MoreModel(R.drawable.ic_vacation,"Logout","logout"))
 
         moreAdapter = MoreAdapter(moreList, mClicks)
-
         bind.accountView.moreRecycler.adapter = moreAdapter
 
         gridList.add(MoreModel(R.drawable.ic_box,"Inventory","inventory"))
@@ -122,10 +121,10 @@ class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
         gridList.add(MoreModel(R.drawable.ic_graph,"Seller Status","sellerStatus"))
         gridList.add(MoreModel(R.drawable.ic_graph,"Seller Analytics","sellerAnalytics"))
         gridList.add(MoreModel(R.drawable.ic_speaker,"Promote Tools","promote"))
+        gridList.add(MoreModel(R.drawable.ic_checked_tag,"Seller Verification","sellerVerification"))
 
         gridAdapter= GridAdapter(gridList,gridClick)
         bind.sellerHub.gridRecycler.adapter = gridAdapter
-
 
         accountGridList.add(MoreModel(R.drawable.ic_box,"Payment & Shipping","paymentShipping"))
         accountGridList.add(MoreModel(R.drawable.ic_mic,"Addresses", "address"))

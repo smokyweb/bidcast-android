@@ -288,4 +288,12 @@
 	<string name="expiry_date">Дата истечения</string>
 	<string name="cvv">CVV</string>
 	<string name="no_offers_found">Предложения не найдены</string>
+    <string name="verification_progress">Verification Progress</string>
+    <string name="id_verification">Id Verification</string>
+	<string name="upload_your_id_card_amp_take_a_selfie"><![CDATA[Upload your ID card & take a selfie]]></string>
+    <string name="selfie">Selfie</string>
+	<string name="id_card">ID Card</string>
+    <string name="no_payment_method_added">No payment method added</string>
+    <string name="manual_verification">Manual Verification</string>
+    <string name="complete_verification">Complete Verification</string>
 </resources>

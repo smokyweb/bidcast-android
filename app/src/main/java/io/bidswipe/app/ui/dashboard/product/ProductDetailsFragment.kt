@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
+import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.navigation.fragment.findNavController
 import io.bidswipe.app.R
@@ -17,6 +18,10 @@ import io.bidswipe.app.interfaces.AlertClicks
 import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.model.OfferModel
 import io.bidswipe.app.network.Resource
+import io.bidswipe.app.network.response.GetPaymentCardsResponse
+import io.bidswipe.app.network.response.GetProductDetailsResponse
+import io.bidswipe.app.network.response.GetPurchaseDetail
+import io.bidswipe.app.network.response.GetShippingAddressResponse
 import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.ui.dashboard.DashViewModel
 import io.bidswipe.app.utils.Alerts
@@ -38,9 +43,15 @@ class ProductDetailsFragment : BaseFragment<DashViewModel, FragmentProductDetail
 	
 	private var productId = ""
 	private var price = ""
-	private var selectedPrice = ""
+	private var shippingId = 0
 	
 	private var offerList = mutableListOf<OfferModel>()
+
+	private var product : GetProductDetailsResponse.Data? = null
+	private var checkOutData : GetPurchaseDetail.Data? = null
+
+	private var cardList = mutableListOf<GetPaymentCardsResponse.Data?>()
+	private var addressList = mutableListOf<GetShippingAddressResponse.Data?>()
 	
 	//	private lateinit var makeOfferSheetBind : MakeOfferSheetBinding
 	private lateinit var offerAdapter: MakeOfferAdapter
@@ -59,16 +70,56 @@ class ProductDetailsFragment : BaseFragment<DashViewModel, FragmentProductDetail
 			var buyNowSheet = Alerts.appBottomSheet(mCtx, true, buyNowSheetBind)
 			
 			buyNowSheetBind.cardNumber.setCompoundDrawablesWithIntrinsicBounds(ContextCompat.getDrawable(mCtx, draw.ic_visa), null, null, null)
-			
+
+			buyNowSheetBind.productName.text = product?.title
+
+			buyNowSheetBind.productDescription.text = product?.description
+
+			buyNowSheetBind.productImg.loadUrl(mCtx, product?.images?.get(0).toString())
+
+			buyNowSheetBind.cardNumber.text = buildString {
+				append("**** **** **** ")
+				append(cardList[0]?.last4)
+			}
+
+			buyNowSheetBind.address.text = addressList.find { it?.isDefault == true }?.streetAddress ?: addressList[0]?.streetAddress
+
+			buyNowSheetBind.subTotal.text = checkOutData?.subTotal.toString()
+			buyNowSheetBind.tax.text = checkOutData?.taxAmount.toString()
+			buyNowSheetBind.shipping.text = checkOutData?.shippingCharges.toString()
+			buyNowSheetBind.total.text = checkOutData?.total.toString()
+
+
 			buyNowSheetBind.confirmButton.setOnClickListener {
 				
 				buyNowSheet.dismiss()
-				
-				findNavController().navigate(ids.goToSendGiftFragment)
-				
+
+				if (buyNowSheetBind.sendAsGift.isChecked){
+					findNavController().navigate(ids.goToSendGiftFragment, bundleOf("shippingId" to shippingId.toString(),"productId" to productId.toString(),"cardId" to cardList[0]?.cardId?.toString(),"promoCode" to buyNowSheetBind.promoCode.value()))
+				}else{
+					bind.loader.isVisible = true
+
+					viewModel.createOrder(
+						shippingId.toString().request(),
+						productId.request(),
+						cardList[0]?.cardId?.request(),
+						buyNowSheetBind.promoCode.value().ifEmpty { null }?.request(),
+						"0".request(),
+						null,
+						null,
+						buyNowSheetBind.shipping.text.toString().request(),
+						buyNowSheetBind.tax.text.toString().request(),
+						buyNowSheetBind.subTotal.text.toString().request(),
+						buyNowSheetBind.total.text.toString().request()
+
+					)
+
+				}
+
 			}
 			
 			buyNowSheet.show()
+
 		}
 		
 		bind.makeOffer.setOnClickListener {
@@ -78,12 +129,17 @@ class ProductDetailsFragment : BaseFragment<DashViewModel, FragmentProductDetail
 		
 		bind.loader.isVisible = true
 		viewModel.getProductDetails(productId.request())
+		viewModel.getPaymentCard()
+		viewModel.getShippingAddress()
+
 		viewModel.getProductDetailsRepo.observe(viewLifecycleOwner) {
 			when (it) {
 				is Resource.Success -> {
 					bind.loader.isVisible = false
 					
 					val mData = it.value.data
+
+					product = mData
 					
 					bind.userName.text = mData?.user?.name
 					
@@ -189,7 +245,169 @@ class ProductDetailsFragment : BaseFragment<DashViewModel, FragmentProductDetail
 				
 			}
 		}
-		
+
+		viewModel.getShippingAddressRepo.observe(viewLifecycleOwner) {
+			when (it) {
+				is Resource.Success -> {
+					bind.loader.isVisible = false
+
+					val mData = it.value.data
+
+					addressList.clear()
+
+					if (mData?.isNotEmpty() == true){
+						addressList.addAll(mData)
+					}
+
+
+					shippingId = addressList.find { it?.isDefault == true }?.id ?: (addressList.get(0)?.id?.toInt()
+						?:0 )
+
+
+					viewModel.getPurchaseProduct(shippingId.toString().request(),productId.request())
+
+//					shippingAddressAdapter.notifyDataSetChanged()
+
+				}
+
+				is Resource.Error -> {
+					bind.loader.isVisible = false
+
+					if (it.isNetworkError) {
+						errorToast(getString(R.string.no_internet))
+					} else {
+						it.parse(mCtx, TAG, object : AlertClicks {
+							override fun primaryClick(dialog: AppBottomSheet) {
+								dialog.dismiss()
+
+							}
+
+							override fun secondaryClick(dialog: AppBottomSheet) {
+								dialog.dismiss()
+
+							}
+						})
+					}
+				}
+
+				else -> {}
+
+			}
+		}
+
+		viewModel.getPaymentCardRepo.observe(viewLifecycleOwner) {
+
+			when (it) {
+				is Resource.Success -> {
+					bind.loader.isVisible = false
+
+					val mData = it.value.data
+
+					cardList.clear()
+
+					if (mData?.isNotEmpty() == true){
+						cardList.addAll(mData)
+					}
+//					cardAdapter.notifyDataSetChanged()
+				}
+
+				is Resource.Error -> {
+					bind.loader.isVisible = false
+
+					if (it.isNetworkError) {
+						errorToast(getString(R.string.no_internet))
+					} else {
+						it.parse(mCtx, TAG, object : AlertClicks {
+							override fun primaryClick(dialog: AppBottomSheet) {
+								dialog.dismiss()
+
+							}
+
+							override fun secondaryClick(dialog: AppBottomSheet) {
+								dialog.dismiss()
+
+							}
+						})
+					}
+				}
+				else -> {}
+			}
+		}
+
+		viewModel.getPurchaseProductRepo.observe(viewLifecycleOwner) {
+
+			when (it) {
+				is Resource.Success -> {
+					bind.loader.isVisible = false
+
+					val mData = it.value.data
+
+					checkOutData = mData
+
+
+//					cardAdapter.notifyDataSetChanged()
+				}
+
+				is Resource.Error -> {
+					bind.loader.isVisible = false
+
+					if (it.isNetworkError) {
+						errorToast(getString(R.string.no_internet))
+					} else {
+						it.parse(mCtx, TAG, object : AlertClicks {
+							override fun primaryClick(dialog: AppBottomSheet) {
+								dialog.dismiss()
+
+							}
+
+							override fun secondaryClick(dialog: AppBottomSheet) {
+								dialog.dismiss()
+
+							}
+						})
+					}
+				}
+				else -> {}
+			}
+		}
+
+
+		viewModel.createOrderRepo.observe(viewLifecycleOwner) {
+
+			when (it) {
+				is Resource.Success -> {
+					bind.loader.isVisible = false
+
+					val mData = it.value.data
+
+					findNavController().navigate(ids.productDetailToOrderStatusFragment)
+
+//					cardAdapter.notifyDataSetChanged()
+				}
+
+				is Resource.Error -> {
+					bind.loader.isVisible = false
+
+					if (it.isNetworkError) {
+						errorToast(getString(R.string.no_internet))
+					} else {
+						it.parse(mCtx, TAG, object : AlertClicks {
+							override fun primaryClick(dialog: AppBottomSheet) {
+								dialog.dismiss()
+
+							}
+
+							override fun secondaryClick(dialog: AppBottomSheet) {
+								dialog.dismiss()
+
+							}
+						})
+					}
+				}
+				else -> {}
+			}
+		}
+
 	}
 	
 	fun getDiscountAmount(originalAmount: Int, percentOff: Int): String {

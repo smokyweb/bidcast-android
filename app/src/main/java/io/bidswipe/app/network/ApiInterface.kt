@@ -14,6 +14,7 @@ import io.bidswipe.app.network.response.GetPaymentCardsResponse
 import io.bidswipe.app.network.response.GetPrepareStepResponse
 import io.bidswipe.app.network.response.GetProductDetailsResponse
 import io.bidswipe.app.network.response.GetProductsResponse
+import io.bidswipe.app.network.response.GetPurchaseDetail
 import io.bidswipe.app.network.response.GetShippingAddressResponse
 import io.bidswipe.app.network.response.GetUserProfileResponse
 import io.bidswipe.app.network.response.LoginResponse
@@ -204,7 +205,7 @@ interface ApiInterface {
 	suspend fun getProductDetails(
 		@Part("product_id") productId: RequestBody?
 	): GetProductDetailsResponse
-	
+
 	@Multipart
 	@POST("api/upsert-shipping-address")
 	suspend fun addShippingAddress(
@@ -247,6 +248,30 @@ interface ApiInterface {
 		@Part("sync_phone_contacts")syncPhoneContacts:RequestBody?,
 		@Part("suggest_my_account")suggestMyAccount:RequestBody?,
 		@Part("haptic_feedback")hapticFeedback:RequestBody?,
+	): CommonResponse
+
+	@Multipart
+	@POST("api/product/purchase-details")
+	suspend fun getPurchaseProduct(
+		@Part("shipping_id") shippingId : RequestBody?,
+		@Part("product_id") productId : RequestBody?
+	): GetPurchaseDetail
+
+	@Multipart
+	@POST("api/product/order")
+	suspend fun createOrder(
+		@Part("shipping_id")shippingId:RequestBody?,
+		@Part("product_id")productId:RequestBody?,
+		@Part("card_id")cardId:RequestBody?,
+		@Part("promo_code")promoCode:RequestBody?,
+		@Part("send_as_gift")sendAsGift:RequestBody?,
+		@Part("gift_user_id")giftUserId:RequestBody?,
+		@Part("gift_msg")giftMessage:RequestBody?,
+		@Part("shipping_charges")shippingCharges:RequestBody?,
+		@Part("tax_amount")taxAmount:RequestBody?,
+		@Part("sub_total")subTotal:RequestBody?,
+		@Part("total")total:RequestBody?,
+		@Part("discount")discount:RequestBody?
 	): CommonResponse
 	
 }

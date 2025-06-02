@@ -72,5 +72,10 @@
         android:name="io.bidswipe.app.ui.dashboard.sellerHub.AnalyticsFragment"
         android:label="fragment_analytics"
         tools:layout="@layout/fragment_analytics" />
+    <fragment
+        android:id="@+id/sellerVerificationFragment"
+        android:name="io.bidswipe.app.ui.dashboard.sellerHub.SellerVerificationFragment"
+        android:label="fragment_seller_verification"
+        tools:layout="@layout/fragment_seller_verification" />
 
 </navigation>

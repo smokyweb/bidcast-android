@@ -67,6 +67,9 @@ class SellerHubActivity : BaseActivity() {
 			"sellerAnalytics" -> {
 				navGraph.setStartDestination(R.id.analyticsFragment)
 			}
+			"sellerVerification" -> {
+				navGraph.setStartDestination(R.id.sellerVerificationFragment)
+			}
 			else -> {
 				navGraph.setStartDestination(R.id.inventoryFragment)
 			}

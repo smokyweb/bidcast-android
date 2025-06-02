@@ -378,4 +378,14 @@
         "when a user tries to pick up one of cards.\n\n"
     </string>
     <string name="action_settings">Settings</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="verification_progress">Verification Progress</string>
+    <string name="id_verification">Id Verification</string>
+    <string name="upload_your_id_card_amp_take_a_selfie"><![CDATA[Upload your ID card & take a selfie]]></string>
+    <string name="selfie">Selfie</string>
+    <string name="id_card">ID Card</string>
+    <string name="no_payment_method_added">No payment method added</string>
+    <string name="manual_verification">Manual Verification</string>
+    <string name="complete_verification">Complete Verification</string>
 </resources>

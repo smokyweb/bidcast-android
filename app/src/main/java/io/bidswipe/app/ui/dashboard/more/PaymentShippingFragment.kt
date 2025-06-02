@@ -60,7 +60,6 @@ class PaymentShippingFragment : BaseFragment<MoreViewModel, FragmentPaymentShipp
 
         bind.addressRecycler.adapter = shippingAddressAdapter
 
-
         bind.addPaymentCard.setOnClickListener {
             startActivity(Intent(mCtx, AddPaymentCardActivity::class.java))
         }

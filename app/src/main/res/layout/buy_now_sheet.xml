@@ -56,7 +56,7 @@
             app:cardElevation="0dp">
 
             <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/icon"
+                android:id="@+id/productImg"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:padding="10dp"
@@ -72,14 +72,14 @@
             android:orientation="vertical">
 
             <TextView
-                android:id="@+id/title"
+                android:id="@+id/productName"
                 style="@style/TitleLarge"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Premium Wireless Headphones"/>
 
             <TextView
-                android:id="@+id/sub_title"
+                android:id="@+id/productDescription"
                 style="@style/BodyLarge"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -112,6 +112,7 @@
 
 
         <com.google.android.material.materialswitch.MaterialSwitch
+            android:id="@+id/sendAsGift"
             style="@style/appSwitch"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -185,7 +186,6 @@
             android:text="@string/shipping_address" />
 
         <TextView
-            android:id="@+id/shipping"
             style="@style/TitleSmall"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -221,7 +221,7 @@
         android:layout_margin="@dimen/margin">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/last_name"
+            android:id="@+id/promoCode"
             style="@style/inputTextStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -252,6 +252,7 @@
             android:text="Subtotal" />
 
         <TextView
+            android:id="@+id/subTotal"
             style="@style/BodyLarge"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -278,6 +279,7 @@
             android:text="Shipping" />
 
         <TextView
+            android:id="@+id/shipping"
             style="@style/BodyLarge"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -304,6 +306,7 @@
             android:text="Tax" />
 
         <TextView
+            android:id="@+id/tax"
             style="@style/BodyLarge"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -334,6 +337,7 @@
             android:text="@string/total" />
 
         <TextView
+            android:id="@+id/total"
             style="@style/TitleLarge"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

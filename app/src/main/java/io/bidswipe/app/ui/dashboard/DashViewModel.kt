@@ -17,6 +17,8 @@ import io.bidswipe.app.network.response.GetOffersResponse
 import io.bidswipe.app.network.response.GetPaymentCardsResponse
 import io.bidswipe.app.network.response.GetPrepareStepResponse
 import io.bidswipe.app.network.response.GetProductDetailsResponse
+import io.bidswipe.app.network.response.GetPurchaseDetail
+import io.bidswipe.app.network.response.GetShippingAddressResponse
 import io.bidswipe.app.network.response.UpdateOfferResponse
 import kotlinx.coroutines.launch
 import okhttp3.MultipartBody
@@ -170,8 +172,55 @@ class DashViewModel @Inject constructor(val repo: DashRepository) : ViewModel() 
 		_addPaymentCardResponse.value = repo.addPaymentCard(cardToken)
 	}
 
+	private var _getShippingAddressResponse = MutableLiveData<Resource<GetShippingAddressResponse>>()
+	val getShippingAddressRepo: MutableLiveData<Resource<GetShippingAddressResponse>>
+		get() = _getShippingAddressResponse
+
+	fun getShippingAddress() = viewModelScope.launch {
+		_getShippingAddressResponse.value = repo.getShippingAddress()
+	}
+
+	private var _getPaymentCardResponse = MutableLiveData<Resource<GetPaymentCardsResponse>>()
+	val getPaymentCardRepo: MutableLiveData<Resource<GetPaymentCardsResponse>>
+		get() = _getPaymentCardResponse
+
+	fun getPaymentCard(
+	) = viewModelScope.launch {
+		_getPaymentCardResponse.value = repo.getPaymentCard()
+	}
 
 
+	private var _getPurchaseProductResponse = MutableLiveData<Resource<GetPurchaseDetail>>()
+	val getPurchaseProductRepo: MutableLiveData<Resource<GetPurchaseDetail>>
+		get() = _getPurchaseProductResponse
+
+	fun getPurchaseProduct(
+		shippingId : RequestBody?,
+		productId : RequestBody?
+	) = viewModelScope.launch {
+		_getPurchaseProductResponse.value = repo.getPurchaseProduct(shippingId,productId)
+	}
+
+	private var _createOrderResponse = MutableLiveData<Resource<CommonResponse>>()
+	val createOrderRepo: MutableLiveData<Resource<CommonResponse>>
+		get() = _createOrderResponse
+
+	fun createOrder(
+		shippingId : RequestBody?,
+		productId : RequestBody?,
+		cardId : RequestBody?,
+		promoCode : RequestBody?,
+		sendAsGift : RequestBody?,
+		giftUserId : RequestBody?,
+		giftMsg : RequestBody?,
+		shippingCharges : RequestBody?,
+		taxAmount : RequestBody?,
+		subTotal : RequestBody?,
+		total : RequestBody?,
+		discount : RequestBody? =null
+	) = viewModelScope.launch {
+		_createOrderResponse.value = repo.createOrder(shippingId,productId,cardId,promoCode,sendAsGift,giftUserId,giftMsg,shippingCharges,taxAmount,subTotal,total,discount)
+	}
 
 	
 }

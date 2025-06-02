@@ -158,4 +158,24 @@ suspend fun settingsList() = call { api.settingsList() }
 		)
 	}
 
+    suspend fun getPurchaseProduct(
+        shippingId : RequestBody?,
+        productId : RequestBody?
+    ) = call { api.getPurchaseProduct(shippingId,productId) }
+
+    suspend fun createOrder(
+        shippingId : RequestBody?,
+        productId : RequestBody?,
+        cardId : RequestBody?,
+        promoCode : RequestBody?,
+        sendAsGift : RequestBody?,
+        giftUserId : RequestBody?,
+        giftMsg : RequestBody?,
+        shippingCharges : RequestBody?,
+        taxAmount : RequestBody?,
+        subTotal : RequestBody?,
+        total : RequestBody?,
+        discount : RequestBody?
+    ) = call { api.createOrder(shippingId,productId,cardId,promoCode,sendAsGift,giftUserId,giftMsg,shippingCharges,taxAmount,subTotal,total,discount) }
+
 }
