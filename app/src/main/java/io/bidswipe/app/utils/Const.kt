@@ -3,7 +3,9 @@ package io.bidswipe.app.utils
 import android.Manifest
 import android.os.Build
 import com.zeugmasolutions.localehelper.Locales
+import io.bidswipe.app.databinding.MoreOptionItemBinding
 import io.bidswipe.app.model.LangModel
+import io.bidswipe.app.model.LiveMoreOption
 import java.util.Locale
 
 object Const {
@@ -78,8 +80,17 @@ object Const {
 		LangModel("Japanese" , Locales.Japanese) ,
 		LangModel("Vietnamese" , Locales.Vietnamese) ,
 		LangModel("Korean" , Locales.Korean)
+	).sortedBy { it.title }
 
 
-		).sortedBy { it.title }
+	val liveMoreMenu = mutableListOf(
+		LiveMoreOption("End Show",true, draw.ic_end),
+		LiveMoreOption("Clone item",false, draw.ic_copy),
+		LiveMoreOption("Tip Setting",false, draw.ic_dollar),
+		LiveMoreOption("Multicast",false, draw.ic_multicast),
+		LiveMoreOption("Add Coupons",false, draw.ic_coupon),
+		LiveMoreOption("Raid",false, draw.ic_people),
+		LiveMoreOption("Create Poll",false, draw.ic_poll),
+	)
 	
 }

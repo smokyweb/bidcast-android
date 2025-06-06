@@ -378,8 +378,6 @@
         "when a user tries to pick up one of cards.\n\n"
     </string>
     <string name="action_settings">Settings</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="verification_progress">Verification Progress</string>
     <string name="id_verification">Id Verification</string>
     <string name="upload_your_id_card_amp_take_a_selfie"><![CDATA[Upload your ID card & take a selfie]]></string>
@@ -388,4 +386,15 @@
     <string name="no_payment_method_added">No payment method added</string>
     <string name="manual_verification">Manual Verification</string>
     <string name="complete_verification">Complete Verification</string>
+    <string name="more">More</string>
+    <string name="promote">Promote</string>
+    <string name="clip">Clip</string>
+    <string name="share">Share</string>
+    <string name="start_now">Start Now</string>
+    <string name="say_something">Say Something</string>
+    <string name="more_option">More Option</string>
+    <string name="verified_buyers">Verified Buyers</string>
+    <string name="when_on_allows_bids_from_verified_buyers_only">When on, allows bids from verified buyers only</string>
+    <string name="end_show">End Show</string>
+    <string name="broadcasting_options">Broadcasting Options</string>
 </resources>
