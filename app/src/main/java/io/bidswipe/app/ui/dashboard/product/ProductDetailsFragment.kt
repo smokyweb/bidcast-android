@@ -89,7 +89,6 @@ class ProductDetailsFragment : BaseFragment<DashViewModel, FragmentProductDetail
 			buyNowSheetBind.shipping.text = checkOutData?.shippingCharges.toString()
 			buyNowSheetBind.total.text = checkOutData?.total.toString()
 
-
 			buyNowSheetBind.confirmButton.setOnClickListener {
 				
 				buyNowSheet.dismiss()
