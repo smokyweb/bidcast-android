@@ -8,6 +8,7 @@ import java.util.Date
             alias(libs.plugins.kotlin.android)
             alias(libs.plugins.hiltAndroid)
             alias(libs.plugins.devtools)
+            alias(libs.plugins.google.gms.google.services)
         }
 
 fun getAPKName() = "Bid_Swipe_${SimpleDateFormat("dd-MM-yyyy").format(Date())}"
@@ -99,6 +100,8 @@ dependencies {
     implementation(libs.material)
     implementation(libs.navigation.fragment.ktx)
     implementation(libs.navigation.ui.ktx)
+    implementation(libs.firebase.messaging.ktx)
+    implementation(libs.firebase.messaging)
     ksp(libs.hilt.compiler)
     implementation(libs.flexbox)
 

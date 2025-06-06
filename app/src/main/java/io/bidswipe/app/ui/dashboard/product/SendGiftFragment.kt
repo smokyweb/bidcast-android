@@ -16,10 +16,8 @@ import io.bidswipe.app.utils.Alerts
 import io.bidswipe.app.utils.hideKeyboard
 import io.bidswipe.app.utils.ids
 import io.bidswipe.app.utils.parse
-import io.bidswipe.app.utils.request
 import io.bidswipe.app.utils.showKeyboard
 import io.bidswipe.app.utils.value
-import kotlin.text.ifEmpty
 
 class SendGiftFragment : BaseFragment<ProductViewModel, FragmentSendGiftBinding>() {
     override fun getModel(): Class<ProductViewModel> = ProductViewModel::class.java
@@ -33,7 +31,6 @@ class SendGiftFragment : BaseFragment<ProductViewModel, FragmentSendGiftBinding>
     private var productId = ""
     private var cardId = ""
     private var promoCode = ""
-    private var selectedUserId = ""
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -80,6 +77,8 @@ class SendGiftFragment : BaseFragment<ProductViewModel, FragmentSendGiftBinding>
                         selectedUserId.request(),
                         bind.message.value().request(),
                     )*/
+
+                    
                 }
 
             }

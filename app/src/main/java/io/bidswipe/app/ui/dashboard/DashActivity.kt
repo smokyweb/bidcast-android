@@ -1,5 +1,6 @@
 package io.bidswipe.app.ui.dashboard
 
+import android.content.Context
 import android.os.Bundle
 import android.view.View
 import androidx.activity.viewModels
@@ -10,15 +11,15 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomsheet.BottomSheetBehavior
-import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.firebase.messaging.FirebaseMessaging
 import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseActivity
 import io.bidswipe.app.controller.SellAdapter
 import io.bidswipe.app.databinding.ActivityDashBinding
-import io.bidswipe.app.databinding.SellBottomSheetBinding
 import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.model.SellModel
 import io.bidswipe.app.utils.Alerts
+import io.bidswipe.app.utils.Prefs
 import io.bidswipe.app.utils.bind
 import io.bidswipe.app.utils.ids
 import io.bidswipe.app.utils.toListProduct
@@ -46,6 +47,7 @@ class DashActivity : BaseActivity(), NavController.OnDestinationChangedListener 
         navController.addOnDestinationChangedListener(this)
         bind.bottomBar.setupWithNavController(navController)
         setupImageSheet()
+
         bind.bottomBar.setOnItemSelectedListener { menuItem ->
             if (menuItem.itemId != ids.sellFragment) viewModel.lastIndex.value = menuItem.itemId
             when (menuItem.itemId) {
@@ -69,6 +71,11 @@ class DashActivity : BaseActivity(), NavController.OnDestinationChangedListener 
                 }
             }
         }
+
+        getDeviceToken(this){
+
+        }
+
     }
 
     override fun onDestinationChanged(
@@ -178,7 +185,26 @@ class DashActivity : BaseActivity(), NavController.OnDestinationChangedListener 
             }
         }
 
+    }
 
+
+    fun getDeviceToken(context: Context, token: (token: String) -> Unit) {
+        FirebaseMessaging.getInstance().token.addOnCompleteListener {
+            if (!it.isSuccessful) {
+                Alerts.log(javaClass.simpleName, "Fetching FCM registration token failed ${it.exception}")
+                return@addOnCompleteListener
+            }
+            val t = it.result.toString()
+
+            log(t)
+           val a= token(t)
+            if (Prefs(context).fcmToken() != t) {
+                Prefs(context).putString(Prefs.PUSH_TOKEN, t)
+                Alerts.log(javaClass.simpleName, "device token $t")
+            } else {
+                Alerts.log(javaClass.simpleName, "device token not refresh  $token")
+            }
+        }
     }
 
 }

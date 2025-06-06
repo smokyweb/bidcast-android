@@ -179,8 +179,7 @@ class ProductDetailsFragment : BaseFragment<DashViewModel, FragmentProductDetail
 							)
 						)
 					)
-					
-					
+
 					bind.address.text = mData?.shippingAdress?.streetAddress
 					
 				}
@@ -419,7 +418,7 @@ class ProductDetailsFragment : BaseFragment<DashViewModel, FragmentProductDetail
 		var makeOfferSheetBind = MakeOfferSheetBinding.bind(layoutInflater.inflate(R.layout.make_offer_sheet, null, false))
 		var makeOfferSheet = Alerts.appBottomSheet(mCtx, true, makeOfferSheetBind)
 		
-		makeOfferSheetBind.listedPrice.text = price.asMoney()
+		makeOfferSheetBind.listedPrice.text = product?.pricing.toString().asMoney()
 		
 		makeOfferSheetBind.offerRecycler.adapter = MakeOfferAdapter(offerList, object : RecyclerClicks {
 			
@@ -455,3 +454,5 @@ class ProductDetailsFragment : BaseFragment<DashViewModel, FragmentProductDetail
 	}
 	
 }
+
+

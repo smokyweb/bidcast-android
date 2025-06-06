@@ -1,5 +1,8 @@
 package io.bidswipe.app.utils
 
+import android.app.Notification
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
@@ -10,6 +13,7 @@ import android.graphics.Paint
 import android.net.Uri
 import android.os.Build
 import android.provider.OpenableColumns
+import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import com.canhub.cropper.CropImageContractOptions
@@ -37,7 +41,8 @@ object Utils {
 
     val timezone get() = TimeZone.getDefault().id.toString()
 
-    val currentTimeInFormat get() = getSimpleDate("yyyy-MM-dd_HH:mm:ss_a").format(timestamp()).toString()
+    val currentTimeInFormat
+        get() = getSimpleDate("yyyy-MM-dd_HH:mm:ss_a").format(timestamp()).toString()
 
     fun timestamp() = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
         Date().toInstant().epochSecond
@@ -58,11 +63,12 @@ object Utils {
         it.enableLights(false)
     }*/
 
-    fun getTimeFromTimestamp(millis: Long, format: String = "hh:mm a") = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-        getSimpleDate(format).format(Instant.ofEpochSecond(millis).toEpochMilli()).toString()
-    } else {
-        getSimpleDate(format).format(millis / 1000).toString()
-    }
+    fun getTimeFromTimestamp(millis: Long, format: String = "hh:mm a") =
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            getSimpleDate(format).format(Instant.ofEpochSecond(millis).toEpochMilli()).toString()
+        } else {
+            getSimpleDate(format).format(millis / 1000).toString()
+        }
 
     fun getFormattedDateTime(inFormat: String, outFormat: String, timestamp: String): String? {
         return try {
@@ -84,17 +90,18 @@ object Utils {
         .format(millis).toString()
 
 
-    fun getNotifBuilder(ctx: Context, title: String, msg: String) = NotificationCompat.Builder(ctx, Const.CHANNEL_ID).apply {
-        color = ContextCompat.getColor(ctx, clr.primary)
-        setBadgeIconType(NotificationCompat.BADGE_ICON_SMALL)
-        priority = NotificationCompat.PRIORITY_HIGH
-        setDefaults(NotificationCompat.DEFAULT_ALL)
-        setSmallIcon(draw.app_icon)
-        setContentTitle(title.asCapital())
-        setContentText(msg.asCapital())
-        setAutoCancel(true)
-        setColorized(true)
-    }
+    fun getNotifBuilder(ctx: Context, title: String, msg: String) =
+        NotificationCompat.Builder(ctx, Const.CHANNEL_ID).apply {
+            color = ContextCompat.getColor(ctx, clr.primary)
+            setBadgeIconType(NotificationCompat.BADGE_ICON_SMALL)
+            priority = NotificationCompat.PRIORITY_HIGH
+            setDefaults(NotificationCompat.DEFAULT_ALL)
+            setSmallIcon(draw.app_icon)
+            setContentTitle(title.asCapital())
+            setContentText(msg.asCapital())
+            setAutoCancel(true)
+            setColorized(true)
+        }
 
     fun pxFromDp(context: Context, dp: Float): Float {
         return dp * context.resources.displayMetrics.density
@@ -103,31 +110,37 @@ object Utils {
     private fun getSimpleDate(format: String) = SimpleDateFormat(format, Locale.getDefault())
 
     fun imagePart(param: String, name: String, file: File) =
-        MultipartBody.Part.Companion.createFormData(param, name, file.asRequestBody("image/jpeg".toMediaTypeOrNull()))
-
-    fun initCrop(mCtx: Context, isCamera: Boolean = false, isGallery: Boolean = false) = CropImageContractOptions(
-        null, CropImageOptions(
-            activityBackgroundColor = ContextCompat.getColor(mCtx, clr.background),
-            toolbarBackButtonColor = ContextCompat.getColor(mCtx, clr.onSurface),
-            toolbarColor = ContextCompat.getColor(mCtx, clr.surface),
-            activityMenuTextColor = ContextCompat.getColor(mCtx, clr.onSurface),
-            activityMenuIconColor = ContextCompat.getColor(mCtx, clr.onSurface),
-            toolbarTitleColor = ContextCompat.getColor(mCtx, clr.onSurface),
-            borderCornerColor = ContextCompat.getColor(mCtx, clr.primary),
-            borderLineColor = ContextCompat.getColor(mCtx, clr.primary),
-            guidelinesColor = ContextCompat.getColor(mCtx, clr.primary),
-            outputCompressFormat = Bitmap.CompressFormat.JPEG,
-            guidelines = CropImageView.Guidelines.ON,
-            imageSourceIncludeGallery = isGallery,
-            imageSourceIncludeCamera = isCamera,
-            cropMenuCropButtonTitle = "Done",
-            outputCompressQuality = 70,
+        MultipartBody.Part.Companion.createFormData(
+            param,
+            name,
+            file.asRequestBody("image/jpeg".toMediaTypeOrNull())
         )
-    )
+
+    fun initCrop(mCtx: Context, isCamera: Boolean = false, isGallery: Boolean = false) =
+        CropImageContractOptions(
+            null, CropImageOptions(
+                activityBackgroundColor = ContextCompat.getColor(mCtx, clr.background),
+                toolbarBackButtonColor = ContextCompat.getColor(mCtx, clr.onSurface),
+                toolbarColor = ContextCompat.getColor(mCtx, clr.surface),
+                activityMenuTextColor = ContextCompat.getColor(mCtx, clr.onSurface),
+                activityMenuIconColor = ContextCompat.getColor(mCtx, clr.onSurface),
+                toolbarTitleColor = ContextCompat.getColor(mCtx, clr.onSurface),
+                borderCornerColor = ContextCompat.getColor(mCtx, clr.primary),
+                borderLineColor = ContextCompat.getColor(mCtx, clr.primary),
+                guidelinesColor = ContextCompat.getColor(mCtx, clr.primary),
+                outputCompressFormat = Bitmap.CompressFormat.JPEG,
+                guidelines = CropImageView.Guidelines.ON,
+                imageSourceIncludeGallery = isGallery,
+                imageSourceIncludeCamera = isCamera,
+                cropMenuCropButtonTitle = "Done",
+                outputCompressQuality = 70,
+            )
+        )
 
     fun getTimeAgo(time: String): String {
 
-        val serverTime = time.ifEmpty { getSimpleDate(Const.SERVER_TIME_FORMAT).format(timestamp()).toString() }
+        val serverTime =
+            time.ifEmpty { getSimpleDate(Const.SERVER_TIME_FORMAT).format(timestamp()).toString() }
         val timeInMillis = getTimeStampFromServerTime(serverTime)
         val now = System.currentTimeMillis()
 
@@ -172,7 +185,8 @@ object Utils {
     }
 
     fun changeBitmapColor(sourceBitmap: Bitmap, color: Int): Bitmap {
-        val resultBitmap = Bitmap.createBitmap(sourceBitmap, 0, 0, sourceBitmap.width - 1, sourceBitmap.height - 1)
+        val resultBitmap =
+            Bitmap.createBitmap(sourceBitmap, 0, 0, sourceBitmap.width - 1, sourceBitmap.height - 1)
         val p = Paint()
         val filter: ColorFilter = LightingColorFilter(color, 1)
         p.setColorFilter(filter)
@@ -237,11 +251,11 @@ object Utils {
             id = text.hashCode()
             isClickable = true
             isCheckable = true
-            chipCornerRadius=mCtx.resources.dpToPx(50).toFloat()
+            chipCornerRadius = mCtx.resources.dpToPx(50).toFloat()
             chipStrokeWidth = mCtx.resources.dpToPx(2).toFloat()
-            chipStartPadding=mCtx.resources.dpToPx(18).toFloat()
+            chipStartPadding = mCtx.resources.dpToPx(18).toFloat()
             chipEndPadding = mCtx.resources.dpToPx(18).toFloat()
-            chipMinHeight= mCtx.resources.dpToPx(44).toFloat()
+            chipMinHeight = mCtx.resources.dpToPx(44).toFloat()
             isChecked = selected // Set the checked state
             isCheckedIconVisible = false
         }
@@ -253,4 +267,16 @@ object Utils {
 
         return matcher.matches()
     }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun notificationChannel() = NotificationChannel(
+        Const.CHANNEL_ID,
+        Const.CHANNEL_NAME,
+        NotificationManager.IMPORTANCE_HIGH
+    ).also {
+        it.lockscreenVisibility = Notification.VISIBILITY_PUBLIC
+        it.enableVibration(true)
+        it.enableLights(false)
+    }
+
 }

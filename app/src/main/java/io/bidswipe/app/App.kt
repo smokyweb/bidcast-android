@@ -1,9 +1,12 @@
 package io.bidswipe.app
 
+import android.app.ActivityManager
 import android.app.Application
 import android.content.Context
-import android.view.Gravity
+import android.os.Process
+import com.google.firebase.FirebaseApp
 import dagger.hilt.android.HiltAndroidApp
+
 
 @HiltAndroidApp
 class App : Application() {
@@ -21,8 +24,20 @@ class App : Application() {
         mCtx = applicationContext
         TAG = mCtx.packageName
 
+        FirebaseApp.initializeApp(applicationContext)
 
 
+    }
+
+    private fun isMainProcess(): Boolean {
+        val pid = Process.myPid()
+        val manager = getSystemService(ACTIVITY_SERVICE) as ActivityManager
+        for (processInfo in manager.getRunningAppProcesses()) {
+            if (processInfo.pid == pid) {
+                return getPackageName() == processInfo.processName
+            }
+        }
+        return false
     }
 
 }
