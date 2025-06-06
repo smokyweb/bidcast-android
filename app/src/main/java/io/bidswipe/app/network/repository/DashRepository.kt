@@ -178,4 +178,9 @@ suspend fun settingsList() = call { api.settingsList() }
         discount : RequestBody?
     ) = call { api.createOrder(shippingId,productId,cardId,promoCode,sendAsGift,giftUserId,giftMsg,shippingCharges,taxAmount,subTotal,total,discount) }
 
+    suspend fun storeBuyerIdentity(
+        image : MultipartBody.Part?
+    ) = call { api.storeBuyerIdentity(image) }
+
+
 }

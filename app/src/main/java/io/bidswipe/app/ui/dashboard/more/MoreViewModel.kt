@@ -14,6 +14,7 @@ import io.bidswipe.app.network.response.GetShippingAddressResponse
 import io.bidswipe.app.network.response.SettingListResponse
 import io.bidswipe.app.network.response.TermsConditionResponse
 import kotlinx.coroutines.launch
+import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import javax.inject.Inject
 
@@ -141,6 +142,16 @@ class MoreViewModel @Inject constructor(val repo: DashRepository) : ViewModel() 
 			suggestMyAccount,
 			hapticFeedback
 		)
+	}
+
+	private var _storeBuyerIdentityResponse = MutableLiveData<Resource<CommonResponse>>()
+	val storeBuyerIdentityRepo: MutableLiveData<Resource<CommonResponse>>
+		get() = _storeBuyerIdentityResponse
+
+	fun storeBuyerIdentity(
+		image :  MultipartBody.Part?
+	) = viewModelScope.launch {
+		_storeBuyerIdentityResponse.value = repo.storeBuyerIdentity(image)
 	}
 
 }

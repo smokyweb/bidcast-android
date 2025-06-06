@@ -74,6 +74,14 @@
             tools:itemCount="6"
             tools:listitem="@layout/show_listing_item" />
 
+        <io.bidswipe.app.ui.custom.NoDataView
+            android:id="@+id/noData"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:visibility="gone"
+            app:title_text="No Shows Found"/>
+
     </LinearLayout>
 
     <LinearLayout
@@ -94,5 +102,11 @@
             android:text="@string/new_show" />
 
     </LinearLayout>
+
+    <io.bidswipe.app.ui.custom.LoaderView
+        android:id="@+id/loader"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

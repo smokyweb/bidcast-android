@@ -101,16 +101,6 @@ class DashViewModel @Inject constructor(val repo: DashRepository) : ViewModel() 
 	}
 
 
-	private var _getMyScheduledShowResponse = MutableLiveData<Resource<GetMyShowResponse>>()
-	val getMyScheduledShowRepo: MutableLiveData<Resource<GetMyShowResponse>>
-		get() = _getMyScheduledShowResponse
-
-	fun getMyScheduledShow(
-		type : RequestBody? = null
-	) = viewModelScope.launch {
-		_getMyScheduledShowResponse.value = repo.getMyScheduledShow(type)
-	}
-
 	private var _getLiveShowResponse = MutableLiveData<Resource<GetMyShowResponse>>()
 	val getLiveShowRepo: MutableLiveData<Resource<GetMyShowResponse>>
 		get() = _getLiveShowResponse

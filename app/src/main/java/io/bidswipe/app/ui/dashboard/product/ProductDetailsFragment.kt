@@ -369,7 +369,6 @@ class ProductDetailsFragment : BaseFragment<DashViewModel, FragmentProductDetail
 			}
 		}
 
-
 		viewModel.createOrderRepo.observe(viewLifecycleOwner) {
 
 			when (it) {

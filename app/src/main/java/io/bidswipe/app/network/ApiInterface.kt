@@ -273,6 +273,13 @@ interface ApiInterface {
 		@Part("total")total:RequestBody?,
 		@Part("discount")discount:RequestBody?
 	): CommonResponse
-	
+
+
+	@Multipart
+	@POST("api/buyer-identity/store")
+	suspend fun storeBuyerIdentity(
+		@Part image : MultipartBody.Part?
+	): CommonResponse
+
 }
 
