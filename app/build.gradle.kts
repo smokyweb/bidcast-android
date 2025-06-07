@@ -9,6 +9,7 @@ import java.util.Date
             alias(libs.plugins.hiltAndroid)
             alias(libs.plugins.devtools)
             alias(libs.plugins.google.gms.google.services)
+
         }
 
 fun getAPKName() = "Bid_Swipe_${SimpleDateFormat("dd-MM-yyyy").format(Date())}"
@@ -143,6 +144,10 @@ dependencies {
     implementation(libs.locale.helper.android)
     implementation(libs.yuanwenhai.html.textview)
     implementation(libs.expandableLayout)
+
+    //ZEGO CLOUD
+    implementation (libs.express.video)
+
 
 
 }

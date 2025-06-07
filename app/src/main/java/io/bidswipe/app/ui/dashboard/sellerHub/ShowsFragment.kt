@@ -1,5 +1,6 @@
 package io.bidswipe.app.ui.dashboard.sellerHub
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -11,9 +12,11 @@ import io.bidswipe.app.base.BaseFragment
 import io.bidswipe.app.controller.ShowListingAdapter
 import io.bidswipe.app.databinding.FragmentShowsBinding
 import io.bidswipe.app.interfaces.AlertClicks
+import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.network.response.GetMyShowResponse
 import io.bidswipe.app.ui.custom.AppBottomSheet
+import io.bidswipe.app.ui.dashboard.scheduleShow.LiveShowActivity
 import io.bidswipe.app.utils.finish
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request
@@ -30,6 +33,15 @@ class ShowsFragment :  BaseFragment<SellerHubViewModel, FragmentShowsBinding>() 
 
     private var showList = mutableListOf<GetMyShowResponse.Data?>()
 
+    private val mClicks = object : RecyclerClicks{
+        override fun itemClick(pos: Int, status: String?) {
+
+            startActivity(Intent(mCtx, LiveShowActivity::class.java))
+
+        }
+
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -37,7 +49,7 @@ class ShowsFragment :  BaseFragment<SellerHubViewModel, FragmentShowsBinding>() 
             finish()
         }
 
-        showAdapter = ShowListingAdapter(showList)
+        showAdapter = ShowListingAdapter(showList, mClicks)
 
         bind.recycler.adapter = showAdapter
 

@@ -18,6 +18,7 @@ import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.network.response.GetMyShowResponse
 import io.bidswipe.app.ui.custom.AppBottomSheet
+import io.bidswipe.app.ui.dashboard.scheduleShow.LiveShowActivity
 import io.bidswipe.app.ui.dashboard.sellerProfile.SellerProfileActivity
 import io.bidswipe.app.utils.Utils
 import io.bidswipe.app.utils.parse
@@ -43,7 +44,12 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
 					startActivity(Intent(mCtx, SellerProfileActivity::class.java).putExtra("userId",
 						showList[pos]?.userId.toString()
 					))
-					
+				}
+
+				"viewShow" ->{
+
+					startActivity(Intent(mCtx, ViewLiveShowActivity::class.java))
+
 				}
 			}
 			
@@ -62,7 +68,6 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
 		bind.recommended.setOnClickListener { selectTab(it as TextView) }
 		bind.popular.setOnClickListener { selectTab(it as TextView) }
 		bind.all.setOnClickListener { selectTab(it as TextView) }
-
 		
 		categoriesList = mutableListOf("For You", "Collectibles", "Trading Cards")
 		categoriesList.forEach {

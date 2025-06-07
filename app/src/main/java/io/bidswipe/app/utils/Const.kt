@@ -25,6 +25,13 @@ object Const {
 	private val COMMON_PERMS = arrayOf(
 		Manifest.permission.INTERNET,
 		Manifest.permission.CAMERA,
+		Manifest.permission.ACCESS_WIFI_STATE,
+		Manifest.permission.ACCESS_NETWORK_STATE,
+		Manifest.permission.RECORD_AUDIO,
+		Manifest.permission.BLUETOOTH,
+		Manifest.permission.MODIFY_AUDIO_SETTINGS,
+		Manifest.permission.READ_PHONE_STATE,
+
 	)
 	
 	val VERSION_PERMS = when {

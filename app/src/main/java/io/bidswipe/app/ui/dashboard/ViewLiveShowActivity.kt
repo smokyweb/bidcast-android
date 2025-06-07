@@ -1,5 +1,6 @@
-package io.bidswipe.app.ui.dashboard.scheduleShow
+package io.bidswipe.app.ui.dashboard
 
+import android.R
 import android.app.Application
 import android.os.Bundle
 import android.view.View
@@ -21,21 +22,15 @@ import im.zego.zegoexpress.entity.ZegoPlayerConfig
 import im.zego.zegoexpress.entity.ZegoRoomConfig
 import im.zego.zegoexpress.entity.ZegoStream
 import im.zego.zegoexpress.entity.ZegoUser
-import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseActivity
-import io.bidswipe.app.controller.LiveMoreAdapter
-import io.bidswipe.app.databinding.ActivityLiveShowBinding
-import io.bidswipe.app.databinding.LiveShowMoreMenuBinding
-import io.bidswipe.app.interfaces.RecyclerClicks
-import io.bidswipe.app.ui.dashboard.DashViewModel
-import io.bidswipe.app.utils.Alerts
-import io.bidswipe.app.utils.Const
+import io.bidswipe.app.databinding.ActivityViewLiveShowBinding
 import io.bidswipe.app.utils.bind
 import org.json.JSONObject
 
-class LiveShowActivity : BaseActivity() {
 
-    private val bind by bind(ActivityLiveShowBinding::inflate)
+class ViewLiveShowActivity : BaseActivity() {
+
+    private val bind by bind(ActivityViewLiveShowBinding::inflate)
     private val viewModel by viewModels<DashViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -43,36 +38,10 @@ class LiveShowActivity : BaseActivity() {
         enableEdgeToEdge()
         setContentView(bind.root)
 
-        bind.more.setOnClickListener {
-            showMoreSheet()
-        }
-
         createEngine()
 
-        loginRoom()
-
-        startListenEvent()
-
-    }
-
-    fun showMoreSheet() {
-        var moreSheetBind = LiveShowMoreMenuBinding.bind(layoutInflater.inflate(R.layout.live_show_more_menu, null, false))
-        var moreSheet = Alerts.appBottomSheet(this, true, moreSheetBind)
-
-
-        moreSheetBind.optionList.adapter = LiveMoreAdapter(Const.liveMoreMenu, object : RecyclerClicks {
-
-            override fun itemClick(pos: Int, status: String?) {
-
-            }
-        })
-
-        moreSheetBind.close.setOnClickListener {
-            moreSheet.dismiss()
-        }
-
-
-        moreSheet.show()
+           loginRoom()
+            startListenEvent()
     }
 
     override fun onDestroy() {
@@ -84,7 +53,7 @@ class LiveShowActivity : BaseActivity() {
         val profile = ZegoEngineProfile().apply {
             appID =  1005763407
             appSign = "73678be720c3ea2d871376882d27d21d5c2bc891363547424458f9febc8bf423"
-            scenario = ZegoScenario.GENERAL
+            scenario = ZegoScenario.BROADCAST
             application = applicationContext as Application
         }
 
@@ -107,11 +76,13 @@ class LiveShowActivity : BaseActivity() {
                 super.onRoomStreamUpdate(roomID, updateType, streamList, extendedData)
                 if (streamList.isNotEmpty()) {
                     val streamID = streamList[0].streamID
-                    /*if (updateType == ZegoUpdateType.ADD) {
+
+                    log("STREAM ID : $streamID")
+                    if (updateType == ZegoUpdateType.ADD) {
                         startPlayStream(streamID)
                     } else {
                         stopPlayStream(streamID)
-                    }*/
+                    }
                 }
             }
 
@@ -201,7 +172,7 @@ class LiveShowActivity : BaseActivity() {
 
 
     fun loginRoom() {
-        val user = ZegoUser("3", userName)
+        val user = ZegoUser("4", userName)
         val roomConfig = ZegoRoomConfig()
         // The `onRoomUserUpdate` callback can be received only when
         // `ZegoRoomConfig` in which the `isUserStatusNotify` parameter is set to
@@ -220,8 +191,8 @@ class LiveShowActivity : BaseActivity() {
                     Toast.makeText(this, "Login successful.", Toast.LENGTH_LONG).show()
 
 
-                    startPreview()
-                    startPublish()
+                        startPreview()
+//                        startPublish()
 
                 } else {
                     // Login failed. For details, see [Error codes\|_blank](/404).

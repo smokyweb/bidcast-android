@@ -1,3 +1,5 @@
+
+
 pluginManagement {
     repositories {
         google {
@@ -18,6 +20,7 @@ dependencyResolutionManagement {
         google()
         mavenCentral()
         maven("https://jitpack.io")
+        maven { url = uri("https://storage.zego.im/maven") }
     }
 }
 

@@ -13,6 +13,8 @@ cameraview = "2.7.2"
 decorator = "2.1.0"
 easyvalidationCore = "1.0.4"
 expandablelayout = "2.9.2"
+expressVideo = "3.19.0"
+zegoexpressengine = "3.8.1"
 flexbox = "3.0.0"
 #agora-rtc-sdk = "4.2.1"
 glide = "4.16.0"
@@ -49,6 +51,7 @@ htmlTextviewVersion = "1.6"
 firebaseMessagingKtx = "24.1.1"
 googleGmsGoogleServices = "4.4.2"
 firebaseMessaging = "24.1.1"
+zegoexpressEngineVersion = "3.8.1"
 
 [libraries]
 android-image-cropper = { module = "com.vanniktech:android-image-cropper", version.ref = "androidImageCropper" }
@@ -73,6 +76,8 @@ cameraview = { module = "com.otaliastudios:cameraview", version.ref = "cameravie
 decorator = { module = "com.rubensousa:decorator", version.ref = "decorator" }
 easyvalidation-core = { module = "com.wajahatkarim:easyvalidation-core", version.ref = "easyvalidationCore" }
 expandableLayout = { module = "com.github.cachapa:ExpandableLayout", version.ref = "expandablelayout" }
+
+express-video = { module = "im.zego:express-video", version.ref = "expressVideo" }
 glide = { module = "com.github.bumptech.glide:glide", version.ref = "glide" }
 glide-transformations = { module = "jp.wasabeef:glide-transformations", version.ref = "glideTransformations" }
 hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hiltAndroid" }
@@ -101,6 +106,7 @@ navigation-ui-ktx = { group = "androidx.navigation", name = "navigation-ui-ktx",
 flexbox = { module = "com.google.android.flexbox:flexbox", version.ref = "flexbox" }
 firebase-messaging-ktx = { group = "com.google.firebase", name = "firebase-messaging-ktx", version.ref = "firebaseMessagingKtx" }
 firebase-messaging = { group = "com.google.firebase", name = "firebase-messaging", version.ref = "firebaseMessaging" }
+zegoexpress-engine = { module = "im.zego:zegoexpress-engine", version.ref = "zegoexpressEngineVersion" }
 
 
 [plugins]

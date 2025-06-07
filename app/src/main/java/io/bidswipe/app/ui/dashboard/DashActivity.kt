@@ -19,7 +19,9 @@ import io.bidswipe.app.databinding.ActivityDashBinding
 import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.model.SellModel
 import io.bidswipe.app.utils.Alerts
+import io.bidswipe.app.utils.Const
 import io.bidswipe.app.utils.Prefs
+import io.bidswipe.app.utils.Utils
 import io.bidswipe.app.utils.bind
 import io.bidswipe.app.utils.ids
 import io.bidswipe.app.utils.toListProduct
@@ -73,6 +75,10 @@ class DashActivity : BaseActivity(), NavController.OnDestinationChangedListener 
         }
 
         getDeviceToken(this){
+
+        }
+
+        requestPerms(Const.PERMISSIONS) { per ->
 
         }
 
