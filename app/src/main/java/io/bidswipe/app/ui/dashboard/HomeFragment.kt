@@ -48,7 +48,7 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
 
 				"viewShow" ->{
 
-					startActivity(Intent(mCtx, ViewLiveShowActivity::class.java))
+					startActivity(Intent(mCtx, ViewLiveShowActivity::class.java).putExtra("roomId", showList[pos]?.roomId.toString()))
 
 				}
 			}

@@ -46,7 +46,9 @@ data class GetMyShowResponse(
         @SerializedName("user")
         val user: User?,
         @SerializedName("user_id")
-        val userId: Int?
+        val userId: Int?,
+        @SerializedName("room_id")
+        val roomId: String
     ) {
         @Keep
         data class Category(

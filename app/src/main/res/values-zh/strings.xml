@@ -295,4 +295,15 @@
     <string name="no_payment_method_added">No payment method added</string>
     <string name="manual_verification">Manual Verification</string>
     <string name="complete_verification">Complete Verification</string>
+    <string name="mic">Mic</string>
+	<string name="rotate_camera">Rotate Camera</string>
+	<string name="zoom_in">Zoom In</string>
+    <string name="promote_show">Promote Show</string>
+    <string name="prices_shown_in_usd_actual_boost_duration_may_vary">Prices shown in USD. Actual boost duration may vary.</string>
+	<string name="quick_visibility_boost">Quick Visibility Boost</string>
+	<string name="get_featured_in_the_top_shows_for_15_minutes">Get featured in the top shows for 15 minutes</string>
+	<string name="create_clip">Create Clip</string>
+    <string name="trim_clip">Trim Clip</string>
+    <string name="share_show">Share Show</string>
+    <string name="create_a_raid">Create a raid</string>
 </resources>

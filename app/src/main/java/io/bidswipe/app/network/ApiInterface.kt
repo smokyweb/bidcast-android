@@ -3,6 +3,7 @@ package io.bidswipe.app.network
 import io.bidswipe.app.network.response.AboutUsResponse
 import io.bidswipe.app.network.response.CommonResponse
 import io.bidswipe.app.network.response.FAQResponse
+import io.bidswipe.app.network.response.GenerateTokenResponse
 import io.bidswipe.app.network.response.GetAllTipsResponse
 import io.bidswipe.app.network.response.GetAuctionTypeResponse
 import io.bidswipe.app.network.response.GetCategoryResponse
@@ -280,6 +281,9 @@ interface ApiInterface {
 	suspend fun storeBuyerIdentity(
 		@Part image : MultipartBody.Part?
 	): CommonResponse
+
+	@POST("api/generate-token")
+	suspend fun generateToken(): GenerateTokenResponse
 
 }
 

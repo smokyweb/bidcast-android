@@ -51,9 +51,10 @@
                 app:tint="@color/onPrimaryContainer" />
 
             <LinearLayout
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:layout_weight="1">
 
                 <TextView
                     style="@style/TitleLarge"
@@ -71,6 +72,12 @@
 
 
             </LinearLayout>
+
+            <com.google.android.material.materialswitch.MaterialSwitch
+                style="@style/appSwitch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"/>
 
 
         </LinearLayout>
@@ -103,16 +110,107 @@
             android:layout_marginTop="@dimen/margin"
             android:text="@string/broadcasting_options" />
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/broadcasting"
-            android:layout_width="match_parent"
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="3">
+
+
+        <LinearLayout
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:padding="12dp"
-            android:layout_marginVertical="@dimen/margin"
-            app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-            app:spanCount="2"
-            tools:itemCount="4"
-            tools:listitem="@layout/offer_price_item" />
+            android:layout_margin="8dp"
+            android:gravity="center"
+            android:background="@drawable/card_8"
+            style="@style/shadowStyle"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:padding="@dimen/margin">
+
+            <ImageView
+                android:id="@+id/image"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:layout_marginBottom="@dimen/half_margin"
+                android:src="@drawable/ic_rotate"
+                android:gravity="center"
+                app:tint="@color/scrim" />
+
+            <TextView
+                android:id="@+id/title"
+                style="@style/BodyLarge"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@string/rotate_camera"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:gravity="center"
+            android:background="@drawable/card_8"
+            style="@style/shadowStyle"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:padding="@dimen/margin">
+
+            <ImageView
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:layout_marginBottom="@dimen/half_margin"
+                android:src="@drawable/ic_zoom"
+                android:gravity="center"
+                app:tint="@color/scrim" />
+
+            <TextView
+                style="@style/BodyLarge"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@string/zoom_in"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/micLayout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:gravity="center"
+            android:background="@drawable/card_8"
+            style="@style/shadowStyle"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:padding="@dimen/margin">
+
+            <ImageView
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:layout_marginBottom="@dimen/half_margin"
+                android:src="@drawable/ic_mic"
+                android:gravity="center"
+                app:tint="@color/scrim" />
+
+            <TextView
+                style="@style/BodyLarge"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@string/mic"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="@+id/view"
+                app:layout_constraintStart_toStartOf="@+id/view"
+                app:layout_constraintTop_toBottomOf="@+id/view" />
+
+        </LinearLayout>
+
+    </LinearLayout>
 
     </LinearLayout>
 

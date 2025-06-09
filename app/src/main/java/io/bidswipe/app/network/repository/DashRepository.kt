@@ -182,5 +182,8 @@ suspend fun settingsList() = call { api.settingsList() }
         image : MultipartBody.Part?
     ) = call { api.storeBuyerIdentity(image) }
 
+    suspend fun generateToken(
+    ) = call { api.generateToken() }
+
 
 }

@@ -1,6 +1,5 @@
 package io.bidswipe.app.ui.dashboard
 
-import android.R
 import android.app.Application
 import android.os.Bundle
 import android.view.View
@@ -16,6 +15,7 @@ import im.zego.zegoexpress.constants.ZegoRoomStateChangedReason
 import im.zego.zegoexpress.constants.ZegoScenario
 import im.zego.zegoexpress.constants.ZegoStreamResourceMode
 import im.zego.zegoexpress.constants.ZegoUpdateType
+import im.zego.zegoexpress.constants.ZegoViewMode
 import im.zego.zegoexpress.entity.ZegoCanvas
 import im.zego.zegoexpress.entity.ZegoEngineProfile
 import im.zego.zegoexpress.entity.ZegoPlayerConfig
@@ -27,21 +27,23 @@ import io.bidswipe.app.databinding.ActivityViewLiveShowBinding
 import io.bidswipe.app.utils.bind
 import org.json.JSONObject
 
-
 class ViewLiveShowActivity : BaseActivity() {
 
     private val bind by bind(ActivityViewLiveShowBinding::inflate)
     private val viewModel by viewModels<DashViewModel>()
+
+    private var roomId  = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(bind.root)
 
-        createEngine()
+        roomId = intent.getStringExtra("roomId") ?: ""
 
-           loginRoom()
-            startListenEvent()
+        createEngine()
+        loginRoom(roomId)
+        startListenEvent()
     }
 
     override fun onDestroy() {
@@ -171,15 +173,15 @@ class ViewLiveShowActivity : BaseActivity() {
     }
 
 
-    fun loginRoom() {
-        val user = ZegoUser("4", userName)
+    fun loginRoom(roomId : String) {
+        val user = ZegoUser(userId, userName)
         val roomConfig = ZegoRoomConfig()
         // The `onRoomUserUpdate` callback can be received only when
         // `ZegoRoomConfig` in which the `isUserStatusNotify` parameter is set to
         // `true` is passed.
         roomConfig.isUserStatusNotify = true
         ZegoExpressEngine.getEngine().loginRoom(
-            "live_room_3",
+            roomId,
             user,
             roomConfig,
             IZegoRoomLoginCallback { error: Int, extendedData: JSONObject? ->
@@ -191,7 +193,7 @@ class ViewLiveShowActivity : BaseActivity() {
                     Toast.makeText(this, "Login successful.", Toast.LENGTH_LONG).show()
 
 
-                        startPreview()
+//                        startPreview()
 //                        startPublish()
 
                 } else {
@@ -206,7 +208,9 @@ class ViewLiveShowActivity : BaseActivity() {
     }
 
     fun startPreview() {
-        val previewCanvas = ZegoCanvas(bind.hostView)
+        val previewCanvas = ZegoCanvas(bind.hostView).apply {
+            viewMode = ZegoViewMode.ASPECT_FILL
+        }
         ZegoExpressEngine.getEngine().startPreview(previewCanvas)
     }
 
@@ -214,23 +218,11 @@ class ViewLiveShowActivity : BaseActivity() {
         ZegoExpressEngine.getEngine().stopPreview()
     }
 
-    fun startPublish() {
-        // After calling the `loginRoom` method, call this method to publish streams.
-        // The StreamID must be unique in the room.
-        val previewCanvas = ZegoCanvas(bind.hostView)
-        ZegoExpressEngine.getEngine().startPreview(previewCanvas)
-        val streamID: String = "live_room_3" + "_" + "3" + "_call"
-        ZegoExpressEngine.getEngine().startPublishingStream(streamID)
-    }
-
-
-    fun stopPublish() {
-        ZegoExpressEngine.getEngine().stopPublishingStream()
-    }
-
     fun startPlayStream(streamID: String?) {
         bind.hostView.setVisibility(View.VISIBLE)
-        val playCanvas = ZegoCanvas(bind.hostView)
+        val playCanvas = ZegoCanvas(bind.hostView).apply {
+            viewMode = ZegoViewMode.ASPECT_FILL
+        }
         val config = ZegoPlayerConfig()
         config.resourceMode = ZegoStreamResourceMode.DEFAULT // Live Streaming
         // config.resourceMode = ZegoStreamResourceMode.ONLY_L3; // Interactive Live Streaming

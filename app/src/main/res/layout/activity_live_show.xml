@@ -9,7 +9,9 @@
     <TextureView
         android:id="@+id/hostView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"/>
 
     <LinearLayout
         android:id="@+id/profileLayout"
@@ -115,7 +117,7 @@
         android:layout_marginEnd="@dimen/margin"
         android:gravity="center_horizontal"
         android:orientation="vertical"
-    app:layout_constraintBottom_toTopOf="@+id/message"
+        app:layout_constraintBottom_toTopOf="@+id/message"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/rehearsalLayout">
 
@@ -171,7 +173,7 @@
 
 
         <com.google.android.material.card.MaterialCardView
-            android:id="@+id/mic"
+            android:id="@+id/clip"
             style="@style/cardStyle"
             android:layout_width="48dp"
             android:layout_height="48dp"
@@ -196,7 +198,7 @@
             android:textColor="@color/surface" />
 
         <com.google.android.material.card.MaterialCardView
-            android:id="@+id/cameraSwitch"
+            android:id="@+id/share"
             style="@style/cardStyle"
             android:layout_width="48dp"
             android:layout_height="48dp"
@@ -221,7 +223,7 @@
             android:textColor="@color/surface" />
 
         <com.google.android.material.card.MaterialCardView
-            android:id="@+id/_switch"
+            android:id="@+id/camera_switch"
             style="@style/cardStyle"
             android:layout_width="48dp"
             android:layout_height="48dp"
@@ -279,7 +281,7 @@
         android:layout_marginHorizontal="@dimen/margin"
         android:layout_marginBottom="@dimen/margin"
         app:boxStrokeColor="@color/scrim"
-        app:layout_constraintBottom_toTopOf="@+id/continueBtn">
+        app:layout_constraintBottom_toTopOf="@+id/startBtn">
 
         <com.google.android.material.textfield.MaterialAutoCompleteTextView
             style="@style/inputTextStyle"
@@ -292,14 +294,20 @@
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/continueBtn"
+        android:id="@+id/startBtn"
         style="@style/appBtn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/margin"
-        android:paddingHorizontal="@dimen/margin"
+        android:layout_marginHorizontal="@dimen/margin"
+        android:layout_marginBottom="32dp"
         android:text="@string/start_now"
         app:layout_constraintBottom_toBottomOf="parent" />
+
+    <io.bidswipe.app.ui.custom.LoaderView
+        android:id="@+id/loader"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"/>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -8,6 +8,7 @@ import io.bidswipe.app.network.Resource
 import io.bidswipe.app.network.repository.DashRepository
 import io.bidswipe.app.network.response.CommonResponse
 import io.bidswipe.app.network.response.FAQResponse
+import io.bidswipe.app.network.response.GenerateTokenResponse
 import io.bidswipe.app.network.response.GetAllTipsResponse
 import io.bidswipe.app.network.response.GetCategoryResponse
 import io.bidswipe.app.network.response.GetHowToSellResponse
@@ -210,6 +211,15 @@ class DashViewModel @Inject constructor(val repo: DashRepository) : ViewModel() 
 		discount : RequestBody? =null
 	) = viewModelScope.launch {
 		_createOrderResponse.value = repo.createOrder(shippingId,productId,cardId,promoCode,sendAsGift,giftUserId,giftMsg,shippingCharges,taxAmount,subTotal,total,discount)
+	}
+
+	private var _generateTokenResponse = MutableLiveData<Resource<GenerateTokenResponse>>()
+	val generateTokenRepo: MutableLiveData<Resource<GenerateTokenResponse>>
+		get() = _generateTokenResponse
+
+	fun generateToken(
+	) = viewModelScope.launch {
+		_generateTokenResponse.value = repo.generateToken()
 	}
 
 	
