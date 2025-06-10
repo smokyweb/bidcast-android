@@ -2,12 +2,14 @@ package io.bidswipe.app.ui.dashboard.scheduleShow
 
 import android.app.Application
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.core.view.isVisible
 import im.zego.zegoexpress.ZegoExpressEngine
 import im.zego.zegoexpress.callback.IZegoEventHandler
+import im.zego.zegoexpress.callback.IZegoIMSendBroadcastMessageCallback
 import im.zego.zegoexpress.callback.IZegoRoomLoginCallback
 import im.zego.zegoexpress.constants.ZegoPlayerState
 import im.zego.zegoexpress.constants.ZegoPublisherState
@@ -15,6 +17,8 @@ import im.zego.zegoexpress.constants.ZegoRoomStateChangedReason
 import im.zego.zegoexpress.constants.ZegoScenario
 import im.zego.zegoexpress.constants.ZegoUpdateType
 import im.zego.zegoexpress.constants.ZegoViewMode
+import im.zego.zegoexpress.entity.ZegoBarrageMessageInfo
+import im.zego.zegoexpress.entity.ZegoBroadcastMessageInfo
 import im.zego.zegoexpress.entity.ZegoCanvas
 import im.zego.zegoexpress.entity.ZegoEngineProfile
 import im.zego.zegoexpress.entity.ZegoRoomConfig
@@ -40,6 +44,8 @@ import io.bidswipe.app.utils.Alerts
 import io.bidswipe.app.utils.Const
 import io.bidswipe.app.utils.bind
 import io.bidswipe.app.utils.parse
+import io.bidswipe.app.utils.request
+import io.bidswipe.app.utils.value
 import org.json.JSONObject
 
 class LiveShowActivity : BaseActivity() {
@@ -48,11 +54,15 @@ class LiveShowActivity : BaseActivity() {
     private val viewModel by viewModels<DashViewModel>()
 
     var isFrontCamera = true
+    var roomID = ""
+    var showId = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(bind.root)
+
+        showId= intent.getStringExtra("showId") ?:""
 
         bind.more.setOnClickListener {
             showMoreSheet()
@@ -74,6 +84,12 @@ class LiveShowActivity : BaseActivity() {
             endShowSheet()
         }
 
+        bind.message.setEndIconOnClickListener {
+
+           if (bind.text.value().isNotEmpty()){
+               sendMessage(bind.text.value())
+           }
+        }
 
         bind.cameraSwitch.setOnClickListener {
 
@@ -91,12 +107,13 @@ class LiveShowActivity : BaseActivity() {
 
         bind.loader.isVisible = true
 
-        viewModel.generateToken()
-
+        viewModel.generateToken(showId.request())
 
         createEngine()
 
         startListenEvent()
+
+        fetchMessage()
 
         bind.startBtn.setOnClickListener {
             startPublish()
@@ -110,7 +127,13 @@ class LiveShowActivity : BaseActivity() {
 
                     val mData = it.value.data
 
+                    roomID =  mData?.roomId.toString()
+
+                    log("ROOM ID FOR HOST: $roomID ")
+
                     loginRoom(mData?.userId.toString(), mData?.roomId.toString())
+
+
 
                 }
 
@@ -225,7 +248,6 @@ class LiveShowActivity : BaseActivity() {
         shareSheetBind.close.setOnClickListener {
             shareSheet.dismiss()
         }
-
 
         shareSheet.show()
     }
@@ -365,6 +387,20 @@ class LiveShowActivity : BaseActivity() {
                     Toast.makeText(applicationContext, "ZegoPlayerState.NO_PLAY", Toast.LENGTH_LONG).show()
                 }
             }
+
+            /*override fun onIMRecvBroadcastMessage(
+                roomID: String?,
+                messageList: java.util.ArrayList<ZegoBroadcastMessageInfo?>?
+            ) {
+                super.onIMRecvBroadcastMessage(roomID, messageList)
+                Log.d("ZEGO", "Barrage message received for room: $roomID")
+                if (messageList != null) {
+                    for (msg in messageList) {
+                        Log.d("CHAT", "Received message from ${msg?.fromUser?.userName}: ${msg?.message}")
+                        // Update UI accordingly
+                    }
+                }
+            }*/
         })
     }
 
@@ -422,12 +458,60 @@ class LiveShowActivity : BaseActivity() {
             viewMode = ZegoViewMode.ASPECT_FILL
         }
         ZegoExpressEngine.getEngine().startPreview(previewCanvas)
-        val streamID: String = "live_room_3" + "_" + "3" + "_call"
+        val streamID: String = roomID + "_" + userId + "_call"
         ZegoExpressEngine.getEngine().startPublishingStream(streamID)
     }
 
     fun stopPublish() {
         ZegoExpressEngine.getEngine().stopPublishingStream()
     }
+
+    fun sendMessage(message: String){
+
+        ZegoExpressEngine.getEngine().sendBroadcastMessage(roomID, message, object : IZegoIMSendBroadcastMessageCallback {
+            override fun onIMSendBroadcastMessageResult(errorCode: Int, messageID: Long) {
+                if (errorCode == 0) {
+                    Log.d("CHAT", "Message sent successfully")
+                } else {
+                    Log.e("CHAT", "Failed to send message")
+                }
+            }
+        })
+
+    }
+
+    fun fetchMessage() {
+
+        ZegoExpressEngine.getEngine().setEventHandler(object : IZegoEventHandler(){
+
+            override fun onIMRecvBroadcastMessage(
+                roomID: String?,
+                messageList: kotlin.collections.ArrayList<ZegoBroadcastMessageInfo?>?
+            ) {
+                Log.d("ZEGO", "Broadcast message received for room: $roomID")
+                if (messageList != null) {
+                    for (msgInfo in messageList) {
+                        Log.d("BROADCAST", "Received broadcast message from ${msgInfo?.fromUser?.userName}: ${msgInfo?.message}")
+                        // Update UI for broadcast messages
+                    }
+                }
+            }
+
+            override fun onIMRecvBarrageMessage(
+                roomID: String?,
+                messageList: kotlin.collections.ArrayList<ZegoBarrageMessageInfo?>?
+            ) {
+                Log.d("ZEGO", "Barrage message received for room: $roomID")
+                if (messageList != null) {
+                    for (msg in messageList) {
+                        Log.d("CHAT", "Received message from ${msg?.fromUser?.userName}: ${msg?.message}")
+                        // Update UI accordingly
+                    }
+                }
+            }
+        })
+    }
+
+
 
 }

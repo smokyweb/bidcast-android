@@ -144,6 +144,7 @@ dependencies {
     implementation(libs.locale.helper.android)
     implementation(libs.yuanwenhai.html.textview)
     implementation(libs.expandableLayout)
+    implementation(libs.slidetoact)
 
     //ZEGO CLOUD
     implementation (libs.express.video)

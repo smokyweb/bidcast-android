@@ -1,4 +1,4 @@
-package io.bidswipe.app.ui.dashboard
+package io.bidswipe.app.ui.dashboard.watchStream
 
 import android.app.Application
 import android.os.Bundle
@@ -6,6 +6,7 @@ import android.view.View
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
+import androidx.viewpager2.widget.ViewPager2
 import im.zego.zegoexpress.ZegoExpressEngine
 import im.zego.zegoexpress.callback.IZegoEventHandler
 import im.zego.zegoexpress.callback.IZegoRoomLoginCallback
@@ -23,7 +24,11 @@ import im.zego.zegoexpress.entity.ZegoRoomConfig
 import im.zego.zegoexpress.entity.ZegoStream
 import im.zego.zegoexpress.entity.ZegoUser
 import io.bidswipe.app.base.BaseActivity
+import io.bidswipe.app.controller.StreamPagerAdapter
 import io.bidswipe.app.databinding.ActivityViewLiveShowBinding
+import io.bidswipe.app.model.StreamModel
+import io.bidswipe.app.ui.dashboard.DashViewModel
+import io.bidswipe.app.utils.Const
 import io.bidswipe.app.utils.bind
 import org.json.JSONObject
 
@@ -34,6 +39,11 @@ class ViewLiveShowActivity : BaseActivity() {
 
     private var roomId  = ""
 
+    private var streamList  = arrayListOf<StreamModel>()
+
+    private lateinit var viewPager: ViewPager2
+    private lateinit var streamPagerAdapter: StreamPagerAdapter
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -41,9 +51,25 @@ class ViewLiveShowActivity : BaseActivity() {
 
         roomId = intent.getStringExtra("roomId") ?: ""
 
+        streamList = intent.getParcelableArrayListExtra<StreamModel>("roomIdsList") !!
+
+        log("ROOMIDS: ${streamList.get(0).roomId}")
+
+       /* val streamList = listOf(
+            StreamModel("live_room_3", "stream1"),
+            StreamModel("room2", "stream2"),
+            StreamModel("room3", "stream3"),
+        )*/
+
+        viewPager = bind.viewPager
+
+        streamPagerAdapter = StreamPagerAdapter(this, streamList,roomId)
+        viewPager.adapter = streamPagerAdapter
+        viewPager.orientation = ViewPager2.ORIENTATION_VERTICAL
+
         createEngine()
-        loginRoom(roomId)
-        startListenEvent()
+       /* loginRoom(roomId)
+        startListenEvent()*/
     }
 
     override fun onDestroy() {
@@ -53,9 +79,9 @@ class ViewLiveShowActivity : BaseActivity() {
 
     private fun createEngine() {
         val profile = ZegoEngineProfile().apply {
-            appID =  1005763407
-            appSign = "73678be720c3ea2d871376882d27d21d5c2bc891363547424458f9febc8bf423"
-            scenario = ZegoScenario.BROADCAST
+            appID = Const.APP_ID.toLong()
+            appSign = Const.APP_SIGN
+            scenario = ZegoScenario.GENERAL
             application = applicationContext as Application
         }
 
@@ -66,7 +92,7 @@ class ViewLiveShowActivity : BaseActivity() {
         ZegoExpressEngine.destroyEngine(null)
     }
 
-    private fun startListenEvent() {
+    /*private fun startListenEvent() {
         ZegoExpressEngine.getEngine().setEventHandler(object : IZegoEventHandler() {
 
             override fun onRoomStreamUpdate(
@@ -166,7 +192,7 @@ class ViewLiveShowActivity : BaseActivity() {
                 }
             }
         })
-    }
+    }*/
 
     private fun stopListenEvent() {
         ZegoExpressEngine.getEngine().setEventHandler(null)
@@ -207,18 +233,7 @@ class ViewLiveShowActivity : BaseActivity() {
         ZegoExpressEngine.getEngine().logoutRoom()
     }
 
-    fun startPreview() {
-        val previewCanvas = ZegoCanvas(bind.hostView).apply {
-            viewMode = ZegoViewMode.ASPECT_FILL
-        }
-        ZegoExpressEngine.getEngine().startPreview(previewCanvas)
-    }
-
-    fun stopPreview() {
-        ZegoExpressEngine.getEngine().stopPreview()
-    }
-
-    fun startPlayStream(streamID: String?) {
+    /*fun startPlayStream(streamID: String?) {
         bind.hostView.setVisibility(View.VISIBLE)
         val playCanvas = ZegoCanvas(bind.hostView).apply {
             viewMode = ZegoViewMode.ASPECT_FILL
@@ -227,11 +242,11 @@ class ViewLiveShowActivity : BaseActivity() {
         config.resourceMode = ZegoStreamResourceMode.DEFAULT // Live Streaming
         // config.resourceMode = ZegoStreamResourceMode.ONLY_L3; // Interactive Live Streaming
         ZegoExpressEngine.getEngine().startPlayingStream(streamID, playCanvas, config)
-    }
+    }*/
 
-    fun stopPlayStream(streamID: String?) {
+   /* fun stopPlayStream(streamID: String?) {
         ZegoExpressEngine.getEngine().stopPlayingStream(streamID)
         bind.hostView.setVisibility(View.GONE)
-    }
+    }*/
 
 }

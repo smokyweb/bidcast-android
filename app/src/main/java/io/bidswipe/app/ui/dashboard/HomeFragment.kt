@@ -15,14 +15,14 @@ import io.bidswipe.app.controller.HomeAdapter
 import io.bidswipe.app.databinding.FragmentHomeBinding
 import io.bidswipe.app.interfaces.AlertClicks
 import io.bidswipe.app.interfaces.RecyclerClicks
+import io.bidswipe.app.model.StreamModel
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.network.response.GetMyShowResponse
 import io.bidswipe.app.ui.custom.AppBottomSheet
-import io.bidswipe.app.ui.dashboard.scheduleShow.LiveShowActivity
 import io.bidswipe.app.ui.dashboard.sellerProfile.SellerProfileActivity
+import io.bidswipe.app.ui.dashboard.watchStream.ViewLiveShowActivity
 import io.bidswipe.app.utils.Utils
 import io.bidswipe.app.utils.parse
-import io.bidswipe.app.utils.request
 import io.bidswipe.app.utils.runSafe
 
 class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
@@ -33,9 +33,9 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
 	
 	private lateinit var homeAdapter: HomeAdapter
 	private var showList = mutableListOf<GetMyShowResponse.Data?>()
-
 	private var categoriesList = mutableListOf<String>()
-	
+	private var romIdsList = mutableListOf<StreamModel>()
+
 	private val mClick = object : RecyclerClicks {
 		override fun itemClick(pos: Int, status: String?) {
 			
@@ -48,7 +48,7 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
 
 				"viewShow" ->{
 
-					startActivity(Intent(mCtx, ViewLiveShowActivity::class.java).putExtra("roomId", showList[pos]?.roomId.toString()))
+					startActivity(Intent(mCtx, ViewLiveShowActivity::class.java).putExtra("roomId", showList[pos]?.roomId.toString()).putParcelableArrayListExtra("roomIdsList", romIdsList as ArrayList))
 
 				}
 			}
@@ -97,6 +97,10 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
 					bind.loader.isVisible = false
 
 					val mData = it.value.data
+
+					mData?.forEach {
+						romIdsList.add(StreamModel(it?.roomId.toString(),""))
+					}
 
 					showList.clear()
 

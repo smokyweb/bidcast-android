@@ -183,7 +183,8 @@ suspend fun settingsList() = call { api.settingsList() }
     ) = call { api.storeBuyerIdentity(image) }
 
     suspend fun generateToken(
-    ) = call { api.generateToken() }
+        showId : RequestBody?
+        ) = call { api.generateToken(showId) }
 
 
 }

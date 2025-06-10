@@ -41,7 +41,7 @@
         android:theme="@style/Theme.Bidswipe"
         tools:targetApi="31">
         <activity
-            android:name=".ui.dashboard.ViewLiveShowActivity"
+            android:name=".ui.dashboard.watchStream.ViewLiveShowActivity"
             android:exported="false" />
         <activity
             android:name=".ui.dashboard.scheduleShow.LiveShowActivity"

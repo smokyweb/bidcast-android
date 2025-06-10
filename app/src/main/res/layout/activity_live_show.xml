@@ -281,9 +281,12 @@
         android:layout_marginHorizontal="@dimen/margin"
         android:layout_marginBottom="@dimen/margin"
         app:boxStrokeColor="@color/scrim"
+        app:endIconMode="custom"
+        app:endIconDrawable="@drawable/ic_forward"
         app:layout_constraintBottom_toTopOf="@+id/startBtn">
 
         <com.google.android.material.textfield.MaterialAutoCompleteTextView
+            android:id="@+id/text"
             style="@style/inputTextStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

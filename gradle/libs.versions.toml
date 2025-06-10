@@ -14,6 +14,7 @@ decorator = "2.1.0"
 easyvalidationCore = "1.0.4"
 expandablelayout = "2.9.2"
 expressVideo = "3.19.0"
+slidetoact = "0.11.0"
 zegoexpressengine = "3.8.1"
 flexbox = "3.0.0"
 #agora-rtc-sdk = "4.2.1"
@@ -93,6 +94,7 @@ retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit
 permissionx = { module = "com.guolindev.permissionx:permissionx", version.ref = "permissionx" }
 picasso = { module = "com.squareup.picasso:picasso", version.ref = "picasso" }
 roundedimageview = { module = "com.makeramen:roundedimageview", version.ref = "roundedimageview" }
+slidetoact = { module = "com.ncorti:slidetoact", version.ref = "slidetoact" }
 stripe-android = { module = "com.stripe:stripe-android", version.ref = "stripeAndroid" }
 yuanwenhai-html-textview = { module = "com.github.YuanWenHai:html-textview", version.ref = "htmlTextviewVersion" }
 swipeMenuRecyclerView = { module = "com.github.aitsuki:SwipeMenuRecyclerView", version.ref = "swipemenurecyclerview" }

@@ -218,8 +218,9 @@ class DashViewModel @Inject constructor(val repo: DashRepository) : ViewModel() 
 		get() = _generateTokenResponse
 
 	fun generateToken(
-	) = viewModelScope.launch {
-		_generateTokenResponse.value = repo.generateToken()
+		showId : RequestBody?
+		) = viewModelScope.launch {
+		_generateTokenResponse.value = repo.generateToken(showId)
 	}
 
 	

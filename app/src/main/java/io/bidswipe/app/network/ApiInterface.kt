@@ -282,8 +282,11 @@ interface ApiInterface {
 		@Part image : MultipartBody.Part?
 	): CommonResponse
 
+	@Multipart
 	@POST("api/generate-token")
-	suspend fun generateToken(): GenerateTokenResponse
+	suspend fun generateToken(
+		@Part("schedule_show_id")showId:RequestBody?
+	): GenerateTokenResponse
 
 }
 

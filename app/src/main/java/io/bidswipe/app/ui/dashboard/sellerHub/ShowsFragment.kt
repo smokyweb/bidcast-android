@@ -36,7 +36,8 @@ class ShowsFragment :  BaseFragment<SellerHubViewModel, FragmentShowsBinding>() 
     private val mClicks = object : RecyclerClicks{
         override fun itemClick(pos: Int, status: String?) {
 
-            startActivity(Intent(mCtx, LiveShowActivity::class.java))
+            startActivity(Intent(mCtx, LiveShowActivity::class.java).putExtra("showId",
+                showList.get(pos)?.id.toString()))
 
         }
 
