@@ -1,5 +1,6 @@
 package io.bidswipe.app.network
 
+import io.bidswipe.app.BuildConfig
 import io.bidswipe.app.network.response.AboutUsResponse
 import io.bidswipe.app.network.response.CommonResponse
 import io.bidswipe.app.network.response.FAQResponse
@@ -22,7 +23,11 @@ import io.bidswipe.app.network.response.LoginResponse
 import io.bidswipe.app.network.response.SettingListResponse
 import io.bidswipe.app.network.response.SignUpResponse
 import io.bidswipe.app.network.response.TermsConditionResponse
+import io.bidswipe.app.network.response.UpdateLiveStatusResponse
 import io.bidswipe.app.network.response.UpdateOfferResponse
+import io.bidswipe.app.network.response.UserDeviceResponse
+import io.bidswipe.app.utils.Utils
+import io.bidswipe.app.utils.request
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.http.GET
@@ -190,9 +195,11 @@ interface ApiInterface {
 		@Part("offer_id") offerId: RequestBody?,
 		@Part("status") status: RequestBody?
 	): UpdateOfferResponse
-	
+
+	@Multipart
 	@POST("api/get-live-show")
 	suspend fun getLiveShow(
+		@Part("type") type: RequestBody?
 	): GetMyShowResponse
 	
 	@Multipart
@@ -230,7 +237,8 @@ interface ApiInterface {
 	@GET("api/get-card")
 	suspend fun getPaymentCard(
 	): GetPaymentCardsResponse
-@GET("api/setting/list")
+
+	@GET("api/setting/list")
 	suspend fun settingsList(
 	): SettingListResponse
 
@@ -287,6 +295,23 @@ interface ApiInterface {
 	suspend fun generateToken(
 		@Part("schedule_show_id")showId:RequestBody?
 	): GenerateTokenResponse
+
+	@Multipart
+	@POST("api/upsert-device-details")
+	suspend fun storeDeviceDetails(
+		@Part("device_token") deviceToken: RequestBody?,
+		@Part("platform") plateform: RequestBody = "android".request(),
+		@Part("app_version") appVersion: RequestBody = BuildConfig.VERSION_NAME.request(),
+		@Part("time_zone") timeZone: RequestBody = Utils.timezone.request(),
+	): UserDeviceResponse
+
+	@Multipart
+	@POST("api/schedule-show/update-live-status")
+	suspend fun updateLiveStatus(
+		@Part("schedule_show_id") showId: RequestBody?,
+		@Part("is_live") isLive: RequestBody?
+	): UpdateLiveStatusResponse
+
 
 }
 

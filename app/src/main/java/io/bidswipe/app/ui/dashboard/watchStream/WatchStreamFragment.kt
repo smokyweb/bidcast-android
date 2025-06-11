@@ -29,8 +29,6 @@ import io.bidswipe.app.base.BaseFragment
 import io.bidswipe.app.databinding.FragmentWatchStreamBinding
 import io.bidswipe.app.ui.dashboard.DashViewModel
 import io.bidswipe.app.utils.value
-import org.json.JSONObject
-import java.util.ArrayList
 
 class WatchStreamFragment : BaseFragment<DashViewModel, FragmentWatchStreamBinding>() {
     override fun getModel(): Class<DashViewModel> = DashViewModel::class.java
@@ -113,11 +111,11 @@ class WatchStreamFragment : BaseFragment<DashViewModel, FragmentWatchStreamBindi
         val canvas = ZegoCanvas(bind.hostView).apply {
             viewMode = ZegoViewMode.ASPECT_FILL
         }
-        ZegoExpressEngine.getEngine().startPlayingStream(roomID + "_" + "" + "_call", canvas)
+        ZegoExpressEngine.getEngine().startPlayingStream(roomID, canvas)
     }
 
     private fun stopStream() {
-        ZegoExpressEngine.getEngine().stopPlayingStream(roomID + "_" + "" + "_call")
+        ZegoExpressEngine.getEngine().stopPlayingStream(roomID)
         ZegoExpressEngine.getEngine().logoutRoom(roomID)
     }
 

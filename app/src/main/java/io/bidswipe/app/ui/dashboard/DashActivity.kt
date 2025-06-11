@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.activity.viewModels
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.view.isVisible
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
 import androidx.navigation.fragment.NavHostFragment
@@ -16,14 +17,20 @@ import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseActivity
 import io.bidswipe.app.controller.SellAdapter
 import io.bidswipe.app.databinding.ActivityDashBinding
+import io.bidswipe.app.interfaces.AlertClicks
 import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.model.SellModel
+import io.bidswipe.app.model.StreamModel
+import io.bidswipe.app.network.Resource
+import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.utils.Alerts
 import io.bidswipe.app.utils.Const
 import io.bidswipe.app.utils.Prefs
 import io.bidswipe.app.utils.Utils
 import io.bidswipe.app.utils.bind
 import io.bidswipe.app.utils.ids
+import io.bidswipe.app.utils.parse
+import io.bidswipe.app.utils.request
 import io.bidswipe.app.utils.toListProduct
 import io.bidswipe.app.utils.toScheduleShow
 
@@ -75,11 +82,46 @@ class DashActivity : BaseActivity(), NavController.OnDestinationChangedListener 
         }
 
         getDeviceToken(this){
-
+            viewModel.storeDeviceDetails(it.request())
         }
 
         requestPerms(Const.PERMISSIONS) { per ->
 
+        }
+
+        viewModel.storeDeviceDetailsRepo.observe(this) {
+            when (it) {
+                is Resource.Success -> {
+
+                    val mData = it.value.data
+
+                    log(mData.toString())
+
+
+                }
+
+                is Resource.Error -> {
+
+                    if (it.isNetworkError) {
+                        errorToast(getString(R.string.no_internet))
+                    } else {
+                        it.parse(this, TAG, object : AlertClicks {
+                            override fun primaryClick(dialog: AppBottomSheet) {
+                                dialog.dismiss()
+
+                            }
+
+                            override fun secondaryClick(dialog: AppBottomSheet) {
+                                dialog.dismiss()
+
+                            }
+                        })
+                    }
+                }
+
+                else -> {}
+
+            }
         }
 
     }

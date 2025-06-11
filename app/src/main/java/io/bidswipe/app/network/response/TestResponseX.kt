@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName
 import androidx.annotation.Keep
 
 @Keep
-data class GetMyShowResponse(
+data class TestResponseX(
     @SerializedName("currentPage")
     val currentPage: Int?,
     @SerializedName("data")

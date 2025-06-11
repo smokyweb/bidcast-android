@@ -20,7 +20,10 @@ import io.bidswipe.app.network.response.GetPrepareStepResponse
 import io.bidswipe.app.network.response.GetProductDetailsResponse
 import io.bidswipe.app.network.response.GetPurchaseDetail
 import io.bidswipe.app.network.response.GetShippingAddressResponse
+import io.bidswipe.app.network.response.UpdateLiveStatusResponse
 import io.bidswipe.app.network.response.UpdateOfferResponse
+import io.bidswipe.app.network.response.UserDeviceResponse
+import io.bidswipe.app.ui.dashboard.scheduleShow.LiveShowActivity
 import kotlinx.coroutines.launch
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -107,8 +110,9 @@ class DashViewModel @Inject constructor(val repo: DashRepository) : ViewModel() 
 		get() = _getLiveShowResponse
 
 	fun getLiveShow(
+		type : RequestBody?
 	) = viewModelScope.launch {
-		_getLiveShowResponse.value = repo.getLiveShow()
+		_getLiveShowResponse.value = repo.getLiveShow(type)
 	}
 
 	private var _getProductDetailsResponse = MutableLiveData<Resource<GetProductDetailsResponse>>()
@@ -221,6 +225,27 @@ class DashViewModel @Inject constructor(val repo: DashRepository) : ViewModel() 
 		showId : RequestBody?
 		) = viewModelScope.launch {
 		_generateTokenResponse.value = repo.generateToken(showId)
+	}
+
+	private var _storeDeviceDetailsResponse = MutableLiveData<Resource<UserDeviceResponse>>()
+	val storeDeviceDetailsRepo: MutableLiveData<Resource<UserDeviceResponse>>
+		get() = _storeDeviceDetailsResponse
+
+	fun storeDeviceDetails(
+		deviceToken : RequestBody?
+	) = viewModelScope.launch {
+		_storeDeviceDetailsResponse.value = repo.storeDeviceDetails(deviceToken)
+	}
+
+	private var _updateLiveStatusResponse = MutableLiveData<Resource<UpdateLiveStatusResponse>>()
+	val updateLiveStatusRepo: MutableLiveData<Resource<UpdateLiveStatusResponse>>
+		get() = _updateLiveStatusResponse
+
+	fun updateLiveStatus(
+		showId: RequestBody?,
+		isLive: RequestBody?
+	) = viewModelScope.launch {
+		_updateLiveStatusResponse.value = repo.updateLiveStatus(showId,isLive)
 	}
 
 	

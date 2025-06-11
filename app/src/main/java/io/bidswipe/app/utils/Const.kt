@@ -2,6 +2,8 @@ package io.bidswipe.app.utils
 
 import android.Manifest
 import android.os.Build
+import com.google.firebase.Firebase
+import com.google.firebase.database.database
 import com.zeugmasolutions.localehelper.Locales
 import io.bidswipe.app.databinding.MoreOptionItemBinding
 import io.bidswipe.app.model.LangModel
@@ -23,6 +25,9 @@ object Const {
 	
 	const val SERVER_TIME_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
 	const val DD_MMMM_YYYY = "dd MMMM yyyy"
+	const val LIVE_SESSIONS = "live_sessions"
+
+	val fireBaseRef= Firebase.database
 	
 	//APP PERMISSIONS
 	private val COMMON_PERMS = arrayOf(

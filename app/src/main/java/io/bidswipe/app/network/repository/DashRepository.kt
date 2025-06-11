@@ -4,6 +4,7 @@ import io.bidswipe.app.base.BaseRepository
 import io.bidswipe.app.network.ApiInterface
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
+import retrofit2.http.Part
 import javax.inject.Inject
 
 class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRepository(){
@@ -100,7 +101,8 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
     ) = call { api.offerUpdateStatus(offerId,status) }
 
  suspend fun getLiveShow(
-    ) = call { api.getLiveShow() }
+     type : RequestBody?
+ ) = call { api.getLiveShow(type) }
 
     suspend fun notifyLiveUser(
         liveUserId : RequestBody?
@@ -185,6 +187,17 @@ suspend fun settingsList() = call { api.settingsList() }
     suspend fun generateToken(
         showId : RequestBody?
         ) = call { api.generateToken(showId) }
+
+
+    suspend fun storeDeviceDetails(
+        deviceToken : RequestBody?
+    ) = call { api.storeDeviceDetails(deviceToken) }
+
+
+    suspend fun updateLiveStatus(
+        showId: RequestBody?,
+        isLive: RequestBody?
+    ) = call { api.updateLiveStatus(showId,isLive) }
 
 
 }

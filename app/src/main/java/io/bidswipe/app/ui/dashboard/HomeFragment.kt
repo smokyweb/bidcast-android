@@ -23,6 +23,7 @@ import io.bidswipe.app.ui.dashboard.sellerProfile.SellerProfileActivity
 import io.bidswipe.app.ui.dashboard.watchStream.ViewLiveShowActivity
 import io.bidswipe.app.utils.Utils
 import io.bidswipe.app.utils.parse
+import io.bidswipe.app.utils.request
 import io.bidswipe.app.utils.runSafe
 
 class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
@@ -48,7 +49,11 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
 
 				"viewShow" ->{
 
-					startActivity(Intent(mCtx, ViewLiveShowActivity::class.java).putExtra("roomId", showList[pos]?.roomId.toString()).putParcelableArrayListExtra("roomIdsList", romIdsList as ArrayList))
+					if (showList.get(pos)?.isLive == true){
+						startActivity(Intent(mCtx, ViewLiveShowActivity::class.java).putExtra("position", pos).putParcelableArrayListExtra("roomIdsList", romIdsList as ArrayList))
+					}
+
+
 
 				}
 			}
@@ -63,11 +68,11 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
 		
 		bind.recycler.adapter = homeAdapter
 
-		selectTab(bind.recommended)
+		selectTab(bind.live)
 
-		bind.recommended.setOnClickListener { selectTab(it as TextView) }
+		bind.live.setOnClickListener { selectTab(it as TextView) }
 		bind.popular.setOnClickListener { selectTab(it as TextView) }
-		bind.all.setOnClickListener { selectTab(it as TextView) }
+		bind.comingSoon.setOnClickListener { selectTab(it as TextView) }
 		
 		categoriesList = mutableListOf("For You", "Collectibles", "Trading Cards")
 		categoriesList.forEach {
@@ -89,7 +94,7 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
 
 		bind.loader.isVisible = true
 
-		viewModel.getLiveShow()
+		viewModel.getLiveShow("live".request())
 
 		viewModel.getLiveShowRepo.observe(viewLifecycleOwner) {
 			when (it) {
@@ -150,13 +155,29 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
 	}
 
 	fun selectTab(selectedTab: TextView) {
-		val tabs = listOf(bind.recommended, bind.popular, bind.all)
+		val tabs = listOf(bind.live, bind.popular, bind.comingSoon)
 		tabs.forEach {
 			it.setTextColor(ContextCompat.getColor(mCtx, R.color.outlineVariant))
 			it.setTypeface(null, Typeface.NORMAL)
 		}
 		selectedTab.setTextColor(ContextCompat.getColor(mCtx, R.color.scrim))
 		selectedTab.setTypeface(null, Typeface.BOLD)
+
+		when(selectedTab){
+			bind.live ->{
+				bind.loader.isVisible = true
+				viewModel.getLiveShow("live".request())
+			}
+			bind.popular ->{
+				bind.loader.isVisible = true
+				viewModel.getLiveShow("popular".request())
+			}
+			bind.comingSoon ->{
+				bind.loader.isVisible = true
+				viewModel.getLiveShow("upcoming".request())
+			}
+
+		}
 	}
 	
 }

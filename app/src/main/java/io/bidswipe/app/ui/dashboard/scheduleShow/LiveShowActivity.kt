@@ -37,11 +37,14 @@ import io.bidswipe.app.databinding.PromoteShowSheetBinding
 import io.bidswipe.app.databinding.ShareSheetBinding
 import io.bidswipe.app.interfaces.AlertClicks
 import io.bidswipe.app.interfaces.RecyclerClicks
+import io.bidswipe.app.model.LiveShowModel
 import io.bidswipe.app.network.Resource
+import io.bidswipe.app.network.response.UpdateLiveStatusResponse
 import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.ui.dashboard.DashViewModel
 import io.bidswipe.app.utils.Alerts
 import io.bidswipe.app.utils.Const
+import io.bidswipe.app.utils.Utils
 import io.bidswipe.app.utils.bind
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request
@@ -63,6 +66,12 @@ class LiveShowActivity : BaseActivity() {
         setContentView(bind.root)
 
         showId= intent.getStringExtra("showId") ?:""
+
+        createEngine()
+
+        startListenEvent()
+
+        fetchMessage()
 
         bind.more.setOnClickListener {
             showMoreSheet()
@@ -109,15 +118,11 @@ class LiveShowActivity : BaseActivity() {
 
         viewModel.generateToken(showId.request())
 
-        createEngine()
-
-        startListenEvent()
-
-        fetchMessage()
-
         bind.startBtn.setOnClickListener {
-            startPublish()
-            bind.startBtn.isVisible = false
+
+            bind.loader.isVisible = true
+
+            viewModel.updateLiveStatus(showId.request(),"true".request())
         }
 
         viewModel.generateTokenRepo.observe(this) {
@@ -134,6 +139,49 @@ class LiveShowActivity : BaseActivity() {
                     loginRoom(mData?.userId.toString(), mData?.roomId.toString())
 
 
+
+                }
+
+                is Resource.Error -> {
+                    bind.loader.isVisible = false
+
+                    if (it.isNetworkError) {
+                        errorToast(getString(R.string.no_internet))
+                    } else {
+                        it.parse(this, TAG, object : AlertClicks {
+                            override fun primaryClick(dialog: AppBottomSheet) {
+                                dialog.dismiss()
+                                finish()
+
+                            }
+
+                            override fun secondaryClick(dialog: AppBottomSheet) {
+                                dialog.dismiss()
+
+                                finish()
+
+                            }
+                        })
+                    }
+                }
+
+                else -> {}
+
+            }
+        }
+
+        viewModel.updateLiveStatusRepo.observe(this) {
+            when (it) {
+                is Resource.Success -> {
+                    bind.loader.isVisible = false
+
+                    val mData = it.value.data
+
+                    addDataOnFirebase(mData)
+
+
+                    startPublish()
+                    bind.startBtn.isVisible = false
 
                 }
 
@@ -269,6 +317,8 @@ class LiveShowActivity : BaseActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
+
+        Const.fireBaseRef.getReference(Const.LIVE_SESSIONS).child(roomID).removeValue()
 
         stopPublish()
         logoutRoom()
@@ -458,7 +508,7 @@ class LiveShowActivity : BaseActivity() {
             viewMode = ZegoViewMode.ASPECT_FILL
         }
         ZegoExpressEngine.getEngine().startPreview(previewCanvas)
-        val streamID: String = roomID + "_" + userId + "_call"
+        val streamID: String = roomID
         ZegoExpressEngine.getEngine().startPublishingStream(streamID)
     }
 
@@ -512,6 +562,42 @@ class LiveShowActivity : BaseActivity() {
         })
     }
 
+    fun addDataOnFirebase(data: UpdateLiveStatusResponse.Data?){
 
+        val prod = data?.products?.get(0)
+
+        val user = data?.user
+
+        val product = LiveShowModel.Product(category = prod?.categoryId.toString(), id = prod?.id?.toInt(), image = (prod?.images?.get(0) ?:"").toString(),name=prod?.title , price =prod?.pricing?.toDouble())
+
+        val seller = LiveShowModel.Seller(
+            id =user?.id.toString(),
+            image = user?.profileImage,
+            isFollowed = false,
+            name = user?.name,
+            rating = user?.rating ?:""
+        )
+
+        val a= LiveShowModel(
+            product = product,
+            roomId = roomID,
+            seller = seller,
+            showDetail = "",
+            thumbnail = data?.thumbnail?.get(0) ?:"",
+            viewerCount = "",
+            highestBid = "",
+            isLive = true,
+            time = Utils.getTimeFromTimestamp(System.currentTimeMillis()/1000,"yyyy-MM-dd_HH:mm:ss_a"),
+            showId = showId
+            )
+
+        Const.fireBaseRef.getReference(Const.LIVE_SESSIONS).child(roomID).setValue(a).addOnCompleteListener {
+
+
+
+        }
+
+
+    }
 
 }

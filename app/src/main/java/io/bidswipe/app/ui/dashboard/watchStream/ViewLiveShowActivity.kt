@@ -1,75 +1,88 @@
 package io.bidswipe.app.ui.dashboard.watchStream
 
+import android.annotation.SuppressLint
 import android.app.Application
 import android.os.Bundle
-import android.view.View
-import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
+import androidx.core.view.isVisible
 import androidx.viewpager2.widget.ViewPager2
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.ValueEventListener
 import im.zego.zegoexpress.ZegoExpressEngine
-import im.zego.zegoexpress.callback.IZegoEventHandler
-import im.zego.zegoexpress.callback.IZegoRoomLoginCallback
-import im.zego.zegoexpress.constants.ZegoPlayerState
-import im.zego.zegoexpress.constants.ZegoPublisherState
-import im.zego.zegoexpress.constants.ZegoRoomStateChangedReason
 import im.zego.zegoexpress.constants.ZegoScenario
-import im.zego.zegoexpress.constants.ZegoStreamResourceMode
-import im.zego.zegoexpress.constants.ZegoUpdateType
-import im.zego.zegoexpress.constants.ZegoViewMode
-import im.zego.zegoexpress.entity.ZegoCanvas
 import im.zego.zegoexpress.entity.ZegoEngineProfile
-import im.zego.zegoexpress.entity.ZegoPlayerConfig
-import im.zego.zegoexpress.entity.ZegoRoomConfig
-import im.zego.zegoexpress.entity.ZegoStream
-import im.zego.zegoexpress.entity.ZegoUser
 import io.bidswipe.app.base.BaseActivity
 import io.bidswipe.app.controller.StreamPagerAdapter
 import io.bidswipe.app.databinding.ActivityViewLiveShowBinding
+import io.bidswipe.app.model.LiveShowModel
 import io.bidswipe.app.model.StreamModel
 import io.bidswipe.app.ui.dashboard.DashViewModel
 import io.bidswipe.app.utils.Const
 import io.bidswipe.app.utils.bind
-import org.json.JSONObject
 
 class ViewLiveShowActivity : BaseActivity() {
 
     private val bind by bind(ActivityViewLiveShowBinding::inflate)
     private val viewModel by viewModels<DashViewModel>()
 
-    private var roomId  = ""
-
-    private var streamList  = arrayListOf<StreamModel>()
-
+    private var pos  = 0
+    private var streamList  = arrayListOf<LiveShowModel>()
     private lateinit var viewPager: ViewPager2
     private lateinit var streamPagerAdapter: StreamPagerAdapter
+
+    private var eventListener = object : ValueEventListener {
+        @SuppressLint("NotifyDataSetChanged")
+        override fun onDataChange(snapshot: DataSnapshot) {
+            streamList.clear()
+
+            if (snapshot.exists() && snapshot.childrenCount > 0) {
+//                bind.noChats.isVisible = false
+                for (data in snapshot.children) {
+                    log("EVENT LISTENER " + data.toString())
+
+                    streamList.add(data.getValue(LiveShowModel::class.java)!!)
+
+                }
+
+            } else {
+//                bind.noChats.isVisible = true
+            }
+
+            viewPager = bind.viewPager
+
+            streamPagerAdapter = StreamPagerAdapter(this@ViewLiveShowActivity, streamList)
+            viewPager.adapter = streamPagerAdapter
+            viewPager.currentItem = pos
+            viewPager.orientation = ViewPager2.ORIENTATION_VERTICAL
+
+
+        }
+
+        override fun onCancelled(error: DatabaseError) {
+
+        }
+
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(bind.root)
 
-        roomId = intent.getStringExtra("roomId") ?: ""
+        pos = intent.getIntExtra("position",0)
 
-        streamList = intent.getParcelableArrayListExtra<StreamModel>("roomIdsList") !!
+//        streamList = intent.getParcelableArrayListExtra<StreamModel>("roomIdsList") !!
 
-        log("ROOMIDS: ${streamList.get(0).roomId}")
+        Const.fireBaseRef.getReference(Const.LIVE_SESSIONS).addValueEventListener(eventListener)
 
-       /* val streamList = listOf(
-            StreamModel("live_room_3", "stream1"),
-            StreamModel("room2", "stream2"),
-            StreamModel("room3", "stream3"),
-        )*/
+//        log("ROOMIDS: ${streamList.get(0).roomId}")
 
-        viewPager = bind.viewPager
 
-        streamPagerAdapter = StreamPagerAdapter(this, streamList,roomId)
-        viewPager.adapter = streamPagerAdapter
-        viewPager.orientation = ViewPager2.ORIENTATION_VERTICAL
 
         createEngine()
-       /* loginRoom(roomId)
-        startListenEvent()*/
+
     }
 
     override fun onDestroy() {
@@ -91,162 +104,5 @@ class ViewLiveShowActivity : BaseActivity() {
     private fun destroyEngine() {
         ZegoExpressEngine.destroyEngine(null)
     }
-
-    /*private fun startListenEvent() {
-        ZegoExpressEngine.getEngine().setEventHandler(object : IZegoEventHandler() {
-
-            override fun onRoomStreamUpdate(
-                roomID: String,
-                updateType: ZegoUpdateType,
-                streamList: ArrayList<ZegoStream>,
-                extendedData: JSONObject
-            ) {
-                super.onRoomStreamUpdate(roomID, updateType, streamList, extendedData)
-                if (streamList.isNotEmpty()) {
-                    val streamID = streamList[0].streamID
-
-                    log("STREAM ID : $streamID")
-                    if (updateType == ZegoUpdateType.ADD) {
-                        startPlayStream(streamID)
-                    } else {
-                        stopPlayStream(streamID)
-                    }
-                }
-            }
-
-            override fun onRoomUserUpdate(
-                roomID: String,
-                updateType: ZegoUpdateType,
-                userList: ArrayList<ZegoUser>
-            ) {
-                super.onRoomUserUpdate(roomID, updateType, userList)
-                val context = applicationContext
-                for (user in userList) {
-                    val message = when (updateType) {
-                        ZegoUpdateType.ADD -> "${user.userID} logged in to the room."
-                        ZegoUpdateType.DELETE -> "${user.userID} logged out of the room."
-                        else -> ""
-                    }
-                    Toast.makeText(context, message, Toast.LENGTH_LONG).show()
-                }
-            }
-
-            override fun onRoomStateChanged(
-                roomID: String,
-                reason: ZegoRoomStateChangedReason,
-                errorCode: Int,
-                extendedData: JSONObject
-            ) {
-                super.onRoomStateChanged(roomID, reason, errorCode, extendedData)
-                val context = applicationContext
-                when (reason) {
-                    ZegoRoomStateChangedReason.LOGIN_FAILED ->
-                        Toast.makeText(context, "ZegoRoomStateChangedReason.LOGIN_FAILED", Toast.LENGTH_LONG).show()
-
-                    ZegoRoomStateChangedReason.RECONNECT_FAILED ->
-                        Toast.makeText(context, "ZegoRoomStateChangedReason.RECONNECT_FAILED", Toast.LENGTH_LONG).show()
-
-                    ZegoRoomStateChangedReason.KICK_OUT ->
-                        Toast.makeText(context, "ZegoRoomStateChangedReason.KICK_OUT", Toast.LENGTH_LONG).show()
-
-                    else -> {
-                        // Other room states can be handled here if needed
-                    }
-                }
-            }
-
-            override fun onPublisherStateUpdate(
-                streamID: String,
-                state: ZegoPublisherState,
-                errorCode: Int,
-                extendedData: JSONObject
-            ) {
-                super.onPublisherStateUpdate(streamID, state, errorCode, extendedData)
-                if (errorCode != 0) {
-                    // Handle publish error
-                }
-
-                if (state == ZegoPublisherState.NO_PUBLISH) {
-                    Toast.makeText(applicationContext, "ZegoPublisherState.NO_PUBLISH", Toast.LENGTH_LONG).show()
-                }
-            }
-
-            override fun onPlayerStateUpdate(
-                streamID: String,
-                state: ZegoPlayerState,
-                errorCode: Int,
-                extendedData: JSONObject
-            ) {
-                super.onPlayerStateUpdate(streamID, state, errorCode, extendedData)
-
-                if (errorCode != 0) {
-                    Toast.makeText(
-                        applicationContext,
-                        "onPlayerStateUpdate, state: $state errorCode: $errorCode",
-                        Toast.LENGTH_LONG
-                    ).show()
-                }
-
-                if (state == ZegoPlayerState.NO_PLAY) {
-                    Toast.makeText(applicationContext, "ZegoPlayerState.NO_PLAY", Toast.LENGTH_LONG).show()
-                }
-            }
-        })
-    }*/
-
-    private fun stopListenEvent() {
-        ZegoExpressEngine.getEngine().setEventHandler(null)
-    }
-
-
-    fun loginRoom(roomId : String) {
-        val user = ZegoUser(userId, userName)
-        val roomConfig = ZegoRoomConfig()
-        // The `onRoomUserUpdate` callback can be received only when
-        // `ZegoRoomConfig` in which the `isUserStatusNotify` parameter is set to
-        // `true` is passed.
-        roomConfig.isUserStatusNotify = true
-        ZegoExpressEngine.getEngine().loginRoom(
-            roomId,
-            user,
-            roomConfig,
-            IZegoRoomLoginCallback { error: Int, extendedData: JSONObject? ->
-                // Room login result. This callback is sufficient if you only need to
-                // check the login result.
-                if (error == 0) {
-                    // Login successful.
-                    // Start the preview and stream publishing.
-                    Toast.makeText(this, "Login successful.", Toast.LENGTH_LONG).show()
-
-
-//                        startPreview()
-//                        startPublish()
-
-                } else {
-                    // Login failed. For details, see [Error codes\|_blank](/404).
-                    Toast.makeText(this, "Login failed. error = " + error, Toast.LENGTH_LONG).show()
-                }
-            })
-    }
-
-    fun logoutRoom() {
-        ZegoExpressEngine.getEngine().logoutRoom()
-    }
-
-    /*fun startPlayStream(streamID: String?) {
-        bind.hostView.setVisibility(View.VISIBLE)
-        val playCanvas = ZegoCanvas(bind.hostView).apply {
-            viewMode = ZegoViewMode.ASPECT_FILL
-        }
-        val config = ZegoPlayerConfig()
-        config.resourceMode = ZegoStreamResourceMode.DEFAULT // Live Streaming
-        // config.resourceMode = ZegoStreamResourceMode.ONLY_L3; // Interactive Live Streaming
-        ZegoExpressEngine.getEngine().startPlayingStream(streamID, playCanvas, config)
-    }*/
-
-   /* fun stopPlayStream(streamID: String?) {
-        ZegoExpressEngine.getEngine().stopPlayingStream(streamID)
-        bind.hostView.setVisibility(View.GONE)
-    }*/
 
 }
