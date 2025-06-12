@@ -199,5 +199,16 @@ suspend fun settingsList() = call { api.settingsList() }
         isLive: RequestBody?
     ) = call { api.updateLiveStatus(showId,isLive) }
 
+    suspend fun createBid(
+        showId: RequestBody?,
+        userId: RequestBody?,
+        productId: RequestBody?,
+        bidPrice: RequestBody?
+    ) = call { api.createBid(showId,userId,productId,bidPrice) }
+
+
+
+    suspend fun getUserProfile(
+    ) = call { api.getUserProfile() }
 
 }

@@ -59,6 +59,7 @@ class LiveShowActivity : BaseActivity() {
     var isFrontCamera = true
     var roomID = ""
     var showId = ""
+    private var liveStatus = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -177,12 +178,15 @@ class LiveShowActivity : BaseActivity() {
 
                     val mData = it.value.data
 
-                    addDataOnFirebase(mData)
+                    if (liveStatus){
+                        addDataOnFirebase(mData)
 
 
-                    startPublish()
-                    bind.startBtn.isVisible = false
-
+                        startPublish()
+                        bind.startBtn.isVisible = false
+                    }else{
+                        finish()
+                    }
                 }
 
                 is Resource.Error -> {
@@ -309,16 +313,23 @@ class LiveShowActivity : BaseActivity() {
         }
 
         endShowSheetBind.endBtn.setOnClickListener {
-            finish()
+            endShowSheet.dismiss()
+            liveStatus = false
+            bind.loader.isVisible = true
+            viewModel.updateLiveStatus(showId.request(),"false".request())
         }
-
         endShowSheet.show()
+
     }
 
     override fun onDestroy() {
         super.onDestroy()
 
+
+
         Const.fireBaseRef.getReference(Const.LIVE_SESSIONS).child(roomID).removeValue()
+
+
 
         stopPublish()
         logoutRoom()
@@ -592,8 +603,6 @@ class LiveShowActivity : BaseActivity() {
             )
 
         Const.fireBaseRef.getReference(Const.LIVE_SESSIONS).child(roomID).setValue(a).addOnCompleteListener {
-
-
 
         }
 

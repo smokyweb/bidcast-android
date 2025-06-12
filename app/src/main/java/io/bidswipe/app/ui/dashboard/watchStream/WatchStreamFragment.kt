@@ -6,32 +6,29 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
+import androidx.core.view.isVisible
+import com.ncorti.slidetoact.SlideToActView
+import com.ncorti.slidetoact.SlideToActView.OnSlideCompleteListener
 import im.zego.zegoexpress.ZegoExpressEngine
 import im.zego.zegoexpress.callback.IZegoEventHandler
 import im.zego.zegoexpress.callback.IZegoIMSendBroadcastMessageCallback
-import im.zego.zegoexpress.constants.ZegoPlayerState
-import im.zego.zegoexpress.constants.ZegoPublisherState
-import im.zego.zegoexpress.constants.ZegoRoomStateChangedReason
 import im.zego.zegoexpress.constants.ZegoScenario
-import im.zego.zegoexpress.constants.ZegoStreamResourceMode
-import im.zego.zegoexpress.constants.ZegoUpdateType
 import im.zego.zegoexpress.constants.ZegoViewMode
 import im.zego.zegoexpress.entity.ZegoBarrageMessageInfo
 import im.zego.zegoexpress.entity.ZegoBroadcastMessageInfo
 import im.zego.zegoexpress.entity.ZegoCanvas
 import im.zego.zegoexpress.entity.ZegoEngineProfile
-import im.zego.zegoexpress.entity.ZegoPlayerConfig
 import im.zego.zegoexpress.entity.ZegoRoomConfig
-import im.zego.zegoexpress.entity.ZegoStream
 import im.zego.zegoexpress.entity.ZegoUser
 import io.bidswipe.app.base.BaseFragment
 import io.bidswipe.app.databinding.FragmentWatchStreamBinding
-import io.bidswipe.app.ui.dashboard.DashViewModel
+import io.bidswipe.app.utils.draw
+import io.bidswipe.app.utils.loadUrl
+import io.bidswipe.app.utils.request
 import io.bidswipe.app.utils.value
 
-class WatchStreamFragment : BaseFragment<DashViewModel, FragmentWatchStreamBinding>() {
-    override fun getModel(): Class<DashViewModel> = DashViewModel::class.java
+class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBinding>() {
+    override fun getModel(): Class<StreamViewModel> = StreamViewModel::class.java
 
     override fun getBind(
         inflater: LayoutInflater,
@@ -72,6 +69,44 @@ class WatchStreamFragment : BaseFragment<DashViewModel, FragmentWatchStreamBindi
            }
 
         }
+
+
+
+        // Or observe selectedStream if you want to react to changes
+        viewModel.selectedStream.observe(viewLifecycleOwner) { stream ->
+            if (stream.roomId == roomID) {
+
+                bind.userImage.loadUrl(mCtx, stream.seller?.image.toString(), placeHolder = draw.user_image)
+
+                bind.userName.text = stream.seller?.name.toString()
+                bind.productName.text = stream.product?.name
+                bind.productImage.loadUrl(mCtx, stream?.product?.image.toString() , placeHolder = draw.product_img )
+                bind.quantity.text = buildString {
+                    append("Price: ")
+                    append(stream.product?.price.toString())
+                }
+
+                bind.max.text = stream.product?.price.toString()
+
+                bind.bid.onSlideCompleteListener = object : OnSlideCompleteListener {
+                    override fun onSlideComplete(view: SlideToActView) {
+                        log("SWIPED")
+
+                        bind.loader.isVisible = true
+
+                        viewModel.createBid(
+                            stream.showId?.request(),
+                            userId.request(),
+                            stream.product?.id.toString().request(),
+                            "100".request()
+                        )
+
+                    }
+                }
+
+            }
+        }
+
 //        createEngine()
 //        loginRoom(roomID)
 //        startListenEvent()
@@ -111,6 +146,10 @@ class WatchStreamFragment : BaseFragment<DashViewModel, FragmentWatchStreamBindi
         val canvas = ZegoCanvas(bind.hostView).apply {
             viewMode = ZegoViewMode.ASPECT_FILL
         }
+       /* val a= ZegoExpressEngine.getEngine().getRoomStreamList(roomID, ZegoRoomStreamListType.ALL).playStreamList.size
+
+        bind.liveCount.text = a.toString()*/
+
         ZegoExpressEngine.getEngine().startPlayingStream(roomID, canvas)
     }
 

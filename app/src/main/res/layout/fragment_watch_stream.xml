@@ -30,9 +30,11 @@
             app:cardElevation="0dp">
 
             <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/icon"
+                android:id="@+id/userImage"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+
+                android:scaleType="centerCrop"
                 android:src="@drawable/user_image" />
 
         </com.google.android.material.card.MaterialCardView>
@@ -44,7 +46,7 @@
             android:orientation="vertical">
 
             <TextView
-                android:id="@+id/title"
+                android:id="@+id/userName"
                 style="@style/TitleLarge"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -81,7 +83,7 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/status"
+            android:id="@+id/liveCount"
             style="@style/appTonalBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -89,7 +91,7 @@
             android:minWidth="45dp"
             android:layout_marginEnd="@dimen/half_margin"
             android:padding="6dp"
-            android:text="1"
+            android:text="0"
             android:textSize="14sp"
             />
 
@@ -276,7 +278,7 @@
                     app:cardElevation="0dp">
 
                     <androidx.appcompat.widget.AppCompatImageView
-                        android:id="@+id/img"
+                        android:id="@+id/productImage"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:scaleType="fitXY"
@@ -332,6 +334,7 @@
         app:layout_constraintBottom_toTopOf="@id/message">
 
         <com.google.android.material.button.MaterialButton
+            android:id="@+id/max"
             style="@style/appTonalBtn"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
@@ -345,7 +348,7 @@
 
 
         <com.ncorti.slidetoact.SlideToActView
-            android:id="@+id/example_gray_on_green"
+            android:id="@+id/bid"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:elevation="6dp"
@@ -384,5 +387,11 @@
             android:inputType="text" />
 
     </com.google.android.material.textfield.TextInputLayout>
+
+    <io.bidswipe.app.ui.custom.LoaderView
+        android:id="@+id/loader"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

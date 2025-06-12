@@ -23,6 +23,7 @@ import io.bidswipe.app.network.response.GetShippingAddressResponse
 import io.bidswipe.app.network.response.UpdateLiveStatusResponse
 import io.bidswipe.app.network.response.UpdateOfferResponse
 import io.bidswipe.app.network.response.UserDeviceResponse
+import io.bidswipe.app.network.response.UserProfileResponse
 import io.bidswipe.app.ui.dashboard.scheduleShow.LiveShowActivity
 import kotlinx.coroutines.launch
 import okhttp3.MultipartBody
@@ -248,5 +249,27 @@ class DashViewModel @Inject constructor(val repo: DashRepository) : ViewModel() 
 		_updateLiveStatusResponse.value = repo.updateLiveStatus(showId,isLive)
 	}
 
-	
+
+	/*private var _updateLiveStatusResponse = MutableLiveData<Resource<UpdateLiveStatusResponse>>()
+	val updateLiveStatusRepo: MutableLiveData<Resource<UpdateLiveStatusResponse>>
+		get() = _updateLiveStatusResponse
+
+	fun updateLiveStatus(
+		showId: RequestBody?,
+		isLive: RequestBody?
+	) = viewModelScope.launch {
+		_updateLiveStatusResponse.value = repo.(showId,isLive)
+	}*/
+
+
+
+	private var _getUserProfileResponse = MutableLiveData<Resource<UserProfileResponse>>()
+	val getUserProfileRepo: MutableLiveData<Resource<UserProfileResponse>>
+		get() = _getUserProfileResponse
+
+	fun getUserProfile(
+	) = viewModelScope.launch {
+		_getUserProfileResponse.value = repo.getUserProfile()
+	}
+
 }

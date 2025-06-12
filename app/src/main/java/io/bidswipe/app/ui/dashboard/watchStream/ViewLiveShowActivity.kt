@@ -25,7 +25,7 @@ import io.bidswipe.app.utils.bind
 class ViewLiveShowActivity : BaseActivity() {
 
     private val bind by bind(ActivityViewLiveShowBinding::inflate)
-    private val viewModel by viewModels<DashViewModel>()
+    private val viewModel by viewModels<StreamViewModel>()
 
     private var pos  = 0
     private var streamList  = arrayListOf<LiveShowModel>()
@@ -52,7 +52,9 @@ class ViewLiveShowActivity : BaseActivity() {
 
             viewPager = bind.viewPager
 
-            streamPagerAdapter = StreamPagerAdapter(this@ViewLiveShowActivity, streamList)
+            viewModel.setStreams(streamList)
+
+            streamPagerAdapter = StreamPagerAdapter(this@ViewLiveShowActivity, viewModel)
             viewPager.adapter = streamPagerAdapter
             viewPager.currentItem = pos
             viewPager.orientation = ViewPager2.ORIENTATION_VERTICAL

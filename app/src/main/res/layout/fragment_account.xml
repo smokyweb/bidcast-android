@@ -48,6 +48,7 @@
 					app:layout_constraintTop_toTopOf="parent">
 
 					<ImageView
+						android:id="@+id/userProfile"
 						android:layout_width="64dp"
 						android:layout_height="64dp"
 						android:contentDescription="@string/app_name"
@@ -67,7 +68,7 @@
 					app:layout_constraintTop_toTopOf="parent" />
 
 				<TextView
-					android:id="@+id/textView2"
+					android:id="@+id/userName"
 					style="@style/TitleMedium"
 					android:layout_width="0dp"
 					android:layout_height="wrap_content"
@@ -78,7 +79,7 @@
 					app:layout_constraintStart_toStartOf="@+id/view" />
 
 				<TextView
-					android:id="@+id/textView3"
+					android:id="@+id/sellerSince"
 					style="@style/TitleSmall"
 					android:layout_width="0dp"
 					android:layout_height="wrap_content"

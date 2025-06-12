@@ -3,6 +3,7 @@ package io.bidswipe.app.network
 import io.bidswipe.app.BuildConfig
 import io.bidswipe.app.network.response.AboutUsResponse
 import io.bidswipe.app.network.response.CommonResponse
+import io.bidswipe.app.network.response.CreateBidResponse
 import io.bidswipe.app.network.response.FAQResponse
 import io.bidswipe.app.network.response.GenerateTokenResponse
 import io.bidswipe.app.network.response.GetAllTipsResponse
@@ -26,6 +27,7 @@ import io.bidswipe.app.network.response.TermsConditionResponse
 import io.bidswipe.app.network.response.UpdateLiveStatusResponse
 import io.bidswipe.app.network.response.UpdateOfferResponse
 import io.bidswipe.app.network.response.UserDeviceResponse
+import io.bidswipe.app.network.response.UserProfileResponse
 import io.bidswipe.app.utils.Utils
 import io.bidswipe.app.utils.request
 import okhttp3.MultipartBody
@@ -311,6 +313,19 @@ interface ApiInterface {
 		@Part("schedule_show_id") showId: RequestBody?,
 		@Part("is_live") isLive: RequestBody?
 	): UpdateLiveStatusResponse
+
+	@Multipart
+	@POST("api/bid/store")
+	suspend fun createBid(
+		@Part("schedule_show_id") showId : RequestBody?,
+		@Part("user_id") userId : RequestBody?,
+		@Part("product_id") productId : RequestBody?,
+		@Part("bid_price") bidPrice : RequestBody?
+	): CreateBidResponse
+
+	@GET("api/get-profile")
+	suspend fun getUserProfile(
+	): UserProfileResponse
 
 
 }

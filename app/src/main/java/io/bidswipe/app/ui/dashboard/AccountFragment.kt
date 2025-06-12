@@ -23,6 +23,7 @@ import io.bidswipe.app.ui.dashboard.more.MoreActivity
 import io.bidswipe.app.ui.dashboard.sellerHub.SellerHubActivity
 import io.bidswipe.app.utils.Prefs
 import io.bidswipe.app.utils.finish
+import io.bidswipe.app.utils.loadUrl
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.toAuth
 
@@ -134,6 +135,42 @@ class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
 
         accountGridAdapter= GridAdapter(accountGridList,accountGridClick)
         bind.accountView.gridRecycler.adapter = accountGridAdapter
+
+        viewModel.getUserProfile()
+
+        viewModel.getUserProfileRepo.observe(viewLifecycleOwner) {
+            when (it) {
+                is Resource.Success -> {
+                    successToast(it.value.message.toString())
+                    val mData = it.value.data
+                    bind.userName.text = mData?.name.toString()
+
+                    bind.userProfile.loadUrl(mCtx,mData?.profileImage.toString())
+
+                }
+
+                is Resource.Error -> {
+                    bind.loader.isVisible = false
+                    viewModel.logoutRepo.value = null
+                    if (it.isNetworkError) {
+                        errorToast(getString(R.string.no_internet))
+                    } else {
+                        it.parse(mCtx, TAG, object : AlertClicks {
+                            override fun primaryClick(dialog: AppBottomSheet) {
+                                dialog.dismiss()
+                            }
+
+                            override fun secondaryClick(dialog: AppBottomSheet) {
+                                dialog.dismiss()
+                            }
+                        })
+                    }
+                }
+
+                else -> {}
+
+            }
+        }
 
         viewModel.logoutRepo.observe(viewLifecycleOwner) {
             when (it) {
