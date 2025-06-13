@@ -27,13 +27,14 @@
                 android:orientation="vertical">
 
                 <TextView
+                    android:id="@+id/orderId"
                     style="@style/TitleLarge"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="#ORD-2025-0123" />
 
                 <TextView
-                    android:id="@+id/prod_sub_title"
+                    android:id="@+id/orderDate"
                     style="@style/BodyMedium"
                     android:textColor="@color/tertiary"
                     android:layout_width="match_parent"
@@ -43,6 +44,7 @@
             </LinearLayout>
 
             <com.google.android.material.card.MaterialCardView
+                android:id="@+id/statusCard"
                 style="@style/cardStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -94,14 +96,14 @@
                 android:orientation="vertical">
 
                 <TextView
-                    android:id="@+id/title"
+                    android:id="@+id/sellerName"
                     style="@style/TitleLarge"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="John Smith" />
 
                 <TextView
-                    android:id="@+id/sub_title"
+                    android:id="@+id/sellerAddress"
                     style="@style/BodyLarge"
                     android:textColor="@color/tertiary"
                     android:layout_width="match_parent"
@@ -134,6 +136,7 @@
                 android:text="Order Amount" />
 
             <TextView
+                android:id="@+id/orderAmount"
                 style="@style/TitleLarge"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

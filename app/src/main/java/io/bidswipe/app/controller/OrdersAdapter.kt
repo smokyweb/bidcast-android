@@ -6,9 +6,11 @@ import io.bidswipe.app.base.BaseAdapter
 import io.bidswipe.app.databinding.InventoryItemBinding
 import io.bidswipe.app.databinding.MyOrdersItemBinding
 import io.bidswipe.app.interfaces.RecyclerClicks
+import io.bidswipe.app.network.response.GetOrdersResponse
+import io.bidswipe.app.utils.asMoney
 
-class OrdersAdapter (mList: MutableList<String>, val mClicks: RecyclerClicks
-) : BaseAdapter<String, MyOrdersItemBinding>(mList) {
+class OrdersAdapter (mList: MutableList<GetOrdersResponse.Data?>, val mClicks: RecyclerClicks
+) : BaseAdapter<GetOrdersResponse.Data?, MyOrdersItemBinding>(mList) {
 
     override fun bindView(inflater: LayoutInflater, parent: ViewGroup) =
         MyOrdersItemBinding.inflate(inflater, parent, false)
@@ -16,9 +18,16 @@ class OrdersAdapter (mList: MutableList<String>, val mClicks: RecyclerClicks
     override fun onBind(
         holder: BaseViewHolder<MyOrdersItemBinding>,
         position: Int,
-        item: String?
+        item: GetOrdersResponse.Data?
     ) {
         with(holder) {
+
+            bind.orderId.text = item?.orderId
+            bind.status.text = item?.status
+
+            bind.orderAmount.text = item?.product?.pricing.toString().asMoney()
+
+
 
 
         }

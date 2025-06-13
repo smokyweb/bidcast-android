@@ -20,6 +20,7 @@ import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.ui.dashboard.product.ProductDetailsActivity
 import io.bidswipe.app.utils.Utils
 import io.bidswipe.app.utils.parse
+import io.bidswipe.app.utils.request
 import io.bidswipe.app.utils.runSafe
 
 class ShopFragment : BaseFragment<SellerViewModel,FragmentShopBinding>() {
@@ -31,6 +32,8 @@ class ShopFragment : BaseFragment<SellerViewModel,FragmentShopBinding>() {
 
     private lateinit var shopAdapter: ShopAdapter
 
+    private var sellerId = ""
+
     private val mClick = object : RecyclerClicks{
       
         override fun itemClick(pos: Int, status: String?) {
@@ -41,6 +44,8 @@ class ShopFragment : BaseFragment<SellerViewModel,FragmentShopBinding>() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        sellerId = activity?.intent?.getStringExtra("userId") ?:""
 
         repeat(5){
             bind.chipGroup.addView(
@@ -63,7 +68,7 @@ class ShopFragment : BaseFragment<SellerViewModel,FragmentShopBinding>() {
 
         bind.recycler.adapter = shopAdapter
 
-        viewModel.getUserProducts()
+        viewModel.getUserProducts(sellerId.request())
 
         viewModel.getUserProductsRepo.observe(viewLifecycleOwner) {
             when (it) {

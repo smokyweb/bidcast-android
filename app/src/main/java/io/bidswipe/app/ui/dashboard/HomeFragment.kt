@@ -49,7 +49,7 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
 
 				"viewShow" ->{
 
-					if (showList.get(pos)?.isLive == true){
+					if (showList[pos]?.isLive == true){
 						startActivity(Intent(mCtx, ViewLiveShowActivity::class.java).putExtra("position", pos).putParcelableArrayListExtra("roomIdsList", romIdsList as ArrayList))
 					}
 

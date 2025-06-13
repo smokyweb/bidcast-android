@@ -141,7 +141,6 @@ class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
         viewModel.getUserProfileRepo.observe(viewLifecycleOwner) {
             when (it) {
                 is Resource.Success -> {
-                    successToast(it.value.message.toString())
                     val mData = it.value.data
                     bind.userName.text = mData?.name.toString()
 

@@ -6,7 +6,12 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.network.repository.DashRepository
+import io.bidswipe.app.network.response.FetchSellerVerificationResponse
+import io.bidswipe.app.network.response.GetMyInventoryResponse
 import io.bidswipe.app.network.response.GetMyShowResponse
+import io.bidswipe.app.network.response.GetOffersResponse
+import io.bidswipe.app.network.response.GetOrdersResponse
+import io.bidswipe.app.network.response.UpdateOfferResponse
 import kotlinx.coroutines.launch
 import okhttp3.RequestBody
 import javax.inject.Inject
@@ -23,6 +28,57 @@ class SellerHubViewModel@Inject constructor(val repo: DashRepository) : ViewMode
         type : RequestBody? = null
     ) = viewModelScope.launch {
         _getMyScheduledShowResponse.value = repo.getMyScheduledShow(type)
+    }
+
+    private var _fetchSellerVerificationResponse = MutableLiveData<Resource<FetchSellerVerificationResponse>>()
+    val fetchSellerVerificationRepo: MutableLiveData<Resource<FetchSellerVerificationResponse>>
+        get() = _fetchSellerVerificationResponse
+
+    fun fetchSellerVerification(
+    ) = viewModelScope.launch {
+        _fetchSellerVerificationResponse.value = repo.fetchSellerVerification()
+    }
+
+    private var _getMyInventoryResponse = MutableLiveData<Resource<GetMyInventoryResponse>>()
+    val getMyInventoryRepo: MutableLiveData<Resource<GetMyInventoryResponse>>
+        get() = _getMyInventoryResponse
+
+    fun getMyInventory(
+        status : RequestBody?,
+        page : RequestBody?
+    ) = viewModelScope.launch {
+        _getMyInventoryResponse.value = repo.getMyInventory(status,page)
+    }
+
+    private var _getOrderListingResponse = MutableLiveData<Resource<GetOrdersResponse>>()
+    val getOrderListingRepo: MutableLiveData<Resource<GetOrdersResponse>>
+        get() = _getOrderListingResponse
+
+    fun getOrderListing(
+        type: RequestBody?,
+    ) = viewModelScope.launch {
+        _getOrderListingResponse.value = repo.getOrderListing(type)
+    }
+
+    private var _offerListResponse = MutableLiveData<Resource<GetOffersResponse>>()
+    val offerListRepo: MutableLiveData<Resource<GetOffersResponse>>
+        get() = _offerListResponse
+
+    fun offerList(
+        page: Int ? = null
+    ) = viewModelScope.launch {
+        _offerListResponse.value = repo.offerList(page)
+    }
+
+    private var _offerUpdateStatusResponse = MutableLiveData<Resource<UpdateOfferResponse>>()
+    val offerUpdateStatusRepo: MutableLiveData<Resource<UpdateOfferResponse>>
+        get() = _offerUpdateStatusResponse
+
+    fun offerUpdateStatus(
+        offerId : RequestBody?,
+        status: RequestBody?
+    ) = viewModelScope.launch {
+        _offerUpdateStatusResponse.value = repo.offerUpdateStatus(offerId,status)
     }
 
 }

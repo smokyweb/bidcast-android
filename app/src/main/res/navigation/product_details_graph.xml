@@ -10,17 +10,14 @@
         android:name="io.bidswipe.app.ui.dashboard.product.ProductDetailsFragment"
         android:label="fragment_product_details"
         tools:layout="@layout/fragment_product_details" >
-        <action
-            android:id="@+id/goToSendGiftFragment"
-            app:destination="@id/sendGiftFragment"
-            app:enterAnim="@anim/slide_in_right"
-            app:exitAnim="@anim/slide_out_left"
-            app:popEnterAnim="@anim/slide_in_left"
-            app:popExitAnim="@anim/slide_out_right"
-            />
-        <action
+
+        <!--<action
             android:id="@+id/productDetailToOrderStatusFragment"
             app:destination="@id/orderStatusFragment"
+            />-->
+        <action
+            android:id="@+id/goToBuyNowFragment"
+            app:destination="@id/buyNowFragment"
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@anim/slide_in_left"
@@ -44,6 +41,26 @@
         android:name="io.bidswipe.app.ui.dashboard.product.OrderStatusFragment"
         android:label="fragment_order_status"
         tools:layout="@layout/fragment_order_status" />
+    <fragment
+        android:id="@+id/buyNowFragment"
+        android:name="io.bidswipe.app.ui.dashboard.product.BuyNowFragment"
+        android:label="fragment_buy_now"
+        tools:layout="@layout/fragment_buy_now" >
+        <action
+            android:id="@+id/buyNowToOrderStatusFragment"
+            app:destination="@id/orderStatusFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"/>
+        <action
+            android:id="@+id/buyNowToSendGiftFragment"
+            app:destination="@id/sendGiftFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"/>
+    </fragment>
 
 
 </navigation>

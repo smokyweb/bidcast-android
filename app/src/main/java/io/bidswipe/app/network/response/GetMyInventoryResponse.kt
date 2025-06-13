@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName
 import androidx.annotation.Keep
 
 @Keep
-data class GetProductsResponse(
+data class GetMyInventoryResponse(
     @SerializedName("currentPage")
     val currentPage: Int?,
     @SerializedName("data")
@@ -29,6 +29,8 @@ data class GetProductsResponse(
         val acceptOffers: Boolean?,
         @SerializedName("category_id")
         val categoryId: Int?,
+        @SerializedName("created_at")
+        val createdAt: String?,
         @SerializedName("description")
         val description: String?,
         @SerializedName("flash_sale")
@@ -38,7 +40,11 @@ data class GetProductsResponse(
         @SerializedName("images")
         val images: List<String?>?,
         @SerializedName("pricing")
-        val pricing: String?,
+        val pricing: Double?,
+        @SerializedName("product_show")
+        val productShow: String?,
+        @SerializedName("purchased_quantity")
+        val purchasedQuantity: Int?,
         @SerializedName("quantity")
         val quantity: Int?,
         @SerializedName("reserve_for_live")
@@ -47,10 +53,11 @@ data class GetProductsResponse(
         val shippingProfileId: Int?,
         @SerializedName("status")
         val status: String?,
+        @SerializedName("thumbnail")
+        val thumbnail: List<String?>?,
         @SerializedName("title")
         val title: String?,
         @SerializedName("user_id")
-        val userId: Int?,
-        var selected: Boolean? = false
+        val userId: Int?
     )
 }

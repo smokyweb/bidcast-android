@@ -5,14 +5,17 @@ import io.bidswipe.app.network.response.AboutUsResponse
 import io.bidswipe.app.network.response.CommonResponse
 import io.bidswipe.app.network.response.CreateBidResponse
 import io.bidswipe.app.network.response.FAQResponse
+import io.bidswipe.app.network.response.FetchSellerVerificationResponse
 import io.bidswipe.app.network.response.GenerateTokenResponse
 import io.bidswipe.app.network.response.GetAllTipsResponse
 import io.bidswipe.app.network.response.GetAuctionTypeResponse
 import io.bidswipe.app.network.response.GetCategoryResponse
 import io.bidswipe.app.network.response.GetHowToSellResponse
 import io.bidswipe.app.network.response.GetLessonsResponse
+import io.bidswipe.app.network.response.GetMyInventoryResponse
 import io.bidswipe.app.network.response.GetMyShowResponse
 import io.bidswipe.app.network.response.GetOffersResponse
+import io.bidswipe.app.network.response.GetOrdersResponse
 import io.bidswipe.app.network.response.GetPaymentCardsResponse
 import io.bidswipe.app.network.response.GetPrepareStepResponse
 import io.bidswipe.app.network.response.GetProductDetailsResponse
@@ -155,9 +158,10 @@ interface ApiInterface {
 		@Part("type") type: RequestBody?
 	): GetAllTipsResponse
 	
-	
+	@Multipart
 	@POST("api/get-user-product")
 	suspend fun getUserProducts(
+		@Part("user_id") userId: RequestBody?
 	): GetProductsResponse
 	
 	@Multipart
@@ -188,7 +192,7 @@ interface ApiInterface {
 	@Multipart
 	@POST("api/offer/lists")
 	suspend fun offerList(
-		@Part("page") page: Int
+		@Part("page") page: Int?
 	): GetOffersResponse
 	
 	@Multipart
@@ -326,6 +330,24 @@ interface ApiInterface {
 	@GET("api/get-profile")
 	suspend fun getUserProfile(
 	): UserProfileResponse
+
+	@GET("api/seller-identity/fetch")
+	suspend fun fetchSellerVerification(
+	): FetchSellerVerificationResponse
+
+
+	@Multipart
+	@POST("api/get-my-inventory")
+	suspend fun getMyInventory(
+		@Part("status") status: RequestBody?,
+		@Part("page") page: RequestBody?,
+	): GetMyInventoryResponse
+
+	@Multipart
+	@POST("api/product/order-listing")
+	suspend fun getOrderListing(
+		@Part("type") type: RequestBody?
+	): GetOrdersResponse
 
 
 }

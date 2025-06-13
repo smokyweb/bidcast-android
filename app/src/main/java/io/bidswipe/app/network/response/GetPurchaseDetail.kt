@@ -49,7 +49,7 @@ data class GetPurchaseDetail(
             @SerializedName("images")
             val images: List<String?>?,
             @SerializedName("pricing")
-            val pricing: Int?,
+            val pricing: String?,
             @SerializedName("quantity")
             val quantity: Int?,
             @SerializedName("reserve_for_live")

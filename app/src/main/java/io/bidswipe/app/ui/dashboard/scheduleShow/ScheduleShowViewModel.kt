@@ -77,8 +77,9 @@ class ScheduleShowViewModel @Inject constructor(val repo: DashRepository) : View
         get() = _getUserProductsResponse
 
     fun getUserProducts(
-    ) = viewModelScope.launch {
-        _getUserProductsResponse.value = repo.getUserProducts()
+        userId : RequestBody? = null
+        ) = viewModelScope.launch {
+        _getUserProductsResponse.value = repo.getUserProducts(userId)
     }
 
 }

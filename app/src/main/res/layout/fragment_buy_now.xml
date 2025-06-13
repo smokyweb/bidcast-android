@@ -146,7 +146,6 @@
                 android:gravity="center_vertical"
                 android:layout_marginBottom="@dimen/margin"
                 android:layout_marginHorizontal="@dimen/margin"
-                android:drawableStart="@drawable/ic_visa"
                 android:drawablePadding="@dimen/half_margin"
                 android:useBoundsForWidth="true"
                 android:background="?selectableItemBackground"
@@ -174,6 +173,7 @@
                     android:text="@string/shipping_address" />
 
                 <TextView
+                    android:id="@+id/changeAddress"
                     style="@style/TitleSmall"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -349,6 +349,12 @@
         </LinearLayout>
 
     </ScrollView>
+
+    <io.bidswipe.app.ui.custom.LoaderView
+        android:id="@+id/loader"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"/>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

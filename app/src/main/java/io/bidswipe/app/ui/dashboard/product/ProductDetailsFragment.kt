@@ -4,14 +4,11 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat
-import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.navigation.fragment.findNavController
 import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseFragment
 import io.bidswipe.app.controller.MakeOfferAdapter
-import io.bidswipe.app.databinding.BuyNowSheetBinding
 import io.bidswipe.app.databinding.FragmentProductDetailsBinding
 import io.bidswipe.app.databinding.MakeOfferSheetBinding
 import io.bidswipe.app.interfaces.AlertClicks
@@ -27,7 +24,6 @@ import io.bidswipe.app.ui.dashboard.DashViewModel
 import io.bidswipe.app.utils.Alerts
 import io.bidswipe.app.utils.Utils
 import io.bidswipe.app.utils.asMoney
-import io.bidswipe.app.utils.draw
 import io.bidswipe.app.utils.finish
 import io.bidswipe.app.utils.hideKeyboard
 import io.bidswipe.app.utils.ids
@@ -36,18 +32,16 @@ import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request
 import io.bidswipe.app.utils.value
 
-class ProductDetailsFragment : BaseFragment<DashViewModel, FragmentProductDetailsBinding>() {
-	override fun getModel(): Class<DashViewModel> = DashViewModel::class.java
+class ProductDetailsFragment : BaseFragment<ProductViewModel, FragmentProductDetailsBinding>() {
+	override fun getModel(): Class<ProductViewModel> = ProductViewModel::class.java
 	
 	override fun getBind(inflater: LayoutInflater, view: ViewGroup?) = FragmentProductDetailsBinding.inflate(inflater, view, false)
 	
 	private var productId = ""
 	private var price = ""
-	private var shippingId = 0
-	
+
 	private var offerList = mutableListOf<OfferModel>()
 
-	private var product : GetProductDetailsResponse.Data? = null
 	private var checkOutData : GetPurchaseDetail.Data? = null
 
 	private var cardList = mutableListOf<GetPaymentCardsResponse.Data?>()
@@ -64,9 +58,13 @@ class ProductDetailsFragment : BaseFragment<DashViewModel, FragmentProductDetail
 		bind.header.onBackClick {
 			finish()
 		}
-		
+
+
 		bind.buyNow.setOnClickListener {
-			var buyNowSheetBind = BuyNowSheetBinding.bind(layoutInflater.inflate(R.layout.buy_now_sheet, null, false))
+
+
+			findNavController().navigate(ids.goToBuyNowFragment)
+			/*var buyNowSheetBind = BuyNowSheetBinding.bind(layoutInflater.inflate(R.layout.buy_now_sheet, null, false))
 			var buyNowSheet = Alerts.appBottomSheet(mCtx, true, buyNowSheetBind)
 			
 			buyNowSheetBind.cardNumber.setCompoundDrawablesWithIntrinsicBounds(ContextCompat.getDrawable(mCtx, draw.ic_visa), null, null, null)
@@ -77,12 +75,19 @@ class ProductDetailsFragment : BaseFragment<DashViewModel, FragmentProductDetail
 
 			buyNowSheetBind.productImg.loadUrl(mCtx, product?.images?.get(0).toString())
 
-			buyNowSheetBind.cardNumber.text = buildString {
-				append("**** **** **** ")
-				append(cardList[0]?.last4)
+			if (cardList.isNotEmpty()){
+				buyNowSheetBind.cardNumber.text = buildString {
+					append("**** **** **** ")
+					append(cardList[0]?.last4)
+				}
 			}
 
-			buyNowSheetBind.address.text = addressList.find { it?.isDefault == true }?.streetAddress ?: addressList[0]?.streetAddress
+
+
+			if (addressList.isNotEmpty()){
+				buyNowSheetBind.address.text = addressList.find { it?.isDefault == true }?.streetAddress ?: addressList[0]?.streetAddress
+			}
+
 
 			buyNowSheetBind.subTotal.text = checkOutData?.subTotal.toString()
 			buyNowSheetBind.tax.text = checkOutData?.taxAmount.toString()
@@ -117,7 +122,7 @@ class ProductDetailsFragment : BaseFragment<DashViewModel, FragmentProductDetail
 
 			}
 			
-			buyNowSheet.show()
+			buyNowSheet.show()*/
 
 		}
 		
@@ -128,8 +133,6 @@ class ProductDetailsFragment : BaseFragment<DashViewModel, FragmentProductDetail
 		
 		bind.loader.isVisible = true
 		viewModel.getProductDetails(productId.request())
-		viewModel.getPaymentCard()
-		viewModel.getShippingAddress()
 
 		viewModel.getProductDetailsRepo.observe(viewLifecycleOwner) {
 			when (it) {
@@ -138,7 +141,7 @@ class ProductDetailsFragment : BaseFragment<DashViewModel, FragmentProductDetail
 					
 					val mData = it.value.data
 
-					product = mData
+					viewModel.product = mData
 					
 					bind.userName.text = mData?.user?.name
 					
@@ -244,166 +247,9 @@ class ProductDetailsFragment : BaseFragment<DashViewModel, FragmentProductDetail
 			}
 		}
 
-		viewModel.getShippingAddressRepo.observe(viewLifecycleOwner) {
-			when (it) {
-				is Resource.Success -> {
-					bind.loader.isVisible = false
-
-					val mData = it.value.data
-
-					addressList.clear()
-
-					if (mData?.isNotEmpty() == true){
-						addressList.addAll(mData)
-					}
 
 
-					shippingId = addressList.find { it?.isDefault == true }?.id ?: (addressList.get(0)?.id?.toInt()
-						?:0 )
 
-
-					viewModel.getPurchaseProduct(shippingId.toString().request(),productId.request())
-
-//					shippingAddressAdapter.notifyDataSetChanged()
-
-				}
-
-				is Resource.Error -> {
-					bind.loader.isVisible = false
-
-					if (it.isNetworkError) {
-						errorToast(getString(R.string.no_internet))
-					} else {
-						it.parse(mCtx, TAG, object : AlertClicks {
-							override fun primaryClick(dialog: AppBottomSheet) {
-								dialog.dismiss()
-
-							}
-
-							override fun secondaryClick(dialog: AppBottomSheet) {
-								dialog.dismiss()
-
-							}
-						})
-					}
-				}
-
-				else -> {}
-
-			}
-		}
-
-		viewModel.getPaymentCardRepo.observe(viewLifecycleOwner) {
-
-			when (it) {
-				is Resource.Success -> {
-					bind.loader.isVisible = false
-
-					val mData = it.value.data
-
-					cardList.clear()
-
-					if (mData?.isNotEmpty() == true){
-						cardList.addAll(mData)
-					}
-//					cardAdapter.notifyDataSetChanged()
-				}
-
-				is Resource.Error -> {
-					bind.loader.isVisible = false
-
-					if (it.isNetworkError) {
-						errorToast(getString(R.string.no_internet))
-					} else {
-						it.parse(mCtx, TAG, object : AlertClicks {
-							override fun primaryClick(dialog: AppBottomSheet) {
-								dialog.dismiss()
-
-							}
-
-							override fun secondaryClick(dialog: AppBottomSheet) {
-								dialog.dismiss()
-
-							}
-						})
-					}
-				}
-				else -> {}
-			}
-		}
-
-		viewModel.getPurchaseProductRepo.observe(viewLifecycleOwner) {
-
-			when (it) {
-				is Resource.Success -> {
-					bind.loader.isVisible = false
-
-					val mData = it.value.data
-
-					checkOutData = mData
-
-
-//					cardAdapter.notifyDataSetChanged()
-				}
-
-				is Resource.Error -> {
-					bind.loader.isVisible = false
-
-					if (it.isNetworkError) {
-						errorToast(getString(R.string.no_internet))
-					} else {
-						it.parse(mCtx, TAG, object : AlertClicks {
-							override fun primaryClick(dialog: AppBottomSheet) {
-								dialog.dismiss()
-
-							}
-
-							override fun secondaryClick(dialog: AppBottomSheet) {
-								dialog.dismiss()
-
-							}
-						})
-					}
-				}
-				else -> {}
-			}
-		}
-
-		viewModel.createOrderRepo.observe(viewLifecycleOwner) {
-
-			when (it) {
-				is Resource.Success -> {
-					bind.loader.isVisible = false
-
-					val mData = it.value.data
-
-					findNavController().navigate(ids.productDetailToOrderStatusFragment)
-
-//					cardAdapter.notifyDataSetChanged()
-				}
-
-				is Resource.Error -> {
-					bind.loader.isVisible = false
-
-					if (it.isNetworkError) {
-						errorToast(getString(R.string.no_internet))
-					} else {
-						it.parse(mCtx, TAG, object : AlertClicks {
-							override fun primaryClick(dialog: AppBottomSheet) {
-								dialog.dismiss()
-
-							}
-
-							override fun secondaryClick(dialog: AppBottomSheet) {
-								dialog.dismiss()
-
-							}
-						})
-					}
-				}
-				else -> {}
-			}
-		}
 
 	}
 	
@@ -416,7 +262,7 @@ class ProductDetailsFragment : BaseFragment<DashViewModel, FragmentProductDetail
 		var makeOfferSheetBind = MakeOfferSheetBinding.bind(layoutInflater.inflate(R.layout.make_offer_sheet, null, false))
 		var makeOfferSheet = Alerts.appBottomSheet(mCtx, true, makeOfferSheetBind)
 		
-		makeOfferSheetBind.listedPrice.text = product?.pricing.toString().asMoney()
+		makeOfferSheetBind.listedPrice.text = viewModel.product?.pricing.toString().asMoney()
 		
 		makeOfferSheetBind.offerRecycler.adapter = MakeOfferAdapter(offerList, object : RecyclerClicks {
 			

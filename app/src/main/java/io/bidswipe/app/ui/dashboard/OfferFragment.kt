@@ -81,9 +81,10 @@ class OfferFragment : BaseFragment<DashViewModel, FragmentOfferBinding>() {
 		}
 		
 		viewModel.offerUpdateStatusRepo.observe(viewLifecycleOwner) {
-			bind.loader.isVisible = false
+
 			when (it) {
 				is Resource.Success -> {
+					bind.loader.isVisible = false
 					var index=mList.indexOfFirst {offer -> offer?.id == it.value.data?.id  }
 					if(index!=-1){
 						var offer = mList[index]
@@ -94,6 +95,7 @@ class OfferFragment : BaseFragment<DashViewModel, FragmentOfferBinding>() {
 				}
 				
 				is Resource.Error -> {
+					bind.loader.isVisible = false
 					if (it.isNetworkError) {
 						errorToast(getString(R.string.no_internet))
 					} else {
