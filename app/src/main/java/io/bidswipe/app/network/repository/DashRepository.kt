@@ -224,4 +224,22 @@ suspend fun settingsList() = call { api.settingsList() }
         type : RequestBody?
     ) = call { api.getOrderListing(type) }
 
+    suspend fun storeSellerId(
+        idCard: MultipartBody.Part,
+        image: MultipartBody.Part
+    ) = call { api.storeSellerId(idCard, image) }
+
+    suspend fun storePhoneNumber(
+        phoneNumber : RequestBody?
+    ) = call { api.storePhoneNumber(phoneNumber) }
+
+    suspend fun verifyNumberOtp(
+        otp : RequestBody?
+    ) = call { api.verifyNumberOtp(otp) }
+
+    suspend fun storePaymentMethod(
+        cardToken : RequestBody?
+    ) = call { api.storePaymentMethod(cardToken) }
+
+
 }

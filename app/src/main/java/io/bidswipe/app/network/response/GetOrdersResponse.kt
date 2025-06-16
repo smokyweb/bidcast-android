@@ -27,10 +27,12 @@ data class GetOrdersResponse(
     data class Data(
         @SerializedName("card_id")
         val cardId: String?,
+        @SerializedName("created_at")
+        val createdAt: String?,
         @SerializedName("gift_msg")
-        val giftMsg: Any?,
+        val giftMsg: String?,
         @SerializedName("gift_user_id")
-        val giftUserId: Any?,
+        val giftUserId: Int?,
         @SerializedName("id")
         val id: Int?,
         @SerializedName("order_id")
@@ -40,7 +42,7 @@ data class GetOrdersResponse(
         @SerializedName("product_id")
         val productId: Int?,
         @SerializedName("promo_code")
-        val promoCode: Any?,
+        val promoCode: String?,
         @SerializedName("send_as_gift")
         val sendAsGift: Boolean?,
         @SerializedName("shipping_address")
@@ -49,6 +51,8 @@ data class GetOrdersResponse(
         val shippingTracking: List<ShippingTracking?>?,
         @SerializedName("status")
         val status: String?,
+        @SerializedName("user")
+        val user: User?,
         @SerializedName("user_id")
         val userId: Int?
     ) {
@@ -69,7 +73,7 @@ data class GetOrdersResponse(
             @SerializedName("images")
             val images: List<String?>?,
             @SerializedName("pricing")
-            val pricing: Int?,
+            val pricing: Double?,
             @SerializedName("product_show")
             val productShow: String?,
             @SerializedName("purchased_quantity")
@@ -100,6 +104,34 @@ data class GetOrdersResponse(
             val orderId: Int?,
             @SerializedName("title")
             val title: String?
+        )
+
+        @Keep
+        data class User(
+            @SerializedName("bio")
+            val bio: String?,
+            @SerializedName("email")
+            val email: String?,
+            @SerializedName("first_name")
+            val firstName: String?,
+            @SerializedName("id")
+            val id: Int?,
+            @SerializedName("is_active")
+            val isActive: Boolean?,
+            @SerializedName("last_name")
+            val lastName: String?,
+            @SerializedName("name")
+            val name: String?,
+            @SerializedName("profile_image")
+            val profileImage: String?,
+            @SerializedName("referral_code")
+            val referralCode: String?,
+            @SerializedName("role_id")
+            val roleId: Int?,
+            @SerializedName("thumbnail")
+            val thumbnail: Any?,
+            @SerializedName("username")
+            val username: String?
         )
     }
 }

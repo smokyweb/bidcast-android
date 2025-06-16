@@ -26,6 +26,8 @@ import io.bidswipe.app.network.response.GetUserProfileResponse
 import io.bidswipe.app.network.response.LoginResponse
 import io.bidswipe.app.network.response.SettingListResponse
 import io.bidswipe.app.network.response.SignUpResponse
+import io.bidswipe.app.network.response.StorePhoneNumberResponse
+import io.bidswipe.app.network.response.StoreSellerIdResponse
 import io.bidswipe.app.network.response.TermsConditionResponse
 import io.bidswipe.app.network.response.UpdateLiveStatusResponse
 import io.bidswipe.app.network.response.UpdateOfferResponse
@@ -348,6 +350,32 @@ interface ApiInterface {
 	suspend fun getOrderListing(
 		@Part("type") type: RequestBody?
 	): GetOrdersResponse
+
+
+	@Multipart
+	@POST("api/seller-identity/store-id-card")
+	suspend fun storeSellerId(
+		@Part idCard:MultipartBody.Part,
+		@Part image: MultipartBody.Part
+	): StoreSellerIdResponse
+
+	@Multipart
+	@POST("api/seller-identity/store-phone-number")
+	suspend fun storePhoneNumber(
+		@Part ("phone_number") phoneNumber: RequestBody?,
+	): StorePhoneNumberResponse
+
+	@Multipart
+	@POST("api/seller-identity/otp-verify")
+	suspend fun verifyNumberOtp(
+		@Part ("otp") otp: RequestBody?,
+	): CommonResponse
+
+	@Multipart
+	@POST("api/seller-identity/store-payment-method")
+	suspend fun storePaymentMethod(
+		@Part ("card_token") cardToken: RequestBody?
+	): CommonResponse
 
 
 }

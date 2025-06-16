@@ -48,7 +48,7 @@ class MyOrdersFragment : BaseFragment<SellerHubViewModel, FragmentMyOrdersBindin
 
 		bind.loader.isVisible = true
 
-		viewModel.getOrderListing("new_order".request())
+		viewModel.getOrderListing("".request())
 
 		viewModel.getOrderListingRepo.observe(viewLifecycleOwner) {
 			when (it) {

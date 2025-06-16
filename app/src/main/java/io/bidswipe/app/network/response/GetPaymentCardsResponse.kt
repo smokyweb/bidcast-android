@@ -34,6 +34,7 @@ data class GetPaymentCardsResponse(
         @SerializedName("fingerprint")
         val fingerprint: String?,
         @SerializedName("last4")
-        val last4: String?
+        val last4: String?,
+        var selected: Boolean? = false
     )
 }

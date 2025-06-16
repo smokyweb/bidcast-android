@@ -48,7 +48,9 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
 					imageList[uploadItemIndex] = imagePath
 					uploadItemIndex = -1
 				}
+
 				bind.imageLimit.text = "${imageList.size}/9"
+
 				bind.images.adapter?.notifyDataSetChanged()
 			}
 		}
