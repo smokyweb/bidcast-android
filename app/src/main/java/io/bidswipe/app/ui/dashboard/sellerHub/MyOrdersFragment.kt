@@ -7,9 +7,7 @@ import android.view.ViewGroup
 import androidx.core.view.isVisible
 import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseFragment
-import io.bidswipe.app.controller.InventoryAdapter
 import io.bidswipe.app.controller.OrdersAdapter
-import io.bidswipe.app.databinding.FragmentInventoryBinding
 import io.bidswipe.app.databinding.FragmentMyOrdersBinding
 import io.bidswipe.app.interfaces.AlertClicks
 import io.bidswipe.app.interfaces.RecyclerClicks
@@ -33,6 +31,7 @@ class MyOrdersFragment : BaseFragment<SellerHubViewModel, FragmentMyOrdersBindin
 		
 		override fun itemClick(pos: Int, status: String?) {
 		}
+
 	}
 	
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -57,8 +56,22 @@ class MyOrdersFragment : BaseFragment<SellerHubViewModel, FragmentMyOrdersBindin
 
 					val mData = it.value.data
 
+					bind.newOrderCount.text = it.value.newOrderCount.toString()
+					bind.processingOrderCount.text = it.value.processingOrderCount.toString()
+					bind.completedOrderCount.text = it.value.completeOrderCount.toString()
+
 					if (mData?.isNotEmpty() == true){
 						orderList.addAll(mData)
+					}
+
+					if (mData?.isEmpty() == true ){
+
+						bind.noData.isVisible = true
+						bind.recycler.isVisible = false
+
+					}else{
+						bind.noData.isVisible = false
+						bind.recycler.isVisible = true
 					}
 
 					adapter.notifyDataSetChanged()

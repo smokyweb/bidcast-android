@@ -50,6 +50,7 @@ class SellerVerificationFragment : BaseFragment<SellerHubViewModel, FragmentSell
     private lateinit var cardAdapter : SelectPaymentCardAdapter
 
     private var addCardLauncher =
+
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
                 bind.loader.isVisible = true

@@ -32,6 +32,7 @@ data class GetShippingAddressResponse(
         @SerializedName("type")
         val type: String?,
         @SerializedName("user_id")
-        val userId: Int?
+        val userId: Int?,
+        var selected : Boolean = false
     )
 }

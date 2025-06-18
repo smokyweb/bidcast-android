@@ -1,5 +1,6 @@
 package io.bidswipe.app.ui.dashboard.more
 
+import android.app.Activity
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -30,14 +31,20 @@ class AddShippingAddressFragment : BaseFragment<MoreViewModel, FragmentAddShippi
         view: ViewGroup?
     ) = FragmentAddShippingAddressBinding.inflate(inflater,view,false)
 
+    private var slug = ""
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        slug = activity?.intent?.getStringExtra("slug") ?:""
+
 
         bind.header.onBackClick {
-
-            findNavController().popBackStack()
-
+            if (slug == "addAddress"){
+                finish()
+            }else{
+                findNavController().popBackStack()
+            }
         }
 
         bind.addAddress.setOnClickListener {
@@ -102,10 +109,15 @@ class AddShippingAddressFragment : BaseFragment<MoreViewModel, FragmentAddShippi
 
                     val mData = it.value.data
 
+                    if (slug == "addAddress"){
+
+                        activity?.setResult(Activity.RESULT_OK)
+                        finish()
+                    }else{
+                        findNavController().popBackStack()
+                    }
+
                     Alerts.success(mCtx,"Offer Sent")
-
-                    findNavController().popBackStack()
-
                 }
 
                 is Resource.Error -> {

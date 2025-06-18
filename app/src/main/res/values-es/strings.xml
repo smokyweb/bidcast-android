@@ -308,4 +308,8 @@
     <string name="share_show">Share Show</string>
     <string name="create_a_raid">Create a raid</string>
     <string name="enter_phone_number">Enter Phone Number</string>
+    <string name="select_shipping_address">Select Shipping Address</string>
+    <string name="select">Select</string>
+    <string name="yes_notify_me">Yes, notify me</string>
+	<string name="no_thanks">No, thanks</string>
 </resources>

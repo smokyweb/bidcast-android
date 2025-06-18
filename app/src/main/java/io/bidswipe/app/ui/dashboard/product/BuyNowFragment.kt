@@ -1,25 +1,35 @@
 package io.bidswipe.app.ui.dashboard.product
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.navigation.fragment.findNavController
 import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseFragment
+import io.bidswipe.app.controller.SelectAddressAdapter
+import io.bidswipe.app.controller.SelectPaymentCardAdapter
+import io.bidswipe.app.databinding.AddressSheetBinding
 import io.bidswipe.app.databinding.FragmentBuyNowBinding
+import io.bidswipe.app.databinding.PaymentSheetBinding
 import io.bidswipe.app.interfaces.AlertClicks
+import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.network.response.GetPaymentCardsResponse
 import io.bidswipe.app.network.response.GetPurchaseDetail
 import io.bidswipe.app.network.response.GetShippingAddressResponse
 import io.bidswipe.app.ui.custom.AppBottomSheet
+import io.bidswipe.app.ui.dashboard.more.MoreActivity
 import io.bidswipe.app.utils.Alerts
 import io.bidswipe.app.utils.asMoney
 import io.bidswipe.app.utils.draw
+import io.bidswipe.app.utils.goToAddCard
 import io.bidswipe.app.utils.ids
 import io.bidswipe.app.utils.loadUrl
 import io.bidswipe.app.utils.parse
@@ -39,6 +49,25 @@ class BuyNowFragment : BaseFragment<ProductViewModel, FragmentBuyNowBinding>() {
     private var cardList = mutableListOf<GetPaymentCardsResponse.Data?>()
     private var addressList = mutableListOf<GetShippingAddressResponse.Data?>()
     private var shippingId = 0
+    private var cardId = ""
+
+    private var addCardLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                bind.loader.isVisible = true
+                viewModel.getPaymentCard()
+            }
+
+        }
+
+    private var addAddressLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                bind.loader.isVisible = true
+                viewModel.getShippingAddress()
+            }
+
+        }
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -46,6 +75,28 @@ class BuyNowFragment : BaseFragment<ProductViewModel, FragmentBuyNowBinding>() {
 
         bind.header.onBackClick {
             findNavController().popBackStack()
+        }
+
+        bind.changeAddress.setOnClickListener {
+            if (addressList.isEmpty()) {
+                addAddressLauncher.launch(
+                    Intent(mCtx, MoreActivity::class.java).putExtra(
+                        "slug",
+                        "addAddress"
+                    )
+                )
+            } else {
+                showAddressSheet()
+            }
+        }
+
+        bind.changePayment.setOnClickListener {
+
+            if (cardList.isEmpty()) {
+                addCardLauncher.launch(mCtx.goToAddCard("buyNow"))
+            } else {
+                showPaymentMethodSheet()
+            }
         }
 
         bind.loader.isVisible = true
@@ -107,8 +158,6 @@ class BuyNowFragment : BaseFragment<ProductViewModel, FragmentBuyNowBinding>() {
                 }
 
             }
-
-
         }
 
         viewModel.getShippingAddressRepo.observe(viewLifecycleOwner) {
@@ -131,6 +180,8 @@ class BuyNowFragment : BaseFragment<ProductViewModel, FragmentBuyNowBinding>() {
                         shippingId = addressList.find { it?.isDefault == true }?.id
                             ?: (addressList[0]?.id?.toInt()
                                 ?: 0)
+
+                        addressList[0]?.selected = true
 
                         viewModel.getPurchaseProduct(
                             shippingId.toString().request(),
@@ -184,8 +235,6 @@ class BuyNowFragment : BaseFragment<ProductViewModel, FragmentBuyNowBinding>() {
 
                     if (mData?.isNotEmpty() == true) {
                         cardList.addAll(mData)
-
-
                     }
 
                     if (cardList.isEmpty()) {
@@ -198,15 +247,17 @@ class BuyNowFragment : BaseFragment<ProductViewModel, FragmentBuyNowBinding>() {
                         bind.cardNumber.text = buildString {
                             append("**** **** **** ")
                             append(cardList[0]?.last4)
-
                         }
-
                         bind.cardNumber.setCompoundDrawablesWithIntrinsicBounds(
                             ContextCompat.getDrawable(
                                 mCtx,
                                 draw.ic_visa
                             ), null, null, null
                         )
+
+                        cardList[0]?.selected = true
+
+                        cardId = cardList[0]?.cardId.toString()
                     }
 //					cardAdapter.notifyDataSetChanged()
                 }
@@ -315,6 +366,104 @@ class BuyNowFragment : BaseFragment<ProductViewModel, FragmentBuyNowBinding>() {
             }
         }
 
+    }
+
+    private fun showPaymentMethodSheet() {
+        var paymentSheetBind =
+            PaymentSheetBinding.bind(layoutInflater.inflate(R.layout.payment_sheet, null, false))
+        var paymentSheet = Alerts.appBottomSheet(mCtx, true, paymentSheetBind)
+        var mList = mutableListOf<String?>()
+
+        /*    repeat(2) {
+                mList.add("")
+            }*/
+
+        paymentSheetBind.recycler.adapter =
+            SelectPaymentCardAdapter(cardList, object : RecyclerClicks {
+
+                override fun itemClick(pos: Int, status: String?) {
+
+                    cardList.forEachIndexed { index, item ->
+
+                        item?.selected = index == pos
+
+                        cardId = item?.cardId.toString()
+
+                        paymentSheetBind.recycler.adapter?.notifyDataSetChanged()
+
+                        bind.cardNumber.text = buildString {
+                            append("**** **** **** ")
+                            append(cardList[pos]?.last4)
+                        }
+                        bind.cardNumber.setCompoundDrawablesWithIntrinsicBounds(
+                            ContextCompat.getDrawable(
+                                mCtx,
+                                draw.ic_visa
+                            ), null, null, null
+                        )
+
+                        cardList[pos]?.selected = true
+                        paymentSheet.dismiss()
+                    }
+
+                }
+            })
+
+        paymentSheetBind.close.setOnClickListener {
+            paymentSheet.dismiss()
+        }
+
+        paymentSheet.show()
+    }
+
+    private fun showAddressSheet() {
+        var addressSheetBind =
+            AddressSheetBinding.bind(layoutInflater.inflate(R.layout.address_sheet, null, false))
+        var addressSheet = Alerts.appBottomSheet(mCtx, true, addressSheetBind)
+
+        addressSheetBind.recycler.adapter =
+            SelectAddressAdapter(addressList, object : RecyclerClicks {
+
+                override fun itemClick(pos: Int, status: String?) {
+
+                    addressList.forEachIndexed { index, item ->
+
+                        item?.selected = index == pos
+
+                        addressSheetBind.recycler.adapter?.notifyDataSetChanged()
+
+                        bind.address.text = addressList.find { it?.isDefault == true }?.streetAddress
+                            ?: addressList[pos]?.streetAddress
+
+
+                        shippingId = addressList.find { it?.isDefault == true }?.id
+                            ?: (addressList[pos]?.id?.toInt()
+                                ?: 0)
+
+                        addressList[pos]?.selected = true
+
+                        viewModel.getPurchaseProduct(
+                            shippingId.toString().request(),
+                            viewModel.product?.id.toString().request()
+                        )
+
+                        addressSheet.hide()
+
+                    }
+
+                }
+            })
+
+        addressSheetBind.close.setOnClickListener {
+
+
+
+            addressSheet.hide()
+
+        }
+
+
+        addressSheet.show()
     }
 
 }

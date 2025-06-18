@@ -45,24 +45,6 @@
 
 	</com.google.android.material.textfield.TextInputLayout>
 
-<!--	<HorizontalScrollView
-		android:id="@+id/chipGroupScroll"
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:scrollbars="none"
-		app:layout_constraintTop_toBottomOf="@id/header"
-		android:layout_marginHorizontal="@dimen/half_margin">
-
-		<com.google.android.material.chip.ChipGroup
-			android:id="@+id/chipGroup"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_margin="@dimen/margin"
-			app:singleLine="true"
-			app:singleSelection="true" />
-
-	</HorizontalScrollView>-->
-
 	<com.google.android.material.chip.ChipGroup
 		android:id="@+id/chipGroup"
 		android:layout_width="match_parent"
@@ -75,17 +57,56 @@
 		app:singleLine="true"
 		app:singleSelection="true" />
 
-	<TextView
+	<LinearLayout
 		android:id="@+id/heading"
-		style="@style/HeadlineSmall"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:layout_gravity="center_vertical"
+		android:orientation="horizontal"
 		android:layout_marginHorizontal="@dimen/margin"
-		android:text="@string/live_now"
+		android:layout_marginBottom="@dimen/margin"
 		app:layout_constraintEnd_toEndOf="parent"
 		app:layout_constraintStart_toStartOf="parent"
-		app:layout_constraintTop_toBottomOf="@id/chipGroup" />
+		app:layout_constraintTop_toBottomOf="@id/chipGroup">
+
+		<TextView
+			android:id="@+id/live"
+			style="@style/TitleLarge"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_gravity="center_vertical"
+			android:text="@string/live_now"
+			/>
+
+		<com.google.android.material.divider.MaterialDivider
+			android:layout_width="2dp"
+			android:layout_height="match_parent"
+			android:layout_marginVertical="4dp"
+			android:layout_marginHorizontal="@dimen/half_margin"/>
+
+		<TextView
+			android:id="@+id/popular"
+			style="@style/TitleLarge"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_gravity="center_vertical"
+			android:text="@string/popular" />
+
+		<com.google.android.material.divider.MaterialDivider
+			android:layout_width="2dp"
+			android:layout_height="match_parent"
+			android:layout_marginVertical="4dp"
+			android:layout_marginHorizontal="@dimen/half_margin"/>
+
+		<TextView
+			android:id="@+id/comingSoon"
+			style="@style/TitleLarge"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_gravity="center_vertical"
+			android:text="@string/comming_soon"
+			/>
+
+	</LinearLayout>
 
 	<androidx.recyclerview.widget.RecyclerView
 		android:id="@+id/recycler"
@@ -99,6 +120,22 @@
 		app:spanCount="2"
 		tools:itemCount="6"
 		tools:listitem="@layout/home_item" />
+
+	<io.bidswipe.app.ui.custom.NoDataView
+		android:id="@+id/noData"
+		android:layout_width="match_parent"
+		android:layout_height="0dp"
+		app:title_text="No Shows Found"
+		android:visibility="gone"
+		app:layout_constraintBottom_toBottomOf="parent"
+		app:layout_constraintTop_toBottomOf="@id/heading"
+		/>
+
+	<io.bidswipe.app.ui.custom.LoaderView
+		android:id="@+id/loader"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:visibility="gone"/>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -32,7 +32,7 @@ data class GetProductDetailsResponse(
         @SerializedName("offer")
         val offer: Offer?,
         @SerializedName("pricing")
-        val pricing: Int?,
+        val pricing: String?,
         @SerializedName("quantity")
         val quantity: Int?,
         @SerializedName("reserve_for_live")

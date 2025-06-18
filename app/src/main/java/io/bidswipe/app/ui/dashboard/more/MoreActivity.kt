@@ -74,6 +74,9 @@ class MoreActivity : BaseActivity() {
             "preferences"->{
                 navGraph.setStartDestination(R.id.preferencesFragment)
             }
+            "addAddress"->{
+                navGraph.setStartDestination(R.id.addShippingAddressFragment)
+            }
 
         }
 

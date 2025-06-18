@@ -302,7 +302,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/margin"
-        android:layout_marginBottom="32dp"
+        android:layout_marginBottom="@dimen/margin"
         android:text="@string/start_now"
         app:layout_constraintBottom_toBottomOf="parent" />
 

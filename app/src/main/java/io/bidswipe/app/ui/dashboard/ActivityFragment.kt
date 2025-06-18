@@ -1,5 +1,6 @@
 package io.bidswipe.app.ui.dashboard
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -13,6 +14,7 @@ import io.bidswipe.app.base.BaseFragment
 import io.bidswipe.app.controller.ViewPagerAdapter
 import io.bidswipe.app.databinding.FragmentActivityBinding
 import io.bidswipe.app.databinding.FragmentExploreBinding
+import io.bidswipe.app.ui.dashboard.more.NotificationActivity
 
 class ActivityFragment : BaseFragment<DashViewModel, FragmentActivityBinding>() {
     override fun getModel(): Class<DashViewModel> = DashViewModel::class.java
@@ -38,6 +40,10 @@ class ActivityFragment : BaseFragment<DashViewModel, FragmentActivityBinding>() 
                 else -> ""
             }
         }.attach()
+
+        bind.header.onMorePrimaryClick {
+            startActivity(Intent(mCtx , NotificationActivity::class.java).putExtra("slug","notification"))
+        }
 
     }
 }

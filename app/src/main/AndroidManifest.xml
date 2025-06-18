@@ -37,12 +37,15 @@
         android:theme="@style/Theme.Bidswipe"
         tools:targetApi="31">
         <activity
+            android:name=".ui.dashboard.more.MainActivity"
+            android:exported="false" />
+        <activity
             android:name=".ui.dashboard.more.NotificationActivity"
             android:exported="false" />
         <activity
             android:name=".ui.dashboard.watchStream.ViewLiveShowActivity"
-            android:windowSoftInputMode="adjustResize"
-            android:exported="false" />
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".ui.dashboard.scheduleShow.LiveShowActivity"
             android:exported="false" />

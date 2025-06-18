@@ -5,7 +5,8 @@ import android.app.Application
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
-import androidx.core.view.isVisible
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.viewpager2.widget.ViewPager2
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -17,8 +18,6 @@ import io.bidswipe.app.base.BaseActivity
 import io.bidswipe.app.controller.StreamPagerAdapter
 import io.bidswipe.app.databinding.ActivityViewLiveShowBinding
 import io.bidswipe.app.model.LiveShowModel
-import io.bidswipe.app.model.StreamModel
-import io.bidswipe.app.ui.dashboard.DashViewModel
 import io.bidswipe.app.utils.Const
 import io.bidswipe.app.utils.bind
 
@@ -72,6 +71,12 @@ class ViewLiveShowActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(bind.root)
+
+        ViewCompat.setOnApplyWindowInsetsListener(bind.root) { v, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            v.setPadding(0, 0, 0, systemBars.bottom)
+            insets
+        }
 
         pos = intent.getIntExtra("position",0)
 

@@ -1,6 +1,7 @@
 package io.bidswipe.app.ui.dashboard
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.graphics.Typeface
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -19,6 +20,7 @@ import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.network.response.GetCategoryResponse
 import io.bidswipe.app.ui.custom.AppBottomSheet
+import io.bidswipe.app.ui.dashboard.more.NotificationActivity
 import io.bidswipe.app.utils.ids
 import io.bidswipe.app.utils.parse
 
@@ -43,6 +45,10 @@ class ExploreFragment : BaseFragment<DashViewModel,FragmentExploreBinding>() {
 
        exploreAdapter = ExploreAdapter(exploreList,mClick)
         bind.recycler.adapter = exploreAdapter
+
+        bind.header.onMorePrimaryClick {
+            startActivity(Intent(mCtx , NotificationActivity::class.java).putExtra("slug","notification"))
+        }
 
         selectTab(bind.recommended)
 

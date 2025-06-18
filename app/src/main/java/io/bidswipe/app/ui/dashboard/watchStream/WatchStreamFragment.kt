@@ -49,8 +49,8 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        roomID = requireArguments().getString("roomID")!!
-        streamID = requireArguments().getString("streamID")!!
+        roomID = requireArguments().getString("roomID") ?:""
+        streamID = requireArguments().getString("streamID") ?:""
     }
 
 

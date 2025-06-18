@@ -19,6 +19,7 @@ import io.bidswipe.app.model.StreamModel
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.network.response.GetMyShowResponse
 import io.bidswipe.app.ui.custom.AppBottomSheet
+import io.bidswipe.app.ui.dashboard.more.NotificationActivity
 import io.bidswipe.app.ui.dashboard.sellerProfile.SellerProfileActivity
 import io.bidswipe.app.ui.dashboard.watchStream.ViewLiveShowActivity
 import io.bidswipe.app.utils.Utils
@@ -67,6 +68,10 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
 		homeAdapter = HomeAdapter(showList, mClick)
 		
 		bind.recycler.adapter = homeAdapter
+
+		bind.header.onMorePrimaryClick {
+			startActivity(Intent(mCtx , NotificationActivity::class.java).putExtra("slug","notification"))
+		}
 
 		selectTab(bind.live)
 

@@ -8,6 +8,8 @@ import android.util.Log
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
 import im.zego.zegoexpress.ZegoExpressEngine
 import im.zego.zegoexpress.callback.IZegoEventHandler
@@ -70,6 +72,12 @@ class LiveShowActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(bind.root)
+
+        ViewCompat.setOnApplyWindowInsetsListener(bind.root) { v, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            v.setPadding(0, 0, 0, systemBars.bottom)
+            insets
+        }
 
         showId= intent.getStringExtra("showId") ?:""
 
@@ -614,7 +622,7 @@ class LiveShowActivity : BaseActivity() {
         runnable = object : Runnable {
             override fun run() {
                 val updateValue = System.currentTimeMillis()
-                Const.fireBaseRef.getReference(Const.LIVE_SESSIONS).child(roomID).child("live").setValue("true")
+                Const.fireBaseRef.getReference(Const.LIVE_SESSIONS).child(roomID).child("live").setValue(true)
                     .addOnSuccessListener {
                         Log.d("FirebaseUpdate", "Successfully updated value: $updateValue")
                     }

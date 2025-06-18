@@ -41,6 +41,7 @@
                 android:padding="@dimen/half_margin">
 
                 <TextView
+                    android:id="@+id/newOrderCount"
                     style="@style/HeadlineMedium"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -74,6 +75,7 @@
                 android:padding="@dimen/half_margin">
 
                 <TextView
+                    android:id="@+id/processingOrderCount"
                     style="@style/HeadlineMedium"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -108,6 +110,7 @@
                 android:padding="@dimen/half_margin">
 
                 <TextView
+                    android:id="@+id/completedOrderCount"
                     style="@style/HeadlineMedium"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -143,6 +146,13 @@
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             tools:itemCount="6"
             tools:listitem="@layout/my_orders_item" />
+
+        <io.bidswipe.app.ui.custom.NoDataView
+            android:id="@+id/noData"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:title_text="No Orders Found"
+            android:visibility="gone"/>
     </LinearLayout>
 
     <io.bidswipe.app.ui.custom.LoaderView

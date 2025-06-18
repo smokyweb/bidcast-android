@@ -21,7 +21,13 @@ data class GetOrdersResponse(
     @SerializedName("total")
     val total: Int?,
     @SerializedName("totalPage")
-    val totalPage: Int?
+    val totalPage: Int?,
+    @SerializedName("new_order_count")
+    val newOrderCount: Int?,
+    @SerializedName("processing_order_count")
+    val processingOrderCount: Int?,
+    @SerializedName("completed_order_count")
+    val completeOrderCount: Int?
 ) {
     @Keep
     data class Data(
@@ -129,7 +135,7 @@ data class GetOrdersResponse(
             @SerializedName("role_id")
             val roleId: Int?,
             @SerializedName("thumbnail")
-            val thumbnail: Any?,
+            val thumbnail: String?,
             @SerializedName("username")
             val username: String?
         )
