@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseFragment
 import io.bidswipe.app.databinding.FragmentAboutUsBinding
+import io.bidswipe.app.utils.finish
 
 class AboutUsFragment : BaseFragment<MoreViewModel,FragmentAboutUsBinding>() {
     override fun getModel(): Class<MoreViewModel> = MoreViewModel::class.java
@@ -16,6 +17,14 @@ class AboutUsFragment : BaseFragment<MoreViewModel,FragmentAboutUsBinding>() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+
+        bind.header.onBackClick {
+
+            finish()
+
+        }
+
 
     }
 

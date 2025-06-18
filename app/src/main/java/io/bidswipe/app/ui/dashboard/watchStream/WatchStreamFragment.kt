@@ -58,14 +58,12 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
         super.onViewCreated(view, savedInstanceState)
 
         log("RoomId: $roomID")
-
-
             fetchMessage()
 
         bind.message.setEndIconOnClickListener {
            if (bind.text.value().isNotEmpty()) {
                sendMessage(bind.text.value())
-               fetchMessage()
+//               fetchMessage()
            }
 
         }
@@ -113,16 +111,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
     }
 
-    private fun createEngine() {
-        val profile = ZegoEngineProfile().apply {
-            appID =  1005763407
-            appSign = "73678be720c3ea2d871376882d27d21d5c2bc891363547424458f9febc8bf423"
-            scenario = ZegoScenario.BROADCAST
-            application = mCtx.applicationContext as Application
-        }
 
-        ZegoExpressEngine.createEngine(profile, null)
-    }
 
     override fun onDestroy() {
         super.onDestroy()
@@ -339,6 +328,8 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
     fun sendMessage(message: String){
 
+        log("RoomID: ${roomID} Message:${message}")
+
         ZegoExpressEngine.getEngine().sendBroadcastMessage(roomID, message, object : IZegoIMSendBroadcastMessageCallback {
             override fun onIMSendBroadcastMessageResult(errorCode: Int, messageID: Long) {
                 if (errorCode == 0) {
@@ -364,19 +355,6 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
                     for (msgInfo in messageList) {
                         Log.d("BROADCAST", "Received broadcast message from ${msgInfo?.fromUser?.userName}: ${msgInfo?.message}")
                         // Update UI for broadcast messages
-                    }
-                }
-            }
-
-            override fun onIMRecvBarrageMessage(
-                roomID: String?,
-                messageList: kotlin.collections.ArrayList<ZegoBarrageMessageInfo?>?
-            ) {
-                Log.d("ZEGO", "Barrage message received for room: $roomID")
-                if (messageList != null) {
-                    for (msg in messageList) {
-                        Log.d("CHAT", "Received message from ${msg?.fromUser?.userName}: ${msg?.message}")
-                        // Update UI accordingly
                     }
                 }
             }

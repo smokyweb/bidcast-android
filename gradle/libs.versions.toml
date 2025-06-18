@@ -43,6 +43,7 @@ roundedimageview = "2.3.0"
 swipemenurecyclerview = "2.1.5"
 singledateandtimepicker = "2.2.7"
 stripeAndroid = "20.48.6"
+swipelayout = "1.3.1"
 toasty = "1.5.2"
 annotation = "1.6.0"
 billingKtx = "7.0.0"
@@ -95,6 +96,7 @@ retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit
 permissionx = { module = "com.guolindev.permissionx:permissionx", version.ref = "permissionx" }
 picasso = { module = "com.squareup.picasso:picasso", version.ref = "picasso" }
 roundedimageview = { module = "com.makeramen:roundedimageview", version.ref = "roundedimageview" }
+swipelayout = { module = "com.github.zerobranch:SwipeLayout", version.ref = "swipelayout" }
 slidetoact = { module = "com.ncorti:slidetoact", version.ref = "slidetoact" }
 stripe-android = { module = "com.stripe:stripe-android", version.ref = "stripeAndroid" }
 yuanwenhai-html-textview = { module = "com.github.YuanWenHai:html-textview", version.ref = "htmlTextviewVersion" }

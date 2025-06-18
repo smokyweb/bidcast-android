@@ -35,8 +35,6 @@ import javax.inject.Inject
 class DashViewModel @Inject constructor(val repo: DashRepository) : ViewModel() {
 	var lastIndex = MutableLiveData(0)
 
-
-
 	private var _logoutResponse = MutableLiveData<Resource<CommonResponse>>()
 	val logoutRepo: MutableLiveData<Resource<CommonResponse>>
 		get() = _logoutResponse

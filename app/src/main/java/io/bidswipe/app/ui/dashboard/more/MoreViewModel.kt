@@ -9,6 +9,8 @@ import io.bidswipe.app.network.repository.DashRepository
 import io.bidswipe.app.network.response.AboutUsResponse
 import io.bidswipe.app.network.response.CommonResponse
 import io.bidswipe.app.network.response.FAQResponse
+import io.bidswipe.app.network.response.GetBuyerIdentityResponse
+import io.bidswipe.app.network.response.GetNotificationResponse
 import io.bidswipe.app.network.response.GetPaymentCardsResponse
 import io.bidswipe.app.network.response.GetShippingAddressResponse
 import io.bidswipe.app.network.response.SettingListResponse
@@ -153,5 +155,24 @@ class MoreViewModel @Inject constructor(val repo: DashRepository) : ViewModel() 
 	) = viewModelScope.launch {
 		_storeBuyerIdentityResponse.value = repo.storeBuyerIdentity(image)
 	}
+
+	private var _fetchBuyerIdentityResponse = MutableLiveData<Resource<GetBuyerIdentityResponse>>()
+	val fetchBuyerIdentityRepo: MutableLiveData<Resource<GetBuyerIdentityResponse>>
+		get() = _fetchBuyerIdentityResponse
+
+	fun fetchBuyerIdentity(
+	) = viewModelScope.launch {
+		_fetchBuyerIdentityResponse.value = repo.fetchBuyerIdentity()
+	}
+
+	private var _getNotificationResponse = MutableLiveData<Resource<GetNotificationResponse>>()
+	val getNotificationRepo: MutableLiveData<Resource<GetNotificationResponse>>
+		get() = _getNotificationResponse
+
+	fun getNotification(
+	) = viewModelScope.launch {
+		_getNotificationResponse.value = repo.getNotification()
+	}
+
 
 }

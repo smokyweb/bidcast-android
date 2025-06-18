@@ -346,7 +346,6 @@
             android:textSize="14sp"
             />
 
-
         <com.ncorti.slidetoact.SlideToActView
             android:id="@+id/bid"
             android:layout_width="match_parent"
@@ -362,7 +361,6 @@
             app:slider_locked="false"
             app:bounce_on_start="true" />
 
-
     </LinearLayout>
 
     <com.google.android.material.textfield.TextInputLayout
@@ -371,7 +369,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/margin"
-        android:layout_marginBottom="@dimen/margin"
+        android:layout_marginBottom="32dp"
         app:boxStrokeColor="@color/scrim"
         app:endIconMode="custom"
         app:endIconDrawable="@drawable/ic_forward"

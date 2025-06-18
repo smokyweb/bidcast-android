@@ -20,6 +20,7 @@ import io.bidswipe.app.network.Resource
 import io.bidswipe.app.ui.custom.AlertType
 import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.ui.dashboard.more.MoreActivity
+import io.bidswipe.app.ui.dashboard.more.NotificationActivity
 import io.bidswipe.app.ui.dashboard.sellerHub.SellerHubActivity
 import io.bidswipe.app.utils.Prefs
 import io.bidswipe.app.utils.finish
@@ -75,7 +76,18 @@ class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
 
     private val accountGridClick = object : RecyclerClicks{
         override fun itemClick(pos: Int, status: String?) {
-            startActivity(Intent(mCtx , MoreActivity::class.java).putExtra("slug",accountGridList[pos].slug))
+
+            when(accountGridList[pos].slug){
+
+                "notification"->{
+                    startActivity(Intent(mCtx , NotificationActivity::class.java).putExtra("slug",accountGridList[pos].slug))
+                }
+
+                else->{
+                    startActivity(Intent(mCtx , MoreActivity::class.java).putExtra("slug",accountGridList[pos].slug))
+                }
+            }
+
         }
 
     }

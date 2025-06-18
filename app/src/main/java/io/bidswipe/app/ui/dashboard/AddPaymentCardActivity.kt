@@ -2,37 +2,27 @@ package io.bidswipe.app.ui.dashboard
 
 import android.app.Activity
 import android.os.Bundle
-import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
-import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.stripe.android.ApiResultCallback
 import com.stripe.android.PaymentConfiguration
 import com.stripe.android.Stripe
 import com.stripe.android.model.CardParams
 import com.stripe.android.model.Token
 import com.wajahatkarim3.easyvalidation.core.view_ktx.validator
-import io.bidswipe.app.BuildConfig
-import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseActivity
 import io.bidswipe.app.databinding.ActivityAddPaymentCardBinding
 import io.bidswipe.app.interfaces.AlertClicks
 import io.bidswipe.app.network.Resource
-import io.bidswipe.app.ui.custom.AlertType
 import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.utils.Alerts
 import io.bidswipe.app.utils.Const
 import io.bidswipe.app.utils.bind
-import io.bidswipe.app.utils.draw
 import io.bidswipe.app.utils.hideKeyboard
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request
 import io.bidswipe.app.utils.runSafe
 import io.bidswipe.app.utils.showKeyboard
-import io.bidswipe.app.utils.string
 import io.bidswipe.app.utils.value
 import kotlin.getValue
 
@@ -49,8 +39,6 @@ class AddPaymentCardActivity : BaseActivity() {
         bind.header.onBackClick { finish() }
 
         PaymentConfiguration.init(this, Const.STRIPE_KEY)
-
-
 
         bind.addCard.setOnClickListener {
 
@@ -152,6 +140,8 @@ class AddPaymentCardActivity : BaseActivity() {
                         bind.loader.isVisible = false
 
                         Alerts.success(this,"Payment card Added")
+
+                        this.setResult(Activity.RESULT_OK)
 
                         finish()
 

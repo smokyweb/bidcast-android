@@ -241,5 +241,10 @@ suspend fun settingsList() = call { api.settingsList() }
         cardToken : RequestBody?
     ) = call { api.storePaymentMethod(cardToken) }
 
+    suspend fun fetchBuyerIdentity(
+    ) = call { api.fetchBuyerIdentity() }
+
+    suspend fun getNotification(
+    ) = call { api.getNotification() }
 
 }

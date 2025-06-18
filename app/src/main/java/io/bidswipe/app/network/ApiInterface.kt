@@ -9,11 +9,13 @@ import io.bidswipe.app.network.response.FetchSellerVerificationResponse
 import io.bidswipe.app.network.response.GenerateTokenResponse
 import io.bidswipe.app.network.response.GetAllTipsResponse
 import io.bidswipe.app.network.response.GetAuctionTypeResponse
+import io.bidswipe.app.network.response.GetBuyerIdentityResponse
 import io.bidswipe.app.network.response.GetCategoryResponse
 import io.bidswipe.app.network.response.GetHowToSellResponse
 import io.bidswipe.app.network.response.GetLessonsResponse
 import io.bidswipe.app.network.response.GetMyInventoryResponse
 import io.bidswipe.app.network.response.GetMyShowResponse
+import io.bidswipe.app.network.response.GetNotificationResponse
 import io.bidswipe.app.network.response.GetOffersResponse
 import io.bidswipe.app.network.response.GetOrdersResponse
 import io.bidswipe.app.network.response.GetPaymentCardsResponse
@@ -376,6 +378,14 @@ interface ApiInterface {
 	suspend fun storePaymentMethod(
 		@Part ("card_token") cardToken: RequestBody?
 	): CommonResponse
+
+	@GET("api/buyer-identity/list")
+	suspend fun fetchBuyerIdentity(
+	): GetBuyerIdentityResponse
+
+	@POST("api/notification/listing")
+	suspend fun getNotification(
+	): GetNotificationResponse
 
 
 }

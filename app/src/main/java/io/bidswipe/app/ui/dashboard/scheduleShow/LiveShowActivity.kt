@@ -2,6 +2,8 @@ package io.bidswipe.app.ui.dashboard.scheduleShow
 
 import android.app.Application
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
@@ -60,6 +62,9 @@ class LiveShowActivity : BaseActivity() {
     var roomID = ""
     var showId = ""
     private var liveStatus = true
+
+    private val handler = Handler(Looper.getMainLooper())
+    private var runnable: Runnable ?= null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -124,6 +129,8 @@ class LiveShowActivity : BaseActivity() {
             bind.loader.isVisible = true
 
             viewModel.updateLiveStatus(showId.request(),"true".request())
+
+
         }
 
         viewModel.generateTokenRepo.observe(this) {
@@ -180,9 +187,11 @@ class LiveShowActivity : BaseActivity() {
 
                     if (liveStatus){
                         addDataOnFirebase(mData)
-
-
                         startPublish()
+
+                        startUpdatingFirebaseEvery5Minutes()
+
+
                         bind.startBtn.isVisible = false
                     }else{
                         finish()
@@ -314,6 +323,7 @@ class LiveShowActivity : BaseActivity() {
 
         endShowSheetBind.endBtn.setOnClickListener {
             endShowSheet.dismiss()
+            stopUpdatingFirebase()
             liveStatus = false
             bind.loader.isVisible = true
             viewModel.updateLiveStatus(showId.request(),"false".request())
@@ -529,6 +539,8 @@ class LiveShowActivity : BaseActivity() {
 
     fun sendMessage(message: String){
 
+        log("RoomID: ${roomID} Message:${message}")
+
         ZegoExpressEngine.getEngine().sendBroadcastMessage(roomID, message, object : IZegoIMSendBroadcastMessageCallback {
             override fun onIMSendBroadcastMessageResult(errorCode: Int, messageID: Long) {
                 if (errorCode == 0) {
@@ -558,18 +570,6 @@ class LiveShowActivity : BaseActivity() {
                 }
             }
 
-            override fun onIMRecvBarrageMessage(
-                roomID: String?,
-                messageList: kotlin.collections.ArrayList<ZegoBarrageMessageInfo?>?
-            ) {
-                Log.d("ZEGO", "Barrage message received for room: $roomID")
-                if (messageList != null) {
-                    for (msg in messageList) {
-                        Log.d("CHAT", "Received message from ${msg?.fromUser?.userName}: ${msg?.message}")
-                        // Update UI accordingly
-                    }
-                }
-            }
         })
     }
 
@@ -607,6 +607,30 @@ class LiveShowActivity : BaseActivity() {
         }
 
 
+    }
+
+    fun startUpdatingFirebaseEvery5Minutes() {
+
+        runnable = object : Runnable {
+            override fun run() {
+                val updateValue = System.currentTimeMillis()
+                Const.fireBaseRef.getReference(Const.LIVE_SESSIONS).child(roomID).child("live").setValue("true")
+                    .addOnSuccessListener {
+                        Log.d("FirebaseUpdate", "Successfully updated value: $updateValue")
+                    }
+                    .addOnFailureListener {
+                        Log.e("FirebaseUpdate", "Failed to update value", it)
+                    }
+
+                handler.postDelayed(this,  5 * 60 * 1000)
+            }
+        }
+
+        runnable?.let { handler.post(it) }
+    }
+
+    fun stopUpdatingFirebase() {
+        runnable?.let { handler.removeCallbacks(it) }
     }
 
 }

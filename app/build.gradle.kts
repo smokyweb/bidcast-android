@@ -132,6 +132,7 @@ dependencies {
 
     //THIRD PARTY DEPENDENCIES
     implementation(libs.recyclerview.animators)
+    implementation(libs.swipelayout)
     implementation(libs.material.calendar.view)
     implementation(libs.android.image.cropper)
     implementation(libs.android.spinKit)

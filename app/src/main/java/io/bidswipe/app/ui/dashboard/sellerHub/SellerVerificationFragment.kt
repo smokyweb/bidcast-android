@@ -1,16 +1,16 @@
 package io.bidswipe.app.ui.dashboard.sellerHub
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.view.isVisible
 import com.canhub.cropper.CropImageContract
-import com.google.common.base.Objects
-import com.wajahatkarim3.easyvalidation.core.view_ktx.regex
 import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseFragment
-import io.bidswipe.app.controller.PaymentCardAdapter
 import io.bidswipe.app.controller.SelectPaymentCardAdapter
 import io.bidswipe.app.databinding.FragmentSellerVerificationBinding
 import io.bidswipe.app.interfaces.AlertClicks
@@ -27,7 +27,6 @@ import io.bidswipe.app.utils.loadUrl
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request
 import io.bidswipe.app.utils.showKeyboard
-import io.bidswipe.app.utils.toDash
 import io.bidswipe.app.utils.value
 import java.io.File
 
@@ -46,9 +45,18 @@ class SellerVerificationFragment : BaseFragment<SellerHubViewModel, FragmentSell
     var selfie = ""
     var isIdVerified = false
     var isPhoneVerified = false
-
     var cardToken = ""
+
     private lateinit var cardAdapter : SelectPaymentCardAdapter
+
+    private var addCardLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                bind.loader.isVisible = true
+                viewModel.getPaymentCard()
+            }
+
+        }
 
     private val mClick = object : RecyclerClicks{
         override fun itemClick(pos: Int, status: String?) {
@@ -60,7 +68,6 @@ class SellerVerificationFragment : BaseFragment<SellerHubViewModel, FragmentSell
                 cardToken = item?.cardId.toString()
 
                 cardAdapter.notifyDataSetChanged()
-
 
             }
 
@@ -157,7 +164,7 @@ class SellerVerificationFragment : BaseFragment<SellerHubViewModel, FragmentSell
         bind.verifyPhone.setOnClickListener {
 
             when{
-                isIdVerified ->{
+                isIdVerified == false ->{
                     Alerts.error(mCtx,"Please verify your Id")
 
                 }
@@ -197,19 +204,17 @@ class SellerVerificationFragment : BaseFragment<SellerHubViewModel, FragmentSell
         }
 
         bind.addCardBtn.setOnClickListener {
-
-            startActivity(mCtx.goToAddCard("verification"))
-
+            addCardLauncher.launch(mCtx.goToAddCard("verification"))
         }
 
         bind.completeVerification.setOnClickListener {
             when{
 
-                !isIdVerified->{
+                isIdVerified == false->{
                     Alerts.error(mCtx,"Please verify your Id")
                 }
 
-                !isPhoneVerified->{
+                isPhoneVerified == false->{
                     Alerts.error(mCtx,"Please verify your phone number")
                 }
 
@@ -230,8 +235,8 @@ class SellerVerificationFragment : BaseFragment<SellerHubViewModel, FragmentSell
         bind.loader.isVisible = true
 
         viewModel.fetchSellerVerification()
-
         viewModel.getPaymentCard()
+
 
         viewModel.fetchSellerVerificationRepo.observe(viewLifecycleOwner) {
             when (it) {
@@ -275,12 +280,12 @@ class SellerVerificationFragment : BaseFragment<SellerHubViewModel, FragmentSell
 
                     }
 
-                    if (mData?.cardId?.isNullOrEmpty() != true) {
+                    if (mData?.cardId?.isNotEmpty()==true) {
                         bind.stepProgress.setProgress(3)
                         bind.stepCount.setText("3 of 4")
                         bind.completeVerification.isVisible = false
                     }else{
-                        bind.completeVerification.isVisible = false
+                        bind.completeVerification.isVisible = true
                     }
 
 
@@ -441,10 +446,6 @@ class SellerVerificationFragment : BaseFragment<SellerHubViewModel, FragmentSell
 
                     cardList.clear()
 
-                    bind.stepProgress.setProgress(3)
-
-                    bind.stepCount.setText("3 of 4")
-
                     if (mData?.isNotEmpty() == true){
                         cardList.addAll(mData)
                     }
@@ -494,7 +495,9 @@ class SellerVerificationFragment : BaseFragment<SellerHubViewModel, FragmentSell
 
                     val mData = it.value.data
 
-                    cardList.clear()
+                    bind.stepProgress.setProgress(3)
+
+                    bind.stepCount.setText("3 of 4")
 
                     bind.completeVerification.isVisible = false
 
