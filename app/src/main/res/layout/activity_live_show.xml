@@ -273,6 +273,23 @@
     </LinearLayout>
 
 
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginEnd="100dp"
+        app:layout_constraintBottom_toTopOf="@id/message"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        tools:listitem="@layout/live_comment_item"
+        android:nestedScrollingEnabled="true"
+        app:layout_constraintDimensionRatio="1:1"
+        app:reverseLayout="false"
+        app:stackFromEnd="true"
+        android:layout_gravity="bottom"
+        tools:itemCount="10"
+        />
+
+
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/message"
         style="@style/inputBoxStyle"

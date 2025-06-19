@@ -11,6 +11,8 @@ import androidx.viewpager2.widget.ViewPager2
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
+import com.gyf.immersionbar.ktx.immersionBar
+import com.gyf.immersionbar.ktx.navigationBarHeight
 import im.zego.zegoexpress.ZegoExpressEngine
 import im.zego.zegoexpress.constants.ZegoScenario
 import im.zego.zegoexpress.entity.ZegoEngineProfile
@@ -20,6 +22,8 @@ import io.bidswipe.app.databinding.ActivityViewLiveShowBinding
 import io.bidswipe.app.model.LiveShowModel
 import io.bidswipe.app.utils.Const
 import io.bidswipe.app.utils.bind
+import io.bidswipe.app.utils.clr
+import io.bidswipe.app.utils.setMargins
 
 class ViewLiveShowActivity : BaseActivity() {
 
@@ -69,14 +73,17 @@ class ViewLiveShowActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
         setContentView(bind.root)
 
-        ViewCompat.setOnApplyWindowInsetsListener(bind.root) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(0, 0, 0, systemBars.bottom)
-            insets
+        immersionBar {
+            transparentBar()
+            navigationBarDarkIcon(true)
+            navigationBarColor(clr.surface)
+            supportActionBar(false)
+            fitsSystemWindows(false)
+            keyboardEnable(true)
         }
+        bind.root.setMargins(0,0,0,navigationBarHeight)
 
         pos = intent.getIntExtra("position",0)
 

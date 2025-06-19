@@ -25,6 +25,7 @@ abstract class BaseFragment<VM : ViewModel , BIND : ViewBinding> : Fragment() {
 
 	protected lateinit var userId : String
 	protected lateinit var userName : String
+	protected lateinit var userImage : String
 
 
 	protected lateinit var TAG : String
@@ -41,6 +42,7 @@ abstract class BaseFragment<VM : ViewModel , BIND : ViewBinding> : Fragment() {
 
 		userId = Prefs(mCtx).getUserData()?.id.toString()
 		userName = Prefs(mCtx).getUserData()?.name.toString()
+		userImage = Prefs(mCtx).getUserData()?.profileImage.toString()
 //		authUserData = Prefs(mCtx).getUserData()
 		viewModel = ViewModelProvider(requireActivity())[getModel()]
 

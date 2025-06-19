@@ -1,6 +1,5 @@
 package io.bidswipe.app.ui.dashboard.watchStream
 
-import android.app.Application
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -12,16 +11,15 @@ import com.ncorti.slidetoact.SlideToActView.OnSlideCompleteListener
 import im.zego.zegoexpress.ZegoExpressEngine
 import im.zego.zegoexpress.callback.IZegoEventHandler
 import im.zego.zegoexpress.callback.IZegoIMSendBroadcastMessageCallback
-import im.zego.zegoexpress.constants.ZegoScenario
 import im.zego.zegoexpress.constants.ZegoViewMode
-import im.zego.zegoexpress.entity.ZegoBarrageMessageInfo
 import im.zego.zegoexpress.entity.ZegoBroadcastMessageInfo
 import im.zego.zegoexpress.entity.ZegoCanvas
-import im.zego.zegoexpress.entity.ZegoEngineProfile
 import im.zego.zegoexpress.entity.ZegoRoomConfig
 import im.zego.zegoexpress.entity.ZegoUser
 import io.bidswipe.app.base.BaseFragment
+import io.bidswipe.app.controller.CommentAdapter
 import io.bidswipe.app.databinding.FragmentWatchStreamBinding
+import io.bidswipe.app.model.CommentModel
 import io.bidswipe.app.utils.draw
 import io.bidswipe.app.utils.loadUrl
 import io.bidswipe.app.utils.request
@@ -37,6 +35,9 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
     private lateinit var roomID: String
     private lateinit var streamID: String
+
+    private var commentList = mutableListOf<CommentModel?>()
+    private lateinit var commentAdapter : CommentAdapter
 
     companion object {
         fun newInstance(roomID: String, streamID: String) = WatchStreamFragment().apply {
@@ -58,7 +59,10 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
         super.onViewCreated(view, savedInstanceState)
 
         log("RoomId: $roomID")
-            fetchMessage()
+
+        commentAdapter = CommentAdapter(commentList)
+
+        bind.recycler.adapter = commentAdapter
 
         bind.message.setEndIconOnClickListener {
            if (bind.text.value().isNotEmpty()) {
@@ -122,6 +126,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
     override fun onResume() {
         super.onResume()
         loginAndPlay()
+        fetchMessage()
     }
 
     override fun onPause() {
@@ -130,7 +135,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
     }
 
     private fun loginAndPlay() {
-        val user = ZegoUser("user_${System.currentTimeMillis()}")
+        val user = ZegoUser(userName.replace(" ",".") + "_" +userId, userImage)
         ZegoExpressEngine.getEngine().loginRoom(roomID,  user,ZegoRoomConfig())
         val canvas = ZegoCanvas(bind.hostView).apply {
             viewMode = ZegoViewMode.ASPECT_FILL
@@ -333,6 +338,10 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
         ZegoExpressEngine.getEngine().sendBroadcastMessage(roomID, message, object : IZegoIMSendBroadcastMessageCallback {
             override fun onIMSendBroadcastMessageResult(errorCode: Int, messageID: Long) {
                 if (errorCode == 0) {
+                    bind.text.setText("")
+                    commentList.add(CommentModel(userImage,userName, message))
+                    commentAdapter.notifyItemInserted(commentList.size - 1)
+                    bind.recycler.post {  bind.recycler.smoothScrollToPosition(commentList.size) }
                     Log.d("CHAT", "Message sent successfully")
                 } else {
                     Log.e("CHAT", "Failed to send message")
@@ -354,6 +363,12 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
                 if (messageList != null) {
                     for (msgInfo in messageList) {
                         Log.d("BROADCAST", "Received broadcast message from ${msgInfo?.fromUser?.userName}: ${msgInfo?.message}")
+
+                        val name = msgInfo?.fromUser?.userID?.split("_")?.get(0)?.replace("."," ")
+
+                        commentList.add(CommentModel(msgInfo?.fromUser?.userName ,name, msgInfo?.message))
+                        commentAdapter.notifyItemInserted(commentList.size - 1)
+                        bind.recycler.post {  bind.recycler.smoothScrollToPosition(commentList.size) }
                         // Update UI for broadcast messages
                     }
                 }

@@ -147,6 +147,9 @@ dependencies {
     implementation(libs.yuanwenhai.html.textview)
     implementation(libs.expandableLayout)
     implementation(libs.slidetoact)
+    implementation(libs.immersionbar.ktx)
+    implementation(libs.immersionbar)
+
 
     //ZEGO CLOUD
     implementation (libs.express.video)

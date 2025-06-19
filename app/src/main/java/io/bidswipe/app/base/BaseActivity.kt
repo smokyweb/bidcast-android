@@ -7,6 +7,7 @@ import com.permissionx.guolindev.PermissionX
 import com.zeugmasolutions.localehelper.LocaleAwareCompatActivity
 import io.bidswipe.app.utils.Alerts
 import dagger.hilt.android.AndroidEntryPoint
+import io.bidswipe.app.utils.Prefs
 
 @Suppress("PropertyName")
 @AndroidEntryPoint
@@ -20,6 +21,10 @@ abstract class BaseActivity : LocaleAwareCompatActivity() {
 	
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
+
+		userId = Prefs(this).getUserData()?.id.toString()
+		userName = Prefs(this).getUserData()?.name.toString()
+		userImage = Prefs(this).getUserData()?.profileImage ?:""
 		
 		/*token = Prefs(this).token()
 		userId = Prefs(this).getUserData()?.id.toString()

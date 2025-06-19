@@ -57,6 +57,8 @@ class DashActivity : BaseActivity(), NavController.OnDestinationChangedListener 
         bind.bottomBar.setupWithNavController(navController)
         setupImageSheet()
 
+        log("USER NEME : ${userName.replace(" " , ".") }  $userId   $userImage")
+
         bind.bottomBar.setOnItemSelectedListener { menuItem ->
             if (menuItem.itemId != ids.sellFragment) viewModel.lastIndex.value = menuItem.itemId
             when (menuItem.itemId) {

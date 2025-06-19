@@ -23,6 +23,7 @@ glideTransformations = "4.3.0"
 hilt = "2.51.1"
 hiltAndroid = "2.52"
 hiltCompiler = "2.52"
+immersionbarKtx = "3.2.2"
 kotlin = "2.0.20"
 kotlinStdlib = "2.0.20"
 kotlinxCoroutinesCore = "1.9.0"
@@ -85,6 +86,8 @@ glide = { module = "com.github.bumptech.glide:glide", version.ref = "glide" }
 glide-transformations = { module = "jp.wasabeef:glide-transformations", version.ref = "glideTransformations" }
 hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hiltAndroid" }
 hilt-compiler = { module = "com.google.dagger:hilt-compiler", version.ref = "hiltCompiler" }
+immersionbar = { module = "com.geyifeng.immersionbar:immersionbar", version.ref = "immersionbarKtx" }
+immersionbar-ktx = { module = "com.geyifeng.immersionbar:immersionbar-ktx", version.ref = "immersionbarKtx" }
 kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "kotlinStdlib" }
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinxCoroutinesCore" }
 locale-helper-android = { module = "com.zeugmasolutions.localehelper:locale-helper-android", version.ref = "localeHelperAndroid" }

@@ -1,5 +1,8 @@
 package io.bidswipe.app.ui.dashboard.scheduleShow
 
+import android.R.attr.fitsSystemWindows
+import android.R.attr.navigationBarColor
+import android.annotation.SuppressLint
 import android.app.Application
 import android.os.Bundle
 import android.os.Handler
@@ -11,6 +14,9 @@ import androidx.activity.viewModels
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
+import androidx.core.view.setPadding
+import com.gyf.immersionbar.ktx.immersionBar
+import com.gyf.immersionbar.ktx.navigationBarHeight
 import im.zego.zegoexpress.ZegoExpressEngine
 import im.zego.zegoexpress.callback.IZegoEventHandler
 import im.zego.zegoexpress.callback.IZegoIMSendBroadcastMessageCallback
@@ -21,7 +27,6 @@ import im.zego.zegoexpress.constants.ZegoRoomStateChangedReason
 import im.zego.zegoexpress.constants.ZegoScenario
 import im.zego.zegoexpress.constants.ZegoUpdateType
 import im.zego.zegoexpress.constants.ZegoViewMode
-import im.zego.zegoexpress.entity.ZegoBarrageMessageInfo
 import im.zego.zegoexpress.entity.ZegoBroadcastMessageInfo
 import im.zego.zegoexpress.entity.ZegoCanvas
 import im.zego.zegoexpress.entity.ZegoEngineProfile
@@ -30,6 +35,7 @@ import im.zego.zegoexpress.entity.ZegoStream
 import im.zego.zegoexpress.entity.ZegoUser
 import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseActivity
+import io.bidswipe.app.controller.CommentAdapter
 import io.bidswipe.app.controller.LiveMoreAdapter
 import io.bidswipe.app.controller.PromoteSheetAdapter
 import io.bidswipe.app.controller.ShareSheetAdapter
@@ -41,6 +47,7 @@ import io.bidswipe.app.databinding.PromoteShowSheetBinding
 import io.bidswipe.app.databinding.ShareSheetBinding
 import io.bidswipe.app.interfaces.AlertClicks
 import io.bidswipe.app.interfaces.RecyclerClicks
+import io.bidswipe.app.model.CommentModel
 import io.bidswipe.app.model.LiveShowModel
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.network.response.UpdateLiveStatusResponse
@@ -50,8 +57,10 @@ import io.bidswipe.app.utils.Alerts
 import io.bidswipe.app.utils.Const
 import io.bidswipe.app.utils.Utils
 import io.bidswipe.app.utils.bind
+import io.bidswipe.app.utils.clr
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request
+import io.bidswipe.app.utils.setMargins
 import io.bidswipe.app.utils.value
 import org.json.JSONObject
 
@@ -68,16 +77,32 @@ class LiveShowActivity : BaseActivity() {
     private val handler = Handler(Looper.getMainLooper())
     private var runnable: Runnable ?= null
 
+    private var commentList = mutableListOf<CommentModel?>()
+    private lateinit var commentAdapter : CommentAdapter
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
+//        enableEdgeToEdge()
         setContentView(bind.root)
 
-        ViewCompat.setOnApplyWindowInsetsListener(bind.root) { v, insets ->
+        immersionBar {
+            transparentBar()
+            navigationBarDarkIcon(true)
+            navigationBarColor(clr.surface)
+            supportActionBar(false)
+            fitsSystemWindows(false)
+            keyboardEnable(true)
+        }
+        bind.root.setMargins(0,0,0,navigationBarHeight)
+  /*      ViewCompat.setOnApplyWindowInsetsListener(bind.root) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(0, 0, 0, systemBars.bottom)
             insets
-        }
+        }*/
+
+        commentAdapter = CommentAdapter(commentList)
+
+        bind.recycler.adapter = commentAdapter
 
         showId= intent.getStringExtra("showId") ?:""
 
@@ -85,7 +110,7 @@ class LiveShowActivity : BaseActivity() {
 
         startListenEvent()
 
-        fetchMessage()
+//        fetchMessage()
 
         bind.more.setOnClickListener {
             showMoreSheet()
@@ -152,9 +177,7 @@ class LiveShowActivity : BaseActivity() {
 
                     log("ROOM ID FOR HOST: $roomID ")
 
-                    loginRoom(mData?.userId.toString(), mData?.roomId.toString())
-
-
+                    loginRoom( mData?.roomId.toString())
 
                 }
 
@@ -344,10 +367,7 @@ class LiveShowActivity : BaseActivity() {
         super.onDestroy()
 
 
-
         Const.fireBaseRef.getReference(Const.LIVE_SESSIONS).child(roomID).removeValue()
-
-
 
         stopPublish()
         logoutRoom()
@@ -467,7 +487,7 @@ class LiveShowActivity : BaseActivity() {
                 }
             }
 
-            /*override fun onIMRecvBroadcastMessage(
+            override fun onIMRecvBroadcastMessage(
                 roomID: String?,
                 messageList: java.util.ArrayList<ZegoBroadcastMessageInfo?>?
             ) {
@@ -476,10 +496,17 @@ class LiveShowActivity : BaseActivity() {
                 if (messageList != null) {
                     for (msg in messageList) {
                         Log.d("CHAT", "Received message from ${msg?.fromUser?.userName}: ${msg?.message}")
+
+                        val name = msg?.fromUser?.userID?.split("_")?.get(0)?.replace("."," ")
+
+                        commentList.add(CommentModel(msg?.fromUser?.userName, name, msg?.message))
+                        commentAdapter.notifyItemInserted(commentList.size - 1)
+                        bind.recycler.post {  bind.recycler.smoothScrollToPosition(commentList.size) }
+//                        bind.recycler.smoothScrollToPosition(commentList.lastIndex)
                         // Update UI accordingly
                     }
                 }
-            }*/
+            }
         })
     }
 
@@ -487,29 +514,21 @@ class LiveShowActivity : BaseActivity() {
         ZegoExpressEngine.getEngine().setEventHandler(null)
     }
 
-    fun loginRoom(liveUserId : String, roomId : String) {
-        val user = ZegoUser(liveUserId,"LIVE TEST USER")
+    fun loginRoom(roomId : String) {
+        val user = ZegoUser(userName.replace(" ",".") + "_" + userId , userImage )
+
         val roomConfig = ZegoRoomConfig()
-        // The `onRoomUserUpdate` callback can be received only when
-        // `ZegoRoomConfig` in which the `isUserStatusNotify` parameter is set to
-        // `true` is passed.
         roomConfig.isUserStatusNotify = true
         ZegoExpressEngine.getEngine().loginRoom(
             roomId,
             user,
             roomConfig,
             IZegoRoomLoginCallback { error: Int, extendedData: JSONObject? ->
-                // Room login result. This callback is sufficient if you only need to
-                // check the login result.
                 if (error == 0) {
-                    // Login successful.
-                    // Start the preview and stream publishing.
                     Toast.makeText(this, "Login successful.", Toast.LENGTH_LONG).show()
-
                     startPreview()
 
                 } else {
-                    // Login failed. For details, see [Error codes\|_blank](/404).
                     Toast.makeText(this, "Login failed. error = " + error, Toast.LENGTH_LONG).show()
                 }
             })
@@ -531,8 +550,6 @@ class LiveShowActivity : BaseActivity() {
     }
 
     fun startPublish() {
-        // After calling the `loginRoom` method, call this method to publish streams.
-        // The StreamID must be unique in the room.
         val previewCanvas = ZegoCanvas(bind.hostView).apply {
             viewMode = ZegoViewMode.ASPECT_FILL
         }
@@ -550,35 +567,20 @@ class LiveShowActivity : BaseActivity() {
         log("RoomID: ${roomID} Message:${message}")
 
         ZegoExpressEngine.getEngine().sendBroadcastMessage(roomID, message, object : IZegoIMSendBroadcastMessageCallback {
+            @SuppressLint("NotifyDataSetChanged")
             override fun onIMSendBroadcastMessageResult(errorCode: Int, messageID: Long) {
                 if (errorCode == 0) {
                     Log.d("CHAT", "Message sent successfully")
+                    bind.text.setText("")
+                    commentList.add(CommentModel(userImage,userName,message))
+                    commentAdapter.notifyItemInserted(commentList.size - 1)
+                    bind.recycler.post {  bind.recycler.smoothScrollToPosition(commentList.size) }
                 } else {
                     Log.e("CHAT", "Failed to send message")
                 }
             }
         })
 
-    }
-
-    fun fetchMessage() {
-
-        ZegoExpressEngine.getEngine().setEventHandler(object : IZegoEventHandler(){
-
-            override fun onIMRecvBroadcastMessage(
-                roomID: String?,
-                messageList: kotlin.collections.ArrayList<ZegoBroadcastMessageInfo?>?
-            ) {
-                Log.d("ZEGO", "Broadcast message received for room: $roomID")
-                if (messageList != null) {
-                    for (msgInfo in messageList) {
-                        Log.d("BROADCAST", "Received broadcast message from ${msgInfo?.fromUser?.userName}: ${msgInfo?.message}")
-                        // Update UI for broadcast messages
-                    }
-                }
-            }
-
-        })
     }
 
     fun addDataOnFirebase(data: UpdateLiveStatusResponse.Data?){
@@ -614,7 +616,6 @@ class LiveShowActivity : BaseActivity() {
 
         }
 
-
     }
 
     fun startUpdatingFirebaseEvery5Minutes() {
@@ -622,7 +623,7 @@ class LiveShowActivity : BaseActivity() {
         runnable = object : Runnable {
             override fun run() {
                 val updateValue = System.currentTimeMillis()
-                Const.fireBaseRef.getReference(Const.LIVE_SESSIONS).child(roomID).child("live").setValue(true)
+                Const.fireBaseRef.getReference(Const.LIVE_SESSIONS).child(roomID).child("time").setValue(Utils.getTimeFromTimestamp(System.currentTimeMillis()/1000,"yyyy-MM-dd_HH:mm:ss_a"))
                     .addOnSuccessListener {
                         Log.d("FirebaseUpdate", "Successfully updated value: $updateValue")
                     }

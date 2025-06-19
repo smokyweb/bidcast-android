@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:paddingHorizontal="16dp"
+    android:paddingVertical="4dp">
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/icon_card"
+            style="@style/cardStyle"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            app:cardCornerRadius="100dp"
+            android:background="@color/transparent"
+            app:cardElevation="0dp">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/userImage"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                android:src="@drawable/user_image" />
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/half_margin"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/userName"
+                style="@style/TitleMedium"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/username" />
+
+            <TextView
+                android:id="@+id/message"
+                style="@style/BodySmall"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="f qff qbacgfaq aqafg" />
+
+        </LinearLayout>
+
+</LinearLayout>

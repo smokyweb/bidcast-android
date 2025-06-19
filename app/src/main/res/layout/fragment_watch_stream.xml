@@ -251,7 +251,24 @@
 
     </LinearLayout>
 
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginEnd="100dp"
+        app:layout_constraintBottom_toTopOf="@id/product"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        tools:listitem="@layout/live_comment_item"
+        app:layout_constraintDimensionRatio="1:1"
+        android:nestedScrollingEnabled="true"
+        app:reverseLayout="false"
+        app:stackFromEnd="true"
+        android:layout_gravity="bottom"
+        tools:itemCount="10"
+        />
+
     <com.google.android.material.card.MaterialCardView
+        android:id="@+id/product"
         style="@style/cardStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -369,7 +386,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/margin"
-        android:layout_marginBottom="32dp"
+        android:layout_marginBottom="@dimen/margin"
         app:boxStrokeColor="@color/scrim"
         app:endIconMode="custom"
         app:endIconDrawable="@drawable/ic_forward"
