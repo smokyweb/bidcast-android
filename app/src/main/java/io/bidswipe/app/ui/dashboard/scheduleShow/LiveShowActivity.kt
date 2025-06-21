@@ -1,7 +1,5 @@
 package io.bidswipe.app.ui.dashboard.scheduleShow
 
-import android.R.attr.fitsSystemWindows
-import android.R.attr.navigationBarColor
 import android.annotation.SuppressLint
 import android.app.Application
 import android.os.Bundle
@@ -9,12 +7,8 @@ import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import android.widget.Toast
-import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
-import androidx.core.view.setPadding
 import com.gyf.immersionbar.ktx.immersionBar
 import com.gyf.immersionbar.ktx.navigationBarHeight
 import im.zego.zegoexpress.ZegoExpressEngine
@@ -82,7 +76,6 @@ class LiveShowActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-//        enableEdgeToEdge()
         setContentView(bind.root)
 
         immersionBar {
@@ -94,11 +87,6 @@ class LiveShowActivity : BaseActivity() {
             keyboardEnable(true)
         }
         bind.root.setMargins(0,0,0,navigationBarHeight)
-  /*      ViewCompat.setOnApplyWindowInsetsListener(bind.root) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(0, 0, 0, systemBars.bottom)
-            insets
-        }*/
 
         commentAdapter = CommentAdapter(commentList)
 
@@ -109,8 +97,6 @@ class LiveShowActivity : BaseActivity() {
         createEngine()
 
         startListenEvent()
-
-//        fetchMessage()
 
         bind.more.setOnClickListener {
             showMoreSheet()
@@ -401,11 +387,6 @@ class LiveShowActivity : BaseActivity() {
                 super.onRoomStreamUpdate(roomID, updateType, streamList, extendedData)
                 if (streamList.isNotEmpty()) {
                     val streamID = streamList[0].streamID
-                    /*if (updateType == ZegoUpdateType.ADD) {
-                        startPlayStream(streamID)
-                    } else {
-                        stopPlayStream(streamID)
-                    }*/
                 }
             }
 

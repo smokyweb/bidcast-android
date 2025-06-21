@@ -3,10 +3,7 @@ package io.bidswipe.app.ui.dashboard.watchStream
 import android.annotation.SuppressLint
 import android.app.Application
 import android.os.Bundle
-import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.viewpager2.widget.ViewPager2
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -41,16 +38,13 @@ class ViewLiveShowActivity : BaseActivity() {
             streamList.clear()
 
             if (snapshot.exists() && snapshot.childrenCount > 0) {
-//                bind.noChats.isVisible = false
                 for (data in snapshot.children) {
-                    log("EVENT LISTENER " + data.toString())
+                    log("EVENT LISTENER $data")
 
                     streamList.add(data.getValue(LiveShowModel::class.java)!!)
 
                 }
 
-            } else {
-//                bind.noChats.isVisible = true
             }
 
             viewPager = bind.viewPager
@@ -91,7 +85,7 @@ class ViewLiveShowActivity : BaseActivity() {
 
         Const.fireBaseRef.getReference(Const.LIVE_SESSIONS).addValueEventListener(eventListener)
 
-//        log("ROOMIDS: ${streamList.get(0).roomId}")
+//        log("ROOM IDS: ${streamList.get(0).roomId}")
 
 
 

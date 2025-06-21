@@ -5,6 +5,7 @@ import io.bidswipe.app.network.response.AboutUsResponse
 import io.bidswipe.app.network.response.CommonResponse
 import io.bidswipe.app.network.response.CreateBidResponse
 import io.bidswipe.app.network.response.FAQResponse
+import io.bidswipe.app.network.response.FetchBidResponse
 import io.bidswipe.app.network.response.FetchSellerVerificationResponse
 import io.bidswipe.app.network.response.GenerateTokenResponse
 import io.bidswipe.app.network.response.GetAllTipsResponse
@@ -209,7 +210,8 @@ interface ApiInterface {
 	@Multipart
 	@POST("api/get-live-show")
 	suspend fun getLiveShow(
-		@Part("type") type: RequestBody?
+		@Part("type") type: RequestBody?,
+		@Part("category") category: RequestBody?
 	): GetMyShowResponse
 	
 	@Multipart
@@ -387,6 +389,9 @@ interface ApiInterface {
 	suspend fun getNotification(
 	): GetNotificationResponse
 
+	@POST("api/bid/fetch")
+	suspend fun fetchBids(
+	): FetchBidResponse
 
 }
 

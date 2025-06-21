@@ -102,8 +102,9 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
     ) = call { api.offerUpdateStatus(offerId,status) }
 
  suspend fun getLiveShow(
-     type : RequestBody?
- ) = call { api.getLiveShow(type) }
+     type : RequestBody?,
+     category: RequestBody?
+ ) = call { api.getLiveShow(type, category) }
 
     suspend fun notifyLiveUser(
         liveUserId : RequestBody?

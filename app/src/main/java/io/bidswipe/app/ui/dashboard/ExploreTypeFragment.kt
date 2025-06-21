@@ -37,6 +37,7 @@ class ExploreTypeFragment : BaseFragment<DashViewModel,FragmentExploreTypeBindin
     private var categoriesList = mutableListOf<String>()
     private var showList = mutableListOf<GetMyShowResponse.Data?>()
     private var romIdsList = mutableListOf<StreamModel>()
+    private var category = ""
 
     private val mClick = object : RecyclerClicks {
         override fun itemClick(pos: Int, status: String?) {
@@ -53,9 +54,6 @@ class ExploreTypeFragment : BaseFragment<DashViewModel,FragmentExploreTypeBindin
                     if (showList[pos]?.isLive == true){
                         startActivity(Intent(mCtx, ViewLiveShowActivity::class.java).putExtra("position", pos).putParcelableArrayListExtra("roomIdsList", romIdsList as ArrayList))
                     }
-
-
-
                 }
             }
 
@@ -64,6 +62,8 @@ class ExploreTypeFragment : BaseFragment<DashViewModel,FragmentExploreTypeBindin
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        category = arguments?.getString("category") ?:""
 
         bind.header.onBackClick {
 
@@ -85,15 +85,13 @@ class ExploreTypeFragment : BaseFragment<DashViewModel,FragmentExploreTypeBindin
         bind.popular.setOnClickListener { selectTab(it as TextView) }
         bind.comingSoon.setOnClickListener { selectTab(it as TextView) }
 
-
-
-        categoriesList = mutableListOf("For You", "Collectibles", "Trading Cards")
+        categoriesList = mutableListOf(category)
         categoriesList.forEach {
             bind.chipGroup.addView(
                 Utils.makeAChip(
                     mCtx = mCtx,
                     text = it,
-                    selected = false
+                    selected = true
                 )
             )
         }
@@ -124,7 +122,6 @@ class ExploreTypeFragment : BaseFragment<DashViewModel,FragmentExploreTypeBindin
                 val index = chipGroup.indexOfChild(chipGroup.findViewById(chipId))
             }
         }
-
 
         viewModel.getLiveShowRepo.observe(viewLifecycleOwner) {
             when (it) {
@@ -196,14 +193,15 @@ class ExploreTypeFragment : BaseFragment<DashViewModel,FragmentExploreTypeBindin
 
         when(selectedTab){
             bind.live ->{
+                viewModel.getLiveShow("live".request(),category.request())
+            }
 
-                viewModel.getLiveShow("live".request())
-            }
             bind.popular ->{
-                viewModel.getLiveShow("popular".request())
+                viewModel.getLiveShow("popular".request(), category.request())
             }
+
             bind.comingSoon ->{
-                viewModel.getLiveShow("upcoming".request())
+                viewModel.getLiveShow("upcoming".request(), category.request())
             }
 
         }

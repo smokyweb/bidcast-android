@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.content.ContextCompat
+import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.navigation.fragment.findNavController
 import io.bidswipe.app.R
@@ -32,10 +33,16 @@ class ExploreFragment : BaseFragment<DashViewModel,FragmentExploreBinding>() {
     private lateinit var exploreAdapter : ExploreAdapter
     private var exploreList = mutableListOf<GetCategoryResponse.Data?>()
 
-    private val mClick = object : RecyclerClicks{
-               override fun itemClick(pos: Int, status: String?) {
-            findNavController().navigate(ids.goTopExploreType)
-            
+    private val mClick = object : RecyclerClicks {
+        override fun itemClick(pos: Int, status: String?) {
+
+            val category = exploreList[pos]?.name
+
+            findNavController().navigate(
+                ids.goTopExploreType,
+                bundleOf("category" to category )
+            )
+
         }
     }
 

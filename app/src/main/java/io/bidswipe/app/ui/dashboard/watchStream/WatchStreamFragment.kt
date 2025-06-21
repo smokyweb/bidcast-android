@@ -31,13 +31,12 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
     override fun getBind(
         inflater: LayoutInflater,
         view: ViewGroup?
-    ) = FragmentWatchStreamBinding.inflate(inflater,view,false)
+    ) = FragmentWatchStreamBinding.inflate(inflater, view, false)
 
     private lateinit var roomID: String
     private lateinit var streamID: String
-
     private var commentList = mutableListOf<CommentModel?>()
-    private lateinit var commentAdapter : CommentAdapter
+    private lateinit var commentAdapter: CommentAdapter
 
     companion object {
         fun newInstance(roomID: String, streamID: String) = WatchStreamFragment().apply {
@@ -50,8 +49,8 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        roomID = requireArguments().getString("roomID") ?:""
-        streamID = requireArguments().getString("streamID") ?:""
+        roomID = requireArguments().getString("roomID") ?: ""
+        streamID = requireArguments().getString("streamID") ?: ""
     }
 
 
@@ -65,24 +64,28 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
         bind.recycler.adapter = commentAdapter
 
         bind.message.setEndIconOnClickListener {
-           if (bind.text.value().isNotEmpty()) {
-               sendMessage(bind.text.value())
-//               fetchMessage()
-           }
+            if (bind.text.value().isNotEmpty()) {
+                sendMessage(bind.text.value())
+            }
 
         }
 
-
-
-        // Or observe selectedStream if you want to react to changes
         viewModel.selectedStream.observe(viewLifecycleOwner) { stream ->
             if (stream.roomId == roomID) {
 
-                bind.userImage.loadUrl(mCtx, stream.seller?.image.toString(), placeHolder = draw.user_image)
+                bind.userImage.loadUrl(
+                    mCtx,
+                    stream.seller?.image.toString(),
+                    placeHolder = draw.user_image
+                )
 
                 bind.userName.text = stream.seller?.name.toString()
                 bind.productName.text = stream.product?.name
-                bind.productImage.loadUrl(mCtx, stream?.product?.image.toString() , placeHolder = draw.product_img )
+                bind.productImage.loadUrl(
+                    mCtx,
+                    stream?.product?.image.toString(),
+                    placeHolder = draw.product_img
+                )
                 bind.quantity.text = buildString {
                     append("Price: ")
                     append(stream.product?.price.toString())
@@ -108,20 +111,12 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
             }
         }
-
-//        createEngine()
-//        loginRoom(roomID)
-//        startListenEvent()
-
     }
-
-
 
     override fun onDestroy() {
         super.onDestroy()
         destroyEngine()
     }
-
 
     override fun onResume() {
         super.onResume()
@@ -135,14 +130,11 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
     }
 
     private fun loginAndPlay() {
-        val user = ZegoUser(userName.replace(" ",".") + "_" +userId, userImage)
-        ZegoExpressEngine.getEngine().loginRoom(roomID,  user,ZegoRoomConfig())
+        val user = ZegoUser(userName.replace(" ", ".") + "_" + userId, userImage)
+        ZegoExpressEngine.getEngine().loginRoom(roomID, user, ZegoRoomConfig())
         val canvas = ZegoCanvas(bind.hostView).apply {
             viewMode = ZegoViewMode.ASPECT_FILL
         }
-       /* val a= ZegoExpressEngine.getEngine().getRoomStreamList(roomID, ZegoRoomStreamListType.ALL).playStreamList.size
-
-        bind.liveCount.text = a.toString()*/
 
         ZegoExpressEngine.getEngine().startPlayingStream(roomID, canvas)
     }
@@ -156,204 +148,30 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
         ZegoExpressEngine.destroyEngine(null)
     }
 
-   /* private fun startListenEvent() {
-        ZegoExpressEngine.getEngine().setEventHandler(object : IZegoEventHandler() {
-
-            override fun onRoomStreamUpdate(
-                roomID: String,
-                updateType: ZegoUpdateType,
-                streamList: ArrayList<ZegoStream>,
-                extendedData: JSONObject
-            ) {
-                super.onRoomStreamUpdate(roomID, updateType, streamList, extendedData)
-                if (streamList.isNotEmpty()) {
-                    val streamID = streamList[0].streamID
-
-                    startPlayStream(streamID)
-
-                    log("STREAM ID : $streamID")
-                  *//*  if (updateType == ZegoUpdateType.ADD) {
-
-                    } else {
-                        stopPlayStream(streamID)
-                    }*//*
-                }
-            }
-
-            override fun onRoomUserUpdate(
-                roomID: String,
-                updateType: ZegoUpdateType,
-                userList: ArrayList<ZegoUser>
-            ) {
-                super.onRoomUserUpdate(roomID, updateType, userList)
-                val context = mCtx
-                for (user in userList) {
-                    val message = when (updateType) {
-                        ZegoUpdateType.ADD -> "${user.userID} logged in to the room."
-                        ZegoUpdateType.DELETE -> "${user.userID} logged out of the room."
-                        else -> ""
-                    }
-                    Toast.makeText(context, message, Toast.LENGTH_LONG).show()
-                }
-            }
-
-            override fun onRoomStateChanged(
-                roomID: String,
-                reason: ZegoRoomStateChangedReason,
-                errorCode: Int,
-                extendedData: JSONObject
-            ) {
-                super.onRoomStateChanged(roomID, reason, errorCode, extendedData)
-                val context = mCtx
-                when (reason) {
-                    ZegoRoomStateChangedReason.LOGIN_FAILED ->
-                        Toast.makeText(context, "ZegoRoomStateChangedReason.LOGIN_FAILED", Toast.LENGTH_LONG).show()
-
-                    ZegoRoomStateChangedReason.RECONNECT_FAILED ->
-                        Toast.makeText(context, "ZegoRoomStateChangedReason.RECONNECT_FAILED", Toast.LENGTH_LONG).show()
-
-                    ZegoRoomStateChangedReason.KICK_OUT ->
-                        Toast.makeText(context, "ZegoRoomStateChangedReason.KICK_OUT", Toast.LENGTH_LONG).show()
-
-                    else -> {
-                        // Other room states can be handled here if needed
-                    }
-                }
-            }
-
-            override fun onPublisherStateUpdate(
-                streamID: String,
-                state: ZegoPublisherState,
-                errorCode: Int,
-                extendedData: JSONObject
-            ) {
-                super.onPublisherStateUpdate(streamID, state, errorCode, extendedData)
-                if (errorCode != 0) {
-                    // Handle publish error
-                }
-
-                if (state == ZegoPublisherState.NO_PUBLISH) {
-                    Toast.makeText(mCtx, "ZegoPublisherState.NO_PUBLISH", Toast.LENGTH_LONG).show()
-                }
-            }
-
-            override fun onPlayerStateUpdate(
-                streamID: String,
-                state: ZegoPlayerState,
-                errorCode: Int,
-                extendedData: JSONObject
-            ) {
-                super.onPlayerStateUpdate(streamID, state, errorCode, extendedData)
-
-                if (errorCode != 0) {
-                    Toast.makeText(
-                        mCtx,
-                        "onPlayerStateUpdate, state: $state errorCode: $errorCode",
-                        Toast.LENGTH_LONG
-                    ).show()
-                }
-
-                if (state == ZegoPlayerState.NO_PLAY) {
-                    Toast.makeText(mCtx, "ZegoPlayerState.NO_PLAY", Toast.LENGTH_LONG).show()
-                }
-            }
-        })
-    }
-
-
-    private fun stopListenEvent() {
-        ZegoExpressEngine.getEngine().setEventHandler(null)
-    }*/
-
-
-   /* fun loginRoom(roomId : String) {
-        val user = ZegoUser(userId, )
-        val roomConfig = ZegoRoomConfig()
-        // The `onRoomUserUpdate` callback can be received only when
-        // `ZegoRoomConfig` in which the `isUserStatusNotify` parameter is set to
-        // `true` is passed.
-        roomConfig.isUserStatusNotify = true
-        ZegoExpressEngine.getEngine().loginRoom(
-            roomId,
-            user,
-            roomConfig,
-            IZegoRoomLoginCallback { error: Int, extendedData: JSONObject? ->
-                // Room login result. This callback is sufficient if you only need to
-                // check the login result.
-                if (error == 0) {
-                    // Login successful.
-                    // Start the preview and stream publishing.
-                    Toast.makeText(mCtx, "Login successful.", Toast.LENGTH_LONG).show()
-
-
-//                        startPreview()
-//                        startPublish()
-
-                } else {
-                    // Login failed. For details, see [Error codes\|_blank](/404).
-                    Toast.makeText(mCtx, "Login failed. error = " + error, Toast.LENGTH_LONG).show()
-                }
-            })
-    }
-
-    fun logoutRoom() {
-        ZegoExpressEngine.getEngine().logoutRoom()
-    }*/
-
-   /* fun startPlayStream(streamID: String?) {
-        bind.hostView.setVisibility(View.VISIBLE)
-        val playCanvas = ZegoCanvas(bind.hostView).apply {
-            viewMode = ZegoViewMode.ASPECT_FILL
-        }
-        val config = ZegoPlayerConfig()
-        config.resourceMode = ZegoStreamResourceMode.DEFAULT // Live Streaming
-        // config.resourceMode = ZegoStreamResourceMode.ONLY_L3; // Interactive Live Streaming
-        ZegoExpressEngine.getEngine().startPlayingStream(streamID, playCanvas, config)
-    }
-
-    fun stopPlayStream(streamID: String?) {
-        ZegoExpressEngine.getEngine().stopPlayingStream(streamID)
-        bind.hostView.setVisibility(View.GONE)
-    }*/
-
-/*    fun fetchMessage(){
-
-// Listen to incoming messages
-        ZegoExpressEngine.getEngine().setEventHandler(object : IZegoEventHandler() {
-            override fun onIMRecvBroadcastMessage(
-                roomID: String?,
-                messageList: ArrayList<ZegoBroadcastMessageInfo?>?
-            ) {
-                super.onIMRecvBroadcastMessage(roomID, messageList)
-
-                Log.d("Tag","MESSAGE RECEIVED : ${messageList}")
-            }
-        })
-    }*/
-
-    fun sendMessage(message: String){
+    fun sendMessage(message: String) {
 
         log("RoomID: ${roomID} Message:${message}")
 
-        ZegoExpressEngine.getEngine().sendBroadcastMessage(roomID, message, object : IZegoIMSendBroadcastMessageCallback {
-            override fun onIMSendBroadcastMessageResult(errorCode: Int, messageID: Long) {
-                if (errorCode == 0) {
-                    bind.text.setText("")
-                    commentList.add(CommentModel(userImage,userName, message))
-                    commentAdapter.notifyItemInserted(commentList.size - 1)
-                    bind.recycler.post {  bind.recycler.smoothScrollToPosition(commentList.size) }
-                    Log.d("CHAT", "Message sent successfully")
-                } else {
-                    Log.e("CHAT", "Failed to send message")
+        ZegoExpressEngine.getEngine()
+            .sendBroadcastMessage(roomID, message, object : IZegoIMSendBroadcastMessageCallback {
+                override fun onIMSendBroadcastMessageResult(errorCode: Int, messageID: Long) {
+                    if (errorCode == 0) {
+                        bind.text.setText("")
+                        commentList.add(CommentModel(userImage, userName, message))
+                        commentAdapter.notifyItemInserted(commentList.size - 1)
+                        bind.recycler.post { bind.recycler.smoothScrollToPosition(commentList.size) }
+                        Log.d("CHAT", "Message sent successfully")
+                    } else {
+                        Log.e("CHAT", "Failed to send message")
+                    }
                 }
-            }
-        })
+            })
 
     }
 
     fun fetchMessage() {
 
-        ZegoExpressEngine.getEngine().setEventHandler(object : IZegoEventHandler(){
+        ZegoExpressEngine.getEngine().setEventHandler(object : IZegoEventHandler() {
 
             override fun onIMRecvBroadcastMessage(
                 roomID: String?,
@@ -362,20 +180,26 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
                 Log.d("ZEGO", "Broadcast message received for room: $roomID")
                 if (messageList != null) {
                     for (msgInfo in messageList) {
-                        Log.d("BROADCAST", "Received broadcast message from ${msgInfo?.fromUser?.userName}: ${msgInfo?.message}")
+                        Log.d(
+                            "BROADCAST",
+                            "Received broadcast message from ${msgInfo?.fromUser?.userName}: ${msgInfo?.message}"
+                        )
 
-                        val name = msgInfo?.fromUser?.userID?.split("_")?.get(0)?.replace("."," ")
+                        val name = msgInfo?.fromUser?.userID?.split("_")?.get(0)?.replace(".", " ")
 
-                        commentList.add(CommentModel(msgInfo?.fromUser?.userName ,name, msgInfo?.message))
+                        commentList.add(
+                            CommentModel(
+                                msgInfo?.fromUser?.userName,
+                                name,
+                                msgInfo?.message
+                            )
+                        )
                         commentAdapter.notifyItemInserted(commentList.size - 1)
-                        bind.recycler.post {  bind.recycler.smoothScrollToPosition(commentList.size) }
-                        // Update UI for broadcast messages
+                        bind.recycler.post { bind.recycler.smoothScrollToPosition(commentList.size) }
                     }
                 }
             }
         })
     }
-
-
 
 }

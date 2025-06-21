@@ -49,7 +49,7 @@ data class GetOffersResponse(
             @SerializedName("images")
             val images: List<String?>?,
             @SerializedName("pricing")
-            val pricing: Int?,
+            val pricing: String?,
             @SerializedName("title")
             val title: String?
         )

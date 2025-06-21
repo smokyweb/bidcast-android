@@ -26,14 +26,14 @@ class HomeAdapter (val mList: MutableList<GetMyShowResponse.Data?>, val mClick: 
                 mClick.itemClick(position,"user")
             }
 
-            bind.root.setOnClickListener {
+            bind.thumbnail.setOnClickListener {
                 mClick.itemClick(position,"viewShow")
             }
 
             bind.userName.text = item?.user?.name.toString()
             bind.userImage.loadUrl(mCtx,item?.user?.profileImage.toString(), draw.user_image)
 
-            bind.thumnail.loadUrl(mCtx,item?.thumbnail?.get(0).toString())
+            bind.thumbnail.loadUrl(mCtx,item?.thumbnail?.get(0).toString())
 
             bind.title.text = item?.title.toString()
             bind.category.text = item?.category?.name

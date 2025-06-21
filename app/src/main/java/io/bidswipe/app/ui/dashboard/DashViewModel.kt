@@ -7,24 +7,17 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.network.repository.DashRepository
 import io.bidswipe.app.network.response.CommonResponse
-import io.bidswipe.app.network.response.FAQResponse
 import io.bidswipe.app.network.response.GenerateTokenResponse
-import io.bidswipe.app.network.response.GetAllTipsResponse
 import io.bidswipe.app.network.response.GetCategoryResponse
 import io.bidswipe.app.network.response.GetHowToSellResponse
 import io.bidswipe.app.network.response.GetLessonsResponse
 import io.bidswipe.app.network.response.GetMyShowResponse
 import io.bidswipe.app.network.response.GetOffersResponse
-import io.bidswipe.app.network.response.GetPaymentCardsResponse
 import io.bidswipe.app.network.response.GetPrepareStepResponse
-import io.bidswipe.app.network.response.GetProductDetailsResponse
-import io.bidswipe.app.network.response.GetPurchaseDetail
-import io.bidswipe.app.network.response.GetShippingAddressResponse
 import io.bidswipe.app.network.response.UpdateLiveStatusResponse
 import io.bidswipe.app.network.response.UpdateOfferResponse
 import io.bidswipe.app.network.response.UserDeviceResponse
 import io.bidswipe.app.network.response.UserProfileResponse
-import io.bidswipe.app.ui.dashboard.scheduleShow.LiveShowActivity
 import kotlinx.coroutines.launch
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -104,14 +97,11 @@ class DashViewModel @Inject constructor(val repo: DashRepository) : ViewModel() 
 		get() = _getLiveShowResponse
 
 	fun getLiveShow(
-		type : RequestBody?
+		type : RequestBody?,
+		category: RequestBody? = null
 	) = viewModelScope.launch {
-		_getLiveShowResponse.value = repo.getLiveShow(type)
+		_getLiveShowResponse.value = repo.getLiveShow(type, category)
 	}
-
-
-
-
 
 	private var _offerListResponse = MutableLiveData<Resource<GetOffersResponse>>()
 	val offerListRepo: MutableLiveData<Resource<GetOffersResponse>>
