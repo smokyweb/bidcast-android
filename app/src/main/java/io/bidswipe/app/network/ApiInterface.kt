@@ -4,6 +4,7 @@ import io.bidswipe.app.BuildConfig
 import io.bidswipe.app.network.response.AboutUsResponse
 import io.bidswipe.app.network.response.CommonResponse
 import io.bidswipe.app.network.response.CreateBidResponse
+import io.bidswipe.app.network.response.CreateOrderResponse
 import io.bidswipe.app.network.response.FAQResponse
 import io.bidswipe.app.network.response.FetchBidResponse
 import io.bidswipe.app.network.response.FetchSellerVerificationResponse
@@ -18,6 +19,7 @@ import io.bidswipe.app.network.response.GetMyInventoryResponse
 import io.bidswipe.app.network.response.GetMyShowResponse
 import io.bidswipe.app.network.response.GetNotificationResponse
 import io.bidswipe.app.network.response.GetOffersResponse
+import io.bidswipe.app.network.response.GetOrderDetailsResponse
 import io.bidswipe.app.network.response.GetOrdersResponse
 import io.bidswipe.app.network.response.GetPaymentCardsResponse
 import io.bidswipe.app.network.response.GetPrepareStepResponse
@@ -36,6 +38,7 @@ import io.bidswipe.app.network.response.UpdateLiveStatusResponse
 import io.bidswipe.app.network.response.UpdateOfferResponse
 import io.bidswipe.app.network.response.UserDeviceResponse
 import io.bidswipe.app.network.response.UserProfileResponse
+import io.bidswipe.app.network.response.UserSearchingResponse
 import io.bidswipe.app.utils.Utils
 import io.bidswipe.app.utils.request
 import okhttp3.MultipartBody
@@ -293,7 +296,7 @@ interface ApiInterface {
 		@Part("sub_total")subTotal:RequestBody?,
 		@Part("total")total:RequestBody?,
 		@Part("discount")discount:RequestBody?
-	): CommonResponse
+	): CreateOrderResponse
 
 
 	@Multipart
@@ -389,9 +392,34 @@ interface ApiInterface {
 	suspend fun getNotification(
 	): GetNotificationResponse
 
-	@POST("api/bid/fetch")
+	@GET("api/bid/fetch")
 	suspend fun fetchBids(
 	): FetchBidResponse
+
+	@Multipart
+	@POST("api/product/order-receipt")
+	suspend fun getOrderReceipt(
+		@Part ("order_id") orderId : RequestBody?
+	): CommonResponse
+
+	@Multipart
+	@POST("api/product/order-details")
+	suspend fun getOrderDetails(
+		@Part("order_id") orderId : RequestBody?
+	): GetOrderDetailsResponse
+
+	@Multipart
+	@POST("promo/verify-code")
+	suspend fun verifyPromoCode(
+		@Part("order_id") orderId : RequestBody?
+	): GetOrderDetailsResponse
+
+
+	@Multipart
+	@POST("api/user/searching")
+	suspend fun searchUsers(
+		@Part("search") search : RequestBody?
+	): UserSearchingResponse
 
 }
 

@@ -61,8 +61,9 @@ class ProductDetailsFragment : BaseFragment<ProductViewModel, FragmentProductDet
 
         bind.buyNow.setOnClickListener {
 
-
             findNavController().navigate(ids.goToBuyNowFragment)
+
+
             /*var buyNowSheetBind = BuyNowSheetBinding.bind(layoutInflater.inflate(R.layout.buy_now_sheet, null, false))
             var buyNowSheet = Alerts.appBottomSheet(mCtx, true, buyNowSheetBind)
 

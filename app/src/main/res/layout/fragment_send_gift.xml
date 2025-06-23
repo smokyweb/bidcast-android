@@ -87,7 +87,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/margin"
-                android:layout_marginBottom="@dimen/half_margin">
+                >
 
                 <com.google.android.material.textfield.MaterialAutoCompleteTextView
                     android:id="@+id/user"
@@ -100,11 +100,23 @@
             </com.google.android.material.textfield.TextInputLayout>
 
             <TextView
+                android:id="@+id/userNotFound"
+                style="@style/BodyMedium"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/margin"
+                android:visibility="gone"
+                android:textColor="@color/error"
+                android:text="@string/no_user_matches_the_name_entered"
+                android:textAlignment="center" />
+
+            <TextView
                 style="@style/TitleSmall"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/margin"
-                android:layout_marginVertical="@dimen/half_margin"
+                android:layout_marginTop="@dimen/margin"
+                android:layout_marginBottom="@dimen/half_margin"
                 android:text="@string/add_a_gift_message_optional" />
 
             <com.google.android.material.textfield.TextInputLayout

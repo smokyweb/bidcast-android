@@ -7,6 +7,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.network.repository.DashRepository
 import io.bidswipe.app.network.response.CommonResponse
+import io.bidswipe.app.network.response.FetchBidResponse
 import io.bidswipe.app.network.response.GenerateTokenResponse
 import io.bidswipe.app.network.response.GetCategoryResponse
 import io.bidswipe.app.network.response.GetHowToSellResponse
@@ -188,6 +189,15 @@ class DashViewModel @Inject constructor(val repo: DashRepository) : ViewModel() 
 	fun getUserProfile(
 	) = viewModelScope.launch {
 		_getUserProfileResponse.value = repo.getUserProfile()
+	}
+
+	private var _fetchBidsResponse = MutableLiveData<Resource<FetchBidResponse>>()
+	val fetchBidsRepo: MutableLiveData<Resource<FetchBidResponse>>
+		get() = _fetchBidsResponse
+
+	fun fetchBids(
+	) = viewModelScope.launch {
+		_fetchBidsResponse.value = repo.fetchBids()
 	}
 
 }

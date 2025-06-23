@@ -89,7 +89,7 @@
                 app:cardElevation="0dp">
 
                 <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/icon"
+                    android:id="@+id/productImage"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:src="@drawable/shoe" />
@@ -104,14 +104,14 @@
                 android:orientation="vertical">
 
                 <TextView
-                    android:id="@+id/title"
+                    android:id="@+id/productName"
                     style="@style/TitleLarge"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Premium Wireless Headphones" />
 
                 <TextView
-                    android:id="@+id/sub_title"
+                    android:id="@+id/productColor"
                     style="@style/BodyLarge"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -139,6 +139,7 @@
                 android:text="@string/order_id" />
 
             <TextView
+                android:id="@+id/orderId"
                 style="@style/TitleMedium"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -165,6 +166,7 @@
                 android:text="@string/order_date" />
 
             <TextView
+                android:id="@+id/orderDate"
                 style="@style/TitleMedium"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -217,6 +219,7 @@
                 android:text="@string/quantity" />
 
             <TextView
+                android:id="@+id/quantity"
                 style="@style/TitleMedium"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -243,6 +246,7 @@
                 android:text="@string/category" />
 
             <TextView
+                android:id="@+id/category"
                 style="@style/TitleMedium"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -300,6 +304,7 @@
             android:weightSum="2">
 
             <com.google.android.material.button.MaterialButton
+                android:id="@+id/receipt"
                 style="@style/appBtnOutline"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -307,7 +312,7 @@
                 android:layout_margin="@dimen/half_margin"
                 app:cornerRadius="32dp"
                 android:paddingHorizontal="@dimen/margin"
-                android:text="Reciept" />
+                android:text="Receipt" />
 
             <com.google.android.material.button.MaterialButton
                 style="@style/appBtnOutline"
@@ -361,7 +366,12 @@
             android:layout_margin="@dimen/margin"
             android:paddingHorizontal="@dimen/margin"
             android:text="@string/home" />
-
     </LinearLayout>
+
+    <io.bidswipe.app.ui.custom.LoaderView
+        android:id="@+id/loader"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -7,10 +7,13 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.network.repository.DashRepository
 import io.bidswipe.app.network.response.CommonResponse
+import io.bidswipe.app.network.response.CreateOrderResponse
+import io.bidswipe.app.network.response.GetOrderDetailsResponse
 import io.bidswipe.app.network.response.GetPaymentCardsResponse
 import io.bidswipe.app.network.response.GetProductDetailsResponse
 import io.bidswipe.app.network.response.GetPurchaseDetail
 import io.bidswipe.app.network.response.GetShippingAddressResponse
+import io.bidswipe.app.network.response.UserSearchingResponse
 import kotlinx.coroutines.launch
 import okhttp3.RequestBody
 import javax.inject.Inject
@@ -19,6 +22,7 @@ import javax.inject.Inject
 class ProductViewModel @Inject constructor(val repo: DashRepository) : ViewModel() {
 
     var product : GetProductDetailsResponse.Data? = null
+    var checkoutData : GetPurchaseDetail.Data? = null
 
 /*    private var _createOrderResponse = MutableLiveData<Resource<CommonResponse>>()
     val createOrderRepo: MutableLiveData<Resource<CommonResponse>>
@@ -79,8 +83,8 @@ class ProductViewModel @Inject constructor(val repo: DashRepository) : ViewModel
         _getPurchaseProductResponse.value = repo.getPurchaseProduct(shippingId,productId)
     }
 
-    private var _createOrderResponse = MutableLiveData<Resource<CommonResponse>>()
-    val createOrderRepo: MutableLiveData<Resource<CommonResponse>>
+    private var _createOrderResponse = MutableLiveData<Resource<CreateOrderResponse>>()
+    val createOrderRepo: MutableLiveData<Resource<CreateOrderResponse>>
         get() = _createOrderResponse
 
     fun createOrder(
@@ -119,6 +123,36 @@ class ProductViewModel @Inject constructor(val repo: DashRepository) : ViewModel
         productId : RequestBody?
     ) = viewModelScope.launch {
         _makeOfferResponse.value = repo.makeOffer(amount,productId)
+    }
+
+    private var _getOrderReceiptResponse = MutableLiveData<Resource<CommonResponse>>()
+    val getOrderReceiptRepo: MutableLiveData<Resource<CommonResponse>>
+        get() = _getOrderReceiptResponse
+
+    fun getOrderReceipt(
+        orderId : RequestBody?
+    ) = viewModelScope.launch {
+        _getOrderReceiptResponse.value = repo.getOrderReceipt(orderId)
+    }
+
+    private var _getOrderDetailsResponse = MutableLiveData<Resource<GetOrderDetailsResponse>>()
+    val getOrderDetailsRepo: MutableLiveData<Resource<GetOrderDetailsResponse>>
+        get() = _getOrderDetailsResponse
+
+    fun getOrderDetails(
+        orderId : RequestBody?
+    ) = viewModelScope.launch {
+        _getOrderDetailsResponse.value = repo.getOrderDetails(orderId)
+    }
+
+    private var _searchUsersResponse = MutableLiveData<Resource<UserSearchingResponse>>()
+    val searchUsersRepo: MutableLiveData<Resource<UserSearchingResponse>>
+        get() = _searchUsersResponse
+
+    fun searchUsers(
+        search : RequestBody?
+    ) = viewModelScope.launch {
+        _searchUsersResponse.value = repo.searchUsers(search)
     }
 
 }

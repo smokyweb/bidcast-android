@@ -114,8 +114,6 @@ class ExploreTypeFragment : BaseFragment<DashViewModel,FragmentExploreTypeBindin
             )
         }*/
 
-
-
         bind.chipGroup.setOnCheckedStateChangeListener { chipGroup, _ ->
             runSafe {
                 val chipId = chipGroup.checkedChipId

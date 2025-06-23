@@ -248,4 +248,19 @@ suspend fun settingsList() = call { api.settingsList() }
     suspend fun getNotification(
     ) = call { api.getNotification() }
 
+    suspend fun fetchBids(
+    ) = call { api.fetchBids() }
+
+    suspend fun getOrderReceipt(
+        orderId : RequestBody?
+    ) = call { api.getOrderReceipt(orderId) }
+
+    suspend fun getOrderDetails(
+        orderId : RequestBody?
+    ) = call { api.getOrderDetails(orderId) }
+
+    suspend fun searchUsers(
+        search : RequestBody?
+    ) = call { api.searchUsers(search) }
+
 }

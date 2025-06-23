@@ -296,6 +296,8 @@ class BuyNowFragment : BaseFragment<ProductViewModel, FragmentBuyNowBinding>() {
 
                     checkOutData = mData
 
+                    viewModel.checkoutData = mData
+
                     bind.subTotal.text = mData?.subTotal.toString().asMoney()
                     bind.tax.text = mData?.taxAmount.toString().asMoney()
                     bind.shipping.text = mData?.shippingCharges.toString().asMoney()
@@ -337,7 +339,7 @@ class BuyNowFragment : BaseFragment<ProductViewModel, FragmentBuyNowBinding>() {
 
                     val mData = it.value.data
 
-                    findNavController().navigate(ids.buyNowToOrderStatusFragment)
+                    findNavController().navigate(ids.buyNowToOrderStatusFragment,bundleOf("orderId" to mData?.id.toString() ))
 
 //					cardAdapter.notifyDataSetChanged()
                 }
