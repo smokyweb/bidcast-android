@@ -174,5 +174,15 @@ class MoreViewModel @Inject constructor(val repo: DashRepository) : ViewModel() 
 		_getNotificationResponse.value = repo.getNotification()
 	}
 
+	private var _deleteNotificationResponse = MutableLiveData<Resource<CommonResponse>>()
+	val deleteNotificationRepo: MutableLiveData<Resource<CommonResponse>>
+		get() = _deleteNotificationResponse
+
+	fun deleteNotification(
+		id : RequestBody?
+	) = viewModelScope.launch {
+		_deleteNotificationResponse.value = repo.deleteNotification(id)
+	}
+
 
 }

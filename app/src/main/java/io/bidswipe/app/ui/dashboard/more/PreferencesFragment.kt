@@ -1,9 +1,12 @@
 package io.bidswipe.app.ui.dashboard.more
 
 import android.os.Bundle
+import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ArrayAdapter
+import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseFragment
@@ -12,6 +15,8 @@ import io.bidswipe.app.network.Resource
 import io.bidswipe.app.utils.finish
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request
+import java.util.Locale
+
 
 class PreferencesFragment : BaseFragment<MoreViewModel, FragmentPreferencesBinding>() {
 	override fun getModel(): Class<MoreViewModel> = MoreViewModel::class.java
@@ -20,6 +25,10 @@ class PreferencesFragment : BaseFragment<MoreViewModel, FragmentPreferencesBindi
 		inflater: LayoutInflater,
 		view: ViewGroup?
 	) = FragmentPreferencesBinding.inflate(inflater, view, false)
+
+	private var countries = Locale.getISOCountries()
+
+	private var countryList = mutableListOf<String>()
 	
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		super.onViewCreated(view, savedInstanceState)
@@ -27,6 +36,24 @@ class PreferencesFragment : BaseFragment<MoreViewModel, FragmentPreferencesBindi
 		bind.header.onBackClick {
 			callAPI()
 		}
+
+		for (countryCode in countries) {
+			val locale = Locale("", countryCode)
+			val countryName = locale.getDisplayCountry()
+			if (!TextUtils.isEmpty(countryName)) {
+				countryList.add(countryName)
+			}
+		}
+
+		bind.country.setAdapter(ArrayAdapter(mCtx, android.R.layout.simple_list_item_1, countryList))
+		val draw = ContextCompat.getDrawable(mCtx, R.drawable.card_8)
+		bind.country.setDropDownBackgroundDrawable(draw)
+
+		bind.country.setOnClickListener {
+			bind.country.showDropDown()
+		}
+
+		log(countryList.toString())
 		
 		bind.loader.isVisible = true
 		viewModel.settingsList()
@@ -36,7 +63,7 @@ class PreferencesFragment : BaseFragment<MoreViewModel, FragmentPreferencesBindi
 					bind.loader.isVisible = false
 					viewModel.settingsListRepo.value = null
 					
-					bind.country.text = it.value.data?.countryOfResidence ?: ""
+					bind.country.setText(it.value.data?.countryOfResidence ?: "",false)
 					bind.directMessages.isChecked = it.value.data?.directMessage == true
 					bind.receiveGifts.isChecked = it.value.data?.receiveGifts == true
 					bind.privateEntry.isChecked = it.value.data?.enablePrivateEntry == true
@@ -100,7 +127,7 @@ class PreferencesFragment : BaseFragment<MoreViewModel, FragmentPreferencesBindi
 	private fun callAPI() {
 		bind.loader.isVisible = true
 		viewModel.settingsStore(
-			"USA".request(),
+			bind.country.text.toString().request(),
 			if (bind.directMessages.isChecked) "1".request() else "0".request(),
 			if (bind.receiveGifts.isChecked) "1".request() else "0".request(),
 			if (bind.privateEntry.isChecked) "1".request() else "0".request(),

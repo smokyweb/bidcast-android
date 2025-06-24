@@ -155,4 +155,14 @@ class ProductViewModel @Inject constructor(val repo: DashRepository) : ViewModel
         _searchUsersResponse.value = repo.searchUsers(search)
     }
 
+    private var _saveSellerProductResponse = MutableLiveData<Resource<CommonResponse>>()
+    val saveSellerProductRepo: MutableLiveData<Resource<CommonResponse>>
+        get() = _saveSellerProductResponse
+
+    fun saveSellerProduct(
+        productId : RequestBody?
+    ) = viewModelScope.launch {
+        _saveSellerProductResponse.value = repo.saveSellerProduct(productId)
+    }
+
 }

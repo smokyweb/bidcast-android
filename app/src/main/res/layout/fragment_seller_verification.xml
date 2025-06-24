@@ -611,6 +611,7 @@
                     </LinearLayout>
 
                     <TextView
+                        android:id="@+id/status"
                         style="@style/TitleMedium"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"

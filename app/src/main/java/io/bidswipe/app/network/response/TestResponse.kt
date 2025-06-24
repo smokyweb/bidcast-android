@@ -6,38 +6,120 @@ import androidx.annotation.Keep
 
 @Keep
 data class TestResponse(
+    @SerializedName("currentPage")
+    val currentPage: Int?,
     @SerializedName("data")
-    val `data`: Data?,
+    val `data`: List<Data?>?,
     @SerializedName("error_type")
     val errorType: String?,
     @SerializedName("message")
     val message: String?,
+    @SerializedName("perPage")
+    val perPage: Int?,
     @SerializedName("status")
-    val status: String?
+    val status: String?,
+    @SerializedName("total")
+    val total: Int?,
+    @SerializedName("totalPage")
+    val totalPage: Int?
 ) {
     @Keep
     data class Data(
-        @SerializedName("bio")
-        val bio: Any?,
-        @SerializedName("email")
-        val email: String?,
-        @SerializedName("first_name")
-        val firstName: String?,
-        @SerializedName("follower_count")
-        val followerCount: Int?,
-        @SerializedName("following_count")
-        val followingCount: Int?,
+        @SerializedName("card_id")
+        val cardId: String?,
+        @SerializedName("created_at")
+        val createdAt: String?,
+        @SerializedName("gift_msg")
+        val giftMsg: String?,
+        @SerializedName("gift_user_id")
+        val giftUserId: Int?,
         @SerializedName("id")
         val id: Int?,
-        @SerializedName("last_name")
-        val lastName: String?,
-        @SerializedName("name")
-        val name: String?,
-        @SerializedName("profile_image")
-        val profileImage: Any?,
-        @SerializedName("role_id")
-        val roleId: Int?,
-        @SerializedName("username")
-        val username: Any?
-    )
+        @SerializedName("order_id")
+        val orderId: String?,
+        @SerializedName("product")
+        val product: Product?,
+        @SerializedName("product_id")
+        val productId: Int?,
+        @SerializedName("promo_code")
+        val promoCode: String?,
+        @SerializedName("send_as_gift")
+        val sendAsGift: Boolean?,
+        @SerializedName("shipping_address")
+        val shippingAddress: String?,
+        @SerializedName("status")
+        val status: String?,
+        @SerializedName("user")
+        val user: User?,
+        @SerializedName("user_id")
+        val userId: Int?
+    ) {
+        @Keep
+        data class Product(
+            @SerializedName("accept_offers")
+            val acceptOffers: Boolean?,
+            @SerializedName("category_id")
+            val categoryId: Int?,
+            @SerializedName("created_at")
+            val createdAt: String?,
+            @SerializedName("description")
+            val description: String?,
+            @SerializedName("flash_sale")
+            val flashSale: Boolean?,
+            @SerializedName("id")
+            val id: Int?,
+            @SerializedName("images")
+            val images: List<String?>?,
+            @SerializedName("pricing")
+            val pricing: Int?,
+            @SerializedName("product_show")
+            val productShow: String?,
+            @SerializedName("purchased_quantity")
+            val purchasedQuantity: Int?,
+            @SerializedName("quantity")
+            val quantity: Int?,
+            @SerializedName("reserve_for_live")
+            val reserveForLive: Boolean?,
+            @SerializedName("seller")
+            val seller: Seller?,
+            @SerializedName("shipping_profile_id")
+            val shippingProfileId: Int?,
+            @SerializedName("status")
+            val status: String?,
+            @SerializedName("thumbnail")
+            val thumbnail: List<Any?>?,
+            @SerializedName("title")
+            val title: String?,
+            @SerializedName("user_id")
+            val userId: Int?
+        ) {
+            @Keep
+            data class Seller(
+                @SerializedName("email")
+                val email: String?,
+                @SerializedName("id")
+                val id: Int?,
+                @SerializedName("name")
+                val name: String?,
+                @SerializedName("profile_image")
+                val profileImage: String?,
+                @SerializedName("username")
+                val username: String?
+            )
+        }
+
+        @Keep
+        data class User(
+            @SerializedName("email")
+            val email: String?,
+            @SerializedName("id")
+            val id: Int?,
+            @SerializedName("name")
+            val name: String?,
+            @SerializedName("profile_image")
+            val profileImage: String?,
+            @SerializedName("username")
+            val username: String?
+        )
+    }
 }

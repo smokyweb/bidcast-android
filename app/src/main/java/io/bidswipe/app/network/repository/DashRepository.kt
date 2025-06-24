@@ -263,4 +263,17 @@ suspend fun settingsList() = call { api.settingsList() }
         search : RequestBody?
     ) = call { api.searchUsers(search) }
 
+    suspend fun saveSellerProduct(
+        productId : RequestBody?
+    ) = call { api.saveSellerProduct(productId) }
+
+    suspend fun getProductsByStatus(
+        type : RequestBody?,
+        page : RequestBody?
+    ) = call { api.getProductsByStatus(type,page) }
+
+    suspend fun deleteNotification(
+        id : RequestBody?
+    ) = call { api.deleteNotification(id) }
+
 }

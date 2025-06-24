@@ -1,6 +1,5 @@
 package io.bidswipe.app.network.response
 
-
 import com.google.gson.annotations.SerializedName
 import androidx.annotation.Keep
 
@@ -14,6 +13,12 @@ data class GetOffersResponse(
     val errorType: String?,
     @SerializedName("message")
     val message: String?,
+    @SerializedName("pending")
+    val pending: Int?,
+    @SerializedName("accepted")
+    val accepted: Int?,
+    @SerializedName("declined")
+    val declined: Int?,
     @SerializedName("perPage")
     val perPage: Int?,
     @SerializedName("status")
@@ -26,7 +31,7 @@ data class GetOffersResponse(
     @Keep
     data class Data(
         @SerializedName("amount")
-        val amount: Int?,
+        val amount: String?,
         @SerializedName("id")
         val id: Int?,
         @SerializedName("product")

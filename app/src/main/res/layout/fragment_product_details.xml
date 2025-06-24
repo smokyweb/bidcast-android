@@ -12,11 +12,9 @@
         android:layout_height="wrap_content"
         app:headerMode="BACK_BUTTON_TITLE_ACTION"
         app:layout_constraintTop_toTopOf="parent"
-        app:primaryIconDrawable="@drawable/close_ic"
-        app:secondaryIconDrawable="@drawable/ic_detail"
+        app:primaryIconDrawable="@drawable/ic_detail"
         app:showBackButton="true"
-        app:showPrimaryIcon="true"
-        app:showSecondaryIcon="true" />
+        app:showPrimaryIcon="true"/>
 
     <LinearLayout
         android:layout_width="match_parent"

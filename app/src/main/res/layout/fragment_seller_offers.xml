@@ -42,11 +42,12 @@
                 android:padding="@dimen/half_margin">
 
                 <TextView
+                    android:id="@+id/pending_count"
                     style="@style/HeadlineMedium"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center"
-                    android:text="24"
+                    android:text="0"
                     android:textColor="@color/tertiary" />
 
                 <TextView
@@ -75,11 +76,12 @@
                 android:padding="@dimen/half_margin">
 
                 <TextView
+                    android:id="@+id/accepted_count"
                     style="@style/HeadlineMedium"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center"
-                    android:text="24"
+                    android:text="0"
                     android:textColor="@color/tertiary" />
 
                 <TextView
@@ -109,11 +111,12 @@
                 android:padding="@dimen/half_margin">
 
                 <TextView
+                    android:id="@+id/declined_count"
                     style="@style/HeadlineMedium"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center"
-                    android:text="24"
+                    android:text="0"
                     android:textColor="@color/tertiary" />
 
                 <TextView

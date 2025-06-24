@@ -38,6 +38,7 @@ media3Exoplayer = "1.6.1"
 navigationKtx = "2.8.4"
 permissionx = "1.8.1"
 picasso = "2.71828"
+powermenu = "2.2.4"
 recyclerviewAnimators = "4.0.2"
 retrofit = "2.11.0"
 roundedimageview = "2.3.0"
@@ -98,6 +99,7 @@ recyclerview-animators = { module = "jp.wasabeef:recyclerview-animators", versio
 retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
 permissionx = { module = "com.guolindev.permissionx:permissionx", version.ref = "permissionx" }
 picasso = { module = "com.squareup.picasso:picasso", version.ref = "picasso" }
+powermenu = { module = "com.github.skydoves:powermenu", version.ref = "powermenu" }
 roundedimageview = { module = "com.makeramen:roundedimageview", version.ref = "roundedimageview" }
 swipelayout = { module = "com.github.zerobranch:SwipeLayout", version.ref = "swipelayout" }
 slidetoact = { module = "com.ncorti:slidetoact", version.ref = "slidetoact" }

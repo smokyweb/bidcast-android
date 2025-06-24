@@ -149,6 +149,9 @@ dependencies {
     implementation(libs.slidetoact)
     implementation(libs.immersionbar.ktx)
     implementation(libs.immersionbar)
+    implementation (libs.powermenu)
+
+
 
 
     //ZEGO CLOUD

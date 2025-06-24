@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName
 import androidx.annotation.Keep
 
 @Keep
-data class TestResponseX(
+data class GetProductsByStatusResponse(
     @SerializedName("currentPage")
     val currentPage: Int?,
     @SerializedName("data")
@@ -25,20 +25,30 @@ data class TestResponseX(
 ) {
     @Keep
     data class Data(
-        @SerializedName("bid_price")
-        val bidPrice: Int?,
+        @SerializedName("card_id")
+        val cardId: String?,
         @SerializedName("created_at")
         val createdAt: String?,
-        @SerializedName("created_by")
-        val createdBy: Int?,
+        @SerializedName("gift_msg")
+        val giftMsg: String?,
+        @SerializedName("gift_user_id")
+        val giftUserId: Int?,
         @SerializedName("id")
         val id: Int?,
+        @SerializedName("order_id")
+        val orderId: String?,
         @SerializedName("product")
         val product: Product?,
         @SerializedName("product_id")
         val productId: Int?,
-        @SerializedName("schedule_show_id")
-        val scheduleShowId: Int?,
+        @SerializedName("promo_code")
+        val promoCode: String?,
+        @SerializedName("send_as_gift")
+        val sendAsGift: Boolean?,
+        @SerializedName("shipping_address")
+        val shippingAddress: String?,
+        @SerializedName("status")
+        val status: String?,
         @SerializedName("user")
         val user: User?,
         @SerializedName("user_id")
@@ -61,7 +71,7 @@ data class TestResponseX(
             @SerializedName("images")
             val images: List<String?>?,
             @SerializedName("pricing")
-            val pricing: Int?,
+            val pricing: String?,
             @SerializedName("product_show")
             val productShow: String?,
             @SerializedName("purchased_quantity")
@@ -70,6 +80,8 @@ data class TestResponseX(
             val quantity: Int?,
             @SerializedName("reserve_for_live")
             val reserveForLive: Boolean?,
+            @SerializedName("seller")
+            val seller: Seller?,
             @SerializedName("shipping_profile_id")
             val shippingProfileId: Int?,
             @SerializedName("status")
@@ -80,7 +92,21 @@ data class TestResponseX(
             val title: String?,
             @SerializedName("user_id")
             val userId: Int?
-        )
+        ){
+            @Keep
+            data class Seller(
+                @SerializedName("email")
+                val email: String?,
+                @SerializedName("id")
+                val id: Int?,
+                @SerializedName("name")
+                val name: String?,
+                @SerializedName("profile_image")
+                val profileImage: String?,
+                @SerializedName("username")
+                val username: String?
+            )
+        }
 
         @Keep
         data class User(

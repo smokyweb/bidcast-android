@@ -24,6 +24,7 @@ import io.bidswipe.app.network.response.GetOrdersResponse
 import io.bidswipe.app.network.response.GetPaymentCardsResponse
 import io.bidswipe.app.network.response.GetPrepareStepResponse
 import io.bidswipe.app.network.response.GetProductDetailsResponse
+import io.bidswipe.app.network.response.GetProductsByStatusResponse
 import io.bidswipe.app.network.response.GetProductsResponse
 import io.bidswipe.app.network.response.GetPurchaseDetail
 import io.bidswipe.app.network.response.GetShippingAddressResponse
@@ -420,6 +421,25 @@ interface ApiInterface {
 	suspend fun searchUsers(
 		@Part("search") search : RequestBody?
 	): UserSearchingResponse
+
+	@Multipart
+	@POST("api/product/save")
+	suspend fun saveSellerProduct(
+		@Part("product_id") productId : RequestBody?
+	): CommonResponse
+
+	@Multipart
+	@POST("api/product/fetch-by-status")
+	suspend fun getProductsByStatus(
+		@Part("type") type : RequestBody?,
+		@Part("page") page : RequestBody?
+	): GetProductsByStatusResponse
+
+	@Multipart
+	@POST("api/notification/delete")
+	suspend fun deleteNotification(
+		@Part("id") id : RequestBody?
+	): CommonResponse
 
 }
 

@@ -44,29 +44,41 @@
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/margin"
                 android:layout_marginVertical="@dimen/half_margin"
-                android:gravity="center_vertical"
+                android:layout_gravity="center_vertical"
                 android:orientation="horizontal">
 
                 <TextView
                     style="@style/TitleMedium"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/country_of_residence"/>
+
+
+                <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="@string/country_of_residence"/>
+                    app:boxBackgroundMode="none">
 
-                <TextView
-                    android:id="@+id/country"
-                    style="@style/TitleMedium"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:alpha="0.7"
-                    android:layout_marginEnd="@dimen/half_margin"
-                    android:text="Account"/>
+                    <com.google.android.material.textfield.MaterialAutoCompleteTextView
+                        android:id="@+id/country"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:alpha="0.7"
+                        android:gravity="end"
+                        android:layout_marginStart="@dimen/half_margin"
+                        android:inputType="none"
+                        android:focusable="false"
+                        android:layout_marginEnd="@dimen/half_margin"
+                        android:text="Account"/>
+                </com.google.android.material.textfield.TextInputLayout>
+
 
                 <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/next"
                     android:layout_width="18dp"
                     android:layout_height="18dp"
+                    android:layout_gravity="center_vertical"
                     android:src="@drawable/ic_forward" />
 
             </LinearLayout>

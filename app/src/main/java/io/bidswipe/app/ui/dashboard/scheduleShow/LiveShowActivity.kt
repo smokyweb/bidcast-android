@@ -68,7 +68,11 @@ class LiveShowActivity : BaseActivity() {
     var showId = ""
     private var liveStatus = true
 
+    private var startTimeMillis: Long = 0L
     private val handler = Handler(Looper.getMainLooper())
+    private lateinit var durationRunnable: Runnable
+
+    private val updateStatusHandler = Handler(Looper.getMainLooper())
     private var runnable: Runnable ?= null
 
     private var commentList = mutableListOf<CommentModel?>()
@@ -205,6 +209,7 @@ class LiveShowActivity : BaseActivity() {
                     if (liveStatus){
                         addDataOnFirebase(mData)
                         startPublish()
+                        startLiveDurationTimer()
 
                         startUpdatingFirebaseEvery5Minutes()
 
@@ -356,6 +361,7 @@ class LiveShowActivity : BaseActivity() {
         Const.fireBaseRef.getReference(Const.LIVE_SESSIONS).child(roomID).removeValue()
 
         stopPublish()
+        stopLiveDurationTimer()
         logoutRoom()
         destroyEngine()
     }
@@ -612,15 +618,41 @@ class LiveShowActivity : BaseActivity() {
                         Log.e("FirebaseUpdate", "Failed to update value", it)
                     }
 
-                handler.postDelayed(this,  5 * 60 * 1000)
+                updateStatusHandler.postDelayed(this,  5 * 60 * 1000)
             }
         }
 
-        runnable?.let { handler.post(it) }
+        runnable?.let { updateStatusHandler.post(it) }
     }
 
     fun stopUpdatingFirebase() {
-        runnable?.let { handler.removeCallbacks(it) }
+        runnable?.let { updateStatusHandler.removeCallbacks(it) }
+    }
+
+    private fun startLiveDurationTimer() {
+        startTimeMillis = System.currentTimeMillis()
+
+        durationRunnable = object : Runnable {
+            override fun run() {
+                val elapsed = System.currentTimeMillis() - startTimeMillis
+                val seconds = (elapsed / 1000) % 60
+                val minutes = (elapsed / (1000 * 60)) % 60
+                val hours = (elapsed / (1000 * 60 * 60))
+
+                val formatted = String.format("%02d:%02d:%02d", hours, minutes, seconds)
+                bind.duration.text = buildString {
+                    append("Show Time: ")
+                    append(formatted)
+                }
+
+                handler.postDelayed(this, 1000)
+            }
+        }
+        handler.post(durationRunnable)
+    }
+
+    private fun stopLiveDurationTimer() {
+        handler.removeCallbacks(durationRunnable)
     }
 
 }

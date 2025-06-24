@@ -15,6 +15,7 @@ import io.bidswipe.app.network.response.GetLessonsResponse
 import io.bidswipe.app.network.response.GetMyShowResponse
 import io.bidswipe.app.network.response.GetOffersResponse
 import io.bidswipe.app.network.response.GetPrepareStepResponse
+import io.bidswipe.app.network.response.GetProductsByStatusResponse
 import io.bidswipe.app.network.response.UpdateLiveStatusResponse
 import io.bidswipe.app.network.response.UpdateOfferResponse
 import io.bidswipe.app.network.response.UserDeviceResponse
@@ -198,6 +199,28 @@ class DashViewModel @Inject constructor(val repo: DashRepository) : ViewModel() 
 	fun fetchBids(
 	) = viewModelScope.launch {
 		_fetchBidsResponse.value = repo.fetchBids()
+	}
+
+	private var _getPurchasedProductsByStatusResponse = MutableLiveData<Resource<GetProductsByStatusResponse>>()
+	val getPurchasedProductsByStatusRepo: MutableLiveData<Resource<GetProductsByStatusResponse>>
+		get() = _getPurchasedProductsByStatusResponse
+
+	fun getPurchasedProductsByStatus(
+		type: RequestBody?,
+		page : RequestBody?
+	) = viewModelScope.launch {
+		_getPurchasedProductsByStatusResponse.value = repo.getProductsByStatus(type,page)
+	}
+
+	private var _getSavedProductsByStatusResponse = MutableLiveData<Resource<GetProductsByStatusResponse>>()
+	val getSavedProductsByStatusRepo: MutableLiveData<Resource<GetProductsByStatusResponse>>
+		get() = _getSavedProductsByStatusResponse
+
+	fun getSavedProductsByStatus(
+		type: RequestBody?,
+		page : RequestBody?
+	) = viewModelScope.launch {
+		_getSavedProductsByStatusResponse.value = repo.getProductsByStatus(type,page)
 	}
 
 }

@@ -64,6 +64,10 @@ class SellerOffersFragment : BaseFragment<SellerHubViewModel, FragmentSellerOffe
 					if (it.value.data?.isNotEmpty() == true) {
 						bind.recycler.isVisible = true
 						bind.noData.isVisible = false
+
+						bind.pendingCount.text = (it.value.pending ?:0).toString()
+						bind.acceptedCount.text = (it.value.accepted ?:0).toString()
+						bind.declinedCount.text = (it.value.declined ?:0).toString()
 						it.value.data.forEach {
 							if (it != null) {
 								itemList.add(it)

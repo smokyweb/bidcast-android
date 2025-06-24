@@ -313,4 +313,5 @@
     <string name="yes_notify_me">Yes, notify me</string>
 	<string name="no_thanks">No, thanks</string>
     <string name="no_user_matches_the_name_entered">No user matches the name entered.</string>
+    <string name="save_product">Save Product</string>
 </resources>

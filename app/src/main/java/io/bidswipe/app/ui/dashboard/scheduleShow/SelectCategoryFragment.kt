@@ -35,7 +35,6 @@ class SelectCategoryFragment : BaseFragment<ScheduleShowViewModel,FragmentSelect
     private var categoryId =""
     private var auctionId =""
 
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -50,7 +49,6 @@ class SelectCategoryFragment : BaseFragment<ScheduleShowViewModel,FragmentSelect
                 }
 
                 auctionId.isEmpty() -> {
-
                     Alerts.error(mCtx, "Please select an Auction Type")
                 }
 

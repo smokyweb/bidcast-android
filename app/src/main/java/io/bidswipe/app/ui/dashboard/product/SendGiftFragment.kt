@@ -8,7 +8,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
-import androidx.core.widget.doOnTextChanged
 import androidx.navigation.fragment.findNavController
 import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseFragment
@@ -181,7 +180,6 @@ class SendGiftFragment : BaseFragment<ProductViewModel, FragmentSendGiftBinding>
 
                     bind.loader.isVisible = false
                     val mData = it.value.data
-
 
                     userList.clear()
 

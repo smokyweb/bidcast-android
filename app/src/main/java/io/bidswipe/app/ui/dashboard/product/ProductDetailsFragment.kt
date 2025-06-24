@@ -4,8 +4,11 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.PopupMenu
+import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.view.isVisible
 import androidx.navigation.fragment.findNavController
+import com.skydoves.powermenu.PowerMenuItem
 import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseFragment
 import io.bidswipe.app.controller.MakeOfferAdapter
@@ -15,9 +18,6 @@ import io.bidswipe.app.interfaces.AlertClicks
 import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.model.OfferModel
 import io.bidswipe.app.network.Resource
-import io.bidswipe.app.network.response.GetPaymentCardsResponse
-import io.bidswipe.app.network.response.GetPurchaseDetail
-import io.bidswipe.app.network.response.GetShippingAddressResponse
 import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.utils.Alerts
 import io.bidswipe.app.utils.Utils
@@ -37,17 +37,9 @@ class ProductDetailsFragment : BaseFragment<ProductViewModel, FragmentProductDet
         FragmentProductDetailsBinding.inflate(inflater, view, false)
 
     private var productId = ""
-    private var price = ""
-
     private var offerList = mutableListOf<OfferModel>()
+    private var actionList = mutableListOf<PowerMenuItem>()
 
-    private var checkOutData: GetPurchaseDetail.Data? = null
-
-    private var cardList = mutableListOf<GetPaymentCardsResponse.Data?>()
-    private var addressList = mutableListOf<GetShippingAddressResponse.Data?>()
-
-    //	private lateinit var makeOfferSheetBind : MakeOfferSheetBinding
-    private lateinit var offerAdapter: MakeOfferAdapter
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -58,71 +50,33 @@ class ProductDetailsFragment : BaseFragment<ProductViewModel, FragmentProductDet
             finish()
         }
 
+        actionList.clear()
+        actionList.add(PowerMenuItem(title = "Save Product"))
+
+        val menu = PopupMenu(mCtx, bind.header.findViewById<AppCompatImageView>(R.id.primaryIcon))
+        menu.menuInflater.inflate(R.menu.action_menu, menu.menu)
+
+        menu.setOnMenuItemClickListener {
+            when (it.itemId) {
+                ids.save_product -> {
+
+                    bind.loader.isVisible = true
+
+                    viewModel.saveSellerProduct(productId.request())
+
+                }
+
+            }
+            return@setOnMenuItemClickListener true
+        }
+
+        bind.header.onMorePrimaryClick {
+            menu.show()
+        }
 
         bind.buyNow.setOnClickListener {
 
             findNavController().navigate(ids.goToBuyNowFragment)
-
-
-            /*var buyNowSheetBind = BuyNowSheetBinding.bind(layoutInflater.inflate(R.layout.buy_now_sheet, null, false))
-            var buyNowSheet = Alerts.appBottomSheet(mCtx, true, buyNowSheetBind)
-
-            buyNowSheetBind.cardNumber.setCompoundDrawablesWithIntrinsicBounds(ContextCompat.getDrawable(mCtx, draw.ic_visa), null, null, null)
-
-            buyNowSheetBind.productName.text = product?.title
-
-            buyNowSheetBind.productDescription.text = product?.description
-
-            buyNowSheetBind.productImg.loadUrl(mCtx, product?.images?.get(0).toString())
-
-            if (cardList.isNotEmpty()){
-                buyNowSheetBind.cardNumber.text = buildString {
-                    append("**** **** **** ")
-                    append(cardList[0]?.last4)
-                }
-            }
-
-
-
-            if (addressList.isNotEmpty()){
-                buyNowSheetBind.address.text = addressList.find { it?.isDefault == true }?.streetAddress ?: addressList[0]?.streetAddress
-            }
-
-
-            buyNowSheetBind.subTotal.text = checkOutData?.subTotal.toString()
-            buyNowSheetBind.tax.text = checkOutData?.taxAmount.toString()
-            buyNowSheetBind.shipping.text = checkOutData?.shippingCharges.toString()
-            buyNowSheetBind.total.text = checkOutData?.total.toString()
-
-            buyNowSheetBind.confirmButton.setOnClickListener {
-
-                buyNowSheet.dismiss()
-
-                if (buyNowSheetBind.sendAsGift.isChecked){
-                    findNavController().navigate(ids.goToSendGiftFragment, bundleOf("shippingId" to shippingId.toString(),"productId" to productId.toString(),"cardId" to cardList[0]?.cardId?.toString(),"promoCode" to buyNowSheetBind.promoCode.value()))
-                }else{
-                    bind.loader.isVisible = true
-
-                    viewModel.createOrder(
-                        shippingId.toString().request(),
-                        productId.request(),
-                        cardList[0]?.cardId?.request(),
-                        buyNowSheetBind.promoCode.value().ifEmpty { null }?.request(),
-                        "0".request(),
-                        null,
-                        null,
-                        buyNowSheetBind.shipping.text.toString().request(),
-                        buyNowSheetBind.tax.text.toString().request(),
-                        buyNowSheetBind.subTotal.text.toString().request(),
-                        buyNowSheetBind.total.text.toString().request()
-
-                    )
-
-                }
-
-            }
-
-            buyNowSheet.show()*/
 
         }
 
@@ -219,6 +173,42 @@ class ProductDetailsFragment : BaseFragment<ProductViewModel, FragmentProductDet
                     it.value.data
 
                     Alerts.success(mCtx, "Offer Sent")
+
+                }
+
+                is Resource.Error -> {
+                    bind.loader.isVisible = false
+
+                    if (it.isNetworkError) {
+                        errorToast(getString(R.string.no_internet))
+                    } else {
+                        it.parse(mCtx, TAG, object : AlertClicks {
+                            override fun primaryClick(dialog: AppBottomSheet) {
+                                dialog.dismiss()
+
+                            }
+
+                            override fun secondaryClick(dialog: AppBottomSheet) {
+                                dialog.dismiss()
+
+                            }
+                        })
+                    }
+                }
+
+                else -> {}
+
+            }
+        }
+
+        viewModel.saveSellerProductRepo.observe(viewLifecycleOwner) {
+            when (it) {
+                is Resource.Success -> {
+                    bind.loader.isVisible = false
+
+                    val mData = it.value.data
+
+                    Alerts.success(mCtx,it.value.message.toString())
 
                 }
 

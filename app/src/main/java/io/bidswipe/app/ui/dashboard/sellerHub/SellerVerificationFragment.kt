@@ -1,7 +1,7 @@
 package io.bidswipe.app.ui.dashboard.sellerHub
 
+import android.annotation.SuppressLint
 import android.app.Activity
-import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -46,6 +46,7 @@ class SellerVerificationFragment : BaseFragment<SellerHubViewModel, FragmentSell
     var isIdVerified = false
     var isPhoneVerified = false
     var cardToken = ""
+    var cardId = ""
 
     private lateinit var cardAdapter : SelectPaymentCardAdapter
 
@@ -109,6 +110,7 @@ class SellerVerificationFragment : BaseFragment<SellerHubViewModel, FragmentSell
     }
 
 
+    @SuppressLint("ResourceAsColor")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -236,13 +238,10 @@ class SellerVerificationFragment : BaseFragment<SellerHubViewModel, FragmentSell
         bind.loader.isVisible = true
 
         viewModel.fetchSellerVerification()
-        viewModel.getPaymentCard()
-
 
         viewModel.fetchSellerVerificationRepo.observe(viewLifecycleOwner) {
             when (it) {
                 is Resource.Success -> {
-                    bind.loader.isVisible = false
 
                     val mData = it.value.data
 
@@ -284,11 +283,22 @@ class SellerVerificationFragment : BaseFragment<SellerHubViewModel, FragmentSell
                     if (mData?.cardId?.isNotEmpty()==true) {
                         bind.stepProgress.setProgress(3)
                         bind.stepCount.setText("3 of 4")
+                        cardId = mData.cardId
                         bind.completeVerification.isVisible = false
                     }else{
                         bind.completeVerification.isVisible = true
                     }
 
+                    if (mData?.status == "verified"){
+                        bind.stepProgress.setProgress(4)
+                        bind.stepCount.setText("4 of 4")
+
+                        bind.status.text = mData.status
+                        bind.status.setTextColor(R.color.success)
+
+                    }
+
+                    viewModel.getPaymentCard()
 
                 }
 
@@ -448,7 +458,12 @@ class SellerVerificationFragment : BaseFragment<SellerHubViewModel, FragmentSell
                     cardList.clear()
 
                     if (mData?.isNotEmpty() == true){
-                        cardList.addAll(mData)
+
+                        mData.forEach {
+                            if (it?.cardId == cardId) it.selected =true
+                            cardList.add(it)
+                        }
+
                     }
 
                     if (cardList.isNotEmpty()){
@@ -460,7 +475,6 @@ class SellerVerificationFragment : BaseFragment<SellerHubViewModel, FragmentSell
                     }
 
                     cardAdapter.notifyDataSetChanged()
-
 
 
                 }

@@ -79,7 +79,16 @@
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/margin" />
 
-        <TextView
+        <org.sufficientlysecure.htmltextview.HtmlTextView
+            android:id="@+id/content"
+            style="@style/BodyMedium"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/half_margin"
+            android:layout_marginTop="@dimen/margin"
+            tools:text="@tools:sample/lorem/random" />
+
+<!--        <TextView
             style="@style/HeadlineSmall"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -99,11 +108,17 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginVertical="@dimen/margin"
-            android:layout_marginHorizontal="@dimen/half_margin"/>
+            android:layout_marginHorizontal="@dimen/half_margin"/>-->
 
     </LinearLayout>
 
 
     </androidx.core.widget.NestedScrollView>
+
+    <io.bidswipe.app.ui.custom.LoaderView
+        android:id="@+id/loader"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

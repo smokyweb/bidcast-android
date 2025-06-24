@@ -55,7 +55,7 @@
                 android:textSize="16sp" />
 
             <TextView
-                android:id="@+id/sub_title"
+                android:id="@+id/duration"
                 style="@style/BodySmall"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
