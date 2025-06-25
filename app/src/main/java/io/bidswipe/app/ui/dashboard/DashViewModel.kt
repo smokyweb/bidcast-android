@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.network.repository.DashRepository
+import io.bidswipe.app.network.response.CheckKycResponse
 import io.bidswipe.app.network.response.CommonResponse
 import io.bidswipe.app.network.response.FetchBidResponse
 import io.bidswipe.app.network.response.GenerateTokenResponse
@@ -222,5 +223,15 @@ class DashViewModel @Inject constructor(val repo: DashRepository) : ViewModel() 
 	) = viewModelScope.launch {
 		_getSavedProductsByStatusResponse.value = repo.getProductsByStatus(type,page)
 	}
+
+	private var _checkKycResponse = MutableLiveData<Resource<CheckKycResponse>>()
+	val checkKycRepo: MutableLiveData<Resource<CheckKycResponse>>
+		get() = _checkKycResponse
+
+	fun checkKyc(
+	) = viewModelScope.launch {
+		_checkKycResponse.value = repo.checkKyc()
+	}
+
 
 }

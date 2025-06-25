@@ -2,6 +2,7 @@ package io.bidswipe.app.network
 
 import io.bidswipe.app.BuildConfig
 import io.bidswipe.app.network.response.AboutUsResponse
+import io.bidswipe.app.network.response.CheckKycResponse
 import io.bidswipe.app.network.response.CommonResponse
 import io.bidswipe.app.network.response.CreateBidResponse
 import io.bidswipe.app.network.response.CreateOrderResponse
@@ -14,6 +15,7 @@ import io.bidswipe.app.network.response.GetAuctionTypeResponse
 import io.bidswipe.app.network.response.GetBuyerIdentityResponse
 import io.bidswipe.app.network.response.GetCategoryResponse
 import io.bidswipe.app.network.response.GetHowToSellResponse
+import io.bidswipe.app.network.response.GetKYCDetailsRespnse
 import io.bidswipe.app.network.response.GetLessonsResponse
 import io.bidswipe.app.network.response.GetMyInventoryResponse
 import io.bidswipe.app.network.response.GetMyShowResponse
@@ -439,6 +441,24 @@ interface ApiInterface {
 	@POST("api/notification/delete")
 	suspend fun deleteNotification(
 		@Part("id") id : RequestBody?
+	): CommonResponse
+
+	@GET("api/stripe/kyc-details")
+	suspend fun getKYCDetails(
+	): GetKYCDetailsRespnse
+
+
+	@POST("api/stripe/check-Kyc")
+	suspend fun checkKyc(
+	): CheckKycResponse
+
+	@POST("api/stripe/fund-transfer")
+	suspend fun fundTransfer(
+		@Part("amount") amount : RequestBody?
+	): CheckKycResponse
+
+	@POST("api/stripe/payout-history")
+	suspend fun getPayoutHistory(
 	): CommonResponse
 
 }

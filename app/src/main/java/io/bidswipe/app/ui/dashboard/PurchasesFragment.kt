@@ -51,6 +51,7 @@ class PurchasesFragment : BaseFragment<DashViewModel, FragmentPurchasesBinding>(
                     if (!isLoading) {
                         isLoading = true
                         page++
+                        bind.bottomLoader.isVisible = true
                         viewModel.getPurchasedProductsByStatus("purchased".request(),page.toString().request())
                     }
                 }
@@ -65,6 +66,7 @@ class PurchasesFragment : BaseFragment<DashViewModel, FragmentPurchasesBinding>(
             when (it) {
                 is Resource.Success -> {
                     bind.loader.isVisible = false
+                    bind.bottomLoader.isVisible = false
 
                     val mData = it.value.data
                     if (page == 1){
@@ -81,6 +83,7 @@ class PurchasesFragment : BaseFragment<DashViewModel, FragmentPurchasesBinding>(
 
                 is Resource.Error -> {
                     bind.loader.isVisible = false
+                    bind.bottomLoader.isVisible = false
 
                     if (it.isNetworkError) {
                         errorToast(getString(R.string.no_internet))
@@ -88,7 +91,6 @@ class PurchasesFragment : BaseFragment<DashViewModel, FragmentPurchasesBinding>(
                         it.parse(mCtx, TAG, object : AlertClicks {
                             override fun primaryClick(dialog: AppBottomSheet) {
                                 dialog.dismiss()
-
                             }
 
                             override fun secondaryClick(dialog: AppBottomSheet) {

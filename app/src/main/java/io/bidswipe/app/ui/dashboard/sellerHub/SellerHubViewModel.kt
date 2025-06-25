@@ -6,8 +6,10 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.network.repository.DashRepository
+import io.bidswipe.app.network.response.CheckKycResponse
 import io.bidswipe.app.network.response.CommonResponse
 import io.bidswipe.app.network.response.FetchSellerVerificationResponse
+import io.bidswipe.app.network.response.GetKYCDetailsRespnse
 import io.bidswipe.app.network.response.GetMyInventoryResponse
 import io.bidswipe.app.network.response.GetMyShowResponse
 import io.bidswipe.app.network.response.GetOffersResponse
@@ -136,4 +138,41 @@ class SellerHubViewModel@Inject constructor(val repo: DashRepository) : ViewMode
         _storePaymentMethodResponse.value = repo.storePaymentMethod(cardToken)
     }
 
+    private var _getKYCDetailsResponse = MutableLiveData<Resource<GetKYCDetailsRespnse>>()
+    val getKYCDetailsRepo: MutableLiveData<Resource<GetKYCDetailsRespnse>>
+        get() = _getKYCDetailsResponse
+
+    fun getKYCDetails(
+        cardToken : RequestBody?
+    ) = viewModelScope.launch {
+        _getKYCDetailsResponse.value = repo.getKYCDetails()
+    }
+
+    private var _checkKycResponse = MutableLiveData<Resource<CheckKycResponse>>()
+    val checkKycRepo: MutableLiveData<Resource<CheckKycResponse>>
+        get() = _checkKycResponse
+
+    fun checkKyc(
+    ) = viewModelScope.launch {
+        _checkKycResponse.value = repo.checkKyc()
+    }
+
+    private var _fundTransferResponse = MutableLiveData<Resource<CheckKycResponse>>()
+    val fundTransferRepo: MutableLiveData<Resource<CheckKycResponse>>
+        get() = _fundTransferResponse
+
+    fun fundTransfer(
+        amount : RequestBody?
+    ) = viewModelScope.launch {
+        _fundTransferResponse.value = repo.fundTransfer(amount)
+    }
+
+    private var _getPayoutHistoryResponse = MutableLiveData<Resource<CommonResponse>>()
+    val getPayoutHistoryRepo: MutableLiveData<Resource<CommonResponse>>
+        get() = _getPayoutHistoryResponse
+
+    fun getPayoutHistory(
+    ) = viewModelScope.launch {
+        _getPayoutHistoryResponse.value = repo.getPayoutHistory()
+    }
 }

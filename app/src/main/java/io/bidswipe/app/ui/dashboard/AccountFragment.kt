@@ -42,6 +42,7 @@ class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
     private lateinit var moreAdapter: MoreAdapter
     private lateinit var gridAdapter: GridAdapter
     private lateinit var accountGridAdapter : GridAdapter
+    private var kycUrl = ""
 
     private val onTabSelectedListener = object : OnTabSelectedListener {
         override fun onTabSelected(tab : TabLayout.Tab?) {
@@ -98,7 +99,7 @@ class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
                 Intent(mCtx, SellerHubActivity::class.java).putExtra(
                     "slug",
                     gridList[pos].slug
-                )
+                ).putExtra("url",kycUrl)
             )
         }
 
@@ -135,6 +136,7 @@ class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
         gridList.add(MoreModel(R.drawable.ic_graph,"Seller Analytics","sellerAnalytics"))
         gridList.add(MoreModel(R.drawable.ic_speaker,"Promote Tools","promote"))
         gridList.add(MoreModel(R.drawable.ic_checked_tag,"Seller Verification","sellerVerification"))
+        gridList.add(MoreModel(R.drawable.ic_checked_tag,"Identity Verification","identityVerification"))
 
         gridAdapter= GridAdapter(gridList,gridClick)
         bind.sellerHub.gridRecycler.adapter = gridAdapter
@@ -147,6 +149,8 @@ class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
 
         accountGridAdapter= GridAdapter(accountGridList,accountGridClick)
         bind.accountView.gridRecycler.adapter = accountGridAdapter
+
+
 
         viewModel.getUserProfile()
 

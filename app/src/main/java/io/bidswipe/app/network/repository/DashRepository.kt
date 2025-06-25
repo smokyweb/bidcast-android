@@ -4,7 +4,6 @@ import io.bidswipe.app.base.BaseRepository
 import io.bidswipe.app.network.ApiInterface
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
-import retrofit2.http.Part
 import javax.inject.Inject
 
 class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRepository(){
@@ -275,5 +274,18 @@ suspend fun settingsList() = call { api.settingsList() }
     suspend fun deleteNotification(
         id : RequestBody?
     ) = call { api.deleteNotification(id) }
+
+    suspend fun getKYCDetails(
+    ) = call { api.getKYCDetails() }
+
+    suspend fun checkKyc(
+    ) = call { api.checkKyc() }
+
+    suspend fun fundTransfer(
+        amount : RequestBody?
+    ) = call { api.fundTransfer(amount) }
+
+    suspend fun getPayoutHistory(
+    ) = call { api.getPayoutHistory() }
 
 }

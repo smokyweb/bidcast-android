@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:keyboard="http://schemas.android.com/apk/res-auto"
+    tools:context=".ui.dashboard.sellerHub.PayoutFragment">
+
+    <io.bidswipe.app.ui.custom.Header
+        android:id="@+id/header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:headerMode="APP_TEXT_ACTION"
+        app:headerTitle="Payout"
+        app:layout_constraintTop_toTopOf="parent"
+        app:showBackButton="true"
+        app:showSecondaryIcon="false" />
+
+    <com.google.android.material.textfield.TextInputEditText
+        android:id="@+id/amount"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="none"
+        android:textSize="60sp"
+        android:focusable="false"
+        app:layout_constraintTop_toBottomOf="@id/header"
+        android:gravity="center_horizontal"
+        android:hint="Enter Amount"/>
+
+
+    <com.davidmiguel.numberkeyboard.NumberKeyboard
+        android:id="@+id/numKeyBoard"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginBottom="200dp"
+        keyboard:numberkeyboard_keyboardType="integer"
+        app:layout_constraintTop_toBottomOf="@id/amount"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

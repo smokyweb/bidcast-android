@@ -1,7 +1,6 @@
 package io.bidswipe.app.ui.dashboard.sellerHub
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,7 +17,6 @@ import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.network.response.GetMyInventoryResponse
 import io.bidswipe.app.ui.custom.AppBottomSheet
-import io.bidswipe.app.ui.dashboard.DashActivity
 import io.bidswipe.app.utils.finish
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request
@@ -87,6 +85,7 @@ class InventoryFragment : BaseFragment<SellerHubViewModel,FragmentInventoryBindi
                     if (!isLoading) {
                         isLoading = true
                         page++
+                        bind.bottomLoader.isVisible = true
                         viewModel.getMyInventory(selectedTab.request(),page.toString().request())
                     }
                 }
@@ -101,6 +100,7 @@ class InventoryFragment : BaseFragment<SellerHubViewModel,FragmentInventoryBindi
             when (it) {
                 is Resource.Success -> {
                     bind.loader.isVisible = false
+                    bind.bottomLoader.isVisible = false
 
                     val mData = it.value.data
 
@@ -128,6 +128,8 @@ class InventoryFragment : BaseFragment<SellerHubViewModel,FragmentInventoryBindi
 
                 is Resource.Error -> {
                     bind.loader.isVisible = false
+                    bind.bottomLoader.isVisible = false
+
 
                     if (it.isNetworkError) {
                         errorToast(getString(R.string.no_internet))

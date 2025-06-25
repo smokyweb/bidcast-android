@@ -70,6 +70,9 @@ class SellerHubActivity : BaseActivity() {
 			"sellerVerification" -> {
 				navGraph.setStartDestination(R.id.sellerVerificationFragment)
 			}
+			"identityVerification" -> {
+				navGraph.setStartDestination(R.id.KYCFragment)
+			}
 			else -> {
 				navGraph.setStartDestination(R.id.inventoryFragment)
 			}

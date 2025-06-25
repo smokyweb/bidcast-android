@@ -24,7 +24,11 @@
         android:id="@+id/walletFragment"
         android:name="io.bidswipe.app.ui.dashboard.sellerHub.WalletFragment"
         android:label="fragment_wallet"
-        tools:layout="@layout/fragment_wallet" />
+        tools:layout="@layout/fragment_wallet" >
+        <action
+            android:id="@+id/goToPayoutFragment"
+            app:destination="@id/payoutFragment" />
+    </fragment>
 
 
     <fragment
@@ -77,5 +81,15 @@
         android:name="io.bidswipe.app.ui.dashboard.sellerHub.SellerVerificationFragment"
         android:label="fragment_seller_verification"
         tools:layout="@layout/fragment_seller_verification" />
+    <fragment
+        android:id="@+id/KYCFragment"
+        android:name="io.bidswipe.app.ui.dashboard.sellerHub.KYCFragment"
+        android:label="fragment_k_y_c"
+        tools:layout="@layout/fragment_k_y_c" />
+    <fragment
+        android:id="@+id/payoutFragment"
+        android:name="io.bidswipe.app.ui.dashboard.sellerHub.PayoutFragment"
+        android:label="fragment_payout"
+        tools:layout="@layout/fragment_payout" />
 
 </navigation>

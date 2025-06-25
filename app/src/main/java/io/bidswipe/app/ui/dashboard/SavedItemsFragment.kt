@@ -1,7 +1,6 @@
 package io.bidswipe.app.ui.dashboard
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,7 +9,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseFragment
-import io.bidswipe.app.controller.PurchasesAdapter
 import io.bidswipe.app.controller.SavedItemAdapter
 import io.bidswipe.app.databinding.FragmentSavedItemsBinding
 import io.bidswipe.app.interfaces.AlertClicks
