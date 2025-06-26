@@ -234,4 +234,18 @@ class DashViewModel @Inject constructor(val repo: DashRepository) : ViewModel() 
 	}
 
 
+	private var _updateProfileResponse = MutableLiveData<Resource<CommonResponse>>()
+	val updateProfileRepo: MutableLiveData<Resource<CommonResponse>>
+		get() = _updateProfileResponse
+
+	fun updateProfile(
+		firstName: RequestBody,
+		lastName: RequestBody,
+		image: MultipartBody.Part?,
+		userName: RequestBody,
+		bio: RequestBody
+	) = viewModelScope.launch {
+		_updateProfileResponse.value = repo.updateProfile(firstName, lastName,image, userName, bio)
+	}
+
 }

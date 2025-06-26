@@ -288,4 +288,17 @@ suspend fun settingsList() = call { api.settingsList() }
     suspend fun getPayoutHistory(
     ) = call { api.getPayoutHistory() }
 
+
+    suspend fun getTransactionsHistory(
+        page : RequestBody?
+    ) = call { api.getTransactionsHistory(page) }
+
+    suspend fun updateProfile(
+        firstName: RequestBody,
+        lastName: RequestBody,
+        image: MultipartBody.Part?,
+        userName: RequestBody,
+        bio: RequestBody
+    ) = call { api.updateProfile(firstName, lastName,image, userName, bio) }
+
 }

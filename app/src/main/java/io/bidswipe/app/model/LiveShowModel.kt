@@ -19,10 +19,10 @@ data class LiveShowModel(
     @Keep
     data class Product(
         var category: String?= null,
-        var id: Int?= null,
+        var id: String?= null,
         var image: String?= "guygfuyf",
         var name: String?= null,
-        var price: Double?= null
+        var price: String?= null
     )
 
     @Keep

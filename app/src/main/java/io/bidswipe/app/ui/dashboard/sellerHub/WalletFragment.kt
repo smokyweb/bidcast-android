@@ -8,9 +8,11 @@ import android.webkit.WebSettings
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.core.view.isVisible
 import androidx.navigation.fragment.findNavController
+import com.google.android.material.tabs.TabLayoutMediator
 import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseFragment
 import io.bidswipe.app.controller.PayoutAdapter
+import io.bidswipe.app.controller.ViewPagerAdapter
 import io.bidswipe.app.databinding.FragmentWalletBinding
 import io.bidswipe.app.interfaces.AlertClicks
 import io.bidswipe.app.interfaces.RecyclerClicks
@@ -45,89 +47,16 @@ class WalletFragment : BaseFragment<SellerHubViewModel, FragmentWalletBinding>()
 			finish()
 		}
 
-		adapter = PayoutAdapter(itemList,mClick)
+		val adapter = ViewPagerAdapter(requireActivity(),"wallet")
+		bind.pager.adapter = adapter
 
-		bind.recycler.adapter = adapter
-
-		bind.payoutCard.setOnClickListener {
-
-			if (!kycStatus){
-				Alerts.error(mCtx,"Please Complete Your KYC")
-			}else{
-				findNavController().navigate(ids.goToPayoutFragment)
+		TabLayoutMediator(bind.tabs, bind.pager) { tab, position ->
+			tab.text = when (position) {
+				0 -> "Wallet"
+				1 -> "Transactions"
+				else -> ""
 			}
-
-		}
-
-		bind.loader.isVisible = false
-
-		viewModel.checkKyc()
-
-		viewModel.getPayoutHistory()
-
-		viewModel.getPayoutHistoryRepo.observe(viewLifecycleOwner) {
-			when (it) {
-				is Resource.Success -> {
-					bind.loader.isVisible = false
-					val mData = it.value.data
-
-
-				}
-
-				is Resource.Error -> {
-					bind.loader.isVisible = false
-					if (it.isNetworkError) {
-						errorToast(getString(R.string.no_internet))
-					} else {
-						it.parse(mCtx, TAG, object : AlertClicks {
-							override fun primaryClick(dialog: AppBottomSheet) {
-								dialog.dismiss()
-							}
-
-							override fun secondaryClick(dialog: AppBottomSheet) {
-								dialog.dismiss()
-							}
-						})
-					}
-				}
-
-				else -> {}
-
-			}
-		}
-
-		viewModel.checkKycRepo.observe(viewLifecycleOwner) {
-			when (it) {
-				is Resource.Success -> {
-					bind.loader.isVisible = false
-					val mData = it.value.data
-
-					kycStatus = mData?.kycStatus == "active"
-
-				}
-
-				is Resource.Error -> {
-					bind.loader.isVisible = false
-					if (it.isNetworkError) {
-						errorToast(getString(R.string.no_internet))
-					} else {
-						it.parse(mCtx, TAG, object : AlertClicks {
-							override fun primaryClick(dialog: AppBottomSheet) {
-								dialog.dismiss()
-							}
-
-							override fun secondaryClick(dialog: AppBottomSheet) {
-								dialog.dismiss()
-							}
-						})
-					}
-				}
-
-				else -> {}
-
-			}
-		}
-
+		}.attach()
 
 		
 	}

@@ -108,8 +108,6 @@ class SelectThumbnailFragment :
                 findNavController().navigate(ids.goToProductTipsFragment)
             }
 
-
-
         }
 
 

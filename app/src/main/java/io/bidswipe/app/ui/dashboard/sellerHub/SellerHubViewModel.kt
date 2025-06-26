@@ -15,6 +15,7 @@ import io.bidswipe.app.network.response.GetMyShowResponse
 import io.bidswipe.app.network.response.GetOffersResponse
 import io.bidswipe.app.network.response.GetOrdersResponse
 import io.bidswipe.app.network.response.GetPaymentCardsResponse
+import io.bidswipe.app.network.response.GetTransactionsHistoryResponse
 import io.bidswipe.app.network.response.StorePhoneNumberResponse
 import io.bidswipe.app.network.response.StoreSellerIdResponse
 import io.bidswipe.app.network.response.UpdateOfferResponse
@@ -175,4 +176,30 @@ class SellerHubViewModel@Inject constructor(val repo: DashRepository) : ViewMode
     ) = viewModelScope.launch {
         _getPayoutHistoryResponse.value = repo.getPayoutHistory()
     }
+
+    private var _getTransactionsHistoryResponse = MutableLiveData<Resource<GetTransactionsHistoryResponse>>()
+    val getTransactionsHistoryRepo: MutableLiveData<Resource<GetTransactionsHistoryResponse>>
+        get() = _getTransactionsHistoryResponse
+
+    fun getTransactionsHistory(
+        page : RequestBody?
+    ) = viewModelScope.launch {
+        _getTransactionsHistoryResponse.value = repo.getTransactionsHistory(page)
+    }
+
+    private var _updateProfileResponse = MutableLiveData<Resource<CommonResponse>>()
+    val updateProfileRepo: MutableLiveData<Resource<CommonResponse>>
+        get() = _updateProfileResponse
+
+    fun updateProfile(
+        firstName: RequestBody,
+        lastName: RequestBody,
+        image: MultipartBody.Part?,
+        userName: RequestBody,
+        bio: RequestBody
+    ) = viewModelScope.launch {
+        _updateProfileResponse.value = repo.updateProfile(firstName, lastName,image, userName, bio)
+    }
+
+
 }

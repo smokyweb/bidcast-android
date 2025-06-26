@@ -150,7 +150,10 @@ class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
         accountGridAdapter= GridAdapter(accountGridList,accountGridClick)
         bind.accountView.gridRecycler.adapter = accountGridAdapter
 
+        bind.editIcon.setOnClickListener {
 
+            startActivity(Intent(mCtx , UpdateAccountActivity::class.java))
+        }
 
         viewModel.getUserProfile()
 

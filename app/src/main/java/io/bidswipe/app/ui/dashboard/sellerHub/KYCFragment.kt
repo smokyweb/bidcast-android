@@ -11,7 +11,6 @@ import android.webkit.WebSettings
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.activity.OnBackPressedCallback
-import androidx.browser.customtabs.CustomTabsIntent
 import androidx.core.view.isVisible
 import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseFragment
@@ -58,7 +57,7 @@ class KYCFragment : BaseFragment<SellerHubViewModel, FragmentKYCBinding>() {
                     bind.loader.isVisible = false
                     val mData = it.value.data
 
-                    val customTab = CustomTabsIntent.Builder().build()
+//                    val customTab = CustomTabsIntent.Builder().build()
 //                    customTab.launchUrl(mCtx , mData?.url.toString().toUri())
 
                     bind.webView.webViewClient = WebClient()

@@ -30,6 +30,7 @@ import io.bidswipe.app.network.response.GetProductsByStatusResponse
 import io.bidswipe.app.network.response.GetProductsResponse
 import io.bidswipe.app.network.response.GetPurchaseDetail
 import io.bidswipe.app.network.response.GetShippingAddressResponse
+import io.bidswipe.app.network.response.GetTransactionsHistoryResponse
 import io.bidswipe.app.network.response.GetUserProfileResponse
 import io.bidswipe.app.network.response.LoginResponse
 import io.bidswipe.app.network.response.SettingListResponse
@@ -459,6 +460,22 @@ interface ApiInterface {
 
 	@POST("api/stripe/payout-history")
 	suspend fun getPayoutHistory(
+	): CommonResponse
+
+    @Multipart
+	@POST("api/transaction-history/listing")
+	suspend fun getTransactionsHistory(
+		@Part("page") page : RequestBody?
+	): GetTransactionsHistoryResponse
+
+	@Multipart
+	@POST("api/update-profile")
+	suspend fun updateProfile(
+		@Part("first_name") firstName: RequestBody,
+		@Part("last_name") lastName: RequestBody,
+		@Part image: MultipartBody.Part?,
+		@Part("username") userName: RequestBody,
+		@Part("bio") bio: RequestBody
 	): CommonResponse
 
 }

@@ -576,7 +576,7 @@ class LiveShowActivity : BaseActivity() {
 
         val user = data?.user
 
-        val product = LiveShowModel.Product(category = prod?.categoryId.toString(), id = prod?.id?.toInt(), image = (prod?.images?.get(0) ?:"").toString(),name=prod?.title , price =prod?.pricing?.toDouble())
+        val product = LiveShowModel.Product(category = prod?.categoryId.toString(), id = prod?.id.toString(), image = (prod?.images?.get(0) ?:"").toString(),name=prod?.title , price =prod?.pricing?.toString())
 
         val seller = LiveShowModel.Seller(
             id =user?.id.toString(),

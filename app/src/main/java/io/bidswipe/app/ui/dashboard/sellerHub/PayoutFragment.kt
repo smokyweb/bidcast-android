@@ -1,16 +1,13 @@
 package io.bidswipe.app.ui.dashboard.sellerHub
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.fragment.findNavController
 import com.davidmiguel.numberkeyboard.NumberKeyboardListener
-import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseFragment
 import io.bidswipe.app.databinding.FragmentPayoutBinding
-import io.bidswipe.app.utils.finish
 
 class PayoutFragment : BaseFragment<SellerHubViewModel, FragmentPayoutBinding>() {
     override fun getModel(): Class<SellerHubViewModel>  = SellerHubViewModel::class.java
@@ -27,7 +24,11 @@ class PayoutFragment : BaseFragment<SellerHubViewModel, FragmentPayoutBinding>()
             findNavController().popBackStack()
         }
 
-        bind.numKeyBoard.setListener(object: NumberKeyboardListener {
+        bind.numberKeyboard.apply {
+
+        }
+
+        bind.numberKeyboard.setListener(object: NumberKeyboardListener {
             override fun onNumberClicked(number: Int) {
 
             }
