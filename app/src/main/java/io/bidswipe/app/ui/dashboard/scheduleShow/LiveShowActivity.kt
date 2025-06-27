@@ -33,17 +33,20 @@ import io.bidswipe.app.controller.CommentAdapter
 import io.bidswipe.app.controller.LiveMoreAdapter
 import io.bidswipe.app.controller.PromoteSheetAdapter
 import io.bidswipe.app.controller.ShareSheetAdapter
+import io.bidswipe.app.controller.ShopSheetAdapter
 import io.bidswipe.app.databinding.ActivityLiveShowBinding
 import io.bidswipe.app.databinding.CreateClipSheetBinding
 import io.bidswipe.app.databinding.EndShowSheetBinding
 import io.bidswipe.app.databinding.LiveShowMoreMenuBinding
 import io.bidswipe.app.databinding.PromoteShowSheetBinding
 import io.bidswipe.app.databinding.ShareSheetBinding
+import io.bidswipe.app.databinding.ShopSheetBinding
 import io.bidswipe.app.interfaces.AlertClicks
 import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.model.CommentModel
 import io.bidswipe.app.model.LiveShowModel
 import io.bidswipe.app.network.Resource
+import io.bidswipe.app.network.response.GetProductsResponse
 import io.bidswipe.app.network.response.UpdateLiveStatusResponse
 import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.ui.dashboard.DashViewModel
@@ -54,6 +57,7 @@ import io.bidswipe.app.utils.bind
 import io.bidswipe.app.utils.clr
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request
+import io.bidswipe.app.utils.runSafe
 import io.bidswipe.app.utils.setMargins
 import io.bidswipe.app.utils.value
 import org.json.JSONObject
@@ -90,6 +94,7 @@ class LiveShowActivity : BaseActivity() {
             fitsSystemWindows(false)
             keyboardEnable(true)
         }
+
         bind.root.setMargins(0,0,0,navigationBarHeight)
 
         commentAdapter = CommentAdapter(commentList)
@@ -127,6 +132,7 @@ class LiveShowActivity : BaseActivity() {
            if (bind.text.value().isNotEmpty()){
                sendMessage(bind.text.value())
            }
+
         }
 
         bind.cameraSwitch.setOnClickListener {
@@ -143,6 +149,12 @@ class LiveShowActivity : BaseActivity() {
 
         }
 
+        bind.shop.setOnClickListener {
+
+            shopSheet()
+
+        }
+
         bind.loader.isVisible = true
 
         viewModel.generateToken(showId.request())
@@ -152,7 +164,6 @@ class LiveShowActivity : BaseActivity() {
             bind.loader.isVisible = true
 
             viewModel.updateLiveStatus(showId.request(),"true".request())
-
 
         }
 
@@ -250,6 +261,99 @@ class LiveShowActivity : BaseActivity() {
 
     }
 
+    fun shopSheet() {
+        var shopSheetBind = ShopSheetBinding.bind(layoutInflater.inflate(R.layout.shop_sheet, null, false))
+        var shopSheet = Alerts.appBottomSheet(this, true, shopSheetBind)
+
+        var productList = mutableListOf<GetProductsResponse.Data?>()
+
+        val categoryList = mutableListOf("Auction","Buy Now", "Freebie", "Sold")
+
+        categoryList.forEach {it->
+            shopSheetBind.chipGroup.addView(
+                Utils.makeAChip(
+                    mCtx = this, text =it , selected = false
+                )
+            )
+        }
+
+        shopSheetBind.chipGroup.setOnCheckedStateChangeListener { chipGroup, _ ->
+            runSafe {
+                val chipId = chipGroup.checkedChipId
+                val index = chipGroup.indexOfChild(chipGroup.findViewById(chipId))
+            }
+        }
+
+       val shopAdapter = ShopSheetAdapter(productList,object  : RecyclerClicks{
+           override fun itemClick(pos: Int, status: String?) {
+           }
+
+       })
+
+        shopSheetBind.recycler.adapter = shopAdapter
+
+        /*shopSheetBind.optionList.adapter = LiveMoreAdapter(Const.liveMoreMenu, object : RecyclerClicks {
+
+            override fun itemClick(pos: Int, status: String?) {
+
+            }
+        })*/
+
+        shopSheetBind.loader.isVisible = true
+
+        viewModel.getUserProducts(userId.request())
+
+        viewModel.getUserProductsRepo.observe(this) {
+            when (it) {
+                is Resource.Success -> {
+
+                    shopSheetBind.loader.isVisible = false
+
+                    val mData = it.value.data
+
+                    productList.clear()
+
+                    mData?.forEach {
+                        productList.add(it)
+                    }
+
+                    shopAdapter.notifyDataSetChanged()
+
+                }
+
+                is Resource.Error -> {
+                    shopSheetBind.loader.isVisible = false
+
+                    if (it.isNetworkError) {
+                        errorToast(getString(R.string.no_internet))
+                    } else {
+                        it.parse(this, TAG, object : AlertClicks {
+                            override fun primaryClick(dialog: AppBottomSheet) {
+                                dialog.dismiss()
+
+                            }
+
+                            override fun secondaryClick(dialog: AppBottomSheet) {
+                                dialog.dismiss()
+
+                            }
+                        })
+                    }
+                }
+
+                else -> {}
+
+            }
+        }
+
+        shopSheetBind.close.setOnClickListener {
+            shopSheet.dismiss()
+        }
+
+        shopSheet.show()
+    }
+
+
     fun showMoreSheet() {
         var moreSheetBind = LiveShowMoreMenuBinding.bind(layoutInflater.inflate(R.layout.live_show_more_menu, null, false))
         var moreSheet = Alerts.appBottomSheet(this, true, moreSheetBind)
@@ -265,7 +369,6 @@ class LiveShowActivity : BaseActivity() {
         moreSheetBind.close.setOnClickListener {
             moreSheet.dismiss()
         }
-
 
         moreSheet.show()
     }
@@ -356,7 +459,6 @@ class LiveShowActivity : BaseActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-
 
         Const.fireBaseRef.getReference(Const.LIVE_SESSIONS).child(roomID).removeValue()
 
@@ -652,7 +754,9 @@ class LiveShowActivity : BaseActivity() {
     }
 
     private fun stopLiveDurationTimer() {
-        handler.removeCallbacks(durationRunnable)
+        if (this::durationRunnable.isInitialized){
+            handler.removeCallbacks(durationRunnable)
+        }
     }
 
 }

@@ -75,6 +75,14 @@ class SavedItemsFragment : BaseFragment<DashViewModel,FragmentSavedItemsBinding>
                         mList.addAll(mData)
                     }
 
+                    if (mList.isEmpty()){
+                        bind.noData.isVisible = true
+                        bind.recycler.isVisible = false
+                    }else{
+                        bind.noData.isVisible = false
+                        bind.recycler.isVisible = true
+                    }
+
                     savedAdapter.notifyDataSetChanged()
 
                 }
@@ -89,12 +97,10 @@ class SavedItemsFragment : BaseFragment<DashViewModel,FragmentSavedItemsBinding>
                         it.parse(mCtx, TAG, object : AlertClicks {
                             override fun primaryClick(dialog: AppBottomSheet) {
                                 dialog.dismiss()
-
                             }
 
                             override fun secondaryClick(dialog: AppBottomSheet) {
                                 dialog.dismiss()
-
                             }
                         })
                     }

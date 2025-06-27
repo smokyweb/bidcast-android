@@ -8,6 +8,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import io.bidswipe.app.model.LiveShowModel
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.network.repository.DashRepository
+import io.bidswipe.app.network.response.CommonResponse
 import io.bidswipe.app.network.response.CreateBidResponse
 import io.bidswipe.app.network.response.UpdateLiveStatusResponse
 import kotlinx.coroutines.launch
@@ -44,6 +45,16 @@ class StreamViewModel @Inject constructor(val repo: DashRepository) : ViewModel(
         bidPrice: RequestBody?
     ) = viewModelScope.launch {
         _createBidResponse.value = repo.createBid(showId,userId,productId,bidPrice)
+    }
+
+    private var _followUserResponse = MutableLiveData<Resource<CommonResponse>>()
+    val followUserShowRepo: MutableLiveData<Resource<CommonResponse>>
+        get() = _followUserResponse
+
+    fun followUser(
+        userId : RequestBody?
+    ) = viewModelScope.launch {
+        _followUserResponse.value = repo.followUser(userId)
     }
 
 }

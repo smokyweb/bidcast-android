@@ -175,7 +175,6 @@
             android:text="@string/promote"
             android:textColor="@color/surface" />
 
-
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/mic"
             style="@style/cardStyle"

@@ -301,4 +301,7 @@ suspend fun settingsList() = call { api.settingsList() }
         bio: RequestBody
     ) = call { api.updateProfile(firstName, lastName,image, userName, bio) }
 
+    suspend fun fetchReferral(
+    ) = call { api.fetchReferral() }
+
 }

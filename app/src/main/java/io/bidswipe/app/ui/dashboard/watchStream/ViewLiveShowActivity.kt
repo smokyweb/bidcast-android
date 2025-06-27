@@ -27,8 +27,8 @@ class ViewLiveShowActivity : BaseActivity() {
     private val bind by bind(ActivityViewLiveShowBinding::inflate)
     private val viewModel by viewModels<StreamViewModel>()
 
-    private var pos  = 0
-    private var streamList  = arrayListOf<LiveShowModel>()
+    private var pos = 0
+    private var streamList = arrayListOf<LiveShowModel>()
     private lateinit var viewPager: ViewPager2
     private lateinit var streamPagerAdapter: StreamPagerAdapter
 
@@ -77,16 +77,15 @@ class ViewLiveShowActivity : BaseActivity() {
             fitsSystemWindows(false)
             keyboardEnable(true)
         }
-        bind.root.setMargins(0,0,0,navigationBarHeight)
+        bind.root.setMargins(0, 0, 0, navigationBarHeight)
 
-        pos = intent.getIntExtra("position",0)
+        pos = intent.getIntExtra("position", 0)
 
 //        streamList = intent.getParcelableArrayListExtra<StreamModel>("roomIdsList") !!
 
         Const.fireBaseRef.getReference(Const.LIVE_SESSIONS).addValueEventListener(eventListener)
 
 //        log("ROOM IDS: ${streamList.get(0).roomId}")
-
 
 
         createEngine()

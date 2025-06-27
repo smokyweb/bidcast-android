@@ -8,6 +8,7 @@ import io.bidswipe.app.network.response.CreateBidResponse
 import io.bidswipe.app.network.response.CreateOrderResponse
 import io.bidswipe.app.network.response.FAQResponse
 import io.bidswipe.app.network.response.FetchBidResponse
+import io.bidswipe.app.network.response.FetchReferralResponse
 import io.bidswipe.app.network.response.FetchSellerVerificationResponse
 import io.bidswipe.app.network.response.GenerateTokenResponse
 import io.bidswipe.app.network.response.GetAllTipsResponse
@@ -477,6 +478,10 @@ interface ApiInterface {
 		@Part("username") userName: RequestBody,
 		@Part("bio") bio: RequestBody
 	): CommonResponse
+
+	@GET("api/referral-code/fetch")
+	suspend fun fetchReferral(
+	): FetchReferralResponse
 
 }
 

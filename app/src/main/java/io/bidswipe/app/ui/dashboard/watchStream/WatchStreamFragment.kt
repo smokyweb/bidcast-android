@@ -5,6 +5,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import com.ncorti.slidetoact.SlideToActView
 import com.ncorti.slidetoact.SlideToActView.OnSlideCompleteListener
@@ -16,12 +17,18 @@ import im.zego.zegoexpress.entity.ZegoBroadcastMessageInfo
 import im.zego.zegoexpress.entity.ZegoCanvas
 import im.zego.zegoexpress.entity.ZegoRoomConfig
 import im.zego.zegoexpress.entity.ZegoUser
+import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseFragment
 import io.bidswipe.app.controller.CommentAdapter
 import io.bidswipe.app.databinding.FragmentWatchStreamBinding
+import io.bidswipe.app.interfaces.AlertClicks
 import io.bidswipe.app.model.CommentModel
+import io.bidswipe.app.network.Resource
+import io.bidswipe.app.ui.custom.AppBottomSheet
+import io.bidswipe.app.utils.asMoney
 import io.bidswipe.app.utils.draw
 import io.bidswipe.app.utils.loadUrl
+import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request
 import io.bidswipe.app.utils.value
 
@@ -53,7 +60,6 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
         streamID = requireArguments().getString("streamID") ?: ""
     }
 
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -67,7 +73,6 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
             if (bind.text.value().isNotEmpty()) {
                 sendMessage(bind.text.value())
             }
-
         }
 
         viewModel.selectedStream.observe(viewLifecycleOwner) { stream ->
@@ -91,7 +96,35 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
                     append(stream.product?.price.toString())
                 }
 
-                bind.max.text = stream.product?.price.toString()
+                if (stream.seller?.isFollowed == true) {
+                    bind.follow.setBackgroundColor(
+                        ContextCompat.getColor(
+                            mCtx,
+                            R.color.outline
+                        )
+                    )
+                    bind.follow.setTextColor(ContextCompat.getColor(mCtx, R.color.onSurface))
+                    bind.follow.text = "Unfollow"
+                } else {
+                    bind.follow.setBackgroundColor(
+                        ContextCompat.getColor(
+                            mCtx,
+                            R.color.primary
+                        )
+                    )
+                    bind.follow.setTextColor(ContextCompat.getColor(mCtx, R.color.background))
+                    bind.follow.text = "Follow"
+                }
+
+                bind.follow.setOnClickListener {
+
+                    viewModel.followUser(stream.seller?.id?.request())
+
+                }
+
+                bind.max.text = stream.product?.price.toString().asMoney()
+
+                bind.bid.text = "Swipe to Bid foe ${(stream.product?.price?.toInt()?.plus(1)).toString().asMoney()}"
 
                 bind.bid.onSlideCompleteListener = object : OnSlideCompleteListener {
                     override fun onSlideComplete(view: SlideToActView) {
@@ -103,7 +136,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
                             stream.showId?.request(),
                             userId.request(),
                             stream.product?.id.toString().request(),
-                            "100".request()
+                            stream.product?.price?.request()
                         )
 
                     }
@@ -111,6 +144,78 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
             }
         }
+
+        viewModel.createBidRepo.observe(viewLifecycleOwner) {
+            when (it) {
+                is Resource.Success -> {
+
+                    bind.loader.isVisible = false
+
+                    val mData = it.value.data
+
+                }
+
+                is Resource.Error -> {
+                    bind.loader.isVisible = false
+
+                    if (it.isNetworkError) {
+                        errorToast(getString(R.string.no_internet))
+                    } else {
+                        it.parse(mCtx, TAG, object : AlertClicks {
+                            override fun primaryClick(dialog: AppBottomSheet) {
+                                dialog.dismiss()
+
+                            }
+
+                            override fun secondaryClick(dialog: AppBottomSheet) {
+                                dialog.dismiss()
+
+                            }
+                        })
+                    }
+                }
+
+                else -> {}
+
+            }
+        }
+
+        viewModel.followUserShowRepo.observe(viewLifecycleOwner) {
+            when (it) {
+                is Resource.Success -> {
+
+                    val mData = it.value.data
+
+
+
+
+                }
+
+                is Resource.Error -> {
+                    bind.loader.isVisible = false
+
+                    if (it.isNetworkError) {
+                        errorToast(getString(R.string.no_internet))
+                    } else {
+                        it.parse(mCtx, TAG, object : AlertClicks {
+                            override fun primaryClick(dialog: AppBottomSheet) {
+                                dialog.dismiss()
+
+                            }
+
+                            override fun secondaryClick(dialog: AppBottomSheet) {
+                                dialog.dismiss()
+
+                            }
+                        })
+                    }
+                }
+
+                else -> {}
+
+            }
+        }
+
     }
 
     override fun onDestroy() {

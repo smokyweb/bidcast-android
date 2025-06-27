@@ -315,4 +315,5 @@
     <string name="no_user_matches_the_name_entered">No user matches the name entered.</string>
     <string name="save_product">Save Product</string>
     <string name="update">Update</string>
+    <string name="search_products">Search Products..</string>
 </resources>

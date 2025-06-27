@@ -8,6 +8,7 @@ import io.bidswipe.app.network.Resource
 import io.bidswipe.app.network.repository.DashRepository
 import io.bidswipe.app.network.response.CheckKycResponse
 import io.bidswipe.app.network.response.CommonResponse
+import io.bidswipe.app.network.response.FetchReferralResponse
 import io.bidswipe.app.network.response.FetchSellerVerificationResponse
 import io.bidswipe.app.network.response.GetKYCDetailsRespnse
 import io.bidswipe.app.network.response.GetMyInventoryResponse
@@ -201,5 +202,13 @@ class SellerHubViewModel@Inject constructor(val repo: DashRepository) : ViewMode
         _updateProfileResponse.value = repo.updateProfile(firstName, lastName,image, userName, bio)
     }
 
+    private var _fetchReferralResponse = MutableLiveData<Resource<FetchReferralResponse>>()
+    val fetchReferralRepo: MutableLiveData<Resource<FetchReferralResponse>>
+        get() = _fetchReferralResponse
+
+    fun fetchReferral(
+    ) = viewModelScope.launch {
+        _fetchReferralResponse.value = repo.fetchReferral()
+    }
 
 }

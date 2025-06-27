@@ -7,7 +7,6 @@ import android.view.ViewGroup
 import androidx.core.view.isVisible
 import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseFragment
-import io.bidswipe.app.controller.OrdersAdapter
 import io.bidswipe.app.controller.SellerOffersAdapter
 import io.bidswipe.app.databinding.FragmentSellerOffersBinding
 import io.bidswipe.app.interfaces.RecyclerClicks
@@ -34,6 +33,7 @@ class SellerOffersFragment : BaseFragment<SellerHubViewModel, FragmentSellerOffe
 		override fun itemClick(pos: Int, status: String?) {
 
 			bind.loader.isVisible = true
+
 			if (status == "accept") {
 				viewModel.offerUpdateStatus(itemList[pos]?.id.toString().request(), "accepted".request())
 			} else if (status == "reject") {

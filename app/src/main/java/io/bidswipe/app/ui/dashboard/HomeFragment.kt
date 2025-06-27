@@ -54,8 +54,6 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
 						startActivity(Intent(mCtx, ViewLiveShowActivity::class.java).putExtra("position", pos).putParcelableArrayListExtra("roomIdsList", romIdsList as ArrayList))
 					}
 
-
-
 				}
 			}
 			

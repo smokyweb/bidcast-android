@@ -17,6 +17,7 @@ import io.bidswipe.app.network.response.GetMyShowResponse
 import io.bidswipe.app.network.response.GetOffersResponse
 import io.bidswipe.app.network.response.GetPrepareStepResponse
 import io.bidswipe.app.network.response.GetProductsByStatusResponse
+import io.bidswipe.app.network.response.GetProductsResponse
 import io.bidswipe.app.network.response.UpdateLiveStatusResponse
 import io.bidswipe.app.network.response.UpdateOfferResponse
 import io.bidswipe.app.network.response.UserDeviceResponse
@@ -246,6 +247,16 @@ class DashViewModel @Inject constructor(val repo: DashRepository) : ViewModel() 
 		bio: RequestBody
 	) = viewModelScope.launch {
 		_updateProfileResponse.value = repo.updateProfile(firstName, lastName,image, userName, bio)
+	}
+
+	private var _getUserProductsResponse = MutableLiveData<Resource<GetProductsResponse>>()
+	val getUserProductsRepo: MutableLiveData<Resource<GetProductsResponse>>
+		get() = _getUserProductsResponse
+
+	fun getUserProducts(
+		userId : RequestBody? = null
+	) = viewModelScope.launch {
+		_getUserProductsResponse.value = repo.getUserProducts(userId)
 	}
 
 }

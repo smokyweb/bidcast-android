@@ -47,7 +47,6 @@ import okhttp3.RequestBody.Companion.toRequestBody
 import java.util.Locale
 import kotlin.math.ceil
 
-
 fun runSafe(callback: () -> Unit) {
 	try {
 		callback.invoke()
