@@ -7,12 +7,12 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.network.repository.DashRepository
 import io.bidswipe.app.network.response.CommonResponse
+import io.bidswipe.app.network.response.FollowUnfollowResponse
 import io.bidswipe.app.network.response.GetProductsResponse
 import io.bidswipe.app.network.response.GetUserProfileResponse
 import kotlinx.coroutines.launch
 import okhttp3.RequestBody
 import javax.inject.Inject
-
 
 @HiltViewModel
 class SellerViewModel  @Inject constructor(val repo: DashRepository) : ViewModel() {
@@ -27,7 +27,6 @@ class SellerViewModel  @Inject constructor(val repo: DashRepository) : ViewModel
         _getProfileByIdResponse.value = repo.getProfileById(userId)
     }
 
-
     private var _getUserProductsResponse = MutableLiveData<Resource<GetProductsResponse>>()
     val getUserProductsRepo: MutableLiveData<Resource<GetProductsResponse>>
         get() = _getUserProductsResponse
@@ -38,9 +37,8 @@ class SellerViewModel  @Inject constructor(val repo: DashRepository) : ViewModel
         _getUserProductsResponse.value = repo.getUserProducts(userId)
     }
 
-
-    private var _followUserResponse = MutableLiveData<Resource<CommonResponse>>()
-    val followUserShowRepo: MutableLiveData<Resource<CommonResponse>>
+    private var _followUserResponse = MutableLiveData<Resource<FollowUnfollowResponse>>()
+    val followUserShowRepo: MutableLiveData<Resource<FollowUnfollowResponse>>
         get() = _followUserResponse
 
     fun followUser(

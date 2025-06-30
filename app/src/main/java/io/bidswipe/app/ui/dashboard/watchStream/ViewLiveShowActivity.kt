@@ -35,26 +35,29 @@ class ViewLiveShowActivity : BaseActivity() {
     private var eventListener = object : ValueEventListener {
         @SuppressLint("NotifyDataSetChanged")
         override fun onDataChange(snapshot: DataSnapshot) {
-            streamList.clear()
 
-            if (snapshot.exists() && snapshot.childrenCount > 0) {
-                for (data in snapshot.children) {
-                    log("EVENT LISTENER $data")
+            if (snapshot.childrenCount.toInt() != streamList.size){
+                streamList.clear()
+                if (snapshot.exists() && snapshot.childrenCount > 0) {
+                    for (data in snapshot.children) {
+                        log("EVENT LISTENER $data")
 
-                    streamList.add(data.getValue(LiveShowModel::class.java)!!)
+                        streamList.add(data.getValue(LiveShowModel::class.java)!!)
+
+                    }
 
                 }
 
+                viewPager = bind.viewPager
+
+                viewModel.setStreams(streamList)
+
+                streamPagerAdapter = StreamPagerAdapter(this@ViewLiveShowActivity, viewModel)
+                viewPager.adapter = streamPagerAdapter
+                viewPager.currentItem = pos
+                viewPager.orientation = ViewPager2.ORIENTATION_VERTICAL
+
             }
-
-            viewPager = bind.viewPager
-
-            viewModel.setStreams(streamList)
-
-            streamPagerAdapter = StreamPagerAdapter(this@ViewLiveShowActivity, viewModel)
-            viewPager.adapter = streamPagerAdapter
-            viewPager.currentItem = pos
-            viewPager.orientation = ViewPager2.ORIENTATION_VERTICAL
 
 
         }
@@ -77,6 +80,7 @@ class ViewLiveShowActivity : BaseActivity() {
             fitsSystemWindows(false)
             keyboardEnable(true)
         }
+
         bind.root.setMargins(0, 0, 0, navigationBarHeight)
 
         pos = intent.getIntExtra("position", 0)

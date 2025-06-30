@@ -1,5 +1,6 @@
 package io.bidswipe.app.ui.dashboard.watchStream
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -7,6 +8,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.ValueEventListener
 import com.ncorti.slidetoact.SlideToActView
 import com.ncorti.slidetoact.SlideToActView.OnSlideCompleteListener
 import im.zego.zegoexpress.ZegoExpressEngine
@@ -25,6 +29,7 @@ import io.bidswipe.app.interfaces.AlertClicks
 import io.bidswipe.app.model.CommentModel
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.ui.custom.AppBottomSheet
+import io.bidswipe.app.utils.Const
 import io.bidswipe.app.utils.asMoney
 import io.bidswipe.app.utils.draw
 import io.bidswipe.app.utils.loadUrl
@@ -33,6 +38,7 @@ import io.bidswipe.app.utils.request
 import io.bidswipe.app.utils.value
 
 class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBinding>() {
+
     override fun getModel(): Class<StreamViewModel> = StreamViewModel::class.java
 
     override fun getBind(
@@ -44,6 +50,21 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
     private lateinit var streamID: String
     private var commentList = mutableListOf<CommentModel?>()
     private lateinit var commentAdapter: CommentAdapter
+    private var isLoggedIn  = false
+
+    private var eventListener = object : ValueEventListener {
+        @SuppressLint("NotifyDataSetChanged")
+        override fun onDataChange(snapshot: DataSnapshot) {
+
+            log("Value : ${snapshot.value}")
+
+        }
+
+        override fun onCancelled(error: DatabaseError) {
+
+        }
+
+    }
 
     companion object {
         fun newInstance(roomID: String, streamID: String) = WatchStreamFragment().apply {
@@ -69,6 +90,8 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
         bind.recycler.adapter = commentAdapter
 
+        Const.fireBaseRef.getReference(Const.LIVE_SESSIONS).child(roomID).child("product").child("status").addValueEventListener(eventListener)
+
         bind.message.setEndIconOnClickListener {
             if (bind.text.value().isNotEmpty()) {
                 sendMessage(bind.text.value())
@@ -91,9 +114,14 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
                     stream?.product?.image.toString(),
                     placeHolder = draw.product_img
                 )
-                bind.quantity.text = buildString {
-                    append("Price: ")
-                    append(stream.product?.price.toString())
+
+                try {
+                    bind.quantity.text = buildString {
+                        append("Price: ")
+                        append(stream.product?.price.toString())
+                    }
+                } catch (e: Exception) {
+                   e.printStackTrace()
                 }
 
                 if (stream.seller?.isFollowed == true) {
@@ -122,9 +150,13 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
                 }
 
-                bind.max.text = stream.product?.price.toString().asMoney()
+                try {
+                    bind.max.text = stream.product?.price.toString().asMoney()
 
-                bind.bid.text = "Swipe to Bid foe ${(stream.product?.price?.toInt()?.plus(1)).toString().asMoney()}"
+                    bind.bid.text = "Swipe to Bid for ${(stream.product?.price?.toInt()?.plus(1)).toString().asMoney()}"
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
 
                 bind.bid.onSlideCompleteListener = object : OnSlideCompleteListener {
                     override fun onSlideComplete(view: SlideToActView) {
@@ -152,6 +184,10 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
                     bind.loader.isVisible = false
 
                     val mData = it.value.data
+
+                    Const.fireBaseRef.getReference(Const.LIVE_SESSIONS).child(roomID).child("product").child("status").setValue("sold").addOnCompleteListener {
+
+                    }
 
                 }
 
@@ -186,8 +222,25 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
                     val mData = it.value.data
 
-
-
+                    if (mData?.status == true) {
+                        bind.follow.setBackgroundColor(
+                            ContextCompat.getColor(
+                                mCtx,
+                                R.color.outline
+                            )
+                        )
+                        bind.follow.setTextColor(ContextCompat.getColor(mCtx, R.color.onSurface))
+                        bind.follow.text = "Unfollow"
+                    } else {
+                        bind.follow.setBackgroundColor(
+                            ContextCompat.getColor(
+                                mCtx,
+                                R.color.primary
+                            )
+                        )
+                        bind.follow.setTextColor(ContextCompat.getColor(mCtx, R.color.background))
+                        bind.follow.text = "Follow"
+                    }
 
                 }
 
@@ -220,11 +273,12 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
     override fun onDestroy() {
         super.onDestroy()
-        destroyEngine()
+//        destroyEngine()
     }
 
     override fun onResume() {
         super.onResume()
+
         loginAndPlay()
         fetchMessage()
     }
@@ -240,7 +294,6 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
         val canvas = ZegoCanvas(bind.hostView).apply {
             viewMode = ZegoViewMode.ASPECT_FILL
         }
-
         ZegoExpressEngine.getEngine().startPlayingStream(roomID, canvas)
     }
 
@@ -275,12 +328,10 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
     }
 
     fun fetchMessage() {
-
         ZegoExpressEngine.getEngine().setEventHandler(object : IZegoEventHandler() {
-
             override fun onIMRecvBroadcastMessage(
                 roomID: String?,
-                messageList: kotlin.collections.ArrayList<ZegoBroadcastMessageInfo?>?
+                messageList: ArrayList<ZegoBroadcastMessageInfo?>?
             ) {
                 Log.d("ZEGO", "Broadcast message received for room: $roomID")
                 if (messageList != null) {
@@ -304,8 +355,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
                     }
                 }
             }
+
         })
     }
-
-
 }

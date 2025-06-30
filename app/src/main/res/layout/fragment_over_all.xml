@@ -28,7 +28,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:text="284"
+                android:text="N/A"
                 android:textColor="@color/primary" />
 
             <TextView
@@ -53,7 +53,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:text="12.4K"
+                android:text="N/A"
                 android:textColor="@color/primary" />
 
             <TextView
@@ -78,7 +78,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:text="892"
+                android:text="N/A"
                 android:textColor="@color/primary" />
 
             <TextView

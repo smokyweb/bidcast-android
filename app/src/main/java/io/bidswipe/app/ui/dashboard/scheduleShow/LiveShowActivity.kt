@@ -9,6 +9,9 @@ import android.util.Log
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.core.view.isVisible
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.ValueEventListener
 import com.gyf.immersionbar.ktx.immersionBar
 import com.gyf.immersionbar.ktx.navigationBarHeight
 import im.zego.zegoexpress.ZegoExpressEngine
@@ -81,6 +84,19 @@ class LiveShowActivity : BaseActivity() {
 
     private var commentList = mutableListOf<CommentModel?>()
     private lateinit var commentAdapter : CommentAdapter
+
+    private var eventListener = object : ValueEventListener {
+        @SuppressLint("NotifyDataSetChanged")
+        override fun onDataChange(snapshot: DataSnapshot) {
+
+
+        }
+
+        override fun onCancelled(error: DatabaseError) {
+
+        }
+
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -223,7 +239,7 @@ class LiveShowActivity : BaseActivity() {
                         startLiveDurationTimer()
 
                         startUpdatingFirebaseEvery5Minutes()
-
+                        Const.fireBaseRef.getReference(Const.LIVE_SESSIONS).child(roomID).child("product").child("status").addValueEventListener(eventListener)
 
                         bind.startBtn.isVisible = false
                     }else{
@@ -688,7 +704,7 @@ class LiveShowActivity : BaseActivity() {
             rating = user?.rating ?:""
         )
 
-        val a= LiveShowModel(
+        val liveShow= LiveShowModel(
             product = product,
             roomId = roomID,
             seller = seller,
@@ -701,7 +717,7 @@ class LiveShowActivity : BaseActivity() {
             showId = showId
             )
 
-        Const.fireBaseRef.getReference(Const.LIVE_SESSIONS).child(roomID).setValue(a).addOnCompleteListener {
+        Const.fireBaseRef.getReference(Const.LIVE_SESSIONS).child(roomID).setValue(liveShow).addOnCompleteListener {
 
         }
 
@@ -720,7 +736,7 @@ class LiveShowActivity : BaseActivity() {
                         Log.e("FirebaseUpdate", "Failed to update value", it)
                     }
 
-                updateStatusHandler.postDelayed(this,  5 * 60 * 1000)
+                updateStatusHandler.postDelayed(this,  4 * 60 * 1000)
             }
         }
 

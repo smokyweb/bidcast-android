@@ -10,6 +10,7 @@ import io.bidswipe.app.network.Resource
 import io.bidswipe.app.network.repository.DashRepository
 import io.bidswipe.app.network.response.CommonResponse
 import io.bidswipe.app.network.response.CreateBidResponse
+import io.bidswipe.app.network.response.FollowUnfollowResponse
 import io.bidswipe.app.network.response.UpdateLiveStatusResponse
 import kotlinx.coroutines.launch
 import okhttp3.RequestBody
@@ -47,8 +48,8 @@ class StreamViewModel @Inject constructor(val repo: DashRepository) : ViewModel(
         _createBidResponse.value = repo.createBid(showId,userId,productId,bidPrice)
     }
 
-    private var _followUserResponse = MutableLiveData<Resource<CommonResponse>>()
-    val followUserShowRepo: MutableLiveData<Resource<CommonResponse>>
+    private var _followUserResponse = MutableLiveData<Resource<FollowUnfollowResponse>>()
+    val followUserShowRepo: MutableLiveData<Resource<FollowUnfollowResponse>>
         get() = _followUserResponse
 
     fun followUser(

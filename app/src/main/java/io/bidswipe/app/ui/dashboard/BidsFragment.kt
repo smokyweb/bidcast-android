@@ -39,17 +39,29 @@ class BidsFragment : BaseFragment<DashViewModel,FragmentBidsBinding>() {
 
         bind.recycler.adapter = bidsAdapter
 
-        viewModel.fetchBids()
 
+        bind.loader.isVisible = true
+
+        viewModel.fetchBids()
         viewModel.fetchBidsRepo.observe(viewLifecycleOwner) {
             when (it) {
                 is Resource.Success -> {
+
+                    bind.loader.isVisible = false
                     val mData = it.value.data
 
                     mList.clear()
 
-                    mData?.forEach {
+                    mData?.forEach { _ ->
                         mList.addAll(mData)
+                    }
+
+                    if (mList.isEmpty()){
+                        bind.noData.isVisible = true
+                        bind.recycler.isVisible = false
+                    }else{
+                        bind.noData.isVisible = false
+                        bind.recycler.isVisible = true
                     }
 
                  bidsAdapter.notifyDataSetChanged()
@@ -57,6 +69,7 @@ class BidsFragment : BaseFragment<DashViewModel,FragmentBidsBinding>() {
                 }
 
                 is Resource.Error -> {
+                    bind.loader.isVisible = false
                     if (it.isNetworkError) {
                         errorToast(getString(R.string.no_internet))
                     } else {

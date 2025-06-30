@@ -12,8 +12,7 @@ import io.bidswipe.app.utils.loadUrl
 class ShopSheetAdapter(mList: MutableList<GetProductsResponse.Data?>, val mClicks: RecyclerClicks
 ) : BaseAdapter<GetProductsResponse.Data?, ShopSheetItemBinding>(mList) {
 
-    override fun bindView(inflater: LayoutInflater, parent: ViewGroup) =
-        ShopSheetItemBinding.inflate(inflater, parent, false)
+    override fun bindView(inflater: LayoutInflater, parent: ViewGroup) = ShopSheetItemBinding.inflate(inflater, parent, false)
 
     override fun onBind(
         holder: BaseViewHolder<ShopSheetItemBinding>,

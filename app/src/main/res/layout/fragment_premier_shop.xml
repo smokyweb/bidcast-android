@@ -55,7 +55,7 @@
 
                             <ImageView
                                 android:layout_width="32dp"
-                                android:layout_height="32dp"
+                                android:layout_height="26dp"
                                 android:layout_gravity="center"
                                 android:contentDescription="@string/app_name"
                                 android:layout_marginTop="@dimen/margin"
@@ -184,7 +184,7 @@
                                         android:layout_width="match_parent"
                                         android:layout_height="wrap_content"
                                         android:gravity="center"
-                                        android:text="4.2"
+                                        android:text="N/A"
                                         android:textColor="@color/tertiary" />
 
                                     <TextView
@@ -217,7 +217,7 @@
                                         android:layout_width="match_parent"
                                         android:layout_height="wrap_content"
                                         android:gravity="center"
-                                        android:text="89%"
+                                        android:text="N/A"
                                         android:textColor="@color/tertiary" />
 
                                     <TextView
@@ -250,7 +250,7 @@
                                         android:layout_width="match_parent"
                                         android:layout_height="wrap_content"
                                         android:gravity="center"
-                                        android:text="95%"
+                                        android:text="N/A"
                                         android:textColor="@color/tertiary" />
 
                                     <TextView
@@ -368,7 +368,7 @@
                     style="@style/TitleMedium"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="75%" />
+                    android:text="0%" />
 
             </LinearLayout>
 
@@ -377,7 +377,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="@dimen/margin"
-                android:progress="75"
+                android:progress="0"
                 android:progressTint="@color/primary"
                 app:layout_constraintTop_toBottomOf="@id/header"
                 app:trackCornerRadius="6dp"

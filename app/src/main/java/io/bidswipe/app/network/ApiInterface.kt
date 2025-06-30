@@ -10,6 +10,7 @@ import io.bidswipe.app.network.response.FAQResponse
 import io.bidswipe.app.network.response.FetchBidResponse
 import io.bidswipe.app.network.response.FetchReferralResponse
 import io.bidswipe.app.network.response.FetchSellerVerificationResponse
+import io.bidswipe.app.network.response.FollowUnfollowResponse
 import io.bidswipe.app.network.response.GenerateTokenResponse
 import io.bidswipe.app.network.response.GetAllTipsResponse
 import io.bidswipe.app.network.response.GetAuctionTypeResponse
@@ -193,7 +194,7 @@ interface ApiInterface {
 	@POST("api/follow-unfollow")
 	suspend fun followUser(
 		@Part("following_id") userId: RequestBody?
-	): CommonResponse
+	): FollowUnfollowResponse
 	
 	@Multipart
 	@POST("api/offer/make")

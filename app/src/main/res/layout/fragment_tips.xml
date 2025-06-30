@@ -46,7 +46,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center"
-                    android:text="24"
+                    android:text="N/A"
                     android:textColor="@color/tertiary" />
 
                 <TextView
@@ -79,7 +79,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center"
-                    android:text="$124"
+                    android:text="N/A"
                     android:textColor="@color/tertiary" />
 
                 <TextView
@@ -110,7 +110,16 @@
             android:padding="@dimen/half_margin"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             tools:itemCount="6"
+            android:visibility="gone"
             tools:listitem="@layout/tips_item" />
+
+        <io.bidswipe.app.ui.custom.NoDataView
+            android:id="@+id/noData"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="visible"
+            app:title_text="No Data Found"/>
+
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

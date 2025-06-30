@@ -1,7 +1,5 @@
 package io.bidswipe.app.model
 
-
-
 import androidx.annotation.Keep
 
 data class LiveShowModel(
@@ -20,7 +18,8 @@ data class LiveShowModel(
     data class Product(
         var category: String?= null,
         var id: String?= null,
-        var image: String?= "guygfuyf",
+        var image: String?= "",
+        var status: String?= "live",
         var name: String?= null,
         var price: String?= null
     )

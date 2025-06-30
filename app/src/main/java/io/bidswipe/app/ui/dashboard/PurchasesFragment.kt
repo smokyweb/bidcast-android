@@ -77,6 +77,14 @@ class PurchasesFragment : BaseFragment<DashViewModel, FragmentPurchasesBinding>(
                         mList.addAll(mData)
                     }
 
+                    if (mList.isEmpty()){
+                        bind.noData.isVisible = true
+                        bind.recycler.isVisible = false
+                    }else{
+                        bind.noData.isVisible = false
+                        bind.recycler.isVisible = true
+                    }
+
                     purchasesAdapter.notifyDataSetChanged()
 
                 }

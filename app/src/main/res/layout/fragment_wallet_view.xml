@@ -45,7 +45,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="center"
-                        android:text="$5,280.50"
+                        android:text="N/A"
                         android:textSize="28dp"
                         android:textColor="@color/tertiary" />
 
@@ -91,7 +91,7 @@
                             style="@style/HeadlineMedium"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="$3,240.00"
+                            android:text="N/A"
                             android:textColor="@color/tertiary" />
 
                     </LinearLayout>
@@ -128,7 +128,7 @@
                             style="@style/HeadlineMedium"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="$3,240.00"
+                            android:text="N/A"
                             android:textColor="@color/tertiary" />
 
                     </LinearLayout>

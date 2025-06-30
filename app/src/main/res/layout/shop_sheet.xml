@@ -31,7 +31,6 @@
             android:src="@drawable/close_ic"
             app:tint="@color/tertiary" />
 
-
     </LinearLayout>
 
     <com.google.android.material.divider.MaterialDivider
