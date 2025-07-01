@@ -102,8 +102,9 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
 
  suspend fun getLiveShow(
      type : RequestBody?,
-     category: RequestBody?
- ) = call { api.getLiveShow(type, category) }
+     category: RequestBody?,
+     search: RequestBody?
+ ) = call { api.getLiveShow(type, category, search) }
 
     suspend fun notifyLiveUser(
         liveUserId : RequestBody?
@@ -248,7 +249,10 @@ suspend fun settingsList() = call { api.settingsList() }
     ) = call { api.getNotification() }
 
     suspend fun fetchBids(
-    ) = call { api.fetchBids() }
+        page : String?
+    ) = call { api.fetchBids(
+      page
+        ) }
 
     suspend fun getOrderReceipt(
         orderId : RequestBody?

@@ -49,7 +49,7 @@ import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.model.CommentModel
 import io.bidswipe.app.model.LiveShowModel
 import io.bidswipe.app.network.Resource
-import io.bidswipe.app.network.response.GetProductsResponse
+import io.bidswipe.app.network.response.GetMyInventoryResponse
 import io.bidswipe.app.network.response.UpdateLiveStatusResponse
 import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.ui.dashboard.DashViewModel
@@ -88,7 +88,13 @@ class LiveShowActivity : BaseActivity() {
     private var eventListener = object : ValueEventListener {
         @SuppressLint("NotifyDataSetChanged")
         override fun onDataChange(snapshot: DataSnapshot) {
+            log("Value : ${snapshot.value}")
 
+            if (snapshot.value == "sold") {
+
+            } else {
+
+            }
 
         }
 
@@ -234,14 +240,20 @@ class LiveShowActivity : BaseActivity() {
                     val mData = it.value.data
 
                     if (liveStatus){
-                        addDataOnFirebase(mData)
-                        startPublish()
-                        startLiveDurationTimer()
 
-                        startUpdatingFirebaseEvery5Minutes()
-                        Const.fireBaseRef.getReference(Const.LIVE_SESSIONS).child(roomID).child("product").child("status").addValueEventListener(eventListener)
+                        try {
+                            addDataOnFirebase(mData)
+                            startPublish()
+                            startLiveDurationTimer()
 
-                        bind.startBtn.isVisible = false
+                            startUpdatingFirebaseEvery5Minutes()
+                            Const.fireBaseRef.getReference(Const.LIVE_SESSIONS).child(roomID).child("product").child("status").addValueEventListener(eventListener)
+
+                            bind.startBtn.isVisible = false
+                        } catch (e: Exception) {
+                           e.printStackTrace()
+                        }
+
                     }else{
                         finish()
                     }
@@ -281,7 +293,7 @@ class LiveShowActivity : BaseActivity() {
         var shopSheetBind = ShopSheetBinding.bind(layoutInflater.inflate(R.layout.shop_sheet, null, false))
         var shopSheet = Alerts.appBottomSheet(this, true, shopSheetBind)
 
-        var productList = mutableListOf<GetProductsResponse.Data?>()
+        var productList = mutableListOf<GetMyInventoryResponse.Data?>()
 
         val categoryList = mutableListOf("Auction","Buy Now", "Freebie", "Sold")
 
@@ -302,6 +314,15 @@ class LiveShowActivity : BaseActivity() {
 
        val shopAdapter = ShopSheetAdapter(productList,object  : RecyclerClicks{
            override fun itemClick(pos: Int, status: String?) {
+
+               productList.forEachIndexed { index,item ->
+
+                   item?.selected = index == pos
+
+                   shopSheetBind.recycler.adapter?.notifyDataSetChanged()
+
+               }
+
            }
 
        })
@@ -317,9 +338,9 @@ class LiveShowActivity : BaseActivity() {
 
         shopSheetBind.loader.isVisible = true
 
-        viewModel.getUserProducts(userId.request())
+        viewModel.getMyInventory("active".request(),"1".request())
 
-        viewModel.getUserProductsRepo.observe(this) {
+        viewModel.getMyInventoryRepo.observe(this) {
             when (it) {
                 is Resource.Success -> {
 

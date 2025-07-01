@@ -96,6 +96,8 @@ class UpdateAccountActivity : BaseActivity() {
 
                     bind.userName.setText(mData?.username)
 
+                    bind.email.setText(mData?.email?:"")
+
                     bind.bio.setText( mData?.bio)
 
                     bind.userProfile.loadUrl(this,mData?.profileImage.toString())

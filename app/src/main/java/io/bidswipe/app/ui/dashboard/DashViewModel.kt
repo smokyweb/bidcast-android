@@ -13,6 +13,7 @@ import io.bidswipe.app.network.response.GenerateTokenResponse
 import io.bidswipe.app.network.response.GetCategoryResponse
 import io.bidswipe.app.network.response.GetHowToSellResponse
 import io.bidswipe.app.network.response.GetLessonsResponse
+import io.bidswipe.app.network.response.GetMyInventoryResponse
 import io.bidswipe.app.network.response.GetMyShowResponse
 import io.bidswipe.app.network.response.GetOffersResponse
 import io.bidswipe.app.network.response.GetPrepareStepResponse
@@ -101,10 +102,11 @@ class DashViewModel @Inject constructor(val repo: DashRepository) : ViewModel() 
 		get() = _getLiveShowResponse
 
 	fun getLiveShow(
-		type : RequestBody?,
-		category: RequestBody? = null
+		type : RequestBody? = null,
+		category: RequestBody? = null,
+		search: RequestBody? = null
 	) = viewModelScope.launch {
-		_getLiveShowResponse.value = repo.getLiveShow(type, category)
+		_getLiveShowResponse.value = repo.getLiveShow(type, category, search)
 	}
 
 	private var _offerListResponse = MutableLiveData<Resource<GetOffersResponse>>()
@@ -199,8 +201,9 @@ class DashViewModel @Inject constructor(val repo: DashRepository) : ViewModel() 
 		get() = _fetchBidsResponse
 
 	fun fetchBids(
+		page : String?
 	) = viewModelScope.launch {
-		_fetchBidsResponse.value = repo.fetchBids()
+		_fetchBidsResponse.value = repo.fetchBids(page)
 	}
 
 	private var _getPurchasedProductsByStatusResponse = MutableLiveData<Resource<GetProductsByStatusResponse>>()
@@ -257,6 +260,17 @@ class DashViewModel @Inject constructor(val repo: DashRepository) : ViewModel() 
 		userId : RequestBody? = null
 	) = viewModelScope.launch {
 		_getUserProductsResponse.value = repo.getUserProducts(userId)
+	}
+
+	private var _getMyInventoryResponse = MutableLiveData<Resource<GetMyInventoryResponse>>()
+	val getMyInventoryRepo: MutableLiveData<Resource<GetMyInventoryResponse>>
+		get() = _getMyInventoryResponse
+
+	fun getMyInventory(
+		status : RequestBody?,
+		page : RequestBody?
+	) = viewModelScope.launch {
+		_getMyInventoryResponse.value = repo.getMyInventory(status,page)
 	}
 
 }

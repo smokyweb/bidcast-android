@@ -35,14 +35,18 @@ class BidsAdapter(mList: MutableList<FetchBidResponse.Data?>, val mClicks: Recyc
                 append(item?.bidPrice.toString().asMoney())
             }
 
-            bind.subTitle.text = buildSpannedString {
-                append("Placed a Bid ")
-                bold { append("•") }
-                append(Utils.getTimeAgo(item?.createdAt ?: ""))
-            }
-
             bind.root.setOnClickListener {
                 mClicks.itemClick(position)
+            }
+
+            try {
+                bind.subTitle.text = buildSpannedString {
+                    append("Placed a Bid ")
+                    bold { append("•") }
+                    append(Utils.getTimeAgo(item?.createdAt ?: ""))
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
             }
 
         }

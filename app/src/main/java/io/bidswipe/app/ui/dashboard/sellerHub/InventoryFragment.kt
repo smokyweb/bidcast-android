@@ -154,8 +154,6 @@ class InventoryFragment : BaseFragment<SellerHubViewModel,FragmentInventoryBindi
         }
 
 
-
-
     }
 
 }

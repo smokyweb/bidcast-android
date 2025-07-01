@@ -53,6 +53,7 @@ import retrofit2.http.GET
 import retrofit2.http.Multipart
 import retrofit2.http.POST
 import retrofit2.http.Part
+import retrofit2.http.Query
 
 interface ApiInterface {
 	
@@ -220,7 +221,8 @@ interface ApiInterface {
 	@POST("api/get-live-show")
 	suspend fun getLiveShow(
 		@Part("type") type: RequestBody?,
-		@Part("category") category: RequestBody?
+		@Part("category") category: RequestBody?,
+		@Part("search") search: RequestBody?
 	): GetMyShowResponse
 	
 	@Multipart
@@ -400,6 +402,7 @@ interface ApiInterface {
 
 	@GET("api/bid/fetch")
 	suspend fun fetchBids(
+		@Query("page") page : String?
 	): FetchBidResponse
 
 	@Multipart

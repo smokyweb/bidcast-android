@@ -98,7 +98,7 @@ class AddProductFragment : BaseFragment<ScheduleShowViewModel,FragmentAddProduct
 
         bind.loader.isVisible = true
 
-        viewModel.getUserProducts()
+        viewModel.getUserProducts("".request())
 
         viewModel.getUserProductsRepo.observe(viewLifecycleOwner) {
             when (it) {

@@ -3,9 +3,6 @@ package io.bidswipe.app.controller
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
-import androidx.viewpager2.adapter.FragmentViewHolder
-import io.bidswipe.app.model.LiveShowModel
-import io.bidswipe.app.model.StreamModel
 import io.bidswipe.app.ui.dashboard.watchStream.StreamViewModel
 import io.bidswipe.app.ui.dashboard.watchStream.WatchStreamFragment
 
@@ -24,5 +21,6 @@ class StreamPagerAdapter (
         viewModel.selectStream(stream)
 
         return WatchStreamFragment.newInstance(stream.roomId.toString(), stream.roomId.toString())
+
     }
 }

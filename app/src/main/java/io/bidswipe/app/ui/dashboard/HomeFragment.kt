@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
+import androidx.navigation.fragment.findNavController
 import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseFragment
 import io.bidswipe.app.controller.HomeAdapter
@@ -23,6 +24,7 @@ import io.bidswipe.app.ui.dashboard.more.NotificationActivity
 import io.bidswipe.app.ui.dashboard.sellerProfile.SellerProfileActivity
 import io.bidswipe.app.ui.dashboard.watchStream.ViewLiveShowActivity
 import io.bidswipe.app.utils.Utils
+import io.bidswipe.app.utils.ids
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request
 import io.bidswipe.app.utils.runSafe
@@ -69,6 +71,10 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
 
 		bind.header.onMorePrimaryClick {
 			startActivity(Intent(mCtx , NotificationActivity::class.java).putExtra("slug","notification"))
+		}
+
+		bind.header.onMoreSecondaryClick {
+			findNavController().navigate(ids.goToSearchShowFragment)
 		}
 
 		selectTab(bind.live)

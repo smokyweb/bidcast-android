@@ -32,6 +32,7 @@ import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.utils.Const
 import io.bidswipe.app.utils.asMoney
 import io.bidswipe.app.utils.draw
+import io.bidswipe.app.utils.finish
 import io.bidswipe.app.utils.loadUrl
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request
@@ -51,20 +52,6 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
     private var commentList = mutableListOf<CommentModel?>()
     private lateinit var commentAdapter: CommentAdapter
     private var isLoggedIn  = false
-
-    private var eventListener = object : ValueEventListener {
-        @SuppressLint("NotifyDataSetChanged")
-        override fun onDataChange(snapshot: DataSnapshot) {
-
-            log("Value : ${snapshot.value}")
-
-        }
-
-        override fun onCancelled(error: DatabaseError) {
-
-        }
-
-    }
 
     companion object {
         fun newInstance(roomID: String, streamID: String) = WatchStreamFragment().apply {
@@ -86,11 +73,36 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
         log("RoomId: $roomID")
 
+        bind.cutButton.setOnClickListener {
+            finish()
+        }
+
         commentAdapter = CommentAdapter(commentList)
 
         bind.recycler.adapter = commentAdapter
 
-        Const.fireBaseRef.getReference(Const.LIVE_SESSIONS).child(roomID).child("product").child("status").addValueEventListener(eventListener)
+
+        Const.fireBaseRef.getReference(Const.LIVE_SESSIONS).child(roomID).child("product")
+            .child("status").addValueEventListener(object : ValueEventListener {
+                @SuppressLint("NotifyDataSetChanged")
+                override fun onDataChange(snapshot: DataSnapshot) {
+
+                    log("Value : ${snapshot.value}")
+
+                    if (snapshot.value == "sold") {
+                        bind.soldLayout.isVisible = true
+                        bind.productLayout.isVisible = false
+                    } else {
+                        bind.soldLayout.isVisible = false
+                        bind.productLayout.isVisible = true
+                    }
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+
+                }
+
+            })
 
         bind.message.setEndIconOnClickListener {
             if (bind.text.value().isNotEmpty()) {
@@ -180,6 +192,8 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
         viewModel.createBidRepo.observe(viewLifecycleOwner) {
             when (it) {
                 is Resource.Success -> {
+
+                    viewModel.createBidRepo.value = null
 
                     bind.loader.isVisible = false
 

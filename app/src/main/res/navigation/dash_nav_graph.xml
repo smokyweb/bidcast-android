@@ -9,7 +9,15 @@
         android:id="@+id/homeFragment"
         android:name="io.bidswipe.app.ui.dashboard.HomeFragment"
         android:label="fragment_home"
-        tools:layout="@layout/fragment_home" />
+        tools:layout="@layout/fragment_home" >
+        <action
+            android:id="@+id/goToSearchShowFragment"
+            app:destination="@id/searchShowFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"/>
+    </fragment>
     <fragment
         android:id="@+id/exploreFragment"
         android:name="io.bidswipe.app.ui.dashboard.ExploreFragment"
@@ -43,5 +51,10 @@
         android:name="io.bidswipe.app.ui.dashboard.ExploreTypeFragment"
         android:label="fragment_explore_type"
         tools:layout="@layout/fragment_explore_type" />
+    <fragment
+        android:id="@+id/searchShowFragment"
+        android:name="io.bidswipe.app.ui.dashboard.SearchShowFragment"
+        android:label="fragment_search_show"
+        tools:layout="@layout/fragment_search_show" />
 
 </navigation>

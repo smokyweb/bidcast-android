@@ -16,9 +16,6 @@ class ActivityFragment : BaseFragment<DashViewModel, FragmentActivityBinding>() 
 
     override fun getBind(inflater: LayoutInflater, view: ViewGroup?) =  FragmentActivityBinding.inflate(inflater,view,false)
 
-//    private lateinit var viewPager: ViewPager2
-//    private lateinit var tabLayout: TabLayout
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 

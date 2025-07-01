@@ -85,6 +85,8 @@ class PurchasesFragment : BaseFragment<DashViewModel, FragmentPurchasesBinding>(
                         bind.recycler.isVisible = true
                     }
 
+                    isLoading = page >= (it.value.totalPage ?: 0)
+
                     purchasesAdapter.notifyDataSetChanged()
 
                 }
