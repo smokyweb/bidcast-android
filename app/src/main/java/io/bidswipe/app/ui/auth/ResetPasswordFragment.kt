@@ -35,7 +35,7 @@ class ResetPasswordFragment : BaseFragment<AuthViewModel,FragmentResetPasswordBi
         email = arguments?.getString("email","").toString()
 
         bind.header.onBackClick{
-            findNavController().popBackStack()
+            findNavController().navigate(ids.goToLoginFragment)
         }
 
         bind.submit.setOnClickListener {

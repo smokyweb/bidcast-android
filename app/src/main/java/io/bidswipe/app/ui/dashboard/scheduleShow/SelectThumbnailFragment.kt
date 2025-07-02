@@ -17,12 +17,12 @@ import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.network.response.GetAllTipsResponse
 import io.bidswipe.app.ui.custom.AppBottomSheet
+import io.bidswipe.app.utils.Alerts
 import io.bidswipe.app.utils.Const
 import io.bidswipe.app.utils.Utils
 import io.bidswipe.app.utils.ids
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request
-import java.io.File
 
 class SelectThumbnailFragment :
     BaseFragment<ScheduleShowViewModel, FragmentSelectThumbnailBinding>() {
@@ -47,14 +47,11 @@ class SelectThumbnailFragment :
 
             bind.img.setImageURI(imageUri)
 
-
             val imagePath = result.getUriFilePath(mCtx, true)
-
 
             if (imagePath != null) {
 
                 viewModel.thumbnail = imagePath
-
 
             }
         }
@@ -96,21 +93,29 @@ class SelectThumbnailFragment :
 
         bind.recycler.adapter = adapter
 
-        val gAdapter = GoodsExampleAdapter(goodsList)
+        val goodsAdapter = GoodsExampleAdapter(goodsList)
 
-        bind.goodsRecycler.adapter = gAdapter
+        bind.goodsRecycler.adapter = goodsAdapter
 
         bind.continueBtn.setOnClickListener {
 
-            if (from == "dash") {
-                findNavController().navigate(ids.selectThumbnail_to_createProductFragment)
-            } else {
-                findNavController().navigate(ids.goToProductTipsFragment)
+            when {
+
+                viewModel.thumbnail.isEmpty() -> {
+                    Alerts.error(mCtx, "Please select ThumbNail")
+                }
+
+                else -> {
+                    if (from == "dash") {
+                        findNavController().navigate(ids.selectThumbnail_to_createProductFragment)
+                    } else {
+                        findNavController().navigate(ids.goToProductTipsFragment)
+                    }
+                }
+
             }
 
         }
-
-
 
         bind.loader.isVisible = true
 
@@ -133,7 +138,7 @@ class SelectThumbnailFragment :
                         goodsList.add(it)
                     }
 
-                    gAdapter.notifyDataSetChanged()
+                    goodsAdapter.notifyDataSetChanged()
 
                     adapter.notifyDataSetChanged()
 

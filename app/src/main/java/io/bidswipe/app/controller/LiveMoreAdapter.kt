@@ -28,14 +28,13 @@ class LiveMoreAdapter(
 		item: LiveMoreOption?
 	) {
 		with(holder) {
-			
-			bind.root.setOnClickListener {
-				mClicks.itemClick(position)
-			}
-
 
             bind.title.text= item?.name
 			bind.icon.setImageResource(item?.image!!)
+
+			bind.root.setOnClickListener {
+				mClicks.itemClick(position, item.name)
+			}
 
 		}
 	}

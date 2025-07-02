@@ -33,6 +33,7 @@ import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request
 import io.bidswipe.app.utils.toListProduct
 import io.bidswipe.app.utils.toScheduleShow
+import io.bidswipe.app.utils.toTutorials
 
 class DashActivity : BaseActivity(), NavController.OnDestinationChangedListener {
 
@@ -168,8 +169,8 @@ class DashActivity : BaseActivity(), NavController.OnDestinationChangedListener 
                        startActivity(this@DashActivity.toListProduct())
                    }
                    1->{
-//                       startActivity(this@DashActivity.toTutorials())
-                       startActivity(this@DashActivity.toScheduleShow(from = "dash"))
+                       startActivity(this@DashActivity.toTutorials())
+//                       startActivity(this@DashActivity.toScheduleShow(from = "dash"))
                    }
                    2 -> {
                        bind.bottomBar.selectedItemId = ids.accountFragment

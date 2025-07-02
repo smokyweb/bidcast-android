@@ -58,6 +58,7 @@ import io.bidswipe.app.utils.Const
 import io.bidswipe.app.utils.Utils
 import io.bidswipe.app.utils.bind
 import io.bidswipe.app.utils.clr
+import io.bidswipe.app.utils.draw
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request
 import io.bidswipe.app.utils.runSafe
@@ -84,6 +85,7 @@ class LiveShowActivity : BaseActivity() {
 
     private var commentList = mutableListOf<CommentModel?>()
     private lateinit var commentAdapter : CommentAdapter
+    private var zoomLevel = 1
 
     private var eventListener = object : ValueEventListener {
         @SuppressLint("NotifyDataSetChanged")
@@ -403,6 +405,36 @@ class LiveShowActivity : BaseActivity() {
             }
         })
 
+        moreSheetBind.zoomInLayout.setOnClickListener {
+            zoomLevel++
+            ZegoExpressEngine.getEngine().setCameraZoomFactor(zoomLevel.toFloat())
+            moreSheet.dismiss()
+        }
+
+        moreSheetBind.micLayout.setOnClickListener {
+            if (ZegoExpressEngine.getEngine().isMicrophoneMuted){
+                ZegoExpressEngine.getEngine().muteMicrophone(false)
+                moreSheetBind.muteIcon.setImageResource(draw.ic_mic)
+            }else{
+                ZegoExpressEngine.getEngine().muteMicrophone(true)
+                moreSheetBind.muteIcon.setImageResource(draw.ic_mute)
+            }
+//            moreSheet.dismiss()
+        }
+
+        moreSheetBind.switchCameraLayout.setOnClickListener {
+            if (isFrontCamera){
+                ZegoExpressEngine.getEngine().useFrontCamera(false)
+                isFrontCamera = false
+
+            }else{
+                ZegoExpressEngine.getEngine().useFrontCamera(true)
+                isFrontCamera = true
+            }
+            moreSheet.dismiss()
+        }
+
+
         moreSheetBind.close.setOnClickListener {
             moreSheet.dismiss()
         }
@@ -658,6 +690,8 @@ class LiveShowActivity : BaseActivity() {
                     Toast.makeText(this, "Login failed. error = " + error, Toast.LENGTH_LONG).show()
                 }
             })
+
+
     }
 
     fun logoutRoom() {

@@ -39,26 +39,28 @@ class OTPFragment : BaseFragment<AuthViewModel,FragmentOTPBinding>() {
             findNavController().popBackStack()
         }
 
+        bind.layout.setOnClickListener {
+            hideKeyboard(it)
+        }
+
+
         bind.submit.setOnClickListener {
 
-            bind.submit.setOnClickListener {
+            when {
+                bind.otp.value().isEmpty() -> {
+                    Alerts.error(mCtx, "please enter the otp sent to your email")
+                    bind.otp.requestFocus()
+                    showKeyboard(bind.otp)
+                }
 
-                when {
-                    bind.otp.value().isEmpty() -> {
-                        Alerts.error(mCtx, "please enter the otp sent to your email")
-                        bind.otp.requestFocus()
-                        showKeyboard(bind.otp)
-                    }
-
-                    else -> {
-                        hideKeyboard(it)
-                        bind.loader.isVisible = true
-                        viewModel.verifyOtp(email.request(), bind.otp.value().request())
-                    }
-
+                else -> {
+                    hideKeyboard(it)
+                    bind.loader.isVisible = true
+                    viewModel.verifyOtp(email.request(), bind.otp.value().request())
                 }
 
             }
+
 
         }
 

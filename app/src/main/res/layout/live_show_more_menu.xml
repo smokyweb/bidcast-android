@@ -118,6 +118,7 @@
 
 
         <LinearLayout
+            android:id="@+id/switch_camera_layout"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
@@ -149,6 +150,7 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/zoomInLayout"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
@@ -190,6 +192,7 @@
             android:padding="@dimen/margin">
 
             <ImageView
+                android:id="@+id/mute_icon"
                 android:layout_width="28dp"
                 android:layout_height="28dp"
                 android:layout_marginBottom="@dimen/half_margin"

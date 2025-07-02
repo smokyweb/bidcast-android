@@ -37,6 +37,10 @@ class ForgotPasswordFragment : BaseFragment<AuthViewModel, FragmentForgotPasswor
             findNavController().popBackStack()
         }
 
+        bind.layout.setOnClickListener {
+            hideKeyboard(it)
+        }
+
         bind.submit.setOnClickListener {
 
             when {

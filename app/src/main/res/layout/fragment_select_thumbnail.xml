@@ -72,8 +72,6 @@
 
 				</com.google.android.material.card.MaterialCardView>
 
-
-
 				<LinearLayout
 					android:id="@+id/pickImageLayout"
 					android:layout_width="match_parent"
@@ -100,9 +98,6 @@
 						android:layout_marginBottom="@dimen/half_margin"
 						android:text="recommended_size_1280_x_720px" />
 				</LinearLayout>
-
-
-
 
 			</LinearLayout>
 
@@ -188,6 +183,5 @@
 		android:layout_width="match_parent"
 		android:layout_height="match_parent"
 		android:visibility="gone"/>
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>
