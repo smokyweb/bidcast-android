@@ -4,10 +4,13 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import io.bidswipe.app.model.LiveMoreOption
+import io.bidswipe.app.model.TutorialShowModel
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.network.repository.DashRepository
 import io.bidswipe.app.network.response.CheckKycResponse
 import io.bidswipe.app.network.response.CommonResponse
+import io.bidswipe.app.network.response.CreateShowResponse
 import io.bidswipe.app.network.response.FetchBidResponse
 import io.bidswipe.app.network.response.GenerateTokenResponse
 import io.bidswipe.app.network.response.GetCategoryResponse
@@ -31,7 +34,15 @@ import javax.inject.Inject
 
 @HiltViewModel
 class DashViewModel @Inject constructor(val repo: DashRepository) : ViewModel() {
+
+	var showDate  = ""
+	var showTime  = ""
+	var showList = mutableListOf<GetPrepareStepResponse.Data?>()
+	var currentStep = 0
+
 	var lastIndex = MutableLiveData(0)
+
+	var showData = MutableLiveData<TutorialShowModel>()
 
 	private var _logoutResponse = MutableLiveData<Resource<CommonResponse>>()
 	val logoutRepo: MutableLiveData<Resource<CommonResponse>>
@@ -96,7 +107,6 @@ class DashViewModel @Inject constructor(val repo: DashRepository) : ViewModel() 
 		_getPrepareStepResponse.value = repo.getPrepareStep()
 	}
 
-
 	private var _getLiveShowResponse = MutableLiveData<Resource<GetMyShowResponse>>()
 	val getLiveShowRepo: MutableLiveData<Resource<GetMyShowResponse>>
 		get() = _getLiveShowResponse
@@ -139,8 +149,6 @@ class DashViewModel @Inject constructor(val repo: DashRepository) : ViewModel() 
 	) = viewModelScope.launch {
 		_addPaymentCardResponse.value = repo.addPaymentCard(cardToken)
 	}
-
-
 
 	private var _generateTokenResponse = MutableLiveData<Resource<GenerateTokenResponse>>()
 	val generateTokenRepo: MutableLiveData<Resource<GenerateTokenResponse>>
@@ -271,6 +279,22 @@ class DashViewModel @Inject constructor(val repo: DashRepository) : ViewModel() 
 		page : RequestBody?
 	) = viewModelScope.launch {
 		_getMyInventoryResponse.value = repo.getMyInventory(status,page)
+	}
+
+	private var _storeScheduleShowResponse = MutableLiveData<Resource<CreateShowResponse>>()
+	val storeScheduleShowRepo: MutableLiveData<Resource<CreateShowResponse>>
+		get() = _storeScheduleShowResponse
+
+	fun storeScheduleShow(
+		title: RequestBody?,
+		date: RequestBody?,
+		time: RequestBody?,
+		categoryId: RequestBody?,
+		auctionTypeId : RequestBody?,
+		thumbnails: List<MultipartBody.Part?>?,
+		productIds: List<Int?>
+	) = viewModelScope.launch {
+		_storeScheduleShowResponse.value = repo.storeScheduleShow(title,date,time,categoryId,auctionTypeId,thumbnails,productIds)
 	}
 
 }

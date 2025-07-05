@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.view.View
 import androidx.activity.viewModels
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.view.isVisible
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
 import androidx.navigation.fragment.NavHostFragment
@@ -20,19 +19,16 @@ import io.bidswipe.app.databinding.ActivityDashBinding
 import io.bidswipe.app.interfaces.AlertClicks
 import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.model.SellModel
-import io.bidswipe.app.model.StreamModel
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.utils.Alerts
 import io.bidswipe.app.utils.Const
 import io.bidswipe.app.utils.Prefs
-import io.bidswipe.app.utils.Utils
 import io.bidswipe.app.utils.bind
 import io.bidswipe.app.utils.ids
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request
 import io.bidswipe.app.utils.toListProduct
-import io.bidswipe.app.utils.toScheduleShow
 import io.bidswipe.app.utils.toTutorials
 
 class DashActivity : BaseActivity(), NavController.OnDestinationChangedListener {
@@ -58,7 +54,7 @@ class DashActivity : BaseActivity(), NavController.OnDestinationChangedListener 
         bind.bottomBar.setupWithNavController(navController)
         setupImageSheet()
 
-        log("USER NEME : ${userName.replace(" " , ".") }  $userId   $userImage")
+        log("USER NAME : ${userName.replace(" " , ".") }  $userId   $userImage")
 
         bind.bottomBar.setOnItemSelectedListener { menuItem ->
             if (menuItem.itemId != ids.sellFragment) viewModel.lastIndex.value = menuItem.itemId
@@ -245,13 +241,11 @@ class DashActivity : BaseActivity(), NavController.OnDestinationChangedListener 
                 Alerts.log(javaClass.simpleName, "Fetching FCM registration token failed ${it.exception}")
                 return@addOnCompleteListener
             }
-            val t = it.result.toString()
+            val deviceToken = it.result.toString()
 
-            log(t)
-           val a= token(t)
-            if (Prefs(context).fcmToken() != t) {
-                Prefs(context).putString(Prefs.PUSH_TOKEN, t)
-                Alerts.log(javaClass.simpleName, "device token $t")
+            if (Prefs(context).fcmToken() != deviceToken) {
+                Prefs(context).putString(Prefs.PUSH_TOKEN, deviceToken)
+                Alerts.log(javaClass.simpleName, "device token $deviceToken")
             } else {
                 Alerts.log(javaClass.simpleName, "device token not refresh  $token")
             }

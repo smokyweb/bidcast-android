@@ -7,6 +7,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.network.repository.DashRepository
 import io.bidswipe.app.network.response.CommonResponse
+import io.bidswipe.app.network.response.CreateShowResponse
 import io.bidswipe.app.network.response.GetAllTipsResponse
 import io.bidswipe.app.network.response.GetAuctionTypeResponse
 import io.bidswipe.app.network.response.GetCategoryResponse
@@ -26,9 +27,8 @@ class ScheduleShowViewModel @Inject constructor(val repo: DashRepository) : View
     var auctionId =""
     var thumbnail =""
 
-
-    private var _storeScheduleShowResponse = MutableLiveData<Resource<CommonResponse>>()
-    val storeScheduleShowRepo: MutableLiveData<Resource<CommonResponse>>
+    private var _storeScheduleShowResponse = MutableLiveData<Resource<CreateShowResponse>>()
+    val storeScheduleShowRepo: MutableLiveData<Resource<CreateShowResponse>>
         get() = _storeScheduleShowResponse
 
     fun storeScheduleShow(
@@ -60,7 +60,6 @@ class ScheduleShowViewModel @Inject constructor(val repo: DashRepository) : View
     ) = viewModelScope.launch {
         _getAuctionTypeResponse.value = repo.getAuctionType()
     }
-
 
     private var _getAllTipsResponse = MutableLiveData<Resource<GetAllTipsResponse>>()
     val getAllTipsRepo: MutableLiveData<Resource<GetAllTipsResponse>>

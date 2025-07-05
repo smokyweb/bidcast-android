@@ -70,7 +70,7 @@ class ShowTitleFragment : BaseFragment<ScheduleShowViewModel,FragmentShowTitleBi
                      viewModel.showTitle = bind.showTitle.value()
                     hideKeyboard(it)
 
-                    if (from =="tips"){
+                    if (from =="tips" || from =="showTutorial" ){
                         findNavController().navigate(ids.goToSelectCategoryFragment)
 
                     }else{

@@ -22,7 +22,7 @@ data class GetPrepareStepResponse(
         @SerializedName("id")
         val id: Int?,
         @SerializedName("status")
-        val status: String?,
+        var status: String?,
         @SerializedName("title")
         val title: String?,
         var selected : Boolean? = false

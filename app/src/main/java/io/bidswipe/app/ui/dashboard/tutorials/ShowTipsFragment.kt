@@ -1,5 +1,6 @@
 package io.bidswipe.app.ui.dashboard.tutorials
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -12,6 +13,8 @@ import io.bidswipe.app.base.BaseFragment
 import io.bidswipe.app.controller.ProductTipsPagerAdapter
 import io.bidswipe.app.databinding.FragmentShowTipsBinding
 import io.bidswipe.app.ui.dashboard.DashViewModel
+import io.bidswipe.app.ui.dashboard.scheduleShow.LiveShowActivity
+import io.bidswipe.app.utils.goToAddCard
 import io.bidswipe.app.utils.ids
 import io.bidswipe.app.utils.string
 import io.bidswipe.app.utils.toScheduleShow
@@ -27,23 +30,32 @@ class ShowTipsFragment : BaseFragment<DashViewModel, FragmentShowTipsBinding>() 
     private lateinit var pagerAdapter: ProductTipsPagerAdapter
 
     private var type = ""
+    private var showId = ""
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         type = arguments?.getString("type", "").toString()
+        showId = arguments?.getString("showId", "").toString()
 
-        if (type == "liveTips") {
-            bind.header.setHeaderText("Going Live Tips")
-        }else if (type == "bringInBuyers"){
-            bind.header.setHeaderText("Bring In Buyers")
-            bind.continueBtn.setBackgroundColor(ContextCompat.getColor(mCtx,R.color.secondary))
+        when(type){
+            "liveTips" ->{
+                bind.header.setHeaderText("Going Live Tips")
+            }
+
+            "bringInBuyers"->{
+                bind.header.setHeaderText("Bring In Buyers")
+                bind.continueBtn.setBackgroundColor(ContextCompat.getColor(mCtx,R.color.secondary))
+            }
+            "goLive" ->{
+                bind.header.setHeaderText("Live Stream Tips")
+                bind.continueBtn.setBackgroundColor(ContextCompat.getColor(mCtx,R.color.secondary))
+            }
         }
 
         bind.header.onBackClick {
             findNavController().popBackStack()
         }
-
 
         bind.stepProgress.max = productTipList.size
 
@@ -77,11 +89,18 @@ class ShowTipsFragment : BaseFragment<DashViewModel, FragmentShowTipsBinding>() 
             if (bind.pager.currentItem == productTipList.size - 1) {
                 when (type) {
                     "showTips" -> {
-                        startActivity(mCtx.toScheduleShow("tips"))
+                       val a = activity as TutorialsActivity
+
+                        a.scheduleShowLauncher.launch( mCtx.toScheduleShow("showTutorial"))
+
+
                         findNavController().popBackStack()
                     }
                     "liveTips" -> {
                         findNavController().navigate(ids.goToLiveRehearsalFragment)
+                    }
+                    "goLive" -> {
+                        startActivity(Intent(mCtx, LiveShowActivity::class.java).putExtra("showId" ,showId))
                     }
                     else -> {
                         findNavController().navigate(ids.goToReferFriendFragment)

@@ -81,7 +81,17 @@
         android:id="@+id/liveRehearsalFragment"
         android:name="io.bidswipe.app.ui.dashboard.tutorials.LiveRehearsalFragment"
         android:label="fragment_live_rehearsal"
-        tools:layout="@layout/fragment_live_rehearsal" />
+        tools:layout="@layout/fragment_live_rehearsal" >
+        <action
+            android:id="@+id/liveRehearsalFragment_to_prepareYourShowFragment"
+            app:destination="@id/prepareYourShowFragment"
+            app:popUpToInclusive="true"
+            app:popUpTo="@id/prepareYourShowFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"/>
+    </fragment>
     <fragment
         android:id="@+id/referFriendFragment"
         android:name="io.bidswipe.app.ui.dashboard.tutorials.ReferFriendFragment"
@@ -99,5 +109,15 @@
         android:id="@+id/completeYourProfileFragment"
         android:name="io.bidswipe.app.ui.dashboard.tutorials.CompleteYourProfileFragment"
         android:label="fragment_complete_your_profile"
-        tools:layout="@layout/fragment_complete_your_profile" />
+        tools:layout="@layout/fragment_complete_your_profile" >
+        <action
+            android:id="@+id/action_completeYourProfileFragment_to_prepareYourShowFragment"
+            app:destination="@id/prepareYourShowFragment"
+            app:popUpToInclusive="true"
+            app:popUpTo="@id/prepareYourShowFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"/>
+    </fragment>
 </navigation>

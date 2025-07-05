@@ -1,5 +1,7 @@
 package io.bidswipe.app.ui.dashboard.scheduleShow
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -92,8 +94,16 @@ class SelectShowTimeFragment : BaseFragment<ScheduleShowViewModel,FragmentSelect
                     Alerts.error(mCtx, "Please select a time for show")
                 }
 
-                else ->{
-                    if (from =="dash") findNavController().navigate(R.id.ShowTimeFragment_to_selectCategoryFragment)
+                else -> {
+                    if (from == "dash") {
+                        findNavController().navigate(R.id.ShowTimeFragment_to_selectCategoryFragment)
+                    } else {
+                        val data = Intent()
+                        data.putExtra("date", viewModel.date)
+                        data.putExtra("time", viewModel.time)
+                        activity?.setResult(Activity.RESULT_OK, data)
+                        finish()
+                    }
                 }
 
             }

@@ -6,6 +6,7 @@ import io.bidswipe.app.network.response.CheckKycResponse
 import io.bidswipe.app.network.response.CommonResponse
 import io.bidswipe.app.network.response.CreateBidResponse
 import io.bidswipe.app.network.response.CreateOrderResponse
+import io.bidswipe.app.network.response.CreateShowResponse
 import io.bidswipe.app.network.response.FAQResponse
 import io.bidswipe.app.network.response.FetchBidResponse
 import io.bidswipe.app.network.response.FetchReferralResponse
@@ -162,7 +163,7 @@ interface ApiInterface {
 		@Part("auction_type_id") auctionTypeId: RequestBody?,
 		@Part thumbnails: List<MultipartBody.Part?>?,
 		@Part("product_ids[]") productIds: List<Int?>
-	): CommonResponse
+	): CreateShowResponse
 	
 	@GET("api/get-auction-type")
 	suspend fun getAuctionType(): GetAuctionTypeResponse

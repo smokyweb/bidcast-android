@@ -18,6 +18,7 @@ import io.bidswipe.app.base.BaseFragment
 import io.bidswipe.app.databinding.FragmentLiveRehearsalBinding
 import io.bidswipe.app.ui.dashboard.DashViewModel
 import io.bidswipe.app.utils.finish
+import io.bidswipe.app.utils.ids
 
 class LiveRehearsalFragment : BaseFragment<DashViewModel,FragmentLiveRehearsalBinding>() {
     override fun getModel(): Class<DashViewModel> = DashViewModel::class.java
@@ -67,13 +68,17 @@ class LiveRehearsalFragment : BaseFragment<DashViewModel,FragmentLiveRehearsalBi
 
         }
         bind.cutButton.setOnClickListener{
-            findNavController().popBackStack()
+            findNavController().navigate(ids.liveRehearsalFragment_to_prepareYourShowFragment)
         }
 
         bind.continueBtn.setOnClickListener {
-            findNavController().popBackStack()
+            viewModel.showList[0]?.status = "completed"
+            viewModel.showList[1]?.status = "completed"
+            viewModel.showList[2]?.status = "completed"
+            viewModel.showList[3]?.status = "locked"
+            viewModel.currentStep = 3
+            findNavController().navigate(ids.liveRehearsalFragment_to_prepareYourShowFragment)
         }
-
 
     }
 

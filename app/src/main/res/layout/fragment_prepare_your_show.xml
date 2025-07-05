@@ -30,7 +30,6 @@
 		app:trackCornerRadius="6dp"
 		app:trackThickness="8dp" />
 
-
 	<androidx.recyclerview.widget.RecyclerView
 		android:id="@+id/recycler"
 		android:layout_width="match_parent"
@@ -61,7 +60,6 @@
 			app:drawableStartCompat="@drawable/ic_question"
 			app:drawableTint="@color/secondary" />
 
-
 	</LinearLayout>
 
 	<io.bidswipe.app.ui.custom.LoaderView
@@ -69,6 +67,5 @@
 		android:layout_width="match_parent"
 		android:layout_height="match_parent"
 		android:visibility="gone"/>
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

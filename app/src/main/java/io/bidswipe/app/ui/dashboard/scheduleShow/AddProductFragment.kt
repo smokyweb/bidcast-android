@@ -1,6 +1,8 @@
 package io.bidswipe.app.ui.dashboard.scheduleShow
 
 import android.annotation.SuppressLint
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -13,6 +15,7 @@ import io.bidswipe.app.controller.ProductAdapter
 import io.bidswipe.app.databinding.FragmentAddProductBinding
 import io.bidswipe.app.interfaces.AlertClicks
 import io.bidswipe.app.interfaces.RecyclerClicks
+import io.bidswipe.app.model.TutorialShowModel
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.network.response.GetProductsResponse
 import io.bidswipe.app.ui.custom.AppBottomSheet
@@ -34,6 +37,8 @@ class AddProductFragment : BaseFragment<ScheduleShowViewModel,FragmentAddProduct
     private var productList = mutableListOf<GetProductsResponse.Data?>()
     private var imagePartList = mutableListOf<MultipartBody.Part?>()
 
+    private var from = ""
+
     private var mClick = object : RecyclerClicks {
         override fun itemClick(pos: Int, status: String?) {
 
@@ -48,6 +53,8 @@ class AddProductFragment : BaseFragment<ScheduleShowViewModel,FragmentAddProduct
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        from = activity?.intent?.getStringExtra("from") ?:""
+
         bind.header.onBackClick{
             findNavController().popBackStack()
         }
@@ -59,8 +66,8 @@ class AddProductFragment : BaseFragment<ScheduleShowViewModel,FragmentAddProduct
         bind.finishBtn.setOnClickListener {
 
             bind.loader.isVisible = true
-           var imagePartList = mutableListOf<MultipartBody.Part?>()
-           var productIdList = mutableListOf<Int>()
+            var imagePartList = mutableListOf<MultipartBody.Part?>()
+            var productIdList = mutableListOf<Int>()
 
             productList.forEach {
 
@@ -80,19 +87,38 @@ class AddProductFragment : BaseFragment<ScheduleShowViewModel,FragmentAddProduct
             imagePartList.add(Utils.imagePart(
                 "thumbnail[]",
                 viewModel.thumbnail,
-                 File(viewModel.thumbnail)
+                File(viewModel.thumbnail)
             ))
 
+            if (from == "showTutorial"){
 
-            viewModel.storeScheduleShow(
-                title = viewModel.showTitle.request(),
-                date = viewModel.date.request(),
-                time = viewModel.time.request(),
-                categoryId = viewModel.categoryId.request(),
-                auctionTypeId = viewModel.auctionId.request(),
-                thumbnails = imagePartList,
-                productIds = productIdList
-            )
+                val data = Intent()
+                data.putExtra("title" , TutorialShowModel(viewModel.showTitle,viewModel.categoryId,viewModel.auctionId,viewModel.thumbnail,productIdList.joinToString(",")))
+//                data.putExtra("categoryId" , )
+//                data.putExtra("auctionTypeId" , )
+//                data.putExtra("thumbnails" , )
+//                data.putExtra("productIds" , )
+                activity?.setResult(Activity.RESULT_OK, data)
+                finish()
+
+
+
+            }else{
+                viewModel.storeScheduleShow(
+                    title = viewModel.showTitle.request(),
+                    date = viewModel.date.request(),
+                    time = viewModel.time.request(),
+                    categoryId = viewModel.categoryId.request(),
+                    auctionTypeId = viewModel.auctionId.request(),
+                    thumbnails = imagePartList,
+                    productIds = productIdList
+                )
+            }
+
+
+
+
+
 
         }
 
