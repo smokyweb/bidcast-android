@@ -1,7 +1,6 @@
 package io.bidswipe.app.ui.dashboard.more
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -23,7 +22,6 @@ class AboutUsFragment : BaseFragment<MoreViewModel,FragmentAboutUsBinding>() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-
         bind.header.onBackClick {
 
             finish()
@@ -39,7 +37,7 @@ class AboutUsFragment : BaseFragment<MoreViewModel,FragmentAboutUsBinding>() {
                 is Resource.Success ->{
                     bind.loader.isVisible = false
                     viewModel.getTermsConditionsRepo.value = null
-                    bind.content.setHtmlFromString(it.value.data?.pageContent ?: "",false)
+                    bind.content.setHtmlFromString(it.value.message ?: "",false)
                 }
                 is Resource.Error ->{
                     bind.loader.isVisible = false

@@ -4,26 +4,22 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
     tools:context=".ui.dashboard.sellerProfile.SellerProfileActivity">
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:fitsSystemWindows="true"
         tools:context=".ui.dashboard.sellerProfile.SellerProfileActivity">
 
         <com.google.android.material.appbar.AppBarLayout
             android:id="@+id/app_bar"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:fitsSystemWindows="true">
+            android:layout_height="wrap_content">
 
             <com.google.android.material.appbar.CollapsingToolbarLayout
                 android:id="@+id/toolbar_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:fitsSystemWindows="true"
                 app:layout_scrollFlags="scroll|exitUntilCollapsed"
                 app:toolbarId="@+id/toolbar"
                 app:contentScrim="@color/surface"
@@ -66,7 +62,7 @@
                             android:layout_width="48dp"
                             android:layout_height="48dp"
                             android:layout_marginStart="@dimen/margin"
-                            android:layout_marginTop="32dp"
+                            android:layout_marginTop="38dp"
                             android:alpha="0.7"
                             android:backgroundTint="@color/background"
                             app:cardCornerRadius="100dp"
@@ -314,6 +310,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:layout_collapseMode="pin"
+                    android:paddingTop="38dp"
                     app:navigationIcon="@null"
                     android:visibility="gone"
                     app:popupTheme="@style/Theme.Bidswipe.PopupOverlay">

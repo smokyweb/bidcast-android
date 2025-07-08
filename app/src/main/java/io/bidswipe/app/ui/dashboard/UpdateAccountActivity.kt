@@ -119,9 +119,7 @@ class UpdateAccountActivity : BaseActivity() {
                         })
                     }
                 }
-
                 else -> {}
-
             }
         }
 

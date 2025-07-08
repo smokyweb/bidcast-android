@@ -9,6 +9,7 @@ import androidx.core.text.buildSpannedString
 import androidx.core.view.isVisible
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.tabs.TabLayoutMediator
+import com.gyf.immersionbar.ktx.immersionBar
 import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseActivity
 import io.bidswipe.app.controller.ViewPagerAdapter
@@ -19,6 +20,7 @@ import io.bidswipe.app.network.Resource
 import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.utils.Alerts
 import io.bidswipe.app.utils.bind
+import io.bidswipe.app.utils.clr
 import io.bidswipe.app.utils.loadUrl
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request
@@ -37,6 +39,15 @@ class SellerProfileActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(bind.root)
+
+        immersionBar {
+            transparentBar()
+            navigationBarDarkIcon(true)
+            navigationBarColor(clr.surface)
+            supportActionBar(false)
+            fitsSystemWindows(false)
+            keyboardEnable(true)
+        }
 
         bind.appBar.addOnOffsetChangedListener(AppBarLayout.OnOffsetChangedListener { _, verticalOffset ->
             val totalScrollRange = bind.appBar.totalScrollRange

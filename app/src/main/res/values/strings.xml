@@ -91,7 +91,7 @@
     <string name="password">Password</string>
     <string name="pick_a_date_and_time_for_your_live_show">Pick a date and time for your live show</string>
     <string name="please_enter_the_email_address_associated_with_your_account">Please enter the email address associated with your account.</string>
-    <string name="privacy_policy">Privacy Policy</string>
+    <string name="privacy_policy">Privacy Policy </string>
     <string name="products">Products</string>
     <string name="publish">Publish</string>
     <string name="purchases">Purchases</string>
@@ -136,7 +136,7 @@
     <string name="success_please_enter_your_new_password_below">Success! Please enter your new password below.</string>
     <string name="tap_to_upload_thumbnail">Tap to upload thumbnail</string>
     <string name="tell_us_about_yourself">Tell us about yourself</string>
-    <string name="terms_of_service">| Terms of Service</string>
+    <string name="terms_of_service"> | Terms of Service</string>
     <string name="this_is_my_message">This is my message</string>
     <string name="time_to_prepare_your_items_properly">Time to prepare your items properly</string>
     <string name="tips_for_a_great_thumbnail">Tips for a Great Thumbnail</string>

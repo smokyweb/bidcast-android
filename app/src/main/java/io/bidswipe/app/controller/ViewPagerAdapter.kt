@@ -11,6 +11,8 @@ import io.bidswipe.app.ui.dashboard.SavedItemsFragment
 import io.bidswipe.app.ui.dashboard.sellerHub.OverAllFragment
 import io.bidswipe.app.ui.dashboard.sellerHub.TransactionsFragment
 import io.bidswipe.app.ui.dashboard.sellerHub.WalletViewFragment
+import io.bidswipe.app.ui.dashboard.sellerProfile.ReviewListFragment
+import io.bidswipe.app.ui.dashboard.sellerProfile.SellerShowFragment
 import io.bidswipe.app.ui.dashboard.sellerProfile.ShopFragment
 
 class ViewPagerAdapter(fragmentActivity: FragmentActivity , type : String) : FragmentStateAdapter(fragmentActivity) {
@@ -39,8 +41,8 @@ class ViewPagerAdapter(fragmentActivity: FragmentActivity , type : String) : Fra
     }else {
         listOf(
            ShopFragment(),
-            BidsFragment(),
-            OfferFragment(),
+            SellerShowFragment(),
+            ReviewListFragment(),
             PurchasesFragment()
         )
     }

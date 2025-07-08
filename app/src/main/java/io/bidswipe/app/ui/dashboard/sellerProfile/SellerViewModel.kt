@@ -8,6 +8,7 @@ import io.bidswipe.app.network.Resource
 import io.bidswipe.app.network.repository.DashRepository
 import io.bidswipe.app.network.response.CommonResponse
 import io.bidswipe.app.network.response.FollowUnfollowResponse
+import io.bidswipe.app.network.response.GetMyShowResponse
 import io.bidswipe.app.network.response.GetProductsResponse
 import io.bidswipe.app.network.response.GetUserProfileResponse
 import kotlinx.coroutines.launch
@@ -55,6 +56,16 @@ class SellerViewModel  @Inject constructor(val repo: DashRepository) : ViewModel
         liveUserId : RequestBody?
     ) = viewModelScope.launch {
         _notifyLiveUserResponse.value = repo.notifyLiveUser(liveUserId)
+    }
+
+    private var _getMyScheduledShowResponse = MutableLiveData<Resource<GetMyShowResponse>>()
+    val getMyScheduledShowRepo: MutableLiveData<Resource<GetMyShowResponse>>
+        get() = _getMyScheduledShowResponse
+
+    fun getMyScheduledShow(
+        type : RequestBody? = null
+    ) = viewModelScope.launch {
+        _getMyScheduledShowResponse.value = repo.getMyScheduledShow(type)
     }
 
 }
