@@ -32,6 +32,12 @@
 
 	</androidx.coordinatorlayout.widget.CoordinatorLayout>
 
+	<io.bidswipe.app.ui.custom.LoaderView
+		android:id="@+id/loader"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:visibility="gone"/>
+
 	<com.google.android.material.bottomnavigation.BottomNavigationView
 		android:id="@+id/bottomBar"
 		style="@style/bottomNavigationStyle"

@@ -4,13 +4,19 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseFragment
+import io.bidswipe.app.controller.FeaturedAdapter
+import io.bidswipe.app.controller.TeamAdapter
 import io.bidswipe.app.databinding.FragmentAboutUsBinding
 import io.bidswipe.app.interfaces.AlertClicks
+import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.network.Resource
+import io.bidswipe.app.network.response.AboutUsResponse
 import io.bidswipe.app.ui.custom.AppBottomSheet
+import io.bidswipe.app.utils.draw
 import io.bidswipe.app.utils.finish
 import io.bidswipe.app.utils.parse
 
@@ -18,6 +24,22 @@ class AboutUsFragment : BaseFragment<MoreViewModel,FragmentAboutUsBinding>() {
     override fun getModel(): Class<MoreViewModel> = MoreViewModel::class.java
 
     override fun getBind(inflater: LayoutInflater, view: ViewGroup?) = FragmentAboutUsBinding.inflate(inflater,view,false)
+
+    private lateinit var featureAdapter : FeaturedAdapter
+
+    private lateinit var teamAdapter : TeamAdapter
+
+    private var featureList = mutableListOf<AboutUsResponse.Data.Feature?>()
+
+    private var teamList = mutableListOf<AboutUsResponse.Data.Team?>()
+
+    private var  mClick = object : RecyclerClicks{
+        override fun itemClick(pos: Int, status: String?) {
+
+
+        }
+
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -28,6 +50,12 @@ class AboutUsFragment : BaseFragment<MoreViewModel,FragmentAboutUsBinding>() {
 
         }
 
+        featureAdapter = FeaturedAdapter(featureList,mClick)
+        bind.gridRecycler.adapter = featureAdapter
+
+        teamAdapter = TeamAdapter(teamList,mClick)
+        bind.teamRecycler.adapter = teamAdapter
+
         bind.loader.isVisible = true
 
         viewModel.aboutUs()
@@ -37,7 +65,46 @@ class AboutUsFragment : BaseFragment<MoreViewModel,FragmentAboutUsBinding>() {
                 is Resource.Success ->{
                     bind.loader.isVisible = false
                     viewModel.getTermsConditionsRepo.value = null
-                    bind.content.setHtmlFromString(it.value.message ?: "",false)
+
+                    val mData = it.value.data
+                    bind.mission.text = mData?.mission
+
+                    mData?.impact?.forEach {
+                        when(it?.label){
+                            "Users" ->{
+
+                                bind.users.text = it.value
+
+                            }
+
+                            "Auction" ->{
+                                bind.auctions.text = it.value
+                            }
+
+                            "Sale" ->{
+                                bind.sales.text = it.value
+                            }
+                        }
+                    }
+
+                    bind.email.title.text = mData?.contactEmail
+                    bind.email.icon.setImageDrawable(ContextCompat.getDrawable(mCtx, draw.ic_mail))
+                    bind.phoneNumber.title.text = mData?.contactPhone
+                    bind.phoneNumber.icon.setImageDrawable(ContextCompat.getDrawable(mCtx, draw.ic_phone))
+
+                    bind.email.subTitle.isVisible = false
+                    bind.phoneNumber.subTitle.isVisible = false
+
+                    if (mData?.team != null){
+                        teamList.addAll(mData.team)
+                    }
+
+                    if (mData?.features != null){
+                        featureList.addAll(mData.features)
+                    }
+                    featureAdapter.notifyDataSetChanged()
+                    teamAdapter.notifyDataSetChanged()
+
                 }
                 is Resource.Error ->{
                     bind.loader.isVisible = false

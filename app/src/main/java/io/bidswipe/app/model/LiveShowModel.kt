@@ -8,7 +8,7 @@ data class LiveShowModel(
     var seller: Seller?= null,
     var showDetail: String?= null,
     var thumbnail: String?= null,
-    var viewerCount: String?= null,
+    var viewerCount: Int?= null,
     var highestBid: String?= null,
     var isLive: Boolean?= null,
     var time: String?= null,

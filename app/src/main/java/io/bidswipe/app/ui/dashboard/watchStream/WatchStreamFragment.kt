@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
+import androidx.viewpager2.widget.ViewPager2
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
@@ -24,9 +25,11 @@ import im.zego.zegoexpress.entity.ZegoUser
 import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseFragment
 import io.bidswipe.app.controller.CommentAdapter
+import io.bidswipe.app.controller.StreamPagerAdapter
 import io.bidswipe.app.databinding.FragmentWatchStreamBinding
 import io.bidswipe.app.interfaces.AlertClicks
 import io.bidswipe.app.model.CommentModel
+import io.bidswipe.app.model.LiveShowModel
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.utils.Const
@@ -82,20 +85,23 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
         bind.recycler.adapter = commentAdapter
 
 
-        Const.fireBaseRef.getReference(Const.LIVE_SESSIONS).child(roomID).child("product")
-            .child("status").addValueEventListener(object : ValueEventListener {
+        Const.fireBaseRef.getReference(Const.LIVE_SESSIONS).child(roomID).addValueEventListener(object : ValueEventListener {
                 @SuppressLint("NotifyDataSetChanged")
                 override fun onDataChange(snapshot: DataSnapshot) {
 
-                    log("Value : ${snapshot.value}")
+                   val data = snapshot.getValue(LiveShowModel::class.java)
 
-                    if (snapshot.value == "sold") {
+                    bind.liveCount.text = data?.viewerCount.toString()
+
+                    if (data?.product?.status == "sold") {
                         bind.soldLayout.isVisible = true
                         bind.productLayout.isVisible = false
                     } else {
                         bind.soldLayout.isVisible = false
                         bind.productLayout.isVisible = true
                     }
+
+
                 }
 
                 override fun onCancelled(error: DatabaseError) {

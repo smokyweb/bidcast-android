@@ -15,7 +15,6 @@
         android:layout_height="28dp"
         android:layout_marginBottom="@dimen/half_margin"
         android:src="@drawable/search"
-        app:tint="@color/primary"
         app:layout_constraintBottom_toTopOf="@+id/view"
         app:layout_constraintEnd_toEndOf="@+id/view"
         app:layout_constraintStart_toStartOf="@+id/view" />

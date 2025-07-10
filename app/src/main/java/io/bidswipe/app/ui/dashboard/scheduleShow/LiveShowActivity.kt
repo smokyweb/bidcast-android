@@ -92,11 +92,17 @@ class LiveShowActivity : BaseActivity() {
         override fun onDataChange(snapshot: DataSnapshot) {
             log("Value : ${snapshot.value}")
 
-            if (snapshot.value == "sold") {
+            val data = snapshot.getValue(LiveShowModel::class.java)
 
+            bind.liveCount.text = data?.viewerCount.toString()
+
+           /* if (data?.product?.status == "sold") {
+                bind.soldLayout.isVisible = true
+                bind.productLayout.isVisible = false
             } else {
-
-            }
+                bind.soldLayout.isVisible = false
+                bind.productLayout.isVisible = true
+            }*/
 
         }
 
@@ -249,7 +255,7 @@ class LiveShowActivity : BaseActivity() {
                             startLiveDurationTimer()
 
                             startUpdatingFirebaseEvery5Minutes()
-                            Const.fireBaseRef.getReference(Const.LIVE_SESSIONS).child(roomID).child("product").child("status").addValueEventListener(eventListener)
+                            Const.fireBaseRef.getReference(Const.LIVE_SESSIONS).child(roomID).addValueEventListener(eventListener)
 
                             bind.startBtn.isVisible = false
                         } catch (e: Exception) {
@@ -765,10 +771,10 @@ class LiveShowActivity : BaseActivity() {
             seller = seller,
             showDetail = "",
             thumbnail = data?.thumbnail?.get(0) ?:"",
-            viewerCount = "",
+            viewerCount = 1,
             highestBid = "",
             isLive = true,
-            time = Utils.getTimeFromTimestamp(System.currentTimeMillis()/1000,"yyyy-MM-dd_HH:mm:ss_a"),
+            time = Utils.getTimeFromTimestamp(System.currentTimeMillis()/1000,"yyyy-MM-dd_hh:mm:ss_a"),
             showId = showId
             )
 
@@ -783,7 +789,7 @@ class LiveShowActivity : BaseActivity() {
         runnable = object : Runnable {
             override fun run() {
                 val updateValue = System.currentTimeMillis()
-                Const.fireBaseRef.getReference(Const.LIVE_SESSIONS).child(roomID).child("time").setValue(Utils.getTimeFromTimestamp(System.currentTimeMillis()/1000,"yyyy-MM-dd_HH:mm:ss_a"))
+                Const.fireBaseRef.getReference(Const.LIVE_SESSIONS).child(roomID).child("time").setValue(Utils.getTimeFromTimestamp(System.currentTimeMillis()/1000,"yyyy-MM-dd_hh:mm:ss_a"))
                     .addOnSuccessListener {
                         Log.d("FirebaseUpdate", "Successfully updated value: $updateValue")
                     }

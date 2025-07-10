@@ -20,6 +20,7 @@ import io.bidswipe.app.ui.dashboard.scheduleShow.LiveShowActivity
 import io.bidswipe.app.utils.finish
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request
+import io.bidswipe.app.utils.toScheduleShow
 
 class ShowsFragment :  BaseFragment<SellerHubViewModel, FragmentShowsBinding>() {
     override fun getModel(): Class<SellerHubViewModel> = SellerHubViewModel::class.java
@@ -90,6 +91,12 @@ class ShowsFragment :  BaseFragment<SellerHubViewModel, FragmentShowsBinding>() 
             }
 
         })
+
+        bind.addNewProduct.setOnClickListener {
+
+            startActivity(mCtx.toScheduleShow(from = "dash"))
+
+        }
 
         bind.loader.isVisible = true
         viewModel.getMyScheduledShow("upcoming".request())

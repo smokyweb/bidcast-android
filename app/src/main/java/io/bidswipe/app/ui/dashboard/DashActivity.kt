@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.activity.viewModels
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.view.isVisible
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
 import androidx.navigation.fragment.NavHostFragment
@@ -26,9 +27,11 @@ import io.bidswipe.app.utils.Const
 import io.bidswipe.app.utils.Prefs
 import io.bidswipe.app.utils.bind
 import io.bidswipe.app.utils.ids
+import io.bidswipe.app.utils.loadUrl
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request
 import io.bidswipe.app.utils.toListProduct
+import io.bidswipe.app.utils.toScheduleShow
 import io.bidswipe.app.utils.toTutorials
 
 class DashActivity : BaseActivity(), NavController.OnDestinationChangedListener {
@@ -41,6 +44,8 @@ class DashActivity : BaseActivity(), NavController.OnDestinationChangedListener 
 
     private lateinit var navController: NavController
     private lateinit var navHostFragment: NavHostFragment
+
+    private var isFirstShowCreated = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -123,6 +128,43 @@ class DashActivity : BaseActivity(), NavController.OnDestinationChangedListener 
             }
         }
 
+        bind.loader.isVisible = false
+
+        viewModel.getUserProfile()
+
+        viewModel.getUserProfileRepo.observe(this) {
+            when (it) {
+                is Resource.Success -> {
+                    val mData = it.value.data
+
+                    isFirstShowCreated = mData?.isFirstShowCreated == true
+
+                }
+
+                is Resource.Error -> {
+                    bind.loader.isVisible = false
+                    viewModel.logoutRepo.value = null
+                    if (it.isNetworkError) {
+                        errorToast(getString(R.string.no_internet))
+                    } else {
+                        it.parse(this, TAG, object : AlertClicks {
+                            override fun primaryClick(dialog: AppBottomSheet) {
+                                dialog.dismiss()
+                            }
+
+                            override fun secondaryClick(dialog: AppBottomSheet) {
+                                dialog.dismiss()
+                            }
+                        })
+                    }
+                }
+
+                else -> {}
+
+            }
+        }
+
+
     }
 
     override fun onDestinationChanged(
@@ -165,8 +207,13 @@ class DashActivity : BaseActivity(), NavController.OnDestinationChangedListener 
                        startActivity(this@DashActivity.toListProduct())
                    }
                    1->{
-                       startActivity(this@DashActivity.toTutorials())
-//                       startActivity(this@DashActivity.toScheduleShow(from = "dash"))
+
+                       if (isFirstShowCreated){
+                           startActivity(this@DashActivity.toScheduleShow(from = "dash"))
+                       }else{
+                           startActivity(this@DashActivity.toTutorials())
+                       }
+
                    }
                    2 -> {
                        bind.bottomBar.selectedItemId = ids.accountFragment

@@ -146,4 +146,7 @@
     <string name="save_product">Save Product</string>
     <string name="update">Update</string>
     <string name="search_products">Search Products..</string>
+    <string name="users">Users</string>
+    <string name="auctions">Auctions</string>
+    <string name="sales">Sales</string>
 </resources>

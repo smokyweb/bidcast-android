@@ -27,6 +27,8 @@ data class UserProfileResponse(
         val id: Int?,
         @SerializedName("is_active")
         val isActive: Boolean?,
+        @SerializedName("is_FirstShowCreated")
+        val isFirstShowCreated: Boolean?,
         @SerializedName("last_name")
         val lastName: String?,
         @SerializedName("name")
