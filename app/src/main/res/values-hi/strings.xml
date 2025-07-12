@@ -319,4 +319,6 @@
     <string name="users">Users</string>
 	<string name="auctions">Auctions</string>
 	<string name="sales">Sales</string>
+    <string name="rate_seller">Rate Seller</string>
+	<string name="block_seller">Block Seller</string>
 </resources>

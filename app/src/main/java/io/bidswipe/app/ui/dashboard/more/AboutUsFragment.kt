@@ -1,9 +1,12 @@
 package io.bidswipe.app.ui.dashboard.more
 
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.browser.customtabs.CustomTabColorSchemeParams
+import androidx.browser.customtabs.CustomTabsIntent
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import io.bidswipe.app.R
@@ -32,10 +35,10 @@ class AboutUsFragment : BaseFragment<MoreViewModel,FragmentAboutUsBinding>() {
     private var featureList = mutableListOf<AboutUsResponse.Data.Feature?>()
 
     private var teamList = mutableListOf<AboutUsResponse.Data.Team?>()
+    private var socialMediaLinks = mutableListOf<AboutUsResponse.Data.SocialMedia?>()
 
     private var  mClick = object : RecyclerClicks{
         override fun itemClick(pos: Int, status: String?) {
-
 
         }
 
@@ -55,6 +58,28 @@ class AboutUsFragment : BaseFragment<MoreViewModel,FragmentAboutUsBinding>() {
 
         teamAdapter = TeamAdapter(teamList,mClick)
         bind.teamRecycler.adapter = teamAdapter
+
+        bind.twitter.setOnClickListener {
+           log( "MediaLink  = ${socialMediaLinks.find { it?.platform == 3}?.url}")
+
+            val url = socialMediaLinks.find { it?.platform == 3}?.url
+            launchWeb(url?.url.toString())
+        }
+
+        bind.insta.setOnClickListener {
+            val url = socialMediaLinks.find { it?.platform == 1}?.url
+            launchWeb(url?.url.toString())
+        }
+
+        bind.faceBook.setOnClickListener {
+            val url = socialMediaLinks.find { it?.platform == 2}?.url
+            launchWeb(url?.url.toString())
+        }
+
+        bind.linkedIn.setOnClickListener {
+            val url = socialMediaLinks.find { it?.platform == 0}?.url
+            launchWeb(url?.url.toString())
+        }
 
         bind.loader.isVisible = true
 
@@ -85,6 +110,10 @@ class AboutUsFragment : BaseFragment<MoreViewModel,FragmentAboutUsBinding>() {
                                 bind.sales.text = it.value
                             }
                         }
+                    }
+
+                    if (mData?.socialMedia!= null){
+                        socialMediaLinks.addAll(mData.socialMedia)
                     }
 
                     bind.email.title.text = mData?.contactEmail
@@ -129,6 +158,31 @@ class AboutUsFragment : BaseFragment<MoreViewModel,FragmentAboutUsBinding>() {
             }
         }
 
+
+    }
+
+    private fun launchWeb(url: String) {
+        log(url)
+
+        val builder = CustomTabsIntent.Builder()
+
+        val params = CustomTabColorSchemeParams.Builder()
+
+        params.setToolbarColor(ContextCompat.getColor(mCtx, R.color.primary))
+
+        builder.setDefaultColorSchemeParams(params.build())
+
+        builder.setShowTitle(true)
+
+        builder.setShareState(CustomTabsIntent.SHARE_STATE_ON)
+
+        builder.setInstantAppsEnabled(true)
+
+        val customBuilder = builder.build()
+
+        customBuilder.intent.setPackage("com.android.chrome")
+
+        customBuilder.launchUrl(requireActivity(), Uri.parse(url))
 
     }
 

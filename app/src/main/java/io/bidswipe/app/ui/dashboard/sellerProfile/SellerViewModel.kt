@@ -10,6 +10,7 @@ import io.bidswipe.app.network.response.CommonResponse
 import io.bidswipe.app.network.response.FollowUnfollowResponse
 import io.bidswipe.app.network.response.GetMyShowResponse
 import io.bidswipe.app.network.response.GetProductsResponse
+import io.bidswipe.app.network.response.GetRatingResponse
 import io.bidswipe.app.network.response.GetUserProfileResponse
 import kotlinx.coroutines.launch
 import okhttp3.RequestBody
@@ -66,6 +67,16 @@ class SellerViewModel  @Inject constructor(val repo: DashRepository) : ViewModel
         type : RequestBody? = null
     ) = viewModelScope.launch {
         _getMyScheduledShowResponse.value = repo.getMyScheduledShow(type)
+    }
+
+    private var _getSellerRatingResponse = MutableLiveData<Resource<GetRatingResponse>>()
+    val getSellerRatingRepo: MutableLiveData<Resource<GetRatingResponse>>
+        get() = _getSellerRatingResponse
+
+    fun getSellerRating(
+        sellerId : String?
+    ) = viewModelScope.launch {
+        _getSellerRatingResponse.value = repo.getSellerRating(sellerId)
     }
 
 }

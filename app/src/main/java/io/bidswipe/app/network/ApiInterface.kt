@@ -32,6 +32,7 @@ import io.bidswipe.app.network.response.GetProductDetailsResponse
 import io.bidswipe.app.network.response.GetProductsByStatusResponse
 import io.bidswipe.app.network.response.GetProductsResponse
 import io.bidswipe.app.network.response.GetPurchaseDetail
+import io.bidswipe.app.network.response.GetRatingResponse
 import io.bidswipe.app.network.response.GetShippingAddressResponse
 import io.bidswipe.app.network.response.GetTransactionsHistoryResponse
 import io.bidswipe.app.network.response.GetUserProfileResponse
@@ -487,6 +488,22 @@ interface ApiInterface {
 	@GET("api/referral-code/fetch")
 	suspend fun fetchReferral(
 	): FetchReferralResponse
+
+	@Multipart
+	@POST("api/seller-rating")
+	suspend fun storeSellerRating(
+		@Part("seller_id") sellerId: RequestBody,
+		@Part("overall_rating") overAllRating: RequestBody,
+		@Part("shipping_rating") shippingRating: RequestBody,
+		@Part("packaging_rating") packagingRating: RequestBody,
+		@Part("accuracy_rating") accuracyRating: RequestBody,
+		@Part("comment") comment: RequestBody
+	): CommonResponse
+
+	@GET("api/get-seller-rating")
+	suspend fun getSellerRating(
+		@Query("seller_id") sellerId : String?
+	): GetRatingResponse
 
 }
 

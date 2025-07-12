@@ -2,8 +2,10 @@ package io.bidswipe.app.network.repository
 
 import io.bidswipe.app.base.BaseRepository
 import io.bidswipe.app.network.ApiInterface
+import io.bidswipe.app.utils.string
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
+import retrofit2.http.Part
 import javax.inject.Inject
 
 class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRepository(){
@@ -307,5 +309,18 @@ suspend fun settingsList() = call { api.settingsList() }
 
     suspend fun fetchReferral(
     ) = call { api.fetchReferral() }
+
+    suspend fun storeSellerRating(
+        sellerId: RequestBody,
+        overAllRating: RequestBody,
+        shippingRating: RequestBody,
+        packagingRating: RequestBody,
+        accuracyRating: RequestBody,
+        comment: RequestBody
+    ) = call { api.storeSellerRating(sellerId,overAllRating,shippingRating,packagingRating,accuracyRating,comment) }
+
+    suspend fun getSellerRating(
+        sellerId : String?
+    ) = call { api. getSellerRating(sellerId)}
 
 }

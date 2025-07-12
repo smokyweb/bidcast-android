@@ -22,6 +22,7 @@ import io.bidswipe.app.network.response.GetOffersResponse
 import io.bidswipe.app.network.response.GetPrepareStepResponse
 import io.bidswipe.app.network.response.GetProductsByStatusResponse
 import io.bidswipe.app.network.response.GetProductsResponse
+import io.bidswipe.app.network.response.GetRatingResponse
 import io.bidswipe.app.network.response.UpdateLiveStatusResponse
 import io.bidswipe.app.network.response.UpdateOfferResponse
 import io.bidswipe.app.network.response.UserDeviceResponse
@@ -296,5 +297,22 @@ class DashViewModel @Inject constructor(val repo: DashRepository) : ViewModel() 
 	) = viewModelScope.launch {
 		_storeScheduleShowResponse.value = repo.storeScheduleShow(title,date,time,categoryId,auctionTypeId,thumbnails,productIds)
 	}
+
+	private var _storeSellerRatingResponse = MutableLiveData<Resource<CommonResponse>>()
+	val storeSellerRatingRepo: MutableLiveData<Resource<CommonResponse>>
+		get() = _storeSellerRatingResponse
+
+	fun storeSellerRating(
+		sellerId: RequestBody,
+		overAllRating: RequestBody,
+		shippingRating: RequestBody,
+		packagingRating: RequestBody,
+		accuracyRating: RequestBody,
+		comment: RequestBody
+	) = viewModelScope.launch {
+		_storeSellerRatingResponse.value = repo.storeSellerRating(sellerId,overAllRating,shippingRating,packagingRating,accuracyRating,comment)
+	}
+
+
 
 }

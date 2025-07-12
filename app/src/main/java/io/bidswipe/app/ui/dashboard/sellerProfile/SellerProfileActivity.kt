@@ -2,14 +2,17 @@ package io.bidswipe.app.ui.dashboard.sellerProfile
 
 import android.os.Bundle
 import android.view.View
+import android.widget.PopupMenu
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.core.content.ContextCompat
+import androidx.core.text.bold
 import androidx.core.text.buildSpannedString
 import androidx.core.view.isVisible
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.gyf.immersionbar.ktx.immersionBar
+import com.skydoves.powermenu.PowerMenuItem
 import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseActivity
 import io.bidswipe.app.controller.ViewPagerAdapter
@@ -21,6 +24,8 @@ import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.utils.Alerts
 import io.bidswipe.app.utils.bind
 import io.bidswipe.app.utils.clr
+import io.bidswipe.app.utils.goToRateSeller
+import io.bidswipe.app.utils.ids
 import io.bidswipe.app.utils.loadUrl
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request
@@ -35,6 +40,8 @@ class SellerProfileActivity : BaseActivity() {
     private var sellerName = ""
     private var sellerImage = ""
 
+    private var actionList = mutableListOf<PowerMenuItem>()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -48,6 +55,34 @@ class SellerProfileActivity : BaseActivity() {
             fitsSystemWindows(false)
             keyboardEnable(true)
         }
+
+        actionList.clear()
+        actionList.add(PowerMenuItem(title = "Save Product"))
+
+        val menu = PopupMenu(this, bind.moreIcon)
+        menu.menuInflater.inflate(R.menu.profile_action_menu, menu.menu)
+        menu.setOnMenuItemClickListener {
+            when (it.itemId) {
+                ids.rate -> {
+                    startActivity(this.goToRateSeller(sellerId, sellerName, sellerImage))
+                }
+
+                ids.block -> {
+
+                }
+
+                ids.reportUser -> {
+
+                }
+
+            }
+            return@setOnMenuItemClickListener true
+        }
+
+        bind.moreIcon.setOnClickListener {
+            menu.show()
+        }
+
 
         bind.appBar.addOnOffsetChangedListener(AppBarLayout.OnOffsetChangedListener { _, verticalOffset ->
             val totalScrollRange = bind.appBar.totalScrollRange
@@ -103,12 +138,12 @@ class SellerProfileActivity : BaseActivity() {
                     bind.userImage.loadUrl(this, mData?.profileImage.toString())
                     bind.userImage2.loadUrl(this, mData?.profileImage.toString())
                     bind.followers.text = buildSpannedString {
-                        append(mData?.followerCount.toString())
+                        bold { append(mData?.followerCount.toString()) }
                         append(" Follower")
                     }
 
                     bind.following.text = buildSpannedString {
-                        append(mData?.followingCount.toString())
+                        bold { append(mData?.followingCount.toString()) }
                         append(" Following")
                     }
 
@@ -174,7 +209,7 @@ class SellerProfileActivity : BaseActivity() {
             when (it) {
                 is Resource.Success -> {
 
-                    val mData = it.value.data
+                    it.value.data
 
                     viewModel.getProfileById(sellerId.request())
 
@@ -211,7 +246,7 @@ class SellerProfileActivity : BaseActivity() {
 
                     bind.loader.isVisible = false
 
-                    val mData = it.value.data
+                    it.value.data
 
                     Alerts.success(this, it.value.message.toString())
 

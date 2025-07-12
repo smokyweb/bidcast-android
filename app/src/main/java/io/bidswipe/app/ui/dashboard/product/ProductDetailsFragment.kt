@@ -40,7 +40,6 @@ class ProductDetailsFragment : BaseFragment<ProductViewModel, FragmentProductDet
     private var offerList = mutableListOf<OfferModel>()
     private var actionList = mutableListOf<PowerMenuItem>()
 
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
