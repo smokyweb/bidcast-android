@@ -106,7 +106,6 @@
 			<LinearLayout
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
-				android:layout_marginVertical="8dp"
 				android:background="@color/background"
 				android:paddingHorizontal="8dp"
 				android:paddingVertical="8dp">
@@ -129,6 +128,7 @@
 						app:layout_constraintEnd_toEndOf="parent"
 						app:layout_constraintStart_toStartOf="parent"
 						app:layout_constraintTop_toTopOf="parent"
+
 						app:tabPadding="0dp">
 
 						<com.google.android.material.tabs.TabItem
@@ -139,7 +139,9 @@
 						<com.google.android.material.tabs.TabItem
 							android:layout_width="wrap_content"
 							android:layout_height="wrap_content"
-							android:text="@string/my_account" />
+							android:text="@string/my_account"
+							/>
+
 					</com.google.android.material.tabs.TabLayout>
 
 				</com.google.android.material.card.MaterialCardView>

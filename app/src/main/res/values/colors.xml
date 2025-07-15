@@ -42,5 +42,6 @@
 
     <color name="warningClr">#ED8430</color>
     <color name="onSecWarning">#DDD0C3</color>
+    <color name="backgroundClr">#E5E7EB</color>
 
 </resources>

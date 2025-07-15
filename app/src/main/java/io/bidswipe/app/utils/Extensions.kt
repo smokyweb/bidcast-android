@@ -103,15 +103,9 @@ fun EditText.setNumberInput() {
 	transformationMethod = HideReturnsTransformationMethod.getInstance()
 }
 
-fun String.asMoney() = "$ " + "%.2f".format(this.toDouble())
-fun String.asRupee() = "₹ " + "%.2f".format(this.toDouble())
+fun String.asMoney() = "$" + "%.2f".format(this.toDouble())
 
-fun String.asBool() = try {
-	java.lang.Boolean.parseBoolean(this.lowercase())
-} catch (e: Exception) {
-	e.printStackTrace()
-	false
-}
+
 
 fun String.request() = this.trim().toRequestBody("text/plain".toMediaTypeOrNull())
 

@@ -27,7 +27,6 @@ import io.bidswipe.app.utils.Const
 import io.bidswipe.app.utils.Prefs
 import io.bidswipe.app.utils.bind
 import io.bidswipe.app.utils.ids
-import io.bidswipe.app.utils.loadUrl
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request
 import io.bidswipe.app.utils.toListProduct
@@ -193,8 +192,8 @@ class DashActivity : BaseActivity(), NavController.OnDestinationChangedListener 
         sellList.addAll(
             listOf(
                 SellModel(R.drawable.ic_tag,R.color.primaryContainer,"List a Product","Create listing for your item"),
-                SellModel(R.drawable.ic_video,R.color.tertiaryContainer,"Schedule a Show","Go live and sell to your audience"),
-                SellModel(R.drawable.ic_shop,R.color.successContainer,"Seller Hub","Manage your store and listings")
+                SellModel(R.drawable.ic_video,R.color.primaryContainer,"Schedule a Show","Go live and sell to your audience"),
+                SellModel(R.drawable.ic_shop,R.color.primaryContainer,"Seller Hub","Manage your store and listings")
             )
         )
 
