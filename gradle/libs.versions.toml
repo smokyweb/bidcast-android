@@ -41,6 +41,7 @@ powermenu = "2.2.4"
 recyclerviewAnimators = "4.0.2"
 retrofit = "2.11.0"
 roundedimageview = "2.3.0"
+socialviewAutocomplete = "0.1"
 swipemenurecyclerview = "2.1.5"
 singledateandtimepicker = "2.2.7"
 stripeAndroid = "20.48.6"
@@ -55,6 +56,7 @@ firebaseMessagingKtx = "24.1.1"
 googleGmsGoogleServices = "4.4.2"
 firebaseMessaging = "24.1.1"
 firebaseDatabase = "21.0.0"
+zim = "2.21.1"
 
 [libraries]
 android-image-cropper = { module = "com.vanniktech:android-image-cropper", version.ref = "androidImageCropper" }
@@ -99,6 +101,7 @@ permissionx = { module = "com.guolindev.permissionx:permissionx", version.ref = 
 picasso = { module = "com.squareup.picasso:picasso", version.ref = "picasso" }
 powermenu = { module = "com.github.skydoves:powermenu", version.ref = "powermenu" }
 roundedimageview = { module = "com.makeramen:roundedimageview", version.ref = "roundedimageview" }
+socialview-autocomplete = { module = "com.hanggrian.socialview:socialview-autocomplete", version.ref = "socialviewAutocomplete" }
 swipelayout = { module = "com.github.zerobranch:SwipeLayout", version.ref = "swipelayout" }
 slidetoact = { module = "com.ncorti:slidetoact", version.ref = "slidetoact" }
 stripe-android = { module = "com.stripe:stripe-android", version.ref = "stripeAndroid" }
@@ -115,6 +118,7 @@ flexbox = { module = "com.google.android.flexbox:flexbox", version.ref = "flexbo
 firebase-messaging-ktx = { group = "com.google.firebase", name = "firebase-messaging-ktx", version.ref = "firebaseMessagingKtx" }
 firebase-messaging = { group = "com.google.firebase", name = "firebase-messaging", version.ref = "firebaseMessaging" }
 firebase-database = { group = "com.google.firebase", name = "firebase-database", version.ref = "firebaseDatabase" }
+zim = { module = "im.zego:zim", version.ref = "zim" }
 
 
 [plugins]

@@ -109,12 +109,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginVertical="@dimen/half_margin"
+                android:layout_marginHorizontal="@dimen/half_margin"
                 android:text="@string/first_name" />
 
             <com.google.android.material.textfield.TextInputLayout
                 style="@style/inputBoxStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/half_margin"
                 android:layout_marginBottom="@dimen/half_margin">
 
                 <com.google.android.material.textfield.MaterialAutoCompleteTextView
@@ -131,6 +133,7 @@
                 style="@style/TitleSmall"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/half_margin"
                 android:layout_marginVertical="@dimen/half_margin"
                 android:text="@string/last_name" />
 
@@ -145,6 +148,7 @@
                     style="@style/inputTextStyle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/half_margin"
                     android:hint="@string/enter_your_last_name"
                     android:inputType="text" />
 

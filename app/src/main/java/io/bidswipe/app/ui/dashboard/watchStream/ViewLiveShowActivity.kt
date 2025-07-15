@@ -13,6 +13,8 @@ import com.gyf.immersionbar.ktx.navigationBarHeight
 import im.zego.zegoexpress.ZegoExpressEngine
 import im.zego.zegoexpress.constants.ZegoScenario
 import im.zego.zegoexpress.entity.ZegoEngineProfile
+import im.zego.zim.ZIM
+import im.zego.zim.entity.ZIMAppConfig
 import io.bidswipe.app.base.BaseActivity
 import io.bidswipe.app.controller.StreamPagerAdapter
 import io.bidswipe.app.databinding.ActivityViewLiveShowBinding
@@ -110,6 +112,7 @@ class ViewLiveShowActivity : BaseActivity() {
         }
 
         ZegoExpressEngine.createEngine(profile, null)
+
     }
 
     private fun destroyEngine() {
