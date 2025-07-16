@@ -120,8 +120,8 @@ class Header @JvmOverloads constructor(
             bind.secondaryIcon.visibility = VISIBLE
         } else {
             bind.secondaryIcon.isEnabled = false
-            bind.secondary.visibility = INVISIBLE
-            bind.secondaryIcon.visibility = INVISIBLE
+            bind.secondary.visibility = GONE
+            bind.secondaryIcon.visibility = GONE
         }
     }
 
@@ -132,8 +132,8 @@ class Header @JvmOverloads constructor(
             bind.primaryIcon.visibility = VISIBLE
         } else {
             bind.primaryIcon.isEnabled = false
-            bind.primary.visibility = INVISIBLE
-            bind.primaryIcon.visibility = INVISIBLE
+            bind.primary.visibility = GONE
+            bind.primaryIcon.visibility = GONE
         }
     }
 
