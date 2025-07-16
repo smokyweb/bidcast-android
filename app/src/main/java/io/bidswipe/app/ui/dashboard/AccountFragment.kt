@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.core.view.isVisible
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayout.OnTabSelectedListener
+import io.bidswipe.app.App
 import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseFragment
 import io.bidswipe.app.controller.GridAdapter
@@ -108,6 +109,16 @@ class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+
+
+        App.profileResponse.observe(viewLifecycleOwner) {
+
+
+            bind.userName.text =it?.username.toString()
+            bind.sellerSince.text = it?.bio.toString()
+            bind.userProfile.loadUrl(mCtx,   it?.profileImage.toString())
+        }
+
         bind.tabs.addOnTabSelectedListener(onTabSelectedListener)
 
         moreList.add(MoreModel(R.drawable.ic_vacation,"About Us","aboutUs"))
@@ -153,41 +164,6 @@ class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
         bind.editIcon.setOnClickListener {
 
             startActivity(Intent(mCtx , UpdateAccountActivity::class.java))
-        }
-
-        viewModel.getUserProfile()
-
-        viewModel.getUserProfileRepo.observe(viewLifecycleOwner) {
-            when (it) {
-                is Resource.Success -> {
-                    val mData = it.value.data
-                    bind.userName.text = mData?.name.toString()
-
-                    bind.userProfile.loadUrl(mCtx,mData?.profileImage.toString())
-
-                }
-
-                is Resource.Error -> {
-                    bind.loader.isVisible = false
-                    viewModel.logoutRepo.value = null
-                    if (it.isNetworkError) {
-                        errorToast(getString(R.string.no_internet))
-                    } else {
-                        it.parse(mCtx, TAG, object : AlertClicks {
-                            override fun primaryClick(dialog: AppBottomSheet) {
-                                dialog.dismiss()
-                            }
-
-                            override fun secondaryClick(dialog: AppBottomSheet) {
-                                dialog.dismiss()
-                            }
-                        })
-                    }
-                }
-
-                else -> {}
-
-            }
         }
 
         viewModel.logoutRepo.observe(viewLifecycleOwner) {

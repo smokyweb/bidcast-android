@@ -74,7 +74,8 @@
                         android:drawablePadding="8dp"
                         android:inputType="none"
                         android:focusable="false"
-                        android:text="Account"/>
+                        android:text="Account"
+                        android:textStyle="bold"/>
 
                 </com.google.android.material.textfield.TextInputLayout>
 

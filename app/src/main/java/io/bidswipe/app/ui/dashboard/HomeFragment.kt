@@ -166,11 +166,11 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
 	fun selectTab(selectedTab: TextView) {
 		val tabs = listOf(bind.live, bind.popular, bind.comingSoon)
 		tabs.forEach {
+			it.setTextAppearance(R.style.TitleMedium)
 			it.setTextColor(ContextCompat.getColor(mCtx, R.color.outlineVariant))
-			it.setTypeface(null, Typeface.NORMAL)
 		}
 		selectedTab.setTextColor(ContextCompat.getColor(mCtx, R.color.scrim))
-		selectedTab.setTypeface(null, Typeface.BOLD)
+		selectedTab.setTextAppearance(R.style.TitleLarge)
 
 		when(selectedTab){
 			bind.live ->{

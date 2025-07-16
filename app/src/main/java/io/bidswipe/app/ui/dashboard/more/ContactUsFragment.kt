@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import com.wajahatkarim3.easyvalidation.core.view_ktx.validator
+import io.bidswipe.app.App
 import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseFragment
 import io.bidswipe.app.databinding.FragmentContactUsBinding
@@ -41,7 +42,7 @@ class ContactUsFragment : BaseFragment<MoreViewModel, FragmentContactUsBinding>(
             hideKeyboard(it)
         }
 
-        bind.email.setText(Prefs(mCtx).getUserData()?.email.toString())
+        bind.email.setText(App.profileResponse.value?.email.toString())
 
 
         bind.sendMessage.setOnClickListener {

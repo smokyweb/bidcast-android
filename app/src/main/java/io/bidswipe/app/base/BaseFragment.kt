@@ -13,6 +13,8 @@ import androidx.lifecycle.*
 import androidx.navigation.fragment.findNavController
 import androidx.viewbinding.ViewBinding
 import com.permissionx.guolindev.PermissionX
+import io.bidswipe.app.App
+import io.bidswipe.app.network.response.LoginResponse
 import io.bidswipe.app.utils.Alerts
 import io.bidswipe.app.utils.Prefs
 

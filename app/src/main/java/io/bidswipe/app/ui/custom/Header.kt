@@ -2,6 +2,7 @@ package io.bidswipe.app.ui.custom
 
 import android.content.Context
 import android.util.AttributeSet
+import android.util.Log
 import android.view.LayoutInflater
 import android.widget.LinearLayout
 import androidx.annotation.DrawableRes
@@ -101,6 +102,7 @@ class Header @JvmOverloads constructor(
 
     fun onBackClick(click: OnClickListener) {
         bind.backIcon.setOnClickListener(click)
+        bind.back.setOnClickListener(click)
     }
 
     fun onMorePrimaryClick(click: OnClickListener) {
@@ -118,8 +120,8 @@ class Header @JvmOverloads constructor(
             bind.secondaryIcon.visibility = VISIBLE
         } else {
             bind.secondaryIcon.isEnabled = false
-            bind.secondary.visibility = INVISIBLE
-            bind.secondaryIcon.visibility = INVISIBLE
+            bind.secondary.visibility = GONE
+            bind.secondaryIcon.visibility = GONE
         }
     }
 
@@ -130,8 +132,8 @@ class Header @JvmOverloads constructor(
             bind.primaryIcon.visibility = VISIBLE
         } else {
             bind.primaryIcon.isEnabled = false
-            bind.primary.visibility = INVISIBLE
-            bind.primaryIcon.visibility = INVISIBLE
+            bind.primary.visibility = GONE
+            bind.primaryIcon.visibility = GONE
         }
     }
 
@@ -155,8 +157,8 @@ class Header @JvmOverloads constructor(
             bind.primaryIcon.visibility = VISIBLE
         } else {
             bind.primary.isEnabled = false
-            bind.primary.visibility = INVISIBLE
-            bind.primaryIcon.visibility = INVISIBLE
+            bind.primary.visibility = VISIBLE
+            bind.primaryIcon.visibility = VISIBLE
         }
     }
 
@@ -167,8 +169,8 @@ class Header @JvmOverloads constructor(
             bind.secondaryIcon.visibility = VISIBLE
         } else {
             bind.secondary.isEnabled = false
-            bind.secondary.visibility = INVISIBLE
-            bind.secondaryIcon.visibility = INVISIBLE
+            bind.secondary.visibility = VISIBLE
+            bind.secondaryIcon.visibility = VISIBLE
         }
     }
 

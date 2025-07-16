@@ -6,6 +6,8 @@ import io.bidswipe.app.base.BaseAdapter
 import io.bidswipe.app.databinding.HomeItemBinding
 import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.network.response.GetMyShowResponse
+import io.bidswipe.app.utils.asCapital
+import io.bidswipe.app.utils.asHtml
 import io.bidswipe.app.utils.draw
 import io.bidswipe.app.utils.loadUrl
 
@@ -30,13 +32,13 @@ class HomeAdapter (val mList: MutableList<GetMyShowResponse.Data?>, val mClick: 
                 mClick.itemClick(position,"viewShow")
             }
 
-            bind.userName.text = item?.user?.name.toString()
+            bind.userName.text = item?.user?.name.toString().asCapital()
             bind.userImage.loadUrl(mCtx,item?.user?.profileImage.toString(), draw.user_image)
 
             bind.thumbnail.loadUrl(mCtx,item?.thumbnail?.get(0).toString())
 
-            bind.title.text = item?.title.toString()
-            bind.category.text = item?.category?.name
+            bind.title.text = item?.title.toString().asCapital()
+            bind.category.text = item?.category?.name?.asCapital()
 
         }
     }
