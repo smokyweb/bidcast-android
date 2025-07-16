@@ -3,15 +3,13 @@
 	xmlns:app="http://schemas.android.com/apk/res-auto"
 	android:layout_width="match_parent"
 	android:layout_height="wrap_content"
-	android:orientation="vertical">
-
-	<LinearLayout
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:gravity="center_vertical"
-		android:orientation="horizontal"
-		android:paddingHorizontal="16dp"
-		android:paddingVertical="20dp">
+	android:orientation="horizontal"
+	android:background="@drawable/card_8"
+	android:paddingHorizontal="16dp"
+	android:paddingVertical="20dp"
+	android:layout_marginHorizontal="@dimen/margin"
+	android:layout_marginVertical="4dp"
+	style="@style/shadowStyle">
 
 		<com.google.android.material.card.MaterialCardView
 			android:id="@+id/icon_card"
@@ -59,14 +57,5 @@
 			android:layout_height="wrap_content"
 			android:alpha="0.5"
 			android:text="6d ago" />
-
-	</LinearLayout>
-
-	<View
-		android:id="@+id/view"
-		android:layout_width="match_parent"
-		android:layout_height="1dp"
-		android:background="@color/outlineVariant"
-		app:layout_constraintTop_toBottomOf="@id/tab_layout" />
 
 </LinearLayout>

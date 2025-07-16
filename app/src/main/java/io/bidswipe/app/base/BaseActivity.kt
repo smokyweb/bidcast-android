@@ -2,7 +2,6 @@ package io.bidswipe.app.base
 
 import android.os.Bundle
 import androidx.activity.OnBackPressedCallback
-import androidx.appcompat.app.AppCompatActivity
 import com.permissionx.guolindev.PermissionX
 import com.zeugmasolutions.localehelper.LocaleAwareCompatActivity
 import io.bidswipe.app.utils.Alerts

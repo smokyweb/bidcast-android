@@ -53,7 +53,18 @@ class ExploreFragment : BaseFragment<DashViewModel,FragmentExploreBinding>() {
        exploreAdapter = ExploreAdapter(exploreList,mClick)
         bind.recycler.adapter = exploreAdapter
 
+        bind.header.onMoreSecondaryClick {
+            bind.searchExpandLayout.toggle()
+
+            if (bind.searchExpandLayout.isExpanded) {
+                bind.email.requestFocus()
+            }
+        }
+
         bind.header.onMorePrimaryClick {
+
+
+
             startActivity(Intent(mCtx , NotificationActivity::class.java).putExtra("slug","notification"))
         }
 
@@ -106,11 +117,11 @@ class ExploreFragment : BaseFragment<DashViewModel,FragmentExploreBinding>() {
     fun selectTab(selectedTab: TextView) {
         val tabs = listOf(bind.recommended, bind.popular, bind.all)
         tabs.forEach {
+            it.setTextAppearance(R.style.TitleMedium)
             it.setTextColor(ContextCompat.getColor(mCtx, R.color.outlineVariant))
-            it.setTypeface(null, Typeface.NORMAL)
         }
         selectedTab.setTextColor(ContextCompat.getColor(mCtx, R.color.scrim))
-        selectedTab.setTypeface(null, Typeface.BOLD)
+        selectedTab.setTextAppearance(R.style.TitleLarge)
     }
 
 

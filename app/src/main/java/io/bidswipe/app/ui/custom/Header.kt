@@ -2,6 +2,7 @@ package io.bidswipe.app.ui.custom
 
 import android.content.Context
 import android.util.AttributeSet
+import android.util.Log
 import android.view.LayoutInflater
 import android.widget.LinearLayout
 import androidx.annotation.DrawableRes
@@ -101,6 +102,7 @@ class Header @JvmOverloads constructor(
 
     fun onBackClick(click: OnClickListener) {
         bind.backIcon.setOnClickListener(click)
+        bind.back.setOnClickListener(click)
     }
 
     fun onMorePrimaryClick(click: OnClickListener) {
@@ -145,30 +147,6 @@ class Header @JvmOverloads constructor(
             bind.back.visibility = GONE
             bind.backIcon.visibility = GONE
             bind.appText.setPadding(20,0,0,0)
-        }
-    }
-
-    fun showPrimaryButton(state: Boolean) {
-        if (state) {
-            bind.primary.isEnabled = true
-            bind.primary.visibility = VISIBLE
-            bind.primaryIcon.visibility = VISIBLE
-        } else {
-            bind.primary.isEnabled = false
-            bind.primary.visibility = INVISIBLE
-            bind.primaryIcon.visibility = INVISIBLE
-        }
-    }
-
-    fun showSecondaryButton(state: Boolean) {
-        if (state) {
-            bind.secondary.isEnabled = true
-            bind.secondary.visibility = VISIBLE
-            bind.secondaryIcon.visibility = VISIBLE
-        } else {
-            bind.secondary.isEnabled = false
-            bind.secondary.visibility = INVISIBLE
-            bind.secondaryIcon.visibility = INVISIBLE
         }
     }
 

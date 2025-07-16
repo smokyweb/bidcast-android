@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.core.view.isVisible
 import com.canhub.cropper.CropImageContract
+import io.bidswipe.app.App
 import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseActivity
 import io.bidswipe.app.databinding.ActivityUpdateAccountBinding
@@ -29,7 +30,7 @@ class UpdateAccountActivity : BaseActivity() {
 
     private val viewModel by viewModels<DashViewModel>()
 
-    private var imagePart : MultipartBody.Part ? =null
+    private var imagePart: MultipartBody.Part? = null
 
     private val imageResult = registerForActivityResult(CropImageContract()) { result ->
         if (result.isSuccessful) {
@@ -40,7 +41,7 @@ class UpdateAccountActivity : BaseActivity() {
             val imagePath = result.getUriFilePath(this, true)
 
             val name = System.currentTimeMillis().toString() + "_profile_gallery.jpeg"
-             imagePart = Utils.imagePart("profile_image", name, File(imagePath ?: ""))
+            imagePart = Utils.imagePart("profile_image", name, File(imagePath ?: ""))
 
         }
     }
@@ -51,7 +52,6 @@ class UpdateAccountActivity : BaseActivity() {
 
 
         bind.header.onBackClick {
-
             finishAfterTransition()
 
         }
@@ -85,22 +85,17 @@ class UpdateAccountActivity : BaseActivity() {
         bind.loader.isVisible = true
 
         viewModel.getUserProfile()
-
         viewModel.getUserProfileRepo.observe(this) {
             when (it) {
                 is Resource.Success -> {
                     bind.loader.isVisible = false
                     val mData = it.value.data
-                    bind.firstName.setText( mData?.firstName.toString())
-                    bind.lastName.setText(mData?.lastName.toString())
-
+                    bind.firstName.setText(mData?.firstName.toString().uppercase())
+                    bind.lastName.setText(mData?.lastName.toString().uppercase())
                     bind.userName.setText(mData?.username)
-
-                    bind.email.setText(mData?.email?:"")
-
-                    bind.bio.setText( mData?.bio)
-
-                    bind.userProfile.loadUrl(this,mData?.profileImage.toString())
+                    bind.email.setText(mData?.email ?: "")
+                    bind.bio.setText(mData?.bio)
+                    bind.userProfile.loadUrl(this, mData?.profileImage.toString())
                 }
 
                 is Resource.Error -> {
@@ -119,6 +114,7 @@ class UpdateAccountActivity : BaseActivity() {
                         })
                     }
                 }
+
                 else -> {}
             }
         }
@@ -129,7 +125,8 @@ class UpdateAccountActivity : BaseActivity() {
                 is Resource.Success -> {
                     bind.loader.isVisible = false
                     val mData = it.value.data
-                    Alerts.success(this,"Profile Updated")
+                    App.getProfile()
+                    Alerts.success(this, "Profile Updated")
                 }
 
                 is Resource.Error -> {
