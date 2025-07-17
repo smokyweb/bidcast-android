@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".ui.dashboard.sellerHub.InventoryFragment">
 
     <io.bidswipe.app.ui.custom.Header
@@ -23,8 +23,8 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:background="@color/background"
-        android:paddingHorizontal="8dp"
         android:orientation="vertical"
+        android:paddingHorizontal="8dp"
         app:layout_constraintBottom_toTopOf="@id/buttonLayout"
         app:layout_constraintTop_toBottomOf="@+id/header">
 
@@ -63,76 +63,83 @@
                     android:layout_height="wrap_content"
                     android:text="@string/inactive" />
 
-
             </com.google.android.material.tabs.TabLayout>
 
         </com.google.android.material.card.MaterialCardView>
 
-        <View
-            android:id="@+id/view"
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/surfaceVariant"
-           android:layout_marginVertical="@dimen/margin"
-            />
-
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/searchLayout"
-            style="@style/inputBoxStyle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="@dimen/margin"
-            app:boxBackgroundColor="@color/surface"
-            app:boxStrokeWidth="2dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/header"
-            app:startIconDrawable="@drawable/search"
-            app:startIconTint="@color/scrim">
-
-            <com.google.android.material.textfield.MaterialAutoCompleteTextView
-                android:id="@+id/email"
-                style="@style/inputTextStyle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="@string/what_are_you_looking_for"
-                android:inputType="textEmailAddress" />
-
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/surfaceVariant"
-            android:layout_marginVertical="@dimen/margin"
-            />
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recycler"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_weight="1"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            tools:itemCount="4"
-            tools:listitem="@layout/inventory_item" />
-
-        <com.github.ybq.android.spinkit.SpinKitView
-            android:id="@+id/bottomLoader"
-            style="@style/appLoader"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:visibility="gone" />
-
-        <io.bidswipe.app.ui.custom.NoDataView
-            android:id="@+id/noData"
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            android:id="@+id/swipeRefreshLayout"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_gravity="center"
-            android:layout_weight="1"
-            app:title_text="No Data Found"
-            android:visibility="gone"/>
+            android:layout_weight="1">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/searchLayout"
+                    style="@style/inputBoxStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/margin"
+                    app:boxBackgroundColor="@color/surface"
+                    app:boxStrokeWidth="2dp"
+                    app:startIconDrawable="@drawable/search"
+                    app:startIconTint="@color/scrim">
+
+                    <com.google.android.material.textfield.MaterialAutoCompleteTextView
+                        android:id="@+id/email"
+                        style="@style/inputTextStyle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/what_are_you_looking_for"
+                        android:inputType="textEmailAddress" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recycler"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:orientation="vertical"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/searchLayout"
+                    tools:itemCount="4"
+                    tools:listitem="@layout/inventory_item" />
+
+                <com.github.ybq.android.spinkit.SpinKitView
+                    android:id="@+id/bottomLoader"
+                    style="@style/appLoader"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+
+                <io.bidswipe.app.ui.custom.NoDataView
+                    android:id="@+id/noData"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/searchLayout"
+                    app:title_text="No Data Found" />
+
+                <io.bidswipe.app.ui.custom.NoDataView
+                    android:id="@+id/noInternet"
+                    style="@style/noInternetStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
     </LinearLayout>
 
@@ -155,10 +162,13 @@
 
     </LinearLayout>
 
+
+
+
     <io.bidswipe.app.ui.custom.LoaderView
         android:id="@+id/loader"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone"/>
+        android:visibility="gone" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

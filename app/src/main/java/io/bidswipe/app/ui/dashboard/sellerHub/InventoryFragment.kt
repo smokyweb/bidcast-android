@@ -8,7 +8,6 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.tabs.TabLayout
-import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseFragment
 import io.bidswipe.app.controller.InventoryAdapter
 import io.bidswipe.app.databinding.FragmentInventoryBinding
@@ -92,15 +91,34 @@ class InventoryFragment : BaseFragment<SellerHubViewModel,FragmentInventoryBindi
             }
         })
 
+        bind.swipeRefreshLayout.setOnRefreshListener {
+            when(bind.tabs.isSelected){
+                true -> viewModel.getMyInventory(selectedTab.request(),page.toString().request())
+                false -> viewModel.getMyInventory("active".request(),"1".request())
+            }
+        }
+
+        bind.noInternet.onClick {
+            bind.noInternet.isVisible = false
+            bind.bottomLoader.isVisible = false
+            bind.loader.isVisible = true
+
+            when(bind.tabs.isSelected){
+                true -> viewModel.getMyInventory(selectedTab.request(),page.toString().request())
+                false -> viewModel.getMyInventory("active".request(),"1".request())
+            }
+        }
+
         bind.loader.isVisible = true
 
         viewModel.getMyInventory("active".request(),"1".request())
-
         viewModel.getMyInventoryRepo.observe(viewLifecycleOwner) {
             when (it) {
                 is Resource.Success -> {
                     bind.loader.isVisible = false
                     bind.bottomLoader.isVisible = false
+                    bind.noInternet.isVisible = false
+                    bind.swipeRefreshLayout.isRefreshing = false
 
                     val mData = it.value.data
 
@@ -129,10 +147,14 @@ class InventoryFragment : BaseFragment<SellerHubViewModel,FragmentInventoryBindi
                 is Resource.Error -> {
                     bind.loader.isVisible = false
                     bind.bottomLoader.isVisible = false
+                    bind.swipeRefreshLayout.isRefreshing = false
 
 
                     if (it.isNetworkError) {
-                        errorToast(getString(R.string.no_internet))
+                        bind.noInternet.isVisible = true
+                        bind.recycler.isVisible = false
+                        bind.noData.isVisible = false
+
                     } else {
                         it.parse(mCtx, TAG, object : AlertClicks {
                             override fun primaryClick(dialog: AppBottomSheet) {

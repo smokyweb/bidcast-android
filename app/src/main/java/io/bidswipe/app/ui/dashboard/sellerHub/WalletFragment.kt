@@ -47,6 +47,14 @@ class WalletFragment : BaseFragment<SellerHubViewModel, FragmentWalletBinding>()
 			finish()
 		}
 
+		bind.swipeRefreshLayout.setOnRefreshListener {
+			bind.swipeRefreshLayout.isRefreshing = false
+		}
+
+		bind.noInternet.onClick {
+			bind.noInternet.isVisible = false
+		}
+
 		val adapter = ViewPagerAdapter(requireActivity(),"wallet")
 		bind.pager.adapter = adapter
 

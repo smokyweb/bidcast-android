@@ -43,6 +43,19 @@ class BidsFragment : BaseFragment<DashViewModel, FragmentBidsBinding>() {
 
         bind.recycler.adapter = bidsAdapter
 
+        bind.swipeRefreshLayout.setOnRefreshListener {
+            page = 1
+            viewModel.fetchBids(page.toString())
+        }
+
+        bind.noInternet.onClick {
+            bind.loader.isVisible = true
+            bind.noInternet.isVisible = false
+            page = 1
+            viewModel.fetchBids(page.toString())
+
+        }
+
         bind.recycler.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
@@ -65,8 +78,11 @@ class BidsFragment : BaseFragment<DashViewModel, FragmentBidsBinding>() {
         viewModel.fetchBidsRepo.observe(viewLifecycleOwner) {
             when (it) {
                 is Resource.Success -> {
-
                     bind.loader.isVisible = false
+                    bind.swipeRefreshLayout.isRefreshing = false
+                    bind.bottomLoader.isVisible = false
+                    bind.noInternet.isVisible =false
+
                     val mData = it.value.data
 
                     mList.clear()
@@ -93,8 +109,14 @@ class BidsFragment : BaseFragment<DashViewModel, FragmentBidsBinding>() {
 
                 is Resource.Error -> {
                     bind.loader.isVisible = false
+                    bind.swipeRefreshLayout.isRefreshing =false
+                    bind.bottomLoader.isVisible = false
+
                     if (it.isNetworkError) {
-                        errorToast(getString(R.string.no_internet))
+                       bind.noInternet.isVisible = true
+                        bind.recycler.isVisible = false
+                        bind.noData.isVisible = false
+
                     } else {
                         it.parse(mCtx, TAG, object : AlertClicks {
                             override fun primaryClick(dialog: AppBottomSheet) {

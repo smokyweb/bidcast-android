@@ -106,7 +106,7 @@ class DashActivity : BaseActivity(), NavController.OnDestinationChangedListener 
                 is Resource.Error -> {
 
                     if (it.isNetworkError) {
-                        errorToast(getString(R.string.no_internet))
+
                     } else {
                         it.parse(this, TAG, object : AlertClicks {
                             override fun primaryClick(dialog: AppBottomSheet) {
@@ -144,7 +144,6 @@ class DashActivity : BaseActivity(), NavController.OnDestinationChangedListener 
                     bind.loader.isVisible = false
                     viewModel.logoutRepo.value = null
                     if (it.isNetworkError) {
-                        errorToast(getString(R.string.no_internet))
                     } else {
                         it.parse(this, TAG, object : AlertClicks {
                             override fun primaryClick(dialog: AppBottomSheet) {

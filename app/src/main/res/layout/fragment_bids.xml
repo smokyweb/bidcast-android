@@ -6,6 +6,16 @@
 	android:layout_height="match_parent"
 	tools:context=".ui.dashboard.BidsFragment">
 
+	<androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+		android:id="@+id/swipeRefreshLayout"
+		android:layout_width="match_parent"
+		android:layout_height="0dp"
+		app:layout_constraintBottom_toBottomOf="parent">
+
+		<androidx.constraintlayout.widget.ConstraintLayout
+			android:layout_width="match_parent"
+			android:layout_height="match_parent">
+
 	<androidx.recyclerview.widget.RecyclerView
 		android:id="@+id/recycler"
 		android:layout_width="match_parent"
@@ -33,6 +43,18 @@
 		android:layout_height="match_parent"
 		android:visibility="gone"
 		app:title_text="No Purchases Found"/>
+
+		</androidx.constraintlayout.widget.ConstraintLayout>
+	</androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+	<io.bidswipe.app.ui.custom.NoDataView
+		android:id="@+id/noInternet"
+		style="@style/noInternetStyle"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:visibility="gone"
+		app:layout_constraintBottom_toBottomOf="parent"
+		app:layout_constraintTop_toTopOf="parent" />
 
 	<io.bidswipe.app.ui.custom.LoaderView
 		android:id="@+id/loader"

@@ -53,14 +53,14 @@
 		app:layout_constraintEnd_toEndOf="parent"
 		app:layout_constraintStart_toStartOf="parent"
 		app:layout_constraintTop_toBottomOf="@id/chipGroupScroll">
+
 		<TextView
 			android:id="@+id/live"
 			style="@style/TitleLarge"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:layout_gravity="center_vertical"
-			android:text="@string/live_now"
-			/>
+			android:text="@string/live_now" />
 
 		<com.google.android.material.divider.MaterialDivider
 			android:layout_width="2dp"
@@ -88,47 +88,63 @@
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:layout_gravity="center_vertical"
-			android:text="@string/comming_soon"
-			/>
+			android:text="@string/comming_soon" />
 
 	</LinearLayout>
 
-	<!--<TextView
-		android:id="@+id/heading"
-		style="@style/HeadlineSmall"
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:layout_gravity="center_vertical"
-		android:layout_marginHorizontal="@dimen/margin"
-		android:text="@string/live_now"
-		 />-->
-
-	<androidx.recyclerview.widget.RecyclerView
-		android:id="@+id/recycler"
+	<androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+		android:id="@+id/swipeRefreshLayout"
 		android:layout_width="match_parent"
 		android:layout_height="0dp"
-		android:layout_margin="@dimen/half_margin"
-		android:orientation="vertical"
-		app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-		app:layout_constraintBottom_toBottomOf="parent"
 		app:layout_constraintTop_toBottomOf="@id/heading"
-		app:spanCount="2"
-		tools:itemCount="6"
-		tools:listitem="@layout/home_item" />
+		app:layout_constraintBottom_toBottomOf="parent">
 
-	<io.bidswipe.app.ui.custom.NoDataView
-		android:id="@+id/noData"
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		app:title_text="No Shows Found"
-		android:visibility="gone"
-		app:layout_constraintTop_toBottomOf="@id/heading"
-		app:layout_constraintBottom_toBottomOf="parent"/>
+		<androidx.constraintlayout.widget.ConstraintLayout
+			android:layout_width="match_parent"
+			android:layout_height="match_parent">
+
+			<androidx.recyclerview.widget.RecyclerView
+				android:id="@+id/recycler"
+				android:layout_width="match_parent"
+				android:layout_height="match_parent"
+				android:layout_margin="@dimen/half_margin"
+				android:orientation="vertical"
+				app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+				app:spanCount="2"
+				tools:itemCount="6"
+				tools:listitem="@layout/home_item" />
+
+			<io.bidswipe.app.ui.custom.NoDataView
+				android:id="@+id/noData"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				app:title_text="No Shows Found"
+				android:visibility="gone"
+				app:layout_constraintTop_toTopOf="parent"
+				app:layout_constraintBottom_toBottomOf="parent"
+				app:layout_constraintEnd_toEndOf="parent"/>
+
+
+			<io.bidswipe.app.ui.custom.NoDataView
+				android:id="@+id/noInternet"
+				style="@style/noInternetStyle"
+				android:layout_width="match_parent"
+				android:layout_height="match_parent"
+				android:visibility="gone"
+				app:layout_constraintBottom_toBottomOf="parent"
+				app:layout_constraintTop_toTopOf="parent" />
+
+		</androidx.constraintlayout.widget.ConstraintLayout>
+
+	</androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
 
 	<io.bidswipe.app.ui.custom.LoaderView
 		android:id="@+id/loader"
 		android:layout_width="match_parent"
 		android:layout_height="match_parent"
-		android:visibility="gone"/>
+		android:visibility="gone"
+		app:layout_constraintBottom_toBottomOf="parent"
+		app:layout_constraintTop_toTopOf="parent"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -97,6 +97,30 @@ class ShowsFragment :  BaseFragment<SellerHubViewModel, FragmentShowsBinding>() 
             startActivity(mCtx.toScheduleShow(from = "dash"))
 
         }
+        bind.swipeRefreshLayout.setOnRefreshListener {
+            when(bind.tabs.isSelected){
+                true ->{
+                    viewModel.getMyScheduledShow("upcoming".request())
+                }
+                false ->{
+                    viewModel.getMyScheduledShow("past".request())
+                }
+            }
+        }
+
+        bind.noInternet.onClick {
+            bind.loader.isVisible = true
+            bind.noInternet.isVisible = false
+
+            when(bind.tabs.isSelected){
+                true ->{
+                    viewModel.getMyScheduledShow("upcoming".request())
+                }
+                false ->{
+                    viewModel.getMyScheduledShow("past".request())
+                }
+            }
+        }
 
         bind.loader.isVisible = true
         viewModel.getMyScheduledShow("upcoming".request())
@@ -104,6 +128,8 @@ class ShowsFragment :  BaseFragment<SellerHubViewModel, FragmentShowsBinding>() 
         viewModel.getMyScheduledShowRepo.observe(viewLifecycleOwner) {
             when (it) {
                 is Resource.Success -> {
+                    bind.noInternet.isVisible = false
+                    bind.swipeRefreshLayout.isRefreshing = false
                     bind.loader.isVisible = false
 
                     val mData = it.value.data
@@ -127,10 +153,14 @@ class ShowsFragment :  BaseFragment<SellerHubViewModel, FragmentShowsBinding>() 
                 }
 
                 is Resource.Error -> {
+                    bind.swipeRefreshLayout.isRefreshing =false
+                    bind.noInternet.isVisible = false
                     bind.loader.isVisible = false
 
                     if (it.isNetworkError) {
-                        errorToast(getString(R.string.no_internet))
+                        bind.noInternet.isVisible = true
+                        bind.recycler.isVisible = false
+                        bind.noData.isVisible = false
                     } else {
                         it.parse(mCtx, TAG, object : AlertClicks {
                             override fun primaryClick(dialog: AppBottomSheet) {

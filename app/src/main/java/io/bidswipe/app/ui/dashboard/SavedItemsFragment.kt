@@ -56,14 +56,26 @@ class SavedItemsFragment : BaseFragment<DashViewModel,FragmentSavedItemsBinding>
                 }
             }
         })
+        bind.swipeRefreshLayout.setOnRefreshListener {
+            page = 1
+            viewModel.getSavedProductsByStatus("saved".request(),page.toString().request())
+        }
+
+        bind.noInternet.onClick {
+            bind.loader.isVisible = true
+            bind.noInternet.isVisible = false
+            page = 1
+            viewModel.getSavedProductsByStatus("saved".request(),page.toString().request())
+        }
 
         bind.loader.isVisible = true
 
         viewModel.getSavedProductsByStatus("saved".request(),"1".request())
-
         viewModel.getSavedProductsByStatusRepo.observe(viewLifecycleOwner) {
             when (it) {
                 is Resource.Success -> {
+                    bind.swipeRefreshLayout.isRefreshing = false
+                    bind.noInternet.isVisible =false
                     bind.loader.isVisible = false
 
                     val mData = it.value.data
@@ -88,11 +100,14 @@ class SavedItemsFragment : BaseFragment<DashViewModel,FragmentSavedItemsBinding>
                 }
 
                 is Resource.Error -> {
+                    bind.swipeRefreshLayout.isRefreshing = false
                     bind.loader.isVisible = false
 
 
                     if (it.isNetworkError) {
-                        errorToast(getString(R.string.no_internet))
+                        bind.noInternet.isVisible = true
+                        bind.recycler.isVisible = false
+                        bind.noData.isVisible = false
                     } else {
                         it.parse(mCtx, TAG, object : AlertClicks {
                             override fun primaryClick(dialog: AppBottomSheet) {

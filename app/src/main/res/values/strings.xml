@@ -85,7 +85,7 @@
     <string name="no">No</string>
     <string name="no_cancel">No Cancel..</string>
     <string name="no_data_found">No Data Found</string>
-    <string name="no_internet">There is no internet connection.\\nPlease connect to the internet and try again</string>
+    <string name="no_internet">There is no internet connection.\nPlease connect to the internet and try again</string>
     <string name="offers">Offers</string>
     <string name="oz">Oz</string>
     <string name="password">Password</string>

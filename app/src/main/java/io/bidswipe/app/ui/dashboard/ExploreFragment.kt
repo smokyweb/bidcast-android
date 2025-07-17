@@ -2,7 +2,6 @@ package io.bidswipe.app.ui.dashboard
 
 import android.annotation.SuppressLint
 import android.content.Intent
-import android.graphics.Typeface
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -62,11 +61,36 @@ class ExploreFragment : BaseFragment<DashViewModel,FragmentExploreBinding>() {
         }
 
         bind.header.onMorePrimaryClick {
-
-
-
             startActivity(Intent(mCtx , NotificationActivity::class.java).putExtra("slug","notification"))
         }
+
+        bind.swipeRefreshLayout.setOnRefreshListener {
+            when (bind.searchExpandLayout.isExpanded) {
+                true -> viewModel.getCategory()
+                bind.recommended.isSelected -> viewModel.getCategory()
+                bind.popular.isSelected -> viewModel.getCategory()
+                bind.all.isSelected -> viewModel.getCategory()
+                else -> {}
+            }
+
+        }
+
+
+        bind.noInternet.onClick {
+
+            bind.loader.isVisible = true
+            bind.noInternet.isVisible = false
+
+            when (bind.searchExpandLayout.isExpanded) {
+                true -> viewModel.getCategory()
+                bind.recommended.isSelected -> viewModel.getCategory()
+                bind.popular.isSelected -> viewModel.getCategory()
+                bind.all.isSelected -> viewModel.getCategory()
+                else -> {}
+            }
+
+        }
+
 
         selectTab(bind.recommended)
 
@@ -80,6 +104,8 @@ class ExploreFragment : BaseFragment<DashViewModel,FragmentExploreBinding>() {
             when (it) {
                 is Resource.Success -> {
                     bind.loader.isVisible = false
+                    bind.swipeRefreshLayout.isRefreshing = false
+                    bind.noInternet.isVisible = false
 
                     if(it.value.data?.isNotEmpty()==true){
                         exploreList.clear()
@@ -89,9 +115,12 @@ class ExploreFragment : BaseFragment<DashViewModel,FragmentExploreBinding>() {
                 }
                 
                 is Resource.Error -> {
+                    bind.noInternet.isVisible = false
+                    bind.swipeRefreshLayout.isRefreshing = false
                     bind.loader.isVisible = false
+
                     if (it.isNetworkError) {
-                        errorToast(getString(R.string.no_internet))
+                        bind.noInternet.isVisible = true
                     } else {
                         it.parse(mCtx, TAG, object : AlertClicks {
                             override fun primaryClick(dialog: AppBottomSheet) {

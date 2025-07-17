@@ -44,11 +44,27 @@ class OfferFragment : BaseFragment<DashViewModel, FragmentOfferBinding>() {
 		offersAdapter = OffersAdapter(mList, mClick)
 		
 		bind.recycler.adapter = offersAdapter
+
+		bind.noInternet.onClick {
+			bind.loader.isVisible = true
+			bind.noInternet.isVisible = false
+			page = 1
+			viewModel.offerList(page)
+		}
+
+		bind.swipeRefreshLayout.setOnRefreshListener {
+			page = 1
+			viewModel.offerList(page)
+		}
 		
 		bind.loader.isVisible = true
+
 		viewModel.offerList(page)
 		viewModel.offerListRepo.observe(viewLifecycleOwner) {
+			bind.swipeRefreshLayout.isRefreshing = false
+			bind.noInternet.isVisible = false
 			bind.loader.isVisible = false
+
 			when (it) {
 				is Resource.Success -> {
 					if (page == 1) mList.clear()
@@ -69,7 +85,10 @@ class OfferFragment : BaseFragment<DashViewModel, FragmentOfferBinding>() {
 				
 				is Resource.Error -> {
 					if (it.isNetworkError) {
-						errorToast(getString(R.string.no_internet))
+						bind.noInternet.isVisible = true
+						bind.recycler.isVisible = false
+						bind.noData.isVisible = false
+
 					} else {
 						it.parse(mCtx, TAG)
 					}
@@ -79,15 +98,15 @@ class OfferFragment : BaseFragment<DashViewModel, FragmentOfferBinding>() {
 				
 			}
 		}
-		
+
 		viewModel.offerUpdateStatusRepo.observe(viewLifecycleOwner) {
 
 			when (it) {
 				is Resource.Success -> {
 					bind.loader.isVisible = false
-					var index=mList.indexOfFirst {offer -> offer?.id == it.value.data?.id  }
+					val index=mList.indexOfFirst { offer -> offer?.id == it.value.data?.id  }
 					if(index!=-1){
-						var offer = mList[index]
+						val offer = mList[index]
 						offer?.status = it.value.data?.status
 						mList[index]=offer
 						offersAdapter.notifyItemChanged(index,offer)
