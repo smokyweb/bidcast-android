@@ -47,7 +47,6 @@ import okhttp3.RequestBody.Companion.toRequestBody
 import java.util.Locale
 import kotlin.math.ceil
 
-
 fun runSafe(callback: () -> Unit) {
 	try {
 		callback.invoke()
@@ -104,15 +103,9 @@ fun EditText.setNumberInput() {
 	transformationMethod = HideReturnsTransformationMethod.getInstance()
 }
 
-fun String.asMoney() = "$ " + "%.2f".format(this.toDouble())
-fun String.asRupee() = "₹ " + "%.2f".format(this.toDouble())
+fun String.asMoney() = "$" + "%.2f".format(this.toDouble())
 
-fun String.asBool() = try {
-	java.lang.Boolean.parseBoolean(this.lowercase())
-} catch (e: Exception) {
-	e.printStackTrace()
-	false
-}
+
 
 fun String.request() = this.trim().toRequestBody("text/plain".toMediaTypeOrNull())
 
@@ -172,7 +165,7 @@ fun Fragment.intent(): Intent {
 fun Resource.Error.parse(
 	mCtx : Context,
 	tag : String,
-	mClicks : AlertClicks,
+	mClicks : AlertClicks?=null,
 	showSecondary : Boolean = false,
 	title : String = "Error",
 	showAlert : Boolean = true,
@@ -189,7 +182,7 @@ fun Resource.Error.parse(
 		e.localizedMessage?.asCapital() ?: "No Data Found"
 	}
 
-	if (this.isNetworkError) Alerts.log(tag , "ERROR : \n${this.errorCode}")
+	if (this.isNetworkError) Alerts.log(tag, "ERROR : \n${this.errorCode}")
 
 	val clicks = if (this.errorResponse?.errorType == "unauthorized" || this.errorResponse?.errorType == "token_invalid") {
 		object : AlertClicks {
@@ -208,7 +201,16 @@ fun Resource.Error.parse(
 			}
 		}
 	} else {
-		mClicks
+			mClicks?:object : AlertClicks {
+				override fun primaryClick(dialog: AppBottomSheet) {
+					dialog.dismiss()
+				}
+				
+				override fun secondaryClick(dialog: AppBottomSheet) {
+					dialog.dismiss()
+					
+				}
+			}
 	}
 
 	if (showAlert) {

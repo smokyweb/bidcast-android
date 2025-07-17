@@ -3,12 +3,15 @@ package io.bidswipe.app.controller
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import io.bidswipe.app.base.BaseAdapter
-import io.bidswipe.app.databinding.BidsItemBinding
 import io.bidswipe.app.databinding.PurchasesItemBinding
 import io.bidswipe.app.interfaces.RecyclerClicks
+import io.bidswipe.app.network.response.GetProductsByStatusResponse
+import io.bidswipe.app.utils.Utils
+import io.bidswipe.app.utils.asMoney
+import io.bidswipe.app.utils.loadUrl
 
-class PurchasesAdapter(mList: MutableList<String>, val mClicks: RecyclerClicks, val type : String
-) : BaseAdapter<String, PurchasesItemBinding>(mList) {
+class PurchasesAdapter(mList: MutableList<GetProductsByStatusResponse.Data?>, val mClicks: RecyclerClicks
+) : BaseAdapter<GetProductsByStatusResponse.Data, PurchasesItemBinding>(mList) {
 
     override fun bindView(inflater: LayoutInflater, parent: ViewGroup) =
         PurchasesItemBinding.inflate(inflater, parent, false)
@@ -16,20 +19,30 @@ class PurchasesAdapter(mList: MutableList<String>, val mClicks: RecyclerClicks, 
     override fun onBind(
         holder: BaseViewHolder<PurchasesItemBinding>,
         position: Int,
-        item: String?
+        item: GetProductsByStatusResponse.Data?
     ) {
         with(holder) {
 
             bind.root.setOnClickListener {
-                mClicks.viewClick(position)
+                mClicks.itemClick(position)
             }
 
-            if (type == "saved"){
+            bind.price.text = item?.product?.pricing.toString().asMoney()
 
-                bind.prodSubTitle.text = "Seller: Jhon Smith"
-
+            bind.productId.text = buildString {
+                append(item?.product?.title)
+                append(" #")
+                append(item?.product?.id.toString())
             }
 
+            bind.prodSubTitle.text = buildString {
+                append("Buyer: ")
+                append(item?.user?.name)
+            }
+
+            bind.date.text = Utils.getFormattedDateTime("yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'","MM/dd/yyyy",item?.product?.createdAt.toString())
+
+            bind.productImage.loadUrl(mCtx,item?.product?.images?.get(0).toString())
 
         }
     }

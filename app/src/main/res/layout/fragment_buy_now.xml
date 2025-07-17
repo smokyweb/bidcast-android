@@ -1,0 +1,360 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".ui.dashboard.product.BuyNowFragment">
+
+    <io.bidswipe.app.ui.custom.Header
+        android:id="@+id/header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:headerMode="BACK_BUTTON_TITLE_ACTION"
+        app:layout_constraintTop_toTopOf="parent"
+        app:primaryIconDrawable="@drawable/close_ic"
+        app:showBackButton="true"
+        app:showPrimaryIcon="false"
+        app:showSecondaryIcon="false"
+        app:headerTitle="Buy Now"/>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toBottomOf="@id/header"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:id="@+id/click"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:layout_margin="@dimen/margin">
+
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/icon_card"
+                    style="@style/cardStyle"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    app:cardBackgroundColor="@color/tertiaryContainer"
+                    app:cardElevation="0dp">
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/productImg"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:src="@drawable/person" />
+
+                </com.google.android.material.card.MaterialCardView>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/half_margin"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/productName"
+                        style="@style/TitleLarge"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Premium Wireless Headphones"/>
+
+                    <TextView
+                        android:id="@+id/productDescription"
+                        style="@style/BodyLarge"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:alpha="0.8"
+                        android:text="White" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <com.google.android.material.divider.MaterialDivider
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                app:dividerColor="@color/outline" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/margin"
+                android:orientation="horizontal">
+
+                <TextView
+                    style="@style/BodyMedium"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/send_as_a_gift"
+                    android:drawableStart="@drawable/ic_gift"
+                    android:drawablePadding="@dimen/half_margin"
+                    android:drawableTint="@color/scrim"/>
+
+
+                <com.google.android.material.materialswitch.MaterialSwitch
+                    android:id="@+id/sendAsGift"
+                    style="@style/appSwitch"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="@style/TitleMedium"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingVertical="@dimen/half_margin"
+                android:orientation="horizontal">
+
+                <TextView
+                    style="@style/TitleLarge"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/margin"
+                    android:layout_marginEnd="@dimen/margin"
+                    android:layout_weight="1"
+                    android:text="@string/payment_method" />
+
+                <TextView
+                    android:id="@+id/changePayment"
+                    style="@style/TitleSmall"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/primary"
+                    android:layout_marginEnd="@dimen/margin"
+                    android:padding="8dp"
+                    android:background="?selectableItemBackground"
+                    android:text="@string/change" />
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/cardNumber"
+                style="@style/TitleMedium"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:layout_marginBottom="@dimen/margin"
+                android:layout_marginHorizontal="@dimen/margin"
+                android:drawablePadding="@dimen/half_margin"
+                android:useBoundsForWidth="true"
+                android:background="?selectableItemBackground"
+                android:text="**** 424242" />
+
+            <com.google.android.material.divider.MaterialDivider
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                app:dividerColor="@color/outline" />
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingVertical="@dimen/half_margin"
+                android:orientation="horizontal">
+
+                <TextView
+                    style="@style/TitleLarge"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/margin"
+                    android:layout_marginEnd="@dimen/margin"
+                    android:layout_weight="1"
+                    android:text="@string/shipping_address" />
+
+                <TextView
+                    android:id="@+id/changeAddress"
+                    style="@style/TitleSmall"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/primary"
+                    android:layout_marginEnd="@dimen/margin"
+                    android:padding="8dp"
+                    android:background="?selectableItemBackground"
+                    android:text="@string/change" />
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/address"
+                style="@style/BodyLarge"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/margin"
+                android:layout_marginHorizontal="@dimen/margin"
+                android:alpha="0.8"
+                android:text="12 Main Road Enginnering Churaha" />
+
+
+            <com.google.android.material.divider.MaterialDivider
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                app:dividerColor="@color/outline" />
+
+
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/inputBoxStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/margin">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/promoCode"
+                    style="@style/inputTextStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:maxLines="1"
+                    android:hint="@string/enter_promo_code" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.divider.MaterialDivider
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                app:dividerColor="@color/outline" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/half_margin"
+                android:alpha="0.7"
+                android:orientation="horizontal">
+
+                <TextView
+                    style="@style/BodyLarge"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/margin"
+                    android:layout_marginEnd="@dimen/margin"
+                    android:layout_weight="1"
+                    android:text="Subtotal" />
+
+                <TextView
+                    android:id="@+id/subTotal"
+                    style="@style/BodyLarge"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/margin"
+                    android:background="?selectableItemBackground"
+                    android:text="$299.99" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:alpha="0.7"
+                android:layout_marginTop="@dimen/half_margin"
+                android:orientation="horizontal">
+
+                <TextView
+                    style="@style/BodyLarge"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/margin"
+                    android:layout_marginEnd="@dimen/margin"
+                    android:layout_weight="1"
+                    android:text="Shipping" />
+
+                <TextView
+                    android:id="@+id/shipping"
+                    style="@style/BodyLarge"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/margin"
+                    android:background="?selectableItemBackground"
+                    android:text="$9.99" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:alpha="0.7"
+                android:layout_marginVertical="@dimen/half_margin"
+                android:orientation="horizontal">
+
+                <TextView
+                    style="@style/BodyLarge"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/margin"
+                    android:layout_marginEnd="@dimen/margin"
+                    android:layout_weight="1"
+                    android:text="Tax" />
+
+                <TextView
+                    android:id="@+id/tax"
+                    style="@style/BodyLarge"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/margin"
+                    android:background="?selectableItemBackground"
+                    android:text="$24.99" />
+
+            </LinearLayout>
+
+            <com.google.android.material.divider.MaterialDivider
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginHorizontal="@dimen/margin"
+                app:dividerColor="@color/outline" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    style="@style/TitleLarge"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/margin"
+                    android:layout_marginEnd="@dimen/margin"
+                    android:layout_weight="1"
+                    android:text="@string/total" />
+
+                <TextView
+                    android:id="@+id/total"
+                    style="@style/TitleLarge"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/margin"
+                    android:padding="8dp"
+                    android:background="?selectableItemBackground"
+                    android:text="$333.00" />
+
+            </LinearLayout>
+
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/confirm_button"
+                style="@style/appBtn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/margin"
+                app:cornerRadius="50dp"
+                android:text="@string/confirm_purchase" />
+
+        </LinearLayout>
+
+    </ScrollView>
+
+    <io.bidswipe.app.ui.custom.LoaderView
+        android:id="@+id/loader"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"/>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

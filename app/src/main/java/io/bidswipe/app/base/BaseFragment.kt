@@ -13,6 +13,8 @@ import androidx.lifecycle.*
 import androidx.navigation.fragment.findNavController
 import androidx.viewbinding.ViewBinding
 import com.permissionx.guolindev.PermissionX
+import io.bidswipe.app.App
+import io.bidswipe.app.network.response.LoginResponse
 import io.bidswipe.app.utils.Alerts
 import io.bidswipe.app.utils.Prefs
 
@@ -24,6 +26,8 @@ abstract class BaseFragment<VM : ViewModel , BIND : ViewBinding> : Fragment() {
 	protected lateinit var bind : BIND
 
 	protected lateinit var userId : String
+	protected lateinit var userName : String
+	protected lateinit var userImage : String
 
 
 	protected lateinit var TAG : String
@@ -38,7 +42,9 @@ abstract class BaseFragment<VM : ViewModel , BIND : ViewBinding> : Fragment() {
 			"FRAGMENT_$tag"
 		}
 
-//		userId = Prefs(mCtx).getUserData()?.id.toString()
+		userId = Prefs(mCtx).getUserData()?.id.toString()
+		userName = Prefs(mCtx).getUserData()?.name.toString()
+		userImage = Prefs(mCtx).getUserData()?.profileImage.toString()
 //		authUserData = Prefs(mCtx).getUserData()
 		viewModel = ViewModelProvider(requireActivity())[getModel()]
 

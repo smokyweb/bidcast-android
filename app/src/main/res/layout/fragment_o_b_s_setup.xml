@@ -1,0 +1,314 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".ui.dashboard.scheduleShow.OBSSetupFragment">
+
+    <io.bidswipe.app.ui.custom.Header
+        android:id="@+id/header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:headerMode="BACK_BUTTON_TITLE_ACTION"
+        app:headerTitle="Choose Sales Format"
+        app:layout_constraintTop_toTopOf="parent"
+        app:primaryIconDrawable="@drawable/notification"
+        app:secondaryIconDrawable="@drawable/search"
+        app:showBackButton="true"
+        app:showPrimaryIcon="false"
+        app:showSecondaryIcon="false" />
+
+    <ScrollView
+        android:id="@+id/scroll"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toBottomOf="@id/header"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/half_margin"
+            android:layout_marginHorizontal="@dimen/margin"
+            android:orientation="vertical">
+
+            <com.google.android.material.card.MaterialCardView
+                style="@style/cardStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/secondaryContainer"
+                app:contentPadding="@dimen/margin">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        style="@style/TitleLarge"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="What is OBS?"/>
+                    <TextView
+                        style="@style/BodyMedium"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/obs_open_broadcast_software_is_a_free_streaming_and_recording_program_that_lets_you_share_your_live_content_with_your_audience" />
+
+                </LinearLayout>
+
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <TextView
+                style="@style/TitleLarge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="@dimen/half_margin"
+                android:text="@string/more_info"
+                android:textColor="@color/secondary"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:layout_marginTop="@dimen/margin"
+                android:orientation="horizontal">
+
+                <TextView
+                    style="@style/BodyMedium"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="live_12345678_abcdefghij" />
+
+                <ImageButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/half_margin"
+                    android:backgroundTint="@color/background"
+                    app:tint="@color/secondary"
+                    android:src="@drawable/ic_copy"
+                    app:cornerRadius="8dp" />
+
+            </LinearLayout>
+
+            <com.google.android.material.card.MaterialCardView
+                style="@style/cardStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/onSecWarning"
+                android:layout_marginTop="@dimen/margin"
+                app:contentPadding="@dimen/margin">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal">
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/imageIcon"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_warning" />
+
+                    <TextView
+                        style="@style/BodyMedium"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/half_margin"
+                        android:text="@string/obs_open_broadcast_software_is_a_free_streaming_and_recording_program_that_lets_you_share_your_live_content_with_your_audience" />
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <TextView
+                style="@style/TitleLarge"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="@dimen/margin"
+                android:text="Setup Instructions" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/icon_card"
+                    style="@style/cardStyle"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    app:cardCornerRadius="100dp"
+                    android:backgroundTint="@color/secondaryContainer"
+                    app:cardElevation="0dp">
+
+                    <TextView
+                        style="@style/TitleMedium"
+                        android:id="@+id/icon"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:textColor="@color/secondary"
+                        android:text="1"
+                         />
+
+                </com.google.android.material.card.MaterialCardView>
+
+                <TextView
+                    style="@style/BodyLarge"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:alpha="0.7"
+                    android:layout_marginStart="@dimen/half_margin"
+                    android:text="Open OBS Studio in your omputer" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_marginTop="@dimen/half_margin"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <com.google.android.material.card.MaterialCardView
+                    style="@style/cardStyle"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    app:cardCornerRadius="100dp"
+                    android:backgroundTint="@color/secondaryContainer"
+                    app:cardElevation="0dp">
+
+                    <TextView
+                        style="@style/TitleMedium"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:textColor="@color/secondary"
+                        android:text="2"
+                        />
+
+                </com.google.android.material.card.MaterialCardView>
+
+                <TextView
+                    style="@style/BodyLarge"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:alpha="0.7"
+                    android:layout_marginStart="@dimen/half_margin"
+                    android:text="Open OBS Studio in your omputer" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_marginTop="@dimen/half_margin"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <com.google.android.material.card.MaterialCardView
+                    style="@style/cardStyle"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    app:cardCornerRadius="100dp"
+                    android:backgroundTint="@color/secondaryContainer"
+                    app:cardElevation="0dp">
+
+                    <TextView
+                        style="@style/TitleMedium"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:textColor="@color/secondary"
+                        android:text="3"
+                        />
+
+                </com.google.android.material.card.MaterialCardView>
+
+                <TextView
+                    style="@style/BodyLarge"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginStart="@dimen/half_margin"
+                    android:text="Open OBS Studio in your omputer" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_marginTop="@dimen/half_margin"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <com.google.android.material.card.MaterialCardView
+                    style="@style/cardStyle"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    app:cardCornerRadius="100dp"
+                    android:backgroundTint="@color/secondaryContainer"
+                    app:cardElevation="0dp">
+
+                    <TextView
+                        style="@style/TitleMedium"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:textColor="@color/secondary"
+                        android:text="4"
+                        />
+
+                </com.google.android.material.card.MaterialCardView>
+
+                <TextView
+                    style="@style/BodyLarge"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:alpha="0.7"
+                    android:layout_marginStart="@dimen/half_margin"
+                    android:text="Open OBS Studio in your omputer" />
+
+            </LinearLayout>
+
+            <TextView
+                style="@style/TitleLarge"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="@dimen/margin"
+                android:text="Get OBS Studio" />
+
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/continueBtn"
+                style="@style/appBtn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:icon="@drawable/download"
+                android:layout_marginTop="@dimen/margin"
+                android:layout_marginBottom="@dimen/margin"
+                android:backgroundTint="@color/secondary"
+                android:text="Download OBS Studio" />
+
+                <com.google.android.material.button.MaterialButton
+                    style="@style/appBtn"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingHorizontal="@dimen/margin"
+                    android:layout_marginBottom="@dimen/margin"
+                    android:backgroundTint="@color/secondary"
+                    android:text="Start Streaming" />
+
+
+        </LinearLayout>
+
+    </ScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

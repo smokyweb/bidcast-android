@@ -58,6 +58,8 @@
         <item name="android:textSize">12sp</item>
     </style>
 
+
+
     <style name="LabelLarge" parent="TextAppearance.Material3.LabelLarge">
         <item name="fontFamily">@font/poppins_semi_bold</item>
         <item name="android:fontFamily">@font/poppins_semi_bold</item>

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:id="@+id/click"
+    android:gravity="center_vertical"
+    android:padding="@dimen/margin"
+    android:layout_margin="@dimen/half_margin"
+    style="@style/shadowStyle"
+    android:background="@drawable/card_8">
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/icon_card"
+        style="@style/cardStyle"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        app:cardElevation="0dp">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/icon"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:src="@drawable/ic_visa"
+            />
+
+    </com.google.android.material.card.MaterialCardView>
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/half_margin"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/cardNumber"
+            style="@style/TitleLarge"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="**** **** 4242" />
+
+        <TextView
+            android:id="@+id/expiryDate"
+            style="@style/BodyLarge"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:alpha="0.7"
+            android:text="Expires 08/25" />
+
+    </LinearLayout>
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/next"
+        android:layout_width="18dp"
+        android:layout_height="18dp"
+        android:rotation="90"
+        android:alpha="0.7"
+        android:src="@drawable/ic_detail" />
+
+</LinearLayout>

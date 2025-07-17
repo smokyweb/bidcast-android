@@ -8,6 +8,8 @@ import java.util.Date
             alias(libs.plugins.kotlin.android)
             alias(libs.plugins.hiltAndroid)
             alias(libs.plugins.devtools)
+            alias(libs.plugins.google.gms.google.services)
+
         }
 
 fun getAPKName() = "Bid_Swipe_${SimpleDateFormat("dd-MM-yyyy").format(Date())}"
@@ -99,6 +101,9 @@ dependencies {
     implementation(libs.material)
     implementation(libs.navigation.fragment.ktx)
     implementation(libs.navigation.ui.ktx)
+    implementation(libs.firebase.messaging.ktx)
+    implementation(libs.firebase.messaging)
+    implementation(libs.firebase.database)
     ksp(libs.hilt.compiler)
     implementation(libs.flexbox)
 
@@ -116,6 +121,9 @@ dependencies {
     implementation(libs.glide)
     ksp(libs.compiler)
 
+    //STRIPE DEPENDENCY
+    implementation (libs.stripe.android)
+
     //ExoPlayer
     implementation(libs.androidx.media3.exoplayer)
     implementation(libs.androidx.media3.exoplayer.dash)
@@ -124,6 +132,7 @@ dependencies {
 
     //THIRD PARTY DEPENDENCIES
     implementation(libs.recyclerview.animators)
+    implementation(libs.swipelayout)
     implementation(libs.material.calendar.view)
     implementation(libs.android.image.cropper)
     implementation(libs.android.spinKit)
@@ -134,8 +143,20 @@ dependencies {
     implementation(libs.roundedimageview)
     implementation(libs.cameraview)
     implementation(libs.easyvalidation.core)
+    implementation(libs.locale.helper.android)
+    implementation(libs.yuanwenhai.html.textview)
+    implementation(libs.expandableLayout)
+    implementation(libs.slidetoact)
+    implementation(libs.immersionbar.ktx)
+    implementation(libs.immersionbar)
+    implementation (libs.powermenu)
+    implementation(libs.socialview.autocomplete)
+    implementation(libs.zim)
 
+    implementation ("androidx.browser:browser:1.8.0")
+    implementation ("com.github.davidmigloz:number-keyboard:3.1.0")
+//    implementation ("com.github.yoanngoular:numpadview:1.0.0")
 
-
-
+    //ZEGO CLOUD
+    implementation (libs.express.video)
 }

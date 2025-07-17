@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "988454812680",
+    "firebase_url": "https://bidcast-a527c-default-rtdb.firebaseio.com",
+    "project_id": "bidcast-a527c",
+    "storage_bucket": "bidcast-a527c.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:988454812680:android:38c0054039521d4ddea5bd",
+        "android_client_info": {
+          "package_name": "io.bidswipe.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC1TfaBJi35l1u_vqed6WR9dl9nSYISJKI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -6,7 +6,6 @@
 	android:layout_height="match_parent"
 	tools:context=".ui.dashboard.tutorials.PrepareYourShowFragment">
 
-
 	<io.bidswipe.app.ui.custom.Header
 		android:id="@+id/header"
 		android:layout_width="match_parent"
@@ -20,7 +19,6 @@
 		app:showPrimaryIcon="false"
 		app:showSecondaryIcon="false" />
 
-
 	<com.google.android.material.progressindicator.LinearProgressIndicator
 		android:id="@+id/stepProgress"
 		android:layout_width="match_parent"
@@ -31,7 +29,6 @@
 		app:layout_constraintTop_toBottomOf="@id/header"
 		app:trackCornerRadius="6dp"
 		app:trackThickness="8dp" />
-
 
 	<androidx.recyclerview.widget.RecyclerView
 		android:id="@+id/recycler"
@@ -63,8 +60,12 @@
 			app:drawableStartCompat="@drawable/ic_question"
 			app:drawableTint="@color/secondary" />
 
-
 	</LinearLayout>
 
+	<io.bidswipe.app.ui.custom.LoaderView
+		android:id="@+id/loader"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:visibility="gone"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

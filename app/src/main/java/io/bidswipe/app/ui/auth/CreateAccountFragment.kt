@@ -33,6 +33,12 @@ class CreateAccountFragment : BaseFragment<AuthViewModel, FragmentCreateAccountB
             findNavController().popBackStack()
         }
 
+
+        bind.layout.setOnClickListener {
+            hideKeyboard(it)
+        }
+
+
         bind.createAccountBtn.setOnClickListener {
             when {
 

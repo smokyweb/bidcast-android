@@ -1,0 +1,646 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".ui.dashboard.sellerHub.SellerVerificationFragment">
+
+    <io.bidswipe.app.ui.custom.Header
+        android:id="@+id/header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:headerMode="BACK_BUTTON_TITLE_ACTION"
+        app:headerTitle="Seller Verification"
+        app:layout_constraintTop_toTopOf="parent"
+        app:primaryIconDrawable="@drawable/close_ic"
+        app:secondaryIconDrawable="@drawable/search"
+        app:showBackButton="true"
+        app:showPrimaryIcon="false"
+        app:showSecondaryIcon="false" />
+
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/scrollView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginBottom="@dimen/margin"
+        app:layout_constraintTop_toBottomOf="@id/header"
+        app:layout_constraintBottom_toTopOf="@id/completeVerification">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:id="@+id/headingView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/margin"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/image_limit"
+                    style="@style/TitleMedium"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:text="@string/verification_progress" />
+
+                <TextView
+                    style="@style/TitleLarge"
+                    android:id="@+id/stepCount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:title="2 of 4" />
+
+            </LinearLayout>
+
+            <com.google.android.material.progressindicator.LinearProgressIndicator
+                android:id="@+id/stepProgress"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/margin"
+                android:max="4"
+                android:progressTint="@color/secondary"
+                app:trackCornerRadius="6dp"
+                app:trackThickness="8dp" />
+
+            <com.google.android.material.card.MaterialCardView
+                style="@style/cardStyle"
+                android:layout_width="match_parent"
+                android:layout_margin="@dimen/margin"
+                app:strokeColor="@color/outline"
+                app:strokeWidth="1dp"
+                android:layout_height="wrap_content">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/surface"
+                    android:padding="@dimen/padding"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <com.google.android.material.card.MaterialCardView
+                            android:id="@+id/icon_card"
+                            style="@style/cardStyle"
+                            android:layout_width="60dp"
+                            android:layout_height="60dp"
+                            android:layout_gravity="center_vertical"
+                            app:cardBackgroundColor="@color/secondaryContainer"
+                            app:cardCornerRadius="100dp"
+                            app:cardElevation="0dp">
+
+                            <androidx.appcompat.widget.AppCompatImageView
+                                android:id="@+id/icon"
+                                android:layout_width="32dp"
+                                android:layout_height="32dp"
+                                android:layout_gravity="center"
+                                app:tint="@color/secondary"
+                                android:src="@drawable/ic_id_card" />
+
+                        </com.google.android.material.card.MaterialCardView>
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginHorizontal="@dimen/half_margin"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:id="@+id/title"
+                                style="@style/TitleLarge"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="@string/id_verification" />
+
+                            <TextView
+                                android:id="@+id/sub_title"
+                                style="@style/BodySmall"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginVertical="@dimen/half_margin"
+                                android:text="@string/upload_your_id_card_amp_take_a_selfie" />
+
+                        </LinearLayout>
+
+                        <androidx.appcompat.widget.AppCompatImageView
+                            android:id="@+id/verificationIcon"
+                            android:layout_width="32dp"
+                            android:layout_height="32dp"
+                            android:layout_gravity="center"
+                            app:tint="@color/success"
+                            android:visibility="gone"
+                            android:src="@drawable/ic_check_white_24dp" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/verifyId"
+                            style="@style/appBtn"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:paddingHorizontal="@dimen/padding"
+                            android:layout_gravity="center_vertical"
+                            android:paddingVertical="4dp"
+                            android:text="Verify"
+                            android:textAppearance="@style/TitleMedium" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:weightSum="2">
+
+                        <com.google.android.material.card.MaterialCardView
+                            android:id="@+id/uploadId"
+                            style="@style/cardStyle"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="4dp"
+                            android:layout_weight="1"
+                            app:strokeColor="@color/outline"
+                            app:strokeWidth="1dp">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:background="@color/surface"
+                                android:orientation="vertical"
+                                android:padding="@dimen/margin">
+
+                                <androidx.appcompat.widget.AppCompatImageView
+                                    android:layout_width="32dp"
+                                    android:layout_height="32dp"
+                                    android:layout_gravity="center"
+                                    android:src="@drawable/ic_id_card" />
+
+                                <TextView
+                                    style="@style/BodyMedium"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:gravity="center"
+                                    android:text="@string/id_card"
+                                    android:textColor="@color/tertiary" />
+
+                            </LinearLayout>
+
+
+                            <androidx.constraintlayout.widget.ConstraintLayout
+                                android:layout_width="match_parent"
+                                android:layout_weight="1"
+                                android:layout_height="wrap_content">
+
+                                <androidx.appcompat.widget.AppCompatImageView
+                                    android:id="@+id/cardImage"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="0dp"
+                                    android:layout_gravity="center"
+                                    android:visibility="gone"
+                                    android:scaleType="centerCrop"
+                                    app:layout_constraintDimensionRatio="1:1"
+                                    android:src="@drawable/ic_id_card"
+                                    app:layout_constraintTop_toTopOf="parent"
+                                    app:layout_constraintBottom_toBottomOf="parent"/>
+
+                            </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
+                        </com.google.android.material.card.MaterialCardView>
+
+                        <com.google.android.material.card.MaterialCardView
+                            android:id="@+id/uploadSelfie"
+                            style="@style/cardStyle"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="4dp"
+                            android:layout_weight="1"
+                            app:strokeColor="@color/outline"
+                            app:strokeWidth="1dp">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:background="@color/surface"
+                                android:orientation="vertical"
+                                android:padding="@dimen/margin">
+
+                                <androidx.appcompat.widget.AppCompatImageView
+                                    android:layout_width="32dp"
+                                    android:layout_height="32dp"
+                                    android:layout_gravity="center"
+                                    app:tint="@color/outlineVariant"
+                                    android:src="@drawable/ic_person_outlined" />
+
+                                <TextView
+                                    android:id="@+id/discount"
+                                    style="@style/BodyMedium"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:gravity="center"
+                                    android:text="@string/selfie"
+                                    android:textColor="@color/tertiary" />
+
+                            </LinearLayout>
+
+                            <androidx.constraintlayout.widget.ConstraintLayout
+                                android:layout_width="match_parent"
+                                android:layout_weight="1"
+                                android:layout_height="wrap_content">
+
+                                <androidx.appcompat.widget.AppCompatImageView
+                                    android:id="@+id/selfie"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="0dp"
+                                    android:layout_gravity="center"
+                                    android:visibility="gone"
+                                    android:scaleType="centerCrop"
+                                    app:layout_constraintDimensionRatio="1:1"
+                                    android:src="@drawable/ic_id_card"
+                                    app:layout_constraintTop_toTopOf="parent"
+                                    app:layout_constraintBottom_toBottomOf="parent"/>
+
+                            </androidx.constraintlayout.widget.ConstraintLayout>
+
+                        <!--    <androidx.appcompat.widget.AppCompatImageView
+                                android:id="@+id/selfie"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_gravity="center"
+                                android:maxHeight="120dp"
+                                android:visibility="gone"
+                                android:src="@drawable/ic_id_card" />-->
+
+                        </com.google.android.material.card.MaterialCardView>
+
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+
+
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView
+                style="@style/cardStyle"
+                android:layout_width="match_parent"
+                android:layout_margin="@dimen/margin"
+                app:strokeColor="@color/outline"
+                app:strokeWidth="1dp"
+                android:layout_height="wrap_content">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="@dimen/padding"
+                    android:background="@color/surface"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <com.google.android.material.card.MaterialCardView
+                            style="@style/cardStyle"
+                            android:layout_width="60dp"
+                            android:layout_height="60dp"
+                            android:layout_gravity="center_vertical"
+                            app:cardBackgroundColor="@color/primaryContainer"
+                            app:cardCornerRadius="100dp"
+                            app:cardElevation="0dp">
+
+                            <androidx.appcompat.widget.AppCompatImageView
+                                android:layout_width="32dp"
+                                android:layout_height="32dp"
+                                android:layout_gravity="center"
+                                app:tint="@color/primary"
+                                android:src="@drawable/ic_phone" />
+
+                        </com.google.android.material.card.MaterialCardView>
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginHorizontal="@dimen/half_margin"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                style="@style/TitleLarge"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="Phone Verification" />
+
+                            <TextView
+                                style="@style/BodyMedium"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginVertical="@dimen/half_margin"
+                                android:text="Verify your phone number" />
+
+
+                        </LinearLayout>
+
+                        <androidx.appcompat.widget.AppCompatImageView
+                            android:id="@+id/verificationPhoneIcon"
+                            android:layout_width="32dp"
+                            android:layout_height="32dp"
+                            android:layout_gravity="center"
+                            app:tint="@color/success"
+                            android:visibility="gone"
+                            android:src="@drawable/ic_check_white_24dp" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/verifyPhone"
+                            style="@style/appBtn"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:paddingHorizontal="@dimen/padding"
+                            android:layout_gravity="center_vertical"
+                            android:paddingVertical="4dp"
+                            android:text="Verify"
+                            android:textAppearance="@style/TitleMedium" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/verifyOtp"
+                            style="@style/appBtn"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:paddingHorizontal="@dimen/padding"
+                            android:visibility="gone"
+                            android:layout_gravity="center_vertical"
+                            android:paddingVertical="4dp"
+                            android:text="Verify OTP"
+                            android:textAppearance="@style/TitleMedium" />
+
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/verifyPhoneTitle"
+                        style="@style/TitleSmall"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginVertical="@dimen/half_margin"
+                        android:text="Enter Phone Number" />
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/phoneNumberLayout"
+                        style="@style/inputBoxStyle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/margin">
+
+                        <com.google.android.material.textfield.MaterialAutoCompleteTextView
+                            android:id="@+id/phoneNumber"
+                            style="@style/inputTextStyle"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:maxLength="10"
+                            android:hint="@string/enter_phone_number"
+                            android:inputType="number"/>
+
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/otpLayout"
+                        style="@style/inputBoxStyle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:visibility="gone"
+                        android:layout_marginBottom="@dimen/margin">
+
+                        <com.google.android.material.textfield.MaterialAutoCompleteTextView
+                            android:id="@+id/otp"
+                            style="@style/inputTextStyle"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="@string/enter_code"
+                            android:inputType="number"/>
+
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView
+                style="@style/cardStyle"
+                android:layout_width="match_parent"
+                android:layout_margin="@dimen/margin"
+                app:strokeColor="@color/outline"
+                app:strokeWidth="1dp"
+                android:layout_height="wrap_content">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/surface"
+                    android:padding="@dimen/padding"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <com.google.android.material.card.MaterialCardView
+                            style="@style/cardStyle"
+                            android:layout_width="60dp"
+                            android:layout_height="60dp"
+                            android:layout_gravity="center_vertical"
+                            app:cardBackgroundColor="@color/primaryContainer"
+                            app:cardCornerRadius="100dp"
+                            app:cardElevation="0dp">
+
+                            <androidx.appcompat.widget.AppCompatImageView
+                                android:layout_width="32dp"
+                                android:layout_height="32dp"
+                                android:layout_gravity="center"
+                                android:src="@drawable/ic_payment_card" />
+
+                        </com.google.android.material.card.MaterialCardView>
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginHorizontal="@dimen/half_margin"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                style="@style/TitleLarge"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="Payment Method" />
+
+                            <TextView
+                                style="@style/BodyMedium"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginVertical="@dimen/half_margin"
+                                android:text="Add your payment details" />
+
+
+                        </LinearLayout>
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/addCardBtn"
+                            style="@style/appBtnTrans"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:paddingHorizontal="@dimen/padding"
+                            android:layout_gravity="center_vertical"
+                            android:paddingVertical="4dp"
+                            android:background="@color/surface"
+                            android:textColor="@color/primary"
+                            android:text="Add"
+                            android:textAppearance="@style/TitleMedium" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/noCardView"
+                        android:layout_width="match_parent"
+                        android:layout_height="120dp"
+                        android:layout_margin="@dimen/half_margin"
+                        android:background="@drawable/dashed_card_8_white"
+                        android:gravity="center"
+                        android:orientation="vertical"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/headingView">
+
+                        <androidx.appcompat.widget.AppCompatImageView
+                            android:layout_width="42dp"
+                            android:layout_height="42dp"
+                            android:src="@drawable/ic_payment_card"
+                            android:tint="@color/outlineVariant" />
+
+                        <TextView
+                            style="@style/TitleMedium"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/no_payment_method_added"
+                            android:textColor="@color/outlineVariant" />
+
+                    </LinearLayout>
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/recycler"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:nestedScrollingEnabled="false"
+                        android:orientation="vertical"
+                        android:visibility="gone"
+                        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                        tools:itemCount="3"
+                        tools:listitem="@layout/payment_card_item" />
+
+
+
+                </LinearLayout>
+
+
+
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView
+                style="@style/cardStyle"
+                android:layout_width="match_parent"
+                android:layout_margin="@dimen/margin"
+                app:strokeColor="@color/outline"
+                app:strokeWidth="1dp"
+                android:layout_height="wrap_content">
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="@dimen/padding"
+                    android:background="@color/surface"
+                    android:orientation="horizontal">
+
+                    <com.google.android.material.card.MaterialCardView
+                        style="@style/cardStyle"
+                        android:layout_width="60dp"
+                        android:layout_height="60dp"
+                        android:layout_gravity="center_vertical"
+                        app:cardBackgroundColor="@color/primaryContainer"
+                        app:cardCornerRadius="100dp"
+                        app:cardElevation="0dp">
+
+                        <androidx.appcompat.widget.AppCompatImageView
+                            android:layout_width="32dp"
+                            android:layout_height="32dp"
+                            android:layout_gravity="center"
+                            android:src="@drawable/person" />
+
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="@dimen/half_margin"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            style="@style/TitleLarge"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@string/manual_verification" />
+
+                        <TextView
+                            style="@style/BodyMedium"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginVertical="@dimen/half_margin"
+                            android:text="Final review by our team" />
+
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/status"
+                        style="@style/TitleMedium"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:text="Pending" />
+
+                </LinearLayout>
+
+
+            </com.google.android.material.card.MaterialCardView>
+
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/completeVerification"
+        style="@style/appBtn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/complete_verification"
+        android:layout_margin="@dimen/margin"
+        app:layout_constraintBottom_toBottomOf="parent"
+        />
+
+    <io.bidswipe.app.ui.custom.LoaderView
+        android:id="@+id/loader"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

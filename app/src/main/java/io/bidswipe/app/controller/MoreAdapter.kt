@@ -25,7 +25,7 @@ class MoreAdapter(
 
             bind.root.setOnClickListener {
 
-                mClicks.viewClick(position)
+                mClicks.itemClick(position)
 
             }
 

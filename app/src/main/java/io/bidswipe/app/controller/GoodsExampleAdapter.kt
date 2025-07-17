@@ -6,8 +6,9 @@ import io.bidswipe.app.base.BaseAdapter
 import io.bidswipe.app.databinding.BidsItemBinding
 import io.bidswipe.app.databinding.GoodsItemBinding
 import io.bidswipe.app.interfaces.RecyclerClicks
+import io.bidswipe.app.utils.loadUrl
 
-class GoodsExampleAdapter(mList: MutableList<String>
+class GoodsExampleAdapter(mList: MutableList<String?>
 ) : BaseAdapter<String, GoodsItemBinding>(mList) {
 
     override fun bindView(inflater: LayoutInflater, parent: ViewGroup) =
@@ -23,6 +24,8 @@ class GoodsExampleAdapter(mList: MutableList<String>
             bind.root.setOnClickListener {
 
             }
+
+            bind.img.loadUrl(mCtx,item.toString())
 
 
         }

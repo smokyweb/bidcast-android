@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/more_graph"
+    app:startDestination="@id/aboutUsFragment">
+
+    <fragment
+        android:id="@+id/aboutUsFragment"
+        android:name="io.bidswipe.app.ui.dashboard.more.AboutUsFragment"
+        android:label="fragment_about_us"
+        tools:layout="@layout/fragment_about_us" />
+
+    <fragment
+        android:id="@+id/termsConditionFragment"
+        android:name="io.bidswipe.app.ui.dashboard.more.TermsConditionFragment"
+        android:label="fragment_terms_condition"
+        tools:layout="@layout/fragment_terms_condition" />
+
+    <fragment
+        android:id="@+id/privacyPolicyFragment"
+        android:name="io.bidswipe.app.ui.dashboard.more.PrivacyPolicyFragment"
+        android:label="fragment_privacy_policy"
+        tools:layout="@layout/fragment_privacy_policy" />
+    <fragment
+        android:id="@+id/contactUsFragment"
+        android:name="io.bidswipe.app.ui.dashboard.more.ContactUsFragment"
+        android:label="fragment_contact_us"
+        tools:layout="@layout/fragment_contact_us" />
+    <fragment
+        android:id="@+id/FAQFragment"
+        android:name="io.bidswipe.app.ui.dashboard.more.FAQFragment"
+        android:label="fragment_f_a_q"
+        tools:layout="@layout/fragment_f_a_q" />
+    <fragment
+        android:id="@+id/salesTaxExemptionFragment"
+        android:name="io.bidswipe.app.ui.dashboard.more.SalesTaxExemptionFragment"
+        android:label="fragment_sales_tax_exemption"
+        tools:layout="@layout/fragment_sales_tax_exemption" />
+    <fragment
+        android:id="@+id/paymentShippingFragment"
+        android:name="io.bidswipe.app.ui.dashboard.more.PaymentShippingFragment"
+        android:label="fragment_payment_shipping"
+        tools:layout="@layout/fragment_payment_shipping" >
+        <action
+            android:id="@+id/goToAddShippingAddressFragment"
+            app:destination="@id/addShippingAddressFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"/>
+    </fragment>
+    <fragment
+        android:id="@+id/addressesFragment"
+        android:name="io.bidswipe.app.ui.dashboard.more.AddressesFragment"
+        android:label="fragment_addresses"
+        tools:layout="@layout/fragment_addresses" >
+        <action
+            android:id="@+id/myAddressToAddShippingAddressFragment"
+            app:destination="@id/addShippingAddressFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"/>
+    </fragment>
+    <fragment
+        android:id="@+id/trustedBuyerFragment"
+        android:name="io.bidswipe.app.ui.dashboard.more.TrustedBuyerFragment"
+        android:label="fragment_trusted_buyer"
+        tools:layout="@layout/fragment_trusted_buyer" />
+    <fragment
+        android:id="@+id/preferencesFragment"
+        android:name="io.bidswipe.app.ui.dashboard.more.PreferencesFragment"
+        android:label="fragment_preferences"
+        tools:layout="@layout/fragment_preferences" />
+    <fragment
+        android:id="@+id/addShippingAddressFragment"
+        android:name="io.bidswipe.app.ui.dashboard.more.AddShippingAddressFragment"
+        android:label="fragment_add_shipping_address"
+        tools:layout="@layout/fragment_add_shipping_address" />
+
+
+</navigation>

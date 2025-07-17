@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_marginHorizontal="@dimen/half_margin"
+    android:orientation="vertical"
+    tools:context=".ui.dashboard.sellerHub.OverAllFragment">
+
+    <LinearLayout
+        android:id="@+id/orders"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/half_margin"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:layout_weight="1"
+            android:background="@drawable/card_8"
+            android:padding="@dimen/half_margin">
+
+            <TextView
+                style="@style/HeadlineMedium"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="N/A"
+                android:textColor="@color/primary" />
+
+            <TextView
+                style="@style/BodySmall"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@string/items" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:background="@drawable/card_8"
+            android:layout_weight="1"
+            android:padding="@dimen/half_margin">
+
+            <TextView
+                style="@style/HeadlineMedium"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="N/A"
+                android:textColor="@color/primary" />
+
+            <TextView
+                style="@style/BodySmall"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@string/revenue" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:layout_weight="1"
+            android:background="@drawable/card_8"
+            android:padding="@dimen/half_margin">
+
+            <TextView
+                style="@style/HeadlineMedium"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="N/A"
+                android:textColor="@color/primary" />
+
+            <TextView
+                style="@style/BodySmall"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@string/rating" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <TextView
+        style="@style/TitleLarge"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/half_margin"
+        android:text="@string/sales_performance" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="180dp"
+        android:gravity="center">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:src="@drawable/ic_graph"
+            android:alpha="0.6"
+            app:layout_constraintDimensionRatio="7:4"/>
+
+    </LinearLayout>
+
+    <TextView
+        style="@style/TitleLarge"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/half_margin"
+        android:text="@string/visitor_analytics" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="180dp"
+        android:gravity="center">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:src="@drawable/ic_graph"
+            android:alpha="0.6"
+            app:layout_constraintDimensionRatio="7:4"/>
+
+    </LinearLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/gridRecycler"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="8dp"
+        app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+        app:spanCount="2"
+        tools:itemCount="4"
+        tools:listitem="@layout/benifits_item" />
+
+
+</LinearLayout>

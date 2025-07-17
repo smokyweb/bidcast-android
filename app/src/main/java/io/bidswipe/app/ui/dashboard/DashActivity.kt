@@ -1,26 +1,36 @@
 package io.bidswipe.app.ui.dashboard
 
+import android.content.Context
 import android.os.Bundle
 import android.view.View
 import androidx.activity.viewModels
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.lifecycle.Lifecycle
+import androidx.core.view.isVisible
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.firebase.messaging.FirebaseMessaging
 import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseActivity
-import io.bidswipe.app.controller.ExploreAdapter
 import io.bidswipe.app.controller.SellAdapter
 import io.bidswipe.app.databinding.ActivityDashBinding
+import io.bidswipe.app.interfaces.AlertClicks
 import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.model.SellModel
+import io.bidswipe.app.network.Resource
+import io.bidswipe.app.ui.custom.AppBottomSheet
+import io.bidswipe.app.utils.Alerts
+import io.bidswipe.app.utils.Const
+import io.bidswipe.app.utils.Prefs
 import io.bidswipe.app.utils.bind
 import io.bidswipe.app.utils.ids
+import io.bidswipe.app.utils.parse
+import io.bidswipe.app.utils.request
 import io.bidswipe.app.utils.toListProduct
+import io.bidswipe.app.utils.toScheduleShow
 import io.bidswipe.app.utils.toTutorials
 
 class DashActivity : BaseActivity(), NavController.OnDestinationChangedListener {
@@ -29,10 +39,12 @@ class DashActivity : BaseActivity(), NavController.OnDestinationChangedListener 
     private val viewModel by viewModels<DashViewModel>()
 
     private lateinit var imageSheet: BottomSheetBehavior<ConstraintLayout>
-    private var exploreList = mutableListOf<SellModel>()
+    private var sellList = mutableListOf<SellModel>()
 
     private lateinit var navController: NavController
     private lateinit var navHostFragment: NavHostFragment
+
+    private var isFirstShowCreated = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,6 +57,9 @@ class DashActivity : BaseActivity(), NavController.OnDestinationChangedListener 
         navController.addOnDestinationChangedListener(this)
         bind.bottomBar.setupWithNavController(navController)
         setupImageSheet()
+
+        log("USER NAME : ${userName.replace(" " , ".") }  $userId   $userImage")
+
         bind.bottomBar.setOnItemSelectedListener { menuItem ->
             if (menuItem.itemId != ids.sellFragment) viewModel.lastIndex.value = menuItem.itemId
             when (menuItem.itemId) {
@@ -56,7 +71,7 @@ class DashActivity : BaseActivity(), NavController.OnDestinationChangedListener 
                 else -> {
                     imageSheet.state=BottomSheetBehavior.STATE_COLLAPSED
                     try {
-                        navController?.let { ctrl ->
+                        navController.let { ctrl ->
                             NavigationUI.onNavDestinationSelected(menuItem, ctrl)
                             ctrl.popBackStack(menuItem.itemId, false)
                         }
@@ -68,6 +83,87 @@ class DashActivity : BaseActivity(), NavController.OnDestinationChangedListener 
                 }
             }
         }
+
+        getDeviceToken(this){
+            viewModel.storeDeviceDetails(it.request())
+        }
+
+        requestPerms(Const.PERMISSIONS) { per ->
+
+        }
+
+        viewModel.storeDeviceDetailsRepo.observe(this) {
+            when (it) {
+                is Resource.Success -> {
+
+                    val mData = it.value.data
+
+                    log(mData.toString())
+
+
+                }
+
+                is Resource.Error -> {
+
+                    if (it.isNetworkError) {
+                        errorToast(getString(R.string.no_internet))
+                    } else {
+                        it.parse(this, TAG, object : AlertClicks {
+                            override fun primaryClick(dialog: AppBottomSheet) {
+                                dialog.dismiss()
+
+                            }
+
+                            override fun secondaryClick(dialog: AppBottomSheet) {
+                                dialog.dismiss()
+
+                            }
+                        })
+                    }
+                }
+
+                else -> {}
+
+            }
+        }
+
+        bind.loader.isVisible = false
+
+        viewModel.getUserProfile()
+
+        viewModel.getUserProfileRepo.observe(this) {
+            when (it) {
+                is Resource.Success -> {
+                    val mData = it.value.data
+
+                    isFirstShowCreated = mData?.isFirstShowCreated == true
+
+                }
+
+                is Resource.Error -> {
+                    bind.loader.isVisible = false
+                    viewModel.logoutRepo.value = null
+                    if (it.isNetworkError) {
+                        errorToast(getString(R.string.no_internet))
+                    } else {
+                        it.parse(this, TAG, object : AlertClicks {
+                            override fun primaryClick(dialog: AppBottomSheet) {
+                                dialog.dismiss()
+                            }
+
+                            override fun secondaryClick(dialog: AppBottomSheet) {
+                                dialog.dismiss()
+                            }
+                        })
+                    }
+                }
+
+                else -> {}
+
+            }
+        }
+
+
     }
 
     override fun onDestinationChanged(
@@ -79,9 +175,9 @@ class DashActivity : BaseActivity(), NavController.OnDestinationChangedListener 
     }
 
     private fun setupImageSheet() {
-        BottomSheetBehavior.from(bind.imageSheet)
+        BottomSheetBehavior.from(bind.sellSheet.root)
 
-        imageSheet = BottomSheetBehavior.from(bind.imageSheet).also {
+        imageSheet = BottomSheetBehavior.from(bind.sellSheet.root).also {
             it.peekHeight = 0
             it.isHideable = true
             it.isDraggable = false
@@ -92,37 +188,46 @@ class DashActivity : BaseActivity(), NavController.OnDestinationChangedListener 
 
         imageSheet.state = BottomSheetBehavior.STATE_COLLAPSED
 
-        exploreList.clear()
-        exploreList.addAll(
+        sellList.clear()
+        sellList.addAll(
             listOf(
-                SellModel(R.drawable.ic_tag,R.color.secondaryContainer,"List a Product","Create listing for your item"),
-                SellModel(R.drawable.ic_video,R.color.tertiaryContainer,"Schedule a Show","Go live and sell to your audience"),
-                SellModel(R.drawable.ic_shop,R.color.successContainer,"Seller Hub","Manage your store and listings")
+                SellModel(R.drawable.ic_tag,R.color.primaryContainer,"List a Product","Create listing for your item"),
+                SellModel(R.drawable.ic_video,R.color.primaryContainer,"Schedule a Show","Go live and sell to your audience"),
+                SellModel(R.drawable.ic_shop,R.color.primaryContainer,"Seller Hub","Manage your store and listings")
             )
         )
 
-       val exploreAdapter = SellAdapter(exploreList,"explore",object:RecyclerClicks{
-           override fun viewClick(pos: Int) {
-
+       val exploreAdapter = SellAdapter(sellList,"explore",object:RecyclerClicks{
+   
+           override fun itemClick(pos: Int, status: String?) {
+               
                when(pos){
                    0->{
                        startActivity(this@DashActivity.toListProduct())
                    }
                    1->{
-                       startActivity(this@DashActivity.toTutorials())
+
+                       if (isFirstShowCreated){
+                           startActivity(this@DashActivity.toScheduleShow(from = "dash"))
+                       }else{
+                           startActivity(this@DashActivity.toTutorials())
+                       }
+
                    }
-
+                   2 -> {
+                       bind.bottomBar.selectedItemId = ids.accountFragment
+                   }
+                   
                }
-
-           }
-
-           override fun itemClick(pos: Int, status: String) {
-
            }
 
        })
 
         bind.sellSheet.recycler.adapter = exploreAdapter
+
+        bind.sellSheet.root.setOnClickListener {
+            imageSheet.state = BottomSheetBehavior.STATE_COLLAPSED
+        }
 
         bind.sellSheet.close.setOnClickListener {
             imageSheet.state = BottomSheetBehavior.STATE_COLLAPSED
@@ -172,5 +277,25 @@ class DashActivity : BaseActivity(), NavController.OnDestinationChangedListener 
                 }
             }
         }
+
     }
+
+
+    fun getDeviceToken(context: Context, token: (token: String) -> Unit) {
+        FirebaseMessaging.getInstance().token.addOnCompleteListener {
+            if (!it.isSuccessful) {
+                Alerts.log(javaClass.simpleName, "Fetching FCM registration token failed ${it.exception}")
+                return@addOnCompleteListener
+            }
+            val deviceToken = it.result.toString()
+
+            if (Prefs(context).fcmToken() != deviceToken) {
+                Prefs(context).putString(Prefs.PUSH_TOKEN, deviceToken)
+                Alerts.log(javaClass.simpleName, "device token $deviceToken")
+            } else {
+                Alerts.log(javaClass.simpleName, "device token not refresh  $token")
+            }
+        }
+    }
+
 }

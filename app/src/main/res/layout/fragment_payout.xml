@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:numberkeyboard="http://schemas.android.com/apk/res-auto"
+    tools:context=".ui.dashboard.sellerHub.PayoutFragment">
+
+    <io.bidswipe.app.ui.custom.Header
+        android:id="@+id/header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:headerMode="APP_TEXT_ACTION"
+        app:headerTitle="Payout"
+        app:layout_constraintTop_toTopOf="parent"
+        app:showBackButton="true"
+        app:showSecondaryIcon="false" />
+
+<!--
+    <com.google.android.material.textfield.TextInputEditText
+        android:id="@+id/amount"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="none"
+        android:textSize="60sp"
+        android:focusable="false"
+        app:layout_constraintTop_toBottomOf="@id/header"
+        android:gravity="center_horizontal"
+        android:hint="Enter Amount"/>
+-->
+<!--
+    <com.ygoular.numpadview.NumPadView
+        android:id="@+id/num_pad_view"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:text_size="13sp"
+        app:text_color="@color/primary"
+        app:text_style="italic"
+        app:text_ripple_effect="false"
+        app:left_icon_tint="@color/secondary"
+        app:left_icon_ripple_effect="true"
+        app:drawable_right="true"
+        app:layout_constraintTop_toBottomOf="@id/header"
+        app:layout_constraintBottom_toBottomOf="parent"
+
+        />-->
+
+
+    <com.davidmiguel.numberkeyboard.NumberKeyboard
+        android:id="@+id/numberKeyboard"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toBottomOf="@id/header"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:numberkeyboard_keyPadding="32dp"
+        numberkeyboard:numberkeyboard_keyboardType="custom"
+        numberkeyboard:numberkeyboard_numberKeyTypeface="@font/poppins_bold" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

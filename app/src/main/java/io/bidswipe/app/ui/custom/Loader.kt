@@ -1,11 +1,11 @@
-package io.riseshine.app.ui.custom
+package io.bidswipe.app.ui.custom
 
+import android.R
 import android.app.Activity
 import android.app.Dialog
 import android.content.Context
 import android.view.Window
 import android.view.WindowManager
-import io.bidswipe.app.ui.custom.LoaderView
 import io.bidswipe.app.utils.runSafe
 
 object Loader {
@@ -21,7 +21,7 @@ object Loader {
 					WindowManager.LayoutParams.MATCH_PARENT,
 					WindowManager.LayoutParams.MATCH_PARENT
 				)
-				window?.setBackgroundDrawableResource(android.R.color.transparent)
+				window?.setBackgroundDrawableResource(R.color.transparent)
 			}
 
 			runSafe {

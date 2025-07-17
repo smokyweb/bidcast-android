@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    style="@style/cardStyle"
+    android:layout_margin="@dimen/half_margin"
+    android:backgroundTint="@color/inverseSurface"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="4dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <com.google.android.material.card.MaterialCardView
+            style="@style/cardStyle"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            app:cardCornerRadius="10dp"
+            app:cardElevation="0dp">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/productImage"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="fitXY"
+                android:src="@drawable/studio" />
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginHorizontal="@dimen/half_margin"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/productName"
+                style="@style/TitleLarge"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Product Name" />
+
+            <TextView
+                android:id="@+id/category"
+                style="@style/BodyMedium"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Category - Condition" />
+
+            <TextView
+                android:id="@+id/price"
+                style="@style/BodyMedium"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="$355" />
+
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+</com.google.android.material.card.MaterialCardView>

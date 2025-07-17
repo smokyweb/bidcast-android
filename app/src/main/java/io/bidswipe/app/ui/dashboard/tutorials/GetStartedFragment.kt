@@ -1,7 +1,6 @@
 package io.bidswipe.app.ui.dashboard.tutorials
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,7 +15,6 @@ import io.bidswipe.app.ui.dashboard.DashViewModel
 import io.bidswipe.app.utils.Alerts
 import io.bidswipe.app.utils.finish
 import io.bidswipe.app.utils.ids
-import io.bidswipe.app.utils.toListProduct
 
 class GetStartedFragment : BaseFragment<DashViewModel,FragmentGetStartedBinding>() {
     override fun getModel(): Class<DashViewModel> = DashViewModel::class.java
@@ -43,11 +41,8 @@ class GetStartedFragment : BaseFragment<DashViewModel,FragmentGetStartedBinding>
         )
 
         val adapter = SellAdapter(mList = exploreList, "getStarted",object: RecyclerClicks {
-            override fun viewClick(pos: Int) {
-
-            }
-
-            override fun itemClick(pos: Int, status: String) {
+         
+            override fun itemClick(pos: Int, status: String?) {
 
             }
 

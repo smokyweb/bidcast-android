@@ -35,7 +35,8 @@
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
 				android:background="@color/background"
-				android:padding="@dimen/margin">
+				android:paddingHorizontal="@dimen/margin"
+				android:paddingVertical="@dimen/half_margin">
 
 				<com.google.android.material.card.MaterialCardView
 					android:id="@+id/materialCardView"
@@ -48,6 +49,7 @@
 					app:layout_constraintTop_toTopOf="parent">
 
 					<ImageView
+						android:id="@+id/userProfile"
 						android:layout_width="64dp"
 						android:layout_height="64dp"
 						android:contentDescription="@string/app_name"
@@ -67,33 +69,44 @@
 					app:layout_constraintTop_toTopOf="parent" />
 
 				<TextView
-					android:id="@+id/textView2"
+					android:id="@+id/userName"
 					style="@style/TitleMedium"
 					android:layout_width="0dp"
 					android:layout_height="wrap_content"
 					android:text="@string/app_name"
 					android:textStyle="bold"
 					app:layout_constraintBottom_toTopOf="@+id/view"
-					app:layout_constraintEnd_toEndOf="@+id/view"
+					app:layout_constraintEnd_toStartOf="@id/edit_icon"
 					app:layout_constraintStart_toStartOf="@+id/view" />
 
 				<TextView
-					android:id="@+id/textView3"
+					android:id="@+id/sellerSince"
 					style="@style/TitleSmall"
 					android:layout_width="0dp"
 					android:layout_height="wrap_content"
-					android:text="Seller since 2024"
+					android:text="N/A"
 					android:textColor="@color/tertiary"
-					app:layout_constraintEnd_toEndOf="@+id/view"
+					app:layout_constraintEnd_toStartOf="@id/edit_icon"
 					app:layout_constraintStart_toStartOf="@+id/view"
 					app:layout_constraintTop_toBottomOf="@+id/view" />
+
+				<androidx.appcompat.widget.AppCompatImageView
+					android:id="@+id/edit_icon"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:contentDescription="@string/app_name"
+					android:scaleType="centerCrop"
+					android:src="@drawable/ic_edit"
+					app:layout_constraintEnd_toEndOf="parent"
+					app:layout_constraintTop_toTopOf="parent"
+
+					app:layout_constraintBottom_toBottomOf="parent"/>
 
 			</androidx.constraintlayout.widget.ConstraintLayout>
 
 			<LinearLayout
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
-				android:layout_marginVertical="8dp"
 				android:background="@color/background"
 				android:paddingHorizontal="8dp"
 				android:paddingVertical="8dp">
@@ -104,6 +117,7 @@
 					android:layout_height="wrap_content"
 					app:cardBackgroundColor="@color/surface"
 					app:cardCornerRadius="8dp"
+					android:layout_margin="@dimen/half_margin"
 					app:cardElevation="0dp">
 
 					<com.google.android.material.tabs.TabLayout
@@ -116,6 +130,7 @@
 						app:layout_constraintEnd_toEndOf="parent"
 						app:layout_constraintStart_toStartOf="parent"
 						app:layout_constraintTop_toTopOf="parent"
+
 						app:tabPadding="0dp">
 
 						<com.google.android.material.tabs.TabItem
@@ -126,7 +141,9 @@
 						<com.google.android.material.tabs.TabItem
 							android:layout_width="wrap_content"
 							android:layout_height="wrap_content"
-							android:text="@string/my_account" />
+							android:text="@string/my_account"
+							/>
+
 					</com.google.android.material.tabs.TabLayout>
 
 				</com.google.android.material.card.MaterialCardView>

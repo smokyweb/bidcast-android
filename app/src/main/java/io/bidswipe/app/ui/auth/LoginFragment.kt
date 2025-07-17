@@ -1,5 +1,6 @@
 package io.bidswipe.app.ui.auth
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -15,6 +16,7 @@ import io.bidswipe.app.interfaces.AlertClicks
 import io.bidswipe.app.model.RememberModel
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.ui.custom.AppBottomSheet
+import io.bidswipe.app.ui.dashboard.more.MoreActivity
 import io.bidswipe.app.utils.Alerts
 import io.bidswipe.app.utils.Prefs
 import io.bidswipe.app.utils.Utils
@@ -45,6 +47,18 @@ class LoginFragment : BaseFragment<AuthViewModel, FragmentLoginBinding>() {
 
         bind.forgot.setOnClickListener {
             findNavController().navigate(ids.goToForgotPassword)
+        }
+
+        bind.layout.setOnClickListener {
+            hideKeyboard(it)
+        }
+
+        bind.privacyPolicy.setOnClickListener {
+            startActivity(Intent(mCtx , MoreActivity::class.java).putExtra("slug","privacyPolicy"))
+        }
+
+        bind.termsOfService.setOnClickListener {
+            startActivity(Intent(mCtx , MoreActivity::class.java).putExtra("slug","termsCondition"))
         }
 
         bind.loginBtn.setOnClickListener {

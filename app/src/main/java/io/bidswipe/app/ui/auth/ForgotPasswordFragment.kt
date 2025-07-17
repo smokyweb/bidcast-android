@@ -1,6 +1,7 @@
 package io.bidswipe.app.ui.auth
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -35,6 +36,10 @@ class ForgotPasswordFragment : BaseFragment<AuthViewModel, FragmentForgotPasswor
 
         bind.header.onBackClick {
             findNavController().popBackStack()
+        }
+
+        bind.layout.setOnClickListener {
+            hideKeyboard(it)
         }
 
         bind.submit.setOnClickListener {

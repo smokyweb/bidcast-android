@@ -1,11 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:app="http://schemas.android.com/apk/res-auto"
 	xmlns:tools="http://schemas.android.com/tools"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"
 	android:orientation="vertical"
 	tools:context=".ui.dashboard.sell.ListAProductFragment">
+
+	<LinearLayout
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:orientation="vertical">
 
 	<io.bidswipe.app.ui.custom.Header
 		android:id="@+id/header"
@@ -46,6 +51,7 @@
 					app:title="Media" />
 
 				<TextView
+					android:id="@+id/image_limit"
 					style="@style/TitleMedium"
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
@@ -54,48 +60,43 @@
 
 			</LinearLayout>
 
-			<LinearLayout
+			<HorizontalScrollView
 				android:layout_width="match_parent"
-				android:layout_height="wrap_content"
-				android:orientation="horizontal">
+				android:layout_height="wrap_content">
 
 				<LinearLayout
-					android:layout_width="120dp"
-					android:layout_height="120dp"
-					android:background="@drawable/dashed_card_8_white"
-					android:gravity="center"
-					app:layout_constraintStart_toStartOf="parent"
-					app:layout_constraintTop_toBottomOf="@id/headingView">
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:orientation="horizontal">
 
-					<ImageView
+					<androidx.recyclerview.widget.RecyclerView
+						android:id="@+id/images"
 						android:layout_width="wrap_content"
 						android:layout_height="wrap_content"
-						android:layout_gravity="center"
-						android:contentDescription="@string/app_name"
-						android:src="@drawable/camera" />
+						android:nestedScrollingEnabled="false"
+						android:orientation="horizontal"
+						app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+						tools:itemCount="1"
+						tools:listitem="@layout/upload_image_item" />
+
+					<LinearLayout
+						android:id="@+id/add_new_image"
+						android:layout_width="120dp"
+						android:layout_height="120dp"
+						android:background="@drawable/dashed_card_8_white"
+						android:gravity="center">
+
+						<ImageView
+							android:layout_width="wrap_content"
+							android:layout_height="wrap_content"
+							android:layout_gravity="center"
+							android:contentDescription="@string/app_name"
+							android:src="@drawable/ic_add" />
+
+					</LinearLayout>
 
 				</LinearLayout>
-
-				<LinearLayout
-					android:layout_width="120dp"
-					android:layout_height="120dp"
-					android:layout_marginStart="@dimen/margin"
-					android:background="@drawable/dashed_card_8_white"
-					android:gravity="center"
-					app:layout_constraintStart_toStartOf="parent"
-					app:layout_constraintTop_toBottomOf="@id/headingView">
-
-					<ImageView
-						android:layout_width="wrap_content"
-						android:layout_height="wrap_content"
-						android:layout_gravity="center"
-						android:contentDescription="@string/app_name"
-						android:src="@drawable/ic_add" />
-
-				</LinearLayout>
-
-
-			</LinearLayout>
+			</HorizontalScrollView>
 
 			<io.bidswipe.app.ui.custom.Heading
 				android:layout_width="match_parent"
@@ -118,11 +119,13 @@
 				app:endIconDrawable="@drawable/ic_forward"
 				app:endIconMode="custom">
 
-				<androidx.appcompat.widget.AppCompatAutoCompleteTextView
-					android:id="@+id/last_name"
+				<com.google.android.material.textfield.MaterialAutoCompleteTextView
+					android:id="@+id/category"
 					style="@style/inputTextStyle"
 					android:layout_width="match_parent"
 					android:layout_height="wrap_content"
+					android:focusable="false"
+					android:focusableInTouchMode="false"
 					android:hint="@string/select_category" />
 
 			</com.google.android.material.textfield.TextInputLayout>
@@ -191,6 +194,7 @@
 					style="@style/inputTextStyle"
 					android:layout_width="match_parent"
 					android:layout_height="wrap_content"
+					android:inputType="number"
 					android:hint="@string/enter_quantity" />
 
 			</com.google.android.material.textfield.TextInputLayout>
@@ -249,6 +253,7 @@
 					style="@style/inputTextStyle"
 					android:layout_width="match_parent"
 					android:layout_height="wrap_content"
+					android:inputType="numberDecimal"
 					android:hint="@string/_0_00" />
 
 			</com.google.android.material.textfield.TextInputLayout>
@@ -342,9 +347,10 @@
 				app:endIconMode="custom">
 
 				<com.google.android.material.textfield.TextInputEditText
-					android:id="@+id/profile"
+					android:id="@+id/shipping_profile"
 					style="@style/inputTextStyle"
 					android:layout_width="match_parent"
+					android:editable="false"
 					android:layout_height="wrap_content"
 					android:hint="@string/select_profile" />
 
@@ -364,7 +370,7 @@
 		android:weightSum="2">
 
 		<com.google.android.material.button.MaterialButton
-			android:id="@+id/decline"
+			android:id="@+id/save_draft"
 			style="@style/appBtnOutline"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
@@ -374,7 +380,7 @@
 			android:text="@string/save_draft" />
 
 		<com.google.android.material.button.MaterialButton
-			android:id="@+id/accept"
+			android:id="@+id/publish"
 			style="@style/appBtn"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
@@ -387,3 +393,10 @@
 	</LinearLayout>
 
 </LinearLayout>
+
+	<io.bidswipe.app.ui.custom.LoaderView
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:id="@+id/loader"
+		android:visibility="gone"/>
+</androidx.constraintlayout.widget.ConstraintLayout>

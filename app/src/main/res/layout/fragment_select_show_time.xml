@@ -71,7 +71,7 @@
 			android:layout_gravity="center"
 			android:layout_marginStart="32dp"
 			android:drawablePadding="@dimen/half_margin"
-			android:text="@string/more_potential_buyers_can_plan_to_attend"
+			android:text="more_potential_buyers_can_plan_to_attend"
 			app:drawableStartCompat="@drawable/ic_tick"
 			app:drawableTint="@color/success" />
 

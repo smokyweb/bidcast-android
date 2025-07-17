@@ -15,7 +15,7 @@
 
     <item
         android:id="@+id/sellFragment"
-        android:icon="@drawable/sell"
+        android:icon="@drawable/ic_plus"
         android:title="@string/sell"
         app:showAsAction="ifRoom" />
 

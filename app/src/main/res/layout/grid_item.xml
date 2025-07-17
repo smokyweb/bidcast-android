@@ -1,34 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:app="http://schemas.android.com/apk/res-auto"
-	style="@style/cardStyle"
 	android:layout_width="match_parent"
 	android:layout_height="wrap_content"
 	android:layout_margin="8dp"
+	android:gravity="center"
+	android:background="@drawable/card_8"
+	style="@style/shadowStyle"
+	android:orientation="vertical"
 	android:padding="@dimen/margin">
 
-	<LinearLayout
-		style="@style/shadowStyle"
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:layout_marginEnd="8dp"
-		android:background="@drawable/card_8"
-		android:gravity="center"
-		android:orientation="vertical"
-		android:padding="@dimen/margin">
-
 		<ImageView
-			android:id="@+id/item_count"
-			android:layout_width="36dp"
-			android:layout_height="36dp"
+			android:id="@+id/image"
+			android:layout_width="28dp"
+			android:layout_height="28dp"
 			android:layout_marginBottom="@dimen/half_margin"
 			android:src="@drawable/search"
+			android:gravity="center"
+			app:tint="@color/scrim"
 			app:layout_constraintBottom_toTopOf="@+id/view"
 			app:layout_constraintEnd_toEndOf="@+id/view"
 			app:layout_constraintStart_toStartOf="@+id/view" />
 
 		<TextView
-			style="@style/TitleLarge"
+			android:id="@+id/title"
+			style="@style/BodyLarge"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
 			android:gravity="center"
@@ -38,6 +34,4 @@
 			app:layout_constraintStart_toStartOf="@+id/view"
 			app:layout_constraintTop_toBottomOf="@+id/view" />
 
-	</LinearLayout>
-
-</com.google.android.material.card.MaterialCardView>
+</LinearLayout>

@@ -1,44 +1,64 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-<style name="Theme.Bidswipe" parent="Theme.Material3.Light.NoActionBar">
-    <item name="colorPrimary">@color/primary</item>
-    <item name="colorOnPrimary">@color/onPrimary</item>
-    <item name="colorPrimaryContainer">@color/primaryContainer</item>
-    <item name="colorOnPrimaryContainer">@color/onPrimaryContainer</item>
 
-    <item name="colorSecondary">@color/secondary</item>
-    <item name="colorOnSecondary">@color/onSecondary</item>
-    <item name="colorSecondaryContainer">@color/secondaryContainer</item>
-    <item name="colorOnSecondaryContainer">@color/onSecondaryContainer</item>
+    <style name="Theme.Bidswipe" parent="Theme.Material3.Light.NoActionBar">
+        <item name="colorPrimary">@color/primary</item>
+        <item name="colorOnPrimary">@color/onPrimary</item>
+        <item name="colorPrimaryContainer">@color/primaryContainer</item>
+        <item name="colorOnPrimaryContainer">@color/onPrimaryContainer</item>
 
-    <item name="colorTertiary">@color/tertiary</item>
-    <item name="colorOnTertiary">@color/onTertiary</item>
-    <item name="colorTertiaryContainer">@color/tertiaryContainer</item>
-    <item name="colorOnTertiaryContainer">@color/onTertiaryContainer</item>
+        <item name="colorSecondary">@color/secondary</item>
+        <item name="colorOnSecondary">@color/onSecondary</item>
+        <item name="colorSecondaryContainer">@color/secondaryContainer</item>
+        <item name="colorOnSecondaryContainer">@color/onSecondaryContainer</item>
 
-    <item name="colorError">@color/error</item>
-    <item name="colorOnError">@color/onError</item>
-    <item name="colorErrorContainer">@color/errorContainer</item>
-    <item name="colorOnErrorContainer">@color/onErrorContainer</item>
+        <item name="colorTertiary">@color/tertiary</item>
+        <item name="colorOnTertiary">@color/onTertiary</item>
+        <item name="colorTertiaryContainer">@color/tertiaryContainer</item>
+        <item name="colorOnTertiaryContainer">@color/onTertiaryContainer</item>
 
-    <item name="android:colorBackground">@color/background</item>
-    <item name="colorOnBackground">@color/onBackground</item>
-    <item name="colorSurface">@color/surface</item>
-    <item name="colorOnSurface">@color/onSurface</item>
-    <item name="colorSurfaceVariant">@color/surfaceVariant</item>
-    <item name="colorOnSurfaceVariant">@color/onSurfaceVariant</item>
+        <item name="colorError">@color/error</item>
+        <item name="colorOnError">@color/onError</item>
+        <item name="colorErrorContainer">@color/errorContainer</item>
+        <item name="colorOnErrorContainer">@color/onErrorContainer</item>
 
-    <item name="colorOutline">@color/outline</item>
-    <item name="colorOutlineVariant">@color/outlineVariant</item>
-    <item name="colorSurfaceInverse">@color/inverseSurface</item>
-    <item name="colorOnSurfaceInverse">@color/inverseOnSurface</item>
+        <item name="android:colorBackground">@color/surface</item>
+        <item name="colorOnBackground">@color/onBackground</item>
+        <item name="colorSurface">@color/surface</item>
+        <item name="colorOnSurface">@color/onSurface</item>
+        <item name="colorSurfaceVariant">@color/surfaceVariant</item>
+        <item name="colorOnSurfaceVariant">@color/onSurfaceVariant</item>
 
+        <item name="colorOutline">@color/outline</item>
+        <item name="colorOutlineVariant">@color/outlineVariant</item>
+        <item name="colorSurfaceInverse">@color/inverseSurface</item>
+        <item name="colorOnSurfaceInverse">@color/inverseOnSurface</item>
 
-    <item name="android:windowLightStatusBar">true</item>
-    <item name="android:statusBarColor">@color/background</item>
-    <item name="android:navigationBarColor">@color/background</item>
-    <item name="android:windowLightNavigationBar" tools:targetApi="o_mr1">true</item>
-    <item name="android:windowOptOutEdgeToEdgeEnforcement" tools:targetApi="vanilla_ice_cream">true</item>
+        <item name="android:windowBackground">@color/surface</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:statusBarColor">@color/background</item>
+        <item name="android:navigationBarColor">@color/background</item>
+        <item name="android:windowLightNavigationBar" tools:targetApi="o_mr1">true</item>
+        <item name="android:windowOptOutEdgeToEdgeEnforcement" tools:targetApi="vanilla_ice_cream">
+            true
+        </item>
 
-    <item name="entryChipStyleNew">@style/entryChipStyleNew</item>
-</style>
+        <item name="android:windowActivityTransitions">true</item>
+        <item name="android:windowAnimationStyle">@style/CustomActivityAnimation</item>
+
+        <item name="entryChipStyleNew">@style/entryChipStyleNew</item>
+    </style>
+
+    <style name="Theme.Bidswipe.ActionBar" parent="Theme.Bidswipe">
+        <item name="windowActionBar">true</item>
+        <item name="windowNoTitle">false</item>
+    </style>
+
+    <style name="Theme.Bidswipe.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="Theme.Bidswipe.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="Theme.Bidswipe.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 </resources>

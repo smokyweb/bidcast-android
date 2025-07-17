@@ -18,32 +18,40 @@
 		<LinearLayout
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
-			android:layout_margin="@dimen/half_margin"
 			android:orientation="vertical">
 
 			<LinearLayout
+				android:id="@+id/userInfo"
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
-				android:layout_marginBottom="@dimen/half_margin"
+				android:layout_margin="@dimen/half_margin"
 				android:orientation="horizontal">
 
 				<com.makeramen.roundedimageview.RoundedImageView
+					android:id="@+id/userImage"
 					android:layout_width="32dp"
 					android:layout_height="32dp"
+					app:riv_corner_radius="100dp"
+					android:scaleType="centerCrop"
 					android:src="@drawable/user_image" />
 
 				<TextView
+					android:id="@+id/userName"
 					style="@style/TitleMedium"
-					android:layout_width="wrap_content"
+					android:layout_width="0dp"
+					android:layout_weight="1"
 					android:layout_height="wrap_content"
 					android:layout_gravity="center_vertical"
 					android:layout_marginStart="@dimen/half_margin"
 					android:text="@string/username" />
+
 			</LinearLayout>
 
 			<androidx.appcompat.widget.AppCompatImageView
+				android:id="@+id/thumbnail"
 				android:layout_width="match_parent"
 				android:layout_height="200dp"
+				android:scaleType="centerCrop"
 				android:background="@color/outline"
 				android:src="@drawable/dummy_image" />
 
@@ -53,16 +61,18 @@
 
 	<TextView
 		android:id="@+id/title"
-		style="@style/TitleSmall"
+		style="@style/TitleMedium"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
+		android:layout_marginTop="4dp"
 		android:text="@string/stream_title"
 		app:layout_constraintEnd_toEndOf="parent"
 		app:layout_constraintStart_toStartOf="parent"
 		app:layout_constraintTop_toBottomOf="@id/cardView" />
 
 	<TextView
-		style="@style/BodyMedium"
+		android:id="@+id/category"
+		style="@style/BodySmall"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:layout_gravity="center_vertical"

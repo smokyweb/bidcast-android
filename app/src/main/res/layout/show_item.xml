@@ -10,7 +10,6 @@
 	<LinearLayout
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:background="@color/surface"
 		android:orientation="horizontal"
 		android:padding="@dimen/margin">
 
@@ -27,6 +26,7 @@
 				android:id="@+id/icon"
 				android:layout_width="16dp"
 				android:layout_height="16dp"
+				android:tint="@color/surface"
 				android:layout_gravity="center"
 				android:src="@drawable/ic_lock" />
 
@@ -56,12 +56,11 @@
 				android:layout_height="wrap_content"
 				android:text="@string/schedule_your_first_show" />
 
-			<TextView
+			<org.sufficientlysecure.htmltextview.HtmlTextView
 				android:id="@+id/sub_title"
 				style="@style/BodySmall"
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
-				android:layout_marginVertical="@dimen/half_margin"
 				android:text="@string/pick_a_date_and_time_for_your_live_show" />
 
 			<com.google.android.material.button.MaterialButton
@@ -72,6 +71,7 @@
 				android:minHeight="0dp"
 				android:paddingHorizontal="@dimen/padding"
 				android:paddingVertical="4dp"
+				android:visibility="gone"
 				android:text="@string/set_schedule"
 				android:textAppearance="@style/TitleMedium" />
 

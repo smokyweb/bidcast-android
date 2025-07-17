@@ -4,8 +4,12 @@
 	android:id="@+id/click"
 	android:layout_width="match_parent"
 	android:layout_height="wrap_content"
-	android:paddingHorizontal="16dp"
-	android:paddingVertical="20dp">
+	android:gravity="center_vertical"
+	android:padding="@dimen/margin"
+	android:layout_margin="@dimen/half_margin"
+	style="@style/shadowStyle"
+	android:background="@drawable/card_8"
+	android:backgroundTint="@color/inverseOnSurface">
 
 	<com.google.android.material.card.MaterialCardView
 		android:id="@+id/icon_card"
@@ -20,7 +24,9 @@
 			android:layout_width="match_parent"
 			android:layout_height="match_parent"
 			android:padding="12dp"
-			android:src="@drawable/notification" />
+			app:tint="@color/onSurface"
+			android:src="@drawable/notification"
+			android:backgroundTint="@color/onSecondary"/>
 
 	</com.google.android.material.card.MaterialCardView>
 

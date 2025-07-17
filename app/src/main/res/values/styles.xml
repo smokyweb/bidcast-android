@@ -18,14 +18,14 @@
 
 		<!--TEXT BOX STYLE-->
 		<item name="boxStrokeColor">@color/input_box_stroke_color_state</item>
-		<item name="boxBackgroundColor">@color/surface</item>
+		<item name="boxBackgroundColor">@color/inverseOnSurface</item>
 		<item name="errorEnabled">false</item>
 		<item name="hintEnabled">false</item>
 		<item name="thumbColor">@color/onBackground</item>
 		<item name="colorAccent">@color/primary</item>
 		<item name="expandedHintEnabled">false</item>
-		<item name="boxStrokeWidth">1dp</item>
-		<item name="boxStrokeWidthFocused">1dp</item>
+		<item name="boxStrokeWidth">2dp</item>
+		<item name="boxStrokeWidthFocused">2dp</item>
 		<item name="boxCornerRadiusBottomStart">6dp</item>
 		<item name="boxCornerRadiusBottomEnd">6dp</item>
 		<item name="boxCornerRadiusTopStart">6dp</item>
@@ -63,7 +63,7 @@
 		<item name="android:padding">16dp</item>
 		<item name="android:textAppearance">@style/BodySmall</item>
 		<item name="android:textColor">@color/onSurface</item>
-		<item name="android:textColorHint">@color/outline</item>
+		<item name="android:textColorHint">@color/outlineVariant</item>
 	</style>
 
 	<style name="textBoxFillDropDown" parent="Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
@@ -106,7 +106,7 @@
 
 	<!--BUTTON STYLES-->
 	<style name="appBtn" parent="Widget.Material3.Button.UnelevatedButton">
-		<item name="cornerRadius">4dp</item>
+		<item name="cornerRadius">8dp</item>
 		<item name="backgroundTint">@color/primary</item>
 		<item name="rippleColor">@color/outline</item>
 		<item name="android:textColor">@color/onPrimary</item>
@@ -167,8 +167,8 @@
 	<style name="shadowStyle">
 		<item name="android:elevation">2dp</item>
 		<item name="cardBackgroundColor">@color/background</item>
-		<item name="android:outlineSpotShadowColor" tools:targetApi="p">@color/inverseSurface</item>
-		<item name="android:outlineAmbientShadowColor" tools:targetApi="p">@color/inverseSurface
+		<item name="android:outlineSpotShadowColor" tools:targetApi="p">@color/tertiary</item>
+		<item name="android:outlineAmbientShadowColor" tools:targetApi="p">@color/tertiary
 		</item>
 	</style>
 
@@ -203,12 +203,15 @@
 		<item name="tabIndicator">@drawable/card_8</item>
 		<item name="tabIndicatorColor">@color/background</item>
 		<item name="tabTextAppearance">@style/TitleMedium</item>
-		<item name="tabTextColor">@color/outlineVariant</item>
+		<item name="tabTextColor">@color/onSurface</item>
 		<item name="tabSelectedTextColor">@color/onBackground</item>
 		<item name="tabIndicatorGravity">stretch</item>
 		<item name="tabIndicatorAnimationMode">elastic</item>
 		<item name="tabIndicatorFullWidth">true</item>
 		<item name="elevation">0dp</item>
+		<item name="tabMode">fixed</item>
+		<item name="tabMaxWidth">0dp</item>
+		<item name="tabGravity">fill</item>
 	</style>
 
 	<style name="callFabStyle" parent="ThemeOverlay.Material3.FloatingActionButton.Primary">
@@ -342,15 +345,12 @@
 
 	<style name="bottomNavigationStyle" parent="Widget.Material3.BottomNavigationView">
 		<item name="itemRippleColor">@color/primary</item>
-		<item name="itemActiveIndicatorStyle">@style/bottomNavIndicator</item>
-		<item name="android:elevation">0dp</item>
-		<item name="elevation">0dp</item>
 		<item name="labelVisibilityMode">labeled</item>
+		<item name="itemActiveIndicatorStyle">@style/bottomNavIndicator</item>
 		<item name="itemTextAppearanceInactive">@style/BodySmall</item>
 		<item name="itemTextAppearanceActive">@style/BodySmall</item>
 		<item name="itemIconTint">@color/bottom_nav_color</item>
 		<item name="itemTextColor">@color/bottom_nav_color</item>
-		<item name="itemIconSize">22dp</item>
 		<item name="android:background">@color/background</item>
 	</style>
 
@@ -366,10 +366,6 @@
 
 
 	<style name="bottomNavIndicator" parent="@style/Widget.Material3.BottomNavigationView.ActiveIndicator">
-		<item name="android:width">0dp</item>
-		<item name="android:height">0dp</item>
-		<item name="marginHorizontal">0dp</item>
-		<!--        <item name="shapeAppearance">@style/navIndicatorShape</item>-->
 		<item name="android:color">@color/transparent</item>
 	</style>
 

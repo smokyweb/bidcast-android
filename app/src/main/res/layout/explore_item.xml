@@ -10,7 +10,7 @@
 		android:id="@+id/click"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:background="@color/surface"
+		android:background="@drawable/card_8"
 		android:gravity="center_vertical"
 		android:paddingStart="12dp"
 		android:paddingTop="16dp"
@@ -22,7 +22,7 @@
 			style="@style/cardStyle"
 			android:layout_width="48dp"
 			android:layout_height="48dp"
-			app:cardBackgroundColor="@color/tertiaryContainer"
+			app:cardBackgroundColor="@color/transparent"
 			app:cardElevation="0dp">
 
 			<androidx.appcompat.widget.AppCompatImageView
@@ -51,7 +51,7 @@
 
 			<TextView
 				android:id="@+id/sub_title"
-				style="@style/BodySmall"
+				style="@style/BodyMedium"
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
 				android:text="@string/app_name" />

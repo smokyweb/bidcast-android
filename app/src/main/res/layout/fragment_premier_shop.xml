@@ -1,0 +1,411 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".ui.dashboard.sellerHub.PremierShopFragment">
+
+    <io.bidswipe.app.ui.custom.Header
+        android:id="@+id/header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:headerMode="BACK_BUTTON_TITLE_ACTION"
+        app:layout_constraintTop_toTopOf="parent"
+        app:showBackButton="true"
+        app:showPrimaryIcon="false"
+        app:showSecondaryIcon="false"
+        app:headerTitle="@string/premier_shop"/>
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toBottomOf="@id/header"
+        android:layout_marginBottom="@dimen/margin"
+        app:layout_constraintBottom_toTopOf="@id/applyBtn">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:elevation="2dp">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="75dp"
+                    android:orientation="vertical"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:orientation="vertical"
+                        app:layout_constraintDimensionRatio="7:4"
+                        android:background="@color/primary"
+                        app:layout_constraintTop_toTopOf="parent">
+
+                            <ImageView
+                                android:layout_width="32dp"
+                                android:layout_height="26dp"
+                                android:layout_gravity="center"
+                                android:contentDescription="@string/app_name"
+                                android:layout_marginTop="@dimen/margin"
+                                android:scaleType="centerCrop"
+                                android:src="@drawable/ic_crown" />
+
+
+                        <TextView
+                            style="@style/HeadlineMedium"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_horizontal"
+                            android:layout_marginHorizontal="@dimen/half_margin"
+                            android:text="Become a Premier Shop"
+                            android:textColor="@color/surface" />
+
+                        <TextView
+                            style="@style/BodyMedium"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_horizontal"
+                            android:layout_marginHorizontal="@dimen/margin"
+                            android:text="Join the elite sellers and unlock exclusive benefits"
+                            android:textAlignment="center"
+                            android:textColor="@color/surface"/>
+
+                    </LinearLayout>
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <com.google.android.material.card.MaterialCardView
+                    style="@style/cardStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:cardBackgroundColor="@color/onPrimary"
+                    android:layout_margin="@dimen/margin"
+                    app:layout_constraintTop_toBottomOf="@id/layout"
+                    app:layout_constraintBottom_toBottomOf="@id/layout"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:strokeWidth="4dp"
+                    app:strokeColor="@color/background">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal"
+                            android:paddingHorizontal="16dp"
+                            android:paddingVertical="20dp">
+
+                            <com.google.android.material.card.MaterialCardView
+                                android:id="@+id/icon_card"
+                                style="@style/cardStyle"
+                                android:layout_width="48dp"
+                                android:layout_height="48dp"
+                                app:cardCornerRadius="100dp"
+                                app:cardElevation="0dp">
+
+                                <androidx.appcompat.widget.AppCompatImageView
+                                    android:id="@+id/icon"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:padding="12dp"
+                                    android:src="@drawable/ic_shop"
+                                    android:tint="@color/primary"
+                                    android:backgroundTint="@color/onSecondary"/>
+
+                            </com.google.android.material.card.MaterialCardView>
+
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_marginHorizontal="@dimen/half_margin"
+                                android:layout_weight="1"
+                                android:orientation="vertical">
+
+                                <TextView
+                                    android:id="@+id/title"
+                                    style="@style/TitleLarge"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:text="Your Shop" />
+
+                                <TextView
+                                    android:id="@+id/sub_title"
+                                    style="@style/BodySmall"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:text="Regular Member" />
+
+                            </LinearLayout>
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/orders"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginHorizontal="@dimen/half_margin"
+                            android:orientation="horizontal"
+                            app:layout_constraintTop_toBottomOf="@+id/header">
+
+                            <com.google.android.material.card.MaterialCardView
+                                style="@style/cardStyle"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_margin="@dimen/half_margin"
+                                android:layout_weight="1">
+
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:orientation="vertical"
+                                    android:background="@drawable/card_8"
+                                    android:padding="@dimen/half_margin">
+
+                                    <TextView
+                                        style="@style/TitleLarge"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:gravity="center"
+                                        android:text="N/A"
+                                        android:textColor="@color/tertiary" />
+
+                                    <TextView
+                                        style="@style/BodySmall"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:gravity="center"
+                                        android:text="Rating" />
+
+                                </LinearLayout>
+
+                            </com.google.android.material.card.MaterialCardView>
+
+                            <com.google.android.material.card.MaterialCardView
+                                style="@style/cardStyle"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_margin="@dimen/half_margin"
+                                android:layout_weight="1">
+
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:orientation="vertical"
+                                    android:background="@drawable/card_8"
+                                    android:padding="@dimen/half_margin">
+
+                                    <TextView
+                                        style="@style/TitleLarge"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:gravity="center"
+                                        android:text="N/A"
+                                        android:textColor="@color/tertiary" />
+
+                                    <TextView
+                                        style="@style/BodySmall"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:gravity="center"
+                                        android:text="Response" />
+
+                                </LinearLayout>
+
+                            </com.google.android.material.card.MaterialCardView>
+
+                            <com.google.android.material.card.MaterialCardView
+                                style="@style/cardStyle"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_margin="@dimen/half_margin"
+                                android:layout_weight="1">
+
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:orientation="vertical"
+                                    android:background="@drawable/card_8"
+                                    android:padding="@dimen/half_margin">
+
+                                    <TextView
+                                        style="@style/TitleLarge"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:gravity="center"
+                                        android:text="N/A"
+                                        android:textColor="@color/tertiary" />
+
+                                    <TextView
+                                        style="@style/BodySmall"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:gravity="center"
+                                        android:text="Delivery" />
+
+                                </LinearLayout>
+
+                            </com.google.android.material.card.MaterialCardView>
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                </com.google.android.material.card.MaterialCardView>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <TextView
+                style="@style/HeadlineSmall"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Premier Benifits"
+                android:layout_marginHorizontal="@dimen/margin"/>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/gridRecycler"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="8dp"
+                app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+                app:spanCount="2"
+                tools:itemCount="4"
+                tools:listitem="@layout/benifits_item" />
+
+            <TextView
+                style="@style/HeadlineSmall"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/requirements"
+                android:layout_marginHorizontal="@dimen/margin"/>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/requirementRecycler"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="8dp"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                tools:itemCount="4"
+                tools:listitem="@layout/requirement_item" />
+
+            <TextView
+                style="@style/HeadlineSmall"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/review_process"
+                android:layout_marginHorizontal="@dimen/margin"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingHorizontal="16dp"
+                android:paddingVertical="20dp">
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:src="@drawable/ic_checked_tag"
+                        android:tint="@color/primary"
+                        android:backgroundTint="@color/onSecondary"/>
+
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/half_margin"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        style="@style/TitleLarge"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Monthly Evaluation" />
+
+                    <TextView
+                        style="@style/BodyMedium"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Performance reviewed every 30 days" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginHorizontal="@dimen/margin"
+                android:orientation="horizontal">
+
+                <TextView
+                    style="@style/BodyLarge"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:alpha="0.7"
+                    android:text="Current Progress" />
+
+                <TextView
+                    style="@style/TitleMedium"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0%" />
+
+            </LinearLayout>
+
+            <com.google.android.material.progressindicator.LinearProgressIndicator
+                android:id="@+id/stepProgress"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/margin"
+                android:progress="0"
+                android:progressTint="@color/primary"
+                app:layout_constraintTop_toBottomOf="@id/header"
+                app:trackCornerRadius="6dp"
+                app:trackThickness="8dp" />
+
+            <TextView
+                style="@style/BodyLarge"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/margin"
+                android:alpha="0.7"
+                android:text="Next Review in 7 days" />
+
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/applyBtn"
+            style="@style/appBtn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/margin"
+            android:paddingHorizontal="@dimen/margin"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:text="Apply for Premier Status" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

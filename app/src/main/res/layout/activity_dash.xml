@@ -1,50 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	xmlns:app="http://schemas.android.com/apk/res-auto"
-	xmlns:tools="http://schemas.android.com/tools"
-	android:id="@+id/main"
-	android:layout_width="match_parent"
-	android:layout_height="match_parent"
-	tools:context=".ui.dashboard.DashActivity">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.dashboard.DashActivity">
 
-	<androidx.fragment.app.FragmentContainerView
-		android:id="@+id/nav_host_fragment"
-		android:name="androidx.navigation.fragment.NavHostFragment"
-		android:layout_width="match_parent"
-		android:layout_height="0dp"
-		app:defaultNavHost="true"
-		app:layout_constraintBottom_toTopOf="@id/bottomBar"
-		app:layout_constraintTop_toTopOf="parent"
-		app:navGraph="@navigation/dash_nav_graph" />
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/nav_host_fragment"
+        android:name="androidx.navigation.fragment.NavHostFragment"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:defaultNavHost="true"
+        app:layout_constraintBottom_toTopOf="@id/bottomBar"
+        app:layout_constraintTop_toTopOf="parent"
+        app:navGraph="@navigation/dash_nav_graph" />
 
-	<androidx.coordinatorlayout.widget.CoordinatorLayout
-		android:id="@+id/co_ordinate"
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:elevation="4dp"
-		app:layout_constraintBottom_toTopOf="@id/bottomBar">
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:id="@+id/co_ordinate"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:elevation="4dp"
+        app:layout_constraintBottom_toTopOf="@id/bottomBar"
+        app:layout_constraintTop_toTopOf="parent">
 
-		<androidx.constraintlayout.widget.ConstraintLayout
-			android:id="@+id/imageSheet"
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:orientation="vertical"
-			app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
+        <include
+            android:id="@+id/sell_sheet"
+            layout="@layout/sell_bottom_sheet" />
 
-			<include
-				android:id="@+id/sell_sheet"
-				layout="@layout/sell_bottom_sheet" />
 
-		</androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
-	</androidx.coordinatorlayout.widget.CoordinatorLayout>
+    <io.bidswipe.app.ui.custom.LoaderView
+        android:id="@+id/loader"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone" />
 
-	<com.google.android.material.bottomnavigation.BottomNavigationView
-		android:id="@+id/bottomBar"
-		style="@style/bottomNavigationStyle"
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		app:layout_constraintBottom_toBottomOf="parent"
-		app:menu="@menu/home_menu" />
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottomBar"
+        style="@style/bottomNavigationStyle"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:menu="@menu/home_menu" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

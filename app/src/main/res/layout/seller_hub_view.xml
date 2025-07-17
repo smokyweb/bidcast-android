@@ -16,16 +16,16 @@
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
 			android:baselineAligned="false"
-			android:paddingHorizontal="@dimen/margin"
-			android:paddingVertical="8dp"
-			android:weightSum="3">
+			android:weightSum="3"
+			android:paddingHorizontal="@dimen/half_margin"
+			android:paddingTop="@dimen/half_margin">
 
 			<LinearLayout
 				style="@style/shadowStyle"
 				android:layout_width="0dp"
 				android:layout_height="wrap_content"
-				android:layout_marginEnd="8dp"
 				android:layout_weight="1"
+				android:layout_margin="@dimen/half_margin"
 				android:background="@drawable/card_8"
 				android:orientation="vertical"
 				android:padding="@dimen/margin">
@@ -36,7 +36,7 @@
 					android:layout_width="match_parent"
 					android:layout_height="wrap_content"
 					android:gravity="center"
-					android:text="@string/app_name"
+					android:text="0"
 					android:textStyle="bold"
 					app:layout_constraintBottom_toTopOf="@+id/view"
 					app:layout_constraintEnd_toEndOf="@+id/view"
@@ -59,7 +59,7 @@
 				style="@style/shadowStyle"
 				android:layout_width="0dp"
 				android:layout_height="wrap_content"
-				android:layout_marginHorizontal="@dimen/half_margin"
+				android:layout_margin="@dimen/half_margin"
 				android:layout_weight="1"
 				android:background="@drawable/card_8"
 				android:orientation="vertical"
@@ -71,7 +71,7 @@
 					android:layout_width="match_parent"
 					android:layout_height="wrap_content"
 					android:gravity="center"
-					android:text="@string/_117_00"
+					android:text="$0.00"
 					android:textStyle="bold"
 					app:layout_constraintBottom_toTopOf="@+id/view"
 					app:layout_constraintEnd_toEndOf="@+id/view"
@@ -94,7 +94,7 @@
 				style="@style/shadowStyle"
 				android:layout_width="0dp"
 				android:layout_height="wrap_content"
-				android:layout_marginStart="8dp"
+				android:layout_margin="@dimen/half_margin"
 				android:layout_weight="1"
 				android:background="@drawable/card_8"
 				android:orientation="vertical"
@@ -106,7 +106,7 @@
 					android:layout_width="match_parent"
 					android:layout_height="wrap_content"
 					android:gravity="center"
-					android:text="4.5"
+					android:text="0"
 					android:textStyle="bold"
 					app:layout_constraintBottom_toTopOf="@+id/view"
 					app:layout_constraintEnd_toEndOf="@+id/view"
@@ -128,6 +128,7 @@
 		</LinearLayout>
 
 		<androidx.recyclerview.widget.RecyclerView
+			android:id="@+id/gridRecycler"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
 			android:padding="8dp"
@@ -141,7 +142,7 @@
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
 			android:layout_margin="@dimen/margin"
-			android:background="@drawable/card_16"
+			android:background="@drawable/card_8"
 			android:gravity="center"
 			android:paddingHorizontal="@dimen/margin"
 			android:paddingVertical="8dp">

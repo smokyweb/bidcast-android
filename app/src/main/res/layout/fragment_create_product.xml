@@ -55,7 +55,7 @@
 						android:layout_width="match_parent"
 						android:layout_height="wrap_content"
 						android:layout_marginStart="@dimen/half_margin"
-						android:text="@string/detailed_product_listings_help_buyers_make_informed_decisions_and_increase_your_chances_of_making_a_sale"
+						android:text="detailed_product_listings_help_buyers_make_informed_decisions_and_increase_your_chances_of_making_a_sale"
 						android:textColor="@color/secondary" />
 
 				</LinearLayout>
@@ -276,24 +276,39 @@
 
 	</ScrollView>
 
-	<LinearLayout
-		android:id="@+id/buttonLayout"
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:orientation="horizontal"
-		android:visibility="visible"
-		app:layout_constraintBottom_toBottomOf="parent">
 
-		<com.google.android.material.button.MaterialButton
-			android:id="@+id/continueBtn"
-			style="@style/appBtn"
+
+		<LinearLayout
+			android:id="@+id/buttonLayout"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
-			android:layout_margin="@dimen/margin"
-			android:paddingHorizontal="@dimen/margin"
-			android:text="@string/_continue" />
+			android:orientation="horizontal"
+			android:visibility="visible"
+			android:weightSum="2"
+			app:layout_constraintBottom_toBottomOf="parent">
 
-	</LinearLayout>
+				<com.google.android.material.button.MaterialButton
+                    android:id="@+id/useProduct"
+                    style="@style/appBtn"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/margin"
+                    android:paddingHorizontal="@dimen/margin"
+                    android:layout_weight="1"
+                    android:text="@string/use_product_library" />
+
+			<com.google.android.material.button.MaterialButton
+				android:id="@+id/continueBtn"
+				style="@style/appBtn"
+				android:layout_width="match_parent"
+				android:layout_height="match_parent"
+				android:layout_margin="@dimen/margin"
+				android:layout_weight="1"
+				android:paddingHorizontal="@dimen/margin"
+				android:text="@string/_continue" />
+
+		</LinearLayout>
+
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

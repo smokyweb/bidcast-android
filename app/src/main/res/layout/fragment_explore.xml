@@ -20,6 +20,16 @@
 		app:showPrimaryIcon="true"
 		app:showSecondaryIcon="true" />
 
+	<net.cachapa.expandablelayout.ExpandableLayout
+		android:id="@+id/searchExpandLayout"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		app:el_duration="500"
+		app:el_expanded="false"
+		app:el_parallax="1"
+		app:layout_constraintEnd_toEndOf="parent"
+		app:layout_constraintStart_toStartOf="parent"
+		app:layout_constraintTop_toBottomOf="@id/header">
 
 	<com.google.android.material.textfield.TextInputLayout
 		android:id="@+id/searchLayout"
@@ -30,9 +40,6 @@
 		android:layout_marginBottom="@dimen/margin"
 		app:boxBackgroundColor="@color/surface"
 		app:boxStrokeWidth="2dp"
-		app:layout_constraintEnd_toEndOf="parent"
-		app:layout_constraintStart_toStartOf="parent"
-		app:layout_constraintTop_toBottomOf="@id/header"
 		app:startIconDrawable="@drawable/search"
 		app:startIconTint="@color/scrim">
 
@@ -43,21 +50,60 @@
 			android:layout_height="wrap_content"
 			android:hint="@string/what_are_you_looking_for"
 			android:inputType="textEmailAddress" />
-
 	</com.google.android.material.textfield.TextInputLayout>
+	</net.cachapa.expandablelayout.ExpandableLayout>
 
-	<TextView
+
+	<LinearLayout
 		android:id="@+id/heading"
-		style="@style/TitleLarge"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:layout_gravity="center_vertical"
-		android:layout_marginHorizontal="@dimen/margin"
-		android:layout_marginVertical="@dimen/half_margin"
-		android:text="Recommended | Popular | All"
+		android:orientation="horizontal"
+		android:layout_margin="@dimen/margin"
 		app:layout_constraintEnd_toEndOf="parent"
 		app:layout_constraintStart_toStartOf="parent"
-		app:layout_constraintTop_toBottomOf="@id/searchLayout" />
+		app:layout_constraintTop_toBottomOf="@id/searchExpandLayout">
+
+		<TextView
+			android:id="@+id/recommended"
+			style="@style/TitleLarge"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_gravity="center_vertical"
+			android:text="@string/recommended"
+			/>
+
+		<com.google.android.material.divider.MaterialDivider
+			android:layout_width="2dp"
+			android:layout_height="match_parent"
+			android:layout_marginVertical="4dp"
+			android:layout_marginHorizontal="@dimen/half_margin"/>
+
+
+		<TextView
+			android:id="@+id/popular"
+			style="@style/TitleLarge"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_gravity="center_vertical"
+			android:text="@string/popular" />
+
+		<com.google.android.material.divider.MaterialDivider
+			android:layout_width="2dp"
+			android:layout_height="match_parent"
+			android:layout_marginVertical="4dp"
+			android:layout_marginHorizontal="@dimen/half_margin"/>
+
+		<TextView
+			android:id="@+id/all"
+			style="@style/TitleLarge"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_gravity="center_vertical"
+			android:text="@string/all"
+			/>
+
+	</LinearLayout>
 
 	<androidx.recyclerview.widget.RecyclerView
 		android:id="@+id/recycler"
@@ -70,6 +116,12 @@
 		app:layout_constraintTop_toBottomOf="@id/heading"
 		tools:itemCount="6"
 		tools:listitem="@layout/explore_item" />
+
+	<io.bidswipe.app.ui.custom.LoaderView
+		android:id="@+id/loader"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:visibility="gone"/>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
