@@ -14,7 +14,6 @@ import io.bidswipe.app.utils.clr
 import io.bidswipe.app.utils.layout
 import io.bidswipe.app.utils.runSafe
 
-
 enum class AlertType {
     SUCCESS,
     WARNING,

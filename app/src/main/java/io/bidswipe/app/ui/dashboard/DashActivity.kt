@@ -206,11 +206,14 @@ class DashActivity : BaseActivity(), NavController.OnDestinationChangedListener 
                    }
                    1->{
 
-                       if (isFirstShowCreated){
-                           startActivity(this@DashActivity.toScheduleShow(from = "dash"))
-                       }else{
-                           startActivity(this@DashActivity.toTutorials())
-                       }
+                       startActivity(this@DashActivity.toTutorials())
+
+
+//                       if (isFirstShowCreated){
+//                           startActivity(this@DashActivity.toScheduleShow(from = "dash"))
+//                       }else{
+//                           startActivity(this@DashActivity.toTutorials())
+//                       }
 
                    }
                    2 -> {

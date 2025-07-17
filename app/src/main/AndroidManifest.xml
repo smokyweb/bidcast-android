@@ -102,6 +102,9 @@
             android:name=".ui.auth.AuthActivity"
             android:exported="false" />
         <activity
+            android:name=".ui.dashboard.more.TrustedBuyerActivity"
+            android:exported="false" />
+        <activity
             android:name="com.canhub.cropper.CropImageActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.Bidswipe.ActionBar"

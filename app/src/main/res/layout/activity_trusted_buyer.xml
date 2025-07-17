@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".ui.dashboard.more.TrustedBuyerFragment">
+    tools:context=".ui.dashboard.more.TrustedBuyerActivity">
 
     <io.bidswipe.app.ui.custom.Header
         android:id="@+id/header"
@@ -159,6 +159,7 @@
                 </LinearLayout>
 
                 <com.google.android.material.divider.MaterialDivider
+                    android:id="@+id/secondDivider"
                     android:layout_width="0dp"
                     android:layout_height="4dp"
                     android:layout_weight="1"
@@ -170,14 +171,15 @@
                     android:orientation="vertical">
 
                     <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/thirdCard"
                         style="@style/cardStyle"
                         android:layout_width="60dp"
                         android:layout_height="60dp"
                         android:layout_gravity="center_horizontal"
-                        android:backgroundTint="@color/outline"
                         app:cardCornerRadius="100dp">
 
                         <TextView
+                            android:id="@+id/thirdText"
                             style="@style/HeadlineSmall"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
@@ -188,6 +190,7 @@
                     </com.google.android.material.card.MaterialCardView>
 
                     <TextView
+                        android:id="@+id/finalStatus"
                         style="@style/BodyLarge"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"

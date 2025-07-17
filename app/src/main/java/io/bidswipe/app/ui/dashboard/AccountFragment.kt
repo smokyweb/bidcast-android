@@ -22,6 +22,7 @@ import io.bidswipe.app.ui.custom.AlertType
 import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.ui.dashboard.more.MoreActivity
 import io.bidswipe.app.ui.dashboard.more.NotificationActivity
+import io.bidswipe.app.ui.dashboard.more.TrustedBuyerActivity
 import io.bidswipe.app.ui.dashboard.sellerHub.SellerHubActivity
 import io.bidswipe.app.utils.Prefs
 import io.bidswipe.app.utils.finish
@@ -83,6 +84,10 @@ class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
 
                 "notification"->{
                     startActivity(Intent(mCtx , NotificationActivity::class.java).putExtra("slug",accountGridList[pos].slug))
+                }
+
+                "buyer"->{
+                    startActivity(Intent(mCtx , TrustedBuyerActivity::class.java).putExtra("slug",accountGridList[pos].slug))
                 }
 
                 else->{

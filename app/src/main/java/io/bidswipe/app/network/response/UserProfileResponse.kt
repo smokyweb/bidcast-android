@@ -44,7 +44,11 @@ data class UserProfileResponse(
         @SerializedName("thumbnail")
         val thumbnail: Any?,
         @SerializedName("username")
-        val username: String?
+        val username: String?,
+        @SerializedName("seller_identity_status")
+        val sellerIdentityStatus: String?,
+        @SerializedName("buyer_identity_status")
+        val buyerIdentityStatus: String?
     ) {
         @Keep
         data class Role(
