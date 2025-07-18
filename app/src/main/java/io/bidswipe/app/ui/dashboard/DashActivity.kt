@@ -2,6 +2,7 @@ package io.bidswipe.app.ui.dashboard
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.activity.viewModels
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -85,6 +86,7 @@ class DashActivity : BaseActivity(), NavController.OnDestinationChangedListener 
         }
 
         getDeviceToken(this){
+            Log.d(TAG, "onCreate: $it")
             viewModel.storeDeviceDetails(it.request())
         }
 
@@ -284,12 +286,14 @@ class DashActivity : BaseActivity(), NavController.OnDestinationChangedListener 
 
 
     fun getDeviceToken(context: Context, token: (token: String) -> Unit) {
+        Log.d(TAG, "getDeviceToken: ")
         FirebaseMessaging.getInstance().token.addOnCompleteListener {
             if (!it.isSuccessful) {
                 Alerts.log(javaClass.simpleName, "Fetching FCM registration token failed ${it.exception}")
                 return@addOnCompleteListener
             }
             val deviceToken = it.result.toString()
+            Log.d(TAG, "getDeviceToken: ")
 
             if (Prefs(context).fcmToken() != deviceToken) {
                 Prefs(context).putString(Prefs.PUSH_TOKEN, deviceToken)
@@ -297,6 +301,7 @@ class DashActivity : BaseActivity(), NavController.OnDestinationChangedListener 
             } else {
                 Alerts.log(javaClass.simpleName, "device token not refresh  $token")
             }
+            token(deviceToken)
         }
     }
 

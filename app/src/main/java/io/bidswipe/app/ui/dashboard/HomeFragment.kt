@@ -103,7 +103,6 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
         }
 
         bind.noInternet.onClick {
-
             bind.loader.isVisible = true
             bind.noInternet.isVisible = false
             viewModel.getLiveShow(selectedTabText.request())

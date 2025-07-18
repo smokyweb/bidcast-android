@@ -91,13 +91,12 @@ class MyOrdersFragment : BaseFragment<SellerHubViewModel, FragmentMyOrdersBindin
 
 				is Resource.Error -> {
 					bind.swipeRefreshLayout.isRefreshing = false
-					bind.noInternet.isVisible = false
 					bind.loader.isVisible = false
+
 
 					if (it.isNetworkError) {
 						bind.noInternet.isVisible = true
 						bind.recycler.isVisible = false
-						bind.noData.isVisible = false
 					} else {
 						it.parse(mCtx, TAG, object : AlertClicks {
 							override fun primaryClick(dialog: AppBottomSheet) {

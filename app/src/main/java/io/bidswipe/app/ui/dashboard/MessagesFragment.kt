@@ -38,10 +38,6 @@ class MessagesFragment : BaseFragment<DashViewModel, FragmentMessagesBinding>() 
         messagesAdapter = MessagesAdapter(chatList, mClicks)
         bind.recycler.adapter = messagesAdapter
 
-        bind.swipeRefreshLayout.setOnRefreshListener {
-
-        }
-
         bind.noInternet.onClick {
             bind.noInternet.isVisible = false
 

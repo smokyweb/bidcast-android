@@ -81,9 +81,14 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 nManager.createNotificationChannel(Utils.notificationChannel())
             }
+            val type = data["type"]?:""
 
             val flag = PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-            val title = (mNotification?.title ?: getString(string.app_name)).toString().asHtml().asCapital()
+            val title =if(type == "message") {
+                data["sender_name"]?:""
+            }else {
+                (mNotification?.title ?: getString(string.app_name)).toString().asHtml().asCapital()
+            }
             val message = (mNotification?.body ?: getString(string.app_name)).toString().asHtml().asCapital()
             var notifyId = kotlin.random.Random.nextInt(8)
 

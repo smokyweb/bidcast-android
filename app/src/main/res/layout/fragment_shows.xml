@@ -26,7 +26,7 @@
         android:background="@color/background"
         android:paddingHorizontal="8dp"
         android:orientation="vertical"
-        app:layout_constraintBottom_toTopOf="@id/buttonLayout"
+        app:layout_constraintBottom_toTopOf="@id/addNewProduct"
         app:layout_constraintTop_toBottomOf="@+id/header">
 
         <com.google.android.material.card.MaterialCardView
@@ -75,10 +75,9 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycler"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:orientation="vertical"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            app:layout_constraintBottom_toBottomOf="parent"
             tools:itemCount="6"
             tools:listitem="@layout/show_listing_item" />
 
@@ -87,11 +86,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:visibility="gone"
-            app:title_text="No Shows Found"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"/>
+            app:title_text="No Shows Found"/>
 
             <io.bidswipe.app.ui.custom.NoDataView
                 android:id="@+id/noInternet"
@@ -108,26 +103,18 @@
 
     </LinearLayout>
 
-
-    <LinearLayout
-        android:id="@+id/buttonLayout"
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/addNewProduct"
+        style="@style/appBtn"
         android:layout_width="match_parent"
+        app:layout_constraintBottom_toBottomOf="parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:visibility="visible"
-        app:layout_constraintBottom_toBottomOf="parent">
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/addNewProduct"
-            style="@style/appBtn"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/margin"
-            android:paddingHorizontal="@dimen/margin"
-            android:text="@string/new_show" />
-
-    </LinearLayout>
-
+        android:layout_margin="@dimen/margin"
+        android:paddingHorizontal="@dimen/margin"
+        android:text="@string/new_show"
+        app:icon="@drawable/ic_add"
+        app:iconGravity="textStart"
+        app:iconPadding="8dp" />
     <io.bidswipe.app.ui.custom.LoaderView
         android:id="@+id/loader"
         android:layout_width="match_parent"

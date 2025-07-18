@@ -7,7 +7,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import com.google.android.material.tabs.TabLayout
-import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseFragment
 import io.bidswipe.app.controller.ShowListingAdapter
 import io.bidswipe.app.databinding.FragmentShowsBinding
@@ -16,6 +15,7 @@ import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.network.response.GetMyShowResponse
 import io.bidswipe.app.ui.custom.AppBottomSheet
+import io.bidswipe.app.ui.custom.Loader.show
 import io.bidswipe.app.ui.dashboard.scheduleShow.LiveShowActivity
 import io.bidswipe.app.utils.finish
 import io.bidswipe.app.utils.parse
@@ -57,28 +57,14 @@ class ShowsFragment :  BaseFragment<SellerHubViewModel, FragmentShowsBinding>() 
 
         bind.tabs.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener{
             override fun onTabSelected(tab: TabLayout.Tab?) {
+                showList.clear()
+                showAdapter.notifyDataSetChanged()
+                bind.loader.isVisible = true
 
-                log("tab : ${tab?.text}   :  ${tab?.tag}")
-
-               when(tab?.position){
-
-                   0 ->{
-                       showList.clear()
-                       showAdapter.notifyDataSetChanged()
-                       bind.loader.isVisible = true
-                       viewModel.getMyScheduledShow("upcoming".request())
-                   }
-
-                   1->{
-                       showList.clear()
-                       bind.loader.isVisible = true
-                       viewModel.getMyScheduledShow("past".request())
-
-                   }
-
-
-
-               }
+                when(tab?.position){
+                    0 -> viewModel.getMyScheduledShow("upcoming".request())
+                    1 -> viewModel.getMyScheduledShow("past".request())
+                }
 
             }
 
@@ -93,54 +79,46 @@ class ShowsFragment :  BaseFragment<SellerHubViewModel, FragmentShowsBinding>() 
         })
 
         bind.addNewProduct.setOnClickListener {
-
             startActivity(mCtx.toScheduleShow(from = "dash"))
 
         }
+
+
         bind.swipeRefreshLayout.setOnRefreshListener {
-            when(bind.tabs.isSelected){
-                true ->{
-                    viewModel.getMyScheduledShow("upcoming".request())
-                }
-                false ->{
-                    viewModel.getMyScheduledShow("past".request())
-                }
-            }
+            bind.loader.isVisible = true
+            viewModel.getMyScheduledShow("upcoming".request())
         }
 
         bind.noInternet.onClick {
             bind.loader.isVisible = true
             bind.noInternet.isVisible = false
 
-            when(bind.tabs.isSelected){
-                true ->{
-                    viewModel.getMyScheduledShow("upcoming".request())
-                }
-                false ->{
-                    viewModel.getMyScheduledShow("past".request())
-                }
-            }
         }
 
         bind.loader.isVisible = true
         viewModel.getMyScheduledShow("upcoming".request())
 
-        viewModel.getMyScheduledShowRepo.observe(viewLifecycleOwner) {
+        viewModel.getMyScheduledShowRepo.observe(viewLifecycleOwner) { it ->
             when (it) {
                 is Resource.Success -> {
                     bind.noInternet.isVisible = false
                     bind.swipeRefreshLayout.isRefreshing = false
                     bind.loader.isVisible = false
+                    bind.addNewProduct.isVisible = true
+
+                    showList.clear()
+                    it.value.data?.let { data ->
+                        showList.addAll(data.distinctBy { show ->show?.id })
+                    }
 
                     val mData = it.value.data
+                        mData?.forEach {
 
-                    mData?.forEach {
+                            showList.add(it)
 
-                        showList.add(it)
+                            showAdapter.notifyDataSetChanged()
 
-                        showAdapter.notifyDataSetChanged()
-
-                    }
+                        }
 
                     if (showList.isEmpty()){
                         bind.noData.isVisible = true
@@ -160,7 +138,7 @@ class ShowsFragment :  BaseFragment<SellerHubViewModel, FragmentShowsBinding>() 
                     if (it.isNetworkError) {
                         bind.noInternet.isVisible = true
                         bind.recycler.isVisible = false
-                        bind.noData.isVisible = false
+                        bind.addNewProduct.isVisible = false
                     } else {
                         it.parse(mCtx, TAG, object : AlertClicks {
                             override fun primaryClick(dialog: AppBottomSheet) {
