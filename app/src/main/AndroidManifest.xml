@@ -37,6 +37,9 @@
         android:theme="@style/Theme.Bidswipe"
         tools:targetApi="31">
         <activity
+            android:name=".ui.dashboard.ChatActivity"
+            android:exported="false" />
+        <activity
             android:name=".ui.dashboard.RateSellerActivity"
             android:exported="false" />
         <activity

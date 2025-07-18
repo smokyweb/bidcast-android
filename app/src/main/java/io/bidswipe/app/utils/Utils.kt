@@ -107,7 +107,7 @@ object Utils {
         return dp * context.resources.displayMetrics.density
     }
 
-    private fun getSimpleDate(format: String) = SimpleDateFormat(format, Locale.getDefault())
+    fun getSimpleDate(format: String) = SimpleDateFormat(format, Locale.getDefault())
 
     fun imagePart(param: String, name: String, file: File) =
         MultipartBody.Part.Companion.createFormData(

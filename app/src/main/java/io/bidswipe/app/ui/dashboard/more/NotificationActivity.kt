@@ -62,6 +62,23 @@ class NotificationActivity : BaseActivity() {
 
         }
 
+        bind.swipeRefreshLayout.setOnRefreshListener {
+            bind.swipeRefreshLayout.isRefreshing = false
+            viewModel.getNotification()
+
+        }
+
+        bind.noInternet.onClick {
+            bind.noInternet.isVisible = false
+            bind.loader.isVisible = true
+            viewModel.getNotification()
+        }
+
+        bind.noData.onClick {
+            viewModel.getNotification()
+            bind.noData.isVisible = false
+        }
+
         bind.loader.isVisible = true
 
        viewModel.getNotification()
@@ -70,6 +87,9 @@ class NotificationActivity : BaseActivity() {
             when (it) {
                 is Resource.Success -> {
                     runSafe {
+                        bind.noInternet.isVisible = false
+                        bind.bottomLoader.isVisible = false
+                        bind.swipeRefreshLayout.isRefreshing = false
                         bind.loader.isVisible = false
 
                         val mData = it.value.data
@@ -84,16 +104,27 @@ class NotificationActivity : BaseActivity() {
                 }
 
                 is Resource.Error -> {
+                    bind.swipeRefreshLayout.isRefreshing = false
                     bind.loader.isVisible = false
-                    it.parse(this, TAG, object : AlertClicks {
-                        override fun primaryClick(dialog: AppBottomSheet) {
-                            dialog.dismiss()
-                        }
+                    bind.bottomLoader.isVisible = false
 
-                        override fun secondaryClick(dialog: AppBottomSheet) {
-                            dialog.dismiss()
-                        }
-                    })
+                    if (it.isNetworkError){
+                        bind.noInternet.isVisible = true
+
+                    }
+                    else{
+                        it.parse(this, TAG, object : AlertClicks {
+                            override fun primaryClick(dialog: AppBottomSheet) {
+                                dialog.dismiss()
+                            }
+
+                            override fun secondaryClick(dialog: AppBottomSheet) {
+                                dialog.dismiss()
+                            }
+                        })
+                    }
+
+
                 }
                 else -> {}
             }

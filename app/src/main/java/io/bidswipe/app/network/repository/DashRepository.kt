@@ -323,4 +323,9 @@ suspend fun settingsList() = call { api.settingsList() }
         sellerId : String?
     ) = call { api. getSellerRating(sellerId)}
 
+    suspend fun sendChatNotification(
+        receiverId: RequestBody,
+        message: RequestBody
+    )= call { api.sendChatNotification(receiverId,message) }
+
 }

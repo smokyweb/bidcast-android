@@ -1,0 +1,437 @@
+package io.bidswipe.app.ui.dashboard
+
+import android.annotation.SuppressLint
+import android.app.Activity
+import android.os.Bundle
+import android.view.inputmethod.InputMethodManager
+import android.widget.ImageView
+import androidx.activity.viewModels
+import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
+import androidx.lifecycle.viewModelScope
+import androidx.recyclerview.widget.ItemTouchHelper
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.canhub.cropper.CropImageContract
+import com.google.firebase.database.ChildEventListener
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.ValueEventListener
+import io.bidswipe.app.base.BaseActivity
+import io.bidswipe.app.controller.ChatAdapter
+import io.bidswipe.app.databinding.ActivityChatBinding
+import io.bidswipe.app.interfaces.RecyclerClicks
+import io.bidswipe.app.model.ChatModel
+import io.bidswipe.app.utils.Alerts
+import io.bidswipe.app.utils.Chats
+import io.bidswipe.app.utils.Const
+import io.bidswipe.app.utils.FireRef
+import io.bidswipe.app.utils.MessageSwiper
+import io.bidswipe.app.utils.Prefs
+import io.bidswipe.app.utils.Utils
+import io.bidswipe.app.utils.bind
+import io.bidswipe.app.utils.clr
+import io.bidswipe.app.utils.hideKeyboard
+import io.bidswipe.app.utils.loadUrl
+import io.bidswipe.app.utils.request
+import io.bidswipe.app.utils.runSafe
+import io.bidswipe.app.utils.showKeyboard
+import io.bidswipe.app.utils.value
+import jp.wasabeef.recyclerview.animators.SlideInUpAnimator
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+
+class ChatActivity : BaseActivity() {
+
+    private val bind by bind(ActivityChatBinding::inflate)
+    private val viewModel by viewModels<DashViewModel>()
+    private var chatList = mutableListOf<ChatModel>()
+
+    private lateinit var chatRef: DatabaseReference
+    private lateinit var chatAdapter: ChatAdapter
+    private var reply: ChatModel.Reply? = null
+    private lateinit var chats: Chats
+    private var isReply = false
+
+    private lateinit var receiverImage: String
+    private lateinit var receiverName: String
+    private lateinit var receiverId: String
+    private lateinit var chatKey: String
+
+    private var firstTimeLoad = true
+    private var loadMore = false
+
+    private var chatLimit = 20
+
+    private val mClick = object : RecyclerClicks {
+
+        override fun itemClick(pos: Int, status: String?) {
+            when (status) {
+                "image" -> {
+//                    val imgList = mutableListOf(chatList[pos].attachment?.image.toString())
+//                    StfalconImageViewer.Builder(this@ChatActivity , imgList , ::loadImage).withBackgroundColorResource(clr.surface)
+//                        .withHiddenStatusBar(false)
+//                        .allowSwipeToDismiss(true).allowZooming(true).show(true)
+                }
+
+                "reply_click" -> {
+                    val notifyIndex =
+                        chatList.indexOf(chatList.find { it.id == chatList[pos].replyMessage?.messageId })
+                    bind.chats.scrollToPosition(notifyIndex)
+                }
+            }
+        }
+    }
+
+    private val imageResult = registerForActivityResult(CropImageContract()) { result ->
+        if (result.isSuccessful) {
+            val profileUri = result.uriContent
+            Alerts.log(TAG, "URI $profileUri")
+
+//            if (profileUri != null) {
+//                chats.sendImage(profileUri) {
+////					viewModel.chatNotification(chatKey.request() , "Shared the image".request() , "image".request() , receiverId.request())
+//                }
+//            }
+//            else {
+//                errorToast("Couldn't select the image")
+//            }
+        } else {
+            result.error?.printStackTrace()
+        }
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        setContentView(bind.root)
+
+        window.navigationBarColor = ContextCompat.getColor(this, clr.background)
+
+        receiverImage = intent.getStringExtra("image").toString()
+        receiverName = intent.getStringExtra("name").toString()
+        receiverId = intent.getStringExtra("id").toString()
+
+
+        chatKey = if (userId > receiverId) {
+            receiverId + "_chats_" + userId
+        } else {
+            userId + "_chats_" + receiverId
+        }
+
+        chatRef = FireRef.CHAT.child(chatKey)
+
+        bind.title.text = receiverName
+        bind.userImage.loadUrl(this, receiverImage)
+
+        chats = Chats(
+            this, chatKey, ChatModel.Users(
+                "" + userId,
+                "" + userName,
+                "" + userImage,
+                "" + receiverId,
+                "" + receiverName,
+                "" + receiverImage,
+            )
+        )
+
+        hideKeyboard()
+
+        bind.toolbar.setNavigationOnClickListener { finishAfterTransition() }
+
+        chatAdapter = ChatAdapter(this, userId, chatList, mClick)
+
+        bind.chats.also {
+            it.adapter = chatAdapter
+            it.setHasFixedSize(true)
+            it.itemAnimator = SlideInUpAnimator().also { animator ->
+                animator.addDuration = 60
+                animator.moveDuration = 60
+                animator.changeDuration = 60
+            }
+
+            it.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                    super.onScrolled(recyclerView, dx, dy)
+                    val layoutManager = bind.chats.layoutManager as LinearLayoutManager
+                    if (layoutManager.findFirstCompletelyVisibleItemPosition() == 0 && dy < 0) {
+                        getMoreChats()
+                    }
+
+                }
+            })
+        }
+
+        val helper = ItemTouchHelper(
+            MessageSwiper(
+                this,
+                object : MessageSwiper.SwipeControllerActions {
+                    override fun showReplyUI(position: Int) {
+
+                        val message = if (chatList[position].type == "image") {
+                            chatList[position].attachment?.image.toString()
+                        } else {
+                            chatList[position].message.toString()
+                        }
+
+                        reply = ChatModel.Reply(
+                            "" + chatList[position].type.toString(),
+                            "" + message,
+                            "" + chatList[position].users?.senderId.toString(),
+                            "" + chatList[position].users?.senderName.toString(),
+                            "" + chatList[position].id.toString(),
+                        )
+
+                        showQuotedMessage(
+                            message,
+                            chatList[position].users?.senderName.toString(),
+                            chatList[position].type.toString()
+                        )
+                    }
+                })
+        )
+
+        helper.attachToRecyclerView(bind.chats)
+
+        bind.send.setOnClickListener {
+
+            if (bind.message.value().isNotEmpty()) {
+
+                val model = if (isReply) ChatModel(
+                    isReply = true,
+                    message = bind.message.value(),
+                    replyMessage = reply
+                )
+                else ChatModel(isReply = false, message = bind.message.value())
+
+                chats.sendChat(model) {
+                        viewModel.sendChatNotification(
+                            receiverId.request(),
+                            bind.message.value().request()
+                        )
+                    bind.message.text = null
+                    bind.message.isFocusableInTouchMode = true
+                    showKeyboard(bind.message)
+                    showReply(false)
+                }
+
+
+            }
+        }
+
+        bind.messageBox.setEndIconOnClickListener {
+            hideKeyboard()
+            requestPerms(Const.PERMISSIONS) {
+                if (it) {
+                    imageResult.launch(Utils.initCrop(this, isCamera = true, isGallery = true))
+                }
+            }
+        }
+
+        bind.cancel.setOnClickListener {
+            showReply(false)
+        }
+
+        getChats()
+
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        runSafe { chatRef.removeEventListener(chatPageListener) }
+    }
+
+    private fun getChats() {
+        chatRef.removeEventListener(chatPageListener)
+        chatRef.orderByChild("id").limitToLast(chatLimit)
+            .addListenerForSingleValueEvent(mainChatListener)
+    }
+
+    private fun getMoreChats() {
+        if (!loadMore) {
+            chatRef.removeEventListener(chatPageListener)
+            loadMore = true
+            bind.expandView.expand(true)
+            bind.chats.scrollToPosition(0)
+
+            val firstId = chatList.first().id.toString()
+
+            val ref = chatRef.orderByChild("id").endBefore(firstId, firstId).limitToLast(chatLimit)
+
+            ref.addListenerForSingleValueEvent(mainChatListener)
+        }
+    }
+
+    private fun loadImage(imageView: ImageView, url: String?) =
+        imageView.loadUrl(this, url.toString())
+
+    private val chatPageListener = object : ChildEventListener {
+        override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
+            bind.loader.isVisible = false
+
+            val chatMsg = ChatModel().fromMap(snapshot)
+            if (chatMsg.users?.receiverId == userId) {
+                snapshot.child("seen").ref.setValue(true).addOnSuccessListener {
+                    chats.updateChatList(mapOf("seen" to true))
+                }
+            }
+
+            if (chatList.isNotEmpty()) {
+
+                if ((chatList.last().timestamp ?: 0) != (chatMsg.timestamp
+                        ?: 0) || chatList.last().type != Chats.ChatType.DATE
+                ) {
+                    if (chatList.find { chat -> chat.id == chatMsg.id } == null) {
+                        chatList.add(chatMsg)
+                        chatAdapter.notifyItemInserted(chatList.size - 1)
+                        bind.chats.smoothScrollToPosition(chatList.size - 1)
+                    }
+                } else {
+                    if (chatList.find { chat -> chat.id == chatMsg.id } == null) {
+                        chatList.add(chatMsg)
+                        chatAdapter.notifyItemInserted(chatList.size - 1)
+                        bind.chats.smoothScrollToPosition(chatList.size - 1)
+                    }
+                }
+            } else {
+                chatList.add(chatMsg)
+                chatAdapter.notifyItemInserted(0)
+                bind.chats.smoothScrollToPosition(chatList.size - 1)
+                bind.chats.isVisible = true
+            }
+
+            bind.message.requestFocus()
+
+        }
+
+        override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
+            Alerts.log(TAG, "changed ${snapshot.children.count()}")
+            runSafe {
+                val index = chatList.indexOf(chatList.find { it.id == snapshot.key })
+                chatList[index].seen = snapshot.child("seen").getValue(Boolean::class.java)
+                chatAdapter.notifyItemChanged(index)
+            }
+        }
+
+        override fun onChildRemoved(snapshot: DataSnapshot) {
+            Alerts.log(TAG, "ChildRemoved $snapshot")
+            runSafe {
+                val removeAt = chatList.indexOf(chatList.find { it.id == snapshot.key })
+                chatList.removeAt(removeAt)
+                chatAdapter.notifyItemRemoved(removeAt)
+                chatAdapter.notifyItemRangeChanged(0, chatList.size)
+            }
+        }
+
+        override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {
+            Alerts.log(TAG, "ChildMoved $snapshot")
+        }
+
+        override fun onCancelled(error: DatabaseError) {
+            Alerts.log(TAG, "ChildMoved $error")
+        }
+
+    }
+
+    private val mainChatListener = object : ValueEventListener {
+        @SuppressLint("NotifyDataSetChanged")
+        override fun onDataChange(snapshot: DataSnapshot) {
+            bind.loader.isVisible = false
+
+            val tempList = mutableListOf<ChatModel>()
+
+            snapshot.children.forEach {
+                val chat = ChatModel().fromMap(it)
+                tempList.add(chat)
+                if (chat.users?.receiverId == userId) {
+                    it.ref.updateChildren(mapOf("seen" to true))
+                }
+            }
+
+            if (chatList.isNotEmpty()) {
+                tempList.reverse()
+                tempList.forEach {
+                    if (chatList.find { chat -> chat.id == it.id } == null) {
+                        if (it.id != null) {
+                            chatList.add(0, it)
+                            chatAdapter.notifyItemInserted(0)
+                        }
+                    }
+                }
+            } else {
+                chatList.addAll(tempList)
+                try {
+                    chatAdapter.notifyItemRangeInserted(0, chatList.size - 1)
+                } catch (e: Exception) {
+                    chatAdapter.notifyDataSetChanged()
+                }
+            }
+
+            loadMore = false
+
+            viewModel.viewModelScope.launch {
+                delay(1000)
+                runOnUiThread {
+                    bind.expandView.collapse(true)
+                }
+            }
+
+            runSafe {
+                if (firstTimeLoad) {
+                    firstTimeLoad = false
+                    if (chatList.size <= chatLimit) {
+                        bind.chats.smoothScrollToPosition(chatList.size - 1)
+                    }
+                }
+            }
+
+            bind.chats.isVisible = true
+
+            log("SIZE => ${chatList.size}")
+
+            chatRef.limitToLast(chatLimit).addChildEventListener(chatPageListener)
+        }
+
+        override fun onCancelled(error: DatabaseError) {
+            error.toException().printStackTrace()
+            Alerts.log(TAG, "CHAT READ ERROR : ${error.message}")
+        }
+
+    }
+
+    private fun showQuotedMessage(message: String, name: String, type: String) {
+        bind.message.requestFocus()
+        val inputMethodManager =
+            this.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
+        inputMethodManager.showSoftInput(bind.message, InputMethodManager.SHOW_IMPLICIT)
+
+        if (type == "image") {
+            bind.replyImage.isVisible = true
+            bind.replyImage.loadUrl(this, message)
+            bind.quotedText.text = buildString { append("Photo") }
+        } else {
+            bind.quotedText.text = message
+            bind.replyImage.isVisible = false
+        }
+
+        if (name == (Prefs(this).getUserData()?.firstName + " " + Prefs(this).getUserData()?.lastName)) {
+            bind.name.text = buildString { append("You") }
+        } else {
+            bind.name.text = name
+        }
+
+        showReply(true)
+    }
+
+    private fun showReply(state: Boolean) {
+        isReply = state
+
+        if (state) {
+            bind.replyLayout.expand(true)
+        } else {
+            bind.replyLayout.collapse(true)
+        }
+    }
+
+}

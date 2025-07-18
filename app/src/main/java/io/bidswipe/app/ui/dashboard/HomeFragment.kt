@@ -3,6 +3,7 @@ package io.bidswipe.app.ui.dashboard
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -23,6 +24,7 @@ import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.ui.dashboard.more.NotificationActivity
 import io.bidswipe.app.ui.dashboard.sellerProfile.SellerProfileActivity
 import io.bidswipe.app.ui.dashboard.watchStream.ViewLiveShowActivity
+import io.bidswipe.app.utils.Prefs
 import io.bidswipe.app.utils.Utils
 import io.bidswipe.app.utils.ids
 import io.bidswipe.app.utils.parse
@@ -89,6 +91,8 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
                 )
             )
         }
+
+        Log.d(TAG, "onViewCreated: ${Prefs(mCtx).getString(Prefs.PUSH_TOKEN)}")
 
         bind.header.onMoreSecondaryClick {
             findNavController().navigate(ids.goToSearchShowFragment)

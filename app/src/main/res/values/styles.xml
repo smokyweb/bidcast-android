@@ -364,6 +364,17 @@
 		<item name="android:textAppearance">@style/BodyMedium</item>
 	</style>
 
+	<style name="toolbarStyle" parent="Widget.Material3.Toolbar">
+		<item name="navigationIcon">@drawable/ic_back</item>
+		<item name="navigationIconTint">@color/onSurface</item>
+		<item name="titleCentered">true</item>
+		<item name="titleTextAppearance">@style/TitleLarge</item>
+		<item name="titleTextColor">@color/onPrimary</item>
+		<item name="android:background">@color/onPrimary</item>
+		<item name="android:theme">@style/popupMenuStyle</item>
+		<item name="tooltipStyle">@style/toolTipStyle</item>
+	</style>
+
 
 	<style name="bottomNavIndicator" parent="@style/Widget.Material3.BottomNavigationView.ActiveIndicator">
 		<item name="android:color">@color/transparent</item>

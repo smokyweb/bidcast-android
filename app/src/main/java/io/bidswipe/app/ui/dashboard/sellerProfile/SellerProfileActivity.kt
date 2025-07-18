@@ -1,5 +1,6 @@
 package io.bidswipe.app.ui.dashboard.sellerProfile
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.PopupMenu
@@ -21,6 +22,7 @@ import io.bidswipe.app.databinding.NotificationSheetBinding
 import io.bidswipe.app.interfaces.AlertClicks
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.ui.custom.AppBottomSheet
+import io.bidswipe.app.ui.dashboard.ChatActivity
 import io.bidswipe.app.utils.Alerts
 import io.bidswipe.app.utils.bind
 import io.bidswipe.app.utils.clr
@@ -129,7 +131,16 @@ class SellerProfileActivity : BaseActivity() {
 		bind.toolbar.setNavigationOnClickListener {
 			finish()
 		}
-		
+
+		bind.messageSeller.setOnClickListener {
+			val intent = Intent(this, ChatActivity::class.java).apply {
+				putExtra("id", sellerId)
+				putExtra("name", sellerName)
+				putExtra("image", sellerImage)
+			}
+			startActivity(intent)
+		}
+
 		val adapter = ViewPagerAdapter(this, "Shop")
 		bind.pager.adapter = adapter
 		

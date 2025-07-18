@@ -311,6 +311,18 @@ class DashViewModel @Inject constructor(val repo: DashRepository) : ViewModel() 
 		_storeSellerRatingResponse.value = repo.storeSellerRating(sellerId,overAllRating,shippingRating,packagingRating,accuracyRating,comment)
 	}
 
+	private var _sendChatNotificationResponse = MutableLiveData<Resource<CommonResponse>>()
+	val sendChatNotificationRepo: MutableLiveData<Resource<CommonResponse>>
+		get() = _sendChatNotificationResponse
+
+	fun sendChatNotification(
+		receiverId: RequestBody,
+		message: RequestBody
+
+	) = viewModelScope.launch {
+		_sendChatNotificationResponse.value = repo.sendChatNotification(receiverId,message)
+	}
+
 
 
 }

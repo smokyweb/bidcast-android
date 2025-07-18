@@ -1,5 +1,6 @@
 package io.bidswipe.app.ui.dashboard
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -7,7 +8,6 @@ import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseFragment
 import io.bidswipe.app.controller.BidsAdapter
 import io.bidswipe.app.databinding.FragmentBidsBinding
@@ -17,7 +17,6 @@ import io.bidswipe.app.network.Resource
 import io.bidswipe.app.network.response.FetchBidResponse
 import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.utils.parse
-import io.bidswipe.app.utils.request
 
 class BidsFragment : BaseFragment<DashViewModel, FragmentBidsBinding>() {
 
@@ -36,6 +35,7 @@ class BidsFragment : BaseFragment<DashViewModel, FragmentBidsBinding>() {
         }
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -115,7 +115,6 @@ class BidsFragment : BaseFragment<DashViewModel, FragmentBidsBinding>() {
                     if (it.isNetworkError) {
                        bind.noInternet.isVisible = true
                         bind.recycler.isVisible = false
-                        bind.noData.isVisible = false
 
                     } else {
                         it.parse(mCtx, TAG, object : AlertClicks {

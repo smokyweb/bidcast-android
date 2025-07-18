@@ -24,6 +24,7 @@
     <string name="become_a_bidswipe_seller">Become a Bidswipe Seller</string>
     <string name="better_promotion_opportunities">Better promotion opportunities</string>
     <string name="bids">Bids</string>
+
     <string name="bidswipe_calculates_shipping_fees_based_on_the_product_weight_you_can_adjust_this_later_if_needed">Bidswipe calculates shipping fees based on the product weight. You can adjust this later if needed.</string>
     <string name="bio">Bio</string>
     <string name="buy_it_now_price">Buy It Now Price</string>
@@ -36,6 +37,7 @@
     <string name="coupons">Coupons</string>
     <string name="create_account">Create Account</string>
     <string name="credits">Credits</string>
+    <string name="blocked_message">You cannot send messages to this chat.</string>
     <string name="describe_your_product">Describe your product</string>
     <string name="description">Description</string>
     <string name="done">Done</string>
@@ -425,4 +427,6 @@
     <string name="rate_seller">Rate Seller</string>
     <string name="block_seller">Block Seller</string>
     <string name="john_smith">John Smith</string>
+    <string name="clear_all">CLEAR ALL</string>
+    <string name="type_here">Type here...\n</string>
 </resources>

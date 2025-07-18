@@ -505,5 +505,13 @@ interface ApiInterface {
 		@Query("seller_id") sellerId : String?
 	): GetRatingResponse
 
+	@Multipart
+	@POST("api/send-chat-notification")
+	suspend fun sendChatNotification(
+		@Part("receiver_id") receiverId: RequestBody,
+		@Part("message") message: RequestBody
+	): CommonResponse
+
+
 }
 
