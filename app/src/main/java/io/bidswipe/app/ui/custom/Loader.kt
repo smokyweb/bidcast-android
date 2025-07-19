@@ -9,33 +9,33 @@ import android.view.WindowManager
 import io.bidswipe.app.utils.runSafe
 
 object Loader {
-	private var dialog: Dialog? = null
+    private var dialog: Dialog? = null
 
-	fun show(context: Context) {
-		if (dialog == null || dialog?.isShowing != true) {
-			dialog = Dialog(context).apply {
-				requestWindowFeature(Window.FEATURE_NO_TITLE)
-				setContentView(LoaderView(context))
-				setCancelable(false) // Prevent dismissing by back button
-				window?.setLayout(
-					WindowManager.LayoutParams.MATCH_PARENT,
-					WindowManager.LayoutParams.MATCH_PARENT
-				)
-				window?.setBackgroundDrawableResource(R.color.transparent)
-			}
+    fun show(context: Context) {
+        if (dialog == null || dialog?.isShowing != true) {
+            dialog = Dialog(context).apply {
+                requestWindowFeature(Window.FEATURE_NO_TITLE)
+                setContentView(LoaderView(context))
+                setCancelable(false) // Prevent dismissing by back button
+                window?.setLayout(
+                    WindowManager.LayoutParams.MATCH_PARENT,
+                    WindowManager.LayoutParams.MATCH_PARENT
+                )
+                window?.setBackgroundDrawableResource(R.color.transparent)
+            }
 
-			runSafe {
-				if (context is Activity && !context.isFinishing) {
-					dialog?.show()
-				}
-			}
-		}
-	}
+            runSafe {
+                if (context is Activity && !context.isFinishing) {
+                    dialog?.show()
+                }
+            }
+        }
+    }
 
-	fun dismiss() {
-		dialog?.dismiss()
-		dialog = null
-	}
+    fun dismiss() {
+        dialog?.dismiss()
+        dialog = null
+    }
 }
 
 

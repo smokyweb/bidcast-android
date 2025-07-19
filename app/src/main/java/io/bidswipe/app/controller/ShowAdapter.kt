@@ -9,10 +9,9 @@ import io.bidswipe.app.base.BaseAdapter
 import io.bidswipe.app.databinding.ShowItemBinding
 import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.network.response.GetPrepareStepResponse
-import io.bidswipe.app.utils.dpToPx
 
 class ShowAdapter(
-    mList: MutableList<GetPrepareStepResponse.Data?>, val mClicks: RecyclerClicks
+    mList: MutableList<GetPrepareStepResponse.Data?>, val mClicks: RecyclerClicks,
 ) : BaseAdapter<GetPrepareStepResponse.Data?, ShowItemBinding>(mList) {
 
     override fun bindView(inflater: LayoutInflater, parent: ViewGroup) =
@@ -21,7 +20,7 @@ class ShowAdapter(
     override fun onBind(
         holder: BaseViewHolder<ShowItemBinding>,
         position: Int,
-        item: GetPrepareStepResponse.Data?
+        item: GetPrepareStepResponse.Data?,
     ) {
         with(holder) {
 
@@ -30,32 +29,32 @@ class ShowAdapter(
             }
 
             bind.setSchedule.setOnClickListener {
-                mClicks.itemClick(position,"schedule")
+                mClicks.itemClick(position, "schedule")
             }
-            
+
             bind.step.text = "${position + 1}"
 
-       /*     if (item?.selected == true) {
-                bind.root.strokeWidth=mCtx.resources.dpToPx(2)
-                bind.iconCard.setCardBackgroundColor(
-                    ContextCompat.getColor(
-                        mCtx,
-                        R.color.secondary
-                    )
-                )
+            /*     if (item?.selected == true) {
+                     bind.root.strokeWidth=mCtx.resources.dpToPx(2)
+                     bind.iconCard.setCardBackgroundColor(
+                         ContextCompat.getColor(
+                             mCtx,
+                             R.color.secondary
+                         )
+                     )
 
-            } else {
-                bind.root.strokeWidth=mCtx.resources.dpToPx(0)
-            }*/
+                 } else {
+                     bind.root.strokeWidth=mCtx.resources.dpToPx(0)
+                 }*/
 
-            if(item?.status=="unlocked"){
+            if (item?.status == "unlocked") {
                 bind.icon.isVisible = true
                 bind.step.isVisible = false
                 bind.setSchedule.isVisible = false
                 bind.icon.setImageDrawable(
                     ContextCompat.getDrawable(
                         mCtx,
-                         R.drawable.ic_lock
+                        R.drawable.ic_lock
                     )
                 )
 
@@ -65,7 +64,7 @@ class ShowAdapter(
                         R.color.outlineVariant
                     )
                 )
-            }else if(item?.status == "completed"){
+            } else if (item?.status == "completed") {
                 bind.icon.isVisible = true
                 bind.step.isVisible = false
                 bind.setSchedule.isVisible = false
@@ -81,13 +80,13 @@ class ShowAdapter(
                         R.color.success
                     )
                 )
-            }else{
+            } else {
                 bind.icon.isVisible = false
                 bind.step.isVisible = true
                 bind.setSchedule.isVisible = true
             }
 
-            bind.subTitle.setHtmlFromString(item?.description ?: "",false)
+            bind.subTitle.setHtmlFromString(item?.description ?: "", false)
             bind.title.text = item?.title
 
         }

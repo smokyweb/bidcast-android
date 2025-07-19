@@ -10,7 +10,7 @@
 		android:id="@+id/header"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		app:headerMode="APP_TEXT_ACTION"
+		app:headerMode="BACK_BUTTON_TITLE_ACTION"
 		app:layout_constraintEnd_toEndOf="parent"
 		app:layout_constraintStart_toStartOf="parent"
 		app:layout_constraintTop_toTopOf="parent"

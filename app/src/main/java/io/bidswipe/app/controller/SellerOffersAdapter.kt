@@ -9,8 +9,6 @@ import androidx.core.text.buildSpannedString
 import androidx.core.view.isVisible
 import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseAdapter
-import io.bidswipe.app.databinding.InventoryItemBinding
-import io.bidswipe.app.databinding.MyOrdersItemBinding
 import io.bidswipe.app.databinding.SellerOffersItemBinding
 import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.network.response.GetOffersResponse
@@ -18,7 +16,8 @@ import io.bidswipe.app.utils.Utils
 import io.bidswipe.app.utils.asMoney
 import io.bidswipe.app.utils.loadUrl
 
-class SellerOffersAdapter (mList: MutableList<GetOffersResponse.Data?>, val mClicks: RecyclerClicks
+class SellerOffersAdapter(
+    mList: MutableList<GetOffersResponse.Data?>, val mClicks: RecyclerClicks,
 ) : BaseAdapter<GetOffersResponse.Data?, SellerOffersItemBinding>(mList) {
 
     override fun bindView(inflater: LayoutInflater, parent: ViewGroup) =
@@ -27,7 +26,7 @@ class SellerOffersAdapter (mList: MutableList<GetOffersResponse.Data?>, val mCli
     override fun onBind(
         holder: BaseViewHolder<SellerOffersItemBinding>,
         position: Int,
-        item:GetOffersResponse.Data?
+        item: GetOffersResponse.Data?,
     ) {
         with(holder) {
 
@@ -73,14 +72,24 @@ class SellerOffersAdapter (mList: MutableList<GetOffersResponse.Data?>, val mCli
                 when (item?.status) {
                     "accepted" -> {
                         bind.status.setTextColor(ContextCompat.getColor(mCtx, R.color.success))
-                        bind.status.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(mCtx, R.color.successContainer))
-                        bind.status.text = ContextCompat.getString(mCtx,R.string.accepted)
+                        bind.status.backgroundTintList = ColorStateList.valueOf(
+                            ContextCompat.getColor(
+                                mCtx,
+                                R.color.successContainer
+                            )
+                        )
+                        bind.status.text = ContextCompat.getString(mCtx, R.string.accepted)
                     }
 
                     "rejected" -> {
                         bind.status.setTextColor(ContextCompat.getColor(mCtx, R.color.error))
-                        bind.status.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(mCtx, R.color.errorContainer))
-                        bind.status.text = ContextCompat.getString(mCtx,R.string.declined)
+                        bind.status.backgroundTintList = ColorStateList.valueOf(
+                            ContextCompat.getColor(
+                                mCtx,
+                                R.color.errorContainer
+                            )
+                        )
+                        bind.status.text = ContextCompat.getString(mCtx, R.string.declined)
                     }
                 }
             }

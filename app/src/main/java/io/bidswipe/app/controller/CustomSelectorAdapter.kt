@@ -14,7 +14,7 @@ class CustomSelectorAdapter(
     context: Context,
     resource: Int,
     objects: MutableList<UserSearchingResponse.Data?>,
-    var selected: (index: Int,name:String) -> Unit
+    var selected: (index: Int, name: String) -> Unit,
 ) : ArrayAdapter<UserSearchingResponse.Data?>(context, resource, objects) {
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
@@ -26,7 +26,7 @@ class CustomSelectorAdapter(
             bind = UserSelectorItemBinding.bind(view!!)
         }
 
-        bind?.userImage?.loadUrl(context, getItem(position)?.profileImage.toString() )
+        bind?.userImage?.loadUrl(context, getItem(position)?.profileImage.toString())
         bind?.text?.text = getItem(position)?.name
 
         bind?.root?.setOnClickListener {

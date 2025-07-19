@@ -36,7 +36,9 @@ class AppBottomSheet(
 ) : BottomSheetDialog(mCtx) {
 
 
-    private val bind = AppAlertViewBinding.bind(LayoutInflater.from(mCtx).inflate(layout.app_alert_view, null, false))
+    private val bind = AppAlertViewBinding.bind(
+        LayoutInflater.from(mCtx).inflate(layout.app_alert_view, null, false)
+    )
 
     init {
         setContentView(bind.root)
@@ -52,31 +54,51 @@ class AppBottomSheet(
             AlertType.ERROR -> {
                 bind.primaryBtn.setErrorStyle()
                 bind.secondaryBtn.setErrorStyle(true)
-                bind.imageCard.setCardBackgroundColor(ContextCompat.getColorStateList(mCtx, clr.error))
+                bind.imageCard.setCardBackgroundColor(
+                    ContextCompat.getColorStateList(
+                        mCtx,
+                        clr.error
+                    )
+                )
             }
 
             AlertType.SUCCESS -> {
                 bind.primaryBtn.setSuccessStyle()
                 bind.secondaryBtn.setSuccessStyle(true)
-                bind.imageCard.setCardBackgroundColor(ContextCompat.getColorStateList(mCtx, clr.success))
+                bind.imageCard.setCardBackgroundColor(
+                    ContextCompat.getColorStateList(
+                        mCtx,
+                        clr.success
+                    )
+                )
             }
 
             AlertType.WARNING -> {
                 bind.primaryBtn.setWarningStyle()
                 bind.secondaryBtn.setWarningStyle(true)
-                bind.imageCard.setCardBackgroundColor(ContextCompat.getColorStateList(mCtx, clr.warningClr))
+                bind.imageCard.setCardBackgroundColor(
+                    ContextCompat.getColorStateList(
+                        mCtx,
+                        clr.warningClr
+                    )
+                )
             }
 
             AlertType.INFO -> {
                 bind.primaryBtn.setInfoStyle()
                 bind.secondaryBtn.setInfoStyle(true)
-                bind.imageCard.setCardBackgroundColor(ContextCompat.getColorStateList(mCtx, clr.primary))
+                bind.imageCard.setCardBackgroundColor(
+                    ContextCompat.getColorStateList(
+                        mCtx,
+                        clr.primary
+                    )
+                )
             }
 
         }
 
         bind.image.setImageResource(image)
-		bind.image.setPadding(iconPadding)
+        bind.image.setPadding(iconPadding)
         bind.message.text = message.asCapital()
         bind.title.text = title.asCapital()
 

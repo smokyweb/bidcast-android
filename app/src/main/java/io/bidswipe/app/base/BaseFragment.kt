@@ -13,85 +13,94 @@ import androidx.lifecycle.*
 import androidx.navigation.fragment.findNavController
 import androidx.viewbinding.ViewBinding
 import com.permissionx.guolindev.PermissionX
-import io.bidswipe.app.App
-import io.bidswipe.app.network.response.LoginResponse
 import io.bidswipe.app.utils.Alerts
 import io.bidswipe.app.utils.Prefs
 
 
-abstract class BaseFragment<VM : ViewModel , BIND : ViewBinding> : Fragment() {
+abstract class BaseFragment<VM : ViewModel, BIND : ViewBinding> : Fragment() {
 
-	protected lateinit var viewModel : VM
-	protected lateinit var mCtx : Context
-	protected lateinit var bind : BIND
+    protected lateinit var viewModel: VM
+    protected lateinit var mCtx: Context
+    protected lateinit var bind: BIND
 
-	protected lateinit var userId : String
-	protected lateinit var userName : String
-	protected lateinit var userImage : String
+    protected lateinit var userId: String
+    protected lateinit var userName: String
+    protected lateinit var userImage: String
 
 
-	protected lateinit var TAG : String
+    protected lateinit var TAG: String
 
-	override fun onCreateView(inflater : LayoutInflater , view : ViewGroup? , savedInstanceState : Bundle?) : View? {
-		bind = getBind(inflater , view)
-		mCtx = inflater.context
+    override fun onCreateView(
+		inflater: LayoutInflater,
+		view: ViewGroup?,
+		savedInstanceState: Bundle?,
+	): View? {
+        bind = getBind(inflater, view)
+        mCtx = inflater.context
 
-		TAG = try {
-			findNavController().currentDestination?.label.toString().uppercase()
-		} catch (e : Exception) {
-			"FRAGMENT_$tag"
-		}
+        TAG = try {
+            findNavController().currentDestination?.label.toString().uppercase()
+        } catch (_: Exception) {
+            "FRAGMENT_$tag"
+        }
 
-		userId = Prefs(mCtx).getUserData()?.id.toString()
-		userName = Prefs(mCtx).getUserData()?.name.toString()
-		userImage = Prefs(mCtx).getUserData()?.profileImage.toString()
+        userId = Prefs(mCtx).getUserData()?.id.toString()
+        userName = Prefs(mCtx).getUserData()?.name.toString()
+        userImage = Prefs(mCtx).getUserData()?.profileImage.toString()
 //		authUserData = Prefs(mCtx).getUserData()
-		viewModel = ViewModelProvider(requireActivity())[getModel()]
+        viewModel = ViewModelProvider(requireActivity())[getModel()]
 
-		return bind.root
-	}
+        return bind.root
+    }
 
-	protected fun log(msg : String) {
-		Alerts.log(TAG , msg)
-	}
+    protected fun log(msg: String) {
+        Alerts.log(TAG, msg)
+    }
 
-	protected fun errorToast(msg : String) {
-		Alerts.error(mCtx , msg)
-	}
+    protected fun errorToast(msg: String) {
+        Alerts.error(mCtx, msg)
+    }
 
-	protected fun successToast(msg : String) {
-		Alerts.success(mCtx , msg)
-	}
+    protected fun successToast(msg: String) {
+        Alerts.success(mCtx, msg)
+    }
 
-	protected fun requestPerms(perms : Array<String> , result : (status : Boolean) -> Unit) {
-		PermissionX.init(this)
-			.permissions(*perms)
-			.explainReasonBeforeRequest()
-			.onExplainRequestReason { scope , deniedList ->
-				scope.showRequestReasonDialog(deniedList , "Grant Permission" , "OK" , "Cancel")
-			}.onForwardToSettings { scope , deniedList ->
-				scope.showForwardToSettingsDialog(deniedList , "You need to allow necessary permissions in Settings manually" , "OK" , "Cancel")
-			}.request { allGranted , grantedList , deniedList ->
-				if (allGranted) {
-					Alerts.log(TAG , "GRANTED : $grantedList")
-					result(true)
-				} else {
-					Alerts.log(TAG , "DENIED : $deniedList")
-					result(false)
-				}
-			}
-	}
+    protected fun requestPerms(perms: Array<String>, result: (status: Boolean) -> Unit) {
+        PermissionX.init(this)
+            .permissions(*perms)
+            .explainReasonBeforeRequest()
+            .onExplainRequestReason { scope, deniedList ->
+                scope.showRequestReasonDialog(deniedList, "Grant Permission", "OK", "Cancel")
+            }.onForwardToSettings { scope, deniedList ->
+                scope.showForwardToSettingsDialog(
+                    deniedList,
+                    "You need to allow necessary permissions in Settings manually",
+                    "OK",
+                    "Cancel"
+                )
+            }.request { allGranted, grantedList, deniedList ->
+                if (allGranted) {
+                    Alerts.log(TAG, "GRANTED : $grantedList")
+                    result(true)
+                } else {
+                    Alerts.log(TAG, "DENIED : $deniedList")
+                    result(false)
+                }
+            }
+    }
 
-	protected fun onBackPressed(callBack : () -> Unit) {
-		activity?.onBackPressedDispatcher?.addCallback(viewLifecycleOwner , object : OnBackPressedCallback(true) {
-			override fun handleOnBackPressed() {
-				callBack.invoke()
-			}
-		})
-	}
+    protected fun onBackPressed(callBack: () -> Unit) {
+        activity?.onBackPressedDispatcher?.addCallback(
+            viewLifecycleOwner,
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    callBack.invoke()
+                }
+            })
+    }
 
-	abstract fun getModel() : Class<VM>
+    abstract fun getModel(): Class<VM>
 
-	abstract fun getBind(inflater : LayoutInflater , view : ViewGroup?) : BIND
+    abstract fun getBind(inflater: LayoutInflater, view: ViewGroup?): BIND
 
 }

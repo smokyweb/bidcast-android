@@ -1,7 +1,7 @@
 package io.bidswipe.app.ui.dashboard
 
 import android.annotation.SuppressLint
-import android.app.Activity
+import android.graphics.Rect
 import android.os.Bundle
 import android.view.inputmethod.InputMethodManager
 import android.widget.ImageView
@@ -18,6 +18,7 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ValueEventListener
+import io.bidswipe.app.App
 import io.bidswipe.app.base.BaseActivity
 import io.bidswipe.app.controller.ChatAdapter
 import io.bidswipe.app.databinding.ActivityChatBinding
@@ -36,7 +37,6 @@ import io.bidswipe.app.utils.hideKeyboard
 import io.bidswipe.app.utils.loadUrl
 import io.bidswipe.app.utils.request
 import io.bidswipe.app.utils.runSafe
-import io.bidswipe.app.utils.showKeyboard
 import io.bidswipe.app.utils.value
 import jp.wasabeef.recyclerview.animators.SlideInUpAnimator
 import kotlinx.coroutines.delay
@@ -107,11 +107,27 @@ class ChatActivity : BaseActivity() {
 
         setContentView(bind.root)
 
+        App.isUserOnChatScreen = true
         window.navigationBarColor = ContextCompat.getColor(this, clr.background)
 
         receiverImage = intent.getStringExtra("image").toString()
         receiverName = intent.getStringExtra("name").toString()
         receiverId = intent.getStringExtra("id").toString()
+
+        bind.root.viewTreeObserver.addOnGlobalLayoutListener {
+            val r = Rect()
+            bind.root.getWindowVisibleDisplayFrame(r)
+            val screenHeight = bind.root.rootView.height
+            val keypadHeight = screenHeight - r.bottom
+
+            if (keypadHeight > screenHeight * 0.15) {
+                if (chatList.isNotEmpty()) {
+                    bind.chats.post {
+                        bind.chats.smoothScrollToPosition(chatList.size - 1)
+                    }
+                }
+            }
+        }
 
 
         chatKey = if (userId > receiverId) {
@@ -212,7 +228,7 @@ class ChatActivity : BaseActivity() {
                         )
                     bind.message.text = null
                     bind.message.isFocusableInTouchMode = true
-                    showKeyboard(bind.message)
+//                    showKeyboard(bind.message)
                     showReply(false)
                 }
 
@@ -234,12 +250,13 @@ class ChatActivity : BaseActivity() {
         }
 
         getChats()
-
     }
 
     override fun onDestroy() {
         super.onDestroy()
         runSafe { chatRef.removeEventListener(chatPageListener) }
+        App.isUserOnChatScreen = false
+
     }
 
     private fun getChats() {
@@ -363,7 +380,7 @@ class ChatActivity : BaseActivity() {
                 chatList.addAll(tempList)
                 try {
                     chatAdapter.notifyItemRangeInserted(0, chatList.size - 1)
-                } catch (e: Exception) {
+                } catch (_: Exception) {
                     chatAdapter.notifyDataSetChanged()
                 }
             }
@@ -398,12 +415,13 @@ class ChatActivity : BaseActivity() {
             Alerts.log(TAG, "CHAT READ ERROR : ${error.message}")
         }
 
+
     }
 
     private fun showQuotedMessage(message: String, name: String, type: String) {
         bind.message.requestFocus()
         val inputMethodManager =
-            this.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
+            this.getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
         inputMethodManager.showSoftInput(bind.message, InputMethodManager.SHOW_IMPLICIT)
 
         if (type == "image") {

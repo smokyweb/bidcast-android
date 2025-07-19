@@ -34,7 +34,8 @@ class LoginFragment : BaseFragment<AuthViewModel, FragmentLoginBinding>() {
 
     override fun getModel(): Class<AuthViewModel> = AuthViewModel::class.java
 
-    override fun getBind(inflater: LayoutInflater, view: ViewGroup?) = FragmentLoginBinding.inflate(inflater, view, false)
+    override fun getBind(inflater: LayoutInflater, view: ViewGroup?) =
+        FragmentLoginBinding.inflate(inflater, view, false)
 
     private val remList = mutableListOf<RememberModel>()
 
@@ -54,11 +55,11 @@ class LoginFragment : BaseFragment<AuthViewModel, FragmentLoginBinding>() {
         }
 
         bind.privacyPolicy.setOnClickListener {
-            startActivity(Intent(mCtx , MoreActivity::class.java).putExtra("slug","privacyPolicy"))
+            startActivity(Intent(mCtx, MoreActivity::class.java).putExtra("slug", "privacyPolicy"))
         }
 
         bind.termsOfService.setOnClickListener {
-            startActivity(Intent(mCtx , MoreActivity::class.java).putExtra("slug","termsCondition"))
+            startActivity(Intent(mCtx, MoreActivity::class.java).putExtra("slug", "termsCondition"))
         }
 
         bind.loginBtn.setOnClickListener {

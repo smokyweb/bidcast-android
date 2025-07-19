@@ -10,7 +10,8 @@ import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.network.response.GetProductsResponse
 import io.bidswipe.app.utils.loadUrl
 
-class ProductAdapter (val mList: MutableList<GetProductsResponse.Data?>, val mClicks: RecyclerClicks
+class ProductAdapter(
+    val mList: MutableList<GetProductsResponse.Data?>, val mClicks: RecyclerClicks,
 ) : BaseAdapter<GetProductsResponse.Data?, ProductListItemBinding>(mList) {
 
     override fun bindView(inflater: LayoutInflater, parent: ViewGroup) =
@@ -19,18 +20,18 @@ class ProductAdapter (val mList: MutableList<GetProductsResponse.Data?>, val mCl
     override fun onBind(
         holder: BaseViewHolder<ProductListItemBinding>,
         position: Int,
-        item: GetProductsResponse.Data?
+        item: GetProductsResponse.Data?,
     ) {
         with(holder) {
 
             bind.root.setOnClickListener {
-                mClicks.itemClick(position,"select")
+                mClicks.itemClick(position, "select")
             }
 
-            if (item?.selected == true){
+            if (item?.selected == true) {
                 bind.root.strokeWidth = 2
                 bind.root.strokeColor = ContextCompat.getColor(mCtx, R.color.primary)
-            }else{
+            } else {
                 bind.root.strokeWidth = 0
             }
 
@@ -41,7 +42,7 @@ class ProductAdapter (val mList: MutableList<GetProductsResponse.Data?>, val mCl
                 append(item?.quantity)
             }
 
-            bind.img.loadUrl(mCtx,item?.images.toString())
+            bind.img.loadUrl(mCtx, item?.images.toString())
 
         }
     }

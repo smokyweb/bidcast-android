@@ -83,8 +83,9 @@
                     style="@style/inputBoxStyle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="@dimen/margin"
                     app:boxBackgroundColor="@color/surface"
+                    android:paddingTop="@dimen/half_margin"
+                    android:paddingBottom="@dimen/half_margin"
                     app:boxStrokeWidth="2dp"
                     app:startIconDrawable="@drawable/search"
                     app:startIconTint="@color/scrim">
@@ -94,6 +95,8 @@
                         style="@style/inputTextStyle"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/half_margin"
+                        android:layout_marginEnd="@dimen/half_margin"
                         android:hint="@string/what_are_you_looking_for"
                         android:inputType="textEmailAddress" />
 

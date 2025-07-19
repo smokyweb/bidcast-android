@@ -14,27 +14,28 @@ import io.bidswipe.app.utils.styleable
 
 
 class Heading @JvmOverloads constructor(
-	context: Context,
-	attrs: AttributeSet? = null,
-	defStyleAttr: Int = 0,
+    context: Context,
+    attrs: AttributeSet? = null,
+    defStyleAttr: Int = 0,
 ) : LinearLayout(context, attrs, defStyleAttr) {
 
-	init {
-		context.theme.obtainStyledAttributes(attrs, styleable.Heading, 0, 0).use {
-			orientation = VERTICAL
-			val title = TextView(context).apply {
-				text =  it.getString(styleable.Heading_title)
-				setTextAppearance(style.TitleLarge)
-				isAllCaps = false
-				setTextColor(ContextCompat.getColor(context, clr.scrim))
-				setPadding(0,0,0,context.resources.dpToPx(4))
-				layoutParams = ViewGroup.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT)
-			}
+    init {
+        context.theme.obtainStyledAttributes(attrs, styleable.Heading, 0, 0).use {
+            orientation = VERTICAL
+            val title = TextView(context).apply {
+                text = it.getString(styleable.Heading_title)
+                setTextAppearance(style.TitleLarge)
+                isAllCaps = false
+                setTextColor(ContextCompat.getColor(context, clr.scrim))
+                setPadding(0, 0, 0, context.resources.dpToPx(4))
+                layoutParams =
+                    ViewGroup.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT)
+            }
 
 
-			addView(title, 0)
-			//addView(line, 1)
-		}
-	}
+            addView(title, 0)
+            //addView(line, 1)
+        }
+    }
 
 }

@@ -98,7 +98,7 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
             findNavController().navigate(ids.goToSearchShowFragment)
         }
 
-		bind.swipeRefreshLayout.setOnRefreshListener {
+        bind.swipeRefreshLayout.setOnRefreshListener {
             viewModel.getLiveShow(selectedTabText.request())
         }
 
@@ -165,13 +165,12 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
                 }
 
                 is Resource.Error -> {
-					bind.swipeRefreshLayout.isRefreshing = false
-					bind.loader.isVisible = false
+                    bind.swipeRefreshLayout.isRefreshing = false
+                    bind.loader.isVisible = false
 
                     if (it.isNetworkError) {
                         bind.noInternet.isVisible = true
                         bind.recycler.isVisible = false
-                        bind.noData.isVisible = false
 
                     } else {
                         it.parse(mCtx, TAG, object : AlertClicks {
@@ -208,19 +207,19 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
         when (selectedTab) {
             bind.live -> {
                 bind.loader.isVisible = true
-                selectedTabText ="live"
+                selectedTabText = "live"
                 viewModel.getLiveShow("live".request())
             }
 
             bind.popular -> {
                 bind.loader.isVisible = true
-                selectedTabText ="popular"
+                selectedTabText = "popular"
                 viewModel.getLiveShow("popular".request())
             }
 
             bind.comingSoon -> {
                 bind.loader.isVisible = true
-                selectedTabText ="upcoming"
+                selectedTabText = "upcoming"
                 viewModel.getLiveShow("upcoming".request())
             }
 

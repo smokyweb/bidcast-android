@@ -7,7 +7,8 @@ import io.bidswipe.app.databinding.PaymentCardItemBinding
 import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.network.response.GetPaymentCardsResponse
 
-class PaymentCardAdapter(mList: MutableList<GetPaymentCardsResponse.Data?>, val mClicks: RecyclerClicks
+class PaymentCardAdapter(
+    mList: MutableList<GetPaymentCardsResponse.Data?>, val mClicks: RecyclerClicks,
 ) : BaseAdapter<GetPaymentCardsResponse.Data?, PaymentCardItemBinding>(mList) {
 
     override fun bindView(inflater: LayoutInflater, parent: ViewGroup) =
@@ -16,7 +17,7 @@ class PaymentCardAdapter(mList: MutableList<GetPaymentCardsResponse.Data?>, val 
     override fun onBind(
         holder: BaseViewHolder<PaymentCardItemBinding>,
         position: Int,
-        item: GetPaymentCardsResponse.Data?
+        item: GetPaymentCardsResponse.Data?,
     ) {
         with(holder) {
 

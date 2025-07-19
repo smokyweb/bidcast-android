@@ -12,7 +12,8 @@ import io.bidswipe.app.utils.Utils
 import io.bidswipe.app.utils.asMoney
 import io.bidswipe.app.utils.loadUrl
 
-class BidsAdapter(mList: MutableList<FetchBidResponse.Data?>, val mClicks: RecyclerClicks
+class BidsAdapter(
+    mList: MutableList<FetchBidResponse.Data?>, val mClicks: RecyclerClicks,
 ) : BaseAdapter<FetchBidResponse.Data?, BidsItemBinding>(mList) {
 
     override fun bindView(inflater: LayoutInflater, parent: ViewGroup) =
@@ -21,15 +22,15 @@ class BidsAdapter(mList: MutableList<FetchBidResponse.Data?>, val mClicks: Recyc
     override fun onBind(
         holder: BaseViewHolder<BidsItemBinding>,
         position: Int,
-        item: FetchBidResponse.Data?
+        item: FetchBidResponse.Data?,
     ) {
         with(holder) {
 
             bind.userName.text = item?.user?.username
-            bind.userImage.loadUrl(mCtx,item?.user?.profileImage.toString())
+            bind.userImage.loadUrl(mCtx, item?.user?.profileImage.toString())
             bind.offerPrice.text = item?.product?.pricing.toString().asMoney()
             bind.productNmae.text = item?.product?.title
-            bind.productImage.loadUrl(mCtx,item?.product?.images?.get(0).toString())
+            bind.productImage.loadUrl(mCtx, item?.product?.images?.get(0).toString())
             bind.prodSubTitle.text = buildString {
                 append("Current Bid: ")
                 append(item?.bidPrice.toString().asMoney())

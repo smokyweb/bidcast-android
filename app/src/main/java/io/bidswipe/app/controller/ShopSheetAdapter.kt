@@ -9,15 +9,17 @@ import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.network.response.GetMyInventoryResponse
 import io.bidswipe.app.utils.loadUrl
 
-class ShopSheetAdapter(mList: MutableList<GetMyInventoryResponse.Data?>, val mClicks: RecyclerClicks
+class ShopSheetAdapter(
+    mList: MutableList<GetMyInventoryResponse.Data?>, val mClicks: RecyclerClicks,
 ) : BaseAdapter<GetMyInventoryResponse.Data?, ShopSheetItemBinding>(mList) {
 
-    override fun bindView(inflater: LayoutInflater, parent: ViewGroup) = ShopSheetItemBinding.inflate(inflater, parent, false)
+    override fun bindView(inflater: LayoutInflater, parent: ViewGroup) =
+        ShopSheetItemBinding.inflate(inflater, parent, false)
 
     override fun onBind(
         holder: BaseViewHolder<ShopSheetItemBinding>,
         position: Int,
-        item: GetMyInventoryResponse.Data?
+        item: GetMyInventoryResponse.Data?,
     ) {
         with(holder) {
 
@@ -29,9 +31,9 @@ class ShopSheetAdapter(mList: MutableList<GetMyInventoryResponse.Data?>, val mCl
                 append(item?.description)
             }
 
-            if (item?.selected == true){
+            if (item?.selected == true) {
                 bind.root.strokeWidth = 2
-            }else{
+            } else {
                 bind.root.strokeWidth = 0
             }
 

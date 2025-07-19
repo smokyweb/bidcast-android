@@ -9,7 +9,8 @@ import io.bidswipe.app.databinding.GridItemBinding
 import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.model.MoreModel
 
-class GridAdapter (mList: MutableList<MoreModel>, val mClicks: RecyclerClicks
+class GridAdapter(
+    mList: MutableList<MoreModel>, val mClicks: RecyclerClicks,
 ) : BaseAdapter<MoreModel, GridItemBinding>(mList) {
 
     override fun bindView(inflater: LayoutInflater, parent: ViewGroup) =
@@ -18,13 +19,18 @@ class GridAdapter (mList: MutableList<MoreModel>, val mClicks: RecyclerClicks
     override fun onBind(
         holder: BaseViewHolder<GridItemBinding>,
         position: Int,
-        item: MoreModel?
+        item: MoreModel?,
     ) {
         with(holder) {
 
             bind.title.text = item?.title ?: ""
 
-            bind.image.setImageDrawable(ContextCompat.getDrawable(mCtx,item?.icon?: R.drawable.notification))
+            bind.image.setImageDrawable(
+                ContextCompat.getDrawable(
+                    mCtx,
+                    item?.icon ?: R.drawable.notification
+                )
+            )
 
             bind.root.setOnClickListener {
                 mClicks.itemClick(position)

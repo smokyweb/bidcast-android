@@ -4,7 +4,7 @@ import io.bidswipe.app.ui.custom.AppBottomSheet
 
 
 interface AlertClicks {
-	fun primaryClick(dialog: AppBottomSheet)
+    fun primaryClick(dialog: AppBottomSheet)
 
-	fun secondaryClick(dialog: AppBottomSheet)
+    fun secondaryClick(dialog: AppBottomSheet)
 }

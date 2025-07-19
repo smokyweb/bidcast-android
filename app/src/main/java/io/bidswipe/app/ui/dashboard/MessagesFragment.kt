@@ -28,7 +28,6 @@ class MessagesFragment : BaseFragment<DashViewModel, FragmentMessagesBinding>() 
         FragmentMessagesBinding.inflate(inflater, view, false)
 
     private lateinit var messagesAdapter: MessagesAdapter
-
     private val chatList = mutableListOf<ChatModel>()
 
 

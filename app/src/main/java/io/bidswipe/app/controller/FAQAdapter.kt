@@ -10,7 +10,7 @@ import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.network.response.FAQResponse
 import io.bidswipe.app.utils.runSafe
 
-class FAQAdapter (mList: MutableList<FAQResponse.Data?>, private val mClicks: RecyclerClicks) :
+class FAQAdapter(mList: MutableList<FAQResponse.Data?>, private val mClicks: RecyclerClicks) :
     BaseAdapter<FAQResponse.Data?, FaqItemBinding>(mList) {
 
     private var selectedPosition = -1
@@ -21,7 +21,7 @@ class FAQAdapter (mList: MutableList<FAQResponse.Data?>, private val mClicks: Re
     override fun onBind(
         holder: BaseViewHolder<FaqItemBinding>,
         position: Int,
-        item: FAQResponse.Data?
+        item: FAQResponse.Data?,
     ) {
 
         runSafe {
@@ -31,7 +31,7 @@ class FAQAdapter (mList: MutableList<FAQResponse.Data?>, private val mClicks: Re
                 bind.answer.text = Html.fromHtml(item?.answer)
 
                 bind.root.setOnClickListener {
-                    mClicks.itemClick(position )
+                    mClicks.itemClick(position)
                 }
 
                 if (item?.selected == true) {
@@ -46,16 +46,16 @@ class FAQAdapter (mList: MutableList<FAQResponse.Data?>, private val mClicks: Re
                     }
 
                 } else {
-                    if(bind.expandView.isExpanded){
+                    if (bind.expandView.isExpanded) {
                         bind.expandView.collapse()
                         bind.answerLayout.isVisible = false
                     }
                 }
 
                 bind.expandView.setOnExpansionUpdateListener { expantionFraction, state ->
-                    if (item?.selected == true){
+                    if (item?.selected == true) {
                         bind.view.rotation = expantionFraction * 90F
-                    }else{
+                    } else {
                         bind.view.rotation = expantionFraction * 0F
                     }
                 }

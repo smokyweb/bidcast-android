@@ -5,14 +5,12 @@ import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseAdapter
-import io.bidswipe.app.base.BaseAdapter.BaseViewHolder
 import io.bidswipe.app.databinding.BenifitsItemBinding
-import io.bidswipe.app.databinding.GridItemBinding
 import io.bidswipe.app.interfaces.RecyclerClicks
-import io.bidswipe.app.model.MoreModel
 import io.bidswipe.app.model.SellModel
 
-class BenifitsAdapter (mList: MutableList<SellModel>, val mClicks: RecyclerClicks
+class BenifitsAdapter(
+    mList: MutableList<SellModel>, val mClicks: RecyclerClicks,
 ) : BaseAdapter<SellModel, BenifitsItemBinding>(mList) {
 
     override fun bindView(inflater: LayoutInflater, parent: ViewGroup) =
@@ -21,14 +19,19 @@ class BenifitsAdapter (mList: MutableList<SellModel>, val mClicks: RecyclerClick
     override fun onBind(
         holder: BaseViewHolder<BenifitsItemBinding>,
         position: Int,
-        item: SellModel?
+        item: SellModel?,
     ) {
         with(holder) {
 
             bind.title.text = item?.title ?: ""
             bind.description.text = item?.subtitle ?: ""
 
-            bind.image.setImageDrawable(ContextCompat.getDrawable(mCtx,item?.icon?: R.drawable.notification))
+            bind.image.setImageDrawable(
+                ContextCompat.getDrawable(
+                    mCtx,
+                    item?.icon ?: R.drawable.notification
+                )
+            )
 
             bind.root.setOnClickListener {
                 mClicks.itemClick(position)

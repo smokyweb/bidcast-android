@@ -26,7 +26,9 @@
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:scrollbars="none"
+		android:background="@color/background"
 		android:layout_marginHorizontal="0dp"
+		android:layout_marginBottom="@dimen/half_margin"
 		app:layout_constraintTop_toBottomOf="@id/header">
 
 		<com.google.android.material.chip.ChipGroup
@@ -34,7 +36,7 @@
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:layout_marginStart="@dimen/half_margin"
-			android:background="@color/background"
+
 			android:layout_marginEnd="@dimen/margin"
 			android:layout_marginBottom="@dimen/margin"
 			android:paddingHorizontal="4dp"
@@ -50,6 +52,7 @@
 		android:orientation="horizontal"
 		android:layout_marginHorizontal="@dimen/margin"
 		android:layout_marginBottom="@dimen/margin"
+		android:layout_marginStart="@dimen/margin"
 		app:layout_constraintEnd_toEndOf="parent"
 		app:layout_constraintStart_toStartOf="parent"
 		app:layout_constraintTop_toBottomOf="@id/chipGroupScroll">

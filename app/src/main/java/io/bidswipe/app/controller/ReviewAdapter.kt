@@ -6,9 +6,9 @@ import io.bidswipe.app.base.BaseAdapter
 import io.bidswipe.app.databinding.ReviewItemBinding
 import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.network.response.GetRatingResponse
-import io.bidswipe.app.utils.loadUrl
 
-class ReviewAdapter (mList: MutableList<GetRatingResponse.Data.Rating?>, val mClicks: RecyclerClicks
+class ReviewAdapter(
+    mList: MutableList<GetRatingResponse.Data.Rating?>, val mClicks: RecyclerClicks,
 ) : BaseAdapter<GetRatingResponse.Data.Rating?, ReviewItemBinding>(mList) {
 
     override fun bindView(inflater: LayoutInflater, parent: ViewGroup) =
@@ -17,7 +17,7 @@ class ReviewAdapter (mList: MutableList<GetRatingResponse.Data.Rating?>, val mCl
     override fun onBind(
         holder: BaseViewHolder<ReviewItemBinding>,
         position: Int,
-        item: GetRatingResponse.Data.Rating?
+        item: GetRatingResponse.Data.Rating?,
     ) {
         with(holder) {
 
@@ -29,7 +29,6 @@ class ReviewAdapter (mList: MutableList<GetRatingResponse.Data.Rating?>, val mCl
             bind.root.setOnClickListener {
                 mClicks.itemClick(position)
             }
-
 
 
         }

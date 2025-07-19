@@ -11,36 +11,47 @@ import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.model.SellModel
 
 class SellAdapter(
-	mList: MutableList<SellModel>, val type: String, val mClicks: RecyclerClicks
+	mList: MutableList<SellModel>, val type: String, val mClicks: RecyclerClicks,
 ) : BaseAdapter<SellModel, SellSheetItemBinding>(mList) {
-	
-	override fun bindView(inflater: LayoutInflater, parent: ViewGroup) =
-		SellSheetItemBinding.inflate(inflater, parent, false)
-	
-	override fun onBind(
+
+    override fun bindView(inflater: LayoutInflater, parent: ViewGroup) =
+        SellSheetItemBinding.inflate(inflater, parent, false)
+
+    override fun onBind(
 		holder: BaseViewHolder<SellSheetItemBinding>,
+
 		position: Int,
-		item: SellModel?
+		item: SellModel?,
 	) {
-		with(holder) {
-			
-			bind.root.setOnClickListener {
-				mClicks.itemClick(position)
-			}
-			
-			if (type == "getStarted" || type == "tips" || type == "affiliate") {
-				bind.next.isVisible = false
-			}
-			
-			if (type == "shipping") {
-				bind.root.background.setTint(ContextCompat.getColor(mCtx, R.color.background))
-			}
-			
-			bind.icon.setImageDrawable(ContextCompat.getDrawable(mCtx, item?.icon ?: R.drawable.notification))
-			bind.iconCard.setCardBackgroundColor(ContextCompat.getColor(mCtx, item?.color ?: R.color.primaryContainer))
-			bind.subTitle.text = item?.subtitle
-			bind.title.text = item?.title
-			
-		}
-	}
+        with(holder) {
+
+            bind.root.setOnClickListener {
+                mClicks.itemClick(position)
+            }
+
+            if (type == "getStarted" || type == "tips" || type == "affiliate") {
+                bind.next.isVisible = false
+            }
+
+            if (type == "shipping") {
+                bind.root.background.setTint(ContextCompat.getColor(mCtx, R.color.background))
+            }
+
+            bind.icon.setImageDrawable(
+                ContextCompat.getDrawable(
+                    mCtx,
+                    item?.icon ?: R.drawable.notification
+                )
+            )
+            bind.iconCard.setCardBackgroundColor(
+                ContextCompat.getColor(
+                    mCtx,
+                    item?.color ?: R.color.primaryContainer
+                )
+            )
+            bind.subTitle.text = item?.subtitle
+            bind.title.text = item?.title
+
+        }
+    }
 }

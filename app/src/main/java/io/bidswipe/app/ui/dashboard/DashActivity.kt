@@ -166,13 +166,23 @@ class DashActivity : BaseActivity(), NavController.OnDestinationChangedListener 
 
 
     }
+    fun hideBottomNav() {
+        bind.bottomBar.isVisible = false
+    }
+
+    fun showBottomNav() {
+        bind.bottomBar.isVisible = true
+    }
 
     override fun onDestinationChanged(
         controller: NavController,
         destination: NavDestination,
         arguments: Bundle?
     ) {
-
+        when (destination.id) {
+            R.id.exploreTypeFragment -> hideBottomNav()
+            else -> showBottomNav()
+        }
     }
 
     private fun setupImageSheet() {
