@@ -2,11 +2,17 @@ package io.bidswipe.app.ui.dashboard.scheduleShow
 
 import android.annotation.SuppressLint
 import android.app.Application
+import android.app.PictureInPictureParams
+import android.content.res.Configuration
+import android.graphics.Rect
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
+import android.util.Rational
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
 import androidx.core.view.isVisible
 import com.google.firebase.database.DataSnapshot
@@ -101,6 +107,8 @@ class LiveShowActivity : BaseActivity() {
 	private var zoomLevel = 1
 
 	private lateinit var zim: ZIM
+	private var stoppedInPictureInPictureMode = false
+	private lateinit var pipParams: PictureInPictureParams
 
 	private var eventListener = object : ValueEventListener {
 		@SuppressLint("NotifyDataSetChanged")
@@ -140,6 +148,8 @@ class LiveShowActivity : BaseActivity() {
 			keyboardEnable(true)
 		}
 
+		initPip()
+
 		bind.root.setMargins(0, 0, 0, navigationBarHeight)
 
 		commentAdapter = CommentAdapter(commentList)
@@ -170,6 +180,9 @@ class LiveShowActivity : BaseActivity() {
 
 		bind.cutButton.setOnClickListener {
 			endShowSheet()
+			/*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+				enterPictureInPictureMode(pipParams)
+			}*/
 		}
 
 		bind.message.setEndIconOnClickListener {
@@ -310,6 +323,29 @@ class LiveShowActivity : BaseActivity() {
 			}
 		}
 
+		onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+			override fun handleOnBackPressed() {
+
+				if (::zim.isInitialized){
+					if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+						enterPictureInPictureMode(pipParams)
+					}
+				}else{
+					finishAfterTransition()
+				}
+
+			}
+		})
+
+	}
+
+	override fun onPause() {
+		super.onPause()
+
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+			enterPictureInPictureMode(pipParams)
+		}
+
 	}
 
 	override fun onDestroy() {
@@ -318,11 +354,16 @@ class LiveShowActivity : BaseActivity() {
 		Const.fireBaseRef.getReference(Const.LIVE_SESSIONS).child(roomID).removeValue()
 
 		stopPublish()
-		zim.logout()
-		zim.destroy()
+
+		if (::zim.isInitialized){
+			zim.logout()
+			zim.destroy()
+		}
+
 		stopLiveDurationTimer()
 		logoutRoom()
 		destroyEngine()
+
 	}
 
 	private fun createEngine() {
@@ -556,6 +597,7 @@ class LiveShowActivity : BaseActivity() {
 				}
 			}
 		})
+
 	}
 
 	private fun stopListenEvent() {
@@ -1046,4 +1088,60 @@ class LiveShowActivity : BaseActivity() {
 		endShowSheet.show()
 
 	}
+
+	fun initPip() {
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+
+			val visibleRect = Rect()
+			bind.root.getGlobalVisibleRect(visibleRect)
+
+			pipParams = PictureInPictureParams.Builder().apply {
+				setAspectRatio(Rational(100, 200))
+//                setAspectRatio(Rational(2, 5))
+				setSourceRectHint(visibleRect)
+				setAutoEnterEnabled(true)
+			}.build()
+
+			setPictureInPictureParams(pipParams)
+
+		}
+	}
+
+
+	override fun onPictureInPictureModeChanged(isInPictureInPictureMode: Boolean, newConfig: Configuration) {
+		super.onPictureInPictureModeChanged(isInPictureInPictureMode, newConfig)
+
+		if (isInPictureInPictureMode) {
+
+			bind.profileLayout.isVisible = false
+			bind.rehearsalLayout.isVisible = false
+			bind.recycler.isVisible = false
+			bind.menuLayout.isVisible = false
+			bind.message.isVisible = false
+
+		} else {
+
+			bind.profileLayout.isVisible = true
+			bind.rehearsalLayout.isVisible = true
+			bind.recycler.isVisible = true
+			bind.menuLayout.isVisible = true
+			bind.message.isVisible = true
+		}
+
+	}
+
+	override fun onUserLeaveHint() {
+		super.onUserLeaveHint()
+		if (!isInPictureInPictureMode) {
+			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+				setPictureInPictureParams(pipParams)
+				enterPictureInPictureMode(pipParams)
+			}
+
+			Alerts.log(javaClass.simpleName, "STARTED IN PIP MODE")
+		} else {
+			Alerts.log(javaClass.simpleName, "ALREADY IN PIP MODE")
+		}
+	}
+
 }

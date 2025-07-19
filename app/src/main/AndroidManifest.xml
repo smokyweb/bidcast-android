@@ -60,6 +60,8 @@
         <activity
             android:name=".ui.dashboard.scheduleShow.LiveShowActivity"
             android:exported="false"
+            android:supportsPictureInPicture="true"
+            android:configChanges="screenSize|smallestScreenSize|screenLayout|orientation"
             android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".ui.dashboard.AddPaymentCardActivity"

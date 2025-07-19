@@ -31,7 +31,6 @@ import io.bidswipe.app.utils.ids
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request
 import io.bidswipe.app.utils.toListProduct
-import io.bidswipe.app.utils.toScheduleShow
 import io.bidswipe.app.utils.toTutorials
 
 class DashActivity : BaseActivity(), NavController.OnDestinationChangedListener {
@@ -64,6 +63,7 @@ class DashActivity : BaseActivity(), NavController.OnDestinationChangedListener 
         bind.bottomBar.setOnItemSelectedListener { menuItem ->
             if (menuItem.itemId != ids.sellFragment) viewModel.lastIndex.value = menuItem.itemId
             when (menuItem.itemId) {
+
                 ids.sellFragment -> {
                     imageSheet.state=BottomSheetBehavior.STATE_EXPANDED
                     return@setOnItemSelectedListener true
@@ -101,7 +101,6 @@ class DashActivity : BaseActivity(), NavController.OnDestinationChangedListener 
                     val mData = it.value.data
 
                     log(mData.toString())
-
 
                 }
 
@@ -146,6 +145,7 @@ class DashActivity : BaseActivity(), NavController.OnDestinationChangedListener 
                     bind.loader.isVisible = false
                     viewModel.logoutRepo.value = null
                     if (it.isNetworkError) {
+
                     } else {
                         it.parse(this, TAG, object : AlertClicks {
                             override fun primaryClick(dialog: AppBottomSheet) {
@@ -163,8 +163,6 @@ class DashActivity : BaseActivity(), NavController.OnDestinationChangedListener 
 
             }
         }
-
-
     }
     fun hideBottomNav() {
         bind.bottomBar.isVisible = false

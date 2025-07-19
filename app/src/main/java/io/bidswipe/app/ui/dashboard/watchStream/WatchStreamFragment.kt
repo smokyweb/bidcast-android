@@ -388,22 +388,22 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
             info: ZIMMessageReceivedInfo?,
             fromRoomID: String?
         ) {
-            super.onRoomMessageReceived(zim, messageList, info, fromRoomID)
-            log("MESSAGE RECEIVED onRoomMessageReceived: ${messageList?.joinToString("\n\n")}")
+	        super.onRoomMessageReceived(zim, messageList, info, fromRoomID)
+	        log("MESSAGE RECEIVED onRoomMessageReceived: ${messageList?.joinToString("\n\n")}")
 
 	        if (messageList != null) {
 		        for (zimMessage in messageList) {
 			        if (zimMessage is ZIMTextMessage) {
 				        val zimTextMessage = zimMessage as ZIMTextMessage
 				        Log.e(TAG, "Received message: ${zimTextMessage.message}")
-				        log( "Received Extended Data: ${zimTextMessage.extendedData}")
+				        log("Received Extended Data: ${zimTextMessage.extendedData}")
 
 				        try {
 					        val jsonObject = JSONObject(zimMessage.extendedData)
 					        val senderImage = jsonObject.getString("userImage")
 					        val senderName = jsonObject.getString("userName")
 					        val senderId = jsonObject.getString("userId")
-					        commentList.add(CommentModel(senderImage, senderName, senderId,zimMessage.message))
+					        commentList.add(CommentModel(senderImage, senderName, senderId, zimMessage.message))
 					        commentAdapter.notifyItemInserted(commentList.size - 1)
 					        bind.recycler.post { bind.recycler.smoothScrollToPosition(commentList.size) }
 				        } catch (e: Exception) {
@@ -571,7 +571,6 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
 	}
 
-
 	/*fun fetchMessage() {
 		ZegoExpressEngine.getEngine().setEventHandler(object : IZegoEventHandler() {
 			override fun onIMRecvBroadcastMessage(
@@ -603,4 +602,5 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
 		})
 	}*/
+
 }
