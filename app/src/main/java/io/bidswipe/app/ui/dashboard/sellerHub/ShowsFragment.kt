@@ -60,6 +60,23 @@ class ShowsFragment : BaseFragment<SellerHubViewModel, FragmentShowsBinding>() {
 
         bind.recycler.adapter = showAdapter
 
+        bind.swipeRefreshLayout.setOnRefreshListener {
+            bind.loader.isVisible = true
+            val currentTab = bind.tabs.selectedTabPosition
+            val requestType = when (currentTab) {
+                0 -> "upcoming"
+                1 -> "past"
+                else -> "upcoming"
+            }
+            viewModel.getMyScheduledShow(requestType.request())
+        }
+
+        bind.noInternet.onClick {
+            bind.loader.isVisible = true
+            bind.noInternet.isVisible = false
+
+        }
+
         bind.tabs.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             @SuppressLint("NotifyDataSetChanged")
             override fun onTabSelected(tab: TabLayout.Tab?) {
@@ -73,14 +90,12 @@ class ShowsFragment : BaseFragment<SellerHubViewModel, FragmentShowsBinding>() {
                 }
 
             }
-
-            override fun onTabUnselected(tab: TabLayout.Tab?) {
-
-            }
-
+            override fun onTabUnselected(tab: TabLayout.Tab?) {}
             override fun onTabReselected(tab: TabLayout.Tab?) {
-
+                onTabSelected(tab)
             }
+
+
 
         })
 
@@ -90,20 +105,10 @@ class ShowsFragment : BaseFragment<SellerHubViewModel, FragmentShowsBinding>() {
         }
 
 
-        bind.swipeRefreshLayout.setOnRefreshListener {
-            bind.loader.isVisible = true
-            viewModel.getMyScheduledShow("upcoming".request())
-        }
-
-        bind.noInternet.onClick {
-            bind.loader.isVisible = true
-            bind.noInternet.isVisible = false
-
-        }
 
         bind.loader.isVisible = true
-        viewModel.getMyScheduledShow("upcoming".request())
 
+        viewModel.getMyScheduledShow("upcoming".request())
         viewModel.getMyScheduledShowRepo.observe(viewLifecycleOwner) { it ->
             when (it) {
                 is Resource.Success -> {
@@ -116,15 +121,7 @@ class ShowsFragment : BaseFragment<SellerHubViewModel, FragmentShowsBinding>() {
                     it.value.data?.let { data ->
                         showList.addAll(data.distinctBy { show -> show?.id })
                     }
-
-                    val mData = it.value.data
-                    mData?.forEach {
-
-                        showList.add(it)
-
                         showAdapter.notifyDataSetChanged()
-
-                    }
 
                     if (showList.isEmpty()) {
                         bind.noData.isVisible = true
