@@ -1,177 +1,176 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	xmlns:app="http://schemas.android.com/apk/res-auto"
-	xmlns:tools="http://schemas.android.com/tools"
-	android:layout_width="match_parent"
-	android:layout_height="match_parent"
-	android:background="@color/surface"
-	android:orientation="vertical"
-	tools:context=".ui.dashboard.AccountFragment">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/surface"
+    android:orientation="vertical"
+    tools:context=".ui.dashboard.AccountFragment">
 
-	<io.bidswipe.app.ui.custom.Header
-		android:id="@+id/header"
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		app:headerMode="APP_TEXT_ACTION"
-		app:layout_constraintStart_toStartOf="parent"
-		app:layout_constraintTop_toTopOf="parent"
-		app:showBackButton="false" />
+    <io.bidswipe.app.ui.custom.Header
+        android:id="@+id/header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:headerMode="APP_TEXT_ACTION"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:showBackButton="false" />
 
-	<androidx.core.widget.NestedScrollView
-		android:layout_width="match_parent"
-		android:layout_height="0dp"
-		app:layout_constraintBottom_toBottomOf="parent"
-		app:layout_constraintTop_toBottomOf="@id/header">
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/header">
 
-		<LinearLayout
-			android:layout_width="match_parent"
-			android:layout_height="match_parent"
-			android:background="@color/surface"
-			android:orientation="vertical"
-			tools:context=".ui.dashboard.AccountFragment">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/surface"
+            android:orientation="vertical"
+            tools:context=".ui.dashboard.AccountFragment">
 
-			<androidx.constraintlayout.widget.ConstraintLayout
-				android:layout_width="match_parent"
-				android:layout_height="wrap_content"
-				android:background="@color/background"
-				android:paddingHorizontal="@dimen/margin"
-				android:paddingVertical="@dimen/half_margin">
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/background"
+                android:paddingHorizontal="@dimen/margin"
+                android:paddingVertical="@dimen/half_margin">
 
-				<com.google.android.material.card.MaterialCardView
-					android:id="@+id/materialCardView"
-					style="@style/cardStyle"
-					android:layout_width="wrap_content"
-					android:layout_height="wrap_content"
-					app:cardCornerRadius="100dp"
-					app:layout_constraintBottom_toBottomOf="parent"
-					app:layout_constraintStart_toStartOf="parent"
-					app:layout_constraintTop_toTopOf="parent">
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/materialCardView"
+                    style="@style/cardStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:cardCornerRadius="100dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
 
-					<ImageView
-						android:id="@+id/userProfile"
-						android:layout_width="64dp"
-						android:layout_height="64dp"
-						android:contentDescription="@string/app_name"
-						android:scaleType="centerCrop"
-						android:src="@drawable/avatar" />
+                    <ImageView
+                        android:id="@+id/userProfile"
+                        android:layout_width="64dp"
+                        android:layout_height="64dp"
+                        android:contentDescription="@string/app_name"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/avatar" />
 
-				</com.google.android.material.card.MaterialCardView>
+                </com.google.android.material.card.MaterialCardView>
 
-				<View
-					android:id="@+id/view"
-					android:layout_width="0dp"
-					android:layout_height="1dp"
-					android:layout_marginStart="16dp"
-					app:layout_constraintBottom_toBottomOf="parent"
-					app:layout_constraintEnd_toEndOf="parent"
-					app:layout_constraintStart_toEndOf="@+id/materialCardView"
-					app:layout_constraintTop_toTopOf="parent" />
+                <View
+                    android:id="@+id/view"
+                    android:layout_width="0dp"
+                    android:layout_height="1dp"
+                    android:layout_marginStart="16dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/materialCardView"
+                    app:layout_constraintTop_toTopOf="parent" />
 
-				<TextView
-					android:id="@+id/userName"
-					style="@style/TitleMedium"
-					android:layout_width="0dp"
-					android:layout_height="wrap_content"
-					android:text="@string/app_name"
-					android:textStyle="bold"
-					app:layout_constraintBottom_toTopOf="@+id/view"
-					app:layout_constraintEnd_toStartOf="@id/edit_icon"
-					app:layout_constraintStart_toStartOf="@+id/view" />
+                <TextView
+                    android:id="@+id/userName"
+                    style="@style/TitleMedium"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/app_name"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toTopOf="@+id/view"
+                    app:layout_constraintEnd_toStartOf="@id/edit_icon"
+                    app:layout_constraintStart_toStartOf="@+id/view" />
 
-				<TextView
-					android:id="@+id/sellerSince"
-					style="@style/TitleSmall"
-					android:layout_width="0dp"
-					android:layout_height="wrap_content"
-					android:text="N/A"
-					android:textColor="@color/tertiary"
-					app:layout_constraintEnd_toStartOf="@id/edit_icon"
-					app:layout_constraintStart_toStartOf="@+id/view"
-					app:layout_constraintTop_toBottomOf="@+id/view" />
+                <TextView
+                    android:id="@+id/sellerSince"
+                    style="@style/TitleSmall"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="N/A"
+                    android:textColor="@color/tertiary"
+                    app:layout_constraintEnd_toStartOf="@id/edit_icon"
+                    app:layout_constraintStart_toStartOf="@+id/view"
+                    app:layout_constraintTop_toBottomOf="@+id/view" />
 
-				<androidx.appcompat.widget.AppCompatImageView
-					android:id="@+id/edit_icon"
-					android:layout_width="wrap_content"
-					android:layout_height="wrap_content"
-					android:contentDescription="@string/app_name"
-					android:scaleType="centerCrop"
-					android:src="@drawable/ic_edit"
-					app:layout_constraintEnd_toEndOf="parent"
-					app:layout_constraintTop_toTopOf="parent"
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/edit_icon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:contentDescription="@string/app_name"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/ic_edit"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
 
-					app:layout_constraintBottom_toBottomOf="parent"/>
+                    app:layout_constraintTop_toTopOf="parent" />
 
-			</androidx.constraintlayout.widget.ConstraintLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
-			<LinearLayout
-				android:layout_width="match_parent"
-				android:layout_height="wrap_content"
-				android:background="@color/background"
-				android:paddingHorizontal="8dp"
-				android:paddingVertical="8dp">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/background"
+                android:paddingHorizontal="8dp"
+                android:paddingVertical="8dp">
 
-				<com.google.android.material.card.MaterialCardView
-					style="@style/cardStyle"
-					android:layout_width="match_parent"
-					android:layout_height="wrap_content"
-					app:cardBackgroundColor="@color/surface"
-					app:cardCornerRadius="8dp"
-					android:layout_margin="@dimen/half_margin"
-					app:cardElevation="0dp">
+                <com.google.android.material.card.MaterialCardView
+                    style="@style/cardStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/half_margin"
+                    app:cardBackgroundColor="@color/surface"
+                    app:cardCornerRadius="8dp"
+                    app:cardElevation="0dp">
 
-					<com.google.android.material.tabs.TabLayout
-						android:id="@+id/tabs"
-						style="@style/tabStyle"
-						android:layout_width="match_parent"
-						android:layout_height="wrap_content"
-						android:layout_margin="5dp"
-						app:layout_constraintBottom_toBottomOf="parent"
-						app:layout_constraintEnd_toEndOf="parent"
-						app:layout_constraintStart_toStartOf="parent"
-						app:layout_constraintTop_toTopOf="parent"
+                    <com.google.android.material.tabs.TabLayout
+                        android:id="@+id/tabs"
+                        style="@style/tabStyle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="5dp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
 
-						app:tabPadding="0dp">
+                        app:tabPadding="0dp">
 
-						<com.google.android.material.tabs.TabItem
-							android:layout_width="wrap_content"
-							android:layout_height="wrap_content"
-							android:text="@string/seller_hub" />
+                        <com.google.android.material.tabs.TabItem
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/seller_hub" />
 
-						<com.google.android.material.tabs.TabItem
-							android:layout_width="wrap_content"
-							android:layout_height="wrap_content"
-							android:text="@string/my_account"
-							/>
+                        <com.google.android.material.tabs.TabItem
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/my_account" />
 
-					</com.google.android.material.tabs.TabLayout>
+                    </com.google.android.material.tabs.TabLayout>
 
-				</com.google.android.material.card.MaterialCardView>
+                </com.google.android.material.card.MaterialCardView>
 
-			</LinearLayout>
+            </LinearLayout>
 
-			<ViewSwitcher
-				android:id="@+id/switcher"
-				android:layout_width="match_parent"
-				android:layout_height="match_parent">
+            <ViewSwitcher
+                android:id="@+id/switcher"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
-				<include
-					android:id="@+id/seller_hub"
-					layout="@layout/seller_hub_view" />
+                <include
+                    android:id="@+id/seller_hub"
+                    layout="@layout/seller_hub_view" />
 
-				<include
-					android:id="@+id/account_view"
-					layout="@layout/account_view" />
+                <include
+                    android:id="@+id/account_view"
+                    layout="@layout/account_view" />
 
-			</ViewSwitcher>
+            </ViewSwitcher>
 
-		</LinearLayout>
+        </LinearLayout>
 
-	</androidx.core.widget.NestedScrollView>
+    </androidx.core.widget.NestedScrollView>
 
-	<io.bidswipe.app.ui.custom.LoaderView
-		android:id="@+id/loader"
-		android:layout_width="match_parent"
-		android:layout_height="match_parent"
-		android:visibility="gone" />
+    <io.bidswipe.app.ui.custom.LoaderView
+        android:id="@+id/loader"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

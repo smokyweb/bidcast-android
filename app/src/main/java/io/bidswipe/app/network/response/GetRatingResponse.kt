@@ -13,14 +13,14 @@ data class GetRatingResponse(
     @SerializedName("message")
     val message: String?,
     @SerializedName("status")
-    val status: String?
+    val status: String?,
 ) {
     @Keep
     data class Data(
         @SerializedName("ratings")
         val ratings: List<Rating?>?,
         @SerializedName("total_reviews")
-        val totalReviews: Int?
+        val totalReviews: Int?,
     ) {
         @Keep
         data class Rating(
@@ -45,7 +45,7 @@ data class GetRatingResponse(
             @SerializedName("user")
             val user: User?,
             @SerializedName("user_id")
-            val userId: Int?
+            val userId: Int?,
         ) {
             @Keep
             data class User(
@@ -54,7 +54,7 @@ data class GetRatingResponse(
                 @SerializedName("id")
                 val id: Int?,
                 @SerializedName("name")
-                val name: String?
+                val name: String?,
             )
         }
     }

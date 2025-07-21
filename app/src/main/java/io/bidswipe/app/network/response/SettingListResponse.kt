@@ -13,7 +13,7 @@ data class SettingListResponse(
     @SerializedName("message")
     val message: String?,
     @SerializedName("status")
-    val status: String?
+    val status: String?,
 ) {
     @Keep
     data class Data(
@@ -44,6 +44,6 @@ data class SettingListResponse(
         @SerializedName("sync_phone_contacts")
         val syncPhoneContacts: Boolean?,
         @SerializedName("user_id")
-        val userId: Int?
+        val userId: Int?,
     )
 }

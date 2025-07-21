@@ -21,7 +21,7 @@ data class GetNotificationResponse(
     @SerializedName("total")
     val total: Int?,
     @SerializedName("totalPage")
-    val totalPage: Int?
+    val totalPage: Int?,
 ) {
     @Keep
     data class Data(
@@ -42,6 +42,6 @@ data class GetNotificationResponse(
         @SerializedName("type")
         val type: String?,
         @SerializedName("updated_at")
-        val updatedAt: String?
+        val updatedAt: String?,
     )
 }

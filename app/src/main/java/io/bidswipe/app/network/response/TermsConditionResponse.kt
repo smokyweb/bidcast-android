@@ -13,7 +13,7 @@ data class TermsConditionResponse(
     @SerializedName("message")
     val message: String?,
     @SerializedName("status")
-    val status: String?
+    val status: String?,
 ) {
     @Keep
     data class Data(
@@ -24,6 +24,6 @@ data class TermsConditionResponse(
         @SerializedName("page_name")
         val pageName: String?,
         @SerializedName("page_url")
-        val pageUrl: String?
+        val pageUrl: String?,
     )
 }

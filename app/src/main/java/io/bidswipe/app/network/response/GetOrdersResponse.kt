@@ -27,7 +27,7 @@ data class GetOrdersResponse(
     @SerializedName("processing_order_count")
     val processingOrderCount: Int?,
     @SerializedName("completed_order_count")
-    val completeOrderCount: Int?
+    val completeOrderCount: Int?,
 ) {
     @Keep
     data class Data(
@@ -60,7 +60,7 @@ data class GetOrdersResponse(
         @SerializedName("user")
         val user: User?,
         @SerializedName("user_id")
-        val userId: Int?
+        val userId: Int?,
     ) {
         @Keep
         data class Product(
@@ -97,7 +97,7 @@ data class GetOrdersResponse(
             @SerializedName("title")
             val title: String?,
             @SerializedName("user_id")
-            val userId: Int?
+            val userId: Int?,
         )
 
         @Keep
@@ -109,7 +109,7 @@ data class GetOrdersResponse(
             @SerializedName("order_id")
             val orderId: Int?,
             @SerializedName("title")
-            val title: String?
+            val title: String?,
         )
 
         @Keep
@@ -137,7 +137,7 @@ data class GetOrdersResponse(
             @SerializedName("thumbnail")
             val thumbnail: String?,
             @SerializedName("username")
-            val username: String?
+            val username: String?,
         )
     }
 }

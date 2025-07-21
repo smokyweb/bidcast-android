@@ -21,7 +21,7 @@ data class UserSearchingResponse(
     @SerializedName("total")
     val total: Int?,
     @SerializedName("totalPage")
-    val totalPage: Int?
+    val totalPage: Int?,
 ) {
     @Keep
     data class Data(
@@ -33,6 +33,6 @@ data class UserSearchingResponse(
         val profileImage: String?,
         @SerializedName("username")
         val username: String?,
-        var selected : Boolean? = false
+        var selected: Boolean? = false,
     )
 }

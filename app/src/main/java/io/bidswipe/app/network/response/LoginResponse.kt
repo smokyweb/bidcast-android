@@ -13,7 +13,7 @@ data class LoginResponse(
     @SerializedName("message")
     val message: String?,
     @SerializedName("status")
-    val status: String?
+    val status: String?,
 ) {
     @Keep
     data class Data(
@@ -34,7 +34,7 @@ data class LoginResponse(
         @SerializedName("role_id")
         val roleId: String?,
         @SerializedName("token")
-        val token: String?
+        val token: String?,
     ) {
         @Keep
         data class Role(
@@ -45,7 +45,7 @@ data class LoginResponse(
             @SerializedName("name")
             val name: String?,
             @SerializedName("updated_at")
-            val updatedAt: Any?
+            val updatedAt: Any?,
         )
     }
 }

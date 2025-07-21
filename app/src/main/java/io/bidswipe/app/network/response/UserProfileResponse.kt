@@ -13,7 +13,7 @@ data class UserProfileResponse(
     @SerializedName("message")
     val message: String?,
     @SerializedName("status")
-    val status: String?
+    val status: String?,
 ) {
     @Keep
     data class Data(
@@ -48,7 +48,7 @@ data class UserProfileResponse(
         @SerializedName("seller_identity_status")
         val sellerIdentityStatus: String?,
         @SerializedName("buyer_identity_status")
-        val buyerIdentityStatus: String?
+        val buyerIdentityStatus: String?,
     ) {
         @Keep
         data class Role(
@@ -59,7 +59,7 @@ data class UserProfileResponse(
             @SerializedName("name")
             val name: String?,
             @SerializedName("updated_at")
-            val updatedAt: Any?
+            val updatedAt: Any?,
         )
     }
 }

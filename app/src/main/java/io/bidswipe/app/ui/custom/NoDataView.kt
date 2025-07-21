@@ -1,5 +1,6 @@
 package io.bidswipe.app.ui.custom
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater
@@ -11,10 +12,11 @@ import io.bidswipe.app.databinding.NoDataViewBinding
 import io.bidswipe.app.utils.draw
 import io.bidswipe.app.utils.styleable
 
+@SuppressLint("ClickableViewAccessibility")
 class NoDataView @JvmOverloads constructor(
-	val mCtx: Context,
-	attrs: AttributeSet? = null,
-	defStyleAttr: Int = 0,
+    val mCtx: Context,
+    attrs: AttributeSet? = null,
+    defStyleAttr: Int = 0,
 ) :
     LinearLayout(mCtx, attrs, defStyleAttr) {
     private val bind = NoDataViewBinding.inflate(LayoutInflater.from(mCtx), this, true)

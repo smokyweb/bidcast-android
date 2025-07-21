@@ -13,14 +13,14 @@ data class GetAllTipsResponse(
     @SerializedName("message")
     val message: String?,
     @SerializedName("status")
-    val status: String?
+    val status: String?,
 ) {
     @Keep
     data class Data(
         @SerializedName("example")
         val example: List<String?>?,
         @SerializedName("tips")
-        val tips: List<Tip?>?
+        val tips: List<Tip?>?,
     ) {
         @Keep
         data class Tip(
@@ -31,7 +31,7 @@ data class GetAllTipsResponse(
             @SerializedName("title")
             val title: String?,
             @SerializedName("color")
-            val color: String?
+            val color: String?,
         )
 
     }

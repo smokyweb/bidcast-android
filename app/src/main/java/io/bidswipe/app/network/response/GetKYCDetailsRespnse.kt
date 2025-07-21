@@ -11,7 +11,7 @@ data class GetKYCDetailsRespnse(
     @SerializedName("message")
     val message: String?,
     @SerializedName("status")
-    val status: String?
+    val status: String?,
 ) {
     @Keep
     data class Data(
@@ -24,6 +24,6 @@ data class GetKYCDetailsRespnse(
         @SerializedName("phone")
         val phone: Any?,
         @SerializedName("postal_code")
-        val postalCode: Any?
+        val postalCode: Any?,
     )
 }

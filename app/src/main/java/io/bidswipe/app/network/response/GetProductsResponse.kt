@@ -21,7 +21,7 @@ data class GetProductsResponse(
     @SerializedName("total")
     val total: Int?,
     @SerializedName("totalPage")
-    val totalPage: Int?
+    val totalPage: Int?,
 ) {
     @Keep
     data class Data(
@@ -51,6 +51,6 @@ data class GetProductsResponse(
         val title: String?,
         @SerializedName("user_id")
         val userId: Int?,
-        var selected: Boolean? = false
+        var selected: Boolean? = false,
     )
 }

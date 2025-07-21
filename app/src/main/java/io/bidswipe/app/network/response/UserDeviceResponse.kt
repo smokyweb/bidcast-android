@@ -13,7 +13,7 @@ data class UserDeviceResponse(
     @SerializedName("message")
     val message: String?,
     @SerializedName("status")
-    val status: String?
+    val status: String?,
 ) {
     @Keep
     data class Data(
@@ -34,6 +34,6 @@ data class UserDeviceResponse(
         @SerializedName("updated_at")
         val updatedAt: String?,
         @SerializedName("user_id")
-        val userId: Int?
+        val userId: Int?,
     )
 }

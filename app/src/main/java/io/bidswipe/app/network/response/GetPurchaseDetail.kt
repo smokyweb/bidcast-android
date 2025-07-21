@@ -13,7 +13,7 @@ data class GetPurchaseDetail(
     @SerializedName("message")
     val message: String?,
     @SerializedName("status")
-    val status: String?
+    val status: String?,
 ) {
     @Keep
     data class Data(
@@ -30,7 +30,7 @@ data class GetPurchaseDetail(
         @SerializedName("tax_percent")
         val taxPercent: String?,
         @SerializedName("total")
-        val total: String?
+        val total: String?,
     ) {
         @Keep
         data class Product(
@@ -61,7 +61,7 @@ data class GetPurchaseDetail(
             @SerializedName("title")
             val title: String?,
             @SerializedName("user_id")
-            val userId: Int?
+            val userId: Int?,
         )
 
         @Keep
@@ -81,7 +81,7 @@ data class GetPurchaseDetail(
             @SerializedName("type")
             val type: String?,
             @SerializedName("user_id")
-            val userId: Int?
+            val userId: Int?,
         )
     }
 }

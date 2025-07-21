@@ -13,7 +13,7 @@ data class CreateShowResponse(
     @SerializedName("message")
     val message: String?,
     @SerializedName("status")
-    val status: String?
+    val status: String?,
 ) {
     @Keep
     data class Data(
@@ -36,6 +36,6 @@ data class CreateShowResponse(
         @SerializedName("title")
         val title: String?,
         @SerializedName("user_id")
-        val userId: Int?
+        val userId: Int?,
     )
 }

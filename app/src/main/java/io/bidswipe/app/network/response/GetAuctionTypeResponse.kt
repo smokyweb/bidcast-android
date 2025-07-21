@@ -13,13 +13,13 @@ data class GetAuctionTypeResponse(
     @SerializedName("message")
     val message: String?,
     @SerializedName("status")
-    val status: String?
+    val status: String?,
 ) {
     @Keep
     data class Data(
         @SerializedName("id")
         val id: Int?,
         @SerializedName("name")
-        val name: String?
+        val name: String?,
     )
 }

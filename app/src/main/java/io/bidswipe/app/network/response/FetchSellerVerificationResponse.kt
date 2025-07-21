@@ -13,7 +13,7 @@ data class FetchSellerVerificationResponse(
     @SerializedName("message")
     val message: String?,
     @SerializedName("status")
-    val status: String?
+    val status: String?,
 ) {
     @Keep
     data class Data(
@@ -38,7 +38,7 @@ data class FetchSellerVerificationResponse(
         @SerializedName("status")
         val status: String?,
         @SerializedName("user_id")
-        val userId: Int?
+        val userId: Int?,
     ) {
         @Keep
         data class CardDetails(
@@ -47,7 +47,7 @@ data class FetchSellerVerificationResponse(
             @SerializedName("exp_year")
             val expYear: Int?,
             @SerializedName("last4")
-            val last4: String?
+            val last4: String?,
         )
     }
 }

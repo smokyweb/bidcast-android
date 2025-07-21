@@ -376,4 +376,8 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
         message: RequestBody,
     ) = call { api.sendChatNotification(receiverId, message) }
 
+    suspend fun getPageUrl(
+        slug: String
+    ) = call { api.getPageUrl(slug) }
+
 }

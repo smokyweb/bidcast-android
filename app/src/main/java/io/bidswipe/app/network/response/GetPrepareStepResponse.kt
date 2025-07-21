@@ -13,7 +13,7 @@ data class GetPrepareStepResponse(
     @SerializedName("message")
     val message: String?,
     @SerializedName("status")
-    val status: String?
+    val status: String?,
 ) {
     @Keep
     data class Data(
@@ -25,6 +25,6 @@ data class GetPrepareStepResponse(
         var status: String?,
         @SerializedName("title")
         val title: String?,
-        var selected : Boolean? = false
+        var selected: Boolean? = false,
     )
 }

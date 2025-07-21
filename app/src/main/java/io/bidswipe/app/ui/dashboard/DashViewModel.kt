@@ -25,6 +25,7 @@ import io.bidswipe.app.network.response.UpdateLiveStatusResponse
 import io.bidswipe.app.network.response.UpdateOfferResponse
 import io.bidswipe.app.network.response.UserDeviceResponse
 import io.bidswipe.app.network.response.UserProfileResponse
+import io.bidswipe.app.network.response.PageUrlResponse
 import kotlinx.coroutines.launch
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -349,6 +350,21 @@ class DashViewModel @Inject constructor(val repo: DashRepository) : ViewModel() 
 
 		) = viewModelScope.launch {
         _sendChatNotificationResponse.value = repo.sendChatNotification(receiverId, message)
+    }
+
+    private var _pageUrlResponse = MutableLiveData<Resource<PageUrlResponse>>()
+    val pageUrlRepo: MutableLiveData<Resource<PageUrlResponse>>
+        get() = _pageUrlResponse
+
+    fun getPageUrl(slug: String) = viewModelScope.launch {
+        _pageUrlResponse.value = repo.getPageUrl(slug)
+    }
+
+    companion object {
+        const val SLUG_ABOUT_US = "about-us"
+        const val SLUG_PRIVACY_POLICY = "privacy-policy"
+        const val SLUG_FAQ = "faq"
+        const val SLUG_TERMS = "terms-conditions"
     }
 
 

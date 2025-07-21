@@ -13,7 +13,7 @@ data class GetOrderDetailsResponse(
     @SerializedName("message")
     val message: String?,
     @SerializedName("status")
-    val status: String?
+    val status: String?,
 ) {
     @Keep
     data class Data(
@@ -48,7 +48,7 @@ data class GetOrderDetailsResponse(
         @SerializedName("user")
         val user: User?,
         @SerializedName("user_id")
-        val userId: Int?
+        val userId: Int?,
     ) {
         @Keep
         data class GiftUser(
@@ -75,7 +75,7 @@ data class GetOrderDetailsResponse(
             @SerializedName("thumbnail")
             val thumbnail: Any?,
             @SerializedName("username")
-            val username: Any?
+            val username: Any?,
         )
 
         @Keep
@@ -113,7 +113,7 @@ data class GetOrderDetailsResponse(
             @SerializedName("title")
             val title: String?,
             @SerializedName("user_id")
-            val userId: Int?
+            val userId: Int?,
         )
 
         @Keep
@@ -125,7 +125,7 @@ data class GetOrderDetailsResponse(
             @SerializedName("order_id")
             val orderId: Int?,
             @SerializedName("title")
-            val title: String?
+            val title: String?,
         )
 
         @Keep
@@ -153,7 +153,7 @@ data class GetOrderDetailsResponse(
             @SerializedName("thumbnail")
             val thumbnail: Any?,
             @SerializedName("username")
-            val username: String?
+            val username: String?,
         )
     }
 }

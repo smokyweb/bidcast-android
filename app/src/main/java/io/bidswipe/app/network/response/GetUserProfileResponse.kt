@@ -13,7 +13,7 @@ data class GetUserProfileResponse(
     @SerializedName("message")
     val message: String?,
     @SerializedName("status")
-    val status: String?
+    val status: String?,
 ) {
     @Keep
     data class Data(
@@ -40,6 +40,6 @@ data class GetUserProfileResponse(
         @SerializedName("role_id")
         val roleId: Int?,
         @SerializedName("username")
-        val username: String?
+        val username: String?,
     )
 }
