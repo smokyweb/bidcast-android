@@ -211,4 +211,17 @@ class SellerHubViewModel@Inject constructor(val repo: DashRepository) : ViewMode
         _fetchReferralResponse.value = repo.fetchReferral()
     }
 
+    private var _storeSellerVerificationResponse = MutableLiveData<Resource<CommonResponse>>()
+    val storeSellerVerificationRepo: MutableLiveData<Resource<CommonResponse>>
+        get() = _storeSellerVerificationResponse
+
+    fun storeSellerVerification(
+        id: MultipartBody.Part?,
+        image: MultipartBody.Part?,
+        phoneVerification: RequestBody,
+        cardToken: RequestBody,
+    ) = viewModelScope.launch {
+        _storeSellerVerificationResponse.value = repo.storeSellerVerification(id,image,phoneVerification,cardToken)
+    }
+
 }

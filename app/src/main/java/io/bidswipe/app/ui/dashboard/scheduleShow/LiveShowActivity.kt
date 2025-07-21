@@ -775,63 +775,69 @@ class LiveShowActivity : BaseActivity() {
 	}
 
 	private fun sendZimMessage(content : String) {
-		val zimMessage = ZIMTextMessage(content)
 
-		val extendedData = JSONObject().apply {
-			put("userImage", userImage)
-			put("userId", userId)
-			put("userName", userName)
-		}
-		zimMessage.extendedData = extendedData.toString()
+		if (::zim.isInitialized){
+			val zimMessage = ZIMTextMessage(content)
 
-		val config = ZIMMessageSendConfig().also {
-			it.priority = ZIMMessagePriority.HIGH
-		}
+			val extendedData = JSONObject().apply {
+				put("userImage", userImage)
+				put("userId", userId)
+				put("userName", userName)
+			}
+			zimMessage.extendedData = extendedData.toString()
 
-		zim.sendMessage(zimMessage, roomID, ZIMConversationType.ROOM, config, object : ZIMMessageSentFullCallback {
-			override fun onMessageAttached(message: ZIMMessage?) {
-
+			val config = ZIMMessageSendConfig().also {
+				it.priority = ZIMMessagePriority.HIGH
 			}
 
-			override fun onMessageSent(message: ZIMMessage?, errorInfo: ZIMError?) {
-				if (errorInfo != null) {
-					log("MESSAGE SENT SUCCESSFULLY : ${message?.conversationType}")
+			zim.sendMessage(zimMessage, roomID, ZIMConversationType.ROOM, config, object : ZIMMessageSentFullCallback {
+				override fun onMessageAttached(message: ZIMMessage?) {
 
-					bind.text.setText("")
-
-					val jsonObject = JSONObject(message?.extendedData)
-					val senderImage = jsonObject.getString("userImage")
-					val senderId = jsonObject.getString("userId")
-					val senderName = jsonObject.getString("userName")
-					commentList.add(CommentModel(senderImage, senderName, senderId,zimMessage.message))
-					commentAdapter.notifyItemInserted(commentList.size - 1)
-					bind.recycler.post { bind.recycler.smoothScrollToPosition(commentList.size) }
-
-
-				} else {
-					log("MESSAGE SENT ERROR : ${errorInfo.toString()}")
 				}
-			}
 
-			override fun onMediaUploadingProgress(
-				message: ZIMMediaMessage?,
-				currentFileSize: Long,
-				totalFileSize: Long
-			) {
+				override fun onMessageSent(message: ZIMMessage?, errorInfo: ZIMError?) {
+					if (errorInfo != null) {
+						log("MESSAGE SENT SUCCESSFULLY : ${message?.conversationType}")
 
-			}
+						bind.text.setText("")
 
-			override fun onMultipleMediaUploadingProgress(
-				message: ZIMMultipleMessage?,
-				currentFileSize: Long,
-				totalFileSize: Long,
-				messageInfoIndex: Int,
-				currentIndexFileSize: Long,
-				totalIndexFileSize: Long
-			) {
+						val jsonObject = JSONObject(message?.extendedData)
+						val senderImage = jsonObject.getString("userImage")
+						val senderId = jsonObject.getString("userId")
+						val senderName = jsonObject.getString("userName")
+						commentList.add(CommentModel(senderImage, senderName, senderId,zimMessage.message))
+						commentAdapter.notifyItemInserted(commentList.size - 1)
+						bind.recycler.post { bind.recycler.smoothScrollToPosition(commentList.size) }
 
-			}
-		})
+
+					} else {
+						log("MESSAGE SENT ERROR : ${errorInfo.toString()}")
+					}
+				}
+
+				override fun onMediaUploadingProgress(
+					message: ZIMMediaMessage?,
+					currentFileSize: Long,
+					totalFileSize: Long
+				) {
+
+				}
+
+				override fun onMultipleMediaUploadingProgress(
+					message: ZIMMultipleMessage?,
+					currentFileSize: Long,
+					totalFileSize: Long,
+					messageInfoIndex: Int,
+					currentIndexFileSize: Long,
+					totalIndexFileSize: Long
+				) {
+
+				}
+			})
+		}else{
+			Alerts.error(this,"Start the live streaming to send Messages")
+		}
+
 	}
 
 	fun shopSheet() {

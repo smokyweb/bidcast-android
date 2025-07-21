@@ -380,4 +380,12 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
         slug: String
     ) = call { api.getPageUrl(slug) }
 
+    suspend fun storeSellerVerification(
+        id: MultipartBody.Part?,
+        image: MultipartBody.Part?,
+        phoneVerification: RequestBody,
+        cardToken: RequestBody,
+    ) = call { api.storeSellerVerification(id
+    ,image,phoneVerification,cardToken) }
+
 }

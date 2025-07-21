@@ -325,6 +325,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 	override fun onPause() {
 		super.onPause()
 		stopStream()
+		zim.logout()
 	}
 
 	private fun loginAndPlay() {
@@ -335,8 +336,22 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 			viewMode = ZegoViewMode.ASPECT_FILL
 		}
 		ZegoExpressEngine.getEngine().startPlayingStream(roomID, canvas)
+		if (::zim.isInitialized){
+			zim.joinRoom(roomID) { roomInfo, errorInfo ->
+				if (errorInfo != null) {
+					log("JOINED ROOM CHAT $roomInfo")
 
-        setupZIMChat()
+					zim.setEventHandler(zimEventHandler)
+
+					sendZimMessage("joined \uD83D\uDC4B")
+
+				} else {
+					log("JOIN ROOM CHAT ERROR : ${errorInfo.toString()}")
+				}
+			}
+		}else{
+			setupZIMChat()
+		}
 	}
 
 	private fun stopStream() {
@@ -369,6 +384,8 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
                         log("JOINED ROOM CHAT $roomInfo")
 
 	                    zim.setEventHandler(zimEventHandler)
+
+	                    sendZimMessage("joined \uD83D\uDC4B")
 
                     } else {
                         log("JOIN ROOM CHAT ERROR : ${errorInfo.toString()}")

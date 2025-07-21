@@ -457,6 +457,16 @@ interface ApiInterface {
     suspend fun getKYCDetails(
     ): GetKYCDetailsRespnse
 
+	@Multipart
+	@POST("api/store-seller-verification")
+	suspend fun storeSellerVerification(
+		@Part idCard: MultipartBody.Part?,
+		@Part image: MultipartBody.Part?,
+		@Part("phone_verification") phoneVerification: RequestBody,
+		@Part("cardToken") cardToken: RequestBody,
+
+	): CommonResponse
+
 
     @POST("api/stripe/check-Kyc")
     suspend fun checkKyc(
