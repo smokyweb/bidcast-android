@@ -13,7 +13,7 @@ data class CreateBidResponse(
     @SerializedName("message")
     val message: String?,
     @SerializedName("status")
-    val status: String?
+    val status: String?,
 ) {
     @Keep
     data class Data(
@@ -28,6 +28,6 @@ data class CreateBidResponse(
         @SerializedName("schedule_show_id")
         val scheduleShowId: Int?,
         @SerializedName("user_id")
-        val userId: Int?
+        val userId: Int?,
     )
 }

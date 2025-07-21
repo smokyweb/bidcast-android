@@ -13,7 +13,7 @@ data class CheckKycResponse(
     @SerializedName("message")
     val message: String?,
     @SerializedName("status")
-    val status: String?
+    val status: String?,
 ) {
     @Keep
     data class Data(
@@ -32,7 +32,7 @@ data class CheckKycResponse(
         @SerializedName("res")
         val res: Boolean?,
         @SerializedName("url")
-        val url: String?
+        val url: String?,
     ) {
         @Keep
         data class KycDetails(
@@ -51,7 +51,7 @@ data class CheckKycResponse(
             @SerializedName("postal_code")
             val postalCode: Any?,
             @SerializedName("rounting_number")
-            val rountingNumber: String?
+            val rountingNumber: String?,
         )
     }
 }

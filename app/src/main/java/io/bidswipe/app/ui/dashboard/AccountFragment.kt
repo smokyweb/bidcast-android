@@ -5,6 +5,10 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.browser.customtabs.CustomTabColorSchemeParams
+import androidx.browser.customtabs.CustomTabsIntent
+import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayout.OnTabSelectedListener
@@ -29,12 +33,14 @@ import io.bidswipe.app.utils.finish
 import io.bidswipe.app.utils.loadUrl
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.toAuth
+import androidx.core.net.toUri
 
 class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
 
     override fun getModel(): Class<DashViewModel> = DashViewModel::class.java
 
-    override fun getBind(inflater : LayoutInflater , view : ViewGroup?) = FragmentAccountBinding.inflate(inflater , view , false)
+    override fun getBind(inflater: LayoutInflater, view: ViewGroup?) =
+        FragmentAccountBinding.inflate(inflater, view, false)
 
     private var moreList = mutableListOf<MoreModel>()
     private var gridList = mutableListOf<MoreModel>()
@@ -43,55 +49,120 @@ class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
 
     private lateinit var moreAdapter: MoreAdapter
     private lateinit var gridAdapter: GridAdapter
-    private lateinit var accountGridAdapter : GridAdapter
+    private lateinit var accountGridAdapter: GridAdapter
     private var kycUrl = ""
 
     private val onTabSelectedListener = object : OnTabSelectedListener {
-        override fun onTabSelected(tab : TabLayout.Tab?) {
+        override fun onTabSelected(tab: TabLayout.Tab?) {
             bind.switcher.displayedChild = tab?.position ?: 0
         }
 
-        override fun onTabUnselected(tab : TabLayout.Tab?) {
+        override fun onTabUnselected(tab: TabLayout.Tab?) {
             bind.switcher.displayedChild = tab?.position ?: 0
         }
 
-        override fun onTabReselected(tab : TabLayout.Tab?) {
+        override fun onTabReselected(tab: TabLayout.Tab?) {
             bind.switcher.displayedChild = tab?.position ?: 0
         }
     }
 
     private val mClicks = object : RecyclerClicks {
-              override fun itemClick(pos: Int, status: String?) {
-            when(moreList[pos].slug){
-                
-                "logout" -> {
-                    logoutDialog()
+        override fun itemClick(pos: Int, status: String?) {
+            when (moreList[pos].slug) {
+                "logout" -> logoutDialog()
+                "aboutUs" -> handlePageUrl(DashViewModel.SLUG_ABOUT_US)
+                "privacyPolicy" -> handlePageUrl(DashViewModel.SLUG_PRIVACY_POLICY)
+                "faq" -> handlePageUrl(DashViewModel.SLUG_FAQ)
+                "termsCondition" -> handlePageUrl(DashViewModel.SLUG_TERMS)
+                else -> {
+                    startActivity(
+                        Intent(mCtx, MoreActivity::class.java)
+                            .putExtra("slug", moreList[pos].slug)
+                    )
                 }
 
-                else -> {
-                    startActivity(Intent(mCtx , MoreActivity::class.java).putExtra("slug",moreList[pos].slug))
-                }
-                
             }
         }
 
     }
 
-    private val accountGridClick = object : RecyclerClicks{
+    private fun handlePageUrl(slug: String) {
+        bind.loader.isVisible = true
+
+        viewModel.getPageUrl(slug)
+        viewModel.pageUrlRepo.observe(viewLifecycleOwner) { it ->
+            when (it) {
+                is Resource.Success -> {
+                    bind.loader.isVisible = false
+                    val url = it.value.data?.url ?: ""
+                    if (url.isNotEmpty()) {
+                        launchWeb(url)
+                    } else {
+                        errorToast("Could not load page")
+                    }
+                    viewModel.pageUrlRepo.value = null
+                }
+                is Resource.Error -> {
+                    bind.loader.isVisible = false
+                    Toast.makeText(mCtx, getString(R.string.no_internet), Toast.LENGTH_SHORT).show()
+
+                    viewModel.pageUrlRepo.value = null
+                }
+
+                else -> {}
+            }
+        }
+    }
+    private fun launchWeb(url: String) {
+        try {
+            CustomTabsIntent.Builder().apply {
+                setDefaultColorSchemeParams(
+                    CustomTabColorSchemeParams.Builder()
+                        .setToolbarColor(ContextCompat.getColor(mCtx, R.color.primary))
+                        .build()
+                )
+                setShowTitle(true)
+            }.build().apply {
+                intent.setPackage("com.android.chrome")
+                launchUrl(requireActivity(), url.toUri())
+            }
+        } catch (_: Exception) {
+            errorToast("Could not open web page")
+            startActivity(Intent(Intent.ACTION_VIEW, url.toUri()))
+        }
+    }
+
+
+    private val accountGridClick = object : RecyclerClicks {
         override fun itemClick(pos: Int, status: String?) {
 
-            when(accountGridList[pos].slug){
+            when (accountGridList[pos].slug) {
 
-                "notification"->{
-                    startActivity(Intent(mCtx , NotificationActivity::class.java).putExtra("slug",accountGridList[pos].slug))
+                "notification" -> {
+                    startActivity(
+                        Intent(mCtx, NotificationActivity::class.java).putExtra(
+                            "slug",
+                            accountGridList[pos].slug
+                        )
+                    )
                 }
 
-                "buyer"->{
-                    startActivity(Intent(mCtx , TrustedBuyerActivity::class.java).putExtra("slug",accountGridList[pos].slug))
+                "buyer" -> {
+                    startActivity(
+                        Intent(mCtx, TrustedBuyerActivity::class.java).putExtra(
+                            "slug",
+                            accountGridList[pos].slug
+                        )
+                    )
                 }
 
-                else->{
-                    startActivity(Intent(mCtx , MoreActivity::class.java).putExtra("slug",accountGridList[pos].slug))
+                else -> {
+                    startActivity(
+                        Intent(mCtx, MoreActivity::class.java).putExtra(
+                            "slug",
+                            accountGridList[pos].slug
+                        )
+                    )
                 }
             }
 
@@ -100,12 +171,12 @@ class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
     }
 
     private val gridClick = object : RecyclerClicks {
-              override fun itemClick(pos: Int, status: String?) {
+        override fun itemClick(pos: Int, status: String?) {
             startActivity(
                 Intent(mCtx, SellerHubActivity::class.java).putExtra(
                     "slug",
                     gridList[pos].slug
-                ).putExtra("url",kycUrl)
+                ).putExtra("url", kycUrl)
             )
         }
 
@@ -119,56 +190,68 @@ class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
         App.profileResponse.observe(viewLifecycleOwner) {
 
 
-            bind.userName.text =it?.username.toString()
+            bind.userName.text = it?.username.toString()
             bind.sellerSince.text = it?.bio.toString()
-            bind.userProfile.loadUrl(mCtx,   it?.profileImage.toString())
+            bind.userProfile.loadUrl(mCtx, it?.profileImage.toString())
         }
 
         bind.tabs.addOnTabSelectedListener(onTabSelectedListener)
 
-        moreList.add(MoreModel(R.drawable.ic_vacation,"About Us","aboutUs"))
-        moreList.add(MoreModel(R.drawable.ic_vacation,"Contact Us", "contactUs"))
+        moreList.add(MoreModel(R.drawable.ic_vacation, "About Us", "aboutUs"))
+        moreList.add(MoreModel(R.drawable.ic_vacation, "Contact Us", "contactUs"))
 //        moreList.add(MoreModel(R.drawable.ic_vacation,"Change Language", "language"))
-        moreList.add(MoreModel(R.drawable.ic_vacation,"Sales Tax Exemption", "salesTax"))
-        moreList.add(MoreModel(R.drawable.ic_vacation,"Terms & Conditions", "termsCondition"))
-        moreList.add(MoreModel(R.drawable.ic_vacation,"Privacy Policy","privacyPolicy"))
-        moreList.add(MoreModel(R.drawable.ic_vacation,"F.A.Q", "faq"))
-        moreList.add(MoreModel(R.drawable.ic_vacation,"Logout","logout"))
+        moreList.add(MoreModel(R.drawable.ic_vacation, "Sales Tax Exemption", "salesTax"))
+        moreList.add(MoreModel(R.drawable.ic_vacation, "Terms & Conditions", "termsCondition"))
+        moreList.add(MoreModel(R.drawable.ic_vacation, "Privacy Policy", "privacyPolicy"))
+        moreList.add(MoreModel(R.drawable.ic_vacation, "F.A.Q", "faq"))
+        moreList.add(MoreModel(R.drawable.ic_vacation, "Logout", "logout"))
 
         moreAdapter = MoreAdapter(moreList, mClicks)
         bind.accountView.moreRecycler.adapter = moreAdapter
 
-        gridList.add(MoreModel(R.drawable.ic_box,"Inventory","inventory"))
-        gridList.add(MoreModel(R.drawable.ic_mic,"Shows", "shows"))
-        gridList.add(MoreModel(R.drawable.ic_order,"My Order", "order"))
-        gridList.add(MoreModel(R.drawable.ic_walllet,"Wallet", "wallet"))
-        gridList.add(MoreModel(R.drawable.ic_tag,"Offers", "offers"))
-        gridList.add(MoreModel(R.drawable.ic_tag,"Tips","tips"))
-        gridList.add(MoreModel(R.drawable.ic_shipping,"Shipping", "shipping"))
-        gridList.add(MoreModel(R.drawable.ic_people,"Affiliate Program","program"))
-        gridList.add(MoreModel(R.drawable.ic_training,"Seller Training","training"))
-        gridList.add(MoreModel(R.drawable.ic_shop,"Premier Shop","shop"))
-        gridList.add(MoreModel(R.drawable.ic_graph,"Seller Status","sellerStatus"))
-        gridList.add(MoreModel(R.drawable.ic_graph,"Seller Analytics","sellerAnalytics"))
-        gridList.add(MoreModel(R.drawable.ic_speaker,"Promote Tools","promote"))
-        gridList.add(MoreModel(R.drawable.ic_checked_tag,"Seller Verification","sellerVerification"))
-        gridList.add(MoreModel(R.drawable.ic_checked_tag,"Identity Verification","identityVerification"))
+        gridList.add(MoreModel(R.drawable.ic_box, "Inventory", "inventory"))
+        gridList.add(MoreModel(R.drawable.ic_mic, "Shows", "shows"))
+        gridList.add(MoreModel(R.drawable.ic_order, "My Order", "order"))
+        gridList.add(MoreModel(R.drawable.ic_walllet, "Wallet", "wallet"))
+        gridList.add(MoreModel(R.drawable.ic_tag, "Offers", "offers"))
+        gridList.add(MoreModel(R.drawable.ic_tag, "Tips", "tips"))
+        gridList.add(MoreModel(R.drawable.ic_shipping, "Shipping", "shipping"))
+        gridList.add(MoreModel(R.drawable.ic_people, "Affiliate Program", "program"))
+        gridList.add(MoreModel(R.drawable.ic_training, "Seller Training", "training"))
+        gridList.add(MoreModel(R.drawable.ic_shop, "Premier Shop", "shop"))
+        gridList.add(MoreModel(R.drawable.ic_graph, "Seller Status", "sellerStatus"))
+        gridList.add(MoreModel(R.drawable.ic_graph, "Seller Analytics", "sellerAnalytics"))
+        gridList.add(MoreModel(R.drawable.ic_speaker, "Promote Tools", "promote"))
+        gridList.add(
+            MoreModel(
+                R.drawable.ic_checked_tag,
+                "Seller Verification",
+                "sellerVerification"
+            )
+        )
+        gridList.add(
+            MoreModel(
+                R.drawable.ic_checked_tag,
+                "Identity Verification",
+                "identityVerification"
+            )
+        )
 
-        gridAdapter= GridAdapter(gridList,gridClick)
+        gridAdapter = GridAdapter(gridList, gridClick)
         bind.sellerHub.gridRecycler.adapter = gridAdapter
 
-        accountGridList.add(MoreModel(R.drawable.ic_box,"Payment & Shipping","paymentShipping"))
-        accountGridList.add(MoreModel(R.drawable.ic_mic,"Addresses", "address"))
-        accountGridList.add(MoreModel(R.drawable.ic_order,"Trusted Buyer", "buyer"))
-        accountGridList.add(MoreModel(R.drawable.ic_walllet,"Notifications", "notification"))
-        accountGridList.add(MoreModel(R.drawable.ic_tag,"Preferences", "preferences"))
+        accountGridList.add(MoreModel(R.drawable.ic_box, "Payment & Shipping", "paymentShipping"))
+        accountGridList.add(MoreModel(R.drawable.ic_mic, "Addresses", "address"))
+        accountGridList.add(MoreModel(R.drawable.ic_order, "Trusted Buyer", "buyer"))
+        accountGridList.add(MoreModel(R.drawable.ic_walllet, "Notifications", "notification"))
+        accountGridList.add(MoreModel(R.drawable.ic_tag, "Preferences", "preferences"))
 
-        accountGridAdapter= GridAdapter(accountGridList,accountGridClick)
+        accountGridAdapter = GridAdapter(accountGridList, accountGridClick)
         bind.accountView.gridRecycler.adapter = accountGridAdapter
 
         bind.editIcon.setOnClickListener {
 
-            startActivity(Intent(mCtx , UpdateAccountActivity::class.java))
+            startActivity(Intent(mCtx, UpdateAccountActivity::class.java))
         }
 
         viewModel.logoutRepo.observe(viewLifecycleOwner) {

@@ -13,7 +13,7 @@ data class AboutUsResponse(
     @SerializedName("message")
     val message: String?,
     @SerializedName("status")
-    val status: String?
+    val status: String?,
 ) {
     @Keep
     data class Data(
@@ -36,7 +36,7 @@ data class AboutUsResponse(
         @SerializedName("social_media")
         val socialMedia: List<SocialMedia?>?,
         @SerializedName("team")
-        val team: List<Team?>?
+        val team: List<Team?>?,
     ) {
         @Keep
         data class Feature(
@@ -45,7 +45,7 @@ data class AboutUsResponse(
             @SerializedName("icon")
             val icon: String?,
             @SerializedName("title")
-            val title: String?
+            val title: String?,
         )
 
         @Keep
@@ -53,7 +53,7 @@ data class AboutUsResponse(
             @SerializedName("label")
             val label: String?,
             @SerializedName("value")
-            val value: String?
+            val value: String?,
         )
 
         @Keep
@@ -61,14 +61,14 @@ data class AboutUsResponse(
             @SerializedName("platform")
             val platform: Int?,
             @SerializedName("url")
-            val url: Url?
+            val url: Url?,
         ) {
             @Keep
             data class Url(
                 @SerializedName("platform")
                 val platform: String?,
                 @SerializedName("url")
-                val url: String?
+                val url: String?,
             )
         }
 
@@ -79,7 +79,7 @@ data class AboutUsResponse(
             @SerializedName("name")
             val name: String?,
             @SerializedName("role")
-            val role: String?
+            val role: String?,
         )
     }
 }
