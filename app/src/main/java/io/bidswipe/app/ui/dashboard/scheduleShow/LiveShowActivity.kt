@@ -702,10 +702,7 @@ class LiveShowActivity : BaseActivity() {
 			viewerCount = 1,
 			highestBid = "",
 			isLive = true,
-			time = Utils.getTimeFromTimestamp(
-				System.currentTimeMillis() / 1000,
-				"yyyy-MM-dd_hh:mm:ss_a"
-			),
+			time = System.currentTimeMillis().toString(),
 			showId = showId
 		)
 

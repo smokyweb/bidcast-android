@@ -113,6 +113,7 @@ class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
             }
         }
     }
+
     private fun launchWeb(url: String) {
         try {
             CustomTabsIntent.Builder().apply {
@@ -131,7 +132,6 @@ class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
             startActivity(Intent(Intent.ACTION_VIEW, url.toUri()))
         }
     }
-
 
     private val accountGridClick = object : RecyclerClicks {
         override fun itemClick(pos: Int, status: String?) {
@@ -185,11 +185,9 @@ class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-
+        App.getProfile()
 
         App.profileResponse.observe(viewLifecycleOwner) {
-
-
             bind.userName.text = it?.username.toString()
             bind.sellerSince.text = it?.bio.toString()
             bind.userProfile.loadUrl(mCtx, it?.profileImage.toString())
@@ -250,7 +248,6 @@ class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
         bind.accountView.gridRecycler.adapter = accountGridAdapter
 
         bind.editIcon.setOnClickListener {
-
             startActivity(Intent(mCtx, UpdateAccountActivity::class.java))
         }
 

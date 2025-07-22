@@ -23,6 +23,8 @@ class StreamViewModel @Inject constructor(val repo: DashRepository) : ViewModel(
     private val _streams = MutableLiveData<List<LiveShowModel>>()
     val streams: LiveData<List<LiveShowModel>> = _streams
 
+    var previousRoomId = ""
+
     fun setStreams(newStreams: List<LiveShowModel>) {
         _streams.value = newStreams
     }
