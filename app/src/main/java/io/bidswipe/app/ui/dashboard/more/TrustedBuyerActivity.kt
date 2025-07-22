@@ -23,13 +23,6 @@ import io.bidswipe.app.utils.runSafe
 import java.io.File
 
 class TrustedBuyerActivity : BaseActivity() {
-/*    override fun getModel(): Class<MoreViewModel> = MoreViewModel::class.java
-
-    override fun getBind(
-        inflater: LayoutInflater,
-        view: ViewGroup?
-    ) = FragmentTrustedBuyerBinding.inflate(inflater,view,false)*/
-
 
     private val bind by bind (ActivityTrustedBuyerBinding::inflate)
 

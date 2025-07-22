@@ -34,6 +34,7 @@ import io.bidswipe.app.utils.loadUrl
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.toAuth
 import androidx.core.net.toUri
+import io.bidswipe.app.ui.dashboard.sellerHub.SellerVerificationActivity
 
 class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
 
@@ -172,12 +173,30 @@ class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
 
     private val gridClick = object : RecyclerClicks {
         override fun itemClick(pos: Int, status: String?) {
-            startActivity(
-                Intent(mCtx, SellerHubActivity::class.java).putExtra(
-                    "slug",
-                    gridList[pos].slug
-                ).putExtra("url", kycUrl)
-            )
+
+            when (gridList[pos].slug) {
+
+                "sellerVerification" -> {
+                    startActivity(
+                        Intent(mCtx, SellerVerificationActivity::class.java).putExtra(
+                            "slug",
+                            gridList[pos].slug
+                        )
+                    )
+                }
+
+                else -> {
+                    startActivity(
+                        Intent(mCtx, SellerHubActivity::class.java).putExtra(
+                            "slug",
+                            gridList[pos].slug
+                        ).putExtra("url", kycUrl)
+                    )
+
+                }
+
+            }
+
         }
 
     }

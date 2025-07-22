@@ -110,6 +110,10 @@
         <activity
             android:name=".ui.dashboard.more.TrustedBuyerActivity"
             android:exported="false" />
+
+        <activity
+            android:name=".ui.dashboard.sellerHub.SellerVerificationActivity"
+            android:exported="false" />
         <activity
             android:name="com.canhub.cropper.CropImageActivity"
             android:screenOrientation="portrait"

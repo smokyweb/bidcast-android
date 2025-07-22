@@ -1,6 +1,7 @@
 package io.bidswipe.app.ui.dashboard
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -17,23 +18,30 @@ import com.google.firebase.messaging.FirebaseMessaging
 import io.bidswipe.app.App
 import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseActivity
+import io.bidswipe.app.controller.MakeOfferAdapter
 import io.bidswipe.app.controller.SellAdapter
 import io.bidswipe.app.databinding.ActivityDashBinding
+import io.bidswipe.app.databinding.MakeOfferSheetBinding
+import io.bidswipe.app.databinding.PaymentAndAddressSheetBinding
 import io.bidswipe.app.interfaces.AlertClicks
 import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.model.SellModel
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.ui.custom.AppBottomSheet
+import io.bidswipe.app.ui.dashboard.sellerHub.SellerVerificationActivity
 import io.bidswipe.app.utils.Alerts
 import io.bidswipe.app.utils.Const
 import io.bidswipe.app.utils.Prefs
+import io.bidswipe.app.utils.asMoney
 import io.bidswipe.app.utils.bind
+import io.bidswipe.app.utils.hideKeyboard
 import io.bidswipe.app.utils.ids
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request
 import io.bidswipe.app.utils.toListProduct
 import io.bidswipe.app.utils.toScheduleShow
 import io.bidswipe.app.utils.toTutorials
+import io.bidswipe.app.utils.value
 
 class DashActivity : BaseActivity(), NavController.OnDestinationChangedListener {
 
@@ -196,39 +204,36 @@ class DashActivity : BaseActivity(), NavController.OnDestinationChangedListener 
             override fun itemClick(pos: Int, status: String?) {
 
                 when (pos) {
-                    0 -> {
-
-                        if (App.profileResponse.value?.sellerIdentityStatus == "verified"){
-                            if ((App.profileResponse.value?.hasCardAdded == true) && (App.profileResponse.value?.hasShippingAddress == true)){
-                                startActivity(this@DashActivity.toListProduct())
-                            }else{
-
-                                Alerts.error(this@DashActivity,"Please add Payment card and Address ")
-
-                            }
-                        }else{
-
-                            Alerts.error(this@DashActivity,"Verify as a Seller")
-
-                        }
-
-
-                    }
-
-                    1 -> {
-
-                       if (App.profileResponse.value?.isFirstShowCreated == true){
-                           startActivity(this@DashActivity.toScheduleShow(from = "dash"))
-                       }else{
-                           startActivity(this@DashActivity.toTutorials())
-                       }
-
-                    }
-
                     2 -> {
                         bind.bottomBar.selectedItemId = ids.accountFragment
+                        return
                     }
+                }
 
+                val profile = App.profileResponse.value
+
+                if (profile?.sellerIdentityStatus != "verified") {
+                    startActivity(Intent(this@DashActivity, SellerVerificationActivity::class.java))
+                    return
+                }
+
+                if (profile.hasCardAdded != true || profile.hasShippingAddress != true) {
+                    showPaymentAndAddressSheet()
+                    return
+                }
+
+                when (pos) {
+                    0 -> startActivity(this@DashActivity.toListProduct())
+
+                    1 -> {
+                        val isFirstShow = profile.isFirstShowCreated == true
+                        val intent = if (isFirstShow) {
+                            this@DashActivity.toScheduleShow(from = "dash")
+                        } else {
+                            this@DashActivity.toTutorials()
+                        }
+                        startActivity(intent)
+                    }
                 }
             }
 
@@ -291,7 +296,6 @@ class DashActivity : BaseActivity(), NavController.OnDestinationChangedListener 
 
     }
 
-
     fun getDeviceToken(context: Context, token: (token: String) -> Unit) {
         Log.d(TAG, "getDeviceToken: ")
         FirebaseMessaging.getInstance().token.addOnCompleteListener {
@@ -313,6 +317,24 @@ class DashActivity : BaseActivity(), NavController.OnDestinationChangedListener 
             }
             token(deviceToken)
         }
+    }
+
+    fun showPaymentAndAddressSheet() {
+        var paymentAddressBind = PaymentAndAddressSheetBinding.bind(
+            layoutInflater.inflate(
+                R.layout.payment_and_address_sheet,
+                null,
+                false
+            )
+        )
+        var makeOfferSheet = Alerts.appBottomSheet(this, true, paymentAddressBind)
+
+        paymentAddressBind.close.setOnClickListener {
+            makeOfferSheet.dismiss()
+        }
+
+
+        makeOfferSheet.show()
     }
 
 }
