@@ -55,9 +55,6 @@ import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request
 import io.bidswipe.app.utils.runSafe
 import io.bidswipe.app.utils.value
-import io.bidswipe.app.utils.StreamingManager
-import io.bidswipe.app.utils.ChatManager
-import io.bidswipe.app.utils.Const
 
 class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBinding>() {
 
@@ -72,8 +69,6 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 	private lateinit var streamID: String
 	private var commentList = mutableListOf<LiveChatModel?>()
 	private lateinit var commentAdapter: CommentAdapter
-	private lateinit var streamingManager: StreamingManager
-	private lateinit var chatManager: ChatManager
 
 	companion object {
 		fun newInstance(roomID: String, streamID: String) = WatchStreamFragment().apply {
@@ -88,38 +83,12 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 		super.onCreate(savedInstanceState)
 		roomID = requireArguments().getString("roomID") ?: ""
 		streamID = requireArguments().getString("streamID") ?: ""
-		streamingManager = StreamingManager(requireContext(), requireActivity().application)
-		chatManager = ChatManager(requireActivity().application, Const.APP_ID.toLong(), Const.APP_SIGN)
 	}
 
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		super.onViewCreated(view, savedInstanceState)
 
 		log("RoomId: $roomID")
-
-		// Set up chat callbacks
-		chatManager.onMessageReceived = { model ->
-			commentList.add(model)
-			commentAdapter.notifyItemInserted(commentList.size - 1)
-			bind.recycler.post { bind.recycler.smoothScrollToPosition(commentList.size) }
-		}
-		chatManager.onMessageSent = { model ->
-			bind.text.setText("")
-			commentList.add(model)
-			commentAdapter.notifyItemInserted(commentList.size - 1)
-			bind.recycler.post { bind.recycler.smoothScrollToPosition(commentList.size) }
-		}
-
-		// Set up streaming callbacks (if needed for playback events)
-		streamingManager.onStreamError = { errorMsg ->
-			errorToast(errorMsg)
-		}
-		streamingManager.onRoomStateChanged = { reason, errorCode ->
-			// Handle room state changes if needed
-		}
-
-		streamingManager.createEngine(Const.APP_ID.toLong(), Const.APP_SIGN)
-		chatManager.initializeZIM()
 
 		bind.cutButton.setOnClickListener {
 			finish()
@@ -158,11 +127,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 //                sendMessage(bind.text.value())
 
 				if (App.profileResponse.value?.buyerIdentityStatus == "verified") {
-					chatManager.sendTextMessage(
-						content = bind.text.value(),
-						extendedData = ZIMExtendedData(userImage, userId, userName).toJson(),
-						roomId = roomID
-					)
+					sendZimMessage(bind.text.value())
 				} else {
 					verificationDialog()
 				}
@@ -318,7 +283,9 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
 	override fun onResume() {
 		super.onResume()
+
 		loginAndPlay()
+
 	}
 
 	override fun onPause() {
@@ -327,37 +294,40 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 	}
 
 	private fun loginAndPlay() {
-		streamingManager.loginRoom(
-			roomId = roomID,
-			userId = userName.replace(" ", ".") + "_" + userId,
-			userName = userImage,
-			userImage = userImage
-		) { error, _ ->
-			if (error == 0) {
-				val canvas = bind.hostView
-				streamingManager.startPreview(canvas) // For playback, you may want a startPlayingStream method
-				// Chat login/join
-				chatManager.login(
-					userId = userName.replace(" ", ".") + "_" + userId,
-					userName = userImage
-				) { chatError ->
-					if (chatError == null) {
-						chatManager.createRoom(roomID, roomID + "_room") { _, _ ->
-							chatManager.sendTextMessage(
-								content = "joined 44B",
-								extendedData = ZIMExtendedData(userImage, userId, userName).toJson(),
-								roomId = roomID
-							)
-						}
-					}
+		val user = ZegoUser(userName.replace(" ", ".") + "_" + userId, userImage)
+		ZegoExpressEngine.getEngine().loginRoom(roomID, user, ZegoRoomConfig())
+
+		val canvas = ZegoCanvas(bind.hostView).apply {
+			viewMode = ZegoViewMode.ASPECT_FILL
+		}
+		ZegoExpressEngine.getEngine().startPlayingStream(roomID, canvas)
+		if (viewModel.previousRoomId.isNotEmpty()) {
+			val roomInfo = ZIMRoomInfo().also {
+				it.roomID = roomID
+				it.roomName = roomID + "_room"
+			}
+			ZIM.getInstance().switchRoom(viewModel.previousRoomId, roomInfo, false, null) { roomInfo, errorInfo ->
+				if (errorInfo != null) {
+					log("JOINED ROOM CHAT $roomInfo")
+
+					ZIM.getInstance().setEventHandler(zimEventHandler)
+
+					viewModel.previousRoomId = roomID
+
+					sendZimMessage("joined \uD83D\uDC4B")
+
+				} else {
+					log("JOIN ROOM CHAT ERROR : ${errorInfo.toString()}")
 				}
 			}
+		} else {
+			setupZIMChat()
 		}
 	}
 
 	private fun stopStream() {
-		streamingManager.stopPreview() // For playback, you may want a stopPlayingStream method
-		streamingManager.logoutRoom()
+		ZegoExpressEngine.getEngine().stopPlayingStream(roomID)
+		ZegoExpressEngine.getEngine().logoutRoom(roomID)
 	}
 
 	private fun destroyEngine() {
