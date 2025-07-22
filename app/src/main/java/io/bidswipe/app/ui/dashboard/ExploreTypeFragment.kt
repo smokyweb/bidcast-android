@@ -50,7 +50,6 @@ class ExploreTypeFragment : BaseFragment<DashViewModel,FragmentExploreTypeBindin
                 }
 
                 "viewShow" ->{
-
                     if (showList[pos]?.isLive == true){
                         startActivity(Intent(mCtx, ViewLiveShowActivity::class.java).putExtra("position", pos).putParcelableArrayListExtra("roomIdsList", romIdsList as ArrayList))
                     }

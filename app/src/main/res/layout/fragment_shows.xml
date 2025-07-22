@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".ui.dashboard.sellerHub.ShowsFragment">
 
     <io.bidswipe.app.ui.custom.Header
         android:id="@+id/header"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:headerMode="APP_TEXT_ACTION"
+        app:headerMode="BACK_BUTTON_TITLE_ACTION"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -24,9 +24,9 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:background="@color/background"
-        android:paddingHorizontal="8dp"
         android:orientation="vertical"
-        app:layout_constraintBottom_toTopOf="@id/buttonLayout"
+        android:paddingHorizontal="8dp"
+        app:layout_constraintBottom_toTopOf="@id/addNewProduct"
         app:layout_constraintTop_toBottomOf="@+id/header">
 
         <com.google.android.material.card.MaterialCardView
@@ -60,53 +60,66 @@
                     android:text="@string/past_shows" />
 
             </com.google.android.material.tabs.TabLayout>
-
         </com.google.android.material.card.MaterialCardView>
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recycler"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/heading"
-            tools:itemCount="6"
-            tools:listitem="@layout/show_listing_item" />
-
-        <io.bidswipe.app.ui.custom.NoDataView
-            android:id="@+id/noData"
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            android:id="@+id/swipeRefreshLayout"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1"
-            android:visibility="gone"
-            app:title_text="No Shows Found"/>
+            android:layout_weight="1">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recycler"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    tools:itemCount="6"
+                    tools:listitem="@layout/show_listing_item" />
+
+                <io.bidswipe.app.ui.custom.NoDataView
+                    android:id="@+id/noData"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:visibility="gone"
+                    app:title_text="No Shows Found" />
+
+                <io.bidswipe.app.ui.custom.NoDataView
+                    android:id="@+id/noInternet"
+                    style="@style/noInternetStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
     </LinearLayout>
 
-    <LinearLayout
-        android:id="@+id/buttonLayout"
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/addNewProduct"
+        style="@style/appBtn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:visibility="visible"
-        app:layout_constraintBottom_toBottomOf="parent">
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/addNewProduct"
-            style="@style/appBtn"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/margin"
-            android:paddingHorizontal="@dimen/margin"
-            android:text="@string/new_show" />
-
-    </LinearLayout>
+        android:layout_margin="@dimen/margin"
+        android:paddingHorizontal="@dimen/margin"
+        android:text="@string/new_show"
+        app:icon="@drawable/ic_add"
+        app:iconGravity="textStart"
+        app:iconPadding="8dp"
+        app:layout_constraintBottom_toBottomOf="parent" />
 
     <io.bidswipe.app.ui.custom.LoaderView
         android:id="@+id/loader"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone"/>
+        android:visibility="gone" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

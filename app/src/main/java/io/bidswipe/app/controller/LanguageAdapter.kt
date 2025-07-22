@@ -8,13 +8,18 @@ import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.model.LangModel
 import io.bidswipe.app.utils.Prefs
 
-class LanguageAdapter(private val languages: List<LangModel?>,
-                      private val mClicks: RecyclerClicks
+class LanguageAdapter(
+    private val languages: List<LangModel?>,
+    private val mClicks: RecyclerClicks,
 ) : BaseAdapter<LangModel, CheckboxItemBinding>(languages) {
     override fun bindView(inflater: LayoutInflater, parent: ViewGroup) =
         CheckboxItemBinding.inflate(inflater, parent, false)
 
-    override fun onBind(holder: BaseViewHolder<CheckboxItemBinding>, position: Int, item: LangModel?) {
+    override fun onBind(
+        holder: BaseViewHolder<CheckboxItemBinding>,
+        position: Int,
+        item: LangModel?,
+    ) {
         with(holder) {
 
             val isSelected = languages[position]?.locale?.language == Prefs(mCtx).localeLanguage()

@@ -13,7 +13,7 @@ data class GetShippingAddressResponse(
     @SerializedName("message")
     val message: String?,
     @SerializedName("status")
-    val status: String?
+    val status: String?,
 ) {
     @Keep
     data class Data(
@@ -33,6 +33,6 @@ data class GetShippingAddressResponse(
         val type: String?,
         @SerializedName("user_id")
         val userId: Int?,
-        var selected : Boolean = false
+        var selected: Boolean = false,
     )
 }

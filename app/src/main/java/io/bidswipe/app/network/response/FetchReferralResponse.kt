@@ -13,7 +13,7 @@ data class FetchReferralResponse(
     @SerializedName("message")
     val message: String?,
     @SerializedName("status")
-    val status: String?
+    val status: String?,
 ) {
     @Keep
     data class Data(
@@ -28,6 +28,6 @@ data class FetchReferralResponse(
         @SerializedName("total_referred")
         val totalReferred: Int?,
         @SerializedName("username")
-        val username: Any?
+        val username: Any?,
     )
 }

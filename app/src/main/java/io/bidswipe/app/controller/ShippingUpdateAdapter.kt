@@ -7,7 +7,8 @@ import io.bidswipe.app.databinding.ShippingUpdateItemBinding
 import io.bidswipe.app.network.response.GetOrderDetailsResponse
 import io.bidswipe.app.utils.Utils
 
-class ShippingUpdateAdapter  (val mList: MutableList<GetOrderDetailsResponse.Data.ShippingTracking?>
+class ShippingUpdateAdapter(
+    val mList: MutableList<GetOrderDetailsResponse.Data.ShippingTracking?>,
 ) : BaseAdapter<GetOrderDetailsResponse.Data.ShippingTracking, ShippingUpdateItemBinding>(mList) {
 
     override fun bindView(inflater: LayoutInflater, parent: ViewGroup) =
@@ -16,12 +17,16 @@ class ShippingUpdateAdapter  (val mList: MutableList<GetOrderDetailsResponse.Dat
     override fun onBind(
         holder: BaseViewHolder<ShippingUpdateItemBinding>,
         position: Int,
-        item: GetOrderDetailsResponse.Data.ShippingTracking?
+        item: GetOrderDetailsResponse.Data.ShippingTracking?,
     ) {
         with(holder) {
 
             bind.title.text = item?.title.toString()
-            bind.subTitle.text = Utils.getFormattedDateTime("yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'","MMM dd, yyyy - HH:mm",item?.createdAt.toString())
+            bind.subTitle.text = Utils.getFormattedDateTime(
+                "yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'",
+                "MMM dd, yyyy - HH:mm",
+                item?.createdAt.toString()
+            )
 
         }
     }

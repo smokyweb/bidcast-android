@@ -8,7 +8,7 @@ import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.model.MoreModel
 
 class MoreAdapter(
-    val mList: MutableList<MoreModel>, val mClicks: RecyclerClicks
+    val mList: MutableList<MoreModel>, val mClicks: RecyclerClicks,
 ) : BaseAdapter<MoreModel, MenuItemBinding>(mList) {
 
     override fun bindView(inflater: LayoutInflater, parent: ViewGroup) =
@@ -17,7 +17,7 @@ class MoreAdapter(
     override fun onBind(
         holder: BaseViewHolder<MenuItemBinding>,
         position: Int,
-        item: MoreModel?
+        item: MoreModel?,
     ) {
         with(holder) {
 

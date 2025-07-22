@@ -63,11 +63,11 @@
             app:popEnterAnim="@anim/slide_in_left"
             app:popExitAnim="@anim/slide_out_right"/>
     </fragment>
-    <fragment
+<!--    <fragment
         android:id="@+id/trustedBuyerFragment"
         android:name="io.bidswipe.app.ui.dashboard.more.TrustedBuyerFragment"
         android:label="fragment_trusted_buyer"
-        tools:layout="@layout/fragment_trusted_buyer" />
+        tools:layout="@layout/activity_trusted_buyer" />-->
     <fragment
         android:id="@+id/preferencesFragment"
         android:name="io.bidswipe.app.ui.dashboard.more.PreferencesFragment"

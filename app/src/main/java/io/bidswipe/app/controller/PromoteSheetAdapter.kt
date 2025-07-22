@@ -6,14 +6,11 @@ import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseAdapter
-import io.bidswipe.app.base.BaseAdapter.BaseViewHolder
-import io.bidswipe.app.databinding.MoreOptionItemBinding
-import io.bidswipe.app.databinding.ProductListItemBinding
 import io.bidswipe.app.databinding.PromoteItemBinding
 import io.bidswipe.app.interfaces.RecyclerClicks
-import io.bidswipe.app.model.LiveMoreOption
 
-class PromoteSheetAdapter(mList: MutableList<String?>, val mClicks: RecyclerClicks
+class PromoteSheetAdapter(
+    mList: MutableList<String?>, val mClicks: RecyclerClicks,
 ) : BaseAdapter<String?, PromoteItemBinding>(mList) {
 
     override fun bindView(inflater: LayoutInflater, parent: ViewGroup) =
@@ -22,7 +19,7 @@ class PromoteSheetAdapter(mList: MutableList<String?>, val mClicks: RecyclerClic
     override fun onBind(
         holder: BaseViewHolder<PromoteItemBinding>,
         position: Int,
-        item: String?
+        item: String?,
     ) {
         with(holder) {
 
@@ -32,7 +29,7 @@ class PromoteSheetAdapter(mList: MutableList<String?>, val mClicks: RecyclerClic
 
 
             val startColor = ContextCompat.getColor(mCtx, R.color.primary)
-            val endColor =  ContextCompat.getColor(mCtx, R.color.secondary)
+            val endColor = ContextCompat.getColor(mCtx, R.color.secondary)
 
             val gradientDrawable = GradientDrawable(
                 GradientDrawable.Orientation.LEFT_RIGHT,  // or TOP_BOTTOM, BL_TR etc
@@ -42,7 +39,7 @@ class PromoteSheetAdapter(mList: MutableList<String?>, val mClicks: RecyclerClic
             gradientDrawable.cornerRadius = 16f  // optional rounding
 
             // Apply as background to the CardView (or any view you want)
-           bind.root.background = gradientDrawable
+            bind.root.background = gradientDrawable
 
         }
     }

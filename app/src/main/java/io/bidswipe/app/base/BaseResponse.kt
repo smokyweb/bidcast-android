@@ -25,5 +25,5 @@ open class BaseResponse(
 	val currentPage: Int? = null,
 	@Keep
 	@SerializedName("per_page")
-	val perPage: Int? = null
+	val perPage: Int? = null,
 )

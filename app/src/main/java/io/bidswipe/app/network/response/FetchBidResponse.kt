@@ -20,7 +20,7 @@ data class FetchBidResponse(
     @SerializedName("total")
     val total: Int?,
     @SerializedName("totalPage")
-    val totalPage: Int?
+    val totalPage: Int?,
 ) {
     @Keep
     data class Data(
@@ -41,7 +41,7 @@ data class FetchBidResponse(
         @SerializedName("user")
         val user: User?,
         @SerializedName("user_id")
-        val userId: Int?
+        val userId: Int?,
     ) {
         @Keep
         data class Product(
@@ -78,7 +78,7 @@ data class FetchBidResponse(
             @SerializedName("title")
             val title: String?,
             @SerializedName("user_id")
-            val userId: Int?
+            val userId: Int?,
         )
 
         @Keep
@@ -106,7 +106,7 @@ data class FetchBidResponse(
             @SerializedName("thumbnail")
             val thumbnail: Any?,
             @SerializedName("username")
-            val username: String?
+            val username: String?,
         )
     }
 }

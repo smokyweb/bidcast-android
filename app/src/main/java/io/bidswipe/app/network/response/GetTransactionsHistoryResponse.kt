@@ -21,7 +21,7 @@ data class GetTransactionsHistoryResponse(
     @SerializedName("total")
     val total: Int?,
     @SerializedName("totalPage")
-    val totalPage: Int?
+    val totalPage: Int?,
 ) {
     @Keep
     data class Data(
@@ -60,6 +60,6 @@ data class GetTransactionsHistoryResponse(
         @SerializedName("type")
         val type: String?,
         @SerializedName("user_id")
-        val userId: Int?
+        val userId: Int?,
     )
 }

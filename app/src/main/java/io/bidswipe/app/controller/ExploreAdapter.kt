@@ -12,7 +12,7 @@ import io.bidswipe.app.network.response.GetCategoryResponse
 import io.bidswipe.app.utils.loadUrl
 
 class ExploreAdapter(
-    val mList: MutableList<GetCategoryResponse.Data?>, val mClicks: RecyclerClicks
+    val mList: MutableList<GetCategoryResponse.Data?>, val mClicks: RecyclerClicks,
 ) : BaseAdapter<GetCategoryResponse.Data?, ExploreItemBinding>(mList) {
 
     override fun bindView(inflater: LayoutInflater, parent: ViewGroup) =
@@ -21,7 +21,7 @@ class ExploreAdapter(
     override fun onBind(
         holder: BaseViewHolder<ExploreItemBinding>,
         position: Int,
-        item: GetCategoryResponse.Data??
+        item: GetCategoryResponse.Data??,
     ) {
         with(holder) {
 

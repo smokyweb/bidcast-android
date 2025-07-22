@@ -2,37 +2,36 @@ package io.bidswipe.app.network.repository
 
 import io.bidswipe.app.base.BaseRepository
 import io.bidswipe.app.network.ApiInterface
-import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import javax.inject.Inject
 
 
-class AuthRepository @Inject constructor(private val api: ApiInterface) : BaseRepository(){
+class AuthRepository @Inject constructor(private val api: ApiInterface) : BaseRepository() {
 
     suspend fun signUp(
         firstName: RequestBody,
         lastName: RequestBody,
         email: RequestBody,
         password: RequestBody,
-        confirmPassword: RequestBody
+        confirmPassword: RequestBody,
     ) = call { api.signUp(firstName, lastName, email, password, confirmPassword) }
 
     suspend fun login(
-        email : RequestBody,
-        password: RequestBody
+        email: RequestBody,
+        password: RequestBody,
     ) = call {
-        api.login(email , password )
+        api.login(email, password)
     }
 
     suspend fun forgotPassword(
-        email : RequestBody
+        email: RequestBody,
     ) = call {
-        api.forgotPassword(email )
+        api.forgotPassword(email)
     }
 
     suspend fun verifyOtp(
-        email : RequestBody,
-        code : RequestBody
+        email: RequestBody,
+        code: RequestBody,
     ) = call {
         api.verifyOtp(email, code)
     }
@@ -40,7 +39,7 @@ class AuthRepository @Inject constructor(private val api: ApiInterface) : BaseRe
     suspend fun resetPassword(
         email: RequestBody,
         password: RequestBody,
-        confirmPassword: RequestBody
+        confirmPassword: RequestBody,
     ) = call { api.resetPassword(email, password, confirmPassword) }
 
 }

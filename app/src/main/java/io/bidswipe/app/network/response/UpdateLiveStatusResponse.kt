@@ -13,7 +13,7 @@ data class UpdateLiveStatusResponse(
     @SerializedName("message")
     val message: String?,
     @SerializedName("status")
-    val status: String?
+    val status: String?,
 ) {
     @Keep
     data class Data(
@@ -50,7 +50,7 @@ data class UpdateLiveStatusResponse(
         @SerializedName("user_id")
         val userId: Int?,
         @SerializedName("viewer_count")
-        val viewerCount: Int?
+        val viewerCount: Int?,
     ) {
         @Keep
         data class Category(
@@ -63,7 +63,7 @@ data class UpdateLiveStatusResponse(
             @SerializedName("name")
             val name: String?,
             @SerializedName("thumbnail")
-            val thumbnail: Any?
+            val thumbnail: Any?,
         )
 
         @Keep
@@ -101,7 +101,7 @@ data class UpdateLiveStatusResponse(
             @SerializedName("title")
             val title: String?,
             @SerializedName("user_id")
-            val userId: Int?
+            val userId: Int?,
         )
 
         @Keep
@@ -133,7 +133,7 @@ data class UpdateLiveStatusResponse(
             @SerializedName("thumbnail")
             val thumbnail: Any?,
             @SerializedName("username")
-            val username: String?
+            val username: String?,
         )
     }
 }

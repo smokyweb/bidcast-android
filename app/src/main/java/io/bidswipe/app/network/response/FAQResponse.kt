@@ -13,7 +13,7 @@ data class FAQResponse(
     @SerializedName("message")
     val message: String?,
     @SerializedName("status")
-    val status: String?
+    val status: String?,
 ) {
     @Keep
     data class Data(
@@ -23,6 +23,6 @@ data class FAQResponse(
         val id: Int?,
         @SerializedName("question")
         val question: String?,
-        var selected : Boolean ?= false
+        var selected: Boolean? = false,
     )
 }

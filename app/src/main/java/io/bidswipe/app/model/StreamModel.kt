@@ -5,7 +5,7 @@ import kotlinx.parcelize.Parcelize
 
 
 @Parcelize
-class StreamModel (
-    var roomId:String,
-    var streamId:String
+class StreamModel(
+    var roomId: String,
+    var streamId: String,
 ) : Parcelable

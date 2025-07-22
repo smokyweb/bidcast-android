@@ -3,7 +3,6 @@ package io.bidswipe.app.controller
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import io.bidswipe.app.base.BaseAdapter
-import io.bidswipe.app.base.BaseAdapter.BaseViewHolder
 import io.bidswipe.app.databinding.PurchasesItemBinding
 import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.network.response.GetProductsByStatusResponse
@@ -11,7 +10,8 @@ import io.bidswipe.app.utils.Utils
 import io.bidswipe.app.utils.asMoney
 import io.bidswipe.app.utils.loadUrl
 
-class SavedItemAdapter(mList: MutableList<GetProductsByStatusResponse.Data?>, val mClicks: RecyclerClicks
+class SavedItemAdapter(
+    mList: MutableList<GetProductsByStatusResponse.Data?>, val mClicks: RecyclerClicks,
 ) : BaseAdapter<GetProductsByStatusResponse.Data, PurchasesItemBinding>(mList) {
 
     override fun bindView(inflater: LayoutInflater, parent: ViewGroup) =
@@ -20,7 +20,7 @@ class SavedItemAdapter(mList: MutableList<GetProductsByStatusResponse.Data?>, va
     override fun onBind(
         holder: BaseViewHolder<PurchasesItemBinding>,
         position: Int,
-        item: GetProductsByStatusResponse.Data?
+        item: GetProductsByStatusResponse.Data?,
     ) {
         with(holder) {
 
@@ -40,9 +40,13 @@ class SavedItemAdapter(mList: MutableList<GetProductsByStatusResponse.Data?>, va
                 append(item?.product?.seller?.name)
             }
 
-            bind.date.text = Utils.getFormattedDateTime("yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'","MM/dd/yyyy",item?.product?.createdAt.toString())
+            bind.date.text = Utils.getFormattedDateTime(
+                "yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'",
+                "MM/dd/yyyy",
+                item?.product?.createdAt.toString()
+            )
 
-            bind.productImage.loadUrl(mCtx,item?.product?.images?.get(0).toString())
+            bind.productImage.loadUrl(mCtx, item?.product?.images?.get(0).toString())
 
         }
     }

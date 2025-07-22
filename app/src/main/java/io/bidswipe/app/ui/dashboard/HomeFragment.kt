@@ -1,8 +1,9 @@
 package io.bidswipe.app.ui.dashboard
 
+import android.annotation.SuppressLint
 import android.content.Intent
-import android.graphics.Typeface
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -23,6 +24,7 @@ import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.ui.dashboard.more.NotificationActivity
 import io.bidswipe.app.ui.dashboard.sellerProfile.SellerProfileActivity
 import io.bidswipe.app.ui.dashboard.watchStream.ViewLiveShowActivity
+import io.bidswipe.app.utils.Prefs
 import io.bidswipe.app.utils.Utils
 import io.bidswipe.app.utils.ids
 import io.bidswipe.app.utils.parse
@@ -30,163 +32,198 @@ import io.bidswipe.app.utils.request
 import io.bidswipe.app.utils.runSafe
 
 class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
-	
-	override fun getModel(): Class<DashViewModel> = DashViewModel::class.java
-	
-	override fun getBind(inflater: LayoutInflater, view: ViewGroup?) = FragmentHomeBinding.inflate(inflater, view, false)
-	
-	private lateinit var homeAdapter: HomeAdapter
-	private var showList = mutableListOf<GetMyShowResponse.Data?>()
-	private var categoriesList = mutableListOf<String>()
-	private var romIdsList = mutableListOf<StreamModel>()
 
-	private val mClick = object : RecyclerClicks {
-		override fun itemClick(pos: Int, status: String?) {
-			
-			when (status) {
-				"user" -> {
-					startActivity(Intent(mCtx, SellerProfileActivity::class.java).putExtra("userId",
-						showList[pos]?.userId.toString()
-					))
-				}
+    override fun getModel(): Class<DashViewModel> = DashViewModel::class.java
 
-				"viewShow" ->{
+    override fun getBind(inflater: LayoutInflater, view: ViewGroup?) =
+        FragmentHomeBinding.inflate(inflater, view, false)
 
-					if (showList[pos]?.isLive == true){
-						startActivity(Intent(mCtx, ViewLiveShowActivity::class.java).putExtra("position", pos).putParcelableArrayListExtra("roomIdsList", romIdsList as ArrayList))
-					}
+    private lateinit var homeAdapter: HomeAdapter
+    private var showList = mutableListOf<GetMyShowResponse.Data?>()
+    private var categoriesList = mutableListOf<String>()
+    private var romIdsList = mutableListOf<StreamModel>()
 
-				}
-			}
-			
-		}
-	}
-	
-	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-		super.onViewCreated(view, savedInstanceState)
-		
-		homeAdapter = HomeAdapter(showList, mClick)
-		
-		bind.recycler.adapter = homeAdapter
+    private val mClick = object : RecyclerClicks {
+        override fun itemClick(pos: Int, status: String?) {
 
-		bind.header.onMorePrimaryClick {
-			startActivity(Intent(mCtx , NotificationActivity::class.java).putExtra("slug","notification"))
-		}
+            when (status) {
+                "user" -> {
+                    startActivity(
+                        Intent(mCtx, SellerProfileActivity::class.java).putExtra(
+                            "userId",
+                            showList[pos]?.userId.toString()
+                        )
+                    )
+                }
 
-		bind.header.onMoreSecondaryClick {
-			findNavController().navigate(ids.goToSearchShowFragment)
-		}
+                "viewShow" -> {
 
-		selectTab(bind.live)
+                    if (showList[pos]?.isLive == true) {
+                        startActivity(
+                            Intent(
+                                mCtx,
+                                ViewLiveShowActivity::class.java
+                            ).putExtra("position", pos)
+                                .putParcelableArrayListExtra("roomIdsList", romIdsList as ArrayList)
+                        )
+                    }
 
-		bind.live.setOnClickListener { selectTab(it as TextView) }
-		bind.popular.setOnClickListener { selectTab(it as TextView) }
-		bind.comingSoon.setOnClickListener { selectTab(it as TextView) }
-		
-		categoriesList = mutableListOf("For You", "Collectibles", "Trading Cards")
-		categoriesList.forEach {
-			bind.chipGroup.addView(
-				Utils.makeAChip(
-					mCtx = mCtx,
-					text = it,
-					selected = false
-				)
-			)
-		}
-		
-		bind.chipGroup.setOnCheckedStateChangeListener { chipGroup, _ ->
-			runSafe {
-				val chipId = chipGroup.checkedChipId
-				chipGroup.indexOfChild(chipGroup.findViewById(chipId))
-			}
-		}
+                }
+            }
 
-		bind.loader.isVisible = true
+        }
+    }
+    private var selectedTabText = "live"
 
-		viewModel.getLiveShow("live".request())
+    @SuppressLint("NotifyDataSetChanged", "SuspiciousIndentation")
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
-		viewModel.getLiveShowRepo.observe(viewLifecycleOwner) {
-			when (it) {
-				is Resource.Success -> {
-					bind.loader.isVisible = false
+        homeAdapter = HomeAdapter(showList, mClick)
 
-					val mData = it.value.data
+        bind.recycler.adapter = homeAdapter
 
-					mData?.forEach {
-						romIdsList.add(StreamModel(it?.roomId.toString(),""))
-					}
+        bind.header.onMorePrimaryClick {
+            startActivity(
+                Intent(mCtx, NotificationActivity::class.java).putExtra(
+                    "slug",
+                    "notification"
+                )
+            )
+        }
 
-					showList.clear()
+        Log.d(TAG, "onViewCreated: ${Prefs(mCtx).getString(Prefs.PUSH_TOKEN)}")
 
-					mData?.forEach {
-						showList.add(it)
-					}
+        bind.header.onMoreSecondaryClick {
+            findNavController().navigate(ids.goToSearchShowFragment)
+        }
 
-					if (showList.isEmpty()){
-						bind.noData.isVisible = true
-						bind.recycler.isVisible = false
-					}else{
-						bind.noData.isVisible = false
-						bind.recycler.isVisible = true
-					}
+        bind.swipeRefreshLayout.setOnRefreshListener {
+            viewModel.getLiveShow(selectedTabText.request())
+        }
+
+        bind.noInternet.onClick {
+            bind.loader.isVisible = true
+            bind.noInternet.isVisible = false
+            viewModel.getLiveShow(selectedTabText.request())
+        }
+
+        selectTab(bind.live)
+
+        bind.live.setOnClickListener { selectTab(it as TextView) }
+        bind.popular.setOnClickListener { selectTab(it as TextView) }
+        bind.comingSoon.setOnClickListener { selectTab(it as TextView) }
+
+        categoriesList = mutableListOf("For You", "Collectibles", "Trading Cards")
+        categoriesList.forEach {
+            bind.chipGroup.addView(
+                Utils.makeAChip(
+                    mCtx = mCtx,
+                    text = it,
+                    selected = false
+                )
+            )
+        }
+
+        bind.chipGroup.setOnCheckedStateChangeListener { chipGroup, _ ->
+            runSafe {
+                val chipId = chipGroup.checkedChipId
+                chipGroup.indexOfChild(chipGroup.findViewById(chipId))
+            }
+        }
+
+        bind.loader.isVisible = true
+
+        viewModel.getLiveShow(selectedTabText.request())
+        viewModel.getLiveShowRepo.observe(viewLifecycleOwner) { it ->
+            when (it) {
+                is Resource.Success -> {
+                    bind.loader.isVisible = false
+                    bind.swipeRefreshLayout.isRefreshing = false
+                    bind.noInternet.isVisible = false
+
+                    val mData = it.value.data
+
+                    mData?.forEach {
+                        romIdsList.add(StreamModel(it?.roomId.toString(), ""))
+                    }
+
+                    showList.clear()
+                    mData?.forEach {
+                        showList.add(it)
+                    }
+
+                    if (showList.isEmpty()) {
+                        bind.noData.isVisible = true
+                        bind.recycler.isVisible = false
+                    } else {
+                        bind.noData.isVisible = false
+                        bind.recycler.isVisible = true
+                    }
+
+                    homeAdapter.notifyDataSetChanged()
+                }
+
+                is Resource.Error -> {
+                    bind.swipeRefreshLayout.isRefreshing = false
+                    bind.loader.isVisible = false
+
+                    if (it.isNetworkError) {
+                        bind.noInternet.isVisible = true
+                        bind.recycler.isVisible = false
+
+                    } else {
+                        it.parse(mCtx, TAG, object : AlertClicks {
+                            override fun primaryClick(dialog: AppBottomSheet) {
+                                dialog.dismiss()
+
+                            }
+
+                            override fun secondaryClick(dialog: AppBottomSheet) {
+                                dialog.dismiss()
+
+                            }
+                        })
+                    }
+                }
+
+                else -> {}
+
+            }
+        }
 
 
-					homeAdapter.notifyDataSetChanged()
+    }
 
-				}
+    fun selectTab(selectedTab: TextView) {
+        val tabs = listOf(bind.live, bind.popular, bind.comingSoon)
+        tabs.forEach {
+            it.setTextAppearance(R.style.TitleMedium)
+            it.setTextColor(ContextCompat.getColor(mCtx, R.color.outlineVariant))
+        }
+        selectedTab.setTextColor(ContextCompat.getColor(mCtx, R.color.scrim))
+        selectedTab.setTextAppearance(R.style.TitleLarge)
 
-				is Resource.Error -> {
-					bind.loader.isVisible = false
+        when (selectedTab) {
+            bind.live -> {
+                bind.loader.isVisible = true
+                selectedTabText = "live"
+                viewModel.getLiveShow("live".request())
+            }
 
-					if (it.isNetworkError) {
-						errorToast(getString(R.string.no_internet))
-					} else {
-						it.parse(mCtx, TAG, object : AlertClicks {
-							override fun primaryClick(dialog: AppBottomSheet) {
-								dialog.dismiss()
+            bind.popular -> {
+                bind.loader.isVisible = true
+                selectedTabText = "popular"
+                viewModel.getLiveShow("popular".request())
+            }
 
-							}
+            bind.comingSoon -> {
+                bind.loader.isVisible = true
+                selectedTabText = "upcoming"
+                viewModel.getLiveShow("upcoming".request())
+            }
 
-							override fun secondaryClick(dialog: AppBottomSheet) {
-								dialog.dismiss()
+        }
+    }
 
-							}
-						})
-					}
-				}
-
-				else -> {}
-
-			}
-		}
-		
-		
-	}
-
-	fun selectTab(selectedTab: TextView) {
-		val tabs = listOf(bind.live, bind.popular, bind.comingSoon)
-		tabs.forEach {
-			it.setTextAppearance(R.style.TitleMedium)
-			it.setTextColor(ContextCompat.getColor(mCtx, R.color.outlineVariant))
-		}
-		selectedTab.setTextColor(ContextCompat.getColor(mCtx, R.color.scrim))
-		selectedTab.setTextAppearance(R.style.TitleLarge)
-
-		when(selectedTab){
-			bind.live ->{
-				bind.loader.isVisible = true
-				viewModel.getLiveShow("live".request())
-			}
-			bind.popular ->{
-				bind.loader.isVisible = true
-				viewModel.getLiveShow("popular".request())
-			}
-			bind.comingSoon ->{
-				bind.loader.isVisible = true
-				viewModel.getLiveShow("upcoming".request())
-			}
-
-		}
-	}
-	
 }

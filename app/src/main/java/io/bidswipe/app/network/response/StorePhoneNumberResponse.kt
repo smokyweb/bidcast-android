@@ -13,13 +13,13 @@ data class StorePhoneNumberResponse(
     @SerializedName("message")
     val message: String?,
     @SerializedName("status")
-    val status: String?
+    val status: String?,
 ) {
     @Keep
     data class Data(
         @SerializedName("otp")
         val otp: Int?,
         @SerializedName("phone_numer")
-        val phoneNumer: String?
+        val phoneNumer: String?,
     )
 }

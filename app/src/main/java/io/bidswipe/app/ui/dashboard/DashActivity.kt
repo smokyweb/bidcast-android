@@ -2,6 +2,7 @@ package io.bidswipe.app.ui.dashboard
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.activity.viewModels
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -30,7 +31,6 @@ import io.bidswipe.app.utils.ids
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request
 import io.bidswipe.app.utils.toListProduct
-import io.bidswipe.app.utils.toScheduleShow
 import io.bidswipe.app.utils.toTutorials
 
 class DashActivity : BaseActivity(), NavController.OnDestinationChangedListener {
@@ -58,18 +58,19 @@ class DashActivity : BaseActivity(), NavController.OnDestinationChangedListener 
         bind.bottomBar.setupWithNavController(navController)
         setupImageSheet()
 
-        log("USER NAME : ${userName.replace(" " , ".") }  $userId   $userImage")
+        log("USER NAME : ${userName.replace(" ", ".")}  $userId   $userImage")
 
         bind.bottomBar.setOnItemSelectedListener { menuItem ->
             if (menuItem.itemId != ids.sellFragment) viewModel.lastIndex.value = menuItem.itemId
             when (menuItem.itemId) {
+
                 ids.sellFragment -> {
-                    imageSheet.state=BottomSheetBehavior.STATE_EXPANDED
+                    imageSheet.state = BottomSheetBehavior.STATE_EXPANDED
                     return@setOnItemSelectedListener true
                 }
 
                 else -> {
-                    imageSheet.state=BottomSheetBehavior.STATE_COLLAPSED
+                    imageSheet.state = BottomSheetBehavior.STATE_COLLAPSED
                     try {
                         navController.let { ctrl ->
                             NavigationUI.onNavDestinationSelected(menuItem, ctrl)
@@ -84,7 +85,8 @@ class DashActivity : BaseActivity(), NavController.OnDestinationChangedListener 
             }
         }
 
-        getDeviceToken(this){
+        getDeviceToken(this) {
+            Log.d(TAG, "onCreate: $it")
             viewModel.storeDeviceDetails(it.request())
         }
 
@@ -100,13 +102,12 @@ class DashActivity : BaseActivity(), NavController.OnDestinationChangedListener 
 
                     log(mData.toString())
 
-
                 }
 
                 is Resource.Error -> {
 
                     if (it.isNetworkError) {
-                        errorToast(getString(R.string.no_internet))
+
                     } else {
                         it.parse(this, TAG, object : AlertClicks {
                             override fun primaryClick(dialog: AppBottomSheet) {
@@ -144,7 +145,7 @@ class DashActivity : BaseActivity(), NavController.OnDestinationChangedListener 
                     bind.loader.isVisible = false
                     viewModel.logoutRepo.value = null
                     if (it.isNetworkError) {
-                        errorToast(getString(R.string.no_internet))
+
                     } else {
                         it.parse(this, TAG, object : AlertClicks {
                             override fun primaryClick(dialog: AppBottomSheet) {
@@ -162,16 +163,25 @@ class DashActivity : BaseActivity(), NavController.OnDestinationChangedListener 
 
             }
         }
+    }
 
+    fun hideBottomNav() {
+        bind.bottomBar.isVisible = false
+    }
 
+    fun showBottomNav() {
+        bind.bottomBar.isVisible = true
     }
 
     override fun onDestinationChanged(
         controller: NavController,
         destination: NavDestination,
-        arguments: Bundle?
+        arguments: Bundle?,
     ) {
-
+        when (destination.id) {
+            R.id.exploreTypeFragment -> hideBottomNav()
+            else -> showBottomNav()
+        }
     }
 
     private fun setupImageSheet() {
@@ -191,37 +201,57 @@ class DashActivity : BaseActivity(), NavController.OnDestinationChangedListener 
         sellList.clear()
         sellList.addAll(
             listOf(
-                SellModel(R.drawable.ic_tag,R.color.primaryContainer,"List a Product","Create listing for your item"),
-                SellModel(R.drawable.ic_video,R.color.primaryContainer,"Schedule a Show","Go live and sell to your audience"),
-                SellModel(R.drawable.ic_shop,R.color.primaryContainer,"Seller Hub","Manage your store and listings")
+                SellModel(
+                    R.drawable.ic_tag,
+                    R.color.primaryContainer,
+                    "List a Product",
+                    "Create listing for your item"
+                ),
+                SellModel(
+                    R.drawable.ic_video,
+                    R.color.primaryContainer,
+                    "Schedule a Show",
+                    "Go live and sell to your audience"
+                ),
+                SellModel(
+                    R.drawable.ic_shop,
+                    R.color.primaryContainer,
+                    "Seller Hub",
+                    "Manage your store and listings"
+                )
             )
         )
 
-       val exploreAdapter = SellAdapter(sellList,"explore",object:RecyclerClicks{
-   
-           override fun itemClick(pos: Int, status: String?) {
-               
-               when(pos){
-                   0->{
-                       startActivity(this@DashActivity.toListProduct())
-                   }
-                   1->{
+        val exploreAdapter = SellAdapter(sellList, "explore", object : RecyclerClicks {
 
-                       if (isFirstShowCreated){
-                           startActivity(this@DashActivity.toScheduleShow(from = "dash"))
-                       }else{
-                           startActivity(this@DashActivity.toTutorials())
-                       }
+            override fun itemClick(pos: Int, status: String?) {
 
-                   }
-                   2 -> {
-                       bind.bottomBar.selectedItemId = ids.accountFragment
-                   }
-                   
-               }
-           }
+                when (pos) {
+                    0 -> {
+                        startActivity(this@DashActivity.toListProduct())
+                    }
 
-       })
+                    1 -> {
+
+                        startActivity(this@DashActivity.toTutorials())
+
+
+//                       if (isFirstShowCreated){
+//                           startActivity(this@DashActivity.toScheduleShow(from = "dash"))
+//                       }else{
+//                           startActivity(this@DashActivity.toTutorials())
+//                       }
+
+                    }
+
+                    2 -> {
+                        bind.bottomBar.selectedItemId = ids.accountFragment
+                    }
+
+                }
+            }
+
+        })
 
         bind.sellSheet.recycler.adapter = exploreAdapter
 
@@ -263,7 +293,7 @@ class DashActivity : BaseActivity(), NavController.OnDestinationChangedListener 
                 }
 
                 BottomSheetBehavior.STATE_COLLAPSED -> {
-                    bind.bottomBar.selectedItemId=viewModel.lastIndex.value?:0
+                    bind.bottomBar.selectedItemId = viewModel.lastIndex.value ?: 0
                 }
             }
         }
@@ -282,12 +312,17 @@ class DashActivity : BaseActivity(), NavController.OnDestinationChangedListener 
 
 
     fun getDeviceToken(context: Context, token: (token: String) -> Unit) {
+        Log.d(TAG, "getDeviceToken: ")
         FirebaseMessaging.getInstance().token.addOnCompleteListener {
             if (!it.isSuccessful) {
-                Alerts.log(javaClass.simpleName, "Fetching FCM registration token failed ${it.exception}")
+                Alerts.log(
+                    javaClass.simpleName,
+                    "Fetching FCM registration token failed ${it.exception}"
+                )
                 return@addOnCompleteListener
             }
             val deviceToken = it.result.toString()
+            Log.d(TAG, "getDeviceToken: ")
 
             if (Prefs(context).fcmToken() != deviceToken) {
                 Prefs(context).putString(Prefs.PUSH_TOKEN, deviceToken)
@@ -295,6 +330,7 @@ class DashActivity : BaseActivity(), NavController.OnDestinationChangedListener 
             } else {
                 Alerts.log(javaClass.simpleName, "device token not refresh  $token")
             }
+            token(deviceToken)
         }
     }
 

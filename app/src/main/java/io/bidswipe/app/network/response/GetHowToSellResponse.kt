@@ -13,7 +13,7 @@ data class GetHowToSellResponse(
     @SerializedName("message")
     val message: String?,
     @SerializedName("status")
-    val status: String?
+    val status: String?,
 ) {
     @Keep
     data class Data(
@@ -24,6 +24,6 @@ data class GetHowToSellResponse(
         @SerializedName("image")
         val image: String?,
         @SerializedName("title")
-        val title: String?
+        val title: String?,
     )
 }

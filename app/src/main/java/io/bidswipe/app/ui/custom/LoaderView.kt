@@ -13,30 +13,34 @@ import io.bidswipe.app.utils.styleable
 
 
 @SuppressLint("ClickableViewAccessibility")
-class LoaderView @JvmOverloads constructor(context : Context , attrs : AttributeSet? = null , defStyleAttr : Int = 0) :
-	LinearLayout(context , attrs , defStyleAttr) {
+class LoaderView @JvmOverloads constructor(
+    context: Context,
+    attrs: AttributeSet? = null,
+    defStyleAttr: Int = 0,
+) :
+    LinearLayout(context, attrs, defStyleAttr) {
 
-	private var loader : SpinKitView ? = null
-	private lateinit var click : LinearLayout
+    private var loader: SpinKitView? = null
+    private lateinit var click: LinearLayout
 
-	init {
-		val attr = context.theme.obtainStyledAttributes(attrs , styleable.LoaderView , 0 , 0)
-		initView(attr)
-	}
+    init {
+        val attr = context.theme.obtainStyledAttributes(attrs, styleable.LoaderView, 0, 0)
+        initView(attr)
+    }
 
-	private fun initView(attr : TypedArray) {
-		val view = inflate(context , layout.loader_view , this)
-		loader = view.findViewById(ids.spinner)
-		click = view.findViewById(ids.click)
+    private fun initView(attr: TypedArray) {
+        val view = inflate(context, layout.loader_view, this)
+        loader = view.findViewById(ids.spinner)
+        click = view.findViewById(ids.click)
 
-	//	loader.setColor(attr.getColor(styleable.LoaderView_loaderColor , ContextCompat.getColor(context , clr.primary)))
+        //	loader.setColor(attr.getColor(styleable.LoaderView_loaderColor , ContextCompat.getColor(context , clr.primary)))
 
-		click.isVisible = attr.getBoolean(styleable.LoaderView_showBack,true)
+        click.isVisible = attr.getBoolean(styleable.LoaderView_showBack, true)
 
-		click.setOnClickListener { }
+        click.setOnClickListener { }
 
-		click.setOnTouchListener { _ , _ -> true }
+        click.setOnTouchListener { _, _ -> true }
 
-	}
+    }
 
 }

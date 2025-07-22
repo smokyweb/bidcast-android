@@ -64,9 +64,9 @@ class MoreActivity : BaseActivity() {
                 navGraph.setStartDestination(R.id.addressesFragment)
             }
 
-            "buyer"->{
+            /*"buyer"->{
                 navGraph.setStartDestination(R.id.trustedBuyerFragment)
-            }
+            }*/
 
             "notification"->{
 

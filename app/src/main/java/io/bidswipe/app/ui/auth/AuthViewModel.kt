@@ -26,7 +26,7 @@ class AuthViewModel @Inject constructor(val repo: AuthRepository) : ViewModel() 
         lastName: RequestBody,
         email: RequestBody,
         password: RequestBody,
-        confirmPassword: RequestBody
+        confirmPassword: RequestBody,
     ) = viewModelScope.launch {
         _signUpResponse.value = repo.signUp(firstName, lastName, email, password, confirmPassword)
     }
@@ -37,9 +37,9 @@ class AuthViewModel @Inject constructor(val repo: AuthRepository) : ViewModel() 
 
     fun login(
         email: RequestBody,
-        password: RequestBody
+        password: RequestBody,
     ) = viewModelScope.launch {
-        _loginResponse.value = repo.login(email , password)
+        _loginResponse.value = repo.login(email, password)
     }
 
     private var _forgotPasswordResponse = MutableLiveData<Resource<CommonResponse>>()
@@ -47,7 +47,7 @@ class AuthViewModel @Inject constructor(val repo: AuthRepository) : ViewModel() 
         get() = _forgotPasswordResponse
 
     fun forgotPassword(
-        email: RequestBody
+        email: RequestBody,
     ) = viewModelScope.launch {
         _forgotPasswordResponse.value = repo.forgotPassword(email)
     }
@@ -58,7 +58,7 @@ class AuthViewModel @Inject constructor(val repo: AuthRepository) : ViewModel() 
 
     fun verifyOtp(
         email: RequestBody,
-        code: RequestBody
+        code: RequestBody,
     ) = viewModelScope.launch {
         _verifyOtpResponse.value = repo.verifyOtp(email, code)
     }
@@ -71,7 +71,7 @@ class AuthViewModel @Inject constructor(val repo: AuthRepository) : ViewModel() 
     fun resetPassword(
         email: RequestBody,
         password: RequestBody,
-        confirmPassword: RequestBody
+        confirmPassword: RequestBody,
     ) = viewModelScope.launch {
         _resetPasswordResponse.value = repo.resetPassword(email, password, confirmPassword)
     }

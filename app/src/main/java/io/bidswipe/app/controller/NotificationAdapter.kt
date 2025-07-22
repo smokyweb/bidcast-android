@@ -8,7 +8,8 @@ import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.network.response.GetNotificationResponse
 import io.bidswipe.app.utils.Utils
 
-class NotificationAdapter(mList: MutableList<GetNotificationResponse.Data?>,val click : RecyclerClicks
+class NotificationAdapter(
+    mList: MutableList<GetNotificationResponse.Data?>, val click: RecyclerClicks,
 ) : BaseAdapter<GetNotificationResponse.Data?, NotificationItemBinding>(mList) {
 
     override fun bindView(inflater: LayoutInflater, parent: ViewGroup) =
@@ -17,7 +18,7 @@ class NotificationAdapter(mList: MutableList<GetNotificationResponse.Data?>,val 
     override fun onBind(
         holder: BaseViewHolder<NotificationItemBinding>,
         position: Int,
-        item: GetNotificationResponse.Data?
+        item: GetNotificationResponse.Data?,
     ) {
         with(holder) {
             bind.message.text = item?.message
@@ -26,7 +27,7 @@ class NotificationAdapter(mList: MutableList<GetNotificationResponse.Data?>,val 
 
             bind.deleteNotification.setOnClickListener {
 
-                click.itemClick(position,"delete")
+                click.itemClick(position, "delete")
 
             }
         }

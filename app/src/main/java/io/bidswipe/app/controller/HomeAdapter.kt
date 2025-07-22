@@ -7,11 +7,11 @@ import io.bidswipe.app.databinding.HomeItemBinding
 import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.network.response.GetMyShowResponse
 import io.bidswipe.app.utils.asCapital
-import io.bidswipe.app.utils.asHtml
 import io.bidswipe.app.utils.draw
 import io.bidswipe.app.utils.loadUrl
 
-class HomeAdapter (val mList: MutableList<GetMyShowResponse.Data?>, val mClick: RecyclerClicks
+class HomeAdapter(
+    val mList: MutableList<GetMyShowResponse.Data?>, val mClick: RecyclerClicks,
 ) : BaseAdapter<GetMyShowResponse.Data?, HomeItemBinding>(mList) {
 
     override fun bindView(inflater: LayoutInflater, parent: ViewGroup) =
@@ -20,22 +20,22 @@ class HomeAdapter (val mList: MutableList<GetMyShowResponse.Data?>, val mClick: 
     override fun onBind(
         holder: BaseViewHolder<HomeItemBinding>,
         position: Int,
-        item: GetMyShowResponse.Data?
+        item: GetMyShowResponse.Data?,
     ) {
         with(holder) {
 
-            bind.userInfo.setOnClickListener{
-                mClick.itemClick(position,"user")
+            bind.userInfo.setOnClickListener {
+                mClick.itemClick(position, "user")
             }
 
             bind.thumbnail.setOnClickListener {
-                mClick.itemClick(position,"viewShow")
+                mClick.itemClick(position, "viewShow")
             }
 
             bind.userName.text = item?.user?.name.toString().asCapital()
-            bind.userImage.loadUrl(mCtx,item?.user?.profileImage.toString(), draw.user_image)
+            bind.userImage.loadUrl(mCtx, item?.user?.profileImage.toString(), draw.user_image)
 
-            bind.thumbnail.loadUrl(mCtx,item?.thumbnail?.get(0).toString())
+            bind.thumbnail.loadUrl(mCtx, item?.thumbnail?.get(0).toString())
 
             bind.title.text = item?.title.toString().asCapital()
             bind.category.text = item?.category?.name?.asCapital()

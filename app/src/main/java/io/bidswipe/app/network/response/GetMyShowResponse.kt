@@ -21,7 +21,7 @@ data class GetMyShowResponse(
     @SerializedName("total")
     val total: Int?,
     @SerializedName("totalPage")
-    val totalPage: Int?
+    val totalPage: Int?,
 ) {
     @Keep
     data class Data(
@@ -54,7 +54,7 @@ data class GetMyShowResponse(
         @SerializedName("user_id")
         val userId: Int?,
         @SerializedName("viewer_count")
-        val viewerCount: Int?
+        val viewerCount: Int?,
     ) {
         @Keep
         data class Category(
@@ -67,7 +67,7 @@ data class GetMyShowResponse(
             @SerializedName("name")
             val name: String?,
             @SerializedName("thumbnail")
-            val thumbnail: Any?
+            val thumbnail: Any?,
         )
 
         @Keep
@@ -95,7 +95,7 @@ data class GetMyShowResponse(
             @SerializedName("thumbnail")
             val thumbnail: Any?,
             @SerializedName("username")
-            val username: Any?
+            val username: Any?,
         )
     }
 }

@@ -13,7 +13,7 @@ data class GetLessonsResponse(
     @SerializedName("message")
     val message: String?,
     @SerializedName("status")
-    val status: String?
+    val status: String?,
 ) {
     @Keep
     data class Data(
@@ -24,6 +24,6 @@ data class GetLessonsResponse(
         @SerializedName("title")
         val title: String?,
         @SerializedName("video")
-        val video: String?
+        val video: String?,
     )
 }

@@ -139,6 +139,7 @@ dependencies {
     implementation(libs.permissionx)
     implementation(libs.toasty)
     implementation(libs.decorator)
+    implementation(libs.advancedCardView)
     implementation(libs.picasso)
     implementation(libs.roundedimageview)
     implementation(libs.cameraview)

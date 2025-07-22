@@ -148,6 +148,7 @@
                             android:paddingHorizontal="@dimen/padding"
                             android:layout_gravity="center_vertical"
                             android:paddingVertical="4dp"
+                            android:visibility="gone"
                             android:text="Verify"
                             android:textAppearance="@style/TitleMedium" />
 
@@ -632,7 +633,7 @@
         style="@style/appBtn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/complete_verification"
+        android:text="@string/submit"
         android:layout_margin="@dimen/margin"
         app:layout_constraintBottom_toBottomOf="parent"
         />

@@ -87,6 +87,16 @@ class SellerVerificationFragment : BaseFragment<SellerHubViewModel, FragmentSell
                 bind.cardImage.loadUrl(mCtx,imageUri.toString())
 
                 cardImage = imagePath
+
+                if (cardImage.isNotEmpty() && selfie.isNotEmpty()){
+
+                    bind.verificationIcon.isVisible = true
+                    bind.stepProgress.setProgress(1)
+                    bind.stepCount.setText("1 of 4")
+
+                }
+
+
                 log("ImageUri = $imageUri")
 
             }
@@ -103,6 +113,15 @@ class SellerVerificationFragment : BaseFragment<SellerHubViewModel, FragmentSell
                 bind.selfie.loadUrl(mCtx,imageUri.toString())
 
                 selfie = imagePath
+
+                if (cardImage.isNotEmpty() && selfie.isNotEmpty()){
+
+                    bind.verificationIcon.isVisible = true
+                    bind.stepProgress.setProgress(1)
+                    bind.stepCount.setText("1 of 4")
+
+                }
+
                 log("ImageUri = $imageUri")
 
             }
@@ -167,10 +186,6 @@ class SellerVerificationFragment : BaseFragment<SellerHubViewModel, FragmentSell
         bind.verifyPhone.setOnClickListener {
 
             when{
-                isIdVerified == false ->{
-                    Alerts.error(mCtx,"Please verify your Id")
-
-                }
 
                 bind.phoneNumber.value().isEmpty() ->{
                     Alerts.error(mCtx,"Please Enter Phone Number")
@@ -213,13 +228,19 @@ class SellerVerificationFragment : BaseFragment<SellerHubViewModel, FragmentSell
         bind.completeVerification.setOnClickListener {
             when{
 
-                isIdVerified == false->{
-                    Alerts.error(mCtx,"Please verify your Id")
+                cardImage.isEmpty() ->{
+
+                    Alerts.error(mCtx,"Please select Id card")
                 }
 
-                isPhoneVerified == false->{
+                selfie.isEmpty() ->{
+                    Alerts.error(mCtx,"Please select Selfie")
+                }
+
+                !isPhoneVerified ->{
                     Alerts.error(mCtx,"Please verify your phone number")
                 }
+
 
                 cardToken.isEmpty() ->{
                     Alerts.error(mCtx,"Please select Payment Card")
@@ -228,7 +249,13 @@ class SellerVerificationFragment : BaseFragment<SellerHubViewModel, FragmentSell
                 else ->{
                     bind.loader.isVisible = true
 
-                    viewModel.storePaymentMethod(cardToken.request())
+                    val idName = System.currentTimeMillis().toString() + "_id_card.jpeg"
+                    val imagePart = Utils.imagePart("id_card", idName, File(cardImage ?: ""))
+
+                    val imageName = System.currentTimeMillis().toString() + "_selfie_image.jpeg"
+                    val selfiePart = Utils.imagePart("image", imageName, File(selfie ?: ""))
+
+                    viewModel.storeSellerVerification(imagePart,selfiePart, "1".request() , cardToken.request()  )
                 }
 
             }
@@ -245,58 +272,50 @@ class SellerVerificationFragment : BaseFragment<SellerHubViewModel, FragmentSell
 
                     val mData = it.value.data
 
-                    if (mData?.idCard.isNullOrEmpty()){
-                        bind.verificationIcon.isVisible = false
-                        bind.verifyId.isVisible = true
-                        isIdVerified = false
 
-                    }else{
-                        isIdVerified = true
-                        bind.verificationIcon.isVisible = true
-                        bind.verifyId.isVisible = false
+                    when(mData?.status){
 
-                        bind.cardImage.isVisible = true
-                        bind.selfie.isVisible = true
+                        "pending" ->{
+                            bind.verifyOtp.isVisible = true
+                            bind.verificationIcon.isVisible = true
 
-                        bind.cardImage.loadUrl(mCtx,mData.idCard)
-                        bind.selfie.loadUrl(mCtx, mData.image.toString())
+                            bind.stepProgress.setProgress(3)
+                            bind.stepCount.setText("3 of 4")
 
-                        bind.stepProgress.setProgress(1)
-                        bind.stepCount.setText("1 of 4")
-                    }
+                            bind.status.text = mData.status
+                            bind.status.setTextColor(R.color.success)
 
-                    if (mData?.numberOtpVerified ==1){
-                        isPhoneVerified = true
-                        bind.phoneNumberLayout.isVisible = false
-                        bind.otpLayout.isVisible = false
-                        bind.verifyOtp.isVisible = false
-                        bind.verifyPhone.isVisible = false
-                        bind.verificationPhoneIcon.isVisible = true
-                        bind.verifyPhoneTitle.isVisible = false
-                        bind.stepProgress.setProgress(2)
-                        bind.stepCount.setText("2 of 4")
+                            bind.phoneNumberLayout.isVisible = false
+                            bind.otpLayout.isVisible = false
+                            bind.verifyOtp.isVisible = false
+                            bind.verifyPhone.isVisible = false
+                            bind.verificationPhoneIcon.isVisible = true
 
-                    }else{
+                            bind.completeVerification.isVisible = false
 
-                    }
+                        }
 
-                    if (mData?.cardId?.isNotEmpty()==true) {
-                        bind.stepProgress.setProgress(3)
-                        bind.stepCount.setText("3 of 4")
-                        cardId = mData.cardId
-                        bind.completeVerification.isVisible = false
-                    }else{
-                        bind.completeVerification.isVisible = true
-                    }
+                        "verified" ->{
 
-                    if (mData?.status == "verified"){
-                        bind.stepProgress.setProgress(4)
-                        bind.stepCount.setText("4 of 4")
+                            bind.verifyPhone.isVisible = false
+                            bind.verifyOtp.isVisible = true
 
-                        bind.status.text = mData.status
-                        bind.status.setTextColor(R.color.success)
+                            bind.phoneNumberLayout.isVisible = false
+                            bind.otpLayout.isVisible = true
+
+                            bind.verificationIcon.isVisible = true
+                            bind.verificationPhoneIcon.isVisible = true
+                            bind.stepProgress.setProgress(4)
+                            bind.stepCount.setText("4 of 4")
+
+                            bind.status.text = mData.status
+                            bind.status.setTextColor(R.color.success)
+                            bind.completeVerification.isVisible = false
+
+                        }
 
                     }
+
 
                     viewModel.getPaymentCard()
 
@@ -326,18 +345,17 @@ class SellerVerificationFragment : BaseFragment<SellerHubViewModel, FragmentSell
             }
         }
 
-        viewModel.storeSellerIdRepo.observe(viewLifecycleOwner) {
+        viewModel.storeSellerVerificationRepo.observe(viewLifecycleOwner) {
             when (it) {
                 is Resource.Success -> {
                     bind.loader.isVisible = false
 
                     val mData = it.value.data
-                    isIdVerified = true
-                    bind.stepProgress.setProgress(1)
-                    bind.stepCount.setText("1 of 4")
+                    bind.stepProgress.setProgress(3)
 
-                    bind.verificationIcon.isVisible = true
-                    bind.verifyId.isVisible = false
+                    bind.stepCount.setText("3 of 4")
+
+                    bind.completeVerification.isVisible = false
 
                     Alerts.success(mCtx,it.value.message.toString())
 

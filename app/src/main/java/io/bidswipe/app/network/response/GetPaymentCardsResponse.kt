@@ -19,7 +19,7 @@ data class GetPaymentCardsResponse(
     @SerializedName("total_pages")
     val totalPages: Int?,
     @SerializedName("total_records")
-    val totalRecords: Int?
+    val totalRecords: Int?,
 ) {
     @Keep
     data class Data(
@@ -35,6 +35,6 @@ data class GetPaymentCardsResponse(
         val fingerprint: String?,
         @SerializedName("last4")
         val last4: String?,
-        var selected: Boolean? = false
+        var selected: Boolean? = false,
     )
 }

@@ -255,7 +255,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginEnd="100dp"
-        app:layout_constraintBottom_toTopOf="@id/product"
+        app:layout_constraintBottom_toTopOf="@id/message"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         tools:listitem="@layout/live_comment_item"
         app:layout_constraintDimensionRatio="1:1"
@@ -265,6 +265,29 @@
         android:layout_gravity="bottom"
         tools:itemCount="10"
         />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/message"
+        style="@style/inputBoxStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/margin"
+        android:layout_marginBottom="@dimen/margin"
+        app:boxStrokeColor="@color/scrim"
+        app:endIconMode="custom"
+        app:endIconDrawable="@drawable/ic_forward"
+        app:layout_constraintBottom_toTopOf="@id/product">
+
+        <com.google.android.material.textfield.MaterialAutoCompleteTextView
+            android:id="@+id/text"
+            style="@style/inputTextStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/say_something"
+            android:textColorHint="@color/scrim"
+            android:inputType="text" />
+
+    </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/product"
@@ -366,7 +389,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/margin"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/message">
+        app:layout_constraintBottom_toBottomOf="parent">
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/max"
@@ -398,28 +421,7 @@
 
     </LinearLayout>
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/message"
-        style="@style/inputBoxStyle"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="@dimen/margin"
-        android:layout_marginBottom="@dimen/margin"
-        app:boxStrokeColor="@color/scrim"
-        app:endIconMode="custom"
-        app:endIconDrawable="@drawable/ic_forward"
-        app:layout_constraintBottom_toBottomOf="parent">
 
-        <com.google.android.material.textfield.MaterialAutoCompleteTextView
-            android:id="@+id/text"
-            style="@style/inputTextStyle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/say_something"
-            android:textColorHint="@color/scrim"
-            android:inputType="text" />
-
-    </com.google.android.material.textfield.TextInputLayout>
 
     <io.bidswipe.app.ui.custom.LoaderView
         android:id="@+id/loader"

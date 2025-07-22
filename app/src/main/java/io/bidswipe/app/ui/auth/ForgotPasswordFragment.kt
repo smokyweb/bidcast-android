@@ -28,7 +28,7 @@ class ForgotPasswordFragment : BaseFragment<AuthViewModel, FragmentForgotPasswor
 
     override fun getBind(
         inflater: LayoutInflater,
-        view: ViewGroup?
+        view: ViewGroup?,
     ) = FragmentForgotPasswordBinding.inflate(inflater, view, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -76,7 +76,10 @@ class ForgotPasswordFragment : BaseFragment<AuthViewModel, FragmentForgotPasswor
                     viewModel.forgotPasswordRepo.value = null
                     bind.loader.isVisible = false
                     log("RESPONSE ::${it.value}")
-                    findNavController().navigate(ids.goToOTPFragment, bundleOf("email" to bind.email.value()))
+                    findNavController().navigate(
+                        ids.goToOTPFragment,
+                        bundleOf("email" to bind.email.value())
+                    )
                 }
 
                 is Resource.Error -> {

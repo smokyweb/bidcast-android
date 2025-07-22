@@ -13,7 +13,7 @@ data class SignUpResponse(
     @SerializedName("message")
     val message: String?,
     @SerializedName("status")
-    val status: String?
+    val status: String?,
 ) {
     @Keep
     data class Data(
@@ -30,6 +30,6 @@ data class SignUpResponse(
         @SerializedName("role_id")
         val roleId: Int?,
         @SerializedName("token")
-        val token: String?
+        val token: String?,
     )
 }

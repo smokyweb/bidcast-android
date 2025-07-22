@@ -21,7 +21,7 @@ data class GetProductsByStatusResponse(
     @SerializedName("total")
     val total: Int?,
     @SerializedName("totalPage")
-    val totalPage: Int?
+    val totalPage: Int?,
 ) {
     @Keep
     data class Data(
@@ -52,7 +52,7 @@ data class GetProductsByStatusResponse(
         @SerializedName("user")
         val user: User?,
         @SerializedName("user_id")
-        val userId: Int?
+        val userId: Int?,
     ) {
         @Keep
         data class Product(
@@ -91,8 +91,8 @@ data class GetProductsByStatusResponse(
             @SerializedName("title")
             val title: String?,
             @SerializedName("user_id")
-            val userId: Int?
-        ){
+            val userId: Int?,
+        ) {
             @Keep
             data class Seller(
                 @SerializedName("email")
@@ -104,7 +104,7 @@ data class GetProductsByStatusResponse(
                 @SerializedName("profile_image")
                 val profileImage: String?,
                 @SerializedName("username")
-                val username: String?
+                val username: String?,
             )
         }
 
@@ -133,7 +133,7 @@ data class GetProductsByStatusResponse(
             @SerializedName("thumbnail")
             val thumbnail: Any?,
             @SerializedName("username")
-            val username: String?
+            val username: String?,
         )
     }
 }

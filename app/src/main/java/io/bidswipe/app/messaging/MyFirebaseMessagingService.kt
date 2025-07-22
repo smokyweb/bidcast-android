@@ -1,29 +1,20 @@
 package io.bidswipe.app.messaging
 
 import android.Manifest
-import android.app.Notification
-import android.app.NotificationChannel
+import android.app.ActivityManager
 import android.app.NotificationManager
 import android.app.PendingIntent
-import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
-import android.media.AudioAttributes
-import android.media.AudioManager
 import android.os.Build
-import android.provider.Settings
-import android.util.Log
-import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
-import androidx.core.app.NotificationManagerCompat
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
-import io.bidswipe.app.R
+import io.bidswipe.app.App
 import io.bidswipe.app.ui.dashboard.DashActivity
 import io.bidswipe.app.utils.Alerts
-import io.bidswipe.app.utils.Const
 import io.bidswipe.app.utils.Prefs
 import io.bidswipe.app.utils.Utils
 import io.bidswipe.app.utils.asCapital
@@ -36,22 +27,19 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         const val TAG = "FIREBASE-SERVICE"
     }
 
-    private val nManager by lazy { getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager }
+    private val nManager by lazy { getSystemService(NOTIFICATION_SERVICE) as NotificationManager }
 
-    override fun onNewToken(token : String) {
+    override fun onNewToken(token: String) {
         super.onNewToken(token)
-        Alerts.log(TAG , "NEW FCM TOKEN => $token")
-
-        Prefs(applicationContext).putString(Prefs.PUSH_TOKEN , token)
+        Alerts.log(TAG, "NEW FCM TOKEN => $token")
+        Prefs(applicationContext).putString(Prefs.PUSH_TOKEN, token)
     }
 
-    override fun onMessageReceived(message : RemoteMessage) {
-        Alerts.log(TAG , "NOTIFY DATA : " + message.data)
-        Alerts.log(TAG , "NOTIFY NOTIFICATION : " + message.notification?.title)
+    override fun onMessageReceived(message: RemoteMessage) {
+        Alerts.log(TAG, "NOTIFY DATA : " + message.data)
+        Alerts.log(TAG, "NOTIFY NOTIFICATION : " + message.notification?.title)
 
-//        getPostImage(message.data , message.notification)
-
-        createNotification(message.data ,message.notification)
+        createNotification(message.data, message.notification)
     }
 
     /*private fun getPostImage(data : Map<String , String> , mNotify : RemoteMessage.Notification?) {
@@ -68,27 +56,39 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         }
     }*/
 
-    private fun createNotification(data : Map<String , String> , mNotification : RemoteMessage.Notification? , postImage : Bitmap? = null) {
+    private fun createNotification(
+        data: Map<String, String>,
+        mNotification: RemoteMessage.Notification?,
+        postImage: Bitmap? = null,
+    ) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
-            ActivityCompat.checkSelfPermission(this , Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED
+            ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.POST_NOTIFICATIONS
+            ) != PackageManager.PERMISSION_GRANTED
         ) {
-            Alerts.log(TAG , "NOTIFICATION PERMISSION NOT GRANTED")
+            Alerts.log(TAG, "NOTIFICATION PERMISSION NOT GRANTED")
             return
-        }
-        else {
+        } else {
             val mCtx = applicationContext
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 nManager.createNotificationChannel(Utils.notificationChannel())
             }
+            val type = data["type"] ?: ""
 
             val flag = PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-            val title = (mNotification?.title ?: getString(string.app_name)).toString().asHtml().asCapital()
-            val message = (mNotification?.body ?: getString(string.app_name)).toString().asHtml().asCapital()
-            var notifyId = kotlin.random.Random.nextInt(8)
+            val title = if (type == "message") {
+                data["sender_name"] ?: ""
+            } else {
+                (mNotification?.title ?: getString(string.app_name)).asHtml().asCapital()
+            }
+            val message =
+                (mNotification?.body ?: getString(string.app_name)).asHtml().asCapital()
+            val notifyId = kotlin.random.Random.nextInt(8)
 
             val notify = try {
-                val notificationStyle = if (postImage != null) {
+                if (postImage != null) {
                     NotificationCompat.BigPictureStyle().also {
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                             it.showBigPictureWhenCollapsed(false)
@@ -97,33 +97,51 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
                         it.setSummaryText(message)
                         it.bigPicture(postImage)
                     }
-                }
-                else {
-                    NotificationCompat.BigTextStyle().setBigContentTitle(title.asCapital()).bigText(message)
+                } else {
+                    NotificationCompat.BigTextStyle().setBigContentTitle(title.asCapital())
+                        .bigText(message)
                 }
 
-                val intent = PendingIntent.getActivity(mCtx , 0 , Intent(applicationContext, DashActivity::class.java) , flag)
+                val intent = PendingIntent.getActivity(
+                    mCtx,
+                    0,
+                    Intent(applicationContext, DashActivity::class.java),
+                    flag
+                )
 
-                Utils.getNotifBuilder(mCtx , title.asCapital() , message).apply {
+                Utils.getNotifBuilder(mCtx, title.asCapital(), message).apply {
                     setCategory(NotificationCompat.CATEGORY_EVENT)
                     setContentIntent(intent)
-                    setStyle(NotificationCompat.BigTextStyle().setBigContentTitle(title).bigText(message))
+                    setStyle(
+                        NotificationCompat.BigTextStyle().setBigContentTitle(title).bigText(message)
+                    )
                 }.build()
-            }
-            catch (e : Exception) {
+            } catch (e: Exception) {
                 e.printStackTrace()
-                Utils.getNotifBuilder(mCtx , title.asCapital() , message).apply {
+                Utils.getNotifBuilder(mCtx, title.asCapital(), message).apply {
                     setCategory(NotificationCompat.CATEGORY_EVENT)
                 }.build()
             }
 
             notify.let {
-                nManager.notify(notifyId.toString() , notifyId , it)
+                val type =data["type"] ?: ""
+                if (type == "message") {
+                    if (App.isUserOnChatScreen) {
+                        Alerts.log(TAG, "User is on chat screen - suppressing notification")
+                        return
+                    }
+                    else{
+                        nManager.notify(notifyId.toString(), notifyId, it)
+                    }
+                }else{
+                    nManager.notify(notifyId.toString(), notifyId, it)
+                }
+
             }
         }
     }
 
-    private fun restoreChatStyle(notificationId : Int) : List<NotificationCompat.MessagingStyle.Message>? {
+    private fun restoreChatStyle(notificationId: Int): List<NotificationCompat.MessagingStyle.Message>? {
         return nManager.activeNotifications.find { it.id == notificationId }?.notification?.let {
             NotificationCompat.MessagingStyle.extractMessagingStyleFromNotification(it)?.messages
         }

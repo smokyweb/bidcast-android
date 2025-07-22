@@ -9,7 +9,8 @@ import io.bidswipe.app.network.response.AboutUsResponse
 import io.bidswipe.app.utils.draw
 import io.bidswipe.app.utils.loadUrl
 
-class TeamAdapter (mList: MutableList<AboutUsResponse.Data.Team?>, val mClicks: RecyclerClicks
+class TeamAdapter(
+    mList: MutableList<AboutUsResponse.Data.Team?>, val mClicks: RecyclerClicks,
 ) : BaseAdapter<AboutUsResponse.Data.Team?, TeamItemBinding>(mList) {
 
     override fun bindView(inflater: LayoutInflater, parent: ViewGroup) =
@@ -18,14 +19,14 @@ class TeamAdapter (mList: MutableList<AboutUsResponse.Data.Team?>, val mClicks: 
     override fun onBind(
         holder: BaseViewHolder<TeamItemBinding>,
         position: Int,
-        item: AboutUsResponse.Data.Team?
+        item: AboutUsResponse.Data.Team?,
     ) {
         with(holder) {
 
             bind.title.text = item?.name ?: ""
             bind.description.text = item?.role ?: ""
 
-            bind.image.loadUrl(mCtx,item?.image.toString(), draw.person)
+            bind.image.loadUrl(mCtx, item?.image.toString(), draw.person)
 
             bind.root.setOnClickListener {
                 mClicks.itemClick(position)

@@ -25,6 +25,7 @@ class App : Application() {
 
         private lateinit var mCtx: Context
         private lateinit var TAG: String
+        var isUserOnChatScreen: Boolean = false
         val profileResponse = MutableLiveData<UserProfileResponse.Data?>()
 
 

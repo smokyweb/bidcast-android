@@ -32,11 +32,6 @@
             app:popExitAnim="@anim/slide_out_right"/>
     </fragment>
     <fragment
-        android:id="@+id/sellFragment"
-        android:name="io.bidswipe.app.ui.dashboard.SellFragment"
-        android:label="fragment_sell"
-        tools:layout="@layout/fragment_sell" />
-    <fragment
         android:id="@+id/activityFragment"
         android:name="io.bidswipe.app.ui.dashboard.ActivityFragment"
         android:label="fragment_activity"
@@ -51,6 +46,7 @@
         android:name="io.bidswipe.app.ui.dashboard.ExploreTypeFragment"
         android:label="fragment_explore_type"
         tools:layout="@layout/fragment_explore_type" />
+
     <fragment
         android:id="@+id/searchShowFragment"
         android:name="io.bidswipe.app.ui.dashboard.SearchShowFragment"

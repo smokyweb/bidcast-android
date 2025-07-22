@@ -9,7 +9,8 @@ import io.bidswipe.app.network.response.GetTransactionsHistoryResponse
 import io.bidswipe.app.utils.Utils
 import io.bidswipe.app.utils.asMoney
 
-class TransactionHistoryAdapter (mList: MutableList<GetTransactionsHistoryResponse.Data?>, val mClicks: RecyclerClicks
+class TransactionHistoryAdapter(
+    mList: MutableList<GetTransactionsHistoryResponse.Data?>, val mClicks: RecyclerClicks,
 ) : BaseAdapter<GetTransactionsHistoryResponse.Data, TransactionItemBinding>(mList) {
 
     override fun bindView(inflater: LayoutInflater, parent: ViewGroup) =
@@ -18,7 +19,7 @@ class TransactionHistoryAdapter (mList: MutableList<GetTransactionsHistoryRespon
     override fun onBind(
         holder: BaseViewHolder<TransactionItemBinding>,
         position: Int,
-        item: GetTransactionsHistoryResponse.Data?
+        item: GetTransactionsHistoryResponse.Data?,
     ) {
         with(holder) {
 
@@ -26,7 +27,11 @@ class TransactionHistoryAdapter (mList: MutableList<GetTransactionsHistoryRespon
 
             bind.amount.text = item?.total.toString().asMoney()
 
-            bind.date.text = Utils.getFormattedDateTime("yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'","MMM dd, yyyy",item?.date.toString())
+            bind.date.text = Utils.getFormattedDateTime(
+                "yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'",
+                "MMM dd, yyyy",
+                item?.date.toString()
+            )
 
         }
     }

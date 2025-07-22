@@ -13,11 +13,11 @@ data class FollowUnfollowResponse(
     @SerializedName("message")
     val message: String?,
     @SerializedName("status")
-    val status: String?
+    val status: String?,
 ) {
     @Keep
     data class Data(
         @SerializedName("status")
-        val status: Boolean?
+        val status: Boolean?,
     )
 }

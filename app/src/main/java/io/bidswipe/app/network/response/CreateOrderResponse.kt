@@ -13,7 +13,7 @@ data class CreateOrderResponse(
     @SerializedName("message")
     val message: String?,
     @SerializedName("status")
-    val status: String?
+    val status: String?,
 ) {
     @Keep
     data class Data(
@@ -40,6 +40,6 @@ data class CreateOrderResponse(
         @SerializedName("status")
         val status: String?,
         @SerializedName("user_id")
-        val userId: Int?
+        val userId: Int?,
     )
 }

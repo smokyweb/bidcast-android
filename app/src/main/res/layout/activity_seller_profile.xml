@@ -244,7 +244,7 @@
                             app:cornerRadius="50dp" />
 
                         <com.google.android.material.button.MaterialButton
-                            android:id="@+id/accept"
+                            android:id="@+id/message_seller"
                             style="@style/appBtn"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"

@@ -4,11 +4,11 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import io.bidswipe.app.base.BaseAdapter
 import io.bidswipe.app.databinding.ShippingAddressItemBinding
-import io.bidswipe.app.databinding.UploadImageItemBinding
 import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.network.response.GetShippingAddressResponse
 
-class ShippingAddressAdapter (mList: MutableList<GetShippingAddressResponse.Data?>, val mClicks: RecyclerClicks
+class ShippingAddressAdapter(
+    mList: MutableList<GetShippingAddressResponse.Data?>, val mClicks: RecyclerClicks,
 ) : BaseAdapter<GetShippingAddressResponse.Data?, ShippingAddressItemBinding>(mList) {
 
     override fun bindView(inflater: LayoutInflater, parent: ViewGroup) =
@@ -17,7 +17,7 @@ class ShippingAddressAdapter (mList: MutableList<GetShippingAddressResponse.Data
     override fun onBind(
         holder: BaseViewHolder<ShippingAddressItemBinding>,
         position: Int,
-        item: GetShippingAddressResponse.Data?
+        item: GetShippingAddressResponse.Data?,
     ) {
         with(holder) {
 

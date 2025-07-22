@@ -1,5 +1,6 @@
 package io.bidswipe.app.ui.dashboard
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -7,7 +8,6 @@ import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseFragment
 import io.bidswipe.app.controller.BidsAdapter
 import io.bidswipe.app.databinding.FragmentBidsBinding
@@ -17,7 +17,6 @@ import io.bidswipe.app.network.Resource
 import io.bidswipe.app.network.response.FetchBidResponse
 import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.utils.parse
-import io.bidswipe.app.utils.request
 
 class BidsFragment : BaseFragment<DashViewModel, FragmentBidsBinding>() {
 
@@ -36,12 +35,26 @@ class BidsFragment : BaseFragment<DashViewModel, FragmentBidsBinding>() {
         }
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         bidsAdapter = BidsAdapter(mList, mClick)
 
         bind.recycler.adapter = bidsAdapter
+
+        bind.swipeRefreshLayout.setOnRefreshListener {
+            page = 1
+            viewModel.fetchBids(page.toString())
+        }
+
+        bind.noInternet.onClick {
+            bind.loader.isVisible = true
+            bind.noInternet.isVisible = false
+            page = 1
+            viewModel.fetchBids(page.toString())
+
+        }
 
         bind.recycler.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
@@ -65,8 +78,11 @@ class BidsFragment : BaseFragment<DashViewModel, FragmentBidsBinding>() {
         viewModel.fetchBidsRepo.observe(viewLifecycleOwner) {
             when (it) {
                 is Resource.Success -> {
-
                     bind.loader.isVisible = false
+                    bind.swipeRefreshLayout.isRefreshing = false
+                    bind.bottomLoader.isVisible = false
+                    bind.noInternet.isVisible =false
+
                     val mData = it.value.data
 
                     mList.clear()
@@ -93,8 +109,13 @@ class BidsFragment : BaseFragment<DashViewModel, FragmentBidsBinding>() {
 
                 is Resource.Error -> {
                     bind.loader.isVisible = false
+                    bind.swipeRefreshLayout.isRefreshing =false
+                    bind.bottomLoader.isVisible = false
+
                     if (it.isNetworkError) {
-                        errorToast(getString(R.string.no_internet))
+                       bind.noInternet.isVisible = true
+                        bind.recycler.isVisible = false
+
                     } else {
                         it.parse(mCtx, TAG, object : AlertClicks {
                             override fun primaryClick(dialog: AppBottomSheet) {

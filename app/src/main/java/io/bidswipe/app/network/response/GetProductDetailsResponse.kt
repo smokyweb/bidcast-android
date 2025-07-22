@@ -13,7 +13,7 @@ data class GetProductDetailsResponse(
     @SerializedName("message")
     val message: String?,
     @SerializedName("status")
-    val status: String?
+    val status: String?,
 ) {
     @Keep
     data class Data(
@@ -63,7 +63,7 @@ data class GetProductDetailsResponse(
             @SerializedName("status")
             val status: String?,
             @SerializedName("user_id")
-            val userId: Int?
+            val userId: Int?,
         )
 
         @Keep
@@ -83,7 +83,7 @@ data class GetProductDetailsResponse(
             @SerializedName("type")
             val type: String?,
             @SerializedName("user_id")
-            val userId: Int?
+            val userId: Int?,
         )
 
         @Keep
@@ -97,7 +97,7 @@ data class GetProductDetailsResponse(
             @SerializedName("seller_verification")
             val sellerVerification: Boolean?,
             @SerializedName("username")
-            val username: String?
+            val username: String?,
         )
     }
 }

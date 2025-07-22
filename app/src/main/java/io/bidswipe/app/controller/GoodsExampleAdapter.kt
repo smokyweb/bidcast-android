@@ -3,12 +3,11 @@ package io.bidswipe.app.controller
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import io.bidswipe.app.base.BaseAdapter
-import io.bidswipe.app.databinding.BidsItemBinding
 import io.bidswipe.app.databinding.GoodsItemBinding
-import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.utils.loadUrl
 
-class GoodsExampleAdapter(mList: MutableList<String?>
+class GoodsExampleAdapter(
+    mList: MutableList<String?>,
 ) : BaseAdapter<String, GoodsItemBinding>(mList) {
 
     override fun bindView(inflater: LayoutInflater, parent: ViewGroup) =
@@ -17,7 +16,7 @@ class GoodsExampleAdapter(mList: MutableList<String?>
     override fun onBind(
         holder: BaseViewHolder<GoodsItemBinding>,
         position: Int,
-        item: String?
+        item: String?,
     ) {
         with(holder) {
 
@@ -25,7 +24,7 @@ class GoodsExampleAdapter(mList: MutableList<String?>
 
             }
 
-            bind.img.loadUrl(mCtx,item.toString())
+            bind.img.loadUrl(mCtx, item.toString())
 
 
         }

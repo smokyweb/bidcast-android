@@ -3,10 +3,9 @@ package io.bidswipe.app.controller
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import io.bidswipe.app.base.BaseAdapter
-import io.bidswipe.app.databinding.HomeItemBinding
 import io.bidswipe.app.databinding.WeightItemBinding
 
-class WeightAdapter  (
+class WeightAdapter(
     val mList: MutableList<String>,
 ) : BaseAdapter<String, WeightItemBinding>(mList) {
 
@@ -16,7 +15,7 @@ class WeightAdapter  (
     override fun onBind(
         holder: BaseViewHolder<WeightItemBinding>,
         position: Int,
-        item: String?
+        item: String?,
     ) {
         with(holder) {
 

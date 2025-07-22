@@ -10,7 +10,8 @@ import io.bidswipe.app.utils.Utils
 import io.bidswipe.app.utils.asMoney
 import io.bidswipe.app.utils.loadUrl
 
-class PurchasesAdapter(mList: MutableList<GetProductsByStatusResponse.Data?>, val mClicks: RecyclerClicks
+class PurchasesAdapter(
+    mList: MutableList<GetProductsByStatusResponse.Data?>, val mClicks: RecyclerClicks,
 ) : BaseAdapter<GetProductsByStatusResponse.Data, PurchasesItemBinding>(mList) {
 
     override fun bindView(inflater: LayoutInflater, parent: ViewGroup) =
@@ -19,7 +20,7 @@ class PurchasesAdapter(mList: MutableList<GetProductsByStatusResponse.Data?>, va
     override fun onBind(
         holder: BaseViewHolder<PurchasesItemBinding>,
         position: Int,
-        item: GetProductsByStatusResponse.Data?
+        item: GetProductsByStatusResponse.Data?,
     ) {
         with(holder) {
 
@@ -40,9 +41,13 @@ class PurchasesAdapter(mList: MutableList<GetProductsByStatusResponse.Data?>, va
                 append(item?.user?.name)
             }
 
-            bind.date.text = Utils.getFormattedDateTime("yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'","MM/dd/yyyy",item?.product?.createdAt.toString())
+            bind.date.text = Utils.getFormattedDateTime(
+                "yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'",
+                "MM/dd/yyyy",
+                item?.product?.createdAt.toString()
+            )
 
-            bind.productImage.loadUrl(mCtx,item?.product?.images?.get(0).toString())
+            bind.productImage.loadUrl(mCtx, item?.product?.images?.get(0).toString())
 
         }
     }

@@ -2,7 +2,6 @@ package io.bidswipe.app.ui.custom
 
 import android.content.Context
 import android.util.AttributeSet
-import android.util.Log
 import android.view.LayoutInflater
 import android.widget.LinearLayout
 import androidx.annotation.DrawableRes
@@ -16,7 +15,7 @@ import io.bidswipe.app.utils.styleable
 class Header @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
-    defStyleAttr: Int = 0
+    defStyleAttr: Int = 0,
 ) : LinearLayout(context, attrs, defStyleAttr) {
 
     private val bind = HeaderViewBinding.inflate(LayoutInflater.from(context), this, true)
@@ -65,7 +64,7 @@ class Header @JvmOverloads constructor(
 
             1 -> { // APP_TEXT_WITH_ACTION_BUTTONS
                 bind.back.isVisible = false
-	            bind.title.isVisible = true
+                bind.title.isVisible = true
                 bind.appText.isVisible = true
                 bind.secondaryIcon.isVisible = true
                 bind.secondary.isVisible = true
@@ -146,7 +145,7 @@ class Header @JvmOverloads constructor(
             bind.backIcon.isEnabled = false
             bind.back.visibility = GONE
             bind.backIcon.visibility = GONE
-            bind.appText.setPadding(20,0,0,0)
+            bind.appText.setPadding(20, 0, 0, 0)
         }
     }
 

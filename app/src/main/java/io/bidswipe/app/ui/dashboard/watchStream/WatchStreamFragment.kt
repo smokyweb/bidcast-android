@@ -1,6 +1,7 @@
 package io.bidswipe.app.ui.dashboard.watchStream
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -14,25 +15,25 @@ import com.google.firebase.database.ValueEventListener
 import com.ncorti.slidetoact.SlideToActView
 import com.ncorti.slidetoact.SlideToActView.OnSlideCompleteListener
 import im.zego.zegoexpress.ZegoExpressEngine
-import im.zego.zegoexpress.callback.IZegoEventHandler
-import im.zego.zegoexpress.callback.IZegoIMSendBroadcastMessageCallback
 import im.zego.zegoexpress.constants.ZegoViewMode
-import im.zego.zegoexpress.entity.ZegoBroadcastMessageInfo
 import im.zego.zegoexpress.entity.ZegoCanvas
 import im.zego.zegoexpress.entity.ZegoRoomConfig
 import im.zego.zegoexpress.entity.ZegoUser
 import im.zego.zim.ZIM
 import im.zego.zim.callback.ZIMEventHandler
-import im.zego.zim.callback.ZIMLoggedInCallback
-import im.zego.zim.callback.ZIMRoomJoinedCallback
+import im.zego.zim.callback.ZIMMessageSentFullCallback
 import im.zego.zim.entity.ZIMAppConfig
 import im.zego.zim.entity.ZIMError
+import im.zego.zim.entity.ZIMMediaMessage
 import im.zego.zim.entity.ZIMMessage
 import im.zego.zim.entity.ZIMMessageReceivedInfo
-import im.zego.zim.entity.ZIMRevokeMessage
-import im.zego.zim.entity.ZIMRoomFullInfo
+import im.zego.zim.entity.ZIMMessageSendConfig
+import im.zego.zim.entity.ZIMMultipleMessage
 import im.zego.zim.entity.ZIMTextMessage
 import im.zego.zim.entity.ZIMUserInfo
+import im.zego.zim.enums.ZIMConversationType
+import im.zego.zim.enums.ZIMMessagePriority
+import io.bidswipe.app.App
 import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseFragment
 import io.bidswipe.app.controller.CommentAdapter
@@ -41,7 +42,9 @@ import io.bidswipe.app.interfaces.AlertClicks
 import io.bidswipe.app.model.CommentModel
 import io.bidswipe.app.model.LiveShowModel
 import io.bidswipe.app.network.Resource
+import io.bidswipe.app.ui.custom.AlertType
 import io.bidswipe.app.ui.custom.AppBottomSheet
+import io.bidswipe.app.ui.dashboard.more.TrustedBuyerActivity
 import io.bidswipe.app.utils.Const
 import io.bidswipe.app.utils.asMoney
 import io.bidswipe.app.utils.draw
@@ -50,6 +53,7 @@ import io.bidswipe.app.utils.loadUrl
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request
 import io.bidswipe.app.utils.value
+import org.json.JSONObject
 
 class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBinding>() {
 
@@ -96,7 +100,6 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
 		bind.recycler.adapter = commentAdapter
 
-
 		Const.fireBaseRef.getReference(Const.LIVE_SESSIONS).child(roomID).addValueEventListener(object : ValueEventListener {
 			@SuppressLint("NotifyDataSetChanged")
 			override fun onDataChange(snapshot: DataSnapshot) {
@@ -125,7 +128,12 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 		bind.message.setEndIconOnClickListener {
 			if (bind.text.value().isNotEmpty()) {
 //                sendMessage(bind.text.value())
-				sendZimMessage()
+
+				if (App.profileResponse.value?.buyerIdentityStatus == "verified") {
+					sendZimMessage(bind.text.value())
+				}else{
+					verificationDialog()
+				}
 			}
 		}
 
@@ -303,6 +311,8 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 			}
 		}
 
+		verificationDialog()
+
 	}
 
 	override fun onResume() {
@@ -310,12 +320,12 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
 		loginAndPlay()
 
-		receiveZimMessage()
 	}
 
 	override fun onPause() {
 		super.onPause()
 		stopStream()
+		zim.logout()
 	}
 
 	private fun loginAndPlay() {
@@ -326,8 +336,22 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 			viewMode = ZegoViewMode.ASPECT_FILL
 		}
 		ZegoExpressEngine.getEngine().startPlayingStream(roomID, canvas)
+		if (::zim.isInitialized){
+			zim.joinRoom(roomID) { roomInfo, errorInfo ->
+				if (errorInfo != null) {
+					log("JOINED ROOM CHAT $roomInfo")
 
-        setupZIMChat()
+					zim.setEventHandler(zimEventHandler)
+
+					sendZimMessage("joined \uD83D\uDC4B")
+
+				} else {
+					log("JOIN ROOM CHAT ERROR : ${errorInfo.toString()}")
+				}
+			}
+		}else{
+			setupZIMChat()
+		}
 	}
 
 	private fun stopStream() {
@@ -360,6 +384,9 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
                         log("JOINED ROOM CHAT $roomInfo")
 
 	                    zim.setEventHandler(zimEventHandler)
+
+	                    sendZimMessage("joined \uD83D\uDC4B")
+
                     } else {
                         log("JOIN ROOM CHAT ERROR : ${errorInfo.toString()}")
                     }
@@ -378,8 +405,33 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
             info: ZIMMessageReceivedInfo?,
             fromRoomID: String?
         ) {
-            super.onRoomMessageReceived(zim, messageList, info, fromRoomID)
-            log("MESSAGE RECEIVED onRoomMessageReceived: ${messageList?.joinToString("\n\n")}")
+	        super.onRoomMessageReceived(zim, messageList, info, fromRoomID)
+	        log("MESSAGE RECEIVED onRoomMessageReceived: ${messageList?.joinToString("\n\n")}")
+
+	        if (messageList != null) {
+		        for (zimMessage in messageList) {
+			        if (zimMessage is ZIMTextMessage) {
+				        val zimTextMessage = zimMessage as ZIMTextMessage
+				        Log.e(TAG, "Received message: ${zimTextMessage.message}")
+				        log("Received Extended Data: ${zimTextMessage.extendedData}")
+
+				        try {
+					        val jsonObject = JSONObject(zimMessage.extendedData)
+					        val senderImage = jsonObject.getString("userImage")
+					        val senderName = jsonObject.getString("userName")
+					        val senderId = jsonObject.getString("userId")
+					        commentList.add(CommentModel(senderImage, senderName, senderId, zimMessage.message))
+					        commentAdapter.notifyItemInserted(commentList.size - 1)
+					        bind.recycler.post { bind.recycler.smoothScrollToPosition(commentList.size) }
+				        } catch (e: Exception) {
+					        e.printStackTrace()
+					        null
+				        }
+
+			        }
+		        }
+	        }
+
         }
     }
 
@@ -404,37 +456,65 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
 	}*/
 
-	fun sendZimMessage() {
+	fun sendZimMessage(content: String) {
 
-		/*   val conversationID = roomID
+		val zimMessage = ZIMTextMessage(content)
 
-		   val zimMessage = ZIMTextMessage()
-		   zimMessage.message = "Message content"
-		   val config = ZIMMessageSendConfig()
-		   config.priority = ZIMMessagePriority.LOW
-		   val pushConfig = ZIMPushConfig()
-		   pushConfig.title = "Title of the offline push"
-		   pushConfig.content = "Content of the offline push"
-		   config.pushConfig = pushConfig*/
+		val extendedData = JSONObject().apply {
+			put("userImage", userImage)
+			put("userId", userId)
+			put("userName", userName)
+		}
 
-		/* ZIM.getInstance().sendRoomMessage(
-			 zimMessage,
-			 roomID,
-			 config,
-			 object : ZIMMessageSentCallback {
-				 override fun onMessageAttached(message: ZIMMessage?) {
+		zimMessage.extendedData = extendedData.toString()
 
-				 }
+		val config = ZIMMessageSendConfig().also {
+			it.priority = ZIMMessagePriority.HIGH
+		}
 
-				 override fun onMessageSent(
-					 message: ZIMMessage?,
-					 errorInfo: ZIMError?
-				 ) {
+		zim.sendMessage(zimMessage, roomID, ZIMConversationType.ROOM, config, object : ZIMMessageSentFullCallback {
+			override fun onMessageAttached(message: ZIMMessage?) {
 
-				 }
+			}
 
-			 })*/
+			override fun onMessageSent(message: ZIMMessage?, errorInfo: ZIMError?) {
+				if (errorInfo != null) {
+					log("MESSAGE SENT SUCCESSFULLY : ${message?.conversationType}")
 
+					bind.text.setText("")
+
+					val jsonObject = JSONObject(message?.extendedData)
+					val senderImage = jsonObject.getString("userImage")
+					val senderId = jsonObject.getString("userId")
+					val senderName = jsonObject.getString("userName")
+					commentList.add(CommentModel(senderImage, senderName, senderId,zimMessage.message))
+					commentAdapter.notifyItemInserted(commentList.size - 1)
+					bind.recycler.post { bind.recycler.smoothScrollToPosition(commentList.size) }
+
+				} else {
+					log("MESSAGE SENT ERROR : ${errorInfo.toString()}")
+				}
+			}
+
+			override fun onMediaUploadingProgress(
+				message: ZIMMediaMessage?,
+				currentFileSize: Long,
+				totalFileSize: Long
+			) {
+
+			}
+
+			override fun onMultipleMediaUploadingProgress(
+				message: ZIMMultipleMessage?,
+				currentFileSize: Long,
+				totalFileSize: Long,
+				messageInfoIndex: Int,
+				currentIndexFileSize: Long,
+				totalIndexFileSize: Long
+			) {
+
+			}
+		})
 
 	}
 
@@ -453,6 +533,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 						if (zimMessage is ZIMTextMessage) {
 							val zimTextMessage = zimMessage as ZIMTextMessage
 							Log.e(TAG, "Received message: ${zimTextMessage.message}")
+
 						}
 					}
 				}
@@ -462,6 +543,48 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 			}
 		})
 
+	}
+
+	private fun verificationDialog() {
+		AppBottomSheet(
+			mCtx,
+			R.drawable.ic_info,
+			title = when(App.profileResponse.value?.buyerIdentityStatus){
+
+				"null" ->{
+					"Become a Verified Buyer!"
+				}
+
+				"pending" ->{
+					"Verification Pending!"
+				}
+
+				"rejected" ->{
+					"Verification Rejected!"
+				}
+
+				else -> {
+					"Become a Verified Buyer!"
+				}
+			},
+			"Before you interact with lives shows, You need to become a Verified Buyer.",
+			primaryBtnText = "Okay",
+			secondaryBtnText = "Cancel",
+			canCancel = true,
+			showSecondary = false,
+			iconPadding = 16,
+			alertType = AlertType.INFO,
+			clicks = object : AlertClicks {
+				override fun primaryClick(dialog: AppBottomSheet) {
+					dialog.dismiss()
+					startActivity(Intent(mCtx , TrustedBuyerActivity::class.java).putExtra("slug","buyer"))
+				}
+
+				override fun secondaryClick(dialog: AppBottomSheet) {
+					dialog.dismiss()
+				}
+			}
+		).show()
 
 	}
 
@@ -496,4 +619,5 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
 		})
 	}*/
+
 }

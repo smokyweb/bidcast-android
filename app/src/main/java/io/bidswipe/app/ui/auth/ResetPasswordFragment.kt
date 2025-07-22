@@ -1,13 +1,11 @@
 package io.bidswipe.app.ui.auth
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.navigation.fragment.findNavController
-import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseFragment
 import io.bidswipe.app.databinding.FragmentResetPasswordBinding
 import io.bidswipe.app.interfaces.AlertClicks
@@ -22,19 +20,20 @@ import io.bidswipe.app.utils.showKeyboard
 import io.bidswipe.app.utils.string
 import io.bidswipe.app.utils.value
 
-class ResetPasswordFragment : BaseFragment<AuthViewModel,FragmentResetPasswordBinding>() {
+class ResetPasswordFragment : BaseFragment<AuthViewModel, FragmentResetPasswordBinding>() {
     override fun getModel(): Class<AuthViewModel> = AuthViewModel::class.java
 
-    override fun getBind(inflater: LayoutInflater, view: ViewGroup?) = FragmentResetPasswordBinding.inflate(inflater, view, false)
+    override fun getBind(inflater: LayoutInflater, view: ViewGroup?) =
+        FragmentResetPasswordBinding.inflate(inflater, view, false)
 
-    private var email =""
+    private var email = ""
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        email = arguments?.getString("email","").toString()
+        email = arguments?.getString("email", "").toString()
 
-        bind.header.onBackClick{
+        bind.header.onBackClick {
             findNavController().navigate(ids.goToLoginFragment)
         }
 

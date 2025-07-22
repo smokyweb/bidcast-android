@@ -10,8 +10,10 @@
         android:id="@+id/hostView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"/>
+        app:layout_constraintVertical_bias="0.0"
+        tools:layout_editor_absoluteX="0dp" />
 
     <LinearLayout
         android:id="@+id/profileLayout"
@@ -112,6 +114,7 @@
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/menuLayout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginEnd="@dimen/margin"
@@ -272,7 +275,6 @@
 
     </LinearLayout>
 
-
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler"
         android:layout_width="match_parent"
@@ -288,7 +290,6 @@
         android:layout_gravity="bottom"
         tools:itemCount="10"
         />
-
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/message"

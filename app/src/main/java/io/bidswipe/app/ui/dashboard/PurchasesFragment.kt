@@ -57,16 +57,28 @@ class PurchasesFragment : BaseFragment<DashViewModel, FragmentPurchasesBinding>(
                 }
             }
         })
+        bind.swipeRefreshLayout.setOnRefreshListener {
+            page = 1
+            viewModel.getPurchasedProductsByStatus("purchased".request(),page.toString().request())
+        }
+
+        bind.noInternet.onClick {
+            bind.loader.isVisible = true
+            bind.noInternet.isVisible = false
+            page = 1
+            viewModel.getPurchasedProductsByStatus("purchased".request(),page.toString().request())
+        }
 
         bind.loader.isVisible = true
 
         viewModel.getPurchasedProductsByStatus("purchased".request(),"1".request())
-
         viewModel.getPurchasedProductsByStatusRepo.observe(viewLifecycleOwner) {
             when (it) {
                 is Resource.Success -> {
                     bind.loader.isVisible = false
                     bind.bottomLoader.isVisible = false
+                    bind.swipeRefreshLayout.isRefreshing = false
+                    bind.noInternet.isVisible = false
 
                     val mData = it.value.data
                     if (page == 1){
@@ -92,11 +104,16 @@ class PurchasesFragment : BaseFragment<DashViewModel, FragmentPurchasesBinding>(
                 }
 
                 is Resource.Error -> {
+                    bind.swipeRefreshLayout.isRefreshing = false
+                    bind.noData.isVisible = false
                     bind.loader.isVisible = false
                     bind.bottomLoader.isVisible = false
 
                     if (it.isNetworkError) {
-                        errorToast(getString(R.string.no_internet))
+                        bind.noInternet.isVisible = true
+                        bind.recycler.isVisible = false
+                        bind.noData.isVisible = false
+
                     } else {
                         it.parse(mCtx, TAG, object : AlertClicks {
                             override fun primaryClick(dialog: AppBottomSheet) {

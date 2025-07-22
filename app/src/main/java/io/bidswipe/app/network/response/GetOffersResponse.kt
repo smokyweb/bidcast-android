@@ -26,7 +26,7 @@ data class GetOffersResponse(
     @SerializedName("total")
     val total: Int?,
     @SerializedName("totalPage")
-    val totalPage: Int?
+    val totalPage: Int?,
 ) {
     @Keep
     data class Data(
@@ -56,7 +56,7 @@ data class GetOffersResponse(
             @SerializedName("pricing")
             val pricing: String?,
             @SerializedName("title")
-            val title: String?
+            val title: String?,
         )
 
         @Keep
@@ -66,7 +66,7 @@ data class GetOffersResponse(
             @SerializedName("name")
             val name: String?,
             @SerializedName("profile_image")
-            val profileImage: String?
+            val profileImage: String?,
         )
     }
 }

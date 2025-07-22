@@ -13,7 +13,7 @@ data class GetCategoryResponse(
     @SerializedName("message")
     val message: String?,
     @SerializedName("status")
-    val status: String?
+    val status: String?,
 ) {
     @Keep
     data class Data(
@@ -24,6 +24,6 @@ data class GetCategoryResponse(
         @SerializedName("image")
         val image: String?,
         @SerializedName("name")
-        val name: String?
+        val name: String?,
     )
 }

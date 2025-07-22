@@ -9,7 +9,8 @@ import io.bidswipe.app.network.response.GetMyInventoryResponse
 import io.bidswipe.app.utils.asMoney
 import io.bidswipe.app.utils.loadUrl
 
-class InventoryAdapter (mList: MutableList<GetMyInventoryResponse.Data?>, val mClicks: RecyclerClicks
+class InventoryAdapter(
+    mList: MutableList<GetMyInventoryResponse.Data?>, val mClicks: RecyclerClicks,
 ) : BaseAdapter<GetMyInventoryResponse.Data?, InventoryItemBinding>(mList) {
 
     override fun bindView(inflater: LayoutInflater, parent: ViewGroup) =
@@ -18,7 +19,7 @@ class InventoryAdapter (mList: MutableList<GetMyInventoryResponse.Data?>, val mC
     override fun onBind(
         holder: BaseViewHolder<InventoryItemBinding>,
         position: Int,
-        item: GetMyInventoryResponse.Data?
+        item: GetMyInventoryResponse.Data?,
     ) {
         with(holder) {
 
@@ -26,7 +27,7 @@ class InventoryAdapter (mList: MutableList<GetMyInventoryResponse.Data?>, val mC
             bind.prodSubTitle.text = item?.description
             bind.price.text = item?.pricing.toString().asMoney()
 
-            bind.productImage.loadUrl(mCtx,item?.images?.get(0).toString())
+            bind.productImage.loadUrl(mCtx, item?.images?.get(0).toString())
 
         }
     }
