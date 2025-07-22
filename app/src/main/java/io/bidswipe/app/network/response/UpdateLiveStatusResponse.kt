@@ -1,8 +1,9 @@
 package io.bidswipe.app.network.response
 
 
-import com.google.gson.annotations.SerializedName
 import androidx.annotation.Keep
+import com.google.gson.annotations.SerializedName
+import io.bidswipe.app.model.LiveShowModel
 
 @Keep
 data class UpdateLiveStatusResponse(
@@ -102,7 +103,19 @@ data class UpdateLiveStatusResponse(
             val title: String?,
             @SerializedName("user_id")
             val userId: Int?,
-        )
+        ) {
+
+            fun toLiveShowProduct(): LiveShowModel.Product {
+                return LiveShowModel.Product(
+                    category = this.categoryId?.toString(),
+                    id = this.id?.toString(),
+                    image = this.images?.firstOrNull() ?: "",
+                    status = this.status ?: "live",
+                    name = this.title,
+                    price = this.pricing?.toString()
+                )
+            }
+        }
 
         @Keep
         data class User(

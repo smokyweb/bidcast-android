@@ -4,16 +4,19 @@ import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 
 object FireRef {
-
-	//REALTIME-DB NODES
 	private val dbRef =  Firebase.database.reference
 
-	val CHAT_LIST = dbRef.child("chat_list")
-	val CHAT = dbRef.child("chats")
+	//NODE CONSTANTS
+	const val LIVE_SESSIONS_REF = "live_sessions"
+	const val CHAT_LIST_REF = "chat_list"
+	const val CHAT_REF = "chats"
+
+	val LIVE_SESSIONS = dbRef.child(LIVE_SESSIONS_REF)
+	val CHAT_LIST = dbRef.child(CHAT_LIST_REF)
+	val CHAT = dbRef.child(CHAT_REF)
 
 	//STORAGE REFERENCES
 //	private val strRef =  Firebase.storage.reference
-
 //	val VIDEO_STR = strRef.child("chat_videos")
 //	val IMAGE_STR = strRef.child("chat_images")
 //	val AUDIO_STR = strRef.child("chat_audio")

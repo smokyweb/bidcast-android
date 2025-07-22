@@ -45,13 +45,15 @@ import io.bidswipe.app.network.Resource
 import io.bidswipe.app.ui.custom.AlertType
 import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.ui.dashboard.more.TrustedBuyerActivity
-import io.bidswipe.app.utils.Const
+import io.bidswipe.app.utils.FireRef
 import io.bidswipe.app.utils.asMoney
 import io.bidswipe.app.utils.draw
 import io.bidswipe.app.utils.finish
+import io.bidswipe.app.utils.getCurrentProduct
 import io.bidswipe.app.utils.loadUrl
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request
+import io.bidswipe.app.utils.runSafe
 import io.bidswipe.app.utils.value
 import org.json.JSONObject
 
@@ -98,7 +100,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
 		bind.recycler.adapter = commentAdapter
 
-		Const.fireBaseRef.getReference(Const.LIVE_SESSIONS).child(roomID).addValueEventListener(object : ValueEventListener {
+		FireRef.LIVE_SESSIONS.child(roomID).addValueEventListener(object : ValueEventListener {
 			@SuppressLint("NotifyDataSetChanged")
 			override fun onDataChange(snapshot: DataSnapshot) {
 
@@ -106,7 +108,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
 				bind.liveCount.text = data?.viewerCount.toString()
 
-				if (data?.product?.status == "sold") {
+				if (data?.products?.getCurrentProduct()?.status == "sold") {
 					bind.soldLayout.isVisible = true
 					bind.productLayout.isVisible = false
 				} else {
@@ -128,7 +130,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
 				if (App.profileResponse.value?.buyerIdentityStatus == "verified") {
 					sendZimMessage(bind.text.value())
-				}else{
+				} else {
 					verificationDialog()
 				}
 			}
@@ -144,54 +146,39 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 				)
 
 				bind.userName.text = stream.seller?.name.toString()
-				bind.productName.text = stream.product?.name
+				bind.productName.text = stream.products?.getCurrentProduct()?.name
 				bind.productImage.loadUrl(
 					mCtx,
-					stream?.product?.image.toString(),
+					stream?.products?.getCurrentProduct()?.image.toString(),
 					placeHolder = draw.product_img
 				)
 
 				try {
 					bind.quantity.text = buildString {
 						append("Price: ")
-						append(stream.product?.price.toString())
+						append(stream.products?.getCurrentProduct()?.price.toString())
 					}
 				} catch (e: Exception) {
 					e.printStackTrace()
 				}
 
 				if (stream.seller?.isFollowed == true) {
-					bind.follow.setBackgroundColor(
-						ContextCompat.getColor(
-							mCtx,
-							R.color.outline
-						)
-					)
+					bind.follow.setBackgroundColor(ContextCompat.getColor(mCtx, R.color.outline))
 					bind.follow.setTextColor(ContextCompat.getColor(mCtx, R.color.onSurface))
 					bind.follow.text = "Unfollow"
 				} else {
-					bind.follow.setBackgroundColor(
-						ContextCompat.getColor(
-							mCtx,
-							R.color.primary
-						)
-					)
+					bind.follow.setBackgroundColor(ContextCompat.getColor(mCtx, R.color.primary))
 					bind.follow.setTextColor(ContextCompat.getColor(mCtx, R.color.background))
 					bind.follow.text = "Follow"
 				}
 
 				bind.follow.setOnClickListener {
-
 					viewModel.followUser(stream.seller?.id?.request())
-
 				}
 
-				try {
-					bind.max.text = stream.product?.price.toString().asMoney()
-
-					bind.bid.text = "Swipe to Bid for ${(stream.product?.price?.toInt()?.plus(1)).toString().asMoney()}"
-				} catch (e: Exception) {
-					e.printStackTrace()
+				runSafe {
+					bind.max.text = stream.products?.getCurrentProduct()?.price.toString().asMoney()
+					bind.bid.text = "Swipe to Bid for ${(stream.products?.getCurrentProduct()?.price?.toInt()?.plus(1)).toString().asMoney()}"
 				}
 
 				bind.bid.onSlideCompleteListener = object : OnSlideCompleteListener {
@@ -203,10 +190,9 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 						viewModel.createBid(
 							stream.showId?.request(),
 							userId.request(),
-							stream.product?.id.toString().request(),
-							stream.product?.price?.request()
+							stream.products?.getCurrentProduct()?.id.toString().request(),
+							stream.products?.getCurrentProduct()?.price?.request()
 						)
-
 					}
 				}
 
@@ -223,11 +209,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
 					it.value.data
 
-					Const.fireBaseRef.getReference(Const.LIVE_SESSIONS).child(roomID).child("product").child("status").setValue("sold")
-						.addOnCompleteListener {
-
-						}
-
+					FireRef.LIVE_SESSIONS.child(roomID).child("product").child("status").setValue("sold")
 				}
 
 				is Resource.Error -> {
@@ -262,21 +244,11 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 					val mData = it.value.data
 
 					if (mData?.status == true) {
-						bind.follow.setBackgroundColor(
-							ContextCompat.getColor(
-								mCtx,
-								R.color.outline
-							)
-						)
+						bind.follow.setBackgroundColor(ContextCompat.getColor(mCtx, R.color.outline))
 						bind.follow.setTextColor(ContextCompat.getColor(mCtx, R.color.onSurface))
 						bind.follow.text = "Unfollow"
 					} else {
-						bind.follow.setBackgroundColor(
-							ContextCompat.getColor(
-								mCtx,
-								R.color.primary
-							)
-						)
+						bind.follow.setBackgroundColor(ContextCompat.getColor(mCtx, R.color.primary))
 						bind.follow.setTextColor(ContextCompat.getColor(mCtx, R.color.background))
 						bind.follow.text = "Follow"
 					}
@@ -332,12 +304,12 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 			viewMode = ZegoViewMode.ASPECT_FILL
 		}
 		ZegoExpressEngine.getEngine().startPlayingStream(roomID, canvas)
-		if (viewModel.previousRoomId.isNotEmpty()){
+		if (viewModel.previousRoomId.isNotEmpty()) {
 			val roomInfo = ZIMRoomInfo().also {
 				it.roomID = roomID
 				it.roomName = roomID + "_room"
 			}
-			ZIM.getInstance().switchRoom(viewModel.previousRoomId, roomInfo,false,null) { roomInfo, errorInfo ->
+			ZIM.getInstance().switchRoom(viewModel.previousRoomId, roomInfo, false, null) { roomInfo, errorInfo ->
 				if (errorInfo != null) {
 					log("JOINED ROOM CHAT $roomInfo")
 
@@ -351,7 +323,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 					log("JOIN ROOM CHAT ERROR : ${errorInfo.toString()}")
 				}
 			}
-		}else{
+		} else {
 			setupZIMChat()
 		}
 	}
@@ -365,73 +337,73 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 		ZegoExpressEngine.destroyEngine(null)
 	}
 
-    private fun setupZIMChat() {
+	private fun setupZIMChat() {
 
 
-        val userInfo = ZIMUserInfo().also {
-            it.userID = userName.replace(" ", ".") + "_" + userId
-            it.userName = userImage
-        }
+		val userInfo = ZIMUserInfo().also {
+			it.userID = userName.replace(" ", ".") + "_" + userId
+			it.userName = userImage
+		}
 
-	    ZIM.getInstance().login(userInfo) { error ->
-            if (error != null) {
-                log("LOGGED INTO ZIM")
-	            ZIM.getInstance().joinRoom(roomID) { roomInfo, errorInfo ->
-                    if (errorInfo != null) {
-                        log("JOINED ROOM CHAT $roomInfo")
+		ZIM.getInstance().login(userInfo) { error ->
+			if (error != null) {
+				log("LOGGED INTO ZIM")
+				ZIM.getInstance().joinRoom(roomID) { roomInfo, errorInfo ->
+					if (errorInfo != null) {
+						log("JOINED ROOM CHAT $roomInfo")
 
-	                    ZIM.getInstance().setEventHandler(zimEventHandler)
-	                    viewModel.previousRoomId = roomID
+						ZIM.getInstance().setEventHandler(zimEventHandler)
+						viewModel.previousRoomId = roomID
 
-	                    sendZimMessage("joined \uD83D\uDC4B")
+						sendZimMessage("joined \uD83D\uDC4B")
 
-                    } else {
-                        log("JOIN ROOM CHAT ERROR : ${errorInfo.toString()}")
-                    }
-                }
-            } else {
-                log("LOG IN ROOM ERROR : ${error.toString()}")
-            }
-        }
+					} else {
+						log("JOIN ROOM CHAT ERROR : ${errorInfo.toString()}")
+					}
+				}
+			} else {
+				log("LOG IN ROOM ERROR : ${error.toString()}")
+			}
+		}
 
-    }
+	}
 
-    private val zimEventHandler = object : ZIMEventHandler() {
-        override fun onRoomMessageReceived(
-            zim: ZIM?,
-            messageList: java.util.ArrayList<ZIMMessage?>?,
-            info: ZIMMessageReceivedInfo?,
-            fromRoomID: String?
-        ) {
-	        super.onRoomMessageReceived(zim, messageList, info, fromRoomID)
-	        log("MESSAGE RECEIVED onRoomMessageReceived: ${messageList?.joinToString("\n\n")}")
+	private val zimEventHandler = object : ZIMEventHandler() {
+		override fun onRoomMessageReceived(
+			zim: ZIM?,
+			messageList: java.util.ArrayList<ZIMMessage?>?,
+			info: ZIMMessageReceivedInfo?,
+			fromRoomID: String?
+		) {
+			super.onRoomMessageReceived(zim, messageList, info, fromRoomID)
+			log("MESSAGE RECEIVED onRoomMessageReceived: ${messageList?.joinToString("\n\n")}")
 
-	        if (messageList != null) {
-		        for (zimMessage in messageList) {
-			        if (zimMessage is ZIMTextMessage) {
-				        val zimTextMessage = zimMessage as ZIMTextMessage
-				        Log.e(TAG, "Received message: ${zimTextMessage.message}")
-				        log("Received Extended Data: ${zimTextMessage.extendedData}")
+			if (messageList != null) {
+				for (zimMessage in messageList) {
+					if (zimMessage is ZIMTextMessage) {
+						val zimTextMessage = zimMessage as ZIMTextMessage
+						Log.e(TAG, "Received message: ${zimTextMessage.message}")
+						log("Received Extended Data: ${zimTextMessage.extendedData}")
 
-				        try {
-					        val jsonObject = JSONObject(zimMessage.extendedData)
-					        val senderImage = jsonObject.getString("userImage")
-					        val senderName = jsonObject.getString("userName")
-					        val senderId = jsonObject.getString("userId")
-					        commentList.add(CommentModel(senderImage, senderName, senderId, zimMessage.message))
-					        commentAdapter.notifyItemInserted(commentList.size - 1)
-					        bind.recycler.post { bind.recycler.smoothScrollToPosition(commentList.size) }
-				        } catch (e: Exception) {
-					        e.printStackTrace()
-					        null
-				        }
+						try {
+							val jsonObject = JSONObject(zimMessage.extendedData)
+							val senderImage = jsonObject.getString("userImage")
+							val senderName = jsonObject.getString("userName")
+							val senderId = jsonObject.getString("userId")
+							commentList.add(CommentModel(senderImage, senderName, senderId, zimMessage.message))
+							commentAdapter.notifyItemInserted(commentList.size - 1)
+							bind.recycler.post { bind.recycler.smoothScrollToPosition(commentList.size) }
+						} catch (e: Exception) {
+							e.printStackTrace()
+							null
+						}
 
-			        }
-		        }
-	        }
+					}
+				}
+			}
 
-        }
-    }
+		}
+	}
 
 	/*fun sendMessage(message: String) {
 
@@ -485,7 +457,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 					val senderImage = jsonObject.getString("userImage")
 					val senderId = jsonObject.getString("userId")
 					val senderName = jsonObject.getString("userName")
-					commentList.add(CommentModel(senderImage, senderName, senderId,zimMessage.message))
+					commentList.add(CommentModel(senderImage, senderName, senderId, zimMessage.message))
 					commentAdapter.notifyItemInserted(commentList.size - 1)
 					bind.recycler.post { bind.recycler.smoothScrollToPosition(commentList.size) }
 
@@ -547,17 +519,17 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 		AppBottomSheet(
 			mCtx,
 			R.drawable.ic_info,
-			title = when(App.profileResponse.value?.buyerIdentityStatus){
+			title = when (App.profileResponse.value?.buyerIdentityStatus) {
 
-				"null" ->{
+				"null" -> {
 					"Become a Verified Buyer!"
 				}
 
-				"pending" ->{
+				"pending" -> {
 					"Verification Pending!"
 				}
 
-				"rejected" ->{
+				"rejected" -> {
 					"Verification Rejected!"
 				}
 
@@ -575,7 +547,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 			clicks = object : AlertClicks {
 				override fun primaryClick(dialog: AppBottomSheet) {
 					dialog.dismiss()
-					startActivity(Intent(mCtx , TrustedBuyerActivity::class.java).putExtra("slug","buyer"))
+					startActivity(Intent(mCtx, TrustedBuyerActivity::class.java).putExtra("slug", "buyer"))
 				}
 
 				override fun secondaryClick(dialog: AppBottomSheet) {

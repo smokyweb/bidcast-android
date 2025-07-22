@@ -39,6 +39,7 @@ import com.squareup.picasso.Picasso
 import com.squareup.picasso.Target
 import io.bidswipe.app.R
 import io.bidswipe.app.interfaces.AlertClicks
+import io.bidswipe.app.model.LiveShowModel
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.ui.custom.AlertType
 import io.bidswipe.app.ui.custom.AppBottomSheet
@@ -76,7 +77,7 @@ fun Resources.dp(value: Float): Int {
 	if (density == 1f) {
 		checkDisplaySize()
 	}
-	
+
 	return if (value == 0f) {
 		0
 	} else ceil((density * value).toDouble()).toInt()
@@ -106,7 +107,6 @@ fun EditText.setNumberInput() {
 fun String.asMoney() = "$" + "%.2f".format(this.toDouble())
 
 
-
 fun String.request() = this.trim().toRequestBody("text/plain".toMediaTypeOrNull())
 
 fun String.asHtml() = HtmlCompat.fromHtml(this, HtmlCompat.FROM_HTML_MODE_COMPACT).toString()
@@ -129,7 +129,7 @@ fun AppCompatActivity.hideKeyboard() {
 
 fun AppCompatActivity.showKeyboard(view: View? = null) {
 	val focus = view ?: (currentFocus ?: View(this))
-	
+
 	val imm = getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
 	imm.showSoftInput(focus, InputMethodManager.SHOW_IMPLICIT)
 }
@@ -163,12 +163,12 @@ fun Fragment.intent(): Intent {
 }
 
 fun Resource.Error.parse(
-	mCtx : Context,
-	tag : String,
-	mClicks : AlertClicks?=null,
-	showSecondary : Boolean = false,
-	title : String = "Error",
-	showAlert : Boolean = true,
+	mCtx: Context,
+	tag: String,
+	mClicks: AlertClicks? = null,
+	showSecondary: Boolean = false,
+	title: String = "Error",
+	showAlert: Boolean = true,
 ) {
 	val message = try {
 		if (this.isNetworkError)
@@ -177,7 +177,7 @@ fun Resource.Error.parse(
 			"Image is too large"
 		else
 			this.errorResponse?.message?.asHtml()?.asCapital() ?: "No Data Found"
-	} catch (e : Exception) {
+	} catch (e: Exception) {
 		e.printStackTrace()
 		e.localizedMessage?.asCapital() ?: "No Data Found"
 	}
@@ -186,7 +186,7 @@ fun Resource.Error.parse(
 
 	val clicks = if (this.errorResponse?.errorType == "unauthorized" || this.errorResponse?.errorType == "token_invalid") {
 		object : AlertClicks {
-			override fun primaryClick(dialog : AppBottomSheet) {
+			override fun primaryClick(dialog: AppBottomSheet) {
 				dialog.dismiss()
 //				mCtx.cancelNotification()
 				Prefs(mCtx).clear()
@@ -196,34 +196,34 @@ fun Resource.Error.parse(
 				})
 			}
 
-			override fun secondaryClick(dialog : AppBottomSheet) {
+			override fun secondaryClick(dialog: AppBottomSheet) {
 				dialog.dismiss()
 			}
 		}
 	} else {
-			mClicks?:object : AlertClicks {
-				override fun primaryClick(dialog: AppBottomSheet) {
-					dialog.dismiss()
-				}
-				
-				override fun secondaryClick(dialog: AppBottomSheet) {
-					dialog.dismiss()
-					
-				}
+		mClicks ?: object : AlertClicks {
+			override fun primaryClick(dialog: AppBottomSheet) {
+				dialog.dismiss()
 			}
+
+			override fun secondaryClick(dialog: AppBottomSheet) {
+				dialog.dismiss()
+
+			}
+		}
 	}
 
 	if (showAlert) {
 		AppBottomSheet(
-			mCtx = mCtx ,
+			mCtx = mCtx,
 			image = draw.ic_error,
-			title = title ,
-			message = message ,
-			primaryBtnText = "Ok" ,
-			secondaryBtnText = "Cancel" ,
-			canCancel = false ,
-			showSecondary = showSecondary ,
-			clicks = clicks ,
+			title = title,
+			message = message,
+			primaryBtnText = "Ok",
+			secondaryBtnText = "Cancel",
+			canCancel = false,
+			showSecondary = showSecondary,
+			clicks = clicks,
 			alertType = AlertType.ERROR
 		).show()
 	}
@@ -242,7 +242,7 @@ fun NavController.animatedNav(@IdRes id: Int, bundle: Bundle? = null) {
 		.setPopEnterAnim(anim.slide_in_left)
 		.setPopExitAnim(anim.slide_out_right)
 		.build()
-	
+
 	this.navigate(id, bundle, opt)
 }
 
@@ -268,11 +268,11 @@ fun Context.getBitmapFromUrl(url: String, callBack: (Bitmap?) -> Unit) {
 					bitmap ?: ContextCompat.getDrawable(this@getBitmapFromUrl, draw.app_icon)?.toBitmap()
 				)
 			}
-			
+
 			override fun onBitmapFailed(e: java.lang.Exception?, errorDrawable: Drawable?) {
 				callBack(errorDrawable?.toBitmap())
 			}
-			
+
 			override fun onPrepareLoad(placeHolderDrawable: Drawable?) {
 //					callBack(placeHolderDrawable?.toBitmap())
 			}
@@ -287,48 +287,48 @@ fun SwipeRefreshLayout.setDefaults() {
 
 fun EditText.addDecimalLimiter(maxLimit: Int = 2) {
 	this.addTextChangedListener(object : TextWatcher {
-		
+
 		override fun afterTextChanged(s: Editable?) {
 			val str = this@addDecimalLimiter.text!!.toString()
 			if (str.isEmpty()) return
 			val str2 = decimalLimiter(str, maxLimit)
-			
+
 			if (str2 != str) {
 				this@addDecimalLimiter.setText(str2)
 				val pos = this@addDecimalLimiter.text!!.length
 				this@addDecimalLimiter.setSelection(pos)
 			}
 		}
-		
+
 		override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-		
+
 		}
-		
+
 		override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-		
+
 		}
-		
+
 	})
 }
 
 fun decimalLimiter(string: String, maxDecimal: Int): String {
-	
+
 	var str = string
 	if (str[0] == '.') str = "0$str"
 	val max = str.length
-	
+
 	var rFinal = ""
 	var after = false
 	var i = 0
 	var up = 0
 	var decimal = 0
 	var t: Char
-	
+
 	val decimalCount = str.count { ".".contains(it) }
-	
+
 	if (decimalCount > 1)
 		return str.dropLast(1)
-	
+
 	while (i < max) {
 		t = str[i]
 		if (t != '.' && !after) {
@@ -344,4 +344,12 @@ fun decimalLimiter(string: String, maxDecimal: Int): String {
 		i++
 	}
 	return rFinal
+}
+
+/**
+ * Extension function to get the current product from a nullable list of LiveShowModel.Product.
+ * Returns the first product where isCurrent == true, or null if none.
+ */
+fun List<LiveShowModel.Product?>?.getCurrentProduct(): LiveShowModel.Product? {
+	return this?.firstOrNull { it?.isCurrent == true }
 }
