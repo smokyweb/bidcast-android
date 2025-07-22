@@ -93,16 +93,22 @@ class ViewLiveShowActivity : BaseActivity() {
 
 //        log("ROOM IDS: ${streamList.get(0).roomId}")
 
-
         createEngine()
+
+        val appConfig = ZIMAppConfig().also {
+            it.appID = Const.APP_ID.toLong()
+            it.appSign = Const.APP_SIGN
+        }
+
+       ZIM.create(appConfig, application)
 
     }
 
     override fun onDestroy() {
         super.onDestroy()
         destroyEngine()
-        ZIM.getInstance().logout()
-        ZIM.getInstance().destroy()
+       /* ZIM.getInstance().logout()
+        ZIM.getInstance().destroy()*/
 
     }
 

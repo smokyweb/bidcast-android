@@ -22,13 +22,13 @@ import im.zego.zegoexpress.entity.ZegoUser
 import im.zego.zim.ZIM
 import im.zego.zim.callback.ZIMEventHandler
 import im.zego.zim.callback.ZIMMessageSentFullCallback
-import im.zego.zim.entity.ZIMAppConfig
 import im.zego.zim.entity.ZIMError
 import im.zego.zim.entity.ZIMMediaMessage
 import im.zego.zim.entity.ZIMMessage
 import im.zego.zim.entity.ZIMMessageReceivedInfo
 import im.zego.zim.entity.ZIMMessageSendConfig
 import im.zego.zim.entity.ZIMMultipleMessage
+import im.zego.zim.entity.ZIMRoomInfo
 import im.zego.zim.entity.ZIMTextMessage
 import im.zego.zim.entity.ZIMUserInfo
 import im.zego.zim.enums.ZIMConversationType
@@ -69,8 +69,6 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 	private var commentList = mutableListOf<CommentModel?>()
 	private lateinit var commentAdapter: CommentAdapter
 	private var isLoggedIn = false
-
-    private lateinit var zim: ZIM
 
 	companion object {
 		fun newInstance(roomID: String, streamID: String) = WatchStreamFragment().apply {
@@ -115,7 +113,6 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 					bind.soldLayout.isVisible = false
 					bind.productLayout.isVisible = true
 				}
-
 
 			}
 
@@ -325,7 +322,6 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 	override fun onPause() {
 		super.onPause()
 		stopStream()
-		zim.logout()
 	}
 
 	private fun loginAndPlay() {
@@ -336,12 +332,18 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 			viewMode = ZegoViewMode.ASPECT_FILL
 		}
 		ZegoExpressEngine.getEngine().startPlayingStream(roomID, canvas)
-		if (::zim.isInitialized){
-			zim.joinRoom(roomID) { roomInfo, errorInfo ->
+		if (viewModel.previousRoomId.isNotEmpty()){
+			val roomInfo = ZIMRoomInfo().also {
+				it.roomID = roomID
+				it.roomName = roomID + "_room"
+			}
+			ZIM.getInstance().switchRoom(viewModel.previousRoomId, roomInfo,false,null) { roomInfo, errorInfo ->
 				if (errorInfo != null) {
 					log("JOINED ROOM CHAT $roomInfo")
 
-					zim.setEventHandler(zimEventHandler)
+					ZIM.getInstance().setEventHandler(zimEventHandler)
+
+					viewModel.previousRoomId = roomID
 
 					sendZimMessage("joined \uD83D\uDC4B")
 
@@ -364,26 +366,22 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 	}
 
     private fun setupZIMChat() {
-        val appConfig = ZIMAppConfig().also {
-            it.appID = Const.APP_ID.toLong()
-            it.appSign = Const.APP_SIGN
-        }
 
-        zim = ZIM.create(appConfig, activity?.application)
 
         val userInfo = ZIMUserInfo().also {
             it.userID = userName.replace(" ", ".") + "_" + userId
             it.userName = userImage
         }
 
-        zim.login(userInfo) { error ->
+	    ZIM.getInstance().login(userInfo) { error ->
             if (error != null) {
                 log("LOGGED INTO ZIM")
-                zim.joinRoom(roomID) { roomInfo, errorInfo ->
+	            ZIM.getInstance().joinRoom(roomID) { roomInfo, errorInfo ->
                     if (errorInfo != null) {
                         log("JOINED ROOM CHAT $roomInfo")
 
-	                    zim.setEventHandler(zimEventHandler)
+	                    ZIM.getInstance().setEventHandler(zimEventHandler)
+	                    viewModel.previousRoomId = roomID
 
 	                    sendZimMessage("joined \uD83D\uDC4B")
 
@@ -472,7 +470,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 			it.priority = ZIMMessagePriority.HIGH
 		}
 
-		zim.sendMessage(zimMessage, roomID, ZIMConversationType.ROOM, config, object : ZIMMessageSentFullCallback {
+		ZIM.getInstance().sendMessage(zimMessage, roomID, ZIMConversationType.ROOM, config, object : ZIMMessageSentFullCallback {
 			override fun onMessageAttached(message: ZIMMessage?) {
 
 			}

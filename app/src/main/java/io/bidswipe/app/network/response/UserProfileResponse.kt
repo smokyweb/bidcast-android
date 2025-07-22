@@ -49,6 +49,10 @@ data class UserProfileResponse(
         val sellerIdentityStatus: String?,
         @SerializedName("buyer_identity_status")
         val buyerIdentityStatus: String?,
+        @SerializedName("has_shipping_address")
+        val hasShippingAddress: Boolean?,
+        @SerializedName("has_card_added")
+        val hasCardAdded: Boolean?
     ) {
         @Keep
         data class Role(

@@ -50,15 +50,12 @@ class SellerVerificationFragment : BaseFragment<SellerHubViewModel, FragmentSell
 
     private lateinit var cardAdapter : SelectPaymentCardAdapter
 
-    private var addCardLauncher =
-
-        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            if (result.resultCode == Activity.RESULT_OK) {
-                bind.loader.isVisible = true
-                viewModel.getPaymentCard()
-            }
-
+    private var addCardLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            bind.loader.isVisible = true
+            viewModel.getPaymentCard()
         }
+    }
 
     private val mClick = object : RecyclerClicks{
         override fun itemClick(pos: Int, status: String?) {
@@ -127,7 +124,6 @@ class SellerVerificationFragment : BaseFragment<SellerHubViewModel, FragmentSell
             }
         }
     }
-
 
     @SuppressLint("ResourceAsColor")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -261,7 +257,6 @@ class SellerVerificationFragment : BaseFragment<SellerHubViewModel, FragmentSell
             }
         }
 
-
         bind.loader.isVisible = true
 
         viewModel.fetchSellerVerification()
@@ -272,50 +267,39 @@ class SellerVerificationFragment : BaseFragment<SellerHubViewModel, FragmentSell
 
                     val mData = it.value.data
 
+                    bind.status.text = mData?.status
 
                     when(mData?.status){
 
                         "pending" ->{
-                            bind.verifyOtp.isVisible = true
                             bind.verificationIcon.isVisible = true
-
                             bind.stepProgress.setProgress(3)
                             bind.stepCount.setText("3 of 4")
-
-                            bind.status.text = mData.status
-                            bind.status.setTextColor(R.color.success)
-
                             bind.phoneNumberLayout.isVisible = false
                             bind.otpLayout.isVisible = false
                             bind.verifyOtp.isVisible = false
                             bind.verifyPhone.isVisible = false
                             bind.verificationPhoneIcon.isVisible = true
-
                             bind.completeVerification.isVisible = false
-
+                            bind.status.setTextColor(R.color.warningClr)
+                            bind.status.text = "Pending"
                         }
 
                         "verified" ->{
-
                             bind.verifyPhone.isVisible = false
                             bind.verifyOtp.isVisible = true
-
                             bind.phoneNumberLayout.isVisible = false
                             bind.otpLayout.isVisible = true
-
                             bind.verificationIcon.isVisible = true
                             bind.verificationPhoneIcon.isVisible = true
                             bind.stepProgress.setProgress(4)
                             bind.stepCount.setText("4 of 4")
-
-                            bind.status.text = mData.status
                             bind.status.setTextColor(R.color.success)
                             bind.completeVerification.isVisible = false
-
+                            bind.status.text = "Verified"
                         }
 
                     }
-
 
                     viewModel.getPaymentCard()
 

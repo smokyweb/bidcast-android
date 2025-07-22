@@ -14,6 +14,7 @@ import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.firebase.messaging.FirebaseMessaging
+import io.bidswipe.app.App
 import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseActivity
 import io.bidswipe.app.controller.SellAdapter
@@ -31,6 +32,7 @@ import io.bidswipe.app.utils.ids
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request
 import io.bidswipe.app.utils.toListProduct
+import io.bidswipe.app.utils.toScheduleShow
 import io.bidswipe.app.utils.toTutorials
 
 class DashActivity : BaseActivity(), NavController.OnDestinationChangedListener {
@@ -128,41 +130,8 @@ class DashActivity : BaseActivity(), NavController.OnDestinationChangedListener 
             }
         }
 
-        bind.loader.isVisible = false
+        App.getProfile()
 
-        viewModel.getUserProfile()
-
-        viewModel.getUserProfileRepo.observe(this) {
-            when (it) {
-                is Resource.Success -> {
-                    val mData = it.value.data
-
-                    isFirstShowCreated = mData?.isFirstShowCreated == true
-
-                }
-
-                is Resource.Error -> {
-                    bind.loader.isVisible = false
-                    viewModel.logoutRepo.value = null
-                    if (it.isNetworkError) {
-
-                    } else {
-                        it.parse(this, TAG, object : AlertClicks {
-                            override fun primaryClick(dialog: AppBottomSheet) {
-                                dialog.dismiss()
-                            }
-
-                            override fun secondaryClick(dialog: AppBottomSheet) {
-                                dialog.dismiss()
-                            }
-                        })
-                    }
-                }
-
-                else -> {}
-
-            }
-        }
     }
 
     fun hideBottomNav() {
@@ -228,19 +197,31 @@ class DashActivity : BaseActivity(), NavController.OnDestinationChangedListener 
 
                 when (pos) {
                     0 -> {
-                        startActivity(this@DashActivity.toListProduct())
+
+                        if (App.profileResponse.value?.sellerIdentityStatus == "verified"){
+                            if ((App.profileResponse.value?.hasCardAdded == true) && (App.profileResponse.value?.hasShippingAddress == true)){
+                                startActivity(this@DashActivity.toListProduct())
+                            }else{
+
+                                Alerts.error(this@DashActivity,"Please add Payment card and Address ")
+
+                            }
+                        }else{
+
+                            Alerts.error(this@DashActivity,"Verify as a Seller")
+
+                        }
+
+
                     }
 
                     1 -> {
 
-                        startActivity(this@DashActivity.toTutorials())
-
-
-//                       if (isFirstShowCreated){
-//                           startActivity(this@DashActivity.toScheduleShow(from = "dash"))
-//                       }else{
-//                           startActivity(this@DashActivity.toTutorials())
-//                       }
+                       if (App.profileResponse.value?.isFirstShowCreated == true){
+                           startActivity(this@DashActivity.toScheduleShow(from = "dash"))
+                       }else{
+                           startActivity(this@DashActivity.toTutorials())
+                       }
 
                     }
 
