@@ -3,7 +3,6 @@ package io.bidswipe.app.ui.dashboard.watchStream
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -39,8 +38,9 @@ import io.bidswipe.app.base.BaseFragment
 import io.bidswipe.app.controller.CommentAdapter
 import io.bidswipe.app.databinding.FragmentWatchStreamBinding
 import io.bidswipe.app.interfaces.AlertClicks
-import io.bidswipe.app.model.CommentModel
+import io.bidswipe.app.model.LiveChatModel
 import io.bidswipe.app.model.LiveShowModel
+import io.bidswipe.app.model.ZIMExtendedData
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.ui.custom.AlertType
 import io.bidswipe.app.ui.custom.AppBottomSheet
@@ -55,7 +55,6 @@ import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request
 import io.bidswipe.app.utils.runSafe
 import io.bidswipe.app.utils.value
-import org.json.JSONObject
 
 class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBinding>() {
 
@@ -68,9 +67,8 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
 	private lateinit var roomID: String
 	private lateinit var streamID: String
-	private var commentList = mutableListOf<CommentModel?>()
+	private var commentList = mutableListOf<LiveChatModel?>()
 	private lateinit var commentAdapter: CommentAdapter
-	private var isLoggedIn = false
 
 	companion object {
 		fun newInstance(roomID: String, streamID: String) = WatchStreamFragment().apply {
@@ -281,7 +279,6 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 		}
 
 		verificationDialog()
-
 	}
 
 	override fun onResume() {
@@ -338,8 +335,6 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 	}
 
 	private fun setupZIMChat() {
-
-
 		val userInfo = ZIMUserInfo().also {
 			it.userID = userName.replace(" ", ".") + "_" + userId
 			it.userName = userImage
@@ -365,7 +360,6 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 				log("LOG IN ROOM ERROR : ${error.toString()}")
 			}
 		}
-
 	}
 
 	private val zimEventHandler = object : ZIMEventHandler() {
@@ -376,71 +370,29 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 			fromRoomID: String?
 		) {
 			super.onRoomMessageReceived(zim, messageList, info, fromRoomID)
-			log("MESSAGE RECEIVED onRoomMessageReceived: ${messageList?.joinToString("\n\n")}")
+			// Callback for receiving in-room messages.
+			messageList?.forEach { zimMessage ->
+				if (zimMessage is ZIMTextMessage) {
+					log("NEW MESSAGE RECEIVED:\n${zimMessage.message}\nExtended Data: ${zimMessage.extendedData}")
 
-			if (messageList != null) {
-				for (zimMessage in messageList) {
-					if (zimMessage is ZIMTextMessage) {
-						val zimTextMessage = zimMessage as ZIMTextMessage
-						Log.e(TAG, "Received message: ${zimTextMessage.message}")
-						log("Received Extended Data: ${zimTextMessage.extendedData}")
+					runSafe {
+						commentList.add(LiveChatModel.fromZIMMessage(zimMessage))
 
-						try {
-							val jsonObject = JSONObject(zimMessage.extendedData)
-							val senderImage = jsonObject.getString("userImage")
-							val senderName = jsonObject.getString("userName")
-							val senderId = jsonObject.getString("userId")
-							commentList.add(CommentModel(senderImage, senderName, senderId, zimMessage.message))
-							commentAdapter.notifyItemInserted(commentList.size - 1)
-							bind.recycler.post { bind.recycler.smoothScrollToPosition(commentList.size) }
-						} catch (e: Exception) {
-							e.printStackTrace()
-							null
+						commentAdapter.notifyItemInserted(commentList.size - 1)
+						bind.recycler.post {
+							bind.recycler.smoothScrollToPosition(commentList.size)
 						}
-
 					}
 				}
 			}
-
 		}
 	}
 
-	/*fun sendMessage(message: String) {
-
-		log("RoomID: ${roomID} Message:${message}")
-
-		ZegoExpressEngine.getEngine()
-			.sendBroadcastMessage(roomID, message, object : IZegoIMSendBroadcastMessageCallback {
-				override fun onIMSendBroadcastMessageResult(errorCode: Int, messageID: Long) {
-					if (errorCode == 0) {
-						bind.text.setText("")
-						commentList.add(CommentModel(userImage, userName, message))
-						commentAdapter.notifyItemInserted(commentList.size - 1)
-						bind.recycler.post { bind.recycler.smoothScrollToPosition(commentList.size) }
-						Log.d("CHAT", "Message sent successfully")
-					} else {
-						Log.e("CHAT", "Failed to send message")
-					}
-				}
-			})
-
-	}*/
-
 	fun sendZimMessage(content: String) {
-
 		val zimMessage = ZIMTextMessage(content)
+		zimMessage.extendedData = ZIMExtendedData(userImage, userId, userName).toJson()
 
-		val extendedData = JSONObject().apply {
-			put("userImage", userImage)
-			put("userId", userId)
-			put("userName", userName)
-		}
-
-		zimMessage.extendedData = extendedData.toString()
-
-		val config = ZIMMessageSendConfig().also {
-			it.priority = ZIMMessagePriority.HIGH
-		}
+		val config = ZIMMessageSendConfig().also { it.priority = ZIMMessagePriority.HIGH }
 
 		ZIM.getInstance().sendMessage(zimMessage, roomID, ZIMConversationType.ROOM, config, object : ZIMMessageSentFullCallback {
 			override fun onMessageAttached(message: ZIMMessage?) {
@@ -453,14 +405,14 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
 					bind.text.setText("")
 
-					val jsonObject = JSONObject(message?.extendedData)
-					val senderImage = jsonObject.getString("userImage")
-					val senderId = jsonObject.getString("userId")
-					val senderName = jsonObject.getString("userName")
-					commentList.add(CommentModel(senderImage, senderName, senderId, zimMessage.message))
-					commentAdapter.notifyItemInserted(commentList.size - 1)
-					bind.recycler.post { bind.recycler.smoothScrollToPosition(commentList.size) }
+					runSafe {
+						commentList.add(LiveChatModel.fromZIMMessage(zimMessage))
 
+						commentAdapter.notifyItemInserted(commentList.size - 1)
+						bind.recycler.post {
+							bind.recycler.smoothScrollToPosition(commentList.size)
+						}
+					}
 				} else {
 					log("MESSAGE SENT ERROR : ${errorInfo.toString()}")
 				}
@@ -485,34 +437,6 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
 			}
 		})
-
-	}
-
-	fun receiveZimMessage() {
-		ZIM.getInstance().setEventHandler(object : ZIMEventHandler() {
-			override fun onReceiveRoomMessage(
-				zim: ZIM?,
-				messageList: java.util.ArrayList<ZIMMessage?>?,
-				fromRoomID: String?
-			) {
-
-				log("Message Received")
-
-				if (messageList != null) {
-					for (zimMessage in messageList) {
-						if (zimMessage is ZIMTextMessage) {
-							val zimTextMessage = zimMessage as ZIMTextMessage
-							Log.e(TAG, "Received message: ${zimTextMessage.message}")
-
-						}
-					}
-				}
-
-				super.onReceiveRoomMessage(zim, messageList, fromRoomID)
-
-			}
-		})
-
 	}
 
 	private fun verificationDialog() {
@@ -558,7 +482,26 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
 	}
 
-	/*fun fetchMessage() {
+	/*fun sendMessage(message: String) {
+
+		log("RoomID: ${roomID} Message:${message}")
+
+		ZegoExpressEngine.getEngine()
+			.sendBroadcastMessage(roomID, message, object : IZegoIMSendBroadcastMessageCallback {
+				override fun onIMSendBroadcastMessageResult(errorCode: Int, messageID: Long) {
+					if (errorCode == 0) {
+						bind.text.setText("")
+						commentList.add(LiveChatModel(userImage, userName, message))
+						commentAdapter.notifyItemInserted(commentList.size - 1)
+						bind.recycler.post { bind.recycler.smoothScrollToPosition(commentList.size) }
+						Log.d("CHAT", "Message sent successfully")
+					} else {
+						Log.e("CHAT", "Failed to send message")
+					}
+				}
+			})
+
+    fun fetchMessage() {
 		ZegoExpressEngine.getEngine().setEventHandler(object : IZegoEventHandler() {
 			override fun onIMRecvBroadcastMessage(
 				roomID: String?,
@@ -575,7 +518,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 						val name = msgInfo?.fromUser?.userID?.split("_")?.get(0)?.replace(".", " ")
 
 						commentList.add(
-							CommentModel(
+							LiveChatModel(
 								msgInfo?.fromUser?.userName,
 								name,
 								msgInfo?.message
@@ -589,5 +532,4 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
 		})
 	}*/
-
 }
