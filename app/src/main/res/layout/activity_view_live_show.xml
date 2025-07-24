@@ -11,300 +11,300 @@
         android:id="@+id/viewPager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"/>
+        android:orientation="vertical" />
 
-   <!-- <TextureView
-        android:id="@+id/hostView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+    <!-- <TextureView
+         android:id="@+id/hostView"
+         android:layout_width="match_parent"
+         android:layout_height="match_parent" />
 
-    <LinearLayout
-        android:id="@+id/profileLayout"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/margin"
-        android:layout_marginTop="48dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+     <LinearLayout
+         android:id="@+id/profileLayout"
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         android:layout_marginStart="@dimen/margin"
+         android:layout_marginTop="48dp"
+         app:layout_constraintStart_toStartOf="parent"
+         app:layout_constraintTop_toTopOf="parent">
 
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/icon_card"
-            style="@style/cardStyle"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            app:cardCornerRadius="100dp"
-            app:cardElevation="0dp">
+         <com.google.android.material.card.MaterialCardView
+             android:id="@+id/icon_card"
+             style="@style/cardStyle"
+             android:layout_width="48dp"
+             android:layout_height="48dp"
+             app:cardCornerRadius="100dp"
+             app:cardElevation="0dp">
 
-            <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/icon"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:src="@drawable/user_image" />
+             <androidx.appcompat.widget.AppCompatImageView
+                 android:id="@+id/icon"
+                 android:layout_width="match_parent"
+                 android:layout_height="match_parent"
+                 android:src="@drawable/user_image" />
 
-        </com.google.android.material.card.MaterialCardView>
+         </com.google.android.material.card.MaterialCardView>
 
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="@dimen/half_margin"
-            android:layout_weight="1"
-            android:orientation="vertical">
+         <LinearLayout
+             android:layout_width="0dp"
+             android:layout_height="wrap_content"
+             android:layout_marginHorizontal="@dimen/half_margin"
+             android:layout_weight="1"
+             android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/title"
-                style="@style/TitleLarge"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/username"
-                android:textColor="@color/surface"
-                android:textSize="16sp" />
+             <TextView
+                 android:id="@+id/title"
+                 style="@style/TitleLarge"
+                 android:layout_width="match_parent"
+                 android:layout_height="wrap_content"
+                 android:text="@string/username"
+                 android:textColor="@color/surface"
+                 android:textSize="16sp" />
 
-            <TextView
-                android:id="@+id/sub_title"
-                style="@style/BodySmall"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/show_time_00_00_01"
-                android:textColor="@color/surface" />
+             <TextView
+                 android:id="@+id/sub_title"
+                 style="@style/BodySmall"
+                 android:layout_width="match_parent"
+                 android:layout_height="wrap_content"
+                 android:text="@string/show_time_00_00_01"
+                 android:textColor="@color/surface" />
 
-        </LinearLayout>
+         </LinearLayout>
 
-    </LinearLayout>
+     </LinearLayout>
 
-    <LinearLayout
-        android:id="@+id/rehearsalLayout"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="@dimen/half_margin"
-        android:layout_marginTop="48dp"
-        android:layout_marginEnd="@dimen/margin"
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+     <LinearLayout
+         android:id="@+id/rehearsalLayout"
+         android:layout_width="0dp"
+         android:layout_height="wrap_content"
+         android:layout_marginHorizontal="@dimen/half_margin"
+         android:layout_marginTop="48dp"
+         android:layout_marginEnd="@dimen/margin"
+         android:gravity="center_vertical"
+         android:orientation="horizontal"
+         app:layout_constraintEnd_toEndOf="parent"
+         app:layout_constraintTop_toTopOf="parent">
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/status"
-            style="@style/appTonalBtn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:minHeight="0dp"
-            android:minWidth="45dp"
-            android:layout_marginEnd="@dimen/half_margin"
-            android:padding="6dp"
-            android:text="1"
-            android:textSize="14sp"
-            />
+         <com.google.android.material.button.MaterialButton
+             android:id="@+id/status"
+             style="@style/appTonalBtn"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:minHeight="0dp"
+             android:minWidth="45dp"
+             android:layout_marginEnd="@dimen/half_margin"
+             android:padding="6dp"
+             android:text="1"
+             android:textSize="14sp"
+             />
 
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/rehearsal"
-            style="@style/cardStyle"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            app:cardCornerRadius="100dp"
-            app:cardElevation="0dp">
+         <com.google.android.material.card.MaterialCardView
+             android:id="@+id/rehearsal"
+             style="@style/cardStyle"
+             android:layout_width="40dp"
+             android:layout_height="40dp"
+             app:cardCornerRadius="100dp"
+             app:cardElevation="0dp">
 
-            <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/cutButton"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:padding="12dp"
-                android:src="@drawable/close_ic" />
+             <androidx.appcompat.widget.AppCompatImageView
+                 android:id="@+id/cutButton"
+                 android:layout_width="match_parent"
+                 android:layout_height="match_parent"
+                 android:padding="12dp"
+                 android:src="@drawable/close_ic" />
 
-        </com.google.android.material.card.MaterialCardView>
-
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="@dimen/margin"
-        android:gravity="center_horizontal"
-        android:orientation="vertical"
-        app:layout_constraintBottom_toTopOf="@+id/message"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/rehearsalLayout">
-
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/more"
-            style="@style/cardStyle"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            app:cardCornerRadius="100dp"
-            app:cardElevation="0dp">
-
-            <androidx.appcompat.widget.AppCompatImageView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:padding="12dp"
-                android:src="@drawable/ic_more"
-                android:tint="@color/scrim" />
-
-        </com.google.android.material.card.MaterialCardView>
-
-        <TextView
-            style="@style/BodySmall"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/half_margin"
-            android:text="@string/more"
-            android:textColor="@color/surface" />
-
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/promote"
-            style="@style/cardStyle"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            app:cardCornerRadius="100dp"
-            app:cardElevation="0dp">
-
-            <androidx.appcompat.widget.AppCompatImageView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:padding="12dp"
-                android:src="@drawable/ic_promote"
-                android:tint="@color/scrim" />
-
-        </com.google.android.material.card.MaterialCardView>
-
-        <TextView
-            style="@style/BodySmall"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/half_margin"
-            android:text="@string/promote"
-            android:textColor="@color/surface" />
+         </com.google.android.material.card.MaterialCardView>
 
 
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/mic"
-            style="@style/cardStyle"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            app:cardCornerRadius="100dp"
-            app:cardElevation="0dp">
+     </LinearLayout>
 
-            <androidx.appcompat.widget.AppCompatImageView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:padding="12dp"
-                android:src="@drawable/ic_attach"
-                android:tint="@color/scrim" />
+     <LinearLayout
+         android:layout_width="0dp"
+         android:layout_height="wrap_content"
+         android:layout_marginEnd="@dimen/margin"
+         android:gravity="center_horizontal"
+         android:orientation="vertical"
+         app:layout_constraintBottom_toTopOf="@+id/message"
+         app:layout_constraintEnd_toEndOf="parent"
+         app:layout_constraintTop_toBottomOf="@id/rehearsalLayout">
 
-        </com.google.android.material.card.MaterialCardView>
+         <com.google.android.material.card.MaterialCardView
+             android:id="@+id/more"
+             style="@style/cardStyle"
+             android:layout_width="48dp"
+             android:layout_height="48dp"
+             app:cardCornerRadius="100dp"
+             app:cardElevation="0dp">
 
-        <TextView
-            style="@style/BodySmall"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/half_margin"
-            android:text="@string/clip"
-            android:textColor="@color/surface" />
+             <androidx.appcompat.widget.AppCompatImageView
+                 android:layout_width="match_parent"
+                 android:layout_height="match_parent"
+                 android:padding="12dp"
+                 android:src="@drawable/ic_more"
+                 android:tint="@color/scrim" />
 
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/cameraSwitch"
-            style="@style/cardStyle"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            app:cardCornerRadius="100dp"
-            app:cardElevation="0dp">
+         </com.google.android.material.card.MaterialCardView>
 
-            <androidx.appcompat.widget.AppCompatImageView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:padding="12dp"
-                android:src="@drawable/share"
-                android:tint="@color/scrim" />
+         <TextView
+             style="@style/BodySmall"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:layout_marginBottom="@dimen/half_margin"
+             android:text="@string/more"
+             android:textColor="@color/surface" />
 
-        </com.google.android.material.card.MaterialCardView>
+         <com.google.android.material.card.MaterialCardView
+             android:id="@+id/promote"
+             style="@style/cardStyle"
+             android:layout_width="48dp"
+             android:layout_height="48dp"
+             app:cardCornerRadius="100dp"
+             app:cardElevation="0dp">
 
-        <TextView
-            style="@style/BodySmall"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/half_margin"
-            android:text="@string/share"
-            android:textColor="@color/surface" />
+             <androidx.appcompat.widget.AppCompatImageView
+                 android:layout_width="match_parent"
+                 android:layout_height="match_parent"
+                 android:padding="12dp"
+                 android:src="@drawable/ic_promote"
+                 android:tint="@color/scrim" />
 
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/_switch"
-            style="@style/cardStyle"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            app:cardCornerRadius="100dp"
-            app:cardElevation="0dp">
+         </com.google.android.material.card.MaterialCardView>
 
-            <androidx.appcompat.widget.AppCompatImageView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:padding="12dp"
-                android:src="@drawable/camera_reverse" />
-
-        </com.google.android.material.card.MaterialCardView>
-
-        <TextView
-            style="@style/BodySmall"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/_switch"
-            android:layout_marginBottom="@dimen/half_margin"
-            android:textColor="@color/surface" />
+         <TextView
+             style="@style/BodySmall"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:layout_marginBottom="@dimen/half_margin"
+             android:text="@string/promote"
+             android:textColor="@color/surface" />
 
 
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/shop"
-            style="@style/cardStyle"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            app:cardCornerRadius="100dp"
-            app:cardElevation="0dp">
+         <com.google.android.material.card.MaterialCardView
+             android:id="@+id/mic"
+             style="@style/cardStyle"
+             android:layout_width="48dp"
+             android:layout_height="48dp"
+             app:cardCornerRadius="100dp"
+             app:cardElevation="0dp">
 
-            <androidx.appcompat.widget.AppCompatImageView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:padding="12dp"
-                android:src="@drawable/ic_shop" />
+             <androidx.appcompat.widget.AppCompatImageView
+                 android:layout_width="match_parent"
+                 android:layout_height="match_parent"
+                 android:padding="12dp"
+                 android:src="@drawable/ic_attach"
+                 android:tint="@color/scrim" />
 
-        </com.google.android.material.card.MaterialCardView>
+         </com.google.android.material.card.MaterialCardView>
 
-        <TextView
-            style="@style/BodySmall"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/shop"
-            android:textColor="@color/surface" />
+         <TextView
+             style="@style/BodySmall"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:layout_marginBottom="@dimen/half_margin"
+             android:text="@string/clip"
+             android:textColor="@color/surface" />
 
-    </LinearLayout>
+         <com.google.android.material.card.MaterialCardView
+             android:id="@+id/cameraSwitch"
+             style="@style/cardStyle"
+             android:layout_width="48dp"
+             android:layout_height="48dp"
+             app:cardCornerRadius="100dp"
+             app:cardElevation="0dp">
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/message"
-        style="@style/inputBoxStyle"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="@dimen/margin"
-        android:layout_marginBottom="@dimen/margin"
-        app:boxStrokeColor="@color/scrim"
-        app:layout_constraintBottom_toBottomOf="parent">
+             <androidx.appcompat.widget.AppCompatImageView
+                 android:layout_width="match_parent"
+                 android:layout_height="match_parent"
+                 android:padding="12dp"
+                 android:src="@drawable/share"
+                 android:tint="@color/scrim" />
 
-        <com.google.android.material.textfield.MaterialAutoCompleteTextView
-            style="@style/inputTextStyle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/say_something"
-            android:textColorHint="@color/scrim"
-            android:inputType="text" />
+         </com.google.android.material.card.MaterialCardView>
 
-    </com.google.android.material.textfield.TextInputLayout>-->
+         <TextView
+             style="@style/BodySmall"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:layout_marginBottom="@dimen/half_margin"
+             android:text="@string/share"
+             android:textColor="@color/surface" />
 
- <!--   <com.google.android.material.button.MaterialButton
-        android:id="@+id/continueBtn"
-        style="@style/appBtn"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/margin"
-        android:paddingHorizontal="@dimen/margin"
-        android:text="@string/start_now"
-        app:layout_constraintBottom_toBottomOf="parent" />-->
+         <com.google.android.material.card.MaterialCardView
+             android:id="@+id/_switch"
+             style="@style/cardStyle"
+             android:layout_width="48dp"
+             android:layout_height="48dp"
+             app:cardCornerRadius="100dp"
+             app:cardElevation="0dp">
+
+             <androidx.appcompat.widget.AppCompatImageView
+                 android:layout_width="match_parent"
+                 android:layout_height="match_parent"
+                 android:padding="12dp"
+                 android:src="@drawable/camera_reverse" />
+
+         </com.google.android.material.card.MaterialCardView>
+
+         <TextView
+             style="@style/BodySmall"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:text="@string/_switch"
+             android:layout_marginBottom="@dimen/half_margin"
+             android:textColor="@color/surface" />
+
+
+         <com.google.android.material.card.MaterialCardView
+             android:id="@+id/shop"
+             style="@style/cardStyle"
+             android:layout_width="48dp"
+             android:layout_height="48dp"
+             app:cardCornerRadius="100dp"
+             app:cardElevation="0dp">
+
+             <androidx.appcompat.widget.AppCompatImageView
+                 android:layout_width="match_parent"
+                 android:layout_height="match_parent"
+                 android:padding="12dp"
+                 android:src="@drawable/ic_shop" />
+
+         </com.google.android.material.card.MaterialCardView>
+
+         <TextView
+             style="@style/BodySmall"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:text="@string/shop"
+             android:textColor="@color/surface" />
+
+     </LinearLayout>
+
+     <com.google.android.material.textfield.TextInputLayout
+         android:id="@+id/message"
+         style="@style/inputBoxStyle"
+         android:layout_width="match_parent"
+         android:layout_height="wrap_content"
+         android:layout_marginHorizontal="@dimen/margin"
+         android:layout_marginBottom="@dimen/margin"
+         app:boxStrokeColor="@color/scrim"
+         app:layout_constraintBottom_toBottomOf="parent">
+
+         <com.google.android.material.textfield.MaterialAutoCompleteTextView
+             style="@style/inputTextStyle"
+             android:layout_width="match_parent"
+             android:layout_height="wrap_content"
+             android:hint="@string/say_something"
+             android:textColorHint="@color/scrim"
+             android:inputType="text" />
+
+     </com.google.android.material.textfield.TextInputLayout>-->
+
+    <!--   <com.google.android.material.button.MaterialButton
+           android:id="@+id/continueBtn"
+           style="@style/appBtn"
+           android:layout_width="match_parent"
+           android:layout_height="wrap_content"
+           android:layout_margin="@dimen/margin"
+           android:paddingHorizontal="@dimen/margin"
+           android:text="@string/start_now"
+           app:layout_constraintBottom_toBottomOf="parent" />-->
 
 </androidx.constraintlayout.widget.ConstraintLayout>

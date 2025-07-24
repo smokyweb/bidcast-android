@@ -10,7 +10,6 @@ import io.bidswipe.app.network.response.CommonResponse
 import io.bidswipe.app.network.response.LoginResponse
 import io.bidswipe.app.network.response.SignUpResponse
 import kotlinx.coroutines.launch
-import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import javax.inject.Inject
 
@@ -62,7 +61,6 @@ class AuthViewModel @Inject constructor(val repo: AuthRepository) : ViewModel() 
     ) = viewModelScope.launch {
         _verifyOtpResponse.value = repo.verifyOtp(email, code)
     }
-
 
     private var _resetPasswordResponse = MutableLiveData<Resource<CommonResponse>>()
     val resetPasswordRepo: MutableLiveData<Resource<CommonResponse>>

@@ -83,7 +83,7 @@
 					android:layout_height="wrap_content"
 					android:gravity="center"
 					android:text="@string/revenue"
-					android:textColor="@color/tertiary"
+					android:textColor	="@color/tertiary"
 					app:layout_constraintEnd_toEndOf="@+id/view"
 					app:layout_constraintStart_toStartOf="@+id/view"
 					app:layout_constraintTop_toBottomOf="@+id/view" />

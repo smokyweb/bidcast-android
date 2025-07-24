@@ -85,13 +85,12 @@
             style="@style/appTonalBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:minHeight="0dp"
-            android:minWidth="45dp"
             android:layout_marginEnd="@dimen/half_margin"
+            android:minWidth="45dp"
+            android:minHeight="0dp"
             android:padding="6dp"
             android:text="1"
-            android:textSize="14sp"
-            />
+            android:textSize="14sp" />
 
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/rehearsal"
@@ -245,8 +244,8 @@
             style="@style/BodySmall"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/_switch"
             android:layout_marginBottom="@dimen/half_margin"
+            android:text="@string/_switch"
             android:textColor="@color/surface" />
 
 
@@ -279,17 +278,16 @@
         android:id="@+id/recycler"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:layout_gravity="bottom"
         android:layout_marginEnd="100dp"
-        app:layout_constraintBottom_toTopOf="@id/message"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        tools:listitem="@layout/live_comment_item"
         android:nestedScrollingEnabled="true"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_constraintBottom_toTopOf="@id/message"
         app:layout_constraintDimensionRatio="1:1"
         app:reverseLayout="false"
         app:stackFromEnd="true"
-        android:layout_gravity="bottom"
         tools:itemCount="10"
-        />
+        tools:listitem="@layout/live_comment_item" />
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/message"
@@ -299,8 +297,8 @@
         android:layout_marginHorizontal="@dimen/margin"
         android:layout_marginBottom="@dimen/margin"
         app:boxStrokeColor="@color/scrim"
-        app:endIconMode="custom"
         app:endIconDrawable="@drawable/ic_forward"
+        app:endIconMode="custom"
         app:layout_constraintBottom_toTopOf="@+id/startBtn">
 
         <com.google.android.material.textfield.MaterialAutoCompleteTextView
@@ -309,8 +307,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/say_something"
-            android:textColorHint="@color/scrim"
-            android:inputType="text" />
+            android:inputType="text"
+            android:textColorHint="@color/scrim" />
 
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -328,7 +326,7 @@
         android:id="@+id/loader"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone"/>
+        android:visibility="gone" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

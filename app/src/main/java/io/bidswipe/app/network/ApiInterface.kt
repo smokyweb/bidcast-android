@@ -48,6 +48,7 @@ import io.bidswipe.app.network.response.UserDeviceResponse
 import io.bidswipe.app.network.response.UserProfileResponse
 import io.bidswipe.app.network.response.UserSearchingResponse
 import io.bidswipe.app.network.response.PageUrlResponse
+import io.bidswipe.app.network.response.SellerStatusResponse
 import io.bidswipe.app.utils.Utils
 import io.bidswipe.app.utils.request
 import okhttp3.MultipartBody
@@ -527,7 +528,12 @@ interface ApiInterface {
     @GET("api/get-pages-url/{slug}")
     suspend fun getPageUrl(
         @Path("slug") slug: String,
+        @Query("noheader") noheader: String = "1"
     ): PageUrlResponse
+
+    @GET("api/seller-status")
+    suspend fun getSellerStatus(
+    ): SellerStatusResponse
 
 }
 

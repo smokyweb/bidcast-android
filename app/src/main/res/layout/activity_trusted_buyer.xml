@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".ui.dashboard.more.TrustedBuyerActivity">
 
     <io.bidswipe.app.ui.custom.Header
@@ -17,14 +17,14 @@
         app:secondaryIconDrawable="@drawable/search"
         app:showBackButton="true"
         app:showPrimaryIcon="true"
-        app:showSecondaryIcon="false"/>
+        app:showSecondaryIcon="false" />
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintTop_toBottomOf="@id/header"
+        android:layout_marginBottom="@dimen/margin"
         app:layout_constraintBottom_toTopOf="@id/submit"
-        android:layout_marginBottom="@dimen/margin">
+        app:layout_constraintTop_toBottomOf="@id/header">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -50,10 +50,10 @@
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
                     android:contentDescription="@string/app_name"
-                    android:scaleType="centerCrop"
                     android:padding="@dimen/padding"
-                    android:tint="@color/primary"
-                    android:src="@drawable/ic_question" />
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/ic_question"
+                    android:tint="@color/primary" />
 
             </com.google.android.material.card.MaterialCardView>
 
@@ -101,8 +101,8 @@
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:gravity="center"
-                            android:textColor="@color/surface"
-                            android:text="1"/>
+                            android:text="1"
+                            android:textColor="@color/surface" />
 
                     </com.google.android.material.card.MaterialCardView>
 
@@ -110,9 +110,9 @@
                         style="@style/BodyLarge"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
-                        android:gravity="center"
                         android:layout_marginTop="@dimen/half_margin"
-                        android:text="@string/upload"/>
+                        android:gravity="center"
+                        android:text="@string/upload" />
 
                 </LinearLayout>
 
@@ -120,8 +120,8 @@
                     android:id="@+id/firstDivider"
                     android:layout_width="0dp"
                     android:layout_height="4dp"
-                    android:layout_weight="1"
                     android:layout_marginBottom="@dimen/margin"
+                    android:layout_weight="1"
                     app:dividerColor="@color/outline" />
 
                 <LinearLayout
@@ -142,9 +142,9 @@
                             style="@style/HeadlineSmall"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:tint="@color/primary"
                             android:gravity="center"
-                            android:text="2"/>
+                            android:text="2"
+                            android:tint="@color/primary" />
 
                     </com.google.android.material.card.MaterialCardView>
 
@@ -152,9 +152,9 @@
                         style="@style/BodyLarge"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
-                        android:gravity="center"
                         android:layout_marginTop="@dimen/half_margin"
-                        android:text="@string/review"/>
+                        android:gravity="center"
+                        android:text="@string/review" />
 
                 </LinearLayout>
 
@@ -162,8 +162,8 @@
                     android:id="@+id/secondDivider"
                     android:layout_width="0dp"
                     android:layout_height="4dp"
-                    android:layout_weight="1"
-                    android:layout_marginBottom="@dimen/margin" />
+                    android:layout_marginBottom="@dimen/margin"
+                    android:layout_weight="1" />
 
                 <LinearLayout
                     android:layout_width="wrap_content"
@@ -183,9 +183,9 @@
                             style="@style/HeadlineSmall"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:tint="@color/primary"
                             android:gravity="center"
-                            android:text="3"/>
+                            android:text="3"
+                            android:tint="@color/primary" />
 
                     </com.google.android.material.card.MaterialCardView>
 
@@ -194,9 +194,9 @@
                         style="@style/BodyLarge"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
-                        android:gravity="center"
                         android:layout_marginTop="@dimen/half_margin"
-                        android:text="@string/verified"/>
+                        android:gravity="center"
+                        android:text="@string/verified" />
 
                 </LinearLayout>
 
@@ -218,7 +218,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/half_margin"
-                android:text="@string/please_upload_a_clear_photo_of_your_valid_government_issued_id_driver_s_license_or_passport"/>
+                android:text="@string/please_upload_a_clear_photo_of_your_valid_government_issued_id_driver_s_license_or_passport" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -234,8 +234,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:gravity="center"
-                    android:visibility="visible"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:visibility="visible">
 
                     <androidx.appcompat.widget.AppCompatImageView
                         android:layout_width="60dp"
@@ -255,20 +255,20 @@
                         style="@style/appBtn"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        app:cornerRadius="32dp"
-                        android:text="@string/choose_file"/>
+                        android:text="@string/choose_file"
+                        app:cornerRadius="32dp" />
 
                 </LinearLayout>
 
                 <com.google.android.material.card.MaterialCardView
                     android:id="@+id/imgCard"
-                    android:layout_width="match_parent"
                     style="@style/cardStyle"
-                    app:cardBackgroundColor="@color/onPrimary"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
                     android:layout_margin="3dp"
-                    android:visibility="gone"
                     android:elevation="0dp"
-                    android:layout_height="match_parent">
+                    android:visibility="gone"
+                    app:cardBackgroundColor="@color/onPrimary">
 
                     <androidx.appcompat.widget.AppCompatImageView
                         android:id="@+id/img"
@@ -282,61 +282,61 @@
             </LinearLayout>
 
             <TextView
-				style="@style/TitleLarge"
-				android:layout_width="match_parent"
-				android:layout_height="wrap_content"
-				android:layout_gravity="center"
+                style="@style/TitleLarge"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
                 android:layout_marginHorizontal="@dimen/half_margin"
-				android:layout_marginTop="@dimen/margin"
-				android:text="@string/requirements" />
+                android:layout_marginTop="@dimen/margin"
+                android:text="@string/requirements" />
 
-			<TextView
-				style="@style/BodyLarge"
-				android:layout_width="match_parent"
-				android:layout_height="wrap_content"
-				android:layout_gravity="center"
-				android:layout_marginStart="@dimen/half_margin"
-				android:drawablePadding="@dimen/half_margin"
-				android:text="Creating Product Listing"
-				app:drawableStartCompat="@drawable/ic_tick" />
+            <TextView
+                style="@style/BodyLarge"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginStart="@dimen/half_margin"
+                android:drawablePadding="@dimen/half_margin"
+                android:text="Creating Product Listing"
+                app:drawableStartCompat="@drawable/ic_tick" />
 
-			<TextView
-				style="@style/BodyLarge"
-				android:layout_width="match_parent"
-				android:layout_height="wrap_content"
-				android:layout_gravity="center"
-				android:layout_marginStart="@dimen/half_margin"
-				android:drawablePadding="@dimen/half_margin"
-				android:text="@string/setting_up_your_store"
-				app:drawableStartCompat="@drawable/ic_tick" />
+            <TextView
+                style="@style/BodyLarge"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginStart="@dimen/half_margin"
+                android:drawablePadding="@dimen/half_margin"
+                android:text="@string/setting_up_your_store"
+                app:drawableStartCompat="@drawable/ic_tick" />
 
-			<TextView
-				style="@style/BodyLarge"
-				android:layout_width="match_parent"
-				android:layout_height="wrap_content"
-				android:layout_gravity="center"
-				android:layout_marginStart="@dimen/half_margin"
-				android:drawablePadding="@dimen/half_margin"
-				android:text="@string/managing_orders_amp_shipping"
-				app:drawableStartCompat="@drawable/ic_tick" />
+            <TextView
+                style="@style/BodyLarge"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginStart="@dimen/half_margin"
+                android:drawablePadding="@dimen/half_margin"
+                android:text="@string/managing_orders_amp_shipping"
+                app:drawableStartCompat="@drawable/ic_tick" />
 
-            </LinearLayout>
+        </LinearLayout>
 
     </androidx.core.widget.NestedScrollView>
 
     <com.google.android.material.button.MaterialButton
-        style="@style/appBtn"
         android:id="@+id/submit"
+        style="@style/appBtn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/margin"
-        app:layout_constraintBottom_toBottomOf="parent"
-        android:text="@string/submit_for_review"/>
+        android:text="@string/submit_for_review"
+        app:layout_constraintBottom_toBottomOf="parent" />
 
     <io.bidswipe.app.ui.custom.LoaderView
         android:id="@+id/loader"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone"/>
+        android:visibility="gone" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

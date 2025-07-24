@@ -1,169 +1,169 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
-	xmlns:app="http://schemas.android.com/apk/res-auto"
-	style="@style/cardStyle"
-	android:layout_width="match_parent"
-	android:layout_height="wrap_content"
-	android:layout_margin="@dimen/half_margin">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    style="@style/cardStyle"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="@dimen/half_margin">
 
-	<LinearLayout
-		android:layout_width="match_parent"
-		android:layout_height="match_parent"
-		android:background="@color/background"
-		android:orientation="vertical">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/background"
+        android:orientation="vertical">
 
-		<LinearLayout
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:layout_marginHorizontal="@dimen/margin"
-			android:layout_marginVertical="@dimen/margin"
-			android:gravity="center_vertical"
-			android:orientation="horizontal">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/margin"
+            android:layout_marginVertical="@dimen/margin"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
 
-			<com.google.android.material.card.MaterialCardView
-				android:id="@+id/icon_card"
-				style="@style/cardStyle"
-				android:layout_width="48dp"
-				android:layout_height="48dp"
-				app:cardCornerRadius="100dp"
-				app:cardElevation="0dp">
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/icon_card"
+                style="@style/cardStyle"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                app:cardCornerRadius="100dp"
+                app:cardElevation="0dp">
 
-				<androidx.appcompat.widget.AppCompatImageView
-					android:id="@+id/user_image"
-					android:layout_width="match_parent"
-					android:layout_height="match_parent"
-					android:scaleType="centerCrop"
-					android:src="@drawable/user_image" />
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/user_image"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/user_image" />
 
-			</com.google.android.material.card.MaterialCardView>
+            </com.google.android.material.card.MaterialCardView>
 
-			<LinearLayout
-				android:layout_width="0dp"
-				android:layout_height="match_parent"
-				android:layout_marginHorizontal="@dimen/half_margin"
-				android:layout_weight="1"
-				android:orientation="vertical">
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginHorizontal="@dimen/half_margin"
+                android:layout_weight="1"
+                android:orientation="vertical">
 
-				<TextView
-					android:id="@+id/user_name"
-					style="@style/TitleLarge"
-					android:layout_width="match_parent"
-					android:layout_height="wrap_content"
-					android:text="@string/john_smith" />
+                <TextView
+                    android:id="@+id/user_name"
+                    style="@style/TitleLarge"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/john_smith" />
 
-				<TextView
-					android:id="@+id/sub_title"
-					style="@style/BodySmall"
-					android:layout_width="match_parent"
-					android:layout_height="wrap_content"
-					android:text="Place a Bid . 2 hour ago" />
+                <TextView
+                    android:id="@+id/sub_title"
+                    style="@style/BodySmall"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Place a Bid . 2 hour ago" />
 
-			</LinearLayout>
+            </LinearLayout>
 
-			<TextView
-				android:id="@+id/offer_price"
-				style="@style/TitleLarge"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:text="$45.00"
-				android:textColor="@color/success" />
+            <TextView
+                android:id="@+id/offer_price"
+                style="@style/TitleLarge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="$45.00"
+                android:textColor="@color/success" />
 
-		</LinearLayout>
+        </LinearLayout>
 
-		<LinearLayout
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:layout_marginBottom="@dimen/half_margin"
-			android:gravity="center_vertical"
-			android:orientation="horizontal"
-			android:paddingHorizontal="16dp">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/half_margin"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingHorizontal="16dp">
 
-			<com.google.android.material.card.MaterialCardView
-				style="@style/cardStyle"
-				android:layout_width="80dp"
-				android:layout_height="80dp"
-				app:cardCornerRadius="10dp"
-				app:cardElevation="0dp">
+            <com.google.android.material.card.MaterialCardView
+                style="@style/cardStyle"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                app:cardCornerRadius="10dp"
+                app:cardElevation="0dp">
 
-				<androidx.appcompat.widget.AppCompatImageView
-					android:id="@+id/productImage"
-					android:layout_width="match_parent"
-					android:layout_height="match_parent"
-					android:scaleType="centerCrop"
-					android:src="@drawable/product_img" />
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/productImage"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/product_img" />
 
-			</com.google.android.material.card.MaterialCardView>
+            </com.google.android.material.card.MaterialCardView>
 
-			<LinearLayout
-				android:layout_width="0dp"
-				android:layout_height="match_parent"
-				android:layout_marginHorizontal="@dimen/half_margin"
-				android:layout_weight="1"
-				android:gravity="center_vertical"
-				android:orientation="vertical">
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginHorizontal="@dimen/half_margin"
+                android:layout_weight="1"
+                android:gravity="center_vertical"
+                android:orientation="vertical">
 
-				<TextView
-					android:id="@+id/product_nmae"
-					style="@style/TitleLarge"
-					android:layout_width="match_parent"
-					android:layout_height="wrap_content"
-					android:text="Cyber Punk #3429" />
+                <TextView
+                    android:id="@+id/product_nmae"
+                    style="@style/TitleLarge"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Cyber Punk #3429" />
 
-				<TextView
-					android:id="@+id/prod_sub_title"
-					style="@style/BodySmall"
-					android:layout_width="match_parent"
-					android:layout_height="wrap_content"
-					android:text="Current Bid: 2:45" />
+                <TextView
+                    android:id="@+id/prod_sub_title"
+                    style="@style/BodySmall"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Current Bid: 2:45" />
 
-			</LinearLayout>
+            </LinearLayout>
 
-		</LinearLayout>
+        </LinearLayout>
 
-		<LinearLayout
-			android:id="@+id/buttonLayout"
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:orientation="horizontal"
-			android:visibility="gone"
-			android:weightSum="2">
+        <LinearLayout
+            android:id="@+id/buttonLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:visibility="gone"
+            android:weightSum="2">
 
-			<com.google.android.material.button.MaterialButton
-				android:id="@+id/decline"
-				style="@style/appBtn"
-				android:layout_width="match_parent"
-				android:layout_height="wrap_content"
-				android:layout_margin="@dimen/margin"
-				android:layout_weight="1"
-				android:backgroundTint="@color/error"
-				android:paddingHorizontal="@dimen/margin"
-				android:text="Decline" />
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/decline"
+                style="@style/appBtn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/margin"
+                android:layout_weight="1"
+                android:backgroundTint="@color/error"
+                android:paddingHorizontal="@dimen/margin"
+                android:text="Decline" />
 
-			<com.google.android.material.button.MaterialButton
-				android:id="@+id/accept"
-				style="@style/appBtn"
-				android:layout_width="match_parent"
-				android:layout_height="wrap_content"
-				android:layout_margin="@dimen/margin"
-				android:layout_weight="1"
-				android:backgroundTint="@color/success"
-				android:paddingHorizontal="@dimen/margin"
-				android:text="Accept" />
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/accept"
+                style="@style/appBtn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/margin"
+                android:layout_weight="1"
+                android:backgroundTint="@color/success"
+                android:paddingHorizontal="@dimen/margin"
+                android:text="Accept" />
 
-		</LinearLayout>
+        </LinearLayout>
 
-		<com.google.android.material.button.MaterialButton
-			android:id="@+id/status"
-			style="@style/appBtn"
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:layout_margin="@dimen/margin"
-			android:backgroundTint="@color/successContainer"
-			android:textColor="@color/success"
-			android:paddingHorizontal="@dimen/margin"
-			android:visibility="gone"
-			android:text="Accepted" />
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/status"
+            style="@style/appBtn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/margin"
+            android:backgroundTint="@color/successContainer"
+            android:paddingHorizontal="@dimen/margin"
+            android:text="Accepted"
+            android:textColor="@color/success"
+            android:visibility="gone" />
 
-	</LinearLayout>
+    </LinearLayout>
 
 </com.google.android.material.card.MaterialCardView>

@@ -20,11 +20,10 @@
                 android:id="@+id/toolbar_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:layout_scrollFlags="scroll|exitUntilCollapsed"
-                app:toolbarId="@+id/toolbar"
                 app:contentScrim="@color/surface"
+                app:layout_scrollFlags="scroll|exitUntilCollapsed"
                 app:statusBarScrim="@color/surface"
-                >
+                app:toolbarId="@+id/toolbar">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -157,30 +156,30 @@
                             app:layout_constraintTop_toTopOf="parent"
                             app:tint="@color/onBackground" />
 
-                            <androidx.appcompat.widget.AppCompatImageView
-                                android:id="@+id/primaryIcon"
-                                android:layout_width="32dp"
-                                android:layout_height="32dp"
-                                android:padding="4dp"
-                                android:src="@drawable/ic_share"
-                                android:visibility="visible"
-                                app:layout_constraintBottom_toBottomOf="parent"
-                                app:layout_constraintEnd_toEndOf="parent"
-                                app:layout_constraintTop_toTopOf="parent"
-                                app:tint="@color/onBackground" />
+                        <androidx.appcompat.widget.AppCompatImageView
+                            android:id="@+id/shareIcon"
+                            android:layout_width="32dp"
+                            android:layout_height="32dp"
+                            android:padding="4dp"
+                            android:src="@drawable/ic_share"
+                            android:visibility="visible"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:tint="@color/onBackground" />
 
-                            <androidx.appcompat.widget.AppCompatImageView
-                                android:id="@+id/moreIcon"
-                                android:layout_width="32dp"
-                                android:layout_height="32dp"
-                                android:padding="4dp"
-                                android:src="@drawable/ic_detail"
-                                android:visibility="visible"
-                                android:layout_margin="@dimen/half_margin"
-                                app:layout_constraintBottom_toBottomOf="parent"
-                                app:layout_constraintEnd_toEndOf="parent"
-                                app:layout_constraintTop_toTopOf="parent"
-                                app:tint="@color/onBackground" />
+                        <androidx.appcompat.widget.AppCompatImageView
+                            android:id="@+id/moreIcon"
+                            android:layout_width="32dp"
+                            android:layout_height="32dp"
+                            android:layout_margin="@dimen/half_margin"
+                            android:padding="4dp"
+                            android:src="@drawable/ic_detail"
+                            android:visibility="visible"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:tint="@color/onBackground" />
 
 
                     </LinearLayout>
@@ -282,18 +281,18 @@
                     android:id="@+id/toolbar"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:layout_collapseMode="pin"
-                    android:paddingTop="38dp"
-                    app:navigationIcon="@drawable/ic_back"
-                    android:visibility="gone"
                     android:gravity="center_vertical"
+                    android:paddingTop="38dp"
+                    android:visibility="gone"
+                    app:layout_collapseMode="pin"
+                    app:navigationIcon="@drawable/ic_back"
                     app:popupTheme="@style/Theme.Bidswipe.PopupOverlay">
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:gravity="center_vertical"
                         android:layout_marginEnd="@dimen/margin"
+                        android:gravity="center_vertical"
                         android:orientation="horizontal">
 
                         <com.makeramen.roundedimageview.RoundedImageView
@@ -301,10 +300,10 @@
                             android:layout_width="42dp"
                             android:layout_height="42dp"
                             android:layout_gravity="center"
-                            android:scaleType="centerCrop"
                             android:layout_marginEnd="@dimen/half_margin"
-                            app:riv_corner_radius="50dp"
-                            android:src="@drawable/user_image" />
+                            android:scaleType="centerCrop"
+                            android:src="@drawable/user_image"
+                            app:riv_corner_radius="50dp" />
 
                         <LinearLayout
                             android:layout_width="0dp"
@@ -333,8 +332,8 @@
                             android:id="@+id/notificationIcon1"
                             android:layout_width="32dp"
                             android:layout_height="32dp"
-                            android:padding="4dp"
                             android:background="?selectableItemBackgroundBorderless"
+                            android:padding="4dp"
                             android:src="@drawable/notification"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
@@ -414,9 +413,9 @@
 
         <androidx.viewpager2.widget.ViewPager2
             android:id="@+id/pager"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 

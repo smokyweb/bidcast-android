@@ -7,7 +7,6 @@
     android:layout_height="match_parent"
     tools:context=".ui.dashboard.more.NotificationActivity">
 
-
     <io.bidswipe.app.ui.custom.Header
         android:id="@+id/header"
         android:layout_width="match_parent"
@@ -83,7 +82,6 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
-
 
 
     <io.bidswipe.app.ui.custom.LoaderView

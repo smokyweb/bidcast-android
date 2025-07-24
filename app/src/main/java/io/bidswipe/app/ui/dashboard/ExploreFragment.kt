@@ -24,12 +24,13 @@ import io.bidswipe.app.ui.dashboard.more.NotificationActivity
 import io.bidswipe.app.utils.ids
 import io.bidswipe.app.utils.parse
 
-class ExploreFragment : BaseFragment<DashViewModel,FragmentExploreBinding>() {
+class ExploreFragment : BaseFragment<DashViewModel, FragmentExploreBinding>() {
     override fun getModel(): Class<DashViewModel> = DashViewModel::class.java
 
-    override fun getBind(inflater: LayoutInflater, view: ViewGroup?) =  FragmentExploreBinding.inflate(inflater,view,false)
+    override fun getBind(inflater: LayoutInflater, view: ViewGroup?) =
+        FragmentExploreBinding.inflate(inflater, view, false)
 
-    private lateinit var exploreAdapter : ExploreAdapter
+    private lateinit var exploreAdapter: ExploreAdapter
     private var exploreList = mutableListOf<GetCategoryResponse.Data?>()
 
     private val mClick = object : RecyclerClicks {
@@ -39,7 +40,7 @@ class ExploreFragment : BaseFragment<DashViewModel,FragmentExploreBinding>() {
 
             findNavController().navigate(
                 ids.goTopExploreType,
-                bundleOf("category" to category )
+                bundleOf("category" to category)
             )
 
         }
@@ -49,7 +50,7 @@ class ExploreFragment : BaseFragment<DashViewModel,FragmentExploreBinding>() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-       exploreAdapter = ExploreAdapter(exploreList,mClick)
+        exploreAdapter = ExploreAdapter(exploreList, mClick)
         bind.recycler.adapter = exploreAdapter
 
         bind.header.onMoreSecondaryClick {
@@ -61,7 +62,12 @@ class ExploreFragment : BaseFragment<DashViewModel,FragmentExploreBinding>() {
         }
 
         bind.header.onMorePrimaryClick {
-            startActivity(Intent(mCtx , NotificationActivity::class.java).putExtra("slug","notification"))
+            startActivity(
+                Intent(mCtx, NotificationActivity::class.java).putExtra(
+                    "slug",
+                    "notification"
+                )
+            )
         }
 
         bind.swipeRefreshLayout.setOnRefreshListener {
@@ -74,7 +80,6 @@ class ExploreFragment : BaseFragment<DashViewModel,FragmentExploreBinding>() {
             }
 
         }
-
 
         bind.noInternet.onClick {
 
@@ -91,7 +96,6 @@ class ExploreFragment : BaseFragment<DashViewModel,FragmentExploreBinding>() {
 
         }
 
-
         selectTab(bind.recommended)
 
         bind.recommended.setOnClickListener { selectTab(it as TextView) }
@@ -100,20 +104,20 @@ class ExploreFragment : BaseFragment<DashViewModel,FragmentExploreBinding>() {
 
         bind.loader.isVisible = true
         viewModel.getCategory()
-        viewModel.getCategoryRepo.observe (viewLifecycleOwner){
+        viewModel.getCategoryRepo.observe(viewLifecycleOwner) {
             when (it) {
                 is Resource.Success -> {
                     bind.loader.isVisible = false
                     bind.swipeRefreshLayout.isRefreshing = false
                     bind.noInternet.isVisible = false
 
-                    if(it.value.data?.isNotEmpty()==true){
+                    if (it.value.data?.isNotEmpty() == true) {
                         exploreList.clear()
                         exploreList.addAll(it.value.data)
                         exploreAdapter.notifyDataSetChanged()
                     }
                 }
-                
+
                 is Resource.Error -> {
                     bind.noInternet.isVisible = false
                     bind.swipeRefreshLayout.isRefreshing = false
@@ -125,22 +129,22 @@ class ExploreFragment : BaseFragment<DashViewModel,FragmentExploreBinding>() {
                         it.parse(mCtx, TAG, object : AlertClicks {
                             override fun primaryClick(dialog: AppBottomSheet) {
                                 dialog.dismiss()
-                                
+
                             }
-                            
+
                             override fun secondaryClick(dialog: AppBottomSheet) {
                                 dialog.dismiss()
-                                
+
                             }
                         })
                     }
                 }
-                
+
                 else -> {}
-                
+
             }
         }
-        
+
     }
 
     fun selectTab(selectedTab: TextView) {

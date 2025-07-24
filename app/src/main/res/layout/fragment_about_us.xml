@@ -54,7 +54,6 @@
 
     </com.google.android.material.card.MaterialCardView>
 
-
     <TextView
         style="@style/HeadlineSmall"
         android:layout_width="wrap_content"

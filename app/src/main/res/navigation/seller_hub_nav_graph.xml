@@ -24,7 +24,7 @@
         android:id="@+id/walletFragment"
         android:name="io.bidswipe.app.ui.dashboard.sellerHub.WalletFragment"
         android:label="fragment_wallet"
-        tools:layout="@layout/fragment_wallet" >
+        tools:layout="@layout/fragment_wallet">
         <action
             android:id="@+id/goToPayoutFragment"
             app:destination="@id/payoutFragment" />

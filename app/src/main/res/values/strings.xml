@@ -429,4 +429,10 @@
     <string name="john_smith">John Smith</string>
     <string name="clear_all">CLEAR ALL</string>
     <string name="type_here">Type here...\n</string>
+    <string name="language">Language</string>
+    <string name="report_user">Report User</string>
+    <string name="submit_report">Submit Report</string>
+    <string name="tell_us_more">Tell us more</string>
+    <string name="write_something">Write Something</string>
+    <string name="would_you_like_to_notified_when_usrname_goes_live">Would you like to notified when @usrname goes live</string>
 </resources>

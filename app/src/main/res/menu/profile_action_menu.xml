@@ -4,20 +4,20 @@
 
     <item
         android:id="@+id/rate"
-        android:title="@string/rate_seller"
         android:icon="@drawable/ic_star"
+        android:title="@string/rate_seller"
         app:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/block"
-        android:title="@string/block_seller"
         android:icon="@drawable/ic_block"
+        android:title="@string/block_seller"
         app:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/reportUser"
-        android:title="Report"
         android:icon="@drawable/ic_error"
+        android:title="Report"
         app:showAsAction="ifRoom" />
 
 </menu>

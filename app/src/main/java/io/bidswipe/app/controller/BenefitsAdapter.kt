@@ -9,7 +9,7 @@ import io.bidswipe.app.databinding.BenifitsItemBinding
 import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.model.SellModel
 
-class BenifitsAdapter(
+class BenefitsAdapter(
     mList: MutableList<SellModel>, val mClicks: RecyclerClicks,
 ) : BaseAdapter<SellModel, BenifitsItemBinding>(mList) {
 

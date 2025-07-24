@@ -17,6 +17,7 @@ import io.bidswipe.app.network.response.GetOffersResponse
 import io.bidswipe.app.network.response.GetOrdersResponse
 import io.bidswipe.app.network.response.GetPaymentCardsResponse
 import io.bidswipe.app.network.response.GetTransactionsHistoryResponse
+import io.bidswipe.app.network.response.SellerStatusResponse
 import io.bidswipe.app.network.response.StorePhoneNumberResponse
 import io.bidswipe.app.network.response.StoreSellerIdResponse
 import io.bidswipe.app.network.response.UpdateOfferResponse
@@ -222,6 +223,15 @@ class SellerHubViewModel@Inject constructor(val repo: DashRepository) : ViewMode
         cardToken: RequestBody,
     ) = viewModelScope.launch {
         _storeSellerVerificationResponse.value = repo.storeSellerVerification(id,image,phoneVerification,cardToken)
+    }
+
+    private var _getSellerStatusResponse = MutableLiveData<Resource<SellerStatusResponse>>()
+    val getSellerStatusRepo: MutableLiveData<Resource<SellerStatusResponse>>
+        get() = _getSellerStatusResponse
+
+    fun getSellerStatus(
+    ) = viewModelScope.launch {
+        _getSellerStatusResponse.value = repo.getSellerStatus()
     }
 
 }

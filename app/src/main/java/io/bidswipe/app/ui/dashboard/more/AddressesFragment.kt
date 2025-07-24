@@ -67,6 +67,7 @@ class AddressesFragment : BaseFragment<MoreViewModel, FragmentAddressesBinding>(
 
                     if (mData?.isNotEmpty() == true){
                         bind.noData.isVisible = false
+                        bind.addressRecycler.isVisible = true
                         addressList.addAll(mData)
                     }else{
                         bind.noData.isVisible = true

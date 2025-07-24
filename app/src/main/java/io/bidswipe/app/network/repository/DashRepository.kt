@@ -388,4 +388,8 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
     ) = call { api.storeSellerVerification(id
     ,image,phoneVerification,cardToken) }
 
+
+    suspend fun getSellerStatus(
+    ) = call { api.getSellerStatus() }
+
 }

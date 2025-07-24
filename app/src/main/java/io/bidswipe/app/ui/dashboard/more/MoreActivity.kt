@@ -20,67 +20,51 @@ class MoreActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(bind.root)
 
-        navHostFragment = supportFragmentManager.findFragmentById(R.id.fragmentContainer) as NavHostFragment
+        navHostFragment =
+            supportFragmentManager.findFragmentById(R.id.fragmentContainer) as NavHostFragment
         navController = navHostFragment.findNavController()
-        val navGraph=navController.navInflater.inflate(R.navigation.more_graph)
+        val navGraph = navController.navInflater.inflate(R.navigation.more_graph)
 
         val slug = intent.getStringExtra("slug").toString()
 
         when (slug) {
 
-            "aboutUs" ->{
-                navGraph.setStartDestination(R.id.aboutUsFragment)
-            }
-
             "language" -> {
-
             }
 
-            "contactUs" ->{
+            "contactUs" -> {
                 navGraph.setStartDestination(R.id.contactUsFragment)
             }
 
-            "salesTax" ->{
+            "salesTax" -> {
                 navGraph.setStartDestination(R.id.salesTaxExemptionFragment)
             }
 
-            "termsCondition" ->{
-                navGraph.setStartDestination(R.id.termsConditionFragment)
-            }
-
-            "privacyPolicy" ->{
-                navGraph.setStartDestination(R.id.privacyPolicyFragment)
-            }
-
-            "faq" ->{
-                navGraph.setStartDestination(R.id.FAQFragment)
-            }
-
-            "paymentShipping"->{
+            "paymentShipping" -> {
                 navGraph.setStartDestination(R.id.paymentShippingFragment)
             }
 
-            "address"->{
+            "address" -> {
                 navGraph.setStartDestination(R.id.addressesFragment)
             }
 
-            /*"buyer"->{
-                navGraph.setStartDestination(R.id.trustedBuyerFragment)
-            }*/
-
-            "notification"->{
-
+            "notification" -> {
             }
-            "preferences"->{
+
+            "preferences" -> {
                 navGraph.setStartDestination(R.id.preferencesFragment)
             }
-            "addAddress"->{
+
+            "addAddress" -> {
                 navGraph.setStartDestination(R.id.addShippingAddressFragment)
             }
 
+            else -> {
+                navGraph.setStartDestination(R.id.contentFragment)
+            }
         }
 
-        navController.graph=navGraph
+        navController.graph = navGraph
 
 
     }

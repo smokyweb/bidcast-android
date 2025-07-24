@@ -1,5 +1,6 @@
 package io.bidswipe.app.ui.custom
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.view.LayoutInflater
 import androidx.core.content.ContextCompat
@@ -26,16 +27,17 @@ class AppBottomSheet(
     var image: Int,
     title: String,
     message: String,
-    private val primaryBtnText: String = "Confirm",
-    private val secondaryBtnText: String = "Cancel",
+    primaryBtnText: String = "Confirm",
+    secondaryBtnText: String = "Cancel",
     canCancel: Boolean,
     showSecondary: Boolean,
-    private val iconPadding: Int = 0,
+    iconPadding: Int = 0,
     clicks: AlertClicks,
     alertType: AlertType = AlertType.SUCCESS,
 ) : BottomSheetDialog(mCtx) {
 
 
+    @SuppressLint("InflateParams")
     private val bind = AppAlertViewBinding.bind(
         LayoutInflater.from(mCtx).inflate(layout.app_alert_view, null, false)
     )

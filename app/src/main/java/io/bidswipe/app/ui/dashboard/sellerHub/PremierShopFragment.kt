@@ -6,13 +6,10 @@ import android.view.View
 import android.view.ViewGroup
 import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseFragment
-import io.bidswipe.app.controller.BenifitsAdapter
-import io.bidswipe.app.controller.GridAdapter
-import io.bidswipe.app.controller.MoreAdapter
+import io.bidswipe.app.controller.BenefitsAdapter
 import io.bidswipe.app.controller.RequirementAdapter
 import io.bidswipe.app.databinding.FragmentPremierShopBinding
 import io.bidswipe.app.interfaces.RecyclerClicks
-import io.bidswipe.app.model.MoreModel
 import io.bidswipe.app.model.SellModel
 import io.bidswipe.app.utils.finish
 
@@ -27,7 +24,7 @@ class PremierShopFragment : BaseFragment<SellerHubViewModel, FragmentPremierShop
 
     private var gridList = mutableListOf<SellModel>()
     private var reqList = mutableListOf("","","","")
-    private lateinit var gridAdapter: BenifitsAdapter
+    private lateinit var gridAdapter: BenefitsAdapter
     private lateinit var reqAdapter: RequirementAdapter
 
     private val mClick = object : RecyclerClicks{
@@ -49,7 +46,7 @@ class PremierShopFragment : BaseFragment<SellerHubViewModel, FragmentPremierShop
         gridList.add(SellModel(R.drawable.ic_speaker,0,"Marketing Boost", "Priority in search result"))
         gridList.add(SellModel(R.drawable.ic_support,0,"Priority Support", "24/7 dedicated assistance"))
 
-        gridAdapter= BenifitsAdapter(gridList,mClick)
+        gridAdapter= BenefitsAdapter(gridList,mClick)
         bind.gridRecycler.adapter = gridAdapter
 
         reqAdapter = RequirementAdapter(reqList,mClick)

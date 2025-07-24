@@ -364,7 +364,7 @@ class DashViewModel @Inject constructor(val repo: DashRepository) : ViewModel() 
         const val SLUG_ABOUT_US = "about-us"
         const val SLUG_PRIVACY_POLICY = "privacy-policy"
         const val SLUG_FAQ = "faq"
-        const val SLUG_TERMS = "terms-conditions"
+        const val SLUG_TERMS = "terms-condition"
     }
 
 

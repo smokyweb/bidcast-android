@@ -41,33 +41,33 @@
         android:id="@+id/paymentShippingFragment"
         android:name="io.bidswipe.app.ui.dashboard.more.PaymentShippingFragment"
         android:label="fragment_payment_shipping"
-        tools:layout="@layout/fragment_payment_shipping" >
+        tools:layout="@layout/fragment_payment_shipping">
         <action
             android:id="@+id/goToAddShippingAddressFragment"
             app:destination="@id/addShippingAddressFragment"
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@anim/slide_in_left"
-            app:popExitAnim="@anim/slide_out_right"/>
+            app:popExitAnim="@anim/slide_out_right" />
     </fragment>
     <fragment
         android:id="@+id/addressesFragment"
         android:name="io.bidswipe.app.ui.dashboard.more.AddressesFragment"
         android:label="fragment_addresses"
-        tools:layout="@layout/fragment_addresses" >
+        tools:layout="@layout/fragment_addresses">
         <action
             android:id="@+id/myAddressToAddShippingAddressFragment"
             app:destination="@id/addShippingAddressFragment"
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@anim/slide_in_left"
-            app:popExitAnim="@anim/slide_out_right"/>
+            app:popExitAnim="@anim/slide_out_right" />
     </fragment>
-<!--    <fragment
-        android:id="@+id/trustedBuyerFragment"
-        android:name="io.bidswipe.app.ui.dashboard.more.TrustedBuyerFragment"
-        android:label="fragment_trusted_buyer"
-        tools:layout="@layout/activity_trusted_buyer" />-->
+    <!--    <fragment
+            android:id="@+id/trustedBuyerFragment"
+            android:name="io.bidswipe.app.ui.dashboard.more.TrustedBuyerFragment"
+            android:label="fragment_trusted_buyer"
+            tools:layout="@layout/activity_trusted_buyer" />-->
     <fragment
         android:id="@+id/preferencesFragment"
         android:name="io.bidswipe.app.ui.dashboard.more.PreferencesFragment"
@@ -78,6 +78,13 @@
         android:name="io.bidswipe.app.ui.dashboard.more.AddShippingAddressFragment"
         android:label="fragment_add_shipping_address"
         tools:layout="@layout/fragment_add_shipping_address" />
+
+    <fragment
+        android:id="@+id/contentFragment"
+        android:name="io.bidswipe.app.ui.dashboard.watchStream.ContentFragment"
+        android:label="fragment_content"
+        tools:layout="@layout/fragment_content" />
+
 
 
 </navigation>

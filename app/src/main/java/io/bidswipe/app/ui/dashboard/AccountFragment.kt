@@ -1,14 +1,11 @@
 package io.bidswipe.app.ui.dashboard
 
+import android.R.id.title
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
-import androidx.browser.customtabs.CustomTabColorSchemeParams
-import androidx.browser.customtabs.CustomTabsIntent
-import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayout.OnTabSelectedListener
@@ -33,8 +30,6 @@ import io.bidswipe.app.utils.finish
 import io.bidswipe.app.utils.loadUrl
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.toAuth
-import androidx.core.net.toUri
-
 class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
 
     override fun getModel(): Class<DashViewModel> = DashViewModel::class.java
@@ -78,6 +73,7 @@ class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
                     startActivity(
                         Intent(mCtx, MoreActivity::class.java)
                             .putExtra("slug", moreList[pos].slug)
+                            .putExtra("title", moreList[pos].title)
                     )
                 }
 
@@ -87,51 +83,20 @@ class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
     }
 
     private fun handlePageUrl(slug: String) {
-        bind.loader.isVisible = true
-
-        viewModel.getPageUrl(slug)
-        viewModel.pageUrlRepo.observe(viewLifecycleOwner) { it ->
-            when (it) {
-                is Resource.Success -> {
-                    bind.loader.isVisible = false
-                    val url = it.value.data?.url ?: ""
-                    if (url.isNotEmpty()) {
-                        launchWeb(url)
-                    } else {
-                        errorToast("Could not load page")
-                    }
-                    viewModel.pageUrlRepo.value = null
-                }
-                is Resource.Error -> {
-                    bind.loader.isVisible = false
-                    Toast.makeText(mCtx, getString(R.string.no_internet), Toast.LENGTH_SHORT).show()
-
-                    viewModel.pageUrlRepo.value = null
-                }
-
-                else -> {}
-            }
+        val title = when (slug) {
+            DashViewModel.SLUG_ABOUT_US -> "About Us"
+            DashViewModel.SLUG_PRIVACY_POLICY -> "Privacy Policy"
+            DashViewModel.SLUG_FAQ -> "FAQ"
+            DashViewModel.SLUG_TERMS -> "Terms & Conditions"
+            else -> "Content"
         }
-    }
-    private fun launchWeb(url: String) {
-        try {
-            CustomTabsIntent.Builder().apply {
-                setDefaultColorSchemeParams(
-                    CustomTabColorSchemeParams.Builder()
-                        .setToolbarColor(ContextCompat.getColor(mCtx, R.color.primary))
-                        .build()
-                )
-                setShowTitle(true)
-            }.build().apply {
-                intent.setPackage("com.android.chrome")
-                launchUrl(requireActivity(), url.toUri())
-            }
-        } catch (_: Exception) {
-            errorToast("Could not open web page")
-            startActivity(Intent(Intent.ACTION_VIEW, url.toUri()))
+        val intent = Intent(requireContext(), MoreActivity::class.java).apply {
+            putExtra("slug", slug)
+            putExtra("title", title)
         }
-    }
+        startActivity(intent)
 
+    }
 
     private val accountGridClick = object : RecyclerClicks {
         override fun itemClick(pos: Int, status: String?) {
@@ -185,10 +150,7 @@ class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-
-
         App.profileResponse.observe(viewLifecycleOwner) {
-
 
             bind.userName.text = it?.username.toString()
             bind.sellerSince.text = it?.bio.toString()
@@ -197,9 +159,9 @@ class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
 
         bind.tabs.addOnTabSelectedListener(onTabSelectedListener)
 
+        moreList.clear()
         moreList.add(MoreModel(R.drawable.ic_vacation, "About Us", "aboutUs"))
         moreList.add(MoreModel(R.drawable.ic_vacation, "Contact Us", "contactUs"))
-//        moreList.add(MoreModel(R.drawable.ic_vacation,"Change Language", "language"))
         moreList.add(MoreModel(R.drawable.ic_vacation, "Sales Tax Exemption", "salesTax"))
         moreList.add(MoreModel(R.drawable.ic_vacation, "Terms & Conditions", "termsCondition"))
         moreList.add(MoreModel(R.drawable.ic_vacation, "Privacy Policy", "privacyPolicy"))
@@ -209,6 +171,7 @@ class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
         moreAdapter = MoreAdapter(moreList, mClicks)
         bind.accountView.moreRecycler.adapter = moreAdapter
 
+        gridList.clear()
         gridList.add(MoreModel(R.drawable.ic_box, "Inventory", "inventory"))
         gridList.add(MoreModel(R.drawable.ic_mic, "Shows", "shows"))
         gridList.add(MoreModel(R.drawable.ic_order, "My Order", "order"))
@@ -240,6 +203,7 @@ class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
         gridAdapter = GridAdapter(gridList, gridClick)
         bind.sellerHub.gridRecycler.adapter = gridAdapter
 
+        accountGridList.clear()
         accountGridList.add(MoreModel(R.drawable.ic_box, "Payment & Shipping", "paymentShipping"))
         accountGridList.add(MoreModel(R.drawable.ic_mic, "Addresses", "address"))
         accountGridList.add(MoreModel(R.drawable.ic_order, "Trusted Buyer", "buyer"))
@@ -250,7 +214,6 @@ class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
         bind.accountView.gridRecycler.adapter = accountGridAdapter
 
         bind.editIcon.setOnClickListener {
-
             startActivity(Intent(mCtx, UpdateAccountActivity::class.java))
         }
 
