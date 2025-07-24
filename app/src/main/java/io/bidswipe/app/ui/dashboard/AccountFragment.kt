@@ -30,6 +30,10 @@ import io.bidswipe.app.utils.finish
 import io.bidswipe.app.utils.loadUrl
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.toAuth
+import androidx.core.net.toUri
+import io.bidswipe.app.ui.dashboard.sellerHub.SellerVerificationActivity
+import io.bidswipe.app.utils.runSafe
+
 class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
 
     override fun getModel(): Class<DashViewModel> = DashViewModel::class.java
@@ -98,6 +102,25 @@ class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
 
     }
 
+    private fun launchWeb(url: String) {
+
+            runSafe {
+                CustomTabsIntent.Builder().apply {
+                    setDefaultColorSchemeParams(
+                        CustomTabColorSchemeParams.Builder()
+                            .setToolbarColor(ContextCompat.getColor(mCtx, R.color.primary))
+                            .build()
+                    )
+                    setShowTitle(true)
+                }.build().apply {
+                    intent.setPackage("com.android.chrome")
+                    launchUrl(requireActivity(), url.toUri())
+                }
+            }
+
+
+    }
+
     private val accountGridClick = object : RecyclerClicks {
         override fun itemClick(pos: Int, status: String?) {
 
@@ -137,12 +160,30 @@ class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
 
     private val gridClick = object : RecyclerClicks {
         override fun itemClick(pos: Int, status: String?) {
-            startActivity(
-                Intent(mCtx, SellerHubActivity::class.java).putExtra(
-                    "slug",
-                    gridList[pos].slug
-                ).putExtra("url", kycUrl)
-            )
+
+            when (gridList[pos].slug) {
+
+                "sellerVerification" -> {
+                    startActivity(
+                        Intent(mCtx, SellerVerificationActivity::class.java).putExtra(
+                            "slug",
+                            gridList[pos].slug
+                        )
+                    )
+                }
+
+                else -> {
+                    startActivity(
+                        Intent(mCtx, SellerHubActivity::class.java).putExtra(
+                            "slug",
+                            gridList[pos].slug
+                        ).putExtra("url", kycUrl)
+                    )
+
+                }
+
+            }
+
         }
 
     }
@@ -150,10 +191,12 @@ class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        App.getProfile()
+
         App.profileResponse.observe(viewLifecycleOwner) {
 
-            bind.userName.text = it?.username.toString()
-            bind.sellerSince.text = it?.bio.toString()
+            bind.userName.text = it?.name ?:""
+            bind.sellerSince.text = it?.bio?:"N/A"
             bind.userProfile.loadUrl(mCtx, it?.profileImage.toString())
         }
 
@@ -185,20 +228,8 @@ class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
         gridList.add(MoreModel(R.drawable.ic_graph, "Seller Status", "sellerStatus"))
         gridList.add(MoreModel(R.drawable.ic_graph, "Seller Analytics", "sellerAnalytics"))
         gridList.add(MoreModel(R.drawable.ic_speaker, "Promote Tools", "promote"))
-        gridList.add(
-            MoreModel(
-                R.drawable.ic_checked_tag,
-                "Seller Verification",
-                "sellerVerification"
-            )
-        )
-        gridList.add(
-            MoreModel(
-                R.drawable.ic_checked_tag,
-                "Identity Verification",
-                "identityVerification"
-            )
-        )
+        gridList.add(MoreModel(R.drawable.ic_checked_tag, "Seller Verification", "sellerVerification"))
+        gridList.add(MoreModel(R.drawable.ic_checked_tag, "Identity Verification", "identityVerification"))
 
         gridAdapter = GridAdapter(gridList, gridClick)
         bind.sellerHub.gridRecycler.adapter = gridAdapter

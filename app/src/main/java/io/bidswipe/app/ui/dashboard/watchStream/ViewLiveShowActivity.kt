@@ -20,6 +20,7 @@ import io.bidswipe.app.controller.StreamPagerAdapter
 import io.bidswipe.app.databinding.ActivityViewLiveShowBinding
 import io.bidswipe.app.model.LiveShowModel
 import io.bidswipe.app.utils.Const
+import io.bidswipe.app.utils.FireRef
 import io.bidswipe.app.utils.bind
 import io.bidswipe.app.utils.clr
 import io.bidswipe.app.utils.setMargins
@@ -89,20 +90,26 @@ class ViewLiveShowActivity : BaseActivity() {
 
 //        streamList = intent.getParcelableArrayListExtra<StreamModel>("roomIdsList") !!
 
-        Const.fireBaseRef.getReference(Const.LIVE_SESSIONS).addValueEventListener(eventListener)
+	    FireRef.LIVE_SESSIONS.addValueEventListener(eventListener)
 
 //        log("ROOM IDS: ${streamList.get(0).roomId}")
 
-
         createEngine()
+
+        val appConfig = ZIMAppConfig().also {
+            it.appID = Const.APP_ID.toLong()
+            it.appSign = Const.APP_SIGN
+        }
+
+       ZIM.create(appConfig, application)
 
     }
 
     override fun onDestroy() {
         super.onDestroy()
         destroyEngine()
-        ZIM.getInstance().logout()
-        ZIM.getInstance().destroy()
+       /* ZIM.getInstance().logout()
+        ZIM.getInstance().destroy()*/
 
     }
 

@@ -28,7 +28,6 @@ class App : Application() {
         var isUserOnChatScreen: Boolean = false
         val profileResponse = MutableLiveData<UserProfileResponse.Data?>()
 
-
         fun getProfile() {
             CoroutineScope(Dispatchers.IO).launch {
                 val repo = DashRepository(RetrofitService(mCtx).build())
@@ -47,8 +46,6 @@ class App : Application() {
                 }
             }
         }
-
-
     }
 
     override fun onCreate() {

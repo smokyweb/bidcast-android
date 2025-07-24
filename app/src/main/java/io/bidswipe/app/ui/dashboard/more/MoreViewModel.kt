@@ -13,6 +13,7 @@ import io.bidswipe.app.network.response.GetBuyerIdentityResponse
 import io.bidswipe.app.network.response.GetNotificationResponse
 import io.bidswipe.app.network.response.GetPaymentCardsResponse
 import io.bidswipe.app.network.response.GetShippingAddressResponse
+import io.bidswipe.app.network.response.SetDefaultAddressResponse
 import io.bidswipe.app.network.response.SettingListResponse
 import io.bidswipe.app.network.response.TermsConditionResponse
 import kotlinx.coroutines.launch
@@ -182,6 +183,47 @@ class MoreViewModel @Inject constructor(val repo: DashRepository) : ViewModel() 
 		id : RequestBody?
 	) = viewModelScope.launch {
 		_deleteNotificationResponse.value = repo.deleteNotification(id)
+	}
+
+	private var _setDefaultShippingAddressResponse = MutableLiveData<Resource<SetDefaultAddressResponse>>()
+	val setDefaultShippingAddressRepo: MutableLiveData<Resource<SetDefaultAddressResponse>>
+		get() = _setDefaultShippingAddressResponse
+
+	fun setDefaultShippingAddress(
+		addressId : RequestBody?
+	) = viewModelScope.launch {
+		_setDefaultShippingAddressResponse.value = repo.setDefaultShippingAddress(addressId)
+	}
+
+
+	private var _setDefaultCardResponse = MutableLiveData<Resource<CommonResponse>>()
+	val setDefaultCardRepo: MutableLiveData<Resource<CommonResponse>>
+		get() = _setDefaultCardResponse
+
+	fun setDefaultCard(
+		cardId : RequestBody?
+	) = viewModelScope.launch {
+		_setDefaultCardResponse.value = repo.setDefaultCard(cardId)
+	}
+
+	private var _deleteCardResponse = MutableLiveData<Resource<CommonResponse>>()
+	val deleteCardRepo: MutableLiveData<Resource<CommonResponse>>
+		get() = _deleteCardResponse
+
+	fun deleteCard(
+		cardId : RequestBody?
+	) = viewModelScope.launch {
+		_deleteCardResponse.value = repo.deleteCard(cardId)
+	}
+
+	private var _deleteAddressResponse = MutableLiveData<Resource<CommonResponse>>()
+	val deleteAddressRepo: MutableLiveData<Resource<CommonResponse>>
+		get() = _deleteAddressResponse
+
+	fun deleteAddress(
+		addressId : RequestBody?
+	) = viewModelScope.launch {
+		_deleteAddressResponse.value = repo.deleteAddress(addressId)
 	}
 
 

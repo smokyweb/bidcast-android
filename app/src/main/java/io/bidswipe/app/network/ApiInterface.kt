@@ -49,6 +49,7 @@ import io.bidswipe.app.network.response.UserProfileResponse
 import io.bidswipe.app.network.response.UserSearchingResponse
 import io.bidswipe.app.network.response.PageUrlResponse
 import io.bidswipe.app.network.response.SellerStatusResponse
+import io.bidswipe.app.network.response.SetDefaultAddressResponse
 import io.bidswipe.app.utils.Utils
 import io.bidswipe.app.utils.request
 import okhttp3.MultipartBody
@@ -534,6 +535,30 @@ interface ApiInterface {
     @GET("api/seller-status")
     suspend fun getSellerStatus(
     ): SellerStatusResponse
+
+    @Multipart
+    @POST("api/set-default-shipping-address")
+    suspend fun setDefaultShippingAddress(
+        @Part("address_id") addressId: RequestBody?
+    ): SetDefaultAddressResponse
+
+    @Multipart
+    @POST("api/set-default-card")
+    suspend fun setDefaultCard(
+        @Part("card_id") cardId: RequestBody?
+    ): CommonResponse
+
+    @Multipart
+    @POST("api/delete-card")
+    suspend fun deleteCard(
+        @Part("card_id") cardId: RequestBody?
+    ): CommonResponse
+
+    @Multipart
+    @POST("api/delete-shipping-address")
+    suspend fun deleteAddress(
+        @Part("address_id") addressId: RequestBody?
+    ): CommonResponse
 
 }
 

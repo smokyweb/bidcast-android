@@ -26,7 +26,6 @@
         app:layout_constraintTop_toTopOf="parent"
         app:title_text="No Messages Found" />
 
-
     <io.bidswipe.app.ui.custom.NoDataView
         android:id="@+id/noInternet"
         style="@style/noInternetStyle"

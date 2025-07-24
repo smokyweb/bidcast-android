@@ -435,4 +435,6 @@
     <string name="tell_us_more">Tell us more</string>
     <string name="write_something">Write Something</string>
     <string name="would_you_like_to_notified_when_usrname_goes_live">Would you like to notified when @usrname goes live</string>
+    <string name="set_as_default">Set as default</string>
+    <string name="delete">Delete</string>
 </resources>

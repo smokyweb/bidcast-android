@@ -4,20 +4,20 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import io.bidswipe.app.base.BaseAdapter
 import io.bidswipe.app.databinding.LiveCommentItemBinding
-import io.bidswipe.app.model.CommentModel
+import io.bidswipe.app.model.LiveChatModel
 import io.bidswipe.app.utils.loadUrl
 
 class CommentAdapter(
-    mList: MutableList<CommentModel?>,
-) : BaseAdapter<CommentModel, LiveCommentItemBinding>(mList) {
+	mList: MutableList<LiveChatModel?>,
+) : BaseAdapter<LiveChatModel, LiveCommentItemBinding>(mList) {
 
     override fun bindView(inflater: LayoutInflater, parent: ViewGroup) =
         LiveCommentItemBinding.inflate(inflater, parent, false)
 
     override fun onBind(
-        holder: BaseViewHolder<LiveCommentItemBinding>,
-        position: Int,
-        item: CommentModel?,
+	    holder: BaseViewHolder<LiveCommentItemBinding>,
+	    position: Int,
+	    item: LiveChatModel?,
     ) {
         with(holder) {
             bind.userName.text = item?.userName

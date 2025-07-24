@@ -65,8 +65,9 @@ import io.bidswipe.app.databinding.ShareSheetBinding
 import io.bidswipe.app.databinding.ShopSheetBinding
 import io.bidswipe.app.interfaces.AlertClicks
 import io.bidswipe.app.interfaces.RecyclerClicks
-import io.bidswipe.app.model.CommentModel
+import io.bidswipe.app.model.LiveChatModel
 import io.bidswipe.app.model.LiveShowModel
+import io.bidswipe.app.model.ZIMExtendedData
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.network.response.GetMyInventoryResponse
 import io.bidswipe.app.network.response.UpdateLiveStatusResponse
@@ -74,6 +75,7 @@ import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.ui.dashboard.DashViewModel
 import io.bidswipe.app.utils.Alerts
 import io.bidswipe.app.utils.Const
+import io.bidswipe.app.utils.FireRef
 import io.bidswipe.app.utils.Utils
 import io.bidswipe.app.utils.bind
 import io.bidswipe.app.utils.clr
@@ -90,25 +92,26 @@ class LiveShowActivity : BaseActivity() {
 	private val bind by bind(ActivityLiveShowBinding::inflate)
 	private val viewModel by viewModels<DashViewModel>()
 
-	var isFrontCamera = true
-	var roomID = ""
-	var showId = ""
-	private var liveStatus = true
-
-	private var startTimeMillis: Long = 0L
-	private val handler = Handler(Looper.getMainLooper())
-	private lateinit var durationRunnable: Runnable
+	private lateinit var pipParams: PictureInPictureParams
+	private lateinit var commentAdapter: CommentAdapter
+	private lateinit var zim: ZIM
 
 	private val updateStatusHandler = Handler(Looper.getMainLooper())
+	private val handler = Handler(Looper.getMainLooper())
+
+	private lateinit var durationRunnable: Runnable
 	private var runnable: Runnable? = null
 
-	private var commentList = mutableListOf<CommentModel?>()
-	private lateinit var commentAdapter: CommentAdapter
-	private var zoomLevel = 1
+	private var commentList = mutableListOf<LiveChatModel?>()
 
-	private lateinit var zim: ZIM
-	private var stoppedInPictureInPictureMode = false
-	private lateinit var pipParams: PictureInPictureParams
+	private var liveStatus = true
+	var isFrontCamera = true
+
+	var roomID = ""
+	var showId = ""
+
+	private var startTimeMillis: Long = 0L
+	private var zoomLevel = 1L
 
 	private var eventListener = object : ValueEventListener {
 		@SuppressLint("NotifyDataSetChanged")
@@ -276,18 +279,15 @@ class LiveShowActivity : BaseActivity() {
 
 					if (liveStatus) {
 
-						try {
-							addDataOnFirebase(mData)
+						runSafe {
+							updateFirebaseNode(mData)
 							startPublish()
 							startLiveDurationTimer()
 
 							startUpdatingFirebaseEvery5Minutes()
-							Const.fireBaseRef.getReference(Const.LIVE_SESSIONS).child(roomID)
-								.addValueEventListener(eventListener)
+							FireRef.LIVE_SESSIONS.child(roomID).addValueEventListener(eventListener)
 
 							bind.startBtn.isVisible = false
-						} catch (e: Exception) {
-							e.printStackTrace()
 						}
 
 					} else {
@@ -312,31 +312,27 @@ class LiveShowActivity : BaseActivity() {
 								dialog.dismiss()
 
 								finish()
-
 							}
 						})
 					}
 				}
 
 				else -> {}
-
 			}
 		}
 
 		onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
 			override fun handleOnBackPressed() {
 
-				if (::zim.isInitialized){
+				if (::zim.isInitialized) {
 					if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 						enterPictureInPictureMode(pipParams)
 					}
-				}else{
+				} else {
 					finishAfterTransition()
 				}
-
 			}
 		})
-
 	}
 
 	override fun onPause() {
@@ -345,17 +341,16 @@ class LiveShowActivity : BaseActivity() {
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 			enterPictureInPictureMode(pipParams)
 		}
-
 	}
 
 	override fun onDestroy() {
 		super.onDestroy()
 
-		Const.fireBaseRef.getReference(Const.LIVE_SESSIONS).child(roomID).removeValue()
+		FireRef.LIVE_SESSIONS.child(roomID).removeValue()
 
 		stopPublish()
 
-		if (::zim.isInitialized){
+		if (::zim.isInitialized) {
 			zim.logout()
 			zim.destroy()
 		}
@@ -413,46 +408,26 @@ class LiveShowActivity : BaseActivity() {
 		}
 	}
 
-	private val zimEventHandler = object : ZIMEventHandler(){
+	private val zimEventHandler = object : ZIMEventHandler() {
 		override fun onRoomMessageReceived(
 			zim: ZIM?,
 			messageList: java.util.ArrayList<ZIMMessage?>?,
 			info: ZIMMessageReceivedInfo?,
 			fromRoomID: String?
 		) {
+			super.onRoomMessageReceived(zim, messageList, info, fromRoomID)
 			// Callback for receiving in-room messages.
-			messageList?.forEach { message ->
+			messageList?.forEach { zimMessage ->
+				if (zimMessage is ZIMTextMessage) {
+					log("NEW MESSAGE RECEIVED:\n${zimMessage.message}\nExtended Data: ${zimMessage.extendedData}")
 
-				log("Message: ${message.toString()}")
+					runSafe {
+						commentList.add(LiveChatModel.fromZIMMessage(zimMessage))
 
-				log("Extended Data: ${message?.extendedData.toString()}")
-
-				if (messageList != null) {
-					for (zimMessage in messageList) {
-						if (zimMessage is ZIMTextMessage) {
-							val zimTextMessage = zimMessage as ZIMTextMessage
-							Log.e(TAG, "Received message: ${zimTextMessage.message}")
-							log( "Received Extended Data: ${zimTextMessage.extendedData}")
-
-							try {
-								val jsonObject = JSONObject(zimMessage.extendedData)
-								val senderImage = jsonObject.getString("userImage")
-								val senderId = jsonObject.getString("userId")
-								val senderName = jsonObject.getString("userName")
-								commentList.add(CommentModel(senderImage, senderName, senderId,zimMessage.message))
-								commentAdapter.notifyItemInserted(commentList.size - 1)
-								bind.recycler.post { bind.recycler.smoothScrollToPosition(commentList.size) }
-							} catch (e: Exception) {
-								e.printStackTrace()
-								null
-							}
-
+						commentAdapter.notifyItemInserted(commentList.size - 1)
+						bind.recycler.post {
+							bind.recycler.smoothScrollToPosition(commentList.size)
 						}
-					}
-				}
-				when (message) {
-					is ZIMTextMessage -> {
-						log("ROOM TEXT MESSAGE RECEIVED : ${message.message}")
 					}
 				}
 			}
@@ -588,7 +563,7 @@ class LiveShowActivity : BaseActivity() {
 
 						val name = msg?.fromUser?.userID?.split("_")?.get(0)?.replace(".", " ")
 
-						commentList.add(CommentModel(msg?.fromUser?.userName, name, msg?.message))
+						commentList.add(LiveChatModel(msg?.fromUser?.userName, name, msg?.message))
 						commentAdapter.notifyItemInserted(commentList.size - 1)
 						bind.recycler.post { bind.recycler.smoothScrollToPosition(commentList.size) }
 //                        bind.recycler.smoothScrollToPosition(commentList.lastIndex)
@@ -653,37 +628,26 @@ class LiveShowActivity : BaseActivity() {
 		ZegoExpressEngine.getEngine().stopPublishingStream()
 	}
 
-/*	fun sendMessage(message: String) {
-		log("RoomID: $roomID Message:${message}")
-		ZegoExpressEngine.getEngine().sendBroadcastMessage(roomID, message, object : IZegoIMSendBroadcastMessageCallback {
-				@SuppressLint("NotifyDataSetChanged")
-				override fun onIMSendBroadcastMessageResult(errorCode: Int, messageID: Long) {
-					if (errorCode == 0) {
-						Log.d("CHAT", "Message sent successfully")
-						bind.text.setText("")
-						commentList.add(CommentModel(userImage, userName, message))
-						commentAdapter.notifyItemInserted(commentList.size - 1)
-						bind.recycler.post { bind.recycler.smoothScrollToPosition(commentList.size) }
-					} else {
-						Log.e("CHAT", "Failed to send message")
+	/*	fun sendMessage(message: String) {
+			log("RoomID: $roomID Message:${message}")
+			ZegoExpressEngine.getEngine().sendBroadcastMessage(roomID, message, object : IZegoIMSendBroadcastMessageCallback {
+					@SuppressLint("NotifyDataSetChanged")
+					override fun onIMSendBroadcastMessageResult(errorCode: Int, messageID: Long) {
+						if (errorCode == 0) {
+							Log.d("CHAT", "Message sent successfully")
+							bind.text.setText("")
+							commentList.add(LiveChatModel(userImage, userName, message))
+							commentAdapter.notifyItemInserted(commentList.size - 1)
+							bind.recycler.post { bind.recycler.smoothScrollToPosition(commentList.size) }
+						} else {
+							Log.e("CHAT", "Failed to send message")
+						}
 					}
-				}
-			})
-	}*/
+				})
+		}*/
 
-	fun addDataOnFirebase(data: UpdateLiveStatusResponse.Data?) {
-
-		val prod = data?.products?.get(0)
-
+	fun updateFirebaseNode(data: UpdateLiveStatusResponse.Data?) {
 		val user = data?.user
-
-		val product = LiveShowModel.Product(
-			category = prod?.categoryId.toString(),
-			id = prod?.id.toString(),
-			image = (prod?.images?.get(0) ?: "").toString(),
-			name = prod?.title,
-			price = prod?.pricing?.toString()
-		)
 
 		val seller = LiveShowModel.Seller(
 			id = user?.id.toString(),
@@ -694,7 +658,7 @@ class LiveShowActivity : BaseActivity() {
 		)
 
 		val liveShow = LiveShowModel(
-			product = product,
+			products = data?.products?.map { it?.toLiveShowProduct() },
 			roomId = roomID,
 			seller = seller,
 			showDetail = "",
@@ -702,35 +666,24 @@ class LiveShowActivity : BaseActivity() {
 			viewerCount = 1,
 			highestBid = "",
 			isLive = true,
-			time = Utils.getTimeFromTimestamp(
-				System.currentTimeMillis() / 1000,
-				"yyyy-MM-dd_hh:mm:ss_a"
-			),
+			time = System.currentTimeMillis().toString(),
 			showId = showId
-		)
+		).toMap()
 
-		Const.fireBaseRef.getReference(Const.LIVE_SESSIONS).child(roomID).setValue(liveShow)
-			.addOnCompleteListener {
-
-			}
-
+		FireRef.LIVE_SESSIONS.child(roomID).updateChildren(liveShow)
 	}
 
 	fun startUpdatingFirebaseEvery5Minutes() {
-
 		runnable = object : Runnable {
 			override fun run() {
 				val updateValue = System.currentTimeMillis()
-				Const.fireBaseRef.getReference(Const.LIVE_SESSIONS).child(roomID).child("time")
-					.setValue(
-						Utils.getTimeFromTimestamp(
-							System.currentTimeMillis() / 1000,
-							"yyyy-MM-dd_hh:mm:ss_a"
-						)
+				FireRef.LIVE_SESSIONS.child(roomID).updateChildren(
+					mapOf(
+						"time" to Utils.getTimeFromTimestamp(System.currentTimeMillis() / 1000, "yyyy-MM-dd_hh:mm:ss_a")
 					)
-					.addOnSuccessListener {
-						Log.d("FirebaseUpdate", "Successfully updated value: $updateValue")
-					}
+				).addOnSuccessListener {
+					Log.d("FirebaseUpdate", "Successfully updated value: $updateValue")
+				}
 					.addOnFailureListener {
 						Log.e("FirebaseUpdate", "Failed to update value", it)
 					}
@@ -774,70 +727,64 @@ class LiveShowActivity : BaseActivity() {
 		}
 	}
 
-	private fun sendZimMessage(content : String) {
-
-		if (::zim.isInitialized){
+	private fun sendZimMessage(content: String) {
+		if (::zim.isInitialized) {
 			val zimMessage = ZIMTextMessage(content)
+			zimMessage.extendedData = ZIMExtendedData(userImage, userId, userName).toJson()
 
-			val extendedData = JSONObject().apply {
-				put("userImage", userImage)
-				put("userId", userId)
-				put("userName", userName)
-			}
-			zimMessage.extendedData = extendedData.toString()
+			val config = ZIMMessageSendConfig().also { it.priority = ZIMMessagePriority.HIGH }
 
-			val config = ZIMMessageSendConfig().also {
-				it.priority = ZIMMessagePriority.HIGH
-			}
+			zim.sendMessage(
+				zimMessage,
+				roomID,
+				ZIMConversationType.ROOM,
+				config,
+				object : ZIMMessageSentFullCallback {
+					override fun onMessageAttached(message: ZIMMessage?) {
 
-			zim.sendMessage(zimMessage, roomID, ZIMConversationType.ROOM, config, object : ZIMMessageSentFullCallback {
-				override fun onMessageAttached(message: ZIMMessage?) {
-
-				}
-
-				override fun onMessageSent(message: ZIMMessage?, errorInfo: ZIMError?) {
-					if (errorInfo != null) {
-						log("MESSAGE SENT SUCCESSFULLY : ${message?.conversationType}")
-
-						bind.text.setText("")
-
-						val jsonObject = JSONObject(message?.extendedData)
-						val senderImage = jsonObject.getString("userImage")
-						val senderId = jsonObject.getString("userId")
-						val senderName = jsonObject.getString("userName")
-						commentList.add(CommentModel(senderImage, senderName, senderId,zimMessage.message))
-						commentAdapter.notifyItemInserted(commentList.size - 1)
-						bind.recycler.post { bind.recycler.smoothScrollToPosition(commentList.size) }
-
-
-					} else {
-						log("MESSAGE SENT ERROR : ${errorInfo.toString()}")
 					}
-				}
 
-				override fun onMediaUploadingProgress(
-					message: ZIMMediaMessage?,
-					currentFileSize: Long,
-					totalFileSize: Long
-				) {
+					override fun onMessageSent(message: ZIMMessage?, errorInfo: ZIMError?) {
+						if (errorInfo != null) {
+							log("MESSAGE SENT SUCCESSFULLY : ${message?.conversationType}")
 
-				}
+							bind.text.setText("")
 
-				override fun onMultipleMediaUploadingProgress(
-					message: ZIMMultipleMessage?,
-					currentFileSize: Long,
-					totalFileSize: Long,
-					messageInfoIndex: Int,
-					currentIndexFileSize: Long,
-					totalIndexFileSize: Long
-				) {
+							runSafe {
+								commentList.add(LiveChatModel.fromZIMMessage(zimMessage))
 
-				}
-			})
-		}else{
-			Alerts.error(this,"Start the live streaming to send Messages")
+								commentAdapter.notifyItemInserted(commentList.size - 1)
+								bind.recycler.post {
+									bind.recycler.smoothScrollToPosition(commentList.size)
+								}
+							}
+						} else {
+							log("MESSAGE SENT ERROR : ${errorInfo.toString()}")
+						}
+					}
+
+					override fun onMediaUploadingProgress(
+						message: ZIMMediaMessage?,
+						currentFileSize: Long,
+						totalFileSize: Long
+					) {
+
+					}
+
+					override fun onMultipleMediaUploadingProgress(
+						message: ZIMMultipleMessage?,
+						currentFileSize: Long,
+						totalFileSize: Long,
+						messageInfoIndex: Int,
+						currentIndexFileSize: Long,
+						totalIndexFileSize: Long
+					) {
+
+					}
+				})
+		} else {
+			Alerts.error(this, "Start the live streaming to send Messages")
 		}
-
 	}
 
 	fun shopSheet() {
@@ -942,23 +889,15 @@ class LiveShowActivity : BaseActivity() {
 	}
 
 	fun showMoreSheet() {
-		var moreSheetBind = LiveShowMoreMenuBinding.bind(
-			layoutInflater.inflate(
-				R.layout.live_show_more_menu,
-				null,
-				false
-			)
-		)
-		var moreSheet = Alerts.appBottomSheet(this, true, moreSheetBind)
+		val moreSheetBind = LiveShowMoreMenuBinding.bind(layoutInflater.inflate(R.layout.live_show_more_menu, null, false))
+		val moreSheet = Alerts.appBottomSheet(this, true, moreSheetBind)
 
+		moreSheetBind.optionList.adapter = LiveMoreAdapter(Const.liveMoreMenu, object : RecyclerClicks {
 
-		moreSheetBind.optionList.adapter =
-			LiveMoreAdapter(Const.liveMoreMenu, object : RecyclerClicks {
+			override fun itemClick(pos: Int, status: String?) {
 
-				override fun itemClick(pos: Int, status: String?) {
-
-				}
-			})
+			}
+		})
 
 		moreSheetBind.zoomInLayout.setOnClickListener {
 			zoomLevel++
@@ -988,7 +927,6 @@ class LiveShowActivity : BaseActivity() {
 			}
 			moreSheet.dismiss()
 		}
-
 
 		moreSheetBind.close.setOnClickListener {
 			moreSheet.dismiss()
@@ -1028,15 +966,15 @@ class LiveShowActivity : BaseActivity() {
 	}
 
 	fun createClipSheet() {
-		var clipSheetBind = CreateClipSheetBinding.bind(
+		val clipSheetBind = CreateClipSheetBinding.bind(
 			layoutInflater.inflate(
 				R.layout.create_clip_sheet,
 				null,
 				false
 			)
 		)
-		var clipSheet = Alerts.appBottomSheet(this, true, clipSheetBind)
-		var mList = mutableListOf<String?>()
+		val clipSheet = Alerts.appBottomSheet(this, true, clipSheetBind)
+		val mList = mutableListOf<String?>()
 
 		repeat(3) {
 			mList.add("")
@@ -1052,10 +990,9 @@ class LiveShowActivity : BaseActivity() {
 	}
 
 	fun shareSheet() {
-		var shareSheetBind =
-			ShareSheetBinding.bind(layoutInflater.inflate(R.layout.share_sheet, null, false))
-		var shareSheet = Alerts.appBottomSheet(this, true, shareSheetBind)
-		var mList = mutableListOf<String?>()
+		val shareSheetBind = ShareSheetBinding.bind(layoutInflater.inflate(R.layout.share_sheet, null, false))
+		val shareSheet = Alerts.appBottomSheet(this, true, shareSheetBind)
+		val mList = mutableListOf<String?>()
 
 		repeat(2) {
 			mList.add("")
@@ -1076,9 +1013,8 @@ class LiveShowActivity : BaseActivity() {
 	}
 
 	fun endShowSheet() {
-		var endShowSheetBind =
-			EndShowSheetBinding.bind(layoutInflater.inflate(R.layout.end_show_sheet, null, false))
-		var endShowSheet = Alerts.appBottomSheet(this, true, endShowSheetBind)
+		val endShowSheetBind = EndShowSheetBinding.bind(layoutInflater.inflate(R.layout.end_show_sheet, null, false))
+		val endShowSheet = Alerts.appBottomSheet(this, true, endShowSheetBind)
 
 		endShowSheetBind.close.setOnClickListener {
 			endShowSheet.dismiss()
@@ -1092,48 +1028,44 @@ class LiveShowActivity : BaseActivity() {
 			viewModel.updateLiveStatus(showId.request(), "false".request())
 		}
 		endShowSheet.show()
-
 	}
 
 	fun initPip() {
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 			val visibleRect = Rect()
 			bind.root.getGlobalVisibleRect(visibleRect)
 
 			pipParams = PictureInPictureParams.Builder().apply {
 				setAspectRatio(Rational(100, 200))
-//                setAspectRatio(Rational(2, 5))
 				setSourceRectHint(visibleRect)
-				setAutoEnterEnabled(true)
+				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+					setAutoEnterEnabled(true)
+				}
 			}.build()
 
 			setPictureInPictureParams(pipParams)
-
 		}
 	}
 
-
-	override fun onPictureInPictureModeChanged(isInPictureInPictureMode: Boolean, newConfig: Configuration) {
+	override fun onPictureInPictureModeChanged(
+		isInPictureInPictureMode: Boolean,
+		newConfig: Configuration
+	) {
 		super.onPictureInPictureModeChanged(isInPictureInPictureMode, newConfig)
 
 		if (isInPictureInPictureMode) {
-
 			bind.profileLayout.isVisible = false
 			bind.rehearsalLayout.isVisible = false
 			bind.recycler.isVisible = false
 			bind.menuLayout.isVisible = false
 			bind.message.isVisible = false
-
 		} else {
-
 			bind.profileLayout.isVisible = true
 			bind.rehearsalLayout.isVisible = true
 			bind.recycler.isVisible = true
 			bind.menuLayout.isVisible = true
 			bind.message.isVisible = true
 		}
-
 	}
 
 	override fun onUserLeaveHint() {
@@ -1143,7 +1075,6 @@ class LiveShowActivity : BaseActivity() {
 				setPictureInPictureParams(pipParams)
 				enterPictureInPictureMode(pipParams)
 			}
-
 			Alerts.log(javaClass.simpleName, "STARTED IN PIP MODE")
 		} else {
 			Alerts.log(javaClass.simpleName, "ALREADY IN PIP MODE")
