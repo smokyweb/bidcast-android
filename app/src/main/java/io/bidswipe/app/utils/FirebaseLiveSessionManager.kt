@@ -8,7 +8,6 @@ import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.DatabaseReference
 import io.bidswipe.app.model.LiveShowModel
 import io.bidswipe.app.network.response.UpdateLiveStatusResponse
-import io.bidswipe.app.utils.Utils
 
 class FirebaseLiveSessionManager(
     private val liveSessionsRef: DatabaseReference
@@ -37,7 +36,7 @@ class FirebaseLiveSessionManager(
             highestBid = "",
             isLive = true,
             time = System.currentTimeMillis().toString(),
-            showId = data?.showId ?: ""
+            showId = data?.id.toString() ?: ""
         ).toMap()
         liveSessionsRef.child(roomID).updateChildren(liveShow)
     }

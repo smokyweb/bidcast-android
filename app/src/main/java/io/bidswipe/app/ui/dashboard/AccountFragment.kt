@@ -35,6 +35,7 @@ import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.toAuth
 import androidx.core.net.toUri
 import io.bidswipe.app.ui.dashboard.sellerHub.SellerVerificationActivity
+import io.bidswipe.app.utils.runSafe
 
 class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
 
@@ -116,22 +117,22 @@ class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
     }
 
     private fun launchWeb(url: String) {
-        try {
-            CustomTabsIntent.Builder().apply {
-                setDefaultColorSchemeParams(
-                    CustomTabColorSchemeParams.Builder()
-                        .setToolbarColor(ContextCompat.getColor(mCtx, R.color.primary))
-                        .build()
-                )
-                setShowTitle(true)
-            }.build().apply {
-                intent.setPackage("com.android.chrome")
-                launchUrl(requireActivity(), url.toUri())
+
+            runSafe {
+                CustomTabsIntent.Builder().apply {
+                    setDefaultColorSchemeParams(
+                        CustomTabColorSchemeParams.Builder()
+                            .setToolbarColor(ContextCompat.getColor(mCtx, R.color.primary))
+                            .build()
+                    )
+                    setShowTitle(true)
+                }.build().apply {
+                    intent.setPackage("com.android.chrome")
+                    launchUrl(requireActivity(), url.toUri())
+                }
             }
-        } catch (_: Exception) {
-            errorToast("Could not open web page")
-            startActivity(Intent(Intent.ACTION_VIEW, url.toUri()))
-        }
+
+
     }
 
     private val accountGridClick = object : RecyclerClicks {
@@ -207,8 +208,8 @@ class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
         App.getProfile()
 
         App.profileResponse.observe(viewLifecycleOwner) {
-            bind.userName.text = it?.username.toString()
-            bind.sellerSince.text = it?.bio.toString()
+            bind.userName.text = it?.name ?:""
+            bind.sellerSince.text = it?.bio?:"N/A"
             bind.userProfile.loadUrl(mCtx, it?.profileImage.toString())
         }
 
@@ -239,20 +240,8 @@ class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
         gridList.add(MoreModel(R.drawable.ic_graph, "Seller Status", "sellerStatus"))
         gridList.add(MoreModel(R.drawable.ic_graph, "Seller Analytics", "sellerAnalytics"))
         gridList.add(MoreModel(R.drawable.ic_speaker, "Promote Tools", "promote"))
-        gridList.add(
-            MoreModel(
-                R.drawable.ic_checked_tag,
-                "Seller Verification",
-                "sellerVerification"
-            )
-        )
-        gridList.add(
-            MoreModel(
-                R.drawable.ic_checked_tag,
-                "Identity Verification",
-                "identityVerification"
-            )
-        )
+        gridList.add(MoreModel(R.drawable.ic_checked_tag, "Seller Verification", "sellerVerification"))
+        gridList.add(MoreModel(R.drawable.ic_checked_tag, "Identity Verification", "identityVerification"))
 
         gridAdapter = GridAdapter(gridList, gridClick)
         bind.sellerHub.gridRecycler.adapter = gridAdapter

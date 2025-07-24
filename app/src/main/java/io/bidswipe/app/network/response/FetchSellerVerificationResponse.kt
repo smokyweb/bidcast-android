@@ -34,7 +34,7 @@ data class FetchSellerVerificationResponse(
         @SerializedName("phone_number")
         val phoneNumber: String?,
         @SerializedName("reason")
-        val reason: Any?,
+        val reason: String?,
         @SerializedName("status")
         val status: String?,
         @SerializedName("user_id")

@@ -73,7 +73,7 @@ class ChatManager(
         isLoggedIn = false
     }
 
-    fun createRoom(roomId: String, roomName: String, callback: (roomInfo: ZIMRoomInfo?, error: ZIMError?) -> Unit) {
+    fun createRoom(roomId: String, roomName: String, callback: (roomInfo: ZIMRoomFullInfo?, error: ZIMError?) -> Unit) {
         val roomInfo = ZIMRoomInfo().also {
             it.roomID = roomId
             it.roomName = roomName

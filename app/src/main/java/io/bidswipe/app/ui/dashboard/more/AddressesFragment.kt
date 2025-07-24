@@ -18,6 +18,7 @@ import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.utils.finish
 import io.bidswipe.app.utils.ids
 import io.bidswipe.app.utils.parse
+import io.bidswipe.app.utils.request
 
 class AddressesFragment : BaseFragment<MoreViewModel, FragmentAddressesBinding>() {
     override fun getModel(): Class<MoreViewModel>   = MoreViewModel::class.java
@@ -32,7 +33,16 @@ class AddressesFragment : BaseFragment<MoreViewModel, FragmentAddressesBinding>(
 
     private val mClick = object : RecyclerClicks{
         override fun itemClick(pos: Int, status: String?) {
-
+            when(status){
+                "default" -> {
+                    bind.loader.isVisible = true
+                    viewModel.setDefaultShippingAddress(addressList[pos]?.id.toString().request())
+                }
+                "delete" ->{
+                    bind.loader.isVisible = true
+                    viewModel.deleteAddress(addressList[pos]?.id.toString().request())
+                }
+            }
         }
 
     }
@@ -73,6 +83,74 @@ class AddressesFragment : BaseFragment<MoreViewModel, FragmentAddressesBinding>(
                     }
 
                     shippingAddressAdapter.notifyDataSetChanged()
+
+                }
+
+                is Resource.Error -> {
+                    bind.loader.isVisible = false
+
+                    if (it.isNetworkError) {
+                        errorToast(getString(R.string.no_internet))
+                    } else {
+                        it.parse(mCtx, TAG, object : AlertClicks {
+                            override fun primaryClick(dialog: AppBottomSheet) {
+                                dialog.dismiss()
+
+                            }
+
+                            override fun secondaryClick(dialog: AppBottomSheet) {
+                                dialog.dismiss()
+
+                            }
+                        })
+                    }
+                }
+
+                else -> {}
+
+            }
+        }
+
+        viewModel.setDefaultShippingAddressRepo.observe(viewLifecycleOwner) {
+            when (it) {
+                is Resource.Success -> {
+                    val mData = it.value.data
+
+                    viewModel.getShippingAddress()
+
+                }
+
+                is Resource.Error -> {
+                    bind.loader.isVisible = false
+
+                    if (it.isNetworkError) {
+                        errorToast(getString(R.string.no_internet))
+                    } else {
+                        it.parse(mCtx, TAG, object : AlertClicks {
+                            override fun primaryClick(dialog: AppBottomSheet) {
+                                dialog.dismiss()
+
+                            }
+
+                            override fun secondaryClick(dialog: AppBottomSheet) {
+                                dialog.dismiss()
+
+                            }
+                        })
+                    }
+                }
+
+                else -> {}
+
+            }
+        }
+
+        viewModel.deleteAddressRepo.observe(viewLifecycleOwner) {
+            when (it) {
+                is Resource.Success -> {
+                    val mData = it.value.data
+
+                    viewModel.getShippingAddress()
 
                 }
 

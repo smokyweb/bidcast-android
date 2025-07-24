@@ -1,6 +1,7 @@
 package io.bidswipe.app.ui.dashboard.scheduleShow
 
 import android.annotation.SuppressLint
+import android.app.Application
 import android.app.PictureInPictureParams
 import android.content.res.Configuration
 import android.graphics.Rect
@@ -8,6 +9,7 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.util.Rational
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
@@ -19,6 +21,34 @@ import com.google.firebase.database.ValueEventListener
 import com.gyf.immersionbar.ktx.immersionBar
 import com.gyf.immersionbar.ktx.navigationBarHeight
 import im.zego.zegoexpress.ZegoExpressEngine
+import im.zego.zegoexpress.callback.IZegoEventHandler
+import im.zego.zegoexpress.constants.ZegoPlayerState
+import im.zego.zegoexpress.constants.ZegoPublisherState
+import im.zego.zegoexpress.constants.ZegoRoomStateChangedReason
+import im.zego.zegoexpress.constants.ZegoScenario
+import im.zego.zegoexpress.constants.ZegoUpdateType
+import im.zego.zegoexpress.constants.ZegoViewMode
+import im.zego.zegoexpress.entity.ZegoBroadcastMessageInfo
+import im.zego.zegoexpress.entity.ZegoCanvas
+import im.zego.zegoexpress.entity.ZegoEngineProfile
+import im.zego.zegoexpress.entity.ZegoRoomConfig
+import im.zego.zegoexpress.entity.ZegoStream
+import im.zego.zegoexpress.entity.ZegoUser
+import im.zego.zim.ZIM
+import im.zego.zim.callback.ZIMEventHandler
+import im.zego.zim.callback.ZIMMessageSentFullCallback
+import im.zego.zim.entity.ZIMAppConfig
+import im.zego.zim.entity.ZIMError
+import im.zego.zim.entity.ZIMMediaMessage
+import im.zego.zim.entity.ZIMMessage
+import im.zego.zim.entity.ZIMMessageReceivedInfo
+import im.zego.zim.entity.ZIMMessageSendConfig
+import im.zego.zim.entity.ZIMMultipleMessage
+import im.zego.zim.entity.ZIMRoomInfo
+import im.zego.zim.entity.ZIMTextMessage
+import im.zego.zim.entity.ZIMUserInfo
+import im.zego.zim.enums.ZIMConversationType
+import im.zego.zim.enums.ZIMMessagePriority
 import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseActivity
 import io.bidswipe.app.controller.CommentAdapter
@@ -40,10 +70,12 @@ import io.bidswipe.app.model.LiveShowModel
 import io.bidswipe.app.model.ZIMExtendedData
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.network.response.GetMyInventoryResponse
+import io.bidswipe.app.network.response.UpdateLiveStatusResponse
 import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.ui.dashboard.DashViewModel
 import io.bidswipe.app.utils.Alerts
 import io.bidswipe.app.utils.Const
+import io.bidswipe.app.utils.FireRef
 import io.bidswipe.app.utils.Utils
 import io.bidswipe.app.utils.bind
 import io.bidswipe.app.utils.clr
@@ -53,38 +85,35 @@ import io.bidswipe.app.utils.request
 import io.bidswipe.app.utils.runSafe
 import io.bidswipe.app.utils.setMargins
 import io.bidswipe.app.utils.value
-import com.google.firebase.database.FirebaseDatabase
-import io.bidswipe.app.utils.ChatManager
-import io.bidswipe.app.utils.FirebaseLiveSessionManager
-import io.bidswipe.app.utils.StreamingManager
+import org.json.JSONObject
 
 class LiveShowActivity : BaseActivity() {
 
 	private val bind by bind(ActivityLiveShowBinding::inflate)
 	private val viewModel by viewModels<DashViewModel>()
 
-	// Managers
-	private lateinit var streamingManager: StreamingManager
-	private lateinit var chatManager: ChatManager
-	private lateinit var firebaseLiveSessionManager: FirebaseLiveSessionManager
-
-	private lateinit var commentAdapter: CommentAdapter
-	private val handler = Handler(Looper.getMainLooper())
-	private var durationRunnable: Runnable? = null
-	private var liveStatus = true
-	private var isFrontCamera = true
-	private var roomID = ""
-	private var showId = ""
-	private var startTimeMillis: Long = 0L
-	private var zoomLevel = 1L
-	private var commentList = mutableListOf<LiveChatModel?>()
-
 	private lateinit var pipParams: PictureInPictureParams
+	private lateinit var commentAdapter: CommentAdapter
+	private lateinit var zim: ZIM
 
 	private val updateStatusHandler = Handler(Looper.getMainLooper())
+	private val handler = Handler(Looper.getMainLooper())
+
+	private lateinit var durationRunnable: Runnable
 	private var runnable: Runnable? = null
 
-	private val eventListener = object : ValueEventListener {
+	private var commentList = mutableListOf<LiveChatModel?>()
+
+	private var liveStatus = true
+	var isFrontCamera = true
+
+	var roomID = ""
+	var showId = ""
+
+	private var startTimeMillis: Long = 0L
+	private var zoomLevel = 1L
+
+	private var eventListener = object : ValueEventListener {
 		@SuppressLint("NotifyDataSetChanged")
 		override fun onDataChange(snapshot: DataSnapshot) {
 			log("Value : ${snapshot.value}")
@@ -126,83 +155,58 @@ class LiveShowActivity : BaseActivity() {
 
 		bind.root.setMargins(0, 0, 0, navigationBarHeight)
 
-		// Initialize managers
-		streamingManager = StreamingManager(this, application)
-		chatManager = ChatManager(application, Const.APP_ID.toLong(), Const.APP_SIGN)
-		firebaseLiveSessionManager = FirebaseLiveSessionManager(FirebaseDatabase.getInstance().getReference("LIVE_SESSIONS"))
-
 		commentAdapter = CommentAdapter(commentList)
 
 		bind.recycler.adapter = commentAdapter
 
 		showId = intent.getStringExtra("showId") ?: ""
 
-		// Set up chat callbacks
-		chatManager.onMessageReceived = { model ->
-			commentList.add(model)
-			commentAdapter.notifyItemInserted(commentList.size - 1)
-			bind.recycler.post { bind.recycler.smoothScrollToPosition(commentList.size) }
-		}
-		chatManager.onMessageSent = { model ->
-			bind.text.setText("")
-			commentList.add(model)
-			commentAdapter.notifyItemInserted(commentList.size - 1)
-			bind.recycler.post { bind.recycler.smoothScrollToPosition(commentList.size) }
+		createEngine()
+
+		startListenEvent()
+
+		bind.more.setOnClickListener {
+			showMoreSheet()
 		}
 
-		// Set up streaming callbacks
-		streamingManager.onUserJoined = { userId ->
-			Toast.makeText(this, "$userId logged in to the room.", Toast.LENGTH_LONG).show()
-		}
-		streamingManager.onUserLeft = { userId ->
-			Toast.makeText(this, "$userId logged out of the room.", Toast.LENGTH_LONG).show()
-		}
-		streamingManager.onStreamError = { errorMsg ->
-			Toast.makeText(this, errorMsg, Toast.LENGTH_LONG).show()
-		}
-		streamingManager.onPublisherStateChanged = { state, errorCode ->
-			if (state == im.zego.zegoexpress.constants.ZegoPublisherState.NO_PUBLISH) {
-				Toast.makeText(this, "ZegoPublisherState.NO_PUBLISH", Toast.LENGTH_LONG).show()
-			}
-		}
-		streamingManager.onPlayerStateChanged = { state, errorCode ->
-			if (state == im.zego.zegoexpress.constants.ZegoPlayerState.NO_PLAY) {
-				Toast.makeText(this, "ZegoPlayerState.NO_PLAY", Toast.LENGTH_LONG).show()
-			}
-		}
-		streamingManager.onRoomStateChanged = { reason, errorCode ->
-			when (reason) {
-				im.zego.zegoexpress.constants.ZegoRoomStateChangedReason.LOGIN_FAILED ->
-					Toast.makeText(this, "ZegoRoomStateChangedReason.LOGIN_FAILED", Toast.LENGTH_LONG).show()
-				im.zego.zegoexpress.constants.ZegoRoomStateChangedReason.RECONNECT_FAILED ->
-					Toast.makeText(this, "ZegoRoomStateChangedReason.RECONNECT_FAILED", Toast.LENGTH_LONG).show()
-				im.zego.zegoexpress.constants.ZegoRoomStateChangedReason.KICK_OUT ->
-					Toast.makeText(this, "ZegoRoomStateChangedReason.KICK_OUT", Toast.LENGTH_LONG).show()
-				else -> {}
-			}
+		bind.promote.setOnClickListener {
+			showPromoteSheet()
 		}
 
-		streamingManager.createEngine(Const.APP_ID.toLong(), Const.APP_SIGN)
-		chatManager.initializeZIM()
+		bind.clip.setOnClickListener {
+			createClipSheet()
+		}
 
-		bind.more.setOnClickListener { showMoreSheet() }
-		bind.promote.setOnClickListener { showPromoteSheet() }
-		bind.clip.setOnClickListener { createClipSheet() }
-		bind.share.setOnClickListener { shareSheet() }
-		bind.cutButton.setOnClickListener { endShowSheet() }
+		bind.share.setOnClickListener {
+			shareSheet()
+		}
+
+		bind.cutButton.setOnClickListener {
+			endShowSheet()
+			/*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+				enterPictureInPictureMode(pipParams)
+			}*/
+		}
+
 		bind.message.setEndIconOnClickListener {
 			if (bind.text.value().isNotEmpty()) {
-				chatManager.sendTextMessage(
-					content = bind.text.value(),
-					extendedData = ZIMExtendedData(userImage, userId, userName).toJson(),
-					roomId = roomID
-				)
+//               sendMessage(bind.text.value())
+				sendZimMessage(bind.text.value())
 			}
 		}
 
 		bind.cameraSwitch.setOnClickListener {
-			streamingManager.toggleCamera()
-			isFrontCamera = streamingManager.isUsingFrontCamera()
+
+			if (isFrontCamera) {
+				ZegoExpressEngine.getEngine().useFrontCamera(false)
+				isFrontCamera = false
+
+			} else {
+				ZegoExpressEngine.getEngine().useFrontCamera(true)
+				isFrontCamera = true
+
+			}
+
 		}
 
 		bind.shop.setOnClickListener {
@@ -276,13 +280,13 @@ class LiveShowActivity : BaseActivity() {
 					if (liveStatus) {
 
 						runSafe {
-							firebaseLiveSessionManager.updateLiveSessionNode(roomID, mData)
+							updateFirebaseNode(mData)
 							startPublish()
 							startLiveDurationTimer()
-							firebaseLiveSessionManager.startPeriodicTimeUpdate(roomID)
-							firebaseLiveSessionManager.listenToLiveSession(roomID) { data ->
-								bind.liveCount.text = data?.viewerCount.toString()
-							}
+
+							startUpdatingFirebaseEvery5Minutes()
+							FireRef.LIVE_SESSIONS.child(roomID).addValueEventListener(eventListener)
+
 							bind.startBtn.isVisible = false
 						}
 
@@ -320,7 +324,7 @@ class LiveShowActivity : BaseActivity() {
 		onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
 			override fun handleOnBackPressed() {
 
-				if (::pipParams.isInitialized) {
+				if (::zim.isInitialized) {
 					if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 						enterPictureInPictureMode(pipParams)
 					}
@@ -342,81 +346,445 @@ class LiveShowActivity : BaseActivity() {
 	override fun onDestroy() {
 		super.onDestroy()
 
-		firebaseLiveSessionManager.removeLiveSession(roomID)
+		FireRef.LIVE_SESSIONS.child(roomID).removeValue()
 
 		stopPublish()
 
-		chatManager.logout()
-		chatManager.destroy()
+		if (::zim.isInitialized) {
+			zim.logout()
+			zim.destroy()
+		}
 
 		stopLiveDurationTimer()
-		streamingManager.logoutRoom()
-		streamingManager.destroyEngine()
-		firebaseLiveSessionManager.removeListener()
-		firebaseLiveSessionManager.stopPeriodicTimeUpdate()
+		logoutRoom()
+		destroyEngine()
 
 	}
 
-	private fun loginRoom(roomId: String) {
-		streamingManager.loginRoom(
-			roomId = roomId,
-			userId = userName.replace(" ", ".") + "_" + userId,
-			userName = userImage,
-			userImage = userImage
-		) { error, _ ->
+	private fun createEngine() {
+		val profile = ZegoEngineProfile().apply {
+			appID = Const.APP_ID.toLong()
+			appSign = Const.APP_SIGN
+			scenario = ZegoScenario.GENERAL
+			application = applicationContext as Application
+		}
+
+		ZegoExpressEngine.createEngine(profile, null)
+	}
+
+	private fun setupZIMChat() {
+		val appConfig = ZIMAppConfig().also {
+			it.appID = Const.APP_ID.toLong()
+			it.appSign = Const.APP_SIGN
+		}
+
+		zim = ZIM.create(appConfig, application)
+
+		val userInfo = ZIMUserInfo().also {
+			it.userID = userName.replace(" ", ".") + "_" + userId
+			it.userName = userImage
+		}
+
+		zim.login(userInfo) { error ->
+			if (error != null) {
+				log("LOGGED INTO ZIM")
+				val roomInfo = ZIMRoomInfo().also {
+					it.roomID = roomID
+					it.roomName = roomID + "_room"
+				}
+
+				zim.createRoom(roomInfo) { roomInfo, errorInfo ->
+					if (errorInfo != null) {
+						log("CREATED ROOM : $roomInfo")
+
+						zim.setEventHandler(zimEventHandler)
+					} else {
+						log("CREATE ROOM ERROR : ${errorInfo.toString()}")
+					}
+				}
+			} else {
+				log("LOG IN ROOM ERROR : ${error.toString()}")
+			}
+		}
+	}
+
+	private val zimEventHandler = object : ZIMEventHandler() {
+		override fun onRoomMessageReceived(
+			zim: ZIM?,
+			messageList: java.util.ArrayList<ZIMMessage?>?,
+			info: ZIMMessageReceivedInfo?,
+			fromRoomID: String?
+		) {
+			super.onRoomMessageReceived(zim, messageList, info, fromRoomID)
+			// Callback for receiving in-room messages.
+			messageList?.forEach { zimMessage ->
+				if (zimMessage is ZIMTextMessage) {
+					log("NEW MESSAGE RECEIVED:\n${zimMessage.message}\nExtended Data: ${zimMessage.extendedData}")
+
+					runSafe {
+						commentList.add(LiveChatModel.fromZIMMessage(zimMessage))
+
+						commentAdapter.notifyItemInserted(commentList.size - 1)
+						bind.recycler.post {
+							bind.recycler.smoothScrollToPosition(commentList.size)
+						}
+					}
+				}
+			}
+		}
+	}
+
+	private fun destroyEngine() {
+		ZegoExpressEngine.destroyEngine(null)
+	}
+
+	private fun startListenEvent() {
+		ZegoExpressEngine.getEngine().setEventHandler(object : IZegoEventHandler() {
+
+			override fun onRoomStreamUpdate(
+				roomID: String,
+				updateType: ZegoUpdateType,
+				streamList: ArrayList<ZegoStream>,
+				extendedData: JSONObject
+			) {
+				super.onRoomStreamUpdate(roomID, updateType, streamList, extendedData)
+				if (streamList.isNotEmpty()) {
+					streamList[0].streamID
+				}
+			}
+
+			override fun onRoomUserUpdate(
+				roomID: String,
+				updateType: ZegoUpdateType,
+				userList: ArrayList<ZegoUser>
+			) {
+				super.onRoomUserUpdate(roomID, updateType, userList)
+				val context = applicationContext
+				for (user in userList) {
+					val message = when (updateType) {
+						ZegoUpdateType.ADD -> "${user.userID} logged in to the room."
+						ZegoUpdateType.DELETE -> "${user.userID} logged out of the room."
+						else -> ""
+					}
+					Toast.makeText(context, message, Toast.LENGTH_LONG).show()
+				}
+			}
+
+			override fun onRoomStateChanged(
+				roomID: String,
+				reason: ZegoRoomStateChangedReason,
+				errorCode: Int,
+				extendedData: JSONObject
+			) {
+				super.onRoomStateChanged(roomID, reason, errorCode, extendedData)
+				val context = applicationContext
+				when (reason) {
+					ZegoRoomStateChangedReason.LOGIN_FAILED ->
+						Toast.makeText(
+							context,
+							"ZegoRoomStateChangedReason.LOGIN_FAILED",
+							Toast.LENGTH_LONG
+						).show()
+
+					ZegoRoomStateChangedReason.RECONNECT_FAILED ->
+						Toast.makeText(
+							context,
+							"ZegoRoomStateChangedReason.RECONNECT_FAILED",
+							Toast.LENGTH_LONG
+						).show()
+
+					ZegoRoomStateChangedReason.KICK_OUT ->
+						Toast.makeText(
+							context,
+							"ZegoRoomStateChangedReason.KICK_OUT",
+							Toast.LENGTH_LONG
+						).show()
+
+					else -> {
+						// Other room states can be handled here if needed
+					}
+				}
+			}
+
+			override fun onPublisherStateUpdate(
+				streamID: String,
+				state: ZegoPublisherState,
+				errorCode: Int,
+				extendedData: JSONObject
+			) {
+				super.onPublisherStateUpdate(streamID, state, errorCode, extendedData)
+				if (errorCode != 0) {
+					// Handle publish error
+				}
+
+				if (state == ZegoPublisherState.NO_PUBLISH) {
+					Toast.makeText(
+						applicationContext,
+						"ZegoPublisherState.NO_PUBLISH",
+						Toast.LENGTH_LONG
+					).show()
+				}
+			}
+
+			override fun onPlayerStateUpdate(
+				streamID: String,
+				state: ZegoPlayerState,
+				errorCode: Int,
+				extendedData: JSONObject
+			) {
+				super.onPlayerStateUpdate(streamID, state, errorCode, extendedData)
+
+				if (errorCode != 0) {
+					Toast.makeText(
+						applicationContext,
+						"onPlayerStateUpdate, state: $state errorCode: $errorCode",
+						Toast.LENGTH_LONG
+					).show()
+				}
+
+				if (state == ZegoPlayerState.NO_PLAY) {
+					Toast.makeText(applicationContext, "ZegoPlayerState.NO_PLAY", Toast.LENGTH_LONG)
+						.show()
+				}
+			}
+
+			override fun onIMRecvBroadcastMessage(
+				roomID: String?,
+				messageList: java.util.ArrayList<ZegoBroadcastMessageInfo?>?
+			) {
+				super.onIMRecvBroadcastMessage(roomID, messageList)
+				Log.d("ZEGO", "Barrage message received for room: $roomID")
+				if (messageList != null) {
+					for (msg in messageList) {
+						/*Log.d(
+							"CHAT",
+							"Received message from ${msg?.fromUser?.userName}: ${msg?.message}"
+						)
+
+						val name = msg?.fromUser?.userID?.split("_")?.get(0)?.replace(".", " ")
+
+						commentList.add(LiveChatModel(msg?.fromUser?.userName, name, msg?.message))
+						commentAdapter.notifyItemInserted(commentList.size - 1)
+						bind.recycler.post { bind.recycler.smoothScrollToPosition(commentList.size) }
+//                        bind.recycler.smoothScrollToPosition(commentList.lastIndex)
+						// Update UI accordingly*/
+					}
+				}
+			}
+		})
+
+	}
+
+	private fun stopListenEvent() {
+		ZegoExpressEngine.getEngine().setEventHandler(null)
+	}
+
+	fun loginRoom(roomId: String) {
+		val user = ZegoUser(userName.replace(" ", ".") + "_" + userId, userImage)
+
+		val roomConfig = ZegoRoomConfig()
+		roomConfig.isUserStatusNotify = true
+		ZegoExpressEngine.getEngine().loginRoom(
+			roomId,
+			user,
+			roomConfig
+		) { error: Int, extendedData: JSONObject? ->
 			if (error == 0) {
 				Toast.makeText(this, "Login successful.", Toast.LENGTH_LONG).show()
-				streamingManager.startPreview(bind.hostView)
-				setupZIMChat()
+				startPreview()
+
 			} else {
 				Toast.makeText(this, "Login failed. error = $error", Toast.LENGTH_LONG).show()
 			}
 		}
 	}
 
-	private fun setupZIMChat() {
-		chatManager.initializeZIM()
-		chatManager.login(
-			userId = userName.replace(" ", ".") + "_" + userId,
-			userName = userImage
-		) { error ->
-			if (error == null) {
-				chatManager.createRoom(roomID, roomID + "_room") { _, errorInfo ->
-					// No need to set event handler here; handled by ChatManager
+	fun logoutRoom() {
+		ZegoExpressEngine.getEngine().logoutRoom()
+	}
+
+	fun startPreview() {
+		val previewCanvas = ZegoCanvas(bind.hostView).apply {
+			viewMode = ZegoViewMode.ASPECT_FILL
+		}
+		ZegoExpressEngine.getEngine().startPreview(previewCanvas)
+	}
+
+	fun stopPreview() {
+		ZegoExpressEngine.getEngine().stopPreview()
+	}
+
+	fun startPublish() {
+		val previewCanvas = ZegoCanvas(bind.hostView).apply {
+			viewMode = ZegoViewMode.ASPECT_FILL
+		}
+		ZegoExpressEngine.getEngine().startPreview(previewCanvas)
+
+		ZegoExpressEngine.getEngine().startPublishingStream(roomID)
+		setupZIMChat()
+	}
+
+	fun stopPublish() {
+		ZegoExpressEngine.getEngine().stopPublishingStream()
+	}
+
+	/*	fun sendMessage(message: String) {
+			log("RoomID: $roomID Message:${message}")
+			ZegoExpressEngine.getEngine().sendBroadcastMessage(roomID, message, object : IZegoIMSendBroadcastMessageCallback {
+					@SuppressLint("NotifyDataSetChanged")
+					override fun onIMSendBroadcastMessageResult(errorCode: Int, messageID: Long) {
+						if (errorCode == 0) {
+							Log.d("CHAT", "Message sent successfully")
+							bind.text.setText("")
+							commentList.add(LiveChatModel(userImage, userName, message))
+							commentAdapter.notifyItemInserted(commentList.size - 1)
+							bind.recycler.post { bind.recycler.smoothScrollToPosition(commentList.size) }
+						} else {
+							Log.e("CHAT", "Failed to send message")
+						}
+					}
+				})
+		}*/
+
+	fun updateFirebaseNode(data: UpdateLiveStatusResponse.Data?) {
+		val user = data?.user
+
+		val seller = LiveShowModel.Seller(
+			id = user?.id.toString(),
+			image = user?.profileImage,
+			isFollowed = false,
+			name = user?.name,
+			rating = user?.rating ?: ""
+		)
+
+		val liveShow = LiveShowModel(
+			products = data?.products?.map { it?.toLiveShowProduct() },
+			roomId = roomID,
+			seller = seller,
+			showDetail = "",
+			thumbnail = data?.thumbnail?.get(0) ?: "",
+			viewerCount = 1,
+			highestBid = "",
+			isLive = true,
+			time = System.currentTimeMillis().toString(),
+			showId = showId
+		).toMap()
+
+		FireRef.LIVE_SESSIONS.child(roomID).updateChildren(liveShow)
+	}
+
+	fun startUpdatingFirebaseEvery5Minutes() {
+		runnable = object : Runnable {
+			override fun run() {
+				val updateValue = System.currentTimeMillis()
+				FireRef.LIVE_SESSIONS.child(roomID).updateChildren(
+					mapOf(
+						"time" to Utils.getTimeFromTimestamp(System.currentTimeMillis() / 1000, "yyyy-MM-dd_hh:mm:ss_a")
+					)
+				).addOnSuccessListener {
+					Log.d("FirebaseUpdate", "Successfully updated value: $updateValue")
 				}
+					.addOnFailureListener {
+						Log.e("FirebaseUpdate", "Failed to update value", it)
+					}
+
+				updateStatusHandler.postDelayed(this, 4 * 60 * 1000)
 			}
 		}
+
+		runnable?.let { updateStatusHandler.post(it) }
 	}
 
-	private fun startPublish() {
-		streamingManager.startPublishingStream(roomID, bind.hostView)
-	}
-
-	private fun stopPublish() {
-		streamingManager.stopPublishingStream()
+	fun stopUpdatingFirebase() {
+		runnable?.let { updateStatusHandler.removeCallbacks(it) }
 	}
 
 	private fun startLiveDurationTimer() {
 		startTimeMillis = System.currentTimeMillis()
+
 		durationRunnable = object : Runnable {
 			override fun run() {
 				val elapsed = System.currentTimeMillis() - startTimeMillis
 				val seconds = (elapsed / 1000) % 60
 				val minutes = (elapsed / (1000 * 60)) % 60
 				val hours = (elapsed / (1000 * 60 * 60))
+
 				val formatted = String.format("%02d:%02d:%02d", hours, minutes, seconds)
 				bind.duration.text = buildString {
 					append("Show Time: ")
 					append(formatted)
 				}
+
 				handler.postDelayed(this, 1000)
 			}
 		}
-		handler.post(durationRunnable!!)
+		handler.post(durationRunnable)
 	}
 
 	private fun stopLiveDurationTimer() {
-		durationRunnable?.let { handler.removeCallbacks(it) }
+		if (this::durationRunnable.isInitialized) {
+			handler.removeCallbacks(durationRunnable)
+		}
+	}
+
+	private fun sendZimMessage(content: String) {
+		if (::zim.isInitialized) {
+			val zimMessage = ZIMTextMessage(content)
+			zimMessage.extendedData = ZIMExtendedData(userImage, userId, userName).toJson()
+
+			val config = ZIMMessageSendConfig().also { it.priority = ZIMMessagePriority.HIGH }
+
+			zim.sendMessage(
+				zimMessage,
+				roomID,
+				ZIMConversationType.ROOM,
+				config,
+				object : ZIMMessageSentFullCallback {
+					override fun onMessageAttached(message: ZIMMessage?) {
+
+					}
+
+					override fun onMessageSent(message: ZIMMessage?, errorInfo: ZIMError?) {
+						if (errorInfo != null) {
+							log("MESSAGE SENT SUCCESSFULLY : ${message?.conversationType}")
+
+							bind.text.setText("")
+
+							runSafe {
+								commentList.add(LiveChatModel.fromZIMMessage(zimMessage))
+
+								commentAdapter.notifyItemInserted(commentList.size - 1)
+								bind.recycler.post {
+									bind.recycler.smoothScrollToPosition(commentList.size)
+								}
+							}
+						} else {
+							log("MESSAGE SENT ERROR : ${errorInfo.toString()}")
+						}
+					}
+
+					override fun onMediaUploadingProgress(
+						message: ZIMMediaMessage?,
+						currentFileSize: Long,
+						totalFileSize: Long
+					) {
+
+					}
+
+					override fun onMultipleMediaUploadingProgress(
+						message: ZIMMultipleMessage?,
+						currentFileSize: Long,
+						totalFileSize: Long,
+						messageInfoIndex: Int,
+						currentIndexFileSize: Long,
+						totalIndexFileSize: Long
+					) {
+
+					}
+				})
+		} else {
+			Alerts.error(this, "Start the live streaming to send Messages")
+		}
 	}
 
 	fun shopSheet() {
@@ -654,7 +1022,7 @@ class LiveShowActivity : BaseActivity() {
 
 		endShowSheetBind.endBtn.setOnClickListener {
 			endShowSheet.dismiss()
-			firebaseLiveSessionManager.stopPeriodicTimeUpdate()
+			stopUpdatingFirebase()
 			liveStatus = false
 			bind.loader.isVisible = true
 			viewModel.updateLiveStatus(showId.request(), "false".request())

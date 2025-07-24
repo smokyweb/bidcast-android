@@ -21,7 +21,6 @@ import io.bidswipe.app.utils.Prefs
 
 class MessagesFragment : BaseFragment<DashViewModel, FragmentMessagesBinding>() {
 
-
     override fun getModel(): Class<DashViewModel> = DashViewModel::class.java
 
     override fun getBind(inflater: LayoutInflater, view: ViewGroup?) =

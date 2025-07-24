@@ -388,4 +388,20 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
     ) = call { api.storeSellerVerification(id
     ,image,phoneVerification,cardToken) }
 
+    suspend fun setDefaultShippingAddress(
+        addressId : RequestBody?
+    ) = call { api.setDefaultShippingAddress(addressId) }
+
+    suspend fun setDefaultCard(
+        cardId : RequestBody?
+    ) = call { api.setDefaultCard(cardId) }
+
+    suspend fun deleteCard(
+        cardId : RequestBody?
+    ) = call { api.deleteCard(cardId) }
+
+    suspend fun deleteAddress(
+        addressId : RequestBody?
+    ) = call { api.deleteAddress(addressId) }
+
 }

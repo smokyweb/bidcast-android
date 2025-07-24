@@ -7,6 +7,7 @@ import android.util.Log
 import android.view.View
 import androidx.activity.viewModels
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
@@ -18,30 +19,27 @@ import com.google.firebase.messaging.FirebaseMessaging
 import io.bidswipe.app.App
 import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseActivity
-import io.bidswipe.app.controller.MakeOfferAdapter
 import io.bidswipe.app.controller.SellAdapter
 import io.bidswipe.app.databinding.ActivityDashBinding
-import io.bidswipe.app.databinding.MakeOfferSheetBinding
 import io.bidswipe.app.databinding.PaymentAndAddressSheetBinding
 import io.bidswipe.app.interfaces.AlertClicks
 import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.model.SellModel
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.ui.custom.AppBottomSheet
+import io.bidswipe.app.ui.dashboard.more.MoreActivity
 import io.bidswipe.app.ui.dashboard.sellerHub.SellerVerificationActivity
 import io.bidswipe.app.utils.Alerts
 import io.bidswipe.app.utils.Const
 import io.bidswipe.app.utils.Prefs
-import io.bidswipe.app.utils.asMoney
 import io.bidswipe.app.utils.bind
-import io.bidswipe.app.utils.hideKeyboard
+import io.bidswipe.app.utils.draw
 import io.bidswipe.app.utils.ids
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request
 import io.bidswipe.app.utils.toListProduct
 import io.bidswipe.app.utils.toScheduleShow
 import io.bidswipe.app.utils.toTutorials
-import io.bidswipe.app.utils.value
 
 class DashActivity : BaseActivity(), NavController.OnDestinationChangedListener {
 
@@ -122,7 +120,6 @@ class DashActivity : BaseActivity(), NavController.OnDestinationChangedListener 
                         it.parse(this, TAG, object : AlertClicks {
                             override fun primaryClick(dialog: AppBottomSheet) {
                                 dialog.dismiss()
-
                             }
 
                             override fun secondaryClick(dialog: AppBottomSheet) {
@@ -320,6 +317,7 @@ class DashActivity : BaseActivity(), NavController.OnDestinationChangedListener 
     }
 
     fun showPaymentAndAddressSheet() {
+
         var paymentAddressBind = PaymentAndAddressSheetBinding.bind(
             layoutInflater.inflate(
                 R.layout.payment_and_address_sheet,
@@ -327,14 +325,78 @@ class DashActivity : BaseActivity(), NavController.OnDestinationChangedListener 
                 false
             )
         )
+
         var makeOfferSheet = Alerts.appBottomSheet(this, true, paymentAddressBind)
+
+        with(paymentAddressBind.addressItem) {
+            val hasAddress = App.profileResponse.value?.hasShippingAddress == true
+            moreIcon.setImageDrawable(ContextCompat.getDrawable(this@DashActivity, draw.ic_pencil))
+            moreIcon.rotation = 0f
+
+            name.isVisible = hasAddress
+            address.isVisible = hasAddress
+
+            if (hasAddress) {
+                val addressData = App.profileResponse.value?.defaultShippingAddress
+                address.text = addressData?.streetAddress
+                name.text = addressData?.name
+                type.text = addressData?.type
+                defaultAddress.isVisible = addressData?.isDefault == true
+            } else {
+                type.text = "Address Not Added"
+                defaultAddress.isVisible = false
+            }
+
+            moreIcon.setOnClickListener {
+                startActivity(
+                    Intent(this@DashActivity, MoreActivity::class.java).putExtra(
+                        "slug",
+                        "paymentShipping"
+                    )
+                )
+            }
+
+        }
+
+        with(paymentAddressBind.paymentCard) {
+            val hasCard = App.profileResponse.value?.hasCardAdded == true
+            iconCard.isVisible = hasCard
+            expiryDate.isVisible = hasCard
+            moreIcon.setImageDrawable(ContextCompat.getDrawable(this@DashActivity, draw.ic_pencil))
+            moreIcon.rotation = 0f
+
+            if (hasCard) {
+                cardNumber.text = buildString {
+                    append("•••• •••• •••• ")
+                    append(App.profileResponse.value?.defaultCard?.last4)
+                }
+
+                expiryDate.text = buildString {
+                    append(App.profileResponse.value?.defaultCard?.expMonth)
+                    append("/")
+                    append(App.profileResponse.value?.defaultCard?.expYear.toString().takeLast(2))
+                }
+            } else {
+                cardNumber.text = "Cards Not Added"
+            }
+
+            moreIcon.setOnClickListener {
+                startActivity(
+                    Intent(this@DashActivity, MoreActivity::class.java).putExtra(
+                        "slug",
+                        "paymentShipping"
+                    )
+                )
+            }
+        }
 
         paymentAddressBind.close.setOnClickListener {
             makeOfferSheet.dismiss()
         }
 
-
+        imageSheet.state = BottomSheetBehavior.STATE_COLLAPSED
         makeOfferSheet.show()
+
     }
 
 }

@@ -5,6 +5,7 @@ import android.app.Activity
 import android.os.Bundle
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import com.canhub.cropper.CropImageContract
 import io.bidswipe.app.R
@@ -287,8 +288,7 @@ class SellerVerificationActivity : BaseActivity() {
                             bind.verifyPhone.isVisible = false
                             bind.verificationPhoneIcon.isVisible = true
                             bind.completeVerification.isVisible = false
-                            bind.status.setTextColor(warningClr)
-                            bind.status.text = "Pending"
+                            bind.status.setTextColor(ContextCompat.getColor(this, R.color.warningClr))
                         }
 
                         "verified" ->{
@@ -300,9 +300,16 @@ class SellerVerificationActivity : BaseActivity() {
                             bind.verificationPhoneIcon.isVisible = true
                             bind.stepProgress.setProgress(4)
                             bind.stepCount.setText("4 of 4")
-                            bind.status.setTextColor(R.color.success)
+                            bind.status.setTextColor(ContextCompat.getColor(this, R.color.success))
                             bind.completeVerification.isVisible = false
-                            bind.status.text = "Verified"
+                        }
+
+                        "rejected" ->{
+
+                            bind.status.setTextColor(ContextCompat.getColor(this, R.color.error))
+                            bind.statusDescription.text = mData.reason.toString()
+
+
                         }
 
                     }
