@@ -1,23 +1,30 @@
 package io.bidswipe.app.ui.dashboard
 
 import android.os.Bundle
+import android.view.LayoutInflater
 import androidx.activity.viewModels
 import androidx.core.view.isVisible
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.stripe.android.ApiResultCallback
 import com.stripe.android.PaymentConfiguration
 import com.stripe.android.Stripe
 import com.stripe.android.model.CardParams
 import com.stripe.android.model.Token
 import com.wajahatkarim3.easyvalidation.core.view_ktx.validator
+import io.bidswipe.app.App
 import io.bidswipe.app.base.BaseActivity
 import io.bidswipe.app.databinding.ActivityAddPaymentCardBinding
+import io.bidswipe.app.databinding.DatePickerLayoutBinding
 import io.bidswipe.app.interfaces.AlertClicks
+import io.bidswipe.app.model.PaymentCardModel
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.utils.Alerts
 import io.bidswipe.app.utils.Const
+import io.bidswipe.app.utils.Utils
 import io.bidswipe.app.utils.bind
 import io.bidswipe.app.utils.hideKeyboard
+import io.bidswipe.app.utils.layout
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request
 import io.bidswipe.app.utils.runSafe
@@ -31,13 +38,21 @@ class AddPaymentCardActivity : BaseActivity() {
 
     private val viewModel by viewModels<DashViewModel>()
 
+    private var mSheet : BottomSheetDialog? = null
+    private var isShowing = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(bind.root)
 
         bind.header.onBackClick { finish() }
 
-        PaymentConfiguration.init(this, Const.STRIPE_KEY)
+        bind.expiryDate.setOnClickListener {
+            showDatePicker {
+                bind.expiryDate.setText(it)
+            }
+        }
+
 
         bind.addCard.setOnClickListener {
 
@@ -61,10 +76,10 @@ class AddPaymentCardActivity : BaseActivity() {
                     showKeyboard(bind.cardNumber)
                 }
 
-                bind.expDate.value().validator().nonEmpty().check().not() -> {
+                bind.expiryDate.value().validator().nonEmpty().check().not() -> {
                     Alerts.error(this, "Enter Expiry Date")
-                    bind.expDate.requestFocus()
-                    showKeyboard(bind.expDate)
+                    bind.expiryDate.requestFocus()
+                    showKeyboard(bind.expiryDate)
                 }
 
                 bind.csv.value().validator().nonEmpty().check().not() -> {
@@ -85,41 +100,15 @@ class AddPaymentCardActivity : BaseActivity() {
 
                     bind.loader.isVisible = true
 
-                    val mCard = CardParams(
-                        number = bind.cardNumber.value(),
-                        expMonth = bind.expDate.value().split("/")[0].toInt(),
-                        expYear = bind.expDate.value().split("/")[1].toInt(),
-                        cvc = bind.csv.value(),
-                        name = bind.name.value(),
-                        currency = "usd"
+                    val cardData = PaymentCardModel(
+                        bind.cardNumber.value().replace(" ",""),
+                        bind.csv.value(),
+                        bind.expiryDate.value()
                     )
 
-                    try {
-                        val stripe = Stripe(this, Const.STRIPE_KEY)
-
-                        stripe.createCardToken(mCard, null, null, object :
-                            ApiResultCallback<Token> {
-
-                            override fun onSuccess(result: Token) {
-
-                                Alerts.log(TAG, "STRIPE TOKEN : $result")
-
-                                viewModel.addPaymentCard(
-                                    bind.cardNumber.value().replace(" ","").request(),
-                                    bind.expDate.value().request(),
-                                    bind.csv.value().request()
-                                )
-                            }
-
-                            override fun onError(e: Exception) {
-                                bind.loader.isVisible = false
-                                Alerts.error(this@AddPaymentCardActivity, e.message.toString())
-                            }
-
-                        })
-                    } catch (e: Exception) {
-                        e.printStackTrace()
-                    }
+                    viewModel.addPaymentCard(
+                        cardData
+                    )
 
                 }
 
@@ -141,6 +130,8 @@ class AddPaymentCardActivity : BaseActivity() {
                         bind.loader.isVisible = false
 
                         Alerts.success(this, "Payment card Added")
+
+                        App.getProfile()
 
                         this.setResult(RESULT_OK)
 
@@ -167,4 +158,37 @@ class AddPaymentCardActivity : BaseActivity() {
         }
 
     }
+
+
+    private fun showDatePicker(call: (String) -> Unit) {
+        val alBind = DatePickerLayoutBinding.bind(LayoutInflater.from(this).inflate(layout.date_picker_layout, null))
+
+        mSheet = Alerts.appBottomSheet(this, false, alBind)
+
+        isShowing = if (mSheet?.isShowing == true) {
+            mSheet?.dismiss()
+            false
+        }
+
+        else {
+            mSheet?.show()
+            true
+        }
+
+        alBind.cancel.setOnClickListener {
+            mSheet?.dismiss()
+            isShowing = false
+        }
+
+        alBind.select.text = "Select Time"
+
+        alBind.select.setOnClickListener {
+            val date = alBind.timePicker.date
+            mSheet?.dismiss()
+            isShowing = false
+            call(Utils.getSimpleDate("YYYY-MM").format(date))
+        }
+
+    }
+
 }

@@ -1,7 +1,6 @@
 package io.bidswipe.app.ui.dashboard.sellerHub
 
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.os.Bundle
 import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts
@@ -10,7 +9,6 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import com.canhub.cropper.CropImageContract
 import io.bidswipe.app.R
-import io.bidswipe.app.R.color.warningClr
 import io.bidswipe.app.base.BaseActivity
 import io.bidswipe.app.controller.SelectPaymentCardAdapter
 import io.bidswipe.app.databinding.ActivitySellerVerificationBinding
@@ -34,26 +32,18 @@ import java.util.Locale
 import kotlin.getValue
 
 class SellerVerificationActivity : BaseActivity() {
-/*
-    override fun getModel(): Class<SellerHubViewModel>  = SellerHubViewModel::class.java
-
-    override fun getBind(
-        inflater: LayoutInflater,
-        view: ViewGroup?
-    ) = FragmentSellerVerificationBinding.inflate(inflater,view,false)*/
 
     private val bind by bind (ActivitySellerVerificationBinding::inflate)
 
     private val viewModel by viewModels <SellerHubViewModel>()
 
-    private var cardList = mutableListOf<GetPaymentCardsResponse.Data?>()
+    private var cardList = mutableListOf<GetPaymentCardsResponse.Data.PaymentProfile?>()
 
     var cardImage = ""
     var selfie = ""
-    var isIdVerified = false
+    var phoneNumber = ""
     var isPhoneVerified = false
-    var cardToken = ""
-    var cardId = ""
+    var paymentCardId = ""
 
     private lateinit var cardAdapter : SelectPaymentCardAdapter
 
@@ -71,7 +61,7 @@ class SellerVerificationActivity : BaseActivity() {
 
                 item?.selected = index == pos
 
-                cardToken = item?.cardId.toString()
+                paymentCardId = item?.customerPaymentProfileId.toString()
 
                 cardAdapter.notifyDataSetChanged()
 
@@ -131,7 +121,6 @@ class SellerVerificationActivity : BaseActivity() {
             }
         }
     }
-
 
     @SuppressLint("ResourceAsColor")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -246,8 +235,7 @@ class SellerVerificationActivity : BaseActivity() {
                     Alerts.error(this,"Please verify your phone number")
                 }
 
-
-                cardToken.isEmpty() ->{
+                paymentCardId.isEmpty() ->{
                     Alerts.error(this,"Please select Payment Card")
                 }
 
@@ -260,18 +248,31 @@ class SellerVerificationActivity : BaseActivity() {
                     val imageName = System.currentTimeMillis().toString() + "_selfie_image.jpeg"
                     val selfiePart = Utils.imagePart("image", imageName, File(selfie ?: ""))
 
-                    viewModel.storeSellerVerification(
-                        imagePart, selfiePart, "1".request(), cardToken.request(),
-                        bind.otp.value().request(),
-                        bind.phoneNumber.value().request()
-                    )
+                    viewModel.storeSellerVerification(imagePart, selfiePart, "1".request(), paymentCardId.request())
                 }
-
             }
         }
 
-        bind.loader.isVisible = true
-        viewModel.storeSellerVerification(id = null,image = null,phoneVerification = "1".request(),cardNumber = "1".request(),expirationDate = "1".request(),cvv = "1".request())
+        bind.editPhone.setOnClickListener {
+            bind.phoneNumberLayout.isVisible = true
+            bind.verifyPhoneTitle.isVisible = true
+            bind.verifyPhoneTitle.text = "Enter phone number"
+            bind.otpLayout.isVisible = false
+            bind.verifyOtp.isVisible = false
+            bind.verifyPhone.isVisible = true
+            bind.verificationPhoneIcon.isVisible = false
+            bind.phoneNumber.setText("")
+            bind.editPhone.isVisible = false
+            bind.resend.isVisible = false
+        }
+
+        bind.resend.setOnClickListener {
+
+            bind.loader.isVisible = true
+            viewModel.storePhoneNumber(phoneNumber.request())
+
+        }
+
         viewModel.storeSellerVerificationRepo.observe(this) {
             when (it) {
                 is Resource.Success -> {
@@ -312,6 +313,8 @@ class SellerVerificationActivity : BaseActivity() {
             }
         }
 
+        bind.loader.isVisible = true
+
         viewModel.fetchSellerVerification()
         viewModel.fetchSellerVerificationRepo.observe(this) { it ->
             when (it) {
@@ -333,6 +336,7 @@ class SellerVerificationActivity : BaseActivity() {
                             bind.phoneNumberLayout.isVisible = false
                             bind.otpLayout.isVisible = false
                             bind.verifyOtp.isVisible = false
+                            bind.verifyPhoneTitle.isVisible = false
                             bind.verifyPhone.isVisible = false
                             bind.verificationPhoneIcon.isVisible = true
                             bind.completeVerification.isVisible = false
@@ -343,9 +347,11 @@ class SellerVerificationActivity : BaseActivity() {
                             bind.verifyPhone.isVisible = false
                             bind.verifyOtp.isVisible = true
                             bind.phoneNumberLayout.isVisible = false
-                            bind.otpLayout.isVisible = true
+                            bind.otpLayout.isVisible = false
                             bind.verificationIcon.isVisible = true
                             bind.verificationPhoneIcon.isVisible = true
+                            bind.verifyOtp.isVisible = false
+                            bind.verifyPhoneTitle.isVisible = false
                             bind.stepProgress.setProgress(4)
                             bind.stepCount.setText("4 of 4")
                             bind.status.setTextColor(ContextCompat.getColor(this, R.color.success))
@@ -353,11 +359,9 @@ class SellerVerificationActivity : BaseActivity() {
                         }
 
                         "rejected" ->{
-
+                            bind.stepCount.setText("0 of 4")
                             bind.status.setTextColor(ContextCompat.getColor(this, R.color.error))
                             bind.statusDescription.text = mData.reason.toString()
-
-
                         }
 
                     }
@@ -390,18 +394,18 @@ class SellerVerificationActivity : BaseActivity() {
             }
         }
 
-
-
         viewModel.storePhoneNumberRepo.observe(this) {
             when (it) {
                 is Resource.Success -> {
                     bind.loader.isVisible = false
 
                     val mData = it.value.data
-
                     bind.verifyPhone.isVisible = false
                     bind.verifyOtp.isVisible = true
-
+                    phoneNumber = mData?.phoneNumer.toString()
+                    bind.verifyPhoneTitle.text = "OTP has been sent on ******${mData?.phoneNumer?.drop(6)}"
+                    bind.editPhone.isVisible = true
+                    bind.resend.isVisible = true
                     bind.phoneNumberLayout.isVisible = false
                     bind.otpLayout.isVisible = true
 
@@ -445,7 +449,8 @@ class SellerVerificationActivity : BaseActivity() {
                     bind.verifyPhoneTitle.isVisible = false
                     bind.phoneNumberLayout.visibility = View.GONE
                     bind.verifyPhoneTitle.visibility = View.GONE
-
+                    bind.resend.isVisible = false
+                    bind.editPhone.isVisible = false
 
                     bind.otpLayout.isVisible = false
                     bind.verifyOtp.isVisible = false
@@ -487,12 +492,13 @@ class SellerVerificationActivity : BaseActivity() {
 
                     cardList.clear()
 
-                    if (mData?.isNotEmpty() == true){
+                    if (mData?.paymentProfiles?.isNotEmpty() == true){
 
-                        mData.forEach {
-                            if (it?.cardId == cardId) it.selected =true
-                            cardList.add(it)
-                        }
+                        paymentCardId = mData.paymentProfiles[0]?.customerPaymentProfileId.toString()
+
+                        mData.paymentProfiles[0]?.selected = true
+
+                        cardList.add(mData.paymentProfiles[0])
 
                     }
 
@@ -572,18 +578,7 @@ class SellerVerificationActivity : BaseActivity() {
             }
         }
 
-
     }
-
-
-
-    /*@SuppressLint("ResourceAsColor")
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
-
-
-    }*/
 
     fun uploadUserId() {
         requestPerms(Const.STR_PERMS) { per ->

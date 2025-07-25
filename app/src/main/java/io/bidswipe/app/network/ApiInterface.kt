@@ -1,6 +1,7 @@
 package io.bidswipe.app.network
 
 import io.bidswipe.app.BuildConfig
+import io.bidswipe.app.model.PaymentCardModel
 import io.bidswipe.app.network.response.AboutUsResponse
 import io.bidswipe.app.network.response.CheckKycResponse
 import io.bidswipe.app.network.response.CommonResponse
@@ -54,6 +55,7 @@ import io.bidswipe.app.utils.Utils
 import io.bidswipe.app.utils.request
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
+import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Multipart
 import retrofit2.http.POST
@@ -257,12 +259,9 @@ interface ApiInterface {
     suspend fun getShippingAddress(
     ): GetShippingAddressResponse
 
-    @Multipart
     @POST("api/add-card-net")
     suspend fun addPaymentCard(
-        @Part("card_number") cardNumber: RequestBody?,
-        @Part("expiration_date") expirationDate: RequestBody?,
-        @Part("cvv") cvv: RequestBody?,
+       @Body data : PaymentCardModel
     ): CommonResponse
 
     @GET("api/get-card-net")
@@ -374,7 +373,6 @@ interface ApiInterface {
         @Part("type") type: RequestBody?,
     ): GetOrdersResponse
 
-
     @Multipart
     @POST("api/seller-identity/store-id-card")
     suspend fun storeSellerId(
@@ -467,10 +465,7 @@ interface ApiInterface {
 		@Part idCard: MultipartBody.Part?,
 		@Part image: MultipartBody.Part?,
 		@Part("phone_verification") phoneVerification: RequestBody,
-		@Part("card_number") cardNumber: RequestBody,
-        @Part("expiration_date") expirationDate: RequestBody,
-        @Part("cvv") cvv: RequestBody
-
+		@Part("customerPaymentProfileId") cardId: RequestBody,
 	): CommonResponse
 
 
@@ -553,9 +548,9 @@ interface ApiInterface {
     ): CommonResponse
 
     @Multipart
-    @POST("api/delete-card")
+    @POST("api/delete-card-net")
     suspend fun deleteCard(
-        @Part("card_id") cardId: RequestBody?
+        @Part("payment_profile_id") cardId: RequestBody?
     ): CommonResponse
 
     @Multipart

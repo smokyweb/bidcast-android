@@ -46,7 +46,7 @@ class BuyNowFragment : BaseFragment<ProductViewModel, FragmentBuyNowBinding>() {
 
     private var checkOutData: GetPurchaseDetail.Data? = null
 
-    private var cardList = mutableListOf<GetPaymentCardsResponse.Data?>()
+    private var cardList = mutableListOf<GetPaymentCardsResponse.Data.PaymentProfile?>()
     private var addressList = mutableListOf<GetShippingAddressResponse.Data?>()
     private var shippingId = 0
     private var cardId = ""
@@ -132,7 +132,7 @@ class BuyNowFragment : BaseFragment<ProductViewModel, FragmentBuyNowBinding>() {
                             bundleOf(
                                 "shippingId" to shippingId.toString(),
                                 "productId" to viewModel.product?.id.toString(),
-                                "cardId" to cardList[0]?.cardId?.toString(),
+                                "cardId" to cardList[0]?.customerPaymentProfileId?.toString(),
                                 "promoCode" to bind.promoCode.value()
                             )
                         )
@@ -142,7 +142,7 @@ class BuyNowFragment : BaseFragment<ProductViewModel, FragmentBuyNowBinding>() {
                         viewModel.createOrder(
                             shippingId.toString().request(),
                             viewModel.product?.id.toString().request(),
-                            cardList[0]?.cardId?.request(),
+                            cardList[0]?.customerPaymentProfileId?.request(),
                             bind.promoCode.value().ifEmpty { null }?.request(),
                             "0".request(),
                             null,
@@ -229,7 +229,7 @@ class BuyNowFragment : BaseFragment<ProductViewModel, FragmentBuyNowBinding>() {
                 is Resource.Success -> {
                     bind.loader.isVisible = false
 
-                    val mData = it.value.data
+                    val mData = it.value.data?.paymentProfiles
 
                     cardList.clear()
 
@@ -245,8 +245,7 @@ class BuyNowFragment : BaseFragment<ProductViewModel, FragmentBuyNowBinding>() {
 
                     } else {
                         bind.cardNumber.text = buildString {
-                            append("**** **** **** ")
-                            append(cardList[0]?.last4)
+                            append(cardList[0]?.payment?.creditCard?.cardNumber)
                         }
                         bind.cardNumber.setCompoundDrawablesWithIntrinsicBounds(
                             ContextCompat.getDrawable(
@@ -257,7 +256,7 @@ class BuyNowFragment : BaseFragment<ProductViewModel, FragmentBuyNowBinding>() {
 
                         cardList[0]?.selected = true
 
-                        cardId = cardList[0]?.cardId.toString()
+                        cardId = cardList[0]?.customerPaymentProfileId.toString()
                     }
 //					cardAdapter.notifyDataSetChanged()
                 }
@@ -392,13 +391,12 @@ class BuyNowFragment : BaseFragment<ProductViewModel, FragmentBuyNowBinding>() {
 
                         item?.selected = index == pos
 
-                        cardId = item?.cardId.toString()
+                        cardId = item?.customerPaymentProfileId.toString()
 
                         paymentSheetBind.recycler.adapter?.notifyDataSetChanged()
 
                         bind.cardNumber.text = buildString {
-                            append("**** **** **** ")
-                            append(cardList[pos]?.last4)
+                            append(cardList[pos]?.payment?.creditCard?.cardNumber)
                         }
                         bind.cardNumber.setCompoundDrawablesWithIntrinsicBounds(
                             ContextCompat.getDrawable(
@@ -419,6 +417,7 @@ class BuyNowFragment : BaseFragment<ProductViewModel, FragmentBuyNowBinding>() {
         }
 
         paymentSheet.show()
+
     }
 
     private fun showAddressSheet() {

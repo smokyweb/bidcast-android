@@ -4,6 +4,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import io.bidswipe.app.model.PaymentCardModel
 import io.bidswipe.app.model.TutorialShowModel
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.network.repository.DashRepository
@@ -157,11 +158,9 @@ class DashViewModel @Inject constructor(val repo: DashRepository) : ViewModel() 
         get() = _addPaymentCardResponse
 
     fun addPaymentCard(
-        cardNumber: RequestBody?,
-        expirationDate: RequestBody?,
-        cvv: RequestBody?,
+	    data: PaymentCardModel
 	) = viewModelScope.launch {
-        _addPaymentCardResponse.value = repo.addPaymentCard(cardNumber, expirationDate, cvv)
+        _addPaymentCardResponse.value = repo.addPaymentCard(data)
     }
 
     private var _generateTokenResponse = MutableLiveData<Resource<GenerateTokenResponse>>()

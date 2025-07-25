@@ -11,8 +11,8 @@ import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.network.response.GetPaymentCardsResponse
 
 class PaymentCardAdapter(
-    mList: MutableList<GetPaymentCardsResponse.Data?>, val mClicks: RecyclerClicks,
-) : BaseAdapter<GetPaymentCardsResponse.Data?, PaymentCardItemBinding>(mList) {
+    mList: MutableList<GetPaymentCardsResponse.Data.PaymentProfile?>, val mClicks: RecyclerClicks,
+) : BaseAdapter<GetPaymentCardsResponse.Data.PaymentProfile?, PaymentCardItemBinding>(mList) {
 
     override fun bindView(inflater: LayoutInflater, parent: ViewGroup) =
         PaymentCardItemBinding.inflate(inflater, parent, false)
@@ -20,7 +20,7 @@ class PaymentCardAdapter(
     override fun onBind(
         holder: BaseViewHolder<PaymentCardItemBinding>,
         position: Int,
-        item: GetPaymentCardsResponse.Data?,
+        item: GetPaymentCardsResponse.Data.PaymentProfile?,
     ) {
         with(holder) {
 
@@ -28,15 +28,10 @@ class PaymentCardAdapter(
                 mClicks.itemClick(position)
             }
 
-            bind.cardNumber.text = buildString {
-                append("•••• •••• •••• ")
-                append(item?.last4)
-            }
+            bind.cardNumber.text = item?.payment?.creditCard?.cardNumber
 
             bind.expiryDate.text = buildString {
-                append(item?.expMonth)
-                append("/")
-                append(item?.expYear.toString().drop(2))
+                append(item?.payment?.creditCard?.expirationDate)
             }
 
             bind.defaultAddress.isVisible = item?.isDefault == true

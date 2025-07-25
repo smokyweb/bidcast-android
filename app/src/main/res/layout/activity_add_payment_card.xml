@@ -105,22 +105,22 @@
                         android:text="@string/expiry_date" />
 
                     <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/expLayout"
                         style="@style/inputBoxStyle"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="@dimen/margin">
 
-                        <com.stripe.android.view.ExpiryDateEditText
-                            android:id="@+id/exp_date"
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/expiryDate"
                             style="@style/inputTextStyle"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:ellipsize="end"
-                            android:focusable="true"
-                            android:hint="MM/YY"
-                            android:inputType="date"
-                            android:maxLength="7"
-                            android:singleLine="true" />
+                            android:focusableInTouchMode="true"
+                            android:focusable="false"
+                            android:focusedByDefault="false"
+                            android:hint="YYYY-MM"
+                            android:inputType="date"/>
 
                     </com.google.android.material.textfield.TextInputLayout>
 

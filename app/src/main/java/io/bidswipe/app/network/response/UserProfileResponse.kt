@@ -81,16 +81,10 @@ data class UserProfileResponse(
 
         @Keep
         data class DefaultCard(
-            @SerializedName("card_holder_name")
-            val cardHolderName: String?,
             @SerializedName("card_id")
             val cardId: String?,
-            @SerializedName("exp_month")
-            val expMonth: Int?,
-            @SerializedName("exp_year")
-            val expYear: Int?,
-            @SerializedName("fingerprint")
-            val fingerprint: String?,
+            @SerializedName("exp_date")
+            val expDate: String?,
             @SerializedName("last4")
             val last4: String?
         )

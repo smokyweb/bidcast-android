@@ -153,6 +153,7 @@ dependencies {
     implementation (libs.powermenu)
     implementation(libs.socialview.autocomplete)
     implementation(libs.zim)
+    implementation(libs.singledateandtimepicker)
 
     implementation ("androidx.browser:browser:1.8.0")
     implementation ("com.github.davidmigloz:number-keyboard:3.1.0")

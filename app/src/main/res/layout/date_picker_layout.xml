@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android = "http://schemas.android.com/apk/res/android"
+    xmlns:app = "http://schemas.android.com/apk/res-auto"
+    style = "@style/cardStyle"
+    android:layout_width = "match_parent"
+    android:layout_height = "wrap_content"
+    android:layout_margin = "@dimen/margin"
+    android:paddingTop="@dimen/margin"
+    android:background = "@drawable/bottom_sheet_back"
+    android:backgroundTint = "@color/surface"
+    android:orientation = "vertical" >
+
+    <com.github.florent37.singledateandtimepicker.SingleDateAndTimePicker
+        android:id = "@+id/timePicker"
+        style="@style/timePickerStyle"
+        android:layout_width = "match_parent"
+        android:layout_height = "wrap_content"
+        android:layout_marginTop = "@dimen/margin"
+        android:layout_marginBottom = "@dimen/margin"
+        app:picker_displayDays = "false"
+        app:picker_visibleItemCount="5"
+        app:picker_displayDaysOfMonth = "false"
+        app:picker_displayHours = "false"
+        app:picker_displayMinutes = "false"
+        app:picker_itemSpacing="32dp"
+        app:picker_displayMonth = "true"
+        android:hapticFeedbackEnabled="true"
+        app:picker_displayMonthNumbers = "false"
+        app:picker_displayYears = "true"
+        app:picker_mustBeOnFuture = "true"/>
+
+    <LinearLayout
+        android:id = "@+id/linearLayout2"
+        android:layout_width = "match_parent"
+        android:layout_height = "wrap_content"
+        android:padding = "@dimen/margin"
+        android:weightSum = "2"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf = "parent"
+        app:layout_constraintEnd_toEndOf = "parent"
+        app:layout_constraintStart_toStartOf = "parent" >
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/cancel"
+            style="@style/appBtnTrans"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Cancel"
+            android:textColor="@color/primary"
+            android:layout_margin = "8dp"
+            app:elevation="8dp"
+            app:rippleColor="@color/outline"
+            app:strokeWidth="2dp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id = "@+id/select"
+            style = "@style/appBtn"
+            android:layout_width = "0dp"
+            android:layout_height = "wrap_content"
+            android:layout_margin = "8dp"
+            android:layout_weight = "1"
+            android:text = "Select Date" />
+
+    </LinearLayout >
+
+</LinearLayout >

@@ -55,6 +55,7 @@ class DashActivity : BaseActivity(), NavController.OnDestinationChangedListener 
     private var isFirstShowCreated = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
+
         super.onCreate(savedInstanceState)
         setContentView(bind.root)
 
@@ -372,12 +373,10 @@ class DashActivity : BaseActivity(), NavController.OnDestinationChangedListener 
                 }
 
                 expiryDate.text = buildString {
-                    append(App.profileResponse.value?.defaultCard?.expMonth)
-                    append("/")
-                    append(App.profileResponse.value?.defaultCard?.expYear.toString().takeLast(2))
+                    append(App.profileResponse.value?.defaultCard?.expDate)
                 }
             } else {
-                cardNumber.text = "Cards Not Added"
+                cardNumber.text = "Payment Cards Not Added"
             }
 
             moreIcon.setOnClickListener {

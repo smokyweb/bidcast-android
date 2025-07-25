@@ -8,8 +8,8 @@ import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.network.response.GetPaymentCardsResponse
 
 class SelectPaymentCardAdapter(
-    mList: MutableList<GetPaymentCardsResponse.Data?>, val mClicks: RecyclerClicks,
-) : BaseAdapter<GetPaymentCardsResponse.Data?, SelcetableCardItemBinding>(mList) {
+    mList: MutableList<GetPaymentCardsResponse.Data.PaymentProfile?>, val mClicks: RecyclerClicks,
+) : BaseAdapter<GetPaymentCardsResponse.Data.PaymentProfile?, SelcetableCardItemBinding>(mList) {
 
     override fun bindView(inflater: LayoutInflater, parent: ViewGroup) =
         SelcetableCardItemBinding.inflate(inflater, parent, false)
@@ -17,7 +17,7 @@ class SelectPaymentCardAdapter(
     override fun onBind(
         holder: BaseViewHolder<SelcetableCardItemBinding>,
         position: Int,
-        item: GetPaymentCardsResponse.Data?,
+        item: GetPaymentCardsResponse.Data.PaymentProfile?,
     ) {
         with(holder) {
 
@@ -26,11 +26,16 @@ class SelectPaymentCardAdapter(
             }
 
             bind.cardNumber.text = buildString {
-                append("XXXX-XXXX-XXXX-")
-                append(item?.last4)
+               append(item?.payment?.creditCard?.cardNumber)
             }
 
             bind.selectBtn.isChecked = item?.selected == true
+
+            bind.root.setOnClickListener {
+
+                mClicks.itemClick(position)
+
+            }
 
 
         }

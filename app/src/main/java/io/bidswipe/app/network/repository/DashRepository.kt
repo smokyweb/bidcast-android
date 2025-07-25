@@ -1,6 +1,7 @@
 package io.bidswipe.app.network.repository
 
 import io.bidswipe.app.base.BaseRepository
+import io.bidswipe.app.model.PaymentCardModel
 import io.bidswipe.app.network.ApiInterface
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -149,10 +150,8 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
     suspend fun getShippingAddress() = call { api.getShippingAddress() }
 
     suspend fun addPaymentCard(
-        cardNumber: RequestBody?,
-        expirationDate: RequestBody?,
-        cvv: RequestBody?,
-    ) = call { api.addPaymentCard(cardNumber, expirationDate, cvv) }
+        data: PaymentCardModel
+    ) = call { api.addPaymentCard(data) }
 
     suspend fun getPaymentCard(
     ) = call { api.getPaymentCard() }
@@ -386,11 +385,9 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
         id: MultipartBody.Part?,
         image: MultipartBody.Part?,
         phoneVerification: RequestBody,
-        cardNumber: RequestBody,
-        expirationDate: RequestBody,
-        cvv: RequestBody
+        cardId: RequestBody
     ) = call { api.storeSellerVerification(id
-    ,image,phoneVerification,cardNumber,expirationDate,cvv) }
+    ,image,phoneVerification,cardId) }
 
 
     suspend fun getSellerStatus(

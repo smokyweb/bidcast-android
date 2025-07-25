@@ -2,13 +2,13 @@ package io.bidswipe.app.ui.dashboard.more
 
 import android.app.Activity
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.RadioButton
 import androidx.core.view.isVisible
 import androidx.navigation.fragment.findNavController
+import io.bidswipe.app.App
 import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseFragment
 import io.bidswipe.app.databinding.FragmentAddShippingAddressBinding
@@ -38,7 +38,6 @@ class AddShippingAddressFragment :
         super.onViewCreated(view, savedInstanceState)
 
         slug = activity?.intent?.getStringExtra("slug") ?: ""
-
 
         bind.header.onBackClick {
             if (slug == "addAddress") {
@@ -117,8 +116,8 @@ class AddShippingAddressFragment :
                     } else {
                         findNavController().popBackStack()
                     }
+                    App.getProfile()
 
-                    Alerts.success(mCtx, "Offer Sent")
                 }
 
                 is Resource.Error -> {

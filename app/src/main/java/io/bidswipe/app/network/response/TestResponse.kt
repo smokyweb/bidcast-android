@@ -1,10 +1,11 @@
 package io.bidswipe.app.network.response
 
+
 import com.google.gson.annotations.SerializedName
 import androidx.annotation.Keep
 
 @Keep
-data class GetPaymentCardsResponse(
+data class TestResponse(
     @SerializedName("data")
     val `data`: Data?,
     @SerializedName("error_type")
@@ -36,10 +37,7 @@ data class GetPaymentCardsResponse(
             @SerializedName("customerType")
             val customerType: String?,
             @SerializedName("payment")
-            val payment: Payment?,
-            @SerializedName("is_default")
-            val isDefault: Boolean?,
-            var selected: Boolean ? = false,
+            val payment: Payment?
         ) {
             @Keep
             data class Payment(
