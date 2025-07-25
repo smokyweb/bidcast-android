@@ -1,6 +1,5 @@
 package io.bidswipe.app.ui.dashboard
 
-import android.app.Activity
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.core.view.isVisible
@@ -56,7 +55,7 @@ class AddPaymentCardActivity : BaseActivity() {
                     showKeyboard(bind.cardNumber)
                 }
 
-                bind.cardNumber.value().validator().minLength(12).check().not() -> {
+                bind.cardNumber.value().validator().minLength(16).check().not() -> {
                     Alerts.error(this, "Card Digit should be 12")
                     bind.cardNumber.requestFocus()
                     showKeyboard(bind.cardNumber)
@@ -106,7 +105,9 @@ class AddPaymentCardActivity : BaseActivity() {
                                 Alerts.log(TAG, "STRIPE TOKEN : $result")
 
                                 viewModel.addPaymentCard(
-                                    result.id.request()
+                                    bind.cardNumber.value().replace(" ","").request(),
+                                    bind.expDate.value().request(),
+                                    bind.csv.value().request()
                                 )
                             }
 
@@ -139,9 +140,9 @@ class AddPaymentCardActivity : BaseActivity() {
                     runSafe {
                         bind.loader.isVisible = false
 
-                        Alerts.success(this,"Payment card Added")
+                        Alerts.success(this, "Payment card Added")
 
-                        this.setResult(Activity.RESULT_OK)
+                        this.setResult(RESULT_OK)
 
                         finish()
 

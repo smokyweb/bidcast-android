@@ -220,9 +220,11 @@ class SellerHubViewModel@Inject constructor(val repo: DashRepository) : ViewMode
         id: MultipartBody.Part?,
         image: MultipartBody.Part?,
         phoneVerification: RequestBody,
-        cardToken: RequestBody,
+        cardNumber: RequestBody,
+        expirationDate: RequestBody,
+        cvv: RequestBody
     ) = viewModelScope.launch {
-        _storeSellerVerificationResponse.value = repo.storeSellerVerification(id,image,phoneVerification,cardToken)
+        _storeSellerVerificationResponse.value = repo.storeSellerVerification(id,image,phoneVerification,cardNumber,expirationDate,cvv)
     }
 
     private var _getSellerStatusResponse = MutableLiveData<Resource<SellerStatusResponse>>()

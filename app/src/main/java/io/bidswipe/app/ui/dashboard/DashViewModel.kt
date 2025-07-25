@@ -157,9 +157,11 @@ class DashViewModel @Inject constructor(val repo: DashRepository) : ViewModel() 
         get() = _addPaymentCardResponse
 
     fun addPaymentCard(
-		cardToken: RequestBody?,
+        cardNumber: RequestBody?,
+        expirationDate: RequestBody?,
+        cvv: RequestBody?,
 	) = viewModelScope.launch {
-        _addPaymentCardResponse.value = repo.addPaymentCard(cardToken)
+        _addPaymentCardResponse.value = repo.addPaymentCard(cardNumber, expirationDate, cvv)
     }
 
     private var _generateTokenResponse = MutableLiveData<Resource<GenerateTokenResponse>>()

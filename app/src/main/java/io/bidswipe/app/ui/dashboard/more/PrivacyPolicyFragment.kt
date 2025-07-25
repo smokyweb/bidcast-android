@@ -15,10 +15,11 @@ import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.utils.finish
 import io.bidswipe.app.utils.parse
 
-class PrivacyPolicyFragment : BaseFragment<MoreViewModel,FragmentPrivacyPolicyBinding>() {
+class PrivacyPolicyFragment : BaseFragment<MoreViewModel, FragmentPrivacyPolicyBinding>() {
     override fun getModel(): Class<MoreViewModel> = MoreViewModel::class.java
 
-    override fun getBind(inflater: LayoutInflater, view: ViewGroup?) = FragmentPrivacyPolicyBinding.inflate(inflater,view,false)
+    override fun getBind(inflater: LayoutInflater, view: ViewGroup?) =
+        FragmentPrivacyPolicyBinding.inflate(inflater, view, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -31,14 +32,15 @@ class PrivacyPolicyFragment : BaseFragment<MoreViewModel,FragmentPrivacyPolicyBi
 
         viewModel.getPrivacyPolicy()
 
-        viewModel.getPrivacyPolicyRepo.observe(viewLifecycleOwner){
-            when(it){
-                is Resource.Success ->{
+        viewModel.getPrivacyPolicyRepo.observe(viewLifecycleOwner) {
+            when (it) {
+                is Resource.Success -> {
                     bind.loader.isVisible = false
                     viewModel.getPrivacyPolicyRepo.value = null
-                    bind.content.setHtmlFromString(it.value.data?.pageContent ?: "",false)
+                    bind.content.setHtmlFromString(it.value.data?.pageContent ?: "", false)
                 }
-                is Resource.Error ->{
+
+                is Resource.Error -> {
                     bind.loader.isVisible = false
                     viewModel.getPrivacyPolicyRepo.value = null
                     if (it.isNetworkError) {
@@ -57,7 +59,8 @@ class PrivacyPolicyFragment : BaseFragment<MoreViewModel,FragmentPrivacyPolicyBi
                         })
                     }
                 }
-                else ->{}
+
+                else -> {}
             }
         }
 

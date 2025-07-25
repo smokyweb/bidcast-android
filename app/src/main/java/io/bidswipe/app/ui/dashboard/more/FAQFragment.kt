@@ -24,15 +24,15 @@ class FAQFragment : BaseFragment<MoreViewModel, FragmentFAQBinding>() {
 
     override fun getBind(
         inflater: LayoutInflater,
-        view: ViewGroup?
-    ) = FragmentFAQBinding.inflate(inflater,view,false)
+        view: ViewGroup?,
+    ) = FragmentFAQBinding.inflate(inflater, view, false)
 
     private var faqList = mutableListOf<FAQResponse.Data?>()
     private var categoriesList = mutableListOf<String>()
 
     private lateinit var adapter: FAQAdapter
 
-    private var mClick = object : RecyclerClicks{
+    private var mClick = object : RecyclerClicks {
         override fun itemClick(pos: Int, status: String?) {
             faqList.forEachIndexed { index, data ->
                 data?.selected = index == pos
@@ -70,7 +70,7 @@ class FAQFragment : BaseFragment<MoreViewModel, FragmentFAQBinding>() {
         }
 
 
-        adapter = FAQAdapter(faqList,mClick)
+        adapter = FAQAdapter(faqList, mClick)
 
         bind.recyclerFaq.adapter = adapter
 
@@ -78,7 +78,7 @@ class FAQFragment : BaseFragment<MoreViewModel, FragmentFAQBinding>() {
 
         viewModel.getFAQ()
 
-        viewModel.getFAQRepo.observe (viewLifecycleOwner){
+        viewModel.getFAQRepo.observe(viewLifecycleOwner) {
             when (it) {
                 is Resource.Success -> {
                     bind.loader.isVisible = false

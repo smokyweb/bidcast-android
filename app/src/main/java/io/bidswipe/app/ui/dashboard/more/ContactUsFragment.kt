@@ -27,7 +27,7 @@ class ContactUsFragment : BaseFragment<MoreViewModel, FragmentContactUsBinding>(
 
     override fun getBind(
         inflater: LayoutInflater,
-        view: ViewGroup?
+        view: ViewGroup?,
     ) = FragmentContactUsBinding.inflate(inflater, view, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

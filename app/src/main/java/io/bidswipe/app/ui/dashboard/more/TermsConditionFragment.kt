@@ -14,13 +14,13 @@ import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.utils.finish
 import io.bidswipe.app.utils.parse
 
-class TermsConditionFragment : BaseFragment<MoreViewModel,FragmentTermsConditionBinding>() {
+class TermsConditionFragment : BaseFragment<MoreViewModel, FragmentTermsConditionBinding>() {
     override fun getModel(): Class<MoreViewModel> = MoreViewModel::class.java
 
     override fun getBind(
         inflater: LayoutInflater,
-        view: ViewGroup?
-    ) = FragmentTermsConditionBinding.inflate(inflater,view,false)
+        view: ViewGroup?,
+    ) = FragmentTermsConditionBinding.inflate(inflater, view, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -33,14 +33,15 @@ class TermsConditionFragment : BaseFragment<MoreViewModel,FragmentTermsCondition
 
         viewModel.getTermsConditions()
 
-        viewModel.getTermsConditionsRepo.observe(viewLifecycleOwner){
-            when(it){
-                is Resource.Success ->{
+        viewModel.getTermsConditionsRepo.observe(viewLifecycleOwner) {
+            when (it) {
+                is Resource.Success -> {
                     bind.loader.isVisible = false
                     viewModel.getTermsConditionsRepo.value = null
-                    bind.content.setHtmlFromString(it.value.data?.pageContent ?: "",false)
+                    bind.content.setHtmlFromString(it.value.data?.pageContent ?: "", false)
                 }
-                is Resource.Error ->{
+
+                is Resource.Error -> {
                     bind.loader.isVisible = false
                     viewModel.getTermsConditionsRepo.value = null
                     if (it.isNetworkError) {
@@ -59,7 +60,8 @@ class TermsConditionFragment : BaseFragment<MoreViewModel,FragmentTermsCondition
                         })
                     }
                 }
-                else ->{}
+
+                else -> {}
             }
         }
     }

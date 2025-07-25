@@ -41,7 +41,7 @@ class BuyNowFragment : BaseFragment<ProductViewModel, FragmentBuyNowBinding>() {
 
     override fun getBind(
         inflater: LayoutInflater,
-        view: ViewGroup?
+        view: ViewGroup?,
     ) = FragmentBuyNowBinding.inflate(inflater, view, false)
 
     private var checkOutData: GetPurchaseDetail.Data? = null
@@ -339,7 +339,10 @@ class BuyNowFragment : BaseFragment<ProductViewModel, FragmentBuyNowBinding>() {
 
                     val mData = it.value.data
 
-                    findNavController().navigate(ids.buyNowToOrderStatusFragment,bundleOf("orderId" to mData?.id.toString() ))
+                    findNavController().navigate(
+                        ids.buyNowToOrderStatusFragment,
+                        bundleOf("orderId" to mData?.id.toString())
+                    )
 
 //					cardAdapter.notifyDataSetChanged()
                 }
@@ -434,8 +437,9 @@ class BuyNowFragment : BaseFragment<ProductViewModel, FragmentBuyNowBinding>() {
 
                         addressSheetBind.recycler.adapter?.notifyDataSetChanged()
 
-                        bind.address.text = addressList.find { it?.isDefault == true }?.streetAddress
-                            ?: addressList[pos]?.streetAddress
+                        bind.address.text =
+                            addressList.find { it?.isDefault == true }?.streetAddress
+                                ?: addressList[pos]?.streetAddress
 
 
                         shippingId = addressList.find { it?.isDefault == true }?.id
@@ -457,7 +461,6 @@ class BuyNowFragment : BaseFragment<ProductViewModel, FragmentBuyNowBinding>() {
             })
 
         addressSheetBind.close.setOnClickListener {
-
 
 
             addressSheet.hide()

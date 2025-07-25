@@ -3,6 +3,7 @@ package io.bidswipe.app.ui.dashboard.sellerHub
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.os.Bundle
+import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.core.content.ContextCompat
@@ -29,6 +30,7 @@ import io.bidswipe.app.utils.request
 import io.bidswipe.app.utils.showKeyboard
 import io.bidswipe.app.utils.value
 import java.io.File
+import java.util.Locale
 import kotlin.getValue
 
 class SellerVerificationActivity : BaseActivity() {
@@ -56,7 +58,7 @@ class SellerVerificationActivity : BaseActivity() {
     private lateinit var cardAdapter : SelectPaymentCardAdapter
 
     private var addCardLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-        if (result.resultCode == Activity.RESULT_OK) {
+        if (result.resultCode == RESULT_OK) {
             bind.loader.isVisible = true
             viewModel.getPaymentCard()
         }
@@ -258,23 +260,69 @@ class SellerVerificationActivity : BaseActivity() {
                     val imageName = System.currentTimeMillis().toString() + "_selfie_image.jpeg"
                     val selfiePart = Utils.imagePart("image", imageName, File(selfie ?: ""))
 
-                    viewModel.storeSellerVerification(imagePart,selfiePart, "1".request() , cardToken.request()  )
+                    viewModel.storeSellerVerification(
+                        imagePart, selfiePart, "1".request(), cardToken.request(),
+                        bind.otp.value().request(),
+                        bind.phoneNumber.value().request()
+                    )
                 }
 
             }
         }
 
         bind.loader.isVisible = true
+        viewModel.storeSellerVerification(id = null,image = null,phoneVerification = "1".request(),cardNumber = "1".request(),expirationDate = "1".request(),cvv = "1".request())
+        viewModel.storeSellerVerificationRepo.observe(this) {
+            when (it) {
+                is Resource.Success -> {
+                    bind.loader.isVisible = false
+
+                    val mData = it.value.data
+                    bind.stepProgress.setProgress(3)
+
+                    bind.stepCount.setText("3 of 4")
+
+                    bind.completeVerification.isVisible = false
+
+                    Alerts.success(this,it.value.message.toString())
+
+                }
+
+                is Resource.Error -> {
+                    bind.loader.isVisible = false
+
+                    if (it.isNetworkError) {
+                        errorToast(getString(R.string.no_internet))
+                    } else {
+                        it.parse(this, TAG, object : AlertClicks {
+                            override fun primaryClick(dialog: AppBottomSheet) {
+                                dialog.dismiss()
+                            }
+
+                            override fun secondaryClick(dialog: AppBottomSheet) {
+                                dialog.dismiss()
+
+                            }
+                        })
+                    }
+                }
+
+                else -> {}
+
+            }
+        }
 
         viewModel.fetchSellerVerification()
-
-        viewModel.fetchSellerVerificationRepo.observe(this) {
+        viewModel.fetchSellerVerificationRepo.observe(this) { it ->
             when (it) {
                 is Resource.Success -> {
 
                     val mData = it.value.data
 
-                    bind.status.text = mData?.status
+                    bind.status.text = mData?.status?.replaceFirstChar {
+                        if (it.isLowerCase()) it.titlecase(Locale.getDefault())
+                        else it.toString()
+                    }
 
                     when(mData?.status){
 
@@ -342,45 +390,7 @@ class SellerVerificationActivity : BaseActivity() {
             }
         }
 
-        viewModel.storeSellerVerificationRepo.observe(this) {
-            when (it) {
-                is Resource.Success -> {
-                    bind.loader.isVisible = false
 
-                    val mData = it.value.data
-                    bind.stepProgress.setProgress(3)
-
-                    bind.stepCount.setText("3 of 4")
-
-                    bind.completeVerification.isVisible = false
-
-                    Alerts.success(this,it.value.message.toString())
-
-                }
-
-                is Resource.Error -> {
-                    bind.loader.isVisible = false
-
-                    if (it.isNetworkError) {
-                        errorToast(getString(R.string.no_internet))
-                    } else {
-                        it.parse(this, TAG, object : AlertClicks {
-                            override fun primaryClick(dialog: AppBottomSheet) {
-                                dialog.dismiss()
-                            }
-
-                            override fun secondaryClick(dialog: AppBottomSheet) {
-                                dialog.dismiss()
-
-                            }
-                        })
-                    }
-                }
-
-                else -> {}
-
-            }
-        }
 
         viewModel.storePhoneNumberRepo.observe(this) {
             when (it) {
@@ -432,6 +442,11 @@ class SellerVerificationActivity : BaseActivity() {
                     bind.stepCount.setText("2 of 4")
 
                     bind.phoneNumberLayout.isVisible = false
+                    bind.verifyPhoneTitle.isVisible = false
+                    bind.phoneNumberLayout.visibility = View.GONE
+                    bind.verifyPhoneTitle.visibility = View.GONE
+
+
                     bind.otpLayout.isVisible = false
                     bind.verifyOtp.isVisible = false
                     bind.verifyPhone.isVisible = false

@@ -23,11 +23,8 @@ import io.bidswipe.app.utils.runSafe
 import java.io.File
 
 class TrustedBuyerActivity : BaseActivity() {
-
-    private val bind by bind (ActivityTrustedBuyerBinding::inflate)
-
-    private val viewModel by viewModels <MoreViewModel>()
-
+    private val bind by bind(ActivityTrustedBuyerBinding::inflate)
+    private val viewModel by viewModels<MoreViewModel>()
     private var idPhoto = ""
 
     private val imageResult = registerForActivityResult(CropImageContract()) { result ->
@@ -72,14 +69,14 @@ class TrustedBuyerActivity : BaseActivity() {
 
         bind.submit.setOnClickListener {
 
-            if (idPhoto.isEmpty()){
-                Alerts.error(this,"Please Select an Id")
+            if (idPhoto.isEmpty()) {
+                Alerts.error(this, "Please Select an Id")
 
-            }else{
+            } else {
                 bind.loader.isVisible = true
 
                 val imageName = System.currentTimeMillis().toString() + "_id_photo.jpeg"
-                val idPart = Utils.imagePart("image", imageName, File(idPhoto ))
+                val idPart = Utils.imagePart("image", imageName, File(idPhoto))
 
                 viewModel.storeBuyerIdentity(idPart)
             }
@@ -99,16 +96,17 @@ class TrustedBuyerActivity : BaseActivity() {
 
                         val mData = it.value.data
 
-                        if (mData?.image?.isNotEmpty() == true){
+                        if (mData?.image?.isNotEmpty() == true) {
 
                             bind.uploadLayout.isVisible = false
                             bind.imgCard.isVisible = true
 
-                            bind.img.loadUrl(this,mData.image.toString())
+                            bind.img.loadUrl(this, mData.image.toString())
 
-                           when(mData.status ){
-                                "rejected" ->{
-                                    bind.firstDivider.dividerColor = ContextCompat.getColor(this, color.primary)
+                            when (mData.status) {
+                                "rejected" -> {
+                                    bind.firstDivider.dividerColor =
+                                        ContextCompat.getColor(this, color.primary)
 
                                     bind.secondCard.setCardBackgroundColor(
                                         ColorStateList.valueOf(
@@ -116,9 +114,15 @@ class TrustedBuyerActivity : BaseActivity() {
                                         )
                                     )
 
-                                    bind.secondText.setTextColor(ContextCompat.getColor(this, R.color.background))
+                                    bind.secondText.setTextColor(
+                                        ContextCompat.getColor(
+                                            this,
+                                            R.color.background
+                                        )
+                                    )
 
-                                    bind.secondDivider.dividerColor = ContextCompat.getColor(this, color.primary)
+                                    bind.secondDivider.dividerColor =
+                                        ContextCompat.getColor(this, color.primary)
                                     bind.thirdCard.setCardBackgroundColor(
                                         ColorStateList.valueOf(
                                             ContextCompat.getColor(this, R.color.error)
@@ -127,58 +131,85 @@ class TrustedBuyerActivity : BaseActivity() {
 
                                     bind.thirdText.setText("!")
 
-                                    bind.thirdText.setTextColor(ContextCompat.getColor(this, R.color.background))
+                                    bind.thirdText.setTextColor(
+                                        ContextCompat.getColor(
+                                            this,
+                                            R.color.background
+                                        )
+                                    )
 
                                     bind.finalStatus.text = "Rejected"
 
-                                    bind.finalStatus.setTextColor(ContextCompat.getColor(this, R.color.error))
+                                    bind.finalStatus.setTextColor(
+                                        ContextCompat.getColor(
+                                            this,
+                                            R.color.error
+                                        )
+                                    )
 
                                     bind.submit.isVisible = true
 
                                 }
 
-                               "verified"->{
-                                   bind.firstDivider.dividerColor = ContextCompat.getColor(this, color.primary)
+                                "verified" -> {
+                                    bind.firstDivider.dividerColor =
+                                        ContextCompat.getColor(this, color.primary)
 
-                                   bind.secondCard.setCardBackgroundColor(
-                                       ColorStateList.valueOf(
-                                           ContextCompat.getColor(this, R.color.primary)
-                                       )
-                                   )
+                                    bind.secondCard.setCardBackgroundColor(
+                                        ColorStateList.valueOf(
+                                            ContextCompat.getColor(this, R.color.primary)
+                                        )
+                                    )
 
-                                   bind.secondText.setTextColor(ContextCompat.getColor(this, R.color.background))
+                                    bind.secondText.setTextColor(
+                                        ContextCompat.getColor(
+                                            this,
+                                            R.color.background
+                                        )
+                                    )
 
-                                   bind.secondDivider.dividerColor = ContextCompat.getColor(this, color.primary)
-                                   bind.thirdCard.setCardBackgroundColor(
-                                       ColorStateList.valueOf(
-                                           ContextCompat.getColor(this, R.color.primary)
-                                       )
-                                   )
+                                    bind.secondDivider.dividerColor =
+                                        ContextCompat.getColor(this, color.primary)
+                                    bind.thirdCard.setCardBackgroundColor(
+                                        ColorStateList.valueOf(
+                                            ContextCompat.getColor(this, R.color.primary)
+                                        )
+                                    )
 
-                                   bind.thirdText.setTextColor(ContextCompat.getColor(this, R.color.background))
+                                    bind.thirdText.setTextColor(
+                                        ContextCompat.getColor(
+                                            this,
+                                            R.color.background
+                                        )
+                                    )
 
-                                   bind.submit.isVisible = false
+                                    bind.submit.isVisible = false
 
-                               }
+                                }
 
-                               else ->{
+                                else -> {
 
-                               bind.firstDivider.dividerColor = ContextCompat.getColor(this, color.primary)
-                               bind.secondCard.setCardBackgroundColor(
-                                   ColorStateList.valueOf(
-                                       ContextCompat.getColor(this, R.color.primary)
-                                   )
-                               )
+                                    bind.firstDivider.dividerColor =
+                                        ContextCompat.getColor(this, color.primary)
+                                    bind.secondCard.setCardBackgroundColor(
+                                        ColorStateList.valueOf(
+                                            ContextCompat.getColor(this, R.color.primary)
+                                        )
+                                    )
 
-                               bind.secondText.setTextColor(ContextCompat.getColor(this, R.color.background))
-                           }
+                                    bind.secondText.setTextColor(
+                                        ContextCompat.getColor(
+                                            this,
+                                            R.color.background
+                                        )
+                                    )
+                                }
 
 
                             }
 
 
-
-                        }else{
+                        } else {
 
                         }
 

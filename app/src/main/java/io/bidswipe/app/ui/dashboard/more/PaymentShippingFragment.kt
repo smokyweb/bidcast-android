@@ -29,24 +29,25 @@ class PaymentShippingFragment : BaseFragment<MoreViewModel, FragmentPaymentShipp
 
     override fun getBind(
         inflater: LayoutInflater,
-        view: ViewGroup?
-    ) = FragmentPaymentShippingBinding.inflate(inflater,view,false)
+        view: ViewGroup?,
+    ) = FragmentPaymentShippingBinding.inflate(inflater, view, false)
 
     private var cardList = mutableListOf<GetPaymentCardsResponse.Data?>()
     private var addressList = mutableListOf<GetShippingAddressResponse.Data?>()
 
-    private lateinit var cardAdapter : PaymentCardAdapter
+    private lateinit var cardAdapter: PaymentCardAdapter
     private lateinit var shippingAddressAdapter: ShippingAddressAdapter
 
-    private val mClick = object : RecyclerClicks{
+    private val mClick = object : RecyclerClicks {
         override fun itemClick(pos: Int, status: String?) {
 
-            when(status){
+            when (status) {
                 "default" -> {
                     bind.loader.isVisible = true
                     viewModel.setDefaultShippingAddress(addressList[pos]?.id.toString().request())
                 }
-                "delete" ->{
+
+                "delete" -> {
                     bind.loader.isVisible = true
                     viewModel.deleteAddress(addressList[pos]?.id.toString().request())
                 }
@@ -57,15 +58,16 @@ class PaymentShippingFragment : BaseFragment<MoreViewModel, FragmentPaymentShipp
 
     }
 
-    private val cardClick = object : RecyclerClicks{
+    private val cardClick = object : RecyclerClicks {
         override fun itemClick(pos: Int, status: String?) {
 
-            when(status){
+            when (status) {
                 "default" -> {
                     bind.loader.isVisible = true
                     viewModel.setDefaultCard(cardList[pos]?.cardId.toString().request())
                 }
-                "delete" ->{
+
+                "delete" -> {
                     bind.loader.isVisible = true
                     viewModel.deleteCard(cardList[pos]?.cardId.toString().request())
                 }
@@ -83,11 +85,11 @@ class PaymentShippingFragment : BaseFragment<MoreViewModel, FragmentPaymentShipp
             finish()
         }
 
-        cardAdapter= PaymentCardAdapter(cardList,cardClick)
+        cardAdapter = PaymentCardAdapter(cardList, cardClick)
 
         bind.recycler.adapter = cardAdapter
 
-        shippingAddressAdapter= ShippingAddressAdapter(addressList,mClick)
+        shippingAddressAdapter = ShippingAddressAdapter(addressList, mClick)
 
         bind.addressRecycler.adapter = shippingAddressAdapter
 
@@ -114,10 +116,10 @@ class PaymentShippingFragment : BaseFragment<MoreViewModel, FragmentPaymentShipp
 
                     addressList.clear()
 
-                    if (mData?.isNotEmpty() == true){
+                    if (mData?.isNotEmpty() == true) {
                         bind.noAddressData.isVisible = false
                         addressList.addAll(mData)
-                    }else{
+                    } else {
                         bind.noAddressData.isVisible = true
                     }
 
@@ -160,10 +162,10 @@ class PaymentShippingFragment : BaseFragment<MoreViewModel, FragmentPaymentShipp
 
                     cardList.clear()
 
-                    if (mData?.isNotEmpty() == true){
+                    if (mData?.isNotEmpty() == true) {
                         bind.noCardsData.isVisible = false
                         cardList.addAll(mData)
-                    }else{
+                    } else {
                         bind.noCardsData.isVisible = true
                     }
 
@@ -331,7 +333,6 @@ class PaymentShippingFragment : BaseFragment<MoreViewModel, FragmentPaymentShipp
 
             }
         }
-
 
 
     }

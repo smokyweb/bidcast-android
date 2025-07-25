@@ -207,7 +207,7 @@ class ProductDetailsFragment : BaseFragment<ProductViewModel, FragmentProductDet
 
                     val mData = it.value.data
 
-                    Alerts.success(mCtx,it.value.message.toString())
+                    Alerts.success(mCtx, it.value.message.toString())
 
                 }
 

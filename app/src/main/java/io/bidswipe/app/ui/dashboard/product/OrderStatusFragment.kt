@@ -29,7 +29,7 @@ class OrderStatusFragment : BaseFragment<ProductViewModel, FragmentOrderStatusBi
 
     override fun getBind(
         inflater: LayoutInflater,
-        view: ViewGroup?
+        view: ViewGroup?,
     ) = FragmentOrderStatusBinding.inflate(inflater, view, false)
 
     private val statusItems = mutableListOf<GetOrderDetailsResponse.Data.ShippingTracking?>()
@@ -76,9 +76,13 @@ class OrderStatusFragment : BaseFragment<ProductViewModel, FragmentOrderStatusBi
                     bind.productName.text = mData?.product?.title
                     bind.productImage.loadUrl(mCtx, mData?.product?.images?.get(0).toString())
                     bind.orderId.text = mData?.id.toString()
-                    bind.orderDate.text = Utils.getFormattedDateTime("yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'","MMM dd, yyyy, HH:mm",mData?.createdAt.toString())
+                    bind.orderDate.text = Utils.getFormattedDateTime(
+                        "yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'",
+                        "MMM dd, yyyy, HH:mm",
+                        mData?.createdAt.toString()
+                    )
 
-                    if(mData?.shippingTracking?.isNotEmpty() == true){
+                    if (mData?.shippingTracking?.isNotEmpty() == true) {
                         statusItems.addAll(mData.shippingTracking)
                     }
 
@@ -119,7 +123,7 @@ class OrderStatusFragment : BaseFragment<ProductViewModel, FragmentOrderStatusBi
 
                     val mData = it.value.data
 
-                    downloadPdf(mCtx,mData.toString(), System.currentTimeMillis().toString())
+                    downloadPdf(mCtx, mData.toString(), System.currentTimeMillis().toString())
 
                 }
 

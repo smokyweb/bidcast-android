@@ -13,8 +13,8 @@ class SalesTaxExemptionFragment : BaseFragment<MoreViewModel, FragmentSalesTaxEx
 
     override fun getBind(
         inflater: LayoutInflater,
-        view: ViewGroup?
-    ) = FragmentSalesTaxExemptionBinding.inflate(inflater,view,false)
+        view: ViewGroup?,
+    ) = FragmentSalesTaxExemptionBinding.inflate(inflater, view, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

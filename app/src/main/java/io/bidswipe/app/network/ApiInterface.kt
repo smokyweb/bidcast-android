@@ -258,12 +258,14 @@ interface ApiInterface {
     ): GetShippingAddressResponse
 
     @Multipart
-    @POST("api/add-card")
+    @POST("api/add-card-net")
     suspend fun addPaymentCard(
-        @Part("card_token") cardToken: RequestBody?,
+        @Part("card_number") cardNumber: RequestBody?,
+        @Part("expiration_date") expirationDate: RequestBody?,
+        @Part("cvv") cvv: RequestBody?,
     ): CommonResponse
 
-    @GET("api/get-card")
+    @GET("api/get-card-net")
     suspend fun getPaymentCard(
     ): GetPaymentCardsResponse
 
@@ -465,7 +467,9 @@ interface ApiInterface {
 		@Part idCard: MultipartBody.Part?,
 		@Part image: MultipartBody.Part?,
 		@Part("phone_verification") phoneVerification: RequestBody,
-		@Part("cardToken") cardToken: RequestBody,
+		@Part("card_number") cardNumber: RequestBody,
+        @Part("expiration_date") expirationDate: RequestBody,
+        @Part("cvv") cvv: RequestBody
 
 	): CommonResponse
 

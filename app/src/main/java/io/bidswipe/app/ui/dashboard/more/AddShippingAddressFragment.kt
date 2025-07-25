@@ -22,63 +22,65 @@ import io.bidswipe.app.utils.request
 import io.bidswipe.app.utils.showKeyboard
 import io.bidswipe.app.utils.value
 
-class AddShippingAddressFragment : BaseFragment<MoreViewModel, FragmentAddShippingAddressBinding>() {
+class AddShippingAddressFragment :
+    BaseFragment<MoreViewModel, FragmentAddShippingAddressBinding>() {
 
     override fun getModel(): Class<MoreViewModel> = MoreViewModel::class.java
 
     override fun getBind(
         inflater: LayoutInflater,
-        view: ViewGroup?
-    ) = FragmentAddShippingAddressBinding.inflate(inflater,view,false)
+        view: ViewGroup?,
+    ) = FragmentAddShippingAddressBinding.inflate(inflater, view, false)
 
     private var slug = ""
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        slug = activity?.intent?.getStringExtra("slug") ?:""
+        slug = activity?.intent?.getStringExtra("slug") ?: ""
 
 
         bind.header.onBackClick {
-            if (slug == "addAddress"){
+            if (slug == "addAddress") {
                 finish()
-            }else{
+            } else {
                 findNavController().popBackStack()
             }
         }
 
         bind.addAddress.setOnClickListener {
 
-            when{
+            when {
 
-                bind.name.value().isEmpty() ->{
-                    Alerts.error(mCtx,"Please enter name")
+                bind.name.value().isEmpty() -> {
+                    Alerts.error(mCtx, "Please enter name")
                     bind.name.requestFocus()
                     showKeyboard(bind.name)
                 }
 
-                bind.phoneNumber.value().isEmpty() ->{
-                    Alerts.error(mCtx,"Please enter phone number")
+                bind.phoneNumber.value().isEmpty() -> {
+                    Alerts.error(mCtx, "Please enter phone number")
                     bind.phoneNumber.requestFocus()
                     showKeyboard(bind.phoneNumber)
                 }
 
-                bind.streetAddress.value().isEmpty() ->{
-                    Alerts.error(mCtx,"Please enter street address")
+                bind.streetAddress.value().isEmpty() -> {
+                    Alerts.error(mCtx, "Please enter street address")
                     bind.streetAddress.requestFocus()
                     showKeyboard(bind.streetAddress)
                 }
 
-                bind.zipCode.value().isEmpty() ->{
-                    Alerts.error(mCtx,"Please enter zip code")
+                bind.zipCode.value().isEmpty() -> {
+                    Alerts.error(mCtx, "Please enter zip code")
                     bind.zipCode.requestFocus()
                     showKeyboard(bind.zipCode)
                 }
 
-                bind.radioGroup.checkedRadioButtonId == -1->{
-                    Alerts.error(mCtx,"Please select address type")
+                bind.radioGroup.checkedRadioButtonId == -1 -> {
+                    Alerts.error(mCtx, "Please select address type")
                 }
-                else->{
+
+                else -> {
                     bind.loader.isVisible = true
 
                     val buttonId = bind.radioGroup.checkedRadioButtonId
@@ -99,7 +101,6 @@ class AddShippingAddressFragment : BaseFragment<MoreViewModel, FragmentAddShippi
             }
 
 
-
         }
 
         viewModel.addShippingAddressRepo.observe(viewLifecycleOwner) {
@@ -109,15 +110,15 @@ class AddShippingAddressFragment : BaseFragment<MoreViewModel, FragmentAddShippi
 
                     val mData = it.value.data
 
-                    if (slug == "addAddress"){
+                    if (slug == "addAddress") {
 
                         activity?.setResult(Activity.RESULT_OK)
                         finish()
-                    }else{
+                    } else {
                         findNavController().popBackStack()
                     }
 
-                    Alerts.success(mCtx,"Offer Sent")
+                    Alerts.success(mCtx, "Offer Sent")
                 }
 
                 is Resource.Error -> {
@@ -144,7 +145,6 @@ class AddShippingAddressFragment : BaseFragment<MoreViewModel, FragmentAddShippi
 
             }
         }
-
 
 
     }

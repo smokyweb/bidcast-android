@@ -79,6 +79,8 @@
                     android:orientation="vertical"
                     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                     tools:itemCount="6"
+                    tools:layout_editor_absoluteX="0dp"
+                    tools:layout_editor_absoluteY="0dp"
                     tools:listitem="@layout/show_listing_item" />
 
                 <io.bidswipe.app.ui.custom.NoDataView

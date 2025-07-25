@@ -21,24 +21,25 @@ import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request
 
 class AddressesFragment : BaseFragment<MoreViewModel, FragmentAddressesBinding>() {
-    override fun getModel(): Class<MoreViewModel>   = MoreViewModel::class.java
+    override fun getModel(): Class<MoreViewModel> = MoreViewModel::class.java
 
     override fun getBind(
         inflater: LayoutInflater,
-        view: ViewGroup?
-    ) = FragmentAddressesBinding.inflate(inflater,view,false)
+        view: ViewGroup?,
+    ) = FragmentAddressesBinding.inflate(inflater, view, false)
 
     private var addressList = mutableListOf<GetShippingAddressResponse.Data?>()
     private lateinit var shippingAddressAdapter: ShippingAddressAdapter
 
-    private val mClick = object : RecyclerClicks{
+    private val mClick = object : RecyclerClicks {
         override fun itemClick(pos: Int, status: String?) {
-            when(status){
+            when (status) {
                 "default" -> {
                     bind.loader.isVisible = true
                     viewModel.setDefaultShippingAddress(addressList[pos]?.id.toString().request())
                 }
-                "delete" ->{
+
+                "delete" -> {
                     bind.loader.isVisible = true
                     viewModel.deleteAddress(addressList[pos]?.id.toString().request())
                 }
@@ -54,7 +55,7 @@ class AddressesFragment : BaseFragment<MoreViewModel, FragmentAddressesBinding>(
             finish()
         }
 
-        shippingAddressAdapter= ShippingAddressAdapter(addressList,mClick)
+        shippingAddressAdapter = ShippingAddressAdapter(addressList, mClick)
 
         bind.addressRecycler.adapter = shippingAddressAdapter
 
@@ -75,11 +76,11 @@ class AddressesFragment : BaseFragment<MoreViewModel, FragmentAddressesBinding>(
 
                     addressList.clear()
 
-                    if (mData?.isNotEmpty() == true){
+                    if (mData?.isNotEmpty() == true) {
                         bind.noData.isVisible = false
                         bind.addressRecycler.isVisible = true
                         addressList.addAll(mData)
-                    }else{
+                    } else {
                         bind.noData.isVisible = true
                     }
 

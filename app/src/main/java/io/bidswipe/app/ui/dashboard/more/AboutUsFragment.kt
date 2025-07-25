@@ -23,21 +23,22 @@ import io.bidswipe.app.utils.draw
 import io.bidswipe.app.utils.finish
 import io.bidswipe.app.utils.parse
 
-class AboutUsFragment : BaseFragment<MoreViewModel,FragmentAboutUsBinding>() {
+class AboutUsFragment : BaseFragment<MoreViewModel, FragmentAboutUsBinding>() {
     override fun getModel(): Class<MoreViewModel> = MoreViewModel::class.java
 
-    override fun getBind(inflater: LayoutInflater, view: ViewGroup?) = FragmentAboutUsBinding.inflate(inflater,view,false)
+    override fun getBind(inflater: LayoutInflater, view: ViewGroup?) =
+        FragmentAboutUsBinding.inflate(inflater, view, false)
 
-    private lateinit var featureAdapter : FeaturedAdapter
+    private lateinit var featureAdapter: FeaturedAdapter
 
-    private lateinit var teamAdapter : TeamAdapter
+    private lateinit var teamAdapter: TeamAdapter
 
     private var featureList = mutableListOf<AboutUsResponse.Data.Feature?>()
 
     private var teamList = mutableListOf<AboutUsResponse.Data.Team?>()
     private var socialMediaLinks = mutableListOf<AboutUsResponse.Data.SocialMedia?>()
 
-    private var  mClick = object : RecyclerClicks{
+    private var mClick = object : RecyclerClicks {
         override fun itemClick(pos: Int, status: String?) {
 
         }
@@ -53,31 +54,31 @@ class AboutUsFragment : BaseFragment<MoreViewModel,FragmentAboutUsBinding>() {
 
         }
 
-        featureAdapter = FeaturedAdapter(featureList,mClick)
+        featureAdapter = FeaturedAdapter(featureList, mClick)
         bind.gridRecycler.adapter = featureAdapter
 
-        teamAdapter = TeamAdapter(teamList,mClick)
+        teamAdapter = TeamAdapter(teamList, mClick)
         bind.teamRecycler.adapter = teamAdapter
 
         bind.twitter.setOnClickListener {
-           log( "MediaLink  = ${socialMediaLinks.find { it?.platform == 3}?.url}")
+            log("MediaLink  = ${socialMediaLinks.find { it?.platform == 3 }?.url}")
 
-            val url = socialMediaLinks.find { it?.platform == 3}?.url
+            val url = socialMediaLinks.find { it?.platform == 3 }?.url
             launchWeb(url?.url.toString())
         }
 
         bind.insta.setOnClickListener {
-            val url = socialMediaLinks.find { it?.platform == 1}?.url
+            val url = socialMediaLinks.find { it?.platform == 1 }?.url
             launchWeb(url?.url.toString())
         }
 
         bind.faceBook.setOnClickListener {
-            val url = socialMediaLinks.find { it?.platform == 2}?.url
+            val url = socialMediaLinks.find { it?.platform == 2 }?.url
             launchWeb(url?.url.toString())
         }
 
         bind.linkedIn.setOnClickListener {
-            val url = socialMediaLinks.find { it?.platform == 0}?.url
+            val url = socialMediaLinks.find { it?.platform == 0 }?.url
             launchWeb(url?.url.toString())
         }
 
@@ -85,9 +86,9 @@ class AboutUsFragment : BaseFragment<MoreViewModel,FragmentAboutUsBinding>() {
 
         viewModel.aboutUs()
 
-        viewModel.aboutUsRepo.observe(viewLifecycleOwner){
-            when(it){
-                is Resource.Success ->{
+        viewModel.aboutUsRepo.observe(viewLifecycleOwner) {
+            when (it) {
+                is Resource.Success -> {
                     bind.loader.isVisible = false
                     viewModel.getTermsConditionsRepo.value = null
 
@@ -95,47 +96,53 @@ class AboutUsFragment : BaseFragment<MoreViewModel,FragmentAboutUsBinding>() {
                     bind.mission.text = mData?.mission
 
                     mData?.impact?.forEach {
-                        when(it?.label){
-                            "Users" ->{
+                        when (it?.label) {
+                            "Users" -> {
 
                                 bind.users.text = it.value
 
                             }
 
-                            "Auction" ->{
+                            "Auction" -> {
                                 bind.auctions.text = it.value
                             }
 
-                            "Sale" ->{
+                            "Sale" -> {
                                 bind.sales.text = it.value
                             }
                         }
                     }
 
-                    if (mData?.socialMedia!= null){
+                    if (mData?.socialMedia != null) {
                         socialMediaLinks.addAll(mData.socialMedia)
                     }
 
                     bind.email.title.text = mData?.contactEmail
                     bind.email.icon.setImageDrawable(ContextCompat.getDrawable(mCtx, draw.ic_mail))
                     bind.phoneNumber.title.text = mData?.contactPhone
-                    bind.phoneNumber.icon.setImageDrawable(ContextCompat.getDrawable(mCtx, draw.ic_phone))
+                    bind.phoneNumber.icon.setImageDrawable(
+                        ContextCompat.getDrawable(
+                            mCtx,
+                            draw.ic_phone
+                        )
+                    )
 
                     bind.email.subTitle.isVisible = false
                     bind.phoneNumber.subTitle.isVisible = false
 
-                    if (mData?.team != null){
+                    if (mData?.team != null) {
                         teamList.addAll(mData.team)
                     }
 
-                    if (mData?.features != null){
+                    if (mData?.features != null) {
                         featureList.addAll(mData.features)
                     }
                     featureAdapter.notifyDataSetChanged()
                     teamAdapter.notifyDataSetChanged()
 
                 }
-                is Resource.Error ->{
+
+                is Resource.Error -> {
                     bind.loader.isVisible = false
                     viewModel.getTermsConditionsRepo.value = null
                     if (it.isNetworkError) {
@@ -154,7 +161,8 @@ class AboutUsFragment : BaseFragment<MoreViewModel,FragmentAboutUsBinding>() {
                         })
                     }
                 }
-                else ->{}
+
+                else -> {}
             }
         }
 

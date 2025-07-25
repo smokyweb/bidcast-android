@@ -27,10 +27,10 @@ class NotificationActivity : BaseActivity() {
 
     private var delPos = -1
 
-    private val mClick = object : RecyclerClicks{
+    private val mClick = object : RecyclerClicks {
         override fun itemClick(pos: Int, status: String?) {
-            when(status){
-                "delete" ->{
+            when (status) {
+                "delete" -> {
                     bind.loader.isVisible = true
                     delPos = pos
                     val id = notificationList[pos]?.id
@@ -58,7 +58,7 @@ class NotificationActivity : BaseActivity() {
 
             bind.loader.isVisible = true
 
-             viewModel.deleteNotification("".request())
+            viewModel.deleteNotification("".request())
 
         }
 
@@ -81,7 +81,7 @@ class NotificationActivity : BaseActivity() {
 
         bind.loader.isVisible = true
 
-       viewModel.getNotification()
+        viewModel.getNotification()
 
         viewModel.getNotificationRepo.observe(this) {
             when (it) {
@@ -93,7 +93,7 @@ class NotificationActivity : BaseActivity() {
                         bind.loader.isVisible = false
 
                         val mData = it.value.data
-                        if (mData!=null){
+                        if (mData != null) {
                             notificationList.addAll(mData)
                         }
 
@@ -108,11 +108,10 @@ class NotificationActivity : BaseActivity() {
                     bind.loader.isVisible = false
                     bind.bottomLoader.isVisible = false
 
-                    if (it.isNetworkError){
+                    if (it.isNetworkError) {
                         bind.noInternet.isVisible = true
 
-                    }
-                    else{
+                    } else {
                         it.parse(this, TAG, object : AlertClicks {
                             override fun primaryClick(dialog: AppBottomSheet) {
                                 dialog.dismiss()
@@ -126,6 +125,7 @@ class NotificationActivity : BaseActivity() {
 
 
                 }
+
                 else -> {}
             }
         }
@@ -136,11 +136,11 @@ class NotificationActivity : BaseActivity() {
                     runSafe {
                         bind.loader.isVisible = false
 
-                        if (delPos != -1){
+                        if (delPos != -1) {
                             notificationList.removeAt(delPos)
                             notificationAdapter.notifyItemRemoved(delPos)
-                            notificationAdapter.notifyItemRangeChanged(0,notificationList.size)
-                        }else{
+                            notificationAdapter.notifyItemRangeChanged(0, notificationList.size)
+                        } else {
                             viewModel.getNotification()
                         }
 
@@ -160,6 +160,7 @@ class NotificationActivity : BaseActivity() {
                         }
                     })
                 }
+
                 else -> {}
             }
         }

@@ -149,8 +149,10 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
     suspend fun getShippingAddress() = call { api.getShippingAddress() }
 
     suspend fun addPaymentCard(
-        cardToken: RequestBody?,
-    ) = call { api.addPaymentCard(cardToken) }
+        cardNumber: RequestBody?,
+        expirationDate: RequestBody?,
+        cvv: RequestBody?,
+    ) = call { api.addPaymentCard(cardNumber, expirationDate, cvv) }
 
     suspend fun getPaymentCard(
     ) = call { api.getPaymentCard() }
@@ -384,9 +386,11 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
         id: MultipartBody.Part?,
         image: MultipartBody.Part?,
         phoneVerification: RequestBody,
-        cardToken: RequestBody,
+        cardNumber: RequestBody,
+        expirationDate: RequestBody,
+        cvv: RequestBody
     ) = call { api.storeSellerVerification(id
-    ,image,phoneVerification,cardToken) }
+    ,image,phoneVerification,cardNumber,expirationDate,cvv) }
 
 
     suspend fun getSellerStatus(

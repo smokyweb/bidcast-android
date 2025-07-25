@@ -249,9 +249,6 @@ class SellerProfileActivity : BaseActivity() {
         bind.notificationIcon.setOnClickListener {
             showNotificationSheet()
         }
-        bind.notificationIcon1.setOnClickListener {
-            showNotificationSheet()
-        }
 
         viewModel.followUserShowRepo.observe(this) {
             when (it) {
@@ -418,7 +415,7 @@ class SellerProfileActivity : BaseActivity() {
         )
         val sheet = Alerts.appBottomSheet(this, true, mBind)
 
-        mBind.submit.setOnClickListener {
+        mBind.submitReport.setOnClickListener {
             sheet.dismiss()
         }
 

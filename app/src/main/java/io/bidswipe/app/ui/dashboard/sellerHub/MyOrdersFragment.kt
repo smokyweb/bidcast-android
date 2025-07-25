@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
+import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseFragment
 import io.bidswipe.app.controller.OrdersAdapter
 import io.bidswipe.app.databinding.FragmentMyOrdersBinding
@@ -13,6 +14,7 @@ import io.bidswipe.app.interfaces.AlertClicks
 import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.network.response.GetOrdersResponse
+import io.bidswipe.app.ui.custom.AlertType
 import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.utils.finish
 import io.bidswipe.app.utils.parse
@@ -25,14 +27,10 @@ class MyOrdersFragment : BaseFragment<SellerHubViewModel, FragmentMyOrdersBindin
         FragmentMyOrdersBinding.inflate(inflater, view, false)
 
     private var orderList = mutableListOf<GetOrdersResponse.Data?>()
-
     private lateinit var adapter: OrdersAdapter
-
     private val mClick = object : RecyclerClicks {
-
         override fun itemClick(pos: Int, status: String?) {
         }
-
     }
 
     @SuppressLint("NotifyDataSetChanged")
@@ -41,6 +39,9 @@ class MyOrdersFragment : BaseFragment<SellerHubViewModel, FragmentMyOrdersBindin
 
         bind.header.onBackClick {
             finish()
+        }
+        bind.header.onMoreSecondaryClick {
+            showDeleteConfirmationDialog()
         }
 
         adapter = OrdersAdapter(orderList, mClick)
@@ -121,5 +122,31 @@ class MyOrdersFragment : BaseFragment<SellerHubViewModel, FragmentMyOrdersBindin
             }
         }
 
+    }
+
+    private fun showDeleteConfirmationDialog() {
+        AppBottomSheet(
+            mCtx,
+            R.drawable.ic_delete,
+            "Delete Order",
+            "Are you sure you want to delete all orders?",
+            primaryBtnText = "Delete",
+            secondaryBtnText = "Cancel",
+            canCancel = true,
+            showSecondary = true,
+            alertType = AlertType.ERROR,
+            clicks = object : AlertClicks {
+                override fun primaryClick(dialog: AppBottomSheet) {
+                    dialog.dismiss()
+                    bind.loader.isVisible = false
+                }
+
+                override fun secondaryClick(dialog: AppBottomSheet) {
+                    dialog.dismiss()
+                }
+
+            },
+
+            ).show()
     }
 }

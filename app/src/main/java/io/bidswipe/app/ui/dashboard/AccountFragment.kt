@@ -1,6 +1,5 @@
 package io.bidswipe.app.ui.dashboard
 
-import android.R.id.title
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -30,9 +29,7 @@ import io.bidswipe.app.utils.finish
 import io.bidswipe.app.utils.loadUrl
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.toAuth
-import androidx.core.net.toUri
 import io.bidswipe.app.ui.dashboard.sellerHub.SellerVerificationActivity
-import io.bidswipe.app.utils.runSafe
 
 class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
 
@@ -102,24 +99,24 @@ class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
 
     }
 
-    private fun launchWeb(url: String) {
+    /*    private fun launchWeb(url: String) {
 
-            runSafe {
-                CustomTabsIntent.Builder().apply {
-                    setDefaultColorSchemeParams(
-                        CustomTabColorSchemeParams.Builder()
-                            .setToolbarColor(ContextCompat.getColor(mCtx, R.color.primary))
-                            .build()
-                    )
-                    setShowTitle(true)
-                }.build().apply {
-                    intent.setPackage("com.android.chrome")
-                    launchUrl(requireActivity(), url.toUri())
+                runSafe {
+                    CustomTabsIntent.Builder().apply {
+                        setDefaultColorSchemeParams(
+                            CustomTabColorSchemeParams.Builder()
+                                .setToolbarColor(ContextCompat.getColor(mCtx, R.color.primary))
+                                .build()
+                        )
+                        setShowTitle(true)
+                    }.build().apply {
+                        intent.setPackage("com.android.chrome")
+                        launchUrl(requireActivity(), url.toUri())
+                    }
                 }
-            }
 
 
-    }
+        }*/
 
     private val accountGridClick = object : RecyclerClicks {
         override fun itemClick(pos: Int, status: String?) {
@@ -195,8 +192,8 @@ class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
 
         App.profileResponse.observe(viewLifecycleOwner) {
 
-            bind.userName.text = it?.name ?:""
-            bind.sellerSince.text = it?.bio?:"N/A"
+            bind.userName.text = it?.name ?: ""
+            bind.sellerSince.text = it?.bio ?: "N/A"
             bind.userProfile.loadUrl(mCtx, it?.profileImage.toString())
         }
 
@@ -228,8 +225,20 @@ class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
         gridList.add(MoreModel(R.drawable.ic_graph, "Seller Status", "sellerStatus"))
         gridList.add(MoreModel(R.drawable.ic_graph, "Seller Analytics", "sellerAnalytics"))
         gridList.add(MoreModel(R.drawable.ic_speaker, "Promote Tools", "promote"))
-        gridList.add(MoreModel(R.drawable.ic_checked_tag, "Seller Verification", "sellerVerification"))
-        gridList.add(MoreModel(R.drawable.ic_checked_tag, "Identity Verification", "identityVerification"))
+        gridList.add(
+            MoreModel(
+                R.drawable.ic_checked_tag,
+                "Seller Verification",
+                "sellerVerification"
+            )
+        )
+        gridList.add(
+            MoreModel(
+                R.drawable.ic_checked_tag,
+                "Identity Verification",
+                "identityVerification"
+            )
+        )
 
         gridAdapter = GridAdapter(gridList, gridClick)
         bind.sellerHub.gridRecycler.adapter = gridAdapter
@@ -251,6 +260,7 @@ class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
         viewModel.logoutRepo.observe(viewLifecycleOwner) {
             when (it) {
                 is Resource.Success -> {
+                    bind.loader.isVisible = false
                     successToast(it.value.message.toString())
                     Prefs(mCtx).clear()
                     startActivity(mCtx.toAuth())

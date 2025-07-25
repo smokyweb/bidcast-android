@@ -36,7 +36,6 @@ class AppBottomSheet(
     alertType: AlertType = AlertType.SUCCESS,
 ) : BottomSheetDialog(mCtx) {
 
-
     @SuppressLint("InflateParams")
     private val bind = AppAlertViewBinding.bind(
         LayoutInflater.from(mCtx).inflate(layout.app_alert_view, null, false)

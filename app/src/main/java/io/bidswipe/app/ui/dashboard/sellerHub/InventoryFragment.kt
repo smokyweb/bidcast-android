@@ -21,23 +21,19 @@ import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request
 import io.bidswipe.app.utils.toListProduct
 
-class InventoryFragment : BaseFragment<SellerHubViewModel,FragmentInventoryBinding>() {
+class InventoryFragment : BaseFragment<SellerHubViewModel, FragmentInventoryBinding>() {
     override fun getModel(): Class<SellerHubViewModel> = SellerHubViewModel::class.java
 
-    override fun getBind(inflater: LayoutInflater, view: ViewGroup?) = FragmentInventoryBinding.inflate(inflater,view,false)
+    override fun getBind(inflater: LayoutInflater, view: ViewGroup?) =
+        FragmentInventoryBinding.inflate(inflater, view, false)
 
-    private var itemList  = mutableListOf<GetMyInventoryResponse.Data?>()
-
-    private lateinit var adapter : InventoryAdapter
-
+    private var itemList = mutableListOf<GetMyInventoryResponse.Data?>()
+    private lateinit var adapter: InventoryAdapter
     private var isLoading = false
-
     private var page = 1
-
     private var selectedTab = "active"
+    private val mClick = object : RecyclerClicks {
 
-    private val mClick = object : RecyclerClicks{
-     
         override fun itemClick(pos: Int, status: String?) {
         }
 
@@ -46,20 +42,20 @@ class InventoryFragment : BaseFragment<SellerHubViewModel,FragmentInventoryBindi
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        bind.header.onBackClick{
+        bind.header.onBackClick {
             finish()
         }
 
-        adapter = InventoryAdapter(itemList,mClick)
+        adapter = InventoryAdapter(itemList, mClick)
 
         bind.recycler.adapter = adapter
 
-        bind.tabs.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener{
+        bind.tabs.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab?) {
                 selectedTab = tab?.text.toString().lowercase()
                 page = 1
                 bind.loader.isVisible = true
-                viewModel.getMyInventory(selectedTab.request(),page.toString().request())
+                viewModel.getMyInventory(selectedTab.request(), page.toString().request())
             }
 
             override fun onTabUnselected(tab: TabLayout.Tab?) {
@@ -85,17 +81,19 @@ class InventoryFragment : BaseFragment<SellerHubViewModel,FragmentInventoryBindi
                         isLoading = true
                         page++
                         bind.bottomLoader.isVisible = true
-                        viewModel.getMyInventory(selectedTab.request(),page.toString().request())
+                        viewModel.getMyInventory(selectedTab.request(), page.toString().request())
                     }
                 }
             }
         })
 
         bind.swipeRefreshLayout.setOnRefreshListener {
-            when(bind.tabs.isSelected){
-                true -> viewModel.getMyInventory(selectedTab.request(),page.toString().request())
-                false -> viewModel.getMyInventory("active".request(),"1".request())
-            }
+            page = 1
+            isLoading = false
+            itemList.clear()
+            bind.recycler.isVisible = false
+            bind.noData.isVisible = false
+            viewModel.getMyInventory(selectedTab.request(), page.toString().request())
         }
 
         bind.noInternet.onClick {
@@ -103,15 +101,25 @@ class InventoryFragment : BaseFragment<SellerHubViewModel,FragmentInventoryBindi
             bind.bottomLoader.isVisible = false
             bind.loader.isVisible = true
 
-            when(bind.tabs.isSelected){
-                true -> viewModel.getMyInventory(selectedTab.request(),page.toString().request())
-                false -> viewModel.getMyInventory("active".request(),"1".request())
-            }
+            bind.tabs.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+                override fun onTabSelected(tab: TabLayout.Tab?) {
+                    selectedTab = tab?.text.toString().lowercase()
+                    page = 1
+                    isLoading = false
+                    itemList.clear()
+                    bind.recycler.isVisible = false
+                    bind.noData.isVisible = false
+                    viewModel.getMyInventory(selectedTab.request(), page.toString().request())
+                }
+
+                override fun onTabUnselected(tab: TabLayout.Tab?) {}
+                override fun onTabReselected(tab: TabLayout.Tab?) {}
+            })
         }
 
         bind.loader.isVisible = true
 
-        viewModel.getMyInventory("active".request(),"1".request())
+        viewModel.getMyInventory("active".request(), "1".request())
         viewModel.getMyInventoryRepo.observe(viewLifecycleOwner) {
             when (it) {
                 is Resource.Success -> {
@@ -122,7 +130,7 @@ class InventoryFragment : BaseFragment<SellerHubViewModel,FragmentInventoryBindi
 
                     val mData = it.value.data
 
-                    if (page==1){
+                    if (page == 1) {
                         itemList.clear()
                     }
 
@@ -130,10 +138,10 @@ class InventoryFragment : BaseFragment<SellerHubViewModel,FragmentInventoryBindi
                         itemList.addAll(mData)
                     }
 
-                    if (itemList.isNotEmpty()){
+                    if (itemList.isNotEmpty()) {
                         bind.recycler.isVisible = true
                         bind.noData.isVisible = false
-                    }else{
+                    } else {
                         bind.recycler.isVisible = false
                         bind.noData.isVisible = true
                     }

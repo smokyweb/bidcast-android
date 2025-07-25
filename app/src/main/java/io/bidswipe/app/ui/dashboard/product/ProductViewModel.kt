@@ -21,29 +21,29 @@ import javax.inject.Inject
 @HiltViewModel
 class ProductViewModel @Inject constructor(val repo: DashRepository) : ViewModel() {
 
-    var product : GetProductDetailsResponse.Data? = null
-    var checkoutData : GetPurchaseDetail.Data? = null
+    var product: GetProductDetailsResponse.Data? = null
+    var checkoutData: GetPurchaseDetail.Data? = null
 
-/*    private var _createOrderResponse = MutableLiveData<Resource<CommonResponse>>()
-    val createOrderRepo: MutableLiveData<Resource<CommonResponse>>
-        get() = _createOrderResponse
+    /*    private var _createOrderResponse = MutableLiveData<Resource<CommonResponse>>()
+        val createOrderRepo: MutableLiveData<Resource<CommonResponse>>
+            get() = _createOrderResponse
 
-    fun createOrder(
-        shippingId : RequestBody?,
-        productId : RequestBody?,
-        cardId : RequestBody?,
-        promoCode : RequestBody?,
-        sendAsGift : RequestBody?,
-        giftUserId : RequestBody?,
-        giftMsg : RequestBody?,
-        shippingCharges : RequestBody?,
-        taxAmount : RequestBody?,
-        subTotal : RequestBody?,
-        total : RequestBody?,
-        discount : RequestBody?
-    ) = viewModelScope.launch {
-        _createOrderResponse.value = repo.createOrder(shippingId,productId,cardId,promoCode,sendAsGift,giftUserId,giftMsg,shippingCharges,taxAmount,subTotal,total,discount)
-    }*/
+        fun createOrder(
+            shippingId : RequestBody?,
+            productId : RequestBody?,
+            cardId : RequestBody?,
+            promoCode : RequestBody?,
+            sendAsGift : RequestBody?,
+            giftUserId : RequestBody?,
+            giftMsg : RequestBody?,
+            shippingCharges : RequestBody?,
+            taxAmount : RequestBody?,
+            subTotal : RequestBody?,
+            total : RequestBody?,
+            discount : RequestBody?
+        ) = viewModelScope.launch {
+            _createOrderResponse.value = repo.createOrder(shippingId,productId,cardId,promoCode,sendAsGift,giftUserId,giftMsg,shippingCharges,taxAmount,subTotal,total,discount)
+        }*/
 
     private var _getProductResponse = MutableLiveData<Resource<CommonResponse>>()
     val getProductRepo: MutableLiveData<Resource<CommonResponse>>
@@ -54,7 +54,8 @@ class ProductViewModel @Inject constructor(val repo: DashRepository) : ViewModel
     }
 
 
-    private var _getShippingAddressResponse = MutableLiveData<Resource<GetShippingAddressResponse>>()
+    private var _getShippingAddressResponse =
+        MutableLiveData<Resource<GetShippingAddressResponse>>()
     val getShippingAddressRepo: MutableLiveData<Resource<GetShippingAddressResponse>>
         get() = _getShippingAddressResponse
 
@@ -77,10 +78,10 @@ class ProductViewModel @Inject constructor(val repo: DashRepository) : ViewModel
         get() = _getPurchaseProductResponse
 
     fun getPurchaseProduct(
-        shippingId : RequestBody?,
-        productId : RequestBody?
+        shippingId: RequestBody?,
+        productId: RequestBody?,
     ) = viewModelScope.launch {
-        _getPurchaseProductResponse.value = repo.getPurchaseProduct(shippingId,productId)
+        _getPurchaseProductResponse.value = repo.getPurchaseProduct(shippingId, productId)
     }
 
     private var _createOrderResponse = MutableLiveData<Resource<CreateOrderResponse>>()
@@ -88,20 +89,33 @@ class ProductViewModel @Inject constructor(val repo: DashRepository) : ViewModel
         get() = _createOrderResponse
 
     fun createOrder(
-        shippingId : RequestBody?,
-        productId : RequestBody?,
-        cardId : RequestBody?,
-        promoCode : RequestBody?,
-        sendAsGift : RequestBody?,
-        giftUserId : RequestBody?,
-        giftMsg : RequestBody?,
-        shippingCharges : RequestBody?,
-        taxAmount : RequestBody?,
-        subTotal : RequestBody?,
-        total : RequestBody?,
-        discount : RequestBody? =null
+        shippingId: RequestBody?,
+        productId: RequestBody?,
+        cardId: RequestBody?,
+        promoCode: RequestBody?,
+        sendAsGift: RequestBody?,
+        giftUserId: RequestBody?,
+        giftMsg: RequestBody?,
+        shippingCharges: RequestBody?,
+        taxAmount: RequestBody?,
+        subTotal: RequestBody?,
+        total: RequestBody?,
+        discount: RequestBody? = null,
     ) = viewModelScope.launch {
-        _createOrderResponse.value = repo.createOrder(shippingId,productId,cardId,promoCode,sendAsGift,giftUserId,giftMsg,shippingCharges,taxAmount,subTotal,total,discount)
+        _createOrderResponse.value = repo.createOrder(
+            shippingId,
+            productId,
+            cardId,
+            promoCode,
+            sendAsGift,
+            giftUserId,
+            giftMsg,
+            shippingCharges,
+            taxAmount,
+            subTotal,
+            total,
+            discount
+        )
     }
 
     private var _getProductDetailsResponse = MutableLiveData<Resource<GetProductDetailsResponse>>()
@@ -109,7 +123,7 @@ class ProductViewModel @Inject constructor(val repo: DashRepository) : ViewModel
         get() = _getProductDetailsResponse
 
     fun getProductDetails(
-        productId : RequestBody?
+        productId: RequestBody?,
     ) = viewModelScope.launch {
         _getProductDetailsResponse.value = repo.getProductDetails(productId)
     }
@@ -119,10 +133,10 @@ class ProductViewModel @Inject constructor(val repo: DashRepository) : ViewModel
         get() = _makeOfferResponse
 
     fun makeOffer(
-        amount : RequestBody?,
-        productId : RequestBody?
+        amount: RequestBody?,
+        productId: RequestBody?,
     ) = viewModelScope.launch {
-        _makeOfferResponse.value = repo.makeOffer(amount,productId)
+        _makeOfferResponse.value = repo.makeOffer(amount, productId)
     }
 
     private var _getOrderReceiptResponse = MutableLiveData<Resource<CommonResponse>>()
@@ -130,7 +144,7 @@ class ProductViewModel @Inject constructor(val repo: DashRepository) : ViewModel
         get() = _getOrderReceiptResponse
 
     fun getOrderReceipt(
-        orderId : RequestBody?
+        orderId: RequestBody?,
     ) = viewModelScope.launch {
         _getOrderReceiptResponse.value = repo.getOrderReceipt(orderId)
     }
@@ -140,7 +154,7 @@ class ProductViewModel @Inject constructor(val repo: DashRepository) : ViewModel
         get() = _getOrderDetailsResponse
 
     fun getOrderDetails(
-        orderId : RequestBody?
+        orderId: RequestBody?,
     ) = viewModelScope.launch {
         _getOrderDetailsResponse.value = repo.getOrderDetails(orderId)
     }
@@ -150,7 +164,7 @@ class ProductViewModel @Inject constructor(val repo: DashRepository) : ViewModel
         get() = _searchUsersResponse
 
     fun searchUsers(
-        search : RequestBody?
+        search: RequestBody?,
     ) = viewModelScope.launch {
         _searchUsersResponse.value = repo.searchUsers(search)
     }
@@ -160,7 +174,7 @@ class ProductViewModel @Inject constructor(val repo: DashRepository) : ViewModel
         get() = _saveSellerProductResponse
 
     fun saveSellerProduct(
-        productId : RequestBody?
+        productId: RequestBody?,
     ) = viewModelScope.launch {
         _saveSellerProductResponse.value = repo.saveSellerProduct(productId)
     }
