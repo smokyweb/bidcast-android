@@ -9,6 +9,7 @@ import io.bidswipe.app.databinding.BidsItemBinding
 import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.network.response.FetchBidResponse
 import io.bidswipe.app.utils.Utils
+import io.bidswipe.app.utils.asCapital
 import io.bidswipe.app.utils.asMoney
 import io.bidswipe.app.utils.loadUrl
 
@@ -26,10 +27,10 @@ class BidsAdapter(
     ) {
         with(holder) {
 
-            bind.userName.text = item?.user?.username
+            bind.userName.text = item?.user?.username?.asCapital()
             bind.userImage.loadUrl(mCtx, item?.user?.profileImage.toString())
             bind.offerPrice.text = item?.product?.pricing.toString().asMoney()
-            bind.productNmae.text = item?.product?.title
+            bind.productName.text = item?.product?.title?.asCapital()
             bind.productImage.loadUrl(mCtx, item?.product?.images?.get(0).toString())
             bind.prodSubTitle.text = buildString {
                 append("Current Bid: ")

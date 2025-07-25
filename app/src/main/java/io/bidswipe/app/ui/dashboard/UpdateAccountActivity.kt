@@ -124,7 +124,7 @@ class UpdateAccountActivity : BaseActivity() {
             when (it) {
                 is Resource.Success -> {
                     bind.loader.isVisible = false
-                    val mData = it.value.data
+                    it.value.data
                     App.getProfile()
                     Alerts.success(this, "Profile Updated")
                 }

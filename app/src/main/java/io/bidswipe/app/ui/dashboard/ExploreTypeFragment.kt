@@ -24,14 +24,16 @@ import io.bidswipe.app.ui.dashboard.more.NotificationActivity
 import io.bidswipe.app.ui.dashboard.sellerProfile.SellerProfileActivity
 import io.bidswipe.app.ui.dashboard.watchStream.ViewLiveShowActivity
 import io.bidswipe.app.utils.Utils
+import io.bidswipe.app.utils.asCapital
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request
 import io.bidswipe.app.utils.runSafe
 
-class ExploreTypeFragment : BaseFragment<DashViewModel,FragmentExploreTypeBinding>() {
+class ExploreTypeFragment : BaseFragment<DashViewModel, FragmentExploreTypeBinding>() {
     override fun getModel(): Class<DashViewModel> = DashViewModel::class.java
 
-    override fun getBind(inflater: LayoutInflater, view: ViewGroup?) = FragmentExploreTypeBinding.inflate(inflater,view,false)
+    override fun getBind(inflater: LayoutInflater, view: ViewGroup?) =
+        FragmentExploreTypeBinding.inflate(inflater, view, false)
 
     private lateinit var homeAdapter: HomeAdapter
     private var categoriesList = mutableListOf<String>()
@@ -44,14 +46,23 @@ class ExploreTypeFragment : BaseFragment<DashViewModel,FragmentExploreTypeBindin
 
             when (status) {
                 "user" -> {
-                    startActivity(Intent(mCtx, SellerProfileActivity::class.java).putExtra("userId",
-                        showList[pos]?.userId.toString()
-                    ))
+                    startActivity(
+                        Intent(mCtx, SellerProfileActivity::class.java).putExtra(
+                            "userId",
+                            showList[pos]?.userId.toString()
+                        )
+                    )
                 }
 
-                "viewShow" ->{
-                    if (showList[pos]?.isLive == true){
-                        startActivity(Intent(mCtx, ViewLiveShowActivity::class.java).putExtra("position", pos).putParcelableArrayListExtra("roomIdsList", romIdsList as ArrayList))
+                "viewShow" -> {
+                    if (showList[pos]?.isLive == true) {
+                        startActivity(
+                            Intent(
+                                mCtx,
+                                ViewLiveShowActivity::class.java
+                            ).putExtra("position", pos)
+                                .putParcelableArrayListExtra("roomIdsList", romIdsList as ArrayList)
+                        )
                     }
                 }
             }
@@ -62,7 +73,9 @@ class ExploreTypeFragment : BaseFragment<DashViewModel,FragmentExploreTypeBindin
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        category = arguments?.getString("category") ?:""
+        category = arguments?.getString("category") ?: ""
+        bind.header.setHeaderText(category.asCapital())
+
 
         bind.header.onBackClick {
 
@@ -71,7 +84,12 @@ class ExploreTypeFragment : BaseFragment<DashViewModel,FragmentExploreTypeBindin
         }
 
         bind.header.onMorePrimaryClick {
-            startActivity(Intent(mCtx , NotificationActivity::class.java).putExtra("slug","notification"))
+            startActivity(
+                Intent(mCtx, NotificationActivity::class.java).putExtra(
+                    "slug",
+                    "notification"
+                )
+            )
         }
 
         homeAdapter = HomeAdapter(showList, mClick)
@@ -85,42 +103,19 @@ class ExploreTypeFragment : BaseFragment<DashViewModel,FragmentExploreTypeBindin
         bind.comingSoon.setOnClickListener { selectTab(it as TextView) }
 
         categoriesList = mutableListOf(category)
-        categoriesList.forEach {
-            bind.chipGroup.addView(
-                Utils.makeAChip(
-                    mCtx = mCtx,
-                    text = it,
-                    selected = true
-                )
-            )
-        }
-
-        bind.chipGroup.setOnCheckedStateChangeListener { chipGroup, _ ->
-            runSafe {
-                val chipId = chipGroup.checkedChipId
-                chipGroup.indexOfChild(chipGroup.findViewById(chipId))
-            }
-        }
 
 
-       /* repeat(1){
-            bind.chipGroup.addView(
-                Utils.makeAChip(
-                    mCtx = mCtx,
-                    text = "Gaming",
-                    selected = true
-                )
-            )
-        }*/
+        /* repeat(1){
+             bind.chipGroup.addView(
+                 Utils.makeAChip(
+                     mCtx = mCtx,
+                     text = "Gaming",
+                     selected = true
+                 )
+             )
+         }*/
 
-        bind.chipGroup.setOnCheckedStateChangeListener { chipGroup, _ ->
-            runSafe {
-                val chipId = chipGroup.checkedChipId
-                val index = chipGroup.indexOfChild(chipGroup.findViewById(chipId))
-            }
-        }
-
-        viewModel.getLiveShowRepo.observe(viewLifecycleOwner) {
+        viewModel.getLiveShowRepo.observe(viewLifecycleOwner) {it ->
             when (it) {
                 is Resource.Success -> {
                     bind.loader.isVisible = false
@@ -128,7 +123,7 @@ class ExploreTypeFragment : BaseFragment<DashViewModel,FragmentExploreTypeBindin
                     val mData = it.value.data
 
                     mData?.forEach {
-                        romIdsList.add(StreamModel(it?.roomId.toString(),""))
+                        romIdsList.add(StreamModel(it?.roomId.toString(), ""))
                     }
 
                     showList.clear()
@@ -137,10 +132,10 @@ class ExploreTypeFragment : BaseFragment<DashViewModel,FragmentExploreTypeBindin
                         showList.add(it)
                     }
 
-                    if (showList.isEmpty()){
+                    if (showList.isEmpty()) {
                         bind.noData.isVisible = true
                         bind.recycler.isVisible = false
-                    }else{
+                    } else {
                         bind.noData.isVisible = false
                         bind.recycler.isVisible = true
                     }
@@ -188,16 +183,16 @@ class ExploreTypeFragment : BaseFragment<DashViewModel,FragmentExploreTypeBindin
 
         bind.loader.isVisible = true
 
-        when(selectedTab){
-            bind.live ->{
-                viewModel.getLiveShow("live".request(),category.request())
+        when (selectedTab) {
+            bind.live -> {
+                viewModel.getLiveShow("live".request(), category.request())
             }
 
-            bind.popular ->{
+            bind.popular -> {
                 viewModel.getLiveShow("popular".request(), category.request())
             }
 
-            bind.comingSoon ->{
+            bind.comingSoon -> {
                 viewModel.getLiveShow("upcoming".request(), category.request())
             }
 

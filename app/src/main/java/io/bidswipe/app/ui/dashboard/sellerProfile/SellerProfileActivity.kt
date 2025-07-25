@@ -197,8 +197,7 @@ class SellerProfileActivity : BaseActivity() {
                     if (mData?.isFollowing == true) {
                         bind.follow.setBackgroundColor(
                             ContextCompat.getColor(
-                                this,
-                                R.color.outline
+                                this, R.color.outline
                             )
                         )
                         bind.follow.setTextColor(ContextCompat.getColor(this, R.color.onSurface))
@@ -206,8 +205,7 @@ class SellerProfileActivity : BaseActivity() {
                     } else {
                         bind.follow.setBackgroundColor(
                             ContextCompat.getColor(
-                                this,
-                                R.color.primary
+                                this, R.color.primary
                             )
                         )
                         bind.follow.setTextColor(ContextCompat.getColor(this, R.color.background))
@@ -253,7 +251,6 @@ class SellerProfileActivity : BaseActivity() {
         viewModel.followUserShowRepo.observe(this) {
             when (it) {
                 is Resource.Success -> {
-
                     it.value.data
 
                     viewModel.getProfileById(sellerId.request())
@@ -328,9 +325,7 @@ class SellerProfileActivity : BaseActivity() {
     fun showNotificationSheet() {
         val notificationSheetBind = NotificationSheetBinding.bind(
             layoutInflater.inflate(
-                R.layout.notification_sheet,
-                null,
-                false
+                R.layout.notification_sheet, null, false
             )
         )
         val notificationSheet = Alerts.appBottomSheet(this, true, notificationSheetBind)
@@ -399,8 +394,7 @@ class SellerProfileActivity : BaseActivity() {
                 override fun secondaryClick(dialog: AppBottomSheet) {
                     dialog.dismiss()
                 }
-            }
-        ).show()
+            }).show()
 
     }
 
@@ -408,9 +402,7 @@ class SellerProfileActivity : BaseActivity() {
     fun reportUserDialog() {
         val mBind = AppReportViewBinding.bind(
             layoutInflater.inflate(
-                R.layout.app_report_view,
-                null,
-                false
+                R.layout.app_report_view, null, false
             )
         )
         val sheet = Alerts.appBottomSheet(this, true, mBind)

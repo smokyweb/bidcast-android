@@ -45,28 +45,17 @@
 
     </com.google.android.material.textfield.TextInputLayout>
 
-    <com.google.android.material.chip.ChipGroup
-        android:id="@+id/chipGroup"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/margin"
-        app:alignContent="space_around"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/searchLayout"
-        app:singleLine="true"
-        app:singleSelection="true" />
-
     <LinearLayout
         android:id="@+id/heading"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/margin"
+        android:layout_marginTop="@dimen/half_margin"
         android:layout_marginBottom="@dimen/margin"
         android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/chipGroup">
+        app:layout_constraintTop_toBottomOf="@id/searchLayout">
 
         <TextView
             android:id="@+id/live"

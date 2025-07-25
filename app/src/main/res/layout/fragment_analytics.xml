@@ -110,23 +110,22 @@
                         <com.google.android.material.tabs.TabItem
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Over All" />
+                            android:text="@string/over_all" />
 
                         <com.google.android.material.tabs.TabItem
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Livestream" />
+                            android:text="@string/livestream" />
 
                          <com.google.android.material.tabs.TabItem
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Promote" />
+                            android:text="@string/promote" />
 
                          <com.google.android.material.tabs.TabItem
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Trust" />
-
+                            android:text="@string/trust" />
 
                     </com.google.android.material.tabs.TabLayout>
 
@@ -141,13 +140,8 @@
                 android:layout_weight="1"
                 />
 
-
         </LinearLayout>
 
-
-
     </androidx.core.widget.NestedScrollView>
-
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

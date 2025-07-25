@@ -7,6 +7,7 @@ import io.bidswipe.app.base.BaseAdapter
 import io.bidswipe.app.databinding.ShopItemBinding
 import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.network.response.GetProductsResponse
+import io.bidswipe.app.utils.asCapital
 import io.bidswipe.app.utils.asMoney
 import io.bidswipe.app.utils.loadUrl
 
@@ -29,7 +30,7 @@ class ShopAdapter(
 
             bind.productImage.loadUrl(mCtx, item?.images?.get(0).toString())
 
-            bind.productName.text = item?.title.toString()
+            bind.productName.text = item?.title.toString().asCapital()
 
             bind.category.text = buildSpannedString {
                 append(item?.description)

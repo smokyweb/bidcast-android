@@ -7,6 +7,7 @@ import io.bidswipe.app.databinding.PurchasesItemBinding
 import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.network.response.GetProductsByStatusResponse
 import io.bidswipe.app.utils.Utils
+import io.bidswipe.app.utils.asCapital
 import io.bidswipe.app.utils.asMoney
 import io.bidswipe.app.utils.loadUrl
 
@@ -31,7 +32,7 @@ class PurchasesAdapter(
             bind.price.text = item?.product?.pricing.toString().asMoney()
 
             bind.productId.text = buildString {
-                append(item?.product?.title)
+                append(item?.product?.title?.asCapital())
                 append(" #")
                 append(item?.product?.id.toString())
             }

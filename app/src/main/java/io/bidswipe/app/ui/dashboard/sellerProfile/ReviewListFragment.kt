@@ -1,5 +1,6 @@
 package io.bidswipe.app.ui.dashboard.sellerProfile
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -37,6 +38,7 @@ class ReviewListFragment : BaseFragment<SellerViewModel, FragmentReviewListBindi
         view: ViewGroup?
     ) = FragmentReviewListBinding.inflate(inflater,view,false)
 
+    @SuppressLint("NotifyDataSetChanged")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 

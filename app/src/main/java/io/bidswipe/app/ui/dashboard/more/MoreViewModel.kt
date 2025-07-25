@@ -198,7 +198,6 @@ class MoreViewModel @Inject constructor(val repo: DashRepository) : ViewModel() 
         _setDefaultShippingAddressResponse.value = repo.setDefaultShippingAddress(addressId)
     }
 
-
     private var _setDefaultCardResponse = MutableLiveData<Resource<CommonResponse>>()
     val setDefaultCardRepo: MutableLiveData<Resource<CommonResponse>>
         get() = _setDefaultCardResponse

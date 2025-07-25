@@ -14,7 +14,6 @@ import io.bidswipe.app.interfaces.AlertClicks
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.utils.Alerts
-import io.bidswipe.app.utils.Prefs
 import io.bidswipe.app.utils.finish
 import io.bidswipe.app.utils.hideKeyboard
 import io.bidswipe.app.utils.parse
@@ -45,7 +44,7 @@ class ContactUsFragment : BaseFragment<MoreViewModel, FragmentContactUsBinding>(
         bind.email.setText(App.profileResponse.value?.email.toString())
 
 
-        bind.sendMessage.setOnClickListener {
+        bind.sendMessage.setOnClickListener { it ->
             when {
 
                 bind.firstName.value().isEmpty() -> {
@@ -89,11 +88,7 @@ class ContactUsFragment : BaseFragment<MoreViewModel, FragmentContactUsBinding>(
                         bind.subject.value().request(),
                         bind.description.value().request()
                     )
-
-
                 }
-
-
             }
 
             viewModel.contactUsRepo.observe(viewLifecycleOwner) {
@@ -101,7 +96,7 @@ class ContactUsFragment : BaseFragment<MoreViewModel, FragmentContactUsBinding>(
                     is Resource.Success -> {
                         bind.loader.isVisible = false
 
-                        val mData = it.value.data
+                        it.value.data
                         Alerts.success(mCtx, it.value.message.toString())
 
                     }
@@ -128,11 +123,10 @@ class ContactUsFragment : BaseFragment<MoreViewModel, FragmentContactUsBinding>(
                     else -> {}
 
                 }
+
             }
 
-
         }
-
 
     }
 

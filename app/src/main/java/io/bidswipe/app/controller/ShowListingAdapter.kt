@@ -6,6 +6,7 @@ import io.bidswipe.app.base.BaseAdapter
 import io.bidswipe.app.databinding.ShowListingItemBinding
 import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.network.response.GetMyShowResponse
+import io.bidswipe.app.utils.asCapital
 import io.bidswipe.app.utils.loadUrl
 
 class ShowListingAdapter(
@@ -26,7 +27,7 @@ class ShowListingAdapter(
                 mClick.itemClick(position, "click")
             }
 
-            bind.name.text = item?.title
+            bind.name.text = item?.title?.asCapital()
 
             bind.date.text = item?.date
 

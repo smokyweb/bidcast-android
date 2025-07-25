@@ -38,7 +38,6 @@ class AnalyticsFragment : BaseFragment<SellerHubViewModel, FragmentAnalyticsBind
             }
         }.attach()
 
-
     }
 
 }

@@ -437,4 +437,10 @@
     <string name="would_you_like_to_notified_when_usrname_goes_live">Would you like to notified when @usrname goes live</string>
     <string name="set_as_default">Set as default</string>
     <string name="delete">Delete</string>
+    <string name="over_all">Over All</string>
+    <string name="livestream">Livestream</string>
+    <string name="trust">Trust</string>
+    <string name="get_in_touch">Get in Touch</string>
+    <string name="support_company_com">support@company.com</string>
+    <string name="send_message">Send Message</string>
 </resources>

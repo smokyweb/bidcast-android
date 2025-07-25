@@ -103,7 +103,7 @@
                 android:orientation="vertical">
 
                 <TextView
-                    android:id="@+id/product_nmae"
+                    android:id="@+id/product_name"
                     style="@style/TitleLarge"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

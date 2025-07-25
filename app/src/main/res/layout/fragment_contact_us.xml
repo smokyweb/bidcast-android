@@ -19,14 +19,20 @@
         app:showPrimaryIcon="false"
         app:showSecondaryIcon="false" />
 
-    <LinearLayout
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:fillViewport="true"
+        app:layout_constraintTop_toBottomOf="@id/header"
+        app:layout_constraintBottom_toTopOf="@id/sendMessage">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/half_margin"
         android:layout_marginVertical="@dimen/half_margin"
         android:orientation="vertical"
-        app:layout_constraintTop_toBottomOf="@id/header"
-        app:layout_constraintBottom_toTopOf="@id/continueBtn">
+        app:layout_constraintTop_toBottomOf="@id/header">
 
 
         <com.google.android.material.card.MaterialCardView
@@ -46,8 +52,7 @@
                     style="@style/TitleLarge"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Get in Touch"
-                    />
+                    android:text="@string/get_in_touch" />
 
                 <TextView
                     style="@style/BodyMedium"
@@ -73,8 +78,8 @@
             <com.google.android.material.textfield.TextInputLayout
                 style="@style/inputBoxStyle"
                 android:layout_width="match_parent"
-                android:layout_marginHorizontal="@dimen/half_margin"
                 android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/half_margin"
                 android:layout_marginBottom="@dimen/margin">
 
                 <com.google.android.material.textfield.MaterialAutoCompleteTextView
@@ -211,7 +216,7 @@
                         style="@style/BodySmall"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="support@company.com" />
+                        android:text="@string/support_company_com" />
 
                 </LinearLayout>
 
@@ -221,6 +226,7 @@
         </com.google.android.material.card.MaterialCardView>
 
     </LinearLayout>
+    </ScrollView>
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/sendMessage"
@@ -228,7 +234,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/margin"
-        android:text="Send Message"
+        android:text="@string/send_message"
         app:layout_constraintBottom_toBottomOf="parent" />
 
     <io.bidswipe.app.ui.custom.LoaderView

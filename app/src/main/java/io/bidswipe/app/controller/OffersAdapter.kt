@@ -13,6 +13,7 @@ import io.bidswipe.app.databinding.BidsItemBinding
 import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.network.response.GetOffersResponse
 import io.bidswipe.app.utils.Utils
+import io.bidswipe.app.utils.asCapital
 import io.bidswipe.app.utils.asMoney
 import io.bidswipe.app.utils.loadUrl
 
@@ -49,7 +50,7 @@ class OffersAdapter(
             bind.offerPrice.text = item?.amount.toString().asMoney()
 
             bind.productImage.loadUrl(mCtx, item?.product?.images?.first() ?: "")
-            bind.productNmae.text = item?.product?.title
+            bind.productName.text = item?.product?.title?.asCapital()
 
             bind.subTitle.text = buildSpannedString {
                 append("Placed an Offer ")

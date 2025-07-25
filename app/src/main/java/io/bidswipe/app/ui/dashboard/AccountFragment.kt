@@ -99,25 +99,6 @@ class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
 
     }
 
-    /*    private fun launchWeb(url: String) {
-
-                runSafe {
-                    CustomTabsIntent.Builder().apply {
-                        setDefaultColorSchemeParams(
-                            CustomTabColorSchemeParams.Builder()
-                                .setToolbarColor(ContextCompat.getColor(mCtx, R.color.primary))
-                                .build()
-                        )
-                        setShowTitle(true)
-                    }.build().apply {
-                        intent.setPackage("com.android.chrome")
-                        launchUrl(requireActivity(), url.toUri())
-                    }
-                }
-
-
-        }*/
-
     private val accountGridClick = object : RecyclerClicks {
         override fun itemClick(pos: Int, status: String?) {
 

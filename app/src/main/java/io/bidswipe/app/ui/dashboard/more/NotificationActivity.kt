@@ -1,5 +1,6 @@
 package io.bidswipe.app.ui.dashboard.more
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.core.view.isVisible
@@ -42,6 +43,7 @@ class NotificationActivity : BaseActivity() {
 
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(bind.root)

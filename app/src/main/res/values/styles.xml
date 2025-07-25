@@ -189,12 +189,6 @@
         <item name="SpinKit_Style">ThreeBounce</item>
     </style>
 
-    <!--<style name="swipeStyle">
-        <item name="preview">none</item>
-        <item name="autoClose">true</item>
-        <item name="designer">@string/parallax_designer</item>
-    </style>-->
-
     <style name="tabStyle" parent="Widget.Material3.TabLayout">
         <item name="enforceTextAppearance">false</item>
         <item name="android:background">@drawable/card_8</item>
@@ -202,6 +196,8 @@
         <item name="tabIndicatorAnimationDuration">500</item>
         <item name="tabIndicator">@drawable/card_8</item>
         <item name="tabIndicatorColor">@color/background</item>
+
+
         <item name="tabTextAppearance">@style/TitleMedium</item>
         <item name="tabTextColor">@color/onSurface</item>
         <item name="tabSelectedTextColor">@color/onBackground</item>

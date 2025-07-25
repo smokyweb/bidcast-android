@@ -6,6 +6,7 @@ import io.bidswipe.app.base.BaseAdapter
 import io.bidswipe.app.databinding.InventoryItemBinding
 import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.network.response.GetMyInventoryResponse
+import io.bidswipe.app.utils.asCapital
 import io.bidswipe.app.utils.asMoney
 import io.bidswipe.app.utils.loadUrl
 
@@ -23,8 +24,8 @@ class InventoryAdapter(
     ) {
         with(holder) {
 
-            bind.productName.text = item?.title
-            bind.prodSubTitle.text = item?.description
+            bind.productName.text = item?.title?.asCapital()
+            bind.prodSubTitle.text = item?.description?.asCapital()
             bind.price.text = item?.pricing.toString().asMoney()
 
             bind.productImage.loadUrl(mCtx, item?.images?.get(0).toString())
