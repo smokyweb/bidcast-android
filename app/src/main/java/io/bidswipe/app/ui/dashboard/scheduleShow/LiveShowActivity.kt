@@ -49,6 +49,7 @@ import im.zego.zim.entity.ZIMTextMessage
 import im.zego.zim.entity.ZIMUserInfo
 import im.zego.zim.enums.ZIMConversationType
 import im.zego.zim.enums.ZIMMessagePriority
+import io.bidswipe.app.App
 import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseActivity
 import io.bidswipe.app.controller.CommentAdapter
@@ -679,7 +680,7 @@ class LiveShowActivity : BaseActivity() {
 				val updateValue = System.currentTimeMillis()
 				FireRef.LIVE_SESSIONS.child(roomID).updateChildren(
 					mapOf(
-						"time" to Utils.getTimeFromTimestamp(System.currentTimeMillis() / 1000, "yyyy-MM-dd_hh:mm:ss_a")
+						"time" to System.currentTimeMillis().toString()
 					)
 				).addOnSuccessListener {
 					Log.d("FirebaseUpdate", "Successfully updated value: $updateValue")
@@ -1059,12 +1060,15 @@ class LiveShowActivity : BaseActivity() {
 			bind.recycler.isVisible = false
 			bind.menuLayout.isVisible = false
 			bind.message.isVisible = false
+			App.PIPMode = true
 		} else {
 			bind.profileLayout.isVisible = true
 			bind.rehearsalLayout.isVisible = true
 			bind.recycler.isVisible = true
 			bind.menuLayout.isVisible = true
 			bind.message.isVisible = true
+			App.PIPMode = false
+
 		}
 	}
 

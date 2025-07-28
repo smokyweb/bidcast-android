@@ -7,7 +7,6 @@
     android:layout_margin="@dimen/half_margin"
     tools:context=".ui.dashboard.sellerProfile.ReviewListFragment">
 
-
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler"
         android:layout_width="match_parent"
@@ -21,10 +20,11 @@
     <io.bidswipe.app.ui.custom.NoDataView
         android:id="@+id/noData"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_weight="1"
         android:visibility="gone"
-        app:title_text="No Shows Found"/>
+        app:layout_constraintTop_toTopOf="parent"
+        app:title_text="No Reviews Found"/>
 
     <io.bidswipe.app.ui.custom.LoaderView
         android:id="@+id/loader"

@@ -5,11 +5,6 @@ import android.view.LayoutInflater
 import androidx.activity.viewModels
 import androidx.core.view.isVisible
 import com.google.android.material.bottomsheet.BottomSheetDialog
-import com.stripe.android.ApiResultCallback
-import com.stripe.android.PaymentConfiguration
-import com.stripe.android.Stripe
-import com.stripe.android.model.CardParams
-import com.stripe.android.model.Token
 import com.wajahatkarim3.easyvalidation.core.view_ktx.validator
 import io.bidswipe.app.App
 import io.bidswipe.app.base.BaseActivity
@@ -20,13 +15,11 @@ import io.bidswipe.app.model.PaymentCardModel
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.utils.Alerts
-import io.bidswipe.app.utils.Const
 import io.bidswipe.app.utils.Utils
 import io.bidswipe.app.utils.bind
 import io.bidswipe.app.utils.hideKeyboard
 import io.bidswipe.app.utils.layout
 import io.bidswipe.app.utils.parse
-import io.bidswipe.app.utils.request
 import io.bidswipe.app.utils.runSafe
 import io.bidswipe.app.utils.showKeyboard
 import io.bidswipe.app.utils.value
@@ -179,8 +172,6 @@ class AddPaymentCardActivity : BaseActivity() {
             mSheet?.dismiss()
             isShowing = false
         }
-
-        alBind.select.text = "Select Time"
 
         alBind.select.setOnClickListener {
             val date = alBind.timePicker.date

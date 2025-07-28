@@ -82,6 +82,7 @@ class SellerVerificationActivity : BaseActivity() {
 
                 cardImage = imagePath
 
+
                 if (cardImage.isNotEmpty() && selfie.isNotEmpty()){
 
                     bind.verificationIcon.isVisible = true
@@ -511,7 +512,6 @@ class SellerVerificationActivity : BaseActivity() {
                     }
 
                     cardAdapter.notifyDataSetChanged()
-
 
                 }
 

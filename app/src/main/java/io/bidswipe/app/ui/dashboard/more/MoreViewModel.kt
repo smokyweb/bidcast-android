@@ -13,6 +13,7 @@ import io.bidswipe.app.network.response.GetBuyerIdentityResponse
 import io.bidswipe.app.network.response.GetNotificationResponse
 import io.bidswipe.app.network.response.GetPaymentCardsResponse
 import io.bidswipe.app.network.response.GetShippingAddressResponse
+import io.bidswipe.app.network.response.GetStatesResponse
 import io.bidswipe.app.network.response.SetDefaultAddressResponse
 import io.bidswipe.app.network.response.SettingListResponse
 import io.bidswipe.app.network.response.TermsConditionResponse
@@ -83,9 +84,11 @@ class MoreViewModel @Inject constructor(val repo: DashRepository) : ViewModel() 
 		phoneNumber: RequestBody?,
 		streetAddress: RequestBody?,
 		pinCode: RequestBody?,
+		city: RequestBody?,
+		state: RequestBody?,
 	) = viewModelScope.launch {
         _addShippingAddressResponse.value =
-            repo.addShippingAddress(type, name, phoneNumber, streetAddress, pinCode)
+            repo.addShippingAddress(type, name, phoneNumber, streetAddress, pinCode, city, state)
     }
 
     private var _getShippingAddressResponse =
@@ -226,6 +229,14 @@ class MoreViewModel @Inject constructor(val repo: DashRepository) : ViewModel() 
 		addressId: RequestBody?,
 	) = viewModelScope.launch {
         _deleteAddressResponse.value = repo.deleteAddress(addressId)
+    }
+
+    private var _getStatesResponse = MutableLiveData<Resource<GetStatesResponse>>()
+    val getStatesRepo: MutableLiveData<Resource<GetStatesResponse>>
+        get() = _getStatesResponse
+
+    fun getStates() = viewModelScope.launch {
+        _getStatesResponse.value = repo.getStates()
     }
 
 

@@ -22,7 +22,7 @@ object Const {
     const val APP_ID = 1005763407
     const val APP_SIGN = "73678be720c3ea2d871376882d27d21d5c2bc891363547424458f9febc8bf423"
 
-    const val SERVER_TIME_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
+    const val SERVER_TIME_FORMAT = "dd-MM-yyyy HH:mm:ss"
     const val DD_MMMM_YYYY = "dd MMMM yyyy"
 
     //APP PERMISSIONS

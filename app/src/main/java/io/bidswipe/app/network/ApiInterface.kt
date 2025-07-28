@@ -35,6 +35,7 @@ import io.bidswipe.app.network.response.GetProductsResponse
 import io.bidswipe.app.network.response.GetPurchaseDetail
 import io.bidswipe.app.network.response.GetRatingResponse
 import io.bidswipe.app.network.response.GetShippingAddressResponse
+import io.bidswipe.app.network.response.GetStatesResponse
 import io.bidswipe.app.network.response.GetTransactionsHistoryResponse
 import io.bidswipe.app.network.response.GetUserProfileResponse
 import io.bidswipe.app.network.response.LoginResponse
@@ -253,6 +254,8 @@ interface ApiInterface {
         @Part("phone_number") phoneNumber: RequestBody?,
         @Part("street_address") streetAddress: RequestBody?,
         @Part("pincode") pinCode: RequestBody?,
+        @Part("city") city: RequestBody?,
+        @Part("state") state: RequestBody?
     ): CommonResponse
 
     @GET("api/get-shipping-address")
@@ -558,6 +561,10 @@ interface ApiInterface {
     suspend fun deleteAddress(
         @Part("address_id") addressId: RequestBody?
     ): CommonResponse
+
+    @GET("api/get-states")
+    suspend fun getStates(
+    ): GetStatesResponse
 
 }
 

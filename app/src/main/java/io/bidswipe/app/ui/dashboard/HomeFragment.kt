@@ -11,6 +11,7 @@ import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.navigation.fragment.findNavController
+import io.bidswipe.app.App
 import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseFragment
 import io.bidswipe.app.controller.HomeAdapter
@@ -24,6 +25,7 @@ import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.ui.dashboard.more.NotificationActivity
 import io.bidswipe.app.ui.dashboard.sellerProfile.SellerProfileActivity
 import io.bidswipe.app.ui.dashboard.watchStream.ViewLiveShowActivity
+import io.bidswipe.app.utils.Alerts
 import io.bidswipe.app.utils.Prefs
 import io.bidswipe.app.utils.Utils
 import io.bidswipe.app.utils.ids
@@ -59,13 +61,22 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
                 "viewShow" -> {
 
                     if (showList[pos]?.isLive == true) {
-                        startActivity(
-                            Intent(
-                                mCtx,
-                                ViewLiveShowActivity::class.java
-                            ).putExtra("position", pos)
-                                .putParcelableArrayListExtra("roomIdsList", romIdsList as ArrayList)
-                        )
+
+                        if (App.PIPMode){
+                            Alerts.error(mCtx,"You are already in Live show")
+
+                        }else{
+                            startActivity(
+                                Intent(
+                                    mCtx,
+                                    ViewLiveShowActivity::class.java
+                                ).putExtra("position", pos)
+                                    .putParcelableArrayListExtra("roomIdsList", romIdsList as ArrayList)
+                            )
+                        }
+
+
+
                     }
 
                 }

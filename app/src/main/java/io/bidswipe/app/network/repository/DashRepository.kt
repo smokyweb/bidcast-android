@@ -145,7 +145,9 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
         phoneNumber: RequestBody?,
         streetAddress: RequestBody?,
         pinCode: RequestBody?,
-    ) = call { api.addShippingAddress(type, name, phoneNumber, streetAddress, pinCode) }
+        city: RequestBody?,
+        state: RequestBody?
+    ) = call { api.addShippingAddress(type, name, phoneNumber, streetAddress, pinCode, city, state) }
 
     suspend fun getShippingAddress() = call { api.getShippingAddress() }
 
@@ -408,5 +410,7 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
     suspend fun deleteAddress(
         addressId : RequestBody?
     ) = call { api.deleteAddress(addressId) }
+
+    suspend fun getStates() = call { api.getStates() }
 
 }

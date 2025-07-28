@@ -85,7 +85,10 @@ class BidsFragment : BaseFragment<DashViewModel, FragmentBidsBinding>() {
 
                     val mData = it.value.data
 
-                    mList.clear()
+                    if (page ==1){
+                        mList.clear()
+                    }
+
 
                     if (mData != null) {
                         mList.addAll(mData)

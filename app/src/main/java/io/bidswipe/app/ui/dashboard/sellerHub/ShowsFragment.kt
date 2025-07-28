@@ -56,12 +56,17 @@ class ShowsFragment : BaseFragment<SellerHubViewModel, FragmentShowsBinding>() {
 				return
 			}
 
-			startActivity(
-				Intent(mCtx, LiveShowActivity::class.java).putExtra(
-					"showId",
-					showList[pos]?.id.toString()
+			if (App.PIPMode) {
+				Alerts.error(mCtx,"You are already in Live show")
+			}else{
+				startActivity(
+					Intent(mCtx, LiveShowActivity::class.java).putExtra(
+						"showId",
+						showList[pos]?.id.toString()
+					)
 				)
-			)
+			}
+
 
 		}
 
