@@ -3,9 +3,11 @@ package io.bidswipe.app.ui.dashboard.watchStream
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import com.google.firebase.database.DataSnapshot
@@ -14,9 +16,16 @@ import com.google.firebase.database.ValueEventListener
 import com.ncorti.slidetoact.SlideToActView
 import com.ncorti.slidetoact.SlideToActView.OnSlideCompleteListener
 import im.zego.zegoexpress.ZegoExpressEngine
+import im.zego.zegoexpress.callback.IZegoEventHandler
+import im.zego.zegoexpress.constants.ZegoPlayerState
+import im.zego.zegoexpress.constants.ZegoPublisherState
+import im.zego.zegoexpress.constants.ZegoRoomStateChangedReason
+import im.zego.zegoexpress.constants.ZegoUpdateType
 import im.zego.zegoexpress.constants.ZegoViewMode
+import im.zego.zegoexpress.entity.ZegoBroadcastMessageInfo
 import im.zego.zegoexpress.entity.ZegoCanvas
 import im.zego.zegoexpress.entity.ZegoRoomConfig
+import im.zego.zegoexpress.entity.ZegoStream
 import im.zego.zegoexpress.entity.ZegoUser
 import im.zego.zim.ZIM
 import im.zego.zim.callback.ZIMEventHandler
@@ -55,6 +64,7 @@ import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request
 import io.bidswipe.app.utils.runSafe
 import io.bidswipe.app.utils.value
+import org.json.JSONObject
 
 class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBinding>() {
 
@@ -301,6 +311,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 			viewMode = ZegoViewMode.ASPECT_FILL
 		}
 		ZegoExpressEngine.getEngine().startPlayingStream(roomID, canvas)
+//		startListenEvent()
 		if (viewModel.previousRoomId.isNotEmpty()) {
 			val roomInfo = ZIMRoomInfo().also {
 				it.roomID = roomID
@@ -532,4 +543,101 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
 		})
 	}*/
+
+/*
+	private fun startListenEvent() {
+		ZegoExpressEngine.getEngine().setEventHandler(object : IZegoEventHandler() {
+
+			override fun onRoomStreamUpdate(
+				roomID: String,
+				updateType: ZegoUpdateType,
+				streamList: ArrayList<ZegoStream>,
+				extendedData: JSONObject
+			) {
+				super.onRoomStreamUpdate(roomID, updateType, streamList, extendedData)
+				if (streamList.isNotEmpty()) {
+					streamList[0].streamID
+				}
+			}
+
+			override fun onRoomUserUpdate(
+				roomID: String,
+				updateType: ZegoUpdateType,
+				userList: ArrayList<ZegoUser>
+			) {
+				super.onRoomUserUpdate(roomID, updateType, userList)
+
+			}
+
+			override fun onRoomStateChanged(
+				roomID: String,
+				reason: ZegoRoomStateChangedReason,
+				errorCode: Int,
+				extendedData: JSONObject
+			) {
+				super.onRoomStateChanged(roomID, reason, errorCode, extendedData)
+				when (reason) {
+					ZegoRoomStateChangedReason.LOGIN_FAILED ->
+						Toast.makeText(
+							context,
+							"ZegoRoomStateChangedReason.LOGIN_FAILED",
+							Toast.LENGTH_LONG
+						).show()
+
+					ZegoRoomStateChangedReason.RECONNECT_FAILED ->
+						Toast.makeText(
+							context,
+							"ZegoRoomStateChangedReason.RECONNECT_FAILED",
+							Toast.LENGTH_LONG
+						).show()
+
+					ZegoRoomStateChangedReason.KICK_OUT ->
+						Toast.makeText(
+							context,
+							"ZegoRoomStateChangedReason.KICK_OUT",
+							Toast.LENGTH_LONG
+						).show()
+
+					else -> {
+					}
+				}
+			}
+
+			override fun onPublisherStateUpdate(
+				streamID: String,
+				state: ZegoPublisherState,
+				errorCode: Int,
+				extendedData: JSONObject
+			) {
+				super.onPublisherStateUpdate(streamID, state, errorCode, extendedData)
+				if (errorCode != 0) {
+					// Handle publish error
+				}
+
+				if (state == ZegoPublisherState.NO_PUBLISH) {
+
+				}
+			}
+
+			override fun onPlayerStateUpdate(
+				streamID: String,
+				state: ZegoPlayerState,
+				errorCode: Int,
+				extendedData: JSONObject
+			) {
+				super.onPlayerStateUpdate(streamID, state, errorCode, extendedData)
+
+				if (errorCode != 0) {
+
+				}
+
+				if (state == ZegoPlayerState.NO_PLAY) {
+
+				}
+			}
+
+		})
+
+	}
+*/
 }

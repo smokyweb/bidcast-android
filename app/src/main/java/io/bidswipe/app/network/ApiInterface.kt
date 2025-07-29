@@ -186,6 +186,7 @@ interface ApiInterface {
     @POST("api/get-user-product")
     suspend fun getUserProducts(
         @Part("user_id") userId: RequestBody?,
+        @Part("category_id") categoryId: RequestBody?
     ): GetProductsResponse
 
     @Multipart

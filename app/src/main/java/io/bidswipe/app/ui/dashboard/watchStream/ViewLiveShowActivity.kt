@@ -117,7 +117,7 @@ class ViewLiveShowActivity : BaseActivity() {
         val profile = ZegoEngineProfile().apply {
             appID = Const.APP_ID.toLong()
             appSign = Const.APP_SIGN
-            scenario = ZegoScenario.GENERAL
+            scenario = ZegoScenario.BROADCAST
             application = applicationContext as Application
         }
 

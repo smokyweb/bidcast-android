@@ -249,7 +249,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginHorizontal="@dimen/half_margin"
                             android:layout_weight="1"
-                            android:backgroundTint="@color/secondary"
+                            android:backgroundTint="@color/primary"
                             android:paddingHorizontal="@dimen/padding"
                             android:text="@string/messages"
                             app:cornerRadius="50dp" />
@@ -262,7 +262,7 @@
                             android:backgroundTint="@color/outline"
                             app:cardCornerRadius="100dp"
                             app:cardElevation="0dp"
-                            app:strokeWidth="1.5dp">
+                            app:strokeWidth="0dp">
 
                             <TextView
                                 android:id="@+id/icon"

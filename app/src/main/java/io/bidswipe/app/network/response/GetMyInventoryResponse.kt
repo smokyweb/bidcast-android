@@ -3,6 +3,7 @@ package io.bidswipe.app.network.response
 
 import com.google.gson.annotations.SerializedName
 import androidx.annotation.Keep
+import java.io.Serializable
 
 @Keep
 data class GetMyInventoryResponse(
@@ -60,5 +61,5 @@ data class GetMyInventoryResponse(
         @SerializedName("user_id")
         val userId: Int?,
         var selected: Boolean? = false,
-    )
+    ): Serializable
 }

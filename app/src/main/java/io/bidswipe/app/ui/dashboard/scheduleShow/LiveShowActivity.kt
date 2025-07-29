@@ -667,7 +667,7 @@ class LiveShowActivity : BaseActivity() {
 			viewerCount = 1,
 			highestBid = "",
 			isLive = true,
-			time = System.currentTimeMillis().toString(),
+			time = Utils.timestamp(),
 			showId = showId
 		).toMap()
 
@@ -677,10 +677,10 @@ class LiveShowActivity : BaseActivity() {
 	fun startUpdatingFirebaseEvery5Minutes() {
 		runnable = object : Runnable {
 			override fun run() {
-				val updateValue = System.currentTimeMillis()
+				val updateValue = Utils.timestamp()
 				FireRef.LIVE_SESSIONS.child(roomID).updateChildren(
 					mapOf(
-						"time" to System.currentTimeMillis().toString()
+						"time" to Utils.timestamp()
 					)
 				).addOnSuccessListener {
 					Log.d("FirebaseUpdate", "Successfully updated value: $updateValue")

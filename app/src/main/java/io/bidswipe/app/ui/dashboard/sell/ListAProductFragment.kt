@@ -16,6 +16,7 @@ import io.bidswipe.app.interfaces.AlertClicks
 import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.network.response.GetCategoryResponse
+import io.bidswipe.app.network.response.GetMyInventoryResponse
 import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.ui.dashboard.DashViewModel
 import io.bidswipe.app.utils.Alerts
@@ -36,6 +37,8 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
 	
 	var imageList = mutableListOf<String?>()
 	var uploadItemIndex = -1
+
+	private var product : GetMyInventoryResponse.Data? = null
 	
 	private val imageResult = registerForActivityResult(CropImageContract()) { result ->
 		if (result.isSuccessful) {
@@ -61,6 +64,15 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
 	
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		super.onViewCreated(view, savedInstanceState)
+
+		product = activity?.intent?.getSerializableExtra("product") as? GetMyInventoryResponse.Data
+
+		if (product!=null){
+			bind.saveDraft.isVisible = false
+			bind.publish.text = "Update"
+		}
+
+		log(product.toString())
 		
 		imageList.clear()
 		imageList.add(null)
@@ -108,6 +120,11 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
 						bind.category.setOnClickListener {
 							bind.category.showDropDown()
 						}
+
+						if (product!=null){
+							addProductData(product)
+						}
+
 					}
 				}
 				
@@ -249,6 +266,21 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
 				)
 			}
 		}
+	}
+
+	private fun addProductData(product: GetMyInventoryResponse.Data?) {
+
+		categoryId = product?.categoryId.toString()
+
+		bind.category.setText(categoryList.find { it?.id.toString() == categoryId }?.name, false)
+		bind.productTitle.setText(product?.title)
+		bind.description.setText(product?.description)
+		bind.quantity.setText(product?.quantity.toString())
+		bind.price.setText(product?.pricing.toString())
+		bind.flashSell.isChecked = product?.flashSale == true
+		bind.acceptOffers.isChecked = product?.acceptOffers == true
+		bind.reserveForLive.isChecked = product?.reserveForLive == true
+
 	}
 	
 }

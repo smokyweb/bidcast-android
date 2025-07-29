@@ -95,7 +95,7 @@ object Utils {
             setBadgeIconType(NotificationCompat.BADGE_ICON_SMALL)
             priority = NotificationCompat.PRIORITY_HIGH
             setDefaults(NotificationCompat.DEFAULT_ALL)
-            setSmallIcon(draw.app_icon)
+            setSmallIcon(draw.notification_icon)
             setContentTitle(title.asCapital())
             setContentText(msg.asCapital())
             setAutoCancel(true)

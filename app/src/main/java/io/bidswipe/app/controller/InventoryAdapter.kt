@@ -29,6 +29,9 @@ class InventoryAdapter(
             bind.price.text = item?.pricing.toString().asMoney()
 
             bind.productImage.loadUrl(mCtx, item?.images?.get(0).toString())
+            bind.root.setOnClickListener {
+                mClicks.itemClick(position)
+            }
 
         }
     }

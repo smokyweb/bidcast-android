@@ -280,8 +280,9 @@ class DashViewModel @Inject constructor(val repo: DashRepository) : ViewModel() 
 
     fun getUserProducts(
 		userId: RequestBody? = null,
+		categoryId: RequestBody? = null,
 	) = viewModelScope.launch {
-        _getUserProductsResponse.value = repo.getUserProducts(userId)
+        _getUserProductsResponse.value = repo.getUserProducts(userId,categoryId)
     }
 
     private var _getMyInventoryResponse = MutableLiveData<Resource<GetMyInventoryResponse>>()

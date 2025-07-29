@@ -6,7 +6,6 @@
 	android:layout_height="match_parent"
 	tools:context=".ui.dashboard.scheduleShow.ShowTitleFragment">
 
-
 	<io.bidswipe.app.ui.custom.Header
 		android:id="@+id/header"
 		android:layout_width="match_parent"
@@ -42,7 +41,7 @@
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
 			android:layout_marginHorizontal="@dimen/half_margin"
-			android:layout_marginBottom="@dimen/margin"
+			android:layout_marginBottom="@dimen/half_margin"
 			app:counterEnabled="true"
 			app:counterMaxLength="100">
 

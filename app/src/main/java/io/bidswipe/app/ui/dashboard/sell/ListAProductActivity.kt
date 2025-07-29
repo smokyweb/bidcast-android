@@ -23,7 +23,6 @@ class ListAProductActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(bind.root)
 
-
         navHostFragment = supportFragmentManager.findFragmentById(R.id.fragmentContainer) as NavHostFragment
         navController = navHostFragment.navController
 

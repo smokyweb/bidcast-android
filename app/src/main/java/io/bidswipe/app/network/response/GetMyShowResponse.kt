@@ -95,7 +95,7 @@ data class GetMyShowResponse(
             @SerializedName("thumbnail")
             val thumbnail: Any?,
             @SerializedName("username")
-            val username: Any?,
+            val username: String?,
         )
     }
 }

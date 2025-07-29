@@ -322,4 +322,5 @@
 	<string name="block_seller">Block Seller</string>
     <string name="set_as_default">Set as default</string>
 	<string name="delete">Delete</string>
+    <string name="product_detail_description">Detailed product listings help buyers make informed decisions and increase your chances of making a sale.</string>
 </resources>

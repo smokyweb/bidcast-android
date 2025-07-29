@@ -2,14 +2,13 @@ package io.bidswipe.app.ui.dashboard.sellerProfile
 
 import android.content.Intent
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseFragment
-import io.bidswipe.app.controller.ShowListingAdapter
+import io.bidswipe.app.controller.HomeAdapter
 import io.bidswipe.app.databinding.FragmentSellerShowBinding
 import io.bidswipe.app.interfaces.AlertClicks
 import io.bidswipe.app.interfaces.RecyclerClicks
@@ -28,8 +27,7 @@ class SellerShowFragment : BaseFragment<SellerViewModel, FragmentSellerShowBindi
         view: ViewGroup?
     ) = FragmentSellerShowBinding.inflate(inflater,view,false)
 
-    private lateinit var showAdapter: ShowListingAdapter
-
+    private lateinit var showAdapter: HomeAdapter
     private var showList = mutableListOf<GetMyShowResponse.Data?>()
 
     private val mClicks = object : RecyclerClicks{
@@ -45,7 +43,7 @@ class SellerShowFragment : BaseFragment<SellerViewModel, FragmentSellerShowBindi
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        showAdapter = ShowListingAdapter(showList, mClicks)
+        showAdapter = HomeAdapter(showList, mClicks)
 
         bind.recycler.adapter = showAdapter
 

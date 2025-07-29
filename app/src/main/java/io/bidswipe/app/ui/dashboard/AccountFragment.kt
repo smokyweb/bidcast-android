@@ -187,7 +187,7 @@ class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
         App.profileResponse.observe(viewLifecycleOwner) {
 
             bind.userName.text = it?.name ?: ""
-            bind.sellerSince.text = it?.bio ?: "N/A"
+            bind.sellerSince.text = it?.username ?: "N/A"
             bind.userProfile.loadUrl(mCtx, it?.profileImage.toString())
         }
 

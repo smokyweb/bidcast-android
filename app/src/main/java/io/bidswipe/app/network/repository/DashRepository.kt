@@ -97,7 +97,8 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
 
     suspend fun getUserProducts(
         userId: RequestBody?,
-    ) = call { api.getUserProducts(userId) }
+        categoryId: RequestBody?,
+    ) = call { api.getUserProducts(userId, categoryId) }
 
     suspend fun getMyScheduledShow(
         type: RequestBody?,

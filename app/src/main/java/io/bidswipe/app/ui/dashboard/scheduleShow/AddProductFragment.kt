@@ -130,7 +130,7 @@ class AddProductFragment : BaseFragment<ScheduleShowViewModel, FragmentAddProduc
 
         bind.loader.isVisible = true
 
-        viewModel.getUserProducts("".request())
+        viewModel.getUserProducts(userId.request(), categoryId = viewModel.categoryId.request())
         viewModel.getUserProductsRepo.observe(viewLifecycleOwner) {
             when (it) {
                 is Resource.Success -> {

@@ -7,14 +7,25 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".ui.dashboard.sellerProfile.SellerShowFragment">
 
-    <androidx.recyclerview.widget.RecyclerView
+   <!-- <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         tools:itemCount="6"
-        tools:listitem="@layout/show_listing_item" />
+        tools:listitem="@layout/show_listing_item" />-->
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="@dimen/half_margin"
+        android:orientation="vertical"
+        app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+        app:spanCount="2"
+        tools:itemCount="6"
+        tools:listitem="@layout/home_item" />
 
     <io.bidswipe.app.ui.custom.NoDataView
         android:id="@+id/noData"

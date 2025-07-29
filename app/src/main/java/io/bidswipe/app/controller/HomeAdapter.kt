@@ -2,6 +2,8 @@ package io.bidswipe.app.controller
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.text.bold
+import androidx.core.text.buildSpannedString
 import io.bidswipe.app.base.BaseAdapter
 import io.bidswipe.app.databinding.HomeItemBinding
 import io.bidswipe.app.interfaces.RecyclerClicks
@@ -32,7 +34,11 @@ class HomeAdapter(
                 mClick.itemClick(position, "viewShow")
             }
 
-            bind.userName.text = item?.user?.name.toString().asCapital()
+            bind.userName.text = buildSpannedString {
+                bold {
+                    append(item?.user?.username?.ifEmpty { item.user.name.toString() })
+                }
+            }
             bind.userImage.loadUrl(mCtx, item?.user?.profileImage.toString(), draw.user_image)
 
             bind.thumbnail.loadUrl(mCtx, item?.thumbnail?.get(0).toString())
