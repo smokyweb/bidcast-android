@@ -18,50 +18,64 @@ import io.bidswipe.app.utils.draw
 import io.bidswipe.app.utils.finish
 import io.bidswipe.app.utils.ids
 
-class ChooseSalesFormatFragment : BaseFragment<ScheduleShowViewModel,FragmentChooseSalesFormatBinding>() {
+class ChooseSalesFormatFragment :
+    BaseFragment<ScheduleShowViewModel, FragmentChooseSalesFormatBinding>() {
     override fun getModel(): Class<ScheduleShowViewModel> = ScheduleShowViewModel::class.java
 
     override fun getBind(
         inflater: LayoutInflater,
-        view: ViewGroup?
-    ) = FragmentChooseSalesFormatBinding.inflate(inflater,view,false)
+        view: ViewGroup?,
+    ) = FragmentChooseSalesFormatBinding.inflate(inflater, view, false)
 
     private var formatList = mutableListOf<FormatModel>()
-    private lateinit var adapter : FormatAdapter
+    private lateinit var adapter: FormatAdapter
 
-    private val mClick = object : RecyclerClicks{
+    private val mClick = object : RecyclerClicks {
 
         override fun itemClick(pos: Int, status: String?) {
-            
+
             formatList.forEachIndexed { index, formatModel ->
                 formatModel.selected = index == pos
             }
-            
+
             bind.offerLayout.isVisible = pos == 1
-            
+
             adapter.notifyDataSetChanged()
-            
-            
+
+
         }
     }
+    private var productData: Bundle? = null
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        bind.header.onBackClick{
+        if(arguments!= null){
+           productData =  requireArguments()
+        }
+
+
+        bind.header.onBackClick {
             findNavController().popBackStack()
         }
 
-        formatList.add(FormatModel(draw.ic_hammer,"Auction"))
-        formatList.add(FormatModel(draw.ic_tag,"Buy It Now"))
+        formatList.add(FormatModel(draw.ic_tag, "Buy It Now"))
 
-        adapter = FormatAdapter(formatList,mClick)
+        adapter = FormatAdapter(formatList, mClick)
 
         bind.recycler.adapter = adapter
 
         bind.continueBtn.setOnClickListener {
-            findNavController().navigate(ids.goToProductWeightFragment)
+            val selectedFormat = formatList.firstOrNull { it.selected == true }?.title ?: ""
+            val bundle = productData
+              bundle?.putString("salesFormat", selectedFormat)
+              bundle?.putString("price", bind.bidPrice.text.toString().trim())
+
+
+            findNavController().navigate(ids.goToProductWeightFragment, bundle)
         }
+
 
     }
 

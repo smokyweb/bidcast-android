@@ -28,12 +28,13 @@ import okhttp3.MultipartBody
 import java.io.File
 
 @SuppressLint("NotifyDataSetChanged")
-class AddProductFragment : BaseFragment<ScheduleShowViewModel,FragmentAddProductBinding>() {
+class AddProductFragment : BaseFragment<ScheduleShowViewModel, FragmentAddProductBinding>() {
     override fun getModel(): Class<ScheduleShowViewModel> = ScheduleShowViewModel::class.java
 
-    override fun getBind(inflater: LayoutInflater, view: ViewGroup?) = FragmentAddProductBinding.inflate(inflater,view,false)
+    override fun getBind(inflater: LayoutInflater, view: ViewGroup?) =
+        FragmentAddProductBinding.inflate(inflater, view, false)
 
-    private lateinit var productAdapter :ProductAdapter
+    private lateinit var productAdapter: ProductAdapter
     private var productList = mutableListOf<GetProductsResponse.Data?>()
     private var imagePartList = mutableListOf<MultipartBody.Part?>()
 
@@ -53,13 +54,13 @@ class AddProductFragment : BaseFragment<ScheduleShowViewModel,FragmentAddProduct
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        from = activity?.intent?.getStringExtra("from") ?:""
+        from = activity?.intent?.getStringExtra("from") ?: ""
 
-        bind.header.onBackClick{
+        bind.header.onBackClick {
             findNavController().popBackStack()
         }
 
-        productAdapter = ProductAdapter(productList,mClick)
+        productAdapter = ProductAdapter(productList, mClick)
 
         bind.recycler.adapter = productAdapter
 
@@ -71,29 +72,40 @@ class AddProductFragment : BaseFragment<ScheduleShowViewModel,FragmentAddProduct
 
             productList.forEach {
 
-                if (it?.selected == true){
+                if (it?.selected == true) {
 
-                    productIdList.add(it.id?.toInt() ?:0 )
+                    productIdList.add(it.id?.toInt() ?: 0)
                 }
 
             }
 
-            if (productIdList.isEmpty()){
+            if (productIdList.isEmpty()) {
 
-                Alerts.error(mCtx,"Please select product")
+                Alerts.error(mCtx, "Please select product")
 
             }
 
-            imagePartList.add(Utils.imagePart(
-                "thumbnail[]",
-                viewModel.thumbnail,
-                File(viewModel.thumbnail)
-            ))
+            imagePartList.add(
+                Utils.imagePart(
+                    "thumbnail[]",
+                    viewModel.thumbnail,
+                    File(viewModel.thumbnail)
+                )
+            )
 
-            if (from == "showTutorial"){
+            if (from == "showTutorial") {
 
                 val data = Intent()
-                data.putExtra("title" , TutorialShowModel(viewModel.showTitle,viewModel.categoryId,viewModel.auctionId,viewModel.thumbnail,productIdList.joinToString(",")))
+                data.putExtra(
+                    "title",
+                    TutorialShowModel(
+                        viewModel.showTitle,
+                        viewModel.categoryId,
+                        viewModel.auctionId,
+                        viewModel.thumbnail,
+                        productIdList.joinToString(",")
+                    )
+                )
 //                data.putExtra("categoryId" , )
 //                data.putExtra("auctionTypeId" , )
 //                data.putExtra("thumbnails" , )
@@ -102,8 +114,7 @@ class AddProductFragment : BaseFragment<ScheduleShowViewModel,FragmentAddProduct
                 finish()
 
 
-
-            }else{
+            } else {
                 viewModel.storeScheduleShow(
                     title = viewModel.showTitle.request(),
                     date = viewModel.date.request(),
@@ -115,17 +126,11 @@ class AddProductFragment : BaseFragment<ScheduleShowViewModel,FragmentAddProduct
                 )
             }
 
-
-
-
-
-
         }
 
         bind.loader.isVisible = true
 
         viewModel.getUserProducts("".request())
-
         viewModel.getUserProductsRepo.observe(viewLifecycleOwner) {
             when (it) {
                 is Resource.Success -> {
@@ -175,7 +180,7 @@ class AddProductFragment : BaseFragment<ScheduleShowViewModel,FragmentAddProduct
 
                     val mData = it.value.data
 
-                   finish()
+                    finish()
 
 
                 }

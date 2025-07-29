@@ -81,4 +81,36 @@ class ScheduleShowViewModel @Inject constructor(val repo: DashRepository) : View
         _getUserProductsResponse.value = repo.getUserProducts(userId)
     }
 
+    private var _storeProductResponse = MutableLiveData<Resource<CommonResponse>>()
+    val storeProductRepo: MutableLiveData<Resource<CommonResponse>>
+        get() = _storeProductResponse
+
+    fun storeProduct(
+        categoryId: RequestBody?,
+        title: RequestBody?,
+        description: RequestBody?,
+        quantity: RequestBody?,
+        pricing: RequestBody?,
+        flashSale: RequestBody?,
+        acceptOffers: RequestBody?,
+        reserveForLive: RequestBody?,
+        shippingProfileId: RequestBody?,
+        status: RequestBody?,
+        productImages: List<MultipartBody.Part>?,
+    ) = viewModelScope.launch {
+        _storeProductResponse.value = repo.storeProduct(
+            categoryId,
+            title,
+            description,
+            quantity,
+            pricing,
+            flashSale,
+            acceptOffers,
+            reserveForLive,
+            shippingProfileId,
+            status,
+            productImages
+        )
+    }
+
 }

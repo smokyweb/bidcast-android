@@ -93,8 +93,6 @@ class SelectCategoryFragment : BaseFragment<ScheduleShowViewModel,FragmentSelect
                         val draw = ContextCompat.getDrawable(mCtx, R.drawable.card_8)
                         bind.category.setDropDownBackgroundDrawable(draw)
 
-
-
                     }
                 }
 

@@ -95,7 +95,7 @@
 				android:layout_marginBottom="@dimen/half_margin">
 
 				<androidx.appcompat.widget.AppCompatAutoCompleteTextView
-					android:id="@+id/last_name"
+					android:id="@+id/bid_price"
 					style="@style/inputTextStyle"
 					android:layout_width="match_parent"
 					android:layout_height="wrap_content"
