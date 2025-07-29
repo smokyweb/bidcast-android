@@ -1,10 +1,12 @@
 package io.bidswipe.app.ui.dashboard
 
 import android.content.Intent
+import android.graphics.Typeface
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.core.view.isVisible
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayout.OnTabSelectedListener
@@ -50,15 +52,26 @@ class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
 
     private val onTabSelectedListener = object : OnTabSelectedListener {
         override fun onTabSelected(tab: TabLayout.Tab?) {
-            bind.switcher.displayedChild = tab?.position ?: 0
+            tab?.let {
+                bind.switcher.displayedChild = it.position
+                it.view.findViewById<TextView>(android.R.id.text1)?.apply {
+                    setTypeface(typeface, Typeface.BOLD)
+                }
+            }
         }
 
         override fun onTabUnselected(tab: TabLayout.Tab?) {
-            bind.switcher.displayedChild = tab?.position ?: 0
+            tab?.let {
+                it.view.findViewById<TextView>(android.R.id.text1)?.apply {
+                    setTypeface(typeface, Typeface.NORMAL)
+                }
+            }
         }
 
         override fun onTabReselected(tab: TabLayout.Tab?) {
-            bind.switcher.displayedChild = tab?.position ?: 0
+            tab?.let {
+                bind.switcher.displayedChild = it.position
+            }
         }
     }
 
