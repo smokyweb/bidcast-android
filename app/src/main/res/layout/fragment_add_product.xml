@@ -71,7 +71,6 @@
 					android:layout_height="wrap_content"
 					android:text="0/100" />
 
-
 			</LinearLayout>
 
 			<LinearLayout
@@ -99,9 +98,7 @@
 
 			</LinearLayout>
 
-
 		</LinearLayout>
-
 
 	</androidx.core.widget.NestedScrollView>
 

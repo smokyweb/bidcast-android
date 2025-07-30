@@ -1,5 +1,6 @@
 package io.bidswipe.app.ui.dashboard.sell
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -7,12 +8,20 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import androidx.core.content.ContextCompat
+import androidx.core.text.buildSpannedString
 import androidx.core.view.isVisible
 import com.canhub.cropper.CropImageContract
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import io.bidswipe.app.App
 import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseFragment
+import io.bidswipe.app.controller.CategoryListAdapter
 import io.bidswipe.app.controller.ImageAdapter
+import io.bidswipe.app.controller.SelectPaymentCardAdapter
+import io.bidswipe.app.databinding.CategoryBottomSheetBinding
 import io.bidswipe.app.databinding.FragmentListAProductBinding
+import io.bidswipe.app.databinding.PaymentAndAddressSheetBinding
+import io.bidswipe.app.databinding.PaymentSheetBinding
 import io.bidswipe.app.interfaces.AlertClicks
 import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.network.Resource
@@ -20,9 +29,11 @@ import io.bidswipe.app.network.response.GetCategoryResponse
 import io.bidswipe.app.network.response.GetMyInventoryResponse
 import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.ui.dashboard.DashViewModel
+import io.bidswipe.app.ui.dashboard.more.MoreActivity
 import io.bidswipe.app.utils.Alerts
 import io.bidswipe.app.utils.Const
 import io.bidswipe.app.utils.Utils
+import io.bidswipe.app.utils.draw
 import io.bidswipe.app.utils.finish
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request
@@ -40,19 +51,21 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
     var imageList = mutableListOf<String?>()
     var uploadItemIndex = -1
 
-    private var product: GetMyInventoryResponse.Data? = null
+    var isSubCategory = false
 
-    private val imageResult = registerForActivityResult(CropImageContract()) { result ->
-        if (result.isSuccessful) {
-            val imageUri = result.uriContent
-            val imagePath = result.getUriFilePath(mCtx, true)
-            if (imagePath != null) {
-                if (uploadItemIndex == -1) {
-                    imageList.add(imagePath)
-                } else {
-                    imageList[uploadItemIndex] = imagePath
-                    uploadItemIndex = -1
-                }
+	private var product : GetMyInventoryResponse.Data? = null
+	
+	private val imageResult = registerForActivityResult(CropImageContract()) { result ->
+		if (result.isSuccessful) {
+			val imageUri = result.uriContent
+			val imagePath = result.getUriFilePath(mCtx, true)
+			if (imagePath != null) {
+				if (uploadItemIndex == -1) {
+					imageList.add(imagePath)
+				} else {
+					imageList[uploadItemIndex] = imagePath
+					uploadItemIndex = -1
+				}
 
                 bind.imageLimit.text = "${imageList.size}/9"
 
@@ -62,12 +75,14 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
     }
 
     private var categoryList = mutableListOf<GetCategoryResponse.Data?>()
+    private var subCategoryList = mutableListOf<GetCategoryResponse.Data?>()
     private var categoryId = ""
+    private var subCategoryId = ""
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        product = activity?.intent?.getParcelableExtra("product")
+	    product = activity?.intent?.getSerializableExtra("product") as? GetMyInventoryResponse.Data
         Log.d("IMAGE_DEBUG", "Received product images: ${product?.images}")
 
         if (product != null) {
@@ -76,63 +91,84 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
             bind.header.setHeaderText("Update Product")
         }
 
-        log(product.toString())
+		log(product.toString())
+		
+		imageList.clear()
+		imageList.add(null)
+		
+		bind.header.onBackClick {
+			finish()
+		}
+		
+		bind.images.adapter = ImageAdapter(imageList, object : RecyclerClicks {
+			override fun itemClick(pos: Int, status: String?) {
+				uploadItemIndex = pos
+				uploadImage()
+			}
+		})
+		
+		bind.addNewImage.setOnClickListener {
+			uploadItemIndex = -1
+			uploadImage()
+		}
+		
+		bind.publish.setOnClickListener {
+			saveProduct()
+		}
+		
+		bind.saveDraft.setOnClickListener {
+			saveProduct("draft")
+		}
 
-        imageList.clear()
-        imageList.add(null)
+		bind.category.setOnClickListener {
+			showCategorySheet(categoryList,"category")
+		}
 
-        bind.header.onBackClick {
-            finish()
-        }
+		viewModel.getCategory()
 
-        bind.images.adapter = ImageAdapter(imageList, object : RecyclerClicks {
-            override fun itemClick(pos: Int, status: String?) {
-                uploadItemIndex = pos
-                uploadImage()
-            }
-        })
+		viewModel.getCategoryRepo.observe(viewLifecycleOwner) {
+			when (it) {
+				is Resource.Success -> {
 
-        bind.addNewImage.setOnClickListener {
-            uploadItemIndex = -1
-            uploadImage()
-        }
+					bind.loader.isVisible = false
 
-        bind.publish.setOnClickListener {
-            saveProduct()
-        }
+					val mData = it.value.data
 
-        bind.saveDraft.setOnClickListener {
-            saveProduct("draft")
-        }
+					if (mData?.isNotEmpty() == true) {
+						if (isSubCategory) {
+							subCategoryList.clear()
+							subCategoryList.addAll(mData)
+							showCategorySheet(subCategoryList, "subCategory")
+						} else {
+							categoryList.clear()
+							categoryList.addAll(mData)
+							isSubCategory = true
+						}
+					}
 
-        viewModel.getCategory()
-        viewModel.getCategoryRepo.observe(viewLifecycleOwner) {
-            when (it) {
-                is Resource.Success -> {
-                    if (it.value.data?.isNotEmpty() == true) {
-                        categoryList.clear()
-                        categoryList.addAll(it.value.data)
+					isSubCategory = !isSubCategory
 
-                        val adapter = ArrayAdapter(
-                            mCtx,
-                            android.R.layout.simple_list_item_1,
-                            categoryList.map { it?.name })
-                        bind.category.setAdapter(adapter)
-                        val draw = ContextCompat.getDrawable(mCtx, R.drawable.card_8)
-                        bind.category.setDropDownBackgroundDrawable(draw)
 
-                        bind.category.setOnItemClickListener { _, _, position, _ ->
-                            categoryId = categoryList[position]?.id.toString()
-                        }
-                        bind.category.setOnClickListener {
-                            bind.category.showDropDown()
-                        }
+					/*val adapter = ArrayAdapter(
+						mCtx,
+						android.R.layout.simple_list_item_1,
+						categoryList.map { it?.name })
+					bind.category.setAdapter(adapter)
+					val draw = ContextCompat.getDrawable(mCtx, R.drawable.card_8)
+					bind.category.setDropDownBackgroundDrawable(draw)
 
-                        if (product != null) {
-                            addProductData(product)
-                        }
+					bind.category.setOnItemClickListener { _, _, position, _ ->
+						categoryId = categoryList[position]?.id.toString()
+					}
+					bind.category.setOnClickListener {
+						bind.category.showDropDown()
+					}*/
 
-                    }
+
+					if (product != null) {
+						addProductData(product)
+					}
+
                 }
 
                 is Resource.Error -> {
@@ -174,87 +210,88 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
                                 dialog.dismiss()
                             }
 
-                            override fun secondaryClick(dialog: AppBottomSheet) {
-                                dialog.dismiss()
-                            }
-                        })
-                }
+						override fun secondaryClick(dialog: AppBottomSheet) {
+							dialog.dismiss()
+						}
+					})
+				}
+				
+				is Resource.Error -> {
+					if (it.isNetworkError) {
+						errorToast(getString(R.string.no_internet))
+					} else {
+						it.parse(mCtx, TAG, object : AlertClicks {
+							override fun primaryClick(dialog: AppBottomSheet) {
+								dialog.dismiss()
+								
+							}
+							
+							override fun secondaryClick(dialog: AppBottomSheet) {
+								dialog.dismiss()
+								
+							}
+						})
+					}
+				}
+				
+				else -> {}
+				
+			}
+		}
+		
+	}
+	
+	fun uploadImage() {
+		if (imageList.size < 9) {
+			requestPerms(Const.STR_PERMS) { per ->
+				if (per) {
+					imageResult.launch(Utils.initCrop(mCtx, isCamera = true, isGallery = true))
+				}
+			}
+		} else {
+			Alerts.error(mCtx, "You can select max 9 images only")
+		}
+	}
+	
+	fun saveProduct(type: String = "active") {
+		when {
 
-                is Resource.Error -> {
-                    if (it.isNetworkError) {
-                        errorToast(getString(R.string.no_internet))
-                    } else {
-                        it.parse(mCtx, TAG, object : AlertClicks {
-                            override fun primaryClick(dialog: AppBottomSheet) {
-                                dialog.dismiss()
+			imageList.filterNotNull().isEmpty() -> {
+				Alerts.error(mCtx, "Please select at least one image")
+			}
 
-                            }
+			categoryId.isEmpty() -> {
+				Alerts.error(mCtx, "Please select category")
+			}
 
-                            override fun secondaryClick(dialog: AppBottomSheet) {
-                                dialog.dismiss()
+			bind.productTitle.value().isEmpty() -> {
+				bind.productTitle.requestFocus()
+				Alerts.error(mCtx, "Please enter product title")
+			}
 
-                            }
-                        })
-                    }
-                }
+			bind.description.value().isEmpty() -> {
+				bind.description.requestFocus()
+				Alerts.error(mCtx, "Please enter description")
+			}
 
-                else -> {}
+			bind.quantity.value().isEmpty() -> {
+				bind.quantity.requestFocus()
+				Alerts.error(mCtx, "Please enter quantity")
+			}
 
-            }
-        }
+			bind.price.value().isEmpty() -> {
+				bind.price.requestFocus()
+				Alerts.error(mCtx, "Please enter price")
+			}
 
-    }
-
-    fun uploadImage() {
-        if (imageList.size < 9) {
-            requestPerms(Const.STR_PERMS) { per ->
-                if (per) {
-                    imageResult.launch(Utils.initCrop(mCtx, isCamera = true, isGallery = true))
-                }
-            }
-        } else {
-            Alerts.error(mCtx, "You can select max 9 images only")
-        }
-    }
-
-    fun saveProduct(type: String = "active") {
-        when {
-            imageList.filterNotNull().isEmpty() -> {
-                Alerts.error(mCtx, "Please select at least one image")
-            }
-
-            categoryId.isEmpty() -> {
-                Alerts.error(mCtx, "Please select category")
-            }
-
-            bind.productTitle.value().isEmpty() -> {
-                bind.productTitle.requestFocus()
-                Alerts.error(mCtx, "Please enter product title")
-            }
-
-            bind.description.value().isEmpty() -> {
-                bind.description.requestFocus()
-                Alerts.error(mCtx, "Please enter description")
-            }
-
-            bind.quantity.value().isEmpty() -> {
-                bind.quantity.requestFocus()
-                Alerts.error(mCtx, "Please enter quantity")
-            }
-
-            bind.price.value().isEmpty() -> {
-                bind.price.requestFocus()
-                Alerts.error(mCtx, "Please enter price")
-            }
-
-            /*	bind.shippingProfile.value().isEmpty() -> {
-                    Alerts.error(mCtx, "Please select shipping")
-                }
-                */
-            else -> {
-                bind.loader.isVisible = true
-                val imagePartList = mutableListOf<MultipartBody.Part>()
-                imageList.filter { it?.contains(Const.BASE_URL)== false }.forEach { image ->
+			/*	bind.shippingProfile.value().isEmpty() -> {
+					Alerts.error(mCtx, "Please select shipping")
+				}
+				*/
+			else -> {
+				bind.loader.isVisible = true
+				val imagePartList = mutableListOf<MultipartBody.Part>()
+				imageList.filter { it?.contains(Const.BASE_URL)== false }.forEach { image ->
                     if (image != null) {
                         val name =
                             System.currentTimeMillis().toString() + "_product_gallery.jpeg"
@@ -266,47 +303,92 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
 
                 viewModel.storeProduct(
                     productId = productId,
-                    categoryId = categoryId.request(),
-                    title = bind.productTitle.value().request(),
-                    description = bind.description.value().request(),
-                    quantity = bind.quantity.value().request(),
-                    pricing = bind.price.value().request(),
-                    flashSale = (if (bind.flashSell.isChecked == true) "1" else "0").request(),
-                    acceptOffers = (if (bind.acceptOffers.isChecked == true) "1" else "0").request(),
-                    reserveForLive = (if (bind.reserveForLive.isChecked == true) "1" else "0").request(),
+	                categoryId = categoryId.request(),
+					title = bind.productTitle.value().request(),
+					description = bind.description.value().request(),
+					quantity = bind.quantity.value().request(),
+					pricing = bind.price.value().request(),
+					flashSale = (if (bind.flashSell.isChecked) "1" else "0").request(),
+					acceptOffers = (if (bind.acceptOffers.isChecked) "1" else "0").request(),
+					reserveForLive = (if (bind.reserveForLive.isChecked) "1" else "0").request(),
                     shippingProfileId = "4".request(),
                     status = type.request(),
+	                subCategoryId = subCategoryId.ifEmpty { null }?.request(),
                     productImages = imagePartList
                 )
             }
         }
     }
 
-    private fun addProductData(product: GetMyInventoryResponse.Data?) {
+	private fun addProductData(product: GetMyInventoryResponse.Data?) {
+		categoryId = product?.categoryId.toString()
+		subCategoryId = product?.subCategoryId.toString()
+		if (product?.subCategory != null){
+			bind.category.setText(buildSpannedString { append(product.category?.name)
+				append("(${product.subCategory.name})") })
+		}else{
+			bind.category.setText(product?.category?.name)
+		}
+		bind.productTitle.setText(product?.title)
+		bind.description.setText(product?.description)
+		bind.quantity.setText(product?.quantity.toString())
+		bind.price.setText(product?.pricing.toString())
+		bind.flashSell.isChecked = product?.flashSale == true
+		bind.acceptOffers.isChecked = product?.acceptOffers == true
+		bind.reserveForLive.isChecked = product?.reserveForLive == true
+		imageList.clear()
+		product?.images?.forEach { imageUrl ->
+			imageUrl?.let {
+				if (imageList.size<9) {
+					imageList.add(it)
+				}
+			}
+		}
 
-        categoryId = product?.categoryId.toString()
+		Log.d(TAG, "addProductData: $imageList")
+		bind.imageLimit.text = "${imageList.size}/9"
+		bind.images.adapter?.notifyDataSetChanged()}
 
-        bind.category.setText(categoryList.find { it?.id.toString() == categoryId }?.name, false)
-        bind.productTitle.setText(product?.title)
-        bind.description.setText(product?.description)
-        bind.quantity.setText(product?.quantity.toString())
-        bind.price.setText(product?.pricing.toString())
-        bind.flashSell.isChecked = product?.flashSale == true
-        bind.acceptOffers.isChecked = product?.acceptOffers == true
-        bind.reserveForLive.isChecked = product?.reserveForLive == true
 
-        imageList.clear()
-        product?.images?.forEach { imageUrl ->
-            imageUrl?.let {
-                if (imageList.size<9) {
-                    imageList.add(it)
-                }
-            }
-        }
+	private fun showCategorySheet(categoryList: MutableList<GetCategoryResponse.Data?>, type: String) {
+		val categorySheetBind =
+			CategoryBottomSheetBinding.bind(layoutInflater.inflate(R.layout.category_bottom_sheet, null, false))
+		val categorySheet = Alerts.appBottomSheet(mCtx, true, categorySheetBind)
 
-        Log.d(TAG, "addProductData: $imageList")
-        bind.imageLimit.text = "${imageList.size}/9"
-        bind.images.adapter?.notifyDataSetChanged()
-    }
+		categorySheetBind.recycler.adapter = CategoryListAdapter(if (type =="category") categoryList else subCategoryList, object : RecyclerClicks {
+
+			override fun itemClick(pos: Int, status: String?) {
+
+				if (type == "category") {
+					categoryId = categoryList[pos]?.id.toString()
+					bind.category.setText(categoryList[pos]?.name.toString())
+					bind.loader.isVisible = true
+					viewModel.getCategory(categoryId)
+					isSubCategory = true
+				}else{
+					bind.category.setText(buildSpannedString {
+						append(bind.category.text)
+						append("(${subCategoryList[pos]?.name.toString()})")
+					})
+					subCategoryId = subCategoryList[pos]?.id.toString()
+					isSubCategory = false
+				}
+				categorySheet.dismiss()
+			}
+		})
+
+		if (type == "subCategory") {
+			categorySheetBind.sheetTitle.text = "Select Product Sub Category"
+		} else {
+			categorySheetBind.sheetTitle.text = "Select Product Category"
+		}
+
+		categorySheetBind.close.setOnClickListener {
+			categorySheet.dismiss()
+		}
+
+		categorySheet.show()
+
+	}
 
 }

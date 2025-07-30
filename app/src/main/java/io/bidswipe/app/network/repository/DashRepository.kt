@@ -19,7 +19,7 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
 
     suspend fun getPrivacyPolicy() = call { api.getPrivacyPolicy() }
 
-    suspend fun getCategory() = call { api.getCategory() }
+    suspend fun getCategory(categoryId: String? = null) = call { api.getCategory(categoryId) }
 
     suspend fun getLesson() = call { api.getLesson() }
 
@@ -37,6 +37,7 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
         shippingProfileId: RequestBody?,
         status: RequestBody?,
         productImages: List<MultipartBody.Part?>?,
+        subCategoryId: RequestBody? = null,
         productId: String? = null
     ) = call {
         api.storeProduct(
@@ -51,6 +52,7 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
             shippingProfileId,
             status,
             productImages,
+            subCategoryId,
             productId
         )
     }

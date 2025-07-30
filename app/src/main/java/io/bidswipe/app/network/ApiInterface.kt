@@ -117,7 +117,9 @@ interface ApiInterface {
     suspend fun getPrivacyPolicy(): TermsConditionResponse
 
     @GET("api/get-category")
-    suspend fun getCategory(): GetCategoryResponse
+    suspend fun getCategory(
+        @Query("category_id") categoryId: String? = null
+    ): GetCategoryResponse
 
     @GET("api/get-lesson")
     suspend fun getLesson(): GetLessonsResponse
@@ -141,6 +143,7 @@ interface ApiInterface {
         @Part("shipping_profile_id") shippingProfileId: RequestBody?,
         @Part("status") status: RequestBody?,
         @Part productImages: List<MultipartBody.Part?>?,
+        @Part("sub_category_id") subCategoryId: RequestBody? = null,
         @Query("product_id") productId: String? = null
     ): CommonResponse
 

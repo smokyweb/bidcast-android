@@ -1,25 +1,20 @@
 package io.bidswipe.app.ui.dashboard.scheduleShow
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.navigation.fragment.findNavController
-import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseFragment
 import io.bidswipe.app.controller.FormatAdapter
 import io.bidswipe.app.databinding.FragmentChooseSalesFormatBinding
 import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.model.FormatModel
-import io.bidswipe.app.ui.dashboard.DashViewModel
 import io.bidswipe.app.utils.draw
-import io.bidswipe.app.utils.finish
 import io.bidswipe.app.utils.ids
 
-class ChooseSalesFormatFragment :
-    BaseFragment<ScheduleShowViewModel, FragmentChooseSalesFormatBinding>() {
+class ChooseSalesFormatFragment : BaseFragment<ScheduleShowViewModel, FragmentChooseSalesFormatBinding>() {
     override fun getModel(): Class<ScheduleShowViewModel> = ScheduleShowViewModel::class.java
 
     override fun getBind(
@@ -29,6 +24,7 @@ class ChooseSalesFormatFragment :
 
     private var formatList = mutableListOf<FormatModel>()
     private lateinit var adapter: FormatAdapter
+    private var productData: Bundle? = null
 
     private val mClick = object : RecyclerClicks {
 
@@ -42,11 +38,8 @@ class ChooseSalesFormatFragment :
 
             adapter.notifyDataSetChanged()
 
-
         }
     }
-    private var productData: Bundle? = null
-
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -55,11 +48,11 @@ class ChooseSalesFormatFragment :
            productData =  requireArguments()
         }
 
-
         bind.header.onBackClick {
             findNavController().popBackStack()
         }
 
+        formatList.add(FormatModel(draw.ic_hammer, "Auction"))
         formatList.add(FormatModel(draw.ic_tag, "Buy It Now"))
 
         adapter = FormatAdapter(formatList, mClick)
@@ -69,14 +62,11 @@ class ChooseSalesFormatFragment :
         bind.continueBtn.setOnClickListener {
             val selectedFormat = formatList.firstOrNull { it.selected == true }?.title ?: ""
             val bundle = productData
-              bundle?.putString("salesFormat",selectedFormat)
-              bundle?.putString("price", bind.bidPrice.text.toString().trim())
-
+            bundle?.putString("salesFormat",selectedFormat)
+            bundle?.putString("price", bind.bidPrice.text.toString().trim())
 
             findNavController().navigate(ids.goToProductWeightFragment, bundle)
         }
-
-
     }
 
 }

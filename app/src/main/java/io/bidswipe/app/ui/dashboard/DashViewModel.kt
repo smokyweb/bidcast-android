@@ -59,8 +59,9 @@ class DashViewModel @Inject constructor(val repo: DashRepository) : ViewModel() 
         get() = _getCategoryResponse
 
     fun getCategory(
+	    categoryId: String? = null
     ) = viewModelScope.launch {
-        _getCategoryResponse.value = repo.getCategory()
+        _getCategoryResponse.value = repo.getCategory(categoryId)
     }
 
     private var _getLessonResponse = MutableLiveData<Resource<GetLessonsResponse>>()
@@ -88,7 +89,8 @@ class DashViewModel @Inject constructor(val repo: DashRepository) : ViewModel() 
 		shippingProfileId: RequestBody?,
 		status: RequestBody?,
 		productImages: List<MultipartBody.Part>?,
-        productId: String? = null
+		subCategoryId: RequestBody? = null,
+		productId: String? = null
 	) = viewModelScope.launch {
         _storeProductResponse.value = repo.storeProduct(
             categoryId,
@@ -102,6 +104,7 @@ class DashViewModel @Inject constructor(val repo: DashRepository) : ViewModel() 
             shippingProfileId,
             status,
             productImages,
+	        subCategoryId ,
             productId
         )
     }

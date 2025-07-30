@@ -116,12 +116,10 @@ class BuyNowFragment : BaseFragment<ProductViewModel, FragmentBuyNowBinding>() {
             when {
 
                 cardList.isEmpty() -> {
-
                     Alerts.error(mCtx, "Please add Payment card")
                 }
 
                 addressList.isEmpty() -> {
-
                     Alerts.error(mCtx, "Please add Shipping Address")
                 }
 
@@ -140,23 +138,21 @@ class BuyNowFragment : BaseFragment<ProductViewModel, FragmentBuyNowBinding>() {
                         bind.loader.isVisible = true
 
                         viewModel.createOrder(
-                            shippingId.toString().request(),
-                            viewModel.product?.id.toString().request(),
-                            cardList[0]?.customerPaymentProfileId?.request(),
-                            bind.promoCode.value().ifEmpty { null }?.request(),
-                            "0".request(),
-                            null,
-                            null,
-                            checkOutData?.shippingCharges.toString().request(),
-                            checkOutData?.taxAmount.toString().request(),
-                            checkOutData?.subTotal.toString().request(),
-                            checkOutData?.total.toString().request()
-
+	                        shippingId = shippingId.toString().request(),
+	                        productId = viewModel.product?.id.toString().request(),
+	                        cardId = cardList[0]?.customerPaymentProfileId?.request(),
+	                        promoCode = bind.promoCode.value().ifEmpty { null }?.request(),
+	                        sendAsGift = "0".request(),
+	                        giftUserId = null,
+	                        giftMsg = null,
+	                        shippingCharges = checkOutData?.shippingCharges.toString().request(),
+	                        taxAmount = checkOutData?.taxAmount.toString().request(),
+	                        subTotal = checkOutData?.subTotal.toString().request(),
+	                        total = checkOutData?.total.toString().request()
                         )
 
                     }
                 }
-
             }
         }
 
@@ -178,7 +174,7 @@ class BuyNowFragment : BaseFragment<ProductViewModel, FragmentBuyNowBinding>() {
 
 
                         shippingId = addressList.find { it?.isDefault == true }?.id
-                            ?: (addressList[0]?.id?.toInt()
+                            ?: (addressList[0]?.id
                                 ?: 0)
 
                         addressList[0]?.selected = true
@@ -207,12 +203,10 @@ class BuyNowFragment : BaseFragment<ProductViewModel, FragmentBuyNowBinding>() {
                         it.parse(mCtx, TAG, object : AlertClicks {
                             override fun primaryClick(dialog: AppBottomSheet) {
                                 dialog.dismiss()
-
                             }
 
                             override fun secondaryClick(dialog: AppBottomSheet) {
                                 dialog.dismiss()
-
                             }
                         })
                     }
@@ -360,7 +354,6 @@ class BuyNowFragment : BaseFragment<ProductViewModel, FragmentBuyNowBinding>() {
 
                             override fun secondaryClick(dialog: AppBottomSheet) {
                                 dialog.dismiss()
-
                             }
                         })
                     }
@@ -373,14 +366,10 @@ class BuyNowFragment : BaseFragment<ProductViewModel, FragmentBuyNowBinding>() {
     }
 
     private fun showPaymentMethodSheet() {
-        var paymentSheetBind =
+        val paymentSheetBind =
             PaymentSheetBinding.bind(layoutInflater.inflate(R.layout.payment_sheet, null, false))
-        var paymentSheet = Alerts.appBottomSheet(mCtx, true, paymentSheetBind)
-        var mList = mutableListOf<String?>()
-
-        /*    repeat(2) {
-                mList.add("")
-            }*/
+        val paymentSheet = Alerts.appBottomSheet(mCtx, true, paymentSheetBind)
+        val mList = mutableListOf<String?>()
 
         paymentSheetBind.recycler.adapter =
             SelectPaymentCardAdapter(cardList, object : RecyclerClicks {

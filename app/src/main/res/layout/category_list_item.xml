@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:id="@+id/click"
+    android:gravity="center_vertical"
+    android:layout_margin="@dimen/half_margin"
+    style="@style/shadowStyle">
+
+    <TextView
+        android:id="@+id/category"
+        style="@style/TitleMedium"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="Gaming" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/moreIcon"
+        android:layout_width="18dp"
+        android:layout_height="18dp"
+        android:alpha="0.7"
+        android:src="@drawable/ic_forward" />
+
+    <RadioButton
+        android:id="@+id/selectBtn"
+        style="@style/Widget.AppCompat.CompoundButton.RadioButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:focusable="false"/>
+
+
+</LinearLayout>

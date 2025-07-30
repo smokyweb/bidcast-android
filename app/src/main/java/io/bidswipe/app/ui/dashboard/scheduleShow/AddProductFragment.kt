@@ -74,7 +74,7 @@ class AddProductFragment : BaseFragment<ScheduleShowViewModel, FragmentAddProduc
 
                 if (it?.selected == true) {
 
-                    productIdList.add(it.id?.toInt() ?: 0)
+                    productIdList.add(it.id ?: 0)
                 }
 
             }
@@ -112,7 +112,6 @@ class AddProductFragment : BaseFragment<ScheduleShowViewModel, FragmentAddProduc
 //                data.putExtra("productIds" , )
                 activity?.setResult(Activity.RESULT_OK, data)
                 finish()
-
 
             } else {
                 viewModel.storeScheduleShow(
@@ -180,9 +179,12 @@ class AddProductFragment : BaseFragment<ScheduleShowViewModel, FragmentAddProduc
 
                     val mData = it.value.data
 
+                   val intent = Intent(mCtx, LiveShowActivity::class.java).putExtra(
+                        "showId",
+                        mData?.id
+                    )
+                    startActivity(intent)
                     finish()
-
-
                 }
 
                 is Resource.Error -> {

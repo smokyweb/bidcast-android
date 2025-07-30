@@ -38,7 +38,7 @@ class InventoryFragment : BaseFragment<SellerHubViewModel, FragmentInventoryBind
     private val mClick = object : RecyclerClicks {
 
         override fun itemClick(pos: Int, status: String?) {
-            startActivity(mCtx.toListProduct().putExtra("product" , itemList[pos] as Parcelable))
+            startActivity(mCtx.toListProduct().putExtra("product" , itemList[pos] ))
 
         }
 

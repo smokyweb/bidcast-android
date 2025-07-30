@@ -63,8 +63,8 @@ class ProductWeightFragment : BaseFragment<ScheduleShowViewModel, FragmentProduc
                 flashSale = "0".request(),
                 acceptOffers = "0".request(),
                 reserveForLive = "0".request(),
-                shippingProfileId = "1".request(),
-                status = "active".request(),
+                shippingProfileId = "4".request(),
+                status =  "active".request(),
                 productImages = imageParts,
             )
         }
@@ -92,6 +92,7 @@ class ProductWeightFragment : BaseFragment<ScheduleShowViewModel, FragmentProduc
                 }
 
                 else -> {}
+
             }
 
         }

@@ -28,6 +28,8 @@ data class GetMyInventoryResponse(
     data class Data(
         @SerializedName("accept_offers")
         val acceptOffers: Boolean?,
+        @SerializedName("category")
+        val category: Category?,
         @SerializedName("category_id")
         val categoryId: Int?,
         @SerializedName("created_at")
@@ -54,12 +56,46 @@ data class GetMyInventoryResponse(
         val shippingProfileId: Int?,
         @SerializedName("status")
         val status: String?,
+        @SerializedName("sub_category")
+        val subCategory:SubCategory?,
+        @SerializedName("sub_category_id")
+        val subCategoryId: String?,
         @SerializedName("thumbnail")
         val thumbnail: List<String?>?,
         @SerializedName("title")
         val title: String?,
         @SerializedName("user_id")
         val userId: Int?,
-        var selected: Boolean? = false,
-    ): Serializable
+        var selected: Boolean? = false
+    ): Serializable{
+        @Keep
+        data class Category(
+            @SerializedName("color")
+            val color: String?,
+            @SerializedName("id")
+            val id: Int?,
+            @SerializedName("image")
+            val image: String?,
+            @SerializedName("name")
+            val name: String?,
+            @SerializedName("thumbnail")
+            val thumbnail: Any?
+        ) : Serializable
+
+        @Keep
+        data class SubCategory(
+            @SerializedName("category_id")
+            val categoryId: Int?,
+            @SerializedName("color")
+            val color: String?,
+            @SerializedName("id")
+            val id: Int?,
+            @SerializedName("image")
+            val image: String?,
+            @SerializedName("name")
+            val name: String?,
+            @SerializedName("thumbnail")
+            val thumbnail: String?
+        ): Serializable
+    }
 }
