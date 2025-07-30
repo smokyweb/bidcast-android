@@ -24,6 +24,7 @@ import io.bidswipe.app.utils.Const
 import io.bidswipe.app.utils.Utils
 import io.bidswipe.app.utils.ids
 import io.bidswipe.app.utils.parse
+
 class CreateProductFragment : BaseFragment<ScheduleShowViewModel, FragmentCreateProductBinding>() {
     override fun getModel(): Class<ScheduleShowViewModel> = ScheduleShowViewModel::class.java
 
@@ -54,7 +55,6 @@ class CreateProductFragment : BaseFragment<ScheduleShowViewModel, FragmentCreate
             }
         }
     }
-
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -104,12 +104,12 @@ class CreateProductFragment : BaseFragment<ScheduleShowViewModel, FragmentCreate
         bind.continueBtn.setOnClickListener {
             if (validateAndNavigate()) {
                 val imagePaths = ArrayList(imageList.filterNotNull())
-                 val bundle = bundleOf(
+                val bundle = bundleOf(
                     "categoryId" to categoryId,
                     "title" to bind.productTitle.text.toString().trim(),
                     "description" to bind.description.text.toString().trim(),
                     "quantity" to currentQuantity,
-                "imagePaths" to imagePaths.joinToString(",")
+                    "imagePaths" to imagePaths.joinToString(",")
                 )
 
                 findNavController().navigate(ids.goToChooseSalesFormatFragment, bundle)
@@ -209,18 +209,20 @@ class CreateProductFragment : BaseFragment<ScheduleShowViewModel, FragmentCreate
             }
         }
 
-        }
-    private fun uploadImage() {
-            if (imageList.size < 9) {
-                requestPerms(Const.STR_PERMS) { per ->
-                    if (per) {
-                        imageResult.launch(Utils.initCrop(mCtx, isCamera = true, isGallery = true))
-                    }
-                }
-            } else {
-                Alerts.error(mCtx, "You can select max 9 images only")
-            }
     }
+
+    private fun uploadImage() {
+        if (imageList.size < 9) {
+            requestPerms(Const.STR_PERMS) { per ->
+                if (per) {
+                    imageResult.launch(Utils.initCrop(mCtx, isCamera = true, isGallery = true))
+                }
+            }
+        } else {
+            Alerts.error(mCtx, "You can select max 9 images only")
+        }
+    }
+
     private fun validateAndNavigate(): Boolean {
         val title = bind.productTitle.text.toString().trim()
         val description = bind.description.text.toString().trim()

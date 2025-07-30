@@ -69,7 +69,7 @@ class ChooseSalesFormatFragment :
         bind.continueBtn.setOnClickListener {
             val selectedFormat = formatList.firstOrNull { it.selected == true }?.title ?: ""
             val bundle = productData
-              bundle?.putString("salesFormat", selectedFormat)
+              bundle?.putString("salesFormat",selectedFormat)
               bundle?.putString("price", bind.bidPrice.text.toString().trim())
 
 

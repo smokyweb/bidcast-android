@@ -141,6 +141,7 @@ interface ApiInterface {
         @Part("shipping_profile_id") shippingProfileId: RequestBody?,
         @Part("status") status: RequestBody?,
         @Part productImages: List<MultipartBody.Part?>?,
+        @Query("product_id") productId: String? = null
     ): CommonResponse
 
     @GET("api/how-to-sell")

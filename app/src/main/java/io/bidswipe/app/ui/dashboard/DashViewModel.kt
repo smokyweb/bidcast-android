@@ -88,6 +88,7 @@ class DashViewModel @Inject constructor(val repo: DashRepository) : ViewModel() 
 		shippingProfileId: RequestBody?,
 		status: RequestBody?,
 		productImages: List<MultipartBody.Part>?,
+        productId: String? = null
 	) = viewModelScope.launch {
         _storeProductResponse.value = repo.storeProduct(
             categoryId,
@@ -100,7 +101,8 @@ class DashViewModel @Inject constructor(val repo: DashRepository) : ViewModel() 
             reserveForLive,
             shippingProfileId,
             status,
-            productImages
+            productImages,
+            productId
         )
     }
 

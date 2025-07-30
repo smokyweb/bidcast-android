@@ -1,16 +1,13 @@
 package io.bidswipe.app.ui.dashboard.scheduleShow
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.navigation.fragment.findNavController
 import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseFragment
 import io.bidswipe.app.controller.WeightAdapter
-import io.bidswipe.app.databinding.FragmentListAProductBinding
 import io.bidswipe.app.databinding.FragmentProductWeightBinding
 import io.bidswipe.app.interfaces.AlertClicks
 import io.bidswipe.app.network.Resource
@@ -19,8 +16,6 @@ import io.bidswipe.app.utils.Utils
 import io.bidswipe.app.utils.ids
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request
-import okhttp3.MultipartBody
-import okhttp3.RequestBody
 import java.io.File
 
 class ProductWeightFragment : BaseFragment<ScheduleShowViewModel, FragmentProductWeightBinding>() {
@@ -69,7 +64,7 @@ class ProductWeightFragment : BaseFragment<ScheduleShowViewModel, FragmentProduc
                 acceptOffers = "0".request(),
                 reserveForLive = "0".request(),
                 shippingProfileId = "1".request(),
-                status =  "active".request(),
+                status = "active".request(),
                 productImages = imageParts,
             )
         }

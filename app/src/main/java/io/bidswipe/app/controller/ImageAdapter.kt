@@ -6,6 +6,8 @@ import androidx.core.net.toUri
 import io.bidswipe.app.base.BaseAdapter
 import io.bidswipe.app.databinding.UploadImageItemBinding
 import io.bidswipe.app.interfaces.RecyclerClicks
+import io.bidswipe.app.utils.Const
+import io.bidswipe.app.utils.loadUrl
 
 class ImageAdapter(
 	mList: MutableList<String?>, val mClicks: RecyclerClicks,
@@ -26,7 +28,12 @@ class ImageAdapter(
             }
 
             if (item != null) {
-                bind.image.setImageURI(item.toUri())
+                if (item.contains(Const.BASE_URL)){
+                    bind.image.loadUrl(mCtx,item)
+                }
+                else{
+                    bind.image.setImageURI(item.toUri())
+                }
             }
 
         }

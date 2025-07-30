@@ -29,7 +29,6 @@ import javax.inject.Inject
 @HiltViewModel
 class SellerHubViewModel@Inject constructor(val repo: DashRepository) : ViewModel() {
 
-
     private var _getMyScheduledShowResponse = MutableLiveData<Resource<GetMyShowResponse>>()
     val getMyScheduledShowRepo: MutableLiveData<Resource<GetMyShowResponse>>
         get() = _getMyScheduledShowResponse

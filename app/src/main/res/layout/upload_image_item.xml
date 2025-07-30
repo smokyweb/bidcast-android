@@ -22,7 +22,7 @@
             android:layout_gravity="center"
             android:scaleType="centerCrop"
             android:contentDescription="@string/app_name"
-            android:src="@drawable/camera" />
+            android:background="@drawable/camera" />
 
     </com.google.android.material.card.MaterialCardView>
 

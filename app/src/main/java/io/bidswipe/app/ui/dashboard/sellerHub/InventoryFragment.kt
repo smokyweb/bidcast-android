@@ -1,6 +1,7 @@
 package io.bidswipe.app.ui.dashboard.sellerHub
 
 import android.os.Bundle
+import android.os.Parcelable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,6 +21,7 @@ import io.bidswipe.app.utils.finish
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request
 import io.bidswipe.app.utils.toListProduct
+import kotlinx.parcelize.Parcelize
 
 class InventoryFragment : BaseFragment<SellerHubViewModel, FragmentInventoryBinding>() {
     override fun getModel(): Class<SellerHubViewModel> = SellerHubViewModel::class.java
@@ -36,8 +38,7 @@ class InventoryFragment : BaseFragment<SellerHubViewModel, FragmentInventoryBind
     private val mClick = object : RecyclerClicks {
 
         override fun itemClick(pos: Int, status: String?) {
-
-            startActivity(mCtx.toListProduct().putExtra("product" , itemList[pos]))
+            startActivity(mCtx.toListProduct().putExtra("product" , itemList[pos] as Parcelable))
 
         }
 

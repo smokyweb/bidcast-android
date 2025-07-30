@@ -37,6 +37,7 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
         shippingProfileId: RequestBody?,
         status: RequestBody?,
         productImages: List<MultipartBody.Part?>?,
+        productId: String? = null
     ) = call {
         api.storeProduct(
             categoryId,
@@ -49,7 +50,8 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
             reserveForLive,
             shippingProfileId,
             status,
-            productImages
+            productImages,
+            productId
         )
     }
 
