@@ -1,27 +1,20 @@
 package io.bidswipe.app.ui.dashboard.sell
 
-import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ArrayAdapter
-import androidx.core.content.ContextCompat
 import androidx.core.text.buildSpannedString
 import androidx.core.view.isVisible
 import com.canhub.cropper.CropImageContract
-import com.google.android.material.bottomsheet.BottomSheetBehavior
-import io.bidswipe.app.App
 import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseFragment
 import io.bidswipe.app.controller.CategoryListAdapter
 import io.bidswipe.app.controller.ImageAdapter
-import io.bidswipe.app.controller.SelectPaymentCardAdapter
+import io.bidswipe.app.controller.ProductVariantAdapter
 import io.bidswipe.app.databinding.CategoryBottomSheetBinding
 import io.bidswipe.app.databinding.FragmentListAProductBinding
-import io.bidswipe.app.databinding.PaymentAndAddressSheetBinding
-import io.bidswipe.app.databinding.PaymentSheetBinding
 import io.bidswipe.app.interfaces.AlertClicks
 import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.network.Resource
@@ -29,11 +22,9 @@ import io.bidswipe.app.network.response.GetCategoryResponse
 import io.bidswipe.app.network.response.GetMyInventoryResponse
 import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.ui.dashboard.DashViewModel
-import io.bidswipe.app.ui.dashboard.more.MoreActivity
 import io.bidswipe.app.utils.Alerts
 import io.bidswipe.app.utils.Const
 import io.bidswipe.app.utils.Utils
-import io.bidswipe.app.utils.draw
 import io.bidswipe.app.utils.finish
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request
@@ -50,11 +41,15 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
 
     var imageList = mutableListOf<String?>()
     var uploadItemIndex = -1
-
     var isSubCategory = false
-
 	private var product : GetMyInventoryResponse.Data? = null
-	
+    private var categoryList = mutableListOf<GetCategoryResponse.Data?>()
+    private var subCategoryList = mutableListOf<GetCategoryResponse.Data?>()
+    private var categoryId = ""
+    private var subCategoryId = ""
+	var variantList = mutableListOf("Color", "Size", "Title")
+    private lateinit var variantAdapter: ProductVariantAdapter
+
 	private val imageResult = registerForActivityResult(CropImageContract()) { result ->
 		if (result.isSuccessful) {
 			val imageUri = result.uriContent
@@ -67,35 +62,37 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
 					uploadItemIndex = -1
 				}
 
-                bind.imageLimit.text = "${imageList.size}/9"
+				bind.imageLimit.text = "${imageList.size}/9"
 
-                bind.images.adapter?.notifyDataSetChanged()
-            }
-        }
-    }
+				bind.images.adapter?.notifyDataSetChanged()
+			}
+		}
+	}
 
-    private var categoryList = mutableListOf<GetCategoryResponse.Data?>()
-    private var subCategoryList = mutableListOf<GetCategoryResponse.Data?>()
-    private var categoryId = ""
-    private var subCategoryId = ""
+	private val mClick = object : RecyclerClicks {
+		override fun itemClick(pos: Int, status: String?) {
+		}
+	}
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+		super.onViewCreated(view, savedInstanceState)
 
-	    product = activity?.intent?.getSerializableExtra("product") as? GetMyInventoryResponse.Data
-        Log.d("IMAGE_DEBUG", "Received product images: ${product?.images}")
+		product = activity?.intent?.getSerializableExtra("product") as? GetMyInventoryResponse.Data
+		Log.d("IMAGE_DEBUG", "Received product images: ${product?.images}")
 
-        if (product != null) {
-            bind.saveDraft.isVisible = false
-            bind.publish.text = "Update"
-            bind.header.setHeaderText("Update Product")
-        }
+		if (product != null) {
+			bind.saveDraft.isVisible = false
+			bind.publish.text = "Update"
+			bind.header.setHeaderText("Update Product")
+			addProductData(product)
+		}
 
 		log(product.toString())
-		
-		imageList.clear()
-		imageList.add(null)
-		
+
+		variantAdapter = ProductVariantAdapter(variantList, mClick)
+
+		bind.variants.adapter = variantAdapter
+
 		bind.header.onBackClick {
 			finish()
 		}
@@ -142,12 +139,11 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
 						} else {
 							categoryList.clear()
 							categoryList.addAll(mData)
-							isSubCategory = true
+//							isSubCategory = true
 						}
 					}
 
 					isSubCategory = !isSubCategory
-
 
 					/*val adapter = ArrayAdapter(
 						mCtx,
@@ -163,11 +159,6 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
 					bind.category.setOnClickListener {
 						bind.category.showDropDown()
 					}*/
-
-
-					if (product != null) {
-						addProductData(product)
-					}
 
                 }
 
@@ -347,15 +338,15 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
 
 		Log.d(TAG, "addProductData: $imageList")
 		bind.imageLimit.text = "${imageList.size}/9"
-		bind.images.adapter?.notifyDataSetChanged()}
-
+		bind.images.adapter?.notifyDataSetChanged()
+	}
 
 	private fun showCategorySheet(categoryList: MutableList<GetCategoryResponse.Data?>, type: String) {
 		val categorySheetBind =
 			CategoryBottomSheetBinding.bind(layoutInflater.inflate(R.layout.category_bottom_sheet, null, false))
 		val categorySheet = Alerts.appBottomSheet(mCtx, true, categorySheetBind)
 
-		categorySheetBind.recycler.adapter = CategoryListAdapter(if (type =="category") categoryList else subCategoryList, object : RecyclerClicks {
+		categorySheetBind.recycler.adapter = CategoryListAdapter(if (type == "category") categoryList else subCategoryList, object : RecyclerClicks {
 
 			override fun itemClick(pos: Int, status: String?) {
 
@@ -365,7 +356,7 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
 					bind.loader.isVisible = true
 					viewModel.getCategory(categoryId)
 					isSubCategory = true
-				}else{
+				} else {
 					bind.category.setText(buildSpannedString {
 						append(bind.category.text)
 						append("(${subCategoryList[pos]?.name.toString()})")

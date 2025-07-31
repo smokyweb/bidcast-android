@@ -48,7 +48,8 @@
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
 				app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-				tools:listitem="@layout/product_list_item" />
+				tools:listitem="@layout/product_list_item"
+				tools:itemCount="2"/>
 
 			<LinearLayout
 				android:layout_width="match_parent"
@@ -74,6 +75,7 @@
 			</LinearLayout>
 
 			<LinearLayout
+				android:id="@+id/addProductLayout"
 				android:layout_width="match_parent"
 				android:layout_height="200dp"
 				android:layout_margin="@dimen/half_margin"

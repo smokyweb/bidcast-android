@@ -48,8 +48,9 @@ class ScheduleShowViewModel @Inject constructor(val repo: DashRepository) : View
         get() = _getCategoryResponse
 
     fun getCategory(
+        categoryId: String? = null
     ) = viewModelScope.launch {
-        _getCategoryResponse.value = repo.getCategory()
+        _getCategoryResponse.value = repo.getCategory(categoryId)
     }
 
     private var _getAuctionTypeResponse = MutableLiveData<Resource<GetAuctionTypeResponse>>()
@@ -98,6 +99,7 @@ class ScheduleShowViewModel @Inject constructor(val repo: DashRepository) : View
         shippingProfileId: RequestBody?,
         status: RequestBody?,
         productImages: List<MultipartBody.Part>?,
+        subCategoryId: RequestBody? = null
     ) = viewModelScope.launch {
         _storeProductResponse.value = repo.storeProduct(
             categoryId,
@@ -110,8 +112,19 @@ class ScheduleShowViewModel @Inject constructor(val repo: DashRepository) : View
             reserveForLive,
             shippingProfileId,
             status,
-            productImages
+            productImages,
+            subCategoryId
         )
+    }
+
+    private var _deleteProductResponse = MutableLiveData<Resource<CommonResponse>>()
+    val deleteProductRepo: MutableLiveData<Resource<CommonResponse>>
+        get() = _deleteProductResponse
+
+    fun deleteProduct(
+        productId : String?
+    ) = viewModelScope.launch {
+        _deleteProductResponse.value = repo.deleteProduct(productId)
     }
 
 }

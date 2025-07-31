@@ -14,11 +14,9 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:primaryIconDrawable="@drawable/notification"
-        app:secondaryIconDrawable="@drawable/search"
         app:showBackButton="true"
-        app:showPrimaryIcon="true"
-        app:showSecondaryIcon="true" />
+        app:showPrimaryIcon="false"
+        app:showSecondaryIcon="false" />
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/searchLayout"
@@ -27,6 +25,7 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/margin"
         android:layout_marginBottom="@dimen/margin"
+        android:layout_marginTop="@dimen/half_margin"
         app:boxBackgroundColor="@color/surface"
         app:boxStrokeWidth="2dp"
         app:layout_constraintEnd_toEndOf="parent"

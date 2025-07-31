@@ -43,6 +43,7 @@ class ProductWeightFragment : BaseFragment<ScheduleShowViewModel, FragmentProduc
 
         bind.continueBtn.setOnClickListener {
             val categoryId = productData?.getString("categoryId") ?: ""
+            val subCategoryId = productData?.getString("subCategoryId") ?: ""
             val title = productData?.getString("title") ?: ""
             val description = productData?.getString("description") ?: ""
             val quantity = productData?.getInt("quantity") ?: 1
@@ -66,6 +67,7 @@ class ProductWeightFragment : BaseFragment<ScheduleShowViewModel, FragmentProduc
                 shippingProfileId = "4".request(),
                 status =  "active".request(),
                 productImages = imageParts,
+                subCategoryId = subCategoryId.request()
             )
         }
 

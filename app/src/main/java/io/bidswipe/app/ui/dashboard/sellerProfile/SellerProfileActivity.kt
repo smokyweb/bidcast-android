@@ -3,7 +3,6 @@ package io.bidswipe.app.ui.dashboard.sellerProfile
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
-import android.view.View
 import android.widget.PopupMenu
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
@@ -79,7 +78,6 @@ class SellerProfileActivity : BaseActivity() {
 
                 ids.reportUser -> {
                     reportUserDialog()
-
                 }
 
             }
@@ -93,7 +91,6 @@ class SellerProfileActivity : BaseActivity() {
         bind.moreIcon.setOnClickListener {
             menu.show()
         }
-
 
         val menu1 = PopupMenu(this, bind.moreIcon1)
         menu1.menuInflater.inflate(R.menu.profile_action_menu, menu1.menu)
@@ -122,12 +119,12 @@ class SellerProfileActivity : BaseActivity() {
         bind.appBar.addOnOffsetChangedListener { _, verticalOffset ->
             val totalScrollRange = bind.appBar.totalScrollRange
             if (abs(verticalOffset) >= totalScrollRange) {
-                bind.toolbar.animate().alpha(1f).setDuration(200).withEndAction {
-                    bind.toolbar.isVisible = true
+                bind.toolbar.animate().alpha(1f).setDuration(200).withStartAction {
+//                    bind.toolbar.isVisible = true
                 }.start()
             } else {
                 bind.toolbar.animate().alpha(0f).setDuration(200).withEndAction {
-                    bind.toolbar.visibility = View.GONE
+//                    bind.toolbar.visibility = View.GONE
                 }.start()
             }
         }

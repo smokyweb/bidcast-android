@@ -6,14 +6,15 @@ import androidx.core.text.buildSpannedString
 import io.bidswipe.app.base.BaseAdapter
 import io.bidswipe.app.databinding.ShopItemBinding
 import io.bidswipe.app.interfaces.RecyclerClicks
+import io.bidswipe.app.network.response.GetMyInventoryResponse
 import io.bidswipe.app.network.response.GetProductsResponse
 import io.bidswipe.app.utils.asCapital
 import io.bidswipe.app.utils.asMoney
 import io.bidswipe.app.utils.loadUrl
 
 class ShopAdapter(
-    mList: MutableList<GetProductsResponse.Data?>, val mClicks: RecyclerClicks,
-) : BaseAdapter<GetProductsResponse.Data?, ShopItemBinding>(mList) {
+    mList: MutableList<GetMyInventoryResponse.Data?>, val mClicks: RecyclerClicks,
+) : BaseAdapter<GetMyInventoryResponse.Data?, ShopItemBinding>(mList) {
 
     override fun bindView(inflater: LayoutInflater, parent: ViewGroup) =
         ShopItemBinding.inflate(inflater, parent, false)
@@ -21,7 +22,7 @@ class ShopAdapter(
     override fun onBind(
         holder: BaseViewHolder<ShopItemBinding>,
         position: Int,
-        item: GetProductsResponse.Data?,
+        item: GetMyInventoryResponse.Data?,
     ) {
         with(holder) {
             bind.root.setOnClickListener {

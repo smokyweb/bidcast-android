@@ -2,12 +2,12 @@ package io.bidswipe.app.ui.dashboard.scheduleShow
 
 import android.app.Activity
 import android.content.Intent
+import android.icu.util.Calendar
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
-import androidx.core.view.isVisible
 import androidx.navigation.fragment.findNavController
 import com.applandeo.materialcalendarview.CalendarDay
 import com.applandeo.materialcalendarview.listeners.OnCalendarDayClickListener
@@ -15,14 +15,11 @@ import com.google.android.material.chip.Chip
 import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseFragment
 import io.bidswipe.app.databinding.FragmentSelectShowTimeBinding
-import io.bidswipe.app.ui.auth.LoginFragment
 import io.bidswipe.app.utils.Alerts
 import io.bidswipe.app.utils.Utils
 import io.bidswipe.app.utils.draw
 import io.bidswipe.app.utils.finish
 import io.bidswipe.app.utils.runSafe
-import java.util.TimeZone
-
 
 class SelectShowTimeFragment : BaseFragment<ScheduleShowViewModel,FragmentSelectShowTimeBinding>() {
 
@@ -33,7 +30,6 @@ class SelectShowTimeFragment : BaseFragment<ScheduleShowViewModel,FragmentSelect
         view: ViewGroup?
     ) = FragmentSelectShowTimeBinding.inflate(inflater,view,false)
 
-
     private var timeList = mutableListOf("07:00", "09:00", "11:00", "13:00", "15:00", "17:00", "19:00", "21:00", "23:00", "01:00")
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -43,6 +39,12 @@ class SelectShowTimeFragment : BaseFragment<ScheduleShowViewModel,FragmentSelect
 
         bind.calenderView.setForwardButtonImage(ContextCompat.getDrawable(mCtx,draw.ic_forward)!!)
         bind.calenderView.setPreviousButtonImage(ContextCompat.getDrawable(mCtx,draw.ic_previous)!!)
+
+        if (viewModel.date.isEmpty()) { // Optionally, only set if not already set (e.g., by a previous selection or state restoration)
+            val calendar = Calendar.getInstance()
+            val date = Utils.getFormattedDateTime("dd-MM-yyyy","yyyy-MM-dd" ,Utils.getDateFromTimestamp(calendar.timeInMillis))
+            viewModel.date = date.toString()
+        }
 
         bind.calenderView.setOnCalendarDayClickListener(object : OnCalendarDayClickListener {
             override fun onClick(calendarDay: CalendarDay) {
@@ -56,7 +58,6 @@ class SelectShowTimeFragment : BaseFragment<ScheduleShowViewModel,FragmentSelect
 
             }
         })
-
 
         bind.header.onBackClick{
            if (from =="tutorial") finish() else findNavController().popBackStack()
@@ -77,7 +78,7 @@ class SelectShowTimeFragment : BaseFragment<ScheduleShowViewModel,FragmentSelect
                 val chipId = chipGroup.checkedChipId
                 val index = chipGroup.indexOfChild(chipGroup.findViewById(chipId))
 
-               val chip : Chip = bind.chipGroup.getChildAt(index) as Chip
+                val chip: Chip = bind.chipGroup.getChildAt(index) as Chip
 
                 viewModel.time = chip.text.toString()
 

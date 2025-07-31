@@ -2,20 +2,17 @@ package io.bidswipe.app.ui.dashboard.sellerProfile
 
 import android.content.Intent
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.google.android.material.tabs.TabLayoutMediator
 import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseFragment
 import io.bidswipe.app.controller.ShopAdapter
-import io.bidswipe.app.controller.ViewPagerAdapter
 import io.bidswipe.app.databinding.FragmentShopBinding
 import io.bidswipe.app.interfaces.AlertClicks
 import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.network.Resource
-import io.bidswipe.app.network.response.GetProductsResponse
+import io.bidswipe.app.network.response.GetMyInventoryResponse
 import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.ui.dashboard.product.ProductDetailsActivity
 import io.bidswipe.app.utils.Utils
@@ -28,7 +25,7 @@ class ShopFragment : BaseFragment<SellerViewModel,FragmentShopBinding>() {
 
     override fun getBind(inflater: LayoutInflater, view: ViewGroup?) = FragmentShopBinding.inflate(inflater,view,false)
 
-    private var productList = mutableListOf<GetProductsResponse.Data?>()
+    private var productList = mutableListOf<GetMyInventoryResponse.Data?>()
 
     private lateinit var shopAdapter: ShopAdapter
 

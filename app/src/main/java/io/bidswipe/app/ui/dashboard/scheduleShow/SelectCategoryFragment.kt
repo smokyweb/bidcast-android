@@ -85,6 +85,7 @@ class SelectCategoryFragment : BaseFragment<ScheduleShowViewModel,FragmentSelect
                 is Resource.Success -> {
                     if (it.value.data?.isNotEmpty() == true) {
                         bind.loader.isVisible = false
+                        viewModel.getCategoryRepo.value = null
                         categoryList.clear()
                         categoryList.addAll(it.value.data)
 

@@ -571,5 +571,10 @@ interface ApiInterface {
     suspend fun getStates(
     ): GetStatesResponse
 
+    @POST("api/delete-product")
+    suspend fun deleteProduct(
+        @Query("product_id") productId: String?
+    ): CommonResponse
+
 }
 

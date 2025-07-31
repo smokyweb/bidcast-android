@@ -42,6 +42,7 @@
 				android:id="@+id/headingView"
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
+				android:layout_marginTop="@dimen/half_margin"
 				android:orientation="horizontal">
 
 				<io.bidswipe.app.ui.custom.Heading
@@ -199,6 +200,19 @@
 					android:hint="@string/enter_quantity" />
 
 			</com.google.android.material.textfield.TextInputLayout>
+
+			<androidx.recyclerview.widget.RecyclerView
+				android:id="@+id/variants"
+				android:layout_width="match_parent"
+				android:layout_height="0dp"
+				android:layout_marginBottom="@dimen/margin"
+				android:nestedScrollingEnabled="false"
+				android:orientation="vertical"
+				android:layout_weight="1"
+				app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+				tools:listitem="@layout/variant_item"
+				tools:itemCount="3"
+				/>
 
 			<com.google.android.material.card.MaterialCardView
 				android:layout_width="match_parent"

@@ -37,6 +37,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:backgroundTint="@color/secondaryContainer"
+                android:layout_marginTop="@dimen/margin"
                 app:contentPadding="@dimen/margin">
 
                 <LinearLayout
@@ -192,7 +193,6 @@
                 android:layout_height="wrap_content"
                 android:text="@string/quantity_available" />
 
-
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -287,6 +287,12 @@
 			android:text="@string/_continue" />
 
 	</LinearLayout>
+
+    <io.bidswipe.app.ui.custom.LoaderView
+        android:id="@+id/loader"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"/>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
