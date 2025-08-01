@@ -3,7 +3,6 @@ package io.bidswipe.app.ui.dashboard.watchStream
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -22,7 +21,6 @@ import im.zego.zegoexpress.constants.ZegoPublisherState
 import im.zego.zegoexpress.constants.ZegoRoomStateChangedReason
 import im.zego.zegoexpress.constants.ZegoUpdateType
 import im.zego.zegoexpress.constants.ZegoViewMode
-import im.zego.zegoexpress.entity.ZegoBroadcastMessageInfo
 import im.zego.zegoexpress.entity.ZegoCanvas
 import im.zego.zegoexpress.entity.ZegoRoomConfig
 import im.zego.zegoexpress.entity.ZegoStream
@@ -64,7 +62,6 @@ import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request
 import io.bidswipe.app.utils.runSafe
 import io.bidswipe.app.utils.value
-import org.json.JSONObject
 
 class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBinding>() {
 
@@ -193,14 +190,27 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 					override fun onSlideComplete(view: SlideToActView) {
 						log("SWIPED")
 
-						bind.loader.isVisible = true
+						/*bind.loader.isVisible = true
 
 						viewModel.createBid(
 							stream.showId?.request(),
 							userId.request(),
 							stream.products?.getCurrentProduct()?.id.toString().request(),
 							stream.products?.getCurrentProduct()?.price?.request()
-						)
+						)*/
+
+						FireRef.LIVE_SESSIONS.child(roomID).child("product").child("status").setValue("sold")
+
+
+						/*val highestBid = HashMap<String, Any>()
+						highestBid.put("bidAmount", (stream.products?.getCurrentProduct()?.price?.toInt()?.plus(1)).toString().request())
+						highestBid.put("productStatus", userId.request())
+						highestBid.put("userName", userName)
+						highestBid.put("userImage", userImage)
+						highestBid.put("userId", userId)
+
+						FireRef.LIVE_SESSIONS.child(roomID).updateChildren(highestBid)*/
+
 					}
 				}
 
@@ -217,7 +227,6 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
 					it.value.data
 
-					FireRef.LIVE_SESSIONS.child(roomID).child("product").child("status").setValue("sold")
 				}
 
 				is Resource.Error -> {

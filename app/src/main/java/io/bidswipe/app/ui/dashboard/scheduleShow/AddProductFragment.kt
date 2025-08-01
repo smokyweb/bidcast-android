@@ -20,6 +20,7 @@ import io.bidswipe.app.network.Resource
 import io.bidswipe.app.network.response.GetMyInventoryResponse
 import io.bidswipe.app.ui.custom.AlertType
 import io.bidswipe.app.ui.custom.AppBottomSheet
+import io.bidswipe.app.ui.dashboard.sellerHub.SellerHubActivity
 import io.bidswipe.app.utils.Alerts
 import io.bidswipe.app.utils.Utils
 import io.bidswipe.app.utils.finish
@@ -76,10 +77,19 @@ class AddProductFragment : BaseFragment<ScheduleShowViewModel, FragmentAddProduc
         bind.recycler.adapter = productAdapter
 
         bind.addProductLayout.setOnClickListener {
-
             findNavController().navigate(ids.addProductFragment_to_createProductFragment)
-
         }
+
+        bind.selectInventoryLayout.setOnClickListener {
+            startActivity(
+                Intent(mCtx, SellerHubActivity::class.java).putExtra(
+                    "slug",
+                    "inventory"
+                ).putExtra("from", "addProduct")
+            )
+        }
+
+
 
         bind.finishBtn.setOnClickListener {
 
@@ -163,6 +173,14 @@ class AddProductFragment : BaseFragment<ScheduleShowViewModel, FragmentAddProduc
 
                     productAdapter.notifyDataSetChanged()
 
+                    if (productList.isEmpty()){
+                        bind.noData.isVisible = true
+                        bind.recycler.isVisible = false
+                    }else{
+                        bind.noData.isVisible = false
+                        bind.recycler.isVisible = true
+                    }
+
                 }
 
                 is Resource.Error -> {
@@ -199,7 +217,7 @@ class AddProductFragment : BaseFragment<ScheduleShowViewModel, FragmentAddProduc
 
                    val intent = Intent(mCtx, LiveShowActivity::class.java).putExtra(
                         "showId",
-                        mData?.id
+                        mData?.id.toString()
                     )
                     startActivity(intent)
                     finish()

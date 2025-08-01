@@ -56,7 +56,7 @@
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/follow"
-                style="@style/appTonalBtn"
+                style="@style/appBtn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:minHeight="0dp"
@@ -401,8 +401,7 @@
             android:layout_marginEnd="@dimen/half_margin"
             android:padding="6dp"
             android:text="Max"
-            android:textSize="14sp"
-            />
+            android:textSize="14sp" />
 
         <com.ncorti.slidetoact.SlideToActView
             android:id="@+id/bid"
@@ -413,15 +412,13 @@
             app:animation_duration="250"
             app:border_radius="8dp"
             app:text="Swipe to Bid"
-            app:outer_color="@color/primary"
+            app:outer_color="@color/secondary"
             app:text_size="12sp"
             app:slider_height="48dp"
             app:slider_locked="false"
             app:bounce_on_start="true" />
 
     </LinearLayout>
-
-
 
     <io.bidswipe.app.ui.custom.LoaderView
         android:id="@+id/loader"

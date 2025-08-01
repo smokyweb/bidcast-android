@@ -444,4 +444,5 @@
     <string name="support_company_com">support@company.com</string>
     <string name="send_message">Send Message</string>
     <string name="product_detail_description">Detailed product listings help buyers make informed decisions and increase your chances of making a sale.</string>
+    <string name="select_from_product_inventory">Select from product Inventory</string>
 </resources>

@@ -55,6 +55,7 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
 			val imageUri = result.uriContent
 			val imagePath = result.getUriFilePath(mCtx, true)
 			if (imagePath != null) {
+
 				if (uploadItemIndex == -1) {
 					imageList.add(imagePath)
 				} else {
@@ -65,6 +66,7 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
 				bind.imageLimit.text = "${imageList.size}/9"
 
 				bind.images.adapter?.notifyDataSetChanged()
+
 			}
 		}
 	}

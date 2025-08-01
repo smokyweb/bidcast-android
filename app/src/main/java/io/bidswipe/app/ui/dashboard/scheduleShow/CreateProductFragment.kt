@@ -136,12 +136,16 @@ class CreateProductFragment : BaseFragment<ScheduleShowViewModel, FragmentCreate
 			bind.category.setText(categoryList[position]?.name)
 		}*/
 
-		viewModel.getCategory()
+		if (viewModel.getCategoryRepo.value == null){
+			bind.loader.isVisible = true
+			viewModel.getCategory()
+		}
 
 		viewModel.getCategoryRepo.observe(viewLifecycleOwner) { it ->
 			when (it) {
 				is Resource.Success -> {
 					bind.loader.isVisible = false
+					viewModel.getCategoryRepo.value = null
 
 					val mData = it.value.data
 
