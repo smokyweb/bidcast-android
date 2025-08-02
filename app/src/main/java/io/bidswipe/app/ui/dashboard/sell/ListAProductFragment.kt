@@ -42,125 +42,125 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
     var imageList = mutableListOf<String?>()
     var uploadItemIndex = -1
     var isSubCategory = false
-	private var product : GetMyInventoryResponse.Data? = null
+    private var product: GetMyInventoryResponse.Data? = null
     private var categoryList = mutableListOf<GetCategoryResponse.Data?>()
     private var subCategoryList = mutableListOf<GetCategoryResponse.Data?>()
     private var categoryId = ""
     private var subCategoryId = ""
-	var variantList = mutableListOf("Color", "Size", "Title")
+    var variantList = mutableListOf<GetCategoryResponse.Data.ExtraField?>()
     private lateinit var variantAdapter: ProductVariantAdapter
 
-	private val imageResult = registerForActivityResult(CropImageContract()) { result ->
-		if (result.isSuccessful) {
-			val imageUri = result.uriContent
-			val imagePath = result.getUriFilePath(mCtx, true)
-			if (imagePath != null) {
+    private val imageResult = registerForActivityResult(CropImageContract()) { result ->
+        if (result.isSuccessful) {
+            val imageUri = result.uriContent
+            val imagePath = result.getUriFilePath(mCtx, true)
+            if (imagePath != null) {
 
-				if (uploadItemIndex == -1) {
-					imageList.add(imagePath)
-				} else {
-					imageList[uploadItemIndex] = imagePath
-					uploadItemIndex = -1
-				}
+                if (uploadItemIndex == -1) {
+                    imageList.add(imagePath)
+                } else {
+                    imageList[uploadItemIndex] = imagePath
+                    uploadItemIndex = -1
+                }
 
-				bind.imageLimit.text = "${imageList.size}/9"
+                bind.imageLimit.text = "${imageList.size}/9"
 
-				bind.images.adapter?.notifyDataSetChanged()
+                bind.images.adapter?.notifyDataSetChanged()
 
-			}
-		}
-	}
+            }
+        }
+    }
 
-	private val mClick = object : RecyclerClicks {
-		override fun itemClick(pos: Int, status: String?) {
-		}
-	}
+    private val mClick = object : RecyclerClicks {
+        override fun itemClick(pos: Int, status: String?) {
+        }
+    }
 
-	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-		super.onViewCreated(view, savedInstanceState)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
-		product = activity?.intent?.getSerializableExtra("product") as? GetMyInventoryResponse.Data
-		Log.d("IMAGE_DEBUG", "Received product images: ${product?.images}")
+        product = activity?.intent?.getSerializableExtra("product") as? GetMyInventoryResponse.Data
+        Log.d("IMAGE_DEBUG", "Received product images: ${product?.images}")
 
-		if (product != null) {
-			bind.saveDraft.isVisible = false
-			bind.publish.text = "Update"
-			bind.header.setHeaderText("Update Product")
-			addProductData(product)
-		}
+        if (product != null) {
+            bind.saveDraft.isVisible = false
+            bind.publish.text = "Update"
+            bind.header.setHeaderText("Update Product")
+            addProductData(product)
+        }
 
-		log(product.toString())
+        log(product.toString())
 
-		variantAdapter = ProductVariantAdapter(variantList, mClick)
+        variantAdapter = ProductVariantAdapter(variantList, mClick)
 
-		bind.variants.adapter = variantAdapter
+        bind.variants.adapter = variantAdapter
 
-		bind.header.onBackClick {
-			finish()
-		}
-		
-		bind.images.adapter = ImageAdapter(imageList, object : RecyclerClicks {
-			override fun itemClick(pos: Int, status: String?) {
-				uploadItemIndex = pos
-				uploadImage()
-			}
-		})
-		
-		bind.addNewImage.setOnClickListener {
-			uploadItemIndex = -1
-			uploadImage()
-		}
-		
-		bind.publish.setOnClickListener {
-			saveProduct()
-		}
-		
-		bind.saveDraft.setOnClickListener {
-			saveProduct("draft")
-		}
+        bind.header.onBackClick {
+            finish()
+        }
 
-		bind.category.setOnClickListener {
-			showCategorySheet(categoryList,"category")
-		}
+        bind.images.adapter = ImageAdapter(imageList, object : RecyclerClicks {
+            override fun itemClick(pos: Int, status: String?) {
+                uploadItemIndex = pos
+                uploadImage()
+            }
+        })
 
-		viewModel.getCategory()
+        bind.addNewImage.setOnClickListener {
+            uploadItemIndex = -1
+            uploadImage()
+        }
 
-		viewModel.getCategoryRepo.observe(viewLifecycleOwner) {
-			when (it) {
-				is Resource.Success -> {
+        bind.publish.setOnClickListener {
+            saveProduct()
+        }
 
-					bind.loader.isVisible = false
+        bind.saveDraft.setOnClickListener {
+            saveProduct("draft")
+        }
 
-					val mData = it.value.data
+        bind.category.setOnClickListener {
+            showCategorySheet(categoryList, "category")
+        }
 
-					if (mData?.isNotEmpty() == true) {
-						if (isSubCategory) {
-							subCategoryList.clear()
-							subCategoryList.addAll(mData)
-							showCategorySheet(subCategoryList, "subCategory")
-						} else {
-							categoryList.clear()
-							categoryList.addAll(mData)
+        viewModel.getCategory()
+
+        viewModel.getCategoryRepo.observe(viewLifecycleOwner) {
+            when (it) {
+                is Resource.Success -> {
+
+                    bind.loader.isVisible = false
+
+                    val mData = it.value.data
+
+                    if (mData?.isNotEmpty() == true) {
+                        if (isSubCategory) {
+                            subCategoryList.clear()
+                            subCategoryList.addAll(mData)
+                            showCategorySheet(subCategoryList, "subCategory")
+                        } else {
+                            categoryList.clear()
+                            categoryList.addAll(mData)
 //							isSubCategory = true
-						}
-					}
+                        }
+                    }
 
-					isSubCategory = !isSubCategory
+                    isSubCategory = !isSubCategory
 
-					/*val adapter = ArrayAdapter(
-						mCtx,
-						android.R.layout.simple_list_item_1,
-						categoryList.map { it?.name })
-					bind.category.setAdapter(adapter)
-					val draw = ContextCompat.getDrawable(mCtx, R.drawable.card_8)
-					bind.category.setDropDownBackgroundDrawable(draw)
+                    /*val adapter = ArrayAdapter(
+                        mCtx,
+                        android.R.layout.simple_list_item_1,
+                        categoryList.map { it?.name })
+                    bind.category.setAdapter(adapter)
+                    val draw = ContextCompat.getDrawable(mCtx, R.drawable.card_8)
+                    bind.category.setDropDownBackgroundDrawable(draw)
 
-					bind.category.setOnItemClickListener { _, _, position, _ ->
-						categoryId = categoryList[position]?.id.toString()
-					}
-					bind.category.setOnClickListener {
-						bind.category.showDropDown()
-					}*/
+                    bind.category.setOnItemClickListener { _, _, position, _ ->
+                        categoryId = categoryList[position]?.id.toString()
+                    }
+                    bind.category.setOnClickListener {
+                        bind.category.showDropDown()
+                    }*/
 
                 }
 
@@ -203,88 +203,91 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
                                 dialog.dismiss()
                             }
 
-						override fun secondaryClick(dialog: AppBottomSheet) {
-							dialog.dismiss()
-						}
-					})
-				}
-				
-				is Resource.Error -> {
-					if (it.isNetworkError) {
-						errorToast(getString(R.string.no_internet))
-					} else {
-						it.parse(mCtx, TAG, object : AlertClicks {
-							override fun primaryClick(dialog: AppBottomSheet) {
-								dialog.dismiss()
-								
-							}
-							
-							override fun secondaryClick(dialog: AppBottomSheet) {
-								dialog.dismiss()
-								
-							}
-						})
-					}
-				}
-				
-				else -> {}
-				
-			}
-		}
-		
-	}
-	
-	fun uploadImage() {
-		if (imageList.size < 9) {
-			requestPerms(Const.STR_PERMS) { per ->
-				if (per) {
-					imageResult.launch(Utils.initCrop(mCtx, isCamera = true, isGallery = true))
-				}
-			}
-		} else {
-			Alerts.error(mCtx, "You can select max 9 images only")
-		}
-	}
-	
-	fun saveProduct(type: String = "active") {
-		when {
+                            override fun secondaryClick(dialog: AppBottomSheet) {
+                                dialog.dismiss()
+                            }
+                        })
+                }
 
-			imageList.filterNotNull().isEmpty() -> {
-				Alerts.error(mCtx, "Please select at least one image")
-			}
+                is Resource.Error -> {
+                    if (it.isNetworkError) {
+                        errorToast(getString(R.string.no_internet))
+                    } else {
+                        it.parse(mCtx, TAG, object : AlertClicks {
+                            override fun primaryClick(dialog: AppBottomSheet) {
+                                dialog.dismiss()
 
-			categoryId.isEmpty() -> {
-				Alerts.error(mCtx, "Please select category")
-			}
+                            }
 
-			bind.productTitle.value().isEmpty() -> {
-				bind.productTitle.requestFocus()
-				Alerts.error(mCtx, "Please enter product title")
-			}
+                            override fun secondaryClick(dialog: AppBottomSheet) {
+                                dialog.dismiss()
 
-			bind.description.value().isEmpty() -> {
-				bind.description.requestFocus()
-				Alerts.error(mCtx, "Please enter description")
-			}
+                            }
+                        })
+                    }
+                }
 
-			bind.quantity.value().isEmpty() -> {
-				bind.quantity.requestFocus()
-				Alerts.error(mCtx, "Please enter quantity")
-			}
+                else -> {}
 
-			bind.price.value().isEmpty() -> {
-				bind.price.requestFocus()
-				Alerts.error(mCtx, "Please enter price")
-			}
+            }
+        }
 
-			/*	bind.shippingProfile.value().isEmpty() -> {
-					Alerts.error(mCtx, "Please select shipping")
-				}
-				*/
-			else -> {
-				bind.loader.isVisible = true
-				val imagePartList = mutableListOf<MultipartBody.Part>()
-				imageList.filter { it?.contains(Const.BASE_URL)== false }.forEach { image ->
+    }
+
+    fun uploadImage() {
+        if (imageList.size < 9) {
+            requestPerms(Const.STR_PERMS) { per ->
+                if (per) {
+                    imageResult.launch(Utils.initCrop(mCtx, isCamera = true, isGallery = true))
+                }
+            }
+        } else {
+            Alerts.error(mCtx, "You can select max 9 images only")
+        }
+    }
+
+    fun saveProduct(type: String = "active") {
+        val variantData = getVariantData()
+        Log.d(TAG, "saveProduct: ${variantData}")
+        when {
+
+            imageList.filterNotNull().isEmpty() -> {
+                Alerts.error(mCtx, "Please select at least one image")
+            }
+
+            categoryId.isEmpty() -> {
+                Alerts.error(mCtx, "Please select category")
+            }
+
+            bind.productTitle.value().isEmpty() -> {
+                bind.productTitle.requestFocus()
+                Alerts.error(mCtx, "Please enter product title")
+            }
+
+            bind.description.value().isEmpty() -> {
+                bind.description.requestFocus()
+                Alerts.error(mCtx, "Please enter description")
+            }
+
+            bind.quantity.value().isEmpty() -> {
+                bind.quantity.requestFocus()
+                Alerts.error(mCtx, "Please enter quantity")
+            }
+
+            bind.price.value().isEmpty() -> {
+                bind.price.requestFocus()
+                Alerts.error(mCtx, "Please enter price")
+            }
+
+            /*	bind.shippingProfile.value().isEmpty() -> {
+                    Alerts.error(mCtx, "Please select shipping")
+                }
+                */
+
+            else -> {
+                bind.loader.isVisible = true
+                val imagePartList = mutableListOf<MultipartBody.Part>()
+                imageList.filter { it?.contains(Const.BASE_URL) == false }.forEach { image ->
                     if (image != null) {
                         val name =
                             System.currentTimeMillis().toString() + "_product_gallery.jpeg"
@@ -296,92 +299,121 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
 
                 viewModel.storeProduct(
                     productId = productId,
-	                categoryId = categoryId.request(),
-					title = bind.productTitle.value().request(),
-					description = bind.description.value().request(),
-					quantity = bind.quantity.value().request(),
-					pricing = bind.price.value().request(),
-					flashSale = (if (bind.flashSell.isChecked) "1" else "0").request(),
-					acceptOffers = (if (bind.acceptOffers.isChecked) "1" else "0").request(),
-					reserveForLive = (if (bind.reserveForLive.isChecked) "1" else "0").request(),
+                    categoryId = categoryId.request(),
+                    title = bind.productTitle.value().request(),
+                    description = bind.description.value().request(),
+                    quantity = bind.quantity.value().request(),
+                    pricing = bind.price.value().request(),
+                    flashSale = (if (bind.flashSell.isChecked) "1" else "0").request(),
+                    acceptOffers = (if (bind.acceptOffers.isChecked) "1" else "0").request(),
+                    reserveForLive = (if (bind.reserveForLive.isChecked) "1" else "0").request(),
                     shippingProfileId = "4".request(),
                     status = type.request(),
-	                subCategoryId = subCategoryId.ifEmpty { null }?.request(),
+                    subCategoryId = subCategoryId.ifEmpty { null }?.request(),
                     productImages = imagePartList
                 )
             }
         }
     }
 
-	private fun addProductData(product: GetMyInventoryResponse.Data?) {
-		categoryId = product?.categoryId.toString()
-		subCategoryId = product?.subCategoryId.toString()
-		if (product?.subCategory != null){
-			bind.category.setText(buildSpannedString { append(product.category?.name)
-				append("(${product.subCategory.name})") })
-		}else{
-			bind.category.setText(product?.category?.name)
-		}
-		bind.productTitle.setText(product?.title)
-		bind.description.setText(product?.description)
-		bind.quantity.setText(product?.quantity.toString())
-		bind.price.setText(product?.pricing.toString())
-		bind.flashSell.isChecked = product?.flashSale == true
-		bind.acceptOffers.isChecked = product?.acceptOffers == true
-		bind.reserveForLive.isChecked = product?.reserveForLive == true
-		imageList.clear()
-		product?.images?.forEach { imageUrl ->
-			imageUrl?.let {
-				if (imageList.size<9) {
-					imageList.add(it)
-				}
-			}
-		}
+    private fun addProductData(product: GetMyInventoryResponse.Data?) {
+        categoryId = product?.categoryId.toString()
+        subCategoryId = product?.subCategoryId.toString()
+        if (product?.subCategory != null) {
+            bind.category.setText(buildSpannedString {
+                append(product.category?.name)
+                append("(${product.subCategory.name})")
+            })
+        } else {
+            bind.category.setText(product?.category?.name)
+        }
+        bind.productTitle.setText(product?.title)
+        bind.description.setText(product?.description)
+        bind.quantity.setText(product?.quantity.toString())
+        bind.price.setText(product?.pricing.toString())
+        bind.flashSell.isChecked = product?.flashSale == true
+        bind.acceptOffers.isChecked = product?.acceptOffers == true
+        bind.reserveForLive.isChecked = product?.reserveForLive == true
+        imageList.clear()
+        product?.images?.forEach { imageUrl ->
+            imageUrl?.let {
+                if (imageList.size < 9) {
+                    imageList.add(it)
+                }
+            }
+        }
 
-		Log.d(TAG, "addProductData: $imageList")
-		bind.imageLimit.text = "${imageList.size}/9"
-		bind.images.adapter?.notifyDataSetChanged()
-	}
+        Log.d(TAG, "addProductData: $imageList")
+        bind.imageLimit.text = "${imageList.size}/9"
+        bind.images.adapter?.notifyDataSetChanged()
+    }
 
-	private fun showCategorySheet(categoryList: MutableList<GetCategoryResponse.Data?>, type: String) {
-		val categorySheetBind =
-			CategoryBottomSheetBinding.bind(layoutInflater.inflate(R.layout.category_bottom_sheet, null, false))
-		val categorySheet = Alerts.appBottomSheet(mCtx, true, categorySheetBind)
+    private fun showCategorySheet(
+		categoryList: MutableList<GetCategoryResponse.Data?>,
+		type: String,
+	) {
+        val categorySheetBind =
+            CategoryBottomSheetBinding.bind(
+                layoutInflater.inflate(
+                    R.layout.category_bottom_sheet,
+                    null,
+                    false
+                )
+            )
+        val categorySheet = Alerts.appBottomSheet(mCtx, true, categorySheetBind)
+        variantList.clear()
+        variantAdapter.notifyDataSetChanged()
+        categorySheetBind.recycler.adapter = CategoryListAdapter(
+            if (type == "category") categoryList else subCategoryList,
+            object : RecyclerClicks {
 
-		categorySheetBind.recycler.adapter = CategoryListAdapter(if (type == "category") categoryList else subCategoryList, object : RecyclerClicks {
+                override fun itemClick(pos: Int, status: String?) {
 
-			override fun itemClick(pos: Int, status: String?) {
+                    if (type == "category") {
+                        categoryId = categoryList[pos]?.id.toString()
+                        bind.category.setText(categoryList[pos]?.name.toString())
+                        bind.loader.isVisible = true
+                        viewModel.getCategory(categoryId)
+                        isSubCategory = true
+                        if (categoryList[pos]?.extraFields?.isNotEmpty()== true){
+                            Log.d(TAG, "itemClick: ${categoryList[pos]?.extraFields}")
+                            variantList.addAll(categoryList[pos]?.extraFields?: mutableListOf())
+                            variantAdapter.notifyDataSetChanged()
+                        }
+                    } else {
+                        bind.category.setText(buildSpannedString {
+                            append(bind.category.text)
+                            append("(${subCategoryList[pos]?.name.toString()})")
+                        })
+                        subCategoryId = subCategoryList[pos]?.id.toString()
+                        isSubCategory = false
+                        if (subCategoryList[pos]?.extraFields?.isNotEmpty()== true){
+                            variantList.addAll(subCategoryList[pos]?.extraFields?: mutableListOf())
+                            variantAdapter.notifyDataSetChanged()
+                        }
+                    }
+                    categorySheet.dismiss()
+                }
+            })
 
-				if (type == "category") {
-					categoryId = categoryList[pos]?.id.toString()
-					bind.category.setText(categoryList[pos]?.name.toString())
-					bind.loader.isVisible = true
-					viewModel.getCategory(categoryId)
-					isSubCategory = true
-				} else {
-					bind.category.setText(buildSpannedString {
-						append(bind.category.text)
-						append("(${subCategoryList[pos]?.name.toString()})")
-					})
-					subCategoryId = subCategoryList[pos]?.id.toString()
-					isSubCategory = false
-				}
-				categorySheet.dismiss()
-			}
-		})
+        if (type == "subCategory") {
+            categorySheetBind.sheetTitle.text = "Select Product Sub Category"
+        } else {
+            categorySheetBind.sheetTitle.text = "Select Product Category"
+        }
 
-		if (type == "subCategory") {
-			categorySheetBind.sheetTitle.text = "Select Product Sub Category"
-		} else {
-			categorySheetBind.sheetTitle.text = "Select Product Category"
-		}
+        categorySheetBind.close.setOnClickListener {
+            categorySheet.dismiss()
+        }
 
-		categorySheetBind.close.setOnClickListener {
-			categorySheet.dismiss()
-		}
+        categorySheet.show()
 
-		categorySheet.show()
-
-	}
+    }
+    fun getVariantData(): Map<String, String> {
+        return (bind.variants.adapter as ProductVariantAdapter)
+            .getAllVariantData()
+            .filter { it.second.isNotEmpty() }
+            .toMap()
+    }
 
 }

@@ -25,5 +25,19 @@ data class GetCategoryResponse(
         val image: String?,
         @SerializedName("name")
         val name: String?,
-    )
+        @SerializedName("thumbnail")
+        val thumbnail: String?,
+        @SerializedName("extra_fields")
+        val extraFields: List<ExtraField?>?,
+    ) {
+        @Keep
+        data class ExtraField(
+            @SerializedName("label")
+            val label: String?,
+            @SerializedName("type")
+            val type: String?,
+            @SerializedName("options")
+            val options: List<String?>?
+        )
+    }
 }
