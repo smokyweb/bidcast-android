@@ -27,7 +27,6 @@ import io.bidswipe.app.utils.Const
 import io.bidswipe.app.utils.Utils
 import io.bidswipe.app.utils.finish
 import io.bidswipe.app.utils.parse
-import io.bidswipe.app.utils.request
 import io.bidswipe.app.utils.value
 import okhttp3.MultipartBody
 import java.io.File
@@ -296,25 +295,38 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
                     }
                 }
                 val productId = if (product != null) product?.id.toString() else null
+                viewModel.storeProductMeta(imagePartList)
+                viewModel.storeProductMetaRepo.observe(viewLifecycleOwner){
+                    when (it) {
+                        is Resource.Success -> {
+//                            bind.loader.isVisible = false
+                            viewModel.storeProduct(
+                                productId = productId,
+                                categoryId = categoryId,
+                                title = bind.productTitle.value(),
+                                description = bind.description.value(),
+                                quantity = bind.quantity.value(),
+                                pricing = bind.price.value(),
+                                flashSale = (if (bind.flashSell.isChecked) "1" else "0"),
+                                acceptOffers = (if (bind.acceptOffers.isChecked) "1" else "0"),
+                                reserveForLive = (if (bind.reserveForLive.isChecked) "1" else "0"),
+                                shippingProfileId = "4",
+                                status = type,
+                                subCategoryId = subCategoryId.ifEmpty { null },
+                                productImages = it.value.data?.map { mapOf("image" to it?.images) },
+                                variant = variantData.toList().map { mapOf(it.first to it.second) }
+                            )
+                        }
+                        is Resource.Error -> {
+                            bind.loader.isVisible = false
+                        }
+                        else -> {}
+                    }
+                }
 
-                viewModel.storeProduct(
-                    productId = productId,
-                    categoryId = categoryId.request(),
-                    title = bind.productTitle.value().request(),
-                    description = bind.description.value().request(),
-                    quantity = bind.quantity.value().request(),
-                    pricing = bind.price.value().request(),
-                    flashSale = (if (bind.flashSell.isChecked) "1" else "0").request(),
-                    acceptOffers = (if (bind.acceptOffers.isChecked) "1" else "0").request(),
-                    reserveForLive = (if (bind.reserveForLive.isChecked) "1" else "0").request(),
-                    shippingProfileId = "4".request(),
-                    status = type.request(),
-                    subCategoryId = subCategoryId.ifEmpty { null }?.request(),
-                    productImages = imagePartList
-                )
             }
         }
-    }
+     }
 
     private fun addProductData(product: GetMyInventoryResponse.Data?) {
         categoryId = product?.categoryId.toString()

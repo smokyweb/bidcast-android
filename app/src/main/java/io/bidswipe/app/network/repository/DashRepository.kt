@@ -2,6 +2,7 @@ package io.bidswipe.app.network.repository
 
 import io.bidswipe.app.base.BaseRepository
 import io.bidswipe.app.model.PaymentCardModel
+import io.bidswipe.app.model.StoreProductRequest
 import io.bidswipe.app.network.ApiInterface
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -26,34 +27,47 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
     suspend fun getProduct(categoryId: RequestBody?) = call { api.getProduct(categoryId) }
 
     suspend fun storeProduct(
-        categoryId: RequestBody?,
-        title: RequestBody?,
-        description: RequestBody?,
-        quantity: RequestBody?,
-        pricing: RequestBody?,
-        flashSale: RequestBody?,
-        acceptOffers: RequestBody?,
-        reserveForLive: RequestBody?,
-        shippingProfileId: RequestBody?,
-        status: RequestBody?,
-        productImages: List<MultipartBody.Part?>?,
-        subCategoryId: RequestBody? = null,
-        productId: String? = null
+        categoryId: String?,
+        title: String?,
+        description: String?,
+        quantity: String?,
+        pricing: String?,
+        flashSale: String?,
+        acceptOffers: String?,
+        reserveForLive: String?,
+        shippingProfileId: String?,
+        status: String?,
+        productImages:  List<Map<String, String?>>?,
+        subCategoryId: String? = null,
+        productId: String? = null,
+        variant: List<Map<String, Any?>>? = null,
     ) = call {
         api.storeProduct(
-            categoryId,
-            title,
-            description,
-            quantity,
-            pricing,
-            flashSale,
-            acceptOffers,
-            reserveForLive,
-            shippingProfileId,
-            status,
-            productImages,
-            subCategoryId,
+            StoreProductRequest
+                (
+                categoryId,
+                title,
+                description,
+                quantity,
+                pricing,
+                flashSale,
+                acceptOffers,
+                reserveForLive,
+                shippingProfileId,
+                status,
+                productImages,
+                subCategoryId,
+                variant
+            ),
             productId
+        )
+    }
+
+    suspend fun storeProductMeta(
+        productImages: List<MultipartBody.Part?>?,
+    ) = call {
+        api.storeProductMeta(
+            productImages
         )
     }
 
@@ -151,13 +165,23 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
         streetAddress: RequestBody?,
         pinCode: RequestBody?,
         city: RequestBody?,
-        state: RequestBody?
-    ) = call { api.addShippingAddress(type, name, phoneNumber, streetAddress, pinCode, city, state) }
+        state: RequestBody?,
+    ) = call {
+        api.addShippingAddress(
+            type,
+            name,
+            phoneNumber,
+            streetAddress,
+            pinCode,
+            city,
+            state
+        )
+    }
 
     suspend fun getShippingAddress() = call { api.getShippingAddress() }
 
     suspend fun addPaymentCard(
-        data: PaymentCardModel
+        data: PaymentCardModel,
     ) = call { api.addPaymentCard(data) }
 
     suspend fun getPaymentCard(
@@ -385,39 +409,42 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
     ) = call { api.sendChatNotification(receiverId, message) }
 
     suspend fun getPageUrl(
-        slug: String
+        slug: String,
     ) = call { api.getPageUrl(slug) }
 
     suspend fun storeSellerVerification(
         id: MultipartBody.Part?,
         image: MultipartBody.Part?,
         phoneVerification: RequestBody,
-        cardId: RequestBody
-    ) = call { api.storeSellerVerification(id
-    ,image,phoneVerification,cardId) }
+        cardId: RequestBody,
+    ) = call {
+        api.storeSellerVerification(
+            id, image, phoneVerification, cardId
+        )
+    }
 
 
     suspend fun getSellerStatus(
     ) = call { api.getSellerStatus() }
 
     suspend fun setDefaultShippingAddress(
-        addressId : RequestBody?
+        addressId: RequestBody?,
     ) = call { api.setDefaultShippingAddress(addressId) }
 
     suspend fun setDefaultCard(
-        cardId : RequestBody?
+        cardId: RequestBody?,
     ) = call { api.setDefaultCard(cardId) }
 
     suspend fun deleteCard(
-        cardId : RequestBody?
+        cardId: RequestBody?,
     ) = call { api.deleteCard(cardId) }
 
     suspend fun deleteAddress(
-        addressId : RequestBody?
+        addressId: RequestBody?,
     ) = call { api.deleteAddress(addressId) }
 
     suspend fun getStates() = call { api.getStates() }
 
-    suspend fun deleteProduct(productId : String?) = call { api.deleteProduct(productId) }
+    suspend fun deleteProduct(productId: String?) = call { api.deleteProduct(productId) }
 
 }
