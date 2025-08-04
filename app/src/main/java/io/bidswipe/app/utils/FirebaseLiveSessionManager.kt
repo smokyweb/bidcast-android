@@ -35,7 +35,6 @@ class FirebaseLiveSessionManager(
             viewerCount = 1,
             highestBid = "",
             isLive = true,
-            time = System.currentTimeMillis(),
             showId = data?.id.toString() ?: ""
         ).toMap()
         liveSessionsRef.child(roomID).updateChildren(liveShow)

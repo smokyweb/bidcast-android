@@ -26,7 +26,6 @@ class ViewPagerAdapter(fragmentActivity: FragmentActivity, type: String) :
             SavedItemsFragment()
         )
     } else if (type == "Analytics") {
-
         listOf(
             OverAllFragment(),
             BidsFragment(),

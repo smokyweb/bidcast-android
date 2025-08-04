@@ -12,7 +12,7 @@ data class LiveShowModel(
 	var viewerCount: Int? = null,
 	var highestBid: String? = null,
 	var isLive: Boolean? = null,
-	var time: Long? = null,
+	var time: String? =  System.currentTimeMillis().toString(),
 	var showId: String? = null,
 ) {
 	@Keep
@@ -92,7 +92,7 @@ data class LiveShowModel(
 			viewerCount = it.child("viewerCount").getValue(Int::class.java),
 			highestBid = it.child("highestBid").getValue(String::class.java),
 			isLive = it.child("isLive").getValue(Boolean::class.java),
-			time = it.child("time").getValue(Long::class.java),
+			time = it.child("time").getValue(String::class.java),
 			showId = it.child("showId").getValue(String::class.java),
 		)
 	}

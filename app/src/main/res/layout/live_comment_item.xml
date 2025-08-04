@@ -36,6 +36,7 @@
                 style="@style/TitleMedium"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:textColor="@color/onPrimary"
                 android:text="@string/username" />
 
             <TextView
@@ -43,6 +44,7 @@
                 style="@style/BodySmall"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:textColor="@color/onPrimary"
                 android:text="f qff qbacgfaq aqafg" />
 
         </LinearLayout>

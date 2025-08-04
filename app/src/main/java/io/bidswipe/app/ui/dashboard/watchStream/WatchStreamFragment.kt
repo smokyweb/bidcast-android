@@ -297,7 +297,9 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 			}
 		}
 
-		verificationDialog()
+		if (App.profileResponse.value?.buyerIdentityStatus != "verified") {
+			verificationDialog()
+		}
 	}
 
 	override fun onResume() {
