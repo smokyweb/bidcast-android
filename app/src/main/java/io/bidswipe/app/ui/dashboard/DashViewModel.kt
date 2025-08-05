@@ -1,5 +1,6 @@
 package io.bidswipe.app.ui.dashboard
 
+import android.content.res.Resources
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -27,6 +28,7 @@ import io.bidswipe.app.network.response.UpdateOfferResponse
 import io.bidswipe.app.network.response.UserDeviceResponse
 import io.bidswipe.app.network.response.UserProfileResponse
 import io.bidswipe.app.network.response.PageUrlResponse
+import io.bidswipe.app.network.response.StoreProductResponse
 import kotlinx.coroutines.launch
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -78,19 +80,20 @@ class DashViewModel @Inject constructor(val repo: DashRepository) : ViewModel() 
         get() = _storeProductResponse
 
     fun storeProduct(
-		categoryId: RequestBody?,
-		title: RequestBody?,
-		description: RequestBody?,
-		quantity: RequestBody?,
-		pricing: RequestBody?,
-		flashSale: RequestBody?,
-		acceptOffers: RequestBody?,
-		reserveForLive: RequestBody?,
-		shippingProfileId: RequestBody?,
-		status: RequestBody?,
-		productImages: List<MultipartBody.Part>?,
-		subCategoryId: RequestBody? = null,
-		productId: String? = null
+        categoryId: String?,
+        title: String?,
+        description: String?,
+        quantity: String?,
+        pricing: String?,
+        flashSale: String?,
+        acceptOffers: String?,
+        reserveForLive: String?,
+        shippingProfileId: String?,
+        status: String?,
+        productImages:  List<Map<String, String?>>?,
+        subCategoryId: String? = null,
+        productId: String? = null,
+        variant: List<Map<String, Any?>>? = null,
 	) = viewModelScope.launch {
         _storeProductResponse.value = repo.storeProduct(
             categoryId,
@@ -105,8 +108,17 @@ class DashViewModel @Inject constructor(val repo: DashRepository) : ViewModel() 
             status,
             productImages,
 	        subCategoryId ,
-            productId
+            productId,
+            variant
         )
+    }
+
+    private var _storeProductMetaResponse = MutableLiveData<Resource<StoreProductResponse>>()
+    val storeProductMetaRepo: MutableLiveData<Resource<StoreProductResponse>>
+        get() = _storeProductMetaResponse
+
+    fun storeProductMeta(productImages: List<MultipartBody.Part>?) = viewModelScope.launch {
+        _storeProductMetaResponse.value = repo.storeProductMeta(productImages)
     }
 
     private var _getHowToSellStepResponse = MutableLiveData<Resource<GetHowToSellResponse>>()

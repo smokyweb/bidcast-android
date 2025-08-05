@@ -2,6 +2,7 @@ package io.bidswipe.app.network
 
 import io.bidswipe.app.BuildConfig
 import io.bidswipe.app.model.PaymentCardModel
+import io.bidswipe.app.model.StoreProductRequest
 import io.bidswipe.app.network.response.AboutUsResponse
 import io.bidswipe.app.network.response.CheckKycResponse
 import io.bidswipe.app.network.response.CommonResponse
@@ -52,6 +53,7 @@ import io.bidswipe.app.network.response.UserSearchingResponse
 import io.bidswipe.app.network.response.PageUrlResponse
 import io.bidswipe.app.network.response.SellerStatusResponse
 import io.bidswipe.app.network.response.SetDefaultAddressResponse
+import io.bidswipe.app.network.response.StoreProductResponse
 import io.bidswipe.app.utils.Utils
 import io.bidswipe.app.utils.request
 import okhttp3.MultipartBody
@@ -129,23 +131,18 @@ interface ApiInterface {
         @Part("category_id") categoryId: RequestBody?,
     ): CommonResponse
 
-    @Multipart
+
     @POST("api/store-product")
     suspend fun storeProduct(
-        @Part("category_id") categoryId: RequestBody?,
-        @Part("title") title: RequestBody?,
-        @Part("description") description: RequestBody?,
-        @Part("quantity") quantity: RequestBody?,
-        @Part("pricing") pricing: RequestBody?,
-        @Part("flash_sale") flashSale: RequestBody?,
-        @Part("accept_offers") acceptOffers: RequestBody?,
-        @Part("reserve_for_live") reserveForLive: RequestBody?,
-        @Part("shipping_profile_id") shippingProfileId: RequestBody?,
-        @Part("status") status: RequestBody?,
-        @Part productImages: List<MultipartBody.Part?>?,
-        @Part("sub_category_id") subCategoryId: RequestBody? = null,
+       @Body storeProductModel: StoreProductRequest,
         @Query("product_id") productId: String? = null
     ): CommonResponse
+
+    @Multipart
+    @POST("store-product-meta")
+    suspend fun storeProductMeta(
+        @Part productImages: List<MultipartBody.Part?>?,
+    ): StoreProductResponse
 
     @GET("api/how-to-sell")
     suspend fun getHowToSellStep(): GetHowToSellResponse

@@ -50,24 +50,24 @@ class ProductWeightFragment : BaseFragment<ScheduleShowViewModel, FragmentProduc
             val price = productData?.getString("price") ?: 1
             val imagePaths = productData?.getString("imagePaths")
             val imageFiles = imagePaths?.split(",")?.map { File(it) }
-            val imageParts = imageFiles?.map {
-                Utils.imagePart("images[]", it.name, it)
+            val productImages = imagePaths?.split(",")?.map { path ->
+                mapOf("image" to path)
             }
 
             // Call the API
             viewModel.storeProduct(
-                categoryId = categoryId.request(),
-                title = title.request(),
-                description = description.request(),
-                quantity = quantity.toString().request(),
-                pricing = price.toString().request(),
-                flashSale = "0".request(),
-                acceptOffers = "0".request(),
-                reserveForLive = "0".request(),
-                shippingProfileId = "4".request(),
-                status =  "active".request(),
-                productImages = imageParts,
-                subCategoryId = subCategoryId.request()
+                categoryId = categoryId,
+                title = title,
+                description = description,
+                quantity = quantity.toString(),
+                pricing = price.toString(),
+                flashSale = "0",
+                acceptOffers = "0",
+                reserveForLive = "0",
+                shippingProfileId = "4",
+                status =  "active",
+                productImages = productImages,
+                subCategoryId = subCategoryId,
             )
         }
 

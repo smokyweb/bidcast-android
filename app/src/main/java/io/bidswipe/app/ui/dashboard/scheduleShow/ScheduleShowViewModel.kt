@@ -23,9 +23,9 @@ class ScheduleShowViewModel @Inject constructor(val repo: DashRepository) : View
     var showTitle = ""
     var date = ""
     var time = ""
-    var categoryId =""
-    var auctionId =""
-    var thumbnail =""
+    var categoryId = ""
+    var auctionId = ""
+    var thumbnail = ""
 
     private var _storeScheduleShowResponse = MutableLiveData<Resource<CreateShowResponse>>()
     val storeScheduleShowRepo: MutableLiveData<Resource<CreateShowResponse>>
@@ -36,11 +36,19 @@ class ScheduleShowViewModel @Inject constructor(val repo: DashRepository) : View
         date: RequestBody?,
         time: RequestBody?,
         categoryId: RequestBody?,
-        auctionTypeId : RequestBody?,
+        auctionTypeId: RequestBody?,
         thumbnails: List<MultipartBody.Part?>?,
-        productIds: List<Int?>
+        productIds: List<Int?>,
     ) = viewModelScope.launch {
-        _storeScheduleShowResponse.value = repo.storeScheduleShow(title,date,time,categoryId,auctionTypeId,thumbnails,productIds)
+        _storeScheduleShowResponse.value = repo.storeScheduleShow(
+            title,
+            date,
+            time,
+            categoryId,
+            auctionTypeId,
+            thumbnails,
+            productIds
+        )
     }
 
     private var _getCategoryResponse = MutableLiveData<Resource<GetCategoryResponse>>()
@@ -48,7 +56,7 @@ class ScheduleShowViewModel @Inject constructor(val repo: DashRepository) : View
         get() = _getCategoryResponse
 
     fun getCategory(
-        categoryId: String? = null
+        categoryId: String? = null,
     ) = viewModelScope.launch {
         _getCategoryResponse.value = repo.getCategory(categoryId)
     }
@@ -67,7 +75,7 @@ class ScheduleShowViewModel @Inject constructor(val repo: DashRepository) : View
         get() = _getAllTipsResponse
 
     fun getAllTips(
-        type : RequestBody?
+        type: RequestBody?,
     ) = viewModelScope.launch {
         _getAllTipsResponse.value = repo.getAllTips(type)
     }
@@ -77,9 +85,9 @@ class ScheduleShowViewModel @Inject constructor(val repo: DashRepository) : View
         get() = _getUserProductsResponse
 
     fun getUserProducts(
-        userId : RequestBody? = null,
-        categoryId: RequestBody? = null
-        ) = viewModelScope.launch {
+        userId: RequestBody? = null,
+        categoryId: RequestBody? = null,
+    ) = viewModelScope.launch {
         _getUserProductsResponse.value = repo.getUserProducts(userId, categoryId)
     }
 
@@ -88,18 +96,20 @@ class ScheduleShowViewModel @Inject constructor(val repo: DashRepository) : View
         get() = _storeProductResponse
 
     fun storeProduct(
-        categoryId: RequestBody?,
-        title: RequestBody?,
-        description: RequestBody?,
-        quantity: RequestBody?,
-        pricing: RequestBody?,
-        flashSale: RequestBody?,
-        acceptOffers: RequestBody?,
-        reserveForLive: RequestBody?,
-        shippingProfileId: RequestBody?,
-        status: RequestBody?,
-        productImages: List<MultipartBody.Part>?,
-        subCategoryId: RequestBody? = null
+        categoryId: String?,
+        title: String?,
+        description: String?,
+        quantity: String?,
+        pricing: String?,
+        flashSale: String?,
+        acceptOffers: String?,
+        reserveForLive: String?,
+        shippingProfileId: String?,
+        status: String?,
+        productImages: List<Map<String, String?>>?,
+        subCategoryId: String? = null,
+        productId: String? = null,
+        variant: List<Map<String, Any?>>? = null,
     ) = viewModelScope.launch {
         _storeProductResponse.value = repo.storeProduct(
             categoryId,
@@ -113,7 +123,9 @@ class ScheduleShowViewModel @Inject constructor(val repo: DashRepository) : View
             shippingProfileId,
             status,
             productImages,
-            subCategoryId
+            subCategoryId,
+            productId,
+            variant
         )
     }
 
@@ -122,7 +134,7 @@ class ScheduleShowViewModel @Inject constructor(val repo: DashRepository) : View
         get() = _deleteProductResponse
 
     fun deleteProduct(
-        productId : String?
+        productId: String?,
     ) = viewModelScope.launch {
         _deleteProductResponse.value = repo.deleteProduct(productId)
     }
