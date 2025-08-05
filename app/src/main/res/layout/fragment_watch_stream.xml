@@ -437,7 +437,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="@dimen/half_margin"
                         android:minHeight="0dp"
-                        android:padding="12dp"
+                        android:paddingVertical="12dp"
                         android:text="Max"
                         android:textSize="14sp" />
 
@@ -482,6 +482,7 @@
                             style="@style/BodyMedium"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:textColor="@color/error"
                             android:text="10 Sec" />
 
                     </LinearLayout>

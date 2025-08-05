@@ -26,6 +26,9 @@ class FirebaseLiveSessionManager(
             name = user?.name,
             rating = user?.rating ?: ""
         )
+
+        val  highestBid = LiveShowModel.HighestBid()
+
         val liveShow = LiveShowModel(
             products = data?.products?.map { it?.toLiveShowProduct() },
             roomId = roomID,
@@ -33,8 +36,9 @@ class FirebaseLiveSessionManager(
             showDetail = "",
             thumbnail = data?.thumbnail?.get(0) ?: "",
             viewerCount = 1,
-            highestBid = "",
+            highestBid = highestBid ,
             isLive = true,
+            time = System.currentTimeMillis().toString(),
             showId = data?.id.toString() ?: ""
         ).toMap()
         liveSessionsRef.child(roomID).updateChildren(liveShow)

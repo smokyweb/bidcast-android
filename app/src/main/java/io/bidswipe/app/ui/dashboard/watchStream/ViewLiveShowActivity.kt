@@ -50,15 +50,21 @@ class ViewLiveShowActivity : BaseActivity() {
                     }
 
                 }
+                if (streamList.isNotEmpty()){
+                    viewPager = bind.viewPager
 
-                viewPager = bind.viewPager
+                    viewModel.setStreams(streamList)
 
-                viewModel.setStreams(streamList)
+                    streamPagerAdapter = StreamPagerAdapter(this@ViewLiveShowActivity, viewModel)
+                    viewPager.adapter = streamPagerAdapter
+                    viewPager.currentItem = pos
+                    viewPager.orientation = ViewPager2.ORIENTATION_VERTICAL
+                    }else{
 
-                streamPagerAdapter = StreamPagerAdapter(this@ViewLiveShowActivity, viewModel)
-                viewPager.adapter = streamPagerAdapter
-                viewPager.currentItem = pos
-                viewPager.orientation = ViewPager2.ORIENTATION_VERTICAL
+                        finishAfterTransition()
+                }
+
+
 
             }
 

@@ -89,8 +89,6 @@ class AddProductFragment : BaseFragment<ScheduleShowViewModel, FragmentAddProduc
             )
         }
 
-
-
         bind.finishBtn.setOnClickListener {
 
             bind.loader.isVisible = true
@@ -281,7 +279,6 @@ class AddProductFragment : BaseFragment<ScheduleShowViewModel, FragmentAddProduc
 
             }
         }
-
 
     }
 

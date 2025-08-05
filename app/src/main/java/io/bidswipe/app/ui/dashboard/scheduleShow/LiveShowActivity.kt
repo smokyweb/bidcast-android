@@ -15,6 +15,7 @@ import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
 import androidx.core.view.isVisible
+import com.google.android.datatransport.ProductData
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
@@ -81,6 +82,7 @@ import io.bidswipe.app.utils.Utils
 import io.bidswipe.app.utils.bind
 import io.bidswipe.app.utils.clr
 import io.bidswipe.app.utils.draw
+import io.bidswipe.app.utils.getCurrentProduct
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request
 import io.bidswipe.app.utils.runSafe
@@ -92,36 +94,35 @@ class LiveShowActivity : BaseActivity() {
 
 	private val bind by bind(ActivityLiveShowBinding::inflate)
 	private val viewModel by viewModels<DashViewModel>()
-
 	private lateinit var pipParams: PictureInPictureParams
 	private lateinit var commentAdapter: CommentAdapter
 	private lateinit var zim: ZIM
-
 	private val updateStatusHandler = Handler(Looper.getMainLooper())
 	private val handler = Handler(Looper.getMainLooper())
-
+	private val bidTimerHandler = Handler(Looper.getMainLooper())
 	private lateinit var durationRunnable: Runnable
 	private var runnable: Runnable? = null
-
+	private lateinit var bidRunnable: Runnable
 	private var commentList = mutableListOf<LiveChatModel?>()
-
 	private var liveStatus = true
 	var isFrontCamera = true
-
 	var roomID = ""
 	var showId = ""
-
+	var bidCounter = 30
 	private var startTimeMillis: Long = 0L
 	private var zoomLevel = 1L
+
+	private var liveData : LiveShowModel ? = null
+
 
 	private var eventListener = object : ValueEventListener {
 		@SuppressLint("NotifyDataSetChanged")
 		override fun onDataChange(snapshot: DataSnapshot) {
 			log("Value : ${snapshot.value}")
 
-			val data = snapshot.getValue(LiveShowModel::class.java)
+			liveData = snapshot.getValue(LiveShowModel::class.java)
 
-			bind.liveCount.text = data?.viewerCount.toString()
+			bind.liveCount.text = liveData?.viewerCount.toString()
 
 			/* if (data?.product?.status == "sold") {
 				 bind.soldLayout.isVisible = true
@@ -131,6 +132,24 @@ class LiveShowActivity : BaseActivity() {
 				 bind.productLayout.isVisible = true
 			 }*/
 
+		}
+
+		override fun onCancelled(error: DatabaseError) {
+
+		}
+
+	}
+
+	private var startTimeListener = object : ValueEventListener {
+		@SuppressLint("NotifyDataSetChanged")
+		override fun onDataChange(snapshot: DataSnapshot) {
+
+			log("StartTime : ${snapshot.value}")
+			if (snapshot.value != null) {
+				startBidTimer()
+			}else{
+
+			}
 		}
 
 		override fun onCancelled(error: DatabaseError) {
@@ -239,7 +258,7 @@ class LiveShowActivity : BaseActivity() {
 
 					log("ROOM ID FOR HOST: $roomID ")
 
-					loginRoom(mData?.roomId.toString())
+					startPreview()
 
 				}
 
@@ -282,12 +301,10 @@ class LiveShowActivity : BaseActivity() {
 
 						runSafe {
 							updateFirebaseNode(mData)
-							startPublish()
-							startLiveDurationTimer()
-
+							loginRoom(roomID)
 							startUpdatingFirebaseEvery5Minutes()
 							FireRef.LIVE_SESSIONS.child(roomID).addValueEventListener(eventListener)
-
+							FireRef.LIVE_SESSIONS.child(roomID).child("highestBid").child("startTime").addValueEventListener(startTimeListener)
 							bind.startBtn.isVisible = false
 						}
 
@@ -322,6 +339,51 @@ class LiveShowActivity : BaseActivity() {
 			}
 		}
 
+		viewModel.createBidRepo.observe(this) {
+			when (it) {
+				is Resource.Success -> {
+
+					viewModel.createBidRepo.value = null
+
+					bind.loader.isVisible = false
+
+					it.value.data
+
+					FireRef.LIVE_SESSIONS.child(roomID).child("products").child("0").updateChildren(
+						mapOf(
+							"status" to "sold",
+							"isCurrent" to false
+						)
+					)
+
+
+				}
+
+				is Resource.Error -> {
+					bind.loader.isVisible = false
+
+					if (it.isNetworkError) {
+						errorToast(getString(R.string.no_internet))
+					} else {
+						it.parse(this, TAG, object : AlertClicks {
+							override fun primaryClick(dialog: AppBottomSheet) {
+								dialog.dismiss()
+
+							}
+
+							override fun secondaryClick(dialog: AppBottomSheet) {
+								dialog.dismiss()
+
+							}
+						})
+					}
+				}
+
+				else -> {}
+
+			}
+		}
+
 		onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
 			override fun handleOnBackPressed() {
 
@@ -334,6 +396,7 @@ class LiveShowActivity : BaseActivity() {
 				}
 			}
 		})
+
 	}
 
 	override fun onPause() {
@@ -357,6 +420,7 @@ class LiveShowActivity : BaseActivity() {
 		}
 
 		stopLiveDurationTimer()
+		stopBidTimeTimer()
 		logoutRoom()
 		destroyEngine()
 
@@ -592,7 +656,9 @@ class LiveShowActivity : BaseActivity() {
 		) { error: Int, extendedData: JSONObject? ->
 			if (error == 0) {
 				Toast.makeText(this, "Login successful.", Toast.LENGTH_LONG).show()
-				startPreview()
+
+				startPublish()
+				startLiveDurationTimer()
 
 			} else {
 				Toast.makeText(this, "Login failed. error = $error", Toast.LENGTH_LONG).show()
@@ -658,15 +724,20 @@ class LiveShowActivity : BaseActivity() {
 			rating = user?.rating ?: ""
 		)
 
+		val prdcts = data?.products?.map { it?.toLiveShowProduct() }
+
+		prdcts?.first()?.isCurrent = true
+
 		val liveShow = LiveShowModel(
-			products = data?.products?.map { it?.toLiveShowProduct() },
+			products = prdcts,
 			roomId = roomID,
 			seller = seller,
 			showDetail = "",
 			thumbnail = data?.thumbnail?.get(0) ?: "",
 			viewerCount = 1,
-			highestBid = "",
+			highestBid = null,
 			isLive = true,
+			time = Utils.timestamp().toString(),
 			showId = showId
 		).toMap()
 
@@ -721,9 +792,60 @@ class LiveShowActivity : BaseActivity() {
 		handler.post(durationRunnable)
 	}
 
+	private fun startBidTimer() {
+
+		 bidRunnable = object : Runnable {
+			override fun run() {
+
+				if (bidCounter > 0) {
+					bidCounter = bidCounter -1
+				}else{
+
+					log("STOP BID TIMER")
+
+					stopBidTimeTimer()
+
+					if (liveData !=null){
+						bind.loader.isVisible = true
+						viewModel.createBid(
+							showId.request(),
+							liveData?.highestBid?.userId?.request(),
+							liveData?.products?.get(0)?.id?.request(),
+							liveData?.highestBid?.bidAmount?.request()
+						)
+					}
+
+					return
+				}
+
+				log("TIME DIFFERENCE : ${bidCounter}")
+
+				FireRef.LIVE_SESSIONS.child(roomID).updateChildren(
+					mapOf(
+						"bidCountDown" to bidCounter.toString()
+					)
+				).addOnSuccessListener {
+				}
+					.addOnFailureListener {
+					}
+
+				bidTimerHandler.postDelayed(this, 1000)
+			}
+		}
+
+		bidRunnable.let { bidTimerHandler.post(it) }
+
+	}
+
 	private fun stopLiveDurationTimer() {
 		if (this::durationRunnable.isInitialized) {
 			handler.removeCallbacks(durationRunnable)
+		}
+	}
+
+	private fun stopBidTimeTimer() {
+		if (this::bidRunnable.isInitialized) {
+			bidTimerHandler.removeCallbacks(bidRunnable)
 		}
 	}
 
@@ -1082,6 +1204,12 @@ class LiveShowActivity : BaseActivity() {
 		} else {
 			Alerts.log(javaClass.simpleName, "ALREADY IN PIP MODE")
 		}
+	}
+
+	fun getTimeDifferenceInSeconds(timestampMillis: Long): Long {
+		val currentTimeMillis = Utils.timestamp()
+		val differenceMillis =  timestampMillis - currentTimeMillis
+		return differenceMillis / 1000
 	}
 
 }

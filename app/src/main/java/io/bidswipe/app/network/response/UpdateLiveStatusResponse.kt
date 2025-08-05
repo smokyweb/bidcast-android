@@ -112,6 +112,7 @@ data class UpdateLiveStatusResponse(
                     image = this.images?.firstOrNull() ?: "",
                     status = this.status ?: "live",
                     name = this.title,
+                    isCurrent = true,
                     price = this.pricing?.toString()
                 )
             }

@@ -10,10 +10,10 @@ data class LiveShowModel(
 	var showDetail: String? = null,
 	var thumbnail: String? = null,
 	var viewerCount: Int? = null,
-	var highestBid: String? = null,
+	var highestBid: HighestBid? = null,
 	var isLive: Boolean? = null,
 	var time: String? =  System.currentTimeMillis().toString(),
-	var showId: String? = null,
+	var showId: String? = null
 ) {
 	@Keep
 	data class Product(
@@ -25,7 +25,7 @@ data class LiveShowModel(
 		var price: String? = null,
 		var currentBidderId: String? = null,
 		var currentBidValue: String? = null,
-		var isCurrent: Boolean = false,
+		var isCurrent: Boolean? = false,
 	) {
 		fun fromMap(it: DataSnapshot): Product = Product(
 			category = it.child("category").getValue(String::class.java),
@@ -60,6 +60,7 @@ data class LiveShowModel(
 		var name: String? = "test",
 		var rating: String? = null,
 	) {
+
 		fun fromMap(it: DataSnapshot): Seller = Seller(
 			id = it.child("id").getValue(String::class.java),
 			image = it.child("image").getValue(String::class.java),
@@ -77,6 +78,35 @@ data class LiveShowModel(
 		)
 	}
 
+	@Keep
+	data class HighestBid(
+		var bidAmount: String? = null,
+		var productStatus: String? = null,
+		var userName: String? = null,
+		var userImage: String? = "test",
+		var userId: String? = null,
+		var startTime: String? = null
+	) {
+
+		fun fromMap(it: DataSnapshot): HighestBid = HighestBid(
+			bidAmount = it.child("bidAmount").getValue(String::class.java),
+			productStatus = it.child("productStatus").getValue(String::class.java),
+			userName = it.child("userName").getValue(String::class.java),
+			userImage = it.child("userImage").getValue(String::class.java),
+			userId = it.child("userId").getValue(String::class.java),
+			startTime = it.child("startTime").getValue(String::class.java),
+		)
+
+		fun toMap() = mapOf(
+			"bidAmount" to bidAmount,
+			"productStatus" to productStatus,
+			"userName" to userName,
+			"userImage" to userImage,
+			"userId" to userId,
+			"startTime" to startTime
+		)
+	}
+
 	fun fromMap(it: DataSnapshot): LiveShowModel {
 		val productList = mutableListOf<Product>()
 		it.child("products").children.forEach { snapshot ->
@@ -90,7 +120,7 @@ data class LiveShowModel(
 			showDetail = it.child("showDetail").getValue(String::class.java),
 			thumbnail = it.child("thumbnail").getValue(String::class.java),
 			viewerCount = it.child("viewerCount").getValue(Int::class.java),
-			highestBid = it.child("highestBid").getValue(String::class.java),
+			highestBid = HighestBid().fromMap(it.child("highestBid")),
 			isLive = it.child("isLive").getValue(Boolean::class.java),
 			time = it.child("time").getValue(String::class.java),
 			showId = it.child("showId").getValue(String::class.java),

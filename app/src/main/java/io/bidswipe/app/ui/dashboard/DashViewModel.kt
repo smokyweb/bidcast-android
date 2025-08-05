@@ -10,6 +10,7 @@ import io.bidswipe.app.network.Resource
 import io.bidswipe.app.network.repository.DashRepository
 import io.bidswipe.app.network.response.CheckKycResponse
 import io.bidswipe.app.network.response.CommonResponse
+import io.bidswipe.app.network.response.CreateBidResponse
 import io.bidswipe.app.network.response.CreateShowResponse
 import io.bidswipe.app.network.response.FetchBidResponse
 import io.bidswipe.app.network.response.GenerateTokenResponse
@@ -378,7 +379,23 @@ class DashViewModel @Inject constructor(val repo: DashRepository) : ViewModel() 
         _pageUrlResponse.value = repo.getPageUrl(slug)
     }
 
-    companion object {
+
+	private var _createBidResponse = MutableLiveData<Resource<CreateBidResponse>>()
+	val createBidRepo: MutableLiveData<Resource<CreateBidResponse>>
+		get() = _createBidResponse
+
+	fun createBid(
+		showId: RequestBody?,
+		userId: RequestBody?,
+		productId: RequestBody?,
+		bidPrice: RequestBody?
+	) = viewModelScope.launch {
+		_createBidResponse.value = repo.createBid(showId,userId,productId,bidPrice)
+	}
+
+
+
+	companion object {
         const val SLUG_ABOUT_US = "about-us"
         const val SLUG_PRIVACY_POLICY = "privacy-policy"
         const val SLUG_FAQ = "faq"
