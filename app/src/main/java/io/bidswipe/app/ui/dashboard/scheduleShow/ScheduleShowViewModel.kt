@@ -12,6 +12,7 @@ import io.bidswipe.app.network.response.GetAllTipsResponse
 import io.bidswipe.app.network.response.GetAuctionTypeResponse
 import io.bidswipe.app.network.response.GetCategoryResponse
 import io.bidswipe.app.network.response.GetProductsResponse
+import io.bidswipe.app.network.response.StoreProductResponse
 import kotlinx.coroutines.launch
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -109,7 +110,7 @@ class ScheduleShowViewModel @Inject constructor(val repo: DashRepository) : View
         productImages: List<Map<String, String?>>?,
         subCategoryId: String? = null,
         productId: String? = null,
-        variant: List<Map<String, Any?>>? = null,
+        variant: List<Map<String?, Any?>>? = null,
     ) = viewModelScope.launch {
         _storeProductResponse.value = repo.storeProduct(
             categoryId,
@@ -129,6 +130,13 @@ class ScheduleShowViewModel @Inject constructor(val repo: DashRepository) : View
         )
     }
 
+    private var _storeProductMetaResponse = MutableLiveData<Resource<StoreProductResponse>>()
+    val storeProductMetaRepo: MutableLiveData<Resource<StoreProductResponse>>
+        get() = _storeProductMetaResponse
+
+    fun storeProductMeta(productImages: List<MultipartBody.Part>?, thumbnail: List<MultipartBody.Part>?) = viewModelScope.launch {
+        _storeProductMetaResponse.value = repo.storeProductMeta(productImages,thumbnail)
+    }
     private var _deleteProductResponse = MutableLiveData<Resource<CommonResponse>>()
     val deleteProductRepo: MutableLiveData<Resource<CommonResponse>>
         get() = _deleteProductResponse

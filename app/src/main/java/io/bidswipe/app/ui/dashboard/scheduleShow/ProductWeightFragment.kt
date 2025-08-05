@@ -16,6 +16,7 @@ import io.bidswipe.app.utils.Utils
 import io.bidswipe.app.utils.ids
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request
+import okhttp3.MultipartBody
 import java.io.File
 
 class ProductWeightFragment : BaseFragment<ScheduleShowViewModel, FragmentProductWeightBinding>() {
@@ -25,7 +26,6 @@ class ProductWeightFragment : BaseFragment<ScheduleShowViewModel, FragmentProduc
         FragmentProductWeightBinding.inflate(inflater, view, false)
 
     private var mList = mutableListOf("", "", "", "", "", "")
-
     private lateinit var adapter: WeightAdapter
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -38,37 +38,91 @@ class ProductWeightFragment : BaseFragment<ScheduleShowViewModel, FragmentProduc
         }
 
         adapter = WeightAdapter(mList)
-
         bind.recycler.adapter = adapter
 
         bind.continueBtn.setOnClickListener {
-            val categoryId = productData?.getString("categoryId") ?: ""
-            val subCategoryId = productData?.getString("subCategoryId") ?: ""
-            val title = productData?.getString("title") ?: ""
-            val description = productData?.getString("description") ?: ""
-            val quantity = productData?.getInt("quantity") ?: 1
-            val price = productData?.getString("price") ?: 1
             val imagePaths = productData?.getString("imagePaths")
-            val imageFiles = imagePaths?.split(",")?.map { File(it) }
-            val productImages = imagePaths?.split(",")?.map { path ->
-                mapOf("image" to path)
+            val imageFiles = imagePaths?.split(",")?.map { File(it) } ?: emptyList()
+
+            if (imageFiles.isEmpty()) {
+                createProduct(productData, null)
+                return@setOnClickListener
             }
 
-            // Call the API
-            viewModel.storeProduct(
-                categoryId = categoryId,
-                title = title,
-                description = description,
-                quantity = quantity.toString(),
-                pricing = price.toString(),
-                flashSale = "0",
-                acceptOffers = "0",
-                reserveForLive = "0",
-                shippingProfileId = "4",
-                status =  "active",
-                productImages = productImages,
-                subCategoryId = subCategoryId,
-            )
+            uploadImages(imageFiles)
+        }
+
+        setupObservers()
+    }
+
+    private fun uploadImages(imageFiles: List<File>) {
+        val imagePartList = mutableListOf<MultipartBody.Part>()
+        val thumbnailPartList = mutableListOf<MultipartBody.Part>()
+
+        imageFiles.forEach { file ->
+            val name = System.currentTimeMillis().toString() + "_product_gallery.jpeg"
+            val imagePart = Utils.imagePart("images[]", name, file)
+            imagePartList.add(imagePart)
+
+            val thumbnailFile = File(file.absolutePath)
+            val thumbnailName = System.currentTimeMillis().toString() + "_product_thumbnail.jpeg"
+            val thumbnailPart = Utils.imagePart("thumbnail[]", thumbnailName, thumbnailFile)
+            thumbnailPartList.add(thumbnailPart)
+        }
+
+        viewModel.storeProductMeta(imagePartList, thumbnailPartList)
+    }
+
+    private fun createProduct(productData: Bundle?, imageUrls: List<Map<String, String>>?) {
+
+        viewModel.storeProduct(
+            categoryId = productData?.getString("categoryId") ?: "",
+            title = productData?.getString("title") ?: "",
+            description = productData?.getString("description") ?: "",
+            quantity = (productData?.getInt("quantity") ?: 1).toString(),
+            pricing = productData?.getString("price") ?: "1",
+            flashSale = "0",
+            acceptOffers = "0",
+            reserveForLive = "0",
+            shippingProfileId = "4",
+            status = "active",
+            productImages = imageUrls,
+            subCategoryId = productData?.getString("subCategoryId") ?: "",
+        )
+    }
+    private fun setupObservers() {
+        viewModel.storeProductMetaRepo.observe(viewLifecycleOwner) { it ->
+            when (it) {
+                is Resource.Success -> {
+                    val imageData = it.value.data?.mapNotNull { data ->
+                        if (data?.images != null && data.thumbnail != null) {
+                            mapOf(
+                                "image" to data.images,
+                                "thumbnail" to data.thumbnail
+                            )
+                        } else {
+                            null
+                        }
+                    }
+                    val productData = arguments
+                    createProduct(productData, imageData)
+                }
+                is Resource.Error -> {
+                    if (it.isNetworkError) {
+                        errorToast(getString(R.string.no_internet))
+                    } else {
+                        it.parse(mCtx, TAG, object : AlertClicks {
+                            override fun primaryClick(dialog: AppBottomSheet) {
+                                dialog.dismiss()
+                            }
+                            override fun secondaryClick(dialog: AppBottomSheet) {
+                                dialog.dismiss()
+                            }
+                        })
+                    }
+                }
+                else -> {}
+            }
         }
 
         viewModel.storeProductRepo.observe(viewLifecycleOwner) { resource ->
@@ -76,7 +130,6 @@ class ProductWeightFragment : BaseFragment<ScheduleShowViewModel, FragmentProduc
                 is Resource.Success -> {
                     findNavController().navigate(ids.addProductFragment)
                 }
-
                 is Resource.Error -> {
                     if (resource.isNetworkError) {
                         errorToast(getString(R.string.no_internet))
@@ -85,18 +138,14 @@ class ProductWeightFragment : BaseFragment<ScheduleShowViewModel, FragmentProduc
                             override fun primaryClick(dialog: AppBottomSheet) {
                                 dialog.dismiss()
                             }
-
                             override fun secondaryClick(dialog: AppBottomSheet) {
                                 dialog.dismiss()
                             }
                         })
                     }
                 }
-
                 else -> {}
-
             }
-
         }
     }
 }

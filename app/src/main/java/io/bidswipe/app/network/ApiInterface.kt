@@ -139,9 +139,10 @@ interface ApiInterface {
     ): CommonResponse
 
     @Multipart
-    @POST("store-product-meta")
+    @POST("api/store-product-meta")
     suspend fun storeProductMeta(
         @Part productImages: List<MultipartBody.Part?>?,
+        @Part thumbnail: List<MultipartBody.Part?>?
     ): StoreProductResponse
 
     @GET("api/how-to-sell")

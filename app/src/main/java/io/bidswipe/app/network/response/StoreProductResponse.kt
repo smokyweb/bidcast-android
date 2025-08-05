@@ -18,6 +18,8 @@ data class StoreProductResponse(
     @Keep
     data class Data(
         @SerializedName("images")
-        val images: String?
+        val images: String?,
+        @SerializedName("thumbnail")
+        val thumbnail: String?
     )
 }

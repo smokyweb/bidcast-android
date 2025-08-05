@@ -40,7 +40,7 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
         productImages:  List<Map<String, String?>>?,
         subCategoryId: String? = null,
         productId: String? = null,
-        variant: List<Map<String, Any?>>? = null,
+        variant: List<Map<String?, Any?>>? = null,
     ) = call {
         api.storeProduct(
             StoreProductRequest
@@ -65,9 +65,11 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
 
     suspend fun storeProductMeta(
         productImages: List<MultipartBody.Part?>?,
+        thumbnail: List<MultipartBody.Part?>? = null
     ) = call {
         api.storeProductMeta(
-            productImages
+            productImages,
+            thumbnail
         )
     }
 

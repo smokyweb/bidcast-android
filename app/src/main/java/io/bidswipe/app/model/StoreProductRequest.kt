@@ -30,6 +30,6 @@ data class StoreProductRequest(
     @SerializedName("sub_category_id")
     val subCategoryId: String? = null,
     @SerializedName("variant")
-    val variant: List<Map<String, Any?>>? = null,
+    val variant: List<Map<String?, Any?>>? = null,
 
     )

@@ -27,6 +27,7 @@ import io.bidswipe.app.utils.Const
 import io.bidswipe.app.utils.Utils
 import io.bidswipe.app.utils.finish
 import io.bidswipe.app.utils.parse
+import io.bidswipe.app.utils.string
 import io.bidswipe.app.utils.value
 import okhttp3.MultipartBody
 import java.io.File
@@ -286,42 +287,38 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
             else -> {
                 bind.loader.isVisible = true
                 val imagePartList = mutableListOf<MultipartBody.Part>()
+                val thumbnailPartList = mutableListOf<MultipartBody.Part>()
                 imageList.filter { it?.contains(Const.BASE_URL) == false }.forEach { image ->
                     if (image != null) {
-                        val name =
-                            System.currentTimeMillis().toString() + "_product_gallery.jpeg"
-                        val imagePart = Utils.imagePart("images[]", name, File(image ?: ""))
+                        val name = System.currentTimeMillis().toString() + "_product_gallery.jpeg"
+                        val thumbnailName = System.currentTimeMillis().toString() + "_product_thumbnail.jpeg"
+
+                        val imagePart = Utils.imagePart("images[]", name, File(image))
                         imagePart.let { element -> imagePartList.add(element) }
+
+                        val thumbnailFile = File(image)
+                        val thumbnailPart = Utils.imagePart("thumbnails[]", thumbnailName, thumbnailFile)
+                        thumbnailPart.let { element -> thumbnailPartList.add(element) }
                     }
                 }
                 val productId = if (product != null) product?.id.toString() else null
-                viewModel.storeProductMeta(imagePartList)
-                viewModel.storeProductMetaRepo.observe(viewLifecycleOwner){
-                    when (it) {
-                        is Resource.Success -> {
+                if (imagePartList.isNotEmpty()){
+                    viewModel.storeProductMeta(imagePartList, thumbnailPartList)
+                    viewModel.storeProductMetaRepo.observe(viewLifecycleOwner){
+                        when (it) {
+                            is Resource.Success -> {
 //                            bind.loader.isVisible = false
-                            viewModel.storeProduct(
-                                productId = productId,
-                                categoryId = categoryId,
-                                title = bind.productTitle.value(),
-                                description = bind.description.value(),
-                                quantity = bind.quantity.value(),
-                                pricing = bind.price.value(),
-                                flashSale = (if (bind.flashSell.isChecked) "1" else "0"),
-                                acceptOffers = (if (bind.acceptOffers.isChecked) "1" else "0"),
-                                reserveForLive = (if (bind.reserveForLive.isChecked) "1" else "0"),
-                                shippingProfileId = "4",
-                                status = type,
-                                subCategoryId = subCategoryId.ifEmpty { null },
-                                productImages = it.value.data?.map { mapOf("image" to it?.images) },
-                                variant = variantData.toList().map { mapOf(it.first to it.second) }
-                            )
+                                createProduct(productId, type,it.value.data?.map { mapOf("image" to it?.images,"thumbnail" to it?.thumbnail) }, variantData)
+                            }
+                            is Resource.Error -> {
+                                bind.loader.isVisible = false
+                            }
+                            else -> {}
                         }
-                        is Resource.Error -> {
-                            bind.loader.isVisible = false
-                        }
-                        else -> {}
                     }
+
+                }else{
+                    createProduct(productId.toString(), type,emptyList(), variantData)
                 }
 
             }
@@ -347,7 +344,7 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
         bind.acceptOffers.isChecked = product?.acceptOffers == true
         bind.reserveForLive.isChecked = product?.reserveForLive == true
         imageList.clear()
-        product?.images?.forEach { imageUrl ->
+        product?.images?.forEachIndexed { index,imageUrl ->
             imageUrl?.let {
                 if (imageList.size < 9) {
                     imageList.add(it)
@@ -421,11 +418,28 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
         categorySheet.show()
 
     }
-    fun getVariantData(): Map<String, String> {
+    fun getVariantData(): List<Map<String?, Any?>> {
         return (bind.variants.adapter as ProductVariantAdapter)
             .getAllVariantData()
-            .filter { it.second.isNotEmpty() }
-            .toMap()
-    }
 
+    }
+    fun createProduct(productId: String?,type: String, images:  List<Map<String, String?>>? = null,variantData:List<Map<String?, Any?>>?= null){
+        viewModel.storeProduct(
+            productId = productId,
+            categoryId = categoryId,
+            title = bind.productTitle.value(),
+            description = bind.description.value(),
+            quantity = bind.quantity.value(),
+            pricing = bind.price.value(),
+            flashSale = (if (bind.flashSell.isChecked) "1" else "0"),
+            acceptOffers = (if (bind.acceptOffers.isChecked) "1" else "0"),
+            reserveForLive = (if (bind.reserveForLive.isChecked) "1" else "0"),
+            shippingProfileId = "4",
+            status = type,
+            subCategoryId = subCategoryId.ifEmpty { null },
+            productImages = images,
+            variant = variantData
+        )
+
+    }
 }

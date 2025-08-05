@@ -1,6 +1,5 @@
 package io.bidswipe.app.ui.dashboard
 
-import android.content.res.Resources
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -93,7 +92,7 @@ class DashViewModel @Inject constructor(val repo: DashRepository) : ViewModel() 
         productImages:  List<Map<String, String?>>?,
         subCategoryId: String? = null,
         productId: String? = null,
-        variant: List<Map<String, Any?>>? = null,
+        variant: List<Map<String?, Any?>>? = null,
 	) = viewModelScope.launch {
         _storeProductResponse.value = repo.storeProduct(
             categoryId,
@@ -117,8 +116,8 @@ class DashViewModel @Inject constructor(val repo: DashRepository) : ViewModel() 
     val storeProductMetaRepo: MutableLiveData<Resource<StoreProductResponse>>
         get() = _storeProductMetaResponse
 
-    fun storeProductMeta(productImages: List<MultipartBody.Part>?) = viewModelScope.launch {
-        _storeProductMetaResponse.value = repo.storeProductMeta(productImages)
+    fun storeProductMeta(productImages: List<MultipartBody.Part>?, thumbnail: List<MultipartBody.Part>?) = viewModelScope.launch {
+        _storeProductMetaResponse.value = repo.storeProductMeta(productImages, thumbnail)
     }
 
     private var _getHowToSellStepResponse = MutableLiveData<Resource<GetHowToSellResponse>>()

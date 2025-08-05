@@ -1,5 +1,6 @@
 package io.bidswipe.app.controller
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.RadioButton
@@ -9,7 +10,6 @@ import io.bidswipe.app.databinding.VariantItemBinding
 import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.network.response.GetCategoryResponse
 import io.bidswipe.app.utils.asCapital
-
 class ProductVariantAdapter(
 	val mList: MutableList<GetCategoryResponse.Data.ExtraField?>,
 	val mClicks: RecyclerClicks,
@@ -57,8 +57,8 @@ class ProductVariantAdapter(
 		}
 	}
 
-	fun getAllVariantData(): List<Pair<String, String>> {
-		val result = mutableListOf<Pair<String, String>>()
+	fun getAllVariantData(): List<Map<String?, Any?>> {
+		val result = mutableListOf<Map<String?, Any?>>()
 
 		for (i in 0 until itemCount) {
 			val viewHolder = holderList[i]
@@ -70,17 +70,23 @@ class ProductVariantAdapter(
 						"text" -> holder.bind.quantity.text?.toString() ?: ""
 						"radio" -> {
 							val selectedId = holder.bind.radioGroup.checkedRadioButtonId
+							val result1 = mutableMapOf<String, Any?>()
+							variant.options?.forEachIndexed {index, option ->
+								result1.put("option_${index+1}", option)
+							}
 							if (selectedId != -1) {
-								holder.bind.radioGroup.findViewById<RadioButton>(selectedId).text.toString()
-							} else ""
+								 result1.put("selected", holder.bind.radioGroup.findViewById<RadioButton>(selectedId).text.toString())
+							} else  result1.put("selected", "")
+							result1
 						}
 						else -> ""
 					}
-					result.add(Pair(it.label ?: "", value))
+					result.add(mapOf(it.label  to value))
 				}
 			}
 		}
-		return result
+		return result.map { mapOf("title" to it.keys.first(), "value" to it.values.first()) }
+
 	}
 
 }
