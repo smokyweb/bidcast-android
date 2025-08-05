@@ -3,7 +3,9 @@ package io.bidswipe.app.ui.dashboard.watchStream
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
+import android.view.GestureDetector
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
@@ -62,6 +64,7 @@ import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request
 import io.bidswipe.app.utils.runSafe
 import io.bidswipe.app.utils.value
+import kotlin.math.abs
 
 class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBinding>() {
 
@@ -94,173 +97,81 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		super.onViewCreated(view, savedInstanceState)
-
-		log("RoomId: $roomID")
-
-		bind.cutButton.setOnClickListener {
-			finish()
-		}
-
-		commentAdapter = CommentAdapter(commentList)
-
-		bind.recycler.adapter = commentAdapter
-
-		FireRef.LIVE_SESSIONS.child(roomID).addValueEventListener(object : ValueEventListener {
-			@SuppressLint("NotifyDataSetChanged")
-			override fun onDataChange(snapshot: DataSnapshot) {
-
-				val data = snapshot.getValue(LiveShowModel::class.java)
-
-				bind.liveCount.text = data?.viewerCount.toString()
-
-				if (data?.products?.getCurrentProduct()?.status == "sold") {
-					bind.soldLayout.isVisible = true
-					bind.productLayout.isVisible = false
-				} else {
-					bind.soldLayout.isVisible = false
-					bind.productLayout.isVisible = true
-				}
-
+		
+			log("RoomId: $roomID")
+			setUpSwipe()
+			
+			bind.cutButton.setOnClickListener {
+				finish()
 			}
-
-			override fun onCancelled(error: DatabaseError) {
-
-			}
-
-		})
-
-		bind.message.setEndIconOnClickListener {
-			if (bind.text.value().isNotEmpty()) {
-//                sendMessage(bind.text.value())
-
-				if (App.profileResponse.value?.buyerIdentityStatus == "verified") {
-					sendZimMessage(bind.text.value())
-				} else {
-					verificationDialog()
-				}
-			}
-		}
-
-		viewModel.selectedStream.observe(viewLifecycleOwner) { stream ->
-			if (stream.roomId == roomID) {
-
-				bind.userImage.loadUrl(
-					mCtx,
-					stream.seller?.image.toString(),
-					placeHolder = draw.user_image
-				)
-
-				bind.userName.text = stream.seller?.name.toString()
-				bind.productName.text = stream.products?.getCurrentProduct()?.name
-				bind.productImage.loadUrl(
-					mCtx,
-					stream?.products?.getCurrentProduct()?.image.toString(),
-					placeHolder = draw.product_img
-				)
-
-				try {
-					bind.quantity.text = buildString {
-						append("Price: ")
-						append(stream.products?.getCurrentProduct()?.price.toString())
-					}
-				} catch (e: Exception) {
-					e.printStackTrace()
-				}
-
-				if (stream.seller?.isFollowed == true) {
-					bind.follow.setBackgroundColor(ContextCompat.getColor(mCtx, R.color.outline))
-					bind.follow.setTextColor(ContextCompat.getColor(mCtx, R.color.onSurface))
-					bind.follow.text = "Unfollow"
-				} else {
-					bind.follow.setBackgroundColor(ContextCompat.getColor(mCtx, R.color.primary))
-					bind.follow.setTextColor(ContextCompat.getColor(mCtx, R.color.background))
-					bind.follow.text = "Follow"
-				}
-
-				bind.follow.setOnClickListener {
-					viewModel.followUser(stream.seller?.id?.request())
-				}
-
-				runSafe {
-					bind.max.text = stream.products?.getCurrentProduct()?.price.toString().asMoney()
-					bind.bid.text = "Swipe to Bid for ${(stream.products?.getCurrentProduct()?.price?.toInt()?.plus(1)).toString().asMoney()}"
-				}
-
-				bind.bid.onSlideCompleteListener = object : OnSlideCompleteListener {
-					override fun onSlideComplete(view: SlideToActView) {
-						log("SWIPED")
-
-						/*bind.loader.isVisible = true
-
-						viewModel.createBid(
-							stream.showId?.request(),
-							userId.request(),
-							stream.products?.getCurrentProduct()?.id.toString().request(),
-							stream.products?.getCurrentProduct()?.price?.request()
-						)*/
-
-						FireRef.LIVE_SESSIONS.child(roomID).child("product").child("status").setValue("sold")
-
-
-						/*val highestBid = HashMap<String, Any>()
-						highestBid.put("bidAmount", (stream.products?.getCurrentProduct()?.price?.toInt()?.plus(1)).toString().request())
-						highestBid.put("productStatus", userId.request())
-						highestBid.put("userName", userName)
-						highestBid.put("userImage", userImage)
-						highestBid.put("userId", userId)
-
-						FireRef.LIVE_SESSIONS.child(roomID).updateChildren(highestBid)*/
-
-					}
-				}
-
-			}
-		}
-
-		viewModel.createBidRepo.observe(viewLifecycleOwner) {
-			when (it) {
-				is Resource.Success -> {
-
-					viewModel.createBidRepo.value = null
-
-					bind.loader.isVisible = false
-
-					it.value.data
-
-				}
-
-				is Resource.Error -> {
-					bind.loader.isVisible = false
-
-					if (it.isNetworkError) {
-						errorToast(getString(R.string.no_internet))
+			
+			commentAdapter = CommentAdapter(commentList)
+			
+			bind.recycler.adapter = commentAdapter
+			
+			FireRef.LIVE_SESSIONS.child(roomID).addValueEventListener(object : ValueEventListener {
+				@SuppressLint("NotifyDataSetChanged")
+				override fun onDataChange(snapshot: DataSnapshot) {
+					
+					val data = snapshot.getValue(LiveShowModel::class.java)
+					
+					bind.liveCount.text = data?.viewerCount.toString()
+					
+					if (data?.products?.getCurrentProduct()?.status == "sold") {
+						bind.soldLayout.isVisible = true
+						bind.productLayout.isVisible = false
 					} else {
-						it.parse(mCtx, TAG, object : AlertClicks {
-							override fun primaryClick(dialog: AppBottomSheet) {
-								dialog.dismiss()
-
-							}
-
-							override fun secondaryClick(dialog: AppBottomSheet) {
-								dialog.dismiss()
-
-							}
-						})
+						bind.soldLayout.isVisible = false
+						bind.productLayout.isVisible = true
+					}
+					
+				}
+				
+				override fun onCancelled(error: DatabaseError) {
+				
+				}
+				
+			})
+			
+			bind.message.setEndIconOnClickListener {
+				if (bind.text.value().isNotEmpty()) {
+//                sendMessage(bind.text.value())
+					
+					if (App.profileResponse.value?.buyerIdentityStatus == "verified") {
+						sendZimMessage(bind.text.value())
+					} else {
+						verificationDialog()
 					}
 				}
-
-				else -> {}
-
 			}
-		}
-
-		viewModel.followUserShowRepo.observe(viewLifecycleOwner) {
-			when (it) {
-				is Resource.Success -> {
-
-					val mData = it.value.data
-
-					if (mData?.status == true) {
+			
+			viewModel.selectedStream.observe(viewLifecycleOwner) { stream ->
+				if (stream.roomId == roomID) {
+					
+					bind.userImage.loadUrl(
+						mCtx,
+						stream.seller?.image.toString(),
+						placeHolder = draw.user_image
+					)
+					
+					bind.userName.text = stream.seller?.name.toString()
+					bind.productName.text = stream.products?.getCurrentProduct()?.name
+					bind.productImage.loadUrl(
+						mCtx,
+						stream?.products?.getCurrentProduct()?.image.toString(),
+						placeHolder = draw.product_img
+					)
+					
+					try {
+						bind.quantity.text = buildString {
+							append("Price: ")
+							append(stream.products?.getCurrentProduct()?.price.toString())
+						}
+					} catch (e: Exception) {
+						e.printStackTrace()
+					}
+					
+					if (stream.seller?.isFollowed == true) {
 						bind.follow.setBackgroundColor(ContextCompat.getColor(mCtx, R.color.outline))
 						bind.follow.setTextColor(ContextCompat.getColor(mCtx, R.color.onSurface))
 						bind.follow.text = "Unfollow"
@@ -269,38 +180,132 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 						bind.follow.setTextColor(ContextCompat.getColor(mCtx, R.color.background))
 						bind.follow.text = "Follow"
 					}
-
-				}
-
-				is Resource.Error -> {
-					bind.loader.isVisible = false
-
-					if (it.isNetworkError) {
-						errorToast(getString(R.string.no_internet))
-					} else {
-						it.parse(mCtx, TAG, object : AlertClicks {
-							override fun primaryClick(dialog: AppBottomSheet) {
-								dialog.dismiss()
-
-							}
-
-							override fun secondaryClick(dialog: AppBottomSheet) {
-								dialog.dismiss()
-
-							}
-						})
+					
+					bind.follow.setOnClickListener {
+						viewModel.followUser(stream.seller?.id?.request())
 					}
+					
+					runSafe {
+						bind.max.text = stream.products?.getCurrentProduct()?.price.toString().asMoney()
+						bind.bid.text = "Swipe to Bid for ${(stream.products?.getCurrentProduct()?.price?.toInt()?.plus(1)).toString().asMoney()}"
+					}
+					
+					bind.bid.onSlideCompleteListener = object : OnSlideCompleteListener {
+						override fun onSlideComplete(view: SlideToActView) {
+							log("SWIPED")
+							
+							/*bind.loader.isVisible = true
+	
+							viewModel.createBid(
+								stream.showId?.request(),
+								userId.request(),
+								stream.products?.getCurrentProduct()?.id.toString().request(),
+								stream.products?.getCurrentProduct()?.price?.request()
+							)*/
+							
+							FireRef.LIVE_SESSIONS.child(roomID).child("product").child("status").setValue("sold")
+							
+							
+							/*val highestBid = HashMap<String, Any>()
+							highestBid.put("bidAmount", (stream.products?.getCurrentProduct()?.price?.toInt()?.plus(1)).toString().request())
+							highestBid.put("productStatus", userId.request())
+							highestBid.put("userName", userName)
+							highestBid.put("userImage", userImage)
+							highestBid.put("userId", userId)
+	
+							FireRef.LIVE_SESSIONS.child(roomID).updateChildren(highestBid)*/
+							
+						}
+					}
+					
 				}
-
-				else -> {}
-
+			}
+			
+			viewModel.createBidRepo.observe(viewLifecycleOwner) {
+				when (it) {
+					is Resource.Success -> {
+						
+						viewModel.createBidRepo.value = null
+						
+						bind.loader.isVisible = false
+						
+						it.value.data
+						
+					}
+					
+					is Resource.Error -> {
+						bind.loader.isVisible = false
+						
+						if (it.isNetworkError) {
+							errorToast(getString(R.string.no_internet))
+						} else {
+							it.parse(mCtx, TAG, object : AlertClicks {
+								override fun primaryClick(dialog: AppBottomSheet) {
+									dialog.dismiss()
+									
+								}
+								
+								override fun secondaryClick(dialog: AppBottomSheet) {
+									dialog.dismiss()
+									
+								}
+							})
+						}
+					}
+					
+					else -> {}
+					
+				}
+			}
+			
+			viewModel.followUserShowRepo.observe(viewLifecycleOwner) {
+				when (it) {
+					is Resource.Success -> {
+						
+						val mData = it.value.data
+						
+						if (mData?.status == true) {
+							bind.follow.setBackgroundColor(ContextCompat.getColor(mCtx, R.color.outline))
+							bind.follow.setTextColor(ContextCompat.getColor(mCtx, R.color.onSurface))
+							bind.follow.text = "Unfollow"
+						} else {
+							bind.follow.setBackgroundColor(ContextCompat.getColor(mCtx, R.color.primary))
+							bind.follow.setTextColor(ContextCompat.getColor(mCtx, R.color.background))
+							bind.follow.text = "Follow"
+						}
+						
+					}
+					
+					is Resource.Error -> {
+						bind.loader.isVisible = false
+						
+						if (it.isNetworkError) {
+							errorToast(getString(R.string.no_internet))
+						} else {
+							it.parse(mCtx, TAG, object : AlertClicks {
+								override fun primaryClick(dialog: AppBottomSheet) {
+									dialog.dismiss()
+									
+								}
+								
+								override fun secondaryClick(dialog: AppBottomSheet) {
+									dialog.dismiss()
+									
+								}
+							})
+						}
+					}
+					
+					else -> {}
+					
+				}
+			}
+			
+			if (App.profileResponse.value?.buyerIdentityStatus != "verified") {
+				verificationDialog()
 			}
 		}
-
-		if (App.profileResponse.value?.buyerIdentityStatus != "verified") {
-			verificationDialog()
-		}
-	}
+	
 
 	override fun onResume() {
 		super.onResume()
@@ -651,4 +656,67 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
 	}
 */
+
+	@SuppressLint("ClickableViewAccessibility")
+	fun setUpSwipe() {
+		
+		var downX = 0f
+		
+		bind.viewFlipper.setOnTouchListener { _, event ->
+			when (event.action) {
+				MotionEvent.ACTION_DOWN -> {
+					downX = event.x
+					true
+				}
+				MotionEvent.ACTION_UP -> {
+					val deltaX = event.x - downX
+					
+					if (abs(deltaX) > 100) {
+						if (deltaX > 0) {
+							bind.viewFlipper.setInAnimation(mCtx, R.anim.slide_in_left)
+							bind.viewFlipper.setOutAnimation(mCtx, R.anim.slide_out_right)
+							bind.viewFlipper.showPrevious()
+						} else {
+							
+							bind.viewFlipper.setInAnimation(mCtx, R.anim.slide_in_right)
+							bind.viewFlipper.setOutAnimation(mCtx, R.anim.slide_out_left)
+							bind.viewFlipper.showNext()
+						}
+					}
+					true
+				}
+				else -> false
+			}
+		}
+		
+		bind.controls.setOnTouchListener { _, event ->
+			when (event.action) {
+				MotionEvent.ACTION_DOWN -> {
+					downX = event.x
+					true
+				}
+				MotionEvent.ACTION_UP -> {
+					val deltaX = event.x - downX
+					
+					if (abs(deltaX) > 100) {
+						if (deltaX > 0) {
+							bind.viewFlipper.setInAnimation(mCtx, R.anim.slide_in_left)
+							bind.viewFlipper.setOutAnimation(mCtx, R.anim.slide_out_right)
+							bind.viewFlipper.showPrevious()
+						} else {
+							
+							bind.viewFlipper.setInAnimation(mCtx, R.anim.slide_in_right)
+							bind.viewFlipper.setOutAnimation(mCtx, R.anim.slide_out_left)
+							bind.viewFlipper.showNext()
+						}
+					}
+					true
+				}
+				else -> false
+			}
+		}
+		
+	}
+	
+	
 }

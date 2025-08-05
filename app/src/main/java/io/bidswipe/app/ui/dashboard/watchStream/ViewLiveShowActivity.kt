@@ -78,7 +78,7 @@ class ViewLiveShowActivity : BaseActivity() {
         immersionBar {
             transparentBar()
             navigationBarDarkIcon(true)
-            navigationBarColor(clr.surface)
+            navigationBarColor(clr.transparent)
             supportActionBar(false)
             fitsSystemWindows(false)
             keyboardEnable(true)
