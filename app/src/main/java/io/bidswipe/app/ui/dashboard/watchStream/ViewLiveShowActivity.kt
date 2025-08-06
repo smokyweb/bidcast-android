@@ -27,112 +27,103 @@ import io.bidswipe.app.utils.setMargins
 
 class ViewLiveShowActivity : BaseActivity() {
 
-    private val bind by bind(ActivityViewLiveShowBinding::inflate)
-    private val viewModel by viewModels<StreamViewModel>()
+	private val bind by bind(ActivityViewLiveShowBinding::inflate)
+	private val viewModel by viewModels<StreamViewModel>()
 
-    private var pos = 0
-    private var streamList = arrayListOf<LiveShowModel>()
-    private lateinit var viewPager: ViewPager2
-    private lateinit var streamPagerAdapter: StreamPagerAdapter
+	private var pos = 0
+	private var streamList = arrayListOf<LiveShowModel>()
+	private lateinit var viewPager: ViewPager2
+	private lateinit var streamPagerAdapter: StreamPagerAdapter
 
-    private var eventListener = object : ValueEventListener {
-        @SuppressLint("NotifyDataSetChanged")
-        override fun onDataChange(snapshot: DataSnapshot) {
+	private var eventListener = object : ValueEventListener {
+		@SuppressLint("NotifyDataSetChanged")
+		override fun onDataChange(snapshot: DataSnapshot) {
 
-            if (snapshot.childrenCount.toInt() != streamList.size){
-                streamList.clear()
-                if (snapshot.exists() && snapshot.childrenCount > 0) {
-                    for (data in snapshot.children) {
-                        log("EVENT LISTENER $data")
+			if (snapshot.childrenCount.toInt() != streamList.size) {
+				streamList.clear()
+				if (snapshot.exists() && snapshot.childrenCount > 0) {
+					for (data in snapshot.children) {
+						log("EVENT LISTENER $data")
 
-                        streamList.add(data.getValue(LiveShowModel::class.java)!!)
+						streamList.add(data.getValue(LiveShowModel::class.java)!!)
 
-                    }
+					}
 
-                }
-                if (streamList.isNotEmpty()){
-                    viewPager = bind.viewPager
+				}
+				if (streamList.isNotEmpty()) {
+					viewPager = bind.viewPager
 
-                    viewModel.setStreams(streamList)
+					viewModel.setStreams(streamList)
 
-                    streamPagerAdapter = StreamPagerAdapter(this@ViewLiveShowActivity, viewModel)
-                    viewPager.adapter = streamPagerAdapter
-                    viewPager.currentItem = pos
-                    viewPager.orientation = ViewPager2.ORIENTATION_VERTICAL
-                    }else{
+					streamPagerAdapter = StreamPagerAdapter(this@ViewLiveShowActivity, viewModel)
+					viewPager.adapter = streamPagerAdapter
+					viewPager.currentItem = pos
+					viewPager.orientation = ViewPager2.ORIENTATION_VERTICAL
+				} else {
 
-                        finishAfterTransition()
-                }
-
-
-
-            }
+					finishAfterTransition()
+				}
 
 
-        }
+			}
 
-        override fun onCancelled(error: DatabaseError) {
+		}
 
-        }
+		override fun onCancelled(error: DatabaseError) {
 
-    }
+		}
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(bind.root)
+	}
 
-        immersionBar {
-            transparentBar()
-            navigationBarDarkIcon(true)
-            navigationBarColor(clr.transparent)
-            supportActionBar(false)
-            fitsSystemWindows(false)
-            keyboardEnable(true)
-        }
+	override fun onCreate(savedInstanceState: Bundle?) {
+		super.onCreate(savedInstanceState)
+		setContentView(bind.root)
 
-        bind.root.setMargins(0, 0, 0, navigationBarHeight)
+		immersionBar {
+			transparentBar()
+			navigationBarDarkIcon(true)
+			navigationBarColor(clr.transparent)
+			supportActionBar(false)
+			fitsSystemWindows(false)
+			keyboardEnable(true)
+		}
 
-        pos = intent.getIntExtra("position", 0)
+		bind.root.setMargins(0, 0, 0, navigationBarHeight)
 
-//        streamList = intent.getParcelableArrayListExtra<StreamModel>("roomIdsList") !!
+		pos = intent.getIntExtra("position", 0)
 
-	    FireRef.LIVE_SESSIONS.addValueEventListener(eventListener)
+		FireRef.LIVE_SESSIONS.addValueEventListener(eventListener)
 
-//        log("ROOM IDS: ${streamList.get(0).roomId}")
+		createEngine()
 
-        createEngine()
+		val appConfig = ZIMAppConfig().also {
+			it.appID = Const.APP_ID.toLong()
+			it.appSign = Const.APP_SIGN
+		}
 
-        val appConfig = ZIMAppConfig().also {
-            it.appID = Const.APP_ID.toLong()
-            it.appSign = Const.APP_SIGN
-        }
+		ZIM.create(appConfig, application)
 
-       ZIM.create(appConfig, application)
+	}
 
-    }
+	override fun onDestroy() {
+		super.onDestroy()
+		destroyEngine()
+	}
 
-    override fun onDestroy() {
-        super.onDestroy()
-        destroyEngine()
-       /* ZIM.getInstance().logout()
-        ZIM.getInstance().destroy()*/
+	private fun createEngine() {
+		val profile = ZegoEngineProfile().apply {
+			appID = Const.APP_ID.toLong()
+			appSign = Const.APP_SIGN
+			scenario = ZegoScenario.BROADCAST
+			application = applicationContext as Application
+		}
 
-    }
+		ZegoExpressEngine.createEngine(profile, null)
 
-    private fun createEngine() {
-        val profile = ZegoEngineProfile().apply {
-            appID = Const.APP_ID.toLong()
-            appSign = Const.APP_SIGN
-            scenario = ZegoScenario.BROADCAST
-            application = applicationContext as Application
-        }
+	}
 
-        ZegoExpressEngine.createEngine(profile, null)
-
-    }
-
-    private fun destroyEngine() {
-        ZegoExpressEngine.destroyEngine(null)
-    }
+	private fun destroyEngine() {
+		ZegoExpressEngine.destroyEngine(null)
+	}
 
 }

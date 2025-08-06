@@ -184,7 +184,7 @@ fun Resource.Error.parse(
 
 	if (this.isNetworkError) Alerts.log(tag, "ERROR : \n${this.errorCode}")
 
-	val clicks = if (this.errorResponse?.errorType == "unauthorized" || this.errorResponse?.errorType == "token_invalid") {
+	val clicks = if (this.errorResponse?.errorType == "UNAUTHORIZED" || this.errorResponse?.errorType == "invalid_token") {
 		object : AlertClicks {
 			override fun primaryClick(dialog: AppBottomSheet) {
 				dialog.dismiss()

@@ -125,7 +125,7 @@
 	<string name="shop">Магазин</string>
 	<string name="show_category">Категория шоу</string>
 	<string name="show_details">Детали шоу</string>
-	<string name="show_time_00_00_01">Время шоу: 00:00:01</string>
+	<string name="show_time_00_00_01">Время шоу: 00:00:00</string>
 	<string name="show_title">Название шоу</string>
 	<string name="sound">Звук</string>
 	<string name="start_bid">Начать торги</string>

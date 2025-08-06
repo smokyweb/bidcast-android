@@ -33,9 +33,10 @@
             app:cardElevation="0dp">
 
             <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/icon"
+                android:id="@+id/hostImage"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:scaleType="centerCrop"
                 android:src="@drawable/user_image" />
 
         </com.google.android.material.card.MaterialCardView>
@@ -48,7 +49,7 @@
             android:orientation="vertical">
 
             <TextView
-                android:id="@+id/title"
+                android:id="@+id/hostName"
                 style="@style/TitleLarge"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

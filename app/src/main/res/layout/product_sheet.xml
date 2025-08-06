@@ -36,7 +36,6 @@
                 android:src="@drawable/close_ic"
                 app:tint="@color/tertiary" />
 
-
         </LinearLayout>
 
         <com.google.android.material.divider.MaterialDivider
@@ -44,59 +43,17 @@
             android:layout_height="1dp"
             app:dividerColor="@color/outline"/>
 
-
-        <LinearLayout
-            android:id="@+id/click"
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycler"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:padding="@dimen/margin"
-            android:layout_margin="@dimen/half_margin"
-            style="@style/shadowStyle"
-            android:background="@drawable/card_8"
-            android:backgroundTint="@color/inverseOnSurface">
-
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/icon_card"
-                style="@style/cardStyle"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                app:cardCornerRadius="100dp"
-                app:cardElevation="0dp">
-
-                <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/icon"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:padding="12dp"
-                    android:src="@drawable/ic_people"
-                    android:backgroundTint="@color/onSecondary"/>
-
-            </com.google.android.material.card.MaterialCardView>
-
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="@dimen/half_margin"
-                android:layout_weight="1"
-                android:orientation="vertical">
-
-                <TextView
-                    android:id="@+id/title"
-                    style="@style/TitleMedium"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/create_a_raid" />
-
-            </LinearLayout>
-
-            <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/next"
-                android:layout_width="18dp"
-                android:layout_height="18dp"
-                android:src="@drawable/ic_forward" />
-
-        </LinearLayout>
+            android:orientation="vertical"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            tools:itemCount="5"
+            android:nestedScrollingEnabled="false"
+            tools:listitem="@layout/shop_sheet_item"
+            app:layout_constraintTop_toBottomOf="@id/chipGroupScroll"
+            app:layout_constraintBottom_toBottomOf="parent"/>
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/endBtn"
@@ -104,7 +61,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="32dp"
-            android:text="@string/end_show"
+            android:text="Add Product"
             app:layout_constraintBottom_toBottomOf="parent" />
 
     </LinearLayout>

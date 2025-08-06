@@ -4,6 +4,7 @@ import io.bidswipe.app.base.BaseRepository
 import io.bidswipe.app.model.PaymentCardModel
 import io.bidswipe.app.model.StoreProductRequest
 import io.bidswipe.app.network.ApiInterface
+import io.bidswipe.app.utils.request
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import javax.inject.Inject
@@ -94,7 +95,7 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
         categoryId: RequestBody?,
         auctionTypeId: RequestBody?,
         thumbnails: List<MultipartBody.Part?>?,
-        productIds: List<Int?>,
+        productIds: RequestBody?
     ) = call {
         api.storeScheduleShow(
             title,

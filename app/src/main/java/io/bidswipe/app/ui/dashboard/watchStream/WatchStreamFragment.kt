@@ -3,14 +3,12 @@ package io.bidswipe.app.ui.dashboard.watchStream
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
-import android.view.GestureDetector
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
-import androidx.lifecycle.viewModelScope
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
@@ -44,7 +42,6 @@ import io.bidswipe.app.databinding.FragmentWatchStreamBinding
 import io.bidswipe.app.databinding.ShopSheetBinding
 import io.bidswipe.app.interfaces.AlertClicks
 import io.bidswipe.app.interfaces.RecyclerClicks
-import io.bidswipe.app.model.ChatModel
 import io.bidswipe.app.model.LiveChatModel
 import io.bidswipe.app.model.LiveShowModel
 import io.bidswipe.app.model.ZIMExtendedData
@@ -96,7 +93,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 		@SuppressLint("NotifyDataSetChanged")
 		override fun onDataChange(snapshot: DataSnapshot) {
 			log("Value : ${snapshot.value}")
-
+/*
 			val data = snapshot.getValue(LiveShowModel::class.java)
 
 			highestBidAmount = data?.highestBid?.bidAmount.toString()
@@ -104,6 +101,9 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 			bind.liveCount.text = data?.viewerCount.toString()
 
 			if (data?.products?.get(0)?.status == "sold") {
+				if (data.highestBid?.userId == userId){
+					bind.soldOutText.text = "You won the bid"
+				}
 				bind.soldLayout.isVisible = true
 				bind.productLayout.isVisible = false
 			} else {
@@ -120,10 +120,38 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 			}else{
 				bind.bidTime.isVisible = false
 			}
+		}*/
+			log("Value : ${snapshot.value}")
+
+			val data = snapshot.getValue(LiveShowModel::class.java) ?: return
+
+			// Safely update highestBidAmount
+			highestBidAmount = data.highestBid?.bidAmount ?: "0"
+
+			// Show viewer count or default to 0
+			bind.liveCount.text = (data.viewerCount ?: 0).toString()
+
+			// Handle product sale status
+			val isSold = data.products?.firstOrNull()?.status == "sold"
+			bind.soldLayout.isVisible = isSold
+			bind.productLayout.isVisible = !isSold
+
+			if (isSold && data.highestBid?.userId == userId) {
+				bind.soldOutText.text = "You won the bid"
+			}
+
+			// Show bid countdown if available
+			val countdown = snapshot.child("bidCountDown").value?.toString()
+			if (!countdown.isNullOrEmpty()) {
+				bind.bidTime.isVisible = true
+				bind.bidTime.text = "Ends in $countdown"
+			} else {
+				bind.bidTime.isVisible = false
+			}
 		}
 
 		override fun onCancelled(error: DatabaseError) {
-
+			log("Firebase cancelled: ${error.message}")
 		}
 
 	}
@@ -221,22 +249,11 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
 				productList.add(stream.products?.getCurrentProduct() as GetMyInventoryResponse.Data?)
 
-
 				bind.bid.onSlideCompleteListener = object : OnSlideCompleteListener {
 					override fun onSlideComplete(view: SlideToActView) {
-						log("SWIPED")
-
-						/*bind.loader.isVisible = true
-
-						viewModel.createBid(
-							stream.showId?.request(),
-							userId.request(),
-							stream.products?.getCurrentProduct()?.id.toString().request(),
-							stream.products?.getCurrentProduct()?.price?.request()
-						)*/
+						/*log("SWIPED")
 
 						val ref = FireRef.LIVE_SESSIONS.child(roomID).child("highestBid")
-
 
 						val a = ref.addValueEventListener(object :
 							ValueEventListener {
@@ -253,13 +270,6 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 									map.put("userImage", userImage)
 									map.put("userId", userId)
 
-									/*val map = LiveShowModel.HighestBid(
-										bidAmount = "12",
-										productStatus = "processed",
-										userName =userName,
-										userImage=userImage,
-										userId =userId
-									).toMap()*/
 									FireRef.LIVE_SESSIONS.child(roomID).child("highestBid").updateChildren(map)
 
 								} else {
@@ -284,12 +294,38 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 							override fun onCancelled(error: DatabaseError) {
 							}
 
-						})
+						})*/
 
+						log("SWIPED")
+
+						val ref = FireRef.LIVE_SESSIONS.child(roomID).child("highestBid")
+
+						ref.addListenerForSingleValueEvent(object : ValueEventListener {
+							override fun onDataChange(snapshot: DataSnapshot) {
+								val bidData = mutableMapOf<String, Any?>(
+									"bidAmount" to highestBidAmount,
+									"userName" to userName,
+									"userImage" to userImage,
+									"userId" to userId
+								)
+
+								// If startTime doesn't exist, it's a new bid; otherwise, update existing
+								if (!snapshot.hasChild("startTime")) {
+									bidData["startTime"] = Utils.timestamp().toString()
+									bidData["productStatus"] = "processed"
+								}
+
+								ref.updateChildren(bidData)
+							}
+
+							override fun onCancelled(error: DatabaseError) {
+								log("Firebase Error: ${error.message}")
+							}
+
+						})
 
 					}
 				}
-
 			}
 		}
 
@@ -376,6 +412,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 		if (App.profileResponse.value?.buyerIdentityStatus != "verified") {
 			verificationDialog()
 		}
+
 	}
 
 	override fun onResume() {

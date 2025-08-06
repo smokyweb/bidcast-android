@@ -61,9 +61,5 @@
     <style name="Theme.Bidswipe.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     <style name="Theme.Bidswipe.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
-    <!-- Base application theme. -->
-    <style name="Base.Theme.Bidswipe" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
-    </style>
+
 </resources>

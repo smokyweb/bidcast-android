@@ -26,6 +26,7 @@ data class LiveShowModel(
 		var currentBidderId: String? = null,
 		var currentBidValue: String? = null,
 		var isCurrent: Boolean? = false,
+		var selected : Boolean = false
 	) {
 		fun fromMap(it: DataSnapshot): Product = Product(
 			category = it.child("category").getValue(String::class.java),

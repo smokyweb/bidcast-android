@@ -40,7 +40,7 @@ class ScheduleShowViewModel @Inject constructor(val repo: DashRepository) : View
         categoryId: RequestBody?,
         auctionTypeId: RequestBody?,
         thumbnails: List<MultipartBody.Part?>?,
-        productIds: List<Int?>,
+        productIds: RequestBody?,
     ) = viewModelScope.launch {
         _storeScheduleShowResponse.value = repo.storeScheduleShow(
             title,

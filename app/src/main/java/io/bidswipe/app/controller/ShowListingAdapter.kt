@@ -33,8 +33,9 @@ class ShowListingAdapter(
 
             bind.time.text = item?.time
 
-            bind.image.loadUrl(mCtx, item?.thumbnail.toString())
+            bind.image.loadUrl(mCtx, item?.imgThumbnail?.first() ?:"")
 
         }
     }
+
 }

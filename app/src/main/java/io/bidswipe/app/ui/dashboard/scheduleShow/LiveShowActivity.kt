@@ -15,7 +15,6 @@ import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
 import androidx.core.view.isVisible
-import com.google.android.datatransport.ProductData
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
@@ -54,6 +53,7 @@ import io.bidswipe.app.App
 import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseActivity
 import io.bidswipe.app.controller.CommentAdapter
+import io.bidswipe.app.controller.FirebaseProductAdapter
 import io.bidswipe.app.controller.LiveMoreAdapter
 import io.bidswipe.app.controller.PromoteSheetAdapter
 import io.bidswipe.app.controller.ShareSheetAdapter
@@ -62,6 +62,7 @@ import io.bidswipe.app.databinding.ActivityLiveShowBinding
 import io.bidswipe.app.databinding.CreateClipSheetBinding
 import io.bidswipe.app.databinding.EndShowSheetBinding
 import io.bidswipe.app.databinding.LiveShowMoreMenuBinding
+import io.bidswipe.app.databinding.ProductSheetBinding
 import io.bidswipe.app.databinding.PromoteShowSheetBinding
 import io.bidswipe.app.databinding.ShareSheetBinding
 import io.bidswipe.app.databinding.ShopSheetBinding
@@ -82,7 +83,7 @@ import io.bidswipe.app.utils.Utils
 import io.bidswipe.app.utils.bind
 import io.bidswipe.app.utils.clr
 import io.bidswipe.app.utils.draw
-import io.bidswipe.app.utils.getCurrentProduct
+import io.bidswipe.app.utils.loadUrl
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request
 import io.bidswipe.app.utils.runSafe
@@ -124,13 +125,11 @@ class LiveShowActivity : BaseActivity() {
 
 			bind.liveCount.text = liveData?.viewerCount.toString()
 
-			/* if (data?.product?.status == "sold") {
-				 bind.soldLayout.isVisible = true
-				 bind.productLayout.isVisible = false
-			 } else {
-				 bind.soldLayout.isVisible = false
-				 bind.productLayout.isVisible = true
-			 }*/
+			val isSold = liveData?.products?.firstOrNull()?.status == "sold"
+
+
+
+
 
 		}
 
@@ -180,6 +179,10 @@ class LiveShowActivity : BaseActivity() {
 		bind.recycler.adapter = commentAdapter
 
 		showId = intent.getStringExtra("showId") ?: ""
+
+		bind.hostName.text = userName
+
+		bind.hostImage.loadUrl(this, userImage)
 
 		createEngine()
 
@@ -356,6 +359,27 @@ class LiveShowActivity : BaseActivity() {
 						)
 					)
 
+					if ((liveData?.products?.size ?: 0) > 1){
+
+
+						val updates = hashMapOf<String, Any?>(
+							"highestBid" to null,
+							"bidCountDown" to null
+						)
+
+						FireRef.LIVE_SESSIONS.child(roomID).updateChildren(updates)
+							.addOnSuccessListener {
+								log("Keys removed successfully")
+							}
+							.addOnFailureListener { error ->
+								log("Failed to remove keys: ${error.message}")
+							}
+
+						showProductSheet()
+
+					}else{
+						Alerts.error(this, "Your Current Product has been sold, Please select next one to your shop")
+					}
 
 				}
 
@@ -368,12 +392,10 @@ class LiveShowActivity : BaseActivity() {
 						it.parse(this, TAG, object : AlertClicks {
 							override fun primaryClick(dialog: AppBottomSheet) {
 								dialog.dismiss()
-
 							}
 
 							override fun secondaryClick(dialog: AppBottomSheet) {
 								dialog.dismiss()
-
 							}
 						})
 					}
@@ -789,6 +811,7 @@ class LiveShowActivity : BaseActivity() {
 				handler.postDelayed(this, 1000)
 			}
 		}
+
 		handler.post(durationRunnable)
 	}
 
@@ -1150,6 +1173,61 @@ class LiveShowActivity : BaseActivity() {
 			viewModel.updateLiveStatus(showId.request(), "false".request())
 		}
 		endShowSheet.show()
+	}
+
+	fun showProductSheet(){
+
+			val productSheetBind = ProductSheetBinding.bind(layoutInflater.inflate(R.layout.product_sheet, null, false))
+			val shopSheet = Alerts.appBottomSheet(this, true, productSheetBind)
+
+			val productList = mutableListOf<LiveShowModel.Product?>()
+
+		FireRef.LIVE_SESSIONS.child(roomID).addListenerForSingleValueEvent(object : ValueEventListener{
+			override fun onDataChange(snapshot: DataSnapshot) {
+
+				val data = snapshot.getValue(LiveShowModel::class.java)
+
+
+				if (data?.products != null) {
+					productList.clear()
+					productList.addAll(
+						data.products!!
+					)
+				}
+
+
+				log("LIVE ADDED PRODUCTS : ${data}")
+
+				val productAdapter = FirebaseProductAdapter(productList, object : RecyclerClicks {
+					override fun itemClick(pos: Int, status: String?) {
+
+						productList.forEachIndexed { index, item ->
+
+							item?.selected = index == pos
+
+							productSheetBind.recycler.adapter?.notifyDataSetChanged()
+
+						}
+
+					}
+
+				})
+
+				productSheetBind.recycler.adapter = productAdapter
+
+				shopSheet.show()
+
+			}
+
+			override fun onCancelled(error: DatabaseError) {
+			}
+
+		})
+
+
+
+
+
 	}
 
 	fun initPip() {

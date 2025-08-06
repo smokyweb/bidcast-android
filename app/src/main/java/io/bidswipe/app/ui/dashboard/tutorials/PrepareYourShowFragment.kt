@@ -113,7 +113,7 @@ class PrepareYourShowFragment : BaseFragment<DashViewModel, FragmentPrepareYourS
 								mData?.categoryId?.request(),
 								mData?.actionId?.request(),
 								imagePartList,
-								productIds!!
+								productIds?.joinToString(",")?.request()
 							)
 
 						}
