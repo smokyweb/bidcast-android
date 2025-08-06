@@ -1,416 +1,415 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	xmlns:app="http://schemas.android.com/apk/res-auto"
-	xmlns:tools="http://schemas.android.com/tools"
-	android:layout_width="match_parent"
-	android:layout_height="match_parent"
-	android:orientation="vertical"
-	tools:context=".ui.dashboard.sell.ListAProductFragment">
-
-	<LinearLayout
-	android:layout_width="match_parent"
-	android:layout_height="match_parent"
-	android:orientation="vertical">
-
-	<io.bidswipe.app.ui.custom.Header
-		android:id="@+id/header"
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		app:headerMode="BACK_BUTTON_TITLE_ACTION"
-		app:headerTitle="List a Product"
-		app:layout_constraintTop_toTopOf="parent"
-		app:primaryIconDrawable="@drawable/notification"
-		app:secondaryIconDrawable="@drawable/search"
-		app:showBackButton="true"
-		app:showPrimaryIcon="false"
-		app:showSecondaryIcon="false" />
-
-	<ScrollView
-		android:id="@+id/scroll"
-		android:layout_width="match_parent"
-		android:layout_height="0dp"
-		android:layout_weight="1"
-		android:fillViewport="true">
-
-		<LinearLayout
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:layout_marginHorizontal="@dimen/margin"
-			android:orientation="vertical">
-
-			<LinearLayout
-				android:id="@+id/headingView"
-				android:layout_width="match_parent"
-				android:layout_height="wrap_content"
-				android:layout_marginTop="@dimen/half_margin"
-				android:orientation="horizontal">
-
-				<io.bidswipe.app.ui.custom.Heading
-					android:layout_width="0dp"
-					android:layout_height="wrap_content"
-					android:layout_weight="1"
-					app:title="Media" />
-
-				<TextView
-					android:id="@+id/image_limit"
-					style="@style/TitleMedium"
-					android:layout_width="wrap_content"
-					android:layout_height="wrap_content"
-					android:layout_gravity="center_vertical"
-					android:text="0/9" />
-
-			</LinearLayout>
-
-			<HorizontalScrollView
-				android:layout_width="match_parent"
-				android:layout_height="wrap_content"
-				android:scrollbars="none">
-
-				<LinearLayout
-					android:layout_width="match_parent"
-					android:layout_height="wrap_content"
-					android:orientation="horizontal">
-
-					<androidx.recyclerview.widget.RecyclerView
-							android:id="@+id/images"
-						android:layout_width="wrap_content"
-						android:layout_height="wrap_content"
-						android:nestedScrollingEnabled="false"
-						android:orientation="horizontal"
-						app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-						tools:itemCount="1"
-						tools:listitem="@layout/upload_image_item" />
-
-					<LinearLayout
-						android:id="@+id/add_new_image"
-						android:layout_width="120dp"
-						android:layout_height="120dp"
-						android:background="@drawable/dashed_card_8_white"
-						android:gravity="center">
-
-						<ImageView
-							android:layout_width="wrap_content"
-							android:layout_height="wrap_content"
-							android:layout_gravity="center"
-							android:contentDescription="@string/app_name"
-							android:src="@drawable/ic_add" />
-
-					</LinearLayout>
-
-				</LinearLayout>
-			</HorizontalScrollView>
-
-			<io.bidswipe.app.ui.custom.Heading
-				android:layout_width="match_parent"
-				android:layout_height="wrap_content"
-				android:layout_marginTop="@dimen/margin"
-				app:title="Product Details" />
-
-			<TextView
-				style="@style/TitleSmall"
-				android:layout_width="match_parent"
-				android:layout_height="wrap_content"
-				android:layout_marginBottom="@dimen/half_margin"
-				android:text="@string/category" />
-
-			<com.google.android.material.textfield.TextInputLayout
-				style="@style/inputBoxStyle"
-				android:layout_width="match_parent"
-				android:layout_height="wrap_content"
-				android:layout_marginBottom="@dimen/margin"
-				app:endIconDrawable="@drawable/ic_forward"
-				app:endIconMode="custom">
-
-				<com.google.android.material.textfield.MaterialAutoCompleteTextView
-					android:id="@+id/category"
-					style="@style/inputTextStyle"
-					android:layout_width="match_parent"
-					android:layout_height="wrap_content"
-					android:focusable="false"
-					android:focusableInTouchMode="false"
-					android:hint="@string/select_category" />
-
-			</com.google.android.material.textfield.TextInputLayout>
-
-			<TextView
-				style="@style/TitleSmall"
-				android:layout_width="match_parent"
-				android:layout_height="wrap_content"
-				android:layout_marginBottom="@dimen/half_margin"
-				android:text="@string/title" />
-
-			<com.google.android.material.textfield.TextInputLayout
-				style="@style/inputBoxStyle"
-				android:layout_width="match_parent"
-				android:layout_height="wrap_content"
-				android:layout_marginBottom="@dimen/margin">
-
-				<com.google.android.material.textfield.TextInputEditText
-					android:id="@+id/product_title"
-					style="@style/inputTextStyle"
-					android:layout_width="match_parent"
-					android:layout_height="wrap_content"
-					android:hint="@string/enter_product_title" />
-
-			</com.google.android.material.textfield.TextInputLayout>
-
-			<TextView
-				style="@style/TitleSmall"
-				android:layout_width="match_parent"
-				android:layout_height="wrap_content"
-				android:layout_marginBottom="@dimen/half_margin"
-				android:text="@string/description" />
-
-			<com.google.android.material.textfield.TextInputLayout
-				style="@style/inputBoxStyle"
-				android:layout_width="match_parent"
-				android:layout_height="wrap_content"
-				android:layout_marginBottom="@dimen/margin">
-
-				<com.google.android.material.textfield.TextInputEditText
-					android:id="@+id/description"
-					style="@style/inputTextStyle"
-					android:layout_width="match_parent"
-					android:layout_height="wrap_content"
-					android:gravity="top"
-					android:hint="@string/describe_your_product"
-					android:minLines="4" />
-
-			</com.google.android.material.textfield.TextInputLayout>
-
-			<TextView
-				style="@style/TitleSmall"
-				android:layout_width="match_parent"
-				android:layout_height="wrap_content"
-				android:layout_marginBottom="@dimen/half_margin"
-				android:text="@string/quantity_available" />
-
-			<com.google.android.material.textfield.TextInputLayout
-				style="@style/inputBoxStyle"
-				android:layout_width="match_parent"
-				android:layout_height="wrap_content"
-				android:layout_marginBottom="@dimen/margin">
-
-				<com.google.android.material.textfield.TextInputEditText
-					android:id="@+id/quantity"
-					style="@style/inputTextStyle"
-					android:layout_width="match_parent"
-					android:layout_height="wrap_content"
-					android:inputType="number"
-					android:hint="@string/enter_quantity" />
-
-			</com.google.android.material.textfield.TextInputLayout>
-
-			<androidx.recyclerview.widget.RecyclerView
-				android:id="@+id/variants"
-				android:layout_width="match_parent"
-				android:layout_height="0dp"
-				android:layout_marginBottom="@dimen/margin"
-				android:nestedScrollingEnabled="false"
-				android:orientation="vertical"
-				android:layout_weight="1"
-				app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-				tools:listitem="@layout/variant_item"
-				tools:itemCount="3"
-				/>
-
-			<com.google.android.material.card.MaterialCardView
-				android:layout_width="match_parent"
-				android:layout_height="wrap_content"
-				app:strokeWidth="2dp">
-
-				<LinearLayout
-					android:layout_width="match_parent"
-					android:layout_height="match_parent"
-					android:gravity="center"
-					android:padding="@dimen/margin">
-
-					<androidx.appcompat.widget.AppCompatImageView
-						android:layout_width="wrap_content"
-						android:layout_height="wrap_content"
-						android:src="@drawable/ic_add" />
-
-					<TextView
-						style="@style/BodyLarge"
-						android:layout_width="wrap_content"
-						android:layout_height="match_parent"
-						android:layout_marginStart="@dimen/half_margin"
-						android:text="@string/add_variants"
-						android:textColor="@color/secondary" />
-
-				</LinearLayout>
-
-			</com.google.android.material.card.MaterialCardView>
-
-			<io.bidswipe.app.ui.custom.Heading
-				android:layout_width="match_parent"
-				android:layout_height="wrap_content"
-				android:layout_marginTop="@dimen/margin"
-				app:title="Pricing" />
-
-			<TextView
-				style="@style/TitleSmall"
-				android:layout_width="match_parent"
-				android:layout_height="wrap_content"
-				android:layout_marginBottom="@dimen/half_margin"
-				android:text="@string/buy_it_now_price" />
-
-			<com.google.android.material.textfield.TextInputLayout
-				style="@style/inputBoxStyle"
-				android:layout_width="match_parent"
-				android:layout_height="wrap_content"
-				android:layout_marginBottom="@dimen/margin"
-				app:endIconDrawable="@drawable/ic_forward"
-				app:endIconMode="custom">
-
-				<com.google.android.material.textfield.TextInputEditText
-					android:id="@+id/price"
-					style="@style/inputTextStyle"
-					android:layout_width="match_parent"
-					android:layout_height="wrap_content"
-					android:inputType="numberDecimal"
-					android:hint="@string/_0_00" />
-
-			</com.google.android.material.textfield.TextInputLayout>
-
-			<LinearLayout
-				android:layout_width="match_parent"
-				android:layout_height="wrap_content"
-				android:layout_marginBottom="@dimen/margin"
-				android:gravity="center"
-				android:orientation="horizontal">
-
-				<TextView
-					style="@style/TitleMedium"
-					android:layout_width="0dp"
-					android:layout_height="wrap_content"
-					android:layout_weight="1"
-					android:text="@string/flash_sell" />
-
-				<com.google.android.material.materialswitch.MaterialSwitch
-					android:id="@+id/flashSell"
-					style="@style/appSwitch"
-					android:layout_width="wrap_content"
-					android:layout_height="wrap_content" />
-
-			</LinearLayout>
-
-			<LinearLayout
-				android:layout_width="match_parent"
-				android:layout_height="wrap_content"
-				android:layout_marginBottom="@dimen/margin"
-				android:gravity="center"
-				android:orientation="horizontal">
-
-				<TextView
-					style="@style/TitleMedium"
-					android:layout_width="0dp"
-					android:layout_height="wrap_content"
-					android:layout_weight="1"
-					android:text="@string/accept_offers" />
-
-				<com.google.android.material.materialswitch.MaterialSwitch
-					android:id="@+id/acceptOffers"
-					style="@style/appSwitch"
-					android:layout_width="wrap_content"
-					android:layout_height="wrap_content" />
-
-			</LinearLayout>
-
-			<LinearLayout
-				android:layout_width="match_parent"
-				android:layout_height="wrap_content"
-				android:layout_marginBottom="@dimen/margin"
-				android:gravity="center"
-				android:orientation="horizontal">
-
-				<TextView
-					style="@style/TitleMedium"
-					android:layout_width="0dp"
-					android:layout_height="wrap_content"
-					android:layout_weight="1"
-					android:text="@string/reserve_for_live" />
-
-				<com.google.android.material.materialswitch.MaterialSwitch
-					android:id="@+id/reserveForLive"
-					style="@style/appSwitch"
-					android:layout_width="wrap_content"
-					android:layout_height="wrap_content" />
-
-			</LinearLayout>
-
-
-			<io.bidswipe.app.ui.custom.Heading
-				android:layout_width="match_parent"
-				android:layout_height="wrap_content"
-				android:layout_marginTop="@dimen/margin"
-				app:title="Shipping" />
-
-			<TextView
-				style="@style/TitleSmall"
-				android:layout_width="match_parent"
-				android:layout_height="wrap_content"
-				android:layout_marginBottom="@dimen/half_margin"
-				android:text="@string/shipping_profile" />
-
-			<com.google.android.material.textfield.TextInputLayout
-				style="@style/inputBoxStyle"
-				android:layout_width="match_parent"
-				android:layout_height="wrap_content"
-				android:layout_marginBottom="@dimen/margin"
-				app:endIconDrawable="@drawable/ic_forward"
-				app:endIconMode="custom">
-
-				<com.google.android.material.textfield.TextInputEditText
-					android:id="@+id/shipping_profile"
-					style="@style/inputTextStyle"
-					android:layout_width="match_parent"
-					android:editable="false"
-					android:layout_height="wrap_content"
-					android:hint="@string/select_profile" />
-
-			</com.google.android.material.textfield.TextInputLayout>
-
-
-		</LinearLayout>
-
-	</ScrollView>
-
-	<LinearLayout
-		android:id="@+id/buttonLayout"
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:orientation="horizontal"
-		android:visibility="visible"
-		android:weightSum="2">
-
-		<com.google.android.material.button.MaterialButton
-			android:id="@+id/save_draft"
-			style="@style/appBtnOutline"
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:layout_margin="@dimen/margin"
-			android:layout_weight="1"
-			android:paddingHorizontal="@dimen/margin"
-			android:text="@string/save_draft" />
-
-		<com.google.android.material.button.MaterialButton
-			android:id="@+id/publish"
-			style="@style/appBtn"
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:layout_margin="@dimen/margin"
-			android:layout_weight="1"
-			android:paddingHorizontal="@dimen/margin"
-			android:text="@string/publish" />
-
-	</LinearLayout>
-
-</LinearLayout>
-
-	<io.bidswipe.app.ui.custom.LoaderView
-		android:layout_width="match_parent"
-		android:layout_height="match_parent"
-		android:id="@+id/loader"
-		android:visibility="gone"/>
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".ui.dashboard.sell.ListAProductFragment">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <io.bidswipe.app.ui.custom.Header
+            android:id="@+id/header"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:headerMode="BACK_BUTTON_TITLE_ACTION"
+            app:headerTitle="List a Product"
+            app:layout_constraintTop_toTopOf="parent"
+            app:primaryIconDrawable="@drawable/notification"
+            app:secondaryIconDrawable="@drawable/search"
+            app:showBackButton="true"
+            app:showPrimaryIcon="false"
+            app:showSecondaryIcon="false" />
+
+        <ScrollView
+            android:id="@+id/scroll"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:fillViewport="true">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/margin"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:id="@+id/headingView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/half_margin"
+                    android:orientation="horizontal">
+
+                    <io.bidswipe.app.ui.custom.Heading
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        app:title="Media" />
+
+                    <TextView
+                        android:id="@+id/image_limit"
+                        style="@style/TitleMedium"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:text="0/9" />
+
+                </LinearLayout>
+
+                <HorizontalScrollView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:scrollbars="none">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/images"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:nestedScrollingEnabled="false"
+                            android:orientation="horizontal"
+                            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                            tools:itemCount="1"
+                            tools:listitem="@layout/upload_image_item" />
+
+                        <LinearLayout
+                            android:id="@+id/add_new_image"
+                            android:layout_width="120dp"
+                            android:layout_height="120dp"
+                            android:background="@drawable/dashed_card_8_white"
+                            android:gravity="center">
+
+                            <ImageView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:contentDescription="@string/app_name"
+                                android:src="@drawable/ic_add" />
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+                </HorizontalScrollView>
+
+                <io.bidswipe.app.ui.custom.Heading
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/margin"
+                    app:title="Product Details" />
+
+                <TextView
+                    style="@style/TitleSmall"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/half_margin"
+                    android:text="@string/category" />
+
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/inputBoxStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/margin"
+                    app:endIconDrawable="@drawable/ic_forward"
+                    app:endIconMode="custom">
+
+                    <com.google.android.material.textfield.MaterialAutoCompleteTextView
+                        android:id="@+id/category"
+                        style="@style/inputTextStyle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:focusable="false"
+                        android:focusableInTouchMode="false"
+                        android:hint="@string/select_category" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <TextView
+                    style="@style/TitleSmall"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/half_margin"
+                    android:text="@string/title" />
+
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/inputBoxStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/margin">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/product_title"
+                        style="@style/inputTextStyle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/enter_product_title" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <TextView
+                    style="@style/TitleSmall"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/half_margin"
+                    android:text="@string/description" />
+
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/inputBoxStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/margin">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/description"
+                        style="@style/inputTextStyle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="top"
+                        android:hint="@string/describe_your_product"
+                        android:minLines="4" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <TextView
+                    style="@style/TitleSmall"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/half_margin"
+                    android:text="@string/quantity_available" />
+
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/inputBoxStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/margin">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/quantity"
+                        style="@style/inputTextStyle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/enter_quantity"
+                        android:inputType="number" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/variants"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginBottom="@dimen/margin"
+                    android:layout_weight="1"
+                    android:nestedScrollingEnabled="false"
+                    android:orientation="vertical"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    tools:itemCount="3"
+                    tools:listitem="@layout/variant_item" />
+
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:strokeWidth="2dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:padding="@dimen/margin">
+
+                        <androidx.appcompat.widget.AppCompatImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:src="@drawable/ic_add" />
+
+                        <TextView
+                            style="@style/BodyLarge"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_marginStart="@dimen/half_margin"
+                            android:text="@string/add_variants"
+                            android:textColor="@color/secondary" />
+
+                    </LinearLayout>
+
+                </com.google.android.material.card.MaterialCardView>
+
+                <io.bidswipe.app.ui.custom.Heading
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/margin"
+                    app:title="Pricing" />
+
+                <TextView
+                    style="@style/TitleSmall"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/half_margin"
+                    android:text="@string/buy_it_now_price" />
+
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/inputBoxStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/margin"
+                    app:endIconDrawable="@drawable/ic_forward"
+                    app:endIconMode="custom">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/price"
+                        style="@style/inputTextStyle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/_0_00"
+                        android:inputType="numberDecimal" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/margin"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        style="@style/TitleMedium"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/flash_sell" />
+
+                    <com.google.android.material.materialswitch.MaterialSwitch
+                        android:id="@+id/flashSell"
+                        style="@style/appSwitch"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/margin"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        style="@style/TitleMedium"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/accept_offers" />
+
+                    <com.google.android.material.materialswitch.MaterialSwitch
+                        android:id="@+id/acceptOffers"
+                        style="@style/appSwitch"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/margin"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        style="@style/TitleMedium"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/reserve_for_live" />
+
+                    <com.google.android.material.materialswitch.MaterialSwitch
+                        android:id="@+id/reserveForLive"
+                        style="@style/appSwitch"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+
+                </LinearLayout>
+
+
+                <io.bidswipe.app.ui.custom.Heading
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/margin"
+                    app:title="Shipping" />
+
+                <TextView
+                    style="@style/TitleSmall"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/half_margin"
+                    android:text="@string/shipping_profile" />
+
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/inputBoxStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/margin"
+                    app:endIconDrawable="@drawable/ic_forward"
+                    app:endIconMode="custom">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/shipping_profile"
+                        style="@style/inputTextStyle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:editable="false"
+                        android:hint="@string/select_profile" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+
+            </LinearLayout>
+
+        </ScrollView>
+
+        <LinearLayout
+            android:id="@+id/buttonLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:visibility="visible"
+            android:weightSum="2">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/save_draft"
+                style="@style/appBtnOutline"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/margin"
+                android:layout_weight="1"
+                android:paddingHorizontal="@dimen/margin"
+                android:text="@string/save_draft" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/publish"
+                style="@style/appBtn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/margin"
+                android:layout_weight="1"
+                android:paddingHorizontal="@dimen/margin"
+                android:text="@string/publish" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <io.bidswipe.app.ui.custom.LoaderView
+        android:id="@+id/loader"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone" />
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -138,7 +138,7 @@
         android:id="@+id/addProductFragment"
         android:name="io.bidswipe.app.ui.dashboard.scheduleShow.AddProductFragment"
         android:label="fragment_add_product"
-        tools:layout="@layout/fragment_add_product" >
+        tools:layout="@layout/fragment_add_product">
         <action
             android:id="@+id/addProductFragment_to_createProductFragment"
             app:destination="@id/createProductFragment"

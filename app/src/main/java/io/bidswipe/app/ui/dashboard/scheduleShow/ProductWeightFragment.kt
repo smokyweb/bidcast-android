@@ -15,7 +15,6 @@ import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.utils.Utils
 import io.bidswipe.app.utils.ids
 import io.bidswipe.app.utils.parse
-import io.bidswipe.app.utils.request
 import okhttp3.MultipartBody
 import java.io.File
 
@@ -88,8 +87,10 @@ class ProductWeightFragment : BaseFragment<ScheduleShowViewModel, FragmentProduc
             status = "active",
             productImages = imageUrls,
             subCategoryId = productData?.getString("subCategoryId") ?: "",
+            variant = viewModel.variantData
         )
     }
+
     private fun setupObservers() {
         viewModel.storeProductMetaRepo.observe(viewLifecycleOwner) { it ->
             when (it) {
@@ -97,8 +98,7 @@ class ProductWeightFragment : BaseFragment<ScheduleShowViewModel, FragmentProduc
                     val imageData = it.value.data?.mapNotNull { data ->
                         if (data?.images != null && data.thumbnail != null) {
                             mapOf(
-                                "image" to data.images,
-                                "thumbnail" to data.thumbnail
+                                "image" to data.images, "thumbnail" to data.thumbnail
                             )
                         } else {
                             null
@@ -107,6 +107,7 @@ class ProductWeightFragment : BaseFragment<ScheduleShowViewModel, FragmentProduc
                     val productData = arguments
                     createProduct(productData, imageData)
                 }
+
                 is Resource.Error -> {
                     if (it.isNetworkError) {
                         errorToast(getString(R.string.no_internet))
@@ -115,12 +116,14 @@ class ProductWeightFragment : BaseFragment<ScheduleShowViewModel, FragmentProduc
                             override fun primaryClick(dialog: AppBottomSheet) {
                                 dialog.dismiss()
                             }
+
                             override fun secondaryClick(dialog: AppBottomSheet) {
                                 dialog.dismiss()
                             }
                         })
                     }
                 }
+
                 else -> {}
             }
         }
@@ -130,6 +133,7 @@ class ProductWeightFragment : BaseFragment<ScheduleShowViewModel, FragmentProduc
                 is Resource.Success -> {
                     findNavController().navigate(ids.addProductFragment)
                 }
+
                 is Resource.Error -> {
                     if (resource.isNetworkError) {
                         errorToast(getString(R.string.no_internet))
@@ -138,12 +142,14 @@ class ProductWeightFragment : BaseFragment<ScheduleShowViewModel, FragmentProduc
                             override fun primaryClick(dialog: AppBottomSheet) {
                                 dialog.dismiss()
                             }
+
                             override fun secondaryClick(dialog: AppBottomSheet) {
                                 dialog.dismiss()
                             }
                         })
                     }
                 }
+
                 else -> {}
             }
         }

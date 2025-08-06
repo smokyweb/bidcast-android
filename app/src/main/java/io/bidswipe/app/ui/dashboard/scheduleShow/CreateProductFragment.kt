@@ -1,6 +1,7 @@
 package io.bidswipe.app.ui.dashboard.scheduleShow
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,9 +10,11 @@ import androidx.core.text.buildSpannedString
 import androidx.core.view.isVisible
 import androidx.navigation.fragment.findNavController
 import com.canhub.cropper.CropImageContract
+import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseFragment
 import io.bidswipe.app.controller.CategoryListAdapter
 import io.bidswipe.app.controller.ImageAdapter
+import io.bidswipe.app.controller.ProductVariantAdapter
 import io.bidswipe.app.databinding.CategoryBottomSheetBinding
 import io.bidswipe.app.databinding.FragmentCreateProductBinding
 import io.bidswipe.app.interfaces.AlertClicks
@@ -40,6 +43,9 @@ class CreateProductFragment : BaseFragment<ScheduleShowViewModel, FragmentCreate
 	private var categoryId = ""
 	private var subCategoryId = ""
 
+	var variantList = mutableListOf<GetCategoryResponse.Data.ExtraField?>()
+	private lateinit var variantAdapter: ProductVariantAdapter
+
 	private val imageResult = registerForActivityResult(CropImageContract()) { result ->
 		if (result.isSuccessful) {
 			val imageUri = result.uriContent
@@ -62,8 +68,20 @@ class CreateProductFragment : BaseFragment<ScheduleShowViewModel, FragmentCreate
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		super.onViewCreated(view, savedInstanceState)
 
+		val productData = arguments
+		val variantData = productData?.getSerializable("variantData") as? ArrayList<Map<String?, Any?>>
+
 		imageList.clear()
 		imageList.add(null)
+
+		variantAdapter = ProductVariantAdapter(variantList, object : RecyclerClicks {
+			override fun itemClick(pos: Int, status: String?) {
+			}
+		})
+		bind.variants.adapter = variantAdapter
+		bind.addVariant.setOnClickListener {
+
+		}
 
 		bind.images.adapter = ImageAdapter(imageList, object : RecyclerClicks {
 			override fun itemClick(pos: Int, status: String?) {
@@ -110,16 +128,22 @@ class CreateProductFragment : BaseFragment<ScheduleShowViewModel, FragmentCreate
 		bind.continueBtn.setOnClickListener {
 			if (validateAndNavigate()) {
 				val imagePaths = ArrayList(imageList.filterNotNull())
+				viewModel.variantData = variantAdapter.getAllVariantData().toMutableList()
+
 				val bundle = bundleOf(
 					"categoryId" to categoryId,
 					"subCategoryId" to subCategoryId,
 					"title" to bind.productTitle.text.toString().trim(),
 					"description" to bind.description.text.toString().trim(),
 					"quantity" to currentQuantity,
-					"imagePaths" to imagePaths.joinToString(",")
+					"imagePaths" to imagePaths.joinToString(","),
 				)
 
-				findNavController().navigate(ids.goToChooseSalesFormatFragment, bundle)
+				try {
+					findNavController().navigate(ids.goToChooseSalesFormatFragment, bundle)
+				} catch (_: Exception) {
+					errorToast("Error navigating to next screen")
+				}
 			}
 		}
 
@@ -283,44 +307,55 @@ class CreateProductFragment : BaseFragment<ScheduleShowViewModel, FragmentCreate
 	}
 
 	private fun showCategorySheet(categoryList: MutableList<GetCategoryResponse.Data?>, type: String) {
-		val categorySheetBind =
-			CategoryBottomSheetBinding.bind(layoutInflater.inflate(io.bidswipe.app.R.layout.category_bottom_sheet, null, false))
+		val categorySheetBind = CategoryBottomSheetBinding.bind(
+			layoutInflater.inflate(R.layout.category_bottom_sheet, null, false)
+		)
 		val categorySheet = Alerts.appBottomSheet(mCtx, true, categorySheetBind)
 
-		categorySheetBind.recycler.adapter = CategoryListAdapter(if (type =="category") categoryList else subCategoryList, object : RecyclerClicks {
+		variantList.clear()
+		variantAdapter.notifyDataSetChanged()
 
-			override fun itemClick(pos: Int, status: String?) {
+		categorySheetBind.recycler.adapter = CategoryListAdapter(
+			if (type == "category") categoryList else subCategoryList,
+			object : RecyclerClicks {
+				override fun itemClick(pos: Int, status: String?) {
+					if (type == "category") {
+						categoryId = categoryList[pos]?.id.toString()
+						bind.category.setText(categoryList[pos]?.name.toString())
+						bind.loader.isVisible = true
+						viewModel.getCategory(categoryId)
+						isSubCategory = true
 
-				if (type == "category") {
-					categoryId = categoryList[pos]?.id.toString()
-					bind.category.setText(categoryList[pos]?.name.toString())
-					bind.loader.isVisible = true
-					viewModel.getCategory(categoryId)
-					isSubCategory = true
-				}else{
-					bind.category.setText(buildSpannedString {
-						append(bind.category.text)
-						append("(${subCategoryList[pos]?.name.toString()})")
-					})
-					subCategoryId = subCategoryList[pos]?.id.toString()
-					isSubCategory = false
+						if (categoryList[pos]?.extraFields?.isNotEmpty() == true) {
+							variantList.addAll(categoryList[pos]?.extraFields ?: mutableListOf())
+							variantAdapter.notifyDataSetChanged()
+						}
+					} else {
+						bind.category.setText(buildSpannedString {
+							append(bind.category.text)
+							append("(${subCategoryList[pos]?.name.toString()})")
+						})
+						subCategoryId = subCategoryList[pos]?.id.toString()
+						isSubCategory = false
+
+						if (subCategoryList[pos]?.extraFields?.isNotEmpty() == true) {
+							variantList.addAll(subCategoryList[pos]?.extraFields ?: mutableListOf())
+							variantAdapter.notifyDataSetChanged()
+						}
+					}
+					categorySheet.dismiss()
 				}
-				categorySheet.dismiss()
-			}
-		})
+			})
 
 		if (type == "subCategory") {
 			categorySheetBind.sheetTitle.text = "Select Product Sub Category"
 		} else {
 			categorySheetBind.sheetTitle.text = "Select Product Category"
 		}
-
 		categorySheetBind.close.setOnClickListener {
 			categorySheet.dismiss()
 		}
-
 		categorySheet.show()
-
 	}
 
 }

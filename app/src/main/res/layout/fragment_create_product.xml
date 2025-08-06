@@ -36,8 +36,8 @@
                 style="@style/cardStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:backgroundTint="@color/secondaryContainer"
                 android:layout_marginTop="@dimen/margin"
+                android:backgroundTint="@color/secondaryContainer"
                 app:contentPadding="@dimen/margin">
 
                 <LinearLayout
@@ -253,46 +253,85 @@
 
             </LinearLayout>
 
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/variants"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/margin"
+                android:nestedScrollingEnabled="false"
+                android:orientation="vertical"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                tools:itemCount="3"
+                tools:listitem="@layout/variant_item" />
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/addVariant"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:strokeWidth="2dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:padding="@dimen/margin">
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_add" />
+
+                    <TextView
+                        style="@style/BodyLarge"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="@dimen/half_margin"
+                        android:text="@string/add_variants"
+                        android:textColor="@color/secondary" />
+
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
         </LinearLayout>
 
     </ScrollView>
 
-	<LinearLayout
-		android:id="@+id/buttonLayout"
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:orientation="horizontal"
-		android:visibility="visible"
-		android:weightSum="2"
-		app:layout_constraintBottom_toBottomOf="parent">
+    <LinearLayout
+        android:id="@+id/buttonLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:visibility="visible"
+        android:weightSum="2"
+        app:layout_constraintBottom_toBottomOf="parent">
 
-		<com.google.android.material.button.MaterialButton
-			android:id="@+id/useProduct"
-			style="@style/appBtn"
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:layout_margin="@dimen/margin"
-			android:layout_weight="1"
-			android:paddingHorizontal="@dimen/margin"
-			android:text="@string/use_product_library" />
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/useProduct"
+            style="@style/appBtn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/margin"
+            android:layout_weight="1"
+            android:paddingHorizontal="@dimen/margin"
+            android:text="@string/use_product_library" />
 
-		<com.google.android.material.button.MaterialButton
-			android:id="@+id/continueBtn"
-			style="@style/appBtn"
-			android:layout_width="match_parent"
-			android:layout_height="match_parent"
-			android:layout_margin="@dimen/margin"
-			android:layout_weight="1"
-			android:paddingHorizontal="@dimen/margin"
-			android:text="@string/_continue" />
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/continueBtn"
+            style="@style/appBtn"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="@dimen/margin"
+            android:layout_weight="1"
+            android:paddingHorizontal="@dimen/margin"
+            android:text="@string/_continue" />
 
-	</LinearLayout>
+    </LinearLayout>
 
     <io.bidswipe.app.ui.custom.LoaderView
         android:id="@+id/loader"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone"/>
+        android:visibility="gone" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

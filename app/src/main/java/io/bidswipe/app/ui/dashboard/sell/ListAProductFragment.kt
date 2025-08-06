@@ -27,7 +27,6 @@ import io.bidswipe.app.utils.Const
 import io.bidswipe.app.utils.Utils
 import io.bidswipe.app.utils.finish
 import io.bidswipe.app.utils.parse
-import io.bidswipe.app.utils.string
 import io.bidswipe.app.utils.value
 import okhttp3.MultipartBody
 import java.io.File
@@ -248,7 +247,6 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
 
     fun saveProduct(type: String = "active") {
         val variantData = getVariantData()
-        Log.d(TAG, "saveProduct: ${variantData}")
         when {
 
             imageList.filterNotNull().isEmpty() -> {
@@ -291,39 +289,53 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
                 imageList.filter { it?.contains(Const.BASE_URL) == false }.forEach { image ->
                     if (image != null) {
                         val name = System.currentTimeMillis().toString() + "_product_gallery.jpeg"
-                        val thumbnailName = System.currentTimeMillis().toString() + "_product_thumbnail.jpeg"
+                        val thumbnailName =
+                            System.currentTimeMillis().toString() + "_product_thumbnail.jpeg"
 
                         val imagePart = Utils.imagePart("images[]", name, File(image))
                         imagePart.let { element -> imagePartList.add(element) }
 
                         val thumbnailFile = File(image)
-                        val thumbnailPart = Utils.imagePart("thumbnails[]", thumbnailName, thumbnailFile)
+                        val thumbnailPart =
+                            Utils.imagePart("thumbnails[]", thumbnailName, thumbnailFile)
                         thumbnailPart.let { element -> thumbnailPartList.add(element) }
                     }
                 }
                 val productId = if (product != null) product?.id.toString() else null
-                if (imagePartList.isNotEmpty()){
+                if (imagePartList.isNotEmpty()) {
                     viewModel.storeProductMeta(imagePartList, thumbnailPartList)
-                    viewModel.storeProductMetaRepo.observe(viewLifecycleOwner){
+                    viewModel.storeProductMetaRepo.observe(viewLifecycleOwner) {
                         when (it) {
                             is Resource.Success -> {
 //                            bind.loader.isVisible = false
-                                createProduct(productId, type,it.value.data?.map { mapOf("image" to it?.images,"thumbnail" to it?.thumbnail) }, variantData)
+                                createProduct(
+                                    productId,
+                                    type,
+                                    it.value.data?.map {
+                                        mapOf(
+                                            "image" to it?.images,
+                                            "thumbnail" to it?.thumbnail
+                                        )
+                                    },
+                                    variantData
+                                )
                             }
+
                             is Resource.Error -> {
                                 bind.loader.isVisible = false
                             }
+
                             else -> {}
                         }
                     }
 
-                }else{
-                    createProduct(productId.toString(), type,emptyList(), variantData)
+                } else {
+                    createProduct(productId.toString(), type, emptyList(), variantData)
                 }
 
             }
         }
-     }
+    }
 
     private fun addProductData(product: GetMyInventoryResponse.Data?) {
         categoryId = product?.categoryId.toString()
@@ -344,7 +356,7 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
         bind.acceptOffers.isChecked = product?.acceptOffers == true
         bind.reserveForLive.isChecked = product?.reserveForLive == true
         imageList.clear()
-        product?.images?.forEachIndexed { index,imageUrl ->
+        product?.images?.forEachIndexed { index, imageUrl ->
             imageUrl?.let {
                 if (imageList.size < 9) {
                     imageList.add(it)
@@ -358,9 +370,9 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
     }
 
     private fun showCategorySheet(
-		categoryList: MutableList<GetCategoryResponse.Data?>,
-		type: String,
-	) {
+        categoryList: MutableList<GetCategoryResponse.Data?>,
+        type: String,
+    ) {
         val categorySheetBind =
             CategoryBottomSheetBinding.bind(
                 layoutInflater.inflate(
@@ -384,9 +396,9 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
                         bind.loader.isVisible = true
                         viewModel.getCategory(categoryId)
                         isSubCategory = true
-                        if (categoryList[pos]?.extraFields?.isNotEmpty()== true){
+                        if (categoryList[pos]?.extraFields?.isNotEmpty() == true) {
                             Log.d(TAG, "itemClick: ${categoryList[pos]?.extraFields}")
-                            variantList.addAll(categoryList[pos]?.extraFields?: mutableListOf())
+                            variantList.addAll(categoryList[pos]?.extraFields ?: mutableListOf())
                             variantAdapter.notifyDataSetChanged()
                         }
                     } else {
@@ -396,8 +408,8 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
                         })
                         subCategoryId = subCategoryList[pos]?.id.toString()
                         isSubCategory = false
-                        if (subCategoryList[pos]?.extraFields?.isNotEmpty()== true){
-                            variantList.addAll(subCategoryList[pos]?.extraFields?: mutableListOf())
+                        if (subCategoryList[pos]?.extraFields?.isNotEmpty() == true) {
+                            variantList.addAll(subCategoryList[pos]?.extraFields ?: mutableListOf())
                             variantAdapter.notifyDataSetChanged()
                         }
                     }
@@ -418,12 +430,19 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
         categorySheet.show()
 
     }
+
     fun getVariantData(): List<Map<String?, Any?>> {
         return (bind.variants.adapter as ProductVariantAdapter)
             .getAllVariantData()
 
     }
-    fun createProduct(productId: String?,type: String, images:  List<Map<String, String?>>? = null,variantData:List<Map<String?, Any?>>?= null){
+
+    fun createProduct(
+        productId: String?,
+        type: String,
+        images: List<Map<String, String?>>? = null,
+        variantData: List<Map<String?, Any?>>? = null,
+    ) {
         viewModel.storeProduct(
             productId = productId,
             categoryId = categoryId,

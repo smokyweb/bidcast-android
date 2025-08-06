@@ -27,6 +27,7 @@ class ScheduleShowViewModel @Inject constructor(val repo: DashRepository) : View
     var categoryId = ""
     var auctionId = ""
     var thumbnail = ""
+    var variantData = mutableListOf<Map<String?, Any?>>()
 
     private var _storeScheduleShowResponse = MutableLiveData<Resource<CreateShowResponse>>()
     val storeScheduleShowRepo: MutableLiveData<Resource<CreateShowResponse>>
