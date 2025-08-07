@@ -47,6 +47,7 @@ class DashViewModel @Inject constructor(val repo: DashRepository) : ViewModel() 
 
     var showData = MutableLiveData<TutorialShowModel>()
 
+     val selectedCategories = mutableListOf<GetCategoryResponse.Data>()
     private var _logoutResponse = MutableLiveData<Resource<CommonResponse>>()
     val logoutRepo: MutableLiveData<Resource<CommonResponse>>
         get() = _logoutResponse
@@ -64,6 +65,16 @@ class DashViewModel @Inject constructor(val repo: DashRepository) : ViewModel() 
 	    categoryId: String? = null
     ) = viewModelScope.launch {
         _getCategoryResponse.value = repo.getCategory(categoryId)
+    }
+
+    private var _getSubCategoryResponse = MutableLiveData<Resource<GetCategoryResponse>>()
+    val getSubCategoryRepo: MutableLiveData<Resource<GetCategoryResponse>>
+        get() = _getSubCategoryResponse
+
+    fun getSubCategory(
+	    categoryId: String? = null
+    ) = viewModelScope.launch {
+        _getSubCategoryResponse.value = repo.getCategory(categoryId)
     }
 
     private var _getLessonResponse = MutableLiveData<Resource<GetLessonsResponse>>()

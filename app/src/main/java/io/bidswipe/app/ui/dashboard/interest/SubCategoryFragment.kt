@@ -1,45 +1,70 @@
 package io.bidswipe.app.ui.dashboard.interest
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.navigation.fragment.findNavController
-import io.bidswipe.app.R
+import androidx.core.view.isVisible
+import io.bidswipe.app.base.BaseFragment
+import io.bidswipe.app.controller.SubCategoryAdapter
 import io.bidswipe.app.databinding.FragmentSubcategoryBinding
+import io.bidswipe.app.interfaces.RecyclerClicks
+import io.bidswipe.app.network.Resource
+import io.bidswipe.app.network.response.GetCategoryResponse
+import io.bidswipe.app.ui.dashboard.DashViewModel
 
-/**
- * A simple [Fragment] subclass as the second destination in the navigation.
- */
-class SubCategoryFragment : Fragment() {
+class SubCategoryFragment : BaseFragment<DashViewModel, FragmentSubcategoryBinding>() {
 
-    private var _binding: FragmentSubcategoryBinding? = null
+    override fun getModel() = DashViewModel::class.java
 
-    // This property is only valid between onCreateView and
-    // onDestroyView.
-    private val binding get() = _binding!!
+    override fun getBind(
+        inflater: LayoutInflater,
+        view: ViewGroup?,
+    ) = FragmentSubcategoryBinding.inflate(inflater, view, false)
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?,
-    ): View {
+    private lateinit var subCategoryAdapter: SubCategoryAdapter
+    private val subCategoryList = mutableListOf<GetCategoryResponse.Data?>()
+    private val selectedCategories = mutableSetOf<GetCategoryResponse.Data>()
 
-        _binding = FragmentSubcategoryBinding.inflate(inflater, container, false)
-        return binding.root
+    private val categoryClicks = object : RecyclerClicks {
+        override fun itemClick(pos: Int, status: String?) {
+//            subCategoryList.getOrNull(pos)?.let { category ->
+//                if (selectedCategories.contains(category)) {
+//                    selectedCategories.remove(category)
+//                } else {
+//                    selectedCategories.add(category)
+//                }
+//            }
+        }
 
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.buttonSecond.setOnClickListener {
-            findNavController().navigate(R.id.action_SecondFragment_to_FirstFragment)
+        subCategoryAdapter = SubCategoryAdapter(subCategoryList, categoryClicks)
+        bind.recyclerView.adapter = subCategoryAdapter
+
+        viewModel.selectedCategories.forEachIndexed { index, data ->
+
+            viewModel.getSubCategory(data.id.toString())
+            viewModel.getSubCategoryRepo.observe(viewLifecycleOwner){
+                when (it) {
+                    is Resource.Success -> {
+                        bind.loader.isVisible = false
+
+                      if (index==0)  subCategoryList.clear()
+                        subCategoryList.addAll(it.value.data ?: emptyList())
+                        subCategoryAdapter.notifyDataSetChanged()
+                    }
+                    is Resource.Error -> {
+
+                    }
+                    else -> {}
+                }
+            }
         }
+
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
-    }
 }

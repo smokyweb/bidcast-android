@@ -12,7 +12,7 @@
         tools:layout="@layout/fragment_category">
 
         <action
-            android:id="@+id/action_FirstFragment_to_SecondFragment"
+            android:id="@+id/gotoSubcategory"
             app:destination="@id/SecondFragment" />
     </fragment>
     <fragment
@@ -22,7 +22,7 @@
         tools:layout="@layout/fragment_subcategory">
 
         <action
-            android:id="@+id/action_SecondFragment_to_FirstFragment"
-            app:destination="@id/FirstFragment" />
+            android:id="@+id/toSubcategory"
+            app:destination="@id/SecondFragment"/>
     </fragment>
 </navigation>
