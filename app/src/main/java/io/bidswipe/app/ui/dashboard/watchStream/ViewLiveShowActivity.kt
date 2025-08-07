@@ -43,10 +43,9 @@ class ViewLiveShowActivity : BaseActivity() {
 				streamList.clear()
 				if (snapshot.exists() && snapshot.childrenCount > 0) {
 					for (data in snapshot.children) {
-						log("EVENT LISTENER $data")
+						log("EVENT LISTENER Stream Data ${LiveShowModel().fromMap(data)}")
 
-						streamList.add(data.getValue(LiveShowModel::class.java)!!)
-
+						streamList.add(LiveShowModel().fromMap(data))
 					}
 
 				}

@@ -28,17 +28,19 @@ data class LiveShowModel(
 		var isCurrent: Boolean? = false,
 		var selected : Boolean = false
 	) {
-		fun fromMap(it: DataSnapshot): Product = Product(
-			category = it.child("category").getValue(String::class.java),
-			id = it.child("id").getValue(String::class.java),
-			image = it.child("image").getValue(String::class.java),
-			status = it.child("status").getValue(String::class.java),
-			name = it.child("name").getValue(String::class.java),
-			price = it.child("price").getValue(String::class.java),
-			currentBidderId = it.child("currentBidderId").getValue(String::class.java),
-			currentBidValue = it.child("currentBidValue").getValue(String::class.java),
-			isCurrent = it.child("isCurrent").getValue(Boolean::class.java) ?: false,
-		)
+		fun fromMap(it: DataSnapshot): Product {
+			return Product(
+				category = it.child("category").getValue(String::class.java),
+				id = it.child("id").getValue(String::class.java),
+				image = it.child("image").getValue(String::class.java),
+				status = it.child("status").getValue(String::class.java),
+				name = it.child("name").getValue(String::class.java),
+				price = it.child("price").getValue(String::class.java),
+				currentBidderId = it.child("currentBidderId").getValue(String::class.java),
+				currentBidValue = it.child("currentBidValue").getValue(String::class.java),
+				isCurrent = it.child("isCurrent").getValue(Boolean::class.java)
+			)
+		}
 
 		fun toMap() = mapOf(
 			"category" to category,
@@ -86,7 +88,8 @@ data class LiveShowModel(
 		var userName: String? = null,
 		var userImage: String? = "test",
 		var userId: String? = null,
-		var startTime: String? = null
+		var startTime: String? = null,
+		var productId: String? = ""
 	) {
 
 		fun fromMap(it: DataSnapshot): HighestBid = HighestBid(
@@ -96,6 +99,7 @@ data class LiveShowModel(
 			userImage = it.child("userImage").getValue(String::class.java),
 			userId = it.child("userId").getValue(String::class.java),
 			startTime = it.child("startTime").getValue(String::class.java),
+			productId = it.child("productId").getValue(String::class.java)
 		)
 
 		fun toMap() = mapOf(
@@ -104,7 +108,8 @@ data class LiveShowModel(
 			"userName" to userName,
 			"userImage" to userImage,
 			"userId" to userId,
-			"startTime" to startTime
+			"startTime" to startTime,
+			"productId" to productId
 		)
 	}
 
@@ -135,7 +140,7 @@ data class LiveShowModel(
 		"showDetail" to showDetail,
 		"thumbnail" to thumbnail,
 		"viewerCount" to viewerCount,
-		"highestBid" to highestBid,
+		"highestBid" to highestBid?.toMap(),
 		"isLive" to isLive,
 		"time" to time,
 		"showId" to showId,

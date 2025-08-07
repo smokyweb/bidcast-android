@@ -115,7 +115,6 @@ class LiveShowActivity : BaseActivity() {
 
 	private var liveData : LiveShowModel ? = null
 
-
 	private var eventListener = object : ValueEventListener {
 		@SuppressLint("NotifyDataSetChanged")
 		override fun onDataChange(snapshot: DataSnapshot) {
@@ -126,10 +125,6 @@ class LiveShowActivity : BaseActivity() {
 			bind.liveCount.text = liveData?.viewerCount.toString()
 
 			val isSold = liveData?.products?.firstOrNull()?.status == "sold"
-
-
-
-
 
 		}
 
@@ -234,7 +229,8 @@ class LiveShowActivity : BaseActivity() {
 
 		bind.shop.setOnClickListener {
 
-			shopSheet()
+			showProductSheet()
+//			shopSheet()
 
 		}
 
@@ -350,8 +346,6 @@ class LiveShowActivity : BaseActivity() {
 
 					bind.loader.isVisible = false
 
-					it.value.data
-
 					FireRef.LIVE_SESSIONS.child(roomID).child("products").child("0").updateChildren(
 						mapOf(
 							"status" to "sold",
@@ -359,25 +353,12 @@ class LiveShowActivity : BaseActivity() {
 						)
 					)
 
-					if ((liveData?.products?.size ?: 0) > 1){
+					if ((liveData?.products?.size ?: 0) > 1) {
 
-
-						val updates = hashMapOf<String, Any?>(
-							"highestBid" to null,
-							"bidCountDown" to null
-						)
-
-						FireRef.LIVE_SESSIONS.child(roomID).updateChildren(updates)
-							.addOnSuccessListener {
-								log("Keys removed successfully")
-							}
-							.addOnFailureListener { error ->
-								log("Failed to remove keys: ${error.message}")
-							}
 
 						showProductSheet()
 
-					}else{
+					} else {
 						Alerts.error(this, "Your Current Product has been sold, Please select next one to your shop")
 					}
 
@@ -1088,6 +1069,7 @@ class LiveShowActivity : BaseActivity() {
 				false
 			)
 		)
+
 		var promoteSheet = Alerts.appBottomSheet(this, true, promoteSheetBind)
 		var mList = mutableListOf<String?>()
 
@@ -1130,7 +1112,6 @@ class LiveShowActivity : BaseActivity() {
 			clipSheet.dismiss()
 		}
 
-
 		clipSheet.show()
 	}
 
@@ -1172,21 +1153,23 @@ class LiveShowActivity : BaseActivity() {
 			bind.loader.isVisible = true
 			viewModel.updateLiveStatus(showId.request(), "false".request())
 		}
+
 		endShowSheet.show()
 	}
 
-	fun showProductSheet(){
+	fun showProductSheet() {
 
-			val productSheetBind = ProductSheetBinding.bind(layoutInflater.inflate(R.layout.product_sheet, null, false))
-			val shopSheet = Alerts.appBottomSheet(this, true, productSheetBind)
+		val productSheetBind = ProductSheetBinding.bind(layoutInflater.inflate(R.layout.product_sheet, null, false))
+		val productSheet = Alerts.appBottomSheet(this, true, productSheetBind)
 
-			val productList = mutableListOf<LiveShowModel.Product?>()
+		val productList = mutableListOf<LiveShowModel.Product?>()
 
-		FireRef.LIVE_SESSIONS.child(roomID).addListenerForSingleValueEvent(object : ValueEventListener{
+		var selectedPos =-1
+
+		FireRef.LIVE_SESSIONS.child(roomID).addListenerForSingleValueEvent(object : ValueEventListener {
 			override fun onDataChange(snapshot: DataSnapshot) {
 
 				val data = snapshot.getValue(LiveShowModel::class.java)
-
 
 				if (data?.products != null) {
 					productList.clear()
@@ -1195,27 +1178,31 @@ class LiveShowActivity : BaseActivity() {
 					)
 				}
 
-
 				log("LIVE ADDED PRODUCTS : ${data}")
 
 				val productAdapter = FirebaseProductAdapter(productList, object : RecyclerClicks {
 					override fun itemClick(pos: Int, status: String?) {
 
-						productList.forEachIndexed { index, item ->
+						if (productList[pos]?.status == "sold") {
 
-							item?.selected = index == pos
+							Alerts.error(this@LiveShowActivity, "This product is already sold")
 
-							productSheetBind.recycler.adapter?.notifyDataSetChanged()
+						} else {
+							productList.forEachIndexed { index, item ->
 
+								item?.selected = index == pos
+								productSheetBind.recycler.adapter?.notifyDataSetChanged()
+
+							}
+							selectedPos = pos
 						}
-
 					}
 
 				})
 
 				productSheetBind.recycler.adapter = productAdapter
 
-				shopSheet.show()
+				productSheet.show()
 
 			}
 
@@ -1224,9 +1211,38 @@ class LiveShowActivity : BaseActivity() {
 
 		})
 
+		productSheetBind.close.setOnClickListener {
+
+			productSheet.dismiss()
+		}
+
+		productSheetBind.addBtn.setOnClickListener {
+
+			if (selectedPos != -1){
+				val updates = hashMapOf<String, Any?>(
+					"highestBid" to null,
+					"bidCountDown" to null
+				)
+
+				FireRef.LIVE_SESSIONS.child(roomID).child("products").child(selectedPos.toString()).updateChildren(mapOf("isCurrent" to true)).addOnSuccessListener{
+
+					FireRef.LIVE_SESSIONS.child(roomID).updateChildren(updates)
+
+					bidCounter = 30
+
+				}.addOnFailureListener {
+
+				}
+
+				productSheet.dismiss()
+
+			}else{
+				Alerts.error(this@LiveShowActivity,"Please select a product")
+			}
 
 
 
+		}
 
 	}
 
@@ -1282,12 +1298,6 @@ class LiveShowActivity : BaseActivity() {
 		} else {
 			Alerts.log(javaClass.simpleName, "ALREADY IN PIP MODE")
 		}
-	}
-
-	fun getTimeDifferenceInSeconds(timestampMillis: Long): Long {
-		val currentTimeMillis = Utils.timestamp()
-		val differenceMillis =  timestampMillis - currentTimeMillis
-		return differenceMillis / 1000
 	}
 
 }

@@ -21,6 +21,7 @@ class StreamViewModel @Inject constructor(val repo: DashRepository) : ViewModel(
 
     // LiveData to hold the list or individual streams
     private val _streams = MutableLiveData<List<LiveShowModel>>()
+
     val streams: LiveData<List<LiveShowModel>> = _streams
 
     var previousRoomId = ""

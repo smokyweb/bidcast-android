@@ -1,8 +1,11 @@
 package io.bidswipe.app.controller
 
+import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
+import androidx.core.text.buildSpannedString
+import androidx.core.text.color
 import androidx.core.view.isVisible
 import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseAdapter
@@ -26,6 +29,8 @@ class FirebaseProductAdapter(
 	) {
 		with(holder) {
 
+			bind.topLayout.isVisible = false
+
 			bind.root.setOnClickListener {
 				mClicks.itemClick(position, "select")
 			}
@@ -36,6 +41,19 @@ class FirebaseProductAdapter(
 
 			bind.trash.setOnClickListener {
 				mClicks.itemClick(position, "delete")
+			}
+
+			bind.root.alpha = if (item?.status == "sold") 0.5f else 1f
+
+			bind.quantity.text = buildSpannedString {
+				append("Status: ")
+				if (item?.status == "sold") {
+					color(Color.RED) {
+						append(item.status)
+					}
+				} else {
+					append(item?.status)
+				}
 			}
 
 			if (item?.selected == true) {
@@ -50,8 +68,8 @@ class FirebaseProductAdapter(
 				append(item?.price?.asMoney())
 			}
 
+
 			bind.productName.text = item?.name
-			bind.quantity.isVisible = false
 
 			bind.img.loadUrl(mCtx, item?.image ?:"")
 

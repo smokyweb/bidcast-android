@@ -1,5 +1,6 @@
 package io.bidswipe.app.controller
 
+import android.util.Log
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
@@ -17,7 +18,7 @@ class StreamPagerAdapter(
     override fun createFragment(position: Int): Fragment {
 
         val stream = viewModel.streams.value?.get(position) ?: throw IllegalStateException("Stream data not available")
-
+        Log.d("TAG", "createFragment: $stream ")
         viewModel.selectStream(stream)
 
         return WatchStreamFragment.newInstance(stream.roomId.toString(), stream.roomId.toString())
