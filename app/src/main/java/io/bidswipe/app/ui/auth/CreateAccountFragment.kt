@@ -38,7 +38,6 @@ class CreateAccountFragment : BaseFragment<AuthViewModel, FragmentCreateAccountB
             hideKeyboard(it)
         }
 
-
         bind.createAccountBtn.setOnClickListener {
             when {
 

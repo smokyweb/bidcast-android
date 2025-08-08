@@ -28,7 +28,6 @@ import im.zego.zegoexpress.constants.ZegoRoomStateChangedReason
 import im.zego.zegoexpress.constants.ZegoScenario
 import im.zego.zegoexpress.constants.ZegoUpdateType
 import im.zego.zegoexpress.constants.ZegoViewMode
-import im.zego.zegoexpress.entity.ZegoBroadcastMessageInfo
 import im.zego.zegoexpress.entity.ZegoCanvas
 import im.zego.zegoexpress.entity.ZegoEngineProfile
 import im.zego.zegoexpress.entity.ZegoRoomConfig
@@ -91,6 +90,7 @@ import io.bidswipe.app.utils.setMargins
 import io.bidswipe.app.utils.value
 import org.json.JSONObject
 
+@SuppressLint("NotifyDataSetChanged")
 class LiveShowActivity : BaseActivity() {
 
 	private val bind by bind(ActivityLiveShowBinding::inflate)
@@ -113,18 +113,16 @@ class LiveShowActivity : BaseActivity() {
 	private var startTimeMillis: Long = 0L
 	private var zoomLevel = 1L
 
-	private var liveData : LiveShowModel ? = null
+	private var liveData: LiveShowModel? = null
 
 	private var eventListener = object : ValueEventListener {
 		@SuppressLint("NotifyDataSetChanged")
 		override fun onDataChange(snapshot: DataSnapshot) {
 			log("Value : ${snapshot.value}")
 
-			liveData = snapshot.getValue(LiveShowModel::class.java)
+			liveData = LiveShowModel().fromMap(snapshot)
 
 			bind.liveCount.text = liveData?.viewerCount.toString()
-
-			val isSold = liveData?.products?.firstOrNull()?.status == "sold"
 
 		}
 
@@ -141,8 +139,6 @@ class LiveShowActivity : BaseActivity() {
 			log("StartTime : ${snapshot.value}")
 			if (snapshot.value != null) {
 				startBidTimer()
-			}else{
-
 			}
 		}
 
@@ -346,7 +342,9 @@ class LiveShowActivity : BaseActivity() {
 
 					bind.loader.isVisible = false
 
-					FireRef.LIVE_SESSIONS.child(roomID).child("products").child("0").updateChildren(
+					val index = liveData?.products?.indexOfFirst {product -> product?.isCurrent == true }
+
+					FireRef.LIVE_SESSIONS.child(roomID).child("products").child(index.toString()).updateChildren(
 						mapOf(
 							"status" to "sold",
 							"isCurrent" to false
@@ -532,7 +530,6 @@ class LiveShowActivity : BaseActivity() {
 					val message = when (updateType) {
 						ZegoUpdateType.ADD -> "${user.userID} logged in to the room."
 						ZegoUpdateType.DELETE -> "${user.userID} logged out of the room."
-						else -> ""
 					}
 					Toast.makeText(context, message, Toast.LENGTH_LONG).show()
 				}
@@ -581,9 +578,6 @@ class LiveShowActivity : BaseActivity() {
 				extendedData: JSONObject
 			) {
 				super.onPublisherStateUpdate(streamID, state, errorCode, extendedData)
-				if (errorCode != 0) {
-					// Handle publish error
-				}
 
 				if (state == ZegoPublisherState.NO_PUBLISH) {
 					Toast.makeText(
@@ -592,6 +586,7 @@ class LiveShowActivity : BaseActivity() {
 						Toast.LENGTH_LONG
 					).show()
 				}
+				// Handle publish error
 			}
 
 			override fun onPlayerStateUpdate(
@@ -616,29 +611,6 @@ class LiveShowActivity : BaseActivity() {
 				}
 			}
 
-			override fun onIMRecvBroadcastMessage(
-				roomID: String?,
-				messageList: java.util.ArrayList<ZegoBroadcastMessageInfo?>?
-			) {
-				super.onIMRecvBroadcastMessage(roomID, messageList)
-				Log.d("ZEGO", "Barrage message received for room: $roomID")
-				if (messageList != null) {
-					for (msg in messageList) {
-						/*Log.d(
-							"CHAT",
-							"Received message from ${msg?.fromUser?.userName}: ${msg?.message}"
-						)
-
-						val name = msg?.fromUser?.userID?.split("_")?.get(0)?.replace(".", " ")
-
-						commentList.add(LiveChatModel(msg?.fromUser?.userName, name, msg?.message))
-						commentAdapter.notifyItemInserted(commentList.size - 1)
-						bind.recycler.post { bind.recycler.smoothScrollToPosition(commentList.size) }
-//                        bind.recycler.smoothScrollToPosition(commentList.lastIndex)
-						// Update UI accordingly*/
-					}
-				}
-			}
 		})
 
 	}
@@ -698,24 +670,6 @@ class LiveShowActivity : BaseActivity() {
 		ZegoExpressEngine.getEngine().stopPublishingStream()
 	}
 
-	/*	fun sendMessage(message: String) {
-			log("RoomID: $roomID Message:${message}")
-			ZegoExpressEngine.getEngine().sendBroadcastMessage(roomID, message, object : IZegoIMSendBroadcastMessageCallback {
-					@SuppressLint("NotifyDataSetChanged")
-					override fun onIMSendBroadcastMessageResult(errorCode: Int, messageID: Long) {
-						if (errorCode == 0) {
-							Log.d("CHAT", "Message sent successfully")
-							bind.text.setText("")
-							commentList.add(LiveChatModel(userImage, userName, message))
-							commentAdapter.notifyItemInserted(commentList.size - 1)
-							bind.recycler.post { bind.recycler.smoothScrollToPosition(commentList.size) }
-						} else {
-							Log.e("CHAT", "Failed to send message")
-						}
-					}
-				})
-		}*/
-
 	fun updateFirebaseNode(data: UpdateLiveStatusResponse.Data?) {
 		val user = data?.user
 
@@ -727,12 +681,12 @@ class LiveShowActivity : BaseActivity() {
 			rating = user?.rating ?: ""
 		)
 
-		val prdcts = data?.products?.map { it?.toLiveShowProduct() }
+		val products = data?.products?.map { it?.toLiveShowProduct() }
 
-		prdcts?.first()?.isCurrent = true
+		products?.first()?.isCurrent = true
 
 		val liveShow = LiveShowModel(
-			products = prdcts,
+			products = products,
 			roomId = roomID,
 			seller = seller,
 			showDetail = "",
@@ -798,23 +752,24 @@ class LiveShowActivity : BaseActivity() {
 
 	private fun startBidTimer() {
 
-		 bidRunnable = object : Runnable {
+		bidRunnable = object : Runnable {
 			override fun run() {
 
 				if (bidCounter > 0) {
-					bidCounter = bidCounter -1
-				}else{
+					bidCounter = bidCounter - 1
+				} else {
 
 					log("STOP BID TIMER")
 
 					stopBidTimeTimer()
 
-					if (liveData !=null){
+					if (liveData != null) {
 						bind.loader.isVisible = true
+
 						viewModel.createBid(
 							showId.request(),
 							liveData?.highestBid?.userId?.request(),
-							liveData?.products?.get(0)?.id?.request(),
+							liveData?.highestBid?.productId?.request(),
 							liveData?.highestBid?.bidAmount?.request()
 						)
 					}
@@ -822,7 +777,7 @@ class LiveShowActivity : BaseActivity() {
 					return
 				}
 
-				log("TIME DIFFERENCE : ${bidCounter}")
+				log("TIME DIFFERENCE : $bidCounter")
 
 				FireRef.LIVE_SESSIONS.child(roomID).updateChildren(
 					mapOf(
@@ -974,8 +929,8 @@ class LiveShowActivity : BaseActivity() {
 
 					productList.clear()
 
-					mData?.forEach {
-						productList.add(it)
+					mData?.forEach {product ->
+						productList.add(product)
 					}
 
 					shopAdapter.notifyDataSetChanged()
@@ -1062,7 +1017,7 @@ class LiveShowActivity : BaseActivity() {
 	}
 
 	fun showPromoteSheet() {
-		var promoteSheetBind = PromoteShowSheetBinding.bind(
+		val promoteSheetBind = PromoteShowSheetBinding.bind(
 			layoutInflater.inflate(
 				R.layout.promote_show_sheet,
 				null,
@@ -1070,8 +1025,8 @@ class LiveShowActivity : BaseActivity() {
 			)
 		)
 
-		var promoteSheet = Alerts.appBottomSheet(this, true, promoteSheetBind)
-		var mList = mutableListOf<String?>()
+		val promoteSheet = Alerts.appBottomSheet(this, true, promoteSheetBind)
+		val mList = mutableListOf<String?>()
 
 		repeat(3) {
 			mList.add("")
@@ -1164,7 +1119,7 @@ class LiveShowActivity : BaseActivity() {
 
 		val productList = mutableListOf<LiveShowModel.Product?>()
 
-		var selectedPos =-1
+		var selectedPos = -1
 
 		FireRef.LIVE_SESSIONS.child(roomID).addListenerForSingleValueEvent(object : ValueEventListener {
 			override fun onDataChange(snapshot: DataSnapshot) {
@@ -1178,7 +1133,7 @@ class LiveShowActivity : BaseActivity() {
 					)
 				}
 
-				log("LIVE ADDED PRODUCTS : ${data}")
+				log("LIVE ADDED PRODUCTS : $data")
 
 				val productAdapter = FirebaseProductAdapter(productList, object : RecyclerClicks {
 					override fun itemClick(pos: Int, status: String?) {
@@ -1218,28 +1173,28 @@ class LiveShowActivity : BaseActivity() {
 
 		productSheetBind.addBtn.setOnClickListener {
 
-			if (selectedPos != -1){
+			if (selectedPos != -1) {
 				val updates = hashMapOf<String, Any?>(
 					"highestBid" to null,
 					"bidCountDown" to null
 				)
 
-				FireRef.LIVE_SESSIONS.child(roomID).child("products").child(selectedPos.toString()).updateChildren(mapOf("isCurrent" to true)).addOnSuccessListener{
+				FireRef.LIVE_SESSIONS.child(roomID).child("products").child(selectedPos.toString()).updateChildren(mapOf("isCurrent" to true))
+					.addOnSuccessListener {
 
-					FireRef.LIVE_SESSIONS.child(roomID).updateChildren(updates)
+						FireRef.LIVE_SESSIONS.child(roomID).updateChildren(updates)
 
-					bidCounter = 30
+						bidCounter = 30
 
-				}.addOnFailureListener {
+					}.addOnFailureListener {
 
 				}
 
 				productSheet.dismiss()
 
-			}else{
-				Alerts.error(this@LiveShowActivity,"Please select a product")
+			} else {
+				Alerts.error(this@LiveShowActivity, "Please select a product")
 			}
-
 
 
 		}

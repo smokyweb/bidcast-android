@@ -67,7 +67,6 @@ class ForgotPasswordFragment : BaseFragment<AuthViewModel, FragmentForgotPasswor
                 }
             }
 
-
         }
 
         viewModel.forgotPasswordRepo.observe(viewLifecycleOwner) {

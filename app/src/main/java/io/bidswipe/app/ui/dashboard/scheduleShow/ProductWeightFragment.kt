@@ -89,6 +89,7 @@ class ProductWeightFragment : BaseFragment<ScheduleShowViewModel, FragmentProduc
             subCategoryId = productData?.getString("subCategoryId") ?: "",
             variant = viewModel.variantData
         )
+
     }
 
     private fun setupObservers() {
@@ -154,4 +155,5 @@ class ProductWeightFragment : BaseFragment<ScheduleShowViewModel, FragmentProduc
             }
         }
     }
+
 }

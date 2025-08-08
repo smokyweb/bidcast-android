@@ -5,6 +5,7 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import io.bidswipe.app.model.RememberModel
 import io.bidswipe.app.network.response.LoginResponse
+import androidx.core.content.edit
 
 class Prefs(ctx : Context) {
 
@@ -14,7 +15,7 @@ class Prefs(ctx : Context) {
 		const val USER_EMAIL = "user_email"
 		const val PUSH_TOKEN = "pushToken"
 		const val TOKEN = "token"
-		const val REFRESH_TOKEN = "refreshToken"
+		const val FIRST_LOGIN = "firstLogin"
 		const val USER = "user"
 		const val REM_NODE = "rem_node"
 		const val LANGUAGE = "Locale.Helper.Selected.Language"
@@ -27,11 +28,11 @@ class Prefs(ctx : Context) {
 
 
 	fun clear() {
-		mPrefs.edit().clear().apply()
+		mPrefs.edit { clear() }
 	}
 
 	fun putString(key : String , value : String) {
-		mPrefs.edit().putString(key , value).apply()
+		mPrefs.edit { putString(key, value) }
 	}
 
 	fun getString(key : String) = mPrefs.getString(key , "").toString()
@@ -59,10 +60,14 @@ class Prefs(ctx : Context) {
 	}
 
 	fun saveUsers(list: MutableList<RememberModel>) {
-		rememberPrefs.edit().putString(REM_NODE, Gson().toJson(list)).apply()
+		rememberPrefs.edit { putString(REM_NODE, Gson().toJson(list)) }
 	}
 
 	fun localeLanguage() = mPrefs.getString(LOCALE_LANGUAGE , "").toString()
+
+	fun isFirstLogin() = rememberPrefs.getBoolean(FIRST_LOGIN,true)
+
+	fun saveFirstLogin(value: Boolean) = rememberPrefs.edit { putBoolean(FIRST_LOGIN, value) }
 
 
 }

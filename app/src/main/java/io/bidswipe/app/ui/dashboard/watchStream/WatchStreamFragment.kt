@@ -38,33 +38,27 @@ import io.bidswipe.app.App
 import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseFragment
 import io.bidswipe.app.controller.CommentAdapter
-import io.bidswipe.app.controller.ShopSheetAdapter
 import io.bidswipe.app.databinding.FragmentWatchStreamBinding
-import io.bidswipe.app.databinding.ShopSheetBinding
 import io.bidswipe.app.interfaces.AlertClicks
-import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.model.LiveChatModel
 import io.bidswipe.app.model.LiveShowModel
 import io.bidswipe.app.model.ZIMExtendedData
 import io.bidswipe.app.network.Resource
-import io.bidswipe.app.network.response.GetMyInventoryResponse
-import io.bidswipe.app.network.response.GetProductsResponse
 import io.bidswipe.app.ui.custom.AlertType
 import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.ui.dashboard.more.TrustedBuyerActivity
-import io.bidswipe.app.utils.Alerts
 import io.bidswipe.app.utils.FireRef
 import io.bidswipe.app.utils.Utils
 import io.bidswipe.app.utils.asMoney
 import io.bidswipe.app.utils.draw
 import io.bidswipe.app.utils.finish
-import io.bidswipe.app.utils.getCurrentProduct
 import io.bidswipe.app.utils.loadUrl
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request
 import io.bidswipe.app.utils.runSafe
 import io.bidswipe.app.utils.value
 import kotlin.math.abs
+import kotlin.toString
 
 class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBinding>() {
 
@@ -77,11 +71,11 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
 	private lateinit var roomID: String
 	private lateinit var streamID: String
-	private var highestBidAmount: String? =  ""
+	private var highestBidAmount: String? = ""
+	private var bidProductId: String? = ""
 	private var commentList = mutableListOf<LiveChatModel?>()
 	private lateinit var commentAdapter: CommentAdapter
-	private var product : LiveShowModel.Product? = null
-	var productList = mutableListOf<GetMyInventoryResponse.Data?>()
+	private var product: LiveShowModel.Product? = null
 
 	companion object {
 		fun newInstance(roomID: String, streamID: String) = WatchStreamFragment().apply {
@@ -96,12 +90,17 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 		@SuppressLint("NotifyDataSetChanged")
 		override fun onDataChange(snapshot: DataSnapshot) {
 
-			val data = LiveShowModel().fromMap(snapshot) ?: return
-
+			val data = LiveShowModel().fromMap(snapshot)
 
 			// Safely update highestBidAmount
-			highestBidAmount = data.highestBid?.bidAmount ?: "0"
 
+			if (data.highestBid != null){
+
+				log("HIGHEST BID: ${data.highestBid}")
+				highestBidAmount = data.highestBid?.bidAmount ?: highestBidAmount
+
+				bind.bid.text = "Swipe to Bid ${(highestBidAmount?.toInt()?.plus(2)).toString().asMoney()}"
+			}
 
 			// Show viewer count or default to 0
 			bind.liveCount.text = (data.viewerCount ?: 0).toString()
@@ -109,8 +108,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 			// Find the current product once
 			val currentProduct = data.products?.find { it?.id == data.highestBid?.productId }
 
-			log("CURRENT PRODUCT Value : ${currentProduct}")
-
+			log("CURRENT PRODUCT Value : $currentProduct")
 
 			// Determine sale status once
 			val isSold = currentProduct?.status == "sold"
@@ -121,39 +119,6 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 				bind.soldOutText.text = "You won the bid"
 
 			}
-
-	/*		// Handle product sale status
-			val isSold = data.products?.find { it?.isCurrent == true }?.status == "sold"
-			bind.soldLayout.isVisible = isSold
-			bind.productLayout.isVisible = !isSold
-
-			if (data.highestBid == null){
-				val currentProduct = data.products?.find { it?.isCurrent == true }
-
-				bind.productName.text = currentProduct?.name
-
-				bind.productImage.loadUrl(
-					mCtx,
-					currentProduct?.image.toString(),
-					placeHolder = draw.product_img
-				)
-
-				bind.bidPrice.text = currentProduct?.price.toString().asMoney()
-
-				try {
-					bind.quantity.text = buildString {
-						append("Price: ")
-						append(currentProduct?.price.toString().asMoney())
-					}
-				} catch (e: Exception) {
-					e.printStackTrace()
-				}
-
-			}
-
-			if (isSold && data.highestBid?.userId == userId) {
-				bind.soldOutText.text = "You won the bid"
-			}*/
 
 			// Show bid countdown if available
 			val countdown = snapshot.child("bidCountDown").value?.toString()
@@ -181,15 +146,12 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 		super.onViewCreated(view, savedInstanceState)
 
 		log("RoomId: $roomID")
+
 		setUpSwipe()
 
 		bind.cutButton.setOnClickListener {
 			finish()
 		}
-
-		/*bind.shop.setOnClickListener {
-			shopSheet()
-		}*/
 
 		commentAdapter = CommentAdapter(commentList)
 
@@ -197,7 +159,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
 		FireRef.LIVE_SESSIONS.child(roomID).addValueEventListener(eventListener)
 
-		FireRef.LIVE_SESSIONS.child(roomID).addChildEventListener(object : ChildEventListener{
+		FireRef.LIVE_SESSIONS.child(roomID).addChildEventListener(object : ChildEventListener {
 			override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
 
 			}
@@ -206,7 +168,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 			}
 
 			override fun onChildRemoved(snapshot: DataSnapshot) {
-				if (snapshot.key == "highestBid"){
+				if (snapshot.key == "highestBid") {
 
 					FireRef.LIVE_SESSIONS.child(roomID).addListenerForSingleValueEvent(object : ValueEventListener {
 						override fun onDataChange(snapshot: DataSnapshot) {
@@ -215,11 +177,11 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
 							val currentProduct = data.products?.find { it?.isCurrent == true }
 
-							log("CURRENT PRODUCT : ${currentProduct}")
-
+							log("CURRENT PRODUCT : $currentProduct")
 
 							if (currentProduct != null) {
 								bind.productName.text = currentProduct.name
+								bidProductId = currentProduct.id
 								bind.productImage.loadUrl(
 									mCtx,
 									currentProduct.image ?: "",
@@ -227,12 +189,14 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 								)
 								bind.bidPrice.text = currentProduct.price.toString().asMoney()
 
+								highestBidAmount = currentProduct.price.toString()
+
 								bind.quantity.text = buildString {
 									append("Price: ")
 									append(currentProduct.price.toString().asMoney())
 								}
 
-								bind.bid.setCompleted(false,true)
+								bind.bid.setCompleted(false, true)
 							}
 						}
 
@@ -274,9 +238,11 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 					placeHolder = draw.user_image
 				)
 
-				 product = stream.products?.find { it?.isCurrent == true }
+				product = stream.products?.find { it?.isCurrent == true }
 
-				highestBidAmount = stream.highestBid?.bidAmount.toString()
+				bidProductId = product?.id.toString()
+
+				highestBidAmount = product?.price.toString()
 
 				bind.userName.text = stream.seller?.name.toString()
 
@@ -288,7 +254,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 					placeHolder = draw.product_img
 				)
 
-				bind.bidPrice.text = (product?.price ?:"0").asMoney()
+				bind.bidPrice.text = (product?.price ?: "0").asMoney()
 
 				try {
 					bind.quantity.text = buildString {
@@ -317,8 +283,6 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 					bind.bid.text = "Swipe to Bid ${(product?.price?.toInt()?.plus(2)).toString().asMoney()}"
 				}
 
-//				productList.add(stream.products?.getCurrentProduct().let { GetMyInventoryResponse.Data(it?.id, it?.name, it?.price, it?.image) })
-
 				bind.bid.onSlideCompleteListener = object : OnSlideCompleteListener {
 					override fun onSlideComplete(view: SlideToActView) {
 
@@ -328,12 +292,15 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
 						ref.addListenerForSingleValueEvent(object : ValueEventListener {
 							override fun onDataChange(snapshot: DataSnapshot) {
+
+								val bidAmount = highestBidAmount?.toInt()?.plus(2).toString()
+
 								val bidData = mutableMapOf<String, Any?>(
-									"bidAmount" to highestBidAmount,
+									"bidAmount" to bidAmount,
 									"userName" to userName,
 									"userImage" to userImage,
 									"userId" to userId,
-									"productId" to product?.id.toString()
+									"productId" to bidProductId
 								)
 
 								// If startTime doesn't exist, it's a new bid; otherwise, update existing
@@ -343,6 +310,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 								}
 
 								ref.updateChildren(bidData)
+
 							}
 
 							override fun onCancelled(error: DatabaseError) {
@@ -645,154 +613,6 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
 	}
 
-	/*fun sendMessage(message: String) {
-
-		log("RoomID: ${roomID} Message:${message}")
-
-		ZegoExpressEngine.getEngine()
-			.sendBroadcastMessage(roomID, message, object : IZegoIMSendBroadcastMessageCallback {
-				override fun onIMSendBroadcastMessageResult(errorCode: Int, messageID: Long) {
-					if (errorCode == 0) {
-						bind.text.setText("")
-						commentList.add(LiveChatModel(userImage, userName, message))
-						commentAdapter.notifyItemInserted(commentList.size - 1)
-						bind.recycler.post { bind.recycler.smoothScrollToPosition(commentList.size) }
-						Log.d("CHAT", "Message sent successfully")
-					} else {
-						Log.e("CHAT", "Failed to send message")
-					}
-				}
-			})
-
-    fun fetchMessage() {
-		ZegoExpressEngine.getEngine().setEventHandler(object : IZegoEventHandler() {
-			override fun onIMRecvBroadcastMessage(
-				roomID: String?,
-				messageList: ArrayList<ZegoBroadcastMessageInfo?>?
-			) {
-				Log.d("ZEGO", "Broadcast message received for room: $roomID")
-				if (messageList != null) {
-					for (msgInfo in messageList) {
-						Log.d(
-							"BROADCAST",
-							"Received broadcast message from ${msgInfo?.fromUser?.userName}: ${msgInfo?.message}"
-						)
-
-						val name = msgInfo?.fromUser?.userID?.split("_")?.get(0)?.replace(".", " ")
-
-						commentList.add(
-							LiveChatModel(
-								msgInfo?.fromUser?.userName,
-								name,
-								msgInfo?.message
-							)
-						)
-						commentAdapter.notifyItemInserted(commentList.size - 1)
-						bind.recycler.post { bind.recycler.smoothScrollToPosition(commentList.size) }
-					}
-				}
-			}
-
-		})
-	}*/
-
-/*
-	private fun startListenEvent() {
-		ZegoExpressEngine.getEngine().setEventHandler(object : IZegoEventHandler() {
-
-			override fun onRoomStreamUpdate(
-				roomID: String,
-				updateType: ZegoUpdateType,
-				streamList: ArrayList<ZegoStream>,
-				extendedData: JSONObject
-			) {
-				super.onRoomStreamUpdate(roomID, updateType, streamList, extendedData)
-				if (streamList.isNotEmpty()) {
-					streamList[0].streamID
-				}
-			}
-
-			override fun onRoomUserUpdate(
-				roomID: String,
-				updateType: ZegoUpdateType,
-				userList: ArrayList<ZegoUser>
-			) {
-				super.onRoomUserUpdate(roomID, updateType, userList)
-
-			}
-
-			override fun onRoomStateChanged(
-				roomID: String,
-				reason: ZegoRoomStateChangedReason,
-				errorCode: Int,
-				extendedData: JSONObject
-			) {
-				super.onRoomStateChanged(roomID, reason, errorCode, extendedData)
-				when (reason) {
-					ZegoRoomStateChangedReason.LOGIN_FAILED ->
-						Toast.makeText(
-							context,
-							"ZegoRoomStateChangedReason.LOGIN_FAILED",
-							Toast.LENGTH_LONG
-						).show()
-
-					ZegoRoomStateChangedReason.RECONNECT_FAILED ->
-						Toast.makeText(
-							context,
-							"ZegoRoomStateChangedReason.RECONNECT_FAILED",
-							Toast.LENGTH_LONG
-						).show()
-
-					ZegoRoomStateChangedReason.KICK_OUT ->
-						Toast.makeText(
-							context,
-							"ZegoRoomStateChangedReason.KICK_OUT",
-							Toast.LENGTH_LONG
-						).show()
-
-					else -> {
-					}
-				}
-			}
-
-			override fun onPublisherStateUpdate(
-				streamID: String,
-				state: ZegoPublisherState,
-				errorCode: Int,
-				extendedData: JSONObject
-			) {
-				super.onPublisherStateUpdate(streamID, state, errorCode, extendedData)
-				if (errorCode != 0) {
-					// Handle publish error
-				}
-
-				if (state == ZegoPublisherState.NO_PUBLISH) {
-
-				}
-			}
-
-			override fun onPlayerStateUpdate(
-				streamID: String,
-				state: ZegoPlayerState,
-				errorCode: Int,
-				extendedData: JSONObject
-			) {
-				super.onPlayerStateUpdate(streamID, state, errorCode, extendedData)
-
-				if (errorCode != 0) {
-
-				}
-
-				if (state == ZegoPlayerState.NO_PLAY) {
-
-				}
-			}
-
-		})
-
-	}
-*/
-
 	@SuppressLint("ClickableViewAccessibility")
 	fun setUpSwipe() {
 
@@ -804,6 +624,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 					downX = event.x
 					true
 				}
+
 				MotionEvent.ACTION_UP -> {
 					val deltaX = event.x - downX
 
@@ -821,6 +642,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 					}
 					true
 				}
+
 				else -> false
 			}
 		}
@@ -831,6 +653,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 					downX = event.x
 					true
 				}
+
 				MotionEvent.ACTION_UP -> {
 					val deltaX = event.x - downX
 
@@ -848,46 +671,11 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 					}
 					true
 				}
+
 				else -> false
 			}
 		}
 
-	}
-
-	fun shopSheet() {
-		val shopSheetBind = ShopSheetBinding.bind(layoutInflater.inflate(R.layout.shop_sheet, null, false))
-		val shopSheet = Alerts.appBottomSheet(mCtx, true, shopSheetBind)
-
-		val shopAdapter = ShopSheetAdapter(productList, object : RecyclerClicks {
-			override fun itemClick(pos: Int, status: String?) {
-
-				productList.forEachIndexed { index, item ->
-
-					item?.selected = index == pos
-
-					shopSheetBind.recycler.adapter?.notifyDataSetChanged()
-
-				}
-
-			}
-
-		})
-
-		shopSheetBind.recycler.adapter = shopAdapter
-
-		/*shopSheetBind.optionList.adapter = LiveMoreAdapter(Const.liveMoreMenu, object : RecyclerClicks {
-
-			override fun itemClick(pos: Int, status: String?) {
-
-			}
-		})*/
-
-
-		shopSheetBind.close.setOnClickListener {
-			shopSheet.dismiss()
-		}
-
-		shopSheet.show()
 	}
 
 }
