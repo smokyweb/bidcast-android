@@ -23,6 +23,7 @@ import io.bidswipe.app.network.response.GetOffersResponse
 import io.bidswipe.app.network.response.GetPrepareStepResponse
 import io.bidswipe.app.network.response.GetProductsByStatusResponse
 import io.bidswipe.app.network.response.GetProductsResponse
+import io.bidswipe.app.network.response.GetSubCategoriesResponse
 import io.bidswipe.app.network.response.UpdateLiveStatusResponse
 import io.bidswipe.app.network.response.UpdateOfferResponse
 import io.bidswipe.app.network.response.UserDeviceResponse
@@ -65,6 +66,22 @@ class DashViewModel @Inject constructor(val repo: DashRepository) : ViewModel() 
 	    categoryId: String? = null
     ) = viewModelScope.launch {
         _getCategoryResponse.value = repo.getCategory(categoryId)
+    }
+
+    private var _getSubCategoriesResponse = MutableLiveData<Resource<GetSubCategoriesResponse>>()
+    val getSubCategoriesRepo: MutableLiveData<Resource<GetSubCategoriesResponse>>
+        get() = _getSubCategoriesResponse
+
+    fun getSubCategories(categoryIds: List<Int>, subCategoryIds:  List<Int>? = null) = viewModelScope.launch {
+        _getSubCategoriesResponse.value = repo.getSubCategories(categoryIds, subCategoryIds)
+    }
+
+    private var _userFavoriteResponse = MutableLiveData<Resource<CommonResponse>>()
+    val userFavoriteRepo: MutableLiveData<Resource<CommonResponse>>
+        get() = _userFavoriteResponse
+
+    fun userFavorite(categoryIds: List<Int>, subcategoriesIds:  List<Int>? = null) = viewModelScope.launch {
+        _userFavoriteResponse.value = repo.userFavorite(categoryIds, subcategoriesIds)
     }
 
     private var _getSubCategoryResponse = MutableLiveData<Resource<GetCategoryResponse>>()
@@ -403,8 +420,6 @@ class DashViewModel @Inject constructor(val repo: DashRepository) : ViewModel() 
 	) = viewModelScope.launch {
 		_createBidResponse.value = repo.createBid(showId,userId,productId,bidPrice)
 	}
-
-
 
 	companion object {
         const val SLUG_ABOUT_US = "about-us"

@@ -1,6 +1,7 @@
 package io.bidswipe.app.network
 
 import io.bidswipe.app.BuildConfig
+import io.bidswipe.app.model.GetSubCategoriesRequest
 import io.bidswipe.app.model.PaymentCardModel
 import io.bidswipe.app.model.StoreProductRequest
 import io.bidswipe.app.network.response.AboutUsResponse
@@ -37,6 +38,7 @@ import io.bidswipe.app.network.response.GetPurchaseDetail
 import io.bidswipe.app.network.response.GetRatingResponse
 import io.bidswipe.app.network.response.GetShippingAddressResponse
 import io.bidswipe.app.network.response.GetStatesResponse
+import io.bidswipe.app.network.response.GetSubCategoriesResponse
 import io.bidswipe.app.network.response.GetTransactionsHistoryResponse
 import io.bidswipe.app.network.response.GetUserProfileResponse
 import io.bidswipe.app.network.response.LoginResponse
@@ -122,6 +124,17 @@ interface ApiInterface {
     suspend fun getCategory(
         @Query("category_id") categoryId: String? = null
     ): GetCategoryResponse
+
+    @POST("api/get-subcategories")
+    suspend fun getSubCategories(
+        @Body getSubCategoriesModel: GetSubCategoriesRequest
+    ): GetSubCategoriesResponse
+
+    @POST("api/user/favorite")
+    suspend fun userFavorite(
+        @Body storeProductModel: GetSubCategoriesRequest
+    ): CommonResponse
+
 
     @GET("api/get-lesson")
     suspend fun getLesson(): GetLessonsResponse
@@ -573,6 +586,9 @@ interface ApiInterface {
     suspend fun deleteProduct(
         @Query("product_id") productId: String?
     ): CommonResponse
+
+
+
 
 }
 

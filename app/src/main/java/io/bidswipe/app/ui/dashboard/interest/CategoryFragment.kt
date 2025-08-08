@@ -45,6 +45,10 @@ class CategoryFragment : BaseFragment<DashViewModel, FragmentCategoryBinding>() 
 
         categoryAdapter = CategoryAdapter(categoryList, categoryClicks)
         bind.recyclerView.adapter = categoryAdapter
+        
+        bind.header.setOnClickListener {
+            findNavController().popBackStack()
+        }
 
         bind.nextButton.setOnClickListener {
             findNavController().navigate(R.id.gotoSubcategory)

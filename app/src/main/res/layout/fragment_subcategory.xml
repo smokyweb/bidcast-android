@@ -15,9 +15,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:showBackButton="true"
-        app:showPrimaryIcon="false"
-        app:showSecondaryIcon="false" />
+        app:showBackButton="true" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
@@ -35,7 +33,7 @@
         style="@style/appBtn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Next"
+        android:text="@string/next"
         android:layout_margin="@dimen/margin"
         app:layout_constraintBottom_toBottomOf="parent" />
 
