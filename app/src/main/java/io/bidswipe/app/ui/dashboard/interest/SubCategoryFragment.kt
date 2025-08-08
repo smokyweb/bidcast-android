@@ -4,13 +4,16 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.view.isVisible
+import androidx.navigation.fragment.findNavController
 import io.bidswipe.app.base.BaseFragment
 import io.bidswipe.app.controller.SubCategoryAdapter
 import io.bidswipe.app.databinding.FragmentSubcategoryBinding
 import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.network.response.GetCategoryResponse
+import io.bidswipe.app.network.response.GetSubCategoriesResponse
 import io.bidswipe.app.ui.dashboard.DashViewModel
 
 class SubCategoryFragment : BaseFragment<DashViewModel, FragmentSubcategoryBinding>() {
@@ -23,20 +26,22 @@ class SubCategoryFragment : BaseFragment<DashViewModel, FragmentSubcategoryBindi
     ) = FragmentSubcategoryBinding.inflate(inflater, view, false)
 
     private lateinit var subCategoryAdapter: SubCategoryAdapter
-    private val subCategoryList = mutableListOf<GetCategoryResponse.Data?>()
-    private val selectedCategories = mutableSetOf<GetCategoryResponse.Data>()
+    private val subCategoryList = mutableListOf<GetSubCategoriesResponse.Data?>()
+    private val selectedSubCategories = mutableListOf<GetSubCategoriesResponse.Data>()
+
 
     private val categoryClicks = object : RecyclerClicks {
         override fun itemClick(pos: Int, status: String?) {
-//            subCategoryList.getOrNull(pos)?.let { category ->
-//                if (selectedCategories.contains(category)) {
-//                    selectedCategories.remove(category)
-//                } else {
-//                    selectedCategories.add(category)
-//                }
-//            }
+            val item = subCategoryList[pos]
+            item?.let {
+                if (selectedSubCategories.contains(it)) {
+                    selectedSubCategories.remove(it)
+                } else {
+                    selectedSubCategories.add(it)
+                }
+                subCategoryAdapter.notifyItemChanged(pos)
+            }
         }
-
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -45,19 +50,55 @@ class SubCategoryFragment : BaseFragment<DashViewModel, FragmentSubcategoryBindi
         subCategoryAdapter = SubCategoryAdapter(subCategoryList, categoryClicks)
         bind.recyclerView.adapter = subCategoryAdapter
 
-        viewModel.selectedCategories.forEachIndexed { index, data ->
+        bind.header.setOnClickListener {
+            findNavController().popBackStack()
+        }
+        bind.firstButton.setOnClickListener {
+            if (selectedSubCategories.isNotEmpty()) {
+                val selectedCategoryIds = viewModel.selectedCategories.mapNotNull { it.id }
+                val selectedSubCategoryIds = selectedSubCategories.mapNotNull { it.id }
 
-            viewModel.getSubCategory(data.id.toString())
-            viewModel.getSubCategoryRepo.observe(viewLifecycleOwner){
+                viewModel.userFavorite(
+                    categoryIds = selectedCategoryIds,
+                    subcategoriesIds = selectedSubCategoryIds
+                )
+                viewModel.userFavoriteRepo.observe(viewLifecycleOwner) {
+                    when (it) {
+                        is Resource.Success -> {
+                            Toast.makeText(requireContext(), "Saved successfully", Toast.LENGTH_SHORT).show()
+                            findNavController().popBackStack()
+                        }
+                        is Resource.Error -> {
+                            Toast.makeText(requireContext(), "Failed to save favorites", Toast.LENGTH_SHORT).show()
+                        }
+                        else -> {}
+                    }
+                }
+            } else {
+                Toast.makeText(
+                    requireContext(),
+                    "Please select at least one category",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        }
+
+        val selectedCategoryIds = viewModel.selectedCategories.mapNotNull { it.id }
+        if (selectedCategoryIds.isNotEmpty()) {
+            bind.loader.isVisible = true
+            viewModel.getSubCategories(selectedCategoryIds)
+
+            viewModel.getSubCategoriesRepo.observe(viewLifecycleOwner) {
                 when (it) {
                     is Resource.Success -> {
                         bind.loader.isVisible = false
-
-                      if (index==0)  subCategoryList.clear()
+                        subCategoryList.clear()
                         subCategoryList.addAll(it.value.data ?: emptyList())
                         subCategoryAdapter.notifyDataSetChanged()
                     }
                     is Resource.Error -> {
+                        bind.loader.isVisible = false
+                        Toast.makeText(requireContext(), "Failed to load subcategories", Toast.LENGTH_SHORT).show()
 
                     }
                     else -> {}

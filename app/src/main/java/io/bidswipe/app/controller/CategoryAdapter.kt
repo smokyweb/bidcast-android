@@ -11,8 +11,8 @@ import io.bidswipe.app.utils.loadUrl
 
 class CategoryAdapter(
     items: List<GetCategoryResponse.Data?>,
-    val mClicks: RecyclerClicks
-) : BaseAdapter<GetCategoryResponse.Data,CategoryItemBinding>(items) {
+    val mClicks: RecyclerClicks,
+) : BaseAdapter<GetCategoryResponse.Data, CategoryItemBinding>(items) {
 
     private val selectedPositions = mutableSetOf<Int>()
 
@@ -22,17 +22,20 @@ class CategoryAdapter(
     override fun onBind(
         holder: BaseViewHolder<CategoryItemBinding>,
         position: Int,
-        item: GetCategoryResponse.Data?
+        item: GetCategoryResponse.Data?,
     ) {
         with(holder.bind) {
             title.text = item?.name
-            categoryImage.loadUrl(mCtx,item?.image ?: "")
+            categoryImage.loadUrl(mCtx, item?.image ?: "")
 
             root.isSelected = selectedPositions.contains(position)
 
-            root.elevation = if (selectedPositions.contains(position)) 8f else 0f
-            main.strokeWidth = if (selectedPositions.contains(position)) 2 else 0
-            main.strokeColor = if (selectedPositions.contains(position)) mCtx.getColor(R.color.primary) else mCtx.getColor(R.color.tertiaryContainer)
+            root.elevation = if (selectedPositions.contains(position)) 16f else 0f
+            main.strokeWidth = if (selectedPositions.contains(position)) 4 else 0
+            main.strokeColor =
+                if (selectedPositions.contains(position)) mCtx.getColor(R.color.primary) else mCtx.getColor(
+                    R.color.tertiaryContainer
+                )
 
             root.setOnClickListener {
                 mClicks.itemClick(position, null)

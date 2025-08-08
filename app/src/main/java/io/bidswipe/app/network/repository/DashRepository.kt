@@ -1,6 +1,7 @@
 package io.bidswipe.app.network.repository
 
 import io.bidswipe.app.base.BaseRepository
+import io.bidswipe.app.model.GetSubCategoriesRequest
 import io.bidswipe.app.model.PaymentCardModel
 import io.bidswipe.app.model.StoreProductRequest
 import io.bidswipe.app.network.ApiInterface
@@ -22,6 +23,15 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
     suspend fun getPrivacyPolicy() = call { api.getPrivacyPolicy() }
 
     suspend fun getCategory(categoryId: String? = null) = call { api.getCategory(categoryId) }
+
+    suspend fun getSubCategories(
+        categoryIds: List<Int>, subCategoryIds: List<Int>? = null
+    )= call{api.getSubCategories(GetSubCategoriesRequest(categoryIds, subCategoryIds))}
+
+    suspend fun userFavorite(
+        categoryIds: List<Int>,
+        subcategoriesIds:  List<Int>? = null
+    )= call{api.userFavorite(GetSubCategoriesRequest(categoryIds, subcategoriesIds))}
 
     suspend fun getLesson() = call { api.getLesson() }
 
