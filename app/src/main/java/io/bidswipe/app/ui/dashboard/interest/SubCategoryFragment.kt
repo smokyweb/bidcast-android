@@ -12,9 +12,9 @@ import io.bidswipe.app.controller.SubCategoryAdapter
 import io.bidswipe.app.databinding.FragmentSubcategoryBinding
 import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.network.Resource
-import io.bidswipe.app.network.response.GetCategoryResponse
 import io.bidswipe.app.network.response.GetSubCategoriesResponse
 import io.bidswipe.app.ui.dashboard.DashViewModel
+import io.bidswipe.app.utils.toDash
 
 class SubCategoryFragment : BaseFragment<DashViewModel, FragmentSubcategoryBinding>() {
 
@@ -66,7 +66,8 @@ class SubCategoryFragment : BaseFragment<DashViewModel, FragmentSubcategoryBindi
                     when (it) {
                         is Resource.Success -> {
                             Toast.makeText(requireContext(), "Saved successfully", Toast.LENGTH_SHORT).show()
-                            findNavController().popBackStack()
+                            startActivity(requireContext().toDash())
+                            requireActivity().finish()
                         }
                         is Resource.Error -> {
                             Toast.makeText(requireContext(), "Failed to save favorites", Toast.LENGTH_SHORT).show()

@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.navigation.fragment.findNavController
 import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseFragment
@@ -51,7 +52,13 @@ class CategoryFragment : BaseFragment<DashViewModel, FragmentCategoryBinding>() 
         }
 
         bind.nextButton.setOnClickListener {
-            findNavController().navigate(R.id.gotoSubcategory)
+            if (viewModel.selectedCategories.isEmpty()){
+                Toast.makeText(requireContext(), "Please select at least one category", Toast.LENGTH_SHORT).show()
+            }
+            else{
+                findNavController().navigate(R.id.gotoSubcategory)
+            }
+
         }
 
         loadCategories()

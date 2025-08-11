@@ -16,6 +16,7 @@ import io.bidswipe.app.interfaces.AlertClicks
 import io.bidswipe.app.model.RememberModel
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.ui.custom.AppBottomSheet
+import io.bidswipe.app.ui.dashboard.interest.ChooseInterestActivity
 import io.bidswipe.app.ui.dashboard.more.MoreActivity
 import io.bidswipe.app.utils.Alerts
 import io.bidswipe.app.utils.Prefs
@@ -102,7 +103,7 @@ class LoginFragment : BaseFragment<AuthViewModel, FragmentLoginBinding>() {
                     bind.loader.isVisible = false
                     log("RESPONSE ::${it.value}")
 
-                    val id = it.value.data?.id.toString()
+                    it.value.data?.id.toString()
 
                     if (bind.rememberMe.isChecked) {
                         Alerts.log(TAG, "REMEMBER ME CHECK")
@@ -116,8 +117,14 @@ class LoginFragment : BaseFragment<AuthViewModel, FragmentLoginBinding>() {
 
                     Prefs(mCtx).putString(Prefs.USER, Gson().toJson(it.value.data).toString())
 
-                    startActivity(mCtx.toDash())
-                    finish()
+                    if (it.value.data?.isFirsttimeLogin == true) {
+                        val intent = Intent(mCtx, ChooseInterestActivity::class.java)
+                        startActivity(intent)
+                        finish()
+                    } else {
+                        startActivity(mCtx.toDash())
+                        finish()
+                    }
 
                 }
 
