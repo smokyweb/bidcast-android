@@ -151,6 +151,7 @@ class LoginFragment : BaseFragment<AuthViewModel, FragmentLoginBinding>() {
                 }
 
                 else -> {}
+
             }
         }
 

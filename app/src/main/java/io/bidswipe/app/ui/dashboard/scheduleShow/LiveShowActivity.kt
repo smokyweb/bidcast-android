@@ -505,6 +505,7 @@ class LiveShowActivity : BaseActivity() {
 	}
 
 	private fun startListenEvent() {
+
 		ZegoExpressEngine.getEngine().setEventHandler(object : IZegoEventHandler() {
 
 			override fun onRoomStreamUpdate(
@@ -699,9 +700,11 @@ class LiveShowActivity : BaseActivity() {
 		).toMap()
 
 		FireRef.LIVE_SESSIONS.child(roomID).updateChildren(liveShow)
+
 	}
 
 	fun startUpdatingFirebaseEvery5Minutes() {
+
 		runnable = object : Runnable {
 			override fun run() {
 				val updateValue = Utils.timestamp().toString()
@@ -721,6 +724,7 @@ class LiveShowActivity : BaseActivity() {
 		}
 
 		runnable?.let { updateStatusHandler.post(it) }
+
 	}
 
 	fun stopUpdatingFirebase() {
@@ -1062,7 +1066,6 @@ class LiveShowActivity : BaseActivity() {
 			mList.add("")
 		}
 
-
 		clipSheetBind.close.setOnClickListener {
 			clipSheet.dismiss()
 		}
@@ -1167,7 +1170,6 @@ class LiveShowActivity : BaseActivity() {
 		})
 
 		productSheetBind.close.setOnClickListener {
-
 			productSheet.dismiss()
 		}
 

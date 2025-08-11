@@ -63,6 +63,8 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
 
                     if (showList[pos]?.isLive == true) {
 
+                        val showId = showList[pos]?.id.toString()
+
                         if (App.PIPMode){
                             Alerts.error(mCtx,"You are already in Live show")
 
@@ -71,12 +73,10 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
                                 Intent(
                                     mCtx,
                                     ViewLiveShowActivity::class.java
-                                ).putExtra("position", pos)
+                                ).putExtra("showId", showId)
                                     .putParcelableArrayListExtra("roomIdsList", romIdsList as ArrayList)
                             )
                         }
-
-
 
                     }
 

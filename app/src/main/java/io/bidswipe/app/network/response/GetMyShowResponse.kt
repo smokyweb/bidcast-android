@@ -96,6 +96,8 @@ data class GetMyShowResponse(
             val thumbnail: Any?,
             @SerializedName("username")
             val username: String?,
+            @SerializedName("is_followed")
+            val isFollowed: Boolean?
         )
     }
 }

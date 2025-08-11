@@ -44,11 +44,11 @@ class ViewLiveShowActivity : BaseActivity() {
 				if (snapshot.exists() && snapshot.childrenCount > 0) {
 					for (data in snapshot.children) {
 						log("EVENT LISTENER Stream Data ${LiveShowModel().fromMap(data)}")
-
 						streamList.add(LiveShowModel().fromMap(data))
 					}
 
 				}
+
 				if (streamList.isNotEmpty()) {
 					viewPager = bind.viewPager
 
@@ -59,10 +59,8 @@ class ViewLiveShowActivity : BaseActivity() {
 					viewPager.currentItem = pos
 					viewPager.orientation = ViewPager2.ORIENTATION_VERTICAL
 				} else {
-
 					finishAfterTransition()
 				}
-
 
 			}
 
@@ -89,7 +87,11 @@ class ViewLiveShowActivity : BaseActivity() {
 
 		bind.root.setMargins(0, 0, 0, navigationBarHeight)
 
-		pos = intent.getIntExtra("position", 0)
+		val showId = intent.getStringExtra("showId")
+
+//		streamList.find { it.showId == showId }
+
+		pos = streamList.indexOf(streamList.find { it.showId == showId })
 
 		FireRef.LIVE_SESSIONS.addValueEventListener(eventListener)
 

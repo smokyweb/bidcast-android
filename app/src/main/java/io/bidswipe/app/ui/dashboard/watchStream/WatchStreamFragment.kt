@@ -99,7 +99,8 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 				log("HIGHEST BID: ${data.highestBid}")
 				highestBidAmount = data.highestBid?.bidAmount ?: highestBidAmount
 
-				bind.bid.text = "Swipe to Bid ${(highestBidAmount?.toInt()?.plus(2)).toString().asMoney()}"
+				bind.bid.text = "Swipe to Bid ${(highestBidAmount?.toDouble()?.toInt()?.plus(2)).toString().asMoney()}"
+
 			}
 
 			// Show viewer count or default to 0
@@ -195,6 +196,8 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 									append("Price: ")
 									append(currentProduct.price.toString().asMoney())
 								}
+
+								bind.bid.text = "Swipe to Bid ${(highestBidAmount?.toDouble()?.toInt()?.plus(2)).toString().asMoney()}"
 
 								bind.bid.setCompleted(false, true)
 							}
@@ -293,7 +296,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 						ref.addListenerForSingleValueEvent(object : ValueEventListener {
 							override fun onDataChange(snapshot: DataSnapshot) {
 
-								val bidAmount = highestBidAmount?.toInt()?.plus(2).toString()
+								val bidAmount = highestBidAmount?.toDouble()?.toInt()?.plus(2).toString()
 
 								val bidData = mutableMapOf<String, Any?>(
 									"bidAmount" to bidAmount,
