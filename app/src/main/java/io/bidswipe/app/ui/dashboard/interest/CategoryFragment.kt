@@ -53,7 +53,7 @@ class CategoryFragment : BaseFragment<DashViewModel, FragmentCategoryBinding>() 
 
         bind.nextButton.setOnClickListener {
             if (viewModel.selectedCategories.isEmpty()){
-                Toast.makeText(requireContext(), "Please select at least one category", Toast.LENGTH_SHORT).show()
+                Toast.makeText(mCtx, "Please select at least one category", Toast.LENGTH_SHORT).show()
             }
             else{
                 findNavController().navigate(R.id.gotoSubcategory)
@@ -74,6 +74,7 @@ class CategoryFragment : BaseFragment<DashViewModel, FragmentCategoryBinding>() 
                     categoryAdapter.notifyDataSetChanged()
                 }
                 is Resource.Error -> {
+                    Toast.makeText(requireContext(), "Failed to load categories", Toast.LENGTH_SHORT).show()
                 }
                 else -> {}
             }

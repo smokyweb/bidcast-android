@@ -22,6 +22,7 @@ import io.bidswipe.app.model.MoreModel
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.ui.custom.AlertType
 import io.bidswipe.app.ui.custom.AppBottomSheet
+import io.bidswipe.app.ui.dashboard.interest.ChooseInterestActivity
 import io.bidswipe.app.ui.dashboard.more.MoreActivity
 import io.bidswipe.app.ui.dashboard.more.NotificationActivity
 import io.bidswipe.app.ui.dashboard.more.TrustedBuyerActivity
@@ -104,7 +105,7 @@ class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
             DashViewModel.SLUG_TERMS -> "Terms & Conditions"
             else -> "Content"
         }
-        val intent = Intent(requireContext(), MoreActivity::class.java).apply {
+        val intent = Intent(mCtx, MoreActivity::class.java).apply {
             putExtra("slug", slug)
             putExtra("title", title)
         }
@@ -132,6 +133,11 @@ class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
                             "slug",
                             accountGridList[pos].slug
                         )
+                    )
+                }
+                "interests" -> {
+                    startActivity(
+                        Intent(mCtx, ChooseInterestActivity::class.java)
                     )
                 }
 
@@ -243,6 +249,7 @@ class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
         accountGridList.add(MoreModel(R.drawable.ic_order, "Trusted Buyer", "buyer"))
         accountGridList.add(MoreModel(R.drawable.ic_walllet, "Notifications", "notification"))
         accountGridList.add(MoreModel(R.drawable.ic_tag, "Preferences", "preferences"))
+        accountGridList.add(MoreModel(R.drawable.explore, "Interests", "interests"))
 
         accountGridAdapter = GridAdapter(accountGridList, accountGridClick)
         bind.accountView.gridRecycler.adapter = accountGridAdapter

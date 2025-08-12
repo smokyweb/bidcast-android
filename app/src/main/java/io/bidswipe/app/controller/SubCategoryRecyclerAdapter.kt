@@ -1,0 +1,58 @@
+package io.bidswipe.app.controller
+
+import android.view.LayoutInflater
+import android.view.ViewGroup
+import io.bidswipe.app.base.BaseAdapter
+import io.bidswipe.app.databinding.SubCategoryItemBinding
+import io.bidswipe.app.databinding.SubcategoryRecyclerItemBinding
+import io.bidswipe.app.interfaces.RecyclerClicks
+import io.bidswipe.app.network.response.GetSubCategoriesResponse
+import io.bidswipe.app.utils.loadUrl
+
+class SubCategoryRecyclerAdapter(
+    items: List<GetSubCategoriesResponse.Data?>,
+    val mClicks: RecyclerClicks,
+): BaseAdapter<GetSubCategoriesResponse.Data, SubcategoryRecyclerItemBinding>(items) {
+lateinit var abcd:SubCategoryAdapter
+    override fun bindView(
+        inflater: LayoutInflater,
+        parent: ViewGroup,
+    )= SubcategoryRecyclerItemBinding.inflate(inflater, parent, false)
+    private val selectedPositions = mutableSetOf<Int>()
+
+    override fun onBind(
+        holder: BaseViewHolder<SubcategoryRecyclerItemBinding>,
+        position: Int,
+        item: GetSubCategoriesResponse.Data?,
+    ) {
+        with(holder.bind){
+            heading.text = item?.name
+            headingImage.loadUrl(mCtx, item?.image ?: "")
+
+            root.isSelected = selectedPositions.contains(position)
+
+            root.setOnClickListener {
+                mClicks.itemClick(position, null)
+                toggleSelection(position)
+
+                recyclerView.adapter = SubCategoryAdapter(item?.subcategories ?: emptyList(), mClicks)
+            }
+             abcd = SubCategoryAdapter(item?.subcategories?:mutableListOf(), object : RecyclerClicks {
+           override fun itemClick(pos: Int, status: String?) {
+               mClicks.itemClick(position, pos.toString())
+              abcd.notifyDataSetChanged()
+           }
+       })
+            recyclerView.adapter= abcd
+        }
+    }
+    private fun toggleSelection(position: Int) {
+        if (selectedPositions.contains(position)) {
+            selectedPositions.remove(position)
+        } else {
+            selectedPositions.add(position)
+        }
+        notifyItemChanged(position)
+    }
+
+}

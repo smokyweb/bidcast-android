@@ -11,9 +11,9 @@ import io.bidswipe.app.network.response.GetSubCategoriesResponse
 import io.bidswipe.app.utils.loadUrl
 
 class SubCategoryAdapter(
-    items: List<GetSubCategoriesResponse.Data?>,
+    items: List<GetSubCategoriesResponse.Data.Subcategory?>,
     val mClicks: RecyclerClicks,
-) : BaseAdapter<GetSubCategoriesResponse.Data, SubCategoryItemBinding>(items) {
+) : BaseAdapter<GetSubCategoriesResponse.Data.Subcategory, SubCategoryItemBinding>(items) {
 
     private val selectedPositions = mutableSetOf<Int>()
     override fun bindView(
@@ -24,7 +24,7 @@ class SubCategoryAdapter(
     override fun onBind(
         holder: BaseViewHolder<SubCategoryItemBinding>,
         position: Int,
-        item: GetSubCategoriesResponse.Data?,
+        item: GetSubCategoriesResponse.Data.Subcategory?,
     ) {
         with(holder.bind) {
             title.text = item?.name
@@ -32,6 +32,8 @@ class SubCategoryAdapter(
 
             root.isSelected = selectedPositions.contains(position)
 
+            val isSelected = selectedPositions.contains(position)
+            root.isSelected = isSelected
             root.elevation = if (selectedPositions.contains(position)) 16f else 0f
             main.strokeWidth = if (selectedPositions.contains(position)) 4 else 0
             main.strokeColor =
@@ -46,7 +48,7 @@ class SubCategoryAdapter(
         }
     }
 
-    private fun toggleSelection(position: Int) {
+     fun toggleSelection(position: Int) {
         if (selectedPositions.contains(position)) {
             selectedPositions.remove(position)
         } else {

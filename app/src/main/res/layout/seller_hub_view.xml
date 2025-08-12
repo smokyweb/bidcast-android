@@ -16,16 +16,16 @@
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
 			android:baselineAligned="false"
-			android:weightSum="3"
 			android:paddingHorizontal="@dimen/half_margin"
-			android:paddingTop="@dimen/half_margin">
+			android:paddingTop="@dimen/half_margin"
+			android:weightSum="3">
 
 			<LinearLayout
 				style="@style/shadowStyle"
 				android:layout_width="0dp"
 				android:layout_height="wrap_content"
-				android:layout_weight="1"
 				android:layout_margin="@dimen/half_margin"
+				android:layout_weight="1"
 				android:background="@drawable/card_8"
 				android:orientation="vertical"
 				android:padding="@dimen/margin">
@@ -83,7 +83,7 @@
 					android:layout_height="wrap_content"
 					android:gravity="center"
 					android:text="@string/revenue"
-					android:textColor	="@color/tertiary"
+					android:textColor="@color/tertiary"
 					app:layout_constraintEnd_toEndOf="@+id/view"
 					app:layout_constraintStart_toStartOf="@+id/view"
 					app:layout_constraintTop_toBottomOf="@+id/view" />

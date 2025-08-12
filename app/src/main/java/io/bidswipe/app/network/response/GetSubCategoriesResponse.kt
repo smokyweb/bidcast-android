@@ -14,32 +14,52 @@ data class GetSubCategoriesResponse(
     val errorType: String?,
     @SerializedName("data")
     val `data`: List<Data?>?
-) {
+)  {
     @Keep
     data class Data(
         @SerializedName("id")
         val id: Int?,
-        @SerializedName("category_id")
-        val categoryId: Int?,
         @SerializedName("name")
         val name: String?,
         @SerializedName("image")
         val image: String?,
-        @SerializedName("extra_fields")
-        val extraFields: List<ExtraField?>?,
         @SerializedName("thumbnail")
-        val thumbnail: String?,
+        val thumbnail: Any?,
+        @SerializedName("extra_fields")
+        val extraFields: List<Any?>?,
         @SerializedName("color")
-        val color: String?
+        val color: String?,
+        @SerializedName("subcategories")
+        val subcategories: List<Subcategory?>?
     ) {
         @Keep
-        data class ExtraField(
-            @SerializedName("label")
-            val label: String?,
-            @SerializedName("type")
-            val type: String?,
-            @SerializedName("options")
-            val options: List<String?>?
-        )
+        data class Subcategory(
+            @SerializedName("id")
+            val id: Int?,
+            @SerializedName("category_id")
+            val categoryId: Int?,
+            @SerializedName("name")
+            val name: String?,
+            @SerializedName("image")
+            val image: String?,
+            @SerializedName("extra_fields")
+            val extraFields: List<ExtraField?>?,
+            @SerializedName("thumbnail")
+            val thumbnail: String?,
+            @SerializedName("color")
+            val color: String?,
+            @SerializedName("is_selected")
+            val isSelected: Boolean?
+        ) {
+            @Keep
+            data class ExtraField(
+                @SerializedName("label")
+                val label: String?,
+                @SerializedName("type")
+                val type: String?,
+                @SerializedName("options")
+                val options: List<String?>?
+            )
+        }
     }
 }

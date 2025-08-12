@@ -26,20 +26,22 @@
         app:layout_constraintBottom_toTopOf="@+id/firstButton"
         app:layout_constraintTop_toBottomOf="@+id/header"
         tools:itemCount="3"
-        tools:listitem="@layout/sub_category_item" />
+        tools:listitem="@layout/subcategory_recycler_item" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/firstButton"
         style="@style/appBtn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/next"
+        android:text="@string/confirm"
         android:layout_margin="@dimen/margin"
         app:layout_constraintBottom_toBottomOf="parent" />
 
     <io.bidswipe.app.ui.custom.LoaderView
         android:id="@+id/loader"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent"
+        tools:layout_editor_absoluteX="43dp"
+        tools:layout_editor_absoluteY="-153dp" />
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
