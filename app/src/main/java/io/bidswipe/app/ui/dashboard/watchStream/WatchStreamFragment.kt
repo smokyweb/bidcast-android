@@ -39,6 +39,7 @@ import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseFragment
 import io.bidswipe.app.controller.CommentAdapter
 import io.bidswipe.app.databinding.FragmentWatchStreamBinding
+import io.bidswipe.app.databinding.InputBottomSheetBinding
 import io.bidswipe.app.interfaces.AlertClicks
 import io.bidswipe.app.model.LiveChatModel
 import io.bidswipe.app.model.LiveShowModel
@@ -47,6 +48,7 @@ import io.bidswipe.app.network.Resource
 import io.bidswipe.app.ui.custom.AlertType
 import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.ui.dashboard.more.TrustedBuyerActivity
+import io.bidswipe.app.utils.Alerts
 import io.bidswipe.app.utils.FireRef
 import io.bidswipe.app.utils.Utils
 import io.bidswipe.app.utils.asMoney
@@ -90,45 +92,49 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 		@SuppressLint("NotifyDataSetChanged")
 		override fun onDataChange(snapshot: DataSnapshot) {
 
-			val data = LiveShowModel().fromMap(snapshot)
+			runSafe {
+				val data = LiveShowModel().fromMap(snapshot)
 
-			// Safely update highestBidAmount
+				// Safely update highestBidAmount
 
-			if (data.highestBid != null){
+				if (data.highestBid != null){
 
-				log("HIGHEST BID: ${data.highestBid}")
-				highestBidAmount = data.highestBid?.bidAmount ?: highestBidAmount
+					log("HIGHEST BID: ${data.highestBid}")
+					highestBidAmount = data.highestBid?.bidAmount ?: highestBidAmount
 
-				bind.bid.text = "Swipe to Bid ${(highestBidAmount?.toDouble()?.toInt()?.plus(2)).toString().asMoney()}"
+					bind.bid.text = "Swipe to Bid ${(highestBidAmount?.toDouble()?.toInt()?.plus(2)).toString().asMoney()}"
+
+				}
+
+				// Show viewer count or default to 0
+				bind.liveCount.text = (data.viewerCount ?: 0).toString()
+
+				// Find the current product once
+				val currentProduct = data.products?.find { it?.id == data.highestBid?.productId }
+
+				log("CURRENT PRODUCT Value : $currentProduct")
+
+				// Determine sale status once
+				val isSold = currentProduct?.status == "sold"
+				bind.soldLayout.isVisible = isSold
+				bind.productLayout.isVisible = !isSold
+
+				if (isSold && data.highestBid?.userId == userId) {
+					bind.soldOutText.text = "You won the bid"
+
+				}
+
+				// Show bid countdown if available
+				val countdown = snapshot.child("bidCountDown").value?.toString()
+				if (!countdown.isNullOrEmpty()) {
+					bind.bidTime.isVisible = true
+					bind.bidTime.text = "Ends in $countdown"
+				} else {
+					bind.bidTime.isVisible = false
+				}
 
 			}
 
-			// Show viewer count or default to 0
-			bind.liveCount.text = (data.viewerCount ?: 0).toString()
-
-			// Find the current product once
-			val currentProduct = data.products?.find { it?.id == data.highestBid?.productId }
-
-			log("CURRENT PRODUCT Value : $currentProduct")
-
-			// Determine sale status once
-			val isSold = currentProduct?.status == "sold"
-			bind.soldLayout.isVisible = isSold
-			bind.productLayout.isVisible = !isSold
-
-			if (isSold && data.highestBid?.userId == userId) {
-				bind.soldOutText.text = "You won the bid"
-
-			}
-
-			// Show bid countdown if available
-			val countdown = snapshot.child("bidCountDown").value?.toString()
-			if (!countdown.isNullOrEmpty()) {
-				bind.bidTime.isVisible = true
-				bind.bidTime.text = "Ends in $countdown"
-			} else {
-				bind.bidTime.isVisible = false
-			}
 		}
 
 		override fun onCancelled(error: DatabaseError) {
@@ -174,33 +180,37 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 					FireRef.LIVE_SESSIONS.child(roomID).addListenerForSingleValueEvent(object : ValueEventListener {
 						override fun onDataChange(snapshot: DataSnapshot) {
 
-							val data = LiveShowModel().fromMap(snapshot)
+							runSafe {
+								val data = LiveShowModel().fromMap(snapshot)
 
-							val currentProduct = data.products?.find { it?.isCurrent == true }
+								val currentProduct = data.products?.find { it?.isCurrent == true }
 
-							log("CURRENT PRODUCT : $currentProduct")
+								log("CURRENT PRODUCT : $currentProduct")
 
-							if (currentProduct != null) {
-								bind.productName.text = currentProduct.name
-								bidProductId = currentProduct.id
-								bind.productImage.loadUrl(
-									mCtx,
-									currentProduct.image ?: "",
-									placeHolder = draw.product_img
-								)
-								bind.bidPrice.text = currentProduct.price.toString().asMoney()
+								if (currentProduct != null) {
+									bind.productName.text = currentProduct.name
+									bidProductId = currentProduct.id
+									bind.productImage.loadUrl(
+										mCtx,
+										currentProduct.image ?: "",
+										placeHolder = draw.product_img
+									)
+									bind.bidPrice.text = currentProduct.price.toString().asMoney()
 
-								highestBidAmount = currentProduct.price.toString()
+									highestBidAmount = currentProduct.price.toString()
 
-								bind.quantity.text = buildString {
-									append("Price: ")
-									append(currentProduct.price.toString().asMoney())
+									bind.quantity.text = buildString {
+										append("Price: ")
+										append(currentProduct.price.toString().asMoney())
+									}
+
+									bind.bid.text = "Swipe to Bid ${(highestBidAmount?.toDouble()?.toInt()?.plus(2)).toString().asMoney()}"
+
+									bind.bid.setCompleted(false, true)
+
 								}
-
-								bind.bid.text = "Swipe to Bid ${(highestBidAmount?.toDouble()?.toInt()?.plus(2)).toString().asMoney()}"
-
-								bind.bid.setCompleted(false, true)
 							}
+
 						}
 
 						override fun onCancelled(error: DatabaseError) {
@@ -216,7 +226,6 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
 			override fun onCancelled(error: DatabaseError) {
 			}
-
 
 		})
 
@@ -289,40 +298,61 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 				bind.bid.onSlideCompleteListener = object : OnSlideCompleteListener {
 					override fun onSlideComplete(view: SlideToActView) {
 
-						log("SWIPED")
+						if (App.profileResponse.value?.buyerIdentityStatus == "verified") {
 
-						val ref = FireRef.LIVE_SESSIONS.child(roomID).child("highestBid")
+							runSafe {
 
-						ref.addListenerForSingleValueEvent(object : ValueEventListener {
-							override fun onDataChange(snapshot: DataSnapshot) {
+								log("SWIPED")
 
-								val bidAmount = highestBidAmount?.toDouble()?.toInt()?.plus(2).toString()
+								val ref = FireRef.LIVE_SESSIONS.child(roomID).child("highestBid")
 
-								val bidData = mutableMapOf<String, Any?>(
-									"bidAmount" to bidAmount,
-									"userName" to userName,
-									"userImage" to userImage,
-									"userId" to userId,
-									"productId" to bidProductId
-								)
+								ref.addListenerForSingleValueEvent(object : ValueEventListener {
+									override fun onDataChange(snapshot: DataSnapshot) {
 
-								// If startTime doesn't exist, it's a new bid; otherwise, update existing
-								if (!snapshot.hasChild("startTime")) {
-									bidData["startTime"] = Utils.timestamp().toString()
-									bidData["productStatus"] = "processed"
-								}
+										val bidAmount = highestBidAmount?.toDouble()?.toInt()?.plus(2).toString()
 
-								ref.updateChildren(bidData)
+										val bidData = mutableMapOf<String, Any?>(
+											"bidAmount" to bidAmount,
+											"userName" to userName,
+											"userImage" to userImage,
+											"userId" to userId,
+											"productId" to bidProductId
+										)
+
+										// If startTime doesn't exist, it's a new bid; otherwise, update existing
+										if (!snapshot.hasChild("startTime")) {
+											bidData["startTime"] = Utils.timestamp().toString()
+											bidData["productStatus"] = "processed"
+										}
+
+										ref.updateChildren(bidData)
+
+										Alerts.success(mCtx, "Bid placed successfully")
+
+									}
+
+									override fun onCancelled(error: DatabaseError) {
+										log("Firebase Error: ${error.message}")
+									}
+
+								})
 
 							}
 
-							override fun onCancelled(error: DatabaseError) {
-								log("Firebase Error: ${error.message}")
-							}
 
-						})
+						} else {
+							verificationDialog()
+						}
+
+
 
 					}
+				}
+
+				bind.max.setOnClickListener {
+
+					showInputSheet()
+
 				}
 			}
 		}
@@ -461,6 +491,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 	private fun stopStream() {
 		ZegoExpressEngine.getEngine().stopPlayingStream(roomID)
 		ZegoExpressEngine.getEngine().logoutRoom(roomID)
+
 	}
 
 	private fun destroyEngine() {
@@ -475,7 +506,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
 		ZIM.getInstance().login(userInfo) { error ->
 			if (error != null) {
-				log("LOGGED INTO ZIM")
+				log("LOGGED INTO ZI...M")
 				ZIM.getInstance().joinRoom(roomID) { roomInfo, errorInfo ->
 					if (errorInfo != null) {
 						log("JOINED ROOM CHAT $roomInfo")
@@ -614,6 +645,67 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 			}
 		).show()
 
+	}
+
+	fun showInputSheet() {
+		val inputSheetBind = InputBottomSheetBinding.bind(
+			layoutInflater.inflate(
+				R.layout.input_bottom_sheet,
+				null,
+				false
+			)
+		)
+
+		val inputSheet = Alerts.appBottomSheet(mCtx, true, inputSheetBind)
+
+		inputSheetBind.submitBtn.setOnClickListener {
+			val ref = FireRef.LIVE_SESSIONS.child(roomID).child("highestBid")
+
+			ref.addListenerForSingleValueEvent(object : ValueEventListener {
+				override fun onDataChange(snapshot: DataSnapshot) {
+
+					runSafe {
+						val bidAmount = inputSheetBind.price.value().toDouble().toString()
+
+						if (inputSheetBind.price.value().isEmpty() || inputSheetBind.price.value().toDouble() < (highestBidAmount?.toDouble() ?: 0.0)){
+							Alerts.error(mCtx, "Bid amount must be greater than the current highest bid.")
+						}else{
+							val bidData = mutableMapOf<String, Any?>(
+								"bidAmount" to bidAmount,
+								"userName" to userName,
+								"userImage" to userImage,
+								"userId" to userId,
+								"productId" to bidProductId
+							)
+
+							// If startTime doesn't exist, it's a new bid; otherwise, update existing
+							if (!snapshot.hasChild("startTime")) {
+								bidData["startTime"] = Utils.timestamp().toString()
+								bidData["productStatus"] = "processed"
+							}
+
+							ref.updateChildren(bidData)
+
+							Alerts.success(mCtx, "Bid placed successfully")
+
+							inputSheet.dismiss()
+						}
+					}
+
+				}
+
+				override fun onCancelled(error: DatabaseError) {
+					log("Firebase Error: ${error.message}")
+				}
+
+			})
+		}
+
+		inputSheetBind.close.setOnClickListener {
+			inputSheet.dismiss()
+		}
+
+		inputSheet.show()
 	}
 
 	@SuppressLint("ClickableViewAccessibility")

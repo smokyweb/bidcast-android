@@ -27,7 +27,6 @@ class CategoryFragment : BaseFragment<DashViewModel, FragmentCategoryBinding>() 
     private lateinit var categoryAdapter: CategoryAdapter
     private val categoryList = mutableListOf<GetCategoryResponse.Data?>()
 
-
     private val categoryClicks = object : RecyclerClicks {
         override fun itemClick(pos: Int, status: String?) {
             categoryList.getOrNull(pos)?.let { category ->

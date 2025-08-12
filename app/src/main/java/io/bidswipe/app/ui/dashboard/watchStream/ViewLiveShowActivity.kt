@@ -23,6 +23,7 @@ import io.bidswipe.app.utils.Const
 import io.bidswipe.app.utils.FireRef
 import io.bidswipe.app.utils.bind
 import io.bidswipe.app.utils.clr
+import io.bidswipe.app.utils.runSafe
 import io.bidswipe.app.utils.setMargins
 
 class ViewLiveShowActivity : BaseActivity() {
@@ -39,29 +40,31 @@ class ViewLiveShowActivity : BaseActivity() {
 		@SuppressLint("NotifyDataSetChanged")
 		override fun onDataChange(snapshot: DataSnapshot) {
 
-			if (snapshot.childrenCount.toInt() != streamList.size) {
-				streamList.clear()
-				if (snapshot.exists() && snapshot.childrenCount > 0) {
-					for (data in snapshot.children) {
-						log("EVENT LISTENER Stream Data ${LiveShowModel().fromMap(data)}")
-						streamList.add(LiveShowModel().fromMap(data))
+			runSafe {
+				if (snapshot.childrenCount.toInt() != streamList.size) {
+					streamList.clear()
+					if (snapshot.exists() && snapshot.childrenCount > 0) {
+						for (data in snapshot.children) {
+							log("EVENT LISTENER Stream Data ${LiveShowModel().fromMap(data)}")
+							streamList.add(LiveShowModel().fromMap(data))
+						}
+
+					}
+
+					if (streamList.isNotEmpty()) {
+						viewPager = bind.viewPager
+
+						viewModel.setStreams(streamList)
+
+						streamPagerAdapter = StreamPagerAdapter(this@ViewLiveShowActivity, viewModel)
+						viewPager.adapter = streamPagerAdapter
+						viewPager.currentItem = pos
+						viewPager.orientation = ViewPager2.ORIENTATION_VERTICAL
+					} else {
+						finishAfterTransition()
 					}
 
 				}
-
-				if (streamList.isNotEmpty()) {
-					viewPager = bind.viewPager
-
-					viewModel.setStreams(streamList)
-
-					streamPagerAdapter = StreamPagerAdapter(this@ViewLiveShowActivity, viewModel)
-					viewPager.adapter = streamPagerAdapter
-					viewPager.currentItem = pos
-					viewPager.orientation = ViewPager2.ORIENTATION_VERTICAL
-				} else {
-					finishAfterTransition()
-				}
-
 			}
 
 		}

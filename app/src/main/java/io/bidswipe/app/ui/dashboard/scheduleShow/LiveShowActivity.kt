@@ -416,6 +416,8 @@ class LiveShowActivity : BaseActivity() {
 		stopPublish()
 
 		if (::zim.isInitialized) {
+
+			log("ZIM DESTROYED")
 			zim.logout()
 			zim.destroy()
 		}
@@ -423,6 +425,8 @@ class LiveShowActivity : BaseActivity() {
 		stopLiveDurationTimer()
 		stopBidTimeTimer()
 		logoutRoom()
+
+		stopListenEvent()
 		destroyEngine()
 
 	}
