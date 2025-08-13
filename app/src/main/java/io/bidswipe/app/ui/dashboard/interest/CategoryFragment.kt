@@ -52,7 +52,7 @@ class CategoryFragment : BaseFragment<DashViewModel, FragmentCategoryBinding>() 
 
         bind.nextButton.setOnClickListener {
             if (viewModel.selectedCategories.isEmpty()){
-                Toast.makeText(mCtx, "Please select at least one category", Toast.LENGTH_SHORT).show()
+                errorToast("Please select at least one category")
             }
             else{
                 findNavController().navigate(R.id.gotoSubcategory)

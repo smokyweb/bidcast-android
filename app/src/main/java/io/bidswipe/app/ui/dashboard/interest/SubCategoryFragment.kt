@@ -31,7 +31,6 @@ class SubCategoryFragment : BaseFragment<DashViewModel, FragmentSubcategoryBindi
     private val subCategoryList = mutableListOf<GetSubCategoriesResponse.Data?>()
     private val selectedSubCategories = mutableListOf<GetSubCategoriesResponse.Data.Subcategory>()
 
-
     private val categoryClicks = object : RecyclerClicks {
         override fun itemClick(pos: Int, status: String?) {
             if (status == null) return

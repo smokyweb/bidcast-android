@@ -17,6 +17,16 @@
         app:layout_constraintTop_toTopOf="parent"
         app:showBackButton="false" />
 
+    <TextView
+        android:id="@+id/title"
+        style="@style/TitleMedium"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:text="@string/choose_the_categories_you_re_interested_in_to_watch_related_shows"
+        app:layout_constraintTop_toBottomOf="@id/header"
+        android:textSize="18sp" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
         android:layout_width="match_parent"
@@ -25,8 +35,8 @@
         android:clipToPadding="false"
         app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
         app:layout_constraintBottom_toTopOf="@+id/nextButton"
-        app:layout_constraintTop_toBottomOf="@+id/header"
-        app:spanCount="2"
+        app:layout_constraintTop_toBottomOf="@+id/title"
+        app:spanCount="3"
         tools:itemCount="6"
         tools:layout_editor_absoluteX="8dp"
         tools:listitem="@layout/category_item" />

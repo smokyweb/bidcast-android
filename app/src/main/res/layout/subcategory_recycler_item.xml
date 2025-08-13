@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
+    style="@style/cardStyle"
+    android:layout_margin="8dp"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical">
@@ -10,61 +12,54 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:background="@drawable/card_8"
-        android:gravity="center_vertical"
-        android:layout_margin="@dimen/half_margin"
-        android:paddingStart="@dimen/half_margin"
-        android:paddingTop="@dimen/padding"
-        android:paddingEnd="@dimen/half_margin"
-        android:paddingBottom="@dimen/padding">
+        android:background="@color/background"
+        android:orientation="vertical"
+        android:padding="8dp">
 
-        <com.google.android.material.card.MaterialCardView
-            style="@style/cardStyle"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            app:cardBackgroundColor="@color/transparent"
-            app:cardElevation="0dp">
-
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/headingImage"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:background="@drawable/avatar"/>
-
-        </com.google.android.material.card.MaterialCardView>
-
-        <TextView
-            android:id="@+id/heading"
-            style="@style/TitleLarge"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/half_margin"
-            android:text="Selected Categories"
-            android:textSize="16sp"/>
+            android:gravity="center_vertical"
+            android:layout_margin="8dp"
+            android:orientation="horizontal">
+
+            <com.google.android.material.card.MaterialCardView
+                style="@style/cardStyle"
+                android:layout_width="44dp"
+                android:layout_height="44dp"
+                android:layout_margin="4dp"
+                app:cardCornerRadius="100dp">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/headingImage"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/avatar" />
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <TextView
+                android:id="@+id/heading"
+                style="@style/TitleMedium"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="18sp"
+                android:layout_marginStart="@dimen/half_margin"
+                android:text="@string/category" />
 
         </LinearLayout>
 
-    <com.google.android.material.card.MaterialCardView
-        style="@style/cardStyle"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:cardBackgroundColor="@color/transparent"
-        app:cardElevation="0dp">
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clipToPadding="false"
+            app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+            app:layout_constraintTop_toBottomOf="@+id/heading"
+            app:spanCount="3"
+            tools:itemCount="6"
+            tools:listitem="@layout/category_item" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/half_margin"
-        android:clipToPadding="false"
-        app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-        app:layout_constraintTop_toBottomOf="@+id/heading"
-        app:spanCount="2"
-        tools:itemCount="6"
-        tools:layout_editor_absoluteX="8dp"
-        tools:listitem="@layout/sub_category_item" />
+    </LinearLayout>
 
-    </com.google.android.material.card.MaterialCardView>
-
-</LinearLayout>
+</com.google.android.material.card.MaterialCardView>

@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/surface"
     tools:context=".ui.dashboard.interest.SubCategoryFragment">
 
     <io.bidswipe.app.ui.custom.Header
@@ -11,37 +12,55 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:headerTitle="Select Your Favourite SubCategory"
+        app:headerTitle="Select Sub Category"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:showBackButton="true" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerView"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:clipToPadding="false"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        app:layout_constraintBottom_toTopOf="@+id/firstButton"
-        app:layout_constraintTop_toBottomOf="@+id/header"
-        tools:itemCount="3"
-        tools:listitem="@layout/subcategory_recycler_item" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/header"
+        android:background="@color/surface"
+        android:orientation="vertical"
+        android:padding="8dp">
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/firstButton"
-        style="@style/appBtn"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/confirm"
-        android:layout_margin="@dimen/margin"
-        app:layout_constraintBottom_toBottomOf="parent" />
+        <TextView
+            style="@style/TitleMedium"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:text="@string/select_sub_categories_based_on_the_categories_you_chose_on_the_previous_page"
+            android:textSize="18sp" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:clipToPadding="false"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:layout_constraintBottom_toTopOf="@+id/firstButton"
+            app:layout_constraintTop_toBottomOf="@+id/header"
+            tools:itemCount="3"
+            tools:listitem="@layout/subcategory_recycler_item" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/firstButton"
+            style="@style/appBtn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/confirm"
+            app:layout_constraintBottom_toBottomOf="parent" />
+
+    </LinearLayout>
 
     <io.bidswipe.app.ui.custom.LoaderView
         android:id="@+id/loader"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:layout_editor_absoluteX="43dp"
-        tools:layout_editor_absoluteY="-153dp" />
+        android:visibility="gone"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

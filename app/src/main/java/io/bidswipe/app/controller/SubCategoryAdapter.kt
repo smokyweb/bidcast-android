@@ -4,57 +4,56 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseAdapter
+import io.bidswipe.app.databinding.CategoryItemBinding
 import io.bidswipe.app.databinding.SubCategoryItemBinding
 import io.bidswipe.app.interfaces.RecyclerClicks
-import io.bidswipe.app.network.response.GetCategoryResponse
 import io.bidswipe.app.network.response.GetSubCategoriesResponse
+import io.bidswipe.app.utils.dpToPx
 import io.bidswipe.app.utils.loadUrl
 
 class SubCategoryAdapter(
-    items: List<GetSubCategoriesResponse.Data.Subcategory?>,
-    val mClicks: RecyclerClicks,
-) : BaseAdapter<GetSubCategoriesResponse.Data.Subcategory, SubCategoryItemBinding>(items) {
+	items: List<GetSubCategoriesResponse.Data.Subcategory?>,
+	val mClicks: RecyclerClicks,
+) : BaseAdapter<GetSubCategoriesResponse.Data.Subcategory, CategoryItemBinding>(items) {
 
-    private val selectedPositions = mutableSetOf<Int>()
-    override fun bindView(
-        inflater: LayoutInflater,
-        parent: ViewGroup,
-    ) = SubCategoryItemBinding.inflate(inflater, parent, false)
+	private val selectedPositions = mutableSetOf<Int>()
+	override fun bindView(
+		inflater: LayoutInflater,
+		parent: ViewGroup,
+	) = CategoryItemBinding.inflate(inflater, parent, false)
 
-    override fun onBind(
-        holder: BaseViewHolder<SubCategoryItemBinding>,
-        position: Int,
-        item: GetSubCategoriesResponse.Data.Subcategory?,
-    ) {
-        with(holder.bind) {
-            title.text = item?.name
-            categoryImage.loadUrl(mCtx, item?.image ?: "")
+	override fun onBind(
+		holder: BaseViewHolder<CategoryItemBinding>,
+		position: Int,
+		item: GetSubCategoriesResponse.Data.Subcategory?,
+	) {
+		with(holder.bind) {
+			title.text = item?.name
+			categoryImage.loadUrl(mCtx, item?.image ?: "")
 
-            root.isSelected = selectedPositions.contains(position)
+			root.isSelected = selectedPositions.contains(position)
 
-            val isSelected = selectedPositions.contains(position)
-            root.isSelected = isSelected
-            root.elevation = if (selectedPositions.contains(position)) 16f else 0f
-            main.strokeWidth = if (selectedPositions.contains(position)) 4 else 0
-            main.strokeColor =
-                if (selectedPositions.contains(position)) mCtx.getColor(R.color.primary) else mCtx.getColor(
-                    R.color.tertiaryContainer
-                )
+			val isSelected = selectedPositions.contains(position)
+			root.isSelected = isSelected
 
-            root.setOnClickListener {
-                mClicks.itemClick(position, null)
-                toggleSelection(position)
-            }
-        }
-    }
+			root.elevation = if (selectedPositions.contains(position)) 16f else 0f
+			main.strokeWidth = if (selectedPositions.contains(position)) mCtx.resources.dpToPx(4) else 0
+			main.strokeColor = if (selectedPositions.contains(position)) mCtx.getColor(R.color.primary) else mCtx.getColor(R.color.transparent)
 
-     fun toggleSelection(position: Int) {
-        if (selectedPositions.contains(position)) {
-            selectedPositions.remove(position)
-        } else {
-            selectedPositions.add(position)
-        }
-        notifyItemChanged(position)
+			root.setOnClickListener {
+				mClicks.itemClick(position, null)
+				toggleSelection(position)
+			}
+		}
+	}
 
-    }
+	fun toggleSelection(position: Int) {
+		if (selectedPositions.contains(position)) {
+			selectedPositions.remove(position)
+		} else {
+			selectedPositions.add(position)
+		}
+		notifyItemChanged(position)
+
+	}
 }
