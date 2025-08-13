@@ -54,8 +54,14 @@ class CategoryFragment : BaseFragment<DashViewModel, FragmentCategoryBinding>() 
             if (viewModel.selectedCategories.isEmpty()){
                 errorToast("Please select at least one category")
             }
-            else{
-                findNavController().navigate(R.id.gotoSubcategory)
+            else {
+                val bundle = Bundle().apply {
+                    putBoolean(
+                        "fromAccount",
+                        requireActivity().intent.getBooleanExtra("fromAccount", false)
+                    )
+                }
+                findNavController().navigate(R.id.gotoSubcategory, bundle)
             }
 
         }
@@ -70,10 +76,20 @@ class CategoryFragment : BaseFragment<DashViewModel, FragmentCategoryBinding>() 
                 is Resource.Success -> {
                     categoryList.clear()
                     categoryList.addAll(it.value.data ?: emptyList())
+                    viewModel.selectedCategories.clear()
+                    val preSelectedIndexes = mutableListOf<Int>()
+                    categoryList.forEachIndexed { index, category ->
+                        if (category?.isSelected == true) {
+                            viewModel.selectedCategories.add(category)
+                            preSelectedIndexes.add(index)
+                        }
+                    }
+                    categoryAdapter.setPreSelected(preSelectedIndexes)
+
                     categoryAdapter.notifyDataSetChanged()
                 }
                 is Resource.Error -> {
-                    Toast.makeText(requireContext(), "Failed to load categories", Toast.LENGTH_SHORT).show()
+                  errorToast("Failed to load categories")
                 }
                 else -> {}
             }

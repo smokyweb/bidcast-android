@@ -137,7 +137,7 @@ class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
                 }
                 "interests" -> {
                     startActivity(
-                        Intent(mCtx, ChooseInterestActivity::class.java)
+                        Intent(mCtx, ChooseInterestActivity::class.java).putExtra("fromAccount", true)
                     )
                 }
 

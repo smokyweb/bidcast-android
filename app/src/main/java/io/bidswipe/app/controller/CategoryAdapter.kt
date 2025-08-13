@@ -63,6 +63,10 @@ class CategoryAdapter(
 		}
 		notifyItemChanged(position)
 	}
+	fun setPreSelected(indexes: List<Int>) {
+		selectedPositions.clear()
+		selectedPositions.addAll(indexes)
+	}
 
 
 }

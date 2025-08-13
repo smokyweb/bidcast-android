@@ -29,22 +29,14 @@ class SubCategoryFragment : BaseFragment<DashViewModel, FragmentSubcategoryBindi
 
     private lateinit var subCategoryRecyclerAdapter: SubCategoryRecyclerAdapter
     private val subCategoryList = mutableListOf<GetSubCategoriesResponse.Data?>()
-    private val selectedSubCategories = mutableListOf<GetSubCategoriesResponse.Data.Subcategory>()
 
     private val categoryClicks = object : RecyclerClicks {
         override fun itemClick(pos: Int, status: String?) {
-            if (status == null) return
-            val item = subCategoryList[pos]?.subcategories?.get(status.toInt())
-            Log.d(TAG, "itemClick: ")
-            item?.let {
-                if (selectedSubCategories.contains(it)) {
-                    selectedSubCategories.remove(it)
-                } else {
-                    selectedSubCategories.add(it)
-                }
+            if (status != null) {
+                subCategoryList[pos]?.subcategories?.get(status.toInt())?.isSelected = !(subCategoryList[pos]?.subcategories?.get(status.toInt())?.isSelected?: false)
                 subCategoryRecyclerAdapter.notifyItemChanged(pos)
-            }
         }
+    }
     }
 
     @SuppressLint("NotifyDataSetChanged")
@@ -57,34 +49,37 @@ class SubCategoryFragment : BaseFragment<DashViewModel, FragmentSubcategoryBindi
         bind.header.setOnClickListener {
             findNavController().popBackStack()
         }
-        bind.firstButton.setOnClickListener {
+        bind.confirmButton.setOnClickListener {
+            val selectedSubCategories = subCategoryList.filter { it?.subcategories?.filter { it1->it1?.isSelected == true }?.isNotEmpty() == true }.toList()
             if (selectedSubCategories.isNotEmpty()) {
                 val selectedCategoryIds = viewModel.selectedCategories.mapNotNull { it.id }
-                val selectedSubCategoryIds = selectedSubCategories.mapNotNull { it.id }
-
+                val selectedSubCategoryIds=mutableListOf<Int>()
+                selectedSubCategories.forEach { it?.subcategories?.filter {
+                        it1->it1?.isSelected == true }?.map { it?.id?.let { element -> selectedSubCategoryIds.add(element) } }}
                 viewModel.userFavorite(
                     categoryIds = selectedCategoryIds,
                     subcategoriesIds = selectedSubCategoryIds
                 )
+                val fromAccount = arguments?.getBoolean("fromAccount", false)
                 viewModel.userFavoriteRepo.observe(viewLifecycleOwner) {
                     when (it) {
                         is Resource.Success -> {
-                            Toast.makeText(mCtx, "Saved successfully", Toast.LENGTH_SHORT).show()
-                            startActivity(mCtx.toDash())
-                            requireActivity().finish()
+                            successToast("Saved successfully")
+                            if (fromAccount == true) {
+                                requireActivity().finish()
+                            } else {
+                                startActivity(mCtx.toDash())
+                                requireActivity().finish()
+                            }
                         }
                         is Resource.Error -> {
-                            Toast.makeText(mCtx, "Failed to save favorites", Toast.LENGTH_SHORT).show()
+                            errorToast("Failed to save")
                         }
                         else -> {}
                     }
                 }
             } else {
-                Toast.makeText(
-                    mCtx,
-                    "Please select at least one category",
-                    Toast.LENGTH_SHORT
-                ).show()
+                errorToast("Please select at least one category")
             }
         }
 
@@ -99,16 +94,17 @@ class SubCategoryFragment : BaseFragment<DashViewModel, FragmentSubcategoryBindi
                         bind.loader.isVisible = false
                         subCategoryList.clear()
 
-                        val filteredList = it.value.data?.filter { category ->
-                            !category?.subcategories.isNullOrEmpty()
-                        } ?: emptyList()
-
-                        subCategoryList.addAll(filteredList)
+//                        val filteredList = it.value.data?.filter { category ->
+//                            !category?.subcategories.isNullOrEmpty()
+//                        } ?: emptyList()
+//
+//                        subCategoryList.addAll(filteredList)
+                        subCategoryList.addAll(it.value.data ?: emptyList())
                         subCategoryRecyclerAdapter.notifyDataSetChanged()
                     }
                     is Resource.Error -> {
                         bind.loader.isVisible = false
-                        Toast.makeText(mCtx, "Failed to load subcategories", Toast.LENGTH_SHORT).show()
+                        errorToast("Failed to load categories")
 
                     }
                     else -> {}

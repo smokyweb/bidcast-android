@@ -18,7 +18,6 @@ class SubCategoryRecyclerAdapter(
 	) = SubcategoryRecyclerItemBinding.inflate(inflater, parent, false)
 
 	lateinit var subCategoryAdapter: SubCategoryAdapter
-	private val selectedPositions = mutableSetOf<Int>()
 
 	override fun onBind(
 		holder: BaseViewHolder<SubcategoryRecyclerItemBinding>,
@@ -30,31 +29,17 @@ class SubCategoryRecyclerAdapter(
 
 			headingImage.loadUrl(mCtx, item?.image ?: "")
 
-			root.isSelected = selectedPositions.contains(position)
-
 			root.setOnClickListener {
 				mClicks.itemClick(position, null)
-				toggleSelection(position)
-
-				recyclerView.adapter = SubCategoryAdapter(item?.subcategories ?: emptyList(), mClicks)
 			}
+
 			subCategoryAdapter = SubCategoryAdapter(item?.subcategories ?: mutableListOf(), object : RecyclerClicks {
 				override fun itemClick(pos: Int, status: String?) {
 					mClicks.itemClick(position, pos.toString())
-					subCategoryAdapter.notifyDataSetChanged()
 				}
 			})
 			recyclerView.adapter = subCategoryAdapter
 		}
-	}
-
-	private fun toggleSelection(position: Int) {
-		if (selectedPositions.contains(position)) {
-			selectedPositions.remove(position)
-		} else {
-			selectedPositions.add(position)
-		}
-		notifyItemChanged(position)
 	}
 
 }

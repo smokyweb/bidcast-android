@@ -16,7 +16,6 @@ class SubCategoryAdapter(
 	val mClicks: RecyclerClicks,
 ) : BaseAdapter<GetSubCategoriesResponse.Data.Subcategory, CategoryItemBinding>(items) {
 
-	private val selectedPositions = mutableSetOf<Int>()
 	override fun bindView(
 		inflater: LayoutInflater,
 		parent: ViewGroup,
@@ -31,29 +30,13 @@ class SubCategoryAdapter(
 			title.text = item?.name
 			categoryImage.loadUrl(mCtx, item?.image ?: "")
 
-			root.isSelected = selectedPositions.contains(position)
-
-			val isSelected = selectedPositions.contains(position)
-			root.isSelected = isSelected
-
-			root.elevation = if (selectedPositions.contains(position)) 16f else 0f
-			main.strokeWidth = if (selectedPositions.contains(position)) mCtx.resources.dpToPx(4) else 0
-			main.strokeColor = if (selectedPositions.contains(position)) mCtx.getColor(R.color.primary) else mCtx.getColor(R.color.transparent)
+			root.elevation = if (item?.isSelected== true) 16f else 0f
+			main.strokeWidth = if (item?.isSelected== true) mCtx.resources.dpToPx(4) else 0
+			main.strokeColor = if (item?.isSelected== true) mCtx.getColor(R.color.primary) else mCtx.getColor(R.color.transparent)
 
 			root.setOnClickListener {
 				mClicks.itemClick(position, null)
-				toggleSelection(position)
 			}
 		}
-	}
-
-	fun toggleSelection(position: Int) {
-		if (selectedPositions.contains(position)) {
-			selectedPositions.remove(position)
-		} else {
-			selectedPositions.add(position)
-		}
-		notifyItemChanged(position)
-
 	}
 }

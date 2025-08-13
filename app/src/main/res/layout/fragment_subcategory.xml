@@ -42,13 +42,13 @@
             android:layout_weight="1"
             android:clipToPadding="false"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            app:layout_constraintBottom_toTopOf="@+id/firstButton"
+            app:layout_constraintBottom_toTopOf="@+id/confirmButton"
             app:layout_constraintTop_toBottomOf="@+id/header"
             tools:itemCount="3"
             tools:listitem="@layout/subcategory_recycler_item" />
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/firstButton"
+            android:id="@+id/confirmButton"
             style="@style/appBtn"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

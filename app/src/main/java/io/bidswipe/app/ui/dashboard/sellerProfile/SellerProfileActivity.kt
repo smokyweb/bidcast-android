@@ -366,7 +366,7 @@ class SellerProfileActivity : BaseActivity() {
         if (shareIntent.resolveActivity(packageManager) != null) {
             startActivity(chooserIntent)
         } else {
-            Toast.makeText(this, "No sharing apps available", Toast.LENGTH_SHORT).show()
+            errorToast("No sharing apps available")
         }
     }
 

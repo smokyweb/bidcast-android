@@ -5,6 +5,6 @@ import com.google.gson.annotations.SerializedName
 data class GetSubCategoriesRequest(
     @SerializedName("category_ids")
     val categoryIds: List<Int>,
-    @SerializedName("sub_category_id")
+    @SerializedName("sub_category_ids")
     val subcategoryIds: List<Int>? = null
 )
