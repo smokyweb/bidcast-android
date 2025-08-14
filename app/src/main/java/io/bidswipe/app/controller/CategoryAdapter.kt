@@ -29,21 +29,48 @@ class CategoryAdapter(
 		with(holder.bind) {
 			title.text = item?.name
 			categoryImage.loadUrl(mCtx, item?.image ?: "")
+			val imageUrl = item?.image?.lowercase() ?: ""
+
+			if (imageUrl.endsWith(".png")) {
+				categoryImage.setPadding(
+					mCtx.resources.dpToPx(32),
+					mCtx.resources.dpToPx(32),
+					mCtx.resources.dpToPx(32),
+					mCtx.resources.dpToPx(32)
+				)
+			} else {
+				categoryImage.setPadding(0, 0, 0, 0)
+			}
+
+			val isSelected = item?.isSelected == true
+			main.strokeWidth = if (isSelected) mCtx.resources.dpToPx(4) else 0
+			main.strokeColor =
+				if (isSelected) mCtx.getColor(R.color.primary) else mCtx.getColor(R.color.transparent)
+			categoryImage.setBackgroundColor(
+				if (isSelected) mCtx.getColor(R.color.inversePrimary)
+				else android.graphics.Color.TRANSPARENT
+			)
+
 
 			root.isSelected = selectedPositions.contains(position)
 
 			main.strokeWidth = if (selectedPositions.contains(position)) mCtx.resources.dpToPx(4) else 0
-			main.strokeColor =
-				if (selectedPositions.contains(position)) mCtx.getColor(R.color.primary) else mCtx.getColor(
+			main.strokeColor = if (selectedPositions.contains(position)) mCtx.getColor(R.color.primary) else mCtx.getColor(
 					R.color.transparent
 				)
 
 			if (selectedPositions.contains(position)) {
-				ViewCompat.setElevation(root, 16f)  // 16dp elevation, "popped up"
-				root.scaleX = 1.05f   // optional scale up effect
+				categoryImage.setBackgroundColor(mCtx.getColor(R.color.inversePrimary))
+			} else {
+				categoryImage.setBackgroundColor(android.graphics.Color.TRANSPARENT)
+			}
+
+			if (selectedPositions.contains(position)) {
+				ViewCompat.setElevation(root, 16f)
+				root.scaleX = 1.05f
 				root.scaleY = 1.05f
 			} else {
-				ViewCompat.setElevation(root, 2f)   // default elevation
+				ViewCompat.setElevation(root, 2f)
 				root.scaleX = 1f
 				root.scaleY = 1f
 			}

@@ -2,11 +2,9 @@ package io.bidswipe.app.ui.dashboard.interest
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.navigation.fragment.findNavController
 import io.bidswipe.app.base.BaseFragment
@@ -94,12 +92,12 @@ class SubCategoryFragment : BaseFragment<DashViewModel, FragmentSubcategoryBindi
                         bind.loader.isVisible = false
                         subCategoryList.clear()
 
-//                        val filteredList = it.value.data?.filter { category ->
-//                            !category?.subcategories.isNullOrEmpty()
-//                        } ?: emptyList()
-//
-//                        subCategoryList.addAll(filteredList)
-                        subCategoryList.addAll(it.value.data ?: emptyList())
+                        val sortedList = (it.value.data ?: emptyList())
+                            .sortedByDescending { category ->
+                                !category?.subcategories.isNullOrEmpty()
+                            }
+
+                        subCategoryList.addAll(sortedList)
                         subCategoryRecyclerAdapter.notifyDataSetChanged()
                     }
                     is Resource.Error -> {

@@ -26,7 +26,6 @@ class SubCategoryRecyclerAdapter(
 	) {
 		with(holder.bind) {
 			heading.text = item?.name
-
 			headingImage.loadUrl(mCtx, item?.image ?: "")
 
 			root.setOnClickListener {

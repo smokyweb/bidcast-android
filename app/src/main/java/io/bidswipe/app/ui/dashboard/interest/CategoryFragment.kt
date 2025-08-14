@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.navigation.fragment.findNavController
 import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseFragment
@@ -14,6 +13,7 @@ import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.network.response.GetCategoryResponse
 import io.bidswipe.app.ui.dashboard.DashViewModel
+import io.bidswipe.app.utils.toDash
 
 class CategoryFragment : BaseFragment<DashViewModel, FragmentCategoryBinding>() {
 
@@ -45,9 +45,19 @@ class CategoryFragment : BaseFragment<DashViewModel, FragmentCategoryBinding>() 
 
         categoryAdapter = CategoryAdapter(categoryList, categoryClicks)
         bind.recyclerView.adapter = categoryAdapter
-        
+
+        val isFirstTimeLogin = activity?.intent?.getBooleanExtra("isFirstTimeLogin", false) ?: false
+
         bind.header.setOnClickListener {
-            findNavController().popBackStack()
+            when {
+                isFirstTimeLogin -> {
+                    startActivity(mCtx.toDash())
+                    requireActivity().finish()
+                }
+                else -> {
+                    requireActivity().finish()
+                }
+            }
         }
 
         bind.nextButton.setOnClickListener {

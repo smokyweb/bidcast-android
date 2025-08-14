@@ -119,6 +119,7 @@ class LoginFragment : BaseFragment<AuthViewModel, FragmentLoginBinding>() {
 
                     if (it.value.data?.isFirsttimeLogin == true) {
                         val intent = Intent(mCtx, ChooseInterestActivity::class.java)
+                        intent.putExtra("isFirstTimeLogin", true)
                         startActivity(intent)
                         finish()
                     } else {
