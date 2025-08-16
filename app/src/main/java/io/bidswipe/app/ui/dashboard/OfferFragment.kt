@@ -36,8 +36,7 @@ class OfferFragment : BaseFragment<DashViewModel, FragmentOfferBinding>() {
 	}
 	
 	private var page = 1
-	private var isLoading = false
-	
+
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		super.onViewCreated(view, savedInstanceState)
 		

@@ -244,14 +244,14 @@ class ProductDetailsFragment : BaseFragment<ProductViewModel, FragmentProductDet
     }
 
     fun showOfferSheet() {
-        var makeOfferSheetBind = MakeOfferSheetBinding.bind(
+        val makeOfferSheetBind = MakeOfferSheetBinding.bind(
             layoutInflater.inflate(
                 R.layout.make_offer_sheet,
                 null,
                 false
             )
         )
-        var makeOfferSheet = Alerts.appBottomSheet(mCtx, true, makeOfferSheetBind)
+        val makeOfferSheet = Alerts.appBottomSheet(mCtx, true, makeOfferSheetBind)
 
         makeOfferSheetBind.listedPrice.text = viewModel.product?.pricing.toString().asMoney()
 

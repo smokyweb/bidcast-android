@@ -112,6 +112,7 @@ class ViewLiveShowActivity : BaseActivity() {
 	override fun onDestroy() {
 		super.onDestroy()
 		destroyEngine()
+		ZIM.getInstance().destroy()
 	}
 
 	private fun createEngine() {

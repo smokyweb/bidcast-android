@@ -107,7 +107,6 @@ class CategoryFragment : BaseFragment<DashViewModel, FragmentCategoryBinding>() 
                 else -> {}
             }
         }
-        categoryAdapter.notifyDataSetChanged()
     }
 }
 

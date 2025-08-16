@@ -48,6 +48,8 @@ import im.zego.zim.entity.ZIMTextMessage
 import im.zego.zim.entity.ZIMUserInfo
 import im.zego.zim.enums.ZIMConversationType
 import im.zego.zim.enums.ZIMMessagePriority
+import im.zego.zim.enums.ZIMRoomEvent
+import im.zego.zim.enums.ZIMRoomState
 import io.bidswipe.app.App
 import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseActivity
@@ -416,8 +418,9 @@ class LiveShowActivity : BaseActivity() {
 		stopPublish()
 
 		if (::zim.isInitialized) {
-
 			log("ZIM DESTROYED")
+			zim.leaveAllRoom { roomIDs, errorInfo ->
+				log("LEFT ALL ROOMS") }
 			zim.logout()
 			zim.destroy()
 		}
@@ -463,7 +466,7 @@ class LiveShowActivity : BaseActivity() {
 					it.roomName = roomID + "_room"
 				}
 
-				zim.createRoom(roomInfo) { roomInfo, errorInfo ->
+					zim.createRoom(roomInfo) { roomInfo, errorInfo ->
 					if (errorInfo != null) {
 						log("CREATED ROOM : $roomInfo")
 
@@ -501,6 +504,13 @@ class LiveShowActivity : BaseActivity() {
 					}
 				}
 			}
+		}
+
+		override fun onRoomStateChanged(zim: ZIM?, state: ZIMRoomState?, event: ZIMRoomEvent?, extendedData: JSONObject?, roomID: String?) {
+			super.onRoomStateChanged(zim, state, event, extendedData, roomID)
+
+			log("ROOM STATE CHANGED: $state")
+
 		}
 	}
 
@@ -636,6 +646,8 @@ class LiveShowActivity : BaseActivity() {
 		) { error: Int, extendedData: JSONObject? ->
 			if (error == 0) {
 				Toast.makeText(this, "Login successful.", Toast.LENGTH_LONG).show()
+
+			log("LOGIN Successful")
 
 				startPublish()
 				startLiveDurationTimer()
@@ -792,8 +804,7 @@ class LiveShowActivity : BaseActivity() {
 						"bidCountDown" to bidCounter.toString()
 					)
 				).addOnSuccessListener {
-				}
-					.addOnFailureListener {
+				}.addOnFailureListener {
 					}
 
 				bidTimerHandler.postDelayed(this, 1000)
@@ -884,7 +895,7 @@ class LiveShowActivity : BaseActivity() {
 
 		val categoryList = mutableListOf("Auction", "Buy Now", "Freebie", "Sold")
 
-		categoryList.forEach { it ->
+		categoryList.forEach { it
 			shopSheetBind.chipGroup.addView(
 				Utils.makeAChip(
 					mCtx = this, text = it, selected = false
@@ -1262,3 +1273,4 @@ class LiveShowActivity : BaseActivity() {
 	}
 
 }
+

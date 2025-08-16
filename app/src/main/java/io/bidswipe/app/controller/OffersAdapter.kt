@@ -34,10 +34,6 @@ class OffersAdapter(
 
             bind.buttonLayout.isVisible = true
 
-            bind.root.setOnClickListener {
-                mClicks.itemClick(position)
-            }
-
             bind.accept.setOnClickListener {
                 mClicks.itemClick(position, "accept")
             }

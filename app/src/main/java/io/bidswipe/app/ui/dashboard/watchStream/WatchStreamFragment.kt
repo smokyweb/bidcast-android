@@ -40,6 +40,7 @@ import io.bidswipe.app.base.BaseFragment
 import io.bidswipe.app.controller.CommentAdapter
 import io.bidswipe.app.databinding.FragmentWatchStreamBinding
 import io.bidswipe.app.databinding.InputBottomSheetBinding
+import io.bidswipe.app.databinding.PaymentAndAddressSheetBinding
 import io.bidswipe.app.interfaces.AlertClicks
 import io.bidswipe.app.model.LiveChatModel
 import io.bidswipe.app.model.LiveShowModel
@@ -47,6 +48,7 @@ import io.bidswipe.app.model.ZIMExtendedData
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.ui.custom.AlertType
 import io.bidswipe.app.ui.custom.AppBottomSheet
+import io.bidswipe.app.ui.dashboard.more.MoreActivity
 import io.bidswipe.app.ui.dashboard.more.TrustedBuyerActivity
 import io.bidswipe.app.utils.Alerts
 import io.bidswipe.app.utils.FireRef
@@ -239,6 +241,12 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 					verificationDialog()
 				}
 			}
+		}
+
+		bind.wallet.setOnClickListener {
+
+			showPaymentAndAddressSheet()
+
 		}
 
 		viewModel.selectedStream.observe(viewLifecycleOwner) { stream ->
@@ -566,7 +574,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
 			override fun onMessageSent(message: ZIMMessage?, errorInfo: ZIMError?) {
 				if (errorInfo != null) {
-					log("MESSAGE SENT SUCCESSFULLY : ${message?.conversationType}")
+					log("MESSAGE SENT SUCCESSFULLY : ${message}")
 
 					bind.text.setText("")
 
@@ -772,5 +780,87 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 		}
 
 	}
+
+
+	fun showPaymentAndAddressSheet() {
+
+		var paymentAddressBind = PaymentAndAddressSheetBinding.bind(
+			layoutInflater.inflate(
+				R.layout.payment_and_address_sheet,
+				null,
+				false
+			)
+		)
+
+		var makeOfferSheet = Alerts.appBottomSheet(mCtx, true, paymentAddressBind)
+
+		with(paymentAddressBind.addressItem) {
+			val hasAddress = App.profileResponse.value?.hasShippingAddress == true
+			moreIcon.setImageDrawable(ContextCompat.getDrawable(mCtx, draw.ic_pencil))
+			moreIcon.rotation = 0f
+
+			name.isVisible = hasAddress
+			address.isVisible = hasAddress
+
+			if (hasAddress) {
+				val addressData = App.profileResponse.value?.defaultShippingAddress
+				address.text = addressData?.streetAddress
+				name.text = addressData?.name
+				type.text = addressData?.type
+				defaultAddress.isVisible = addressData?.isDefault == true
+			} else {
+				type.text = "Address Not Added"
+				defaultAddress.isVisible = false
+			}
+
+			moreIcon.setOnClickListener {
+				startActivity(
+					Intent(mCtx, MoreActivity::class.java).putExtra(
+						"slug",
+						"paymentShipping"
+					)
+				)
+			}
+
+		}
+
+		with(paymentAddressBind.paymentCard) {
+			val hasCard = App.profileResponse.value?.hasCardAdded == true
+			iconCard.isVisible = hasCard
+			expiryDate.isVisible = hasCard
+			moreIcon.setImageDrawable(ContextCompat.getDrawable(mCtx, draw.ic_pencil))
+			moreIcon.rotation = 0f
+
+			if (hasCard) {
+				cardNumber.text = buildString {
+					append("•••• •••• •••• ")
+					append(App.profileResponse.value?.defaultCard?.last4)
+				}
+
+				expiryDate.text = buildString {
+					append(App.profileResponse.value?.defaultCard?.expDate)
+				}
+			} else {
+				cardNumber.text = "Payment Cards Not Added"
+			}
+
+			moreIcon.setOnClickListener {
+				startActivity(
+					Intent(mCtx, MoreActivity::class.java).putExtra(
+						"slug",
+						"paymentShipping"
+					)
+				)
+			}
+		}
+
+		paymentAddressBind.close.setOnClickListener {
+			makeOfferSheet.dismiss()
+		}
+
+		makeOfferSheet.show()
+
+	}
+
 
 }
