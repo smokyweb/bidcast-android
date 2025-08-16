@@ -6,7 +6,9 @@ import io.bidswipe.app.base.BaseAdapter
 import io.bidswipe.app.databinding.PurchasesItemBinding
 import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.network.response.GetProductsByStatusResponse
+import io.bidswipe.app.utils.Const
 import io.bidswipe.app.utils.Utils
+import io.bidswipe.app.utils.asCapital
 import io.bidswipe.app.utils.asMoney
 import io.bidswipe.app.utils.loadUrl
 
@@ -31,20 +33,23 @@ class SavedItemAdapter(
             bind.price.text = item?.product?.pricing.toString().asMoney()
 
             bind.productId.text = buildString {
-                append(item?.product?.title)
+                append(item?.product?.title?.asCapital())
                 append(" #")
                 append(item?.product?.id.toString())
             }
             bind.prodSubTitle.text = buildString {
                 append("Seller: ")
-                append(item?.product?.seller?.name)
+                append(item?.product?.seller?.name?.asCapital())
             }
 
-            bind.date.text = Utils.getFormattedDateTime(
-                "yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'",
-                "MM/dd/yyyy",
-                item?.product?.createdAt.toString()
-            )
+            bind.date.text =buildString {
+                append("Date: ")
+                append( Utils.getFormattedDateTime(
+                    Const.SERVER_TIME_FORMAT,
+                    "MM/dd/yyyy",
+                    item?.product?.createdAt.toString()
+                ))
+            }
 
             bind.productImage.loadUrl(mCtx, item?.product?.images?.get(0).toString())
 

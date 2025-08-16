@@ -78,8 +78,8 @@ object Utils {
         }
     }
 
-    fun getTimeStampFromServerTime(time: String): Long {
-        val inputFormat = SimpleDateFormat(Const.SERVER_TIME_FORMAT)
+    fun getTimeStampFromServerTime(time: String, format: String = Const.SERVER_TIME_FORMAT): Long {
+        val inputFormat = SimpleDateFormat(format)
         inputFormat.timeZone = TimeZone.getTimeZone("UTC")
         val date = inputFormat.parse(time)
         return date?.time ?: timestamp()
@@ -136,11 +136,10 @@ object Utils {
             )
         )
 
-    fun getTimeAgo(time: String): String {
+    fun getTimeAgo(time: String,format: String = Const.SERVER_TIME_FORMAT): String {
 
-        val serverTime =
-            time.ifEmpty { getSimpleDate(Const.SERVER_TIME_FORMAT).format(timestamp()).toString() }
-        val timeInMillis = getTimeStampFromServerTime(serverTime)
+        val serverTime = time.ifEmpty { getSimpleDate(format).format(timestamp()).toString() }
+        val timeInMillis = getTimeStampFromServerTime(serverTime,format)
         val now = System.currentTimeMillis()
 
         val diff = now - timeInMillis

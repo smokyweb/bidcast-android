@@ -40,17 +40,11 @@ class BidsAdapter(
             bind.root.setOnClickListener {
                 mClicks.itemClick(position)
             }
-
-            try {
-                bind.subTitle.text = buildSpannedString {
-                    append("Placed a Bid ")
-                    bold { append("•") }
-                    append(Utils.getTimeAgo(item?.createdAt ?: ""))
-                }
-            } catch (e: Exception) {
-                e.printStackTrace()
+            bind.subTitle.text = buildSpannedString {
+                append("Placed a Bid ")
+                bold { append(" • ") }
+                append(Utils.getTimeAgo(item?.createdAt ?: "", "dd-MM-yyyy HH:mm:ss" ))
             }
-
         }
     }
 }

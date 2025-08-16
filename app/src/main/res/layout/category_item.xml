@@ -5,38 +5,36 @@
     android:id="@+id/main"
     style="@style/cardStyle"
     android:layout_width="match_parent"
+    app:cardCornerRadius="@dimen/half_margin"
     android:layout_height="wrap_content"
     android:layout_margin="8dp">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:orientation="vertical">
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/categoryImage"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:scaleType="centerCrop"
-            app:layout_constraintDimensionRatio="1"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_width="84dp"
+            android:layout_height="84dp"
+            android:layout_marginTop="8dp"
+            android:padding="12dp"
+            android:scaleType="centerInside"
             tools:src="@drawable/avatar" />
 
         <TextView
             android:id="@+id/title"
-            style="@style/TitleSmall"
+            style="@style/TitleMedium"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:background="@drawable/category_background"
+            android:layout_height="wrap_content"
             android:ellipsize="end"
             android:gravity="center|bottom"
             android:maxLines="1"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            android:textColor="@color/onPrimary"
             android:padding="@dimen/half_margin"
             tools:text="Category Name" />
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    </LinearLayout>
 
 </com.google.android.material.card.MaterialCardView>

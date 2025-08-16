@@ -25,12 +25,12 @@ class SubCategoryRecyclerAdapter(
 		item: GetSubCategoriesResponse.Data?,
 	) {
 		with(holder.bind) {
+			root.setOnClickListener {
+				mClicks.itemClick(position)
+			}
+
 			heading.text = item?.name
 			headingImage.loadUrl(mCtx, item?.image ?: "")
-
-			root.setOnClickListener {
-				mClicks.itemClick(position, null)
-			}
 
 			subCategoryAdapter = SubCategoryAdapter(item?.subcategories ?: mutableListOf(), object : RecyclerClicks {
 				override fun itemClick(pos: Int, status: String?) {

@@ -2,6 +2,7 @@ package io.bidswipe.app.controller
 
 import android.view.LayoutInflater
 import android.content.res.ColorStateList
+import android.util.Log
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.core.text.bold
@@ -46,7 +47,7 @@ class OffersAdapter(
             }
 
             bind.userImage.loadUrl(mCtx, item?.user?.profileImage ?: "")
-            bind.userName.text = item?.user?.name
+            bind.userName.text = item?.user?.name?.asCapital()
             bind.offerPrice.text = item?.amount.toString().asMoney()
 
             bind.productImage.loadUrl(mCtx, item?.product?.images?.first() ?: "")
@@ -54,8 +55,8 @@ class OffersAdapter(
 
             bind.subTitle.text = buildSpannedString {
                 append("Placed an Offer ")
-                bold { append("•") }
-                append(Utils.getTimeAgo(item?.createdAt ?: ""))
+                bold { append(" • ") }
+                append(Utils.getTimeAgo(item?.createdAt ?: "", "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"))
             }
 
             bind.prodSubTitle.text = buildSpannedString {
@@ -63,6 +64,7 @@ class OffersAdapter(
                 append(item?.product?.pricing.toString().asMoney())
             }
 
+            Log.d(TAG, "onBind: ${item?.status}")
             if (item?.status == "pending") {
                 bind.status.isVisible = false
                 bind.buttonLayout.isVisible = true

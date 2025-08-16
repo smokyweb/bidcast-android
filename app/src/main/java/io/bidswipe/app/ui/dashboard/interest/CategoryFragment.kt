@@ -1,5 +1,6 @@
 package io.bidswipe.app.ui.dashboard.interest
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -29,6 +30,7 @@ class CategoryFragment : BaseFragment<DashViewModel, FragmentCategoryBinding>() 
 
     private val categoryClicks = object : RecyclerClicks {
         override fun itemClick(pos: Int, status: String?) {
+            categoryList[pos]?.isSelected = !(categoryList[pos]?.isSelected ?: false)
             categoryList.getOrNull(pos)?.let { category ->
                 if (viewModel.selectedCategories.contains(category)) {
                     viewModel.selectedCategories.remove(category)
@@ -37,6 +39,7 @@ class CategoryFragment : BaseFragment<DashViewModel, FragmentCategoryBinding>() 
                 }
 
             }
+            categoryAdapter.notifyItemChanged(pos)
         }
     }
 
@@ -79,6 +82,7 @@ class CategoryFragment : BaseFragment<DashViewModel, FragmentCategoryBinding>() 
         loadCategories()
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     private fun loadCategories() {
         viewModel.getCategory()
         viewModel.getCategoryRepo.observe(viewLifecycleOwner){
@@ -94,7 +98,6 @@ class CategoryFragment : BaseFragment<DashViewModel, FragmentCategoryBinding>() 
                             preSelectedIndexes.add(index)
                         }
                     }
-                    categoryAdapter.setPreSelected(preSelectedIndexes)
 
                     categoryAdapter.notifyDataSetChanged()
                 }

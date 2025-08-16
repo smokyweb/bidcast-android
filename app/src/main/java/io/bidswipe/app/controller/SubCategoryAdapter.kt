@@ -5,7 +5,6 @@ import android.view.ViewGroup
 import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseAdapter
 import io.bidswipe.app.databinding.CategoryItemBinding
-import io.bidswipe.app.databinding.SubCategoryItemBinding
 import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.network.response.GetSubCategoriesResponse
 import io.bidswipe.app.utils.dpToPx
@@ -27,16 +26,23 @@ class SubCategoryAdapter(
 		item: GetSubCategoriesResponse.Data.Subcategory?,
 	) {
 		with(holder.bind) {
+			root.setOnClickListener {
+			mClicks.itemClick(position)
+		}
+
 			title.text = item?.name
 			categoryImage.loadUrl(mCtx, item?.image ?: "")
 
-			root.elevation = if (item?.isSelected== true) 16f else 0f
-			main.strokeWidth = if (item?.isSelected== true) mCtx.resources.dpToPx(4) else 0
-			main.strokeColor = if (item?.isSelected== true) mCtx.getColor(R.color.primary) else mCtx.getColor(R.color.transparent)
-
-			root.setOnClickListener {
-				mClicks.itemClick(position, null)
+			if (item?.isSelected == true) {
+				main.setCardBackgroundColor(mCtx.getColor(R.color.primaryContainer))
+				main.strokeColor = mCtx.getColor(R.color.primary)
+				main.strokeWidth = mCtx.resources.dpToPx(2)
+			} else {
+				main.setCardBackgroundColor(mCtx.getColor(R.color.outline))
+				main.strokeColor = mCtx.getColor(R.color.transparent)
+				main.strokeWidth = 0
 			}
+
 		}
 	}
 }

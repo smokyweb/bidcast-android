@@ -50,14 +50,14 @@
 				style="@style/BodySmall"
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
-				android:text="Buyer: John Smith" />
+				android:text="Seller: John Smith" />
 
 			<TextView
 				android:id="@+id/date"
 				style="@style/BodySmall"
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
-				android:text="Date : 05/05/2035" />
+				android:text="Date:05/05/2035" />
 
 		</LinearLayout>
 
