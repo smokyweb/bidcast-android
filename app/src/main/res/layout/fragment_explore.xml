@@ -137,9 +137,6 @@
 
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
-
-
-
     <io.bidswipe.app.ui.custom.LoaderView
         android:id="@+id/loader"
         android:layout_width="match_parent"

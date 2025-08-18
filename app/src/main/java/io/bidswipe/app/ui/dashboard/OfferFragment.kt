@@ -1,6 +1,7 @@
 package io.bidswipe.app.ui.dashboard
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -26,6 +27,7 @@ class OfferFragment : BaseFragment<DashViewModel, FragmentOfferBinding>() {
 	
 	private var mClick = object : RecyclerClicks {
 		override fun itemClick(pos: Int, status: String?) {
+			Log.d(TAG, "itemClick: ${mList[pos]}")
 			bind.loader.isVisible = true
 			if (status == "accept") {
 				viewModel.offerUpdateStatus(mList[pos]?.id.toString().request(), "accepted".request())
@@ -105,10 +107,9 @@ class OfferFragment : BaseFragment<DashViewModel, FragmentOfferBinding>() {
 					bind.loader.isVisible = false
 					val index=mList.indexOfFirst { offer -> offer?.id == it.value.data?.id  }
 					if(index!=-1){
-						val offer = mList[index]
-						offer?.status = it.value.data?.status
-						mList[index]=offer
-						offersAdapter.notifyItemChanged(index,offer)
+						val updatedItem = mList[index]?.copy(status = it.value.data?.status)
+						mList[index] = updatedItem
+						offersAdapter.notifyItemChanged(index, updatedItem)
 					}
 				}
 				

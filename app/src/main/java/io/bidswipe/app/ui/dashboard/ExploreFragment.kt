@@ -32,6 +32,7 @@ class ExploreFragment : BaseFragment<DashViewModel, FragmentExploreBinding>() {
 
     private lateinit var exploreAdapter: ExploreAdapter
     private var exploreList = mutableListOf<GetCategoryResponse.Data?>()
+    private var currentSelectedTab: TextView? = null
 
     private val mClick = object : RecyclerClicks {
         override fun itemClick(pos: Int, status: String?) {
@@ -71,40 +72,36 @@ class ExploreFragment : BaseFragment<DashViewModel, FragmentExploreBinding>() {
         }
 
         bind.swipeRefreshLayout.setOnRefreshListener {
-            when (bind.searchExpandLayout.isExpanded) {
-                true -> viewModel.getCategory()
-                bind.recommended.isSelected -> viewModel.getCategory()
-                bind.popular.isSelected -> viewModel.getCategory()
-                bind.all.isSelected -> viewModel.getCategory()
-                else -> {}
+            when(currentSelectedTab?.text) {
+                "Recommended" -> viewModel.getCategory(type = "recommended")
+                "Popular" -> viewModel.getCategory(type = "popular")
+                else-> viewModel.getCategory()
             }
-
         }
 
         bind.noInternet.onClick {
-
             bind.loader.isVisible = true
             bind.noInternet.isVisible = false
 
-            when (bind.searchExpandLayout.isExpanded) {
-                true -> viewModel.getCategory()
-                bind.recommended.isSelected -> viewModel.getCategory()
-                bind.popular.isSelected -> viewModel.getCategory()
+            when {
+                bind.searchExpandLayout.isExpanded -> viewModel.getCategory()
+                bind.recommended.isSelected -> viewModel.getCategory(type = "recommended")
+                bind.popular.isSelected -> viewModel.getCategory(type = "popular")
                 bind.all.isSelected -> viewModel.getCategory()
-                else -> {}
             }
-
         }
-
-        selectTab(bind.recommended)
 
         bind.recommended.setOnClickListener { selectTab(it as TextView) }
         bind.popular.setOnClickListener { selectTab(it as TextView) }
         bind.all.setOnClickListener { selectTab(it as TextView) }
 
-        bind.loader.isVisible = true
-        viewModel.getCategory()
+        selectTab(bind.recommended)
+
+//        bind.loader.isVisible = true
+//        viewModel.getCategory()
         viewModel.getCategoryRepo.observe(viewLifecycleOwner) {
+            bind.loader.isVisible = false
+            bind.swipeRefreshLayout.isRefreshing = false
             when (it) {
                 is Resource.Success -> {
                     bind.loader.isVisible = false
@@ -143,19 +140,29 @@ class ExploreFragment : BaseFragment<DashViewModel, FragmentExploreBinding>() {
                 else -> {}
 
             }
+
         }
 
     }
 
-    fun selectTab(selectedTab: TextView) {
-        val tabs = listOf(bind.recommended, bind.popular, bind.all)
-        tabs.forEach {
-            it.setTextAppearance(R.style.TitleMedium)
-            it.setTextColor(ContextCompat.getColor(mCtx, R.color.outlineVariant))
+    private fun selectTab(selectedTab: TextView) {
+        currentSelectedTab = selectedTab
+
+        bind.loader.isVisible = true
+        when(currentSelectedTab?.text) {
+            "Recommended" -> viewModel.getCategory(type = "recommended")
+            "Popular" -> viewModel.getCategory(type = "popular")
+            else-> viewModel.getCategory()
         }
+
+        listOf(bind.recommended, bind.popular, bind.all).forEach { tab ->
+            tab.setTextAppearance(R.style.TitleMedium)
+            tab.setTextColor(ContextCompat.getColor(mCtx, R.color.outlineVariant))
+            tab.isSelected = (tab == selectedTab)
+        }
+
         selectedTab.setTextColor(ContextCompat.getColor(mCtx, R.color.scrim))
         selectedTab.setTextAppearance(R.style.TitleLarge)
+
     }
-
-
 }

@@ -122,17 +122,18 @@ interface ApiInterface {
 
     @GET("api/get-category")
     suspend fun getCategory(
-        @Query("category_id") categoryId: String? = null
+        @Query("category_id") categoryId: String? = null,
+        @Query("type") type: String? = null,
     ): GetCategoryResponse
 
     @POST("api/get-subcategories")
     suspend fun getSubCategories(
-        @Body getSubCategoriesModel: GetSubCategoriesRequest
+        @Body getSubCategoriesModel: GetSubCategoriesRequest,
     ): GetSubCategoriesResponse
 
     @POST("api/user/favorite")
     suspend fun userFavorite(
-        @Body storeProductModel: GetSubCategoriesRequest
+        @Body storeProductModel: GetSubCategoriesRequest,
     ): CommonResponse
 
 
@@ -147,15 +148,15 @@ interface ApiInterface {
 
     @POST("api/store-product")
     suspend fun storeProduct(
-       @Body storeProductModel: StoreProductRequest,
-        @Query("product_id") productId: String? = null
+        @Body storeProductModel: StoreProductRequest,
+        @Query("product_id") productId: String? = null,
     ): CommonResponse
 
     @Multipart
     @POST("api/store-product-meta")
     suspend fun storeProductMeta(
         @Part productImages: List<MultipartBody.Part?>?,
-        @Part thumbnail: List<MultipartBody.Part?>?
+        @Part thumbnail: List<MultipartBody.Part?>?,
     ): StoreProductResponse
 
     @GET("api/how-to-sell")
@@ -185,7 +186,7 @@ interface ApiInterface {
         @Part("category_id") categoryId: RequestBody?,
         @Part("auction_type_id") auctionTypeId: RequestBody?,
         @Part thumbnails: List<MultipartBody.Part?>?,
-        @Part("product_ids[]") productIds: RequestBody?
+        @Part("product_ids[]") productIds: RequestBody?,
     ): CreateShowResponse
 
     @GET("api/get-auction-type")
@@ -201,7 +202,7 @@ interface ApiInterface {
     @POST("api/get-user-product")
     suspend fun getUserProducts(
         @Part("user_id") userId: RequestBody?,
-        @Part("category_id") categoryId: RequestBody?
+        @Part("category_id") categoryId: RequestBody?,
     ): GetProductsResponse
 
     @Multipart
@@ -271,7 +272,7 @@ interface ApiInterface {
         @Part("street_address") streetAddress: RequestBody?,
         @Part("pincode") pinCode: RequestBody?,
         @Part("city") city: RequestBody?,
-        @Part("state") state: RequestBody?
+        @Part("state") state: RequestBody?,
     ): CommonResponse
 
     @GET("api/get-shipping-address")
@@ -280,7 +281,7 @@ interface ApiInterface {
 
     @POST("api/add-card-net")
     suspend fun addPaymentCard(
-       @Body data : PaymentCardModel
+        @Body data: PaymentCardModel,
     ): CommonResponse
 
     @GET("api/get-card-net")
@@ -478,14 +479,14 @@ interface ApiInterface {
     suspend fun getKYCDetails(
     ): GetKYCDetailsRespnse
 
-	@Multipart
-	@POST("api/store-seller-verification")
-	suspend fun storeSellerVerification(
-		@Part idCard: MultipartBody.Part?,
-		@Part image: MultipartBody.Part?,
-		@Part("phone_verification") phoneVerification: RequestBody,
-		@Part("customerPaymentProfileId") cardId: RequestBody,
-	): CommonResponse
+    @Multipart
+    @POST("api/store-seller-verification")
+    suspend fun storeSellerVerification(
+        @Part idCard: MultipartBody.Part?,
+        @Part image: MultipartBody.Part?,
+        @Part("phone_verification") phoneVerification: RequestBody,
+        @Part("customerPaymentProfileId") cardId: RequestBody,
+    ): CommonResponse
 
 
     @POST("api/stripe/check-Kyc")
@@ -547,7 +548,7 @@ interface ApiInterface {
     @GET("api/get-pages-url/{slug}")
     suspend fun getPageUrl(
         @Path("slug") slug: String,
-        @Query("noheader") noheader: String = "1"
+        @Query("noheader") noheader: String = "1",
     ): PageUrlResponse
 
     @GET("api/seller-status")
@@ -557,25 +558,25 @@ interface ApiInterface {
     @Multipart
     @POST("api/set-default-shipping-address")
     suspend fun setDefaultShippingAddress(
-        @Part("address_id") addressId: RequestBody?
+        @Part("address_id") addressId: RequestBody?,
     ): SetDefaultAddressResponse
 
     @Multipart
     @POST("api/set-default-card")
     suspend fun setDefaultCard(
-        @Part("card_id") cardId: RequestBody?
+        @Part("card_id") cardId: RequestBody?,
     ): CommonResponse
 
     @Multipart
     @POST("api/delete-card-net")
     suspend fun deleteCard(
-        @Part("payment_profile_id") cardId: RequestBody?
+        @Part("payment_profile_id") cardId: RequestBody?,
     ): CommonResponse
 
     @Multipart
     @POST("api/delete-shipping-address")
     suspend fun deleteAddress(
-        @Part("address_id") addressId: RequestBody?
+        @Part("address_id") addressId: RequestBody?,
     ): CommonResponse
 
     @GET("api/get-states")
@@ -584,10 +585,8 @@ interface ApiInterface {
 
     @POST("api/delete-product")
     suspend fun deleteProduct(
-        @Query("product_id") productId: String?
+        @Query("product_id") productId: String?,
     ): CommonResponse
-
-
 
 
 }

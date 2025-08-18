@@ -84,8 +84,10 @@ class CategoryFragment : BaseFragment<DashViewModel, FragmentCategoryBinding>() 
 
     @SuppressLint("NotifyDataSetChanged")
     private fun loadCategories() {
+        bind.loader.visibility = View.VISIBLE
         viewModel.getCategory()
         viewModel.getCategoryRepo.observe(viewLifecycleOwner){
+            bind.loader.visibility = View.GONE
             when (it) {
                 is Resource.Success -> {
                     categoryList.clear()

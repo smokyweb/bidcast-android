@@ -115,11 +115,15 @@ class BidsFragment : BaseFragment<DashViewModel, FragmentBidsBinding>() {
                     bind.swipeRefreshLayout.isRefreshing =false
                     bind.bottomLoader.isVisible = false
 
-                    if (it.isNetworkError) {
+                    if (it.isNetworkError && mList.isEmpty()) {
                        bind.noInternet.isVisible = true
                         bind.recycler.isVisible = false
 
-                    } else {
+                    } else if (it.isNetworkError){
+                        errorToast("Network error - please check your connection")
+
+                    }
+                    else{
                         it.parse(mCtx, TAG, object : AlertClicks {
                             override fun primaryClick(dialog: AppBottomSheet) {
                                 dialog.dismiss()
