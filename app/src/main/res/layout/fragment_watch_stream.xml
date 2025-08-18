@@ -98,9 +98,9 @@
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="@dimen/half_margin"
                     android:minWidth="45dp"
-                    android:paddingHorizontal="@dimen/half_margin"
                     android:minHeight="0dp"
                     android:padding="6dp"
+                    android:paddingHorizontal="@dimen/half_margin"
                     android:text="0"
                     android:textSize="14sp" />
 
@@ -124,346 +124,358 @@
 
             </LinearLayout>
 
-            <View
-                android:id="@+id/view2"
+            <ScrollView
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                app:layout_constraintBottom_toTopOf="@id/controls"
-                app:layout_constraintTop_toBottomOf="@id/profileLayout" />
-
-
-            <LinearLayout
-                android:id="@+id/controls"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/live_show_background"
-                android:orientation="vertical"
+                android:fillViewport="true"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/view2">
+                app:layout_constraintTop_toBottomOf="@id/profileLayout">
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:gravity="bottom"
-                    android:layout_weight="1"
-                    android:orientation="horizontal">
-
-                    <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/recycler"
-                        android:layout_width="0dp"
-                        android:layout_height="200dp"
-                        android:layout_gravity="bottom"
-                        android:layout_marginEnd="32dp"
-                        android:layout_weight="1"
-                        android:nestedScrollingEnabled="true"
-                        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                        app:layout_constraintBottom_toTopOf="@id/message"
-                        app:layout_constraintDimensionRatio="1:1"
-                        app:reverseLayout="false"
-                        app:stackFromEnd="true"
-                        tools:itemCount="10"
-                        tools:listitem="@layout/live_comment_item" />
-
-                    <ScrollView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content">
-                        <LinearLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginEnd="@dimen/margin"
-                            android:gravity="center_horizontal"
-                            android:orientation="vertical"
-                            app:layout_constraintBottom_toTopOf="@+id/message"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintTop_toBottomOf="@id/rehearsalLayout">
-
-                            <com.google.android.material.card.MaterialCardView
-                                android:id="@+id/gift"
-                                style="@style/cardStyle"
-                                android:layout_width="48dp"
-                                android:layout_height="48dp"
-                                app:cardCornerRadius="100dp"
-                                android:layout_marginBottom="@dimen/half_margin"
-                                app:cardElevation="0dp">
-
-                                <androidx.appcompat.widget.AppCompatImageView
-                                    android:layout_width="match_parent"
-                                    android:layout_height="match_parent"
-                                    android:padding="12dp"
-                                    android:src="@drawable/ic_gift"
-                                    android:tint="@color/scrim" />
-
-                            </com.google.android.material.card.MaterialCardView>
-
-
-                            <com.google.android.material.card.MaterialCardView
-                                android:id="@+id/promote"
-                                style="@style/cardStyle"
-                                android:layout_width="48dp"
-                                android:layout_height="48dp"
-                                app:cardCornerRadius="100dp"
-                                android:layout_marginBottom="@dimen/half_margin"
-                                app:cardElevation="0dp">
-
-                                <androidx.appcompat.widget.AppCompatImageView
-                                    android:layout_width="match_parent"
-                                    android:layout_height="match_parent"
-                                    android:padding="12dp"
-                                    android:src="@drawable/ic_clip"
-                                    android:tint="@color/scrim" />
-
-                            </com.google.android.material.card.MaterialCardView>
-
-
-
-                            <com.google.android.material.card.MaterialCardView
-                                android:id="@+id/mic"
-                                style="@style/cardStyle"
-                                android:layout_width="48dp"
-                                android:layout_height="48dp"
-                                app:cardCornerRadius="100dp"
-                                android:layout_marginBottom="@dimen/half_margin"
-                                app:cardElevation="0dp">
-
-                                <androidx.appcompat.widget.AppCompatImageView
-                                    android:layout_width="match_parent"
-                                    android:layout_height="match_parent"
-                                    android:padding="12dp"
-                                    android:src="@drawable/share_arrow"
-                                    android:tint="@color/scrim" />
-
-                            </com.google.android.material.card.MaterialCardView>
-
-                            <com.google.android.material.card.MaterialCardView
-                                android:id="@+id/wallet"
-                                style="@style/cardStyle"
-                                android:layout_width="48dp"
-                                android:layout_height="48dp"
-                                app:cardCornerRadius="100dp"
-                                android:layout_marginBottom="@dimen/half_margin"
-                                app:cardElevation="0dp">
-
-                                <androidx.appcompat.widget.AppCompatImageView
-                                    android:layout_width="match_parent"
-                                    android:layout_height="match_parent"
-                                    android:padding="12dp"
-                                    android:src="@drawable/ic_walllet"
-                                    android:tint="@color/scrim" />
-
-                            </com.google.android.material.card.MaterialCardView>
-
-
-                            <com.google.android.material.card.MaterialCardView
-                                android:id="@+id/shop"
-                                style="@style/cardStyle"
-                                android:layout_width="48dp"
-                                android:layout_height="48dp"
-                                app:cardCornerRadius="100dp"
-                                android:layout_marginBottom="@dimen/margin"
-                                app:cardElevation="0dp">
-
-                                <androidx.appcompat.widget.AppCompatImageView
-                                    android:layout_width="match_parent"
-                                    android:layout_height="match_parent"
-                                    android:padding="12dp"
-                                    android:src="@drawable/ic_shop" />
-
-                            </com.google.android.material.card.MaterialCardView>
-
-                        </LinearLayout>
-                    </ScrollView>
-
-                </LinearLayout>
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/message"
-                    style="@style/inputBoxStyle"
-                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="@dimen/margin"
-                    android:layout_marginBottom="@dimen/half_margin"
-                    app:boxStrokeColor="@color/scrim"
-                    app:endIconDrawable="@drawable/ic_forward"
-                    app:endIconMode="custom"
-                    app:layout_constraintBottom_toTopOf="@id/product">
+                    android:orientation="vertical">
 
-                    <com.google.android.material.textfield.MaterialAutoCompleteTextView
-                        android:id="@+id/text"
-                        style="@style/inputTextStyle"
+                    <View
+                        android:id="@+id/view2"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:hint="@string/say_something"
-                        android:inputType="text"
-                        android:textColorHint="@color/scrim" />
-
-                </com.google.android.material.textfield.TextInputLayout>
-
-                <com.google.android.material.card.MaterialCardView
-                    android:id="@+id/product"
-                    style="@style/cardStyle"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="@dimen/margin"
-                    app:layout_constraintBottom_toTopOf="@id/bidLayout"
-                    app:layout_constraintStart_toStartOf="parent">
+                        android:layout_height="0dp"
+                        android:layout_weight="1"
+                        app:layout_constraintBottom_toTopOf="@id/controls" />
 
                     <LinearLayout
-                        android:id="@+id/product_layout"
+                        android:id="@+id/controls"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_margin="@dimen/half_margin"
-                        android:orientation="horizontal">
+                        android:background="@drawable/live_show_background"
+                        android:orientation="vertical"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/view2">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="0dp"
+                            android:layout_weight="1"
+                            android:gravity="bottom"
+                            android:orientation="horizontal">
+
+                            <androidx.recyclerview.widget.RecyclerView
+                                android:id="@+id/recycler"
+                                android:layout_width="0dp"
+                                android:layout_height="200dp"
+                                android:layout_gravity="bottom"
+                                android:layout_marginEnd="32dp"
+                                android:layout_weight="1"
+                                android:nestedScrollingEnabled="true"
+                                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                                app:layout_constraintBottom_toTopOf="@id/message"
+                                app:layout_constraintDimensionRatio="1:1"
+                                app:reverseLayout="false"
+                                app:stackFromEnd="true"
+                                tools:itemCount="10"
+                                tools:listitem="@layout/live_comment_item" />
+
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginEnd="@dimen/margin"
+                                android:gravity="center_horizontal"
+                                android:orientation="vertical"
+                                app:layout_constraintBottom_toTopOf="@+id/message"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintTop_toBottomOf="@id/rehearsalLayout">
+
+                                <com.google.android.material.card.MaterialCardView
+                                    android:id="@+id/gift"
+                                    style="@style/cardStyle"
+                                    android:layout_width="48dp"
+                                    android:layout_height="48dp"
+                                    android:layout_marginBottom="@dimen/half_margin"
+                                    app:cardCornerRadius="100dp"
+                                    app:cardElevation="0dp">
+
+                                    <androidx.appcompat.widget.AppCompatImageView
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:padding="12dp"
+                                        android:src="@drawable/ic_gift"
+                                        android:tint="@color/scrim" />
+
+                                </com.google.android.material.card.MaterialCardView>
+
+
+                                <com.google.android.material.card.MaterialCardView
+                                    android:id="@+id/promote"
+                                    style="@style/cardStyle"
+                                    android:layout_width="48dp"
+                                    android:layout_height="48dp"
+                                    android:layout_marginBottom="@dimen/half_margin"
+                                    app:cardCornerRadius="100dp"
+                                    app:cardElevation="0dp">
+
+                                    <androidx.appcompat.widget.AppCompatImageView
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:padding="12dp"
+                                        android:src="@drawable/ic_clip"
+                                        android:tint="@color/scrim" />
+
+                                </com.google.android.material.card.MaterialCardView>
+
+
+                                <com.google.android.material.card.MaterialCardView
+                                    android:id="@+id/mic"
+                                    style="@style/cardStyle"
+                                    android:layout_width="48dp"
+                                    android:layout_height="48dp"
+                                    android:layout_marginBottom="@dimen/half_margin"
+                                    app:cardCornerRadius="100dp"
+                                    app:cardElevation="0dp">
+
+                                    <androidx.appcompat.widget.AppCompatImageView
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:padding="12dp"
+                                        android:src="@drawable/share_arrow"
+                                        android:tint="@color/scrim" />
+
+                                </com.google.android.material.card.MaterialCardView>
+
+                                <com.google.android.material.card.MaterialCardView
+                                    android:id="@+id/wallet"
+                                    style="@style/cardStyle"
+                                    android:layout_width="48dp"
+                                    android:layout_height="48dp"
+                                    android:layout_marginBottom="@dimen/half_margin"
+                                    app:cardCornerRadius="100dp"
+                                    app:cardElevation="0dp">
+
+                                    <androidx.appcompat.widget.AppCompatImageView
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:padding="12dp"
+                                        android:src="@drawable/ic_walllet"
+                                        android:tint="@color/scrim" />
+
+                                </com.google.android.material.card.MaterialCardView>
+
+
+                                <com.google.android.material.card.MaterialCardView
+                                    android:id="@+id/shop"
+                                    style="@style/cardStyle"
+                                    android:layout_width="48dp"
+                                    android:layout_height="48dp"
+                                    android:layout_marginBottom="@dimen/margin"
+                                    app:cardCornerRadius="100dp"
+                                    app:cardElevation="0dp">
+
+                                    <androidx.appcompat.widget.AppCompatImageView
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:padding="12dp"
+                                        android:src="@drawable/ic_shop" />
+
+                                </com.google.android.material.card.MaterialCardView>
+
+                            </LinearLayout>
+
+                        </LinearLayout>
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:id="@+id/message"
+                            style="@style/inputBoxStyle"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginHorizontal="@dimen/margin"
+                            android:layout_marginBottom="@dimen/half_margin"
+                            app:boxStrokeColor="@color/scrim"
+                            app:endIconDrawable="@drawable/ic_forward"
+                            app:endIconMode="custom"
+                            app:layout_constraintBottom_toTopOf="@id/product">
+
+                            <com.google.android.material.textfield.MaterialAutoCompleteTextView
+                                android:id="@+id/text"
+                                style="@style/inputTextStyle"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:hint="@string/say_something"
+                                android:inputType="text"
+                                android:textColorHint="@color/scrim" />
+
+                        </com.google.android.material.textfield.TextInputLayout>
 
                         <com.google.android.material.card.MaterialCardView
+                            android:id="@+id/product"
                             style="@style/cardStyle"
-                            android:layout_width="80dp"
-                            android:layout_height="80dp"
-                            app:cardCornerRadius="10dp"
-                            app:cardElevation="0dp">
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginHorizontal="@dimen/margin"
+                            android:layout_marginBottom="@dimen/margin"
+                            app:layout_constraintBottom_toTopOf="@id/bidLayout"
+                            app:layout_constraintStart_toStartOf="parent">
 
-                            <androidx.appcompat.widget.AppCompatImageView
-                                android:id="@+id/productImage"
+                            <LinearLayout
+                                android:id="@+id/product_layout"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_margin="@dimen/half_margin"
+                                android:orientation="horizontal">
+
+                                <com.google.android.material.card.MaterialCardView
+                                    style="@style/cardStyle"
+                                    android:layout_width="80dp"
+                                    android:layout_height="80dp"
+                                    app:cardCornerRadius="10dp"
+                                    app:cardElevation="0dp">
+
+                                    <androidx.appcompat.widget.AppCompatImageView
+                                        android:id="@+id/productImage"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:scaleType="fitXY"
+                                        android:src="@drawable/shoe" />
+
+                                </com.google.android.material.card.MaterialCardView>
+
+                                <LinearLayout
+                                    android:layout_width="0dp"
+                                    android:layout_height="match_parent"
+                                    android:layout_marginHorizontal="@dimen/half_margin"
+                                    android:layout_weight="1"
+                                    android:gravity="center_vertical"
+                                    android:orientation="vertical">
+
+                                    <TextView
+                                        android:id="@+id/productName"
+                                        style="@style/TitleLarge"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:text="White Sneakers" />
+
+                                    <TextView
+                                        android:id="@+id/prod_sub_title"
+                                        style="@style/BodySmall"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:text="Sports &amp; Lifestyle" />
+
+                                    <TextView
+                                        android:id="@+id/quantity"
+                                        style="@style/BodySmall"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:text="Quantity: 1" />
+
+                                </LinearLayout>
+
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:id="@+id/sold_layout"
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
-                                android:scaleType="fitXY"
-                                android:src="@drawable/shoe" />
+                                android:layout_margin="@dimen/half_margin"
+                                android:layout_marginHorizontal="@dimen/half_margin"
+                                android:layout_weight="1"
+                                android:gravity="center_horizontal"
+                                android:orientation="vertical"
+                                android:visibility="gone">
+
+                                <TextView
+                                    android:id="@+id/soldOutText"
+                                    style="@style/TitleLarge"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Sold Out!" />
+
+                                <TextView
+                                    style="@style/BodySmall"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Please wait for next product" />
+
+                            </LinearLayout>
+
 
                         </com.google.android.material.card.MaterialCardView>
 
                         <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="match_parent"
-                            android:layout_marginHorizontal="@dimen/half_margin"
-                            android:layout_weight="1"
-                            android:gravity="center_vertical"
-                            android:orientation="vertical">
+                            android:id="@+id/bidLayout"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginHorizontal="@dimen/margin"
+                            android:layout_marginBottom="@dimen/half_margin"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toStartOf="parent">
 
-                            <TextView
-                                android:id="@+id/productName"
-                                style="@style/TitleLarge"
-                                android:layout_width="match_parent"
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/max"
+                                style="@style/appTonalBtn"
+                                android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="White Sneakers" />
+                                android:layout_marginEnd="@dimen/half_margin"
+                                android:minWidth="45dp"
+                                android:minHeight="0dp"
+                                android:paddingHorizontal="@dimen/half_margin"
+                                android:paddingVertical="12dp"
+                                android:text="Max"
+                                android:textSize="14sp" />
 
-                            <TextView
-                                android:id="@+id/prod_sub_title"
-                                style="@style/BodySmall"
-                                android:layout_width="match_parent"
+                            <com.ncorti.slidetoact.SlideToActView
+                                android:id="@+id/bid"
+                                android:layout_width="0dp"
                                 android:layout_height="wrap_content"
-                                android:text="Sports &amp; Lifestyle" />
+                                android:layout_weight="1"
+                                android:elevation="6dp"
+                                app:animation_duration="250"
+                                app:area_margin="4dp"
+                                app:border_radius="8dp"
+                                app:bounce_on_start="true"
+                                app:icon_margin="12dp"
+                                app:inner_color="@color/secondaryContainer"
+                                app:outer_color="@color/primary"
+                                app:slider_height="48dp"
+                                app:slider_icon="@drawable/ic_dollar_2"
+                                app:slider_icon_color="@color/onSurface"
+                                app:slider_locked="false"
+                                app:text="Swipe to Bid"
+                                app:text_appearance="@style/SlideButtonTitle" />
 
-                            <TextView
-                                android:id="@+id/quantity"
-                                style="@style/BodySmall"
-                                android:layout_width="match_parent"
+                            <LinearLayout
+                                android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Quantity: 1" />
+                                android:layout_marginStart="@dimen/half_margin"
+                                android:background="@drawable/card_8"
+                                android:gravity="center"
+                                android:orientation="vertical"
+                                android:padding="@dimen/half_margin">
+
+                                <TextView
+                                    android:id="@+id/bid_price"
+                                    style="@style/TitleMedium"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="$20" />
+
+                                <TextView
+                                    android:id="@+id/bid_time"
+                                    style="@style/BodyMedium"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="10 Sec"
+                                    android:textColor="@color/error" />
+
+                            </LinearLayout>
 
                         </LinearLayout>
 
                     </LinearLayout>
 
-                    <LinearLayout
-                        android:id="@+id/sold_layout"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_margin="@dimen/half_margin"
-                        android:layout_marginHorizontal="@dimen/half_margin"
-                        android:layout_weight="1"
-                        android:gravity="center_horizontal"
-                        android:orientation="vertical"
-                        android:visibility="gone">
-
-                        <TextView
-                            android:id="@+id/soldOutText"
-                            style="@style/TitleLarge"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Sold Out!" />
-
-                        <TextView
-                            style="@style/BodySmall"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Please wait for next product" />
-
-                    </LinearLayout>
-
-
-                </com.google.android.material.card.MaterialCardView>
-
-                <LinearLayout
-                    android:id="@+id/bidLayout"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="@dimen/margin"
-                    android:layout_marginVertical="@dimen/half_margin"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="parent">
-
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/max"
-                        style="@style/appTonalBtn"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="@dimen/half_margin"
-                        android:minWidth="45dp"
-                        android:paddingHorizontal="@dimen/half_margin"
-                        android:minHeight="0dp"
-                        android:paddingVertical="12dp"
-                        android:text="Max"
-                        android:textSize="14sp" />
-
-                    <com.ncorti.slidetoact.SlideToActView
-                        android:id="@+id/bid"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:elevation="6dp"
-                        app:animation_duration="250"
-                        app:area_margin="4dp"
-                        app:border_radius="8dp"
-                        app:bounce_on_start="true"
-                        app:icon_margin="12dp"
-                        app:inner_color="@color/secondaryContainer"
-                        app:outer_color="@color/primary"
-                        app:slider_height="48dp"
-                        app:slider_icon="@drawable/ic_dollar_2"
-                        app:slider_icon_color="@color/onSurface"
-                        app:slider_locked="false"
-                        app:text="Swipe to Bid"
-                        app:text_appearance="@style/SlideButtonTitle" />
-
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="@dimen/half_margin"
-                        android:background="@drawable/card_8"
-                        android:gravity="center"
-                        android:orientation="vertical"
-                        android:padding="@dimen/half_margin">
-
-                        <TextView
-                            android:id="@+id/bid_price"
-                            style="@style/TitleMedium"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="$20" />
-
-                        <TextView
-                            android:id="@+id/bid_time"
-                            style="@style/BodyMedium"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:textColor="@color/error"
-                            android:text="10 Sec" />
-
-                    </LinearLayout>
-
                 </LinearLayout>
 
-            </LinearLayout>
+            </ScrollView>
+
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

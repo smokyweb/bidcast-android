@@ -28,6 +28,7 @@ class App : Application() {
         var PIPMode: Boolean = false
         var isUserOnChatScreen: Boolean = false
         val profileResponse = MutableLiveData<UserProfileResponse.Data?>()
+        val interests = mutableListOf<String?>()
 
         fun getProfile() {
             CoroutineScope(Dispatchers.IO).launch {
@@ -47,6 +48,7 @@ class App : Application() {
                 }
             }
         }
+
     }
 
     override fun onCreate() {

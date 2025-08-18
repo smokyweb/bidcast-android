@@ -99,6 +99,7 @@ class DashActivity : BaseActivity(), NavController.OnDestinationChangedListener 
             viewModel.storeDeviceDetails(it.request())
         }
 
+
         requestPerms(Const.PERMISSIONS) { per ->
 
         }

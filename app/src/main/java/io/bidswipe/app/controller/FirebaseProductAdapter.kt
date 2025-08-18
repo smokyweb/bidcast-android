@@ -4,43 +4,34 @@ import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
+import androidx.core.text.bold
 import androidx.core.text.buildSpannedString
 import androidx.core.text.color
-import androidx.core.view.isVisible
 import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseAdapter
-import io.bidswipe.app.databinding.ProductListItemBinding
+import io.bidswipe.app.databinding.ProductSelectionItemBinding
 import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.model.LiveShowModel
+import io.bidswipe.app.utils.asCapital
 import io.bidswipe.app.utils.asMoney
 import io.bidswipe.app.utils.loadUrl
 
 class FirebaseProductAdapter(
 	val mList: MutableList<LiveShowModel.Product?>, val mClicks: RecyclerClicks,
-) : BaseAdapter<LiveShowModel.Product?, ProductListItemBinding>(mList) {
+) : BaseAdapter<LiveShowModel.Product?, ProductSelectionItemBinding>(mList) {
 
 	override fun bindView(inflater: LayoutInflater, parent: ViewGroup) =
-		ProductListItemBinding.inflate(inflater, parent, false)
+		ProductSelectionItemBinding.inflate(inflater, parent, false)
 
 	override fun onBind(
-		holder: BaseViewHolder<ProductListItemBinding>,
+		holder: BaseViewHolder<ProductSelectionItemBinding>,
 		position: Int,
 		item: LiveShowModel.Product?,
 	) {
 		with(holder) {
 
-			bind.topLayout.isVisible = false
-
 			bind.root.setOnClickListener {
 				mClicks.itemClick(position, "select")
-			}
-
-			bind.edit.setOnClickListener {
-				mClicks.itemClick(position, "edit")
-			}
-
-			bind.trash.setOnClickListener {
-				mClicks.itemClick(position, "delete")
 			}
 
 			bind.root.alpha = if (item?.status == "sold") 0.5f else 1f
@@ -48,11 +39,11 @@ class FirebaseProductAdapter(
 			bind.quantity.text = buildSpannedString {
 				append("Status: ")
 				if (item?.status == "sold") {
-					color(Color.RED) {
+					bold { color(Color.RED) {
 						append(item.status)
-					}
+					} }
 				} else {
-					append(item?.status)
+					bold { append(item?.status) }
 				}
 			}
 
@@ -64,12 +55,11 @@ class FirebaseProductAdapter(
 			}
 
 			bind.prodSubTitle.text = buildString {
-				append("Price: ")
 				append(item?.price?.asMoney())
 			}
 
 
-			bind.productName.text = item?.name
+			bind.productName.text = item?.name?.asCapital()
 
 			bind.img.loadUrl(mCtx, item?.image ?:"")
 

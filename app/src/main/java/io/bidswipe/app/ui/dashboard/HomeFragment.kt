@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.content.ContextCompat
+import androidx.core.view.get
 import androidx.core.view.isVisible
 import androidx.navigation.fragment.findNavController
 import io.bidswipe.app.App
@@ -42,8 +43,10 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
 
     private lateinit var homeAdapter: HomeAdapter
     private var showList = mutableListOf<GetMyShowResponse.Data?>()
-    private var categoriesList = mutableListOf<String>()
+    private var categoriesList = mutableListOf<String?>()
     private var romIdsList = mutableListOf<StreamModel>()
+
+    private var selectedCategory = ""
 
     private val mClick = object : RecyclerClicks {
         override fun itemClick(pos: Int, status: String?) {
@@ -112,13 +115,17 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
         }
 
         bind.swipeRefreshLayout.setOnRefreshListener {
-            viewModel.getLiveShow(selectedTabText.request())
+//            viewModel.getLiveShow(selectedTabText.request())
+            viewModel.getCategory()
         }
 
         bind.noInternet.onClick {
             bind.loader.isVisible = true
             bind.noInternet.isVisible = false
+/*
             viewModel.getLiveShow(selectedTabText.request())
+*/
+            viewModel.getCategory()
         }
 
         selectTab(bind.live)
@@ -127,30 +134,76 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
         bind.popular.setOnClickListener { selectTab(it as TextView) }
         bind.comingSoon.setOnClickListener { selectTab(it as TextView) }
 
-        categoriesList = mutableListOf("For You", "Collectibles", "Trading Cards")
-        categoriesList.forEach {
-            bind.chipGroup.addView(
-                Utils.makeAChip(
-                    mCtx = mCtx,
-                    text = it,
-                    selected = false
-                )
-            )
-        }
+//        categoriesList = mutableListOf("For You", "Collectibles", "Trading Cards")
 
         bind.chipGroup.setOnCheckedStateChangeListener { chipGroup, _ ->
             runSafe {
                 val chipId = chipGroup.checkedChipId
-                chipGroup.indexOfChild(chipGroup.findViewById(chipId))
+               val index = chipGroup.indexOfChild(chipGroup.findViewById(chipId))
+                if (categoriesList[index].toString() == "For You"){
+                    selectedCategory = "for_you"
+                }
+                bind.loader.isVisible = true
+                viewModel.getLiveShow(selectedTabText.request(), selectedCategory.request())
             }
         }
 
         bind.loader.isVisible = true
 
-        viewModel.getLiveShow(selectedTabText.request())
+        viewModel.getCategory()
+        viewModel.getCategoryRepo.observe(viewLifecycleOwner){
+            when (it) {
+                is Resource.Success -> {
+
+                    val mData = it.value.data
+                    bind.chipGroup.removeAllViews()
+                    categoriesList.clear()
+
+                    categoriesList.add("For You")
+                    categoriesList.addAll(mData?.filter { it?.isSelected == true }?.map{category -> category?.name} ?: emptyList())
+
+                    log("categoriesList : $categoriesList")
+
+                    categoriesList.forEach {
+                        bind.chipGroup.addView(
+                            Utils.makeAChip(
+                                mCtx = mCtx,
+                                text = it ?:"",
+                                selected = false
+                            )
+                        )
+                    }
+
+                    bind.chipGroup.check(bind.chipGroup[0].id)
+
+                }
+                is Resource.Error -> {
+                    if (it.isNetworkError) {
+
+                    } else {
+                        it.parse(mCtx, TAG, object : AlertClicks {
+                            override fun primaryClick(dialog: AppBottomSheet) {
+                                dialog.dismiss()
+
+                            }
+
+                            override fun secondaryClick(dialog: AppBottomSheet) {
+                                dialog.dismiss()
+
+                            }
+                        })
+                    }
+                }
+                else -> {}
+            }
+        }
+
+//        viewModel.getLiveShow(selectedTabText.request())
+
         viewModel.getLiveShowRepo.observe(viewLifecycleOwner) { it ->
             when (it) {
                 is Resource.Success -> {
+
                     bind.loader.isVisible = false
                     bind.swipeRefreshLayout.isRefreshing = false
                     bind.noInternet.isVisible = false
@@ -221,19 +274,19 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
             bind.live -> {
                 bind.loader.isVisible = true
                 selectedTabText = "live"
-                viewModel.getLiveShow("live".request())
+                viewModel.getLiveShow("live".request(),selectedCategory.request())
             }
 
             bind.popular -> {
                 bind.loader.isVisible = true
                 selectedTabText = "popular"
-                viewModel.getLiveShow("popular".request())
+                viewModel.getLiveShow("popular".request(),selectedCategory.request())
             }
 
             bind.comingSoon -> {
                 bind.loader.isVisible = true
                 selectedTabText = "upcoming"
-                viewModel.getLiveShow("upcoming".request())
+                viewModel.getLiveShow("upcoming".request(),selectedCategory.request())
             }
 
         }

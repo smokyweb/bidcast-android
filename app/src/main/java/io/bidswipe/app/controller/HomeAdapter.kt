@@ -44,7 +44,6 @@ class HomeAdapter(
             bind.thumbnail.loadUrl(mCtx, item?.thumbnail?.get(0).toString())
 
             bind.title.text = item?.title.toString().asCapital()
-            bind.category.text = item?.category?.name?.asCapital()
 
         }
     }

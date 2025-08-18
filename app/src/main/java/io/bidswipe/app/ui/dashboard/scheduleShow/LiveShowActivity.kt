@@ -82,8 +82,9 @@ import io.bidswipe.app.utils.Const
 import io.bidswipe.app.utils.FireRef
 import io.bidswipe.app.utils.Utils
 import io.bidswipe.app.utils.bind
-import io.bidswipe.app.utils.clr
+import io.bidswipe.app.utils.dpToPx
 import io.bidswipe.app.utils.draw
+import io.bidswipe.app.utils.hideKeyboard
 import io.bidswipe.app.utils.loadUrl
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request
@@ -152,20 +153,20 @@ class LiveShowActivity : BaseActivity() {
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
+
 		setContentView(bind.root)
 
 		immersionBar {
 			transparentBar()
-			navigationBarDarkIcon(true)
-			navigationBarColor(clr.surface)
+			navigationBarColor(R.color.transparent)
 			supportActionBar(false)
-			fitsSystemWindows(false)
 			keyboardEnable(true)
 		}
 
 		initPip()
 
-		bind.root.setMargins(0, 0, 0, navigationBarHeight)
+		bind.message.setMargins(resources.dpToPx(16), resources.dpToPx(16), resources.dpToPx(16), navigationBarHeight)
+		bind.startBtn.setMargins(resources.dpToPx(16), resources.dpToPx(0), resources.dpToPx(16), navigationBarHeight)
 
 		commentAdapter = CommentAdapter(commentList)
 
@@ -174,6 +175,10 @@ class LiveShowActivity : BaseActivity() {
 		showId = intent.getStringExtra("showId") ?: ""
 
 		bind.hostName.text = userName
+
+		bind.controls.setOnClickListener {
+			hideKeyboard()
+		}
 
 		bind.hostImage.loadUrl(this, userImage)
 
@@ -198,10 +203,12 @@ class LiveShowActivity : BaseActivity() {
 		}
 
 		bind.cutButton.setOnClickListener {
-			endShowSheet()
-			/*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-				enterPictureInPictureMode(pipParams)
-			}*/
+			if (::zim.isInitialized){
+				endShowSheet()
+			}else{
+				finishAfterTransition()
+			}
+
 		}
 
 		bind.message.setEndIconOnClickListener {
@@ -227,8 +234,11 @@ class LiveShowActivity : BaseActivity() {
 
 		bind.shop.setOnClickListener {
 
-			showProductSheet()
-//			shopSheet()
+			if (::zim.isInitialized){
+				showProductSheet()
+			}else{
+				Alerts.error(this,"Please start live show to access this feature")
+			}
 
 		}
 

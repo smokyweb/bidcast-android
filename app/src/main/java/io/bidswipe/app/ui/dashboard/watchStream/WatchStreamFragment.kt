@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -56,6 +57,7 @@ import io.bidswipe.app.utils.Utils
 import io.bidswipe.app.utils.asMoney
 import io.bidswipe.app.utils.draw
 import io.bidswipe.app.utils.finish
+import io.bidswipe.app.utils.hideKeyboard
 import io.bidswipe.app.utils.loadUrl
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request
@@ -80,6 +82,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 	private var commentList = mutableListOf<LiveChatModel?>()
 	private lateinit var commentAdapter: CommentAdapter
 	private var product: LiveShowModel.Product? = null
+	private var inputSheet : BottomSheetDialog? = null
 
 	companion object {
 		fun newInstance(roomID: String, streamID: String) = WatchStreamFragment().apply {
@@ -119,11 +122,16 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 				// Determine sale status once
 				val isSold = currentProduct?.status == "sold"
 				bind.soldLayout.isVisible = isSold
+				bind.bidLayout.isVisible = !isSold
+
+				if (isSold){
+					inputSheet?.dismiss()
+				}
+
 				bind.productLayout.isVisible = !isSold
 
 				if (isSold && data.highestBid?.userId == userId) {
 					bind.soldOutText.text = "You won the bid"
-
 				}
 
 				// Show bid countdown if available
@@ -160,6 +168,10 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
 		bind.cutButton.setOnClickListener {
 			finish()
+		}
+
+		bind.controls.setOnClickListener {
+			hideKeyboard(it)
 		}
 
 		commentAdapter = CommentAdapter(commentList)
@@ -407,7 +419,6 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 				is Resource.Success -> {
 
 					val mData = it.value.data
-
 					if (mData?.status == true) {
 						bind.follow.setBackgroundColor(ContextCompat.getColor(mCtx, R.color.outline))
 						bind.follow.setTextColor(ContextCompat.getColor(mCtx, R.color.onSurface))
@@ -499,7 +510,6 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 	private fun stopStream() {
 		ZegoExpressEngine.getEngine().stopPlayingStream(roomID)
 		ZegoExpressEngine.getEngine().logoutRoom(roomID)
-
 	}
 
 	private fun destroyEngine() {
@@ -663,8 +673,8 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 				false
 			)
 		)
+		inputSheet = Alerts.appBottomSheet(mCtx, true, inputSheetBind)
 
-		val inputSheet = Alerts.appBottomSheet(mCtx, true, inputSheetBind)
 
 		inputSheetBind.submitBtn.setOnClickListener {
 			val ref = FireRef.LIVE_SESSIONS.child(roomID).child("highestBid")
@@ -696,7 +706,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
 							Alerts.success(mCtx, "Bid placed successfully")
 
-							inputSheet.dismiss()
+							inputSheet?.dismiss()
 						}
 					}
 
@@ -710,10 +720,10 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 		}
 
 		inputSheetBind.close.setOnClickListener {
-			inputSheet.dismiss()
+			inputSheet?.dismiss()
 		}
 
-		inputSheet.show()
+		inputSheet?.show()
 	}
 
 	@SuppressLint("ClickableViewAccessibility")

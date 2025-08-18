@@ -83,7 +83,6 @@ class ProductDetailsFragment : BaseFragment<ProductViewModel, FragmentProductDet
             showOfferSheet()
         }
 
-
         bind.loader.isVisible = true
         viewModel.getProductDetails(productId.request())
 
