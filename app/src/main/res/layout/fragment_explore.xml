@@ -14,16 +14,16 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:showBackButton="false"/>
+        app:showBackButton="false" />
 
     <net.cachapa.expandablelayout.ExpandableLayout
         android:id="@+id/searchExpandLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/half_margin"
         app:el_duration="500"
         app:el_expanded="true"
         app:el_parallax="1"
-        android:layout_marginTop="@dimen/half_margin"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/header">
@@ -40,7 +40,7 @@
             app:startIconTint="@color/scrim">
 
             <com.google.android.material.textfield.MaterialAutoCompleteTextView
-                android:id="@+id/email"
+                android:id="@+id/search"
                 style="@style/inputTextStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -55,9 +55,9 @@
         android:id="@+id/heading"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
         android:layout_marginHorizontal="@dimen/margin"
         android:layout_marginVertical="@dimen/half_margin"
+        android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/searchExpandLayout">
@@ -122,14 +122,25 @@
                 tools:itemCount="6"
                 tools:listitem="@layout/explore_item" />
 
-                <io.bidswipe.app.ui.custom.NoDataView
-                    android:id="@+id/noInternet"
-                    style="@style/noInternetStyle"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:visibility="gone"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+            <io.bidswipe.app.ui.custom.NoDataView
+                android:id="@+id/noInternet"
+                style="@style/noInternetStyle"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <io.bidswipe.app.ui.custom.NoDataView
+                android:id="@+id/noData"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:title_text="No Results Found"/>
+
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

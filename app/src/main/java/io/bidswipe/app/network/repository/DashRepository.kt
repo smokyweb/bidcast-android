@@ -22,7 +22,11 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
 
     suspend fun getPrivacyPolicy() = call { api.getPrivacyPolicy() }
 
-    suspend fun getCategory(categoryId: String? = null, type: String? = null) = call { api.getCategory(categoryId, type) }
+    suspend fun getCategory(
+        categoryId: String? = null,
+        type: String? = null,
+        search: String? = null
+    ) = call { api.getCategory(categoryId, type, search) }
 
     suspend fun getSubCategories(
         categoryIds: List<Int>, subCategoryIds: List<Int>? = null

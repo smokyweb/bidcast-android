@@ -64,9 +64,10 @@ class DashViewModel @Inject constructor(val repo: DashRepository) : ViewModel() 
 
     fun getCategory(
 	    categoryId: String? = null,
-        type: String? = null
+        type: String? = null,
+        search: String? = null
     ) = viewModelScope.launch {
-        _getCategoryResponse.value = repo.getCategory(categoryId,type)
+        _getCategoryResponse.value = repo.getCategory(categoryId,type,search)
     }
 
     private var _getSubCategoriesResponse = MutableLiveData<Resource<GetSubCategoriesResponse>>()

@@ -40,7 +40,6 @@ class BidsFragment : BaseFragment<DashViewModel, FragmentBidsBinding>() {
         super.onViewCreated(view, savedInstanceState)
 
         bidsAdapter = BidsAdapter(mList, mClick)
-
         bind.recycler.adapter = bidsAdapter
 
         bind.swipeRefreshLayout.setOnRefreshListener {
@@ -74,7 +73,7 @@ class BidsFragment : BaseFragment<DashViewModel, FragmentBidsBinding>() {
 
         bind.loader.isVisible = true
 
-        viewModel.fetchBids("1")
+        viewModel.fetchBids(page.toString())
         viewModel.fetchBidsRepo.observe(viewLifecycleOwner) {
             when (it) {
                 is Resource.Success -> {
@@ -88,7 +87,6 @@ class BidsFragment : BaseFragment<DashViewModel, FragmentBidsBinding>() {
                     if (page ==1){
                         mList.clear()
                     }
-
 
                     if (mData != null) {
                         mList.addAll(mData)
@@ -104,8 +102,6 @@ class BidsFragment : BaseFragment<DashViewModel, FragmentBidsBinding>() {
 
                     isLoading = page >= (it.value.totalPage ?: 0)
 
-                    log("SIZE : ${mList.size} ")
-
                     bidsAdapter.notifyDataSetChanged()
 
                 }
@@ -119,11 +115,7 @@ class BidsFragment : BaseFragment<DashViewModel, FragmentBidsBinding>() {
                        bind.noInternet.isVisible = true
                         bind.recycler.isVisible = false
 
-                    } else if (it.isNetworkError){
-                        errorToast("Network error - please check your connection")
-
-                    }
-                    else{
+                    } else{
                         it.parse(mCtx, TAG, object : AlertClicks {
                             override fun primaryClick(dialog: AppBottomSheet) {
                                 dialog.dismiss()

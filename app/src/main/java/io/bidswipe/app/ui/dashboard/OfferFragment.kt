@@ -6,13 +6,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
-import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseFragment
 import io.bidswipe.app.controller.OffersAdapter
 import io.bidswipe.app.databinding.FragmentOfferBinding
+import io.bidswipe.app.interfaces.AlertClicks
 import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.network.response.GetOffersResponse
+import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request
 
@@ -115,10 +116,24 @@ class OfferFragment : BaseFragment<DashViewModel, FragmentOfferBinding>() {
 				
 				is Resource.Error -> {
 					bind.loader.isVisible = false
+					bind.swipeRefreshLayout.isRefreshing =false
+
 					if (it.isNetworkError) {
-						errorToast(getString(R.string.no_internet))
+						bind.noInternet.isVisible = true
+						bind.recycler.isVisible = false
+
 					} else {
-						it.parse(mCtx, TAG)
+						it.parse(mCtx, TAG, object : AlertClicks {
+							override fun primaryClick(dialog: AppBottomSheet) {
+								dialog.dismiss()
+
+							}
+
+							override fun secondaryClick(dialog: AppBottomSheet) {
+								dialog.dismiss()
+
+							}
+						})
 					}
 				}
 				

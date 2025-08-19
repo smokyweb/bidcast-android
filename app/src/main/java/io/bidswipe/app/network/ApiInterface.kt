@@ -124,6 +124,7 @@ interface ApiInterface {
     suspend fun getCategory(
         @Query("category_id") categoryId: String? = null,
         @Query("type") type: String? = null,
+        @Query("search") search: String? = null,
     ): GetCategoryResponse
 
     @POST("api/get-subcategories")
