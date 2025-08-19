@@ -36,6 +36,7 @@ object Alerts {
 
     fun appAlert(mCtx: Context, isCancelable: Boolean = false, view: ViewBinding) =
         AlertDialog.Builder(mCtx).apply {
+
             setView(view.root)
             setCancelable(isCancelable)
         }.create().also {

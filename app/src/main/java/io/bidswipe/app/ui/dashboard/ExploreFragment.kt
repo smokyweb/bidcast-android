@@ -25,6 +25,7 @@ import io.bidswipe.app.utils.ids
 import io.bidswipe.app.utils.parse
 
 class ExploreFragment : BaseFragment<DashViewModel, FragmentExploreBinding>() {
+
     override fun getModel(): Class<DashViewModel> = DashViewModel::class.java
 
     override fun getBind(inflater: LayoutInflater, view: ViewGroup?) =
@@ -84,7 +85,7 @@ class ExploreFragment : BaseFragment<DashViewModel, FragmentExploreBinding>() {
             bind.noInternet.isVisible = false
 
             when {
-                bind.searchExpandLayout.isExpanded -> viewModel.getCategory()
+//                bind.searchExpandLayout.isExpanded -> viewModel.getCategory()
                 bind.recommended.isSelected -> viewModel.getCategory(type = "recommended")
                 bind.popular.isSelected -> viewModel.getCategory(type = "popular")
                 bind.all.isSelected -> viewModel.getCategory()

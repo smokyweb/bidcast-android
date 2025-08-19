@@ -15,6 +15,7 @@ import im.zego.zegoexpress.constants.ZegoScenario
 import im.zego.zegoexpress.entity.ZegoEngineProfile
 import im.zego.zim.ZIM
 import im.zego.zim.entity.ZIMAppConfig
+import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseActivity
 import io.bidswipe.app.controller.StreamPagerAdapter
 import io.bidswipe.app.databinding.ActivityViewLiveShowBinding
@@ -23,6 +24,7 @@ import io.bidswipe.app.utils.Const
 import io.bidswipe.app.utils.FireRef
 import io.bidswipe.app.utils.bind
 import io.bidswipe.app.utils.clr
+import io.bidswipe.app.utils.dpToPx
 import io.bidswipe.app.utils.runSafe
 import io.bidswipe.app.utils.setMargins
 
@@ -81,14 +83,14 @@ class ViewLiveShowActivity : BaseActivity() {
 
 		immersionBar {
 			transparentBar()
-			navigationBarDarkIcon(true)
-			navigationBarColor(clr.transparent)
+			navigationBarColor(R.color.transparent)
 			supportActionBar(false)
-			fitsSystemWindows(false)
 			keyboardEnable(true)
 		}
 
-		bind.root.setMargins(0, 0, 0, navigationBarHeight)
+		bind.root.setMargins(resources.dpToPx(16), resources.dpToPx(16), resources.dpToPx(16), navigationBarHeight)
+//		bind.startBtn.setMargins(resources.dpToPx(16), resources.dpToPx(0), resources.dpToPx(16), navigationBarHeight)
+
 
 		val showId = intent.getStringExtra("showId")
 

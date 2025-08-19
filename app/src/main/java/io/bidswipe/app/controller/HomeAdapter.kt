@@ -45,6 +45,8 @@ class HomeAdapter(
 
             bind.title.text = item?.title.toString().asCapital()
 
+            bind.category.text = item?.category?.name
+
         }
     }
 }

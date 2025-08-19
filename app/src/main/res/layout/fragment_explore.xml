@@ -21,8 +21,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:el_duration="500"
-        app:el_expanded="false"
+        app:el_expanded="true"
         app:el_parallax="1"
+        android:layout_marginTop="@dimen/half_margin"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/header">
@@ -33,7 +34,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="@dimen/margin"
-            android:layout_marginBottom="@dimen/margin"
             app:boxBackgroundColor="@color/surface"
             app:boxStrokeWidth="2dp"
             app:startIconDrawable="@drawable/search"
@@ -47,6 +47,7 @@
                 android:hint="@string/what_are_you_looking_for"
                 android:inputType="textEmailAddress" />
         </com.google.android.material.textfield.TextInputLayout>
+
     </net.cachapa.expandablelayout.ExpandableLayout>
 
 
@@ -55,11 +56,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:background="@color/onPrimary"
         android:layout_marginHorizontal="@dimen/margin"
-        android:layout_marginBottom="@dimen/margin"
-        android:layout_marginStart="@dimen/margin"
-        android:paddingBottom="@dimen/half_margin"
+        android:layout_marginVertical="@dimen/half_margin"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/searchExpandLayout">

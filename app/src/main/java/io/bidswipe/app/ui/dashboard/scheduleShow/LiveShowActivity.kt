@@ -67,6 +67,7 @@ import io.bidswipe.app.databinding.ProductSheetBinding
 import io.bidswipe.app.databinding.PromoteShowSheetBinding
 import io.bidswipe.app.databinding.ShareSheetBinding
 import io.bidswipe.app.databinding.ShopSheetBinding
+import io.bidswipe.app.databinding.ShowConfirmationAlertBinding
 import io.bidswipe.app.interfaces.AlertClicks
 import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.model.LiveChatModel
@@ -165,7 +166,7 @@ class LiveShowActivity : BaseActivity() {
 
 		initPip()
 
-		bind.message.setMargins(resources.dpToPx(16), resources.dpToPx(16), resources.dpToPx(16), navigationBarHeight)
+		bind.message.setMargins(resources.dpToPx(16), resources.dpToPx(16), resources.dpToPx(16), resources.dpToPx(16))
 		bind.startBtn.setMargins(resources.dpToPx(16), resources.dpToPx(0), resources.dpToPx(16), navigationBarHeight)
 
 		commentAdapter = CommentAdapter(commentList)
@@ -248,9 +249,7 @@ class LiveShowActivity : BaseActivity() {
 
 		bind.startBtn.setOnClickListener {
 
-			bind.loader.isVisible = true
-
-			viewModel.updateLiveStatus(showId.request(), "true".request())
+			showConfirmationAlert()
 
 		}
 
@@ -303,6 +302,7 @@ class LiveShowActivity : BaseActivity() {
 					bind.loader.isVisible = false
 
 					val mData = it.value.data
+					bind.message.setMargins(resources.dpToPx(16), resources.dpToPx(16), resources.dpToPx(16), navigationBarHeight)
 
 					if (liveStatus) {
 
@@ -1280,6 +1280,23 @@ class LiveShowActivity : BaseActivity() {
 		} else {
 			Alerts.log(javaClass.simpleName, "ALREADY IN PIP MODE")
 		}
+	}
+
+	fun showConfirmationAlert(){
+
+		val showConfirmationSheetBind = ShowConfirmationAlertBinding.bind(layoutInflater.inflate(R.layout.show_confirmation_alert, null, false))
+		val showConfirmationSheet = Alerts.appAlert(this, true, showConfirmationSheetBind)
+
+		showConfirmationSheetBind.startBtn.setOnClickListener {
+			showConfirmationSheet.dismiss()
+			bind.loader.isVisible = true
+
+			viewModel.updateLiveStatus(showId.request(), "true".request())
+		}
+
+		showConfirmationSheet.show()
+
+
 	}
 
 }
