@@ -27,7 +27,10 @@ class BidsAdapter(
     ) {
         with(holder) {
 
-            bind.userName.text = item?.user?.username?.asCapital()
+            bind.userName.text = buildString {
+                append(item?.user?.name?.asCapital())
+            }
+
             bind.userImage.loadUrl(mCtx, item?.user?.profileImage.toString())
             bind.offerPrice.text = item?.product?.pricing.toString().asMoney()
             bind.productName.text = item?.product?.title?.asCapital()

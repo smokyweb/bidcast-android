@@ -474,6 +474,10 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 		stopStream()
 	}
 
+	override fun onDestroy() {
+		super.onDestroy()
+		ZIM.getInstance().setEventHandler(null)	}
+
 	private fun loginAndPlay() {
 		val user = ZegoUser(userName.replace(" ", ".") + "_" + userId, userImage)
 		ZegoExpressEngine.getEngine().loginRoom(roomID, user, ZegoRoomConfig())

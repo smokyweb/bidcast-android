@@ -60,7 +60,7 @@ data class FetchBidResponse(
             @SerializedName("images")
             val images: List<String?>?,
             @SerializedName("pricing")
-            val pricing: Double?,
+            val pricing: String?,
             @SerializedName("product_show")
             val productShow: String?,
             @SerializedName("purchased_quantity")

@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.widget.PopupMenu
-import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.core.content.ContextCompat
@@ -114,6 +113,14 @@ class SellerProfileActivity : BaseActivity() {
 
         bind.moreIcon1.setOnClickListener {
             menu1.show()
+        }
+
+        bind.share1.setOnClickListener {
+            shareSellerProfile()
+        }
+
+        bind.notificationIcon1.setOnClickListener {
+            showNotificationSheet()
         }
 
         bind.appBar.addOnOffsetChangedListener { _, verticalOffset ->

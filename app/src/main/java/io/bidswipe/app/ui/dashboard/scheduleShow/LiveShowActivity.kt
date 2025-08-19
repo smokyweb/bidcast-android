@@ -47,6 +47,7 @@ import im.zego.zim.entity.ZIMRoomInfo
 import im.zego.zim.entity.ZIMTextMessage
 import im.zego.zim.entity.ZIMUserInfo
 import im.zego.zim.enums.ZIMConversationType
+import im.zego.zim.enums.ZIMErrorCode
 import im.zego.zim.enums.ZIMMessagePriority
 import im.zego.zim.enums.ZIMRoomEvent
 import im.zego.zim.enums.ZIMRoomState
@@ -330,7 +331,6 @@ class LiveShowActivity : BaseActivity() {
 							override fun primaryClick(dialog: AppBottomSheet) {
 								dialog.dismiss()
 								finish()
-
 							}
 
 							override fun secondaryClick(dialog: AppBottomSheet) {
@@ -364,7 +364,6 @@ class LiveShowActivity : BaseActivity() {
 					)
 
 					if ((liveData?.products?.size ?: 0) > 1) {
-
 
 						showProductSheet()
 
@@ -476,7 +475,26 @@ class LiveShowActivity : BaseActivity() {
 					it.roomName = roomID + "_room"
 				}
 
-					zim.createRoom(roomInfo) { roomInfo, errorInfo ->
+				zim.createRoom(roomInfo) { roomInfoo, errorInfo ->
+
+					when(errorInfo.code){
+						ZIMErrorCode.SUCCESS->{
+							log("CREATED ROOM : $roomInfoo")
+							onRoomJoinedOrCreatedSuccessfully(roomInfo.roomID )
+						}
+
+						ZIMErrorCode.THE_ROOM_ALREADY_EXISTS ->{
+							log("ROOM ALREADY EXISTS")
+							joinExistingZimRoom(roomID)
+						}
+
+						else -> {
+							log("FAILED TO CREATE ROOM")
+						}
+					}
+				}
+
+					/*zim.createRoom(roomInfo) { roomInfo, errorInfo ->
 					if (errorInfo != null) {
 						log("CREATED ROOM : $roomInfo")
 
@@ -484,11 +502,31 @@ class LiveShowActivity : BaseActivity() {
 					} else {
 						log("CREATE ROOM ERROR : ${errorInfo.toString()}")
 					}
-				}
+				}*/
 			} else {
 				log("LOG IN ROOM ERROR : ${error.toString()}")
 			}
 		}
+
+	}
+
+	private fun joinExistingZimRoom(roomIDToJoin: String) {
+		val zim = ZIM.getInstance()
+		zim.joinRoom(roomIDToJoin) { joinedRoomInfo, joinError ->
+			if (joinError.code == ZIMErrorCode.SUCCESS) {
+				log("Successfully JOINED existing ZIM room: ID '${roomID}', Name: '${joinedRoomInfo}'")
+				onRoomJoinedOrCreatedSuccessfully(roomID?: roomIDToJoin)
+			} else {
+				log("Failed to JOIN existing ZIM room '$roomIDToJoin' after create attempt failed. Code: ${joinError.code}, Message: ${joinError.message}")
+				// Handle join room errors (this is a more critical failure if create also failed)
+				// showToast("Failed to connect to chat room.")
+			}
+		}
+	}
+
+	private fun onRoomJoinedOrCreatedSuccessfully(currentRoomID: String) {
+		ZIM.getInstance().setEventHandler(zimEventHandler)
+		sendZimMessage("active \uD83D\uDC4B")
 	}
 
 	private val zimEventHandler = object : ZIMEventHandler() {

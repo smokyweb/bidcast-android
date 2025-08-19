@@ -83,14 +83,14 @@ class ViewLiveShowActivity : BaseActivity() {
 
 		immersionBar {
 			transparentBar()
-			navigationBarColor(R.color.transparent)
+			navigationBarDarkIcon(true)
+			navigationBarColor(clr.transparent)
 			supportActionBar(false)
+			fitsSystemWindows(false)
 			keyboardEnable(true)
 		}
 
-		bind.root.setMargins(resources.dpToPx(16), resources.dpToPx(16), resources.dpToPx(16), navigationBarHeight)
-//		bind.startBtn.setMargins(resources.dpToPx(16), resources.dpToPx(0), resources.dpToPx(16), navigationBarHeight)
-
+		bind.root.setMargins(0, 0, 0, navigationBarHeight)
 
 		val showId = intent.getStringExtra("showId")
 

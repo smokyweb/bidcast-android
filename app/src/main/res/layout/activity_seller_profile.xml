@@ -342,7 +342,7 @@
                             app:tint="@color/onBackground" />
 
                         <androidx.appcompat.widget.AppCompatImageView
-                            android:id="@+id/primaryIcon1"
+                            android:id="@+id/share1"
                             android:layout_width="32dp"
                             android:layout_height="32dp"
                             android:padding="4dp"

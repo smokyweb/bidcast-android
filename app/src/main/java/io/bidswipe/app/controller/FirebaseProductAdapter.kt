@@ -39,11 +39,13 @@ class FirebaseProductAdapter(
 			bind.quantity.text = buildSpannedString {
 				append("Status: ")
 				if (item?.status == "sold") {
-					bold { color(Color.RED) {
-						append(item.status)
-					} }
+					bold {
+						color(Color.RED) {
+							append(item.status?.asCapital())
+						}
+					}
 				} else {
-					bold { append(item?.status) }
+					bold { append(item?.status?.asCapital()) }
 				}
 			}
 
@@ -58,11 +60,9 @@ class FirebaseProductAdapter(
 				append(item?.price?.asMoney())
 			}
 
-
 			bind.productName.text = item?.name?.asCapital()
 
 			bind.img.loadUrl(mCtx, item?.image ?:"")
-
 		}
 	}
 }
