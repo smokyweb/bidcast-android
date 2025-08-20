@@ -536,7 +536,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 						ZIM.getInstance().setEventHandler(zimEventHandler)
 						viewModel.previousRoomId = roomID
 
-						sendZimMessage("joined \uD83D\uDC4B")
+						sendZimMessage("Joined \uD83D\uDC4B")
 
 					} else {
 						log("JOIN ROOM CHAT ERROR : ${errorInfo.toString()}")

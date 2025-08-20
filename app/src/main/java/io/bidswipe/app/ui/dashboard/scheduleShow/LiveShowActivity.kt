@@ -515,7 +515,7 @@ class LiveShowActivity : BaseActivity() {
 		zim.joinRoom(roomIDToJoin) { joinedRoomInfo, joinError ->
 			if (joinError.code == ZIMErrorCode.SUCCESS) {
 				log("Successfully JOINED existing ZIM room: ID '${roomID}', Name: '${joinedRoomInfo}'")
-				onRoomJoinedOrCreatedSuccessfully(roomID?: roomIDToJoin)
+				onRoomJoinedOrCreatedSuccessfully(roomID)
 			} else {
 				log("Failed to JOIN existing ZIM room '$roomIDToJoin' after create attempt failed. Code: ${joinError.code}, Message: ${joinError.message}")
 				// Handle join room errors (this is a more critical failure if create also failed)
@@ -526,7 +526,7 @@ class LiveShowActivity : BaseActivity() {
 
 	private fun onRoomJoinedOrCreatedSuccessfully(currentRoomID: String) {
 		ZIM.getInstance().setEventHandler(zimEventHandler)
-		sendZimMessage("active \uD83D\uDC4B")
+		sendZimMessage("Active \uD83D\uDC4B")
 	}
 
 	private val zimEventHandler = object : ZIMEventHandler() {

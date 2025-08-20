@@ -115,24 +115,22 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
         }
 
         bind.swipeRefreshLayout.setOnRefreshListener {
-//            viewModel.getLiveShow(selectedTabText.request())
+            viewModel.getLiveShow(selectedTabText.request())
             viewModel.getCategory()
         }
 
         bind.noInternet.onClick {
             bind.loader.isVisible = true
             bind.noInternet.isVisible = false
-/*
             viewModel.getLiveShow(selectedTabText.request())
-*/
             viewModel.getCategory()
         }
 
-        selectTab(bind.live)
+        selectTab(bind.live, true)
 
-        bind.live.setOnClickListener { selectTab(it as TextView) }
-        bind.popular.setOnClickListener { selectTab(it as TextView) }
-        bind.comingSoon.setOnClickListener { selectTab(it as TextView) }
+        bind.live.setOnClickListener { selectTab(it as TextView,false) }
+        bind.popular.setOnClickListener { selectTab(it as TextView,false) }
+        bind.comingSoon.setOnClickListener { selectTab(it as TextView,false) }
 
 //        categoriesList = mutableListOf("For You", "Collectibles", "Trading Cards")
 
@@ -140,8 +138,10 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
             runSafe {
                 val chipId = chipGroup.checkedChipId
                val index = chipGroup.indexOfChild(chipGroup.findViewById(chipId))
-                if (categoriesList[index].toString() == "For You"){
-                    selectedCategory = "for_you"
+                selectedCategory = if (categoriesList[index].toString() == "For You"){
+                    "for_you"
+                }else{
+                    categoriesList[index].toString()
                 }
                 bind.loader.isVisible = true
                 viewModel.getLiveShow(selectedTabText.request(), selectedCategory.request())
@@ -154,6 +154,8 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
         viewModel.getCategoryRepo.observe(viewLifecycleOwner){
             when (it) {
                 is Resource.Success -> {
+
+                    viewModel.getCategoryRepo.value = null
 
                     val mData = it.value.data
                     bind.chipGroup.removeAllViews()
@@ -258,10 +260,9 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
             }
         }
 
-
     }
 
-    fun selectTab(selectedTab: TextView) {
+    fun selectTab(selectedTab: TextView, isFirst: Boolean) {
         val tabs = listOf(bind.live, bind.popular, bind.comingSoon)
         tabs.forEach {
             it.setTextAppearance(R.style.TitleMedium)
@@ -270,21 +271,22 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
         selectedTab.setTextColor(ContextCompat.getColor(mCtx, R.color.scrim))
         selectedTab.setTextAppearance(R.style.TitleLarge)
 
+        bind.loader.isVisible = true
+
         when (selectedTab) {
             bind.live -> {
-                bind.loader.isVisible = true
                 selectedTabText = "live"
-                viewModel.getLiveShow("live".request(),selectedCategory.request())
+	            if (!isFirst) {
+		            viewModel.getLiveShow("live".request(),selectedCategory.request())
+	            }
             }
 
             bind.popular -> {
-                bind.loader.isVisible = true
                 selectedTabText = "popular"
                 viewModel.getLiveShow("popular".request(),selectedCategory.request())
             }
 
             bind.comingSoon -> {
-                bind.loader.isVisible = true
                 selectedTabText = "upcoming"
                 viewModel.getLiveShow("upcoming".request(),selectedCategory.request())
             }

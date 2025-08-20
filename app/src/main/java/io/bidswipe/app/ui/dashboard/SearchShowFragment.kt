@@ -73,7 +73,6 @@ class SearchShowFragment : BaseFragment<DashViewModel, FragmentSearchShowBinding
             hideKeyboard(it)
         }
 
-
         homeAdapter = HomeAdapter(showList,mClick)
 
         bind.recycler.adapter = homeAdapter
