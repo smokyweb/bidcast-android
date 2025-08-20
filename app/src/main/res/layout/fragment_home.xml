@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:focusableInTouchMode="true"
     tools:context=".ui.dashboard.HomeFragment">
 
     <io.bidswipe.app.ui.custom.Header
@@ -21,6 +22,41 @@
         app:showPrimaryIcon="true"
         app:showSecondaryIcon="true" />
 
+    <net.cachapa.expandablelayout.ExpandableLayout
+        android:id="@+id/searchExpandLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:el_duration="500"
+        app:el_expanded="true"
+        app:el_parallax="1"
+        android:background="@color/onPrimary"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/header">
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/searchLayout"
+            style="@style/inputBoxStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/margin"
+            app:boxBackgroundColor="@color/surface"
+            app:boxStrokeWidth="2dp"
+            app:startIconDrawable="@drawable/search"
+            app:startIconTint="@color/scrim">
+
+            <com.google.android.material.textfield.MaterialAutoCompleteTextView
+                android:id="@+id/search"
+                style="@style/inputTextStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/what_are_you_looking_for"
+                android:inputType="text" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+    </net.cachapa.expandablelayout.ExpandableLayout>
+
     <HorizontalScrollView
         android:id="@+id/chipGroupScroll"
         android:layout_width="match_parent"
@@ -30,7 +66,7 @@
         android:background="@color/background"
         android:paddingTop="@dimen/half_margin"
         android:scrollbars="none"
-        app:layout_constraintTop_toBottomOf="@id/header">
+        app:layout_constraintTop_toBottomOf="@id/searchExpandLayout">
 
         <com.google.android.material.chip.ChipGroup
             android:id="@+id/chipGroup"
@@ -105,6 +141,7 @@
         app:layout_constraintTop_toBottomOf="@id/heading">
 
         <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/main"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 

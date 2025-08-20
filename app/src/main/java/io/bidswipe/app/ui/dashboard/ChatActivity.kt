@@ -3,6 +3,7 @@ package io.bidswipe.app.ui.dashboard
 import android.annotation.SuppressLint
 import android.graphics.Rect
 import android.os.Bundle
+import android.util.Log
 import android.view.inputmethod.InputMethodManager
 import android.widget.ImageView
 import androidx.activity.viewModels
@@ -106,6 +107,10 @@ class ChatActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
 
         setContentView(bind.root)
+        bind.replyLayout.setOnClickListener {
+            Log.d(TAG, "onCreate: ")
+            hideKeyboard()
+        }
 
         App.isUserOnChatScreen = true
         window.navigationBarColor = ContextCompat.getColor(this, clr.background)

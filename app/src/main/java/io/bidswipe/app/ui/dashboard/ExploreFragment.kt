@@ -23,6 +23,7 @@ import io.bidswipe.app.network.Resource
 import io.bidswipe.app.network.response.GetCategoryResponse
 import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.ui.dashboard.more.NotificationActivity
+import io.bidswipe.app.utils.hideKeyboard
 import io.bidswipe.app.utils.ids
 import io.bidswipe.app.utils.parse
 
@@ -54,6 +55,10 @@ class ExploreFragment : BaseFragment<DashViewModel, FragmentExploreBinding>() {
 
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		super.onViewCreated(view, savedInstanceState)
+
+		bind.root.setOnClickListener {
+			hideKeyboard(it)
+		}
 
 		exploreAdapter = ExploreAdapter(exploreList, mClick)
 		bind.recycler.adapter = exploreAdapter
