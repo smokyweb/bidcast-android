@@ -64,7 +64,6 @@ import io.bidswipe.app.utils.request
 import io.bidswipe.app.utils.runSafe
 import io.bidswipe.app.utils.value
 import kotlin.math.abs
-import kotlin.toString
 
 class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBinding>() {
 
@@ -82,7 +81,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 	private var commentList = mutableListOf<LiveChatModel?>()
 	private lateinit var commentAdapter: CommentAdapter
 	private var product: LiveShowModel.Product? = null
-	private var inputSheet : BottomSheetDialog? = null
+	private var inputSheet: BottomSheetDialog? = null
 
 	companion object {
 		fun newInstance(roomID: String, streamID: String) = WatchStreamFragment().apply {
@@ -102,7 +101,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
 				// Safely update highestBidAmount
 
-				if (data.highestBid != null){
+				if (data.highestBid != null) {
 
 					log("HIGHEST BID: ${data.highestBid}")
 					highestBidAmount = data.highestBid?.bidAmount ?: highestBidAmount
@@ -124,7 +123,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 				bind.soldLayout.isVisible = isSold
 				bind.bidLayout.isVisible = !isSold
 
-				if (isSold){
+				if (isSold) {
 					inputSheet?.dismiss()
 				}
 
@@ -347,6 +346,8 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
 										ref.updateChildren(bidData)
 
+										sendZimMessage("New high bid: $$bidAmount")
+
 										Alerts.success(mCtx, "Bid placed successfully")
 
 									}
@@ -363,8 +364,6 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 						} else {
 							verificationDialog()
 						}
-
-
 
 					}
 				}
@@ -476,7 +475,8 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
 	override fun onDestroy() {
 		super.onDestroy()
-		ZIM.getInstance().setEventHandler(null)	}
+		ZIM.getInstance().setEventHandler(null)
+	}
 
 	private fun loginAndPlay() {
 		val user = ZegoUser(userName.replace(" ", ".") + "_" + userId, userImage)
@@ -500,7 +500,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
 					viewModel.previousRoomId = roomID
 
-					sendZimMessage("joined \uD83D\uDC4B")
+					sendZimMessage("Joined \uD83D\uDC4B")
 
 				} else {
 					log("JOIN ROOM CHAT ERROR : ${errorInfo.toString()}")
@@ -624,6 +624,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
 			}
 		})
+
 	}
 
 	private fun verificationDialog() {
@@ -689,9 +690,11 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 					runSafe {
 						val bidAmount = inputSheetBind.price.value().toDouble().toString()
 
-						if (inputSheetBind.price.value().isEmpty() || inputSheetBind.price.value().toDouble() < (highestBidAmount?.toDouble() ?: 0.0)){
+						if (inputSheetBind.price.value().isEmpty() || inputSheetBind.price.value().toDouble() < (highestBidAmount?.toDouble()
+								?: 0.0)
+						) {
 							Alerts.error(mCtx, "Bid amount must be greater than the current highest bid.")
-						}else{
+						} else {
 							val bidData = mutableMapOf<String, Any?>(
 								"bidAmount" to bidAmount,
 								"userName" to userName,
@@ -709,6 +712,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 							ref.updateChildren(bidData)
 
 							Alerts.success(mCtx, "Bid placed successfully")
+							sendZimMessage("New high bid: $$bidAmount")
 
 							inputSheet?.dismiss()
 						}

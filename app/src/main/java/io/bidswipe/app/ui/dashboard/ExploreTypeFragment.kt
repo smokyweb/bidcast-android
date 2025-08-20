@@ -4,6 +4,8 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.graphics.Typeface
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -78,22 +80,29 @@ class ExploreTypeFragment : BaseFragment<DashViewModel, FragmentExploreTypeBindi
         category = arguments?.getString("category") ?: ""
         bind.header.setHeaderText(category.asCapital())
 
-
         bind.header.onBackClick {
-
             findNavController().popBackStack()
-
         }
 
         bind.swipeRefreshLayout.setOnRefreshListener {
             viewModel.getLiveShow(selectedTabText.request(), category.request())
         }
 
+        bind.search.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+            override fun afterTextChanged(s: Editable?) {
+                if (!s.isNullOrEmpty()) {
+                    bind.loader.isVisible = true
+                    viewModel.getLiveShow(selectedTabText.request(), category.request(),s.toString().request())
+                }
+            }
+        })
+
         bind.noInternet.setOnClickListener {
             bind.loader.isVisible = true
             bind.noInternet.isVisible = false
             viewModel.getLiveShow(selectedTabText.request(), category.request())
-
         }
 
         bind.header.onMorePrimaryClick {
@@ -116,7 +125,7 @@ class ExploreTypeFragment : BaseFragment<DashViewModel, FragmentExploreTypeBindi
         bind.comingSoon.setOnClickListener { selectTab(it as TextView) }
 
         categoriesList = mutableListOf(category)
-        viewModel.getLiveShow(selectedTabText.request())
+        viewModel.getLiveShow(selectedTabText.request(), category = category.request())
         viewModel.getLiveShowRepo.observe(viewLifecycleOwner) { it ->
             when (it) {
                 is Resource.Success -> {
@@ -143,7 +152,6 @@ class ExploreTypeFragment : BaseFragment<DashViewModel, FragmentExploreTypeBindi
                         bind.recycler.isVisible = true
                     }
                     homeAdapter.notifyDataSetChanged()
-
                 }
 
                 is Resource.Error -> {
@@ -155,15 +163,14 @@ class ExploreTypeFragment : BaseFragment<DashViewModel, FragmentExploreTypeBindi
                         bind.recycler.isVisible = false
                         errorToast(getString(R.string.no_internet))
                     } else {
+
                         it.parse(mCtx, TAG, object : AlertClicks {
                             override fun primaryClick(dialog: AppBottomSheet) {
                                 dialog.dismiss()
-
                             }
 
                             override fun secondaryClick(dialog: AppBottomSheet) {
                                 dialog.dismiss()
-
                             }
                         })
                     }
@@ -189,19 +196,16 @@ class ExploreTypeFragment : BaseFragment<DashViewModel, FragmentExploreTypeBindi
 
         when (selectedTab) {
             bind.live -> {
-                bind.loader.isVisible = true
                 selectedTabText = "live"
                 viewModel.getLiveShow("live".request(), category.request())
             }
 
             bind.popular -> {
-                bind.loader.isVisible = true
                 selectedTabText = "popular"
                 viewModel.getLiveShow("popular".request(), category.request())
             }
 
             bind.comingSoon -> {
-                bind.loader.isVisible = true
                 selectedTabText = "upcoming"
                 viewModel.getLiveShow("upcoming".request(), category.request())
             }

@@ -29,6 +29,7 @@ import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request
 import io.bidswipe.app.utils.toScheduleShow
 
+@SuppressLint("NotifyDataSetChanged")
 class ShowsFragment : BaseFragment<SellerHubViewModel, FragmentShowsBinding>() {
 	override fun getModel(): Class<SellerHubViewModel> = SellerHubViewModel::class.java
 
@@ -63,7 +64,7 @@ class ShowsFragment : BaseFragment<SellerHubViewModel, FragmentShowsBinding>() {
 					Intent(mCtx, LiveShowActivity::class.java).putExtra(
 						"showId",
 						showList[pos]?.id.toString()
-					)
+					).putExtra("time",  showList[pos]?.time)
 				)
 			}
 
@@ -72,7 +73,6 @@ class ShowsFragment : BaseFragment<SellerHubViewModel, FragmentShowsBinding>() {
 
 	}
 
-	@SuppressLint("NotifyDataSetChanged")
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		super.onViewCreated(view, savedInstanceState)
 
@@ -187,7 +187,7 @@ class ShowsFragment : BaseFragment<SellerHubViewModel, FragmentShowsBinding>() {
 
 	fun showPaymentAndAddressSheet() {
 
-		var paymentAddressBind = PaymentAndAddressSheetBinding.bind(
+		val paymentAddressBind = PaymentAndAddressSheetBinding.bind(
 			layoutInflater.inflate(
 				R.layout.payment_and_address_sheet,
 				null,
@@ -195,7 +195,7 @@ class ShowsFragment : BaseFragment<SellerHubViewModel, FragmentShowsBinding>() {
 			)
 		)
 
-		var makeOfferSheet = Alerts.appBottomSheet(mCtx, true, paymentAddressBind)
+		val makeOfferSheet = Alerts.appBottomSheet(mCtx, true, paymentAddressBind)
 
 		with(paymentAddressBind.addressItem) {
 			val hasAddress = App.profileResponse.value?.hasShippingAddress == true

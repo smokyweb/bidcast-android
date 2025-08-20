@@ -13,7 +13,8 @@ data class LiveShowModel(
 	var highestBid: HighestBid? = null,
 	var isLive: Boolean? = null,
 	var time: String? =  System.currentTimeMillis().toString(),
-	var showId: String? = null
+	var showId: String? = null,
+	var allowBidForAll: Boolean? = true
 ) {
 	@Keep
 	data class Product(
@@ -130,6 +131,7 @@ data class LiveShowModel(
 			isLive = it.child("isLive").getValue(Boolean::class.java),
 			time = it.child("time").getValue(String::class.java),
 			showId = it.child("showId").getValue(String::class.java),
+			allowBidForAll = it.child("allowBidForAll").getValue(Boolean::class.java),
 		)
 	}
 
@@ -144,5 +146,6 @@ data class LiveShowModel(
 		"isLive" to isLive,
 		"time" to time,
 		"showId" to showId,
+		"allowBidForAll" to allowBidForAll
 	)
 }

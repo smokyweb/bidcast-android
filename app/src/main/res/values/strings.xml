@@ -489,4 +489,5 @@
     <string name="confirm">Confirm</string>
     <string name="select_sub_categories_based_on_the_categories_you_chose_on_the_previous_page">Select Sub Categories based on the Categories you chose on the previous page</string>
     <string name="choose_the_categories_you_re_interested_in_to_watch_related_shows">Choose the categories you’re interested in to watch related shows.</string>
+    <string name="select_next_product_for_auction">Select Next Product For Auction</string>
 </resources>

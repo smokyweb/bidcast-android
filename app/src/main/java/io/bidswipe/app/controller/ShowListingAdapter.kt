@@ -6,6 +6,7 @@ import io.bidswipe.app.base.BaseAdapter
 import io.bidswipe.app.databinding.ShowListingItemBinding
 import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.network.response.GetMyShowResponse
+import io.bidswipe.app.utils.Utils
 import io.bidswipe.app.utils.asCapital
 import io.bidswipe.app.utils.loadUrl
 
@@ -31,7 +32,12 @@ class ShowListingAdapter(
 
             bind.date.text = item?.date
 
-            bind.time.text = item?.time
+            bind.time.text = Utils.getFormattedDateTime("HH:mm:ss","hh:mm a" , item?.time.toString())
+
+            bind.rsvp.text = buildString {
+                append(item?.viewerCount ?:0)
+                append(" RSVPs")
+            }
 
             bind.image.loadUrl(mCtx, item?.imgThumbnail?.first() ?:"")
 

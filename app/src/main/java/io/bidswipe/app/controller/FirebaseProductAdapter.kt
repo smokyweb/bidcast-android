@@ -7,6 +7,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.text.bold
 import androidx.core.text.buildSpannedString
 import androidx.core.text.color
+import androidx.core.view.isVisible
 import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseAdapter
 import io.bidswipe.app.databinding.ProductSelectionItemBinding
@@ -14,6 +15,7 @@ import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.model.LiveShowModel
 import io.bidswipe.app.utils.asCapital
 import io.bidswipe.app.utils.asMoney
+import io.bidswipe.app.utils.dpToPx
 import io.bidswipe.app.utils.loadUrl
 
 class FirebaseProductAdapter(
@@ -50,11 +52,16 @@ class FirebaseProductAdapter(
 			}
 
 			if (item?.selected == true) {
-				bind.root.strokeWidth = 2
+				bind.root.strokeWidth = mCtx.resources.dpToPx(4)
 				bind.root.strokeColor = ContextCompat.getColor(mCtx, R.color.primary)
+				bind.root.setCardBackgroundColor(ContextCompat.getColor(mCtx, R.color.primaryContainer))
 			} else {
 				bind.root.strokeWidth = 0
+				bind.root.strokeColor = ContextCompat.getColor(mCtx, R.color.background)
+				bind.root.setCardBackgroundColor(ContextCompat.getColor(mCtx, R.color.background))
 			}
+
+			bind.productStatus.isVisible = item?.isCurrent == true
 
 			bind.prodSubTitle.text = buildString {
 				append(item?.price?.asMoney())
@@ -62,7 +69,7 @@ class FirebaseProductAdapter(
 
 			bind.productName.text = item?.name?.asCapital()
 
-			bind.img.loadUrl(mCtx, item?.image ?:"")
+			bind.img.loadUrl(mCtx, item?.image ?: "")
 		}
 	}
 }

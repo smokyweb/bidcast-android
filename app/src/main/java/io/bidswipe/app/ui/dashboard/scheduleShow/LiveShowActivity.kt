@@ -114,6 +114,7 @@ class LiveShowActivity : BaseActivity() {
 	var isFrontCamera = true
 	var roomID = ""
 	var showId = ""
+	var showTime = ""
 	var bidCounter = 30
 	private var startTimeMillis: Long = 0L
 	private var zoomLevel = 1L
@@ -175,6 +176,7 @@ class LiveShowActivity : BaseActivity() {
 		bind.recycler.adapter = commentAdapter
 
 		showId = intent.getStringExtra("showId") ?: ""
+		showTime = intent.getStringExtra("time") ?: ""
 
 		bind.hostName.text = userName
 
@@ -205,9 +207,9 @@ class LiveShowActivity : BaseActivity() {
 		}
 
 		bind.cutButton.setOnClickListener {
-			if (::zim.isInitialized){
+			if (::zim.isInitialized) {
 				endShowSheet()
-			}else{
+			} else {
 				finishAfterTransition()
 			}
 
@@ -236,10 +238,10 @@ class LiveShowActivity : BaseActivity() {
 
 		bind.shop.setOnClickListener {
 
-			if (::zim.isInitialized){
+			if (::zim.isInitialized) {
 				showProductSheet()
-			}else{
-				Alerts.error(this,"Please start live show to access this feature")
+			} else {
+				Alerts.error(this, "Please start live show to access this feature")
 			}
 
 		}
@@ -306,7 +308,6 @@ class LiveShowActivity : BaseActivity() {
 					bind.message.setMargins(resources.dpToPx(16), resources.dpToPx(16), resources.dpToPx(16), navigationBarHeight)
 
 					if (liveStatus) {
-
 						runSafe {
 							updateFirebaseNode(mData)
 							loginRoom(roomID)
@@ -354,7 +355,7 @@ class LiveShowActivity : BaseActivity() {
 
 					bind.loader.isVisible = false
 
-					val index = liveData?.products?.indexOfFirst {product -> product?.isCurrent == true }
+					val index = liveData?.products?.indexOfFirst { product -> product?.isCurrent == true }
 
 					FireRef.LIVE_SESSIONS.child(roomID).child("products").child(index.toString()).updateChildren(
 						mapOf(
@@ -429,7 +430,8 @@ class LiveShowActivity : BaseActivity() {
 		if (::zim.isInitialized) {
 			log("ZIM DESTROYED")
 			zim.leaveAllRoom { roomIDs, errorInfo ->
-				log("LEFT ALL ROOMS") }
+				log("LEFT ALL ROOMS")
+			}
 			zim.logout()
 			zim.destroy()
 		}
@@ -477,13 +479,13 @@ class LiveShowActivity : BaseActivity() {
 
 				zim.createRoom(roomInfo) { roomInfoo, errorInfo ->
 
-					when(errorInfo.code){
-						ZIMErrorCode.SUCCESS->{
+					when (errorInfo.code) {
+						ZIMErrorCode.SUCCESS -> {
 							log("CREATED ROOM : $roomInfoo")
-							onRoomJoinedOrCreatedSuccessfully(roomInfo.roomID )
+							onRoomJoinedOrCreatedSuccessfully(roomInfo.roomID)
 						}
 
-						ZIMErrorCode.THE_ROOM_ALREADY_EXISTS ->{
+						ZIMErrorCode.THE_ROOM_ALREADY_EXISTS -> {
 							log("ROOM ALREADY EXISTS")
 							joinExistingZimRoom(roomID)
 						}
@@ -494,15 +496,15 @@ class LiveShowActivity : BaseActivity() {
 					}
 				}
 
-					/*zim.createRoom(roomInfo) { roomInfo, errorInfo ->
-					if (errorInfo != null) {
-						log("CREATED ROOM : $roomInfo")
+				/*zim.createRoom(roomInfo) { roomInfo, errorInfo ->
+				if (errorInfo != null) {
+					log("CREATED ROOM : $roomInfo")
 
-						zim.setEventHandler(zimEventHandler)
-					} else {
-						log("CREATE ROOM ERROR : ${errorInfo.toString()}")
-					}
-				}*/
+					zim.setEventHandler(zimEventHandler)
+				} else {
+					log("CREATE ROOM ERROR : ${errorInfo.toString()}")
+				}
+			}*/
 			} else {
 				log("LOG IN ROOM ERROR : ${error.toString()}")
 			}
@@ -541,7 +543,6 @@ class LiveShowActivity : BaseActivity() {
 			messageList?.forEach { zimMessage ->
 				if (zimMessage is ZIMTextMessage) {
 					log("NEW MESSAGE RECEIVED:\n${zimMessage.message}\nExtended Data: ${zimMessage.extendedData}")
-
 					runSafe {
 						commentList.add(LiveChatModel.fromZIMMessage(zimMessage))
 
@@ -695,7 +696,7 @@ class LiveShowActivity : BaseActivity() {
 			if (error == 0) {
 				Toast.makeText(this, "Login successful.", Toast.LENGTH_LONG).show()
 
-			log("LOGIN Successful")
+				log("LOGIN Successful")
 
 				startPublish()
 				startLiveDurationTimer()
@@ -853,7 +854,7 @@ class LiveShowActivity : BaseActivity() {
 					)
 				).addOnSuccessListener {
 				}.addOnFailureListener {
-					}
+				}
 
 				bidTimerHandler.postDelayed(this, 1000)
 			}
@@ -943,7 +944,8 @@ class LiveShowActivity : BaseActivity() {
 
 		val categoryList = mutableListOf("Auction", "Buy Now", "Freebie", "Sold")
 
-		categoryList.forEach { it
+		categoryList.forEach {
+			it
 			shopSheetBind.chipGroup.addView(
 				Utils.makeAChip(
 					mCtx = this, text = it, selected = false
@@ -996,7 +998,7 @@ class LiveShowActivity : BaseActivity() {
 
 					productList.clear()
 
-					mData?.forEach {product ->
+					mData?.forEach { product ->
 						productList.add(product)
 					}
 
@@ -1190,9 +1192,9 @@ class LiveShowActivity : BaseActivity() {
 		FireRef.LIVE_SESSIONS.child(roomID).addListenerForSingleValueEvent(object : ValueEventListener {
 			override fun onDataChange(snapshot: DataSnapshot) {
 
-				val data = snapshot.getValue(LiveShowModel::class.java)
+				val data = LiveShowModel().fromMap(snapshot)
 
-				if (data?.products != null) {
+				if (data.products != null) {
 					productList.clear()
 					productList.addAll(
 						data.products!!
@@ -1253,7 +1255,7 @@ class LiveShowActivity : BaseActivity() {
 
 					}.addOnFailureListener {
 
-				}
+					}
 
 				productSheet.dismiss()
 
@@ -1320,20 +1322,22 @@ class LiveShowActivity : BaseActivity() {
 		}
 	}
 
-	fun showConfirmationAlert(){
+	fun showConfirmationAlert() {
 
 		val showConfirmationSheetBind = ShowConfirmationAlertBinding.bind(layoutInflater.inflate(R.layout.show_confirmation_alert, null, false))
 		val showConfirmationSheet = Alerts.appAlert(this, true, showConfirmationSheetBind)
+
+		showConfirmationSheetBind.timing.text = "Show Starts at ${Utils.getFormattedDateTime("HH:mm:ss","hh:mm a" , showTime)}"
 
 		showConfirmationSheetBind.startBtn.setOnClickListener {
 			showConfirmationSheet.dismiss()
 			bind.loader.isVisible = true
 
 			viewModel.updateLiveStatus(showId.request(), "true".request())
+
 		}
 
 		showConfirmationSheet.show()
-
 
 	}
 
