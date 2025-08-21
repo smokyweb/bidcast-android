@@ -27,6 +27,7 @@ import io.bidswipe.app.ui.dashboard.more.NotificationActivity
 import io.bidswipe.app.ui.dashboard.sellerProfile.SellerProfileActivity
 import io.bidswipe.app.ui.dashboard.watchStream.ViewLiveShowActivity
 import io.bidswipe.app.utils.asCapital
+import io.bidswipe.app.utils.hideKeyboard
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request
 
@@ -80,6 +81,12 @@ class ExploreTypeFragment : BaseFragment<DashViewModel, FragmentExploreTypeBindi
         category = arguments?.getString("category") ?: ""
         bind.header.setHeaderText(category.asCapital())
 
+        bind.root.setOnClickListener {
+            hideKeyboard(it)
+        }
+        bind.main.setOnClickListener {
+            hideKeyboard(it)
+        }
         bind.header.onBackClick {
             findNavController().popBackStack()
         }
@@ -161,7 +168,6 @@ class ExploreTypeFragment : BaseFragment<DashViewModel, FragmentExploreTypeBindi
                     if (it.isNetworkError) {
                         bind.noInternet.isVisible = true
                         bind.recycler.isVisible = false
-                        errorToast(getString(R.string.no_internet))
                     } else {
 
                         it.parse(mCtx, TAG, object : AlertClicks {

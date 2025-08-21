@@ -25,6 +25,7 @@ import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.utils.Alerts
 import io.bidswipe.app.utils.Const
 import io.bidswipe.app.utils.Utils
+import io.bidswipe.app.utils.hideKeyboard
 import io.bidswipe.app.utils.ids
 import io.bidswipe.app.utils.parse
 
@@ -81,6 +82,12 @@ class CreateProductFragment : BaseFragment<ScheduleShowViewModel, FragmentCreate
 		bind.variants.adapter = variantAdapter
 		bind.addVariant.setOnClickListener {
 
+		}
+		bind.root.setOnClickListener {
+			hideKeyboard(it)
+		}
+		bind.main.setOnClickListener {
+			hideKeyboard(it)
 		}
 
 		bind.images.adapter = ImageAdapter(imageList, object : RecyclerClicks {

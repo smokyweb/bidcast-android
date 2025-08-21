@@ -1,7 +1,7 @@
 package io.bidswipe.app.ui.dashboard.sellerHub
 
+import android.annotation.SuppressLint
 import android.os.Bundle
-import android.os.Parcelable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,11 +18,11 @@ import io.bidswipe.app.network.Resource
 import io.bidswipe.app.network.response.GetMyInventoryResponse
 import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.utils.finish
+import io.bidswipe.app.utils.hideKeyboard
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request
 import io.bidswipe.app.utils.toListProduct
-import kotlinx.parcelize.Parcelize
-
+@SuppressLint("NotifyDataSetChanged")
 class InventoryFragment : BaseFragment<SellerHubViewModel, FragmentInventoryBinding>() {
     override fun getModel(): Class<SellerHubViewModel> = SellerHubViewModel::class.java
 
@@ -38,17 +38,24 @@ class InventoryFragment : BaseFragment<SellerHubViewModel, FragmentInventoryBind
     private val mClick = object : RecyclerClicks {
 
         override fun itemClick(pos: Int, status: String?) {
-            startActivity(mCtx.toListProduct().putExtra("product" , itemList[pos] ))
+            startActivity(mCtx.toListProduct().putExtra("product", itemList[pos]))
 
         }
 
     }
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         bind.header.onBackClick {
             finish()
+        }
+        bind.main.setOnClickListener {
+            hideKeyboard(it)
+        }
+        bind.root.setOnClickListener {
+            hideKeyboard(it)
         }
 
         adapter = InventoryAdapter(itemList, mClick)

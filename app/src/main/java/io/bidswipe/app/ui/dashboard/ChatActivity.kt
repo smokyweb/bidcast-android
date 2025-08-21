@@ -43,6 +43,7 @@ import jp.wasabeef.recyclerview.animators.SlideInUpAnimator
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
+@SuppressLint("ClickableViewAccessibility")
 class ChatActivity : BaseActivity() {
 
     private val bind by bind(ActivityChatBinding::inflate)
@@ -103,12 +104,17 @@ class ChatActivity : BaseActivity() {
         }
     }
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         setContentView(bind.root)
-        bind.replyLayout.setOnClickListener {
-            Log.d(TAG, "onCreate: ")
+
+        bind.chats.setOnTouchListener { _, _ ->
+            hideKeyboard()
+            return@setOnTouchListener true
+        }
+        bind.header.setOnClickListener {
             hideKeyboard()
         }
 
@@ -227,10 +233,10 @@ class ChatActivity : BaseActivity() {
                 else ChatModel(isReply = false, message = bind.message.value())
 
                 chats.sendChat(model) {
-                        viewModel.sendChatNotification(
-                            receiverId.request(),
-                            bind.message.value().request()
-                        )
+                    viewModel.sendChatNotification(
+                        receiverId.request(),
+                        bind.message.value().request()
+                    )
                     bind.message.text = null
                     bind.message.isFocusableInTouchMode = true
 //                    showKeyboard(bind.message)

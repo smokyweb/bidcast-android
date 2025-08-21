@@ -50,7 +50,6 @@
 
     </net.cachapa.expandablelayout.ExpandableLayout>
 
-
     <LinearLayout
         android:id="@+id/heading"
         android:layout_width="match_parent"
@@ -108,9 +107,9 @@
         app:layout_constraintTop_toBottomOf="@id/heading">
 
         <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/main"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
-
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recycler"
@@ -139,8 +138,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:title_text="No Results Found"/>
-
+                app:title_text="No Results Found" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -151,6 +149,5 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="gone" />
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

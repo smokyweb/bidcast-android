@@ -5,7 +5,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -28,7 +27,6 @@ import io.bidswipe.app.ui.dashboard.more.NotificationActivity
 import io.bidswipe.app.ui.dashboard.sellerProfile.SellerProfileActivity
 import io.bidswipe.app.ui.dashboard.watchStream.ViewLiveShowActivity
 import io.bidswipe.app.utils.Alerts
-import io.bidswipe.app.utils.Prefs
 import io.bidswipe.app.utils.Utils
 import io.bidswipe.app.utils.hideKeyboard
 import io.bidswipe.app.utils.parse
@@ -99,15 +97,13 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        bind.root.setOnClickListener {
+        bind.header.setOnClickListener {
             hideKeyboard(it)
         }
         bind.main.setOnClickListener {
-            Log.d(TAG, "onViewCreated: click2")
             hideKeyboard(it)
         }
-        bind.root.setOnClickListener {
-            Log.d(TAG, "onViewCreated: clickxyz")
+        bind.recycler.setOnClickListener {
             hideKeyboard(it)
         }
 
@@ -123,8 +119,6 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
                 )
             )
         }
-
-        Log.d(TAG, "onViewCreated: ${Prefs(mCtx).getString(Prefs.PUSH_TOKEN)}")
 
         bind.header.onMoreSecondaryClick {
             bind.searchExpandLayout.toggle()
@@ -156,7 +150,6 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
             viewModel.getCategory()
         }
 
-
         selectTab(bind.live, true)
 
         bind.live.setOnClickListener { selectTab(it as TextView, false) }
@@ -185,6 +178,9 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
         viewModel.getCategoryRepo.observe(viewLifecycleOwner) { it ->
             when (it) {
                 is Resource.Success -> {
+                    bind.loader.isVisible = false
+                    bind.noInternet.isVisible = false
+                    bind.noData.isVisible = false
 
                     viewModel.getCategoryRepo.value = null
 
@@ -195,8 +191,6 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
                     categoriesList.add("For You")
                     categoriesList.addAll(mData?.filter { it?.isSelected == true }
                         ?.map { category -> category?.name } ?: emptyList())
-
-                    log("categoriesList : $categoriesList")
 
                     categoriesList.forEach {
                         bind.chipGroup.addView(
@@ -215,6 +209,7 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
                 is Resource.Error -> {
                     if (it.isNetworkError) {
                         bind.noInternet.isVisible = true
+                        bind.noData.isVisible = false
                         bind.recycler.isVisible = false
 
                     } else {
@@ -235,7 +230,6 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
                 else -> {}
             }
         }
-
 
         viewModel.getLiveShowRepo.observe(viewLifecycleOwner) { it ->
             when (it) {

@@ -26,10 +26,10 @@
         android:id="@+id/searchExpandLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@color/onPrimary"
         app:el_duration="500"
         app:el_expanded="false"
         app:el_parallax="1"
-        android:background="@color/onPrimary"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/header">
@@ -76,8 +76,8 @@
             android:layout_marginEnd="@dimen/margin"
             android:layout_marginBottom="@dimen/margin"
             android:paddingHorizontal="4dp"
-            app:singleLine="true"
             app:selectionRequired="true"
+            app:singleLine="true"
             app:singleSelection="true" />
 
     </HorizontalScrollView>

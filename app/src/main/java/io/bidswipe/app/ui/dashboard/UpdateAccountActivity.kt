@@ -55,6 +55,9 @@ class UpdateAccountActivity : BaseActivity() {
             finishAfterTransition()
 
         }
+        bind.root.setOnClickListener {
+            hideKeyboard()
+        }
 
         bind.layout.setOnClickListener {
             hideKeyboard()

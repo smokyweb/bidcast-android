@@ -22,6 +22,7 @@ import io.bidswipe.app.utils.Const
 import io.bidswipe.app.utils.Utils
 import io.bidswipe.app.utils.bind
 import io.bidswipe.app.utils.goToAddCard
+import io.bidswipe.app.utils.hideKeyboard
 import io.bidswipe.app.utils.loadUrl
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request
@@ -130,6 +131,13 @@ class SellerVerificationActivity : BaseActivity() {
 
         bind.header.onBackClick {
             finish()
+        }
+        bind.root.setOnClickListener {
+            hideKeyboard()
+        }
+        bind.main.setOnTouchListener { _, _ ->
+            hideKeyboard()
+            return@setOnTouchListener true
         }
 
         cardAdapter= SelectPaymentCardAdapter(cardList,mClick)

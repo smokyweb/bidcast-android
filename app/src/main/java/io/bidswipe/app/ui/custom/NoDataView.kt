@@ -32,8 +32,8 @@ class NoDataView @JvmOverloads constructor(
             bind.icon.isVisible = it.getBoolean(styleable.NoDataView_iconVisible, true)
             bind.btn.isVisible = it.getBoolean(styleable.NoDataView_show_button, false)
 
-            bind.root.setOnClickListener { }
-            bind.root.setOnTouchListener { _, _ -> true }
+//            bind.root.setOnClickListener { }
+//            bind.root.setOnTouchListener { _, _ -> true }
         }
     }
 

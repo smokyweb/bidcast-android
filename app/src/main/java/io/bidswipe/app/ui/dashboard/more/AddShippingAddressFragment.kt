@@ -20,6 +20,7 @@ import io.bidswipe.app.network.response.GetStatesResponse
 import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.utils.Alerts
 import io.bidswipe.app.utils.finish
+import io.bidswipe.app.utils.hideKeyboard
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request
 import io.bidswipe.app.utils.showKeyboard
@@ -49,6 +50,12 @@ class AddShippingAddressFragment :
             } else {
                 findNavController().popBackStack()
             }
+        }
+        bind.root.setOnClickListener {
+            hideKeyboard(it)
+        }
+        bind.rootView.setOnClickListener {
+            hideKeyboard(it)
         }
 
         bind.state.setOnItemClickListener { _, _, position, _ ->
