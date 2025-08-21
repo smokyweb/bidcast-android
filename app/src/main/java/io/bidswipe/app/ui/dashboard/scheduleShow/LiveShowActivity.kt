@@ -130,6 +130,7 @@ class LiveShowActivity : BaseActivity() {
 
 			bind.liveCount.text = liveData?.viewerCount.toString()
 
+
 		}
 
 		override fun onCancelled(error: DatabaseError) {
@@ -1049,6 +1050,16 @@ class LiveShowActivity : BaseActivity() {
 			}
 		})
 
+		moreSheetBind.allowVerifiedUser.setOnCheckedChangeListener { view,isChecked ->
+
+			FireRef.LIVE_SESSIONS.child(roomID).updateChildren(mapOf("allowBidForAll" to !isChecked))
+
+		}
+
+		log(liveData?.allowBidForAll.toString())
+
+		moreSheetBind.allowVerifiedUser.isChecked = liveData?.allowBidForAll == false
+
 		moreSheetBind.zoomInLayout.setOnClickListener {
 			zoomLevel++
 			ZegoExpressEngine.getEngine().setCameraZoomFactor(zoomLevel.toFloat())
@@ -1111,7 +1122,6 @@ class LiveShowActivity : BaseActivity() {
 		promoteSheetBind.close.setOnClickListener {
 			promoteSheet.dismiss()
 		}
-
 
 		promoteSheet.show()
 	}
@@ -1240,29 +1250,34 @@ class LiveShowActivity : BaseActivity() {
 
 		productSheetBind.addBtn.setOnClickListener {
 
-			if (selectedPos != -1) {
-				val updates = hashMapOf<String, Any?>(
-					"highestBid" to null,
-					"bidCountDown" to null
-				)
-
-				FireRef.LIVE_SESSIONS.child(roomID).child("products").child(selectedPos.toString()).updateChildren(mapOf("isCurrent" to true))
-					.addOnSuccessListener {
-
-						FireRef.LIVE_SESSIONS.child(roomID).updateChildren(updates)
-
-						bidCounter = 30
-
-					}.addOnFailureListener {
-
-					}
-
-				productSheet.dismiss()
-
-			} else {
+			if (selectedPos == -1) {
 				Alerts.error(this@LiveShowActivity, "Please select a product")
+				return@setOnClickListener
 			}
 
+			val isAnyProductLive = liveData?.products?.any { it?.isCurrent == true } == true
+			if (isAnyProductLive) {
+				Alerts.error(this@LiveShowActivity, "One Product is Already Live")
+				return@setOnClickListener
+			}
+
+			val productRef = FireRef.LIVE_SESSIONS.child(roomID).child("products").child(selectedPos.toString())
+			val sessionRef = FireRef.LIVE_SESSIONS.child(roomID)
+
+			val updates = mapOf(
+				"highestBid" to null,
+				"bidCountDown" to null
+			)
+
+			productRef.updateChildren(mapOf("isCurrent" to true))
+				.addOnSuccessListener {
+					sessionRef.updateChildren(updates)
+					bidCounter = 30
+					productSheet.dismiss()
+				}
+				.addOnFailureListener {
+					Alerts.error(this@LiveShowActivity, "Failed to set product live")
+				}
 
 		}
 

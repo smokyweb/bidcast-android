@@ -43,7 +43,6 @@
                         android:id="@+id/userImage"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-
                         android:scaleType="centerCrop"
                         android:src="@drawable/user_image" />
 

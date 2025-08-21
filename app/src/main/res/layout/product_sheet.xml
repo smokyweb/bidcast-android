@@ -5,9 +5,9 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginTop="32dp"
-    android:elevation="32dp"
+    android:background="@drawable/bottom_sheet_back"
     android:backgroundTint="@color/surface"
-    android:background="@drawable/bottom_sheet_back">
+    android:elevation="32dp">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -43,8 +43,8 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycler"
             android:layout_width="match_parent"
-            android:layout_marginTop="@dimen/half_margin"
             android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/half_margin"
             android:nestedScrollingEnabled="false"
             android:orientation="vertical"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"

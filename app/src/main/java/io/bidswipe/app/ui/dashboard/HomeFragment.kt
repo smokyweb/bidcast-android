@@ -101,6 +101,7 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
             hideKeyboard(it)
         }
         bind.main.setOnClickListener {
+            Log.d(TAG, "onViewCreated: click2")
             hideKeyboard(it)
         }
         bind.recycler.setOnClickListener {
@@ -139,14 +140,14 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
         })
 
         bind.swipeRefreshLayout.setOnRefreshListener {
-            viewModel.getLiveShow(selectedTabText.request(), selectedCategory.request())
+//            viewModel.getLiveShow(selectedTabText.request(), selectedCategory.request())
             viewModel.getCategory()
         }
 
         bind.noInternet.onClick {
             bind.loader.isVisible = true
-            bind.noInternet.isVisible = false
-            viewModel.getLiveShow(selectedTabText.request(), selectedCategory.request())
+//            bind.noInternet.isVisible = false
+//            viewModel.getLiveShow(selectedTabText.request(), selectedCategory.request())
             viewModel.getCategory()
         }
 
@@ -155,7 +156,6 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
         bind.live.setOnClickListener { selectTab(it as TextView, false) }
         bind.popular.setOnClickListener { selectTab(it as TextView, false) }
         bind.comingSoon.setOnClickListener { selectTab(it as TextView, false) }
-
 
         bind.chipGroup.setOnCheckedStateChangeListener { chipGroup, _ ->
             runSafe {

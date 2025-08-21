@@ -9,8 +9,8 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding= "@dimen/margin"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:padding="@dimen/margin">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -45,16 +45,16 @@
             <androidx.appcompat.widget.AppCompatImageView
                 android:layout_width="28dp"
                 android:layout_height="28dp"
-                android:src="@drawable/ic_question"
                 android:layout_gravity="center"
                 android:layout_marginEnd="@dimen/margin"
+                android:src="@drawable/ic_question"
                 app:tint="@color/onPrimaryContainer" />
 
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_weight="1">
+                android:layout_weight="1"
+                android:orientation="vertical">
 
                 <TextView
                     style="@style/TitleLarge"
@@ -67,18 +67,16 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/half_margin"
-                    android:text="@string/when_on_allows_bids_from_verified_buyers_only"
-                    />
-
+                    android:text="@string/when_on_allows_bids_from_verified_buyers_only" />
 
             </LinearLayout>
 
             <com.google.android.material.materialswitch.MaterialSwitch
+                android:id="@+id/allowVerifiedUser"
                 style="@style/appSwitch"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"/>
-
+                android:layout_gravity="center_vertical" />
 
         </LinearLayout>
 
@@ -97,7 +95,6 @@
             tools:itemCount="4"
             tools:listitem="@layout/offer_price_item" />
 
-
         <com.google.android.material.divider.MaterialDivider
             android:layout_width="match_parent"
             android:layout_height="1dp"
@@ -110,110 +107,109 @@
             android:layout_marginTop="@dimen/margin"
             android:text="@string/broadcasting_options" />
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:weightSum="3">
-
-
         <LinearLayout
-            android:id="@+id/switch_camera_layout"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="8dp"
-            android:gravity="center"
-            android:background="@drawable/card_8"
-            style="@style/shadowStyle"
-            android:layout_weight="1"
-            android:orientation="vertical"
-            android:padding="@dimen/margin">
+            android:orientation="horizontal"
+            android:weightSum="3">
 
-            <ImageView
-                android:id="@+id/image"
-                android:layout_width="28dp"
-                android:layout_height="28dp"
-                android:layout_marginBottom="@dimen/half_margin"
-                android:src="@drawable/ic_rotate"
-                android:gravity="center"
-                app:tint="@color/scrim" />
-
-            <TextView
-                android:id="@+id/title"
-                style="@style/BodyLarge"
-                android:layout_width="match_parent"
+            <LinearLayout
+                android:id="@+id/switch_camera_layout"
+                style="@style/shadowStyle"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:layout_weight="1"
+                android:background="@drawable/card_8"
                 android:gravity="center"
-                android:text="@string/rotate_camera"
-                android:textStyle="bold" />
+                android:orientation="vertical"
+                android:padding="@dimen/margin">
+
+                <ImageView
+                    android:id="@+id/image"
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
+                    android:layout_marginBottom="@dimen/half_margin"
+                    android:gravity="center"
+                    android:src="@drawable/ic_rotate"
+                    app:tint="@color/scrim" />
+
+                <TextView
+                    android:id="@+id/title"
+                    style="@style/BodyLarge"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="@string/rotate_camera"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/zoomInLayout"
+                style="@style/shadowStyle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:layout_weight="1"
+                android:background="@drawable/card_8"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:padding="@dimen/margin">
+
+                <ImageView
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
+                    android:layout_marginBottom="@dimen/half_margin"
+                    android:gravity="center"
+                    android:src="@drawable/ic_zoom"
+                    app:tint="@color/scrim" />
+
+                <TextView
+                    style="@style/BodyLarge"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="@string/zoom_in"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/micLayout"
+                style="@style/shadowStyle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:layout_weight="1"
+                android:background="@drawable/card_8"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:padding="@dimen/margin">
+
+                <ImageView
+                    android:id="@+id/mute_icon"
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
+                    android:layout_marginBottom="@dimen/half_margin"
+                    android:gravity="center"
+                    android:src="@drawable/ic_mic"
+                    app:tint="@color/scrim" />
+
+                <TextView
+                    style="@style/BodyLarge"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="@string/mic"
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toEndOf="@+id/view"
+                    app:layout_constraintStart_toStartOf="@+id/view"
+                    app:layout_constraintTop_toBottomOf="@+id/view" />
+
+            </LinearLayout>
 
         </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/zoomInLayout"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_margin="8dp"
-            android:gravity="center"
-            android:background="@drawable/card_8"
-            style="@style/shadowStyle"
-            android:layout_weight="1"
-            android:orientation="vertical"
-            android:padding="@dimen/margin">
-
-            <ImageView
-                android:layout_width="28dp"
-                android:layout_height="28dp"
-                android:layout_marginBottom="@dimen/half_margin"
-                android:src="@drawable/ic_zoom"
-                android:gravity="center"
-                app:tint="@color/scrim" />
-
-            <TextView
-                style="@style/BodyLarge"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="@string/zoom_in"
-                android:textStyle="bold" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/micLayout"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_margin="8dp"
-            android:gravity="center"
-            android:background="@drawable/card_8"
-            style="@style/shadowStyle"
-            android:layout_weight="1"
-            android:orientation="vertical"
-            android:padding="@dimen/margin">
-
-            <ImageView
-                android:id="@+id/mute_icon"
-                android:layout_width="28dp"
-                android:layout_height="28dp"
-                android:layout_marginBottom="@dimen/half_margin"
-                android:src="@drawable/ic_mic"
-                android:gravity="center"
-                app:tint="@color/scrim" />
-
-            <TextView
-                style="@style/BodyLarge"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="@string/mic"
-                android:textStyle="bold"
-                app:layout_constraintEnd_toEndOf="@+id/view"
-                app:layout_constraintStart_toStartOf="@+id/view"
-                app:layout_constraintTop_toBottomOf="@+id/view" />
-
-        </LinearLayout>
-
-    </LinearLayout>
 
     </LinearLayout>
 

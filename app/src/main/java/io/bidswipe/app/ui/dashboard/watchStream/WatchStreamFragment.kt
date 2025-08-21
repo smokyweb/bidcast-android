@@ -82,6 +82,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 	private lateinit var commentAdapter: CommentAdapter
 	private var product: LiveShowModel.Product? = null
 	private var inputSheet: BottomSheetDialog? = null
+	private var isAllowBidForAll = true
 
 	companion object {
 		fun newInstance(roomID: String, streamID: String) = WatchStreamFragment().apply {
@@ -141,6 +142,8 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 				} else {
 					bind.bidTime.isVisible = false
 				}
+
+				isAllowBidForAll = data.allowBidForAll ?: true
 
 			}
 
@@ -317,54 +320,17 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 				bind.bid.onSlideCompleteListener = object : OnSlideCompleteListener {
 					override fun onSlideComplete(view: SlideToActView) {
 
-						if (App.profileResponse.value?.buyerIdentityStatus == "verified") {
+						if (isAllowBidForAll) {
+							attemptBid()
+						} else {
 
-							runSafe {
-
-								log("SWIPED")
-
-								val ref = FireRef.LIVE_SESSIONS.child(roomID).child("highestBid")
-
-								ref.addListenerForSingleValueEvent(object : ValueEventListener {
-									override fun onDataChange(snapshot: DataSnapshot) {
-
-										val bidAmount = highestBidAmount?.toDouble()?.toInt()?.plus(2).toString()
-
-										val bidData = mutableMapOf<String, Any?>(
-											"bidAmount" to bidAmount,
-											"userName" to userName,
-											"userImage" to userImage,
-											"userId" to userId,
-											"productId" to bidProductId
-										)
-
-										// If startTime doesn't exist, it's a new bid; otherwise, update existing
-										if (!snapshot.hasChild("startTime")) {
-											bidData["startTime"] = Utils.timestamp().toString()
-											bidData["productStatus"] = "processed"
-										}
-
-										ref.updateChildren(bidData)
-
-										sendZimMessage("New high bid: $$bidAmount")
-
-										Alerts.success(mCtx, "Bid placed successfully")
-
-									}
-
-									override fun onCancelled(error: DatabaseError) {
-										log("Firebase Error: ${error.message}")
-									}
-
-								})
-
+							if (App.profileResponse.value?.buyerIdentityStatus == "verified") {
+								attemptBid()
+							} else {
+								verificationDialog()
 							}
 
-
-						} else {
-							verificationDialog()
 						}
-
 					}
 				}
 
@@ -799,7 +765,6 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
 	}
 
-
 	fun showPaymentAndAddressSheet() {
 
 		var paymentAddressBind = PaymentAndAddressSheetBinding.bind(
@@ -880,5 +845,39 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
 	}
 
+	fun attemptBid() {
+		runSafe {
+			log("SWIPED")
+
+			val ref = FireRef.LIVE_SESSIONS.child(roomID).child("highestBid")
+
+			ref.addListenerForSingleValueEvent(object : ValueEventListener {
+				override fun onDataChange(snapshot: DataSnapshot) {
+					val bidAmount = highestBidAmount?.toDouble()?.toInt()?.plus(2).toString()
+
+					val bidData = mutableMapOf<String, Any?>(
+						"bidAmount" to bidAmount,
+						"userName" to userName,
+						"userImage" to userImage,
+						"userId" to userId,
+						"productId" to bidProductId
+					)
+
+					if (!snapshot.hasChild("startTime")) {
+						bidData["startTime"] = Utils.timestamp().toString()
+						bidData["productStatus"] = "processed"
+					}
+
+					ref.updateChildren(bidData)
+					sendZimMessage("New high bid: $$bidAmount")
+					Alerts.success(mCtx, "Bid placed successfully")
+				}
+
+				override fun onCancelled(error: DatabaseError) {
+					log("Firebase Error: ${error.message}")
+				}
+			})
+		}
+	}
 
 }

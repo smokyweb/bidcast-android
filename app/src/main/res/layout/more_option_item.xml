@@ -1,32 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	xmlns:app="http://schemas.android.com/apk/res-auto"
-	android:layout_width="wrap_content"
-	android:layout_height="wrap_content"
-	android:layout_margin="@dimen/half_margin"
-	android:padding= "@dimen/margin"
-	android:orientation="horizontal"
-	android:gravity="center"
-	style="@style/cardStyle">
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    style="@style/cardStyle"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center"
+    android:backgroundTint="@color/background"
+    android:layout_margin="@dimen/half_margin"
+    android:orientation="horizontal">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_margin="@dimen/half_margin">
+
+        <ImageView
+            android:id="@+id/icon"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:layout_marginEnd="12dp"
+            android:contentDescription="@string/vacation_mode"
+            android:src="@drawable/ic_vacation"
+            app:tint="@color/scrim" />
+
+        <TextView
+            android:id="@+id/title"
+            style="@style/TitleMedium"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/end_show" />
+
+    </LinearLayout>
 
 
-
-			<ImageView
-				android:id="@+id/icon"
-				android:layout_width="28dp"
-				android:layout_height="28dp"
-				android:layout_marginEnd="12dp"
-				android:contentDescription="@string/vacation_mode"
-				android:src="@drawable/ic_vacation"
-				app:tint = "@color/scrim"/>
-
-			<TextView
-				android:id="@+id/title"
-				style="@style/TitleMedium"
-				android:layout_width="match_parent"
-				android:layout_height="wrap_content"
-				android:text="@string/end_show" />
-
-
-
-</LinearLayout>
+</com.google.android.material.card.MaterialCardView>
