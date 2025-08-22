@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    style="@style/cardStyle"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    style="@style/cardStyle"
-    android:backgroundTint="@color/surfaceVariant"
     android:layout_margin="@dimen/half_margin"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:backgroundTint="@color/surfaceVariant">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -72,14 +72,9 @@
                     android:layout_height="wrap_content"
                     android:text="Stock: 24" />
 
-
             </LinearLayout>
 
-
-
-
         </LinearLayout>
-
 
     </LinearLayout>
 

@@ -82,18 +82,24 @@ class OffersAdapter(
 
             bind.subTitle.text = buildSpannedString {
                 append("Placed an Offer ")
-                bold { append(" • ") }
+                bold { append("• ") }
                 append(Utils.getTimeAgo(item?.createdAt ?: "", "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"))
             }
 
             bind.productImage.loadUrl(mCtx, item?.product?.images?.first() ?: "")
             bind.productName.text = item?.product?.title?.asCapital()
+            bind.productName.text = buildString {
+                append(item?.product?.title?.asCapital())
+                append(" #")
+                append(item?.product?.id.toString())
+            }
 
             bind.prodSubTitle.text = buildSpannedString {
-                append("Asking price : ")
+                append("Asking Price: ")
                 append(item?.product?.pricing.toString().asMoney())
             }
-      
+
+
         }
     }
 }

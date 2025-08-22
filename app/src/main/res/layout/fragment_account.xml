@@ -56,37 +56,34 @@
 
                 </com.google.android.material.card.MaterialCardView>
 
-                <TextView
-                android:id="@+id/userName"
-                style="@style/TitleMedium"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:text="@string/app_name"
-                android:textStyle="bold"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toTopOf="@+id/view"
-                app:layout_constraintEnd_toStartOf="@id/edit_icon"
-                app:layout_constraintStart_toStartOf="@+id/view" />
-
-                <View
-                    android:id="@+id/view"
-                    android:layout_width="0dp"
-                    android:layout_height="1dp"
-                    android:layout_marginStart="16dp"
-                    app:layout_constraintTop_toBottomOf="@id/userName"
-                    app:layout_constraintStart_toEndOf="@+id/materialCardView"
-                    app:layout_constraintEnd_toStartOf="@id/edit_icon" />
-
-                <TextView
-                    android:id="@+id/sellerSince"
-                    style="@style/TitleSmall"
+                <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:text="dfbgh"
-                    android:textColor="@color/tertiary"
-                    app:layout_constraintTop_toBottomOf="@id/view"
-                    app:layout_constraintEnd_toStartOf="@id/edit_icon"
-                    app:layout_constraintStart_toStartOf="@+id/view"/>
+                    android:orientation="vertical"
+                    android:layout_marginStart="@dimen/half_margin"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/edit_icon"
+                    app:layout_constraintStart_toEndOf="@+id/materialCardView"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <TextView
+                        android:id="@+id/userName"
+                        style="@style/TitleMedium"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/app_name"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/sellerSince"
+                        style="@style/TitleSmall"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="dfbgh"
+                        android:textColor="@color/tertiary" />
+
+                </LinearLayout>
+
 
                 <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/edit_icon"

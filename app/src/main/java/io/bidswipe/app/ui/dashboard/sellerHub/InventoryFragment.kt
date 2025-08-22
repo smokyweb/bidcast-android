@@ -113,20 +113,12 @@ class InventoryFragment : BaseFragment<SellerHubViewModel, FragmentInventoryBind
             bind.bottomLoader.isVisible = false
             bind.loader.isVisible = true
 
-            bind.tabs.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
-                override fun onTabSelected(tab: TabLayout.Tab?) {
-                    selectedTab = tab?.text.toString().lowercase()
-                    page = 1
-                    isLoading = false
-                    itemList.clear()
-                    bind.recycler.isVisible = false
-                    bind.noData.isVisible = false
-                    viewModel.getMyInventory(selectedTab.request(), page.toString().request())
-                }
-
-                override fun onTabUnselected(tab: TabLayout.Tab?) {}
-                override fun onTabReselected(tab: TabLayout.Tab?) {}
-            })
+            page = 1
+            isLoading = false
+            itemList.clear()
+            bind.recycler.isVisible = false
+            bind.noData.isVisible = false
+            viewModel.getMyInventory(selectedTab.request(), page.toString().request())
         }
 
         bind.loader.isVisible = true
@@ -139,6 +131,7 @@ class InventoryFragment : BaseFragment<SellerHubViewModel, FragmentInventoryBind
                     bind.bottomLoader.isVisible = false
                     bind.noInternet.isVisible = false
                     bind.swipeRefreshLayout.isRefreshing = false
+                    bind.addNewProduct.isVisible = true
 
                     val mData = it.value.data
 
@@ -171,10 +164,14 @@ class InventoryFragment : BaseFragment<SellerHubViewModel, FragmentInventoryBind
 
 
                     if (it.isNetworkError) {
+                        bind.loader.isVisible = false
                         bind.noInternet.isVisible = true
                         bind.recycler.isVisible = false
+                        bind.addNewProduct.isVisible = false
 
                     } else {
+                        bind.noInternet.isVisible = false
+                        bind.addNewProduct.isVisible = true
                         it.parse(mCtx, TAG, object : AlertClicks {
                             override fun primaryClick(dialog: AppBottomSheet) {
                                 dialog.dismiss()

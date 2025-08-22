@@ -98,6 +98,14 @@ class ShowsFragment : BaseFragment<SellerHubViewModel, FragmentShowsBinding>() {
 		bind.noInternet.onClick {
 			bind.loader.isVisible = true
 			bind.noInternet.isVisible = false
+
+			val currentTab = bind.tabs.selectedTabPosition
+			val requestType = when (currentTab) {
+				0 -> "upcoming"
+				1 -> "past"
+				else -> "upcoming"
+			}
+			viewModel.getMyScheduledShow(requestType.request())
 		}
 
 		bind.tabs.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {

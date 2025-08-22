@@ -1,5 +1,6 @@
 package io.bidswipe.app.controller
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import io.bidswipe.app.base.BaseAdapter
@@ -42,8 +43,9 @@ class PurchasesAdapter(
                 append(item?.user?.name)
             }
 
+            Log.d(TAG, "onBind: ${bind.date.text}")
             bind.date.text = Utils.getFormattedDateTime(
-                "yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'",
+                "dd-MM-yyyy HH:mm:ss",
                 "MM/dd/yyyy",
                 item?.product?.createdAt.toString()
             )

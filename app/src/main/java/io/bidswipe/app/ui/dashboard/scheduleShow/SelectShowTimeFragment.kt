@@ -40,7 +40,7 @@ class SelectShowTimeFragment : BaseFragment<ScheduleShowViewModel,FragmentSelect
         bind.calenderView.setForwardButtonImage(ContextCompat.getDrawable(mCtx,draw.ic_forward)!!)
         bind.calenderView.setPreviousButtonImage(ContextCompat.getDrawable(mCtx,draw.ic_previous)!!)
 
-        if (viewModel.date.isEmpty()) { // Optionally, only set if not already set (e.g., by a previous selection or state restoration)
+        if (viewModel.date.isEmpty()) {
             val calendar = Calendar.getInstance()
             val date = Utils.getFormattedDateTime("dd-MM-yyyy","yyyy-MM-dd" ,Utils.getDateFromTimestamp(calendar.timeInMillis))
             viewModel.date = date.toString()
@@ -108,8 +108,6 @@ class SelectShowTimeFragment : BaseFragment<ScheduleShowViewModel,FragmentSelect
                 }
 
             }
-
-//            if (from =="dash") findNavController().navigate(R.id.ShowTimeFragment_to_selectCategoryFragment)
 
         }
 

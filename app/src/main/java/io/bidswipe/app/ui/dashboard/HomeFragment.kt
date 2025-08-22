@@ -139,14 +139,14 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
         })
 
         bind.swipeRefreshLayout.setOnRefreshListener {
-//            viewModel.getLiveShow(selectedTabText.request(), selectedCategory.request())
+            viewModel.getLiveShow(selectedTabText.request(), selectedCategory.request())
             viewModel.getCategory()
         }
 
         bind.noInternet.onClick {
-            bind.loader.isVisible = true
-//            bind.noInternet.isVisible = false
-//            viewModel.getLiveShow(selectedTabText.request(), selectedCategory.request())
+            bind.loader.isVisible = false
+            bind.noInternet.isVisible = false
+            viewModel.getLiveShow(selectedTabText.request(), selectedCategory.request())
             viewModel.getCategory()
         }
 
@@ -171,7 +171,7 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
             }
         }
 
-        bind.loader.isVisible = true
+        bind.loader.isVisible = false
 
         viewModel.getCategory()
         viewModel.getCategoryRepo.observe(viewLifecycleOwner) { it ->

@@ -29,7 +29,6 @@ class MessagesFragment : BaseFragment<DashViewModel, FragmentMessagesBinding>() 
     private lateinit var messagesAdapter: MessagesAdapter
     private val chatList = mutableListOf<ChatModel>()
 
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 

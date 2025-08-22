@@ -167,9 +167,10 @@ class ExploreTypeFragment : BaseFragment<DashViewModel, FragmentExploreTypeBindi
 
                     if (it.isNetworkError) {
                         bind.noInternet.isVisible = true
+                        bind.noData.isVisible = false
                         bind.recycler.isVisible = false
                     } else {
-
+                        bind.noInternet.isVisible = false
                         it.parse(mCtx, TAG, object : AlertClicks {
                             override fun primaryClick(dialog: AppBottomSheet) {
                                 dialog.dismiss()
@@ -189,14 +190,23 @@ class ExploreTypeFragment : BaseFragment<DashViewModel, FragmentExploreTypeBindi
 
     }
 
+    override fun onPause() {
+        super.onPause()
+        bind.search.setText("")
+    }
+
     fun selectTab(selectedTab: TextView) {
-        val tabs = listOf(bind.live, bind.popular, bind.comingSoon)
-        tabs.forEach {
-            it.setTextColor(ContextCompat.getColor(mCtx, R.color.outlineVariant))
-            it.setTypeface(null, Typeface.NORMAL)
+
+        bind.search.setText("")
+
+        listOf(bind.live, bind.popular, bind.comingSoon).forEach { tab ->
+            tab.setTextAppearance(R.style.TitleMedium)
+            tab.setTextColor(ContextCompat.getColor(mCtx, R.color.outlineVariant))
+            tab.isSelected = (tab == selectedTab)
         }
+
         selectedTab.setTextColor(ContextCompat.getColor(mCtx, R.color.scrim))
-        selectedTab.setTypeface(null, Typeface.BOLD)
+        selectedTab.setTextAppearance(R.style.TitleLarge)
 
         bind.loader.isVisible = true
 

@@ -1,5 +1,6 @@
 package io.bidswipe.app.ui.dashboard
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -16,7 +17,7 @@ import io.bidswipe.app.network.response.GetOffersResponse
 import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request
-
+@SuppressLint("NotifyDataSetChanged")
 class OfferFragment : BaseFragment<DashViewModel, FragmentOfferBinding>() {
 	
 	override fun getModel(): Class<DashViewModel> = DashViewModel::class.java
@@ -39,7 +40,8 @@ class OfferFragment : BaseFragment<DashViewModel, FragmentOfferBinding>() {
 	
 	private var page = 1
 
-	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		super.onViewCreated(view, savedInstanceState)
 		
 		offersAdapter = OffersAdapter(mList, mClick)
@@ -61,7 +63,7 @@ class OfferFragment : BaseFragment<DashViewModel, FragmentOfferBinding>() {
 		bind.loader.isVisible = true
 
 		viewModel.offerList(page)
-		viewModel.offerListRepo.observe(viewLifecycleOwner) {
+		viewModel.offerListRepo.observe(viewLifecycleOwner) {it->
 			bind.swipeRefreshLayout.isRefreshing = false
 			bind.noInternet.isVisible = false
 			bind.loader.isVisible = false

@@ -50,7 +50,6 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/margin"
         android:layout_marginTop="@dimen/half_margin"
-        android:layout_marginBottom="@dimen/margin"
         android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
