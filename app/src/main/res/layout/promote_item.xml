@@ -1,65 +1,68 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/main_layout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginVertical="@dimen/half_margin"
-    style="@style/cardStyle">
+    android:background="@color/cardview_dark_background"
+    android:orientation="vertical"
+    android:padding="@dimen/padding">
 
-        <LinearLayout
-            android:layout_width="match_parent"
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical">
+
+
+        <TextView
+            android:id="@+id/title"
+            style="@style/HeadlineSmall"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:padding="@dimen/padding"
-            android:orientation="vertical">
+            android:layout_weight="1"
+            android:text="15 Minute Boost"
+            android:textColor="@color/onPrimary" />
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical">
-
-
-                <TextView
-                    android:id="@+id/title"
-                    style="@style/HeadlineMedium"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="15 Minute Boost" />
-
-                <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/titleIcon"
-                    android:layout_width="44dp"
-                    android:layout_height="44dp"
-                    android:padding="12dp"
-                    android:src="@drawable/ic_quick" />
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/titleIcon"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:src="@drawable/ic_quick"
+            android:tint="@color/onPrimary" />
 
 
-            </LinearLayout>
+    </LinearLayout>
 
-            <TextView
-                android:id="@+id/subTitle"
-                style="@style/BodyLarge"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/quick_visibility_boost" />
+    <TextView
+        android:id="@+id/subTitle"
+        style="@style/BodyMedium"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/quick_visibility_boost"
+        android:textColor="@color/onPrimary" />
 
-            <TextView
-                android:id="@+id/description"
-                style="@style/BodyLarge"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/half_margin"
-                android:text="@string/get_featured_in_the_top_shows_for_15_minutes" />
+    <TextView
+        android:id="@+id/description"
+        style="@style/BodyMedium"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/half_margin"
+        android:text="@string/get_featured_in_the_top_shows_for_15_minutes"
+        android:textColor="@color/onPrimary" />
 
-            <com.google.android.material.button.MaterialButton
-                style="@style/appBtn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/margin"
-                android:backgroundTint="@color/background"
-                android:textColor="@color/primary"
-                android:text="Select-$3.99"/>
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/amount"
+        style="@style/appBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin"
+        android:backgroundTint="@color/background"
+        android:minHeight="0dp"
+        android:paddingHorizontal="16dp"
+        android:paddingVertical="6dp"
+        android:text="Select $3.99"
+        android:textColor="@color/primary"
+        app:cornerRadius="24dp" />
 
-        </LinearLayout>
-
-</com.google.android.material.card.MaterialCardView>
+</LinearLayout>

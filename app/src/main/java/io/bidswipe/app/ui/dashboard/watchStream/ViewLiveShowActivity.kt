@@ -86,9 +86,7 @@ class ViewLiveShowActivity : BaseActivity() {
 			fitsSystemWindows(false)
 			keyboardEnable(true)
 		}
-
-		bind.root.setMargins(0, 0, 0, navigationBarHeight)
-
+		
 		val showId = intent.getStringExtra("showId")
 
 //		streamList.find { it.showId == showId }

@@ -14,6 +14,7 @@ import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
+import com.gyf.immersionbar.ktx.navigationBarHeight
 import com.ncorti.slidetoact.SlideToActView
 import com.ncorti.slidetoact.SlideToActView.OnSlideCompleteListener
 import im.zego.zegoexpress.ZegoExpressEngine
@@ -55,6 +56,7 @@ import io.bidswipe.app.utils.Alerts
 import io.bidswipe.app.utils.FireRef
 import io.bidswipe.app.utils.Utils
 import io.bidswipe.app.utils.asMoney
+import io.bidswipe.app.utils.dpToPx
 import io.bidswipe.app.utils.draw
 import io.bidswipe.app.utils.finish
 import io.bidswipe.app.utils.hideKeyboard
@@ -62,6 +64,7 @@ import io.bidswipe.app.utils.loadUrl
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request
 import io.bidswipe.app.utils.runSafe
+import io.bidswipe.app.utils.setMargins
 import io.bidswipe.app.utils.value
 import kotlin.math.abs
 
@@ -167,6 +170,8 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 		log("RoomId: $roomID")
 
 		setUpSwipe()
+		
+		bind.bidLayout.setMargins(resources.dpToPx(16), 0, resources.dpToPx(16), navigationBarHeight)
 
 		bind.cutButton.setOnClickListener {
 			finish()

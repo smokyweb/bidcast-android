@@ -92,7 +92,6 @@ class ContentFragment : BaseFragment<DashViewModel, FragmentContentBinding>() {
                 is Resource.Success -> {
                     bind.loader.isVisible = false
                     it.value.data?.url?.let { url ->
-                        Log.d(TAG, "loadWebContent: $url")
                         bind.webView.loadUrl(url)
                     }
                 }

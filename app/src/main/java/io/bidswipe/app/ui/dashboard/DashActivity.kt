@@ -296,7 +296,6 @@ class DashActivity : BaseActivity(), NavController.OnDestinationChangedListener 
     }
 
     fun getDeviceToken(context: Context, token: (token: String) -> Unit) {
-        Log.d(TAG, "getDeviceToken: ")
         FirebaseMessaging.getInstance().token.addOnCompleteListener {
             if (!it.isSuccessful) {
                 Alerts.log(
@@ -306,9 +305,7 @@ class DashActivity : BaseActivity(), NavController.OnDestinationChangedListener 
                 return@addOnCompleteListener
             }
             val deviceToken = it.result.toString()
-            Log.d(TAG, "getDeviceToken: ")
-
-            if (Prefs(context).fcmToken() != deviceToken) {
+             if (Prefs(context).fcmToken() != deviceToken) {
                 Prefs(context).putString(Prefs.PUSH_TOKEN, deviceToken)
                 Alerts.log(javaClass.simpleName, "device token $deviceToken")
             } else {

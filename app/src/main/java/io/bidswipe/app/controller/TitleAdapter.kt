@@ -21,8 +21,7 @@ class TitleAdapter(
         item: GetAllTipsResponse.Data.Tip?,
     ) {
         with(holder) {
-            Log.d(TAG, "onBind:${item?.icon} ")
-
+       
             bind.icon.loadUrl(mCtx, item?.icon.toString())
             bind.title.setHtmlFromString(item?.description ?: "", false)
 

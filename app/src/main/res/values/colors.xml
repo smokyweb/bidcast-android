@@ -44,4 +44,12 @@
     <color name="onSecWarning">#DDD0C3</color>
     <color name="backgroundClr">#E5E7EB</color>
 
+    <color name="boost_15_start">#EC4899</color>
+    <color name="boost_15_end">#8B5CF6</color>
+
+    <color name="boost_full_start">#3B82F6</color>
+    <color name="boost_full_end">#06B6D4</color>
+
+    <color name="boost_community_start">#F97316</color>
+    <color name="boost_community_end">#EF4444</color>
 </resources>

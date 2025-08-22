@@ -8,39 +8,45 @@ import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseAdapter
 import io.bidswipe.app.databinding.PromoteItemBinding
 import io.bidswipe.app.interfaces.RecyclerClicks
+import io.bidswipe.app.model.PromoteShowModel
+import io.bidswipe.app.utils.asMoney
+import io.bidswipe.app.utils.dpToPx
 
 class PromoteSheetAdapter(
-    mList: MutableList<String?>, val mClicks: RecyclerClicks,
-) : BaseAdapter<String?, PromoteItemBinding>(mList) {
-
-    override fun bindView(inflater: LayoutInflater, parent: ViewGroup) =
-        PromoteItemBinding.inflate(inflater, parent, false)
-
-    override fun onBind(
-        holder: BaseViewHolder<PromoteItemBinding>,
-        position: Int,
-        item: String?,
-    ) {
-        with(holder) {
-
-            bind.root.setOnClickListener {
-                mClicks.itemClick(position)
-            }
-
-
-            val startColor = ContextCompat.getColor(mCtx, R.color.primary)
-            val endColor = ContextCompat.getColor(mCtx, R.color.secondary)
-
-            val gradientDrawable = GradientDrawable(
-                GradientDrawable.Orientation.LEFT_RIGHT,  // or TOP_BOTTOM, BL_TR etc
-                intArrayOf(startColor, endColor)
-            )
-
-            gradientDrawable.cornerRadius = 16f  // optional rounding
-
-            // Apply as background to the CardView (or any view you want)
-            bind.root.background = gradientDrawable
-
-        }
-    }
+	mList: MutableList<PromoteShowModel>, val mClicks: RecyclerClicks,
+) : BaseAdapter<PromoteShowModel?, PromoteItemBinding>(mList) {
+	
+	override fun bindView(inflater: LayoutInflater, parent: ViewGroup) =
+		PromoteItemBinding.inflate(inflater, parent, false)
+	
+	override fun onBind(
+		holder: BaseViewHolder<PromoteItemBinding>,
+		position: Int,
+		item: PromoteShowModel?,
+	) {
+		with(holder) {
+			
+			bind.root.setOnClickListener {
+				mClicks.itemClick(position)
+			}
+			bind.title.text = item?.title
+			bind.subTitle.text=item?.subtitle
+			bind.description.text=item?.description
+			bind.titleIcon.setImageResource(item?.iconResId?: R.drawable.ic_flash)
+			bind.amount.setTextColor(ContextCompat.getColor(mCtx,item?.gradientColors?.first()?:R.color.primary))
+			bind.amount.text = buildString {
+				append("Select")
+				append(" • ")
+				append(item?.price)
+			}
+		
+			val gradientDrawable = GradientDrawable(
+				GradientDrawable.Orientation.LEFT_RIGHT,
+				item?.gradientColors?.map { ContextCompat.getColor(mCtx,it)}?.toIntArray()
+			)
+			gradientDrawable.cornerRadius = mCtx.resources.dpToPx(16).toFloat()
+			bind.mainLayout.background = gradientDrawable
+			
+		}
+	}
 }

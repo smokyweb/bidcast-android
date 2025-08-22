@@ -93,8 +93,7 @@ class OffersAdapter(
                 append("Asking price : ")
                 append(item?.product?.pricing.toString().asMoney())
             }
-            Log.d(TAG, "onBind: ${item?.status}+${item?.product?.pricing}")
-
+      
         }
     }
 }

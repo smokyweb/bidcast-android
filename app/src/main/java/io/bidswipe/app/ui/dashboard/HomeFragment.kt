@@ -101,7 +101,6 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
             hideKeyboard(it)
         }
         bind.main.setOnClickListener {
-            Log.d(TAG, "onViewCreated: click2")
             hideKeyboard(it)
         }
         bind.recycler.setOnClickListener {

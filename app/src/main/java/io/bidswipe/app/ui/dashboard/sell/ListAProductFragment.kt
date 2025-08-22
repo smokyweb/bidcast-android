@@ -79,8 +79,7 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
         super.onViewCreated(view, savedInstanceState)
 
         product = activity?.intent?.getSerializableExtra("product") as? GetMyInventoryResponse.Data
-        Log.d("IMAGE_DEBUG", "Received product images: ${product?.images}")
-
+ 
         if (product != null) {
             bind.saveDraft.isVisible = false
             bind.publish.text = "Update"
@@ -363,8 +362,6 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
                 }
             }
         }
-
-        Log.d(TAG, "addProductData: $imageList")
         bind.imageLimit.text = "${imageList.size}/9"
         bind.images.adapter?.notifyDataSetChanged()
     }
@@ -397,8 +394,7 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
                         viewModel.getCategory(categoryId)
                         isSubCategory = true
                         if (categoryList[pos]?.extraFields?.isNotEmpty() == true) {
-                            Log.d(TAG, "itemClick: ${categoryList[pos]?.extraFields}")
-                            variantList.addAll(categoryList[pos]?.extraFields ?: mutableListOf())
+                             variantList.addAll(categoryList[pos]?.extraFields ?: mutableListOf())
                             variantAdapter.notifyDataSetChanged()
                         }
                     } else {

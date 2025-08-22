@@ -38,9 +38,7 @@ class ThumbnailTipsAdapter(
             if (type == "shipping") {
                 bind.root.background.setTint(ContextCompat.getColor(mCtx, R.color.background))
             }
-
-            Log.d(TAG, "onBind:${item?.icon} ")
-
+            
             bind.icon.loadUrl(mCtx, item?.icon.toString())
             bind.iconCard.setCardBackgroundColor(Color.parseColor(item?.color))
             bind.subTitle.text = item?.description
