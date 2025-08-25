@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.network.repository.DashRepository
+import io.bidswipe.app.network.response.BlockedUnblockedResponse
 import io.bidswipe.app.network.response.CommonResponse
 import io.bidswipe.app.network.response.FollowUnfollowResponse
 import io.bidswipe.app.network.response.GetMyShowResponse
@@ -78,6 +79,15 @@ class SellerViewModel  @Inject constructor(val repo: DashRepository) : ViewModel
         sellerId : String?
     ) = viewModelScope.launch {
         _getSellerRatingResponse.value = repo.getSellerRating(sellerId)
+    }
+    private var _blockUnblockUserResponse = MutableLiveData<Resource<BlockedUnblockedResponse>>()
+    val blockUnblockUserRepo: MutableLiveData<Resource<BlockedUnblockedResponse>>
+        get() = _blockUnblockUserResponse
+
+    fun blockUnblockUser(
+        blockedID: RequestBody
+    ) = viewModelScope.launch {
+        _blockUnblockUserResponse.value = repo.blockUnblockUser(blockedID)
     }
 
 }

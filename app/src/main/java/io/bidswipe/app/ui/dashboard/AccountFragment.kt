@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.view.isVisible
+import androidx.navigation.fragment.findNavController
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayout.OnTabSelectedListener
 import io.bidswipe.app.App
@@ -33,6 +34,7 @@ import io.bidswipe.app.utils.loadUrl
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.toAuth
 import io.bidswipe.app.ui.dashboard.sellerHub.SellerVerificationActivity
+import io.bidswipe.app.utils.ids
 
 class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
 
@@ -84,6 +86,10 @@ class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
                 "privacyPolicy" -> handlePageUrl(DashViewModel.SLUG_PRIVACY_POLICY)
                 "faq" -> handlePageUrl(DashViewModel.SLUG_FAQ)
                 "termsCondition" -> handlePageUrl(DashViewModel.SLUG_TERMS)
+                "blockedUsers" -> {
+                    bind.loader.isVisible = true
+                    findNavController().navigate(ids.goToBlockedUsersFragment)
+                }
                 else -> {
                     startActivity(
                         Intent(mCtx, MoreActivity::class.java)
@@ -206,6 +212,7 @@ class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
         moreList.add(MoreModel(R.drawable.ic_vacation, "Terms & Conditions", "termsCondition"))
         moreList.add(MoreModel(R.drawable.ic_vacation, "Privacy Policy", "privacyPolicy"))
         moreList.add(MoreModel(R.drawable.ic_vacation, "F.A.Q", "faq"))
+        moreList.add(MoreModel(R.drawable.ic_vacation, "Blocked Users", "blockedUsers"))
         moreList.add(MoreModel(R.drawable.ic_vacation, "Logout", "logout"))
 
         moreAdapter = MoreAdapter(moreList, mClicks)

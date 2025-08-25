@@ -24,6 +24,7 @@ import io.bidswipe.app.network.Resource
 import io.bidswipe.app.ui.custom.AlertType
 import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.ui.dashboard.ChatActivity
+import io.bidswipe.app.ui.dashboard.more.MoreViewModel
 import io.bidswipe.app.utils.Alerts
 import io.bidswipe.app.utils.bind
 import io.bidswipe.app.utils.clr
@@ -89,6 +90,9 @@ class SellerProfileActivity : BaseActivity() {
 
         bind.moreIcon.setOnClickListener {
             menu.show()
+        }
+        bind.moreIcon1.setOnClickListener {
+            showBlockConfirmation()
         }
 
         val menu1 = PopupMenu(this, bind.moreIcon1)
@@ -392,7 +396,7 @@ class SellerProfileActivity : BaseActivity() {
             clicks = object : AlertClicks {
                 override fun primaryClick(dialog: AppBottomSheet) {
                     dialog.dismiss()
-                    bind.loader.isVisible = false
+                   blockUser()
                 }
 
                 override fun secondaryClick(dialog: AppBottomSheet) {
@@ -416,6 +420,43 @@ class SellerProfileActivity : BaseActivity() {
         }
 
         sheet.show()
+    }
+
+    private fun blockUser() {
+        bind.loader.isVisible = true
+        viewModel.blockUnblockUser(sellerId.request())
+
+        viewModel.blockUnblockUserRepo.observe(this) {
+            when (it) {
+                is Resource.Success -> {
+                    bind.loader.isVisible = false
+                    it.value.data
+                    if (it.value.status == "success") {
+                        Alerts.success(this, it.value.message ?: "User blocked successfully")
+                        finish()
+                    } else {
+                        Alerts.error(this, it.value.message ?: "Failed to block user")
+                    }
+                }
+                is Resource.Error -> {
+                    bind.loader.isVisible = false
+                    if (it.isNetworkError) {
+                        errorToast(getString(R.string.no_internet))
+                    }else{
+                        it.parse(this, TAG, object : AlertClicks {
+                            override fun primaryClick(dialog: AppBottomSheet) {
+                                dialog.dismiss()
+                            }
+
+                            override fun secondaryClick(dialog: AppBottomSheet) {
+                               dialog.dismiss()
+                            }
+                        })
+                    }
+                }
+                else -> {}
+            }
+        }
     }
 
 

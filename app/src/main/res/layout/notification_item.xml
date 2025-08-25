@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    style="@style/cardStyle"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="@dimen/half_margin"
-    style="@style/cardStyle">
+    android:layout_margin="@dimen/half_margin">
 
     <com.zerobranch.layout.SwipeLayout
         android:id="@+id/swipeLayout"
@@ -29,9 +29,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="0dp"
                 android:layout_gravity="end"
+                android:padding="32dp"
                 app:backgroundTint="@color/error"
                 app:cornerRadius="0dp"
-                android:padding="32dp"
                 app:icon="@drawable/ic_delete"
                 app:iconTint="@color/background"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -72,8 +72,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="7 hrs ago"
-                    android:textAllCaps="false"/>
-
+                    android:textAllCaps="false" />
 
             </LinearLayout>
 
@@ -84,7 +83,6 @@
                 android:layout_height="wrap_content"
                 android:text="7 hrs ago"
                 android:textAllCaps="false" />
-
 
         </LinearLayout>
 

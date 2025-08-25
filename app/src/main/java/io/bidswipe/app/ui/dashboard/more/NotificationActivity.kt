@@ -53,13 +53,10 @@ class NotificationActivity : BaseActivity() {
         }
 
         notificationAdapter = NotificationAdapter(notificationList, mClick)
-
         bind.notificationRec.adapter = notificationAdapter
 
         bind.deleteAll.setOnClickListener {
-
             bind.loader.isVisible = true
-
             viewModel.deleteNotification("".request())
 
         }
@@ -77,14 +74,13 @@ class NotificationActivity : BaseActivity() {
         }
 
         bind.noData.onClick {
-            viewModel.getNotification()
             bind.noData.isVisible = false
+            viewModel.getNotification()
+
         }
 
         bind.loader.isVisible = true
-
         viewModel.getNotification()
-
         viewModel.getNotificationRepo.observe(this) {
             when (it) {
                 is Resource.Success -> {
@@ -93,27 +89,30 @@ class NotificationActivity : BaseActivity() {
                         bind.bottomLoader.isVisible = false
                         bind.swipeRefreshLayout.isRefreshing = false
                         bind.loader.isVisible = false
+                        bind.deleteAll.isVisible = true
 
                         val mData = it.value.data
                         if (mData != null) {
                             notificationList.addAll(mData)
                         }
-
                         notificationAdapter.notifyDataSetChanged()
-
                         bind.noData.isVisible = mData?.isEmpty() == true
                     }
                 }
 
                 is Resource.Error -> {
-                    bind.swipeRefreshLayout.isRefreshing = false
                     bind.loader.isVisible = false
+                    bind.swipeRefreshLayout.isRefreshing = false
                     bind.bottomLoader.isVisible = false
 
                     if (it.isNetworkError) {
                         bind.noInternet.isVisible = true
+                        bind.noData.isVisible = false
+                        bind.deleteAll.isVisible = false
 
                     } else {
+                        bind.noInternet.isVisible = false
+                        bind.deleteAll.isVisible = true
                         it.parse(this, TAG, object : AlertClicks {
                             override fun primaryClick(dialog: AppBottomSheet) {
                                 dialog.dismiss()

@@ -5,6 +5,7 @@ import io.bidswipe.app.model.GetSubCategoriesRequest
 import io.bidswipe.app.model.PaymentCardModel
 import io.bidswipe.app.model.StoreProductRequest
 import io.bidswipe.app.network.response.AboutUsResponse
+import io.bidswipe.app.network.response.BlockedUnblockedResponse
 import io.bidswipe.app.network.response.CheckKycResponse
 import io.bidswipe.app.network.response.CommonResponse
 import io.bidswipe.app.network.response.CreateBidResponse
@@ -18,6 +19,7 @@ import io.bidswipe.app.network.response.FollowUnfollowResponse
 import io.bidswipe.app.network.response.GenerateTokenResponse
 import io.bidswipe.app.network.response.GetAllTipsResponse
 import io.bidswipe.app.network.response.GetAuctionTypeResponse
+import io.bidswipe.app.network.response.GetBlockedUsersResponse
 import io.bidswipe.app.network.response.GetBuyerIdentityResponse
 import io.bidswipe.app.network.response.GetCategoryResponse
 import io.bidswipe.app.network.response.GetHowToSellResponse
@@ -588,6 +590,17 @@ interface ApiInterface {
     suspend fun deleteProduct(
         @Query("product_id") productId: String?,
     ): CommonResponse
+
+    @Multipart
+    @POST("api/block-unblock")
+    suspend fun blockUnblockUser(
+        @Part("blocked_id") blockedId: RequestBody
+    ): BlockedUnblockedResponse
+
+    @GET("api/blocked-users")
+    suspend fun getBlockedUsers(
+        @Query("blocked_by") blockedBy: String = "true"
+    ): GetBlockedUsersResponse
 
 
 }

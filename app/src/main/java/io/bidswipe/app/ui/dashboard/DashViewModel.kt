@@ -8,12 +8,14 @@ import io.bidswipe.app.model.PaymentCardModel
 import io.bidswipe.app.model.TutorialShowModel
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.network.repository.DashRepository
+import io.bidswipe.app.network.response.BlockedUnblockedResponse
 import io.bidswipe.app.network.response.CheckKycResponse
 import io.bidswipe.app.network.response.CommonResponse
 import io.bidswipe.app.network.response.CreateBidResponse
 import io.bidswipe.app.network.response.CreateShowResponse
 import io.bidswipe.app.network.response.FetchBidResponse
 import io.bidswipe.app.network.response.GenerateTokenResponse
+import io.bidswipe.app.network.response.GetBlockedUsersResponse
 import io.bidswipe.app.network.response.GetCategoryResponse
 import io.bidswipe.app.network.response.GetHowToSellResponse
 import io.bidswipe.app.network.response.GetLessonsResponse
@@ -428,6 +430,24 @@ class DashViewModel @Inject constructor(val repo: DashRepository) : ViewModel() 
         const val SLUG_PRIVACY_POLICY = "privacy-policy"
         const val SLUG_FAQ = "faq"
         const val SLUG_TERMS = "terms-condition"
+    }
+
+    private var _blockUnblockUserResponse = MutableLiveData<Resource<BlockedUnblockedResponse>>()
+    val blockUnblockUserRepo: MutableLiveData<Resource<BlockedUnblockedResponse>>
+        get() = _blockUnblockUserResponse
+
+    fun blockUnblockUser(
+        blockedID: RequestBody
+    ) = viewModelScope.launch {
+        _blockUnblockUserResponse.value = repo.blockUnblockUser(blockedID)
+    }
+
+    private var _getBlockedUsersResponse = MutableLiveData<Resource<GetBlockedUsersResponse>>()
+    val getBlockedUsersRepo: MutableLiveData<Resource<GetBlockedUsersResponse>>
+        get() = _getBlockedUsersResponse
+
+    fun getBlockedUsers(blockedBy : String = "true") = viewModelScope.launch {
+        _getBlockedUsersResponse.value = repo.getBlockedUsers(blockedBy)
     }
 
 
