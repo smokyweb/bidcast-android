@@ -96,7 +96,9 @@ class NotificationActivity : BaseActivity() {
                             notificationList.addAll(mData)
                         }
                         notificationAdapter.notifyDataSetChanged()
+                        val isEmpty = mData.isNullOrEmpty()
                         bind.noData.isVisible = mData?.isEmpty() == true
+                        bind.deleteAll.isVisible =!isEmpty
                     }
                 }
 
@@ -112,7 +114,7 @@ class NotificationActivity : BaseActivity() {
 
                     } else {
                         bind.noInternet.isVisible = false
-                        bind.deleteAll.isVisible = true
+                        bind.deleteAll.isVisible = false
                         it.parse(this, TAG, object : AlertClicks {
                             override fun primaryClick(dialog: AppBottomSheet) {
                                 dialog.dismiss()

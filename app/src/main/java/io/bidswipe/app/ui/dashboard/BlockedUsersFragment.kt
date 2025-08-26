@@ -6,13 +6,17 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
-import androidx.navigation.fragment.findNavController
+import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseFragment
 import io.bidswipe.app.controller.BlockedUsersAdapter
 import io.bidswipe.app.databinding.FragmentBlockedUsersBinding
+import io.bidswipe.app.interfaces.AlertClicks
 import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.network.response.GetBlockedUsersResponse
+import io.bidswipe.app.ui.custom.AlertType
+import io.bidswipe.app.ui.custom.AppBottomSheet
+import io.bidswipe.app.utils.finish
 import okhttp3.RequestBody.Companion.toRequestBody
 
 @SuppressLint("NotifyDataSetChanged")
@@ -30,11 +34,10 @@ class BlockedUsersFragment : BaseFragment<DashViewModel, FragmentBlockedUsersBin
 
     private var mClick = object : RecyclerClicks {
         override fun itemClick(pos: Int, status: String?) {
-            bind.loader.isVisible = true
             unblockPos = pos
-            val userId = mList[pos]?.id?.toString() ?: return
-            val requestBody = userId.toRequestBody()
-            viewModel.blockUnblockUser(requestBody)
+            userId = mList[pos]?.id?.toString() ?: return
+
+            showUnblockConfirmation(mList[pos]?.name ?: "this user")
         }
     }
 
@@ -42,7 +45,7 @@ class BlockedUsersFragment : BaseFragment<DashViewModel, FragmentBlockedUsersBin
         super.onViewCreated(view, savedInstanceState)
 
         bind.header.onBackClick {
-            findNavController().popBackStack()
+          finish()
         }
         bind.swipeRefreshLayout.setOnRefreshListener {
             viewModel.getBlockedUsers()
@@ -64,6 +67,7 @@ class BlockedUsersFragment : BaseFragment<DashViewModel, FragmentBlockedUsersBin
                     if (unblockPos != -1 && unblockPos < mList.size) {
                         mList.removeAt(unblockPos)
                         adapter.notifyItemRemoved(unblockPos)
+                        adapter.notifyItemRangeChanged(0, mList.size)
 
                         if (mList.isEmpty()) {
                             bind.noData.isVisible = true
@@ -124,6 +128,33 @@ class BlockedUsersFragment : BaseFragment<DashViewModel, FragmentBlockedUsersBin
             }
         }
 
+    }
+    private fun showUnblockConfirmation(userName: String) {
+        AppBottomSheet(
+            requireContext(),
+            R.drawable.ic_block,
+            "Unblock User",
+            "Are you sure you want to unblock $userName?",
+            primaryBtnText = "Unblock",
+            secondaryBtnText = "Cancel",
+            canCancel = true,
+            showSecondary = true,
+            iconPadding = 16,
+            alertType = AlertType.INFO,
+            clicks = object : AlertClicks {
+                override fun primaryClick(dialog: AppBottomSheet) {
+                    dialog.dismiss()
+                    bind.loader.isVisible = true
+                    viewModel.blockUnblockUser(userId.toRequestBody())
+                }
+
+                override fun secondaryClick(dialog: AppBottomSheet) {
+                    dialog.dismiss()
+
+                    unblockPos = -1
+                    userId = ""
+                }
+            }).show()
     }
 
 }

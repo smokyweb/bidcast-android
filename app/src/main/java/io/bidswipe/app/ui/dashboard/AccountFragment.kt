@@ -86,10 +86,6 @@ class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
                 "privacyPolicy" -> handlePageUrl(DashViewModel.SLUG_PRIVACY_POLICY)
                 "faq" -> handlePageUrl(DashViewModel.SLUG_FAQ)
                 "termsCondition" -> handlePageUrl(DashViewModel.SLUG_TERMS)
-                "blockedUsers" -> {
-                    bind.loader.isVisible = true
-                    findNavController().navigate(ids.goToBlockedUsersFragment)
-                }
                 else -> {
                     startActivity(
                         Intent(mCtx, MoreActivity::class.java)

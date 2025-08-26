@@ -469,7 +469,6 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
     ) = call { api.blockUnblockUser(blockedID) }
 
     suspend fun getBlockedUsers(
-        blockedBy: String = "true"
-    ) = call { api.getBlockedUsers(blockedBy) }
+    ) = call { api.getBlockedUsers() }
 
 }

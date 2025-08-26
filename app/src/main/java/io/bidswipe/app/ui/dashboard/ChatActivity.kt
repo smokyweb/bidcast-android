@@ -1,13 +1,22 @@
 package io.bidswipe.app.ui.dashboard
 
 import android.annotation.SuppressLint
+import android.graphics.Color
 import android.graphics.Rect
 import android.os.Bundle
+import android.text.SpannableStringBuilder
+import android.text.TextPaint
+import android.text.method.LinkMovementMethod
+import android.text.style.ClickableSpan
 import android.util.Log
+import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.ImageView
+import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.core.content.ContextCompat
+import androidx.core.text.bold
+import androidx.core.text.buildSpannedString
 import androidx.core.view.isVisible
 import androidx.lifecycle.viewModelScope
 import androidx.recyclerview.widget.ItemTouchHelper
@@ -20,11 +29,13 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ValueEventListener
 import io.bidswipe.app.App
+import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseActivity
 import io.bidswipe.app.controller.ChatAdapter
 import io.bidswipe.app.databinding.ActivityChatBinding
 import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.model.ChatModel
+import io.bidswipe.app.network.Resource
 import io.bidswipe.app.utils.Alerts
 import io.bidswipe.app.utils.Chats
 import io.bidswipe.app.utils.Const
@@ -42,6 +53,7 @@ import io.bidswipe.app.utils.value
 import jp.wasabeef.recyclerview.animators.SlideInUpAnimator
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import okhttp3.RequestBody.Companion.toRequestBody
 
 @SuppressLint("ClickableViewAccessibility")
 class ChatActivity : BaseActivity() {
@@ -65,16 +77,18 @@ class ChatActivity : BaseActivity() {
     private var loadMore = false
 
     private var chatLimit = 20
+    private var isBlockedByMe = false
+    private var isBlockedByOther = false
 
     private val mClick = object : RecyclerClicks {
 
         override fun itemClick(pos: Int, status: String?) {
             when (status) {
                 "image" -> {
-//                    val imgList = mutableListOf(chatList[pos].attachment?.image.toString())
-//                    StfalconImageViewer.Builder(this@ChatActivity , imgList , ::loadImage).withBackgroundColorResource(clr.surface)
-//                        .withHiddenStatusBar(false)
-//                        .allowSwipeToDismiss(true).allowZooming(true).show(true)
+                   /* val imgList = mutableListOf(chatList[pos].attachment?.image.toString())
+                    StfalconImageViewer.Builder(this@ChatActivity , imgList , ::loadImage).withBackgroundColorResource(clr.surface)
+                        .withHiddenStatusBar(false)
+                        .allowSwipeToDismiss(true).allowZooming(true).show(true)*/
                 }
 
                 "reply_click" -> {
@@ -91,14 +105,14 @@ class ChatActivity : BaseActivity() {
             val profileUri = result.uriContent
             Alerts.log(TAG, "URI $profileUri")
 
-//            if (profileUri != null) {
-//                chats.sendImage(profileUri) {
-////					viewModel.chatNotification(chatKey.request() , "Shared the image".request() , "image".request() , receiverId.request())
-//                }
-//            }
-//            else {
-//                errorToast("Couldn't select the image")
-//            }
+/*            if (profileUri != null) {
+                chats.sendImage(profileUri) {
+//					viewModel.chatNotification(chatKey.request() , "Shared the image".request() , "image".request() , receiverId.request())
+                }
+            }
+            else {
+                errorToast("Couldn't select the image")
+            }*/
         } else {
             result.error?.printStackTrace()
         }
@@ -195,6 +209,7 @@ class ChatActivity : BaseActivity() {
                 this,
                 object : MessageSwiper.SwipeControllerActions {
                     override fun showReplyUI(position: Int) {
+                        if (isBlockedByMe || isBlockedByOther) return
 
                         val message = if (chatList[position].type == "image") {
                             chatList[position].attachment?.image.toString()
@@ -222,6 +237,7 @@ class ChatActivity : BaseActivity() {
         helper.attachToRecyclerView(bind.chats)
 
         bind.send.setOnClickListener {
+            if (isBlockedByMe || isBlockedByOther) return@setOnClickListener
 
             if (bind.message.value().isNotEmpty()) {
 
@@ -239,7 +255,6 @@ class ChatActivity : BaseActivity() {
                     )
                     bind.message.text = null
                     bind.message.isFocusableInTouchMode = true
-//                    showKeyboard(bind.message)
                     showReply(false)
                 }
 
@@ -248,6 +263,7 @@ class ChatActivity : BaseActivity() {
         }
 
         bind.messageBox.setEndIconOnClickListener {
+            if (isBlockedByMe || isBlockedByOther) return@setEndIconOnClickListener
             hideKeyboard()
             requestPerms(Const.PERMISSIONS) {
                 if (it) {
@@ -259,8 +275,96 @@ class ChatActivity : BaseActivity() {
         bind.cancel.setOnClickListener {
             showReply(false)
         }
-
+        checkBlockStatus()
         getChats()
+
+
+        viewModel.blockUnblockUserRepo.observe(this) { resource ->
+            bind.loader.isVisible = false
+            when (resource) {
+                is Resource.Success -> {
+                    viewModel.blockUnblockUserRepo.value = null
+                       isBlockedByMe = !isBlockedByMe
+                        updateChatUI()
+                        successToast(resource.value.message ?: "Operation successful")
+
+                }
+                is Resource.Error -> {
+                    viewModel.blockUnblockUserRepo.value = null
+                    errorToast("Something went wrong")
+                }
+                else -> {}
+            }
+        }
+
+    }
+
+    private fun checkBlockStatus() {
+        viewModel.getBlockedUsers()
+        viewModel.getBlockedUsersRepo.observe(this) { it ->
+            when (it) {
+                is Resource.Success -> {
+                    val mData = it.value.data
+                    isBlockedByMe = mData?.blockedByMe?.any { it?.id.toString() == receiverId }?: false
+                    isBlockedByOther =mData?.blockedMe?.any { it?.id.toString() == receiverId }?: false
+                    updateChatUI()
+                }
+                is Resource.Error -> {
+                }
+                else -> {}
+            }
+        }
+
+    }
+
+
+    private fun updateChatUI() {
+        if (isBlockedByOther) {
+            bind.userBlocked.text = "You are blocked by $receiverName"
+            bind.userBlocked.isVisible = true
+            bind.chatBox.isVisible = false
+            bind.send.isVisible = false
+        } else if (isBlockedByMe) {
+          unBlockText(  bind.userBlocked)
+            bind.userBlocked.isVisible = true
+            bind.chatBox.isVisible = false
+            bind.send.isVisible = false
+
+        } else {
+            bind.userBlocked.isVisible = false
+            bind.chatBox.isVisible = true
+            bind.send.isVisible = true
+        }
+    }
+
+    private fun unBlockText(view: TextView) {
+        val spanTxt = SpannableStringBuilder("You have blocked $receiverName ")
+        spanTxt.append(buildSpannedString { bold { append("Click here") } })
+        spanTxt.setSpan(object : ClickableSpan() {
+            override fun onClick(widget: View) {
+                try {
+                    bind.loader.isVisible = true
+                    viewModel.blockUnblockUser(receiverId.toRequestBody())
+
+
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+            }
+
+            override fun updateDrawState(ds: TextPaint) {
+                super.updateDrawState(ds)
+                ds.color = ContextCompat.getColor(this@ChatActivity, R.color.error)
+                ds.isUnderlineText = true
+            }
+
+        }, spanTxt.length - "Click here".length, spanTxt.length, 0)
+        spanTxt.append(" to unblock them.")
+        view.apply {
+            movementMethod = LinkMovementMethod.getInstance()
+            highlightColor = Color.TRANSPARENT
+            setText(spanTxt, TextView.BufferType.SPANNABLE)
+        }
     }
 
     override fun onDestroy() {
@@ -290,10 +394,6 @@ class ChatActivity : BaseActivity() {
             ref.addListenerForSingleValueEvent(mainChatListener)
         }
     }
-
-    private fun loadImage(imageView: ImageView, url: String?) =
-        imageView.loadUrl(this, url.toString())
-
     private val chatPageListener = object : ChildEventListener {
         override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
             bind.loader.isVisible = false

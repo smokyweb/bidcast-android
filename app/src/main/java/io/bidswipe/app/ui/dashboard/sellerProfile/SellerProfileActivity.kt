@@ -24,7 +24,6 @@ import io.bidswipe.app.network.Resource
 import io.bidswipe.app.ui.custom.AlertType
 import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.ui.dashboard.ChatActivity
-import io.bidswipe.app.ui.dashboard.more.MoreViewModel
 import io.bidswipe.app.utils.Alerts
 import io.bidswipe.app.utils.bind
 import io.bidswipe.app.utils.clr
@@ -91,9 +90,7 @@ class SellerProfileActivity : BaseActivity() {
         bind.moreIcon.setOnClickListener {
             menu.show()
         }
-        bind.moreIcon1.setOnClickListener {
-            showBlockConfirmation()
-        }
+
 
         val menu1 = PopupMenu(this, bind.moreIcon1)
         menu1.menuInflater.inflate(R.menu.profile_action_menu, menu1.menu)
@@ -104,10 +101,12 @@ class SellerProfileActivity : BaseActivity() {
                 }
 
                 ids.block -> {
+                    showBlockConfirmation()
 
                 }
 
                 ids.reportUser -> {
+                    reportUserDialog()
 
                 }
 

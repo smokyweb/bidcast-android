@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    style="@style/cardStyle"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="@dimen/half_margin"
-    style="@style/cardStyle">
+    android:layout_margin="@dimen/half_margin">
 
     <com.zerobranch.layout.SwipeLayout
         android:id="@+id/swipeLayout"
@@ -18,7 +18,9 @@
             android:id="@+id/unblock"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_gravity="end">
+            android:layout_gravity="end"
+            android:clickable="true"
+            android:focusable="true">
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/unblockUser"
@@ -26,14 +28,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="0dp"
                 android:layout_gravity="end"
-                app:backgroundTint="@color/error"
-                app:cornerRadius="0dp"
                 android:padding="32dp"
                 android:text="Unblock"
+                app:backgroundTint="@color/error"
+                app:cornerRadius="0dp"
                 app:iconTint="@color/background"
-                app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
                 app:rippleColor="@color/onErrorContainer" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
@@ -42,9 +44,9 @@
             android:id="@+id/click"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
             android:background="@drawable/card_8"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
             android:paddingHorizontal="16dp"
             android:paddingVertical="20dp">
 

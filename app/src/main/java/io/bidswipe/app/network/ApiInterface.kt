@@ -599,7 +599,6 @@ interface ApiInterface {
 
     @GET("api/blocked-users")
     suspend fun getBlockedUsers(
-        @Query("blocked_by") blockedBy: String = "true"
     ): GetBlockedUsersResponse
 
 

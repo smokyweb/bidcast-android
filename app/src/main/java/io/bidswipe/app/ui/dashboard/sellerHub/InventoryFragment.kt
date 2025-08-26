@@ -149,6 +149,7 @@ class InventoryFragment : BaseFragment<SellerHubViewModel, FragmentInventoryBind
                     } else {
                         bind.recycler.isVisible = false
                         bind.noData.isVisible = true
+                        bind.addNewProduct.isVisible = false
                     }
 
                     isLoading = page >= (it.value.totalPage ?: 0)

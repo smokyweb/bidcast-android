@@ -35,6 +35,9 @@ class MoreActivity : BaseActivity() {
             "contactUs" -> {
                 navGraph.setStartDestination(R.id.contactUsFragment)
             }
+            "blockedUsers" -> {
+                navGraph.setStartDestination(R.id.blockedUsersFragment)
+            }
 
             "salesTax" -> {
                 navGraph.setStartDestination(R.id.salesTaxExemptionFragment)

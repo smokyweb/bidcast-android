@@ -27,8 +27,9 @@ class BlockedUsersAdapter (
             bind.name.text = item?.name?.asCapital()
             bind.icon.loadUrl(mCtx,item?.image.toString())
 
+            bind.click.setOnClickListener {   }
             bind.unblockUser.setOnClickListener {
-                mClicks.itemClick(position)
+                mClicks.itemClick(position,"unblock")
             }
 
         }

@@ -20,7 +20,7 @@ data class GetBlockedUsersResponse(
         @SerializedName("blocked_by_me")
         val blockedByMe: List<BlockedByMe?>?,
         @SerializedName("blocked_me")
-        val blockedMe: List<Any?>?
+        val blockedMe: List<BlockedByMe?>?
     ) {
         @Keep
         data class BlockedByMe(

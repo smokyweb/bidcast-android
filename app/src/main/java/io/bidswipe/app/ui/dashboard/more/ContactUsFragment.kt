@@ -33,7 +33,6 @@ class ContactUsFragment : BaseFragment<MoreViewModel, FragmentContactUsBinding>(
         super.onViewCreated(view, savedInstanceState)
 
         bind.header.onBackClick {
-
             finish()
         }
 

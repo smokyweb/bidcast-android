@@ -39,6 +39,11 @@ class MessagesFragment : BaseFragment<DashViewModel, FragmentMessagesBinding>() 
             bind.noInternet.isVisible = false
 
         }
+        bind.swipeRefresh.setOnRefreshListener {
+            bind.loader.isVisible = true
+            FireRef.CHAT_LIST.child(userId).orderByChild("timestamp")
+                .addValueEventListener(mValueEventListener)
+        }
 
     }
 
@@ -47,6 +52,7 @@ class MessagesFragment : BaseFragment<DashViewModel, FragmentMessagesBinding>() 
         override fun onDataChange(snap: DataSnapshot) {
             Alerts.log(TAG, "CHAT READ $snap ")
             chatList.clear()
+
             snap.children.forEach {
                 val chat = ChatModel().fromMap(it)
                 chatList.add(chat)
@@ -64,13 +70,17 @@ class MessagesFragment : BaseFragment<DashViewModel, FragmentMessagesBinding>() 
             messagesAdapter.notifyDataSetChanged()
 
             bind.loader.isVisible = false
+            bind.swipeRefresh.isRefreshing = false
 
         }
 
         override fun onCancelled(error: DatabaseError) {
             error.toException().printStackTrace()
-            bind.loader.isVisible = false
             Alerts.log(TAG, "CHAT READ ERROR : ${error.message}")
+
+            bind.loader.isVisible = false
+            bind.swipeRefresh.isRefreshing = false
+            bind.noInternet.isVisible = true
         }
     }
     private val mClicks = object : RecyclerClicks {
@@ -101,6 +111,7 @@ class MessagesFragment : BaseFragment<DashViewModel, FragmentMessagesBinding>() 
 
     override fun onStart() {
         super.onStart()
+        bind.loader.isVisible = true
         FireRef.CHAT_LIST.child(userId).orderByChild("timestamp")
             .addValueEventListener(mValueEventListener)
     }
@@ -109,6 +120,7 @@ class MessagesFragment : BaseFragment<DashViewModel, FragmentMessagesBinding>() 
         super.onStop()
         FireRef.CHAT_LIST.child(userId).orderByChild("timestamp")
             .removeEventListener(mValueEventListener)
+        bind.loader.isVisible = false
     }
 
     private fun updateChat(id: String) {

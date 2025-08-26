@@ -446,8 +446,8 @@ class DashViewModel @Inject constructor(val repo: DashRepository) : ViewModel() 
     val getBlockedUsersRepo: MutableLiveData<Resource<GetBlockedUsersResponse>>
         get() = _getBlockedUsersResponse
 
-    fun getBlockedUsers(blockedBy : String = "true") = viewModelScope.launch {
-        _getBlockedUsersResponse.value = repo.getBlockedUsers(blockedBy)
+    fun getBlockedUsers() = viewModelScope.launch {
+        _getBlockedUsersResponse.value = repo.getBlockedUsers()
     }
 
 

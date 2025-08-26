@@ -85,6 +85,11 @@
         android:label="fragment_content"
         tools:layout="@layout/fragment_content" />
 
+    <fragment
+        android:id="@+id/blockedUsersFragment"
+        android:name="io.bidswipe.app.ui.dashboard.BlockedUsersFragment"
+        android:label="fragment_blocked_users"
+        tools:layout="@layout/fragment_blocked_users" />
 
 
 </navigation>
