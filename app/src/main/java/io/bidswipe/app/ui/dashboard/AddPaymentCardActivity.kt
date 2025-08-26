@@ -38,6 +38,8 @@ class AddPaymentCardActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(bind.root)
 
+        log("GET PAYMENT CARD")
+
         bind.header.onBackClick { finish() }
 
         bind.expiryDate.setOnClickListener {

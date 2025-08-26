@@ -83,7 +83,6 @@ class SellerVerificationActivity : BaseActivity() {
 
                 cardImage = imagePath
 
-
                 if (cardImage.isNotEmpty() && selfie.isNotEmpty()){
 
                     bind.verificationIcon.isVisible = true
@@ -91,7 +90,6 @@ class SellerVerificationActivity : BaseActivity() {
                     bind.stepCount.setText("1 of 4")
 
                 }
-
 
                 log("ImageUri = $imageUri")
 

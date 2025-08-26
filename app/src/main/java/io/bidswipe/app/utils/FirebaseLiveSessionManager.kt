@@ -39,7 +39,7 @@ class FirebaseLiveSessionManager(
             highestBid = highestBid ,
             isLive = true,
             time = System.currentTimeMillis().toString(),
-            showId = data?.id.toString() ?: ""
+            showId = data?.id.toString()
         ).toMap()
         liveSessionsRef.child(roomID).updateChildren(liveShow)
     }

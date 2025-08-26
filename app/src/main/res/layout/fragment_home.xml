@@ -166,7 +166,6 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:title_text="No Shows Found" />
 
-
             <io.bidswipe.app.ui.custom.NoDataView
                 android:id="@+id/noInternet"
                 style="@style/noInternetStyle"
@@ -179,7 +178,6 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
-
 
     <io.bidswipe.app.ui.custom.LoaderView
         android:id="@+id/loader"

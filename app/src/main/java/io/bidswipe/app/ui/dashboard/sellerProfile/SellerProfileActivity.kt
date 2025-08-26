@@ -91,6 +91,7 @@ class SellerProfileActivity : BaseActivity() {
         bind.moreIcon.setOnClickListener {
             menu.show()
         }
+
         bind.moreIcon1.setOnClickListener {
             showBlockConfirmation()
         }

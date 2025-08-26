@@ -35,9 +35,10 @@ class MessagesFragment : BaseFragment<DashViewModel, FragmentMessagesBinding>() 
         messagesAdapter = MessagesAdapter(chatList, mClicks)
         bind.recycler.adapter = messagesAdapter
 
+        bind.loader.isVisible = true
+
         bind.noInternet.onClick {
             bind.noInternet.isVisible = false
-
         }
 
     }
@@ -73,6 +74,7 @@ class MessagesFragment : BaseFragment<DashViewModel, FragmentMessagesBinding>() 
             Alerts.log(TAG, "CHAT READ ERROR : ${error.message}")
         }
     }
+
     private val mClicks = object : RecyclerClicks {
         override fun itemClick(pos: Int, status: String?) {
             var name = ""

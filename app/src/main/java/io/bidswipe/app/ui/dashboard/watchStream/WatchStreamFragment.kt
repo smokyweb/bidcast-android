@@ -164,6 +164,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 		streamID = requireArguments().getString("streamID") ?: ""
 	}
 
+	@SuppressLint("ClickableViewAccessibility")
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		super.onViewCreated(view, savedInstanceState)
 
@@ -177,8 +178,9 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 			finish()
 		}
 
-		bind.controls.setOnClickListener {
-			hideKeyboard(it)
+		bind.recycler.setOnTouchListener { view, event ->
+			hideKeyboard(view)
+			return@setOnTouchListener true
 		}
 
 		commentAdapter = CommentAdapter(commentList)
@@ -227,7 +229,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
 									bind.bid.text = "Swipe to Bid ${(highestBidAmount?.toDouble()?.toInt()?.plus(2)).toString().asMoney()}"
 
-									bind.bid.setCompleted(false, true)
+									bind.bid.setCompleted(completed = false, withAnimation = true)
 
 								}
 							}
@@ -651,7 +653,6 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 		)
 		inputSheet = Alerts.appBottomSheet(mCtx, true, inputSheetBind)
 
-
 		inputSheetBind.submitBtn.setOnClickListener {
 			val ref = FireRef.LIVE_SESSIONS.child(roomID).child("highestBid")
 
@@ -876,6 +877,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 					ref.updateChildren(bidData)
 					sendZimMessage("New high bid: $$bidAmount")
 					Alerts.success(mCtx, "Bid placed successfully")
+					bind.bid.setCompleted(completed = false, withAnimation = true)
 				}
 
 				override fun onCancelled(error: DatabaseError) {
