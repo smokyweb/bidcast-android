@@ -36,6 +36,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:title_text="No Messages Found" />
         </androidx.constraintlayout.widget.ConstraintLayout>
+
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
     <io.bidswipe.app.ui.custom.NoDataView

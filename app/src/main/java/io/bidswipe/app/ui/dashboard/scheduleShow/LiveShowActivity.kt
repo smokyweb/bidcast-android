@@ -96,7 +96,7 @@ import io.bidswipe.app.utils.setMargins
 import io.bidswipe.app.utils.value
 import org.json.JSONObject
 
-@SuppressLint("NotifyDataSetChanged")
+@SuppressLint("NotifyDataSetChanged" , "ClickableViewAccessibility")
 class LiveShowActivity : BaseActivity() {
 	
 	private val bind by bind(ActivityLiveShowBinding::inflate)
@@ -130,8 +130,7 @@ class LiveShowActivity : BaseActivity() {
 			liveData = LiveShowModel().fromMap(snapshot)
 			
 			bind.liveCount.text = liveData?.viewerCount.toString()
-			
-			
+
 		}
 		
 		override fun onCancelled(error: DatabaseError) {
@@ -184,6 +183,11 @@ class LiveShowActivity : BaseActivity() {
 		
 		bind.controls.setOnClickListener {
 			hideKeyboard()
+		}
+
+		bind.recycler.setOnTouchListener { view, event ->
+			hideKeyboard()
+			return@setOnTouchListener true
 		}
 		
 		bind.hostImage.loadUrl(this, userImage)
@@ -779,12 +783,12 @@ class LiveShowActivity : BaseActivity() {
 					)
 				).addOnSuccessListener {
 					Log.d("FirebaseUpdate", "Successfully updated value: $updateValue")
-				}
-					.addOnFailureListener {
+				}.addOnFailureListener {
 						Log.e("FirebaseUpdate", "Failed to update value", it)
-					}
+				}
 				
 				updateStatusHandler.postDelayed(this, 4 * 60 * 1000)
+
 			}
 		}
 		
@@ -842,7 +846,6 @@ class LiveShowActivity : BaseActivity() {
 							liveData?.highestBid?.bidAmount?.request()
 						)
 					}
-					
 					return
 				}
 				
@@ -852,10 +855,7 @@ class LiveShowActivity : BaseActivity() {
 					mapOf(
 						"bidCountDown" to bidCounter.toString()
 					)
-				).addOnSuccessListener {
-				}.addOnFailureListener {
-				}
-				
+				)
 				bidTimerHandler.postDelayed(this, 1000)
 			}
 		}

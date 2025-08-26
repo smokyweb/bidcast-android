@@ -35,9 +35,10 @@ class MessagesFragment : BaseFragment<DashViewModel, FragmentMessagesBinding>() 
         messagesAdapter = MessagesAdapter(chatList, mClicks)
         bind.recycler.adapter = messagesAdapter
 
+        bind.loader.isVisible = true
+
         bind.noInternet.onClick {
             bind.noInternet.isVisible = false
-
         }
         bind.swipeRefresh.setOnRefreshListener {
             bind.loader.isVisible = true
@@ -83,6 +84,7 @@ class MessagesFragment : BaseFragment<DashViewModel, FragmentMessagesBinding>() 
             bind.noInternet.isVisible = true
         }
     }
+
     private val mClicks = object : RecyclerClicks {
         override fun itemClick(pos: Int, status: String?) {
             var name = ""

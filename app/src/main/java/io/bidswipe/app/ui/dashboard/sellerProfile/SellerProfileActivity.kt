@@ -91,7 +91,6 @@ class SellerProfileActivity : BaseActivity() {
             menu.show()
         }
 
-
         val menu1 = PopupMenu(this, bind.moreIcon1)
         menu1.menuInflater.inflate(R.menu.profile_action_menu, menu1.menu)
         menu1.setOnMenuItemClickListener {

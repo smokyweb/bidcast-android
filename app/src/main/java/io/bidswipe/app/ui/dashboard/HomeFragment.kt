@@ -33,6 +33,7 @@ import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request
 import io.bidswipe.app.utils.runSafe
 
+@SuppressLint("NotifyDataSetChanged")
 class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
 
     override fun getModel(): Class<DashViewModel> = DashViewModel::class.java
@@ -91,18 +92,20 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
 
         }
     }
+
     private var selectedTabText = "live"
 
-    @SuppressLint("NotifyDataSetChanged", "SuspiciousIndentation")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         bind.header.setOnClickListener {
             hideKeyboard(it)
         }
+
         bind.main.setOnClickListener {
             hideKeyboard(it)
         }
+
         bind.recycler.setOnClickListener {
             hideKeyboard(it)
         }
@@ -180,7 +183,6 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
                     bind.loader.isVisible = false
                     bind.noInternet.isVisible = false
                     bind.noData.isVisible = false
-
                     viewModel.getCategoryRepo.value = null
 
                     val mData = it.value.data

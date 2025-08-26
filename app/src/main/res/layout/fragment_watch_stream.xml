@@ -120,7 +120,6 @@
 
                 </com.google.android.material.card.MaterialCardView>
 
-
             </LinearLayout>
 
             <ScrollView
@@ -143,7 +142,6 @@
                         app:layout_constraintBottom_toTopOf="@id/controls" />
 
                     <LinearLayout
-                        android:id="@+id/controls"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:background="@drawable/live_show_background"
@@ -153,9 +151,9 @@
                         app:layout_constraintTop_toBottomOf="@+id/view2">
 
                         <LinearLayout
+                            android:id="@+id/controls"
                             android:layout_width="match_parent"
-                            android:layout_height="0dp"
-                            android:layout_weight="1"
+                            android:layout_height="wrap_content"
                             android:gravity="bottom"
                             android:orientation="horizontal">
 
