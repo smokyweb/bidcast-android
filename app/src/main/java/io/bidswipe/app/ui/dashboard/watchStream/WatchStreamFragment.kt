@@ -22,20 +22,8 @@ import im.zego.zegoexpress.constants.ZegoViewMode
 import im.zego.zegoexpress.entity.ZegoCanvas
 import im.zego.zegoexpress.entity.ZegoRoomConfig
 import im.zego.zegoexpress.entity.ZegoUser
-import im.zego.zim.ZIM
-import im.zego.zim.callback.ZIMEventHandler
-import im.zego.zim.callback.ZIMMessageSentFullCallback
-import im.zego.zim.entity.ZIMError
-import im.zego.zim.entity.ZIMMediaMessage
-import im.zego.zim.entity.ZIMMessage
-import im.zego.zim.entity.ZIMMessageReceivedInfo
-import im.zego.zim.entity.ZIMMessageSendConfig
-import im.zego.zim.entity.ZIMMultipleMessage
-import im.zego.zim.entity.ZIMRoomInfo
 import im.zego.zim.entity.ZIMTextMessage
-import im.zego.zim.entity.ZIMUserInfo
-import im.zego.zim.enums.ZIMConversationType
-import im.zego.zim.enums.ZIMMessagePriority
+import io.bidswipe.app.utils.ChatManager
 import io.bidswipe.app.App
 import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseFragment
@@ -53,6 +41,7 @@ import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.ui.dashboard.more.MoreActivity
 import io.bidswipe.app.ui.dashboard.more.TrustedBuyerActivity
 import io.bidswipe.app.utils.Alerts
+import io.bidswipe.app.utils.Const
 import io.bidswipe.app.utils.FireRef
 import io.bidswipe.app.utils.Utils
 import io.bidswipe.app.utils.asMoney
@@ -86,6 +75,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 	private var product: LiveShowModel.Product? = null
 	private var inputSheet: BottomSheetDialog? = null
 	private var isAllowBidForAll = true
+	private var chatManager: ChatManager? = null
 
 	companion object {
 		fun newInstance(roomID: String, streamID: String) = WatchStreamFragment().apply {
@@ -448,7 +438,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
 	override fun onDestroy() {
 		super.onDestroy()
-		ZIM.getInstance().setEventHandler(null)
+		chatManager?.shutdown()
 	}
 
 	private fun loginAndPlay() {
@@ -459,29 +449,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 			viewMode = ZegoViewMode.ASPECT_FILL
 		}
 		ZegoExpressEngine.getEngine().startPlayingStream(roomID, canvas)
-//		startListenEvent()
-		if (viewModel.previousRoomId.isNotEmpty()) {
-			val roomInfo = ZIMRoomInfo().also {
-				it.roomID = roomID
-				it.roomName = roomID + "_room"
-			}
-			ZIM.getInstance().switchRoom(viewModel.previousRoomId, roomInfo, false, null) { roomInfo, errorInfo ->
-				if (errorInfo != null) {
-					log("JOINED ROOM CHAT $roomInfo")
-
-					ZIM.getInstance().setEventHandler(zimEventHandler)
-
-					viewModel.previousRoomId = roomID
-
-					sendZimMessage("Joined \uD83D\uDC4B")
-
-				} else {
-					log("JOIN ROOM CHAT ERROR : ${errorInfo.toString()}")
-				}
-			}
-		} else {
-			setupZIMChat()
-		}
+		initializeChat()
 	}
 
 	private fun stopStream() {
@@ -493,111 +461,41 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 		ZegoExpressEngine.destroyEngine(null)
 	}
 
-	private fun setupZIMChat() {
-		val userInfo = ZIMUserInfo().also {
-			it.userID = userName.replace(" ", ".") + "_" + userId
-			it.userName = userImage
+	private fun initializeChat() {
+		if (chatManager == null) {
+			chatManager = ChatManager(
+				application = requireActivity().application,
+				appId = Const.APP_ID.toLong(),
+				appSign = Const.APP_SIGN,
+				userId = userId,
+				userName = userName,
+				userImage = userImage
+			)
 		}
 
-		ZIM.getInstance().login(userInfo) { error ->
-			if (error != null) {
-				log("LOGGED INTO ZI...M")
-				ZIM.getInstance().joinRoom(roomID) { roomInfo, errorInfo ->
-					if (errorInfo != null) {
-						log("JOINED ROOM CHAT $roomInfo")
-
-						ZIM.getInstance().setEventHandler(zimEventHandler)
-						viewModel.previousRoomId = roomID
-
-						sendZimMessage("Joined \uD83D\uDC4B")
-
-					} else {
-						log("JOIN ROOM CHAT ERROR : ${errorInfo.toString()}")
-					}
-				}
-			} else {
-				log("LOG IN ROOM ERROR : ${error.toString()}")
-			}
-		}
-
-	}
-
-	private val zimEventHandler = object : ZIMEventHandler() {
-		override fun onRoomMessageReceived(
-			zim: ZIM?,
-			messageList: java.util.ArrayList<ZIMMessage?>?,
-			info: ZIMMessageReceivedInfo?,
-			fromRoomID: String?
-		) {
-			super.onRoomMessageReceived(zim, messageList, info, fromRoomID)
-			// Callback for receiving in-room messages.
-			messageList?.forEach { zimMessage ->
-				if (zimMessage is ZIMTextMessage) {
-					log("NEW MESSAGE RECEIVED:\n${zimMessage.message}\nExtended Data: ${zimMessage.extendedData}")
-
-					runSafe {
-						commentList.add(LiveChatModel.fromZIMMessage(zimMessage))
-
-						commentAdapter.notifyItemInserted(commentList.size - 1)
-						bind.recycler.post {
-							bind.recycler.smoothScrollToPosition(commentList.size)
-						}
-					}
+		chatManager?.setListener(object : ChatManager.Listener {
+			override fun onMessageReceived(message: ZIMTextMessage) {
+				runSafe {
+					commentList.add(LiveChatModel.fromZIMMessage(message))
+					commentAdapter.notifyItemInserted(commentList.size - 1)
+					bind.recycler.post { bind.recycler.smoothScrollToPosition(commentList.size) }
 				}
 			}
-		}
-	}
-
-	fun sendZimMessage(content: String) {
-		val zimMessage = ZIMTextMessage(content)
-		zimMessage.extendedData = ZIMExtendedData(userImage, userId, userName).toJson()
-
-		val config = ZIMMessageSendConfig().also { it.priority = ZIMMessagePriority.HIGH }
-
-		ZIM.getInstance().sendMessage(zimMessage, roomID, ZIMConversationType.ROOM, config, object : ZIMMessageSentFullCallback {
-			override fun onMessageAttached(message: ZIMMessage?) {
-
-			}
-
-			override fun onMessageSent(message: ZIMMessage?, errorInfo: ZIMError?) {
-				if (errorInfo != null) {
-					log("MESSAGE SENT SUCCESSFULLY : ${message}")
-
-					bind.text.setText("")
-
-					runSafe {
-						commentList.add(LiveChatModel.fromZIMMessage(zimMessage))
-
-						commentAdapter.notifyItemInserted(commentList.size - 1)
-						bind.recycler.post {
-							bind.recycler.smoothScrollToPosition(commentList.size)
-						}
-					}
-				} else {
-					log("MESSAGE SENT ERROR : ${errorInfo.toString()}")
-				}
-			}
-
-			override fun onMediaUploadingProgress(
-				message: ZIMMediaMessage?,
-				currentFileSize: Long,
-				totalFileSize: Long
-			) {
-
-			}
-
-			override fun onMultipleMediaUploadingProgress(
-				message: ZIMMultipleMessage?,
-				currentFileSize: Long,
-				totalFileSize: Long,
-				messageInfoIndex: Int,
-				currentIndexFileSize: Long,
-				totalIndexFileSize: Long
-			) {
-
+			override fun onRoomStateChanged(state: String) {
+				log("ROOM STATE CHANGED: $state")
 			}
 		})
+		chatManager?.initializeAndLogin(roomID)
 
+		sendZimMessage("Joined \uD83D\uDC4B")
+	}
+
+	// ZIM event handler moved into ChatManager
+
+	fun sendZimMessage(content: String) {
+		val extended = ZIMExtendedData(userImage, userId, userName).toJson()
+		chatManager?.sendTextMessage(roomID, content, extended)
+		bind.text.setText("")
 	}
 
 	private fun verificationDialog() {

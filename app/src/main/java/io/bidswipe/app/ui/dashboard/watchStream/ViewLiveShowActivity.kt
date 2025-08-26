@@ -13,8 +13,7 @@ import com.gyf.immersionbar.ktx.navigationBarHeight
 import im.zego.zegoexpress.ZegoExpressEngine
 import im.zego.zegoexpress.constants.ZegoScenario
 import im.zego.zegoexpress.entity.ZegoEngineProfile
-import im.zego.zim.ZIM
-import im.zego.zim.entity.ZIMAppConfig
+import io.bidswipe.app.utils.ChatManager
 import io.bidswipe.app.base.BaseActivity
 import io.bidswipe.app.controller.StreamPagerAdapter
 import io.bidswipe.app.databinding.ActivityViewLiveShowBinding
@@ -35,6 +34,7 @@ class ViewLiveShowActivity : BaseActivity() {
 	private var streamList = arrayListOf<LiveShowModel>()
 	private lateinit var viewPager: ViewPager2
 	private lateinit var streamPagerAdapter: StreamPagerAdapter
+	private var chatManager: ChatManager? = null
 
 	private var eventListener = object : ValueEventListener {
 		@SuppressLint("NotifyDataSetChanged")
@@ -97,19 +97,22 @@ class ViewLiveShowActivity : BaseActivity() {
 
 		createEngine()
 
-		val appConfig = ZIMAppConfig().also {
-			it.appID = Const.APP_ID.toLong()
-			it.appSign = Const.APP_SIGN
-		}
-
-		ZIM.create(appConfig, application)
+		// Initialize ChatManager here if you want the ZIM SDK ready at Activity scope
+		chatManager = ChatManager(
+			application = application,
+			appId = Const.APP_ID.toLong(),
+			appSign = Const.APP_SIGN,
+			userId = userId,
+			userName = userName,
+			userImage = userImage
+		)
 
 	}
 
 	override fun onDestroy() {
 		super.onDestroy()
 		destroyEngine()
-		ZIM.getInstance().destroy()
+		chatManager?.shutdown()
 	}
 
 	private fun createEngine() {
