@@ -102,7 +102,6 @@ dependencies {
     implementation(libs.navigation.fragment.ktx)
     implementation(libs.navigation.ui.ktx)
     implementation(libs.firebase.messaging.ktx)
-    implementation(libs.firebase.messaging)
     implementation(libs.firebase.database)
     ksp(libs.hilt.compiler)
     implementation(libs.flexbox)

@@ -55,7 +55,6 @@ navigationUiKtx = "2.8.9"
 htmlTextviewVersion = "1.6"
 firebaseMessagingKtx = "24.1.1"
 googleGmsGoogleServices = "4.4.2"
-firebaseMessaging = "24.1.1"
 firebaseDatabase = "21.0.0"
 zim = "2.21.1"
 
@@ -118,7 +117,6 @@ navigation-fragment-ktx = { group = "androidx.navigation", name = "navigation-fr
 navigation-ui-ktx = { group = "androidx.navigation", name = "navigation-ui-ktx", version.ref = "navigationUiKtx" }
 flexbox = { module = "com.google.android.flexbox:flexbox", version.ref = "flexbox" }
 firebase-messaging-ktx = { group = "com.google.firebase", name = "firebase-messaging-ktx", version.ref = "firebaseMessagingKtx" }
-firebase-messaging = { group = "com.google.firebase", name = "firebase-messaging", version.ref = "firebaseMessaging" }
 firebase-database = { group = "com.google.firebase", name = "firebase-database", version.ref = "firebaseDatabase" }
 zim = { module = "im.zego:zim", version.ref = "zim" }
 

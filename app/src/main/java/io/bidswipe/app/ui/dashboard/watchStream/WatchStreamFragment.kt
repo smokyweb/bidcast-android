@@ -170,7 +170,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
 		bind.recycler.setOnTouchListener { view, event ->
 			hideKeyboard(view)
-			return@setOnTouchListener true
+			return@setOnTouchListener false
 		}
 
 		commentAdapter = CommentAdapter(commentList)
@@ -485,9 +485,10 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 				log("ROOM STATE CHANGED: $state")
 			}
 		})
-		chatManager?.initializeAndLogin(roomID)
+		chatManager?.initializeAndLogin(roomID){
+			sendZimMessage("Joined \uD83D\uDC4B")
+		}
 
-		sendZimMessage("Joined \uD83D\uDC4B")
 	}
 
 	// ZIM event handler moved into ChatManager
@@ -625,7 +626,6 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 							bind.viewFlipper.setOutAnimation(mCtx, R.anim.slide_out_right)
 							bind.viewFlipper.showPrevious()
 						} else {
-
 							bind.viewFlipper.setInAnimation(mCtx, R.anim.slide_in_right)
 							bind.viewFlipper.setOutAnimation(mCtx, R.anim.slide_out_left)
 							bind.viewFlipper.showNext()
@@ -671,7 +671,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
 	fun showPaymentAndAddressSheet() {
 
-		var paymentAddressBind = PaymentAndAddressSheetBinding.bind(
+		val paymentAddressBind = PaymentAndAddressSheetBinding.bind(
 			layoutInflater.inflate(
 				R.layout.payment_and_address_sheet,
 				null,
@@ -679,7 +679,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 			)
 		)
 
-		var makeOfferSheet = Alerts.appBottomSheet(mCtx, true, paymentAddressBind)
+		val makeOfferSheet = Alerts.appBottomSheet(mCtx, true, paymentAddressBind)
 
 		with(paymentAddressBind.addressItem) {
 			val hasAddress = App.profileResponse.value?.hasShippingAddress == true

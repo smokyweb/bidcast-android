@@ -1,7 +1,6 @@
 package io.bidswipe.app.ui.dashboard.scheduleShow
 
 import android.annotation.SuppressLint
-import android.app.Application
 import android.app.PictureInPictureParams
 import android.content.res.Configuration
 import android.graphics.Rect
@@ -20,19 +19,9 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import com.gyf.immersionbar.ktx.immersionBar
 import com.gyf.immersionbar.ktx.navigationBarHeight
-import im.zego.zegoexpress.ZegoExpressEngine
-import im.zego.zegoexpress.callback.IZegoEventHandler
-import im.zego.zegoexpress.constants.ZegoPlayerState
-import im.zego.zegoexpress.constants.ZegoPublisherState
 import im.zego.zegoexpress.constants.ZegoRoomStateChangedReason
 import im.zego.zegoexpress.constants.ZegoScenario
-import im.zego.zegoexpress.constants.ZegoUpdateType
-import im.zego.zegoexpress.constants.ZegoViewMode
-import im.zego.zegoexpress.entity.ZegoCanvas
-import im.zego.zegoexpress.entity.ZegoEngineProfile
-import im.zego.zegoexpress.entity.ZegoRoomConfig
-import im.zego.zegoexpress.entity.ZegoStream
-import im.zego.zegoexpress.entity.ZegoUser
+import io.bidswipe.app.utils.StreamingManager
 import im.zego.zim.entity.ZIMTextMessage
 import io.bidswipe.app.utils.ChatManager
 import io.bidswipe.app.App
@@ -88,6 +77,7 @@ class LiveShowActivity : BaseActivity() {
 	private lateinit var pipParams: PictureInPictureParams
 	private lateinit var commentAdapter: CommentAdapter
 	private var chatManager: ChatManager? = null
+	private var streamingManager: StreamingManager? = null
 	private val updateStatusHandler = Handler(Looper.getMainLooper())
 	private val handler = Handler(Looper.getMainLooper())
 	private val bidTimerHandler = Handler(Looper.getMainLooper())
@@ -171,14 +161,12 @@ class LiveShowActivity : BaseActivity() {
 
 		bind.recycler.setOnTouchListener { view, event ->
 			hideKeyboard()
-			return@setOnTouchListener true
+			return@setOnTouchListener false
 		}
 		
 		bind.hostImage.loadUrl(this, userImage)
 		
-		createEngine()
-		
-		startListenEvent()
+		initializeStreamingManager()
 		
 		bind.more.setOnClickListener {
 			showMoreSheet()
@@ -213,15 +201,8 @@ class LiveShowActivity : BaseActivity() {
 		}
 		
 		bind.cameraSwitch.setOnClickListener {
-			
-			if (isFrontCamera) {
-				ZegoExpressEngine.getEngine().useFrontCamera(false)
-				isFrontCamera = false
-				
-			} else {
-				ZegoExpressEngine.getEngine().useFrontCamera(true)
-				isFrontCamera = true
-			}
+			streamingManager?.toggleCamera()
+			isFrontCamera = streamingManager?.isUsingFrontCamera() ?: true
 		}
 		
 		bind.shop.setOnClickListener {
@@ -415,26 +396,53 @@ class LiveShowActivity : BaseActivity() {
 		
 		stopPublish()
 		chatManager?.shutdown()
+		streamingManager?.destroyEngine()
 		
 		stopLiveDurationTimer()
 		stopBidTimeTimer()
 		logoutRoom()
 		
-		stopListenEvent()
-		destroyEngine()
-		
 	}
 	
-	private fun createEngine() {
-		val profile = ZegoEngineProfile().apply {
-			appID = Const.APP_ID.toLong()
-			appSign = Const.APP_SIGN
-			scenario = ZegoScenario.GENERAL
-			application = applicationContext as Application
+	private fun initializeStreamingManager() {
+
+		streamingManager = StreamingManager(this)
+
+		streamingManager?.createEngine(Const.APP_ID.toLong(), Const.APP_SIGN, ZegoScenario.GENERAL)
+		
+		// Set up streaming event handlers
+		streamingManager?.onUserJoined = { userId ->
+			Toast.makeText(this, "$userId logged in to the room.", Toast.LENGTH_LONG).show()
 		}
 		
-		ZegoExpressEngine.createEngine(profile, null)
+		streamingManager?.onUserLeft = { userId ->
+			Toast.makeText(this, "$userId logged out of the room.", Toast.LENGTH_LONG).show()
+		}
+		
+		streamingManager?.onStreamError = { error ->
+			Toast.makeText(this, "Stream error: $error", Toast.LENGTH_LONG).show()
+		}
+		
+		streamingManager?.onPublisherStateChanged = { state, errorCode ->
+			if (errorCode != 0) {
+				Toast.makeText(this, "Publisher state: $state, error: $errorCode", Toast.LENGTH_LONG).show()
+			}
+		}
+		
+		streamingManager?.onRoomStateChanged = { reason, errorCode ->
+			when (reason) {
+				ZegoRoomStateChangedReason.LOGIN_FAILED ->
+					Toast.makeText(this, "Login failed", Toast.LENGTH_LONG).show()
+				ZegoRoomStateChangedReason.RECONNECT_FAILED ->
+					Toast.makeText(this, "Reconnect failed", Toast.LENGTH_LONG).show()
+				ZegoRoomStateChangedReason.KICK_OUT ->
+					Toast.makeText(this, "Kicked out", Toast.LENGTH_LONG).show()
+				else -> {}
+			}
+		}
 	}
+	
+	// Streaming functionality now handled by StreamingManager
 	
 	private fun initializeChat() {
 		if (chatManager == null) {
@@ -447,6 +455,7 @@ class LiveShowActivity : BaseActivity() {
 				userImage = userImage
 			)
 		}
+
 		chatManager?.setListener(object : ChatManager.Listener {
 			override fun onMessageReceived(message: ZIMTextMessage) {
 				log("NEW MESSAGE RECEIVED:\n${message.message}\nExtended Data: ${message.extendedData}")
@@ -465,139 +474,18 @@ class LiveShowActivity : BaseActivity() {
 				log("ROOM STATE CHANGED: $state")
 			}
 		})
-		chatManager?.initializeAndLogin(roomID)
-		val extended = ZIMExtendedData(userImage, userId, userName).toJson()
-		chatManager?.sendTextMessage(roomID, "Active \uD83D\uDC4B", extended)	}
-	
-	private fun destroyEngine() {
-		ZegoExpressEngine.destroyEngine(null)
-	}
-	
-	private fun startListenEvent() {
-		
-		ZegoExpressEngine.getEngine().setEventHandler(object : IZegoEventHandler() {
-			
-			override fun onRoomStreamUpdate(
-				roomID: String,
-				updateType: ZegoUpdateType,
-				streamList: ArrayList<ZegoStream>,
-				extendedData: JSONObject
-			) {
-				super.onRoomStreamUpdate(roomID, updateType, streamList, extendedData)
-				if (streamList.isNotEmpty()) {
-					streamList[0].streamID
-				}
-			}
-			
-			override fun onRoomUserUpdate(
-				roomID: String,
-				updateType: ZegoUpdateType,
-				userList: ArrayList<ZegoUser>
-			) {
-				super.onRoomUserUpdate(roomID, updateType, userList)
-				val context = applicationContext
-				for (user in userList) {
-					val message = when (updateType) {
-						ZegoUpdateType.ADD -> "${user.userID} logged in to the room."
-						ZegoUpdateType.DELETE -> "${user.userID} logged out of the room."
-					}
-					Toast.makeText(context, message, Toast.LENGTH_LONG).show()
-				}
-			}
-			
-			override fun onRoomStateChanged(
-				roomID: String,
-				reason: ZegoRoomStateChangedReason,
-				errorCode: Int,
-				extendedData: JSONObject
-			) {
-				super.onRoomStateChanged(roomID, reason, errorCode, extendedData)
-				val context = applicationContext
-				when (reason) {
-					ZegoRoomStateChangedReason.LOGIN_FAILED ->
-						Toast.makeText(
-							context,
-							"ZegoRoomStateChangedReason.LOGIN_FAILED",
-							Toast.LENGTH_LONG
-						).show()
-					
-					ZegoRoomStateChangedReason.RECONNECT_FAILED ->
-						Toast.makeText(
-							context,
-							"ZegoRoomStateChangedReason.RECONNECT_FAILED",
-							Toast.LENGTH_LONG
-						).show()
-					
-					ZegoRoomStateChangedReason.KICK_OUT ->
-						Toast.makeText(
-							context,
-							"ZegoRoomStateChangedReason.KICK_OUT",
-							Toast.LENGTH_LONG
-						).show()
-					
-					else -> {
-						// Other room states can be handled here if needed
-					}
-				}
-			}
-			
-			override fun onPublisherStateUpdate(
-				streamID: String,
-				state: ZegoPublisherState,
-				errorCode: Int,
-				extendedData: JSONObject
-			) {
-				super.onPublisherStateUpdate(streamID, state, errorCode, extendedData)
-				
-				if (state == ZegoPublisherState.NO_PUBLISH) {
-					Toast.makeText(
-						applicationContext,
-						"ZegoPublisherState.NO_PUBLISH",
-						Toast.LENGTH_LONG
-					).show()
-				}
-				// Handle publish error
-			}
-			
-			override fun onPlayerStateUpdate(
-				streamID: String,
-				state: ZegoPlayerState,
-				errorCode: Int,
-				extendedData: JSONObject
-			) {
-				super.onPlayerStateUpdate(streamID, state, errorCode, extendedData)
-				
-				if (errorCode != 0) {
-					Toast.makeText(
-						applicationContext,
-						"onPlayerStateUpdate, state: $state errorCode: $errorCode",
-						Toast.LENGTH_LONG
-					).show()
-				}
-				
-				if (state == ZegoPlayerState.NO_PLAY) {
-					Toast.makeText(applicationContext, "ZegoPlayerState.NO_PLAY", Toast.LENGTH_LONG)
-						.show()
-				}
-			}
-			
-		})
-		
-	}
-	
-	private fun stopListenEvent() {
-		ZegoExpressEngine.getEngine().setEventHandler(null)
-	}
+		chatManager?.initializeAndLogin(roomID){
+			val extended = ZIMExtendedData(userImage, userId, userName).toJson()
+			chatManager?.sendTextMessage(roomID, "Active \uD83D\uDC4B", extended)	}
+		}
+	// Event handling now managed by StreamingManager
 	
 	fun loginRoom(roomId: String) {
-		val user = ZegoUser(userName.replace(" ", ".") + "_" + userId, userImage)
-		
-		val roomConfig = ZegoRoomConfig()
-		roomConfig.isUserStatusNotify = true
-		ZegoExpressEngine.getEngine().loginRoom(
+		streamingManager?.loginRoom(
 			roomId,
-			user,
-			roomConfig
+			userId,
+			userName,
+			userImage
 		) { error: Int, extendedData: JSONObject? ->
 			if (error == 0) {
 				Toast.makeText(this, "Login successful.", Toast.LENGTH_LONG).show()
@@ -614,32 +502,24 @@ class LiveShowActivity : BaseActivity() {
 	}
 	
 	fun logoutRoom() {
-		ZegoExpressEngine.getEngine().logoutRoom()
+		streamingManager?.logoutRoom()
 	}
 	
 	fun startPreview() {
-		val previewCanvas = ZegoCanvas(bind.hostView).apply {
-			viewMode = ZegoViewMode.ASPECT_FILL
-		}
-		ZegoExpressEngine.getEngine().startPreview(previewCanvas)
+		streamingManager?.startPreview(bind.hostView)
 	}
 	
 	fun stopPreview() {
-		ZegoExpressEngine.getEngine().stopPreview()
+		streamingManager?.stopPreview()
 	}
 	
 	fun startPublish() {
-		val previewCanvas = ZegoCanvas(bind.hostView).apply {
-			viewMode = ZegoViewMode.ASPECT_FILL
-		}
-		ZegoExpressEngine.getEngine().startPreview(previewCanvas)
-		
-		ZegoExpressEngine.getEngine().startPublishingStream(roomID)
+		streamingManager?.startPublishingStream(roomID, bind.hostView)
 		initializeChat()
 	}
 	
 	fun stopPublish() {
-		ZegoExpressEngine.getEngine().stopPublishingStream()
+		streamingManager?.stopPublishingStream()
 	}
 	
 	fun updateFirebaseNode(data: UpdateLiveStatusResponse.Data?) {
@@ -901,38 +781,32 @@ class LiveShowActivity : BaseActivity() {
 		
 		moreSheetBind.allowVerifiedUser.isChecked = liveData?.allowBidForAll == false
 		
-		if (ZegoExpressEngine.getEngine().isMicrophoneMuted == false) {
+		if (streamingManager?.isMicrophoneMuted() == false) {
 			moreSheetBind.muteIcon.setImageResource(draw.ic_mic)
 		} else {
 			moreSheetBind.muteIcon.setImageResource(draw.ic_mute)
 		}
 		
 		moreSheetBind.zoomInLayout.setOnClickListener {
-			zoomLevel++
-			ZegoExpressEngine.getEngine().setCameraZoomFactor(zoomLevel.toFloat())
+			streamingManager?.zoomIn()
+			zoomLevel = streamingManager?.getZoomLevel()?.toLong() ?: 1L
 			moreSheet.dismiss()
 		}
 		
 		moreSheetBind.micLayout.setOnClickListener {
-			if (ZegoExpressEngine.getEngine().isMicrophoneMuted) {
-				ZegoExpressEngine.getEngine().muteMicrophone(false)
-				moreSheetBind.muteIcon.setImageResource(draw.ic_mic)
-			} else {
-				ZegoExpressEngine.getEngine().muteMicrophone(true)
+			val isMuted = streamingManager?.isMicrophoneMuted() ?: false
+			streamingManager?.muteMicrophone(!isMuted)
+			
+			if (!isMuted) {
 				moreSheetBind.muteIcon.setImageResource(draw.ic_mute)
+			} else {
+				moreSheetBind.muteIcon.setImageResource(draw.ic_mic)
 			}
-//            moreSheet.dismiss()
 		}
 		
 		moreSheetBind.switchCameraLayout.setOnClickListener {
-			if (isFrontCamera) {
-				ZegoExpressEngine.getEngine().useFrontCamera(false)
-				isFrontCamera = false
-				
-			} else {
-				ZegoExpressEngine.getEngine().useFrontCamera(true)
-				isFrontCamera = true
-			}
+			streamingManager?.toggleCamera()
+			isFrontCamera = streamingManager?.isUsingFrontCamera() ?: true
 			moreSheet.dismiss()
 		}
 		

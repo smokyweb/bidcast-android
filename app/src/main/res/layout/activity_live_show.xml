@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.dashboard.tutorials.LiveRehearsalFragment">
+    tools:context=".ui.dashboard.scheduleShow.LiveShowActivity">
 
     <TextureView
         android:id="@+id/hostView"

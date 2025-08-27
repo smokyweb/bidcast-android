@@ -8,10 +8,8 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import io.bidswipe.app.model.LiveShowModel
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.network.repository.DashRepository
-import io.bidswipe.app.network.response.CommonResponse
 import io.bidswipe.app.network.response.CreateBidResponse
 import io.bidswipe.app.network.response.FollowUnfollowResponse
-import io.bidswipe.app.network.response.UpdateLiveStatusResponse
 import kotlinx.coroutines.launch
 import okhttp3.RequestBody
 import javax.inject.Inject

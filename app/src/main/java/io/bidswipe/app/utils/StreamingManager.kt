@@ -18,8 +18,7 @@ import im.zego.zegoexpress.entity.ZegoUser
 import org.json.JSONObject
 
 class StreamingManager(
-    private val context: Context,
-    private val application: Application
+    private val context: Context
 ) {
     private var isEngineCreated = false
     private var isFrontCamera = true
@@ -32,13 +31,24 @@ class StreamingManager(
     var onPlayerStateChanged: ((ZegoPlayerState, Int) -> Unit)? = null
     var onRoomStateChanged: ((ZegoRoomStateChangedReason, Int) -> Unit)? = null
 
+    companion object {
+
+        private var instance: StreamingManager? = null
+
+        fun getInstance(context: Context): StreamingManager {
+            return instance ?: synchronized(this) {
+                instance ?: StreamingManager(context.applicationContext).also { instance = it }
+            }
+        }
+    }
+
     fun createEngine(appId: Long, appSign: String, scenario: ZegoScenario = ZegoScenario.GENERAL) {
         if (!isEngineCreated) {
             val profile = ZegoEngineProfile().apply {
                 this.appID = appId
                 this.appSign = appSign
                 this.scenario = scenario
-                this.application = application
+                this.application = context.applicationContext as Application
             }
             ZegoExpressEngine.createEngine(profile, null)
             isEngineCreated = true
@@ -103,32 +113,36 @@ class StreamingManager(
             isEngineCreated = false
         }
     }
-
+    
+    // Room management
     fun loginRoom(roomId: String, userId: String, userName: String, userImage: String, callback: (error: Int, extendedData: JSONObject?) -> Unit) {
-        val user = ZegoUser(userId, userImage)
-        val roomConfig = ZegoRoomConfig().apply { isUserStatusNotify = true }
-        ZegoExpressEngine.getEngine().loginRoom(roomId, user, roomConfig, callback)
+        if (isEngineCreated) {
+            val user = ZegoUser(userName.replace(" ", ".") + "_" + userId, userImage)
+            val roomConfig = ZegoRoomConfig().apply { isUserStatusNotify = true }
+            ZegoExpressEngine.getEngine().loginRoom(roomId, user, roomConfig, callback)
+        }
     }
-
+    
     fun logoutRoom() {
         if (isEngineCreated) {
             ZegoExpressEngine.getEngine().logoutRoom()
         }
     }
-
+    
+    // Preview and publishing
     fun startPreview(view: View) {
         if (isEngineCreated) {
             val previewCanvas = ZegoCanvas(view).apply { viewMode = ZegoViewMode.ASPECT_FILL }
             ZegoExpressEngine.getEngine().startPreview(previewCanvas)
         }
     }
-
+    
     fun stopPreview() {
         if (isEngineCreated) {
             ZegoExpressEngine.getEngine().stopPreview()
         }
     }
-
+    
     fun startPublishingStream(streamId: String, view: View) {
         if (isEngineCreated) {
             val previewCanvas = ZegoCanvas(view).apply { viewMode = ZegoViewMode.ASPECT_FILL }
@@ -136,12 +150,34 @@ class StreamingManager(
             ZegoExpressEngine.getEngine().startPublishingStream(streamId)
         }
     }
-
+    
     fun stopPublishingStream() {
         if (isEngineCreated) {
             ZegoExpressEngine.getEngine().stopPublishingStream()
         }
     }
+
+
+    // Viewer-side playback
+    fun startPlayingStream(streamId: String, view: View) {
+        if (isEngineCreated) {
+            val canvas = ZegoCanvas(view).apply { viewMode = ZegoViewMode.ASPECT_FILL }
+            ZegoExpressEngine.getEngine().startPlayingStream(streamId, canvas)
+        }
+    }
+
+    fun stopPlayingStream(streamId: String) {
+        if (isEngineCreated) {
+            ZegoExpressEngine.getEngine().stopPlayingStream(streamId)
+        }
+    }
+
+    fun logoutRoom(roomId: String) {
+        if (isEngineCreated) {
+            ZegoExpressEngine.getEngine().logoutRoom(roomId)
+        }
+    }
+
 
     fun useFrontCamera(useFront: Boolean) {
         if (isEngineCreated) {

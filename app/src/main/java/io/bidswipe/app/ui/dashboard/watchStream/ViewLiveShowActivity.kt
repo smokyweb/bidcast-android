@@ -20,6 +20,7 @@ import io.bidswipe.app.databinding.ActivityViewLiveShowBinding
 import io.bidswipe.app.model.LiveShowModel
 import io.bidswipe.app.utils.Const
 import io.bidswipe.app.utils.FireRef
+import io.bidswipe.app.utils.StreamingManager
 import io.bidswipe.app.utils.bind
 import io.bidswipe.app.utils.clr
 import io.bidswipe.app.utils.runSafe
@@ -35,6 +36,7 @@ class ViewLiveShowActivity : BaseActivity() {
 	private lateinit var viewPager: ViewPager2
 	private lateinit var streamPagerAdapter: StreamPagerAdapter
 	private var chatManager: ChatManager? = null
+	private var streamingManager: StreamingManager? = null
 
 	private var eventListener = object : ValueEventListener {
 		@SuppressLint("NotifyDataSetChanged")

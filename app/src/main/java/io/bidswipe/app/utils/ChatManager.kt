@@ -17,6 +17,8 @@ import im.zego.zim.entity.ZIMUserInfo
 import im.zego.zim.enums.ZIMConversationType
 import im.zego.zim.enums.ZIMErrorCode
 import im.zego.zim.enums.ZIMMessagePriority
+import im.zego.zim.enums.ZIMRoomEvent
+import im.zego.zim.enums.ZIMRoomState
 
 class ChatManager(
 	private val application: Application,
@@ -39,7 +41,7 @@ class ChatManager(
 		this.listener = listener
 	}
 
-	fun initializeAndLogin(roomId: String) {
+	fun initializeAndLogin(roomId: String,callback: () -> Unit) {
 		if (zim == null) {
 			val appConfig = ZIMAppConfig().also {
 				it.appID = appId
@@ -56,7 +58,9 @@ class ChatManager(
 		zim?.login(userInfo) { error ->
 			if (error != null) {
 				// Login success
-				createOrJoinRoom(roomId)
+				createOrJoinRoom(roomId){
+					callback.invoke()
+				}
 			} else {
 				// Login error
 				listener?.onRoomStateChanged("login_error")
@@ -64,7 +68,7 @@ class ChatManager(
 		}
 	}
 
-	private fun createOrJoinRoom(roomId: String) {
+	private fun createOrJoinRoom(roomId: String, callback: () -> Unit) {
 		val roomInfo = ZIMRoomInfo().also {
 			it.roomID = roomId
 			it.roomName = roomId + "_room"
@@ -75,9 +79,12 @@ class ChatManager(
 				ZIMErrorCode.SUCCESS -> {
 					attachEventHandler()
 					listener?.onRoomStateChanged("room_created")
+					callback.invoke()
 				}
 				ZIMErrorCode.THE_ROOM_ALREADY_EXISTS -> {
-					joinExistingRoom(roomId)
+					joinExistingRoom(roomId){
+						callback.invoke()
+					}
 				}
 				else -> {
 					listener?.onRoomStateChanged("room_create_failed:${errorInfo.code}")
@@ -86,11 +93,12 @@ class ChatManager(
 		}
 	}
 
-	private fun joinExistingRoom(roomId: String) {
+	private fun joinExistingRoom(roomId: String,callback: () -> Unit) {
 		ZIM.getInstance().joinRoom(roomId) { _, joinError ->
 			if (joinError.code == ZIMErrorCode.SUCCESS) {
 				attachEventHandler()
 				listener?.onRoomStateChanged("room_joined")
+				callback.invoke()
 			} else {
 				listener?.onRoomStateChanged("room_join_failed:${joinError.code}")
 			}
@@ -101,7 +109,7 @@ class ChatManager(
 		ZIM.getInstance().setEventHandler(object : ZIMEventHandler() {
 			override fun onRoomMessageReceived(
 				zim: ZIM?,
-				messageList: java.util.ArrayList<ZIMMessage?>?,
+				messageList: ArrayList<ZIMMessage?>?,
 				info: ZIMMessageReceivedInfo?,
 				fromRoomID: String?
 			) {
@@ -115,8 +123,8 @@ class ChatManager(
 
 			override fun onRoomStateChanged(
 				zim: ZIM?,
-				state: im.zego.zim.enums.ZIMRoomState?,
-				event: im.zego.zim.enums.ZIMRoomEvent?,
+				state: ZIMRoomState?,
+				event: ZIMRoomEvent?,
 				extendedData: JSONObject?,
 				roomID: String?
 			) {
