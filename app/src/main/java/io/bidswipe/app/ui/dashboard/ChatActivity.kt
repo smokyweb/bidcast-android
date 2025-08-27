@@ -8,10 +8,8 @@ import android.text.SpannableStringBuilder
 import android.text.TextPaint
 import android.text.method.LinkMovementMethod
 import android.text.style.ClickableSpan
-import android.util.Log
 import android.view.View
 import android.view.inputmethod.InputMethodManager
-import android.widget.ImageView
 import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.core.content.ContextCompat
@@ -33,9 +31,12 @@ import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseActivity
 import io.bidswipe.app.controller.ChatAdapter
 import io.bidswipe.app.databinding.ActivityChatBinding
+import io.bidswipe.app.interfaces.AlertClicks
 import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.model.ChatModel
 import io.bidswipe.app.network.Resource
+import io.bidswipe.app.ui.custom.AlertType
+import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.utils.Alerts
 import io.bidswipe.app.utils.Chats
 import io.bidswipe.app.utils.Const
@@ -123,6 +124,8 @@ class ChatActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
 
         setContentView(bind.root)
+
+        bind
 
         bind.chats.setOnTouchListener { _, _ ->
             hideKeyboard()
@@ -343,10 +346,7 @@ class ChatActivity : BaseActivity() {
         spanTxt.setSpan(object : ClickableSpan() {
             override fun onClick(widget: View) {
                 try {
-                    bind.loader.isVisible = true
-                    viewModel.blockUnblockUser(receiverId.toRequestBody())
-
-
+                    showUnblockConfirmation()
                 } catch (e: Exception) {
                     e.printStackTrace()
                 }
@@ -527,6 +527,52 @@ class ChatActivity : BaseActivity() {
         }
 
 
+    }
+
+    private fun showUnblockConfirmation() {
+        AppBottomSheet(
+            this,
+            R.drawable.ic_block,
+            "Unblock User",
+            "Are you sure you want to unblock $receiverName?",
+            primaryBtnText = "Unblock",
+            secondaryBtnText = "Cancel",
+            canCancel = true,
+            showSecondary = true,
+            iconPadding = 16,
+            alertType = AlertType.INFO,
+            clicks = object : AlertClicks {
+                override fun primaryClick(dialog: AppBottomSheet) {
+                    dialog.dismiss()
+                    unblockUser()
+                }
+
+                override fun secondaryClick(dialog: AppBottomSheet) {
+                    dialog.dismiss()
+                }
+            }).show()
+    }
+
+    private fun unblockUser() {
+        bind.loader.isVisible = true
+        viewModel.blockUnblockUser(receiverId.toRequestBody())
+
+        viewModel.blockUnblockUserRepo.observe(this) { resource ->
+            bind.loader.isVisible = false
+            when (resource) {
+                is Resource.Success -> {
+                    viewModel.blockUnblockUserRepo.value = null
+                    isBlockedByMe = !isBlockedByMe
+                    updateChatUI()
+                    successToast(resource.value.message ?: "User unblocked successfully")
+                }
+                is Resource.Error -> {
+                    viewModel.blockUnblockUserRepo.value = null
+                    errorToast("Something went wrong")
+                }
+                else -> {}
+            }
+        }
     }
 
     private fun showQuotedMessage(message: String, name: String, type: String) {

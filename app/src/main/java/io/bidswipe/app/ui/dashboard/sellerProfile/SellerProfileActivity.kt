@@ -129,11 +129,11 @@ class SellerProfileActivity : BaseActivity() {
             val totalScrollRange = bind.appBar.totalScrollRange
             if (abs(verticalOffset) >= totalScrollRange) {
                 bind.toolbar.animate().alpha(1f).setDuration(200).withStartAction {
-//                    bind.toolbar.isVisible = true
+                    bind.toolbar.isVisible = true
                 }.start()
             } else {
                 bind.toolbar.animate().alpha(0f).setDuration(200).withEndAction {
-//                    bind.toolbar.visibility = View.GONE
+                    bind.toolbar.isVisible = false
                 }.start()
             }
         }

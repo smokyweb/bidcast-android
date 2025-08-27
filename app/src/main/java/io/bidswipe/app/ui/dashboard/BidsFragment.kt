@@ -1,5 +1,6 @@
 package io.bidswipe.app.ui.dashboard
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -35,6 +36,7 @@ class BidsFragment : BaseFragment<DashViewModel, FragmentBidsBinding>() {
         }
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 

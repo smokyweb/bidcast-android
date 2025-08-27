@@ -31,6 +31,10 @@ class MessagesAdapter(
     ) {
         with(holder) {
 
+            bind.root.setOnClickListener {
+                mClicks.itemClick(position, "")
+            }
+
             if (item?.users?.senderId == Prefs(mCtx).getUserData()?.id.toString()) {
                 bind.name.text = item.users?.receiverName
                 bind.icon.loadUrl(mCtx, item.users?.receiverImage.toString())
@@ -73,9 +77,6 @@ class MessagesAdapter(
                 ).toString()
             }
 
-            holder.bind.root.setOnClickListener {
-                mClicks.itemClick(position, "")
-            }
         }
     }
 }

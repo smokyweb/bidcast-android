@@ -1,5 +1,6 @@
 package io.bidswipe.app.controller
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.text.bold
@@ -8,6 +9,7 @@ import io.bidswipe.app.base.BaseAdapter
 import io.bidswipe.app.databinding.BidsItemBinding
 import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.network.response.FetchBidResponse
+import io.bidswipe.app.utils.Const
 import io.bidswipe.app.utils.Utils
 import io.bidswipe.app.utils.asCapital
 import io.bidswipe.app.utils.asMoney
@@ -31,22 +33,23 @@ class BidsAdapter(
                 append(item?.user?.name?.asCapital())
             }
 
-            bind.userImage.loadUrl(mCtx, item?.user?.profileImage.toString())
-            bind.offerPrice.text = item?.product?.pricing.toString().asMoney()
+            bind.userImage.loadUrl(mCtx, item?.user?.profileImage?:"")
+            bind.offerPrice.text =( item?.product?.pricing?:0).toString().asMoney()
             bind.productName.text = item?.product?.title?.asCapital()
-            bind.productImage.loadUrl(mCtx, item?.product?.images?.get(0).toString())
+            bind.productImage.loadUrl(mCtx, item?.product?.images?.get(0)?:"")
             bind.prodSubTitle.text = buildString {
                 append("Current Bid: ")
-                append(item?.bidPrice.toString().asMoney())
+                append((item?.bidPrice?:0).toString().asMoney())
             }
 
             bind.root.setOnClickListener {
                 mClicks.itemClick(position)
             }
+            Log.d(TAG, "onBind: ${item?.createdAt}")
             bind.subTitle.text = buildSpannedString {
                 append("Placed a Bid ")
                 bold { append(" • ") }
-                append(Utils.getTimeAgo(item?.createdAt ?: "", "dd-MM-yyyy HH:mm:ss" ))
+                append(Utils.getTimeAgo(item?.createdAt ?: "", Const.DD_MM_YYYY_HH_MM_SS ))
             }
         }
     }

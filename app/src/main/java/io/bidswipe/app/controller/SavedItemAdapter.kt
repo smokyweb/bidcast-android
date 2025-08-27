@@ -45,7 +45,7 @@ class SavedItemAdapter(
             bind.date.text =buildString {
                 append("Date: ")
                 append( Utils.getFormattedDateTime(
-                    Const.SERVER_TIME_FORMAT,
+                    Const.DD_MM_YYYY_HH_MM_SS,
                     "MM/dd/yyyy",
                     item?.product?.createdAt.toString()
                 ))

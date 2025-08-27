@@ -23,7 +23,7 @@ class App : Application() {
 
     companion object {
 
-        private lateinit var mCtx: Context
+        lateinit var mCtx: Context
         private lateinit var TAG: String
         var PIPMode: Boolean = false
         var isUserOnChatScreen: Boolean = false

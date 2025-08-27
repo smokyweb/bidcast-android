@@ -89,8 +89,8 @@ class NotificationActivity : BaseActivity() {
                         bind.bottomLoader.isVisible = false
                         bind.swipeRefreshLayout.isRefreshing = false
                         bind.loader.isVisible = false
-                        bind.deleteAll.isVisible = true
 
+                        notificationList.clear()
                         val mData = it.value.data
                         if (mData != null) {
                             notificationList.addAll(mData)
@@ -111,6 +111,8 @@ class NotificationActivity : BaseActivity() {
                         bind.noInternet.isVisible = true
                         bind.noData.isVisible = false
                         bind.deleteAll.isVisible = false
+                        notificationList.clear()
+                        notificationAdapter.notifyDataSetChanged()
 
                     } else {
                         bind.noInternet.isVisible = false

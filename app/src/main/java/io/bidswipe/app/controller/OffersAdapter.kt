@@ -78,7 +78,7 @@ class OffersAdapter(
 
             bind.userImage.loadUrl(mCtx, item?.user?.profileImage ?: "")
             bind.userName.text = item?.user?.name?.asCapital()
-            bind.offerPrice.text = item?.amount.toString().asMoney()
+            bind.offerPrice.text = (item?.amount?:0).toString().asMoney()
 
             bind.subTitle.text = buildSpannedString {
                 append("Placed an Offer ")
@@ -86,7 +86,7 @@ class OffersAdapter(
                 append(Utils.getTimeAgo(item?.createdAt ?: "", "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"))
             }
 
-            bind.productImage.loadUrl(mCtx, item?.product?.images?.first() ?: "")
+            bind.productImage.loadUrl(mCtx, item?.product?.images?.first()?:"")
             bind.productName.text = item?.product?.title?.asCapital()
             bind.productName.text = buildString {
                 append(item?.product?.title?.asCapital())
@@ -94,9 +94,9 @@ class OffersAdapter(
                 append(item?.product?.id.toString())
             }
 
-            bind.prodSubTitle.text = buildSpannedString {
+            bind.prodSubTitle.text = buildString {
                 append("Asking Price: ")
-                append(item?.product?.pricing.toString().asMoney())
+                append((item?.product?.pricing?:0).toString().asMoney())
             }
 
 

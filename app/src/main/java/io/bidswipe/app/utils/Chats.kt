@@ -20,7 +20,7 @@ class Chats(
 	mCtx: Context,
 	private val chatKey: String,
 	private val users: ChatModel.Users,
-) {
+) { 
     private var progressBind = ProgressAlertViewBinding.bind(
         LayoutInflater.from(mCtx).inflate(layout.progress_alert_view, null, false)
     )
