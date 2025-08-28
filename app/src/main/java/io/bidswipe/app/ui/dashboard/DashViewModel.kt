@@ -19,6 +19,7 @@ import io.bidswipe.app.network.response.GetBlockedUsersResponse
 import io.bidswipe.app.network.response.GetCategoryResponse
 import io.bidswipe.app.network.response.GetHowToSellResponse
 import io.bidswipe.app.network.response.GetLessonsResponse
+import io.bidswipe.app.network.response.GetMailClassesResponse
 import io.bidswipe.app.network.response.GetMyInventoryResponse
 import io.bidswipe.app.network.response.GetMyShowResponse
 import io.bidswipe.app.network.response.GetOffersResponse
@@ -448,6 +449,14 @@ class DashViewModel @Inject constructor(val repo: DashRepository) : ViewModel() 
 
     fun getBlockedUsers() = viewModelScope.launch {
         _getBlockedUsersResponse.value = repo.getBlockedUsers()
+    }
+
+    private var _getMailClassesResponse = MutableLiveData<Resource<GetMailClassesResponse>>()
+    val getMailClassesRepo: MutableLiveData<Resource<GetMailClassesResponse>>
+        get() = _getMailClassesResponse
+
+    fun getMailClasses() = viewModelScope.launch {
+        _getMailClassesResponse.value = repo.getMailClasses()
     }
 
 

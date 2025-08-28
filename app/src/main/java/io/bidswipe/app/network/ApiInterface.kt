@@ -25,6 +25,7 @@ import io.bidswipe.app.network.response.GetCategoryResponse
 import io.bidswipe.app.network.response.GetHowToSellResponse
 import io.bidswipe.app.network.response.GetKYCDetailsRespnse
 import io.bidswipe.app.network.response.GetLessonsResponse
+import io.bidswipe.app.network.response.GetMailClassesResponse
 import io.bidswipe.app.network.response.GetMyInventoryResponse
 import io.bidswipe.app.network.response.GetMyShowResponse
 import io.bidswipe.app.network.response.GetNotificationResponse
@@ -600,6 +601,10 @@ interface ApiInterface {
     @GET("api/blocked-users")
     suspend fun getBlockedUsers(
     ): GetBlockedUsersResponse
+
+    @GET("api/usps/mail-classes")
+    suspend fun getMailClasses(
+    ): GetMailClassesResponse
 
 
 }

@@ -471,4 +471,7 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
     suspend fun getBlockedUsers(
     ) = call { api.getBlockedUsers() }
 
+    suspend fun getMailClasses(
+    ) = call{api.getMailClasses()}
+
 }

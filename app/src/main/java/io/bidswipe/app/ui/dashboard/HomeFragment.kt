@@ -235,10 +235,10 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
         viewModel.getLiveShowRepo.observe(viewLifecycleOwner) { it ->
             when (it) {
                 is Resource.Success -> {
-
                     bind.loader.isVisible = false
                     bind.swipeRefreshLayout.isRefreshing = false
                     bind.noInternet.isVisible = false
+                    bind.noData.isVisible = false
 
                     val mData = it.value.data
 
@@ -254,9 +254,12 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
                     if (showList.isEmpty()) {
                         bind.noData.isVisible = true
                         bind.recycler.isVisible = false
+                        bind.noInternet.isVisible = false
+
                     } else {
                         bind.noData.isVisible = false
                         bind.recycler.isVisible = true
+                        bind.noInternet.isVisible = false
                     }
 
                     homeAdapter.notifyDataSetChanged()
@@ -266,10 +269,11 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
                     bind.swipeRefreshLayout.isRefreshing = false
                     bind.loader.isVisible = false
 
+
                     if (it.isNetworkError) {
                         bind.noInternet.isVisible = true
                         bind.recycler.isVisible = false
-
+                        bind.noData.isVisible = false
                     } else {
                         it.parse(mCtx, TAG, object : AlertClicks {
                             override fun primaryClick(dialog: AppBottomSheet) {

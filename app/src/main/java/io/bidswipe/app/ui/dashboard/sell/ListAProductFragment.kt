@@ -5,6 +5,8 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ArrayAdapter
+import androidx.core.content.ContextCompat
 import androidx.core.text.buildSpannedString
 import androidx.core.view.isVisible
 import com.canhub.cropper.CropImageContract
@@ -19,6 +21,7 @@ import io.bidswipe.app.interfaces.AlertClicks
 import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.network.response.GetCategoryResponse
+import io.bidswipe.app.network.response.GetMailClassesResponse
 import io.bidswipe.app.network.response.GetMyInventoryResponse
 import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.ui.dashboard.DashViewModel
@@ -43,6 +46,7 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
     var isSubCategory = false
     private var product: GetMyInventoryResponse.Data? = null
     private var categoryList = mutableListOf<GetCategoryResponse.Data?>()
+    private var mailClassesList = mutableListOf<GetMailClassesResponse.Data.MailClasse?>()
     private var subCategoryList = mutableListOf<GetCategoryResponse.Data?>()
     private var categoryId = ""
     private var subCategoryId = ""
@@ -230,6 +234,69 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
             }
         }
 
+        viewModel.getMailClasses()
+        viewModel.getMailClassesRepo.observe(viewLifecycleOwner){
+            when (it){
+                is Resource.Success -> {
+                    bind.loader.isVisible = false
+                    mailClassesList.clear()
+
+                    val mData = it.value.data
+                    if (mData?.mailClasses?.isNotEmpty() == true) {
+                        mailClassesList.addAll(mData.mailClasses)
+                        setupMailClassDropdown()
+                    }
+
+
+                }
+                is Resource.Error -> {
+                if (it.isNetworkError) {
+                    errorToast(getString(R.string.no_internet))
+                }else{
+                    it.parse(mCtx, TAG, object : AlertClicks {
+                        override fun primaryClick(dialog: AppBottomSheet) {
+                            dialog.dismiss()
+                        }
+                        override fun secondaryClick(dialog: AppBottomSheet) {
+                            dialog.dismiss()
+                        }
+                    })
+                }
+            }
+                else -> {}
+            }
+
+        }
+
+    }
+
+    private fun setupMailClassDropdown() {
+        val mailClassNames = mailClassesList.map { it?.label ?: "" }.toTypedArray()
+
+        val adapter = ArrayAdapter(
+            mCtx,
+            android.R.layout.simple_list_item_1,
+            mailClassNames
+        )
+
+        bind.mailclass.setAdapter(adapter)
+
+        val drawable = ContextCompat.getDrawable(mCtx, R.drawable.card_8)
+        bind.mailclass.setDropDownBackgroundDrawable(drawable)
+
+        bind.mailclass.setOnItemClickListener { _, _, position, _ ->
+            val selectedMailClass = mailClassesList[position]
+            log("Selected mail class: ${selectedMailClass?.label}")
+        }
+
+        bind.mailclass.setOnClickListener {
+            if (mailClassesList.isNotEmpty()) {
+                bind.mailclass.showDropDown()
+            } else {
+                viewModel.getMailClasses()
+//                Alerts.info(mCtx, "Loading mail classes...")
+            }
+        }
     }
 
     fun uploadImage() {

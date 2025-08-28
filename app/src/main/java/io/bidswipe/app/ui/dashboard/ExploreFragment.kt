@@ -42,9 +42,7 @@ class ExploreFragment : BaseFragment<DashViewModel, FragmentExploreBinding>() {
 
     private val mClick = object : RecyclerClicks {
         override fun itemClick(pos: Int, status: String?) {
-
             val category = exploreList[pos]?.name
-
             findNavController().navigate(
                 ids.goTopExploreType,
                 bundleOf("category" to category)
@@ -67,7 +65,6 @@ class ExploreFragment : BaseFragment<DashViewModel, FragmentExploreBinding>() {
 
         bind.header.onMoreSecondaryClick {
             bind.searchExpandLayout.toggle()
-
             if (bind.searchExpandLayout.isExpanded) {
                 bind.search.requestFocus()
             }
@@ -96,6 +93,7 @@ class ExploreFragment : BaseFragment<DashViewModel, FragmentExploreBinding>() {
         })
 
         bind.swipeRefreshLayout.setOnRefreshListener {
+            bind.search.setText("")
             viewModel.getCategory(type = selectedTabText)
         }
 

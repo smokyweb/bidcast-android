@@ -1,10 +1,10 @@
 package io.bidswipe.app.controller
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.text.bold
 import androidx.core.text.buildSpannedString
+import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseAdapter
 import io.bidswipe.app.databinding.BidsItemBinding
 import io.bidswipe.app.interfaces.RecyclerClicks
@@ -33,10 +33,27 @@ class BidsAdapter(
                 append(item?.user?.name?.asCapital())
             }
 
-            bind.userImage.loadUrl(mCtx, item?.user?.profileImage?:"")
-            bind.offerPrice.text =( item?.product?.pricing?:0).toString().asMoney()
+            val profileImage = item?.user?.profileImage
+            if (profileImage.isNullOrEmpty()) {
+                bind.userImage.setImageResource(R.drawable.avatar)
+            } else {
+                bind.userImage.loadUrl(mCtx, profileImage)
+            }
+
+            bind.offerPrice.text = (item?.product?.pricing ?: 0).toString().asMoney()
             bind.productName.text = item?.product?.title?.asCapital()
-            bind.productImage.loadUrl(mCtx, item?.product?.images?.get(0)?:"")
+
+            val productImage = if (item?.product?.images.isNullOrEmpty()) {
+                null
+            } else {
+                item.product.images[0]
+            }
+
+            if (productImage.isNullOrEmpty()) {
+                bind.productImage.setImageResource(R.drawable.avatar)
+            } else {
+                bind.productImage.loadUrl(mCtx, productImage)
+            }
             bind.prodSubTitle.text = buildString {
                 append("Current Bid: ")
                 append((item?.bidPrice?:0).toString().asMoney())
@@ -45,7 +62,6 @@ class BidsAdapter(
             bind.root.setOnClickListener {
                 mClicks.itemClick(position)
             }
-            Log.d(TAG, "onBind: ${item?.createdAt}")
             bind.subTitle.text = buildSpannedString {
                 append("Placed a Bid ")
                 bold { append(" • ") }

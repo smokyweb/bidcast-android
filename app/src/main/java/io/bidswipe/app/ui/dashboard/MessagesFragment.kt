@@ -35,13 +35,13 @@ class MessagesFragment : BaseFragment<DashViewModel, FragmentMessagesBinding>() 
         messagesAdapter = MessagesAdapter(chatList, mClicks)
         bind.recycler.adapter = messagesAdapter
 
-        bind.loader.isVisible = true
+        bind.loader.isVisible = false
 
         bind.noInternet.onClick {
             bind.noInternet.isVisible = false
         }
         bind.swipeRefresh.setOnRefreshListener {
-            bind.loader.isVisible = true
+            bind.loader.isVisible = false
             FireRef.CHAT_LIST.child(userId).orderByChild("timestamp")
                 .addValueEventListener(mValueEventListener)
         }
@@ -113,7 +113,7 @@ class MessagesFragment : BaseFragment<DashViewModel, FragmentMessagesBinding>() 
 
     override fun onStart() {
         super.onStart()
-        bind.loader.isVisible = true
+        bind.loader.isVisible = false
         FireRef.CHAT_LIST.child(userId).orderByChild("timestamp")
             .addValueEventListener(mValueEventListener)
     }
