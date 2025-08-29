@@ -24,7 +24,7 @@ data class GetSubCategoriesResponse(
         @SerializedName("image")
         val image: String?,
         @SerializedName("thumbnail")
-        val thumbnail: Any?,
+        val thumbnail: String?,
         @SerializedName("extra_fields")
         val extraFields: List<Any?>?,
         @SerializedName("color")

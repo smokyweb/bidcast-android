@@ -17,23 +17,23 @@ data class GetMailClassesResponse(
 ) {
     @Keep
     data class Data(
-        @SerializedName("mail_classes")
-        val mailClasses: List<MailClasse?>?
+        @SerializedName("mail_classes"  )
+        val mailClasses: List<MailClasses?>?
     ) {
         @Keep
-        data class MailClasse(
+        data class MailClasses(
             @SerializedName("label")
             val label: String?,
             @SerializedName("max_weight_lbs")
             val maxWeightLbs: Double?,
             @SerializedName("max_length_in")
-            val maxLengthIn: Int?,
+            val maxLengthIn: Double?,
             @SerializedName("max_width_in")
-            val maxWidthIn: Int?,
+            val maxWidthIn: Double?,
             @SerializedName("max_height_in")
-            val maxHeightIn: Int?,
+            val maxHeightIn: Double?,
             @SerializedName("max_length_plus_girth_in")
-            val maxLengthPlusGirthIn: Int?,
+            val maxLengthPlusGirthIn: Double?,
             @SerializedName("notes")
             val notes: String?
         )

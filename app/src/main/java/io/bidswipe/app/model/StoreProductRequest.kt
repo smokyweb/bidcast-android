@@ -28,8 +28,17 @@ data class StoreProductRequest(
     @SerializedName("images")
     val images: List<Map<String, String?>>? = null ,
     @SerializedName("sub_category_id")
-    val subCategoryId: String? = null,
+    val subCategoryId: Int? = null,
     @SerializedName("variant")
     val variant: List<Map<String?, Any?>>? = null,
-
+    @SerializedName("width")
+    val width: String? = null,
+    @SerializedName("height")
+    val height: String? = null,
+    @SerializedName("length")
+    val length: String? = null,
+    @SerializedName("weight")
+    val weight: String? = null,
+    @SerializedName("mail_class")
+    val mailClass: String? = null
     )

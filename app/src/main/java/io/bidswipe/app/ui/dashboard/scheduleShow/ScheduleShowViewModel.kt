@@ -11,6 +11,7 @@ import io.bidswipe.app.network.response.CreateShowResponse
 import io.bidswipe.app.network.response.GetAllTipsResponse
 import io.bidswipe.app.network.response.GetAuctionTypeResponse
 import io.bidswipe.app.network.response.GetCategoryResponse
+import io.bidswipe.app.network.response.GetMailClassesResponse
 import io.bidswipe.app.network.response.GetProductsResponse
 import io.bidswipe.app.network.response.StoreProductResponse
 import kotlinx.coroutines.launch
@@ -109,7 +110,7 @@ class ScheduleShowViewModel @Inject constructor(val repo: DashRepository) : View
         shippingProfileId: String?,
         status: String?,
         productImages: List<Map<String, String?>>?,
-        subCategoryId: String? = null,
+        subCategoryId: Int? = null,
         productId: String? = null,
         variant: List<Map<String?, Any?>>? = null,
     ) = viewModelScope.launch {
@@ -146,6 +147,14 @@ class ScheduleShowViewModel @Inject constructor(val repo: DashRepository) : View
         productId: String?,
     ) = viewModelScope.launch {
         _deleteProductResponse.value = repo.deleteProduct(productId)
+    }
+
+    private var _getMailClassesResponse = MutableLiveData<Resource<GetMailClassesResponse>>()
+    val getMailClassesRepo: MutableLiveData<Resource<GetMailClassesResponse>>
+        get() = _getMailClassesResponse
+
+    fun getMailClasses() = viewModelScope.launch {
+        _getMailClassesResponse.value = repo.getMailClasses()
     }
 
 }

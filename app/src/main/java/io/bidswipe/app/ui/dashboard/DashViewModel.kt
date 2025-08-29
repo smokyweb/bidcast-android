@@ -124,9 +124,14 @@ class DashViewModel @Inject constructor(val repo: DashRepository) : ViewModel() 
         shippingProfileId: String?,
         status: String?,
         productImages:  List<Map<String, String?>>?,
-        subCategoryId: String? = null,
+        subCategoryId: Int? = null,
         productId: String? = null,
-        variant: List<Map<String?, Any?>>? = null,
+        variant: List<Map<String?, Any?>>? = null,width: String? = null,
+        height: String? = null,
+        length: String? = null,
+        weight: String? = null,
+        mailClass: String? = null
+
 	) = viewModelScope.launch {
         _storeProductResponse.value = repo.storeProduct(
             categoryId,
@@ -142,7 +147,12 @@ class DashViewModel @Inject constructor(val repo: DashRepository) : ViewModel() 
             productImages,
 	        subCategoryId ,
             productId,
-            variant
+            variant,
+            width,
+            height,
+            length,
+            weight,
+            mailClass
         )
     }
 

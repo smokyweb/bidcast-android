@@ -86,7 +86,7 @@ class ProductWeightFragment : BaseFragment<ScheduleShowViewModel, FragmentProduc
             shippingProfileId = "4",
             status = "active",
             productImages = imageUrls,
-            subCategoryId = productData?.getString("subCategoryId") ?: "",
+            subCategoryId = productData?.getString("subCategoryId")?.toInt(),
             variant = viewModel.variantData
         )
 

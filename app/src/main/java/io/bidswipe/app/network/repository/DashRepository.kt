@@ -53,9 +53,13 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
         shippingProfileId: String?,
         status: String?,
         productImages:  List<Map<String, String?>>?,
-        subCategoryId: String? = null,
+        subCategoryId: Int? = null,
         productId: String? = null,
-        variant: List<Map<String?, Any?>>? = null,
+        variant: List<Map<String?, Any?>>? = null,width: String? = null,
+        height: String? = null,
+        length: String? = null,
+        weight: String? = null,
+        mailClass: String? = null
     ) = call {
         api.storeProduct(
             StoreProductRequest
@@ -72,7 +76,12 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
                 status,
                 productImages,
                 subCategoryId,
-                variant
+                variant,
+                width,
+                height,
+                length,
+                weight,
+                mailClass
             ),
             productId
         )

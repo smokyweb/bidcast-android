@@ -50,6 +50,16 @@ data class GetMyInventoryResponse(
         val purchasedQuantity: Int?,
         @SerializedName("quantity")
         val quantity: Int?,
+        @SerializedName("width")
+        val width: Int?,
+        @SerializedName("height")
+        val height: Int?,
+        @SerializedName("length")
+        val length: Int?,
+        @SerializedName("weight")
+        val weight: Int?,
+        @SerializedName("mailClass")
+        val mailClass: String?,
         @SerializedName("reserve_for_live")
         val reserveForLive: Boolean?,
         @SerializedName("shipping_profile_id")

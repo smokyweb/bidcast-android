@@ -1,5 +1,6 @@
 package io.bidswipe.app.ui.dashboard.sell
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -23,6 +24,7 @@ import io.bidswipe.app.network.Resource
 import io.bidswipe.app.network.response.GetCategoryResponse
 import io.bidswipe.app.network.response.GetMailClassesResponse
 import io.bidswipe.app.network.response.GetMyInventoryResponse
+import io.bidswipe.app.network.response.GetSubCategoriesResponse
 import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.ui.dashboard.DashViewModel
 import io.bidswipe.app.utils.Alerts
@@ -46,12 +48,20 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
     var isSubCategory = false
     private var product: GetMyInventoryResponse.Data? = null
     private var categoryList = mutableListOf<GetCategoryResponse.Data?>()
-    private var mailClassesList = mutableListOf<GetMailClassesResponse.Data.MailClasse?>()
     private var subCategoryList = mutableListOf<GetCategoryResponse.Data?>()
+    private var mailClassesList = mutableListOf<GetMailClassesResponse.Data.MailClasses?>()
+
     private var categoryId = ""
     private var subCategoryId = ""
     var variantList = mutableListOf<GetCategoryResponse.Data.ExtraField?>()
     private lateinit var variantAdapter: ProductVariantAdapter
+
+    private var packageWidth = 0.0
+    private var packageHeight = 0.0
+    private var packageLength = 0.0
+    private var packageWeight = 0.0
+    private var selectedMailClass: GetMailClassesResponse.Data.MailClasses? = null
+
 
     private val imageResult = registerForActivityResult(CropImageContract()) { result ->
         if (result.isSuccessful) {
@@ -83,7 +93,7 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
         super.onViewCreated(view, savedInstanceState)
 
         product = activity?.intent?.getSerializableExtra("product") as? GetMyInventoryResponse.Data
- 
+
         if (product != null) {
             bind.saveDraft.isVisible = false
             bind.publish.text = "Update"
@@ -235,8 +245,8 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
         }
 
         viewModel.getMailClasses()
-        viewModel.getMailClassesRepo.observe(viewLifecycleOwner){
-            when (it){
+        viewModel.getMailClassesRepo.observe(viewLifecycleOwner) {
+            when (it) {
                 is Resource.Success -> {
                     bind.loader.isVisible = false
                     mailClassesList.clear()
@@ -245,24 +255,31 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
                     if (mData?.mailClasses?.isNotEmpty() == true) {
                         mailClassesList.addAll(mData.mailClasses)
                         setupMailClassDropdown()
+
+                        product?.let {
+                        }
+
                     }
 
 
                 }
+
                 is Resource.Error -> {
-                if (it.isNetworkError) {
-                    errorToast(getString(R.string.no_internet))
-                }else{
-                    it.parse(mCtx, TAG, object : AlertClicks {
-                        override fun primaryClick(dialog: AppBottomSheet) {
-                            dialog.dismiss()
-                        }
-                        override fun secondaryClick(dialog: AppBottomSheet) {
-                            dialog.dismiss()
-                        }
-                    })
+                    if (it.isNetworkError) {
+                        errorToast(getString(R.string.no_internet))
+                    } else {
+                        it.parse(mCtx, TAG, object : AlertClicks {
+                            override fun primaryClick(dialog: AppBottomSheet) {
+                                dialog.dismiss()
+                            }
+
+                            override fun secondaryClick(dialog: AppBottomSheet) {
+                                dialog.dismiss()
+                            }
+                        })
+                    }
                 }
-            }
+
                 else -> {}
             }
 
@@ -285,7 +302,7 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
         bind.mailclass.setDropDownBackgroundDrawable(drawable)
 
         bind.mailclass.setOnItemClickListener { _, _, position, _ ->
-            val selectedMailClass = mailClassesList[position]
+            selectedMailClass = mailClassesList[position]
             log("Selected mail class: ${selectedMailClass?.label}")
         }
 
@@ -294,10 +311,42 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
                 bind.mailclass.showDropDown()
             } else {
                 viewModel.getMailClasses()
-//                Alerts.info(mCtx, "Loading mail classes...")
             }
         }
     }
+
+    /*private fun validatePackageDimensions() {
+        selectedMailClass?.let { mailClass ->
+            // Check if any dimension exceeds the mail class limits
+            val errors = mutableListOf<String>()
+
+            if (packageLength > (mailClass.maxLengthIn ?: 0.0)) {
+                errors.add("Length exceeds maximum of ${mailClass.maxLengthIn} inches")
+            }
+
+            if (packageWidth > (mailClass.maxWidthIn ?: 0.0)) {
+                errors.add("Width exceeds maximum of ${mailClass.maxWidthIn} inches")
+            }
+
+            if (packageHeight > (mailClass.maxHeightIn ?: 0.0)) {
+                errors.add("Height exceeds maximum of ${mailClass.maxHeightIn} inches")
+            }
+
+            if (packageWeight > (mailClass.maxWeightLbs ?: 0.0)) {
+                errors.add("Weight exceeds maximum of ${mailClass.maxWeightLbs} lbs")
+            }
+            val lengthPlusGirth = packageLength + (2 * packageWidth) + (2 * packageHeight)
+            if (lengthPlusGirth > (mailClass.maxLengthPlusGirthIn ?: 0.0)) {
+                errors.add("Length + girth exceeds maximum of ${mailClass.maxLengthPlusGirthIn} inches")
+            }
+
+            if (errors.isNotEmpty()) {
+                val errorMessage = "Package doesn't meet requirements for ${mailClass.label}:\n" +
+                        errors.joinToString("\n")
+                Alerts.error(mCtx, errorMessage)
+            }
+        }
+    }*/
 
     fun uploadImage() {
         if (imageList.size < 9) {
@@ -312,6 +361,16 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
     }
 
     fun saveProduct(type: String = "active") {
+        try {
+            packageWidth = bind.width.value().toDoubleOrNull() ?: 0.0
+            packageHeight = bind.height.value().toDoubleOrNull() ?: 0.0
+            packageLength = bind.length.value().toDoubleOrNull() ?: 0.0
+            packageWeight = bind.weight.value().toDoubleOrNull() ?: 0.0
+        } catch (_: NumberFormatException) {
+            Alerts.error(mCtx, "Please enter valid numeric values for dimensions")
+            return
+        }
+
         val variantData = getVariantData()
         when {
 
@@ -331,6 +390,46 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
             bind.description.value().isEmpty() -> {
                 bind.description.requestFocus()
                 Alerts.error(mCtx, "Please enter description")
+            }
+
+            selectedMailClass == null -> {
+                Alerts.error(mCtx, "Please select a mail class")
+            }
+
+            packageWidth <= 0 || packageHeight <= 0 || packageLength <= 0 || packageWeight <= 0 -> {
+                Alerts.error(mCtx, "Please enter all package dimensions")
+            }
+
+            selectedMailClass?.maxWidthIn != null && (packageWidth > (selectedMailClass?.maxWidthIn
+                ?: 0.0)) -> {
+                Alerts.error(
+                    mCtx,
+                    "Width exceeds maximum of ${selectedMailClass?.maxWidthIn} inches"
+                )
+            }
+
+            selectedMailClass?.maxHeightIn != null && (packageWidth > (selectedMailClass?.maxHeightIn
+                ?: 0.0)) -> {
+                Alerts.error(
+                    mCtx,
+                    "Height exceeds maximum of ${selectedMailClass?.maxHeightIn} inches"
+                )
+            }
+
+            selectedMailClass?.maxLengthIn != null && (packageWidth > (selectedMailClass?.maxLengthIn
+                ?: 0.0)) -> {
+                Alerts.error(
+                    mCtx,
+                    "Length exceeds maximum of ${selectedMailClass?.maxLengthIn} inches"
+                )
+            }
+
+            selectedMailClass?.maxWeightLbs != null && (packageWidth > (selectedMailClass?.maxWeightLbs
+                ?: 0.0)) -> {
+                Alerts.error(
+                    mCtx,
+                    "Weight exceeds maximum of ${selectedMailClass?.maxWeightLbs} inches"
+                )
             }
 
             bind.quantity.value().isEmpty() -> {
@@ -433,6 +532,7 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
         bind.images.adapter?.notifyDataSetChanged()
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     private fun showCategorySheet(
         categoryList: MutableList<GetCategoryResponse.Data?>,
         type: String,
@@ -451,17 +551,17 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
         categorySheetBind.recycler.adapter = CategoryListAdapter(
             if (type == "category") categoryList else subCategoryList,
             object : RecyclerClicks {
-
                 override fun itemClick(pos: Int, status: String?) {
-
                     if (type == "category") {
                         categoryId = categoryList[pos]?.id.toString()
                         bind.category.setText(categoryList[pos]?.name.toString())
                         bind.loader.isVisible = true
-                        viewModel.getCategory(categoryId)
+                        subCategoryId = ""
+                        viewModel.getCategory(categoryId,"sucategory")
                         isSubCategory = true
+
                         if (categoryList[pos]?.extraFields?.isNotEmpty() == true) {
-                             variantList.addAll(categoryList[pos]?.extraFields ?: mutableListOf())
+                            variantList.addAll(categoryList[pos]?.extraFields ?: mutableListOf())
                             variantAdapter.notifyDataSetChanged()
                         }
                     } else {
@@ -470,6 +570,7 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
                             append("(${subCategoryList[pos]?.name.toString()})")
                         })
                         subCategoryId = subCategoryList[pos]?.id.toString()
+                        Log.d(TAG, "itemClick: $subCategoryId")
                         isSubCategory = false
                         if (subCategoryList[pos]?.extraFields?.isNotEmpty() == true) {
                             variantList.addAll(subCategoryList[pos]?.extraFields ?: mutableListOf())
@@ -509,6 +610,7 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
         viewModel.storeProduct(
             productId = productId,
             categoryId = categoryId,
+            subCategoryId = subCategoryId.ifEmpty { null }?.toInt(),
             title = bind.productTitle.value(),
             description = bind.description.value(),
             quantity = bind.quantity.value(),
@@ -518,9 +620,13 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
             reserveForLive = (if (bind.reserveForLive.isChecked) "1" else "0"),
             shippingProfileId = "4",
             status = type,
-            subCategoryId = subCategoryId.ifEmpty { null },
             productImages = images,
-            variant = variantData
+            variant = variantData,
+            width = bind.width.value(),
+            height = bind.height.value(),
+            length = bind.length.value(),
+            weight = bind.weight.value(),
+            mailClass = selectedMailClass?.label
         )
 
     }
