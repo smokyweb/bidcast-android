@@ -17,11 +17,6 @@ import com.google.firebase.database.ValueEventListener
 import com.gyf.immersionbar.ktx.navigationBarHeight
 import com.ncorti.slidetoact.SlideToActView
 import com.ncorti.slidetoact.SlideToActView.OnSlideCompleteListener
-import im.zego.zegoexpress.ZegoExpressEngine
-import im.zego.zegoexpress.constants.ZegoViewMode
-import im.zego.zegoexpress.entity.ZegoCanvas
-import im.zego.zegoexpress.entity.ZegoRoomConfig
-import im.zego.zegoexpress.entity.ZegoUser
 import im.zego.zim.entity.ZIMTextMessage
 import io.bidswipe.app.utils.ChatManager
 import io.bidswipe.app.App
@@ -45,6 +40,7 @@ import io.bidswipe.app.utils.Const
 import io.bidswipe.app.utils.FireRef
 import io.bidswipe.app.utils.Utils
 import io.bidswipe.app.utils.asMoney
+import io.bidswipe.app.utils.StreamingManager
 import io.bidswipe.app.utils.dpToPx
 import io.bidswipe.app.utils.draw
 import io.bidswipe.app.utils.finish
@@ -442,23 +438,27 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 	}
 
 	private fun loginAndPlay() {
-		val user = ZegoUser(userName.replace(" ", ".") + "_" + userId, userImage)
-		ZegoExpressEngine.getEngine().loginRoom(roomID, user, ZegoRoomConfig())
-
-		val canvas = ZegoCanvas(bind.hostView).apply {
-			viewMode = ZegoViewMode.ASPECT_FILL
+		val manager = StreamingManager.getInstance(requireContext())
+		manager.loginRoom(
+			roomId = roomID,
+			userId = userId,
+			userName = userName,
+			userImage = userImage
+		) { _, _ ->
+			manager.startPlayingStream(roomID, bind.hostView)
 		}
-		ZegoExpressEngine.getEngine().startPlayingStream(roomID, canvas)
 		initializeChat()
 	}
 
 	private fun stopStream() {
-		ZegoExpressEngine.getEngine().stopPlayingStream(roomID)
-		ZegoExpressEngine.getEngine().logoutRoom(roomID)
+		val manager = StreamingManager.getInstance(requireContext())
+		manager.stopPlayingStream(roomID)
+		manager.logoutRoom(roomID)
 	}
 
 	private fun destroyEngine() {
-		ZegoExpressEngine.destroyEngine(null)
+		val manager = StreamingManager.getInstance(requireContext())
+		manager.destroyEngine()
 	}
 
 	private fun initializeChat() {

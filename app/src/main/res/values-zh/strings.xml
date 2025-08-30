@@ -324,4 +324,5 @@
 	<string name="delete">Delete</string>
     <string name="product_detail_description">Detailed product listings help buyers make informed decisions and increase your chances of making a sale.</string>
     <string name="select_from_product_inventory">Select from product Inventory</string>
+    <string name="enter_referral_code">Enter Referral Code</string>
 </resources>

@@ -26,8 +26,9 @@ class AuthViewModel @Inject constructor(val repo: AuthRepository) : ViewModel() 
         email: RequestBody,
         password: RequestBody,
         confirmPassword: RequestBody,
+        referralCode : RequestBody ?= null
     ) = viewModelScope.launch {
-        _signUpResponse.value = repo.signUp(firstName, lastName, email, password, confirmPassword)
+        _signUpResponse.value = repo.signUp(firstName, lastName, email, password, confirmPassword, referralCode)
     }
 
     private var _loginResponse = MutableLiveData<Resource<LoginResponse>>()

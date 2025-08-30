@@ -18,7 +18,6 @@ import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.model.SellModel
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.ui.custom.AppBottomSheet
-import io.bidswipe.app.utils.Alerts
 import io.bidswipe.app.utils.asMoney
 import io.bidswipe.app.utils.finish
 import io.bidswipe.app.utils.parse
@@ -41,14 +40,6 @@ class AffiliateProgramFragment : BaseFragment<SellerHubViewModel, FragmentAffili
             finish()
         }
 
-        mList.clear()
-        mList.addAll(
-            listOf(
-                SellModel(R.drawable.ic_dollar,R.color.secondaryContainer,"Earn $100 Reward","When your referral makes their first sale"),
-                SellModel(R.drawable.ic_gift,R.color.tertiaryContainer,"They Get Bonus Too!","Your referrals get $100 matched earnings in their first week")
-            )
-        )
-
         val adapter = SellAdapter(mList = mList, "affiliate",object: RecyclerClicks {
 
             override fun itemClick(pos: Int, status: String?) {
@@ -70,7 +61,7 @@ class AffiliateProgramFragment : BaseFragment<SellerHubViewModel, FragmentAffili
         bind.share.setOnClickListener {
             val shareIntent = Intent(Intent.ACTION_SEND).apply {
                 type = "Text/*"
-                putExtra(Intent.EXTRA_TEXT,"https://play.google.com/store/apps/details?id=io.bidswipe.app")
+                putExtra(Intent.EXTRA_TEXT,"https://play.google.com/store/apps/details?id=io.bidswipe.app&referrer=${bind.referralCode.text}")
             }
 
             context?.startActivity(Intent.createChooser(shareIntent, "Share invite link"))
@@ -89,6 +80,14 @@ class AffiliateProgramFragment : BaseFragment<SellerHubViewModel, FragmentAffili
                     bind.referralCode.text = mData?.referralCode
                     bind.referralCount.text = mData?.totalReferred.toString()
                     bind.totalEarning.text = mData?.totalEarnings.toString().asMoney()
+
+                    mList.clear()
+                    mList.addAll(
+                        listOf(
+                            SellModel(R.drawable.ic_dollar,R.color.secondaryContainer,"Earn $100 Reward","When your referral makes their first sale"),
+                            SellModel(R.drawable.ic_gift,R.color.tertiaryContainer,"They Get Bonus Too!","Your referrals get $100 matched earnings in their first week")
+                        )
+                    )
 
                 }
 

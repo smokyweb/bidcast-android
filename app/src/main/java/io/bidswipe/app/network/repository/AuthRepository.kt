@@ -14,7 +14,8 @@ class AuthRepository @Inject constructor(private val api: ApiInterface) : BaseRe
         email: RequestBody,
         password: RequestBody,
         confirmPassword: RequestBody,
-    ) = call { api.signUp(firstName, lastName, email, password, confirmPassword) }
+        referralCode: RequestBody?
+    ) = call { api.signUp(firstName, lastName, email, password, confirmPassword , referralCode) }
 
     suspend fun login(
         email: RequestBody,

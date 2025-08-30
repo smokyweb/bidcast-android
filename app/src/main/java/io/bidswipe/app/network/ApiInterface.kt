@@ -81,6 +81,7 @@ interface ApiInterface {
         @Part("email") email: RequestBody,
         @Part("password") password: RequestBody,
         @Part("password_confirmation") passwordConfirmation: RequestBody,
+        @Part("referral_code") referralCode: RequestBody?,
     ): SignUpResponse
 
     @Multipart

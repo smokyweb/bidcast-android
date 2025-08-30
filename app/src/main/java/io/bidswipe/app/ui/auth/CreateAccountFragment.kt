@@ -98,7 +98,8 @@ class CreateAccountFragment : BaseFragment<AuthViewModel, FragmentCreateAccountB
                         bind.lastName.text?.trim().toString().request(),
                         bind.email.text?.trim().toString().request(),
                         bind.password.text?.trim().toString().request(),
-                        bind.cPassword.text?.trim().toString().request()
+                        bind.cPassword.text?.trim().toString().request(),
+                        bind.referralCode.value().ifEmpty { null }?.request()
                     )
                 }
             }

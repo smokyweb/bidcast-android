@@ -1,7 +1,6 @@
 package io.bidswipe.app.ui.dashboard.watchStream
 
 import android.annotation.SuppressLint
-import android.app.Application
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.viewpager2.widget.ViewPager2
@@ -9,10 +8,7 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import com.gyf.immersionbar.ktx.immersionBar
-import com.gyf.immersionbar.ktx.navigationBarHeight
-import im.zego.zegoexpress.ZegoExpressEngine
 import im.zego.zegoexpress.constants.ZegoScenario
-import im.zego.zegoexpress.entity.ZegoEngineProfile
 import io.bidswipe.app.utils.ChatManager
 import io.bidswipe.app.base.BaseActivity
 import io.bidswipe.app.controller.StreamPagerAdapter
@@ -24,7 +20,6 @@ import io.bidswipe.app.utils.StreamingManager
 import io.bidswipe.app.utils.bind
 import io.bidswipe.app.utils.clr
 import io.bidswipe.app.utils.runSafe
-import io.bidswipe.app.utils.setMargins
 
 class ViewLiveShowActivity : BaseActivity() {
 
@@ -118,19 +113,17 @@ class ViewLiveShowActivity : BaseActivity() {
 	}
 
 	private fun createEngine() {
-		val profile = ZegoEngineProfile().apply {
-			appID = Const.APP_ID.toLong()
-			appSign = Const.APP_SIGN
+		streamingManager = StreamingManager.getInstance(applicationContext)
+		streamingManager?.createEngine(
+			appId = Const.APP_ID.toLong(),
+			appSign = Const.APP_SIGN,
 			scenario = ZegoScenario.BROADCAST
-			application = applicationContext as Application
-		}
-
-		ZegoExpressEngine.createEngine(profile, null)
+		)
 
 	}
 
 	private fun destroyEngine() {
-		ZegoExpressEngine.destroyEngine(null)
+		streamingManager?.destroyEngine()
 	}
 
 }
