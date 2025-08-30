@@ -40,5 +40,8 @@ data class StoreProductRequest(
     @SerializedName("weight")
     val weight: String? = null,
     @SerializedName("mail_class")
-    val mailClass: String? = null
+    val mailClass: String? = null,
+    @SerializedName("processing_category")
+    val processingCategory: String? = null,
+
     )

@@ -153,7 +153,7 @@
 		android:id="@+id/buttonLayout"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:orientation="horizontal"
+
 		android:visibility="visible"
 		app:layout_constraintBottom_toBottomOf="parent">
 
@@ -162,10 +162,17 @@
 			style="@style/appBtn"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
+			android:orientation="horizontal"
 			android:layout_margin="@dimen/margin"
 			android:paddingHorizontal="@dimen/margin"
 			android:text="@string/_continue" />
 
 	</LinearLayout>
+
+	<io.bidswipe.app.ui.custom.LoaderView
+		android:id="@+id/loader"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:visibility="gone"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

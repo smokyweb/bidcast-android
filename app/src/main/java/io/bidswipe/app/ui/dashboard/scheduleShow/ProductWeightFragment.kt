@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.navigation.fragment.findNavController
 import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseFragment
@@ -40,6 +41,7 @@ class ProductWeightFragment : BaseFragment<ScheduleShowViewModel, FragmentProduc
         bind.recycler.adapter = adapter
 
         bind.continueBtn.setOnClickListener {
+            bind.loader.isVisible = true
             val imagePaths = productData?.getString("imagePaths")
             val imageFiles = imagePaths?.split(",")?.map { File(it) } ?: emptyList()
 
@@ -87,7 +89,14 @@ class ProductWeightFragment : BaseFragment<ScheduleShowViewModel, FragmentProduc
             status = "active",
             productImages = imageUrls,
             subCategoryId = productData?.getString("subCategoryId")?.toInt(),
-            variant = viewModel.variantData
+            variant = viewModel.variantData,
+            weight = productData?.getString("weight") ?: "",
+            height = productData?.getString("height") ?: "",
+            length = productData?.getString("length") ?: "",
+            width = productData?.getString("width") ?: "",
+            mailClass = productData?.getString("mailClass") ?: "",
+            processingCategory = productData?.getString("processingCategory") ?: "",
+
         )
 
     }
@@ -110,6 +119,7 @@ class ProductWeightFragment : BaseFragment<ScheduleShowViewModel, FragmentProduc
                 }
 
                 is Resource.Error -> {
+                    bind.loader.isVisible = false
                     if (it.isNetworkError) {
                         errorToast(getString(R.string.no_internet))
                     } else {
@@ -129,17 +139,19 @@ class ProductWeightFragment : BaseFragment<ScheduleShowViewModel, FragmentProduc
             }
         }
 
-        viewModel.storeProductRepo.observe(viewLifecycleOwner) { resource ->
-            when (resource) {
+        viewModel.storeProductRepo.observe(viewLifecycleOwner) { it ->
+            when (it) {
                 is Resource.Success -> {
+                    bind.loader.isVisible = false
                     findNavController().navigate(ids.addProductFragment)
                 }
 
                 is Resource.Error -> {
-                    if (resource.isNetworkError) {
+                    bind.loader.isVisible = false
+                    if (it.isNetworkError) {
                         errorToast(getString(R.string.no_internet))
                     } else {
-                        resource.parse(mCtx, TAG, object : AlertClicks {
+                        it.parse(mCtx, TAG, object : AlertClicks {
                             override fun primaryClick(dialog: AppBottomSheet) {
                                 dialog.dismiss()
                             }

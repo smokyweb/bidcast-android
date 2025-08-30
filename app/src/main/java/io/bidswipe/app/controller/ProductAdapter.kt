@@ -8,7 +8,6 @@ import io.bidswipe.app.base.BaseAdapter
 import io.bidswipe.app.databinding.ProductListItemBinding
 import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.network.response.GetMyInventoryResponse
-import io.bidswipe.app.network.response.GetProductsResponse
 import io.bidswipe.app.utils.loadUrl
 
 class ProductAdapter(

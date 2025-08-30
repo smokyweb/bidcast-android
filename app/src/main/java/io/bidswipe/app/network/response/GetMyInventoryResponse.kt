@@ -58,8 +58,10 @@ data class GetMyInventoryResponse(
         val length: Int?,
         @SerializedName("weight")
         val weight: Int?,
-        @SerializedName("mailClass")
+        @SerializedName("mail_class")
         val mailClass: String?,
+        @SerializedName("processing_category")
+        val processingCategory: String?,
         @SerializedName("reserve_for_live")
         val reserveForLive: Boolean?,
         @SerializedName("shipping_profile_id")

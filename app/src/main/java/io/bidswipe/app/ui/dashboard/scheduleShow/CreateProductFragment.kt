@@ -52,6 +52,8 @@ class CreateProductFragment : BaseFragment<ScheduleShowViewModel, FragmentCreate
 	private var selectedMailClass: GetMailClassesResponse.Data.MailClasses? = null
 	var variantList = mutableListOf<GetCategoryResponse.Data.ExtraField?>()
 	private lateinit var variantAdapter: ProductVariantAdapter
+	private val processingCategories = listOf("LETTERS", "FLATS", "MACHINABLE", "NONSTANDARD", "NON_MACHINABLE")
+	private var selectedProcessingCategory: String? = null
 
 	private val imageResult = registerForActivityResult(CropImageContract()) { result ->
 		if (result.isSuccessful) {
@@ -76,10 +78,10 @@ class CreateProductFragment : BaseFragment<ScheduleShowViewModel, FragmentCreate
 		super.onViewCreated(view, savedInstanceState)
 
 		val productData = arguments
-		val product = arguments?.getSerializable("product") as? GetMyInventoryResponse.Data
-		product?.let {
-			setProductData(it)
+		if (productData != null) {
+			val product = productData.getSerializable("product") as GetMyInventoryResponse.Data
 		}
+
 		Log.d(TAG, "onViewCreated: oncreate")
 		imageList.clear()
 		imageList.add(null)
@@ -98,6 +100,7 @@ class CreateProductFragment : BaseFragment<ScheduleShowViewModel, FragmentCreate
 		bind.main.setOnClickListener {
 			hideKeyboard(it)
 		}
+		setupProcessingCategoryDropdown()
 
 		bind.images.adapter = ImageAdapter(imageList, object : RecyclerClicks {
 			override fun itemClick(pos: Int, status: String?) {
@@ -157,12 +160,15 @@ class CreateProductFragment : BaseFragment<ScheduleShowViewModel, FragmentCreate
 					"height" to bind.height.value(),
 					"length" to bind.length.value(),
 					"weight" to bind.weight.value(),
-					"mailClass" to selectedMailClass?.label
+					"mailClass" to selectedMailClass?.label,
+					"processingCategory" to selectedProcessingCategory
 				)
+				Log.d(TAG, "onViewCreated: $bundle")
 
 				try {
 					findNavController().navigate(ids.goToChooseSalesFormatFragment, bundle)
 				} catch (_: Exception) {
+					bind.loader.isVisible = false
 					errorToast("Error navigating to next screen")
 				}
 			}
@@ -323,6 +329,25 @@ class CreateProductFragment : BaseFragment<ScheduleShowViewModel, FragmentCreate
 
 	}
 
+	private fun setupProcessingCategoryDropdown() {
+		val proCategoryAdapter = ArrayAdapter(
+			mCtx,
+			android.R.layout.simple_list_item_1,
+			processingCategories
+		)
+		bind.procategory.setAdapter(proCategoryAdapter)
+		val proDrawable = ContextCompat.getDrawable(mCtx, R.drawable.card_8)
+		bind.procategory.setDropDownBackgroundDrawable(proDrawable)
+
+		bind.procategory.setOnItemClickListener { _, _, position, _ ->
+			selectedProcessingCategory = processingCategories[position]
+			log("Selected processing category: $selectedProcessingCategory")
+		}
+		bind.procategory.setOnClickListener {
+			bind.procategory.showDropDown()
+		}
+	}
+
 	private fun setupMailClassDropdown() {
 		val mailClassNames = mailClassesList.map { it?.label ?: "" }.toTypedArray()
 
@@ -393,6 +418,10 @@ class CreateProductFragment : BaseFragment<ScheduleShowViewModel, FragmentCreate
 
 		if (selectedMailClass == null) {
 			errorToast("Please select a mail class")
+			return false
+		}
+		if (selectedProcessingCategory == null) {
+			errorToast("Please select a processing category")
 			return false
 		}
 
@@ -498,35 +527,5 @@ class CreateProductFragment : BaseFragment<ScheduleShowViewModel, FragmentCreate
 		}
 		categorySheet.show()
 	}
-
-	private fun setProductData(product: GetMyInventoryResponse.Data) {
-		categoryId = product.categoryId.toString()
-		subCategoryId = product.subCategoryId.toString()
-
-		if (product.subCategory != null) {
-			bind.category.setText(buildSpannedString {
-				append(product.category?.name)
-				append("(${product.subCategory.name})")
-			})
-		} else {
-			bind.category.setText(product.category?.name)
-		}
-
-		bind.productTitle.setText(product.title)
-		bind.description.setText(product.description)
-		bind.quantity.setText(product.quantity?.toString() ?: "1")
-		bind.width.setText(product.width?.toString() ?: "")
-		bind.height.setText(product.height?.toString() ?: "")
-		bind.length.setText(product.length?.toString() ?: "")
-		bind.weight.setText(product.weight?.toString() ?: "")
-		bind.mailClass.setText(product.mailClass ?: "")
-
-		imageList.clear()
-		product.images?.forEach { url ->
-			url?.let { imageList.add(it) }
-		}
-		bind.images.adapter?.notifyDataSetChanged()
-	}
-
 
 }

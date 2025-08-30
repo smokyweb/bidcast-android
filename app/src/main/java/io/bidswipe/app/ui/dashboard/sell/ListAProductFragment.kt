@@ -24,7 +24,6 @@ import io.bidswipe.app.network.Resource
 import io.bidswipe.app.network.response.GetCategoryResponse
 import io.bidswipe.app.network.response.GetMailClassesResponse
 import io.bidswipe.app.network.response.GetMyInventoryResponse
-import io.bidswipe.app.network.response.GetSubCategoriesResponse
 import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.ui.dashboard.DashViewModel
 import io.bidswipe.app.utils.Alerts
@@ -109,6 +108,25 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
 
         bind.header.onBackClick {
             finish()
+        }
+
+        val processingCategories = listOf("LETTERS", "FLATS", "MACHINABLE", "NONSTANDARD", "NON_MACHINABLE")
+        val proCategoryAdapter = ArrayAdapter(
+            mCtx,
+            android.R.layout.simple_list_item_1,
+            processingCategories
+        )
+        bind.procategory.setAdapter(proCategoryAdapter)
+        val proDrawable = ContextCompat.getDrawable(mCtx, R.drawable.card_8)
+        bind.procategory.setDropDownBackgroundDrawable(proDrawable)
+        var selectedProcessingCategory: String? = null
+
+        bind.procategory.setOnItemClickListener { _, _, position, _ ->
+            selectedProcessingCategory = processingCategories[position]
+            log("Selected processing category: $selectedProcessingCategory")
+        }
+        bind.procategory.setOnClickListener {
+            bind.procategory.showDropDown()
         }
 
         bind.images.adapter = ImageAdapter(imageList, object : RecyclerClicks {
@@ -392,9 +410,7 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
                 Alerts.error(mCtx, "Please enter description")
             }
 
-            selectedMailClass == null -> {
-                Alerts.error(mCtx, "Please select a mail class")
-            }
+
 
             packageWidth <= 0 || packageHeight <= 0 || packageLength <= 0 || packageWeight <= 0 -> {
                 Alerts.error(mCtx, "Please enter all package dimensions")
@@ -404,7 +420,7 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
                 ?: 0.0)) -> {
                 Alerts.error(
                     mCtx,
-                    "Width exceeds maximum of ${selectedMailClass?.maxWidthIn} inches"
+                    "Width exceeds maximum of ${selectedMailClass?.maxWidthIn} cm"
                 )
             }
 
@@ -412,7 +428,7 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
                 ?: 0.0)) -> {
                 Alerts.error(
                     mCtx,
-                    "Height exceeds maximum of ${selectedMailClass?.maxHeightIn} inches"
+                    "Height exceeds maximum of ${selectedMailClass?.maxHeightIn} cm"
                 )
             }
 
@@ -420,7 +436,7 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
                 ?: 0.0)) -> {
                 Alerts.error(
                     mCtx,
-                    "Length exceeds maximum of ${selectedMailClass?.maxLengthIn} inches"
+                    "Length exceeds maximum of ${selectedMailClass?.maxLengthIn} cm"
                 )
             }
 
@@ -428,8 +444,15 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
                 ?: 0.0)) -> {
                 Alerts.error(
                     mCtx,
-                    "Weight exceeds maximum of ${selectedMailClass?.maxWeightLbs} inches"
+                    "Weight exceeds maximum of ${selectedMailClass?.maxWeightLbs} lbs"
                 )
+            }
+            selectedMailClass == null -> {
+            Alerts.error(mCtx, "Please select a mail class")
+        }
+            bind.procategory.value().isEmpty() ->{
+                bind.procategory.requestFocus()
+                Alerts.error(mCtx, "Please enter processing category")
             }
 
             bind.quantity.value().isEmpty() -> {
@@ -516,6 +539,12 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
         bind.productTitle.setText(product?.title)
         bind.description.setText(product?.description)
         bind.quantity.setText(product?.quantity.toString())
+        bind.width.setText(product?.width.toString())
+        bind.height.setText(product?.height.toString())
+        bind.length.setText(product?.length.toString())
+        bind.weight.setText(product?.weight.toString())
+        bind.mailclass.setText(product?.mailClass)
+        bind.procategory.setText(product?.processingCategory)
         bind.price.setText(product?.pricing.toString())
         bind.flashSell.isChecked = product?.flashSale == true
         bind.acceptOffers.isChecked = product?.acceptOffers == true
@@ -557,7 +586,7 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
                         bind.category.setText(categoryList[pos]?.name.toString())
                         bind.loader.isVisible = true
                         subCategoryId = ""
-                        viewModel.getCategory(categoryId,"sucategory")
+                        viewModel.getCategory(categoryId,"subCategory")
                         isSubCategory = true
 
                         if (categoryList[pos]?.extraFields?.isNotEmpty() == true) {
@@ -626,7 +655,8 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
             height = bind.height.value(),
             length = bind.length.value(),
             weight = bind.weight.value(),
-            mailClass = selectedMailClass?.label
+            mailClass = selectedMailClass?.label,
+            processingCategory = bind.procategory.value()
         )
 
     }

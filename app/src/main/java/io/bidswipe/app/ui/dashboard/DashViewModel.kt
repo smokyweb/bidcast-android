@@ -130,7 +130,8 @@ class DashViewModel @Inject constructor(val repo: DashRepository) : ViewModel() 
         height: String? = null,
         length: String? = null,
         weight: String? = null,
-        mailClass: String? = null
+        mailClass: String? = null,
+        processingCategory: String? = null,
 
 	) = viewModelScope.launch {
         _storeProductResponse.value = repo.storeProduct(
@@ -152,7 +153,8 @@ class DashViewModel @Inject constructor(val repo: DashRepository) : ViewModel() 
             height,
             length,
             weight,
-            mailClass
+            mailClass,
+            processingCategory
         )
     }
 
