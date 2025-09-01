@@ -1,5 +1,6 @@
 package io.bidswipe.app.controller
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
@@ -24,6 +25,7 @@ class ProductAdapter(
     ) {
         with(holder) {
 
+            Log.d(TAG, "onBind: sadsafdsh")
             bind.root.setOnClickListener {
                 mClicks.itemClick(position, "select")
             }

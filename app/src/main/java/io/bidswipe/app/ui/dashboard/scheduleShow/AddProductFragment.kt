@@ -4,9 +4,12 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.view.isVisible
 import androidx.navigation.fragment.findNavController
 import io.bidswipe.app.R
@@ -42,19 +45,45 @@ class AddProductFragment : BaseFragment<ScheduleShowViewModel, FragmentAddProduc
     private var productList = mutableListOf<GetMyInventoryResponse.Data?>()
     private var imagePartList = mutableListOf<MultipartBody.Part?>()
 
+    private val inventoryLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                val data = result.data
+                val selectedProducts =
+                    data?.getSerializableExtra("selectedProducts") as? ArrayList<GetMyInventoryResponse.Data>
+
+                Log.d(TAG, "$selectedProducts ")
+                selectedProducts?.forEach {
+                    it.selected = true
+                    if (!productList.any { existing -> existing?.id == it.id }) {
+                        productList.add(it)
+                    }
+                }
+
+                productAdapter.notifyDataSetChanged()
+
+                if (productList.isNotEmpty()) {
+                    bind.noData.isVisible = false
+                    bind.recycler.isVisible = true
+                }
+            }
+        }
+
     private var from = ""
 
     private var mClick = object : RecyclerClicks {
         override fun itemClick(pos: Int, status: String?) {
-            when(status){
+            when (status) {
                 "select" -> {
                     productList[pos]?.selected = true
                     productAdapter.notifyItemChanged(pos)
                 }
-                "edit" ->{
-                    startActivity(mCtx.toListProduct().putExtra("product" , productList[pos] ))
+
+                "edit" -> {
+                    startActivity(mCtx.toListProduct().putExtra("product", productList[pos]))
                 }
-                "delete" ->{
+
+                "delete" -> {
 
                     deleteProductDialog(productList[pos]?.id.toString())
 
@@ -73,7 +102,6 @@ class AddProductFragment : BaseFragment<ScheduleShowViewModel, FragmentAddProduc
         }
 
         productAdapter = ProductAdapter(productList, mClick)
-
         bind.recycler.adapter = productAdapter
 
         bind.addProductLayout.setOnClickListener {
@@ -81,11 +109,10 @@ class AddProductFragment : BaseFragment<ScheduleShowViewModel, FragmentAddProduc
         }
 
         bind.selectInventoryLayout.setOnClickListener {
-            startActivity(
-                Intent(mCtx, SellerHubActivity::class.java).putExtra(
-                    "slug",
-                    "inventory"
-                ).putExtra("from", "addProduct")
+            inventoryLauncher.launch(
+                Intent(mCtx, SellerHubActivity::class.java)
+                    .putExtra("slug", "inventory")
+                    .putExtra("from", "addProduct")
             )
         }
 
@@ -96,18 +123,13 @@ class AddProductFragment : BaseFragment<ScheduleShowViewModel, FragmentAddProduc
             val productIdList = mutableListOf<Int>()
 
             productList.forEach {
-
                 if (it?.selected == true) {
-
                     productIdList.add(it.id ?: 0)
                 }
-
             }
 
             if (productIdList.isEmpty()) {
-
                 Alerts.error(mCtx, "Please select product")
-
             }
 
             imagePartList.add(
@@ -171,10 +193,10 @@ class AddProductFragment : BaseFragment<ScheduleShowViewModel, FragmentAddProduc
 
                     productAdapter.notifyDataSetChanged()
 
-                    if (productList.isEmpty()){
+                    if (productList.isEmpty()) {
                         bind.noData.isVisible = true
                         bind.recycler.isVisible = false
-                    }else{
+                    } else {
                         bind.noData.isVisible = false
                         bind.recycler.isVisible = true
                     }
@@ -213,7 +235,7 @@ class AddProductFragment : BaseFragment<ScheduleShowViewModel, FragmentAddProduc
 
                     val mData = it.value.data
 
-                   val intent = Intent(mCtx, LiveShowActivity::class.java).putExtra(
+                    val intent = Intent(mCtx, LiveShowActivity::class.java).putExtra(
                         "showId",
                         mData?.id.toString()
                     )
@@ -251,7 +273,10 @@ class AddProductFragment : BaseFragment<ScheduleShowViewModel, FragmentAddProduc
 
                     val mData = it.value.data
 
-                    viewModel.getUserProducts(userId.request(), categoryId = viewModel.categoryId.request())
+                    viewModel.getUserProducts(
+                        userId.request(),
+                        categoryId = viewModel.categoryId.request()
+                    )
 
                 }
 

@@ -1,14 +1,18 @@
 package io.bidswipe.app.ui.dashboard.sellerHub
 
 import android.annotation.SuppressLint
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.tabs.TabLayout
+import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseFragment
 import io.bidswipe.app.controller.InventoryAdapter
 import io.bidswipe.app.databinding.FragmentInventoryBinding
@@ -34,6 +38,7 @@ class InventoryFragment : BaseFragment<SellerHubViewModel, FragmentInventoryBind
     private var isLoading = false
     private var page = 1
     private var selectedTab = "active"
+    private var from: String? = null
 
     private val mClick = object : RecyclerClicks {
 
@@ -47,19 +52,66 @@ class InventoryFragment : BaseFragment<SellerHubViewModel, FragmentInventoryBind
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        val from = requireActivity().intent.getStringExtra("from")
+
+//        from = arguments?.getString("from")
+
+        val isSelectionMode = from == "addProduct"
+
+        if (isSelectionMode) {
+            bind.tabs.isVisible = false
+            bind.addNewProduct.text = "Add Selected"
+            bind.addNewProduct.setOnClickListener {
+                val selectedItems = itemList.filter { it?.selected == true }
+                if (selectedItems.isEmpty()) {
+                    Toast.makeText(mCtx, "Please select at least one product", Toast.LENGTH_SHORT).show()
+                    return@setOnClickListener
+                }
+
+                val selectedList = ArrayList<GetMyInventoryResponse.Data>()
+                selectedItems.forEach { it?.let { selectedList.add(it) } }
+
+                val intent = Intent()
+                intent.putExtra("selectedProducts", selectedList)
+                activity?.setResult(Activity.RESULT_OK, intent)
+                finish()
+            }
+
+
+        } else {
+            bind.addNewProduct.text = getString(R.string.new_product)
+            bind.addNewProduct.setOnClickListener {
+                startActivity(mCtx.toListProduct())
+            }
+
+        }
+
+        adapter = InventoryAdapter(itemList, isSelectionMode, object : RecyclerClicks {
+            override fun itemClick(pos: Int, status: String?) {
+                if(isSelectionMode) {
+                    itemList[pos]?.selected = !(itemList[pos]?.selected ?: false)
+                    adapter.notifyItemChanged(pos)
+
+                    val selectedCount = itemList.count { it?.selected == true }
+                    bind.addNewProduct.text =
+                        if (selectedCount > 0) "Add ($selectedCount)" else "Add Selected"
+                }
+                else{
+                    startActivity(mCtx.toListProduct().putExtra("product", itemList[pos]))
+                }
+            }
+        })
 
         bind.header.onBackClick {
             finish()
         }
+
         bind.main.setOnClickListener {
             hideKeyboard(it)
         }
         bind.root.setOnClickListener {
             hideKeyboard(it)
         }
-
-        adapter = InventoryAdapter(itemList, mClick)
-
         bind.recycler.adapter = adapter
 
         bind.tabs.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
@@ -78,11 +130,6 @@ class InventoryFragment : BaseFragment<SellerHubViewModel, FragmentInventoryBind
 
             }
         })
-
-        bind.addNewProduct.setOnClickListener {
-            startActivity(mCtx.toListProduct())
-        }
-
         bind.recycler.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)

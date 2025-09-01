@@ -35,17 +35,25 @@ class MessagesFragment : BaseFragment<DashViewModel, FragmentMessagesBinding>() 
         messagesAdapter = MessagesAdapter(chatList, mClicks)
         bind.recycler.adapter = messagesAdapter
 
-        bind.loader.isVisible = false
-
         bind.noInternet.onClick {
             bind.noInternet.isVisible = false
+            fetchChats()
+
         }
         bind.swipeRefresh.setOnRefreshListener {
-            bind.loader.isVisible = false
-            FireRef.CHAT_LIST.child(userId).orderByChild("timestamp")
-                .addValueEventListener(mValueEventListener)
+            fetchChats()
         }
+        fetchChats()
 
+    }
+    private fun fetchChats() {
+        bind.loader.isVisible = true
+        bind.noData.isVisible = false
+        bind.noInternet.isVisible = false
+        bind.recycler.isVisible = false
+
+        FireRef.CHAT_LIST.child(userId).orderByChild("timestamp")
+            .addListenerForSingleValueEvent(mValueEventListener)
     }
 
     private var mValueEventListener = object : ValueEventListener {
@@ -59,20 +67,19 @@ class MessagesFragment : BaseFragment<DashViewModel, FragmentMessagesBinding>() 
                 chatList.add(chat)
             }
 
-            if (snap.value.toString() == "null") {
+            if (chatList.isEmpty()) {
                 bind.noData.isVisible = true
                 bind.recycler.isVisible = false
             } else {
-                bind.noData.isVisible = false
-                bind.recycler.isVisible = true
-            }
+                chatList.reverse()
+                messagesAdapter.notifyDataSetChanged()
 
-            chatList.reverse()
-            messagesAdapter.notifyDataSetChanged()
+                bind.recycler.isVisible = true
+                bind.noData.isVisible = false
+            }
 
             bind.loader.isVisible = false
             bind.swipeRefresh.isRefreshing = false
-
         }
 
         override fun onCancelled(error: DatabaseError) {
@@ -82,6 +89,8 @@ class MessagesFragment : BaseFragment<DashViewModel, FragmentMessagesBinding>() 
             bind.loader.isVisible = false
             bind.swipeRefresh.isRefreshing = false
             bind.noInternet.isVisible = true
+            bind.recycler.isVisible = false
+            bind.noData.isVisible = false
         }
     }
 
