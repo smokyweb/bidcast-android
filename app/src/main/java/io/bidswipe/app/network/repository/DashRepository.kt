@@ -485,4 +485,6 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
     suspend fun getMailClasses(
     ) = call{api.getMailClasses()}
 
+    suspend fun getPremierShop(
+    ) = call{api.getPremierShop()}
 }

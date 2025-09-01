@@ -153,7 +153,6 @@ dependencies {
     implementation(libs.socialview.autocomplete)
     implementation(libs.zim)
     implementation(libs.singledateandtimepicker)
-    implementation(libs.installreferrer)
 
     implementation ("androidx.browser:browser:1.8.0")
     implementation ("com.github.davidmigloz:number-keyboard:3.1.0")

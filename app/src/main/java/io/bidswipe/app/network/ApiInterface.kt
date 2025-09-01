@@ -33,6 +33,7 @@ import io.bidswipe.app.network.response.GetOffersResponse
 import io.bidswipe.app.network.response.GetOrderDetailsResponse
 import io.bidswipe.app.network.response.GetOrdersResponse
 import io.bidswipe.app.network.response.GetPaymentCardsResponse
+import io.bidswipe.app.network.response.GetPremierShopResponse
 import io.bidswipe.app.network.response.GetPrepareStepResponse
 import io.bidswipe.app.network.response.GetProductDetailsResponse
 import io.bidswipe.app.network.response.GetProductsByStatusResponse
@@ -606,6 +607,11 @@ interface ApiInterface {
     @GET("api/usps/mail-classes")
     suspend fun getMailClasses(
     ): GetMailClassesResponse
+
+    @GET("api/get-premier-shop")
+    suspend fun getPremierShop(
+    ): GetPremierShopResponse
+
 
 
 }

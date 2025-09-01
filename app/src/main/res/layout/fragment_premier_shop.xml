@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".ui.dashboard.sellerHub.PremierShopFragment">
 
     <io.bidswipe.app.ui.custom.Header
@@ -11,18 +11,18 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:headerMode="BACK_BUTTON_TITLE_ACTION"
+        app:headerTitle="@string/premier_shop"
         app:layout_constraintTop_toTopOf="parent"
         app:showBackButton="true"
         app:showPrimaryIcon="false"
-        app:showSecondaryIcon="false"
-        app:headerTitle="@string/premier_shop"/>
+        app:showSecondaryIcon="false" />
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintTop_toBottomOf="@id/header"
         android:layout_marginBottom="@dimen/margin"
-        app:layout_constraintBottom_toTopOf="@id/applyBtn">
+        app:layout_constraintBottom_toTopOf="@id/applyBtn"
+        app:layout_constraintTop_toBottomOf="@id/header">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -46,20 +46,19 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
+                        android:background="@color/primary"
                         android:orientation="vertical"
                         app:layout_constraintDimensionRatio="7:4"
-                        android:background="@color/primary"
                         app:layout_constraintTop_toTopOf="parent">
 
-                            <ImageView
-                                android:layout_width="32dp"
-                                android:layout_height="26dp"
-                                android:layout_gravity="center"
-                                android:contentDescription="@string/app_name"
-                                android:layout_marginTop="@dimen/margin"
-                                android:scaleType="centerCrop"
-                                android:src="@drawable/ic_crown" />
-
+                        <ImageView
+                            android:layout_width="32dp"
+                            android:layout_height="26dp"
+                            android:layout_gravity="center"
+                            android:layout_marginTop="@dimen/margin"
+                            android:contentDescription="@string/app_name"
+                            android:scaleType="centerCrop"
+                            android:src="@drawable/ic_crown" />
 
                         <TextView
                             style="@style/HeadlineMedium"
@@ -78,7 +77,7 @@
                             android:layout_marginHorizontal="@dimen/margin"
                             android:text="Join the elite sellers and unlock exclusive benefits"
                             android:textAlignment="center"
-                            android:textColor="@color/surface"/>
+                            android:textColor="@color/surface" />
 
                     </LinearLayout>
 
@@ -88,14 +87,14 @@
                     style="@style/cardStyle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:cardBackgroundColor="@color/onPrimary"
                     android:layout_margin="@dimen/margin"
-                    app:layout_constraintTop_toBottomOf="@id/layout"
+                    app:cardBackgroundColor="@color/onPrimary"
                     app:layout_constraintBottom_toBottomOf="@id/layout"
-                    app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:strokeWidth="4dp"
-                    app:strokeColor="@color/background">
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/layout"
+                    app:strokeColor="@color/background"
+                    app:strokeWidth="4dp">
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -122,10 +121,10 @@
                                     android:id="@+id/icon"
                                     android:layout_width="match_parent"
                                     android:layout_height="match_parent"
+                                    android:backgroundTint="@color/onSecondary"
                                     android:padding="12dp"
                                     android:src="@drawable/ic_shop"
-                                    android:tint="@color/primary"
-                                    android:backgroundTint="@color/onSecondary"/>
+                                    android:tint="@color/primary" />
 
                             </com.google.android.material.card.MaterialCardView>
 
@@ -172,11 +171,12 @@
                                 <LinearLayout
                                     android:layout_width="match_parent"
                                     android:layout_height="match_parent"
-                                    android:orientation="vertical"
                                     android:background="@drawable/card_8"
+                                    android:orientation="vertical"
                                     android:padding="@dimen/half_margin">
 
                                     <TextView
+                                        android:id="@+id/rating"
                                         style="@style/TitleLarge"
                                         android:layout_width="match_parent"
                                         android:layout_height="wrap_content"
@@ -205,11 +205,12 @@
                                 <LinearLayout
                                     android:layout_width="match_parent"
                                     android:layout_height="match_parent"
-                                    android:orientation="vertical"
                                     android:background="@drawable/card_8"
+                                    android:orientation="vertical"
                                     android:padding="@dimen/half_margin">
 
                                     <TextView
+                                        android:id="@+id/response"
                                         style="@style/TitleLarge"
                                         android:layout_width="match_parent"
                                         android:layout_height="wrap_content"
@@ -238,11 +239,12 @@
                                 <LinearLayout
                                     android:layout_width="match_parent"
                                     android:layout_height="match_parent"
-                                    android:orientation="vertical"
                                     android:background="@drawable/card_8"
+                                    android:orientation="vertical"
                                     android:padding="@dimen/half_margin">
 
                                     <TextView
+                                        android:id="@+id/delivery"
                                         style="@style/TitleLarge"
                                         android:layout_width="match_parent"
                                         android:layout_height="wrap_content"
@@ -273,8 +275,8 @@
                 style="@style/HeadlineSmall"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Premier Benifits"
-                android:layout_marginHorizontal="@dimen/margin"/>
+                android:layout_marginHorizontal="@dimen/margin"
+                android:text="Premier Benifits" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/gridRecycler"
@@ -290,8 +292,8 @@
                 style="@style/HeadlineSmall"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/requirements"
-                android:layout_marginHorizontal="@dimen/margin"/>
+                android:layout_marginHorizontal="@dimen/margin"
+                android:text="@string/requirements" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/requirementRecycler"
@@ -306,8 +308,8 @@
                 style="@style/HeadlineSmall"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/review_process"
-                android:layout_marginHorizontal="@dimen/margin"/>
+                android:layout_marginHorizontal="@dimen/margin"
+                android:text="@string/review_process" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -316,12 +318,14 @@
                 android:orientation="horizontal"
                 android:paddingHorizontal="16dp"
                 android:paddingVertical="20dp">
-                    <androidx.appcompat.widget.AppCompatImageView
-                        android:layout_width="32dp"
-                        android:layout_height="32dp"
-                        android:src="@drawable/ic_checked_tag"
-                        android:tint="@color/primary"
-                        android:backgroundTint="@color/onSecondary"/>
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/reviewLogo"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:backgroundTint="@color/onSecondary"
+                    android:src="@drawable/ic_checked_tag"
+                    android:tint="@color/primary" />
 
 
                 <LinearLayout
@@ -332,12 +336,14 @@
                     android:orientation="vertical">
 
                     <TextView
+                        android:id="@+id/reviewTitle"
                         style="@style/TitleLarge"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="Monthly Evaluation" />
 
                     <TextView
+                        android:id="@+id/reviewDetails"
                         style="@style/BodyMedium"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -362,6 +368,7 @@
                     android:text="Current Progress" />
 
                 <TextView
+                    android:id="@+id/progress"
                     style="@style/TitleMedium"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -374,13 +381,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="@dimen/margin"
-                android:progress="0"
+                android:progress="9"
                 android:progressTint="@color/primary"
                 app:layout_constraintTop_toBottomOf="@id/header"
                 app:trackCornerRadius="6dp"
                 app:trackThickness="8dp" />
 
             <TextView
+                android:id="@+id/nextReview"
                 style="@style/BodyLarge"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -392,17 +400,21 @@
 
     </androidx.core.widget.NestedScrollView>
 
+    <io.bidswipe.app.ui.custom.LoaderView
+        android:id="@+id/loader"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"/>
 
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/applyBtn"
-            style="@style/appBtn"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/margin"
-            android:paddingHorizontal="@dimen/margin"
-            app:layout_constraintBottom_toBottomOf="parent"
-            android:text="Apply for Premier Status" />
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/applyBtn"
+        style="@style/appBtn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/margin"
+        android:paddingHorizontal="@dimen/margin"
+        android:text="Apply for Premier Status"
+        app:layout_constraintBottom_toBottomOf="parent" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
