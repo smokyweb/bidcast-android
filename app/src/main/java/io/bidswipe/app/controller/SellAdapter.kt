@@ -43,6 +43,7 @@ class SellAdapter(
                     item?.icon ?: R.drawable.notification
                 )
             )
+
             bind.iconCard.setCardBackgroundColor(
                 ContextCompat.getColor(
                     mCtx,

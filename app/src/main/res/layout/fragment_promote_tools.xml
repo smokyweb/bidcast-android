@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".ui.dashboard.sellerHub.PromoteToolsFragment">
 
     <io.bidswipe.app.ui.custom.Header
@@ -21,8 +21,8 @@
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintTop_toBottomOf="@id/header"
-        app:layout_constraintBottom_toBottomOf="parent">
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/header">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -36,15 +36,11 @@
                 android:gravity="center_vertical"
                 android:orientation="horizontal">
 
-
-
-                    <androidx.appcompat.widget.AppCompatImageView
-                        android:id="@+id/icon"
-                        android:layout_width="48dp"
-                        android:layout_height="48dp"
-                        android:src="@drawable/ic_speaker" />
-
-
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/icon"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:src="@drawable/ic_speaker" />
 
                 <LinearLayout
                     android:layout_width="0dp"
@@ -79,84 +75,86 @@
                 android:orientation="horizontal"
                 app:layout_constraintTop_toBottomOf="@+id/header">
 
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginHorizontal="@dimen/half_margin"
+                    android:layout_weight="1"
+                    android:background="@drawable/card_8"
+                    android:orientation="vertical"
+                    android:padding="@dimen/half_margin">
 
-
-                    <LinearLayout
+                    <TextView
+                        android:id="@+id/shows"
+                        style="@style/HeadlineMedium"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:orientation="vertical"
-                        android:layout_weight="1"
-                        android:background="@drawable/card_8"
-                        android:padding="@dimen/half_margin">
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="284"
+                        android:textColor="@color/primary" />
 
-                        <TextView
-                            style="@style/HeadlineMedium"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:gravity="center"
-                            android:text="284"
-                            android:textColor="@color/primary" />
-
-                        <TextView
-                            style="@style/BodySmall"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:gravity="center"
-                            android:text="@string/shows" />
-
-                    </LinearLayout>
-
-
-                    <LinearLayout
+                    <TextView
+                        style="@style/BodySmall"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:orientation="vertical"
-                        android:background="@drawable/card_8"
-                        android:layout_weight="1"
-                        android:padding="@dimen/half_margin">
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="@string/shows" />
 
-                        <TextView
-                            style="@style/HeadlineMedium"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:gravity="center"
-                            android:text="12.4K"
-                            android:textColor="@color/primary" />
+                </LinearLayout>
 
-                        <TextView
-                            style="@style/BodySmall"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:gravity="center"
-                            android:text="Views" />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginHorizontal="@dimen/half_margin"
+                    android:layout_weight="1"
+                    android:background="@drawable/card_8"
+                    android:orientation="vertical"
+                    android:padding="@dimen/half_margin">
 
-                    </LinearLayout>
-
-
-                    <LinearLayout
+                    <TextView
+                        android:id="@+id/views"
+                        style="@style/HeadlineMedium"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:orientation="vertical"
-                        android:layout_weight="1"
-                        android:background="@drawable/card_8"
-                        android:padding="@dimen/half_margin">
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="12.4K"
+                        android:textColor="@color/primary" />
 
-                        <TextView
-                            style="@style/HeadlineMedium"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:gravity="center"
-                            android:text="892"
-                            android:textColor="@color/primary" />
+                    <TextView
+                        style="@style/BodySmall"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="Views" />
 
-                        <TextView
-                            style="@style/BodySmall"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:gravity="center"
-                            android:text="Followers" />
+                </LinearLayout>
 
-                    </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginHorizontal="@dimen/half_margin"
+                    android:layout_weight="1"
+                    android:background="@drawable/card_8"
+                    android:orientation="vertical"
+                    android:padding="@dimen/half_margin">
+
+                    <TextView
+                        android:id="@+id/followers"
+                        style="@style/HeadlineMedium"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="892"
+                        android:textColor="@color/primary" />
+
+                    <TextView
+                        style="@style/BodySmall"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="Followers" />
+
+                </LinearLayout>
 
             </LinearLayout>
 
@@ -175,13 +173,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/margin"
-               app:cardBackgroundColor="@color/primary">
+                app:cardBackgroundColor="@color/primary">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:padding="@dimen/padding"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:padding="@dimen/padding">
 
                     <TextView
                         style="@style/TitleLarge"
@@ -196,27 +194,27 @@
                         android:text="@string/get_tips_and_strategies_to_grow_your_live_shows" />
 
                     <com.google.android.material.button.MaterialButton
+                        android:id="@+id/startLearning"
                         style="@style/appBtn"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/margin"
                         android:backgroundTint="@color/surface"
-                        android:textColor="@color/primary"
-                        android:text="@string/start_learning"/>
+                        android:text="@string/start_learning"
+                        android:textColor="@color/primary" />
 
                 </LinearLayout>
-
 
             </com.google.android.material.card.MaterialCardView>
 
         </LinearLayout>
 
-
-
-
-
     </androidx.core.widget.NestedScrollView>
 
-
+    <io.bidswipe.app.ui.custom.LoaderView
+        android:id="@+id/loader"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -4,13 +4,18 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import io.bidswipe.app.R
+import androidx.core.view.isVisible
 import io.bidswipe.app.base.BaseFragment
-import io.bidswipe.app.controller.AnalyticsGridAdapter
+import io.bidswipe.app.controller.PromoteFeatureAdapter
 import io.bidswipe.app.databinding.FragmentPromoteToolsBinding
+import io.bidswipe.app.interfaces.AlertClicks
 import io.bidswipe.app.interfaces.RecyclerClicks
-import io.bidswipe.app.model.SellModel
+import io.bidswipe.app.network.Resource
+import io.bidswipe.app.network.response.GetPromoteToolsResponse
+import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.utils.finish
+import io.bidswipe.app.utils.parse
+import io.bidswipe.app.utils.toTutorials
 
 class PromoteToolsFragment : BaseFragment<SellerHubViewModel, FragmentPromoteToolsBinding>() {
     override fun getModel(): Class<SellerHubViewModel> = SellerHubViewModel::class.java
@@ -20,9 +25,8 @@ class PromoteToolsFragment : BaseFragment<SellerHubViewModel, FragmentPromoteToo
         view: ViewGroup?
     ) = FragmentPromoteToolsBinding.inflate(inflater,view,false)
 
-    private var gridList = mutableListOf<SellModel>()
-    private var reqList = mutableListOf("","","","")
-    private lateinit var gridAdapter: AnalyticsGridAdapter
+    private var gridList = mutableListOf<GetPromoteToolsResponse.Data.Feature?>()
+    private lateinit var gridAdapter: PromoteFeatureAdapter
 
     private val mClick = object : RecyclerClicks{
         override fun itemClick(pos: Int, status: String?) {
@@ -37,15 +41,51 @@ class PromoteToolsFragment : BaseFragment<SellerHubViewModel, FragmentPromoteToo
             finish()
         }
 
-        gridList.clear()
-        gridList.add(SellModel(R.drawable.ic_share,0,"Share","Share your show on social media"))
-        gridList.add(SellModel(R.drawable.ic_ads,0,"Ads", "Create ads for your shows"))
-        gridList.add(SellModel(R.drawable.ic_people,0,"Audience", "Grow your audience"))
-        gridList.add(SellModel(R.drawable.ic_graph,0,"Analytics", "Track performance"))
-
-        gridAdapter= AnalyticsGridAdapter(gridList,mClick)
+        gridAdapter= PromoteFeatureAdapter(gridList,mClick)
         bind.gridRecycler.adapter = gridAdapter
 
+        bind.startLearning.setOnClickListener {
+            startActivity(mCtx.toTutorials().putExtra("type", "promoteTools"))
+        }
+
+        bind.loader.isVisible = true
+        viewModel.getPromoteTools()
+
+        viewModel.getPromoteToolsRepo.observe(viewLifecycleOwner){
+            when(it){
+
+                is Resource.Success -> {
+                    bind.loader.isVisible = false
+                    val mData = it.value.data
+                    gridList.clear()
+                    bind.shows.text = (mData?.showOptions?.shows ?:0).toString()
+                    bind.views.text = (mData?.showOptions?.views ?:0).toString()
+                    bind.followers.text = (mData?.showOptions?.followers ?:0).toString()
+                    gridList.addAll(mData?.features ?: emptyList())
+                    gridAdapter.notifyDataSetChanged()
+                }
+
+                is Resource.Error -> {
+
+                    bind.loader.isVisible = false
+
+                    it.parse(mCtx, TAG, object : AlertClicks {
+                        override fun primaryClick(dialog: AppBottomSheet) {
+                            dialog.dismiss()
+
+                        }
+
+                        override fun secondaryClick(dialog: AppBottomSheet) {
+                            dialog.dismiss()
+
+                        }
+                    })
+
+                }
+
+            }
+
+        }
 
     }
 

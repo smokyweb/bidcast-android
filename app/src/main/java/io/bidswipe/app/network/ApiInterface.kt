@@ -38,6 +38,7 @@ import io.bidswipe.app.network.response.GetPrepareStepResponse
 import io.bidswipe.app.network.response.GetProductDetailsResponse
 import io.bidswipe.app.network.response.GetProductsByStatusResponse
 import io.bidswipe.app.network.response.GetProductsResponse
+import io.bidswipe.app.network.response.GetPromoteToolsResponse
 import io.bidswipe.app.network.response.GetPurchaseDetail
 import io.bidswipe.app.network.response.GetRatingResponse
 import io.bidswipe.app.network.response.GetShippingAddressResponse
@@ -612,7 +613,9 @@ interface ApiInterface {
     suspend fun getPremierShop(
     ): GetPremierShopResponse
 
-
+    @GET("api/get-promote-tools")
+    suspend fun getPromoteTools(
+    ): GetPromoteToolsResponse
 
 }
 

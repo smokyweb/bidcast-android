@@ -29,7 +29,7 @@ class HowToSellFragment : BaseFragment<DashViewModel,FragmentHowToSellBinding>()
     private var tipList = mutableListOf<GetHowToSellResponse.Data?>()
     private lateinit var pagerAdapter: HowToSellPagerAdapter
 
-    private var type =""
+    private var type = ""
 
     private var tipPos = 1
 
@@ -56,7 +56,6 @@ class HowToSellFragment : BaseFragment<DashViewModel,FragmentHowToSellBinding>()
 //        }
 
 
-
         pagerAdapter = HowToSellPagerAdapter(tipList)
         bind.pager.adapter = pagerAdapter
 
@@ -79,12 +78,18 @@ class HowToSellFragment : BaseFragment<DashViewModel,FragmentHowToSellBinding>()
         bind.nextBtn.setOnClickListener {
 
             log("ITEM : ${bind.pager.currentItem}")
-            if (bind.pager.currentItem == tipList.size -1 ) {
-                if (type.isEmpty()){
-                    findNavController().navigate(ids.prepareYourShowFragment)
-                }else{
+
+            if (bind.pager.currentItem == tipList.size - 1) {
+                if (requireActivity().intent.getStringExtra("type") == "promoteTools") {
                     finish()
+                } else {
+                    if (type.isEmpty()) {
+                        findNavController().navigate(ids.prepareYourShowFragment)
+                    } else {
+                        finish()
+                    }
                 }
+
             } else {
                 bind.pager.currentItem += 1
             }
@@ -93,7 +98,11 @@ class HowToSellFragment : BaseFragment<DashViewModel,FragmentHowToSellBinding>()
 
         bind.backBtn.setOnClickListener {
             if (bind.pager.currentItem == 0 ) {
-                findNavController().popBackStack()
+                if (requireActivity().intent.getStringExtra("type") == "promoteTools") {
+                    finish()
+                } else {
+                    findNavController().popBackStack()
+                }
             } else {
                 bind.pager.currentItem -= 1
             }

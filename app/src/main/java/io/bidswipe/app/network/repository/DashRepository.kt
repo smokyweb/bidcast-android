@@ -487,4 +487,7 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
 
     suspend fun getPremierShop(
     ) = call{api.getPremierShop()}
+
+    suspend fun getPromoteTools(
+    ) = call{api.getPromoteTools()}
 }

@@ -17,6 +17,7 @@ import io.bidswipe.app.network.response.GetOffersResponse
 import io.bidswipe.app.network.response.GetOrdersResponse
 import io.bidswipe.app.network.response.GetPaymentCardsResponse
 import io.bidswipe.app.network.response.GetPremierShopResponse
+import io.bidswipe.app.network.response.GetPromoteToolsResponse
 import io.bidswipe.app.network.response.GetTransactionsHistoryResponse
 import io.bidswipe.app.network.response.SellerStatusResponse
 import io.bidswipe.app.network.response.StorePhoneNumberResponse
@@ -243,5 +244,13 @@ class SellerHubViewModel@Inject constructor(val repo: DashRepository) : ViewMode
         _getPremierShopResponse.value = repo.getPremierShop()
     }
 
+    private var _getPromoteToolsResponse = MutableLiveData<Resource<GetPromoteToolsResponse>>()
+    val getPromoteToolsRepo: MutableLiveData<Resource<GetPromoteToolsResponse>>
+        get() = _getPromoteToolsResponse
+
+    fun getPromoteTools(
+    ) = viewModelScope.launch {
+        _getPromoteToolsResponse.value = repo.getPromoteTools()
+    }
 
 }
