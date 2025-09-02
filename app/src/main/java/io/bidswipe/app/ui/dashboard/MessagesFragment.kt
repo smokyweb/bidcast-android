@@ -18,6 +18,7 @@ import io.bidswipe.app.model.ChatModel
 import io.bidswipe.app.utils.Alerts
 import io.bidswipe.app.utils.FireRef
 import io.bidswipe.app.utils.Prefs
+import io.bidswipe.app.utils.Utils
 
 class MessagesFragment : BaseFragment<DashViewModel, FragmentMessagesBinding>() {
 
@@ -35,25 +36,27 @@ class MessagesFragment : BaseFragment<DashViewModel, FragmentMessagesBinding>() 
         messagesAdapter = MessagesAdapter(chatList, mClicks)
         bind.recycler.adapter = messagesAdapter
 
-        bind.noInternet.onClick {
-            bind.noInternet.isVisible = false
-            fetchChats()
+        bind.swipeRefresh.setOnRefreshListener { loadMessages() }
 
-        }
-        bind.swipeRefresh.setOnRefreshListener {
-            fetchChats()
-        }
-        fetchChats()
+        bind.noInternet.onClick { loadMessages() }
 
+        loadMessages()
     }
-    private fun fetchChats() {
+    private fun loadMessages() {
+        if (! Utils.isOnline(mCtx)) {
+            bind.loader.isVisible = false
+            bind.swipeRefresh.isRefreshing = false
+            bind.noInternet.isVisible = true
+            bind.recycler.isVisible = false
+            bind.noData.isVisible = false
+            return
+        }
+
         bind.loader.isVisible = true
-        bind.noData.isVisible = false
         bind.noInternet.isVisible = false
-        bind.recycler.isVisible = false
 
         FireRef.CHAT_LIST.child(userId).orderByChild("timestamp")
-            .addListenerForSingleValueEvent(mValueEventListener)
+            .addValueEventListener(mValueEventListener)
     }
 
     private var mValueEventListener = object : ValueEventListener {
@@ -67,19 +70,21 @@ class MessagesFragment : BaseFragment<DashViewModel, FragmentMessagesBinding>() 
                 chatList.add(chat)
             }
 
+            // Handle no data scenario
             if (chatList.isEmpty()) {
                 bind.noData.isVisible = true
                 bind.recycler.isVisible = false
             } else {
-                chatList.reverse()
-                messagesAdapter.notifyDataSetChanged()
-
-                bind.recycler.isVisible = true
                 bind.noData.isVisible = false
+                bind.recycler.isVisible = true
             }
+
+            chatList.reverse()
+            messagesAdapter.notifyDataSetChanged()
 
             bind.loader.isVisible = false
             bind.swipeRefresh.isRefreshing = false
+            bind.noInternet.isVisible = false
         }
 
         override fun onCancelled(error: DatabaseError) {
@@ -122,7 +127,6 @@ class MessagesFragment : BaseFragment<DashViewModel, FragmentMessagesBinding>() 
 
     override fun onStart() {
         super.onStart()
-        bind.loader.isVisible = false
         FireRef.CHAT_LIST.child(userId).orderByChild("timestamp")
             .addValueEventListener(mValueEventListener)
     }
@@ -131,7 +135,6 @@ class MessagesFragment : BaseFragment<DashViewModel, FragmentMessagesBinding>() 
         super.onStop()
         FireRef.CHAT_LIST.child(userId).orderByChild("timestamp")
             .removeEventListener(mValueEventListener)
-        bind.loader.isVisible = false
     }
 
     private fun updateChat(id: String) {

@@ -265,6 +265,10 @@ object Utils {
 
         return matcher.matches()
     }
+    fun isOnline(context: Context): Boolean {
+        val cm = context.getSystemService(Context.CONNECTIVITY_SERVICE) as android.net.ConnectivityManager
+        return cm.activeNetworkInfo?.isConnectedOrConnecting == true
+    }
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun notificationChannel() = NotificationChannel(
