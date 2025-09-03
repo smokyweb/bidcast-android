@@ -6,7 +6,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
-import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseFragment
 import io.bidswipe.app.controller.HomeAdapter
 import io.bidswipe.app.databinding.FragmentSellerShowBinding
@@ -26,15 +25,15 @@ class SellerShowFragment : BaseFragment<SellerViewModel, FragmentSellerShowBindi
         inflater: LayoutInflater,
         view: ViewGroup?
     ) = FragmentSellerShowBinding.inflate(inflater,view,false)
-
     private lateinit var showAdapter: HomeAdapter
     private var showList = mutableListOf<GetMyShowResponse.Data?>()
-
+    private var page = 1
+    private var isLoading = false
     private val mClicks = object : RecyclerClicks{
         override fun itemClick(pos: Int, status: String?) {
 
             startActivity(Intent(mCtx, LiveShowActivity::class.java).putExtra("showId",
-                showList.get(pos)?.id.toString()))
+                showList[pos]?.id.toString()))
 
         }
 
@@ -46,6 +45,12 @@ class SellerShowFragment : BaseFragment<SellerViewModel, FragmentSellerShowBindi
         showAdapter = HomeAdapter(showList, mClicks)
 
         bind.recycler.adapter = showAdapter
+        bind.noInternet.onClick {
+            bind.loader.isVisible = true
+            bind.noInternet.isVisible = false
+            page = 1
+            viewModel.getMyScheduledShow("upcoming".request())
+        }
 
         bind.loader.isVisible = true
         viewModel.getMyScheduledShow("upcoming".request())
@@ -54,15 +59,14 @@ class SellerShowFragment : BaseFragment<SellerViewModel, FragmentSellerShowBindi
             when (it) {
                 is Resource.Success -> {
                     bind.loader.isVisible = false
+                    bind.noInternet.isVisible = false
 
                     val mData = it.value.data
-
-                    mData?.forEach {
-
-                        showList.add(it)
-
-                        showAdapter.notifyDataSetChanged()
-
+                    if (page == 1){
+                        showList.clear()
+                    }
+                    if (mData != null){
+                        showList.addAll(mData)
                     }
 
                     if (showList.isEmpty()){
@@ -72,14 +76,19 @@ class SellerShowFragment : BaseFragment<SellerViewModel, FragmentSellerShowBindi
                         bind.noData.isVisible = false
                         bind.recycler.isVisible = true
                     }
-
+                    isLoading = page >= (it.value.totalPage ?: 0)
+                    showAdapter.notifyDataSetChanged()
                 }
 
                 is Resource.Error -> {
+                    bind.noData.isVisible = false
                     bind.loader.isVisible = false
 
                     if (it.isNetworkError) {
-                        errorToast(getString(R.string.no_internet))
+                        bind.noInternet.isVisible = true
+                        bind.recycler.isVisible = false
+                        bind.noData.isVisible = false
+//                        errorToast(getString(R.string.no_internet))
                     } else {
                         it.parse(mCtx, TAG, object : AlertClicks {
                             override fun primaryClick(dialog: AppBottomSheet) {

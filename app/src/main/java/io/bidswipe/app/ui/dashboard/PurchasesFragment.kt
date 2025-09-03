@@ -35,7 +35,6 @@ class PurchasesFragment : BaseFragment<DashViewModel, FragmentPurchasesBinding>(
         }
     }
 
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -62,7 +61,6 @@ class PurchasesFragment : BaseFragment<DashViewModel, FragmentPurchasesBinding>(
             page = 1
             viewModel.getPurchasedProductsByStatus("purchased".request(),page.toString().request())
         }
-
         bind.noInternet.onClick {
             bind.loader.isVisible = true
             bind.noInternet.isVisible = false
@@ -78,8 +76,8 @@ class PurchasesFragment : BaseFragment<DashViewModel, FragmentPurchasesBinding>(
                 is Resource.Success -> {
                     bind.loader.isVisible = false
                     bind.bottomLoader.isVisible = false
-                    bind.swipeRefreshLayout.isRefreshing = false
                     bind.noInternet.isVisible = false
+                    bind.swipeRefreshLayout.isRefreshing = false
 
                     val mData = it.value.data
                     if (page == 1){
@@ -105,10 +103,10 @@ class PurchasesFragment : BaseFragment<DashViewModel, FragmentPurchasesBinding>(
                 }
 
                 is Resource.Error -> {
-                    bind.swipeRefreshLayout.isRefreshing = false
                     bind.noData.isVisible = false
                     bind.loader.isVisible = false
                     bind.bottomLoader.isVisible = false
+                    bind.swipeRefreshLayout.isRefreshing = false
 
                     if (it.isNetworkError) {
                         bind.noInternet.isVisible = true

@@ -17,96 +17,87 @@ import io.bidswipe.app.network.response.GetRatingResponse
 import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.utils.parse
 
-class ReviewListFragment : BaseFragment<SellerViewModel, FragmentReviewListBinding>() {
-    override fun getModel(): Class<SellerViewModel>  = SellerViewModel::class.java
+class ReviewListFragment : BaseFragment<SellerViewModel , FragmentReviewListBinding>() {
+	override fun getModel() : Class<SellerViewModel> = SellerViewModel::class.java
 
-    private lateinit var adapter : ReviewAdapter
+	override fun getBind(
+		inflater : LayoutInflater ,
+		view : ViewGroup? ,
+	) = FragmentReviewListBinding.inflate(inflater , view , false)
+	private lateinit var adapter : ReviewAdapter
+	private var list = mutableListOf<GetRatingResponse.Data.Rating?>()
+	private var sellerId = ""
+	private var mClick = object : RecyclerClicks {
+		override fun itemClick(pos : Int , status : String?) {
 
-    private var list = mutableListOf<GetRatingResponse.Data.Rating?>()
+		}
 
-    private var mClick  = object  : RecyclerClicks{
-        override fun itemClick(pos: Int, status: String?) {
+	}
 
-        }
+	@SuppressLint("NotifyDataSetChanged")
+	override fun onViewCreated(view : View , savedInstanceState : Bundle?) {
+		super.onViewCreated(view , savedInstanceState)
 
-    }
+		sellerId = activity?.intent?.getStringExtra("userId") ?: ""
+		adapter = ReviewAdapter(list , mClick)
+		bind.recycler.adapter = adapter
 
-    private var sellerId = ""
+		bind.loader.isVisible = true
+		bind.noInternet.onClick {
+			bind.loader.isVisible = true
+			bind.noInternet.isVisible = false
+			viewModel.getSellerRating(sellerId)
+		}
 
-    override fun getBind(
-        inflater: LayoutInflater,
-        view: ViewGroup?
-    ) = FragmentReviewListBinding.inflate(inflater,view,false)
+		viewModel.getSellerRating(sellerId)
+		viewModel.getSellerRatingRepo.observe(viewLifecycleOwner) {
+			when (it) {
+				is Resource.Success -> {
+					bind.loader.isVisible = false
+					bind.noInternet.isVisible = false
 
-    @SuppressLint("NotifyDataSetChanged")
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+					val mData = it.value.data
+					list.clear()
+					if (mData?.ratings != null) {
+						list.addAll(mData.ratings)
+					}
+					if (list.isEmpty()) {
+						bind.noData.isVisible = true
+						bind.recycler.isVisible = false
+					} else {
+						bind.noData.isVisible = false
+						bind.recycler.isVisible = true
 
-        sellerId = activity?.intent?.getStringExtra("userId") ?:""
+					}
+					adapter.notifyDataSetChanged()
 
-        adapter = ReviewAdapter(list,mClick)
+				}
+				is Resource.Error -> {
+					bind.noData.isVisible = false
+					bind.loader.isVisible = false
 
-        bind.recycler.adapter = adapter
+					if (it.isNetworkError) {
+						bind.noInternet.isVisible = true
+						bind.recycler.isVisible = false
+						bind.noData.isVisible = false
+//                        errorToast(getString(R.string.no_internet))
+					} else {
+						it.parse(mCtx , TAG , object : AlertClicks {
+							override fun primaryClick(dialog : AppBottomSheet) {
+								dialog.dismiss()
 
-        bind.loader.isVisible = true
+							}
 
-        viewModel.getSellerRating(sellerId)
+							override fun secondaryClick(dialog : AppBottomSheet) {
+								dialog.dismiss()
 
-        viewModel.getSellerRatingRepo.observe(viewLifecycleOwner) {
-            when (it) {
-                is Resource.Success -> {
+							}
+						})
+					}
+				}
 
-                    bind.loader.isVisible = false
-
-
-                    val mData = it.value.data
-
-                    list.clear()
-
-                    if (mData?.ratings!=null){
-                        list.addAll(mData.ratings)
-                    }
-
-                    if (list.isEmpty()){
-                        bind.noData.isVisible = true
-                        bind.recycler.isVisible = false
-                    }else{
-                        bind.noData.isVisible = false
-                        bind.recycler.isVisible = true
-
-                    }
-
-                    adapter.notifyDataSetChanged()
-
-
-                }
-
-                is Resource.Error -> {
-                    bind.loader.isVisible = false
-
-                    if (it.isNetworkError) {
-                        errorToast(getString(R.string.no_internet))
-                    } else {
-                        it.parse(mCtx, TAG, object : AlertClicks {
-                            override fun primaryClick(dialog: AppBottomSheet) {
-                                dialog.dismiss()
-
-                            }
-
-                            override fun secondaryClick(dialog: AppBottomSheet) {
-                                dialog.dismiss()
-
-                            }
-                        })
-                    }
-                }
-
-                else -> {}
-
-            }
-        }
-
-    }
-
-
+				else -> {}
+			}
+		}
+	}
 }

@@ -44,9 +44,7 @@ class WalletViewFragment : BaseFragment<SellerHubViewModel, FragmentWalletViewBi
         super.onViewCreated(view, savedInstanceState)
 
         adapter = PayoutAdapter(itemList,mClick)
-
 		bind.recycler.adapter = adapter
-
 		bind.payoutCard.setOnClickListener {
 
 			if (!kycStatus){

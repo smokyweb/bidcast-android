@@ -1,11 +1,12 @@
 package io.bidswipe.app.ui.dashboard.sellerProfile
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import io.bidswipe.app.R
+import androidx.core.view.isVisible
 import io.bidswipe.app.base.BaseFragment
 import io.bidswipe.app.controller.ShopAdapter
 import io.bidswipe.app.databinding.FragmentShopBinding
@@ -20,93 +21,114 @@ import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request
 import io.bidswipe.app.utils.runSafe
 
-class ShopFragment : BaseFragment<SellerViewModel,FragmentShopBinding>() {
-    override fun getModel(): Class<SellerViewModel> = SellerViewModel::class.java
+class ShopFragment : BaseFragment<SellerViewModel , FragmentShopBinding>() {
+	override fun getModel() : Class<SellerViewModel> = SellerViewModel::class.java
 
-    override fun getBind(inflater: LayoutInflater, view: ViewGroup?) = FragmentShopBinding.inflate(inflater,view,false)
+	override fun getBind(inflater : LayoutInflater , view : ViewGroup?) = FragmentShopBinding.inflate(inflater , view , false)
+	private var productList = mutableListOf<GetMyInventoryResponse.Data?>()
+	private lateinit var shopAdapter : ShopAdapter
+	private var sellerId = ""
+	private var page = 1
+	private var isLoading = false
 
-    private var productList = mutableListOf<GetMyInventoryResponse.Data?>()
+	private val mClick = object : RecyclerClicks {
+		override fun itemClick(pos : Int , status : String?) {
+			startActivity(Intent(mCtx , ProductDetailsActivity::class.java).putExtra("productId" , productList[pos]?.id.toString()))
 
-    private lateinit var shopAdapter: ShopAdapter
+		}
+	}
 
-    private var sellerId = ""
+	@SuppressLint("NotifyDataSetChanged")
+	override fun onViewCreated(view : View , savedInstanceState : Bundle?) {
+		super.onViewCreated(view , savedInstanceState)
 
-    private val mClick = object : RecyclerClicks{
-      
-        override fun itemClick(pos: Int, status: String?) {
-            startActivity(Intent(mCtx, ProductDetailsActivity::class.java).putExtra("productId",productList[pos]?.id.toString()))
-            
-        }
-    }
+		sellerId = activity?.intent?.getStringExtra("userId") ?: ""
+		repeat(5) {
+			bind.chipGroup.addView(
+				Utils.makeAChip(
+					mCtx = mCtx ,
+					text = "For You" ,
+					selected = false
+				)
+			)
+		}
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+		bind.chipGroup.setOnCheckedStateChangeListener { chipGroup , _ ->
+			runSafe {
+				val chipId = chipGroup.checkedChipId
+				chipGroup.indexOfChild(chipGroup.findViewById(chipId))
+			}
+		}
+		bind.noInternet.onClick {
+			bind.loader.isVisible = true
+			bind.noInternet.isVisible = false
+			page = 1
+			viewModel.getUserProducts(sellerId.request())
 
-        sellerId = activity?.intent?.getStringExtra("userId") ?:""
+		}
 
-        repeat(5){
-            bind.chipGroup.addView(
-                Utils.makeAChip(
-                    mCtx = mCtx,
-                    text = "For You",
-                    selected = false
-                )
-            )
-        }
-        
-        bind.chipGroup.setOnCheckedStateChangeListener { chipGroup, _ ->
-            runSafe {
-                val chipId = chipGroup.checkedChipId
-                val index = chipGroup.indexOfChild(chipGroup.findViewById(chipId))
-            }
-        }
+		shopAdapter = ShopAdapter(productList , mClick)
+		bind.recycler.adapter = shopAdapter
+		viewModel.getUserProducts(sellerId.request())
+		viewModel.getUserProductsRepo.observe(viewLifecycleOwner) {
+			when (it) {
+				is Resource.Success -> {
+					bind.loader.isVisible = false
+					bind.noInternet.isVisible = false
+					bind.noData.isVisible = false
 
-        shopAdapter = ShopAdapter(productList,mClick)
+					val mData = it.value.data
+					if (page == 1) {
+						productList.clear()
+					}
+					if (mData != null) {
+						productList.addAll(mData)
+					}
+					if (productList.isEmpty()) {
+						bind.noData.isVisible = true
+						bind.recycler.isVisible = false
+					} else {
+						bind.noData.isVisible = false
+						bind.recycler.isVisible = true
+					}
+					/* productList.clear()
+					 mData?.forEach {
+						 productList.add(it)
+					 }*/
+					isLoading = page >= (it.value.totalPage ?: 0)
+					shopAdapter.notifyDataSetChanged()
 
-        bind.recycler.adapter = shopAdapter
+				}
 
-        viewModel.getUserProducts(sellerId.request())
+				is Resource.Error -> {
+					bind.loader.isVisible = false
+					bind.noData.isVisible = false
 
-        viewModel.getUserProductsRepo.observe(viewLifecycleOwner) {
-            when (it) {
-                is Resource.Success -> {
+					if (it.isNetworkError) {
+						bind.noInternet.isVisible = true
+						bind.recycler.isVisible = false
+						bind.noData.isVisible = false
+//                        errorToast(getString(R.string.no_internet))
+					} else {
+						it.parse(mCtx , TAG , object : AlertClicks {
+							override fun primaryClick(dialog : AppBottomSheet) {
+								dialog.dismiss()
 
-                    val mData = it.value.data
+							}
 
-                    productList.clear()
+							override fun secondaryClick(dialog : AppBottomSheet) {
+								dialog.dismiss()
 
-                    mData?.forEach {
-                        productList.add(it)
-                    }
+							}
+						})
+					}
+				}
 
-                    shopAdapter.notifyDataSetChanged()
+				else -> {}
 
-                }
+			}
+		}
 
-                is Resource.Error -> {
-
-                    if (it.isNetworkError) {
-                        errorToast(getString(R.string.no_internet))
-                    } else {
-                        it.parse(mCtx, TAG, object : AlertClicks {
-                            override fun primaryClick(dialog: AppBottomSheet) {
-                                dialog.dismiss()
-
-                            }
-
-                            override fun secondaryClick(dialog: AppBottomSheet) {
-                                dialog.dismiss()
-
-                            }
-                        })
-                    }
-                }
-
-                else -> {}
-
-            }
-        }
-
-    }
+	}
 
 }

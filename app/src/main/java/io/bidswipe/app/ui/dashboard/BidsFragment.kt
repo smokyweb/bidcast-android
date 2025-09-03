@@ -96,9 +96,11 @@ class BidsFragment : BaseFragment<DashViewModel, FragmentBidsBinding>() {
                     if (mList.isEmpty()) {
                         bind.noData.isVisible = true
                         bind.recycler.isVisible = false
+                        bind.noInternet.isVisible = false
                     } else {
                         bind.noData.isVisible = false
                         bind.recycler.isVisible = true
+                        bind.noInternet.isVisible = false
                     }
 
                     isLoading = page >= (it.value.totalPage ?: 0)
@@ -115,7 +117,7 @@ class BidsFragment : BaseFragment<DashViewModel, FragmentBidsBinding>() {
                     if (it.isNetworkError) {
                        bind.noInternet.isVisible = true
                         bind.recycler.isVisible = false
-
+                        bind.noData.isVisible = false
                     } else{
                         it.parse(mCtx, TAG, object : AlertClicks {
                             override fun primaryClick(dialog: AppBottomSheet) {

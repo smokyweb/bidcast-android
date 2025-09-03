@@ -159,6 +159,7 @@ class SellerProfileActivity : BaseActivity() {
 
         val adapter = ViewPagerAdapter(this, "Shop")
         bind.pager.adapter = adapter
+        bind.pager.isUserInputEnabled = false
 
         TabLayoutMediator(bind.tabLayout, bind.pager) { tab, position ->
             tab.text = when (position) {

@@ -51,13 +51,13 @@ data class GetMyInventoryResponse(
         @SerializedName("quantity")
         val quantity: Int?,
         @SerializedName("width")
-        val width: Int?,
+        val width: Double?,
         @SerializedName("height")
-        val height: Int?,
+        val height: Double?,
         @SerializedName("length")
-        val length: Int?,
+        val length: Double?,
         @SerializedName("weight")
-        val weight: Int?,
+        val weight: Double?,
         @SerializedName("mail_class")
         val mailClass: String?,
         @SerializedName("processing_category")

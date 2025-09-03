@@ -11,46 +11,52 @@ import io.bidswipe.app.ui.dashboard.SavedItemsFragment
 import io.bidswipe.app.ui.dashboard.sellerHub.OverAllFragment
 import io.bidswipe.app.ui.dashboard.sellerHub.TransactionsFragment
 import io.bidswipe.app.ui.dashboard.sellerHub.WalletViewFragment
+import io.bidswipe.app.ui.dashboard.sellerProfile.ClipsFragment
 import io.bidswipe.app.ui.dashboard.sellerProfile.ReviewListFragment
 import io.bidswipe.app.ui.dashboard.sellerProfile.SellerShowFragment
 import io.bidswipe.app.ui.dashboard.sellerProfile.ShopFragment
 
-class ViewPagerAdapter(fragmentActivity: FragmentActivity, type: String) :
-    FragmentStateAdapter(fragmentActivity) {
-    private val fragments = if (type == "Activity") {
-        listOf(
-            MessagesFragment(),
-            BidsFragment(),
-            OfferFragment(),
-            PurchasesFragment(),
-            SavedItemsFragment()
-        )
-    } else if (type == "Analytics") {
-        listOf(
-            OverAllFragment(),
-            BidsFragment(),
-            OfferFragment(),
-            PurchasesFragment()
-        )
-    } else if (type == "wallet") {
+class ViewPagerAdapter(fragmentActivity : FragmentActivity , type : String) :
+	FragmentStateAdapter(fragmentActivity) {
+	private val fragments = when (type) {
+		"Activity" -> {
+			listOf(
+				MessagesFragment() ,
+				BidsFragment() ,
+				OfferFragment() ,
+				PurchasesFragment() ,
+				SavedItemsFragment()
+			)
+		}
 
-        listOf(
-            WalletViewFragment(),
-            TransactionsFragment()
-        )
-    } else {
-        listOf(
-            ShopFragment(),
-            SellerShowFragment(),
-            ReviewListFragment(),
-            PurchasesFragment()
-        )
-    }
+		"Analytics" -> {
+			listOf(
+				OverAllFragment() ,
+				BidsFragment() ,
+				OfferFragment() ,
+				PurchasesFragment()
+			)
+		}
 
-    override fun getItemCount(): Int = fragments.size
+		"wallet" -> {
+			listOf(
+				WalletViewFragment() ,
+				TransactionsFragment()
+			)
+		}
 
+		else -> {
+			listOf(
+				ShopFragment() ,
+				SellerShowFragment() ,
+				ReviewListFragment() ,
+				ClipsFragment()
+			)
+		}
+	}
 
-    override fun createFragment(position: Int): Fragment = fragments[position]
+	override fun getItemCount() : Int = fragments.size
 
+	override fun createFragment(position : Int) : Fragment = fragments[position]
 
 }

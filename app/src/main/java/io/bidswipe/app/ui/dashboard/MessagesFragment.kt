@@ -20,33 +20,28 @@ import io.bidswipe.app.utils.FireRef
 import io.bidswipe.app.utils.Prefs
 import io.bidswipe.app.utils.Utils
 
-class MessagesFragment : BaseFragment<DashViewModel, FragmentMessagesBinding>() {
+class MessagesFragment : BaseFragment<DashViewModel , FragmentMessagesBinding>() {
 
-	override fun getModel(): Class<DashViewModel> = DashViewModel::class.java
+	override fun getModel() : Class<DashViewModel> = DashViewModel::class.java
 
-	override fun getBind(inflater: LayoutInflater, view: ViewGroup?) =
-		FragmentMessagesBinding.inflate(inflater, view, false)
+	override fun getBind(inflater : LayoutInflater , view : ViewGroup?) =
+		FragmentMessagesBinding.inflate(inflater , view , false)
 
-	private lateinit var messagesAdapter: MessagesAdapter
+	private lateinit var messagesAdapter : MessagesAdapter
 	private val chatList = mutableListOf<ChatModel>()
 
-	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-		super.onViewCreated(view, savedInstanceState)
+	override fun onViewCreated(view : View , savedInstanceState : Bundle?) {
+		super.onViewCreated(view , savedInstanceState)
 
-		messagesAdapter = MessagesAdapter(chatList, mClicks)
+		messagesAdapter = MessagesAdapter(chatList , mClicks)
 		bind.recycler.adapter = messagesAdapter
-
 		bind.swipeRefresh.setOnRefreshListener { loadMessages() }
-
 		bind.noInternet.onClick { loadMessages() }
-
-
-
 		loadMessages()
 	}
 
 	private fun loadMessages() {
-		if (!Utils.isOnline(mCtx)) {
+		if (! Utils.isOnline(mCtx)) {
 			bind.loader.isVisible = false
 			bind.swipeRefresh.isRefreshing = false
 			bind.noInternet.isVisible = true
@@ -64,9 +59,9 @@ class MessagesFragment : BaseFragment<DashViewModel, FragmentMessagesBinding>() 
 
 	private var mValueEventListener = object : ValueEventListener {
 		@SuppressLint("NotifyDataSetChanged")
-		override fun onDataChange(snap: DataSnapshot) {
+		override fun onDataChange(snap : DataSnapshot) {
 
-			Alerts.log(TAG, "CHAT READ $snap ")
+			Alerts.log(TAG , "CHAT READ $snap ")
 			chatList.clear()
 
 			snap.children.forEach {
@@ -91,12 +86,12 @@ class MessagesFragment : BaseFragment<DashViewModel, FragmentMessagesBinding>() 
 			bind.noInternet.isVisible = false
 		}
 
-		override fun onCancelled(error: DatabaseError) {
+		override fun onCancelled(error : DatabaseError) {
 
 			log("CHAT READ ERROR : ${error.message}")
 
 
-			Alerts.log(TAG, "CHAT READ ERROR : ${error.code}")
+			Alerts.log(TAG , "CHAT READ ERROR : ${error.code}")
 
 			bind.loader.isVisible = false
 			bind.swipeRefresh.isRefreshing = false
@@ -108,7 +103,7 @@ class MessagesFragment : BaseFragment<DashViewModel, FragmentMessagesBinding>() 
 	}
 
 	private val mClicks = object : RecyclerClicks {
-		override fun itemClick(pos: Int, status: String?) {
+		override fun itemClick(pos : Int , status : String?) {
 			var name = ""
 			var img = ""
 			var id = ""
@@ -123,10 +118,10 @@ class MessagesFragment : BaseFragment<DashViewModel, FragmentMessagesBinding>() 
 			}
 
 			updateChat(id)
-			val intent = Intent(mCtx, ChatActivity::class.java).apply {
-				putExtra("id", id)
-				putExtra("name", name)
-				putExtra("image", img)
+			val intent = Intent(mCtx , ChatActivity::class.java).apply {
+				putExtra("id" , id)
+				putExtra("name" , name)
+				putExtra("image" , img)
 			}
 			startActivity(intent)
 
@@ -145,10 +140,10 @@ class MessagesFragment : BaseFragment<DashViewModel, FragmentMessagesBinding>() 
 			.removeEventListener(mValueEventListener)
 	}
 
-	private fun updateChat(id: String) {
+	private fun updateChat(id : String) {
 		FireRef.CHAT_LIST.child(userId).orderByChild("timestamp")
 			.addListenerForSingleValueEvent(object : ValueEventListener {
-				override fun onDataChange(snapshot: DataSnapshot) {
+				override fun onDataChange(snapshot : DataSnapshot) {
 					snapshot.children.forEach {
 						if ((id == it.child("users")
 								.child("receiverId").value) || (id == it.child("users")
@@ -159,9 +154,9 @@ class MessagesFragment : BaseFragment<DashViewModel, FragmentMessagesBinding>() 
 					}
 				}
 
-				override fun onCancelled(error: DatabaseError) {
+				override fun onCancelled(error : DatabaseError) {
 					error.toException().printStackTrace()
-					Alerts.log("Chat List", "CHAT READ ERROR : ${error.message}")
+					Alerts.log("Chat List" , "CHAT READ ERROR : ${error.message}")
 				}
 			})
 	}

@@ -6,417 +6,424 @@
     android:layout_height="match_parent"
     tools:context=".ui.dashboard.sellerProfile.SellerProfileActivity">
 
- <!--   <androidx.coordinatorlayout.widget.CoordinatorLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:context=".ui.dashboard.sellerProfile.SellerProfileActivity">-->
+    <!--   <androidx.coordinatorlayout.widget.CoordinatorLayout
+           android:layout_width="match_parent"
+           android:layout_height="match_parent"
+           tools:context=".ui.dashboard.sellerProfile.SellerProfileActivity">-->
 
-        <com.google.android.material.appbar.AppBarLayout
-            android:id="@+id/app_bar"
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/app_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:liftOnScroll="true">
+
+        <com.google.android.material.appbar.CollapsingToolbarLayout
+            android:id="@+id/toolbar_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:liftOnScroll="true">
+            android:fitsSystemWindows="true"
+            app:contentScrim="@color/surface"
+            app:layout_scrollFlags="scroll|snap|exitUntilCollapsed"
+            app:statusBarScrim="@color/surface"
+            app:toolbarId="@+id/toolbar">
 
-            <com.google.android.material.appbar.CollapsingToolbarLayout
-                android:id="@+id/toolbar_layout"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:contentScrim="@color/surface"
-                android:fitsSystemWindows="true"
-                app:layout_scrollFlags="scroll|snap|exitUntilCollapsed"
-                app:statusBarScrim="@color/surface"
-                app:toolbarId="@+id/toolbar">
+                android:orientation="vertical"
+                app:layout_collapseMode="parallax">
 
-                <LinearLayout
+                <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:layout_collapseMode="parallax"
-                    android:orientation="vertical">
+                    android:elevation="2dp">
 
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:elevation="2dp">
+                        android:layout_marginBottom="75dp"
+                        android:orientation="vertical"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent">
 
-                        <androidx.constraintlayout.widget.ConstraintLayout
+                        <androidx.appcompat.widget.AppCompatImageView
+                            android:id="@+id/appCompatImageView"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginBottom="75dp"
-                            android:orientation="vertical"
-                            app:layout_constraintBottom_toBottomOf="parent"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent">
-
-                            <androidx.appcompat.widget.AppCompatImageView
-                                android:id="@+id/appCompatImageView"
-                                android:layout_width="match_parent"
-                                android:layout_height="0dp"
-                                android:scaleType="fitXY"
-                                android:src="@drawable/studio"
-                                app:layout_constraintDimensionRatio="3:1.5"
-                                app:layout_constraintTop_toTopOf="parent" />
-
-                        </androidx.constraintlayout.widget.ConstraintLayout>
-
-                        <com.google.android.material.card.MaterialCardView
-                            android:id="@+id/backBtnCard"
-                            style="@style/cardStyle"
-                            android:layout_width="48dp"
-                            android:layout_height="48dp"
-                            android:layout_marginStart="@dimen/margin"
-                            android:layout_marginTop="38dp"
-                            android:alpha="0.7"
-                            android:backgroundTint="@color/background"
-                            app:cardCornerRadius="100dp"
-                            app:cardElevation="0dp"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent"
-                            app:strokeWidth="1dp">
-
-                            <androidx.appcompat.widget.AppCompatImageView
-                                android:id="@+id/backBtn"
-                                style="@style/TitleLarge"
-                                android:layout_width="match_parent"
-                                android:layout_height="match_parent"
-                                android:gravity="center"
-                                android:padding="@dimen/half_margin"
-                                android:src="@drawable/ic_back" />
-
-                        </com.google.android.material.card.MaterialCardView>
-
-                        <com.google.android.material.card.MaterialCardView
-                            android:id="@+id/materialCardView"
-                            style="@style/cardStyle"
-                            android:layout_width="120dp"
-                            android:layout_height="120dp"
-                            android:layout_margin="@dimen/margin"
-                            app:cardBackgroundColor="@color/onPrimary"
-                            app:cardCornerRadius="120dp"
-                            app:layout_constraintBottom_toBottomOf="parent"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:strokeColor="@color/background"
-                            app:strokeWidth="4dp">
-
-                            <androidx.appcompat.widget.AppCompatImageView
-                                android:id="@+id/userImage"
-                                android:layout_width="match_parent"
-                                android:layout_height="match_parent"
-                                android:layout_gravity="center"
-                                android:scaleType="centerCrop"
-                                android:src="@drawable/user_image" />
-
-                        </com.google.android.material.card.MaterialCardView>
+                            android:layout_height="0dp"
+                            android:scaleType="fitXY"
+                            android:src="@drawable/studio"
+                            app:layout_constraintDimensionRatio="3:1.5"
+                            app:layout_constraintTop_toTopOf="parent" />
 
                     </androidx.constraintlayout.widget.ConstraintLayout>
 
-                    <LinearLayout
-                        android:id="@+id/user_header"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginHorizontal="@dimen/margin"
-                        android:gravity="center_vertical"
-                        android:orientation="horizontal">
-
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:orientation="vertical">
-
-                            <TextView
-                                android:id="@+id/name"
-                                style="@style/TitleLarge"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:text="Sarah Wlliams"
-                                android:textStyle="bold"
-                                app:layout_constraintBottom_toTopOf="@+id/view"
-                                app:layout_constraintEnd_toEndOf="@+id/view"
-                                app:layout_constraintStart_toStartOf="@+id/view" />
-
-                            <TextView
-                                android:id="@+id/userName"
-                                style="@style/TitleSmall"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:text="\@sarahwilliams"
-                                android:textColor="@color/tertiary"
-                                app:layout_constraintEnd_toEndOf="@+id/view"
-                                app:layout_constraintStart_toStartOf="@+id/view"
-                                app:layout_constraintTop_toBottomOf="@+id/view" />
-
-                        </LinearLayout>
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/backBtnCard"
+                        style="@style/cardStyle"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:layout_marginStart="@dimen/margin"
+                        android:layout_marginTop="38dp"
+                        android:alpha="0.7"
+                        android:backgroundTint="@color/background"
+                        app:cardCornerRadius="100dp"
+                        app:cardElevation="0dp"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:strokeWidth="1dp">
 
                         <androidx.appcompat.widget.AppCompatImageView
-                            android:id="@+id/notificationIcon"
-                            android:layout_width="26dp"
-                            android:layout_height="32dp"
-                            android:background="?selectableItemBackgroundBorderless"
-                            android:padding="4dp"
-                            android:src="@drawable/notification"
-                            app:layout_constraintBottom_toBottomOf="parent"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent"
-                            app:tint="@color/onBackground" />
+                            android:id="@+id/backBtn"
+                            style="@style/TitleLarge"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
+                            android:padding="@dimen/half_margin"
+                            android:src="@drawable/ic_back" />
+
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/materialCardView"
+                        style="@style/cardStyle"
+                        android:layout_width="120dp"
+                        android:layout_height="120dp"
+                        android:layout_margin="@dimen/margin"
+                        app:cardBackgroundColor="@color/onPrimary"
+                        app:cardCornerRadius="120dp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:strokeColor="@color/background"
+                        app:strokeWidth="4dp">
 
                         <androidx.appcompat.widget.AppCompatImageView
-                            android:id="@+id/shareIcon"
-                            android:layout_width="32dp"
-                            android:layout_height="32dp"
-                            android:padding="4dp"
-                            android:src="@drawable/ic_share"
-                            android:visibility="visible"
-                            app:layout_constraintBottom_toBottomOf="parent"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintTop_toTopOf="parent"
-                            app:tint="@color/onBackground" />
+                            android:id="@+id/userImage"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_gravity="center"
+                            android:scaleType="centerCrop"
+                            android:src="@drawable/user_image" />
 
-                        <androidx.appcompat.widget.AppCompatImageView
-                            android:id="@+id/moreIcon"
-                            android:layout_width="32dp"
-                            android:layout_height="32dp"
-                            android:layout_margin="@dimen/half_margin"
-                            android:padding="4dp"
-                            android:src="@drawable/ic_detail"
-                            android:visibility="visible"
-                            app:layout_constraintBottom_toBottomOf="parent"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintTop_toTopOf="parent"
-                            app:tint="@color/onBackground" />
+                    </com.google.android.material.card.MaterialCardView>
 
+                </androidx.constraintlayout.widget.ConstraintLayout>
 
-                    </LinearLayout>
+                <LinearLayout
+                    android:id="@+id/user_header"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/margin"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
 
                     <LinearLayout
-                        android:layout_width="match_parent"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginHorizontal="@dimen/margin"
-                        android:layout_marginTop="@dimen/half_margin"
-                        android:gravity="center_vertical"
-                        android:orientation="horizontal">
+                        android:layout_weight="1"
+                        android:orientation="vertical">
 
                         <TextView
-                            android:id="@+id/followers"
-                            style="@style/BodyLarge"
-                            android:layout_width="wrap_content"
+                            android:id="@+id/name"
+                            style="@style/TitleLarge"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="24k Followers"
+                            android:text="Sarah Wlliams"
+                            android:textStyle="bold"
                             app:layout_constraintBottom_toTopOf="@+id/view"
                             app:layout_constraintEnd_toEndOf="@+id/view"
                             app:layout_constraintStart_toStartOf="@+id/view" />
 
                         <TextView
-                            android:id="@+id/following"
-                            style="@style/BodyLarge"
-                            android:layout_width="wrap_content"
+                            android:id="@+id/userName"
+                            style="@style/TitleSmall"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="@dimen/margin"
-                            android:text="856 Following"
+                            android:text="\@sarahwilliams"
+                            android:textColor="@color/tertiary"
                             app:layout_constraintEnd_toEndOf="@+id/view"
                             app:layout_constraintStart_toStartOf="@+id/view"
                             app:layout_constraintTop_toBottomOf="@+id/view" />
 
                     </LinearLayout>
 
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/notificationIcon"
+                        android:layout_width="26dp"
+                        android:layout_height="32dp"
+                        android:background="?selectableItemBackgroundBorderless"
+                        android:padding="4dp"
+                        android:src="@drawable/notification"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:tint="@color/onBackground" />
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/shareIcon"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:padding="4dp"
+                        android:src="@drawable/ic_share"
+                        android:visibility="visible"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:tint="@color/onBackground" />
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/moreIcon"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:layout_margin="@dimen/half_margin"
+                        android:padding="4dp"
+                        android:src="@drawable/ic_detail"
+                        android:visibility="visible"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:tint="@color/onBackground" />
+
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/margin"
+                    android:layout_marginTop="@dimen/half_margin"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
                     <TextView
-                        android:id="@+id/bio"
-                        style="@style/BodyMedium"
-                        android:layout_width="match_parent"
+                        android:id="@+id/followers"
+                        style="@style/BodyLarge"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_margin="@dimen/margin"
-                        android:text="@string/professional_photographer_specializing_in_portrait_and_wedding_photography_available_for_bookings_worldwide"
+                        android:text="24k Followers"
+                        app:layout_constraintBottom_toTopOf="@+id/view"
+                        app:layout_constraintEnd_toEndOf="@+id/view"
+                        app:layout_constraintStart_toStartOf="@+id/view" />
+
+                    <TextView
+                        android:id="@+id/following"
+                        style="@style/BodyLarge"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/margin"
+                        android:text="856 Following"
                         app:layout_constraintEnd_toEndOf="@+id/view"
                         app:layout_constraintStart_toStartOf="@+id/view"
                         app:layout_constraintTop_toBottomOf="@+id/view" />
 
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="@dimen/margin"
-                        android:orientation="horizontal">
-
-                        <com.google.android.material.button.MaterialButton
-                            android:id="@+id/follow"
-                            style="@style/appBtn"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:paddingHorizontal="32dp"
-                            android:text="@string/follow"
-                            app:cornerRadius="50dp" />
-
-                        <com.google.android.material.button.MaterialButton
-                            android:id="@+id/message_seller"
-                            style="@style/appBtn"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_marginHorizontal="@dimen/half_margin"
-                            android:layout_weight="1"
-                            android:backgroundTint="@color/primary"
-                            android:paddingHorizontal="@dimen/padding"
-                            android:text="@string/messages"
-                            app:cornerRadius="50dp" />
-
-                        <com.google.android.material.card.MaterialCardView
-                            android:id="@+id/icon_card"
-                            style="@style/cardStyle"
-                            android:layout_width="48dp"
-                            android:layout_height="48dp"
-                            android:backgroundTint="@color/outline"
-                            app:cardCornerRadius="100dp"
-                            app:cardElevation="0dp"
-                            app:strokeWidth="0dp">
-
-                            <TextView
-                                android:id="@+id/icon"
-                                style="@style/TitleLarge"
-                                android:layout_width="match_parent"
-                                android:layout_height="match_parent"
-                                android:gravity="center"
-                                android:text="$" />
-
-                        </com.google.android.material.card.MaterialCardView>
-
-                    </LinearLayout>
                 </LinearLayout>
 
-                <com.google.android.material.appbar.MaterialToolbar
-                    android:id="@+id/toolbar"
+                <TextView
+                    android:id="@+id/bio"
+                    style="@style/BodyMedium"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingTop="38dp"
-                    app:layout_collapseMode="pin"
-                    app:navigationIcon="@drawable/ic_back"
-                    app:popupTheme="@style/Theme.Bidswipe.PopupOverlay">
+                    android:layout_margin="@dimen/margin"
+                    android:text="@string/professional_photographer_specializing_in_portrait_and_wedding_photography_available_for_bookings_worldwide"
+                    app:layout_constraintEnd_toEndOf="@+id/view"
+                    app:layout_constraintStart_toStartOf="@+id/view"
+                    app:layout_constraintTop_toBottomOf="@+id/view" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/margin"
+                    android:orientation="horizontal">
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/follow"
+                        style="@style/appBtn"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:paddingHorizontal="32dp"
+                        android:text="@string/follow"
+                        app:cornerRadius="50dp" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/message_seller"
+                        style="@style/appBtn"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="@dimen/half_margin"
+                        android:layout_weight="1"
+                        android:backgroundTint="@color/primary"
+                        android:paddingHorizontal="@dimen/padding"
+                        android:text="@string/messages"
+                        app:cornerRadius="50dp" />
+
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/icon_card"
+                        style="@style/cardStyle"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:backgroundTint="@color/outline"
+                        app:cardCornerRadius="100dp"
+                        app:cardElevation="0dp"
+                        app:strokeWidth="0dp">
+
+                        <TextView
+                            android:id="@+id/icon"
+                            style="@style/TitleLarge"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
+                            android:text="$" />
+
+                    </com.google.android.material.card.MaterialCardView>
+
+                </LinearLayout>
+            </LinearLayout>
+
+            <com.google.android.material.appbar.MaterialToolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="38dp"
+                app:layout_collapseMode="pin"
+                app:navigationIcon="@drawable/ic_back"
+                app:popupTheme="@style/Theme.Bidswipe.PopupOverlay">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/margin"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <com.makeramen.roundedimageview.RoundedImageView
+                        android:id="@+id/userImage2"
+                        android:layout_width="42dp"
+                        android:layout_height="42dp"
+                        android:layout_gravity="center"
+                        android:layout_marginEnd="@dimen/half_margin"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/user_image"
+                        app:riv_corner_radius="50dp" />
 
                     <LinearLayout
-                        android:layout_width="match_parent"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginEnd="@dimen/margin"
-                        android:gravity="center_vertical"
-                        android:orientation="horizontal">
+                        android:layout_weight="1"
+                        android:orientation="vertical">
 
-                        <com.makeramen.roundedimageview.RoundedImageView
-                            android:id="@+id/userImage2"
-                            android:layout_width="42dp"
-                            android:layout_height="42dp"
-                            android:layout_gravity="center"
-                            android:layout_marginEnd="@dimen/half_margin"
-                            android:scaleType="centerCrop"
-                            android:src="@drawable/user_image"
-                            app:riv_corner_radius="50dp" />
-
-                        <LinearLayout
-                            android:layout_width="0dp"
+                        <TextView
+                            android:id="@+id/name1"
+                            style="@style/TitleLarge"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:orientation="vertical">
+                            android:text="Sarah Wlliams" />
 
-                            <TextView
-                                android:id="@+id/name1"
-                                style="@style/TitleLarge"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:text="Sarah Wlliams" />
-
-                            <TextView
-                                android:id="@+id/userName1"
-                                style="@style/TitleSmall"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:text="\@sarahwilliams"
-                                android:textColor="@color/tertiary" />
-
-                        </LinearLayout>
-
-                        <androidx.appcompat.widget.AppCompatImageView
-                            android:id="@+id/notificationIcon1"
-                            android:layout_width="32dp"
-                            android:layout_height="32dp"
-                            android:background="?selectableItemBackgroundBorderless"
-                            android:padding="4dp"
-                            android:src="@drawable/notification"
-                            app:layout_constraintBottom_toBottomOf="parent"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent"
-                            app:tint="@color/onBackground" />
-
-                        <androidx.appcompat.widget.AppCompatImageView
-                            android:id="@+id/share1"
-                            android:layout_width="32dp"
-                            android:layout_height="32dp"
-                            android:padding="4dp"
-                            android:src="@drawable/ic_share"
-                            app:layout_constraintBottom_toBottomOf="parent"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintTop_toTopOf="parent"
-                            app:tint="@color/onBackground" />
-
-                        <androidx.appcompat.widget.AppCompatImageView
-                            android:id="@+id/moreIcon1"
-                            android:layout_width="32dp"
-                            android:layout_height="32dp"
-                            android:padding="4dp"
-                            android:src="@drawable/ic_detail"
-                            app:layout_constraintBottom_toBottomOf="parent"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintTop_toTopOf="parent"
-                            app:tint="@color/onBackground" />
-
+                        <TextView
+                            android:id="@+id/userName1"
+                            style="@style/TitleSmall"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="\@sarahwilliams"
+                            android:textColor="@color/tertiary" />
 
                     </LinearLayout>
 
-                </com.google.android.material.appbar.MaterialToolbar>
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/notificationIcon1"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:background="?selectableItemBackgroundBorderless"
+                        android:padding="4dp"
+                        android:src="@drawable/notification"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:tint="@color/onBackground" />
 
-            </com.google.android.material.appbar.CollapsingToolbarLayout>
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/share1"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:padding="4dp"
+                        android:src="@drawable/ic_share"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:tint="@color/onBackground" />
 
-            <com.google.android.material.tabs.TabLayout
-                android:id="@+id/tab_layout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@color/surface"
-                app:tabIndicatorColor="@color/secondary"
-                app:tabMode="fixed"
-                app:tabSelectedTextAppearance="@style/TitleMedium"
-                app:tabSelectedTextColor="@color/secondary"
-                app:tabTextAppearance="@style/TitleSmall">
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/moreIcon1"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:padding="4dp"
+                        android:src="@drawable/ic_detail"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:tint="@color/onBackground" />
 
-                <com.google.android.material.tabs.TabItem
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/shop" />
 
-                <com.google.android.material.tabs.TabItem
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/shows" />
+                </LinearLayout>
 
-                <com.google.android.material.tabs.TabItem
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/reviews" />
+            </com.google.android.material.appbar.MaterialToolbar>
 
-                <com.google.android.material.tabs.TabItem
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/clips" />
+        </com.google.android.material.appbar.CollapsingToolbarLayout>
 
-            </com.google.android.material.tabs.TabLayout>
-
-         <!--   <View
-                android:id="@+id/view"
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@color/outlineVariant"
-                app:layout_constraintTop_toBottomOf="@id/tab_layout" />-->
-
-        </com.google.android.material.appbar.AppBarLayout>
-
-        <androidx.viewpager2.widget.ViewPager2
-            android:id="@+id/pager"
+        <com.google.android.material.tabs.TabLayout
+            android:id="@+id/tab_layout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+            android:layout_height="wrap_content"
+            android:background="@color/surface"
+            app:tabIndicatorColor="@color/secondary"
+            app:tabMode="fixed"
+            app:tabSelectedTextAppearance="@style/TitleMedium"
+            app:tabSelectedTextColor="@color/secondary"
+            app:tabTextAppearance="@style/TitleSmall">
+
+            <com.google.android.material.tabs.TabItem
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/shop" />
+
+            <com.google.android.material.tabs.TabItem
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/shows" />
+
+            <com.google.android.material.tabs.TabItem
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/reviews" />
+
+            <com.google.android.material.tabs.TabItem
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/clips" />
+
+        </com.google.android.material.tabs.TabLayout>
+
+        <!--   <View
+               android:id="@+id/view"
+               android:layout_width="match_parent"
+               android:layout_height="1dp"
+               android:background="@color/outlineVariant"
+               app:layout_constraintTop_toBottomOf="@id/tab_layout" />-->
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/pager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+
+    <io.bidswipe.app.ui.custom.NoDataView
+        android:id="@+id/noInternet"
+        style="@style/noInternetStyle"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone" />
 
     <io.bidswipe.app.ui.custom.LoaderView
         android:id="@+id/loader"
