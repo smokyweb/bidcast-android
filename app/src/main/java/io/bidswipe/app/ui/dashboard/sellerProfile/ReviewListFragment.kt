@@ -6,7 +6,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
-import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseFragment
 import io.bidswipe.app.controller.ReviewAdapter
 import io.bidswipe.app.databinding.FragmentReviewListBinding
@@ -15,6 +14,7 @@ import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.network.response.GetRatingResponse
 import io.bidswipe.app.ui.custom.AppBottomSheet
+import io.bidswipe.app.utils.Utils
 import io.bidswipe.app.utils.parse
 
 class ReviewListFragment : BaseFragment<SellerViewModel , FragmentReviewListBinding>() {
@@ -33,6 +33,20 @@ class ReviewListFragment : BaseFragment<SellerViewModel , FragmentReviewListBind
 		}
 
 	}
+	override fun onResume() {
+		super.onResume()
+		if (Utils.isOnline(mCtx)) {
+			bind.noInternet.isVisible = false
+			bind.loader.isVisible = true
+			viewModel.getSellerRating(sellerId)
+		} else {
+			bind.recycler.isVisible = false
+			bind.noData.isVisible = false
+			bind.loader.isVisible = false
+			bind.noInternet.isVisible = true
+		}
+	}
+
 
 	@SuppressLint("NotifyDataSetChanged")
 	override fun onViewCreated(view : View , savedInstanceState : Bundle?) {

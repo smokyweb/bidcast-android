@@ -15,6 +15,7 @@ import io.bidswipe.app.network.Resource
 import io.bidswipe.app.network.response.GetMyShowResponse
 import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.ui.dashboard.scheduleShow.LiveShowActivity
+import io.bidswipe.app.utils.Utils
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request
 
@@ -38,6 +39,22 @@ class SellerShowFragment : BaseFragment<SellerViewModel, FragmentSellerShowBindi
         }
 
     }
+
+    override fun onResume() {
+        super.onResume()
+        if (Utils.isOnline(mCtx)) {
+            bind.noInternet.isVisible = false
+            bind.loader.isVisible = true
+            page = 1
+            viewModel.getMyScheduledShow("upcoming".request())
+        } else {
+            bind.recycler.isVisible = false
+            bind.noData.isVisible = false
+            bind.loader.isVisible = false
+            bind.noInternet.isVisible = true
+        }
+    }
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

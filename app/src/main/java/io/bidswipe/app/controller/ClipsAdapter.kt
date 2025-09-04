@@ -2,11 +2,14 @@ package io.bidswipe.app.controller
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseAdapter
 import io.bidswipe.app.databinding.ClipsItemBinding
 
-class ClipsAdapter : BaseAdapter<String, ClipsItemBinding>(mutableListOf()) {
+class ClipsAdapter(
+	mList: List<String>,
+	private val onItemClick: (String, Int) -> Unit = { _, _ -> },
+	private val onPlayClick: (String, Int) -> Unit = { _, _ -> }
+) : BaseAdapter<String, ClipsItemBinding>(mList) {
 
 	override fun bindView(inflater: LayoutInflater, parent: ViewGroup) =
 		ClipsItemBinding.inflate(inflater, parent, false)
@@ -17,11 +20,13 @@ class ClipsAdapter : BaseAdapter<String, ClipsItemBinding>(mutableListOf()) {
 		item: String?,
 	) {
 		with(holder) {
-			bind.title.text = item ?: "Category Name"
-			bind.categoryImage.setImageResource(R.drawable.avatar)
-
 			bind.root.setOnClickListener {
+				onItemClick("", position)
+			}
+			bind.playButton.setOnClickListener {
+				onPlayClick("", position)
 			}
 		}
 	}
+
 }

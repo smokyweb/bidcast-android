@@ -376,7 +376,10 @@
             android:layout_height="wrap_content"
             android:background="@color/surface"
             app:tabIndicatorColor="@color/secondary"
+            app:tabIndicatorHeight="3dp"
             app:tabMode="fixed"
+            app:tabGravity="fill"
+            app:tabRippleColor="@null"
             app:tabSelectedTextAppearance="@style/TitleMedium"
             app:tabSelectedTextColor="@color/secondary"
             app:tabTextAppearance="@style/TitleSmall">

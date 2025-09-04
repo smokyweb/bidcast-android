@@ -17,6 +17,7 @@ import io.bidswipe.app.network.response.GetBlockedUsersResponse
 import io.bidswipe.app.ui.custom.AlertType
 import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.utils.finish
+import io.bidswipe.app.utils.parse
 import okhttp3.RequestBody.Companion.toRequestBody
 
 @SuppressLint("NotifyDataSetChanged")
@@ -80,8 +81,23 @@ class BlockedUsersFragment : BaseFragment<DashViewModel, FragmentBlockedUsersBin
 
                 is Resource.Error -> {
                     bind.loader.isVisible = false
-                    unblockPos = -1
-                    errorToast("Something went wrong")
+
+                    if (it.isNetworkError){
+                        bind.noInternet.isVisible = true
+                        bind.recycler.isVisible = false
+                        bind.noData.isVisible = false
+                    }else{
+                        bind.noInternet.isVisible = false
+                        it.parse(mCtx, TAG, object : AlertClicks {
+                            override fun primaryClick(dialog : AppBottomSheet) {
+                                dialog.dismiss()
+                            }
+
+                            override fun secondaryClick(dialog : AppBottomSheet) {
+                                dialog.dismiss()
+                            }
+                        })
+                    }
                 }
 
                 else -> {}
@@ -121,7 +137,14 @@ class BlockedUsersFragment : BaseFragment<DashViewModel, FragmentBlockedUsersBin
                         bind.recycler.isVisible = false
                         bind.noData.isVisible = false
                     } else {
-                        errorToast("Something went wrong")
+                       it.parse(mCtx,TAG, object : AlertClicks {
+                           override fun primaryClick(dialog : AppBottomSheet) {
+                               dialog.dismiss()
+                           }
+                           override fun secondaryClick(dialog : AppBottomSheet) {
+                               dialog.dismiss()
+                           }
+                       })
                     }
                 }
                 else -> {}

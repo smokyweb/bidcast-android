@@ -3,36 +3,34 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
+    style="@style/cardStyle"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="@dimen/half_margin"
+    android:layout_margin="8dp"
     app:cardCornerRadius="@dimen/half_margin">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center_horizontal"
         android:orientation="vertical">
 
-        <androidx.appcompat.widget.AppCompatImageView
+        <LinearLayout
             android:id="@+id/categoryImage"
-            android:layout_width="84dp"
-            android:layout_height="84dp"
-            android:layout_marginTop="8dp"
-            android:padding="12dp"
-            android:scaleType="centerInside"
-            tools:src="@drawable/avatar" />
-
-        <TextView
-            android:id="@+id/title"
-            style="@style/TitleMedium"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:ellipsize="end"
-            android:gravity="center|bottom"
-            android:maxLines="1"
-            android:padding="@dimen/half_margin"
-            tools:text="Category Name" />
+            android:background="@drawable/create_clip"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <ImageView
+                android:id="@+id/playButton"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:contentDescription="@string/play_video"
+                android:elevation="8dp"
+                android:src="@drawable/play" />
+
+        </LinearLayout>
 
     </LinearLayout>
 

@@ -492,4 +492,6 @@
     <string name="select_next_product_for_auction">Select Next Product For Auction</string>
     <string name="more_potential_buyers_can_plan_to_attend">More potential buyers can plan to attend</string>
     <string name="enter_referral_code">Enter Referral Code</string>
+    <string name="play_video">Play video</string>
+    <string name="video_thumbnail">Video thumbnail</string>
 </resources>

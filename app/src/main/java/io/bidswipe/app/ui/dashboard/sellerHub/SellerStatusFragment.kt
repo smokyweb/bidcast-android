@@ -9,11 +9,14 @@ import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseFragment
 import io.bidswipe.app.controller.StatusAdapter
 import io.bidswipe.app.databinding.FragmentSellerStatusBinding
+import io.bidswipe.app.interfaces.AlertClicks
 import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.network.response.SellerStatusResponse
+import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.ui.dashboard.more.MoreActivity
 import io.bidswipe.app.utils.finish
+import io.bidswipe.app.utils.parse
 
 class SellerStatusFragment : BaseFragment<SellerHubViewModel, FragmentSellerStatusBinding>() {
 
@@ -65,6 +68,16 @@ class SellerStatusFragment : BaseFragment<SellerHubViewModel, FragmentSellerStat
                     if (it.isNetworkError) {
                         errorToast(getString(R.string.no_internet))
                     } else {
+                        it.parse(mCtx, TAG, object : AlertClicks{
+                            override fun primaryClick(dialog : AppBottomSheet) {
+                                dialog.dismiss()
+                            }
+
+                            override fun secondaryClick(dialog : AppBottomSheet) {
+                                dialog.dismiss()
+                            }
+
+                        })
                     }
                 }
 

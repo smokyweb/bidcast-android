@@ -38,6 +38,21 @@ class ShopFragment : BaseFragment<SellerViewModel , FragmentShopBinding>() {
 		}
 	}
 
+	override fun onResume() {
+		super.onResume()
+		if (Utils.isOnline(mCtx)) {
+			bind.noInternet.isVisible = false
+			bind.loader.isVisible = true
+			page = 1
+			viewModel.getUserProducts(sellerId.request())
+		} else {
+			bind.recycler.isVisible = false
+			bind.noData.isVisible = false
+			bind.loader.isVisible = false
+			bind.noInternet.isVisible = true
+		}
+	}
+
 	@SuppressLint("NotifyDataSetChanged")
 	override fun onViewCreated(view : View , savedInstanceState : Bundle?) {
 		super.onViewCreated(view , savedInstanceState)
