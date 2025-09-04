@@ -37,6 +37,7 @@ class MessagesFragment : BaseFragment<DashViewModel , FragmentMessagesBinding>()
 		bind.recycler.adapter = messagesAdapter
 		bind.swipeRefresh.setOnRefreshListener { loadMessages() }
 		bind.noInternet.onClick { loadMessages() }
+
 		loadMessages()
 	}
 

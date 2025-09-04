@@ -96,7 +96,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 					log("HIGHEST BID: ${data.highestBid}")
 					highestBidAmount = data.highestBid?.bidAmount ?: highestBidAmount
 
-					bind.bid.text = "Swipe to Bid ${(highestBidAmount?.toDouble()?.toInt()?.plus(2)).toString().asMoney()}"
+					bind.bid.text = "Swipe to Bid ${newBidAmount(highestBidAmount?.toDouble()?.toInt() ?:0).toString().asMoney()}"
 
 				}
 
@@ -213,7 +213,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 										append(currentProduct.price.toString().asMoney())
 									}
 
-									bind.bid.text = "Swipe to Bid ${(highestBidAmount?.toDouble()?.toInt()?.plus(2)).toString().asMoney()}"
+									bind.bid.text = "Swipe to Bid ${newBidAmount(highestBidAmount?.toDouble()?.toInt() ?:0 ).toString().asMoney()}"
 
 									bind.bid.setCompleted(completed = false, withAnimation = true)
 
@@ -307,7 +307,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 				}
 
 				runSafe {
-					bind.bid.text = "Swipe to Bid ${(product?.price?.toInt()?.plus(2)).toString().asMoney()}"
+					bind.bid.text = "Swipe to Bid ${newBidAmount(highestBidAmount?.toDouble()?.toInt() ?:0).toString().asMoney()}"
 				}
 
 				bind.bid.onSlideCompleteListener = object : OnSlideCompleteListener {
@@ -757,7 +757,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
 			ref.addListenerForSingleValueEvent(object : ValueEventListener {
 				override fun onDataChange(snapshot: DataSnapshot) {
-					val bidAmount = highestBidAmount?.toDouble()?.toInt()?.plus(2).toString()
+					val bidAmount = newBidAmount(highestBidAmount?.toDouble()?.toInt() ?:0).toString()
 
 					val bidData = mutableMapOf<String, Any?>(
 						"bidAmount" to bidAmount,
@@ -782,6 +782,19 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 					log("Firebase Error: ${error.message}")
 				}
 			})
+		}
+	}
+
+	fun newBidAmount(amount: Int): Int {
+		return when {
+			amount in 1..30 -> amount+1
+			amount in 31..50 -> amount+2
+			amount in 51..100 -> amount+3
+			amount in 101..300 -> amount+5
+			amount in 301..1000 -> amount+10
+			amount in 1001..2000 -> amount+20
+			amount >= 2001 -> 50
+			else -> 0
 		}
 	}
 
