@@ -10,28 +10,28 @@ import io.bidswipe.app.utils.draw
 import io.bidswipe.app.utils.loadUrl
 
 class TeamAdapter(
-    mList: MutableList<AboutUsResponse.Data.Team?>, val mClicks: RecyclerClicks,
-) : BaseAdapter<AboutUsResponse.Data.Team?, TeamItemBinding>(mList) {
+	mList : MutableList<AboutUsResponse.Data.Team?> , val mClicks : RecyclerClicks ,
+) : BaseAdapter<AboutUsResponse.Data.Team? , TeamItemBinding>(mList) {
 
-    override fun bindView(inflater: LayoutInflater, parent: ViewGroup) =
-        TeamItemBinding.inflate(inflater, parent, false)
+	override fun bindView(inflater : LayoutInflater , parent : ViewGroup) =
+		TeamItemBinding.inflate(inflater , parent , false)
 
-    override fun onBind(
-        holder: BaseViewHolder<TeamItemBinding>,
-        position: Int,
-        item: AboutUsResponse.Data.Team?,
-    ) {
-        with(holder) {
+	override fun onBind(
+		holder : BaseViewHolder<TeamItemBinding> ,
+		position : Int ,
+		item : AboutUsResponse.Data.Team? ,
+	) {
+		with(holder) {
 
-            bind.title.text = item?.name ?: ""
-            bind.description.text = item?.role ?: ""
+			bind.title.text = item?.name ?: ""
+			bind.description.text = item?.role ?: ""
 
-            bind.image.loadUrl(mCtx, item?.image.toString(), draw.person)
+			bind.image.loadUrl(mCtx , item?.image.toString() , draw.person)
 
-            bind.root.setOnClickListener {
-                mClicks.itemClick(position)
-            }
+			bind.root.setOnClickListener {
+				mClicks.itemClick(position)
+			}
 
-        }
-    }
+		}
+	}
 }

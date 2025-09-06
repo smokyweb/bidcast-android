@@ -9,15 +9,15 @@ import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseFragment
 import io.bidswipe.app.databinding.FragmentOBSSetupBinding
 
-class OBSSetupFragment : BaseFragment<ScheduleShowViewModel,FragmentOBSSetupBinding>() {
-    override fun getModel(): Class<ScheduleShowViewModel> = ScheduleShowViewModel::class.java
+class OBSSetupFragment : BaseFragment<ScheduleShowViewModel , FragmentOBSSetupBinding>() {
+	override fun getModel() : Class<ScheduleShowViewModel> = ScheduleShowViewModel::class.java
 
-    override fun getBind(inflater: LayoutInflater, view: ViewGroup?) = FragmentOBSSetupBinding.inflate(inflater,view,false)
+	override fun getBind(inflater : LayoutInflater , view : ViewGroup?) = FragmentOBSSetupBinding.inflate(inflater , view , false)
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+	override fun onViewCreated(view : View , savedInstanceState : Bundle?) {
+		super.onViewCreated(view , savedInstanceState)
 
 
-    }
+	}
 
 }

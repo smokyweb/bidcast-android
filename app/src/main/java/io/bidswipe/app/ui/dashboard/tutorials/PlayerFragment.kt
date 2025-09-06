@@ -20,142 +20,142 @@ import io.bidswipe.app.ui.dashboard.DashViewModel
 import io.bidswipe.app.utils.ids
 import io.bidswipe.app.utils.parse
 
-class PlayerFragment : BaseFragment<DashViewModel, FragmentPlayerBinding>() {
-    override fun getModel(): Class<DashViewModel> = DashViewModel::class.java
+class PlayerFragment : BaseFragment<DashViewModel , FragmentPlayerBinding>() {
+	override fun getModel() : Class<DashViewModel> = DashViewModel::class.java
 
-    override fun getBind(inflater: LayoutInflater, view: ViewGroup?) =
-        FragmentPlayerBinding.inflate(inflater, view, false)
+	override fun getBind(inflater : LayoutInflater , view : ViewGroup?) =
+		FragmentPlayerBinding.inflate(inflater , view , false)
 
-    private var lessonList = mutableListOf<String>()
+	private var lessonList = mutableListOf<String>()
 
-    private var playPos = 0
+	private var playPos = 0
 
-    private var player: ExoPlayer? = null
+	private var player : ExoPlayer? = null
 
-    @OptIn(UnstableApi::class)
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+	@OptIn(UnstableApi::class)
+	override fun onViewCreated(view : View , savedInstanceState : Bundle?) {
+		super.onViewCreated(view , savedInstanceState)
 
-        bind.header.onBackClick {
-            findNavController().popBackStack()
-        }
+		bind.header.onBackClick {
+			findNavController().popBackStack()
+		}
 
-        player = ExoPlayer.Builder(mCtx).build()
-        bind.player.player = player
+		player = ExoPlayer.Builder(mCtx).build()
+		bind.player.player = player
 
-        bind.player.useController = true
-        bind.player.setShowSubtitleButton(true)
-        bind.player.showController()
-        bind.nextButton.setOnClickListener {
+		bind.player.useController = true
+		bind.player.setShowSubtitleButton(true)
+		bind.player.showController()
+		bind.nextButton.setOnClickListener {
 
-            playPos = playPos + 1
+			playPos = playPos + 1
 
-            if (playPos < lessonList.size) {
+			if (playPos < lessonList.size) {
 
-                bind.header.setHeaderText("Lesson ${playPos + 1}/${lessonList.size}")
+				bind.header.setHeaderText("Lesson ${playPos + 1}/${lessonList.size}")
 
-                player?.setMediaItem(
-                    MediaItem.Builder()
-                        .setUri(lessonList[playPos].toString()).build()
-                )
+				player?.setMediaItem(
+					MediaItem.Builder()
+						.setUri(lessonList[playPos].toString()).build()
+				)
 
-                player?.prepare()
+				player?.prepare()
 
-                player?.play()
-            } else {
-                findNavController().navigate(ids.goToSellFragment)
-            }
+				player?.play()
+			} else {
+				findNavController().navigate(ids.goToSellFragment)
+			}
 //
-        }
+		}
 
-        /* val playerControlView = bind.player.findViewById<TextView>(R.id.mute)
+		/* val playerControlView = bind.player.findViewById<TextView>(R.id.mute)
 
-         playerControlView.setOnClickListener {
+		 playerControlView.setOnClickListener {
 
-             playerControlView.setOnClickListener {
-                 // Toggle mute state
-                 val currentMuteState = player?.isDeviceMuted
-                 currentMuteState?.let { it1 -> player?.setDeviceMuted(!it1) }
+			 playerControlView.setOnClickListener {
+				 // Toggle mute state
+				 val currentMuteState = player?.isDeviceMuted
+				 currentMuteState?.let { it1 -> player?.setDeviceMuted(!it1) }
 
-                 // Change the button text based on the new mute state
-                 if (currentMuteState == true) {
-                     playerControlView.text = "Unmute"
-                 } else {
-                     playerControlView.text = "Mute"
-                 }
-             }
-
-
-         }*/
+				 // Change the button text based on the new mute state
+				 if (currentMuteState == true) {
+					 playerControlView.text = "Unmute"
+				 } else {
+					 playerControlView.text = "Mute"
+				 }
+			 }
 
 
-        // Check if PlayerControlView is available
+		 }*/
 
 
-        bind.loader.isVisible = true
+		// Check if PlayerControlView is available
 
-        viewModel.getLesson()
 
-        viewModel.getLessonRepo.observe(viewLifecycleOwner) {
-            when (it) {
-                is Resource.Success -> {
+		bind.loader.isVisible = true
 
-                    viewModel.getLessonRepo.value = null
-                    bind.loader.isVisible = false
+		viewModel.getLesson()
 
-                    val mData = it.value.data
+		viewModel.getLessonRepo.observe(viewLifecycleOwner) {
+			when (it) {
+				is Resource.Success -> {
 
-                    lessonList.clear()
+					viewModel.getLessonRepo.value = null
+					bind.loader.isVisible = false
 
-                    mData?.forEach {
+					val mData = it.value.data
 
-                        lessonList.add(it?.video.toString())
+					lessonList.clear()
 
-                    }
+					mData?.forEach {
 
-                    bind.header.setHeaderText("Lesson 1/${lessonList.size}")
+						lessonList.add(it?.video.toString())
 
-                    player?.setMediaItem(
-                        MediaItem.Builder()
-                            .setUri(lessonList[playPos].toString()).build()
-                    )
+					}
 
-                    player?.prepare()
+					bind.header.setHeaderText("Lesson 1/${lessonList.size}")
 
-                    player?.play()
+					player?.setMediaItem(
+						MediaItem.Builder()
+							.setUri(lessonList[playPos].toString()).build()
+					)
 
-                }
+					player?.prepare()
 
-                is Resource.Error -> {
-                    viewModel.getLessonRepo.value = null
-                    bind.loader.isVisible = false
-                    if (it.isNetworkError) {
-                        errorToast(getString(R.string.no_internet))
-                    } else {
-                        it.parse(mCtx, TAG, object : AlertClicks {
-                            override fun primaryClick(dialog: AppBottomSheet) {
-                                dialog.dismiss()
+					player?.play()
 
-                            }
+				}
 
-                            override fun secondaryClick(dialog: AppBottomSheet) {
-                                dialog.dismiss()
+				is Resource.Error -> {
+					viewModel.getLessonRepo.value = null
+					bind.loader.isVisible = false
+					if (it.isNetworkError) {
+						errorToast(getString(R.string.no_internet))
+					} else {
+						it.parse(mCtx , TAG , object : AlertClicks {
+							override fun primaryClick(dialog : AppBottomSheet) {
+								dialog.dismiss()
 
-                            }
-                        })
-                    }
-                }
+							}
 
-                else -> {}
+							override fun secondaryClick(dialog : AppBottomSheet) {
+								dialog.dismiss()
 
-            }
-        }
-    }
+							}
+						})
+					}
+				}
 
-    override fun onDestroy() {
-        super.onDestroy()
-        player = null
-        player?.release()
-    }
+				else -> {}
+
+			}
+		}
+	}
+
+	override fun onDestroy() {
+		super.onDestroy()
+		player = null
+		player?.release()
+	}
 
 }

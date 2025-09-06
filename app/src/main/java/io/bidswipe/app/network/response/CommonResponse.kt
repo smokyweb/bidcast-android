@@ -6,12 +6,12 @@ import androidx.annotation.Keep
 
 @Keep
 data class CommonResponse(
-    @SerializedName("data")
-    val `data`: Any?,
-    @SerializedName("error_type")
-    val errorType: String?,
-    @SerializedName("message")
-    val message: String?,
-    @SerializedName("status")
-    val status: String?,
+	@SerializedName("data")
+	val `data` : Any? ,
+	@SerializedName("error_type")
+	val errorType : String? ,
+	@SerializedName("message")
+	val message : String? ,
+	@SerializedName("status")
+	val status : String? ,
 )

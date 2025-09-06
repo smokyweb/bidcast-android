@@ -19,108 +19,108 @@ import io.bidswipe.app.utils.finish
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.runSafe
 
-class FAQFragment : BaseFragment<MoreViewModel, FragmentFAQBinding>() {
-    override fun getModel(): Class<MoreViewModel> = MoreViewModel::class.java
+class FAQFragment : BaseFragment<MoreViewModel , FragmentFAQBinding>() {
+	override fun getModel() : Class<MoreViewModel> = MoreViewModel::class.java
 
-    override fun getBind(
-        inflater: LayoutInflater,
-        view: ViewGroup?,
-    ) = FragmentFAQBinding.inflate(inflater, view, false)
+	override fun getBind(
+		inflater : LayoutInflater ,
+		view : ViewGroup? ,
+	) = FragmentFAQBinding.inflate(inflater , view , false)
 
-    private var faqList = mutableListOf<FAQResponse.Data?>()
-    private var categoriesList = mutableListOf<String>()
+	private var faqList = mutableListOf<FAQResponse.Data?>()
+	private var categoriesList = mutableListOf<String>()
 
-    private lateinit var adapter: FAQAdapter
+	private lateinit var adapter : FAQAdapter
 
-    private var mClick = object : RecyclerClicks {
-        override fun itemClick(pos: Int, status: String?) {
-            faqList.forEachIndexed { index, data ->
-                data?.selected = index == pos
-            }
+	private var mClick = object : RecyclerClicks {
+		override fun itemClick(pos : Int , status : String?) {
+			faqList.forEachIndexed { index , data ->
+				data?.selected = index == pos
+			}
 
-            adapter.notifyDataSetChanged()
+			adapter.notifyDataSetChanged()
 
-        }
+		}
 
-    }
+	}
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+	override fun onViewCreated(view : View , savedInstanceState : Bundle?) {
+		super.onViewCreated(view , savedInstanceState)
 
-        bind.header.onBackClick {
-            finish()
-        }
+		bind.header.onBackClick {
+			finish()
+		}
 
-        categoriesList = mutableListOf("All FAQs", "Bidding", "Payments")
-        categoriesList.forEach {
-            bind.chipGroup.addView(
-                Utils.makeAChip(
-                    mCtx = mCtx,
-                    text = it,
-                    selected = false
-                )
-            )
-        }
+		categoriesList = mutableListOf("All FAQs" , "Bidding" , "Payments")
+		categoriesList.forEach {
+			bind.chipGroup.addView(
+				Utils.makeAChip(
+					mCtx = mCtx ,
+					text = it ,
+					selected = false
+				)
+			)
+		}
 
-        bind.chipGroup.setOnCheckedStateChangeListener { chipGroup, _ ->
-            runSafe {
-                val chipId = chipGroup.checkedChipId
-                chipGroup.indexOfChild(chipGroup.findViewById(chipId))
-            }
-        }
-
-
-        adapter = FAQAdapter(faqList, mClick)
-
-        bind.recyclerFaq.adapter = adapter
-
-        bind.loader.isVisible = true
-
-        viewModel.getFAQ()
-
-        viewModel.getFAQRepo.observe(viewLifecycleOwner) {
-            when (it) {
-                is Resource.Success -> {
-                    bind.loader.isVisible = false
-
-                    val mData = it.value.data
-                    faqList.clear()
-
-                    mData?.forEach {
-
-                        faqList.add(it)
-
-                    }
+		bind.chipGroup.setOnCheckedStateChangeListener { chipGroup , _ ->
+			runSafe {
+				val chipId = chipGroup.checkedChipId
+				chipGroup.indexOfChild(chipGroup.findViewById(chipId))
+			}
+		}
 
 
-                    adapter.notifyDataSetChanged()
+		adapter = FAQAdapter(faqList , mClick)
 
-                }
+		bind.recyclerFaq.adapter = adapter
 
-                is Resource.Error -> {
-                    bind.loader.isVisible = false
-                    if (it.isNetworkError) {
-                        errorToast(getString(R.string.no_internet))
-                    } else {
-                        it.parse(mCtx, TAG, object : AlertClicks {
-                            override fun primaryClick(dialog: AppBottomSheet) {
-                                dialog.dismiss()
+		bind.loader.isVisible = true
 
-                            }
+		viewModel.getFAQ()
 
-                            override fun secondaryClick(dialog: AppBottomSheet) {
-                                dialog.dismiss()
+		viewModel.getFAQRepo.observe(viewLifecycleOwner) {
+			when (it) {
+				is Resource.Success -> {
+					bind.loader.isVisible = false
 
-                            }
-                        })
-                    }
-                }
+					val mData = it.value.data
+					faqList.clear()
 
-                else -> {}
+					mData?.forEach {
 
-            }
-        }
+						faqList.add(it)
 
-    }
+					}
+
+
+					adapter.notifyDataSetChanged()
+
+				}
+
+				is Resource.Error -> {
+					bind.loader.isVisible = false
+					if (it.isNetworkError) {
+						errorToast(getString(R.string.no_internet))
+					} else {
+						it.parse(mCtx , TAG , object : AlertClicks {
+							override fun primaryClick(dialog : AppBottomSheet) {
+								dialog.dismiss()
+
+							}
+
+							override fun secondaryClick(dialog : AppBottomSheet) {
+								dialog.dismiss()
+
+							}
+						})
+					}
+				}
+
+				else -> {}
+
+			}
+		}
+
+	}
 
 }

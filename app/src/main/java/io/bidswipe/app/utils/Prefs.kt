@@ -24,7 +24,7 @@ class Prefs(ctx : Context) {
 	}
 
 	private val mPrefs = ctx.getSharedPreferences(SHARED_PREF , Context.MODE_PRIVATE)
-	private val rememberPrefs = ctx.getSharedPreferences(REMEMBER_PREFS, Context.MODE_PRIVATE)
+	private val rememberPrefs = ctx.getSharedPreferences(REMEMBER_PREFS , Context.MODE_PRIVATE)
 
 
 	fun clear() {
@@ -32,7 +32,7 @@ class Prefs(ctx : Context) {
 	}
 
 	fun putString(key : String , value : String) {
-		mPrefs.edit { putString(key, value) }
+		mPrefs.edit { putString(key , value) }
 	}
 
 	fun getString(key : String) = mPrefs.getString(key , "").toString()
@@ -49,25 +49,25 @@ class Prefs(ctx : Context) {
 		null
 	}
 
-	fun getUsers(): MutableList<RememberModel> {
+	fun getUsers() : MutableList<RememberModel> {
 		val mList = mutableListOf<RememberModel>()
-		val data = rememberPrefs.getString(REM_NODE, "").toString()
+		val data = rememberPrefs.getString(REM_NODE , "").toString()
 
 		if (data.isNotEmpty()) {
-			mList.addAll(Gson().fromJson(data, object : TypeToken<List<RememberModel>>() {}.type))
+			mList.addAll(Gson().fromJson(data , object : TypeToken<List<RememberModel>>() {}.type))
 		}
 		return mList
 	}
 
-	fun saveUsers(list: MutableList<RememberModel>) {
-		rememberPrefs.edit { putString(REM_NODE, Gson().toJson(list)) }
+	fun saveUsers(list : MutableList<RememberModel>) {
+		rememberPrefs.edit { putString(REM_NODE , Gson().toJson(list)) }
 	}
 
 	fun localeLanguage() = mPrefs.getString(LOCALE_LANGUAGE , "").toString()
 
-	fun isFirstLogin() = rememberPrefs.getBoolean(FIRST_LOGIN,true)
+	fun isFirstLogin() = rememberPrefs.getBoolean(FIRST_LOGIN , true)
 
-	fun saveFirstLogin(value: Boolean) = rememberPrefs.edit { putBoolean(FIRST_LOGIN, value) }
+	fun saveFirstLogin(value : Boolean) = rememberPrefs.edit { putBoolean(FIRST_LOGIN , value) }
 
 
 }

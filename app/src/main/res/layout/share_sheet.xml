@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:background="@drawable/bottom_sheet_back"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:background="@drawable/bottom_sheet_back">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding= "@dimen/margin"
         android:orientation="vertical"
+        android:padding="@dimen/margin"
         app:layout_constraintTop_toTopOf="parent">
 
         <LinearLayout
@@ -30,8 +30,8 @@
                 android:id="@+id/close"
                 android:layout_width="44dp"
                 android:layout_height="44dp"
-                android:padding="12dp"
                 android:alpha="0.7"
+                android:padding="12dp"
                 android:src="@drawable/close_ic"
                 app:tint="@color/tertiary" />
 
@@ -41,7 +41,7 @@
         <com.google.android.material.divider.MaterialDivider
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            app:dividerColor="@color/outline"/>
+            app:dividerColor="@color/outline" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -122,43 +122,43 @@
 
 
             <LinearLayout
+                style="@style/shadowStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:gravity="center"
                 android:layout_weight="1"
-                style="@style/shadowStyle"
+                android:gravity="center"
                 android:orientation="vertical">
 
                 <ImageView
                     android:layout_width="28dp"
                     android:layout_height="28dp"
                     android:layout_marginBottom="@dimen/half_margin"
-                    android:src="@drawable/ic_whatsapp"
-                    android:gravity="center"/>
+                    android:gravity="center"
+                    android:src="@drawable/ic_whatsapp" />
 
                 <TextView
                     style="@style/BodyMedium"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center"
-                    android:text="WhatsApp"/>
+                    android:text="WhatsApp" />
 
             </LinearLayout>
 
             <LinearLayout
+                style="@style/shadowStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:gravity="center"
                 android:layout_weight="1"
-                style="@style/shadowStyle"
+                android:gravity="center"
                 android:orientation="vertical">
 
                 <ImageView
                     android:layout_width="28dp"
                     android:layout_height="28dp"
                     android:layout_marginBottom="@dimen/half_margin"
-                    android:src="@drawable/ic_facebook"
-                    android:gravity="center"/>
+                    android:gravity="center"
+                    android:src="@drawable/ic_facebook" />
 
                 <TextView
                     style="@style/BodyLarge"
@@ -173,19 +173,19 @@
             </LinearLayout>
 
             <LinearLayout
+                style="@style/shadowStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:gravity="center"
                 android:layout_weight="1"
-                style="@style/shadowStyle"
+                android:gravity="center"
                 android:orientation="vertical">
 
                 <ImageView
                     android:layout_width="28dp"
                     android:layout_height="28dp"
                     android:layout_marginBottom="@dimen/half_margin"
-                    android:src="@drawable/ic_twitter"
-                    android:gravity="center" />
+                    android:gravity="center"
+                    android:src="@drawable/ic_twitter" />
 
                 <TextView
                     style="@style/BodyLarge"
@@ -197,11 +197,11 @@
             </LinearLayout>
 
             <LinearLayout
+                style="@style/shadowStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:gravity="center"
                 android:layout_weight="1"
-                style="@style/shadowStyle"
+                android:gravity="center"
                 android:orientation="vertical">
 
                 <ImageView
@@ -209,8 +209,8 @@
                     android:layout_width="28dp"
                     android:layout_height="28dp"
                     android:layout_marginBottom="@dimen/half_margin"
-                    android:src="@drawable/ic_link"
-                    android:gravity="center" />
+                    android:gravity="center"
+                    android:src="@drawable/ic_link" />
 
                 <TextView
                     android:id="@+id/title"
@@ -218,7 +218,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center"
-                    android:text="Copy Link"/>
+                    android:text="Copy Link" />
 
             </LinearLayout>
 

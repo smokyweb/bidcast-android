@@ -9,29 +9,29 @@ import io.bidswipe.app.network.response.GetRatingResponse
 import io.bidswipe.app.utils.asCapital
 
 class ReviewAdapter(
-    mList: MutableList<GetRatingResponse.Data.Rating?>, val mClicks: RecyclerClicks,
-) : BaseAdapter<GetRatingResponse.Data.Rating?, ReviewItemBinding>(mList) {
+	mList : MutableList<GetRatingResponse.Data.Rating?> , val mClicks : RecyclerClicks ,
+) : BaseAdapter<GetRatingResponse.Data.Rating? , ReviewItemBinding>(mList) {
 
-    override fun bindView(inflater: LayoutInflater, parent: ViewGroup) =
-        ReviewItemBinding.inflate(inflater, parent, false)
+	override fun bindView(inflater : LayoutInflater , parent : ViewGroup) =
+		ReviewItemBinding.inflate(inflater , parent , false)
 
-    override fun onBind(
-        holder: BaseViewHolder<ReviewItemBinding>,
-        position: Int,
-        item: GetRatingResponse.Data.Rating?,
-    ) {
-        with(holder) {
+	override fun onBind(
+		holder : BaseViewHolder<ReviewItemBinding> ,
+		position : Int ,
+		item : GetRatingResponse.Data.Rating? ,
+	) {
+		with(holder) {
 
-            bind.title.text = item?.user?.name
-            bind.description.text = item?.comment?.asCapital()
+			bind.title.text = item?.user?.name
+			bind.description.text = item?.comment?.asCapital()
 
-            bind.rating.rating = item?.overallRating?.toFloat() ?: 0f
+			bind.rating.rating = item?.overallRating?.toFloat() ?: 0f
 
-            bind.root.setOnClickListener {
-                mClicks.itemClick(position)
-            }
+			bind.root.setOnClickListener {
+				mClicks.itemClick(position)
+			}
 
 
-        }
-    }
+		}
+	}
 }

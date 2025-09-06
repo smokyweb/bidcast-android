@@ -1,71 +1,71 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	xmlns:app="http://schemas.android.com/apk/res-auto"
-	xmlns:tools="http://schemas.android.com/tools"
-	android:layout_width="match_parent"
-	android:layout_height="match_parent"
-	tools:context=".ui.dashboard.tutorials.PrepareYourShowFragment">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.dashboard.tutorials.PrepareYourShowFragment">
 
-	<io.bidswipe.app.ui.custom.Header
-		android:id="@+id/header"
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		app:headerMode="BACK_BUTTON_TITLE_ACTION"
-		app:headerTitle="Let's Prepare Your Show"
-		app:layout_constraintTop_toTopOf="parent"
-		app:primaryIconDrawable="@drawable/close_ic"
-		app:secondaryIconDrawable="@drawable/search"
-		app:showBackButton="true"
-		app:showPrimaryIcon="false"
-		app:showSecondaryIcon="false" />
+    <io.bidswipe.app.ui.custom.Header
+        android:id="@+id/header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:headerMode="BACK_BUTTON_TITLE_ACTION"
+        app:headerTitle="Let's Prepare Your Show"
+        app:layout_constraintTop_toTopOf="parent"
+        app:primaryIconDrawable="@drawable/close_ic"
+        app:secondaryIconDrawable="@drawable/search"
+        app:showBackButton="true"
+        app:showPrimaryIcon="false"
+        app:showSecondaryIcon="false" />
 
-	<com.google.android.material.progressindicator.LinearProgressIndicator
-		android:id="@+id/stepProgress"
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:padding="@dimen/margin"
-		android:progress="15"
-		android:progressTint="@color/secondary"
-		app:layout_constraintTop_toBottomOf="@id/header"
-		app:trackCornerRadius="6dp"
-		app:trackThickness="8dp" />
+    <com.google.android.material.progressindicator.LinearProgressIndicator
+        android:id="@+id/stepProgress"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/margin"
+        android:progress="15"
+        android:progressTint="@color/secondary"
+        app:layout_constraintTop_toBottomOf="@id/header"
+        app:trackCornerRadius="6dp"
+        app:trackThickness="8dp" />
 
-	<androidx.recyclerview.widget.RecyclerView
-		android:id="@+id/recycler"
-		android:layout_width="match_parent"
-		android:layout_height="0dp"
-		android:layout_marginHorizontal="@dimen/half_margin"
-		android:nestedScrollingEnabled="false"
-		android:orientation="vertical"
-		app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-		app:layout_constraintBottom_toTopOf="@id/textLayout"
-		app:layout_constraintTop_toBottomOf="@id/stepProgress"
-		tools:itemCount="5"
-		tools:listitem="@layout/show_item" />
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginHorizontal="@dimen/half_margin"
+        android:nestedScrollingEnabled="false"
+        android:orientation="vertical"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_constraintBottom_toTopOf="@id/textLayout"
+        app:layout_constraintTop_toBottomOf="@id/stepProgress"
+        tools:itemCount="5"
+        tools:listitem="@layout/show_item" />
 
-	<LinearLayout
-		android:id="@+id/textLayout"
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		app:layout_constraintBottom_toBottomOf="parent">
+    <LinearLayout
+        android:id="@+id/textLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent">
 
-		<TextView
-			android:id="@+id/sub_title"
-			style="@style/BodyLarge"
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:layout_margin="@dimen/margin"
-			android:drawablePadding="@dimen/half_margin"
-			android:text="@string/need_help_contact_our_support_team"
-			app:drawableStartCompat="@drawable/ic_question"
-			app:drawableTint="@color/secondary" />
+        <TextView
+            android:id="@+id/sub_title"
+            style="@style/BodyLarge"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/margin"
+            android:drawablePadding="@dimen/half_margin"
+            android:text="@string/need_help_contact_our_support_team"
+            app:drawableStartCompat="@drawable/ic_question"
+            app:drawableTint="@color/secondary" />
 
-	</LinearLayout>
+    </LinearLayout>
 
-	<io.bidswipe.app.ui.custom.LoaderView
-		android:id="@+id/loader"
-		android:layout_width="match_parent"
-		android:layout_height="match_parent"
-		android:visibility="gone"/>
+    <io.bidswipe.app.ui.custom.LoaderView
+        android:id="@+id/loader"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

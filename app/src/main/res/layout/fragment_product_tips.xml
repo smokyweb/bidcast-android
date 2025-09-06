@@ -1,77 +1,77 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	xmlns:app="http://schemas.android.com/apk/res-auto"
-	xmlns:tools="http://schemas.android.com/tools"
-	android:layout_width="match_parent"
-	android:layout_height="match_parent"
-	tools:context=".ui.dashboard.scheduleShow.ProductTipsFragment">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.dashboard.scheduleShow.ProductTipsFragment">
 
-	<io.bidswipe.app.ui.custom.Header
-		android:id="@+id/header"
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		app:headerMode="BACK_BUTTON_TITLE_ACTION"
-		app:headerTitle="Product Tips"
-		app:layout_constraintTop_toTopOf="parent"
-		app:primaryIconDrawable="@drawable/ic_question"
-		app:showBackButton="true"
-		app:showPrimaryIcon="true"
-		app:showSecondaryIcon="false" />
+    <io.bidswipe.app.ui.custom.Header
+        android:id="@+id/header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:headerMode="BACK_BUTTON_TITLE_ACTION"
+        app:headerTitle="Product Tips"
+        app:layout_constraintTop_toTopOf="parent"
+        app:primaryIconDrawable="@drawable/ic_question"
+        app:showBackButton="true"
+        app:showPrimaryIcon="true"
+        app:showSecondaryIcon="false" />
 
-	<LinearLayout
-		android:id="@+id/progressLayout"
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:orientation="vertical"
-		app:layout_constraintTop_toBottomOf="@+id/header">
+    <LinearLayout
+        android:id="@+id/progressLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintTop_toBottomOf="@+id/header">
 
-		<com.google.android.material.progressindicator.LinearProgressIndicator
-			android:id="@+id/stepProgress"
-			style="@style/progressStyle"
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:padding="@dimen/margin"
-			android:progress="33"
-			app:layout_constraintTop_toBottomOf="@id/header"
-			app:trackCornerRadius="6dp"
-			app:trackThickness="8dp" />
+        <com.google.android.material.progressindicator.LinearProgressIndicator
+            android:id="@+id/stepProgress"
+            style="@style/progressStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/margin"
+            android:progress="33"
+            app:layout_constraintTop_toBottomOf="@id/header"
+            app:trackCornerRadius="6dp"
+            app:trackThickness="8dp" />
 
-		<TextView
-			android:id="@+id/step"
-			style="@style/TitleMedium"
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:layout_marginHorizontal="@dimen/margin"
-			android:text="@string/step_1_of_7"
-			android:textColor="@color/onSurfaceVariant" />
+        <TextView
+            android:id="@+id/step"
+            style="@style/TitleMedium"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/margin"
+            android:text="@string/step_1_of_7"
+            android:textColor="@color/onSurfaceVariant" />
 
-	</LinearLayout>
+    </LinearLayout>
 
-	<androidx.viewpager2.widget.ViewPager2
-		android:id="@+id/pager"
-		android:layout_width="match_parent"
-		android:layout_height="0dp"
-		app:layout_constraintBottom_toTopOf="@id/buttonLayout"
-		app:layout_constraintTop_toBottomOf="@id/progressLayout" />
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/pager"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@id/buttonLayout"
+        app:layout_constraintTop_toBottomOf="@id/progressLayout" />
 
-	<LinearLayout
-		android:id="@+id/buttonLayout"
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:orientation="horizontal"
-		android:visibility="visible"
-		app:layout_constraintBottom_toBottomOf="parent">
+    <LinearLayout
+        android:id="@+id/buttonLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="parent">
 
-		<com.google.android.material.button.MaterialButton
-			android:id="@+id/continueBtn"
-			style="@style/appBtn"
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:layout_margin="@dimen/margin"
-			android:paddingHorizontal="@dimen/margin"
-			android:text="@string/continue_to_next_step" />
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/continueBtn"
+            style="@style/appBtn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/margin"
+            android:paddingHorizontal="@dimen/margin"
+            android:text="@string/continue_to_next_step" />
 
-	</LinearLayout>
+    </LinearLayout>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

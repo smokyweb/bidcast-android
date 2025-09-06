@@ -11,64 +11,65 @@ import io.bidswipe.app.utils.bind
 
 class MoreActivity : BaseActivity() {
 
-    private val bind by bind(ActivityMoreBinding::inflate)
+	private val bind by bind(ActivityMoreBinding::inflate)
 
-    private lateinit var navHostFragment: NavHostFragment
-    private lateinit var navController: NavController
+	private lateinit var navHostFragment : NavHostFragment
+	private lateinit var navController : NavController
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(bind.root)
+	override fun onCreate(savedInstanceState : Bundle?) {
+		super.onCreate(savedInstanceState)
+		setContentView(bind.root)
 
-        navHostFragment =
-            supportFragmentManager.findFragmentById(R.id.fragmentContainer) as NavHostFragment
-        navController = navHostFragment.findNavController()
-        val navGraph = navController.navInflater.inflate(R.navigation.more_graph)
+		navHostFragment =
+			supportFragmentManager.findFragmentById(R.id.fragmentContainer) as NavHostFragment
+		navController = navHostFragment.findNavController()
+		val navGraph = navController.navInflater.inflate(R.navigation.more_graph)
 
-        val slug = intent.getStringExtra("slug").toString()
+		val slug = intent.getStringExtra("slug").toString()
 
-        when (slug) {
+		when (slug) {
 
-            "language" -> {
-            }
+			"language" -> {
+			}
 
-            "contactUs" -> {
-                navGraph.setStartDestination(R.id.contactUsFragment)
-            }
-            "blockedUsers" -> {
-                navGraph.setStartDestination(R.id.blockedUsersFragment)
-            }
+			"contactUs" -> {
+				navGraph.setStartDestination(R.id.contactUsFragment)
+			}
 
-            "salesTax" -> {
-                navGraph.setStartDestination(R.id.salesTaxExemptionFragment)
-            }
+			"blockedUsers" -> {
+				navGraph.setStartDestination(R.id.blockedUsersFragment)
+			}
 
-            "paymentShipping" -> {
-                navGraph.setStartDestination(R.id.paymentShippingFragment)
-            }
+			"salesTax" -> {
+				navGraph.setStartDestination(R.id.salesTaxExemptionFragment)
+			}
 
-            "address" -> {
-                navGraph.setStartDestination(R.id.addressesFragment)
-            }
+			"paymentShipping" -> {
+				navGraph.setStartDestination(R.id.paymentShippingFragment)
+			}
 
-            "notification" -> {
-            }
+			"address" -> {
+				navGraph.setStartDestination(R.id.addressesFragment)
+			}
 
-            "preferences" -> {
-                navGraph.setStartDestination(R.id.preferencesFragment)
-            }
+			"notification" -> {
+			}
 
-            "addAddress" -> {
-                navGraph.setStartDestination(R.id.addShippingAddressFragment)
-            }
+			"preferences" -> {
+				navGraph.setStartDestination(R.id.preferencesFragment)
+			}
 
-            else -> {
-                navGraph.setStartDestination(R.id.contentFragment)
-            }
-        }
+			"addAddress" -> {
+				navGraph.setStartDestination(R.id.addShippingAddressFragment)
+			}
 
-        navController.graph = navGraph
+			else -> {
+				navGraph.setStartDestination(R.id.contentFragment)
+			}
+		}
+
+		navController.graph = navGraph
 
 
-    }
+	}
 }

@@ -18,76 +18,77 @@ import okhttp3.RequestBody
 import javax.inject.Inject
 
 @HiltViewModel
-class SellerViewModel  @Inject constructor(val repo: DashRepository) : ViewModel() {
+class SellerViewModel @Inject constructor(val repo : DashRepository) : ViewModel() {
 
-    private var _getProfileByIdResponse = MutableLiveData<Resource<GetUserProfileResponse>>()
-    val getProfileByIdShowRepo: MutableLiveData<Resource<GetUserProfileResponse>>
-        get() = _getProfileByIdResponse
+	private var _getProfileByIdResponse = MutableLiveData<Resource<GetUserProfileResponse>>()
+	val getProfileByIdShowRepo : MutableLiveData<Resource<GetUserProfileResponse>>
+		get() = _getProfileByIdResponse
 
-    fun getProfileById(
-        userId : RequestBody?
+	fun getProfileById(
+        userId : RequestBody? ,
     ) = viewModelScope.launch {
-        _getProfileByIdResponse.value = repo.getProfileById(userId)
-    }
+		_getProfileByIdResponse.value = repo.getProfileById(userId)
+	}
 
-    private var _getUserProductsResponse = MutableLiveData<Resource<GetProductsResponse>>()
-    val getUserProductsRepo: MutableLiveData<Resource<GetProductsResponse>>
-        get() = _getUserProductsResponse
+	private var _getUserProductsResponse = MutableLiveData<Resource<GetProductsResponse>>()
+	val getUserProductsRepo : MutableLiveData<Resource<GetProductsResponse>>
+		get() = _getUserProductsResponse
 
-    fun getUserProducts(
-        userId : RequestBody? = null,
-        categoryId : RequestBody? = null
-        ) = viewModelScope.launch {
-        _getUserProductsResponse.value = repo.getUserProducts(userId, categoryId)
-    }
-
-    private var _followUserResponse = MutableLiveData<Resource<FollowUnfollowResponse>>()
-    val followUserShowRepo: MutableLiveData<Resource<FollowUnfollowResponse>>
-        get() = _followUserResponse
-
-    fun followUser(
-        userId : RequestBody?
+	fun getUserProducts(
+        userId : RequestBody? = null ,
+        categoryId : RequestBody? = null ,
     ) = viewModelScope.launch {
-        _followUserResponse.value = repo.followUser(userId)
-    }
+		_getUserProductsResponse.value = repo.getUserProducts(userId , categoryId)
+	}
 
-    private var _notifyLiveUserResponse = MutableLiveData<Resource<CommonResponse>>()
-    val notifyLiveUserRepo: MutableLiveData<Resource<CommonResponse>>
-        get() = _notifyLiveUserResponse
+	private var _followUserResponse = MutableLiveData<Resource<FollowUnfollowResponse>>()
+	val followUserShowRepo : MutableLiveData<Resource<FollowUnfollowResponse>>
+		get() = _followUserResponse
 
-    fun notifyLiveUser(
-        liveUserId : RequestBody?
+	fun followUser(
+        userId : RequestBody? ,
     ) = viewModelScope.launch {
-        _notifyLiveUserResponse.value = repo.notifyLiveUser(liveUserId)
-    }
+		_followUserResponse.value = repo.followUser(userId)
+	}
 
-    private var _getMyScheduledShowResponse = MutableLiveData<Resource<GetMyShowResponse>>()
-    val getMyScheduledShowRepo: MutableLiveData<Resource<GetMyShowResponse>>
-        get() = _getMyScheduledShowResponse
+	private var _notifyLiveUserResponse = MutableLiveData<Resource<CommonResponse>>()
+	val notifyLiveUserRepo : MutableLiveData<Resource<CommonResponse>>
+		get() = _notifyLiveUserResponse
 
-    fun getMyScheduledShow(
-        type : RequestBody? = null
+	fun notifyLiveUser(
+        liveUserId : RequestBody? ,
     ) = viewModelScope.launch {
-        _getMyScheduledShowResponse.value = repo.getMyScheduledShow(type)
-    }
+		_notifyLiveUserResponse.value = repo.notifyLiveUser(liveUserId)
+	}
 
-    private var _getSellerRatingResponse = MutableLiveData<Resource<GetRatingResponse>>()
-    val getSellerRatingRepo: MutableLiveData<Resource<GetRatingResponse>>
-        get() = _getSellerRatingResponse
+	private var _getMyScheduledShowResponse = MutableLiveData<Resource<GetMyShowResponse>>()
+	val getMyScheduledShowRepo : MutableLiveData<Resource<GetMyShowResponse>>
+		get() = _getMyScheduledShowResponse
 
-    fun getSellerRating(
-        sellerId : String?
+	fun getMyScheduledShow(
+        type : RequestBody? = null ,
     ) = viewModelScope.launch {
-        _getSellerRatingResponse.value = repo.getSellerRating(sellerId)
-    }
-    private var _blockUnblockUserResponse = MutableLiveData<Resource<BlockedUnblockedResponse>>()
-    val blockUnblockUserRepo: MutableLiveData<Resource<BlockedUnblockedResponse>>
-        get() = _blockUnblockUserResponse
+		_getMyScheduledShowResponse.value = repo.getMyScheduledShow(type)
+	}
 
-    fun blockUnblockUser(
-        blockedID: RequestBody
+	private var _getSellerRatingResponse = MutableLiveData<Resource<GetRatingResponse>>()
+	val getSellerRatingRepo : MutableLiveData<Resource<GetRatingResponse>>
+		get() = _getSellerRatingResponse
+
+	fun getSellerRating(
+        sellerId : String? ,
     ) = viewModelScope.launch {
-        _blockUnblockUserResponse.value = repo.blockUnblockUser(blockedID)
-    }
+		_getSellerRatingResponse.value = repo.getSellerRating(sellerId)
+	}
+
+	private var _blockUnblockUserResponse = MutableLiveData<Resource<BlockedUnblockedResponse>>()
+	val blockUnblockUserRepo : MutableLiveData<Resource<BlockedUnblockedResponse>>
+		get() = _blockUnblockUserResponse
+
+	fun blockUnblockUser(
+        blockedID : RequestBody ,
+    ) = viewModelScope.launch {
+		_blockUnblockUserResponse.value = repo.blockUnblockUser(blockedID)
+	}
 
 }

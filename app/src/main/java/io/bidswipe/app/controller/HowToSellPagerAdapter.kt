@@ -7,25 +7,25 @@ import io.bidswipe.app.databinding.HowToSellItemBinding
 import io.bidswipe.app.network.response.GetHowToSellResponse
 import io.bidswipe.app.utils.loadUrl
 
-class HowToSellPagerAdapter(mList: MutableList<GetHowToSellResponse.Data?>) :
-    BaseAdapter<GetHowToSellResponse.Data?, HowToSellItemBinding>(mList) {
+class HowToSellPagerAdapter(mList : MutableList<GetHowToSellResponse.Data?>) :
+	BaseAdapter<GetHowToSellResponse.Data? , HowToSellItemBinding>(mList) {
 
-    override fun bindView(inflater: LayoutInflater, parent: ViewGroup) =
-        HowToSellItemBinding.inflate(inflater, parent, false)
+	override fun bindView(inflater : LayoutInflater , parent : ViewGroup) =
+		HowToSellItemBinding.inflate(inflater , parent , false)
 
-    override fun onBind(
-        holder: BaseViewHolder<HowToSellItemBinding>,
-        position: Int,
-        item: GetHowToSellResponse.Data?,
-    ) {
-        with(holder) {
+	override fun onBind(
+		holder : BaseViewHolder<HowToSellItemBinding> ,
+		position : Int ,
+		item : GetHowToSellResponse.Data? ,
+	) {
+		with(holder) {
 
-            bind.title.text = item?.title.toString()
-            bind.description.setHtmlFromString(item?.description ?: "", false)
+			bind.title.text = item?.title.toString()
+			bind.description.setHtmlFromString(item?.description ?: "" , false)
 
-            bind.img.loadUrl(mCtx, item?.image.toString())
+			bind.img.loadUrl(mCtx , item?.image.toString())
 
 
-        }
-    }
+		}
+	}
 }

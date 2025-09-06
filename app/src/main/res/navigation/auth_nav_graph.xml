@@ -5,7 +5,6 @@
     android:id="@+id/auth_nav_graph"
     app:startDestination="@id/loginFragment">
 
-
     <fragment
         android:id="@+id/loginFragment"
         android:name="io.bidswipe.app.ui.auth.LoginFragment"

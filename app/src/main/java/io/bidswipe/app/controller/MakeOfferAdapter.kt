@@ -11,32 +11,32 @@ import io.bidswipe.app.model.OfferModel
 import io.bidswipe.app.utils.asMoney
 
 class MakeOfferAdapter(
-	mList: MutableList<OfferModel>, val mClicks: RecyclerClicks,
-) : BaseAdapter<OfferModel, OfferPriceItemBinding>(mList) {
+	mList : MutableList<OfferModel> , val mClicks : RecyclerClicks ,
+) : BaseAdapter<OfferModel , OfferPriceItemBinding>(mList) {
 
-    override fun bindView(inflater: LayoutInflater, parent: ViewGroup) =
-        OfferPriceItemBinding.inflate(inflater, parent, false)
+	override fun bindView(inflater : LayoutInflater , parent : ViewGroup) =
+		OfferPriceItemBinding.inflate(inflater , parent , false)
 
-    override fun onBind(
-		holder: BaseViewHolder<OfferPriceItemBinding>,
-		position: Int,
-		item: OfferModel?,
+	override fun onBind(
+		holder : BaseViewHolder<OfferPriceItemBinding> ,
+		position : Int ,
+		item : OfferModel? ,
 	) {
-        with(holder) {
+		with(holder) {
 
-            bind.root.setOnClickListener {
-                mClicks.itemClick(position)
-            }
+			bind.root.setOnClickListener {
+				mClicks.itemClick(position)
+			}
 
-            if (item?.selected == true) {
-                bind.root.strokeWidth = 2
-                bind.root.strokeColor = ContextCompat.getColor(mCtx, R.color.primary)
-            } else {
-                bind.root.strokeWidth = 0
-            }
+			if (item?.selected == true) {
+				bind.root.strokeWidth = 2
+				bind.root.strokeColor = ContextCompat.getColor(mCtx , R.color.primary)
+			} else {
+				bind.root.strokeWidth = 0
+			}
 
-            bind.amount.text = item?.amount?.asMoney()
-            bind.discount.text = item?.percent
-        }
-    }
+			bind.amount.text = item?.amount?.asMoney()
+			bind.discount.text = item?.percent
+		}
+	}
 }

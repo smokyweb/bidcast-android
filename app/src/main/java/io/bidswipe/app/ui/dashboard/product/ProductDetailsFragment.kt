@@ -20,6 +20,7 @@ import io.bidswipe.app.model.OfferModel
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.utils.Alerts
+import io.bidswipe.app.utils.Const
 import io.bidswipe.app.utils.Utils
 import io.bidswipe.app.utils.asMoney
 import io.bidswipe.app.utils.finish
@@ -110,7 +111,7 @@ class ProductDetailsFragment : BaseFragment<ProductViewModel, FragmentProductDet
                     bind.productImage.loadUrl(mCtx, mData?.images?.get(0).toString())
 
                     bind.productName.text = mData?.title
-                    bind.posted.text = Utils.getTimeAgo(mData?.createdAt ?: "")
+                    bind.posted.text = Utils.getTimeAgo(mData?.createdAt ?: "", Const.DD_MM_YYYY_HH_MM_SS)
 
                     bind.price.text = mData?.pricing.toString().asMoney()
 

@@ -11,37 +11,37 @@ import io.bidswipe.app.utils.asCapital
 import io.bidswipe.app.utils.loadUrl
 
 class ShowListingAdapter(
-    val mList: MutableList<GetMyShowResponse.Data?>, val mClick: RecyclerClicks,
-) : BaseAdapter<GetMyShowResponse.Data?, ShowListingItemBinding>(mList) {
+	val mList : MutableList<GetMyShowResponse.Data?> , val mClick : RecyclerClicks ,
+) : BaseAdapter<GetMyShowResponse.Data? , ShowListingItemBinding>(mList) {
 
-    override fun bindView(inflater: LayoutInflater, parent: ViewGroup) =
-        ShowListingItemBinding.inflate(inflater, parent, false)
+	override fun bindView(inflater : LayoutInflater , parent : ViewGroup) =
+		ShowListingItemBinding.inflate(inflater , parent , false)
 
-    override fun onBind(
-        holder: BaseViewHolder<ShowListingItemBinding>,
-        position: Int,
-        item: GetMyShowResponse.Data?,
-    ) {
-        with(holder) {
+	override fun onBind(
+		holder : BaseViewHolder<ShowListingItemBinding> ,
+		position : Int ,
+		item : GetMyShowResponse.Data? ,
+	) {
+		with(holder) {
 
-            bind.root.setOnClickListener {
-                mClick.itemClick(position, "click")
-            }
+			bind.root.setOnClickListener {
+				mClick.itemClick(position , "click")
+			}
 
-            bind.name.text = item?.title?.asCapital()
+			bind.name.text = item?.title?.asCapital()
 
-            bind.date.text = item?.date
+			bind.date.text = item?.date
 
-            bind.time.text = Utils.getFormattedDateTime("HH:mm:ss","hh:mm a" , item?.time.toString())
+			bind.time.text = Utils.getFormattedDateTime("HH:mm:ss" , "hh:mm a" , item?.time.toString())
 
-            bind.rsvp.text = buildString {
-                append(item?.viewerCount ?:0)
-                append(" RSVPs")
-            }
+			bind.rsvp.text = buildString {
+				append(item?.viewerCount ?: 0)
+				append(" RSVPs")
+			}
 
-            bind.image.loadUrl(mCtx, item?.imgThumbnail?.first() ?:"")
+			bind.image.loadUrl(mCtx , item?.imgThumbnail?.first() ?: "")
 
-        }
-    }
+		}
+	}
 
 }

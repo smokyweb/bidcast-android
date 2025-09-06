@@ -7,73 +7,73 @@ import androidx.annotation.Keep
 @Keep
 data class GetPremierShopResponse(
     @SerializedName("data")
-    val `data`: Data?,
+    val `data` : Data? ,
     @SerializedName("error_type")
-    val errorType: String?,
+    val errorType : String? ,
     @SerializedName("message")
-    val message: String?,
+    val message : String? ,
     @SerializedName("status")
-    val status: String?
+    val status : String? ,
 ) {
-    @Keep
-    data class Data(
+	@Keep
+	data class Data(
         @SerializedName("current_progress")
-        val currentProgress: String?,
+        val currentProgress : String? ,
         @SerializedName("features")
-        val features: List<Feature?>?,
+        val features : List<Feature?>? ,
         @SerializedName("id")
-        val id: Int?,
+        val id : Int? ,
         @SerializedName("next_review")
-        val nextReview: String?,
+        val nextReview : String? ,
         @SerializedName("page_details")
-        val pageDetails: String?,
+        val pageDetails : String? ,
         @SerializedName("page_logo")
-        val pageLogo: String?,
+        val pageLogo : String? ,
         @SerializedName("page_title")
-        val pageTitle: String?,
+        val pageTitle : String? ,
         @SerializedName("requirements")
-        val requirements: List<Requirement?>?,
+        val requirements : List<Requirement?>? ,
         @SerializedName("review_details")
-        val reviewDetails: String?,
+        val reviewDetails : String? ,
         @SerializedName("review_logo")
-        val reviewLogo: String?,
+        val reviewLogo : String? ,
         @SerializedName("review_title")
-        val reviewTitle: String?,
+        val reviewTitle : String? ,
         @SerializedName("shop_details")
-        val shopDetails: String?,
+        val shopDetails : String? ,
         @SerializedName("shop_logo")
-        val shopLogo: String?,
+        val shopLogo : String? ,
         @SerializedName("shop_options")
-        val shopOptions: ShopOptions?,
+        val shopOptions : ShopOptions? ,
         @SerializedName("shop_title")
-        val shopTitle: String?
+        val shopTitle : String? ,
     ) {
-        @Keep
-        data class Feature(
+		@Keep
+		data class Feature(
             @SerializedName("description")
-            val description: String?,
+            val description : String? ,
             @SerializedName("icon")
-            val icon: String?,
+            val icon : String? ,
             @SerializedName("title")
-            val title: String?
+            val title : String? ,
         )
 
-        @Keep
-        data class Requirement(
+		@Keep
+		data class Requirement(
             @SerializedName("platform")
-            val platform: String?,
+            val platform : String? ,
             @SerializedName("url")
-            val url: String?
+            val url : String? ,
         )
 
-        @Keep
-        data class ShopOptions(
+		@Keep
+		data class ShopOptions(
             @SerializedName("Delivery")
-            val delivery: String?,
+            val delivery : String? ,
             @SerializedName("Rating")
-            val rating: Double?,
+            val rating : Double? ,
             @SerializedName("Response")
-            val response: String?
+            val response : String? ,
         )
-    }
+	}
 }

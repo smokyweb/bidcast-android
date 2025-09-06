@@ -34,60 +34,60 @@ import io.bidswipe.app.utils.ids
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.value
 
-class CreateProductFragment : BaseFragment<ScheduleShowViewModel, FragmentCreateProductBinding>() {
-	override fun getModel(): Class<ScheduleShowViewModel> = ScheduleShowViewModel::class.java
+class CreateProductFragment : BaseFragment<ScheduleShowViewModel , FragmentCreateProductBinding>() {
+	override fun getModel() : Class<ScheduleShowViewModel> = ScheduleShowViewModel::class.java
 
-	override fun getBind(inflater: LayoutInflater, view: ViewGroup?) =
-		FragmentCreateProductBinding.inflate(inflater, view, false)
+	override fun getBind(inflater : LayoutInflater , view : ViewGroup?) =
+		FragmentCreateProductBinding.inflate(inflater , view , false)
 
 	private var categoryList = mutableListOf<GetCategoryResponse.Data?>()
 	private var subCategoryList = mutableListOf<GetCategoryResponse.Data?>()
 	private var mailClassesList = mutableListOf<GetMailClassesResponse.Data.MailClasses?>()
 	private var currentQuantity = 1
 	private var imageList = mutableListOf<String?>()
-	private var uploadItemIndex = -1
+	private var uploadItemIndex = - 1
 	var isSubCategory = false
 	private var categoryId = ""
 	private var subCategoryId = ""
-	private var selectedMailClass: GetMailClassesResponse.Data.MailClasses? = null
+	private var selectedMailClass : GetMailClassesResponse.Data.MailClasses? = null
 	var variantList = mutableListOf<GetCategoryResponse.Data.ExtraField?>()
-	private lateinit var variantAdapter: ProductVariantAdapter
-	private val processingCategories = listOf("LETTERS", "FLATS", "MACHINABLE", "NONSTANDARD", "NON_MACHINABLE")
-	private var selectedProcessingCategory: String? = null
+	private lateinit var variantAdapter : ProductVariantAdapter
+	private val processingCategories = listOf("LETTERS" , "FLATS" , "MACHINABLE" , "NONSTANDARD" , "NON_MACHINABLE")
+	private var selectedProcessingCategory : String? = null
 
 	private val imageResult = registerForActivityResult(CropImageContract()) { result ->
 		if (result.isSuccessful) {
 			val imageUri = result.uriContent
-			val imagePath = result.getUriFilePath(mCtx, true)
+			val imagePath = result.getUriFilePath(mCtx , true)
 
 			if (imagePath != null) {
-				if (uploadItemIndex == -1) {
+				if (uploadItemIndex == - 1) {
 					if (imageList.size < 9) {
 						imageList.add(imagePath)
 					}
 				} else {
 					imageList[uploadItemIndex] = imagePath
-					uploadItemIndex = -1
+					uploadItemIndex = - 1
 				}
 				bind.images.adapter?.notifyDataSetChanged()
 			}
 		}
 	}
 
-	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-		super.onViewCreated(view, savedInstanceState)
+	override fun onViewCreated(view : View , savedInstanceState : Bundle?) {
+		super.onViewCreated(view , savedInstanceState)
 
 		val productData = arguments
 		if (productData != null) {
 			val product = productData.getSerializable("product") as GetMyInventoryResponse.Data
 		}
 
-		Log.d(TAG, "onViewCreated: oncreate")
+		Log.d(TAG , "onViewCreated: oncreate")
 		imageList.clear()
 		imageList.add(null)
 
-		variantAdapter = ProductVariantAdapter(variantList, object : RecyclerClicks {
-			override fun itemClick(pos: Int, status: String?) {
+		variantAdapter = ProductVariantAdapter(variantList , object : RecyclerClicks {
+			override fun itemClick(pos : Int , status : String?) {
 			}
 		})
 		bind.variants.adapter = variantAdapter
@@ -102,34 +102,34 @@ class CreateProductFragment : BaseFragment<ScheduleShowViewModel, FragmentCreate
 		}
 		setupProcessingCategoryDropdown()
 
-		bind.images.adapter = ImageAdapter(imageList, object : RecyclerClicks {
-			override fun itemClick(pos: Int, status: String?) {
+		bind.images.adapter = ImageAdapter(imageList , object : RecyclerClicks {
+			override fun itemClick(pos : Int , status : String?) {
 				uploadItemIndex = pos
 				uploadImage()
 			}
 		})
 
 		bind.addNewImage.setOnClickListener {
-			uploadItemIndex = -1
+			uploadItemIndex = - 1
 			uploadImage()
 		}
 
 		bind.quantity.setText(currentQuantity.toString())
 
 		bind.increaseQuantity.setOnClickListener {
-			currentQuantity++
+			currentQuantity ++
 			bind.quantity.setText(currentQuantity.toString())
 		}
 
 		bind.decreaseQuantity.setOnClickListener {
 			if (currentQuantity > 1) {
-				currentQuantity--
+				currentQuantity --
 				bind.quantity.setText(currentQuantity.toString())
 			}
 		}
 
-		bind.quantity.setOnFocusChangeListener { _, hasFocus ->
-			if (!hasFocus) {
+		bind.quantity.setOnFocusChangeListener { _ , hasFocus ->
+			if (! hasFocus) {
 				val input = bind.quantity.text.toString().toIntOrNull() ?: 1
 				currentQuantity = if (input < 1) 1 else input
 				bind.quantity.setText(currentQuantity.toString())
@@ -137,7 +137,7 @@ class CreateProductFragment : BaseFragment<ScheduleShowViewModel, FragmentCreate
 		}
 
 		bind.category.setOnClickListener {
-			showCategorySheet(categoryList,"category")
+			showCategorySheet(categoryList , "category")
 		}
 
 		bind.header.onBackClick {
@@ -150,24 +150,24 @@ class CreateProductFragment : BaseFragment<ScheduleShowViewModel, FragmentCreate
 				viewModel.variantData = variantAdapter.getAllVariantData().toMutableList()
 
 				val bundle = bundleOf(
-					"categoryId" to categoryId,
-					"subCategoryId" to subCategoryId,
-					"title" to bind.productTitle.text.toString().trim(),
-					"description" to bind.description.text.toString().trim(),
-					"quantity" to currentQuantity,
-					"imagePaths" to imagePaths.joinToString(","),
-					"width" to bind.width.value(),
-					"height" to bind.height.value(),
-					"length" to bind.length.value(),
-					"weight" to bind.weight.value(),
-					"mailClass" to selectedMailClass?.label,
+					"categoryId" to categoryId ,
+					"subCategoryId" to subCategoryId ,
+					"title" to bind.productTitle.text.toString().trim() ,
+					"description" to bind.description.text.toString().trim() ,
+					"quantity" to currentQuantity ,
+					"imagePaths" to imagePaths.joinToString(",") ,
+					"width" to bind.width.value() ,
+					"height" to bind.height.value() ,
+					"length" to bind.length.value() ,
+					"weight" to bind.weight.value() ,
+					"mailClass" to selectedMailClass?.label ,
 					"processingCategory" to selectedProcessingCategory
 				)
-				Log.d(TAG, "onViewCreated: $bundle")
+				Log.d(TAG , "onViewCreated: $bundle")
 
 				try {
-					findNavController().navigate(ids.goToChooseSalesFormatFragment, bundle)
-				} catch (_: Exception) {
+					findNavController().navigate(ids.goToChooseSalesFormatFragment , bundle)
+				} catch (_ : Exception) {
 					bind.loader.isVisible = false
 					errorToast("Error navigating to next screen")
 				}
@@ -178,10 +178,10 @@ class CreateProductFragment : BaseFragment<ScheduleShowViewModel, FragmentCreate
 			findNavController().navigate(ids.createProductAddProductFragment)
 		}
 
-	/*	bind.category.setOnClickListener {
-			bind.category.showDropDown()
-		}
-*/
+		/*	bind.category.setOnClickListener {
+				bind.category.showDropDown()
+			}
+	*/
 		/*bind.category.setOnItemClickListener { _, _, position, _ ->
 			categoryId = categoryList[position]?.id.toString()
 			bind.category.setText(categoryList[position]?.name)
@@ -207,12 +207,12 @@ class CreateProductFragment : BaseFragment<ScheduleShowViewModel, FragmentCreate
 					if (it.isNetworkError) {
 						errorToast(getString(R.string.no_internet))
 					} else {
-						it.parse(mCtx, TAG, object : AlertClicks {
-							override fun primaryClick(dialog: AppBottomSheet) {
+						it.parse(mCtx , TAG , object : AlertClicks {
+							override fun primaryClick(dialog : AppBottomSheet) {
 								dialog.dismiss()
 							}
 
-							override fun secondaryClick(dialog: AppBottomSheet) {
+							override fun secondaryClick(dialog : AppBottomSheet) {
 								dialog.dismiss()
 							}
 						})
@@ -223,7 +223,7 @@ class CreateProductFragment : BaseFragment<ScheduleShowViewModel, FragmentCreate
 			}
 		}
 
-		if (viewModel.getCategoryRepo.value == null){
+		if (viewModel.getCategoryRepo.value == null) {
 			bind.loader.isVisible = true
 			viewModel.getCategory()
 		}
@@ -240,7 +240,7 @@ class CreateProductFragment : BaseFragment<ScheduleShowViewModel, FragmentCreate
 						if (isSubCategory) {
 							subCategoryList.clear()
 							subCategoryList.addAll(mData)
-							showCategorySheet(subCategoryList, "subCategory")
+							showCategorySheet(subCategoryList , "subCategory")
 						} else {
 							categoryList.clear()
 							categoryList.addAll(mData)
@@ -248,7 +248,7 @@ class CreateProductFragment : BaseFragment<ScheduleShowViewModel, FragmentCreate
 						}
 					}
 
-					isSubCategory = !isSubCategory
+					isSubCategory = ! isSubCategory
 
 
 					/*if (it.value.data?.isNotEmpty() == true) {
@@ -271,12 +271,12 @@ class CreateProductFragment : BaseFragment<ScheduleShowViewModel, FragmentCreate
 					if (it.isNetworkError) {
 						errorToast(getString(io.bidswipe.app.R.string.no_internet))
 					} else {
-						it.parse(mCtx, TAG, object : AlertClicks {
-							override fun primaryClick(dialog: AppBottomSheet) {
+						it.parse(mCtx , TAG , object : AlertClicks {
+							override fun primaryClick(dialog : AppBottomSheet) {
 								dialog.dismiss()
 							}
 
-							override fun secondaryClick(dialog: AppBottomSheet) {
+							override fun secondaryClick(dialog : AppBottomSheet) {
 								dialog.dismiss()
 							}
 						})
@@ -331,15 +331,15 @@ class CreateProductFragment : BaseFragment<ScheduleShowViewModel, FragmentCreate
 
 	private fun setupProcessingCategoryDropdown() {
 		val proCategoryAdapter = ArrayAdapter(
-			mCtx,
-			android.R.layout.simple_list_item_1,
+			mCtx ,
+			android.R.layout.simple_list_item_1 ,
 			processingCategories
 		)
 		bind.procategory.setAdapter(proCategoryAdapter)
-		val proDrawable = ContextCompat.getDrawable(mCtx, R.drawable.card_8)
+		val proDrawable = ContextCompat.getDrawable(mCtx , R.drawable.card_8)
 		bind.procategory.setDropDownBackgroundDrawable(proDrawable)
 
-		bind.procategory.setOnItemClickListener { _, _, position, _ ->
+		bind.procategory.setOnItemClickListener { _ , _ , position , _ ->
 			selectedProcessingCategory = processingCategories[position]
 			log("Selected processing category: $selectedProcessingCategory")
 		}
@@ -352,17 +352,17 @@ class CreateProductFragment : BaseFragment<ScheduleShowViewModel, FragmentCreate
 		val mailClassNames = mailClassesList.map { it?.label ?: "" }.toTypedArray()
 
 		val adapter = ArrayAdapter(
-			mCtx,
-			android.R.layout.simple_list_item_1,
+			mCtx ,
+			android.R.layout.simple_list_item_1 ,
 			mailClassNames
 		)
 
 		bind.mailClass.setAdapter(adapter)
 
-		val drawable = ContextCompat.getDrawable(mCtx, R.drawable.card_8)
+		val drawable = ContextCompat.getDrawable(mCtx , R.drawable.card_8)
 		bind.mailClass.setDropDownBackgroundDrawable(drawable)
 
-		bind.mailClass.setOnItemClickListener { _, _, position, _ ->
+		bind.mailClass.setOnItemClickListener { _ , _ , position , _ ->
 			selectedMailClass = mailClassesList[position]
 			log("Selected mail class: ${selectedMailClass?.label}")
 		}
@@ -380,15 +380,15 @@ class CreateProductFragment : BaseFragment<ScheduleShowViewModel, FragmentCreate
 		if (imageList.size < 9) {
 			requestPerms(Const.STR_PERMS) { per ->
 				if (per) {
-					imageResult.launch(Utils.initCrop(mCtx, isCamera = true, isGallery = true))
+					imageResult.launch(Utils.initCrop(mCtx , isCamera = true , isGallery = true))
 				}
 			}
 		} else {
-			Alerts.error(mCtx, "You can select max 9 images only")
+			Alerts.error(mCtx , "You can select max 9 images only")
 		}
 	}
 
-	private fun validateAndNavigate(): Boolean {
+	private fun validateAndNavigate() : Boolean {
 		val title = bind.productTitle.text.toString().trim()
 		val description = bind.description.text.toString().trim()
 		val width = bind.width.value()
@@ -464,11 +464,11 @@ class CreateProductFragment : BaseFragment<ScheduleShowViewModel, FragmentCreate
 				if (errors.isNotEmpty()) {
 					val errorMessage = "Package doesn't meet requirements for ${mailClass.label}:\n" +
 							errors.joinToString("\n")
-					Alerts.error(mCtx, errorMessage)
+					Alerts.error(mCtx , errorMessage)
 					return false
 				}
 			}
-		} catch (e: NumberFormatException) {
+		} catch (e : NumberFormatException) {
 			errorToast("Please enter valid numeric values for dimensions")
 			return false
 		}
@@ -476,19 +476,19 @@ class CreateProductFragment : BaseFragment<ScheduleShowViewModel, FragmentCreate
 		return true
 	}
 
-	private fun showCategorySheet(categoryList: MutableList<GetCategoryResponse.Data?>, type: String) {
+	private fun showCategorySheet(categoryList : MutableList<GetCategoryResponse.Data?> , type : String) {
 		val categorySheetBind = CategoryBottomSheetBinding.bind(
-			layoutInflater.inflate(R.layout.category_bottom_sheet, null, false)
+			layoutInflater.inflate(R.layout.category_bottom_sheet , null , false)
 		)
-		val categorySheet = Alerts.appBottomSheet(mCtx, true, categorySheetBind)
+		val categorySheet = Alerts.appBottomSheet(mCtx , true , categorySheetBind)
 
 		variantList.clear()
 		variantAdapter.notifyDataSetChanged()
 
 		categorySheetBind.recycler.adapter = CategoryListAdapter(
-			if (type == "category") categoryList else subCategoryList,
+			if (type == "category") categoryList else subCategoryList ,
 			object : RecyclerClicks {
-				override fun itemClick(pos: Int, status: String?) {
+				override fun itemClick(pos : Int , status : String?) {
 					if (type == "category") {
 						categoryId = categoryList[pos]?.id.toString()
 						bind.category.setText(categoryList[pos]?.name.toString())

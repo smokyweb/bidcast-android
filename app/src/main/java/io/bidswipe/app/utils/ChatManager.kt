@@ -21,44 +21,44 @@ import im.zego.zim.enums.ZIMRoomEvent
 import im.zego.zim.enums.ZIMRoomState
 
 class ChatManager(
-	private val application: Application,
-	private val appId: Long,
-	private val appSign: String,
-	private val userId: String,
-	private val userName: String,
-	private val userImage: String
+	private val application : Application ,
+	private val appId : Long ,
+	private val appSign : String ,
+	private val userId : String ,
+	private val userName : String ,
+	private val userImage : String ,
 ) {
 
 	interface Listener {
-		fun onMessageReceived(message: ZIMTextMessage)
-		fun onRoomStateChanged(state: String)
+		fun onMessageReceived(message : ZIMTextMessage)
+		fun onRoomStateChanged(state : String)
 	}
 
-	private var zim: ZIM? = null
-	private var listener: Listener? = null
+	private var zim : ZIM? = null
+	private var listener : Listener? = null
 
-	fun setListener(listener: Listener?) {
+	fun setListener(listener : Listener?) {
 		this.listener = listener
 	}
 
-	fun initializeAndLogin(roomId: String,callback: () -> Unit) {
+	fun initializeAndLogin(roomId : String , callback : () -> Unit) {
 		if (zim == null) {
 			val appConfig = ZIMAppConfig().also {
 				it.appID = appId
 				it.appSign = appSign
 			}
-			zim = ZIM.create(appConfig, application)
+			zim = ZIM.create(appConfig , application)
 		}
 
 		val userInfo = ZIMUserInfo().also {
-			it.userID = userName.replace(" ", ".") + "_" + userId
+			it.userID = userName.replace(" " , ".") + "_" + userId
 			it.userName = userImage
 		}
 
 		zim?.login(userInfo) { error ->
 			if (error != null) {
 				// Login success
-				createOrJoinRoom(roomId){
+				createOrJoinRoom(roomId) {
 					callback.invoke()
 				}
 			} else {
@@ -68,24 +68,26 @@ class ChatManager(
 		}
 	}
 
-	private fun createOrJoinRoom(roomId: String, callback: () -> Unit) {
+	private fun createOrJoinRoom(roomId : String , callback : () -> Unit) {
 		val roomInfo = ZIMRoomInfo().also {
 			it.roomID = roomId
 			it.roomName = roomId + "_room"
 		}
 
-		zim?.createRoom(roomInfo) { _, errorInfo ->
+		zim?.createRoom(roomInfo) { _ , errorInfo ->
 			when (errorInfo.code) {
 				ZIMErrorCode.SUCCESS -> {
 					attachEventHandler()
 					listener?.onRoomStateChanged("room_created")
 					callback.invoke()
 				}
+
 				ZIMErrorCode.THE_ROOM_ALREADY_EXISTS -> {
-					joinExistingRoom(roomId){
+					joinExistingRoom(roomId) {
 						callback.invoke()
 					}
 				}
+
 				else -> {
 					listener?.onRoomStateChanged("room_create_failed:${errorInfo.code}")
 				}
@@ -93,8 +95,8 @@ class ChatManager(
 		}
 	}
 
-	private fun joinExistingRoom(roomId: String,callback: () -> Unit) {
-		ZIM.getInstance().joinRoom(roomId) { _, joinError ->
+	private fun joinExistingRoom(roomId : String , callback : () -> Unit) {
+		ZIM.getInstance().joinRoom(roomId) { _ , joinError ->
 			if (joinError.code == ZIMErrorCode.SUCCESS) {
 				attachEventHandler()
 				listener?.onRoomStateChanged("room_joined")
@@ -108,12 +110,12 @@ class ChatManager(
 	private fun attachEventHandler() {
 		ZIM.getInstance().setEventHandler(object : ZIMEventHandler() {
 			override fun onRoomMessageReceived(
-				zim: ZIM?,
-				messageList: ArrayList<ZIMMessage?>?,
-				info: ZIMMessageReceivedInfo?,
-				fromRoomID: String?
+				zim : ZIM? ,
+				messageList : ArrayList<ZIMMessage?>? ,
+				info : ZIMMessageReceivedInfo? ,
+				fromRoomID : String? ,
 			) {
-				super.onRoomMessageReceived(zim, messageList, info, fromRoomID)
+				super.onRoomMessageReceived(zim , messageList , info , fromRoomID)
 				messageList?.forEach { message ->
 					if (message is ZIMTextMessage) {
 						listener?.onMessageReceived(message)
@@ -122,33 +124,33 @@ class ChatManager(
 			}
 
 			override fun onRoomStateChanged(
-				zim: ZIM?,
-				state: ZIMRoomState?,
-				event: ZIMRoomEvent?,
-				extendedData: JSONObject?,
-				roomID: String?
+				zim : ZIM? ,
+				state : ZIMRoomState? ,
+				event : ZIMRoomEvent? ,
+				extendedData : JSONObject? ,
+				roomID : String? ,
 			) {
-				super.onRoomStateChanged(zim, state, event, extendedData, roomID)
+				super.onRoomStateChanged(zim , state , event , extendedData , roomID)
 				listener?.onRoomStateChanged(state?.name ?: "unknown")
 			}
 		})
 	}
 
-	fun sendTextMessage(roomId: String, content: String, extendedDataJson: String) {
+	fun sendTextMessage(roomId : String , content : String , extendedDataJson : String) {
 		val message = ZIMTextMessage(content)
 		message.extendedData = extendedDataJson
 
 		val config = im.zego.zim.entity.ZIMMessageSendConfig().also { it.priority = ZIMMessagePriority.HIGH }
 
 		zim?.sendMessage(
-			message,
-			roomId,
-			ZIMConversationType.ROOM,
-			config,
+			message ,
+			roomId ,
+			ZIMConversationType.ROOM ,
+			config ,
 			object : ZIMMessageSentFullCallback {
-				override fun onMessageAttached(message: ZIMMessage?) {}
+				override fun onMessageAttached(message : ZIMMessage?) {}
 
-				override fun onMessageSent(message: ZIMMessage?, errorInfo: ZIMError?) {
+				override fun onMessageSent(message : ZIMMessage? , errorInfo : ZIMError?) {
 					if (errorInfo != null) {
 						// success
 						if (message is ZIMTextMessage) {
@@ -159,15 +161,23 @@ class ChatManager(
 					}
 				}
 
-				override fun onMediaUploadingProgress(message: ZIMMediaMessage?, currentFileSize: Long, totalFileSize: Long) {}
+				override fun onMediaUploadingProgress(message : ZIMMediaMessage? , currentFileSize : Long , totalFileSize : Long) {}
 
-				override fun onMultipleMediaUploadingProgress(message: ZIMMultipleMessage?, currentFileSize: Long, totalFileSize: Long, messageInfoIndex: Int, currentIndexFileSize: Long, totalIndexFileSize: Long) {}
+				override fun onMultipleMediaUploadingProgress(
+					message : ZIMMultipleMessage? ,
+					currentFileSize : Long ,
+					totalFileSize : Long ,
+					messageInfoIndex : Int ,
+					currentIndexFileSize : Long ,
+					totalIndexFileSize : Long ,
+				) {
+				}
 			}
 		)
 	}
 
 	fun leaveAllRoomsAndLogout() {
-		zim?.leaveAllRoom { _, _ -> }
+		zim?.leaveAllRoom { _ , _ -> }
 		zim?.logout()
 	}
 

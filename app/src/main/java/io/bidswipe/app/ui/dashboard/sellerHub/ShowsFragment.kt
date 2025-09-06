@@ -30,25 +30,25 @@ import io.bidswipe.app.utils.request
 import io.bidswipe.app.utils.toScheduleShow
 
 @SuppressLint("NotifyDataSetChanged")
-class ShowsFragment : BaseFragment<SellerHubViewModel, FragmentShowsBinding>() {
-	override fun getModel(): Class<SellerHubViewModel> = SellerHubViewModel::class.java
+class ShowsFragment : BaseFragment<SellerHubViewModel , FragmentShowsBinding>() {
+	override fun getModel() : Class<SellerHubViewModel> = SellerHubViewModel::class.java
 
 	override fun getBind(
-		inflater: LayoutInflater,
-		view: ViewGroup?,
-	) = FragmentShowsBinding.inflate(inflater, view, false)
+		inflater : LayoutInflater ,
+		view : ViewGroup? ,
+	) = FragmentShowsBinding.inflate(inflater , view , false)
 
-	private lateinit var showAdapter: ShowListingAdapter
+	private lateinit var showAdapter : ShowListingAdapter
 
 	private var showList = mutableListOf<GetMyShowResponse.Data?>()
 
 	private val mClicks = object : RecyclerClicks {
-		override fun itemClick(pos: Int, status: String?) {
+		override fun itemClick(pos : Int , status : String?) {
 
 			val profile = App.profileResponse.value
 
 			if (profile?.sellerIdentityStatus != "verified") {
-				startActivity(Intent(mCtx, SellerVerificationActivity::class.java))
+				startActivity(Intent(mCtx , SellerVerificationActivity::class.java))
 				return
 			}
 
@@ -58,13 +58,13 @@ class ShowsFragment : BaseFragment<SellerHubViewModel, FragmentShowsBinding>() {
 			}
 
 			if (App.PIPMode) {
-				Alerts.error(mCtx,"You are already in Live show")
-			}else{
+				Alerts.error(mCtx , "You are already in Live show")
+			} else {
 				startActivity(
-					Intent(mCtx, LiveShowActivity::class.java).putExtra(
-						"showId",
+					Intent(mCtx , LiveShowActivity::class.java).putExtra(
+						"showId" ,
 						showList[pos]?.id.toString()
-					).putExtra("time",  showList[pos]?.time)
+					).putExtra("time" , showList[pos]?.time)
 				)
 			}
 
@@ -73,14 +73,14 @@ class ShowsFragment : BaseFragment<SellerHubViewModel, FragmentShowsBinding>() {
 
 	}
 
-	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-		super.onViewCreated(view, savedInstanceState)
+	override fun onViewCreated(view : View , savedInstanceState : Bundle?) {
+		super.onViewCreated(view , savedInstanceState)
 
 		bind.header.onBackClick {
 			finish()
 		}
 
-		showAdapter = ShowListingAdapter(showList, mClicks)
+		showAdapter = ShowListingAdapter(showList , mClicks)
 
 		bind.recycler.adapter = showAdapter
 
@@ -110,7 +110,7 @@ class ShowsFragment : BaseFragment<SellerHubViewModel, FragmentShowsBinding>() {
 
 		bind.tabs.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
 			@SuppressLint("NotifyDataSetChanged")
-			override fun onTabSelected(tab: TabLayout.Tab?) {
+			override fun onTabSelected(tab : TabLayout.Tab?) {
 				showList.clear()
 				showAdapter.notifyDataSetChanged()
 				bind.loader.isVisible = true
@@ -122,8 +122,8 @@ class ShowsFragment : BaseFragment<SellerHubViewModel, FragmentShowsBinding>() {
 
 			}
 
-			override fun onTabUnselected(tab: TabLayout.Tab?) {}
-			override fun onTabReselected(tab: TabLayout.Tab?) {
+			override fun onTabUnselected(tab : TabLayout.Tab?) {}
+			override fun onTabReselected(tab : TabLayout.Tab?) {
 				onTabSelected(tab)
 			}
 
@@ -171,13 +171,13 @@ class ShowsFragment : BaseFragment<SellerHubViewModel, FragmentShowsBinding>() {
 						bind.recycler.isVisible = false
 						bind.addNewProduct.isVisible = false
 					} else {
-						it.parse(mCtx, TAG, object : AlertClicks {
-							override fun primaryClick(dialog: AppBottomSheet) {
+						it.parse(mCtx , TAG , object : AlertClicks {
+							override fun primaryClick(dialog : AppBottomSheet) {
 								dialog.dismiss()
 
 							}
 
-							override fun secondaryClick(dialog: AppBottomSheet) {
+							override fun secondaryClick(dialog : AppBottomSheet) {
 								dialog.dismiss()
 
 							}
@@ -197,17 +197,17 @@ class ShowsFragment : BaseFragment<SellerHubViewModel, FragmentShowsBinding>() {
 
 		val paymentAddressBind = PaymentAndAddressSheetBinding.bind(
 			layoutInflater.inflate(
-				R.layout.payment_and_address_sheet,
-				null,
+				R.layout.payment_and_address_sheet ,
+				null ,
 				false
 			)
 		)
 
-		val makeOfferSheet = Alerts.appBottomSheet(mCtx, true, paymentAddressBind)
+		val makeOfferSheet = Alerts.appBottomSheet(mCtx , true , paymentAddressBind)
 
 		with(paymentAddressBind.addressItem) {
 			val hasAddress = App.profileResponse.value?.hasShippingAddress == true
-			moreIcon.setImageDrawable(ContextCompat.getDrawable(mCtx, draw.ic_pencil))
+			moreIcon.setImageDrawable(ContextCompat.getDrawable(mCtx , draw.ic_pencil))
 			moreIcon.rotation = 0f
 
 			name.isVisible = hasAddress
@@ -225,8 +225,8 @@ class ShowsFragment : BaseFragment<SellerHubViewModel, FragmentShowsBinding>() {
 			}
 			moreIcon.setOnClickListener {
 				startActivity(
-					Intent(mCtx, MoreActivity::class.java).putExtra(
-						"slug",
+					Intent(mCtx , MoreActivity::class.java).putExtra(
+						"slug" ,
 						"paymentShipping"
 					)
 				)
@@ -237,7 +237,7 @@ class ShowsFragment : BaseFragment<SellerHubViewModel, FragmentShowsBinding>() {
 			val hasCard = App.profileResponse.value?.hasCardAdded == true
 			iconCard.isVisible = hasCard
 			expiryDate.isVisible = hasCard
-			moreIcon.setImageDrawable(ContextCompat.getDrawable(mCtx, draw.ic_pencil))
+			moreIcon.setImageDrawable(ContextCompat.getDrawable(mCtx , draw.ic_pencil))
 			moreIcon.rotation = 0f
 
 			if (hasCard) {
@@ -254,8 +254,8 @@ class ShowsFragment : BaseFragment<SellerHubViewModel, FragmentShowsBinding>() {
 			}
 			moreIcon.setOnClickListener {
 				startActivity(
-					Intent(mCtx, MoreActivity::class.java).putExtra(
-						"slug",
+					Intent(mCtx , MoreActivity::class.java).putExtra(
+						"slug" ,
 						"paymentShipping"
 					)
 				)

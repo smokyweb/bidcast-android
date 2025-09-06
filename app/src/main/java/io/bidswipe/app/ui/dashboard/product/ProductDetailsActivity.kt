@@ -8,14 +8,14 @@ import io.bidswipe.app.databinding.ActivityProductDetailsBinding
 import io.bidswipe.app.utils.bind
 
 class ProductDetailsActivity : BaseActivity() {
-    private val bind by bind(ActivityProductDetailsBinding::inflate)
+	private val bind by bind(ActivityProductDetailsBinding::inflate)
 
-    private lateinit var navHostFragment: NavHostFragment
-    private lateinit var navController: NavController
+	private lateinit var navHostFragment : NavHostFragment
+	private lateinit var navController : NavController
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(bind.root)
-    }
+	override fun onCreate(savedInstanceState : Bundle?) {
+		super.onCreate(savedInstanceState)
+		setContentView(bind.root)
+	}
 
 }

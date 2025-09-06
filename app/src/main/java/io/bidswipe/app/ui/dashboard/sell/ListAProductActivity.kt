@@ -10,20 +10,20 @@ import io.bidswipe.app.utils.bind
 import io.bidswipe.app.utils.hideKeyboard
 
 class ListAProductActivity : BaseActivity() {
-    private val bind by bind (ActivityListAproductBinding::inflate)
-    private lateinit var navHostFragment: NavHostFragment
-    private lateinit var navController: NavController
+	private val bind by bind(ActivityListAproductBinding::inflate)
+	private lateinit var navHostFragment : NavHostFragment
+	private lateinit var navController : NavController
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(bind.root)
+	override fun onCreate(savedInstanceState : Bundle?) {
+		super.onCreate(savedInstanceState)
+		setContentView(bind.root)
 
-        bind.main.setOnClickListener {
-            hideKeyboard()
-        }
-        navHostFragment = supportFragmentManager.findFragmentById(R.id.fragmentContainer) as NavHostFragment
-        navController = navHostFragment.navController
+		bind.main.setOnClickListener {
+			hideKeyboard()
+		}
+		navHostFragment = supportFragmentManager.findFragmentById(R.id.fragmentContainer) as NavHostFragment
+		navController = navHostFragment.navController
 
 
-    }
+	}
 }

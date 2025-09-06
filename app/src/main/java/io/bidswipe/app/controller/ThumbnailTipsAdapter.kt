@@ -14,36 +14,36 @@ import io.bidswipe.app.network.response.GetAllTipsResponse
 import io.bidswipe.app.utils.loadUrl
 
 class ThumbnailTipsAdapter(
-    mList: MutableList<GetAllTipsResponse.Data.Tip?>, val type: String, val mClicks: RecyclerClicks,
-) : BaseAdapter<GetAllTipsResponse.Data.Tip?, SellSheetItemBinding>(mList) {
+	mList : MutableList<GetAllTipsResponse.Data.Tip?> , val type : String , val mClicks : RecyclerClicks ,
+) : BaseAdapter<GetAllTipsResponse.Data.Tip? , SellSheetItemBinding>(mList) {
 
-    override fun bindView(inflater: LayoutInflater, parent: ViewGroup) =
-        SellSheetItemBinding.inflate(inflater, parent, false)
+	override fun bindView(inflater : LayoutInflater , parent : ViewGroup) =
+		SellSheetItemBinding.inflate(inflater , parent , false)
 
-    override fun onBind(
-        holder: BaseViewHolder<SellSheetItemBinding>,
-        position: Int,
-        item: GetAllTipsResponse.Data.Tip?,
-    ) {
-        with(holder) {
+	override fun onBind(
+		holder : BaseViewHolder<SellSheetItemBinding> ,
+		position : Int ,
+		item : GetAllTipsResponse.Data.Tip? ,
+	) {
+		with(holder) {
 
-            bind.root.setOnClickListener {
-                mClicks.itemClick(position)
-            }
+			bind.root.setOnClickListener {
+				mClicks.itemClick(position)
+			}
 
-            if (type == "getStarted" || type == "tips") {
-                bind.next.isVisible = false
-            }
+			if (type == "getStarted" || type == "tips") {
+				bind.next.isVisible = false
+			}
 
-            if (type == "shipping") {
-                bind.root.background.setTint(ContextCompat.getColor(mCtx, R.color.background))
-            }
-            
-            bind.icon.loadUrl(mCtx, item?.icon.toString())
-            bind.iconCard.setCardBackgroundColor(Color.parseColor(item?.color))
-            bind.subTitle.text = item?.description
-            bind.title.text = item?.title
+			if (type == "shipping") {
+				bind.root.background.setTint(ContextCompat.getColor(mCtx , R.color.background))
+			}
 
-        }
-    }
+			bind.icon.loadUrl(mCtx , item?.icon.toString())
+			bind.iconCard.setCardBackgroundColor(Color.parseColor(item?.color))
+			bind.subTitle.text = item?.description
+			bind.title.text = item?.title
+
+		}
+	}
 }

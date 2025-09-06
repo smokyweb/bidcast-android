@@ -7,19 +7,19 @@ import io.bidswipe.app.ui.dashboard.watchStream.StreamViewModel
 import io.bidswipe.app.ui.dashboard.watchStream.WatchStreamFragment
 
 class StreamPagerAdapter(
-    fragmentActivity: FragmentActivity,
-    private val viewModel: StreamViewModel,
+	fragmentActivity : FragmentActivity ,
+	private val viewModel : StreamViewModel ,
 //    private val streamList: List<LiveShowModel>
 ) : FragmentStateAdapter(fragmentActivity) {
 
-    override fun getItemCount(): Int = viewModel.streams.value?.size ?: 0
+	override fun getItemCount() : Int = viewModel.streams.value?.size ?: 0
 
-    override fun createFragment(position: Int): Fragment {
+	override fun createFragment(position : Int) : Fragment {
 
-        val stream = viewModel.streams.value?.get(position) ?: throw IllegalStateException("Stream data not available")
-         viewModel.selectStream(stream)
+		val stream = viewModel.streams.value?.get(position) ?: throw IllegalStateException("Stream data not available")
+		viewModel.selectStream(stream)
 
-        return WatchStreamFragment.newInstance(stream.roomId.toString(), stream.roomId.toString())
+		return WatchStreamFragment.newInstance(stream.roomId.toString() , stream.roomId.toString())
 
-    }
+	}
 }

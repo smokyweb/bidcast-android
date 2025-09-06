@@ -18,74 +18,74 @@ import io.bidswipe.app.ui.dashboard.more.MoreActivity
 import io.bidswipe.app.utils.finish
 import io.bidswipe.app.utils.parse
 
-class SellerStatusFragment : BaseFragment<SellerHubViewModel, FragmentSellerStatusBinding>() {
+class SellerStatusFragment : BaseFragment<SellerHubViewModel , FragmentSellerStatusBinding>() {
 
-    override fun getModel(): Class<SellerHubViewModel> = SellerHubViewModel::class.java
+	override fun getModel() : Class<SellerHubViewModel> = SellerHubViewModel::class.java
 
-    override fun getBind(
-        inflater: LayoutInflater,
-        view: ViewGroup?,
-    ) = FragmentSellerStatusBinding.inflate(inflater, view, false)
-
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
-        bind.header.onBackClick {
-            finish()
-        }
-
-        bind.contactButton.setOnClickListener {
-            startActivity(Intent(mCtx, MoreActivity::class.java).putExtra("slug", "contactUs"))
-
-        }
-
-        viewModel.getSellerStatus()
-        viewModel.getSellerStatusRepo.observe(viewLifecycleOwner) {
-            when (it) {
-                is Resource.Success -> {
-
-                    val mData = it.value.data
-
-                    val marketplaceVendor = mData?.marketplaceVendor
-                    val liveSellVendor = mData?.liveSellVendor
-
-                    if (marketplaceVendor != null) {
-                        bind.vendor.status.text = marketplaceVendor.status
-                        bind.vendor.title.text = marketplaceVendor.title
-                        bind.vendor.subTitle.text = "Seller Rating: ${marketplaceVendor.sellerRating}/5"
-                    }
-                    if (liveSellVendor != null) {
-                        bind.sender.status.text = liveSellVendor.status
-                        bind.sender.title.text = liveSellVendor.title
-                        bind.sender.subTitle.text = "Submitted: ${liveSellVendor.submitted}"
+	override fun getBind(
+		inflater : LayoutInflater ,
+		view : ViewGroup? ,
+	) = FragmentSellerStatusBinding.inflate(inflater , view , false)
 
 
-                    }
-                }
+	override fun onViewCreated(view : View , savedInstanceState : Bundle?) {
+		super.onViewCreated(view , savedInstanceState)
 
-                is Resource.Error -> {
-                    if (it.isNetworkError) {
-                        errorToast(getString(R.string.no_internet))
-                    } else {
-                        it.parse(mCtx, TAG, object : AlertClicks{
-                            override fun primaryClick(dialog : AppBottomSheet) {
-                                dialog.dismiss()
-                            }
+		bind.header.onBackClick {
+			finish()
+		}
 
-                            override fun secondaryClick(dialog : AppBottomSheet) {
-                                dialog.dismiss()
-                            }
+		bind.contactButton.setOnClickListener {
+			startActivity(Intent(mCtx , MoreActivity::class.java).putExtra("slug" , "contactUs"))
 
-                        })
-                    }
-                }
+		}
 
-                else -> {}
+		viewModel.getSellerStatus()
+		viewModel.getSellerStatusRepo.observe(viewLifecycleOwner) {
+			when (it) {
+				is Resource.Success -> {
 
-            }
-        }
+					val mData = it.value.data
 
-    }
+					val marketplaceVendor = mData?.marketplaceVendor
+					val liveSellVendor = mData?.liveSellVendor
+
+					if (marketplaceVendor != null) {
+						bind.vendor.status.text = marketplaceVendor.status
+						bind.vendor.title.text = marketplaceVendor.title
+						bind.vendor.subTitle.text = "Seller Rating: ${marketplaceVendor.sellerRating}/5"
+					}
+					if (liveSellVendor != null) {
+						bind.sender.status.text = liveSellVendor.status
+						bind.sender.title.text = liveSellVendor.title
+						bind.sender.subTitle.text = "Submitted: ${liveSellVendor.submitted}"
+
+
+					}
+				}
+
+				is Resource.Error -> {
+					if (it.isNetworkError) {
+						errorToast(getString(R.string.no_internet))
+					} else {
+						it.parse(mCtx , TAG , object : AlertClicks {
+							override fun primaryClick(dialog : AppBottomSheet) {
+								dialog.dismiss()
+							}
+
+							override fun secondaryClick(dialog : AppBottomSheet) {
+								dialog.dismiss()
+							}
+
+						})
+					}
+				}
+
+				else -> {}
+
+			}
+		}
+
+	}
 
 }

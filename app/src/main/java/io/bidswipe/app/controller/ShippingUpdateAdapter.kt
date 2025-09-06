@@ -8,26 +8,26 @@ import io.bidswipe.app.network.response.GetOrderDetailsResponse
 import io.bidswipe.app.utils.Utils
 
 class ShippingUpdateAdapter(
-    val mList: MutableList<GetOrderDetailsResponse.Data.ShippingTracking?>,
-) : BaseAdapter<GetOrderDetailsResponse.Data.ShippingTracking, ShippingUpdateItemBinding>(mList) {
+	val mList : MutableList<GetOrderDetailsResponse.Data.ShippingTracking?> ,
+) : BaseAdapter<GetOrderDetailsResponse.Data.ShippingTracking , ShippingUpdateItemBinding>(mList) {
 
-    override fun bindView(inflater: LayoutInflater, parent: ViewGroup) =
-        ShippingUpdateItemBinding.inflate(inflater, parent, false)
+	override fun bindView(inflater : LayoutInflater , parent : ViewGroup) =
+		ShippingUpdateItemBinding.inflate(inflater , parent , false)
 
-    override fun onBind(
-        holder: BaseViewHolder<ShippingUpdateItemBinding>,
-        position: Int,
-        item: GetOrderDetailsResponse.Data.ShippingTracking?,
-    ) {
-        with(holder) {
+	override fun onBind(
+		holder : BaseViewHolder<ShippingUpdateItemBinding> ,
+		position : Int ,
+		item : GetOrderDetailsResponse.Data.ShippingTracking? ,
+	) {
+		with(holder) {
 
-            bind.title.text = item?.title.toString()
-            bind.subTitle.text = Utils.getFormattedDateTime(
-                "yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'",
-                "MMM dd, yyyy - HH:mm",
-                item?.createdAt.toString()
-            )
+			bind.title.text = item?.title.toString()
+			bind.subTitle.text = Utils.getFormattedDateTime(
+				"yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'" ,
+				"MMM dd, yyyy - HH:mm" ,
+				item?.createdAt.toString()
+			)
 
-        }
-    }
+		}
+	}
 }

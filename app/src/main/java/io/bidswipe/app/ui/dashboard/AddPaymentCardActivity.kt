@@ -27,161 +27,159 @@ import kotlin.getValue
 
 class AddPaymentCardActivity : BaseActivity() {
 
-    private val bind by bind(ActivityAddPaymentCardBinding::inflate)
+	private val bind by bind(ActivityAddPaymentCardBinding::inflate)
 
-    private val viewModel by viewModels<DashViewModel>()
+	private val viewModel by viewModels<DashViewModel>()
 
-    private var mSheet : BottomSheetDialog? = null
-    private var isShowing = false
+	private var mSheet : BottomSheetDialog? = null
+	private var isShowing = false
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(bind.root)
+	override fun onCreate(savedInstanceState : Bundle?) {
+		super.onCreate(savedInstanceState)
+		setContentView(bind.root)
 
-        log("GET PAYMENT CARD")
+		log("GET PAYMENT CARD")
 
-        bind.header.onBackClick { finish() }
+		bind.header.onBackClick { finish() }
 
-        bind.expiryDate.setOnClickListener {
-            showDatePicker {
-                bind.expiryDate.setText(it)
-            }
-        }
-
-
-        bind.addCard.setOnClickListener {
-
-            when {
-
-                bind.name.value().validator().nonEmpty().check().not() -> {
-                    Alerts.error(this, "Enter Card Holder Name")
-                    bind.name.requestFocus()
-                    showKeyboard(bind.name)
-                }
-
-                bind.cardNumber.value().validator().nonEmpty().check().not() -> {
-                    Alerts.error(this, "Enter Card Number")
-                    bind.cardNumber.requestFocus()
-                    showKeyboard(bind.cardNumber)
-                }
-
-                bind.cardNumber.value().validator().minLength(16).check().not() -> {
-                    Alerts.error(this, "Card Digit should be 12")
-                    bind.cardNumber.requestFocus()
-                    showKeyboard(bind.cardNumber)
-                }
-
-                bind.expiryDate.value().validator().nonEmpty().check().not() -> {
-                    Alerts.error(this, "Enter Expiry Date")
-                    bind.expiryDate.requestFocus()
-                    showKeyboard(bind.expiryDate)
-                }
-
-                bind.csv.value().validator().nonEmpty().check().not() -> {
-                    Alerts.error(this, "Enter CVV")
-                    bind.csv.requestFocus()
-                    showKeyboard(bind.csv)
-                }
-
-                bind.csv.value().validator().minLength(3).check().not() -> {
-                    Alerts.error(this, "Enter Valid CVV")
-                    bind.csv.requestFocus()
-                    showKeyboard(bind.csv)
-                }
-
-                else -> {
-
-                    hideKeyboard()
-
-                    bind.loader.isVisible = true
-
-                    val cardData = PaymentCardModel(
-                        bind.cardNumber.value().replace(" ",""),
-                        bind.csv.value(),
-                        bind.expiryDate.value()
-                    )
-
-                    viewModel.addPaymentCard(
-                        cardData
-                    )
-
-                }
-
-            }
-            /*
-                        if (bind.name.value().isEmpty()) {
-                        successSheet(true)
-                    } else {
-                        successSheet()
-                    }*/
-
-        }
+		bind.expiryDate.setOnClickListener {
+			showDatePicker {
+				bind.expiryDate.setText(it)
+			}
+		}
 
 
-        viewModel.addPaymentCardRepo.observe(this) {
-            when (it) {
-                is Resource.Success -> {
-                    runSafe {
-                        bind.loader.isVisible = false
+		bind.addCard.setOnClickListener {
 
-                        Alerts.success(this, "Payment card Added")
+			when {
 
-                        App.getProfile()
+				bind.name.value().validator().nonEmpty().check().not() -> {
+					Alerts.error(this , "Enter Card Holder Name")
+					bind.name.requestFocus()
+					showKeyboard(bind.name)
+				}
 
-                        this.setResult(RESULT_OK)
+				bind.cardNumber.value().validator().nonEmpty().check().not() -> {
+					Alerts.error(this , "Enter Card Number")
+					bind.cardNumber.requestFocus()
+					showKeyboard(bind.cardNumber)
+				}
 
-                        finish()
+				bind.cardNumber.value().validator().minLength(16).check().not() -> {
+					Alerts.error(this , "Card Digit should be 12")
+					bind.cardNumber.requestFocus()
+					showKeyboard(bind.cardNumber)
+				}
 
-                    }
-                }
+				bind.expiryDate.value().validator().nonEmpty().check().not() -> {
+					Alerts.error(this , "Enter Expiry Date")
+					bind.expiryDate.requestFocus()
+					showKeyboard(bind.expiryDate)
+				}
 
-                is Resource.Error -> {
-                    bind.loader.isVisible = false
-                    it.parse(this, TAG, object : AlertClicks {
-                        override fun primaryClick(dialog: AppBottomSheet) {
-                            dialog.dismiss()
-                        }
+				bind.csv.value().validator().nonEmpty().check().not() -> {
+					Alerts.error(this , "Enter CVV")
+					bind.csv.requestFocus()
+					showKeyboard(bind.csv)
+				}
 
-                        override fun secondaryClick(dialog: AppBottomSheet) {
-                            dialog.dismiss()
-                        }
-                    })
-                }
+				bind.csv.value().validator().minLength(3).check().not() -> {
+					Alerts.error(this , "Enter Valid CVV")
+					bind.csv.requestFocus()
+					showKeyboard(bind.csv)
+				}
 
-                else -> {}
-            }
-        }
+				else -> {
 
-    }
+					hideKeyboard()
+
+					bind.loader.isVisible = true
+
+					val cardData = PaymentCardModel(
+						bind.cardNumber.value().replace(" " , "") ,
+						bind.csv.value() ,
+						bind.expiryDate.value()
+					)
+
+					viewModel.addPaymentCard(
+						cardData
+					)
+
+				}
+
+			}
+			/*
+						if (bind.name.value().isEmpty()) {
+						successSheet(true)
+					} else {
+						successSheet()
+					}*/
+
+		}
 
 
-    private fun showDatePicker(call: (String) -> Unit) {
-        val alBind = DatePickerLayoutBinding.bind(LayoutInflater.from(this).inflate(layout.date_picker_layout, null))
+		viewModel.addPaymentCardRepo.observe(this) {
+			when (it) {
+				is Resource.Success -> {
+					runSafe {
+						bind.loader.isVisible = false
 
-        mSheet = Alerts.appBottomSheet(this, false, alBind)
+						Alerts.success(this , "Payment card Added")
 
-        isShowing = if (mSheet?.isShowing == true) {
-            mSheet?.dismiss()
-            false
-        }
+						App.getProfile()
 
-        else {
-            mSheet?.show()
-            true
-        }
+						this.setResult(RESULT_OK)
 
-        alBind.cancel.setOnClickListener {
-            mSheet?.dismiss()
-            isShowing = false
-        }
+						finish()
 
-        alBind.select.setOnClickListener {
-            val date = alBind.timePicker.date
-            mSheet?.dismiss()
-            isShowing = false
-            call(Utils.getSimpleDate("YYYY-MM").format(date))
-        }
+					}
+				}
 
-    }
+				is Resource.Error -> {
+					bind.loader.isVisible = false
+					it.parse(this , TAG , object : AlertClicks {
+						override fun primaryClick(dialog : AppBottomSheet) {
+							dialog.dismiss()
+						}
+
+						override fun secondaryClick(dialog : AppBottomSheet) {
+							dialog.dismiss()
+						}
+					})
+				}
+
+				else -> {}
+			}
+		}
+
+	}
+
+
+	private fun showDatePicker(call : (String) -> Unit) {
+		val alBind = DatePickerLayoutBinding.bind(LayoutInflater.from(this).inflate(layout.date_picker_layout , null))
+
+		mSheet = Alerts.appBottomSheet(this , false , alBind)
+
+		isShowing = if (mSheet?.isShowing == true) {
+			mSheet?.dismiss()
+			false
+		} else {
+			mSheet?.show()
+			true
+		}
+
+		alBind.cancel.setOnClickListener {
+			mSheet?.dismiss()
+			isShowing = false
+		}
+
+		alBind.select.setOnClickListener {
+			val date = alBind.timePicker.date
+			mSheet?.dismiss()
+			isShowing = false
+			call(Utils.getSimpleDate("YYYY-MM").format(date))
+		}
+
+	}
 
 }

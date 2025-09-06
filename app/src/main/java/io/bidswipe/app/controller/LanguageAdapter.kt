@@ -9,27 +9,27 @@ import io.bidswipe.app.model.LangModel
 import io.bidswipe.app.utils.Prefs
 
 class LanguageAdapter(
-    private val languages: List<LangModel?>,
-    private val mClicks: RecyclerClicks,
-) : BaseAdapter<LangModel, CheckboxItemBinding>(languages) {
-    override fun bindView(inflater: LayoutInflater, parent: ViewGroup) =
-        CheckboxItemBinding.inflate(inflater, parent, false)
+	private val languages : List<LangModel?> ,
+	private val mClicks : RecyclerClicks ,
+) : BaseAdapter<LangModel , CheckboxItemBinding>(languages) {
+	override fun bindView(inflater : LayoutInflater , parent : ViewGroup) =
+		CheckboxItemBinding.inflate(inflater , parent , false)
 
-    override fun onBind(
-        holder: BaseViewHolder<CheckboxItemBinding>,
-        position: Int,
-        item: LangModel?,
-    ) {
-        with(holder) {
+	override fun onBind(
+		holder : BaseViewHolder<CheckboxItemBinding> ,
+		position : Int ,
+		item : LangModel? ,
+	) {
+		with(holder) {
 
-            val isSelected = languages[position]?.locale?.language == Prefs(mCtx).localeLanguage()
+			val isSelected = languages[position]?.locale?.language == Prefs(mCtx).localeLanguage()
 
-            bind.item.text = languages[position]?.title
-            bind.root.isChecked = isSelected
+			bind.item.text = languages[position]?.title
+			bind.root.isChecked = isSelected
 
-            bind.root.addOnCheckedStateChangedListener { _, _ ->
-                mClicks.itemClick(position)
-            }
-        }
-    }
+			bind.root.addOnCheckedStateChangedListener { _ , _ ->
+				mClicks.itemClick(position)
+			}
+		}
+	}
 }

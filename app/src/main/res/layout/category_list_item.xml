@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/click"
+    style="@style/shadowStyle"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:id="@+id/click"
-    android:gravity="center_vertical"
     android:layout_margin="@dimen/half_margin"
-    style="@style/shadowStyle">
+    android:gravity="center_vertical">
 
     <TextView
         android:id="@+id/category"
@@ -27,8 +27,8 @@
         style="@style/Widget.AppCompat.CompoundButton.RadioButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:visibility="gone"
-        android:focusable="false"/>
+        android:focusable="false"
+        android:visibility="gone" />
 
 
 </LinearLayout>

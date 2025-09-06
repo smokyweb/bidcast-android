@@ -17,50 +17,50 @@ import kotlin.getValue
 
 class TutorialsActivity : BaseActivity() {
 
-    private val bind by bind(ActivityTutorialsBinding::inflate)
-    private val viewModel by viewModels<DashViewModel>()
+	private val bind by bind(ActivityTutorialsBinding::inflate)
+	private val viewModel by viewModels<DashViewModel>()
 
-    private var type = ""
-    private lateinit var navController: NavController
-    private lateinit var navHostFragment: NavHostFragment
+	private var type = ""
+	private lateinit var navController : NavController
+	private lateinit var navHostFragment : NavHostFragment
 
-    var scheduleShowLauncher =
-        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            if (result.resultCode == Activity.RESULT_OK) {
+	var scheduleShowLauncher =
+		registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+			if (result.resultCode == Activity.RESULT_OK) {
 
-                if (result.data != null){
-                    viewModel.currentStep = 2
+				if (result.data != null) {
+					viewModel.currentStep = 2
 
-                    log(
-                        "DATA : ${result.data?.getParcelableExtra<TutorialShowModel>("title" ) }"
-                    )
+					log(
+						"DATA : ${result.data?.getParcelableExtra<TutorialShowModel>("title")}"
+					)
 
-                    viewModel.showData.value = result.data?.getParcelableExtra("title")
+					viewModel.showData.value = result.data?.getParcelableExtra("title")
 
-                }
+				}
 
-            }
+			}
 
-        }
+		}
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(bind.root)
+	override fun onCreate(savedInstanceState : Bundle?) {
+		super.onCreate(savedInstanceState)
+		setContentView(bind.root)
 
 
-        type = intent.getStringExtra("type").toString()
+		type = intent.getStringExtra("type").toString()
 
-        navHostFragment =
-            supportFragmentManager.findFragmentById(R.id.fragmentContainer) as NavHostFragment
-        navController = navHostFragment.navController
+		navHostFragment =
+			supportFragmentManager.findFragmentById(R.id.fragmentContainer) as NavHostFragment
+		navController = navHostFragment.navController
 
-        val id = when (type.trim()) {
-            "promoteTools" -> R.id.howToSellFragment
-            else -> {
-                R.id.getStartedFragment
-            }
-        }
-        navController.setNewStart(id, R.navigation.tutorials_nav_graph)
+		val id = when (type.trim()) {
+			"promoteTools" -> R.id.howToSellFragment
+			else -> {
+				R.id.getStartedFragment
+			}
+		}
+		navController.setNewStart(id , R.navigation.tutorials_nav_graph)
 
-    }
+	}
 }

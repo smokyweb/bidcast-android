@@ -14,7 +14,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:primaryIconDrawable="@drawable/ic_detail"
         app:showBackButton="true"
-        app:showPrimaryIcon="true"/>
+        app:showPrimaryIcon="true" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -29,15 +29,15 @@
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
             android:orientation="horizontal"
-            android:paddingVertical="@dimen/half_margin"
-            android:paddingHorizontal="@dimen/margin">
+            android:paddingHorizontal="@dimen/margin"
+            android:paddingVertical="@dimen/half_margin">
 
             <com.makeramen.roundedimageview.RoundedImageView
                 android:id="@+id/userImage"
                 android:layout_width="44dp"
                 android:layout_height="44dp"
-                android:src="@drawable/avatar"
                 android:scaleType="centerCrop"
+                android:src="@drawable/avatar"
                 app:riv_corner_radius="100dp" />
 
             <LinearLayout
@@ -77,12 +77,12 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/margin"
+            android:layout_marginVertical="@dimen/half_margin"
             android:background="@drawable/card_16"
             android:backgroundTint="@color/outline"
             android:gravity="center_vertical"
             android:orientation="vertical"
-            android:layout_marginVertical="@dimen/half_margin"
-            android:layout_marginHorizontal="@dimen/margin"
             android:padding="12dp">
 
             <LinearLayout
@@ -233,7 +233,7 @@
         android:id="@+id/loader"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone"/>
+        android:visibility="gone" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

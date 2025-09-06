@@ -1,133 +1,133 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
-	xmlns:app="http://schemas.android.com/apk/res-auto"
-	style="@style/cardStyle"
-	android:layout_width="match_parent"
-	android:layout_height="wrap_content"
-	android:layout_margin="@dimen/half_margin"
-	android:backgroundTint="@color/background">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    style="@style/cardStyle"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="@dimen/half_margin"
+    android:backgroundTint="@color/background">
 
-	<LinearLayout
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:layout_margin="@dimen/half_margin"
-		android:orientation="vertical">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/half_margin"
+        android:orientation="vertical">
 
-		<LinearLayout
-			android:id="@+id/topLayout"
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:orientation="horizontal">
+        <LinearLayout
+            android:id="@+id/topLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
 
-			<TextView
-				android:id="@+id/exSpace"
-				style="@style/TitleLarge"
-				android:layout_width="0dp"
-				android:layout_height="wrap_content"
-				android:layout_weight="1"
-				android:text="@string/added_product" />
+            <TextView
+                android:id="@+id/exSpace"
+                style="@style/TitleLarge"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/added_product" />
 
-			<androidx.constraintlayout.widget.ConstraintLayout
-				android:id="@+id/secondary"
-				android:layout_width="32dp"
-				android:layout_height="32dp"
-				android:layout_marginEnd="@dimen/half_margin"
-				app:layout_constraintBottom_toBottomOf="parent"
-				app:layout_constraintStart_toStartOf="parent"
-				app:layout_constraintTop_toTopOf="parent">
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/secondary"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_marginEnd="@dimen/half_margin"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
 
-				<androidx.appcompat.widget.AppCompatImageView
-					android:id="@+id/trash"
-					android:layout_width="match_parent"
-					android:layout_height="match_parent"
-					android:background="?selectableItemBackgroundBorderless"
-					android:padding="4dp"
-					android:src="@drawable/trash"
-					app:layout_constraintBottom_toBottomOf="parent"
-					app:layout_constraintStart_toStartOf="parent"
-					app:layout_constraintTop_toTopOf="parent"
-					app:tint="@color/onBackground" />
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/trash"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="?selectableItemBackgroundBorderless"
+                    android:padding="4dp"
+                    android:src="@drawable/trash"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:tint="@color/onBackground" />
 
-			</androidx.constraintlayout.widget.ConstraintLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
-			<androidx.constraintlayout.widget.ConstraintLayout
-				android:id="@+id/primary"
-				android:layout_width="32dp"
-				android:layout_height="32dp"
-				android:layout_marginEnd="@dimen/half_margin"
-				app:layout_constraintBottom_toBottomOf="parent"
-				app:layout_constraintEnd_toEndOf="parent">
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/primary"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_marginEnd="@dimen/half_margin"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent">
 
-				<androidx.appcompat.widget.AppCompatImageView
-					android:id="@+id/edit"
-					android:layout_width="match_parent"
-					android:layout_height="match_parent"
-					android:padding="4dp"
-					android:src="@drawable/ic_edit"
-					android:visibility="visible"
-					app:layout_constraintBottom_toBottomOf="parent"
-					app:layout_constraintEnd_toEndOf="parent"
-					app:layout_constraintTop_toTopOf="parent" />
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/edit"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:padding="4dp"
+                    android:src="@drawable/ic_edit"
+                    android:visibility="visible"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
-			</androidx.constraintlayout.widget.ConstraintLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
-		</LinearLayout>
+        </LinearLayout>
 
-		<LinearLayout
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:orientation="horizontal">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
 
-			<com.google.android.material.card.MaterialCardView
-				style="@style/cardStyle"
-				android:layout_width="80dp"
-				android:layout_height="80dp"
-				app:cardCornerRadius="10dp"
-				app:cardElevation="0dp">
+            <com.google.android.material.card.MaterialCardView
+                style="@style/cardStyle"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                app:cardCornerRadius="10dp"
+                app:cardElevation="0dp">
 
-				<androidx.appcompat.widget.AppCompatImageView
-					android:id="@+id/img"
-					android:layout_width="match_parent"
-					android:layout_height="match_parent"
-					android:scaleType="fitXY"
-					android:src="@drawable/shoe" />
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/img"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="fitXY"
+                    android:src="@drawable/shoe" />
 
-			</com.google.android.material.card.MaterialCardView>
+            </com.google.android.material.card.MaterialCardView>
 
-			<LinearLayout
-				android:layout_width="0dp"
-				android:layout_height="match_parent"
-				android:layout_marginHorizontal="@dimen/half_margin"
-				android:layout_weight="1"
-				android:gravity="center_vertical"
-				android:orientation="vertical">
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginHorizontal="@dimen/half_margin"
+                android:layout_weight="1"
+                android:gravity="center_vertical"
+                android:orientation="vertical">
 
-				<TextView
-					android:id="@+id/productName"
-					style="@style/TitleLarge"
-					android:layout_width="match_parent"
-					android:layout_height="wrap_content"
-					android:text="White Sneakers" />
+                <TextView
+                    android:id="@+id/productName"
+                    style="@style/TitleLarge"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="White Sneakers" />
 
-				<TextView
-					android:id="@+id/prod_sub_title"
-					style="@style/BodySmall"
-					android:layout_width="match_parent"
-					android:layout_height="wrap_content"
-					android:text="Sports &amp; Lifestyle" />
+                <TextView
+                    android:id="@+id/prod_sub_title"
+                    style="@style/BodySmall"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Sports &amp; Lifestyle" />
 
-				<TextView
-					android:id="@+id/quantity"
-					style="@style/BodySmall"
-					android:layout_width="match_parent"
-					android:layout_height="wrap_content"
-					android:text="Quantity: 1" />
+                <TextView
+                    android:id="@+id/quantity"
+                    style="@style/BodySmall"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Quantity: 1" />
 
-			</LinearLayout>
+            </LinearLayout>
 
-		</LinearLayout>
+        </LinearLayout>
 
 
-	</LinearLayout>
+    </LinearLayout>
 
 </com.google.android.material.card.MaterialCardView>

@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:background="@drawable/bottom_sheet_back"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:background="@drawable/bottom_sheet_back">
 
     <LinearLayout
         android:id="@+id/header"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
-        android:padding="@dimen/margin"
         android:orientation="horizontal"
+        android:padding="@dimen/margin"
         app:layout_constraintTop_toTopOf="parent">
 
         <TextView
@@ -26,8 +26,8 @@
             android:id="@+id/close"
             android:layout_width="44dp"
             android:layout_height="44dp"
-            android:padding="12dp"
             android:alpha="0.7"
+            android:padding="12dp"
             android:src="@drawable/close_ic"
             app:tint="@color/tertiary" />
 
@@ -37,16 +37,16 @@
         android:id="@+id/divider"
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        app:layout_constraintTop_toBottomOf="@id/header"
-        app:dividerColor="@color/outline"/>
+        app:dividerColor="@color/outline"
+        app:layout_constraintTop_toBottomOf="@id/header" />
 
     <LinearLayout
         android:id="@+id/contentLayout"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:orientation="vertical"
         app:layout_constraintDimensionRatio="3:7"
-        app:layout_constraintTop_toBottomOf="@id/divider"
-        android:orientation="vertical">
+        app:layout_constraintTop_toBottomOf="@id/divider">
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/searchLayout"
@@ -57,10 +57,10 @@
             android:layout_marginBottom="@dimen/margin"
             app:boxBackgroundColor="@color/surface"
             app:boxStrokeWidth="2dp"
-            app:endIconTint="@color/scrim"
             app:endIconMode="custom"
-            app:startIconDrawable="@drawable/search"
-            app:layout_constraintTop_toBottomOf="@id/divider">
+            app:endIconTint="@color/scrim"
+            app:layout_constraintTop_toBottomOf="@id/divider"
+            app:startIconDrawable="@drawable/search">
 
             <com.google.android.material.textfield.MaterialAutoCompleteTextView
                 android:id="@+id/email"
@@ -76,9 +76,9 @@
             android:id="@+id/chipGroupScroll"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_margin="@dimen/margin"
             android:scrollbars="none"
-            app:layout_constraintTop_toBottomOf="@id/searchLayout"
-            android:layout_margin="@dimen/margin">
+            app:layout_constraintTop_toBottomOf="@id/searchLayout">
 
             <com.google.android.material.chip.ChipGroup
                 android:id="@+id/chipGroup"
@@ -94,32 +94,32 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/half_margin"
+            android:nestedScrollingEnabled="false"
             android:orientation="vertical"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            tools:itemCount="5"
-            android:nestedScrollingEnabled="false"
-            tools:listitem="@layout/shop_sheet_item"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toBottomOf="@id/chipGroupScroll"
-            app:layout_constraintBottom_toBottomOf="parent"/>
+            tools:itemCount="5"
+            tools:listitem="@layout/shop_sheet_item" />
 
     </LinearLayout>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent"
-        android:src="@drawable/ic_add"
-        app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginEnd="@dimen/padding"
-        android:layout_marginBottom="@dimen/padding"/>
+        android:layout_marginBottom="@dimen/padding"
+        android:src="@drawable/ic_add"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <io.bidswipe.app.ui.custom.LoaderView
         android:id="@+id/loader"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintTop_toBottomOf="@id/divider"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
-        android:visibility="gone"/>
+        app:layout_constraintTop_toBottomOf="@id/divider" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

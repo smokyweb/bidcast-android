@@ -16,100 +16,106 @@ import io.bidswipe.app.network.response.GetSubCategoriesResponse
 import io.bidswipe.app.ui.dashboard.DashViewModel
 import io.bidswipe.app.utils.toDash
 
-class SubCategoryFragment : BaseFragment<DashViewModel, FragmentSubcategoryBinding>() {
+class SubCategoryFragment : BaseFragment<DashViewModel , FragmentSubcategoryBinding>() {
 
-    override fun getModel() = DashViewModel::class.java
+	override fun getModel() = DashViewModel::class.java
 
-    override fun getBind(
-        inflater: LayoutInflater,
-        view: ViewGroup?,
-    ) = FragmentSubcategoryBinding.inflate(inflater, view, false)
+	override fun getBind(
+		inflater : LayoutInflater ,
+		view : ViewGroup? ,
+	) = FragmentSubcategoryBinding.inflate(inflater , view , false)
 
-    private lateinit var subCategoryRecyclerAdapter: SubCategoryRecyclerAdapter
-    private val subCategoryList = mutableListOf<GetSubCategoriesResponse.Data?>()
+	private lateinit var subCategoryRecyclerAdapter : SubCategoryRecyclerAdapter
+	private val subCategoryList = mutableListOf<GetSubCategoriesResponse.Data?>()
 
-    private val categoryClicks = object : RecyclerClicks {
-        override fun itemClick(pos: Int, status: String?) {
-            if (status != null) {
-                subCategoryList[pos]?.subcategories?.get(status.toInt())?.isSelected = !(subCategoryList[pos]?.subcategories?.get(status.toInt())?.isSelected?: false)
-                subCategoryRecyclerAdapter.notifyItemChanged(pos)
-        }
-    }
-    }
+	private val categoryClicks = object : RecyclerClicks {
+		override fun itemClick(pos : Int , status : String?) {
+			if (status != null) {
+				subCategoryList[pos]?.subcategories?.get(status.toInt())?.isSelected =
+					! (subCategoryList[pos]?.subcategories?.get(status.toInt())?.isSelected ?: false)
+				subCategoryRecyclerAdapter.notifyItemChanged(pos)
+			}
+		}
+	}
 
-    @SuppressLint("NotifyDataSetChanged")
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+	@SuppressLint("NotifyDataSetChanged")
+	override fun onViewCreated(view : View , savedInstanceState : Bundle?) {
+		super.onViewCreated(view , savedInstanceState)
 
-        subCategoryRecyclerAdapter = SubCategoryRecyclerAdapter(subCategoryList, categoryClicks)
-        bind.recyclerView.adapter = subCategoryRecyclerAdapter
+		subCategoryRecyclerAdapter = SubCategoryRecyclerAdapter(subCategoryList , categoryClicks)
+		bind.recyclerView.adapter = subCategoryRecyclerAdapter
 
-        bind.header.setOnClickListener {
-            findNavController().popBackStack()
-        }
-        bind.confirmButton.setOnClickListener {
-            val selectedSubCategories = subCategoryList.filter { it?.subcategories?.filter { it1->it1?.isSelected == true }?.isNotEmpty() == true }.toList()
-            if (selectedSubCategories.isNotEmpty()) {
-                val selectedCategoryIds = viewModel.selectedCategories.mapNotNull { it.id }
-                val selectedSubCategoryIds=mutableListOf<Int>()
-                selectedSubCategories.forEach { it?.subcategories?.filter {
-                        it1->it1?.isSelected == true }?.map { it?.id?.let { element -> selectedSubCategoryIds.add(element) } }}
-                viewModel.userFavorite(
-                    categoryIds = selectedCategoryIds,
-                    subcategoriesIds = selectedSubCategoryIds
-                )
-                val fromAccount = arguments?.getBoolean("fromAccount", false)
-                viewModel.userFavoriteRepo.observe(viewLifecycleOwner) {
-                    when (it) {
-                        is Resource.Success -> {
-                            successToast("Saved successfully")
-                            if (fromAccount == true) {
-                                requireActivity().finish()
-                            } else {
-                                startActivity(mCtx.toDash())
-                                requireActivity().finish()
-                            }
-                        }
-                        is Resource.Error -> {
-                            errorToast("Failed to save")
-                        }
-                        else -> {}
-                    }
-                }
-            } else {
-                errorToast("Please select at least one category")
-            }
-        }
+		bind.header.setOnClickListener {
+			findNavController().popBackStack()
+		}
+		bind.confirmButton.setOnClickListener {
+			val selectedSubCategories = subCategoryList.filter { it?.subcategories?.filter { it1 -> it1?.isSelected == true }?.isNotEmpty() == true }.toList()
+			if (selectedSubCategories.isNotEmpty()) {
+				val selectedCategoryIds = viewModel.selectedCategories.mapNotNull { it.id }
+				val selectedSubCategoryIds = mutableListOf<Int>()
+				selectedSubCategories.forEach {
+					it?.subcategories?.filter { it1 -> it1?.isSelected == true }?.map { it?.id?.let { element -> selectedSubCategoryIds.add(element) } }
+				}
+				viewModel.userFavorite(
+					categoryIds = selectedCategoryIds ,
+					subcategoriesIds = selectedSubCategoryIds
+				)
+				val fromAccount = arguments?.getBoolean("fromAccount" , false)
+				viewModel.userFavoriteRepo.observe(viewLifecycleOwner) {
+					when (it) {
+						is Resource.Success -> {
+							successToast("Saved successfully")
+							if (fromAccount == true) {
+								requireActivity().finish()
+							} else {
+								startActivity(mCtx.toDash())
+								requireActivity().finish()
+							}
+						}
 
-        val selectedCategoryIds = viewModel.selectedCategories.mapNotNull { it.id }
-        if (selectedCategoryIds.isNotEmpty()) {
-            bind.loader.isVisible = true
-            viewModel.getSubCategories(selectedCategoryIds)
+						is Resource.Error -> {
+							errorToast("Failed to save")
+						}
 
-            viewModel.getSubCategoriesRepo.observe(viewLifecycleOwner) {
-                when (it) {
-                    is Resource.Success -> {
-                        bind.loader.isVisible = false
-                        subCategoryList.clear()
+						else -> {}
+					}
+				}
+			} else {
+				errorToast("Please select at least one category")
+			}
+		}
 
-                        val sortedList = (it.value.data ?: emptyList())
-                            .sortedByDescending { category ->
-                                !category?.subcategories.isNullOrEmpty()
-                            }
+		val selectedCategoryIds = viewModel.selectedCategories.mapNotNull { it.id }
+		if (selectedCategoryIds.isNotEmpty()) {
+			bind.loader.isVisible = true
+			viewModel.getSubCategories(selectedCategoryIds)
 
-                        subCategoryList.addAll(sortedList)
-                        subCategoryRecyclerAdapter.notifyDataSetChanged()
-                    }
-                    is Resource.Error -> {
-                        bind.loader.isVisible = false
-                        errorToast("Failed to load categories")
+			viewModel.getSubCategoriesRepo.observe(viewLifecycleOwner) {
+				when (it) {
+					is Resource.Success -> {
+						bind.loader.isVisible = false
+						subCategoryList.clear()
 
-                    }
-                    else -> {}
-                }
-            }
-        }
+						val sortedList = (it.value.data ?: emptyList())
+							.sortedByDescending { category ->
+								! category?.subcategories.isNullOrEmpty()
+							}
 
-    }
+						subCategoryList.addAll(sortedList)
+						subCategoryRecyclerAdapter.notifyDataSetChanged()
+					}
+
+					is Resource.Error -> {
+						bind.loader.isVisible = false
+						errorToast("Failed to load categories")
+
+					}
+
+					else -> {}
+				}
+			}
+		}
+
+	}
 
 }

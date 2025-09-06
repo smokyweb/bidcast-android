@@ -4,7 +4,7 @@ import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 
 object FireRef {
-	private val dbRef =  Firebase.database.reference
+	private val dbRef = Firebase.database.reference
 
 	//NODE CONSTANTS
 	const val LIVE_SESSIONS_REF = "live_sessions"

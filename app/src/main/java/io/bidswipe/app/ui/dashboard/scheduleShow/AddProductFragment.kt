@@ -35,304 +35,304 @@ import okhttp3.MultipartBody
 import java.io.File
 
 @SuppressLint("NotifyDataSetChanged")
-class AddProductFragment : BaseFragment<ScheduleShowViewModel, FragmentAddProductBinding>() {
-    override fun getModel(): Class<ScheduleShowViewModel> = ScheduleShowViewModel::class.java
+class AddProductFragment : BaseFragment<ScheduleShowViewModel , FragmentAddProductBinding>() {
+	override fun getModel() : Class<ScheduleShowViewModel> = ScheduleShowViewModel::class.java
 
-    override fun getBind(inflater: LayoutInflater, view: ViewGroup?) =
-        FragmentAddProductBinding.inflate(inflater, view, false)
+	override fun getBind(inflater : LayoutInflater , view : ViewGroup?) =
+		FragmentAddProductBinding.inflate(inflater , view , false)
 
-    private lateinit var productAdapter: ProductAdapter
-    private var productList = mutableListOf<GetMyInventoryResponse.Data?>()
-    private var imagePartList = mutableListOf<MultipartBody.Part?>()
+	private lateinit var productAdapter : ProductAdapter
+	private var productList = mutableListOf<GetMyInventoryResponse.Data?>()
+	private var imagePartList = mutableListOf<MultipartBody.Part?>()
 
-    private val inventoryLauncher =
-        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            if (result.resultCode == Activity.RESULT_OK) {
-                val data = result.data
-                val selectedProducts =
-                    data?.getSerializableExtra("selectedProducts") as? ArrayList<GetMyInventoryResponse.Data>
+	private val inventoryLauncher =
+		registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+			if (result.resultCode == Activity.RESULT_OK) {
+				val data = result.data
+				val selectedProducts =
+					data?.getSerializableExtra("selectedProducts") as? ArrayList<GetMyInventoryResponse.Data>
 
-                Log.d(TAG, "$selectedProducts ")
-                selectedProducts?.forEach {
-                    it.selected = true
-                    if (!productList.any { existing -> existing?.id == it.id }) {
-                        productList.add(it)
-                    }
-                }
+				Log.d(TAG , "$selectedProducts ")
+				selectedProducts?.forEach {
+					it.selected = true
+					if (! productList.any { existing -> existing?.id == it.id }) {
+						productList.add(it)
+					}
+				}
 
-                productAdapter.notifyDataSetChanged()
+				productAdapter.notifyDataSetChanged()
 
-                if (productList.isNotEmpty()) {
-                    bind.noData.isVisible = false
-                    bind.recycler.isVisible = true
-                }
-            }
-        }
+				if (productList.isNotEmpty()) {
+					bind.noData.isVisible = false
+					bind.recycler.isVisible = true
+				}
+			}
+		}
 
-    private var from = ""
+	private var from = ""
 
-    private var mClick = object : RecyclerClicks {
-        override fun itemClick(pos: Int, status: String?) {
-            when (status) {
-                "select" -> {
-                    productList[pos]?.selected = true
-                    productAdapter.notifyItemChanged(pos)
-                }
+	private var mClick = object : RecyclerClicks {
+		override fun itemClick(pos : Int , status : String?) {
+			when (status) {
+				"select" -> {
+					productList[pos]?.selected = true
+					productAdapter.notifyItemChanged(pos)
+				}
 
-                "edit" -> {
-                    startActivity(mCtx.toListProduct().putExtra("product", productList[pos]))
-                }
+				"edit" -> {
+					startActivity(mCtx.toListProduct().putExtra("product" , productList[pos]))
+				}
 
-                "delete" -> {
+				"delete" -> {
 
-                    deleteProductDialog(productList[pos]?.id.toString())
+					deleteProductDialog(productList[pos]?.id.toString())
 
-                }
-            }
-        }
-    }
+				}
+			}
+		}
+	}
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+	override fun onViewCreated(view : View , savedInstanceState : Bundle?) {
+		super.onViewCreated(view , savedInstanceState)
 
-        from = activity?.intent?.getStringExtra("from") ?: ""
+		from = activity?.intent?.getStringExtra("from") ?: ""
 
-        bind.header.onBackClick {
-            findNavController().popBackStack()
-        }
+		bind.header.onBackClick {
+			findNavController().popBackStack()
+		}
 
-        productAdapter = ProductAdapter(productList, mClick)
-        bind.recycler.adapter = productAdapter
+		productAdapter = ProductAdapter(productList , mClick)
+		bind.recycler.adapter = productAdapter
 
-        bind.addProductLayout.setOnClickListener {
-            findNavController().navigate(ids.addProductFragment_to_createProductFragment)
-        }
+		bind.addProductLayout.setOnClickListener {
+			findNavController().navigate(ids.addProductFragment_to_createProductFragment)
+		}
 
-        bind.selectInventoryLayout.setOnClickListener {
-            inventoryLauncher.launch(
-                Intent(mCtx, SellerHubActivity::class.java)
-                    .putExtra("slug", "inventory")
-                    .putExtra("from", "addProduct")
-            )
-        }
+		bind.selectInventoryLayout.setOnClickListener {
+			inventoryLauncher.launch(
+				Intent(mCtx , SellerHubActivity::class.java)
+					.putExtra("slug" , "inventory")
+					.putExtra("from" , "addProduct")
+			)
+		}
 
-        bind.finishBtn.setOnClickListener {
+		bind.finishBtn.setOnClickListener {
 
-            bind.loader.isVisible = true
-            val imagePartList = mutableListOf<MultipartBody.Part?>()
-            val productIdList = mutableListOf<Int>()
+			bind.loader.isVisible = true
+			val imagePartList = mutableListOf<MultipartBody.Part?>()
+			val productIdList = mutableListOf<Int>()
 
-            productList.forEach {
-                if (it?.selected == true) {
-                    productIdList.add(it.id ?: 0)
-                }
-            }
+			productList.forEach {
+				if (it?.selected == true) {
+					productIdList.add(it.id ?: 0)
+				}
+			}
 
-            if (productIdList.isEmpty()) {
-                Alerts.error(mCtx, "Please select product")
-            }
+			if (productIdList.isEmpty()) {
+				Alerts.error(mCtx , "Please select product")
+			}
 
-            imagePartList.add(
-                Utils.imagePart(
-                    "thumbnail[]",
-                    viewModel.thumbnail,
-                    File(viewModel.thumbnail)
-                )
-            )
+			imagePartList.add(
+				Utils.imagePart(
+					"thumbnail[]" ,
+					viewModel.thumbnail ,
+					File(viewModel.thumbnail)
+				)
+			)
 
-            if (from == "showTutorial") {
+			if (from == "showTutorial") {
 
-                val data = Intent()
-                data.putExtra(
-                    "title",
-                    TutorialShowModel(
-                        viewModel.showTitle,
-                        viewModel.categoryId,
-                        viewModel.auctionId,
-                        viewModel.thumbnail,
-                        productIdList.joinToString(",")
-                    )
-                )
+				val data = Intent()
+				data.putExtra(
+					"title" ,
+					TutorialShowModel(
+						viewModel.showTitle ,
+						viewModel.categoryId ,
+						viewModel.auctionId ,
+						viewModel.thumbnail ,
+						productIdList.joinToString(",")
+					)
+				)
 //                data.putExtra("categoryId" , )
 //                data.putExtra("auctionTypeId" , )
 //                data.putExtra("thumbnails" , )
 //                data.putExtra("productIds" , )
-                activity?.setResult(Activity.RESULT_OK, data)
-                finish()
+				activity?.setResult(Activity.RESULT_OK , data)
+				finish()
 
-            } else {
-                viewModel.storeScheduleShow(
-                    title = viewModel.showTitle.request(),
-                    date = viewModel.date.request(),
-                    time = viewModel.time.request(),
-                    categoryId = viewModel.categoryId.request(),
-                    auctionTypeId = viewModel.auctionId.request(),
-                    thumbnails = imagePartList,
-                    productIds = productIdList.joinToString(",").request()
-                )
-            }
+			} else {
+				viewModel.storeScheduleShow(
+					title = viewModel.showTitle.request() ,
+					date = viewModel.date.request() ,
+					time = viewModel.time.request() ,
+					categoryId = viewModel.categoryId.request() ,
+					auctionTypeId = viewModel.auctionId.request() ,
+					thumbnails = imagePartList ,
+					productIds = productIdList.joinToString(",").request()
+				)
+			}
 
-        }
+		}
 
-        bind.loader.isVisible = true
+		bind.loader.isVisible = true
 
-        viewModel.getUserProducts(userId.request(), categoryId = viewModel.categoryId.request())
+		viewModel.getUserProducts(userId.request() , categoryId = viewModel.categoryId.request())
 
-        viewModel.getUserProductsRepo.observe(viewLifecycleOwner) {
-            when (it) {
-                is Resource.Success -> {
-                    bind.loader.isVisible = false
+		viewModel.getUserProductsRepo.observe(viewLifecycleOwner) {
+			when (it) {
+				is Resource.Success -> {
+					bind.loader.isVisible = false
 
-                    val mData = it.value.data
+					val mData = it.value.data
 
-                    productList.clear()
+					productList.clear()
 
-                    mData?.forEach {
-                        productList.add(it)
-                    }
+					mData?.forEach {
+						productList.add(it)
+					}
 
-                    productAdapter.notifyDataSetChanged()
+					productAdapter.notifyDataSetChanged()
 
-                    if (productList.isEmpty()) {
-                        bind.noData.isVisible = true
-                        bind.recycler.isVisible = false
-                    } else {
-                        bind.noData.isVisible = false
-                        bind.recycler.isVisible = true
-                    }
+					if (productList.isEmpty()) {
+						bind.noData.isVisible = true
+						bind.recycler.isVisible = false
+					} else {
+						bind.noData.isVisible = false
+						bind.recycler.isVisible = true
+					}
 
-                }
+				}
 
-                is Resource.Error -> {
-                    bind.loader.isVisible = false
+				is Resource.Error -> {
+					bind.loader.isVisible = false
 
-                    if (it.isNetworkError) {
-                        errorToast(getString(R.string.no_internet))
-                    } else {
-                        it.parse(mCtx, TAG, object : AlertClicks {
-                            override fun primaryClick(dialog: AppBottomSheet) {
-                                dialog.dismiss()
+					if (it.isNetworkError) {
+						errorToast(getString(R.string.no_internet))
+					} else {
+						it.parse(mCtx , TAG , object : AlertClicks {
+							override fun primaryClick(dialog : AppBottomSheet) {
+								dialog.dismiss()
 
-                            }
+							}
 
-                            override fun secondaryClick(dialog: AppBottomSheet) {
-                                dialog.dismiss()
+							override fun secondaryClick(dialog : AppBottomSheet) {
+								dialog.dismiss()
 
-                            }
-                        })
-                    }
-                }
+							}
+						})
+					}
+				}
 
-                else -> {}
+				else -> {}
 
-            }
-        }
+			}
+		}
 
-        viewModel.storeScheduleShowRepo.observe(viewLifecycleOwner) {
-            when (it) {
-                is Resource.Success -> {
-                    bind.loader.isVisible = false
+		viewModel.storeScheduleShowRepo.observe(viewLifecycleOwner) {
+			when (it) {
+				is Resource.Success -> {
+					bind.loader.isVisible = false
 
-                    val mData = it.value.data
+					val mData = it.value.data
 
-                    val intent = Intent(mCtx, LiveShowActivity::class.java).putExtra(
-                        "showId",
-                        mData?.id.toString()
-                    )
-                    startActivity(intent)
-                    finish()
-                }
+					val intent = Intent(mCtx , LiveShowActivity::class.java).putExtra(
+						"showId" ,
+						mData?.id.toString()
+					)
+					startActivity(intent)
+					finish()
+				}
 
-                is Resource.Error -> {
-                    bind.loader.isVisible = false
+				is Resource.Error -> {
+					bind.loader.isVisible = false
 
-                    if (it.isNetworkError) {
-                        errorToast(getString(R.string.no_internet))
-                    } else {
-                        it.parse(mCtx, TAG, object : AlertClicks {
-                            override fun primaryClick(dialog: AppBottomSheet) {
-                                dialog.dismiss()
-                            }
+					if (it.isNetworkError) {
+						errorToast(getString(R.string.no_internet))
+					} else {
+						it.parse(mCtx , TAG , object : AlertClicks {
+							override fun primaryClick(dialog : AppBottomSheet) {
+								dialog.dismiss()
+							}
 
-                            override fun secondaryClick(dialog: AppBottomSheet) {
-                                dialog.dismiss()
+							override fun secondaryClick(dialog : AppBottomSheet) {
+								dialog.dismiss()
 
-                            }
-                        })
-                    }
-                }
+							}
+						})
+					}
+				}
 
-                else -> {}
+				else -> {}
 
-            }
-        }
+			}
+		}
 
-        viewModel.deleteProductRepo.observe(viewLifecycleOwner) {
-            when (it) {
-                is Resource.Success -> {
+		viewModel.deleteProductRepo.observe(viewLifecycleOwner) {
+			when (it) {
+				is Resource.Success -> {
 
-                    val mData = it.value.data
+					val mData = it.value.data
 
-                    viewModel.getUserProducts(
-                        userId.request(),
-                        categoryId = viewModel.categoryId.request()
-                    )
+					viewModel.getUserProducts(
+						userId.request() ,
+						categoryId = viewModel.categoryId.request()
+					)
 
-                }
+				}
 
-                is Resource.Error -> {
-                    bind.loader.isVisible = false
+				is Resource.Error -> {
+					bind.loader.isVisible = false
 
-                    if (it.isNetworkError) {
-                        errorToast(getString(R.string.no_internet))
-                    } else {
-                        it.parse(mCtx, TAG, object : AlertClicks {
-                            override fun primaryClick(dialog: AppBottomSheet) {
-                                dialog.dismiss()
+					if (it.isNetworkError) {
+						errorToast(getString(R.string.no_internet))
+					} else {
+						it.parse(mCtx , TAG , object : AlertClicks {
+							override fun primaryClick(dialog : AppBottomSheet) {
+								dialog.dismiss()
 
-                            }
+							}
 
-                            override fun secondaryClick(dialog: AppBottomSheet) {
-                                dialog.dismiss()
+							override fun secondaryClick(dialog : AppBottomSheet) {
+								dialog.dismiss()
 
-                            }
-                        })
-                    }
-                }
+							}
+						})
+					}
+				}
 
-                else -> {}
+				else -> {}
 
-            }
-        }
+			}
+		}
 
-    }
+	}
 
-    private fun deleteProductDialog(productId: String) {
-        AppBottomSheet(
-            mCtx,
-            R.drawable.trash,
-            "Delete!",
-            "Are you sure you want to delete?",
-            primaryBtnText = "Yes",
-            secondaryBtnText = "No",
-            canCancel = true,
-            showSecondary = true,
-            iconPadding = 16,
-            alertType = AlertType.ERROR,
-            clicks = object : AlertClicks {
-                override fun primaryClick(dialog: AppBottomSheet) {
-                    dialog.dismiss()
-                    bind.loader.isVisible = true
-                    viewModel.deleteProduct(productId)
-                }
+	private fun deleteProductDialog(productId : String) {
+		AppBottomSheet(
+			mCtx ,
+			R.drawable.trash ,
+			"Delete!" ,
+			"Are you sure you want to delete?" ,
+			primaryBtnText = "Yes" ,
+			secondaryBtnText = "No" ,
+			canCancel = true ,
+			showSecondary = true ,
+			iconPadding = 16 ,
+			alertType = AlertType.ERROR ,
+			clicks = object : AlertClicks {
+				override fun primaryClick(dialog : AppBottomSheet) {
+					dialog.dismiss()
+					bind.loader.isVisible = true
+					viewModel.deleteProduct(productId)
+				}
 
-                override fun secondaryClick(dialog: AppBottomSheet) {
-                    dialog.dismiss()
-                }
-            }
+				override fun secondaryClick(dialog : AppBottomSheet) {
+					dialog.dismiss()
+				}
+			}
 
-        ).show()
+		).show()
 
-    }
+	}
 
 }

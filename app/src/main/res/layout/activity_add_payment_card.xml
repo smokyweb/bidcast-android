@@ -116,11 +116,11 @@
                             style="@style/inputTextStyle"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:focusableInTouchMode="true"
                             android:focusable="false"
+                            android:focusableInTouchMode="true"
                             android:focusedByDefault="false"
                             android:hint="YYYY-MM"
-                            android:inputType="date"/>
+                            android:inputType="date" />
 
                     </com.google.android.material.textfield.TextInputLayout>
 

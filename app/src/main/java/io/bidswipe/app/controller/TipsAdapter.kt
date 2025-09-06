@@ -7,24 +7,24 @@ import io.bidswipe.app.databinding.TipsItemBinding
 import io.bidswipe.app.interfaces.RecyclerClicks
 
 class TipsAdapter(
-    mList: MutableList<String>, val mClicks: RecyclerClicks,
-) : BaseAdapter<String?, TipsItemBinding>(mList) {
+	mList : MutableList<String> , val mClicks : RecyclerClicks ,
+) : BaseAdapter<String? , TipsItemBinding>(mList) {
 
-    override fun bindView(inflater: LayoutInflater, parent: ViewGroup) =
-        TipsItemBinding.inflate(inflater, parent, false)
+	override fun bindView(inflater : LayoutInflater , parent : ViewGroup) =
+		TipsItemBinding.inflate(inflater , parent , false)
 
-    override fun onBind(
-        holder: BaseViewHolder<TipsItemBinding>,
-        position: Int,
-        item: String?,
-    ) {
-        with(holder) {
+	override fun onBind(
+		holder : BaseViewHolder<TipsItemBinding> ,
+		position : Int ,
+		item : String? ,
+	) {
+		with(holder) {
 
-            bind.root.setOnClickListener {
-                mClicks.itemClick(position)
-            }
+			bind.root.setOnClickListener {
+				mClicks.itemClick(position)
+			}
 
 
-        }
-    }
+		}
+	}
 }

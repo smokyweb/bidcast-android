@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/click"
-    android:gravity="center_vertical"
-    android:padding="@dimen/margin"
-    android:layout_margin="@dimen/half_margin"
     style="@style/shadowStyle"
-    android:background="@drawable/card_8">
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="@dimen/half_margin"
+    android:background="@drawable/card_8"
+    android:gravity="center_vertical"
+    android:padding="@dimen/margin">
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/icon_card"
@@ -21,26 +21,25 @@
             android:id="@+id/icon"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:src="@drawable/ic_visa"
-            />
+            android:src="@drawable/ic_visa" />
 
     </com.google.android.material.card.MaterialCardView>
 
-        <TextView
-            android:id="@+id/cardNumber"
-            style="@style/TitleMedium"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_marginHorizontal="@dimen/margin"
-            android:text="**** **** 4242" />
+    <TextView
+        android:id="@+id/cardNumber"
+        style="@style/TitleMedium"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/margin"
+        android:layout_weight="1"
+        android:text="**** **** 4242" />
 
     <RadioButton
         android:id="@+id/selectBtn"
         style="@style/Widget.AppCompat.CompoundButton.RadioButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-       android:focusable="false"/>
+        android:focusable="false" />
 
 
 </LinearLayout>

@@ -20,133 +20,133 @@ import io.bidswipe.app.utils.finish
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request
 
-class MyOrdersFragment : BaseFragment<SellerHubViewModel, FragmentMyOrdersBinding>() {
-    override fun getModel(): Class<SellerHubViewModel> = SellerHubViewModel::class.java
+class MyOrdersFragment : BaseFragment<SellerHubViewModel , FragmentMyOrdersBinding>() {
+	override fun getModel() : Class<SellerHubViewModel> = SellerHubViewModel::class.java
 
-    override fun getBind(inflater: LayoutInflater, view: ViewGroup?) =
-        FragmentMyOrdersBinding.inflate(inflater, view, false)
+	override fun getBind(inflater : LayoutInflater , view : ViewGroup?) =
+		FragmentMyOrdersBinding.inflate(inflater , view , false)
 
-    private var orderList = mutableListOf<GetOrdersResponse.Data?>()
-    private lateinit var adapter: OrdersAdapter
-    private val mClick = object : RecyclerClicks {
-        override fun itemClick(pos: Int, status: String?) {
-        }
-    }
+	private var orderList = mutableListOf<GetOrdersResponse.Data?>()
+	private lateinit var adapter : OrdersAdapter
+	private val mClick = object : RecyclerClicks {
+		override fun itemClick(pos : Int , status : String?) {
+		}
+	}
 
-    @SuppressLint("NotifyDataSetChanged")
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+	@SuppressLint("NotifyDataSetChanged")
+	override fun onViewCreated(view : View , savedInstanceState : Bundle?) {
+		super.onViewCreated(view , savedInstanceState)
 
-        bind.header.onBackClick {
-            finish()
-        }
-        bind.header.onMoreSecondaryClick {
-            showDeleteConfirmationDialog()
-        }
+		bind.header.onBackClick {
+			finish()
+		}
+		bind.header.onMoreSecondaryClick {
+			showDeleteConfirmationDialog()
+		}
 
-        adapter = OrdersAdapter(orderList, mClick)
+		adapter = OrdersAdapter(orderList , mClick)
 
-        bind.recycler.adapter = adapter
+		bind.recycler.adapter = adapter
 
-        bind.loader.isVisible = true
+		bind.loader.isVisible = true
 
-        bind.swipeRefreshLayout.setOnRefreshListener {
-            viewModel.getOrderListing("".request())
-        }
+		bind.swipeRefreshLayout.setOnRefreshListener {
+			viewModel.getOrderListing("".request())
+		}
 
-        bind.noInternet.onClick {
-            bind.loader.isVisible = true
-            bind.noInternet.isVisible = false
-            viewModel.getOrderListing("".request())
-        }
+		bind.noInternet.onClick {
+			bind.loader.isVisible = true
+			bind.noInternet.isVisible = false
+			viewModel.getOrderListing("".request())
+		}
 
-        viewModel.getOrderListing("".request())
-        viewModel.getOrderListingRepo.observe(viewLifecycleOwner) {
-            when (it) {
-                is Resource.Success -> {
-                    bind.swipeRefreshLayout.isRefreshing = false
-                    bind.noInternet.isVisible = false
-                    bind.loader.isVisible = false
+		viewModel.getOrderListing("".request())
+		viewModel.getOrderListingRepo.observe(viewLifecycleOwner) {
+			when (it) {
+				is Resource.Success -> {
+					bind.swipeRefreshLayout.isRefreshing = false
+					bind.noInternet.isVisible = false
+					bind.loader.isVisible = false
 
-                    val mData = it.value.data
+					val mData = it.value.data
 
-                    bind.newOrderCount.text = it.value.newOrderCount.toString()
-                    bind.processingOrderCount.text = it.value.processingOrderCount.toString()
-                    bind.completedOrderCount.text = it.value.completeOrderCount.toString()
+					bind.newOrderCount.text = it.value.newOrderCount.toString()
+					bind.processingOrderCount.text = it.value.processingOrderCount.toString()
+					bind.completedOrderCount.text = it.value.completeOrderCount.toString()
 
-                    orderList.clear()
-                    if (mData?.isNotEmpty() == true) {
-                        orderList.addAll(mData)
-                    }
+					orderList.clear()
+					if (mData?.isNotEmpty() == true) {
+						orderList.addAll(mData)
+					}
 
-                    if (mData?.isEmpty() == true) {
+					if (mData?.isEmpty() == true) {
 
-                        bind.noData.isVisible = true
-                        bind.recycler.isVisible = false
+						bind.noData.isVisible = true
+						bind.recycler.isVisible = false
 
-                    } else {
-                        bind.noData.isVisible = false
-                        bind.recycler.isVisible = true
-                    }
+					} else {
+						bind.noData.isVisible = false
+						bind.recycler.isVisible = true
+					}
 
-                    adapter.notifyDataSetChanged()
+					adapter.notifyDataSetChanged()
 
-                }
+				}
 
-                is Resource.Error -> {
-                    bind.swipeRefreshLayout.isRefreshing = false
-                    bind.loader.isVisible = false
+				is Resource.Error -> {
+					bind.swipeRefreshLayout.isRefreshing = false
+					bind.loader.isVisible = false
 
 
-                    if (it.isNetworkError) {
-                        bind.noInternet.isVisible = true
-                        bind.recycler.isVisible = false
+					if (it.isNetworkError) {
+						bind.noInternet.isVisible = true
+						bind.recycler.isVisible = false
 
-                    } else {
-                        it.parse(mCtx, TAG, object : AlertClicks {
-                            override fun primaryClick(dialog: AppBottomSheet) {
-                                dialog.dismiss()
+					} else {
+						it.parse(mCtx , TAG , object : AlertClicks {
+							override fun primaryClick(dialog : AppBottomSheet) {
+								dialog.dismiss()
 
-                            }
+							}
 
-                            override fun secondaryClick(dialog: AppBottomSheet) {
-                                dialog.dismiss()
+							override fun secondaryClick(dialog : AppBottomSheet) {
+								dialog.dismiss()
 
-                            }
-                        })
-                    }
-                }
+							}
+						})
+					}
+				}
 
-                else -> {}
+				else -> {}
 
-            }
-        }
+			}
+		}
 
-    }
+	}
 
-    private fun showDeleteConfirmationDialog() {
-        AppBottomSheet(
-            mCtx,
-            R.drawable.ic_delete,
-            "Delete Order",
-            "Are you sure you want to delete all orders?",
-            primaryBtnText = "Delete",
-            secondaryBtnText = "Cancel",
-            canCancel = true,
-            showSecondary = true,
-            alertType = AlertType.ERROR,
-            clicks = object : AlertClicks {
-                override fun primaryClick(dialog: AppBottomSheet) {
-                    dialog.dismiss()
-                    bind.loader.isVisible = false
-                }
+	private fun showDeleteConfirmationDialog() {
+		AppBottomSheet(
+			mCtx ,
+			R.drawable.ic_delete ,
+			"Delete Order" ,
+			"Are you sure you want to delete all orders?" ,
+			primaryBtnText = "Delete" ,
+			secondaryBtnText = "Cancel" ,
+			canCancel = true ,
+			showSecondary = true ,
+			alertType = AlertType.ERROR ,
+			clicks = object : AlertClicks {
+				override fun primaryClick(dialog : AppBottomSheet) {
+					dialog.dismiss()
+					bind.loader.isVisible = false
+				}
 
-                override fun secondaryClick(dialog: AppBottomSheet) {
-                    dialog.dismiss()
-                }
+				override fun secondaryClick(dialog : AppBottomSheet) {
+					dialog.dismiss()
+				}
 
-            },
+			} ,
 
-            ).show()
-    }
+			).show()
+	}
 }

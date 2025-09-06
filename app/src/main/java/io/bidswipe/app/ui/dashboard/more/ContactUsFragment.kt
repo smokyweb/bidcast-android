@@ -21,112 +21,112 @@ import io.bidswipe.app.utils.request
 import io.bidswipe.app.utils.showKeyboard
 import io.bidswipe.app.utils.value
 
-class ContactUsFragment : BaseFragment<MoreViewModel, FragmentContactUsBinding>() {
-    override fun getModel(): Class<MoreViewModel> = MoreViewModel::class.java
+class ContactUsFragment : BaseFragment<MoreViewModel , FragmentContactUsBinding>() {
+	override fun getModel() : Class<MoreViewModel> = MoreViewModel::class.java
 
-    override fun getBind(
-        inflater: LayoutInflater,
-        view: ViewGroup?,
-    ) = FragmentContactUsBinding.inflate(inflater, view, false)
+	override fun getBind(
+		inflater : LayoutInflater ,
+		view : ViewGroup? ,
+	) = FragmentContactUsBinding.inflate(inflater , view , false)
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+	override fun onViewCreated(view : View , savedInstanceState : Bundle?) {
+		super.onViewCreated(view , savedInstanceState)
 
-        bind.header.onBackClick {
-            finish()
-        }
+		bind.header.onBackClick {
+			finish()
+		}
 
-        bind.root.setOnClickListener {
-            hideKeyboard(it)
-        }
+		bind.root.setOnClickListener {
+			hideKeyboard(it)
+		}
 
-        bind.email.setText(App.profileResponse.value?.email.toString())
+		bind.email.setText(App.profileResponse.value?.email.toString())
 
 
-        bind.sendMessage.setOnClickListener { it ->
-            when {
+		bind.sendMessage.setOnClickListener { it ->
+			when {
 
-                bind.firstName.value().isEmpty() -> {
-                    Alerts.error(mCtx, "Name can not be empty")
-                    bind.firstName.requestFocus()
-                    showKeyboard(bind.firstName)
-                }
+				bind.firstName.value().isEmpty() -> {
+					Alerts.error(mCtx , "Name can not be empty")
+					bind.firstName.requestFocus()
+					showKeyboard(bind.firstName)
+				}
 
-                bind.email.value().isEmpty() -> {
-                    Alerts.error(mCtx, "Email can not be empty")
-                    bind.email.requestFocus()
-                    showKeyboard(bind.email)
-                }
+				bind.email.value().isEmpty() -> {
+					Alerts.error(mCtx , "Email can not be empty")
+					bind.email.requestFocus()
+					showKeyboard(bind.email)
+				}
 
-                bind.email.value().validator().validEmail().check().not() -> {
-                    Alerts.error(mCtx, "Please enter valid user email")
-                    bind.email.requestFocus()
-                    showKeyboard(bind.email)
-                }
+				bind.email.value().validator().validEmail().check().not() -> {
+					Alerts.error(mCtx , "Please enter valid user email")
+					bind.email.requestFocus()
+					showKeyboard(bind.email)
+				}
 
-                bind.subject.value().isEmpty() -> {
-                    Alerts.error(mCtx, "Subject can't be empty")
-                    bind.subject.requestFocus()
-                    showKeyboard(bind.subject)
-                }
+				bind.subject.value().isEmpty() -> {
+					Alerts.error(mCtx , "Subject can't be empty")
+					bind.subject.requestFocus()
+					showKeyboard(bind.subject)
+				}
 
-                bind.description.value().isEmpty() -> {
-                    Alerts.error(mCtx, "Enter Message")
-                    bind.subject.requestFocus()
-                    showKeyboard(bind.description)
-                }
+				bind.description.value().isEmpty() -> {
+					Alerts.error(mCtx , "Enter Message")
+					bind.subject.requestFocus()
+					showKeyboard(bind.description)
+				}
 
-                else -> {
+				else -> {
 
-                    hideKeyboard(it)
-                    bind.loader.isVisible = true
+					hideKeyboard(it)
+					bind.loader.isVisible = true
 
-                    viewModel.contactUs(
-                        bind.firstName.value().request(),
-                        bind.email.value().request(),
-                        bind.subject.value().request(),
-                        bind.description.value().request()
-                    )
-                }
-            }
+					viewModel.contactUs(
+						bind.firstName.value().request() ,
+						bind.email.value().request() ,
+						bind.subject.value().request() ,
+						bind.description.value().request()
+					)
+				}
+			}
 
-            viewModel.contactUsRepo.observe(viewLifecycleOwner) {
-                when (it) {
-                    is Resource.Success -> {
-                        bind.loader.isVisible = false
+			viewModel.contactUsRepo.observe(viewLifecycleOwner) {
+				when (it) {
+					is Resource.Success -> {
+						bind.loader.isVisible = false
 
-                        it.value.data
-                        Alerts.success(mCtx, it.value.message.toString())
+						it.value.data
+						Alerts.success(mCtx , it.value.message.toString())
 
-                    }
+					}
 
-                    is Resource.Error -> {
-                        bind.loader.isVisible = false
-                        if (it.isNetworkError) {
-                            errorToast(getString(R.string.no_internet))
-                        } else {
-                            it.parse(mCtx, TAG, object : AlertClicks {
-                                override fun primaryClick(dialog: AppBottomSheet) {
-                                    dialog.dismiss()
+					is Resource.Error -> {
+						bind.loader.isVisible = false
+						if (it.isNetworkError) {
+							errorToast(getString(R.string.no_internet))
+						} else {
+							it.parse(mCtx , TAG , object : AlertClicks {
+								override fun primaryClick(dialog : AppBottomSheet) {
+									dialog.dismiss()
 
-                                }
+								}
 
-                                override fun secondaryClick(dialog: AppBottomSheet) {
-                                    dialog.dismiss()
+								override fun secondaryClick(dialog : AppBottomSheet) {
+									dialog.dismiss()
 
-                                }
-                            })
-                        }
-                    }
+								}
+							})
+						}
+					}
 
-                    else -> {}
+					else -> {}
 
-                }
+				}
 
-            }
+			}
 
-        }
+		}
 
-    }
+	}
 
 }

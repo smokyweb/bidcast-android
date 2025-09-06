@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".ui.dashboard.more.ContactUsFragment">
 
     <io.bidswipe.app.ui.custom.Header
@@ -23,48 +23,48 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:fillViewport="true"
-        app:layout_constraintTop_toBottomOf="@id/header"
-        app:layout_constraintBottom_toTopOf="@id/sendMessage">
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="@dimen/half_margin"
-        android:layout_marginVertical="@dimen/half_margin"
-        android:orientation="vertical"
+        app:layout_constraintBottom_toTopOf="@id/sendMessage"
         app:layout_constraintTop_toBottomOf="@id/header">
 
-
-        <com.google.android.material.card.MaterialCardView
-            style="@style/cardStyle"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="@dimen/half_margin"
-            android:backgroundTint="@color/surface"
-            app:contentPadding="@dimen/margin">
+            android:layout_marginVertical="@dimen/half_margin"
+            android:orientation="vertical"
+            app:layout_constraintTop_toBottomOf="@id/header">
 
-            <LinearLayout
+
+            <com.google.android.material.card.MaterialCardView
+                style="@style/cardStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:layout_marginHorizontal="@dimen/half_margin"
+                android:backgroundTint="@color/surface"
+                app:contentPadding="@dimen/margin">
 
-                <TextView
-                    style="@style/TitleLarge"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/get_in_touch" />
-
-                <TextView
-                    style="@style/BodyMedium"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/we_re_here_to_help_send_us_your_queries_and_we_ll_get_back_to_you_soon"
-                    android:textColor="@color/secondary" />
+                    android:orientation="vertical">
 
-            </LinearLayout>
+                    <TextView
+                        style="@style/TitleLarge"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/get_in_touch" />
+
+                    <TextView
+                        style="@style/BodyMedium"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/we_re_here_to_help_send_us_your_queries_and_we_ll_get_back_to_you_soon"
+                        android:textColor="@color/secondary" />
+
+                </LinearLayout>
 
 
-        </com.google.android.material.card.MaterialCardView>
+            </com.google.android.material.card.MaterialCardView>
 
 
             <TextView
@@ -148,84 +148,83 @@
                 android:layout_marginHorizontal="@dimen/half_margin"
                 android:text="@string/messages" />
 
-        <com.google.android.material.textfield.TextInputLayout
-            style="@style/inputBoxStyle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="@dimen/half_margin"
-            android:layout_marginBottom="@dimen/margin">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/description"
-                style="@style/inputTextStyle"
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/inputBoxStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="top"
-                android:hint="@string/enter_your_message_here"
-                android:minLines="4" />
+                android:layout_marginHorizontal="@dimen/half_margin"
+                android:layout_marginBottom="@dimen/margin">
 
-        </com.google.android.material.textfield.TextInputLayout>
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/description"
+                    style="@style/inputTextStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="top"
+                    android:hint="@string/enter_your_message_here"
+                    android:minLines="4" />
 
-        <com.google.android.material.card.MaterialCardView
-            style="@style/cardStyle"
-            android:layout_width="match_parent"
-            android:layout_margin="@dimen/half_margin"
-            android:layout_height="wrap_content"
-            >
+            </com.google.android.material.textfield.TextInputLayout>
 
-            <LinearLayout
+            <com.google.android.material.card.MaterialCardView
+                style="@style/cardStyle"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="horizontal"
-                app:cardBackgroundColor="@color/surface"
-                android:padding="@dimen/margin">
-
-                <com.google.android.material.card.MaterialCardView
-                    android:id="@+id/icon_card"
-                    style="@style/cardStyle"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    app:cardCornerRadius="100dp"
-                    app:cardElevation="0dp">
-
-                    <androidx.appcompat.widget.AppCompatImageView
-                        android:id="@+id/icon"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:padding="12dp"
-                        android:src="@drawable/ic_mail"/>
-
-                </com.google.android.material.card.MaterialCardView>
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/half_margin">
 
                 <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="@dimen/half_margin"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    android:padding="@dimen/margin"
+                    app:cardBackgroundColor="@color/surface">
 
-                    <TextView
-                        android:id="@+id/title"
-                        style="@style/TitleLarge"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="@string/email" />
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/icon_card"
+                        style="@style/cardStyle"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        app:cardCornerRadius="100dp"
+                        app:cardElevation="0dp">
 
-                    <TextView
-                        android:id="@+id/sub_title"
-                        style="@style/BodySmall"
-                        android:layout_width="match_parent"
+                        <androidx.appcompat.widget.AppCompatImageView
+                            android:id="@+id/icon"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:padding="12dp"
+                            android:src="@drawable/ic_mail" />
+
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:text="@string/support_company_com" />
+                        android:layout_marginHorizontal="@dimen/half_margin"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/title"
+                            style="@style/TitleLarge"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@string/email" />
+
+                        <TextView
+                            android:id="@+id/sub_title"
+                            style="@style/BodySmall"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@string/support_company_com" />
+
+                    </LinearLayout>
+
 
                 </LinearLayout>
 
+            </com.google.android.material.card.MaterialCardView>
 
-            </LinearLayout>
-
-        </com.google.android.material.card.MaterialCardView>
-
-    </LinearLayout>
+        </LinearLayout>
     </ScrollView>
 
     <com.google.android.material.button.MaterialButton
@@ -241,6 +240,6 @@
         android:id="@+id/loader"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone"/>
+        android:visibility="gone" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

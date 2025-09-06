@@ -24,6 +24,7 @@ class ReviewListFragment : BaseFragment<SellerViewModel , FragmentReviewListBind
 		inflater : LayoutInflater ,
 		view : ViewGroup? ,
 	) = FragmentReviewListBinding.inflate(inflater , view , false)
+
 	private lateinit var adapter : ReviewAdapter
 	private var list = mutableListOf<GetRatingResponse.Data.Rating?>()
 	private var sellerId = ""
@@ -33,6 +34,7 @@ class ReviewListFragment : BaseFragment<SellerViewModel , FragmentReviewListBind
 		}
 
 	}
+
 	override fun onResume() {
 		super.onResume()
 		if (Utils.isOnline(mCtx)) {
@@ -86,6 +88,7 @@ class ReviewListFragment : BaseFragment<SellerViewModel , FragmentReviewListBind
 					adapter.notifyDataSetChanged()
 
 				}
+
 				is Resource.Error -> {
 					bind.noData.isVisible = false
 					bind.loader.isVisible = false

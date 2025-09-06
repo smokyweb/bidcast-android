@@ -7,19 +7,19 @@ import androidx.annotation.Keep
 @Keep
 data class StoreProductResponse(
     @SerializedName("status")
-    val status: String?,
+    val status : String? ,
     @SerializedName("message")
-    val message: String?,
+    val message : String? ,
     @SerializedName("error_type")
-    val errorType: String?,
+    val errorType : String? ,
     @SerializedName("data")
-    val `data`: List<Data?>?
+    val `data` : List<Data?>? ,
 ) {
-    @Keep
-    data class Data(
+	@Keep
+	data class Data(
         @SerializedName("images")
-        val images: String?,
+        val images : String? ,
         @SerializedName("thumbnail")
-        val thumbnail: String?
+        val thumbnail : String? ,
     )
 }

@@ -7,59 +7,59 @@ import androidx.annotation.Keep
 @Keep
 data class GetSubCategoriesResponse(
     @SerializedName("status")
-    val status: String?,
+    val status : String? ,
     @SerializedName("message")
-    val message: String?,
+    val message : String? ,
     @SerializedName("error_type")
-    val errorType: String?,
+    val errorType : String? ,
     @SerializedName("data")
-    val `data`: List<Data?>?
-)  {
-    @Keep
-    data class Data(
+    val `data` : List<Data?>? ,
+) {
+	@Keep
+	data class Data(
         @SerializedName("id")
-        val id: Int?,
+        val id : Int? ,
         @SerializedName("name")
-        val name: String?,
+        val name : String? ,
         @SerializedName("image")
-        val image: String?,
+        val image : String? ,
         @SerializedName("thumbnail")
-        val thumbnail: String?,
+        val thumbnail : String? ,
         @SerializedName("extra_fields")
-        val extraFields: List<Any?>?,
+        val extraFields : List<Any?>? ,
         @SerializedName("color")
-        val color: String?,
+        val color : String? ,
         @SerializedName("subcategories")
-        val subcategories: List<Subcategory?>?
+        val subcategories : List<Subcategory?>? ,
     ) {
-        @Keep
-        data class Subcategory(
+		@Keep
+		data class Subcategory(
             @SerializedName("id")
-            val id: Int?,
+            val id : Int? ,
             @SerializedName("category_id")
-            val categoryId: Int?,
+            val categoryId : Int? ,
             @SerializedName("name")
-            val name: String?,
+            val name : String? ,
             @SerializedName("image")
-            val image: String?,
+            val image : String? ,
             @SerializedName("extra_fields")
-            val extraFields: List<ExtraField?>?,
+            val extraFields : List<ExtraField?>? ,
             @SerializedName("thumbnail")
-            val thumbnail: String?,
+            val thumbnail : String? ,
             @SerializedName("color")
-            val color: String?,
+            val color : String? ,
             @SerializedName("is_selected")
-            var isSelected: Boolean?= false
+            var isSelected : Boolean? = false ,
         ) {
-            @Keep
-            data class ExtraField(
+			@Keep
+			data class ExtraField(
                 @SerializedName("label")
-                val label: String?,
+                val label : String? ,
                 @SerializedName("type")
-                val type: String?,
+                val type : String? ,
                 @SerializedName("options")
-                val options: List<String?>?
+                val options : List<String?>? ,
             )
-        }
-    }
+		}
+	}
 }

@@ -13,34 +13,33 @@ import io.bidswipe.app.utils.toDash
 
 class SplashActivity : AppCompatActivity() {
 
-    private var referrerCode: String? = null
+	private var referrerCode : String? = null
+
+	override fun onCreate(savedInstanceState : Bundle?) {
+		super.onCreate(savedInstanceState)
+		enableEdgeToEdge()
+		setContentView(R.layout.activity_splash)
+
+		val referrer = intent.data?.getQueryParameter("referrer")
+
+		Log.d("TAG" , "onCreate: $referrer ")
+		if (referrer != null) {
+			referrerCode = referrer
+
+		} else {
+			// Use Install Referrer API to get the referrer code
+		}
 
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        setContentView(R.layout.activity_splash)
+		Handler(Looper.getMainLooper()).postDelayed({
 
-        val referrer = intent.data?.getQueryParameter("referrer")
+			if (Prefs(this@SplashActivity).token().isNotEmpty()) {
+				startActivity(this.toDash())
+			} else {
+				startActivity(this.toAuth())
+			}
 
-        Log.d("TAG", "onCreate: $referrer ")
-        if (referrer != null) {
-            referrerCode = referrer
-
-        } else {
-            // Use Install Referrer API to get the referrer code
-        }
-
-
-        Handler(Looper.getMainLooper()).postDelayed({
-
-            if (Prefs(this@SplashActivity).token().isNotEmpty()) {
-                startActivity(this.toDash())
-            } else {
-                startActivity(this.toAuth())
-            }
-
-            finishAfterTransition()
-        }, 1500)
-    }
+			finishAfterTransition()
+		} , 1500)
+	}
 }

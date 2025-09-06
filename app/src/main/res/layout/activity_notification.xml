@@ -30,53 +30,53 @@
             android:layout_height="match_parent"
             android:fillViewport="true">
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/notificationRec"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="@dimen/half_margin"
-                android:nestedScrollingEnabled="false"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                app:layout_constraintBottom_toTopOf="@id/deleteAll"
-                app:layout_constraintTop_toBottomOf="parent"
-                tools:itemCount="2"
-                tools:listitem="@layout/notification_item" />
+                android:orientation="vertical">
 
-            <com.github.ybq.android.spinkit.SpinKitView
-                android:id="@+id/bottomLoader"
-                style="@style/appLoader"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_margin="8dp"
-                android:elevation="2dp"
-                android:visibility="gone"
-                app:layout_constraintBottom_toTopOf="@id/deleteAll" />
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/notificationRec"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/half_margin"
+                    android:nestedScrollingEnabled="false"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    app:layout_constraintBottom_toTopOf="@id/deleteAll"
+                    app:layout_constraintTop_toBottomOf="parent"
+                    tools:itemCount="2"
+                    tools:listitem="@layout/notification_item" />
 
-            <io.bidswipe.app.ui.custom.NoDataView
-                android:id="@+id/noData"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:visibility="gone"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintTop_toBottomOf="parent"
-                app:title_text="Notifications not found" />
+                <com.github.ybq.android.spinkit.SpinKitView
+                    android:id="@+id/bottomLoader"
+                    style="@style/appLoader"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_margin="8dp"
+                    android:elevation="2dp"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toTopOf="@id/deleteAll" />
 
-                  <io.bidswipe.app.ui.custom.NoDataView
-                android:id="@+id/noInternet"
-                style="@style/noInternetStyle"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:visibility="gone"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                <io.bidswipe.app.ui.custom.NoDataView
+                    android:id="@+id/noData"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintTop_toBottomOf="parent"
+                    app:title_text="Notifications not found" />
 
-        </LinearLayout>
+                <io.bidswipe.app.ui.custom.NoDataView
+                    android:id="@+id/noInternet"
+                    style="@style/noInternetStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+            </LinearLayout>
         </ScrollView>
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 

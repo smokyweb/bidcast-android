@@ -10,16 +10,16 @@ import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.model.SellModel
 
 class AnalyticsGridAdapter(
-	mList: MutableList<SellModel>, val mClicks: RecyclerClicks,
-) : BaseAdapter<SellModel, BenifitsItemBinding>(mList) {
+	mList : MutableList<SellModel> , val mClicks : RecyclerClicks ,
+) : BaseAdapter<SellModel , BenifitsItemBinding>(mList) {
 
-	override fun bindView(inflater: LayoutInflater, parent: ViewGroup) =
-		BenifitsItemBinding.inflate(inflater, parent, false)
+	override fun bindView(inflater : LayoutInflater , parent : ViewGroup) =
+		BenifitsItemBinding.inflate(inflater , parent , false)
 
 	override fun onBind(
-		holder: BaseViewHolder<BenifitsItemBinding>,
-		position: Int,
-		item: SellModel?,
+		holder : BaseViewHolder<BenifitsItemBinding> ,
+		position : Int ,
+		item : SellModel? ,
 	) {
 		with(holder) {
 
@@ -28,14 +28,14 @@ class AnalyticsGridAdapter(
 
 			bind.image.setImageDrawable(
 				ContextCompat.getDrawable(
-					mCtx,
+					mCtx ,
 					item?.icon ?: R.drawable.notification
 				)
 			)
 
 			bind.image.setBackgroundColor(
 				ContextCompat.getColor(
-					mCtx,
+					mCtx ,
 					item?.color ?: R.color.primaryContainer
 				)
 			)

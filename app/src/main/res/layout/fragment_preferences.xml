@@ -44,23 +44,24 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-               android:layout_marginHorizontal="@dimen/margin"
+                android:layout_marginHorizontal="@dimen/margin"
                 android:orientation="horizontal">
 
                 <TextView
                     style="@style/TitleMedium"
-                    android:layout_weight="1"
-                    android:layout_width="0dp"  android:layout_marginVertical="@dimen/half_margin"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_marginVertical="@dimen/half_margin"
+                    android:layout_weight="1"
                     android:text="@string/country_of_residence" />
 
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:gravity="end"
-                    android:layout_marginStart="@dimen/half_margin"
                     android:layout_marginVertical="@dimen/half_margin"
+                    android:layout_marginStart="@dimen/half_margin"
+                    android:gravity="end"
                     app:boxStrokeWidth="0dp">
 
                     <com.google.android.material.textfield.MaterialAutoCompleteTextView
@@ -68,14 +69,14 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:alpha="0.7"
-                        android:padding="@dimen/half_margin"
-                        android:gravity="end"
                         android:drawableEnd="@drawable/ic_forward"
                         android:drawablePadding="8dp"
-                        android:inputType="none"
                         android:focusable="false"
+                        android:gravity="end"
+                        android:inputType="none"
+                        android:padding="@dimen/half_margin"
                         android:text="Account"
-                        android:textStyle="bold"/>
+                        android:textStyle="bold" />
 
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -85,11 +86,11 @@
                 style="@style/TitleSmall"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginVertical="@dimen/half_margin"
+                android:alpha="0.7"
                 android:background="@color/backgroundClr"
                 android:paddingHorizontal="@dimen/margin"
                 android:paddingVertical="12dp"
-                android:layout_marginVertical="@dimen/half_margin"
-                android:alpha="0.7"
                 android:text="@string/privacy" />
 
             <com.google.android.material.materialswitch.MaterialSwitch
@@ -129,18 +130,16 @@
                 android:text="@string/enable_private_entry" />
 
 
-
-
             <TextView
                 style="@style/TitleSmall"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginVertical="@dimen/half_margin"
+                android:layout_marginTop="@dimen/margin"
+                android:alpha="0.7"
                 android:background="@color/backgroundClr"
                 android:paddingHorizontal="@dimen/margin"
                 android:paddingVertical="12dp"
-                android:layout_marginTop="@dimen/margin"
-                android:layout_marginVertical="@dimen/half_margin"
-                android:alpha="0.7"
                 android:text="@string/display" />
 
 
@@ -171,12 +170,12 @@
                 style="@style/TitleSmall"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginVertical="@dimen/half_margin"
+                android:layout_marginTop="@dimen/margin"
+                android:alpha="0.7"
                 android:background="@color/backgroundClr"
                 android:paddingHorizontal="@dimen/margin"
                 android:paddingVertical="12dp"
-                android:layout_marginTop="@dimen/margin"
-                android:layout_marginVertical="@dimen/half_margin"
-                android:alpha="0.7"
                 android:text="@string/content" />
 
             <com.google.android.material.materialswitch.MaterialSwitch
@@ -202,17 +201,16 @@
                 android:text="@string/save_past_shows" />
 
 
-
             <TextView
                 style="@style/TitleSmall"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginVertical="@dimen/half_margin"
+                android:layout_marginTop="@dimen/margin"
+                android:alpha="0.7"
                 android:background="@color/backgroundClr"
                 android:paddingHorizontal="@dimen/margin"
                 android:paddingVertical="12dp"
-                android:layout_marginTop="@dimen/margin"
-                android:layout_marginVertical="@dimen/half_margin"
-                android:alpha="0.7"
                 android:text="@string/other_settings" />
 
             <com.google.android.material.materialswitch.MaterialSwitch
@@ -265,7 +263,6 @@
                 android:layout_marginHorizontal="@dimen/margin"
                 android:layout_marginBottom="@dimen/margin"
                 android:text="@string/haptic_feedback" />
-
 
 
         </LinearLayout>

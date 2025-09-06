@@ -7,12 +7,12 @@ import io.bidswipe.app.utils.bind
 
 class AuthActivity : BaseActivity() {
 
-    private val bind by bind(ActivityAuthBinding::inflate)
+	private val bind by bind(ActivityAuthBinding::inflate)
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(bind.root)
+	override fun onCreate(savedInstanceState : Bundle?) {
+		super.onCreate(savedInstanceState)
+		setContentView(bind.root)
 
-    }
+	}
 
 }

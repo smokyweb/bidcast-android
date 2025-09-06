@@ -6,20 +6,20 @@ import io.bidswipe.app.base.BaseAdapter
 import io.bidswipe.app.databinding.WeightItemBinding
 
 class WeightAdapter(
-    val mList: MutableList<String>,
-) : BaseAdapter<String, WeightItemBinding>(mList) {
+	val mList : MutableList<String> ,
+) : BaseAdapter<String , WeightItemBinding>(mList) {
 
-    override fun bindView(inflater: LayoutInflater, parent: ViewGroup) =
-        WeightItemBinding.inflate(inflater, parent, false)
+	override fun bindView(inflater : LayoutInflater , parent : ViewGroup) =
+		WeightItemBinding.inflate(inflater , parent , false)
 
-    override fun onBind(
-        holder: BaseViewHolder<WeightItemBinding>,
-        position: Int,
-        item: String?,
-    ) {
-        with(holder) {
+	override fun onBind(
+		holder : BaseViewHolder<WeightItemBinding> ,
+		position : Int ,
+		item : String? ,
+	) {
+		with(holder) {
 
 
-        }
-    }
+		}
+	}
 }

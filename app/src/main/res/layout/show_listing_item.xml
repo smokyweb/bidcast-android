@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    style="@style/cardStyle"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    style="@style/cardStyle"
-    app:cardBackgroundColor="@color/background"
     android:layout_margin="@dimen/half_margin"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    app:cardBackgroundColor="@color/background">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -73,14 +73,12 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:drawableStart="@drawable/ic_person_outlined"
-                    android:drawableTint="@color/onSurface"
                     android:drawablePadding="@dimen/half_margin"
+                    android:drawableTint="@color/onSurface"
                     android:text="135 RSVPs" />
 
 
             </LinearLayout>
-
-
 
 
         </LinearLayout>

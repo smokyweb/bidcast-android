@@ -8,21 +8,21 @@ import io.bidswipe.app.model.LiveChatModel
 import io.bidswipe.app.utils.loadUrl
 
 class CommentAdapter(
-	mList: MutableList<LiveChatModel?>,
-) : BaseAdapter<LiveChatModel, LiveCommentItemBinding>(mList) {
+	mList : MutableList<LiveChatModel?> ,
+) : BaseAdapter<LiveChatModel , LiveCommentItemBinding>(mList) {
 
-    override fun bindView(inflater: LayoutInflater, parent: ViewGroup) =
-        LiveCommentItemBinding.inflate(inflater, parent, false)
+	override fun bindView(inflater : LayoutInflater , parent : ViewGroup) =
+		LiveCommentItemBinding.inflate(inflater , parent , false)
 
-    override fun onBind(
-	    holder: BaseViewHolder<LiveCommentItemBinding>,
-	    position: Int,
-	    item: LiveChatModel?,
-    ) {
-        with(holder) {
-            bind.userName.text = item?.userName
-            bind.message.text = item?.message
-            bind.userImage.loadUrl(mCtx, item?.userImage.toString())
-        }
-    }
+	override fun onBind(
+		holder : BaseViewHolder<LiveCommentItemBinding> ,
+		position : Int ,
+		item : LiveChatModel? ,
+	) {
+		with(holder) {
+			bind.userName.text = item?.userName
+			bind.message.text = item?.message
+			bind.userImage.loadUrl(mCtx , item?.userImage.toString())
+		}
+	}
 }

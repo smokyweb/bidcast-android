@@ -5,22 +5,22 @@ import androidx.annotation.Keep
 
 @Keep
 data class GetProductsResponse(
-    @SerializedName("currentPage")
-    val currentPage: Int?,
-    @SerializedName("data")
-    val `data`: List<GetMyInventoryResponse.Data?>?,
-    @SerializedName("error_type")
-    val errorType: String?,
-    @SerializedName("message")
-    val message: String?,
-    @SerializedName("perPage")
-    val perPage: Int?,
-    @SerializedName("status")
-    val status: String?,
-    @SerializedName("total")
-    val total: Int?,
-    @SerializedName("totalPage")
-    val totalPage: Int?,
+	@SerializedName("currentPage")
+	val currentPage : Int? ,
+	@SerializedName("data")
+	val `data` : List<GetMyInventoryResponse.Data?>? ,
+	@SerializedName("error_type")
+	val errorType : String? ,
+	@SerializedName("message")
+	val message : String? ,
+	@SerializedName("perPage")
+	val perPage : Int? ,
+	@SerializedName("status")
+	val status : String? ,
+	@SerializedName("total")
+	val total : Int? ,
+	@SerializedName("totalPage")
+	val totalPage : Int? ,
 ) /*{
     @Keep
     data class Data(

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".ui.dashboard.sellerHub.SellerVerificationActivity">
 
     <io.bidswipe.app.ui.custom.Header
@@ -24,8 +24,8 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginBottom="@dimen/margin"
-        app:layout_constraintTop_toBottomOf="@id/header"
-        app:layout_constraintBottom_toTopOf="@id/completeVerification">
+        app:layout_constraintBottom_toTopOf="@id/completeVerification"
+        app:layout_constraintTop_toBottomOf="@id/header">
 
         <LinearLayout
             android:id="@+id/main"
@@ -44,14 +44,14 @@
                     android:id="@+id/image_limit"
                     style="@style/TitleMedium"
                     android:layout_width="0dp"
-                    android:layout_weight="1"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
+                    android:layout_weight="1"
                     android:text="@string/verification_progress" />
 
                 <TextView
-                    style="@style/TitleLarge"
                     android:id="@+id/stepCount"
+                    style="@style/TitleLarge"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     app:title="2 of 4" />
@@ -62,8 +62,8 @@
                 android:id="@+id/stepProgress"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="@dimen/margin"
                 android:max="4"
+                android:padding="@dimen/margin"
                 android:progressTint="@color/secondary"
                 app:trackCornerRadius="6dp"
                 app:trackThickness="8dp" />
@@ -71,17 +71,17 @@
             <com.google.android.material.card.MaterialCardView
                 style="@style/cardStyle"
                 android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_margin="@dimen/margin"
                 app:strokeColor="@color/outline"
-                app:strokeWidth="1dp"
-                android:layout_height="wrap_content">
+                app:strokeWidth="1dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@color/surface"
-                    android:padding="@dimen/padding"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:padding="@dimen/padding">
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -103,8 +103,8 @@
                                 android:layout_width="32dp"
                                 android:layout_height="32dp"
                                 android:layout_gravity="center"
-                                app:tint="@color/secondary"
-                                android:src="@drawable/ic_id_card" />
+                                android:src="@drawable/ic_id_card"
+                                app:tint="@color/secondary" />
 
                         </com.google.android.material.card.MaterialCardView>
 
@@ -137,21 +137,21 @@
                             android:layout_width="32dp"
                             android:layout_height="32dp"
                             android:layout_gravity="center"
-                            app:tint="@color/success"
+                            android:src="@drawable/ic_check_white_24dp"
                             android:visibility="gone"
-                            android:src="@drawable/ic_check_white_24dp" />
+                            app:tint="@color/success" />
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/verifyId"
                             style="@style/appBtn"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:paddingHorizontal="@dimen/padding"
                             android:layout_gravity="center_vertical"
+                            android:paddingHorizontal="@dimen/padding"
                             android:paddingVertical="4dp"
-                            android:visibility="gone"
                             android:text="Verify"
-                            android:textAppearance="@style/TitleMedium" />
+                            android:textAppearance="@style/TitleMedium"
+                            android:visibility="gone" />
 
                     </LinearLayout>
 
@@ -197,23 +197,22 @@
 
                             <androidx.constraintlayout.widget.ConstraintLayout
                                 android:layout_width="match_parent"
-                                android:layout_weight="1"
-                                android:layout_height="wrap_content">
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1">
 
                                 <androidx.appcompat.widget.AppCompatImageView
                                     android:id="@+id/cardImage"
                                     android:layout_width="match_parent"
                                     android:layout_height="0dp"
                                     android:layout_gravity="center"
-                                    android:visibility="gone"
                                     android:scaleType="centerCrop"
-                                    app:layout_constraintDimensionRatio="1:1"
                                     android:src="@drawable/ic_id_card"
-                                    app:layout_constraintTop_toTopOf="parent"
-                                    app:layout_constraintBottom_toBottomOf="parent"/>
+                                    android:visibility="gone"
+                                    app:layout_constraintBottom_toBottomOf="parent"
+                                    app:layout_constraintDimensionRatio="1:1"
+                                    app:layout_constraintTop_toTopOf="parent" />
 
                             </androidx.constraintlayout.widget.ConstraintLayout>
-
 
 
                         </com.google.android.material.card.MaterialCardView>
@@ -239,8 +238,8 @@
                                     android:layout_width="32dp"
                                     android:layout_height="32dp"
                                     android:layout_gravity="center"
-                                    app:tint="@color/outlineVariant"
-                                    android:src="@drawable/ic_person_outlined" />
+                                    android:src="@drawable/ic_person_outlined"
+                                    app:tint="@color/outlineVariant" />
 
                                 <TextView
                                     android:id="@+id/discount"
@@ -255,31 +254,31 @@
 
                             <androidx.constraintlayout.widget.ConstraintLayout
                                 android:layout_width="match_parent"
-                                android:layout_weight="1"
-                                android:layout_height="wrap_content">
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1">
 
                                 <androidx.appcompat.widget.AppCompatImageView
                                     android:id="@+id/selfie"
                                     android:layout_width="match_parent"
                                     android:layout_height="0dp"
                                     android:layout_gravity="center"
-                                    android:visibility="gone"
                                     android:scaleType="centerCrop"
-                                    app:layout_constraintDimensionRatio="1:1"
                                     android:src="@drawable/ic_id_card"
-                                    app:layout_constraintTop_toTopOf="parent"
-                                    app:layout_constraintBottom_toBottomOf="parent"/>
+                                    android:visibility="gone"
+                                    app:layout_constraintBottom_toBottomOf="parent"
+                                    app:layout_constraintDimensionRatio="1:1"
+                                    app:layout_constraintTop_toTopOf="parent" />
 
                             </androidx.constraintlayout.widget.ConstraintLayout>
 
-                        <!--    <androidx.appcompat.widget.AppCompatImageView
-                                android:id="@+id/selfie"
-                                android:layout_width="match_parent"
-                                android:layout_height="match_parent"
-                                android:layout_gravity="center"
-                                android:maxHeight="120dp"
-                                android:visibility="gone"
-                                android:src="@drawable/ic_id_card" />-->
+                            <!--    <androidx.appcompat.widget.AppCompatImageView
+                                    android:id="@+id/selfie"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:layout_gravity="center"
+                                    android:maxHeight="120dp"
+                                    android:visibility="gone"
+                                    android:src="@drawable/ic_id_card" />-->
 
                         </com.google.android.material.card.MaterialCardView>
 
@@ -289,24 +288,22 @@
                 </LinearLayout>
 
 
-
-
             </com.google.android.material.card.MaterialCardView>
 
             <com.google.android.material.card.MaterialCardView
                 style="@style/cardStyle"
                 android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_margin="@dimen/margin"
                 app:strokeColor="@color/outline"
-                app:strokeWidth="1dp"
-                android:layout_height="wrap_content">
+                app:strokeWidth="1dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:padding="@dimen/padding"
                     android:background="@color/surface"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:padding="@dimen/padding">
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -326,8 +323,8 @@
                                 android:layout_width="32dp"
                                 android:layout_height="32dp"
                                 android:layout_gravity="center"
-                                app:tint="@color/primary"
-                                android:src="@drawable/ic_phone" />
+                                android:src="@drawable/ic_phone"
+                                app:tint="@color/primary" />
 
                         </com.google.android.material.card.MaterialCardView>
 
@@ -359,17 +356,17 @@
                             android:layout_width="32dp"
                             android:layout_height="32dp"
                             android:layout_gravity="center"
-                            app:tint="@color/success"
+                            android:src="@drawable/ic_check_white_24dp"
                             android:visibility="gone"
-                            android:src="@drawable/ic_check_white_24dp" />
+                            app:tint="@color/success" />
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/verifyPhone"
                             style="@style/appBtn"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:paddingHorizontal="@dimen/padding"
                             android:layout_gravity="center_vertical"
+                            android:paddingHorizontal="@dimen/padding"
                             android:paddingVertical="4dp"
                             android:text="Verify"
                             android:textAppearance="@style/TitleMedium" />
@@ -379,12 +376,12 @@
                             style="@style/appBtn"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:paddingHorizontal="@dimen/padding"
-                            android:visibility="gone"
                             android:layout_gravity="center_vertical"
+                            android:paddingHorizontal="@dimen/padding"
                             android:paddingVertical="4dp"
                             android:text="Verify OTP"
-                            android:textAppearance="@style/TitleMedium" />
+                            android:textAppearance="@style/TitleMedium"
+                            android:visibility="gone" />
 
                     </LinearLayout>
 
@@ -399,21 +396,20 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_marginVertical="@dimen/half_margin"
-                            android:text="Enter Phone Number"
                             android:layout_weight="1"
-                            android:visibility="visible"/>
+                            android:text="Enter Phone Number"
+                            android:visibility="visible" />
 
                         <androidx.appcompat.widget.AppCompatImageView
                             android:id="@+id/editPhone"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginEnd="@dimen/half_margin"
                             android:layout_gravity="center"
-                            android:visibility="gone"
-                            android:src="@drawable/ic_pencil" />
+                            android:layout_marginEnd="@dimen/half_margin"
+                            android:src="@drawable/ic_pencil"
+                            android:visibility="gone" />
 
                     </LinearLayout>
-
 
 
                     <com.google.android.material.textfield.TextInputLayout
@@ -421,17 +417,16 @@
                         style="@style/inputBoxStyle"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="@dimen/half_margin"
-                        >
+                        android:layout_marginBottom="@dimen/half_margin">
 
                         <com.google.android.material.textfield.MaterialAutoCompleteTextView
                             android:id="@+id/phoneNumber"
                             style="@style/inputTextStyle"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:maxLength="10"
                             android:hint="@string/enter_phone_number"
-                            android:inputType="number"/>
+                            android:inputType="number"
+                            android:maxLength="10" />
 
                     </com.google.android.material.textfield.TextInputLayout>
 
@@ -440,8 +435,8 @@
                         style="@style/inputBoxStyle"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:visibility="gone"
-                        android:layout_marginBottom="@dimen/half_margin">
+                        android:layout_marginBottom="@dimen/half_margin"
+                        android:visibility="gone">
 
                         <com.google.android.material.textfield.MaterialAutoCompleteTextView
                             android:id="@+id/otp"
@@ -449,7 +444,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:hint="@string/enter_code"
-                            android:inputType="number"/>
+                            android:inputType="number" />
 
                     </com.google.android.material.textfield.TextInputLayout>
 
@@ -458,10 +453,10 @@
                         style="@style/BodyMedium"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_gravity="end"
                         android:text="Resend?"
-                        android:visibility="gone"
                         android:textColor="@color/primary"
-                        android:layout_gravity="end"/>
+                        android:visibility="gone" />
 
                 </LinearLayout>
 
@@ -470,17 +465,17 @@
             <com.google.android.material.card.MaterialCardView
                 style="@style/cardStyle"
                 android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_margin="@dimen/margin"
                 app:strokeColor="@color/outline"
-                app:strokeWidth="1dp"
-                android:layout_height="wrap_content">
+                app:strokeWidth="1dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@color/surface"
-                    android:padding="@dimen/padding"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:padding="@dimen/padding">
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -533,13 +528,13 @@
                             style="@style/appBtnTrans"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:paddingHorizontal="@dimen/padding"
                             android:layout_gravity="center_vertical"
-                            android:paddingVertical="4dp"
                             android:background="@color/surface"
-                            android:textColor="@color/primary"
+                            android:paddingHorizontal="@dimen/padding"
+                            android:paddingVertical="4dp"
                             android:text="Add"
-                            android:textAppearance="@style/TitleMedium" />
+                            android:textAppearance="@style/TitleMedium"
+                            android:textColor="@color/primary" />
 
                     </LinearLayout>
 
@@ -581,10 +576,7 @@
                         tools:listitem="@layout/payment_card_item" />
 
 
-
                 </LinearLayout>
-
-
 
 
             </com.google.android.material.card.MaterialCardView>
@@ -592,18 +584,18 @@
             <com.google.android.material.card.MaterialCardView
                 style="@style/cardStyle"
                 android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_margin="@dimen/margin"
                 app:strokeColor="@color/outline"
-                app:strokeWidth="1dp"
-                android:layout_height="wrap_content">
+                app:strokeWidth="1dp">
 
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:padding="@dimen/padding"
                     android:background="@color/surface"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    android:padding="@dimen/padding">
 
                     <com.google.android.material.card.MaterialCardView
                         style="@style/cardStyle"
@@ -667,15 +659,14 @@
         style="@style/appBtn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/submit"
         android:layout_margin="@dimen/margin"
-        app:layout_constraintBottom_toBottomOf="parent"
-        />
+        android:text="@string/submit"
+        app:layout_constraintBottom_toBottomOf="parent" />
 
     <io.bidswipe.app.ui.custom.LoaderView
         android:id="@+id/loader"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone"/>
+        android:visibility="gone" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

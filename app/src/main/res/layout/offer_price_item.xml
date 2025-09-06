@@ -22,8 +22,8 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:text="$1,039"
-            android:textStyle="bold"
-            android:textColor="@color/primary" />
+            android:textColor="@color/primary"
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/discount"

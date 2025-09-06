@@ -7,17 +7,17 @@ import androidx.annotation.Keep
 @Keep
 data class BlockedUnblockedResponse(
     @SerializedName("status")
-    val status: String?,
+    val status : String? ,
     @SerializedName("message")
-    val message: String?,
+    val message : String? ,
     @SerializedName("error_type")
-    val errorType: String?,
+    val errorType : String? ,
     @SerializedName("data")
-    val `data`: Data?
+    val `data` : Data? ,
 ) {
-    @Keep
-    data class Data(
+	@Keep
+	data class Data(
         @SerializedName("status")
-        val status: Boolean?
+        val status : Boolean? ,
     )
 }

@@ -107,7 +107,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Listed Price: $129.99" />
- <TextView
+
+                <TextView
                     android:id="@+id/offer_price"
                     style="@style/BodySmall"
                     android:layout_width="match_parent"
@@ -122,8 +123,8 @@
             android:id="@+id/buttonLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
             android:layout_margin="@dimen/margin"
+            android:orientation="horizontal"
             android:weightSum="2">
 
             <com.google.android.material.button.MaterialButton
@@ -131,12 +132,12 @@
                 style="@style/appBtn"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:minHeight="0dp"
                 android:layout_marginEnd="@dimen/half_margin"
-                android:paddingVertical="@dimen/half_margin"
+                android:layout_weight="1"
                 android:backgroundTint="@color/success"
+                android:minHeight="0dp"
                 android:paddingHorizontal="@dimen/margin"
+                android:paddingVertical="@dimen/half_margin"
                 android:text="Accept" />
 
             <com.google.android.material.button.MaterialButton
@@ -147,8 +148,8 @@
                 android:layout_marginStart="@dimen/half_margin"
                 android:layout_weight="1"
                 android:backgroundTint="@color/error"
-                android:paddingHorizontal="@dimen/margin"
                 android:minHeight="0dp"
+                android:paddingHorizontal="@dimen/margin"
                 android:paddingVertical="@dimen/half_margin"
                 android:text="Decline" />
 
@@ -162,10 +163,10 @@
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/margin"
             android:backgroundTint="@color/successContainer"
-            android:textColor="@color/success"
             android:paddingHorizontal="@dimen/margin"
-            android:visibility="gone"
-            android:text="Accepted" />
+            android:text="Accepted"
+            android:textColor="@color/success"
+            android:visibility="gone" />
 
     </LinearLayout>
 

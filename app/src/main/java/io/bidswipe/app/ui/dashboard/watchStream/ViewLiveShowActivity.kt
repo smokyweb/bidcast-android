@@ -28,14 +28,14 @@ class ViewLiveShowActivity : BaseActivity() {
 
 	private var pos = 0
 	private var streamList = arrayListOf<LiveShowModel>()
-	private lateinit var viewPager: ViewPager2
-	private lateinit var streamPagerAdapter: StreamPagerAdapter
-	private var chatManager: ChatManager? = null
-	private var streamingManager: StreamingManager? = null
+	private lateinit var viewPager : ViewPager2
+	private lateinit var streamPagerAdapter : StreamPagerAdapter
+	private var chatManager : ChatManager? = null
+	private var streamingManager : StreamingManager? = null
 
 	private var eventListener = object : ValueEventListener {
 		@SuppressLint("NotifyDataSetChanged")
-		override fun onDataChange(snapshot: DataSnapshot) {
+		override fun onDataChange(snapshot : DataSnapshot) {
 
 			runSafe {
 				if (snapshot.childrenCount.toInt() != streamList.size) {
@@ -52,7 +52,7 @@ class ViewLiveShowActivity : BaseActivity() {
 
 						viewModel.setStreams(streamList)
 
-						streamPagerAdapter = StreamPagerAdapter(this@ViewLiveShowActivity, viewModel)
+						streamPagerAdapter = StreamPagerAdapter(this@ViewLiveShowActivity , viewModel)
 						viewPager.adapter = streamPagerAdapter
 						viewPager.currentItem = pos
 						viewPager.orientation = ViewPager2.ORIENTATION_VERTICAL
@@ -65,13 +65,13 @@ class ViewLiveShowActivity : BaseActivity() {
 
 		}
 
-		override fun onCancelled(error: DatabaseError) {
+		override fun onCancelled(error : DatabaseError) {
 
 		}
 
 	}
 
-	override fun onCreate(savedInstanceState: Bundle?) {
+	override fun onCreate(savedInstanceState : Bundle?) {
 		super.onCreate(savedInstanceState)
 		setContentView(bind.root)
 
@@ -83,7 +83,7 @@ class ViewLiveShowActivity : BaseActivity() {
 			fitsSystemWindows(false)
 			keyboardEnable(true)
 		}
-		
+
 		val showId = intent.getStringExtra("showId")
 
 //		streamList.find { it.showId == showId }
@@ -96,11 +96,11 @@ class ViewLiveShowActivity : BaseActivity() {
 
 		// Initialize ChatManager here if you want the ZIM SDK ready at Activity scope
 		chatManager = ChatManager(
-			application = application,
-			appId = Const.APP_ID.toLong(),
-			appSign = Const.APP_SIGN,
-			userId = userId,
-			userName = userName,
+			application = application ,
+			appId = Const.APP_ID.toLong() ,
+			appSign = Const.APP_SIGN ,
+			userId = userId ,
+			userName = userName ,
 			userImage = userImage
 		)
 
@@ -115,8 +115,8 @@ class ViewLiveShowActivity : BaseActivity() {
 	private fun createEngine() {
 		streamingManager = StreamingManager.getInstance(applicationContext)
 		streamingManager?.createEngine(
-			appId = Const.APP_ID.toLong(),
-			appSign = Const.APP_SIGN,
+			appId = Const.APP_ID.toLong() ,
+			appSign = Const.APP_SIGN ,
 			scenario = ZegoScenario.BROADCAST
 		)
 

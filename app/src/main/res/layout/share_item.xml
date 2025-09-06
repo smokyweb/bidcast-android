@@ -2,14 +2,14 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/click"
+    style="@style/shadowStyle"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:gravity="center_vertical"
-    android:padding="@dimen/margin"
     android:layout_margin="@dimen/half_margin"
-    style="@style/shadowStyle"
     android:background="@drawable/card_8"
-    android:backgroundTint="@color/inverseOnSurface">
+    android:backgroundTint="@color/inverseOnSurface"
+    android:gravity="center_vertical"
+    android:padding="@dimen/margin">
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/icon_card"
@@ -23,9 +23,9 @@
             android:id="@+id/icon"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:backgroundTint="@color/onSecondary"
             android:padding="12dp"
-            android:src="@drawable/ic_mail"
-            android:backgroundTint="@color/onSecondary"/>
+            android:src="@drawable/ic_mail" />
 
     </com.google.android.material.card.MaterialCardView>
 

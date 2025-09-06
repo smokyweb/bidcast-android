@@ -13,10 +13,10 @@ class SellerHubActivity : BaseActivity() {
 
 	private val bind by bind(ActivitySellerHubBinding::inflate)
 
-	private lateinit var navHostFragment: NavHostFragment
-	private lateinit var navController: NavController
+	private lateinit var navHostFragment : NavHostFragment
+	private lateinit var navController : NavController
 
-	override fun onCreate(savedInstanceState: Bundle?) {
+	override fun onCreate(savedInstanceState : Bundle?) {
 		super.onCreate(savedInstanceState)
 		setContentView(bind.root)
 
@@ -30,30 +30,39 @@ class SellerHubActivity : BaseActivity() {
 			"inventory" -> {
 				navGraph.setStartDestination(R.id.inventoryFragment)
 			}
+
 			"order" -> {
 				navGraph.setStartDestination(R.id.myOrdersFragment)
 			}
+
 			"offers" -> {
 				navGraph.setStartDestination(R.id.sellerOffersFragment)
 			}
+
 			"wallet" -> {
 				navGraph.setStartDestination(R.id.walletFragment)
 			}
-            "shows" -> {
-                navGraph.setStartDestination(R.id.showsFragment)
-            }
-			 "shipping" -> {
-                navGraph.setStartDestination(R.id.shippingFragment)
-            }
+
+			"shows" -> {
+				navGraph.setStartDestination(R.id.showsFragment)
+			}
+
+			"shipping" -> {
+				navGraph.setStartDestination(R.id.shippingFragment)
+			}
+
 			"tips" -> {
-                navGraph.setStartDestination(R.id.tipsFragment)
-            }
+				navGraph.setStartDestination(R.id.tipsFragment)
+			}
+
 			"program" -> {
 				navGraph.setStartDestination(R.id.affiliateProgramFragment)
 			}
+
 			"training" -> {
 				navGraph.setStartDestination(R.id.howToSellFragment2)
 			}
+
 			"sellerStatus" -> {
 				navGraph.setStartDestination(R.id.sellerStatusFragment)
 			}
@@ -61,18 +70,23 @@ class SellerHubActivity : BaseActivity() {
 			"shop" -> {
 				navGraph.setStartDestination(R.id.premierShopFragment)
 			}
+
 			"promote" -> {
 				navGraph.setStartDestination(R.id.promoteToolsFragment)
 			}
+
 			"sellerAnalytics" -> {
 				navGraph.setStartDestination(R.id.analyticsFragment)
 			}
+
 			"sellerVerification" -> {
 				navGraph.setStartDestination(R.id.sellerVerificationFragment)
 			}
+
 			"identityVerification" -> {
 				navGraph.setStartDestination(R.id.KYCFragment)
 			}
+
 			else -> {
 				navGraph.setStartDestination(R.id.inventoryFragment)
 			}

@@ -23,175 +23,175 @@ import io.bidswipe.app.utils.draw
 import io.bidswipe.app.utils.finish
 import io.bidswipe.app.utils.parse
 
-class AboutUsFragment : BaseFragment<MoreViewModel, FragmentAboutUsBinding>() {
-    override fun getModel(): Class<MoreViewModel> = MoreViewModel::class.java
+class AboutUsFragment : BaseFragment<MoreViewModel , FragmentAboutUsBinding>() {
+	override fun getModel() : Class<MoreViewModel> = MoreViewModel::class.java
 
-    override fun getBind(inflater: LayoutInflater, view: ViewGroup?) =
-        FragmentAboutUsBinding.inflate(inflater, view, false)
+	override fun getBind(inflater : LayoutInflater , view : ViewGroup?) =
+		FragmentAboutUsBinding.inflate(inflater , view , false)
 
-    private lateinit var featureAdapter: FeaturedAdapter
+	private lateinit var featureAdapter : FeaturedAdapter
 
-    private lateinit var teamAdapter: TeamAdapter
+	private lateinit var teamAdapter : TeamAdapter
 
-    private var featureList = mutableListOf<AboutUsResponse.Data.Feature?>()
+	private var featureList = mutableListOf<AboutUsResponse.Data.Feature?>()
 
-    private var teamList = mutableListOf<AboutUsResponse.Data.Team?>()
-    private var socialMediaLinks = mutableListOf<AboutUsResponse.Data.SocialMedia?>()
+	private var teamList = mutableListOf<AboutUsResponse.Data.Team?>()
+	private var socialMediaLinks = mutableListOf<AboutUsResponse.Data.SocialMedia?>()
 
-    private var mClick = object : RecyclerClicks {
-        override fun itemClick(pos: Int, status: String?) {
+	private var mClick = object : RecyclerClicks {
+		override fun itemClick(pos : Int , status : String?) {
 
-        }
+		}
 
-    }
+	}
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+	override fun onViewCreated(view : View , savedInstanceState : Bundle?) {
+		super.onViewCreated(view , savedInstanceState)
 
-        bind.header.onBackClick {
+		bind.header.onBackClick {
 
-            finish()
+			finish()
 
-        }
+		}
 
-        featureAdapter = FeaturedAdapter(featureList, mClick)
-        bind.gridRecycler.adapter = featureAdapter
+		featureAdapter = FeaturedAdapter(featureList , mClick)
+		bind.gridRecycler.adapter = featureAdapter
 
-        teamAdapter = TeamAdapter(teamList, mClick)
-        bind.teamRecycler.adapter = teamAdapter
+		teamAdapter = TeamAdapter(teamList , mClick)
+		bind.teamRecycler.adapter = teamAdapter
 
-        bind.twitter.setOnClickListener {
-            log("MediaLink  = ${socialMediaLinks.find { it?.platform == 3 }?.url}")
+		bind.twitter.setOnClickListener {
+			log("MediaLink  = ${socialMediaLinks.find { it?.platform == 3 }?.url}")
 
-            val url = socialMediaLinks.find { it?.platform == 3 }?.url
-            launchWeb(url?.url.toString())
-        }
+			val url = socialMediaLinks.find { it?.platform == 3 }?.url
+			launchWeb(url?.url.toString())
+		}
 
-        bind.insta.setOnClickListener {
-            val url = socialMediaLinks.find { it?.platform == 1 }?.url
-            launchWeb(url?.url.toString())
-        }
+		bind.insta.setOnClickListener {
+			val url = socialMediaLinks.find { it?.platform == 1 }?.url
+			launchWeb(url?.url.toString())
+		}
 
-        bind.faceBook.setOnClickListener {
-            val url = socialMediaLinks.find { it?.platform == 2 }?.url
-            launchWeb(url?.url.toString())
-        }
+		bind.faceBook.setOnClickListener {
+			val url = socialMediaLinks.find { it?.platform == 2 }?.url
+			launchWeb(url?.url.toString())
+		}
 
-        bind.linkedIn.setOnClickListener {
-            val url = socialMediaLinks.find { it?.platform == 0 }?.url
-            launchWeb(url?.url.toString())
-        }
+		bind.linkedIn.setOnClickListener {
+			val url = socialMediaLinks.find { it?.platform == 0 }?.url
+			launchWeb(url?.url.toString())
+		}
 
-        bind.loader.isVisible = true
+		bind.loader.isVisible = true
 
-        viewModel.aboutUs()
+		viewModel.aboutUs()
 
-        viewModel.aboutUsRepo.observe(viewLifecycleOwner) {
-            when (it) {
-                is Resource.Success -> {
-                    bind.loader.isVisible = false
-                    viewModel.getTermsConditionsRepo.value = null
+		viewModel.aboutUsRepo.observe(viewLifecycleOwner) {
+			when (it) {
+				is Resource.Success -> {
+					bind.loader.isVisible = false
+					viewModel.getTermsConditionsRepo.value = null
 
-                    val mData = it.value.data
-                    bind.mission.text = mData?.mission
+					val mData = it.value.data
+					bind.mission.text = mData?.mission
 
-                    mData?.impact?.forEach {
-                        when (it?.label) {
-                            "Users" -> {
+					mData?.impact?.forEach {
+						when (it?.label) {
+							"Users" -> {
 
-                                bind.users.text = it.value
+								bind.users.text = it.value
 
-                            }
+							}
 
-                            "Auction" -> {
-                                bind.auctions.text = it.value
-                            }
+							"Auction" -> {
+								bind.auctions.text = it.value
+							}
 
-                            "Sale" -> {
-                                bind.sales.text = it.value
-                            }
-                        }
-                    }
+							"Sale" -> {
+								bind.sales.text = it.value
+							}
+						}
+					}
 
-                    if (mData?.socialMedia != null) {
-                        socialMediaLinks.addAll(mData.socialMedia)
-                    }
+					if (mData?.socialMedia != null) {
+						socialMediaLinks.addAll(mData.socialMedia)
+					}
 
-                    bind.email.title.text = mData?.contactEmail
-                    bind.email.icon.setImageDrawable(ContextCompat.getDrawable(mCtx, draw.ic_mail))
-                    bind.phoneNumber.title.text = mData?.contactPhone
-                    bind.phoneNumber.icon.setImageDrawable(
-                        ContextCompat.getDrawable(
-                            mCtx,
-                            draw.ic_phone
-                        )
-                    )
+					bind.email.title.text = mData?.contactEmail
+					bind.email.icon.setImageDrawable(ContextCompat.getDrawable(mCtx , draw.ic_mail))
+					bind.phoneNumber.title.text = mData?.contactPhone
+					bind.phoneNumber.icon.setImageDrawable(
+						ContextCompat.getDrawable(
+							mCtx ,
+							draw.ic_phone
+						)
+					)
 
-                    bind.email.subTitle.isVisible = false
-                    bind.phoneNumber.subTitle.isVisible = false
+					bind.email.subTitle.isVisible = false
+					bind.phoneNumber.subTitle.isVisible = false
 
-                    if (mData?.team != null) {
-                        teamList.addAll(mData.team)
-                    }
+					if (mData?.team != null) {
+						teamList.addAll(mData.team)
+					}
 
-                    if (mData?.features != null) {
-                        featureList.addAll(mData.features)
-                    }
-                    featureAdapter.notifyDataSetChanged()
-                    teamAdapter.notifyDataSetChanged()
+					if (mData?.features != null) {
+						featureList.addAll(mData.features)
+					}
+					featureAdapter.notifyDataSetChanged()
+					teamAdapter.notifyDataSetChanged()
 
-                }
+				}
 
-                is Resource.Error -> {
-                    bind.loader.isVisible = false
-                    viewModel.getTermsConditionsRepo.value = null
-                    if (it.isNetworkError) {
-                        errorToast(getString(R.string.no_internet))
-                    } else {
-                        it.parse(mCtx, TAG, object : AlertClicks {
-                            override fun primaryClick(dialog: AppBottomSheet) {
-                                dialog.dismiss()
+				is Resource.Error -> {
+					bind.loader.isVisible = false
+					viewModel.getTermsConditionsRepo.value = null
+					if (it.isNetworkError) {
+						errorToast(getString(R.string.no_internet))
+					} else {
+						it.parse(mCtx , TAG , object : AlertClicks {
+							override fun primaryClick(dialog : AppBottomSheet) {
+								dialog.dismiss()
 
-                            }
+							}
 
-                            override fun secondaryClick(dialog: AppBottomSheet) {
-                                dialog.dismiss()
+							override fun secondaryClick(dialog : AppBottomSheet) {
+								dialog.dismiss()
 
-                            }
-                        })
-                    }
-                }
+							}
+						})
+					}
+				}
 
-                else -> {}
-            }
-        }
+				else -> {}
+			}
+		}
 
 
-    }
+	}
 
-    private fun launchWeb(url: String) {
-        log(url)
+	private fun launchWeb(url : String) {
+		log(url)
 
-        val builder = CustomTabsIntent.Builder()
+		val builder = CustomTabsIntent.Builder()
 
-        val params = CustomTabColorSchemeParams.Builder()
+		val params = CustomTabColorSchemeParams.Builder()
 
-        params.setToolbarColor(ContextCompat.getColor(mCtx, R.color.primary))
+		params.setToolbarColor(ContextCompat.getColor(mCtx , R.color.primary))
 
-        builder.setDefaultColorSchemeParams(params.build())
+		builder.setDefaultColorSchemeParams(params.build())
 
-        builder.setShowTitle(true)
+		builder.setShowTitle(true)
 
-        builder.setShareState(CustomTabsIntent.SHARE_STATE_ON)
+		builder.setShareState(CustomTabsIntent.SHARE_STATE_ON)
 
-        builder.setInstantAppsEnabled(true)
+		builder.setInstantAppsEnabled(true)
 
-        val customBuilder = builder.build()
+		val customBuilder = builder.build()
 
-        customBuilder.intent.setPackage("com.android.chrome")
+		customBuilder.intent.setPackage("com.android.chrome")
 
-        customBuilder.launchUrl(requireActivity(), Uri.parse(url))
+		customBuilder.launchUrl(requireActivity() , Uri.parse(url))
 
-    }
+	}
 
 }

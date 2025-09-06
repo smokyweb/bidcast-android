@@ -14,59 +14,59 @@ import io.bidswipe.app.model.FormatModel
 import io.bidswipe.app.utils.draw
 import io.bidswipe.app.utils.ids
 
-class ChooseSalesFormatFragment : BaseFragment<ScheduleShowViewModel, FragmentChooseSalesFormatBinding>() {
-    override fun getModel(): Class<ScheduleShowViewModel> = ScheduleShowViewModel::class.java
+class ChooseSalesFormatFragment : BaseFragment<ScheduleShowViewModel , FragmentChooseSalesFormatBinding>() {
+	override fun getModel() : Class<ScheduleShowViewModel> = ScheduleShowViewModel::class.java
 
-    override fun getBind(
-        inflater: LayoutInflater,
-        view: ViewGroup?,
-    ) = FragmentChooseSalesFormatBinding.inflate(inflater, view, false)
+	override fun getBind(
+		inflater : LayoutInflater ,
+		view : ViewGroup? ,
+	) = FragmentChooseSalesFormatBinding.inflate(inflater , view , false)
 
-    private var formatList = mutableListOf<FormatModel>()
-    private lateinit var adapter: FormatAdapter
-    private var productData: Bundle? = null
+	private var formatList = mutableListOf<FormatModel>()
+	private lateinit var adapter : FormatAdapter
+	private var productData : Bundle? = null
 
-    private val mClick = object : RecyclerClicks {
+	private val mClick = object : RecyclerClicks {
 
-        override fun itemClick(pos: Int, status: String?) {
+		override fun itemClick(pos : Int , status : String?) {
 
-            formatList.forEachIndexed { index, formatModel ->
-                formatModel.selected = index == pos
-            }
+			formatList.forEachIndexed { index , formatModel ->
+				formatModel.selected = index == pos
+			}
 
-            bind.offerLayout.isVisible = pos == 1
+			bind.offerLayout.isVisible = pos == 1
 
-            adapter.notifyDataSetChanged()
+			adapter.notifyDataSetChanged()
 
-        }
-    }
+		}
+	}
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+	override fun onViewCreated(view : View , savedInstanceState : Bundle?) {
+		super.onViewCreated(view , savedInstanceState)
 
-        if(arguments!= null){
-           productData =  requireArguments()
-        }
+		if (arguments != null) {
+			productData = requireArguments()
+		}
 
-        bind.header.onBackClick {
-            findNavController().popBackStack()
-        }
+		bind.header.onBackClick {
+			findNavController().popBackStack()
+		}
 
-        formatList.add(FormatModel(draw.ic_hammer, "Auction"))
-        formatList.add(FormatModel(draw.ic_tag, "Buy It Now"))
+		formatList.add(FormatModel(draw.ic_hammer , "Auction"))
+		formatList.add(FormatModel(draw.ic_tag , "Buy It Now"))
 
-        adapter = FormatAdapter(formatList, mClick)
+		adapter = FormatAdapter(formatList , mClick)
 
-        bind.recycler.adapter = adapter
+		bind.recycler.adapter = adapter
 
-        bind.continueBtn.setOnClickListener {
-            val selectedFormat = formatList.firstOrNull { it.selected == true }?.title ?: ""
-            val bundle = productData
-            bundle?.putString("salesFormat",selectedFormat)
-            bundle?.putString("price", bind.bidPrice.text.toString().trim())
+		bind.continueBtn.setOnClickListener {
+			val selectedFormat = formatList.firstOrNull { it.selected == true }?.title ?: ""
+			val bundle = productData
+			bundle?.putString("salesFormat" , selectedFormat)
+			bundle?.putString("price" , bind.bidPrice.text.toString().trim())
 
-            findNavController().navigate(ids.goToProductWeightFragment, bundle)
-        }
-    }
+			findNavController().navigate(ids.goToProductWeightFragment , bundle)
+		}
+	}
 
 }

@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    style="@style/cardStyle"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    style="@style/cardStyle"
     android:layout_margin="@dimen/half_margin"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:orientation="vertical">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -56,10 +56,10 @@
                     style="@style/Widget.AppCompat.RatingBar.Small"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:saveEnabled="true"
                     android:layout_gravity="center_vertical"
+                    android:numStars="5"
                     android:rating="3"
-                    android:numStars="5"/>
+                    android:saveEnabled="true" />
 
             </LinearLayout>
 
@@ -73,9 +73,7 @@
                 android:text="@string/username" />
 
 
-
         </LinearLayout>
-
 
 
     </LinearLayout>

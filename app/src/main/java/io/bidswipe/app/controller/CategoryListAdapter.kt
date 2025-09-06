@@ -8,16 +8,16 @@ import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.network.response.GetCategoryResponse
 
 class CategoryListAdapter(
-	mList: MutableList<GetCategoryResponse.Data?>, val mClicks: RecyclerClicks,
-) : BaseAdapter<GetCategoryResponse.Data?, CategoryListItemBinding>(mList) {
+	mList : MutableList<GetCategoryResponse.Data?> , val mClicks : RecyclerClicks ,
+) : BaseAdapter<GetCategoryResponse.Data? , CategoryListItemBinding>(mList) {
 
-	override fun bindView(inflater: LayoutInflater, parent: ViewGroup) =
-		CategoryListItemBinding.inflate(inflater, parent, false)
+	override fun bindView(inflater : LayoutInflater , parent : ViewGroup) =
+		CategoryListItemBinding.inflate(inflater , parent , false)
 
 	override fun onBind(
-		holder: BaseViewHolder<CategoryListItemBinding>,
-		position: Int,
-		item: GetCategoryResponse.Data?,
+		holder : BaseViewHolder<CategoryListItemBinding> ,
+		position : Int ,
+		item : GetCategoryResponse.Data? ,
 	) {
 		with(holder) {
 

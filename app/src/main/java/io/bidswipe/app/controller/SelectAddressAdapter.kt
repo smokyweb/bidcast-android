@@ -9,29 +9,29 @@ import io.bidswipe.app.network.response.GetShippingAddressResponse
 
 class SelectAddressAdapter(
 
-    mList: MutableList<GetShippingAddressResponse.Data?>, val mClicks: RecyclerClicks,
-) : BaseAdapter<GetShippingAddressResponse.Data?, SelectableAddressItemBinding>(mList) {
+	mList : MutableList<GetShippingAddressResponse.Data?> , val mClicks : RecyclerClicks ,
+) : BaseAdapter<GetShippingAddressResponse.Data? , SelectableAddressItemBinding>(mList) {
 
-    override fun bindView(inflater: LayoutInflater, parent: ViewGroup) =
-        SelectableAddressItemBinding.inflate(inflater, parent, false)
+	override fun bindView(inflater : LayoutInflater , parent : ViewGroup) =
+		SelectableAddressItemBinding.inflate(inflater , parent , false)
 
-    override fun onBind(
-        holder: BaseViewHolder<SelectableAddressItemBinding>,
-        position: Int,
-        item: GetShippingAddressResponse.Data?,
-    ) {
-        with(holder) {
+	override fun onBind(
+		holder : BaseViewHolder<SelectableAddressItemBinding> ,
+		position : Int ,
+		item : GetShippingAddressResponse.Data? ,
+	) {
+		with(holder) {
 
-            bind.root.setOnClickListener {
-                mClicks.itemClick(position)
-            }
+			bind.root.setOnClickListener {
+				mClicks.itemClick(position)
+			}
 
-            bind.address.text = buildString {
-                append(item?.streetAddress)
-            }
+			bind.address.text = buildString {
+				append(item?.streetAddress)
+			}
 
-            bind.selectBtn.isChecked = item?.selected == true
+			bind.selectBtn.isChecked = item?.selected == true
 
-        }
-    }
+		}
+	}
 }

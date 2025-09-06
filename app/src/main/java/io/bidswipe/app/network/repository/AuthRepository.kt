@@ -6,41 +6,41 @@ import okhttp3.RequestBody
 import javax.inject.Inject
 
 
-class AuthRepository @Inject constructor(private val api: ApiInterface) : BaseRepository() {
+class AuthRepository @Inject constructor(private val api : ApiInterface) : BaseRepository() {
 
-    suspend fun signUp(
-        firstName: RequestBody,
-        lastName: RequestBody,
-        email: RequestBody,
-        password: RequestBody,
-        confirmPassword: RequestBody,
-        referralCode: RequestBody?
-    ) = call { api.signUp(firstName, lastName, email, password, confirmPassword , referralCode) }
+	suspend fun signUp(
+		firstName : RequestBody ,
+		lastName : RequestBody ,
+		email : RequestBody ,
+		password : RequestBody ,
+		confirmPassword : RequestBody ,
+		referralCode : RequestBody? ,
+	) = call { api.signUp(firstName , lastName , email , password , confirmPassword , referralCode) }
 
-    suspend fun login(
-        email: RequestBody,
-        password: RequestBody,
-    ) = call {
-        api.login(email, password)
-    }
+	suspend fun login(
+		email : RequestBody ,
+		password : RequestBody ,
+	) = call {
+		api.login(email , password)
+	}
 
-    suspend fun forgotPassword(
-        email: RequestBody,
-    ) = call {
-        api.forgotPassword(email)
-    }
+	suspend fun forgotPassword(
+		email : RequestBody ,
+	) = call {
+		api.forgotPassword(email)
+	}
 
-    suspend fun verifyOtp(
-        email: RequestBody,
-        code: RequestBody,
-    ) = call {
-        api.verifyOtp(email, code)
-    }
+	suspend fun verifyOtp(
+		email : RequestBody ,
+		code : RequestBody ,
+	) = call {
+		api.verifyOtp(email , code)
+	}
 
-    suspend fun resetPassword(
-        email: RequestBody,
-        password: RequestBody,
-        confirmPassword: RequestBody,
-    ) = call { api.resetPassword(email, password, confirmPassword) }
+	suspend fun resetPassword(
+		email : RequestBody ,
+		password : RequestBody ,
+		confirmPassword : RequestBody ,
+	) = call { api.resetPassword(email , password , confirmPassword) }
 
 }

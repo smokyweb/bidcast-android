@@ -129,6 +129,17 @@ class MessagesFragment : BaseFragment<DashViewModel , FragmentMessagesBinding>()
 		}
 	}
 
+	fun reloadData() {
+		if (Utils.isOnline(mCtx)) {
+			loadMessages()
+		} else {
+			bind.loader.isVisible = false
+			bind.noInternet.isVisible = true
+			bind.recycler.isVisible = false
+			bind.noData.isVisible = false
+		}
+	}
+
 	override fun onStart() {
 		super.onStart()
 		FireRef.CHAT_LIST.child(userId).orderByChild("timestamp")

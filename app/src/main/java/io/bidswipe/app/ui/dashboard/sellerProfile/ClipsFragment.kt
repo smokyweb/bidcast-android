@@ -10,14 +10,15 @@ import io.bidswipe.app.controller.ClipsAdapter
 import io.bidswipe.app.databinding.FragmentClipsBinding
 import io.bidswipe.app.utils.Utils
 
-class ClipsFragment : BaseFragment<SellerViewModel, FragmentClipsBinding>() {
+class ClipsFragment : BaseFragment<SellerViewModel , FragmentClipsBinding>() {
 	override fun getModel() = SellerViewModel::class.java
 
 	override fun getBind(
-		inflater: LayoutInflater,
-		view: ViewGroup?
-	) = FragmentClipsBinding.inflate(inflater, view, false)
-	private lateinit var clipsAdapter: ClipsAdapter
+		inflater : LayoutInflater ,
+		view : ViewGroup? ,
+	) = FragmentClipsBinding.inflate(inflater , view , false)
+
+	private lateinit var clipsAdapter : ClipsAdapter
 
 	override fun onResume() {
 		super.onResume()
@@ -34,15 +35,15 @@ class ClipsFragment : BaseFragment<SellerViewModel, FragmentClipsBinding>() {
 		}
 	}
 
-	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-		super.onViewCreated(view, savedInstanceState)
+	override fun onViewCreated(view : View , savedInstanceState : Bundle?) {
+		super.onViewCreated(view , savedInstanceState)
 
 		val staticClips = listOf(
-			"Clip 1",
-			"Clip 2",
-			"Clip 3",
-			"Clip 4",
-			"Clip 5",
+			"Clip 1" ,
+			"Clip 2" ,
+			"Clip 3" ,
+			"Clip 4" ,
+			"Clip 5" ,
 			"Clip 6"
 		)
 		clipsAdapter = ClipsAdapter(mList = staticClips)

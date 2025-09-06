@@ -47,16 +47,14 @@ class MessageSwiper(
 	override fun convertToAbsoluteDirection(flags : Int , layoutDirection : Int) = if (swipeBack) {
 		swipeBack = false
 		0
-	}
-	else {
+	} else {
 		super.convertToAbsoluteDirection(flags , layoutDirection)
 	}
 
 	override fun onChildDraw(c : Canvas , v : RecyclerView , h : RecyclerView.ViewHolder , dX : Float , dY : Float , state : Int , isActive : Boolean) {
 		if (h is ChatAdapter.DateViewHolder) {
 			Alerts.log(javaClass.simpleName , "DATE ITEM")
-		}
-		else {
+		} else {
 			if (state == ACTION_STATE_SWIPE) {
 				setTouchListener(v , h)
 			}
@@ -101,24 +99,20 @@ class MessageSwiper(
 				replyButtonProgress += dt / 180.0f
 				if (replyButtonProgress > 1.0f) {
 					replyButtonProgress = 1.0f
-				}
-				else {
+				} else {
 					mView.invalidate()
 				}
 			}
-		}
-		else if (translationX <= 0.0f) {
+		} else if (translationX <= 0.0f) {
 			replyButtonProgress = 0f
 			startTracking = false
 			isVibrate = false
-		}
-		else {
+		} else {
 			if (replyButtonProgress > 0.0f) {
 				replyButtonProgress -= dt / 180.0f
 				if (replyButtonProgress < 0.1f) {
 					replyButtonProgress = 0f
-				}
-				else {
+				} else {
 					mView.invalidate()
 				}
 			}
@@ -127,17 +121,15 @@ class MessageSwiper(
 		val alpha : Int
 		val scale : Float
 
-		if (showing)  {
+		if (showing) {
 			scale = if (replyButtonProgress <= 0.8f) {
 				1.2f * (replyButtonProgress / 0.8f)
-			}
-			else {
+			} else {
 				1.2f - 0.2f * ((replyButtonProgress - 0.8f) / 0.2f)
 			}
 
 			alpha = min(255f , 255 * (replyButtonProgress / 0.8f)).toInt()
-		}
-		else {
+		} else {
 			scale = replyButtonProgress
 			alpha = min(255f , 255 * replyButtonProgress).toInt()
 		}
@@ -154,8 +146,7 @@ class MessageSwiper(
 
 		val x = if (mView.translationX > convertToDp(130)) {
 			convertToDp(130) / 2
-		}
-		else {
+		} else {
 			(mView.translationX / 2).toInt()
 		}
 

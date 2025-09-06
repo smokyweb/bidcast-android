@@ -8,26 +8,26 @@ import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.model.LiveMoreOption
 
 class LiveMoreAdapter(
-	mList: MutableList<LiveMoreOption>, val mClicks: RecyclerClicks,
-) : BaseAdapter<LiveMoreOption, MoreOptionItemBinding>(mList) {
+	mList : MutableList<LiveMoreOption> , val mClicks : RecyclerClicks ,
+) : BaseAdapter<LiveMoreOption , MoreOptionItemBinding>(mList) {
 
-    override fun bindView(inflater: LayoutInflater, parent: ViewGroup) =
-        MoreOptionItemBinding.inflate(inflater, parent, false)
+	override fun bindView(inflater : LayoutInflater , parent : ViewGroup) =
+		MoreOptionItemBinding.inflate(inflater , parent , false)
 
-    override fun onBind(
-		holder: BaseViewHolder<MoreOptionItemBinding>,
-		position: Int,
-		item: LiveMoreOption?,
+	override fun onBind(
+		holder : BaseViewHolder<MoreOptionItemBinding> ,
+		position : Int ,
+		item : LiveMoreOption? ,
 	) {
-        with(holder) {
+		with(holder) {
 
-            bind.title.text = item?.name
-            bind.icon.setImageResource(item?.image!!)
+			bind.title.text = item?.name
+			bind.icon.setImageResource(item?.image !!)
 
-            bind.root.setOnClickListener {
-                mClicks.itemClick(position, item.name)
-            }
+			bind.root.setOnClickListener {
+				mClicks.itemClick(position , item.name)
+			}
 
-        }
-    }
+		}
+	}
 }

@@ -12,29 +12,29 @@ import io.bidswipe.app.network.response.GetCategoryResponse
 import io.bidswipe.app.utils.loadUrl
 
 class ExploreAdapter(
-    val mList: MutableList<GetCategoryResponse.Data?>, val mClicks: RecyclerClicks,
-) : BaseAdapter<GetCategoryResponse.Data?, ExploreItemBinding>(mList) {
+	val mList : MutableList<GetCategoryResponse.Data?> , val mClicks : RecyclerClicks ,
+) : BaseAdapter<GetCategoryResponse.Data? , ExploreItemBinding>(mList) {
 
-    override fun bindView(inflater: LayoutInflater, parent: ViewGroup) =
-        ExploreItemBinding.inflate(inflater, parent, false)
+	override fun bindView(inflater : LayoutInflater , parent : ViewGroup) =
+		ExploreItemBinding.inflate(inflater , parent , false)
 
-    override fun onBind(
-        holder: BaseViewHolder<ExploreItemBinding>,
-        position: Int,
-        item: GetCategoryResponse.Data??,
-    ) {
-        with(holder) {
+	override fun onBind(
+		holder : BaseViewHolder<ExploreItemBinding> ,
+		position : Int ,
+		item : GetCategoryResponse.Data?? ,
+	) {
+		with(holder) {
 
-            bind.root.setOnClickListener {
-                mClicks.itemClick(position)
-            }
+			bind.root.setOnClickListener {
+				mClicks.itemClick(position)
+			}
 
-            bind.title.text = item?.name
-            bind.icon.loadUrl(mCtx, item?.image ?: "")
-            bind.iconCard.setCardBackgroundColor(
-                item?.color?.toColorInt() ?: ContextCompat.getColor(mCtx, R.color.primary)
-            )
+			bind.title.text = item?.name
+			bind.icon.loadUrl(mCtx , item?.image ?: "")
+			bind.iconCard.setCardBackgroundColor(
+				item?.color?.toColorInt() ?: ContextCompat.getColor(mCtx , R.color.primary)
+			)
 
-        }
-    }
+		}
+	}
 }

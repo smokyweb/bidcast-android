@@ -19,37 +19,37 @@ import io.bidswipe.app.utils.Alerts
 import io.bidswipe.app.utils.ids
 import io.bidswipe.app.utils.parse
 
-class WalletViewFragment : BaseFragment<SellerHubViewModel, FragmentWalletViewBinding>() {
-    override fun getModel(): Class<SellerHubViewModel>  = SellerHubViewModel::class.java
+class WalletViewFragment : BaseFragment<SellerHubViewModel , FragmentWalletViewBinding>() {
+	override fun getModel() : Class<SellerHubViewModel> = SellerHubViewModel::class.java
 
-    override fun getBind(
-        inflater: LayoutInflater,
-        view: ViewGroup?
-    ) = FragmentWalletViewBinding.inflate(inflater,view,false)
+	override fun getBind(
+		inflater : LayoutInflater ,
+		view : ViewGroup? ,
+	) = FragmentWalletViewBinding.inflate(inflater , view , false)
 
-    private var itemList = mutableListOf("", "", "", "", "")
+	private var itemList = mutableListOf("" , "" , "" , "" , "")
 
-    private lateinit var adapter: PayoutAdapter
+	private lateinit var adapter : PayoutAdapter
 
-    private var kycStatus = false
+	private var kycStatus = false
 
-    private val mClick = object : RecyclerClicks {
+	private val mClick = object : RecyclerClicks {
 
-        override fun itemClick(pos: Int, status: String?) {
-        }
-    }
+		override fun itemClick(pos : Int , status : String?) {
+		}
+	}
 
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+	override fun onViewCreated(view : View , savedInstanceState : Bundle?) {
+		super.onViewCreated(view , savedInstanceState)
 
-        adapter = PayoutAdapter(itemList,mClick)
+		adapter = PayoutAdapter(itemList , mClick)
 		bind.recycler.adapter = adapter
 		bind.payoutCard.setOnClickListener {
 
-			if (!kycStatus){
-				Alerts.error(mCtx,"Please Complete Your KYC")
-			}else{
+			if (! kycStatus) {
+				Alerts.error(mCtx , "Please Complete Your KYC")
+			} else {
 				findNavController().navigate(ids.goToPayoutFragment)
 			}
 
@@ -75,12 +75,12 @@ class WalletViewFragment : BaseFragment<SellerHubViewModel, FragmentWalletViewBi
 					if (it.isNetworkError) {
 						errorToast(getString(R.string.no_internet))
 					} else {
-						it.parse(mCtx, TAG, object : AlertClicks {
-							override fun primaryClick(dialog: AppBottomSheet) {
+						it.parse(mCtx , TAG , object : AlertClicks {
+							override fun primaryClick(dialog : AppBottomSheet) {
 								dialog.dismiss()
 							}
 
-							override fun secondaryClick(dialog: AppBottomSheet) {
+							override fun secondaryClick(dialog : AppBottomSheet) {
 								dialog.dismiss()
 							}
 						})
@@ -107,12 +107,12 @@ class WalletViewFragment : BaseFragment<SellerHubViewModel, FragmentWalletViewBi
 					if (it.isNetworkError) {
 						errorToast(getString(R.string.no_internet))
 					} else {
-						it.parse(mCtx, TAG, object : AlertClicks {
-							override fun primaryClick(dialog: AppBottomSheet) {
+						it.parse(mCtx , TAG , object : AlertClicks {
+							override fun primaryClick(dialog : AppBottomSheet) {
 								dialog.dismiss()
 							}
 
-							override fun secondaryClick(dialog: AppBottomSheet) {
+							override fun secondaryClick(dialog : AppBottomSheet) {
 								dialog.dismiss()
 							}
 						})
@@ -124,8 +124,6 @@ class WalletViewFragment : BaseFragment<SellerHubViewModel, FragmentWalletViewBi
 			}
 		}
 
-
-
-    }
+	}
 
 }

@@ -7,21 +7,21 @@ import androidx.annotation.Keep
 @Keep
 data class GetStatesResponse(
     @SerializedName("data")
-    val `data`: List<Data?>?,
+    val `data` : List<Data?>? ,
     @SerializedName("error_type")
-    val errorType: String?,
+    val errorType : String? ,
     @SerializedName("message")
-    val message: String?,
+    val message : String? ,
     @SerializedName("status")
-    val status: String?
+    val status : String? ,
 ) {
-    @Keep
-    data class Data(
+	@Keep
+	data class Data(
         @SerializedName("id")
-        val id: Int?,
+        val id : Int? ,
         @SerializedName("iso2")
-        val iso2: String?,
+        val iso2 : String? ,
         @SerializedName("name")
-        val name: String?
+        val name : String? ,
     )
 }

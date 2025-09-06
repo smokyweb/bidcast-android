@@ -6,25 +6,25 @@ import io.bidswipe.app.base.BaseAdapter
 import io.bidswipe.app.databinding.ClipsItemBinding
 
 class ClipsAdapter(
-	mList: List<String>,
-	private val onItemClick: (String, Int) -> Unit = { _, _ -> },
-	private val onPlayClick: (String, Int) -> Unit = { _, _ -> }
-) : BaseAdapter<String, ClipsItemBinding>(mList) {
+	mList : List<String> ,
+	private val onItemClick : (String , Int) -> Unit = { _ , _ -> } ,
+	private val onPlayClick : (String , Int) -> Unit = { _ , _ -> } ,
+) : BaseAdapter<String , ClipsItemBinding>(mList) {
 
-	override fun bindView(inflater: LayoutInflater, parent: ViewGroup) =
-		ClipsItemBinding.inflate(inflater, parent, false)
+	override fun bindView(inflater : LayoutInflater , parent : ViewGroup) =
+		ClipsItemBinding.inflate(inflater , parent , false)
 
 	override fun onBind(
-		holder: BaseViewHolder<ClipsItemBinding>,
-		position: Int,
-		item: String?,
+		holder : BaseViewHolder<ClipsItemBinding> ,
+		position : Int ,
+		item : String? ,
 	) {
 		with(holder) {
 			bind.root.setOnClickListener {
-				onItemClick("", position)
+				onItemClick("" , position)
 			}
 			bind.playButton.setOnClickListener {
-				onPlayClick("", position)
+				onPlayClick("" , position)
 			}
 		}
 	}

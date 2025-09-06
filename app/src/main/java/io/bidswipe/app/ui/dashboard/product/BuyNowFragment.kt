@@ -36,427 +36,427 @@ import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request
 import io.bidswipe.app.utils.value
 
-class BuyNowFragment : BaseFragment<ProductViewModel, FragmentBuyNowBinding>() {
-    override fun getModel(): Class<ProductViewModel> = ProductViewModel::class.java
+class BuyNowFragment : BaseFragment<ProductViewModel , FragmentBuyNowBinding>() {
+	override fun getModel() : Class<ProductViewModel> = ProductViewModel::class.java
 
-    override fun getBind(
-        inflater: LayoutInflater,
-        view: ViewGroup?,
-    ) = FragmentBuyNowBinding.inflate(inflater, view, false)
+	override fun getBind(
+		inflater : LayoutInflater ,
+		view : ViewGroup? ,
+	) = FragmentBuyNowBinding.inflate(inflater , view , false)
 
-    private var checkOutData: GetPurchaseDetail.Data? = null
+	private var checkOutData : GetPurchaseDetail.Data? = null
 
-    private var cardList = mutableListOf<GetPaymentCardsResponse.Data.PaymentProfile?>()
-    private var addressList = mutableListOf<GetShippingAddressResponse.Data?>()
-    private var shippingId = 0
-    private var cardId = ""
+	private var cardList = mutableListOf<GetPaymentCardsResponse.Data.PaymentProfile?>()
+	private var addressList = mutableListOf<GetShippingAddressResponse.Data?>()
+	private var shippingId = 0
+	private var cardId = ""
 
-    private var addCardLauncher =
-        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            if (result.resultCode == Activity.RESULT_OK) {
-                bind.loader.isVisible = true
-                viewModel.getPaymentCard()
-            }
+	private var addCardLauncher =
+		registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+			if (result.resultCode == Activity.RESULT_OK) {
+				bind.loader.isVisible = true
+				viewModel.getPaymentCard()
+			}
 
-        }
+		}
 
-    private var addAddressLauncher =
-        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            if (result.resultCode == Activity.RESULT_OK) {
-                bind.loader.isVisible = true
-                viewModel.getShippingAddress()
-            }
+	private var addAddressLauncher =
+		registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+			if (result.resultCode == Activity.RESULT_OK) {
+				bind.loader.isVisible = true
+				viewModel.getShippingAddress()
+			}
 
-        }
-
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
-        bind.header.onBackClick {
-            findNavController().popBackStack()
-        }
-
-        bind.changeAddress.setOnClickListener {
-            if (addressList.isEmpty()) {
-                addAddressLauncher.launch(
-                    Intent(mCtx, MoreActivity::class.java).putExtra(
-                        "slug",
-                        "addAddress"
-                    )
-                )
-            } else {
-                showAddressSheet()
-            }
-        }
-
-        bind.changePayment.setOnClickListener {
-
-            if (cardList.isEmpty()) {
-                addCardLauncher.launch(mCtx.goToAddCard("buyNow"))
-            } else {
-                showPaymentMethodSheet()
-            }
-        }
-
-        bind.loader.isVisible = true
-
-        viewModel.getPaymentCard()
-
-        viewModel.getShippingAddress()
-
-        bind.productName.text = viewModel.product?.title
-
-        bind.productDescription.text = viewModel.product?.description
-
-        bind.productImg.loadUrl(mCtx, viewModel.product?.images?.get(0).toString())
-
-        bind.confirmButton.setOnClickListener {
-
-            when {
-
-                cardList.isEmpty() -> {
-                    Alerts.error(mCtx, "Please add Payment card")
-                }
-
-                addressList.isEmpty() -> {
-                    Alerts.error(mCtx, "Please add Shipping Address")
-                }
-
-                else -> {
-                    if (bind.sendAsGift.isChecked) {
-                        findNavController().navigate(
-                            ids.buyNowToSendGiftFragment,
-                            bundleOf(
-                                "shippingId" to shippingId.toString(),
-                                "productId" to viewModel.product?.id.toString(),
-                                "cardId" to cardList[0]?.customerPaymentProfileId?.toString(),
-                                "promoCode" to bind.promoCode.value()
-                            )
-                        )
-                    } else {
-                        bind.loader.isVisible = true
-
-                        viewModel.createOrder(
-	                        shippingId = shippingId.toString().request(),
-	                        productId = viewModel.product?.id.toString().request(),
-	                        cardId = cardList[0]?.customerPaymentProfileId?.request(),
-	                        promoCode = bind.promoCode.value().ifEmpty { null }?.request(),
-	                        sendAsGift = "0".request(),
-	                        giftUserId = null,
-	                        giftMsg = null,
-	                        shippingCharges = checkOutData?.shippingCharges.toString().request(),
-	                        taxAmount = checkOutData?.taxAmount.toString().request(),
-	                        subTotal = checkOutData?.subTotal.toString().request(),
-	                        total = checkOutData?.total.toString().request()
-                        )
-
-                    }
-                }
-            }
-        }
-
-        viewModel.getShippingAddressRepo.observe(viewLifecycleOwner) {
-            when (it) {
-                is Resource.Success -> {
-                    bind.loader.isVisible = false
-
-                    val mData = it.value.data
-
-                    addressList.clear()
-
-                    if (mData?.isNotEmpty() == true) {
-                        addressList.addAll(mData)
-
-                        bind.address.text =
-                            addressList.find { it?.isDefault == true }?.streetAddress
-                                ?: addressList[0]?.streetAddress
+		}
 
 
-                        shippingId = addressList.find { it?.isDefault == true }?.id
-                            ?: (addressList[0]?.id
-                                ?: 0)
+	override fun onViewCreated(view : View , savedInstanceState : Bundle?) {
+		super.onViewCreated(view , savedInstanceState)
 
-                        addressList[0]?.selected = true
+		bind.header.onBackClick {
+			findNavController().popBackStack()
+		}
 
-                        viewModel.getPurchaseProduct(
-                            shippingId.toString().request(),
-                            viewModel.product?.id.toString().request()
-                        )
-                    }
+		bind.changeAddress.setOnClickListener {
+			if (addressList.isEmpty()) {
+				addAddressLauncher.launch(
+					Intent(mCtx , MoreActivity::class.java).putExtra(
+						"slug" ,
+						"addAddress"
+					)
+				)
+			} else {
+				showAddressSheet()
+			}
+		}
 
-                    if (addressList.isEmpty()) {
-                        bind.address.text = "Address not Found"
-                        bind.changeAddress.text = "Add Address"
-                    }
+		bind.changePayment.setOnClickListener {
+
+			if (cardList.isEmpty()) {
+				addCardLauncher.launch(mCtx.goToAddCard("buyNow"))
+			} else {
+				showPaymentMethodSheet()
+			}
+		}
+
+		bind.loader.isVisible = true
+
+		viewModel.getPaymentCard()
+
+		viewModel.getShippingAddress()
+
+		bind.productName.text = viewModel.product?.title
+
+		bind.productDescription.text = viewModel.product?.description
+
+		bind.productImg.loadUrl(mCtx , viewModel.product?.images?.get(0).toString())
+
+		bind.confirmButton.setOnClickListener {
+
+			when {
+
+				cardList.isEmpty() -> {
+					Alerts.error(mCtx , "Please add Payment card")
+				}
+
+				addressList.isEmpty() -> {
+					Alerts.error(mCtx , "Please add Shipping Address")
+				}
+
+				else -> {
+					if (bind.sendAsGift.isChecked) {
+						findNavController().navigate(
+							ids.buyNowToSendGiftFragment ,
+							bundleOf(
+								"shippingId" to shippingId.toString() ,
+								"productId" to viewModel.product?.id.toString() ,
+								"cardId" to cardList[0]?.customerPaymentProfileId?.toString() ,
+								"promoCode" to bind.promoCode.value()
+							)
+						)
+					} else {
+						bind.loader.isVisible = true
+
+						viewModel.createOrder(
+							shippingId = shippingId.toString().request() ,
+							productId = viewModel.product?.id.toString().request() ,
+							cardId = cardList[0]?.customerPaymentProfileId?.request() ,
+							promoCode = bind.promoCode.value().ifEmpty { null }?.request() ,
+							sendAsGift = "0".request() ,
+							giftUserId = null ,
+							giftMsg = null ,
+							shippingCharges = checkOutData?.shippingCharges.toString().request() ,
+							taxAmount = checkOutData?.taxAmount.toString().request() ,
+							subTotal = checkOutData?.subTotal.toString().request() ,
+							total = checkOutData?.total.toString().request()
+						)
+
+					}
+				}
+			}
+		}
+
+		viewModel.getShippingAddressRepo.observe(viewLifecycleOwner) {
+			when (it) {
+				is Resource.Success -> {
+					bind.loader.isVisible = false
+
+					val mData = it.value.data
+
+					addressList.clear()
+
+					if (mData?.isNotEmpty() == true) {
+						addressList.addAll(mData)
+
+						bind.address.text =
+							addressList.find { it?.isDefault == true }?.streetAddress
+								?: addressList[0]?.streetAddress
+
+
+						shippingId = addressList.find { it?.isDefault == true }?.id
+							?: (addressList[0]?.id
+								?: 0)
+
+						addressList[0]?.selected = true
+
+						viewModel.getPurchaseProduct(
+							shippingId.toString().request() ,
+							viewModel.product?.id.toString().request()
+						)
+					}
+
+					if (addressList.isEmpty()) {
+						bind.address.text = "Address not Found"
+						bind.changeAddress.text = "Add Address"
+					}
 
 //					shippingAddressAdapter.notifyDataSetChanged()
 
-                }
+				}
 
-                is Resource.Error -> {
-                    bind.loader.isVisible = false
+				is Resource.Error -> {
+					bind.loader.isVisible = false
 
-                    if (it.isNetworkError) {
-                        errorToast(getString(R.string.no_internet))
-                    } else {
-                        it.parse(mCtx, TAG, object : AlertClicks {
-                            override fun primaryClick(dialog: AppBottomSheet) {
-                                dialog.dismiss()
-                            }
+					if (it.isNetworkError) {
+						errorToast(getString(R.string.no_internet))
+					} else {
+						it.parse(mCtx , TAG , object : AlertClicks {
+							override fun primaryClick(dialog : AppBottomSheet) {
+								dialog.dismiss()
+							}
 
-                            override fun secondaryClick(dialog: AppBottomSheet) {
-                                dialog.dismiss()
-                            }
-                        })
-                    }
-                }
+							override fun secondaryClick(dialog : AppBottomSheet) {
+								dialog.dismiss()
+							}
+						})
+					}
+				}
 
-                else -> {}
+				else -> {}
 
-            }
-        }
+			}
+		}
 
-        viewModel.getPaymentCardRepo.observe(viewLifecycleOwner) {
+		viewModel.getPaymentCardRepo.observe(viewLifecycleOwner) {
 
-            when (it) {
-                is Resource.Success -> {
-                    bind.loader.isVisible = false
+			when (it) {
+				is Resource.Success -> {
+					bind.loader.isVisible = false
 
-                    val mData = it.value.data?.paymentProfiles
+					val mData = it.value.data?.paymentProfiles
 
-                    cardList.clear()
+					cardList.clear()
 
-                    if (mData?.isNotEmpty() == true) {
-                        cardList.addAll(mData)
-                    }
+					if (mData?.isNotEmpty() == true) {
+						cardList.addAll(mData)
+					}
 
-                    if (cardList.isEmpty()) {
+					if (cardList.isEmpty()) {
 
-                        bind.cardNumber.text = "No Cards Found"
+						bind.cardNumber.text = "No Cards Found"
 
-                        bind.changePayment.text = "Add Card"
+						bind.changePayment.text = "Add Card"
 
-                    } else {
-                        bind.cardNumber.text = buildString {
-                            append(cardList[0]?.payment?.creditCard?.cardNumber)
-                        }
-                        bind.cardNumber.setCompoundDrawablesWithIntrinsicBounds(
-                            ContextCompat.getDrawable(
-                                mCtx,
-                                draw.ic_visa
-                            ), null, null, null
-                        )
+					} else {
+						bind.cardNumber.text = buildString {
+							append(cardList[0]?.payment?.creditCard?.cardNumber)
+						}
+						bind.cardNumber.setCompoundDrawablesWithIntrinsicBounds(
+							ContextCompat.getDrawable(
+								mCtx ,
+								draw.ic_visa
+							) , null , null , null
+						)
 
-                        cardList[0]?.selected = true
+						cardList[0]?.selected = true
 
-                        cardId = cardList[0]?.customerPaymentProfileId.toString()
-                    }
+						cardId = cardList[0]?.customerPaymentProfileId.toString()
+					}
 //					cardAdapter.notifyDataSetChanged()
-                }
+				}
 
-                is Resource.Error -> {
-                    bind.loader.isVisible = false
+				is Resource.Error -> {
+					bind.loader.isVisible = false
 
-                    if (it.isNetworkError) {
-                        errorToast(getString(R.string.no_internet))
-                    } else {
-                        it.parse(mCtx, TAG, object : AlertClicks {
-                            override fun primaryClick(dialog: AppBottomSheet) {
-                                dialog.dismiss()
+					if (it.isNetworkError) {
+						errorToast(getString(R.string.no_internet))
+					} else {
+						it.parse(mCtx , TAG , object : AlertClicks {
+							override fun primaryClick(dialog : AppBottomSheet) {
+								dialog.dismiss()
 
-                            }
+							}
 
-                            override fun secondaryClick(dialog: AppBottomSheet) {
-                                dialog.dismiss()
+							override fun secondaryClick(dialog : AppBottomSheet) {
+								dialog.dismiss()
 
-                            }
-                        })
-                    }
-                }
+							}
+						})
+					}
+				}
 
-                else -> {}
-            }
-        }
+				else -> {}
+			}
+		}
 
-        viewModel.getPurchaseProductRepo.observe(viewLifecycleOwner) {
+		viewModel.getPurchaseProductRepo.observe(viewLifecycleOwner) {
 
-            when (it) {
-                is Resource.Success -> {
-                    bind.loader.isVisible = false
+			when (it) {
+				is Resource.Success -> {
+					bind.loader.isVisible = false
 
-                    val mData = it.value.data
+					val mData = it.value.data
 
-                    checkOutData = mData
+					checkOutData = mData
 
-                    viewModel.checkoutData = mData
+					viewModel.checkoutData = mData
 
-                    bind.subTotal.text = mData?.subTotal.toString().asMoney()
-                    bind.tax.text = mData?.taxAmount.toString().asMoney()
-                    bind.shipping.text = mData?.shippingCharges.toString().asMoney()
-                    bind.total.text = mData?.total.toString().asMoney()
+					bind.subTotal.text = mData?.subTotal.toString().asMoney()
+					bind.tax.text = mData?.taxAmount.toString().asMoney()
+					bind.shipping.text = mData?.shippingCharges.toString().asMoney()
+					bind.total.text = mData?.total.toString().asMoney()
 
-
-//					cardAdapter.notifyDataSetChanged()
-                }
-
-                is Resource.Error -> {
-                    bind.loader.isVisible = false
-
-                    if (it.isNetworkError) {
-                        errorToast(getString(R.string.no_internet))
-                    } else {
-                        it.parse(mCtx, TAG, object : AlertClicks {
-                            override fun primaryClick(dialog: AppBottomSheet) {
-                                dialog.dismiss()
-
-                            }
-
-                            override fun secondaryClick(dialog: AppBottomSheet) {
-                                dialog.dismiss()
-
-                            }
-                        })
-                    }
-                }
-
-                else -> {}
-            }
-        }
-
-        viewModel.createOrderRepo.observe(viewLifecycleOwner) {
-
-            when (it) {
-                is Resource.Success -> {
-                    bind.loader.isVisible = false
-
-                    val mData = it.value.data
-
-                    findNavController().navigate(
-                        ids.buyNowToOrderStatusFragment,
-                        bundleOf("orderId" to mData?.id.toString())
-                    )
 
 //					cardAdapter.notifyDataSetChanged()
-                }
+				}
 
-                is Resource.Error -> {
-                    bind.loader.isVisible = false
+				is Resource.Error -> {
+					bind.loader.isVisible = false
 
-                    if (it.isNetworkError) {
-                        errorToast(getString(R.string.no_internet))
-                    } else {
-                        it.parse(mCtx, TAG, object : AlertClicks {
-                            override fun primaryClick(dialog: AppBottomSheet) {
-                                dialog.dismiss()
+					if (it.isNetworkError) {
+						errorToast(getString(R.string.no_internet))
+					} else {
+						it.parse(mCtx , TAG , object : AlertClicks {
+							override fun primaryClick(dialog : AppBottomSheet) {
+								dialog.dismiss()
 
-                            }
+							}
 
-                            override fun secondaryClick(dialog: AppBottomSheet) {
-                                dialog.dismiss()
-                            }
-                        })
-                    }
-                }
+							override fun secondaryClick(dialog : AppBottomSheet) {
+								dialog.dismiss()
 
-                else -> {}
-            }
-        }
+							}
+						})
+					}
+				}
 
-    }
+				else -> {}
+			}
+		}
 
-    private fun showPaymentMethodSheet() {
-        val paymentSheetBind =
-            PaymentSheetBinding.bind(layoutInflater.inflate(R.layout.payment_sheet, null, false))
-        val paymentSheet = Alerts.appBottomSheet(mCtx, true, paymentSheetBind)
-        val mList = mutableListOf<String?>()
+		viewModel.createOrderRepo.observe(viewLifecycleOwner) {
 
-        paymentSheetBind.recycler.adapter =
-            SelectPaymentCardAdapter(cardList, object : RecyclerClicks {
+			when (it) {
+				is Resource.Success -> {
+					bind.loader.isVisible = false
 
-                override fun itemClick(pos: Int, status: String?) {
+					val mData = it.value.data
 
-                    cardList.forEachIndexed { index, item ->
+					findNavController().navigate(
+						ids.buyNowToOrderStatusFragment ,
+						bundleOf("orderId" to mData?.id.toString())
+					)
 
-                        item?.selected = index == pos
+//					cardAdapter.notifyDataSetChanged()
+				}
 
-                        cardId = item?.customerPaymentProfileId.toString()
+				is Resource.Error -> {
+					bind.loader.isVisible = false
 
-                        paymentSheetBind.recycler.adapter?.notifyDataSetChanged()
+					if (it.isNetworkError) {
+						errorToast(getString(R.string.no_internet))
+					} else {
+						it.parse(mCtx , TAG , object : AlertClicks {
+							override fun primaryClick(dialog : AppBottomSheet) {
+								dialog.dismiss()
 
-                        bind.cardNumber.text = buildString {
-                            append(cardList[pos]?.payment?.creditCard?.cardNumber)
-                        }
-                        bind.cardNumber.setCompoundDrawablesWithIntrinsicBounds(
-                            ContextCompat.getDrawable(
-                                mCtx,
-                                draw.ic_visa
-                            ), null, null, null
-                        )
+							}
 
-                        cardList[pos]?.selected = true
-                        paymentSheet.dismiss()
-                    }
+							override fun secondaryClick(dialog : AppBottomSheet) {
+								dialog.dismiss()
+							}
+						})
+					}
+				}
 
-                }
-            })
+				else -> {}
+			}
+		}
 
-        paymentSheetBind.close.setOnClickListener {
-            paymentSheet.dismiss()
-        }
+	}
 
-        paymentSheet.show()
+	private fun showPaymentMethodSheet() {
+		val paymentSheetBind =
+			PaymentSheetBinding.bind(layoutInflater.inflate(R.layout.payment_sheet , null , false))
+		val paymentSheet = Alerts.appBottomSheet(mCtx , true , paymentSheetBind)
+		val mList = mutableListOf<String?>()
 
-    }
+		paymentSheetBind.recycler.adapter =
+			SelectPaymentCardAdapter(cardList , object : RecyclerClicks {
 
-    private fun showAddressSheet() {
-        var addressSheetBind =
-            AddressSheetBinding.bind(layoutInflater.inflate(R.layout.address_sheet, null, false))
-        var addressSheet = Alerts.appBottomSheet(mCtx, true, addressSheetBind)
+				override fun itemClick(pos : Int , status : String?) {
 
-        addressSheetBind.recycler.adapter =
-            SelectAddressAdapter(addressList, object : RecyclerClicks {
+					cardList.forEachIndexed { index , item ->
 
-                override fun itemClick(pos: Int, status: String?) {
+						item?.selected = index == pos
 
-                    addressList.forEachIndexed { index, item ->
+						cardId = item?.customerPaymentProfileId.toString()
 
-                        item?.selected = index == pos
+						paymentSheetBind.recycler.adapter?.notifyDataSetChanged()
 
-                        addressSheetBind.recycler.adapter?.notifyDataSetChanged()
+						bind.cardNumber.text = buildString {
+							append(cardList[pos]?.payment?.creditCard?.cardNumber)
+						}
+						bind.cardNumber.setCompoundDrawablesWithIntrinsicBounds(
+							ContextCompat.getDrawable(
+								mCtx ,
+								draw.ic_visa
+							) , null , null , null
+						)
 
-                        bind.address.text =
-                            addressList.find { it?.isDefault == true }?.streetAddress
-                                ?: addressList[pos]?.streetAddress
+						cardList[pos]?.selected = true
+						paymentSheet.dismiss()
+					}
+
+				}
+			})
+
+		paymentSheetBind.close.setOnClickListener {
+			paymentSheet.dismiss()
+		}
+
+		paymentSheet.show()
+
+	}
+
+	private fun showAddressSheet() {
+		var addressSheetBind =
+			AddressSheetBinding.bind(layoutInflater.inflate(R.layout.address_sheet , null , false))
+		var addressSheet = Alerts.appBottomSheet(mCtx , true , addressSheetBind)
+
+		addressSheetBind.recycler.adapter =
+			SelectAddressAdapter(addressList , object : RecyclerClicks {
+
+				override fun itemClick(pos : Int , status : String?) {
+
+					addressList.forEachIndexed { index , item ->
+
+						item?.selected = index == pos
+
+						addressSheetBind.recycler.adapter?.notifyDataSetChanged()
+
+						bind.address.text =
+							addressList.find { it?.isDefault == true }?.streetAddress
+								?: addressList[pos]?.streetAddress
 
 
-                        shippingId = addressList.find { it?.isDefault == true }?.id
-                            ?: (addressList[pos]?.id?.toInt()
-                                ?: 0)
+						shippingId = addressList.find { it?.isDefault == true }?.id
+							?: (addressList[pos]?.id?.toInt()
+								?: 0)
 
-                        addressList[pos]?.selected = true
+						addressList[pos]?.selected = true
 
-                        viewModel.getPurchaseProduct(
-                            shippingId.toString().request(),
-                            viewModel.product?.id.toString().request()
-                        )
+						viewModel.getPurchaseProduct(
+							shippingId.toString().request() ,
+							viewModel.product?.id.toString().request()
+						)
 
-                        addressSheet.hide()
+						addressSheet.hide()
 
-                    }
+					}
 
-                }
-            })
+				}
+			})
 
-        addressSheetBind.close.setOnClickListener {
-
-
-            addressSheet.hide()
-
-        }
+		addressSheetBind.close.setOnClickListener {
 
 
-        addressSheet.show()
-    }
+			addressSheet.hide()
+
+		}
+
+
+		addressSheet.show()
+	}
 
 }

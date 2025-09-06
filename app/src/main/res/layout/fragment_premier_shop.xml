@@ -404,7 +404,7 @@
         android:id="@+id/loader"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone"/>
+        android:visibility="gone" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/applyBtn"

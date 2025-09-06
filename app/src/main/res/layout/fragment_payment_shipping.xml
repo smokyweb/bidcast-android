@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".ui.dashboard.more.PaymentShippingFragment">
 
     <io.bidswipe.app.ui.custom.Header
@@ -17,7 +17,7 @@
         app:secondaryIconDrawable="@drawable/search"
         app:showBackButton="true"
         app:showPrimaryIcon="true"
-        app:showSecondaryIcon="false"/>
+        app:showSecondaryIcon="false" />
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
@@ -33,18 +33,18 @@
             <TextView
                 style="@style/TitleLarge"
                 android:layout_width="match_parent"
-                android:layout_marginTop="@dimen/margin"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/margin"
+                android:layout_marginTop="@dimen/margin"
                 android:text="@string/payment_method" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recycler"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_margin="@dimen/half_margin"
                 android:nestedScrollingEnabled="false"
                 android:orientation="vertical"
-                android:layout_margin="@dimen/half_margin"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 tools:itemCount="3"
                 tools:listitem="@layout/payment_card_item" />
@@ -53,8 +53,8 @@
                 android:id="@+id/noCardsData"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:title_text="No Cards Found"
-                android:visibility="gone"/>
+                android:visibility="gone"
+                app:title_text="No Cards Found" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/addPaymentCard"
@@ -62,7 +62,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/margin"
-                android:text="@string/add_payment_method"/>
+                android:text="@string/add_payment_method" />
 
             <TextView
                 style="@style/TitleLarge"
@@ -75,9 +75,9 @@
                 android:id="@+id/addressRecycler"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_margin="@dimen/half_margin"
                 android:nestedScrollingEnabled="false"
                 android:orientation="vertical"
-                android:layout_margin="@dimen/half_margin"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 tools:itemCount="3"
                 tools:listitem="@layout/shipping_address_item" />
@@ -86,8 +86,8 @@
                 android:id="@+id/noAddressData"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:title_text="No Addresses Found"
-                android:visibility="gone"/>
+                android:visibility="gone"
+                app:title_text="No Addresses Found" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/addNewAddress"
@@ -95,7 +95,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/margin"
-                android:text="@string/add_new_address"/>
+                android:text="@string/add_new_address" />
 
         </LinearLayout>
 
@@ -105,6 +105,6 @@
         android:id="@+id/loader"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone"/>
+        android:visibility="gone" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

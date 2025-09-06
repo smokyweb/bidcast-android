@@ -7,35 +7,35 @@ import androidx.annotation.Keep
 @Keep
 data class GetMailClassesResponse(
     @SerializedName("status")
-    val status: String?,
+    val status : String? ,
     @SerializedName("message")
-    val message: String?,
+    val message : String? ,
     @SerializedName("error_type")
-    val errorType: String?,
+    val errorType : String? ,
     @SerializedName("data")
-    val `data`: Data?
+    val `data` : Data? ,
 ) {
-    @Keep
-    data class Data(
-        @SerializedName("mail_classes"  )
-        val mailClasses: List<MailClasses?>?
+	@Keep
+	data class Data(
+        @SerializedName("mail_classes")
+        val mailClasses : List<MailClasses?>? ,
     ) {
-        @Keep
-        data class MailClasses(
+		@Keep
+		data class MailClasses(
             @SerializedName("label")
-            val label: String?,
+            val label : String? ,
             @SerializedName("max_weight_lbs")
-            val maxWeightLbs: Double?,
+            val maxWeightLbs : Double? ,
             @SerializedName("max_length_in")
-            val maxLengthIn: Double?,
+            val maxLengthIn : Double? ,
             @SerializedName("max_width_in")
-            val maxWidthIn: Double?,
+            val maxWidthIn : Double? ,
             @SerializedName("max_height_in")
-            val maxHeightIn: Double?,
+            val maxHeightIn : Double? ,
             @SerializedName("max_length_plus_girth_in")
-            val maxLengthPlusGirthIn: Double?,
+            val maxLengthPlusGirthIn : Double? ,
             @SerializedName("notes")
-            val notes: String?
+            val notes : String? ,
         )
-    }
+	}
 }

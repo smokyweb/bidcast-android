@@ -26,146 +26,152 @@ import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request
 import io.bidswipe.app.utils.showKeyboard
 
-class SearchShowFragment : BaseFragment<DashViewModel, FragmentSearchShowBinding>() {
-    override fun getModel(): Class<DashViewModel> = DashViewModel::class.java
+class SearchShowFragment : BaseFragment<DashViewModel , FragmentSearchShowBinding>() {
+	override fun getModel() : Class<DashViewModel> = DashViewModel::class.java
 
-    override fun getBind(
-        inflater: LayoutInflater,
-        view: ViewGroup?
-    ) = FragmentSearchShowBinding.inflate(inflater,view,false)
+	override fun getBind(
+        inflater : LayoutInflater ,
+        view : ViewGroup? ,
+    ) = FragmentSearchShowBinding.inflate(inflater , view , false)
 
-    private var showList = mutableListOf<GetMyShowResponse.Data?>()
-    private var romIdsList = mutableListOf<StreamModel>()
-    private lateinit var homeAdapter: HomeAdapter
+	private var showList = mutableListOf<GetMyShowResponse.Data?>()
+	private var romIdsList = mutableListOf<StreamModel>()
+	private lateinit var homeAdapter : HomeAdapter
 
-    private val mClick = object : RecyclerClicks{
-        override fun itemClick(pos: Int, status: String?) {
+	private val mClick = object : RecyclerClicks {
+		override fun itemClick(pos : Int , status : String?) {
 
-            when(status){
+			when (status) {
 
-                "user" -> {
-                    startActivity(Intent(mCtx, SellerProfileActivity::class.java).putExtra("userId",
-                        showList[pos]?.userId.toString()
-                    ))
-                }
+				"user" -> {
+					startActivity(
+						Intent(mCtx , SellerProfileActivity::class.java).putExtra(
+							"userId" ,
+							showList[pos]?.userId.toString()
+						)
+					)
+				}
 
-                "viewShow" ->{
+				"viewShow" -> {
 
-                    if (showList[pos]?.isLive == true){
-                        startActivity(Intent(mCtx, ViewLiveShowActivity::class.java).putExtra("position", pos).putParcelableArrayListExtra("roomIdsList", romIdsList as ArrayList))
-                    }
+					if (showList[pos]?.isLive == true) {
+						startActivity(
+							Intent(mCtx , ViewLiveShowActivity::class.java).putExtra("position" , pos)
+								.putParcelableArrayListExtra("roomIdsList" , romIdsList as ArrayList)
+						)
+					}
 
-                }
-            }
+				}
+			}
 
-        }
+		}
 
-    }
+	}
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+	override fun onViewCreated(view : View , savedInstanceState : Bundle?) {
+		super.onViewCreated(view , savedInstanceState)
 
-        bind.header.onBackClick {
-            findNavController().popBackStack()
-        }
+		bind.header.onBackClick {
+			findNavController().popBackStack()
+		}
 
-        bind.root.setOnClickListener {
-            hideKeyboard(it)
-        }
+		bind.root.setOnClickListener {
+			hideKeyboard(it)
+		}
 
-        homeAdapter = HomeAdapter(showList,mClick)
+		homeAdapter = HomeAdapter(showList , mClick)
 
-        bind.recycler.adapter = homeAdapter
+		bind.recycler.adapter = homeAdapter
 
-        bind.search.requestFocus()
+		bind.search.requestFocus()
 
-        showKeyboard(bind.search)
+		showKeyboard(bind.search)
 
-        bind.loader.isVisible = true
-        viewModel.getLiveShow(search = "".request())
+		bind.loader.isVisible = true
+		viewModel.getLiveShow(search = "".request())
 
-        bind.search.addTextChangedListener(object : TextWatcher{
-            override fun beforeTextChanged(
-                p0: CharSequence?,
-                p1: Int,
-                p2: Int,
-                p3: Int
+		bind.search.addTextChangedListener(object : TextWatcher {
+			override fun beforeTextChanged(
+                p0 : CharSequence? ,
+                p1 : Int ,
+                p2 : Int ,
+                p3 : Int ,
             ) {
-            }
+			}
 
-            override fun onTextChanged(
-                p0: CharSequence?,
-                p1: Int,
-                p2: Int,
-                p3: Int
+			override fun onTextChanged(
+                p0 : CharSequence? ,
+                p1 : Int ,
+                p2 : Int ,
+                p3 : Int ,
             ) {
-            }
+			}
 
-            override fun afterTextChanged(p0: Editable?) {
+			override fun afterTextChanged(p0 : Editable?) {
 
-                bind.loader.isVisible = true
-                viewModel.getLiveShow(search = p0.toString().request())
-
-
-            }
-        })
-
-        viewModel.getLiveShowRepo.observe(viewLifecycleOwner) {
-            when (it) {
-                is Resource.Success -> {
-                    bind.loader.isVisible = false
-
-                    val mData = it.value.data
-
-                    mData?.forEach {
-                        romIdsList.add(StreamModel(it?.roomId.toString(),""))
-                    }
-
-                    showList.clear()
-
-                    mData?.forEach {
-                        showList.add(it)
-                    }
-
-                    if (showList.isEmpty()){
-                        bind.noData.isVisible = true
-                        bind.recycler.isVisible = false
-                    }else{
-                        bind.noData.isVisible = false
-                        bind.recycler.isVisible = true
-                    }
+				bind.loader.isVisible = true
+				viewModel.getLiveShow(search = p0.toString().request())
 
 
-                    homeAdapter.notifyDataSetChanged()
+			}
+		})
 
-                }
+		viewModel.getLiveShowRepo.observe(viewLifecycleOwner) {
+			when (it) {
+				is Resource.Success -> {
+					bind.loader.isVisible = false
 
-                is Resource.Error -> {
-                    bind.loader.isVisible = false
+					val mData = it.value.data
 
-                    if (it.isNetworkError) {
-                        errorToast(getString(R.string.no_internet))
-                    } else {
-                        it.parse(mCtx, TAG, object : AlertClicks {
-                            override fun primaryClick(dialog: AppBottomSheet) {
-                                dialog.dismiss()
+					mData?.forEach {
+						romIdsList.add(StreamModel(it?.roomId.toString() , ""))
+					}
 
-                            }
+					showList.clear()
 
-                            override fun secondaryClick(dialog: AppBottomSheet) {
-                                dialog.dismiss()
+					mData?.forEach {
+						showList.add(it)
+					}
 
-                            }
-                        })
-                    }
-                }
-
-                else -> {}
-
-            }
-        }
+					if (showList.isEmpty()) {
+						bind.noData.isVisible = true
+						bind.recycler.isVisible = false
+					} else {
+						bind.noData.isVisible = false
+						bind.recycler.isVisible = true
+					}
 
 
-    }
+					homeAdapter.notifyDataSetChanged()
+
+				}
+
+				is Resource.Error -> {
+					bind.loader.isVisible = false
+
+					if (it.isNetworkError) {
+						errorToast(getString(R.string.no_internet))
+					} else {
+						it.parse(mCtx , TAG , object : AlertClicks {
+							override fun primaryClick(dialog : AppBottomSheet) {
+								dialog.dismiss()
+
+							}
+
+							override fun secondaryClick(dialog : AppBottomSheet) {
+								dialog.dismiss()
+
+							}
+						})
+					}
+				}
+
+				else -> {}
+
+			}
+		}
+
+
+	}
 
 }

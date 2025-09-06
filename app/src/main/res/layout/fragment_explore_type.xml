@@ -24,8 +24,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/margin"
-        android:layout_marginBottom="@dimen/margin"
         android:layout_marginTop="@dimen/half_margin"
+        android:layout_marginBottom="@dimen/margin"
         app:boxBackgroundColor="@color/surface"
         app:boxStrokeWidth="2dp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -67,7 +67,7 @@
             android:layout_width="2dp"
             android:layout_height="match_parent"
             android:layout_marginHorizontal="@dimen/half_margin"
-            android:layout_marginVertical="4dp"/>
+            android:layout_marginVertical="4dp" />
 
         <TextView
             android:id="@+id/popular"
@@ -81,7 +81,7 @@
             android:layout_width="2dp"
             android:layout_height="match_parent"
             android:layout_marginHorizontal="@dimen/half_margin"
-            android:layout_marginVertical="4dp"/>
+            android:layout_marginVertical="4dp" />
 
         <TextView
             android:id="@+id/comingSoon"
@@ -146,7 +146,7 @@
         android:layout_height="match_parent"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+        app:layout_constraintTop_toTopOf="parent" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

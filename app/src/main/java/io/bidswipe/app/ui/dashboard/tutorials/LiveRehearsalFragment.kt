@@ -20,85 +20,86 @@ import io.bidswipe.app.ui.dashboard.DashViewModel
 import io.bidswipe.app.utils.finish
 import io.bidswipe.app.utils.ids
 
-class LiveRehearsalFragment : BaseFragment<DashViewModel,FragmentLiveRehearsalBinding>() {
-    override fun getModel(): Class<DashViewModel> = DashViewModel::class.java
+class LiveRehearsalFragment : BaseFragment<DashViewModel , FragmentLiveRehearsalBinding>() {
+	override fun getModel() : Class<DashViewModel> = DashViewModel::class.java
 
-    override fun getBind(inflater: LayoutInflater, view: ViewGroup?) = FragmentLiveRehearsalBinding.inflate(inflater,view,false)
+	override fun getBind(inflater : LayoutInflater , view : ViewGroup?) = FragmentLiveRehearsalBinding.inflate(inflater , view , false)
 
-    private val cameraListener = object : CameraListener() {
+	private val cameraListener = object : CameraListener() {
 
-        override fun onVideoRecordingStart() {
-            super.onVideoRecordingStart()
+		override fun onVideoRecordingStart() {
+			super.onVideoRecordingStart()
 
-        }
+		}
 
-        override fun onVideoRecordingEnd() {
-            super.onVideoRecordingEnd()
+		override fun onVideoRecordingEnd() {
+			super.onVideoRecordingEnd()
 
-        }
-        override fun onVideoTaken(result : VideoResult) {
-            super.onVideoTaken(result)
-            log("VIDEO RECORDING FINISHED : " + result.file.absolutePath)
-        }
+		}
+
+		override fun onVideoTaken(result : VideoResult) {
+			super.onVideoTaken(result)
+			log("VIDEO RECORDING FINISHED : " + result.file.absolutePath)
+		}
 
 
-        override fun onCameraError(exception : CameraException) {
-            super.onCameraError(exception)
-            exception.printStackTrace()
-        }
-    }
+		override fun onCameraError(exception : CameraException) {
+			super.onCameraError(exception)
+			exception.printStackTrace()
+		}
+	}
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+	override fun onViewCreated(view : View , savedInstanceState : Bundle?) {
+		super.onViewCreated(view , savedInstanceState)
 
-        bind.camera.also {
-            it.setLifecycleOwner(viewLifecycleOwner)
-            it.addCameraListener(cameraListener)
-            it.facing = Facing.FRONT
-            it.mode = Mode.VIDEO
-        }
+		bind.camera.also {
+			it.setLifecycleOwner(viewLifecycleOwner)
+			it.addCameraListener(cameraListener)
+			it.facing = Facing.FRONT
+			it.mode = Mode.VIDEO
+		}
 
-        bind.cameraSwitch.setOnClickListener {
+		bind.cameraSwitch.setOnClickListener {
 
-            if (bind.camera.facing == Facing.FRONT){
-                bind.camera.facing = Facing.BACK
-            }else{
-                bind.camera.facing = Facing.FRONT
-            }
+			if (bind.camera.facing == Facing.FRONT) {
+				bind.camera.facing = Facing.BACK
+			} else {
+				bind.camera.facing = Facing.FRONT
+			}
 
-        }
-        bind.cutButton.setOnClickListener{
-            findNavController().navigate(ids.liveRehearsalFragment_to_prepareYourShowFragment)
-        }
+		}
+		bind.cutButton.setOnClickListener {
+			findNavController().navigate(ids.liveRehearsalFragment_to_prepareYourShowFragment)
+		}
 
-        bind.continueBtn.setOnClickListener {
-            viewModel.showList[0]?.status = "completed"
-            viewModel.showList[1]?.status = "completed"
-            viewModel.showList[2]?.status = "completed"
-            viewModel.showList[3]?.status = "locked"
-            viewModel.currentStep = 3
-            findNavController().navigate(ids.liveRehearsalFragment_to_prepareYourShowFragment)
-        }
+		bind.continueBtn.setOnClickListener {
+			viewModel.showList[0]?.status = "completed"
+			viewModel.showList[1]?.status = "completed"
+			viewModel.showList[2]?.status = "completed"
+			viewModel.showList[3]?.status = "locked"
+			viewModel.currentStep = 3
+			findNavController().navigate(ids.liveRehearsalFragment_to_prepareYourShowFragment)
+		}
 
-    }
+	}
 
-    override fun onResume() {
-        super.onResume()
-        bind.camera.open()
-    }
+	override fun onResume() {
+		super.onResume()
+		bind.camera.open()
+	}
 
-    override fun onPause() {
-        super.onPause()
-        bind.camera.close()
-    }
+	override fun onPause() {
+		super.onPause()
+		bind.camera.close()
+	}
 
-    override fun onDestroy() {
-        super.onDestroy()
-        bind.camera.destroy()
-    }
+	override fun onDestroy() {
+		super.onDestroy()
+		bind.camera.destroy()
+	}
 
-    fun hasMicrophone(): Boolean {
-        return this.mCtx.packageManager?.hasSystemFeature(PackageManager.FEATURE_MICROPHONE) == true
-    }
+	fun hasMicrophone() : Boolean {
+		return this.mCtx.packageManager?.hasSystemFeature(PackageManager.FEATURE_MICROPHONE) == true
+	}
 
 }

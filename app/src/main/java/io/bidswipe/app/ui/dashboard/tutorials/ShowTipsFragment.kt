@@ -19,100 +19,104 @@ import io.bidswipe.app.utils.ids
 import io.bidswipe.app.utils.string
 import io.bidswipe.app.utils.toScheduleShow
 
-class ShowTipsFragment : BaseFragment<DashViewModel, FragmentShowTipsBinding>() {
+class ShowTipsFragment : BaseFragment<DashViewModel , FragmentShowTipsBinding>() {
 
-    override fun getModel(): Class<DashViewModel> = DashViewModel::class.java
+	override fun getModel() : Class<DashViewModel> = DashViewModel::class.java
 
-    override fun getBind(inflater: LayoutInflater, view: ViewGroup?) =
-        FragmentShowTipsBinding.inflate(inflater, view, false)
+	override fun getBind(inflater : LayoutInflater , view : ViewGroup?) =
+		FragmentShowTipsBinding.inflate(inflater , view , false)
 
-    private var productTipList = mutableListOf("", "", "")
-    private lateinit var pagerAdapter: ProductTipsPagerAdapter
+	private var productTipList = mutableListOf("" , "" , "")
+	private lateinit var pagerAdapter : ProductTipsPagerAdapter
 
-    private var type = ""
-    private var showId = ""
+	private var type = ""
+	private var showId = ""
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+	override fun onViewCreated(view : View , savedInstanceState : Bundle?) {
+		super.onViewCreated(view , savedInstanceState)
 
-        type = arguments?.getString("type", "").toString()
-        showId = arguments?.getString("showId", "").toString()
+		type = arguments?.getString("type" , "").toString()
+		showId = arguments?.getString("showId" , "").toString()
 
-        when(type){
-            "liveTips" ->{
-                bind.header.setHeaderText("Going Live Tips")
-            }
+		when (type) {
+			"liveTips" -> {
+				bind.header.setHeaderText("Going Live Tips")
+			}
 
-            "bringInBuyers"->{
-                bind.header.setHeaderText("Bring In Buyers")
-                bind.continueBtn.setBackgroundColor(ContextCompat.getColor(mCtx,R.color.secondary))
-            }
-            "goLive" ->{
-                bind.header.setHeaderText("Live Stream Tips")
-                bind.continueBtn.setBackgroundColor(ContextCompat.getColor(mCtx,R.color.secondary))
-            }
-        }
+			"bringInBuyers" -> {
+				bind.header.setHeaderText("Bring In Buyers")
+				bind.continueBtn.setBackgroundColor(ContextCompat.getColor(mCtx , R.color.secondary))
+			}
 
-        bind.header.onBackClick {
-            findNavController().popBackStack()
-        }
+			"goLive" -> {
+				bind.header.setHeaderText("Live Stream Tips")
+				bind.continueBtn.setBackgroundColor(ContextCompat.getColor(mCtx , R.color.secondary))
+			}
+		}
 
-        bind.stepProgress.max = productTipList.size
+		bind.header.onBackClick {
+			findNavController().popBackStack()
+		}
 
-        pagerAdapter = ProductTipsPagerAdapter(productTipList, type)
-        bind.pager.adapter = pagerAdapter
+		bind.stepProgress.max = productTipList.size
 
-        bind.pager.isUserInputEnabled = false
+		pagerAdapter = ProductTipsPagerAdapter(productTipList , type)
+		bind.pager.adapter = pagerAdapter
 
-        bind.pager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
-            override fun onPageSelected(position: Int) {
-                super.onPageSelected(position)
+		bind.pager.isUserInputEnabled = false
 
-                bind.stepProgress.progress = position + 1
+		bind.pager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+			override fun onPageSelected(position : Int) {
+				super.onPageSelected(position)
 
-                bind.step.text = buildString {
-                    append("Step ")
-                    append(position + 1)
-                    append(" of ${productTipList.size}")
-                }
+				bind.stepProgress.progress = position + 1
 
-                if (position == 2){
-                    bind.continueBtn.text = resources.getString(string._continue)
-                }else{
-                    bind.continueBtn.text = resources.getString(string.continue_to_next_step)
-                }
+				bind.step.text = buildString {
+					append("Step ")
+					append(position + 1)
+					append(" of ${productTipList.size}")
+				}
 
-            }
-        })
+				if (position == 2) {
+					bind.continueBtn.text = resources.getString(string._continue)
+				} else {
+					bind.continueBtn.text = resources.getString(string.continue_to_next_step)
+				}
 
-        bind.continueBtn.setOnClickListener {
-            if (bind.pager.currentItem == productTipList.size - 1) {
-                when (type) {
-                    "showTips" -> {
-                       val a = activity as TutorialsActivity
+			}
+		})
 
-                        a.scheduleShowLauncher.launch( mCtx.toScheduleShow("showTutorial"))
+		bind.continueBtn.setOnClickListener {
+			if (bind.pager.currentItem == productTipList.size - 1) {
+				when (type) {
+					"showTips" -> {
+						val a = activity as TutorialsActivity
+
+						a.scheduleShowLauncher.launch(mCtx.toScheduleShow("showTutorial"))
 
 
-                        findNavController().popBackStack()
-                    }
-                    "liveTips" -> {
-                        findNavController().navigate(ids.goToLiveRehearsalFragment)
-                    }
-                    "goLive" -> {
-                        startActivity(Intent(mCtx, LiveShowActivity::class.java).putExtra("showId" ,showId))
-                    }
-                    else -> {
-                        findNavController().navigate(ids.goToReferFriendFragment)
-                    }
-                }
+						findNavController().popBackStack()
+					}
 
-            } else {
-                bind.pager.currentItem += 1
-            }
+					"liveTips" -> {
+						findNavController().navigate(ids.goToLiveRehearsalFragment)
+					}
 
-        }
-        
-    }
+					"goLive" -> {
+						startActivity(Intent(mCtx , LiveShowActivity::class.java).putExtra("showId" , showId))
+					}
+
+					else -> {
+						findNavController().navigate(ids.goToReferFriendFragment)
+					}
+				}
+
+			} else {
+				bind.pager.currentItem += 1
+			}
+
+		}
+
+	}
 
 }

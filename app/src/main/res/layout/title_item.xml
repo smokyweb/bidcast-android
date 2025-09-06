@@ -5,20 +5,19 @@
     android:layout_margin="@dimen/half_margin"
     android:orientation="horizontal">
 
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/icon"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:src="@drawable/notification"/>
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/icon"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:src="@drawable/notification" />
 
-        <org.sufficientlysecure.htmltextview.HtmlTextView
-            android:id="@+id/title"
-            style="@style/BodyLarge"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/half_margin"
-            android:text="@string/app_name" />
-
+    <org.sufficientlysecure.htmltextview.HtmlTextView
+        android:id="@+id/title"
+        style="@style/BodyLarge"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/half_margin"
+        android:text="@string/app_name" />
 
 
 </LinearLayout>

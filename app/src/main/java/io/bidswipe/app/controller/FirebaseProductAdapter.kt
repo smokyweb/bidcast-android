@@ -19,21 +19,21 @@ import io.bidswipe.app.utils.dpToPx
 import io.bidswipe.app.utils.loadUrl
 
 class FirebaseProductAdapter(
-	val mList: MutableList<LiveShowModel.Product?>, val mClicks: RecyclerClicks,
-) : BaseAdapter<LiveShowModel.Product?, ProductSelectionItemBinding>(mList) {
+	val mList : MutableList<LiveShowModel.Product?> , val mClicks : RecyclerClicks ,
+) : BaseAdapter<LiveShowModel.Product? , ProductSelectionItemBinding>(mList) {
 
-	override fun bindView(inflater: LayoutInflater, parent: ViewGroup) =
-		ProductSelectionItemBinding.inflate(inflater, parent, false)
+	override fun bindView(inflater : LayoutInflater , parent : ViewGroup) =
+		ProductSelectionItemBinding.inflate(inflater , parent , false)
 
 	override fun onBind(
-		holder: BaseViewHolder<ProductSelectionItemBinding>,
-		position: Int,
-		item: LiveShowModel.Product?,
+		holder : BaseViewHolder<ProductSelectionItemBinding> ,
+		position : Int ,
+		item : LiveShowModel.Product? ,
 	) {
 		with(holder) {
 
 			bind.root.setOnClickListener {
-				mClicks.itemClick(position, "select")
+				mClicks.itemClick(position , "select")
 			}
 
 			bind.root.alpha = if (item?.status == "sold") 0.5f else 1f
@@ -53,12 +53,12 @@ class FirebaseProductAdapter(
 
 			if (item?.selected == true) {
 				bind.root.strokeWidth = mCtx.resources.dpToPx(4)
-				bind.root.strokeColor = ContextCompat.getColor(mCtx, R.color.primary)
-				bind.root.setCardBackgroundColor(ContextCompat.getColor(mCtx, R.color.primaryContainer))
+				bind.root.strokeColor = ContextCompat.getColor(mCtx , R.color.primary)
+				bind.root.setCardBackgroundColor(ContextCompat.getColor(mCtx , R.color.primaryContainer))
 			} else {
 				bind.root.strokeWidth = 0
-				bind.root.strokeColor = ContextCompat.getColor(mCtx, R.color.background)
-				bind.root.setCardBackgroundColor(ContextCompat.getColor(mCtx, R.color.background))
+				bind.root.strokeColor = ContextCompat.getColor(mCtx , R.color.background)
+				bind.root.setCardBackgroundColor(ContextCompat.getColor(mCtx , R.color.background))
 			}
 
 			bind.productStatus.isVisible = item?.isCurrent == true
@@ -69,7 +69,7 @@ class FirebaseProductAdapter(
 
 			bind.productName.text = item?.name?.asCapital()
 
-			bind.img.loadUrl(mCtx, item?.image ?: "")
+			bind.img.loadUrl(mCtx , item?.image ?: "")
 		}
 	}
 }

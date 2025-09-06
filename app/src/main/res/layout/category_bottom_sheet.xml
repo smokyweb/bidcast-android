@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:elevation="4dp"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
     android:background="@drawable/top_curve"
     android:backgroundTint="@android:color/white"
+    android:elevation="4dp"
     android:orientation="vertical">
 
     <View
@@ -62,9 +62,9 @@
         style="@style/appBtn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_margin="@dimen/margin"
         android:text="@string/select"
         android:visibility="gone"
-        android:layout_margin="@dimen/margin"
         app:layout_constraintBottom_toBottomOf="parent" />
 
 </LinearLayout>

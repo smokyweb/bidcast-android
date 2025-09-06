@@ -11,36 +11,36 @@ import io.bidswipe.app.utils.dpToPx
 import io.bidswipe.app.utils.loadUrl
 
 class CategoryAdapter(
-    items: List<GetCategoryResponse.Data?>,
-    val mClicks: RecyclerClicks,
-) : BaseAdapter<GetCategoryResponse.Data, CategoryItemBinding>(items) {
+	items : List<GetCategoryResponse.Data?> ,
+	val mClicks : RecyclerClicks ,
+) : BaseAdapter<GetCategoryResponse.Data , CategoryItemBinding>(items) {
 
-    override fun bindView(inflater: LayoutInflater, parent: ViewGroup) =
-        CategoryItemBinding.inflate(inflater, parent, false)
+	override fun bindView(inflater : LayoutInflater , parent : ViewGroup) =
+		CategoryItemBinding.inflate(inflater , parent , false)
 
-    override fun onBind(
-        holder: BaseViewHolder<CategoryItemBinding>,
-        position: Int,
-        item: GetCategoryResponse.Data?,
-    ) {
-        with(holder.bind) {
+	override fun onBind(
+		holder : BaseViewHolder<CategoryItemBinding> ,
+		position : Int ,
+		item : GetCategoryResponse.Data? ,
+	) {
+		with(holder.bind) {
 
-            root.setOnClickListener {
-                mClicks.itemClick(position, null)
-            }
+			root.setOnClickListener {
+				mClicks.itemClick(position , null)
+			}
 
-            if (item?.isSelected == true) {
-                main.setCardBackgroundColor(mCtx.getColor(R.color.primaryContainer))
-                main.strokeColor = mCtx.getColor(R.color.primary)
-                main.strokeWidth = mCtx.resources.dpToPx(2)
-            } else {
-                main.setCardBackgroundColor(mCtx.getColor(R.color.outline))
-                main.strokeColor = mCtx.getColor(R.color.transparent)
-                main.strokeWidth = 0
-            }
-            title.text = item?.name
-            categoryImage.loadUrl(mCtx, item?.image ?: "")
-        }
-    }
+			if (item?.isSelected == true) {
+				main.setCardBackgroundColor(mCtx.getColor(R.color.primaryContainer))
+				main.strokeColor = mCtx.getColor(R.color.primary)
+				main.strokeWidth = mCtx.resources.dpToPx(2)
+			} else {
+				main.setCardBackgroundColor(mCtx.getColor(R.color.outline))
+				main.strokeColor = mCtx.getColor(R.color.transparent)
+				main.strokeWidth = 0
+			}
+			title.text = item?.name
+			categoryImage.loadUrl(mCtx , item?.image ?: "")
+		}
+	}
 
 }

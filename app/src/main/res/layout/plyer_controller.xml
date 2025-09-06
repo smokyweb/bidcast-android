@@ -1,51 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	xmlns:app="http://schemas.android.com/apk/res-auto"
-	android:layout_width="match_parent"
-	android:layout_height="wrap_content"
-	android:layout_gravity="bottom"
-	android:background="@color/onSurface"
-	android:orientation="vertical">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="bottom"
+    android:background="@color/onSurface"
+    android:orientation="vertical">
 
-	<androidx.media3.ui.DefaultTimeBar
-		android:id="@id/exo_progress"
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content" />
+    <androidx.media3.ui.DefaultTimeBar
+        android:id="@id/exo_progress"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 
-	<LinearLayout
-		android:id="@+id/buttonLayout"
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:layout_margin="@dimen/margin"
-		android:gravity="center_vertical"
-		android:orientation="horizontal"
-		android:weightSum="3">
+    <LinearLayout
+        android:id="@+id/buttonLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/margin"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:weightSum="3">
 
-		<ImageButton
-			android:id="@id/exo_play_pause"
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:layout_weight="1"
-			android:background="@null"
-			android:src="@drawable/exo_icon_play" />
+        <ImageButton
+            android:id="@id/exo_play_pause"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@null"
+            android:src="@drawable/exo_icon_play" />
 
-		<TextView
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:layout_weight="1"
-			android:drawablePadding="@dimen/half_margin"
-			android:text="@string/sound"
-			app:drawableStartCompat="@drawable/ic_sound" />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:drawablePadding="@dimen/half_margin"
+            android:text="@string/sound"
+            app:drawableStartCompat="@drawable/ic_sound" />
 
-		<TextView
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:layout_weight="1"
-			android:drawablePadding="@dimen/half_margin"
-			android:text="@string/caption"
-			app:drawableStartCompat="@drawable/ic_cc" />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:drawablePadding="@dimen/half_margin"
+            android:text="@string/caption"
+            app:drawableStartCompat="@drawable/ic_cc" />
 
 
-	</LinearLayout>
+    </LinearLayout>
 
 </LinearLayout>

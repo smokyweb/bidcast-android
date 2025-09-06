@@ -31,212 +31,212 @@ import io.bidswipe.app.utils.string
 import io.bidswipe.app.utils.toDash
 import io.bidswipe.app.utils.value
 
-class LoginFragment : BaseFragment<AuthViewModel, FragmentLoginBinding>() {
+class LoginFragment : BaseFragment<AuthViewModel , FragmentLoginBinding>() {
 
-    override fun getModel(): Class<AuthViewModel> = AuthViewModel::class.java
+	override fun getModel() : Class<AuthViewModel> = AuthViewModel::class.java
 
-    override fun getBind(inflater: LayoutInflater, view: ViewGroup?) =
-        FragmentLoginBinding.inflate(inflater, view, false)
+	override fun getBind(inflater : LayoutInflater , view : ViewGroup?) =
+		FragmentLoginBinding.inflate(inflater , view , false)
 
-    private val remList = mutableListOf<RememberModel>()
+	private val remList = mutableListOf<RememberModel>()
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+	override fun onViewCreated(view : View , savedInstanceState : Bundle?) {
+		super.onViewCreated(view , savedInstanceState)
 
-        bind.createAccount.setOnClickListener {
-            findNavController().navigate(ids.goToCreateAccount)
-        }
+		bind.createAccount.setOnClickListener {
+			findNavController().navigate(ids.goToCreateAccount)
+		}
 
-        bind.forgot.setOnClickListener {
-            findNavController().navigate(ids.goToForgotPassword)
-        }
+		bind.forgot.setOnClickListener {
+			findNavController().navigate(ids.goToForgotPassword)
+		}
 
-        bind.layout.setOnClickListener {
-            hideKeyboard(it)
-        }
+		bind.layout.setOnClickListener {
+			hideKeyboard(it)
+		}
 
-        bind.privacyPolicy.setOnClickListener {
-            startActivity(Intent(mCtx, MoreActivity::class.java).putExtra("slug", "privacyPolicy"))
-        }
+		bind.privacyPolicy.setOnClickListener {
+			startActivity(Intent(mCtx , MoreActivity::class.java).putExtra("slug" , "privacyPolicy"))
+		}
 
-        bind.termsOfService.setOnClickListener {
-            startActivity(Intent(mCtx, MoreActivity::class.java).putExtra("slug", "termsCondition"))
-        }
+		bind.termsOfService.setOnClickListener {
+			startActivity(Intent(mCtx , MoreActivity::class.java).putExtra("slug" , "termsCondition"))
+		}
 
-        bind.loginBtn.setOnClickListener {
-            when {
+		bind.loginBtn.setOnClickListener {
+			when {
 
-                bind.email.value().isEmpty() -> {
-                    Alerts.error(mCtx, "Please enter email address")
-                    bind.email.requestFocus()
-                    showKeyboard(bind.email)
-                }
+				bind.email.value().isEmpty() -> {
+					Alerts.error(mCtx , "Please enter email address")
+					bind.email.requestFocus()
+					showKeyboard(bind.email)
+				}
 
-                Utils.validateEmail(bind.email.value()).not() -> {
-                    Alerts.error(mCtx, "please enter correct email address")
-                    bind.email.requestFocus()
-                    showKeyboard(bind.email)
-                }
+				Utils.validateEmail(bind.email.value()).not() -> {
+					Alerts.error(mCtx , "please enter correct email address")
+					bind.email.requestFocus()
+					showKeyboard(bind.email)
+				}
 
-                bind.password.value().isEmpty() -> {
-                    Alerts.error(mCtx, "Please enter password")
-                    bind.password.requestFocus()
-                    showKeyboard(bind.password)
-                }
+				bind.password.value().isEmpty() -> {
+					Alerts.error(mCtx , "Please enter password")
+					bind.password.requestFocus()
+					showKeyboard(bind.password)
+				}
 
-                else -> {
-                    hideKeyboard(it)
-                    bind.loader.isVisible = true
-                    viewModel.login(
-                        bind.email.text.toString().request(),
-                        bind.password.text.toString().request()
-                    )
-                }
+				else -> {
+					hideKeyboard(it)
+					bind.loader.isVisible = true
+					viewModel.login(
+						bind.email.text.toString().request() ,
+						bind.password.text.toString().request()
+					)
+				}
 
-            }
-        }
+			}
+		}
 
-        viewModel.loginRepo.observe(viewLifecycleOwner) {
-            when (it) {
-                is Resource.Success -> {
-                    viewModel.loginRepo.value = null
-                    bind.loader.isVisible = false
-                    log("RESPONSE ::${it.value}")
+		viewModel.loginRepo.observe(viewLifecycleOwner) {
+			when (it) {
+				is Resource.Success -> {
+					viewModel.loginRepo.value = null
+					bind.loader.isVisible = false
+					log("RESPONSE ::${it.value}")
 
-                    it.value.data?.id.toString()
+					it.value.data?.id.toString()
 
-                    if (bind.rememberMe.isChecked) {
-                        Alerts.log(TAG, "REMEMBER ME CHECK")
-                        saveRemember()
-                    }
+					if (bind.rememberMe.isChecked) {
+						Alerts.log(TAG , "REMEMBER ME CHECK")
+						saveRemember()
+					}
 
-                    Prefs(mCtx).putString(
-                        Prefs.TOKEN,
-                        "Bearer " + it.value.data?.token.toString().trim()
-                    )
+					Prefs(mCtx).putString(
+						Prefs.TOKEN ,
+						"Bearer " + it.value.data?.token.toString().trim()
+					)
 
-                    Prefs(mCtx).putString(Prefs.USER, Gson().toJson(it.value.data).toString())
+					Prefs(mCtx).putString(Prefs.USER , Gson().toJson(it.value.data).toString())
 
-                    if (it.value.data?.isFirsttimeLogin == true) {
-                        val intent = Intent(mCtx, ChooseInterestActivity::class.java)
-                        intent.putExtra("isFirstTimeLogin", true)
-                        startActivity(intent)
-                        finish()
-                    } else {
-                        startActivity(mCtx.toDash())
-                        finish()
-                    }
+					if (it.value.data?.isFirsttimeLogin == true) {
+						val intent = Intent(mCtx , ChooseInterestActivity::class.java)
+						intent.putExtra("isFirstTimeLogin" , true)
+						startActivity(intent)
+						finish()
+					} else {
+						startActivity(mCtx.toDash())
+						finish()
+					}
 
-                }
+				}
 
-                is Resource.Error -> {
-                    viewModel.loginRepo.value = null
-                    bind.loader.isVisible = false
-                    if (it.isNetworkError) {
-                        errorToast(getString(string.no_internet))
-                    } else {
+				is Resource.Error -> {
+					viewModel.loginRepo.value = null
+					bind.loader.isVisible = false
+					if (it.isNetworkError) {
+						errorToast(getString(string.no_internet))
+					} else {
 
-                        it.parse(mCtx, TAG, mClicks = object : AlertClicks {
+						it.parse(mCtx , TAG , mClicks = object : AlertClicks {
 
-                            override fun primaryClick(dialog: AppBottomSheet) {
-                                dialog.dismiss()
-                            }
+							override fun primaryClick(dialog : AppBottomSheet) {
+								dialog.dismiss()
+							}
 
-                            override fun secondaryClick(dialog: AppBottomSheet) {
-                                dialog.dismiss()
-                            }
+							override fun secondaryClick(dialog : AppBottomSheet) {
+								dialog.dismiss()
+							}
 
-                        })
+						})
 
-                    }
-                }
+					}
+				}
 
-                else -> {}
+				else -> {}
 
-            }
-        }
+			}
+		}
 
-    }
+	}
 
-    override fun onStart() {
-        super.onStart()
-        fetchRem()
-    }
+	override fun onStart() {
+		super.onStart()
+		fetchRem()
+	}
 
-    private fun saveRemember() {
-        try {
+	private fun saveRemember() {
+		try {
 
-            val users = Prefs(mCtx).getUsers()
+			val users = Prefs(mCtx).getUsers()
 
-            if (users.isEmpty()) {
-                users.add(
-                    RememberModel(
-                        bind.email.value().trim(),
-                        bind.password.value()
-                    )
-                )
-            } else {
+			if (users.isEmpty()) {
+				users.add(
+					RememberModel(
+						bind.email.value().trim() ,
+						bind.password.value()
+					)
+				)
+			} else {
 
-                if (!users.contains(
-                        RememberModel(
-                            bind.email.value().trim(),
-                            bind.password.value()
-                        )
-                    )
-                ) {
-                    users.add(
-                        RememberModel(
-                            bind.email.value().trim(),
-                            bind.password.value()
-                        )
-                    )
-                }
+				if (! users.contains(
+						RememberModel(
+							bind.email.value().trim() ,
+							bind.password.value()
+						)
+					)
+				) {
+					users.add(
+						RememberModel(
+							bind.email.value().trim() ,
+							bind.password.value()
+						)
+					)
+				}
 
-                if (users.find { it.email == bind.email.value() }?.password != bind.password.value()) {
-                    users.find { it.email == bind.email.value() }?.password =
-                        bind.password.value()
-                }
-            }
+				if (users.find { it.email == bind.email.value() }?.password != bind.password.value()) {
+					users.find { it.email == bind.email.value() }?.password =
+						bind.password.value()
+				}
+			}
 
-            Prefs(mCtx).saveUsers(users)
+			Prefs(mCtx).saveUsers(users)
 
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-    }
+		} catch (e : Exception) {
+			e.printStackTrace()
+		}
+	}
 
-    private fun fetchRem() {
+	private fun fetchRem() {
 
-        val users = Prefs(mCtx).getUsers()
+		val users = Prefs(mCtx).getUsers()
 
-        if (users.isNotEmpty()) {
+		if (users.isNotEmpty()) {
 
-            remList.clear()
-            val userList = mutableListOf<String>()
+			remList.clear()
+			val userList = mutableListOf<String>()
 
-            users.forEach {
-                if (it.email.isNotEmpty()) {
-                    userList.add(it.email)
-                    remList.add(it)
-                }
-            }
+			users.forEach {
+				if (it.email.isNotEmpty()) {
+					userList.add(it.email)
+					remList.add(it)
+				}
+			}
 
-            userList.forEach {
-                Alerts.log(TAG, "DATA: $it")
-            }
+			userList.forEach {
+				Alerts.log(TAG , "DATA: $it")
+			}
 
-            val arrAdapter = ArrayAdapter(mCtx, R.layout.remember_list_item, userList)
-            bind.email.setAdapter(arrAdapter)
+			val arrAdapter = ArrayAdapter(mCtx , R.layout.remember_list_item , userList)
+			bind.email.setAdapter(arrAdapter)
 
-            bind.email.setOnItemClickListener { _, _, position, _ ->
-                try {
-                    bind.password.setText(remList[position].password)
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                }
-            }
-        }
+			bind.email.setOnItemClickListener { _ , _ , position , _ ->
+				try {
+					bind.password.setText(remList[position].password)
+				} catch (e : Exception) {
+					e.printStackTrace()
+				}
+			}
+		}
 
-    }
+	}
 
 }

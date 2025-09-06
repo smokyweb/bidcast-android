@@ -13,46 +13,48 @@ import io.bidswipe.app.utils.asMoney
 import io.bidswipe.app.utils.loadUrl
 
 class SavedItemAdapter(
-    mList: MutableList<GetProductsByStatusResponse.Data?>, val mClicks: RecyclerClicks,
-) : BaseAdapter<GetProductsByStatusResponse.Data, PurchasesItemBinding>(mList) {
+	mList : MutableList<GetProductsByStatusResponse.Data?> , val mClicks : RecyclerClicks ,
+) : BaseAdapter<GetProductsByStatusResponse.Data , PurchasesItemBinding>(mList) {
 
-    override fun bindView(inflater: LayoutInflater, parent: ViewGroup) =
-        PurchasesItemBinding.inflate(inflater, parent, false)
+	override fun bindView(inflater : LayoutInflater , parent : ViewGroup) =
+		PurchasesItemBinding.inflate(inflater , parent , false)
 
-    override fun onBind(
-        holder: BaseViewHolder<PurchasesItemBinding>,
-        position: Int,
-        item: GetProductsByStatusResponse.Data?,
-    ) {
-        with(holder) {
+	override fun onBind(
+		holder : BaseViewHolder<PurchasesItemBinding> ,
+		position : Int ,
+		item : GetProductsByStatusResponse.Data? ,
+	) {
+		with(holder) {
 
-            bind.root.setOnClickListener {
-                mClicks.itemClick(position)
-            }
+			bind.root.setOnClickListener {
+				mClicks.itemClick(position)
+			}
 
-            bind.price.text = item?.product?.pricing.toString().asMoney()
+			bind.price.text = item?.product?.pricing.toString().asMoney()
 
-            bind.productId.text = buildString {
-                append(item?.product?.title?.asCapital())
-                append(" #")
-                append(item?.product?.id.toString())
-            }
-            bind.prodSubTitle.text = buildString {
-                append("Seller: ")
-                append(item?.product?.seller?.name?.asCapital())
-            }
+			bind.productId.text = buildString {
+				append(item?.product?.title?.asCapital())
+				append(" #")
+				append(item?.product?.id.toString())
+			}
+			bind.prodSubTitle.text = buildString {
+				append("Seller: ")
+				append(item?.product?.seller?.name?.asCapital())
+			}
 
-            bind.date.text =buildString {
-                append("Date: ")
-                append( Utils.getFormattedDateTime(
-                    Const.DD_MM_YYYY_HH_MM_SS,
-                    "MM/dd/yyyy",
-                    item?.product?.createdAt.toString()
-                ))
-            }
+			bind.date.text = buildString {
+				append("Date: ")
+				append(
+					Utils.getFormattedDateTime(
+						Const.DD_MM_YYYY_HH_MM_SS ,
+						"MM/dd/yyyy" ,
+						item?.product?.createdAt.toString()
+					)
+				)
+			}
 
-            bind.productImage.loadUrl(mCtx, item?.product?.images?.get(0).toString())
+			bind.productImage.loadUrl(mCtx , item?.product?.images?.get(0).toString())
 
-        }
-    }
+		}
+	}
 }

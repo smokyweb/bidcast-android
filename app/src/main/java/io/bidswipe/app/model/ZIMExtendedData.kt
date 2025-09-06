@@ -5,23 +5,23 @@ import com.google.gson.annotations.SerializedName
 
 data class ZIMExtendedData(
 	@SerializedName("userImage")
-	val userImage: String? = null,
+	val userImage : String? = null ,
 
 	@SerializedName("userId")
-	val userId: String? = null,
+	val userId : String? = null ,
 
 	@SerializedName("userName")
-	val userName: String? = null
+	val userName : String? = null ,
 ) {
-	fun toJson(): String {
+	fun toJson() : String {
 		return gson.toJson(this)
 	}
 
 	companion object {
 		private val gson = Gson()
 
-		fun fromJson(json: String): ZIMExtendedData {
-			return gson.fromJson(json, ZIMExtendedData::class.java)
+		fun fromJson(json : String) : ZIMExtendedData {
+			return gson.fromJson(json , ZIMExtendedData::class.java)
 		}
 	}
 }

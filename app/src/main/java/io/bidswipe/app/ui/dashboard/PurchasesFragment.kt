@@ -16,123 +16,138 @@ import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.network.response.GetProductsByStatusResponse
 import io.bidswipe.app.ui.custom.AppBottomSheet
+import io.bidswipe.app.utils.Utils
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request
+
 @SuppressLint("NotifyDataSetChanged")
-class PurchasesFragment : BaseFragment<DashViewModel, FragmentPurchasesBinding>() {
+class PurchasesFragment : BaseFragment<DashViewModel , FragmentPurchasesBinding>() {
 
-    override fun getModel(): Class<DashViewModel> = DashViewModel::class.java
+	override fun getModel() : Class<DashViewModel> = DashViewModel::class.java
 
-    override fun getBind(inflater: LayoutInflater, view: ViewGroup?) = FragmentPurchasesBinding.inflate(inflater,view,false)
+	override fun getBind(inflater : LayoutInflater , view : ViewGroup?) = FragmentPurchasesBinding.inflate(inflater , view , false)
 
-    private lateinit var purchasesAdapter : PurchasesAdapter
-    private var mList = mutableListOf<GetProductsByStatusResponse.Data?>()
-    private var page = 1
-    private var isLoading = false
+	private lateinit var purchasesAdapter : PurchasesAdapter
+	private var mList = mutableListOf<GetProductsByStatusResponse.Data?>()
+	private var page = 1
+	private var isLoading = false
 
-    private var mClick = object : RecyclerClicks {
-        override fun itemClick(pos: Int, status: String?) {
-        }
-    }
+	private var mClick = object : RecyclerClicks {
+		override fun itemClick(pos : Int , status : String?) {
+		}
+	}
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+	override fun onViewCreated(view : View , savedInstanceState : Bundle?) {
+		super.onViewCreated(view , savedInstanceState)
 
-        purchasesAdapter = PurchasesAdapter(mList,mClick)
+		purchasesAdapter = PurchasesAdapter(mList , mClick)
 
-        bind.recycler.adapter = purchasesAdapter
+		bind.recycler.adapter = purchasesAdapter
 
-        bind.recycler.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                super.onScrolled(recyclerView, dx, dy)
-                val layoutManager = bind.recycler.layoutManager as LinearLayoutManager
-                val lastItemPosition = layoutManager.findLastVisibleItemPosition()
-                if (lastItemPosition == (mList.size - 1)) {
-                    if (!isLoading) {
-                        isLoading = true
-                        page++
-                        bind.bottomLoader.isVisible = true
-                        viewModel.getPurchasedProductsByStatus("purchased".request(),page.toString().request())
-                    }
-                }
-            }
-        })
-        bind.swipeRefreshLayout.setOnRefreshListener {
-            page = 1
-            viewModel.getPurchasedProductsByStatus("purchased".request(),page.toString().request())
-        }
-        bind.noInternet.onClick {
-            bind.loader.isVisible = true
-            bind.noInternet.isVisible = false
-            page = 1
-            viewModel.getPurchasedProductsByStatus("purchased".request(),page.toString().request())
-        }
+		bind.recycler.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+			override fun onScrolled(recyclerView : RecyclerView , dx : Int , dy : Int) {
+				super.onScrolled(recyclerView , dx , dy)
+				val layoutManager = bind.recycler.layoutManager as LinearLayoutManager
+				val lastItemPosition = layoutManager.findLastVisibleItemPosition()
+				if (lastItemPosition == (mList.size - 1)) {
+					if (! isLoading) {
+						isLoading = true
+						page ++
+						bind.bottomLoader.isVisible = true
+						viewModel.getPurchasedProductsByStatus("purchased".request() , page.toString().request())
+					}
+				}
+			}
+		})
+		bind.swipeRefreshLayout.setOnRefreshListener {
+			page = 1
+			viewModel.getPurchasedProductsByStatus("purchased".request() , page.toString().request())
+		}
+		bind.noInternet.onClick {
+			bind.loader.isVisible = true
+			bind.noInternet.isVisible = false
+			page = 1
+			viewModel.getPurchasedProductsByStatus("purchased".request() , page.toString().request())
+		}
 
-        bind.loader.isVisible = true
+		bind.loader.isVisible = true
 
-        viewModel.getPurchasedProductsByStatus("purchased".request(),"1".request())
-        viewModel.getPurchasedProductsByStatusRepo.observe(viewLifecycleOwner) {
-            when (it) {
-                is Resource.Success -> {
-                    bind.loader.isVisible = false
-                    bind.bottomLoader.isVisible = false
-                    bind.noInternet.isVisible = false
-                    bind.swipeRefreshLayout.isRefreshing = false
+		viewModel.getPurchasedProductsByStatus("purchased".request() , "1".request())
+		viewModel.getPurchasedProductsByStatusRepo.observe(viewLifecycleOwner) {
+			when (it) {
+				is Resource.Success -> {
+					bind.loader.isVisible = false
+					bind.bottomLoader.isVisible = false
+					bind.noInternet.isVisible = false
+					bind.swipeRefreshLayout.isRefreshing = false
 
-                    val mData = it.value.data
-                    if (page == 1){
-                        mList.clear()
+					val mData = it.value.data
+					if (page == 1) {
+						mList.clear()
 
-                    }
-                    if (mData != null){
-                        mList.addAll(mData)
-                    }
+					}
+					if (mData != null) {
+						mList.addAll(mData)
+					}
 
-                    if (mList.isEmpty()){
-                        bind.noData.isVisible = true
-                        bind.recycler.isVisible = false
-                    }else{
-                        bind.noData.isVisible = false
-                        bind.recycler.isVisible = true
-                    }
+					if (mList.isEmpty()) {
+						bind.noData.isVisible = true
+						bind.recycler.isVisible = false
+					} else {
+						bind.noData.isVisible = false
+						bind.recycler.isVisible = true
+					}
 
-                    isLoading = page >= (it.value.totalPage ?: 0)
+					isLoading = page >= (it.value.totalPage ?: 0)
 
-                    purchasesAdapter.notifyDataSetChanged()
+					purchasesAdapter.notifyDataSetChanged()
 
-                }
+				}
 
-                is Resource.Error -> {
-                    bind.noData.isVisible = false
-                    bind.loader.isVisible = false
-                    bind.bottomLoader.isVisible = false
-                    bind.swipeRefreshLayout.isRefreshing = false
+				is Resource.Error -> {
+					bind.noData.isVisible = false
+					bind.loader.isVisible = false
+					bind.bottomLoader.isVisible = false
+					bind.swipeRefreshLayout.isRefreshing = false
 
-                    if (it.isNetworkError) {
-                        bind.noInternet.isVisible = true
-                        bind.recycler.isVisible = false
-                        bind.noData.isVisible = false
+					if (it.isNetworkError) {
+						bind.noInternet.isVisible = true
+						bind.recycler.isVisible = false
+						bind.noData.isVisible = false
 
-                    } else {
-                        it.parse(mCtx, TAG, object : AlertClicks {
-                            override fun primaryClick(dialog: AppBottomSheet) {
-                                dialog.dismiss()
-                            }
+					} else {
+						it.parse(mCtx , TAG , object : AlertClicks {
+							override fun primaryClick(dialog : AppBottomSheet) {
+								dialog.dismiss()
+							}
 
-                            override fun secondaryClick(dialog: AppBottomSheet) {
-                                dialog.dismiss()
+							override fun secondaryClick(dialog : AppBottomSheet) {
+								dialog.dismiss()
 
-                            }
-                        })
-                    }
-                }
+							}
+						})
+					}
+				}
 
-                else -> {}
+				else -> {}
 
-            }
-        }
+			}
+		}
 
 
-    }
+	}
 
+	fun reloadData() {
+		if (Utils.isOnline(mCtx)) {
+			bind.loader.isVisible = true
+			bind.noInternet.isVisible = false
+			page = 1
+			viewModel.getPurchasedProductsByStatus("purchased".request() , page.toString().request())
+		} else {
+			bind.loader.isVisible = false
+			bind.noInternet.isVisible = true
+			bind.recycler.isVisible = false
+			bind.noData.isVisible = false
+		}
+	}
 }

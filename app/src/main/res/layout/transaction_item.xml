@@ -27,8 +27,8 @@
                 android:layout_height="match_parent"
                 android:background="@color/secondaryContainer"
                 android:padding="@dimen/half_margin"
-                app:tint="@color/success"
-                android:src="@drawable/ic_check_white_24dp" />
+                android:src="@drawable/ic_check_white_24dp"
+                app:tint="@color/success" />
 
         </com.google.android.material.card.MaterialCardView>
 

@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:orientation="vertical"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
     tools:context=".ui.dashboard.sellerHub.SellerStatusFragment">
 
     <io.bidswipe.app.ui.custom.Header
@@ -20,18 +20,18 @@
         app:showSecondaryIcon="false" />
 
 
-      <include
-          android:id="@+id/vendor"
-          layout="@layout/status_item" />
+    <include
+        android:id="@+id/vendor"
+        layout="@layout/status_item" />
 
     <include
-          android:id="@+id/sender"
-          layout="@layout/status_item" />
+        android:id="@+id/sender"
+        layout="@layout/status_item" />
 
     <View
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"/>
+        android:layout_weight="1" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/contact_button"
@@ -39,8 +39,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/margin"
-        app:layout_constraintBottom_toBottomOf="parent"
-        android:text="@string/contact_support" />
+        android:text="@string/contact_support"
+        app:layout_constraintBottom_toBottomOf="parent" />
 
 
 </LinearLayout>

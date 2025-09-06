@@ -12,48 +12,48 @@ import io.bidswipe.app.network.response.GetMyInventoryResponse
 import io.bidswipe.app.utils.loadUrl
 
 class ProductAdapter(
-    val mList: MutableList<GetMyInventoryResponse.Data?>, val mClicks: RecyclerClicks,
-) : BaseAdapter<GetMyInventoryResponse.Data?, ProductListItemBinding>(mList) {
+	val mList : MutableList<GetMyInventoryResponse.Data?> , val mClicks : RecyclerClicks ,
+) : BaseAdapter<GetMyInventoryResponse.Data? , ProductListItemBinding>(mList) {
 
-    override fun bindView(inflater: LayoutInflater, parent: ViewGroup) =
-        ProductListItemBinding.inflate(inflater, parent, false)
+	override fun bindView(inflater : LayoutInflater , parent : ViewGroup) =
+		ProductListItemBinding.inflate(inflater , parent , false)
 
-    override fun onBind(
-        holder: BaseViewHolder<ProductListItemBinding>,
-        position: Int,
-        item: GetMyInventoryResponse.Data?,
-    ) {
-        with(holder) {
+	override fun onBind(
+		holder : BaseViewHolder<ProductListItemBinding> ,
+		position : Int ,
+		item : GetMyInventoryResponse.Data? ,
+	) {
+		with(holder) {
 
-            Log.d(TAG, "onBind: sadsafdsh")
-            bind.root.setOnClickListener {
-                mClicks.itemClick(position, "select")
-            }
+			Log.d(TAG , "onBind: sadsafdsh")
+			bind.root.setOnClickListener {
+				mClicks.itemClick(position , "select")
+			}
 
-            bind.edit.setOnClickListener {
-                mClicks.itemClick(position, "edit")
-            }
+			bind.edit.setOnClickListener {
+				mClicks.itemClick(position , "edit")
+			}
 
-            bind.trash.setOnClickListener {
-                mClicks.itemClick(position, "delete")
-            }
+			bind.trash.setOnClickListener {
+				mClicks.itemClick(position , "delete")
+			}
 
-            if (item?.selected == true) {
-                bind.root.strokeWidth = 2
-                bind.root.strokeColor = ContextCompat.getColor(mCtx, R.color.primary)
-            } else {
-                bind.root.strokeWidth = 0
-            }
+			if (item?.selected == true) {
+				bind.root.strokeWidth = 2
+				bind.root.strokeColor = ContextCompat.getColor(mCtx , R.color.primary)
+			} else {
+				bind.root.strokeWidth = 0
+			}
 
-            bind.productName.text = item?.title
-            bind.prodSubTitle.text = item?.description
-            bind.quantity.text = buildString {
-                append("Quantity: ")
-                append(item?.quantity)
-            }
+			bind.productName.text = item?.title
+			bind.prodSubTitle.text = item?.description
+			bind.quantity.text = buildString {
+				append("Quantity: ")
+				append(item?.quantity)
+			}
 
-            bind.img.loadUrl(mCtx, item?.images.toString())
+			bind.img.loadUrl(mCtx , item?.images.toString())
 
-        }
-    }
+		}
+	}
 }

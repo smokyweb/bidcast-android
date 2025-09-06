@@ -7,38 +7,37 @@ import io.bidswipe.app.base.BaseAdapter
 import io.bidswipe.app.databinding.ShopItemBinding
 import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.network.response.GetMyInventoryResponse
-import io.bidswipe.app.network.response.GetProductsResponse
 import io.bidswipe.app.utils.asCapital
 import io.bidswipe.app.utils.asMoney
 import io.bidswipe.app.utils.loadUrl
 
 class ShopAdapter(
-    mList: MutableList<GetMyInventoryResponse.Data?>, val mClicks: RecyclerClicks,
-) : BaseAdapter<GetMyInventoryResponse.Data?, ShopItemBinding>(mList) {
+	mList : MutableList<GetMyInventoryResponse.Data?> , val mClicks : RecyclerClicks ,
+) : BaseAdapter<GetMyInventoryResponse.Data? , ShopItemBinding>(mList) {
 
-    override fun bindView(inflater: LayoutInflater, parent: ViewGroup) =
-        ShopItemBinding.inflate(inflater, parent, false)
+	override fun bindView(inflater : LayoutInflater , parent : ViewGroup) =
+		ShopItemBinding.inflate(inflater , parent , false)
 
-    override fun onBind(
-        holder: BaseViewHolder<ShopItemBinding>,
-        position: Int,
-        item: GetMyInventoryResponse.Data?,
-    ) {
-        with(holder) {
-            bind.root.setOnClickListener {
-                mClicks.itemClick(position)
-            }
+	override fun onBind(
+		holder : BaseViewHolder<ShopItemBinding> ,
+		position : Int ,
+		item : GetMyInventoryResponse.Data? ,
+	) {
+		with(holder) {
+			bind.root.setOnClickListener {
+				mClicks.itemClick(position)
+			}
 
-            bind.productImage.loadUrl(mCtx, item?.images?.get(0).toString())
+			bind.productImage.loadUrl(mCtx , item?.images?.get(0).toString())
 
-            bind.productName.text = item?.title.toString().asCapital()
+			bind.productName.text = item?.title.toString().asCapital()
 
-            bind.category.text = buildSpannedString {
-                append(item?.description)
-            }
+			bind.category.text = buildSpannedString {
+				append(item?.description)
+			}
 
-            bind.price.text = item?.pricing.toString().asMoney()
+			bind.price.text = item?.pricing.toString().asMoney()
 
-        }
-    }
+		}
+	}
 }

@@ -13,44 +13,44 @@ import io.bidswipe.app.utils.bind
 
 class LanguageActivity : BaseActivity() {
 
-    private val bind by bind(ActivityLanguageBinding::inflate)
-    private val viewModel by viewModels<DashViewModel>()
+	private val bind by bind(ActivityLanguageBinding::inflate)
+	private val viewModel by viewModels<DashViewModel>()
 
-    private lateinit var langAdapter : LanguageAdapter
-    private var selectedLang = Const.languages.find { it.locale == Locales.English }!!
+	private lateinit var langAdapter : LanguageAdapter
+	private var selectedLang = Const.languages.find { it.locale == Locales.English } !!
 
-    private val mClick = object : RecyclerClicks {
-       
-        override fun itemClick(pos : Int , status : String?) {
-            selectedLang = Const.languages[pos]
-            updateLocale(selectedLang.locale)
-            Prefs(this@LanguageActivity).putString(Prefs.LANGUAGE , selectedLang.title)
-            Prefs(this@LanguageActivity).putString(Prefs.LOCALE_LANGUAGE , selectedLang.locale.language)
-        }
-    }
+	private val mClick = object : RecyclerClicks {
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(bind.root)
+		override fun itemClick(pos : Int , status : String?) {
+			selectedLang = Const.languages[pos]
+			updateLocale(selectedLang.locale)
+			Prefs(this@LanguageActivity).putString(Prefs.LANGUAGE , selectedLang.title)
+			Prefs(this@LanguageActivity).putString(Prefs.LOCALE_LANGUAGE , selectedLang.locale.language)
+		}
+	}
 
-        langAdapter = LanguageAdapter(Const.languages , mClick)
-        bind.language.adapter = langAdapter
+	override fun onCreate(savedInstanceState : Bundle?) {
+		super.onCreate(savedInstanceState)
+		setContentView(bind.root)
 
-        bind.header.onBackClick {
-            finish()
-        }
+		langAdapter = LanguageAdapter(Const.languages , mClick)
+		bind.language.adapter = langAdapter
 
-        bind.skip.setOnClickListener {
-            updateLocale(selectedLang.locale)
-            Prefs(this@LanguageActivity).putString(Prefs.LANGUAGE , selectedLang.title)
-            Prefs(this@LanguageActivity).putString(Prefs.LOCALE_LANGUAGE , selectedLang.locale.language)
-            finish()
-        }
+		bind.header.onBackClick {
+			finish()
+		}
 
-        bind.select.setOnClickListener {
-            finish()
-        }
+		bind.skip.setOnClickListener {
+			updateLocale(selectedLang.locale)
+			Prefs(this@LanguageActivity).putString(Prefs.LANGUAGE , selectedLang.title)
+			Prefs(this@LanguageActivity).putString(Prefs.LOCALE_LANGUAGE , selectedLang.locale.language)
+			finish()
+		}
+
+		bind.select.setOnClickListener {
+			finish()
+		}
 
 
-    }
+	}
 }

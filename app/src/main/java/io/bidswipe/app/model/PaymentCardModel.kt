@@ -7,9 +7,9 @@ import androidx.annotation.Keep
 @Keep
 data class PaymentCardModel(
     @SerializedName("card_number")
-    val cardNumber: String?,
+    val cardNumber : String? ,
     @SerializedName("cvv")
-    val cvv: String?,
+    val cvv : String? ,
     @SerializedName("expiration_date")
-    val expirationDate: String?
+    val expirationDate : String? ,
 )

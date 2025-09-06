@@ -6,56 +6,56 @@ import androidx.annotation.Keep
 @Keep
 data class GetPaymentCardsResponse(
     @SerializedName("data")
-    val `data`: Data?,
+    val `data` : Data? ,
     @SerializedName("error_type")
-    val errorType: String?,
+    val errorType : String? ,
     @SerializedName("message")
-    val message: String?,
+    val message : String? ,
     @SerializedName("status")
-    val status: String?
+    val status : String? ,
 ) {
-    @Keep
-    data class Data(
+	@Keep
+	data class Data(
         @SerializedName("customerProfileId")
-        val customerProfileId: String?,
+        val customerProfileId : String? ,
         @SerializedName("description")
-        val description: String?,
+        val description : String? ,
         @SerializedName("email")
-        val email: String?,
+        val email : String? ,
         @SerializedName("merchantCustomerId")
-        val merchantCustomerId: String?,
+        val merchantCustomerId : String? ,
         @SerializedName("paymentProfiles")
-        val paymentProfiles: List<PaymentProfile?>?,
+        val paymentProfiles : List<PaymentProfile?>? ,
         @SerializedName("profileType")
-        val profileType: String?
+        val profileType : String? ,
     ) {
-        @Keep
-        data class PaymentProfile(
-            @SerializedName("customerPaymentProfileId")
-            val customerPaymentProfileId: String?,
-            @SerializedName("customerType")
-            val customerType: String?,
-            @SerializedName("payment")
-            val payment: Payment?,
-            @SerializedName("is_default")
-            val isDefault: Boolean?,
-            var selected: Boolean ? = false,
-        ) {
-            @Keep
-            data class Payment(
+		@Keep
+		data class PaymentProfile(
+			@SerializedName("customerPaymentProfileId")
+			val customerPaymentProfileId : String? ,
+			@SerializedName("customerType")
+			val customerType : String? ,
+			@SerializedName("payment")
+			val payment : Payment? ,
+			@SerializedName("is_default")
+			val isDefault : Boolean? ,
+			var selected : Boolean? = false ,
+		) {
+			@Keep
+			data class Payment(
                 @SerializedName("creditCard")
-                val creditCard: CreditCard?
+                val creditCard : CreditCard? ,
             ) {
-                @Keep
-                data class CreditCard(
+				@Keep
+				data class CreditCard(
                     @SerializedName("cardNumber")
-                    val cardNumber: String?,
+                    val cardNumber : String? ,
                     @SerializedName("cardType")
-                    val cardType: String?,
+                    val cardType : String? ,
                     @SerializedName("expirationDate")
-                    val expirationDate: String?
+                    val expirationDate : String? ,
                 )
-            }
-        }
-    }
+			}
+		}
+	}
 }

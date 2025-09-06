@@ -7,29 +7,29 @@ import androidx.annotation.Keep
 @Keep
 data class GetBlockedUsersResponse(
     @SerializedName("status")
-    val status: Boolean,
+    val status : Boolean ,
     @SerializedName("message")
-    val message: String?,
+    val message : String? ,
     @SerializedName("error_type")
-    val errorType: String?,
+    val errorType : String? ,
     @SerializedName("data")
-    val `data`: Data?
+    val `data` : Data? ,
 ) {
-    @Keep
-    data class Data(
+	@Keep
+	data class Data(
         @SerializedName("blocked_by_me")
-        val blockedByMe: List<BlockedByMe?>?,
+        val blockedByMe : List<BlockedByMe?>? ,
         @SerializedName("blocked_me")
-        val blockedMe: List<BlockedByMe?>?
+        val blockedMe : List<BlockedByMe?>? ,
     ) {
-        @Keep
-        data class BlockedByMe(
+		@Keep
+		data class BlockedByMe(
             @SerializedName("id")
-            val id: Int?,
+            val id : Int? ,
             @SerializedName("name")
-            val name: String?,
+            val name : String? ,
             @SerializedName("image")
-            val image: String?
+            val image : String? ,
         )
-    }
+	}
 }

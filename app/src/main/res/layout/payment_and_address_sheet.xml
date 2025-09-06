@@ -41,13 +41,14 @@
             android:layout_height="1dp"
             app:dividerColor="@color/outline" />
 
-        <include layout="@layout/payment_card_item"
-            android:id="@+id/paymentCard"/>
+        <include
+            android:id="@+id/paymentCard"
+            layout="@layout/payment_card_item" />
 
 
-        <include layout="@layout/shipping_address_item"
-            android:id="@+id/addressItem"/>
-
+        <include
+            android:id="@+id/addressItem"
+            layout="@layout/shipping_address_item" />
 
 
     </LinearLayout>

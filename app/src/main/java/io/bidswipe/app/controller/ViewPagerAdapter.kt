@@ -59,4 +59,6 @@ class ViewPagerAdapter(fragmentActivity : FragmentActivity , type : String) :
 
 	override fun createFragment(position : Int) : Fragment = fragments[position]
 
+	fun getFragment(position: Int): Fragment = fragments[position]
+
 }

@@ -11,51 +11,53 @@ import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.network.response.GetPaymentCardsResponse
 
 class PaymentCardAdapter(
-    mList: MutableList<GetPaymentCardsResponse.Data.PaymentProfile?>, val mClicks: RecyclerClicks,
-) : BaseAdapter<GetPaymentCardsResponse.Data.PaymentProfile?, PaymentCardItemBinding>(mList) {
+	mList : MutableList<GetPaymentCardsResponse.Data.PaymentProfile?> , val mClicks : RecyclerClicks ,
+) : BaseAdapter<GetPaymentCardsResponse.Data.PaymentProfile? , PaymentCardItemBinding>(mList) {
 
-    override fun bindView(inflater: LayoutInflater, parent: ViewGroup) =
-        PaymentCardItemBinding.inflate(inflater, parent, false)
+	override fun bindView(inflater : LayoutInflater , parent : ViewGroup) =
+		PaymentCardItemBinding.inflate(inflater , parent , false)
 
-    override fun onBind(
-        holder: BaseViewHolder<PaymentCardItemBinding>,
-        position: Int,
-        item: GetPaymentCardsResponse.Data.PaymentProfile?,
-    ) {
-        with(holder) {
+	override fun onBind(
+		holder : BaseViewHolder<PaymentCardItemBinding> ,
+		position : Int ,
+		item : GetPaymentCardsResponse.Data.PaymentProfile? ,
+	) {
+		with(holder) {
 
-            bind.root.setOnClickListener {
-                mClicks.itemClick(position)
-            }
+			bind.root.setOnClickListener {
+				mClicks.itemClick(position)
+			}
 
-            bind.cardNumber.text = item?.payment?.creditCard?.cardNumber
+			bind.cardNumber.text = item?.payment?.creditCard?.cardNumber
 
-            bind.expiryDate.text = buildString {
-                append(item?.payment?.creditCard?.expirationDate)
-            }
+			bind.expiryDate.text = buildString {
+				append(item?.payment?.creditCard?.expirationDate)
+			}
 
-            bind.defaultAddress.isVisible = item?.isDefault == true
+			bind.defaultAddress.isVisible = item?.isDefault == true
 
-            bind.moreIcon.setOnClickListener { view ->
-                val popup = PopupMenu(view.context, view)
-                popup.inflate(R.menu.card_action_menu)  // Your menu XML
-                popup.setOnMenuItemClickListener { menuItem ->
-                    when (menuItem.itemId) {
-                        R.id.setDefault -> {
-                            mClicks.itemClick(position,"default")
-                            true
-                        }
-                        R.id.delete -> {
-                            mClicks.itemClick(position,"delete")
-                            true
-                        }
-                        else -> false
-                    }
-                }
-                popup.show()
-            }
+			bind.moreIcon.setOnClickListener { view ->
+				val popup = PopupMenu(view.context , view)
+				popup.inflate(R.menu.card_action_menu)  // Your menu XML
+				popup.setOnMenuItemClickListener { menuItem ->
+					when (menuItem.itemId) {
+						R.id.setDefault -> {
+							mClicks.itemClick(position , "default")
+							true
+						}
+
+						R.id.delete -> {
+							mClicks.itemClick(position , "delete")
+							true
+						}
+
+						else -> false
+					}
+				}
+				popup.show()
+			}
 
 
-        }
-    }
+		}
+	}
 }

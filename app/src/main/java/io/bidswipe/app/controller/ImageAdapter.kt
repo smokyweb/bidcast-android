@@ -10,32 +10,31 @@ import io.bidswipe.app.utils.Const
 import io.bidswipe.app.utils.loadUrl
 
 class ImageAdapter(
-	mList: MutableList<String?>, val mClicks: RecyclerClicks,
-) : BaseAdapter<String?, UploadImageItemBinding>(mList) {
+	mList : MutableList<String?> , val mClicks : RecyclerClicks ,
+) : BaseAdapter<String? , UploadImageItemBinding>(mList) {
 
-    override fun bindView(inflater: LayoutInflater, parent: ViewGroup) =
-        UploadImageItemBinding.inflate(inflater, parent, false)
+	override fun bindView(inflater : LayoutInflater , parent : ViewGroup) =
+		UploadImageItemBinding.inflate(inflater , parent , false)
 
-    override fun onBind(
-		holder: BaseViewHolder<UploadImageItemBinding>,
-		position: Int,
-		item: String?,
+	override fun onBind(
+		holder : BaseViewHolder<UploadImageItemBinding> ,
+		position : Int ,
+		item : String? ,
 	) {
-        with(holder) {
+		with(holder) {
 
-            bind.root.setOnClickListener {
-                mClicks.itemClick(position)
-            }
+			bind.root.setOnClickListener {
+				mClicks.itemClick(position)
+			}
 
-            if (item != null) {
-                if (item.contains(Const.BASE_URL)){
-                    bind.image.loadUrl(mCtx,item)
-                }
-                else{
-                    bind.image.setImageURI(item.toUri())
-                }
-            }
+			if (item != null) {
+				if (item.contains(Const.BASE_URL)) {
+					bind.image.loadUrl(mCtx , item)
+				} else {
+					bind.image.setImageURI(item.toUri())
+				}
+			}
 
-        }
-    }
+		}
+	}
 }

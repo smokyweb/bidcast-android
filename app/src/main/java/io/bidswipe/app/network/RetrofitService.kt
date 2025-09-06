@@ -13,43 +13,43 @@ import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 
 
-class RetrofitService(private val mCtx: Context) {
-    val loggingInterceptor = HttpLoggingInterceptor().apply {
-        level = HttpLoggingInterceptor.Level.BODY
-    }
+class RetrofitService(private val mCtx : Context) {
+	val loggingInterceptor = HttpLoggingInterceptor().apply {
+		level = HttpLoggingInterceptor.Level.BODY
+	}
 
-    fun build(): ApiInterface {
-        val gson = GsonBuilder()
-            .enableComplexMapKeySerialization()
-            .setPrettyPrinting()
-            .serializeNulls()
-            .create()
+	fun build() : ApiInterface {
+		val gson = GsonBuilder()
+			.enableComplexMapKeySerialization()
+			.setPrettyPrinting()
+			.serializeNulls()
+			.create()
 
-        val okHttpClient = OkHttpClient.Builder().apply {
-            addInterceptor(Interceptor { chain ->
-                val request = chain.request().newBuilder().apply {
-                    val token = Prefs(mCtx).token()
-                    if (token.isEmpty().not()) {
-                        addHeader("Authorization", token)
-                    }
-                    addHeader("timezone", Utils.timezone)
-                    addHeader("Content-Type", "application/json")
-                    addHeader("Accept", "application/json")
-                }.build()
-                chain.proceed(request)
-            })
-            addInterceptor(loggingInterceptor)
-            connectTimeout(100, TimeUnit.SECONDS)
-            readTimeout(100, TimeUnit.SECONDS)
-            writeTimeout(100, TimeUnit.SECONDS)
-        }.build()
+		val okHttpClient = OkHttpClient.Builder().apply {
+			addInterceptor(Interceptor { chain ->
+				val request = chain.request().newBuilder().apply {
+					val token = Prefs(mCtx).token()
+					if (token.isEmpty().not()) {
+						addHeader("Authorization" , token)
+					}
+					addHeader("timezone" , Utils.timezone)
+					addHeader("Content-Type" , "application/json")
+					addHeader("Accept" , "application/json")
+				}.build()
+				chain.proceed(request)
+			})
+			addInterceptor(loggingInterceptor)
+			connectTimeout(100 , TimeUnit.SECONDS)
+			readTimeout(100 , TimeUnit.SECONDS)
+			writeTimeout(100 , TimeUnit.SECONDS)
+		}.build()
 
 
-        return Retrofit.Builder().apply {
-            baseUrl(BASE_URL)
-            client(okHttpClient)
-            addConverterFactory(GsonConverterFactory.create(gson))
-        }.build().create(ApiInterface::class.java)
-    }
+		return Retrofit.Builder().apply {
+			baseUrl(BASE_URL)
+			client(okHttpClient)
+			addConverterFactory(GsonConverterFactory.create(gson))
+		}.build().create(ApiInterface::class.java)
+	}
 }
 

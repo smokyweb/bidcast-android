@@ -53,38 +53,38 @@ import io.bidswipe.app.utils.setMargins
 import io.bidswipe.app.utils.value
 import kotlin.math.abs
 
-class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBinding>() {
+class WatchStreamFragment : BaseFragment<StreamViewModel , FragmentWatchStreamBinding>() {
 
-	override fun getModel(): Class<StreamViewModel> = StreamViewModel::class.java
+	override fun getModel() : Class<StreamViewModel> = StreamViewModel::class.java
 
 	override fun getBind(
-		inflater: LayoutInflater,
-		view: ViewGroup?
-	) = FragmentWatchStreamBinding.inflate(inflater, view, false)
+		inflater : LayoutInflater ,
+		view : ViewGroup? ,
+	) = FragmentWatchStreamBinding.inflate(inflater , view , false)
 
-	private lateinit var roomID: String
-	private lateinit var streamID: String
-	private var highestBidAmount: String? = ""
-	private var bidProductId: String? = ""
+	private lateinit var roomID : String
+	private lateinit var streamID : String
+	private var highestBidAmount : String? = ""
+	private var bidProductId : String? = ""
 	private var commentList = mutableListOf<LiveChatModel?>()
-	private lateinit var commentAdapter: CommentAdapter
-	private var product: LiveShowModel.Product? = null
-	private var inputSheet: BottomSheetDialog? = null
+	private lateinit var commentAdapter : CommentAdapter
+	private var product : LiveShowModel.Product? = null
+	private var inputSheet : BottomSheetDialog? = null
 	private var isAllowBidForAll = true
-	private var chatManager: ChatManager? = null
+	private var chatManager : ChatManager? = null
 
 	companion object {
-		fun newInstance(roomID: String, streamID: String) = WatchStreamFragment().apply {
+		fun newInstance(roomID : String , streamID : String) = WatchStreamFragment().apply {
 			arguments = Bundle().apply {
-				putString("roomID", roomID)
-				putString("streamID", streamID)
+				putString("roomID" , roomID)
+				putString("streamID" , streamID)
 			}
 		}
 	}
 
 	private var eventListener = object : ValueEventListener {
 		@SuppressLint("NotifyDataSetChanged")
-		override fun onDataChange(snapshot: DataSnapshot) {
+		override fun onDataChange(snapshot : DataSnapshot) {
 
 			runSafe {
 				val data = LiveShowModel().fromMap(snapshot)
@@ -96,7 +96,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 					log("HIGHEST BID: ${data.highestBid}")
 					highestBidAmount = data.highestBid?.bidAmount ?: highestBidAmount
 
-					bind.bid.text = "Swipe to Bid ${newBidAmount(highestBidAmount?.toDouble()?.toInt() ?:0).toString().asMoney()}"
+					bind.bid.text = "Swipe to Bid ${newBidAmount(highestBidAmount?.toDouble()?.toInt() ?: 0).toString().asMoney()}"
 
 				}
 
@@ -111,13 +111,13 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 				// Determine sale status once
 				val isSold = currentProduct?.status == "sold"
 				bind.soldLayout.isVisible = isSold
-				bind.bidLayout.isVisible = !isSold
+				bind.bidLayout.isVisible = ! isSold
 
 				if (isSold) {
 					inputSheet?.dismiss()
 				}
 
-				bind.productLayout.isVisible = !isSold
+				bind.productLayout.isVisible = ! isSold
 
 				if (isSold && data.highestBid?.userId == userId) {
 					bind.soldOutText.text = "You won the bid"
@@ -125,7 +125,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
 				// Show bid countdown if available
 				val countdown = snapshot.child("bidCountDown").value?.toString()
-				if (!countdown.isNullOrEmpty()) {
+				if (! countdown.isNullOrEmpty()) {
 					bind.bidTime.isVisible = true
 					bind.bidTime.text = "Ends in $countdown"
 				} else {
@@ -138,33 +138,33 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
 		}
 
-		override fun onCancelled(error: DatabaseError) {
+		override fun onCancelled(error : DatabaseError) {
 			log("Firebase cancelled: ${error.message}")
 		}
 
 	}
 
-	override fun onCreate(savedInstanceState: Bundle?) {
+	override fun onCreate(savedInstanceState : Bundle?) {
 		super.onCreate(savedInstanceState)
 		roomID = requireArguments().getString("roomID") ?: ""
 		streamID = requireArguments().getString("streamID") ?: ""
 	}
 
 	@SuppressLint("ClickableViewAccessibility")
-	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-		super.onViewCreated(view, savedInstanceState)
+	override fun onViewCreated(view : View , savedInstanceState : Bundle?) {
+		super.onViewCreated(view , savedInstanceState)
 
 		log("RoomId: $roomID")
 
 		setUpSwipe()
-		
-		bind.bidLayout.setMargins(resources.dpToPx(16), 0, resources.dpToPx(16), navigationBarHeight)
+
+		bind.bidLayout.setMargins(resources.dpToPx(16) , 0 , resources.dpToPx(16) , navigationBarHeight)
 
 		bind.cutButton.setOnClickListener {
 			finish()
 		}
 
-		bind.recycler.setOnTouchListener { view, event ->
+		bind.recycler.setOnTouchListener { view , event ->
 			hideKeyboard(view)
 			return@setOnTouchListener false
 		}
@@ -176,18 +176,18 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 		FireRef.LIVE_SESSIONS.child(roomID).addValueEventListener(eventListener)
 
 		FireRef.LIVE_SESSIONS.child(roomID).addChildEventListener(object : ChildEventListener {
-			override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
+			override fun onChildAdded(snapshot : DataSnapshot , previousChildName : String?) {
 
 			}
 
-			override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
+			override fun onChildChanged(snapshot : DataSnapshot , previousChildName : String?) {
 			}
 
-			override fun onChildRemoved(snapshot: DataSnapshot) {
+			override fun onChildRemoved(snapshot : DataSnapshot) {
 				if (snapshot.key == "highestBid") {
 
 					FireRef.LIVE_SESSIONS.child(roomID).addListenerForSingleValueEvent(object : ValueEventListener {
-						override fun onDataChange(snapshot: DataSnapshot) {
+						override fun onDataChange(snapshot : DataSnapshot) {
 
 							runSafe {
 								val data = LiveShowModel().fromMap(snapshot)
@@ -200,8 +200,8 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 									bind.productName.text = currentProduct.name
 									bidProductId = currentProduct.id
 									bind.productImage.loadUrl(
-										mCtx,
-										currentProduct.image ?: "",
+										mCtx ,
+										currentProduct.image ?: "" ,
 										placeHolder = draw.product_img
 									)
 									bind.bidPrice.text = currentProduct.price.toString().asMoney()
@@ -213,16 +213,16 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 										append(currentProduct.price.toString().asMoney())
 									}
 
-									bind.bid.text = "Swipe to Bid ${newBidAmount(highestBidAmount?.toDouble()?.toInt() ?:0 ).toString().asMoney()}"
+									bind.bid.text = "Swipe to Bid ${newBidAmount(highestBidAmount?.toDouble()?.toInt() ?: 0).toString().asMoney()}"
 
-									bind.bid.setCompleted(completed = false, withAnimation = true)
+									bind.bid.setCompleted(completed = false , withAnimation = true)
 
 								}
 							}
 
 						}
 
-						override fun onCancelled(error: DatabaseError) {
+						override fun onCancelled(error : DatabaseError) {
 
 						}
 					})
@@ -230,10 +230,10 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 				}
 			}
 
-			override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {
+			override fun onChildMoved(snapshot : DataSnapshot , previousChildName : String?) {
 			}
 
-			override fun onCancelled(error: DatabaseError) {
+			override fun onCancelled(error : DatabaseError) {
 			}
 
 		})
@@ -260,8 +260,8 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 			if (stream.roomId == roomID) {
 
 				bind.userImage.loadUrl(
-					mCtx,
-					stream.seller?.image.toString(),
+					mCtx ,
+					stream.seller?.image.toString() ,
 					placeHolder = draw.user_image
 				)
 
@@ -276,8 +276,8 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 				bind.productName.text = product?.name
 
 				bind.productImage.loadUrl(
-					mCtx,
-					product?.image.toString(),
+					mCtx ,
+					product?.image.toString() ,
 					placeHolder = draw.product_img
 				)
 
@@ -288,17 +288,17 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 						append("Price: ")
 						append(product?.price.toString().asMoney())
 					}
-				} catch (e: Exception) {
+				} catch (e : Exception) {
 					e.printStackTrace()
 				}
 
 				if (stream.seller?.isFollowed == true) {
-					bind.follow.setBackgroundColor(ContextCompat.getColor(mCtx, R.color.outline))
-					bind.follow.setTextColor(ContextCompat.getColor(mCtx, R.color.onSurface))
+					bind.follow.setBackgroundColor(ContextCompat.getColor(mCtx , R.color.outline))
+					bind.follow.setTextColor(ContextCompat.getColor(mCtx , R.color.onSurface))
 					bind.follow.text = "Unfollow"
 				} else {
-					bind.follow.setBackgroundColor(ContextCompat.getColor(mCtx, R.color.primary))
-					bind.follow.setTextColor(ContextCompat.getColor(mCtx, R.color.background))
+					bind.follow.setBackgroundColor(ContextCompat.getColor(mCtx , R.color.primary))
+					bind.follow.setTextColor(ContextCompat.getColor(mCtx , R.color.background))
 					bind.follow.text = "Follow"
 				}
 
@@ -307,11 +307,11 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 				}
 
 				runSafe {
-					bind.bid.text = "Swipe to Bid ${newBidAmount(highestBidAmount?.toDouble()?.toInt() ?:0).toString().asMoney()}"
+					bind.bid.text = "Swipe to Bid ${newBidAmount(highestBidAmount?.toDouble()?.toInt() ?: 0).toString().asMoney()}"
 				}
 
 				bind.bid.onSlideCompleteListener = object : OnSlideCompleteListener {
-					override fun onSlideComplete(view: SlideToActView) {
+					override fun onSlideComplete(view : SlideToActView) {
 
 						if (isAllowBidForAll) {
 							attemptBid()
@@ -353,13 +353,13 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 					if (it.isNetworkError) {
 						errorToast(getString(R.string.no_internet))
 					} else {
-						it.parse(mCtx, TAG, object : AlertClicks {
-							override fun primaryClick(dialog: AppBottomSheet) {
+						it.parse(mCtx , TAG , object : AlertClicks {
+							override fun primaryClick(dialog : AppBottomSheet) {
 								dialog.dismiss()
 
 							}
 
-							override fun secondaryClick(dialog: AppBottomSheet) {
+							override fun secondaryClick(dialog : AppBottomSheet) {
 								dialog.dismiss()
 
 							}
@@ -378,12 +378,12 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
 					val mData = it.value.data
 					if (mData?.status == true) {
-						bind.follow.setBackgroundColor(ContextCompat.getColor(mCtx, R.color.outline))
-						bind.follow.setTextColor(ContextCompat.getColor(mCtx, R.color.onSurface))
+						bind.follow.setBackgroundColor(ContextCompat.getColor(mCtx , R.color.outline))
+						bind.follow.setTextColor(ContextCompat.getColor(mCtx , R.color.onSurface))
 						bind.follow.text = "Unfollow"
 					} else {
-						bind.follow.setBackgroundColor(ContextCompat.getColor(mCtx, R.color.primary))
-						bind.follow.setTextColor(ContextCompat.getColor(mCtx, R.color.background))
+						bind.follow.setBackgroundColor(ContextCompat.getColor(mCtx , R.color.primary))
+						bind.follow.setTextColor(ContextCompat.getColor(mCtx , R.color.background))
 						bind.follow.text = "Follow"
 					}
 
@@ -395,13 +395,13 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 					if (it.isNetworkError) {
 						errorToast(getString(R.string.no_internet))
 					} else {
-						it.parse(mCtx, TAG, object : AlertClicks {
-							override fun primaryClick(dialog: AppBottomSheet) {
+						it.parse(mCtx , TAG , object : AlertClicks {
+							override fun primaryClick(dialog : AppBottomSheet) {
 								dialog.dismiss()
 
 							}
 
-							override fun secondaryClick(dialog: AppBottomSheet) {
+							override fun secondaryClick(dialog : AppBottomSheet) {
 								dialog.dismiss()
 
 							}
@@ -440,12 +440,12 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 	private fun loginAndPlay() {
 		val manager = StreamingManager.getInstance(requireContext())
 		manager.loginRoom(
-			roomId = roomID,
-			userId = userId,
-			userName = userName,
+			roomId = roomID ,
+			userId = userId ,
+			userName = userName ,
 			userImage = userImage
-		) { _, _ ->
-			manager.startPlayingStream(roomID, bind.hostView)
+		) { _ , _ ->
+			manager.startPlayingStream(roomID , bind.hostView)
 		}
 		initializeChat()
 	}
@@ -464,28 +464,29 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 	private fun initializeChat() {
 		if (chatManager == null) {
 			chatManager = ChatManager(
-				application = requireActivity().application,
-				appId = Const.APP_ID.toLong(),
-				appSign = Const.APP_SIGN,
-				userId = userId,
-				userName = userName,
+				application = requireActivity().application ,
+				appId = Const.APP_ID.toLong() ,
+				appSign = Const.APP_SIGN ,
+				userId = userId ,
+				userName = userName ,
 				userImage = userImage
 			)
 		}
 
 		chatManager?.setListener(object : ChatManager.Listener {
-			override fun onMessageReceived(message: ZIMTextMessage) {
+			override fun onMessageReceived(message : ZIMTextMessage) {
 				runSafe {
 					commentList.add(LiveChatModel.fromZIMMessage(message))
 					commentAdapter.notifyItemInserted(commentList.size - 1)
 					bind.recycler.post { bind.recycler.smoothScrollToPosition(commentList.size) }
 				}
 			}
-			override fun onRoomStateChanged(state: String) {
+
+			override fun onRoomStateChanged(state : String) {
 				log("ROOM STATE CHANGED: $state")
 			}
 		})
-		chatManager?.initializeAndLogin(roomID){
+		chatManager?.initializeAndLogin(roomID) {
 			sendZimMessage("Joined \uD83D\uDC4B")
 		}
 
@@ -493,16 +494,16 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
 	// ZIM event handler moved into ChatManager
 
-	fun sendZimMessage(content: String) {
-		val extended = ZIMExtendedData(userImage, userId, userName).toJson()
-		chatManager?.sendTextMessage(roomID, content, extended)
+	fun sendZimMessage(content : String) {
+		val extended = ZIMExtendedData(userImage , userId , userName).toJson()
+		chatManager?.sendTextMessage(roomID , content , extended)
 		bind.text.setText("")
 	}
 
 	private fun verificationDialog() {
 		AppBottomSheet(
-			mCtx,
-			R.drawable.ic_info,
+			mCtx ,
+			R.drawable.ic_info ,
 			title = when (App.profileResponse.value?.buyerIdentityStatus) {
 
 				"null" -> {
@@ -520,21 +521,21 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 				else -> {
 					"Become a Verified Buyer!"
 				}
-			},
-			"Before you interact with lives shows, You need to become a Verified Buyer.",
-			primaryBtnText = "Okay",
-			secondaryBtnText = "Cancel",
-			canCancel = true,
-			showSecondary = false,
-			iconPadding = 16,
-			alertType = AlertType.INFO,
+			} ,
+			"Before you interact with lives shows, You need to become a Verified Buyer." ,
+			primaryBtnText = "Okay" ,
+			secondaryBtnText = "Cancel" ,
+			canCancel = true ,
+			showSecondary = false ,
+			iconPadding = 16 ,
+			alertType = AlertType.INFO ,
 			clicks = object : AlertClicks {
-				override fun primaryClick(dialog: AppBottomSheet) {
+				override fun primaryClick(dialog : AppBottomSheet) {
 					dialog.dismiss()
-					startActivity(Intent(mCtx, TrustedBuyerActivity::class.java).putExtra("slug", "buyer"))
+					startActivity(Intent(mCtx , TrustedBuyerActivity::class.java).putExtra("slug" , "buyer"))
 				}
 
-				override fun secondaryClick(dialog: AppBottomSheet) {
+				override fun secondaryClick(dialog : AppBottomSheet) {
 					dialog.dismiss()
 				}
 			}
@@ -545,18 +546,18 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 	fun showInputSheet() {
 		val inputSheetBind = InputBottomSheetBinding.bind(
 			layoutInflater.inflate(
-				R.layout.input_bottom_sheet,
-				null,
+				R.layout.input_bottom_sheet ,
+				null ,
 				false
 			)
 		)
-		inputSheet = Alerts.appBottomSheet(mCtx, true, inputSheetBind)
+		inputSheet = Alerts.appBottomSheet(mCtx , true , inputSheetBind)
 
 		inputSheetBind.submitBtn.setOnClickListener {
 			val ref = FireRef.LIVE_SESSIONS.child(roomID).child("highestBid")
 
 			ref.addListenerForSingleValueEvent(object : ValueEventListener {
-				override fun onDataChange(snapshot: DataSnapshot) {
+				override fun onDataChange(snapshot : DataSnapshot) {
 
 					runSafe {
 						val bidAmount = inputSheetBind.price.value().toDouble().toString()
@@ -564,25 +565,25 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 						if (inputSheetBind.price.value().isEmpty() || inputSheetBind.price.value().toDouble() < (highestBidAmount?.toDouble()
 								?: 0.0)
 						) {
-							Alerts.error(mCtx, "Bid amount must be greater than the current highest bid.")
+							Alerts.error(mCtx , "Bid amount must be greater than the current highest bid.")
 						} else {
-							val bidData = mutableMapOf<String, Any?>(
-								"bidAmount" to bidAmount,
-								"userName" to userName,
-								"userImage" to userImage,
-								"userId" to userId,
+							val bidData = mutableMapOf<String , Any?>(
+								"bidAmount" to bidAmount ,
+								"userName" to userName ,
+								"userImage" to userImage ,
+								"userId" to userId ,
 								"productId" to bidProductId
 							)
 
 							// If startTime doesn't exist, it's a new bid; otherwise, update existing
-							if (!snapshot.hasChild("startTime")) {
+							if (! snapshot.hasChild("startTime")) {
 								bidData["startTime"] = Utils.timestamp().toString()
 								bidData["productStatus"] = "processed"
 							}
 
 							ref.updateChildren(bidData)
 
-							Alerts.success(mCtx, "Bid placed successfully")
+							Alerts.success(mCtx , "Bid placed successfully")
 							sendZimMessage("New high bid: $$bidAmount")
 
 							inputSheet?.dismiss()
@@ -591,7 +592,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
 				}
 
-				override fun onCancelled(error: DatabaseError) {
+				override fun onCancelled(error : DatabaseError) {
 					log("Firebase Error: ${error.message}")
 				}
 
@@ -610,7 +611,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
 		var downX = 0f
 
-		bind.viewFlipper.setOnTouchListener { _, event ->
+		bind.viewFlipper.setOnTouchListener { _ , event ->
 			when (event.action) {
 				MotionEvent.ACTION_DOWN -> {
 					downX = event.x
@@ -622,12 +623,12 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
 					if (abs(deltaX) > 100) {
 						if (deltaX > 0) {
-							bind.viewFlipper.setInAnimation(mCtx, R.anim.slide_in_left)
-							bind.viewFlipper.setOutAnimation(mCtx, R.anim.slide_out_right)
+							bind.viewFlipper.setInAnimation(mCtx , R.anim.slide_in_left)
+							bind.viewFlipper.setOutAnimation(mCtx , R.anim.slide_out_right)
 							bind.viewFlipper.showPrevious()
 						} else {
-							bind.viewFlipper.setInAnimation(mCtx, R.anim.slide_in_right)
-							bind.viewFlipper.setOutAnimation(mCtx, R.anim.slide_out_left)
+							bind.viewFlipper.setInAnimation(mCtx , R.anim.slide_in_right)
+							bind.viewFlipper.setOutAnimation(mCtx , R.anim.slide_out_left)
 							bind.viewFlipper.showNext()
 						}
 					}
@@ -638,7 +639,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 			}
 		}
 
-		bind.controls.setOnTouchListener { _, event ->
+		bind.controls.setOnTouchListener { _ , event ->
 			when (event.action) {
 				MotionEvent.ACTION_DOWN -> {
 					downX = event.x
@@ -650,13 +651,13 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
 					if (abs(deltaX) > 100) {
 						if (deltaX > 0) {
-							bind.viewFlipper.setInAnimation(mCtx, R.anim.slide_in_left)
-							bind.viewFlipper.setOutAnimation(mCtx, R.anim.slide_out_right)
+							bind.viewFlipper.setInAnimation(mCtx , R.anim.slide_in_left)
+							bind.viewFlipper.setOutAnimation(mCtx , R.anim.slide_out_right)
 							bind.viewFlipper.showPrevious()
 						} else {
 
-							bind.viewFlipper.setInAnimation(mCtx, R.anim.slide_in_right)
-							bind.viewFlipper.setOutAnimation(mCtx, R.anim.slide_out_left)
+							bind.viewFlipper.setInAnimation(mCtx , R.anim.slide_in_right)
+							bind.viewFlipper.setOutAnimation(mCtx , R.anim.slide_out_left)
 							bind.viewFlipper.showNext()
 						}
 					}
@@ -673,17 +674,17 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
 		val paymentAddressBind = PaymentAndAddressSheetBinding.bind(
 			layoutInflater.inflate(
-				R.layout.payment_and_address_sheet,
-				null,
+				R.layout.payment_and_address_sheet ,
+				null ,
 				false
 			)
 		)
 
-		val makeOfferSheet = Alerts.appBottomSheet(mCtx, true, paymentAddressBind)
+		val makeOfferSheet = Alerts.appBottomSheet(mCtx , true , paymentAddressBind)
 
 		with(paymentAddressBind.addressItem) {
 			val hasAddress = App.profileResponse.value?.hasShippingAddress == true
-			moreIcon.setImageDrawable(ContextCompat.getDrawable(mCtx, draw.ic_pencil))
+			moreIcon.setImageDrawable(ContextCompat.getDrawable(mCtx , draw.ic_pencil))
 			moreIcon.rotation = 0f
 
 			name.isVisible = hasAddress
@@ -702,8 +703,8 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
 			moreIcon.setOnClickListener {
 				startActivity(
-					Intent(mCtx, MoreActivity::class.java).putExtra(
-						"slug",
+					Intent(mCtx , MoreActivity::class.java).putExtra(
+						"slug" ,
 						"paymentShipping"
 					)
 				)
@@ -715,7 +716,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 			val hasCard = App.profileResponse.value?.hasCardAdded == true
 			iconCard.isVisible = hasCard
 			expiryDate.isVisible = hasCard
-			moreIcon.setImageDrawable(ContextCompat.getDrawable(mCtx, draw.ic_pencil))
+			moreIcon.setImageDrawable(ContextCompat.getDrawable(mCtx , draw.ic_pencil))
 			moreIcon.rotation = 0f
 
 			if (hasCard) {
@@ -733,8 +734,8 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
 			moreIcon.setOnClickListener {
 				startActivity(
-					Intent(mCtx, MoreActivity::class.java).putExtra(
-						"slug",
+					Intent(mCtx , MoreActivity::class.java).putExtra(
+						"slug" ,
 						"paymentShipping"
 					)
 				)
@@ -756,43 +757,43 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 			val ref = FireRef.LIVE_SESSIONS.child(roomID).child("highestBid")
 
 			ref.addListenerForSingleValueEvent(object : ValueEventListener {
-				override fun onDataChange(snapshot: DataSnapshot) {
-					val bidAmount = newBidAmount(highestBidAmount?.toDouble()?.toInt() ?:0).toString()
+				override fun onDataChange(snapshot : DataSnapshot) {
+					val bidAmount = newBidAmount(highestBidAmount?.toDouble()?.toInt() ?: 0).toString()
 
-					val bidData = mutableMapOf<String, Any?>(
-						"bidAmount" to bidAmount,
-						"userName" to userName,
-						"userImage" to userImage,
-						"userId" to userId,
+					val bidData = mutableMapOf<String , Any?>(
+						"bidAmount" to bidAmount ,
+						"userName" to userName ,
+						"userImage" to userImage ,
+						"userId" to userId ,
 						"productId" to bidProductId
 					)
 
-					if (!snapshot.hasChild("startTime")) {
+					if (! snapshot.hasChild("startTime")) {
 						bidData["startTime"] = Utils.timestamp().toString()
 						bidData["productStatus"] = "processed"
 					}
 
 					ref.updateChildren(bidData)
 					sendZimMessage("New high bid: $$bidAmount")
-					Alerts.success(mCtx, "Bid placed successfully")
-					bind.bid.setCompleted(completed = false, withAnimation = true)
+					Alerts.success(mCtx , "Bid placed successfully")
+					bind.bid.setCompleted(completed = false , withAnimation = true)
 				}
 
-				override fun onCancelled(error: DatabaseError) {
+				override fun onCancelled(error : DatabaseError) {
 					log("Firebase Error: ${error.message}")
 				}
 			})
 		}
 	}
 
-	fun newBidAmount(amount: Int): Int {
+	fun newBidAmount(amount : Int) : Int {
 		return when {
-			amount in 1..30 -> amount+1
-			amount in 31..50 -> amount+2
-			amount in 51..100 -> amount+3
-			amount in 101..300 -> amount+5
-			amount in 301..1000 -> amount+10
-			amount in 1001..2000 -> amount+20
+			amount in 1 .. 30 -> amount + 1
+			amount in 31 .. 50 -> amount + 2
+			amount in 51 .. 100 -> amount + 3
+			amount in 101 .. 300 -> amount + 5
+			amount in 301 .. 1000 -> amount + 10
+			amount in 1001 .. 2000 -> amount + 20
 			amount >= 2001 -> 50
 			else -> 0
 		}

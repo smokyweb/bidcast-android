@@ -13,40 +13,40 @@ import io.bidswipe.app.utils.draw
 import io.bidswipe.app.utils.loadUrl
 
 class HomeAdapter(
-    val mList: MutableList<GetMyShowResponse.Data?>, val mClick: RecyclerClicks,
-) : BaseAdapter<GetMyShowResponse.Data?, HomeItemBinding>(mList) {
+	val mList : MutableList<GetMyShowResponse.Data?> , val mClick : RecyclerClicks ,
+) : BaseAdapter<GetMyShowResponse.Data? , HomeItemBinding>(mList) {
 
-    override fun bindView(inflater: LayoutInflater, parent: ViewGroup) =
-        HomeItemBinding.inflate(inflater, parent, false)
+	override fun bindView(inflater : LayoutInflater , parent : ViewGroup) =
+		HomeItemBinding.inflate(inflater , parent , false)
 
-    override fun onBind(
-        holder: BaseViewHolder<HomeItemBinding>,
-        position: Int,
-        item: GetMyShowResponse.Data?,
-    ) {
-        with(holder) {
+	override fun onBind(
+		holder : BaseViewHolder<HomeItemBinding> ,
+		position : Int ,
+		item : GetMyShowResponse.Data? ,
+	) {
+		with(holder) {
 
-            bind.userInfo.setOnClickListener {
-                mClick.itemClick(position, "user")
-            }
+			bind.userInfo.setOnClickListener {
+				mClick.itemClick(position , "user")
+			}
 
-            bind.thumbnail.setOnClickListener {
-                mClick.itemClick(position, "viewShow")
-            }
+			bind.thumbnail.setOnClickListener {
+				mClick.itemClick(position , "viewShow")
+			}
 
-            bind.userName.text = buildSpannedString {
-                bold {
-                    append(item?.user?.username?.ifEmpty { item.user.name.toString() })
-                }
-            }
-            bind.userImage.loadUrl(mCtx, item?.user?.profileImage.toString(), draw.user_image)
+			bind.userName.text = buildSpannedString {
+				bold {
+					append(item?.user?.username?.ifEmpty { item.user.name.toString() })
+				}
+			}
+			bind.userImage.loadUrl(mCtx , item?.user?.profileImage.toString() , draw.user_image)
 
-            bind.thumbnail.loadUrl(mCtx, item?.thumbnail?.get(0).toString())
+			bind.thumbnail.loadUrl(mCtx , item?.thumbnail?.get(0).toString())
 
-            bind.title.text = item?.title.toString().asCapital()
+			bind.title.text = item?.title.toString().asCapital()
 
-            bind.category.text = item?.category?.name
+			bind.category.text = item?.category?.name
 
-        }
-    }
+		}
+	}
 }

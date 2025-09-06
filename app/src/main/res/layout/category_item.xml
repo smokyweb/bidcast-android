@@ -5,9 +5,9 @@
     android:id="@+id/main"
     style="@style/cardStyle"
     android:layout_width="match_parent"
-    app:cardCornerRadius="@dimen/half_margin"
     android:layout_height="wrap_content"
-    android:layout_margin="8dp">
+    android:layout_margin="8dp"
+    app:cardCornerRadius="@dimen/half_margin">
 
     <LinearLayout
         android:layout_width="match_parent"

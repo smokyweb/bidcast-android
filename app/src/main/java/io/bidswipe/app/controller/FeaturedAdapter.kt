@@ -9,27 +9,27 @@ import io.bidswipe.app.network.response.AboutUsResponse
 import io.bidswipe.app.utils.loadUrl
 
 class FeaturedAdapter(
-    mList: MutableList<AboutUsResponse.Data.Feature?>, val mClicks: RecyclerClicks,
-) : BaseAdapter<AboutUsResponse.Data.Feature?, BenifitsItemBinding>(mList) {
+	mList : MutableList<AboutUsResponse.Data.Feature?> , val mClicks : RecyclerClicks ,
+) : BaseAdapter<AboutUsResponse.Data.Feature? , BenifitsItemBinding>(mList) {
 
-    override fun bindView(inflater: LayoutInflater, parent: ViewGroup) =
-        BenifitsItemBinding.inflate(inflater, parent, false)
+	override fun bindView(inflater : LayoutInflater , parent : ViewGroup) =
+		BenifitsItemBinding.inflate(inflater , parent , false)
 
-    override fun onBind(
-        holder: BaseViewHolder<BenifitsItemBinding>,
-        position: Int,
-        item: AboutUsResponse.Data.Feature?,
-    ) {
-        with(holder) {
+	override fun onBind(
+		holder : BaseViewHolder<BenifitsItemBinding> ,
+		position : Int ,
+		item : AboutUsResponse.Data.Feature? ,
+	) {
+		with(holder) {
 
-            bind.title.text = item?.title ?: ""
-            bind.description.text = item?.description ?: ""
-            bind.image.loadUrl(mCtx, item?.icon.toString())
+			bind.title.text = item?.title ?: ""
+			bind.description.text = item?.description ?: ""
+			bind.image.loadUrl(mCtx , item?.icon.toString())
 
-            bind.root.setOnClickListener {
-                mClicks.itemClick(position)
-            }
+			bind.root.setOnClickListener {
+				mClicks.itemClick(position)
+			}
 
-        }
-    }
+		}
+	}
 }

@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/bottom_sheet_back"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:background="@drawable/bottom_sheet_back">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding= "@dimen/margin"
         android:orientation="vertical"
+        android:padding="@dimen/margin"
         app:layout_constraintTop_toTopOf="parent">
 
         <LinearLayout
@@ -22,8 +22,8 @@
                 android:id="@+id/close"
                 android:layout_width="44dp"
                 android:layout_height="44dp"
-                android:padding="12dp"
                 android:alpha="0.7"
+                android:padding="12dp"
                 android:src="@drawable/close_ic"
                 app:tint="@color/tertiary" />
 
@@ -52,7 +52,6 @@
         </com.google.android.material.card.MaterialCardView>
 
 
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -62,15 +61,15 @@
             <androidx.appcompat.widget.AppCompatImageView
                 android:layout_width="28dp"
                 android:layout_height="28dp"
-                android:src="@drawable/ic_scissor"
                 android:layout_gravity="center"
-                android:layout_marginEnd="@dimen/margin" />
+                android:layout_marginEnd="@dimen/margin"
+                android:src="@drawable/ic_scissor" />
 
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_weight="1">
+                android:layout_weight="1"
+                android:orientation="vertical">
 
                 <TextView
                     style="@style/TitleLarge"
@@ -83,8 +82,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/half_margin"
-                    android:text="@string/when_on_allows_bids_from_verified_buyers_only"
-                    />
+                    android:text="@string/when_on_allows_bids_from_verified_buyers_only" />
 
 
             </LinearLayout>
@@ -94,7 +92,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Edit"
-                android:textColor="@color/primary"/>
+                android:textColor="@color/primary" />
 
 
         </LinearLayout>

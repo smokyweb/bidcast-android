@@ -8,36 +8,36 @@ import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.network.response.GetPaymentCardsResponse
 
 class SelectPaymentCardAdapter(
-    mList: MutableList<GetPaymentCardsResponse.Data.PaymentProfile?>, val mClicks: RecyclerClicks,
-) : BaseAdapter<GetPaymentCardsResponse.Data.PaymentProfile?, SelcetableCardItemBinding>(mList) {
+	mList : MutableList<GetPaymentCardsResponse.Data.PaymentProfile?> , val mClicks : RecyclerClicks ,
+) : BaseAdapter<GetPaymentCardsResponse.Data.PaymentProfile? , SelcetableCardItemBinding>(mList) {
 
-    override fun bindView(inflater: LayoutInflater, parent: ViewGroup) =
-        SelcetableCardItemBinding.inflate(inflater, parent, false)
+	override fun bindView(inflater : LayoutInflater , parent : ViewGroup) =
+		SelcetableCardItemBinding.inflate(inflater , parent , false)
 
-    override fun onBind(
-        holder: BaseViewHolder<SelcetableCardItemBinding>,
-        position: Int,
-        item: GetPaymentCardsResponse.Data.PaymentProfile?,
-    ) {
-        with(holder) {
+	override fun onBind(
+		holder : BaseViewHolder<SelcetableCardItemBinding> ,
+		position : Int ,
+		item : GetPaymentCardsResponse.Data.PaymentProfile? ,
+	) {
+		with(holder) {
 
-            bind.root.setOnClickListener {
-                mClicks.itemClick(position)
-            }
+			bind.root.setOnClickListener {
+				mClicks.itemClick(position)
+			}
 
-            bind.cardNumber.text = buildString {
-               append(item?.payment?.creditCard?.cardNumber)
-            }
+			bind.cardNumber.text = buildString {
+				append(item?.payment?.creditCard?.cardNumber)
+			}
 
-            bind.selectBtn.isChecked = item?.selected == true
+			bind.selectBtn.isChecked = item?.selected == true
 
-            bind.root.setOnClickListener {
+			bind.root.setOnClickListener {
 
-                mClicks.itemClick(position)
+				mClicks.itemClick(position)
 
-            }
+			}
 
 
-        }
-    }
+		}
+	}
 }

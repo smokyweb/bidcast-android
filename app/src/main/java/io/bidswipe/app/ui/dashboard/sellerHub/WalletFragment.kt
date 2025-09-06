@@ -23,25 +23,25 @@ import io.bidswipe.app.utils.finish
 import io.bidswipe.app.utils.ids
 import io.bidswipe.app.utils.parse
 
-class WalletFragment : BaseFragment<SellerHubViewModel, FragmentWalletBinding>() {
+class WalletFragment : BaseFragment<SellerHubViewModel , FragmentWalletBinding>() {
 
-	override fun getModel(): Class<SellerHubViewModel> = SellerHubViewModel::class.java
+	override fun getModel() : Class<SellerHubViewModel> = SellerHubViewModel::class.java
 
-	override fun getBind(inflater: LayoutInflater, view: ViewGroup?) = FragmentWalletBinding.inflate(inflater, view, false)
-	private var itemList = mutableListOf("", "", "", "", "")
+	override fun getBind(inflater : LayoutInflater , view : ViewGroup?) = FragmentWalletBinding.inflate(inflater , view , false)
+	private var itemList = mutableListOf("" , "" , "" , "" , "")
 
-	private lateinit var adapter: PayoutAdapter
+	private lateinit var adapter : PayoutAdapter
 
 	private var kycStatus = false
 
 	private val mClick = object : RecyclerClicks {
 
-		override fun itemClick(pos: Int, status: String?) {
+		override fun itemClick(pos : Int , status : String?) {
 		}
 	}
 
-	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-		super.onViewCreated(view, savedInstanceState)
+	override fun onViewCreated(view : View , savedInstanceState : Bundle?) {
+		super.onViewCreated(view , savedInstanceState)
 
 		bind.header.onBackClick {
 			finish()
@@ -55,10 +55,10 @@ class WalletFragment : BaseFragment<SellerHubViewModel, FragmentWalletBinding>()
 			bind.noInternet.isVisible = false
 		}
 
-		val adapter = ViewPagerAdapter(requireActivity(),"wallet")
+		val adapter = ViewPagerAdapter(requireActivity() , "wallet")
 		bind.pager.adapter = adapter
 
-		TabLayoutMediator(bind.tabs, bind.pager) { tab, position ->
+		TabLayoutMediator(bind.tabs , bind.pager) { tab , position ->
 			tab.text = when (position) {
 				0 -> "Wallet"
 				1 -> "Transactions"
@@ -66,6 +66,5 @@ class WalletFragment : BaseFragment<SellerHubViewModel, FragmentWalletBinding>()
 			}
 		}.attach()
 
-		
 	}
 }

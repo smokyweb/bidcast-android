@@ -10,29 +10,29 @@ import io.bidswipe.app.utils.Utils
 import io.bidswipe.app.utils.asMoney
 
 class TransactionHistoryAdapter(
-    mList: MutableList<GetTransactionsHistoryResponse.Data?>, val mClicks: RecyclerClicks,
-) : BaseAdapter<GetTransactionsHistoryResponse.Data, TransactionItemBinding>(mList) {
+	mList : MutableList<GetTransactionsHistoryResponse.Data?> , val mClicks : RecyclerClicks ,
+) : BaseAdapter<GetTransactionsHistoryResponse.Data , TransactionItemBinding>(mList) {
 
-    override fun bindView(inflater: LayoutInflater, parent: ViewGroup) =
-        TransactionItemBinding.inflate(inflater, parent, false)
+	override fun bindView(inflater : LayoutInflater , parent : ViewGroup) =
+		TransactionItemBinding.inflate(inflater , parent , false)
 
-    override fun onBind(
-        holder: BaseViewHolder<TransactionItemBinding>,
-        position: Int,
-        item: GetTransactionsHistoryResponse.Data?,
-    ) {
-        with(holder) {
+	override fun onBind(
+		holder : BaseViewHolder<TransactionItemBinding> ,
+		position : Int ,
+		item : GetTransactionsHistoryResponse.Data? ,
+	) {
+		with(holder) {
 
-            bind.title.setText("Purchase Completed")
+			bind.title.setText("Purchase Completed")
 
-            bind.amount.text = item?.total.toString().asMoney()
+			bind.amount.text = item?.total.toString().asMoney()
 
-            bind.date.text = Utils.getFormattedDateTime(
-                "yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'",
-                "MMM dd, yyyy",
-                item?.date.toString()
-            )
+			bind.date.text = Utils.getFormattedDateTime(
+				"yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'" ,
+				"MMM dd, yyyy" ,
+				item?.date.toString()
+			)
 
-        }
-    }
+		}
+	}
 }

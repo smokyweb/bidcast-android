@@ -26,13 +26,13 @@ import io.bidswipe.app.utils.toScheduleShow
 import okhttp3.MultipartBody
 import java.io.File
 
-class PrepareYourShowFragment : BaseFragment<DashViewModel, FragmentPrepareYourShowBinding>() {
-	override fun getModel(): Class<DashViewModel> = DashViewModel::class.java
-	
+class PrepareYourShowFragment : BaseFragment<DashViewModel , FragmentPrepareYourShowBinding>() {
+	override fun getModel() : Class<DashViewModel> = DashViewModel::class.java
+
 	override fun getBind(
-		inflater: LayoutInflater,
-		view: ViewGroup?
-	) = FragmentPrepareYourShowBinding.inflate(inflater, view, false)
+		inflater : LayoutInflater ,
+		view : ViewGroup? ,
+	) = FragmentPrepareYourShowBinding.inflate(inflater , view , false)
 
 	var imagePartList = mutableListOf<MultipartBody.Part?>()
 
@@ -56,63 +56,65 @@ class PrepareYourShowFragment : BaseFragment<DashViewModel, FragmentPrepareYourS
 			}
 
 		}
-	
-	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-		super.onViewCreated(view, savedInstanceState)
-		
+
+	override fun onViewCreated(view : View , savedInstanceState : Bundle?) {
+		super.onViewCreated(view , savedInstanceState)
+
 		bind.header.onBackClick {
 			findNavController().popBackStack()
 		}
 
-		val adapter = ShowAdapter(mList = viewModel.showList,  object : RecyclerClicks {
-			override fun itemClick(pos: Int, status: String?) {
+		val adapter = ShowAdapter(mList = viewModel.showList , object : RecyclerClicks {
+			override fun itemClick(pos : Int , status : String?) {
 				if (status == null) {
-					
+
 					bind.stepProgress.setProgress(pos + 1)
-					
-					viewModel.showList.forEachIndexed { index, showModel ->
+
+					viewModel.showList.forEachIndexed { index , showModel ->
 						showModel?.selected = index == pos
 					}
-					
+
 					bind.recycler.adapter?.notifyDataSetChanged()
-					
+
 				} else {
 					when (pos) {
 						0 -> {
 							scheduleShowLauncher.launch(mCtx.toScheduleShow(from = "tutorial"))
 						}
-						
+
 						1 -> {
-							findNavController().navigate(ids.goToShowTipsFragment, bundleOf("type" to "showTips"))
+							findNavController().navigate(ids.goToShowTipsFragment , bundleOf("type" to "showTips"))
 						}
-						
+
 						2 -> {
-							findNavController().navigate(ids.goToShowTipsFragment, bundleOf("type" to "liveTips"))
+							findNavController().navigate(ids.goToShowTipsFragment , bundleOf("type" to "liveTips"))
 						}
-						
+
 						3 -> {
 
 							bind.loader.isVisible = true
 
-							val mData =viewModel.showData.value
+							val mData = viewModel.showData.value
 
-							imagePartList.add(Utils.imagePart(
-								"thumbnail[]",
-								mData?.thumbnail.toString(),
-								File(mData?.thumbnail)
-							))
+							imagePartList.add(
+								Utils.imagePart(
+									"thumbnail[]" ,
+									mData?.thumbnail.toString() ,
+									File(mData?.thumbnail)
+								)
+							)
 
-							 val productIds = mData?.productIds?.split(",")?.map {
-								 it.toInt()
-							 }
+							val productIds = mData?.productIds?.split(",")?.map {
+								it.toInt()
+							}
 
 							viewModel.storeScheduleShow(
-								mData?.showTitle?.request(),
-								viewModel.showDate.request(),
-								viewModel.showTime.request(),
-								mData?.categoryId?.request(),
-								mData?.actionId?.request(),
-								imagePartList,
+								mData?.showTitle?.request() ,
+								viewModel.showDate.request() ,
+								viewModel.showTime.request() ,
+								mData?.categoryId?.request() ,
+								mData?.actionId?.request() ,
+								imagePartList ,
 								productIds?.joinToString(",")?.request()
 							)
 
@@ -123,26 +125,26 @@ class PrepareYourShowFragment : BaseFragment<DashViewModel, FragmentPrepareYourS
 							bind.loader.isVisible = true
 
 							findNavController().navigate(
-								ids.goToShowTipsFragment,
+								ids.goToShowTipsFragment ,
 								bundleOf("type" to "goLive")
 							)
 						}
-						
+
 					}
 				}
 			}
-			
+
 		})
-		
+
 		bind.recycler.adapter = adapter
 
 		bind.loader.isVisible = false
 
-		if (viewModel.getPrepareStepRepo.value == null){
+		if (viewModel.getPrepareStepRepo.value == null) {
 			viewModel.getPrepareStep()
 		}
 
-		viewModel.getPrepareStepRepo.observe (viewLifecycleOwner){
+		viewModel.getPrepareStepRepo.observe(viewLifecycleOwner) {
 			when (it) {
 				is Resource.Success -> {
 					bind.loader.isVisible = false
@@ -170,13 +172,13 @@ class PrepareYourShowFragment : BaseFragment<DashViewModel, FragmentPrepareYourS
 					if (it.isNetworkError) {
 						errorToast(getString(R.string.no_internet))
 					} else {
-						it.parse(mCtx, TAG, object : AlertClicks {
-							override fun primaryClick(dialog: AppBottomSheet) {
+						it.parse(mCtx , TAG , object : AlertClicks {
+							override fun primaryClick(dialog : AppBottomSheet) {
 								dialog.dismiss()
 
 							}
 
-							override fun secondaryClick(dialog: AppBottomSheet) {
+							override fun secondaryClick(dialog : AppBottomSheet) {
 								dialog.dismiss()
 
 							}
@@ -189,28 +191,29 @@ class PrepareYourShowFragment : BaseFragment<DashViewModel, FragmentPrepareYourS
 			}
 		}
 
-		viewModel.showData.observe(viewLifecycleOwner){
-			if (viewModel.showList.isNotEmpty()){
+		viewModel.showData.observe(viewLifecycleOwner) {
+			if (viewModel.showList.isNotEmpty()) {
 				val mData = it
 				log("SHOW DATA :$it")
 
-				when(viewModel.currentStep){
-					1 ->{
+				when (viewModel.currentStep) {
+					1 -> {
 						viewModel.showList[0]?.status = "completed"
 						viewModel.showList[1]?.status = "locked"
 
 					}
 
-					2 ->{
+					2 -> {
 						viewModel.showList[1]?.status = "completed"
 						viewModel.showList[2]?.status = "locked"
 					}
-					3 ->{
+
+					3 -> {
 						viewModel.showList[2]?.status = "completed"
 						viewModel.showList[3]?.status = "locked"
 					}
 
-					4 ->{
+					4 -> {
 						viewModel.showList[3]?.status = "completed"
 						viewModel.showList[4]?.status = "locked"
 					}
@@ -231,7 +234,7 @@ class PrepareYourShowFragment : BaseFragment<DashViewModel, FragmentPrepareYourS
 					val mData = it.value.data
 
 					findNavController().navigate(
-						ids.goToShowTipsFragment,
+						ids.goToShowTipsFragment ,
 						bundleOf("type" to "bringInBuyers" , "showId" to mData?.id.toString())
 					)
 
@@ -243,13 +246,13 @@ class PrepareYourShowFragment : BaseFragment<DashViewModel, FragmentPrepareYourS
 					if (it.isNetworkError) {
 						errorToast(getString(R.string.no_internet))
 					} else {
-						it.parse(mCtx, TAG, object : AlertClicks {
-							override fun primaryClick(dialog: AppBottomSheet) {
+						it.parse(mCtx , TAG , object : AlertClicks {
+							override fun primaryClick(dialog : AppBottomSheet) {
 								dialog.dismiss()
 
 							}
 
-							override fun secondaryClick(dialog: AppBottomSheet) {
+							override fun secondaryClick(dialog : AppBottomSheet) {
 								dialog.dismiss()
 
 							}
@@ -263,7 +266,6 @@ class PrepareYourShowFragment : BaseFragment<DashViewModel, FragmentPrepareYourS
 		}
 
 
-
 	}
-	
+
 }
