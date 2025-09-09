@@ -340,9 +340,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel , FragmentWatchStreamBi
 				is Resource.Success -> {
 
 					viewModel.createBidRepo.value = null
-
 					bind.loader.isVisible = false
-
 					it.value.data
 
 				}

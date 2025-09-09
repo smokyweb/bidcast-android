@@ -644,7 +644,6 @@ class ListAProductFragment : BaseFragment<DashViewModel , FragmentListAProductBi
 			reserveForLive = (if (bind.reserveForLive.isChecked) "1" else "0") ,
 			shippingProfileId = "4" ,
 			status = type ,
-
 			productImages = images ,
 			variant = variantData ,
 			width = bind.width.value() ,

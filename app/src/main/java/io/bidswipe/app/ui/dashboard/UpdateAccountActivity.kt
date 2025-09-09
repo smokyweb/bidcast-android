@@ -74,15 +74,12 @@ class UpdateAccountActivity : BaseActivity() {
 		bind.update.setOnClickListener {
 			bind.loader.isVisible = true
 			viewModel.updateProfile(
-
 				bind.firstName.value().request() ,
 				bind.lastName.value().request() ,
 				imagePart ,
 				bind.userName.value().request() ,
 				bind.bio.value().request()
-
 			)
-
 		}
 
 		bind.loader.isVisible = true

@@ -33,7 +33,9 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/background"
+                android:background="@drawable/card_8"
+                android:layout_marginVertical="@dimen/half_margin"
+                android:layout_marginHorizontal="@dimen/margin"
                 android:paddingHorizontal="@dimen/margin"
                 android:paddingVertical="@dimen/half_margin">
 
@@ -83,7 +85,6 @@
                         android:textColor="@color/tertiary" />
 
                 </LinearLayout>
-
 
                 <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/edit_icon"

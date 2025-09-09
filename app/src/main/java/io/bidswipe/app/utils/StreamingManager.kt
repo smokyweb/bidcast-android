@@ -9,6 +9,8 @@ import im.zego.zegoexpress.constants.ZegoPlayerState
 import im.zego.zegoexpress.constants.ZegoPublisherState
 import im.zego.zegoexpress.constants.ZegoRoomStateChangedReason
 import im.zego.zegoexpress.constants.ZegoScenario
+import im.zego.zegoexpress.constants.ZegoTrafficControlMinVideoBitrateMode
+import im.zego.zegoexpress.constants.ZegoTrafficControlProperty
 import im.zego.zegoexpress.constants.ZegoUpdateType
 import im.zego.zegoexpress.constants.ZegoViewMode
 import im.zego.zegoexpress.entity.ZegoCanvas
@@ -51,6 +53,8 @@ class StreamingManager(
 				this.application = context.applicationContext as Application
 			}
 			ZegoExpressEngine.createEngine(profile , null)
+			ZegoExpressEngine.getEngine().enableTrafficControl(true, 1)
+			ZegoExpressEngine.getEngine().setMinVideoBitrateForTrafficControl(200, ZegoTrafficControlMinVideoBitrateMode.NO_VIDEO)
 			isEngineCreated = true
 			setUpEventHandler()
 		}

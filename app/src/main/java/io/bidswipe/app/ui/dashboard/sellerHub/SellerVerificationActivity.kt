@@ -30,7 +30,6 @@ import io.bidswipe.app.utils.showKeyboard
 import io.bidswipe.app.utils.value
 import java.io.File
 import java.util.Locale
-import kotlin.getValue
 
 class SellerVerificationActivity : BaseActivity() {
 
@@ -46,7 +45,7 @@ class SellerVerificationActivity : BaseActivity() {
 	var isPhoneVerified = false
 	var paymentCardId = ""
 
-	private lateinit var cardAdapter : SelectPaymentCardAdapter
+	private lateinit var cardAdapter: SelectPaymentCardAdapter
 
 	private var addCardLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
 		if (result.resultCode == RESULT_OK) {
@@ -56,9 +55,9 @@ class SellerVerificationActivity : BaseActivity() {
 	}
 
 	private val mClick = object : RecyclerClicks {
-		override fun itemClick(pos : Int , status : String?) {
+		override fun itemClick(pos: Int, status: String?) {
 
-			cardList.forEachIndexed { index , item ->
+			cardList.forEachIndexed { index, item ->
 
 				item?.selected = index == pos
 
@@ -75,11 +74,11 @@ class SellerVerificationActivity : BaseActivity() {
 	private val idResult = registerForActivityResult(CropImageContract()) { result ->
 		if (result.isSuccessful) {
 			val imageUri = result.uriContent
-			val imagePath = result.getUriFilePath(this , true)
+			val imagePath = result.getUriFilePath(this, true)
 			if (imagePath != null) {
 
 				bind.cardImage.isVisible = true
-				bind.cardImage.loadUrl(this , imageUri.toString())
+				bind.cardImage.loadUrl(this, imageUri.toString())
 
 				cardImage = imagePath
 
@@ -87,7 +86,7 @@ class SellerVerificationActivity : BaseActivity() {
 
 					bind.verificationIcon.isVisible = true
 					bind.stepProgress.setProgress(1)
-					bind.stepCount.setText("1 of 4")
+					bind.stepCount.text = "1 of 3"
 
 				}
 
@@ -100,11 +99,11 @@ class SellerVerificationActivity : BaseActivity() {
 	private val selfieResult = registerForActivityResult(CropImageContract()) { result ->
 		if (result.isSuccessful) {
 			val imageUri = result.uriContent
-			val imagePath = result.getUriFilePath(this , true)
+			val imagePath = result.getUriFilePath(this, true)
 			if (imagePath != null) {
 
 				bind.selfie.isVisible = true
-				bind.selfie.loadUrl(this , imageUri.toString())
+				bind.selfie.loadUrl(this, imageUri.toString())
 
 				selfie = imagePath
 
@@ -112,7 +111,7 @@ class SellerVerificationActivity : BaseActivity() {
 
 					bind.verificationIcon.isVisible = true
 					bind.stepProgress.setProgress(1)
-					bind.stepCount.setText("1 of 4")
+					bind.stepCount.text = "1 of 3"
 
 				}
 
@@ -123,7 +122,7 @@ class SellerVerificationActivity : BaseActivity() {
 	}
 
 	@SuppressLint("ResourceAsColor")
-	override fun onCreate(savedInstanceState : Bundle?) {
+	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
 		setContentView(bind.root)
 
@@ -133,12 +132,13 @@ class SellerVerificationActivity : BaseActivity() {
 		bind.root.setOnClickListener {
 			hideKeyboard()
 		}
-		bind.main.setOnTouchListener { _ , _ ->
+
+		bind.main.setOnTouchListener { _, _ ->
 			hideKeyboard()
 			return@setOnTouchListener true
 		}
 
-		cardAdapter = SelectPaymentCardAdapter(cardList , mClick)
+		cardAdapter = SelectPaymentCardAdapter(cardList, mClick)
 
 		bind.recycler.adapter = cardAdapter
 
@@ -156,26 +156,26 @@ class SellerVerificationActivity : BaseActivity() {
 
 				cardImage.isEmpty() -> {
 
-					Alerts.error(this , "Please select Id card")
+					Alerts.error(this, "Please select Id card")
 				}
 
 				selfie.isEmpty() -> {
-					Alerts.error(this , "Please select Selfie")
+					Alerts.error(this, "Please select Selfie")
 				}
 
 				else -> {
 					bind.loader.isVisible = true
 
 					val idName = System.currentTimeMillis().toString() + "_id_card.jpeg"
-					val imagePart = Utils.imagePart("id_card" , idName , File(cardImage ?: ""))
+					val imagePart = Utils.imagePart("id_card", idName, File(cardImage ?: ""))
 
 					val imageName = System.currentTimeMillis().toString() + "_selfie_image.jpeg"
-					val selfiePart = Utils.imagePart("image" , imageName , File(selfie ?: ""))
+					val selfiePart = Utils.imagePart("image", imageName, File(selfie ?: ""))
 
 					log("SELFIE PART : $selfiePart")
 
 					viewModel.storeSellerId(
-						imagePart ,
+						imagePart,
 						selfiePart
 					)
 				}
@@ -189,7 +189,7 @@ class SellerVerificationActivity : BaseActivity() {
 			when {
 
 				bind.phoneNumber.value().isEmpty() -> {
-					Alerts.error(this , "Please Enter Phone Number")
+					Alerts.error(this, "Please Enter Phone Number")
 					showKeyboard(bind.phoneNumber)
 				}
 
@@ -208,7 +208,7 @@ class SellerVerificationActivity : BaseActivity() {
 			when {
 
 				bind.otp.value().isEmpty() -> {
-					Alerts.error(this , "Please Enter OTP")
+					Alerts.error(this, "Please Enter OTP")
 					showKeyboard(bind.otp)
 				}
 
@@ -231,31 +231,31 @@ class SellerVerificationActivity : BaseActivity() {
 
 				cardImage.isEmpty() -> {
 
-					Alerts.error(this , "Please select Id card")
+					Alerts.error(this, "Please select Id card")
 				}
 
 				selfie.isEmpty() -> {
-					Alerts.error(this , "Please select Selfie")
+					Alerts.error(this, "Please select Selfie")
 				}
 
-				! isPhoneVerified -> {
-					Alerts.error(this , "Please verify your phone number")
+				!isPhoneVerified -> {
+					Alerts.error(this, "Please verify your phone number")
 				}
 
 				paymentCardId.isEmpty() -> {
-					Alerts.error(this , "Please select Payment Card")
+					Alerts.error(this, "Please select Payment Card")
 				}
 
 				else -> {
 					bind.loader.isVisible = true
 
 					val idName = System.currentTimeMillis().toString() + "_id_card.jpeg"
-					val imagePart = Utils.imagePart("id_card" , idName , File(cardImage ?: ""))
+					val imagePart = Utils.imagePart("id_card", idName, File(cardImage ?: ""))
 
 					val imageName = System.currentTimeMillis().toString() + "_selfie_image.jpeg"
-					val selfiePart = Utils.imagePart("image" , imageName , File(selfie ?: ""))
+					val selfiePart = Utils.imagePart("image", imageName, File(selfie ?: ""))
 
-					viewModel.storeSellerVerification(imagePart , selfiePart , "1".request() , paymentCardId.request())
+					viewModel.storeSellerVerification(imagePart, selfiePart, "1".request(), paymentCardId.request())
 				}
 			}
 		}
@@ -285,14 +285,14 @@ class SellerVerificationActivity : BaseActivity() {
 				is Resource.Success -> {
 					bind.loader.isVisible = false
 
-					val mData = it.value.data
-					bind.stepProgress.setProgress(3)
+					it.value.data
+					bind.stepProgress.setProgress(2)
 
-					bind.stepCount.setText("3 of 4")
+					bind.stepCount.text = "2 of 3"
 
 					bind.completeVerification.isVisible = false
 
-					Alerts.success(this , it.value.message.toString())
+					Alerts.success(this, it.value.message.toString())
 
 				}
 
@@ -302,12 +302,12 @@ class SellerVerificationActivity : BaseActivity() {
 					if (it.isNetworkError) {
 						errorToast(getString(R.string.no_internet))
 					} else {
-						it.parse(this , TAG , object : AlertClicks {
-							override fun primaryClick(dialog : AppBottomSheet) {
+						it.parse(this, TAG, object : AlertClicks {
+							override fun primaryClick(dialog: AppBottomSheet) {
 								dialog.dismiss()
 							}
 
-							override fun secondaryClick(dialog : AppBottomSheet) {
+							override fun secondaryClick(dialog: AppBottomSheet) {
 								dialog.dismiss()
 
 							}
@@ -339,7 +339,8 @@ class SellerVerificationActivity : BaseActivity() {
 						"pending" -> {
 							bind.verificationIcon.isVisible = true
 							bind.stepProgress.setProgress(3)
-							bind.stepCount.setText("3 of 4")
+							bind.stepCount.text = "2 of 3"
+							bind.addCardBtn.isVisible = false
 							bind.phoneNumberLayout.isVisible = false
 							bind.otpLayout.isVisible = false
 							bind.verifyOtp.isVisible = false
@@ -347,7 +348,7 @@ class SellerVerificationActivity : BaseActivity() {
 							bind.verifyPhone.isVisible = false
 							bind.verificationPhoneIcon.isVisible = true
 							bind.completeVerification.isVisible = false
-							bind.status.setTextColor(ContextCompat.getColor(this , R.color.warningClr))
+							bind.status.setTextColor(ContextCompat.getColor(this, R.color.warningClr))
 						}
 
 						"verified" -> {
@@ -358,17 +359,23 @@ class SellerVerificationActivity : BaseActivity() {
 							bind.verificationIcon.isVisible = true
 							bind.verificationPhoneIcon.isVisible = true
 							bind.verifyOtp.isVisible = false
+							bind.addCardBtn.isVisible = false
 							bind.verifyPhoneTitle.isVisible = false
-							bind.stepProgress.setProgress(4)
-							bind.stepCount.setText("4 of 4")
-							bind.status.setTextColor(ContextCompat.getColor(this , R.color.success))
+							bind.stepProgress.setProgress(3)
+							bind.stepCount.text = "3 of 3"
+							bind.status.setTextColor(ContextCompat.getColor(this, R.color.success))
 							bind.completeVerification.isVisible = false
 						}
 
 						"rejected" -> {
-							bind.stepCount.setText("0 of 4")
-							bind.status.setTextColor(ContextCompat.getColor(this , R.color.error))
+							bind.stepCount.text = "0 of 3"
+							bind.addCardBtn.isVisible = false
+							bind.status.setTextColor(ContextCompat.getColor(this, R.color.error))
 							bind.statusDescription.text = mData.reason.toString()
+						}
+
+						else -> {
+							bind.addCardBtn.isVisible = true
 						}
 
 					}
@@ -383,12 +390,12 @@ class SellerVerificationActivity : BaseActivity() {
 					if (it.isNetworkError) {
 						errorToast(getString(R.string.no_internet))
 					} else {
-						it.parse(this , TAG , object : AlertClicks {
-							override fun primaryClick(dialog : AppBottomSheet) {
+						it.parse(this, TAG, object : AlertClicks {
+							override fun primaryClick(dialog: AppBottomSheet) {
 								dialog.dismiss()
 							}
 
-							override fun secondaryClick(dialog : AppBottomSheet) {
+							override fun secondaryClick(dialog: AppBottomSheet) {
 								dialog.dismiss()
 
 							}
@@ -424,12 +431,12 @@ class SellerVerificationActivity : BaseActivity() {
 					if (it.isNetworkError) {
 						errorToast(getString(R.string.no_internet))
 					} else {
-						it.parse(this , TAG , object : AlertClicks {
-							override fun primaryClick(dialog : AppBottomSheet) {
+						it.parse(this, TAG, object : AlertClicks {
+							override fun primaryClick(dialog: AppBottomSheet) {
 								dialog.dismiss()
 							}
 
-							override fun secondaryClick(dialog : AppBottomSheet) {
+							override fun secondaryClick(dialog: AppBottomSheet) {
 								dialog.dismiss()
 
 							}
@@ -447,10 +454,10 @@ class SellerVerificationActivity : BaseActivity() {
 				is Resource.Success -> {
 					bind.loader.isVisible = false
 
-					val mData = it.value.data
+					it.value.data
 					isPhoneVerified = true
 					bind.stepProgress.setProgress(2)
-					bind.stepCount.setText("2 of 4")
+					bind.stepCount.text = "2 of 3"
 
 					bind.phoneNumberLayout.isVisible = false
 					bind.verifyPhoneTitle.isVisible = false
@@ -472,12 +479,12 @@ class SellerVerificationActivity : BaseActivity() {
 					if (it.isNetworkError) {
 						errorToast(getString(R.string.no_internet))
 					} else {
-						it.parse(this , TAG , object : AlertClicks {
-							override fun primaryClick(dialog : AppBottomSheet) {
+						it.parse(this, TAG, object : AlertClicks {
+							override fun primaryClick(dialog: AppBottomSheet) {
 								dialog.dismiss()
 							}
 
-							override fun secondaryClick(dialog : AppBottomSheet) {
+							override fun secondaryClick(dialog: AppBottomSheet) {
 								dialog.dismiss()
 
 							}
@@ -527,12 +534,12 @@ class SellerVerificationActivity : BaseActivity() {
 					if (it.isNetworkError) {
 						errorToast(getString(R.string.no_internet))
 					} else {
-						it.parse(this , TAG , object : AlertClicks {
-							override fun primaryClick(dialog : AppBottomSheet) {
+						it.parse(this, TAG, object : AlertClicks {
+							override fun primaryClick(dialog: AppBottomSheet) {
 								dialog.dismiss()
 							}
 
-							override fun secondaryClick(dialog : AppBottomSheet) {
+							override fun secondaryClick(dialog: AppBottomSheet) {
 								dialog.dismiss()
 
 							}
@@ -550,11 +557,11 @@ class SellerVerificationActivity : BaseActivity() {
 				is Resource.Success -> {
 					bind.loader.isVisible = false
 
-					val mData = it.value.data
+					it.value.data
 
 					bind.stepProgress.setProgress(3)
 
-					bind.stepCount.setText("3 of 4")
+					bind.stepCount.text = "3 of 3"
 
 					bind.completeVerification.isVisible = false
 
@@ -566,12 +573,12 @@ class SellerVerificationActivity : BaseActivity() {
 					if (it.isNetworkError) {
 						errorToast(getString(R.string.no_internet))
 					} else {
-						it.parse(this , TAG , object : AlertClicks {
-							override fun primaryClick(dialog : AppBottomSheet) {
+						it.parse(this, TAG, object : AlertClicks {
+							override fun primaryClick(dialog: AppBottomSheet) {
 								dialog.dismiss()
 							}
 
-							override fun secondaryClick(dialog : AppBottomSheet) {
+							override fun secondaryClick(dialog: AppBottomSheet) {
 								dialog.dismiss()
 
 							}
@@ -589,7 +596,7 @@ class SellerVerificationActivity : BaseActivity() {
 	fun uploadUserId() {
 		requestPerms(Const.STR_PERMS) { per ->
 			if (per) {
-				idResult.launch(Utils.initCrop(this , isCamera = true , isGallery = true))
+				idResult.launch(Utils.initCrop(this, isCamera = true, isGallery = true))
 			}
 		}
 	}
@@ -597,7 +604,7 @@ class SellerVerificationActivity : BaseActivity() {
 	fun uploadUserSelfie() {
 		requestPerms(Const.STR_PERMS) { per ->
 			if (per) {
-				selfieResult.launch(Utils.initCrop(this , isCamera = true , isGallery = true))
+				selfieResult.launch(Utils.initCrop(this, isCamera = true, isGallery = true))
 			}
 		}
 	}
