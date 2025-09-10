@@ -8,7 +8,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.view.isVisible
-import androidx.navigation.fragment.findNavController
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayout.OnTabSelectedListener
 import io.bidswipe.app.App
@@ -34,7 +33,6 @@ import io.bidswipe.app.utils.loadUrl
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.toAuth
 import io.bidswipe.app.ui.dashboard.sellerHub.SellerVerificationActivity
-import io.bidswipe.app.utils.ids
 
 class AccountFragment : BaseFragment<DashViewModel , FragmentAccountBinding>() {
 
@@ -241,7 +239,7 @@ class AccountFragment : BaseFragment<DashViewModel , FragmentAccountBinding>() {
 		)
 		gridList.add(
 			MoreModel(
-				R.drawable.ic_checked_tag ,
+				R.drawable.ic_payment_verification ,
 				"Identity Verification" ,
 				"identityVerification"
 			)

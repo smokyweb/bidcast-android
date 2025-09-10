@@ -1,13 +1,19 @@
 package io.bidswipe.app.controller
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.core.text.bold
 import androidx.core.text.buildSpannedString
+import androidx.recyclerview.widget.ListAdapter
+import androidx.recyclerview.widget.RecyclerView
+import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseAdapter
+import io.bidswipe.app.databinding.AccountViewBinding.bind
 import io.bidswipe.app.databinding.HomeItemBinding
 import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.network.response.GetMyShowResponse
+import io.bidswipe.app.utils.MyDiffCallback
 import io.bidswipe.app.utils.asCapital
 import io.bidswipe.app.utils.draw
 import io.bidswipe.app.utils.loadUrl

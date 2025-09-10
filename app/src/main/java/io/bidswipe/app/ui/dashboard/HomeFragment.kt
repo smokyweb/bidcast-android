@@ -12,13 +12,20 @@ import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.core.view.get
 import androidx.core.view.isVisible
+import androidx.viewpager2.widget.ViewPager2
+import com.google.firebase.database.ChildEventListener
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.ValueEventListener
 import io.bidswipe.app.App
 import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseFragment
 import io.bidswipe.app.controller.HomeAdapter
+import io.bidswipe.app.controller.StreamPagerAdapter
 import io.bidswipe.app.databinding.FragmentHomeBinding
 import io.bidswipe.app.interfaces.AlertClicks
 import io.bidswipe.app.interfaces.RecyclerClicks
+import io.bidswipe.app.model.LiveShowModel
 import io.bidswipe.app.model.StreamModel
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.network.response.GetMyShowResponse
@@ -27,6 +34,7 @@ import io.bidswipe.app.ui.dashboard.more.NotificationActivity
 import io.bidswipe.app.ui.dashboard.sellerProfile.SellerProfileActivity
 import io.bidswipe.app.ui.dashboard.watchStream.ViewLiveShowActivity
 import io.bidswipe.app.utils.Alerts
+import io.bidswipe.app.utils.FireRef
 import io.bidswipe.app.utils.Utils
 import io.bidswipe.app.utils.hideKeyboard
 import io.bidswipe.app.utils.parse
@@ -34,14 +42,14 @@ import io.bidswipe.app.utils.request
 import io.bidswipe.app.utils.runSafe
 
 @SuppressLint("NotifyDataSetChanged")
-class HomeFragment : BaseFragment<DashViewModel , FragmentHomeBinding>() {
+class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
 
-	override fun getModel() : Class<DashViewModel> = DashViewModel::class.java
+	override fun getModel(): Class<DashViewModel> = DashViewModel::class.java
 
-	override fun getBind(inflater : LayoutInflater , view : ViewGroup?) =
-		FragmentHomeBinding.inflate(inflater , view , false)
+	override fun getBind(inflater: LayoutInflater, view: ViewGroup?) =
+		FragmentHomeBinding.inflate(inflater, view, false)
 
-	private lateinit var homeAdapter : HomeAdapter
+	private lateinit var homeAdapter: HomeAdapter
 	private var showList = mutableListOf<GetMyShowResponse.Data?>()
 	private var categoriesList = mutableListOf<String?>()
 	private var romIdsList = mutableListOf<StreamModel>()
@@ -49,36 +57,35 @@ class HomeFragment : BaseFragment<DashViewModel , FragmentHomeBinding>() {
 	private var selectedCategory = ""
 
 	private val mClick = object : RecyclerClicks {
-		override fun itemClick(pos : Int , status : String?) {
+		override fun itemClick(pos: Int, status: String?) {
 
 			when (status) {
 
 				"user" -> {
 					startActivity(
-						Intent(mCtx , SellerProfileActivity::class.java).putExtra(
-							"userId" ,
+						Intent(mCtx, SellerProfileActivity::class.java).putExtra(
+							"userId",
 							showList[pos]?.userId.toString()
 						)
 					)
 				}
 
 				"viewShow" -> {
-
 					if (showList[pos]?.isLive == true) {
 
 						val showId = showList[pos]?.id.toString()
 
 						if (App.PIPMode) {
-							Alerts.error(mCtx , "You are already in Live show")
+							Alerts.error(mCtx, "You are already in Live show")
 
 						} else {
 							startActivity(
 								Intent(
-									mCtx ,
+									mCtx,
 									ViewLiveShowActivity::class.java
-								).putExtra("showId" , showId)
+								).putExtra("showId", showId)
 									.putParcelableArrayListExtra(
-										"roomIdsList" ,
+										"roomIdsList",
 										romIdsList as ArrayList
 									)
 							)
@@ -95,8 +102,8 @@ class HomeFragment : BaseFragment<DashViewModel , FragmentHomeBinding>() {
 
 	private var selectedTabText = "live"
 
-	override fun onViewCreated(view : View , savedInstanceState : Bundle?) {
-		super.onViewCreated(view , savedInstanceState)
+	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+		super.onViewCreated(view, savedInstanceState)
 
 		bind.header.setOnClickListener {
 			hideKeyboard(it)
@@ -110,14 +117,14 @@ class HomeFragment : BaseFragment<DashViewModel , FragmentHomeBinding>() {
 			hideKeyboard(it)
 		}
 
-		homeAdapter = HomeAdapter(showList , mClick)
+		homeAdapter = HomeAdapter(showList, mClick)
 
 		bind.recycler.adapter = homeAdapter
 
 		bind.header.onMorePrimaryClick {
 			startActivity(
-				Intent(mCtx , NotificationActivity::class.java).putExtra(
-					"slug" ,
+				Intent(mCtx, NotificationActivity::class.java).putExtra(
+					"slug",
 					"notification"
 				)
 			)
@@ -126,15 +133,18 @@ class HomeFragment : BaseFragment<DashViewModel , FragmentHomeBinding>() {
 		bind.header.onMoreSecondaryClick {
 			bind.searchExpandLayout.toggle()
 		}
+
+		FireRef.LIVE_SESSIONS.addChildEventListener(eventListener)
+
 		bind.search.addTextChangedListener(object : TextWatcher {
-			override fun beforeTextChanged(s : CharSequence? , start : Int , count : Int , after : Int) {}
-			override fun onTextChanged(s : CharSequence? , start : Int , before : Int , count : Int) {}
-			override fun afterTextChanged(s : Editable?) {
-				if (! s.isNullOrEmpty()) {
+			override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+			override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+			override fun afterTextChanged(s: Editable?) {
+				if (!s.isNullOrEmpty()) {
 					bind.loader.isVisible = true
 					viewModel.getLiveShow(
-						selectedTabText.request() ,
-						selectedCategory.request() ,
+						selectedTabText.request(),
+						selectedCategory.request(),
 						s.toString().request()
 					)
 				}
@@ -142,24 +152,24 @@ class HomeFragment : BaseFragment<DashViewModel , FragmentHomeBinding>() {
 		})
 
 		bind.swipeRefreshLayout.setOnRefreshListener {
-			viewModel.getLiveShow(selectedTabText.request() , selectedCategory.request())
+			viewModel.getLiveShow(selectedTabText.request(), selectedCategory.request())
 			viewModel.getCategory()
 		}
 
 		bind.noInternet.onClick {
 			bind.loader.isVisible = false
 			bind.noInternet.isVisible = false
-			viewModel.getLiveShow(selectedTabText.request() , selectedCategory.request())
+			viewModel.getLiveShow(selectedTabText.request(), selectedCategory.request())
 			viewModel.getCategory()
 		}
 
-		selectTab(bind.live , true)
+		selectTab(bind.live, true)
 
-		bind.live.setOnClickListener { selectTab(it as TextView , false) }
-		bind.popular.setOnClickListener { selectTab(it as TextView , false) }
-		bind.comingSoon.setOnClickListener { selectTab(it as TextView , false) }
+		bind.live.setOnClickListener { selectTab(it as TextView, false) }
+		bind.popular.setOnClickListener { selectTab(it as TextView, false) }
+		bind.comingSoon.setOnClickListener { selectTab(it as TextView, false) }
 
-		bind.chipGroup.setOnCheckedStateChangeListener { chipGroup , _ ->
+		bind.chipGroup.setOnCheckedStateChangeListener { chipGroup, _ ->
 			runSafe {
 				val chipId = chipGroup.checkedChipId
 				val index = chipGroup.indexOfChild(chipGroup.findViewById(chipId))
@@ -170,7 +180,7 @@ class HomeFragment : BaseFragment<DashViewModel , FragmentHomeBinding>() {
 				}
 				bind.search.setText("")
 				bind.loader.isVisible = true
-				viewModel.getLiveShow(selectedTabText.request() , selectedCategory.request())
+				viewModel.getLiveShow(selectedTabText.request(), selectedCategory.request())
 			}
 		}
 
@@ -196,8 +206,8 @@ class HomeFragment : BaseFragment<DashViewModel , FragmentHomeBinding>() {
 					categoriesList.forEach {
 						bind.chipGroup.addView(
 							Utils.makeAChip(
-								mCtx = mCtx ,
-								text = it ?: "" ,
+								mCtx = mCtx,
+								text = it ?: "",
 								selected = false
 							)
 						)
@@ -214,13 +224,13 @@ class HomeFragment : BaseFragment<DashViewModel , FragmentHomeBinding>() {
 						bind.recycler.isVisible = false
 
 					} else {
-						it.parse(mCtx , TAG , object : AlertClicks {
-							override fun primaryClick(dialog : AppBottomSheet) {
+						it.parse(mCtx, TAG, object : AlertClicks {
+							override fun primaryClick(dialog: AppBottomSheet) {
 								dialog.dismiss()
 
 							}
 
-							override fun secondaryClick(dialog : AppBottomSheet) {
+							override fun secondaryClick(dialog: AppBottomSheet) {
 								dialog.dismiss()
 
 							}
@@ -243,7 +253,7 @@ class HomeFragment : BaseFragment<DashViewModel , FragmentHomeBinding>() {
 					val mData = it.value.data
 
 					mData?.forEach {
-						romIdsList.add(StreamModel(it?.roomId.toString() , ""))
+						romIdsList.add(StreamModel(it?.roomId.toString(), ""))
 					}
 
 					showList.clear()
@@ -275,13 +285,13 @@ class HomeFragment : BaseFragment<DashViewModel , FragmentHomeBinding>() {
 						bind.recycler.isVisible = false
 						bind.noData.isVisible = false
 					} else {
-						it.parse(mCtx , TAG , object : AlertClicks {
-							override fun primaryClick(dialog : AppBottomSheet) {
+						it.parse(mCtx, TAG, object : AlertClicks {
+							override fun primaryClick(dialog: AppBottomSheet) {
 								dialog.dismiss()
 
 							}
 
-							override fun secondaryClick(dialog : AppBottomSheet) {
+							override fun secondaryClick(dialog: AppBottomSheet) {
 								dialog.dismiss()
 
 							}
@@ -296,13 +306,13 @@ class HomeFragment : BaseFragment<DashViewModel , FragmentHomeBinding>() {
 
 	}
 
-	fun selectTab(selectedTab : TextView , isFirst : Boolean) {
-		val tabs = listOf(bind.live , bind.popular , bind.comingSoon)
+	fun selectTab(selectedTab: TextView, isFirst: Boolean) {
+		val tabs = listOf(bind.live, bind.popular, bind.comingSoon)
 		tabs.forEach {
 			it.setTextAppearance(R.style.TitleMedium)
-			it.setTextColor(ContextCompat.getColor(mCtx , R.color.outlineVariant))
+			it.setTextColor(ContextCompat.getColor(mCtx, R.color.outlineVariant))
 		}
-		selectedTab.setTextColor(ContextCompat.getColor(mCtx , R.color.scrim))
+		selectedTab.setTextColor(ContextCompat.getColor(mCtx, R.color.scrim))
 		selectedTab.setTextAppearance(R.style.TitleLarge)
 
 		bind.search.setText("")
@@ -311,22 +321,45 @@ class HomeFragment : BaseFragment<DashViewModel , FragmentHomeBinding>() {
 		when (selectedTab) {
 			bind.live -> {
 				selectedTabText = "live"
-				if (! isFirst) {
-					viewModel.getLiveShow("live".request() , selectedCategory.request())
+				if (!isFirst) {
+					viewModel.getLiveShow("live".request(), selectedCategory.request())
 				}
 			}
 
 			bind.popular -> {
 				selectedTabText = "popular"
-				viewModel.getLiveShow("popular".request() , selectedCategory.request())
+				viewModel.getLiveShow("popular".request(), selectedCategory.request())
 			}
 
 			bind.comingSoon -> {
 				selectedTabText = "upcoming"
-				viewModel.getLiveShow("upcoming".request() , selectedCategory.request())
+				viewModel.getLiveShow("upcoming".request(), selectedCategory.request())
 			}
 
 		}
+	}
+
+	private var eventListener = object : ChildEventListener {
+		override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
+			viewModel.getLiveShow(selectedTabText.request(), selectedCategory.request())
+		}
+
+		override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
+			viewModel.getLiveShow(selectedTabText.request(), selectedCategory.request())
+		}
+
+		override fun onChildRemoved(snapshot: DataSnapshot) {
+
+		}
+
+		override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {
+
+		}
+
+		override fun onCancelled(error: DatabaseError) {
+		}
+
+
 	}
 
 }

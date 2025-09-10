@@ -26,6 +26,7 @@ import io.bidswipe.app.interfaces.AlertClicks
 import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.model.SellModel
 import io.bidswipe.app.network.Resource
+import io.bidswipe.app.ui.custom.AlertType
 import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.ui.dashboard.more.MoreActivity
 import io.bidswipe.app.ui.dashboard.sellerHub.SellerVerificationActivity
@@ -99,7 +100,6 @@ class DashActivity : BaseActivity() , NavController.OnDestinationChangedListener
 			viewModel.storeDeviceDetails(it.request())
 		}
 
-
 		requestPerms(Const.PERMISSIONS) { per ->
 
 		}
@@ -126,7 +126,6 @@ class DashActivity : BaseActivity() , NavController.OnDestinationChangedListener
 
 							override fun secondaryClick(dialog : AppBottomSheet) {
 								dialog.dismiss()
-
 							}
 						})
 					}
@@ -212,7 +211,7 @@ class DashActivity : BaseActivity() , NavController.OnDestinationChangedListener
 				val profile = App.profileResponse.value
 
 				if (profile?.sellerIdentityStatus != "verified") {
-					startActivity(Intent(this@DashActivity , SellerVerificationActivity::class.java))
+					verificationDialog()
 					return
 				}
 
@@ -373,6 +372,7 @@ class DashActivity : BaseActivity() , NavController.OnDestinationChangedListener
 				expiryDate.text = buildString {
 					append(App.profileResponse.value?.defaultCard?.expDate)
 				}
+
 			} else {
 				cardNumber.text = "Payment Cards Not Added"
 			}
@@ -385,6 +385,7 @@ class DashActivity : BaseActivity() , NavController.OnDestinationChangedListener
 					)
 				)
 			}
+
 		}
 
 		paymentAddressBind.close.setOnClickListener {
@@ -393,6 +394,69 @@ class DashActivity : BaseActivity() , NavController.OnDestinationChangedListener
 
 		imageSheet.state = BottomSheetBehavior.STATE_COLLAPSED
 		makeOfferSheet.show()
+
+	}
+
+	private fun verificationDialog() {
+		AppBottomSheet(
+			this,
+			R.drawable.ic_info ,
+			title = when (App.profileResponse.value?.sellerIdentityStatus) {
+				"null" -> {
+					"Become a Verified Seller!"
+				}
+
+				"pending" -> {
+					"Verification Pending!"
+				}
+
+				"rejected" -> {
+					"Verification Rejected!"
+				}
+
+				else -> {
+					"Become a Verified Seller!"
+				}
+			} ,
+			message = when (App.profileResponse.value?.sellerIdentityStatus) {
+				"null" -> {
+					"Your seller verification request has been rejected, You need to reapply for the verification."
+				}
+
+				"pending" -> {
+					"Your seller verification request is currently pending. You will be able to access this functionality once it is approved by the admin."
+				}
+
+				"rejected" -> {
+					"Your seller verification request was not approved. Please reapply to complete the verification process."
+				}
+
+				else -> {
+					"Before you interact with lives shows, You need to become a Verified Seller."
+				}
+			},
+			primaryBtnText = "Okay" ,
+			secondaryBtnText = "Cancel" ,
+			canCancel = true ,
+			showSecondary = false ,
+			iconPadding = 16 ,
+			alertType = AlertType.INFO ,
+			clicks = object : AlertClicks {
+				override fun primaryClick(dialog : AppBottomSheet) {
+					dialog.dismiss()
+
+					if (App.profileResponse.value?.sellerIdentityStatus == "pending"){
+						return
+					}
+
+					startActivity(Intent(this@DashActivity , SellerVerificationActivity::class.java))
+				}
+
+				override fun secondaryClick(dialog : AppBottomSheet) {
+					dialog.dismiss()
+				}
+			}
+		).show()
 
 	}
 
