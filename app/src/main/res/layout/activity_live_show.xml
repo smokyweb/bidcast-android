@@ -338,6 +338,8 @@
                         android:layout_height="wrap_content"
                         android:layout_marginHorizontal="@dimen/margin"
                         android:layout_marginBottom="@dimen/margin"
+                        app:boxBackgroundColor="@color/scrim"
+                        android:alpha="0.3"
                         app:boxStrokeColor="@color/scrim"
                         app:endIconDrawable="@drawable/ic_forward"
                         app:endIconMode="custom"
@@ -350,7 +352,7 @@
                             android:layout_height="wrap_content"
                             android:hint="@string/say_something"
                             android:inputType="text"
-                            android:textColorHint="@color/scrim" />
+                            android:textColor="@color/surface"/>
 
                     </com.google.android.material.textfield.TextInputLayout>
 

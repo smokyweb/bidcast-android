@@ -67,13 +67,13 @@ data class GetMyShowResponse(
 			@SerializedName("name")
 			val name : String? ,
 			@SerializedName("thumbnail")
-			val thumbnail : Any? ,
+			val thumbnail : String? ,
 		)
 
 		@Keep
 		data class User(
             @SerializedName("bio")
-            val bio : Any? ,
+            val bio : String? ,
             @SerializedName("email")
             val email : String? ,
             @SerializedName("first_name")
@@ -87,13 +87,13 @@ data class GetMyShowResponse(
             @SerializedName("name")
             val name : String? ,
             @SerializedName("profile_image")
-            val profileImage : Any? ,
+            val profileImage : String? ,
             @SerializedName("referral_code")
             val referralCode : String? ,
             @SerializedName("role_id")
             val roleId : Int? ,
             @SerializedName("thumbnail")
-            val thumbnail : Any? ,
+            val thumbnail : String? ,
             @SerializedName("username")
             val username : String? ,
             @SerializedName("is_followed")

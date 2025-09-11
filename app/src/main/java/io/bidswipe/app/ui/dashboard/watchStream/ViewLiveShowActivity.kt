@@ -27,6 +27,7 @@ class ViewLiveShowActivity : BaseActivity() {
 	private val viewModel by viewModels<StreamViewModel>()
 
 	private var pos = 0
+	private var showId = ""
 	private var streamList = arrayListOf<LiveShowModel>()
 	private lateinit var viewPager : ViewPager2
 	private lateinit var streamPagerAdapter : StreamPagerAdapter
@@ -46,6 +47,8 @@ class ViewLiveShowActivity : BaseActivity() {
 							streamList.add(LiveShowModel().fromMap(data))
 						}
 					}
+
+					pos = streamList.indexOf(streamList.find { it.showId == showId })
 
 					if (streamList.isNotEmpty()) {
 						viewPager = bind.viewPager
@@ -84,11 +87,12 @@ class ViewLiveShowActivity : BaseActivity() {
 			keyboardEnable(true)
 		}
 
-		val showId = intent.getStringExtra("showId")
+		 showId = intent.getStringExtra("showId") ?:""
 
 //		streamList.find { it.showId == showId }
 
-		pos = streamList.indexOf(streamList.find { it.showId == showId })
+
+		log("POSITION : $pos ")
 
 		FireRef.LIVE_SESSIONS.addValueEventListener(eventListener)
 

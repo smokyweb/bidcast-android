@@ -256,6 +256,7 @@ interface ApiInterface {
 		@Part("type") type : RequestBody? ,
 		@Part("category") category : RequestBody? ,
 		@Part("search") search : RequestBody? ,
+		@Part("page") page : RequestBody?
 	) : GetMyShowResponse
 
 	@Multipart

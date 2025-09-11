@@ -1,58 +1,80 @@
 package io.bidswipe.app.controller
 
+import android.util.Log
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.core.text.bold
 import androidx.core.text.buildSpannedString
-import androidx.recyclerview.widget.ListAdapter
-import androidx.recyclerview.widget.RecyclerView
-import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseAdapter
-import io.bidswipe.app.databinding.AccountViewBinding.bind
 import io.bidswipe.app.databinding.HomeItemBinding
 import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.network.response.GetMyShowResponse
-import io.bidswipe.app.utils.MyDiffCallback
 import io.bidswipe.app.utils.asCapital
 import io.bidswipe.app.utils.draw
 import io.bidswipe.app.utils.loadUrl
 
 class HomeAdapter(
-	val mList : MutableList<GetMyShowResponse.Data?> , val mClick : RecyclerClicks ,
-) : BaseAdapter<GetMyShowResponse.Data? , HomeItemBinding>(mList) {
+	var mList: MutableList<GetMyShowResponse.Data?>, val mClick: RecyclerClicks,
+) : BaseAdapter<GetMyShowResponse.Data?, HomeItemBinding>(mList) {
 
-	override fun bindView(inflater : LayoutInflater , parent : ViewGroup) =
-		HomeItemBinding.inflate(inflater , parent , false)
+	override fun bindView(inflater: LayoutInflater, parent: ViewGroup) = HomeItemBinding.inflate(inflater, parent, false)
 
 	override fun onBind(
-		holder : BaseViewHolder<HomeItemBinding> ,
-		position : Int ,
-		item : GetMyShowResponse.Data? ,
+		holder: BaseViewHolder<HomeItemBinding>,
+		position: Int,
+		item: GetMyShowResponse.Data?,
 	) {
 		with(holder) {
 
 			bind.userInfo.setOnClickListener {
-				mClick.itemClick(position , "user")
+				mClick.itemClick(position, "user")
 			}
 
 			bind.thumbnail.setOnClickListener {
-				mClick.itemClick(position , "viewShow")
+				mClick.itemClick(position, "viewShow")
 			}
 
-			bind.userName.text = buildSpannedString {
-				bold {
-					append(item?.user?.username?.ifEmpty { item.user.name.toString() })
-				}
-			}
-			bind.userImage.loadUrl(mCtx , item?.user?.profileImage.toString() , draw.user_image)
+			bind.userImage.loadUrl(mCtx , item?.user?.profileImage ?:"" , draw.user_image)
 
-			bind.thumbnail.loadUrl(mCtx , item?.thumbnail?.get(0).toString())
+			if (item?.thumbnail != null){
+				bind.thumbnail.loadUrl(mCtx, item.thumbnail[0] ?:"")
+			}
 
 			bind.title.text = item?.title.toString().asCapital()
 
 			bind.category.text = item?.category?.name
 
+			Log.d(TAG, "onBind: ${item?.user?.name}" )
+
+			bind.userName.text = buildSpannedString {
+				bold {
+					append(item?.user?.username?.ifEmpty { item.user.name })
+				}
+			}
+
 		}
 	}
+
+	/*fun updateList(newItems: MutableList<GetMyShowResponse.Data?>) {
+		val diffCallback = object : DiffUtil.Callback() {
+			override fun getOldListSize(): Int = mList.size
+			override fun getNewListSize(): Int = newItems.size
+
+			override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+				return mList[oldItemPosition]?.id == newItems[newItemPosition]?.id
+			}
+
+			override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+				return mList[oldItemPosition] == newItems[newItemPosition]
+			}
+		}
+
+		val diffResult = DiffUtil.calculateDiff(diffCallback)
+
+		// Update the internal list
+		mList = newItems
+
+		// Notify only changes
+		diffResult.dispatchUpdatesTo(this)
+	}*/
 }

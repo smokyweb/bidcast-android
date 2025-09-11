@@ -189,8 +189,9 @@ class DashViewModel @Inject constructor(val repo : DashRepository) : ViewModel()
 		type : RequestBody? = null ,
 		category : RequestBody? = null ,
 		search : RequestBody? = null ,
+		page : RequestBody? = null ,
 	) = viewModelScope.launch {
-		_getLiveShowResponse.value = repo.getLiveShow(type , category , search)
+		_getLiveShowResponse.value = repo.getLiveShow(type , category , search, page)
 	}
 
 	private var _offerListResponse = MutableLiveData<Resource<GetOffersResponse>>()
