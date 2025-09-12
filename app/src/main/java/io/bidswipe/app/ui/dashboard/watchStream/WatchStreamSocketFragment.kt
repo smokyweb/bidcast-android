@@ -1,0 +1,655 @@
+package io.bidswipe.app.ui.dashboard.watchStream
+
+import android.annotation.SuppressLint
+import android.content.Intent
+import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.MotionEvent
+import android.view.View
+import android.view.ViewGroup
+import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
+import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.gyf.immersionbar.ktx.navigationBarHeight
+import com.ncorti.slidetoact.SlideToActView
+import io.bidswipe.app.App
+import io.bidswipe.app.R
+import io.bidswipe.app.base.BaseFragment
+import io.bidswipe.app.controller.CommentAdapter
+import io.bidswipe.app.databinding.FragmentWatchStreamBinding
+import io.bidswipe.app.databinding.InputBottomSheetBinding
+import io.bidswipe.app.databinding.PaymentAndAddressSheetBinding
+import io.bidswipe.app.interfaces.AlertClicks
+import io.bidswipe.app.model.LiveChatModel
+import io.bidswipe.app.model.LiveShowModel
+import io.bidswipe.app.model.ZIMExtendedData
+import io.bidswipe.app.network.Resource
+import io.bidswipe.app.ui.custom.AlertType
+import io.bidswipe.app.ui.custom.AppBottomSheet
+import io.bidswipe.app.ui.dashboard.more.MoreActivity
+import io.bidswipe.app.ui.dashboard.more.TrustedBuyerActivity
+import io.bidswipe.app.utils.Alerts
+import io.bidswipe.app.utils.ChatManager
+import io.bidswipe.app.utils.Const
+import io.bidswipe.app.utils.SocketManager
+import io.bidswipe.app.utils.StreamingManager
+import io.bidswipe.app.utils.asMoney
+import io.bidswipe.app.utils.dpToPx
+import io.bidswipe.app.utils.draw
+import io.bidswipe.app.utils.finish
+import io.bidswipe.app.utils.hideKeyboard
+import io.bidswipe.app.utils.value
+import io.bidswipe.app.utils.loadUrl
+import io.bidswipe.app.utils.parse
+import io.bidswipe.app.utils.request
+import io.bidswipe.app.utils.runSafe
+import io.bidswipe.app.utils.setMargins
+import org.json.JSONObject
+import kotlin.math.abs
+
+class WatchStreamSocketFragment : BaseFragment<StreamViewModel , FragmentWatchStreamBinding>() {
+
+    override fun getModel() : Class<StreamViewModel> = StreamViewModel::class.java
+
+    override fun getBind(
+        inflater : LayoutInflater ,
+        view : ViewGroup? ,
+    ) = FragmentWatchStreamBinding.inflate(inflater , view , false)
+
+    private lateinit var roomID : String
+    private lateinit var socketUrl : String
+    private var chatManager : ChatManager? = null
+    private var socketManager : SocketManager? = null
+    private var highestBidAmount : String? = "0"
+    private var bidProductId : String? = null
+    private var inputSheet : BottomSheetDialog? = null
+    private var isAllowBidForAll = true
+    private var commentList = mutableListOf<LiveChatModel?>()
+    private lateinit var commentAdapter : CommentAdapter
+    private var product : LiveShowModel.Product? = null
+
+    companion object {
+        fun newInstance(roomID : String , streamID : String) = WatchStreamFragment().apply {
+            arguments = Bundle().apply {
+                putString("roomID" , roomID)
+                putString("streamID" , streamID)
+            }
+        }
+    }
+
+    override fun onCreate(savedInstanceState : Bundle?) {
+        super.onCreate(savedInstanceState)
+        roomID = requireArguments().getString("roomID") ?: ""
+        socketUrl = requireArguments().getString("socketUrl") ?: ""
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
+    override fun onViewCreated(view : View , savedInstanceState : Bundle?) {
+        super.onViewCreated(view , savedInstanceState)
+
+        setUpSwipe()
+
+        bind.bidLayout.setMargins(resources.dpToPx(16) , 0 , resources.dpToPx(16) , navigationBarHeight)
+
+        bind.cutButton.setOnClickListener {
+            finish()
+        }
+
+        bind.recycler.setOnTouchListener { view, event ->
+            hideKeyboard(view)
+            return@setOnTouchListener false
+        }
+
+        commentAdapter = CommentAdapter(commentList)
+
+        bind.recycler.adapter = commentAdapter
+
+        // Streaming playback still via Zego engine
+        StreamingManager.getInstance(requireContext()).startPlayingStream(roomID , bind.hostView)
+
+        // Initialize sockets
+        if (socketUrl.isNotEmpty()) {
+            socketManager = SocketManager.getInstance(requireContext())
+            socketManager?.initialize(socketUrl , mapOf("uid" to userId))
+            socketManager?.connect(onConnected = {
+                socketManager?.joinRoom(roomID)
+                socketManager?.emitViewerJoin(roomID)
+            }) { err -> log("Socket connect error: $err") }
+
+            socketManager?.onViewerCount { count ->
+                runSafe { bind.liveCount.text = count.toString() }
+            }
+
+            socketManager?.onBidUpdate { json ->
+                handleBidUpdate(json)
+            }
+
+            // Optional room/session updates (current product, sold, allow flags, countdown)
+            socketManager?.onMessage { msg ->
+                val type = msg.optString("type")
+                when (type) {
+                    "session_update" -> updateSessionUI(msg)
+                    "countdown" -> updateCountdown(msg)
+                }
+            }
+
+        }
+
+        initializeChat()
+
+        viewModel.selectedStream.observe(viewLifecycleOwner) { stream ->
+            if (stream.roomId == roomID) {
+
+                bind.userImage.loadUrl(
+                    mCtx ,
+                    stream.seller?.image.toString() ,
+                    placeHolder = draw.user_image
+                )
+
+                product = stream.products?.find { it?.isCurrent == true }
+
+                bidProductId = product?.id.toString()
+
+                highestBidAmount = product?.price.toString()
+
+                bind.userName.text = stream.seller?.name.toString()
+
+                bind.productName.text = product?.name
+
+                bind.productImage.loadUrl(
+                    mCtx ,
+                    product?.image.toString() ,
+                    placeHolder = draw.product_img
+                )
+
+                bind.bidPrice.text = (product?.price ?: "0").asMoney()
+
+                try {
+                    bind.quantity.text = buildString {
+                        append("Price: ")
+                        append(product?.price.toString().asMoney())
+                    }
+                } catch (e : Exception) {
+                    e.printStackTrace()
+                }
+
+                if (stream.seller?.isFollowed == true) {
+                    bind.follow.setBackgroundColor(ContextCompat.getColor(mCtx , R.color.outline))
+                    bind.follow.setTextColor(ContextCompat.getColor(mCtx , R.color.onSurface))
+                    bind.follow.text = "Unfollow"
+                } else {
+                    bind.follow.setBackgroundColor(ContextCompat.getColor(mCtx , R.color.primary))
+                    bind.follow.setTextColor(ContextCompat.getColor(mCtx , R.color.background))
+                    bind.follow.text = "Follow"
+                }
+
+                bind.follow.setOnClickListener {
+                    viewModel.followUser(stream.seller?.id?.request())
+                }
+
+                runSafe {
+                    bind.bid.text = "Swipe to Bid ${newBidAmount(highestBidAmount?.toDouble()?.toInt() ?: 0).toString().asMoney()}"
+                }
+
+                bind.bid.onSlideCompleteListener = object : SlideToActView.OnSlideCompleteListener {
+                    override fun onSlideComplete(view : SlideToActView) {
+
+                        if (isAllowBidForAll) {
+                            attemptBid()
+                        } else {
+
+                            if (App.profileResponse.value?.buyerIdentityStatus == "verified") {
+                                attemptBid()
+                            } else {
+                                verificationDialog()
+                            }
+                        }
+                    }
+                }
+
+                bind.max.setOnClickListener {
+
+                    showInputSheet()
+
+                }
+            }
+        }
+
+        bind.message.setEndIconOnClickListener {
+            if (bind.text.value().isNotEmpty()) {
+
+                if (App.profileResponse.value?.buyerIdentityStatus == "verified") {
+                    sendZimMessage(bind.text.value())
+                } else {
+                    verificationDialog()
+                }
+            }
+        }
+
+        bind.wallet.setOnClickListener {
+
+            showPaymentAndAddressSheet()
+
+        }
+
+        viewModel.createBidRepo.observe(viewLifecycleOwner) {
+            when (it) {
+                is Resource.Success -> {
+
+                    viewModel.createBidRepo.value = null
+                    bind.loader.isVisible = false
+                    it.value.data
+
+                }
+
+                is Resource.Error -> {
+                    bind.loader.isVisible = false
+
+                    if (it.isNetworkError) {
+                        errorToast(getString(R.string.no_internet))
+                    } else {
+                        it.parse(mCtx , TAG , object : AlertClicks {
+                            override fun primaryClick(dialog : AppBottomSheet) {
+                                dialog.dismiss()
+
+                            }
+
+                            override fun secondaryClick(dialog : AppBottomSheet) {
+                                dialog.dismiss()
+
+                            }
+                        })
+                    }
+                }
+
+                else -> {}
+
+            }
+        }
+
+        viewModel.followUserShowRepo.observe(viewLifecycleOwner) {
+            when (it) {
+                is Resource.Success -> {
+
+                    val mData = it.value.data
+                    if (mData?.status == true) {
+                        bind.follow.setBackgroundColor(ContextCompat.getColor(mCtx , R.color.outline))
+                        bind.follow.setTextColor(ContextCompat.getColor(mCtx , R.color.onSurface))
+                        bind.follow.text = "Unfollow"
+                    } else {
+                        bind.follow.setBackgroundColor(ContextCompat.getColor(mCtx , R.color.primary))
+                        bind.follow.setTextColor(ContextCompat.getColor(mCtx , R.color.background))
+                        bind.follow.text = "Follow"
+                    }
+
+                }
+
+                is Resource.Error -> {
+                    bind.loader.isVisible = false
+
+                    if (it.isNetworkError) {
+                        errorToast(getString(R.string.no_internet))
+                    } else {
+                        it.parse(mCtx , TAG , object : AlertClicks {
+                            override fun primaryClick(dialog : AppBottomSheet) {
+                                dialog.dismiss()
+
+                            }
+
+                            override fun secondaryClick(dialog : AppBottomSheet) {
+                                dialog.dismiss()
+
+                            }
+                        })
+                    }
+                }
+
+                else -> {}
+
+            }
+        }
+
+        if (App.profileResponse.value?.buyerIdentityStatus != "verified") {
+            verificationDialog()
+        }
+
+    }
+
+    override fun onResume() {
+        super.onResume()
+        socketManager?.emitViewerJoin(roomID)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        socketManager?.emitViewerLeave(roomID)
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        socketManager?.leaveRoom(roomID)
+        socketManager?.disconnect()
+    }
+
+    private fun handleBidUpdate(json : JSONObject) {
+        runSafe {
+            val bidAmount = json.optString("bidAmount" , "0")
+            bind.bid.text = "Swipe to Bid ${bidAmount.toDoubleOrNull()?.toInt()?.plus(2)?.toString()?.asMoney()}"
+            highestBidAmount = bidAmount
+            bidProductId = json.optString("productId" , bidProductId)
+        }
+    }
+
+    private fun updateSessionUI(json : JSONObject) {
+        runSafe {
+            // minimal fields: product image/name/price, seller, allowBidForAll
+            json.optJSONObject("seller")?.let { seller ->
+                bind.userName.text = seller.optString("name")
+                bind.userImage.loadUrl(mCtx , seller.optString("image"))
+            }
+            json.optJSONObject("product")?.let { product ->
+                bind.productName.text = product.optString("name")
+                bind.productImage.loadUrl(mCtx , product.optString("image"))
+                val price = product.optString("price" , "0")
+                bind.bidPrice.text = price.asMoney()
+                highestBidAmount = price
+                bidProductId = product.optString("id" , bidProductId)
+                bind.bid.text = "Swipe to Bid ${newBidAmount(price.toDoubleOrNull()?.toInt() ?: 0).toString().asMoney()}"
+            }
+            isAllowBidForAll = json.optBoolean("allowBidForAll" , true)
+            val isSold = json.optBoolean("isSold" , false)
+            bind.soldLayout.isVisible = isSold
+            bind.bidLayout.isVisible = ! isSold
+            bind.productLayout.isVisible = ! isSold
+        }
+    }
+
+    private fun updateCountdown(json : JSONObject) {
+        val value = json.optString("bidCountDown" , "")
+        runSafe {
+            bind.bidTime.isVisible = value.isNotEmpty()
+            if (value.isNotEmpty()) bind.bidTime.text = "Ends in $value"
+        }
+    }
+
+    private fun showInputSheet() {
+        val inputSheetBind = InputBottomSheetBinding.bind(
+            layoutInflater.inflate(
+                R.layout.input_bottom_sheet ,
+                null ,
+                false
+            )
+        )
+        inputSheet = Alerts.appBottomSheet(mCtx , true , inputSheetBind)
+
+        inputSheetBind.submitBtn.setOnClickListener {
+            val priceText = inputSheetBind.price.value()
+            val priceVal = priceText.toDoubleOrNull() ?: 0.0
+            val current = highestBidAmount?.toDoubleOrNull() ?: 0.0
+            if (priceVal <= current) {
+                Alerts.error(mCtx , "Bid amount must be greater than the current highest bid.")
+            } else {
+                socketManager?.emitBid(
+                    roomId = roomID ,
+                    userId = userId ,
+                    userName = userName ,
+                    userImage = userImage ,
+                    productId = bidProductId ,
+                    bidAmount = priceVal.toString()
+                )
+                Alerts.success(mCtx , "Bid placed successfully")
+                sendZimMessage("New high bid: $${priceVal}")
+                inputSheet?.dismiss()
+            }
+        }
+
+        inputSheetBind.close.setOnClickListener { inputSheet?.dismiss() }
+        inputSheet?.show()
+    }
+
+    private fun initializeChat() {
+        if (chatManager == null) {
+            chatManager = ChatManager(
+                application = requireActivity().application ,
+                appId = Const.APP_ID.toLong() ,
+                appSign = Const.APP_SIGN ,
+                userId = userId ,
+                userName = userName ,
+                userImage = userImage
+            )
+        }
+        chatManager?.initializeAndLogin(roomID) {
+            val extended = ZIMExtendedData(userImage , userId , userName).toJson()
+            chatManager?.sendTextMessage(roomID , "Joined 👋" , extended)
+        }
+    }
+
+    fun newBidAmount(amount : Int) : Int {
+        return when {
+            amount in 1 .. 30 -> amount + 1
+            amount in 31 .. 50 -> amount + 2
+            amount in 51 .. 100 -> amount + 3
+            amount in 101 .. 300 -> amount + 5
+            amount in 301 .. 1000 -> amount + 10
+            amount in 1001 .. 2000 -> amount + 20
+            amount >= 2001 -> 50
+            else -> 0
+        }
+    }
+
+    fun attemptBid() {
+        runSafe {
+            log("SWIPED")
+
+            val bidAmount = newBidAmount(highestBidAmount?.toDouble()?.toInt() ?: 0).toString()
+
+            socketManager?.emitBid(
+                roomId = roomID ,
+                userId = userId ,
+                userName = userName ,
+                userImage = userImage ,
+                productId = bidProductId ,
+                bidAmount = bidAmount
+            )
+
+            sendZimMessage("New high bid: $$bidAmount")
+            Alerts.success(mCtx , "Bid placed successfully")
+            bind.bid.setCompleted(completed = false , withAnimation = true)
+        }
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
+    fun setUpSwipe() {
+
+        var downX = 0f
+
+        bind.viewFlipper.setOnTouchListener { _ , event ->
+            when (event.action) {
+                MotionEvent.ACTION_DOWN -> {
+                    downX = event.x
+                    true
+                }
+
+                MotionEvent.ACTION_UP -> {
+                    val deltaX = event.x - downX
+
+                    if (abs(deltaX) > 100) {
+                        if (deltaX > 0) {
+                            bind.viewFlipper.setInAnimation(mCtx , R.anim.slide_in_left)
+                            bind.viewFlipper.setOutAnimation(mCtx , R.anim.slide_out_right)
+                            bind.viewFlipper.showPrevious()
+                        } else {
+                            bind.viewFlipper.setInAnimation(mCtx , R.anim.slide_in_right)
+                            bind.viewFlipper.setOutAnimation(mCtx , R.anim.slide_out_left)
+                            bind.viewFlipper.showNext()
+                        }
+                    }
+                    true
+                }
+
+                else -> false
+            }
+        }
+
+        bind.controls.setOnTouchListener { _ , event ->
+            when (event.action) {
+                MotionEvent.ACTION_DOWN -> {
+                    downX = event.x
+                    true
+                }
+
+                MotionEvent.ACTION_UP -> {
+                    val deltaX = event.x - downX
+
+                    if (abs(deltaX) > 100) {
+                        if (deltaX > 0) {
+                            bind.viewFlipper.setInAnimation(mCtx , R.anim.slide_in_left)
+                            bind.viewFlipper.setOutAnimation(mCtx , R.anim.slide_out_right)
+                            bind.viewFlipper.showPrevious()
+                        } else {
+
+                            bind.viewFlipper.setInAnimation(mCtx , R.anim.slide_in_right)
+                            bind.viewFlipper.setOutAnimation(mCtx , R.anim.slide_out_left)
+                            bind.viewFlipper.showNext()
+                        }
+                    }
+                    true
+                }
+
+                else -> false
+            }
+        }
+
+    }
+
+    fun sendZimMessage(content : String) {
+        val extended = ZIMExtendedData(userImage , userId , userName).toJson()
+        chatManager?.sendTextMessage(roomID , content , extended)
+        bind.text.setText("")
+    }
+
+    private fun verificationDialog() {
+        AppBottomSheet(
+            mCtx ,
+            R.drawable.ic_info ,
+            title = when (App.profileResponse.value?.buyerIdentityStatus) {
+
+                "null" -> {
+                    "Become a Verified Buyer!"
+                }
+
+                "pending" -> {
+                    "Verification Pending!"
+                }
+
+                "rejected" -> {
+                    "Verification Rejected!"
+                }
+
+                else -> {
+                    "Become a Verified Buyer!"
+                }
+            } ,
+            "Before you interact with lives shows, You need to become a Verified Buyer." ,
+            primaryBtnText = "Okay" ,
+            secondaryBtnText = "Cancel" ,
+            canCancel = true ,
+            showSecondary = false ,
+            iconPadding = 16 ,
+            alertType = AlertType.INFO ,
+            clicks = object : AlertClicks {
+                override fun primaryClick(dialog : AppBottomSheet) {
+                    dialog.dismiss()
+                    startActivity(Intent(mCtx , TrustedBuyerActivity::class.java).putExtra("slug" , "buyer"))
+                }
+
+                override fun secondaryClick(dialog : AppBottomSheet) {
+                    dialog.dismiss()
+                }
+            }
+        ).show()
+    }
+
+    fun showPaymentAndAddressSheet() {
+
+        val paymentAddressBind = PaymentAndAddressSheetBinding.bind(
+            layoutInflater.inflate(
+                R.layout.payment_and_address_sheet ,
+                null ,
+                false
+            )
+        )
+
+        val makeOfferSheet = Alerts.appBottomSheet(mCtx , true , paymentAddressBind)
+
+        with(paymentAddressBind.addressItem) {
+            val hasAddress = App.profileResponse.value?.hasShippingAddress == true
+            moreIcon.setImageDrawable(ContextCompat.getDrawable(mCtx , draw.ic_pencil))
+            moreIcon.rotation = 0f
+
+            name.isVisible = hasAddress
+            address.isVisible = hasAddress
+
+            if (hasAddress) {
+                val addressData = App.profileResponse.value?.defaultShippingAddress
+                address.text = addressData?.streetAddress
+                name.text = addressData?.name
+                type.text = addressData?.type
+                defaultAddress.isVisible = addressData?.isDefault == true
+            } else {
+                type.text = "Address Not Added"
+                defaultAddress.isVisible = false
+            }
+
+            moreIcon.setOnClickListener {
+                startActivity(
+                    Intent(mCtx , MoreActivity::class.java).putExtra(
+                        "slug" ,
+                        "paymentShipping"
+                    )
+                )
+            }
+
+        }
+
+        with(paymentAddressBind.paymentCard) {
+            val hasCard = App.profileResponse.value?.hasCardAdded == true
+            iconCard.isVisible = hasCard
+            expiryDate.isVisible = hasCard
+            moreIcon.setImageDrawable(ContextCompat.getDrawable(mCtx , draw.ic_pencil))
+            moreIcon.rotation = 0f
+
+            if (hasCard) {
+                cardNumber.text = buildString {
+                    append("•••• •••• •••• ")
+                    append(App.profileResponse.value?.defaultCard?.last4)
+                }
+
+                expiryDate.text = buildString {
+                    append(App.profileResponse.value?.defaultCard?.expDate)
+                }
+            } else {
+                cardNumber.text = "Payment Cards Not Added"
+            }
+
+            moreIcon.setOnClickListener {
+                startActivity(
+                    Intent(mCtx , MoreActivity::class.java).putExtra(
+                        "slug" ,
+                        "paymentShipping"
+                    )
+                )
+            }
+        }
+
+        paymentAddressBind.close.setOnClickListener {
+            makeOfferSheet.dismiss()
+        }
+
+        makeOfferSheet.show()
+
+    }
+
+}
+
+

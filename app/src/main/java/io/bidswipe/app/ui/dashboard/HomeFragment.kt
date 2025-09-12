@@ -309,7 +309,6 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
 						it.parse(mCtx, TAG, object : AlertClicks {
 							override fun primaryClick(dialog: AppBottomSheet) {
 								dialog.dismiss()
-
 							}
 
 							override fun secondaryClick(dialog: AppBottomSheet) {

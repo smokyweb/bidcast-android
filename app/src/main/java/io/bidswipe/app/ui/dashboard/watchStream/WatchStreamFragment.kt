@@ -322,7 +322,6 @@ class WatchStreamFragment : BaseFragment<StreamViewModel , FragmentWatchStreamBi
 							} else {
 								verificationDialog()
 							}
-
 						}
 					}
 				}
@@ -420,9 +419,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel , FragmentWatchStreamBi
 
 	override fun onResume() {
 		super.onResume()
-
 		loginAndPlay()
-
 	}
 
 	override fun onPause() {

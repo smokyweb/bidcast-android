@@ -49,11 +49,6 @@
         <activity
             android:name=".ui.dashboard.UpdateAccountActivity"
             android:exported="false" />
-        <!--
-        <activity
-            android:name=".ui.dashboard.more.MainActivity"
-            android:exported="false" />
-        -->
         <activity
             android:name=".ui.dashboard.more.NotificationActivity"
             android:exported="false" />
@@ -63,6 +58,12 @@
             android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".ui.dashboard.scheduleShow.LiveShowActivity"
+            android:configChanges="screenSize|smallestScreenSize|screenLayout|orientation"
+            android:exported="false"
+            android:supportsPictureInPicture="true"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name=".ui.dashboard.scheduleShow.LiveShowSocketActivity"
             android:configChanges="screenSize|smallestScreenSize|screenLayout|orientation"
             android:exported="false"
             android:supportsPictureInPicture="true"

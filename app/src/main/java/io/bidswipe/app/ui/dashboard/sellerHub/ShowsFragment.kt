@@ -22,6 +22,7 @@ import io.bidswipe.app.network.response.GetMyShowResponse
 import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.ui.dashboard.more.MoreActivity
 import io.bidswipe.app.ui.dashboard.scheduleShow.LiveShowActivity
+import io.bidswipe.app.ui.dashboard.scheduleShow.LiveShowSocketActivity
 import io.bidswipe.app.utils.Alerts
 import io.bidswipe.app.utils.draw
 import io.bidswipe.app.utils.finish
@@ -61,7 +62,7 @@ class ShowsFragment : BaseFragment<SellerHubViewModel , FragmentShowsBinding>() 
 				Alerts.error(mCtx , "You are already in Live show")
 			} else {
 				startActivity(
-					Intent(mCtx , LiveShowActivity::class.java).putExtra(
+					Intent(mCtx , LiveShowSocketActivity::class.java).putExtra(
 						"showId" ,
 						showList[pos]?.id.toString()
 					).putExtra("time" , showList[pos]?.time)
@@ -123,6 +124,7 @@ class ShowsFragment : BaseFragment<SellerHubViewModel , FragmentShowsBinding>() 
 			}
 
 			override fun onTabUnselected(tab : TabLayout.Tab?) {}
+
 			override fun onTabReselected(tab : TabLayout.Tab?) {
 				onTabSelected(tab)
 			}

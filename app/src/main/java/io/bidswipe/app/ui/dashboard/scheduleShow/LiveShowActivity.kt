@@ -74,6 +74,7 @@ class LiveShowActivity : BaseActivity() {
 
 	private val bind by bind(ActivityLiveShowBinding::inflate)
 	private val viewModel by viewModels<DashViewModel>()
+
 	private lateinit var pipParams : PictureInPictureParams
 	private lateinit var commentAdapter : CommentAdapter
 	private var chatManager : ChatManager? = null
