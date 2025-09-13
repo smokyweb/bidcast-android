@@ -36,6 +36,8 @@ class PrepareYourShowFragment : BaseFragment<DashViewModel , FragmentPrepareYour
 
 	var imagePartList = mutableListOf<MultipartBody.Part?>()
 
+	private var showId = ""
+
 	private var scheduleShowLauncher =
 		registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
 			if (result.resultCode == Activity.RESULT_OK) {
@@ -126,7 +128,7 @@ class PrepareYourShowFragment : BaseFragment<DashViewModel , FragmentPrepareYour
 
 							findNavController().navigate(
 								ids.goToShowTipsFragment ,
-								bundleOf("type" to "goLive")
+								bundleOf("type" to "goLive" , "showId" to viewModel.showId)
 							)
 						}
 
@@ -196,6 +198,7 @@ class PrepareYourShowFragment : BaseFragment<DashViewModel , FragmentPrepareYour
 				val mData = it
 				log("SHOW DATA :$it")
 
+
 				when (viewModel.currentStep) {
 					1 -> {
 						viewModel.showList[0]?.status = "completed"
@@ -232,6 +235,8 @@ class PrepareYourShowFragment : BaseFragment<DashViewModel , FragmentPrepareYour
 					bind.loader.isVisible = false
 
 					val mData = it.value.data
+
+					viewModel.showId = mData?.id.toString()
 
 					findNavController().navigate(
 						ids.goToShowTipsFragment ,

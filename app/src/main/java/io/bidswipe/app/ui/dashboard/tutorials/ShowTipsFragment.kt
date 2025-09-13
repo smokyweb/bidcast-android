@@ -37,6 +37,7 @@ class ShowTipsFragment : BaseFragment<DashViewModel , FragmentShowTipsBinding>()
 
 		type = arguments?.getString("type" , "").toString()
 		showId = arguments?.getString("showId" , "").toString()
+		log("ShowId : $showId")
 
 		when (type) {
 			"liveTips" -> {
@@ -93,7 +94,6 @@ class ShowTipsFragment : BaseFragment<DashViewModel , FragmentShowTipsBinding>()
 						val a = activity as TutorialsActivity
 
 						a.scheduleShowLauncher.launch(mCtx.toScheduleShow("showTutorial"))
-
 
 						findNavController().popBackStack()
 					}

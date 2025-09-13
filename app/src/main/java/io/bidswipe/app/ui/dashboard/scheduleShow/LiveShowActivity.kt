@@ -154,6 +154,8 @@ class LiveShowActivity : BaseActivity() {
 		showId = intent.getStringExtra("showId") ?: ""
 		showTime = intent.getStringExtra("time") ?: ""
 
+		log("SHOW ID : $showId")
+
 		bind.hostName.text = userName
 
 		bind.controls.setOnClickListener {
