@@ -13,6 +13,9 @@ import android.util.Rational
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -39,6 +42,7 @@ import io.bidswipe.app.databinding.EndShowSheetBinding
 import io.bidswipe.app.databinding.LiveShowMoreMenuBinding
 import io.bidswipe.app.databinding.ProductSheetBinding
 import io.bidswipe.app.databinding.PromoteShowSheetBinding
+import io.bidswipe.app.databinding.SendTipSheetBinding
 import io.bidswipe.app.databinding.ShareSheetBinding
 import io.bidswipe.app.databinding.ShopSheetBinding
 import io.bidswipe.app.databinding.ShowConfirmationAlertBinding
@@ -141,11 +145,17 @@ class LiveShowActivity : BaseActivity() {
 			supportActionBar(false)
 			keyboardEnable(true)
 		}
+		
+		ViewCompat.setOnApplyWindowInsetsListener(window.decorView){ v, insets  ->
+			val system = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+			
+			bind.profileLayout.setMargins(top = system.top)
+			bind.startBtn.setMargins(resources.dpToPx(16) , resources.dpToPx(0) , resources.dpToPx(16) , system.bottom)
+			
+			insets
+		}
 
 		initPip()
-
-		bind.message.setMargins(resources.dpToPx(16) , resources.dpToPx(16) , resources.dpToPx(16) , resources.dpToPx(16))
-		bind.startBtn.setMargins(resources.dpToPx(16) , resources.dpToPx(0) , resources.dpToPx(16) , navigationBarHeight)
 
 		commentAdapter = CommentAdapter(commentList)
 
@@ -870,6 +880,24 @@ class LiveShowActivity : BaseActivity() {
 		}
 
 		promoteSheet.show()
+	}
+
+	fun sendTipSheet() {
+		val sendTipSheetBind = SendTipSheetBinding.bind(
+			layoutInflater.inflate(
+				R.layout.send_tip_sheet ,
+				null ,
+				false
+			)
+		)
+
+		val sendTipSheet = Alerts.appBottomSheet(this , true , sendTipSheetBind)
+		
+		sendTipSheetBind.close.setOnClickListener {
+			sendTipSheet.dismiss()
+		}
+
+		sendTipSheet.show()
 	}
 
 	fun createClipSheet() {

@@ -8,6 +8,8 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.gyf.immersionbar.ktx.navigationBarHeight
@@ -88,9 +90,16 @@ class WatchStreamSocketFragment : BaseFragment<StreamViewModel , FragmentWatchSt
         super.onViewCreated(view , savedInstanceState)
 
         setUpSwipe()
-
-        bind.bidLayout.setMargins(resources.dpToPx(16) , 0 , resources.dpToPx(16) , navigationBarHeight)
-
+        
+        ViewCompat.setOnApplyWindowInsetsListener(requireActivity().window.decorView){ v, insets  ->
+            val system = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            
+            bind.controlsView.setMargins(top = system.top)
+            bind.bidLayout.setMargins(resources.dpToPx(16) , 0 , resources.dpToPx(16) , system.bottom)
+            
+            insets
+        }
+     
         bind.cutButton.setOnClickListener {
             finish()
         }

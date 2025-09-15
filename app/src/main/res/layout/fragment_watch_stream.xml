@@ -19,15 +19,15 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/controls_view"
             android:layout_width="match_parent"
+            android:background="@drawable/center_gradient"
             android:layout_height="match_parent">
 
             <LinearLayout
                 android:id="@+id/profileLayout"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/margin"
-                android:layout_marginTop="48dp"
                 android:gravity="center_vertical"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
 
@@ -49,9 +49,10 @@
                 </com.google.android.material.card.MaterialCardView>
 
                 <LinearLayout
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="@dimen/half_margin"
+                    android:layout_weight="1"
                     android:orientation="vertical">
 
                     <TextView
@@ -76,19 +77,6 @@
 
                 </LinearLayout>
 
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/rehearsalLayout"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="@dimen/half_margin"
-                android:layout_marginTop="48dp"
-                android:layout_marginEnd="@dimen/margin"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/liveCount"
@@ -144,7 +132,6 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:background="@drawable/live_show_background"
                         android:orientation="vertical"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
@@ -404,6 +391,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginHorizontal="@dimen/margin"
+                            android:gravity="center_vertical"
                             android:layout_marginBottom="@dimen/half_margin"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintStart_toStartOf="parent">
@@ -426,7 +414,6 @@
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
-                                android:elevation="6dp"
                                 app:animation_duration="250"
                                 app:area_margin="4dp"
                                 app:border_radius="8dp"
@@ -446,13 +433,16 @@
                                 android:layout_height="wrap_content"
                                 android:layout_marginStart="@dimen/half_margin"
                                 android:background="@drawable/card_8"
+                                android:backgroundTint="@color/black25"
                                 android:gravity="center"
-                                android:orientation="vertical"
-                                android:padding="@dimen/half_margin">
+                                android:paddingVertical="4dp"
+                                android:paddingHorizontal="16dp"
+                                android:orientation="vertical">
 
                                 <TextView
                                     android:id="@+id/bid_price"
                                     style="@style/TitleMedium"
+                                    android:textColor="@color/onPrimary"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:text="$20" />

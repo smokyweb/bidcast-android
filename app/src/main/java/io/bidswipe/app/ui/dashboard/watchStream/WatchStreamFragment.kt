@@ -8,6 +8,8 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.firebase.database.ChildEventListener
@@ -157,9 +159,16 @@ class WatchStreamFragment : BaseFragment<StreamViewModel , FragmentWatchStreamBi
 		log("RoomId: $roomID")
 
 		setUpSwipe()
-
-		bind.bidLayout.setMargins(resources.dpToPx(16) , 0 , resources.dpToPx(16) , navigationBarHeight)
-
+		
+		ViewCompat.setOnApplyWindowInsetsListener(requireActivity().window.decorView){ v, insets  ->
+			val system = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+			
+			bind.profileLayout.setMargins(top = system.top, left = resources.dpToPx(16) , right =  resources.dpToPx(16) ,)
+			bind.bidLayout.setMargins(resources.dpToPx(16) , 0 , resources.dpToPx(16) , system.bottom)
+			
+			insets
+		}
+		
 		bind.cutButton.setOnClickListener {
 			finish()
 		}
