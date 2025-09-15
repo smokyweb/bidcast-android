@@ -227,7 +227,7 @@
                 android:layout_marginVertical="@dimen/half_margin"
                 app:dividerColor="@color/outline" />
 
-            <com.google.android.material.materialswitch.MaterialSwitch
+            <!--<com.google.android.material.materialswitch.MaterialSwitch
                 android:id="@+id/sync_phone_contact"
                 style="@style/appSwitch"
                 android:layout_width="match_parent"
@@ -253,7 +253,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:layout_marginVertical="@dimen/half_margin"
-                app:dividerColor="@color/outline" />
+                app:dividerColor="@color/outline" />-->
 
             <com.google.android.material.materialswitch.MaterialSwitch
                 android:id="@+id/haptic_feedback"

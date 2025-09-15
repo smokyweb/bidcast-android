@@ -96,12 +96,12 @@ object Const {
 
 	val liveMoreMenu = mutableListOf(
 		LiveMoreOption("End Show" , true , draw.ic_end) ,
-		LiveMoreOption("Clone item" , false , draw.ic_copy) ,
+//		LiveMoreOption("Clone item" , false , draw.ic_copy) ,
 		LiveMoreOption("Tip Setting" , false , draw.ic_dollar) ,
-		LiveMoreOption("Multicast" , false , draw.ic_multicast) ,
-		LiveMoreOption("Add Coupons" , false , draw.ic_coupon) ,
+//		LiveMoreOption("Multicast" , false , draw.ic_multicast) ,
+//		LiveMoreOption("Add Coupons" , false , draw.ic_coupon) ,
 		LiveMoreOption("Raid" , false , draw.ic_people) ,
-		LiveMoreOption("Create Poll" , false , draw.ic_poll) ,
+//		LiveMoreOption("Create Poll" , false , draw.ic_poll)
 	)
 
 }

@@ -205,6 +205,10 @@ class StreamingManager(
 		setCameraZoomLevel(zoomLevel + 1f)
 	}
 
+	fun zoomOut() {
+		setCameraZoomLevel(zoomLevel - 1f)
+	}
+
 	fun muteMicrophone(mute : Boolean) {
 		if (isEngineCreated) {
 			ZegoExpressEngine.getEngine().muteMicrophone(mute)

@@ -546,9 +546,8 @@ class LiveShowSocketActivity : BaseActivity() {
             }
         }
 
-        moreSheetBind.switchCameraLayout.setOnClickListener {
-            streamingManager?.toggleCamera()
-            isFrontCamera = streamingManager?.isUsingFrontCamera() ?: true
+        moreSheetBind.zoomOut.setOnClickListener {
+            streamingManager?.zoomOut()
             moreSheet.dismiss()
         }
 
@@ -640,7 +639,7 @@ class LiveShowSocketActivity : BaseActivity() {
             mList.add("")
         }
 
-        shareSheetBind.optionList.adapter = ShareSheetAdapter(mList , object : RecyclerClicks {
+       /* shareSheetBind.optionList.adapter = ShareSheetAdapter(mList , object : RecyclerClicks {
 
             override fun itemClick(pos : Int , status : String?) {
 
@@ -649,7 +648,7 @@ class LiveShowSocketActivity : BaseActivity() {
 
         shareSheetBind.close.setOnClickListener {
             shareSheet.dismiss()
-        }
+        }*/
 
         shareSheet.show()
     }

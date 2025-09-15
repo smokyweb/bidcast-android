@@ -1,6 +1,10 @@
 package io.bidswipe.app.base
 
 import android.os.Bundle
+import android.view.HapticFeedbackConstants
+import android.view.MotionEvent
+import android.view.View
+import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
 import com.permissionx.guolindev.PermissionX
 import com.zeugmasolutions.localehelper.LocaleAwareCompatActivity
@@ -25,9 +29,28 @@ abstract class BaseActivity : LocaleAwareCompatActivity() {
         userName = Prefs(this).getUserData()?.name.toString()
         userImage = Prefs(this).getUserData()?.profileImage ?: ""
 
+        applyHapticToAllClickableViews(window.decorView)
+
         /*token = Prefs(this).token()
         userId = Prefs(this).getUserData()?.id.toString()
         userName = Prefs(this).getUserData()?.firstname + " " + Prefs(this).getUserData()?.lastname*/
+    }
+
+    private fun applyHapticToAllClickableViews(view: View) {
+        if (view.isClickable) {
+            view.setOnTouchListener { v, event ->
+                if (event.action == MotionEvent.ACTION_DOWN) {
+                    v.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY)
+                }
+                false
+            }
+        }
+
+        if (view is ViewGroup) {
+            for (i in 0 until view.childCount) {
+                applyHapticToAllClickableViews(view.getChildAt(i))
+            }
+        }
     }
 
     protected fun log(msg: String) = Alerts.log(TAG, msg)

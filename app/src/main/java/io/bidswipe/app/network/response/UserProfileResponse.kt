@@ -56,7 +56,8 @@ data class UserProfileResponse(
         val hasShippingAddress : Boolean? ,
         @SerializedName("has_card_added")
         val hasCardAdded : Boolean? ,
-    ) {
+        val preferences: SettingListResponse.Data?
+        ) {
 
 		@Keep
 		data class DefaultShippingAddress(

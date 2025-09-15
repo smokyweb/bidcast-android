@@ -481,8 +481,9 @@ class WatchStreamFragment : BaseFragment<StreamViewModel , FragmentWatchStreamBi
 				log("ROOM STATE CHANGED: $state")
 			}
 		})
+
 		chatManager?.initializeAndLogin(roomID) {
-			sendZimMessage("Joined \uD83D\uDC4B")
+			if (App.profileResponse.value?.preferences?.enablePrivateEntry == false) sendZimMessage("Joined \uD83D\uDC4B")
 		}
 
 	}
@@ -535,7 +536,6 @@ class WatchStreamFragment : BaseFragment<StreamViewModel , FragmentWatchStreamBi
 				}
 			}
 		).show()
-
 	}
 
 	fun showInputSheet() {

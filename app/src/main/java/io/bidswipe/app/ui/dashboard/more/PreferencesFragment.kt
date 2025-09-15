@@ -81,8 +81,8 @@ class PreferencesFragment : BaseFragment<MoreViewModel , FragmentPreferencesBind
 					bind.savePastShows.isChecked = it.value.data?.savePastShows == true
 
 					bind.activityStatus.isChecked = it.value.data?.activityStatus == true
-					bind.syncPhoneContact.isChecked = it.value.data?.syncPhoneContacts == true
-					bind.suggestAccount.isChecked = it.value.data?.suggestMyAccount == true
+//					bind.syncPhoneContact.isChecked = it.value.data?.syncPhoneContacts == true
+//					bind.suggestAccount.isChecked = it.value.data?.suggestMyAccount == true
 					bind.hapticFeedback.isChecked = it.value.data?.hapticFeedback == true
 
 				}
@@ -142,9 +142,9 @@ class PreferencesFragment : BaseFragment<MoreViewModel , FragmentPreferencesBind
 			if (bind.enableClips.isChecked) "1".request() else "0".request() ,
 			if (bind.savePastShows.isChecked) "1".request() else "0".request() ,
 			if (bind.activityStatus.isChecked) "1".request() else "0".request() ,
-			if (bind.syncPhoneContact.isChecked) "1".request() else "0".request() ,
-			if (bind.suggestAccount.isChecked) "1".request() else "0".request() ,
-			if (bind.hapticFeedback.isChecked) "1".request() else "0".request() ,
+			 "0".request() ,
+			"0".request() ,
+			if (bind.hapticFeedback.isChecked) "1".request() else "0".request()
 		)
 	}
 }

@@ -4,7 +4,9 @@ package io.bidswipe.app.base
 
 import android.content.Context
 import android.os.Bundle
+import android.view.HapticFeedbackConstants
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
@@ -16,18 +18,14 @@ import com.permissionx.guolindev.PermissionX
 import io.bidswipe.app.utils.Alerts
 import io.bidswipe.app.utils.Prefs
 
-
 abstract class BaseFragment<VM : ViewModel, BIND : ViewBinding> : Fragment() {
 
     protected lateinit var viewModel: VM
     protected lateinit var mCtx: Context
     protected lateinit var bind: BIND
-
     protected lateinit var userId: String
     protected lateinit var userName: String
     protected lateinit var userImage: String
-
-
     protected lateinit var TAG: String
 
     override fun onCreateView(
@@ -37,6 +35,8 @@ abstract class BaseFragment<VM : ViewModel, BIND : ViewBinding> : Fragment() {
 	): View? {
         bind = getBind(inflater, view)
         mCtx = inflater.context
+
+        applyHapticToAllClickableViews(bind.root)
 
         TAG = try {
             findNavController().currentDestination?.label.toString().uppercase()
@@ -97,6 +97,23 @@ abstract class BaseFragment<VM : ViewModel, BIND : ViewBinding> : Fragment() {
                     callBack.invoke()
                 }
             })
+    }
+
+    private fun applyHapticToAllClickableViews(view: View) {
+        if (view.isClickable) {
+            view.setOnTouchListener { v, event ->
+                if (event.action == MotionEvent.ACTION_DOWN) {
+                    v.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY)
+                }
+                false
+            }
+        }
+
+        if (view is ViewGroup) {
+            for (i in 0 until view.childCount) {
+                applyHapticToAllClickableViews(view.getChildAt(i))
+            }
+        }
     }
 
     abstract fun getModel(): Class<VM>

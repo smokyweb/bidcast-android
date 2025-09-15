@@ -796,7 +796,6 @@ class LiveShowActivity : BaseActivity() {
 
 		moreSheetBind.zoomInLayout.setOnClickListener {
 			streamingManager?.zoomIn()
-			zoomLevel = streamingManager?.getZoomLevel()?.toLong() ?: 1L
 			moreSheet.dismiss()
 		}
 
@@ -811,9 +810,8 @@ class LiveShowActivity : BaseActivity() {
 			}
 		}
 
-		moreSheetBind.switchCameraLayout.setOnClickListener {
-			streamingManager?.toggleCamera()
-			isFrontCamera = streamingManager?.isUsingFrontCamera() ?: true
+		moreSheetBind.zoomOut.setOnClickListener {
+			streamingManager?.zoomOut()
 			moreSheet.dismiss()
 		}
 
@@ -905,16 +903,13 @@ class LiveShowActivity : BaseActivity() {
 			mList.add("")
 		}
 
-		shareSheetBind.optionList.adapter = ShareSheetAdapter(mList , object : RecyclerClicks {
+//		shareSheetBind.optionList.adapter = ShareSheetAdapter(mList , object : RecyclerClicks {
+//			override fun itemClick(pos : Int , status : String?) {}
+//		})
 
-			override fun itemClick(pos : Int , status : String?) {
-
-			}
-		})
-
-		shareSheetBind.close.setOnClickListener {
-			shareSheet.dismiss()
-		}
+//		shareSheetBind.close.setOnClickListener {
+//			shareSheet.dismiss()
+//		}
 
 		shareSheet.show()
 	}
@@ -1095,9 +1090,7 @@ class LiveShowActivity : BaseActivity() {
 		showConfirmationSheetBind.startBtn.setOnClickListener {
 			showConfirmationSheet.dismiss()
 			bind.loader.isVisible = true
-
 			viewModel.updateLiveStatus(showId.request() , "true".request())
-
 		}
 
 		showConfirmationSheet.show()
