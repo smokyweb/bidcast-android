@@ -258,7 +258,7 @@
                         app:cornerRadius="50dp" />
 
                     <com.google.android.material.card.MaterialCardView
-                        android:id="@+id/icon_card"
+                        android:id="@+id/send_tip"
                         style="@style/cardStyle"
                         android:layout_width="48dp"
                         android:layout_height="48dp"

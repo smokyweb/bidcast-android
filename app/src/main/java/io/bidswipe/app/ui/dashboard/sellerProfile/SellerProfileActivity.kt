@@ -3,6 +3,7 @@ package io.bidswipe.app.ui.dashboard.sellerProfile
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import android.widget.PopupMenu
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
@@ -219,6 +220,12 @@ class SellerProfileActivity : BaseActivity() {
 						bind.follow.text = "Follow"
 					}
 
+					if (mData?.preferences?.directMessage == false)
+						bind.messageSeller.visibility = View.INVISIBLE
+					
+					if (mData?.preferences?.receiveGifts == false)
+						bind.sendTip.visibility = View.INVISIBLE
+					
 				}
 
 				is Resource.Error -> {

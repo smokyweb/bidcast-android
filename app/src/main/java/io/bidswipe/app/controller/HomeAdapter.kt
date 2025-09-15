@@ -48,7 +48,7 @@ class HomeAdapter(
 
 			bind.userName.text = buildSpannedString {
 				bold {
-					append(item?.user?.username?.ifEmpty { item.user.name })
+					append((item?.user?.username?:"").ifEmpty { item?.user?.name?:"user@${item?.user?.id}" })
 				}
 			}
 
