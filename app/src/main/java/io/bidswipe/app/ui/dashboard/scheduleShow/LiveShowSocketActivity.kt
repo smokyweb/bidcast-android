@@ -14,6 +14,7 @@ import androidx.core.view.isVisible
 import com.gyf.immersionbar.ktx.immersionBar
 import com.gyf.immersionbar.ktx.navigationBarHeight
 import im.zego.zegoexpress.constants.ZegoScenario
+import io.bidswipe.app.App
 import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseActivity
 import io.bidswipe.app.controller.CommentAdapter
@@ -125,6 +126,8 @@ class LiveShowSocketActivity : BaseActivity() {
             hideKeyboard()
             return@setOnTouchListener false
         }
+
+        bind.clip.isVisible = App.profileResponse.value?.preferences?.enableClips == true
 
         bind.hostImage.loadUrl(this , userImage)
 

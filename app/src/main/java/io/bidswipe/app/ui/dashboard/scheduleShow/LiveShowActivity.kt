@@ -2,6 +2,7 @@ package io.bidswipe.app.ui.dashboard.scheduleShow
 
 import android.annotation.SuppressLint
 import android.app.PictureInPictureParams
+import android.content.Intent
 import android.content.res.Configuration
 import android.graphics.Rect
 import android.os.Build
@@ -172,6 +173,8 @@ class LiveShowActivity : BaseActivity() {
 			hideKeyboard()
 		}
 
+		bind.clip.isVisible = App.profileResponse.value?.preferences?.enableClips == true
+
 		bind.recycler.setOnTouchListener { view , event ->
 			hideKeyboard()
 			return@setOnTouchListener false
@@ -194,7 +197,25 @@ class LiveShowActivity : BaseActivity() {
 		}
 
 		bind.share.setOnClickListener {
-			shareSheet()
+
+			val shareText = buildString {
+				append(Const.BASE_URL)
+				append("/live-show")
+			}
+
+			val shareIntent = Intent().apply {
+				action = Intent.ACTION_SEND
+				putExtra(Intent.EXTRA_TEXT , shareText)
+				type = "text/plain"
+			}
+
+			val chooserIntent = Intent.createChooser(shareIntent , "Share via")
+
+			if (shareIntent.resolveActivity(packageManager) != null) {
+				startActivity(chooserIntent)
+			} else {
+				errorToast("No sharing apps available")
+			}
 		}
 
 		bind.cutButton.setOnClickListener {

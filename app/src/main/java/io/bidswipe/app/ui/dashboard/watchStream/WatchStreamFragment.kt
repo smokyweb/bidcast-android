@@ -28,6 +28,7 @@ import io.bidswipe.app.controller.CommentAdapter
 import io.bidswipe.app.databinding.FragmentWatchStreamBinding
 import io.bidswipe.app.databinding.InputBottomSheetBinding
 import io.bidswipe.app.databinding.PaymentAndAddressSheetBinding
+import io.bidswipe.app.databinding.SendTipSheetBinding
 import io.bidswipe.app.interfaces.AlertClicks
 import io.bidswipe.app.model.LiveChatModel
 import io.bidswipe.app.model.LiveShowModel
@@ -257,6 +258,10 @@ class WatchStreamFragment : BaseFragment<StreamViewModel , FragmentWatchStreamBi
 					verificationDialog()
 				}
 			}
+		}
+
+		bind.gift.setOnClickListener {
+			sendTipSheet()
 		}
 
 		bind.wallet.setOnClickListener {
@@ -801,6 +806,24 @@ class WatchStreamFragment : BaseFragment<StreamViewModel , FragmentWatchStreamBi
 			amount >= 2001 -> 50
 			else -> 0
 		}
+	}
+
+	fun sendTipSheet() {
+		val sendTipSheetBind = SendTipSheetBinding.bind(
+			layoutInflater.inflate(
+				R.layout.send_tip_sheet,
+				null,
+				false
+			)
+		)
+
+		val sendTipSheet = Alerts.appBottomSheet(mCtx, true, sendTipSheetBind)
+
+		sendTipSheetBind.close.setOnClickListener {
+			sendTipSheet.dismiss()
+		}
+
+		sendTipSheet.show()
 	}
 
 }
