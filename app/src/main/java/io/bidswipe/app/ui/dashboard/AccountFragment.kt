@@ -33,6 +33,7 @@ import io.bidswipe.app.utils.loadUrl
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.toAuth
 import io.bidswipe.app.ui.dashboard.sellerHub.SellerVerificationActivity
+import io.bidswipe.app.utils.setHapticClickListener
 
 class AccountFragment : BaseFragment<DashViewModel , FragmentAccountBinding>() {
 
@@ -259,7 +260,7 @@ class AccountFragment : BaseFragment<DashViewModel , FragmentAccountBinding>() {
 		accountGridAdapter = GridAdapter(accountGridList , accountGridClick)
 		bind.accountView.gridRecycler.adapter = accountGridAdapter
 
-		bind.editIcon.setOnClickListener {
+		bind.editIcon.setHapticClickListener {
 			startActivity(Intent(mCtx , UpdateAccountActivity::class.java))
 		}
 

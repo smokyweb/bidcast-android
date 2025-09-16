@@ -8,6 +8,7 @@ import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.network.response.AboutUsResponse
 import io.bidswipe.app.utils.draw
 import io.bidswipe.app.utils.loadUrl
+import io.bidswipe.app.utils.setHapticClickListener
 
 class TeamAdapter(
 	mList : MutableList<AboutUsResponse.Data.Team?> , val mClicks : RecyclerClicks ,
@@ -28,7 +29,7 @@ class TeamAdapter(
 
 			bind.image.loadUrl(mCtx , item?.image.toString() , draw.person)
 
-			bind.root.setOnClickListener {
+			bind.root.setHapticClickListener {
 				mClicks.itemClick(position)
 			}
 

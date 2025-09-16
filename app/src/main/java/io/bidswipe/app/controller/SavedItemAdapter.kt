@@ -11,6 +11,7 @@ import io.bidswipe.app.utils.Utils
 import io.bidswipe.app.utils.asCapital
 import io.bidswipe.app.utils.asMoney
 import io.bidswipe.app.utils.loadUrl
+import io.bidswipe.app.utils.setHapticClickListener
 
 class SavedItemAdapter(
 	mList : MutableList<GetProductsByStatusResponse.Data?> , val mClicks : RecyclerClicks ,
@@ -26,7 +27,7 @@ class SavedItemAdapter(
 	) {
 		with(holder) {
 
-			bind.root.setOnClickListener {
+			bind.root.setHapticClickListener {
 				mClicks.itemClick(position)
 			}
 

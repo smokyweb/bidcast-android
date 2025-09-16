@@ -23,6 +23,7 @@ import io.bidswipe.app.utils.Utils
 import io.bidswipe.app.utils.clr
 import io.bidswipe.app.utils.draw
 import io.bidswipe.app.utils.loadUrl
+import io.bidswipe.app.utils.setHapticClickListener
 import java.time.Instant
 import java.util.Calendar
 
@@ -61,7 +62,7 @@ class ChatAdapter(
 						}
 					}
 
-					bind.imageView.setOnClickListener {
+					bind.imageView.setHapticClickListener {
 						mClicks.itemClick(position , "image")
 					}
 
@@ -78,7 +79,7 @@ class ChatAdapter(
 						true
 					}
 
-					bind.replyView.root.setOnClickListener {
+					bind.replyView.root.setHapticClickListener {
 						mClicks.itemClick(position , "reply_click")
 					}
 
@@ -135,7 +136,7 @@ class ChatAdapter(
 						true
 					}
 
-					bind.replyView.root.setOnClickListener {
+					bind.replyView.root.setHapticClickListener {
 						mClicks.itemClick(position , "reply_click")
 					}
 

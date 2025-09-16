@@ -20,7 +20,6 @@ import io.bidswipe.app.base.BaseActivity
 import io.bidswipe.app.controller.CommentAdapter
 import io.bidswipe.app.controller.LiveMoreAdapter
 import io.bidswipe.app.controller.PromoteSheetAdapter
-import io.bidswipe.app.controller.ShareSheetAdapter
 import io.bidswipe.app.databinding.ActivityLiveShowBinding
 import io.bidswipe.app.databinding.CreateClipSheetBinding
 import io.bidswipe.app.databinding.EndShowSheetBinding
@@ -54,6 +53,7 @@ import io.bidswipe.app.utils.loadUrl
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request
 import io.bidswipe.app.utils.runSafe
+import io.bidswipe.app.utils.setHapticClickListener
 import io.bidswipe.app.utils.setMargins
 import io.bidswipe.app.utils.value
 import org.json.JSONObject
@@ -118,7 +118,7 @@ class LiveShowSocketActivity : BaseActivity() {
         bind.hostName.text = userName
         bind.hostImage.loadUrl(this , userImage)
 
-        bind.controls.setOnClickListener {
+        bind.controls.setHapticClickListener {
             hideKeyboard()
         }
 
@@ -141,23 +141,23 @@ class LiveShowSocketActivity : BaseActivity() {
             }
         }
 
-        bind.more.setOnClickListener {
+        bind.more.setHapticClickListener {
             showMoreSheet()
         }
 
-        bind.promote.setOnClickListener {
+        bind.promote.setHapticClickListener {
             showPromoteSheet()
         }
 
-        bind.clip.setOnClickListener {
+        bind.clip.setHapticClickListener {
             createClipSheet()
         }
 
-        bind.share.setOnClickListener {
+        bind.share.setHapticClickListener {
             shareSheet()
         }
 
-        bind.cutButton.setOnClickListener {
+        bind.cutButton.setHapticClickListener {
             if (chatManager != null) {
                 endShowSheet()
             } else {
@@ -166,12 +166,12 @@ class LiveShowSocketActivity : BaseActivity() {
 
         }
 
-        bind.cameraSwitch.setOnClickListener {
+        bind.cameraSwitch.setHapticClickListener {
             streamingManager?.toggleCamera()
             isFrontCamera = streamingManager?.isUsingFrontCamera() ?: true
         }
 
-        bind.shop.setOnClickListener {
+        bind.shop.setHapticClickListener {
 
             if (chatManager != null) {
                 showProductSheet()
@@ -185,7 +185,7 @@ class LiveShowSocketActivity : BaseActivity() {
 
         viewModel.generateToken(showId.request())
 
-        bind.startBtn.setOnClickListener {
+        bind.startBtn.setHapticClickListener {
 
             showConfirmationAlert()
 
@@ -435,8 +435,8 @@ class LiveShowSocketActivity : BaseActivity() {
         val productSheetBind = ProductSheetBinding.bind(layoutInflater.inflate(io.bidswipe.app.R.layout.product_sheet , null , false))
         val sheet = io.bidswipe.app.utils.Alerts.appBottomSheet(this , true , productSheetBind)
         // Expect server to push product list via a message; here we show only UI shell
-        productSheetBind.close.setOnClickListener { sheet.dismiss() }
-        productSheetBind.addBtn.setOnClickListener {
+        productSheetBind.close.setHapticClickListener { sheet.dismiss() }
+        productSheetBind.addBtn.setHapticClickListener {
             // Notify server that host set a product live
             socketManager?.sendMessage(roomID , "set_current_product" , userId , userName , userImage)
             sheet.dismiss()
@@ -447,8 +447,8 @@ class LiveShowSocketActivity : BaseActivity() {
     private fun endShowSheet() {
         val endShowSheetBind = EndShowSheetBinding.bind(layoutInflater.inflate(io.bidswipe.app.R.layout.end_show_sheet , null , false))
         val sheet = io.bidswipe.app.utils.Alerts.appBottomSheet(this , true , endShowSheetBind)
-        endShowSheetBind.close.setOnClickListener { sheet.dismiss() }
-        endShowSheetBind.endBtn.setOnClickListener {
+        endShowSheetBind.close.setHapticClickListener { sheet.dismiss() }
+        endShowSheetBind.endBtn.setHapticClickListener {
             sheet.dismiss()
             socketManager?.sendMessage(roomID , "end_show" , userId , userName , userImage)
             finishAfterTransition()
@@ -532,13 +532,13 @@ class LiveShowSocketActivity : BaseActivity() {
             moreSheetBind.muteIcon.setImageResource(draw.ic_mute)
         }
 
-        moreSheetBind.zoomInLayout.setOnClickListener {
+        moreSheetBind.zoomInLayout.setHapticClickListener {
             streamingManager?.zoomIn()
             zoomLevel = streamingManager?.getZoomLevel()?.toLong() ?: 1L
             moreSheet.dismiss()
         }
 
-        moreSheetBind.micLayout.setOnClickListener {
+        moreSheetBind.micLayout.setHapticClickListener {
             val isMuted = streamingManager?.isMicrophoneMuted() ?: false
             streamingManager?.muteMicrophone(! isMuted)
 
@@ -549,12 +549,12 @@ class LiveShowSocketActivity : BaseActivity() {
             }
         }
 
-        moreSheetBind.zoomOut.setOnClickListener {
+        moreSheetBind.zoomOut.setHapticClickListener {
             streamingManager?.zoomOut()
             moreSheet.dismiss()
         }
 
-        moreSheetBind.close.setOnClickListener {
+        moreSheetBind.close.setHapticClickListener {
             moreSheet.dismiss()
         }
 
@@ -604,7 +604,7 @@ class LiveShowSocketActivity : BaseActivity() {
             }
         })
 
-        promoteSheetBind.close.setOnClickListener {
+        promoteSheetBind.close.setHapticClickListener {
             promoteSheet.dismiss()
         }
 
@@ -626,7 +626,7 @@ class LiveShowSocketActivity : BaseActivity() {
             mList.add("")
         }
 
-        clipSheetBind.close.setOnClickListener {
+        clipSheetBind.close.setHapticClickListener {
             clipSheet.dismiss()
         }
 
@@ -649,7 +649,7 @@ class LiveShowSocketActivity : BaseActivity() {
             }
         })
 
-        shareSheetBind.close.setOnClickListener {
+        shareSheetBind.close.setHapticClickListener {
             shareSheet.dismiss()
         }*/
 
@@ -663,7 +663,7 @@ class LiveShowSocketActivity : BaseActivity() {
 
         showConfirmationSheetBind.timing.text = "Show Starts at ${Utils.getFormattedDateTime("HH:mm:ss" , "hh:mm a" , showTime)}"
 
-        showConfirmationSheetBind.startBtn.setOnClickListener {
+        showConfirmationSheetBind.startBtn.setHapticClickListener {
             showConfirmationSheet.dismiss()
             bind.loader.isVisible = true
 

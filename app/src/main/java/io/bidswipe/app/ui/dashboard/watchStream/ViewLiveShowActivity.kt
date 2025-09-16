@@ -1,6 +1,7 @@
 package io.bidswipe.app.ui.dashboard.watchStream
 
 import android.annotation.SuppressLint
+import android.net.Uri
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.viewpager2.widget.ViewPager2
@@ -89,8 +90,16 @@ class ViewLiveShowActivity : BaseActivity() {
 
 		 showId = intent.getStringExtra("showId") ?:""
 
-//		streamList.find { it.showId == showId }
+		if (showId.isNotEmpty()){
+			val data: Uri? = intent.data
+			data?.let { uri ->
+				showId = uri.getQueryParameter("showId").toString()
+				// Use the param or the path to navigate or update UI
+				log(" SHOW ID : $showId" )
+			}
+		}
 
+//		streamList.find { it.showId == showId }
 
 		log("POSITION : $pos ")
 

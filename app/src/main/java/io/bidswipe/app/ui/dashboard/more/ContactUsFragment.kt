@@ -18,6 +18,7 @@ import io.bidswipe.app.utils.finish
 import io.bidswipe.app.utils.hideKeyboard
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request
+import io.bidswipe.app.utils.setHapticClickListener
 import io.bidswipe.app.utils.showKeyboard
 import io.bidswipe.app.utils.value
 
@@ -36,14 +37,14 @@ class ContactUsFragment : BaseFragment<MoreViewModel , FragmentContactUsBinding>
 			finish()
 		}
 
-		bind.root.setOnClickListener {
+		bind.root.setHapticClickListener {
 			hideKeyboard(it)
 		}
 
 		bind.email.setText(App.profileResponse.value?.email.toString())
 
 
-		bind.sendMessage.setOnClickListener { it ->
+		bind.sendMessage.setHapticClickListener { it ->
 			when {
 
 				bind.firstName.value().isEmpty() -> {

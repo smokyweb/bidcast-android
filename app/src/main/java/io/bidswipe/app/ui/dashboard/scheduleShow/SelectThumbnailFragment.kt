@@ -23,6 +23,7 @@ import io.bidswipe.app.utils.Utils
 import io.bidswipe.app.utils.ids
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request
+import io.bidswipe.app.utils.setHapticClickListener
 
 class SelectThumbnailFragment :
 	BaseFragment<ScheduleShowViewModel , FragmentSelectThumbnailBinding>() {
@@ -76,7 +77,7 @@ class SelectThumbnailFragment :
 			 )
 		 )*/
 
-		bind.pickThumbnail.setOnClickListener {
+		bind.pickThumbnail.setHapticClickListener {
 			requestPerms(Const.STR_PERMS) { per ->
 				if (per) {
 					imageResult.launch(Utils.initCrop(mCtx , isCamera = true , isGallery = true))
@@ -97,7 +98,7 @@ class SelectThumbnailFragment :
 
 		bind.goodsRecycler.adapter = goodsAdapter
 
-		bind.continueBtn.setOnClickListener {
+		bind.continueBtn.setHapticClickListener {
 
 			when {
 

@@ -14,6 +14,7 @@ import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.model.SellModel
 import io.bidswipe.app.ui.dashboard.DashViewModel
 import io.bidswipe.app.utils.ids
+import io.bidswipe.app.utils.setHapticClickListener
 
 class ReferFriendFragment : BaseFragment<DashViewModel , FragmentReferFriendBinding>() {
 	override fun getModel() : Class<DashViewModel> = DashViewModel::class.java
@@ -63,7 +64,7 @@ class ReferFriendFragment : BaseFragment<DashViewModel , FragmentReferFriendBind
 
 		})
 
-		bind.continueBtn.setOnClickListener {
+		bind.continueBtn.setHapticClickListener {
 
 			findNavController().navigate(ids.goToCompleteYourProfileFragment)
 

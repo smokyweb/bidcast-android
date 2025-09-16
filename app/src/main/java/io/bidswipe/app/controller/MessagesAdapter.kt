@@ -11,6 +11,7 @@ import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.model.ChatModel
 import io.bidswipe.app.utils.Prefs
 import io.bidswipe.app.utils.loadUrl
+import io.bidswipe.app.utils.setHapticClickListener
 import java.text.SimpleDateFormat
 import java.time.Instant
 import java.util.Calendar
@@ -31,7 +32,7 @@ class MessagesAdapter(
 	) {
 		with(holder) {
 
-			bind.root.setOnClickListener {
+			bind.root.setHapticClickListener {
 				mClicks.itemClick(position , "")
 			}
 

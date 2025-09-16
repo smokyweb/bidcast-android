@@ -32,6 +32,7 @@ import io.bidswipe.app.utils.Utils
 import io.bidswipe.app.utils.hideKeyboard
 import io.bidswipe.app.utils.ids
 import io.bidswipe.app.utils.parse
+import io.bidswipe.app.utils.setHapticClickListener
 import io.bidswipe.app.utils.value
 
 class CreateProductFragment : BaseFragment<ScheduleShowViewModel , FragmentCreateProductBinding>() {
@@ -91,13 +92,13 @@ class CreateProductFragment : BaseFragment<ScheduleShowViewModel , FragmentCreat
 			}
 		})
 		bind.variants.adapter = variantAdapter
-		bind.addVariant.setOnClickListener {
+		bind.addVariant.setHapticClickListener {
 
 		}
-		bind.root.setOnClickListener {
+		bind.root.setHapticClickListener {
 			hideKeyboard(it)
 		}
-		bind.main.setOnClickListener {
+		bind.main.setHapticClickListener {
 			hideKeyboard(it)
 		}
 		setupProcessingCategoryDropdown()
@@ -109,19 +110,19 @@ class CreateProductFragment : BaseFragment<ScheduleShowViewModel , FragmentCreat
 			}
 		})
 
-		bind.addNewImage.setOnClickListener {
+		bind.addNewImage.setHapticClickListener {
 			uploadItemIndex = - 1
 			uploadImage()
 		}
 
 		bind.quantity.setText(currentQuantity.toString())
 
-		bind.increaseQuantity.setOnClickListener {
+		bind.increaseQuantity.setHapticClickListener {
 			currentQuantity ++
 			bind.quantity.setText(currentQuantity.toString())
 		}
 
-		bind.decreaseQuantity.setOnClickListener {
+		bind.decreaseQuantity.setHapticClickListener {
 			if (currentQuantity > 1) {
 				currentQuantity --
 				bind.quantity.setText(currentQuantity.toString())
@@ -136,7 +137,7 @@ class CreateProductFragment : BaseFragment<ScheduleShowViewModel , FragmentCreat
 			}
 		}
 
-		bind.category.setOnClickListener {
+		bind.category.setHapticClickListener {
 			showCategorySheet(categoryList , "category")
 		}
 
@@ -144,7 +145,7 @@ class CreateProductFragment : BaseFragment<ScheduleShowViewModel , FragmentCreat
 			findNavController().popBackStack()
 		}
 
-		bind.continueBtn.setOnClickListener {
+		bind.continueBtn.setHapticClickListener {
 			if (validateAndNavigate()) {
 				val imagePaths = ArrayList(imageList.filterNotNull())
 				viewModel.variantData = variantAdapter.getAllVariantData().toMutableList()
@@ -174,11 +175,11 @@ class CreateProductFragment : BaseFragment<ScheduleShowViewModel , FragmentCreat
 			}
 		}
 
-		bind.useProduct.setOnClickListener {
+		bind.useProduct.setHapticClickListener {
 			findNavController().navigate(ids.createProductAddProductFragment)
 		}
 
-		/*	bind.category.setOnClickListener {
+		/*	bind.category.setHapticClickListener {
 				bind.category.showDropDown()
 			}
 	*/
@@ -343,7 +344,7 @@ class CreateProductFragment : BaseFragment<ScheduleShowViewModel , FragmentCreat
 			selectedProcessingCategory = processingCategories[position]
 			log("Selected processing category: $selectedProcessingCategory")
 		}
-		bind.procategory.setOnClickListener {
+		bind.procategory.setHapticClickListener {
 			bind.procategory.showDropDown()
 		}
 	}
@@ -367,7 +368,7 @@ class CreateProductFragment : BaseFragment<ScheduleShowViewModel , FragmentCreat
 			log("Selected mail class: ${selectedMailClass?.label}")
 		}
 
-		bind.mailClass.setOnClickListener {
+		bind.mailClass.setHapticClickListener {
 			if (mailClassesList.isNotEmpty()) {
 				bind.mailClass.showDropDown()
 			} else {
@@ -522,7 +523,7 @@ class CreateProductFragment : BaseFragment<ScheduleShowViewModel , FragmentCreat
 		} else {
 			categorySheetBind.sheetTitle.text = "Select Product Category"
 		}
-		categorySheetBind.close.setOnClickListener {
+		categorySheetBind.close.setHapticClickListener {
 			categorySheet.dismiss()
 		}
 		categorySheet.show()

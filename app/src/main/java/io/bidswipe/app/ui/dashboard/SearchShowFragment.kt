@@ -24,6 +24,7 @@ import io.bidswipe.app.ui.dashboard.watchStream.ViewLiveShowActivity
 import io.bidswipe.app.utils.hideKeyboard
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request
+import io.bidswipe.app.utils.setHapticClickListener
 import io.bidswipe.app.utils.showKeyboard
 
 class SearchShowFragment : BaseFragment<DashViewModel , FragmentSearchShowBinding>() {
@@ -75,7 +76,7 @@ class SearchShowFragment : BaseFragment<DashViewModel , FragmentSearchShowBindin
 			findNavController().popBackStack()
 		}
 
-		bind.root.setOnClickListener {
+		bind.root.setHapticClickListener {
 			hideKeyboard(it)
 		}
 

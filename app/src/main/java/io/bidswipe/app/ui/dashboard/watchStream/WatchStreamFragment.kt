@@ -52,6 +52,7 @@ import io.bidswipe.app.utils.loadUrl
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request
 import io.bidswipe.app.utils.runSafe
+import io.bidswipe.app.utils.setHapticClickListener
 import io.bidswipe.app.utils.setMargins
 import io.bidswipe.app.utils.value
 import kotlin.math.abs
@@ -170,7 +171,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel , FragmentWatchStreamBi
 			insets
 		}
 		
-		bind.cutButton.setOnClickListener {
+		bind.cutButton.setHapticClickListener {
 			finish()
 		}
 
@@ -260,11 +261,11 @@ class WatchStreamFragment : BaseFragment<StreamViewModel , FragmentWatchStreamBi
 			}
 		}
 
-		bind.gift.setOnClickListener {
+		bind.gift.setHapticClickListener {
 			sendTipSheet()
 		}
 
-		bind.wallet.setOnClickListener {
+		bind.wallet.setHapticClickListener {
 
 			showPaymentAndAddressSheet()
 
@@ -316,7 +317,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel , FragmentWatchStreamBi
 					bind.follow.text = "Follow"
 				}
 
-				bind.follow.setOnClickListener {
+				bind.follow.setHapticClickListener {
 					viewModel.followUser(stream.seller?.id?.request())
 				}
 
@@ -340,7 +341,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel , FragmentWatchStreamBi
 					}
 				}
 
-				bind.max.setOnClickListener {
+				bind.max.setHapticClickListener {
 
 					showInputSheet()
 
@@ -562,7 +563,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel , FragmentWatchStreamBi
 		)
 		inputSheet = Alerts.appBottomSheet(mCtx , true , inputSheetBind)
 
-		inputSheetBind.submitBtn.setOnClickListener {
+		inputSheetBind.submitBtn.setHapticClickListener {
 			val ref = FireRef.LIVE_SESSIONS.child(roomID).child("highestBid")
 
 			ref.addListenerForSingleValueEvent(object : ValueEventListener {
@@ -608,7 +609,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel , FragmentWatchStreamBi
 			})
 		}
 
-		inputSheetBind.close.setOnClickListener {
+		inputSheetBind.close.setHapticClickListener {
 			inputSheet?.dismiss()
 		}
 
@@ -710,7 +711,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel , FragmentWatchStreamBi
 				defaultAddress.isVisible = false
 			}
 
-			moreIcon.setOnClickListener {
+			moreIcon.setHapticClickListener {
 				startActivity(
 					Intent(mCtx , MoreActivity::class.java).putExtra(
 						"slug" ,
@@ -741,7 +742,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel , FragmentWatchStreamBi
 				cardNumber.text = "Payment Cards Not Added"
 			}
 
-			moreIcon.setOnClickListener {
+			moreIcon.setHapticClickListener {
 				startActivity(
 					Intent(mCtx , MoreActivity::class.java).putExtra(
 						"slug" ,
@@ -751,7 +752,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel , FragmentWatchStreamBi
 			}
 		}
 
-		paymentAddressBind.close.setOnClickListener {
+		paymentAddressBind.close.setHapticClickListener {
 			makeOfferSheet.dismiss()
 		}
 
@@ -819,7 +820,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel , FragmentWatchStreamBi
 
 		val sendTipSheet = Alerts.appBottomSheet(mCtx, true, sendTipSheetBind)
 
-		sendTipSheetBind.close.setOnClickListener {
+		sendTipSheetBind.close.setHapticClickListener {
 			sendTipSheet.dismiss()
 		}
 

@@ -22,6 +22,7 @@ import io.bidswipe.app.utils.finish
 import io.bidswipe.app.utils.loadUrl
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request
+import io.bidswipe.app.utils.setHapticClickListener
 
 class OrderStatusFragment : BaseFragment<ProductViewModel , FragmentOrderStatusBinding>() {
 
@@ -50,11 +51,11 @@ class OrderStatusFragment : BaseFragment<ProductViewModel , FragmentOrderStatusB
 
 		bind.shippingRecycler.adapter = adapter
 
-		bind.homeBtn.setOnClickListener {
+		bind.homeBtn.setHapticClickListener {
 			finish()
 		}
 
-		bind.receipt.setOnClickListener {
+		bind.receipt.setHapticClickListener {
 
 			bind.loader.isVisible = true
 

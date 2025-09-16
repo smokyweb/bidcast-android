@@ -17,6 +17,7 @@ import io.bidswipe.app.utils.asCapital
 import io.bidswipe.app.utils.asMoney
 import io.bidswipe.app.utils.dpToPx
 import io.bidswipe.app.utils.loadUrl
+import io.bidswipe.app.utils.setHapticClickListener
 
 class FirebaseProductAdapter(
 	val mList : MutableList<LiveShowModel.Product?> , val mClicks : RecyclerClicks ,
@@ -32,7 +33,7 @@ class FirebaseProductAdapter(
 	) {
 		with(holder) {
 
-			bind.root.setOnClickListener {
+			bind.root.setHapticClickListener {
 				mClicks.itemClick(position , "select")
 			}
 

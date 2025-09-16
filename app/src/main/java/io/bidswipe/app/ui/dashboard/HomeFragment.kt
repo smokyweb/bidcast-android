@@ -33,6 +33,7 @@ import io.bidswipe.app.utils.hideKeyboard
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request
 import io.bidswipe.app.utils.runSafe
+import io.bidswipe.app.utils.setHapticClickListener
 import io.bidswipe.app.utils.value
 
 @SuppressLint("NotifyDataSetChanged")
@@ -98,15 +99,15 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		super.onViewCreated(view, savedInstanceState)
 
-		bind.header.setOnClickListener {
+		bind.header.setHapticClickListener {
 			hideKeyboard(it)
 		}
 
-		bind.main.setOnClickListener {
+		bind.main.setHapticClickListener {
 			hideKeyboard(it)
 		}
 
-		bind.recycler.setOnClickListener {
+		bind.recycler.setHapticClickListener {
 			hideKeyboard(it)
 		}
 
@@ -179,9 +180,9 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
 
 		selectTab(bind.live, true)
 
-		bind.live.setOnClickListener { selectTab(it as TextView, false) }
-		bind.popular.setOnClickListener { selectTab(it as TextView, false) }
-		bind.comingSoon.setOnClickListener { selectTab(it as TextView, false) }
+		bind.live.setHapticClickListener { selectTab(it as TextView, false) }
+		bind.popular.setHapticClickListener { selectTab(it as TextView, false) }
+		bind.comingSoon.setHapticClickListener { selectTab(it as TextView, false) }
 
 		bind.chipGroup.setOnCheckedStateChangeListener { chipGroup, _ ->
 			runSafe {

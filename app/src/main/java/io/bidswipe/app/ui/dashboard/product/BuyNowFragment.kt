@@ -34,6 +34,7 @@ import io.bidswipe.app.utils.ids
 import io.bidswipe.app.utils.loadUrl
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request
+import io.bidswipe.app.utils.setHapticClickListener
 import io.bidswipe.app.utils.value
 
 class BuyNowFragment : BaseFragment<ProductViewModel , FragmentBuyNowBinding>() {
@@ -77,7 +78,7 @@ class BuyNowFragment : BaseFragment<ProductViewModel , FragmentBuyNowBinding>() 
 			findNavController().popBackStack()
 		}
 
-		bind.changeAddress.setOnClickListener {
+		bind.changeAddress.setHapticClickListener {
 			if (addressList.isEmpty()) {
 				addAddressLauncher.launch(
 					Intent(mCtx , MoreActivity::class.java).putExtra(
@@ -90,7 +91,7 @@ class BuyNowFragment : BaseFragment<ProductViewModel , FragmentBuyNowBinding>() 
 			}
 		}
 
-		bind.changePayment.setOnClickListener {
+		bind.changePayment.setHapticClickListener {
 
 			if (cardList.isEmpty()) {
 				addCardLauncher.launch(mCtx.goToAddCard("buyNow"))
@@ -111,7 +112,7 @@ class BuyNowFragment : BaseFragment<ProductViewModel , FragmentBuyNowBinding>() 
 
 		bind.productImg.loadUrl(mCtx , viewModel.product?.images?.get(0).toString())
 
-		bind.confirmButton.setOnClickListener {
+		bind.confirmButton.setHapticClickListener {
 
 			when {
 
@@ -401,7 +402,7 @@ class BuyNowFragment : BaseFragment<ProductViewModel , FragmentBuyNowBinding>() 
 				}
 			})
 
-		paymentSheetBind.close.setOnClickListener {
+		paymentSheetBind.close.setHapticClickListener {
 			paymentSheet.dismiss()
 		}
 
@@ -448,7 +449,7 @@ class BuyNowFragment : BaseFragment<ProductViewModel , FragmentBuyNowBinding>() 
 				}
 			})
 
-		addressSheetBind.close.setOnClickListener {
+		addressSheetBind.close.setHapticClickListener {
 
 
 			addressSheet.hide()

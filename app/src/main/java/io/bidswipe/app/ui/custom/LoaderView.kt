@@ -9,6 +9,7 @@ import androidx.core.view.isVisible
 import com.github.ybq.android.spinkit.SpinKitView
 import io.bidswipe.app.utils.ids
 import io.bidswipe.app.utils.layout
+import io.bidswipe.app.utils.setHapticClickListener
 import io.bidswipe.app.utils.styleable
 
 

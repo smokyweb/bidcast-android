@@ -6,6 +6,7 @@ import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseAdapter
 import io.bidswipe.app.databinding.StatusItemBinding
 import io.bidswipe.app.interfaces.RecyclerClicks
+import io.bidswipe.app.utils.setHapticClickListener
 
 class StatusAdapter(
 	mList : MutableList<String> , val mClicks : RecyclerClicks ,
@@ -25,7 +26,7 @@ class StatusAdapter(
 			bind.title.text = "Marketplace Vender Status"
 			bind.subTitle.text = "Seller Rating: 4.8/5"
 			bind.icon.setImageResource(R.drawable.ic_shop)
-			bind.root.setOnClickListener {
+			bind.root.setHapticClickListener {
 				mClicks.itemClick(position , item)
 			}
 

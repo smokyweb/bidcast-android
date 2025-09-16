@@ -8,6 +8,7 @@ import io.bidswipe.app.base.BaseAdapter
 import io.bidswipe.app.databinding.GridItemBinding
 import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.model.MoreModel
+import io.bidswipe.app.utils.setHapticClickListener
 
 class GridAdapter(
 	mList : MutableList<MoreModel> , val mClicks : RecyclerClicks ,
@@ -32,7 +33,7 @@ class GridAdapter(
 				)
 			)
 
-			bind.root.setOnClickListener {
+			bind.root.setHapticClickListener {
 				mClicks.itemClick(position)
 			}
 

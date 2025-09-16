@@ -13,6 +13,7 @@ import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.model.FormatModel
 import io.bidswipe.app.utils.draw
 import io.bidswipe.app.utils.ids
+import io.bidswipe.app.utils.setHapticClickListener
 
 class ChooseSalesFormatFragment : BaseFragment<ScheduleShowViewModel , FragmentChooseSalesFormatBinding>() {
 	override fun getModel() : Class<ScheduleShowViewModel> = ScheduleShowViewModel::class.java
@@ -59,7 +60,7 @@ class ChooseSalesFormatFragment : BaseFragment<ScheduleShowViewModel , FragmentC
 
 		bind.recycler.adapter = adapter
 
-		bind.continueBtn.setOnClickListener {
+		bind.continueBtn.setHapticClickListener {
 			val selectedFormat = formatList.firstOrNull { it.selected == true }?.title ?: ""
 			val bundle = productData
 			bundle?.putString("salesFormat" , selectedFormat)

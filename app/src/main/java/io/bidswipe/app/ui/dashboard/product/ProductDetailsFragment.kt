@@ -29,6 +29,7 @@ import io.bidswipe.app.utils.ids
 import io.bidswipe.app.utils.loadUrl
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request
+import io.bidswipe.app.utils.setHapticClickListener
 import io.bidswipe.app.utils.value
 
 class ProductDetailsFragment : BaseFragment<ProductViewModel, FragmentProductDetailsBinding>() {
@@ -74,13 +75,13 @@ class ProductDetailsFragment : BaseFragment<ProductViewModel, FragmentProductDet
             menu.show()
         }
 
-        bind.buyNow.setOnClickListener {
+        bind.buyNow.setHapticClickListener {
 
             findNavController().navigate(ids.goToBuyNowFragment)
 
         }
 
-        bind.makeOffer.setOnClickListener {
+        bind.makeOffer.setHapticClickListener {
             showOfferSheet()
         }
 
@@ -270,11 +271,11 @@ class ProductDetailsFragment : BaseFragment<ProductViewModel, FragmentProductDet
                 }
             })
 
-        makeOfferSheetBind.close.setOnClickListener {
+        makeOfferSheetBind.close.setHapticClickListener {
             makeOfferSheet.dismiss()
         }
 
-        makeOfferSheetBind.select.setOnClickListener {
+        makeOfferSheetBind.select.setHapticClickListener {
 
             if (makeOfferSheetBind.customOffer.value().isEmpty()) {
                 Alerts.error(mCtx, "Please Enter Offer Amount")

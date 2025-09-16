@@ -44,6 +44,6 @@ data class SettingListResponse(
 		@SerializedName("sync_phone_contacts")
 		val syncPhoneContacts : Boolean? ,
 		@SerializedName("user_id")
-		val userId : Int? ,
+		val userId : Int?
 	)
 }

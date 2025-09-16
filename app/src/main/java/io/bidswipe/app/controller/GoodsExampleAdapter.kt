@@ -5,6 +5,7 @@ import android.view.ViewGroup
 import io.bidswipe.app.base.BaseAdapter
 import io.bidswipe.app.databinding.GoodsItemBinding
 import io.bidswipe.app.utils.loadUrl
+import io.bidswipe.app.utils.setHapticClickListener
 
 class GoodsExampleAdapter(
 	mList : MutableList<String?> ,
@@ -20,7 +21,7 @@ class GoodsExampleAdapter(
 	) {
 		with(holder) {
 
-			bind.root.setOnClickListener {
+			bind.root.setHapticClickListener {
 
 			}
 

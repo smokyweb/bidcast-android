@@ -14,6 +14,7 @@ import io.bidswipe.app.utils.Utils
 import io.bidswipe.app.utils.asCapital
 import io.bidswipe.app.utils.asMoney
 import io.bidswipe.app.utils.loadUrl
+import io.bidswipe.app.utils.setHapticClickListener
 
 class BidsAdapter(
 	mList : MutableList<FetchBidResponse.Data?> , val mClicks : RecyclerClicks ,
@@ -59,7 +60,7 @@ class BidsAdapter(
 				append((item?.bidPrice ?: 0).toString().asMoney())
 			}
 
-			bind.root.setOnClickListener {
+			bind.root.setHapticClickListener {
 				mClicks.itemClick(position)
 			}
 			bind.subTitle.text = buildSpannedString {

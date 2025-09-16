@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
+import io.bidswipe.app.App
 import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseFragment
 import io.bidswipe.app.databinding.FragmentPreferencesBinding
@@ -15,8 +16,8 @@ import io.bidswipe.app.network.Resource
 import io.bidswipe.app.utils.finish
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request
+import io.bidswipe.app.utils.setHapticClickListener
 import java.util.Locale
-
 
 class PreferencesFragment : BaseFragment<MoreViewModel , FragmentPreferencesBinding>() {
 	override fun getModel() : Class<MoreViewModel> = MoreViewModel::class.java
@@ -55,7 +56,7 @@ class PreferencesFragment : BaseFragment<MoreViewModel , FragmentPreferencesBind
 		val draw = ContextCompat.getDrawable(mCtx , R.drawable.card_8)
 		bind.country.setDropDownBackgroundDrawable(draw)
 
-		bind.country.setOnClickListener {
+		bind.country.setHapticClickListener {
 			bind.country.showDropDown()
 		}
 
@@ -84,7 +85,6 @@ class PreferencesFragment : BaseFragment<MoreViewModel , FragmentPreferencesBind
 //					bind.syncPhoneContact.isChecked = it.value.data?.syncPhoneContacts == true
 //					bind.suggestAccount.isChecked = it.value.data?.suggestMyAccount == true
 					bind.hapticFeedback.isChecked = it.value.data?.hapticFeedback == true
-
 				}
 
 				is Resource.Error -> {
@@ -132,6 +132,7 @@ class PreferencesFragment : BaseFragment<MoreViewModel , FragmentPreferencesBind
 
 	private fun callAPI() {
 		bind.loader.isVisible = true
+		App.getProfile()
 		viewModel.settingsStore(
 			bind.country.text.toString().request() ,
 			if (bind.directMessages.isChecked) "1".request() else "0".request() ,

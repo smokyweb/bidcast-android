@@ -9,6 +9,7 @@ import io.bidswipe.app.databinding.FaqItemBinding
 import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.network.response.FAQResponse
 import io.bidswipe.app.utils.runSafe
+import io.bidswipe.app.utils.setHapticClickListener
 
 class FAQAdapter(mList : MutableList<FAQResponse.Data?> , private val mClicks : RecyclerClicks) :
 	BaseAdapter<FAQResponse.Data? , FaqItemBinding>(mList) {
@@ -30,7 +31,7 @@ class FAQAdapter(mList : MutableList<FAQResponse.Data?> , private val mClicks : 
 				bind.question.text = item?.question
 				bind.answer.text = Html.fromHtml(item?.answer)
 
-				bind.root.setOnClickListener {
+				bind.root.setHapticClickListener {
 					mClicks.itemClick(position)
 				}
 

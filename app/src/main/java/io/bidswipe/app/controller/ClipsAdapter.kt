@@ -4,6 +4,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import io.bidswipe.app.base.BaseAdapter
 import io.bidswipe.app.databinding.ClipsItemBinding
+import io.bidswipe.app.utils.setHapticClickListener
 
 class ClipsAdapter(
 	mList : List<String> ,
@@ -20,10 +21,10 @@ class ClipsAdapter(
 		item : String? ,
 	) {
 		with(holder) {
-			bind.root.setOnClickListener {
+			bind.root.setHapticClickListener {
 				onItemClick("" , position)
 			}
-			bind.playButton.setOnClickListener {
+			bind.playButton.setHapticClickListener {
 				onPlayClick("" , position)
 			}
 		}

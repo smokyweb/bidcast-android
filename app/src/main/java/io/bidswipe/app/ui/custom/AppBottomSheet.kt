@@ -14,6 +14,7 @@ import io.bidswipe.app.utils.asCapital
 import io.bidswipe.app.utils.clr
 import io.bidswipe.app.utils.layout
 import io.bidswipe.app.utils.runSafe
+import io.bidswipe.app.utils.setHapticClickListener
 
 enum class AlertType {
 	SUCCESS ,
@@ -108,8 +109,8 @@ class AppBottomSheet(
 		bind.primaryBtn.text = primaryBtnText.asCapital()
 		bind.secondaryBtn.text = secondaryBtnText.asCapital()
 
-		bind.primaryBtn.setOnClickListener { clicks.primaryClick(this) }
-		bind.secondaryBtn.setOnClickListener { clicks.secondaryClick(this) }
+		bind.primaryBtn.setHapticClickListener { clicks.primaryClick(this) }
+		bind.secondaryBtn.setHapticClickListener { clicks.secondaryClick(this) }
 	}
 
 	private fun MaterialButton.setErrorStyle(isOutline : Boolean = false) {

@@ -12,6 +12,7 @@ import io.bidswipe.app.network.response.GetMyShowResponse
 import io.bidswipe.app.utils.asCapital
 import io.bidswipe.app.utils.draw
 import io.bidswipe.app.utils.loadUrl
+import io.bidswipe.app.utils.setHapticClickListener
 
 class HomeAdapter(
 	var mList: MutableList<GetMyShowResponse.Data?>, val mClick: RecyclerClicks,
@@ -26,11 +27,11 @@ class HomeAdapter(
 	) {
 		with(holder) {
 
-			bind.userInfo.setOnClickListener {
+			bind.userInfo.setHapticClickListener {
 				mClick.itemClick(position, "user")
 			}
 
-			bind.thumbnail.setOnClickListener {
+			bind.thumbnail.setHapticClickListener {
 				mClick.itemClick(position, "viewShow")
 			}
 

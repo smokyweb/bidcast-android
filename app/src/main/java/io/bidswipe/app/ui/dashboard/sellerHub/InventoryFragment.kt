@@ -25,6 +25,7 @@ import io.bidswipe.app.utils.finish
 import io.bidswipe.app.utils.hideKeyboard
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request
+import io.bidswipe.app.utils.setHapticClickListener
 import io.bidswipe.app.utils.toListProduct
 
 @SuppressLint("NotifyDataSetChanged")
@@ -62,11 +63,11 @@ class InventoryFragment : BaseFragment<SellerHubViewModel , FragmentInventoryBin
 		if (isSelectionMode) {
 			bind.tabs.isVisible = false
 			bind.addNewProduct.text = "Add Selected"
-			bind.addNewProduct.setOnClickListener {
+			bind.addNewProduct.setHapticClickListener {
 				val selectedItems = itemList.filter { it?.selected == true }
 				if (selectedItems.isEmpty()) {
 					Toast.makeText(mCtx , "Please select at least one product" , Toast.LENGTH_SHORT).show()
-					return@setOnClickListener
+					return@setHapticClickListener
 				}
 
 				val selectedList = ArrayList<GetMyInventoryResponse.Data>()
@@ -81,7 +82,7 @@ class InventoryFragment : BaseFragment<SellerHubViewModel , FragmentInventoryBin
 
 		} else {
 			bind.addNewProduct.text = getString(R.string.new_product)
-			bind.addNewProduct.setOnClickListener {
+			bind.addNewProduct.setHapticClickListener {
 				startActivity(mCtx.toListProduct())
 			}
 
@@ -106,10 +107,10 @@ class InventoryFragment : BaseFragment<SellerHubViewModel , FragmentInventoryBin
 			finish()
 		}
 
-		bind.main.setOnClickListener {
+		bind.main.setHapticClickListener {
 			hideKeyboard(it)
 		}
-		bind.root.setOnClickListener {
+		bind.root.setHapticClickListener {
 			hideKeyboard(it)
 		}
 		bind.recycler.adapter = adapter

@@ -6,6 +6,7 @@ import io.bidswipe.app.base.BaseAdapter
 import io.bidswipe.app.databinding.SelcetableCardItemBinding
 import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.network.response.GetPaymentCardsResponse
+import io.bidswipe.app.utils.setHapticClickListener
 
 class SelectPaymentCardAdapter(
 	mList : MutableList<GetPaymentCardsResponse.Data.PaymentProfile?> , val mClicks : RecyclerClicks ,
@@ -21,7 +22,7 @@ class SelectPaymentCardAdapter(
 	) {
 		with(holder) {
 
-			bind.root.setOnClickListener {
+			bind.root.setHapticClickListener {
 				mClicks.itemClick(position)
 			}
 
@@ -31,7 +32,7 @@ class SelectPaymentCardAdapter(
 
 			bind.selectBtn.isChecked = item?.selected == true
 
-			bind.root.setOnClickListener {
+			bind.root.setHapticClickListener {
 
 				mClicks.itemClick(position)
 

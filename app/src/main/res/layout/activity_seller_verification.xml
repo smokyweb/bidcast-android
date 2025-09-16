@@ -171,34 +171,38 @@
                             app:strokeColor="@color/outline"
                             app:strokeWidth="1dp">
 
-                            <LinearLayout
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:background="@color/surface"
-                                android:orientation="vertical"
-                                android:padding="@dimen/margin">
-
-                                <androidx.appcompat.widget.AppCompatImageView
-                                    android:layout_width="32dp"
-                                    android:layout_height="32dp"
-                                    android:layout_gravity="center"
-                                    android:src="@drawable/ic_id_card" />
-
-                                <TextView
-                                    style="@style/BodyMedium"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:gravity="center"
-                                    android:text="@string/id_card"
-                                    android:textColor="@color/tertiary" />
-
-                            </LinearLayout>
-
-
                             <androidx.constraintlayout.widget.ConstraintLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1">
+
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="0dp"
+                                    android:background="@color/surface"
+                                    android:orientation="vertical"
+                                    android:padding="@dimen/margin"
+                                    android:gravity="center"
+                                    app:layout_constraintBottom_toBottomOf="parent"
+                                    app:layout_constraintDimensionRatio="1:1"
+                                    app:layout_constraintTop_toTopOf="parent" >
+
+                                    <androidx.appcompat.widget.AppCompatImageView
+                                        android:layout_width="48dp"
+                                        android:layout_height="48dp"
+                                        android:layout_gravity="center"
+                                        android:src="@drawable/ic_id_card" />
+
+                                    <TextView
+                                        style="@style/BodyMedium"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:gravity="center"
+                                        android:text="@string/id_card"
+                                        android:textColor="@color/tertiary" />
+
+                                </LinearLayout>
+
 
                                 <androidx.appcompat.widget.AppCompatImageView
                                     android:id="@+id/cardImage"
@@ -227,35 +231,41 @@
                             app:strokeColor="@color/outline"
                             app:strokeWidth="1dp">
 
-                            <LinearLayout
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:background="@color/surface"
-                                android:orientation="vertical"
-                                android:padding="@dimen/margin">
-
-                                <androidx.appcompat.widget.AppCompatImageView
-                                    android:layout_width="32dp"
-                                    android:layout_height="32dp"
-                                    android:layout_gravity="center"
-                                    android:src="@drawable/ic_person_outlined"
-                                    app:tint="@color/outlineVariant" />
-
-                                <TextView
-                                    android:id="@+id/discount"
-                                    style="@style/BodyMedium"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:gravity="center"
-                                    android:text="@string/selfie"
-                                    android:textColor="@color/tertiary" />
-
-                            </LinearLayout>
 
                             <androidx.constraintlayout.widget.ConstraintLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1">
+
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="0dp"
+                                    android:background="@color/surface"
+                                    android:orientation="vertical"
+                                    android:gravity="center"
+                                    app:layout_constraintBottom_toBottomOf="parent"
+                                    app:layout_constraintDimensionRatio="1:1"
+                                    app:layout_constraintTop_toTopOf="parent"
+                                    android:padding="@dimen/margin">
+
+                                    <androidx.appcompat.widget.AppCompatImageView
+                                        android:layout_width="48dp"
+                                        android:layout_height="48dp"
+                                        android:layout_gravity="center"
+                                        android:src="@drawable/ic_person_outlined"
+                                        app:tint="@color/outlineVariant" />
+
+                                    <TextView
+                                        android:id="@+id/discount"
+                                        style="@style/BodyMedium"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:gravity="center"
+                                        android:text="@string/selfie"
+                                        android:textColor="@color/tertiary" />
+
+                                </LinearLayout>
+
 
                                 <androidx.appcompat.widget.AppCompatImageView
                                     android:id="@+id/selfie"

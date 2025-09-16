@@ -10,6 +10,7 @@ import com.permissionx.guolindev.PermissionX
 import com.zeugmasolutions.localehelper.LocaleAwareCompatActivity
 import io.bidswipe.app.utils.Alerts
 import dagger.hilt.android.AndroidEntryPoint
+import io.bidswipe.app.App
 import io.bidswipe.app.utils.Prefs
 
 @Suppress("PropertyName")
@@ -29,7 +30,10 @@ abstract class BaseActivity : LocaleAwareCompatActivity() {
         userName = Prefs(this).getUserData()?.name.toString()
         userImage = Prefs(this).getUserData()?.profileImage ?: ""
 
-        applyHapticToAllClickableViews(window.decorView)
+        if (App.profileResponse.value?.preferences?.hapticFeedback == true){
+            applyHapticToAllClickableViews(window.decorView)
+        }
+
 
         /*token = Prefs(this).token()
         userId = Prefs(this).getUserData()?.id.toString()

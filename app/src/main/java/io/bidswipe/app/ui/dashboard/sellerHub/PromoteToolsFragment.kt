@@ -15,6 +15,7 @@ import io.bidswipe.app.network.response.GetPromoteToolsResponse
 import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.utils.finish
 import io.bidswipe.app.utils.parse
+import io.bidswipe.app.utils.setHapticClickListener
 import io.bidswipe.app.utils.toTutorials
 
 class PromoteToolsFragment : BaseFragment<SellerHubViewModel , FragmentPromoteToolsBinding>() {
@@ -44,7 +45,7 @@ class PromoteToolsFragment : BaseFragment<SellerHubViewModel , FragmentPromoteTo
 		gridAdapter = PromoteFeatureAdapter(gridList , mClick)
 		bind.gridRecycler.adapter = gridAdapter
 
-		bind.startLearning.setOnClickListener {
+		bind.startLearning.setHapticClickListener {
 			startActivity(mCtx.toTutorials().putExtra("type" , "promoteTools"))
 		}
 

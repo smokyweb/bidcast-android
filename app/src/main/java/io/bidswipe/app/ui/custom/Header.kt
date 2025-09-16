@@ -10,6 +10,7 @@ import androidx.core.content.res.use
 import androidx.core.view.isVisible
 import io.bidswipe.app.databinding.HeaderViewBinding
 import io.bidswipe.app.utils.draw
+import io.bidswipe.app.utils.setHapticClickListener
 import io.bidswipe.app.utils.styleable
 
 class Header @JvmOverloads constructor(

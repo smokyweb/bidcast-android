@@ -6,6 +6,7 @@ import io.bidswipe.app.base.BaseAdapter
 import io.bidswipe.app.databinding.MoreOptionItemBinding
 import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.model.LiveMoreOption
+import io.bidswipe.app.utils.setHapticClickListener
 
 class LiveMoreAdapter(
 	mList : MutableList<LiveMoreOption> , val mClicks : RecyclerClicks ,
@@ -24,7 +25,7 @@ class LiveMoreAdapter(
 			bind.title.text = item?.name
 			bind.icon.setImageResource(item?.image !!)
 
-			bind.root.setOnClickListener {
+			bind.root.setHapticClickListener {
 				mClicks.itemClick(position , item.name)
 			}
 

@@ -5,6 +5,7 @@ import android.view.ViewGroup
 import io.bidswipe.app.base.BaseAdapter
 import io.bidswipe.app.databinding.TipsItemBinding
 import io.bidswipe.app.interfaces.RecyclerClicks
+import io.bidswipe.app.utils.setHapticClickListener
 
 class TipsAdapter(
 	mList : MutableList<String> , val mClicks : RecyclerClicks ,
@@ -20,7 +21,7 @@ class TipsAdapter(
 	) {
 		with(holder) {
 
-			bind.root.setOnClickListener {
+			bind.root.setHapticClickListener {
 				mClicks.itemClick(position)
 			}
 

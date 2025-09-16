@@ -21,6 +21,7 @@ import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.utils.asMoney
 import io.bidswipe.app.utils.finish
 import io.bidswipe.app.utils.parse
+import io.bidswipe.app.utils.setHapticClickListener
 
 class AffiliateProgramFragment : BaseFragment<SellerHubViewModel , FragmentAffiliateProgramBinding>() {
 
@@ -50,7 +51,7 @@ class AffiliateProgramFragment : BaseFragment<SellerHubViewModel , FragmentAffil
 
 		bind.recycler.adapter = adapter
 
-		bind.copyBtn.setOnClickListener {
+		bind.copyBtn.setHapticClickListener {
 
 			val clipboard = context?.getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
 			val clip = ClipData.newPlainText("label" , bind.referralCode.text)
@@ -58,7 +59,7 @@ class AffiliateProgramFragment : BaseFragment<SellerHubViewModel , FragmentAffil
 
 		}
 
-		bind.share.setOnClickListener {
+		bind.share.setHapticClickListener {
 			val shareIntent = Intent(Intent.ACTION_SEND).apply {
 				type = "Text/*"
 				putExtra(Intent.EXTRA_TEXT , "https://play.google.com/store/apps/details?id=io.bidswipe.app&referrer=${bind.referralCode.text}")

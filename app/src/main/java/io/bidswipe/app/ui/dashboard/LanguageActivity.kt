@@ -10,6 +10,7 @@ import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.utils.Const
 import io.bidswipe.app.utils.Prefs
 import io.bidswipe.app.utils.bind
+import io.bidswipe.app.utils.setHapticClickListener
 
 class LanguageActivity : BaseActivity() {
 
@@ -40,14 +41,14 @@ class LanguageActivity : BaseActivity() {
 			finish()
 		}
 
-		bind.skip.setOnClickListener {
+		bind.skip.setHapticClickListener {
 			updateLocale(selectedLang.locale)
 			Prefs(this@LanguageActivity).putString(Prefs.LANGUAGE , selectedLang.title)
 			Prefs(this@LanguageActivity).putString(Prefs.LOCALE_LANGUAGE , selectedLang.locale.language)
 			finish()
 		}
 
-		bind.select.setOnClickListener {
+		bind.select.setHapticClickListener {
 			finish()
 		}
 

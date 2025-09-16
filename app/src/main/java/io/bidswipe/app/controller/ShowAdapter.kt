@@ -9,6 +9,7 @@ import io.bidswipe.app.base.BaseAdapter
 import io.bidswipe.app.databinding.ShowItemBinding
 import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.network.response.GetPrepareStepResponse
+import io.bidswipe.app.utils.setHapticClickListener
 
 class ShowAdapter(
 	mList : MutableList<GetPrepareStepResponse.Data?> , val mClicks : RecyclerClicks ,
@@ -24,11 +25,11 @@ class ShowAdapter(
 	) {
 		with(holder) {
 
-			bind.root.setOnClickListener {
+			bind.root.setHapticClickListener {
 				mClicks.itemClick(position)
 			}
 
-			bind.setSchedule.setOnClickListener {
+			bind.setSchedule.setHapticClickListener {
 				mClicks.itemClick(position , "schedule")
 			}
 

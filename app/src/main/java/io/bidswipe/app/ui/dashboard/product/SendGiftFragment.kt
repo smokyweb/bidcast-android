@@ -23,6 +23,7 @@ import io.bidswipe.app.utils.ids
 import io.bidswipe.app.utils.layout
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request
+import io.bidswipe.app.utils.setHapticClickListener
 import io.bidswipe.app.utils.showKeyboard
 import io.bidswipe.app.utils.value
 
@@ -59,7 +60,7 @@ class SendGiftFragment : BaseFragment<ProductViewModel , FragmentSendGiftBinding
 			findNavController().popBackStack()
 		}
 
-		bind.root.setOnClickListener {
+		bind.root.setHapticClickListener {
 			hideKeyboard(it)
 		}
 
@@ -99,7 +100,7 @@ class SendGiftFragment : BaseFragment<ProductViewModel , FragmentSendGiftBinding
 		addTexWatcher()
 
 
-		bind.continueBtn.setOnClickListener {
+		bind.continueBtn.setHapticClickListener {
 
 			when {
 

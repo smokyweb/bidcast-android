@@ -14,6 +14,7 @@ import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.network.response.GetSubCategoriesResponse
 import io.bidswipe.app.ui.dashboard.DashViewModel
+import io.bidswipe.app.utils.setHapticClickListener
 import io.bidswipe.app.utils.toDash
 
 class SubCategoryFragment : BaseFragment<DashViewModel , FragmentSubcategoryBinding>() {
@@ -45,10 +46,10 @@ class SubCategoryFragment : BaseFragment<DashViewModel , FragmentSubcategoryBind
 		subCategoryRecyclerAdapter = SubCategoryRecyclerAdapter(subCategoryList , categoryClicks)
 		bind.recyclerView.adapter = subCategoryRecyclerAdapter
 
-		bind.header.setOnClickListener {
+		bind.header.setHapticClickListener {
 			findNavController().popBackStack()
 		}
-		bind.confirmButton.setOnClickListener {
+		bind.confirmButton.setHapticClickListener {
 			val selectedSubCategories = subCategoryList.filter { it?.subcategories?.filter { it1 -> it1?.isSelected == true }?.isNotEmpty() == true }.toList()
 			if (selectedSubCategories.isNotEmpty()) {
 				val selectedCategoryIds = viewModel.selectedCategories.mapNotNull { it.id }

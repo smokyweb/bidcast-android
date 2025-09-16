@@ -6,6 +6,7 @@ import io.bidswipe.app.base.BaseAdapter
 import io.bidswipe.app.databinding.CategoryListItemBinding
 import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.network.response.GetCategoryResponse
+import io.bidswipe.app.utils.setHapticClickListener
 
 class CategoryListAdapter(
 	mList : MutableList<GetCategoryResponse.Data?> , val mClicks : RecyclerClicks ,
@@ -21,7 +22,7 @@ class CategoryListAdapter(
 	) {
 		with(holder) {
 
-			bind.root.setOnClickListener {
+			bind.root.setHapticClickListener {
 				mClicks.itemClick(position)
 			}
 

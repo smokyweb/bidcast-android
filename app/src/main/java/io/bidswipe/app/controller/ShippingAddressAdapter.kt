@@ -9,6 +9,7 @@ import io.bidswipe.app.base.BaseAdapter
 import io.bidswipe.app.databinding.ShippingAddressItemBinding
 import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.network.response.GetShippingAddressResponse
+import io.bidswipe.app.utils.setHapticClickListener
 
 class ShippingAddressAdapter(
 	mList : MutableList<GetShippingAddressResponse.Data?> , val mClicks : RecyclerClicks ,
@@ -24,7 +25,7 @@ class ShippingAddressAdapter(
 	) {
 		with(holder) {
 
-			bind.root.setOnClickListener {
+			bind.root.setHapticClickListener {
 				mClicks.itemClick(position)
 			}
 
@@ -34,7 +35,7 @@ class ShippingAddressAdapter(
 
 			bind.defaultAddress.isVisible = item?.isDefault == true
 
-			bind.moreIcon.setOnClickListener { view ->
+			bind.moreIcon.setHapticClickListener { view ->
 				val popup = PopupMenu(view.context , view)
 				popup.inflate(R.menu.card_action_menu)  // Your menu XML
 				popup.setOnMenuItemClickListener { menuItem ->

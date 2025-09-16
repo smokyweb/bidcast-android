@@ -23,6 +23,7 @@ import io.bidswipe.app.utils.finish
 import io.bidswipe.app.utils.hideKeyboard
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request
+import io.bidswipe.app.utils.setHapticClickListener
 import io.bidswipe.app.utils.showKeyboard
 import io.bidswipe.app.utils.value
 
@@ -51,10 +52,10 @@ class AddShippingAddressFragment :
 				findNavController().popBackStack()
 			}
 		}
-		bind.root.setOnClickListener {
+		bind.root.setHapticClickListener {
 			hideKeyboard(it)
 		}
-		bind.rootView.setOnClickListener {
+		bind.rootView.setHapticClickListener {
 			hideKeyboard(it)
 		}
 
@@ -62,11 +63,11 @@ class AddShippingAddressFragment :
 
 		}
 
-		bind.state.setOnClickListener {
+		bind.state.setHapticClickListener {
 			bind.state.showDropDown()
 		}
 
-		bind.addAddress.setOnClickListener {
+		bind.addAddress.setHapticClickListener {
 
 			when {
 

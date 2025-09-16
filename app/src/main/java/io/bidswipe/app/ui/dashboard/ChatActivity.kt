@@ -50,6 +50,7 @@ import io.bidswipe.app.utils.hideKeyboard
 import io.bidswipe.app.utils.loadUrl
 import io.bidswipe.app.utils.request
 import io.bidswipe.app.utils.runSafe
+import io.bidswipe.app.utils.setHapticClickListener
 import io.bidswipe.app.utils.value
 import jp.wasabeef.recyclerview.animators.SlideInUpAnimator
 import kotlinx.coroutines.delay
@@ -131,7 +132,7 @@ class ChatActivity : BaseActivity() {
 			hideKeyboard()
 			return@setOnTouchListener true
 		}
-		bind.header.setOnClickListener {
+		bind.header.setHapticClickListener {
 			hideKeyboard()
 		}
 
@@ -239,8 +240,8 @@ class ChatActivity : BaseActivity() {
 
 		helper.attachToRecyclerView(bind.chats)
 
-		bind.send.setOnClickListener {
-			if (isBlockedByMe || isBlockedByOther) return@setOnClickListener
+		bind.send.setHapticClickListener {
+			if (isBlockedByMe || isBlockedByOther) return@setHapticClickListener
 
 			if (bind.message.value().isNotEmpty()) {
 
@@ -275,7 +276,7 @@ class ChatActivity : BaseActivity() {
 			}
 		}
 
-		bind.cancel.setOnClickListener {
+		bind.cancel.setHapticClickListener {
 			showReply(false)
 		}
 		checkBlockStatus()

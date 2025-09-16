@@ -9,6 +9,7 @@ import io.bidswipe.app.base.BaseAdapter
 import io.bidswipe.app.databinding.PaymentCardItemBinding
 import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.network.response.GetPaymentCardsResponse
+import io.bidswipe.app.utils.setHapticClickListener
 
 class PaymentCardAdapter(
 	mList : MutableList<GetPaymentCardsResponse.Data.PaymentProfile?> , val mClicks : RecyclerClicks ,
@@ -24,7 +25,7 @@ class PaymentCardAdapter(
 	) {
 		with(holder) {
 
-			bind.root.setOnClickListener {
+			bind.root.setHapticClickListener {
 				mClicks.itemClick(position)
 			}
 
@@ -36,7 +37,7 @@ class PaymentCardAdapter(
 
 			bind.defaultAddress.isVisible = item?.isDefault == true
 
-			bind.moreIcon.setOnClickListener { view ->
+			bind.moreIcon.setHapticClickListener { view ->
 				val popup = PopupMenu(view.context , view)
 				popup.inflate(R.menu.card_action_menu)  // Your menu XML
 				popup.setOnMenuItemClickListener { menuItem ->

@@ -14,6 +14,7 @@ import io.bidswipe.app.utils.bind
 import io.bidswipe.app.utils.loadUrl
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request
+import io.bidswipe.app.utils.setHapticClickListener
 import io.bidswipe.app.utils.value
 
 class RateSellerActivity : BaseActivity() {
@@ -42,7 +43,7 @@ class RateSellerActivity : BaseActivity() {
 			finishAfterTransition()
 		}
 
-		bind.add.setOnClickListener {
+		bind.add.setHapticClickListener {
 
 			when {
 

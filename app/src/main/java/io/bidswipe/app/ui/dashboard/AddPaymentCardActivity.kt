@@ -21,6 +21,7 @@ import io.bidswipe.app.utils.hideKeyboard
 import io.bidswipe.app.utils.layout
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.runSafe
+import io.bidswipe.app.utils.setHapticClickListener
 import io.bidswipe.app.utils.showKeyboard
 import io.bidswipe.app.utils.value
 import kotlin.getValue
@@ -42,14 +43,14 @@ class AddPaymentCardActivity : BaseActivity() {
 
 		bind.header.onBackClick { finish() }
 
-		bind.expiryDate.setOnClickListener {
+		bind.expiryDate.setHapticClickListener {
 			showDatePicker {
 				bind.expiryDate.setText(it)
 			}
 		}
 
 
-		bind.addCard.setOnClickListener {
+		bind.addCard.setHapticClickListener {
 
 			when {
 
@@ -168,12 +169,12 @@ class AddPaymentCardActivity : BaseActivity() {
 			true
 		}
 
-		alBind.cancel.setOnClickListener {
+		alBind.cancel.setHapticClickListener {
 			mSheet?.dismiss()
 			isShowing = false
 		}
 
-		alBind.select.setOnClickListener {
+		alBind.select.setHapticClickListener {
 			val date = alBind.timePicker.date
 			mSheet?.dismiss()
 			isShowing = false

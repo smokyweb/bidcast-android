@@ -9,6 +9,7 @@ import io.bidswipe.app.R
 import io.bidswipe.app.databinding.UserSelectorItemBinding
 import io.bidswipe.app.network.response.UserSearchingResponse
 import io.bidswipe.app.utils.loadUrl
+import io.bidswipe.app.utils.setHapticClickListener
 
 class CustomSelectorAdapter(
 	context : Context ,
@@ -29,7 +30,7 @@ class CustomSelectorAdapter(
 		bind?.userImage?.loadUrl(context , getItem(position)?.profileImage.toString())
 		bind?.text?.text = getItem(position)?.name
 
-		bind?.root?.setOnClickListener {
+		bind?.root?.setHapticClickListener {
 			selected(position , getItem(position)?.name.toString())
 		}
 

@@ -23,6 +23,7 @@ import io.bidswipe.app.utils.finish
 import io.bidswipe.app.utils.ids
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request
+import io.bidswipe.app.utils.setHapticClickListener
 
 class PaymentShippingFragment : BaseFragment<MoreViewModel , FragmentPaymentShippingBinding>() {
 	override fun getModel() : Class<MoreViewModel> = MoreViewModel::class.java
@@ -93,11 +94,11 @@ class PaymentShippingFragment : BaseFragment<MoreViewModel , FragmentPaymentShip
 
 		bind.addressRecycler.adapter = shippingAddressAdapter
 
-		bind.addPaymentCard.setOnClickListener {
+		bind.addPaymentCard.setHapticClickListener {
 			startActivity(Intent(mCtx , AddPaymentCardActivity::class.java))
 		}
 
-		bind.addNewAddress.setOnClickListener {
+		bind.addNewAddress.setHapticClickListener {
 			findNavController().navigate(ids.goToAddShippingAddressFragment)
 		}
 

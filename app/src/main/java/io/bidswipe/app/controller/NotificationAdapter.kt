@@ -7,6 +7,7 @@ import io.bidswipe.app.databinding.NotificationItemBinding
 import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.network.response.GetNotificationResponse
 import io.bidswipe.app.utils.Utils
+import io.bidswipe.app.utils.setHapticClickListener
 
 class NotificationAdapter(
 	mList : MutableList<GetNotificationResponse.Data?> , val click : RecyclerClicks ,
@@ -25,7 +26,7 @@ class NotificationAdapter(
 			bind.title.text = item?.title
 			bind.time.text = Utils.getTimeAgo(item?.createdAt ?: "")
 
-			bind.deleteNotification.setOnClickListener {
+			bind.deleteNotification.setHapticClickListener {
 
 				click.itemClick(position , "delete")
 

@@ -8,6 +8,7 @@ import io.bidswipe.app.base.BaseAdapter
 import io.bidswipe.app.databinding.BenifitsItemBinding
 import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.model.SellModel
+import io.bidswipe.app.utils.setHapticClickListener
 
 class AnalyticsGridAdapter(
 	mList : MutableList<SellModel> , val mClicks : RecyclerClicks ,
@@ -40,7 +41,7 @@ class AnalyticsGridAdapter(
 				)
 			)
 
-			bind.root.setOnClickListener {
+			bind.root.setHapticClickListener {
 				mClicks.itemClick(position)
 			}
 

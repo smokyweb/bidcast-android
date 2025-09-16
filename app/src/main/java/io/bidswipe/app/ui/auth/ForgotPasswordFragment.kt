@@ -19,6 +19,7 @@ import io.bidswipe.app.utils.hideKeyboard
 import io.bidswipe.app.utils.ids
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request
+import io.bidswipe.app.utils.setHapticClickListener
 import io.bidswipe.app.utils.showKeyboard
 import io.bidswipe.app.utils.string
 import io.bidswipe.app.utils.value
@@ -38,11 +39,11 @@ class ForgotPasswordFragment : BaseFragment<AuthViewModel , FragmentForgotPasswo
 			findNavController().popBackStack()
 		}
 
-		bind.layout.setOnClickListener {
+		bind.layout.setHapticClickListener {
 			hideKeyboard(it)
 		}
 
-		bind.submit.setOnClickListener {
+		bind.submit.setHapticClickListener {
 
 			when {
 

@@ -10,6 +10,7 @@ import io.bidswipe.app.databinding.ExploreItemBinding
 import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.network.response.GetCategoryResponse
 import io.bidswipe.app.utils.loadUrl
+import io.bidswipe.app.utils.setHapticClickListener
 
 class ExploreAdapter(
 	val mList : MutableList<GetCategoryResponse.Data?> , val mClicks : RecyclerClicks ,
@@ -25,7 +26,7 @@ class ExploreAdapter(
 	) {
 		with(holder) {
 
-			bind.root.setOnClickListener {
+			bind.root.setHapticClickListener {
 				mClicks.itemClick(position)
 			}
 

@@ -15,6 +15,7 @@ import io.bidswipe.app.ui.dashboard.DashViewModel
 import io.bidswipe.app.utils.Alerts
 import io.bidswipe.app.utils.finish
 import io.bidswipe.app.utils.ids
+import io.bidswipe.app.utils.setHapticClickListener
 
 class GetStartedFragment : BaseFragment<DashViewModel , FragmentGetStartedBinding>() {
 	override fun getModel() : Class<DashViewModel> = DashViewModel::class.java
@@ -55,7 +56,7 @@ class GetStartedFragment : BaseFragment<DashViewModel , FragmentGetStartedBindin
 
 		bind.recycler.adapter = adapter
 
-		bind.continueBtn.setOnClickListener {
+		bind.continueBtn.setHapticClickListener {
 			if (bind.checkBox.isChecked.not()) {
 
 				Alerts.error(mCtx , "Please agree with guidlines")

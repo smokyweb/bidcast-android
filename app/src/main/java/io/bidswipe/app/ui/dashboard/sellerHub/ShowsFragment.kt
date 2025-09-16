@@ -28,6 +28,7 @@ import io.bidswipe.app.utils.draw
 import io.bidswipe.app.utils.finish
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request
+import io.bidswipe.app.utils.setHapticClickListener
 import io.bidswipe.app.utils.toScheduleShow
 
 @SuppressLint("NotifyDataSetChanged")
@@ -129,7 +130,7 @@ class ShowsFragment : BaseFragment<SellerHubViewModel , FragmentShowsBinding>() 
 
 		})
 
-		bind.addNewProduct.setOnClickListener {
+		bind.addNewProduct.setHapticClickListener {
 			startActivity(mCtx.toScheduleShow(from = "dash"))
 
 		}
@@ -223,7 +224,7 @@ class ShowsFragment : BaseFragment<SellerHubViewModel , FragmentShowsBinding>() 
 				type.text = "Address Not Added"
 				defaultAddress.isVisible = false
 			}
-			moreIcon.setOnClickListener {
+			moreIcon.setHapticClickListener {
 				startActivity(
 					Intent(mCtx , MoreActivity::class.java).putExtra(
 						"slug" ,
@@ -252,7 +253,7 @@ class ShowsFragment : BaseFragment<SellerHubViewModel , FragmentShowsBinding>() 
 			} else {
 				cardNumber.text = "Cards Not Added"
 			}
-			moreIcon.setOnClickListener {
+			moreIcon.setHapticClickListener {
 				startActivity(
 					Intent(mCtx , MoreActivity::class.java).putExtra(
 						"slug" ,
@@ -263,7 +264,7 @@ class ShowsFragment : BaseFragment<SellerHubViewModel , FragmentShowsBinding>() 
 		}
 
 
-		paymentAddressBind.close.setOnClickListener {
+		paymentAddressBind.close.setHapticClickListener {
 			makeOfferSheet.dismiss()
 		}
 

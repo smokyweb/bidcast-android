@@ -9,6 +9,7 @@ import io.bidswipe.app.databinding.VariantItemBinding
 import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.network.response.GetCategoryResponse
 import io.bidswipe.app.utils.asCapital
+import io.bidswipe.app.utils.setHapticClickListener
 
 class ProductVariantAdapter(
 	val mList : MutableList<GetCategoryResponse.Data.ExtraField?> ,
@@ -47,7 +48,7 @@ class ProductVariantAdapter(
 				bind.radioGroup.isVisible = false
 			}
 
-			bind.root.setOnClickListener {
+			bind.root.setHapticClickListener {
 
 				mClicks.itemClick(position)
 

@@ -20,6 +20,7 @@ import io.bidswipe.app.utils.Alerts
 import io.bidswipe.app.utils.finish
 import io.bidswipe.app.utils.ids
 import io.bidswipe.app.utils.parse
+import io.bidswipe.app.utils.setHapticClickListener
 
 class SelectCategoryFragment : BaseFragment<ScheduleShowViewModel , FragmentSelectCategoryBinding>() {
 	override fun getModel() : Class<ScheduleShowViewModel> = ScheduleShowViewModel::class.java
@@ -42,7 +43,7 @@ class SelectCategoryFragment : BaseFragment<ScheduleShowViewModel , FragmentSele
 			finish()
 		}
 
-		bind.continueBtn.setOnClickListener {
+		bind.continueBtn.setHapticClickListener {
 			when {
 				categoryId.isEmpty() -> {
 					Alerts.error(mCtx , "Please Select a Category")
@@ -66,7 +67,7 @@ class SelectCategoryFragment : BaseFragment<ScheduleShowViewModel , FragmentSele
 			categoryId = categoryList[position]?.id.toString()
 		}
 
-		bind.category.setOnClickListener {
+		bind.category.setHapticClickListener {
 			bind.category.showDropDown()
 		}
 
@@ -74,7 +75,7 @@ class SelectCategoryFragment : BaseFragment<ScheduleShowViewModel , FragmentSele
 			auctionId = auctionTypeList[position]?.id.toString()
 		}
 
-		bind.auctionType.setOnClickListener {
+		bind.auctionType.setHapticClickListener {
 			bind.auctionType.showDropDown()
 		}
 

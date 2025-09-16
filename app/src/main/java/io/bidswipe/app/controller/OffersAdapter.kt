@@ -16,6 +16,7 @@ import io.bidswipe.app.utils.Utils
 import io.bidswipe.app.utils.asCapital
 import io.bidswipe.app.utils.asMoney
 import io.bidswipe.app.utils.loadUrl
+import io.bidswipe.app.utils.setHapticClickListener
 
 class OffersAdapter(
 	mList : MutableList<GetOffersResponse.Data?> , val mClicks : RecyclerClicks ,
@@ -33,11 +34,11 @@ class OffersAdapter(
 
 			bind.buttonLayout.isVisible = true
 
-			bind.accept.setOnClickListener {
+			bind.accept.setHapticClickListener {
 				mClicks.itemClick(position , "accept")
 			}
 
-			bind.decline.setOnClickListener {
+			bind.decline.setHapticClickListener {
 				mClicks.itemClick(position , "reject")
 			}
 

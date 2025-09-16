@@ -17,6 +17,7 @@ import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.ui.dashboard.more.MoreActivity
 import io.bidswipe.app.utils.finish
 import io.bidswipe.app.utils.parse
+import io.bidswipe.app.utils.setHapticClickListener
 
 class SellerStatusFragment : BaseFragment<SellerHubViewModel , FragmentSellerStatusBinding>() {
 
@@ -35,7 +36,7 @@ class SellerStatusFragment : BaseFragment<SellerHubViewModel , FragmentSellerSta
 			finish()
 		}
 
-		bind.contactButton.setOnClickListener {
+		bind.contactButton.setHapticClickListener {
 			startActivity(Intent(mCtx , MoreActivity::class.java).putExtra("slug" , "contactUs"))
 
 		}
