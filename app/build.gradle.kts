@@ -2,15 +2,14 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import java.text.SimpleDateFormat
 import java.util.Date
 
-        plugins {
-            alias(libs.plugins.androidApplication)
-            alias(libs.plugins.kotlin.parcelize)
-            alias(libs.plugins.kotlin.android)
-            alias(libs.plugins.hiltAndroid)
-            alias(libs.plugins.devtools)
-            alias(libs.plugins.google.gms.google.services)
-
-        }
+plugins {
+    alias(libs.plugins.androidApplication)
+    alias(libs.plugins.kotlin.parcelize)
+    alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.hiltAndroid)
+    alias(libs.plugins.devtools)
+    alias(libs.plugins.google.gms.google.services)
+}
 
 fun getAPKName() = "Bid_Swipe_${SimpleDateFormat("dd-MM-yyyy").format(Date())}"
 
@@ -121,7 +120,7 @@ dependencies {
     ksp(libs.compiler)
 
     //STRIPE DEPENDENCY
-    implementation (libs.stripe.android)
+    implementation(libs.stripe.android)
 
     //ExoPlayer
     implementation(libs.androidx.media3.exoplayer)
@@ -149,17 +148,17 @@ dependencies {
     implementation(libs.slidetoact)
     implementation(libs.immersionbar.ktx)
     implementation(libs.immersionbar)
-    implementation (libs.powermenu)
+    implementation(libs.powermenu)
     implementation(libs.socialview.autocomplete)
     implementation(libs.zim)
     implementation(libs.singledateandtimepicker)
 
-    implementation ("androidx.browser:browser:1.8.0")
-    implementation ("com.github.davidmigloz:number-keyboard:3.1.0")
+    implementation("androidx.browser:browser:1.8.0")
+    implementation("com.github.davidmigloz:number-keyboard:3.1.0")
 //    implementation ("com.github.yoanngoular:numpadview:1.0.0")
 
     //ZEGO CLOUD
-    implementation (libs.express.video)
+    implementation(libs.express.video)
 
     // SOCKET.IO
     implementation("io.socket:socket.io-client:2.1.0") {

@@ -1,15 +1,11 @@
 package io.bidswipe.app.ui
 
+import android.content.Intent
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.util.Log
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import io.bidswipe.app.R
-import io.bidswipe.app.utils.Prefs
-import io.bidswipe.app.utils.toAuth
-import io.bidswipe.app.utils.toDash
 
 class SplashActivity : AppCompatActivity() {
 
@@ -23,6 +19,7 @@ class SplashActivity : AppCompatActivity() {
 		val referrer = intent.data?.getQueryParameter("referrer")
 
 		Log.d("TAG" , "onCreate: $referrer ")
+
 		if (referrer != null) {
 			referrerCode = referrer
 
@@ -30,16 +27,17 @@ class SplashActivity : AppCompatActivity() {
 			// Use Install Referrer API to get the referrer code
 		}
 
+		startActivity(Intent(this@SplashActivity, SpoofSocketActivity::class.java))
 
-		Handler(Looper.getMainLooper()).postDelayed({
-
-			if (Prefs(this@SplashActivity).token().isNotEmpty()) {
-				startActivity(this.toDash())
-			} else {
-				startActivity(this.toAuth())
-			}
-
-			finishAfterTransition()
-		} , 1500)
+//		Handler(Looper.getMainLooper()).postDelayed({
+//
+//			if (Prefs(this@SplashActivity).token().isNotEmpty()) {
+//				startActivity(this.toDash())
+//			} else {
+//				startActivity(this.toAuth())
+//			}
+//
+//			finishAfterTransition()
+//		} , 1500)
 	}
 }

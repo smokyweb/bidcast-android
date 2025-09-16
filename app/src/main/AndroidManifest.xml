@@ -113,6 +113,18 @@
             android:name=".ui.dashboard.DashActivity"
             android:exported="false" />
         <activity
+            android:name=".ui.SpoofSocketActivity"
+            android:exported="true"
+            android:label="Socket Test Activity">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data
+                    android:host="socket-test"
+                    android:scheme="bidcast" />
+            </intent-filter>
+        </activity>
+        <activity
             android:name=".ui.SplashActivity"
             android:exported="true">
             <intent-filter>
