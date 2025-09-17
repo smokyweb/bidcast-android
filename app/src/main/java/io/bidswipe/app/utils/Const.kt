@@ -22,6 +22,11 @@ object Const {
 	const val APP_ID = 1005763407
 	const val APP_SIGN = "73678be720c3ea2d871376882d27d21d5c2bc891363547424458f9febc8bf423"
 
+	//DOLBY iO CONST
+	const val ACCOUNT_ID = "227tmE"
+	const val  PUBLISHING_TOKEN = "87970298b75ff70fc95f9a1a8c52955988776fd131c029976dc3db62af9e8701"
+	const val TOKEN_ID = "14730126"
+
 	const val SERVER_TIME_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
 	const val DD_MM_YYYY_HH_MM_SS = "dd-MM-yyyy HH:mm:ss"
 	const val DD_MMMM_YYYY = "dd MMMM yyyy"
@@ -36,7 +41,6 @@ object Const {
 		Manifest.permission.BLUETOOTH ,
 		Manifest.permission.MODIFY_AUDIO_SETTINGS ,
 		Manifest.permission.READ_PHONE_STATE ,
-
 		)
 
 	val VERSION_PERMS = when {

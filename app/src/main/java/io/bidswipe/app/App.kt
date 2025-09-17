@@ -7,6 +7,7 @@ import android.os.Process
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.google.firebase.FirebaseApp
+import com.millicast.Core
 import dagger.hilt.android.HiltAndroidApp
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.network.RetrofitService
@@ -61,6 +62,8 @@ class App : Application() {
 
 		mCtx = applicationContext
 		TAG = mCtx.packageName
+
+		Core.initialize()
 
 		FirebaseApp.initializeApp(applicationContext)
 

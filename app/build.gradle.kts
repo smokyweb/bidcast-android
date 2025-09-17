@@ -127,7 +127,6 @@ dependencies {
     implementation(libs.androidx.media3.exoplayer.dash)
     implementation(libs.androidx.media3.ui)
 
-
     //THIRD PARTY DEPENDENCIES
     implementation(libs.recyclerview.animators)
     implementation(libs.swipelayout)
@@ -152,6 +151,8 @@ dependencies {
     implementation(libs.socialview.autocomplete)
     implementation(libs.zim)
     implementation(libs.singledateandtimepicker)
+
+    implementation(libs.millicast.sdk.android)
 
     implementation("androidx.browser:browser:1.8.0")
     implementation("com.github.davidmigloz:number-keyboard:3.1.0")

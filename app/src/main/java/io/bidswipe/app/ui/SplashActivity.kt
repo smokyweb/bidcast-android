@@ -9,6 +9,8 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.os.postDelayed
 import io.bidswipe.app.R
+import io.bidswipe.app.ui.dashboard.scheduleShow.ChooseModeActivity
+import io.bidswipe.app.ui.dashboard.scheduleShow.DolbyStreamActivity
 import io.bidswipe.app.utils.Prefs
 import io.bidswipe.app.utils.toAuth
 import io.bidswipe.app.utils.toDash
@@ -33,9 +35,9 @@ class SplashActivity : AppCompatActivity() {
 			// Use Install Referrer API to get the referrer code
 		}
 
-//		startActivity(Intent(this@SplashActivity, SpoofSocketActivity::class.java))
+		startActivity(Intent(this@SplashActivity, ChooseModeActivity::class.java))
 
-		Handler(Looper.getMainLooper()).postDelayed({
+		/*Handler(Looper.getMainLooper()).postDelayed({
 
 			if (Prefs(this@SplashActivity).token().isNotEmpty()) {
 				startActivity(this.toDash())
@@ -44,6 +46,6 @@ class SplashActivity : AppCompatActivity() {
 			}
 
 			finishAfterTransition()
-		} , 1500)
+		} , 1500)*/
 	}
 }
