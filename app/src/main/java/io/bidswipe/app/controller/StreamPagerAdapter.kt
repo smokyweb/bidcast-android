@@ -4,7 +4,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import io.bidswipe.app.ui.dashboard.watchStream.StreamViewModel
-import io.bidswipe.app.ui.dashboard.watchStream.WatchStreamFragment
+import io.bidswipe.app.ui.dashboard.watchStream.WatchStreamSocketFragment
 
 class StreamPagerAdapter(
 	fragmentActivity : FragmentActivity ,
@@ -19,7 +19,7 @@ class StreamPagerAdapter(
 		val stream = viewModel.streams.value?.get(position) ?: throw IllegalStateException("Stream data not available")
 		viewModel.selectStream(stream)
 
-		return WatchStreamFragment.newInstance(stream.roomId.toString() , stream.roomId.toString())
+		return WatchStreamSocketFragment.newInstance(stream.roomId.toString() , stream.roomId.toString())
 
 	}
 }

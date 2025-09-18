@@ -11,8 +11,18 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.viewModelScope
 import com.google.android.material.bottomsheet.BottomSheetDialog
-import com.gyf.immersionbar.ktx.navigationBarHeight
+import com.millicast.Core
+import com.millicast.Media
+import com.millicast.Subscriber
+import com.millicast.clients.ConnectionOptions
+import com.millicast.subscribers.Credential
+import com.millicast.subscribers.Option
+import com.millicast.subscribers.remote.RemoteAudioTrack
+import com.millicast.subscribers.remote.RemoteVideoTrack
+import com.millicast.subscribers.state.SubscriberConnectionState
 import com.ncorti.slidetoact.SlideToActView
 import io.bidswipe.app.App
 import io.bidswipe.app.R
@@ -23,18 +33,15 @@ import io.bidswipe.app.databinding.InputBottomSheetBinding
 import io.bidswipe.app.databinding.PaymentAndAddressSheetBinding
 import io.bidswipe.app.interfaces.AlertClicks
 import io.bidswipe.app.model.LiveChatModel
-import io.bidswipe.app.model.LiveShowModel
-import io.bidswipe.app.model.ZIMExtendedData
+import io.bidswipe.app.model.LiveShowModelOld
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.ui.custom.AlertType
 import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.ui.dashboard.more.MoreActivity
 import io.bidswipe.app.ui.dashboard.more.TrustedBuyerActivity
 import io.bidswipe.app.utils.Alerts
-import io.bidswipe.app.utils.ChatManager
 import io.bidswipe.app.utils.Const
 import io.bidswipe.app.utils.SocketManager
-import io.bidswipe.app.utils.StreamingManager
 import io.bidswipe.app.utils.asMoney
 import io.bidswipe.app.utils.dpToPx
 import io.bidswipe.app.utils.draw
@@ -47,7 +54,14 @@ import io.bidswipe.app.utils.request
 import io.bidswipe.app.utils.runSafe
 import io.bidswipe.app.utils.setHapticClickListener
 import io.bidswipe.app.utils.setMargins
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
 import org.json.JSONObject
+import org.webrtc.EglBase
+import org.webrtc.RendererCommon
 import kotlin.math.abs
 
 class WatchStreamSocketFragment : BaseFragment<StreamViewModel , FragmentWatchStreamBinding>() {
@@ -61,7 +75,7 @@ class WatchStreamSocketFragment : BaseFragment<StreamViewModel , FragmentWatchSt
 
     private lateinit var roomID : String
     private lateinit var socketUrl : String
-    private var chatManager : ChatManager? = null
+//    private var chatManager : ChatManager? = null
     private var socketManager : SocketManager? = null
     private var highestBidAmount : String? = "0"
     private var bidProductId : String? = null
@@ -69,10 +83,17 @@ class WatchStreamSocketFragment : BaseFragment<StreamViewModel , FragmentWatchSt
     private var isAllowBidForAll = true
     private var commentList = mutableListOf<LiveChatModel?>()
     private lateinit var commentAdapter : CommentAdapter
-    private var product : LiveShowModel.Product? = null
+    private var product : LiveShowModelOld.Product? = null
+    
+    private lateinit var subscriber: Subscriber
+    private lateinit var eglBase: EglBase
+    private var subscriberStateJob: Job? = null
+    val sourceVideoTracks: ArrayList<RemoteVideoTrack> = arrayListOf()
+    var audioTrack: RemoteAudioTrack? = null
+    private var streamName: String = ""
 
     companion object {
-        fun newInstance(roomID : String , streamID : String) = WatchStreamFragment().apply {
+        fun newInstance(roomID : String , streamID : String) = WatchStreamSocketFragment().apply {
             arguments = Bundle().apply {
                 putString("roomID" , roomID)
                 putString("streamID" , streamID)
@@ -83,7 +104,7 @@ class WatchStreamSocketFragment : BaseFragment<StreamViewModel , FragmentWatchSt
     override fun onCreate(savedInstanceState : Bundle?) {
         super.onCreate(savedInstanceState)
         roomID = requireArguments().getString("roomID") ?: ""
-        socketUrl = requireArguments().getString("socketUrl") ?: ""
+        socketUrl = Const.SOCKET_URL// requireArguments().getString("socketUrl") ?: ""
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -115,8 +136,12 @@ class WatchStreamSocketFragment : BaseFragment<StreamViewModel , FragmentWatchSt
         bind.recycler.adapter = commentAdapter
 
         // Streaming playback still via Zego engine
-        StreamingManager.getInstance(requireContext()).startPlayingStream(roomID , bind.hostView)
-
+//        StreamingManager.getInstance(requireContext()).startPlayingStream(roomID , bind.hostView)
+        subscriber = Core.createSubscriber()
+        
+        initRenderer()
+        startSubscription()
+        
         // Initialize sockets
         if (socketUrl.isNotEmpty()) {
             socketManager = SocketManager.getInstance(requireContext())
@@ -136,16 +161,30 @@ class WatchStreamSocketFragment : BaseFragment<StreamViewModel , FragmentWatchSt
 
             // Optional room/session updates (current product, sold, allow flags, countdown)
             socketManager?.onMessage { msg ->
+                log("${roomID}  MESGSA E $msg")
                 val type = msg.optString("type")
                 when (type) {
                     "session_update" -> updateSessionUI(msg)
                     "countdown" -> updateCountdown(msg)
+                    else->{
+                        if(msg.optString("roomId")==roomID){
+                            viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Main) {
+                                commentList.add(LiveChatModel(
+                                    msg.optString("userImage"),
+                                    msg.optString("userName"),
+                                    msg.optString("userId"),
+                                    msg.optString("content")
+                                ))
+                                commentAdapter.notifyItemInserted(commentList.size - 1)
+                                bind.recycler.scrollToPosition(commentList.size - 1)
+                            }
+                        }
+                    }
                 }
             }
-
         }
 
-        initializeChat()
+//        initializeChat()
 
         viewModel.selectedStream.observe(viewLifecycleOwner) { stream ->
             if (stream.roomId == roomID) {
@@ -218,18 +257,16 @@ class WatchStreamSocketFragment : BaseFragment<StreamViewModel , FragmentWatchSt
                 }
 
                 bind.max.setHapticClickListener {
-
                     showInputSheet()
-
                 }
             }
         }
 
         bind.message.setEndIconOnClickListener {
             if (bind.text.value().isNotEmpty()) {
-
                 if (App.profileResponse.value?.buyerIdentityStatus == "verified") {
-                    sendZimMessage(bind.text.value())
+                    socketManager?.sendMessage(roomID,bind.text.value(),userId , userName,userImage)
+                    bind.text.text.clear()
                 } else {
                     verificationDialog()
                 }
@@ -237,9 +274,7 @@ class WatchStreamSocketFragment : BaseFragment<StreamViewModel , FragmentWatchSt
         }
 
         bind.wallet.setHapticClickListener {
-
             showPaymentAndAddressSheet()
-
         }
 
         viewModel.createBidRepo.observe(viewLifecycleOwner) {
@@ -408,7 +443,7 @@ class WatchStreamSocketFragment : BaseFragment<StreamViewModel , FragmentWatchSt
                     bidAmount = priceVal.toString()
                 )
                 Alerts.success(mCtx , "Bid placed successfully")
-                sendZimMessage("New high bid: $${priceVal}")
+//                sendZimMessage("New high bid: $${priceVal}")
                 inputSheet?.dismiss()
             }
         }
@@ -417,6 +452,7 @@ class WatchStreamSocketFragment : BaseFragment<StreamViewModel , FragmentWatchSt
         inputSheet?.show()
     }
 
+/*
     private fun initializeChat() {
         if (chatManager == null) {
             chatManager = ChatManager(
@@ -433,6 +469,7 @@ class WatchStreamSocketFragment : BaseFragment<StreamViewModel , FragmentWatchSt
             chatManager?.sendTextMessage(roomID , "Joined 👋" , extended)
         }
     }
+*/
 
     fun newBidAmount(amount : Int) : Int {
         return when {
@@ -462,7 +499,7 @@ class WatchStreamSocketFragment : BaseFragment<StreamViewModel , FragmentWatchSt
                 bidAmount = bidAmount
             )
 
-            sendZimMessage("New high bid: $$bidAmount")
+//            sendZimMessage("New high bid: $$bidAmount")
             Alerts.success(mCtx , "Bid placed successfully")
             bind.bid.setCompleted(completed = false , withAnimation = true)
         }
@@ -532,11 +569,11 @@ class WatchStreamSocketFragment : BaseFragment<StreamViewModel , FragmentWatchSt
 
     }
 
-    fun sendZimMessage(content : String) {
+  /*  fun sendZimMessage(content : String) {
         val extended = ZIMExtendedData(userImage , userId , userName).toJson()
         chatManager?.sendTextMessage(roomID , content , extended)
         bind.text.setText("")
-    }
+    }*/
 
     private fun verificationDialog() {
         AppBottomSheet(
@@ -659,7 +696,140 @@ class WatchStreamSocketFragment : BaseFragment<StreamViewModel , FragmentWatchSt
         makeOfferSheet.show()
 
     }
-
+    
+    private fun initRenderer() {
+        // Prefer SDK-provided EGL context for subscriber per docs
+        eglBase = EglBase.create()
+        bind.hostView.init(Media.eglBaseContext, null)
+        bind.hostView.setMirror(false)
+        bind.hostView.setScalingType(RendererCommon.ScalingType.SCALE_ASPECT_FIT)
+        log("Renderer initialized")
+    }
+    
+    private fun startSubscription() {
+        viewModel.viewModelScope.launch {
+            try {
+                log("Starting subscription flow...")
+                val credentials = Credential(
+                    streamName =roomID,// streamName.ifBlank { Const.ACCOUNT_ID },
+                    accountId = Const.ACCOUNT_ID,
+                    apiUrl = "https://director.millicast.com/api/director/subscribe"
+                )
+                
+                subscriber.setCredentials(credentials)
+                log("Credentials set. Connecting (autoReconnect=true)...")
+                subscriber.connect(ConnectionOptions(autoReconnect = true))
+                
+                subscriberStateJob?.cancel()
+                subscriberStateJob = viewModel.viewModelScope.launch {
+                    // Connection state
+                    subscriber.state
+                        .map { it.connectionState }
+                        .distinctUntilChanged()
+                        .collect { state ->
+                            log("Subscriber state: $state")
+                            when (state) {
+                                SubscriberConnectionState.Connected -> {
+                                    log("Connected. Subscribing now...")
+                                    subscriber.subscribe(Option())
+                                    log("Subscribe invoked; awaiting remote tracks...")
+                                }
+                                
+                                SubscriberConnectionState.Subscribed -> {
+                                    log("Subscriber state: Subscribed (media should start)")
+                                }
+                                
+                                else -> {}
+                            }
+                        }
+                }
+                
+                // Log websocket and peer connection states
+                viewModel.viewModelScope.launch {
+                    subscriber.state.map { it.websocketConnectionState }.distinctUntilChanged().collect { ws ->
+                        log("WebSocket state: $ws")
+                    }
+                }
+                viewModel.viewModelScope.launch {
+                    subscriber.state.map { it.peerConnectionState }.distinctUntilChanged().collect { pc ->
+                        log("PeerConnection state: $pc")
+                    }
+                }
+                // Log signaling errors if any
+                viewModel.viewModelScope.launch {
+                    subscriber.signalingError.collect { err ->
+                        log("Signaling error: $err")
+                    }
+                }
+                
+                // Collect remote video/audio tracks
+                viewModel.viewModelScope.launch {
+                    subscriber.onRemoteTrack.collect { holder ->
+                        when (holder) {
+                            is RemoteVideoTrack -> {
+                                log("RemoteVideoTrack: sourceId=${holder.sourceId}")
+                                sourceVideoTracks.add(holder)
+                                holder.enableAsync(videoSink = bind.hostView)
+                                viewModel.viewModelScope.launch {
+                                    holder.onState.collect { trackState ->
+                                        log("VideoTrack state mid=${trackState.mid} active=${trackState.isActive}")
+                                        if (!trackState.isActive) holder.disableAsync() else holder.enableAsync(videoSink = bind.hostView)
+                                    }
+                                }
+                                // Add a tiny post-frame confirmation
+                                bind.hostView.postDelayed({
+                                    log("Renderer (TextureViewRenderer) ready; awaiting frames...")
+                                }, 300)
+                            }
+                            
+                            is RemoteAudioTrack -> {
+                                log("RemoteAudioTrack: sourceId=${holder.sourceId}")
+                                audioTrack = holder
+                                holder.enableAsync()
+                            }
+                        }
+                    }
+                }
+            } catch (e: Throwable) {
+                log("SUBSCRIBE ERROR: ${e.localizedMessage}")
+                e.printStackTrace()
+            }
+        }
+    }
+    
+    override fun onDestroy() {
+        super.onDestroy()
+        log("Subscriber cleanup starting")
+        try {
+            subscriberStateJob?.cancel()
+        } catch (_: Throwable) {
+        }
+        try {
+            sourceVideoTracks.forEach { it.disableAsync() }
+        } catch (_: Throwable) {
+        }
+        try {
+            audioTrack?.disableAsync()
+        } catch (_: Throwable) {
+        }
+//		try {
+//			bind.hostView.clearImage()
+//		} catch (_: Throwable) {
+//		}
+        try {
+            viewModel.viewModelScope.launch { subscriber.unsubscribe(); subscriber.disconnect() }
+        } catch (_: Throwable) {
+        }
+        try {
+            bind.hostView.release()
+        } catch (_: Throwable) {
+        }
+        try {
+            eglBase.release()
+        } catch (_: Throwable) {
+        }
+        log("Subscriber cleanup finished")
+    }
 }
 
 

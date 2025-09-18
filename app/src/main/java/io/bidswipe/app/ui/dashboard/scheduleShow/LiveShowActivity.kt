@@ -48,7 +48,7 @@ import io.bidswipe.app.databinding.ShowConfirmationAlertBinding
 import io.bidswipe.app.interfaces.AlertClicks
 import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.model.LiveChatModel
-import io.bidswipe.app.model.LiveShowModel
+import io.bidswipe.app.model.LiveShowModelOld
 import io.bidswipe.app.model.PromoteShowModel
 import io.bidswipe.app.model.ZIMExtendedData
 import io.bidswipe.app.network.Resource
@@ -99,14 +99,14 @@ class LiveShowActivity : BaseActivity() {
 	private var startTimeMillis : Long = 0L
 	private var zoomLevel = 1L
 
-	private var liveData : LiveShowModel? = null
+	private var liveData : LiveShowModelOld? = null
 
 	private var eventListener = object : ValueEventListener {
 		@SuppressLint("NotifyDataSetChanged")
 		override fun onDataChange(snapshot : DataSnapshot) {
 			log("Value : ${snapshot.value}")
 
-			liveData = LiveShowModel().fromMap(snapshot)
+			liveData = LiveShowModelOld().fromMap(snapshot)
 
 			bind.liveCount.text = liveData?.viewerCount.toString()
 
@@ -562,7 +562,7 @@ class LiveShowActivity : BaseActivity() {
 	fun updateFirebaseNode(data : UpdateLiveStatusResponse.Data?) {
 		val user = data?.user
 
-		val seller = LiveShowModel.Seller(
+		val seller = LiveShowModelOld.Seller(
 			id = user?.id.toString() ,
 			image = user?.profileImage ,
 			isFollowed = false ,
@@ -574,7 +574,7 @@ class LiveShowActivity : BaseActivity() {
 
 		products?.first()?.isCurrent = true
 
-		val liveShow = LiveShowModel(
+		val liveShow = LiveShowModelOld(
 			products = products ,
 			roomId = roomID ,
 			seller = seller ,
@@ -1000,14 +1000,14 @@ class LiveShowActivity : BaseActivity() {
 		val productSheetBind = ProductSheetBinding.bind(layoutInflater.inflate(R.layout.product_sheet , null , false))
 		val productSheet = Alerts.appBottomSheet(this , true , productSheetBind)
 
-		val productList = mutableListOf<LiveShowModel.Product?>()
+		val productList = mutableListOf<LiveShowModelOld.Product?>()
 
 		var selectedPos = - 1
 
 		FireRef.LIVE_SESSIONS.child(roomID).addListenerForSingleValueEvent(object : ValueEventListener {
 			override fun onDataChange(snapshot : DataSnapshot) {
 
-				val data = LiveShowModel().fromMap(snapshot)
+				val data = LiveShowModelOld().fromMap(snapshot)
 
 				if (data.products != null) {
 					productList.clear()

@@ -10,8 +10,8 @@ import java.util.Locale
 object Const {
 
 	const val BASE_URL = "https://backend.bidcast.betaplanets.com"
-
-
+	val SOCKET_URL = "https://node.bidcast.betaplanets.com/"
+	
 	const val STRIPE_KEY =
 		"pk_test_51RQLxjQEbmPLLc7GaDeFTplB9lwTK5t9ZvpHVd1CtK4XtWsmktQvN3hoZW0ZZ0kSu0PFJ6R63D9X3PSMAq8tg5Sh00Vzh05MeU"
 

@@ -63,7 +63,7 @@ class ShowsFragment : BaseFragment<SellerHubViewModel , FragmentShowsBinding>() 
 				Alerts.error(mCtx , "You are already in Live show")
 			} else {
 				startActivity(
-					Intent(mCtx , LiveShowActivity::class.java).putExtra(
+					Intent(mCtx , LiveShowSocketActivity::class.java).putExtra(
 						"showId" ,
 						showList[pos]?.id.toString()
 					).putExtra("time" , showList[pos]?.time)

@@ -14,7 +14,7 @@ import io.bidswipe.app.utils.ChatManager
 import io.bidswipe.app.base.BaseActivity
 import io.bidswipe.app.controller.StreamPagerAdapter
 import io.bidswipe.app.databinding.ActivityViewLiveShowBinding
-import io.bidswipe.app.model.LiveShowModel
+import io.bidswipe.app.model.LiveShowModelOld
 import io.bidswipe.app.utils.Const
 import io.bidswipe.app.utils.FireRef
 import io.bidswipe.app.utils.StreamingManager
@@ -29,28 +29,33 @@ class ViewLiveShowActivity : BaseActivity() {
 
 	private var pos = 0
 	private var showId = ""
-	private var streamList = arrayListOf<LiveShowModel>()
+	private var publisherId = ""
+	private var streamList = arrayListOf<LiveShowModelOld>()
 	private lateinit var viewPager : ViewPager2
 	private lateinit var streamPagerAdapter : StreamPagerAdapter
 	private var chatManager : ChatManager? = null
 	private var streamingManager : StreamingManager? = null
-
+	
 	private var eventListener = object : ValueEventListener {
 		@SuppressLint("NotifyDataSetChanged")
 		override fun onDataChange(snapshot : DataSnapshot) {
-
 			runSafe {
-				if (snapshot.childrenCount.toInt() != streamList.size) {
+//				if (snapshot.childrenCount.toInt() != streamList.size) {
 					streamList.clear()
 					if (snapshot.exists() && snapshot.childrenCount > 0) {
 						for (data in snapshot.children) {
-							log("EVENT LISTENER Stream Data ${LiveShowModel().fromMap(data)}")
-							streamList.add(LiveShowModel().fromMap(data))
+							log("EVENT LISTENER Stream Data ${LiveShowModelOld().fromMap(data)}")
+							streamList.add(LiveShowModelOld().fromMap(data))
 						}
 					}
-
+					log("EVENT LISTENER Stream List $showId")
+					streamList.add(LiveShowModelOld(
+						showId = showId,
+						roomId = "live_room_${publisherId}_$showId"
+					))
+					
 					pos = streamList.indexOf(streamList.find { it.showId == showId })
-
+				
 					if (streamList.isNotEmpty()) {
 						viewPager = bind.viewPager
 
@@ -64,7 +69,7 @@ class ViewLiveShowActivity : BaseActivity() {
 						finishAfterTransition()
 					}
 
-				}
+//				}
 			}
 
 		}
@@ -89,6 +94,7 @@ class ViewLiveShowActivity : BaseActivity() {
 		}
 
 		 showId = intent.getStringExtra("showId") ?:""
+		 publisherId = intent.getStringExtra("userId") ?:""
 
 		if (showId.isNotEmpty()){
 			val data: Uri? = intent.data
@@ -104,8 +110,7 @@ class ViewLiveShowActivity : BaseActivity() {
 		log("POSITION : $pos ")
 
 		FireRef.LIVE_SESSIONS.addValueEventListener(eventListener)
-
-		createEngine()
+//		createEngine()
 
 		// Initialize ChatManager here if you want the ZIM SDK ready at Activity scope
 		chatManager = ChatManager(
@@ -118,13 +123,7 @@ class ViewLiveShowActivity : BaseActivity() {
 		)
 
 	}
-
-	override fun onDestroy() {
-		super.onDestroy()
-		destroyEngine()
-		chatManager?.shutdown()
-	}
-
+	
 	private fun createEngine() {
 		streamingManager = StreamingManager.getInstance(applicationContext)
 		streamingManager?.createEngine(

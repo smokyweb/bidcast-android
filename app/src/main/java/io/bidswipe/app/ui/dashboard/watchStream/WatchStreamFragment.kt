@@ -16,7 +16,6 @@ import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
-import com.gyf.immersionbar.ktx.navigationBarHeight
 import com.ncorti.slidetoact.SlideToActView
 import com.ncorti.slidetoact.SlideToActView.OnSlideCompleteListener
 import im.zego.zim.entity.ZIMTextMessage
@@ -31,7 +30,7 @@ import io.bidswipe.app.databinding.PaymentAndAddressSheetBinding
 import io.bidswipe.app.databinding.SendTipSheetBinding
 import io.bidswipe.app.interfaces.AlertClicks
 import io.bidswipe.app.model.LiveChatModel
-import io.bidswipe.app.model.LiveShowModel
+import io.bidswipe.app.model.LiveShowModelOld
 import io.bidswipe.app.model.ZIMExtendedData
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.ui.custom.AlertType
@@ -72,7 +71,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel , FragmentWatchStreamBi
 	private var bidProductId : String? = ""
 	private var commentList = mutableListOf<LiveChatModel?>()
 	private lateinit var commentAdapter : CommentAdapter
-	private var product : LiveShowModel.Product? = null
+	private var product : LiveShowModelOld.Product? = null
 	private var inputSheet : BottomSheetDialog? = null
 	private var isAllowBidForAll = true
 	private var chatManager : ChatManager? = null
@@ -91,7 +90,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel , FragmentWatchStreamBi
 		override fun onDataChange(snapshot : DataSnapshot) {
 
 			runSafe {
-				val data = LiveShowModel().fromMap(snapshot)
+				val data = LiveShowModelOld().fromMap(snapshot)
 
 				// Safely update highestBidAmount
 
@@ -201,7 +200,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel , FragmentWatchStreamBi
 						override fun onDataChange(snapshot : DataSnapshot) {
 
 							runSafe {
-								val data = LiveShowModel().fromMap(snapshot)
+								val data = LiveShowModelOld().fromMap(snapshot)
 
 								val currentProduct = data.products?.find { it?.isCurrent == true }
 

@@ -1,151 +1,136 @@
 package io.bidswipe.app.model
 
-import androidx.annotation.Keep
-import com.google.firebase.database.DataSnapshot
+import org.json.JSONArray
+import org.json.JSONObject
 
 data class LiveShowModel(
-	var products : List<Product?>? = null ,
-	var roomId : String? = null ,
-	var seller : Seller? = null ,
-	var showDetail : String? = null ,
-	var thumbnail : String? = null ,
-	var viewerCount : Int? = null ,
-	var highestBid : HighestBid? = null ,
-	var isLive : Boolean? = null ,
-	var time : String? = System.currentTimeMillis().toString() ,
-	var showId : String? = null ,
-	var allowBidForAll : Boolean? = true ,
+	val products: List<Product?>,
+	val roomId: String?,
+	val seller: Seller?,
+	val showDetail: String,
+	val thumbnail: String,
+	val viewerCount: Int,
+	val highestBid: HighestBid,
+	val isLive: Boolean,
+	val time: String?, // CURRENT TIMESTAMP
+	val showId: String?,
+	val allowBidForAll: Boolean? = true,
+	val bidCountDown: String?,
+	val showTimer: String?
 ) {
-	@Keep
 	data class Product(
-		var category : String? = null ,
-		var id : String? = null ,
-		var image : String? = "" ,
-		var status : String? = "live" , // "live", "sold"
-		var name : String? = null ,
-		var price : String? = null ,
-		var currentBidderId : String? = null ,
-		var currentBidValue : String? = null ,
-		var isCurrent : Boolean? = false ,
-		var selected : Boolean = false ,
+		val category: String? = null,
+		val id: String? = null,
+		val image: String? = "",
+		val status: String? = "live",
+		val name: String? = null,
+		val price: String? = null,
+		val quantity: String? = null,
+		val isCurrent: Boolean? = false
 	) {
-		fun fromMap(it : DataSnapshot) : Product {
-			return Product(
-				category = it.child("category").getValue(String::class.java) ,
-				id = it.child("id").getValue(String::class.java) ,
-				image = it.child("image").getValue(String::class.java) ,
-				status = it.child("status").getValue(String::class.java) ,
-				name = it.child("name").getValue(String::class.java) ,
-				price = it.child("price").getValue(String::class.java) ,
-				currentBidderId = it.child("currentBidderId").getValue(String::class.java) ,
-				currentBidValue = it.child("currentBidValue").getValue(String::class.java) ,
-				isCurrent = it.child("isCurrent").getValue(Boolean::class.java)
+		fun toJson() = JSONObject().apply {
+			put("category", category)
+			put("id", id)
+			put("image", image)
+			put("status", status)
+			put("name", name)
+			put("price", price)
+			put("quantity", quantity)
+			put("is_current", isCurrent)
+		}
+		companion object {
+			fun fromJson(json: JSONObject) = Product(
+				category = json.optString("category", null),
+				id = json.optString("id", null),
+				image = json.optString("image", ""),
+				status = json.optString("status", "live"),
+				name = json.optString("name", null),
+				price = json.optString("price", null),
+				quantity = json.optString("quantity", null),
+				isCurrent = if (json.has("is_current")) json.optBoolean("is_current") else false
 			)
 		}
-
-		fun toMap() = mapOf(
-			"category" to category ,
-			"id" to id ,
-			"image" to image ,
-			"status" to status ,
-			"name" to name ,
-			"price" to price ,
-			"currentBidderId" to currentBidderId ,
-			"currentBidValue" to currentBidValue ,
-			"isCurrent" to isCurrent ,
-		)
 	}
-
-	@Keep
 	data class Seller(
-		var id : String? = null ,
-		var image : String? = null ,
-		var isFollowed : Boolean? = false ,
-		var name : String? = "test" ,
-		var rating : String? = null ,
+		val id: String? = null,
+		val image: String? = null,
+		val name: String? = "test",
+		val rating: String? = null
 	) {
-
-		fun fromMap(it : DataSnapshot) : Seller = Seller(
-			id = it.child("id").getValue(String::class.java) ,
-			image = it.child("image").getValue(String::class.java) ,
-			isFollowed = it.child("isFollowed").getValue(Boolean::class.java) ,
-			name = it.child("name").getValue(String::class.java) ,
-			rating = it.child("rating").getValue(String::class.java) ,
-		)
-
-		fun toMap() = mapOf(
-			"id" to id ,
-			"image" to image ,
-			"isFollowed" to isFollowed ,
-			"name" to name ,
-			"rating" to rating ,
-		)
-	}
-
-	@Keep
-	data class HighestBid(
-		var bidAmount : String? = null ,
-		var productStatus : String? = null ,
-		var userName : String? = null ,
-		var userImage : String? = "test" ,
-		var userId : String? = null ,
-		var startTime : String? = null ,
-		var productId : String? = "" ,
-	) {
-
-		fun fromMap(it : DataSnapshot) : HighestBid = HighestBid(
-			bidAmount = it.child("bidAmount").getValue(String::class.java) ,
-			productStatus = it.child("productStatus").getValue(String::class.java) ,
-			userName = it.child("userName").getValue(String::class.java) ,
-			userImage = it.child("userImage").getValue(String::class.java) ,
-			userId = it.child("userId").getValue(String::class.java) ,
-			startTime = it.child("startTime").getValue(String::class.java) ,
-			productId = it.child("productId").getValue(String::class.java)
-		)
-
-		fun toMap() = mapOf(
-			"bidAmount" to bidAmount ,
-			"productStatus" to productStatus ,
-			"userName" to userName ,
-			"userImage" to userImage ,
-			"userId" to userId ,
-			"startTime" to startTime ,
-			"productId" to productId
-		)
-	}
-
-	fun fromMap(it : DataSnapshot) : LiveShowModel {
-		val productList = mutableListOf<Product>()
-		it.child("products").children.forEach { snapshot ->
-			productList.add(Product().fromMap(snapshot))
+		fun toJson() = JSONObject().apply {
+			put("id", id)
+			put("image", image)
+			put("name", name)
+			put("rating", rating)
 		}
-
-		return LiveShowModel(
-			products = productList.ifEmpty { null } ,
-			roomId = it.child("roomId").getValue(String::class.java) ,
-			seller = Seller().fromMap(it.child("seller")) ,
-			showDetail = it.child("showDetail").getValue(String::class.java) ,
-			thumbnail = it.child("thumbnail").getValue(String::class.java) ,
-			viewerCount = it.child("viewerCount").getValue(Int::class.java) ,
-			highestBid = HighestBid().fromMap(it.child("highestBid")) ,
-			isLive = it.child("isLive").getValue(Boolean::class.java) ,
-			time = it.child("time").getValue(String::class.java) ,
-			showId = it.child("showId").getValue(String::class.java) ,
-			allowBidForAll = it.child("allowBidForAll").getValue(Boolean::class.java) ,
+		companion object {
+			fun fromJson(json: JSONObject) = Seller(
+				id = json.optString("id", null),
+				image = json.optString("image", null),
+				name = json.optString("name", "test"),
+				rating = json.optString("rating", null)
+			)
+		}
+	}
+	data class HighestBid(
+		val bidAmount: String? = null,
+		val userName: String? = null,
+		val userImage: String? = "test",
+		val userId: String? = null,
+		val productId: String? = ""
+	) {
+		fun toJson() = JSONObject().apply {
+			put("bid_amount", bidAmount)
+			put("user_name", userName)
+			put("user_image", userImage)
+			put("user_id", userId)
+			put("product_id", productId)
+		}
+		companion object {
+			fun fromJson(json: JSONObject) = HighestBid(
+				bidAmount = json.optString("bid_amount", null),
+				userName = json.optString("user_name", null),
+				userImage = json.optString("user_image", "test"),
+				userId = json.optString("user_id", null),
+				productId = json.optString("product_id", "")
+			)
+		}
+	}
+	fun toJson() = JSONObject().apply {
+		put("products", JSONArray().apply { products.forEach { put(it?.toJson()) } })
+		put("room_id", roomId)
+		put("seller", seller?.toJson())
+		put("show_detail", showDetail)
+		put("thumbnail", thumbnail)
+		put("viewer_count", viewerCount)
+		put("highest_bid", highestBid.toJson())
+		put("is_live", isLive)
+		put("time", time)
+		put("show_id", showId)
+		put("allow_bid_for_all", allowBidForAll)
+		put("bid_count_down", bidCountDown)
+		put("show_timer", showTimer)
+	}
+	companion object {
+		fun fromJson(json: JSONObject) = LiveShowModel(
+			products = json.optJSONArray("products")
+				?.let { array ->
+					(0 until array.length()).map { i ->
+						array.optJSONObject(i)?.let { Product.fromJson(it) }
+					}
+				} ?: emptyList(),
+			roomId = json.optString("room_id", null),
+			seller = json.optJSONObject("seller")?.let { Seller.fromJson(it) },
+			showDetail = json.optString("show_detail", ""),
+			thumbnail = json.optString("thumbnail", ""),
+			viewerCount = json.optInt("viewer_count", 0),
+			highestBid = json.optJSONObject("highest_bid")?.let { HighestBid.fromJson(it) } ?: HighestBid(),
+			isLive = json.optBoolean("is_live", false),
+			time = json.optString("time", null),
+			showId = json.optString("show_id", null),
+			allowBidForAll = if (json.has("allow_bid_for_all")) json.optBoolean("allow_bid_for_all") else true,
+			bidCountDown = json.optString("bid_count_down", null),
+			showTimer = json.optString("show_timer", null)
 		)
 	}
-
-	fun toMap() = mapOf(
-		"products" to products?.map { it?.toMap() } ,
-		"roomId" to roomId ,
-		"seller" to seller?.toMap() ,
-		"showDetail" to showDetail ,
-		"thumbnail" to thumbnail ,
-		"viewerCount" to viewerCount ,
-		"highestBid" to highestBid?.toMap() ,
-		"isLive" to isLive ,
-		"time" to time ,
-		"showId" to showId ,
-		"allowBidForAll" to allowBidForAll
-	)
 }
