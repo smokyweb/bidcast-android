@@ -12,7 +12,6 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 
-
 class RetrofitService(private val mCtx : Context) {
 	val loggingInterceptor = HttpLoggingInterceptor().apply {
 		level = HttpLoggingInterceptor.Level.BODY
@@ -32,7 +31,7 @@ class RetrofitService(private val mCtx : Context) {
 					if (token.isEmpty().not()) {
 						addHeader("Authorization" , token)
 					}
-					addHeader("timezone" , Utils.timezone)
+					addHeader("time_zone" , Utils.timezone)
 					addHeader("Content-Type" , "application/json")
 					addHeader("Accept" , "application/json")
 				}.build()

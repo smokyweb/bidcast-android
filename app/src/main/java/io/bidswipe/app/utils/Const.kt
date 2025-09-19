@@ -11,7 +11,7 @@ object Const {
 
 	const val BASE_URL = "https://backend.bidcast.betaplanets.com"
 	val SOCKET_URL = "https://node.bidcast.betaplanets.com/"
-	
+
 	const val STRIPE_KEY =
 		"pk_test_51RQLxjQEbmPLLc7GaDeFTplB9lwTK5t9ZvpHVd1CtK4XtWsmktQvN3hoZW0ZZ0kSu0PFJ6R63D9X3PSMAq8tg5Sh00Vzh05MeU"
 
@@ -30,6 +30,8 @@ object Const {
 	const val SERVER_TIME_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
 	const val DD_MM_YYYY_HH_MM_SS = "dd-MM-yyyy HH:mm:ss"
 	const val DD_MMMM_YYYY = "dd MMMM yyyy"
+
+	const val BULLET = "•"
 
 	//APP PERMISSIONS
 	private val COMMON_PERMS = arrayOf(

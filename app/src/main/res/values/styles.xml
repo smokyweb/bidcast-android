@@ -165,8 +165,8 @@
     <style name="shadowStyle">
         <item name="android:elevation">2dp</item>
         <item name="cardBackgroundColor">@color/background</item>
-        <item name="android:outlineSpotShadowColor" tools:targetApi="p">@color/tertiary</item>
-        <item name="android:outlineAmbientShadowColor" tools:targetApi="p">@color/tertiary
+        <item name="android:outlineSpotShadowColor" tools:targetApi="p">@color/outline</item>
+        <item name="android:outlineAmbientShadowColor" tools:targetApi="p">@color/onSurfaceVariant
         </item>
     </style>
 
@@ -178,8 +178,8 @@
         <item name="android:outlineProvider">background</item>
         <item name="cardBackgroundColor">@color/surface</item>
         <item name="rippleColor">@color/surfaceVariant</item>
-        <item name="android:outlineSpotShadowColor" tools:targetApi="p">@color/tertiary</item>
-        <item name="android:outlineAmbientShadowColor" tools:targetApi="p">@color/tertiary</item>
+        <item name="android:outlineSpotShadowColor" tools:targetApi="p">@color/onSurfaceVariant</item>
+        <item name="android:outlineAmbientShadowColor" tools:targetApi="p">@color/onSurfaceVariant</item>
     </style>
 
     <style name="appLoader">
