@@ -147,7 +147,9 @@ class WatchStreamSocketFragment : BaseFragment<StreamViewModel , FragmentWatchSt
             socketManager = SocketManager.getInstance(requireContext())
             socketManager?.initialize(socketUrl , mapOf("uid" to userId))
             socketManager?.connect(onConnected = {
-                socketManager?.joinRoom(roomID)
+                socketManager?.joinRoom(roomID){
+                    log("ROOM JOINED success")
+                }
                 socketManager?.emitViewerJoin(roomID)
             }) { err -> log("Socket connect error: $err") }
 
@@ -187,21 +189,21 @@ class WatchStreamSocketFragment : BaseFragment<StreamViewModel , FragmentWatchSt
 //        initializeChat()
 
         viewModel.selectedStream.observe(viewLifecycleOwner) { stream ->
-            if (stream.roomId == roomID) {
+            if (stream == roomID) {
 
-                bind.userImage.loadUrl(
+               /* bind.userImage.loadUrl(
                     mCtx ,
                     stream.seller?.image.toString() ,
                     placeHolder = draw.user_image
-                )
+                )*/
 
-                product = stream.products?.find { it?.isCurrent == true }
+//                product = stream.products?.find { it?.isCurrent == true }
 
                 bidProductId = product?.id.toString()
 
                 highestBidAmount = product?.price.toString()
 
-                bind.userName.text = stream.seller?.name.toString()
+//                bind.userName.text = stream.seller?.name.toString()
 
                 bind.productName.text = product?.name
 
@@ -222,18 +224,18 @@ class WatchStreamSocketFragment : BaseFragment<StreamViewModel , FragmentWatchSt
                     e.printStackTrace()
                 }
 
-                if (stream.seller?.isFollowed == true) {
-                    bind.follow.setBackgroundColor(ContextCompat.getColor(mCtx , R.color.outline))
-                    bind.follow.setTextColor(ContextCompat.getColor(mCtx , R.color.onSurface))
-                    bind.follow.text = "Unfollow"
-                } else {
-                    bind.follow.setBackgroundColor(ContextCompat.getColor(mCtx , R.color.primary))
-                    bind.follow.setTextColor(ContextCompat.getColor(mCtx , R.color.background))
-                    bind.follow.text = "Follow"
-                }
+//                if (stream.seller?.isFollowed == true) {
+//                    bind.follow.setBackgroundColor(ContextCompat.getColor(mCtx , R.color.outline))
+//                    bind.follow.setTextColor(ContextCompat.getColor(mCtx , R.color.onSurface))
+//                    bind.follow.text = "Unfollow"
+//                } else {
+//                    bind.follow.setBackgroundColor(ContextCompat.getColor(mCtx , R.color.primary))
+//                    bind.follow.setTextColor(ContextCompat.getColor(mCtx , R.color.background))
+//                    bind.follow.text = "Follow"
+//                }
 
                 bind.follow.setHapticClickListener {
-                    viewModel.followUser(stream.seller?.id?.request())
+//                    viewModel.followUser(stream.seller?.id?.request())
                 }
 
                 runSafe {

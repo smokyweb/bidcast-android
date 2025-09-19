@@ -148,7 +148,9 @@ class SpoofSocketActivity : AppCompatActivity() {
     }
 
     private fun joinRoom(roomId: String) {
-        socketManager.joinRoom(roomId)
+        socketManager.joinRoom(roomId){
+
+        }
         appendMessage("Joined room: $roomId")
         Toast.makeText(this, "Joined room: $roomId", Toast.LENGTH_SHORT).show()
     }

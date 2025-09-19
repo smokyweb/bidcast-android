@@ -2,6 +2,7 @@ package io.bidswipe.app.model
 
 import org.json.JSONArray
 import org.json.JSONObject
+import java.io.Serializable
 
 data class LiveShowModel(
 	val products: List<Product?>,
@@ -17,7 +18,7 @@ data class LiveShowModel(
 	val allowBidForAll: Boolean? = true,
 	val bidCountDown: String?,
 	val showTimer: String?
-) {
+) : Serializable {
 	data class Product(
 		val category: String? = null,
 		val id: String? = null,
@@ -27,7 +28,7 @@ data class LiveShowModel(
 		val price: String? = null,
 		val quantity: String? = null,
 		val isCurrent: Boolean? = false
-	) {
+	): Serializable {
 		fun toJson() = JSONObject().apply {
 			put("category", category)
 			put("id", id)
@@ -56,7 +57,7 @@ data class LiveShowModel(
 		val image: String? = null,
 		val name: String? = "test",
 		val rating: String? = null
-	) {
+	): Serializable {
 		fun toJson() = JSONObject().apply {
 			put("id", id)
 			put("image", image)
@@ -78,7 +79,7 @@ data class LiveShowModel(
 		val userImage: String? = "test",
 		val userId: String? = null,
 		val productId: String? = ""
-	) {
+	): Serializable {
 		fun toJson() = JSONObject().apply {
 			put("bid_amount", bidAmount)
 			put("user_name", userName)

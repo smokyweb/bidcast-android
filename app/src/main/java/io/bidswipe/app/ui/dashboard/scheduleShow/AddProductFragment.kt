@@ -17,6 +17,7 @@ import io.bidswipe.app.controller.ProductAdapter
 import io.bidswipe.app.databinding.FragmentAddProductBinding
 import io.bidswipe.app.interfaces.AlertClicks
 import io.bidswipe.app.interfaces.RecyclerClicks
+import io.bidswipe.app.model.LiveShowModel
 import io.bidswipe.app.model.TutorialShowModel
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.network.response.GetMyInventoryResponse
@@ -236,11 +237,52 @@ class AddProductFragment : BaseFragment<ScheduleShowViewModel, FragmentAddProduc
 				is Resource.Success -> {
 					bind.loader.isVisible = false
 
-					val mData = it.value.data
+					val data = it.value.data
+
+					val products = data?.products?.map { it?.toLiveShowProduct() }
+
+					products?.first()?.isCurrent = true
+
+					val showData = LiveShowModel(
+						seller = LiveShowModel.Seller(
+							id = userId.toString(),
+							image = userImage,
+							name = userName,
+							rating =  ""
+						),
+						products = products?.map { p ->
+							LiveShowModel.Product(
+								p?.category,
+								p?.id,
+								p?.image,
+								p?.status,
+								p?.name,
+								p?.price,
+								"1",
+							)
+						}?.toList() ?: mutableListOf(),
+						roomId = data?.id.toString(),
+						showDetail = "Test Details",
+						thumbnail = data?.thumbnail?.getOrNull(0) ?: "",
+						viewerCount = 1,
+						highestBid = LiveShowModel.HighestBid(
+							bidAmount = "",
+							userName = "",
+							userImage = "",
+							userId = "",
+							productId = ""
+						),
+						isLive = true,
+						time = Utils.timestamp().toString(),
+						showId = data?.id.toString(),
+						allowBidForAll = true,
+						bidCountDown = "",
+						showTimer = "",
+					)
 
 					val intent = Intent(mCtx, LiveShowActivity::class.java).putExtra(
-						"showId",
-						mData?.id.toString()
+						"showData",
+						showData
 					)
 					startActivity(intent)
 					finish()

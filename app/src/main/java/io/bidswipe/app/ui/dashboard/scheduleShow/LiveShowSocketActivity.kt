@@ -7,6 +7,7 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.util.Rational
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
@@ -50,6 +51,7 @@ import io.bidswipe.app.model.LiveShowModelOld
 import io.bidswipe.app.model.PromoteShowModel
 import io.bidswipe.app.network.response.UpdateLiveStatusResponse
 import io.bidswipe.app.network.Resource
+import io.bidswipe.app.network.response.GetMyShowResponse
 import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.ui.dashboard.DashViewModel
 import io.bidswipe.app.utils.Alerts
@@ -85,7 +87,7 @@ class LiveShowSocketActivity : BaseActivity() {
 	
 	private var socketManager: SocketManager? = null
 	
-	private var roomID: String = ""
+//	private var roomID: String = ""
 	private var socketUrl: String = ""
 	private var bidCounter = 30
 	private var countdownRunning = false
@@ -106,7 +108,8 @@ class LiveShowSocketActivity : BaseActivity() {
 	private var startTimeMillis: Long = 0L
 	private var zoomLevel = 1L
 	private var liveData: LiveShowModelOld? = null
-	
+	private var liveShowData: LiveShowModel? = null
+
 	private lateinit var publisher: Publisher
 	private lateinit var eglBase: EglBase
 	
@@ -148,11 +151,14 @@ class LiveShowSocketActivity : BaseActivity() {
 		
 		commentAdapter = CommentAdapter(commentList)
 		bind.recycler.adapter = commentAdapter
-		
-		showId = intent.getStringExtra("showId") ?: ""
+
+		liveShowData = intent.getSerializableExtra("showData") as LiveShowModel
+
+		showId = liveShowData?.showId ?: ""
 		showTime = intent.getStringExtra("time") ?: ""
-		
-		roomID = intent.getStringExtra("roomId") ?: ""
+
+		log("LIVE SHOW DATA : $liveShowData ")
+
 		socketUrl = Const.SOCKET_URL//intent.getStringExtra("socketUrl") ?: ""
 		initializeSocket()
 		
@@ -171,9 +177,10 @@ class LiveShowSocketActivity : BaseActivity() {
 		bind.clip.isVisible = App.profileResponse.value?.preferences?.enableClips == true
 		
 		bind.hostImage.loadUrl(this, userImage)
+
 		bind.message.setEndIconOnClickListener {
 			if (bind.text.value().isNotEmpty()) {
-				socketManager?.sendMessage(roomID, bind.text.value(), userId, userName, userImage)
+				socketManager?.sendMessage(showId, bind.text.value(), userId, userName, userImage)
 				bind.text.text.clear()
 			}
 		}
@@ -222,10 +229,9 @@ class LiveShowSocketActivity : BaseActivity() {
 				Alerts.error(this, "Please start live show to access this feature")
 			}
 		}
-		
-		bind.loader.isVisible = true
-		
-		viewModel.generateToken(showId.request())
+
+		/*viewModel.generateToken(showId.request())
+
 		viewModel.generateTokenRepo.observe(this) {
 			when (it) {
 				is Resource.Success -> {
@@ -263,8 +269,9 @@ class LiveShowSocketActivity : BaseActivity() {
 				else -> {}
 				
 			}
-		}
+		}*/
 		
+/*
 		viewModel.updateLiveStatusRepo.observe(this) {
 			when (it) {
 				is Resource.Success -> {
@@ -274,10 +281,7 @@ class LiveShowSocketActivity : BaseActivity() {
 					
 					if (liveStatus) {
 						runSafe {
-							bind.loader.isVisible = true
-							connectPublisher()
-							bind.startBtn.isVisible = false
-							addShowData(mData)
+
 						}
 					} else {
 						finish()
@@ -308,7 +312,8 @@ class LiveShowSocketActivity : BaseActivity() {
 				else -> {}
 			}
 		}
-		
+*/
+
 		viewModel.createBidRepo.observe(this) {
 			when (it) {
 				is Resource.Success -> {
@@ -319,7 +324,7 @@ class LiveShowSocketActivity : BaseActivity() {
 					
 					val index = liveData?.products?.indexOfFirst { product -> product?.isCurrent == true }
 					
-					FireRef.LIVE_SESSIONS.child(roomID).child("products").child(index.toString()).updateChildren(
+					/*FireRef.LIVE_SESSIONS.child(roomID).child("products").child(index.toString()).updateChildren(
 						mapOf(
 							"status" to "sold",
 							"isCurrent" to false
@@ -332,7 +337,7 @@ class LiveShowSocketActivity : BaseActivity() {
 						
 					} else {
 						Alerts.error(this, "Your Current Product has been sold, Please select next one to your shop")
-					}
+					}*/
 					
 				}
 				
@@ -368,11 +373,12 @@ class LiveShowSocketActivity : BaseActivity() {
 				}
 			}
 		})
+
 	}
 	
 	override fun onDestroy() {
 		super.onDestroy()
-		socketManager?.emitViewerLeave(roomID)
+		socketManager?.emitViewerLeave(showId)
 		socketManager?.disconnect()
 		stopLiveDurationTimer()
 		
@@ -462,7 +468,6 @@ class LiveShowSocketActivity : BaseActivity() {
 		}
 	}
 	
-	
 	private fun initializeSocket() {
 		log("SOCKET URL $socketUrl")
 		if (socketUrl.isEmpty()) return
@@ -470,8 +475,10 @@ class LiveShowSocketActivity : BaseActivity() {
 		socketManager = SocketManager.getInstance(this)
 		socketManager?.initialize(socketUrl, mapOf("uid" to userId))
 		socketManager?.connect(onConnected = {
-			socketManager?.joinRoom(roomID)
-			socketManager?.emitViewerJoin(roomID)
+			socketManager?.joinRoom(showId){
+
+			}
+			socketManager?.emitViewerJoin(showId)
 		}) { err ->
 			log("Socket connect error: $err")
 		}
@@ -481,7 +488,7 @@ class LiveShowSocketActivity : BaseActivity() {
 		}
 		
 		socketManager?.onMessage { msg ->
-			if (msg.optString("roomId") == roomID) {
+			if (msg.optString("roomId") == showId) {
 				runOnUiThread {
 					commentList.add(
 						LiveChatModel(
@@ -506,7 +513,7 @@ class LiveShowSocketActivity : BaseActivity() {
 		productSheetBind.close.setHapticClickListener { sheet.dismiss() }
 		productSheetBind.addBtn.setHapticClickListener {
 			// Notify server that host set a product live
-			socketManager?.sendMessage(roomID, "set_current_product", userId, userName, userImage)
+			socketManager?.sendMessage(showId, "set_current_product", userId, userName, userImage)
 			sheet.dismiss()
 		}
 		sheet.show()
@@ -518,16 +525,17 @@ class LiveShowSocketActivity : BaseActivity() {
 		endShowSheetBind.close.setHapticClickListener { sheet.dismiss() }
 		endShowSheetBind.endBtn.setHapticClickListener {
 			sheet.dismiss()
-			socketManager?.sendMessage(roomID, "end_show", userId, userName, userImage)
+			socketManager?.sendMessage(showId, "end_show", userId, userName, userImage)
 			finishAfterTransition()
 		}
 		sheet.show()
 	}
 	
-	fun addShowData(data: UpdateLiveStatusResponse.Data?) {
-		val user = data?.user
+	fun addShowData(data: LiveShowModel) {
+		/*val user = data?.user
 		
 		val products = data?.products?.map { it?.toLiveShowProduct() }
+
 		products?.first()?.isCurrent = true
 		
 		val showData = LiveShowModel(
@@ -565,9 +573,15 @@ class LiveShowSocketActivity : BaseActivity() {
 			allowBidForAll = true,
 			bidCountDown = "",
 			showTimer = "",
-		)
+		)*/
+
 		
-		socketManager?.createRoom(showId, showData)
+		socketManager?.createRoom(showId, data)
+
+		socketManager?.onRoomCreated { obj ->
+			log("ROOM CREATED SUCCESSFULLY : ${obj}")
+
+		}
 		
 	}
 	
@@ -584,7 +598,7 @@ class LiveShowSocketActivity : BaseActivity() {
 		
 		moreSheetBind.allowVerifiedUser.setOnCheckedChangeListener { view, isChecked ->
 			
-			FireRef.LIVE_SESSIONS.child(roomID).updateChildren(mapOf("allowBidForAll" to !isChecked))
+//			FireRef.LIVE_SESSIONS.child(roomID).updateChildren(mapOf("allowBidForAll" to !isChecked))
 			
 		}
 		
@@ -733,9 +747,11 @@ class LiveShowSocketActivity : BaseActivity() {
 		showConfirmationSheetBind.startBtn.setHapticClickListener {
 			showConfirmationSheet.dismiss()
 			bind.loader.isVisible = true
-			
-			viewModel.updateLiveStatus(showId.request(), "true".request())
-			
+			connectPublisher()
+			bind.startBtn.isVisible = false
+
+			addShowData(liveShowData!!)
+
 		}
 		
 		showConfirmationSheet.show()
@@ -772,7 +788,7 @@ class LiveShowSocketActivity : BaseActivity() {
 					}
 					
 					val credentials = Credential(
-						streamName = roomID,//Const.ACCOUNT_ID,
+						streamName = showId,//Const.ACCOUNT_ID,
 						token = Const.PUBLISHING_TOKEN,
 						apiUrl = "https://director.millicast.com/api/director/publish"
 					)
@@ -797,7 +813,7 @@ class LiveShowSocketActivity : BaseActivity() {
 										dtx = true,
 										stereo = true
 									)
-									
+
 									bind.loader.isVisible = false
 									publisher.publish(options)
 									startLiveDurationTimer()

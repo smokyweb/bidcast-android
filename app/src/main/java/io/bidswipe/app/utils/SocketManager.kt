@@ -80,10 +80,21 @@ class SocketManager private constructor(
 		socket?.disconnect()
 	}
 	
-	fun joinRoom(roomId: String) {
+	fun joinRoom(roomId: String,listener: (liveShowJson: JSONObject) -> Unit) {
 		val payload = JSONObject().apply { put("roomId", roomId) }
 		Log.d(TAG, "EMIT: join_room - RoomId: $roomId")
+
 		socket?.emit("join_room", payload)
+
+		socket?.on("join_room"){ args ->{
+			val obj = args.firstOrNull()
+			if (obj is JSONObject) {
+				Log.d(TAG, "RECEIVED: join_room - $obj")
+				listener(obj)
+			}
+		}
+
+		}
 	}
 	
 	fun leaveRoom(roomId: String) {
@@ -368,15 +379,14 @@ class SocketManager private constructor(
 	
 	fun createRoom(roomId: String,liveShowData: LiveShowModel) {
 		val payload = JSONObject().apply {
-			put("roomId", roomId)
-			put("live_show_data",liveShowData)
+
 		}
 		Log.d(TAG, "EMIT: room_created - RoomId: $payload")
-		socket?.emit("create_room", payload)
+		socket?.emit("room_create", liveShowData.toJson())
 	}
 	
 	fun onRoomCreated(listener: (bidJson: JSONObject) -> Unit) {
-		socket?.on("create_room_get") { args ->
+		socket?.on("room_create_get") { args ->
 			val obj = args.firstOrNull()
 			if (obj is JSONObject) {
 				Log.d(TAG, "RECEIVED: create_room_get - $obj")

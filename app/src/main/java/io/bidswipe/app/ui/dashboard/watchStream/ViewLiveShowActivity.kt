@@ -30,30 +30,36 @@ class ViewLiveShowActivity : BaseActivity() {
 	private var pos = 0
 	private var showId = ""
 	private var publisherId = ""
-	private var streamList = arrayListOf<LiveShowModelOld>()
+	private var streamList = arrayListOf<String>()
 	private lateinit var viewPager : ViewPager2
 	private lateinit var streamPagerAdapter : StreamPagerAdapter
 	private var chatManager : ChatManager? = null
 	private var streamingManager : StreamingManager? = null
+	private var roomIdsList = arrayListOf<String>()
 	
 	private var eventListener = object : ValueEventListener {
 		@SuppressLint("NotifyDataSetChanged")
 		override fun onDataChange(snapshot : DataSnapshot) {
 			runSafe {
 //				if (snapshot.childrenCount.toInt() != streamList.size) {
-					streamList.clear()
+					/*streamList.clear()
 					if (snapshot.exists() && snapshot.childrenCount > 0) {
 						for (data in snapshot.children) {
 							log("EVENT LISTENER Stream Data ${LiveShowModelOld().fromMap(data)}")
 							streamList.add(LiveShowModelOld().fromMap(data))
 						}
 					}
+
+
 					log("EVENT LISTENER Stream List $showId")
+
+				roomIdsList.forEach {
 					streamList.add(LiveShowModelOld(
-						showId = showId,
-						roomId = "live_room_${publisherId}_$showId"
+						showId = it,
+						roomId = it
 					))
-					
+				}
+
 					pos = streamList.indexOf(streamList.find { it.showId == showId })
 				
 					if (streamList.isNotEmpty()) {
@@ -68,7 +74,7 @@ class ViewLiveShowActivity : BaseActivity() {
 					} else {
 						finishAfterTransition()
 					}
-
+*/
 //				}
 			}
 
@@ -94,7 +100,14 @@ class ViewLiveShowActivity : BaseActivity() {
 		}
 
 		 showId = intent.getStringExtra("showId") ?:""
-		 publisherId = intent.getStringExtra("userId") ?:""
+
+		val roomIds = intent.getStringExtra("roomIdsList")
+
+		 val a = roomIds?.split(",")
+
+		roomIdsList.addAll(a ?: emptyList())
+
+		publisherId = intent.getStringExtra("userId") ?:""
 
 		if (showId.isNotEmpty()){
 			val data: Uri? = intent.data
@@ -109,8 +122,25 @@ class ViewLiveShowActivity : BaseActivity() {
 
 		log("POSITION : $pos ")
 
-		FireRef.LIVE_SESSIONS.addValueEventListener(eventListener)
+//		FireRef.LIVE_SESSIONS.addValueEventListener(eventListener)
 //		createEngine()
+
+		streamList.addAll(roomIdsList)
+
+//		pos = streamList.indexOf(roomIdsList.find { it == showId })
+
+		if (streamList.isNotEmpty()) {
+			viewPager = bind.viewPager
+
+			viewModel.setStreams(roomIdsList)
+
+			streamPagerAdapter = StreamPagerAdapter(this@ViewLiveShowActivity , viewModel)
+			viewPager.adapter = streamPagerAdapter
+			viewPager.currentItem = 0
+			viewPager.orientation = ViewPager2.ORIENTATION_VERTICAL
+		} else {
+			finishAfterTransition()
+		}
 
 		// Initialize ChatManager here if you want the ZIM SDK ready at Activity scope
 		chatManager = ChatManager(

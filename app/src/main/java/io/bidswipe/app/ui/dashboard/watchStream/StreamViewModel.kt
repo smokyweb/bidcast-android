@@ -18,21 +18,21 @@ import javax.inject.Inject
 class StreamViewModel @Inject constructor(val repo : DashRepository) : ViewModel() {
 
 	// LiveData to hold the list or individual streams
-	private val _streams = MutableLiveData<List<LiveShowModelOld>>()
+	private val _streams = MutableLiveData<List<String>>()
 
-	val streams : LiveData<List<LiveShowModelOld>> = _streams
+	val streams : LiveData<List<String>> = _streams
 
 	var previousRoomId = ""
 
-	fun setStreams(newStreams : List<LiveShowModelOld>) {
+	fun setStreams(newStreams : List<String>) {
 		_streams.value = newStreams
 	}
 
 	// Optionally, you can have a LiveData for the currently selected stream
-	private val _selectedStream = MutableLiveData<LiveShowModelOld>()
-	val selectedStream : LiveData<LiveShowModelOld> = _selectedStream
+	private val _selectedStream = MutableLiveData<String>()
+	val selectedStream : LiveData<String> = _selectedStream
 
-	fun selectStream(stream : LiveShowModelOld) {
+	fun selectStream(stream : String) {
 		_selectedStream.value = stream
 	}
 

@@ -49,7 +49,7 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
 	private lateinit var homeAdapter: HomeAdapter
 	private var showList = mutableListOf<GetMyShowResponse.Data?>()
 	private var categoriesList = mutableListOf<String?>()
-	private var romIdsList = mutableListOf<StreamModel>()
+	private var romIdsList = mutableListOf<String>()
 	private var page = 1
 	private var isLoading = false
 	
@@ -82,9 +82,9 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
 									ViewLiveShowActivity::class.java
 								).putExtra("showId", showId)
 									.putExtra("userId", showList[pos]?.userId.toString())
-									.putParcelableArrayListExtra(
+									.putExtra(
 										"roomIdsList",
-										romIdsList as ArrayList
+										romIdsList.joinToString(",")
 									)
 							)
 						}
@@ -269,7 +269,7 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
 					val mData = it.value.data
 					
 					mData?.forEach {
-						romIdsList.add(StreamModel(it?.roomId.toString(), ""))
+						romIdsList.add(it?.id.toString())
 					}
 					
 					if (page == 1) {
