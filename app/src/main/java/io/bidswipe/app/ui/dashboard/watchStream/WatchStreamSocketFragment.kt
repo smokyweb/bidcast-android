@@ -33,6 +33,7 @@ import io.bidswipe.app.databinding.InputBottomSheetBinding
 import io.bidswipe.app.databinding.PaymentAndAddressSheetBinding
 import io.bidswipe.app.interfaces.AlertClicks
 import io.bidswipe.app.model.LiveChatModel
+import io.bidswipe.app.model.LiveShowModel
 import io.bidswipe.app.model.LiveShowModelOld
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.ui.custom.AlertType
@@ -50,7 +51,6 @@ import io.bidswipe.app.utils.hideKeyboard
 import io.bidswipe.app.utils.value
 import io.bidswipe.app.utils.loadUrl
 import io.bidswipe.app.utils.parse
-import io.bidswipe.app.utils.request
 import io.bidswipe.app.utils.runSafe
 import io.bidswipe.app.utils.setHapticClickListener
 import io.bidswipe.app.utils.setMargins
@@ -118,7 +118,6 @@ class WatchStreamSocketFragment : BaseFragment<StreamViewModel , FragmentWatchSt
             
             bind.controlsView.setMargins(top = system.top)
             bind.bidLayout.setMargins(resources.dpToPx(16) , 0 , resources.dpToPx(16) , system.bottom)
-            
             insets
         }
      
@@ -147,10 +146,13 @@ class WatchStreamSocketFragment : BaseFragment<StreamViewModel , FragmentWatchSt
             socketManager = SocketManager.getInstance(requireContext())
             socketManager?.initialize(socketUrl , mapOf("uid" to userId))
             socketManager?.connect(onConnected = {
-                socketManager?.joinRoom(roomID){
+                socketManager?.joinRoom(roomID,userId){
                     log("ROOM JOINED success")
                 }
-                socketManager?.emitViewerJoin(roomID)
+
+
+
+//                socketManager?.emitViewerJoin(roomID)
             }) { err -> log("Socket connect error: $err") }
 
             socketManager?.onViewerCount { count ->
@@ -163,39 +165,48 @@ class WatchStreamSocketFragment : BaseFragment<StreamViewModel , FragmentWatchSt
 
             // Optional room/session updates (current product, sold, allow flags, countdown)
             socketManager?.onMessage { msg ->
-                log("${roomID}  MESGSA E $msg")
-                val type = msg.optString("type")
+                log("${roomID}  MESSAGES $msg")
+
+                if(msg.optString("roomId")==roomID){
+                    viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Main) {
+                        commentList.add(LiveChatModel(
+                            msg.optString("userImage"),
+                            msg.optString("userName"),
+                            msg.optString("userId"),
+                            msg.optString("content")
+                        ))
+                        commentAdapter.notifyItemInserted(commentList.size - 1)
+                        bind.recycler.scrollToPosition(commentList.size - 1)
+                    }
+                }
+
+                /*val type = msg.optString("type")
                 when (type) {
                     "session_update" -> updateSessionUI(msg)
                     "countdown" -> updateCountdown(msg)
                     else->{
-                        if(msg.optString("roomId")==roomID){
-                            viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Main) {
-                                commentList.add(LiveChatModel(
-                                    msg.optString("userImage"),
-                                    msg.optString("userName"),
-                                    msg.optString("userId"),
-                                    msg.optString("content")
-                                ))
-                                commentAdapter.notifyItemInserted(commentList.size - 1)
-                                bind.recycler.scrollToPosition(commentList.size - 1)
-                            }
-                        }
+
                     }
-                }
+                }*/
             }
+        }
+
+        socketManager?.onRoomCreated { obj ->
+
+            updateSessionUI(obj)
+
         }
 
 //        initializeChat()
 
-        viewModel.selectedStream.observe(viewLifecycleOwner) { stream ->
+        /*viewModel.selectedStream.observe(viewLifecycleOwner) { stream ->
             if (stream == roomID) {
 
-               /* bind.userImage.loadUrl(
+               *//* bind.userImage.loadUrl(
                     mCtx ,
                     stream.seller?.image.toString() ,
                     placeHolder = draw.user_image
-                )*/
+                )*//*
 
 //                product = stream.products?.find { it?.isCurrent == true }
 
@@ -262,7 +273,7 @@ class WatchStreamSocketFragment : BaseFragment<StreamViewModel , FragmentWatchSt
                     showInputSheet()
                 }
             }
-        }
+        }*/
 
         bind.message.setEndIconOnClickListener {
             if (bind.text.value().isNotEmpty()) {
@@ -364,7 +375,10 @@ class WatchStreamSocketFragment : BaseFragment<StreamViewModel , FragmentWatchSt
 
     override fun onResume() {
         super.onResume()
-        socketManager?.emitViewerJoin(roomID)
+        socketManager?.joinRoom(roomID,userId){
+
+        }
+//        socketManager?.emitViewerJoin(roomID)
     }
 
     override fun onPause() {
@@ -374,7 +388,7 @@ class WatchStreamSocketFragment : BaseFragment<StreamViewModel , FragmentWatchSt
 
     override fun onDestroyView() {
         super.onDestroyView()
-        socketManager?.leaveRoom(roomID)
+        socketManager?.leaveRoom(roomID,userId)
         socketManager?.disconnect()
     }
 
@@ -389,12 +403,20 @@ class WatchStreamSocketFragment : BaseFragment<StreamViewModel , FragmentWatchSt
 
     private fun updateSessionUI(json : JSONObject) {
         runSafe {
-            // minimal fields: product image/name/price, seller, allowBidForAll
+
+            log("SESSION UPDATE: $json")
+
+            val showData = LiveShowModel.fromJson(json)
+
+         /*   // minimal fields: product image/name/price, seller, allowBidForAll
             json.optJSONObject("seller")?.let { seller ->
                 bind.userName.text = seller.optString("name")
                 bind.userImage.loadUrl(mCtx , seller.optString("image"))
             }
-            json.optJSONObject("product")?.let { product ->
+
+
+            json.optJSONObject("products")?.let { product ->
+
                 bind.productName.text = product.optString("name")
                 bind.productImage.loadUrl(mCtx , product.optString("image"))
                 val price = product.optString("price" , "0")
@@ -403,11 +425,62 @@ class WatchStreamSocketFragment : BaseFragment<StreamViewModel , FragmentWatchSt
                 bidProductId = product.optString("id" , bidProductId)
                 bind.bid.text = "Swipe to Bid ${newBidAmount(price.toDoubleOrNull()?.toInt() ?: 0).toString().asMoney()}"
             }
+
             isAllowBidForAll = json.optBoolean("allowBidForAll" , true)
             val isSold = json.optBoolean("isSold" , false)
             bind.soldLayout.isVisible = isSold
             bind.bidLayout.isVisible = ! isSold
+            bind.productLayout.isVisible = ! isSold*/
+
+
+            // Safely update highestBidAmount
+
+            if (showData.highestBid != null) {
+
+                log("HIGHEST BID: ${showData.highestBid}")
+                highestBidAmount = showData.highestBid?.bidAmount ?: highestBidAmount
+
+                bind.bid.text = "Swipe to Bid ${newBidAmount(highestBidAmount?.toDouble()?.toInt() ?: 0).toString().asMoney()}"
+
+            }
+
+            bind.userName.text = showData.seller?.name
+            bind.userImage.loadUrl(mCtx , showData.seller?.image ?:"")
+
+            // Show viewer count or default to 0
+            bind.liveCount.text = (showData.viewerCount ?: 0).toString()
+
+            // Find the current product once
+            val currentProduct = showData.products.find { it?.id == showData.highestBid.productId }
+
+            log("CURRENT PRODUCT Value : $currentProduct")
+
+            // Determine sale status once
+            val isSold = currentProduct?.status == "sold"
+            bind.soldLayout.isVisible = isSold
+            bind.bidLayout.isVisible = ! isSold
+
+            if (isSold) {
+                inputSheet?.dismiss()
+            }
+
             bind.productLayout.isVisible = ! isSold
+
+            if (isSold && showData.highestBid?.userId == userId) {
+                bind.soldOutText.text = "You won the bid"
+            }
+
+            // Show bid countdown if available
+            val countdown = showData.bidCountDown.toString()
+            if (! countdown.isNullOrEmpty()) {
+                bind.bidTime.isVisible = true
+                bind.bidTime.text = "Ends in $countdown"
+            } else {
+                bind.bidTime.isVisible = false
+            }
+
+            isAllowBidForAll = showData.allowBidForAll ?: true
+
         }
     }
 
@@ -832,6 +905,7 @@ class WatchStreamSocketFragment : BaseFragment<StreamViewModel , FragmentWatchSt
         }
         log("Subscriber cleanup finished")
     }
+
 }
 
 

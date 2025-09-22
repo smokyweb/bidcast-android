@@ -18,6 +18,19 @@ class SocketManager private constructor(
 	
 	@Volatile
 	private var isInitialized = false
+
+    // Session state to avoid duplicate emits/listeners
+    @Volatile
+    private var currentRoomId: String? = null
+    @Volatile
+    private var hasJoinedRoom: Boolean = false
+    @Volatile
+    private var viewerJoinEmitted: Boolean = false
+
+    // De-duplicate incoming chat messages within a sliding window
+    private val recentMessageKeys: ArrayDeque<String> = ArrayDeque()
+    private val recentMessageSet: HashSet<String> = HashSet()
+    private val recentMessageCapacity: Int = 200
 	
 	companion object {
 		private const val TAG = "SocketManager"
@@ -58,47 +71,64 @@ class SocketManager private constructor(
 	
 	fun connect(onConnected: (() -> Unit)? = null, onError: ((String) -> Unit)? = null) {
 		Log.d(TAG, "Attempting to connect to socket")
-		socket?.on(Socket.EVENT_CONNECT) {
+        // Remove previous listeners to prevent duplicates
+        socket?.off(Socket.EVENT_CONNECT)
+        socket?.off(Socket.EVENT_CONNECT_ERROR)
+
+        socket?.on(Socket.EVENT_CONNECT) {
 			Log.d(TAG, "Socket connected successfully")
 			onConnected?.invoke()
 		}
 		
-		socket?.on(Socket.EVENT_CONNECT_ERROR) { args ->
+        socket?.on(Socket.EVENT_CONNECT_ERROR) { args ->
 			val error = args.firstOrNull()?.toString() ?: "connect_error"
 			Log.e(TAG, "Socket connection error: $error")
 			onError?.invoke(error)
 		}
-		socket?.on(Socket.EVENT_CONNECT_ERROR) {
-			Log.e(TAG, "Socket connection timeout")
-			onError?.invoke("connect_timeout")
-		}
+       /* socket?.on(Socket.EVENT_CONNECT_TIMEOUT) {
+            Log.e(TAG, "Socket connection timeout")
+            onError?.invoke("connect_timeout")
+        }*/
 		socket?.connect()
 	}
 	
 	fun disconnect() {
 		Log.d(TAG, "Disconnecting from socket")
-		socket?.disconnect()
+        try {
+            socket?.off() // remove all listeners to avoid future duplicates
+        } catch (_: Throwable) {}
+        socket?.disconnect()
+        // Reset session flags
+        currentRoomId = null
+        hasJoinedRoom = false
+        viewerJoinEmitted = false
 	}
 	
-	fun joinRoom(roomId: String,listener: (liveShowJson: JSONObject) -> Unit) {
-		val payload = JSONObject().apply { put("roomId", roomId) }
-		Log.d(TAG, "EMIT: join_room - RoomId: $roomId")
+    fun joinRoom(roomId: String, userId: String,listener: (liveShowJson: JSONObject) -> Unit) {
+        // Avoid duplicate join for the same room in the same session
+        if (hasJoinedRoom && currentRoomId == roomId) {
+            Log.d(TAG, "joinRoom skipped; already joined RoomId: $roomId")
+            return
+        }
 
-		socket?.emit("join_room", payload)
+        val payload = JSONObject().apply {
+			put("room_id", roomId)
+			put("user_id", userId)}
+        Log.d(TAG, "EMIT: join_room - RoomId: $roomId")
 
-		socket?.on("join_room"){ args ->{
-			val obj = args.firstOrNull()
-			if (obj is JSONObject) {
-				Log.d(TAG, "RECEIVED: join_room - $obj")
-				listener(obj)
-			}
-		}
+        socket?.emit("join_room", payload)
+	    listener(payload)
 
-		}
-	}
+	    // Ensure we only have one handler
+		// socket?.off("join_room")
+
+    }
 	
-	fun leaveRoom(roomId: String) {
-		val payload = JSONObject().apply { put("roomId", roomId) }
+	fun leaveRoom(roomId: String, userId: String) {
+		val payload = JSONObject().apply {
+			put("room_id", roomId)
+			put("user_id", userId)
+		}
 		Log.d(TAG, "EMIT: leave_room - RoomId: $roomId")
 		socket?.emit("leave_room", payload)
 	}
@@ -142,6 +172,7 @@ class SocketManager private constructor(
 	/**
 	 * Listen for current product changes
 	 */
+
 	fun onCurrentProductChange(listener: (productJson: JSONObject) -> Unit) {
 		socket?.on("current_product_change") { args ->
 			val obj = args.firstOrNull()
@@ -248,6 +279,7 @@ class SocketManager private constructor(
 			TAG,
 			"EMIT: product_status_change - RoomId: ${liveSocket.roomId}, ProductId: ${product.id}, Status: $newStatus"
 		)
+
 		socket?.emit("product_status_change", payload)
 	}
 	
@@ -331,25 +363,55 @@ class SocketManager private constructor(
 		}
 	}
 	
-	fun emitViewerJoin(roomId: String) {
+	/*fun emitViewerJoin(roomId: String) {
 		val payload = JSONObject().apply { put("roomId", roomId) }
 		Log.d(TAG, "EMIT: viewer_join - RoomId: $roomId")
 		socket?.emit("viewer_join", payload)
-	}
+	}*/
 	
 	fun emitViewerLeave(roomId: String) {
 		val payload = JSONObject().apply { put("roomId", roomId) }
 		Log.d(TAG, "EMIT: viewer_leave - RoomId: $roomId")
 		socket?.emit("viewer_leave", payload)
 	}
-	
+
 	fun onMessage(listener: (message: JSONObject) -> Unit) {
+		// Avoid duplicate message handlers on reconnect or re-entry
+		socket?.off("chat_get")
 		socket?.on("chat_get") { args ->
-			val obj = args.firstOrNull()
-			if (obj is JSONObject) {
-				Log.d(TAG, "RECEIVED: message - $obj")
-				listener(obj)
+			val obj = args.firstOrNull() as? JSONObject ?: return@on
+
+			// Extract required fields once
+			val roomId = obj.optString("roomId")
+			val userId = obj.optString("userId")
+			val content = obj.optString("content")
+			val timestamp = obj.optString("timestamp")
+
+			// Build a unique key to detect duplicates
+			val key = "$roomId|$userId|$content|$timestamp"
+
+			val isDuplicate = synchronized(this) {
+				if (recentMessageSet.contains(key)) {
+					true
+				} else {
+					recentMessageSet.add(key)
+					recentMessageKeys.addLast(key)
+
+					if (recentMessageKeys.size > recentMessageCapacity) {
+						val oldest = recentMessageKeys.removeFirst()
+						recentMessageSet.remove(oldest)
+					}
+					false
+				}
 			}
+
+			if (isDuplicate) {
+				Log.d(TAG, "RECEIVED: duplicate message - $obj")
+				return@on
+			}
+
+			Log.d(TAG, "RECEIVED: new message - $obj")
+			listener(obj)
 		}
 	}
 	
@@ -378,9 +440,7 @@ class SocketManager private constructor(
 	}
 	
 	fun createRoom(roomId: String,liveShowData: LiveShowModel) {
-		val payload = JSONObject().apply {
-
-		}
+		val payload = JSONObject().apply {}
 		Log.d(TAG, "EMIT: room_created - RoomId: $payload")
 		socket?.emit("room_create", liveShowData.toJson())
 	}

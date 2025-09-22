@@ -269,7 +269,7 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
 					val mData = it.value.data
 					
 					mData?.forEach {
-						romIdsList.add(it?.id.toString())
+						romIdsList.add(it?.roomId.toString())
 					}
 					
 					if (page == 1) {
