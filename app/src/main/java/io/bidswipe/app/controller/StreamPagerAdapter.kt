@@ -15,12 +15,8 @@ class StreamPagerAdapter(
 	override fun getItemCount() : Int = viewModel.streams.value?.size ?: 0
 
 	override fun createFragment(position : Int) : Fragment {
-
 		val stream = viewModel.streams.value?.get(position) ?: throw IllegalStateException("Stream data not available")
-
 		viewModel.selectStream(stream)
-
 		return WatchStreamSocketFragment.newInstance(stream , stream)
-
 	}
 }

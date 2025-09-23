@@ -109,11 +109,9 @@ class SellerVerificationActivity : BaseActivity() {
 				selfie = imagePath
 
 				if (cardImage.isNotEmpty() && selfie.isNotEmpty()) {
-
 					bind.verificationIcon.isVisible = true
 					bind.stepProgress.setProgress(1)
 					bind.stepCount.text = "1 of 3"
-
 				}
 
 				log("ImageUri = $imageUri")
@@ -130,6 +128,7 @@ class SellerVerificationActivity : BaseActivity() {
 		bind.header.onBackClick {
 			finish()
 		}
+
 		bind.root.setHapticClickListener {
 			hideKeyboard()
 		}
@@ -156,7 +155,6 @@ class SellerVerificationActivity : BaseActivity() {
 			when {
 
 				cardImage.isEmpty() -> {
-
 					Alerts.error(this, "Please select Id card")
 				}
 
@@ -334,6 +332,17 @@ class SellerVerificationActivity : BaseActivity() {
 						if (it.isLowerCase()) it.titlecase(Locale.getDefault())
 						else it.toString()
 					}
+
+					if (mData?.idCard?.isNotEmpty() == true && mData.image?.isNotEmpty() == true){
+						bind.cardImage.isVisible = true
+						bind.selfie.isVisible = true
+					}else{
+						bind.cardImage.isVisible = true
+						bind.selfie.isVisible = true
+					}
+
+					bind.cardImage.loadUrl(this,mData?.idCard ?:"")
+					bind.selfie.loadUrl(this,mData?.image ?:"")
 
 					when (mData?.status) {
 

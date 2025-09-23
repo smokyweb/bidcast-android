@@ -3,6 +3,7 @@ package io.bidswipe.app.ui.dashboard.watchStream
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
@@ -23,7 +24,6 @@ import com.millicast.subscribers.Option
 import com.millicast.subscribers.remote.RemoteAudioTrack
 import com.millicast.subscribers.remote.RemoteVideoTrack
 import com.millicast.subscribers.state.SubscriberConnectionState
-import com.ncorti.slidetoact.SlideToActView
 import io.bidswipe.app.App
 import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseFragment
@@ -104,6 +104,7 @@ class WatchStreamSocketFragment : BaseFragment<StreamViewModel , FragmentWatchSt
     override fun onCreate(savedInstanceState : Bundle?) {
         super.onCreate(savedInstanceState)
         roomID = requireArguments().getString("roomID") ?: ""
+        Log.d("TAG", "onCreate: ROOM ID: $roomID ")
         socketUrl = Const.SOCKET_URL// requireArguments().getString("socketUrl") ?: ""
     }
 
@@ -115,8 +116,7 @@ class WatchStreamSocketFragment : BaseFragment<StreamViewModel , FragmentWatchSt
         
         ViewCompat.setOnApplyWindowInsetsListener(requireActivity().window.decorView){ v, insets  ->
             val system = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            
-            bind.controlsView.setMargins(top = system.top)
+            bind.profileLayout.setMargins(top = system.top, left = resources.dpToPx(16) , right =  resources.dpToPx(16) ,)
             bind.bidLayout.setMargins(resources.dpToPx(16) , 0 , resources.dpToPx(16) , system.bottom)
             insets
         }
@@ -139,6 +139,7 @@ class WatchStreamSocketFragment : BaseFragment<StreamViewModel , FragmentWatchSt
         subscriber = Core.createSubscriber()
         
         initRenderer()
+
         startSubscription()
         
         // Initialize sockets
@@ -147,11 +148,8 @@ class WatchStreamSocketFragment : BaseFragment<StreamViewModel , FragmentWatchSt
             socketManager?.initialize(socketUrl , mapOf("uid" to userId))
             socketManager?.connect(onConnected = {
                 socketManager?.joinRoom(roomID,userId){
-                    log("ROOM JOINED success")
+                   socketManager?.sendMessage(roomID, bind.text.value(), userId, userName, userImage)
                 }
-
-
-
 //                socketManager?.emitViewerJoin(roomID)
             }) { err -> log("Socket connect error: $err") }
 
@@ -167,7 +165,7 @@ class WatchStreamSocketFragment : BaseFragment<StreamViewModel , FragmentWatchSt
             socketManager?.onMessage { msg ->
                 log("${roomID}  MESSAGES $msg")
 
-                if(msg.optString("roomId")==roomID){
+                if(msg.optString("roomId") == roomID){
                     viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Main) {
                         commentList.add(LiveChatModel(
                             msg.optString("userImage"),
@@ -290,7 +288,7 @@ class WatchStreamSocketFragment : BaseFragment<StreamViewModel , FragmentWatchSt
             showPaymentAndAddressSheet()
         }
 
-        viewModel.createBidRepo.observe(viewLifecycleOwner) {
+       /* viewModel.createBidRepo.observe(viewLifecycleOwner) {
             when (it) {
                 is Resource.Success -> {
 
@@ -365,7 +363,7 @@ class WatchStreamSocketFragment : BaseFragment<StreamViewModel , FragmentWatchSt
                 else -> {}
 
             }
-        }
+        }*/
 
         if (App.profileResponse.value?.buyerIdentityStatus != "verified") {
             verificationDialog()
@@ -376,14 +374,14 @@ class WatchStreamSocketFragment : BaseFragment<StreamViewModel , FragmentWatchSt
     override fun onResume() {
         super.onResume()
         socketManager?.joinRoom(roomID,userId){
-
+            socketManager?.sendMessage(roomID, bind.text.value(), userId, userName, userImage)
         }
 //        socketManager?.emitViewerJoin(roomID)
     }
 
     override fun onPause() {
         super.onPause()
-        socketManager?.emitViewerLeave(roomID)
+        socketManager?.leaveRoom(roomID,userId)
     }
 
     override fun onDestroyView() {
@@ -644,12 +642,6 @@ class WatchStreamSocketFragment : BaseFragment<StreamViewModel , FragmentWatchSt
 
     }
 
-  /*  fun sendZimMessage(content : String) {
-        val extended = ZIMExtendedData(userImage , userId , userName).toJson()
-        chatManager?.sendTextMessage(roomID , content , extended)
-        bind.text.setText("")
-    }*/
-
     private fun verificationDialog() {
         AppBottomSheet(
             mCtx ,
@@ -786,7 +778,7 @@ class WatchStreamSocketFragment : BaseFragment<StreamViewModel , FragmentWatchSt
             try {
                 log("Starting subscription flow...")
                 val credentials = Credential(
-                    streamName =roomID,// streamName.ifBlank { Const.ACCOUNT_ID },
+                    streamName = roomID,// streamName.ifBlank { Const.ACCOUNT_ID },
                     accountId = Const.ACCOUNT_ID,
                     apiUrl = "https://director.millicast.com/api/director/subscribe"
                 )

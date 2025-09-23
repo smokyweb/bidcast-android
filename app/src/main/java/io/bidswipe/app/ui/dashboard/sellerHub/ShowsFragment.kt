@@ -91,7 +91,7 @@ class ShowsFragment : BaseFragment<SellerHubViewModel , FragmentShowsBinding>() 
 							"1",
 						)
 					}?.toList() ?: mutableListOf(),
-					roomId = data?.id.toString(),
+					roomId = "live_room_${userId}_${data?.id.toString()}",
 					showDetail = "Test Details",
 					thumbnail = data?.thumbnail?.getOrNull(0) ?: "",
 					viewerCount = 1,

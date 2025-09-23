@@ -125,10 +125,8 @@ class LiveShowSocketActivity : BaseActivity() {
 		
 		ViewCompat.setOnApplyWindowInsetsListener(window.decorView) { v, insets ->
 			val system = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-			
-			bind.profileLayout.setMargins(top = system.top)
+			bind.profileLayout.setMargins(top = system.top,left = resources.dpToPx(16) , right =  resources.dpToPx(16) ,)
 			bind.startBtn.setMargins(resources.dpToPx(16), resources.dpToPx(0), resources.dpToPx(16), system.bottom)
-			
 			insets
 		}
 		
@@ -620,9 +618,7 @@ class LiveShowSocketActivity : BaseActivity() {
 		}
 		
 		moreSheetBind.micLayout.setHapticClickListener {
-			val isMuted = audioSource?.isCapturing ?: false
-			
-			if (!isMuted) {
+			if (audioSource?.isCapturing == true) {
 				audioSource?.stopCapture()
 				moreSheetBind.muteIcon.setImageResource(draw.ic_mute)
 			} else {
@@ -818,6 +814,7 @@ class LiveShowSocketActivity : BaseActivity() {
 								}
 							}
 					}
+
 				} catch (e: Exception) {
 					bind.loader.isVisible = false
 					log("CONNECTING PUBLISHER ERROR : ${e.localizedMessage}")

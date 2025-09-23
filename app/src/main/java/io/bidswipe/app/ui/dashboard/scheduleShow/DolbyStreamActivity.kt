@@ -55,7 +55,6 @@ class DolbyStreamActivity : BaseActivity() {
 
 	}
 
-
 	private fun initRenderer() {
 		eglBase = EglBase.create()
 		bind.remoteView.init(eglBase.eglBaseContext, null)

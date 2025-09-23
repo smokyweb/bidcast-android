@@ -9,14 +9,12 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import com.gyf.immersionbar.ktx.immersionBar
-import im.zego.zegoexpress.constants.ZegoScenario
 import io.bidswipe.app.utils.ChatManager
 import io.bidswipe.app.base.BaseActivity
 import io.bidswipe.app.controller.StreamPagerAdapter
 import io.bidswipe.app.databinding.ActivityViewLiveShowBinding
-import io.bidswipe.app.model.LiveShowModelOld
 import io.bidswipe.app.utils.Const
-import io.bidswipe.app.utils.FireRef
+import io.bidswipe.app.utils.SocketManager
 import io.bidswipe.app.utils.StreamingManager
 import io.bidswipe.app.utils.bind
 import io.bidswipe.app.utils.clr
@@ -36,6 +34,10 @@ class ViewLiveShowActivity : BaseActivity() {
 	private var chatManager : ChatManager? = null
 	private var streamingManager : StreamingManager? = null
 	private var roomIdsList = arrayListOf<String>()
+
+	private lateinit var socketUrl : String
+	//    private var chatManager : ChatManager? = null
+	private var socketManager : SocketManager? = null
 	
 	private var eventListener = object : ValueEventListener {
 		@SuppressLint("NotifyDataSetChanged")
@@ -103,10 +105,6 @@ class ViewLiveShowActivity : BaseActivity() {
 
 		val roomIds = intent.getStringExtra("roomIdsList")
 
-		 val a = roomIds?.split(",")
-
-		roomIdsList.addAll(a ?: emptyList())
-
 		publisherId = intent.getStringExtra("userId") ?:""
 
 		if (showId.isNotEmpty()){
@@ -125,14 +123,18 @@ class ViewLiveShowActivity : BaseActivity() {
 //		FireRef.LIVE_SESSIONS.addValueEventListener(eventListener)
 //		createEngine()
 
-		streamList.addAll(roomIdsList)
+		streamList.clear()
+
+		streamList.addAll(roomIds?.split(",") ?: emptyList())
 
 //		pos = streamList.indexOf(roomIdsList.find { it == showId })
 
 		if (streamList.isNotEmpty()) {
 			viewPager = bind.viewPager
 
-			viewModel.setStreams(roomIdsList)
+			viewModel.setStreams(streamList)
+
+			log("STREAM LIST : ${streamList}")
 
 			streamPagerAdapter = StreamPagerAdapter(this@ViewLiveShowActivity , viewModel)
 			viewPager.adapter = streamPagerAdapter
@@ -143,7 +145,7 @@ class ViewLiveShowActivity : BaseActivity() {
 		}
 
 		// Initialize ChatManager here if you want the ZIM SDK ready at Activity scope
-		chatManager = ChatManager(
+		/*chatManager = ChatManager(
 			application = application ,
 			appId = Const.APP_ID.toLong() ,
 			appSign = Const.APP_SIGN ,
@@ -151,21 +153,40 @@ class ViewLiveShowActivity : BaseActivity() {
 			userName = userName ,
 			userImage = userImage
 		)
+*/
+	}
+
+	override fun onDestroy() {
+		super.onDestroy()
+//		FireRef.LIVE_SESSIONS.removeEventListener(eventListener)
+		destroyEngine()
 
 	}
 	
 	private fun createEngine() {
-		streamingManager = StreamingManager.getInstance(applicationContext)
+
+		socketUrl = Const.SOCKET_URL
+		socketManager = SocketManager.getInstance(this)
+		socketManager?.initialize(socketUrl , mapOf("uid" to userId))
+		socketManager?.connect(onConnected = {
+//                socketManager?.emitViewerJoin(roomID)
+		}) { err -> log("Socket connect error: $err")
+
+		}
+
+
+		/*streamingManager = StreamingManager.getInstance(applicationContext)
 		streamingManager?.createEngine(
 			appId = Const.APP_ID.toLong() ,
 			appSign = Const.APP_SIGN ,
 			scenario = ZegoScenario.BROADCAST
-		)
+		)*/
 
 	}
 
 	private fun destroyEngine() {
-		streamingManager?.destroyEngine()
+		socketManager?.disconnect()
+//		streamingManager?.destroyEngine()
 	}
 
 }

@@ -267,6 +267,8 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
 					bind.noData.isVisible = false
 					
 					val mData = it.value.data
+
+					romIdsList.clear()
 					
 					mData?.forEach {
 						romIdsList.add(it?.roomId.toString())

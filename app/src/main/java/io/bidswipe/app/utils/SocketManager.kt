@@ -146,6 +146,7 @@ class SocketManager private constructor(
 	/**
 	 * Listen for live show updates
 	 */
+
 	fun onLiveShowUpdate(listener: (liveShowJson: JSONObject) -> Unit) {
 		socket?.on("live_show_update") { args ->
 			val obj = args.firstOrNull()
@@ -203,6 +204,7 @@ class SocketManager private constructor(
 	/**
 	 * Place a bid using LiveSocketModel structure
 	 */
+
 	fun emitBidWithLiveSocketModel(
 		liveSocket: LiveSocketModel,
 		userId: String,
@@ -231,7 +233,7 @@ class SocketManager private constructor(
 		
 		Log.d(
 			TAG,
-			"EMIT: place_bid_with_livesocket - RoomId: ${liveSocket.roomId}, ShowId: ${liveSocket.showId}, ProductId: ${currentProduct.id}, BidAmount: $bidAmount"
+			"EMIT: place_bid_with_liveSocket - RoomId: ${liveSocket.roomId}, ShowId: ${liveSocket.showId}, ProductId: ${currentProduct.id}, BidAmount: $bidAmount"
 		)
 		socket?.emit("place_bid", payload)
 	}
@@ -325,6 +327,8 @@ class SocketManager private constructor(
 	/**
 	 * Emit complete LiveSocketModel update
 	 */
+
+
 	fun emitLiveSocketUpdate(liveSocket: LiveSocketModel) {
 		val payload = liveSocket.toJson()
 		Log.d(
@@ -446,6 +450,7 @@ class SocketManager private constructor(
 	}
 	
 	fun onRoomCreated(listener: (bidJson: JSONObject) -> Unit) {
+		socket?.off("room_create_get")
 		socket?.on("room_create_get") { args ->
 			val obj = args.firstOrNull()
 			if (obj is JSONObject) {
