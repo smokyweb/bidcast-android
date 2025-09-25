@@ -9,6 +9,7 @@ import io.bidswipe.app.base.BaseAdapter
 import io.bidswipe.app.databinding.SellSheetItemBinding
 import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.model.SellModel
+import io.bidswipe.app.utils.setHapticClickListener
 
 class SellAdapter(
 	mList : MutableList<SellModel> , val type : String , val mClicks : RecyclerClicks ,
@@ -25,7 +26,7 @@ class SellAdapter(
 	) {
 		with(holder) {
 
-			bind.root.setOnClickListener {
+            bind.root.setHapticClickListener {
 				mClicks.itemClick(position)
 			}
 

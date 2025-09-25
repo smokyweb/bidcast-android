@@ -38,6 +38,15 @@
         android:theme="@style/Theme.Bidswipe"
         tools:targetApi="31">
         <activity
+            android:name=".ui.dashboard.scheduleShow.ChooseModeActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.dashboard.scheduleShow.DolbyStreamActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.dashboard.scheduleShow.DolbySubscribeActivity"
+            android:exported="false" />
+        <activity
             android:name=".ui.dashboard.interest.ChooseInterestActivity"
             android:exported="false"
             android:theme="@style/Theme.Bidswipe" />
@@ -56,19 +65,7 @@
         <activity
             android:name=".ui.dashboard.watchStream.ViewLiveShowActivity"
             android:exported="false"
-            android:windowSoftInputMode="adjustResize"
-            tools:ignore="AppLinkUrlError">
-            <intent-filter android:autoVerify="true">
-                <action android:name="android.intent.action.VIEW" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-
-                <data android:scheme="https" />
-                <data android:host="backend.bidcast.betaplanets.com" />
-                <data android:pathPattern="/live-show" />
-            </intent-filter>
-        </activity>
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".ui.dashboard.scheduleShow.LiveShowActivity"
             android:configChanges="screenSize|smallestScreenSize|screenLayout|orientation"
@@ -111,17 +108,30 @@
             android:exported="false" />
         <activity
             android:name=".ui.dashboard.DashActivity"
-            android:exported="false" />
+            android:exported="true">
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="https" />
+                <data android:host="backend.bidcast.betaplanets.com" />
+                <data android:pathPrefix="/live-show" />
+            </intent-filter>
+        </activity>
         <activity
             android:name=".ui.SpoofSocketActivity"
             android:exported="true"
             android:label="Socket Test Activity">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.DEFAULT" />
-                <data
-                    android:host="socket-test"
-                    android:scheme="bidcast" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="bidcast" />
+                <data android:host="socket-test" />
             </intent-filter>
         </activity>
         <activity
@@ -129,6 +139,7 @@
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>

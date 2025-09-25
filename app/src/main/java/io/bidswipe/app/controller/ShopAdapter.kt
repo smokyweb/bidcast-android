@@ -10,6 +10,7 @@ import io.bidswipe.app.network.response.GetMyInventoryResponse
 import io.bidswipe.app.utils.asCapital
 import io.bidswipe.app.utils.asMoney
 import io.bidswipe.app.utils.loadUrl
+import io.bidswipe.app.utils.setHapticClickListener
 
 class ShopAdapter(
 	mList : MutableList<GetMyInventoryResponse.Data?> , val mClicks : RecyclerClicks ,
@@ -24,7 +25,7 @@ class ShopAdapter(
 		item : GetMyInventoryResponse.Data? ,
 	) {
 		with(holder) {
-			bind.root.setOnClickListener {
+            bind.root.setHapticClickListener {
 				mClicks.itemClick(position)
 			}
 

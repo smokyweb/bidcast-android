@@ -20,6 +20,7 @@ import io.bidswipe.app.utils.bind
 import io.bidswipe.app.utils.loadUrl
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.runSafe
+import io.bidswipe.app.utils.setHapticClickListener
 import java.io.File
 
 class TrustedBuyerActivity : BaseActivity() {
@@ -51,7 +52,7 @@ class TrustedBuyerActivity : BaseActivity() {
 			finish()
 		}
 
-		bind.fileBtn.setOnClickListener {
+        bind.fileBtn.setHapticClickListener {
 			requestPerms(Const.STR_PERMS) { per ->
 				if (per) {
 					imageResult.launch(Utils.initCrop(this , isCamera = true , isGallery = true))
@@ -59,7 +60,7 @@ class TrustedBuyerActivity : BaseActivity() {
 			}
 		}
 
-		bind.imgCard.setOnClickListener {
+        bind.imgCard.setHapticClickListener {
 			requestPerms(Const.STR_PERMS) { per ->
 				if (per) {
 					imageResult.launch(Utils.initCrop(this , isCamera = true , isGallery = true))
@@ -67,7 +68,7 @@ class TrustedBuyerActivity : BaseActivity() {
 			}
 		}
 
-		bind.submit.setOnClickListener {
+        bind.submit.setHapticClickListener {
 
 			if (idPhoto.isEmpty()) {
 				Alerts.error(this , "Please Select an Id")

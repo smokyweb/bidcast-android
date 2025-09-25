@@ -15,7 +15,6 @@ import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
 import androidx.core.view.ViewCompat
-import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
 import com.google.firebase.database.DataSnapshot
@@ -35,7 +34,6 @@ import io.bidswipe.app.controller.CommentAdapter
 import io.bidswipe.app.controller.FirebaseProductAdapter
 import io.bidswipe.app.controller.LiveMoreAdapter
 import io.bidswipe.app.controller.PromoteSheetAdapter
-import io.bidswipe.app.controller.ShareSheetAdapter
 import io.bidswipe.app.controller.ShopSheetAdapter
 import io.bidswipe.app.databinding.ActivityLiveShowBinding
 import io.bidswipe.app.databinding.CreateClipSheetBinding
@@ -50,7 +48,7 @@ import io.bidswipe.app.databinding.ShowConfirmationAlertBinding
 import io.bidswipe.app.interfaces.AlertClicks
 import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.model.LiveChatModel
-import io.bidswipe.app.model.LiveShowModel
+import io.bidswipe.app.model.LiveShowModelOld
 import io.bidswipe.app.model.PromoteShowModel
 import io.bidswipe.app.model.ZIMExtendedData
 import io.bidswipe.app.network.Resource
@@ -70,6 +68,7 @@ import io.bidswipe.app.utils.loadUrl
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request
 import io.bidswipe.app.utils.runSafe
+import io.bidswipe.app.utils.setHapticClickListener
 import io.bidswipe.app.utils.setMargins
 import io.bidswipe.app.utils.value
 import org.json.JSONObject
@@ -100,14 +99,14 @@ class LiveShowActivity : BaseActivity() {
 	private var startTimeMillis : Long = 0L
 	private var zoomLevel = 1L
 
-	private var liveData : LiveShowModel? = null
+    private var liveData: LiveShowModelOld? = null
 
 	private var eventListener = object : ValueEventListener {
 		@SuppressLint("NotifyDataSetChanged")
 		override fun onDataChange(snapshot : DataSnapshot) {
 			log("Value : ${snapshot.value}")
 
-			liveData = LiveShowModel().fromMap(snapshot)
+            liveData = LiveShowModelOld().fromMap(snapshot)
 
 			bind.liveCount.text = liveData?.viewerCount.toString()
 
@@ -169,7 +168,7 @@ class LiveShowActivity : BaseActivity() {
 
 		bind.hostName.text = userName
 
-		bind.controls.setOnClickListener {
+        bind.controls.setHapticClickListener {
 			hideKeyboard()
 		}
 
@@ -184,23 +183,23 @@ class LiveShowActivity : BaseActivity() {
 
 		initializeStreamingManager()
 
-		bind.more.setOnClickListener {
+        bind.more.setHapticClickListener {
 			showMoreSheet()
 		}
 
-		bind.promote.setOnClickListener {
+        bind.promote.setHapticClickListener {
 			showPromoteSheet()
 		}
 
-		bind.clip.setOnClickListener {
+        bind.clip.setHapticClickListener {
 			createClipSheet()
 		}
 
-		bind.share.setOnClickListener {
+        bind.share.setHapticClickListener {
 
 			val shareText = buildString {
 				append(Const.BASE_URL)
-				append("/live-show")
+                append("/live-show?showId=$showId")
 			}
 
 			val shareIntent = Intent().apply {
@@ -218,7 +217,7 @@ class LiveShowActivity : BaseActivity() {
 			}
 		}
 
-		bind.cutButton.setOnClickListener {
+        bind.cutButton.setHapticClickListener {
 			if (chatManager != null) {
 				endShowSheet()
 			} else {
@@ -234,12 +233,12 @@ class LiveShowActivity : BaseActivity() {
 			}
 		}
 
-		bind.cameraSwitch.setOnClickListener {
+        bind.cameraSwitch.setHapticClickListener {
 			streamingManager?.toggleCamera()
 			isFrontCamera = streamingManager?.isUsingFrontCamera() ?: true
 		}
 
-		bind.shop.setOnClickListener {
+        bind.shop.setHapticClickListener {
 
 			if (chatManager != null) {
 				showProductSheet()
@@ -253,7 +252,7 @@ class LiveShowActivity : BaseActivity() {
 
 		viewModel.generateToken(showId.request())
 
-		bind.startBtn.setOnClickListener {
+        bind.startBtn.setHapticClickListener {
 
 			showConfirmationAlert()
 
@@ -563,7 +562,7 @@ class LiveShowActivity : BaseActivity() {
 	fun updateFirebaseNode(data : UpdateLiveStatusResponse.Data?) {
 		val user = data?.user
 
-		val seller = LiveShowModel.Seller(
+        val seller = LiveShowModelOld.Seller(
 			id = user?.id.toString() ,
 			image = user?.profileImage ,
 			isFollowed = false ,
@@ -575,7 +574,7 @@ class LiveShowActivity : BaseActivity() {
 
 		products?.first()?.isCurrent = true
 
-		val liveShow = LiveShowModel(
+        val liveShow = LiveShowModelOld(
 			products = products ,
 			roomId = roomID ,
 			seller = seller ,
@@ -791,7 +790,7 @@ class LiveShowActivity : BaseActivity() {
 			}
 		}
 
-		shopSheetBind.close.setOnClickListener {
+        shopSheetBind.close.setHapticClickListener {
 			shopSheet.dismiss()
 		}
 
@@ -805,6 +804,21 @@ class LiveShowActivity : BaseActivity() {
 		moreSheetBind.optionList.adapter = LiveMoreAdapter(Const.liveMoreMenu , object : RecyclerClicks {
 
 			override fun itemClick(pos : Int , status : String?) {
+
+                when (pos) {
+                    0 -> {
+                        if (chatManager != null) {
+                            endShowSheet()
+                            moreSheet.dismiss()
+                        } else {
+                            finishAfterTransition()
+                        }
+                    }
+
+                    else -> {
+
+                    }
+                }
 
 			}
 		})
@@ -825,12 +839,12 @@ class LiveShowActivity : BaseActivity() {
 			moreSheetBind.muteIcon.setImageResource(draw.ic_mute)
 		}
 
-		moreSheetBind.zoomInLayout.setOnClickListener {
+        moreSheetBind.zoomInLayout.setHapticClickListener {
 			streamingManager?.zoomIn()
 			moreSheet.dismiss()
 		}
 
-		moreSheetBind.micLayout.setOnClickListener {
+        moreSheetBind.micLayout.setHapticClickListener {
 			val isMuted = streamingManager?.isMicrophoneMuted() ?: false
 			streamingManager?.muteMicrophone(! isMuted)
 
@@ -841,12 +855,12 @@ class LiveShowActivity : BaseActivity() {
 			}
 		}
 
-		moreSheetBind.zoomOut.setOnClickListener {
+        moreSheetBind.zoomOut.setHapticClickListener {
 			streamingManager?.zoomOut()
 			moreSheet.dismiss()
 		}
 
-		moreSheetBind.close.setOnClickListener {
+        moreSheetBind.close.setHapticClickListener {
 			moreSheet.dismiss()
 		}
 
@@ -896,7 +910,7 @@ class LiveShowActivity : BaseActivity() {
 			}
 		})
 
-		promoteSheetBind.close.setOnClickListener {
+        promoteSheetBind.close.setHapticClickListener {
 			promoteSheet.dismiss()
 		}
 
@@ -913,8 +927,8 @@ class LiveShowActivity : BaseActivity() {
 		)
 
 		val sendTipSheet = Alerts.appBottomSheet(this , true , sendTipSheetBind)
-		
-		sendTipSheetBind.close.setOnClickListener {
+
+        sendTipSheetBind.close.setHapticClickListener {
 			sendTipSheet.dismiss()
 		}
 
@@ -936,7 +950,7 @@ class LiveShowActivity : BaseActivity() {
 			mList.add("")
 		}
 
-		clipSheetBind.close.setOnClickListener {
+        clipSheetBind.close.setHapticClickListener {
 			clipSheet.dismiss()
 		}
 
@@ -956,7 +970,7 @@ class LiveShowActivity : BaseActivity() {
 //			override fun itemClick(pos : Int , status : String?) {}
 //		})
 
-//		shareSheetBind.close.setOnClickListener {
+//		shareSheetBind.close.setHapticClickListener {
 //			shareSheet.dismiss()
 //		}
 
@@ -967,11 +981,11 @@ class LiveShowActivity : BaseActivity() {
 		val endShowSheetBind = EndShowSheetBinding.bind(layoutInflater.inflate(R.layout.end_show_sheet , null , false))
 		val endShowSheet = Alerts.appBottomSheet(this , true , endShowSheetBind)
 
-		endShowSheetBind.close.setOnClickListener {
+        endShowSheetBind.close.setHapticClickListener {
 			endShowSheet.dismiss()
 		}
 
-		endShowSheetBind.endBtn.setOnClickListener {
+        endShowSheetBind.endBtn.setHapticClickListener {
 			endShowSheet.dismiss()
 			stopUpdatingFirebase()
 			liveStatus = false
@@ -987,14 +1001,14 @@ class LiveShowActivity : BaseActivity() {
 		val productSheetBind = ProductSheetBinding.bind(layoutInflater.inflate(R.layout.product_sheet , null , false))
 		val productSheet = Alerts.appBottomSheet(this , true , productSheetBind)
 
-		val productList = mutableListOf<LiveShowModel.Product?>()
+        val productList = mutableListOf<LiveShowModelOld.Product?>()
 
 		var selectedPos = - 1
 
 		FireRef.LIVE_SESSIONS.child(roomID).addListenerForSingleValueEvent(object : ValueEventListener {
 			override fun onDataChange(snapshot : DataSnapshot) {
 
-				val data = LiveShowModel().fromMap(snapshot)
+                val data = LiveShowModelOld().fromMap(snapshot)
 
 				if (data.products != null) {
 					productList.clear()
@@ -1036,21 +1050,21 @@ class LiveShowActivity : BaseActivity() {
 
 		})
 
-		productSheetBind.close.setOnClickListener {
+        productSheetBind.close.setHapticClickListener {
 			productSheet.dismiss()
 		}
 
-		productSheetBind.addBtn.setOnClickListener {
+        productSheetBind.addBtn.setHapticClickListener {
 
 			if (selectedPos == - 1) {
 				Alerts.error(this@LiveShowActivity , "Please select a product")
-				return@setOnClickListener
+                return@setHapticClickListener
 			}
 
 			val isAnyProductLive = liveData?.products?.any { it?.isCurrent == true } == true
 			if (isAnyProductLive) {
 				Alerts.error(this@LiveShowActivity , "One Product is Already Live")
-				return@setOnClickListener
+                return@setHapticClickListener
 			}
 
 			val productRef = FireRef.LIVE_SESSIONS.child(roomID).child("products").child(selectedPos.toString())
@@ -1136,7 +1150,7 @@ class LiveShowActivity : BaseActivity() {
 
 		showConfirmationSheetBind.timing.text = "Show Starts at ${Utils.getFormattedDateTime("HH:mm:ss" , "hh:mm a" , showTime)}"
 
-		showConfirmationSheetBind.startBtn.setOnClickListener {
+        showConfirmationSheetBind.startBtn.setHapticClickListener {
 			showConfirmationSheet.dismiss()
 			bind.loader.isVisible = true
 			viewModel.updateLiveStatus(showId.request() , "true".request())

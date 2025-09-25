@@ -3,6 +3,7 @@ package io.bidswipe.app.ui.dashboard.watchStream
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
@@ -11,9 +12,18 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.viewModelScope
 import com.google.android.material.bottomsheet.BottomSheetDialog
-import com.gyf.immersionbar.ktx.navigationBarHeight
-import com.ncorti.slidetoact.SlideToActView
+import com.millicast.Core
+import com.millicast.Media
+import com.millicast.Subscriber
+import com.millicast.clients.ConnectionOptions
+import com.millicast.subscribers.Credential
+import com.millicast.subscribers.Option
+import com.millicast.subscribers.remote.RemoteAudioTrack
+import com.millicast.subscribers.remote.RemoteVideoTrack
+import com.millicast.subscribers.state.SubscriberConnectionState
 import io.bidswipe.app.App
 import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseFragment
@@ -24,17 +34,15 @@ import io.bidswipe.app.databinding.PaymentAndAddressSheetBinding
 import io.bidswipe.app.interfaces.AlertClicks
 import io.bidswipe.app.model.LiveChatModel
 import io.bidswipe.app.model.LiveShowModel
-import io.bidswipe.app.model.ZIMExtendedData
+import io.bidswipe.app.model.LiveShowModelOld
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.ui.custom.AlertType
 import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.ui.dashboard.more.MoreActivity
 import io.bidswipe.app.ui.dashboard.more.TrustedBuyerActivity
 import io.bidswipe.app.utils.Alerts
-import io.bidswipe.app.utils.ChatManager
 import io.bidswipe.app.utils.Const
 import io.bidswipe.app.utils.SocketManager
-import io.bidswipe.app.utils.StreamingManager
 import io.bidswipe.app.utils.asMoney
 import io.bidswipe.app.utils.dpToPx
 import io.bidswipe.app.utils.draw
@@ -43,10 +51,17 @@ import io.bidswipe.app.utils.hideKeyboard
 import io.bidswipe.app.utils.value
 import io.bidswipe.app.utils.loadUrl
 import io.bidswipe.app.utils.parse
-import io.bidswipe.app.utils.request
 import io.bidswipe.app.utils.runSafe
+import io.bidswipe.app.utils.setHapticClickListener
 import io.bidswipe.app.utils.setMargins
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
 import org.json.JSONObject
+import org.webrtc.EglBase
+import org.webrtc.RendererCommon
 import kotlin.math.abs
 
 class WatchStreamSocketFragment : BaseFragment<StreamViewModel , FragmentWatchStreamBinding>() {
@@ -60,7 +75,8 @@ class WatchStreamSocketFragment : BaseFragment<StreamViewModel , FragmentWatchSt
 
     private lateinit var roomID : String
     private lateinit var socketUrl : String
-    private var chatManager : ChatManager? = null
+
+    //    private var chatManager : ChatManager? = null
     private var socketManager : SocketManager? = null
     private var highestBidAmount : String? = "0"
     private var bidProductId : String? = null
@@ -68,10 +84,17 @@ class WatchStreamSocketFragment : BaseFragment<StreamViewModel , FragmentWatchSt
     private var isAllowBidForAll = true
     private var commentList = mutableListOf<LiveChatModel?>()
     private lateinit var commentAdapter : CommentAdapter
-    private var product : LiveShowModel.Product? = null
+    private var product: LiveShowModelOld.Product? = null
+
+    private lateinit var subscriber: Subscriber
+    private lateinit var eglBase: EglBase
+    private var subscriberStateJob: Job? = null
+    val sourceVideoTracks: ArrayList<RemoteVideoTrack> = arrayListOf()
+    var audioTrack: RemoteAudioTrack? = null
+    private var streamName: String = ""
 
     companion object {
-        fun newInstance(roomID : String , streamID : String) = WatchStreamFragment().apply {
+        fun newInstance(roomID: String, streamID: String) = WatchStreamSocketFragment().apply {
             arguments = Bundle().apply {
                 putString("roomID" , roomID)
                 putString("streamID" , streamID)
@@ -82,7 +105,8 @@ class WatchStreamSocketFragment : BaseFragment<StreamViewModel , FragmentWatchSt
     override fun onCreate(savedInstanceState : Bundle?) {
         super.onCreate(savedInstanceState)
         roomID = requireArguments().getString("roomID") ?: ""
-        socketUrl = requireArguments().getString("socketUrl") ?: ""
+        Log.d("TAG", "onCreate: ROOM ID: $roomID ")
+        socketUrl = Const.SOCKET_URL// requireArguments().getString("socketUrl") ?: ""
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -93,14 +117,16 @@ class WatchStreamSocketFragment : BaseFragment<StreamViewModel , FragmentWatchSt
         
         ViewCompat.setOnApplyWindowInsetsListener(requireActivity().window.decorView){ v, insets  ->
             val system = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            
-            bind.controlsView.setMargins(top = system.top)
+            bind.profileLayout.setMargins(
+                top = system.top,
+                left = resources.dpToPx(16),
+                right = resources.dpToPx(16),
+            )
             bind.bidLayout.setMargins(resources.dpToPx(16) , 0 , resources.dpToPx(16) , system.bottom)
-            
             insets
         }
-     
-        bind.cutButton.setOnClickListener {
+
+        bind.cutButton.setHapticClickListener {
             finish()
         }
 
@@ -114,15 +140,28 @@ class WatchStreamSocketFragment : BaseFragment<StreamViewModel , FragmentWatchSt
         bind.recycler.adapter = commentAdapter
 
         // Streaming playback still via Zego engine
-        StreamingManager.getInstance(requireContext()).startPlayingStream(roomID , bind.hostView)
+//        StreamingManager.getInstance(requireContext()).startPlayingStream(roomID , bind.hostView)
+        subscriber = Core.createSubscriber()
 
+        initRenderer()
+
+        startSubscription()
+        
         // Initialize sockets
         if (socketUrl.isNotEmpty()) {
             socketManager = SocketManager.getInstance(requireContext())
             socketManager?.initialize(socketUrl , mapOf("uid" to userId))
             socketManager?.connect(onConnected = {
-                socketManager?.joinRoom(roomID)
-                socketManager?.emitViewerJoin(roomID)
+                socketManager?.joinRoom(roomID, userId) {
+                    socketManager?.sendMessage(
+                        roomID,
+                        bind.text.value(),
+                        userId,
+                        userName,
+                        userImage
+                    )
+                }
+//                socketManager?.emitViewerJoin(roomID)
             }) { err -> log("Socket connect error: $err") }
 
             socketManager?.onViewerCount { count ->
@@ -135,33 +174,58 @@ class WatchStreamSocketFragment : BaseFragment<StreamViewModel , FragmentWatchSt
 
             // Optional room/session updates (current product, sold, allow flags, countdown)
             socketManager?.onMessage { msg ->
-                val type = msg.optString("type")
+                log("${roomID}  MESSAGES $msg")
+
+                if (msg.optString("roomId") == roomID) {
+                    viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Main) {
+                        commentList.add(
+                            LiveChatModel(
+                                msg.optString("userImage"),
+                                msg.optString("userName"),
+                                msg.optString("userId"),
+                                msg.optString("content")
+                            )
+                        )
+                        commentAdapter.notifyItemInserted(commentList.size - 1)
+                        bind.recycler.scrollToPosition(commentList.size - 1)
+                    }
+                }
+
+                /*val type = msg.optString("type")
                 when (type) {
                     "session_update" -> updateSessionUI(msg)
                     "countdown" -> updateCountdown(msg)
-                }
+                    else->{
+
+                    }
+                }*/
             }
+        }
+
+        socketManager?.onRoomCreated { obj ->
+
+            updateSessionUI(obj)
 
         }
 
-        initializeChat()
+//        initializeChat()
 
-        viewModel.selectedStream.observe(viewLifecycleOwner) { stream ->
-            if (stream.roomId == roomID) {
+        /*viewModel.selectedStream.observe(viewLifecycleOwner) { stream ->
+            if (stream == roomID) {
 
-                bind.userImage.loadUrl(
+               *//* bind.userImage.loadUrl(
                     mCtx ,
                     stream.seller?.image.toString() ,
                     placeHolder = draw.user_image
-                )
+                )*//*
 
-                product = stream.products?.find { it?.isCurrent == true }
+//                product = stream.products?.find { it?.isCurrent == true }
 
                 bidProductId = product?.id.toString()
 
                 highestBidAmount = product?.price.toString()
 
-                bind.userName.text = stream.seller?.name.toString()
+//                bind.userName.text = stream.seller?.name.toString()
 
                 bind.productName.text = product?.name
 
@@ -182,18 +246,18 @@ class WatchStreamSocketFragment : BaseFragment<StreamViewModel , FragmentWatchSt
                     e.printStackTrace()
                 }
 
-                if (stream.seller?.isFollowed == true) {
-                    bind.follow.setBackgroundColor(ContextCompat.getColor(mCtx , R.color.outline))
-                    bind.follow.setTextColor(ContextCompat.getColor(mCtx , R.color.onSurface))
-                    bind.follow.text = "Unfollow"
-                } else {
-                    bind.follow.setBackgroundColor(ContextCompat.getColor(mCtx , R.color.primary))
-                    bind.follow.setTextColor(ContextCompat.getColor(mCtx , R.color.background))
-                    bind.follow.text = "Follow"
-                }
+//                if (stream.seller?.isFollowed == true) {
+//                    bind.follow.setBackgroundColor(ContextCompat.getColor(mCtx , R.color.outline))
+//                    bind.follow.setTextColor(ContextCompat.getColor(mCtx , R.color.onSurface))
+//                    bind.follow.text = "Unfollow"
+//                } else {
+//                    bind.follow.setBackgroundColor(ContextCompat.getColor(mCtx , R.color.primary))
+//                    bind.follow.setTextColor(ContextCompat.getColor(mCtx , R.color.background))
+//                    bind.follow.text = "Follow"
+//                }
 
-                bind.follow.setOnClickListener {
-                    viewModel.followUser(stream.seller?.id?.request())
+                bind.follow.setHapticClickListener {
+//                    viewModel.followUser(stream.seller?.id?.request())
                 }
 
                 runSafe {
@@ -216,107 +280,109 @@ class WatchStreamSocketFragment : BaseFragment<StreamViewModel , FragmentWatchSt
                     }
                 }
 
-                bind.max.setOnClickListener {
-
+                bind.max.setHapticClickListener {
                     showInputSheet()
-
                 }
             }
-        }
+        }*/
 
         bind.message.setEndIconOnClickListener {
             if (bind.text.value().isNotEmpty()) {
-
                 if (App.profileResponse.value?.buyerIdentityStatus == "verified") {
-                    sendZimMessage(bind.text.value())
+                    socketManager?.sendMessage(
+                        roomID,
+                        bind.text.value(),
+                        userId,
+                        userName,
+                        userImage
+                    )
+                    bind.text.text.clear()
                 } else {
                     verificationDialog()
                 }
             }
         }
 
-        bind.wallet.setOnClickListener {
-
+        bind.wallet.setHapticClickListener {
             showPaymentAndAddressSheet()
-
         }
 
-        viewModel.createBidRepo.observe(viewLifecycleOwner) {
-            when (it) {
-                is Resource.Success -> {
+        /* viewModel.createBidRepo.observe(viewLifecycleOwner) {
+             when (it) {
+                 is Resource.Success -> {
 
-                    viewModel.createBidRepo.value = null
-                    bind.loader.isVisible = false
-                    it.value.data
+                     viewModel.createBidRepo.value = null
+                     bind.loader.isVisible = false
+                     it.value.data
 
-                }
+                 }
 
-                is Resource.Error -> {
-                    bind.loader.isVisible = false
+                 is Resource.Error -> {
+                     bind.loader.isVisible = false
 
-                    if (it.isNetworkError) {
-                        errorToast(getString(R.string.no_internet))
-                    } else {
-                        it.parse(mCtx , TAG , object : AlertClicks {
-                            override fun primaryClick(dialog : AppBottomSheet) {
-                                dialog.dismiss()
+                     if (it.isNetworkError) {
+                         errorToast(getString(R.string.no_internet))
+                     } else {
+                         it.parse(mCtx , TAG , object : AlertClicks {
+                             override fun primaryClick(dialog : AppBottomSheet) {
+                                 dialog.dismiss()
 
-                            }
+                             }
 
-                            override fun secondaryClick(dialog : AppBottomSheet) {
-                                dialog.dismiss()
+                             override fun secondaryClick(dialog : AppBottomSheet) {
+                                 dialog.dismiss()
 
-                            }
-                        })
-                    }
-                }
+                             }
+                         })
+                     }
+                 }
 
-                else -> {}
+                 else -> {}
 
-            }
-        }
+             }
+         }
 
-        viewModel.followUserShowRepo.observe(viewLifecycleOwner) {
-            when (it) {
-                is Resource.Success -> {
+         viewModel.followUserShowRepo.observe(viewLifecycleOwner) {
+             when (it) {
+                 is Resource.Success -> {
 
-                    val mData = it.value.data
-                    if (mData?.status == true) {
-                        bind.follow.setBackgroundColor(ContextCompat.getColor(mCtx , R.color.outline))
-                        bind.follow.setTextColor(ContextCompat.getColor(mCtx , R.color.onSurface))
-                        bind.follow.text = "Unfollow"
-                    } else {
-                        bind.follow.setBackgroundColor(ContextCompat.getColor(mCtx , R.color.primary))
-                        bind.follow.setTextColor(ContextCompat.getColor(mCtx , R.color.background))
-                        bind.follow.text = "Follow"
-                    }
+                     val mData = it.value.data
+                     if (mData?.status == true) {
+                         bind.follow.setBackgroundColor(ContextCompat.getColor(mCtx , R.color.outline))
+                         bind.follow.setTextColor(ContextCompat.getColor(mCtx , R.color.onSurface))
+                         bind.follow.text = "Unfollow"
+                     } else {
+                         bind.follow.setBackgroundColor(ContextCompat.getColor(mCtx , R.color.primary))
+                         bind.follow.setTextColor(ContextCompat.getColor(mCtx , R.color.background))
+                         bind.follow.text = "Follow"
+                     }
 
-                }
+                 }
 
-                is Resource.Error -> {
-                    bind.loader.isVisible = false
+                 is Resource.Error -> {
+                     bind.loader.isVisible = false
 
-                    if (it.isNetworkError) {
-                        errorToast(getString(R.string.no_internet))
-                    } else {
-                        it.parse(mCtx , TAG , object : AlertClicks {
-                            override fun primaryClick(dialog : AppBottomSheet) {
-                                dialog.dismiss()
+                     if (it.isNetworkError) {
+                         errorToast(getString(R.string.no_internet))
+                     } else {
+                         it.parse(mCtx , TAG , object : AlertClicks {
+                             override fun primaryClick(dialog : AppBottomSheet) {
+                                 dialog.dismiss()
 
-                            }
+                             }
 
-                            override fun secondaryClick(dialog : AppBottomSheet) {
-                                dialog.dismiss()
+                             override fun secondaryClick(dialog : AppBottomSheet) {
+                                 dialog.dismiss()
 
-                            }
-                        })
-                    }
-                }
+                             }
+                         })
+                     }
+                 }
 
-                else -> {}
+                 else -> {}
 
-            }
-        }
+             }
+         }*/
 
         if (App.profileResponse.value?.buyerIdentityStatus != "verified") {
             verificationDialog()
@@ -326,17 +392,20 @@ class WatchStreamSocketFragment : BaseFragment<StreamViewModel , FragmentWatchSt
 
     override fun onResume() {
         super.onResume()
-        socketManager?.emitViewerJoin(roomID)
+        socketManager?.joinRoom(roomID, userId) {
+            socketManager?.sendMessage(roomID, bind.text.value(), userId, userName, userImage)
+        }
+//        socketManager?.emitViewerJoin(roomID)
     }
 
     override fun onPause() {
         super.onPause()
-        socketManager?.emitViewerLeave(roomID)
+        socketManager?.leaveRoom(roomID, userId)
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
-        socketManager?.leaveRoom(roomID)
+        socketManager?.leaveRoom(roomID, userId)
         socketManager?.disconnect()
     }
 
@@ -351,25 +420,88 @@ class WatchStreamSocketFragment : BaseFragment<StreamViewModel , FragmentWatchSt
 
     private fun updateSessionUI(json : JSONObject) {
         runSafe {
-            // minimal fields: product image/name/price, seller, allowBidForAll
-            json.optJSONObject("seller")?.let { seller ->
-                bind.userName.text = seller.optString("name")
-                bind.userImage.loadUrl(mCtx , seller.optString("image"))
+
+            log("SESSION UPDATE: $json")
+
+            val showData = LiveShowModel.fromJson(json)
+
+            /*   // minimal fields: product image/name/price, seller, allowBidForAll
+               json.optJSONObject("seller")?.let { seller ->
+                   bind.userName.text = seller.optString("name")
+                   bind.userImage.loadUrl(mCtx , seller.optString("image"))
+               }
+
+
+               json.optJSONObject("products")?.let { product ->
+
+                   bind.productName.text = product.optString("name")
+                   bind.productImage.loadUrl(mCtx , product.optString("image"))
+                   val price = product.optString("price" , "0")
+                   bind.bidPrice.text = price.asMoney()
+                   highestBidAmount = price
+                   bidProductId = product.optString("id" , bidProductId)
+                   bind.bid.text = "Swipe to Bid ${newBidAmount(price.toDoubleOrNull()?.toInt() ?: 0).toString().asMoney()}"
+               }
+
+               isAllowBidForAll = json.optBoolean("allowBidForAll" , true)
+               val isSold = json.optBoolean("isSold" , false)
+               bind.soldLayout.isVisible = isSold
+               bind.bidLayout.isVisible = ! isSold
+               bind.productLayout.isVisible = ! isSold*/
+
+
+            // Safely update highestBidAmount
+
+            if (showData.highestBid != null) {
+
+                log("HIGHEST BID: ${showData.highestBid}")
+                highestBidAmount = showData.highestBid?.bidAmount ?: highestBidAmount
+
+                bind.bid.text = "Swipe to Bid ${
+                    newBidAmount(
+                        highestBidAmount?.toDouble()?.toInt() ?: 0
+                    ).toString().asMoney()
+                }"
+
             }
-            json.optJSONObject("product")?.let { product ->
-                bind.productName.text = product.optString("name")
-                bind.productImage.loadUrl(mCtx , product.optString("image"))
-                val price = product.optString("price" , "0")
-                bind.bidPrice.text = price.asMoney()
-                highestBidAmount = price
-                bidProductId = product.optString("id" , bidProductId)
-                bind.bid.text = "Swipe to Bid ${newBidAmount(price.toDoubleOrNull()?.toInt() ?: 0).toString().asMoney()}"
-            }
-            isAllowBidForAll = json.optBoolean("allowBidForAll" , true)
-            val isSold = json.optBoolean("isSold" , false)
+
+            bind.userName.text = showData.seller?.name
+            bind.userImage.loadUrl(mCtx, showData.seller?.image ?: "")
+
+            // Show viewer count or default to 0
+            bind.liveCount.text = (showData.viewerCount ?: 0).toString()
+
+            // Find the current product once
+            val currentProduct = showData.products.find { it?.id == showData.highestBid.productId }
+
+            log("CURRENT PRODUCT Value : $currentProduct")
+
+            // Determine sale status once
+            val isSold = currentProduct?.status == "sold"
             bind.soldLayout.isVisible = isSold
-            bind.bidLayout.isVisible = ! isSold
+            bind.bidLayout.isVisible = !isSold
+
+            if (isSold) {
+                inputSheet?.dismiss()
+            }
+
             bind.productLayout.isVisible = ! isSold
+
+            if (isSold && showData.highestBid?.userId == userId) {
+                bind.soldOutText.text = "You won the bid"
+            }
+
+            // Show bid countdown if available
+            val countdown = showData.bidCountDown.toString()
+            if (!countdown.isNullOrEmpty()) {
+                bind.bidTime.isVisible = true
+                bind.bidTime.text = "Ends in $countdown"
+            } else {
+                bind.bidTime.isVisible = false
+            }
+
+            isAllowBidForAll = showData.allowBidForAll ?: true
+
         }
     }
 
@@ -391,7 +523,7 @@ class WatchStreamSocketFragment : BaseFragment<StreamViewModel , FragmentWatchSt
         )
         inputSheet = Alerts.appBottomSheet(mCtx , true , inputSheetBind)
 
-        inputSheetBind.submitBtn.setOnClickListener {
+        inputSheetBind.submitBtn.setHapticClickListener {
             val priceText = inputSheetBind.price.value()
             val priceVal = priceText.toDoubleOrNull() ?: 0.0
             val current = highestBidAmount?.toDoubleOrNull() ?: 0.0
@@ -407,31 +539,33 @@ class WatchStreamSocketFragment : BaseFragment<StreamViewModel , FragmentWatchSt
                     bidAmount = priceVal.toString()
                 )
                 Alerts.success(mCtx , "Bid placed successfully")
-                sendZimMessage("New high bid: $${priceVal}")
+//                sendZimMessage("New high bid: $${priceVal}")
                 inputSheet?.dismiss()
             }
         }
 
-        inputSheetBind.close.setOnClickListener { inputSheet?.dismiss() }
+        inputSheetBind.close.setHapticClickListener { inputSheet?.dismiss() }
         inputSheet?.show()
     }
 
-    private fun initializeChat() {
-        if (chatManager == null) {
-            chatManager = ChatManager(
-                application = requireActivity().application ,
-                appId = Const.APP_ID.toLong() ,
-                appSign = Const.APP_SIGN ,
-                userId = userId ,
-                userName = userName ,
-                userImage = userImage
-            )
+    /*
+        private fun initializeChat() {
+            if (chatManager == null) {
+                chatManager = ChatManager(
+                    application = requireActivity().application ,
+                    appId = Const.APP_ID.toLong() ,
+                    appSign = Const.APP_SIGN ,
+                    userId = userId ,
+                    userName = userName ,
+                    userImage = userImage
+                )
+            }
+            chatManager?.initializeAndLogin(roomID) {
+                val extended = ZIMExtendedData(userImage , userId , userName).toJson()
+                chatManager?.sendTextMessage(roomID , "Joined 👋" , extended)
+            }
         }
-        chatManager?.initializeAndLogin(roomID) {
-            val extended = ZIMExtendedData(userImage , userId , userName).toJson()
-            chatManager?.sendTextMessage(roomID , "Joined 👋" , extended)
-        }
-    }
+    */
 
     fun newBidAmount(amount : Int) : Int {
         return when {
@@ -461,7 +595,7 @@ class WatchStreamSocketFragment : BaseFragment<StreamViewModel , FragmentWatchSt
                 bidAmount = bidAmount
             )
 
-            sendZimMessage("New high bid: $$bidAmount")
+//            sendZimMessage("New high bid: $$bidAmount")
             Alerts.success(mCtx , "Bid placed successfully")
             bind.bid.setCompleted(completed = false , withAnimation = true)
         }
@@ -529,12 +663,6 @@ class WatchStreamSocketFragment : BaseFragment<StreamViewModel , FragmentWatchSt
             }
         }
 
-    }
-
-    fun sendZimMessage(content : String) {
-        val extended = ZIMExtendedData(userImage , userId , userName).toJson()
-        chatManager?.sendTextMessage(roomID , content , extended)
-        bind.text.setText("")
     }
 
     private fun verificationDialog() {
@@ -610,7 +738,7 @@ class WatchStreamSocketFragment : BaseFragment<StreamViewModel , FragmentWatchSt
                 defaultAddress.isVisible = false
             }
 
-            moreIcon.setOnClickListener {
+            moreIcon.setHapticClickListener {
                 startActivity(
                     Intent(mCtx , MoreActivity::class.java).putExtra(
                         "slug" ,
@@ -641,7 +769,7 @@ class WatchStreamSocketFragment : BaseFragment<StreamViewModel , FragmentWatchSt
                 cardNumber.text = "Payment Cards Not Added"
             }
 
-            moreIcon.setOnClickListener {
+            moreIcon.setHapticClickListener {
                 startActivity(
                     Intent(mCtx , MoreActivity::class.java).putExtra(
                         "slug" ,
@@ -651,12 +779,150 @@ class WatchStreamSocketFragment : BaseFragment<StreamViewModel , FragmentWatchSt
             }
         }
 
-        paymentAddressBind.close.setOnClickListener {
+        paymentAddressBind.close.setHapticClickListener {
             makeOfferSheet.dismiss()
         }
 
         makeOfferSheet.show()
 
+    }
+
+    private fun initRenderer() {
+        // Prefer SDK-provided EGL context for subscriber per docs
+        eglBase = EglBase.create()
+        bind.hostView.init(Media.eglBaseContext, null)
+        bind.hostView.setMirror(false)
+        bind.hostView.setScalingType(RendererCommon.ScalingType.SCALE_ASPECT_FIT)
+        log("Renderer initialized")
+    }
+
+    private fun startSubscription() {
+        viewModel.viewModelScope.launch {
+            try {
+                log("Starting subscription flow...")
+                val credentials = Credential(
+                    streamName = roomID,// streamName.ifBlank { Const.ACCOUNT_ID },
+                    accountId = Const.ACCOUNT_ID,
+                    apiUrl = "https://director.millicast.com/api/director/subscribe"
+                )
+
+                subscriber.setCredentials(credentials)
+                log("Credentials set. Connecting (autoReconnect=true)...")
+                subscriber.connect(ConnectionOptions(autoReconnect = true))
+
+                subscriberStateJob?.cancel()
+                subscriberStateJob = viewModel.viewModelScope.launch {
+                    // Connection state
+                    subscriber.state
+                        .map { it.connectionState }
+                        .distinctUntilChanged()
+                        .collect { state ->
+                            log("Subscriber state: $state")
+                            when (state) {
+                                SubscriberConnectionState.Connected -> {
+                                    log("Connected. Subscribing now...")
+                                    subscriber.subscribe(Option())
+                                    log("Subscribe invoked; awaiting remote tracks...")
+                                }
+
+                                SubscriberConnectionState.Subscribed -> {
+                                    log("Subscriber state: Subscribed (media should start)")
+                                }
+
+                                else -> {}
+                            }
+                        }
+                }
+
+                // Log websocket and peer connection states
+                viewModel.viewModelScope.launch {
+                    subscriber.state.map { it.websocketConnectionState }.distinctUntilChanged()
+                        .collect { ws ->
+                            log("WebSocket state: $ws")
+                        }
+                }
+                viewModel.viewModelScope.launch {
+                    subscriber.state.map { it.peerConnectionState }.distinctUntilChanged()
+                        .collect { pc ->
+                            log("PeerConnection state: $pc")
+                        }
+                }
+                // Log signaling errors if any
+                viewModel.viewModelScope.launch {
+                    subscriber.signalingError.collect { err ->
+                        log("Signaling error: $err")
+                    }
+                }
+
+                // Collect remote video/audio tracks
+                viewModel.viewModelScope.launch {
+                    subscriber.onRemoteTrack.collect { holder ->
+                        when (holder) {
+                            is RemoteVideoTrack -> {
+                                log("RemoteVideoTrack: sourceId=${holder.sourceId}")
+                                sourceVideoTracks.add(holder)
+                                holder.enableAsync(videoSink = bind.hostView)
+                                viewModel.viewModelScope.launch {
+                                    holder.onState.collect { trackState ->
+                                        log("VideoTrack state mid=${trackState.mid} active=${trackState.isActive}")
+                                        if (!trackState.isActive) holder.disableAsync() else holder.enableAsync(
+                                            videoSink = bind.hostView
+                                        )
+                                    }
+                                }
+                                // Add a tiny post-frame confirmation
+                                bind.hostView.postDelayed({
+                                    log("Renderer (TextureViewRenderer) ready; awaiting frames...")
+                                }, 300)
+                            }
+
+                            is RemoteAudioTrack -> {
+                                log("RemoteAudioTrack: sourceId=${holder.sourceId}")
+                                audioTrack = holder
+                                holder.enableAsync()
+                            }
+                        }
+                    }
+                }
+            } catch (e: Throwable) {
+                log("SUBSCRIBE ERROR: ${e.localizedMessage}")
+                e.printStackTrace()
+            }
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        log("Subscriber cleanup starting")
+        try {
+            subscriberStateJob?.cancel()
+        } catch (_: Throwable) {
+        }
+        try {
+            sourceVideoTracks.forEach { it.disableAsync() }
+        } catch (_: Throwable) {
+        }
+        try {
+            audioTrack?.disableAsync()
+        } catch (_: Throwable) {
+        }
+//		try {
+//			bind.hostView.clearImage()
+//		} catch (_: Throwable) {
+//		}
+        try {
+            viewModel.viewModelScope.launch { subscriber.unsubscribe(); subscriber.disconnect() }
+        } catch (_: Throwable) {
+        }
+        try {
+            bind.hostView.release()
+        } catch (_: Throwable) {
+        }
+        try {
+            eglBase.release()
+        } catch (_: Throwable) {
+        }
+        log("Subscriber cleanup finished")
     }
 
 }

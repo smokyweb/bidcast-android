@@ -19,6 +19,7 @@ import io.bidswipe.app.utils.hideKeyboard
 import io.bidswipe.app.utils.loadUrl
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request
+import io.bidswipe.app.utils.setHapticClickListener
 import io.bidswipe.app.utils.value
 import okhttp3.MultipartBody
 import java.io.File
@@ -55,15 +56,15 @@ class UpdateAccountActivity : BaseActivity() {
 			finishAfterTransition()
 
 		}
-		bind.root.setOnClickListener {
+        bind.root.setHapticClickListener {
 			hideKeyboard()
 		}
 
-		bind.layout.setOnClickListener {
+        bind.layout.setHapticClickListener {
 			hideKeyboard()
 		}
 
-		bind.selectImg.setOnClickListener {
+        bind.selectImg.setHapticClickListener {
 			requestPerms(Const.STR_PERMS) { per ->
 				if (per) {
 					imageResult.launch(Utils.initCrop(this , isCamera = true , isGallery = true))
@@ -71,7 +72,7 @@ class UpdateAccountActivity : BaseActivity() {
 			}
 		}
 
-		bind.update.setOnClickListener {
+        bind.update.setHapticClickListener {
 			bind.loader.isVisible = true
 			viewModel.updateProfile(
 				bind.firstName.value().request() ,

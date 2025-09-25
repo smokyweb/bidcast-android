@@ -17,6 +17,7 @@ import io.bidswipe.app.databinding.FragmentShowsBinding
 import io.bidswipe.app.databinding.PaymentAndAddressSheetBinding
 import io.bidswipe.app.interfaces.AlertClicks
 import io.bidswipe.app.interfaces.RecyclerClicks
+import io.bidswipe.app.model.LiveShowModel
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.network.response.GetMyShowResponse
 import io.bidswipe.app.ui.custom.AppBottomSheet
@@ -24,10 +25,12 @@ import io.bidswipe.app.ui.dashboard.more.MoreActivity
 import io.bidswipe.app.ui.dashboard.scheduleShow.LiveShowActivity
 import io.bidswipe.app.ui.dashboard.scheduleShow.LiveShowSocketActivity
 import io.bidswipe.app.utils.Alerts
+import io.bidswipe.app.utils.Utils
 import io.bidswipe.app.utils.draw
 import io.bidswipe.app.utils.finish
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request
+import io.bidswipe.app.utils.setHapticClickListener
 import io.bidswipe.app.utils.toScheduleShow
 
 @SuppressLint("NotifyDataSetChanged")
@@ -61,13 +64,61 @@ class ShowsFragment : BaseFragment<SellerHubViewModel , FragmentShowsBinding>() 
 			if (App.PIPMode) {
 				Alerts.error(mCtx , "You are already in Live show")
 			} else {
+
+                val data = showList[0]
+
+                val user = data?.user
+
+                val products = data?.products?.map { it?.toLiveShowProduct() }
+
+                products?.first()?.isCurrent = true
+
+                val showData = LiveShowModel(
+                    seller = LiveShowModel.Seller(
+                        id = user?.id.toString(),
+                        image = user?.profileImage,
+                        name = user?.name,
+                        rating = user?.rating ?: ""
+                    ),
+                    products = products?.map { p ->
+                        LiveShowModel.Product(
+                            p?.category,
+                            p?.id,
+                            p?.image,
+                            p?.status,
+                            p?.name,
+                            p?.price,
+                            "1",
+                        )
+                    }?.toList() ?: mutableListOf(),
+                    roomId = "live_room_${userId}_${data?.id.toString()}",
+                    showDetail = "Test Details",
+                    thumbnail = data?.thumbnail?.getOrNull(0) ?: "",
+                    viewerCount = "1",
+                    highestBid = LiveShowModel.HighestBid(
+                        bidAmount = "",
+                        userName = "",
+                        userImage = "",
+                        userId = "",
+                        productId = ""
+                    ),
+                    isLive = true,
+                    time = Utils.timestamp().toString(),
+                    showId = data?.id.toString(),
+                    allowBidForAll = true,
+                    bidCountDown = "",
+                    showTimer = "",
+                )
+
 				startActivity(
-					Intent(mCtx , LiveShowActivity::class.java).putExtra(
-						"showId" ,
-						showList[pos]?.id.toString()
+                    Intent(mCtx, LiveShowSocketActivity::class.java).putExtra(
+                        "showData",
+                        showData
 					).putExtra("time" , showList[pos]?.time)
 				)
-			}
+
+
+            }
 		}
 
 	}
@@ -108,7 +159,6 @@ class ShowsFragment : BaseFragment<SellerHubViewModel , FragmentShowsBinding>() 
 		}
 
 		bind.tabs.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
-			@SuppressLint("NotifyDataSetChanged")
 			override fun onTabSelected(tab : TabLayout.Tab?) {
 				showList.clear()
 				showAdapter.notifyDataSetChanged()
@@ -129,7 +179,7 @@ class ShowsFragment : BaseFragment<SellerHubViewModel , FragmentShowsBinding>() 
 
 		})
 
-		bind.addNewProduct.setOnClickListener {
+        bind.addNewProduct.setHapticClickListener {
 			startActivity(mCtx.toScheduleShow(from = "dash"))
 
 		}
@@ -223,7 +273,7 @@ class ShowsFragment : BaseFragment<SellerHubViewModel , FragmentShowsBinding>() 
 				type.text = "Address Not Added"
 				defaultAddress.isVisible = false
 			}
-			moreIcon.setOnClickListener {
+            moreIcon.setHapticClickListener {
 				startActivity(
 					Intent(mCtx , MoreActivity::class.java).putExtra(
 						"slug" ,
@@ -252,7 +302,7 @@ class ShowsFragment : BaseFragment<SellerHubViewModel , FragmentShowsBinding>() 
 			} else {
 				cardNumber.text = "Cards Not Added"
 			}
-			moreIcon.setOnClickListener {
+            moreIcon.setHapticClickListener {
 				startActivity(
 					Intent(mCtx , MoreActivity::class.java).putExtra(
 						"slug" ,
@@ -262,8 +312,7 @@ class ShowsFragment : BaseFragment<SellerHubViewModel , FragmentShowsBinding>() 
 			}
 		}
 
-
-		paymentAddressBind.close.setOnClickListener {
+        paymentAddressBind.close.setHapticClickListener {
 			makeOfferSheet.dismiss()
 		}
 

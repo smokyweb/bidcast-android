@@ -30,6 +30,7 @@ import io.bidswipe.app.utils.Const
 import io.bidswipe.app.utils.Utils
 import io.bidswipe.app.utils.finish
 import io.bidswipe.app.utils.parse
+import io.bidswipe.app.utils.setHapticClickListener
 import io.bidswipe.app.utils.value
 import okhttp3.MultipartBody
 import java.io.File
@@ -123,7 +124,7 @@ class ListAProductFragment : BaseFragment<DashViewModel , FragmentListAProductBi
 			selectedProcessingCategory = processingCategories[position]
 			log("Selected processing category: $selectedProcessingCategory")
 		}
-		bind.procategory.setOnClickListener {
+        bind.procategory.setHapticClickListener {
 			bind.procategory.showDropDown()
 		}
 		bind.images.adapter = ImageAdapter(imageList , object : RecyclerClicks {
@@ -133,20 +134,20 @@ class ListAProductFragment : BaseFragment<DashViewModel , FragmentListAProductBi
 			}
 		})
 
-		bind.addNewImage.setOnClickListener {
+        bind.addNewImage.setHapticClickListener {
 			uploadItemIndex = - 1
 			uploadImage()
 		}
 
-		bind.publish.setOnClickListener {
+        bind.publish.setHapticClickListener {
 			saveProduct()
 		}
 
-		bind.saveDraft.setOnClickListener {
+        bind.saveDraft.setHapticClickListener {
 			saveProduct("draft")
 		}
 
-		bind.category.setOnClickListener {
+        bind.category.setHapticClickListener {
 			showCategorySheet(categoryList , "category")
 		}
 
@@ -185,7 +186,7 @@ class ListAProductFragment : BaseFragment<DashViewModel , FragmentListAProductBi
 					bind.category.setOnItemClickListener { _, _, position, _ ->
 						categoryId = categoryList[position]?.id.toString()
 					}
-					bind.category.setOnClickListener {
+					bind.category.setHapticClickListener {
 						bind.category.showDropDown()
 					}*/
 
@@ -320,7 +321,7 @@ class ListAProductFragment : BaseFragment<DashViewModel , FragmentListAProductBi
 			log("Selected mail class: ${selectedMailClass?.label}")
 		}
 
-		bind.mailclass.setOnClickListener {
+        bind.mailclass.setHapticClickListener {
 			if (mailClassesList.isNotEmpty()) {
 				bind.mailclass.showDropDown()
 			} else {
@@ -613,7 +614,7 @@ class ListAProductFragment : BaseFragment<DashViewModel , FragmentListAProductBi
 			categorySheetBind.sheetTitle.text = "Select Product Category"
 		}
 
-		categorySheetBind.close.setOnClickListener {
+        categorySheetBind.close.setHapticClickListener {
 			categorySheet.dismiss()
 		}
 

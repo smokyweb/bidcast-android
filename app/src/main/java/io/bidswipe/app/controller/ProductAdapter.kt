@@ -10,6 +10,7 @@ import io.bidswipe.app.databinding.ProductListItemBinding
 import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.network.response.GetMyInventoryResponse
 import io.bidswipe.app.utils.loadUrl
+import io.bidswipe.app.utils.setHapticClickListener
 
 class ProductAdapter(
 	val mList : MutableList<GetMyInventoryResponse.Data?> , val mClicks : RecyclerClicks ,
@@ -26,15 +27,15 @@ class ProductAdapter(
 		with(holder) {
 
 			Log.d(TAG , "onBind: sadsafdsh")
-			bind.root.setOnClickListener {
+            bind.root.setHapticClickListener {
 				mClicks.itemClick(position , "select")
 			}
 
-			bind.edit.setOnClickListener {
+            bind.edit.setHapticClickListener {
 				mClicks.itemClick(position , "edit")
 			}
 
-			bind.trash.setOnClickListener {
+            bind.trash.setHapticClickListener {
 				mClicks.itemClick(position , "delete")
 			}
 

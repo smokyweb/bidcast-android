@@ -21,6 +21,7 @@ import io.bidswipe.app.utils.hideKeyboard
 import io.bidswipe.app.utils.ids
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request
+import io.bidswipe.app.utils.setHapticClickListener
 import io.bidswipe.app.utils.showKeyboard
 import io.bidswipe.app.utils.value
 
@@ -45,7 +46,7 @@ class ShowTitleFragment : BaseFragment<ScheduleShowViewModel , FragmentShowTitle
 			finish()
 		}
 
-		bind.layout.setOnClickListener {
+        bind.layout.setHapticClickListener {
 			hideKeyboard(it)
 		}
 
@@ -56,7 +57,7 @@ class ShowTitleFragment : BaseFragment<ScheduleShowViewModel , FragmentShowTitle
 		bind.exampleRecycler.adapter = exampleAdapter
 
 
-		bind.continueBtn.setOnClickListener {
+        bind.continueBtn.setHapticClickListener {
 
 			when {
 

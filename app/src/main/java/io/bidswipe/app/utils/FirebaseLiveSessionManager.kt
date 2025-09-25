@@ -6,7 +6,7 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.DatabaseReference
-import io.bidswipe.app.model.LiveShowModel
+import io.bidswipe.app.model.LiveShowModelOld
 import io.bidswipe.app.network.response.UpdateLiveStatusResponse
 
 class FirebaseLiveSessionManager(
@@ -19,7 +19,7 @@ class FirebaseLiveSessionManager(
 
 	fun updateLiveSessionNode(roomID : String , data : UpdateLiveStatusResponse.Data?) {
 		val user = data?.user
-		val seller = LiveShowModel.Seller(
+        val seller = LiveShowModelOld.Seller(
 			id = user?.id.toString() ,
 			image = user?.profileImage ,
 			isFollowed = false ,
@@ -27,9 +27,9 @@ class FirebaseLiveSessionManager(
 			rating = user?.rating ?: ""
 		)
 
-		val highestBid = LiveShowModel.HighestBid()
+        val highestBid = LiveShowModelOld.HighestBid()
 
-		val liveShow = LiveShowModel(
+        val liveShow = LiveShowModelOld(
 			products = data?.products?.map { it?.toLiveShowProduct() } ,
 			roomId = roomID ,
 			seller = seller ,
@@ -44,12 +44,12 @@ class FirebaseLiveSessionManager(
 		liveSessionsRef.child(roomID).updateChildren(liveShow)
 	}
 
-	fun listenToLiveSession(roomID : String , onDataChange : (LiveShowModel?) -> Unit) {
+    fun listenToLiveSession(roomID: String, onDataChange: (LiveShowModelOld?) -> Unit) {
 		removeListener()
 		currentRoomId = roomID
 		valueEventListener = object : ValueEventListener {
 			override fun onDataChange(snapshot : DataSnapshot) {
-				val data = snapshot.getValue(LiveShowModel::class.java)
+                val data = snapshot.getValue(LiveShowModelOld::class.java)
 				onDataChange(data)
 			}
 

@@ -12,27 +12,28 @@ import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseAdapter
 import io.bidswipe.app.databinding.ProductSelectionItemBinding
 import io.bidswipe.app.interfaces.RecyclerClicks
-import io.bidswipe.app.model.LiveShowModel
+import io.bidswipe.app.model.LiveShowModelOld
 import io.bidswipe.app.utils.asCapital
 import io.bidswipe.app.utils.asMoney
 import io.bidswipe.app.utils.dpToPx
 import io.bidswipe.app.utils.loadUrl
+import io.bidswipe.app.utils.setHapticClickListener
 
 class FirebaseProductAdapter(
-	val mList : MutableList<LiveShowModel.Product?> , val mClicks : RecyclerClicks ,
-) : BaseAdapter<LiveShowModel.Product? , ProductSelectionItemBinding>(mList) {
+    val mList: MutableList<LiveShowModelOld.Product?>, val mClicks: RecyclerClicks,
+) : BaseAdapter<LiveShowModelOld.Product?, ProductSelectionItemBinding>(mList) {
 
 	override fun bindView(inflater : LayoutInflater , parent : ViewGroup) =
 		ProductSelectionItemBinding.inflate(inflater , parent , false)
 
 	override fun onBind(
-		holder : BaseViewHolder<ProductSelectionItemBinding> ,
-		position : Int ,
-		item : LiveShowModel.Product? ,
+        holder: BaseViewHolder<ProductSelectionItemBinding>,
+        position: Int,
+        item: LiveShowModelOld.Product?,
 	) {
 		with(holder) {
 
-			bind.root.setOnClickListener {
+            bind.root.setHapticClickListener {
 				mClicks.itemClick(position , "select")
 			}
 

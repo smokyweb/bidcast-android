@@ -10,6 +10,7 @@ import io.bidswipe.app.base.BaseFragment
 import io.bidswipe.app.controller.ProductTipsPagerAdapter
 import io.bidswipe.app.databinding.FragmentProductTipsBinding
 import io.bidswipe.app.utils.ids
+import io.bidswipe.app.utils.setHapticClickListener
 import io.bidswipe.app.utils.string
 
 class ProductTipsFragment : BaseFragment<ScheduleShowViewModel , FragmentProductTipsBinding>() {
@@ -39,7 +40,7 @@ class ProductTipsFragment : BaseFragment<ScheduleShowViewModel , FragmentProduct
 
 		bind.pager.isUserInputEnabled = false
 
-		bind.continueBtn.setOnClickListener {
+        bind.continueBtn.setHapticClickListener {
 			if (bind.pager.currentItem == productTipList.size - 1) {
 
 				findNavController().navigate(ids.goToCreateProductFragment)

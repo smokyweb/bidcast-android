@@ -30,6 +30,7 @@ import io.bidswipe.app.utils.asCapital
 import io.bidswipe.app.utils.hideKeyboard
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request
+import io.bidswipe.app.utils.setHapticClickListener
 
 class ExploreTypeFragment : BaseFragment<DashViewModel , FragmentExploreTypeBinding>() {
 	override fun getModel() : Class<DashViewModel> = DashViewModel::class.java
@@ -81,10 +82,10 @@ class ExploreTypeFragment : BaseFragment<DashViewModel , FragmentExploreTypeBind
 		category = arguments?.getString("category") ?: ""
 		bind.header.setHeaderText(category.asCapital())
 
-		bind.root.setOnClickListener {
+        bind.root.setHapticClickListener {
 			hideKeyboard(it)
 		}
-		bind.main.setOnClickListener {
+        bind.main.setHapticClickListener {
 			hideKeyboard(it)
 		}
 		bind.header.onBackClick {
@@ -106,7 +107,7 @@ class ExploreTypeFragment : BaseFragment<DashViewModel , FragmentExploreTypeBind
 			}
 		})
 
-		bind.noInternet.setOnClickListener {
+        bind.noInternet.setHapticClickListener {
 			bind.loader.isVisible = true
 			bind.noInternet.isVisible = false
 			viewModel.getLiveShow(selectedTabText.request() , category.request())
@@ -127,9 +128,9 @@ class ExploreTypeFragment : BaseFragment<DashViewModel , FragmentExploreTypeBind
 
 		selectTab(bind.live)
 
-		bind.live.setOnClickListener { selectTab(it as TextView) }
-		bind.popular.setOnClickListener { selectTab(it as TextView) }
-		bind.comingSoon.setOnClickListener { selectTab(it as TextView) }
+        bind.live.setHapticClickListener { selectTab(it as TextView) }
+        bind.popular.setHapticClickListener { selectTab(it as TextView) }
+        bind.comingSoon.setHapticClickListener { selectTab(it as TextView) }
 
 		categoriesList = mutableListOf(category)
 		viewModel.getLiveShow(selectedTabText.request() , category = category.request())

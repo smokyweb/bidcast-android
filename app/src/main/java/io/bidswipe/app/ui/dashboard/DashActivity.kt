@@ -2,9 +2,11 @@ package io.bidswipe.app.ui.dashboard
 
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
@@ -38,6 +40,7 @@ import io.bidswipe.app.utils.draw
 import io.bidswipe.app.utils.ids
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request
+import io.bidswipe.app.utils.setHapticClickListener
 import io.bidswipe.app.utils.toListProduct
 import io.bidswipe.app.utils.toScheduleShow
 import io.bidswipe.app.utils.toTutorials
@@ -239,11 +242,11 @@ class DashActivity : BaseActivity() , NavController.OnDestinationChangedListener
 
 		bind.sellSheet.recycler.adapter = exploreAdapter
 
-		bind.sellSheet.root.setOnClickListener {
+        bind.sellSheet.root.setHapticClickListener {
 			imageSheet.state = BottomSheetBehavior.STATE_COLLAPSED
 		}
 
-		bind.sellSheet.close.setOnClickListener {
+        bind.sellSheet.close.setHapticClickListener {
 			imageSheet.state = BottomSheetBehavior.STATE_COLLAPSED
 		}
 
@@ -345,7 +348,7 @@ class DashActivity : BaseActivity() , NavController.OnDestinationChangedListener
 				defaultAddress.isVisible = false
 			}
 
-			moreIcon.setOnClickListener {
+            moreIcon.setHapticClickListener {
 				startActivity(
 					Intent(this@DashActivity , MoreActivity::class.java).putExtra(
 						"slug" ,
@@ -377,7 +380,7 @@ class DashActivity : BaseActivity() , NavController.OnDestinationChangedListener
 				cardNumber.text = "Payment Cards Not Added"
 			}
 
-			moreIcon.setOnClickListener {
+            moreIcon.setHapticClickListener {
 				startActivity(
 					Intent(this@DashActivity , MoreActivity::class.java).putExtra(
 						"slug" ,
@@ -388,7 +391,7 @@ class DashActivity : BaseActivity() , NavController.OnDestinationChangedListener
 
 		}
 
-		paymentAddressBind.close.setOnClickListener {
+        paymentAddressBind.close.setHapticClickListener {
 			makeOfferSheet.dismiss()
 		}
 

@@ -8,6 +8,7 @@ import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.network.response.GetBlockedUsersResponse
 import io.bidswipe.app.utils.asCapital
 import io.bidswipe.app.utils.loadUrl
+import io.bidswipe.app.utils.setHapticClickListener
 
 class BlockedUsersAdapter(
 	mList : MutableList<GetBlockedUsersResponse.Data.BlockedByMe?> , val mClicks : RecyclerClicks ,
@@ -27,8 +28,8 @@ class BlockedUsersAdapter(
 			bind.name.text = item?.name?.asCapital()
 			bind.icon.loadUrl(mCtx , item?.image.toString())
 
-			bind.click.setOnClickListener { }
-			bind.unblockUser.setOnClickListener {
+            bind.click.setHapticClickListener { }
+            bind.unblockUser.setHapticClickListener {
 				mClicks.itemClick(position , "unblock")
 			}
 

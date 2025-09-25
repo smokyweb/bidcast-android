@@ -7,6 +7,7 @@ import io.bidswipe.app.databinding.BenifitsItemBinding
 import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.network.response.GetPremierShopResponse
 import io.bidswipe.app.utils.loadUrl
+import io.bidswipe.app.utils.setHapticClickListener
 
 class BenefitsAdapter(
 	mList : MutableList<GetPremierShopResponse.Data.Feature?> , val mClicks : RecyclerClicks ,
@@ -27,7 +28,7 @@ class BenefitsAdapter(
 
 			bind.image.loadUrl(mCtx , item?.icon ?: "")
 
-			bind.root.setOnClickListener {
+            bind.root.setHapticClickListener {
 				mClicks.itemClick(position)
 			}
 

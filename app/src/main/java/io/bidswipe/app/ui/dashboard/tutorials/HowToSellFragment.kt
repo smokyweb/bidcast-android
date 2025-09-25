@@ -19,6 +19,7 @@ import io.bidswipe.app.ui.dashboard.DashViewModel
 import io.bidswipe.app.utils.finish
 import io.bidswipe.app.utils.ids
 import io.bidswipe.app.utils.parse
+import io.bidswipe.app.utils.setHapticClickListener
 
 class HowToSellFragment : BaseFragment<DashViewModel , FragmentHowToSellBinding>() {
 
@@ -47,11 +48,11 @@ class HowToSellFragment : BaseFragment<DashViewModel , FragmentHowToSellBinding>
 
 		}
 
-//        bind.next.setOnClickListener {
+//        bind.next.setHapticClickListener {
 //            findNavController().navigate(ids.prepareYourShowFragment)
 //        }
 //
-//        bind.back.setOnClickListener {
+//        bind.back.setHapticClickListener {
 //            findNavController().popBackStack()
 //        }
 
@@ -75,7 +76,7 @@ class HowToSellFragment : BaseFragment<DashViewModel , FragmentHowToSellBinding>
 			}
 		})
 
-		bind.nextBtn.setOnClickListener {
+        bind.nextBtn.setHapticClickListener {
 
 			log("ITEM : ${bind.pager.currentItem}")
 
@@ -96,7 +97,7 @@ class HowToSellFragment : BaseFragment<DashViewModel , FragmentHowToSellBinding>
 
 		}
 
-		bind.backBtn.setOnClickListener {
+        bind.backBtn.setHapticClickListener {
 			if (bind.pager.currentItem == 0) {
 				if (requireActivity().intent.getStringExtra("type") == "promoteTools") {
 					finish()

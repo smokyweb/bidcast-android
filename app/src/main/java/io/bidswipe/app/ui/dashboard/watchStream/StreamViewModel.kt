@@ -5,7 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import io.bidswipe.app.model.LiveShowModel
+import io.bidswipe.app.model.LiveShowModelOld
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.network.repository.DashRepository
 import io.bidswipe.app.network.response.CreateBidResponse
@@ -18,21 +18,19 @@ import javax.inject.Inject
 class StreamViewModel @Inject constructor(val repo : DashRepository) : ViewModel() {
 
 	// LiveData to hold the list or individual streams
-	private val _streams = MutableLiveData<List<LiveShowModel>>()
+    private val _streams = MutableLiveData<List<String>>()
 
-	val streams : LiveData<List<LiveShowModel>> = _streams
+    val streams: LiveData<List<String>> = _streams
 
-	var previousRoomId = ""
-
-	fun setStreams(newStreams : List<LiveShowModel>) {
+    fun setStreams(newStreams: List<String>) {
 		_streams.value = newStreams
 	}
 
 	// Optionally, you can have a LiveData for the currently selected stream
-	private val _selectedStream = MutableLiveData<LiveShowModel>()
-	val selectedStream : LiveData<LiveShowModel> = _selectedStream
+    private val _selectedStream = MutableLiveData<String>()
+    val selectedStream: LiveData<String> = _selectedStream
 
-	fun selectStream(stream : LiveShowModel) {
+    fun selectStream(stream: String) {
 		_selectedStream.value = stream
 	}
 

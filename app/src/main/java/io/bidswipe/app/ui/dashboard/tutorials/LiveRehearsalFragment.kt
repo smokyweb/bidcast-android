@@ -19,6 +19,7 @@ import io.bidswipe.app.databinding.FragmentLiveRehearsalBinding
 import io.bidswipe.app.ui.dashboard.DashViewModel
 import io.bidswipe.app.utils.finish
 import io.bidswipe.app.utils.ids
+import io.bidswipe.app.utils.setHapticClickListener
 
 class LiveRehearsalFragment : BaseFragment<DashViewModel , FragmentLiveRehearsalBinding>() {
 	override fun getModel() : Class<DashViewModel> = DashViewModel::class.java
@@ -59,7 +60,7 @@ class LiveRehearsalFragment : BaseFragment<DashViewModel , FragmentLiveRehearsal
 			it.mode = Mode.VIDEO
 		}
 
-		bind.cameraSwitch.setOnClickListener {
+        bind.cameraSwitch.setHapticClickListener {
 
 			if (bind.camera.facing == Facing.FRONT) {
 				bind.camera.facing = Facing.BACK
@@ -68,11 +69,11 @@ class LiveRehearsalFragment : BaseFragment<DashViewModel , FragmentLiveRehearsal
 			}
 
 		}
-		bind.cutButton.setOnClickListener {
+        bind.cutButton.setHapticClickListener {
 			findNavController().navigate(ids.liveRehearsalFragment_to_prepareYourShowFragment)
 		}
 
-		bind.continueBtn.setOnClickListener {
+        bind.continueBtn.setHapticClickListener {
 			viewModel.showList[0]?.status = "completed"
 			viewModel.showList[1]?.status = "completed"
 			viewModel.showList[2]?.status = "completed"

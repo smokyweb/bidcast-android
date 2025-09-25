@@ -20,6 +20,7 @@ import io.bidswipe.app.utils.Utils
 import io.bidswipe.app.utils.draw
 import io.bidswipe.app.utils.finish
 import io.bidswipe.app.utils.runSafe
+import io.bidswipe.app.utils.setHapticClickListener
 
 class SelectShowTimeFragment : BaseFragment<ScheduleShowViewModel , FragmentSelectShowTimeBinding>() {
 
@@ -85,7 +86,7 @@ class SelectShowTimeFragment : BaseFragment<ScheduleShowViewModel , FragmentSele
 			}
 		}
 
-		bind.continueBtn.setOnClickListener {
+        bind.continueBtn.setHapticClickListener {
 
 			when {
 				viewModel.date.isEmpty() -> {

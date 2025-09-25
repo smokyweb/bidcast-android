@@ -18,6 +18,7 @@ import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.ui.dashboard.DashViewModel
+import io.bidswipe.app.utils.Alerts
 import io.bidswipe.app.utils.Utils
 import io.bidswipe.app.utils.ids
 import io.bidswipe.app.utils.parse
@@ -94,8 +95,6 @@ class PrepareYourShowFragment : BaseFragment<DashViewModel , FragmentPrepareYour
 
 						3 -> {
 
-							bind.loader.isVisible = true
-
 							val mData = viewModel.showData.value
 
 							imagePartList.add(
@@ -106,9 +105,16 @@ class PrepareYourShowFragment : BaseFragment<DashViewModel , FragmentPrepareYour
 								)
 							)
 
+                            if (mData?.productIds?.isEmpty() == true) {
+                                Alerts.error(mCtx, "Please select products")
+                                return
+                            }
+
 							val productIds = mData?.productIds?.split(",")?.map {
 								it.toInt()
 							}
+
+                            bind.loader.isVisible = true
 
 							viewModel.storeScheduleShow(
 								mData?.showTitle?.request() ,

@@ -19,6 +19,7 @@ import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.ui.dashboard.DashViewModel
 import io.bidswipe.app.utils.ids
 import io.bidswipe.app.utils.parse
+import io.bidswipe.app.utils.setHapticClickListener
 
 class PlayerFragment : BaseFragment<DashViewModel , FragmentPlayerBinding>() {
 	override fun getModel() : Class<DashViewModel> = DashViewModel::class.java
@@ -46,7 +47,7 @@ class PlayerFragment : BaseFragment<DashViewModel , FragmentPlayerBinding>() {
 		bind.player.useController = true
 		bind.player.setShowSubtitleButton(true)
 		bind.player.showController()
-		bind.nextButton.setOnClickListener {
+        bind.nextButton.setHapticClickListener {
 
 			playPos = playPos + 1
 
@@ -70,9 +71,9 @@ class PlayerFragment : BaseFragment<DashViewModel , FragmentPlayerBinding>() {
 
 		/* val playerControlView = bind.player.findViewById<TextView>(R.id.mute)
 
-		 playerControlView.setOnClickListener {
+		 playerControlView.setHapticClickListener {
 
-			 playerControlView.setOnClickListener {
+			 playerControlView.setHapticClickListener {
 				 // Toggle mute state
 				 val currentMuteState = player?.isDeviceMuted
 				 currentMuteState?.let { it1 -> player?.setDeviceMuted(!it1) }

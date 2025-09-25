@@ -14,6 +14,7 @@ decorator = "2.1.0"
 easyvalidationCore = "1.0.4"
 expandablelayout = "2.9.2"
 expressVideo = "3.19.0"
+millicastSdkAndroid = "2.5.2"
 slidetoact = "0.11.0"
 flexbox = "3.0.0"
 #agora-rtc-sdk = "4.2.1"
@@ -96,6 +97,7 @@ locale-helper-android = { module = "com.zeugmasolutions.localehelper:locale-help
 logging-interceptor = { module = "com.squareup.okhttp3:logging-interceptor", version.ref = "loggingInterceptor" }
 material = { module = "com.google.android.material:material", version.ref = "material" }
 material-calendar-view = { module = "com.applandeo:material-calendar-view", version.ref = "materialCalendarView" }
+millicast-sdk-android = { module = "com.millicast:millicast-sdk-android", version.ref = "millicastSdkAndroid" }
 recyclerview-animators = { module = "jp.wasabeef:recyclerview-animators", version.ref = "recyclerviewAnimators" }
 retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
 permissionx = { module = "com.guolindev.permissionx:permissionx", version.ref = "permissionx" }

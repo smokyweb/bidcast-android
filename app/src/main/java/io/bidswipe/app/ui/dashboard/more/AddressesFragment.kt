@@ -19,6 +19,7 @@ import io.bidswipe.app.utils.finish
 import io.bidswipe.app.utils.ids
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request
+import io.bidswipe.app.utils.setHapticClickListener
 
 class AddressesFragment : BaseFragment<MoreViewModel , FragmentAddressesBinding>() {
 	override fun getModel() : Class<MoreViewModel> = MoreViewModel::class.java
@@ -59,7 +60,7 @@ class AddressesFragment : BaseFragment<MoreViewModel , FragmentAddressesBinding>
 
 		bind.addressRecycler.adapter = shippingAddressAdapter
 
-		bind.addNewAddress.setOnClickListener {
+        bind.addNewAddress.setHapticClickListener {
 			findNavController().navigate(ids.myAddressToAddShippingAddressFragment)
 		}
 

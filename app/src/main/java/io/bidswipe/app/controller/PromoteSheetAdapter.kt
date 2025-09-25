@@ -10,6 +10,7 @@ import io.bidswipe.app.databinding.PromoteItemBinding
 import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.model.PromoteShowModel
 import io.bidswipe.app.utils.dpToPx
+import io.bidswipe.app.utils.setHapticClickListener
 
 class PromoteSheetAdapter(
 	mList : MutableList<PromoteShowModel> , val mClicks : RecyclerClicks ,
@@ -25,7 +26,7 @@ class PromoteSheetAdapter(
 	) {
 		with(holder) {
 
-			bind.root.setOnClickListener {
+            bind.root.setHapticClickListener {
 				mClicks.itemClick(position)
 			}
 			bind.title.text = item?.title

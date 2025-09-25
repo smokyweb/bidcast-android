@@ -16,6 +16,7 @@ import io.bidswipe.app.utils.bind
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request
 import io.bidswipe.app.utils.runSafe
+import io.bidswipe.app.utils.setHapticClickListener
 import kotlin.getValue
 
 class NotificationActivity : BaseActivity() {
@@ -55,7 +56,7 @@ class NotificationActivity : BaseActivity() {
 		notificationAdapter = NotificationAdapter(notificationList , mClick)
 		bind.notificationRec.adapter = notificationAdapter
 
-		bind.deleteAll.setOnClickListener {
+        bind.deleteAll.setHapticClickListener {
 			bind.loader.isVisible = true
 			viewModel.deleteNotification("".request())
 

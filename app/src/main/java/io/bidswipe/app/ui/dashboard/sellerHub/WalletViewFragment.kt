@@ -18,6 +18,7 @@ import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.utils.Alerts
 import io.bidswipe.app.utils.ids
 import io.bidswipe.app.utils.parse
+import io.bidswipe.app.utils.setHapticClickListener
 
 class WalletViewFragment : BaseFragment<SellerHubViewModel , FragmentWalletViewBinding>() {
 	override fun getModel() : Class<SellerHubViewModel> = SellerHubViewModel::class.java
@@ -45,7 +46,7 @@ class WalletViewFragment : BaseFragment<SellerHubViewModel , FragmentWalletViewB
 
 		adapter = PayoutAdapter(itemList , mClick)
 		bind.recycler.adapter = adapter
-		bind.payoutCard.setOnClickListener {
+        bind.payoutCard.setHapticClickListener {
 
 			if (! kycStatus) {
 				Alerts.error(mCtx , "Please Complete Your KYC")

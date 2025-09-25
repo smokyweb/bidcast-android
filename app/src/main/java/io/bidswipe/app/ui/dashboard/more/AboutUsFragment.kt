@@ -22,6 +22,7 @@ import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.utils.draw
 import io.bidswipe.app.utils.finish
 import io.bidswipe.app.utils.parse
+import io.bidswipe.app.utils.setHapticClickListener
 
 class AboutUsFragment : BaseFragment<MoreViewModel , FragmentAboutUsBinding>() {
 	override fun getModel() : Class<MoreViewModel> = MoreViewModel::class.java
@@ -60,24 +61,24 @@ class AboutUsFragment : BaseFragment<MoreViewModel , FragmentAboutUsBinding>() {
 		teamAdapter = TeamAdapter(teamList , mClick)
 		bind.teamRecycler.adapter = teamAdapter
 
-		bind.twitter.setOnClickListener {
+        bind.twitter.setHapticClickListener {
 			log("MediaLink  = ${socialMediaLinks.find { it?.platform == 3 }?.url}")
 
 			val url = socialMediaLinks.find { it?.platform == 3 }?.url
 			launchWeb(url?.url.toString())
 		}
 
-		bind.insta.setOnClickListener {
+        bind.insta.setHapticClickListener {
 			val url = socialMediaLinks.find { it?.platform == 1 }?.url
 			launchWeb(url?.url.toString())
 		}
 
-		bind.faceBook.setOnClickListener {
+        bind.faceBook.setHapticClickListener {
 			val url = socialMediaLinks.find { it?.platform == 2 }?.url
 			launchWeb(url?.url.toString())
 		}
 
-		bind.linkedIn.setOnClickListener {
+        bind.linkedIn.setHapticClickListener {
 			val url = socialMediaLinks.find { it?.platform == 0 }?.url
 			launchWeb(url?.url.toString())
 		}

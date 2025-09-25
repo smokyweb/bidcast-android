@@ -16,6 +16,7 @@ import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.utils.Utils
 import io.bidswipe.app.utils.ids
 import io.bidswipe.app.utils.parse
+import io.bidswipe.app.utils.setHapticClickListener
 import okhttp3.MultipartBody
 import java.io.File
 
@@ -40,14 +41,14 @@ class ProductWeightFragment : BaseFragment<ScheduleShowViewModel , FragmentProdu
 		adapter = WeightAdapter(mList)
 		bind.recycler.adapter = adapter
 
-		bind.continueBtn.setOnClickListener {
+        bind.continueBtn.setHapticClickListener {
 			bind.loader.isVisible = true
 			val imagePaths = productData?.getString("imagePaths")
 			val imageFiles = imagePaths?.split(",")?.map { File(it) } ?: emptyList()
 
 			if (imageFiles.isEmpty()) {
 				createProduct(productData , null)
-				return@setOnClickListener
+                return@setHapticClickListener
 			}
 
 			uploadImages(imageFiles)

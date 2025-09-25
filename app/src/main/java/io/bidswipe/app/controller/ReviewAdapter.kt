@@ -7,6 +7,7 @@ import io.bidswipe.app.databinding.ReviewItemBinding
 import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.network.response.GetRatingResponse
 import io.bidswipe.app.utils.asCapital
+import io.bidswipe.app.utils.setHapticClickListener
 
 class ReviewAdapter(
 	mList : MutableList<GetRatingResponse.Data.Rating?> , val mClicks : RecyclerClicks ,
@@ -27,7 +28,7 @@ class ReviewAdapter(
 
 			bind.rating.rating = item?.overallRating?.toFloat() ?: 0f
 
-			bind.root.setOnClickListener {
+            bind.root.setHapticClickListener {
 				mClicks.itemClick(position)
 			}
 

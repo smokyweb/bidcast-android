@@ -9,6 +9,7 @@ import io.bidswipe.app.base.BaseFragment
 import io.bidswipe.app.databinding.FragmentCompleteYourProfileBinding
 import io.bidswipe.app.ui.dashboard.DashViewModel
 import io.bidswipe.app.utils.ids
+import io.bidswipe.app.utils.setHapticClickListener
 
 class CompleteYourProfileFragment : BaseFragment<DashViewModel , FragmentCompleteYourProfileBinding>() {
 	override fun getModel() : Class<DashViewModel> = DashViewModel::class.java
@@ -25,7 +26,7 @@ class CompleteYourProfileFragment : BaseFragment<DashViewModel , FragmentComplet
 			findNavController().navigate(ids.action_completeYourProfileFragment_to_prepareYourShowFragment)
 		}
 
-		bind.continueBtn.setOnClickListener {
+        bind.continueBtn.setHapticClickListener {
 			viewModel.currentStep = 4
 			findNavController().navigate(ids.action_completeYourProfileFragment_to_prepareYourShowFragment)
 		}

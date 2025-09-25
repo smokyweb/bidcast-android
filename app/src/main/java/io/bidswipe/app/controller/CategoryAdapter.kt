@@ -9,6 +9,7 @@ import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.network.response.GetCategoryResponse
 import io.bidswipe.app.utils.dpToPx
 import io.bidswipe.app.utils.loadUrl
+import io.bidswipe.app.utils.setHapticClickListener
 
 class CategoryAdapter(
 	items : List<GetCategoryResponse.Data?> ,
@@ -25,7 +26,7 @@ class CategoryAdapter(
 	) {
 		with(holder.bind) {
 
-			root.setOnClickListener {
+            root.setHapticClickListener {
 				mClicks.itemClick(position , null)
 			}
 

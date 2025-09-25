@@ -15,6 +15,7 @@ import androidx.lifecycle.*
 import androidx.navigation.fragment.findNavController
 import androidx.viewbinding.ViewBinding
 import com.permissionx.guolindev.PermissionX
+import io.bidswipe.app.App
 import io.bidswipe.app.utils.Alerts
 import io.bidswipe.app.utils.Prefs
 
@@ -36,7 +37,10 @@ abstract class BaseFragment<VM : ViewModel, BIND : ViewBinding> : Fragment() {
         bind = getBind(inflater, view)
         mCtx = inflater.context
 
-        applyHapticToAllClickableViews(bind.root)
+        if (App.profileResponse.value?.preferences?.hapticFeedback == true) {
+            applyHapticToAllClickableViews(bind.root)
+        }
+
 
         TAG = try {
             findNavController().currentDestination?.label.toString().uppercase()

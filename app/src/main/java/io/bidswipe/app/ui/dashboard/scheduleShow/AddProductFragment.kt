@@ -8,7 +8,6 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.view.isVisible
 import androidx.navigation.fragment.findNavController
@@ -18,6 +17,7 @@ import io.bidswipe.app.controller.ProductAdapter
 import io.bidswipe.app.databinding.FragmentAddProductBinding
 import io.bidswipe.app.interfaces.AlertClicks
 import io.bidswipe.app.interfaces.RecyclerClicks
+import io.bidswipe.app.model.LiveShowModel
 import io.bidswipe.app.model.TutorialShowModel
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.network.response.GetMyInventoryResponse
@@ -30,18 +30,19 @@ import io.bidswipe.app.utils.finish
 import io.bidswipe.app.utils.ids
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request
+import io.bidswipe.app.utils.setHapticClickListener
 import io.bidswipe.app.utils.toListProduct
 import okhttp3.MultipartBody
 import java.io.File
 
 @SuppressLint("NotifyDataSetChanged")
-class AddProductFragment : BaseFragment<ScheduleShowViewModel , FragmentAddProductBinding>() {
-	override fun getModel() : Class<ScheduleShowViewModel> = ScheduleShowViewModel::class.java
+class AddProductFragment : BaseFragment<ScheduleShowViewModel, FragmentAddProductBinding>() {
+    override fun getModel(): Class<ScheduleShowViewModel> = ScheduleShowViewModel::class.java
 
-	override fun getBind(inflater : LayoutInflater , view : ViewGroup?) =
-		FragmentAddProductBinding.inflate(inflater , view , false)
+    override fun getBind(inflater: LayoutInflater, view: ViewGroup?) =
+        FragmentAddProductBinding.inflate(inflater, view, false)
 
-	private lateinit var productAdapter : ProductAdapter
+    private lateinit var productAdapter: ProductAdapter
 	private var productList = mutableListOf<GetMyInventoryResponse.Data?>()
 	private var imagePartList = mutableListOf<MultipartBody.Part?>()
 
@@ -52,10 +53,10 @@ class AddProductFragment : BaseFragment<ScheduleShowViewModel , FragmentAddProdu
 				val selectedProducts =
 					data?.getSerializableExtra("selectedProducts") as? ArrayList<GetMyInventoryResponse.Data>
 
-				Log.d(TAG , "$selectedProducts ")
+                Log.d(TAG, "$selectedProducts ")
 				selectedProducts?.forEach {
 					it.selected = true
-					if (! productList.any { existing -> existing?.id == it.id }) {
+                    if (!productList.any { existing -> existing?.id == it.id }) {
 						productList.add(it)
 					}
 				}
@@ -72,7 +73,7 @@ class AddProductFragment : BaseFragment<ScheduleShowViewModel , FragmentAddProdu
 	private var from = ""
 
 	private var mClick = object : RecyclerClicks {
-		override fun itemClick(pos : Int , status : String?) {
+        override fun itemClick(pos: Int, status: String?) {
 			when (status) {
 				"select" -> {
 					productList[pos]?.selected = true
@@ -80,7 +81,7 @@ class AddProductFragment : BaseFragment<ScheduleShowViewModel , FragmentAddProdu
 				}
 
 				"edit" -> {
-					startActivity(mCtx.toListProduct().putExtra("product" , productList[pos]))
+                    startActivity(mCtx.toListProduct().putExtra("product", productList[pos]))
 				}
 
 				"delete" -> {
@@ -92,8 +93,8 @@ class AddProductFragment : BaseFragment<ScheduleShowViewModel , FragmentAddProdu
 		}
 	}
 
-	override fun onViewCreated(view : View , savedInstanceState : Bundle?) {
-		super.onViewCreated(view , savedInstanceState)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
 		from = activity?.intent?.getStringExtra("from") ?: ""
 
@@ -101,24 +102,23 @@ class AddProductFragment : BaseFragment<ScheduleShowViewModel , FragmentAddProdu
 			findNavController().popBackStack()
 		}
 
-		productAdapter = ProductAdapter(productList , mClick)
+        productAdapter = ProductAdapter(productList, mClick)
 		bind.recycler.adapter = productAdapter
 
-		bind.addProductLayout.setOnClickListener {
+        bind.addProductLayout.setHapticClickListener {
 			findNavController().navigate(ids.addProductFragment_to_createProductFragment)
 		}
 
-		bind.selectInventoryLayout.setOnClickListener {
+        bind.selectInventoryLayout.setHapticClickListener {
 			inventoryLauncher.launch(
-				Intent(mCtx , SellerHubActivity::class.java)
-					.putExtra("slug" , "inventory")
-					.putExtra("from" , "addProduct")
+                Intent(mCtx, SellerHubActivity::class.java)
+                    .putExtra("slug", "inventory")
+                    .putExtra("from", "addProduct")
 			)
 		}
 
-		bind.finishBtn.setOnClickListener {
+        bind.finishBtn.setHapticClickListener {
 
-			bind.loader.isVisible = true
 			val imagePartList = mutableListOf<MultipartBody.Part?>()
 			val productIdList = mutableListOf<Int>()
 
@@ -129,27 +129,30 @@ class AddProductFragment : BaseFragment<ScheduleShowViewModel , FragmentAddProdu
 			}
 
 			if (productIdList.isEmpty()) {
-				Alerts.error(mCtx , "Please select product")
+                Alerts.error(mCtx, "Please select product")
+                return@setHapticClickListener
 			}
 
 			imagePartList.add(
 				Utils.imagePart(
-					"thumbnail[]" ,
-					viewModel.thumbnail ,
+                    "thumbnail[]",
+                    viewModel.thumbnail,
 					File(viewModel.thumbnail)
 				)
 			)
+
+            bind.loader.isVisible = true
 
 			if (from == "showTutorial") {
 
 				val data = Intent()
 				data.putExtra(
-					"title" ,
+                    "title",
 					TutorialShowModel(
-						viewModel.showTitle ,
-						viewModel.categoryId ,
-						viewModel.auctionId ,
-						viewModel.thumbnail ,
+                        viewModel.showTitle,
+                        viewModel.categoryId,
+                        viewModel.auctionId,
+                        viewModel.thumbnail,
 						productIdList.joinToString(",")
 					)
 				)
@@ -157,17 +160,18 @@ class AddProductFragment : BaseFragment<ScheduleShowViewModel , FragmentAddProdu
 //                data.putExtra("auctionTypeId" , )
 //                data.putExtra("thumbnails" , )
 //                data.putExtra("productIds" , )
-				activity?.setResult(Activity.RESULT_OK , data)
+
+                activity?.setResult(Activity.RESULT_OK, data)
 				finish()
 
 			} else {
 				viewModel.storeScheduleShow(
-					title = viewModel.showTitle.request() ,
-					date = viewModel.date.request() ,
-					time = viewModel.time.request() ,
-					categoryId = viewModel.categoryId.request() ,
-					auctionTypeId = viewModel.auctionId.request() ,
-					thumbnails = imagePartList ,
+                    title = viewModel.showTitle.request(),
+                    date = viewModel.date.request(),
+                    time = viewModel.time.request(),
+                    categoryId = viewModel.categoryId.request(),
+                    auctionTypeId = viewModel.auctionId.request(),
+                    thumbnails = imagePartList,
 					productIds = productIdList.joinToString(",").request()
 				)
 			}
@@ -176,7 +180,7 @@ class AddProductFragment : BaseFragment<ScheduleShowViewModel , FragmentAddProdu
 
 		bind.loader.isVisible = true
 
-		viewModel.getUserProducts(userId.request() , categoryId = viewModel.categoryId.request())
+        viewModel.getUserProducts(userId.request(), categoryId = viewModel.categoryId.request())
 
 		viewModel.getUserProductsRepo.observe(viewLifecycleOwner) {
 			when (it) {
@@ -209,13 +213,13 @@ class AddProductFragment : BaseFragment<ScheduleShowViewModel , FragmentAddProdu
 					if (it.isNetworkError) {
 						errorToast(getString(R.string.no_internet))
 					} else {
-						it.parse(mCtx , TAG , object : AlertClicks {
-							override fun primaryClick(dialog : AppBottomSheet) {
+                        it.parse(mCtx, TAG, object : AlertClicks {
+                            override fun primaryClick(dialog: AppBottomSheet) {
 								dialog.dismiss()
 
 							}
 
-							override fun secondaryClick(dialog : AppBottomSheet) {
+                            override fun secondaryClick(dialog: AppBottomSheet) {
 								dialog.dismiss()
 
 							}
@@ -233,11 +237,52 @@ class AddProductFragment : BaseFragment<ScheduleShowViewModel , FragmentAddProdu
 				is Resource.Success -> {
 					bind.loader.isVisible = false
 
-					val mData = it.value.data
+                    val data = it.value.data
 
-					val intent = Intent(mCtx , LiveShowActivity::class.java).putExtra(
-						"showId" ,
-						mData?.id.toString()
+                    val products = data?.products?.map { it?.toLiveShowProduct() }
+
+                    products?.first()?.isCurrent = true
+
+                    val showData = LiveShowModel(
+                        seller = LiveShowModel.Seller(
+                            id = userId.toString(),
+                            image = userImage,
+                            name = userName,
+                            rating = ""
+                        ),
+                        products = products?.map { p ->
+                            LiveShowModel.Product(
+                                p?.category,
+                                p?.id,
+                                p?.image,
+                                p?.status,
+                                p?.name,
+                                p?.price,
+                                "1",
+                            )
+                        }?.toList() ?: mutableListOf(),
+                        roomId = data?.id.toString(),
+                        showDetail = "Test Details",
+                        thumbnail = data?.thumbnail?.getOrNull(0) ?: "",
+                        viewerCount = "1",
+                        highestBid = LiveShowModel.HighestBid(
+                            bidAmount = "",
+                            userName = "",
+                            userImage = "",
+                            userId = "",
+                            productId = ""
+                        ),
+                        isLive = true,
+                        time = Utils.timestamp().toString(),
+                        showId = data?.id.toString(),
+                        allowBidForAll = true,
+                        bidCountDown = "",
+                        showTimer = "",
+                    )
+
+                    val intent = Intent(mCtx, LiveShowActivity::class.java).putExtra(
+                        "showData",
+                        showData
 					)
 					startActivity(intent)
 					finish()
@@ -249,12 +294,12 @@ class AddProductFragment : BaseFragment<ScheduleShowViewModel , FragmentAddProdu
 					if (it.isNetworkError) {
 						errorToast(getString(R.string.no_internet))
 					} else {
-						it.parse(mCtx , TAG , object : AlertClicks {
-							override fun primaryClick(dialog : AppBottomSheet) {
+                        it.parse(mCtx, TAG, object : AlertClicks {
+                            override fun primaryClick(dialog: AppBottomSheet) {
 								dialog.dismiss()
 							}
 
-							override fun secondaryClick(dialog : AppBottomSheet) {
+                            override fun secondaryClick(dialog: AppBottomSheet) {
 								dialog.dismiss()
 
 							}
@@ -271,10 +316,10 @@ class AddProductFragment : BaseFragment<ScheduleShowViewModel , FragmentAddProdu
 			when (it) {
 				is Resource.Success -> {
 
-					val mData = it.value.data
+                    it.value.data
 
 					viewModel.getUserProducts(
-						userId.request() ,
+                        userId.request(),
 						categoryId = viewModel.categoryId.request()
 					)
 
@@ -286,13 +331,13 @@ class AddProductFragment : BaseFragment<ScheduleShowViewModel , FragmentAddProdu
 					if (it.isNetworkError) {
 						errorToast(getString(R.string.no_internet))
 					} else {
-						it.parse(mCtx , TAG , object : AlertClicks {
-							override fun primaryClick(dialog : AppBottomSheet) {
+                        it.parse(mCtx, TAG, object : AlertClicks {
+                            override fun primaryClick(dialog: AppBottomSheet) {
 								dialog.dismiss()
 
 							}
 
-							override fun secondaryClick(dialog : AppBottomSheet) {
+                            override fun secondaryClick(dialog: AppBottomSheet) {
 								dialog.dismiss()
 
 							}
@@ -307,26 +352,26 @@ class AddProductFragment : BaseFragment<ScheduleShowViewModel , FragmentAddProdu
 
 	}
 
-	private fun deleteProductDialog(productId : String) {
+    private fun deleteProductDialog(productId: String) {
 		AppBottomSheet(
-			mCtx ,
-			R.drawable.trash ,
-			"Delete!" ,
-			"Are you sure you want to delete?" ,
-			primaryBtnText = "Yes" ,
-			secondaryBtnText = "No" ,
-			canCancel = true ,
-			showSecondary = true ,
-			iconPadding = 16 ,
-			alertType = AlertType.ERROR ,
+            mCtx,
+            R.drawable.trash,
+            "Delete!",
+            "Are you sure you want to delete?",
+            primaryBtnText = "Yes",
+            secondaryBtnText = "No",
+            canCancel = true,
+            showSecondary = true,
+            iconPadding = 16,
+            alertType = AlertType.ERROR,
 			clicks = object : AlertClicks {
-				override fun primaryClick(dialog : AppBottomSheet) {
+                override fun primaryClick(dialog: AppBottomSheet) {
 					dialog.dismiss()
 					bind.loader.isVisible = true
 					viewModel.deleteProduct(productId)
 				}
 
-				override fun secondaryClick(dialog : AppBottomSheet) {
+                override fun secondaryClick(dialog: AppBottomSheet) {
 					dialog.dismiss()
 				}
 			}

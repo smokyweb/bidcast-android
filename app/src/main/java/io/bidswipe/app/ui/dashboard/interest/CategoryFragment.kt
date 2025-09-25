@@ -14,6 +14,7 @@ import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.network.response.GetCategoryResponse
 import io.bidswipe.app.ui.dashboard.DashViewModel
+import io.bidswipe.app.utils.setHapticClickListener
 import io.bidswipe.app.utils.toDash
 
 class CategoryFragment : BaseFragment<DashViewModel , FragmentCategoryBinding>() {
@@ -51,7 +52,7 @@ class CategoryFragment : BaseFragment<DashViewModel , FragmentCategoryBinding>()
 
 		val isFirstTimeLogin = activity?.intent?.getBooleanExtra("isFirstTimeLogin" , false) ?: false
 
-		bind.header.setOnClickListener {
+        bind.header.setHapticClickListener {
 			when {
 				isFirstTimeLogin -> {
 					startActivity(mCtx.toDash())
@@ -64,7 +65,7 @@ class CategoryFragment : BaseFragment<DashViewModel , FragmentCategoryBinding>()
 			}
 		}
 
-		bind.nextButton.setOnClickListener {
+        bind.nextButton.setHapticClickListener {
 			if (viewModel.selectedCategories.isEmpty()) {
 				errorToast("Please select at least one category")
 			} else {

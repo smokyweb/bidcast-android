@@ -8,6 +8,7 @@ import io.bidswipe.app.databinding.UploadImageItemBinding
 import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.utils.Const
 import io.bidswipe.app.utils.loadUrl
+import io.bidswipe.app.utils.setHapticClickListener
 
 class ImageAdapter(
 	mList : MutableList<String?> , val mClicks : RecyclerClicks ,
@@ -23,7 +24,7 @@ class ImageAdapter(
 	) {
 		with(holder) {
 
-			bind.root.setOnClickListener {
+            bind.root.setHapticClickListener {
 				mClicks.itemClick(position)
 			}
 

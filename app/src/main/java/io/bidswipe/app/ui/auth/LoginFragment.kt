@@ -26,6 +26,7 @@ import io.bidswipe.app.utils.hideKeyboard
 import io.bidswipe.app.utils.ids
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request
+import io.bidswipe.app.utils.setHapticClickListener
 import io.bidswipe.app.utils.showKeyboard
 import io.bidswipe.app.utils.string
 import io.bidswipe.app.utils.toDash
@@ -43,27 +44,27 @@ class LoginFragment : BaseFragment<AuthViewModel , FragmentLoginBinding>() {
 	override fun onViewCreated(view : View , savedInstanceState : Bundle?) {
 		super.onViewCreated(view , savedInstanceState)
 
-		bind.createAccount.setOnClickListener {
+        bind.createAccount.setHapticClickListener {
 			findNavController().navigate(ids.goToCreateAccount)
 		}
 
-		bind.forgot.setOnClickListener {
+        bind.forgot.setHapticClickListener {
 			findNavController().navigate(ids.goToForgotPassword)
 		}
 
-		bind.layout.setOnClickListener {
+        bind.layout.setHapticClickListener {
 			hideKeyboard(it)
 		}
 
-		bind.privacyPolicy.setOnClickListener {
+        bind.privacyPolicy.setHapticClickListener {
 			startActivity(Intent(mCtx , MoreActivity::class.java).putExtra("slug" , "privacyPolicy"))
 		}
 
-		bind.termsOfService.setOnClickListener {
+        bind.termsOfService.setHapticClickListener {
 			startActivity(Intent(mCtx , MoreActivity::class.java).putExtra("slug" , "termsCondition"))
 		}
 
-		bind.loginBtn.setOnClickListener {
+        bind.loginBtn.setHapticClickListener {
 			when {
 
 				bind.email.value().isEmpty() -> {

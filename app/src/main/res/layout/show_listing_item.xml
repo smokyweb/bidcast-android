@@ -10,7 +10,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="4dp"
+        android:layout_margin="8dp"
         android:gravity="center_vertical"
         android:orientation="horizontal">
 
@@ -31,9 +31,9 @@
         </com.google.android.material.card.MaterialCardView>
 
         <LinearLayout
+            android:layout_marginStart="16dp"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_marginHorizontal="@dimen/half_margin"
             android:layout_weight="1"
             android:gravity="center_vertical"
             android:orientation="vertical">
@@ -46,43 +46,26 @@
                 android:text="Show Name" />
 
             <TextView
-                android:id="@+id/date"
-                style="@style/BodyMedium"
+                android:id="@+id/rsvp"
+                style="@style/BodyLarge"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Feb 15, 2025" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/half_margin">
+                android:drawablePadding="@dimen/half_margin"
+                android:layout_marginVertical="8dp"
+                android:text="135 RSVPs"
+                app:drawableStartCompat="@drawable/ic_person_outlined"
+                app:drawableTint="@color/onSurface" />
 
                 <TextView
                     android:id="@+id/time"
-                    style="@style/TitleMedium"
-                    android:layout_width="0dp"
+                    style="@style/BodyMedium"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:drawableStart="@drawable/ic_clock"
                     android:drawablePadding="@dimen/half_margin"
-                    android:text="8:00 PM EST" />
-
-                <TextView
-                    android:id="@+id/rsvp"
-                    style="@style/BodyLarge"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:drawableStart="@drawable/ic_person_outlined"
-                    android:drawablePadding="@dimen/half_margin"
-                    android:drawableTint="@color/onSurface"
-                    android:text="135 RSVPs" />
-
-
-            </LinearLayout>
-
+                    android:text="8:00 PM EST"
+                    app:drawableStartCompat="@drawable/ic_clock" />
 
         </LinearLayout>
-
 
     </LinearLayout>
 

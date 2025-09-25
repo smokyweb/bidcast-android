@@ -26,6 +26,7 @@ import io.bidswipe.app.utils.hideKeyboard
 import io.bidswipe.app.utils.loadUrl
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request
+import io.bidswipe.app.utils.setHapticClickListener
 import io.bidswipe.app.utils.showKeyboard
 import io.bidswipe.app.utils.value
 import java.io.File
@@ -108,11 +109,9 @@ class SellerVerificationActivity : BaseActivity() {
 				selfie = imagePath
 
 				if (cardImage.isNotEmpty() && selfie.isNotEmpty()) {
-
 					bind.verificationIcon.isVisible = true
 					bind.stepProgress.setProgress(1)
 					bind.stepCount.text = "1 of 3"
-
 				}
 
 				log("ImageUri = $imageUri")
@@ -129,7 +128,8 @@ class SellerVerificationActivity : BaseActivity() {
 		bind.header.onBackClick {
 			finish()
 		}
-		bind.root.setOnClickListener {
+
+        bind.root.setHapticClickListener {
 			hideKeyboard()
 		}
 
@@ -142,20 +142,19 @@ class SellerVerificationActivity : BaseActivity() {
 
 		bind.recycler.adapter = cardAdapter
 
-		bind.uploadId.setOnClickListener {
+        bind.uploadId.setHapticClickListener {
 			uploadUserId()
 		}
 
-		bind.uploadSelfie.setOnClickListener {
+        bind.uploadSelfie.setHapticClickListener {
 			uploadUserSelfie()
 		}
 
-		bind.verifyId.setOnClickListener {
+        bind.verifyId.setHapticClickListener {
 
 			when {
 
 				cardImage.isEmpty() -> {
-
 					Alerts.error(this, "Please select Id card")
 				}
 
@@ -184,7 +183,7 @@ class SellerVerificationActivity : BaseActivity() {
 
 		}
 
-		bind.verifyPhone.setOnClickListener {
+        bind.verifyPhone.setHapticClickListener {
 
 			when {
 
@@ -203,7 +202,7 @@ class SellerVerificationActivity : BaseActivity() {
 
 		}
 
-		bind.verifyOtp.setOnClickListener {
+        bind.verifyOtp.setHapticClickListener {
 
 			when {
 
@@ -222,11 +221,11 @@ class SellerVerificationActivity : BaseActivity() {
 
 		}
 
-		bind.addCardBtn.setOnClickListener {
+        bind.addCardBtn.setHapticClickListener {
 			addCardLauncher.launch(this.goToAddCard("verification"))
 		}
 
-		bind.completeVerification.setOnClickListener {
+        bind.completeVerification.setHapticClickListener {
 			when {
 
 				cardImage.isEmpty() -> {
@@ -260,7 +259,7 @@ class SellerVerificationActivity : BaseActivity() {
 			}
 		}
 
-		bind.editPhone.setOnClickListener {
+        bind.editPhone.setHapticClickListener {
 			bind.phoneNumberLayout.isVisible = true
 			bind.verifyPhoneTitle.isVisible = true
 			bind.verifyPhoneTitle.text = "Enter phone number"
@@ -273,7 +272,7 @@ class SellerVerificationActivity : BaseActivity() {
 			bind.resend.isVisible = false
 		}
 
-		bind.resend.setOnClickListener {
+        bind.resend.setHapticClickListener {
 
 			bind.loader.isVisible = true
 			viewModel.storePhoneNumber(phoneNumber.request())
@@ -333,6 +332,17 @@ class SellerVerificationActivity : BaseActivity() {
 						if (it.isLowerCase()) it.titlecase(Locale.getDefault())
 						else it.toString()
 					}
+
+                    if (mData?.idCard?.isNotEmpty() == true && mData.image?.isNotEmpty() == true) {
+                        bind.cardImage.isVisible = true
+                        bind.selfie.isVisible = true
+                    } else {
+                        bind.cardImage.isVisible = true
+                        bind.selfie.isVisible = true
+                    }
+
+                    bind.cardImage.loadUrl(this, mData?.idCard ?: "")
+                    bind.selfie.loadUrl(this, mData?.image ?: "")
 
 					when (mData?.status) {
 

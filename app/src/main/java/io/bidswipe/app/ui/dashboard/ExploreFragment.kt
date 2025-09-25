@@ -26,6 +26,7 @@ import io.bidswipe.app.ui.dashboard.more.NotificationActivity
 import io.bidswipe.app.utils.hideKeyboard
 import io.bidswipe.app.utils.ids
 import io.bidswipe.app.utils.parse
+import io.bidswipe.app.utils.setHapticClickListener
 
 @SuppressLint("NotifyDataSetChanged")
 class ExploreFragment : BaseFragment<DashViewModel , FragmentExploreBinding>() {
@@ -54,10 +55,10 @@ class ExploreFragment : BaseFragment<DashViewModel , FragmentExploreBinding>() {
 	override fun onViewCreated(view : View , savedInstanceState : Bundle?) {
 		super.onViewCreated(view , savedInstanceState)
 
-		bind.root.setOnClickListener {
+        bind.root.setHapticClickListener {
 			hideKeyboard(it)
 		}
-		bind.main.setOnClickListener {
+        bind.main.setHapticClickListener {
 			hideKeyboard(it)
 		}
 		exploreAdapter = ExploreAdapter(exploreList , mClick)
@@ -103,9 +104,9 @@ class ExploreFragment : BaseFragment<DashViewModel , FragmentExploreBinding>() {
 			viewModel.getCategory(type = selectedTabText)
 		}
 
-		bind.recommended.setOnClickListener { selectTab(it as TextView) }
-		bind.popular.setOnClickListener { selectTab(it as TextView) }
-		bind.all.setOnClickListener { selectTab(it as TextView) }
+        bind.recommended.setHapticClickListener { selectTab(it as TextView) }
+        bind.popular.setHapticClickListener { selectTab(it as TextView) }
+        bind.all.setHapticClickListener { selectTab(it as TextView) }
 
 		viewModel.getCategoryRepo.observe(viewLifecycleOwner) {
 			bind.loader.isVisible = false

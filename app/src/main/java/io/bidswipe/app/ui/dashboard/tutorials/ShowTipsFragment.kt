@@ -16,6 +16,7 @@ import io.bidswipe.app.ui.dashboard.DashViewModel
 import io.bidswipe.app.ui.dashboard.scheduleShow.LiveShowActivity
 import io.bidswipe.app.utils.goToAddCard
 import io.bidswipe.app.utils.ids
+import io.bidswipe.app.utils.setHapticClickListener
 import io.bidswipe.app.utils.string
 import io.bidswipe.app.utils.toScheduleShow
 
@@ -87,7 +88,7 @@ class ShowTipsFragment : BaseFragment<DashViewModel , FragmentShowTipsBinding>()
 			}
 		})
 
-		bind.continueBtn.setOnClickListener {
+        bind.continueBtn.setHapticClickListener {
 			if (bind.pager.currentItem == productTipList.size - 1) {
 				when (type) {
 					"showTips" -> {

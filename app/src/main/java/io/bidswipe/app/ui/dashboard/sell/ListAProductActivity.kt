@@ -8,6 +8,7 @@ import io.bidswipe.app.base.BaseActivity
 import io.bidswipe.app.databinding.ActivityListAproductBinding
 import io.bidswipe.app.utils.bind
 import io.bidswipe.app.utils.hideKeyboard
+import io.bidswipe.app.utils.setHapticClickListener
 
 class ListAProductActivity : BaseActivity() {
 	private val bind by bind(ActivityListAproductBinding::inflate)
@@ -18,7 +19,7 @@ class ListAProductActivity : BaseActivity() {
 		super.onCreate(savedInstanceState)
 		setContentView(bind.root)
 
-		bind.main.setOnClickListener {
+        bind.main.setHapticClickListener {
 			hideKeyboard()
 		}
 		navHostFragment = supportFragmentManager.findFragmentById(R.id.fragmentContainer) as NavHostFragment

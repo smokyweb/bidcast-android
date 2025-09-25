@@ -7,6 +7,7 @@ import io.bidswipe.app.databinding.BenifitsItemBinding
 import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.network.response.AboutUsResponse
 import io.bidswipe.app.utils.loadUrl
+import io.bidswipe.app.utils.setHapticClickListener
 
 class FeaturedAdapter(
 	mList : MutableList<AboutUsResponse.Data.Feature?> , val mClicks : RecyclerClicks ,
@@ -26,7 +27,7 @@ class FeaturedAdapter(
 			bind.description.text = item?.description ?: ""
 			bind.image.loadUrl(mCtx , item?.icon.toString())
 
-			bind.root.setOnClickListener {
+            bind.root.setHapticClickListener {
 				mClicks.itemClick(position)
 			}
 

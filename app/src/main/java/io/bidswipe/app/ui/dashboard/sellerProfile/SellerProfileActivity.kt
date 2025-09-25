@@ -34,6 +34,7 @@ import io.bidswipe.app.utils.ids
 import io.bidswipe.app.utils.loadUrl
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request
+import io.bidswipe.app.utils.setHapticClickListener
 import kotlin.math.abs
 
 class SellerProfileActivity : BaseActivity() {
@@ -84,12 +85,12 @@ class SellerProfileActivity : BaseActivity() {
 			}
 			return@setOnMenuItemClickListener true
 		}
-		
-		bind.shareIcon.setOnClickListener {
+
+        bind.shareIcon.setHapticClickListener {
 			shareSellerProfile()
 		}
-		
-		bind.moreIcon.setOnClickListener {
+
+        bind.moreIcon.setHapticClickListener {
 			menu.show()
 		}
 		
@@ -114,16 +115,16 @@ class SellerProfileActivity : BaseActivity() {
 			}
 			return@setOnMenuItemClickListener true
 		}
-		
-		bind.moreIcon1.setOnClickListener {
+
+        bind.moreIcon1.setHapticClickListener {
 			menu1.show()
 		}
-		
-		bind.share1.setOnClickListener {
+
+        bind.share1.setHapticClickListener {
 			shareSellerProfile()
 		}
-		
-		bind.notificationIcon1.setOnClickListener {
+
+        bind.notificationIcon1.setHapticClickListener {
 			showNotificationSheet()
 		}
 		
@@ -141,16 +142,16 @@ class SellerProfileActivity : BaseActivity() {
 		}
 		
 		sellerId = intent?.getStringExtra("userId") ?: ""
-		
-		bind.backBtnCard.setOnClickListener {
+
+        bind.backBtnCard.setHapticClickListener {
 			finish()
 		}
 		
 		bind.toolbar.setNavigationOnClickListener {
 			finish()
 		}
-		
-		bind.messageSeller.setOnClickListener {
+
+        bind.messageSeller.setHapticClickListener {
 			val intent = Intent(this, ChatActivity::class.java).apply {
 				putExtra("id", sellerId)
 				putExtra("name", sellerName)
@@ -158,8 +159,8 @@ class SellerProfileActivity : BaseActivity() {
 			}
 			startActivity(intent)
 		}
-		
-		bind.sendTip.setOnClickListener {
+
+        bind.sendTip.setHapticClickListener {
 			sendTipSheet()
 		}
 		
@@ -257,13 +258,13 @@ class SellerProfileActivity : BaseActivity() {
 				
 			}
 		}
-		
-		bind.follow.setOnClickListener {
+
+        bind.follow.setHapticClickListener {
 			bind.loader.isVisible = true
 			viewModel.followUser(sellerId.request())
 		}
-		
-		bind.notificationIcon.setOnClickListener {
+
+        bind.notificationIcon.setHapticClickListener {
 			showNotificationSheet()
 		}
 		
@@ -352,16 +353,16 @@ class SellerProfileActivity : BaseActivity() {
 		notificationSheetBind.userImage.loadUrl(this, sellerImage)
 		notificationSheetBind.userName.text = sellerName
 		notificationSheetBind.text.text = "Would you like to notified when $sellerName goes live?"
-		
-		notificationSheetBind.close.setOnClickListener {
+
+        notificationSheetBind.close.setHapticClickListener {
 			notificationSheet.dismiss()
 		}
-		
-		notificationSheetBind.noBtn.setOnClickListener {
+
+        notificationSheetBind.noBtn.setHapticClickListener {
 			notificationSheet.dismiss()
 		}
-		
-		notificationSheetBind.submit.setOnClickListener {
+
+        notificationSheetBind.submit.setHapticClickListener {
 			bind.loader.isVisible = true
 			notificationSheet.dismiss()
 			viewModel.notifyLiveUser(sellerId.request())
@@ -425,8 +426,8 @@ class SellerProfileActivity : BaseActivity() {
 			)
 		)
 		val sheet = Alerts.appBottomSheet(this, true, mBind)
-		
-		mBind.submitReport.setOnClickListener {
+
+        mBind.submitReport.setHapticClickListener {
 			sheet.dismiss()
 		}
 		
@@ -482,8 +483,8 @@ class SellerProfileActivity : BaseActivity() {
 		)
 		
 		val sendTipSheet = Alerts.appBottomSheet(this, true, sendTipSheetBind)
-		
-		sendTipSheetBind.close.setOnClickListener {
+
+        sendTipSheetBind.close.setHapticClickListener {
 			sendTipSheet.dismiss()
 		}
 		

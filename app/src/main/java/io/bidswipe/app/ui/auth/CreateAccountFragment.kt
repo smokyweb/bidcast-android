@@ -17,6 +17,7 @@ import io.bidswipe.app.utils.Alerts
 import io.bidswipe.app.utils.hideKeyboard
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request
+import io.bidswipe.app.utils.setHapticClickListener
 import io.bidswipe.app.utils.showKeyboard
 import io.bidswipe.app.utils.value
 
@@ -34,11 +35,11 @@ class CreateAccountFragment : BaseFragment<AuthViewModel , FragmentCreateAccount
 		}
 
 
-		bind.layout.setOnClickListener {
+        bind.layout.setHapticClickListener {
 			hideKeyboard(it)
 		}
 
-		bind.createAccountBtn.setOnClickListener {
+        bind.createAccountBtn.setHapticClickListener {
 			when {
 
 				bind.firstName.value().isEmpty() -> {

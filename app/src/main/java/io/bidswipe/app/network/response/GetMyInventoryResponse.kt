@@ -80,7 +80,8 @@ data class GetMyInventoryResponse(
         val userId : Int? ,
         var selected : Boolean? = false ,
     ) : Serializable {
-		@Keep
+
+        @Keep
 		data class Category(
             @SerializedName("color")
             val color : String? ,

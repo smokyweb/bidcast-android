@@ -6,40 +6,52 @@ import io.bidswipe.app.base.BaseAdapter
 import io.bidswipe.app.databinding.ShowListingItemBinding
 import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.network.response.GetMyShowResponse
+import io.bidswipe.app.utils.Const
 import io.bidswipe.app.utils.Utils
 import io.bidswipe.app.utils.asCapital
 import io.bidswipe.app.utils.loadUrl
+import io.bidswipe.app.utils.setHapticClickListener
 
 class ShowListingAdapter(
-	val mList : MutableList<GetMyShowResponse.Data?> , val mClick : RecyclerClicks ,
-) : BaseAdapter<GetMyShowResponse.Data? , ShowListingItemBinding>(mList) {
+    val mList: MutableList<GetMyShowResponse.Data?>, val mClick: RecyclerClicks,
+) : BaseAdapter<GetMyShowResponse.Data?, ShowListingItemBinding>(mList) {
 
-	override fun bindView(inflater : LayoutInflater , parent : ViewGroup) =
-		ShowListingItemBinding.inflate(inflater , parent , false)
+    override fun bindView(inflater: LayoutInflater, parent: ViewGroup) =
+        ShowListingItemBinding.inflate(inflater, parent, false)
 
 	override fun onBind(
-		holder : BaseViewHolder<ShowListingItemBinding> ,
-		position : Int ,
-		item : GetMyShowResponse.Data? ,
+        holder: BaseViewHolder<ShowListingItemBinding>,
+        position: Int,
+        item: GetMyShowResponse.Data?,
 	) {
 		with(holder) {
 
-			bind.root.setOnClickListener {
-				mClick.itemClick(position , "click")
+            bind.root.setHapticClickListener {
+                mClick.itemClick(position, "click")
 			}
 
 			bind.name.text = item?.title?.asCapital()
 
-			bind.date.text = item?.date
-
-			bind.time.text = Utils.getFormattedDateTime("HH:mm:ss" , "hh:mm a" , item?.time.toString())
+            bind.time.text = "${
+                Utils.getFormattedDateTime(
+                    "yyyy-mm-dd",
+                    "mm-dd-yyyy",
+                    item?.date.toString()
+                )
+            } ${Const.BULLET} ${
+                Utils.getFormattedDateTime(
+                    "HH:mm:ss",
+                    "hh:mm a",
+                    item?.time.toString()
+                )
+            }"
 
 			bind.rsvp.text = buildString {
 				append(item?.viewerCount ?: 0)
 				append(" RSVPs")
 			}
 
-			bind.image.loadUrl(mCtx , item?.imgThumbnail?.first() ?: "")
+            bind.image.loadUrl(mCtx, item?.imgThumbnail?.first() ?: "")
 
 		}
 	}

@@ -11,6 +11,7 @@ import io.bidswipe.app.network.response.GetMyInventoryResponse
 import io.bidswipe.app.utils.asCapital
 import io.bidswipe.app.utils.asMoney
 import io.bidswipe.app.utils.loadUrl
+import io.bidswipe.app.utils.setHapticClickListener
 
 class InventoryAdapter(
 	mList : MutableList<GetMyInventoryResponse.Data?> ,
@@ -44,13 +45,13 @@ class InventoryAdapter(
 					bind.root.strokeWidth = 0
 				}
 
-				bind.root.setOnClickListener {
+                bind.root.setHapticClickListener {
 					mClicks.itemClick(position , "toggle")
 				}
 			} else {
 				bind.root.setBackgroundColor(ContextCompat.getColor(mCtx , R.color.surface))
 				bind.root.strokeWidth = 0
-				bind.root.setOnClickListener {
+                bind.root.setHapticClickListener {
 					mClicks.itemClick(position)
 				}
 			}

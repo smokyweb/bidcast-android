@@ -6,6 +6,7 @@ import io.bidswipe.app.base.BaseAdapter
 import io.bidswipe.app.databinding.SelectableAddressItemBinding
 import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.network.response.GetShippingAddressResponse
+import io.bidswipe.app.utils.setHapticClickListener
 
 class SelectAddressAdapter(
 
@@ -22,7 +23,7 @@ class SelectAddressAdapter(
 	) {
 		with(holder) {
 
-			bind.root.setOnClickListener {
+            bind.root.setHapticClickListener {
 				mClicks.itemClick(position)
 			}
 

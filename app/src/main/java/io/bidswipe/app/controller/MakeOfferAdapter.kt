@@ -9,6 +9,7 @@ import io.bidswipe.app.databinding.OfferPriceItemBinding
 import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.model.OfferModel
 import io.bidswipe.app.utils.asMoney
+import io.bidswipe.app.utils.setHapticClickListener
 
 class MakeOfferAdapter(
 	mList : MutableList<OfferModel> , val mClicks : RecyclerClicks ,
@@ -24,7 +25,7 @@ class MakeOfferAdapter(
 	) {
 		with(holder) {
 
-			bind.root.setOnClickListener {
+            bind.root.setHapticClickListener {
 				mClicks.itemClick(position)
 			}
 

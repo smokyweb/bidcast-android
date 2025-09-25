@@ -10,6 +10,7 @@ import androidx.core.content.res.use
 import androidx.core.view.isVisible
 import io.bidswipe.app.databinding.NoDataViewBinding
 import io.bidswipe.app.utils.draw
+import io.bidswipe.app.utils.setHapticClickListener
 import io.bidswipe.app.utils.styleable
 
 @SuppressLint("ClickableViewAccessibility")
@@ -32,7 +33,7 @@ class NoDataView @JvmOverloads constructor(
 			bind.icon.isVisible = it.getBoolean(styleable.NoDataView_iconVisible , true)
 			bind.btn.isVisible = it.getBoolean(styleable.NoDataView_show_button , false)
 
-//            bind.root.setOnClickListener { }
+//            bind.root.setHapticClickListener { }
 //            bind.root.setOnTouchListener { _, _ -> true }
 		}
 	}
