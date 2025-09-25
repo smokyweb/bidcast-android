@@ -12,38 +12,41 @@ import java.net.URISyntaxException
 class SocketManager private constructor(
 	context: Context,
 ) {
-	
+
 	private var socket: Socket? = null
 	private val appContext = context.applicationContext
-	
+
 	@Volatile
 	private var isInitialized = false
 
-    // Session state to avoid duplicate emits/listeners
-    @Volatile
-    private var currentRoomId: String? = null
-    @Volatile
-    private var hasJoinedRoom: Boolean = false
-    @Volatile
-    private var viewerJoinEmitted: Boolean = false
+	// Session state to avoid duplicate emits/listeners
+	@Volatile
+	private var currentRoomId: String? = null
 
-    // De-duplicate incoming chat messages within a sliding window
-    private val recentMessageKeys: ArrayDeque<String> = ArrayDeque()
-    private val recentMessageSet: HashSet<String> = HashSet()
-    private val recentMessageCapacity: Int = 200
-	
+	@Volatile
+	private var hasJoinedRoom: Boolean = false
+
+	@Volatile
+	private var viewerJoinEmitted: Boolean = false
+
+	// De-duplicate incoming chat messages within a sliding window
+	private val recentMessageKeys: ArrayDeque<String> = ArrayDeque()
+	private val recentMessageSet: HashSet<String> = HashSet()
+	private val recentMessageCapacity: Int = 200
+
 	companion object {
 		private const val TAG = "SocketManager"
+
 		@Volatile
 		private var instance: SocketManager? = null
-		
+
 		fun getInstance(context: Context): SocketManager {
 			return instance ?: synchronized(this) {
 				instance ?: SocketManager(context).also { instance = it }
 			}
 		}
 	}
-	
+
 	fun initialize(serverUrl: String, queryParams: Map<String, String> = emptyMap()) {
 		if (isInitialized) {
 			Log.d(TAG, "Socket already initialized")
@@ -68,62 +71,64 @@ class SocketManager private constructor(
 			e.printStackTrace()
 		}
 	}
-	
+
 	fun connect(onConnected: (() -> Unit)? = null, onError: ((String) -> Unit)? = null) {
 		Log.d(TAG, "Attempting to connect to socket")
-        // Remove previous listeners to prevent duplicates
-        socket?.off(Socket.EVENT_CONNECT)
-        socket?.off(Socket.EVENT_CONNECT_ERROR)
+		// Remove previous listeners to prevent duplicates
+		socket?.off(Socket.EVENT_CONNECT)
+		socket?.off(Socket.EVENT_CONNECT_ERROR)
 
-        socket?.on(Socket.EVENT_CONNECT) {
+		socket?.on(Socket.EVENT_CONNECT) {
 			Log.d(TAG, "Socket connected successfully")
 			onConnected?.invoke()
 		}
-		
-        socket?.on(Socket.EVENT_CONNECT_ERROR) { args ->
+
+		socket?.on(Socket.EVENT_CONNECT_ERROR) { args ->
 			val error = args.firstOrNull()?.toString() ?: "connect_error"
 			Log.e(TAG, "Socket connection error: $error")
 			onError?.invoke(error)
 		}
-       /* socket?.on(Socket.EVENT_CONNECT_TIMEOUT) {
-            Log.e(TAG, "Socket connection timeout")
-            onError?.invoke("connect_timeout")
-        }*/
+		/* socket?.on(Socket.EVENT_CONNECT_TIMEOUT) {
+			 Log.e(TAG, "Socket connection timeout")
+			 onError?.invoke("connect_timeout")
+		 }*/
 		socket?.connect()
 	}
-	
+
 	fun disconnect() {
 		Log.d(TAG, "Disconnecting from socket")
-        try {
-            socket?.off() // remove all listeners to avoid future duplicates
-        } catch (_: Throwable) {}
-        socket?.disconnect()
-        // Reset session flags
-        currentRoomId = null
-        hasJoinedRoom = false
-        viewerJoinEmitted = false
+		try {
+			socket?.off() // remove all listeners to avoid future duplicates
+		} catch (_: Throwable) {
+		}
+		socket?.disconnect()
+		// Reset session flags
+		currentRoomId = null
+		hasJoinedRoom = false
+		viewerJoinEmitted = false
 	}
-	
-    fun joinRoom(roomId: String, userId: String,listener: (liveShowJson: JSONObject) -> Unit) {
-        // Avoid duplicate join for the same room in the same session
-        if (hasJoinedRoom && currentRoomId == roomId) {
-            Log.d(TAG, "joinRoom skipped; already joined RoomId: $roomId")
-            return
-        }
 
-        val payload = JSONObject().apply {
+	fun joinRoom(roomId: String, userId: String, listener: (liveShowJson: JSONObject) -> Unit) {
+		// Avoid duplicate join for the same room in the same session
+		if (hasJoinedRoom && currentRoomId == roomId) {
+			Log.d(TAG, "joinRoom skipped; already joined RoomId: $roomId")
+			return
+		}
+
+		val payload = JSONObject().apply {
 			put("room_id", roomId)
-			put("user_id", userId)}
-        Log.d(TAG, "EMIT: join_room - RoomId: $roomId")
+			put("user_id", userId)
+		}
+		Log.d(TAG, "EMIT: join_room - RoomId: $roomId")
 
-        socket?.emit("join_room", payload)
-	    listener(payload)
+		socket?.emit("join_room", payload)
+		listener(payload)
 
-	    // Ensure we only have one handler
+		// Ensure we only have one handler
 		// socket?.off("join_room")
 
-    }
-	
+	}
+
 	fun leaveRoom(roomId: String, userId: String) {
 		val payload = JSONObject().apply {
 			put("room_id", roomId)
@@ -132,7 +137,7 @@ class SocketManager private constructor(
 		Log.d(TAG, "EMIT: leave_room - RoomId: $roomId")
 		socket?.emit("leave_room", payload)
 	}
-	
+
 	fun onBidUpdate(listener: (bidJson: JSONObject) -> Unit) {
 		socket?.on("bid_update") { args ->
 			val obj = args.firstOrNull()
@@ -142,7 +147,7 @@ class SocketManager private constructor(
 			}
 		}
 	}
-	
+
 	/**
 	 * Listen for live show updates
 	 */
@@ -156,7 +161,7 @@ class SocketManager private constructor(
 			}
 		}
 	}
-	
+
 	/**
 	 * Listen for product status changes
 	 */
@@ -169,7 +174,7 @@ class SocketManager private constructor(
 			}
 		}
 	}
-	
+
 	/**
 	 * Listen for current product changes
 	 */
@@ -183,7 +188,7 @@ class SocketManager private constructor(
 			}
 		}
 	}
-	
+
 	fun emitBid(roomId: String, userId: String, userName: String, userImage: String, productId: String?, bidAmount: String) {
 		val payload = JSONObject().apply {
 			put("roomId", roomId)
@@ -200,7 +205,7 @@ class SocketManager private constructor(
 		)
 		socket?.emit("place_bid", payload)
 	}
-	
+
 	/**
 	 * Place a bid using LiveSocketModel structure
 	 */
@@ -217,7 +222,7 @@ class SocketManager private constructor(
 			Log.w(TAG, "No current product found in live socket for bidding")
 			return
 		}
-		
+
 		val payload = JSONObject().apply {
 			put("room_id", liveSocket.roomId)
 			put("show_id", liveSocket.showId)
@@ -230,14 +235,14 @@ class SocketManager private constructor(
 			put("timestamp", Utils.timestamp())
 			put("allow_bid_for_all", liveSocket.allowBidForAll)
 		}
-		
+
 		Log.d(
 			TAG,
 			"EMIT: place_bid_with_liveSocket - RoomId: ${liveSocket.roomId}, ShowId: ${liveSocket.showId}, ProductId: ${currentProduct.id}, BidAmount: $bidAmount"
 		)
 		socket?.emit("place_bid", payload)
 	}
-	
+
 	/**
 	 * Update highest bid in LiveSocketModel structure
 	 */
@@ -251,14 +256,14 @@ class SocketManager private constructor(
 			put("highest_bid", highestBid.toJson())
 			put("timestamp", Utils.timestamp())
 		}
-		
+
 		Log.d(
 			TAG,
 			"EMIT: highest_bid_update - RoomId: ${liveSocket.roomId}, BidAmount: ${highestBid.bidAmount}, UserId: ${highestBid.userId}"
 		)
 		socket?.emit("highest_bid_update", payload)
 	}
-	
+
 	/**
 	 * Emit product status change (e.g., sold, live, etc.)
 	 */
@@ -276,7 +281,7 @@ class SocketManager private constructor(
 			put("new_status", newStatus)
 			put("timestamp", Utils.timestamp())
 		}
-		
+
 		Log.d(
 			TAG,
 			"EMIT: product_status_change - RoomId: ${liveSocket.roomId}, ProductId: ${product.id}, Status: $newStatus"
@@ -284,7 +289,7 @@ class SocketManager private constructor(
 
 		socket?.emit("product_status_change", payload)
 	}
-	
+
 	/**
 	 * Emit current product change
 	 */
@@ -298,14 +303,14 @@ class SocketManager private constructor(
 			put("new_current_product", newCurrentProduct.toJson())
 			put("timestamp", Utils.timestamp())
 		}
-		
+
 		Log.d(
 			TAG,
 			"EMIT: current_product_change - RoomId: ${liveSocket.roomId}, NewProductId: ${newCurrentProduct.id}"
 		)
 		socket?.emit("current_product_change", payload)
 	}
-	
+
 	/**
 	 * Emit live show state update
 	 */
@@ -319,11 +324,11 @@ class SocketManager private constructor(
 			put("is_live", isLive)
 			put("timestamp", Utils.timestamp())
 		}
-		
+
 		Log.d(TAG, "EMIT: live_show_state_update - RoomId: ${liveSocket.roomId}, IsLive: $isLive")
 		socket?.emit("live_show_state_update", payload)
 	}
-	
+
 	/**
 	 * Emit complete LiveSocketModel update
 	 */
@@ -337,7 +342,7 @@ class SocketManager private constructor(
 		)
 		socket?.emit("live_socket_update", payload)
 	}
-	
+
 	/**
 	 * Listen for complete LiveSocketModel updates
 	 */
@@ -355,9 +360,9 @@ class SocketManager private constructor(
 			}
 		}
 	}
-	
+
 	fun onViewerCount(listener: (count: Int) -> Unit) {
-		socket?.on("viewer_count") { args ->
+		socket?.on("viewerCount") { args ->
 			val obj = args.firstOrNull()
 			if (obj is JSONObject) {
 				val count = obj.optInt("count", 0)
@@ -366,13 +371,13 @@ class SocketManager private constructor(
 			}
 		}
 	}
-	
+
 	/*fun emitViewerJoin(roomId: String) {
 		val payload = JSONObject().apply { put("roomId", roomId) }
 		Log.d(TAG, "EMIT: viewer_join - RoomId: $roomId")
 		socket?.emit("viewer_join", payload)
 	}*/
-	
+
 	fun emitViewerLeave(roomId: String) {
 		val payload = JSONObject().apply { put("roomId", roomId) }
 		Log.d(TAG, "EMIT: viewer_leave - RoomId: $roomId")
@@ -418,7 +423,7 @@ class SocketManager private constructor(
 			listener(obj)
 		}
 	}
-	
+
 	fun sendMessage(roomId: String, content: String, userId: String, userName: String, userImage: String) {
 		val payload = JSONObject().apply {
 			put("roomId", roomId)
@@ -431,7 +436,7 @@ class SocketManager private constructor(
 		Log.d(TAG, "EMIT: message - RoomId: $roomId, UserId: $userId, Content: $content")
 		socket?.emit("chat", payload)
 	}
-	
+
 	fun emitTypedMessage(roomId: String, type: String, data: JSONObject) {
 		val payload = JSONObject().apply {
 			put("type", type)
@@ -442,13 +447,13 @@ class SocketManager private constructor(
 		Log.d(TAG, "EMIT: typed_message - RoomId: $roomId, Type: $type, Data: $data")
 		socket?.emit("message", payload)
 	}
-	
-	fun createRoom(roomId: String,liveShowData: LiveShowModel) {
+
+	fun createRoom(roomId: String, liveShowData: LiveShowModel) {
 		val payload = JSONObject().apply {}
 		Log.d(TAG, "EMIT: room_created - RoomId: $payload")
 		socket?.emit("room_create", liveShowData.toJson())
 	}
-	
+
 	fun onRoomCreated(listener: (bidJson: JSONObject) -> Unit) {
 		socket?.off("room_create_get")
 		socket?.on("room_create_get") { args ->
@@ -459,7 +464,27 @@ class SocketManager private constructor(
 			}
 		}
 	}
-	
+
+
+	fun onDurationUpdate(listener: (timerJson: JSONObject) -> Unit) {
+		socket?.off("show_timer_update")
+		socket?.on("show_timer_update") { args ->
+			val obj = args.firstOrNull()
+			if (obj is JSONObject) {
+				Log.d(TAG, "RECEIVED: show_timer_update - $obj")
+				listener(obj)
+			}
+		}
+	}
+
+	fun emitEndRoom(roomId: String) {
+		val payload = JSONObject().apply {
+			put("room_id", roomId)
+		}
+		Log.d(TAG, "EMIT: endRoom - RoomId: $payload")
+		socket?.emit("endRoom", payload)
+	}
+
 }
 
 

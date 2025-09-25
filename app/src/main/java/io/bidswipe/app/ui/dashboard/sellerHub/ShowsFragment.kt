@@ -94,7 +94,7 @@ class ShowsFragment : BaseFragment<SellerHubViewModel , FragmentShowsBinding>() 
 					roomId = "live_room_${userId}_${data?.id.toString()}",
 					showDetail = "Test Details",
 					thumbnail = data?.thumbnail?.getOrNull(0) ?: "",
-					viewerCount = 1,
+					viewerCount = "1",
 					highestBid = LiveShowModel.HighestBid(
 						bidAmount = "",
 						userName = "",

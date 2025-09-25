@@ -20,13 +20,10 @@ import io.bidswipe.app.controller.HomeAdapter
 import io.bidswipe.app.databinding.FragmentHomeBinding
 import io.bidswipe.app.interfaces.AlertClicks
 import io.bidswipe.app.interfaces.RecyclerClicks
-import io.bidswipe.app.model.StreamModel
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.network.response.GetMyShowResponse
 import io.bidswipe.app.ui.SpoofSocketActivity
 import io.bidswipe.app.ui.custom.AppBottomSheet
-import io.bidswipe.app.ui.dashboard.more.NotificationActivity
-import io.bidswipe.app.ui.dashboard.scheduleShow.LiveShowSocketActivity
 import io.bidswipe.app.ui.dashboard.sellerProfile.SellerProfileActivity
 import io.bidswipe.app.ui.dashboard.watchStream.ViewLiveShowActivity
 import io.bidswipe.app.utils.Alerts
@@ -71,7 +68,7 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
 				
 				"viewShow" -> {
 					if (showList[pos]?.isLive == true) {
-						val showId = showList[pos]?.id.toString()
+						val roomId = showList[pos]?.roomId.toString()
 						print("ROOM $romIdsList")
 						if (App.PIPMode) {
 							Alerts.error(mCtx, "You are already in Live show")
@@ -80,7 +77,7 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
 								Intent(
 									mCtx,
 									ViewLiveShowActivity::class.java
-								).putExtra("showId", showId)
+								).putExtra("roomId", roomId)
 									.putExtra("userId", showList[pos]?.userId.toString())
 									.putExtra(
 										"roomIdsList",

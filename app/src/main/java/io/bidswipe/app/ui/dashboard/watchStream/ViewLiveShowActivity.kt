@@ -26,7 +26,7 @@ class ViewLiveShowActivity : BaseActivity() {
 	private val viewModel by viewModels<StreamViewModel>()
 
 	private var pos = 0
-	private var showId = ""
+	private var roomId = ""
 	private var publisherId = ""
 	private var streamList = arrayListOf<String>()
 	private lateinit var viewPager : ViewPager2
@@ -101,24 +101,23 @@ class ViewLiveShowActivity : BaseActivity() {
 			keyboardEnable(true)
 		}
 
-		 showId = intent.getStringExtra("showId") ?:""
+		 roomId = intent.getStringExtra("roomId") ?:""
 
 		val roomIds = intent.getStringExtra("roomIdsList")
 
 		publisherId = intent.getStringExtra("userId") ?:""
 
-		if (showId.isNotEmpty()){
+		if (roomId.isNotEmpty()){
 			val data: Uri? = intent.data
 			data?.let { uri ->
-				showId = uri.getQueryParameter("showId").toString()
+				roomId = uri.getQueryParameter("showId").toString()
 				// Use the param or the path to navigate or update UI
-				log(" SHOW ID : $showId" )
+				log(" SHOW ID : $roomId" )
 			}
 		}
 
 //		streamList.find { it.showId == showId }
 
-		log("POSITION : $pos ")
 
 //		FireRef.LIVE_SESSIONS.addValueEventListener(eventListener)
 //		createEngine()
@@ -127,7 +126,9 @@ class ViewLiveShowActivity : BaseActivity() {
 
 		streamList.addAll(roomIds?.split(",") ?: emptyList())
 
-//		pos = streamList.indexOf(roomIdsList.find { it == showId })
+		pos = streamList.indexOf(roomId)
+
+		log("POSITION : $pos ")
 
 		if (streamList.isNotEmpty()) {
 			viewPager = bind.viewPager
@@ -138,7 +139,7 @@ class ViewLiveShowActivity : BaseActivity() {
 
 			streamPagerAdapter = StreamPagerAdapter(this@ViewLiveShowActivity , viewModel)
 			viewPager.adapter = streamPagerAdapter
-			viewPager.currentItem = 0
+			viewPager.currentItem = pos
 			viewPager.orientation = ViewPager2.ORIENTATION_VERTICAL
 		} else {
 			finishAfterTransition()

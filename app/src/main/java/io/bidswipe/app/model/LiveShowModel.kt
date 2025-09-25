@@ -10,7 +10,7 @@ data class LiveShowModel(
 	val seller: Seller?,
 	val showDetail: String,
 	val thumbnail: String,
-	val viewerCount: Int,
+	val viewerCount: String,
 	val highestBid: HighestBid,
 	val isLive: Boolean,
 	val time: String?, // CURRENT TIMESTAMP
@@ -124,7 +124,7 @@ data class LiveShowModel(
 			seller = json.optJSONObject("seller")?.let { Seller.fromJson(it) },
 			showDetail = json.optString("show_detail", ""),
 			thumbnail = json.optString("thumbnail", ""),
-			viewerCount = json.optInt("viewer_count", 0),
+			viewerCount = json.optString("viewer_count", "0"),
 			highestBid = json.optJSONObject("highest_bid")?.let { HighestBid.fromJson(it) } ?: HighestBid(),
 			isLive = json.optBoolean("is_live", false),
 			time = json.optString("time", null),

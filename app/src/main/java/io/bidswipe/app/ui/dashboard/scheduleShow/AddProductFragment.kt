@@ -264,7 +264,7 @@ class AddProductFragment : BaseFragment<ScheduleShowViewModel, FragmentAddProduc
 						roomId = data?.id.toString(),
 						showDetail = "Test Details",
 						thumbnail = data?.thumbnail?.getOrNull(0) ?: "",
-						viewerCount = 1,
+						viewerCount = "1",
 						highestBid = LiveShowModel.HighestBid(
 							bidAmount = "",
 							userName = "",
