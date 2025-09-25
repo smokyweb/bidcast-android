@@ -14,6 +14,7 @@ import androidx.core.view.isVisible
 import com.google.android.material.tabs.TabLayoutMediator
 import com.gyf.immersionbar.ktx.immersionBar
 import com.skydoves.powermenu.PowerMenuItem
+import io.bidswipe.app.App
 import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseActivity
 import io.bidswipe.app.controller.ViewPagerAdapter
@@ -30,6 +31,7 @@ import io.bidswipe.app.utils.Alerts
 import io.bidswipe.app.utils.bind
 import io.bidswipe.app.utils.clr
 import io.bidswipe.app.utils.goToRateSeller
+import io.bidswipe.app.utils.hideKeyboard
 import io.bidswipe.app.utils.ids
 import io.bidswipe.app.utils.loadUrl
 import io.bidswipe.app.utils.parse
@@ -38,22 +40,22 @@ import io.bidswipe.app.utils.setHapticClickListener
 import kotlin.math.abs
 
 class SellerProfileActivity : BaseActivity() {
-	
+
 	private val bind by bind(ActivitySellerProfileBinding::inflate)
 	private val viewModel by viewModels<SellerViewModel>()
-	
+
 	private var sellerId = ""
 	private var sellerName = ""
 	private var sellerImage = ""
-	
+
 	private var actionList = mutableListOf<PowerMenuItem>()
-	
+
 	@SuppressLint("SetTextI18n")
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
 		enableEdgeToEdge()
 		setContentView(bind.root)
-		
+
 		immersionBar {
 			transparentBar()
 			navigationBarDarkIcon(true)
@@ -62,10 +64,10 @@ class SellerProfileActivity : BaseActivity() {
 			fitsSystemWindows(false)
 			keyboardEnable(true)
 		}
-		
+
 		actionList.clear()
 		actionList.add(PowerMenuItem(title = "Save Product"))
-		
+
 		val menu = PopupMenu(this, bind.moreIcon)
 		menu.menuInflater.inflate(R.menu.profile_action_menu, menu.menu)
 		menu.setOnMenuItemClickListener {
@@ -73,27 +75,27 @@ class SellerProfileActivity : BaseActivity() {
 				ids.rate -> {
 					startActivity(this.goToRateSeller(sellerId, sellerName, sellerImage))
 				}
-				
+
 				ids.block -> {
 					showBlockConfirmation()
 				}
-				
+
 				ids.reportUser -> {
 					reportUserDialog()
 				}
-				
+
 			}
 			return@setOnMenuItemClickListener true
 		}
 
-        bind.shareIcon.setHapticClickListener {
+		bind.shareIcon.setHapticClickListener {
 			shareSellerProfile()
 		}
 
-        bind.moreIcon.setHapticClickListener {
+		bind.moreIcon.setHapticClickListener {
 			menu.show()
 		}
-		
+
 		val menu1 = PopupMenu(this, bind.moreIcon1)
 		menu1.menuInflater.inflate(R.menu.profile_action_menu, menu1.menu)
 		menu1.setOnMenuItemClickListener {
@@ -101,33 +103,33 @@ class SellerProfileActivity : BaseActivity() {
 				ids.rate -> {
 					startActivity(this.goToRateSeller(sellerId, sellerName, sellerImage))
 				}
-				
+
 				ids.block -> {
 					showBlockConfirmation()
-					
+
 				}
-				
+
 				ids.reportUser -> {
 					reportUserDialog()
-					
+
 				}
-				
+
 			}
 			return@setOnMenuItemClickListener true
 		}
 
-        bind.moreIcon1.setHapticClickListener {
+		bind.moreIcon1.setHapticClickListener {
 			menu1.show()
 		}
 
-        bind.share1.setHapticClickListener {
+		bind.share1.setHapticClickListener {
 			shareSellerProfile()
 		}
 
-        bind.notificationIcon1.setHapticClickListener {
+		bind.notificationIcon1.setHapticClickListener {
 			showNotificationSheet()
 		}
-		
+
 		bind.appBar.addOnOffsetChangedListener { _, verticalOffset ->
 			val totalScrollRange = bind.appBar.totalScrollRange
 			if (abs(verticalOffset) >= totalScrollRange) {
@@ -140,18 +142,18 @@ class SellerProfileActivity : BaseActivity() {
 				}.start()
 			}
 		}
-		
+
 		sellerId = intent?.getStringExtra("userId") ?: ""
 
-        bind.backBtnCard.setHapticClickListener {
+		bind.backBtnCard.setHapticClickListener {
 			finish()
 		}
-		
+
 		bind.toolbar.setNavigationOnClickListener {
 			finish()
 		}
 
-        bind.messageSeller.setHapticClickListener {
+		bind.messageSeller.setHapticClickListener {
 			val intent = Intent(this, ChatActivity::class.java).apply {
 				putExtra("id", sellerId)
 				putExtra("name", sellerName)
@@ -160,14 +162,14 @@ class SellerProfileActivity : BaseActivity() {
 			startActivity(intent)
 		}
 
-        bind.sendTip.setHapticClickListener {
+		bind.sendTip.setHapticClickListener {
 			sendTipSheet()
 		}
-		
+
 		val adapter = ViewPagerAdapter(this, "Shop")
 		bind.pager.adapter = adapter
 		bind.pager.isUserInputEnabled = false
-		
+
 		TabLayoutMediator(bind.tabLayout, bind.pager) { tab, position ->
 			tab.text = when (position) {
 				0 -> "Shop"
@@ -177,19 +179,19 @@ class SellerProfileActivity : BaseActivity() {
 				else -> ""
 			}
 		}.attach()
-		
+
 		bind.loader.isVisible = true
 		viewModel.getProfileById(sellerId.request())
 		viewModel.getProfileByIdShowRepo.observe(this) {
 			when (it) {
 				is Resource.Success -> {
 					bind.loader.isVisible = false
-					
+
 					val mData = it.value.data
-					
+
 					sellerName = mData?.name ?: ""
 					sellerImage = mData?.profileImage ?: ""
-					
+
 					bind.name.text = mData?.name
 					bind.name1.text = mData?.name
 					bind.userName.text = mData?.username ?: ""
@@ -200,14 +202,14 @@ class SellerProfileActivity : BaseActivity() {
 						bold { append(mData?.followerCount.toString()) }
 						append(" Follower")
 					}
-					
+
 					bind.following.text = buildSpannedString {
 						bold { append(mData?.followingCount.toString()) }
 						append(" Following")
 					}
-					
+
 					bind.bio.text = mData?.bio ?: ""
-					
+
 					if (mData?.isFollowing == true) {
 						bind.follow.setBackgroundColor(
 							ContextCompat.getColor(
@@ -225,122 +227,150 @@ class SellerProfileActivity : BaseActivity() {
 						bind.follow.setTextColor(ContextCompat.getColor(this, R.color.background))
 						bind.follow.text = "Follow"
 					}
-					
+
 					if (mData?.preferences?.directMessage == false)
 						bind.messageSeller.visibility = View.INVISIBLE
-					
+
 //					if (mData?.preferences?.receiveGifts == false)
 //						bind.sendTip.visibility = View.INVISIBLE
-					
+
 				}
-				
+
 				is Resource.Error -> {
 					bind.loader.isVisible = false
-					
+
 					if (it.isNetworkError) {
 						errorToast(getString(R.string.no_internet))
 					} else {
 						it.parse(this, TAG, object : AlertClicks {
 							override fun primaryClick(dialog: AppBottomSheet) {
 								dialog.dismiss()
-								
+
 							}
-							
+
 							override fun secondaryClick(dialog: AppBottomSheet) {
 								dialog.dismiss()
-								
+
 							}
 						})
 					}
 				}
-				
+
 				else -> {}
-				
+
 			}
 		}
 
-        bind.follow.setHapticClickListener {
+		bind.follow.setHapticClickListener {
 			bind.loader.isVisible = true
 			viewModel.followUser(sellerId.request())
 		}
 
-        bind.notificationIcon.setHapticClickListener {
+		bind.notificationIcon.setHapticClickListener {
 			showNotificationSheet()
 		}
-		
+
 		viewModel.followUserShowRepo.observe(this) {
 			when (it) {
 				is Resource.Success -> {
 					it.value.data
-					
+
 					viewModel.getProfileById(sellerId.request())
-					
+
 				}
-				
+
 				is Resource.Error -> {
 					bind.loader.isVisible = false
-					
+
 					if (it.isNetworkError) {
 						errorToast(getString(R.string.no_internet))
 					} else {
 						it.parse(this, TAG, object : AlertClicks {
 							override fun primaryClick(dialog: AppBottomSheet) {
 								dialog.dismiss()
-								
+
 							}
-							
+
 							override fun secondaryClick(dialog: AppBottomSheet) {
 								dialog.dismiss()
-								
+
 							}
 						})
 					}
 				}
-				
+
 				else -> {}
-				
+
 			}
 		}
-		
+
 		viewModel.notifyLiveUserRepo.observe(this) {
 			when (it) {
 				is Resource.Success -> {
-					
+
 					bind.loader.isVisible = false
-					
+
 					it.value.data
-					
+
 					Alerts.success(this, it.value.message.toString())
-					
+
 				}
-				
+
 				is Resource.Error -> {
 					bind.loader.isVisible = false
-					
+
 					if (it.isNetworkError) {
 						errorToast(getString(R.string.no_internet))
 					} else {
 						it.parse(this, TAG, object : AlertClicks {
 							override fun primaryClick(dialog: AppBottomSheet) {
 								dialog.dismiss()
-								
+
 							}
-							
+
 							override fun secondaryClick(dialog: AppBottomSheet) {
 								dialog.dismiss()
-								
+
 							}
 						})
 					}
 				}
-				
+
 				else -> {}
-				
+
 			}
 		}
-		
+
+		viewModel.sendTipAmountRepo.observe(this) {
+			when (it) {
+				is Resource.Success -> {
+					bind.loader.isVisible = false
+					Alerts.success(this, "Tip sent successfully")
+				}
+
+				is Resource.Error -> {
+					bind.loader.isVisible = false
+					if (it.isNetworkError) {
+						errorToast(getString(R.string.no_internet))
+					} else {
+						it.parse(this, TAG, object : AlertClicks {
+							override fun primaryClick(dialog: AppBottomSheet) {
+								dialog.dismiss()
+							}
+
+							override fun secondaryClick(dialog: AppBottomSheet) {
+								dialog.dismiss()
+							}
+						})
+					}
+				}
+
+				else -> {}
+			}
+		}
+
 	}
-	
+
 	@SuppressLint("InflateParams", "SetTextI18n")
 	fun showNotificationSheet() {
 		val notificationSheetBind = NotificationSheetBinding.bind(
@@ -349,50 +379,50 @@ class SellerProfileActivity : BaseActivity() {
 			)
 		)
 		val notificationSheet = Alerts.appBottomSheet(this, true, notificationSheetBind)
-		
+
 		notificationSheetBind.userImage.loadUrl(this, sellerImage)
 		notificationSheetBind.userName.text = sellerName
 		notificationSheetBind.text.text = "Would you like to notified when $sellerName goes live?"
 
-        notificationSheetBind.close.setHapticClickListener {
+		notificationSheetBind.close.setHapticClickListener {
 			notificationSheet.dismiss()
 		}
 
-        notificationSheetBind.noBtn.setHapticClickListener {
+		notificationSheetBind.noBtn.setHapticClickListener {
 			notificationSheet.dismiss()
 		}
 
-        notificationSheetBind.submit.setHapticClickListener {
+		notificationSheetBind.submit.setHapticClickListener {
 			bind.loader.isVisible = true
 			notificationSheet.dismiss()
 			viewModel.notifyLiveUser(sellerId.request())
 		}
-		
+
 		notificationSheet.show()
 	}
-	
+
 	private fun shareSellerProfile() {
 		val shareText = buildString {
 			append("Check out ${sellerName}'s profile!\n")
 			append("Username: @${bind.userName.text}\n")
 			append(sellerImage.takeIf { it.isNotEmpty() }?.let { "Profile image: $it" } ?: "")
 		}
-		
+
 		val shareIntent = Intent().apply {
 			action = Intent.ACTION_SEND
 			putExtra(Intent.EXTRA_TEXT, shareText)
 			type = "text/plain"
 		}
-		
+
 		val chooserIntent = Intent.createChooser(shareIntent, "Share via")
-		
+
 		if (shareIntent.resolveActivity(packageManager) != null) {
 			startActivity(chooserIntent)
 		} else {
 			errorToast("No sharing apps available")
 		}
 	}
-	
+
 	private fun showBlockConfirmation() {
 		AppBottomSheet(
 			this,
@@ -410,14 +440,14 @@ class SellerProfileActivity : BaseActivity() {
 					dialog.dismiss()
 					blockUser()
 				}
-				
+
 				override fun secondaryClick(dialog: AppBottomSheet) {
 					dialog.dismiss()
 				}
 			}).show()
-		
+
 	}
-	
+
 	@SuppressLint("InflateParams")
 	fun reportUserDialog() {
 		val mBind = AppReportViewBinding.bind(
@@ -427,17 +457,17 @@ class SellerProfileActivity : BaseActivity() {
 		)
 		val sheet = Alerts.appBottomSheet(this, true, mBind)
 
-        mBind.submitReport.setHapticClickListener {
+		mBind.submitReport.setHapticClickListener {
 			sheet.dismiss()
 		}
-		
+
 		sheet.show()
 	}
-	
+
 	private fun blockUser() {
 		bind.loader.isVisible = true
 		viewModel.blockUnblockUser(sellerId.request())
-		
+
 		viewModel.blockUnblockUserRepo.observe(this) {
 			when (it) {
 				is Resource.Success -> {
@@ -450,7 +480,7 @@ class SellerProfileActivity : BaseActivity() {
 						Alerts.error(this, it.value.message ?: "Failed to block user")
 					}
 				}
-				
+
 				is Resource.Error -> {
 					bind.loader.isVisible = false
 					if (it.isNetworkError) {
@@ -460,19 +490,19 @@ class SellerProfileActivity : BaseActivity() {
 							override fun primaryClick(dialog: AppBottomSheet) {
 								dialog.dismiss()
 							}
-							
+
 							override fun secondaryClick(dialog: AppBottomSheet) {
 								dialog.dismiss()
 							}
 						})
 					}
 				}
-				
+
 				else -> {}
 			}
 		}
 	}
-	
+
 	fun sendTipSheet() {
 		val sendTipSheetBind = SendTipSheetBinding.bind(
 			layoutInflater.inflate(
@@ -481,15 +511,93 @@ class SellerProfileActivity : BaseActivity() {
 				false
 			)
 		)
-		
+
 		val sendTipSheet = Alerts.appBottomSheet(this, true, sendTipSheetBind)
 
-        sendTipSheetBind.close.setHapticClickListener {
-			sendTipSheet.dismiss()
+		sendTipSheetBind.root.setOnClickListener {
+			hideKeyboard()
 		}
-		
+
+		sendTipSheetBind.btnTip5.setHapticClickListener {
+			sendTipSheetBind.customOffer.setText("5")
+		}
+
+		sendTipSheetBind.btnTip10.setHapticClickListener {
+			sendTipSheetBind.customOffer.setText("10")
+		}
+
+		sendTipSheetBind.btnTip25.setHapticClickListener {
+			sendTipSheetBind.customOffer.setText("25")
+		}
+
+		sendTipSheetBind.btnTip50.setHapticClickListener {
+			sendTipSheetBind.customOffer.setText("50")
+		}
+
+		sendTipSheetBind.paymentWallet.text = buildString {
+			append("Wallet - ")
+			append(App.profileResponse.value?.walletAmount ?: 0)
+		}
+
+		sendTipSheetBind.walletRadio.setOnCheckedChangeListener { _, isChecked ->
+			if (isChecked) {
+				sendTipSheetBind.cardRadio.isChecked = false
+			}
+		}
+
+		sendTipSheetBind.cardRadio.setOnCheckedChangeListener { _, isChecked ->
+			if (isChecked) {
+				sendTipSheetBind.walletRadio.isChecked = false
+			}
+		}
+
+		if (App.profileResponse.value?.defaultCard != null) {
+			sendTipSheetBind.paymentCard.text = buildString {
+				append("XXXX XXXX XXXX ")
+				append(App.profileResponse.value?.defaultCard?.last4 ?: 0)
+			}
+		} else {
+			sendTipSheetBind.cardRadio.isVisible = false
+			sendTipSheetBind.paymentCard.text = buildString {
+				append("Payment Method Not Added")
+			}
+		}
+
+		sendTipSheetBind.btnSendTip.setHapticClickListener {
+
+			with(sendTipSheetBind) {
+
+				if (!walletRadio.isChecked && !cardRadio.isChecked) {
+					Alerts.error(this@SellerProfileActivity, "Please select a payment method")
+					return@setHapticClickListener
+				}
+
+
+				if (customOffer.text.toString().isEmpty()) {
+					Alerts.error(this@SellerProfileActivity, "Please enter an amount")
+					return@setHapticClickListener
+				}
+
+				if (walletRadio.isChecked && customOffer.text.toString().toInt() > (App.profileResponse.value?.walletAmount ?: 0)) {
+					Alerts.error(this@SellerProfileActivity, "Insufficient balance")
+					return@setHapticClickListener
+				}
+
+
+			}
+
+			sendTipSheet.dismiss()
+			bind.loader.isVisible = true
+			viewModel.sendTipAmount(
+				sellerId.request(),
+				sendTipSheetBind.customOffer.text.toString().request(),
+				null
+			)
+
+		}
+
 		sendTipSheet.show()
 	}
-	
-	
+
+
 }

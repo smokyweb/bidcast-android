@@ -13,6 +13,7 @@ import io.bidswipe.app.network.response.GetMyShowResponse
 import io.bidswipe.app.network.response.GetProductsResponse
 import io.bidswipe.app.network.response.GetRatingResponse
 import io.bidswipe.app.network.response.GetUserProfileResponse
+import io.bidswipe.app.network.response.SentTipAmountResponse
 import kotlinx.coroutines.launch
 import okhttp3.RequestBody
 import javax.inject.Inject
@@ -89,6 +90,18 @@ class SellerViewModel @Inject constructor(val repo : DashRepository) : ViewModel
         blockedID : RequestBody ,
     ) = viewModelScope.launch {
 		_blockUnblockUserResponse.value = repo.blockUnblockUser(blockedID)
+	}
+
+	private var _sendTipAmountResponse = MutableLiveData<Resource<SentTipAmountResponse>>()
+	val sendTipAmountRepo : MutableLiveData<Resource<SentTipAmountResponse>>
+		get() = _sendTipAmountResponse
+
+	fun sendTipAmount(
+		sellerId : RequestBody ,
+		amount : RequestBody ,
+		cardNumber : RequestBody?
+	) = viewModelScope.launch {
+		_sendTipAmountResponse.value = repo.sendTipAmount(sellerId, amount, cardNumber)
 	}
 
 }

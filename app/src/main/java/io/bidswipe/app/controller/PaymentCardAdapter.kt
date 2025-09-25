@@ -12,20 +12,20 @@ import io.bidswipe.app.network.response.GetPaymentCardsResponse
 import io.bidswipe.app.utils.setHapticClickListener
 
 class PaymentCardAdapter(
-	mList : MutableList<GetPaymentCardsResponse.Data.PaymentProfile?> , val mClicks : RecyclerClicks ,
-) : BaseAdapter<GetPaymentCardsResponse.Data.PaymentProfile? , PaymentCardItemBinding>(mList) {
+	mList: MutableList<GetPaymentCardsResponse.Data.PaymentProfile?>, val mClicks: RecyclerClicks,
+) : BaseAdapter<GetPaymentCardsResponse.Data.PaymentProfile?, PaymentCardItemBinding>(mList) {
 
-	override fun bindView(inflater : LayoutInflater , parent : ViewGroup) =
-		PaymentCardItemBinding.inflate(inflater , parent , false)
+	override fun bindView(inflater: LayoutInflater, parent: ViewGroup) =
+		PaymentCardItemBinding.inflate(inflater, parent, false)
 
 	override fun onBind(
-		holder : BaseViewHolder<PaymentCardItemBinding> ,
-		position : Int ,
-		item : GetPaymentCardsResponse.Data.PaymentProfile? ,
+		holder: BaseViewHolder<PaymentCardItemBinding>,
+		position: Int,
+		item: GetPaymentCardsResponse.Data.PaymentProfile?,
 	) {
 		with(holder) {
 
-            bind.root.setHapticClickListener {
+			bind.root.setHapticClickListener {
 				mClicks.itemClick(position)
 			}
 
@@ -37,22 +37,24 @@ class PaymentCardAdapter(
 
 			bind.defaultAddress.isVisible = item?.isDefault == true
 
-            bind.moreIcon.setHapticClickListener { view ->
-				val popup = PopupMenu(view.context , view)
+			bind.moreIcon.setHapticClickListener { view ->
+				val popup = PopupMenu(view.context, view)
 				popup.inflate(R.menu.card_action_menu)  // Your menu XML
 				popup.setOnMenuItemClickListener { menuItem ->
 					when (menuItem.itemId) {
+
 						R.id.setDefault -> {
-							mClicks.itemClick(position , "default")
+							mClicks.itemClick(position, "default")
 							true
 						}
 
 						R.id.delete -> {
-							mClicks.itemClick(position , "delete")
+							mClicks.itemClick(position, "delete")
 							true
 						}
 
 						else -> false
+
 					}
 				}
 				popup.show()

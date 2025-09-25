@@ -31,6 +31,7 @@ import io.bidswipe.app.controller.CommentAdapter
 import io.bidswipe.app.databinding.FragmentWatchStreamBinding
 import io.bidswipe.app.databinding.InputBottomSheetBinding
 import io.bidswipe.app.databinding.PaymentAndAddressSheetBinding
+import io.bidswipe.app.databinding.SendTipSheetBinding
 import io.bidswipe.app.interfaces.AlertClicks
 import io.bidswipe.app.model.LiveChatModel
 import io.bidswipe.app.model.LiveShowModel
@@ -307,9 +308,13 @@ class WatchStreamSocketFragment : BaseFragment<StreamViewModel , FragmentWatchSt
             showPaymentAndAddressSheet()
         }
 
-        /* viewModel.createBidRepo.observe(viewLifecycleOwner) {
-             when (it) {
-                 is Resource.Success -> {
+        bind.gift.setHapticClickListener {
+            sendTipSheet()
+        }
+
+       /* viewModel.createBidRepo.observe(viewLifecycleOwner) {
+            when (it) {
+                is Resource.Success -> {
 
                      viewModel.createBidRepo.value = null
                      bind.loader.isVisible = false
@@ -965,6 +970,24 @@ class WatchStreamSocketFragment : BaseFragment<StreamViewModel , FragmentWatchSt
         System.gc()
         
         log("Subscriber cleanup finished")
+    }
+
+    fun sendTipSheet() {
+        val sendTipSheetBind = SendTipSheetBinding.bind(
+            layoutInflater.inflate(
+                R.layout.send_tip_sheet,
+                null,
+                false
+            )
+        )
+
+        val sendTipSheet = Alerts.appBottomSheet(mCtx, true, sendTipSheetBind)
+
+        sendTipSheetBind.close.setHapticClickListener {
+            sendTipSheet.dismiss()
+        }
+
+        sendTipSheet.show()
     }
 
 }

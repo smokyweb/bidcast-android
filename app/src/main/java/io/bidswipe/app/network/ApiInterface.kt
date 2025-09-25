@@ -59,6 +59,7 @@ import io.bidswipe.app.network.response.UserProfileResponse
 import io.bidswipe.app.network.response.UserSearchingResponse
 import io.bidswipe.app.network.response.PageUrlResponse
 import io.bidswipe.app.network.response.SellerStatusResponse
+import io.bidswipe.app.network.response.SentTipAmountResponse
 import io.bidswipe.app.network.response.SetDefaultAddressResponse
 import io.bidswipe.app.network.response.StoreProductResponse
 import io.bidswipe.app.utils.Utils
@@ -617,6 +618,14 @@ interface ApiInterface {
 	@GET("api/get-promote-tools")
 	suspend fun getPromoteTools(
 	) : GetPromoteToolsResponse
+
+	@Multipart
+	@POST("api/send-tip-amount")
+	suspend fun sendTipAmount(
+		@Part("seller_id") sellerId : RequestBody ,
+		@Part("amount") amount : RequestBody ,
+		@Part("card_number") cardNumber : RequestBody?
+	) : SentTipAmountResponse
 
 }
 

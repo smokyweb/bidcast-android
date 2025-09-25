@@ -37,75 +37,75 @@ import io.bidswipe.app.utils.value
 
 class ProductDetailsFragment : BaseFragment<ProductViewModel, FragmentProductDetailsBinding>() {
 	override fun getModel(): Class<ProductViewModel> = ProductViewModel::class.java
-	
+
 	override fun getBind(inflater: LayoutInflater, view: ViewGroup?) =
 		FragmentProductDetailsBinding.inflate(inflater, view, false)
-	
+
 	private var productId = ""
 	private var offerList = mutableListOf<OfferModel>()
 	private var actionList = mutableListOf<PowerMenuItem>()
-	
+
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		super.onViewCreated(view, savedInstanceState)
-		
+
 		productId = activity?.intent?.getStringExtra("productId") ?: ""
-		
+
 		bind.header.onBackClick {
 			finish()
 		}
-		
+
 		actionList.clear()
 		actionList.add(PowerMenuItem(title = "Save Product"))
-		
+
 		val menu = PopupMenu(mCtx, bind.header.findViewById<AppCompatImageView>(R.id.primaryIcon))
 		menu.menuInflater.inflate(R.menu.action_menu, menu.menu)
-		
+
 		menu.setOnMenuItemClickListener {
 			when (it.itemId) {
 				ids.save_product -> {
-					
+
 					bind.loader.isVisible = true
-					
+
 					viewModel.saveSellerProduct(productId.request())
-					
+
 				}
-				
+
 			}
 			return@setOnMenuItemClickListener true
 		}
-		
+
 		bind.header.onMorePrimaryClick {
 			menu.show()
 		}
-		
+
 		bind.buyNow.setHapticClickListener {
 			findNavController().navigate(ids.goToBuyNowFragment)
 		}
-		
+
 		bind.makeOffer.setHapticClickListener {
 			showOfferSheet()
 		}
-		
+
 		bind.loader.isVisible = true
 		viewModel.getProductDetails(productId.request())
-		
+
 		viewModel.getProductDetailsRepo.observe(viewLifecycleOwner) {
 			when (it) {
 				is Resource.Success -> {
 					bind.loader.isVisible = false
-					
+
 					val mData = it.value.data
-					
+
 					viewModel.product = mData
-					
+
 					bind.userName.text = mData?.user?.name?.asCapital()
-					
+
 					if (mData?.user?.sellerVerification == true) {
 						bind.sellerStatus.text = "Verified Seller"
 					} else {
 						bind.sellerStatus.text = "Unverified Seller"
 					}
-					
+
 					bind.price.text = mData?.pricing.toString().asMoney()
 					
 					val offer = mData?.offer
@@ -131,19 +131,19 @@ class ProductDetailsFragment : BaseFragment<ProductViewModel, FragmentProductDet
 						bind.offerLayout.isVisible = false
 						bind.makeOffer.isVisible = mData?.acceptOffers == true
 					}
-					
+
 					bind.userImage.loadUrl(mCtx, mData?.user?.profileImage.toString())
-					
+
 					bind.productImage.loadUrl(mCtx, mData?.images?.get(0).toString())
-					
+
 					bind.productName.text = mData?.title?.asCapital()
 					bind.posted.text = Utils.getTimeAgo(mData?.createdAt ?: "", Const.DD_MM_YYYY_HH_MM_SS)
-					
-					
+
+
 					bind.address.text = mData?.shippingAdress?.streetAddress ?: "--"
-					
+
 					offerList.clear()
-					
+
 					offerList.addAll(
 						listOf(
 							OfferModel(
@@ -162,107 +162,107 @@ class ProductDetailsFragment : BaseFragment<ProductViewModel, FragmentProductDet
 						)
 					)
 				}
-				
+
 				is Resource.Error -> {
 					bind.loader.isVisible = false
-					
+
 					if (it.isNetworkError) {
 						errorToast(getString(R.string.no_internet))
 					} else {
 						it.parse(mCtx, TAG, object : AlertClicks {
 							override fun primaryClick(dialog: AppBottomSheet) {
 								dialog.dismiss()
-								
+
 							}
-							
+
 							override fun secondaryClick(dialog: AppBottomSheet) {
 								dialog.dismiss()
-								
+
 							}
 						})
 					}
 				}
-				
+
 				else -> {}
-				
+
 			}
 		}
-		
+
 		viewModel.makeOfferRepo.observe(viewLifecycleOwner) {
 			when (it) {
 				is Resource.Success -> {
 					bind.loader.isVisible = false
 					Alerts.success(mCtx, "Offer Sent")
 				}
-				
+
 				is Resource.Error -> {
 					bind.loader.isVisible = false
-					
+
 					if (it.isNetworkError) {
 						errorToast(getString(R.string.no_internet))
 					} else {
 						it.parse(mCtx, TAG, object : AlertClicks {
 							override fun primaryClick(dialog: AppBottomSheet) {
 								dialog.dismiss()
-								
+
 							}
-							
+
 							override fun secondaryClick(dialog: AppBottomSheet) {
 								dialog.dismiss()
-								
+
 							}
 						})
 					}
 				}
-				
+
 				else -> {}
-				
+
 			}
 		}
-		
+
 		viewModel.saveSellerProductRepo.observe(viewLifecycleOwner) {
 			when (it) {
 				is Resource.Success -> {
 					bind.loader.isVisible = false
-					
+
 					it.value.data
-					
+
 					Alerts.success(mCtx, it.value.message.toString())
-					
+
 				}
-				
+
 				is Resource.Error -> {
 					bind.loader.isVisible = false
-					
+
 					if (it.isNetworkError) {
 						errorToast(getString(R.string.no_internet))
 					} else {
 						it.parse(mCtx, TAG, object : AlertClicks {
 							override fun primaryClick(dialog: AppBottomSheet) {
 								dialog.dismiss()
-								
+
 							}
-							
+
 							override fun secondaryClick(dialog: AppBottomSheet) {
 								dialog.dismiss()
-								
+
 							}
 						})
 					}
 				}
-				
+
 				else -> {}
-				
+
 			}
 		}
-		
+
 	}
-	
+
 	fun getDiscountAmount(originalAmount: Double, percentOff: Int): String {
 		val discountedAmount = originalAmount - (originalAmount * percentOff) / 100
 		return discountedAmount.toString()
 	}
-	
+
 	fun showOfferSheet() {
 		val makeOfferSheetBind = MakeOfferSheetBinding.bind(
 			layoutInflater.inflate(
@@ -272,30 +272,30 @@ class ProductDetailsFragment : BaseFragment<ProductViewModel, FragmentProductDet
 			)
 		)
 		val makeOfferSheet = Alerts.appBottomSheet(mCtx, true, makeOfferSheetBind)
-		
+
 		makeOfferSheetBind.listedPrice.text = viewModel.product?.pricing.toString().asMoney()
-		
+
 		makeOfferSheetBind.offerRecycler.adapter =
 			MakeOfferAdapter(offerList, object : RecyclerClicks {
-				
+
 				override fun itemClick(pos: Int, status: String?) {
-					
+
 					makeOfferSheetBind.customOffer.setText(offerList[pos].amount)
-					
+
 					offerList.forEachIndexed { index, item ->
 						item.selected = index == pos
 					}
-					
+
 					makeOfferSheetBind.offerRecycler.adapter?.notifyDataSetChanged()
 				}
 			})
-		
+
 		makeOfferSheetBind.close.setHapticClickListener {
 			makeOfferSheet.dismiss()
 		}
-		
+
 		makeOfferSheetBind.select.setHapticClickListener {
-			
+
 			if (makeOfferSheetBind.customOffer.value().isEmpty()) {
 				Alerts.error(mCtx, "Please Enter Offer Amount")
 			} else {
@@ -307,11 +307,11 @@ class ProductDetailsFragment : BaseFragment<ProductViewModel, FragmentProductDet
 					productId.request()
 				)
 			}
-			
+
 		}
 		makeOfferSheet.show()
 	}
-	
+
 }
 
 

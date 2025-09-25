@@ -150,7 +150,7 @@ class BuyNowFragment : BaseFragment<ProductViewModel, FragmentBuyNowBinding>() {
 						viewModel.createOrder(
 							shippingId = shippingId.toString().request(),
 							productId = viewModel.product?.id.toString().request(),
-							cardId = cardList[0]?.customerPaymentProfileId?.request(),
+							cardId = null,
 							promoCode = bind.promoCode.value().ifEmpty { null }?.request(),
 							sendAsGift = "0".request(),
 							giftUserId = null,
