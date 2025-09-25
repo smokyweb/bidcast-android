@@ -421,10 +421,10 @@ class SocketManager private constructor(
                 }
             }
 
-            if (isDuplicate) {
-                Log.d(TAG, "RECEIVED: duplicate message - $obj")
-                return@on
-            }
+//            if (isDuplicate) {
+//                Log.d(TAG, "RECEIVED: duplicate message - $obj")
+//                return@on
+//            }
 
             Log.d(TAG, "RECEIVED: new message - $obj")
             listener(obj)
@@ -439,14 +439,13 @@ class SocketManager private constructor(
         userImage: String
     ) {
         val payload = JSONObject().apply {
-            put("roomId", roomId)
-            put("content", content)
-            put("userId", userId)
-            put("userName", userName)
-            put("userImage", userImage)
-            put("timestamp", Utils.timestamp())
+            put("room_id", roomId)
+            put("message", content)
+            put("user_id", userId)
+            put("user_name", userName)
+            put("user_image", userImage)
         }
-        Log.d(TAG, "EMIT: message - RoomId: $roomId, UserId: $userId, Content: $content")
+         Log.d(TAG, "EMIT: message - $payload")
         socket?.emit("chat", payload)
     }
 

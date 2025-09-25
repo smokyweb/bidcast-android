@@ -311,7 +311,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginHorizontal="@dimen/margin"
                         android:layout_marginVertical="@dimen/margin"
-                        android:alpha="0.3"
+                        android:alpha="0.5"
                         app:boxBackgroundColor="@color/scrim"
                         app:boxStrokeColor="@color/scrim"
                         app:endIconDrawable="@drawable/ic_forward"

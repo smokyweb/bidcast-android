@@ -55,7 +55,7 @@ data class GetProductDetailsResponse(
 		@Keep
 		data class Offer(
 			@SerializedName("amount")
-			val amount : Int? ,
+			val amount : Double? ,
 			@SerializedName("id")
 			val id : Int? ,
 			@SerializedName("product_id")

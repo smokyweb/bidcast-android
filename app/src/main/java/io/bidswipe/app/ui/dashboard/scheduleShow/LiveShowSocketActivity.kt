@@ -148,7 +148,7 @@ class LiveShowSocketActivity : BaseActivity() {
         log("LIVE SHOW DATA : $liveShowData ")
 
         publisher = Core.createPublisher()
-
+        
         initRenderer()
 
         connectPublisher()
@@ -229,8 +229,9 @@ class LiveShowSocketActivity : BaseActivity() {
                 }
             })
         }
-
+        
         bind.shop.setHapticClickListener {
+            log("PUBLISHER :  ${publisher.currentState}")
             if (publisher.isPublishing) {
                 showProductSheet()
             } else {
@@ -344,40 +345,6 @@ class LiveShowSocketActivity : BaseActivity() {
         }
     }
 
-//	private fun initializeStreaming() {
-//		streamingManager = StreamingManager.getInstance(this)
-//		streamingManager?.createEngine(Const.APP_ID.toLong(), Const.APP_SIGN, ZegoScenario.GENERAL)
-//	}
-
-    private fun startLiveDurationTimer() {
-        startTimeMillis = System.currentTimeMillis()
-
-        durationRunnable = object : Runnable {
-            override fun run() {
-                val elapsed = System.currentTimeMillis() - startTimeMillis
-                val seconds = (elapsed / 1000) % 60
-                val minutes = (elapsed / (1000 * 60)) % 60
-                val hours = (elapsed / (1000 * 60 * 60))
-
-                val formatted = String.format("%02d:%02d:%02d", hours, minutes, seconds)
-                bind.duration.text = buildString {
-                    append("Show Time: ")
-                    append(formatted)
-                }
-
-                handler.postDelayed(this, 1000)
-            }
-        }
-
-        handler.post(durationRunnable)
-    }
-
-    private fun stopLiveDurationTimer() {
-        if (this::durationRunnable.isInitialized) {
-            handler.removeCallbacks(durationRunnable)
-        }
-    }
-
     private fun stopStreaming() {
         try {
             // Disable audio track first
@@ -456,14 +423,14 @@ class LiveShowSocketActivity : BaseActivity() {
 
             log("MESSAGE : $msg")
 
-            if (msg.optString("roomId") == roomID) {
+            if (msg.optString("room_id") == roomID) {
                 runOnUiThread {
                     commentList.add(
                         LiveChatModel(
-                            msg.optString("userImage"),
-                            msg.optString("userName"),
-                            msg.optString("userId"),
-                            msg.optString("content")
+                            msg.optString("user_image"),
+                            msg.optString("user_name"),
+                            msg.optString("user_id"),
+                            msg.optString("message")
                         )
                     )
                     commentAdapter.notifyItemInserted(commentList.size - 1)
@@ -506,8 +473,7 @@ class LiveShowSocketActivity : BaseActivity() {
     }
 
     fun addShowData(data: LiveShowModel) {
-
-
+        
         /*val user = data?.user
 
         val products = data?.products?.map { it?.toLiveShowProduct() }
@@ -550,8 +516,7 @@ class LiveShowSocketActivity : BaseActivity() {
             bidCountDown = "",
             showTimer = "",
         )*/
-
-
+        
         socketManager?.createRoom(roomID, data)
 
         socketManager?.onRoomCreated { obj ->
@@ -559,16 +524,21 @@ class LiveShowSocketActivity : BaseActivity() {
         }
 
         socketManager?.onDurationUpdate { obj ->
-
             if (roomID == obj.optString("room_id")) {
-                bind.duration.text = buildString {
-                    append("Show Time: ")
-                    append(obj.optString("elapsed"))
+                val elapsedSeconds = obj.optString("elapsed").toLongOrNull() ?: 0L
+				val formattedTime = "%02d:%02d:%02d".format(
+					elapsedSeconds / 3600,
+					(elapsedSeconds / 60) % 60,
+					elapsedSeconds % 60
+				)
+				
+				bind.duration.text = buildString {
+					append("Show Time: ")
+					append(formattedTime)
                 }
             }
-
         }
-
+        
     }
 
     fun showMoreSheet() {
@@ -752,7 +722,7 @@ class LiveShowSocketActivity : BaseActivity() {
                 false
             )
         )
-        val showConfirmationSheet = Alerts.appAlert(this, true, showConfirmationSheetBind)
+        val showConfirmationSheet = Alerts.appBottomSheet(this, true, showConfirmationSheetBind)
 
         showConfirmationSheetBind.timing.text =
             "Show Starts at ${Utils.getFormattedDateTime("HH:mm:ss", "hh:mm a", showTime)}"
