@@ -34,7 +34,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="@dimen/margin"
-            app:boxBackgroundColor="@color/surface"
             app:boxStrokeWidth="2dp"
             app:startIconDrawable="@drawable/search"
             app:startIconTint="@color/scrim">

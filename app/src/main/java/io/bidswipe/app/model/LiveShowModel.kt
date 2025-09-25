@@ -10,7 +10,7 @@ data class LiveShowModel(
     val seller: Seller?,
     val showDetail: String,
     val thumbnail: String,
-    val viewerCount: String,
+    var viewerCount: String,
     val highestBid: HighestBid,
     val isLive: Boolean,
     val time: String?, // CURRENT TIMESTAMP
@@ -27,7 +27,7 @@ data class LiveShowModel(
         val name: String? = null,
         val price: String? = null,
         val quantity: String? = null,
-        val isCurrent: Boolean? = false
+        var isCurrent: Boolean? = false
     ) : Serializable {
         fun toJson() = JSONObject().apply {
             put("category", category)

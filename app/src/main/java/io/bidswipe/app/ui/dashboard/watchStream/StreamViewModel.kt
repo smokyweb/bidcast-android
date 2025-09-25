@@ -10,6 +10,7 @@ import io.bidswipe.app.network.Resource
 import io.bidswipe.app.network.repository.DashRepository
 import io.bidswipe.app.network.response.CreateBidResponse
 import io.bidswipe.app.network.response.FollowUnfollowResponse
+import io.bidswipe.app.network.response.SentTipAmountResponse
 import kotlinx.coroutines.launch
 import okhttp3.RequestBody
 import javax.inject.Inject
@@ -55,6 +56,18 @@ class StreamViewModel @Inject constructor(val repo : DashRepository) : ViewModel
         userId : RequestBody? ,
     ) = viewModelScope.launch {
 		_followUserResponse.value = repo.followUser(userId)
+	}
+
+	private var _sendTipAmountResponse = MutableLiveData<Resource<SentTipAmountResponse>>()
+	val sendTipAmountRepo : MutableLiveData<Resource<SentTipAmountResponse>>
+		get() = _sendTipAmountResponse
+
+	fun sendTipAmount(
+		sellerId : RequestBody ,
+		amount : RequestBody ,
+		cardNumber : RequestBody?
+	) = viewModelScope.launch {
+		_sendTipAmountResponse.value = repo.sendTipAmount(sellerId, amount, cardNumber)
 	}
 
 }

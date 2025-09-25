@@ -463,6 +463,7 @@ class SocketManager private constructor(
     fun createRoom(roomId: String, liveShowData: LiveShowModel) {
         val payload = JSONObject().apply {}
         Log.d(TAG, "EMIT: room_created - RoomId: $payload")
+        liveShowData.products.first()?.isCurrent = true
         socket?.emit("room_create", liveShowData.toJson())
     }
 

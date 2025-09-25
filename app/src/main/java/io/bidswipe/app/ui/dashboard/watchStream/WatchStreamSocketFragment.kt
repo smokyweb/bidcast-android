@@ -52,6 +52,7 @@ import io.bidswipe.app.utils.hideKeyboard
 import io.bidswipe.app.utils.value
 import io.bidswipe.app.utils.loadUrl
 import io.bidswipe.app.utils.parse
+import io.bidswipe.app.utils.request
 import io.bidswipe.app.utils.runSafe
 import io.bidswipe.app.utils.setHapticClickListener
 import io.bidswipe.app.utils.setMargins
@@ -81,6 +82,7 @@ class WatchStreamSocketFragment : BaseFragment<StreamViewModel , FragmentWatchSt
     private var socketManager : SocketManager? = null
     private var highestBidAmount : String? = "0"
     private var bidProductId : String? = null
+    private var sellerId : String? = ""
     private var inputSheet : BottomSheetDialog? = null
     private var isAllowBidForAll = true
     private var commentList = mutableListOf<LiveChatModel?>()
@@ -166,7 +168,7 @@ class WatchStreamSocketFragment : BaseFragment<StreamViewModel , FragmentWatchSt
             }) { err -> log("Socket connect error: $err") }
 
             socketManager?.onViewerCount { count ->
-                runSafe { bind.liveCount.text = count.toString() }
+//                runSafe { bind.liveCount.text = count.toString() }
             }
 
             socketManager?.onBidUpdate { json ->
@@ -177,20 +179,19 @@ class WatchStreamSocketFragment : BaseFragment<StreamViewModel , FragmentWatchSt
             socketManager?.onMessage { msg ->
                 log("${roomID}  MESSAGES $msg")
 
-                if (msg.optString("roomId") == roomID) {
-                    viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Main) {
-                        commentList.add(
-                            LiveChatModel(
-                                msg.optString("userImage"),
-                                msg.optString("userName"),
-                                msg.optString("userId"),
-                                msg.optString("content")
-                            )
+                viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Main) {
+                    commentList.add(
+                        LiveChatModel(
+                            msg.optString("user_image"),
+                            msg.optString("user_name"),
+                            msg.optString("user_id"),
+                            msg.optString("message")
                         )
-                        commentAdapter.notifyItemInserted(commentList.size - 1)
-                        bind.recycler.scrollToPosition(commentList.size - 1)
-                    }
+                    )
+                    commentAdapter.notifyItemInserted(commentList.size - 1)
+                    bind.recycler.scrollToPosition(commentList.size - 1)
                 }
+
 
                 /*val type = msg.optString("type")
                 when (type) {
@@ -208,84 +209,6 @@ class WatchStreamSocketFragment : BaseFragment<StreamViewModel , FragmentWatchSt
             updateSessionUI(obj)
 
         }
-
-//        initializeChat()
-
-        /*viewModel.selectedStream.observe(viewLifecycleOwner) { stream ->
-            if (stream == roomID) {
-
-               *//* bind.userImage.loadUrl(
-                    mCtx ,
-                    stream.seller?.image.toString() ,
-                    placeHolder = draw.user_image
-                )*//*
-
-//                product = stream.products?.find { it?.isCurrent == true }
-
-                bidProductId = product?.id.toString()
-
-                highestBidAmount = product?.price.toString()
-
-//                bind.userName.text = stream.seller?.name.toString()
-
-                bind.productName.text = product?.name
-
-                bind.productImage.loadUrl(
-                    mCtx ,
-                    product?.image.toString() ,
-                    placeHolder = draw.product_img
-                )
-
-                bind.bidPrice.text = (product?.price ?: "0").asMoney()
-
-                try {
-                    bind.quantity.text = buildString {
-                        append("Price: ")
-                        append(product?.price.toString().asMoney())
-                    }
-                } catch (e : Exception) {
-                    e.printStackTrace()
-                }
-
-//                if (stream.seller?.isFollowed == true) {
-//                    bind.follow.setBackgroundColor(ContextCompat.getColor(mCtx , R.color.outline))
-//                    bind.follow.setTextColor(ContextCompat.getColor(mCtx , R.color.onSurface))
-//                    bind.follow.text = "Unfollow"
-//                } else {
-//                    bind.follow.setBackgroundColor(ContextCompat.getColor(mCtx , R.color.primary))
-//                    bind.follow.setTextColor(ContextCompat.getColor(mCtx , R.color.background))
-//                    bind.follow.text = "Follow"
-//                }
-
-                bind.follow.setHapticClickListener {
-//                    viewModel.followUser(stream.seller?.id?.request())
-                }
-
-                runSafe {
-                    bind.bid.text = "Swipe to Bid ${newBidAmount(highestBidAmount?.toDouble()?.toInt() ?: 0).toString().asMoney()}"
-                }
-
-                bind.bid.onSlideCompleteListener = object : SlideToActView.OnSlideCompleteListener {
-                    override fun onSlideComplete(view : SlideToActView) {
-
-                        if (isAllowBidForAll) {
-                            attemptBid()
-                        } else {
-
-                            if (App.profileResponse.value?.buyerIdentityStatus == "verified") {
-                                attemptBid()
-                            } else {
-                                verificationDialog()
-                            }
-                        }
-                    }
-                }
-
-                bind.max.setHapticClickListener {
-                    showInputSheet()
-                }
-            }
-        }*/
 
         bind.message.setEndIconOnClickListener {
             if (bind.text.value().isNotEmpty()) {
@@ -425,35 +348,22 @@ class WatchStreamSocketFragment : BaseFragment<StreamViewModel , FragmentWatchSt
 
     private fun updateSessionUI(json : JSONObject) {
         runSafe {
-
-            log("SESSION UPDATE: $json")
-
             val showData = LiveShowModel.fromJson(json)
 
-            /*   // minimal fields: product image/name/price, seller, allowBidForAll
-               json.optJSONObject("seller")?.let { seller ->
-                   bind.userName.text = seller.optString("name")
-                   bind.userImage.loadUrl(mCtx , seller.optString("image"))
-               }
+            log("SESSION UPDATE: $showData")
+
+            val liveProduct = showData.products.find { it?.isCurrent == true }
+
+            bind.productName.text = liveProduct?.name
+            val price = liveProduct?.price
+            bind.bidPrice.text = price?.asMoney()
+            highestBidAmount = price
+            bidProductId = liveProduct?.id
+
+            bind.bid.text = "Swipe to Bid ${newBidAmount(price?.toDoubleOrNull()?.toInt() ?: 0).toString().asMoney()}"
 
 
-               json.optJSONObject("products")?.let { product ->
-
-                   bind.productName.text = product.optString("name")
-                   bind.productImage.loadUrl(mCtx , product.optString("image"))
-                   val price = product.optString("price" , "0")
-                   bind.bidPrice.text = price.asMoney()
-                   highestBidAmount = price
-                   bidProductId = product.optString("id" , bidProductId)
-                   bind.bid.text = "Swipe to Bid ${newBidAmount(price.toDoubleOrNull()?.toInt() ?: 0).toString().asMoney()}"
-               }
-
-               isAllowBidForAll = json.optBoolean("allowBidForAll" , true)
-               val isSold = json.optBoolean("isSold" , false)
-               bind.soldLayout.isVisible = isSold
-               bind.bidLayout.isVisible = ! isSold
-               bind.productLayout.isVisible = ! isSold*/
-
+            isAllowBidForAll = json.optBoolean("allowBidForAll", true)
 
             // Safely update highestBidAmount
 
@@ -470,19 +380,15 @@ class WatchStreamSocketFragment : BaseFragment<StreamViewModel , FragmentWatchSt
 
             }
 
+            sellerId = showData.seller?.id.toString()
+
             bind.userName.text = showData.seller?.name
             bind.userImage.loadUrl(mCtx, showData.seller?.image ?: "")
 
-            // Show viewer count or default to 0
-            bind.liveCount.text = (showData.viewerCount ?: 0).toString()
-
-            // Find the current product once
-            val currentProduct = showData.products.find { it?.id == showData.highestBid.productId }
-
-            log("CURRENT PRODUCT Value : $currentProduct")
+            bind.liveCount.text = showData.viewerCount
 
             // Determine sale status once
-            val isSold = currentProduct?.status == "sold"
+            val isSold = liveProduct?.status == "sold"
             bind.soldLayout.isVisible = isSold
             bind.bidLayout.isVisible = !isSold
 
@@ -492,13 +398,13 @@ class WatchStreamSocketFragment : BaseFragment<StreamViewModel , FragmentWatchSt
 
             bind.productLayout.isVisible = ! isSold
 
-            if (isSold && showData.highestBid?.userId == userId) {
+            if (isSold && showData.highestBid.userId == userId) {
                 bind.soldOutText.text = "You won the bid"
             }
 
             // Show bid countdown if available
             val countdown = showData.bidCountDown.toString()
-            if (!countdown.isNullOrEmpty()) {
+            if (!countdown.isNotEmpty()) {
                 bind.bidTime.isVisible = true
                 bind.bidTime.text = "Ends in $countdown"
             } else {
@@ -983,8 +889,86 @@ class WatchStreamSocketFragment : BaseFragment<StreamViewModel , FragmentWatchSt
 
         val sendTipSheet = Alerts.appBottomSheet(mCtx, true, sendTipSheetBind)
 
-        sendTipSheetBind.close.setHapticClickListener {
+        sendTipSheetBind.root.setOnClickListener {
+            hideKeyboard(it)
+        }
+
+        sendTipSheetBind.btnTip5.setHapticClickListener {
+            sendTipSheetBind.customOffer.setText("5")
+        }
+
+        sendTipSheetBind.btnTip10.setHapticClickListener {
+            sendTipSheetBind.customOffer.setText("10")
+        }
+
+        sendTipSheetBind.btnTip25.setHapticClickListener {
+            sendTipSheetBind.customOffer.setText("25")
+        }
+
+        sendTipSheetBind.btnTip50.setHapticClickListener {
+            sendTipSheetBind.customOffer.setText("50")
+        }
+
+        sendTipSheetBind.paymentWallet.text = buildString {
+            append("Wallet - ")
+            append(App.profileResponse.value?.walletAmount ?: 0)
+        }
+
+        sendTipSheetBind.walletRadio.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
+                sendTipSheetBind.cardRadio.isChecked = false
+            }
+        }
+
+        sendTipSheetBind.cardRadio.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
+                sendTipSheetBind.walletRadio.isChecked = false
+            }
+        }
+
+        if (App.profileResponse.value?.defaultCard != null) {
+            sendTipSheetBind.paymentCard.text = buildString {
+                append("XXXX XXXX XXXX ")
+                append(App.profileResponse.value?.defaultCard?.last4 ?: 0)
+            }
+        } else {
+            sendTipSheetBind.cardRadio.isVisible = false
+            sendTipSheetBind.paymentCard.text = buildString {
+                append("Payment Method Not Added")
+            }
+        }
+
+        sendTipSheetBind.btnSendTip.setHapticClickListener {
+
+            with(sendTipSheetBind) {
+
+                if (!walletRadio.isChecked && !cardRadio.isChecked) {
+                    Alerts.error(mCtx, "Please select a payment method")
+                    return@setHapticClickListener
+                }
+
+
+                if (customOffer.text.toString().isEmpty()) {
+                    Alerts.error(mCtx, "Please enter an amount")
+                    return@setHapticClickListener
+                }
+
+                if (walletRadio.isChecked && customOffer.text.toString().toInt() > (App.profileResponse.value?.walletAmount ?: 0)) {
+                    Alerts.error(mCtx, "Insufficient balance")
+                    return@setHapticClickListener
+                }
+
+
+            }
+
             sendTipSheet.dismiss()
+            bind.loader.isVisible = true
+            viewModel.sendTipAmount(
+                sellerId!!.request(),
+                sendTipSheetBind.customOffer.text.toString().request(),
+                null
+            )
+
         }
 
         sendTipSheet.show()
