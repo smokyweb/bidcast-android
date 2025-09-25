@@ -113,9 +113,7 @@ class BuyNowFragment : BaseFragment<ProductViewModel, FragmentBuyNowBinding>() {
 		bind.productImg.loadUrl(mCtx, viewModel.product?.images?.get(0).toString())
 
 		bind.confirmButton.setHapticClickListener {
-
 			when {
-
 				cardList.isEmpty() -> {
 					Alerts.error(mCtx, "Please add Payment card")
 				}

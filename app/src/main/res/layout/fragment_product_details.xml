@@ -78,9 +78,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="@dimen/margin"
-            android:layout_marginVertical="@dimen/half_margin"
+            android:layout_marginTop="@dimen/margin"
+            style="@style/shadowStyle"
             android:background="@drawable/card_16"
-            android:backgroundTint="@color/outline"
             android:gravity="center_vertical"
             android:orientation="vertical"
             android:padding="12dp">
@@ -104,6 +104,34 @@
                 <TextView
                     android:id="@+id/price"
                     style="@style/HeadlineMedium"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginStart="@dimen/half_margin"
+                    android:text="--" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/offer_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:visibility="gone"
+                app:layout_constraintTop_toBottomOf="@id/header">
+
+                <TextView
+                    android:id="@+id/offer_heading"
+                    style="@style/TitleMedium"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginStart="@dimen/half_margin"
+                    android:layout_weight="1"
+                    android:text="Offer Sent" />
+
+                <TextView
+                    android:id="@+id/offer_price"
+                    style="@style/TitleMedium"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
@@ -198,10 +226,8 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/tertiary"
             android:orientation="horizontal"
             android:padding="@dimen/margin">
-
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/buy_now"
