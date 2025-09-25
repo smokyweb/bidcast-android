@@ -491,4 +491,11 @@ class DashRepository @Inject constructor(private val api : ApiInterface) : BaseR
 
 	suspend fun getPromoteTools(
 	) = call { api.getPromoteTools() }
+
+	suspend fun sendTipAmount(
+		sellerId : RequestBody ,
+		amount : RequestBody ,
+		cardNumber : RequestBody?
+	) = call { api.sendTipAmount(sellerId, amount, cardNumber) }
+
 }

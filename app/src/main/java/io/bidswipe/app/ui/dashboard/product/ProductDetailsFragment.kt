@@ -136,7 +136,7 @@ class ProductDetailsFragment : BaseFragment<ProductViewModel, FragmentProductDet
                         )
                     )
 
-                    bind.address.text = mData?.shippingAdress?.streetAddress
+                    bind.address.text = mData?.shippingAddress?.streetAddress
 
                 }
 

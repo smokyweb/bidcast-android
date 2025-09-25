@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/bottom_sheet_back"
@@ -60,7 +59,7 @@
             android:weightSum="4">
 
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnTip50"
+                android:id="@+id/btnTip5"
                 style="@style/appBtnOutline"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -71,7 +70,7 @@
                 app:strokeWidth="1dp" />
 
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnTip100"
+                android:id="@+id/btnTip10"
                 style="@style/appBtnOutline"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -83,7 +82,7 @@
                 app:strokeWidth="1dp" />
 
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnTip250"
+                android:id="@+id/btnTip25"
                 style="@style/appBtnOutline"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -95,7 +94,7 @@
                 app:strokeWidth="1dp" />
 
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnTip500"
+                android:id="@+id/btnTip50"
                 style="@style/appBtnOutline"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -130,11 +129,11 @@
                 style="@style/inputBoxStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:boxBackgroundColor="@color/surface"
+                app:boxBackgroundColor="@color/background"
                 app:boxStrokeWidth="0dp"
                 app:boxStrokeWidthFocused="0dp">
 
-                <com.google.android.material.textview.MaterialTextView
+                <com.google.android.material.textfield.MaterialAutoCompleteTextView
                     android:id="@+id/custom_offer"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -161,21 +160,52 @@
             android:orientation="vertical"
             android:showDividers="middle">
 
-            <TextView
-                android:id="@+id/paymentWallet"
-                style="@style/TitleSmall"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="12dp"
-                android:text="Wallet - $1,200" />
+                android:orientation="horizontal">
 
-            <TextView
-                android:id="@+id/paymentCard"
-                style="@style/TitleSmall"
+                <TextView
+                    android:id="@+id/paymentWallet"
+                    style="@style/TitleSmall"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:padding="12dp"
+                    android:layout_weight="1"
+                    android:text="Wallet - $1,200" />
+
+                <RadioButton
+                    android:id="@+id/walletRadio"
+                    style="@style/Widget.AppCompat.CompoundButton.RadioButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:focusable="false" />
+
+            </LinearLayout>
+
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="12dp"
-                android:text="Card" />
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/paymentCard"
+                    style="@style/TitleSmall"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:padding="12dp"
+                    android:layout_weight="1"
+                    android:text="Card" />
+
+                <RadioButton
+                    android:id="@+id/cardRadio"
+                    style="@style/Widget.AppCompat.CompoundButton.RadioButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:focusable="false" />
+
+            </LinearLayout>
+
         </LinearLayout>
 
         <com.google.android.material.button.MaterialButton

@@ -38,7 +38,7 @@ data class GetProductDetailsResponse(
 		@SerializedName("reserve_for_live")
 		val reserveForLive : Boolean? ,
 		@SerializedName("shipping_adress")
-		val shippingAdress : ShippingAdress? ,
+		val shippingAddress : ShippingAddress? ,
 		@SerializedName("shipping_profile_id")
 		val shippingProfileId : Int? ,
 		@SerializedName("status")
@@ -55,7 +55,7 @@ data class GetProductDetailsResponse(
 		@Keep
 		data class Offer(
 			@SerializedName("amount")
-			val amount : Int? ,
+			val amount : Double? ,
 			@SerializedName("id")
 			val id : Int? ,
 			@SerializedName("product_id")
@@ -67,7 +67,7 @@ data class GetProductDetailsResponse(
 		)
 
 		@Keep
-		data class ShippingAdress(
+		data class ShippingAddress(
 			@SerializedName("id")
 			val id : Int? ,
 			@SerializedName("is_default")

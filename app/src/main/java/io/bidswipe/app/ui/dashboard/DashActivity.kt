@@ -2,11 +2,9 @@ package io.bidswipe.app.ui.dashboard
 
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
@@ -45,20 +43,20 @@ import io.bidswipe.app.utils.toListProduct
 import io.bidswipe.app.utils.toScheduleShow
 import io.bidswipe.app.utils.toTutorials
 
-class DashActivity : BaseActivity() , NavController.OnDestinationChangedListener {
+class DashActivity : BaseActivity(), NavController.OnDestinationChangedListener {
 
 	private val bind by bind(ActivityDashBinding::inflate)
 	private val viewModel by viewModels<DashViewModel>()
 
-	private lateinit var imageSheet : BottomSheetBehavior<ConstraintLayout>
+	private lateinit var imageSheet: BottomSheetBehavior<ConstraintLayout>
 	private var sellList = mutableListOf<SellModel>()
 
-	private lateinit var navController : NavController
-	private lateinit var navHostFragment : NavHostFragment
+	private lateinit var navController: NavController
+	private lateinit var navHostFragment: NavHostFragment
 
 	private var isFirstShowCreated = false
 
-	override fun onCreate(savedInstanceState : Bundle?) {
+	override fun onCreate(savedInstanceState: Bundle?) {
 
 		super.onCreate(savedInstanceState)
 		setContentView(bind.root)
@@ -71,7 +69,7 @@ class DashActivity : BaseActivity() , NavController.OnDestinationChangedListener
 		bind.bottomBar.setupWithNavController(navController)
 		setupImageSheet()
 
-		log("USER NAME : ${userName.replace(" " , ".")}  $userId   $userImage")
+		log("USER NAME : ${userName.replace(" ", ".")}  $userId   $userImage")
 
 		bind.bottomBar.setOnItemSelectedListener { menuItem ->
 			if (menuItem.itemId != ids.sellFragment) viewModel.lastIndex.value = menuItem.itemId
@@ -86,11 +84,11 @@ class DashActivity : BaseActivity() , NavController.OnDestinationChangedListener
 					imageSheet.state = BottomSheetBehavior.STATE_COLLAPSED
 					try {
 						navController.let { ctrl ->
-							NavigationUI.onNavDestinationSelected(menuItem , ctrl)
-							ctrl.popBackStack(menuItem.itemId , false)
+							NavigationUI.onNavDestinationSelected(menuItem, ctrl)
+							ctrl.popBackStack(menuItem.itemId, false)
 						}
 						return@setOnItemSelectedListener true
-					} catch (e : Exception) {
+					} catch (e: Exception) {
 						e.printStackTrace()
 						return@setOnItemSelectedListener false
 					}
@@ -99,7 +97,7 @@ class DashActivity : BaseActivity() , NavController.OnDestinationChangedListener
 		}
 
 		getDeviceToken(this) {
-			Log.d(TAG , "onCreate: $it")
+			Log.d(TAG, "onCreate: $it")
 			viewModel.storeDeviceDetails(it.request())
 		}
 
@@ -122,12 +120,12 @@ class DashActivity : BaseActivity() , NavController.OnDestinationChangedListener
 					if (it.isNetworkError) {
 
 					} else {
-						it.parse(this , TAG , object : AlertClicks {
-							override fun primaryClick(dialog : AppBottomSheet) {
+						it.parse(this, TAG, object : AlertClicks {
+							override fun primaryClick(dialog: AppBottomSheet) {
 								dialog.dismiss()
 							}
 
-							override fun secondaryClick(dialog : AppBottomSheet) {
+							override fun secondaryClick(dialog: AppBottomSheet) {
 								dialog.dismiss()
 							}
 						})
@@ -152,9 +150,9 @@ class DashActivity : BaseActivity() , NavController.OnDestinationChangedListener
 	}
 
 	override fun onDestinationChanged(
-		controller : NavController ,
-		destination : NavDestination ,
-		arguments : Bundle? ,
+		controller: NavController,
+		destination: NavDestination,
+		arguments: Bundle?,
 	) {
 		when (destination.id) {
 			R.id.exploreTypeFragment -> hideBottomNav()
@@ -180,29 +178,29 @@ class DashActivity : BaseActivity() , NavController.OnDestinationChangedListener
 		sellList.addAll(
 			listOf(
 				SellModel(
-					R.drawable.ic_tag ,
-					R.color.primaryContainer ,
-					"List a Product" ,
+					R.drawable.ic_tag,
+					R.color.primaryContainer,
+					"List a Product",
 					"Create listing for your item"
-				) ,
+				),
 				SellModel(
-					R.drawable.ic_video ,
-					R.color.primaryContainer ,
-					"Schedule a Show" ,
+					R.drawable.ic_video,
+					R.color.primaryContainer,
+					"Schedule a Show",
 					"Go live and sell to your audience"
-				) ,
+				),
 				SellModel(
-					R.drawable.ic_shop ,
-					R.color.primaryContainer ,
-					"Seller Hub" ,
+					R.drawable.ic_shop,
+					R.color.primaryContainer,
+					"Seller Hub",
 					"Manage your store and listings"
 				)
 			)
 		)
 
-		val exploreAdapter = SellAdapter(sellList , "explore" , object : RecyclerClicks {
+		val exploreAdapter = SellAdapter(sellList, "explore", object : RecyclerClicks {
 
-			override fun itemClick(pos : Int , status : String?) {
+			override fun itemClick(pos: Int, status: String?) {
 
 				when (pos) {
 					2 -> {
@@ -242,18 +240,18 @@ class DashActivity : BaseActivity() , NavController.OnDestinationChangedListener
 
 		bind.sellSheet.recycler.adapter = exploreAdapter
 
-        bind.sellSheet.root.setHapticClickListener {
+		bind.sellSheet.root.setHapticClickListener {
 			imageSheet.state = BottomSheetBehavior.STATE_COLLAPSED
 		}
 
-        bind.sellSheet.close.setHapticClickListener {
+		bind.sellSheet.close.setHapticClickListener {
 			imageSheet.state = BottomSheetBehavior.STATE_COLLAPSED
 		}
 
 	}
 
 	private val mSheetCallback = object : BottomSheetBehavior.BottomSheetCallback() {
-		override fun onStateChanged(bottomSheet : View , newState : Int) {
+		override fun onStateChanged(bottomSheet: View, newState: Int) {
 			when (newState) {
 				BottomSheetBehavior.STATE_EXPANDED -> {
 					/*val params = CoordinatorLayout.LayoutParams(
@@ -285,11 +283,11 @@ class DashActivity : BaseActivity() , NavController.OnDestinationChangedListener
 			}
 		}
 
-		override fun onSlide(bottomSheet : View , slideOffset : Float) {
+		override fun onSlide(bottomSheet: View, slideOffset: Float) {
 			if (slideOffset > 0) {
 				try {
 //						bind.commentSheet.sheetRoot.itemClick.alpha = slideOffset
-				} catch (e : Exception) {
+				} catch (e: Exception) {
 					e.printStackTrace()
 				}
 			}
@@ -297,21 +295,21 @@ class DashActivity : BaseActivity() , NavController.OnDestinationChangedListener
 
 	}
 
-	fun getDeviceToken(context : Context , token : (token : String) -> Unit) {
+	fun getDeviceToken(context: Context, token: (token: String) -> Unit) {
 		FirebaseMessaging.getInstance().token.addOnCompleteListener {
-			if (! it.isSuccessful) {
+			if (!it.isSuccessful) {
 				Alerts.log(
-					javaClass.simpleName ,
+					javaClass.simpleName,
 					"Fetching FCM registration token failed ${it.exception}"
 				)
 				return@addOnCompleteListener
 			}
 			val deviceToken = it.result.toString()
 			if (Prefs(context).fcmToken() != deviceToken) {
-				Prefs(context).putString(Prefs.PUSH_TOKEN , deviceToken)
-				Alerts.log(javaClass.simpleName , "device token $deviceToken")
+				Prefs(context).putString(Prefs.PUSH_TOKEN, deviceToken)
+				Alerts.log(javaClass.simpleName, "device token $deviceToken")
 			} else {
-				Alerts.log(javaClass.simpleName , "device token not refresh  $token")
+				Alerts.log(javaClass.simpleName, "device token not refresh  $token")
 			}
 			token(deviceToken)
 		}
@@ -321,17 +319,17 @@ class DashActivity : BaseActivity() , NavController.OnDestinationChangedListener
 
 		var paymentAddressBind = PaymentAndAddressSheetBinding.bind(
 			layoutInflater.inflate(
-				R.layout.payment_and_address_sheet ,
-				null ,
+				R.layout.payment_and_address_sheet,
+				null,
 				false
 			)
 		)
 
-		var makeOfferSheet = Alerts.appBottomSheet(this , true , paymentAddressBind)
+		var makeOfferSheet = Alerts.appBottomSheet(this, true, paymentAddressBind)
 
 		with(paymentAddressBind.addressItem) {
 			val hasAddress = App.profileResponse.value?.hasShippingAddress == true
-			moreIcon.setImageDrawable(ContextCompat.getDrawable(this@DashActivity , draw.ic_pencil))
+			moreIcon.setImageDrawable(ContextCompat.getDrawable(this@DashActivity, draw.ic_pencil))
 			moreIcon.rotation = 0f
 
 			name.isVisible = hasAddress
@@ -348,10 +346,10 @@ class DashActivity : BaseActivity() , NavController.OnDestinationChangedListener
 				defaultAddress.isVisible = false
 			}
 
-            moreIcon.setHapticClickListener {
+			moreIcon.setHapticClickListener {
 				startActivity(
-					Intent(this@DashActivity , MoreActivity::class.java).putExtra(
-						"slug" ,
+					Intent(this@DashActivity, MoreActivity::class.java).putExtra(
+						"slug",
 						"paymentShipping"
 					)
 				)
@@ -363,7 +361,7 @@ class DashActivity : BaseActivity() , NavController.OnDestinationChangedListener
 			val hasCard = App.profileResponse.value?.hasCardAdded == true
 			iconCard.isVisible = hasCard
 			expiryDate.isVisible = hasCard
-			moreIcon.setImageDrawable(ContextCompat.getDrawable(this@DashActivity , draw.ic_pencil))
+			moreIcon.setImageDrawable(ContextCompat.getDrawable(this@DashActivity, draw.ic_pencil))
 			moreIcon.rotation = 0f
 
 			if (hasCard) {
@@ -380,10 +378,10 @@ class DashActivity : BaseActivity() , NavController.OnDestinationChangedListener
 				cardNumber.text = "Payment Cards Not Added"
 			}
 
-            moreIcon.setHapticClickListener {
+			moreIcon.setHapticClickListener {
 				startActivity(
-					Intent(this@DashActivity , MoreActivity::class.java).putExtra(
-						"slug" ,
+					Intent(this@DashActivity, MoreActivity::class.java).putExtra(
+						"slug",
 						"paymentShipping"
 					)
 				)
@@ -391,7 +389,7 @@ class DashActivity : BaseActivity() , NavController.OnDestinationChangedListener
 
 		}
 
-        paymentAddressBind.close.setHapticClickListener {
+		paymentAddressBind.close.setHapticClickListener {
 			makeOfferSheet.dismiss()
 		}
 
@@ -403,7 +401,7 @@ class DashActivity : BaseActivity() , NavController.OnDestinationChangedListener
 	private fun verificationDialog() {
 		AppBottomSheet(
 			this,
-			R.drawable.ic_info ,
+			R.drawable.ic_info,
 			title = when (App.profileResponse.value?.sellerIdentityStatus) {
 				"null" -> {
 					"Become a Verified Seller!"
@@ -420,7 +418,7 @@ class DashActivity : BaseActivity() , NavController.OnDestinationChangedListener
 				else -> {
 					"Become a Verified Seller!"
 				}
-			} ,
+			},
 			message = when (App.profileResponse.value?.sellerIdentityStatus) {
 				"null" -> {
 					"Your seller verification request has been rejected, You need to reapply for the verification."
@@ -438,24 +436,24 @@ class DashActivity : BaseActivity() , NavController.OnDestinationChangedListener
 					"Before you interact with lives shows, You need to become a Verified Seller."
 				}
 			},
-			primaryBtnText = "Okay" ,
-			secondaryBtnText = "Cancel" ,
-			canCancel = true ,
-			showSecondary = false ,
-			iconPadding = 16 ,
-			alertType = AlertType.INFO ,
+			primaryBtnText = "Okay",
+			secondaryBtnText = "Cancel",
+			canCancel = true,
+			showSecondary = false,
+			iconPadding = 16,
+			alertType = AlertType.INFO,
 			clicks = object : AlertClicks {
-				override fun primaryClick(dialog : AppBottomSheet) {
+				override fun primaryClick(dialog: AppBottomSheet) {
 					dialog.dismiss()
 
-					if (App.profileResponse.value?.sellerIdentityStatus == "pending"){
+					if (App.profileResponse.value?.sellerIdentityStatus == "pending") {
 						return
 					}
 
-					startActivity(Intent(this@DashActivity , SellerVerificationActivity::class.java))
+					startActivity(Intent(this@DashActivity, SellerVerificationActivity::class.java))
 				}
 
-				override fun secondaryClick(dialog : AppBottomSheet) {
+				override fun secondaryClick(dialog: AppBottomSheet) {
 					dialog.dismiss()
 				}
 			}

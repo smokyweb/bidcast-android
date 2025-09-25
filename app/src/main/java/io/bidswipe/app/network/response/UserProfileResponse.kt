@@ -57,7 +57,9 @@ data class UserProfileResponse(
         @SerializedName("has_card_added")
         val hasCardAdded : Boolean? ,
         @SerializedName("preference")
-        val preferences: SettingListResponse.Data?
+        val preferences: SettingListResponse.Data?,
+        @SerializedName("wallet_amount")
+        val walletAmount: Int?,
         ) {
 
 		@Keep
