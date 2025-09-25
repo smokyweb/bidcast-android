@@ -1,3 +1,5 @@
+package io.bidswipe.app.base
+
 import androidx.annotation.Keep
 import com.google.gson.annotations.SerializedName
 

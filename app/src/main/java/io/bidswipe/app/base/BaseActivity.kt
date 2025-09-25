@@ -8,8 +8,8 @@ import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
 import com.permissionx.guolindev.PermissionX
 import com.zeugmasolutions.localehelper.LocaleAwareCompatActivity
-import io.bidswipe.app.utils.Alerts
 import dagger.hilt.android.AndroidEntryPoint
+import io.bidswipe.app.utils.Alerts
 import io.bidswipe.app.utils.Prefs
 
 @Suppress("PropertyName")
@@ -42,6 +42,7 @@ abstract class BaseActivity : LocaleAwareCompatActivity() {
                 if (event.action == MotionEvent.ACTION_DOWN) {
                     v.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY)
                 }
+                v.performClick()
                 false
             }
         }

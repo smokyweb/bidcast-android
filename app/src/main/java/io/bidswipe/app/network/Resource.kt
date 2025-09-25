@@ -1,6 +1,6 @@
 package io.bidswipe.app.network
 
-import BaseResponse
+import io.bidswipe.app.base.BaseResponse
 
 sealed class Resource<out T> {
 

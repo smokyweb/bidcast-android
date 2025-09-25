@@ -1,6 +1,5 @@
 package io.bidswipe.app.base
 
-import BaseResponse
 import com.google.gson.Gson
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.utils.runSafe
