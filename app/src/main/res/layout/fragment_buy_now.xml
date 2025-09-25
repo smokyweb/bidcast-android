@@ -39,8 +39,8 @@
                 <com.google.android.material.card.MaterialCardView
                     android:id="@+id/icon_card"
                     style="@style/cardStyle"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
+                    android:layout_width="64dp"
+                    android:layout_height="64dp"
                     app:cardBackgroundColor="@color/tertiaryContainer"
                     app:cardElevation="0dp">
 
@@ -227,6 +227,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/half_margin"
+                android:layout_marginHorizontal="@dimen/margin"
                 android:alpha="0.7"
                 android:orientation="horizontal">
 
@@ -234,19 +235,16 @@
                     style="@style/BodyLarge"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/margin"
                     android:layout_marginEnd="@dimen/margin"
                     android:layout_weight="1"
-                    android:text="Subtotal" />
+                    android:text="Product Price" />
 
                 <TextView
-                    android:id="@+id/subTotal"
+                    android:id="@+id/price"
                     style="@style/BodyLarge"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="@dimen/margin"
-                    android:background="?selectableItemBackground"
-                    android:text="$299.99" />
+                    android:text="White" />
 
             </LinearLayout>
 
@@ -274,6 +272,33 @@
                     android:layout_marginEnd="@dimen/margin"
                     android:background="?selectableItemBackground"
                     android:text="$9.99" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/half_margin"
+                android:alpha="0.7"
+                android:orientation="horizontal">
+
+                <TextView
+                    style="@style/BodyLarge"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/margin"
+                    android:layout_marginEnd="@dimen/margin"
+                    android:layout_weight="1"
+                    android:text="Subtotal" />
+
+                <TextView
+                    android:id="@+id/subTotal"
+                    style="@style/BodyLarge"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/margin"
+                    android:background="?selectableItemBackground"
+                    android:text="$299.99" />
 
             </LinearLayout>
 

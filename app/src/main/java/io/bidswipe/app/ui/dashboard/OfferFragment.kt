@@ -32,8 +32,10 @@ class OfferFragment : BaseFragment<DashViewModel , FragmentOfferBinding>() {
 		override fun itemClick(pos : Int , status : String?) {
 			bind.loader.isVisible = true
 			if (status == "accept") {
+				bind.loader.isVisible=true
 				viewModel.offerUpdateStatus(mList[pos]?.id.toString().request() , "accepted".request())
 			} else if (status == "reject") {
+				bind.loader.isVisible=true
 				viewModel.offerUpdateStatus(mList[pos]?.id.toString().request() , "rejected".request())
 			}
 		}

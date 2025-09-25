@@ -74,227 +74,252 @@
                 android:textAlignment="center" />
 
             <LinearLayout
-                android:id="@+id/click"
+                style="@style/shadowStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="@dimen/margin"
-                android:gravity="center_vertical">
-
-                <com.google.android.material.card.MaterialCardView
-                    android:id="@+id/icon_card"
-                    style="@style/cardStyle"
-                    android:layout_width="60dp"
-                    android:layout_height="60dp"
-                    app:cardBackgroundColor="@color/tertiaryContainer"
-                    app:cardElevation="0dp">
-
-                    <androidx.appcompat.widget.AppCompatImageView
-                        android:id="@+id/productImage"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:src="@drawable/shoe" />
-
-                </com.google.android.material.card.MaterialCardView>
+                android:layout_margin="@dimen/half_margin"
+                android:background="@drawable/card_16"
+                android:gravity="center_vertical"
+                android:orientation="vertical"
+                android:padding="@dimen/padding">
 
                 <LinearLayout
-                    android:layout_width="wrap_content"
+                    android:id="@+id/click"
+                    style="@style/shadowStyle"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="@dimen/half_margin"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
+                    android:gravity="center_vertical">
 
-                    <TextView
-                        android:id="@+id/productName"
-                        style="@style/TitleLarge"
-                        android:layout_width="match_parent"
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/icon_card"
+                        style="@style/cardStyle"
+                        android:layout_width="60dp"
+                        android:layout_height="60dp"
+                        app:cardBackgroundColor="@color/tertiaryContainer"
+                        app:cardElevation="0dp">
+
+                        <androidx.appcompat.widget.AppCompatImageView
+                            android:id="@+id/productImage"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:src="@drawable/shoe" />
+
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Premium Wireless Headphones" />
+                        android:layout_marginHorizontal="@dimen/half_margin"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/productName"
+                            style="@style/TitleLarge"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Premium Wireless Headphones" />
+
+                        <TextView
+                            android:id="@+id/productColor"
+                            style="@style/BodyLarge"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:alpha="0.8"
+                            android:text="White" />
+
+                    </LinearLayout>
+                </LinearLayout>
+
+                <com.google.android.material.divider.MaterialDivider
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_margin="@dimen/half_margin" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/half_margin"
+                    android:orientation="horizontal">
 
                     <TextView
-                        android:id="@+id/productColor"
                         style="@style/BodyLarge"
-                        android:layout_width="match_parent"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:alpha="0.8"
-                        android:text="White" />
+                        android:layout_marginEnd="@dimen/margin"
+                        android:layout_weight="1"
+                        android:alpha="0.7"
+                        android:text="@string/order_id" />
+
+                    <TextView
+                        android:id="@+id/orderId"
+                        style="@style/TitleMedium"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="?selectableItemBackground"
+                        android:text="#48643546" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/half_margin"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        style="@style/BodyLarge"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="@dimen/margin"
+                        android:layout_weight="1"
+                        android:alpha="0.7"
+                        android:text="@string/order_date" />
+
+                    <TextView
+                        android:id="@+id/orderDate"
+                        style="@style/TitleMedium"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="?selectableItemBackground"
+                        android:text="Jan 15, 2025" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginVertical="@dimen/half_margin"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        style="@style/TitleMedium"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="@dimen/margin"
+                        android:layout_weight="1"
+                        android:alpha="0.7"
+                        android:text="@string/sold_by" />
+
+                    <TextView
+                        style="@style/BodyLarge"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="?selectableItemBackground"
+                        android:text="TechGear Pro" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/half_margin"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        style="@style/BodyLarge"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="@dimen/margin"
+                        android:layout_weight="1"
+                        android:alpha="0.7"
+                        android:text="@string/quantity" />
+
+                    <TextView
+                        android:id="@+id/quantity"
+                        style="@style/TitleMedium"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="?selectableItemBackground"
+                        android:text="1" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/half_margin"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        style="@style/BodyLarge"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="@dimen/margin"
+                        android:layout_weight="1"
+                        android:alpha="0.7"
+                        android:text="@string/category" />
+
+                    <TextView
+                        android:id="@+id/category"
+                        style="@style/TitleMedium"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="?selectableItemBackground"
+                        android:text="Electronics" />
 
                 </LinearLayout>
 
             </LinearLayout>
 
             <LinearLayout
+                style="@style/shadowStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/half_margin"
-                android:orientation="horizontal">
+                android:layout_margin="@dimen/half_margin"
+                android:background="@drawable/card_16"
+                android:gravity="center_vertical"
+                android:orientation="vertical"
+                android:padding="@dimen/padding">
 
                 <TextView
-                    style="@style/BodyLarge"
-                    android:layout_width="0dp"
+                    style="@style/TitleLarge"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/margin"
-                    android:layout_marginEnd="@dimen/margin"
-                    android:layout_weight="1"
-                    android:alpha="0.7"
-                    android:text="@string/order_id" />
+                    android:layout_marginHorizontal="@dimen/half_margin"
+                    android:drawableStart="@drawable/ic_vehicle"
+                    android:drawablePadding="@dimen/half_margin"
+                    android:text="Shipping Updates"
+                    app:drawableTint="@color/primary" />
 
-                <TextView
-                    android:id="@+id/orderId"
-                    style="@style/TitleMedium"
-                    android:layout_width="wrap_content"
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/shippingRecycler"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="@dimen/margin"
-                    android:background="?selectableItemBackground"
-                    android:text="#48643546" />
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    tools:itemCount="2"
+                    tools:listitem="@layout/shipping_update_item" />
 
             </LinearLayout>
 
             <LinearLayout
+                style="@style/shadowStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/half_margin"
-                android:orientation="horizontal">
+                android:layout_margin="@dimen/half_margin"
+                android:background="@drawable/card_16"
+                android:gravity="center_vertical"
+                android:orientation="vertical"
+                android:padding="@dimen/padding">
 
                 <TextView
+                    style="@style/TitleLarge"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/half_margin"
+                    android:drawableStart="@drawable/ic_location_marker"
+                    android:drawablePadding="@dimen/half_margin"
+                    android:text="@string/delivery_address" />
+
+                <TextView
+                    android:id="@+id/address"
                     style="@style/BodyLarge"
-                    android:layout_width="0dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/margin"
-                    android:layout_marginEnd="@dimen/margin"
-                    android:layout_weight="1"
-                    android:alpha="0.7"
-                    android:text="@string/order_date" />
-
-                <TextView
-                    android:id="@+id/orderDate"
-                    style="@style/TitleMedium"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="@dimen/margin"
-                    android:background="?selectableItemBackground"
-                    android:text="Jan 15, 2025" />
-
+                    android:layout_marginHorizontal="@dimen/half_margin"
+                    android:alpha="0.8"
+                    android:text="12 Main Road Enginnering Churaha" />
             </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginVertical="@dimen/half_margin"
-                android:orientation="horizontal">
-
-                <TextView
-                    style="@style/TitleMedium"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/margin"
-                    android:layout_marginEnd="@dimen/margin"
-                    android:layout_weight="1"
-                    android:alpha="0.7"
-                    android:text="@string/sold_by" />
-
-                <TextView
-                    style="@style/BodyLarge"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="@dimen/margin"
-                    android:background="?selectableItemBackground"
-                    android:text="TechGear Pro" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/half_margin"
-                android:orientation="horizontal">
-
-                <TextView
-                    style="@style/BodyLarge"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/margin"
-                    android:layout_marginEnd="@dimen/margin"
-                    android:layout_weight="1"
-                    android:alpha="0.7"
-                    android:text="@string/quantity" />
-
-                <TextView
-                    android:id="@+id/quantity"
-                    style="@style/TitleMedium"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="@dimen/margin"
-                    android:background="?selectableItemBackground"
-                    android:text="1" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/half_margin"
-                android:orientation="horizontal">
-
-                <TextView
-                    style="@style/BodyLarge"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/margin"
-                    android:layout_marginEnd="@dimen/margin"
-                    android:layout_weight="1"
-                    android:alpha="0.7"
-                    android:text="@string/category" />
-
-                <TextView
-                    android:id="@+id/category"
-                    style="@style/TitleMedium"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="@dimen/margin"
-                    android:background="?selectableItemBackground"
-                    android:text="Electronics" />
-
-            </LinearLayout>
-
-            <TextView
-                style="@style/TitleLarge"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="@dimen/half_margin"
-                android:layout_marginTop="@dimen/margin"
-                android:drawableStart="@drawable/ic_vehicle"
-                android:drawablePadding="@dimen/half_margin"
-                android:text="Shipping Updates"
-                app:drawableTint="@color/primary" />
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/shippingRecycler"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                tools:itemCount="2"
-                tools:listitem="@layout/shipping_update_item" />
-
-
-            <TextView
-                style="@style/TitleLarge"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="@dimen/half_margin"
-                android:layout_marginTop="@dimen/margin"
-                android:drawableStart="@drawable/ic_location_marker"
-                android:drawablePadding="@dimen/half_margin"
-                android:text="@string/delivery_address" />
-
-            <TextView
-                android:id="@+id/address"
-                style="@style/BodyLarge"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="@dimen/half_margin"
-                android:layout_marginBottom="@dimen/margin"
-                android:alpha="0.8"
-                android:text="12 Main Road Enginnering Churaha" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -325,25 +350,34 @@
 
             </LinearLayout>
 
-            <TextView
-                style="@style/TitleLarge"
+            <LinearLayout
+                style="@style/shadowStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="@dimen/half_margin"
-                android:layout_marginTop="@dimen/margin"
-                android:drawableStart="@drawable/ic_shield"
-                android:drawablePadding="@dimen/half_margin"
-                android:text="@string/swiftbid_buyer_protection" />
+                android:layout_margin="@dimen/half_margin"
+                android:background="@drawable/card_16"
+                android:gravity="center_vertical"
+                android:orientation="vertical"
+                android:padding="@dimen/padding">
 
-            <TextView
-                style="@style/BodyLarge"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="@dimen/half_margin"
-                android:layout_marginBottom="@dimen/margin"
-                android:alpha="0.8"
-                android:text="Get full refund if the item is not as described or if is not delivered" />
+                <TextView
+                    style="@style/TitleLarge"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/half_margin"
+                    android:drawableStart="@drawable/ic_shield"
+                    android:drawablePadding="@dimen/half_margin"
+                    android:text="@string/swiftbid_buyer_protection" />
 
+                <TextView
+                    style="@style/BodyLarge"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/half_margin"
+                    android:alpha="0.8"
+                    android:text="Get full refund if the item is not as described or if is not delivered" />
+
+            </LinearLayout>
         </LinearLayout>
 
     </androidx.core.widget.NestedScrollView>

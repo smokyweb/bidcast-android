@@ -107,18 +107,25 @@ class ProductDetailsFragment : BaseFragment<ProductViewModel, FragmentProductDet
 					}
 					
 					bind.price.text = mData?.pricing.toString().asMoney()
-					if (mData?.offer != null) {
+					
+					val offer = mData?.offer
+					if (offer != null) {
 						bind.offerLayout.isVisible = true
-						bind.offerHeading.text = "Offer ${mData.offer.status}"
-						bind.offerPrice.text = mData.offer.amount.toString().asMoney()
-						if (mData.offer.status == "accepted") {
-							bind.price.paintFlags = bind.price.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
-							bind.price.setTextColor(ContextCompat.getColor(mCtx, R.color.outlineVariant))
-						}
-						if (mData.offer.status == "rejected") {
-							bind.makeOffer.isVisible = mData.acceptOffers == true
-						} else {
-							bind.makeOffer.isVisible = false
+						bind.offerHeading.text = "Offer ${offer.status}"
+						bind.offerPrice.text = offer.amount.toString().asMoney()
+						
+						when (offer.status) {
+							"accepted" -> {
+								bind.price.paintFlags = bind.price.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
+								bind.price.setTextColor(ContextCompat.getColor(mCtx, R.color.outlineVariant))
+								bind.makeOffer.isVisible = false
+							}
+							"rejected" -> {
+								bind.makeOffer.isVisible = mData.acceptOffers == true
+							}
+							else -> {
+								bind.makeOffer.isVisible = false
+							}
 						}
 					} else {
 						bind.offerLayout.isVisible = false

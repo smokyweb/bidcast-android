@@ -14,7 +14,12 @@
         android:id="@+id/myOrdersFragment"
         android:name="io.bidswipe.app.ui.dashboard.sellerHub.MyOrdersFragment"
         android:label="fragment_my_orders"
-        tools:layout="@layout/fragment_my_orders" />
+        tools:layout="@layout/fragment_my_orders" >
+
+        <action
+            android:id="@+id/toOrderStatus"
+            app:destination="@id/orderStatusFragment" />
+    </fragment>
     <fragment
         android:id="@+id/sellerOffersFragment"
         android:name="io.bidswipe.app.ui.dashboard.sellerHub.SellerOffersFragment"
@@ -91,5 +96,10 @@
         android:name="io.bidswipe.app.ui.dashboard.sellerHub.PayoutFragment"
         android:label="fragment_payout"
         tools:layout="@layout/fragment_payout" />
+    <fragment
+        android:id="@+id/orderStatusFragment"
+        android:name="io.bidswipe.app.ui.dashboard.product.OrderStatusFragment"
+        android:label="fragment_order_status"
+        tools:layout="@layout/fragment_order_status" />
 
 </navigation>
