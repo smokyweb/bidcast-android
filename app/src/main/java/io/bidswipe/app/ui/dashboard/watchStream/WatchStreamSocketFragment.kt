@@ -894,34 +894,76 @@ class WatchStreamSocketFragment : BaseFragment<StreamViewModel , FragmentWatchSt
     override fun onDestroy() {
         super.onDestroy()
         log("Subscriber cleanup starting")
-        try {
+        
+        // Cancel job first - safest operation
+        runSafe {
             subscriberStateJob?.cancel()
-        } catch (_: Throwable) {
+            subscriberStateJob = null
         }
-        try {
-            sourceVideoTracks.forEach { it.disableAsync() }
-        } catch (_: Throwable) {
+        
+        // Cleanup video tracks safely
+        runSafe {
+            sourceVideoTracks.forEach { track ->
+                try {
+                    track.disableAsync()
+                } catch (e: Exception) {
+                    log("Error disabling video track: ${e.message}")
+                }
+            }
+            sourceVideoTracks.clear()
         }
-        try {
-            audioTrack?.disableAsync()
-        } catch (_: Throwable) {
+        
+        // Cleanup audio track safely
+        runSafe {
+            audioTrack?.let { track ->
+                try {
+                    track.disableAsync()
+                } catch (e: Exception) {
+                    log("Error disabling audio track: ${e.message}")
+                }
+            }
+            audioTrack = null
         }
-//		try {
-//			bind.hostView.clearImage()
-//		} catch (_: Throwable) {
-//		}
-        try {
-            viewModel.viewModelScope.launch { subscriber.unsubscribe(); subscriber.disconnect() }
-        } catch (_: Throwable) {
+        
+        // Unsubscribe and disconnect safely
+        runSafe {
+            if (::subscriber.isInitialized) {
+                viewModel.viewModelScope.launch {
+                    try {
+                        subscriber.unsubscribe()
+                    } catch (e: Exception) {
+                        log("Error unsubscribing: ${e.message}")
+                    }
+                    try {
+                        subscriber.disconnect()
+                    } catch (e: Exception) {
+                        log("Error disconnecting subscriber: ${e.message}")
+                    }
+                }
+            }
         }
-        try {
-            bind.hostView.release()
-        } catch (_: Throwable) {
+        
+        // Cleanup video view safely
+        runSafe {
+            runSafe {
+                bind.hostView.release()
+            }
         }
-        try {
-            eglBase.release()
-        } catch (_: Throwable) {
+        
+        // Cleanup EGL base safely
+        runSafe {
+            if (::eglBase.isInitialized) {
+                try {
+                    eglBase.release()
+                } catch (e: Exception) {
+                    log("Error releasing EGL base: ${e.message}")
+                }
+            }
         }
+        
+        // Force garbage collection
+        System.gc()
+        
         log("Subscriber cleanup finished")
     }
 

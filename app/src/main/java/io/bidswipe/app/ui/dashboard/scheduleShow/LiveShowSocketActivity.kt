@@ -253,79 +253,132 @@ class LiveShowSocketActivity : BaseActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        socketManager?.emitEndRoom(roomID)
-        socketManager?.leaveRoom(roomID, userId)
-        socketManager?.disconnect()
-//		stopLiveDurationTimer()
+        log("Publisher cleanup starting")
+        
+        // Socket cleanup
+        runSafe {
+            socketManager?.emitEndRoom(roomID)
+            socketManager?.leaveRoom(roomID, userId)
+            socketManager?.disconnect()
+        }
 
         // Cancel publisher state monitoring job first
-        try {
+        runSafe {
             publisherStateJob?.cancel()
-        } catch (e: Throwable) {
-            e.printStackTrace()
+            publisherStateJob = null
         }
 
-        // Stop and release audio source first
-        try {
-            audioSource?.stopCapture()
-            audioSource?.release()
-        } catch (_: Throwable) {
+        // Stop and release audio source safely
+        runSafe {
+            audioSource?.let { source ->
+                try {
+                    source.stopCapture()
+                } catch (e: Exception) {
+                    log("Error stopping audio capture: ${e.message}")
+                }
+                try {
+                    source.release()
+                } catch (e: Exception) {
+                    log("Error releasing audio source: ${e.message}")
+                }
+            }
+            audioSource = null
         }
 
-        // Stop and release video source
-        try {
-            videoSource?.stopCapture()
-            videoSource?.release()
-        } catch (_: Throwable) {
+        // Stop and release video source safely
+        runSafe {
+            videoSource?.let { source ->
+                try {
+                    source.stopCapture()
+                } catch (e: Exception) {
+                    log("Error stopping video capture: ${e.message}")
+                }
+                try {
+                    source.release()
+                } catch (e: Exception) {
+                    log("Error releasing video source: ${e.message}")
+                }
+            }
+            videoSource = null
         }
 
-        // Disable audio track and set volume to 0
-        try {
+        // Disable audio track safely
+        runSafe {
             audioTrack?.let { track ->
-                track.setEnabled(false)
-                track.setVolume(0.0)
+                try {
+                    track.setEnabled(false)
+                    track.setVolume(0.0)
+                } catch (e: Exception) {
+                    log("Error disabling audio track: ${e.message}")
+                }
             }
-        } catch (_: Throwable) {
+            audioTrack = null
         }
 
-        // Remove video sink from video track
-        try {
+        // Remove video sink safely
+        runSafe {
             videoTrack?.let { track ->
-                track.removeVideoSink(bind.hostView)
+                try {
+                    track.removeVideoSink(bind.hostView)
+                } catch (e: Exception) {
+                    log("Error removing video sink: ${e.message}")
+                }
             }
-        } catch (_: Throwable) {
+            videoTrack = null
         }
 
-        // Unpublish and disconnect publisher
-        try {
-            viewModel.viewModelScope.launch {
-                publisher.unpublish()
-                publisher.disconnect()
+        // Unpublish and disconnect publisher safely
+        runSafe {
+            if (::publisher.isInitialized) {
+                viewModel.viewModelScope.launch {
+                    try {
+                        publisher.unpublish()
+                    } catch (e: Exception) {
+                        log("Error unpublishing: ${e.message}")
+                    }
+                    try {
+                        publisher.disconnect()
+                    } catch (e: Exception) {
+                        log("Error disconnecting publisher: ${e.message}")
+                    }
+                }
             }
-        } catch (_: Throwable) {
         }
 
-        // Clean up video view
-        try {
-            bind.hostView.clearImage()
-            bind.hostView.release()
-        } catch (_: Throwable) {
+        // Clean up video view safely
+        runSafe {
+            try {
+                bind.hostView.clearImage()
+            } catch (e: Exception) {
+                log("Error clearing video view: ${e.message}")
+            }
+            try {
+                bind.hostView.release()
+            } catch (e: Exception) {
+                log("Error releasing video view: ${e.message}")
+            }
         }
 
-        // Release EGL base
-        try {
-            eglBase.release()
-        } catch (_: Throwable) {
+        // Release EGL base safely
+        runSafe {
+            if (::eglBase.isInitialized) {
+                try {
+                    eglBase.release()
+                } catch (e: Exception) {
+                    log("Error releasing EGL base: ${e.message}")
+                }
+            }
         }
 
-        // Force cleanup since Millicast's release() is broken
+        // Force cleanup
         forcedCleanup()
 
         // Give system time to release microphone
         handler.postDelayed({
             System.gc()
         }, 100)
-
+        
+        log("Publisher cleanup finished")
     }
 
     fun initPip() {
