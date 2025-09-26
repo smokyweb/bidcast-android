@@ -17,10 +17,12 @@ import io.bidswipe.app.interfaces.AlertClicks
 import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.network.response.GetPremierShopResponse
+import io.bidswipe.app.ui.custom.AlertType
 import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.utils.finish
 import io.bidswipe.app.utils.loadUrl
 import io.bidswipe.app.utils.parse
+import io.bidswipe.app.utils.setHapticClickListener
 
 @SuppressLint("NotifyDataSetChanged")
 class PremierShopFragment : BaseFragment<SellerHubViewModel , FragmentPremierShopBinding>() {
@@ -62,7 +64,6 @@ class PremierShopFragment : BaseFragment<SellerHubViewModel , FragmentPremierSho
 
 		bind.loader.isVisible = true
 		viewModel.getPremierShop()
-
 		viewModel.getPremierShopRepo.observe(viewLifecycleOwner) {
 
 			when (it) {
@@ -104,6 +105,11 @@ class PremierShopFragment : BaseFragment<SellerHubViewModel , FragmentPremierSho
 
 					if (progress < 100) {
 						bind.applyBtn.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(mCtx , R.color.outlineVariant))
+					}else if(progress==100){
+						bind.applyBtn.setHapticClickListener {
+							bind.loader.isVisible=true
+							viewModel.applyPremierShop()
+						}
 					}
 
 					bind.progress.text = mData?.currentProgress
@@ -141,8 +147,46 @@ class PremierShopFragment : BaseFragment<SellerHubViewModel , FragmentPremierSho
 			}
 
 		}
-
-
+	
+		viewModel.applyPremierShopRepo.observe(viewLifecycleOwner) {
+			when (it) {
+				is Resource.Success -> {
+					bind.loader.isVisible = false
+					viewModel.applyPremierShopRepo.value = null
+					
+					AppBottomSheet(
+						mCtx,
+						R.drawable.ic_success,
+						"Premier Shop Applied",
+						it.value.message?:"",
+						primaryBtnText = "Okay",
+						secondaryBtnText = "Cancel",
+						canCancel = true,
+						showSecondary = false,
+						iconPadding = 16,
+						alertType = AlertType.SUCCESS,
+						clicks = object : AlertClicks {
+							override fun primaryClick(dialog: AppBottomSheet) {
+								dialog.dismiss()
+							}
+							
+							override fun secondaryClick(dialog: AppBottomSheet) {
+								dialog.dismiss()
+							}
+						}
+					).show()
+				}
+				
+				is Resource.Error -> {
+					bind.loader.isVisible = false
+					viewModel.applyPremierShopRepo.value = null
+				}
+				
+				else -> {}
+				
+			}
+		}
+		
 	}
 
 }

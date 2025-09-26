@@ -59,7 +59,7 @@ data class UserProfileResponse(
         @SerializedName("preference")
         val preferences: SettingListResponse.Data?,
         @SerializedName("wallet_amount")
-        val walletAmount: Int?,
+        val walletAmount: Any?,
         ) {
 
 		@Keep

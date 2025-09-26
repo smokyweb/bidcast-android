@@ -13,9 +13,8 @@
         app:headerMode="BACK_BUTTON_TITLE_ACTION"
         app:headerTitle="Send as a Gift"
         app:layout_constraintTop_toTopOf="parent"
-        app:primaryIconDrawable="@drawable/close_ic"
         app:showBackButton="true"
-        app:showPrimaryIcon="true"
+        app:showPrimaryIcon="false"
         app:showSecondaryIcon="false" />
 
     <androidx.core.widget.NestedScrollView

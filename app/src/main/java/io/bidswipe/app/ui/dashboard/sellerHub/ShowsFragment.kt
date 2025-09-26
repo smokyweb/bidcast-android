@@ -50,12 +50,12 @@ class ShowsFragment : BaseFragment<SellerHubViewModel , FragmentShowsBinding>() 
 		override fun itemClick(pos : Int , status : String?) {
 
 			val profile = App.profileResponse.value
-
+			
 			if (profile?.sellerIdentityStatus != "verified") {
 				startActivity(Intent(mCtx , SellerVerificationActivity::class.java))
 				return
 			}
-
+			
 			if (profile.hasCardAdded != true || profile.hasShippingAddress != true) {
 				showPaymentAndAddressSheet()
 				return

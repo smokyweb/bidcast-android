@@ -38,6 +38,7 @@ import io.bidswipe.app.network.response.GetPrepareStepResponse
 import io.bidswipe.app.network.response.GetProductDetailsResponse
 import io.bidswipe.app.network.response.GetProductsByStatusResponse
 import io.bidswipe.app.network.response.GetProductsResponse
+import io.bidswipe.app.network.response.GetPromotePlansResponse
 import io.bidswipe.app.network.response.GetPromoteToolsResponse
 import io.bidswipe.app.network.response.GetPurchaseDetail
 import io.bidswipe.app.network.response.GetRatingResponse
@@ -619,6 +620,17 @@ interface ApiInterface {
 	suspend fun getPromoteTools(
 	) : GetPromoteToolsResponse
 
+	@GET("api/get-promote-show")
+	suspend fun getPromoteShowList(
+	) : GetPromotePlansResponse
+
+	@Multipart
+	@POST("api/schedule-show/store-promote-show")
+	suspend fun promoteShow(
+		@Part("schedule_show_id") scheduleShowId : RequestBody ,
+		@Part("promote_show_id") promoteShowId : RequestBody ,
+	) : CommonResponse
+
 	@Multipart
 	@POST("api/send-tip-amount")
 	suspend fun sendTipAmount(
@@ -626,6 +638,16 @@ interface ApiInterface {
 		@Part("amount") amount : RequestBody ,
 		@Part("card_number") cardNumber : RequestBody?
 	) : SentTipAmountResponse
-
+	
+	@Multipart
+	@POST("api/stripe/fund-transfer")
+	suspend fun payout(
+		@Part("amount") amount: RequestBody
+	) : CommonResponse
+	
+	@POST("api/apply-premier-shop")
+	suspend fun applyPremierShop(
+	) : CommonResponse
+	
 }
 

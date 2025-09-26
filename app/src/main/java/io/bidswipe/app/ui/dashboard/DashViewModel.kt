@@ -26,6 +26,7 @@ import io.bidswipe.app.network.response.GetOffersResponse
 import io.bidswipe.app.network.response.GetPrepareStepResponse
 import io.bidswipe.app.network.response.GetProductsByStatusResponse
 import io.bidswipe.app.network.response.GetProductsResponse
+import io.bidswipe.app.network.response.GetPromotePlansResponse
 import io.bidswipe.app.network.response.GetSubCategoriesResponse
 import io.bidswipe.app.network.response.UpdateLiveStatusResponse
 import io.bidswipe.app.network.response.UpdateOfferResponse
@@ -470,6 +471,25 @@ class DashViewModel @Inject constructor(val repo : DashRepository) : ViewModel()
 
 	fun getMailClasses() = viewModelScope.launch {
 		_getMailClassesResponse.value = repo.getMailClasses()
+	}
+	
+	private var _getPromoteShowListResponse = MutableLiveData<Resource<GetPromotePlansResponse>>()
+	val getPromoteShowListRepo : MutableLiveData<Resource<GetPromotePlansResponse>>
+		get() = _getPromoteShowListResponse
+
+	fun getPromoteShowList() = viewModelScope.launch {
+		_getPromoteShowListResponse.value = repo.getPromoteShowList()
+	}
+	
+	private var _promoteShowResponse = MutableLiveData<Resource<CommonResponse>>()
+	val promoteShowRepo : MutableLiveData<Resource<CommonResponse>>
+		get() = _promoteShowResponse
+
+	fun promoteShow(
+		scheduleShowId : RequestBody,
+		promoteShowId : RequestBody
+	) = viewModelScope.launch {
+		_promoteShowResponse.value = repo.promoteShow(scheduleShowId , promoteShowId)
 	}
 
 

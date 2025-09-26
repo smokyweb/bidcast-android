@@ -253,4 +253,23 @@ class SellerHubViewModel @Inject constructor(val repo : DashRepository) : ViewMo
 		_getPromoteToolsResponse.value = repo.getPromoteTools()
 	}
 
+	private var _payoutResponse = MutableLiveData<Resource<CommonResponse>>()
+	val payoutRepo : MutableLiveData<Resource<CommonResponse>>
+		get() = _payoutResponse
+
+	fun payout(
+		amount : RequestBody,
+	) = viewModelScope.launch {
+		_payoutResponse.value = repo.payout(amount)
+	}
+
+	private var _applyPremierShopResponse = MutableLiveData<Resource<CommonResponse>>()
+	val applyPremierShopRepo : MutableLiveData<Resource<CommonResponse>>
+		get() = _applyPremierShopResponse
+
+	fun applyPremierShop(
+	) = viewModelScope.launch {
+		_applyPremierShopResponse.value = repo.applyPremierShop()
+	}
+
 }

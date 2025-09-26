@@ -953,7 +953,7 @@ class WatchStreamSocketFragment : BaseFragment<StreamViewModel , FragmentWatchSt
                     return@setHapticClickListener
                 }
 
-                if (walletRadio.isChecked && customOffer.text.toString().toInt() > (App.profileResponse.value?.walletAmount ?: 0)) {
+                if (walletRadio.isChecked && customOffer.text.toString().toDouble() > ((App.profileResponse.value?.walletAmount?: "0.0").toString().toDouble())) {
                     Alerts.error(mCtx, "Insufficient balance")
                     return@setHapticClickListener
                 }

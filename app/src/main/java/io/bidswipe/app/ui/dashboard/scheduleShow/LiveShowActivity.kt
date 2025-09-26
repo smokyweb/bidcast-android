@@ -904,11 +904,11 @@ class LiveShowActivity : BaseActivity() {
 			)
 		)
 
-		promoteSheetBind.optionList.adapter = PromoteSheetAdapter(mList , object : RecyclerClicks {
-			override fun itemClick(pos : Int , status : String?) {
-
-			}
-		})
+//		promoteSheetBind.optionList.adapter = PromoteSheetAdapter(mList , object : RecyclerClicks {
+//			override fun itemClick(pos : Int , status : String?) {
+//
+//			}
+//		})
 
         promoteSheetBind.close.setHapticClickListener {
 			promoteSheet.dismiss()
