@@ -108,6 +108,24 @@ class SocketManager private constructor(
         viewerJoinEmitted = false
     }
 
+    fun createRoom(roomId: String, liveShowData: LiveShowModel) {
+        val payload = JSONObject().apply {}
+        Log.d(TAG, "EMIT: room_created - RoomId: $payload")
+        liveShowData.products.first()?.isCurrent = true
+        socket?.emit("room_create", liveShowData.toJson())
+    }
+
+    fun onRoomCreated(listener: (bidJson: JSONObject) -> Unit) {
+        socket?.off("room_create_get")
+        socket?.on("room_create_get") { args ->
+            val obj = args.firstOrNull()
+            if (obj is JSONObject) {
+                Log.d(TAG, "RECEIVED: create_room_get - $obj")
+                listener(obj)
+            }
+        }
+    }
+
     fun joinRoom(roomId: String, userId: String, listener: (liveShowJson: JSONObject) -> Unit) {
         // Avoid duplicate join for the same room in the same session
         if (hasJoinedRoom && currentRoomId == roomId) {
@@ -138,11 +156,74 @@ class SocketManager private constructor(
         socket?.emit("leave_room", payload)
     }
 
-    fun onBidUpdate(listener: (bidJson: JSONObject) -> Unit) {
-        socket?.on("bid_update") { args ->
+    fun onDurationUpdate(listener: (timerJson: JSONObject) -> Unit) {
+        socket?.off("show_timer_update")
+        socket?.on("show_timer_update") { args ->
             val obj = args.firstOrNull()
             if (obj is JSONObject) {
-                Log.d(TAG, "RECEIVED: bid_update - $obj")
+                Log.d(TAG, "RECEIVED: show_timer_update - $obj")
+                listener(obj)
+            }
+        }
+    }
+
+    fun emitEndRoom(roomId: String) {
+        val payload = JSONObject().apply {
+            put("room_id", roomId)
+        }
+        Log.d(TAG, "EMIT: endRoom - RoomId: $payload")
+        socket?.emit("endRoom", payload)
+    }
+
+    fun emitBid(
+        roomId: String,
+        userId: String,
+        userName: String,
+        userImage: String,
+        productId: String?,
+        bidAmount: String
+    ) {
+        val payload = JSONObject().apply {
+            put("room_id", roomId)
+            put("bid_amount", bidAmount)
+            put("user_name", userName)
+            put("user_image", userImage)
+            put("user_id", userId)
+            put("product_id", productId)
+        }
+
+        Log.d(
+            TAG,
+            "EMIT: place_bid - RoomId: $roomId, UserId: $userId, BidAmount: $bidAmount, ProductId: $productId"
+        )
+        socket?.emit("place_bid", payload)
+    }
+
+    fun getBidTimerUpdate(listener: (bidJson: JSONObject) -> Unit) {
+        socket?.on("bid_timer_update") { args ->
+            val obj = args.firstOrNull()
+            if (obj is JSONObject) {
+                Log.d(TAG, "RECEIVED: bid_timer_update - $obj")
+                listener(obj)
+            }
+        }
+    }
+
+    fun getHighestBid(listener: (bidJson: JSONObject) -> Unit) {
+        socket?.on("get_highest_bid") { args ->
+            val obj = args.firstOrNull()
+            if (obj is JSONObject) {
+                Log.d(TAG, "RECEIVED: get_highest_bid - $obj")
+                listener(obj)
+            }
+        }
+    }
+
+    fun getBidFinalize(listener: (bidJson: JSONObject) -> Unit) {
+        socket?.on("bid_finalized") { args ->
+            val obj = args.firstOrNull()
+            if (obj is JSONObject) {
+                Log.d(TAG, "RECEIVED: bid_finalized - $obj")
                 listener(obj)
             }
         }
@@ -189,29 +270,7 @@ class SocketManager private constructor(
         }
     }
 
-    fun emitBid(
-        roomId: String,
-        userId: String,
-        userName: String,
-        userImage: String,
-        productId: String?,
-        bidAmount: String
-    ) {
-        val payload = JSONObject().apply {
-            put("roomId", roomId)
-            put("userId", userId)
-            put("userName", userName)
-            put("userImage", userImage)
-            put("productId", productId)
-            put("bidAmount", bidAmount)
-            put("timestamp", Utils.timestamp())
-        }
-        Log.d(
-            TAG,
-            "EMIT: place_bid - RoomId: $roomId, UserId: $userId, BidAmount: $bidAmount, ProductId: $productId"
-        )
-        socket?.emit("place_bid", payload)
-    }
+
 
     /**
      * Place a bid using LiveSocketModel structure
@@ -371,8 +430,8 @@ class SocketManager private constructor(
     fun onViewerCount(listener: (count: Int) -> Unit) {
         socket?.on("viewerCount") { args ->
             val obj = args.firstOrNull()
-            if (obj is JSONObject) {
-                val count = obj.optInt("count", 0)
+            if (obj is String) {
+                val count = obj.toInt()
                 Log.d(TAG, "RECEIVED: viewer_count - Count: $count")
                 listener(count)
             }
@@ -460,43 +519,9 @@ class SocketManager private constructor(
         socket?.emit("message", payload)
     }
 
-    fun createRoom(roomId: String, liveShowData: LiveShowModel) {
-        val payload = JSONObject().apply {}
-        Log.d(TAG, "EMIT: room_created - RoomId: $payload")
-        liveShowData.products.first()?.isCurrent = true
-        socket?.emit("room_create", liveShowData.toJson())
-    }
-
-    fun onRoomCreated(listener: (bidJson: JSONObject) -> Unit) {
-        socket?.off("room_create_get")
-        socket?.on("room_create_get") { args ->
-            val obj = args.firstOrNull()
-            if (obj is JSONObject) {
-                Log.d(TAG, "RECEIVED: create_room_get - $obj")
-                listener(obj)
-            }
-        }
-    }
 
 
-    fun onDurationUpdate(listener: (timerJson: JSONObject) -> Unit) {
-        socket?.off("show_timer_update")
-        socket?.on("show_timer_update") { args ->
-            val obj = args.firstOrNull()
-            if (obj is JSONObject) {
-                Log.d(TAG, "RECEIVED: show_timer_update - $obj")
-                listener(obj)
-            }
-        }
-    }
 
-    fun emitEndRoom(roomId: String) {
-        val payload = JSONObject().apply {
-            put("room_id", roomId)
-        }
-        Log.d(TAG, "EMIT: endRoom - RoomId: $payload")
-        socket?.emit("endRoom", payload)
-    }
 
 }
 

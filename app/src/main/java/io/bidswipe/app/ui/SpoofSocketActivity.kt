@@ -35,12 +35,12 @@ class SpoofSocketActivity : AppCompatActivity() {
 
     private fun setupSocketListeners() {
         // Listen for bid updates
-        socketManager.onBidUpdate { bidJson ->
+        /*socketManager.onBidUpdate { bidJson ->
             runOnUiThread {
                 val message = "Bid Update: ${bidJson.toString()}"
                 appendMessage(message)
             }
-        }
+        }*/
 
         // Listen for viewer count updates
         socketManager.onViewerCount { count ->

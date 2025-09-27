@@ -1019,7 +1019,7 @@ class LiveShowActivity : BaseActivity() {
 
 				log("LIVE ADDED PRODUCTS : $data")
 
-				val productAdapter = FirebaseProductAdapter(productList , object : RecyclerClicks {
+				/*val productAdapter = FirebaseProductAdapter(productList , object : RecyclerClicks {
 					override fun itemClick(pos : Int , status : String?) {
 
 						if (productList[pos]?.status == "sold") {
@@ -1037,9 +1037,9 @@ class LiveShowActivity : BaseActivity() {
 						}
 					}
 
-				})
+				})*/
 
-				productSheetBind.recycler.adapter = productAdapter
+//				productSheetBind.recycler.adapter = productAdapter
 
 				productSheet.show()
 

@@ -17,6 +17,9 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
 import androidx.lifecycle.viewModelScope
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.ValueEventListener
 import com.gyf.immersionbar.ktx.immersionBar
 import com.gyf.immersionbar.ktx.navigationBarHeight
 import com.millicast.Core
@@ -36,6 +39,7 @@ import io.bidswipe.app.App
 import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseActivity
 import io.bidswipe.app.controller.CommentAdapter
+import io.bidswipe.app.controller.FirebaseProductAdapter
 import io.bidswipe.app.controller.LiveMoreAdapter
 import io.bidswipe.app.controller.PromoteSheetAdapter
 import io.bidswipe.app.databinding.ActivityLiveShowBinding
@@ -58,6 +62,7 @@ import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.ui.dashboard.DashViewModel
 import io.bidswipe.app.utils.Alerts
 import io.bidswipe.app.utils.Const
+import io.bidswipe.app.utils.FireRef
 import io.bidswipe.app.utils.SocketManager
 import io.bidswipe.app.utils.Utils
 import io.bidswipe.app.utils.bind
@@ -96,7 +101,7 @@ class LiveShowSocketActivity : BaseActivity() {
 	var showTime = ""
 	private var startTimeMillis: Long = 0L
 	private var zoomLevel = 1.0f
-	private var liveData: LiveShowModelOld? = null
+//	private var liveData: LiveShowModelOld? = null
 	private var liveShowData: LiveShowModel? = null
 	
 	private lateinit var publisher: Publisher
@@ -111,6 +116,8 @@ class LiveShowSocketActivity : BaseActivity() {
 	private var currentCameraId: String? = null
 	private var maxZoom: Float = 1.0f
 	private var minZoom: Float = 1.0f
+
+	private var  productList = mutableListOf<LiveShowModel.Product?>()
 	
 	private var promotePlans = mutableListOf<GetPromotePlansResponse.Data?>()
 	
@@ -242,7 +249,7 @@ class LiveShowSocketActivity : BaseActivity() {
 		
 		bind.shop.setHapticClickListener {
 			log("PUBLISHER :  ${publisher.currentState}")
-			if (publisher.isPublishing) {
+			if (isShowLive) {
 				showProductSheet()
 			} else {
 				Alerts.error(this, "Please start live show to access this feature")
@@ -560,21 +567,87 @@ class LiveShowSocketActivity : BaseActivity() {
 				}
 			}
 		}
+
+		socketManager?.getBidFinalize { json ->
+			runSafe {
+
+				runOnUiThread {
+
+					if (roomID == json.optString("room_id")){
+						val winner = json.getJSONObject("winner")
+
+						productList.find { it?.id == winner.optString("product_id") }?.status = "sold"
+
+//						log("UPDATED PRODUCT LIST : ${productList} ")
+
+						showProductSheet()
+
+					}
+
+
+				}
+
+			}
+		}
 	}
 	
 	// Product selection (simplified socket mirroring)
 	private fun showProductSheet() {
-		val productSheetBind =
-			ProductSheetBinding.bind(layoutInflater.inflate(R.layout.product_sheet, null, false))
-		val sheet = Alerts.appBottomSheet(this, true, productSheetBind)
-		// Expect server to push product list via a message; here we show only UI shell
-		productSheetBind.close.setHapticClickListener { sheet.dismiss() }
-		productSheetBind.addBtn.setHapticClickListener {
-			// Notify server that host set a product live
-			socketManager?.sendMessage(roomID, "set_current_product", userId, userName, userImage)
-			sheet.dismiss()
+		val productSheetBind = ProductSheetBinding.bind(layoutInflater.inflate(R.layout.product_sheet , null , false))
+		val productSheet = Alerts.appBottomSheet(this , true , productSheetBind)
+
+		var selectedPos = -1
+
+
+		val productAdapter = FirebaseProductAdapter(productList, object : RecyclerClicks {
+			override fun itemClick(pos: Int, status: String?) {
+
+				if (productList[pos]?.status == "sold") {
+
+					Alerts.error(this@LiveShowSocketActivity, "This product is already sold")
+
+				} else {
+					productList.forEachIndexed { index, item ->
+
+						item?.selected = index == pos
+						productSheetBind.recycler.adapter?.notifyDataSetChanged()
+
+					}
+					selectedPos = pos
+				}
+			}
+
+		})
+
+		productSheetBind.recycler.adapter = productAdapter
+
+		productSheet.show()
+
+		productSheetBind.close.setHapticClickListener {
+			productSheet.dismiss()
 		}
-		sheet.show()
+
+		productSheetBind.addBtn.setHapticClickListener {
+
+			if (selectedPos == - 1) {
+				Alerts.error(this@LiveShowSocketActivity , "Please select a product")
+				return@setHapticClickListener
+			}
+
+			val isAnyProductLive = liveShowData?.products?.any { it?.isCurrent == true } == true
+			if (isAnyProductLive) {
+				Alerts.error(this@LiveShowSocketActivity , "One Product is Already Live")
+				return@setHapticClickListener
+			}
+
+			val updates = mapOf(
+				"highestBid" to null ,
+				"bidCountDown" to null
+			)
+
+
+
+		}
 	}
 	
 	private fun endShowSheet() {
@@ -642,6 +715,15 @@ class LiveShowSocketActivity : BaseActivity() {
 		socketManager?.createRoom(roomID, data)
 		
 		socketManager?.onRoomCreated { obj ->
+			runSafe {
+				val showData = LiveShowModel.fromJson(obj)
+
+				productList.clear()
+
+				productList.addAll(showData.products)
+
+				log("ROOM CREATED : $showData")
+			}
 //			startLiveDurationTimer()
 		}
 		
@@ -702,9 +784,9 @@ class LiveShowSocketActivity : BaseActivity() {
 		
 		}
 		
-		log(liveData?.allowBidForAll.toString())
+		log(liveShowData?.allowBidForAll.toString())
 		
-		moreSheetBind.allowVerifiedUser.isChecked = liveData?.allowBidForAll == false
+		moreSheetBind.allowVerifiedUser.isChecked = liveShowData?.allowBidForAll == false
 		
 		if (audioSource?.isCapturing == true) {
 			moreSheetBind.muteIcon.setImageResource(draw.ic_mic)
