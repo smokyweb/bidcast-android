@@ -141,10 +141,6 @@ class SocketManager private constructor(
 
         socket?.emit("join_room", payload)
         listener(payload)
-
-        // Ensure we only have one handler
-        // socket?.off("join_room")
-
     }
 
     fun leaveRoom(roomId: String, userId: String) {
@@ -199,7 +195,7 @@ class SocketManager private constructor(
         socket?.emit("place_bid", payload)
     }
 
-    fun getBidTimerUpdate(listener: (bidJson: JSONObject) -> Unit) {
+    fun getBidTimerUpdate(listener: (json: JSONObject) -> Unit) {
         socket?.on("bid_timer_update") { args ->
             val obj = args.firstOrNull()
             if (obj is JSONObject) {
@@ -209,7 +205,7 @@ class SocketManager private constructor(
         }
     }
 
-    fun getHighestBid(listener: (bidJson: JSONObject) -> Unit) {
+    fun getHighestBid(listener: (json: JSONObject) -> Unit) {
         socket?.on("get_highest_bid") { args ->
             val obj = args.firstOrNull()
             if (obj is JSONObject) {
@@ -224,6 +220,32 @@ class SocketManager private constructor(
             val obj = args.firstOrNull()
             if (obj is JSONObject) {
                 Log.d(TAG, "RECEIVED: bid_finalized - $obj")
+                listener(obj)
+            }
+        }
+    }
+
+    fun setNextProduct(
+        roomId: String,
+        productId: String?
+    ) {
+        val payload = JSONObject().apply {
+            put("room_id", roomId)
+            put("product_id", productId)
+        }
+
+        Log.d(
+            TAG,
+            "EMIT: set_next_product - RoomId: $roomId, ProductId: $productId"
+        )
+        socket?.emit("set_next_product", payload)
+    }
+
+    fun getUpdatedProduct(listener: (json: JSONObject) -> Unit) {
+        socket?.on("next_product_set") { args ->
+            val obj = args.firstOrNull()
+            if (obj is JSONObject) {
+                Log.d(TAG, "RECEIVED: next_product_set - $obj")
                 listener(obj)
             }
         }
@@ -246,6 +268,7 @@ class SocketManager private constructor(
     /**
      * Listen for product status changes
      */
+
     fun onProductStatusUpdate(listener: (productJson: JSONObject) -> Unit) {
         socket?.on("product_status_update") { args ->
             val obj = args.firstOrNull()
@@ -259,7 +282,6 @@ class SocketManager private constructor(
     /**
      * Listen for current product changes
      */
-
     fun onCurrentProductChange(listener: (productJson: JSONObject) -> Unit) {
         socket?.on("current_product_change") { args ->
             val obj = args.firstOrNull()
@@ -275,7 +297,6 @@ class SocketManager private constructor(
     /**
      * Place a bid using LiveSocketModel structure
      */
-
     fun emitBidWithLiveSocketModel(
         liveSocket: LiveSocketModel,
         userId: String,
@@ -427,13 +448,12 @@ class SocketManager private constructor(
         }
     }
 
-    fun onViewerCount(listener: (count: Int) -> Unit) {
+    fun onViewerCount(listener: (count: JSONObject) -> Unit) {
         socket?.on("viewerCount") { args ->
             val obj = args.firstOrNull()
-            if (obj is String) {
-                val count = obj.toInt()
-                Log.d(TAG, "RECEIVED: viewer_count - Count: $count")
-                listener(count)
+            if (obj is JSONObject) {
+                Log.d(TAG, "RECEIVED: next_product_set - $obj")
+                listener(obj)
             }
         }
     }

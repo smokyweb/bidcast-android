@@ -127,6 +127,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
 				// Show bid countdown if available
 				val countdown = snapshot.child("bidCountDown").value?.toString()
+
 				if (!countdown.isNullOrEmpty()) {
 					bind.bidTime.isVisible = true
 					bind.bidTime.text = "Ends in $countdown"
@@ -408,12 +409,10 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 						it.parse(mCtx, TAG, object : AlertClicks {
 							override fun primaryClick(dialog: AppBottomSheet) {
 								dialog.dismiss()
-
 							}
 
 							override fun secondaryClick(dialog: AppBottomSheet) {
 								dialog.dismiss()
-
 							}
 						})
 					}

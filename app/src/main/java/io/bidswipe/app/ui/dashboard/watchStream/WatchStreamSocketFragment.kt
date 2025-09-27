@@ -37,7 +37,6 @@ import io.bidswipe.app.databinding.SendTipSheetBinding
 import io.bidswipe.app.interfaces.AlertClicks
 import io.bidswipe.app.model.LiveChatModel
 import io.bidswipe.app.model.LiveShowModel
-import io.bidswipe.app.model.LiveShowModelOld
 import io.bidswipe.app.ui.custom.AlertType
 import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.ui.dashboard.more.MoreActivity
@@ -78,23 +77,19 @@ class WatchStreamSocketFragment : BaseFragment<StreamViewModel, FragmentWatchStr
 	private lateinit var roomID: String
 	private lateinit var socketUrl: String
 
-	//    private var chatManager : ChatManager? = null
 	private var socketManager: SocketManager? = null
-	private var highestBidAmount: String? = "0"
+	private var highestBidAmount: String? = ""
 	private var bidProductId: String? = null
 	private var sellerId: String? = ""
 	private var inputSheet: BottomSheetDialog? = null
 	private var isAllowBidForAll = true
 	private var commentList = mutableListOf<LiveChatModel?>()
 	private lateinit var commentAdapter: CommentAdapter
-	private var product: LiveShowModelOld.Product? = null
-
 	private lateinit var subscriber: Subscriber
 	private lateinit var eglBase: EglBase
 	private var subscriberStateJob: Job? = null
 	val sourceVideoTracks: ArrayList<RemoteVideoTrack> = arrayListOf()
 	var audioTrack: RemoteAudioTrack? = null
-	private var streamName: String = ""
 
 	companion object {
 		fun newInstance(roomID: String, streamID: String) = WatchStreamSocketFragment().apply {
@@ -142,8 +137,6 @@ class WatchStreamSocketFragment : BaseFragment<StreamViewModel, FragmentWatchStr
 
 		bind.recycler.adapter = commentAdapter
 
-		// Streaming playback still via Zego engine
-//        StreamingManager.getInstance(requireContext()).startPlayingStream(roomID , bind.hostView)
 		subscriber = Core.createSubscriber()
 
 		initRenderer()
@@ -156,26 +149,42 @@ class WatchStreamSocketFragment : BaseFragment<StreamViewModel, FragmentWatchStr
 			socketManager?.initialize(socketUrl, mapOf("uid" to userId))
 			socketManager?.connect(onConnected = {
 				socketManager?.joinRoom(roomID, userId) {
-					socketManager?.sendMessage(
+					/*socketManager?.sendMessage(
 						roomID,
-						bind.text.value(),
+						"Joined \uD83D\uDC4B",
 						userId,
 						userName,
 						userImage
-					)
+					)*/
 				}
 //                socketManager?.emitViewerJoin(roomID)
 			}) { err -> log("Socket connect error: $err") }
 
-			socketManager?.onViewerCount { count ->
+			socketManager?.onViewerCount { args ->
 
-				log("VIEWER COUNT: $count")
+				runSafe {
+					if (args.optString("room_id") == roomID){
+						requireActivity().runOnUiThread {
+							bind.liveCount.text = args.optString("count")
+						}
+					}
 
-				runSafe { bind.liveCount.text = count.toString() }
+				}
 			}
 
 			socketManager?.getHighestBid { json ->
 				handleBidUpdate(json)
+			}
+
+			socketManager?.getUpdatedProduct { json ->
+				runSafe {
+					requireActivity().runOnUiThread {
+						val products = LiveShowModel.fromJson(json)
+						updateProductUI(products.products.find { it?.isCurrent == true })
+						bind.bid.text = "Swipe to Bid ${newBidAmount(products.products.find { it?.isCurrent == true }?.price?.toDoubleOrNull()?.toInt() ?: 0).toString().asMoney()}"
+					}
+				}
+
 			}
 
 			socketManager?.getBidFinalize { json ->
@@ -227,16 +236,9 @@ class WatchStreamSocketFragment : BaseFragment<StreamViewModel, FragmentWatchStr
 					bind.recycler.scrollToPosition(commentList.size - 1)
 				}
 
-
-				/*val type = msg.optString("type")
-				when (type) {
-					"session_update" -> updateSessionUI(msg)
-					"countdown" -> updateCountdown(msg)
-					else->{
-
-					}
-				}*/
 			}
+
+
 		}
 
 		socketManager?.onRoomCreated { obj ->
@@ -279,9 +281,8 @@ class WatchStreamSocketFragment : BaseFragment<StreamViewModel, FragmentWatchStr
 	override fun onResume() {
 		super.onResume()
 		socketManager?.joinRoom(roomID, userId) {
-			socketManager?.sendMessage(roomID, bind.text.value(), userId, userName, userImage)
+			socketManager?.sendMessage(roomID, "Joined \uD83D\uDC4B", userId, userName, userImage)
 		}
-//        socketManager?.emitViewerJoin(roomID)
 	}
 
 	override fun onPause() {
@@ -298,9 +299,7 @@ class WatchStreamSocketFragment : BaseFragment<StreamViewModel, FragmentWatchStr
 	private fun handleBidUpdate(json: JSONObject) {
 		runSafe {
 			val bidAmount = json.optString("bid_amount", "0")
-
 			log("BID UPDATE: $bidAmount")
-
 			bind.bid.text = "Swipe to Bid ${newBidAmount(bidAmount.toDoubleOrNull()?.toInt() ?: 0).toString().asMoney()}"
 			highestBidAmount = bidAmount
 			bidProductId = json.optString("productId", bidProductId)
@@ -315,13 +314,16 @@ class WatchStreamSocketFragment : BaseFragment<StreamViewModel, FragmentWatchStr
 
 			val liveProduct = showData.products.find { it?.isCurrent == true }
 
-			bind.productName.text = liveProduct?.name
-			bind.productImage.loadUrl(mCtx, liveProduct?.image ?: "")
-			val price = liveProduct?.price
-			bind.bid.text = "Swipe to Bid ${newBidAmount(price?.toDoubleOrNull()?.toInt() ?: 0).toString().asMoney()}"
-			bind.bidPrice.text = price?.asMoney()
-			highestBidAmount = price
-			bidProductId = liveProduct?.id
+			if (showData.highestBid.bidAmount?.isNotEmpty() == true){
+				highestBidAmount = showData.highestBid.bidAmount
+				log("HIGHEST BID: ${highestBidAmount}")
+				bind.bid.text = "Swipe to Bid ${newBidAmount(highestBidAmount?.toDoubleOrNull()?.toInt() ?: 0).toString().asMoney()}"
+			}else{
+				highestBidAmount = ""
+				bind.bid.text = "Swipe to Bid ${newBidAmount(liveProduct?.price?.toDoubleOrNull()?.toInt() ?: 0).toString().asMoney()}"
+			}
+
+			updateProductUI(liveProduct)
 
 			isAllowBidForAll = json.optBoolean("allowBidForAll", true)
 
@@ -441,6 +443,14 @@ class WatchStreamSocketFragment : BaseFragment<StreamViewModel, FragmentWatchStr
 					bidAmount = priceText
 				)
 				Alerts.success(mCtx, "Bid placed successfully")
+
+				socketManager?.sendMessage(
+					roomID,
+					"New high bid: $$priceText",
+					userId,
+					userName,
+					userImage
+				)
 //                sendZimMessage("New high bid: $${priceVal}")
 				inputSheet?.dismiss()
 			}
@@ -502,8 +512,27 @@ class WatchStreamSocketFragment : BaseFragment<StreamViewModel, FragmentWatchStr
 
 //            sendZimMessage("New high bid: $$bidAmount")
 			Alerts.success(mCtx, "Bid placed successfully")
+		socketManager?.sendMessage(
+				roomID,
+			"New high bid: $$bidAmount",
+				userId,
+				userName,
+				userImage
+			)
 			bind.bid.setCompleted(completed = false, withAnimation = true)
 		}
+	}
+
+	fun updateProductUI(liveProduct : LiveShowModel.Product?){
+		bind.soldLayout.isVisible = false
+		bind.bidLayout.isVisible = true
+		bind.productLayout.isVisible = true
+		bind.productName.text = liveProduct?.name
+		bind.productImage.loadUrl(mCtx, liveProduct?.image ?: "")
+		val price = liveProduct?.price
+		bind.bidPrice.text = price?.asMoney()
+		highestBidAmount = price
+		bidProductId = liveProduct?.id
 	}
 
 	@SuppressLint("ClickableViewAccessibility")
