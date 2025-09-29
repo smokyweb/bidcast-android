@@ -13,7 +13,6 @@ plugins {
 
 fun getAPKName() = "Bid_Swipe_${SimpleDateFormat("dd-MM-yyyy").format(Date())}"
 
-
 android {
     namespace = "io.bidswipe.app"
     compileSdk = 35

@@ -38,10 +38,10 @@
                         android:layout_height="wrap_content"
                         android:gravity="center"
                         android:text="@string/available_balance"
-                        android:textColor="@color/tertiary" />
+                        android:textColor="@color/onSurfaceVariant" />
 
                     <TextView
-                        style="@style/HeadlineSmall"
+                        style="@style/TitleLarge"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="center"
@@ -81,14 +81,15 @@
                             android:src="@drawable/ic_payout" />
 
                         <TextView
-                            style="@style/BodyLarge"
+                            style="@style/BodyMedium"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="@string/available_for_payout"
-                            android:textColor="@color/tertiary" />
+                            android:layout_marginTop="4dp"
+                            android:textColor="@color/onSurfaceVariant" />
 
                         <TextView
-                            style="@style/HeadlineMedium"
+                            style="@style/TitleLarge"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="N/A"
@@ -118,14 +119,15 @@
                             android:src="@drawable/ic_payout" />
 
                         <TextView
-                            style="@style/BodyLarge"
+                            style="@style/BodyMedium"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="@string/processing"
-                            android:textColor="@color/tertiary" />
+                            android:layout_marginTop="4dp"
+                            android:textColor="@color/onSurfaceVariant" />
 
                         <TextView
-                            style="@style/HeadlineMedium"
+                            style="@style/TitleLarge"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="N/A"

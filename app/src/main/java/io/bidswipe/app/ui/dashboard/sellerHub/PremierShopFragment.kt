@@ -180,6 +180,17 @@ class PremierShopFragment : BaseFragment<SellerHubViewModel , FragmentPremierSho
 				is Resource.Error -> {
 					bind.loader.isVisible = false
 					viewModel.applyPremierShopRepo.value = null
+					it.parse(mCtx , TAG , object : AlertClicks {
+						override fun primaryClick(dialog : AppBottomSheet) {
+							dialog.dismiss()
+							
+						}
+						
+						override fun secondaryClick(dialog : AppBottomSheet) {
+							dialog.dismiss()
+							
+						}
+					})
 				}
 				
 				else -> {}
