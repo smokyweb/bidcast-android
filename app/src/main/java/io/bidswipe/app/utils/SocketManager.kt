@@ -251,6 +251,19 @@ class SocketManager private constructor(
         }
     }
 
+    fun updateLiveShowStatus(roomId: String){
+        val payload = JSONObject().apply {
+            put("room_id", roomId)
+        }
+
+        Log.d(
+            TAG,
+            "EMIT: liveScheduler - RoomId: $roomId"
+        )
+
+        socket?.emit("liveScheduler", payload)
+    }
+
     /**
      * Listen for live show updates
      */

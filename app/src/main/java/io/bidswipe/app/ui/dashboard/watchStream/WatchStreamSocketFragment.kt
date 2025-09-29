@@ -207,7 +207,7 @@ class WatchStreamSocketFragment : BaseFragment<StreamViewModel, FragmentWatchStr
 						if (userId == winner.optString("user_id")) {
 							bind.soldOutText.text = "You won the bid"
 						} else {
-							bind.soldOutText.text = "Bidder ${winner.optString("userName")} won the bid"
+							bind.soldOutText.text = "Bidder ${winner.optString("user_name")} won the bid"
 						}
 
 					/*	if (isSold && data.highestBid?.userId == userId) {
@@ -378,7 +378,6 @@ class WatchStreamSocketFragment : BaseFragment<StreamViewModel, FragmentWatchStr
 
 			log("ALLOW BID FOR ALL: $isAllowBidForAll")
 
-
 			bind.bid.onSlideCompleteListener = object : OnSlideCompleteListener {
 				override fun onSlideComplete(view: SlideToActView) {
 
@@ -411,13 +410,18 @@ class WatchStreamSocketFragment : BaseFragment<StreamViewModel, FragmentWatchStr
 		runSafe {
 			log("BID COUNTDOWN: $value")
 			requireActivity().runOnUiThread{
-				bind.bidTime.isVisible = true
-				bind.bidTime.text = "Ends in $value"
+				if (json.optString(    "room_id") == roomID){
+					bind.bidTime.isVisible = true
+					bind.bidTime.text = "Ends in $value"
+				}else{
+					bind.bidTime.isVisible = false
+				}
 			}
 		}
 	}
 
 	private fun showInputSheet() {
+
 		val inputSheetBind = InputBottomSheetBinding.bind(
 			layoutInflater.inflate(
 				R.layout.input_bottom_sheet,
@@ -425,6 +429,7 @@ class WatchStreamSocketFragment : BaseFragment<StreamViewModel, FragmentWatchStr
 				false
 			)
 		)
+
 		inputSheet = Alerts.appBottomSheet(mCtx, true, inputSheetBind)
 
 		inputSheetBind.submitBtn.setHapticClickListener {
@@ -969,7 +974,6 @@ class WatchStreamSocketFragment : BaseFragment<StreamViewModel, FragmentWatchStr
 					Alerts.error(mCtx, "Please select a payment method")
 					return@setHapticClickListener
 				}
-
 
 				if (customOffer.text.toString().isEmpty()) {
 					Alerts.error(mCtx, "Please enter an amount")

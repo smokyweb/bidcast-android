@@ -22,7 +22,6 @@ import io.bidswipe.app.network.Resource
 import io.bidswipe.app.network.response.GetMyShowResponse
 import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.ui.dashboard.more.MoreActivity
-import io.bidswipe.app.ui.dashboard.scheduleShow.LiveShowActivity
 import io.bidswipe.app.ui.dashboard.scheduleShow.LiveShowSocketActivity
 import io.bidswipe.app.utils.Alerts
 import io.bidswipe.app.utils.Utils
@@ -34,103 +33,101 @@ import io.bidswipe.app.utils.setHapticClickListener
 import io.bidswipe.app.utils.toScheduleShow
 
 @SuppressLint("NotifyDataSetChanged")
-class ShowsFragment : BaseFragment<SellerHubViewModel , FragmentShowsBinding>() {
-	override fun getModel() : Class<SellerHubViewModel> = SellerHubViewModel::class.java
+class ShowsFragment : BaseFragment<SellerHubViewModel, FragmentShowsBinding>() {
+	override fun getModel(): Class<SellerHubViewModel> = SellerHubViewModel::class.java
 
 	override fun getBind(
-		inflater : LayoutInflater ,
-		view : ViewGroup? ,
-	) = FragmentShowsBinding.inflate(inflater , view , false)
+		inflater: LayoutInflater,
+		view: ViewGroup?,
+	) = FragmentShowsBinding.inflate(inflater, view, false)
 
-	private lateinit var showAdapter : ShowListingAdapter
+	private lateinit var showAdapter: ShowListingAdapter
 
 	private var showList = mutableListOf<GetMyShowResponse.Data?>()
 
 	private val mClicks = object : RecyclerClicks {
-		override fun itemClick(pos : Int , status : String?) {
+		override fun itemClick(pos: Int, status: String?) {
 
 			val profile = App.profileResponse.value
-			
+
 			if (profile?.sellerIdentityStatus != "verified") {
-				startActivity(Intent(mCtx , SellerVerificationActivity::class.java))
+				startActivity(Intent(mCtx, SellerVerificationActivity::class.java))
 				return
 			}
-			
+
 			if (profile.hasCardAdded != true || profile.hasShippingAddress != true) {
 				showPaymentAndAddressSheet()
 				return
 			}
 
 			if (App.PIPMode) {
-				Alerts.error(mCtx , "You are already in Live show")
+				Alerts.error(mCtx, "You are already in Live show")
 			} else {
 
-                val data = showList[0]
+				val data = showList[pos]
 
-                val user = data?.user
+				val user = data?.user
 
-                val products = data?.products?.map { it?.toLiveShowProduct() }
+				val products = data?.products?.map { it?.toLiveShowProduct() }
 
-                products?.first()?.isCurrent = true
+				products?.first()?.isCurrent = true
 
-                val showData = LiveShowModel(
-                    seller = LiveShowModel.Seller(
-                        id = user?.id.toString(),
-                        image = user?.profileImage,
-                        name = user?.name,
-                        rating = user?.rating ?: ""
-                    ),
-                    products = products?.map { p ->
-                        LiveShowModel.Product(
-                            p?.category,
-                            p?.id,
-                            p?.image,
-                            p?.status,
-                            p?.name,
-                            p?.price,
-                            "1",
-                        )
-                    }?.toList() ?: mutableListOf(),
-                    roomId = "live_room_${userId}_${data?.id.toString()}",
-                    showDetail = "Test Details",
-                    thumbnail = data?.thumbnail?.getOrNull(0) ?: "",
-                    viewerCount = "1",
-                    highestBid = LiveShowModel.HighestBid(
-                        bidAmount = "",
-                        userName = "",
-                        userImage = "",
-                        userId = "",
-                        productId = ""
-                    ),
-                    isLive = true,
-                    time = Utils.timestamp().toString(),
-                    showId = data?.id.toString(),
-                    allowBidForAll = true,
-                    bidCountDown = "",
-                    showTimer = "",
-                )
-
-				startActivity(
-                    Intent(mCtx, LiveShowSocketActivity::class.java).putExtra(
-                        "showData",
-                        showData
-					).putExtra("time" , showList[pos]?.time)
+				val showData = LiveShowModel(
+					seller = LiveShowModel.Seller(
+						id = user?.id.toString(),
+						image = user?.profileImage,
+						name = user?.name,
+						rating = user?.rating ?: ""
+					),
+					products = products?.map { p ->
+						LiveShowModel.Product(
+							p?.category,
+							p?.id,
+							p?.image,
+							p?.status,
+							p?.name,
+							p?.price,
+							"1",
+						)
+					}?.toList() ?: mutableListOf(),
+					roomId = "live_room_${userId}_${data?.id.toString()}",
+					showDetail = "Test Details",
+					thumbnail = data?.thumbnail?.getOrNull(0) ?: "",
+					viewerCount = "1",
+					highestBid = LiveShowModel.HighestBid(
+						bidAmount = "",
+						userName = "",
+						userImage = "",
+						userId = "",
+						productId = ""
+					),
+					isLive = true,
+					time = Utils.timestamp().toString(),
+					showId = data?.id.toString(),
+					allowBidForAll = true,
+					bidCountDown = "",
+					showTimer = "",
 				)
 
-
-            }
+				startActivity(
+					Intent(mCtx, LiveShowSocketActivity::class.java).putExtra(
+						"showData",
+						showData
+					).putExtra("time", showList[pos]?.time)
+				)
+			}
 		}
 
 	}
 
-	override fun onViewCreated(view : View , savedInstanceState : Bundle?) {
-		super.onViewCreated(view , savedInstanceState)
+	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+		super.onViewCreated(view, savedInstanceState)
 
 		bind.header.onBackClick {
 			finish()
 		}
 
-		showAdapter = ShowListingAdapter(showList , mClicks)
+		showAdapter = ShowListingAdapter(showList, mClicks)
 
 		bind.recycler.adapter = showAdapter
 
@@ -159,7 +156,7 @@ class ShowsFragment : BaseFragment<SellerHubViewModel , FragmentShowsBinding>() 
 		}
 
 		bind.tabs.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
-			override fun onTabSelected(tab : TabLayout.Tab?) {
+			override fun onTabSelected(tab: TabLayout.Tab?) {
 				showList.clear()
 				showAdapter.notifyDataSetChanged()
 				bind.loader.isVisible = true
@@ -171,15 +168,15 @@ class ShowsFragment : BaseFragment<SellerHubViewModel , FragmentShowsBinding>() 
 
 			}
 
-			override fun onTabUnselected(tab : TabLayout.Tab?) {}
+			override fun onTabUnselected(tab: TabLayout.Tab?) {}
 
-			override fun onTabReselected(tab : TabLayout.Tab?) {
+			override fun onTabReselected(tab: TabLayout.Tab?) {
 				onTabSelected(tab)
 			}
 
 		})
 
-        bind.addNewProduct.setHapticClickListener {
+		bind.addNewProduct.setHapticClickListener {
 			startActivity(mCtx.toScheduleShow(from = "dash"))
 
 		}
@@ -221,13 +218,13 @@ class ShowsFragment : BaseFragment<SellerHubViewModel , FragmentShowsBinding>() 
 						bind.recycler.isVisible = false
 						bind.addNewProduct.isVisible = false
 					} else {
-						it.parse(mCtx , TAG , object : AlertClicks {
-							override fun primaryClick(dialog : AppBottomSheet) {
+						it.parse(mCtx, TAG, object : AlertClicks {
+							override fun primaryClick(dialog: AppBottomSheet) {
 								dialog.dismiss()
 
 							}
 
-							override fun secondaryClick(dialog : AppBottomSheet) {
+							override fun secondaryClick(dialog: AppBottomSheet) {
 								dialog.dismiss()
 
 							}
@@ -247,17 +244,17 @@ class ShowsFragment : BaseFragment<SellerHubViewModel , FragmentShowsBinding>() 
 
 		val paymentAddressBind = PaymentAndAddressSheetBinding.bind(
 			layoutInflater.inflate(
-				R.layout.payment_and_address_sheet ,
-				null ,
+				R.layout.payment_and_address_sheet,
+				null,
 				false
 			)
 		)
 
-		val makeOfferSheet = Alerts.appBottomSheet(mCtx , true , paymentAddressBind)
+		val makeOfferSheet = Alerts.appBottomSheet(mCtx, true, paymentAddressBind)
 
 		with(paymentAddressBind.addressItem) {
 			val hasAddress = App.profileResponse.value?.hasShippingAddress == true
-			moreIcon.setImageDrawable(ContextCompat.getDrawable(mCtx , draw.ic_pencil))
+			moreIcon.setImageDrawable(ContextCompat.getDrawable(mCtx, draw.ic_pencil))
 			moreIcon.rotation = 0f
 
 			name.isVisible = hasAddress
@@ -273,10 +270,10 @@ class ShowsFragment : BaseFragment<SellerHubViewModel , FragmentShowsBinding>() 
 				type.text = "Address Not Added"
 				defaultAddress.isVisible = false
 			}
-            moreIcon.setHapticClickListener {
+			moreIcon.setHapticClickListener {
 				startActivity(
-					Intent(mCtx , MoreActivity::class.java).putExtra(
-						"slug" ,
+					Intent(mCtx, MoreActivity::class.java).putExtra(
+						"slug",
 						"paymentShipping"
 					)
 				)
@@ -287,7 +284,7 @@ class ShowsFragment : BaseFragment<SellerHubViewModel , FragmentShowsBinding>() 
 			val hasCard = App.profileResponse.value?.hasCardAdded == true
 			iconCard.isVisible = hasCard
 			expiryDate.isVisible = hasCard
-			moreIcon.setImageDrawable(ContextCompat.getDrawable(mCtx , draw.ic_pencil))
+			moreIcon.setImageDrawable(ContextCompat.getDrawable(mCtx, draw.ic_pencil))
 			moreIcon.rotation = 0f
 
 			if (hasCard) {
@@ -302,17 +299,17 @@ class ShowsFragment : BaseFragment<SellerHubViewModel , FragmentShowsBinding>() 
 			} else {
 				cardNumber.text = "Cards Not Added"
 			}
-            moreIcon.setHapticClickListener {
+			moreIcon.setHapticClickListener {
 				startActivity(
-					Intent(mCtx , MoreActivity::class.java).putExtra(
-						"slug" ,
+					Intent(mCtx, MoreActivity::class.java).putExtra(
+						"slug",
 						"paymentShipping"
 					)
 				)
 			}
 		}
 
-        paymentAddressBind.close.setHapticClickListener {
+		paymentAddressBind.close.setHapticClickListener {
 			makeOfferSheet.dismiss()
 		}
 
