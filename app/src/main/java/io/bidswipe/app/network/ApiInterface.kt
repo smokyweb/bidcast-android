@@ -459,7 +459,6 @@ interface ApiInterface {
 		@Part("order_id") orderId : RequestBody? ,
 	) : GetOrderDetailsResponse
 
-
 	@Multipart
 	@POST("api/user/searching")
 	suspend fun searchUsers(
@@ -638,16 +637,16 @@ interface ApiInterface {
 		@Part("amount") amount : RequestBody ,
 		@Part("card_number") cardNumber : RequestBody?
 	) : SentTipAmountResponse
-	
+
 	@Multipart
 	@POST("api/stripe/fund-transfer")
 	suspend fun payout(
 		@Part("amount") amount: RequestBody
 	) : CommonResponse
-	
+
 	@POST("api/apply-premier-shop")
 	suspend fun applyPremierShop(
 	) : CommonResponse
-	
+
 }
 

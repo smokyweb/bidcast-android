@@ -23,11 +23,12 @@ data class LiveShowModel(
         val category: String? = null,
         val id: String? = null,
         val image: String? = "",
-        val status: String? = "live",
+        var status: String? = "live",
         val name: String? = null,
         val price: String? = null,
         val quantity: String? = null,
-        var isCurrent: Boolean? = false
+        var isCurrent: Boolean? = false,
+        var selected: Boolean? = false
     ) : Serializable {
         fun toJson() = JSONObject().apply {
             put("category", category)

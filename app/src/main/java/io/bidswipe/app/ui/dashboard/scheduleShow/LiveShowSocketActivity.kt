@@ -26,6 +26,7 @@ import com.millicast.Media.videoSources
 import com.millicast.Publisher
 import com.millicast.devices.source.audio.MicrophoneAudioSource
 import com.millicast.devices.source.video.CameraVideoSource
+import com.millicast.devices.source.video.VideoSource
 import com.millicast.devices.track.AudioTrack
 import com.millicast.devices.track.VideoTrack
 import com.millicast.devices.type.SwitchCameraHandler
@@ -36,6 +37,7 @@ import io.bidswipe.app.App
 import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseActivity
 import io.bidswipe.app.controller.CommentAdapter
+import io.bidswipe.app.controller.FirebaseProductAdapter
 import io.bidswipe.app.controller.LiveMoreAdapter
 import io.bidswipe.app.controller.PromoteSheetAdapter
 import io.bidswipe.app.databinding.ActivityLiveShowBinding
@@ -50,7 +52,6 @@ import io.bidswipe.app.interfaces.AlertClicks
 import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.model.LiveChatModel
 import io.bidswipe.app.model.LiveShowModel
-import io.bidswipe.app.model.LiveShowModelOld
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.network.response.GetPromotePlansResponse
 import io.bidswipe.app.ui.custom.AlertType
@@ -77,6 +78,7 @@ import kotlinx.coroutines.launch
 import org.webrtc.EglBase
 import org.webrtc.RendererCommon
 
+@SuppressLint("NotifyDataSetChanged")
 class LiveShowSocketActivity : BaseActivity() {
 	
 	private val bind by bind(ActivityLiveShowBinding::inflate)
@@ -89,14 +91,11 @@ class LiveShowSocketActivity : BaseActivity() {
 	private lateinit var pipParams: PictureInPictureParams
 	private lateinit var commentAdapter: CommentAdapter
 	private val handler = Handler(Looper.getMainLooper())
-	private lateinit var durationRunnable: Runnable
 	private var commentList = mutableListOf<LiveChatModel?>()
 	var isFrontCamera = false
 	var showId = ""
 	var showTime = ""
-	private var startTimeMillis: Long = 0L
 	private var zoomLevel = 1.0f
-	private var liveData: LiveShowModelOld? = null
 	private var liveShowData: LiveShowModel? = null
 	
 	private lateinit var publisher: Publisher
@@ -111,6 +110,9 @@ class LiveShowSocketActivity : BaseActivity() {
 	private var currentCameraId: String? = null
 	private var maxZoom: Float = 1.0f
 	private var minZoom: Float = 1.0f
+	private lateinit var productAdapter : FirebaseProductAdapter
+
+	private var  productList = mutableListOf<LiveShowModel.Product?>()
 	
 	private var promotePlans = mutableListOf<GetPromotePlansResponse.Data?>()
 	
@@ -216,7 +218,7 @@ class LiveShowSocketActivity : BaseActivity() {
 			
 			log("STATE: ${publisher.isPublishing}")
 			
-			if (publisher.isPublishing) {
+			if (isShowLive) {
 				endShowSheet()
 			} else {
 				stopStreaming()
@@ -242,7 +244,7 @@ class LiveShowSocketActivity : BaseActivity() {
 		
 		bind.shop.setHapticClickListener {
 			log("PUBLISHER :  ${publisher.currentState}")
-			if (publisher.isPublishing) {
+			if (isShowLive) {
 				showProductSheet()
 			} else {
 				Alerts.error(this, "Please start live show to access this feature")
@@ -537,14 +539,20 @@ class LiveShowSocketActivity : BaseActivity() {
 			log("Socket connect error: $err")
 		}
 		
-		socketManager?.onViewerCount { count ->
-			runSafe { bind.liveCount.text = count.toString() }
+		socketManager?.onViewerCount { args ->
+			runSafe {
+				if (args.optString("room_id") == roomID){
+					runOnUiThread {
+						bind.liveCount.text = args.optString("count")
+					}
+				}
+
+			}
 		}
 		
 		socketManager?.onMessage { msg ->
-			
+
 			log("MESSAGE : $msg")
-			
 			if (msg.optString("room_id") == roomID) {
 				runOnUiThread {
 					commentList.add(
@@ -560,21 +568,113 @@ class LiveShowSocketActivity : BaseActivity() {
 				}
 			}
 		}
+
+		socketManager?.getBidFinalize { json ->
+			runSafe {
+
+				runOnUiThread {
+
+					if (roomID == json.optString("room_id")){
+						val winner = json.getJSONObject("winner")
+						val product = productList.find { it?.id == winner.optString("product_id") }
+
+						product?.status = "sold"
+						product?.isCurrent = false
+
+//						log("UPDATED PRODUCT LIST : ${productList} ")
+
+						showProductSheet()
+
+					}
+
+
+				}
+
+			}
+		}
+
+		socketManager?.getUpdatedProduct { json ->
+			runSafe {
+				runOnUiThread {
+
+					val product = LiveShowModel.fromJson(json)
+
+					productList.clear()
+
+					productList.addAll(product.products)
+
+					/*productList.find { it?.id == product.id }.let {
+						val index = productList.indexOf(it)
+						if (index != -1) {
+							productList[index] = product
+						}
+					}*/
+
+					productAdapter.notifyDataSetChanged()
+
+				}
+			}
+
+		}
+
+
 	}
 	
 	// Product selection (simplified socket mirroring)
 	private fun showProductSheet() {
-		val productSheetBind =
-			ProductSheetBinding.bind(layoutInflater.inflate(R.layout.product_sheet, null, false))
-		val sheet = Alerts.appBottomSheet(this, true, productSheetBind)
-		// Expect server to push product list via a message; here we show only UI shell
-		productSheetBind.close.setHapticClickListener { sheet.dismiss() }
-		productSheetBind.addBtn.setHapticClickListener {
-			// Notify server that host set a product live
-			socketManager?.sendMessage(roomID, "set_current_product", userId, userName, userImage)
-			sheet.dismiss()
+		val productSheetBind = ProductSheetBinding.bind(layoutInflater.inflate(R.layout.product_sheet , null , false))
+		val productSheet = Alerts.appBottomSheet(this , true , productSheetBind)
+
+		var selectedPos = -1
+
+		productAdapter = FirebaseProductAdapter(productList, object : RecyclerClicks {
+			override fun itemClick(pos: Int, status: String?) {
+
+				if (productList[pos]?.status == "sold") {
+
+					Alerts.error(this@LiveShowSocketActivity, "This product is already sold")
+
+				} else {
+					productList.forEachIndexed { index, item ->
+
+						item?.selected = index == pos
+						productSheetBind.recycler.adapter?.notifyDataSetChanged()
+
+					}
+					selectedPos = pos
+				}
+			}
+
+		})
+
+		productSheetBind.recycler.adapter = productAdapter
+
+		productSheet.show()
+
+		productSheetBind.close.setHapticClickListener {
+			productSheet.dismiss()
 		}
-		sheet.show()
+
+		productSheetBind.addBtn.setHapticClickListener {
+
+			if (selectedPos == - 1) {
+				Alerts.error(this@LiveShowSocketActivity , "Please select a product")
+				return@setHapticClickListener
+			}
+
+			val isAnyProductLive = productList.any { it?.isCurrent == true } == true
+
+			if (isAnyProductLive) {
+				Alerts.error(this@LiveShowSocketActivity , "One Product is Already Live")
+				return@setHapticClickListener
+			}
+
+			val selectedProduct = productList[selectedPos]
+
+			socketManager?.setNextProduct(roomID, selectedProduct?.id)
+			productSheet.dismiss()
+
+		}
 	}
 	
 	private fun endShowSheet() {
@@ -642,6 +742,15 @@ class LiveShowSocketActivity : BaseActivity() {
 		socketManager?.createRoom(roomID, data)
 		
 		socketManager?.onRoomCreated { obj ->
+			runSafe {
+				val showData = LiveShowModel.fromJson(obj)
+
+				productList.clear()
+
+				productList.addAll(showData.products)
+
+				log("ROOM CREATED : $showData")
+			}
 //			startLiveDurationTimer()
 		}
 		
@@ -698,13 +807,11 @@ class LiveShowSocketActivity : BaseActivity() {
 		
 		moreSheetBind.allowVerifiedUser.setOnCheckedChangeListener { view, isChecked ->
 
-//			FireRef.LIVE_SESSIONS.child(roomID).updateChildren(mapOf("allowBidForAll" to !isChecked))
-		
 		}
 		
-		log(liveData?.allowBidForAll.toString())
+		log(liveShowData?.allowBidForAll.toString())
 		
-		moreSheetBind.allowVerifiedUser.isChecked = liveData?.allowBidForAll == false
+		moreSheetBind.allowVerifiedUser.isChecked = liveShowData?.allowBidForAll == false
 		
 		if (audioSource?.isCapturing == true) {
 			moreSheetBind.muteIcon.setImageResource(draw.ic_mic)
@@ -927,26 +1034,35 @@ class LiveShowSocketActivity : BaseActivity() {
 			e.printStackTrace()
 			null
 		}
-		
+
 		videoTrack = try {
-			videoSource = videoSources<CameraVideoSource>().first()
-			
+			val allVideoSources = videoSources<CameraVideoSource>()
+
+			// Find front camera source
+			videoSource = allVideoSources.find { source ->
+				// Check if this is the front camera source
+				// You might need to check source properties or use a different approach
+				// depending on Millicast's API
+				source.toString().contains("front") ||
+						source.toString().contains("1") // Front camera is often index 1
+			} ?: allVideoSources.first() // Fallback to first available
+
 			val capabilities = videoSource?.capabilities ?: emptyList()
 			if (capabilities.isNotEmpty()) {
-				// Prefer a reasonable preview size to avoid giant frames
 				val preferred = capabilities.firstOrNull { it.width <= 1280 && it.height <= 720 }
 					?: capabilities.last()
 				videoSource?.setCapability(preferred)
 			}
-			
-			videoSource?.startCapture()  // This DOES return VideoTrack, but could be null if videoSource is null
+
+			videoSource?.startCapture()
+
 		} catch (e: Throwable) {
 			e.printStackTrace()
 			null
 		}
-		
+
 		log("AUDIO TRACK : ${audioTrack?.name} || VIDEO TRACK : ${videoTrack?.name}")
-		
+
 		callback(audioTrack, videoTrack)
 	}
 	
