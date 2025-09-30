@@ -52,7 +52,7 @@ data class GetTransactionsHistoryResponse(
 		@SerializedName("status")
 		val status : String? ,
 		@SerializedName("sub_total")
-		val subTotal : Int? ,
+		val subTotal : Double? ,
 		@SerializedName("tax_amount")
 		val taxAmount : Double? ,
 		@SerializedName("total")

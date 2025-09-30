@@ -86,10 +86,10 @@ class TransactionsFragment : BaseFragment<SellerHubViewModel , FragmentTransacti
 		bind.loader.isVisible = true
 
 		viewModel.getTransactionsHistory("1".request())
-
 		viewModel.getTransactionsHistoryRepo.observe(viewLifecycleOwner) {
 			when (it) {
 				is Resource.Success -> {
+					viewModel.getTransactionsHistoryRepo.value=null
 					bind.bottomLoader.isVisible = false
 					bind.loader.isVisible = false
 					val mData = it.value.data
@@ -121,6 +121,7 @@ class TransactionsFragment : BaseFragment<SellerHubViewModel , FragmentTransacti
 				}
 
 				is Resource.Error -> {
+					viewModel.getTransactionsHistoryRepo.value=null
 					bind.loader.isVisible = false
 					bind.bottomLoader.isVisible = false
 					if (it.isNetworkError) {

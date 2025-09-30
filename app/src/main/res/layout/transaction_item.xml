@@ -25,10 +25,7 @@
                 android:id="@+id/icon"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@color/secondaryContainer"
-                android:padding="@dimen/half_margin"
-                android:src="@drawable/ic_check_white_24dp"
-                app:tint="@color/success" />
+           android:src="@drawable/ic_transaction"/>
 
         </com.google.android.material.card.MaterialCardView>
 

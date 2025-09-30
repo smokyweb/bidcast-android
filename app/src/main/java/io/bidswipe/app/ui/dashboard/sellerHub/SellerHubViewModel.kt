@@ -19,6 +19,7 @@ import io.bidswipe.app.network.response.GetPaymentCardsResponse
 import io.bidswipe.app.network.response.GetPremierShopResponse
 import io.bidswipe.app.network.response.GetPromoteToolsResponse
 import io.bidswipe.app.network.response.GetTransactionsHistoryResponse
+import io.bidswipe.app.network.response.PayoutHistoryResponse
 import io.bidswipe.app.network.response.SellerStatusResponse
 import io.bidswipe.app.network.response.StorePhoneNumberResponse
 import io.bidswipe.app.network.response.StoreSellerIdResponse
@@ -171,8 +172,8 @@ class SellerHubViewModel @Inject constructor(val repo : DashRepository) : ViewMo
 		_fundTransferResponse.value = repo.fundTransfer(amount)
 	}
 
-	private var _getPayoutHistoryResponse = MutableLiveData<Resource<CommonResponse>>()
-	val getPayoutHistoryRepo : MutableLiveData<Resource<CommonResponse>>
+	private var _getPayoutHistoryResponse = MutableLiveData<Resource<PayoutHistoryResponse>>()
+	val getPayoutHistoryRepo : MutableLiveData<Resource<PayoutHistoryResponse>>
 		get() = _getPayoutHistoryResponse
 
 	fun getPayoutHistory(

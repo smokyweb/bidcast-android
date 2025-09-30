@@ -87,8 +87,7 @@ object Utils {
 
 	fun getDateFromTimestamp(millis : Long) = getSimpleDate("dd-MM-yyyy")
 		.format(millis).toString()
-
-
+	
 	fun getNotifBuilder(ctx : Context , title : String , msg : String) =
 		NotificationCompat.Builder(ctx , Const.CHANNEL_ID).apply {
 			color = ContextCompat.getColor(ctx , clr.primary)

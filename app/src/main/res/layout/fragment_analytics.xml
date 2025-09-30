@@ -91,7 +91,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    app:cardBackgroundColor="@color/surface"
+                    app:cardBackgroundColor="@color/surfaceVariant"
                     app:cardCornerRadius="8dp"
                     app:cardElevation="0dp">
 

@@ -41,11 +41,12 @@
                         android:textColor="@color/onSurfaceVariant" />
 
                     <TextView
+                        android:id="@+id/wallet_amount"
                         style="@style/TitleLarge"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="center"
-                        android:text="N/A"
+                        android:text="$0.00"
                         android:textColor="@color/tertiary"
                         android:textSize="28dp" />
 
@@ -89,10 +90,11 @@
                             android:textColor="@color/onSurfaceVariant" />
 
                         <TextView
+                            android:id="@+id/available"
                             style="@style/TitleLarge"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="N/A"
+                            android:text="$0.00"
                             android:textColor="@color/tertiary" />
 
                     </LinearLayout>
@@ -116,9 +118,10 @@
                         <androidx.appcompat.widget.AppCompatImageView
                             android:layout_width="44dp"
                             android:layout_height="32dp"
-                            android:src="@drawable/ic_payout" />
+                            android:src="@drawable/ic_processing" />
 
                         <TextView
+                            android:id="@+id/processing"
                             style="@style/BodyMedium"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -130,7 +133,7 @@
                             style="@style/TitleLarge"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="N/A"
+                            android:text="$0.00"
                             android:textColor="@color/tertiary" />
 
                     </LinearLayout>
@@ -188,7 +191,7 @@
             </com.google.android.material.card.MaterialCardView>
 
             <TextView
-                style="@style/TitleMedium"
+                style="@style/TitleLarge"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/margin"
