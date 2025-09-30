@@ -1045,7 +1045,7 @@ class LiveShowSocketActivity : BaseActivity() {
 					}
 
 					val credentials = Credential(
-						streamName = Const.ACCOUNT_ID, // Use account ID as stream name
+						streamName = roomID,
 						token = Const.PUBLISHING_TOKEN,
 						apiUrl = "https://director.millicast.com/api/director/publish"
 					)

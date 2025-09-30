@@ -12,12 +12,12 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 
-class RetrofitService(private val mCtx : Context) {
+class RetrofitService(private val mCtx: Context) {
 	val loggingInterceptor = HttpLoggingInterceptor().apply {
 		level = HttpLoggingInterceptor.Level.BODY
 	}
 
-	fun build() : ApiInterface {
+	fun build(): ApiInterface {
 		val gson = GsonBuilder()
 			.enableComplexMapKeySerialization()
 			.setPrettyPrinting()
@@ -29,18 +29,18 @@ class RetrofitService(private val mCtx : Context) {
 				val request = chain.request().newBuilder().apply {
 					val token = Prefs(mCtx).token()
 					if (token.isEmpty().not()) {
-						addHeader("Authorization" , token)
+						addHeader("Authorization", token)
 					}
-                    addHeader("time_zone", Utils.timezone)
-					addHeader("Content-Type" , "application/json")
-					addHeader("Accept" , "application/json")
+					addHeader("time_zone", Utils.timezone)
+					addHeader("Content-Type", "application/json")
+					addHeader("Accept", "application/json")
 				}.build()
 				chain.proceed(request)
 			})
 			addInterceptor(loggingInterceptor)
-			connectTimeout(100 , TimeUnit.SECONDS)
-			readTimeout(100 , TimeUnit.SECONDS)
-			writeTimeout(100 , TimeUnit.SECONDS)
+			connectTimeout(100, TimeUnit.SECONDS)
+			readTimeout(100, TimeUnit.SECONDS)
+			writeTimeout(100, TimeUnit.SECONDS)
 		}.build()
 
 

@@ -24,6 +24,7 @@ import io.bidswipe.app.network.Resource
 import io.bidswipe.app.network.response.GetMyShowResponse
 import io.bidswipe.app.ui.SpoofSocketActivity
 import io.bidswipe.app.ui.custom.AppBottomSheet
+import io.bidswipe.app.ui.dashboard.more.NotificationActivity
 import io.bidswipe.app.ui.dashboard.sellerProfile.SellerProfileActivity
 import io.bidswipe.app.ui.dashboard.watchStream.ViewLiveShowActivity
 import io.bidswipe.app.utils.Alerts
@@ -113,13 +114,13 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
         bind.recycler.adapter = homeAdapter
 
         bind.header.onMorePrimaryClick {
-            mCtx.startActivity(Intent(mCtx, SpoofSocketActivity::class.java))
-//			startActivity(
-//				Intent(mCtx, NotificationActivity::class.java).putExtra(
-//					"slug",
-//					"notification"
-//				)
-//			)
+//            mCtx.startActivity(Intent(mCtx, SpoofSocketActivity::class.java))
+			startActivity(
+				Intent(mCtx, NotificationActivity::class.java).putExtra(
+					"slug",
+					"notification"
+				)
+			)
 		}
 
         bind.header.onMoreSecondaryClick {

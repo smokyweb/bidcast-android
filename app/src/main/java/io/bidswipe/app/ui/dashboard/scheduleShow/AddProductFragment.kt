@@ -239,13 +239,15 @@ class AddProductFragment : BaseFragment<ScheduleShowViewModel, FragmentAddProduc
 
                     val data = it.value.data
 
-                    val products = data?.products?.map { it?.toLiveShowProduct() }
+					log("SHOW DATA Before Start Shoe: $data")
+
+					val products = data?.products?.map { it?.toLiveShowProduct() }
 
                     products?.first()?.isCurrent = true
 
                     val showData = LiveShowModel(
                         seller = LiveShowModel.Seller(
-                            id = userId.toString(),
+                            id = userId,
                             image = userImage,
                             name = userName,
                             rating = ""
@@ -261,7 +263,7 @@ class AddProductFragment : BaseFragment<ScheduleShowViewModel, FragmentAddProduc
                                 "1",
                             )
                         }?.toList() ?: mutableListOf(),
-                        roomId = data?.id.toString(),
+                        roomId = "live_room_${userId}_${data?.id.toString()}",
                         showDetail = "Test Details",
                         thumbnail = data?.thumbnail?.getOrNull(0) ?: "",
                         viewerCount = "1",
@@ -280,10 +282,11 @@ class AddProductFragment : BaseFragment<ScheduleShowViewModel, FragmentAddProduc
                         showTimer = "",
                     )
 
-                    val intent = Intent(mCtx, LiveShowActivity::class.java).putExtra(
-                        "showData",
-                        showData
-					)
+                    val intent = Intent(mCtx, LiveShowSocketActivity::class.java).putExtra(
+	                    "showData",
+	                    showData
+                    ).putExtra("time", data?.time)
+
 					startActivity(intent)
 					finish()
 				}
@@ -301,7 +304,6 @@ class AddProductFragment : BaseFragment<ScheduleShowViewModel, FragmentAddProduc
 
                             override fun secondaryClick(dialog: AppBottomSheet) {
 								dialog.dismiss()
-
 							}
 						})
 					}

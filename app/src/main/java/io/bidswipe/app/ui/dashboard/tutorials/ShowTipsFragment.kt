@@ -12,8 +12,12 @@ import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseFragment
 import io.bidswipe.app.controller.ProductTipsPagerAdapter
 import io.bidswipe.app.databinding.FragmentShowTipsBinding
+import io.bidswipe.app.model.LiveShowModel
 import io.bidswipe.app.ui.dashboard.DashViewModel
 import io.bidswipe.app.ui.dashboard.scheduleShow.LiveShowActivity
+import io.bidswipe.app.ui.dashboard.scheduleShow.LiveShowSocketActivity
+import io.bidswipe.app.utils.Utils
+import io.bidswipe.app.utils.finish
 import io.bidswipe.app.utils.goToAddCard
 import io.bidswipe.app.utils.ids
 import io.bidswipe.app.utils.setHapticClickListener
@@ -104,7 +108,60 @@ class ShowTipsFragment : BaseFragment<DashViewModel , FragmentShowTipsBinding>()
 					}
 
 					"goLive" -> {
-						startActivity(Intent(mCtx , LiveShowActivity::class.java).putExtra("showId" , showId))
+
+						val data = viewModel.currentShowData
+
+						log("SHOW DATA Before Start Shoe: $data")
+
+						val products = data?.products?.map { it?.toLiveShowProduct() }
+
+						products?.first()?.isCurrent = true
+
+						val showData = LiveShowModel(
+							seller = LiveShowModel.Seller(
+								id = userId,
+								image = userImage,
+								name = userName,
+								rating = ""
+							),
+							products = products?.map { p ->
+								LiveShowModel.Product(
+									p?.category,
+									p?.id,
+									p?.image,
+									p?.status,
+									p?.name,
+									p?.price,
+									"1",
+								)
+							}?.toList() ?: mutableListOf(),
+							roomId = "live_room_${userId}_${data?.id.toString()}",
+							showDetail = "Test Details",
+							thumbnail = data?.thumbnail?.getOrNull(0) ?: "",
+							viewerCount = "1",
+							highestBid = LiveShowModel.HighestBid(
+								bidAmount = "",
+								userName = "",
+								userImage = "",
+								userId = "",
+								productId = ""
+							),
+							isLive = true,
+							time = Utils.timestamp().toString(),
+							showId = data?.id.toString(),
+							allowBidForAll = true,
+							bidCountDown = "",
+							showTimer = "",
+						)
+
+						val intent = Intent(mCtx, LiveShowSocketActivity::class.java).putExtra(
+							"showData",
+							showData
+						).putExtra("time", data?.time)
+
+						startActivity(intent)
+
+						finish()
 					}
 
 					else -> {
