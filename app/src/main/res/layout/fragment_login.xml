@@ -35,8 +35,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
-                android:orientation="vertical"
-                android:padding="@dimen/padding">
+                android:orientation="vertical">
 
                 <TextView
                     style="@style/TitleSmall"
@@ -95,6 +94,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/margin"
+                    android:layout_marginHorizontal="@dimen/margin"
                     android:gravity="center"
                     android:orientation="horizontal"
                     android:weightSum="1">
@@ -131,6 +131,7 @@
                     style="@style/appBtn"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/margin"
                     android:layout_marginVertical="@dimen/padding"
                     android:text="@string/login" />
 
@@ -152,6 +153,7 @@
                     <TextView
                         android:id="@+id/createAccount"
                         style="@style/TitleMedium"
+                        android:background="?selectableItemBackground"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
@@ -180,6 +182,7 @@
             style="@style/BodyMedium"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:background="?selectableItemBackground"
             android:layout_gravity="center"
             android:text="Privacy Policy" />
 
@@ -188,6 +191,7 @@
             style="@style/BodyMedium"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:background="?selectableItemBackground"
             android:layout_gravity="center"
             android:text=" | Terms of Service" />
 

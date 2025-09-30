@@ -22,8 +22,6 @@
         android:required="false"
         tools:ignore="SelectedPhotoAccess" />
 
-    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
-
     <application
         android:name=".App"
         android:allowBackup="true"
@@ -155,7 +153,6 @@
             android:exported="false" />
         <activity
             android:name="com.canhub.cropper.CropImageActivity"
-            android:screenOrientation="portrait"
             android:theme="@style/Theme.Bidswipe.ActionBar"
             android:windowSoftInputMode="adjustResize"
             tools:ignore="LockedOrientationActivity" />

@@ -16,7 +16,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/margin"
-        android:layout_marginBottom="@dimen/margin"
         android:hapticFeedbackEnabled="true"
         app:picker_displayDays="false"
         app:picker_displayDaysOfMonth="false"

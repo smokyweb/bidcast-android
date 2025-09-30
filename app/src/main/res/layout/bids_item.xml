@@ -33,7 +33,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:scaleType="centerCrop"
-                    android:src="@drawable/user_image" />
+                    android:src="@drawable/placeholder_user" />
 
             </com.google.android.material.card.MaterialCardView>
 
@@ -90,7 +90,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:scaleType="centerCrop"
-                    android:src="@drawable/product_img" />
+                    android:src="@drawable/placeholder_square" />
 
             </com.google.android.material.card.MaterialCardView>
 

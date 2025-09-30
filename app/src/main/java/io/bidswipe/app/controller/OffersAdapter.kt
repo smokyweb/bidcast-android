@@ -22,8 +22,7 @@ class OffersAdapter(
 	mList: MutableList<GetOffersResponse.Data?>, val mClicks: RecyclerClicks,
 ) : BaseAdapter<GetOffersResponse.Data?, BidsItemBinding>(mList) {
 	
-	override fun bindView(inflater: LayoutInflater, parent: ViewGroup) =
-		BidsItemBinding.inflate(inflater, parent, false)
+	override fun bindView(inflater: LayoutInflater, parent: ViewGroup) = BidsItemBinding.inflate(inflater, parent, false)
 	
 	override fun onBind(
 		holder: BaseViewHolder<BidsItemBinding>,

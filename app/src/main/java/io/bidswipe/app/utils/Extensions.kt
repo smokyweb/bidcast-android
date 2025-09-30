@@ -56,10 +56,9 @@ fun runSafe(callback : () -> Unit) {
 	}
 }
 
-inline fun <reified T : Enum<T>> TypedArray.getEnum(index : Int , default : T) =
-	getInt(index , - 1).let {
-		if (it >= 0) enumValues<T>()[it] else default
-	}
+inline fun <reified T : Enum<T>> TypedArray.getEnum(index : Int , default : T) = getInt(index , - 1).let {
+	if (it >= 0) enumValues<T>()[it] else default
+}
 
 inline fun <T : ViewBinding> AppCompatActivity.bind(crossinline inflater : (LayoutInflater) -> T) =
 	lazy(LazyThreadSafetyMode.NONE) {
@@ -88,7 +87,7 @@ fun ImageView.loadUrl(mCtx : Context , url : String , placeHolder : Int? = null)
 	runSafe {
 		Glide.with(mCtx)
 			.load(url)
-			.placeholder(placeHolder ?: R.drawable.avatar)
+			.placeholder(placeHolder ?: R.drawable.placeholder_square)
 			.error(placeHolder)
 			.into(this)
 	}
@@ -219,7 +218,7 @@ fun Resource.Error.parse(
 			image = draw.ic_error ,
 			title = title ,
 			message = message ,
-			primaryBtnText = "Ok" ,
+			primaryBtnText = "Okay" ,
 			secondaryBtnText = "Cancel" ,
 			canCancel = false ,
 			showSecondary = showSecondary ,
@@ -351,13 +350,13 @@ fun decimalLimiter(string : String , maxDecimal : Int) : String {
  * Returns the first product where isCurrent == true, or null if none.
  */
 
-fun List<LiveShowModelOld.Product?>?.getCurrentProduct(): LiveShowModelOld.Product? {
+fun List<LiveShowModelOld.Product?>?.getCurrentProduct() : LiveShowModelOld.Product? {
 	return this?.firstOrNull { it?.isCurrent == true }
 }
 
-fun View.setHapticClickListener(onClick: (View) -> Unit) {
-    setOnClickListener {
-        HapticManager.performHaptic(this)
-        onClick(it)
-    }
+fun View.setHapticClickListener(onClick : (View) -> Unit) {
+	setOnClickListener {
+		HapticManager.performHaptic(this)
+		onClick(it)
+	}
 }

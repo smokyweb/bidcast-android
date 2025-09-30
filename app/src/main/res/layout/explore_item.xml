@@ -12,32 +12,30 @@
         android:layout_height="wrap_content"
         android:background="@drawable/card_8"
         android:gravity="center_vertical"
-        android:paddingStart="12dp"
-        android:paddingTop="16dp"
-        android:paddingEnd="@dimen/half_margin"
-        android:paddingBottom="16dp">
+        android:paddingHorizontal="@dimen/margin"
+        android:paddingVertical="16dp">
 
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/icon_card"
             style="@style/cardStyle"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            app:cardBackgroundColor="@color/transparent"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            app:cardBackgroundColor="@color/primaryContainer"
             app:cardElevation="0dp">
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/icon"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:padding="8dp"
-                android:src="@drawable/ic_video" />
+                android:src="@drawable/placeholder_square" />
 
         </com.google.android.material.card.MaterialCardView>
 
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_marginHorizontal="@dimen/half_margin"
+            android:layout_marginHorizontal="@dimen/margin"
+            android:gravity="center"
             android:layout_weight="1"
             android:orientation="vertical">
 

@@ -277,9 +277,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="@dimen/half_margin"
-                    android:drawableStart="@drawable/ic_vehicle"
                     android:drawablePadding="@dimen/half_margin"
                     android:text="Shipping Updates"
+                    app:drawableStartCompat="@drawable/ic_vehicle"
                     app:drawableTint="@color/primary" />
 
                 <androidx.recyclerview.widget.RecyclerView
@@ -307,9 +307,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="@dimen/half_margin"
-                    android:drawableStart="@drawable/ic_location_marker"
                     android:drawablePadding="@dimen/half_margin"
-                    android:text="@string/delivery_address" />
+                    android:text="@string/delivery_address"
+                    app:drawableStartCompat="@drawable/ic_location_marker" />
 
                 <TextView
                     android:id="@+id/address"
@@ -365,9 +365,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="@dimen/half_margin"
-                    android:drawableStart="@drawable/ic_shield"
                     android:drawablePadding="@dimen/half_margin"
-                    android:text="@string/swiftbid_buyer_protection" />
+                    android:text="@string/swiftbid_buyer_protection"
+                    app:drawableStartCompat="@drawable/ic_shield" />
 
                 <TextView
                     style="@style/BodyLarge"

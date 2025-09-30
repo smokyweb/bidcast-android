@@ -54,7 +54,7 @@
                         android:layout_height="64dp"
                         android:contentDescription="@string/app_name"
                         android:scaleType="centerCrop"
-                        android:src="@drawable/avatar" />
+                        android:src="@drawable/placeholder_user" />
 
                 </com.google.android.material.card.MaterialCardView>
 

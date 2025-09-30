@@ -36,7 +36,7 @@ class BidsAdapter(
 
 			val profileImage = item?.user?.profileImage
 			if (profileImage.isNullOrEmpty()) {
-				bind.userImage.setImageResource(R.drawable.avatar)
+				bind.userImage.setImageResource(R.drawable.placeholder_user)
 			} else {
 				bind.userImage.loadUrl(mCtx , profileImage)
 			}
@@ -51,7 +51,7 @@ class BidsAdapter(
 			}
 
 			if (productImage.isNullOrEmpty()) {
-				bind.productImage.setImageResource(R.drawable.avatar)
+				bind.productImage.setImageResource(R.drawable.placeholder_user)
 			} else {
 				bind.productImage.loadUrl(mCtx , productImage)
 			}

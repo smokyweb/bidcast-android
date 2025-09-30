@@ -381,8 +381,8 @@
         <item name="picker_curvedMaxAngle">65</item>
         <item name="picker_cyclic">true</item>
         <item name="picker_mustBeOnFuture">true</item>
-        <item name="picker_selectedTextColor">@color/secondary</item>
-        <item name="picker_selectorColor">@color/secondary</item>
+        <item name="picker_selectedTextColor">@color/primary</item>
+        <item name="picker_selectorColor">@color/primary</item>
         <item name="picker_textAlign">center</item>
         <item name="picker_textColor">@color/primary</item>
         <item name="picker_textSize">18sp</item>

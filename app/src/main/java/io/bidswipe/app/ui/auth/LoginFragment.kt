@@ -36,35 +36,34 @@ class LoginFragment : BaseFragment<AuthViewModel , FragmentLoginBinding>() {
 
 	override fun getModel() : Class<AuthViewModel> = AuthViewModel::class.java
 
-	override fun getBind(inflater : LayoutInflater , view : ViewGroup?) =
-		FragmentLoginBinding.inflate(inflater , view , false)
+	override fun getBind(inflater : LayoutInflater , view : ViewGroup?) = FragmentLoginBinding.inflate(inflater , view , false)
 
 	private val remList = mutableListOf<RememberModel>()
 
 	override fun onViewCreated(view : View , savedInstanceState : Bundle?) {
 		super.onViewCreated(view , savedInstanceState)
 
-        bind.createAccount.setHapticClickListener {
+		bind.createAccount.setHapticClickListener {
 			findNavController().navigate(ids.goToCreateAccount)
 		}
 
-        bind.forgot.setHapticClickListener {
+		bind.forgot.setHapticClickListener {
 			findNavController().navigate(ids.goToForgotPassword)
 		}
 
-        bind.layout.setHapticClickListener {
+		bind.layout.setHapticClickListener {
 			hideKeyboard(it)
 		}
 
-        bind.privacyPolicy.setHapticClickListener {
+		bind.privacyPolicy.setHapticClickListener {
 			startActivity(Intent(mCtx , MoreActivity::class.java).putExtra("slug" , "privacyPolicy"))
 		}
 
-        bind.termsOfService.setHapticClickListener {
+		bind.termsOfService.setHapticClickListener {
 			startActivity(Intent(mCtx , MoreActivity::class.java).putExtra("slug" , "termsCondition"))
 		}
 
-        bind.loginBtn.setHapticClickListener {
+		bind.loginBtn.setHapticClickListener {
 			when {
 
 				bind.email.value().isEmpty() -> {

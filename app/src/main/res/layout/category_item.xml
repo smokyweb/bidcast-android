@@ -22,7 +22,7 @@
             android:layout_marginTop="8dp"
             android:padding="12dp"
             android:scaleType="centerInside"
-            tools:src="@drawable/avatar" />
+            tools:src="@drawable/placeholder_square" />
 
         <TextView
             android:id="@+id/title"

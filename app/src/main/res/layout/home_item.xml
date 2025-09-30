@@ -52,7 +52,7 @@
             android:layout_height="match_parent"
             android:background="@color/outline"
             android:scaleType="centerCrop"
-            android:src="@drawable/dummy_image" />
+            android:src="@drawable/placeholder_rect" />
 
     </com.google.android.material.card.MaterialCardView>
 

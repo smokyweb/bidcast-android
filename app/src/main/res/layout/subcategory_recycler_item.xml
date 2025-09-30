@@ -34,7 +34,7 @@
                     android:id="@+id/headingImage"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:src="@drawable/avatar" />
+                    android:src="@drawable/placeholder_square" />
 
             </com.google.android.material.card.MaterialCardView>
 

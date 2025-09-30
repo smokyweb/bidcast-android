@@ -21,7 +21,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintDimensionRatio="1:0.4"
             app:layout_constraintTop_toTopOf="parent"
-            tools:src="@drawable/avatar" />
+            tools:src="@drawable/placeholder_square" />
 
         <TextView
             android:id="@+id/title"

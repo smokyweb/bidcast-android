@@ -27,7 +27,7 @@
                 android:id="@+id/icon"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:src="@drawable/user_image" />
+                android:src="@drawable/placeholder_user" />
 
         </com.google.android.material.card.MaterialCardView>
 

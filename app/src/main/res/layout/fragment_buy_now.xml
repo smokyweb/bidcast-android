@@ -93,10 +93,10 @@
                     style="@style/BodyMedium"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:drawableStart="@drawable/ic_gift"
                     android:drawablePadding="@dimen/half_margin"
-                    android:drawableTint="@color/scrim"
-                    android:text="@string/send_as_a_gift" />
+                    android:text="@string/send_as_a_gift"
+                    app:drawableStartCompat="@drawable/ic_gift"
+                    app:drawableTint="@color/scrim" />
 
 
                 <com.google.android.material.materialswitch.MaterialSwitch
