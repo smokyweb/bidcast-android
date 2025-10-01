@@ -3,8 +3,10 @@ package io.bidswipe.app.utils
 import android.Manifest
 import android.os.Build
 import com.zeugmasolutions.localehelper.Locales
+import io.bidswipe.app.base.BaseResponse
 import io.bidswipe.app.model.LangModel
 import io.bidswipe.app.model.LiveMoreOption
+import io.bidswipe.app.network.Resource
 import java.util.Locale
 
 object Const {
@@ -32,6 +34,13 @@ object Const {
 	const val DD_MMMM_YYYY = "dd MMMM yyyy"
 
     const val BULLET = "•"
+
+	val NO_INTERNET_ERROR = Resource.Error(
+		isNetworkError = true,
+		errorCode = "NO_INTERNET",
+		errorResponse = BaseResponse(message = "No internet connection. Please check your network.")
+	)
+
 
 	//APP PERMISSIONS
 	private val COMMON_PERMS = arrayOf(

@@ -2,6 +2,7 @@ package io.bidswipe.app.network
 
 import android.content.Context
 import com.google.gson.GsonBuilder
+import io.bidswipe.app.BuildConfig
 import io.bidswipe.app.utils.Const.BASE_URL
 import io.bidswipe.app.utils.Prefs
 import io.bidswipe.app.utils.Utils
@@ -14,7 +15,11 @@ import java.util.concurrent.TimeUnit
 
 class RetrofitService(private val mCtx : Context) {
 	val loggingInterceptor = HttpLoggingInterceptor().apply {
-		level = HttpLoggingInterceptor.Level.BODY
+		level = if (BuildConfig.DEBUG) {
+			HttpLoggingInterceptor.Level.BODY
+		} else {
+			HttpLoggingInterceptor.Level.NONE
+		}
 	}
 
 	fun build() : ApiInterface {
@@ -38,9 +43,9 @@ class RetrofitService(private val mCtx : Context) {
 				chain.proceed(request)
 			})
 			addInterceptor(loggingInterceptor)
-			connectTimeout(100 , TimeUnit.SECONDS)
-			readTimeout(100 , TimeUnit.SECONDS)
-			writeTimeout(100 , TimeUnit.SECONDS)
+			connectTimeout(30 , TimeUnit.SECONDS)
+			readTimeout(30 , TimeUnit.SECONDS)
+			writeTimeout(30 , TimeUnit.SECONDS)
 		}.build()
 
 

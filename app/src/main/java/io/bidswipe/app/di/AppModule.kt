@@ -9,6 +9,7 @@ import dagger.hilt.components.SingletonComponent
 import io.bidswipe.app.network.ApiInterface
 import io.bidswipe.app.network.RetrofitService
 import io.bidswipe.app.network.repository.AuthRepository
+import io.bidswipe.app.utils.NetworkMonitor
 import javax.inject.Singleton
 
 @Module
@@ -23,5 +24,10 @@ object AppModule {
 	@Singleton
 	@Provides
 	fun provideAppRepository(api : ApiInterface) : AuthRepository = AuthRepository(api)
+
+	@Singleton
+	@Provides
+	fun provideNetworkMonitor(@ApplicationContext context : Context) : NetworkMonitor =
+		NetworkMonitor(context)
 
 }

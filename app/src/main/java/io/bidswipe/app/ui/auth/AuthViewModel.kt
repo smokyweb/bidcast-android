@@ -9,12 +9,17 @@ import io.bidswipe.app.network.repository.AuthRepository
 import io.bidswipe.app.network.response.CommonResponse
 import io.bidswipe.app.network.response.LoginResponse
 import io.bidswipe.app.network.response.SignUpResponse
+import io.bidswipe.app.utils.Const.NO_INTERNET_ERROR
+import io.bidswipe.app.utils.NetworkMonitor
 import kotlinx.coroutines.launch
 import okhttp3.RequestBody
 import javax.inject.Inject
 
 @HiltViewModel
-class AuthViewModel @Inject constructor(val repo : AuthRepository) : ViewModel() {
+class AuthViewModel @Inject constructor(
+	val repo : AuthRepository,
+	private val networkMonitor : NetworkMonitor
+) : ViewModel() {
 
 	private var _signUpResponse = MutableLiveData<Resource<SignUpResponse>>()
 	val signUpRepo : MutableLiveData<Resource<SignUpResponse>>
@@ -28,6 +33,10 @@ class AuthViewModel @Inject constructor(val repo : AuthRepository) : ViewModel()
         confirmPassword : RequestBody ,
         referralCode : RequestBody? = null ,
     ) = viewModelScope.launch {
+		if (!networkMonitor.hasInternet()) {
+			_signUpResponse.value = NO_INTERNET_ERROR
+			return@launch
+		}
 		_signUpResponse.value = repo.signUp(firstName , lastName , email , password , confirmPassword , referralCode)
 	}
 
@@ -39,6 +48,10 @@ class AuthViewModel @Inject constructor(val repo : AuthRepository) : ViewModel()
 		email : RequestBody ,
 		password : RequestBody ,
 	) = viewModelScope.launch {
+		if (!networkMonitor.hasInternet()) {
+			_loginResponse.value = NO_INTERNET_ERROR
+			return@launch
+		}
 		_loginResponse.value = repo.login(email , password)
 	}
 
@@ -49,6 +62,10 @@ class AuthViewModel @Inject constructor(val repo : AuthRepository) : ViewModel()
 	fun forgotPassword(
 		email : RequestBody ,
 	) = viewModelScope.launch {
+		if (!networkMonitor.hasInternet()) {
+			_forgotPasswordResponse.value = NO_INTERNET_ERROR
+			return@launch
+		}
 		_forgotPasswordResponse.value = repo.forgotPassword(email)
 	}
 
@@ -60,6 +77,10 @@ class AuthViewModel @Inject constructor(val repo : AuthRepository) : ViewModel()
 		email : RequestBody ,
 		code : RequestBody ,
 	) = viewModelScope.launch {
+		if (!networkMonitor.hasInternet()) {
+			_verifyOtpResponse.value = NO_INTERNET_ERROR
+			return@launch
+		}
 		_verifyOtpResponse.value = repo.verifyOtp(email , code)
 	}
 
@@ -72,6 +93,10 @@ class AuthViewModel @Inject constructor(val repo : AuthRepository) : ViewModel()
 		password : RequestBody ,
 		confirmPassword : RequestBody ,
 	) = viewModelScope.launch {
+		if (!networkMonitor.hasInternet()) {
+			_resetPasswordResponse.value = NO_INTERNET_ERROR
+			return@launch
+		}
 		_resetPasswordResponse.value = repo.resetPassword(email , password , confirmPassword)
 	}
 
