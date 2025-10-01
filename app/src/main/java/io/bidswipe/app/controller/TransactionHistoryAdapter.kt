@@ -1,7 +1,10 @@
 package io.bidswipe.app.controller
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
+import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseAdapter
 import io.bidswipe.app.databinding.TransactionItemBinding
 import io.bidswipe.app.interfaces.RecyclerClicks
@@ -22,8 +25,20 @@ class TransactionHistoryAdapter(
 		item : GetTransactionsHistoryResponse.Data? ,
 	) {
 		with(holder) {
-
-			bind.title.setText("Purchase Completed")
+			Log.d(TAG, "onBind: $item")
+			bind.title.text= when(item?.sourceType){
+				"tip_amount"->"Sent tip to User_${item.sellerId}"
+				"account"->if(item.type=="withdraw") "Payout" else ""
+				"card"->if(item.type=="debited" && item.orderId!=null)  "Product Purchased" else ""
+				else->""
+			}
+		val icon=when(item?.status?.lowercase()){
+				"process"-> R.drawable.ic_transaction_processing
+				"paid"-> R.drawable.ic_transaction_success
+				else -> R.drawable.ic_transaction
+			}
+			
+			bind.icon.setImageDrawable(ContextCompat.getDrawable(mCtx , icon))
 
 			bind.amount.text = item?.total.toString().asMoney()
 

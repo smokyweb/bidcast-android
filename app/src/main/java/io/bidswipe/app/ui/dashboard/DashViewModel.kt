@@ -46,6 +46,7 @@ class DashViewModel @Inject constructor(val repo : DashRepository) : ViewModel()
 	var showDate = ""
 	var showTime = ""
 	var showId = ""
+	var currentShowData : CreateShowResponse.Data? = null
 	var showList = mutableListOf<GetPrepareStepResponse.Data?>()
 	var currentStep = 0
 

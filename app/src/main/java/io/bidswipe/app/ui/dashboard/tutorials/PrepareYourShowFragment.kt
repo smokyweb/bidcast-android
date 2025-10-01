@@ -242,6 +242,8 @@ class PrepareYourShowFragment : BaseFragment<DashViewModel , FragmentPrepareYour
 
 					val mData = it.value.data
 
+					viewModel.currentShowData = mData
+
 					viewModel.showId = mData?.id.toString()
 
 					findNavController().navigate(

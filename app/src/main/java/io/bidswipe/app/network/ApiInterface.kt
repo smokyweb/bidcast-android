@@ -59,6 +59,7 @@ import io.bidswipe.app.network.response.UserDeviceResponse
 import io.bidswipe.app.network.response.UserProfileResponse
 import io.bidswipe.app.network.response.UserSearchingResponse
 import io.bidswipe.app.network.response.PageUrlResponse
+import io.bidswipe.app.network.response.PayoutHistoryResponse
 import io.bidswipe.app.network.response.SellerStatusResponse
 import io.bidswipe.app.network.response.SentTipAmountResponse
 import io.bidswipe.app.network.response.SetDefaultAddressResponse
@@ -509,7 +510,7 @@ interface ApiInterface {
 
 	@POST("api/stripe/payout-history")
 	suspend fun getPayoutHistory(
-	) : CommonResponse
+	) : PayoutHistoryResponse
 
 	@Multipart
 	@POST("api/transaction-history/listing")

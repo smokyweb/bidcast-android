@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.navigation.fragment.findNavController
+import io.bidswipe.app.App
 import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseFragment
 import io.bidswipe.app.controller.PayoutAdapter
@@ -13,8 +14,10 @@ import io.bidswipe.app.databinding.FragmentWalletViewBinding
 import io.bidswipe.app.interfaces.AlertClicks
 import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.network.Resource
+import io.bidswipe.app.network.response.PayoutHistoryResponse
 import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.utils.Alerts
+import io.bidswipe.app.utils.asMoney
 import io.bidswipe.app.utils.ids
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.setHapticClickListener
@@ -27,7 +30,7 @@ class WalletViewFragment : BaseFragment<SellerHubViewModel, FragmentWalletViewBi
 		view: ViewGroup?,
 	) = FragmentWalletViewBinding.inflate(inflater, view, false)
 	
-	private var itemList = mutableListOf("", "", "", "", "")
+	private var itemList = mutableListOf<PayoutHistoryResponse.Data?>()
 	
 	private lateinit var adapter: PayoutAdapter
 	
@@ -52,16 +55,27 @@ class WalletViewFragment : BaseFragment<SellerHubViewModel, FragmentWalletViewBi
 //			}
 		}
 		
+		App.profileResponse.observe(viewLifecycleOwner){
+			val walletAmount =it?.walletAmount.toString().toDouble()
+			bind.walletAmount.text=walletAmount.toString().asMoney()
+			bind.available.text=walletAmount.toString().asMoney()
+		}
+		
 		bind.loader.isVisible = false
-		
-		viewModel.checkKyc()
-		
 		viewModel.getPayoutHistory()
-		
 		viewModel.getPayoutHistoryRepo.observe(viewLifecycleOwner) {
 			when (it) {
 				is Resource.Success -> {
 					bind.loader.isVisible = false
+					if(it.value.currentPage==1){itemList.clear()}
+					if(it.value.data?.isNotEmpty()==true){
+						bind.noData.isVisible=false
+						bind.recycler.isVisible=true
+						itemList.addAll(it.value.data)
+					}else{
+						bind.noData.isVisible=true
+						bind.recycler.isVisible=false
+					}
 				}
 				
 				is Resource.Error -> {
@@ -85,7 +99,8 @@ class WalletViewFragment : BaseFragment<SellerHubViewModel, FragmentWalletViewBi
 				
 			}
 		}
-		
+
+/*		viewModel.checkKyc()
 		viewModel.checkKycRepo.observe(viewLifecycleOwner) {
 			when (it) {
 				is Resource.Success -> {
@@ -116,7 +131,7 @@ class WalletViewFragment : BaseFragment<SellerHubViewModel, FragmentWalletViewBi
 				else -> {}
 				
 			}
-		}
+		}*/
 		
 	}
 	

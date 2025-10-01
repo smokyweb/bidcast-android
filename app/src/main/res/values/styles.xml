@@ -192,12 +192,10 @@
     <style name="tabStyle" parent="Widget.Material3.TabLayout">
         <item name="enforceTextAppearance">false</item>
         <item name="android:background">@drawable/card_8</item>
-        <item name="android:backgroundTint">@color/surface</item>
+        <item name="android:backgroundTint">@color/surfaceVariant</item>
         <item name="tabIndicatorAnimationDuration">500</item>
         <item name="tabIndicator">@drawable/card_8</item>
         <item name="tabIndicatorColor">@color/background</item>
-
-
         <item name="tabTextAppearance">@style/TitleMedium</item>
         <item name="tabTextColor">@color/onSurface</item>
         <item name="tabSelectedTextColor">@color/onBackground</item>

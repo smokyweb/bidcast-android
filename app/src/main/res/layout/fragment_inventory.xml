@@ -32,7 +32,7 @@
             style="@style/cardStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:cardBackgroundColor="@color/surface"
+            app:cardBackgroundColor="@color/surfaceVariant"
             app:cardCornerRadius="8dp"
             app:cardElevation="0dp">
 

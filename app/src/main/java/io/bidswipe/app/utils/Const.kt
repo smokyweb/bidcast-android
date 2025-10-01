@@ -26,7 +26,7 @@ object Const {
 
     //DOLBY iO CONST
     const val ACCOUNT_ID = "227tmE"
-    const val PUBLISHING_TOKEN = "87970298b75ff70fc95f9a1a8c52955988776fd131c029976dc3db62af9e8701"
+    const val PUBLISHING_TOKEN = "7c963b9175d4006b4f57ccc95749252065ddff636b0b4e0fe4b7caebe710e763"
     const val TOKEN_ID = "14730126"
 
 	const val SERVER_TIME_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"

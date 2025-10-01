@@ -740,7 +740,7 @@ class WatchStreamSocketFragment : BaseFragment<StreamViewModel, FragmentWatchStr
 			try {
 				log("Starting subscription flow...")
 				val credentials = Credential(
-					streamName = roomID,// streamName.ifBlank { Const.ACCOUNT_ID },
+					streamName = roomID,
 					accountId = Const.ACCOUNT_ID,
 					apiUrl = "https://director.millicast.com/api/director/subscribe"
 				)

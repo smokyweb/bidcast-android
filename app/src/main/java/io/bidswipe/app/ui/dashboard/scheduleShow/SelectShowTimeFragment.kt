@@ -2,7 +2,6 @@ package io.bidswipe.app.ui.dashboard.scheduleShow
 
 import android.app.Activity
 import android.content.Intent
-import android.icu.util.Calendar
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -21,6 +20,7 @@ import io.bidswipe.app.utils.draw
 import io.bidswipe.app.utils.finish
 import io.bidswipe.app.utils.runSafe
 import io.bidswipe.app.utils.setHapticClickListener
+import java.util.Calendar
 
 class SelectShowTimeFragment : BaseFragment<ScheduleShowViewModel , FragmentSelectShowTimeBinding>() {
 
@@ -40,6 +40,14 @@ class SelectShowTimeFragment : BaseFragment<ScheduleShowViewModel , FragmentSele
 
 		bind.calenderView.setForwardButtonImage(ContextCompat.getDrawable(mCtx , draw.ic_forward) !!)
 		bind.calenderView.setPreviousButtonImage(ContextCompat.getDrawable(mCtx , draw.ic_previous) !!)
+
+		val today = Calendar.getInstance().apply {
+			set(Calendar.HOUR_OF_DAY, 0)
+			set(Calendar.MINUTE, 0)
+			set(Calendar.SECOND, 0)
+			set(Calendar.MILLISECOND, 0)
+		}
+		bind.calenderView.setMinimumDate(today)
 
 		if (viewModel.date.isEmpty()) {
 			val calendar = Calendar.getInstance()
