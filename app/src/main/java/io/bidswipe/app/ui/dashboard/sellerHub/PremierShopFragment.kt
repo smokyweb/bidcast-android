@@ -25,27 +25,27 @@ import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.setHapticClickListener
 
 @SuppressLint("NotifyDataSetChanged")
-class PremierShopFragment : BaseFragment<SellerHubViewModel , FragmentPremierShopBinding>() {
-	override fun getModel() : Class<SellerHubViewModel> = SellerHubViewModel::class.java
+class PremierShopFragment : BaseFragment<SellerHubViewModel, FragmentPremierShopBinding>() {
+	override fun getModel(): Class<SellerHubViewModel> = SellerHubViewModel::class.java
 
 	override fun getBind(
-        inflater : LayoutInflater ,
-        view : ViewGroup? ,
-    ) = FragmentPremierShopBinding.inflate(inflater , view , false)
+		inflater: LayoutInflater,
+		view: ViewGroup?,
+	) = FragmentPremierShopBinding.inflate(inflater, view, false)
 
 	private var gridList = mutableListOf<GetPremierShopResponse.Data.Feature?>()
 	private var reqList = mutableListOf<GetPremierShopResponse.Data.Requirement?>()
-	private lateinit var gridAdapter : BenefitsAdapter
-	private lateinit var reqAdapter : RequirementAdapter
+	private lateinit var gridAdapter: BenefitsAdapter
+	private lateinit var reqAdapter: RequirementAdapter
 
 	private val mClick = object : RecyclerClicks {
-		override fun itemClick(pos : Int , status : String?) {
+		override fun itemClick(pos: Int, status: String?) {
 		}
 
 	}
 
-	override fun onViewCreated(view : View , savedInstanceState : Bundle?) {
-		super.onViewCreated(view , savedInstanceState)
+	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+		super.onViewCreated(view, savedInstanceState)
 
 		bind.header.onBackClick {
 			finish()
@@ -56,10 +56,10 @@ class PremierShopFragment : BaseFragment<SellerHubViewModel , FragmentPremierSho
 		 gridList.add(SellModel(R.drawable.ic_speaker,0,"Marketing Boost", "Priority in search result"))
 		 gridList.add(SellModel(R.drawable.ic_support,0,"Priority Support", "24/7 dedicated assistance"))*/
 
-		gridAdapter = BenefitsAdapter(gridList , mClick)
+		gridAdapter = BenefitsAdapter(gridList, mClick)
 		bind.gridRecycler.adapter = gridAdapter
 
-		reqAdapter = RequirementAdapter(reqList , mClick)
+		reqAdapter = RequirementAdapter(reqList, mClick)
 		bind.requirementRecycler.adapter = reqAdapter
 
 		bind.loader.isVisible = true
@@ -93,21 +93,21 @@ class PremierShopFragment : BaseFragment<SellerHubViewModel , FragmentPremierSho
 
 					bind.delivery.text = mData?.shopOptions?.delivery ?: "N/A"
 
-					bind.reviewLogo.loadUrl(mCtx , mData?.reviewLogo ?: "")
+					bind.reviewLogo.loadUrl(mCtx, mData?.reviewLogo ?: "")
 
 					bind.reviewTitle.text = mData?.reviewTitle
 
 					bind.reviewDetails.text = mData?.reviewDetails
 
-					val progress = mData?.currentProgress?.replace("%" , "")?.toInt() ?: 0
+					val progress = mData?.currentProgress?.replace("%", "")?.toInt() ?: 0
 
 					bind.stepProgress.progress = progress ?: 0
 
 					if (progress < 100) {
-						bind.applyBtn.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(mCtx , R.color.outlineVariant))
-					}else if(progress==100){
+						bind.applyBtn.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(mCtx, R.color.outlineVariant))
+					} else if (progress == 100) {
 						bind.applyBtn.setHapticClickListener {
-							bind.loader.isVisible=true
+							bind.loader.isVisible = true
 							viewModel.applyPremierShop()
 						}
 					}
@@ -125,21 +125,17 @@ class PremierShopFragment : BaseFragment<SellerHubViewModel , FragmentPremierSho
 				is Resource.Error -> {
 					bind.loader.isVisible = false
 
-					if (it.isNetworkError) {
-						errorToast(getString(R.string.no_internet))
-					} else {
-						it.parse(mCtx , TAG , object : AlertClicks {
-							override fun primaryClick(dialog : AppBottomSheet) {
-								dialog.dismiss()
+					it.parse(mCtx, TAG, object : AlertClicks {
+						override fun primaryClick(dialog: AppBottomSheet) {
+							dialog.dismiss()
 
-							}
+						}
 
-							override fun secondaryClick(dialog : AppBottomSheet) {
-								dialog.dismiss()
+						override fun secondaryClick(dialog: AppBottomSheet) {
+							dialog.dismiss()
 
-							}
-						})
-					}
+						}
+					})
 				}
 
 				else -> {}
@@ -147,18 +143,18 @@ class PremierShopFragment : BaseFragment<SellerHubViewModel , FragmentPremierSho
 			}
 
 		}
-	
+
 		viewModel.applyPremierShopRepo.observe(viewLifecycleOwner) {
 			when (it) {
 				is Resource.Success -> {
 					bind.loader.isVisible = false
 					viewModel.applyPremierShopRepo.value = null
-					
+
 					AppBottomSheet(
 						mCtx,
 						R.drawable.ic_success,
 						"Premier Shop Applied",
-						it.value.message?:"",
+						it.value.message ?: "",
 						primaryBtnText = "Okay",
 						secondaryBtnText = "Cancel",
 						canCancel = true,
@@ -169,35 +165,35 @@ class PremierShopFragment : BaseFragment<SellerHubViewModel , FragmentPremierSho
 							override fun primaryClick(dialog: AppBottomSheet) {
 								dialog.dismiss()
 							}
-							
+
 							override fun secondaryClick(dialog: AppBottomSheet) {
 								dialog.dismiss()
 							}
 						}
 					).show()
 				}
-				
+
 				is Resource.Error -> {
 					bind.loader.isVisible = false
 					viewModel.applyPremierShopRepo.value = null
-					it.parse(mCtx , TAG , object : AlertClicks {
-						override fun primaryClick(dialog : AppBottomSheet) {
+					it.parse(mCtx, TAG, object : AlertClicks {
+						override fun primaryClick(dialog: AppBottomSheet) {
 							dialog.dismiss()
-							
+
 						}
-						
-						override fun secondaryClick(dialog : AppBottomSheet) {
+
+						override fun secondaryClick(dialog: AppBottomSheet) {
 							dialog.dismiss()
-							
+
 						}
 					})
 				}
-				
+
 				else -> {}
-				
+
 			}
 		}
-		
+
 	}
 
 }

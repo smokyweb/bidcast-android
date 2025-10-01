@@ -7,7 +7,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.navigation.fragment.findNavController
-import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseFragment
 import io.bidswipe.app.controller.PaymentCardAdapter
 import io.bidswipe.app.controller.ShippingAddressAdapter
@@ -25,22 +24,22 @@ import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request
 import io.bidswipe.app.utils.setHapticClickListener
 
-class PaymentShippingFragment : BaseFragment<MoreViewModel , FragmentPaymentShippingBinding>() {
-	override fun getModel() : Class<MoreViewModel> = MoreViewModel::class.java
+class PaymentShippingFragment : BaseFragment<MoreViewModel, FragmentPaymentShippingBinding>() {
+	override fun getModel(): Class<MoreViewModel> = MoreViewModel::class.java
 
 	override fun getBind(
-		inflater : LayoutInflater ,
-		view : ViewGroup? ,
-	) = FragmentPaymentShippingBinding.inflate(inflater , view , false)
+		inflater: LayoutInflater,
+		view: ViewGroup?,
+	) = FragmentPaymentShippingBinding.inflate(inflater, view, false)
 
 	private var cardList = mutableListOf<GetPaymentCardsResponse.Data.PaymentProfile?>()
 	private var addressList = mutableListOf<GetShippingAddressResponse.Data?>()
 
-	private lateinit var cardAdapter : PaymentCardAdapter
-	private lateinit var shippingAddressAdapter : ShippingAddressAdapter
+	private lateinit var cardAdapter: PaymentCardAdapter
+	private lateinit var shippingAddressAdapter: ShippingAddressAdapter
 
 	private val mClick = object : RecyclerClicks {
-		override fun itemClick(pos : Int , status : String?) {
+		override fun itemClick(pos: Int, status: String?) {
 
 			when (status) {
 				"default" -> {
@@ -60,7 +59,7 @@ class PaymentShippingFragment : BaseFragment<MoreViewModel , FragmentPaymentShip
 	}
 
 	private val cardClick = object : RecyclerClicks {
-		override fun itemClick(pos : Int , status : String?) {
+		override fun itemClick(pos: Int, status: String?) {
 
 			when (status) {
 				"default" -> {
@@ -79,26 +78,26 @@ class PaymentShippingFragment : BaseFragment<MoreViewModel , FragmentPaymentShip
 
 	}
 
-	override fun onViewCreated(view : View , savedInstanceState : Bundle?) {
-		super.onViewCreated(view , savedInstanceState)
+	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+		super.onViewCreated(view, savedInstanceState)
 
 		bind.header.onBackClick {
 			finish()
 		}
 
-		cardAdapter = PaymentCardAdapter(cardList , cardClick)
+		cardAdapter = PaymentCardAdapter(cardList, cardClick)
 
 		bind.recycler.adapter = cardAdapter
 
-		shippingAddressAdapter = ShippingAddressAdapter(addressList , mClick)
+		shippingAddressAdapter = ShippingAddressAdapter(addressList, mClick)
 
 		bind.addressRecycler.adapter = shippingAddressAdapter
 
-        bind.addPaymentCard.setHapticClickListener {
-			startActivity(Intent(mCtx , AddPaymentCardActivity::class.java))
+		bind.addPaymentCard.setHapticClickListener {
+			startActivity(Intent(mCtx, AddPaymentCardActivity::class.java))
 		}
 
-        bind.addNewAddress.setHapticClickListener {
+		bind.addNewAddress.setHapticClickListener {
 			findNavController().navigate(ids.goToAddShippingAddressFragment)
 		}
 
@@ -131,21 +130,17 @@ class PaymentShippingFragment : BaseFragment<MoreViewModel , FragmentPaymentShip
 				is Resource.Error -> {
 					bind.loader.isVisible = false
 
-					if (it.isNetworkError) {
-						errorToast(getString(R.string.no_internet))
-					} else {
-						it.parse(mCtx , TAG , object : AlertClicks {
-							override fun primaryClick(dialog : AppBottomSheet) {
-								dialog.dismiss()
+					it.parse(mCtx, TAG, object : AlertClicks {
+						override fun primaryClick(dialog: AppBottomSheet) {
+							dialog.dismiss()
 
-							}
+						}
 
-							override fun secondaryClick(dialog : AppBottomSheet) {
-								dialog.dismiss()
+						override fun secondaryClick(dialog: AppBottomSheet) {
+							dialog.dismiss()
 
-							}
-						})
-					}
+						}
+					})
 				}
 
 				else -> {}
@@ -177,21 +172,18 @@ class PaymentShippingFragment : BaseFragment<MoreViewModel , FragmentPaymentShip
 				is Resource.Error -> {
 					bind.loader.isVisible = false
 
-					if (it.isNetworkError) {
-						errorToast(getString(R.string.no_internet))
-					} else {
-						it.parse(mCtx , TAG , object : AlertClicks {
-							override fun primaryClick(dialog : AppBottomSheet) {
-								dialog.dismiss()
+					it.parse(mCtx, TAG, object : AlertClicks {
+						override fun primaryClick(dialog: AppBottomSheet) {
+							dialog.dismiss()
 
-							}
+						}
 
-							override fun secondaryClick(dialog : AppBottomSheet) {
-								dialog.dismiss()
+						override fun secondaryClick(dialog: AppBottomSheet) {
+							dialog.dismiss()
 
-							}
-						})
-					}
+						}
+					})
+
 				}
 
 				else -> {}
@@ -202,7 +194,7 @@ class PaymentShippingFragment : BaseFragment<MoreViewModel , FragmentPaymentShip
 		viewModel.setDefaultShippingAddressRepo.observe(viewLifecycleOwner) {
 			when (it) {
 				is Resource.Success -> {
-					val mData = it.value.data
+					it.value.data
 
 					viewModel.getShippingAddress()
 
@@ -211,21 +203,17 @@ class PaymentShippingFragment : BaseFragment<MoreViewModel , FragmentPaymentShip
 				is Resource.Error -> {
 					bind.loader.isVisible = false
 
-					if (it.isNetworkError) {
-						errorToast(getString(R.string.no_internet))
-					} else {
-						it.parse(mCtx , TAG , object : AlertClicks {
-							override fun primaryClick(dialog : AppBottomSheet) {
-								dialog.dismiss()
+					it.parse(mCtx, TAG, object : AlertClicks {
+						override fun primaryClick(dialog: AppBottomSheet) {
+							dialog.dismiss()
 
-							}
+						}
 
-							override fun secondaryClick(dialog : AppBottomSheet) {
-								dialog.dismiss()
+						override fun secondaryClick(dialog: AppBottomSheet) {
+							dialog.dismiss()
 
-							}
-						})
-					}
+						}
+					})
 				}
 
 				else -> {}
@@ -236,7 +224,7 @@ class PaymentShippingFragment : BaseFragment<MoreViewModel , FragmentPaymentShip
 		viewModel.setDefaultCardRepo.observe(viewLifecycleOwner) {
 			when (it) {
 				is Resource.Success -> {
-					val mData = it.value.data
+					it.value.data
 
 					viewModel.getPaymentCard()
 
@@ -245,21 +233,17 @@ class PaymentShippingFragment : BaseFragment<MoreViewModel , FragmentPaymentShip
 				is Resource.Error -> {
 					bind.loader.isVisible = false
 
-					if (it.isNetworkError) {
-						errorToast(getString(R.string.no_internet))
-					} else {
-						it.parse(mCtx , TAG , object : AlertClicks {
-							override fun primaryClick(dialog : AppBottomSheet) {
-								dialog.dismiss()
+					it.parse(mCtx, TAG, object : AlertClicks {
+						override fun primaryClick(dialog: AppBottomSheet) {
+							dialog.dismiss()
 
-							}
+						}
 
-							override fun secondaryClick(dialog : AppBottomSheet) {
-								dialog.dismiss()
+						override fun secondaryClick(dialog: AppBottomSheet) {
+							dialog.dismiss()
 
-							}
-						})
-					}
+						}
+					})
 				}
 
 				else -> {}
@@ -270,7 +254,7 @@ class PaymentShippingFragment : BaseFragment<MoreViewModel , FragmentPaymentShip
 		viewModel.deleteCardRepo.observe(viewLifecycleOwner) {
 			when (it) {
 				is Resource.Success -> {
-					val mData = it.value.data
+					it.value.data
 
 					viewModel.getPaymentCard()
 
@@ -279,21 +263,17 @@ class PaymentShippingFragment : BaseFragment<MoreViewModel , FragmentPaymentShip
 				is Resource.Error -> {
 					bind.loader.isVisible = false
 
-					if (it.isNetworkError) {
-						errorToast(getString(R.string.no_internet))
-					} else {
-						it.parse(mCtx , TAG , object : AlertClicks {
-							override fun primaryClick(dialog : AppBottomSheet) {
-								dialog.dismiss()
+					it.parse(mCtx, TAG, object : AlertClicks {
+						override fun primaryClick(dialog: AppBottomSheet) {
+							dialog.dismiss()
 
-							}
+						}
 
-							override fun secondaryClick(dialog : AppBottomSheet) {
-								dialog.dismiss()
+						override fun secondaryClick(dialog: AppBottomSheet) {
+							dialog.dismiss()
 
-							}
-						})
-					}
+						}
+					})
 				}
 
 				else -> {}
@@ -304,7 +284,7 @@ class PaymentShippingFragment : BaseFragment<MoreViewModel , FragmentPaymentShip
 		viewModel.deleteAddressRepo.observe(viewLifecycleOwner) {
 			when (it) {
 				is Resource.Success -> {
-					val mData = it.value.data
+					it.value.data
 
 					viewModel.getShippingAddress()
 
@@ -313,21 +293,17 @@ class PaymentShippingFragment : BaseFragment<MoreViewModel , FragmentPaymentShip
 				is Resource.Error -> {
 					bind.loader.isVisible = false
 
-					if (it.isNetworkError) {
-						errorToast(getString(R.string.no_internet))
-					} else {
-						it.parse(mCtx , TAG , object : AlertClicks {
-							override fun primaryClick(dialog : AppBottomSheet) {
-								dialog.dismiss()
+					it.parse(mCtx, TAG, object : AlertClicks {
+						override fun primaryClick(dialog: AppBottomSheet) {
+							dialog.dismiss()
 
-							}
+						}
 
-							override fun secondaryClick(dialog : AppBottomSheet) {
-								dialog.dismiss()
+						override fun secondaryClick(dialog: AppBottomSheet) {
+							dialog.dismiss()
 
-							}
-						})
-					}
+						}
+					})
 				}
 
 				else -> {}

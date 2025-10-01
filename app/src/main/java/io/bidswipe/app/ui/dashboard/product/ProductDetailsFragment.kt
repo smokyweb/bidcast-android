@@ -107,22 +107,24 @@ class ProductDetailsFragment : BaseFragment<ProductViewModel, FragmentProductDet
 					}
 
 					bind.price.text = mData?.pricing.toString().asMoney()
-					
+
 					val offer = mData?.offer
 					if (offer != null) {
 						bind.offerLayout.isVisible = true
 						bind.offerHeading.text = "Offer ${offer.status}"
 						bind.offerPrice.text = offer.amount.toString().asMoney()
-						
+
 						when (offer.status) {
 							"accepted" -> {
 								bind.price.paintFlags = bind.price.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
 								bind.price.setTextColor(ContextCompat.getColor(mCtx, R.color.outlineVariant))
 								bind.makeOffer.isVisible = false
 							}
+
 							"rejected" -> {
 								bind.makeOffer.isVisible = mData.acceptOffers == true
 							}
+
 							else -> {
 								bind.makeOffer.isVisible = false
 							}
@@ -166,21 +168,17 @@ class ProductDetailsFragment : BaseFragment<ProductViewModel, FragmentProductDet
 				is Resource.Error -> {
 					bind.loader.isVisible = false
 
-					if (it.isNetworkError) {
-						errorToast(getString(R.string.no_internet))
-					} else {
-						it.parse(mCtx, TAG, object : AlertClicks {
-							override fun primaryClick(dialog: AppBottomSheet) {
-								dialog.dismiss()
+					it.parse(mCtx, TAG, object : AlertClicks {
+						override fun primaryClick(dialog: AppBottomSheet) {
+							dialog.dismiss()
 
-							}
+						}
 
-							override fun secondaryClick(dialog: AppBottomSheet) {
-								dialog.dismiss()
+						override fun secondaryClick(dialog: AppBottomSheet) {
+							dialog.dismiss()
 
-							}
-						})
-					}
+						}
+					})
 				}
 
 				else -> {}
@@ -198,21 +196,17 @@ class ProductDetailsFragment : BaseFragment<ProductViewModel, FragmentProductDet
 				is Resource.Error -> {
 					bind.loader.isVisible = false
 
-					if (it.isNetworkError) {
-						errorToast(getString(R.string.no_internet))
-					} else {
-						it.parse(mCtx, TAG, object : AlertClicks {
-							override fun primaryClick(dialog: AppBottomSheet) {
-								dialog.dismiss()
+					it.parse(mCtx, TAG, object : AlertClicks {
+						override fun primaryClick(dialog: AppBottomSheet) {
+							dialog.dismiss()
 
-							}
+						}
 
-							override fun secondaryClick(dialog: AppBottomSheet) {
-								dialog.dismiss()
+						override fun secondaryClick(dialog: AppBottomSheet) {
+							dialog.dismiss()
 
-							}
-						})
-					}
+						}
+					})
 				}
 
 				else -> {}
@@ -234,21 +228,17 @@ class ProductDetailsFragment : BaseFragment<ProductViewModel, FragmentProductDet
 				is Resource.Error -> {
 					bind.loader.isVisible = false
 
-					if (it.isNetworkError) {
-						errorToast(getString(R.string.no_internet))
-					} else {
-						it.parse(mCtx, TAG, object : AlertClicks {
-							override fun primaryClick(dialog: AppBottomSheet) {
-								dialog.dismiss()
+					it.parse(mCtx, TAG, object : AlertClicks {
+						override fun primaryClick(dialog: AppBottomSheet) {
+							dialog.dismiss()
 
-							}
+						}
 
-							override fun secondaryClick(dialog: AppBottomSheet) {
-								dialog.dismiss()
+						override fun secondaryClick(dialog: AppBottomSheet) {
+							dialog.dismiss()
 
-							}
-						})
-					}
+						}
+					})
 				}
 
 				else -> {}

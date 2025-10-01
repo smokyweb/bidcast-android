@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.navigation.fragment.findNavController
-import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseFragment
 import io.bidswipe.app.controller.ShippingAddressAdapter
 import io.bidswipe.app.databinding.FragmentAddressesBinding
@@ -21,19 +20,19 @@ import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request
 import io.bidswipe.app.utils.setHapticClickListener
 
-class AddressesFragment : BaseFragment<MoreViewModel , FragmentAddressesBinding>() {
-	override fun getModel() : Class<MoreViewModel> = MoreViewModel::class.java
+class AddressesFragment : BaseFragment<MoreViewModel, FragmentAddressesBinding>() {
+	override fun getModel(): Class<MoreViewModel> = MoreViewModel::class.java
 
 	override fun getBind(
-		inflater : LayoutInflater ,
-		view : ViewGroup? ,
-	) = FragmentAddressesBinding.inflate(inflater , view , false)
+		inflater: LayoutInflater,
+		view: ViewGroup?,
+	) = FragmentAddressesBinding.inflate(inflater, view, false)
 
 	private var addressList = mutableListOf<GetShippingAddressResponse.Data?>()
-	private lateinit var shippingAddressAdapter : ShippingAddressAdapter
+	private lateinit var shippingAddressAdapter: ShippingAddressAdapter
 
 	private val mClick = object : RecyclerClicks {
-		override fun itemClick(pos : Int , status : String?) {
+		override fun itemClick(pos: Int, status: String?) {
 			when (status) {
 				"default" -> {
 					bind.loader.isVisible = true
@@ -49,18 +48,18 @@ class AddressesFragment : BaseFragment<MoreViewModel , FragmentAddressesBinding>
 
 	}
 
-	override fun onViewCreated(view : View , savedInstanceState : Bundle?) {
-		super.onViewCreated(view , savedInstanceState)
+	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+		super.onViewCreated(view, savedInstanceState)
 
 		bind.header.onBackClick {
 			finish()
 		}
 
-		shippingAddressAdapter = ShippingAddressAdapter(addressList , mClick)
+		shippingAddressAdapter = ShippingAddressAdapter(addressList, mClick)
 
 		bind.addressRecycler.adapter = shippingAddressAdapter
 
-        bind.addNewAddress.setHapticClickListener {
+		bind.addNewAddress.setHapticClickListener {
 			findNavController().navigate(ids.myAddressToAddShippingAddressFragment)
 		}
 
@@ -92,21 +91,17 @@ class AddressesFragment : BaseFragment<MoreViewModel , FragmentAddressesBinding>
 				is Resource.Error -> {
 					bind.loader.isVisible = false
 
-					if (it.isNetworkError) {
-						errorToast(getString(R.string.no_internet))
-					} else {
-						it.parse(mCtx , TAG , object : AlertClicks {
-							override fun primaryClick(dialog : AppBottomSheet) {
-								dialog.dismiss()
+					it.parse(mCtx, TAG, object : AlertClicks {
+						override fun primaryClick(dialog: AppBottomSheet) {
+							dialog.dismiss()
 
-							}
+						}
 
-							override fun secondaryClick(dialog : AppBottomSheet) {
-								dialog.dismiss()
+						override fun secondaryClick(dialog: AppBottomSheet) {
+							dialog.dismiss()
 
-							}
-						})
-					}
+						}
+					})
 				}
 
 				else -> {}
@@ -117,7 +112,7 @@ class AddressesFragment : BaseFragment<MoreViewModel , FragmentAddressesBinding>
 		viewModel.setDefaultShippingAddressRepo.observe(viewLifecycleOwner) {
 			when (it) {
 				is Resource.Success -> {
-					val mData = it.value.data
+					it.value.data
 
 					viewModel.getShippingAddress()
 
@@ -126,21 +121,17 @@ class AddressesFragment : BaseFragment<MoreViewModel , FragmentAddressesBinding>
 				is Resource.Error -> {
 					bind.loader.isVisible = false
 
-					if (it.isNetworkError) {
-						errorToast(getString(R.string.no_internet))
-					} else {
-						it.parse(mCtx , TAG , object : AlertClicks {
-							override fun primaryClick(dialog : AppBottomSheet) {
-								dialog.dismiss()
+					it.parse(mCtx, TAG, object : AlertClicks {
+						override fun primaryClick(dialog: AppBottomSheet) {
+							dialog.dismiss()
 
-							}
+						}
 
-							override fun secondaryClick(dialog : AppBottomSheet) {
-								dialog.dismiss()
+						override fun secondaryClick(dialog: AppBottomSheet) {
+							dialog.dismiss()
 
-							}
-						})
-					}
+						}
+					})
 				}
 
 				else -> {}
@@ -151,7 +142,7 @@ class AddressesFragment : BaseFragment<MoreViewModel , FragmentAddressesBinding>
 		viewModel.deleteAddressRepo.observe(viewLifecycleOwner) {
 			when (it) {
 				is Resource.Success -> {
-					val mData = it.value.data
+					it.value.data
 
 					viewModel.getShippingAddress()
 
@@ -160,21 +151,17 @@ class AddressesFragment : BaseFragment<MoreViewModel , FragmentAddressesBinding>
 				is Resource.Error -> {
 					bind.loader.isVisible = false
 
-					if (it.isNetworkError) {
-						errorToast(getString(R.string.no_internet))
-					} else {
-						it.parse(mCtx , TAG , object : AlertClicks {
-							override fun primaryClick(dialog : AppBottomSheet) {
-								dialog.dismiss()
+					it.parse(mCtx, TAG, object : AlertClicks {
+						override fun primaryClick(dialog: AppBottomSheet) {
+							dialog.dismiss()
 
-							}
+						}
 
-							override fun secondaryClick(dialog : AppBottomSheet) {
-								dialog.dismiss()
+						override fun secondaryClick(dialog: AppBottomSheet) {
+							dialog.dismiss()
 
-							}
-						})
-					}
+						}
+					})
 				}
 
 				else -> {}

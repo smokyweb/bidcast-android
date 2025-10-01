@@ -22,13 +22,13 @@ import io.bidswipe.app.utils.ids
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.setHapticClickListener
 
-class SelectCategoryFragment : BaseFragment<ScheduleShowViewModel , FragmentSelectCategoryBinding>() {
-	override fun getModel() : Class<ScheduleShowViewModel> = ScheduleShowViewModel::class.java
+class SelectCategoryFragment : BaseFragment<ScheduleShowViewModel, FragmentSelectCategoryBinding>() {
+	override fun getModel(): Class<ScheduleShowViewModel> = ScheduleShowViewModel::class.java
 
 	override fun getBind(
-        inflater : LayoutInflater ,
-        view : ViewGroup? ,
-    ) = FragmentSelectCategoryBinding.inflate(inflater , view , false)
+		inflater: LayoutInflater,
+		view: ViewGroup?,
+	) = FragmentSelectCategoryBinding.inflate(inflater, view, false)
 
 	private var categoryList = mutableListOf<GetCategoryResponse.Data?>()
 	private var auctionTypeList = mutableListOf<GetAuctionTypeResponse.Data?>()
@@ -36,21 +36,21 @@ class SelectCategoryFragment : BaseFragment<ScheduleShowViewModel , FragmentSele
 	private var categoryId = ""
 	private var auctionId = ""
 
-	override fun onViewCreated(view : View , savedInstanceState : Bundle?) {
-		super.onViewCreated(view , savedInstanceState)
+	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+		super.onViewCreated(view, savedInstanceState)
 
 		bind.header.onBackClick {
 			finish()
 		}
 
-        bind.continueBtn.setHapticClickListener {
+		bind.continueBtn.setHapticClickListener {
 			when {
 				categoryId.isEmpty() -> {
-					Alerts.error(mCtx , "Please Select a Category")
+					Alerts.error(mCtx, "Please Select a Category")
 				}
 
 				auctionId.isEmpty() -> {
-					Alerts.error(mCtx , "Please select an Auction Type")
+					Alerts.error(mCtx, "Please select an Auction Type")
 				}
 
 				else -> {
@@ -63,19 +63,19 @@ class SelectCategoryFragment : BaseFragment<ScheduleShowViewModel , FragmentSele
 			}
 		}
 
-		bind.category.setOnItemClickListener { _ , _ , position , _ ->
+		bind.category.setOnItemClickListener { _, _, position, _ ->
 			categoryId = categoryList[position]?.id.toString()
 		}
 
-        bind.category.setHapticClickListener {
+		bind.category.setHapticClickListener {
 			bind.category.showDropDown()
 		}
 
-		bind.auctionType.setOnItemClickListener { _ , _ , position , _ ->
+		bind.auctionType.setOnItemClickListener { _, _, position, _ ->
 			auctionId = auctionTypeList[position]?.id.toString()
 		}
 
-        bind.auctionType.setHapticClickListener {
+		bind.auctionType.setHapticClickListener {
 			bind.auctionType.showDropDown()
 		}
 
@@ -90,9 +90,9 @@ class SelectCategoryFragment : BaseFragment<ScheduleShowViewModel , FragmentSele
 						categoryList.clear()
 						categoryList.addAll(it.value.data)
 
-						val adapter = ArrayAdapter(mCtx , android.R.layout.simple_list_item_1 , categoryList.map { it?.name })
+						val adapter = ArrayAdapter(mCtx, android.R.layout.simple_list_item_1, categoryList.map { it?.name })
 						bind.category.setAdapter(adapter)
-						val draw = ContextCompat.getDrawable(mCtx , R.drawable.card_8)
+						val draw = ContextCompat.getDrawable(mCtx, R.drawable.card_8)
 						bind.category.setDropDownBackgroundDrawable(draw)
 
 					}
@@ -101,21 +101,18 @@ class SelectCategoryFragment : BaseFragment<ScheduleShowViewModel , FragmentSele
 				is Resource.Error -> {
 					bind.loader.isVisible = false
 
-					if (it.isNetworkError) {
-						errorToast(getString(R.string.no_internet))
-					} else {
-						it.parse(mCtx , TAG , object : AlertClicks {
-							override fun primaryClick(dialog : AppBottomSheet) {
-								dialog.dismiss()
+					it.parse(mCtx, TAG, object : AlertClicks {
+						override fun primaryClick(dialog: AppBottomSheet) {
+							dialog.dismiss()
 
-							}
+						}
 
-							override fun secondaryClick(dialog : AppBottomSheet) {
-								dialog.dismiss()
+						override fun secondaryClick(dialog: AppBottomSheet) {
+							dialog.dismiss()
 
-							}
-						})
-					}
+						}
+					})
+
 				}
 
 				else -> {}
@@ -134,9 +131,9 @@ class SelectCategoryFragment : BaseFragment<ScheduleShowViewModel , FragmentSele
 						auctionTypeList.clear()
 						auctionTypeList.addAll(it.value.data)
 
-						val adapter = ArrayAdapter(mCtx , android.R.layout.simple_list_item_1 , auctionTypeList.map { it?.name })
+						val adapter = ArrayAdapter(mCtx, android.R.layout.simple_list_item_1, auctionTypeList.map { it?.name })
 						bind.auctionType.setAdapter(adapter)
-						val draw = ContextCompat.getDrawable(mCtx , R.drawable.card_8)
+						val draw = ContextCompat.getDrawable(mCtx, R.drawable.card_8)
 						bind.auctionType.setDropDownBackgroundDrawable(draw)
 
 					}
@@ -145,21 +142,17 @@ class SelectCategoryFragment : BaseFragment<ScheduleShowViewModel , FragmentSele
 				is Resource.Error -> {
 					bind.loader.isVisible = false
 
-					if (it.isNetworkError) {
-						errorToast(getString(R.string.no_internet))
-					} else {
-						it.parse(mCtx , TAG , object : AlertClicks {
-							override fun primaryClick(dialog : AppBottomSheet) {
-								dialog.dismiss()
+					it.parse(mCtx, TAG, object : AlertClicks {
+						override fun primaryClick(dialog: AppBottomSheet) {
+							dialog.dismiss()
 
-							}
+						}
 
-							override fun secondaryClick(dialog : AppBottomSheet) {
-								dialog.dismiss()
+						override fun secondaryClick(dialog: AppBottomSheet) {
+							dialog.dismiss()
 
-							}
-						})
-					}
+						}
+					})
 				}
 
 				else -> {}

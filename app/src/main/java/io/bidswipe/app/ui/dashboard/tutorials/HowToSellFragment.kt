@@ -7,7 +7,6 @@ import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.navigation.fragment.findNavController
 import androidx.viewpager2.widget.ViewPager2
-import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseFragment
 import io.bidswipe.app.controller.HowToSellPagerAdapter
 import io.bidswipe.app.databinding.FragmentHowToSellBinding
@@ -21,21 +20,21 @@ import io.bidswipe.app.utils.ids
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.setHapticClickListener
 
-class HowToSellFragment : BaseFragment<DashViewModel , FragmentHowToSellBinding>() {
+class HowToSellFragment : BaseFragment<DashViewModel, FragmentHowToSellBinding>() {
 
-	override fun getModel() : Class<DashViewModel> = DashViewModel::class.java
+	override fun getModel(): Class<DashViewModel> = DashViewModel::class.java
 
-	override fun getBind(inflater : LayoutInflater , view : ViewGroup?) = FragmentHowToSellBinding.inflate(inflater , view , false)
+	override fun getBind(inflater: LayoutInflater, view: ViewGroup?) = FragmentHowToSellBinding.inflate(inflater, view, false)
 
 	private var tipList = mutableListOf<GetHowToSellResponse.Data?>()
-	private lateinit var pagerAdapter : HowToSellPagerAdapter
+	private lateinit var pagerAdapter: HowToSellPagerAdapter
 
 	private var type = ""
 
 	private var tipPos = 1
 
-	override fun onViewCreated(view : View , savedInstanceState : Bundle?) {
-		super.onViewCreated(view , savedInstanceState)
+	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+		super.onViewCreated(view, savedInstanceState)
 
 		type = activity?.intent?.getStringExtra("slug") ?: ""
 
@@ -63,7 +62,7 @@ class HowToSellFragment : BaseFragment<DashViewModel , FragmentHowToSellBinding>
 		bind.pager.isUserInputEnabled = false
 
 		bind.pager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
-			override fun onPageSelected(position : Int) {
+			override fun onPageSelected(position: Int) {
 				super.onPageSelected(position)
 
 				bind.track.progress = position + 1
@@ -76,7 +75,7 @@ class HowToSellFragment : BaseFragment<DashViewModel , FragmentHowToSellBinding>
 			}
 		})
 
-        bind.nextBtn.setHapticClickListener {
+		bind.nextBtn.setHapticClickListener {
 
 			log("ITEM : ${bind.pager.currentItem}")
 
@@ -97,7 +96,7 @@ class HowToSellFragment : BaseFragment<DashViewModel , FragmentHowToSellBinding>
 
 		}
 
-        bind.backBtn.setHapticClickListener {
+		bind.backBtn.setHapticClickListener {
 			if (bind.pager.currentItem == 0) {
 				if (requireActivity().intent.getStringExtra("type") == "promoteTools") {
 					finish()
@@ -140,21 +139,18 @@ class HowToSellFragment : BaseFragment<DashViewModel , FragmentHowToSellBinding>
 
 				is Resource.Error -> {
 					bind.loader.isVisible = false
-					if (it.isNetworkError) {
-						errorToast(getString(R.string.no_internet))
-					} else {
-						it.parse(mCtx , TAG , object : AlertClicks {
-							override fun primaryClick(dialog : AppBottomSheet) {
-								dialog.dismiss()
 
-							}
+					it.parse(mCtx, TAG, object : AlertClicks {
+						override fun primaryClick(dialog: AppBottomSheet) {
+							dialog.dismiss()
 
-							override fun secondaryClick(dialog : AppBottomSheet) {
-								dialog.dismiss()
+						}
 
-							}
-						})
-					}
+						override fun secondaryClick(dialog: AppBottomSheet) {
+							dialog.dismiss()
+
+						}
+					})
 				}
 
 				else -> {}

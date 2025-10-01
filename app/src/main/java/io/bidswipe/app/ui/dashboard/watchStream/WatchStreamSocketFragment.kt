@@ -37,6 +37,7 @@ import io.bidswipe.app.databinding.SendTipSheetBinding
 import io.bidswipe.app.interfaces.AlertClicks
 import io.bidswipe.app.model.LiveChatModel
 import io.bidswipe.app.model.LiveShowModel
+import io.bidswipe.app.network.Resource
 import io.bidswipe.app.ui.custom.AlertType
 import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.ui.dashboard.more.MoreActivity
@@ -50,6 +51,7 @@ import io.bidswipe.app.utils.draw
 import io.bidswipe.app.utils.finish
 import io.bidswipe.app.utils.hideKeyboard
 import io.bidswipe.app.utils.loadUrl
+import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request
 import io.bidswipe.app.utils.runSafe
 import io.bidswipe.app.utils.setHapticClickListener
@@ -163,7 +165,7 @@ class WatchStreamSocketFragment : BaseFragment<StreamViewModel, FragmentWatchStr
 			socketManager?.onViewerCount { args ->
 
 				runSafe {
-					if (args.optString("room_id") == roomID){
+					if (args.optString("room_id") == roomID) {
 						requireActivity().runOnUiThread {
 							bind.liveCount.text = args.optString("count")
 						}
@@ -181,7 +183,11 @@ class WatchStreamSocketFragment : BaseFragment<StreamViewModel, FragmentWatchStr
 					requireActivity().runOnUiThread {
 						val products = LiveShowModel.fromJson(json)
 						updateProductUI(products.products.find { it?.isCurrent == true })
-						bind.bid.text = "Swipe to Bid ${newBidAmount(products.products.find { it?.isCurrent == true }?.price?.toDoubleOrNull()?.toInt() ?: 0).toString().asMoney()}"
+						bind.bid.text = "Swipe to Bid ${
+							newBidAmount(
+								products.products.find { it?.isCurrent == true }?.price?.toDoubleOrNull()?.toInt() ?: 0
+							).toString().asMoney()
+						}"
 					}
 				}
 
@@ -198,10 +204,10 @@ class WatchStreamSocketFragment : BaseFragment<StreamViewModel, FragmentWatchStr
 
 						log("WINNER: $winner")
 
-						 if (roomID == json.optString("room_id")){
-							 bind.soldLayout.isVisible = true
-							 bind.bidLayout.isVisible = false
-							 bind.productLayout.isVisible = false
+						if (roomID == json.optString("room_id")) {
+							bind.soldLayout.isVisible = true
+							bind.bidLayout.isVisible = false
+							bind.productLayout.isVisible = false
 						}
 
 						if (userId == winner.optString("user_id")) {
@@ -210,9 +216,9 @@ class WatchStreamSocketFragment : BaseFragment<StreamViewModel, FragmentWatchStr
 							bind.soldOutText.text = "Bidder ${winner.optString("user_name")} won the bid"
 						}
 
-					/*	if (isSold && data.highestBid?.userId == userId) {
-							bind.soldOutText.text = "You won the bid"
-						}*/
+						/*	if (isSold && data.highestBid?.userId == userId) {
+								bind.soldOutText.text = "You won the bid"
+							}*/
 
 					}
 
@@ -276,6 +282,36 @@ class WatchStreamSocketFragment : BaseFragment<StreamViewModel, FragmentWatchStr
 			verificationDialog()
 		}
 
+		viewModel.sendTipAmountRepo.observe(viewLifecycleOwner) { it ->
+			when (it) {
+				is Resource.Success -> {
+					bind.loader.isVisible = false
+
+					it.value.data
+
+					Alerts.success(mCtx, "Tip sent successfully")
+
+
+				}
+
+				is Resource.Error -> {
+					it.parse(mCtx, TAG, object : AlertClicks {
+						override fun primaryClick(dialog: AppBottomSheet) {
+							dialog.dismiss()
+
+						}
+
+						override fun secondaryClick(dialog: AppBottomSheet) {
+							dialog.dismiss()
+
+						}
+					})
+				}
+
+				else -> {}
+			}
+		}
+
 	}
 
 	override fun onResume() {
@@ -314,11 +350,11 @@ class WatchStreamSocketFragment : BaseFragment<StreamViewModel, FragmentWatchStr
 
 			val liveProduct = showData.products.find { it?.isCurrent == true }
 
-			if (showData.highestBid.bidAmount?.isNotEmpty() == true){
+			if (showData.highestBid.bidAmount?.isNotEmpty() == true) {
 				highestBidAmount = showData.highestBid.bidAmount
 				log("HIGHEST BID: ${highestBidAmount}")
 				bind.bid.text = "Swipe to Bid ${newBidAmount(highestBidAmount?.toDoubleOrNull()?.toInt() ?: 0).toString().asMoney()}"
-			}else{
+			} else {
 				highestBidAmount = ""
 				bind.bid.text = "Swipe to Bid ${newBidAmount(liveProduct?.price?.toDoubleOrNull()?.toInt() ?: 0).toString().asMoney()}"
 			}
@@ -409,11 +445,11 @@ class WatchStreamSocketFragment : BaseFragment<StreamViewModel, FragmentWatchStr
 		val value = json.optString("remaining")
 		runSafe {
 			log("BID COUNTDOWN: $value")
-			requireActivity().runOnUiThread{
-				if (json.optString(    "room_id") == roomID){
+			requireActivity().runOnUiThread {
+				if (json.optString("room_id") == roomID) {
 					bind.bidTime.isVisible = true
 					bind.bidTime.text = "Ends in $value"
-				}else{
+				} else {
 					bind.bidTime.isVisible = false
 				}
 			}
@@ -517,9 +553,9 @@ class WatchStreamSocketFragment : BaseFragment<StreamViewModel, FragmentWatchStr
 
 //            sendZimMessage("New high bid: $$bidAmount")
 			Alerts.success(mCtx, "Bid placed successfully")
-		socketManager?.sendMessage(
+			socketManager?.sendMessage(
 				roomID,
-			"New high bid: $$bidAmount",
+				"New high bid: $$bidAmount",
 				userId,
 				userName,
 				userImage
@@ -528,7 +564,7 @@ class WatchStreamSocketFragment : BaseFragment<StreamViewModel, FragmentWatchStr
 		}
 	}
 
-	fun updateProductUI(liveProduct : LiveShowModel.Product?){
+	fun updateProductUI(liveProduct: LiveShowModel.Product?) {
 		bind.soldLayout.isVisible = false
 		bind.bidLayout.isVisible = true
 		bind.productLayout.isVisible = true
@@ -980,7 +1016,9 @@ class WatchStreamSocketFragment : BaseFragment<StreamViewModel, FragmentWatchStr
 					return@setHapticClickListener
 				}
 
-				if (walletRadio.isChecked && customOffer.text.toString().toDouble() > ((App.profileResponse.value?.walletAmount?: "0.0").toString().toDouble())) {
+				if (walletRadio.isChecked && customOffer.text.toString().toDouble() > ((App.profileResponse.value?.walletAmount ?: "0.0").toString()
+						.toDouble())
+				) {
 					Alerts.error(mCtx, "Insufficient balance")
 					return@setHapticClickListener
 				}

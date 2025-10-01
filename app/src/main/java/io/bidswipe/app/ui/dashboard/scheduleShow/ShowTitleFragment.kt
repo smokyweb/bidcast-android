@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.navigation.fragment.findNavController
-import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseFragment
 import io.bidswipe.app.controller.ExampleAdapter
 import io.bidswipe.app.controller.TitleAdapter
@@ -25,20 +24,20 @@ import io.bidswipe.app.utils.setHapticClickListener
 import io.bidswipe.app.utils.showKeyboard
 import io.bidswipe.app.utils.value
 
-class ShowTitleFragment : BaseFragment<ScheduleShowViewModel , FragmentShowTitleBinding>() {
+class ShowTitleFragment : BaseFragment<ScheduleShowViewModel, FragmentShowTitleBinding>() {
 
-	override fun getModel() : Class<ScheduleShowViewModel> = ScheduleShowViewModel::class.java
+	override fun getModel(): Class<ScheduleShowViewModel> = ScheduleShowViewModel::class.java
 
-	override fun getBind(inflater : LayoutInflater , view : ViewGroup?) = FragmentShowTitleBinding.inflate(inflater , view , false)
+	override fun getBind(inflater: LayoutInflater, view: ViewGroup?) = FragmentShowTitleBinding.inflate(inflater, view, false)
 
-	private lateinit var titleAdapter : TitleAdapter
-	private lateinit var exampleAdapter : ExampleAdapter
+	private lateinit var titleAdapter: TitleAdapter
+	private lateinit var exampleAdapter: ExampleAdapter
 
 	private var titleList = mutableListOf<GetAllTipsResponse.Data.Tip?>()
 	private var exampleList = mutableListOf<String?>()
 
-	override fun onViewCreated(view : View , savedInstanceState : Bundle?) {
-		super.onViewCreated(view , savedInstanceState)
+	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+		super.onViewCreated(view, savedInstanceState)
 
 		val from = activity?.intent?.getStringExtra("from")
 
@@ -46,7 +45,7 @@ class ShowTitleFragment : BaseFragment<ScheduleShowViewModel , FragmentShowTitle
 			finish()
 		}
 
-        bind.layout.setHapticClickListener {
+		bind.layout.setHapticClickListener {
 			hideKeyboard(it)
 		}
 
@@ -57,12 +56,12 @@ class ShowTitleFragment : BaseFragment<ScheduleShowViewModel , FragmentShowTitle
 		bind.exampleRecycler.adapter = exampleAdapter
 
 
-        bind.continueBtn.setHapticClickListener {
+		bind.continueBtn.setHapticClickListener {
 
 			when {
 
 				bind.showTitle.value().isEmpty() -> {
-					Alerts.error(mCtx , "Please enter the show title")
+					Alerts.error(mCtx, "Please enter the show title")
 					bind.showTitle.requestFocus()
 					showKeyboard(bind.showTitle)
 				}
@@ -112,21 +111,18 @@ class ShowTitleFragment : BaseFragment<ScheduleShowViewModel , FragmentShowTitle
 				is Resource.Error -> {
 					bind.loader.isVisible = false
 
-					if (it.isNetworkError) {
-						errorToast(getString(R.string.no_internet))
-					} else {
-						it.parse(mCtx , TAG , object : AlertClicks {
-							override fun primaryClick(dialog : AppBottomSheet) {
-								dialog.dismiss()
+					it.parse(mCtx, TAG, object : AlertClicks {
+						override fun primaryClick(dialog: AppBottomSheet) {
+							dialog.dismiss()
 
-							}
+						}
 
-							override fun secondaryClick(dialog : AppBottomSheet) {
-								dialog.dismiss()
+						override fun secondaryClick(dialog: AppBottomSheet) {
+							dialog.dismiss()
 
-							}
-						})
-					}
+						}
+					})
+
 				}
 
 				else -> {}

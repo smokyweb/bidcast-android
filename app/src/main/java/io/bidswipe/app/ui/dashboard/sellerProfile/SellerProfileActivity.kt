@@ -238,22 +238,17 @@ class SellerProfileActivity : BaseActivity() {
 
 				is Resource.Error -> {
 					bind.loader.isVisible = false
+					it.parse(this, TAG, object : AlertClicks {
+						override fun primaryClick(dialog: AppBottomSheet) {
+							dialog.dismiss()
 
-					if (it.isNetworkError) {
-						errorToast(getString(R.string.no_internet))
-					} else {
-						it.parse(this, TAG, object : AlertClicks {
-							override fun primaryClick(dialog: AppBottomSheet) {
-								dialog.dismiss()
+						}
 
-							}
+						override fun secondaryClick(dialog: AppBottomSheet) {
+							dialog.dismiss()
 
-							override fun secondaryClick(dialog: AppBottomSheet) {
-								dialog.dismiss()
-
-							}
-						})
-					}
+						}
+					})
 				}
 
 				else -> {}
@@ -281,22 +276,17 @@ class SellerProfileActivity : BaseActivity() {
 
 				is Resource.Error -> {
 					bind.loader.isVisible = false
+					it.parse(this, TAG, object : AlertClicks {
+						override fun primaryClick(dialog: AppBottomSheet) {
+							dialog.dismiss()
 
-					if (it.isNetworkError) {
-						errorToast(getString(R.string.no_internet))
-					} else {
-						it.parse(this, TAG, object : AlertClicks {
-							override fun primaryClick(dialog: AppBottomSheet) {
-								dialog.dismiss()
+						}
 
-							}
+						override fun secondaryClick(dialog: AppBottomSheet) {
+							dialog.dismiss()
 
-							override fun secondaryClick(dialog: AppBottomSheet) {
-								dialog.dismiss()
-
-							}
-						})
-					}
+						}
+					})
 				}
 
 				else -> {}
@@ -319,21 +309,17 @@ class SellerProfileActivity : BaseActivity() {
 				is Resource.Error -> {
 					bind.loader.isVisible = false
 
-					if (it.isNetworkError) {
-						errorToast(getString(R.string.no_internet))
-					} else {
-						it.parse(this, TAG, object : AlertClicks {
-							override fun primaryClick(dialog: AppBottomSheet) {
-								dialog.dismiss()
+					it.parse(this, TAG, object : AlertClicks {
+						override fun primaryClick(dialog: AppBottomSheet) {
+							dialog.dismiss()
 
-							}
+						}
 
-							override fun secondaryClick(dialog: AppBottomSheet) {
-								dialog.dismiss()
+						override fun secondaryClick(dialog: AppBottomSheet) {
+							dialog.dismiss()
 
-							}
-						})
-					}
+						}
+					})
 				}
 
 				else -> {}
@@ -350,19 +336,15 @@ class SellerProfileActivity : BaseActivity() {
 
 				is Resource.Error -> {
 					bind.loader.isVisible = false
-					if (it.isNetworkError) {
-						errorToast(getString(R.string.no_internet))
-					} else {
-						it.parse(this, TAG, object : AlertClicks {
-							override fun primaryClick(dialog: AppBottomSheet) {
-								dialog.dismiss()
-							}
+					it.parse(this, TAG, object : AlertClicks {
+						override fun primaryClick(dialog: AppBottomSheet) {
+							dialog.dismiss()
+						}
 
-							override fun secondaryClick(dialog: AppBottomSheet) {
-								dialog.dismiss()
-							}
-						})
-					}
+						override fun secondaryClick(dialog: AppBottomSheet) {
+							dialog.dismiss()
+						}
+					})
 				}
 
 				else -> {}
@@ -483,19 +465,15 @@ class SellerProfileActivity : BaseActivity() {
 
 				is Resource.Error -> {
 					bind.loader.isVisible = false
-					if (it.isNetworkError) {
-						errorToast(getString(R.string.no_internet))
-					} else {
-						it.parse(this, TAG, object : AlertClicks {
-							override fun primaryClick(dialog: AppBottomSheet) {
-								dialog.dismiss()
-							}
+					it.parse(this, TAG, object : AlertClicks {
+						override fun primaryClick(dialog: AppBottomSheet) {
+							dialog.dismiss()
+						}
 
-							override fun secondaryClick(dialog: AppBottomSheet) {
-								dialog.dismiss()
-							}
-						})
-					}
+						override fun secondaryClick(dialog: AppBottomSheet) {
+							dialog.dismiss()
+						}
+					})
 				}
 
 				else -> {}
@@ -577,8 +555,10 @@ class SellerProfileActivity : BaseActivity() {
 					Alerts.error(this@SellerProfileActivity, "Please enter an amount")
 					return@setHapticClickListener
 				}
-				
-				if (walletRadio.isChecked && customOffer.text.toString().toDouble() > ((App.profileResponse.value?.walletAmount?: "0.0").toString().toDouble())) {
+
+				if (walletRadio.isChecked && customOffer.text.toString().toDouble() > ((App.profileResponse.value?.walletAmount ?: "0.0").toString()
+						.toDouble())
+				) {
 					Alerts.error(this@SellerProfileActivity, "Insufficient balance")
 					return@setHapticClickListener
 				}

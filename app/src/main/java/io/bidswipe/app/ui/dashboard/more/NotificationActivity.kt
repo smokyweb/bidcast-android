@@ -17,20 +17,19 @@ import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request
 import io.bidswipe.app.utils.runSafe
 import io.bidswipe.app.utils.setHapticClickListener
-import kotlin.getValue
 
 class NotificationActivity : BaseActivity() {
 
 	private val bind by bind(ActivityNotificationBinding::inflate)
 	private val viewModel by viewModels<MoreViewModel>()
 
-	private lateinit var notificationAdapter : NotificationAdapter
+	private lateinit var notificationAdapter: NotificationAdapter
 	private var notificationList = mutableListOf<GetNotificationResponse.Data?>()
 
-	private var delPos = - 1
+	private var delPos = -1
 
 	private val mClick = object : RecyclerClicks {
-		override fun itemClick(pos : Int , status : String?) {
+		override fun itemClick(pos: Int, status: String?) {
 			when (status) {
 				"delete" -> {
 					bind.loader.isVisible = true
@@ -45,7 +44,7 @@ class NotificationActivity : BaseActivity() {
 	}
 
 	@SuppressLint("NotifyDataSetChanged")
-	override fun onCreate(savedInstanceState : Bundle?) {
+	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
 		setContentView(bind.root)
 
@@ -53,10 +52,10 @@ class NotificationActivity : BaseActivity() {
 			finish()
 		}
 
-		notificationAdapter = NotificationAdapter(notificationList , mClick)
+		notificationAdapter = NotificationAdapter(notificationList, mClick)
 		bind.notificationRec.adapter = notificationAdapter
 
-        bind.deleteAll.setHapticClickListener {
+		bind.deleteAll.setHapticClickListener {
 			bind.loader.isVisible = true
 			viewModel.deleteNotification("".request())
 
@@ -65,7 +64,6 @@ class NotificationActivity : BaseActivity() {
 		bind.swipeRefreshLayout.setOnRefreshListener {
 			bind.swipeRefreshLayout.isRefreshing = false
 			viewModel.getNotification()
-
 		}
 
 		bind.noInternet.onClick {
@@ -77,7 +75,6 @@ class NotificationActivity : BaseActivity() {
 		bind.noData.onClick {
 			bind.noData.isVisible = false
 			viewModel.getNotification()
-
 		}
 
 		bind.loader.isVisible = true
@@ -99,7 +96,7 @@ class NotificationActivity : BaseActivity() {
 						notificationAdapter.notifyDataSetChanged()
 						val isEmpty = mData.isNullOrEmpty()
 						bind.noData.isVisible = mData?.isEmpty() == true
-						bind.deleteAll.isVisible = ! isEmpty
+						bind.deleteAll.isVisible = !isEmpty
 					}
 				}
 
@@ -118,12 +115,12 @@ class NotificationActivity : BaseActivity() {
 					} else {
 						bind.noInternet.isVisible = false
 						bind.deleteAll.isVisible = false
-						it.parse(this , TAG , object : AlertClicks {
-							override fun primaryClick(dialog : AppBottomSheet) {
+						it.parse(this, TAG, object : AlertClicks {
+							override fun primaryClick(dialog: AppBottomSheet) {
 								dialog.dismiss()
 							}
 
-							override fun secondaryClick(dialog : AppBottomSheet) {
+							override fun secondaryClick(dialog: AppBottomSheet) {
 								dialog.dismiss()
 							}
 						})
@@ -142,26 +139,26 @@ class NotificationActivity : BaseActivity() {
 					runSafe {
 						bind.loader.isVisible = false
 
-						if (delPos != - 1) {
+						if (delPos != -1) {
 							notificationList.removeAt(delPos)
 							notificationAdapter.notifyItemRemoved(delPos)
-							notificationAdapter.notifyItemRangeChanged(0 , notificationList.size)
+							notificationAdapter.notifyItemRangeChanged(0, notificationList.size)
 						} else {
 							viewModel.getNotification()
 						}
 
-						delPos = - 1
+						delPos = -1
 					}
 				}
 
 				is Resource.Error -> {
 					bind.loader.isVisible = false
-					it.parse(this , TAG , object : AlertClicks {
-						override fun primaryClick(dialog : AppBottomSheet) {
+					it.parse(this, TAG, object : AlertClicks {
+						override fun primaryClick(dialog: AppBottomSheet) {
 							dialog.dismiss()
 						}
 
-						override fun secondaryClick(dialog : AppBottomSheet) {
+						override fun secondaryClick(dialog: AppBottomSheet) {
 							dialog.dismiss()
 						}
 					})

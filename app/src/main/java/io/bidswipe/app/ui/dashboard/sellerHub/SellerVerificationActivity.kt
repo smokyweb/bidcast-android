@@ -86,7 +86,7 @@ class SellerVerificationActivity : BaseActivity() {
 				if (cardImage.isNotEmpty() && selfie.isNotEmpty()) {
 
 					bind.verificationIcon.isVisible = true
-					bind.stepProgress.setProgress(1)
+					bind.stepProgress.progress = 1
 					bind.stepCount.text = "1 of 3"
 
 				}
@@ -110,7 +110,7 @@ class SellerVerificationActivity : BaseActivity() {
 
 				if (cardImage.isNotEmpty() && selfie.isNotEmpty()) {
 					bind.verificationIcon.isVisible = true
-					bind.stepProgress.setProgress(1)
+					bind.stepProgress.progress = 1
 					bind.stepCount.text = "1 of 3"
 				}
 
@@ -129,7 +129,7 @@ class SellerVerificationActivity : BaseActivity() {
 			finish()
 		}
 
-        bind.root.setHapticClickListener {
+		bind.root.setHapticClickListener {
 			hideKeyboard()
 		}
 
@@ -142,15 +142,15 @@ class SellerVerificationActivity : BaseActivity() {
 
 		bind.recycler.adapter = cardAdapter
 
-        bind.uploadId.setHapticClickListener {
+		bind.uploadId.setHapticClickListener {
 			uploadUserId()
 		}
 
-        bind.uploadSelfie.setHapticClickListener {
+		bind.uploadSelfie.setHapticClickListener {
 			uploadUserSelfie()
 		}
 
-        bind.verifyId.setHapticClickListener {
+		bind.verifyId.setHapticClickListener {
 
 			when {
 
@@ -183,7 +183,7 @@ class SellerVerificationActivity : BaseActivity() {
 
 		}
 
-        bind.verifyPhone.setHapticClickListener {
+		bind.verifyPhone.setHapticClickListener {
 
 			when {
 
@@ -202,7 +202,7 @@ class SellerVerificationActivity : BaseActivity() {
 
 		}
 
-        bind.verifyOtp.setHapticClickListener {
+		bind.verifyOtp.setHapticClickListener {
 
 			when {
 
@@ -221,11 +221,11 @@ class SellerVerificationActivity : BaseActivity() {
 
 		}
 
-        bind.addCardBtn.setHapticClickListener {
+		bind.addCardBtn.setHapticClickListener {
 			addCardLauncher.launch(this.goToAddCard("verification"))
 		}
 
-        bind.completeVerification.setHapticClickListener {
+		bind.completeVerification.setHapticClickListener {
 			when {
 
 				cardImage.isEmpty() -> {
@@ -259,7 +259,7 @@ class SellerVerificationActivity : BaseActivity() {
 			}
 		}
 
-        bind.editPhone.setHapticClickListener {
+		bind.editPhone.setHapticClickListener {
 			bind.phoneNumberLayout.isVisible = true
 			bind.verifyPhoneTitle.isVisible = true
 			bind.verifyPhoneTitle.text = "Enter phone number"
@@ -272,7 +272,7 @@ class SellerVerificationActivity : BaseActivity() {
 			bind.resend.isVisible = false
 		}
 
-        bind.resend.setHapticClickListener {
+		bind.resend.setHapticClickListener {
 
 			bind.loader.isVisible = true
 			viewModel.storePhoneNumber(phoneNumber.request())
@@ -285,7 +285,7 @@ class SellerVerificationActivity : BaseActivity() {
 					bind.loader.isVisible = false
 
 					it.value.data
-					bind.stepProgress.setProgress(2)
+					bind.stepProgress.progress = 2
 
 					bind.stepCount.text = "2 of 3"
 
@@ -298,20 +298,16 @@ class SellerVerificationActivity : BaseActivity() {
 				is Resource.Error -> {
 					bind.loader.isVisible = false
 
-					if (it.isNetworkError) {
-						errorToast(getString(R.string.no_internet))
-					} else {
-						it.parse(this, TAG, object : AlertClicks {
-							override fun primaryClick(dialog: AppBottomSheet) {
-								dialog.dismiss()
-							}
+					it.parse(this, TAG, object : AlertClicks {
+						override fun primaryClick(dialog: AppBottomSheet) {
+							dialog.dismiss()
+						}
 
-							override fun secondaryClick(dialog: AppBottomSheet) {
-								dialog.dismiss()
+						override fun secondaryClick(dialog: AppBottomSheet) {
+							dialog.dismiss()
 
-							}
-						})
-					}
+						}
+					})
 				}
 
 				else -> {}
@@ -333,22 +329,22 @@ class SellerVerificationActivity : BaseActivity() {
 						else it.toString()
 					}
 
-                    if (mData?.idCard?.isNotEmpty() == true && mData.image?.isNotEmpty() == true) {
-                        bind.cardImage.isVisible = true
-                        bind.selfie.isVisible = true
-                    } else {
-                        bind.cardImage.isVisible = true
-                        bind.selfie.isVisible = true
-                    }
+					if (mData?.idCard?.isNotEmpty() == true && mData.image?.isNotEmpty() == true) {
+						bind.cardImage.isVisible = true
+						bind.selfie.isVisible = true
+					} else {
+						bind.cardImage.isVisible = true
+						bind.selfie.isVisible = true
+					}
 
-                    bind.cardImage.loadUrl(this, mData?.idCard ?: "")
-                    bind.selfie.loadUrl(this, mData?.image ?: "")
+					bind.cardImage.loadUrl(this, mData?.idCard ?: "")
+					bind.selfie.loadUrl(this, mData?.image ?: "")
 
 					when (mData?.status) {
 
 						"pending" -> {
 							bind.verificationIcon.isVisible = true
-							bind.stepProgress.setProgress(3)
+							bind.stepProgress.progress = 3
 							bind.stepCount.text = "2 of 3"
 							bind.addCardBtn.isVisible = false
 							bind.phoneNumberLayout.isVisible = false
@@ -371,7 +367,7 @@ class SellerVerificationActivity : BaseActivity() {
 							bind.verifyOtp.isVisible = false
 							bind.addCardBtn.isVisible = false
 							bind.verifyPhoneTitle.isVisible = false
-							bind.stepProgress.setProgress(3)
+							bind.stepProgress.progress = 3
 							bind.stepCount.text = "3 of 3"
 							bind.status.setTextColor(ContextCompat.getColor(this, R.color.success))
 							bind.completeVerification.isVisible = false
@@ -397,20 +393,16 @@ class SellerVerificationActivity : BaseActivity() {
 				is Resource.Error -> {
 					bind.loader.isVisible = false
 
-					if (it.isNetworkError) {
-						errorToast(getString(R.string.no_internet))
-					} else {
-						it.parse(this, TAG, object : AlertClicks {
-							override fun primaryClick(dialog: AppBottomSheet) {
-								dialog.dismiss()
-							}
+					it.parse(this, TAG, object : AlertClicks {
+						override fun primaryClick(dialog: AppBottomSheet) {
+							dialog.dismiss()
+						}
 
-							override fun secondaryClick(dialog: AppBottomSheet) {
-								dialog.dismiss()
+						override fun secondaryClick(dialog: AppBottomSheet) {
+							dialog.dismiss()
 
-							}
-						})
-					}
+						}
+					})
 				}
 
 				else -> {}
@@ -438,20 +430,16 @@ class SellerVerificationActivity : BaseActivity() {
 				is Resource.Error -> {
 					bind.loader.isVisible = false
 
-					if (it.isNetworkError) {
-						errorToast(getString(R.string.no_internet))
-					} else {
-						it.parse(this, TAG, object : AlertClicks {
-							override fun primaryClick(dialog: AppBottomSheet) {
-								dialog.dismiss()
-							}
+					it.parse(this, TAG, object : AlertClicks {
+						override fun primaryClick(dialog: AppBottomSheet) {
+							dialog.dismiss()
+						}
 
-							override fun secondaryClick(dialog: AppBottomSheet) {
-								dialog.dismiss()
+						override fun secondaryClick(dialog: AppBottomSheet) {
+							dialog.dismiss()
 
-							}
-						})
-					}
+						}
+					})
 				}
 
 				else -> {}
@@ -466,7 +454,7 @@ class SellerVerificationActivity : BaseActivity() {
 
 					it.value.data
 					isPhoneVerified = true
-					bind.stepProgress.setProgress(2)
+					bind.stepProgress.progress = 2
 					bind.stepCount.text = "2 of 3"
 
 					bind.phoneNumberLayout.isVisible = false
@@ -486,20 +474,16 @@ class SellerVerificationActivity : BaseActivity() {
 				is Resource.Error -> {
 					bind.loader.isVisible = false
 
-					if (it.isNetworkError) {
-						errorToast(getString(R.string.no_internet))
-					} else {
-						it.parse(this, TAG, object : AlertClicks {
-							override fun primaryClick(dialog: AppBottomSheet) {
-								dialog.dismiss()
-							}
+					it.parse(this, TAG, object : AlertClicks {
+						override fun primaryClick(dialog: AppBottomSheet) {
+							dialog.dismiss()
+						}
 
-							override fun secondaryClick(dialog: AppBottomSheet) {
-								dialog.dismiss()
+						override fun secondaryClick(dialog: AppBottomSheet) {
+							dialog.dismiss()
 
-							}
-						})
-					}
+						}
+					})
 				}
 
 				else -> {}
@@ -541,20 +525,16 @@ class SellerVerificationActivity : BaseActivity() {
 				is Resource.Error -> {
 					bind.loader.isVisible = false
 
-					if (it.isNetworkError) {
-						errorToast(getString(R.string.no_internet))
-					} else {
-						it.parse(this, TAG, object : AlertClicks {
-							override fun primaryClick(dialog: AppBottomSheet) {
-								dialog.dismiss()
-							}
+					it.parse(this, TAG, object : AlertClicks {
+						override fun primaryClick(dialog: AppBottomSheet) {
+							dialog.dismiss()
+						}
 
-							override fun secondaryClick(dialog: AppBottomSheet) {
-								dialog.dismiss()
+						override fun secondaryClick(dialog: AppBottomSheet) {
+							dialog.dismiss()
 
-							}
-						})
-					}
+						}
+					})
 				}
 
 				else -> {}
@@ -569,7 +549,7 @@ class SellerVerificationActivity : BaseActivity() {
 
 					it.value.data
 
-					bind.stepProgress.setProgress(3)
+					bind.stepProgress.progress = 3
 
 					bind.stepCount.text = "3 of 3"
 
@@ -580,20 +560,16 @@ class SellerVerificationActivity : BaseActivity() {
 				is Resource.Error -> {
 					bind.loader.isVisible = false
 
-					if (it.isNetworkError) {
-						errorToast(getString(R.string.no_internet))
-					} else {
-						it.parse(this, TAG, object : AlertClicks {
-							override fun primaryClick(dialog: AppBottomSheet) {
-								dialog.dismiss()
-							}
+					it.parse(this, TAG, object : AlertClicks {
+						override fun primaryClick(dialog: AppBottomSheet) {
+							dialog.dismiss()
+						}
 
-							override fun secondaryClick(dialog: AppBottomSheet) {
-								dialog.dismiss()
+						override fun secondaryClick(dialog: AppBottomSheet) {
+							dialog.dismiss()
 
-							}
-						})
-					}
+						}
+					})
 				}
 
 				else -> {}

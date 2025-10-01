@@ -1,7 +1,6 @@
 package io.bidswipe.app.ui.auth
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -21,40 +20,39 @@ import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request
 import io.bidswipe.app.utils.setHapticClickListener
 import io.bidswipe.app.utils.showKeyboard
-import io.bidswipe.app.utils.string
 import io.bidswipe.app.utils.value
 
-class ForgotPasswordFragment : BaseFragment<AuthViewModel , FragmentForgotPasswordBinding>() {
-	override fun getModel() : Class<AuthViewModel> = AuthViewModel::class.java
+class ForgotPasswordFragment : BaseFragment<AuthViewModel, FragmentForgotPasswordBinding>() {
+	override fun getModel(): Class<AuthViewModel> = AuthViewModel::class.java
 
 	override fun getBind(
-		inflater : LayoutInflater ,
-		view : ViewGroup? ,
-	) = FragmentForgotPasswordBinding.inflate(inflater , view , false)
+		inflater: LayoutInflater,
+		view: ViewGroup?,
+	) = FragmentForgotPasswordBinding.inflate(inflater, view, false)
 
-	override fun onViewCreated(view : View , savedInstanceState : Bundle?) {
-		super.onViewCreated(view , savedInstanceState)
+	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+		super.onViewCreated(view, savedInstanceState)
 
 		bind.header.onBackClick {
 			findNavController().popBackStack()
 		}
 
-        bind.layout.setHapticClickListener {
+		bind.layout.setHapticClickListener {
 			hideKeyboard(it)
 		}
 
-        bind.submit.setHapticClickListener {
+		bind.submit.setHapticClickListener {
 
 			when {
 
 				bind.email.value().isEmpty() -> {
-					Alerts.error(mCtx , "Please enter email address")
+					Alerts.error(mCtx, "Please enter email address")
 					bind.email.requestFocus()
 					showKeyboard(bind.email)
 				}
 
 				Utils.validateEmail(bind.email.value()).not() -> {
-					Alerts.error(mCtx , "please enter correct email address")
+					Alerts.error(mCtx, "please enter correct email address")
 					bind.email.requestFocus()
 					showKeyboard(bind.email)
 				}
@@ -77,7 +75,7 @@ class ForgotPasswordFragment : BaseFragment<AuthViewModel , FragmentForgotPasswo
 					bind.loader.isVisible = false
 					log("RESPONSE ::${it.value}")
 					findNavController().navigate(
-						ids.goToOTPFragment ,
+						ids.goToOTPFragment,
 						bundleOf("email" to bind.email.value())
 					)
 				}
@@ -85,23 +83,21 @@ class ForgotPasswordFragment : BaseFragment<AuthViewModel , FragmentForgotPasswo
 				is Resource.Error -> {
 					viewModel.forgotPasswordRepo.value = null
 					bind.loader.isVisible = false
-					if (it.isNetworkError) {
-						errorToast(getString(string.no_internet))
-					} else {
 
-						it.parse(mCtx , TAG , mClicks = object : AlertClicks {
 
-							override fun primaryClick(dialog : AppBottomSheet) {
-								dialog.dismiss()
-							}
+					it.parse(mCtx, TAG, mClicks = object : AlertClicks {
 
-							override fun secondaryClick(dialog : AppBottomSheet) {
-								dialog.dismiss()
-							}
+						override fun primaryClick(dialog: AppBottomSheet) {
+							dialog.dismiss()
+						}
 
-						})
+						override fun secondaryClick(dialog: AppBottomSheet) {
+							dialog.dismiss()
+						}
 
-					}
+					})
+
+
 				}
 
 				else -> {}

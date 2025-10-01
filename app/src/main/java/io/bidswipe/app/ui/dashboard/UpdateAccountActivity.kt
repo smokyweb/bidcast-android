@@ -5,7 +5,6 @@ import androidx.activity.viewModels
 import androidx.core.view.isVisible
 import com.canhub.cropper.CropImageContract
 import io.bidswipe.app.App
-import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseActivity
 import io.bidswipe.app.databinding.ActivityUpdateAccountBinding
 import io.bidswipe.app.interfaces.AlertClicks
@@ -23,7 +22,6 @@ import io.bidswipe.app.utils.setHapticClickListener
 import io.bidswipe.app.utils.value
 import okhttp3.MultipartBody
 import java.io.File
-import kotlin.getValue
 
 class UpdateAccountActivity : BaseActivity() {
 
@@ -31,7 +29,7 @@ class UpdateAccountActivity : BaseActivity() {
 
 	private val viewModel by viewModels<DashViewModel>()
 
-	private var imagePart : MultipartBody.Part? = null
+	private var imagePart: MultipartBody.Part? = null
 
 	private val imageResult = registerForActivityResult(CropImageContract()) { result ->
 		if (result.isSuccessful) {
@@ -39,46 +37,45 @@ class UpdateAccountActivity : BaseActivity() {
 
 			bind.userProfile.setImageURI(imageUri)
 
-			val imagePath = result.getUriFilePath(this , true)
+			val imagePath = result.getUriFilePath(this, true)
 
 			val name = System.currentTimeMillis().toString() + "_profile_gallery.jpeg"
-			imagePart = Utils.imagePart("profile_image" , name , File(imagePath ?: ""))
+			imagePart = Utils.imagePart("profile_image", name, File(imagePath ?: ""))
 
 		}
 	}
 
-	override fun onCreate(savedInstanceState : Bundle?) {
+	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
 		setContentView(bind.root)
-
 
 		bind.header.onBackClick {
 			finishAfterTransition()
 
 		}
-        bind.root.setHapticClickListener {
+		bind.root.setHapticClickListener {
 			hideKeyboard()
 		}
 
-        bind.layout.setHapticClickListener {
+		bind.layout.setHapticClickListener {
 			hideKeyboard()
 		}
 
-        bind.selectImg.setHapticClickListener {
+		bind.selectImg.setHapticClickListener {
 			requestPerms(Const.STR_PERMS) { per ->
 				if (per) {
-					imageResult.launch(Utils.initCrop(this , isCamera = true , isGallery = true))
+					imageResult.launch(Utils.initCrop(this, isCamera = true, isGallery = true))
 				}
 			}
 		}
 
-        bind.update.setHapticClickListener {
+		bind.update.setHapticClickListener {
 			bind.loader.isVisible = true
 			viewModel.updateProfile(
-				bind.firstName.value().request() ,
-				bind.lastName.value().request() ,
-				imagePart ,
-				bind.userName.value().request() ,
+				bind.firstName.value().request(),
+				bind.lastName.value().request(),
+				imagePart,
+				bind.userName.value().request(),
 				bind.bio.value().request()
 			)
 		}
@@ -96,24 +93,21 @@ class UpdateAccountActivity : BaseActivity() {
 					bind.userName.setText(mData?.username)
 					bind.email.setText(mData?.email ?: "")
 					bind.bio.setText(mData?.bio)
-					bind.userProfile.loadUrl(this , mData?.profileImage.toString())
+					bind.userProfile.loadUrl(this, mData?.profileImage.toString())
 				}
 
 				is Resource.Error -> {
+					bind.loader.isVisible = false
 					viewModel.getUserProfileRepo.value = null
-					if (it.isNetworkError) {
-						errorToast(getString(R.string.no_internet))
-					} else {
-						it.parse(this , TAG , object : AlertClicks {
-							override fun primaryClick(dialog : AppBottomSheet) {
-								dialog.dismiss()
-							}
+					it.parse(this, TAG, object : AlertClicks {
+						override fun primaryClick(dialog: AppBottomSheet) {
+							dialog.dismiss()
+						}
 
-							override fun secondaryClick(dialog : AppBottomSheet) {
-								dialog.dismiss()
-							}
-						})
-					}
+						override fun secondaryClick(dialog: AppBottomSheet) {
+							dialog.dismiss()
+						}
+					})
 				}
 
 				else -> {}
@@ -127,24 +121,20 @@ class UpdateAccountActivity : BaseActivity() {
 					bind.loader.isVisible = false
 					it.value.data
 					App.getProfile()
-					Alerts.success(this , "Profile Updated")
+					Alerts.success(this, "Profile Updated")
 				}
 
 				is Resource.Error -> {
 					viewModel.getUserProfileRepo.value = null
-					if (it.isNetworkError) {
-						errorToast(getString(R.string.no_internet))
-					} else {
-						it.parse(this , TAG , object : AlertClicks {
-							override fun primaryClick(dialog : AppBottomSheet) {
-								dialog.dismiss()
-							}
+					it.parse(this, TAG, object : AlertClicks {
+						override fun primaryClick(dialog: AppBottomSheet) {
+							dialog.dismiss()
+						}
 
-							override fun secondaryClick(dialog : AppBottomSheet) {
-								dialog.dismiss()
-							}
-						})
-					}
+						override fun secondaryClick(dialog: AppBottomSheet) {
+							dialog.dismiss()
+						}
+					})
 				}
 
 				else -> {}

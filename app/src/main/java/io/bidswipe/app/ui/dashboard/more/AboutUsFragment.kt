@@ -24,15 +24,15 @@ import io.bidswipe.app.utils.finish
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.setHapticClickListener
 
-class AboutUsFragment : BaseFragment<MoreViewModel , FragmentAboutUsBinding>() {
-	override fun getModel() : Class<MoreViewModel> = MoreViewModel::class.java
+class AboutUsFragment : BaseFragment<MoreViewModel, FragmentAboutUsBinding>() {
+	override fun getModel(): Class<MoreViewModel> = MoreViewModel::class.java
 
-	override fun getBind(inflater : LayoutInflater , view : ViewGroup?) =
-		FragmentAboutUsBinding.inflate(inflater , view , false)
+	override fun getBind(inflater: LayoutInflater, view: ViewGroup?) =
+		FragmentAboutUsBinding.inflate(inflater, view, false)
 
-	private lateinit var featureAdapter : FeaturedAdapter
+	private lateinit var featureAdapter: FeaturedAdapter
 
-	private lateinit var teamAdapter : TeamAdapter
+	private lateinit var teamAdapter: TeamAdapter
 
 	private var featureList = mutableListOf<AboutUsResponse.Data.Feature?>()
 
@@ -40,14 +40,14 @@ class AboutUsFragment : BaseFragment<MoreViewModel , FragmentAboutUsBinding>() {
 	private var socialMediaLinks = mutableListOf<AboutUsResponse.Data.SocialMedia?>()
 
 	private var mClick = object : RecyclerClicks {
-		override fun itemClick(pos : Int , status : String?) {
+		override fun itemClick(pos: Int, status: String?) {
 
 		}
 
 	}
 
-	override fun onViewCreated(view : View , savedInstanceState : Bundle?) {
-		super.onViewCreated(view , savedInstanceState)
+	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+		super.onViewCreated(view, savedInstanceState)
 
 		bind.header.onBackClick {
 
@@ -55,30 +55,30 @@ class AboutUsFragment : BaseFragment<MoreViewModel , FragmentAboutUsBinding>() {
 
 		}
 
-		featureAdapter = FeaturedAdapter(featureList , mClick)
+		featureAdapter = FeaturedAdapter(featureList, mClick)
 		bind.gridRecycler.adapter = featureAdapter
 
-		teamAdapter = TeamAdapter(teamList , mClick)
+		teamAdapter = TeamAdapter(teamList, mClick)
 		bind.teamRecycler.adapter = teamAdapter
 
-        bind.twitter.setHapticClickListener {
+		bind.twitter.setHapticClickListener {
 			log("MediaLink  = ${socialMediaLinks.find { it?.platform == 3 }?.url}")
 
 			val url = socialMediaLinks.find { it?.platform == 3 }?.url
 			launchWeb(url?.url.toString())
 		}
 
-        bind.insta.setHapticClickListener {
+		bind.insta.setHapticClickListener {
 			val url = socialMediaLinks.find { it?.platform == 1 }?.url
 			launchWeb(url?.url.toString())
 		}
 
-        bind.faceBook.setHapticClickListener {
+		bind.faceBook.setHapticClickListener {
 			val url = socialMediaLinks.find { it?.platform == 2 }?.url
 			launchWeb(url?.url.toString())
 		}
 
-        bind.linkedIn.setHapticClickListener {
+		bind.linkedIn.setHapticClickListener {
 			val url = socialMediaLinks.find { it?.platform == 0 }?.url
 			launchWeb(url?.url.toString())
 		}
@@ -119,11 +119,11 @@ class AboutUsFragment : BaseFragment<MoreViewModel , FragmentAboutUsBinding>() {
 					}
 
 					bind.email.title.text = mData?.contactEmail
-					bind.email.icon.setImageDrawable(ContextCompat.getDrawable(mCtx , draw.ic_mail))
+					bind.email.icon.setImageDrawable(ContextCompat.getDrawable(mCtx, draw.ic_mail))
 					bind.phoneNumber.title.text = mData?.contactPhone
 					bind.phoneNumber.icon.setImageDrawable(
 						ContextCompat.getDrawable(
-							mCtx ,
+							mCtx,
 							draw.ic_phone
 						)
 					)
@@ -146,21 +146,18 @@ class AboutUsFragment : BaseFragment<MoreViewModel , FragmentAboutUsBinding>() {
 				is Resource.Error -> {
 					bind.loader.isVisible = false
 					viewModel.getTermsConditionsRepo.value = null
-					if (it.isNetworkError) {
-						errorToast(getString(R.string.no_internet))
-					} else {
-						it.parse(mCtx , TAG , object : AlertClicks {
-							override fun primaryClick(dialog : AppBottomSheet) {
-								dialog.dismiss()
+					it.parse(mCtx, TAG, object : AlertClicks {
+						override fun primaryClick(dialog: AppBottomSheet) {
+							dialog.dismiss()
 
-							}
+						}
 
-							override fun secondaryClick(dialog : AppBottomSheet) {
-								dialog.dismiss()
+						override fun secondaryClick(dialog: AppBottomSheet) {
+							dialog.dismiss()
 
-							}
-						})
-					}
+						}
+					})
+
 				}
 
 				else -> {}
@@ -170,14 +167,14 @@ class AboutUsFragment : BaseFragment<MoreViewModel , FragmentAboutUsBinding>() {
 
 	}
 
-	private fun launchWeb(url : String) {
+	private fun launchWeb(url: String) {
 		log(url)
 
 		val builder = CustomTabsIntent.Builder()
 
 		val params = CustomTabColorSchemeParams.Builder()
 
-		params.setToolbarColor(ContextCompat.getColor(mCtx , R.color.primary))
+		params.setToolbarColor(ContextCompat.getColor(mCtx, R.color.primary))
 
 		builder.setDefaultColorSchemeParams(params.build())
 
@@ -191,7 +188,7 @@ class AboutUsFragment : BaseFragment<MoreViewModel , FragmentAboutUsBinding>() {
 
 		customBuilder.intent.setPackage("com.android.chrome")
 
-		customBuilder.launchUrl(requireActivity() , Uri.parse(url))
+		customBuilder.launchUrl(requireActivity(), Uri.parse(url))
 
 	}
 

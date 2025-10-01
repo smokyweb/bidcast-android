@@ -39,45 +39,45 @@ import io.bidswipe.app.utils.value
 
 class BuyNowFragment : BaseFragment<ProductViewModel, FragmentBuyNowBinding>() {
 	override fun getModel(): Class<ProductViewModel> = ProductViewModel::class.java
-	
+
 	override fun getBind(
 		inflater: LayoutInflater,
 		view: ViewGroup?,
 	) = FragmentBuyNowBinding.inflate(inflater, view, false)
-	
+
 	private var checkOutData: GetPurchaseDetail.Data? = null
-	
+
 	private var cardList = mutableListOf<GetPaymentCardsResponse.Data.PaymentProfile?>()
 	private var addressList = mutableListOf<GetShippingAddressResponse.Data?>()
 	private var shippingId = 0
 	private var cardId = ""
-	
+
 	private var addCardLauncher =
 		registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
 			if (result.resultCode == Activity.RESULT_OK) {
 				bind.loader.isVisible = true
 				viewModel.getPaymentCard()
 			}
-			
+
 		}
-	
+
 	private var addAddressLauncher =
 		registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
 			if (result.resultCode == Activity.RESULT_OK) {
 				bind.loader.isVisible = true
 				viewModel.getShippingAddress()
 			}
-			
+
 		}
-	
-	
+
+
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		super.onViewCreated(view, savedInstanceState)
-		
+
 		bind.header.onBackClick {
 			findNavController().popBackStack()
 		}
-		
+
 		bind.changeAddress.setHapticClickListener {
 			if (addressList.isEmpty()) {
 				addAddressLauncher.launch(
@@ -90,21 +90,21 @@ class BuyNowFragment : BaseFragment<ProductViewModel, FragmentBuyNowBinding>() {
 				showAddressSheet()
 			}
 		}
-		
+
 		bind.changePayment.setHapticClickListener {
-			
+
 			if (cardList.isEmpty()) {
 				addCardLauncher.launch(mCtx.goToAddCard("buyNow"))
 			} else {
 				showPaymentMethodSheet()
 			}
 		}
-		
+
 		bind.loader.isVisible = true
-		
+
 		viewModel.getPaymentCard()
 		viewModel.getShippingAddress()
-		
+
 		bind.productName.text = viewModel.product?.title
 		bind.productDescription.text = viewModel.product?.description
 		bind.productImg.loadUrl(mCtx, viewModel.product?.images?.get(0).toString())
@@ -114,7 +114,7 @@ class BuyNowFragment : BaseFragment<ProductViewModel, FragmentBuyNowBinding>() {
 				"accepted" -> {
 					bind.price.text = offer.amount.toString().asMoney()
 				}
-				
+
 				else -> {
 					bind.price.text = viewModel.product?.pricing.toString().asMoney()
 				}
@@ -122,17 +122,17 @@ class BuyNowFragment : BaseFragment<ProductViewModel, FragmentBuyNowBinding>() {
 		} else {
 			bind.price.text = viewModel.product?.pricing.toString().asMoney()
 		}
-		
+
 		bind.confirmButton.setHapticClickListener {
 			when {
 				cardList.isEmpty() -> {
 					Alerts.error(mCtx, "Please add Payment card")
 				}
-				
+
 				addressList.isEmpty() -> {
 					Alerts.error(mCtx, "Please add Shipping Address")
 				}
-				
+
 				else -> {
 					if (bind.sendAsGift.isChecked) {
 						findNavController().navigate(
@@ -146,7 +146,7 @@ class BuyNowFragment : BaseFragment<ProductViewModel, FragmentBuyNowBinding>() {
 						)
 					} else {
 						bind.loader.isVisible = true
-						
+
 						viewModel.createOrder(
 							shippingId = shippingId.toString().request(),
 							productId = viewModel.product?.id.toString().request(),
@@ -160,93 +160,88 @@ class BuyNowFragment : BaseFragment<ProductViewModel, FragmentBuyNowBinding>() {
 							subTotal = checkOutData?.subTotal.toString().request(),
 							total = checkOutData?.total.toString().request()
 						)
-						
+
 					}
 				}
 			}
 		}
-		
+
 		viewModel.getShippingAddressRepo.observe(viewLifecycleOwner) {
 			when (it) {
 				is Resource.Success -> {
 					bind.loader.isVisible = false
-					
+
 					val mData = it.value.data
-					
+
 					addressList.clear()
-					
+
 					if (mData?.isNotEmpty() == true) {
 						addressList.addAll(mData)
-						
+
 						bind.address.text =
 							addressList.find { it?.isDefault == true }?.streetAddress
 								?: addressList[0]?.streetAddress
-						
-						
+
+
 						shippingId = addressList.find { it?.isDefault == true }?.id
 							?: (addressList[0]?.id
 								?: 0)
-						
+
 						addressList[0]?.selected = true
-						
+
 						viewModel.getPurchaseProduct(
 							shippingId.toString().request(),
 							viewModel.product?.id.toString().request()
 						)
 					}
-					
+
 					if (addressList.isEmpty()) {
 						bind.address.text = "Address not Found"
 						bind.changeAddress.text = "Add Address"
 					}
 
 //					shippingAddressAdapter.notifyDataSetChanged()
-				
+
 				}
-				
+
 				is Resource.Error -> {
 					bind.loader.isVisible = false
-					
-					if (it.isNetworkError) {
-						errorToast(getString(R.string.no_internet))
-					} else {
-						it.parse(mCtx, TAG, object : AlertClicks {
-							override fun primaryClick(dialog: AppBottomSheet) {
-								dialog.dismiss()
-							}
-							
-							override fun secondaryClick(dialog: AppBottomSheet) {
-								dialog.dismiss()
-							}
-						})
-					}
+					it.parse(mCtx, TAG, object : AlertClicks {
+						override fun primaryClick(dialog: AppBottomSheet) {
+							dialog.dismiss()
+						}
+
+						override fun secondaryClick(dialog: AppBottomSheet) {
+							dialog.dismiss()
+						}
+					})
 				}
-				
+
 				else -> {}
-				
+
 			}
 		}
-		
+
 		viewModel.getPaymentCardRepo.observe(viewLifecycleOwner) {
-			
+
 			when (it) {
 				is Resource.Success -> {
 					bind.loader.isVisible = false
-					
+
 					val mData = it.value.data?.paymentProfiles
-					
+
 					cardList.clear()
-					
+
 					if (mData?.isNotEmpty() == true) {
 						cardList.addAll(mData)
 					}
-					
+
 					if (cardList.isEmpty()) {
-						
+
 						bind.cardNumber.text = "No Cards Found"
-						
+
 						bind.changePayment.text = "Add Card"
-						
+
 					} else {
 						bind.cardNumber.text = buildString {
 							append(cardList[0]?.payment?.creditCard?.cardNumber)
@@ -257,49 +252,45 @@ class BuyNowFragment : BaseFragment<ProductViewModel, FragmentBuyNowBinding>() {
 								draw.ic_visa
 							), null, null, null
 						)
-						
+
 						cardList[0]?.selected = true
-						
+
 						cardId = cardList[0]?.customerPaymentProfileId.toString()
 					}
 //					cardAdapter.notifyDataSetChanged()
 				}
-				
+
 				is Resource.Error -> {
 					bind.loader.isVisible = false
-					
-					if (it.isNetworkError) {
-						errorToast(getString(R.string.no_internet))
-					} else {
-						it.parse(mCtx, TAG, object : AlertClicks {
-							override fun primaryClick(dialog: AppBottomSheet) {
-								dialog.dismiss()
-								
-							}
-							
-							override fun secondaryClick(dialog: AppBottomSheet) {
-								dialog.dismiss()
-								
-							}
-						})
-					}
+
+					it.parse(mCtx, TAG, object : AlertClicks {
+						override fun primaryClick(dialog: AppBottomSheet) {
+							dialog.dismiss()
+
+						}
+
+						override fun secondaryClick(dialog: AppBottomSheet) {
+							dialog.dismiss()
+
+						}
+					})
 				}
-				
+
 				else -> {}
 			}
 		}
-		
+
 		viewModel.getPurchaseProductRepo.observe(viewLifecycleOwner) {
 			when (it) {
 				is Resource.Success -> {
 					bind.loader.isVisible = false
-					
+
 					val mData = it.value.data
-					
+
 					checkOutData = mData
-					
+
 					viewModel.checkoutData = mData
-					
+
 					bind.subTotal.text = mData?.subTotal.toString().asMoney()
 					bind.tax.text = mData?.taxAmount.toString().asMoney()
 					bind.shipping.text = mData?.shippingCharges.toString().asMoney()
@@ -307,38 +298,34 @@ class BuyNowFragment : BaseFragment<ProductViewModel, FragmentBuyNowBinding>() {
 
 //					cardAdapter.notifyDataSetChanged()
 				}
-				
+
 				is Resource.Error -> {
 					bind.loader.isVisible = false
-					
-					if (it.isNetworkError) {
-						errorToast(getString(R.string.no_internet))
-					} else {
-						it.parse(mCtx, TAG, object : AlertClicks {
-							override fun primaryClick(dialog: AppBottomSheet) {
-								dialog.dismiss()
-							}
-							
-							override fun secondaryClick(dialog: AppBottomSheet) {
-								dialog.dismiss()
-								
-							}
-						})
-					}
+
+					it.parse(mCtx, TAG, object : AlertClicks {
+						override fun primaryClick(dialog: AppBottomSheet) {
+							dialog.dismiss()
+						}
+
+						override fun secondaryClick(dialog: AppBottomSheet) {
+							dialog.dismiss()
+
+						}
+					})
 				}
-				
+
 				else -> {}
 			}
 		}
-		
+
 		viewModel.createOrderRepo.observe(viewLifecycleOwner) {
-			
+
 			when (it) {
 				is Resource.Success -> {
 					bind.loader.isVisible = false
-					
+
 					val mData = it.value.data
-					
+
 					findNavController().navigate(
 						ids.buyNowToOrderStatusFragment,
 						bundleOf("orderId" to mData?.id.toString())
@@ -346,50 +333,46 @@ class BuyNowFragment : BaseFragment<ProductViewModel, FragmentBuyNowBinding>() {
 
 //					cardAdapter.notifyDataSetChanged()
 				}
-				
+
 				is Resource.Error -> {
 					bind.loader.isVisible = false
-					
-					if (it.isNetworkError) {
-						errorToast(getString(R.string.no_internet))
-					} else {
-						it.parse(mCtx, TAG, object : AlertClicks {
-							override fun primaryClick(dialog: AppBottomSheet) {
-								dialog.dismiss()
-								
-							}
-							
-							override fun secondaryClick(dialog: AppBottomSheet) {
-								dialog.dismiss()
-							}
-						})
-					}
+
+					it.parse(mCtx, TAG, object : AlertClicks {
+						override fun primaryClick(dialog: AppBottomSheet) {
+							dialog.dismiss()
+
+						}
+
+						override fun secondaryClick(dialog: AppBottomSheet) {
+							dialog.dismiss()
+						}
+					})
 				}
-				
+
 				else -> {}
 			}
 		}
 	}
-	
+
 	private fun showPaymentMethodSheet() {
 		val paymentSheetBind =
 			PaymentSheetBinding.bind(layoutInflater.inflate(R.layout.payment_sheet, null, false))
 		val paymentSheet = Alerts.appBottomSheet(mCtx, true, paymentSheetBind)
 		mutableListOf<String?>()
-		
+
 		paymentSheetBind.recycler.adapter =
 			SelectPaymentCardAdapter(cardList, object : RecyclerClicks {
-				
+
 				override fun itemClick(pos: Int, status: String?) {
-					
+
 					cardList.forEachIndexed { index, item ->
-						
+
 						item?.selected = index == pos
-						
+
 						cardId = item?.customerPaymentProfileId.toString()
-						
+
 						paymentSheetBind.recycler.adapter?.notifyDataSetChanged()
-						
+
 						bind.cardNumber.text = buildString {
 							append(cardList[pos]?.payment?.creditCard?.cardNumber)
 						}
@@ -399,70 +382,70 @@ class BuyNowFragment : BaseFragment<ProductViewModel, FragmentBuyNowBinding>() {
 								draw.ic_visa
 							), null, null, null
 						)
-						
+
 						cardList[pos]?.selected = true
 						paymentSheet.dismiss()
 					}
-					
+
 				}
 			})
-		
+
 		paymentSheetBind.close.setHapticClickListener {
 			paymentSheet.dismiss()
 		}
-		
+
 		paymentSheet.show()
-		
+
 	}
-	
+
 	private fun showAddressSheet() {
 		var addressSheetBind =
 			AddressSheetBinding.bind(layoutInflater.inflate(R.layout.address_sheet, null, false))
 		var addressSheet = Alerts.appBottomSheet(mCtx, true, addressSheetBind)
-		
+
 		addressSheetBind.recycler.adapter =
 			SelectAddressAdapter(addressList, object : RecyclerClicks {
-				
+
 				override fun itemClick(pos: Int, status: String?) {
-					
+
 					addressList.forEachIndexed { index, item ->
-						
+
 						item?.selected = index == pos
-						
+
 						addressSheetBind.recycler.adapter?.notifyDataSetChanged()
-						
+
 						bind.address.text =
 							addressList.find { it?.isDefault == true }?.streetAddress
 								?: addressList[pos]?.streetAddress
-						
-						
+
+
 						shippingId = addressList.find { it?.isDefault == true }?.id
 							?: (addressList[pos]?.id?.toInt()
 								?: 0)
-						
+
 						addressList[pos]?.selected = true
-						
+
 						viewModel.getPurchaseProduct(
 							shippingId.toString().request(),
 							viewModel.product?.id.toString().request()
 						)
-						
+
 						addressSheet.hide()
-						
+
 					}
-					
+
 				}
 			})
-		
+
 		addressSheetBind.close.setHapticClickListener {
-			
-			
+
+
 			addressSheet.hide()
-			
+
 		}
-		
-		
+
+
 		addressSheet.show()
 	}
-	
+
 }

@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
-import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseFragment
 import io.bidswipe.app.controller.SellerOffersAdapter
 import io.bidswipe.app.databinding.FragmentSellerOffersBinding
@@ -16,41 +15,41 @@ import io.bidswipe.app.utils.finish
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request
 
-class SellerOffersFragment : BaseFragment<SellerHubViewModel , FragmentSellerOffersBinding>() {
-	override fun getModel() : Class<SellerHubViewModel> = SellerHubViewModel::class.java
+class SellerOffersFragment : BaseFragment<SellerHubViewModel, FragmentSellerOffersBinding>() {
+	override fun getModel(): Class<SellerHubViewModel> = SellerHubViewModel::class.java
 
-	override fun getBind(inflater : LayoutInflater , view : ViewGroup?) = FragmentSellerOffersBinding.inflate(inflater , view , false)
+	override fun getBind(inflater: LayoutInflater, view: ViewGroup?) = FragmentSellerOffersBinding.inflate(inflater, view, false)
 
 	private var itemList = mutableListOf<GetOffersResponse.Data?>()
 
-	private lateinit var adapter : SellerOffersAdapter
+	private lateinit var adapter: SellerOffersAdapter
 
 	private var page = 1
 	private var isLoading = false
 
 	private val mClick = object : RecyclerClicks {
 
-		override fun itemClick(pos : Int , status : String?) {
+		override fun itemClick(pos: Int, status: String?) {
 
 			bind.loader.isVisible = true
 
 			if (status == "accept") {
-				viewModel.offerUpdateStatus(itemList[pos]?.id.toString().request() , "accepted".request())
+				viewModel.offerUpdateStatus(itemList[pos]?.id.toString().request(), "accepted".request())
 			} else if (status == "reject") {
-				viewModel.offerUpdateStatus(itemList[pos]?.id.toString().request() , "rejected".request())
+				viewModel.offerUpdateStatus(itemList[pos]?.id.toString().request(), "rejected".request())
 			}
 
 		}
 	}
 
-	override fun onViewCreated(view : View , savedInstanceState : Bundle?) {
-		super.onViewCreated(view , savedInstanceState)
+	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+		super.onViewCreated(view, savedInstanceState)
 
 		bind.header.onBackClick {
 			finish()
 		}
 
-		adapter = SellerOffersAdapter(itemList , mClick)
+		adapter = SellerOffersAdapter(itemList, mClick)
 
 		bind.recycler.adapter = adapter
 
@@ -81,11 +80,7 @@ class SellerOffersFragment : BaseFragment<SellerHubViewModel , FragmentSellerOff
 				}
 
 				is Resource.Error -> {
-					if (it.isNetworkError) {
-						errorToast(getString(R.string.no_internet))
-					} else {
-						it.parse(mCtx , TAG)
-					}
+					it.parse(mCtx, TAG)
 				}
 
 				else -> {}
@@ -99,21 +94,17 @@ class SellerOffersFragment : BaseFragment<SellerHubViewModel , FragmentSellerOff
 				is Resource.Success -> {
 					bind.loader.isVisible = false
 					var index = itemList.indexOfFirst { offer -> offer?.id == it.value.data?.id }
-					if (index != - 1) {
+					if (index != -1) {
 						var offer = itemList[index]
 						offer?.status = it.value.data?.status
 						itemList[index] = offer
-						adapter.notifyItemChanged(index , offer)
+						adapter.notifyItemChanged(index, offer)
 					}
 				}
 
 				is Resource.Error -> {
 					bind.loader.isVisible = false
-					if (it.isNetworkError) {
-						errorToast(getString(R.string.no_internet))
-					} else {
-						it.parse(mCtx , TAG)
-					}
+					it.parse(mCtx, TAG)
 				}
 
 				else -> {}

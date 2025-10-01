@@ -10,7 +10,6 @@ import androidx.media3.common.MediaItem
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.navigation.fragment.findNavController
-import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseFragment
 import io.bidswipe.app.databinding.FragmentPlayerBinding
 import io.bidswipe.app.interfaces.AlertClicks
@@ -21,21 +20,21 @@ import io.bidswipe.app.utils.ids
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.setHapticClickListener
 
-class PlayerFragment : BaseFragment<DashViewModel , FragmentPlayerBinding>() {
-	override fun getModel() : Class<DashViewModel> = DashViewModel::class.java
+class PlayerFragment : BaseFragment<DashViewModel, FragmentPlayerBinding>() {
+	override fun getModel(): Class<DashViewModel> = DashViewModel::class.java
 
-	override fun getBind(inflater : LayoutInflater , view : ViewGroup?) =
-		FragmentPlayerBinding.inflate(inflater , view , false)
+	override fun getBind(inflater: LayoutInflater, view: ViewGroup?) =
+		FragmentPlayerBinding.inflate(inflater, view, false)
 
 	private var lessonList = mutableListOf<String>()
 
 	private var playPos = 0
 
-	private var player : ExoPlayer? = null
+	private var player: ExoPlayer? = null
 
 	@OptIn(UnstableApi::class)
-	override fun onViewCreated(view : View , savedInstanceState : Bundle?) {
-		super.onViewCreated(view , savedInstanceState)
+	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+		super.onViewCreated(view, savedInstanceState)
 
 		bind.header.onBackClick {
 			findNavController().popBackStack()
@@ -47,7 +46,7 @@ class PlayerFragment : BaseFragment<DashViewModel , FragmentPlayerBinding>() {
 		bind.player.useController = true
 		bind.player.setShowSubtitleButton(true)
 		bind.player.showController()
-        bind.nextButton.setHapticClickListener {
+		bind.nextButton.setHapticClickListener {
 
 			playPos = playPos + 1
 
@@ -130,21 +129,19 @@ class PlayerFragment : BaseFragment<DashViewModel , FragmentPlayerBinding>() {
 				is Resource.Error -> {
 					viewModel.getLessonRepo.value = null
 					bind.loader.isVisible = false
-					if (it.isNetworkError) {
-						errorToast(getString(R.string.no_internet))
-					} else {
-						it.parse(mCtx , TAG , object : AlertClicks {
-							override fun primaryClick(dialog : AppBottomSheet) {
-								dialog.dismiss()
 
-							}
+					it.parse(mCtx, TAG, object : AlertClicks {
+						override fun primaryClick(dialog: AppBottomSheet) {
+							dialog.dismiss()
 
-							override fun secondaryClick(dialog : AppBottomSheet) {
-								dialog.dismiss()
+						}
 
-							}
-						})
-					}
+						override fun secondaryClick(dialog: AppBottomSheet) {
+							dialog.dismiss()
+
+						}
+					})
+
 				}
 
 				else -> {}

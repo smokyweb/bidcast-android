@@ -7,7 +7,6 @@ import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.navigation.fragment.findNavController
 import com.canhub.cropper.CropImageContract
-import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseFragment
 import io.bidswipe.app.controller.GoodsExampleAdapter
 import io.bidswipe.app.controller.ThumbnailTipsAdapter
@@ -26,14 +25,14 @@ import io.bidswipe.app.utils.request
 import io.bidswipe.app.utils.setHapticClickListener
 
 class SelectThumbnailFragment :
-	BaseFragment<ScheduleShowViewModel , FragmentSelectThumbnailBinding>() {
+	BaseFragment<ScheduleShowViewModel, FragmentSelectThumbnailBinding>() {
 
-	override fun getModel() : Class<ScheduleShowViewModel> = ScheduleShowViewModel::class.java
+	override fun getModel(): Class<ScheduleShowViewModel> = ScheduleShowViewModel::class.java
 
 	override fun getBind(
-        inflater : LayoutInflater ,
-        view : ViewGroup? ,
-    ) = FragmentSelectThumbnailBinding.inflate(inflater , view , false)
+		inflater: LayoutInflater,
+		view: ViewGroup?,
+	) = FragmentSelectThumbnailBinding.inflate(inflater, view, false)
 
 	private var tipsList = mutableListOf<GetAllTipsResponse.Data.Tip?>()
 
@@ -48,7 +47,7 @@ class SelectThumbnailFragment :
 
 			bind.img.setImageURI(imageUri)
 
-			val imagePath = result.getUriFilePath(mCtx , true)
+			val imagePath = result.getUriFilePath(mCtx, true)
 
 			if (imagePath != null) {
 
@@ -58,8 +57,8 @@ class SelectThumbnailFragment :
 		}
 	}
 
-	override fun onViewCreated(view : View , savedInstanceState : Bundle?) {
-		super.onViewCreated(view , savedInstanceState)
+	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+		super.onViewCreated(view, savedInstanceState)
 
 		val from = activity?.intent?.getStringExtra("from").toString()
 
@@ -77,16 +76,16 @@ class SelectThumbnailFragment :
 			 )
 		 )*/
 
-        bind.pickThumbnail.setHapticClickListener {
+		bind.pickThumbnail.setHapticClickListener {
 			requestPerms(Const.STR_PERMS) { per ->
 				if (per) {
-					imageResult.launch(Utils.initCrop(mCtx , isCamera = true , isGallery = true))
+					imageResult.launch(Utils.initCrop(mCtx, isCamera = true, isGallery = true))
 				}
 			}
 		}
 
-		val adapter = ThumbnailTipsAdapter(mList = tipsList , "getStarted" , object : RecyclerClicks {
-			override fun itemClick(pos : Int , status : String?) {
+		val adapter = ThumbnailTipsAdapter(mList = tipsList, "getStarted", object : RecyclerClicks {
+			override fun itemClick(pos: Int, status: String?) {
 
 			}
 
@@ -98,12 +97,12 @@ class SelectThumbnailFragment :
 
 		bind.goodsRecycler.adapter = goodsAdapter
 
-        bind.continueBtn.setHapticClickListener {
+		bind.continueBtn.setHapticClickListener {
 
 			when {
 
 				viewModel.thumbnail.isEmpty() -> {
-					Alerts.error(mCtx , "Please select ThumbNail")
+					Alerts.error(mCtx, "Please select ThumbNail")
 				}
 
 				else -> {
@@ -148,21 +147,17 @@ class SelectThumbnailFragment :
 				is Resource.Error -> {
 					bind.loader.isVisible = false
 
-					if (it.isNetworkError) {
-						errorToast(getString(R.string.no_internet))
-					} else {
-						it.parse(mCtx , TAG , object : AlertClicks {
-							override fun primaryClick(dialog : AppBottomSheet) {
-								dialog.dismiss()
+					it.parse(mCtx, TAG, object : AlertClicks {
+						override fun primaryClick(dialog: AppBottomSheet) {
+							dialog.dismiss()
 
-							}
+						}
 
-							override fun secondaryClick(dialog : AppBottomSheet) {
-								dialog.dismiss()
+						override fun secondaryClick(dialog: AppBottomSheet) {
+							dialog.dismiss()
 
-							}
-						})
-					}
+						}
+					})
 				}
 
 				else -> {}

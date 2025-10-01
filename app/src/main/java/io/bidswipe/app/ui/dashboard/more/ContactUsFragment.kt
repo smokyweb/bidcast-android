@@ -7,7 +7,6 @@ import android.view.ViewGroup
 import androidx.core.view.isVisible
 import com.wajahatkarim3.easyvalidation.core.view_ktx.validator
 import io.bidswipe.app.App
-import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseFragment
 import io.bidswipe.app.databinding.FragmentContactUsBinding
 import io.bidswipe.app.interfaces.AlertClicks
@@ -22,57 +21,57 @@ import io.bidswipe.app.utils.setHapticClickListener
 import io.bidswipe.app.utils.showKeyboard
 import io.bidswipe.app.utils.value
 
-class ContactUsFragment : BaseFragment<MoreViewModel , FragmentContactUsBinding>() {
-	override fun getModel() : Class<MoreViewModel> = MoreViewModel::class.java
+class ContactUsFragment : BaseFragment<MoreViewModel, FragmentContactUsBinding>() {
+	override fun getModel(): Class<MoreViewModel> = MoreViewModel::class.java
 
 	override fun getBind(
-		inflater : LayoutInflater ,
-		view : ViewGroup? ,
-	) = FragmentContactUsBinding.inflate(inflater , view , false)
+		inflater: LayoutInflater,
+		view: ViewGroup?,
+	) = FragmentContactUsBinding.inflate(inflater, view, false)
 
-	override fun onViewCreated(view : View , savedInstanceState : Bundle?) {
-		super.onViewCreated(view , savedInstanceState)
+	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+		super.onViewCreated(view, savedInstanceState)
 
 		bind.header.onBackClick {
 			finish()
 		}
 
-        bind.root.setHapticClickListener {
+		bind.root.setHapticClickListener {
 			hideKeyboard(it)
 		}
 
 		bind.email.setText(App.profileResponse.value?.email.toString())
 
 
-        bind.sendMessage.setHapticClickListener { it ->
+		bind.sendMessage.setHapticClickListener { it ->
 			when {
 
 				bind.firstName.value().isEmpty() -> {
-					Alerts.error(mCtx , "Name can not be empty")
+					Alerts.error(mCtx, "Name can not be empty")
 					bind.firstName.requestFocus()
 					showKeyboard(bind.firstName)
 				}
 
 				bind.email.value().isEmpty() -> {
-					Alerts.error(mCtx , "Email can not be empty")
+					Alerts.error(mCtx, "Email can not be empty")
 					bind.email.requestFocus()
 					showKeyboard(bind.email)
 				}
 
 				bind.email.value().validator().validEmail().check().not() -> {
-					Alerts.error(mCtx , "Please enter valid user email")
+					Alerts.error(mCtx, "Please enter valid user email")
 					bind.email.requestFocus()
 					showKeyboard(bind.email)
 				}
 
 				bind.subject.value().isEmpty() -> {
-					Alerts.error(mCtx , "Subject can't be empty")
+					Alerts.error(mCtx, "Subject can't be empty")
 					bind.subject.requestFocus()
 					showKeyboard(bind.subject)
 				}
 
 				bind.description.value().isEmpty() -> {
-					Alerts.error(mCtx , "Enter Message")
+					Alerts.error(mCtx, "Enter Message")
 					bind.subject.requestFocus()
 					showKeyboard(bind.description)
 				}
@@ -83,9 +82,9 @@ class ContactUsFragment : BaseFragment<MoreViewModel , FragmentContactUsBinding>
 					bind.loader.isVisible = true
 
 					viewModel.contactUs(
-						bind.firstName.value().request() ,
-						bind.email.value().request() ,
-						bind.subject.value().request() ,
+						bind.firstName.value().request(),
+						bind.email.value().request(),
+						bind.subject.value().request(),
 						bind.description.value().request()
 					)
 				}
@@ -97,27 +96,23 @@ class ContactUsFragment : BaseFragment<MoreViewModel , FragmentContactUsBinding>
 						bind.loader.isVisible = false
 
 						it.value.data
-						Alerts.success(mCtx , it.value.message.toString())
+						Alerts.success(mCtx, it.value.message.toString())
 
 					}
 
 					is Resource.Error -> {
 						bind.loader.isVisible = false
-						if (it.isNetworkError) {
-							errorToast(getString(R.string.no_internet))
-						} else {
-							it.parse(mCtx , TAG , object : AlertClicks {
-								override fun primaryClick(dialog : AppBottomSheet) {
-									dialog.dismiss()
+						it.parse(mCtx, TAG, object : AlertClicks {
+							override fun primaryClick(dialog: AppBottomSheet) {
+								dialog.dismiss()
 
-								}
+							}
 
-								override fun secondaryClick(dialog : AppBottomSheet) {
-									dialog.dismiss()
+							override fun secondaryClick(dialog: AppBottomSheet) {
+								dialog.dismiss()
 
-								}
-							})
-						}
+							}
+						})
 					}
 
 					else -> {}

@@ -28,12 +28,14 @@ import io.bidswipe.app.network.response.GetProductsByStatusResponse
 import io.bidswipe.app.network.response.GetProductsResponse
 import io.bidswipe.app.network.response.GetPromotePlansResponse
 import io.bidswipe.app.network.response.GetSubCategoriesResponse
+import io.bidswipe.app.network.response.PageUrlResponse
+import io.bidswipe.app.network.response.StoreProductResponse
 import io.bidswipe.app.network.response.UpdateLiveStatusResponse
 import io.bidswipe.app.network.response.UpdateOfferResponse
 import io.bidswipe.app.network.response.UserDeviceResponse
 import io.bidswipe.app.network.response.UserProfileResponse
-import io.bidswipe.app.network.response.PageUrlResponse
-import io.bidswipe.app.network.response.StoreProductResponse
+import io.bidswipe.app.utils.Const.NO_INTERNET_ERROR
+import io.bidswipe.app.utils.NetworkMonitor
 import kotlinx.coroutines.launch
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -41,12 +43,15 @@ import javax.inject.Inject
 
 
 @HiltViewModel
-class DashViewModel @Inject constructor(val repo : DashRepository) : ViewModel() {
+class DashViewModel @Inject constructor(
+	val repo: DashRepository,
+	private val networkMonitor: NetworkMonitor
+) : ViewModel() {
 
 	var showDate = ""
 	var showTime = ""
 	var showId = ""
-	var currentShowData : CreateShowResponse.Data? = null
+	var currentShowData: CreateShowResponse.Data? = null
 	var showList = mutableListOf<GetPrepareStepResponse.Data?>()
 	var currentStep = 0
 
@@ -56,207 +61,275 @@ class DashViewModel @Inject constructor(val repo : DashRepository) : ViewModel()
 
 	val selectedCategories = mutableListOf<GetCategoryResponse.Data>()
 	private var _logoutResponse = MutableLiveData<Resource<CommonResponse>>()
-	val logoutRepo : MutableLiveData<Resource<CommonResponse>>
+	val logoutRepo: MutableLiveData<Resource<CommonResponse>>
 		get() = _logoutResponse
 
 	fun logout(
 	) = viewModelScope.launch {
+		if (!networkMonitor.hasInternet()) {
+			_logoutResponse.value = NO_INTERNET_ERROR
+			return@launch
+		}
 		_logoutResponse.value = repo.logout()
 	}
 
 	private var _getCategoryResponse = MutableLiveData<Resource<GetCategoryResponse>>()
-	val getCategoryRepo : MutableLiveData<Resource<GetCategoryResponse>>
+	val getCategoryRepo: MutableLiveData<Resource<GetCategoryResponse>>
 		get() = _getCategoryResponse
 
 	fun getCategory(
-		categoryId : String? = null ,
-		type : String? = null ,
-		search : String? = null ,
+		categoryId: String? = null,
+		type: String? = null,
+		search: String? = null,
 	) = viewModelScope.launch {
-		_getCategoryResponse.value = repo.getCategory(categoryId , type , search)
+		if (!networkMonitor.hasInternet()) {
+			_getCategoryResponse.value = NO_INTERNET_ERROR
+			return@launch
+		}
+		_getCategoryResponse.value = repo.getCategory(categoryId, type, search)
 	}
 
 	private var _getSubCategoriesResponse = MutableLiveData<Resource<GetSubCategoriesResponse>>()
-	val getSubCategoriesRepo : MutableLiveData<Resource<GetSubCategoriesResponse>>
+	val getSubCategoriesRepo: MutableLiveData<Resource<GetSubCategoriesResponse>>
 		get() = _getSubCategoriesResponse
 
-	fun getSubCategories(categoryIds : List<Int> , subCategoryIds : List<Int>? = null) = viewModelScope.launch {
-		_getSubCategoriesResponse.value = repo.getSubCategories(categoryIds , subCategoryIds)
+	fun getSubCategories(categoryIds: List<Int>, subCategoryIds: List<Int>? = null) = viewModelScope.launch {
+		if (!networkMonitor.hasInternet()) {
+			_getSubCategoriesResponse.value = NO_INTERNET_ERROR
+			return@launch
+		}
+		_getSubCategoriesResponse.value = repo.getSubCategories(categoryIds, subCategoryIds)
 	}
 
 	private var _userFavoriteResponse = MutableLiveData<Resource<CommonResponse>>()
-	val userFavoriteRepo : MutableLiveData<Resource<CommonResponse>>
+	val userFavoriteRepo: MutableLiveData<Resource<CommonResponse>>
 		get() = _userFavoriteResponse
 
-	fun userFavorite(categoryIds : List<Int> , subcategoriesIds : List<Int>? = null) = viewModelScope.launch {
-		_userFavoriteResponse.value = repo.userFavorite(categoryIds , subcategoriesIds)
+	fun userFavorite(categoryIds: List<Int>, subcategoriesIds: List<Int>? = null) = viewModelScope.launch {
+		if (!networkMonitor.hasInternet()) {
+			_userFavoriteResponse.value = NO_INTERNET_ERROR
+			return@launch
+		}
+		_userFavoriteResponse.value = repo.userFavorite(categoryIds, subcategoriesIds)
 	}
 
 	private var _getSubCategoryResponse = MutableLiveData<Resource<GetCategoryResponse>>()
-	val getSubCategoryRepo : MutableLiveData<Resource<GetCategoryResponse>>
+	val getSubCategoryRepo: MutableLiveData<Resource<GetCategoryResponse>>
 		get() = _getSubCategoryResponse
 
 	fun getSubCategory(
-		categoryId : String? = null ,
+		categoryId: String? = null,
 	) = viewModelScope.launch {
+		if (!networkMonitor.hasInternet()) {
+			_getSubCategoryResponse.value = NO_INTERNET_ERROR
+			return@launch
+		}
 		_getSubCategoryResponse.value = repo.getCategory(categoryId)
 	}
 
 	private var _getLessonResponse = MutableLiveData<Resource<GetLessonsResponse>>()
-	val getLessonRepo : MutableLiveData<Resource<GetLessonsResponse>>
+	val getLessonRepo: MutableLiveData<Resource<GetLessonsResponse>>
 		get() = _getLessonResponse
 
 	fun getLesson() = viewModelScope.launch {
+		if (!networkMonitor.hasInternet()) {
+			_getLessonResponse.value = NO_INTERNET_ERROR
+			return@launch
+		}
 		_getLessonResponse.value = repo.getLesson()
 	}
 
 	private var _storeProductResponse = MutableLiveData<Resource<CommonResponse>>()
-	val storeProductRepo : MutableLiveData<Resource<CommonResponse>>
+	val storeProductRepo: MutableLiveData<Resource<CommonResponse>>
 		get() = _storeProductResponse
 
 	fun storeProduct(
-		categoryId : String? ,
-		title : String? ,
-		description : String? ,
-		quantity : String? ,
-		pricing : String? ,
-		flashSale : String? ,
-		acceptOffers : String? ,
-		reserveForLive : String? ,
-		shippingProfileId : String? ,
-		status : String? ,
-		productImages : List<Map<String , String?>>? ,
-		subCategoryId : Int? = null ,
-		productId : String? = null ,
-		variant : List<Map<String? , Any?>>? = null , width : String? = null ,
-		height : String? = null ,
-		length : String? = null ,
-		weight : String? = null ,
-		mailClass : String? = null ,
-		processingCategory : String? = null ,
+		categoryId: String?,
+		title: String?,
+		description: String?,
+		quantity: String?,
+		pricing: String?,
+		flashSale: String?,
+		acceptOffers: String?,
+		reserveForLive: String?,
+		shippingProfileId: String?,
+		status: String?,
+		productImages: List<Map<String, String?>>?,
+		subCategoryId: Int? = null,
+		productId: String? = null,
+		variant: List<Map<String?, Any?>>? = null, width: String? = null,
+		height: String? = null,
+		length: String? = null,
+		weight: String? = null,
+		mailClass: String? = null,
+		processingCategory: String? = null,
 
 		) = viewModelScope.launch {
+		if (!networkMonitor.hasInternet()) {
+			_storeProductResponse.value = NO_INTERNET_ERROR
+			return@launch
+		}
 		_storeProductResponse.value = repo.storeProduct(
-			categoryId ,
-			title ,
-			description ,
-			quantity ,
-			pricing ,
-			flashSale ,
-			acceptOffers ,
-			reserveForLive ,
-			shippingProfileId ,
-			status ,
-			productImages ,
-			subCategoryId ,
-			productId ,
-			variant ,
-			width ,
-			height ,
-			length ,
-			weight ,
-			mailClass ,
+			categoryId,
+			title,
+			description,
+			quantity,
+			pricing,
+			flashSale,
+			acceptOffers,
+			reserveForLive,
+			shippingProfileId,
+			status,
+			productImages,
+			subCategoryId,
+			productId,
+			variant,
+			width,
+			height,
+			length,
+			weight,
+			mailClass,
 			processingCategory
 		)
 	}
 
 	private var _storeProductMetaResponse = MutableLiveData<Resource<StoreProductResponse>>()
-	val storeProductMetaRepo : MutableLiveData<Resource<StoreProductResponse>>
+	val storeProductMetaRepo: MutableLiveData<Resource<StoreProductResponse>>
 		get() = _storeProductMetaResponse
 
-	fun storeProductMeta(productImages : List<MultipartBody.Part>? , thumbnail : List<MultipartBody.Part>?) = viewModelScope.launch {
-		_storeProductMetaResponse.value = repo.storeProductMeta(productImages , thumbnail)
+	fun storeProductMeta(productImages: List<MultipartBody.Part>?, thumbnail: List<MultipartBody.Part>?) = viewModelScope.launch {
+		if (!networkMonitor.hasInternet()) {
+			_storeProductMetaResponse.value = NO_INTERNET_ERROR
+			return@launch
+		}
+		_storeProductMetaResponse.value = repo.storeProductMeta(productImages, thumbnail)
 	}
 
 	private var _getHowToSellStepResponse = MutableLiveData<Resource<GetHowToSellResponse>>()
-	val getHowToSellStepRepo : MutableLiveData<Resource<GetHowToSellResponse>>
+	val getHowToSellStepRepo: MutableLiveData<Resource<GetHowToSellResponse>>
 		get() = _getHowToSellStepResponse
 
 	fun getHowToSellStep() = viewModelScope.launch {
+		if (!networkMonitor.hasInternet()) {
+			_getHowToSellStepResponse.value = NO_INTERNET_ERROR
+			return@launch
+		}
 		_getHowToSellStepResponse.value = repo.getHowToSellStep()
 	}
 
 	private var _getPrepareStepResponse = MutableLiveData<Resource<GetPrepareStepResponse>>()
-	val getPrepareStepRepo : MutableLiveData<Resource<GetPrepareStepResponse>>
+	val getPrepareStepRepo: MutableLiveData<Resource<GetPrepareStepResponse>>
 		get() = _getPrepareStepResponse
 
 	fun getPrepareStep() = viewModelScope.launch {
+		if (!networkMonitor.hasInternet()) {
+			_getPrepareStepResponse.value = NO_INTERNET_ERROR
+			return@launch
+		}
 		_getPrepareStepResponse.value = repo.getPrepareStep()
 	}
 
 	private var _getLiveShowResponse = MutableLiveData<Resource<GetMyShowResponse>>()
-	val getLiveShowRepo : MutableLiveData<Resource<GetMyShowResponse>>
+	val getLiveShowRepo: MutableLiveData<Resource<GetMyShowResponse>>
 		get() = _getLiveShowResponse
 
 	fun getLiveShow(
-		type : RequestBody? = null ,
-		category : RequestBody? = null ,
-		search : RequestBody? = null ,
-		page : RequestBody? = null ,
+		type: RequestBody? = null,
+		category: RequestBody? = null,
+		search: RequestBody? = null,
+		page: RequestBody? = null,
 	) = viewModelScope.launch {
-		_getLiveShowResponse.value = repo.getLiveShow(type , category , search, page)
+		if (!networkMonitor.hasInternet()) {
+			_getLiveShowResponse.value = NO_INTERNET_ERROR
+			return@launch
+		}
+		_getLiveShowResponse.value = repo.getLiveShow(type, category, search, page)
 	}
 
 	private var _offerListResponse = MutableLiveData<Resource<GetOffersResponse>>()
-	val offerListRepo : MutableLiveData<Resource<GetOffersResponse>>
+	val offerListRepo: MutableLiveData<Resource<GetOffersResponse>>
 		get() = _offerListResponse
 
 	fun offerList(
-		page : Int ,
+		page: Int,
 	) = viewModelScope.launch {
+		if (!networkMonitor.hasInternet()) {
+			_offerListResponse.value = NO_INTERNET_ERROR
+			return@launch
+		}
 		_offerListResponse.value = repo.offerList(page)
 	}
 
 	private var _offerUpdateStatusResponse = MutableLiveData<Resource<UpdateOfferResponse>>()
-	val offerUpdateStatusRepo : MutableLiveData<Resource<UpdateOfferResponse>>
+	val offerUpdateStatusRepo: MutableLiveData<Resource<UpdateOfferResponse>>
 		get() = _offerUpdateStatusResponse
 
 	fun offerUpdateStatus(
-		offerId : RequestBody? ,
-		status : RequestBody? ,
+		offerId: RequestBody?,
+		status: RequestBody?,
 	) = viewModelScope.launch {
-		_offerUpdateStatusResponse.value = repo.offerUpdateStatus(offerId , status)
+		if (!networkMonitor.hasInternet()) {
+			_offerUpdateStatusResponse.value = NO_INTERNET_ERROR
+			return@launch
+		}
+		_offerUpdateStatusResponse.value = repo.offerUpdateStatus(offerId, status)
 	}
 
 	private var _addPaymentCardResponse = MutableLiveData<Resource<CommonResponse>>()
-	val addPaymentCardRepo : MutableLiveData<Resource<CommonResponse>>
+	val addPaymentCardRepo: MutableLiveData<Resource<CommonResponse>>
 		get() = _addPaymentCardResponse
 
 	fun addPaymentCard(
-		data : PaymentCardModel ,
+		data: PaymentCardModel,
 	) = viewModelScope.launch {
+		if (!networkMonitor.hasInternet()) {
+			_addPaymentCardResponse.value = NO_INTERNET_ERROR
+			return@launch
+		}
 		_addPaymentCardResponse.value = repo.addPaymentCard(data)
 	}
 
 	private var _generateTokenResponse = MutableLiveData<Resource<GenerateTokenResponse>>()
-	val generateTokenRepo : MutableLiveData<Resource<GenerateTokenResponse>>
+	val generateTokenRepo: MutableLiveData<Resource<GenerateTokenResponse>>
 		get() = _generateTokenResponse
 
 	fun generateToken(
-		showId : RequestBody? ,
+		showId: RequestBody?,
 	) = viewModelScope.launch {
+		if (!networkMonitor.hasInternet()) {
+			_generateTokenResponse.value = NO_INTERNET_ERROR
+			return@launch
+		}
 		_generateTokenResponse.value = repo.generateToken(showId)
 	}
 
 	private var _storeDeviceDetailsResponse = MutableLiveData<Resource<UserDeviceResponse>>()
-	val storeDeviceDetailsRepo : MutableLiveData<Resource<UserDeviceResponse>>
+	val storeDeviceDetailsRepo: MutableLiveData<Resource<UserDeviceResponse>>
 		get() = _storeDeviceDetailsResponse
 
 	fun storeDeviceDetails(
-		deviceToken : RequestBody? ,
+		deviceToken: RequestBody?,
 	) = viewModelScope.launch {
+		if (!networkMonitor.hasInternet()) {
+			_storeDeviceDetailsResponse.value = NO_INTERNET_ERROR
+			return@launch
+		}
 		_storeDeviceDetailsResponse.value = repo.storeDeviceDetails(deviceToken)
 	}
 
 	private var _updateLiveStatusResponse = MutableLiveData<Resource<UpdateLiveStatusResponse>>()
-	val updateLiveStatusRepo : MutableLiveData<Resource<UpdateLiveStatusResponse>>
+	val updateLiveStatusRepo: MutableLiveData<Resource<UpdateLiveStatusResponse>>
 		get() = _updateLiveStatusResponse
 
 	fun updateLiveStatus(
-		showId : RequestBody? ,
-		isLive : RequestBody? ,
+		showId: RequestBody?,
+		isLive: RequestBody?,
 	) = viewModelScope.launch {
-		_updateLiveStatusResponse.value = repo.updateLiveStatus(showId , isLive)
+		if (!networkMonitor.hasInternet()) {
+			_updateLiveStatusResponse.value = NO_INTERNET_ERROR
+			return@launch
+		}
+		_updateLiveStatusResponse.value = repo.updateLiveStatus(showId, isLive)
 	}
 
 
@@ -273,172 +346,224 @@ class DashViewModel @Inject constructor(val repo : DashRepository) : ViewModel()
 
 
 	private var _getUserProfileResponse = MutableLiveData<Resource<UserProfileResponse>>()
-	val getUserProfileRepo : MutableLiveData<Resource<UserProfileResponse>>
+	val getUserProfileRepo: MutableLiveData<Resource<UserProfileResponse>>
 		get() = _getUserProfileResponse
 
 	fun getUserProfile(
 	) = viewModelScope.launch {
+		if (!networkMonitor.hasInternet()) {
+			_getUserProfileResponse.value = NO_INTERNET_ERROR
+			return@launch
+		}
 		_getUserProfileResponse.value = repo.getUserProfile()
 	}
 
 	private var _fetchBidsResponse = MutableLiveData<Resource<FetchBidResponse>>()
-	val fetchBidsRepo : MutableLiveData<Resource<FetchBidResponse>>
+	val fetchBidsRepo: MutableLiveData<Resource<FetchBidResponse>>
 		get() = _fetchBidsResponse
 
 	fun fetchBids(
-		page : String? ,
+		page: String?,
 	) = viewModelScope.launch {
+		if (!networkMonitor.hasInternet()) {
+			_fetchBidsResponse.value = NO_INTERNET_ERROR
+			return@launch
+		}
 		_fetchBidsResponse.value = repo.fetchBids(page)
 	}
 
 	private var _getPurchasedProductsByStatusResponse =
 		MutableLiveData<Resource<GetProductsByStatusResponse>>()
-	val getPurchasedProductsByStatusRepo : MutableLiveData<Resource<GetProductsByStatusResponse>>
+	val getPurchasedProductsByStatusRepo: MutableLiveData<Resource<GetProductsByStatusResponse>>
 		get() = _getPurchasedProductsByStatusResponse
 
 	fun getPurchasedProductsByStatus(
-		type : RequestBody? ,
-		page : RequestBody? ,
+		type: RequestBody?,
+		page: RequestBody?,
 	) = viewModelScope.launch {
-		_getPurchasedProductsByStatusResponse.value = repo.getProductsByStatus(type , page)
+		if (!networkMonitor.hasInternet()) {
+			_getPurchasedProductsByStatusResponse.value = NO_INTERNET_ERROR
+			return@launch
+		}
+		_getPurchasedProductsByStatusResponse.value = repo.getProductsByStatus(type, page)
 	}
 
 	private var _getSavedProductsByStatusResponse =
 		MutableLiveData<Resource<GetProductsByStatusResponse>>()
-	val getSavedProductsByStatusRepo : MutableLiveData<Resource<GetProductsByStatusResponse>>
+	val getSavedProductsByStatusRepo: MutableLiveData<Resource<GetProductsByStatusResponse>>
 		get() = _getSavedProductsByStatusResponse
 
 	fun getSavedProductsByStatus(
-		type : RequestBody? ,
-		page : RequestBody? ,
+		type: RequestBody?,
+		page: RequestBody?,
 	) = viewModelScope.launch {
-		_getSavedProductsByStatusResponse.value = repo.getProductsByStatus(type , page)
+		if (!networkMonitor.hasInternet()) {
+			_getSavedProductsByStatusResponse.value = NO_INTERNET_ERROR
+			return@launch
+		}
+		_getSavedProductsByStatusResponse.value = repo.getProductsByStatus(type, page)
 	}
 
 	private var _checkKycResponse = MutableLiveData<Resource<CheckKycResponse>>()
-	val checkKycRepo : MutableLiveData<Resource<CheckKycResponse>>
+	val checkKycRepo: MutableLiveData<Resource<CheckKycResponse>>
 		get() = _checkKycResponse
 
 	fun checkKyc(
 	) = viewModelScope.launch {
+		if (!networkMonitor.hasInternet()) {
+			_checkKycResponse.value = NO_INTERNET_ERROR
+			return@launch
+		}
 		_checkKycResponse.value = repo.checkKyc()
 	}
 
 
 	private var _updateProfileResponse = MutableLiveData<Resource<CommonResponse>>()
-	val updateProfileRepo : MutableLiveData<Resource<CommonResponse>>
+	val updateProfileRepo: MutableLiveData<Resource<CommonResponse>>
 		get() = _updateProfileResponse
 
 	fun updateProfile(
-		firstName : RequestBody ,
-		lastName : RequestBody ,
-		image : MultipartBody.Part? ,
-		userName : RequestBody ,
-		bio : RequestBody ,
+		firstName: RequestBody,
+		lastName: RequestBody,
+		image: MultipartBody.Part?,
+		userName: RequestBody,
+		bio: RequestBody,
 	) = viewModelScope.launch {
-		_updateProfileResponse.value = repo.updateProfile(firstName , lastName , image , userName , bio)
+		if (!networkMonitor.hasInternet()) {
+			_updateProfileResponse.value = NO_INTERNET_ERROR
+			return@launch
+		}
+		_updateProfileResponse.value = repo.updateProfile(firstName, lastName, image, userName, bio)
 	}
 
 	private var _getUserProductsResponse = MutableLiveData<Resource<GetProductsResponse>>()
-	val getUserProductsRepo : MutableLiveData<Resource<GetProductsResponse>>
+	val getUserProductsRepo: MutableLiveData<Resource<GetProductsResponse>>
 		get() = _getUserProductsResponse
 
 	fun getUserProducts(
-		userId : RequestBody? = null ,
-		categoryId : RequestBody? = null ,
+		userId: RequestBody? = null,
+		categoryId: RequestBody? = null,
 	) = viewModelScope.launch {
-		_getUserProductsResponse.value = repo.getUserProducts(userId , categoryId)
+		if (!networkMonitor.hasInternet()) {
+			_getUserProductsResponse.value = NO_INTERNET_ERROR
+			return@launch
+		}
+		_getUserProductsResponse.value = repo.getUserProducts(userId, categoryId)
 	}
 
 	private var _getMyInventoryResponse = MutableLiveData<Resource<GetMyInventoryResponse>>()
-	val getMyInventoryRepo : MutableLiveData<Resource<GetMyInventoryResponse>>
+	val getMyInventoryRepo: MutableLiveData<Resource<GetMyInventoryResponse>>
 		get() = _getMyInventoryResponse
 
 	fun getMyInventory(
-		status : RequestBody? ,
-		page : RequestBody? ,
+		status: RequestBody?,
+		page: RequestBody?,
 	) = viewModelScope.launch {
-		_getMyInventoryResponse.value = repo.getMyInventory(status , page)
+		if (!networkMonitor.hasInternet()) {
+			_getMyInventoryResponse.value = NO_INTERNET_ERROR
+			return@launch
+		}
+		_getMyInventoryResponse.value = repo.getMyInventory(status, page)
 	}
 
 	private var _storeScheduleShowResponse = MutableLiveData<Resource<CreateShowResponse>>()
-	val storeScheduleShowRepo : MutableLiveData<Resource<CreateShowResponse>>
+	val storeScheduleShowRepo: MutableLiveData<Resource<CreateShowResponse>>
 		get() = _storeScheduleShowResponse
 
 	fun storeScheduleShow(
-		title : RequestBody? ,
-		date : RequestBody? ,
-		time : RequestBody? ,
-		categoryId : RequestBody? ,
-		auctionTypeId : RequestBody? ,
-		thumbnails : List<MultipartBody.Part?>? ,
-		productIds : RequestBody? ,
+		title: RequestBody?,
+		date: RequestBody?,
+		time: RequestBody?,
+		categoryId: RequestBody?,
+		auctionTypeId: RequestBody?,
+		thumbnails: List<MultipartBody.Part?>?,
+		productIds: RequestBody?,
 	) = viewModelScope.launch {
+		if (!networkMonitor.hasInternet()) {
+			_storeScheduleShowResponse.value = NO_INTERNET_ERROR
+			return@launch
+		}
 		_storeScheduleShowResponse.value = repo.storeScheduleShow(
-			title ,
-			date ,
-			time ,
-			categoryId ,
-			auctionTypeId ,
-			thumbnails ,
+			title,
+			date,
+			time,
+			categoryId,
+			auctionTypeId,
+			thumbnails,
 			productIds
 		)
 	}
 
 	private var _storeSellerRatingResponse = MutableLiveData<Resource<CommonResponse>>()
-	val storeSellerRatingRepo : MutableLiveData<Resource<CommonResponse>>
+	val storeSellerRatingRepo: MutableLiveData<Resource<CommonResponse>>
 		get() = _storeSellerRatingResponse
 
 	fun storeSellerRating(
-		sellerId : RequestBody ,
-		overAllRating : RequestBody ,
-		shippingRating : RequestBody ,
-		packagingRating : RequestBody ,
-		accuracyRating : RequestBody ,
-		comment : RequestBody ,
+		sellerId: RequestBody,
+		overAllRating: RequestBody,
+		shippingRating: RequestBody,
+		packagingRating: RequestBody,
+		accuracyRating: RequestBody,
+		comment: RequestBody,
 	) = viewModelScope.launch {
+		if (!networkMonitor.hasInternet()) {
+			_storeSellerRatingResponse.value = NO_INTERNET_ERROR
+			return@launch
+		}
 		_storeSellerRatingResponse.value = repo.storeSellerRating(
-			sellerId ,
-			overAllRating ,
-			shippingRating ,
-			packagingRating ,
-			accuracyRating ,
+			sellerId,
+			overAllRating,
+			shippingRating,
+			packagingRating,
+			accuracyRating,
 			comment
 		)
 	}
 
 	private var _sendChatNotificationResponse = MutableLiveData<Resource<CommonResponse>>()
-	val sendChatNotificationRepo : MutableLiveData<Resource<CommonResponse>>
+	val sendChatNotificationRepo: MutableLiveData<Resource<CommonResponse>>
 		get() = _sendChatNotificationResponse
 
 	fun sendChatNotification(
-		receiverId : RequestBody ,
-		message : RequestBody ,
+		receiverId: RequestBody,
+		message: RequestBody,
 
 		) = viewModelScope.launch {
-		_sendChatNotificationResponse.value = repo.sendChatNotification(receiverId , message)
+		if (!networkMonitor.hasInternet()) {
+			_sendChatNotificationResponse.value = NO_INTERNET_ERROR
+			return@launch
+		}
+		_sendChatNotificationResponse.value = repo.sendChatNotification(receiverId, message)
 	}
 
 	private var _pageUrlResponse = MutableLiveData<Resource<PageUrlResponse>>()
-	val pageUrlRepo : MutableLiveData<Resource<PageUrlResponse>>
+	val pageUrlRepo: MutableLiveData<Resource<PageUrlResponse>>
 		get() = _pageUrlResponse
 
-	fun getPageUrl(slug : String) = viewModelScope.launch {
+	fun getPageUrl(slug: String) = viewModelScope.launch {
+		if (!networkMonitor.hasInternet()) {
+			_pageUrlResponse.value = NO_INTERNET_ERROR
+			return@launch
+		}
 		_pageUrlResponse.value = repo.getPageUrl(slug)
 	}
 
 
 	private var _createBidResponse = MutableLiveData<Resource<CreateBidResponse>>()
-	val createBidRepo : MutableLiveData<Resource<CreateBidResponse>>
+	val createBidRepo: MutableLiveData<Resource<CreateBidResponse>>
 		get() = _createBidResponse
 
 	fun createBid(
-		showId : RequestBody? ,
-		userId : RequestBody? ,
-		productId : RequestBody? ,
-		bidPrice : RequestBody? ,
+		showId: RequestBody?,
+		userId: RequestBody?,
+		productId: RequestBody?,
+		bidPrice: RequestBody?,
 	) = viewModelScope.launch {
-		_createBidResponse.value = repo.createBid(showId , userId , productId , bidPrice)
+		if (!networkMonitor.hasInternet()) {
+			_createBidResponse.value = NO_INTERNET_ERROR
+			return@launch
+		}
+		_createBidResponse.value = repo.createBid(showId, userId, productId, bidPrice)
 	}
 
 	companion object {
@@ -449,48 +574,68 @@ class DashViewModel @Inject constructor(val repo : DashRepository) : ViewModel()
 	}
 
 	private var _blockUnblockUserResponse = MutableLiveData<Resource<BlockedUnblockedResponse>>()
-	val blockUnblockUserRepo : MutableLiveData<Resource<BlockedUnblockedResponse>>
+	val blockUnblockUserRepo: MutableLiveData<Resource<BlockedUnblockedResponse>>
 		get() = _blockUnblockUserResponse
 
 	fun blockUnblockUser(
-		blockedID : RequestBody ,
+		blockedID: RequestBody,
 	) = viewModelScope.launch {
+		if (!networkMonitor.hasInternet()) {
+			_blockUnblockUserResponse.value = NO_INTERNET_ERROR
+			return@launch
+		}
 		_blockUnblockUserResponse.value = repo.blockUnblockUser(blockedID)
 	}
 
 	private var _getBlockedUsersResponse = MutableLiveData<Resource<GetBlockedUsersResponse>>()
-	val getBlockedUsersRepo : MutableLiveData<Resource<GetBlockedUsersResponse>>
+	val getBlockedUsersRepo: MutableLiveData<Resource<GetBlockedUsersResponse>>
 		get() = _getBlockedUsersResponse
 
 	fun getBlockedUsers() = viewModelScope.launch {
+		if (!networkMonitor.hasInternet()) {
+			_getBlockedUsersResponse.value = NO_INTERNET_ERROR
+			return@launch
+		}
 		_getBlockedUsersResponse.value = repo.getBlockedUsers()
 	}
 
 	private var _getMailClassesResponse = MutableLiveData<Resource<GetMailClassesResponse>>()
-	val getMailClassesRepo : MutableLiveData<Resource<GetMailClassesResponse>>
+	val getMailClassesRepo: MutableLiveData<Resource<GetMailClassesResponse>>
 		get() = _getMailClassesResponse
 
 	fun getMailClasses() = viewModelScope.launch {
+		if (!networkMonitor.hasInternet()) {
+			_getMailClassesResponse.value = NO_INTERNET_ERROR
+			return@launch
+		}
 		_getMailClassesResponse.value = repo.getMailClasses()
 	}
-	
+
 	private var _getPromoteShowListResponse = MutableLiveData<Resource<GetPromotePlansResponse>>()
-	val getPromoteShowListRepo : MutableLiveData<Resource<GetPromotePlansResponse>>
+	val getPromoteShowListRepo: MutableLiveData<Resource<GetPromotePlansResponse>>
 		get() = _getPromoteShowListResponse
 
 	fun getPromoteShowList() = viewModelScope.launch {
+		if (!networkMonitor.hasInternet()) {
+			_getPromoteShowListResponse.value = NO_INTERNET_ERROR
+			return@launch
+		}
 		_getPromoteShowListResponse.value = repo.getPromoteShowList()
 	}
-	
+
 	private var _promoteShowResponse = MutableLiveData<Resource<CommonResponse>>()
-	val promoteShowRepo : MutableLiveData<Resource<CommonResponse>>
+	val promoteShowRepo: MutableLiveData<Resource<CommonResponse>>
 		get() = _promoteShowResponse
 
 	fun promoteShow(
-		scheduleShowId : RequestBody,
-		promoteShowId : RequestBody
+		scheduleShowId: RequestBody,
+		promoteShowId: RequestBody
 	) = viewModelScope.launch {
-		_promoteShowResponse.value = repo.promoteShow(scheduleShowId , promoteShowId)
+		if (!networkMonitor.hasInternet()) {
+			_promoteShowResponse.value = NO_INTERNET_ERROR
+			return@launch
+		}
+		_promoteShowResponse.value = repo.promoteShow(scheduleShowId, promoteShowId)
 	}
 
 

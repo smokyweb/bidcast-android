@@ -124,9 +124,6 @@ class TransactionsFragment : BaseFragment<SellerHubViewModel , FragmentTransacti
 					viewModel.getTransactionsHistoryRepo.value=null
 					bind.loader.isVisible = false
 					bind.bottomLoader.isVisible = false
-					if (it.isNetworkError) {
-						errorToast(getString(R.string.no_internet))
-					} else {
 						it.parse(mCtx , TAG , object : AlertClicks {
 							override fun primaryClick(dialog : AppBottomSheet) {
 								dialog.dismiss()
@@ -136,7 +133,6 @@ class TransactionsFragment : BaseFragment<SellerHubViewModel , FragmentTransacti
 								dialog.dismiss()
 							}
 						})
-					}
 				}
 
 				else -> {}

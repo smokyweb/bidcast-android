@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
-import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseFragment
 import io.bidswipe.app.controller.FAQAdapter
 import io.bidswipe.app.databinding.FragmentFAQBinding
@@ -19,22 +18,22 @@ import io.bidswipe.app.utils.finish
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.runSafe
 
-class FAQFragment : BaseFragment<MoreViewModel , FragmentFAQBinding>() {
-	override fun getModel() : Class<MoreViewModel> = MoreViewModel::class.java
+class FAQFragment : BaseFragment<MoreViewModel, FragmentFAQBinding>() {
+	override fun getModel(): Class<MoreViewModel> = MoreViewModel::class.java
 
 	override fun getBind(
-		inflater : LayoutInflater ,
-		view : ViewGroup? ,
-	) = FragmentFAQBinding.inflate(inflater , view , false)
+		inflater: LayoutInflater,
+		view: ViewGroup?,
+	) = FragmentFAQBinding.inflate(inflater, view, false)
 
 	private var faqList = mutableListOf<FAQResponse.Data?>()
 	private var categoriesList = mutableListOf<String>()
 
-	private lateinit var adapter : FAQAdapter
+	private lateinit var adapter: FAQAdapter
 
 	private var mClick = object : RecyclerClicks {
-		override fun itemClick(pos : Int , status : String?) {
-			faqList.forEachIndexed { index , data ->
+		override fun itemClick(pos: Int, status: String?) {
+			faqList.forEachIndexed { index, data ->
 				data?.selected = index == pos
 			}
 
@@ -44,25 +43,25 @@ class FAQFragment : BaseFragment<MoreViewModel , FragmentFAQBinding>() {
 
 	}
 
-	override fun onViewCreated(view : View , savedInstanceState : Bundle?) {
-		super.onViewCreated(view , savedInstanceState)
+	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+		super.onViewCreated(view, savedInstanceState)
 
 		bind.header.onBackClick {
 			finish()
 		}
 
-		categoriesList = mutableListOf("All FAQs" , "Bidding" , "Payments")
+		categoriesList = mutableListOf("All FAQs", "Bidding", "Payments")
 		categoriesList.forEach {
 			bind.chipGroup.addView(
 				Utils.makeAChip(
-					mCtx = mCtx ,
-					text = it ,
+					mCtx = mCtx,
+					text = it,
 					selected = false
 				)
 			)
 		}
 
-		bind.chipGroup.setOnCheckedStateChangeListener { chipGroup , _ ->
+		bind.chipGroup.setOnCheckedStateChangeListener { chipGroup, _ ->
 			runSafe {
 				val chipId = chipGroup.checkedChipId
 				chipGroup.indexOfChild(chipGroup.findViewById(chipId))
@@ -70,7 +69,7 @@ class FAQFragment : BaseFragment<MoreViewModel , FragmentFAQBinding>() {
 		}
 
 
-		adapter = FAQAdapter(faqList , mClick)
+		adapter = FAQAdapter(faqList, mClick)
 
 		bind.recyclerFaq.adapter = adapter
 
@@ -99,21 +98,17 @@ class FAQFragment : BaseFragment<MoreViewModel , FragmentFAQBinding>() {
 
 				is Resource.Error -> {
 					bind.loader.isVisible = false
-					if (it.isNetworkError) {
-						errorToast(getString(R.string.no_internet))
-					} else {
-						it.parse(mCtx , TAG , object : AlertClicks {
-							override fun primaryClick(dialog : AppBottomSheet) {
-								dialog.dismiss()
+					it.parse(mCtx, TAG, object : AlertClicks {
+						override fun primaryClick(dialog: AppBottomSheet) {
+							dialog.dismiss()
 
-							}
+						}
 
-							override fun secondaryClick(dialog : AppBottomSheet) {
-								dialog.dismiss()
+						override fun secondaryClick(dialog: AppBottomSheet) {
+							dialog.dismiss()
 
-							}
-						})
-					}
+						}
+					})
 				}
 
 				else -> {}

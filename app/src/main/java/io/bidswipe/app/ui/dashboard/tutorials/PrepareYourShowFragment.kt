@@ -9,7 +9,6 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.navigation.fragment.findNavController
-import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseFragment
 import io.bidswipe.app.controller.ShowAdapter
 import io.bidswipe.app.databinding.FragmentPrepareYourShowBinding
@@ -27,13 +26,13 @@ import io.bidswipe.app.utils.toScheduleShow
 import okhttp3.MultipartBody
 import java.io.File
 
-class PrepareYourShowFragment : BaseFragment<DashViewModel , FragmentPrepareYourShowBinding>() {
-	override fun getModel() : Class<DashViewModel> = DashViewModel::class.java
+class PrepareYourShowFragment : BaseFragment<DashViewModel, FragmentPrepareYourShowBinding>() {
+	override fun getModel(): Class<DashViewModel> = DashViewModel::class.java
 
 	override fun getBind(
-		inflater : LayoutInflater ,
-		view : ViewGroup? ,
-	) = FragmentPrepareYourShowBinding.inflate(inflater , view , false)
+		inflater: LayoutInflater,
+		view: ViewGroup?,
+	) = FragmentPrepareYourShowBinding.inflate(inflater, view, false)
 
 	var imagePartList = mutableListOf<MultipartBody.Part?>()
 
@@ -60,20 +59,20 @@ class PrepareYourShowFragment : BaseFragment<DashViewModel , FragmentPrepareYour
 
 		}
 
-	override fun onViewCreated(view : View , savedInstanceState : Bundle?) {
-		super.onViewCreated(view , savedInstanceState)
+	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+		super.onViewCreated(view, savedInstanceState)
 
 		bind.header.onBackClick {
 			findNavController().popBackStack()
 		}
 
-		val adapter = ShowAdapter(mList = viewModel.showList , object : RecyclerClicks {
-			override fun itemClick(pos : Int , status : String?) {
+		val adapter = ShowAdapter(mList = viewModel.showList, object : RecyclerClicks {
+			override fun itemClick(pos: Int, status: String?) {
 				if (status == null) {
 
-					bind.stepProgress.setProgress(pos + 1)
+					bind.stepProgress.progress = pos + 1
 
-					viewModel.showList.forEachIndexed { index , showModel ->
+					viewModel.showList.forEachIndexed { index, showModel ->
 						showModel?.selected = index == pos
 					}
 
@@ -86,11 +85,11 @@ class PrepareYourShowFragment : BaseFragment<DashViewModel , FragmentPrepareYour
 						}
 
 						1 -> {
-							findNavController().navigate(ids.goToShowTipsFragment , bundleOf("type" to "showTips"))
+							findNavController().navigate(ids.goToShowTipsFragment, bundleOf("type" to "showTips"))
 						}
 
 						2 -> {
-							findNavController().navigate(ids.goToShowTipsFragment , bundleOf("type" to "liveTips"))
+							findNavController().navigate(ids.goToShowTipsFragment, bundleOf("type" to "liveTips"))
 						}
 
 						3 -> {
@@ -99,30 +98,30 @@ class PrepareYourShowFragment : BaseFragment<DashViewModel , FragmentPrepareYour
 
 							imagePartList.add(
 								Utils.imagePart(
-									"thumbnail[]" ,
-									mData?.thumbnail.toString() ,
+									"thumbnail[]",
+									mData?.thumbnail.toString(),
 									File(mData?.thumbnail)
 								)
 							)
 
-                            if (mData?.productIds?.isEmpty() == true) {
-                                Alerts.error(mCtx, "Please select products")
-                                return
-                            }
+							if (mData?.productIds?.isEmpty() == true) {
+								Alerts.error(mCtx, "Please select products")
+								return
+							}
 
 							val productIds = mData?.productIds?.split(",")?.map {
 								it.toInt()
 							}
 
-                            bind.loader.isVisible = true
+							bind.loader.isVisible = true
 
 							viewModel.storeScheduleShow(
-								mData?.showTitle?.request() ,
-								viewModel.showDate.request() ,
-								viewModel.showTime.request() ,
-								mData?.categoryId?.request() ,
-								mData?.actionId?.request() ,
-								imagePartList ,
+								mData?.showTitle?.request(),
+								viewModel.showDate.request(),
+								viewModel.showTime.request(),
+								mData?.categoryId?.request(),
+								mData?.actionId?.request(),
+								imagePartList,
 								productIds?.joinToString(",")?.request()
 							)
 
@@ -133,8 +132,8 @@ class PrepareYourShowFragment : BaseFragment<DashViewModel , FragmentPrepareYour
 							bind.loader.isVisible = true
 
 							findNavController().navigate(
-								ids.goToShowTipsFragment ,
-								bundleOf("type" to "goLive" , "showId" to viewModel.showId)
+								ids.goToShowTipsFragment,
+								bundleOf("type" to "goLive", "showId" to viewModel.showId)
 							)
 						}
 
@@ -169,7 +168,7 @@ class PrepareYourShowFragment : BaseFragment<DashViewModel , FragmentPrepareYour
 					}
 
 					bind.stepProgress.max = viewModel.showList.size
-					bind.stepProgress.setProgress(1)
+					bind.stepProgress.progress = 1
 
 					adapter.notifyDataSetChanged()
 
@@ -177,21 +176,18 @@ class PrepareYourShowFragment : BaseFragment<DashViewModel , FragmentPrepareYour
 
 				is Resource.Error -> {
 					bind.loader.isVisible = false
-					if (it.isNetworkError) {
-						errorToast(getString(R.string.no_internet))
-					} else {
-						it.parse(mCtx , TAG , object : AlertClicks {
-							override fun primaryClick(dialog : AppBottomSheet) {
-								dialog.dismiss()
 
-							}
+					it.parse(mCtx, TAG, object : AlertClicks {
+						override fun primaryClick(dialog: AppBottomSheet) {
+							dialog.dismiss()
 
-							override fun secondaryClick(dialog : AppBottomSheet) {
-								dialog.dismiss()
+						}
 
-							}
-						})
-					}
+						override fun secondaryClick(dialog: AppBottomSheet) {
+							dialog.dismiss()
+
+						}
+					})
 				}
 
 				else -> {}
@@ -201,7 +197,7 @@ class PrepareYourShowFragment : BaseFragment<DashViewModel , FragmentPrepareYour
 
 		viewModel.showData.observe(viewLifecycleOwner) {
 			if (viewModel.showList.isNotEmpty()) {
-				val mData = it
+				it
 				log("SHOW DATA :$it")
 
 
@@ -247,8 +243,8 @@ class PrepareYourShowFragment : BaseFragment<DashViewModel , FragmentPrepareYour
 					viewModel.showId = mData?.id.toString()
 
 					findNavController().navigate(
-						ids.goToShowTipsFragment ,
-						bundleOf("type" to "bringInBuyers" , "showId" to mData?.id.toString())
+						ids.goToShowTipsFragment,
+						bundleOf("type" to "bringInBuyers", "showId" to mData?.id.toString())
 					)
 
 				}
@@ -256,21 +252,17 @@ class PrepareYourShowFragment : BaseFragment<DashViewModel , FragmentPrepareYour
 				is Resource.Error -> {
 					bind.loader.isVisible = false
 
-					if (it.isNetworkError) {
-						errorToast(getString(R.string.no_internet))
-					} else {
-						it.parse(mCtx , TAG , object : AlertClicks {
-							override fun primaryClick(dialog : AppBottomSheet) {
-								dialog.dismiss()
+					it.parse(mCtx, TAG, object : AlertClicks {
+						override fun primaryClick(dialog: AppBottomSheet) {
+							dialog.dismiss()
 
-							}
+						}
 
-							override fun secondaryClick(dialog : AppBottomSheet) {
-								dialog.dismiss()
+						override fun secondaryClick(dialog: AppBottomSheet) {
+							dialog.dismiss()
 
-							}
-						})
-					}
+						}
+					})
 				}
 
 				else -> {}

@@ -201,7 +201,7 @@ class LiveShowSocketActivity : BaseActivity() {
 				return@setEndIconOnClickListener
 			}
 
-			if (bind.text.value().isNotEmpty() ) {
+			if (bind.text.value().isNotEmpty()) {
 				socketManager?.sendMessage(roomID, bind.text.value(), userId, userName, userImage)
 				bind.text.text.clear()
 			}
@@ -555,7 +555,6 @@ class LiveShowSocketActivity : BaseActivity() {
 		socketManager?.initialize(socketUrl, mapOf("uid" to userId))
 		socketManager?.connect(onConnected = {
 			socketManager?.joinRoom(roomID, userId) {
-
 
 
 			}
@@ -1053,7 +1052,7 @@ class LiveShowSocketActivity : BaseActivity() {
 					publisher.setCredentials(credentials)
 
 					log("Attempting to connect to Milli-cast...")
-					if (!publisher.isConnected){
+					if (!publisher.isConnected) {
 						publisher.connect()
 					}
 
@@ -1083,6 +1082,7 @@ class LiveShowSocketActivity : BaseActivity() {
 										}
 										publisher.publish(options)
 									}
+
 									PublisherConnectionState.Disconnected -> {
 										log("Publisher disconnected")
 										runOnUiThread {
@@ -1101,34 +1101,39 @@ class LiveShowSocketActivity : BaseActivity() {
 				} catch (e: Exception) {
 					log("CONNECTING PUBLISHER ERROR : ${e.localizedMessage}")
 					e.printStackTrace()
-					
+
 					// Handle retry logic for websocket handshake failures
 					if (e.message?.contains("websocket handshake failed") == true && connectionRetryCount < maxRetryAttempts) {
 						connectionRetryCount++
 						log("Retrying connection attempt $connectionRetryCount/$maxRetryAttempts")
-						
+
 						runOnUiThread {
 							bind.loader.isVisible = true
 							// Show retry message
 							// You can add a toast or update UI to show retry status
 						}
-						
+
 						// Wait 2 seconds before retry
 						handler.postDelayed({
 							connectPublisher()
 						}, 2000)
 						return@launch
 					}
-					
+
 					runOnUiThread {
 						bind.loader.isVisible = false
 						when {
 							e.message?.contains("websocket handshake failed") == true -> {
-								Alerts.error(this@LiveShowSocketActivity, "Network connection failed after $maxRetryAttempts attempts. Please check your internet connection and try again.")
+								Alerts.error(
+									this@LiveShowSocketActivity,
+									"Network connection failed after $maxRetryAttempts attempts. Please check your internet connection and try again."
+								)
 							}
+
 							e.message?.contains("token") == true -> {
 								Alerts.error(this@LiveShowSocketActivity, "Invalid streaming credentials. Please contact support.")
 							}
+
 							else -> {
 								Alerts.error(this@LiveShowSocketActivity, "Failed to start streaming: ${e.localizedMessage}")
 							}

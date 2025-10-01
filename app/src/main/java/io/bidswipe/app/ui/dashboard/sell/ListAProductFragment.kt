@@ -35,17 +35,17 @@ import io.bidswipe.app.utils.value
 import okhttp3.MultipartBody
 import java.io.File
 
-class ListAProductFragment : BaseFragment<DashViewModel , FragmentListAProductBinding>() {
+class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBinding>() {
 
-	override fun getModel() : Class<DashViewModel> = DashViewModel::class.java
+	override fun getModel(): Class<DashViewModel> = DashViewModel::class.java
 
-	override fun getBind(inflater : LayoutInflater , view : ViewGroup?) =
-		FragmentListAProductBinding.inflate(inflater , view , false)
+	override fun getBind(inflater: LayoutInflater, view: ViewGroup?) =
+		FragmentListAProductBinding.inflate(inflater, view, false)
 
 	var imageList = mutableListOf<String?>()
-	var uploadItemIndex = - 1
+	var uploadItemIndex = -1
 	var isSubCategory = false
-	private var product : GetMyInventoryResponse.Data? = null
+	private var product: GetMyInventoryResponse.Data? = null
 	private var categoryList = mutableListOf<GetCategoryResponse.Data?>()
 	private var subCategoryList = mutableListOf<GetCategoryResponse.Data?>()
 	private var mailClassesList = mutableListOf<GetMailClassesResponse.Data.MailClasses?>()
@@ -53,25 +53,25 @@ class ListAProductFragment : BaseFragment<DashViewModel , FragmentListAProductBi
 	private var categoryId = ""
 	private var subCategoryId = ""
 	var variantList = mutableListOf<GetCategoryResponse.Data.ExtraField?>()
-	private lateinit var variantAdapter : ProductVariantAdapter
+	private lateinit var variantAdapter: ProductVariantAdapter
 
 	private var packageWidth = 0.0
 	private var packageHeight = 0.0
 	private var packageLength = 0.0
 	private var packageWeight = 0.0
-	private var selectedMailClass : GetMailClassesResponse.Data.MailClasses? = null
+	private var selectedMailClass: GetMailClassesResponse.Data.MailClasses? = null
 
 	private val imageResult = registerForActivityResult(CropImageContract()) { result ->
 		if (result.isSuccessful) {
 			val imageUri = result.uriContent
-			val imagePath = result.getUriFilePath(mCtx , true)
+			val imagePath = result.getUriFilePath(mCtx, true)
 			if (imagePath != null) {
 
-				if (uploadItemIndex == - 1) {
+				if (uploadItemIndex == -1) {
 					imageList.add(imagePath)
 				} else {
 					imageList[uploadItemIndex] = imagePath
-					uploadItemIndex = - 1
+					uploadItemIndex = -1
 				}
 
 				bind.imageLimit.text = "${imageList.size}/9"
@@ -83,12 +83,12 @@ class ListAProductFragment : BaseFragment<DashViewModel , FragmentListAProductBi
 	}
 
 	private val mClick = object : RecyclerClicks {
-		override fun itemClick(pos : Int , status : String?) {
+		override fun itemClick(pos: Int, status: String?) {
 		}
 	}
 
-	override fun onViewCreated(view : View , savedInstanceState : Bundle?) {
-		super.onViewCreated(view , savedInstanceState)
+	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+		super.onViewCreated(view, savedInstanceState)
 
 		product = activity?.intent?.getSerializableExtra("product") as? GetMyInventoryResponse.Data
 
@@ -101,7 +101,7 @@ class ListAProductFragment : BaseFragment<DashViewModel , FragmentListAProductBi
 
 		log(product.toString())
 
-		variantAdapter = ProductVariantAdapter(variantList , mClick)
+		variantAdapter = ProductVariantAdapter(variantList, mClick)
 
 		bind.variants.adapter = variantAdapter
 
@@ -109,46 +109,46 @@ class ListAProductFragment : BaseFragment<DashViewModel , FragmentListAProductBi
 			finish()
 		}
 
-		val processingCategories = listOf("LETTERS" , "FLATS" , "MACHINABLE" , "NONSTANDARD" , "NON_MACHINABLE")
+		val processingCategories = listOf("LETTERS", "FLATS", "MACHINABLE", "NONSTANDARD", "NON_MACHINABLE")
 		val proCategoryAdapter = ArrayAdapter(
-			mCtx ,
-			android.R.layout.simple_list_item_1 ,
+			mCtx,
+			android.R.layout.simple_list_item_1,
 			processingCategories
 		)
 		bind.procategory.setAdapter(proCategoryAdapter)
-		val proDrawable = ContextCompat.getDrawable(mCtx , R.drawable.card_8)
+		val proDrawable = ContextCompat.getDrawable(mCtx, R.drawable.card_8)
 		bind.procategory.setDropDownBackgroundDrawable(proDrawable)
-		var selectedProcessingCategory : String? = null
+		var selectedProcessingCategory: String? = null
 
-		bind.procategory.setOnItemClickListener { _ , _ , position , _ ->
+		bind.procategory.setOnItemClickListener { _, _, position, _ ->
 			selectedProcessingCategory = processingCategories[position]
 			log("Selected processing category: $selectedProcessingCategory")
 		}
-        bind.procategory.setHapticClickListener {
+		bind.procategory.setHapticClickListener {
 			bind.procategory.showDropDown()
 		}
-		bind.images.adapter = ImageAdapter(imageList , object : RecyclerClicks {
-			override fun itemClick(pos : Int , status : String?) {
+		bind.images.adapter = ImageAdapter(imageList, object : RecyclerClicks {
+			override fun itemClick(pos: Int, status: String?) {
 				uploadItemIndex = pos
 				uploadImage()
 			}
 		})
 
-        bind.addNewImage.setHapticClickListener {
-			uploadItemIndex = - 1
+		bind.addNewImage.setHapticClickListener {
+			uploadItemIndex = -1
 			uploadImage()
 		}
 
-        bind.publish.setHapticClickListener {
+		bind.publish.setHapticClickListener {
 			saveProduct()
 		}
 
-        bind.saveDraft.setHapticClickListener {
+		bind.saveDraft.setHapticClickListener {
 			saveProduct("draft")
 		}
 
-        bind.category.setHapticClickListener {
-			showCategorySheet(categoryList , "category")
+		bind.category.setHapticClickListener {
+			showCategorySheet(categoryList, "category")
 		}
 
 		viewModel.getCategory()
@@ -165,7 +165,7 @@ class ListAProductFragment : BaseFragment<DashViewModel , FragmentListAProductBi
 						if (isSubCategory) {
 							subCategoryList.clear()
 							subCategoryList.addAll(mData)
-							showCategorySheet(subCategoryList , "subCategory")
+							showCategorySheet(subCategoryList, "subCategory")
 						} else {
 							categoryList.clear()
 							categoryList.addAll(mData)
@@ -173,7 +173,7 @@ class ListAProductFragment : BaseFragment<DashViewModel , FragmentListAProductBi
 						}
 					}
 
-					isSubCategory = ! isSubCategory
+					isSubCategory = !isSubCategory
 
 					/*val adapter = ArrayAdapter(
 						mCtx,
@@ -193,21 +193,18 @@ class ListAProductFragment : BaseFragment<DashViewModel , FragmentListAProductBi
 				}
 
 				is Resource.Error -> {
-					if (it.isNetworkError) {
-						errorToast(getString(R.string.no_internet))
-					} else {
-						it.parse(mCtx , TAG , object : AlertClicks {
-							override fun primaryClick(dialog : AppBottomSheet) {
-								dialog.dismiss()
+					it.parse(mCtx, TAG, object : AlertClicks {
+						override fun primaryClick(dialog: AppBottomSheet) {
+							dialog.dismiss()
 
-							}
+						}
 
-							override fun secondaryClick(dialog : AppBottomSheet) {
-								dialog.dismiss()
+						override fun secondaryClick(dialog: AppBottomSheet) {
+							dialog.dismiss()
 
-							}
-						})
-					}
+						}
+					})
+
 				}
 
 				else -> {}
@@ -221,38 +218,34 @@ class ListAProductFragment : BaseFragment<DashViewModel , FragmentListAProductBi
 			when (it) {
 				is Resource.Success -> {
 					Alerts.showBottomSheet(
-						mCtx ,
-						it.value.message ?: "Product added successfully" ,
-						"Success" ,
-						false ,
+						mCtx,
+						it.value.message ?: "Product added successfully",
+						"Success",
+						false,
 						object : AlertClicks {
-							override fun primaryClick(dialog : AppBottomSheet) {
+							override fun primaryClick(dialog: AppBottomSheet) {
 								finish()
 								dialog.dismiss()
 							}
 
-							override fun secondaryClick(dialog : AppBottomSheet) {
+							override fun secondaryClick(dialog: AppBottomSheet) {
 								dialog.dismiss()
 							}
 						})
 				}
 
 				is Resource.Error -> {
-					if (it.isNetworkError) {
-						errorToast(getString(R.string.no_internet))
-					} else {
-						it.parse(mCtx , TAG , object : AlertClicks {
-							override fun primaryClick(dialog : AppBottomSheet) {
-								dialog.dismiss()
+					it.parse(mCtx, TAG, object : AlertClicks {
+						override fun primaryClick(dialog: AppBottomSheet) {
+							dialog.dismiss()
 
-							}
+						}
 
-							override fun secondaryClick(dialog : AppBottomSheet) {
-								dialog.dismiss()
+						override fun secondaryClick(dialog: AppBottomSheet) {
+							dialog.dismiss()
 
-							}
-						})
-					}
+						}
+					})
 				}
 
 				else -> {}
@@ -280,19 +273,16 @@ class ListAProductFragment : BaseFragment<DashViewModel , FragmentListAProductBi
 				}
 
 				is Resource.Error -> {
-					if (it.isNetworkError) {
-						errorToast(getString(R.string.no_internet))
-					} else {
-						it.parse(mCtx , TAG , object : AlertClicks {
-							override fun primaryClick(dialog : AppBottomSheet) {
-								dialog.dismiss()
-							}
+					it.parse(mCtx, TAG, object : AlertClicks {
+						override fun primaryClick(dialog: AppBottomSheet) {
+							dialog.dismiss()
+						}
 
-							override fun secondaryClick(dialog : AppBottomSheet) {
-								dialog.dismiss()
-							}
-						})
-					}
+						override fun secondaryClick(dialog: AppBottomSheet) {
+							dialog.dismiss()
+						}
+					})
+
 				}
 
 				else -> {}
@@ -306,22 +296,22 @@ class ListAProductFragment : BaseFragment<DashViewModel , FragmentListAProductBi
 		val mailClassNames = mailClassesList.map { it?.label ?: "" }.toTypedArray()
 
 		val adapter = ArrayAdapter(
-			mCtx ,
-			android.R.layout.simple_list_item_1 ,
+			mCtx,
+			android.R.layout.simple_list_item_1,
 			mailClassNames
 		)
 
 		bind.mailclass.setAdapter(adapter)
 
-		val drawable = ContextCompat.getDrawable(mCtx , R.drawable.card_8)
+		val drawable = ContextCompat.getDrawable(mCtx, R.drawable.card_8)
 		bind.mailclass.setDropDownBackgroundDrawable(drawable)
 
-		bind.mailclass.setOnItemClickListener { _ , _ , position , _ ->
+		bind.mailclass.setOnItemClickListener { _, _, position, _ ->
 			selectedMailClass = mailClassesList[position]
 			log("Selected mail class: ${selectedMailClass?.label}")
 		}
 
-        bind.mailclass.setHapticClickListener {
+		bind.mailclass.setHapticClickListener {
 			if (mailClassesList.isNotEmpty()) {
 				bind.mailclass.showDropDown()
 			} else {
@@ -367,22 +357,22 @@ class ListAProductFragment : BaseFragment<DashViewModel , FragmentListAProductBi
 		if (imageList.size < 9) {
 			requestPerms(Const.STR_PERMS) { per ->
 				if (per) {
-					imageResult.launch(Utils.initCrop(mCtx , isCamera = true , isGallery = true))
+					imageResult.launch(Utils.initCrop(mCtx, isCamera = true, isGallery = true))
 				}
 			}
 		} else {
-			Alerts.error(mCtx , "You can select max 9 images only")
+			Alerts.error(mCtx, "You can select max 9 images only")
 		}
 	}
 
-	fun saveProduct(type : String = "active") {
+	fun saveProduct(type: String = "active") {
 		try {
 			packageWidth = bind.width.value().toDoubleOrNull() ?: 0.0
 			packageHeight = bind.height.value().toDoubleOrNull() ?: 0.0
 			packageLength = bind.length.value().toDoubleOrNull() ?: 0.0
 			packageWeight = bind.weight.value().toDoubleOrNull() ?: 0.0
-		} catch (_ : NumberFormatException) {
-			Alerts.error(mCtx , "Please enter valid numeric values for dimensions")
+		} catch (_: NumberFormatException) {
+			Alerts.error(mCtx, "Please enter valid numeric values for dimensions")
 			return
 		}
 
@@ -390,32 +380,32 @@ class ListAProductFragment : BaseFragment<DashViewModel , FragmentListAProductBi
 		when {
 
 			imageList.filterNotNull().isEmpty() -> {
-				Alerts.error(mCtx , "Please select at least one image")
+				Alerts.error(mCtx, "Please select at least one image")
 			}
 
 			categoryId.isEmpty() -> {
-				Alerts.error(mCtx , "Please select category")
+				Alerts.error(mCtx, "Please select category")
 			}
 
 			bind.productTitle.value().isEmpty() -> {
 				bind.productTitle.requestFocus()
-				Alerts.error(mCtx , "Please enter product title")
+				Alerts.error(mCtx, "Please enter product title")
 			}
 
 			bind.description.value().isEmpty() -> {
 				bind.description.requestFocus()
-				Alerts.error(mCtx , "Please enter description")
+				Alerts.error(mCtx, "Please enter description")
 			}
 
 
 			packageWidth <= 0 || packageHeight <= 0 || packageLength <= 0 || packageWeight <= 0 -> {
-				Alerts.error(mCtx , "Please enter all package dimensions")
+				Alerts.error(mCtx, "Please enter all package dimensions")
 			}
 
 			selectedMailClass?.maxWidthIn != null && (packageWidth > (selectedMailClass?.maxWidthIn
 				?: 0.0)) -> {
 				Alerts.error(
-					mCtx ,
+					mCtx,
 					"Width exceeds maximum of ${selectedMailClass?.maxWidthIn} cm"
 				)
 			}
@@ -423,7 +413,7 @@ class ListAProductFragment : BaseFragment<DashViewModel , FragmentListAProductBi
 			selectedMailClass?.maxHeightIn != null && (packageWidth > (selectedMailClass?.maxHeightIn
 				?: 0.0)) -> {
 				Alerts.error(
-					mCtx ,
+					mCtx,
 					"Height exceeds maximum of ${selectedMailClass?.maxHeightIn} cm"
 				)
 			}
@@ -431,7 +421,7 @@ class ListAProductFragment : BaseFragment<DashViewModel , FragmentListAProductBi
 			selectedMailClass?.maxLengthIn != null && (packageWidth > (selectedMailClass?.maxLengthIn
 				?: 0.0)) -> {
 				Alerts.error(
-					mCtx ,
+					mCtx,
 					"Length exceeds maximum of ${selectedMailClass?.maxLengthIn} cm"
 				)
 			}
@@ -439,28 +429,28 @@ class ListAProductFragment : BaseFragment<DashViewModel , FragmentListAProductBi
 			selectedMailClass?.maxWeightLbs != null && (packageWidth > (selectedMailClass?.maxWeightLbs
 				?: 0.0)) -> {
 				Alerts.error(
-					mCtx ,
+					mCtx,
 					"Weight exceeds maximum of ${selectedMailClass?.maxWeightLbs} lbs"
 				)
 			}
 
 			selectedMailClass == null -> {
-				Alerts.error(mCtx , "Please select a mail class")
+				Alerts.error(mCtx, "Please select a mail class")
 			}
 
 			bind.procategory.value().isEmpty() -> {
 				bind.procategory.requestFocus()
-				Alerts.error(mCtx , "Please enter processing category")
+				Alerts.error(mCtx, "Please enter processing category")
 			}
 
 			bind.quantity.value().isEmpty() -> {
 				bind.quantity.requestFocus()
-				Alerts.error(mCtx , "Please enter quantity")
+				Alerts.error(mCtx, "Please enter quantity")
 			}
 
 			bind.price.value().isEmpty() -> {
 				bind.price.requestFocus()
-				Alerts.error(mCtx , "Please enter price")
+				Alerts.error(mCtx, "Please enter price")
 			}
 
 			/*	bind.shippingProfile.value().isEmpty() -> {
@@ -478,31 +468,31 @@ class ListAProductFragment : BaseFragment<DashViewModel , FragmentListAProductBi
 						val thumbnailName =
 							System.currentTimeMillis().toString() + "_product_thumbnail.jpeg"
 
-						val imagePart = Utils.imagePart("images[]" , name , File(image))
+						val imagePart = Utils.imagePart("images[]", name, File(image))
 						imagePart.let { element -> imagePartList.add(element) }
 
 						val thumbnailFile = File(image)
 						val thumbnailPart =
-							Utils.imagePart("thumbnails[]" , thumbnailName , thumbnailFile)
+							Utils.imagePart("thumbnails[]", thumbnailName, thumbnailFile)
 						thumbnailPart.let { element -> thumbnailPartList.add(element) }
 					}
 				}
 				val productId = if (product != null) product?.id.toString() else null
 				if (imagePartList.isNotEmpty()) {
-					viewModel.storeProductMeta(imagePartList , thumbnailPartList)
+					viewModel.storeProductMeta(imagePartList, thumbnailPartList)
 					viewModel.storeProductMetaRepo.observe(viewLifecycleOwner) {
 						when (it) {
 							is Resource.Success -> {
 //                            bind.loader.isVisible = false
 								createProduct(
-									productId ,
-									type ,
+									productId,
+									type,
 									it.value.data?.map {
 										mapOf(
-											"image" to it?.images ,
+											"image" to it?.images,
 											"thumbnail" to it?.thumbnail
 										)
-									} ,
+									},
 									variantData
 								)
 							}
@@ -516,14 +506,14 @@ class ListAProductFragment : BaseFragment<DashViewModel , FragmentListAProductBi
 					}
 
 				} else {
-					createProduct(productId.toString() , type , emptyList() , variantData)
+					createProduct(productId.toString(), type, emptyList(), variantData)
 				}
 
 			}
 		}
 	}
 
-	private fun addProductData(product : GetMyInventoryResponse.Data?) {
+	private fun addProductData(product: GetMyInventoryResponse.Data?) {
 		categoryId = product?.categoryId.toString()
 		subCategoryId = product?.subCategoryId.toString()
 		if (product?.subCategory != null) {
@@ -548,7 +538,7 @@ class ListAProductFragment : BaseFragment<DashViewModel , FragmentListAProductBi
 		bind.acceptOffers.isChecked = product?.acceptOffers == true
 		bind.reserveForLive.isChecked = product?.reserveForLive == true
 		imageList.clear()
-		product?.images?.forEachIndexed { index , imageUrl ->
+		product?.images?.forEachIndexed { index, imageUrl ->
 			imageUrl?.let {
 				if (imageList.size < 9) {
 					imageList.add(it)
@@ -561,32 +551,32 @@ class ListAProductFragment : BaseFragment<DashViewModel , FragmentListAProductBi
 
 	@SuppressLint("NotifyDataSetChanged")
 	private fun showCategorySheet(
-		categoryList : MutableList<GetCategoryResponse.Data?> ,
-		type : String ,
+		categoryList: MutableList<GetCategoryResponse.Data?>,
+		type: String,
 	) {
 		val categorySheetBind =
 			CategoryBottomSheetBinding.bind(
 				layoutInflater.inflate(
-					R.layout.category_bottom_sheet ,
-					null ,
+					R.layout.category_bottom_sheet,
+					null,
 					false
 				)
 			)
-		val categorySheet = Alerts.appBottomSheet(mCtx , true , categorySheetBind)
+		val categorySheet = Alerts.appBottomSheet(mCtx, true, categorySheetBind)
 		variantList.clear()
 		variantAdapter.notifyDataSetChanged()
 		categorySheetBind.recycler.adapter = CategoryListAdapter(
-			if (type == "category") categoryList else subCategoryList ,
+			if (type == "category") categoryList else subCategoryList,
 			object : RecyclerClicks {
 
-				override fun itemClick(pos : Int , status : String?) {
+				override fun itemClick(pos: Int, status: String?) {
 
 					if (type == "category") {
 						categoryId = categoryList[pos]?.id.toString()
 						bind.category.setText(categoryList[pos]?.name.toString())
 						bind.loader.isVisible = true
 						subCategoryId = ""
-						viewModel.getCategory(categoryId , "subCategory")
+						viewModel.getCategory(categoryId, "subCategory")
 						isSubCategory = true
 						if (categoryList[pos]?.extraFields?.isNotEmpty() == true) {
 							variantList.addAll(categoryList[pos]?.extraFields ?: mutableListOf())
@@ -614,7 +604,7 @@ class ListAProductFragment : BaseFragment<DashViewModel , FragmentListAProductBi
 			categorySheetBind.sheetTitle.text = "Select Product Category"
 		}
 
-        categorySheetBind.close.setHapticClickListener {
+		categorySheetBind.close.setHapticClickListener {
 			categorySheet.dismiss()
 		}
 
@@ -622,36 +612,36 @@ class ListAProductFragment : BaseFragment<DashViewModel , FragmentListAProductBi
 
 	}
 
-	fun getVariantData() : List<Map<String? , Any?>> {
+	fun getVariantData(): List<Map<String?, Any?>> {
 		return (bind.variants.adapter as ProductVariantAdapter)
 			.getAllVariantData()
 	}
 
 	fun createProduct(
-		productId : String? ,
-		type : String ,
-		images : List<Map<String , String?>>? = null ,
-		variantData : List<Map<String? , Any?>>? = null ,
+		productId: String?,
+		type: String,
+		images: List<Map<String, String?>>? = null,
+		variantData: List<Map<String?, Any?>>? = null,
 	) {
 		viewModel.storeProduct(
-			productId = productId ,
-			categoryId = categoryId ,
-			subCategoryId = subCategoryId.ifEmpty { null }?.toInt() , title = bind.productTitle.value() ,
-			description = bind.description.value() ,
-			quantity = bind.quantity.value() ,
-			pricing = bind.price.value() ,
-			flashSale = (if (bind.flashSell.isChecked) "1" else "0") ,
-			acceptOffers = (if (bind.acceptOffers.isChecked) "1" else "0") ,
-			reserveForLive = (if (bind.reserveForLive.isChecked) "1" else "0") ,
-			shippingProfileId = "4" ,
-			status = type ,
-			productImages = images ,
-			variant = variantData ,
-			width = bind.width.value() ,
-			height = bind.height.value() ,
-			length = bind.length.value() ,
-			weight = bind.weight.value() ,
-			mailClass = selectedMailClass?.label ,
+			productId = productId,
+			categoryId = categoryId,
+			subCategoryId = subCategoryId.ifEmpty { null }?.toInt(), title = bind.productTitle.value(),
+			description = bind.description.value(),
+			quantity = bind.quantity.value(),
+			pricing = bind.price.value(),
+			flashSale = (if (bind.flashSell.isChecked) "1" else "0"),
+			acceptOffers = (if (bind.acceptOffers.isChecked) "1" else "0"),
+			reserveForLive = (if (bind.reserveForLive.isChecked) "1" else "0"),
+			shippingProfileId = "4",
+			status = type,
+			productImages = images,
+			variant = variantData,
+			width = bind.width.value(),
+			height = bind.height.value(),
+			length = bind.length.value(),
+			weight = bind.weight.value(),
+			mailClass = selectedMailClass?.label,
 			processingCategory = bind.procategory.value()
 		)
 

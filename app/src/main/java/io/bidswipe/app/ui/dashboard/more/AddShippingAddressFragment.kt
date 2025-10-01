@@ -28,20 +28,20 @@ import io.bidswipe.app.utils.showKeyboard
 import io.bidswipe.app.utils.value
 
 class AddShippingAddressFragment :
-	BaseFragment<MoreViewModel , FragmentAddShippingAddressBinding>() {
+	BaseFragment<MoreViewModel, FragmentAddShippingAddressBinding>() {
 
-	override fun getModel() : Class<MoreViewModel> = MoreViewModel::class.java
+	override fun getModel(): Class<MoreViewModel> = MoreViewModel::class.java
 
 	override fun getBind(
-		inflater : LayoutInflater ,
-		view : ViewGroup? ,
-	) = FragmentAddShippingAddressBinding.inflate(inflater , view , false)
+		inflater: LayoutInflater,
+		view: ViewGroup?,
+	) = FragmentAddShippingAddressBinding.inflate(inflater, view, false)
 
 	private var slug = ""
 	private var stateList = mutableListOf<GetStatesResponse.Data?>()
 
-	override fun onViewCreated(view : View , savedInstanceState : Bundle?) {
-		super.onViewCreated(view , savedInstanceState)
+	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+		super.onViewCreated(view, savedInstanceState)
 
 		slug = activity?.intent?.getStringExtra("slug") ?: ""
 
@@ -52,61 +52,61 @@ class AddShippingAddressFragment :
 				findNavController().popBackStack()
 			}
 		}
-        bind.root.setHapticClickListener {
+		bind.root.setHapticClickListener {
 			hideKeyboard(it)
 		}
-        bind.rootView.setHapticClickListener {
+		bind.rootView.setHapticClickListener {
 			hideKeyboard(it)
 		}
 
-		bind.state.setOnItemClickListener { _ , _ , position , _ ->
+		bind.state.setOnItemClickListener { _, _, position, _ ->
 
 		}
 
-        bind.state.setHapticClickListener {
+		bind.state.setHapticClickListener {
 			bind.state.showDropDown()
 		}
 
-        bind.addAddress.setHapticClickListener {
+		bind.addAddress.setHapticClickListener {
 
 			when {
 
 				bind.name.value().isEmpty() -> {
-					Alerts.error(mCtx , "Please enter name")
+					Alerts.error(mCtx, "Please enter name")
 					bind.name.requestFocus()
 					showKeyboard(bind.name)
 				}
 
 				bind.phoneNumber.value().isEmpty() -> {
-					Alerts.error(mCtx , "Please enter phone number")
+					Alerts.error(mCtx, "Please enter phone number")
 					bind.phoneNumber.requestFocus()
 					showKeyboard(bind.phoneNumber)
 				}
 
 				bind.streetAddress.value().isEmpty() -> {
-					Alerts.error(mCtx , "Please enter street address")
+					Alerts.error(mCtx, "Please enter street address")
 					bind.streetAddress.requestFocus()
 					showKeyboard(bind.streetAddress)
 				}
 
 				bind.zipCode.value().isEmpty() -> {
-					Alerts.error(mCtx , "Please enter zip code")
+					Alerts.error(mCtx, "Please enter zip code")
 					bind.zipCode.requestFocus()
 					showKeyboard(bind.zipCode)
 				}
 
 				bind.city.value().isEmpty() -> {
-					Alerts.error(mCtx , "Please enter city")
+					Alerts.error(mCtx, "Please enter city")
 					bind.city.requestFocus()
 					showKeyboard(bind.city)
 				}
 
 				bind.state.value().isEmpty() -> {
-					Alerts.error(mCtx , "Please select state")
+					Alerts.error(mCtx, "Please select state")
 				}
 
-				bind.radioGroup.checkedRadioButtonId == - 1 -> {
-					Alerts.error(mCtx , "Please select address type")
+				bind.radioGroup.checkedRadioButtonId == -1 -> {
+					Alerts.error(mCtx, "Please select address type")
 				}
 
 				else -> {
@@ -119,12 +119,12 @@ class AddShippingAddressFragment :
 					val selectedText = selectedRadioButton.text
 
 					viewModel.addShippingAddress(
-						type = selectedText.toString().request() ,
-						name = bind.name.value().request() ,
-						phoneNumber = bind.phoneNumber.value().request() ,
-						streetAddress = bind.streetAddress.value().request() ,
-						pinCode = bind.zipCode.value().request() ,
-						city = bind.city.value().request() ,
+						type = selectedText.toString().request(),
+						name = bind.name.value().request(),
+						phoneNumber = bind.phoneNumber.value().request(),
+						streetAddress = bind.streetAddress.value().request(),
+						pinCode = bind.zipCode.value().request(),
+						city = bind.city.value().request(),
 						state = bind.state.value().request()
 					)
 				}
@@ -140,7 +140,7 @@ class AddShippingAddressFragment :
 					bind.loader.isVisible = false
 					viewModel.addShippingAddressRepo.value = null
 
-					val mData = it.value.data
+					it.value.data
 
 					App.getProfile()
 
@@ -158,21 +158,17 @@ class AddShippingAddressFragment :
 				is Resource.Error -> {
 					bind.loader.isVisible = false
 
-					if (it.isNetworkError) {
-						errorToast(getString(R.string.no_internet))
-					} else {
-						it.parse(mCtx , TAG , object : AlertClicks {
-							override fun primaryClick(dialog : AppBottomSheet) {
-								dialog.dismiss()
+					it.parse(mCtx, TAG, object : AlertClicks {
+						override fun primaryClick(dialog: AppBottomSheet) {
+							dialog.dismiss()
 
-							}
+						}
 
-							override fun secondaryClick(dialog : AppBottomSheet) {
-								dialog.dismiss()
+						override fun secondaryClick(dialog: AppBottomSheet) {
+							dialog.dismiss()
 
-							}
-						})
-					}
+						}
+					})
 				}
 
 				else -> {}
@@ -190,9 +186,9 @@ class AddShippingAddressFragment :
 						stateList.clear()
 						stateList.addAll(it.value.data)
 
-						val adapter = ArrayAdapter(mCtx , android.R.layout.simple_list_item_1 , stateList.map { it?.iso2 })
+						val adapter = ArrayAdapter(mCtx, android.R.layout.simple_list_item_1, stateList.map { it?.iso2 })
 						bind.state.setAdapter(adapter)
-						val draw = ContextCompat.getDrawable(mCtx , R.drawable.card_8)
+						val draw = ContextCompat.getDrawable(mCtx, R.drawable.card_8)
 						bind.state.setDropDownBackgroundDrawable(draw)
 					}
 				}
@@ -200,21 +196,17 @@ class AddShippingAddressFragment :
 				is Resource.Error -> {
 					bind.loader.isVisible = false
 
-					if (it.isNetworkError) {
-						errorToast(getString(R.string.no_internet))
-					} else {
-						it.parse(mCtx , TAG , object : AlertClicks {
-							override fun primaryClick(dialog : AppBottomSheet) {
-								dialog.dismiss()
+					it.parse(mCtx, TAG, object : AlertClicks {
+						override fun primaryClick(dialog: AppBottomSheet) {
+							dialog.dismiss()
 
-							}
+						}
 
-							override fun secondaryClick(dialog : AppBottomSheet) {
-								dialog.dismiss()
+						override fun secondaryClick(dialog: AppBottomSheet) {
+							dialog.dismiss()
 
-							}
-						})
-					}
+						}
+					})
 				}
 
 				else -> {}

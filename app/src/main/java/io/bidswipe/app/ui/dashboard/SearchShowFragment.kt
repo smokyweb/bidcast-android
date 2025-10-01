@@ -9,7 +9,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.navigation.fragment.findNavController
-import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseFragment
 import io.bidswipe.app.controller.HomeAdapter
 import io.bidswipe.app.databinding.FragmentSearchShowBinding
@@ -27,27 +26,27 @@ import io.bidswipe.app.utils.request
 import io.bidswipe.app.utils.setHapticClickListener
 import io.bidswipe.app.utils.showKeyboard
 
-class SearchShowFragment : BaseFragment<DashViewModel , FragmentSearchShowBinding>() {
-	override fun getModel() : Class<DashViewModel> = DashViewModel::class.java
+class SearchShowFragment : BaseFragment<DashViewModel, FragmentSearchShowBinding>() {
+	override fun getModel(): Class<DashViewModel> = DashViewModel::class.java
 
 	override fun getBind(
-        inflater : LayoutInflater ,
-        view : ViewGroup? ,
-    ) = FragmentSearchShowBinding.inflate(inflater , view , false)
+		inflater: LayoutInflater,
+		view: ViewGroup?,
+	) = FragmentSearchShowBinding.inflate(inflater, view, false)
 
 	private var showList = mutableListOf<GetMyShowResponse.Data?>()
 	private var romIdsList = mutableListOf<StreamModel>()
-	private lateinit var homeAdapter : HomeAdapter
+	private lateinit var homeAdapter: HomeAdapter
 
 	private val mClick = object : RecyclerClicks {
-		override fun itemClick(pos : Int , status : String?) {
+		override fun itemClick(pos: Int, status: String?) {
 
 			when (status) {
 
 				"user" -> {
 					startActivity(
-						Intent(mCtx , SellerProfileActivity::class.java).putExtra(
-							"userId" ,
+						Intent(mCtx, SellerProfileActivity::class.java).putExtra(
+							"userId",
 							showList[pos]?.userId.toString()
 						)
 					)
@@ -57,8 +56,8 @@ class SearchShowFragment : BaseFragment<DashViewModel , FragmentSearchShowBindin
 
 					if (showList[pos]?.isLive == true) {
 						startActivity(
-							Intent(mCtx , ViewLiveShowActivity::class.java).putExtra("position" , pos)
-								.putParcelableArrayListExtra("roomIdsList" , romIdsList as ArrayList)
+							Intent(mCtx, ViewLiveShowActivity::class.java).putExtra("position", pos)
+								.putParcelableArrayListExtra("roomIdsList", romIdsList as ArrayList)
 						)
 					}
 
@@ -69,18 +68,18 @@ class SearchShowFragment : BaseFragment<DashViewModel , FragmentSearchShowBindin
 
 	}
 
-	override fun onViewCreated(view : View , savedInstanceState : Bundle?) {
-		super.onViewCreated(view , savedInstanceState)
+	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+		super.onViewCreated(view, savedInstanceState)
 
 		bind.header.onBackClick {
 			findNavController().popBackStack()
 		}
 
-        bind.root.setHapticClickListener {
+		bind.root.setHapticClickListener {
 			hideKeyboard(it)
 		}
 
-		homeAdapter = HomeAdapter(showList , mClick)
+		homeAdapter = HomeAdapter(showList, mClick)
 
 		bind.recycler.adapter = homeAdapter
 
@@ -93,22 +92,22 @@ class SearchShowFragment : BaseFragment<DashViewModel , FragmentSearchShowBindin
 
 		bind.search.addTextChangedListener(object : TextWatcher {
 			override fun beforeTextChanged(
-                p0 : CharSequence? ,
-                p1 : Int ,
-                p2 : Int ,
-                p3 : Int ,
-            ) {
+				p0: CharSequence?,
+				p1: Int,
+				p2: Int,
+				p3: Int,
+			) {
 			}
 
 			override fun onTextChanged(
-                p0 : CharSequence? ,
-                p1 : Int ,
-                p2 : Int ,
-                p3 : Int ,
-            ) {
+				p0: CharSequence?,
+				p1: Int,
+				p2: Int,
+				p3: Int,
+			) {
 			}
 
-			override fun afterTextChanged(p0 : Editable?) {
+			override fun afterTextChanged(p0: Editable?) {
 
 				bind.loader.isVisible = true
 				viewModel.getLiveShow(search = p0.toString().request())
@@ -125,7 +124,7 @@ class SearchShowFragment : BaseFragment<DashViewModel , FragmentSearchShowBindin
 					val mData = it.value.data
 
 					mData?.forEach {
-						romIdsList.add(StreamModel(it?.roomId.toString() , ""))
+						romIdsList.add(StreamModel(it?.roomId.toString(), ""))
 					}
 
 					showList.clear()
@@ -150,21 +149,17 @@ class SearchShowFragment : BaseFragment<DashViewModel , FragmentSearchShowBindin
 				is Resource.Error -> {
 					bind.loader.isVisible = false
 
-					if (it.isNetworkError) {
-						errorToast(getString(R.string.no_internet))
-					} else {
-						it.parse(mCtx , TAG , object : AlertClicks {
-							override fun primaryClick(dialog : AppBottomSheet) {
-								dialog.dismiss()
+					it.parse(mCtx, TAG, object : AlertClicks {
+						override fun primaryClick(dialog: AppBottomSheet) {
+							dialog.dismiss()
 
-							}
+						}
 
-							override fun secondaryClick(dialog : AppBottomSheet) {
-								dialog.dismiss()
+						override fun secondaryClick(dialog: AppBottomSheet) {
+							dialog.dismiss()
 
-							}
-						})
-					}
+						}
+					})
 				}
 
 				else -> {}

@@ -3,7 +3,6 @@ package io.bidswipe.app.ui.dashboard
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.core.view.isVisible
-import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseActivity
 import io.bidswipe.app.databinding.ActivityRateSellerBinding
 import io.bidswipe.app.interfaces.AlertClicks
@@ -27,7 +26,7 @@ class RateSellerActivity : BaseActivity() {
 	private var sellerName = ""
 	private var sellerImage = ""
 
-	override fun onCreate(savedInstanceState : Bundle?) {
+	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
 		setContentView(bind.root)
 
@@ -37,38 +36,38 @@ class RateSellerActivity : BaseActivity() {
 
 		bind.sellerName.text = sellerName
 
-		bind.profileImage.loadUrl(this , sellerImage)
+		bind.profileImage.loadUrl(this, sellerImage)
 
 		bind.header.onBackClick {
 			finishAfterTransition()
 		}
 
-        bind.add.setHapticClickListener {
+		bind.add.setHapticClickListener {
 
 			when {
 
 				bind.overAllRating.rating < 1 -> {
-					Alerts.error(this , "Please select overall rating")
+					Alerts.error(this, "Please select overall rating")
 
 				}
 
 				bind.shippingRating.rating < 1 -> {
-					Alerts.error(this , "Please select shipping rating")
+					Alerts.error(this, "Please select shipping rating")
 
 				}
 
 				bind.packagingRating.rating < 1 -> {
-					Alerts.error(this , "Please select packaging rating")
+					Alerts.error(this, "Please select packaging rating")
 
 				}
 
 				bind.accuracyRating.rating < 1 -> {
-					Alerts.error(this , "Please select accuracy rating")
+					Alerts.error(this, "Please select accuracy rating")
 
 				}
 
 				bind.description.value().isEmpty() -> {
-					Alerts.error(this , "Please add description")
+					Alerts.error(this, "Please add description")
 
 				}
 
@@ -76,11 +75,11 @@ class RateSellerActivity : BaseActivity() {
 					bind.loader.isVisible = true
 
 					viewModel.storeSellerRating(
-						sellerId.request() ,
-						bind.overAllRating.rating.toString().request() ,
-						bind.shippingRating.rating.toString().request() ,
-						bind.packagingRating.rating.toString().request() ,
-						bind.accuracyRating.rating.toString().request() ,
+						sellerId.request(),
+						bind.overAllRating.rating.toString().request(),
+						bind.shippingRating.rating.toString().request(),
+						bind.packagingRating.rating.toString().request(),
+						bind.accuracyRating.rating.toString().request(),
 						bind.description.value().request()
 					)
 
@@ -104,21 +103,17 @@ class RateSellerActivity : BaseActivity() {
 				is Resource.Error -> {
 					bind.loader.isVisible = false
 
-					if (it.isNetworkError) {
-						errorToast(getString(R.string.no_internet))
-					} else {
-						it.parse(this , TAG , object : AlertClicks {
-							override fun primaryClick(dialog : AppBottomSheet) {
-								dialog.dismiss()
+					it.parse(this, TAG, object : AlertClicks {
+						override fun primaryClick(dialog: AppBottomSheet) {
+							dialog.dismiss()
 
-							}
+						}
 
-							override fun secondaryClick(dialog : AppBottomSheet) {
-								dialog.dismiss()
+						override fun secondaryClick(dialog: AppBottomSheet) {
+							dialog.dismiss()
 
-							}
-						})
-					}
+						}
+					})
 				}
 
 				else -> {}

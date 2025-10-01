@@ -23,27 +23,27 @@ import io.bidswipe.app.utils.finish
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.setHapticClickListener
 
-class AffiliateProgramFragment : BaseFragment<SellerHubViewModel , FragmentAffiliateProgramBinding>() {
+class AffiliateProgramFragment : BaseFragment<SellerHubViewModel, FragmentAffiliateProgramBinding>() {
 
-	override fun getModel() : Class<SellerHubViewModel> = SellerHubViewModel::class.java
+	override fun getModel(): Class<SellerHubViewModel> = SellerHubViewModel::class.java
 
 	override fun getBind(
-        inflater : LayoutInflater ,
-        view : ViewGroup? ,
-    ) = FragmentAffiliateProgramBinding.inflate(inflater , view , false)
+		inflater: LayoutInflater,
+		view: ViewGroup?,
+	) = FragmentAffiliateProgramBinding.inflate(inflater, view, false)
 
 	private val mList = mutableListOf<SellModel>()
 
-	override fun onViewCreated(view : View , savedInstanceState : Bundle?) {
-		super.onViewCreated(view , savedInstanceState)
+	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+		super.onViewCreated(view, savedInstanceState)
 
 		bind.header.onBackClick {
 			finish()
 		}
 
-		val adapter = SellAdapter(mList = mList , "affiliate" , object : RecyclerClicks {
+		val adapter = SellAdapter(mList = mList, "affiliate", object : RecyclerClicks {
 
-			override fun itemClick(pos : Int , status : String?) {
+			override fun itemClick(pos: Int, status: String?) {
 
 			}
 
@@ -51,21 +51,21 @@ class AffiliateProgramFragment : BaseFragment<SellerHubViewModel , FragmentAffil
 
 		bind.recycler.adapter = adapter
 
-        bind.copyBtn.setHapticClickListener {
+		bind.copyBtn.setHapticClickListener {
 
 			val clipboard = context?.getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
-			val clip = ClipData.newPlainText("label" , bind.referralCode.text)
+			val clip = ClipData.newPlainText("label", bind.referralCode.text)
 			clipboard.setPrimaryClip(clip)
 
 		}
 
-        bind.share.setHapticClickListener {
+		bind.share.setHapticClickListener {
 			val shareIntent = Intent(Intent.ACTION_SEND).apply {
 				type = "Text/*"
-				putExtra(Intent.EXTRA_TEXT , "https://play.google.com/store/apps/details?id=io.bidswipe.app&referrer=${bind.referralCode.text}")
+				putExtra(Intent.EXTRA_TEXT, "https://play.google.com/store/apps/details?id=io.bidswipe.app&referrer=${bind.referralCode.text}")
 			}
 
-			context?.startActivity(Intent.createChooser(shareIntent , "Share invite link"))
+			context?.startActivity(Intent.createChooser(shareIntent, "Share invite link"))
 		}
 
 		bind.loader.isVisible = true
@@ -85,11 +85,16 @@ class AffiliateProgramFragment : BaseFragment<SellerHubViewModel , FragmentAffil
 					mList.clear()
 					mList.addAll(
 						listOf(
-							SellModel(R.drawable.ic_dollar , R.color.secondaryContainer , "Earn $100 Reward" , "When your referral makes their first sale") ,
 							SellModel(
-								R.drawable.ic_gift ,
-								R.color.tertiaryContainer ,
-								"They Get Bonus Too!" ,
+								R.drawable.ic_dollar,
+								R.color.secondaryContainer,
+								"Earn $100 Reward",
+								"When your referral makes their first sale"
+							),
+							SellModel(
+								R.drawable.ic_gift,
+								R.color.tertiaryContainer,
+								"They Get Bonus Too!",
 								"Your referrals get $100 matched earnings in their first week"
 							)
 						)
@@ -99,19 +104,17 @@ class AffiliateProgramFragment : BaseFragment<SellerHubViewModel , FragmentAffil
 
 				is Resource.Error -> {
 					bind.loader.isVisible = false
-					if (it.isNetworkError) {
-						errorToast(getString(R.string.no_internet))
-					} else {
-						it.parse(mCtx , TAG , object : AlertClicks {
-							override fun primaryClick(dialog : AppBottomSheet) {
-								dialog.dismiss()
-							}
 
-							override fun secondaryClick(dialog : AppBottomSheet) {
-								dialog.dismiss()
-							}
-						})
-					}
+					it.parse(mCtx, TAG, object : AlertClicks {
+						override fun primaryClick(dialog: AppBottomSheet) {
+							dialog.dismiss()
+						}
+
+						override fun secondaryClick(dialog: AppBottomSheet) {
+							dialog.dismiss()
+						}
+					})
+
 				}
 
 				else -> {}

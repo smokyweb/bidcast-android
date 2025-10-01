@@ -28,20 +28,19 @@ import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request
 import io.bidswipe.app.utils.setHapticClickListener
 import io.bidswipe.app.utils.showKeyboard
-import io.bidswipe.app.utils.string
 import io.bidswipe.app.utils.toDash
 import io.bidswipe.app.utils.value
 
-class LoginFragment : BaseFragment<AuthViewModel , FragmentLoginBinding>() {
+class LoginFragment : BaseFragment<AuthViewModel, FragmentLoginBinding>() {
 
-	override fun getModel() : Class<AuthViewModel> = AuthViewModel::class.java
+	override fun getModel(): Class<AuthViewModel> = AuthViewModel::class.java
 
-	override fun getBind(inflater : LayoutInflater , view : ViewGroup?) = FragmentLoginBinding.inflate(inflater , view , false)
+	override fun getBind(inflater: LayoutInflater, view: ViewGroup?) = FragmentLoginBinding.inflate(inflater, view, false)
 
 	private val remList = mutableListOf<RememberModel>()
 
-	override fun onViewCreated(view : View , savedInstanceState : Bundle?) {
-		super.onViewCreated(view , savedInstanceState)
+	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+		super.onViewCreated(view, savedInstanceState)
 
 		bind.createAccount.setHapticClickListener {
 			findNavController().navigate(ids.goToCreateAccount)
@@ -56,30 +55,30 @@ class LoginFragment : BaseFragment<AuthViewModel , FragmentLoginBinding>() {
 		}
 
 		bind.privacyPolicy.setHapticClickListener {
-			startActivity(Intent(mCtx , MoreActivity::class.java).putExtra("slug" , "privacyPolicy"))
+			startActivity(Intent(mCtx, MoreActivity::class.java).putExtra("slug", "privacyPolicy"))
 		}
 
 		bind.termsOfService.setHapticClickListener {
-			startActivity(Intent(mCtx , MoreActivity::class.java).putExtra("slug" , "termsCondition"))
+			startActivity(Intent(mCtx, MoreActivity::class.java).putExtra("slug", "termsCondition"))
 		}
 
 		bind.loginBtn.setHapticClickListener {
 			when {
 
 				bind.email.value().isEmpty() -> {
-					Alerts.error(mCtx , "Please enter email address")
+					Alerts.error(mCtx, "Please enter email address")
 					bind.email.requestFocus()
 					showKeyboard(bind.email)
 				}
 
 				Utils.validateEmail(bind.email.value()).not() -> {
-					Alerts.error(mCtx , "please enter correct email address")
+					Alerts.error(mCtx, "please enter correct email address")
 					bind.email.requestFocus()
 					showKeyboard(bind.email)
 				}
 
 				bind.password.value().isEmpty() -> {
-					Alerts.error(mCtx , "Please enter password")
+					Alerts.error(mCtx, "Please enter password")
 					bind.password.requestFocus()
 					showKeyboard(bind.password)
 				}
@@ -88,7 +87,7 @@ class LoginFragment : BaseFragment<AuthViewModel , FragmentLoginBinding>() {
 					hideKeyboard(it)
 					bind.loader.isVisible = true
 					viewModel.login(
-						bind.email.text.toString().request() ,
+						bind.email.text.toString().request(),
 						bind.password.text.toString().request()
 					)
 				}
@@ -106,20 +105,20 @@ class LoginFragment : BaseFragment<AuthViewModel , FragmentLoginBinding>() {
 					it.value.data?.id.toString()
 
 					if (bind.rememberMe.isChecked) {
-						Alerts.log(TAG , "REMEMBER ME CHECK")
+						Alerts.log(TAG, "REMEMBER ME CHECK")
 						saveRemember()
 					}
 
 					Prefs(mCtx).putString(
-						Prefs.TOKEN ,
+						Prefs.TOKEN,
 						"Bearer " + it.value.data?.token.toString().trim()
 					)
 
-					Prefs(mCtx).putString(Prefs.USER , Gson().toJson(it.value.data).toString())
+					Prefs(mCtx).putString(Prefs.USER, Gson().toJson(it.value.data).toString())
 
 					if (it.value.data?.isFirsttimeLogin == true) {
-						val intent = Intent(mCtx , ChooseInterestActivity::class.java)
-						intent.putExtra("isFirstTimeLogin" , true)
+						val intent = Intent(mCtx, ChooseInterestActivity::class.java)
+						intent.putExtra("isFirstTimeLogin", true)
 						startActivity(intent)
 						finish()
 					} else {
@@ -132,23 +131,21 @@ class LoginFragment : BaseFragment<AuthViewModel , FragmentLoginBinding>() {
 				is Resource.Error -> {
 					viewModel.loginRepo.value = null
 					bind.loader.isVisible = false
-					if (it.isNetworkError) {
-						errorToast(getString(string.no_internet))
-					} else {
 
-						it.parse(mCtx , TAG , mClicks = object : AlertClicks {
 
-							override fun primaryClick(dialog : AppBottomSheet) {
-								dialog.dismiss()
-							}
+					it.parse(mCtx, TAG, mClicks = object : AlertClicks {
 
-							override fun secondaryClick(dialog : AppBottomSheet) {
-								dialog.dismiss()
-							}
+						override fun primaryClick(dialog: AppBottomSheet) {
+							dialog.dismiss()
+						}
 
-						})
+						override fun secondaryClick(dialog: AppBottomSheet) {
+							dialog.dismiss()
+						}
 
-					}
+					})
+
+
 				}
 
 				else -> {}
@@ -171,22 +168,22 @@ class LoginFragment : BaseFragment<AuthViewModel , FragmentLoginBinding>() {
 			if (users.isEmpty()) {
 				users.add(
 					RememberModel(
-						bind.email.value().trim() ,
+						bind.email.value().trim(),
 						bind.password.value()
 					)
 				)
 			} else {
 
-				if (! users.contains(
+				if (!users.contains(
 						RememberModel(
-							bind.email.value().trim() ,
+							bind.email.value().trim(),
 							bind.password.value()
 						)
 					)
 				) {
 					users.add(
 						RememberModel(
-							bind.email.value().trim() ,
+							bind.email.value().trim(),
 							bind.password.value()
 						)
 					)
@@ -200,7 +197,7 @@ class LoginFragment : BaseFragment<AuthViewModel , FragmentLoginBinding>() {
 
 			Prefs(mCtx).saveUsers(users)
 
-		} catch (e : Exception) {
+		} catch (e: Exception) {
 			e.printStackTrace()
 		}
 	}
@@ -222,16 +219,16 @@ class LoginFragment : BaseFragment<AuthViewModel , FragmentLoginBinding>() {
 			}
 
 			userList.forEach {
-				Alerts.log(TAG , "DATA: $it")
+				Alerts.log(TAG, "DATA: $it")
 			}
 
-			val arrAdapter = ArrayAdapter(mCtx , R.layout.remember_list_item , userList)
+			val arrAdapter = ArrayAdapter(mCtx, R.layout.remember_list_item, userList)
 			bind.email.setAdapter(arrAdapter)
 
-			bind.email.setOnItemClickListener { _ , _ , position , _ ->
+			bind.email.setOnItemClickListener { _, _, position, _ ->
 				try {
 					bind.password.setText(remList[position].password)
-				} catch (e : Exception) {
+				} catch (e: Exception) {
 					e.printStackTrace()
 				}
 			}

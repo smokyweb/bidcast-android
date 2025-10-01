@@ -49,7 +49,6 @@ object Const {
 		Manifest.permission.ACCESS_WIFI_STATE ,
 		Manifest.permission.ACCESS_NETWORK_STATE ,
 		Manifest.permission.RECORD_AUDIO ,
-		Manifest.permission.BLUETOOTH ,
 		Manifest.permission.MODIFY_AUDIO_SETTINGS ,
 		Manifest.permission.READ_PHONE_STATE ,
 		)
@@ -63,24 +62,13 @@ object Const {
 	}
 
 	val STR_PERMS = when {
-		Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE -> arrayOf(
-			Manifest.permission.READ_MEDIA_VISUAL_USER_SELECTED ,
-			Manifest.permission.READ_MEDIA_IMAGES
-		)
-
-		Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU -> arrayOf(
-			Manifest.permission.READ_MEDIA_IMAGES
-		)
 
 		Build.VERSION.SDK_INT >= Build.VERSION_CODES.P -> arrayOf(
-			Manifest.permission.READ_EXTERNAL_STORAGE ,
-			Manifest.permission.WRITE_EXTERNAL_STORAGE
-
+//			Manifest.permission.READ_EXTERNAL_STORAGE ,
 		)
 
 		else -> arrayOf(
-			Manifest.permission.READ_EXTERNAL_STORAGE ,
-			Manifest.permission.WRITE_EXTERNAL_STORAGE
+			Manifest.permission.READ_EXTERNAL_STORAGE
 		)
 	}
 
@@ -90,7 +78,7 @@ object Const {
 	)
 
 	val CAMERA_PERMS = arrayOf(
-		Manifest.permission.CAMERA ,
+		Manifest.permission.CAMERA
 	)
 
 	val PERMISSIONS = COMMON_PERMS + VERSION_PERMS + STR_PERMS

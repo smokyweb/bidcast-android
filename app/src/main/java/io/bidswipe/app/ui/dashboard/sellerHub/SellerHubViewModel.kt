@@ -24,13 +24,18 @@ import io.bidswipe.app.network.response.SellerStatusResponse
 import io.bidswipe.app.network.response.StorePhoneNumberResponse
 import io.bidswipe.app.network.response.StoreSellerIdResponse
 import io.bidswipe.app.network.response.UpdateOfferResponse
+import io.bidswipe.app.utils.Const.NO_INTERNET_ERROR
+import io.bidswipe.app.utils.NetworkMonitor
 import kotlinx.coroutines.launch
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import javax.inject.Inject
 
 @HiltViewModel
-class SellerHubViewModel @Inject constructor(val repo : DashRepository) : ViewModel() {
+class SellerHubViewModel @Inject constructor(
+	val repo : DashRepository,
+	private val networkMonitor : NetworkMonitor
+) : ViewModel() {
 
 	private var _getMyScheduledShowResponse = MutableLiveData<Resource<GetMyShowResponse>>()
 	val getMyScheduledShowRepo : MutableLiveData<Resource<GetMyShowResponse>>
@@ -39,6 +44,10 @@ class SellerHubViewModel @Inject constructor(val repo : DashRepository) : ViewMo
 	fun getMyScheduledShow(
         type : RequestBody? = null ,
     ) = viewModelScope.launch {
+		if (!networkMonitor.hasInternet()) {
+			_getMyScheduledShowResponse.value = NO_INTERNET_ERROR
+			return@launch
+		}
 		_getMyScheduledShowResponse.value = repo.getMyScheduledShow(type)
 	}
 
@@ -48,6 +57,10 @@ class SellerHubViewModel @Inject constructor(val repo : DashRepository) : ViewMo
 
 	fun fetchSellerVerification(
 	) = viewModelScope.launch {
+		if (!networkMonitor.hasInternet()) {
+			_fetchSellerVerificationResponse.value = NO_INTERNET_ERROR
+			return@launch
+		}
 		_fetchSellerVerificationResponse.value = repo.fetchSellerVerification()
 	}
 
@@ -59,6 +72,10 @@ class SellerHubViewModel @Inject constructor(val repo : DashRepository) : ViewMo
         status : RequestBody? ,
         page : RequestBody? ,
     ) = viewModelScope.launch {
+		if (!networkMonitor.hasInternet()) {
+			_getMyInventoryResponse.value = NO_INTERNET_ERROR
+			return@launch
+		}
 		_getMyInventoryResponse.value = repo.getMyInventory(status , page)
 	}
 
@@ -69,6 +86,10 @@ class SellerHubViewModel @Inject constructor(val repo : DashRepository) : ViewMo
 	fun getOrderListing(
 		type : RequestBody? ,
 	) = viewModelScope.launch {
+		if (!networkMonitor.hasInternet()) {
+			_getOrderListingResponse.value = NO_INTERNET_ERROR
+			return@launch
+		}
 		_getOrderListingResponse.value = repo.getOrderListing(type)
 	}
 
@@ -79,6 +100,10 @@ class SellerHubViewModel @Inject constructor(val repo : DashRepository) : ViewMo
 	fun offerList(
         page : Int? = null ,
     ) = viewModelScope.launch {
+		if (!networkMonitor.hasInternet()) {
+			_offerListResponse.value = NO_INTERNET_ERROR
+			return@launch
+		}
 		_offerListResponse.value = repo.offerList(page)
 	}
 
@@ -90,6 +115,10 @@ class SellerHubViewModel @Inject constructor(val repo : DashRepository) : ViewMo
         offerId : RequestBody? ,
         status : RequestBody? ,
     ) = viewModelScope.launch {
+		if (!networkMonitor.hasInternet()) {
+			_offerUpdateStatusResponse.value = NO_INTERNET_ERROR
+			return@launch
+		}
 		_offerUpdateStatusResponse.value = repo.offerUpdateStatus(offerId , status)
 	}
 
@@ -101,6 +130,10 @@ class SellerHubViewModel @Inject constructor(val repo : DashRepository) : ViewMo
         idCard : MultipartBody.Part ,
         image : MultipartBody.Part ,
     ) = viewModelScope.launch {
+		if (!networkMonitor.hasInternet()) {
+			_storeSellerIdResponse.value = NO_INTERNET_ERROR
+			return@launch
+		}
 		_storeSellerIdResponse.value = repo.storeSellerId(idCard , image)
 	}
 
@@ -111,6 +144,10 @@ class SellerHubViewModel @Inject constructor(val repo : DashRepository) : ViewMo
 	fun storePhoneNumber(
         phoneNumber : RequestBody? ,
     ) = viewModelScope.launch {
+		if (!networkMonitor.hasInternet()) {
+			_storePhoneNumberResponse.value = NO_INTERNET_ERROR
+			return@launch
+		}
 		_storePhoneNumberResponse.value = repo.storePhoneNumber(phoneNumber)
 	}
 
@@ -121,6 +158,10 @@ class SellerHubViewModel @Inject constructor(val repo : DashRepository) : ViewMo
 	fun verifyNumberOtp(
         otp : RequestBody? ,
     ) = viewModelScope.launch {
+		if (!networkMonitor.hasInternet()) {
+			_verifyNumberOtpResponse.value = NO_INTERNET_ERROR
+			return@launch
+		}
 		_verifyNumberOtpResponse.value = repo.verifyNumberOtp(otp)
 	}
 
@@ -130,6 +171,10 @@ class SellerHubViewModel @Inject constructor(val repo : DashRepository) : ViewMo
 
 	fun getPaymentCard(
 	) = viewModelScope.launch {
+		if (!networkMonitor.hasInternet()) {
+			_getPaymentCardResponse.value = NO_INTERNET_ERROR
+			return@launch
+		}
 		_getPaymentCardResponse.value = repo.getPaymentCard()
 	}
 
@@ -140,6 +185,10 @@ class SellerHubViewModel @Inject constructor(val repo : DashRepository) : ViewMo
 	fun storePaymentMethod(
         cardToken : RequestBody? ,
     ) = viewModelScope.launch {
+		if (!networkMonitor.hasInternet()) {
+			_storePaymentMethodResponse.value = NO_INTERNET_ERROR
+			return@launch
+		}
 		_storePaymentMethodResponse.value = repo.storePaymentMethod(cardToken)
 	}
 
@@ -150,6 +199,10 @@ class SellerHubViewModel @Inject constructor(val repo : DashRepository) : ViewMo
 	fun getKYCDetails(
         cardToken : RequestBody? ,
     ) = viewModelScope.launch {
+		if (!networkMonitor.hasInternet()) {
+			_getKYCDetailsResponse.value = NO_INTERNET_ERROR
+			return@launch
+		}
 		_getKYCDetailsResponse.value = repo.getKYCDetails()
 	}
 
@@ -159,6 +212,10 @@ class SellerHubViewModel @Inject constructor(val repo : DashRepository) : ViewMo
 
 	fun checkKyc(
 	) = viewModelScope.launch {
+		if (!networkMonitor.hasInternet()) {
+			_checkKycResponse.value = NO_INTERNET_ERROR
+			return@launch
+		}
 		_checkKycResponse.value = repo.checkKyc()
 	}
 
@@ -169,6 +226,10 @@ class SellerHubViewModel @Inject constructor(val repo : DashRepository) : ViewMo
 	fun fundTransfer(
         amount : RequestBody? ,
     ) = viewModelScope.launch {
+		if (!networkMonitor.hasInternet()) {
+			_fundTransferResponse.value = NO_INTERNET_ERROR
+			return@launch
+		}
 		_fundTransferResponse.value = repo.fundTransfer(amount)
 	}
 
@@ -178,6 +239,10 @@ class SellerHubViewModel @Inject constructor(val repo : DashRepository) : ViewMo
 
 	fun getPayoutHistory(
 	) = viewModelScope.launch {
+		if (!networkMonitor.hasInternet()) {
+			_getPayoutHistoryResponse.value = NO_INTERNET_ERROR
+			return@launch
+		}
 		_getPayoutHistoryResponse.value = repo.getPayoutHistory()
 	}
 
@@ -188,6 +253,10 @@ class SellerHubViewModel @Inject constructor(val repo : DashRepository) : ViewMo
 	fun getTransactionsHistory(
         page : RequestBody? ,
     ) = viewModelScope.launch {
+		if (!networkMonitor.hasInternet()) {
+			_getTransactionsHistoryResponse.value = NO_INTERNET_ERROR
+			return@launch
+		}
 		_getTransactionsHistoryResponse.value = repo.getTransactionsHistory(page)
 	}
 
@@ -202,6 +271,10 @@ class SellerHubViewModel @Inject constructor(val repo : DashRepository) : ViewMo
         userName : RequestBody ,
         bio : RequestBody ,
     ) = viewModelScope.launch {
+		if (!networkMonitor.hasInternet()) {
+			_updateProfileResponse.value = NO_INTERNET_ERROR
+			return@launch
+		}
 		_updateProfileResponse.value = repo.updateProfile(firstName , lastName , image , userName , bio)
 	}
 
@@ -211,6 +284,10 @@ class SellerHubViewModel @Inject constructor(val repo : DashRepository) : ViewMo
 
 	fun fetchReferral(
 	) = viewModelScope.launch {
+		if (!networkMonitor.hasInternet()) {
+			_fetchReferralResponse.value = NO_INTERNET_ERROR
+			return@launch
+		}
 		_fetchReferralResponse.value = repo.fetchReferral()
 	}
 
@@ -224,6 +301,10 @@ class SellerHubViewModel @Inject constructor(val repo : DashRepository) : ViewMo
         phoneVerification : RequestBody ,
         cardId : RequestBody ,
     ) = viewModelScope.launch {
+		if (!networkMonitor.hasInternet()) {
+			_storeSellerVerificationResponse.value = NO_INTERNET_ERROR
+			return@launch
+		}
 		_storeSellerVerificationResponse.value = repo.storeSellerVerification(id , image , phoneVerification , cardId)
 	}
 
@@ -233,6 +314,10 @@ class SellerHubViewModel @Inject constructor(val repo : DashRepository) : ViewMo
 
 	fun getSellerStatus(
 	) = viewModelScope.launch {
+		if (!networkMonitor.hasInternet()) {
+			_getSellerStatusResponse.value = NO_INTERNET_ERROR
+			return@launch
+		}
 		_getSellerStatusResponse.value = repo.getSellerStatus()
 	}
 
@@ -242,6 +327,10 @@ class SellerHubViewModel @Inject constructor(val repo : DashRepository) : ViewMo
 
 	fun getPremierShop(
 	) = viewModelScope.launch {
+		if (!networkMonitor.hasInternet()) {
+			_getPremierShopResponse.value = NO_INTERNET_ERROR
+			return@launch
+		}
 		_getPremierShopResponse.value = repo.getPremierShop()
 	}
 
@@ -251,6 +340,10 @@ class SellerHubViewModel @Inject constructor(val repo : DashRepository) : ViewMo
 
 	fun getPromoteTools(
 	) = viewModelScope.launch {
+		if (!networkMonitor.hasInternet()) {
+			_getPromoteToolsResponse.value = NO_INTERNET_ERROR
+			return@launch
+		}
 		_getPromoteToolsResponse.value = repo.getPromoteTools()
 	}
 
@@ -261,6 +354,10 @@ class SellerHubViewModel @Inject constructor(val repo : DashRepository) : ViewMo
 	fun payout(
 		amount : RequestBody,
 	) = viewModelScope.launch {
+		if (!networkMonitor.hasInternet()) {
+			_payoutResponse.value = NO_INTERNET_ERROR
+			return@launch
+		}
 		_payoutResponse.value = repo.payout(amount)
 	}
 
@@ -270,6 +367,10 @@ class SellerHubViewModel @Inject constructor(val repo : DashRepository) : ViewMo
 
 	fun applyPremierShop(
 	) = viewModelScope.launch {
+		if (!networkMonitor.hasInternet()) {
+			_applyPremierShopResponse.value = NO_INTERNET_ERROR
+			return@launch
+		}
 		_applyPremierShopResponse.value = repo.applyPremierShop()
 	}
 

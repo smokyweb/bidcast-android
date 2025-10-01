@@ -40,6 +40,7 @@ import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request
 import io.bidswipe.app.utils.setHapticClickListener
 import io.bidswipe.app.utils.toListProduct
+import io.bidswipe.app.utils.toScheduleShow
 import io.bidswipe.app.utils.toTutorials
 
 class DashActivity : BaseActivity(), NavController.OnDestinationChangedListener {
@@ -116,19 +117,16 @@ class DashActivity : BaseActivity(), NavController.OnDestinationChangedListener 
 
 				is Resource.Error -> {
 
-					if (it.isNetworkError) {
+					it.parse(this, TAG, object : AlertClicks {
+						override fun primaryClick(dialog: AppBottomSheet) {
+							dialog.dismiss()
+						}
 
-					} else {
-						it.parse(this, TAG, object : AlertClicks {
-							override fun primaryClick(dialog: AppBottomSheet) {
-								dialog.dismiss()
-							}
+						override fun secondaryClick(dialog: AppBottomSheet) {
+							dialog.dismiss()
+						}
+					})
 
-							override fun secondaryClick(dialog: AppBottomSheet) {
-								dialog.dismiss()
-							}
-						})
-					}
 				}
 
 				else -> {}
@@ -225,13 +223,12 @@ class DashActivity : BaseActivity(), NavController.OnDestinationChangedListener 
 
 					1 -> {
 						val isFirstShow = profile.isFirstShowCreated == true
-						val intent = this@DashActivity.toTutorials()
 
-						/*val intent = if (isFirstShow) {
+						val intent = if (isFirstShow) {
 							this@DashActivity.toScheduleShow(from = "dash")
 						} else {
 							this@DashActivity.toTutorials()
-						}*/
+						}
 						startActivity(intent)
 					}
 				}
