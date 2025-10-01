@@ -171,6 +171,17 @@ class SocketManager private constructor(
         socket?.emit("endRoom", payload)
     }
 
+    fun onRoomEnded(listener: (JSONObject) -> Unit) {
+        socket?.off("roomEnded")
+        socket?.on("roomEnded") { args ->
+            val obj = args.firstOrNull()
+            if (obj is JSONObject) {
+                Log.d(TAG, "RECEIVED: roomEnded - $obj")
+                listener(obj)
+            }
+        }
+    }
+
     fun emitBid(
         roomId: String,
         userId: String,

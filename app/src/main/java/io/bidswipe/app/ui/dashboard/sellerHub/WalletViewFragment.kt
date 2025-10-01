@@ -32,8 +32,6 @@ class WalletViewFragment : BaseFragment<SellerHubViewModel, FragmentWalletViewBi
 
 	private lateinit var adapter: PayoutAdapter
 
-	private var kycStatus = false
-
 	private val mClick = object : RecyclerClicks {
 		override fun itemClick(pos: Int, status: String?) {
 		}

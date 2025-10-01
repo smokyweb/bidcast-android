@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.get
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -20,6 +21,7 @@ import io.bidswipe.app.utils.Utils
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request
 import io.bidswipe.app.utils.runSafe
+import kotlin.toString
 
 class TransactionsFragment : BaseFragment<SellerHubViewModel , FragmentTransactionsBinding>() {
 	override fun getModel() : Class<SellerHubViewModel> = SellerHubViewModel::class.java
@@ -35,6 +37,7 @@ class TransactionsFragment : BaseFragment<SellerHubViewModel , FragmentTransacti
 
 	private lateinit var transactionHistoryAdapter : TransactionHistoryAdapter
 	private var page = 1
+	private var status = ""
 	private var isLoading = false
 
 	private val mClick = object : RecyclerClicks {
@@ -50,6 +53,7 @@ class TransactionsFragment : BaseFragment<SellerHubViewModel , FragmentTransacti
 		bind.transaction.adapter = transactionHistoryAdapter
 
 		categoriesList = mutableListOf("All" , "Processing" , "Completed" , "Withdrawal")
+
 		categoriesList.forEach {
 			bind.chipGroup.addView(
 				Utils.makeAChip(
@@ -60,10 +64,32 @@ class TransactionsFragment : BaseFragment<SellerHubViewModel , FragmentTransacti
 			)
 		}
 
+		bind.chipGroup.check(bind.chipGroup[0].id)
+
 		bind.chipGroup.setOnCheckedStateChangeListener { chipGroup , _ ->
 			runSafe {
 				val chipId = chipGroup.checkedChipId
 				chipGroup.indexOfChild(chipGroup.findViewById(chipId))
+			}
+		}
+
+		bind.chipGroup.setOnCheckedStateChangeListener { chipGroup, _ ->
+			runSafe {
+				val chipId = chipGroup.checkedChipId
+				val index = chipGroup.indexOfChild(chipGroup.findViewById(chipId))
+				status = when(index){
+					0 -> ""
+					1 -> "process"
+					2 -> "completed"
+					3 -> "Payout"
+					else -> ""
+				}
+				page = 1
+				bind.loader.isVisible = true
+				viewModel.getTransactionsHistory(
+					page = page.toString().request(),
+					status.ifEmpty { null}?.request()
+				)
 			}
 		}
 
@@ -77,7 +103,7 @@ class TransactionsFragment : BaseFragment<SellerHubViewModel , FragmentTransacti
 						isLoading = true
 						page ++
 						bind.bottomLoader.isVisible = true
-						viewModel.getTransactionsHistory(page.toString().request())
+						viewModel.getTransactionsHistory(page.toString().request(), status = status.ifEmpty { null}?.request())
 					}
 				}
 			}

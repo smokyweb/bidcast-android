@@ -22,10 +22,8 @@ class NotificationActivity : BaseActivity() {
 
 	private val bind by bind(ActivityNotificationBinding::inflate)
 	private val viewModel by viewModels<MoreViewModel>()
-
 	private lateinit var notificationAdapter: NotificationAdapter
 	private var notificationList = mutableListOf<GetNotificationResponse.Data?>()
-
 	private var delPos = -1
 
 	private val mClick = object : RecyclerClicks {
@@ -40,14 +38,12 @@ class NotificationActivity : BaseActivity() {
 				}
 			}
 		}
-
 	}
 
 	@SuppressLint("NotifyDataSetChanged")
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
 		setContentView(bind.root)
-
 		bind.header.onBackClick {
 			finish()
 		}
@@ -58,7 +54,6 @@ class NotificationActivity : BaseActivity() {
 		bind.deleteAll.setHapticClickListener {
 			bind.loader.isVisible = true
 			viewModel.deleteNotification("".request())
-
 		}
 
 		bind.swipeRefreshLayout.setOnRefreshListener {

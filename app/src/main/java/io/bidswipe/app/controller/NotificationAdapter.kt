@@ -1,7 +1,9 @@
 package io.bidswipe.app.controller
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import com.zerobranch.layout.SwipeLayout
 import io.bidswipe.app.base.BaseAdapter
 import io.bidswipe.app.databinding.NotificationItemBinding
 import io.bidswipe.app.interfaces.RecyclerClicks
@@ -27,10 +29,23 @@ class NotificationAdapter(
 			bind.time.text = Utils.getTimeAgo(item?.createdAt ?: "")
 
             bind.deleteNotification.setHapticClickListener {
+	            Log.d(TAG, "onBind: ")
 
-				click.itemClick(position , "delete")
+//				click.itemClick(position , "delete")
 
 			}
+
+			bind.swipeLayout.close()
+
+			bind.swipeLayout.setOnActionsListener(object : SwipeLayout.SwipeActionsListener{
+				override fun onOpen(direction: Int, isContinuous: Boolean) {
+
+				}
+
+				override fun onClose() {
+				}
+
+			})
 		}
 	}
 }

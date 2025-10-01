@@ -244,7 +244,13 @@ class WatchStreamSocketFragment : BaseFragment<StreamViewModel, FragmentWatchStr
 
 			}
 
-
+			socketManager?.onRoomEnded { json ->
+				runSafe {
+					if (json.optString("room_end") == roomID){
+						finish()
+					}
+				}
+			}
 		}
 
 		socketManager?.onRoomCreated { obj ->

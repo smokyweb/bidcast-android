@@ -351,11 +351,9 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 		viewModel.createBidRepo.observe(viewLifecycleOwner) {
 			when (it) {
 				is Resource.Success -> {
-
 					viewModel.createBidRepo.value = null
 					bind.loader.isVisible = false
 					it.value.data
-
 				}
 
 				is Resource.Error -> {

@@ -396,7 +396,8 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
 	
 	suspend fun getTransactionsHistory(
 		page: RequestBody?,
-	) = call { api.getTransactionsHistory(page) }
+		status: RequestBody?,
+	) = call { api.getTransactionsHistory(page, status) }
 	
 	suspend fun updateProfile(
 		firstName: RequestBody,

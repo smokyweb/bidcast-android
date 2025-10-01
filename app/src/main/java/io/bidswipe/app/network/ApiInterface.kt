@@ -516,6 +516,7 @@ interface ApiInterface {
 	@POST("api/transaction-history/listing")
 	suspend fun getTransactionsHistory(
 		@Part("page") page : RequestBody? ,
+		@Part("status") status : RequestBody?
 	) : GetTransactionsHistoryResponse
 
 	@Multipart

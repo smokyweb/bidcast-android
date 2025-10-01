@@ -252,12 +252,13 @@ class SellerHubViewModel @Inject constructor(
 
 	fun getTransactionsHistory(
         page : RequestBody? ,
+        status : RequestBody? = null
     ) = viewModelScope.launch {
 		if (!networkMonitor.hasInternet()) {
 			_getTransactionsHistoryResponse.value = NO_INTERNET_ERROR
 			return@launch
 		}
-		_getTransactionsHistoryResponse.value = repo.getTransactionsHistory(page)
+		_getTransactionsHistoryResponse.value = repo.getTransactionsHistory(page,status)
 	}
 
 	private var _updateProfileResponse = MutableLiveData<Resource<CommonResponse>>()
