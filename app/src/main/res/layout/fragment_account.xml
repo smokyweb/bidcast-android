@@ -33,9 +33,9 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/card_8"
-                android:layout_marginVertical="@dimen/half_margin"
                 android:layout_marginHorizontal="@dimen/margin"
+                android:layout_marginVertical="@dimen/half_margin"
+                android:background="@drawable/card_8"
                 android:paddingHorizontal="@dimen/margin"
                 android:paddingVertical="@dimen/half_margin">
 

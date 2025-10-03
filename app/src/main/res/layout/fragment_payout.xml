@@ -74,8 +74,9 @@
                         android:layout_height="wrap_content"
                         android:background="@color/transparent"
                         android:focusable="false"
+                        android:maxLength="9"
                         android:focusableInTouchMode="false"
-                        android:hint="0.00"
+                        android:hint="0.0"
                         android:textSize="48sp" />
                 </LinearLayout>
 

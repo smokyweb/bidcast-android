@@ -240,7 +240,7 @@ class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
 		accountGridList.add(MoreModel(R.drawable.ic_box, "Payment & Shipping", "paymentShipping"))
 		accountGridList.add(MoreModel(R.drawable.ic_mic, "Addresses", "address"))
 		accountGridList.add(MoreModel(R.drawable.ic_order, "Trusted Buyer", "buyer"))
-		accountGridList.add(MoreModel(R.drawable.ic_walllet, "Notifications", "notification"))
+		accountGridList.add(MoreModel(R.drawable.notification, "Notifications", "notification"))
 		accountGridList.add(MoreModel(R.drawable.ic_tag, "Preferences", "preferences"))
 		accountGridList.add(MoreModel(R.drawable.explore, "Interests", "interests"))
 

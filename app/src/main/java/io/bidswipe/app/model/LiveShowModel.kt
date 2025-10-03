@@ -15,7 +15,7 @@ data class LiveShowModel(
     val isLive: Boolean,
     val time: String?, // CURRENT TIMESTAMP
     val showId: String?,
-    val allowBidForAll: Boolean? = true,
+    var allowBidForAll: Boolean? = true,
     val bidCountDown: String?,
     val showTimer: String?
 ) : Serializable {

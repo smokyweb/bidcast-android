@@ -214,7 +214,7 @@
 
 
                                 <com.google.android.material.card.MaterialCardView
-                                    android:id="@+id/mic"
+                                    android:id="@+id/share"
                                     style="@style/cardStyle"
                                     android:layout_width="48dp"
                                     android:layout_height="48dp"

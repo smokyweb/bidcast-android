@@ -13,38 +13,38 @@ import io.bidswipe.app.utils.Utils
 import io.bidswipe.app.utils.asMoney
 
 class TransactionHistoryAdapter(
-	mList : MutableList<GetTransactionsHistoryResponse.Data?> , val mClicks : RecyclerClicks ,
-) : BaseAdapter<GetTransactionsHistoryResponse.Data , TransactionItemBinding>(mList) {
+	mList: MutableList<GetTransactionsHistoryResponse.Data?>, val mClicks: RecyclerClicks,
+) : BaseAdapter<GetTransactionsHistoryResponse.Data, TransactionItemBinding>(mList) {
 
-	override fun bindView(inflater : LayoutInflater , parent : ViewGroup) =
-		TransactionItemBinding.inflate(inflater , parent , false)
+	override fun bindView(inflater: LayoutInflater, parent: ViewGroup) =
+		TransactionItemBinding.inflate(inflater, parent, false)
 
 	override fun onBind(
-		holder : BaseViewHolder<TransactionItemBinding> ,
-		position : Int ,
-		item : GetTransactionsHistoryResponse.Data? ,
+		holder: BaseViewHolder<TransactionItemBinding>,
+		position: Int,
+		item: GetTransactionsHistoryResponse.Data?,
 	) {
 		with(holder) {
 			Log.d(TAG, "onBind: $item")
-			bind.title.text= when(item?.sourceType){
-				"tip_amount"->"Sent tip to User_${item.sellerId}"
-				"account"->if(item.type=="withdraw") "Payout" else ""
-				"card"->if(item.type=="debited" && item.orderId!=null)  "Product Purchased" else ""
-				else->""
+			bind.title.text = when (item?.sourceType) {
+				"tip_amount" -> "Sent tip to ${item.receiver?.name}"
+				"account" -> if (item.type == "withdraw") "Payout" else if (item.type == "debited") "Debited" else if (item.type == "Credited by ${item.sender?.name}") "egw" else ""
+				"card" -> if (item.type == "debited" && item.orderId != null) "Product Purchased" else ""
+				else -> ""
 			}
-		val icon=when(item?.status?.lowercase()){
-				"process"-> R.drawable.ic_transaction_processing
-				"paid"-> R.drawable.ic_transaction_success
+			val icon = when (item?.status?.lowercase()) {
+				"process" -> R.drawable.ic_transaction_processing
+				"paid" -> R.drawable.ic_transaction_success
 				else -> R.drawable.ic_transaction
 			}
-			
-			bind.icon.setImageDrawable(ContextCompat.getDrawable(mCtx , icon))
+
+			bind.icon.setImageDrawable(ContextCompat.getDrawable(mCtx, icon))
 
 			bind.amount.text = item?.total.toString().asMoney()
 
 			bind.date.text = Utils.getFormattedDateTime(
-				"yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'" ,
-				"MMM dd, yyyy" ,
+				"yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'",
+				"MMM dd, yyyy",
 				item?.date.toString()
 			)
 

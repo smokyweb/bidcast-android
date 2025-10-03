@@ -20,44 +20,43 @@ import io.bidswipe.app.utils.Utils
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request
 import io.bidswipe.app.utils.runSafe
-import kotlin.toString
 
-class TransactionsFragment : BaseFragment<SellerHubViewModel , FragmentTransactionsBinding>() {
-	override fun getModel() : Class<SellerHubViewModel> = SellerHubViewModel::class.java
+class TransactionsFragment : BaseFragment<SellerHubViewModel, FragmentTransactionsBinding>() {
+	override fun getModel(): Class<SellerHubViewModel> = SellerHubViewModel::class.java
 
 	override fun getBind(
-        inflater : LayoutInflater ,
-        view : ViewGroup? ,
-    ) = FragmentTransactionsBinding.inflate(inflater , view , false)
+		inflater: LayoutInflater,
+		view: ViewGroup?,
+	) = FragmentTransactionsBinding.inflate(inflater, view, false)
 
 	private var categoriesList = mutableListOf<String>()
 
 	private var transactionList = mutableListOf<GetTransactionsHistoryResponse.Data?>()
 
-	private lateinit var transactionHistoryAdapter : TransactionHistoryAdapter
+	private lateinit var transactionHistoryAdapter: TransactionHistoryAdapter
 	private var page = 1
 	private var status = ""
 	private var isLoading = false
 
 	private val mClick = object : RecyclerClicks {
-		override fun itemClick(pos : Int , status : String?) {
+		override fun itemClick(pos: Int, status: String?) {
 		}
 	}
 
-	override fun onViewCreated(view : View , savedInstanceState : Bundle?) {
-		super.onViewCreated(view , savedInstanceState)
+	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+		super.onViewCreated(view, savedInstanceState)
 
-		transactionHistoryAdapter = TransactionHistoryAdapter(transactionList , mClick)
+		transactionHistoryAdapter = TransactionHistoryAdapter(transactionList, mClick)
 
 		bind.transaction.adapter = transactionHistoryAdapter
 
-		categoriesList = mutableListOf("All" , "Processing" , "Completed" , "Withdrawal")
+		categoriesList = mutableListOf("All", "Processing", "Completed", "Withdrawal")
 
 		categoriesList.forEach {
 			bind.chipGroup.addView(
 				Utils.makeAChip(
-					mCtx = mCtx ,
-					text = it ,
+					mCtx = mCtx,
+					text = it,
 					selected = false
 				)
 			)
@@ -65,18 +64,11 @@ class TransactionsFragment : BaseFragment<SellerHubViewModel , FragmentTransacti
 
 		bind.chipGroup.check(bind.chipGroup[0].id)
 
-		bind.chipGroup.setOnCheckedStateChangeListener { chipGroup , _ ->
-			runSafe {
-				val chipId = chipGroup.checkedChipId
-				chipGroup.indexOfChild(chipGroup.findViewById(chipId))
-			}
-		}
-
 		bind.chipGroup.setOnCheckedStateChangeListener { chipGroup, _ ->
 			runSafe {
 				val chipId = chipGroup.checkedChipId
 				val index = chipGroup.indexOfChild(chipGroup.findViewById(chipId))
-				status = when(index){
+				status = when (index) {
 					0 -> ""
 					1 -> "process"
 					2 -> "completed"
@@ -87,22 +79,22 @@ class TransactionsFragment : BaseFragment<SellerHubViewModel , FragmentTransacti
 				bind.loader.isVisible = true
 				viewModel.getTransactionsHistory(
 					page = page.toString().request(),
-					status.ifEmpty { null}?.request()
+					status.ifEmpty { null }?.request()
 				)
 			}
 		}
 
 		bind.transaction.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-			override fun onScrolled(recyclerView : RecyclerView , dx : Int , dy : Int) {
-				super.onScrolled(recyclerView , dx , dy)
+			override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+				super.onScrolled(recyclerView, dx, dy)
 				val layoutManager = bind.transaction.layoutManager as LinearLayoutManager
 				val lastItemPosition = layoutManager.findLastVisibleItemPosition()
 				if (lastItemPosition == (transactionList.size - 1)) {
-					if (! isLoading) {
+					if (!isLoading) {
 						isLoading = true
-						page ++
+						page++
 						bind.bottomLoader.isVisible = true
-						viewModel.getTransactionsHistory(page.toString().request(), status = status.ifEmpty { null}?.request())
+						viewModel.getTransactionsHistory(page.toString().request(), status = status.ifEmpty { null }?.request())
 					}
 				}
 			}
@@ -114,7 +106,7 @@ class TransactionsFragment : BaseFragment<SellerHubViewModel , FragmentTransacti
 		viewModel.getTransactionsHistoryRepo.observe(viewLifecycleOwner) {
 			when (it) {
 				is Resource.Success -> {
-					viewModel.getTransactionsHistoryRepo.value=null
+					viewModel.getTransactionsHistoryRepo.value = null
 					bind.bottomLoader.isVisible = false
 					bind.loader.isVisible = false
 					val mData = it.value.data
@@ -146,18 +138,18 @@ class TransactionsFragment : BaseFragment<SellerHubViewModel , FragmentTransacti
 				}
 
 				is Resource.Error -> {
-					viewModel.getTransactionsHistoryRepo.value=null
+					viewModel.getTransactionsHistoryRepo.value = null
 					bind.loader.isVisible = false
 					bind.bottomLoader.isVisible = false
-						it.parse(mCtx , TAG , object : AlertClicks {
-							override fun primaryClick(dialog : AppBottomSheet) {
-								dialog.dismiss()
-							}
+					it.parse(mCtx, TAG, object : AlertClicks {
+						override fun primaryClick(dialog: AppBottomSheet) {
+							dialog.dismiss()
+						}
 
-							override fun secondaryClick(dialog : AppBottomSheet) {
-								dialog.dismiss()
-							}
-						})
+						override fun secondaryClick(dialog: AppBottomSheet) {
+							dialog.dismiss()
+						}
+					})
 				}
 
 				else -> {}

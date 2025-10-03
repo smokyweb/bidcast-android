@@ -1,6 +1,5 @@
 package io.bidswipe.app.network.response
 
-
 import com.google.gson.annotations.SerializedName
 import androidx.annotation.Keep
 
@@ -19,47 +18,85 @@ data class GetTransactionsHistoryResponse(
 	@SerializedName("status")
 	val status : String? ,
 	@SerializedName("total")
-	val total : Int? ,
+	val total : String? ,
 	@SerializedName("totalPage")
 	val totalPage : Int? ,
-) {
+)  {
 	@Keep
 	data class Data(
 		@SerializedName("account_number")
-		val accountNumber : String? ,
+		val accountNumber: Any?,
+		@SerializedName("buyer")
+		val buyer: Buyer?,
+		@SerializedName("buyer_email")
+		val buyerEmail: String?,
+		@SerializedName("buyer_name")
+		val buyerName: String?,
 		@SerializedName("card_number")
-		val cardNumber : String? ,
+		val cardNumber: String?,
 		@SerializedName("charge_id")
-		val chargeId : String? ,
+		val chargeId: String?,
+		@SerializedName("counterparty_name")
+		val counterpartyName: String?,
 		@SerializedName("date")
-		val date : String? ,
+		val date: String?,
 		@SerializedName("discount")
-		val discount : Int? ,
+		val discount: Int?,
 		@SerializedName("id")
-		val id : Int? ,
+		val id: Int?,
 		@SerializedName("order_id")
-		val orderId : Int? ,
+		val orderId: Int?,
 		@SerializedName("payment_intent_id")
-		val paymentIntentId : String? ,
+		val paymentIntentId: Any?,
 		@SerializedName("product_price")
-		val productPrice : String? ,
+		val productPrice: Int?,
+		@SerializedName("receiver")
+		val `receiver`: Receiver?,
 		@SerializedName("seller_id")
-		val sellerId : Int? ,
+		val sellerId: Int?,
+		@SerializedName("sender")
+		val sender: Sender?,
 		@SerializedName("shipping_charges")
-		val shippingCharges : Int? ,
+		val shippingCharges: Int?,
 		@SerializedName("source_type")
-		val sourceType : String? ,
+		val sourceType: String?,
 		@SerializedName("status")
-		val status : String? ,
+		val status: String?,
 		@SerializedName("sub_total")
-		val subTotal : Double? ,
+		val subTotal: String?,
 		@SerializedName("tax_amount")
-		val taxAmount : Double? ,
+		val taxAmount: String?,
 		@SerializedName("total")
-		val total : Double? ,
+		val total: String?,
 		@SerializedName("type")
-		val type : String? ,
+		val type: String?,
 		@SerializedName("user_id")
-		val userId : Int? ,
-	)
+		val userId: Int?
+	) {
+		@Keep
+		data class Buyer(
+			@SerializedName("email")
+			val email: String?,
+			@SerializedName("id")
+			val id: Int?,
+			@SerializedName("name")
+			val name: String?
+		)
+
+		@Keep
+		data class Receiver(
+			@SerializedName("id")
+			val id: Int?,
+			@SerializedName("name")
+			val name: String?
+		)
+
+		@Keep
+		data class Sender(
+			@SerializedName("id")
+			val id: Int?,
+			@SerializedName("name")
+			val name: String?
+		)
+	}
 }

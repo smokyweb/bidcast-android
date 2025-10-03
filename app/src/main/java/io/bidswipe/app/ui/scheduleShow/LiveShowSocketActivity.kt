@@ -225,7 +225,7 @@ class LiveShowSocketActivity : BaseActivity() {
 		bind.share.setHapticClickListener {
 			val shareText = buildString {
 				append(Const.BASE_URL)
-				append("/live-show?showId=$showId")
+				append("/live-show?roomId=$roomID")
 			}
 
 			val shareIntent = Intent().apply {
@@ -795,6 +795,13 @@ class LiveShowSocketActivity : BaseActivity() {
 			}
 		}
 
+		socketManager?.onAllowBidForAllUpdate { obj ->
+			if (roomID == obj.optString("room_id")) {
+				val allowBidForAll = obj.optBoolean("allow_bid_for_all")
+				liveShowData?.allowBidForAll = allowBidForAll
+			}
+		}
+
 	}
 
 	fun showMoreSheet() {
@@ -831,6 +838,8 @@ class LiveShowSocketActivity : BaseActivity() {
 			})
 
 		moreSheetBind.allowVerifiedUser.setOnCheckedChangeListener { view, isChecked ->
+
+			socketManager?.updateAllowBidForAll(roomID, !isChecked)
 
 		}
 
@@ -1306,7 +1315,6 @@ class LiveShowSocketActivity : BaseActivity() {
 			bind.menuLayout.isVisible = true
 			bind.message.isVisible = true
 			App.PIPMode = false
-
 		}
 	}
 

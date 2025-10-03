@@ -246,7 +246,7 @@ class WatchStreamSocketFragment : BaseFragment<StreamViewModel, FragmentWatchStr
 
 			socketManager?.onRoomEnded { json ->
 				runSafe {
-					if (json.optString("room_end") == roomID){
+					if (json.optString("room_end") == roomID) {
 						finish()
 					}
 				}
@@ -282,6 +282,27 @@ class WatchStreamSocketFragment : BaseFragment<StreamViewModel, FragmentWatchStr
 
 		bind.gift.setHapticClickListener {
 			sendTipSheet()
+		}
+
+		bind.share.setHapticClickListener {
+			val shareText = buildString {
+				append(Const.BASE_URL)
+				append("/live-show?roomId=$roomID")
+			}
+
+			val shareIntent = Intent().apply {
+				action = Intent.ACTION_SEND
+				putExtra(Intent.EXTRA_TEXT, shareText)
+				type = "text/plain"
+			}
+
+			val chooserIntent = Intent.createChooser(shareIntent, "Share via")
+
+			if (shareIntent.resolveActivity(requireActivity().packageManager) != null) {
+				startActivity(chooserIntent)
+			} else {
+				errorToast("No sharing apps available")
+			}
 		}
 
 		if (App.profileResponse.value?.buyerIdentityStatus != "verified") {
@@ -426,7 +447,6 @@ class WatchStreamSocketFragment : BaseFragment<StreamViewModel, FragmentWatchStr
 					if (isAllowBidForAll) {
 						attemptBid()
 					} else {
-
 						if (App.profileResponse.value?.buyerIdentityStatus == "verified") {
 							attemptBid()
 						} else {
@@ -442,6 +462,13 @@ class WatchStreamSocketFragment : BaseFragment<StreamViewModel, FragmentWatchStr
 
 			socketManager?.getBidTimerUpdate { json ->
 				updateCountdown(json)
+			}
+
+			socketManager?.onAllowBidForAllUpdate { obj ->
+				if (roomID == obj.optString("room_id")) {
+					val allowBidForAll = obj.optBoolean("allow_bid_for_all")
+					isAllowBidForAll = allowBidForAll
+				}
 			}
 
 		}

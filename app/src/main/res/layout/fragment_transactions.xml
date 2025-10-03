@@ -20,6 +20,7 @@
             android:layout_height="wrap_content"
             android:layout_marginVertical="@dimen/margin"
             android:paddingHorizontal="@dimen/margin"
+            app:selectionRequired="true"
             app:singleLine="true"
             app:singleSelection="true" />
 

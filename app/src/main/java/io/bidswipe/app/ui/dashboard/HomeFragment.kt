@@ -230,7 +230,7 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
 						)
 					}
 
-                    bind.chipGroup.check(bind.chipGroup[0].id)
+					bind.chipGroup.check(bind.chipGroup[0].id)
 
                 }
 
