@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/FirstFragment"
-        android:name="io.bidswipe.app.ui.dashboard.interest.CategoryFragment"
+        android:name="io.bidswipe.app.ui.interest.CategoryFragment"
         android:label="@string/first_fragment_label"
         tools:layout="@layout/fragment_category">
 
@@ -17,7 +17,7 @@
     </fragment>
     <fragment
         android:id="@+id/SecondFragment"
-        android:name="io.bidswipe.app.ui.dashboard.interest.SubCategoryFragment"
+        android:name="io.bidswipe.app.ui.interest.SubCategoryFragment"
         android:label="@string/second_fragment_label"
         tools:layout="@layout/fragment_subcategory">
 

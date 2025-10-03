@@ -6,10 +6,10 @@ import io.bidswipe.app.ui.auth.AuthActivity
 import io.bidswipe.app.ui.dashboard.AddPaymentCardActivity
 import io.bidswipe.app.ui.dashboard.DashActivity
 import io.bidswipe.app.ui.dashboard.RateSellerActivity
-import io.bidswipe.app.ui.dashboard.interest.ChooseInterestActivity
-import io.bidswipe.app.ui.dashboard.scheduleShow.ScheduleShowActivity
-import io.bidswipe.app.ui.dashboard.sell.ListAProductActivity
-import io.bidswipe.app.ui.dashboard.tutorials.TutorialsActivity
+import io.bidswipe.app.ui.interest.ChooseInterestActivity
+import io.bidswipe.app.ui.scheduleShow.ScheduleShowActivity
+import io.bidswipe.app.ui.sell.ListAProductActivity
+import io.bidswipe.app.ui.tutorials.TutorialsActivity
 
 fun Context.toAuth() = Intent(this , AuthActivity::class.java)
 

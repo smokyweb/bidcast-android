@@ -14,7 +14,6 @@ class SocketManager private constructor(
 ) {
 
     private var socket: Socket? = null
-    private val appContext = context.applicationContext
 
     @Volatile
     private var isInitialized = false
@@ -315,7 +314,6 @@ class SocketManager private constructor(
             }
         }
     }
-
 
 
     /**

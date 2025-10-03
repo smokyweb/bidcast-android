@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.dashboard.sellerHub.PayoutFragment">
+    tools:context=".ui.sellerHub.PayoutFragment">
 
     <io.bidswipe.app.ui.custom.Header
         android:id="@+id/header"

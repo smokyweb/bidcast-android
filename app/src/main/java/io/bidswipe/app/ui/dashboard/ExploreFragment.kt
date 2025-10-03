@@ -22,7 +22,7 @@ import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.network.response.GetCategoryResponse
 import io.bidswipe.app.ui.custom.AppBottomSheet
-import io.bidswipe.app.ui.dashboard.more.NotificationActivity
+import io.bidswipe.app.ui.more.NotificationActivity
 import io.bidswipe.app.utils.hideKeyboard
 import io.bidswipe.app.utils.ids
 import io.bidswipe.app.utils.parse

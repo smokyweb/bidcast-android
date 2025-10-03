@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/productDetailsFragment"
-        android:name="io.bidswipe.app.ui.dashboard.product.ProductDetailsFragment"
+        android:name="io.bidswipe.app.ui.product.ProductDetailsFragment"
         android:label="fragment_product_details"
         tools:layout="@layout/fragment_product_details">
 
@@ -25,7 +25,7 @@
     </fragment>
     <fragment
         android:id="@+id/sendGiftFragment"
-        android:name="io.bidswipe.app.ui.dashboard.product.SendGiftFragment"
+        android:name="io.bidswipe.app.ui.product.SendGiftFragment"
         android:label="fragment_send_gift"
         tools:layout="@layout/fragment_send_gift">
         <action
@@ -38,12 +38,12 @@
     </fragment>
     <fragment
         android:id="@+id/orderStatusFragment"
-        android:name="io.bidswipe.app.ui.dashboard.product.OrderStatusFragment"
+        android:name="io.bidswipe.app.ui.product.OrderStatusFragment"
         android:label="fragment_order_status"
         tools:layout="@layout/fragment_order_status" />
     <fragment
         android:id="@+id/buyNowFragment"
-        android:name="io.bidswipe.app.ui.dashboard.product.BuyNowFragment"
+        android:name="io.bidswipe.app.ui.product.BuyNowFragment"
         android:label="fragment_buy_now"
         tools:layout="@layout/fragment_buy_now">
         <action

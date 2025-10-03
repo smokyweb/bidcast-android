@@ -35,16 +35,16 @@
         android:theme="@style/Theme.Bidswipe"
         tools:targetApi="31">
         <activity
-            android:name=".ui.dashboard.scheduleShow.ChooseModeActivity"
+            android:name="io.bidswipe.app.ui.scheduleShow.ChooseModeActivity"
             android:exported="false" />
         <activity
-            android:name=".ui.dashboard.scheduleShow.DolbyStreamActivity"
+            android:name="io.bidswipe.app.ui.scheduleShow.DolbyStreamActivity"
             android:exported="false" />
         <activity
-            android:name=".ui.dashboard.scheduleShow.DolbySubscribeActivity"
+            android:name="io.bidswipe.app.ui.scheduleShow.DolbySubscribeActivity"
             android:exported="false" />
         <activity
-            android:name=".ui.dashboard.interest.ChooseInterestActivity"
+            android:name="io.bidswipe.app.ui.interest.ChooseInterestActivity"
             android:exported="false"
             android:theme="@style/Theme.Bidswipe" />
         <activity
@@ -57,20 +57,20 @@
             android:name=".ui.dashboard.UpdateAccountActivity"
             android:exported="false" />
         <activity
-            android:name=".ui.dashboard.more.NotificationActivity"
+            android:name="io.bidswipe.app.ui.more.NotificationActivity"
             android:exported="false" />
         <activity
-            android:name=".ui.dashboard.watchStream.ViewLiveShowActivity"
+            android:name="io.bidswipe.app.ui.watchStream.ViewLiveShowActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".ui.dashboard.scheduleShow.LiveShowActivity"
+            android:name="io.bidswipe.app.ui.scheduleShow.LiveShowActivity"
             android:configChanges="screenSize|smallestScreenSize|screenLayout|orientation"
             android:exported="false"
             android:supportsPictureInPicture="true"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".ui.dashboard.scheduleShow.LiveShowSocketActivity"
+            android:name="io.bidswipe.app.ui.scheduleShow.LiveShowSocketActivity"
             android:configChanges="screenSize|smallestScreenSize|screenLayout|orientation"
             android:exported="false"
             android:launchMode="singleTop"
@@ -80,29 +80,29 @@
             android:name=".ui.dashboard.AddPaymentCardActivity"
             android:exported="false" />
         <activity
-            android:name=".ui.dashboard.sellerProfile.SellerProfileActivity"
+            android:name="io.bidswipe.app.ui.sellerProfile.SellerProfileActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".ui.dashboard.product.ProductDetailsActivity"
+            android:name="io.bidswipe.app.ui.product.ProductDetailsActivity"
             android:exported="false" />
         <activity
-            android:name=".ui.dashboard.sellerHub.SellerHubActivity"
+            android:name="io.bidswipe.app.ui.sellerHub.SellerHubActivity"
             android:exported="false" />
         <activity
-            android:name=".ui.dashboard.more.MoreActivity"
+            android:name="io.bidswipe.app.ui.more.MoreActivity"
             android:exported="false" />
         <activity
             android:name=".ui.dashboard.LanguageActivity"
             android:exported="false" />
         <activity
-            android:name=".ui.dashboard.scheduleShow.ScheduleShowActivity"
+            android:name="io.bidswipe.app.ui.scheduleShow.ScheduleShowActivity"
             android:exported="false" />
         <activity
-            android:name=".ui.dashboard.tutorials.TutorialsActivity"
+            android:name="io.bidswipe.app.ui.tutorials.TutorialsActivity"
             android:exported="false" />
         <activity
-            android:name=".ui.dashboard.sell.ListAProductActivity"
+            android:name="io.bidswipe.app.ui.sell.ListAProductActivity"
             android:exported="false" />
         <activity
             android:name=".ui.dashboard.DashActivity"
@@ -145,10 +145,10 @@
             android:name=".ui.auth.AuthActivity"
             android:exported="false" />
         <activity
-            android:name=".ui.dashboard.more.TrustedBuyerActivity"
+            android:name="io.bidswipe.app.ui.more.TrustedBuyerActivity"
             android:exported="false" />
         <activity
-            android:name=".ui.dashboard.sellerHub.SellerVerificationActivity"
+            android:name="io.bidswipe.app.ui.sellerHub.SellerVerificationActivity"
             android:exported="false" />
         <activity
             android:name="com.canhub.cropper.CropImageActivity"

@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/surface"
-    tools:context=".ui.dashboard.interest.SubCategoryFragment">
+    tools:context=".ui.interest.SubCategoryFragment">
 
     <io.bidswipe.app.ui.custom.Header
         android:id="@+id/header"

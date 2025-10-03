@@ -2,7 +2,6 @@ package io.bidswipe.app.ui.dashboard
 
 import android.annotation.SuppressLint
 import android.content.Intent
-import android.graphics.Typeface
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -23,9 +22,9 @@ import io.bidswipe.app.model.StreamModel
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.network.response.GetMyShowResponse
 import io.bidswipe.app.ui.custom.AppBottomSheet
-import io.bidswipe.app.ui.dashboard.more.NotificationActivity
-import io.bidswipe.app.ui.dashboard.sellerProfile.SellerProfileActivity
-import io.bidswipe.app.ui.dashboard.watchStream.ViewLiveShowActivity
+import io.bidswipe.app.ui.more.NotificationActivity
+import io.bidswipe.app.ui.sellerProfile.SellerProfileActivity
+import io.bidswipe.app.ui.watchStream.ViewLiveShowActivity
 import io.bidswipe.app.utils.asCapital
 import io.bidswipe.app.utils.hideKeyboard
 import io.bidswipe.app.utils.parse

@@ -28,8 +28,8 @@ import io.bidswipe.app.model.SellModel
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.ui.custom.AlertType
 import io.bidswipe.app.ui.custom.AppBottomSheet
-import io.bidswipe.app.ui.dashboard.more.MoreActivity
-import io.bidswipe.app.ui.dashboard.sellerHub.SellerVerificationActivity
+import io.bidswipe.app.ui.more.MoreActivity
+import io.bidswipe.app.ui.sellerHub.SellerVerificationActivity
 import io.bidswipe.app.utils.Alerts
 import io.bidswipe.app.utils.Const
 import io.bidswipe.app.utils.Prefs

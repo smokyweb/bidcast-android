@@ -3,8 +3,8 @@ package io.bidswipe.app.controller
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
-import io.bidswipe.app.ui.dashboard.watchStream.StreamViewModel
-import io.bidswipe.app.ui.dashboard.watchStream.WatchStreamSocketFragment
+import io.bidswipe.app.ui.watchStream.StreamViewModel
+import io.bidswipe.app.ui.watchStream.WatchStreamSocketFragment
 
 class StreamPagerAdapter(
 	fragmentActivity : FragmentActivity ,

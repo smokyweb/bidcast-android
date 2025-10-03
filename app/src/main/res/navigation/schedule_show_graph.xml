@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/showTitleFragment"
-        android:name="io.bidswipe.app.ui.dashboard.scheduleShow.ShowTitleFragment"
+        android:name="io.bidswipe.app.ui.scheduleShow.ShowTitleFragment"
         android:label="fragment_show_title"
         tools:layout="@layout/fragment_show_title">
         <action
@@ -28,7 +28,7 @@
 
     <fragment
         android:id="@+id/selectShowTimeFragment"
-        android:name="io.bidswipe.app.ui.dashboard.scheduleShow.SelectShowTimeFragment"
+        android:name="io.bidswipe.app.ui.scheduleShow.SelectShowTimeFragment"
         android:label="fragment_select_show_time"
         tools:layout="@layout/fragment_select_show_time">
         <action
@@ -41,7 +41,7 @@
     </fragment>
     <fragment
         android:id="@+id/selectCategoryFragment"
-        android:name="io.bidswipe.app.ui.dashboard.scheduleShow.SelectCategoryFragment"
+        android:name="io.bidswipe.app.ui.scheduleShow.SelectCategoryFragment"
         android:label="fragment_select_category"
         tools:layout="@layout/fragment_select_category">
         <action
@@ -54,7 +54,7 @@
     </fragment>
     <fragment
         android:id="@+id/selectThumbnailFragment"
-        android:name="io.bidswipe.app.ui.dashboard.scheduleShow.SelectThumbnailFragment"
+        android:name="io.bidswipe.app.ui.scheduleShow.SelectThumbnailFragment"
         android:label="fragment_select_thumbnail"
         tools:layout="@layout/fragment_select_thumbnail">
         <action
@@ -76,7 +76,7 @@
 
     <fragment
         android:id="@+id/productTipsFragment"
-        android:name="io.bidswipe.app.ui.dashboard.scheduleShow.ProductTipsFragment"
+        android:name="io.bidswipe.app.ui.scheduleShow.ProductTipsFragment"
         android:label="fragment_product_tips"
         tools:layout="@layout/fragment_product_tips">
         <action
@@ -90,7 +90,7 @@
 
     <fragment
         android:id="@+id/createProductFragment"
-        android:name="io.bidswipe.app.ui.dashboard.scheduleShow.CreateProductFragment"
+        android:name="io.bidswipe.app.ui.scheduleShow.CreateProductFragment"
         android:label="fragment_create_product"
         tools:layout="@layout/fragment_create_product">
         <action
@@ -110,7 +110,7 @@
     </fragment>
     <fragment
         android:id="@+id/chooseSalesFormatFragment"
-        android:name="io.bidswipe.app.ui.dashboard.scheduleShow.ChooseSalesFormatFragment"
+        android:name="io.bidswipe.app.ui.scheduleShow.ChooseSalesFormatFragment"
         android:label="fragment_choose_sales_format"
         tools:layout="@layout/fragment_choose_sales_format">
         <action
@@ -123,7 +123,7 @@
     </fragment>
     <fragment
         android:id="@+id/productWeightFragment"
-        android:name="io.bidswipe.app.ui.dashboard.scheduleShow.ProductWeightFragment"
+        android:name="io.bidswipe.app.ui.scheduleShow.ProductWeightFragment"
         android:label="fragment_product_weight"
         tools:layout="@layout/fragment_product_weight">
         <action
@@ -136,7 +136,7 @@
     </fragment>
     <fragment
         android:id="@+id/addProductFragment"
-        android:name="io.bidswipe.app.ui.dashboard.scheduleShow.AddProductFragment"
+        android:name="io.bidswipe.app.ui.scheduleShow.AddProductFragment"
         android:label="fragment_add_product"
         tools:layout="@layout/fragment_add_product">
         <action

@@ -18,8 +18,8 @@ import io.bidswipe.app.model.StreamModel
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.network.response.GetMyShowResponse
 import io.bidswipe.app.ui.custom.AppBottomSheet
-import io.bidswipe.app.ui.dashboard.sellerProfile.SellerProfileActivity
-import io.bidswipe.app.ui.dashboard.watchStream.ViewLiveShowActivity
+import io.bidswipe.app.ui.sellerProfile.SellerProfileActivity
+import io.bidswipe.app.ui.watchStream.ViewLiveShowActivity
 import io.bidswipe.app.utils.hideKeyboard
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request

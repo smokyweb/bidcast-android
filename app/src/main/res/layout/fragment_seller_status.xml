@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".ui.dashboard.sellerHub.SellerStatusFragment">
+    tools:context=".ui.sellerHub.SellerStatusFragment">
 
     <io.bidswipe.app.ui.custom.Header
         android:id="@+id/header"

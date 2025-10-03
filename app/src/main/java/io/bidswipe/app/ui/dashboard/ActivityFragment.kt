@@ -10,7 +10,7 @@ import com.google.android.material.tabs.TabLayoutMediator
 import io.bidswipe.app.base.BaseFragment
 import io.bidswipe.app.controller.ViewPagerAdapter
 import io.bidswipe.app.databinding.FragmentActivityBinding
-import io.bidswipe.app.ui.dashboard.more.NotificationActivity
+import io.bidswipe.app.ui.more.NotificationActivity
 
 class ActivityFragment : BaseFragment<DashViewModel , FragmentActivityBinding>() {
 	override fun getModel() : Class<DashViewModel> = DashViewModel::class.java

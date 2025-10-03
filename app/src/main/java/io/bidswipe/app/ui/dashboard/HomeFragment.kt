@@ -22,11 +22,10 @@ import io.bidswipe.app.interfaces.AlertClicks
 import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.network.response.GetMyShowResponse
-import io.bidswipe.app.ui.SpoofSocketActivity
 import io.bidswipe.app.ui.custom.AppBottomSheet
-import io.bidswipe.app.ui.dashboard.more.NotificationActivity
-import io.bidswipe.app.ui.dashboard.sellerProfile.SellerProfileActivity
-import io.bidswipe.app.ui.dashboard.watchStream.ViewLiveShowActivity
+import io.bidswipe.app.ui.more.NotificationActivity
+import io.bidswipe.app.ui.sellerProfile.SellerProfileActivity
+import io.bidswipe.app.ui.watchStream.ViewLiveShowActivity
 import io.bidswipe.app.utils.Alerts
 import io.bidswipe.app.utils.Utils
 import io.bidswipe.app.utils.hideKeyboard

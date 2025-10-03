@@ -1,16 +1,12 @@
 package io.bidswipe.app.ui
 
-import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.os.postDelayed
 import io.bidswipe.app.R
-import io.bidswipe.app.ui.dashboard.scheduleShow.ChooseModeActivity
-import io.bidswipe.app.ui.dashboard.scheduleShow.DolbyStreamActivity
 import io.bidswipe.app.utils.Prefs
 import io.bidswipe.app.utils.toAuth
 import io.bidswipe.app.utils.toDash

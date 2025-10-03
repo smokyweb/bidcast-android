@@ -5,7 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.dashboard.sellerHub.SellerHubActivity">
+    tools:context=".ui.sellerHub.SellerHubActivity">
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/fragmentContainer"

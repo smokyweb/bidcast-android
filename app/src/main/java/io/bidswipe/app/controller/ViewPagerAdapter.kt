@@ -8,13 +8,13 @@ import io.bidswipe.app.ui.dashboard.MessagesFragment
 import io.bidswipe.app.ui.dashboard.OfferFragment
 import io.bidswipe.app.ui.dashboard.PurchasesFragment
 import io.bidswipe.app.ui.dashboard.SavedItemsFragment
-import io.bidswipe.app.ui.dashboard.sellerHub.OverAllFragment
-import io.bidswipe.app.ui.dashboard.sellerHub.TransactionsFragment
-import io.bidswipe.app.ui.dashboard.sellerHub.WalletViewFragment
-import io.bidswipe.app.ui.dashboard.sellerProfile.ClipsFragment
-import io.bidswipe.app.ui.dashboard.sellerProfile.ReviewListFragment
-import io.bidswipe.app.ui.dashboard.sellerProfile.SellerShowFragment
-import io.bidswipe.app.ui.dashboard.sellerProfile.ShopFragment
+import io.bidswipe.app.ui.sellerHub.OverAllFragment
+import io.bidswipe.app.ui.sellerHub.TransactionsFragment
+import io.bidswipe.app.ui.sellerHub.WalletViewFragment
+import io.bidswipe.app.ui.sellerProfile.ClipsFragment
+import io.bidswipe.app.ui.sellerProfile.ReviewListFragment
+import io.bidswipe.app.ui.sellerProfile.SellerShowFragment
+import io.bidswipe.app.ui.sellerProfile.ShopFragment
 
 class ViewPagerAdapter(fragmentActivity : FragmentActivity , type : String) :
 	FragmentStateAdapter(fragmentActivity) {

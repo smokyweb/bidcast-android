@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.dashboard.more.AddressesFragment">
+    tools:context=".ui.more.AddressesFragment">
 
     <io.bidswipe.app.ui.custom.Header
         android:id="@+id/header"

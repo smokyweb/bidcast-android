@@ -7,12 +7,12 @@
 
     <fragment
         android:id="@+id/inventoryFragment"
-        android:name="io.bidswipe.app.ui.dashboard.sellerHub.InventoryFragment"
+        android:name="io.bidswipe.app.ui.sellerHub.InventoryFragment"
         android:label="fragment_inventory"
         tools:layout="@layout/fragment_inventory" />
     <fragment
         android:id="@+id/myOrdersFragment"
-        android:name="io.bidswipe.app.ui.dashboard.sellerHub.MyOrdersFragment"
+        android:name="io.bidswipe.app.ui.sellerHub.MyOrdersFragment"
         android:label="fragment_my_orders"
         tools:layout="@layout/fragment_my_orders" >
 
@@ -22,12 +22,12 @@
     </fragment>
     <fragment
         android:id="@+id/sellerOffersFragment"
-        android:name="io.bidswipe.app.ui.dashboard.sellerHub.SellerOffersFragment"
+        android:name="io.bidswipe.app.ui.sellerHub.SellerOffersFragment"
         android:label="fragment_seller_offers"
         tools:layout="@layout/fragment_seller_offers" />
     <fragment
         android:id="@+id/walletFragment"
-        android:name="io.bidswipe.app.ui.dashboard.sellerHub.WalletFragment"
+        android:name="io.bidswipe.app.ui.sellerHub.WalletFragment"
         android:label="fragment_wallet"
         tools:layout="@layout/fragment_wallet">
         <action
@@ -38,67 +38,67 @@
 
     <fragment
         android:id="@+id/showsFragment"
-        android:name="io.bidswipe.app.ui.dashboard.sellerHub.ShowsFragment"
+        android:name="io.bidswipe.app.ui.sellerHub.ShowsFragment"
         android:label="fragment_shows"
         tools:layout="@layout/fragment_shows" />
     <fragment
         android:id="@+id/shippingFragment"
-        android:name="io.bidswipe.app.ui.dashboard.sellerHub.ShippingFragment"
+        android:name="io.bidswipe.app.ui.sellerHub.ShippingFragment"
         android:label="fragment_shipping"
         tools:layout="@layout/fragment_shipping" />
     <fragment
         android:id="@+id/tipsFragment"
-        android:name="io.bidswipe.app.ui.dashboard.sellerHub.TipsFragment"
+        android:name="io.bidswipe.app.ui.sellerHub.TipsFragment"
         android:label="fragment_tips"
         tools:layout="@layout/fragment_tips" />
     <fragment
         android:id="@+id/affiliateProgramFragment"
-        android:name="io.bidswipe.app.ui.dashboard.sellerHub.AffiliateProgramFragment"
+        android:name="io.bidswipe.app.ui.sellerHub.AffiliateProgramFragment"
         android:label="fragment_affiliate_program"
         tools:layout="@layout/fragment_affiliate_program" />
     <fragment
         android:id="@+id/howToSellFragment2"
-        android:name="io.bidswipe.app.ui.dashboard.tutorials.HowToSellFragment"
+        android:name="io.bidswipe.app.ui.tutorials.HowToSellFragment"
         android:label="fragment_how_to_sell"
         tools:layout="@layout/fragment_how_to_sell" />
     <fragment
         android:id="@+id/sellerStatusFragment"
-        android:name="io.bidswipe.app.ui.dashboard.sellerHub.SellerStatusFragment"
+        android:name="io.bidswipe.app.ui.sellerHub.SellerStatusFragment"
         android:label="fragment_seller_status"
         tools:layout="@layout/fragment_seller_status" />
     <fragment
         android:id="@+id/premierShopFragment"
-        android:name="io.bidswipe.app.ui.dashboard.sellerHub.PremierShopFragment"
+        android:name="io.bidswipe.app.ui.sellerHub.PremierShopFragment"
         android:label="fragment_premier_shop"
         tools:layout="@layout/fragment_premier_shop" />
     <fragment
         android:id="@+id/promoteToolsFragment"
-        android:name="io.bidswipe.app.ui.dashboard.sellerHub.PromoteToolsFragment"
+        android:name="io.bidswipe.app.ui.sellerHub.PromoteToolsFragment"
         android:label="fragment_promote_tools"
         tools:layout="@layout/fragment_promote_tools" />
     <fragment
         android:id="@+id/analyticsFragment"
-        android:name="io.bidswipe.app.ui.dashboard.sellerHub.AnalyticsFragment"
+        android:name="io.bidswipe.app.ui.sellerHub.AnalyticsFragment"
         android:label="fragment_analytics"
         tools:layout="@layout/fragment_analytics" />
     <fragment
         android:id="@+id/sellerVerificationFragment"
-        android:name="io.bidswipe.app.ui.dashboard.sellerHub.SellerVerificationFragment"
+        android:name="io.bidswipe.app.ui.sellerHub.SellerVerificationFragment"
         android:label="fragment_seller_verification"
         tools:layout="@layout/activity_seller_verification" />
     <fragment
         android:id="@+id/KYCFragment"
-        android:name="io.bidswipe.app.ui.dashboard.sellerHub.KYCFragment"
+        android:name="io.bidswipe.app.ui.sellerHub.KYCFragment"
         android:label="fragment_k_y_c"
         tools:layout="@layout/fragment_k_y_c" />
     <fragment
         android:id="@+id/payoutFragment"
-        android:name="io.bidswipe.app.ui.dashboard.sellerHub.PayoutFragment"
+        android:name="io.bidswipe.app.ui.sellerHub.PayoutFragment"
         android:label="fragment_payout"
         tools:layout="@layout/fragment_payout" />
     <fragment
         android:id="@+id/orderStatusFragment"
-        android:name="io.bidswipe.app.ui.dashboard.product.OrderStatusFragment"
+        android:name="io.bidswipe.app.ui.product.OrderStatusFragment"
         android:label="fragment_order_status"
         tools:layout="@layout/fragment_order_status" />
 

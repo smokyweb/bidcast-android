@@ -7,39 +7,39 @@
 
     <fragment
         android:id="@+id/aboutUsFragment"
-        android:name="io.bidswipe.app.ui.dashboard.more.AboutUsFragment"
+        android:name="io.bidswipe.app.ui.more.AboutUsFragment"
         android:label="fragment_about_us"
         tools:layout="@layout/fragment_about_us" />
 
     <fragment
         android:id="@+id/termsConditionFragment"
-        android:name="io.bidswipe.app.ui.dashboard.more.TermsConditionFragment"
+        android:name="io.bidswipe.app.ui.more.TermsConditionFragment"
         android:label="fragment_terms_condition"
         tools:layout="@layout/fragment_terms_condition" />
 
     <fragment
         android:id="@+id/privacyPolicyFragment"
-        android:name="io.bidswipe.app.ui.dashboard.more.PrivacyPolicyFragment"
+        android:name="io.bidswipe.app.ui.more.PrivacyPolicyFragment"
         android:label="fragment_privacy_policy"
         tools:layout="@layout/fragment_privacy_policy" />
     <fragment
         android:id="@+id/contactUsFragment"
-        android:name="io.bidswipe.app.ui.dashboard.more.ContactUsFragment"
+        android:name="io.bidswipe.app.ui.more.ContactUsFragment"
         android:label="fragment_contact_us"
         tools:layout="@layout/fragment_contact_us" />
     <fragment
         android:id="@+id/FAQFragment"
-        android:name="io.bidswipe.app.ui.dashboard.more.FAQFragment"
+        android:name="io.bidswipe.app.ui.more.FAQFragment"
         android:label="fragment_f_a_q"
         tools:layout="@layout/fragment_f_a_q" />
     <fragment
         android:id="@+id/salesTaxExemptionFragment"
-        android:name="io.bidswipe.app.ui.dashboard.more.SalesTaxExemptionFragment"
+        android:name="io.bidswipe.app.ui.more.SalesTaxExemptionFragment"
         android:label="fragment_sales_tax_exemption"
         tools:layout="@layout/fragment_sales_tax_exemption" />
     <fragment
         android:id="@+id/paymentShippingFragment"
-        android:name="io.bidswipe.app.ui.dashboard.more.PaymentShippingFragment"
+        android:name="io.bidswipe.app.ui.more.PaymentShippingFragment"
         android:label="fragment_payment_shipping"
         tools:layout="@layout/fragment_payment_shipping">
         <action
@@ -52,7 +52,7 @@
     </fragment>
     <fragment
         android:id="@+id/addressesFragment"
-        android:name="io.bidswipe.app.ui.dashboard.more.AddressesFragment"
+        android:name="io.bidswipe.app.ui.more.AddressesFragment"
         android:label="fragment_addresses"
         tools:layout="@layout/fragment_addresses">
         <action
@@ -65,23 +65,23 @@
     </fragment>
     <!--    <fragment
             android:id="@+id/trustedBuyerFragment"
-            android:name="io.bidswipe.app.ui.dashboard.more.TrustedBuyerFragment"
+            android:name="io.bidswipe.app.ui.more.TrustedBuyerFragment"
             android:label="fragment_trusted_buyer"
             tools:layout="@layout/activity_trusted_buyer" />-->
     <fragment
         android:id="@+id/preferencesFragment"
-        android:name="io.bidswipe.app.ui.dashboard.more.PreferencesFragment"
+        android:name="io.bidswipe.app.ui.more.PreferencesFragment"
         android:label="fragment_preferences"
         tools:layout="@layout/fragment_preferences" />
     <fragment
         android:id="@+id/addShippingAddressFragment"
-        android:name="io.bidswipe.app.ui.dashboard.more.AddShippingAddressFragment"
+        android:name="io.bidswipe.app.ui.more.AddShippingAddressFragment"
         android:label="fragment_add_shipping_address"
         tools:layout="@layout/fragment_add_shipping_address" />
 
     <fragment
         android:id="@+id/contentFragment"
-        android:name="io.bidswipe.app.ui.dashboard.watchStream.ContentFragment"
+        android:name="io.bidswipe.app.ui.watchStream.ContentFragment"
         android:label="fragment_content"
         tools:layout="@layout/fragment_content" />
 
