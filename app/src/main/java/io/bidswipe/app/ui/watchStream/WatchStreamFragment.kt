@@ -18,7 +18,6 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import com.ncorti.slidetoact.SlideToActView
 import com.ncorti.slidetoact.SlideToActView.OnSlideCompleteListener
-import im.zego.zim.entity.ZIMTextMessage
 import io.bidswipe.app.App
 import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseFragment
@@ -40,7 +39,6 @@ import io.bidswipe.app.utils.Alerts
 import io.bidswipe.app.utils.ChatManager
 import io.bidswipe.app.utils.Const
 import io.bidswipe.app.utils.FireRef
-import io.bidswipe.app.utils.StreamingManager
 import io.bidswipe.app.utils.Utils
 import io.bidswipe.app.utils.asMoney
 import io.bidswipe.app.utils.dpToPx
@@ -420,7 +418,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
 	}
 
-	override fun onResume() {
+	/*override fun onResume() {
 		super.onResume()
 		loginAndPlay()
 	}
@@ -429,13 +427,13 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 		super.onPause()
 		stopStream()
 	}
-
+*/
 	override fun onDestroy() {
 		super.onDestroy()
-		chatManager?.shutdown()
+//		chatManager?.shutdown()
 	}
 
-	private fun loginAndPlay() {
+	/*private fun loginAndPlay() {
 		val manager = StreamingManager.getInstance(requireContext())
 		manager.loginRoom(
 			roomId = roomID,
@@ -458,7 +456,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 		val manager = StreamingManager.getInstance(requireContext())
 		manager.destroyEngine()
 	}
-
+*/
 	private fun initializeChat() {
 		if (chatManager == null) {
 			chatManager = ChatManager(
@@ -471,7 +469,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 			)
 		}
 
-		chatManager?.setListener(object : ChatManager.Listener {
+		/*chatManager?.setListener(object : ChatManager.Listener {
 			override fun onMessageReceived(message: ZIMTextMessage) {
 				runSafe {
 					commentList.add(LiveChatModel.fromZIMMessage(message))
@@ -483,11 +481,11 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 			override fun onRoomStateChanged(state: String) {
 				log("ROOM STATE CHANGED: $state")
 			}
-		})
+		})*/
 
-		chatManager?.initializeAndLogin(roomID) {
-			if (App.profileResponse.value?.preferences?.enablePrivateEntry == false) sendZimMessage("Joined \uD83D\uDC4B")
-		}
+//		chatManager?.initializeAndLogin(roomID) {
+//			if (App.profileResponse.value?.preferences?.enablePrivateEntry == false) sendZimMessage("Joined \uD83D\uDC4B")
+//		}
 
 	}
 
@@ -495,7 +493,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
 	fun sendZimMessage(content: String) {
 		val extended = ZIMExtendedData(userImage, userId, userName).toJson()
-		chatManager?.sendTextMessage(roomID, content, extended)
+//		chatManager?.sendTextMessage(roomID, content, extended)
 		bind.text.setText("")
 	}
 

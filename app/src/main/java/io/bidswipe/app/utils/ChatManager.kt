@@ -2,23 +2,6 @@ package io.bidswipe.app.utils
 
 import android.app.Application
 import org.json.JSONObject
-import im.zego.zim.ZIM
-import im.zego.zim.callback.ZIMEventHandler
-import im.zego.zim.callback.ZIMMessageSentFullCallback
-import im.zego.zim.entity.ZIMAppConfig
-import im.zego.zim.entity.ZIMError
-import im.zego.zim.entity.ZIMMediaMessage
-import im.zego.zim.entity.ZIMMessage
-import im.zego.zim.entity.ZIMMessageReceivedInfo
-import im.zego.zim.entity.ZIMMultipleMessage
-import im.zego.zim.entity.ZIMRoomInfo
-import im.zego.zim.entity.ZIMTextMessage
-import im.zego.zim.entity.ZIMUserInfo
-import im.zego.zim.enums.ZIMConversationType
-import im.zego.zim.enums.ZIMErrorCode
-import im.zego.zim.enums.ZIMMessagePriority
-import im.zego.zim.enums.ZIMRoomEvent
-import im.zego.zim.enums.ZIMRoomState
 
 class ChatManager(
 	private val application : Application ,
@@ -29,7 +12,7 @@ class ChatManager(
 	private val userImage : String ,
 ) {
 
-	interface Listener {
+/*	interface Listener {
 		fun onMessageReceived(message : ZIMTextMessage)
 		fun onRoomStateChanged(state : String)
 	}
@@ -185,5 +168,5 @@ class ChatManager(
 		leaveAllRoomsAndLogout()
 		zim?.destroy()
 		zim = null
-	}
+	}*/
 }

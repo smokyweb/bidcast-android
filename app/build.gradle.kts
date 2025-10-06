@@ -75,8 +75,6 @@ android {
     }
 }
 
-
-
 dependencies {
     implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
 
@@ -148,7 +146,7 @@ dependencies {
     implementation(libs.immersionbar)
     implementation(libs.powermenu)
     implementation(libs.socialview.autocomplete)
-    implementation(libs.zim)
+//    implementation(libs.zim)
     implementation(libs.singledateandtimepicker)
 
     implementation(libs.millicast.sdk.android)
@@ -158,7 +156,7 @@ dependencies {
 //    implementation ("com.github.yoanngoular:numpadview:1.0.0")
 
     //ZEGO CLOUD
-    implementation(libs.express.video)
+//    implementation(libs.express.video)
 
     // SOCKET.IO
     implementation("io.socket:socket.io-client:2.1.0") {

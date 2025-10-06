@@ -1,6 +1,5 @@
 package io.bidswipe.app.model
 
-import im.zego.zim.entity.ZIMTextMessage
 import org.json.JSONObject
 
 data class LiveChatModel(
@@ -10,7 +9,7 @@ data class LiveChatModel(
 	val message : String? ,
 ) {
 	companion object {
-		fun fromZIMMessage(message : ZIMTextMessage) : LiveChatModel {
+		/*fun fromZIMMessage(message : ZIMTextMessage) : LiveChatModel {
 			val mData = ZIMExtendedData.fromJson(JSONObject(message.extendedData).toString())
 			val senderImage = mData.userImage
 			val senderId = mData.userId
@@ -22,6 +21,6 @@ data class LiveChatModel(
 				senderId ,
 				message.message
 			)
-		}
+		}*/
 	}
 }

@@ -22,9 +22,6 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import com.gyf.immersionbar.ktx.immersionBar
 import com.gyf.immersionbar.ktx.navigationBarHeight
-import im.zego.zegoexpress.constants.ZegoRoomStateChangedReason
-import im.zego.zegoexpress.constants.ZegoScenario
-import im.zego.zim.entity.ZIMTextMessage
 import io.bidswipe.app.App
 import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseActivity
@@ -182,7 +179,7 @@ class LiveShowActivity : BaseActivity() {
 		initializeStreamingManager()
 
 		bind.more.setHapticClickListener {
-			showMoreSheet()
+//			showMoreSheet()
 		}
 
 		bind.promote.setHapticClickListener {
@@ -227,12 +224,12 @@ class LiveShowActivity : BaseActivity() {
 		bind.message.setEndIconOnClickListener {
 			if (bind.text.value().isNotEmpty()) {
 				val extended = ZIMExtendedData(userImage, userId, userName).toJson()
-				chatManager?.sendTextMessage(roomID, bind.text.value(), extended)
+//				chatManager?.sendTextMessage(roomID, bind.text.value(), extended)
 			}
 		}
 
 		bind.cameraSwitch.setHapticClickListener {
-			streamingManager?.toggleCamera()
+//			streamingManager?.toggleCamera()
 			isFrontCamera = streamingManager?.isUsingFrontCamera() ?: true
 		}
 
@@ -267,7 +264,7 @@ class LiveShowActivity : BaseActivity() {
 
 					log("ROOM ID FOR HOST: $roomID ")
 
-					startPreview()
+//					startPreview()
 
 				}
 
@@ -410,6 +407,7 @@ class LiveShowActivity : BaseActivity() {
 		}
 	}
 
+/*
 	override fun onDestroy() {
 		super.onDestroy()
 
@@ -424,12 +422,13 @@ class LiveShowActivity : BaseActivity() {
 		logoutRoom()
 
 	}
+*/
 
 	private fun initializeStreamingManager() {
 
 		streamingManager = StreamingManager(this)
 
-		streamingManager?.createEngine(Const.APP_ID.toLong(), Const.APP_SIGN, ZegoScenario.GENERAL)
+//		streamingManager?.createEngine(Const.APP_ID.toLong(), Const.APP_SIGN, ZegoScenario.GENERAL)
 
 		// Set up streaming event handlers
 		streamingManager?.onUserJoined = { userId ->
@@ -444,13 +443,13 @@ class LiveShowActivity : BaseActivity() {
 			Toast.makeText(this, "Stream error: $error", Toast.LENGTH_LONG).show()
 		}
 
-		streamingManager?.onPublisherStateChanged = { state, errorCode ->
+		/*streamingManager?.onPublisherStateChanged = { state, errorCode ->
 			if (errorCode != 0) {
 				Toast.makeText(this, "Publisher state: $state, error: $errorCode", Toast.LENGTH_LONG).show()
 			}
-		}
+		}*/
 
-		streamingManager?.onRoomStateChanged = { reason, errorCode ->
+		/*streamingManager?.onRoomStateChanged = { reason, errorCode ->
 			when (reason) {
 				ZegoRoomStateChangedReason.LOGIN_FAILED ->
 					Toast.makeText(this, "Login failed", Toast.LENGTH_LONG).show()
@@ -463,7 +462,7 @@ class LiveShowActivity : BaseActivity() {
 
 				else -> {}
 			}
-		}
+		}*/
 	}
 
 	// Streaming functionality now handled by StreamingManager
@@ -480,7 +479,7 @@ class LiveShowActivity : BaseActivity() {
 			)
 		}
 
-		chatManager?.setListener(object : ChatManager.Listener {
+		/*chatManager?.setListener(object : ChatManager.Listener {
 			override fun onMessageReceived(message: ZIMTextMessage) {
 				log("NEW MESSAGE RECEIVED:\n${message.message}\nExtended Data: ${message.extendedData}")
 				runSafe {
@@ -497,16 +496,17 @@ class LiveShowActivity : BaseActivity() {
 			override fun onRoomStateChanged(state: String) {
 				log("ROOM STATE CHANGED: $state")
 			}
-		})
-		chatManager?.initializeAndLogin(roomID) {
-			val extended = ZIMExtendedData(userImage, userId, userName).toJson()
-			chatManager?.sendTextMessage(roomID, "Active \uD83D\uDC4B", extended)
-		}
+		})*/
+
+//		chatManager?.initializeAndLogin(roomID) {
+//			val extended = ZIMExtendedData(userImage, userId, userName).toJson()
+//			chatManager?.sendTextMessage(roomID, "Active \uD83D\uDC4B", extended)
+//		}
 	}
 	// Event handling now managed by StreamingManager
 
 	fun loginRoom(roomId: String) {
-		streamingManager?.loginRoom(
+		/*streamingManager?.loginRoom(
 			roomId,
 			userId,
 			userName,
@@ -523,10 +523,10 @@ class LiveShowActivity : BaseActivity() {
 			} else {
 				Toast.makeText(this, "Login failed. error = $error", Toast.LENGTH_LONG).show()
 			}
-		}
+		}*/
 	}
 
-	fun logoutRoom() {
+	/*fun logoutRoom() {
 		streamingManager?.logoutRoom()
 	}
 
@@ -545,7 +545,7 @@ class LiveShowActivity : BaseActivity() {
 
 	fun stopPublish() {
 		streamingManager?.stopPublishingStream()
-	}
+	}*/
 
 	fun updateFirebaseNode(data: UpdateLiveStatusResponse.Data?) {
 		val user = data?.user
@@ -781,6 +781,7 @@ class LiveShowActivity : BaseActivity() {
 		shopSheet.show()
 	}
 
+/*
 	fun showMoreSheet() {
 		val moreSheetBind = LiveShowMoreMenuBinding.bind(layoutInflater.inflate(R.layout.live_show_more_menu, null, false))
 		val moreSheet = Alerts.appBottomSheet(this, true, moreSheetBind)
@@ -850,6 +851,7 @@ class LiveShowActivity : BaseActivity() {
 
 		moreSheet.show()
 	}
+*/
 
 	fun showPromoteSheet() {
 		val promoteSheetBind = PromoteShowSheetBinding.bind(

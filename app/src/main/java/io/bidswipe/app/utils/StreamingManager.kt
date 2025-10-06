@@ -3,20 +3,6 @@ package io.bidswipe.app.utils
 import android.app.Application
 import android.content.Context
 import android.view.View
-import im.zego.zegoexpress.ZegoExpressEngine
-import im.zego.zegoexpress.callback.IZegoEventHandler
-import im.zego.zegoexpress.constants.ZegoPlayerState
-import im.zego.zegoexpress.constants.ZegoPublisherState
-import im.zego.zegoexpress.constants.ZegoRoomStateChangedReason
-import im.zego.zegoexpress.constants.ZegoScenario
-import im.zego.zegoexpress.constants.ZegoTrafficControlMinVideoBitrateMode
-import im.zego.zegoexpress.constants.ZegoTrafficControlProperty
-import im.zego.zegoexpress.constants.ZegoUpdateType
-import im.zego.zegoexpress.constants.ZegoViewMode
-import im.zego.zegoexpress.entity.ZegoCanvas
-import im.zego.zegoexpress.entity.ZegoEngineProfile
-import im.zego.zegoexpress.entity.ZegoRoomConfig
-import im.zego.zegoexpress.entity.ZegoUser
 import org.json.JSONObject
 
 class StreamingManager(
@@ -29,11 +15,12 @@ class StreamingManager(
 	var onUserJoined : ((String) -> Unit)? = null
 	var onUserLeft : ((String) -> Unit)? = null
 	var onStreamError : ((String) -> Unit)? = null
-	var onPublisherStateChanged : ((ZegoPublisherState , Int) -> Unit)? = null
-	var onPlayerStateChanged : ((ZegoPlayerState , Int) -> Unit)? = null
-	var onRoomStateChanged : ((ZegoRoomStateChangedReason , Int) -> Unit)? = null
 
-	companion object {
+//	var onPublisherStateChanged : ((ZegoPublisherState , Int) -> Unit)? = null
+//	var onPlayerStateChanged : ((ZegoPlayerState , Int) -> Unit)? = null
+//	var onRoomStateChanged : ((ZegoRoomStateChangedReason , Int) -> Unit)? = null
+
+	/*companion object {
 
 		private var instance : StreamingManager? = null
 
@@ -219,7 +206,7 @@ class StreamingManager(
 		return if (isEngineCreated) {
 			ZegoExpressEngine.getEngine().isMicrophoneMuted
 		} else false
-	}
+	}*/
 
 	fun isUsingFrontCamera() : Boolean = isFrontCamera
 	fun getZoomLevel() : Float = zoomLevel
