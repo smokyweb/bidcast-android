@@ -18,7 +18,6 @@ class WalletFragment : BaseFragment<SellerHubViewModel, FragmentWalletBinding>()
 	override fun getModel(): Class<SellerHubViewModel> = SellerHubViewModel::class.java
 
 	override fun getBind(inflater: LayoutInflater, view: ViewGroup?) = FragmentWalletBinding.inflate(inflater, view, false)
-	private var itemList = mutableListOf("", "", "", "", "")
 
 	private lateinit var adapter: PayoutAdapter
 
@@ -27,6 +26,7 @@ class WalletFragment : BaseFragment<SellerHubViewModel, FragmentWalletBinding>()
 	private val mClick = object : RecyclerClicks {
 
 		override fun itemClick(pos: Int, status: String?) {
+
 		}
 	}
 
@@ -45,9 +45,10 @@ class WalletFragment : BaseFragment<SellerHubViewModel, FragmentWalletBinding>()
 			bind.noInternet.isVisible = false
 		}
 
-
 		val adapter = ViewPagerAdapter(requireActivity(), "wallet")
 		bind.pager.adapter = adapter
+
+		bind.pager.isUserInputEnabled = false
 
 		TabLayoutMediator(bind.tabs, bind.pager) { tab, position ->
 			tab.text = when (position) {

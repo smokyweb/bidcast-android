@@ -145,7 +145,7 @@ dependencies {
     implementation(libs.immersionbar.ktx)
     implementation(libs.immersionbar)
     implementation(libs.powermenu)
-    implementation(libs.socialview.autocomplete)
+//    implementation(libs.socialview.autocomplete)
 //    implementation(libs.zim)
     implementation(libs.singledateandtimepicker)
 

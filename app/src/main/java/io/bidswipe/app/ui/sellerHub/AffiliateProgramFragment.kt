@@ -18,6 +18,7 @@ import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.model.SellModel
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.ui.custom.AppBottomSheet
+import io.bidswipe.app.utils.Const
 import io.bidswipe.app.utils.asMoney
 import io.bidswipe.app.utils.finish
 import io.bidswipe.app.utils.parse
@@ -60,9 +61,15 @@ class AffiliateProgramFragment : BaseFragment<SellerHubViewModel, FragmentAffili
 		}
 
 		bind.share.setHapticClickListener {
+
+			val shareText = buildString {
+				append(Const.BASE_URL)
+				append("/referral-code?referralCode=${bind.referralCode.text}")
+			}
+
 			val shareIntent = Intent(Intent.ACTION_SEND).apply {
 				type = "Text/*"
-				putExtra(Intent.EXTRA_TEXT, "https://play.google.com/store/apps/details?id=io.bidswipe.app&referrer=${bind.referralCode.text}")
+				putExtra(Intent.EXTRA_TEXT, shareText )
 			}
 
 			context?.startActivity(Intent.createChooser(shareIntent, "Share invite link"))

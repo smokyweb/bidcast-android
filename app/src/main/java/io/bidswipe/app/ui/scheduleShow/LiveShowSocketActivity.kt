@@ -93,7 +93,7 @@ class LiveShowSocketActivity : BaseActivity() {
 	private lateinit var commentAdapter: CommentAdapter
 	private val handler = Handler(Looper.getMainLooper())
 	private var commentList = mutableListOf<LiveChatModel?>()
-	var isFrontCamera = false
+	var isFrontCamera = true
 	var showId = ""
 	var showTime = ""
 	private var zoomLevel = 1.0f
@@ -1003,7 +1003,7 @@ class LiveShowSocketActivity : BaseActivity() {
 	private fun initRenderer() {
 		eglBase = EglBase.create()
 		bind.hostView.init(eglBase.eglBaseContext, null)
-		bind.hostView.setMirror(false)
+		bind.hostView.setMirror(true)
 		bind.hostView.setEnableHardwareScaler(true)
 		bind.hostView.setScalingType(RendererCommon.ScalingType.SCALE_ASPECT_FIT)
 	}

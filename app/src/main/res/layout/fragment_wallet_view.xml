@@ -121,7 +121,6 @@
                             android:src="@drawable/ic_processing" />
 
                         <TextView
-                            android:id="@+id/processing"
                             style="@style/BodyMedium"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -130,6 +129,7 @@
                             android:textColor="@color/onSurfaceVariant" />
 
                         <TextView
+                            android:id="@+id/processing"
                             style="@style/TitleLarge"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"

@@ -511,5 +511,11 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
 	
 	suspend fun applyPremierShop(
 	) = call { api.applyPremierShop() }
+
+	suspend fun walletInfo(
+	) = call { api.walletInfo() }
+
+	suspend fun getTipAmount(
+	) = call { api.getTipAmount() }
 	
 }

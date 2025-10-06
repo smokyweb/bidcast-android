@@ -12,6 +12,7 @@ import com.gyf.immersionbar.ktx.immersionBar
 import io.bidswipe.app.base.BaseActivity
 import io.bidswipe.app.controller.StreamPagerAdapter
 import io.bidswipe.app.databinding.ActivityViewLiveShowBinding
+import io.bidswipe.app.model.LiveShowModel
 import io.bidswipe.app.utils.Const
 import io.bidswipe.app.utils.SocketManager
 import io.bidswipe.app.utils.bind
@@ -136,6 +137,18 @@ class ViewLiveShowActivity : BaseActivity() {
 			viewPager.orientation = ViewPager2.ORIENTATION_VERTICAL
 		} else {
 			finishAfterTransition()
+		}
+
+		socketManager?.onRoomCreated { json ->
+
+			val showData = LiveShowModel.fromJson(json)
+
+			if (!streamList.contains(showData.showId)){
+				streamList.add(showData.showId.toString())
+			}
+
+			streamPagerAdapter.notifyDataSetChanged()
+
 		}
 
 		// Initialize ChatManager here if you want the ZIM SDK ready at Activity scope

@@ -10,7 +10,7 @@
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" /> <!-- Permissions required by the App -->
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.VIBRATE" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <uses-feature
         android:glEsVersion="0x00020000"
@@ -36,7 +36,7 @@
         tools:targetApi="31">
         <activity
             android:name="io.bidswipe.app.ui.scheduleShow.ChooseModeActivity"
-            android:exported="false" />
+            android:exported="false"></activity>
         <activity
             android:name="io.bidswipe.app.ui.scheduleShow.DolbyStreamActivity"
             android:exported="false" />
@@ -143,7 +143,18 @@
         </activity>
         <activity
             android:name=".ui.auth.AuthActivity"
-            android:exported="false" />
+            android:exported="true">
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="https" />
+                <data android:host="backend.bidcast.betaplanets.com" />
+                <data android:pathPattern="/referral-code" />
+            </intent-filter>
+        </activity>
         <activity
             android:name="io.bidswipe.app.ui.more.TrustedBuyerActivity"
             android:exported="false" />

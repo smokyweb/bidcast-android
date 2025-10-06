@@ -45,6 +45,7 @@ import io.bidswipe.app.network.response.GetRatingResponse
 import io.bidswipe.app.network.response.GetShippingAddressResponse
 import io.bidswipe.app.network.response.GetStatesResponse
 import io.bidswipe.app.network.response.GetSubCategoriesResponse
+import io.bidswipe.app.network.response.GetTipAmountResponse
 import io.bidswipe.app.network.response.GetTransactionsHistoryResponse
 import io.bidswipe.app.network.response.GetUserProfileResponse
 import io.bidswipe.app.network.response.LoginResponse
@@ -64,6 +65,7 @@ import io.bidswipe.app.network.response.SellerStatusResponse
 import io.bidswipe.app.network.response.SentTipAmountResponse
 import io.bidswipe.app.network.response.SetDefaultAddressResponse
 import io.bidswipe.app.network.response.StoreProductResponse
+import io.bidswipe.app.network.response.WalletInfoResponse
 import io.bidswipe.app.utils.Utils
 import io.bidswipe.app.utils.request
 import okhttp3.MultipartBody
@@ -649,6 +651,14 @@ interface ApiInterface {
 	@POST("api/apply-premier-shop")
 	suspend fun applyPremierShop(
 	) : CommonResponse
+
+	@GET("api/wallet-info")
+	suspend fun walletInfo(
+	) : WalletInfoResponse
+
+	@GET("api/get-tip-amount")
+	suspend fun getTipAmount(
+	) : GetTipAmountResponse
 
 }
 

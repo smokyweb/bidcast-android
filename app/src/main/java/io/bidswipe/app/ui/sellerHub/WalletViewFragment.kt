@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.navigation.fragment.findNavController
-import io.bidswipe.app.App
 import io.bidswipe.app.base.BaseFragment
 import io.bidswipe.app.controller.PayoutAdapter
 import io.bidswipe.app.databinding.FragmentWalletViewBinding
@@ -51,14 +50,9 @@ class WalletViewFragment : BaseFragment<SellerHubViewModel, FragmentWalletViewBi
 //			}
 		}
 
-		App.profileResponse.observe(viewLifecycleOwner) {
-			val walletAmount = it?.walletAmount.toString().toDouble()
-			bind.walletAmount.text = walletAmount.toString().asMoney()
-			bind.available.text = walletAmount.toString().asMoney()
-		}
-
 		bind.loader.isVisible = false
 		viewModel.getPayoutHistory()
+		viewModel.walletInfo()
 		viewModel.getPayoutHistoryRepo.observe(viewLifecycleOwner) {
 			when (it) {
 				is Resource.Success -> {
@@ -93,6 +87,37 @@ class WalletViewFragment : BaseFragment<SellerHubViewModel, FragmentWalletViewBi
 
 			}
 		}
+
+		viewModel.walletInfoRepo.observe(viewLifecycleOwner) {
+			when (it) {
+				is Resource.Success -> {
+					bind.loader.isVisible = false
+                    val mData = it.value.data
+					bind.walletAmount.text = mData?.avaiableBalance.toString().asMoney()
+					bind.available.text = mData?.avaiableForPayout.toString().asMoney()
+					bind.processing.text = mData?.processing.toString().asMoney()
+
+					bind.payoutCard.isVisible = (mData?.avaiableForPayout ?: 0) > 10
+				}
+
+				is Resource.Error -> {
+					bind.loader.isVisible = false
+					it.parse(mCtx, TAG, object : AlertClicks {
+						override fun primaryClick(dialog: AppBottomSheet) {
+							dialog.dismiss()
+						}
+
+						override fun secondaryClick(dialog: AppBottomSheet) {
+							dialog.dismiss()
+						}
+					})
+				}
+
+				else -> {}
+
+			}
+		}
+
 
 		/*		viewModel.checkKyc()
 				viewModel.checkKycRepo.observe(viewLifecycleOwner) {

@@ -18,12 +18,14 @@ import io.bidswipe.app.network.response.GetOrdersResponse
 import io.bidswipe.app.network.response.GetPaymentCardsResponse
 import io.bidswipe.app.network.response.GetPremierShopResponse
 import io.bidswipe.app.network.response.GetPromoteToolsResponse
+import io.bidswipe.app.network.response.GetTipAmountResponse
 import io.bidswipe.app.network.response.GetTransactionsHistoryResponse
 import io.bidswipe.app.network.response.PayoutHistoryResponse
 import io.bidswipe.app.network.response.SellerStatusResponse
 import io.bidswipe.app.network.response.StorePhoneNumberResponse
 import io.bidswipe.app.network.response.StoreSellerIdResponse
 import io.bidswipe.app.network.response.UpdateOfferResponse
+import io.bidswipe.app.network.response.WalletInfoResponse
 import io.bidswipe.app.utils.Const.NO_INTERNET_ERROR
 import io.bidswipe.app.utils.NetworkMonitor
 import kotlinx.coroutines.launch
@@ -373,6 +375,32 @@ class SellerHubViewModel @Inject constructor(
 			return@launch
 		}
 		_applyPremierShopResponse.value = repo.applyPremierShop()
+	}
+
+	private var _walletInfoResponse = MutableLiveData<Resource<WalletInfoResponse>>()
+	val walletInfoRepo : MutableLiveData<Resource<WalletInfoResponse>>
+		get() = _walletInfoResponse
+
+	fun walletInfo(
+	) = viewModelScope.launch {
+		if (!networkMonitor.hasInternet()) {
+			_walletInfoResponse.value = NO_INTERNET_ERROR
+			return@launch
+		}
+		_walletInfoResponse.value = repo.walletInfo()
+	}
+
+	private var getTipAmountResponse = MutableLiveData<Resource<GetTipAmountResponse>>()
+	val getTipAmountRepo : MutableLiveData<Resource<GetTipAmountResponse>>
+		get() = getTipAmountResponse
+
+	fun getTipAmount(
+	) = viewModelScope.launch {
+		if (!networkMonitor.hasInternet()) {
+			getTipAmountResponse.value = NO_INTERNET_ERROR
+			return@launch
+		}
+		getTipAmountResponse.value = repo.getTipAmount()
 	}
 
 }

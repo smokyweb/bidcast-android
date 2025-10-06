@@ -186,7 +186,8 @@
 # Millicast SDK
 # ============================================================================
 -keep class com.millicast.** { *; }
--dontwarn com.millicast.**
+-keepclassmembers class com.millicast.** { *; }
+
 
 # ============================================================================
 # Custom App Classes - Keep important base classes

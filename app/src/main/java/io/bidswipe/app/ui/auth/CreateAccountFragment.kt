@@ -26,8 +26,19 @@ class CreateAccountFragment : BaseFragment<AuthViewModel, FragmentCreateAccountB
 	override fun getBind(inflater: LayoutInflater, view: ViewGroup?) =
 		FragmentCreateAccountBinding.inflate(inflater, view, false)
 
+	var referralCode = ""
+
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		super.onViewCreated(view, savedInstanceState)
+
+		referralCode = arguments?.getString("referralCode").toString()
+
+		if (referralCode.isNotEmpty()){
+
+			bind.referralCode.setText(referralCode)
+		}
+
+	log("REFERRAL CODE : $referralCode")
 
 		bind.header.onBackClick {
 			findNavController().popBackStack()
