@@ -40,17 +40,6 @@ class InventoryFragment : BaseFragment<SellerHubViewModel, FragmentInventoryBind
 	private var isLoading = false
 	private var page = 1
 	private var selectedTab = "active"
-	private var from: String? = null
-
-	private val mClick = object : RecyclerClicks {
-
-		override fun itemClick(pos: Int, status: String?) {
-			startActivity(mCtx.toListProduct().putExtra("product", itemList[pos]))
-
-		}
-
-	}
-
 
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		super.onViewCreated(view, savedInstanceState)

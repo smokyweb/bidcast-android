@@ -62,4 +62,8 @@
 
     <style name="Theme.Bidswipe.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
+    <style name="RemoveSplash" parent="Theme.Bidswipe">
+        <item name="android:windowIsTranslucent">true</item>
+    </style>
+
 </resources>

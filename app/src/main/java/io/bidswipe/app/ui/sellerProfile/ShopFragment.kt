@@ -34,7 +34,6 @@ class ShopFragment : BaseFragment<SellerViewModel , FragmentShopBinding>() {
 	private val mClick = object : RecyclerClicks {
 		override fun itemClick(pos : Int , status : String?) {
 			startActivity(Intent(mCtx , ProductDetailsActivity::class.java).putExtra("productId" , productList[pos]?.id.toString()))
-
 		}
 	}
 

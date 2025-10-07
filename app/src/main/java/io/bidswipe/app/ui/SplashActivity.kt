@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
+import android.view.View
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import io.bidswipe.app.R
@@ -19,7 +20,7 @@ class SplashActivity : AppCompatActivity() {
 		super.onCreate(savedInstanceState)
 		enableEdgeToEdge()
 		setContentView(R.layout.activity_splash)
-
+	    
         val referrer = intent.data?.getQueryParameter("referrer")
 
         Log.d("TAG", "onCreate: $referrer ")
@@ -29,8 +30,6 @@ class SplashActivity : AppCompatActivity() {
 		} else {
 			// Use Install Referrer API to get the referrer code
 		}
-
-//		startActivity(Intent(this@SplashActivity, ChooseModeActivity::class.java))
 
         Handler(Looper.getMainLooper()).postDelayed({
 
