@@ -21,10 +21,13 @@ import io.bidswipe.app.network.response.GetPromoteToolsResponse
 import io.bidswipe.app.network.response.GetTipAmountResponse
 import io.bidswipe.app.network.response.GetTransactionsHistoryResponse
 import io.bidswipe.app.network.response.PayoutHistoryResponse
+import io.bidswipe.app.network.response.SalesAnalyticsResponse
+import io.bidswipe.app.network.response.SellerAnalyticsResponse
 import io.bidswipe.app.network.response.SellerStatusResponse
 import io.bidswipe.app.network.response.StorePhoneNumberResponse
 import io.bidswipe.app.network.response.StoreSellerIdResponse
 import io.bidswipe.app.network.response.UpdateOfferResponse
+import io.bidswipe.app.network.response.VisitorsAnalyticsResponse
 import io.bidswipe.app.network.response.WalletInfoResponse
 import io.bidswipe.app.utils.Const.NO_INTERNET_ERROR
 import io.bidswipe.app.utils.NetworkMonitor
@@ -401,6 +404,45 @@ class SellerHubViewModel @Inject constructor(
 			return@launch
 		}
 		getTipAmountResponse.value = repo.getTipAmount()
+	}
+
+	private var getSellerAnalyticsResponse = MutableLiveData<Resource<SellerAnalyticsResponse>>()
+	val getSellerAnalyticsRepo : MutableLiveData<Resource<SellerAnalyticsResponse>>
+		get() = getSellerAnalyticsResponse
+
+	fun getSellerAnalytics(
+	) = viewModelScope.launch {
+		if (!networkMonitor.hasInternet()) {
+			getSellerAnalyticsResponse.value = NO_INTERNET_ERROR
+			return@launch
+		}
+		getSellerAnalyticsResponse.value = repo.getSellerAnalytics()
+	}
+
+	private var getVisitorsAnalyticsResponse = MutableLiveData<Resource<VisitorsAnalyticsResponse>>()
+	val getVisitorsAnalyticsRepo : MutableLiveData<Resource<VisitorsAnalyticsResponse>>
+		get() = getVisitorsAnalyticsResponse
+
+	fun getVisitorsAnalytics(
+	) = viewModelScope.launch {
+		if (!networkMonitor.hasInternet()) {
+			getVisitorsAnalyticsResponse.value = NO_INTERNET_ERROR
+			return@launch
+		}
+		getVisitorsAnalyticsResponse.value = repo.getVisitorsAnalytics()
+	}
+
+	private var getSalesPerformanceResponse = MutableLiveData<Resource<SalesAnalyticsResponse>>()
+	val getSalesPerformanceRepo : MutableLiveData<Resource<SalesAnalyticsResponse>>
+		get() = getSalesPerformanceResponse
+
+	fun getSalesPerformance(
+	) = viewModelScope.launch {
+		if (!networkMonitor.hasInternet()) {
+			getSalesPerformanceResponse.value = NO_INTERNET_ERROR
+			return@launch
+		}
+		getSalesPerformanceResponse.value = repo.getSalesPerformance()
 	}
 
 }

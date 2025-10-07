@@ -5,10 +5,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.google.android.material.tabs.TabLayoutMediator
+import io.bidswipe.app.App
 import io.bidswipe.app.base.BaseFragment
 import io.bidswipe.app.controller.ViewPagerAdapter
 import io.bidswipe.app.databinding.FragmentAnalyticsBinding
 import io.bidswipe.app.utils.finish
+import io.bidswipe.app.utils.loadUrl
 
 class AnalyticsFragment : BaseFragment<SellerHubViewModel , FragmentAnalyticsBinding>() {
 	override fun getModel() : Class<SellerHubViewModel> = SellerHubViewModel::class.java
@@ -33,10 +35,19 @@ class AnalyticsFragment : BaseFragment<SellerHubViewModel , FragmentAnalyticsBin
 				0 -> "Over All"
 				1 -> "Livestream"
 				2 -> "Promote"
-				3 -> "Trust"
-				else -> ""
+				else -> "Over All"
 			}
 		}.attach()
+
+		bind.pager.isUserInputEnabled = false
+
+		val userData = App.profileResponse.value
+
+		bind.userName.text = userData?.name
+
+		bind.bio.text = userData?.bio
+
+		bind.profileImage.loadUrl(mCtx,userData?.profileImage ?:"")
 
 	}
 

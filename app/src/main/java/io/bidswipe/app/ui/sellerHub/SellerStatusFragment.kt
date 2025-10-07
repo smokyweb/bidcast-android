@@ -24,7 +24,6 @@ class SellerStatusFragment : BaseFragment<SellerHubViewModel, FragmentSellerStat
 		view: ViewGroup?,
 	) = FragmentSellerStatusBinding.inflate(inflater, view, false)
 
-
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		super.onViewCreated(view, savedInstanceState)
 
@@ -34,7 +33,6 @@ class SellerStatusFragment : BaseFragment<SellerHubViewModel, FragmentSellerStat
 
 		bind.contactButton.setHapticClickListener {
 			startActivity(Intent(mCtx, MoreActivity::class.java).putExtra("slug", "contactUs"))
-
 		}
 
 		viewModel.getSellerStatus()
@@ -56,8 +54,6 @@ class SellerStatusFragment : BaseFragment<SellerHubViewModel, FragmentSellerStat
 						bind.sender.status.text = liveSellVendor.status
 						bind.sender.title.text = liveSellVendor.title
 						bind.sender.subTitle.text = "Submitted: ${liveSellVendor.submitted}"
-
-
 					}
 				}
 

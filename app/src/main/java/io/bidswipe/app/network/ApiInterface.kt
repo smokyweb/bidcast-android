@@ -61,10 +61,13 @@ import io.bidswipe.app.network.response.UserProfileResponse
 import io.bidswipe.app.network.response.UserSearchingResponse
 import io.bidswipe.app.network.response.PageUrlResponse
 import io.bidswipe.app.network.response.PayoutHistoryResponse
+import io.bidswipe.app.network.response.SalesAnalyticsResponse
+import io.bidswipe.app.network.response.SellerAnalyticsResponse
 import io.bidswipe.app.network.response.SellerStatusResponse
 import io.bidswipe.app.network.response.SentTipAmountResponse
 import io.bidswipe.app.network.response.SetDefaultAddressResponse
 import io.bidswipe.app.network.response.StoreProductResponse
+import io.bidswipe.app.network.response.VisitorsAnalyticsResponse
 import io.bidswipe.app.network.response.WalletInfoResponse
 import io.bidswipe.app.utils.Utils
 import io.bidswipe.app.utils.request
@@ -659,6 +662,18 @@ interface ApiInterface {
 	@GET("api/get-tip-amount")
 	suspend fun getTipAmount(
 	) : GetTipAmountResponse
+
+	@GET("api/seller-analytic")
+	suspend fun getSellerAnalytics(
+	) : SellerAnalyticsResponse
+
+	@GET("api/seller/visitor-analytics")
+	suspend fun getVisitorsAnalytics(
+	) : VisitorsAnalyticsResponse
+
+	@GET("api/seller/sales-performance")
+	suspend fun getSalesPerformance(
+	) : SalesAnalyticsResponse
 
 }
 

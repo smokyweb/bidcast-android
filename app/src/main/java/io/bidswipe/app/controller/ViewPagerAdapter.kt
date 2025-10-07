@@ -33,8 +33,7 @@ class ViewPagerAdapter(fragmentActivity : FragmentActivity , type : String) :
 			listOf(
 				OverAllFragment() ,
 				BidsFragment() ,
-				OfferFragment() ,
-				PurchasesFragment()
+				OfferFragment()
 			)
 		}
 

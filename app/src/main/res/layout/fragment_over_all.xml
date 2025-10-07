@@ -20,10 +20,12 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:background="@drawable/card_8"
+            android:layout_marginHorizontal="@dimen/half_margin"
             android:orientation="vertical"
             android:padding="@dimen/half_margin">
 
             <TextView
+                android:id="@+id/items"
                 style="@style/HeadlineMedium"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -44,11 +46,13 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
+            android:layout_marginHorizontal="@dimen/half_margin"
             android:background="@drawable/card_8"
             android:orientation="vertical"
             android:padding="@dimen/half_margin">
 
             <TextView
+                android:id="@+id/revenue"
                 style="@style/HeadlineMedium"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -69,11 +73,13 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
+            android:layout_marginHorizontal="@dimen/half_margin"
             android:background="@drawable/card_8"
             android:orientation="vertical"
             android:padding="@dimen/half_margin">
 
             <TextView
+                android:id="@+id/rating"
                 style="@style/HeadlineMedium"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -101,15 +107,22 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="180dp"
+        android:layout_height="240dp"
         android:gravity="center">
 
         <androidx.appcompat.widget.AppCompatImageView
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:alpha="0.6"
+            android:visibility="gone"
             android:src="@drawable/ic_graph"
             app:layout_constraintDimensionRatio="7:4" />
+
+        <com.github.mikephil.charting.charts.LineChart
+            android:id="@+id/salesChart"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            />
 
     </LinearLayout>
 
@@ -130,7 +143,15 @@
             android:layout_height="48dp"
             android:alpha="0.6"
             android:src="@drawable/ic_graph"
+            android:visibility="gone"
             app:layout_constraintDimensionRatio="7:4" />
+
+        <com.github.mikephil.charting.charts.LineChart
+            android:id="@+id/visitorChart"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            />
+
 
     </LinearLayout>
 
@@ -143,6 +164,12 @@
         app:spanCount="2"
         tools:itemCount="4"
         tools:listitem="@layout/benifits_item" />
+
+    <io.bidswipe.app.ui.custom.LoaderView
+        android:id="@+id/loader"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"/>
 
 
 </LinearLayout>

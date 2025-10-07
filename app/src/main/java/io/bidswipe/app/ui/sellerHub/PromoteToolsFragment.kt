@@ -18,35 +18,34 @@ import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.setHapticClickListener
 import io.bidswipe.app.utils.toTutorials
 
-class PromoteToolsFragment : BaseFragment<SellerHubViewModel , FragmentPromoteToolsBinding>() {
-	override fun getModel() : Class<SellerHubViewModel> = SellerHubViewModel::class.java
+class PromoteToolsFragment : BaseFragment<SellerHubViewModel, FragmentPromoteToolsBinding>() {
+	override fun getModel(): Class<SellerHubViewModel> = SellerHubViewModel::class.java
 
 	override fun getBind(
-        inflater : LayoutInflater ,
-        view : ViewGroup? ,
-    ) = FragmentPromoteToolsBinding.inflate(inflater , view , false)
+		inflater: LayoutInflater,
+		view: ViewGroup?,
+	) = FragmentPromoteToolsBinding.inflate(inflater, view, false)
 
 	private var gridList = mutableListOf<GetPromoteToolsResponse.Data.Feature?>()
-	private lateinit var gridAdapter : PromoteFeatureAdapter
+	private lateinit var gridAdapter: PromoteFeatureAdapter
 
 	private val mClick = object : RecyclerClicks {
-		override fun itemClick(pos : Int , status : String?) {
+		override fun itemClick(pos: Int, status: String?) {
 		}
-
 	}
 
-	override fun onViewCreated(view : View , savedInstanceState : Bundle?) {
-		super.onViewCreated(view , savedInstanceState)
+	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+		super.onViewCreated(view, savedInstanceState)
 
 		bind.header.onBackClick {
 			finish()
 		}
 
-		gridAdapter = PromoteFeatureAdapter(gridList , mClick)
+		gridAdapter = PromoteFeatureAdapter(gridList, mClick)
 		bind.gridRecycler.adapter = gridAdapter
 
-        bind.startLearning.setHapticClickListener {
-			startActivity(mCtx.toTutorials().putExtra("type" , "promoteTools"))
+		bind.startLearning.setHapticClickListener {
+			startActivity(mCtx.toTutorials().putExtra("slug", "promoteTools"))
 		}
 
 		bind.loader.isVisible = true
@@ -70,16 +69,15 @@ class PromoteToolsFragment : BaseFragment<SellerHubViewModel , FragmentPromoteTo
 
 					bind.loader.isVisible = false
 
-					it.parse(mCtx , TAG , object : AlertClicks {
-						override fun primaryClick(dialog : AppBottomSheet) {
+					it.parse(mCtx, TAG, object : AlertClicks {
+						override fun primaryClick(dialog: AppBottomSheet) {
 							dialog.dismiss()
-
 						}
 
-						override fun secondaryClick(dialog : AppBottomSheet) {
+						override fun secondaryClick(dialog: AppBottomSheet) {
 							dialog.dismiss()
-
 						}
+
 					})
 
 				}

@@ -13,10 +13,7 @@
         app:headerMode="BACK_BUTTON_TITLE_ACTION"
         app:headerTitle="@string/analytics"
         app:layout_constraintTop_toTopOf="parent"
-        app:primaryIconDrawable="@drawable/ic_setting"
-        app:showBackButton="true"
-        app:showPrimaryIcon="true"
-        app:showSecondaryIcon="false" />
+        app:showBackButton="true" />
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
@@ -46,7 +43,7 @@
                     app:cardElevation="0dp">
 
                     <androidx.appcompat.widget.AppCompatImageView
-                        android:id="@+id/icon"
+                        android:id="@+id/profileImage"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:src="@drawable/user_image" />
@@ -61,14 +58,14 @@
                     android:orientation="vertical">
 
                     <TextView
-                        android:id="@+id/title"
+                        android:id="@+id/userName"
                         style="@style/TitleLarge"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="John Smith" />
 
                     <TextView
-                        android:id="@+id/sub_title"
+                        android:id="@+id/bio"
                         style="@style/BodyMedium"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"

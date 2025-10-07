@@ -148,6 +148,7 @@ dependencies {
 //    implementation(libs.socialview.autocomplete)
 //    implementation(libs.zim)
     implementation(libs.singledateandtimepicker)
+    implementation(libs.mpandroidchart)
 
     implementation(libs.millicast.sdk.android)
 

@@ -517,5 +517,14 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
 
 	suspend fun getTipAmount(
 	) = call { api.getTipAmount() }
+
+	suspend fun getSellerAnalytics(
+	) = call { api.getSellerAnalytics() }
+
+	suspend fun getVisitorsAnalytics(
+	) = call { api.getVisitorsAnalytics() }
+
+	suspend fun getSalesPerformance(
+	) = call { api.getSalesPerformance() }
 	
 }

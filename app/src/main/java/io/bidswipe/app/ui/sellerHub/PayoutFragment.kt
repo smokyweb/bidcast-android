@@ -34,7 +34,7 @@ class PayoutFragment : BaseFragment<SellerHubViewModel, FragmentPayoutBinding>()
 		
 		val walletAmount = App.profileResponse.value?.walletAmount.toString().toDouble()
 		bind.walletAmount.text= buildSpannedString {
-			append("Wallet Amount : ")
+			append("Available for payout : ")
 			append("$")
 			append(walletAmount.toString())
 		}

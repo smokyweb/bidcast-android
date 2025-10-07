@@ -14,10 +14,7 @@
         app:headerMode="BACK_BUTTON_TITLE_ACTION"
         app:headerTitle="@string/offers"
         app:layout_constraintTop_toTopOf="parent"
-        app:primaryIconDrawable="@drawable/ic_setting"
-        app:showBackButton="true"
-        app:showPrimaryIcon="true"
-        app:showSecondaryIcon="false" />
+        app:showBackButton="true" />
 
     <LinearLayout
         android:id="@+id/orders"
