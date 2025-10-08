@@ -6,8 +6,7 @@ import androidx.activity.viewModels
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import com.canhub.cropper.CropImageContract
-import io.bidswipe.app.R
-import io.bidswipe.app.R.*
+import io.bidswipe.app.R.color
 import io.bidswipe.app.base.BaseActivity
 import io.bidswipe.app.databinding.ActivityTrustedBuyerBinding
 import io.bidswipe.app.interfaces.AlertClicks
@@ -32,7 +31,7 @@ class TrustedBuyerActivity : BaseActivity() {
 		if (result.isSuccessful) {
 			val imageUri = result.uriContent
 
-			val imagePath = result.getUriFilePath(this , true)
+			val imagePath = result.getUriFilePath(this, true)
 
 			bind.uploadLayout.isVisible = false
 			bind.imgCard.isVisible = true
@@ -44,7 +43,7 @@ class TrustedBuyerActivity : BaseActivity() {
 		}
 	}
 
-	override fun onCreate(savedInstanceState : Bundle?) {
+	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
 		setContentView(bind.root)
 
@@ -52,32 +51,32 @@ class TrustedBuyerActivity : BaseActivity() {
 			finish()
 		}
 
-        bind.fileBtn.setHapticClickListener {
+		bind.fileBtn.setHapticClickListener {
 			requestPerms(Const.STR_PERMS) { per ->
 				if (per) {
-					imageResult.launch(Utils.initCrop(this , isCamera = true , isGallery = true))
+					imageResult.launch(Utils.initCrop(this, isCamera = true, isGallery = true))
 				}
 			}
 		}
 
-        bind.imgCard.setHapticClickListener {
+		bind.imgCard.setHapticClickListener {
 			requestPerms(Const.STR_PERMS) { per ->
 				if (per) {
-					imageResult.launch(Utils.initCrop(this , isCamera = true , isGallery = true))
+					imageResult.launch(Utils.initCrop(this, isCamera = true, isGallery = true))
 				}
 			}
 		}
 
-        bind.submit.setHapticClickListener {
+		bind.submit.setHapticClickListener {
 
 			if (idPhoto.isEmpty()) {
-				Alerts.error(this , "Please Select an Id")
+				Alerts.error(this, "Please Select an Id")
 
 			} else {
 				bind.loader.isVisible = true
 
 				val imageName = System.currentTimeMillis().toString() + "_id_photo.jpeg"
-				val idPart = Utils.imagePart("image" , imageName , File(idPhoto))
+				val idPart = Utils.imagePart("image", imageName, File(idPhoto))
 
 				viewModel.storeBuyerIdentity(idPart)
 			}
@@ -102,40 +101,40 @@ class TrustedBuyerActivity : BaseActivity() {
 							bind.uploadLayout.isVisible = false
 							bind.imgCard.isVisible = true
 
-							bind.img.loadUrl(this , mData.image.toString())
+							bind.img.loadUrl(this, mData.image.toString())
 
 							when (mData.status) {
 								"rejected" -> {
 									bind.firstDivider.dividerColor =
-										ContextCompat.getColor(this , color.primary)
+										ContextCompat.getColor(this, color.primary)
 
 									bind.secondCard.setCardBackgroundColor(
 										ColorStateList.valueOf(
-											ContextCompat.getColor(this , R.color.primary)
+											ContextCompat.getColor(this, color.primary)
 										)
 									)
 
 									bind.secondText.setTextColor(
 										ContextCompat.getColor(
-											this ,
-											R.color.background
+											this,
+											color.background
 										)
 									)
 
 									bind.secondDivider.dividerColor =
-										ContextCompat.getColor(this , color.primary)
+										ContextCompat.getColor(this, color.primary)
 									bind.thirdCard.setCardBackgroundColor(
 										ColorStateList.valueOf(
-											ContextCompat.getColor(this , R.color.error)
+											ContextCompat.getColor(this, color.error)
 										)
 									)
 
-									bind.thirdText.setText("!")
+									bind.thirdText.text = "!"
 
 									bind.thirdText.setTextColor(
 										ContextCompat.getColor(
-											this ,
-											R.color.background
+											this,
+											color.background
 										)
 									)
 
@@ -143,8 +142,8 @@ class TrustedBuyerActivity : BaseActivity() {
 
 									bind.finalStatus.setTextColor(
 										ContextCompat.getColor(
-											this ,
-											R.color.error
+											this,
+											color.error
 										)
 									)
 
@@ -154,33 +153,33 @@ class TrustedBuyerActivity : BaseActivity() {
 
 								"verified" -> {
 									bind.firstDivider.dividerColor =
-										ContextCompat.getColor(this , color.primary)
+										ContextCompat.getColor(this, color.primary)
 
 									bind.secondCard.setCardBackgroundColor(
 										ColorStateList.valueOf(
-											ContextCompat.getColor(this , R.color.primary)
+											ContextCompat.getColor(this, color.primary)
 										)
 									)
 
 									bind.secondText.setTextColor(
 										ContextCompat.getColor(
-											this ,
-											R.color.background
+											this,
+											color.background
 										)
 									)
 
 									bind.secondDivider.dividerColor =
-										ContextCompat.getColor(this , color.primary)
+										ContextCompat.getColor(this, color.primary)
 									bind.thirdCard.setCardBackgroundColor(
 										ColorStateList.valueOf(
-											ContextCompat.getColor(this , R.color.primary)
+											ContextCompat.getColor(this, color.primary)
 										)
 									)
 
 									bind.thirdText.setTextColor(
 										ContextCompat.getColor(
-											this ,
-											R.color.background
+											this,
+											color.background
 										)
 									)
 
@@ -191,41 +190,36 @@ class TrustedBuyerActivity : BaseActivity() {
 								else -> {
 
 									bind.firstDivider.dividerColor =
-										ContextCompat.getColor(this , color.primary)
+										ContextCompat.getColor(this, color.primary)
 									bind.secondCard.setCardBackgroundColor(
 										ColorStateList.valueOf(
-											ContextCompat.getColor(this , R.color.primary)
+											ContextCompat.getColor(this, color.primary)
 										)
 									)
 
 									bind.secondText.setTextColor(
 										ContextCompat.getColor(
-											this ,
-											R.color.background
+											this,
+											color.background
 										)
 									)
+
+									bind.submit.isVisible = false
+
 								}
-
-
 							}
-
-
-						} else {
-
 						}
-
-
 					}
 				}
 
 				is Resource.Error -> {
 					bind.loader.isVisible = false
-					it.parse(this , TAG , object : AlertClicks {
-						override fun primaryClick(dialog : AppBottomSheet) {
+					it.parse(this, TAG, object : AlertClicks {
+						override fun primaryClick(dialog: AppBottomSheet) {
 							dialog.dismiss()
 						}
 
-						override fun secondaryClick(dialog : AppBottomSheet) {
+						override fun secondaryClick(dialog: AppBottomSheet) {
 							dialog.dismiss()
 						}
 					})
@@ -242,7 +236,7 @@ class TrustedBuyerActivity : BaseActivity() {
 					runSafe {
 						bind.loader.isVisible = false
 
-						val mData = it.value.data
+						it.value.data
 
 						viewModel.fetchBuyerIdentity()
 
@@ -251,12 +245,12 @@ class TrustedBuyerActivity : BaseActivity() {
 
 				is Resource.Error -> {
 					bind.loader.isVisible = false
-					it.parse(this , TAG , object : AlertClicks {
-						override fun primaryClick(dialog : AppBottomSheet) {
+					it.parse(this, TAG, object : AlertClicks {
+						override fun primaryClick(dialog: AppBottomSheet) {
 							dialog.dismiss()
 						}
 
-						override fun secondaryClick(dialog : AppBottomSheet) {
+						override fun secondaryClick(dialog: AppBottomSheet) {
 							dialog.dismiss()
 						}
 					})

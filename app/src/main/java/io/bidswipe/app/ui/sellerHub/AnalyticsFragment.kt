@@ -9,6 +9,7 @@ import io.bidswipe.app.App
 import io.bidswipe.app.base.BaseFragment
 import io.bidswipe.app.controller.ViewPagerAdapter
 import io.bidswipe.app.databinding.FragmentAnalyticsBinding
+import io.bidswipe.app.utils.asCapital
 import io.bidswipe.app.utils.finish
 import io.bidswipe.app.utils.loadUrl
 
@@ -43,7 +44,7 @@ class AnalyticsFragment : BaseFragment<SellerHubViewModel , FragmentAnalyticsBin
 
 		val userData = App.profileResponse.value
 
-		bind.userName.text = userData?.name
+		bind.userName.text = userData?.name?.asCapital()
 
 		bind.bio.text = userData?.bio
 

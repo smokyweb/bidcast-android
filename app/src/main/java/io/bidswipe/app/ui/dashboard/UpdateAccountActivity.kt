@@ -13,6 +13,7 @@ import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.utils.Alerts
 import io.bidswipe.app.utils.Const
 import io.bidswipe.app.utils.Utils
+import io.bidswipe.app.utils.asCapital
 import io.bidswipe.app.utils.bind
 import io.bidswipe.app.utils.hideKeyboard
 import io.bidswipe.app.utils.loadUrl
@@ -88,8 +89,8 @@ class UpdateAccountActivity : BaseActivity() {
 				is Resource.Success -> {
 					bind.loader.isVisible = false
 					val mData = it.value.data
-					bind.firstName.setText(mData?.firstName.toString().uppercase())
-					bind.lastName.setText(mData?.lastName.toString().uppercase())
+					bind.firstName.setText(mData?.firstName?.asCapital())
+					bind.lastName.setText(mData?.lastName?.asCapital())
 					bind.userName.setText(mData?.username)
 					bind.email.setText(mData?.email ?: "")
 					bind.bio.setText(mData?.bio)
@@ -113,7 +114,6 @@ class UpdateAccountActivity : BaseActivity() {
 				else -> {}
 			}
 		}
-
 
 		viewModel.updateProfileRepo.observe(this) {
 			when (it) {

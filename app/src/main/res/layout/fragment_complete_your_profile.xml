@@ -62,12 +62,11 @@
                     app:layout_constraintTop_toTopOf="parent">
 
                     <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/userProfile"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_gravity="center"
-                        android:scaleType="centerInside"
-                        android:src="@drawable/ic_person_outlined"
-                        android:tint="@color/outlineVariant" />
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/ic_person_outlined" />
 
                 </com.google.android.material.card.MaterialCardView>
 
@@ -98,6 +97,7 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
 
 
+
             <TextView
                 style="@style/BodyLarge"
                 android:layout_width="wrap_content"
@@ -114,22 +114,48 @@
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/half_margin"
                 android:layout_marginVertical="@dimen/half_margin"
-                android:text="@string/full_name" />
+                android:text="@string/first_name" />
 
             <com.google.android.material.textfield.TextInputLayout
                 style="@style/inputBoxStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/half_margin"
-                app:startIconDrawable="@drawable/ic_person_outlined">
+                android:layout_marginHorizontal="@dimen/half_margin"
+                android:layout_marginBottom="@dimen/half_margin">
 
                 <com.google.android.material.textfield.MaterialAutoCompleteTextView
-                    android:id="@+id/name"
+                    android:id="@+id/firstName"
+                    style="@style/inputTextStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:capitalize="characters"
+                    android:hint="@string/enter_your_first_name"
+                    android:inputType="text" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <TextView
+                style="@style/TitleSmall"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/half_margin"
+                android:layout_marginVertical="@dimen/half_margin"
+                android:text="@string/last_name" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/inputBoxStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/half_margin">
+
+                <com.google.android.material.textfield.MaterialAutoCompleteTextView
+                    android:id="@+id/last_name"
                     style="@style/inputTextStyle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="@dimen/half_margin"
-                    android:hint="@string/enter_your_full_name"
+                    android:capitalize="characters"
+                    android:hint="@string/enter_your_last_name"
                     android:inputType="text" />
 
             </com.google.android.material.textfield.TextInputLayout>
@@ -150,7 +176,7 @@
                 android:layout_marginBottom="@dimen/half_margin">
 
                 <com.google.android.material.textfield.MaterialAutoCompleteTextView
-                    android:id="@+id/email"
+                    android:id="@+id/userName"
                     style="@style/inputTextStyle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -175,7 +201,7 @@
                 android:layout_marginBottom="@dimen/half_margin">
 
                 <com.google.android.material.textfield.MaterialAutoCompleteTextView
-                    android:id="@+id/password"
+                    android:id="@+id/bio"
                     style="@style/inputTextStyle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -191,7 +217,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginVertical="@dimen/margin"
-                android:backgroundTint="@color/secondary"
                 android:text="@string/_continue" />
 
 
@@ -199,5 +224,10 @@
 
     </androidx.core.widget.NestedScrollView>
 
+    <io.bidswipe.app.ui.custom.LoaderView
+        android:id="@+id/loader"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

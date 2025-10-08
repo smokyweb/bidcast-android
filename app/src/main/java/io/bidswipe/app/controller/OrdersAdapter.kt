@@ -39,7 +39,7 @@ class OrdersAdapter(
 			
 			bind.userImage.loadUrl(mCtx, item?.user?.profileImage.toString())
 			
-			bind.sellerName.text = item?.user?.name
+			bind.sellerName.text = item?.user?.name?.asCapital()
 			bind.sellerAddress.text = item?.shippingAddress
 			
 		}

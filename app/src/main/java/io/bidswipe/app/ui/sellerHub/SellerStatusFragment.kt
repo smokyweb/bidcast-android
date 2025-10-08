@@ -11,6 +11,7 @@ import io.bidswipe.app.interfaces.AlertClicks
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.ui.more.MoreActivity
+import io.bidswipe.app.utils.asCapital
 import io.bidswipe.app.utils.finish
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.setHapticClickListener
@@ -46,12 +47,12 @@ class SellerStatusFragment : BaseFragment<SellerHubViewModel, FragmentSellerStat
 					val liveSellVendor = mData?.liveSellVendor
 
 					if (marketplaceVendor != null) {
-						bind.vendor.status.text = marketplaceVendor.status
+						bind.vendor.status.text = marketplaceVendor.status?.asCapital()
 						bind.vendor.title.text = marketplaceVendor.title
 						bind.vendor.subTitle.text = "Seller Rating: ${marketplaceVendor.sellerRating}/5"
 					}
 					if (liveSellVendor != null) {
-						bind.sender.status.text = liveSellVendor.status
+						bind.sender.status.text = liveSellVendor.status?.asCapital()
 						bind.sender.title.text = liveSellVendor.title
 						bind.sender.subTitle.text = "Submitted: ${liveSellVendor.submitted}"
 					}

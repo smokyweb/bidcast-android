@@ -332,13 +332,12 @@ class SellerVerificationActivity : BaseActivity() {
 					if (mData?.idCard?.isNotEmpty() == true && mData.image?.isNotEmpty() == true) {
 						bind.cardImage.isVisible = true
 						bind.selfie.isVisible = true
+						bind.cardImage.loadUrl(this, mData.idCard)
+						bind.selfie.loadUrl(this, mData.image)
 					} else {
-						bind.cardImage.isVisible = true
-						bind.selfie.isVisible = true
+						bind.cardImage.isVisible = false
+						bind.selfie.isVisible = false
 					}
-
-					bind.cardImage.loadUrl(this, mData?.idCard ?: "")
-					bind.selfie.loadUrl(this, mData?.image ?: "")
 
 					when (mData?.status) {
 
@@ -355,6 +354,8 @@ class SellerVerificationActivity : BaseActivity() {
 							bind.verificationPhoneIcon.isVisible = true
 							bind.completeVerification.isVisible = false
 							bind.status.setTextColor(ContextCompat.getColor(this, R.color.warningClr))
+							bind.uploadId.isClickable = false
+							bind.uploadSelfie.isClickable = false
 						}
 
 						"verified" -> {
@@ -371,6 +372,8 @@ class SellerVerificationActivity : BaseActivity() {
 							bind.stepCount.text = "3 of 3"
 							bind.status.setTextColor(ContextCompat.getColor(this, R.color.success))
 							bind.completeVerification.isVisible = false
+							bind.uploadId.isClickable = false
+							bind.uploadSelfie.isClickable = false
 						}
 
 						"rejected" -> {

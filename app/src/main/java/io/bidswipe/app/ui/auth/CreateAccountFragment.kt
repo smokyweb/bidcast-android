@@ -31,10 +31,9 @@ class CreateAccountFragment : BaseFragment<AuthViewModel, FragmentCreateAccountB
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		super.onViewCreated(view, savedInstanceState)
 
-		referralCode = arguments?.getString("referralCode").toString()
+		referralCode = arguments?.getString("referralCode") ?:""
 
 		if (referralCode.isNotEmpty()){
-
 			bind.referralCode.setText(referralCode)
 		}
 

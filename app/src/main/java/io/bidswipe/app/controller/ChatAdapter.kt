@@ -20,6 +20,7 @@ import io.bidswipe.app.model.ChatModel
 import io.bidswipe.app.utils.Chats
 import io.bidswipe.app.utils.Prefs
 import io.bidswipe.app.utils.Utils
+import io.bidswipe.app.utils.asCapital
 import io.bidswipe.app.utils.clr
 import io.bidswipe.app.utils.draw
 import io.bidswipe.app.utils.loadUrl
@@ -154,7 +155,7 @@ class ChatAdapter(
 					if (chat.replyMessage?.senderName == Prefs(mCtx).getUserData()?.name) {
 						bind.replyView.replyName.text = "You"
 					} else {
-						bind.replyView.replyName.text = chat.replyMessage?.senderName
+						bind.replyView.replyName.text = chat.replyMessage?.senderName?.asCapital()
 					}
 
 					bind.message.text = chat.message

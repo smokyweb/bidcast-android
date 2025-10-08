@@ -8,170 +8,185 @@
     android:orientation="vertical"
     tools:context=".ui.sellerHub.OverAllFragment">
 
-    <LinearLayout
-        android:id="@+id/orders"
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="@dimen/half_margin"
-        android:orientation="horizontal">
+        android:layout_height="match_parent">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginHorizontal="@dimen/half_margin"
-            android:layout_weight="1"
-            android:background="@drawable/card_8"
-            android:orientation="vertical"
-            android:padding="@dimen/half_margin">
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:id="@+id/orders"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/half_margin"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginHorizontal="@dimen/half_margin"
+                    android:layout_weight="1"
+                    android:background="@drawable/card_8"
+                    android:orientation="vertical"
+                    android:padding="@dimen/half_margin">
+
+                    <TextView
+                        android:id="@+id/items"
+                        style="@style/HeadlineMedium"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="N/A"
+                        android:textColor="@color/primary" />
+
+                    <TextView
+                        style="@style/BodySmall"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="@string/items" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginHorizontal="@dimen/half_margin"
+                    android:layout_weight="1"
+                    android:background="@drawable/card_8"
+                    android:orientation="vertical"
+                    android:padding="@dimen/half_margin">
+
+                    <TextView
+                        android:id="@+id/revenue"
+                        style="@style/HeadlineMedium"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="N/A"
+                        android:textColor="@color/primary" />
+
+                    <TextView
+                        style="@style/BodySmall"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="@string/revenue" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginHorizontal="@dimen/half_margin"
+                    android:layout_weight="1"
+                    android:background="@drawable/card_8"
+                    android:orientation="vertical"
+                    android:padding="@dimen/half_margin">
+
+                    <TextView
+                        android:id="@+id/rating"
+                        style="@style/HeadlineMedium"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="N/A"
+                        android:textColor="@color/primary" />
+
+                    <TextView
+                        style="@style/BodySmall"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="@string/rating" />
+
+                </LinearLayout>
+
+            </LinearLayout>
 
             <TextView
-                android:id="@+id/items"
-                style="@style/HeadlineMedium"
+                style="@style/TitleLarge"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/half_margin"
+                android:text="@string/sales_performance" />
+
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:text="N/A"
-                android:textColor="@color/primary" />
+                android:orientation="vertical">
+
+                <io.bidswipe.app.ui.custom.NoDataView
+                    android:id="@+id/no_data"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:alpha="0.6"
+                    android:visibility="gone"
+                    app:desc_text="No Sales Data Available"
+                    app:icon="@drawable/ic_graph"
+                    app:iconSize="48dp" />
+
+                <com.github.mikephil.charting.charts.LineChart
+                    android:id="@+id/salesChart"
+                    android:layout_width="match_parent"
+                    android:layout_height="240dp" />
+
+            </LinearLayout>
 
             <TextView
-                style="@style/BodySmall"
+                style="@style/TitleLarge"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/half_margin"
+                android:text="@string/visitor_analytics" />
+
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:text="@string/items" />
+                android:orientation="vertical">
+
+                <io.bidswipe.app.ui.custom.NoDataView
+                    android:id="@+id/no_data_visitors"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:alpha="0.6"
+                    android:visibility="gone"
+                    app:desc_text="No Sales Data Available"
+                    app:icon="@drawable/ic_graph"
+                    app:iconSize="48dp" />
+
+                <com.github.mikephil.charting.charts.LineChart
+                    android:id="@+id/visitorChart"
+                    android:layout_width="match_parent"
+                    android:layout_height="240dp" />
+
+            </LinearLayout>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/gridRecycler"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="8dp"
+                app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+                android:nestedScrollingEnabled="false"
+                app:spanCount="2"
+                tools:itemCount="4"
+                tools:listitem="@layout/benifits_item" />
 
         </LinearLayout>
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginHorizontal="@dimen/half_margin"
-            android:layout_weight="1"
-            android:background="@drawable/card_8"
-            android:orientation="vertical"
-            android:padding="@dimen/half_margin">
-
-            <TextView
-                android:id="@+id/revenue"
-                style="@style/HeadlineMedium"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="N/A"
-                android:textColor="@color/primary" />
-
-            <TextView
-                style="@style/BodySmall"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="@string/revenue" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginHorizontal="@dimen/half_margin"
-            android:layout_weight="1"
-            android:background="@drawable/card_8"
-            android:orientation="vertical"
-            android:padding="@dimen/half_margin">
-
-            <TextView
-                android:id="@+id/rating"
-                style="@style/HeadlineMedium"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="N/A"
-                android:textColor="@color/primary" />
-
-            <TextView
-                style="@style/BodySmall"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="@string/rating" />
-
-        </LinearLayout>
-
-    </LinearLayout>
-
-    <TextView
-        style="@style/TitleLarge"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/half_margin"
-        android:text="@string/sales_performance" />
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:orientation="vertical">
-
-        <io.bidswipe.app.ui.custom.NoDataView
-            android:id="@+id/no_data"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:alpha="0.6"
-            android:visibility="gone"
-            app:desc_text="No Sales Data Available"
-            app:icon="@drawable/ic_graph"
-            app:iconSize="48dp" />
-
-        <com.github.mikephil.charting.charts.LineChart
-            android:id="@+id/salesChart"
-            android:layout_width="match_parent"
-            android:layout_height="240dp" />
-
-    </LinearLayout>
-
-    <TextView
-        style="@style/TitleLarge"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/half_margin"
-        android:text="@string/visitor_analytics" />
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:orientation="vertical">
-
-        <io.bidswipe.app.ui.custom.NoDataView
-            android:id="@+id/no_data_visitors"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:alpha="0.6"
-            android:visibility="gone"
-            app:desc_text="No Sales Data Available"
-            app:icon="@drawable/ic_graph"
-            app:iconSize="48dp" />
-
-        <com.github.mikephil.charting.charts.LineChart
-            android:id="@+id/visitorChart"
-            android:layout_width="match_parent"
-            android:layout_height="240dp" />
-
-    </LinearLayout>
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/gridRecycler"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="8dp"
-        app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-        app:spanCount="2"
-        tools:itemCount="4"
-        tools:listitem="@layout/benifits_item" />
+    </androidx.core.widget.NestedScrollView>
 
     <io.bidswipe.app.ui.custom.LoaderView
         android:id="@+id/loader"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         android:visibility="gone" />
 
 

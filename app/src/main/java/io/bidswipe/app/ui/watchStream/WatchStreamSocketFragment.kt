@@ -45,6 +45,7 @@ import io.bidswipe.app.ui.more.TrustedBuyerActivity
 import io.bidswipe.app.utils.Alerts
 import io.bidswipe.app.utils.Const
 import io.bidswipe.app.utils.SocketManager
+import io.bidswipe.app.utils.asCapital
 import io.bidswipe.app.utils.asMoney
 import io.bidswipe.app.utils.dpToPx
 import io.bidswipe.app.utils.draw
@@ -407,7 +408,7 @@ class WatchStreamSocketFragment : BaseFragment<StreamViewModel, FragmentWatchStr
 
 			sellerId = showData.seller?.id.toString()
 
-			bind.userName.text = showData.seller?.name
+			bind.userName.text = showData.seller?.name?.asCapital()
 			bind.userImage.loadUrl(mCtx, showData.seller?.image ?: "")
 
 			bind.liveCount.text = showData.viewerCount
@@ -601,7 +602,7 @@ class WatchStreamSocketFragment : BaseFragment<StreamViewModel, FragmentWatchStr
 		bind.soldLayout.isVisible = false
 		bind.bidLayout.isVisible = true
 		bind.productLayout.isVisible = true
-		bind.productName.text = liveProduct?.name
+		bind.productName.text = liveProduct?.name?.asCapital()
 		bind.productImage.loadUrl(mCtx, liveProduct?.image ?: "")
 		val price = liveProduct?.price
 		bind.bidPrice.text = price?.asMoney()

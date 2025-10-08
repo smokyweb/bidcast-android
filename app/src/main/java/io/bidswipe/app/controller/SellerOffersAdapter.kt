@@ -13,6 +13,7 @@ import io.bidswipe.app.databinding.SellerOffersItemBinding
 import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.network.response.GetOffersResponse
 import io.bidswipe.app.utils.Utils
+import io.bidswipe.app.utils.asCapital
 import io.bidswipe.app.utils.asMoney
 import io.bidswipe.app.utils.loadUrl
 import io.bidswipe.app.utils.setHapticClickListener
@@ -46,11 +47,11 @@ class SellerOffersAdapter(
 			}
 
 			bind.userImage.loadUrl(mCtx , item?.user?.profileImage ?: "")
-			bind.userName.text = item?.user?.name
+			bind.userName.text = item?.user?.name?.asCapital()
 			bind.offerPrice.text = item?.amount.toString().asMoney()
 
 			bind.productImage.loadUrl(mCtx , item?.product?.images?.first() ?: "")
-			bind.productName.text = item?.product?.title
+			bind.productName.text = item?.product?.title?.asCapital()
 
 			bind.subTitle.text = buildSpannedString {
 				append("Placed an Offer ")

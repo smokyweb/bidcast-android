@@ -10,6 +10,7 @@ import io.bidswipe.app.databinding.MessagesItemsBinding
 import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.model.ChatModel
 import io.bidswipe.app.utils.Prefs
+import io.bidswipe.app.utils.asCapital
 import io.bidswipe.app.utils.loadUrl
 import io.bidswipe.app.utils.setHapticClickListener
 import java.text.SimpleDateFormat
@@ -18,30 +19,30 @@ import java.util.Calendar
 import java.util.Locale
 
 class MessagesAdapter(
-	mList : MutableList<ChatModel> , val mClicks : RecyclerClicks ,
-) : BaseAdapter<ChatModel , MessagesItemsBinding>(mList) {
+	mList: MutableList<ChatModel>, val mClicks: RecyclerClicks,
+) : BaseAdapter<ChatModel, MessagesItemsBinding>(mList) {
 
-	override fun bindView(inflater : LayoutInflater , parent : ViewGroup) =
-		MessagesItemsBinding.inflate(inflater , parent , false)
+	override fun bindView(inflater: LayoutInflater, parent: ViewGroup) =
+		MessagesItemsBinding.inflate(inflater, parent, false)
 
 	@RequiresApi(Build.VERSION_CODES.O)
 	override fun onBind(
-		holder : BaseViewHolder<MessagesItemsBinding> ,
-		position : Int ,
-		item : ChatModel? ,
+		holder: BaseViewHolder<MessagesItemsBinding>,
+		position: Int,
+		item: ChatModel?,
 	) {
 		with(holder) {
 
-            bind.root.setHapticClickListener {
-				mClicks.itemClick(position , "")
+			bind.root.setHapticClickListener {
+				mClicks.itemClick(position, "")
 			}
 
 			if (item?.users?.senderId == Prefs(mCtx).getUserData()?.id.toString()) {
-				bind.name.text = item.users?.receiverName
-				bind.icon.loadUrl(mCtx , item.users?.receiverImage.toString())
+				bind.name.text = item.users?.receiverName?.asCapital()
+				bind.icon.loadUrl(mCtx, item.users?.receiverImage.toString())
 			} else {
-				bind.name.text = item?.users?.senderName
-				bind.icon.loadUrl(mCtx , item?.users?.senderImage.toString())
+				bind.name.text = item?.users?.senderName?.asCapital()
+				bind.icon.loadUrl(mCtx, item?.users?.senderImage.toString())
 			}
 
 			bind.message.text = item?.message
@@ -55,7 +56,7 @@ class MessagesAdapter(
 				bind.time.text = when {
 					now.get(Calendar.DATE) == calendar.get(Calendar.DATE) -> {
 						SimpleDateFormat(
-							"hh:mm a" ,
+							"hh:mm a",
 							Locale.getDefault()
 						).format(Instant.ofEpochSecond(item?.timestamp ?: 0L).toEpochMilli())
 							.toString()
@@ -66,12 +67,12 @@ class MessagesAdapter(
 					}
 
 					else -> {
-						DateFormat.format("MM-dd-yyyy" , calendar).toString()
+						DateFormat.format("MM-dd-yyyy", calendar).toString()
 					}
 				}
-			} catch (e : Exception) {
+			} catch (e: Exception) {
 				e.printStackTrace()
-				SimpleDateFormat("MM-dd-yyyy" , Locale.getDefault()).format(
+				SimpleDateFormat("MM-dd-yyyy", Locale.getDefault()).format(
 					Instant.ofEpochSecond(
 						item?.timestamp ?: 0L
 					).toEpochMilli()

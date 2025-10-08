@@ -8,6 +8,7 @@ import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.network.response.GetTipAmountResponse
 import io.bidswipe.app.utils.Const
 import io.bidswipe.app.utils.Utils
+import io.bidswipe.app.utils.asCapital
 import io.bidswipe.app.utils.asMoney
 import io.bidswipe.app.utils.loadUrl
 import io.bidswipe.app.utils.setHapticClickListener
@@ -26,7 +27,7 @@ class TipsAdapter(
 	) {
 		with(holder) {
 
-			bind.userName.text = item?.user?.name
+			bind.userName.text = item?.user?.name?.asCapital()
 //			bind.date.text = item?.createdAt
 
 			bind.date.text = buildString {

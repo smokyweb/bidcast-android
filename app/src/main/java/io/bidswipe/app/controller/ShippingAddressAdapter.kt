@@ -9,6 +9,7 @@ import io.bidswipe.app.base.BaseAdapter
 import io.bidswipe.app.databinding.ShippingAddressItemBinding
 import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.network.response.GetShippingAddressResponse
+import io.bidswipe.app.utils.asCapital
 import io.bidswipe.app.utils.setHapticClickListener
 
 class ShippingAddressAdapter(
@@ -30,7 +31,7 @@ class ShippingAddressAdapter(
 			}
 
 			bind.address.text = item?.streetAddress
-			bind.name.text = item?.name
+			bind.name.text = item?.name?.asCapital()
 			bind.type.text = item?.type
 
 			bind.defaultAddress.isVisible = item?.isDefault == true

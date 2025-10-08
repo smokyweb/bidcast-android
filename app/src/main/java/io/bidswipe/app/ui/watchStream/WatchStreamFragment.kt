@@ -40,6 +40,7 @@ import io.bidswipe.app.utils.ChatManager
 import io.bidswipe.app.utils.Const
 import io.bidswipe.app.utils.FireRef
 import io.bidswipe.app.utils.Utils
+import io.bidswipe.app.utils.asCapital
 import io.bidswipe.app.utils.asMoney
 import io.bidswipe.app.utils.dpToPx
 import io.bidswipe.app.utils.draw
@@ -205,7 +206,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 								log("CURRENT PRODUCT : $currentProduct")
 
 								if (currentProduct != null) {
-									bind.productName.text = currentProduct.name
+									bind.productName.text = currentProduct.name?.asCapital()
 									bidProductId = currentProduct.id
 									bind.productImage.loadUrl(
 										mCtx,
@@ -285,7 +286,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
 //				bind.userName.text = stream.seller?.name.toString()
 
-				bind.productName.text = product?.name
+				bind.productName.text = product?.name?.asCapital()
 
 				bind.productImage.loadUrl(
 					mCtx,

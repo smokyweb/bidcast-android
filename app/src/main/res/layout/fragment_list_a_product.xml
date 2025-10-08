@@ -406,7 +406,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="@dimen/margin"
-                    app:endIconDrawable="@drawable/ic_forward"
                     app:endIconMode="custom">
 
                     <com.google.android.material.textfield.TextInputEditText
@@ -415,6 +414,9 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="@string/_0_00"
+                        android:drawablePadding="@dimen/half_margin"
+                        android:drawableTint="@color/primary"
+                        android:drawableStart="@drawable/ic_dollar"
                         android:inputType="numberDecimal" />
 
                 </com.google.android.material.textfield.TextInputLayout>

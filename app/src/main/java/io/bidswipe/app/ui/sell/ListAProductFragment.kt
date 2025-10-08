@@ -202,7 +202,6 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
 						
 						override fun secondaryClick(dialog: AppBottomSheet) {
 							dialog.dismiss()
-							
 						}
 					})
 					
@@ -239,12 +238,10 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
 					it.parse(mCtx, TAG, object : AlertClicks {
 						override fun primaryClick(dialog: AppBottomSheet) {
 							dialog.dismiss()
-							
 						}
 						
 						override fun secondaryClick(dialog: AppBottomSheet) {
 							dialog.dismiss()
-							
 						}
 					})
 				}
@@ -421,7 +418,7 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
 				)
 			}
 			
-			selectedMailClass?.maxHeightIn != null && (packageWidth > (selectedMailClass?.maxHeightIn
+			selectedMailClass?.maxHeightIn != null && (packageHeight > (selectedMailClass?.maxHeightIn
 				?: 0.0)) -> {
 				Alerts.error(
 					mCtx,
@@ -429,7 +426,7 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
 				)
 			}
 			
-			selectedMailClass?.maxLengthIn != null && (packageWidth > (selectedMailClass?.maxLengthIn
+			selectedMailClass?.maxLengthIn != null && (packageLength > (selectedMailClass?.maxLengthIn
 				?: 0.0)) -> {
 				Alerts.error(
 					mCtx,
@@ -437,7 +434,7 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
 				)
 			}
 			
-			selectedMailClass?.maxWeightLbs != null && (packageWidth > (selectedMailClass?.maxWeightLbs
+			selectedMailClass?.maxWeightLbs != null && (packageWeight > (selectedMailClass?.maxWeightLbs
 				?: 0.0)) -> {
 				Alerts.error(
 					mCtx,
@@ -494,7 +491,6 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
 					viewModel.storeProductMetaRepo.observe(viewLifecycleOwner) {
 						when (it) {
 							is Resource.Success -> {
-//                            bind.loader.isVisible = false
 								createProduct(
 									productId,
 									type,

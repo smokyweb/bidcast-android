@@ -1,5 +1,6 @@
 package io.bidswipe.app.ui.sellerHub
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Color
 import android.os.Bundle
@@ -31,88 +32,86 @@ import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.utils.asMoney
 import io.bidswipe.app.utils.parse
 
-
+@SuppressLint("NotifyDataSetChanged")
 class OverAllFragment : BaseFragment<SellerHubViewModel, FragmentOverAllBinding>() {
 	override fun getModel(): Class<SellerHubViewModel> = SellerHubViewModel::class.java
-	
+
 	override fun getBind(
 		inflater: LayoutInflater,
 		view: ViewGroup?,
 	) = FragmentOverAllBinding.inflate(inflater, view, false)
-	
+
 	private var gridList = mutableListOf<SellModel>()
-	private var reqList = mutableListOf("", "", "", "")
 	private lateinit var gridAdapter: AnalyticsGridAdapter
-	
+
 	private val mClick = object : RecyclerClicks {
 		override fun itemClick(pos: Int, status: String?) {
 		}
-		
 	}
-	
+
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		super.onViewCreated(view, savedInstanceState)
-		
 		gridAdapter = AnalyticsGridAdapter(gridList, mClick)
 		bind.gridRecycler.adapter = gridAdapter
-		
+
+
 		bind.loader.isVisible = true
-		
+
 		viewModel.getSellerAnalytics()
-		
+
 		viewModel.getSalesPerformance()
-		
+
 		viewModel.getVisitorsAnalytics()
-		
+
 		viewModel.getSellerAnalyticsRepo.observe(viewLifecycleOwner) {
 			when (it) {
 				is Resource.Success -> {
 					bind.loader.isVisible = false
-					
+
 					val mData = it.value.data
-					
+
 					bind.items.text = (mData?.stats?.totalItems ?: 0).toString()
 					bind.revenue.text = (mData?.stats?.revenue ?: "0").asMoney()
 					bind.rating.text = (mData?.stats?.rating ?: 0).toDouble().toString()
-					
+
 					gridList.clear()
 					gridList.add(SellModel(R.drawable.ic_people, 0, "Total Followers", ((mData?.stats?.followers ?: 0).toString())))
 					gridList.add(SellModel(R.drawable.ic_star, 0, "Avg Rating", ("${(mData?.stats?.rating ?: 0)}/5")))
 					gridList.add(SellModel(R.drawable.ic_video, 0, "Live Sessions", (mData?.stats?.liveSessions ?: 0).toString()))
 					gridList.add(SellModel(R.drawable.ic_cart, 0, "Total Sales", (mData?.stats?.totalSales ?: 0).toString()))
-					
+
 					gridAdapter.notifyDataSetChanged()
-					
+
 				}
-				
+
 				is Resource.Error -> {
 					bind.loader.isVisible = false
-					
+
 					it.parse(mCtx, TAG, object : AlertClicks {
 						override fun primaryClick(dialog: AppBottomSheet) {
 							dialog.dismiss()
-							
+
 						}
-						
+
 						override fun secondaryClick(dialog: AppBottomSheet) {
 							dialog.dismiss()
-							
+
 						}
 					})
 				}
-				
+
 				else -> {}
-				
+
 			}
 		}
-		
+
 		viewModel.getSalesPerformanceRepo.observe(viewLifecycleOwner) {
 			when (it) {
 				is Resource.Success -> {
 					bind.loader.isVisible = false
-					
+
 					val mData = it.value.data?.chart?.toMutableList()
-					
+
 					if (mData?.isNotEmpty() == true) {
 						if (mData.size == 1) {
 							mData.add(0, SalesAnalyticsResponse.Data.Chart("", "0", 0))
@@ -121,7 +120,7 @@ class OverAllFragment : BaseFragment<SellerHubViewModel, FragmentOverAllBinding>
 						mData.forEachIndexed { index, chartData ->
 							entries.add(Entry(index.toFloat(), chartData?.totalSales?.toFloat() ?: 0f, chartData?.totalSales))
 						}
-						
+
 						setUpChart(mCtx, bind.salesChart, entries, mData.map { (it?.label ?: "").removePrefix("day ") }.toMutableList())
 						bind.salesChart.isVisible = true
 						bind.noData.isVisible = false
@@ -130,35 +129,35 @@ class OverAllFragment : BaseFragment<SellerHubViewModel, FragmentOverAllBinding>
 						bind.noData.isVisible = true
 					}
 				}
-				
+
 				is Resource.Error -> {
 					bind.loader.isVisible = false
-					
+
 					it.parse(mCtx, TAG, object : AlertClicks {
 						override fun primaryClick(dialog: AppBottomSheet) {
 							dialog.dismiss()
-							
+
 						}
-						
+
 						override fun secondaryClick(dialog: AppBottomSheet) {
 							dialog.dismiss()
-							
+
 						}
 					})
 				}
-				
+
 				else -> {}
-				
+
 			}
 		}
-		
+
 		viewModel.getVisitorsAnalyticsRepo.observe(viewLifecycleOwner) {
 			when (it) {
 				is Resource.Success -> {
 					bind.loader.isVisible = false
-					
+
 					val mData = it.value.data?.chart?.toMutableList()
-					
+
 					if (mData?.isNotEmpty() == true) {
 						if (mData.size == 1) {
 							mData.add(0, VisitorsAnalyticsResponse.Data.Chart("", "0"))
@@ -167,8 +166,7 @@ class OverAllFragment : BaseFragment<SellerHubViewModel, FragmentOverAllBinding>
 						mData.forEachIndexed { index, chartData ->
 							entries.add(Entry(index.toFloat(), chartData?.totalVisitors?.toFloat() ?: 0f, chartData?.totalVisitors?.toInt()))
 						}
-						
-						setUpChart(mCtx, bind.visitorChart, entries, mData?.map { (it?.label ?: "").removePrefix("day ") }?.toMutableList())
+setUpChart(mCtx, bind.visitorChart, entries, mData?.map { (it?.label ?: "").removePrefix("day ") }?.toMutableList())
 						bind.visitorChart.isVisible = true
 						bind.noDataVisitors.isVisible = false
 					} else {
@@ -177,30 +175,30 @@ class OverAllFragment : BaseFragment<SellerHubViewModel, FragmentOverAllBinding>
 					}
 					log("VISITORS DATA : ${mData}")
 				}
-				
+
 				is Resource.Error -> {
 					bind.loader.isVisible = false
-					
+
 					it.parse(mCtx, TAG, object : AlertClicks {
 						override fun primaryClick(dialog: AppBottomSheet) {
 							dialog.dismiss()
-							
+
 						}
-						
+
 						override fun secondaryClick(dialog: AppBottomSheet) {
 							dialog.dismiss()
-							
+
 						}
 					})
 				}
-				
+
 				else -> {}
-				
+
 			}
 		}
-		
+
 	}
-	
+
 	fun setUpChart(
 		mCtx: Context,
 		chart: LineChart,
@@ -212,7 +210,7 @@ class OverAllFragment : BaseFragment<SellerHubViewModel, FragmentOverAllBinding>
 		chart.also {
 			it.clear()
 			it.invalidate()
-			
+
 			it.setBackgroundColor(Color.WHITE)
 			it.animateX(2000)
 			it.description.isEnabled = false
@@ -222,9 +220,9 @@ class OverAllFragment : BaseFragment<SellerHubViewModel, FragmentOverAllBinding>
 			it.setTouchEnabled(false)
 			it.isDragEnabled = false
 			it.setPinchZoom(false)
-			
+
 			it.xAxis.setLabelCount(labelCount, true)
-			
+
 			if (!labels.isNullOrEmpty()) {
 				it.xAxis.valueFormatter = object : ValueFormatter() {
 					override fun getAxisLabel(value: Float, axis: AxisBase?): String {
@@ -238,7 +236,7 @@ class OverAllFragment : BaseFragment<SellerHubViewModel, FragmentOverAllBinding>
 					}
 				}
 			}
-			
+
 			it.xAxis.also { xAxis ->
 				xAxis.axisLineColor = ContextCompat.getColor(mCtx, R.color.inversePrimary)
 				xAxis.gridColor = ContextCompat.getColor(mCtx, R.color.inversePrimary)
@@ -250,7 +248,7 @@ class OverAllFragment : BaseFragment<SellerHubViewModel, FragmentOverAllBinding>
 				xAxis.typeface = defFont
 				xAxis.textSize = 10f
 			}
-			
+
 			it.axisLeft.also { yAxis ->
 				yAxis.axisLineColor = ContextCompat.getColor(mCtx, R.color.inversePrimary)
 				yAxis.gridColor = ContextCompat.getColor(mCtx, R.color.inversePrimary)
@@ -261,10 +259,10 @@ class OverAllFragment : BaseFragment<SellerHubViewModel, FragmentOverAllBinding>
 				yAxis.textSize = 10f
 			}
 		}
-		
+
 		val legend = chart.legend
 		legend.isEnabled = false
-		
+
 		val mDataSet = LineDataSet(values, "").also { set ->
 			set.lineWidth = 1.5f
 			set.circleRadius = 1f
@@ -278,15 +276,15 @@ class OverAllFragment : BaseFragment<SellerHubViewModel, FragmentOverAllBinding>
 			set.fillColor = ContextCompat.getColor(mCtx, R.color.primaryContainer)
 			set.fillAlpha = 80
 		}
-		
+
 		chart.data = LineData(arrayListOf<ILineDataSet>(mDataSet))
 		chart.animateX(1500)
-		
+
 		chart.isNestedScrollingEnabled = true
 		chart.setVisibleXRangeMaximum(10F)
-		
+
 		chart.moveViewToX(values.size - 6f)
-		
+
 	}
-	
+
 }

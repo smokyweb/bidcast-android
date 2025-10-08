@@ -16,7 +16,6 @@
         app:layout_constraintTop_toTopOf="parent"
         app:showBackButton="true" />
 
-
     <include
         android:id="@+id/vendor"
         layout="@layout/status_item" />

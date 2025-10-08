@@ -28,6 +28,7 @@ import io.bidswipe.app.ui.custom.AlertType
 import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.ui.dashboard.ChatActivity
 import io.bidswipe.app.utils.Alerts
+import io.bidswipe.app.utils.asCapital
 import io.bidswipe.app.utils.bind
 import io.bidswipe.app.utils.clr
 import io.bidswipe.app.utils.goToRateSeller
@@ -189,11 +190,11 @@ class SellerProfileActivity : BaseActivity() {
 
 					val mData = it.value.data
 
-					sellerName = mData?.name ?: ""
+					sellerName = mData?.name?.asCapital() ?: ""
 					sellerImage = mData?.profileImage ?: ""
 
-					bind.name.text = mData?.name
-					bind.name1.text = mData?.name
+					bind.name.text = mData?.name?.asCapital()
+					bind.name1.text = mData?.name?.asCapital()
 					bind.userName.text = mData?.username ?: ""
 					bind.userName1.text = mData?.username ?: ""
 					bind.userImage.loadUrl(this, mData?.profileImage.toString())
@@ -363,7 +364,7 @@ class SellerProfileActivity : BaseActivity() {
 		val notificationSheet = Alerts.appBottomSheet(this, true, notificationSheetBind)
 
 		notificationSheetBind.userImage.loadUrl(this, sellerImage)
-		notificationSheetBind.userName.text = sellerName
+		notificationSheetBind.userName.text = sellerName.asCapital()
 		notificationSheetBind.text.text = "Would you like to notified when $sellerName goes live?"
 
 		notificationSheetBind.close.setHapticClickListener {

@@ -29,6 +29,7 @@ import io.bidswipe.app.ui.more.TrustedBuyerActivity
 import io.bidswipe.app.ui.sellerHub.SellerHubActivity
 import io.bidswipe.app.ui.sellerHub.SellerVerificationActivity
 import io.bidswipe.app.utils.Prefs
+import io.bidswipe.app.utils.asCapital
 import io.bidswipe.app.utils.finish
 import io.bidswipe.app.utils.loadUrl
 import io.bidswipe.app.utils.parse
@@ -193,7 +194,7 @@ class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
 
 		App.profileResponse.observe(viewLifecycleOwner) {
 
-			bind.userName.text = it?.name ?: ""
+			bind.userName.text = it?.name?.asCapital() ?: ""
 
 			bind.sellerSince.isVisible = it?.username.isNullOrEmpty() == false
 

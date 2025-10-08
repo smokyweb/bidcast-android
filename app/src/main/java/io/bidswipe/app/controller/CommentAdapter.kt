@@ -5,6 +5,7 @@ import android.view.ViewGroup
 import io.bidswipe.app.base.BaseAdapter
 import io.bidswipe.app.databinding.LiveCommentItemBinding
 import io.bidswipe.app.model.LiveChatModel
+import io.bidswipe.app.utils.asCapital
 import io.bidswipe.app.utils.loadUrl
 
 class CommentAdapter(
@@ -20,7 +21,7 @@ class CommentAdapter(
 		item : LiveChatModel? ,
 	) {
 		with(holder) {
-			bind.userName.text = item?.userName
+			bind.userName.text = item?.userName?.asCapital()
 			bind.message.text = item?.message
 			bind.userImage.loadUrl(mCtx , item?.userImage.toString())
 		}

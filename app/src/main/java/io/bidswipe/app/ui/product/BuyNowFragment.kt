@@ -27,6 +27,7 @@ import io.bidswipe.app.network.response.GetShippingAddressResponse
 import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.ui.more.MoreActivity
 import io.bidswipe.app.utils.Alerts
+import io.bidswipe.app.utils.asCapital
 import io.bidswipe.app.utils.asMoney
 import io.bidswipe.app.utils.draw
 import io.bidswipe.app.utils.goToAddCard
@@ -105,7 +106,7 @@ class BuyNowFragment : BaseFragment<ProductViewModel, FragmentBuyNowBinding>() {
 		viewModel.getPaymentCard()
 		viewModel.getShippingAddress()
 
-		bind.productName.text = viewModel.product?.title
+		bind.productName.text = viewModel.product?.title?.asCapital()
 		bind.productDescription.text = viewModel.product?.description
 		bind.productImg.loadUrl(mCtx, viewModel.product?.images?.get(0).toString())
 		val offer = viewModel.product?.offer

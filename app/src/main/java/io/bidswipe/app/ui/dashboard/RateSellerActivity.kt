@@ -9,6 +9,7 @@ import io.bidswipe.app.interfaces.AlertClicks
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.utils.Alerts
+import io.bidswipe.app.utils.asCapital
 import io.bidswipe.app.utils.bind
 import io.bidswipe.app.utils.loadUrl
 import io.bidswipe.app.utils.parse
@@ -34,7 +35,7 @@ class RateSellerActivity : BaseActivity() {
 		sellerName = intent.getStringExtra("sellerName") ?: ""
 		sellerImage = intent.getStringExtra("sellerImage") ?: ""
 
-		bind.sellerName.text = sellerName
+		bind.sellerName.text = sellerName.asCapital()
 
 		bind.profileImage.loadUrl(this, sellerImage)
 

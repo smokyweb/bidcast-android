@@ -55,6 +55,7 @@ import io.bidswipe.app.utils.Const
 import io.bidswipe.app.utils.FireRef
 import io.bidswipe.app.utils.StreamingManager
 import io.bidswipe.app.utils.Utils
+import io.bidswipe.app.utils.asCapital
 import io.bidswipe.app.utils.bind
 import io.bidswipe.app.utils.dpToPx
 import io.bidswipe.app.utils.draw
@@ -161,7 +162,7 @@ class LiveShowActivity : BaseActivity() {
 
 		log("SHOW ID : $showId")
 
-		bind.hostName.text = userName
+		bind.hostName.text = userName.asCapital()
 
 		bind.controls.setHapticClickListener {
 			hideKeyboard()

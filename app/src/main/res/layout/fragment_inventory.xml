@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:backgroundTint="@color/surface"
     tools:context=".ui.sellerHub.InventoryFragment">
 
     <io.bidswipe.app.ui.custom.Header

@@ -219,7 +219,10 @@ class DashActivity : BaseActivity(), NavController.OnDestinationChangedListener 
 				}
 
 				when (pos) {
-					0 -> startActivity(this@DashActivity.toListProduct())
+					0 -> {
+						startActivity(this@DashActivity.toListProduct())
+						imageSheet.state = BottomSheetBehavior.STATE_COLLAPSED
+					}
 
 					1 -> {
 						val isFirstShow = profile.isFirstShowCreated == true
@@ -230,6 +233,7 @@ class DashActivity : BaseActivity(), NavController.OnDestinationChangedListener 
 							this@DashActivity.toTutorials()
 						}
 						startActivity(intent)
+						imageSheet.state = BottomSheetBehavior.STATE_COLLAPSED
 					}
 				}
 			}
@@ -315,7 +319,7 @@ class DashActivity : BaseActivity(), NavController.OnDestinationChangedListener 
 
 	fun showPaymentAndAddressSheet() {
 
-		var paymentAddressBind = PaymentAndAddressSheetBinding.bind(
+		val paymentAddressBind = PaymentAndAddressSheetBinding.bind(
 			layoutInflater.inflate(
 				R.layout.payment_and_address_sheet,
 				null,
@@ -323,7 +327,7 @@ class DashActivity : BaseActivity(), NavController.OnDestinationChangedListener 
 			)
 		)
 
-		var makeOfferSheet = Alerts.appBottomSheet(this, true, paymentAddressBind)
+		val makeOfferSheet = Alerts.appBottomSheet(this, true, paymentAddressBind)
 
 		with(paymentAddressBind.addressItem) {
 			val hasAddress = App.profileResponse.value?.hasShippingAddress == true

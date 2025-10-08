@@ -32,8 +32,9 @@ class ViewPagerAdapter(fragmentActivity : FragmentActivity , type : String) :
 		"Analytics" -> {
 			listOf(
 				OverAllFragment() ,
-				BidsFragment() ,
-				OfferFragment()
+				OverAllFragment() ,
+				OverAllFragment()
+
 			)
 		}
 

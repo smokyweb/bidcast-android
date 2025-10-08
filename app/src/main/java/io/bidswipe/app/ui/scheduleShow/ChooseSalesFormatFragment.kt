@@ -53,6 +53,7 @@ class ChooseSalesFormatFragment : BaseFragment<ScheduleShowViewModel , FragmentC
 			findNavController().popBackStack()
 		}
 
+		formatList.clear()
 		formatList.add(FormatModel(draw.ic_hammer , "Auction"))
 		formatList.add(FormatModel(draw.ic_tag , "Buy It Now"))
 

@@ -14,44 +14,47 @@ import io.bidswipe.app.utils.loadUrl
 import io.bidswipe.app.utils.setHapticClickListener
 
 class InventoryAdapter(
-	mList : MutableList<GetMyInventoryResponse.Data?> ,
-	private val isSelectionMode : Boolean ,
-	val mClicks : RecyclerClicks ,
-) : BaseAdapter<GetMyInventoryResponse.Data? , InventoryItemBinding>(mList) {
+	mList: MutableList<GetMyInventoryResponse.Data?>,
+	private val isSelectionMode: Boolean,
+	val mClicks: RecyclerClicks,
+) : BaseAdapter<GetMyInventoryResponse.Data?, InventoryItemBinding>(mList) {
 
-	override fun bindView(inflater : LayoutInflater , parent : ViewGroup) =
-		InventoryItemBinding.inflate(inflater , parent , false)
+	override fun bindView(inflater: LayoutInflater, parent: ViewGroup) =
+		InventoryItemBinding.inflate(inflater, parent, false)
 
 	override fun onBind(
-		holder : BaseViewHolder<InventoryItemBinding> ,
-		position : Int ,
-		item : GetMyInventoryResponse.Data? ,
+		holder: BaseViewHolder<InventoryItemBinding>,
+		position: Int,
+		item: GetMyInventoryResponse.Data?,
 	) {
 		with(holder) {
 
 			bind.productName.text = item?.title?.asCapital()
-			bind.prodSubTitle.text = item?.description?.asCapital()
+			bind.prodSubTitle.text = item?.category?.name
 			bind.price.text = item?.pricing.toString().asMoney()
-			bind.productImage.loadUrl(mCtx , item?.images?.get(0).toString())
-
+			bind.productImage.loadUrl(mCtx, item?.images?.get(0).toString())
+			bind.stockCount.text =buildString {
+				append("Stock: ")
+				append(item?.quantity ?:0)
+			}
 
 			if (isSelectionMode) {
 				if (item?.selected == true) {
-					bind.root.setBackgroundColor(ContextCompat.getColor(mCtx , R.color.secondaryContainer))
+					bind.root.setBackgroundColor(ContextCompat.getColor(mCtx, R.color.secondaryContainer))
 					bind.root.strokeWidth = 2
-					bind.root.strokeColor = ContextCompat.getColor(mCtx , R.color.primary)
+					bind.root.strokeColor = ContextCompat.getColor(mCtx, R.color.primary)
 				} else {
-					bind.root.setBackgroundColor(ContextCompat.getColor(mCtx , R.color.surface))
+					bind.root.setBackgroundColor(ContextCompat.getColor(mCtx, R.color.surface))
 					bind.root.strokeWidth = 0
 				}
 
-                bind.root.setHapticClickListener {
-					mClicks.itemClick(position , "toggle")
+				bind.root.setHapticClickListener {
+					mClicks.itemClick(position, "toggle")
 				}
 			} else {
-				bind.root.setBackgroundColor(ContextCompat.getColor(mCtx , R.color.surface))
+				bind.root.setBackgroundColor(ContextCompat.getColor(mCtx, R.color.surface))
 				bind.root.strokeWidth = 0
-                bind.root.setHapticClickListener {
+				bind.root.setHapticClickListener {
 					mClicks.itemClick(position)
 				}
 			}

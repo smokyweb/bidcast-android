@@ -19,6 +19,7 @@ import io.bidswipe.app.network.Resource
 import io.bidswipe.app.network.response.GetOrderDetailsResponse
 import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.utils.Utils
+import io.bidswipe.app.utils.asCapital
 import io.bidswipe.app.utils.finish
 import io.bidswipe.app.utils.loadUrl
 import io.bidswipe.app.utils.parse
@@ -81,7 +82,7 @@ class OrderStatusFragment : BaseFragment<ProductViewModel, FragmentOrderStatusBi
 
 					val mData = it.value.data
 
-					bind.productName.text = mData?.product?.title
+					bind.productName.text = mData?.product?.title?.asCapital()
 					bind.address.text = mData?.shippingAddress?:"N/A"
 					bind.productImage.loadUrl(mCtx, mData?.product?.images?.get(0).toString())
 					bind.orderId.text = mData?.orderId.toString()

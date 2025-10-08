@@ -62,6 +62,7 @@ import io.bidswipe.app.utils.Alerts
 import io.bidswipe.app.utils.Const
 import io.bidswipe.app.utils.SocketManager
 import io.bidswipe.app.utils.Utils
+import io.bidswipe.app.utils.asCapital
 import io.bidswipe.app.utils.bind
 import io.bidswipe.app.utils.dpToPx
 import io.bidswipe.app.utils.draw
@@ -179,7 +180,7 @@ class LiveShowSocketActivity : BaseActivity() {
 		socketUrl = Const.SOCKET_URL //intent.getStringExtra("socketUrl") ?: ""
 		initializeSocket()
 
-		bind.hostName.text = userName
+		bind.hostName.text = userName?.asCapital()
 		bind.hostImage.loadUrl(this, userImage)
 
 		bind.controls.setHapticClickListener {

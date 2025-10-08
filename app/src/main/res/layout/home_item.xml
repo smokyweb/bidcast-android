@@ -56,6 +56,28 @@
 
     </com.google.android.material.card.MaterialCardView>
 
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/liveCard"
+        style="@style/cardStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_constraintTop_toTopOf="@id/cardView"
+        app:layout_constraintEnd_toEndOf="@id/cardView"
+        android:layout_marginEnd="@dimen/half_margin"
+        android:layout_marginTop="@dimen/half_margin"
+        android:backgroundTint="@color/error">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/surface"
+            android:paddingVertical="4dp"
+            android:paddingHorizontal="@dimen/half_margin"
+            android:text="Live"/>
+
+    </com.google.android.material.card.MaterialCardView>
+
     <TextView
         android:id="@+id/title"
         style="@style/TitleMedium"

@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.text.bold
 import androidx.core.text.buildSpannedString
+import androidx.core.view.isVisible
 import io.bidswipe.app.base.BaseAdapter
 import io.bidswipe.app.databinding.HomeItemBinding
 import io.bidswipe.app.interfaces.RecyclerClicks
@@ -27,31 +28,33 @@ class HomeAdapter(
 	) {
 		with(holder) {
 
-            bind.userInfo.setHapticClickListener {
+			bind.userInfo.setHapticClickListener {
 				mClick.itemClick(position, "user")
 			}
 
-            bind.thumbnail.setHapticClickListener {
+			bind.thumbnail.setHapticClickListener {
 				mClick.itemClick(position, "viewShow")
 			}
 
-			bind.userImage.loadUrl(mCtx , item?.user?.profileImage ?:"" , draw.user_image)
+			bind.userImage.loadUrl(mCtx, item?.user?.profileImage ?: "", draw.user_image)
 
-			if (item?.thumbnail != null){
-				bind.thumbnail.loadUrl(mCtx, item.thumbnail[0] ?:"")
+			if (item?.thumbnail != null) {
+				bind.thumbnail.loadUrl(mCtx, item.thumbnail[0] ?: "")
 			}
 
 			bind.title.text = item?.title.toString().asCapital()
 
 			bind.category.text = item?.category?.name
 
-			Log.d(TAG, "onBind: ${item?.user?.name}" )
+			Log.d(TAG, "onBind: ${item?.user?.name}")
 
 			bind.userName.text = buildSpannedString {
 				bold {
-					append((item?.user?.username?:"").ifEmpty { item?.user?.name?:"user@${item?.user?.id}" })
+					append((item?.user?.username?.asCapital() ?: "").ifEmpty { item?.user?.name ?: "user@${item?.user?.id}" })
 				}
 			}
+
+			bind.liveCard.isVisible = item?.isLive == true
 
 		}
 	}

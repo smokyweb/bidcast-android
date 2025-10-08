@@ -99,6 +99,10 @@
                     style="@style/inputTextStyle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:inputType="numberDecimal"
+                    android:drawablePadding="@dimen/half_margin"
+                    android:drawableTint="@color/primary"
+                    android:drawableStart="@drawable/ic_dollar"
                     android:hint="@string/_0_00" />
 
             </com.google.android.material.textfield.TextInputLayout>

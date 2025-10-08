@@ -44,6 +44,7 @@ import io.bidswipe.app.utils.FireRef
 import io.bidswipe.app.utils.MessageSwiper
 import io.bidswipe.app.utils.Prefs
 import io.bidswipe.app.utils.Utils
+import io.bidswipe.app.utils.asCapital
 import io.bidswipe.app.utils.bind
 import io.bidswipe.app.utils.clr
 import io.bidswipe.app.utils.hideKeyboard
@@ -167,7 +168,7 @@ class ChatActivity : BaseActivity() {
 
 		chatRef = FireRef.CHAT.child(chatKey)
 
-		bind.title.text = receiverName
+		bind.title.text = receiverName.asCapital()
 		bind.userImage.loadUrl(this , receiverImage)
 
 		chats = Chats(

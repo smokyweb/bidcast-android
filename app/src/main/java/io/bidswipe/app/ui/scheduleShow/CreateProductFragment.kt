@@ -85,7 +85,7 @@ class CreateProductFragment : BaseFragment<ScheduleShowViewModel, FragmentCreate
 
 		Log.d(TAG, "onViewCreated: oncreate")
 		imageList.clear()
-		imageList.add(null)
+//		imageList.add(null)
 
 		variantAdapter = ProductVariantAdapter(variantList, object : RecyclerClicks {
 			override fun itemClick(pos: Int, status: String?) {
@@ -406,7 +406,7 @@ class CreateProductFragment : BaseFragment<ScheduleShowViewModel, FragmentCreate
 			return false
 		}
 
-		if (imageList.size <= 1) {
+		if (imageList.isEmpty()) {
 			errorToast("Please add at least one image")
 			return false
 		}
