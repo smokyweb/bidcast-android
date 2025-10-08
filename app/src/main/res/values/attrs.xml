@@ -11,6 +11,7 @@
         <attr name="desc_text" format="string" />
         <attr name="title_text" format="string" />
         <attr name="icon" format="reference" />
+        <attr name="iconSize" format="dimension" />
         <attr name="iconVisible" format="boolean" />
         <attr name="btn_title" format="string" />
         <attr name="show_button" format="boolean" />

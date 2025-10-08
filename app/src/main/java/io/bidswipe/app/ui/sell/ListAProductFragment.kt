@@ -556,6 +556,7 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
 				}
 			}
 		}
+		
 		bind.imageLimit.text = "${imageList.size}/9"
 		bind.images.adapter?.notifyDataSetChanged()
 	}

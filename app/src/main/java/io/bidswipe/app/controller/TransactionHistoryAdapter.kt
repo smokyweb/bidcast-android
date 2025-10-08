@@ -28,9 +28,9 @@ class TransactionHistoryAdapter(
 			Log.d(TAG, "onBind: $item")
 			bind.title.text = when (item?.sourceType) {
 				"tip_amount" -> "Sent tip to ${item.receiver?.name}"
-				"account" -> if (item.type == "withdraw") "Payout" else if (item.type == "debited") "Debited" else if (item.type == "Credited by ${item.sender?.name}") "egw" else ""
-				"card" -> if (item.type == "debited" && item.orderId != null) "Product Purchased" else ""
-				else -> ""
+				"account" -> if (item.type == "withdraw") "Payout" else if (item.type == "debited") "Debited"  else ""
+				"card" -> if (item.type == "debited" && item.orderId != null) "Product Purchased" else "Debited"
+				else -> "Debited"
 			}
 			val icon = when (item?.status?.lowercase()) {
 				"process" -> R.drawable.ic_transaction_processing

@@ -7,6 +7,7 @@ import io.bidswipe.app.databinding.MyOrdersItemBinding
 import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.network.response.GetOrdersResponse
 import io.bidswipe.app.utils.Utils
+import io.bidswipe.app.utils.asCapital
 import io.bidswipe.app.utils.asMoney
 import io.bidswipe.app.utils.loadUrl
 import io.bidswipe.app.utils.setHapticClickListener
@@ -26,7 +27,7 @@ class OrdersAdapter(
 		with(holder) {
 			bind.root.setHapticClickListener { mClicks.itemClick(position) }
 			bind.orderId.text = item?.orderId
-			bind.status.text = item?.status
+			bind.status.text = item?.status?.replace("_", " ")?.asCapital()
 			
 			bind.orderAmount.text = item?.product?.pricing.toString().asMoney()
 			

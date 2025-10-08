@@ -10,36 +10,45 @@ import androidx.core.content.res.use
 import androidx.core.view.isVisible
 import io.bidswipe.app.databinding.NoDataViewBinding
 import io.bidswipe.app.utils.draw
-import io.bidswipe.app.utils.setHapticClickListener
 import io.bidswipe.app.utils.styleable
 
 @SuppressLint("ClickableViewAccessibility")
 class NoDataView @JvmOverloads constructor(
-	val mCtx : Context ,
-	attrs : AttributeSet? = null ,
-	defStyleAttr : Int = 0 ,
+	val mCtx: Context,
+	attrs: AttributeSet? = null,
+	defStyleAttr: Int = 0,
 ) :
-	LinearLayout(mCtx , attrs , defStyleAttr) {
-	private val bind = NoDataViewBinding.inflate(LayoutInflater.from(mCtx) , this , true)
-	var title : TextView = bind.title
-
+	LinearLayout(mCtx, attrs, defStyleAttr) {
+	private val bind = NoDataViewBinding.inflate(LayoutInflater.from(mCtx), this, true)
+	var title: TextView = bind.title
+	
 	init {
-		mCtx.theme.obtainStyledAttributes(attrs , styleable.NoDataView , 0 , 0).use {
-			bind.icon.setImageResource(it.getResourceId(styleable.NoDataView_icon , draw.empty))
-			title.text = it.getString(styleable.NoDataView_title_text)
-			bind.title.text = it.getString(styleable.NoDataView_title_text)
+		mCtx.theme.obtainStyledAttributes(attrs, styleable.NoDataView, 0, 0).use {
+			bind.icon.setImageResource(it.getResourceId(styleable.NoDataView_icon, draw.empty))
+			val titleText = it.getString(styleable.NoDataView_title_text)
+			bind.title.text = titleText
+			if (titleText.isNullOrEmpty()) {
+				bind.title.isVisible = false
+			}
 			bind.desc.text = it.getString(styleable.NoDataView_desc_text)
 			bind.btn.text = it.getString(styleable.NoDataView_btn_title)
-			bind.icon.isVisible = it.getBoolean(styleable.NoDataView_iconVisible , true)
-			bind.btn.isVisible = it.getBoolean(styleable.NoDataView_show_button , false)
+			bind.icon.isVisible = it.getBoolean(styleable.NoDataView_iconVisible, true)
+			bind.btn.isVisible = it.getBoolean(styleable.NoDataView_show_button, false)
+			
+			val iconSize = it.getDimensionPixelSize(styleable.NoDataView_iconSize, 0)
+			if (iconSize != 0) {
+				bind.icon.layoutParams.width = iconSize
+				bind.icon.layoutParams.height = iconSize
+				bind.icon.setPadding(0, 0, 0, 0)
+			}
 
 //            bind.root.setHapticClickListener { }
 //            bind.root.setOnTouchListener { _, _ -> true }
 		}
 	}
-
-	fun onClick(click : OnClickListener) {
+	
+	fun onClick(click: OnClickListener) {
 		bind.btn.setOnClickListener { click.onClick(this) }
 	}
-
+	
 }

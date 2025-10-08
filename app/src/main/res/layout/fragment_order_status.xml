@@ -37,20 +37,21 @@
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/materialCardView"
                 style="@style/cardStyle"
-                android:layout_width="80dp"
-                android:layout_height="80dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="@dimen/margin"
                 android:backgroundTint="@color/background"
                 app:cardCornerRadius="100dp">
 
                 <ImageView
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
                     android:layout_gravity="center"
                     android:contentDescription="@string/app_name"
                     android:scaleType="centerCrop"
                     android:src="@drawable/ic_box"
+                    android:layout_margin="24dp"
                     app:tint="@color/primary" />
 
             </com.google.android.material.card.MaterialCardView>
@@ -81,7 +82,7 @@
                 android:background="@drawable/card_16"
                 android:gravity="center_vertical"
                 android:orientation="vertical"
-                android:padding="@dimen/padding">
+                android:padding="@dimen/margin">
 
                 <LinearLayout
                     android:id="@+id/click"
@@ -270,13 +271,12 @@
                 android:background="@drawable/card_16"
                 android:gravity="center_vertical"
                 android:orientation="vertical"
-                android:padding="@dimen/padding">
+                android:padding="@dimen/margin">
 
                 <TextView
                     style="@style/TitleLarge"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="@dimen/half_margin"
                     android:drawablePadding="@dimen/half_margin"
                     android:text="Shipping Updates"
                     app:drawableStartCompat="@drawable/ic_vehicle"
@@ -300,13 +300,12 @@
                 android:background="@drawable/card_16"
                 android:gravity="center_vertical"
                 android:orientation="vertical"
-                android:padding="@dimen/padding">
+                android:padding="@dimen/margin">
 
                 <TextView
                     style="@style/TitleLarge"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="@dimen/half_margin"
                     android:drawablePadding="@dimen/half_margin"
                     android:text="@string/delivery_address"
                     app:drawableStartCompat="@drawable/ic_location_marker" />
@@ -358,13 +357,12 @@
                 android:background="@drawable/card_16"
                 android:gravity="center_vertical"
                 android:orientation="vertical"
-                android:padding="@dimen/padding">
+                android:padding="@dimen/margin">
 
                 <TextView
                     style="@style/TitleLarge"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="@dimen/half_margin"
                     android:drawablePadding="@dimen/half_margin"
                     android:text="@string/swiftbid_buyer_protection"
                     app:drawableStartCompat="@drawable/ic_shield" />
@@ -373,7 +371,6 @@
                     style="@style/BodyLarge"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="@dimen/half_margin"
                     android:alpha="0.8"
                     android:text="Get full refund if the item is not as described or if is not delivered" />
 

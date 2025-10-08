@@ -18,9 +18,9 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_marginHorizontal="@dimen/half_margin"
             android:layout_weight="1"
             android:background="@drawable/card_8"
-            android:layout_marginHorizontal="@dimen/half_margin"
             android:orientation="vertical"
             android:padding="@dimen/half_margin">
 
@@ -45,8 +45,8 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="1"
             android:layout_marginHorizontal="@dimen/half_margin"
+            android:layout_weight="1"
             android:background="@drawable/card_8"
             android:orientation="vertical"
             android:padding="@dimen/half_margin">
@@ -72,8 +72,8 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="1"
             android:layout_marginHorizontal="@dimen/half_margin"
+            android:layout_weight="1"
             android:background="@drawable/card_8"
             android:orientation="vertical"
             android:padding="@dimen/half_margin">
@@ -107,22 +107,24 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="240dp"
-        android:gravity="center">
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="vertical">
 
-        <androidx.appcompat.widget.AppCompatImageView
-            android:layout_width="48dp"
-            android:layout_height="48dp"
+        <io.bidswipe.app.ui.custom.NoDataView
+            android:id="@+id/no_data"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:alpha="0.6"
             android:visibility="gone"
-            android:src="@drawable/ic_graph"
-            app:layout_constraintDimensionRatio="7:4" />
+            app:desc_text="No Sales Data Available"
+            app:icon="@drawable/ic_graph"
+            app:iconSize="48dp" />
 
         <com.github.mikephil.charting.charts.LineChart
             android:id="@+id/salesChart"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            />
+            android:layout_height="240dp" />
 
     </LinearLayout>
 
@@ -135,23 +137,24 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="180dp"
-        android:gravity="center">
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="vertical">
 
-        <androidx.appcompat.widget.AppCompatImageView
-            android:layout_width="48dp"
-            android:layout_height="48dp"
+        <io.bidswipe.app.ui.custom.NoDataView
+            android:id="@+id/no_data_visitors"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:alpha="0.6"
-            android:src="@drawable/ic_graph"
             android:visibility="gone"
-            app:layout_constraintDimensionRatio="7:4" />
+            app:desc_text="No Sales Data Available"
+            app:icon="@drawable/ic_graph"
+            app:iconSize="48dp" />
 
         <com.github.mikephil.charting.charts.LineChart
             android:id="@+id/visitorChart"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            />
-
+            android:layout_height="240dp" />
 
     </LinearLayout>
 
@@ -169,7 +172,7 @@
         android:id="@+id/loader"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone"/>
+        android:visibility="gone" />
 
 
 </LinearLayout>

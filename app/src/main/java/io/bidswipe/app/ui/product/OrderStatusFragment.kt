@@ -76,13 +76,15 @@ class OrderStatusFragment : BaseFragment<ProductViewModel, FragmentOrderStatusBi
 		viewModel.getOrderDetailsRepo.observe(viewLifecycleOwner) {
 			when (it) {
 				is Resource.Success -> {
+					viewModel.getOrderDetailsRepo.value=null
 					bind.loader.isVisible = false
 
 					val mData = it.value.data
 
 					bind.productName.text = mData?.product?.title
+					bind.address.text = mData?.shippingAddress?:"N/A"
 					bind.productImage.loadUrl(mCtx, mData?.product?.images?.get(0).toString())
-					bind.orderId.text = mData?.id.toString()
+					bind.orderId.text = mData?.orderId.toString()
 					bind.orderDate.text = Utils.getFormattedDateTime(
 						"yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'",
 						"MMM dd, yyyy, HH:mm",
@@ -98,8 +100,8 @@ class OrderStatusFragment : BaseFragment<ProductViewModel, FragmentOrderStatusBi
 				}
 
 				is Resource.Error -> {
+					viewModel.getOrderDetailsRepo.value=null
 					bind.loader.isVisible = false
-
 					it.parse(mCtx, TAG, object : AlertClicks {
 						override fun primaryClick(dialog: AppBottomSheet) {
 							dialog.dismiss()

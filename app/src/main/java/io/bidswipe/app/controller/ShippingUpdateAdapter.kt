@@ -6,6 +6,7 @@ import io.bidswipe.app.base.BaseAdapter
 import io.bidswipe.app.databinding.ShippingUpdateItemBinding
 import io.bidswipe.app.network.response.GetOrderDetailsResponse
 import io.bidswipe.app.utils.Utils
+import io.bidswipe.app.utils.asCapital
 
 class ShippingUpdateAdapter(
 	val mList : MutableList<GetOrderDetailsResponse.Data.ShippingTracking?> ,
@@ -21,7 +22,7 @@ class ShippingUpdateAdapter(
 	) {
 		with(holder) {
 
-			bind.title.text = item?.title.toString()
+			bind.title.text = item?.title?.asCapital()
 			bind.subTitle.text = Utils.getFormattedDateTime(
 				"yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'" ,
 				"MMM dd, yyyy - HH:mm" ,
