@@ -37,7 +37,6 @@ class MessagesFragment : BaseFragment<DashViewModel , FragmentMessagesBinding>()
 		bind.recycler.adapter = messagesAdapter
 		bind.swipeRefresh.setOnRefreshListener { loadMessages() }
 		bind.noInternet.onClick { loadMessages() }
-
 		loadMessages()
 	}
 
@@ -162,6 +161,7 @@ class MessagesFragment : BaseFragment<DashViewModel , FragmentMessagesBinding>()
 								.child("senderId").value)
 						) {
 							it.child("seen").ref.setValue(true)
+							it.child("unreadCount").ref.setValue(0)
 						}
 					}
 				}

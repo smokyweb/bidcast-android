@@ -28,12 +28,11 @@ import io.bidswipe.app.utils.setHapticClickListener
 import java.time.Instant
 import java.util.Calendar
 
-
 class ChatAdapter(
-	private val mCtx : Context ,
-	private val senderId : String ,
-	private val mList : MutableList<ChatModel> ,
-	private val mClicks : RecyclerClicks ,
+	private val mCtx: Context,
+	private val senderId: String,
+	private val mList: MutableList<ChatModel>,
+	private val mClicks: RecyclerClicks,
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
 	companion object {
@@ -44,7 +43,7 @@ class ChatAdapter(
 
 	@RequiresApi(Build.VERSION_CODES.O)
 	@SuppressLint("SetTextI18n")
-	override fun onBindViewHolder(holder : RecyclerView.ViewHolder , position : Int) {
+	override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
 		val chat = mList[position]
 
 		if (chat.type != Chats.ChatType.DATE) {
@@ -59,35 +58,35 @@ class ChatAdapter(
 						Chats.ChatType.IMAGE -> {
 							bind.chatView.isVisible = false
 							bind.imageView.isVisible = true
-							bind.image.loadUrl(mCtx , chat.attachment?.image.toString())
+							bind.image.loadUrl(mCtx, chat.attachment?.image.toString())
 						}
 					}
 
-                    bind.imageView.setHapticClickListener {
-						mClicks.itemClick(position , "image")
+					bind.imageView.setHapticClickListener {
+						mClicks.itemClick(position, "image")
 					}
 
 					bind.replyView.root.setBackgroundColor(
 						ContextCompat.getColor(
-							mCtx , clr.primaryContainer
+							mCtx, clr.primaryContainer
 						)
 					)
 					bind.replyView.replyDivider.backgroundTintList =
-						ColorStateList.valueOf(ContextCompat.getColor(mCtx , clr.onPrimaryContainer))
+						ColorStateList.valueOf(ContextCompat.getColor(mCtx, clr.onPrimaryContainer))
 
 					bind.root.setOnLongClickListener {
-						mClicks.itemClick(position , "select")
+						mClicks.itemClick(position, "select")
 						true
 					}
 
-                    bind.replyView.root.setHapticClickListener {
-						mClicks.itemClick(position , "reply_click")
+					bind.replyView.root.setHapticClickListener {
+						mClicks.itemClick(position, "reply_click")
 					}
 
 					bind.replyView.root.isVisible = chat.isReply ?: false
 					if (chat.replyMessage?.type == "image") {
 						bind.replyView.replyImage.loadUrl(
-							mCtx , chat.replyMessage?.message.toString()
+							mCtx, chat.replyMessage?.message.toString()
 						)
 						bind.replyView.replyMsg.text = "Photo"
 					} else {
@@ -126,25 +125,25 @@ class ChatAdapter(
 						Chats.ChatType.IMAGE -> {
 							bind.chatView.isVisible = false
 							bind.imageView.isVisible = true
-							bind.image.loadUrl(mCtx , chat.attachment?.image.toString())
+							bind.image.loadUrl(mCtx, chat.attachment?.image.toString())
 						}
 					}
 
 					bind.imgRead.isVisible = false
 
 					bind.root.setOnLongClickListener {
-						mClicks.itemClick(position , "select")
+						mClicks.itemClick(position, "select")
 						true
 					}
 
-                    bind.replyView.root.setHapticClickListener {
-						mClicks.itemClick(position , "reply_click")
+					bind.replyView.root.setHapticClickListener {
+						mClicks.itemClick(position, "reply_click")
 					}
 
 					bind.replyView.root.isVisible = chat.isReply ?: false
 					if (chat.replyMessage?.type == "image") {
 						bind.replyView.replyImage.loadUrl(
-							mCtx , chat.replyMessage?.message.toString()
+							mCtx, chat.replyMessage?.message.toString()
 						)
 						bind.replyView.replyMsg.text = "Photo"
 					} else {
@@ -183,10 +182,10 @@ class ChatAdapter(
 						}
 
 						else -> {
-							DateFormat.format("MM-dd-yyyy" , calendar).toString()
+							DateFormat.format("MM-dd-yyyy", calendar).toString()
 						}
 					}
-				} catch (e : Exception) {
+				} catch (e: Exception) {
 					e.printStackTrace()
 					chat.message
 				}
@@ -196,32 +195,32 @@ class ChatAdapter(
 
 	}
 
-	override fun onCreateViewHolder(parent : ViewGroup , type : Int) : RecyclerView.ViewHolder {
+	override fun onCreateViewHolder(parent: ViewGroup, type: Int): RecyclerView.ViewHolder {
 		return when (type) {
 			ITEM_RECEIVE -> ReceiveViewHolder(
 				ReceiverChatItemBinding.bind(
 					LayoutInflater.from(parent.context)
-						.inflate(R.layout.receiver_chat_item , parent , false)
+						.inflate(R.layout.receiver_chat_item, parent, false)
 				)
 			)
 
 			ITEM_DATE -> DateViewHolder(
 				DateChatItemBinding.bind(
 					LayoutInflater.from(parent.context)
-						.inflate(R.layout.date_chat_item , parent , false)
+						.inflate(R.layout.date_chat_item, parent, false)
 				)
 			)
 
 			else -> SentViewHolder(
 				SenderChatItemBinding.bind(
 					LayoutInflater.from(parent.context)
-						.inflate(R.layout.sender_chat_item , parent , false)
+						.inflate(R.layout.sender_chat_item, parent, false)
 				)
 			)
 		}
 	}
 
-	override fun getItemViewType(position : Int) : Int {
+	override fun getItemViewType(position: Int): Int {
 		return if (mList[position].type == Chats.ChatType.DATE) {
 			ITEM_DATE
 		} else {
@@ -235,10 +234,10 @@ class ChatAdapter(
 
 	override fun getItemCount() = mList.size
 
-	class SentViewHolder(var bind : SenderChatItemBinding) : RecyclerView.ViewHolder(bind.root)
+	class SentViewHolder(var bind: SenderChatItemBinding) : RecyclerView.ViewHolder(bind.root)
 
-	class ReceiveViewHolder(var bind : ReceiverChatItemBinding) : RecyclerView.ViewHolder(bind.root)
+	class ReceiveViewHolder(var bind: ReceiverChatItemBinding) : RecyclerView.ViewHolder(bind.root)
 
-	class DateViewHolder(var bind : DateChatItemBinding) : RecyclerView.ViewHolder(bind.root)
+	class DateViewHolder(var bind: DateChatItemBinding) : RecyclerView.ViewHolder(bind.root)
 
 }

@@ -495,4 +495,7 @@
     <string name="play_video">Play video</string>
     <string name="video_thumbnail">Video thumbnail</string>
     <string name="send_tip">Send Tip</string>
+    <string name="product_deleted">Product Deleted</string>
+    <string name="product_no_longer_available">This product is no longer available</string>
+    <string name="deleted_product_message">The seller has removed this product</string>
 </resources>

@@ -216,13 +216,24 @@ class Chats(
 
 	private fun addToChatList(model : ChatModel) {
 		model.id = chatKey
-		FireRef.CHAT_LIST.child(users.receiverId.toString()).child(users.senderId.toString())
-			.setValue(model.toMap())
+		
+		// For the sender - reset unread count to 0
+		val senderModel = model.copy(unreadCount = 0)
 		FireRef.CHAT_LIST.child(users.senderId.toString()).child(users.receiverId.toString())
-			.setValue(model.toMap())
+			.setValue(senderModel.toMap())
+		
+		// For the receiver - increment unread count
+		val receiverRef = FireRef.CHAT_LIST.child(users.receiverId.toString())
+			.child(users.senderId.toString())
+		
+		receiverRef.get().addOnSuccessListener { snapshot ->
+			val currentCount = snapshot.child("unreadCount").getValue(Int::class.java) ?: 0
+			val receiverModel = model.copy(unreadCount = currentCount + 1)
+			receiverRef.setValue(receiverModel.toMap())
+		}
 	}
 
-	fun updateChatList(map : Map<String , Boolean>) {
+	fun updateChatList(map : Map<String , Any>) {
 		FireRef.CHAT_LIST.child(users.receiverId.toString()).child(users.senderId.toString())
 			.updateChildren(map)
 	}

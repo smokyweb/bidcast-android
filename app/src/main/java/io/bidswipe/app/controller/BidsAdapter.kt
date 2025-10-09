@@ -42,32 +42,53 @@ class BidsAdapter(
 			}
 
 			bind.offerPrice.text = (item?.product?.pricing ?: 0).toString().asMoney()
-			bind.productName.text = item?.product?.title?.asCapital()
+			bind.offerPrice.alpha = 1.0f
+			bind.offerPrice.setTextColor(mCtx.getColor(R.color.success))
 
-			val productImage = if (item?.product?.images.isNullOrEmpty()) {
-				null
-			} else {
-				item.product.images[0]
-			}
-
-			if (productImage.isNullOrEmpty()) {
-				bind.productImage.setImageResource(R.drawable.placeholder_user)
-			} else {
-				bind.productImage.loadUrl(mCtx , productImage)
-			}
-			bind.prodSubTitle.text = buildString {
-				append("Current Bid: ")
-				append((item?.bidPrice ?: 0).toString().asMoney())
-			}
-
-            bind.root.setHapticClickListener {
-				mClicks.itemClick(position)
-			}
 			bind.subTitle.text = buildSpannedString {
 				append("Placed a Bid ")
 				bold { append(" • ") }
 				append(Utils.getTimeAgo(item?.createdAt ?: "" , Const.DD_MM_YYYY_HH_MM_SS))
 			}
+
+		if (item?.product != null){
+			bind.prodSubTitle.text = buildString {
+				append("Current Bid: ")
+				append((item.bidPrice ?: 0).toString().asMoney())
+			}
+
+			bind.productName.text = item.product.title?.asCapital()
+
+			val productImage = if (item.product.images.isNullOrEmpty()) {
+				null
+			} else {
+				item.product.images[0]
+			}
+
+			bind.productName.alpha = 1f
+			bind.prodSubTitle.alpha = 1f
+
+			if (productImage.isNullOrEmpty()) {
+				bind.productImage.setImageResource(R.drawable.placeholder_square)
+			} else {
+				bind.productImage.loadUrl(mCtx , productImage , R.drawable.placeholder_square)
+			}
+
+		}else{
+
+			bind.productName.text = mCtx.getString(R.string.product_deleted)
+			bind.productName.setTextColor(mCtx.getColor(R.color.onSurfaceVariant))
+			bind.productName.alpha = 0.6f
+			bind.prodSubTitle.text = mCtx.getString(R.string.product_no_longer_available)
+			bind.prodSubTitle.setTextColor(mCtx.getColor(R.color.onSurfaceVariant))
+			bind.prodSubTitle.alpha = 0.7f
+			bind.productImage.setImageResource(R.drawable.placeholder_square)
+
+		}
+			bind.root.setHapticClickListener {
+				mClicks.itemClick(position)
+			}
+
 		}
 	}
 }

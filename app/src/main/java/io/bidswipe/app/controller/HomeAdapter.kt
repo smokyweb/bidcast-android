@@ -36,7 +36,7 @@ class HomeAdapter(
 				mClick.itemClick(position, "viewShow")
 			}
 
-			bind.userImage.loadUrl(mCtx, item?.user?.profileImage ?: "", draw.user_image)
+			bind.userImage.loadUrl(mCtx, item?.user?.profileImage ?: "", draw.placeholder_user)
 
 			if (item?.thumbnail != null) {
 				bind.thumbnail.loadUrl(mCtx, item.thumbnail[0] ?: "")

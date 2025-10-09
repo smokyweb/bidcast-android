@@ -10,6 +10,7 @@ data class ChatModel(
 	var id : String? = "" ,
 	var message : String? = "" ,
 	var seen : Boolean? = false ,
+	var unreadCount : Int? = 0 ,
 	var users : Users? = Users() ,
 	var replyMessage : Reply? = null ,
 	var timezone : String? = Utils.timezone ,
@@ -31,7 +32,7 @@ data class ChatModel(
 			"" + it.child("audio").getValue(String::class.java) ,
 			"" + it.child("image").getValue(String::class.java) ,
 			"" + it.child("video").getValue(String::class.java) ,
-			"" + it.child("thumbnail").getValue(String::class.java) ,
+			"" + it.child("thumbnail").getValue(String::class.java)
 		)
 	}
 
@@ -90,6 +91,7 @@ data class ChatModel(
 		"id" to id ,
 		"type" to type ,
 		"seen" to seen ,
+		"unreadCount" to unreadCount ,
 		"message" to message ,
 		"timezone" to timezone ,
 		"timestamp" to timestamp ,
@@ -104,6 +106,7 @@ data class ChatModel(
 		id = it.child("id").getValue(String::class.java) ,
 		type = it.child("type").getValue(String::class.java) ,
 		seen = it.child("seen").getValue(Boolean::class.java) ,
+		unreadCount = it.child("unreadCount").getValue(Int::class.java) ?: 0 ,
 		replyMessage = Reply().fromMap(it.child("replyMessage")) ,
 		attachment = Attachment().fromMap(it.child("attachment")) ,
 		message = it.child("message").getValue(String::class.java) ,

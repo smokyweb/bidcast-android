@@ -65,16 +65,16 @@ class ChatActivity : BaseActivity() {
 	private val viewModel by viewModels<DashViewModel>()
 	private var chatList = mutableListOf<ChatModel>()
 
-	private lateinit var chatRef : DatabaseReference
-	private lateinit var chatAdapter : ChatAdapter
-	private var reply : ChatModel.Reply? = null
-	private lateinit var chats : Chats
+	private lateinit var chatRef: DatabaseReference
+	private lateinit var chatAdapter: ChatAdapter
+	private var reply: ChatModel.Reply? = null
+	private lateinit var chats: Chats
 	private var isReply = false
 
-	private lateinit var receiverImage : String
-	private lateinit var receiverName : String
-	private lateinit var receiverId : String
-	private lateinit var chatKey : String
+	private lateinit var receiverImage: String
+	private lateinit var receiverName: String
+	private lateinit var receiverId: String
+	private lateinit var chatKey: String
 
 	private var firstTimeLoad = true
 	private var loadMore = false
@@ -85,13 +85,13 @@ class ChatActivity : BaseActivity() {
 
 	private val mClick = object : RecyclerClicks {
 
-		override fun itemClick(pos : Int , status : String?) {
+		override fun itemClick(pos: Int, status: String?) {
 			when (status) {
 				"image" -> {
-					/* val imgList = mutableListOf(chatList[pos].attachment?.image.toString())
-					 StfalconImageViewer.Builder(this@ChatActivity , imgList , ::loadImage).withBackgroundColorResource(clr.surface)
-						 .withHiddenStatusBar(false)
-						 .allowSwipeToDismiss(true).allowZooming(true).show(true)*/
+					/*val imgList = mutableListOf(chatList[pos].attachment?.image.toString())
+					StfalconImageViewer.Builder(this@ChatActivity , imgList , ::loadImage).withBackgroundColorResource(clr.surface)
+						.withHiddenStatusBar(false)
+						.allowSwipeToDismiss(true).allowZooming(true).show(true)*/
 				}
 
 				"reply_click" -> {
@@ -106,7 +106,7 @@ class ChatActivity : BaseActivity() {
 	private val imageResult = registerForActivityResult(CropImageContract()) { result ->
 		if (result.isSuccessful) {
 			val profileUri = result.uriContent
-			Alerts.log(TAG , "URI $profileUri")
+			Alerts.log(TAG, "URI $profileUri")
 
 			/*            if (profileUri != null) {
 							chats.sendImage(profileUri) {
@@ -122,23 +122,22 @@ class ChatActivity : BaseActivity() {
 	}
 
 
-	override fun onCreate(savedInstanceState : Bundle?) {
+	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
 
 		setContentView(bind.root)
 
-		bind
-
-		bind.chats.setOnTouchListener { _ , _ ->
+		bind.chats.setOnTouchListener { _, _ ->
 			hideKeyboard()
-			return@setOnTouchListener true
+			return@setOnTouchListener false
 		}
-        bind.header.setHapticClickListener {
+
+		bind.header.setHapticClickListener {
 			hideKeyboard()
 		}
 
 		App.isUserOnChatScreen = true
-		window.navigationBarColor = ContextCompat.getColor(this , clr.background)
+		window.navigationBarColor = ContextCompat.getColor(this, clr.background)
 
 		receiverImage = intent.getStringExtra("image").toString()
 		receiverName = intent.getStringExtra("name").toString()
@@ -168,17 +167,21 @@ class ChatActivity : BaseActivity() {
 
 		chatRef = FireRef.CHAT.child(chatKey)
 
+		// Reset unread count when opening chat
+		FireRef.CHAT_LIST.child(userId).child(receiverId)
+			.updateChildren(mapOf("unreadCount" to 0))
+
 		bind.title.text = receiverName.asCapital()
-		bind.userImage.loadUrl(this , receiverImage)
+		bind.userImage.loadUrl(this, receiverImage)
 
 		chats = Chats(
-			this , chatKey , ChatModel.Users(
-				"" + userId ,
-				"" + userName ,
-				"" + userImage ,
-				"" + receiverId ,
-				"" + receiverName ,
-				"" + receiverImage ,
+			this, chatKey, ChatModel.Users(
+				"" + userId,
+				"" + userName,
+				"" + userImage,
+				"" + receiverId,
+				"" + receiverName,
+				"" + receiverImage,
 			)
 		)
 
@@ -186,7 +189,7 @@ class ChatActivity : BaseActivity() {
 
 		bind.toolbar.setNavigationOnClickListener { finishAfterTransition() }
 
-		chatAdapter = ChatAdapter(this , userId , chatList , mClick)
+		chatAdapter = ChatAdapter(this, userId, chatList, mClick)
 
 		bind.chats.also {
 			it.adapter = chatAdapter
@@ -198,8 +201,8 @@ class ChatActivity : BaseActivity() {
 			}
 
 			it.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-				override fun onScrolled(recyclerView : RecyclerView , dx : Int , dy : Int) {
-					super.onScrolled(recyclerView , dx , dy)
+				override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+					super.onScrolled(recyclerView, dx, dy)
 					val layoutManager = bind.chats.layoutManager as LinearLayoutManager
 					if (layoutManager.findFirstCompletelyVisibleItemPosition() == 0 && dy < 0) {
 						getMoreChats()
@@ -211,9 +214,9 @@ class ChatActivity : BaseActivity() {
 
 		val helper = ItemTouchHelper(
 			MessageSwiper(
-				this ,
+				this,
 				object : MessageSwiper.SwipeControllerActions {
-					override fun showReplyUI(position : Int) {
+					override fun showReplyUI(position: Int) {
 						if (isBlockedByMe || isBlockedByOther) return
 
 						val message = if (chatList[position].type == "image") {
@@ -223,16 +226,16 @@ class ChatActivity : BaseActivity() {
 						}
 
 						reply = ChatModel.Reply(
-							"" + chatList[position].type.toString() ,
-							"" + message ,
-							"" + chatList[position].users?.senderId.toString() ,
-							"" + chatList[position].users?.senderName.toString() ,
-							"" + chatList[position].id.toString() ,
+							"" + chatList[position].type.toString(),
+							"" + message,
+							"" + chatList[position].users?.senderId.toString(),
+							"" + chatList[position].users?.senderName.toString(),
+							"" + chatList[position].id.toString(),
 						)
 
 						showQuotedMessage(
-							message ,
-							chatList[position].users?.senderName.toString() ,
+							message,
+							chatList[position].users?.senderName.toString(),
 							chatList[position].type.toString()
 						)
 					}
@@ -241,21 +244,21 @@ class ChatActivity : BaseActivity() {
 
 		helper.attachToRecyclerView(bind.chats)
 
-        bind.send.setHapticClickListener {
-            if (isBlockedByMe || isBlockedByOther) return@setHapticClickListener
+		bind.send.setHapticClickListener {
+			if (isBlockedByMe || isBlockedByOther) return@setHapticClickListener
 
 			if (bind.message.value().isNotEmpty()) {
 
 				val model = if (isReply) ChatModel(
-					isReply = true ,
-					message = bind.message.value() ,
+					isReply = true,
+					message = bind.message.value(),
 					replyMessage = reply
 				)
-				else ChatModel(isReply = false , message = bind.message.value())
+				else ChatModel(isReply = false, message = bind.message.value())
 
 				chats.sendChat(model) {
 					viewModel.sendChatNotification(
-						receiverId.request() ,
+						receiverId.request(),
 						bind.message.value().request()
 					)
 					bind.message.text = null
@@ -272,12 +275,12 @@ class ChatActivity : BaseActivity() {
 			hideKeyboard()
 			requestPerms(Const.PERMISSIONS) {
 				if (it) {
-					imageResult.launch(Utils.initCrop(this , isCamera = true , isGallery = true))
+					imageResult.launch(Utils.initCrop(this, isCamera = true, isGallery = true))
 				}
 			}
 		}
 
-        bind.cancel.setHapticClickListener {
+		bind.cancel.setHapticClickListener {
 			showReply(false)
 		}
 		checkBlockStatus()
@@ -289,7 +292,7 @@ class ChatActivity : BaseActivity() {
 			when (resource) {
 				is Resource.Success -> {
 					viewModel.blockUnblockUserRepo.value = null
-					isBlockedByMe = ! isBlockedByMe
+					isBlockedByMe = !isBlockedByMe
 					updateChatUI()
 					successToast(resource.value.message ?: "Operation successful")
 
@@ -323,9 +326,7 @@ class ChatActivity : BaseActivity() {
 				else -> {}
 			}
 		}
-
 	}
-
 
 	private fun updateChatUI() {
 		if (isBlockedByOther) {
@@ -346,30 +347,30 @@ class ChatActivity : BaseActivity() {
 		}
 	}
 
-	private fun unBlockText(view : TextView) {
+	private fun unBlockText(view: TextView) {
 		val spanTxt = SpannableStringBuilder("You have blocked $receiverName ")
 		spanTxt.append(buildSpannedString { bold { append("Click here") } })
 		spanTxt.setSpan(object : ClickableSpan() {
-			override fun onClick(widget : View) {
+			override fun onClick(widget: View) {
 				try {
 					showUnblockConfirmation()
-				} catch (e : Exception) {
+				} catch (e: Exception) {
 					e.printStackTrace()
 				}
 			}
 
-			override fun updateDrawState(ds : TextPaint) {
+			override fun updateDrawState(ds: TextPaint) {
 				super.updateDrawState(ds)
-				ds.color = ContextCompat.getColor(this@ChatActivity , R.color.error)
+				ds.color = ContextCompat.getColor(this@ChatActivity, R.color.error)
 				ds.isUnderlineText = true
 			}
 
-		} , spanTxt.length - "Click here".length , spanTxt.length , 0)
+		}, spanTxt.length - "Click here".length, spanTxt.length, 0)
 		spanTxt.append(" to unblock them.")
 		view.apply {
 			movementMethod = LinkMovementMethod.getInstance()
 			highlightColor = Color.TRANSPARENT
-			setText(spanTxt , TextView.BufferType.SPANNABLE)
+			setText(spanTxt, TextView.BufferType.SPANNABLE)
 		}
 	}
 
@@ -387,7 +388,7 @@ class ChatActivity : BaseActivity() {
 	}
 
 	private fun getMoreChats() {
-		if (! loadMore) {
+		if (!loadMore) {
 			chatRef.removeEventListener(chatPageListener)
 			loadMore = true
 			bind.expandView.expand(true)
@@ -395,20 +396,24 @@ class ChatActivity : BaseActivity() {
 
 			val firstId = chatList.first().id.toString()
 
-			val ref = chatRef.orderByChild("id").endBefore(firstId , firstId).limitToLast(chatLimit)
+			val ref = chatRef.orderByChild("id").endBefore(firstId, firstId).limitToLast(chatLimit)
 
 			ref.addListenerForSingleValueEvent(mainChatListener)
 		}
 	}
 
 	private val chatPageListener = object : ChildEventListener {
-		override fun onChildAdded(snapshot : DataSnapshot , previousChildName : String?) {
+		override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
 			bind.loader.isVisible = false
 
 			val chatMsg = ChatModel().fromMap(snapshot)
 			if (chatMsg.users?.receiverId == userId) {
 				snapshot.child("seen").ref.setValue(true).addOnSuccessListener {
+					// Update the OTHER person's chat list that message is seen (but don't touch their unreadCount)
 					chats.updateChatList(mapOf("seen" to true))
+					// Update current user's own chat list to reset unreadCount
+					FireRef.CHAT_LIST.child(userId).child(receiverId)
+						.updateChildren(mapOf("unreadCount" to 0))
 				}
 			}
 
@@ -433,15 +438,15 @@ class ChatActivity : BaseActivity() {
 				chatList.add(chatMsg)
 				chatAdapter.notifyItemInserted(0)
 				bind.chats.smoothScrollToPosition(chatList.size - 1)
-				bind.chats.isVisible = true
+//				bind.chats.isVisible = true
 			}
 
 			bind.message.requestFocus()
 
 		}
 
-		override fun onChildChanged(snapshot : DataSnapshot , previousChildName : String?) {
-			Alerts.log(TAG , "changed ${snapshot.children.count()}")
+		override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
+			Alerts.log(TAG, "changed ${snapshot.children.count()}")
 			runSafe {
 				val index = chatList.indexOf(chatList.find { it.id == snapshot.key })
 				chatList[index].seen = snapshot.child("seen").getValue(Boolean::class.java)
@@ -449,29 +454,29 @@ class ChatActivity : BaseActivity() {
 			}
 		}
 
-		override fun onChildRemoved(snapshot : DataSnapshot) {
-			Alerts.log(TAG , "ChildRemoved $snapshot")
+		override fun onChildRemoved(snapshot: DataSnapshot) {
+			Alerts.log(TAG, "ChildRemoved $snapshot")
 			runSafe {
 				val removeAt = chatList.indexOf(chatList.find { it.id == snapshot.key })
 				chatList.removeAt(removeAt)
 				chatAdapter.notifyItemRemoved(removeAt)
-				chatAdapter.notifyItemRangeChanged(0 , chatList.size)
+				chatAdapter.notifyItemRangeChanged(0, chatList.size)
 			}
 		}
 
-		override fun onChildMoved(snapshot : DataSnapshot , previousChildName : String?) {
-			Alerts.log(TAG , "ChildMoved $snapshot")
+		override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {
+			Alerts.log(TAG, "ChildMoved $snapshot")
 		}
 
-		override fun onCancelled(error : DatabaseError) {
-			Alerts.log(TAG , "ChildMoved $error")
+		override fun onCancelled(error: DatabaseError) {
+			Alerts.log(TAG, "ChildMoved $error")
 		}
 
 	}
 
 	private val mainChatListener = object : ValueEventListener {
 		@SuppressLint("NotifyDataSetChanged")
-		override fun onDataChange(snapshot : DataSnapshot) {
+		override fun onDataChange(snapshot: DataSnapshot) {
 			bind.loader.isVisible = false
 
 			val tempList = mutableListOf<ChatModel>()
@@ -489,7 +494,7 @@ class ChatActivity : BaseActivity() {
 				tempList.forEach {
 					if (chatList.find { chat -> chat.id == it.id } == null) {
 						if (it.id != null) {
-							chatList.add(0 , it)
+							chatList.add(0, it)
 							chatAdapter.notifyItemInserted(0)
 						}
 					}
@@ -497,8 +502,8 @@ class ChatActivity : BaseActivity() {
 			} else {
 				chatList.addAll(tempList)
 				try {
-					chatAdapter.notifyItemRangeInserted(0 , chatList.size - 1)
-				} catch (_ : Exception) {
+					chatAdapter.notifyItemRangeInserted(0, chatList.size - 1)
+				} catch (_: Exception) {
 					chatAdapter.notifyDataSetChanged()
 				}
 			}
@@ -521,16 +526,16 @@ class ChatActivity : BaseActivity() {
 				}
 			}
 
-			bind.chats.isVisible = true
+//			bind.chats.isVisible = true
 
 			log("SIZE => ${chatList.size}")
 
 			chatRef.limitToLast(chatLimit).addChildEventListener(chatPageListener)
 		}
 
-		override fun onCancelled(error : DatabaseError) {
+		override fun onCancelled(error: DatabaseError) {
 			error.toException().printStackTrace()
-			Alerts.log(TAG , "CHAT READ ERROR : ${error.message}")
+			Alerts.log(TAG, "CHAT READ ERROR : ${error.message}")
 		}
 
 
@@ -538,23 +543,23 @@ class ChatActivity : BaseActivity() {
 
 	private fun showUnblockConfirmation() {
 		AppBottomSheet(
-			this ,
-			R.drawable.ic_block ,
-			"Unblock User" ,
-			"Are you sure you want to unblock $receiverName?" ,
-			primaryBtnText = "Unblock" ,
-			secondaryBtnText = "Cancel" ,
-			canCancel = true ,
-			showSecondary = true ,
-			iconPadding = 16 ,
-			alertType = AlertType.INFO ,
+			this,
+			R.drawable.ic_block,
+			"Unblock User",
+			"Are you sure you want to unblock $receiverName?",
+			primaryBtnText = "Unblock",
+			secondaryBtnText = "Cancel",
+			canCancel = true,
+			showSecondary = true,
+			iconPadding = 16,
+			alertType = AlertType.INFO,
 			clicks = object : AlertClicks {
-				override fun primaryClick(dialog : AppBottomSheet) {
+				override fun primaryClick(dialog: AppBottomSheet) {
 					dialog.dismiss()
 					unblockUser()
 				}
 
-				override fun secondaryClick(dialog : AppBottomSheet) {
+				override fun secondaryClick(dialog: AppBottomSheet) {
 					dialog.dismiss()
 				}
 			}).show()
@@ -569,7 +574,7 @@ class ChatActivity : BaseActivity() {
 			when (resource) {
 				is Resource.Success -> {
 					viewModel.blockUnblockUserRepo.value = null
-					isBlockedByMe = ! isBlockedByMe
+					isBlockedByMe = !isBlockedByMe
 					updateChatUI()
 					successToast(resource.value.message ?: "User unblocked successfully")
 				}
@@ -584,15 +589,15 @@ class ChatActivity : BaseActivity() {
 		}
 	}
 
-	private fun showQuotedMessage(message : String , name : String , type : String) {
+	private fun showQuotedMessage(message: String, name: String, type: String) {
 		bind.message.requestFocus()
 		val inputMethodManager =
 			this.getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
-		inputMethodManager.showSoftInput(bind.message , InputMethodManager.SHOW_IMPLICIT)
+		inputMethodManager.showSoftInput(bind.message, InputMethodManager.SHOW_IMPLICIT)
 
 		if (type == "image") {
 			bind.replyImage.isVisible = true
-			bind.replyImage.loadUrl(this , message)
+			bind.replyImage.loadUrl(this, message)
 			bind.quotedText.text = buildString { append("Photo") }
 		} else {
 			bind.quotedText.text = message
@@ -608,7 +613,7 @@ class ChatActivity : BaseActivity() {
 		showReply(true)
 	}
 
-	private fun showReply(state : Boolean) {
+	private fun showReply(state: Boolean) {
 		isReply = state
 
 		if (state) {

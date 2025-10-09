@@ -4,14 +4,13 @@
     style="@style/cardStyle"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginVertical="@dimen/half_margin">
+    android:layout_margin="@dimen/half_margin">
 
     <com.zerobranch.layout.SwipeLayout
         android:id="@+id/swipeLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:draggedItem="@id/click"
-
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:rightItem="@id/deleteNotification"

@@ -34,7 +34,6 @@ class NotificationActivity : BaseActivity() {
 					delPos = pos
 					val id = notificationList[pos]?.id
 					viewModel.deleteNotification(id.toString().request())
-
 				}
 			}
 		}

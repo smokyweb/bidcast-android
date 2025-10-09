@@ -445,15 +445,22 @@ class WatchStreamSocketFragment : BaseFragment<StreamViewModel, FragmentWatchStr
 			bind.bid.onSlideCompleteListener = object : OnSlideCompleteListener {
 				override fun onSlideComplete(view: SlideToActView) {
 
-					if (isAllowBidForAll) {
-						attemptBid()
-					} else {
-						if (App.profileResponse.value?.buyerIdentityStatus == "verified") {
+					if (App.profileResponse.value?.hasShippingAddress == true && App.profileResponse.value?.hasCardAdded == true){
+
+						if (isAllowBidForAll) {
 							attemptBid()
 						} else {
-							verificationDialog()
+							if (App.profileResponse.value?.buyerIdentityStatus == "verified") {
+								attemptBid()
+							} else {
+								verificationDialog()
+							}
 						}
+
+					}else{
+						showPaymentAndAddressSheet()
 					}
+
 				}
 			}
 
@@ -791,6 +798,8 @@ class WatchStreamSocketFragment : BaseFragment<StreamViewModel, FragmentWatchStr
 		paymentAddressBind.close.setHapticClickListener {
 			makeOfferSheet.dismiss()
 		}
+
+		bind.bid.setCompleted(completed = false, withAnimation = true)
 
 		makeOfferSheet.show()
 
