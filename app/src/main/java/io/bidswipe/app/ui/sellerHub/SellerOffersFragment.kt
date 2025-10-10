@@ -1,5 +1,6 @@
 package io.bidswipe.app.ui.sellerHub
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -11,6 +12,7 @@ import io.bidswipe.app.databinding.FragmentSellerOffersBinding
 import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.network.response.GetOffersResponse
+import io.bidswipe.app.ui.dashboard.ChatActivity
 import io.bidswipe.app.utils.finish
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request
@@ -25,20 +27,36 @@ class SellerOffersFragment : BaseFragment<SellerHubViewModel, FragmentSellerOffe
 	private lateinit var adapter: SellerOffersAdapter
 
 	private var page = 1
-	private var isLoading = false
 
 	private val mClick = object : RecyclerClicks {
 
 		override fun itemClick(pos: Int, status: String?) {
 
-			bind.loader.isVisible = true
+			val sellerId = itemList[pos]?.user?.id.toString()
+			val sellerName = itemList[pos]?.user?.name
+			val sellerImage = itemList[pos]?.user?.profileImage
 
-			if (status == "accept") {
-				viewModel.offerUpdateStatus(itemList[pos]?.id.toString().request(), "accepted".request())
-			} else if (status == "reject") {
-				viewModel.offerUpdateStatus(itemList[pos]?.id.toString().request(), "rejected".request())
+			when (status) {
+				"chat" -> {
+					val intent = Intent(mCtx, ChatActivity::class.java).apply {
+						putExtra("id", sellerId)
+						putExtra("name", sellerName)
+						putExtra("image", sellerImage)
+					}
+					startActivity(intent)
+				}
+
+				"accept" -> {
+					bind.loader.isVisible = true
+					viewModel.offerUpdateStatus(itemList[pos]?.id.toString().request(), "accepted".request())
+				}
+
+				"reject" -> {
+					bind.loader.isVisible = true
+					viewModel.offerUpdateStatus(itemList[pos]?.id.toString().request(), "rejected".request())
+				}
+
 			}
-
 		}
 	}
 
@@ -93,9 +111,9 @@ class SellerOffersFragment : BaseFragment<SellerHubViewModel, FragmentSellerOffe
 			when (it) {
 				is Resource.Success -> {
 					bind.loader.isVisible = false
-					var index = itemList.indexOfFirst { offer -> offer?.id == it.value.data?.id }
+					val index = itemList.indexOfFirst { offer -> offer?.id == it.value.data?.id }
 					if (index != -1) {
-						var offer = itemList[index]
+						val offer = itemList[index]
 						offer?.status = it.value.data?.status
 						itemList[index] = offer
 						adapter.notifyItemChanged(index, offer)

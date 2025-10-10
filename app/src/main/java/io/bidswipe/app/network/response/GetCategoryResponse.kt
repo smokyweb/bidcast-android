@@ -32,6 +32,8 @@ data class GetCategoryResponse(
 		val color : String? ,
 		@SerializedName("is_selected")
 		var isSelected : Boolean? = false ,
+		@SerializedName("liveCount")
+		var liveCount : Int?
 	) {
 		@Keep
 		data class ExtraField(

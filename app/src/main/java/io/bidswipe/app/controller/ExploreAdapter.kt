@@ -13,27 +13,32 @@ import io.bidswipe.app.utils.loadUrl
 import io.bidswipe.app.utils.setHapticClickListener
 
 class ExploreAdapter(
-	val mList : MutableList<GetCategoryResponse.Data?> , val mClicks : RecyclerClicks ,
-) : BaseAdapter<GetCategoryResponse.Data? , ExploreItemBinding>(mList) {
+	val mList: MutableList<GetCategoryResponse.Data?>, val mClicks: RecyclerClicks,
+) : BaseAdapter<GetCategoryResponse.Data?, ExploreItemBinding>(mList) {
 
-	override fun bindView(inflater : LayoutInflater , parent : ViewGroup) =
-		ExploreItemBinding.inflate(inflater , parent , false)
+	override fun bindView(inflater: LayoutInflater, parent: ViewGroup) =
+		ExploreItemBinding.inflate(inflater, parent, false)
 
 	override fun onBind(
-		holder : BaseViewHolder<ExploreItemBinding> ,
-		position : Int ,
-		item : GetCategoryResponse.Data?? ,
+		holder: BaseViewHolder<ExploreItemBinding>,
+		position: Int,
+		item: GetCategoryResponse.Data??,
 	) {
 		with(holder) {
 
-            bind.root.setHapticClickListener {
+			bind.root.setHapticClickListener {
 				mClicks.itemClick(position)
 			}
 
 			bind.title.text = item?.name
-			bind.icon.loadUrl(mCtx , item?.image ?: "")
+			bind.subTitle.text = buildString {
+				append(item?.liveCount)
+				append(" ")
+				append("Live")
+			}
+			bind.icon.loadUrl(mCtx, item?.image ?: "")
 			bind.iconCard.setCardBackgroundColor(
-				item?.color?.toColorInt() ?: ContextCompat.getColor(mCtx , R.color.primary)
+				item?.color?.toColorInt() ?: ContextCompat.getColor(mCtx, R.color.primary)
 			)
 
 		}

@@ -345,7 +345,7 @@
                                         android:text="White Sneakers" />
 
                                     <TextView
-                                        android:id="@+id/prod_sub_title"
+                                        android:id="@+id/product_category"
                                         style="@style/BodySmall"
                                         android:layout_width="match_parent"
                                         android:layout_height="wrap_content"

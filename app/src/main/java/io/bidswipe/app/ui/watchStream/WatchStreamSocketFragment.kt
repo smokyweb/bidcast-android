@@ -610,6 +610,11 @@ class WatchStreamSocketFragment : BaseFragment<StreamViewModel, FragmentWatchStr
 		bind.bidLayout.isVisible = true
 		bind.productLayout.isVisible = true
 		bind.productName.text = liveProduct?.name?.asCapital()
+		bind.productCategory.text = liveProduct?.category?.asCapital()
+		bind.quantity.text = buildString {
+			append("Quantity: ")
+			append(liveProduct?.quantity ?:0)
+		}
 		bind.productImage.loadUrl(mCtx, liveProduct?.image ?: "")
 		val price = liveProduct?.price
 		bind.bidPrice.text = price?.asMoney()

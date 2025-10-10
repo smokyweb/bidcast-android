@@ -101,7 +101,7 @@ class TrustedBuyerActivity : BaseActivity() {
 							bind.uploadLayout.isVisible = false
 							bind.imgCard.isVisible = true
 
-							bind.img.loadUrl(this, mData.image.toString())
+							bind.img.loadUrl(this, mData.image)
 
 							when (mData.status) {
 								"rejected" -> {

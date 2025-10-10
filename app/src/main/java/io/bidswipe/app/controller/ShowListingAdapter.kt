@@ -32,19 +32,27 @@ class ShowListingAdapter(
 
 			bind.name.text = item?.title?.asCapital()
 
-			bind.time.text = "${
-				Utils.getFormattedDateTime(
-					"yyyy-mm-dd",
-					"mm-dd-yyyy",
-					item?.date.toString()
+			bind.category.text = item?.category?.name?.asCapital()
+
+			bind.time.text = buildString {
+				append(
+					Utils.getFormattedDateTime(
+						"yyyy-mm-dd",
+						"mm-dd-yyyy",
+						item?.date.toString()
+					)
 				)
-			} ${Const.BULLET} ${
-				Utils.getFormattedDateTime(
-					"HH:mm:ss",
-					"hh:mm a",
-					item?.time.toString()
+				append(" ")
+				append(Const.BULLET)
+				append(" ")
+				append(
+					Utils.getFormattedDateTime(
+						"HH:mm:ss",
+						"hh:mm a",
+						item?.time.toString()
+					)
 				)
-			}"
+			}
 
 			bind.rsvp.text = buildString {
 				append(item?.viewerCount ?: 0)

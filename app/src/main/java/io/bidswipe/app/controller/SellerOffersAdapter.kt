@@ -15,43 +15,36 @@ import io.bidswipe.app.network.response.GetOffersResponse
 import io.bidswipe.app.utils.Utils
 import io.bidswipe.app.utils.asCapital
 import io.bidswipe.app.utils.asMoney
+import io.bidswipe.app.utils.draw
 import io.bidswipe.app.utils.loadUrl
 import io.bidswipe.app.utils.setHapticClickListener
 
 class SellerOffersAdapter(
-	mList : MutableList<GetOffersResponse.Data?> , val mClicks : RecyclerClicks ,
-) : BaseAdapter<GetOffersResponse.Data? , SellerOffersItemBinding>(mList) {
+	mList: MutableList<GetOffersResponse.Data?>, val mClicks: RecyclerClicks,
+) : BaseAdapter<GetOffersResponse.Data?, SellerOffersItemBinding>(mList) {
 
-	override fun bindView(inflater : LayoutInflater , parent : ViewGroup) =
-		SellerOffersItemBinding.inflate(inflater , parent , false)
+	override fun bindView(inflater: LayoutInflater, parent: ViewGroup) =
+		SellerOffersItemBinding.inflate(inflater, parent, false)
 
 	override fun onBind(
-		holder : BaseViewHolder<SellerOffersItemBinding> ,
-		position : Int ,
-		item : GetOffersResponse.Data? ,
+		holder: BaseViewHolder<SellerOffersItemBinding>,
+		position: Int,
+		item: GetOffersResponse.Data?,
 	) {
 		with(holder) {
 
 			bind.buttonLayout.isVisible = true
 
-            bind.root.setHapticClickListener {
-				mClicks.itemClick(position)
+			bind.accept.setHapticClickListener {
+				mClicks.itemClick(position, "accept")
 			}
 
-            bind.accept.setHapticClickListener {
-				mClicks.itemClick(position , "accept")
+			bind.decline.setHapticClickListener {
+				mClicks.itemClick(position, "reject")
 			}
 
-            bind.decline.setHapticClickListener {
-				mClicks.itemClick(position , "reject")
-			}
-
-			bind.userImage.loadUrl(mCtx , item?.user?.profileImage ?: "")
+			bind.userImage.loadUrl(mCtx, item?.user?.profileImage ?: "")
 			bind.userName.text = item?.user?.name?.asCapital()
-			bind.offerPrice.text = item?.amount.toString().asMoney()
-
-			bind.productImage.loadUrl(mCtx , item?.product?.images?.first() ?: "")
-			bind.productName.text = item?.product?.title?.asCapital()
 
 			bind.subTitle.text = buildSpannedString {
 				append("Placed an Offer ")
@@ -59,10 +52,18 @@ class SellerOffersAdapter(
 				append(Utils.getTimeAgo(item?.createdAt ?: ""))
 			}
 
-			bind.prodSubTitle.text = buildSpannedString {
-				append("Asking price : ")
-				append(item?.product?.pricing.toString().asMoney())
+			bind.listedPrice.text = buildSpannedString {
+				append("Listed price : ")
+				append(item?.product?.pricing?.asMoney())
 			}
+
+			bind.offerPrice.text = buildSpannedString {
+				append("Offer price : ")
+				append(item?.amount?.asMoney())
+			}
+
+			bind.productImage.loadUrl(mCtx, item?.product?.images?.get(0) ?:"" , draw.placeholder_square)
+			bind.productName.text = item?.product?.title
 
 			if (item?.status == "pending") {
 				bind.status.isVisible = false
@@ -73,27 +74,31 @@ class SellerOffersAdapter(
 
 				when (item?.status) {
 					"accepted" -> {
-						bind.status.setTextColor(ContextCompat.getColor(mCtx , R.color.success))
+						bind.status.setTextColor(ContextCompat.getColor(mCtx, R.color.success))
 						bind.status.backgroundTintList = ColorStateList.valueOf(
 							ContextCompat.getColor(
-								mCtx ,
+								mCtx,
 								R.color.successContainer
 							)
 						)
-						bind.status.text = ContextCompat.getString(mCtx , R.string.accepted)
+						bind.status.text = ContextCompat.getString(mCtx, R.string.accepted)
 					}
 
 					"rejected" -> {
-						bind.status.setTextColor(ContextCompat.getColor(mCtx , R.color.error))
+						bind.status.setTextColor(ContextCompat.getColor(mCtx, R.color.error))
 						bind.status.backgroundTintList = ColorStateList.valueOf(
 							ContextCompat.getColor(
-								mCtx ,
+								mCtx,
 								R.color.errorContainer
 							)
 						)
-						bind.status.text = ContextCompat.getString(mCtx , R.string.declined)
+						bind.status.text = ContextCompat.getString(mCtx, R.string.declined)
 					}
 				}
+			}
+
+			bind.chat.setHapticClickListener {
+				mClicks.itemClick(position, "chat")
 			}
 		}
 

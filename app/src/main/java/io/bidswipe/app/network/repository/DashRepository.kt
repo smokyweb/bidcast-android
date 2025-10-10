@@ -25,7 +25,8 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
 		categoryId: String? = null,
 		type: String? = null,
 		search: String? = null,
-	) = call { api.getCategory(categoryId, type, search) }
+		getCount: String? = null
+	) = call { api.getCategory(categoryId, type, search, getCount) }
 	
 	suspend fun getSubCategories(
 		categoryIds: List<Int>, subCategoryIds: List<Int>? = null,

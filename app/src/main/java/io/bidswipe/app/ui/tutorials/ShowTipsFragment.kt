@@ -124,7 +124,7 @@ class ShowTipsFragment : BaseFragment<DashViewModel , FragmentShowTipsBinding>()
 							),
 							products = products?.map { p ->
 								LiveShowModel.Product(
-									p?.category,
+									data.category?.name,
 									p?.id,
 									p?.image,
 									p?.status,

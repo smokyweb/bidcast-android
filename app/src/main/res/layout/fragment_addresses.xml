@@ -16,7 +16,6 @@
         app:primaryIconDrawable="@drawable/ic_add"
         app:secondaryIconDrawable="@drawable/search"
         app:showBackButton="true"
-        app:showPrimaryIcon="true"
         app:showSecondaryIcon="false" />
 
     <androidx.recyclerview.widget.RecyclerView

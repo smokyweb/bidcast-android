@@ -3,6 +3,7 @@ package io.bidswipe.app.network.response
 
 import com.google.gson.annotations.SerializedName
 import androidx.annotation.Keep
+import io.bidswipe.app.model.LiveShowModel
 import io.bidswipe.app.model.LiveShowModelOld
 import io.bidswipe.app.utils.string
 import java.io.Serializable
@@ -129,8 +130,8 @@ data class GetMyShowResponse(
             val width: Int?
         ) : Serializable {
 
-            fun toLiveShowProduct(): LiveShowModelOld.Product {
-                return LiveShowModelOld.Product(
+            fun toLiveShowProduct(): LiveShowModel.Product {
+                return LiveShowModel.Product(
                     category = this.categoryId?.toString(),
                     id = this.id?.toString(),
                     image = this.images?.firstOrNull() ?: "",

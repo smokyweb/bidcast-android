@@ -81,12 +81,13 @@ class DashViewModel @Inject constructor(
 		categoryId: String? = null,
 		type: String? = null,
 		search: String? = null,
+		getCount: String? = null,
 	) = viewModelScope.launch {
 		if (!networkMonitor.hasInternet()) {
 			_getCategoryResponse.value = NO_INTERNET_ERROR
 			return@launch
 		}
-		_getCategoryResponse.value = repo.getCategory(categoryId, type, search)
+		_getCategoryResponse.value = repo.getCategory(categoryId, type, search,getCount)
 	}
 
 	private var _getSubCategoriesResponse = MutableLiveData<Resource<GetSubCategoriesResponse>>()

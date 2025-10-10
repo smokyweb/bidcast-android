@@ -29,39 +29,39 @@ import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.setHapticClickListener
 
 @SuppressLint("NotifyDataSetChanged")
-class ExploreFragment : BaseFragment<DashViewModel , FragmentExploreBinding>() {
+class ExploreFragment : BaseFragment<DashViewModel, FragmentExploreBinding>() {
 
-	override fun getModel() : Class<DashViewModel> = DashViewModel::class.java
+	override fun getModel(): Class<DashViewModel> = DashViewModel::class.java
 
-	override fun getBind(inflater : LayoutInflater , view : ViewGroup?) =
-		FragmentExploreBinding.inflate(inflater , view , false)
+	override fun getBind(inflater: LayoutInflater, view: ViewGroup?) =
+		FragmentExploreBinding.inflate(inflater, view, false)
 
-	private lateinit var exploreAdapter : ExploreAdapter
+	private lateinit var exploreAdapter: ExploreAdapter
 	private var exploreList = mutableListOf<GetCategoryResponse.Data?>()
-	private var currentSelectedTab : TextView? = null
+	private var currentSelectedTab: TextView? = null
 	private var selectedTabText = "recommended"
 
 	private val mClick = object : RecyclerClicks {
-		override fun itemClick(pos : Int , status : String?) {
+		override fun itemClick(pos: Int, status: String?) {
 			val category = exploreList[pos]?.name
 			findNavController().navigate(
-				ids.goTopExploreType ,
+				ids.goTopExploreType,
 				bundleOf("category" to category)
 			)
 
 		}
 	}
 
-	override fun onViewCreated(view : View , savedInstanceState : Bundle?) {
-		super.onViewCreated(view , savedInstanceState)
+	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+		super.onViewCreated(view, savedInstanceState)
 
-        bind.root.setHapticClickListener {
+		bind.root.setHapticClickListener {
 			hideKeyboard(it)
 		}
-        bind.main.setHapticClickListener {
+		bind.main.setHapticClickListener {
 			hideKeyboard(it)
 		}
-		exploreAdapter = ExploreAdapter(exploreList , mClick)
+		exploreAdapter = ExploreAdapter(exploreList, mClick)
 		bind.recycler.adapter = exploreAdapter
 
 		bind.header.onMoreSecondaryClick {
@@ -73,8 +73,8 @@ class ExploreFragment : BaseFragment<DashViewModel , FragmentExploreBinding>() {
 
 		bind.header.onMorePrimaryClick {
 			startActivity(
-				Intent(mCtx , NotificationActivity::class.java).putExtra(
-					"slug" ,
+				Intent(mCtx, NotificationActivity::class.java).putExtra(
+					"slug",
 					"notification"
 				)
 			)
@@ -83,34 +83,32 @@ class ExploreFragment : BaseFragment<DashViewModel , FragmentExploreBinding>() {
 		selectTab(bind.recommended)
 
 		bind.search.addTextChangedListener(object : TextWatcher {
-			override fun beforeTextChanged(s : CharSequence? , start : Int , count : Int , after : Int) {}
-			override fun onTextChanged(s : CharSequence? , start : Int , before : Int , count : Int) {}
-			override fun afterTextChanged(s : Editable?) {
-				if (! s.isNullOrEmpty()) {
+			override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+			override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+			override fun afterTextChanged(s: Editable?) {
+				if (!s.isNullOrEmpty()) {
 					bind.loader.isVisible = true
-					viewModel.getCategory(type = selectedTabText , search = s.toString())
+					viewModel.getCategory(type = selectedTabText, search = s.toString(), getCount = "true")
 				}
 			}
 		})
 
 		bind.swipeRefreshLayout.setOnRefreshListener {
 			bind.search.setText("")
-			viewModel.getCategory(type = selectedTabText)
+			viewModel.getCategory(type = selectedTabText,getCount = "true")
 		}
 
 		bind.noInternet.onClick {
 			bind.loader.isVisible = true
 			bind.noInternet.isVisible = false
-			viewModel.getCategory(type = selectedTabText)
+			viewModel.getCategory(type = selectedTabText,getCount = "true")
 		}
 
-        bind.recommended.setHapticClickListener { selectTab(it as TextView) }
-        bind.popular.setHapticClickListener { selectTab(it as TextView) }
-        bind.all.setHapticClickListener { selectTab(it as TextView) }
+		bind.recommended.setHapticClickListener { selectTab(it as TextView) }
+		bind.popular.setHapticClickListener { selectTab(it as TextView) }
+		bind.all.setHapticClickListener { selectTab(it as TextView) }
 
 		viewModel.getCategoryRepo.observe(viewLifecycleOwner) {
-			bind.loader.isVisible = false
-			bind.swipeRefreshLayout.isRefreshing = false
 			when (it) {
 				is Resource.Success -> {
 					bind.loader.isVisible = false
@@ -143,13 +141,13 @@ class ExploreFragment : BaseFragment<DashViewModel , FragmentExploreBinding>() {
 						bind.recycler.isVisible = false
 					} else {
 						bind.noInternet.isVisible = false
-						it.parse(mCtx , TAG , object : AlertClicks {
-							override fun primaryClick(dialog : AppBottomSheet) {
+						it.parse(mCtx, TAG, object : AlertClicks {
+							override fun primaryClick(dialog: AppBottomSheet) {
 								dialog.dismiss()
 
 							}
 
-							override fun secondaryClick(dialog : AppBottomSheet) {
+							override fun secondaryClick(dialog: AppBottomSheet) {
 								dialog.dismiss()
 
 							}
@@ -170,17 +168,17 @@ class ExploreFragment : BaseFragment<DashViewModel , FragmentExploreBinding>() {
 		bind.search.setText("")
 	}
 
-	private fun selectTab(selectedTab : TextView) {
+	private fun selectTab(selectedTab: TextView) {
 
 		bind.search.setText("")
 
-		listOf(bind.recommended , bind.popular , bind.all).forEach { tab ->
+		listOf(bind.recommended, bind.popular, bind.all).forEach { tab ->
 			tab.setTextAppearance(R.style.TitleMedium)
-			tab.setTextColor(ContextCompat.getColor(mCtx , R.color.outlineVariant))
+			tab.setTextColor(ContextCompat.getColor(mCtx, R.color.outlineVariant))
 			tab.isSelected = (tab == selectedTab)
 		}
 
-		selectedTab.setTextColor(ContextCompat.getColor(mCtx , R.color.scrim))
+		selectedTab.setTextColor(ContextCompat.getColor(mCtx, R.color.scrim))
 		selectedTab.setTextAppearance(R.style.TitleLarge)
 
 		currentSelectedTab = selectedTab
@@ -190,17 +188,17 @@ class ExploreFragment : BaseFragment<DashViewModel , FragmentExploreBinding>() {
 		when (selectedTab) {
 			bind.recommended -> {
 				selectedTabText = "recommended"
-				viewModel.getCategory(type = "recommended")
+				viewModel.getCategory(type = "recommended", getCount = "true")
 			}
 
 			bind.popular -> {
 				selectedTabText = "popular"
-				viewModel.getCategory(type = "popular")
+				viewModel.getCategory(type = "popular", getCount = "true")
 			}
 
 			bind.all -> {
 				selectedTabText = "all"
-				viewModel.getCategory(type = "all")
+				viewModel.getCategory(type = "all", getCount = "true")
 			}
 
 		}

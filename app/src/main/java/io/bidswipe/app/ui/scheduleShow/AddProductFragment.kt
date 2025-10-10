@@ -251,7 +251,7 @@ class AddProductFragment : BaseFragment<ScheduleShowViewModel, FragmentAddProduc
 						),
 						products = products?.map { p ->
 							LiveShowModel.Product(
-								p?.category,
+								data.category?.name,
 								p?.id,
 								p?.image,
 								p?.status,
