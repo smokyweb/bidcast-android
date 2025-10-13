@@ -59,6 +59,8 @@ class PurchasesFragment : BaseFragment<DashViewModel , FragmentPurchasesBinding>
 				}
 			}
 		})
+
+
 		bind.swipeRefreshLayout.setOnRefreshListener {
 			page = 1
 			viewModel.getPurchasedProductsByStatus("purchased".request() , page.toString().request())

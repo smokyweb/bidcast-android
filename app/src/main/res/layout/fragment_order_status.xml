@@ -103,6 +103,7 @@
                             android:id="@+id/productImage"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
+                            android:scaleType="centerCrop"
                             android:src="@drawable/shoe" />
 
                     </com.google.android.material.card.MaterialCardView>
@@ -135,6 +136,7 @@
                 <com.google.android.material.divider.MaterialDivider
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
+                    android:alpha="0.5"
                     android:layout_margin="@dimen/half_margin" />
 
                 <LinearLayout
@@ -203,6 +205,7 @@
                         android:text="@string/sold_by" />
 
                     <TextView
+                        android:id="@+id/sold_by"
                         style="@style/BodyLarge"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"

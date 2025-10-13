@@ -13,9 +13,12 @@ import io.bidswipe.app.base.BaseFragment
 import io.bidswipe.app.controller.CountrySelectorAdapter
 import io.bidswipe.app.databinding.CountryPickerSheetBinding
 import io.bidswipe.app.databinding.FragmentPreferencesBinding
+import io.bidswipe.app.interfaces.AlertClicks
 import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.model.CountryModel
 import io.bidswipe.app.network.Resource
+import io.bidswipe.app.ui.custom.AlertType
+import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.utils.Alerts
 import io.bidswipe.app.utils.finish
 import io.bidswipe.app.utils.parse
@@ -75,6 +78,10 @@ class PreferencesFragment : BaseFragment<MoreViewModel, FragmentPreferencesBindi
 //			bind.country.showDropDown()
 		}
 
+		bind.privacy.setHapticClickListener {
+			showPrivacyInfo()
+		}
+
 		log(countryList.toString())
 
 		bind.loader.isVisible = true
@@ -87,8 +94,7 @@ class PreferencesFragment : BaseFragment<MoreViewModel, FragmentPreferencesBindi
 
 					val mData = it.value.data
 
-					countryList.find { it?.countryName == mData?.countryOfResidence }?.selected =
-						true
+					countryList.find { it?.countryName == mData?.countryOfResidence }?.selected = true
 
 					bind.country.setText(mData?.countryOfResidence ?: "", false)
 					bind.directMessages.isChecked = mData?.directMessage == true
@@ -182,5 +188,36 @@ class PreferencesFragment : BaseFragment<MoreViewModel, FragmentPreferencesBindi
 		countryPickerDialog?.show()
 	}
 
+	private fun showPrivacyInfo() {
+		AppBottomSheet(
+			mCtx = mCtx,
+			image = R.drawable.ic_question,
+			title = "Privacy Settings",
+			message = "Configure your privacy preferences to control your account visibility and interactions:\n" +
+					"\n" +
+					"• Direct Messages: Control who can send you direct messages\n" +
+					"\n" +
+					"• Receive Gifts: Allow others to send you gifts during live shows\n" +
+					"\n" +
+					"• Private Entry: Join live shows without appearing in the viewer list\n" +
+					"\n" +
+					"These settings help you maintain your desired level of privacy while using BidSwipe.",
+			primaryBtnText = "Got It",
+			secondaryBtnText = "Learn More",
+			canCancel = true,
+			showSecondary = false,
+			iconPadding = 16,
+			alertType = AlertType.INFO,
+			clicks = object : AlertClicks {
+				override fun primaryClick(dialog: AppBottomSheet) {
+					dialog.dismiss()
+				}
+
+				override fun secondaryClick(dialog: AppBottomSheet) {
+					dialog.dismiss()
+				}
+			}
+		).show()
+	}
 
 }

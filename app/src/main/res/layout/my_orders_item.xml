@@ -38,6 +38,7 @@
                     style="@style/BodyMedium"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:alpha="0.7"
                     android:text="Jan 23, 2025, 14:30"
                     android:textColor="@color/tertiary" />
 
@@ -75,13 +76,13 @@
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/icon_card"
                 style="@style/cardStyle"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                app:cardCornerRadius="100dp"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                app:cardCornerRadius="8dp"
                 app:cardElevation="0dp">
 
                 <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/userImage"
+                    android:id="@+id/productImage"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:scaleType="centerCrop"
@@ -97,17 +98,18 @@
                 android:orientation="vertical">
 
                 <TextView
-                    android:id="@+id/sellerName"
+                    android:id="@+id/productName"
                     style="@style/TitleLarge"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="John Smith" />
 
                 <TextView
-                    android:id="@+id/sellerAddress"
+                    android:id="@+id/category"
                     style="@style/BodyLarge"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:alpha="0.7"
                     android:text="Los Angeles, CA"
                     android:textColor="@color/tertiary" />
 
@@ -118,6 +120,7 @@
         <com.google.android.material.divider.MaterialDivider
             android:layout_width="match_parent"
             android:layout_height="1dp"
+            android:alpha="0.5"
             android:layout_margin="@dimen/margin" />
 
         <LinearLayout
@@ -134,6 +137,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="Order Amount"
+                android:alpha="0.7"
                 android:textColor="@color/tertiary" />
 
             <TextView

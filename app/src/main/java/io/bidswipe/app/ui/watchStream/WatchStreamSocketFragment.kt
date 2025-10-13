@@ -780,11 +780,11 @@ class WatchStreamSocketFragment : BaseFragment<StreamViewModel, FragmentWatchStr
 			if (hasCard) {
 				cardNumber.text = buildString {
 					append("•••• •••• •••• ")
-					append(App.profileResponse.value?.defaultCard?.last4)
+					append(App.profileResponse.value?.defaultCard?.last4 ?:"")
 				}
 
 				expiryDate.text = buildString {
-					append(App.profileResponse.value?.defaultCard?.expDate)
+					append(App.profileResponse.value?.defaultCard?.expDate?:"")
 				}
 			} else {
 				cardNumber.text = "Payment Cards Not Added"

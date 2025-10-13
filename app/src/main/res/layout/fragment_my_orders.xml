@@ -144,6 +144,27 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
 
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/searchLayout"
+                    style="@style/inputBoxStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="@dimen/half_margin"
+                    app:boxStrokeWidth="2dp"
+                    app:startIconDrawable="@drawable/search"
+                    app:startIconTint="@color/scrim">
+
+                    <com.google.android.material.textfield.MaterialAutoCompleteTextView
+                        android:id="@+id/search"
+                        style="@style/inputTextStyle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="@dimen/margin"
+                        android:hint="@string/what_are_you_looking_for"
+                        android:inputType="textEmailAddress" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/recycler"
                     android:layout_width="match_parent"
@@ -153,6 +174,15 @@
                     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                     tools:itemCount="6"
                     tools:listitem="@layout/my_orders_item" />
+
+                <com.github.ybq.android.spinkit.SpinKitView
+                    android:id="@+id/bottomLoader"
+                    style="@style/appLoader"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/recycler" />
 
                 <io.bidswipe.app.ui.custom.NoDataView
                     android:id="@+id/noData"
@@ -172,6 +202,7 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
+
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
     <io.bidswipe.app.ui.custom.LoaderView

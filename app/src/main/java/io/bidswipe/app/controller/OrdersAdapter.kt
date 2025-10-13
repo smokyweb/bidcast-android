@@ -37,10 +37,10 @@ class OrdersAdapter(
 				item?.createdAt.toString()
 			)
 			
-			bind.userImage.loadUrl(mCtx, item?.user?.profileImage.toString())
+			bind.productImage.loadUrl(mCtx, item?.product?.images?.get(0) ?:"")
 			
-			bind.sellerName.text = item?.user?.name?.asCapital()
-			bind.sellerAddress.text = item?.shippingAddress
+			bind.productName.text = item?.product?.title?.asCapital()
+			bind.category.text = item?.product?.category?.name
 			
 		}
 	}

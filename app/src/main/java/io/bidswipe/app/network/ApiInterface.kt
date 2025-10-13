@@ -407,7 +407,9 @@ interface ApiInterface {
 	@Multipart
 	@POST("api/product/order-listing")
 	suspend fun getOrderListing(
+		@Part("page") page : RequestBody? ,
 		@Part("type") type : RequestBody? ,
+		@Part("search") search : RequestBody? ,
 	) : GetOrdersResponse
 
 	@Multipart

@@ -1,5 +1,6 @@
 package io.bidswipe.app.ui.tutorials
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -26,6 +27,7 @@ import io.bidswipe.app.utils.toScheduleShow
 import okhttp3.MultipartBody
 import java.io.File
 
+@SuppressLint("NotifyDataSetChanged")
 class PrepareYourShowFragment : BaseFragment<DashViewModel, FragmentPrepareYourShowBinding>() {
 	override fun getModel(): Class<DashViewModel> = DashViewModel::class.java
 
@@ -35,8 +37,6 @@ class PrepareYourShowFragment : BaseFragment<DashViewModel, FragmentPrepareYourS
 	) = FragmentPrepareYourShowBinding.inflate(inflater, view, false)
 
 	var imagePartList = mutableListOf<MultipartBody.Part?>()
-
-	private var showId = ""
 
 	private var scheduleShowLauncher =
 		registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -160,8 +160,6 @@ class PrepareYourShowFragment : BaseFragment<DashViewModel, FragmentPrepareYourS
 					viewModel.showList.clear()
 
 					mData?.forEach {
-
-//						it?.status ="locaked"
 
 						viewModel.showList.add(it)
 

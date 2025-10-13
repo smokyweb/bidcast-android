@@ -85,6 +85,8 @@ class OrderStatusFragment : BaseFragment<ProductViewModel, FragmentOrderStatusBi
 					bind.productName.text = mData?.product?.title?.asCapital()
 					bind.address.text = mData?.shippingAddress?:"N/A"
 					bind.productImage.loadUrl(mCtx, mData?.product?.images?.get(0).toString())
+					bind.productColor.text = mData?.product?.category?.name
+					bind.category.text = mData?.product?.category?.name
 					bind.orderId.text = mData?.orderId.toString()
 					bind.orderDate.text = Utils.getFormattedDateTime(
 						"yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'",

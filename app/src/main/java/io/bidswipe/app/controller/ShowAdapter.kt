@@ -12,28 +12,30 @@ import io.bidswipe.app.network.response.GetPrepareStepResponse
 import io.bidswipe.app.utils.setHapticClickListener
 
 class ShowAdapter(
-	mList : MutableList<GetPrepareStepResponse.Data?> , val mClicks : RecyclerClicks ,
-) : BaseAdapter<GetPrepareStepResponse.Data? , ShowItemBinding>(mList) {
+	mList: MutableList<GetPrepareStepResponse.Data?>, val mClicks: RecyclerClicks,
+) : BaseAdapter<GetPrepareStepResponse.Data?, ShowItemBinding>(mList) {
 
-	override fun bindView(inflater : LayoutInflater , parent : ViewGroup) =
-		ShowItemBinding.inflate(inflater , parent , false)
+	override fun bindView(inflater: LayoutInflater, parent: ViewGroup) =
+		ShowItemBinding.inflate(inflater, parent, false)
 
 	override fun onBind(
-		holder : BaseViewHolder<ShowItemBinding> ,
-		position : Int ,
-		item : GetPrepareStepResponse.Data? ,
+		holder: BaseViewHolder<ShowItemBinding>,
+		position: Int,
+		item: GetPrepareStepResponse.Data?,
 	) {
 		with(holder) {
 
-            bind.root.setHapticClickListener {
+			bind.root.setHapticClickListener {
 				mClicks.itemClick(position)
 			}
 
-            bind.setSchedule.setHapticClickListener {
-				mClicks.itemClick(position , "schedule")
+			bind.setSchedule.setHapticClickListener {
+				mClicks.itemClick(position, "schedule")
 			}
 
-			bind.step.text = "${position + 1}"
+			bind.step.text = buildString {
+				append(position + 1)
+			}
 
 			/*     if (item?.selected == true) {
 					 bind.root.strokeWidth=mCtx.resources.dpToPx(2)
@@ -48,46 +50,50 @@ class ShowAdapter(
 					 bind.root.strokeWidth=mCtx.resources.dpToPx(0)
 				 }*/
 
-			if (item?.status == "unlocked") {
-				bind.icon.isVisible = true
-				bind.step.isVisible = false
-				bind.setSchedule.isVisible = false
-				bind.icon.setImageDrawable(
-					ContextCompat.getDrawable(
-						mCtx ,
-						R.drawable.ic_lock
+			when (item?.status) {
+				"unlocked" -> {
+					bind.icon.isVisible = true
+					bind.step.isVisible = false
+					bind.setSchedule.isVisible = false
+					bind.icon.setImageDrawable(
+						ContextCompat.getDrawable(
+							mCtx,
+							R.drawable.ic_lock
+						)
 					)
-				)
 
-				bind.iconCard.setCardBackgroundColor(
-					ContextCompat.getColor(
-						mCtx ,
-						R.color.outlineVariant
+					bind.iconCard.setCardBackgroundColor(
+						ContextCompat.getColor(
+							mCtx,
+							R.color.outlineVariant
+						)
 					)
-				)
-			} else if (item?.status == "completed") {
-				bind.icon.isVisible = true
-				bind.step.isVisible = false
-				bind.setSchedule.isVisible = false
-				bind.icon.setImageDrawable(
-					ContextCompat.getDrawable(
-						mCtx ,
-						R.drawable.ic_tick
+				}
+				"completed" -> {
+					bind.icon.isVisible = true
+					bind.step.isVisible = false
+					bind.setSchedule.isVisible = false
+					bind.icon.setImageDrawable(
+						ContextCompat.getDrawable(
+							mCtx,
+							R.drawable.ic_tick
+						)
 					)
-				)
-				bind.iconCard.setCardBackgroundColor(
-					ContextCompat.getColor(
-						mCtx ,
-						R.color.success
+					bind.iconCard.setCardBackgroundColor(
+						ContextCompat.getColor(
+							mCtx,
+							R.color.success
+						)
 					)
-				)
-			} else {
-				bind.icon.isVisible = false
-				bind.step.isVisible = true
-				bind.setSchedule.isVisible = true
+				}
+				else -> {
+					bind.icon.isVisible = false
+					bind.step.isVisible = true
+					bind.setSchedule.isVisible = true
+				}
 			}
 
-			bind.subTitle.setHtmlFromString(item?.description ?: "" , false)
+			bind.subTitle.text = item?.description ?: ""
 			bind.title.text = item?.title
 
 		}

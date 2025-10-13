@@ -63,6 +63,7 @@ import io.bidswipe.app.utils.Const
 import io.bidswipe.app.utils.SocketManager
 import io.bidswipe.app.utils.Utils
 import io.bidswipe.app.utils.asCapital
+import io.bidswipe.app.utils.asMoney
 import io.bidswipe.app.utils.bind
 import io.bidswipe.app.utils.dpToPx
 import io.bidswipe.app.utils.draw
@@ -1318,5 +1319,21 @@ class LiveShowSocketActivity : BaseActivity() {
 			App.PIPMode = false
 		}
 	}
+
+	/*fun updateProductUI(liveProduct: LiveShowModel.Product?) {
+		bind.soldLayout.isVisible = false
+		bind.productLayout.isVisible = true
+		bind.productName.text = liveProduct?.name?.asCapital()
+//		bind.productCategory.text = liveProduct?.category?.asCapital()
+//		bind.quantity.text = buildString {
+//			append("Quantity: ")
+//			append(liveProduct?.quantity ?:0)
+//		}
+		bind.productImage.loadUrl(this, liveProduct?.image ?: "")
+		val price = liveProduct?.price
+		bind.bid.text = price?.asMoney()
+		highestBidAmount = price
+		bidProductId = liveProduct?.id
+	}*/
 
 }

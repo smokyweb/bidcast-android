@@ -89,13 +89,15 @@ class SellerHubViewModel @Inject constructor(
 		get() = _getOrderListingResponse
 
 	fun getOrderListing(
+		page: RequestBody?,
 		type : RequestBody? ,
+		search : RequestBody? = null
 	) = viewModelScope.launch {
 		if (!networkMonitor.hasInternet()) {
 			_getOrderListingResponse.value = NO_INTERNET_ERROR
 			return@launch
 		}
-		_getOrderListingResponse.value = repo.getOrderListing(type)
+		_getOrderListingResponse.value = repo.getOrderListing(page,type, search)
 	}
 
 	private var _offerListResponse = MutableLiveData<Resource<GetOffersResponse>>()

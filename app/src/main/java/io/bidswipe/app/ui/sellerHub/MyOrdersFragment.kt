@@ -2,12 +2,16 @@ package io.bidswipe.app.ui.sellerHub
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseFragment
 import io.bidswipe.app.controller.OrdersAdapter
@@ -30,6 +34,8 @@ class MyOrdersFragment : BaseFragment<SellerHubViewModel, FragmentMyOrdersBindin
 	
 	private var orderList = mutableListOf<GetOrdersResponse.Data?>()
 	private lateinit var adapter: OrdersAdapter
+	private var page = 1
+	private var isLoading = false
 	
 	private val mClick = object : RecyclerClicks {
 		override fun itemClick(pos: Int, status: String?) {
@@ -55,30 +61,67 @@ class MyOrdersFragment : BaseFragment<SellerHubViewModel, FragmentMyOrdersBindin
 		bind.loader.isVisible = true
 		
 		bind.swipeRefreshLayout.setOnRefreshListener {
-			viewModel.getOrderListing("".request())
+			page = 1
+			viewModel.getOrderListing(page = page.toString().request(),"".request())
 		}
+
+		bind.recycler.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+			override fun onScrolled(recyclerView : RecyclerView , dx : Int , dy : Int) {
+				super.onScrolled(recyclerView , dx , dy)
+				val layoutManager = bind.recycler.layoutManager as LinearLayoutManager
+				val lastItemPosition = layoutManager.findLastVisibleItemPosition()
+				if (lastItemPosition == (orderList.size - 1)) {
+					if (! isLoading) {
+						isLoading = true
+						page ++
+						bind.bottomLoader.isVisible = true
+						viewModel.getOrderListing(page = page.toString().request(),"".request())
+					}
+				}
+			}
+		})
+
+		bind.search.addTextChangedListener(object : TextWatcher {
+			override fun beforeTextChanged(s : CharSequence? , start : Int , count : Int , after : Int) {}
+			override fun onTextChanged(s : CharSequence? , start : Int , before : Int , count : Int) {}
+			override fun afterTextChanged(s : Editable?) {
+				if (! s.isNullOrEmpty()) {
+					page = 1
+					bind.loader.isVisible = true
+					viewModel.getOrderListing(page.toString().request(),"".request(), s.toString().request())
+				}
+			}
+		})
 		
 		bind.noInternet.onClick {
 			bind.loader.isVisible = true
 			bind.noInternet.isVisible = false
-			viewModel.getOrderListing("".request())
+			viewModel.getOrderListing(page = page.toString().request(),"".request())
 		}
 		
-		viewModel.getOrderListing("".request())
+		viewModel.getOrderListing(page = page.toString().request(),"".request())
 		viewModel.getOrderListingRepo.observe(viewLifecycleOwner) {
 			when (it) {
 				is Resource.Success -> {
 					bind.swipeRefreshLayout.isRefreshing = false
 					bind.noInternet.isVisible = false
+					bind.bottomLoader.isVisible = false
 					bind.loader.isVisible = false
 					
 					val mData = it.value.data
-					
+
+					if (page == 1) {
+						orderList.clear()
+					}
+
+					if (mData != null) {
+						orderList.addAll(mData)
+					}
+
 					bind.newOrderCount.text = it.value.newOrderCount.toString()
 					bind.processingOrderCount.text = it.value.processingOrderCount.toString()
 					bind.completedOrderCount.text = it.value.completeOrderCount.toString()
-					
-					orderList.clear()
+
 					if (mData?.isNotEmpty() == true) {
 						orderList.addAll(mData)
 					}
@@ -92,6 +135,8 @@ class MyOrdersFragment : BaseFragment<SellerHubViewModel, FragmentMyOrdersBindin
 						bind.noData.isVisible = false
 						bind.recycler.isVisible = true
 					}
+
+					isLoading = page >= (it.value.totalPage ?: 0)
 					
 					adapter.notifyDataSetChanged()
 					
@@ -100,8 +145,9 @@ class MyOrdersFragment : BaseFragment<SellerHubViewModel, FragmentMyOrdersBindin
 				is Resource.Error -> {
 					bind.swipeRefreshLayout.isRefreshing = false
 					bind.loader.isVisible = false
-					
-					
+					bind.bottomLoader.isVisible = false
+
+
 					if (it.isNetworkError) {
 						bind.noInternet.isVisible = true
 						bind.recycler.isVisible = false
@@ -110,7 +156,6 @@ class MyOrdersFragment : BaseFragment<SellerHubViewModel, FragmentMyOrdersBindin
 						it.parse(mCtx, TAG, object : AlertClicks {
 							override fun primaryClick(dialog: AppBottomSheet) {
 								dialog.dismiss()
-								
 							}
 							
 							override fun secondaryClick(dialog: AppBottomSheet) {

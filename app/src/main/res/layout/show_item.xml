@@ -56,7 +56,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/schedule_your_first_show" />
 
-            <org.sufficientlysecure.htmltextview.HtmlTextView
+            <TextView
                 android:id="@+id/sub_title"
                 style="@style/BodySmall"
                 android:layout_width="match_parent"

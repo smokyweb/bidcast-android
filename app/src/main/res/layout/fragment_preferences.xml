@@ -83,6 +83,7 @@
             </LinearLayout>
 
             <TextView
+                android:id="@+id/privacy"
                 style="@style/TitleSmall"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -90,6 +91,7 @@
                 android:alpha="0.7"
                 android:background="@color/backgroundClr"
                 android:paddingHorizontal="@dimen/margin"
+                android:drawableEnd="@drawable/ic_question"
                 android:paddingVertical="12dp"
                 android:text="@string/privacy" />
 
