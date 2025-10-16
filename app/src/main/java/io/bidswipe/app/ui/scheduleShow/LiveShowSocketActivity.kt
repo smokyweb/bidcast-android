@@ -487,13 +487,13 @@ class LiveShowSocketActivity : BaseActivity() {
 		log("Publisher cleanup finished")
 	}
 
-	fun initPip() {
+	private fun initPip() {
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 			val visibleRect = Rect()
 			bind.root.getGlobalVisibleRect(visibleRect)
-
 			pipParams = PictureInPictureParams.Builder().apply {
 				setAspectRatio(Rational(100, 200))
+//                setAspectRatio(Rational(2, 5))
 				setSourceRectHint(visibleRect)
 				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
 					setAutoEnterEnabled(true)
@@ -1323,6 +1323,7 @@ class LiveShowSocketActivity : BaseActivity() {
 			bind.recycler.isVisible = false
 			bind.menuLayout.isVisible = false
 			bind.message.isVisible = false
+			bind.product.isVisible = false
 			App.PIPMode = true
 		} else {
 			bind.profileLayout.isVisible = true
@@ -1330,7 +1331,24 @@ class LiveShowSocketActivity : BaseActivity() {
 			bind.recycler.isVisible = true
 			bind.menuLayout.isVisible = true
 			bind.message.isVisible = true
+			bind.product.isVisible = false
 			App.PIPMode = false
+		}
+	}
+
+	override fun onUserLeaveHint() {
+		super.onUserLeaveHint()
+
+		log("USER LEAVE HINT")
+
+		if (!isInPictureInPictureMode) {
+			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+				setPictureInPictureParams(pipParams)
+				enterPictureInPictureMode(pipParams)
+			}
+			log("STARTED IN PIP MODE")
+		} else {
+			log("ALREADY IN PIP MODE")
 		}
 	}
 

@@ -28,7 +28,6 @@ class ContentFragment : BaseFragment<DashViewModel , FragmentContentBinding>() {
 
 	private var slug : String? = null
 
-
 	@SuppressLint("SetJavaScriptEnabled")
 	override fun onViewCreated(view : View , savedInstanceState : Bundle?) {
 		super.onViewCreated(view , savedInstanceState)

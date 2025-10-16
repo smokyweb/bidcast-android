@@ -72,6 +72,7 @@
         <activity
             android:name="io.bidswipe.app.ui.scheduleShow.LiveShowSocketActivity"
             android:configChanges="screenSize|smallestScreenSize|screenLayout|orientation"
+            android:resizeableActivity="true"
             android:exported="false"
             android:launchMode="singleTop"
             android:supportsPictureInPicture="true"
