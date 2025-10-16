@@ -173,7 +173,7 @@
                             android:layout_weight="1"
                             android:nestedScrollingEnabled="true"
                             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                            app:layout_constraintBottom_toTopOf="@id/message"
+                            app:layout_constraintBottom_toTopOf="@id/product"
                             app:layout_constraintDimensionRatio="1:1"
                             app:reverseLayout="false"
                             app:stackFromEnd="true"
@@ -304,47 +304,23 @@
 
                     </LinearLayout>
 
-                    <com.google.android.material.textfield.TextInputLayout
-                        android:id="@+id/message"
-                        style="@style/inputBoxStyle"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginHorizontal="@dimen/margin"
-                        android:layout_marginVertical="@dimen/margin"
-                        android:alpha="0.5"
-                        app:boxBackgroundColor="@color/scrim"
-                        app:boxStrokeColor="@color/scrim"
-                        app:endIconDrawable="@drawable/ic_forward"
-                        app:endIconMode="custom"
-                        app:layout_constraintBottom_toTopOf="@+id/startBtn">
-
-                        <com.google.android.material.textfield.MaterialAutoCompleteTextView
-                            android:id="@+id/text"
-                            style="@style/inputTextStyle"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:hint="@string/say_something"
-                            android:inputType="text"
-                            android:textColor="@color/surface" />
-
-                    </com.google.android.material.textfield.TextInputLayout>
-
                     <com.google.android.material.card.MaterialCardView
                         android:id="@+id/product"
-                        style="@style/cardStyle"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:visibility="gone"
+                        android:backgroundTint="@color/black25"
+                        app:strokeWidth="0dp"
                         android:layout_marginHorizontal="@dimen/margin"
-                        android:layout_marginBottom="@dimen/margin"
+                        android:layout_marginTop="@dimen/margin"
                         app:layout_constraintBottom_toTopOf="@id/bidLayout"
                         app:layout_constraintStart_toStartOf="parent">
 
                         <LinearLayout
                             android:id="@+id/product_layout"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_margin="@dimen/half_margin"
+                            android:layout_height="match_parent"
+                            android:padding="@dimen/half_margin"
                             android:orientation="horizontal">
 
                             <com.google.android.material.card.MaterialCardView
@@ -376,21 +352,51 @@
                                     style="@style/TitleLarge"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
+                                    android:textColor="@color/surface"
                                     android:text="White Sneakers" />
 
                                 <TextView
-                                    android:id="@+id/product_price"
+                                    android:id="@+id/product_category"
                                     style="@style/BodySmall"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
+                                    android:textColor="@color/surface"
                                     android:text="Sports &amp; Lifestyle" />
 
                                 <TextView
-                                    android:id="@+id/bid_amount"
+                                    android:id="@+id/quantity"
                                     style="@style/BodySmall"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
+                                    android:textColor="@color/surface"
                                     android:text="Quantity: 1" />
+
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center_vertical"
+                                android:layout_marginEnd="@dimen/half_margin"
+                                android:orientation="vertical">
+
+                                <TextView
+                                    android:id="@+id/bidPrice"
+                                    style="@style/TitleLarge"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center"
+                                    android:textColor="@color/surface"
+                                    android:text="$23.00" />
+
+                                <TextView
+                                    android:id="@+id/bid_time"
+                                    style="@style/BodySmall"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center"
+                                    android:textColor="@color/error"
+                                    android:text="00:00:00" />
 
                             </LinearLayout>
 
@@ -425,6 +431,30 @@
 
                     </com.google.android.material.card.MaterialCardView>
 
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/message"
+                        style="@style/inputBoxStyle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="@dimen/margin"
+                        android:layout_marginVertical="@dimen/margin"
+                        app:boxBackgroundColor="@color/black25"
+                        app:boxStrokeWidth="0dp"
+                        app:endIconDrawable="@drawable/ic_forward"
+                        app:endIconMode="custom"
+                        app:layout_constraintBottom_toTopOf="@+id/startBtn">
+
+                        <com.google.android.material.textfield.MaterialAutoCompleteTextView
+                            android:id="@+id/text"
+                            style="@style/inputTextStyle"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="@string/say_something"
+                            android:inputType="text"
+                            android:textColor="@color/surface" />
+
+                    </com.google.android.material.textfield.TextInputLayout>
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/startBtn"

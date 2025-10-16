@@ -78,6 +78,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import org.json.JSONObject
 import org.webrtc.EglBase
 import org.webrtc.RendererCommon
 
@@ -614,7 +615,6 @@ class LiveShowSocketActivity : BaseActivity() {
 
 					}
 
-
 				}
 
 			}
@@ -637,6 +637,9 @@ class LiveShowSocketActivity : BaseActivity() {
 						}
 					}*/
 
+					val products = LiveShowModel.fromJson(json)
+					updateProductUI(products.products.find { it?.isCurrent == true })
+
 					productAdapter.notifyDataSetChanged()
 
 				}
@@ -644,6 +647,13 @@ class LiveShowSocketActivity : BaseActivity() {
 
 		}
 
+		socketManager?.getBidTimerUpdate { json ->
+			updateCountdown(json)
+		}
+
+		socketManager?.getHighestBid { json ->
+			handleBidUpdate(json)
+		}
 
 	}
 
@@ -775,6 +785,10 @@ class LiveShowSocketActivity : BaseActivity() {
 				productList.clear()
 
 				productList.addAll(showData.products)
+
+				val liveProduct = showData.products.find { it?.isCurrent == true }
+
+				updateProductUI(liveProduct)
 
 				log("ROOM CREATED : $showData")
 			}
@@ -1320,20 +1334,51 @@ class LiveShowSocketActivity : BaseActivity() {
 		}
 	}
 
-	/*fun updateProductUI(liveProduct: LiveShowModel.Product?) {
-		bind.soldLayout.isVisible = false
-		bind.productLayout.isVisible = true
-		bind.productName.text = liveProduct?.name?.asCapital()
-//		bind.productCategory.text = liveProduct?.category?.asCapital()
-//		bind.quantity.text = buildString {
-//			append("Quantity: ")
-//			append(liveProduct?.quantity ?:0)
-//		}
-		bind.productImage.loadUrl(this, liveProduct?.image ?: "")
+	fun updateProductUI(liveProduct: LiveShowModel.Product?) {
+
+		runOnUiThread {
+			log("updateProductUI : $liveProduct")
+			bind.product.isVisible = true
+			bind.productLayout.isVisible = true
+			bind.productName.text = liveProduct?.name?.asCapital()
+			bind.productCategory.text = liveProduct?.category?.asCapital()
+			bind.quantity.text = buildString {
+				append("Quantity: ")
+				append(liveProduct?.quantity ?:0)
+			}
+			bind.productImage.loadUrl(this, liveProduct?.image ?: "")
+		}
+
 		val price = liveProduct?.price
-		bind.bid.text = price?.asMoney()
-		highestBidAmount = price
-		bidProductId = liveProduct?.id
-	}*/
+		bind.bidPrice.text = price?.asMoney()
+	}
+
+	private fun updateCountdown(json: JSONObject) {
+		runSafe {
+			runOnUiThread {
+				if (json.optString("room_id") == roomID) {
+					val value = json.optString("remaining")
+					bind.bidTime.isVisible = true
+					bind.bidTime.text = "Ends in $value"
+				} else {
+					bind.bidTime.isVisible = false
+				}
+			}
+		}
+	}
+
+	private fun handleBidUpdate(json: JSONObject) {
+		runSafe {
+			runOnUiThread {
+				if (json.optString("room_id") == roomID){
+					val highestBid = json.getJSONObject("get_highest_bid")
+					val bidAmount = highestBid.optString("bid_amount")
+					log("BID UPDATE: $bidAmount")
+					bind.bidPrice.text = bidAmount.asMoney()
+				}
+			}
+
+		}
+	}
 
 }

@@ -47,10 +47,11 @@
             android:layout_marginTop="@dimen/half_margin"
             android:nestedScrollingEnabled="false"
             android:orientation="vertical"
+            android:layout_weight="1"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toBottomOf="@id/chipGroupScroll"
-            tools:itemCount="5"
+            tools:itemCount="510"
             tools:listitem="@layout/product_selection_item" />
 
         <com.google.android.material.button.MaterialButton

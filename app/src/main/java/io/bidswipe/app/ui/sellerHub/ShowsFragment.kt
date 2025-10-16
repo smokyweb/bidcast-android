@@ -70,7 +70,12 @@ class ShowsFragment : BaseFragment<SellerHubViewModel, FragmentShowsBinding>() {
 
 				val products = data?.products?.map { it?.toLiveShowProduct() }
 
-				products?.first()?.isCurrent = true
+				if (products?.isEmpty() == true){
+					Alerts.error(mCtx, "No products found for this Show")
+					return
+				}else{
+					products?.first()?.isCurrent = true
+				}
 
 				val showData = LiveShowModel(
 					seller = LiveShowModel.Seller(

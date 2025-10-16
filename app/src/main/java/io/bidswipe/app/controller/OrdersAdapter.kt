@@ -28,7 +28,6 @@ class OrdersAdapter(
 			bind.root.setHapticClickListener { mClicks.itemClick(position) }
 			bind.orderId.text = item?.orderId
 			bind.status.text = item?.status?.replace("_", " ")?.asCapital()
-			
 			bind.orderAmount.text = item?.product?.pricing.toString().asMoney()
 			
 			bind.orderDate.text = Utils.getFormattedDateTime(

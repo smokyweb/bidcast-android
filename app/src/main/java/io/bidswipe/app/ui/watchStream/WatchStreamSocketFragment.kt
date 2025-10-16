@@ -183,7 +183,9 @@ class WatchStreamSocketFragment : BaseFragment<StreamViewModel, FragmentWatchStr
 				runSafe {
 					requireActivity().runOnUiThread {
 						val products = LiveShowModel.fromJson(json)
+
 						updateProductUI(products.products.find { it?.isCurrent == true })
+
 						bind.bid.text = "Swipe to Bid ${
 							newBidAmount(
 								products.products.find { it?.isCurrent == true }?.price?.toDoubleOrNull()?.toInt() ?: 0
@@ -331,7 +333,6 @@ class WatchStreamSocketFragment : BaseFragment<StreamViewModel, FragmentWatchStr
 
 						override fun secondaryClick(dialog: AppBottomSheet) {
 							dialog.dismiss()
-
 						}
 					})
 				}
@@ -362,11 +363,18 @@ class WatchStreamSocketFragment : BaseFragment<StreamViewModel, FragmentWatchStr
 
 	private fun handleBidUpdate(json: JSONObject) {
 		runSafe {
-			val bidAmount = json.optString("bid_amount", "0")
-			log("BID UPDATE: $bidAmount")
-			bind.bid.text = "Swipe to Bid ${newBidAmount(bidAmount.toDoubleOrNull()?.toInt() ?: 0).toString().asMoney()}"
-			highestBidAmount = bidAmount
-			bidProductId = json.optString("productId", bidProductId)
+			requireActivity().runOnUiThread {
+				if (json.optString("room_id") == roomID){
+					val highestBid = json.getJSONObject("get_highest_bid")
+					val bidAmount = highestBid.optString("bid_amount")
+					log("BID UPDATE: $bidAmount")
+					bind.bidPrice.text = bidAmount.asMoney()
+					bind.bid.text = "Swipe to Bid ${newBidAmount(bidAmount.toDoubleOrNull()?.toInt() ?: 0).toString().asMoney()}"
+					highestBidAmount = bidAmount
+					bidProductId = highestBid.optString("product_id")
+				}
+			}
+
 		}
 	}
 
@@ -526,13 +534,13 @@ class WatchStreamSocketFragment : BaseFragment<StreamViewModel, FragmentWatchStr
 				)
 				Alerts.success(mCtx, "Bid placed successfully")
 
-				socketManager?.sendMessage(
+			/*	socketManager?.sendMessage(
 					roomID,
 					"New high bid: $$priceText",
 					userId,
 					userName,
 					userImage
-				)
+				)*/
 //                sendZimMessage("New high bid: $${priceVal}")
 				inputSheet?.dismiss()
 			}
@@ -594,32 +602,36 @@ class WatchStreamSocketFragment : BaseFragment<StreamViewModel, FragmentWatchStr
 
 //            sendZimMessage("New high bid: $$bidAmount")
 			Alerts.success(mCtx, "Bid placed successfully")
-			socketManager?.sendMessage(
+		/*	socketManager?.sendMessage(
 				roomID,
 				"New high bid: $$bidAmount",
 				userId,
 				userName,
 				userImage
-			)
+			)*/
 			bind.bid.setCompleted(completed = false, withAnimation = true)
 		}
 	}
 
 	fun updateProductUI(liveProduct: LiveShowModel.Product?) {
-		bind.soldLayout.isVisible = false
-		bind.bidLayout.isVisible = true
-		bind.productLayout.isVisible = true
-		bind.productName.text = liveProduct?.name?.asCapital()
-		bind.productCategory.text = liveProduct?.category?.asCapital()
-		bind.quantity.text = buildString {
-			append("Quantity: ")
-			append(liveProduct?.quantity ?:0)
+
+		activity?.runOnUiThread {
+			bind.soldLayout.isVisible = false
+			bind.bidLayout.isVisible = true
+			bind.productLayout.isVisible = true
+			bind.productName.text = liveProduct?.name?.asCapital()
+			bind.productCategory.text = liveProduct?.category?.asCapital()
+			bind.quantity.text = buildString {
+				append("Quantity: ")
+				append(liveProduct?.quantity ?:0)
+			}
+			bind.productImage.loadUrl(mCtx, liveProduct?.image ?: "")
+			val price = liveProduct?.price
+			bind.bidPrice.text = price?.asMoney()
+			highestBidAmount = price
+			bidProductId = liveProduct?.id
 		}
-		bind.productImage.loadUrl(mCtx, liveProduct?.image ?: "")
-		val price = liveProduct?.price
-		bind.bidPrice.text = price?.asMoney()
-		highestBidAmount = price
-		bidProductId = liveProduct?.id
+
 	}
 
 	@SuppressLint("ClickableViewAccessibility")

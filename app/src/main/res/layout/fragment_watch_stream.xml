@@ -276,14 +276,13 @@
                             style="@style/inputBoxStyle"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            app:boxBackgroundColor="@color/scrim"
-                            android:alpha="0.3"
                             android:layout_marginHorizontal="@dimen/margin"
-                            android:layout_marginBottom="@dimen/half_margin"
-                            app:boxStrokeColor="@color/scrim"
+                            android:layout_marginVertical="@dimen/margin"
+                            app:boxBackgroundColor="@color/black25"
+                            app:boxStrokeWidth="0dp"
                             app:endIconDrawable="@drawable/ic_forward"
                             app:endIconMode="custom"
-                            app:layout_constraintBottom_toTopOf="@id/product">
+                            app:layout_constraintBottom_toTopOf="@+id/product">
 
                             <com.google.android.material.textfield.MaterialAutoCompleteTextView
                                 android:id="@+id/text"
@@ -292,7 +291,7 @@
                                 android:layout_height="wrap_content"
                                 android:hint="@string/say_something"
                                 android:inputType="text"
-                                android:textColor="@color/surface"/>
+                                android:textColor="@color/surface" />
 
                         </com.google.android.material.textfield.TextInputLayout>
 
