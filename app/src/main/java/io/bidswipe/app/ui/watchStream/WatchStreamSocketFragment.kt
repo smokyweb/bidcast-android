@@ -1020,6 +1020,9 @@ class WatchStreamSocketFragment : BaseFragment<StreamViewModel, FragmentWatchStr
 		sendTipSheetBind.btnTip5.setHapticClickListener {
 			sendTipSheetBind.customOffer.setText("5")
 		}
+		sendTipSheetBind.close.setHapticClickListener {
+			sendTipSheet.dismiss()
+		}
 
 		sendTipSheetBind.btnTip10.setHapticClickListener {
 			sendTipSheetBind.customOffer.setText("10")
