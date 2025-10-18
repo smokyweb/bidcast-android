@@ -26,7 +26,7 @@ object Const {
 
     //DOLBY iO CONST
     const val ACCOUNT_ID = "227tmE"
-    const val PUBLISHING_TOKEN = "7c963b9175d4006b4f57ccc95749252065ddff636b0b4e0fe4b7caebe710e763"
+    const val PUBLISHING_TOKEN = "3355b11d1201319117ffc14cef3f55ffe9c1054651735e8a03b0d09608a4127e"
     const val TOKEN_ID = "14730126"
 
 	const val SERVER_TIME_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
@@ -40,7 +40,6 @@ object Const {
 		errorCode = "NO_INTERNET",
 		errorResponse = BaseResponse(message = "No internet connection. Please check your network.")
 	)
-
 
 	//APP PERMISSIONS
 	private val COMMON_PERMS = arrayOf(

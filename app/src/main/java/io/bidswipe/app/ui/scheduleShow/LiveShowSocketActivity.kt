@@ -58,6 +58,7 @@ import io.bidswipe.app.network.response.GetPromotePlansResponse
 import io.bidswipe.app.ui.custom.AlertType
 import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.ui.dashboard.DashViewModel
+import io.bidswipe.app.ui.watchStream.WatchStreamSocketFragment
 import io.bidswipe.app.utils.Alerts
 import io.bidswipe.app.utils.Const
 import io.bidswipe.app.utils.SocketManager
@@ -182,7 +183,7 @@ class LiveShowSocketActivity : BaseActivity() {
 		socketUrl = Const.SOCKET_URL //intent.getStringExtra("socketUrl") ?: ""
 		initializeSocket()
 
-		bind.hostName.text = userName?.asCapital()
+		bind.hostName.text = userName.asCapital()
 		bind.hostImage.loadUrl(this, userImage)
 
 		bind.controls.setHapticClickListener {
@@ -356,8 +357,13 @@ class LiveShowSocketActivity : BaseActivity() {
 	}
 
 	override fun onDestroy() {
-		super.onDestroy()
-		log("Publisher cleanup starting")
+
+		if (!isInPictureInPictureMode){
+
+			stopStreaming()
+
+		}
+
 		isShowLive = false
 		// Socket cleanup
 		runSafe {
@@ -485,6 +491,16 @@ class LiveShowSocketActivity : BaseActivity() {
 		}, 100)
 
 		log("Publisher cleanup finished")
+		super.onDestroy()
+	}
+
+	override fun onStop() {
+		super.onStop()
+		if (!isInPictureInPictureMode){
+
+			stopStreaming()
+
+		}
 	}
 
 	private fun initPip() {
@@ -1066,7 +1082,7 @@ class LiveShowSocketActivity : BaseActivity() {
 							Alerts.error(this@LiveShowSocketActivity, "Invalid streaming credentials")
 						}
 						return@launch
-					}
+					} 
 
 					val credentials = Credential(
 						streamName = roomID,
@@ -1098,6 +1114,7 @@ class LiveShowSocketActivity : BaseActivity() {
 										val options = Option(
 											videoCodec = videoCodecs.firstOrNull(),
 											audioCodec = audioCodecs.firstOrNull(),
+											recordStream = true,
 											dtx = true,
 											stereo = true
 										)

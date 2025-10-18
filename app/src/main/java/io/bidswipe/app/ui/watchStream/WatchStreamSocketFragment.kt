@@ -341,6 +341,36 @@ class WatchStreamSocketFragment : BaseFragment<StreamViewModel, FragmentWatchStr
 			}
 		}
 
+		viewModel.followUserShowRepo.observe(viewLifecycleOwner) {
+			when (it) {
+				is Resource.Success -> {
+					bind.loader.isVisible = false
+					it.value.data
+
+					bind.follow.isVisible = false
+
+				}
+
+				is Resource.Error -> {
+					bind.loader.isVisible = false
+					it.parse(mCtx, TAG, object : AlertClicks {
+						override fun primaryClick(dialog: AppBottomSheet) {
+							dialog.dismiss()
+
+						}
+
+						override fun secondaryClick(dialog: AppBottomSheet) {
+							dialog.dismiss()
+
+						}
+					})
+				}
+
+				else -> {}
+
+			}
+		}
+
 	}
 
 	override fun onResume() {
@@ -421,6 +451,10 @@ class WatchStreamSocketFragment : BaseFragment<StreamViewModel, FragmentWatchStr
 
 			bind.liveCount.text = showData.viewerCount
 
+			bind.follow.setHapticClickListener {
+				bind.loader.isVisible = true
+				viewModel.followUser(sellerId?.request())
+			}
 			// Determine sale status once
 
 			/*val isSold = liveProduct?.status == "sold"
