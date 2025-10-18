@@ -187,7 +187,8 @@ class ChatAdapter(
 					}
 				} catch (e: Exception) {
 					e.printStackTrace()
-					chat.message
+					bind.date.text = chat.message?:""
+//					chat.message
 				}
 
 			}

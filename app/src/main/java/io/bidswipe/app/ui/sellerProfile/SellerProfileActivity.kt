@@ -410,8 +410,8 @@ class SellerProfileActivity : BaseActivity() {
 		AppBottomSheet(
 			this,
 			R.drawable.ic_block,
-			"Block User",
-			"Are you sure you want to block this user?",
+			"Block Seller",
+			"Are you sure you want to block this seller?",
 			primaryBtnText = "Block",
 			secondaryBtnText = "Cancel",
 			canCancel = true,
@@ -495,6 +495,9 @@ class SellerProfileActivity : BaseActivity() {
 
 		sendTipSheetBind.root.setOnClickListener {
 			hideKeyboard()
+		}
+		sendTipSheetBind.close.setHapticClickListener {
+			sendTipSheet.dismiss()
 		}
 
 		sendTipSheetBind.btnTip5.setHapticClickListener {

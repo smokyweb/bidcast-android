@@ -12,6 +12,7 @@ import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.navigation.fragment.findNavController
+import io.bidswipe.app.App
 import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseFragment
 import io.bidswipe.app.controller.HomeAdapter
@@ -25,6 +26,7 @@ import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.ui.more.NotificationActivity
 import io.bidswipe.app.ui.sellerProfile.SellerProfileActivity
 import io.bidswipe.app.ui.watchStream.ViewLiveShowActivity
+import io.bidswipe.app.utils.Alerts
 import io.bidswipe.app.utils.asCapital
 import io.bidswipe.app.utils.hideKeyboard
 import io.bidswipe.app.utils.parse
@@ -60,13 +62,23 @@ class ExploreTypeFragment : BaseFragment<DashViewModel , FragmentExploreTypeBind
 
 				"viewShow" -> {
 					if (showList[pos]?.isLive == true) {
-						startActivity(
-							Intent(
-								mCtx ,
-								ViewLiveShowActivity::class.java
-							).putExtra("position" , pos)
-								.putParcelableArrayListExtra("roomIdsList" , romIdsList as ArrayList)
-						)
+						val roomId = showList[pos]?.roomId.toString()
+						print("ROOM $romIdsList")
+						if (App.PIPMode) {
+							Alerts.error(mCtx , "You are already in Live show")
+						} else {
+							startActivity(
+								Intent(
+									mCtx ,
+									ViewLiveShowActivity::class.java
+								).putExtra("roomId" , roomId)
+									.putExtra("userId" , showList[pos]?.userId.toString())
+									.putExtra(
+										"roomIdsList" ,
+										romIdsList.joinToString(",") { it.roomId }
+									)
+							)
+						}
 					}
 				}
 			}

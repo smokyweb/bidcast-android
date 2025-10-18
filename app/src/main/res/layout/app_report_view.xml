@@ -16,19 +16,25 @@
 
         <TextView
             android:id="@+id/report_heading"
-            style="@style/TitleLarge"
+            style="@style/HeadlineSmall"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingBottom="8dp"
-            android:text="@string/report_user"
+            android:text="@string/report_seller"
             android:textSize="16sp" />
+
+        <TextView
+            style="@style/TitleMedium"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin"
+            android:text="Reason" />
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/spinnerBox"
             style="@style/inputBoxStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingTop="30dp"
             app:endIconDrawable="@drawable/ic_down_arrow"
             app:endIconMode="dropdown_menu">
 
@@ -45,7 +51,7 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <TextView
-            style="@style/BodyMedium"
+            style="@style/TitleMedium"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/margin"
@@ -55,7 +61,6 @@
             android:id="@+id/tellMore"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="8dp"
             android:background="@drawable/card_8_outline"
             android:gravity="top"
             android:hint="@string/write_something"

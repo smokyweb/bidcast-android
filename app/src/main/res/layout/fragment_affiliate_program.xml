@@ -119,7 +119,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="@dimen/half_margin"
-                    android:backgroundTint="@color/background"
+                    android:backgroundTint="@color/transparent"
                     android:src="@drawable/ic_copy"
                     app:cornerRadius="8dp"
                     app:tint="@color/primary" />
