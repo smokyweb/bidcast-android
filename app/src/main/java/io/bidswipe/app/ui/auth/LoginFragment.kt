@@ -55,11 +55,15 @@ class LoginFragment : BaseFragment<AuthViewModel, FragmentLoginBinding>() {
 		}
 
 		bind.privacyPolicy.setHapticClickListener {
-			startActivity(Intent(mCtx, MoreActivity::class.java).putExtra("slug", "privacy-policy"))
+			startActivity(Intent(mCtx, MoreActivity::class.java)
+				.putExtra("slug", "privacy-policy")
+				.putExtra("title", "Privacy Policy"))
 		}
 
 		bind.termsOfService.setHapticClickListener {
-			startActivity(Intent(mCtx, MoreActivity::class.java).putExtra("slug", "terms-condition"))
+			startActivity(Intent(mCtx, MoreActivity::class.java)
+				.putExtra("slug", "terms-condition")
+				.putExtra("title", "Terms of Service"))
 		}
 
 		bind.loginBtn.setHapticClickListener {

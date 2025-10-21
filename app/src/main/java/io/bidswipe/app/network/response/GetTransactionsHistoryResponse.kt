@@ -41,7 +41,7 @@ data class GetTransactionsHistoryResponse(
 		@SerializedName("date")
 		val date: String?,
 		@SerializedName("discount")
-		val discount: Int?,
+		val discount: Double,
 		@SerializedName("id")
 		val id: Int?,
 		@SerializedName("order_id")
@@ -49,7 +49,7 @@ data class GetTransactionsHistoryResponse(
 		@SerializedName("payment_intent_id")
 		val paymentIntentId: Any?,
 		@SerializedName("product_price")
-		val productPrice: Int?,
+		val productPrice: Double,
 		@SerializedName("receiver")
 		val `receiver`: Receiver?,
 		@SerializedName("seller_id")
@@ -57,7 +57,7 @@ data class GetTransactionsHistoryResponse(
 		@SerializedName("sender")
 		val sender: Sender?,
 		@SerializedName("shipping_charges")
-		val shippingCharges: Int?,
+		val shippingCharges: Double,
 		@SerializedName("source_type")
 		val sourceType: String?,
 		@SerializedName("status")

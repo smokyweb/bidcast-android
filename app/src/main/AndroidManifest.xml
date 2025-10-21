@@ -107,7 +107,8 @@
             android:exported="false" />
         <activity
             android:name=".ui.dashboard.DashActivity"
-            android:exported="true">
+            android:exported="true"
+            android:windowSoftInputMode="adjustNothing">
             <intent-filter android:autoVerify="true">
                 <action android:name="android.intent.action.VIEW" />
 

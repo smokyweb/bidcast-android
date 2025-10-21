@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.view.isVisible
+import androidx.core.widget.addTextChangedListener
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.tabs.TabLayout
@@ -29,20 +30,21 @@ import io.bidswipe.app.utils.setHapticClickListener
 import io.bidswipe.app.utils.toListProduct
 
 @SuppressLint("NotifyDataSetChanged")
-class InventoryFragment : BaseFragment<SellerHubViewModel, FragmentInventoryBinding>() {
-	override fun getModel(): Class<SellerHubViewModel> = SellerHubViewModel::class.java
+class InventoryFragment : BaseFragment<SellerHubViewModel , FragmentInventoryBinding>() {
+	override fun getModel() : Class<SellerHubViewModel> = SellerHubViewModel::class.java
 
-	override fun getBind(inflater: LayoutInflater, view: ViewGroup?) =
-		FragmentInventoryBinding.inflate(inflater, view, false)
+	override fun getBind(inflater : LayoutInflater , view : ViewGroup?) =
+		FragmentInventoryBinding.inflate(inflater , view , false)
 
 	private var itemList = mutableListOf<GetMyInventoryResponse.Data?>()
-	private lateinit var adapter: InventoryAdapter
+	private var filteredList = mutableListOf<GetMyInventoryResponse.Data?>()
+	private lateinit var adapter : InventoryAdapter
 	private var isLoading = false
 	private var page = 1
 	private var selectedTab = "active"
 
-	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-		super.onViewCreated(view, savedInstanceState)
+	override fun onViewCreated(view : View , savedInstanceState : Bundle?) {
+		super.onViewCreated(view , savedInstanceState)
 		val from = requireActivity().intent.getStringExtra("from")
 
 //        from = arguments?.getString("from")
@@ -55,7 +57,7 @@ class InventoryFragment : BaseFragment<SellerHubViewModel, FragmentInventoryBind
 			bind.addNewProduct.setHapticClickListener {
 				val selectedItems = itemList.filter { it?.selected == true }
 				if (selectedItems.isEmpty()) {
-					Toast.makeText(mCtx, "Please select at least one product", Toast.LENGTH_SHORT).show()
+					Toast.makeText(mCtx , "Please select at least one product" , Toast.LENGTH_SHORT).show()
 					return@setHapticClickListener
 				}
 
@@ -63,11 +65,10 @@ class InventoryFragment : BaseFragment<SellerHubViewModel, FragmentInventoryBind
 				selectedItems.forEach { it?.let { selectedList.add(it) } }
 
 				val intent = Intent()
-				intent.putExtra("selectedProducts", selectedList)
-				activity?.setResult(Activity.RESULT_OK, intent)
+				intent.putExtra("selectedProducts" , selectedList)
+				activity?.setResult(Activity.RESULT_OK , intent)
 				finish()
 			}
-
 
 		} else {
 			bind.addNewProduct.text = getString(R.string.new_product)
@@ -77,20 +78,35 @@ class InventoryFragment : BaseFragment<SellerHubViewModel, FragmentInventoryBind
 
 		}
 
-		adapter = InventoryAdapter(itemList, isSelectionMode, object : RecyclerClicks {
-			override fun itemClick(pos: Int, status: String?) {
-				if (isSelectionMode) {
-					itemList[pos]?.selected = !(itemList[pos]?.selected ?: false)
-					adapter.notifyItemChanged(pos)
-
-					val selectedCount = itemList.count { it?.selected == true }
-					bind.addNewProduct.text =
-						if (selectedCount > 0) "Add ($selectedCount)" else "Add Selected"
-				} else {
-					startActivity(mCtx.toListProduct().putExtra("product", itemList[pos]))
+		adapter = InventoryAdapter(filteredList , isSelectionMode , object : RecyclerClicks {
+			override fun itemClick(pos : Int , status : String?) {
+				filteredList[pos]?.let { item ->
+					if (isSelectionMode) {
+						item.selected = ! (item.selected ?: false)
+						adapter.notifyItemChanged(pos)
+					} else {
+						startActivity(mCtx.toListProduct().putExtra("product" , item))
+					}
 				}
 			}
 		})
+		bind.recycler.adapter = adapter
+
+		bind.search.addTextChangedListener { editable ->
+			val query = editable.toString().trim()
+			filteredList.clear()
+			if (query.isEmpty()) {
+				filteredList.addAll(itemList)
+			} else {
+				filteredList.addAll(
+					itemList.filter {
+						it?.title?.contains(query , ignoreCase = true) == true ||
+								it?.category?.name?.contains(query , ignoreCase = true) == true
+					}
+				)
+			}
+			adapter.notifyDataSetChanged()
+		}
 
 		bind.header.onBackClick {
 			finish()
@@ -105,32 +121,32 @@ class InventoryFragment : BaseFragment<SellerHubViewModel, FragmentInventoryBind
 		bind.recycler.adapter = adapter
 
 		bind.tabs.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
-			override fun onTabSelected(tab: TabLayout.Tab?) {
+			override fun onTabSelected(tab : TabLayout.Tab?) {
 				selectedTab = tab?.text.toString().lowercase()
 				page = 1
 				bind.loader.isVisible = true
-				viewModel.getMyInventory(selectedTab.request(), page.toString().request())
+				viewModel.getMyInventory(selectedTab.request() , page.toString().request())
 			}
 
-			override fun onTabUnselected(tab: TabLayout.Tab?) {
+			override fun onTabUnselected(tab : TabLayout.Tab?) {
 
 			}
 
-			override fun onTabReselected(tab: TabLayout.Tab?) {
+			override fun onTabReselected(tab : TabLayout.Tab?) {
 
 			}
 		})
 		bind.recycler.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-			override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-				super.onScrolled(recyclerView, dx, dy)
+			override fun onScrolled(recyclerView : RecyclerView , dx : Int , dy : Int) {
+				super.onScrolled(recyclerView , dx , dy)
 				val layoutManager = bind.recycler.layoutManager as LinearLayoutManager
 				val lastItemPosition = layoutManager.findLastVisibleItemPosition()
-				if (lastItemPosition == (itemList.size - 1)) {
-					if (!isLoading) {
+				if (lastItemPosition == (filteredList.size - 1)) {
+					if (! isLoading) {
 						isLoading = true
-						page++
+						page ++
 						bind.bottomLoader.isVisible = true
-						viewModel.getMyInventory(selectedTab.request(), page.toString().request())
+						viewModel.getMyInventory(selectedTab.request() , page.toString().request())
 					}
 				}
 			}
@@ -140,11 +156,11 @@ class InventoryFragment : BaseFragment<SellerHubViewModel, FragmentInventoryBind
 			page = 1
 			isLoading = false
 			itemList.clear()
+			filteredList.clear()
 			bind.recycler.isVisible = false
 			bind.noData.isVisible = false
-			viewModel.getMyInventory(selectedTab.request(), page.toString().request())
+			viewModel.getMyInventory(selectedTab.request() , page.toString().request())
 		}
-
 		bind.noInternet.onClick {
 			bind.noInternet.isVisible = false
 			bind.bottomLoader.isVisible = false
@@ -153,14 +169,15 @@ class InventoryFragment : BaseFragment<SellerHubViewModel, FragmentInventoryBind
 			page = 1
 			isLoading = false
 			itemList.clear()
+			filteredList.clear()
 			bind.recycler.isVisible = false
 			bind.noData.isVisible = false
-			viewModel.getMyInventory(selectedTab.request(), page.toString().request())
+			viewModel.getMyInventory(selectedTab.request() , page.toString().request())
 		}
 
 		bind.loader.isVisible = true
 
-		viewModel.getMyInventory("active".request(), "1".request())
+		viewModel.getMyInventory("active".request() , "1".request())
 		viewModel.getMyInventoryRepo.observe(viewLifecycleOwner) {
 			when (it) {
 				is Resource.Success -> {
@@ -170,17 +187,17 @@ class InventoryFragment : BaseFragment<SellerHubViewModel, FragmentInventoryBind
 					bind.swipeRefreshLayout.isRefreshing = false
 					bind.addNewProduct.isVisible = true
 
-					val mData = it.value.data
+					val mData = it.value.data ?: emptyList()
 
 					if (page == 1) {
 						itemList.clear()
-					}
-
-					if (mData != null) {
 						itemList.addAll(mData)
 					}
 
-					if (itemList.isNotEmpty()) {
+					filteredList.clear()
+					filteredList.addAll(itemList)
+
+					if (filteredList.isNotEmpty()) {
 						bind.recycler.isVisible = true
 						bind.noData.isVisible = false
 					} else {
@@ -190,7 +207,6 @@ class InventoryFragment : BaseFragment<SellerHubViewModel, FragmentInventoryBind
 					}
 
 					isLoading = page >= (it.value.totalPage ?: 0)
-
 					adapter.notifyDataSetChanged()
 
 				}
@@ -199,7 +215,6 @@ class InventoryFragment : BaseFragment<SellerHubViewModel, FragmentInventoryBind
 					bind.loader.isVisible = false
 					bind.bottomLoader.isVisible = false
 					bind.swipeRefreshLayout.isRefreshing = false
-
 
 					if (it.isNetworkError) {
 						bind.loader.isVisible = false
@@ -210,13 +225,13 @@ class InventoryFragment : BaseFragment<SellerHubViewModel, FragmentInventoryBind
 					} else {
 						bind.noInternet.isVisible = false
 						bind.addNewProduct.isVisible = true
-						it.parse(mCtx, TAG, object : AlertClicks {
-							override fun primaryClick(dialog: AppBottomSheet) {
+						it.parse(mCtx , TAG , object : AlertClicks {
+							override fun primaryClick(dialog : AppBottomSheet) {
 								dialog.dismiss()
 
 							}
 
-							override fun secondaryClick(dialog: AppBottomSheet) {
+							override fun secondaryClick(dialog : AppBottomSheet) {
 								dialog.dismiss()
 
 							}
@@ -225,10 +240,8 @@ class InventoryFragment : BaseFragment<SellerHubViewModel, FragmentInventoryBind
 				}
 
 				else -> {}
-
 			}
 		}
-
 
 	}
 

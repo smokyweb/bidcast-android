@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.navigation.fragment.findNavController
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import io.bidswipe.app.base.BaseFragment
 import io.bidswipe.app.controller.PayoutAdapter
 import io.bidswipe.app.databinding.FragmentWalletViewBinding
@@ -19,28 +20,26 @@ import io.bidswipe.app.utils.ids
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.setHapticClickListener
 
-class WalletViewFragment : BaseFragment<SellerHubViewModel, FragmentWalletViewBinding>() {
-	override fun getModel(): Class<SellerHubViewModel> = SellerHubViewModel::class.java
+class WalletViewFragment : BaseFragment<SellerHubViewModel , FragmentWalletViewBinding>() {
+	override fun getModel() : Class<SellerHubViewModel> = SellerHubViewModel::class.java
 
 	override fun getBind(
-		inflater: LayoutInflater,
-		view: ViewGroup?,
-	) = FragmentWalletViewBinding.inflate(inflater, view, false)
+		inflater : LayoutInflater ,
+		view : ViewGroup? ,
+	) = FragmentWalletViewBinding.inflate(inflater , view , false)
 
 	private var itemList = mutableListOf<PayoutHistoryResponse.Data?>()
-
-	private lateinit var adapter: PayoutAdapter
+	private lateinit var adapter : PayoutAdapter
 
 	private val mClick = object : RecyclerClicks {
-		override fun itemClick(pos: Int, status: String?) {
+		override fun itemClick(pos : Int , status : String?) {
 		}
 	}
 
+	override fun onViewCreated(view : View , savedInstanceState : Bundle?) {
+		super.onViewCreated(view , savedInstanceState)
 
-	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-		super.onViewCreated(view, savedInstanceState)
-
-		adapter = PayoutAdapter(itemList, mClick)
+		adapter = PayoutAdapter(itemList , mClick)
 		bind.recycler.adapter = adapter
 		bind.payoutCard.setHapticClickListener {
 //			if (!kycStatus) {
@@ -48,6 +47,14 @@ class WalletViewFragment : BaseFragment<SellerHubViewModel, FragmentWalletViewBi
 //			} else {
 			findNavController().navigate(ids.goToPayoutFragment)
 //			}
+		}
+		val parentSwipe = requireActivity().findViewById<SwipeRefreshLayout>(
+			io.bidswipe.app.R.id.swipeRefreshLayout
+		)
+
+		bind.scroll.viewTreeObserver.addOnScrollChangedListener {
+			val canScrollUp = bind.scroll.canScrollVertically(- 1)
+			parentSwipe?.isEnabled = ! canScrollUp
 		}
 
 		bind.loader.isVisible = false
@@ -72,12 +79,12 @@ class WalletViewFragment : BaseFragment<SellerHubViewModel, FragmentWalletViewBi
 
 				is Resource.Error -> {
 					bind.loader.isVisible = false
-					it.parse(mCtx, TAG, object : AlertClicks {
-						override fun primaryClick(dialog: AppBottomSheet) {
+					it.parse(mCtx , TAG , object : AlertClicks {
+						override fun primaryClick(dialog : AppBottomSheet) {
 							dialog.dismiss()
 						}
 
-						override fun secondaryClick(dialog: AppBottomSheet) {
+						override fun secondaryClick(dialog : AppBottomSheet) {
 							dialog.dismiss()
 						}
 					})
@@ -92,7 +99,7 @@ class WalletViewFragment : BaseFragment<SellerHubViewModel, FragmentWalletViewBi
 			when (it) {
 				is Resource.Success -> {
 					bind.loader.isVisible = false
-                    val mData = it.value.data
+					val mData = it.value.data
 					bind.walletAmount.text = mData?.avaiableBalance.toString().asMoney()
 					bind.available.text = mData?.avaiableForPayout.toString().asMoney()
 					bind.processing.text = mData?.processing.toString().asMoney()
@@ -102,12 +109,12 @@ class WalletViewFragment : BaseFragment<SellerHubViewModel, FragmentWalletViewBi
 
 				is Resource.Error -> {
 					bind.loader.isVisible = false
-					it.parse(mCtx, TAG, object : AlertClicks {
-						override fun primaryClick(dialog: AppBottomSheet) {
+					it.parse(mCtx , TAG , object : AlertClicks {
+						override fun primaryClick(dialog : AppBottomSheet) {
 							dialog.dismiss()
 						}
 
-						override fun secondaryClick(dialog: AppBottomSheet) {
+						override fun secondaryClick(dialog : AppBottomSheet) {
 							dialog.dismiss()
 						}
 					})
@@ -117,7 +124,6 @@ class WalletViewFragment : BaseFragment<SellerHubViewModel, FragmentWalletViewBi
 
 			}
 		}
-
 
 		/*		viewModel.checkKyc()
 				viewModel.checkKycRepo.observe(viewLifecycleOwner) {

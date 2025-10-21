@@ -33,25 +33,25 @@ import io.bidswipe.app.utils.asMoney
 import io.bidswipe.app.utils.parse
 
 @SuppressLint("NotifyDataSetChanged")
-class OverAllFragment : BaseFragment<SellerHubViewModel, FragmentOverAllBinding>() {
-	override fun getModel(): Class<SellerHubViewModel> = SellerHubViewModel::class.java
+class OverAllFragment : BaseFragment<SellerHubViewModel , FragmentOverAllBinding>() {
+	override fun getModel() : Class<SellerHubViewModel> = SellerHubViewModel::class.java
 
 	override fun getBind(
-		inflater: LayoutInflater,
-		view: ViewGroup?,
-	) = FragmentOverAllBinding.inflate(inflater, view, false)
+		inflater : LayoutInflater ,
+		view : ViewGroup? ,
+	) = FragmentOverAllBinding.inflate(inflater , view , false)
 
 	private var gridList = mutableListOf<SellModel>()
-	private lateinit var gridAdapter: AnalyticsGridAdapter
+	private lateinit var gridAdapter : AnalyticsGridAdapter
 
 	private val mClick = object : RecyclerClicks {
-		override fun itemClick(pos: Int, status: String?) {
+		override fun itemClick(pos : Int , status : String?) {
 		}
 	}
 
-	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-		super.onViewCreated(view, savedInstanceState)
-		gridAdapter = AnalyticsGridAdapter(gridList, mClick)
+	override fun onViewCreated(view : View , savedInstanceState : Bundle?) {
+		super.onViewCreated(view , savedInstanceState)
+		gridAdapter = AnalyticsGridAdapter(gridList , mClick)
 		bind.gridRecycler.adapter = gridAdapter
 
 
@@ -75,10 +75,10 @@ class OverAllFragment : BaseFragment<SellerHubViewModel, FragmentOverAllBinding>
 					bind.rating.text = (mData?.stats?.rating ?: 0).toDouble().toString()
 
 					gridList.clear()
-					gridList.add(SellModel(R.drawable.ic_people, 0, "Total Followers", ((mData?.stats?.followers ?: 0).toString())))
-					gridList.add(SellModel(R.drawable.ic_star, 0, "Avg Rating", ("${(mData?.stats?.rating ?: 0)}/5")))
-					gridList.add(SellModel(R.drawable.ic_video, 0, "Live Sessions", (mData?.stats?.liveSessions ?: 0).toString()))
-					gridList.add(SellModel(R.drawable.ic_cart, 0, "Total Sales", (mData?.stats?.totalSales ?: 0).toString()))
+					gridList.add(SellModel(R.drawable.ic_people , 0 , "Total Followers" , ((mData?.stats?.followers ?: 0).toString())))
+					gridList.add(SellModel(R.drawable.ic_star , 0 , "Avg Rating" , ("${(mData?.stats?.rating ?: 0)}/5")))
+					gridList.add(SellModel(R.drawable.ic_video , 0 , "Live Sessions" , (mData?.stats?.liveSessions ?: 0).toString()))
+					gridList.add(SellModel(R.drawable.ic_cart , 0 , "Total Sales" , (mData?.stats?.totalSales ?: 0).toString()))
 
 					gridAdapter.notifyDataSetChanged()
 
@@ -87,13 +87,13 @@ class OverAllFragment : BaseFragment<SellerHubViewModel, FragmentOverAllBinding>
 				is Resource.Error -> {
 					bind.loader.isVisible = false
 
-					it.parse(mCtx, TAG, object : AlertClicks {
-						override fun primaryClick(dialog: AppBottomSheet) {
+					it.parse(mCtx , TAG , object : AlertClicks {
+						override fun primaryClick(dialog : AppBottomSheet) {
 							dialog.dismiss()
 
 						}
 
-						override fun secondaryClick(dialog: AppBottomSheet) {
+						override fun secondaryClick(dialog : AppBottomSheet) {
 							dialog.dismiss()
 
 						}
@@ -114,14 +114,14 @@ class OverAllFragment : BaseFragment<SellerHubViewModel, FragmentOverAllBinding>
 
 					if (mData?.isNotEmpty() == true) {
 						if (mData.size == 1) {
-							mData.add(0, SalesAnalyticsResponse.Data.Chart("", "0", 0))
+							mData.add(0 , SalesAnalyticsResponse.Data.Chart("" , "0" , 0))
 						}
 						val entries = ArrayList<Entry>()
-						mData.forEachIndexed { index, chartData ->
-							entries.add(Entry(index.toFloat(), chartData?.totalSales?.toFloat() ?: 0f, chartData?.totalSales))
+						mData.forEachIndexed { index , chartData ->
+							entries.add(Entry(index.toFloat() , chartData?.totalSales?.toFloat() ?: 0f , chartData?.totalSales))
 						}
 
-						setUpChart(mCtx, bind.salesChart, entries, mData.map { (it?.label ?: "").removePrefix("day ") }.toMutableList())
+						setUpChart(mCtx , bind.salesChart , entries , mData.map { (it?.label ?: "").removePrefix("day ") }.toMutableList())
 						bind.salesChart.isVisible = true
 						bind.noData.isVisible = false
 					} else {
@@ -133,13 +133,13 @@ class OverAllFragment : BaseFragment<SellerHubViewModel, FragmentOverAllBinding>
 				is Resource.Error -> {
 					bind.loader.isVisible = false
 
-					it.parse(mCtx, TAG, object : AlertClicks {
-						override fun primaryClick(dialog: AppBottomSheet) {
+					it.parse(mCtx , TAG , object : AlertClicks {
+						override fun primaryClick(dialog : AppBottomSheet) {
 							dialog.dismiss()
 
 						}
 
-						override fun secondaryClick(dialog: AppBottomSheet) {
+						override fun secondaryClick(dialog : AppBottomSheet) {
 							dialog.dismiss()
 
 						}
@@ -160,13 +160,18 @@ class OverAllFragment : BaseFragment<SellerHubViewModel, FragmentOverAllBinding>
 
 					if (mData?.isNotEmpty() == true) {
 						if (mData.size == 1) {
-							mData.add(0, VisitorsAnalyticsResponse.Data.Chart("", "0"))
+							mData.add(0 , VisitorsAnalyticsResponse.Data.Chart("" , "0"))
 						}
 						val entries = ArrayList<Entry>()
-						mData.forEachIndexed { index, chartData ->
-							entries.add(Entry(index.toFloat(), chartData?.totalVisitors?.toFloat() ?: 0f, chartData?.totalVisitors?.toInt()))
+						mData.forEachIndexed { index , chartData ->
+							entries.add(Entry(index.toFloat() , chartData?.totalVisitors?.toFloat() ?: 0f , chartData?.totalVisitors?.toInt()))
 						}
-setUpChart(mCtx, bind.visitorChart, entries, mData?.map { (it?.label ?: "").removePrefix("day ") }?.toMutableList())
+						val labels = try {
+							mData.map { (it?.label ?: "").removePrefix("day ") }.toMutableList()
+						} catch (_: Exception) {
+							mutableListOf()
+						}
+						setUpChart(mCtx, bind.visitorChart, entries, labels)
 						bind.visitorChart.isVisible = true
 						bind.noDataVisitors.isVisible = false
 					} else {
@@ -179,13 +184,13 @@ setUpChart(mCtx, bind.visitorChart, entries, mData?.map { (it?.label ?: "").remo
 				is Resource.Error -> {
 					bind.loader.isVisible = false
 
-					it.parse(mCtx, TAG, object : AlertClicks {
-						override fun primaryClick(dialog: AppBottomSheet) {
+					it.parse(mCtx , TAG , object : AlertClicks {
+						override fun primaryClick(dialog : AppBottomSheet) {
 							dialog.dismiss()
 
 						}
 
-						override fun secondaryClick(dialog: AppBottomSheet) {
+						override fun secondaryClick(dialog : AppBottomSheet) {
 							dialog.dismiss()
 
 						}
@@ -200,13 +205,13 @@ setUpChart(mCtx, bind.visitorChart, entries, mData?.map { (it?.label ?: "").remo
 	}
 
 	fun setUpChart(
-		mCtx: Context,
-		chart: LineChart,
-		values: MutableList<Entry>,
-		labels: MutableList<String>? = mutableListOf(),
+		mCtx : Context ,
+		chart : LineChart ,
+		values : MutableList<Entry> ,
+		labels : MutableList<String>? = mutableListOf() ,
 	) {
 		val labelCount = labels?.size ?: 0
-		val defFont = ResourcesCompat.getFont(mCtx, R.font.poppins_regular)!!
+		val defFont = ResourcesCompat.getFont(mCtx , R.font.poppins_regular) !!
 		chart.also {
 			it.clear()
 			it.invalidate()
@@ -221,15 +226,15 @@ setUpChart(mCtx, bind.visitorChart, entries, mData?.map { (it?.label ?: "").remo
 			it.isDragEnabled = false
 			it.setPinchZoom(false)
 
-			it.xAxis.setLabelCount(labelCount, true)
+			it.xAxis.setLabelCount(labelCount , true)
 
-			if (!labels.isNullOrEmpty()) {
+			if (! labels.isNullOrEmpty()) {
 				it.xAxis.valueFormatter = object : ValueFormatter() {
-					override fun getAxisLabel(value: Float, axis: AxisBase?): String {
+					override fun getAxisLabel(value : Float , axis : AxisBase?) : String {
 						return if (value.toInt() < (labels.size)) {
 							try {
 								labels[value.toInt()]
-							} catch (e: Exception) {
+							} catch (_ : Exception) {
 								""
 							}
 						} else ""
@@ -238,9 +243,9 @@ setUpChart(mCtx, bind.visitorChart, entries, mData?.map { (it?.label ?: "").remo
 			}
 
 			it.xAxis.also { xAxis ->
-				xAxis.axisLineColor = ContextCompat.getColor(mCtx, R.color.inversePrimary)
-				xAxis.gridColor = ContextCompat.getColor(mCtx, R.color.inversePrimary)
-				xAxis.textColor = ContextCompat.getColor(mCtx, R.color.primary)
+				xAxis.axisLineColor = ContextCompat.getColor(mCtx , R.color.inversePrimary)
+				xAxis.gridColor = ContextCompat.getColor(mCtx , R.color.inversePrimary)
+				xAxis.textColor = ContextCompat.getColor(mCtx , R.color.primary)
 				xAxis.position = XAxis.XAxisPosition.BOTTOM
 				xAxis.setDrawLimitLinesBehindData(false)
 				xAxis.setDrawAxisLine(false)
@@ -250,9 +255,9 @@ setUpChart(mCtx, bind.visitorChart, entries, mData?.map { (it?.label ?: "").remo
 			}
 
 			it.axisLeft.also { yAxis ->
-				yAxis.axisLineColor = ContextCompat.getColor(mCtx, R.color.inversePrimary)
-				yAxis.gridColor = ContextCompat.getColor(mCtx, R.color.inversePrimary)
-				yAxis.textColor = ContextCompat.getColor(mCtx, R.color.primary)
+				yAxis.axisLineColor = ContextCompat.getColor(mCtx , R.color.inversePrimary)
+				yAxis.gridColor = ContextCompat.getColor(mCtx , R.color.inversePrimary)
+				yAxis.textColor = ContextCompat.getColor(mCtx , R.color.primary)
 				yAxis.setDrawLimitLinesBehindData(false)
 				yAxis.setDrawGridLines(false)
 				yAxis.typeface = defFont
@@ -263,17 +268,17 @@ setUpChart(mCtx, bind.visitorChart, entries, mData?.map { (it?.label ?: "").remo
 		val legend = chart.legend
 		legend.isEnabled = false
 
-		val mDataSet = LineDataSet(values, "").also { set ->
+		val mDataSet = LineDataSet(values , "").also { set ->
 			set.lineWidth = 1.5f
 			set.circleRadius = 1f
 			set.valueTextSize = 0f
 			set.setDrawFilled(true)
 			set.setDrawCircles(false)
 			set.mode = LineDataSet.Mode.HORIZONTAL_BEZIER
-			set.setColors(ContextCompat.getColor(mCtx, R.color.primary))
-			set.enableDashedHighlightLine(15f, 2f, 10f)
-			set.highLightColor = ContextCompat.getColor(mCtx, R.color.primary)
-			set.fillColor = ContextCompat.getColor(mCtx, R.color.primaryContainer)
+			set.setColors(ContextCompat.getColor(mCtx , R.color.primary))
+			set.enableDashedHighlightLine(15f , 2f , 10f)
+			set.highLightColor = ContextCompat.getColor(mCtx , R.color.primary)
+			set.fillColor = ContextCompat.getColor(mCtx , R.color.primaryContainer)
 			set.fillAlpha = 80
 		}
 
