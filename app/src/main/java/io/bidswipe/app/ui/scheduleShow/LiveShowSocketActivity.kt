@@ -58,7 +58,6 @@ import io.bidswipe.app.network.response.GetPromotePlansResponse
 import io.bidswipe.app.ui.custom.AlertType
 import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.ui.dashboard.DashViewModel
-import io.bidswipe.app.ui.watchStream.WatchStreamSocketFragment
 import io.bidswipe.app.utils.Alerts
 import io.bidswipe.app.utils.Const
 import io.bidswipe.app.utils.SocketManager
@@ -640,23 +639,27 @@ class LiveShowSocketActivity : BaseActivity() {
 			runSafe {
 				runOnUiThread {
 
-					val product = LiveShowModel.fromJson(json)
+					if (roomID == json.optString("room_id")) {
 
-					productList.clear()
+						val product = LiveShowModel.fromJson(json)
 
-					productList.addAll(product.products)
+						productList.clear()
 
-					/*productList.find { it?.id == product.id }.let {
+						productList.addAll(product.products)
+
+						/*productList.find { it?.id == product.id }.let {
 						val index = productList.indexOf(it)
 						if (index != -1) {
 							productList[index] = product
 						}
 					}*/
 
-					val products = LiveShowModel.fromJson(json)
-					updateProductUI(products.products.find { it?.isCurrent == true })
+						val products = LiveShowModel.fromJson(json)
+						updateProductUI(products.products.find { it?.isCurrent == true })
 
-					productAdapter.notifyDataSetChanged()
+						productAdapter.notifyDataSetChanged()
+
+					}
 
 				}
 			}
@@ -796,17 +799,21 @@ class LiveShowSocketActivity : BaseActivity() {
 
 		socketManager?.onRoomCreated { obj ->
 			runSafe {
-				val showData = LiveShowModel.fromJson(obj)
 
-				productList.clear()
+				if (obj.optString("room_id") == roomID){
+					val showData = LiveShowModel.fromJson(obj)
 
-				productList.addAll(showData.products)
+					productList.clear()
 
-				val liveProduct = showData.products.find { it?.isCurrent == true }
+					productList.addAll(showData.products)
 
-				updateProductUI(liveProduct)
+					val liveProduct = showData.products.find { it?.isCurrent == true }
 
-				log("ROOM CREATED : $showData")
+					updateProductUI(liveProduct)
+
+					log("ROOM CREATED : $showData")
+				}
+
 			}
 //			startLiveDurationTimer()
 		}
@@ -1389,10 +1396,11 @@ class LiveShowSocketActivity : BaseActivity() {
 	}
 
 	private fun updateCountdown(json: JSONObject) {
+		val value = json.optString("remaining")
 		runSafe {
-			runOnUiThread {
+			this.runOnUiThread {
 				if (json.optString("room_id") == roomID) {
-					val value = json.optString("remaining")
+					log("BID TIMER UPDATE : $value")
 					bind.bidTime.isVisible = true
 					bind.bidTime.text = "Ends in $value"
 				} else {
