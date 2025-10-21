@@ -182,15 +182,19 @@ class WatchStreamSocketFragment : BaseFragment<StreamViewModel, FragmentWatchStr
 			socketManager?.getUpdatedProduct { json ->
 				runSafe {
 					requireActivity().runOnUiThread {
-						val products = LiveShowModel.fromJson(json)
 
-						updateProductUI(products.products.find { it?.isCurrent == true })
+						if (json.optString("room_id") == roomID) {
+							val products = LiveShowModel.fromJson(json)
 
-						bind.bid.text = "Swipe to Bid ${
-							newBidAmount(
-								products.products.find { it?.isCurrent == true }?.price?.toDoubleOrNull()?.toInt() ?: 0
-							).toString().asMoney()
-						}"
+							updateProductUI(products.products.find { it?.isCurrent == true })
+
+							bind.bid.text = "Swipe to Bid ${
+								newBidAmount(
+									products.products.find { it?.isCurrent == true }?.price?.toDoubleOrNull()?.toInt() ?: 0
+								).toString().asMoney()
+							}"
+						}
+
 					}
 				}
 
@@ -258,7 +262,9 @@ class WatchStreamSocketFragment : BaseFragment<StreamViewModel, FragmentWatchStr
 
 		socketManager?.onRoomCreated { obj ->
 			requireActivity().runOnUiThread {
-				updateSessionUI(obj)
+				if (obj.optString("room_id") == roomID){
+					updateSessionUI(obj)
+				}
 			}
 		}
 
@@ -532,8 +538,6 @@ class WatchStreamSocketFragment : BaseFragment<StreamViewModel, FragmentWatchStr
 				if (json.optString("room_id") == roomID) {
 					bind.bidTime.isVisible = true
 					bind.bidTime.text = "Ends in $value"
-				} else {
-					bind.bidTime.isVisible = false
 				}
 			}
 		}

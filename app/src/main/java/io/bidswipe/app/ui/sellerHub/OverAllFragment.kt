@@ -166,7 +166,7 @@ class OverAllFragment : BaseFragment<SellerHubViewModel, FragmentOverAllBinding>
 						mData.forEachIndexed { index, chartData ->
 							entries.add(Entry(index.toFloat(), chartData?.totalVisitors?.toFloat() ?: 0f, chartData?.totalVisitors?.toInt()))
 						}
-setUpChart(mCtx, bind.visitorChart, entries, mData?.map { (it?.label ?: "").removePrefix("day ") }?.toMutableList())
+						setUpChart(mCtx, bind.visitorChart, entries, mData?.map { (it?.label ?: "").removePrefix("day ") }?.toMutableList())
 						bind.visitorChart.isVisible = true
 						bind.noDataVisitors.isVisible = false
 					} else {

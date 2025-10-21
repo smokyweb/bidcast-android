@@ -71,7 +71,9 @@ class ContentFragment : BaseFragment<DashViewModel , FragmentContentBinding>() {
 			}
 		}
 
+
 		bind.header.setHeaderText(title)
+
 		bind.header.onBackClick {
 			if (! findNavController().popBackStack()) {
 				requireActivity().onBackPressed()
