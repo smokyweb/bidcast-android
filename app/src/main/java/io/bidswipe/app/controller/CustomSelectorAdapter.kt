@@ -12,26 +12,27 @@ import io.bidswipe.app.utils.loadUrl
 import io.bidswipe.app.utils.setHapticClickListener
 
 class CustomSelectorAdapter(
-	context : Context ,
-	resource : Int ,
-	objects : MutableList<UserSearchingResponse.Data?> ,
-	var selected : (index : Int , name : String) -> Unit ,
-) : ArrayAdapter<UserSearchingResponse.Data?>(context , resource , objects) {
+	context: Context,
+	resource: Int,
+	objects: MutableList<UserSearchingResponse.Data?>,
+	var selected: (index: Int, name: String) -> Unit,
+) : ArrayAdapter<UserSearchingResponse.Data?>(context, resource, objects) {
 
-	override fun getView(position : Int , convertView : View? , parent : ViewGroup) : View {
+	override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
 		var view = convertView
 
-		var bind : UserSelectorItemBinding? = null
+		var bind: UserSelectorItemBinding? = null
+
 		if (view == null) {
-			view = LayoutInflater.from(context).inflate(R.layout.user_selector_item , parent , false)
-			bind = UserSelectorItemBinding.bind(view !!)
+			view = LayoutInflater.from(context).inflate(R.layout.user_selector_item, parent, false)
+			bind = UserSelectorItemBinding.bind(view)
 		}
 
-		bind?.userImage?.loadUrl(context , getItem(position)?.profileImage.toString())
+		bind?.userImage?.loadUrl(context, getItem(position)?.profileImage.toString())
 		bind?.text?.text = getItem(position)?.name
 
-        bind?.root?.setHapticClickListener {
-			selected(position , getItem(position)?.name.toString())
+		bind?.root?.setHapticClickListener {
+			selected(position, getItem(position)?.name.toString())
 		}
 
 		return view

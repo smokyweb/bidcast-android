@@ -40,10 +40,12 @@ import io.bidswipe.app.base.BaseActivity
 import io.bidswipe.app.controller.CommentAdapter
 import io.bidswipe.app.controller.FirebaseProductAdapter
 import io.bidswipe.app.controller.LiveMoreAdapter
+import io.bidswipe.app.controller.LiveSellerAdapter
 import io.bidswipe.app.controller.PromoteSheetAdapter
 import io.bidswipe.app.databinding.ActivityLiveShowBinding
 import io.bidswipe.app.databinding.CreateClipSheetBinding
 import io.bidswipe.app.databinding.EndShowSheetBinding
+import io.bidswipe.app.databinding.LiveSellerSheetBinding
 import io.bidswipe.app.databinding.LiveShowMoreMenuBinding
 import io.bidswipe.app.databinding.ProductSheetBinding
 import io.bidswipe.app.databinding.PromoteShowSheetBinding
@@ -117,11 +119,11 @@ class LiveShowSocketActivity : BaseActivity() {
 	private var maxZoom: Float = 1.0f
 	private var minZoom: Float = 1.0f
 	private lateinit var productAdapter: FirebaseProductAdapter
+	private lateinit var sellerAdapter: LiveSellerAdapter
+	private var userList = mutableListOf<String?>()
 
 	private var productList = mutableListOf<LiveShowModel.Product?>()
-
 	private var promotePlans = mutableListOf<GetPromotePlansResponse.Data?>()
-
 	private var isShowLive = false
 	private var connectionRetryCount = 0
 	private val maxRetryAttempts = 3
@@ -868,6 +870,11 @@ class LiveShowSocketActivity : BaseActivity() {
 							}
 						}
 
+						2 ->{
+							moreSheet.dismiss()
+							showSellerSheet()
+						}
+
 						else -> {
 
 						}
@@ -1420,6 +1427,39 @@ class LiveShowSocketActivity : BaseActivity() {
 					bind.bidPrice.text = bidAmount.asMoney()
 				}
 			}
+
+		}
+	}
+
+	private fun showSellerSheet() {
+		val liveSellerSheetBind = LiveSellerSheetBinding.bind(layoutInflater.inflate(R.layout.live_seller_sheet, null, false))
+		val liveSellerSheet = Alerts.appBottomSheet(this, true, liveSellerSheetBind)
+
+
+		repeat(10){
+			userList.add(" ")
+		}
+
+		sellerAdapter = LiveSellerAdapter(userList, object : RecyclerClicks {
+			override fun itemClick(pos: Int, status: String?) {
+
+
+
+			}
+
+		})
+
+		liveSellerSheetBind.recycler.adapter = sellerAdapter
+
+		liveSellerSheet.show()
+
+		liveSellerSheetBind.close.setHapticClickListener {
+			liveSellerSheet.dismiss()
+		}
+
+		liveSellerSheetBind.addBtn.setHapticClickListener {
+
+			liveSellerSheet.dismiss()
 
 		}
 	}

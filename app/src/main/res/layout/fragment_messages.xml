@@ -9,7 +9,9 @@
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/swipeRefresh"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -19,13 +21,21 @@
                 android:id="@+id/recycler"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_marginVertical="@dimen/half_margin"
-                android:orientation="vertical"
+                android:layout_margin="@dimen/half_margin"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintBottom_toTopOf="@+id/bottomLoader"
                 app:layout_constraintTop_toTopOf="parent"
-                tools:itemCount="5"
+                tools:itemCount="2"
+                tools:layout_editor_absoluteX="8dp"
                 tools:listitem="@layout/messages_items" />
+
+            <com.github.ybq.android.spinkit.SpinKitView
+                android:id="@+id/bottomLoader"
+                style="@style/appLoader"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent" />
 
             <io.bidswipe.app.ui.custom.NoDataView
                 android:id="@+id/noData"

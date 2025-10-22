@@ -68,6 +68,7 @@ import org.webrtc.EglBase
 import org.webrtc.RendererCommon
 import kotlin.math.abs
 
+@SuppressLint("NotifyDataSetChanged")
 class WatchStreamSocketFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBinding>() {
 
 	override fun getModel(): Class<StreamViewModel> = StreamViewModel::class.java
@@ -152,15 +153,7 @@ class WatchStreamSocketFragment : BaseFragment<StreamViewModel, FragmentWatchStr
 			socketManager?.initialize(socketUrl, mapOf("uid" to userId))
 			socketManager?.connect(onConnected = {
 				socketManager?.joinRoom(roomID, userId) {
-					/*socketManager?.sendMessage(
-						roomID,
-						"Joined \uD83D\uDC4B",
-						userId,
-						userName,
-						userImage
-					)*/
 				}
-//                socketManager?.emitViewerJoin(roomID)
 			}) { err -> log("Socket connect error: $err") }
 
 			socketManager?.onViewerCount { args ->
@@ -222,10 +215,6 @@ class WatchStreamSocketFragment : BaseFragment<StreamViewModel, FragmentWatchStr
 						} else {
 							bind.soldOutText.text = "Bidder ${winner.optString("user_name")} won the bid"
 						}
-
-						/*	if (isSold && data.highestBid?.userId == userId) {
-								bind.soldOutText.text = "You won the bid"
-							}*/
 
 					}
 
@@ -881,7 +870,7 @@ class WatchStreamSocketFragment : BaseFragment<StreamViewModel, FragmentWatchStr
 
 				subscriber.setCredentials(credentials)
 				log("Credentials set. Connecting (autoReconnect=true)...")
-				subscriber.connect(ConnectionOptions(autoReconnect = true))
+				subscriber.connect(ConnectionOptions(autoReconnect = false))
 
 				subscriberStateJob?.cancel()
 				subscriberStateJob = viewModel.viewModelScope.launch {
@@ -1123,8 +1112,6 @@ class WatchStreamSocketFragment : BaseFragment<StreamViewModel, FragmentWatchStr
 					Alerts.error(mCtx, "Insufficient balance")
 					return@setHapticClickListener
 				}
-
-
 			}
 
 			sendTipSheet.dismiss()
@@ -1139,6 +1126,31 @@ class WatchStreamSocketFragment : BaseFragment<StreamViewModel, FragmentWatchStr
 
 		sendTipSheet.show()
 	}
+
+	private fun onRaid(){
+		viewModel.viewModelScope.launch {
+			try {
+				socketManager?.leaveRoom(roomID, userId)
+				commentList.clear()
+				commentAdapter.notifyDataSetChanged()
+
+				roomID = "live_room_34_149"
+				subscriber = Core.createSubscriber()
+
+				startSubscription()
+
+				// 8. Join new socket room
+				socketManager?.joinRoom(roomID, userId) {
+					socketManager?.sendMessage(roomID, "Joined \uD83D\uDC4B", userId, userName, userImage)
+				}
+			} catch (e: Exception) {
+				log("Raid failed: ${e.message}")
+				e.printStackTrace()
+			}
+		}
+
+	}
+
 
 }
 

@@ -66,6 +66,9 @@ class MessagesFragment : BaseFragment<DashViewModel , FragmentMessagesBinding>()
 
 			snap.children.forEach {
 				val chat = ChatModel().fromMap(it)
+
+				log("Chat USERs: ${chat}")
+
 				chatList.add(chat)
 			}
 
