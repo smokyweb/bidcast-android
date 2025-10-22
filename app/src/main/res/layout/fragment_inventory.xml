@@ -85,7 +85,10 @@
                     app:boxBackgroundColor="@color/surface"
                     app:boxStrokeWidth="2dp"
                     app:startIconDrawable="@drawable/search"
-                    app:startIconTint="@color/scrim">
+                    app:startIconTint="@color/scrim"
+                    app:endIconMode="custom"
+                    app:endIconDrawable="@drawable/ic_close"
+                    app:endIconTint="@color/scrim">
 
                     <com.google.android.material.textfield.MaterialAutoCompleteTextView
                         android:id="@+id/search"

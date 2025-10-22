@@ -402,6 +402,7 @@ interface ApiInterface {
 	suspend fun getMyInventory(
 		@Part("status") status : RequestBody? ,
 		@Part("page") page : RequestBody? ,
+		@Part("search") search : RequestBody? ,
 	) : GetMyInventoryResponse
 
 	@Multipart

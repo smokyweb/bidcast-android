@@ -319,7 +319,8 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
 	suspend fun getMyInventory(
 		status: RequestBody?,
 		page: RequestBody?,
-	) = call { api.getMyInventory(status, page) }
+		search: RequestBody?,
+	) = call { api.getMyInventory(status, page, search) }
 	
 	suspend fun getOrderListing(
 		page: RequestBody?,

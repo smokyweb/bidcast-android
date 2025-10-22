@@ -4,6 +4,8 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -91,21 +93,35 @@ class InventoryFragment : BaseFragment<SellerHubViewModel , FragmentInventoryBin
 			}
 		})
 		bind.recycler.adapter = adapter
+		bind.searchLayout.isEndIconVisible = false
 
-		bind.search.addTextChangedListener { editable ->
-			val query = editable.toString().trim()
-			filteredList.clear()
-			if (query.isEmpty()) {
-				filteredList.addAll(itemList)
-			} else {
-				filteredList.addAll(
-					itemList.filter {
-						it?.title?.contains(query , ignoreCase = true) == true ||
-								it?.category?.name?.contains(query , ignoreCase = true) == true
-					}
-				)
+		bind.search.addTextChangedListener(object : TextWatcher {
+			override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+			override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+			override fun afterTextChanged(s: Editable?) {
+				val query = s?.toString()?.trim() ?: ""
+				bind.searchLayout.isEndIconVisible = query.isNotEmpty()
+
+				page = 1
+				isLoading = false
+
+				bind.loader.isVisible = true
+				bind.recycler.isVisible = false
+				bind.noData.isVisible = false
+
+				if (query.isNotEmpty()) {
+					viewModel.getMyInventory(selectedTab.request(), page.toString().request(), query.request())
+				} else {
+					viewModel.getMyInventory(selectedTab.request(), page.toString().request())
+				}
 			}
-			adapter.notifyDataSetChanged()
+		})
+
+		bind.searchLayout.setEndIconOnClickListener {
+			bind.search.text?.clear()
+			bind.searchLayout.isEndIconVisible = false
+			page = 1
+			viewModel.getMyInventory(selectedTab.request(), page.toString().request())
 		}
 
 		bind.header.onBackClick {
@@ -124,18 +140,16 @@ class InventoryFragment : BaseFragment<SellerHubViewModel , FragmentInventoryBin
 			override fun onTabSelected(tab : TabLayout.Tab?) {
 				selectedTab = tab?.text.toString().lowercase()
 				page = 1
+				bind.search.text?.clear()
+				bind.searchLayout.isEndIconVisible = false
 				bind.loader.isVisible = true
 				viewModel.getMyInventory(selectedTab.request() , page.toString().request())
 			}
 
-			override fun onTabUnselected(tab : TabLayout.Tab?) {
-
-			}
-
-			override fun onTabReselected(tab : TabLayout.Tab?) {
-
-			}
+			override fun onTabUnselected(tab : TabLayout.Tab?) {}
+			override fun onTabReselected(tab : TabLayout.Tab?) {}
 		})
+
 		bind.recycler.addOnScrollListener(object : RecyclerView.OnScrollListener() {
 			override fun onScrolled(recyclerView : RecyclerView , dx : Int , dy : Int) {
 				super.onScrolled(recyclerView , dx , dy)
