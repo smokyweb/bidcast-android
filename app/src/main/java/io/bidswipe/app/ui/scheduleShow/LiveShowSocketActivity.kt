@@ -56,6 +56,7 @@ import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.model.LiveChatModel
 import io.bidswipe.app.model.LiveShowModel
 import io.bidswipe.app.network.Resource
+import io.bidswipe.app.network.response.GetLiveSellerResponse
 import io.bidswipe.app.network.response.GetPromotePlansResponse
 import io.bidswipe.app.ui.custom.AlertType
 import io.bidswipe.app.ui.custom.AppBottomSheet
@@ -90,37 +91,35 @@ class LiveShowSocketActivity : BaseActivity() {
 	private val bind by bind(ActivityLiveShowBinding::inflate)
 	private val viewModel by viewModels<DashViewModel>()
 
-	private var socketManager: SocketManager? = null
+	private var socketManager : SocketManager? = null
 
-	private var roomID: String = ""
-	private var socketUrl: String = ""
-	private lateinit var pipParams: PictureInPictureParams
-	private lateinit var commentAdapter: CommentAdapter
+	private var roomID : String = ""
+	private var socketUrl : String = ""
+	private lateinit var pipParams : PictureInPictureParams
+	private lateinit var commentAdapter : CommentAdapter
 	private val handler = Handler(Looper.getMainLooper())
 	private var commentList = mutableListOf<LiveChatModel?>()
 	var isFrontCamera = true
 	var showId = ""
 	var showTime = ""
 	private var zoomLevel = 1.0f
-	private var liveShowData: LiveShowModel? = null
-
-	private lateinit var publisher: Publisher
-	private lateinit var eglBase: EglBase
-
-	private var audioSource: MicrophoneAudioSource? = null
-	private var videoSource: CameraVideoSource? = null
-	private var audioTrack: AudioTrack? = null
-	private var videoTrack: VideoTrack? = null
-	private var publisherStateJob: Job? = null
-	private lateinit var cameraManager: CameraManager
-	private var currentCameraId: String? = null
-	private var updateStatusRunnable: Runnable? = null
+	private var liveShowData : LiveShowModel? = null
+	private lateinit var publisher : Publisher
+	private lateinit var eglBase : EglBase
+	private var audioSource : MicrophoneAudioSource? = null
+	private var videoSource : CameraVideoSource? = null
+	private var audioTrack : AudioTrack? = null
+	private var videoTrack : VideoTrack? = null
+	private var publisherStateJob : Job? = null
+	private lateinit var cameraManager : CameraManager
+	private var currentCameraId : String? = null
+	private var updateStatusRunnable : Runnable? = null
 	private val updateStatusHandler = Handler(Looper.getMainLooper())
-	private var maxZoom: Float = 1.0f
-	private var minZoom: Float = 1.0f
-	private lateinit var productAdapter: FirebaseProductAdapter
-	private lateinit var sellerAdapter: LiveSellerAdapter
-	private var userList = mutableListOf<String?>()
+	private var maxZoom : Float = 1.0f
+	private var minZoom : Float = 1.0f
+	private lateinit var productAdapter : FirebaseProductAdapter
+	private lateinit var sellerAdapter : LiveSellerAdapter
+	private var userList = mutableListOf<GetLiveSellerResponse.Data?>()
 
 	private var productList = mutableListOf<LiveShowModel.Product?>()
 	private var promotePlans = mutableListOf<GetPromotePlansResponse.Data?>()
@@ -129,7 +128,7 @@ class LiveShowSocketActivity : BaseActivity() {
 	private val maxRetryAttempts = 3
 
 	@SuppressLint("ClickableViewAccessibility")
-	override fun onCreate(savedInstanceState: Bundle?) {
+	override fun onCreate(savedInstanceState : Bundle?) {
 		super.onCreate(savedInstanceState)
 		setContentView(bind.root)
 
@@ -139,17 +138,17 @@ class LiveShowSocketActivity : BaseActivity() {
 			keyboardEnable(true)
 		}
 
-		ViewCompat.setOnApplyWindowInsetsListener(window.decorView) { v, insets ->
+		ViewCompat.setOnApplyWindowInsetsListener(window.decorView) { v , insets ->
 			val system = insets.getInsets(WindowInsetsCompat.Type.systemBars())
 			bind.profileLayout.setMargins(
-				top = system.top,
-				left = resources.dpToPx(16),
+				top = system.top ,
+				left = resources.dpToPx(16) ,
 				right = resources.dpToPx(16)
 			)
 			bind.startBtn.setMargins(
-				resources.dpToPx(16),
-				resources.dpToPx(0),
-				resources.dpToPx(16),
+				resources.dpToPx(16) ,
+				resources.dpToPx(0) ,
+				resources.dpToPx(16) ,
 				system.bottom
 			)
 			insets
@@ -185,30 +184,30 @@ class LiveShowSocketActivity : BaseActivity() {
 		initializeSocket()
 
 		bind.hostName.text = userName.asCapital()
-		bind.hostImage.loadUrl(this, userImage)
+		bind.hostImage.loadUrl(this , userImage)
 
 		bind.controls.setHapticClickListener {
 			hideKeyboard()
 		}
 
-		bind.recycler.setOnTouchListener { view, event ->
+		bind.recycler.setOnTouchListener { view , event ->
 			hideKeyboard()
 			return@setOnTouchListener false
 		}
 
 		bind.clip.isVisible = App.profileResponse.value?.preferences?.enableClips == true
 
-		bind.hostImage.loadUrl(this, userImage)
+		bind.hostImage.loadUrl(this , userImage)
 
 		bind.message.setEndIconOnClickListener {
 
-			if (!isShowLive) {
-				Alerts.error(this, "Please start live show to send message")
+			if (! isShowLive) {
+				Alerts.error(this , "Please start live show to send message")
 				return@setEndIconOnClickListener
 			}
 
 			if (bind.text.value().isNotEmpty()) {
-				socketManager?.sendMessage(roomID, bind.text.value(), userId, userName, userImage)
+				socketManager?.sendMessage(roomID , bind.text.value() , userId , userName , userImage)
 				bind.text.text.clear()
 			}
 		}
@@ -235,11 +234,11 @@ class LiveShowSocketActivity : BaseActivity() {
 
 			val shareIntent = Intent().apply {
 				action = Intent.ACTION_SEND
-				putExtra(Intent.EXTRA_TEXT, shareText)
+				putExtra(Intent.EXTRA_TEXT , shareText)
 				type = "text/plain"
 			}
 
-			val chooserIntent = Intent.createChooser(shareIntent, "Share via")
+			val chooserIntent = Intent.createChooser(shareIntent , "Share via")
 
 			if (shareIntent.resolveActivity(packageManager) != null) {
 				startActivity(chooserIntent)
@@ -257,19 +256,19 @@ class LiveShowSocketActivity : BaseActivity() {
 				// Delay finish to allow microphone release
 				handler.postDelayed({
 					finishAfterTransition()
-				}, 200)
+				} , 200)
 			}
 		}
 
 		bind.cameraSwitch.setHapticClickListener {
 			videoSource?.switchCamera(object : SwitchCameraHandler {
 
-				override fun onCameraSwitchDone(p0: Boolean) {
-					isFrontCamera = !isFrontCamera
+				override fun onCameraSwitchDone(p0 : Boolean) {
+					isFrontCamera = ! isFrontCamera
 					bind.hostView.setMirror(isFrontCamera)
 				}
 
-				override fun onCameraSwitchError(p0: String?) {
+				override fun onCameraSwitchError(p0 : String?) {
 
 				}
 			})
@@ -280,11 +279,11 @@ class LiveShowSocketActivity : BaseActivity() {
 			if (isShowLive) {
 				showProductSheet()
 			} else {
-				Alerts.error(this, "Please start live show to access this feature")
+				Alerts.error(this , "Please start live show to access this feature")
 			}
 		}
 
-		onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+		onBackPressedDispatcher.addCallback(this , object : OnBackPressedCallback(true) {
 			override fun handleOnBackPressed() {
 				if (isShowLive) {
 					if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -323,22 +322,22 @@ class LiveShowSocketActivity : BaseActivity() {
 					viewModel.promoteShowRepo.value = null
 
 					AppBottomSheet(
-						this,
-						R.drawable.ic_success,
-						"Show Promoted",
-						it.value.message ?: "",
-						primaryBtnText = "Okay",
-						secondaryBtnText = "Cancel",
-						canCancel = true,
-						showSecondary = false,
-						iconPadding = 16,
-						alertType = AlertType.SUCCESS,
+						this ,
+						R.drawable.ic_success ,
+						"Show Promoted" ,
+						it.value.message ?: "" ,
+						primaryBtnText = "Okay" ,
+						secondaryBtnText = "Cancel" ,
+						canCancel = true ,
+						showSecondary = false ,
+						iconPadding = 16 ,
+						alertType = AlertType.SUCCESS ,
 						clicks = object : AlertClicks {
-							override fun primaryClick(dialog: AppBottomSheet) {
+							override fun primaryClick(dialog : AppBottomSheet) {
 								dialog.dismiss()
 							}
 
-							override fun secondaryClick(dialog: AppBottomSheet) {
+							override fun secondaryClick(dialog : AppBottomSheet) {
 								dialog.dismiss()
 							}
 						}
@@ -355,11 +354,32 @@ class LiveShowSocketActivity : BaseActivity() {
 			}
 		}
 
+		viewModel.getLiveSellerRepo.observe(this) { it ->
+			when (it) {
+				is Resource.Success -> {
+					bind.loader.isVisible = false
+					viewModel.getLiveSellerRepo.value = null
+					it.value.data?.let { data ->
+						userList.clear()
+						userList.addAll(data)
+						showSellerSheet()
+					}
+				}
+
+				is Resource.Error -> {
+					bind.loader.isVisible = false
+					viewModel.getLiveSellerRepo.value = null
+				}
+
+				else -> {}
+			}
+		}
+
 	}
 
 	override fun onDestroy() {
 
-		if (!isInPictureInPictureMode){
+		if (! isInPictureInPictureMode) {
 
 			stopStreaming()
 
@@ -369,7 +389,7 @@ class LiveShowSocketActivity : BaseActivity() {
 		// Socket cleanup
 		runSafe {
 			socketManager?.emitEndRoom(roomID)
-			socketManager?.leaveRoom(roomID, userId)
+			socketManager?.leaveRoom(roomID , userId)
 			socketManager?.disconnect()
 		}
 
@@ -386,12 +406,12 @@ class LiveShowSocketActivity : BaseActivity() {
 			audioSource?.let { source ->
 				try {
 					source.stopCapture()
-				} catch (e: Exception) {
+				} catch (e : Exception) {
 					log("Error stopping audio capture: ${e.message}")
 				}
 				try {
 					source.release()
-				} catch (e: Exception) {
+				} catch (e : Exception) {
 					log("Error releasing audio source: ${e.message}")
 				}
 			}
@@ -403,12 +423,12 @@ class LiveShowSocketActivity : BaseActivity() {
 			videoSource?.let { source ->
 				try {
 					source.stopCapture()
-				} catch (e: Exception) {
+				} catch (e : Exception) {
 					log("Error stopping video capture: ${e.message}")
 				}
 				try {
 					source.release()
-				} catch (e: Exception) {
+				} catch (e : Exception) {
 					log("Error releasing video source: ${e.message}")
 				}
 			}
@@ -421,7 +441,7 @@ class LiveShowSocketActivity : BaseActivity() {
 				try {
 					track.setEnabled(false)
 					track.setVolume(0.0)
-				} catch (e: Exception) {
+				} catch (e : Exception) {
 					log("Error disabling audio track: ${e.message}")
 				}
 			}
@@ -433,7 +453,7 @@ class LiveShowSocketActivity : BaseActivity() {
 			videoTrack?.let { track ->
 				try {
 					track.removeVideoSink(bind.hostView)
-				} catch (e: Exception) {
+				} catch (e : Exception) {
 					log("Error removing video sink: ${e.message}")
 				}
 			}
@@ -446,12 +466,12 @@ class LiveShowSocketActivity : BaseActivity() {
 				viewModel.viewModelScope.launch {
 					try {
 						publisher.unpublish()
-					} catch (e: Exception) {
+					} catch (e : Exception) {
 						log("Error unpublishing: ${e.message}")
 					}
 					try {
 						publisher.disconnect()
-					} catch (e: Exception) {
+					} catch (e : Exception) {
 						log("Error disconnecting publisher: ${e.message}")
 					}
 				}
@@ -462,12 +482,12 @@ class LiveShowSocketActivity : BaseActivity() {
 		runSafe {
 			try {
 				bind.hostView.clearImage()
-			} catch (e: Exception) {
+			} catch (e : Exception) {
 				log("Error clearing video view: ${e.message}")
 			}
 			try {
 				bind.hostView.release()
-			} catch (e: Exception) {
+			} catch (e : Exception) {
 				log("Error releasing video view: ${e.message}")
 			}
 		}
@@ -477,7 +497,7 @@ class LiveShowSocketActivity : BaseActivity() {
 			if (::eglBase.isInitialized) {
 				try {
 					eglBase.release()
-				} catch (e: Exception) {
+				} catch (e : Exception) {
 					log("Error releasing EGL base: ${e.message}")
 				}
 			}
@@ -489,7 +509,7 @@ class LiveShowSocketActivity : BaseActivity() {
 		// Give system time to release microphone
 		handler.postDelayed({
 			System.gc()
-		}, 100)
+		} , 100)
 
 		log("Publisher cleanup finished")
 		super.onDestroy()
@@ -497,7 +517,7 @@ class LiveShowSocketActivity : BaseActivity() {
 
 	override fun onStop() {
 		super.onStop()
-		if (!isInPictureInPictureMode){
+		if (! isInPictureInPictureMode) {
 
 			stopStreaming()
 
@@ -509,7 +529,7 @@ class LiveShowSocketActivity : BaseActivity() {
 			val visibleRect = Rect()
 			bind.root.getGlobalVisibleRect(visibleRect)
 			pipParams = PictureInPictureParams.Builder().apply {
-				setAspectRatio(Rational(100, 200))
+				setAspectRatio(Rational(100 , 200))
 //                setAspectRatio(Rational(2, 5))
 				setSourceRectHint(visibleRect)
 				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
@@ -537,7 +557,7 @@ class LiveShowSocketActivity : BaseActivity() {
 			viewModel.viewModelScope.launch {
 				try {
 					publisher.unpublish()
-				} catch (e: Exception) {
+				} catch (e : Exception) {
 					log("Error unpublishing: ${e.message}")
 				}
 			}
@@ -546,7 +566,7 @@ class LiveShowSocketActivity : BaseActivity() {
 			forcedCleanup()
 
 			log("Streaming stopped successfully")
-		} catch (e: Exception) {
+		} catch (e : Exception) {
 			log("Error stopping stream: ${e.message}")
 		}
 	}
@@ -563,7 +583,7 @@ class LiveShowSocketActivity : BaseActivity() {
 			videoSource = null
 
 			log("Forced cleanup completed")
-		} catch (e: Exception) {
+		} catch (e : Exception) {
 			log("Error in forced cleanup: ${e.message}")
 		}
 	}
@@ -573,9 +593,9 @@ class LiveShowSocketActivity : BaseActivity() {
 		if (socketUrl.isEmpty()) return
 
 		socketManager = SocketManager.getInstance(this)
-		socketManager?.initialize(socketUrl, mapOf("uid" to userId))
+		socketManager?.initialize(socketUrl , mapOf("uid" to userId))
 		socketManager?.connect(onConnected = {
-			socketManager?.joinRoom(roomID, userId) {
+			socketManager?.joinRoom(roomID , userId) {
 
 
 			}
@@ -602,9 +622,9 @@ class LiveShowSocketActivity : BaseActivity() {
 				runOnUiThread {
 					commentList.add(
 						LiveChatModel(
-							msg.optString("user_image"),
-							msg.optString("user_name"),
-							msg.optString("user_id"),
+							msg.optString("user_image") ,
+							msg.optString("user_name") ,
+							msg.optString("user_id") ,
 							msg.optString("message")
 						)
 					)
@@ -680,20 +700,20 @@ class LiveShowSocketActivity : BaseActivity() {
 
 	// Product selection (simplified socket mirroring)
 	private fun showProductSheet() {
-		val productSheetBind = ProductSheetBinding.bind(layoutInflater.inflate(R.layout.product_sheet, null, false))
-		val productSheet = Alerts.appBottomSheet(this, true, productSheetBind)
+		val productSheetBind = ProductSheetBinding.bind(layoutInflater.inflate(R.layout.product_sheet , null , false))
+		val productSheet = Alerts.appBottomSheet(this , true , productSheetBind)
 
-		var selectedPos = -1
+		var selectedPos = - 1
 
-		productAdapter = FirebaseProductAdapter(productList, object : RecyclerClicks {
-			override fun itemClick(pos: Int, status: String?) {
+		productAdapter = FirebaseProductAdapter(productList , object : RecyclerClicks {
+			override fun itemClick(pos : Int , status : String?) {
 
 				if (productList[pos]?.status == "sold") {
 
-					Alerts.error(this@LiveShowSocketActivity, "This product is already sold")
+					Alerts.error(this@LiveShowSocketActivity , "This product is already sold")
 
 				} else {
-					productList.forEachIndexed { index, item ->
+					productList.forEachIndexed { index , item ->
 
 						item?.selected = index == pos
 						productSheetBind.recycler.adapter?.notifyDataSetChanged()
@@ -715,21 +735,21 @@ class LiveShowSocketActivity : BaseActivity() {
 
 		productSheetBind.addBtn.setHapticClickListener {
 
-			if (selectedPos == -1) {
-				Alerts.error(this@LiveShowSocketActivity, "Please select a product")
+			if (selectedPos == - 1) {
+				Alerts.error(this@LiveShowSocketActivity , "Please select a product")
 				return@setHapticClickListener
 			}
 
 			val isAnyProductLive = productList.any { it?.isCurrent == true } == true
 
 			if (isAnyProductLive) {
-				Alerts.error(this@LiveShowSocketActivity, "One Product is Already Live")
+				Alerts.error(this@LiveShowSocketActivity , "One Product is Already Live")
 				return@setHapticClickListener
 			}
 
 			val selectedProduct = productList[selectedPos]
 
-			socketManager?.setNextProduct(roomID, selectedProduct?.id)
+			socketManager?.setNextProduct(roomID , selectedProduct?.id)
 			productSheet.dismiss()
 
 		}
@@ -737,22 +757,22 @@ class LiveShowSocketActivity : BaseActivity() {
 
 	private fun endShowSheet() {
 		val endShowSheetBind =
-			EndShowSheetBinding.bind(layoutInflater.inflate(R.layout.end_show_sheet, null, false))
-		val sheet = Alerts.appBottomSheet(this, true, endShowSheetBind)
+			EndShowSheetBinding.bind(layoutInflater.inflate(R.layout.end_show_sheet , null , false))
+		val sheet = Alerts.appBottomSheet(this , true , endShowSheetBind)
 		endShowSheetBind.close.setHapticClickListener { sheet.dismiss() }
 		endShowSheetBind.endBtn.setHapticClickListener {
 			sheet.dismiss()
-			socketManager?.sendMessage(roomID, "end_show", userId, userName, userImage)
+			socketManager?.sendMessage(roomID , "end_show" , userId , userName , userImage)
 			stopStreaming()
 			// Delay finish to allow microphone release
 			handler.postDelayed({
 				finishAfterTransition()
-			}, 200)
+			} , 200)
 		}
 		sheet.show()
 	}
 
-	fun addShowData(data: LiveShowModel) {
+	fun addShowData(data : LiveShowModel) {
 
 		/*val user = data?.user
 
@@ -797,12 +817,12 @@ class LiveShowSocketActivity : BaseActivity() {
 			showTimer = "",
 		)*/
 		isShowLive = true
-		socketManager?.createRoom(roomID, data)
+		socketManager?.createRoom(roomID , data)
 
 		socketManager?.onRoomCreated { obj ->
 			runSafe {
 
-				if (obj.optString("room_id") == roomID){
+				if (obj.optString("room_id") == roomID) {
 					val showData = LiveShowModel.fromJson(obj)
 
 					productList.clear()
@@ -824,8 +844,8 @@ class LiveShowSocketActivity : BaseActivity() {
 			if (roomID == obj.optString("room_id")) {
 				val elapsedSeconds = obj.optString("elapsed").toLongOrNull() ?: 0L
 				val formattedTime = "%02d:%02d:%02d".format(
-					elapsedSeconds / 3600,
-					(elapsedSeconds / 60) % 60,
+					elapsedSeconds / 3600 ,
+					(elapsedSeconds / 60) % 60 ,
 					elapsedSeconds % 60
 				)
 
@@ -848,16 +868,16 @@ class LiveShowSocketActivity : BaseActivity() {
 	fun showMoreSheet() {
 		val moreSheetBind = LiveShowMoreMenuBinding.bind(
 			layoutInflater.inflate(
-				R.layout.live_show_more_menu,
-				null,
+				R.layout.live_show_more_menu ,
+				null ,
 				false
 			)
 		)
-		val moreSheet = Alerts.appBottomSheet(this, true, moreSheetBind)
+		val moreSheet = Alerts.appBottomSheet(this , true , moreSheetBind)
 
 		moreSheetBind.optionList.adapter =
-			LiveMoreAdapter(Const.liveMoreMenu, object : RecyclerClicks {
-				override fun itemClick(pos: Int, status: String?) {
+			LiveMoreAdapter(Const.liveMoreMenu , object : RecyclerClicks {
+				override fun itemClick(pos : Int , status : String?) {
 
 					when (pos) {
 						0 -> {
@@ -870,9 +890,11 @@ class LiveShowSocketActivity : BaseActivity() {
 							}
 						}
 
-						2 ->{
+						2 -> {
 							moreSheet.dismiss()
-							showSellerSheet()
+//							showSellerSheet()
+							viewModel.getLiveSeller()
+
 						}
 
 						else -> {
@@ -883,9 +905,9 @@ class LiveShowSocketActivity : BaseActivity() {
 				}
 			})
 
-		moreSheetBind.allowVerifiedUser.setOnCheckedChangeListener { view, isChecked ->
+		moreSheetBind.allowVerifiedUser.setOnCheckedChangeListener { view , isChecked ->
 
-			socketManager?.updateAllowBidForAll(roomID, !isChecked)
+			socketManager?.updateAllowBidForAll(roomID , ! isChecked)
 
 		}
 
@@ -929,20 +951,20 @@ class LiveShowSocketActivity : BaseActivity() {
 	fun showPromoteSheet() {
 		val promoteSheetBind = PromoteShowSheetBinding.bind(
 			layoutInflater.inflate(
-				R.layout.promote_show_sheet,
-				null,
+				R.layout.promote_show_sheet ,
+				null ,
 				false
 			)
 		)
 
-		val promoteSheet = Alerts.appBottomSheet(this, true, promoteSheetBind)
+		val promoteSheet = Alerts.appBottomSheet(this , true , promoteSheetBind)
 
-		promoteSheetBind.optionList.adapter = PromoteSheetAdapter(promotePlans, object : RecyclerClicks {
-			override fun itemClick(pos: Int, status: String?) {
+		promoteSheetBind.optionList.adapter = PromoteSheetAdapter(promotePlans , object : RecyclerClicks {
+			override fun itemClick(pos : Int , status : String?) {
 				promoteSheet.dismiss()
 				bind.loader.isVisible = true
 				viewModel.promoteShow(
-					showId.request(),
+					showId.request() ,
 					promotePlans[pos]?.id.toString().request()
 				)
 			}
@@ -958,12 +980,12 @@ class LiveShowSocketActivity : BaseActivity() {
 	fun createClipSheet() {
 		val clipSheetBind = CreateClipSheetBinding.bind(
 			layoutInflater.inflate(
-				R.layout.create_clip_sheet,
-				null,
+				R.layout.create_clip_sheet ,
+				null ,
 				false
 			)
 		)
-		val clipSheet = Alerts.appBottomSheet(this, true, clipSheetBind)
+		val clipSheet = Alerts.appBottomSheet(this , true , clipSheetBind)
 		val mList = mutableListOf<String?>()
 
 		repeat(3) {
@@ -979,8 +1001,8 @@ class LiveShowSocketActivity : BaseActivity() {
 
 	fun shareSheet() {
 		val shareSheetBind =
-			ShareSheetBinding.bind(layoutInflater.inflate(R.layout.share_sheet, null, false))
-		val shareSheet = Alerts.appBottomSheet(this, true, shareSheetBind)
+			ShareSheetBinding.bind(layoutInflater.inflate(R.layout.share_sheet , null , false))
+		val shareSheet = Alerts.appBottomSheet(this , true , shareSheetBind)
 		val mList = mutableListOf<String?>()
 
 		repeat(2) {
@@ -1005,16 +1027,16 @@ class LiveShowSocketActivity : BaseActivity() {
 
 		val showConfirmationSheetBind = ShowConfirmationAlertBinding.bind(
 			layoutInflater.inflate(
-				R.layout.show_confirmation_alert,
-				null,
+				R.layout.show_confirmation_alert ,
+				null ,
 				false
 			)
 		)
 
-		val showConfirmationSheet = Alerts.appBottomSheet(this, true, showConfirmationSheetBind)
+		val showConfirmationSheet = Alerts.appBottomSheet(this , true , showConfirmationSheetBind)
 
 		showConfirmationSheetBind.timing.text =
-			"Show Starts at ${Utils.getFormattedDateTime("HH:mm:ss", "hh:mm a", showTime)}"
+			"Show Starts at ${Utils.getFormattedDateTime("HH:mm:ss" , "hh:mm a" , showTime)}"
 
 		showConfirmationSheetBind.startBtn.setHapticClickListener {
 			showConfirmationSheet.dismiss()
@@ -1022,19 +1044,19 @@ class LiveShowSocketActivity : BaseActivity() {
 //			connectPublisher()
 			bind.startBtn.isVisible = false
 			bind.message.setMargins(
-				resources.dpToPx(16),
-				resources.dpToPx(16),
-				resources.dpToPx(16),
+				resources.dpToPx(16) ,
+				resources.dpToPx(16) ,
+				resources.dpToPx(16) ,
 				navigationBarHeight
 			)
 
-			addShowData(liveShowData!!)
+			addShowData(liveShowData !!)
 
 			socketManager?.sendMessage(
-				roomID,
-				"Joined \uD83D\uDC4B",
-				userId,
-				userName,
+				roomID ,
+				"Joined \uD83D\uDC4B" ,
+				userId ,
+				userName ,
 				userImage
 			)
 
@@ -1048,7 +1070,7 @@ class LiveShowSocketActivity : BaseActivity() {
 
 	private fun initRenderer() {
 		eglBase = EglBase.create()
-		bind.hostView.init(eglBase.eglBaseContext, null)
+		bind.hostView.init(eglBase.eglBaseContext , null)
 		bind.hostView.setMirror(true)
 		bind.hostView.setEnableHardwareScaler(true)
 		bind.hostView.setScalingType(RendererCommon.ScalingType.SCALE_ASPECT_FIT)
@@ -1056,16 +1078,16 @@ class LiveShowSocketActivity : BaseActivity() {
 
 	private fun connectPublisher() {
 		// Check network connectivity first
-		if (!isNetworkAvailable()) {
+		if (! isNetworkAvailable()) {
 			runOnUiThread {
 				bind.loader.isVisible = false
-				Alerts.error(this, "No internet connection. Please check your network and try again.")
+				Alerts.error(this , "No internet connection. Please check your network and try again.")
 			}
 			return
 		}
 
 		// Start preparing media sources (mic + camera)
-		readyPublishingSources { aTrack, vTrack ->
+		readyPublishingSources { aTrack , vTrack ->
 
 			log("CONNECTING PUBLISHER")
 
@@ -1073,7 +1095,7 @@ class LiveShowSocketActivity : BaseActivity() {
 				log("Failed to initialize audio/video tracks.")
 				runOnUiThread {
 					bind.loader.isVisible = false
-					Alerts.error(this, "Failed to initialize camera/microphone")
+					Alerts.error(this , "Failed to initialize camera/microphone")
 				}
 				return@readyPublishingSources
 			}
@@ -1093,21 +1115,21 @@ class LiveShowSocketActivity : BaseActivity() {
 						log("Invalid credentials: Token or Account ID is empty")
 						runOnUiThread {
 							bind.loader.isVisible = false
-							Alerts.error(this@LiveShowSocketActivity, "Invalid streaming credentials")
+							Alerts.error(this@LiveShowSocketActivity , "Invalid streaming credentials")
 						}
 						return@launch
-					} 
+					}
 
 					val credentials = Credential(
-						streamName = roomID,
-						token = Const.PUBLISHING_TOKEN,
+						streamName = roomID ,
+						token = Const.PUBLISHING_TOKEN ,
 						apiUrl = "https://director.millicast.com/api/director/publish"
 					)
 
 					publisher.setCredentials(credentials)
 
 					log("Attempting to connect to Milli-cast...")
-					if (!publisher.isConnected) {
+					if (! publisher.isConnected) {
 						publisher.connect()
 					}
 
@@ -1126,10 +1148,10 @@ class LiveShowSocketActivity : BaseActivity() {
 										val audioCodecs = Media.supportedAudioCodecs
 
 										val options = Option(
-											videoCodec = videoCodecs.firstOrNull(),
-											audioCodec = audioCodecs.firstOrNull(),
-											recordStream = true,
-											dtx = true,
+											videoCodec = videoCodecs.firstOrNull() ,
+											audioCodec = audioCodecs.firstOrNull() ,
+											recordStream = true ,
+											dtx = true ,
 											stereo = true
 										)
 
@@ -1143,7 +1165,7 @@ class LiveShowSocketActivity : BaseActivity() {
 										log("Publisher disconnected")
 										runOnUiThread {
 											bind.loader.isVisible = false
-											Alerts.error(this@LiveShowSocketActivity, "Connection lost. Please check your internet connection.")
+											Alerts.error(this@LiveShowSocketActivity , "Connection lost. Please check your internet connection.")
 										}
 									}
 
@@ -1154,13 +1176,13 @@ class LiveShowSocketActivity : BaseActivity() {
 							}
 					}
 
-				} catch (e: Exception) {
+				} catch (e : Exception) {
 					log("CONNECTING PUBLISHER ERROR : ${e.localizedMessage}")
 					e.printStackTrace()
 
 					// Handle retry logic for websocket handshake failures
 					if (e.message?.contains("websocket handshake failed") == true && connectionRetryCount < maxRetryAttempts) {
-						connectionRetryCount++
+						connectionRetryCount ++
 						log("Retrying connection attempt $connectionRetryCount/$maxRetryAttempts")
 
 						runOnUiThread {
@@ -1172,7 +1194,7 @@ class LiveShowSocketActivity : BaseActivity() {
 						// Wait 2 seconds before retry
 						handler.postDelayed({
 							connectPublisher()
-						}, 2000)
+						} , 2000)
 						return@launch
 					}
 
@@ -1181,17 +1203,17 @@ class LiveShowSocketActivity : BaseActivity() {
 						when {
 							e.message?.contains("websocket handshake failed") == true -> {
 								Alerts.error(
-									this@LiveShowSocketActivity,
+									this@LiveShowSocketActivity ,
 									"Network connection failed after $maxRetryAttempts attempts. Please check your internet connection and try again."
 								)
 							}
 
 							e.message?.contains("token") == true -> {
-								Alerts.error(this@LiveShowSocketActivity, "Invalid streaming credentials. Please contact support.")
+								Alerts.error(this@LiveShowSocketActivity , "Invalid streaming credentials. Please contact support.")
 							}
 
 							else -> {
-								Alerts.error(this@LiveShowSocketActivity, "Failed to start streaming: ${e.localizedMessage}")
+								Alerts.error(this@LiveShowSocketActivity , "Failed to start streaming: ${e.localizedMessage}")
 							}
 						}
 					}
@@ -1200,11 +1222,11 @@ class LiveShowSocketActivity : BaseActivity() {
 		}
 	}
 
-	private fun readyPublishingSources(callback: (AudioTrack?, VideoTrack?) -> Unit) {
+	private fun readyPublishingSources(callback : (AudioTrack? , VideoTrack?) -> Unit) {
 		audioTrack = try {
 			audioSource = audioSources<MicrophoneAudioSource>().firstOrNull()
 			audioSource?.startCapture()  // This DOES return AudioTrack, but could be null if audioSource is null
-		} catch (e: Throwable) {
+		} catch (e : Throwable) {
 			e.printStackTrace()
 			null
 		}
@@ -1230,14 +1252,14 @@ class LiveShowSocketActivity : BaseActivity() {
 
 			videoSource?.startCapture()
 
-		} catch (e: Throwable) {
+		} catch (e : Throwable) {
 			e.printStackTrace()
 			null
 		}
 
 		log("AUDIO TRACK : ${audioTrack?.name} || VIDEO TRACK : ${videoTrack?.name}")
 
-		callback(audioTrack, videoTrack)
+		callback(audioTrack , videoTrack)
 	}
 
 	private fun initCameraManager() {
@@ -1264,7 +1286,7 @@ class LiveShowSocketActivity : BaseActivity() {
 					break
 				}
 			}
-		} catch (e: CameraAccessException) {
+		} catch (e : CameraAccessException) {
 			log("Camera access error: ${e.message}")
 			e.printStackTrace()
 		}
@@ -1280,7 +1302,7 @@ class LiveShowSocketActivity : BaseActivity() {
 			} else {
 				log("Maximum zoom level reached: $maxZoom")
 			}
-		} catch (e: Exception) {
+		} catch (e : Exception) {
 			log("Zoom in error: ${e.message}")
 		}
 	}
@@ -1294,12 +1316,12 @@ class LiveShowSocketActivity : BaseActivity() {
 			} else {
 				log("Minimum zoom level reached: $minZoom")
 			}
-		} catch (e: Exception) {
+		} catch (e : Exception) {
 			log("Zoom out error: ${e.message}")
 		}
 	}
 
-	private fun applyVisualZoom(zoom: Float) {
+	private fun applyVisualZoom(zoom : Float) {
 		try {
 			// Apply visual zoom by scaling the video view
 			// This provides visual feedback but doesn't affect the actual camera zoom
@@ -1311,7 +1333,7 @@ class LiveShowSocketActivity : BaseActivity() {
 			bind.hostView.pivotY = bind.hostView.height / 2f
 
 			log("Applied visual zoom: ${zoom}x to video view")
-		} catch (e: Exception) {
+		} catch (e : Exception) {
 			log("Visual zoom error: ${e.message}")
 		}
 	}
@@ -1322,7 +1344,7 @@ class LiveShowSocketActivity : BaseActivity() {
 			override fun run() {
 				socketManager?.updateLiveShowStatus(roomID)
 				log("Updating status 4 minutes")
-				updateStatusHandler.postDelayed(this, 4 * 60 * 1000)
+				updateStatusHandler.postDelayed(this , 4 * 60 * 1000)
 			}
 		}
 
@@ -1330,23 +1352,23 @@ class LiveShowSocketActivity : BaseActivity() {
 
 	}
 
-	private fun isNetworkAvailable(): Boolean {
+	private fun isNetworkAvailable() : Boolean {
 		return try {
 			val connectivityManager = getSystemService(CONNECTIVITY_SERVICE) as android.net.ConnectivityManager
 			val network = connectivityManager.activeNetwork
 			val capabilities = connectivityManager.getNetworkCapabilities(network)
 			capabilities?.hasCapability(android.net.NetworkCapabilities.NET_CAPABILITY_INTERNET) == true
-		} catch (e: Exception) {
+		} catch (e : Exception) {
 			log("Network check error: ${e.message}")
 			false
 		}
 	}
 
 	override fun onPictureInPictureModeChanged(
-		isInPictureInPictureMode: Boolean,
-		newConfig: Configuration,
+		isInPictureInPictureMode : Boolean ,
+		newConfig : Configuration ,
 	) {
-		super.onPictureInPictureModeChanged(isInPictureInPictureMode, newConfig)
+		super.onPictureInPictureModeChanged(isInPictureInPictureMode , newConfig)
 
 		if (isInPictureInPictureMode) {
 			bind.profileLayout.isVisible = false
@@ -1372,7 +1394,7 @@ class LiveShowSocketActivity : BaseActivity() {
 
 		log("USER LEAVE HINT")
 
-		if (!isInPictureInPictureMode) {
+		if (! isInPictureInPictureMode) {
 			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 				setPictureInPictureParams(pipParams)
 				enterPictureInPictureMode(pipParams)
@@ -1383,7 +1405,7 @@ class LiveShowSocketActivity : BaseActivity() {
 		}
 	}
 
-	fun updateProductUI(liveProduct: LiveShowModel.Product?) {
+	fun updateProductUI(liveProduct : LiveShowModel.Product?) {
 
 		runOnUiThread {
 			log("updateProductUI : $liveProduct")
@@ -1393,16 +1415,16 @@ class LiveShowSocketActivity : BaseActivity() {
 			bind.productCategory.text = liveProduct?.category?.asCapital()
 			bind.quantity.text = buildString {
 				append("Quantity: ")
-				append(liveProduct?.quantity ?:0)
+				append(liveProduct?.quantity ?: 0)
 			}
-			bind.productImage.loadUrl(this, liveProduct?.image ?: "")
+			bind.productImage.loadUrl(this , liveProduct?.image ?: "")
 		}
 
 		val price = liveProduct?.price
 		bind.bidPrice.text = price?.asMoney()
 	}
 
-	private fun updateCountdown(json: JSONObject) {
+	private fun updateCountdown(json : JSONObject) {
 		val value = json.optString("remaining")
 		runSafe {
 			this.runOnUiThread {
@@ -1417,10 +1439,10 @@ class LiveShowSocketActivity : BaseActivity() {
 		}
 	}
 
-	private fun handleBidUpdate(json: JSONObject) {
+	private fun handleBidUpdate(json : JSONObject) {
 		runSafe {
 			runOnUiThread {
-				if (json.optString("room_id") == roomID){
+				if (json.optString("room_id") == roomID) {
 					val highestBid = json.getJSONObject("get_highest_bid")
 					val bidAmount = highestBid.optString("bid_amount")
 					log("BID UPDATE: $bidAmount")
@@ -1432,18 +1454,11 @@ class LiveShowSocketActivity : BaseActivity() {
 	}
 
 	private fun showSellerSheet() {
-		val liveSellerSheetBind = LiveSellerSheetBinding.bind(layoutInflater.inflate(R.layout.live_seller_sheet, null, false))
-		val liveSellerSheet = Alerts.appBottomSheet(this, true, liveSellerSheetBind)
+		val liveSellerSheetBind = LiveSellerSheetBinding.bind(layoutInflater.inflate(R.layout.live_seller_sheet , null , false))
+		val liveSellerSheet = Alerts.appBottomSheet(this , true , liveSellerSheetBind)
 
-
-		repeat(10){
-			userList.add(" ")
-		}
-
-		sellerAdapter = LiveSellerAdapter(userList, object : RecyclerClicks {
-			override fun itemClick(pos: Int, status: String?) {
-
-
+		sellerAdapter = LiveSellerAdapter(userList , object : RecyclerClicks {
+			override fun itemClick(pos : Int , status : String?) {
 
 			}
 

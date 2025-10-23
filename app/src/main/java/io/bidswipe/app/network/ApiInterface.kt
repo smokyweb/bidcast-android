@@ -25,6 +25,7 @@ import io.bidswipe.app.network.response.GetCategoryResponse
 import io.bidswipe.app.network.response.GetHowToSellResponse
 import io.bidswipe.app.network.response.GetKYCDetailsRespnse
 import io.bidswipe.app.network.response.GetLessonsResponse
+import io.bidswipe.app.network.response.GetLiveSellerResponse
 import io.bidswipe.app.network.response.GetMailClassesResponse
 import io.bidswipe.app.network.response.GetMyInventoryResponse
 import io.bidswipe.app.network.response.GetMyShowResponse
@@ -678,6 +679,10 @@ interface ApiInterface {
 	@GET("api/seller/sales-performance")
 	suspend fun getSalesPerformance(
 	) : SalesAnalyticsResponse
+
+	@GET("api/get-live-seller")
+	suspend fun getLiveSeller(
+	): GetLiveSellerResponse
 
 }
 

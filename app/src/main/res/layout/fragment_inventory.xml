@@ -84,11 +84,10 @@
                     android:paddingBottom="@dimen/half_margin"
                     app:boxBackgroundColor="@color/surface"
                     app:boxStrokeWidth="2dp"
+                    app:endIconMode="clear_text"
+                    app:endIconTint="@color/scrim"
                     app:startIconDrawable="@drawable/search"
-                    app:startIconTint="@color/scrim"
-                    app:endIconMode="custom"
-                    app:endIconDrawable="@drawable/ic_close"
-                    app:endIconTint="@color/scrim">
+                    app:startIconTint="@color/scrim">
 
                     <com.google.android.material.textfield.MaterialAutoCompleteTextView
                         android:id="@+id/search"
@@ -106,11 +105,14 @@
                     android:id="@+id/recycler"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
+                    android:layout_marginBottom="@dimen/margin"
                     android:orientation="vertical"
                     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                     app:layout_constraintBottom_toTopOf="@id/addNewProduct"
                     app:layout_constraintTop_toBottomOf="@id/searchLayout"
+                    app:layout_constraintVertical_bias="0.0"
                     tools:itemCount="4"
+                    tools:layout_editor_absoluteX="0dp"
                     tools:listitem="@layout/inventory_item" />
 
                 <com.github.ybq.android.spinkit.SpinKitView
@@ -137,7 +139,8 @@
                     style="@style/appBtn"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_margin="@dimen/margin"
+                    android:layout_marginTop="@dimen/margin"
+                    android:layout_margin="@dimen/half_margin"
                     android:paddingHorizontal="@dimen/margin"
                     android:text="@string/new_product"
                     app:layout_constraintBottom_toBottomOf="parent" />

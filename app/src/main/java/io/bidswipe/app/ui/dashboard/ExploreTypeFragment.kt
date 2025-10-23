@@ -93,10 +93,10 @@ class ExploreTypeFragment : BaseFragment<DashViewModel , FragmentExploreTypeBind
 		category = arguments?.getString("category") ?: ""
 		bind.header.setHeaderText(category.asCapital())
 
-        bind.root.setHapticClickListener {
+		bind.root.setHapticClickListener {
 			hideKeyboard(it)
 		}
-        bind.main.setHapticClickListener {
+		bind.main.setHapticClickListener {
 			hideKeyboard(it)
 		}
 		bind.header.onBackClick {
@@ -104,21 +104,36 @@ class ExploreTypeFragment : BaseFragment<DashViewModel , FragmentExploreTypeBind
 		}
 
 		bind.swipeRefreshLayout.setOnRefreshListener {
+			bind.search.setText("")
+			bind.searchLayout.isEndIconVisible = false
 			viewModel.getLiveShow(selectedTabText.request() , category.request())
 		}
-
+		bind.searchLayout.isEndIconVisible = false
 		bind.search.addTextChangedListener(object : TextWatcher {
-			override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-			override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
-			override fun afterTextChanged(s: Editable?) {
-				if (!s.isNullOrEmpty()) {
-					bind.loader.isVisible = true
-					viewModel.getLiveShow(selectedTabText.request(), category.request(), s.toString().request())
+			override fun beforeTextChanged(s : CharSequence? , start : Int , count : Int , after : Int) {}
+			override fun onTextChanged(s : CharSequence? , start : Int , before : Int , count : Int) {}
+			override fun afterTextChanged(s : Editable?) {
+				bind.searchLayout.isEndIconVisible = ! s.isNullOrEmpty()
+
+				bind.loader.isVisible = true
+				bind.recycler.isVisible = false
+				bind.noData.isVisible = false
+
+				if (! s.isNullOrEmpty()) {
+					viewModel.getLiveShow(selectedTabText.request() , category.request() , s.toString().request())
+				}
+				else {
+					viewModel.getLiveShow(selectedTabText.request() , category.request())
 				}
 			}
 		})
+		bind.searchLayout.setEndIconOnClickListener {
+			bind.search.setText("")
+			viewModel.getLiveShow(selectedTabText.request() , category.request())
+			hideKeyboard(it)
+		}
 
-        bind.noInternet.setHapticClickListener {
+		bind.noInternet.setHapticClickListener {
 			bind.loader.isVisible = true
 			bind.noInternet.isVisible = false
 			viewModel.getLiveShow(selectedTabText.request() , category.request())
@@ -139,9 +154,9 @@ class ExploreTypeFragment : BaseFragment<DashViewModel , FragmentExploreTypeBind
 
 		selectTab(bind.live)
 
-        bind.live.setHapticClickListener { selectTab(it as TextView) }
-        bind.popular.setHapticClickListener { selectTab(it as TextView) }
-        bind.comingSoon.setHapticClickListener { selectTab(it as TextView) }
+		bind.live.setHapticClickListener { selectTab(it as TextView) }
+		bind.popular.setHapticClickListener { selectTab(it as TextView) }
+		bind.comingSoon.setHapticClickListener { selectTab(it as TextView) }
 
 		categoriesList = mutableListOf(category)
 		viewModel.getLiveShow(selectedTabText.request() , category = category.request())

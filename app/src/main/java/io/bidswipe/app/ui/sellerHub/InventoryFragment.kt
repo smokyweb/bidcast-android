@@ -11,7 +11,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.view.isVisible
-import androidx.core.widget.addTextChangedListener
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.tabs.TabLayout
@@ -96,9 +95,9 @@ class InventoryFragment : BaseFragment<SellerHubViewModel , FragmentInventoryBin
 		bind.searchLayout.isEndIconVisible = false
 
 		bind.search.addTextChangedListener(object : TextWatcher {
-			override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-			override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
-			override fun afterTextChanged(s: Editable?) {
+			override fun beforeTextChanged(s : CharSequence? , start : Int , count : Int , after : Int) {}
+			override fun onTextChanged(s : CharSequence? , start : Int , before : Int , count : Int) {}
+			override fun afterTextChanged(s : Editable?) {
 				val query = s?.toString()?.trim() ?: ""
 				bind.searchLayout.isEndIconVisible = query.isNotEmpty()
 
@@ -110,9 +109,9 @@ class InventoryFragment : BaseFragment<SellerHubViewModel , FragmentInventoryBin
 				bind.noData.isVisible = false
 
 				if (query.isNotEmpty()) {
-					viewModel.getMyInventory(selectedTab.request(), page.toString().request(), query.request())
+					viewModel.getMyInventory(selectedTab.request() , page.toString().request() , query.request())
 				} else {
-					viewModel.getMyInventory(selectedTab.request(), page.toString().request())
+					viewModel.getMyInventory(selectedTab.request() , page.toString().request())
 				}
 			}
 		})
@@ -121,7 +120,7 @@ class InventoryFragment : BaseFragment<SellerHubViewModel , FragmentInventoryBin
 			bind.search.text?.clear()
 			bind.searchLayout.isEndIconVisible = false
 			page = 1
-			viewModel.getMyInventory(selectedTab.request(), page.toString().request())
+			viewModel.getMyInventory(selectedTab.request() , page.toString().request())
 		}
 
 		bind.header.onBackClick {
@@ -167,6 +166,7 @@ class InventoryFragment : BaseFragment<SellerHubViewModel , FragmentInventoryBin
 		})
 
 		bind.swipeRefreshLayout.setOnRefreshListener {
+			bind.search.setText("")
 			page = 1
 			isLoading = false
 			itemList.clear()

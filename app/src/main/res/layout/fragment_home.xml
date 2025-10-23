@@ -42,6 +42,8 @@
             android:layout_marginHorizontal="@dimen/margin"
             app:boxBackgroundColor="@color/surface"
             app:boxStrokeWidth="2dp"
+            app:endIconMode="clear_text"
+            app:endIconTint="@color/scrim"
             app:startIconDrawable="@drawable/search"
             app:startIconTint="@color/scrim">
 

@@ -4,8 +4,6 @@ package io.bidswipe.app.network.response
 import com.google.gson.annotations.SerializedName
 import androidx.annotation.Keep
 import io.bidswipe.app.model.LiveShowModel
-import io.bidswipe.app.model.LiveShowModelOld
-import io.bidswipe.app.utils.string
 import java.io.Serializable
 
 @Keep

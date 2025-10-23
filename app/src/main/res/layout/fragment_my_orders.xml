@@ -151,6 +151,8 @@
                     android:layout_height="wrap_content"
                     android:paddingTop="@dimen/half_margin"
                     app:boxStrokeWidth="2dp"
+                    app:endIconMode="clear_text"
+                    app:endIconTint="@color/scrim"
                     app:startIconDrawable="@drawable/search"
                     app:startIconTint="@color/scrim">
 
