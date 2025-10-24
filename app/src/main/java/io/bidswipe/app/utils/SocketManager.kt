@@ -300,6 +300,28 @@ class SocketManager private constructor(
 		}
 	}
 
+	fun createRaid(sourceRoomId: String, targetRoomId: String, sourceHostId: String, targetHostId: String) {
+		val payload = JSONObject().apply {
+			put("source_room_id", sourceRoomId)
+			put("target_room_id", targetRoomId)
+			put("source_host_id", sourceHostId)
+			put("target_host_id", targetHostId)
+		}
+		socket?.emit("createRaid", payload)
+	}
+
+	fun receiveRaid(listener: (json: JSONObject) -> Unit) {
+		socket?.on("receiveRaid") { args ->
+			val obj = args.firstOrNull()
+			if (obj is JSONObject) {
+				Log.d(TAG, "RECEIVED: receiveRaid - $obj")
+				listener(obj)
+			}
+		}
+	}
+
+
+
 	/**
 	 * Listen for live show updates
 	 */

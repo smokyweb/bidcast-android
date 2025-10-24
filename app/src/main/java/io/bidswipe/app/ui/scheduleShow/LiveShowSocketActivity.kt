@@ -1496,7 +1496,13 @@ class LiveShowSocketActivity : BaseActivity() {
 		liveSellerSheetBind.addBtn.setHapticClickListener {
 			if (selectedItem != null) {
 				log("Selected seller: ${selectedItem?.name}")
+				socketManager?.createRaid(roomID , selectedItem?.roomId.toString(), selectedItem?.id.toString(), userId)
 				liveSellerSheet.dismiss()
+				stopStreaming()
+				// Delay finish to allow microphone release
+				handler.postDelayed({
+					finishAfterTransition()
+				} , 200)
 			} else {
 				Alerts.error(this@LiveShowSocketActivity , "Please select a seller")
 			}

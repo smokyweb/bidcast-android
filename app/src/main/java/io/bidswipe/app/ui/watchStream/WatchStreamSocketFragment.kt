@@ -257,6 +257,15 @@ class WatchStreamSocketFragment : BaseFragment<StreamViewModel, FragmentWatchStr
 			}
 		}
 
+		socketManager?.receiveRaid {obj ->
+			requireActivity().runOnUiThread {
+				if (obj.optString("source_room_id") == roomID){
+					val targetRoomId = obj.optString("target_room_id")
+					onRaid(targetRoomId)
+				}
+			}
+		}
+
 		bind.message.setEndIconOnClickListener {
 			if (bind.text.value().isNotEmpty()) {
 				if (App.profileResponse.value?.buyerIdentityStatus == "verified") {
@@ -1127,14 +1136,15 @@ class WatchStreamSocketFragment : BaseFragment<StreamViewModel, FragmentWatchStr
 		sendTipSheet.show()
 	}
 
-	private fun onRaid(){
+	private fun onRaid(targetRoomId: String){
 		viewModel.viewModelScope.launch {
 			try {
 				socketManager?.leaveRoom(roomID, userId)
 				commentList.clear()
 				commentAdapter.notifyDataSetChanged()
 
-				roomID = "live_room_34_149"
+				roomID = targetRoomId
+
 				subscriber = Core.createSubscriber()
 
 				startSubscription()
