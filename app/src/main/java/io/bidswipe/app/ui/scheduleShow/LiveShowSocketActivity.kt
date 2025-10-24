@@ -2,6 +2,7 @@ package io.bidswipe.app.ui.scheduleShow
 
 import android.annotation.SuppressLint
 import android.app.PictureInPictureParams
+import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
 import android.graphics.Rect
@@ -13,8 +14,10 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.util.Rational
+import android.view.View
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
+import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
@@ -47,6 +50,7 @@ import io.bidswipe.app.databinding.CreateClipSheetBinding
 import io.bidswipe.app.databinding.EndShowSheetBinding
 import io.bidswipe.app.databinding.LiveSellerSheetBinding
 import io.bidswipe.app.databinding.LiveShowMoreMenuBinding
+import io.bidswipe.app.databinding.NoDataViewBinding
 import io.bidswipe.app.databinding.ProductSheetBinding
 import io.bidswipe.app.databinding.PromoteShowSheetBinding
 import io.bidswipe.app.databinding.ShareSheetBinding
@@ -359,9 +363,32 @@ class LiveShowSocketActivity : BaseActivity() {
 				is Resource.Success -> {
 					bind.loader.isVisible = false
 					viewModel.getLiveSellerRepo.value = null
-					it.value.data?.let { data ->
+
+					val dataList = it.value.data ?: mutableListOf()
+
+					if (dataList.isEmpty()) {
+						val noDataBind = NoDataViewBinding.bind(
+							layoutInflater.inflate(R.layout.no_data_view, null, false)
+						)
+
+						val noDataSheet = Alerts.appBottomSheet(this, true, noDataBind)
+						noDataBind.root.background = ContextCompat.getDrawable(this, R.drawable.bottom_sheet_back)
+
+						noDataBind.title.text = "No Sellers Found"
+						noDataBind.desc.text = "Currently no other sellers are live."
+						noDataBind.btn.isVisible = true
+						noDataBind.btn.text = "Retry"
+
+						noDataBind.btn.setOnClickListener {
+							noDataSheet.dismiss()
+							bind.loader.isVisible = true
+							viewModel.getLiveSeller()
+						}
+
+						noDataSheet.show()
+					} else {
 						userList.clear()
-						userList.addAll(data)
+						userList.addAll(dataList)
 						showSellerSheet()
 					}
 				}
@@ -369,6 +396,22 @@ class LiveShowSocketActivity : BaseActivity() {
 				is Resource.Error -> {
 					bind.loader.isVisible = false
 					viewModel.getLiveSellerRepo.value = null
+
+					val noDataBind = NoDataViewBinding.bind(
+						layoutInflater.inflate(R.layout.no_data_view, null, false)
+					)
+					val noDataSheet = Alerts.appBottomSheet(this, true, noDataBind)
+					noDataBind.root.background = ContextCompat.getDrawable(this, R.drawable.bottom_sheet_back)
+					noDataBind.title.text = "Something went wrong"
+					noDataBind.desc.text = "Please try again later."
+					noDataBind.btn.isVisible = true
+					noDataBind.btn.text = "Retry"
+					noDataBind.btn.setOnClickListener {
+						noDataSheet.dismiss()
+						bind.loader.isVisible = true
+						viewModel.getLiveSeller()
+					}
+					noDataSheet.show()
 				}
 
 				else -> {}
@@ -894,9 +937,9 @@ class LiveShowSocketActivity : BaseActivity() {
 							moreSheet.dismiss()
 //							showSellerSheet()
 							viewModel.getLiveSeller()
+							bind.loader.isVisible = true
 
 						}
-
 						else -> {
 
 						}
@@ -1454,29 +1497,62 @@ class LiveShowSocketActivity : BaseActivity() {
 	}
 
 	private fun showSellerSheet() {
-		val liveSellerSheetBind = LiveSellerSheetBinding.bind(layoutInflater.inflate(R.layout.live_seller_sheet , null , false))
-		val liveSellerSheet = Alerts.appBottomSheet(this , true , liveSellerSheetBind)
+		val liveSellerSheetBind = LiveSellerSheetBinding.bind(
+			layoutInflater.inflate(R.layout.live_seller_sheet, null, false)
+		)
+		val liveSellerSheet = Alerts.appBottomSheet(this, true, liveSellerSheetBind)
+
+		val noDataView = NoDataViewBinding.bind(
+			layoutInflater.inflate(R.layout.no_data_view, liveSellerSheetBind.root, false)
+		)
+
+		liveSellerSheetBind.root.addView(noDataView.root)
+		noDataView.root.isVisible = false
+
+		var selectedItem: GetLiveSellerResponse.Data? = null
+		var selectedPosition = -1
 
 		sellerAdapter = LiveSellerAdapter(userList , object : RecyclerClicks {
 			override fun itemClick(pos : Int , status : String?) {
-
+				selectedPosition = pos
+				selectedItem = userList[pos]
 			}
 
 		})
 
 		liveSellerSheetBind.recycler.adapter = sellerAdapter
 
-		liveSellerSheet.show()
+		if (userList.isEmpty()) {
+			liveSellerSheetBind.recycler.isVisible = false
+			noDataView.root.isVisible = true
+			noDataView.title.text = "No Sellers Found"
+			noDataView.desc.text = "Currently no other sellers are live."
+			noDataView.btn.isVisible = true
+			noDataView.btn.text = "Retry"
+			noDataView.btn.setOnClickListener {
+				liveSellerSheet.dismiss()
+				viewModel.getLiveSeller()
+				bind.loader.isVisible = true
+			}
+		} else {
+			liveSellerSheetBind.recycler.isVisible = true
+			noDataView.root.isVisible = false
+		}
 
 		liveSellerSheetBind.close.setHapticClickListener {
 			liveSellerSheet.dismiss()
 		}
 
 		liveSellerSheetBind.addBtn.setHapticClickListener {
-
-			liveSellerSheet.dismiss()
-
+			if (selectedItem != null) {
+				log("Selected seller: ${selectedItem?.name}")
+				liveSellerSheet.dismiss()
+			} else {
+				Alerts.error(this@LiveShowSocketActivity, "Please select a seller")
+			}
 		}
+
+		liveSellerSheet.show()
 	}
 
 }

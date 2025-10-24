@@ -13,6 +13,8 @@ class LiveSellerAdapter(
 	val mList: MutableList<GetLiveSellerResponse.Data?> , val mClicks: RecyclerClicks ,
 ) : BaseAdapter<GetLiveSellerResponse.Data?, UserSelectorItemBinding>(mList) {
 
+	private var selectedPosition = -1
+
 	override fun bindView(inflater: LayoutInflater, parent: ViewGroup) =
 		UserSelectorItemBinding.inflate(inflater, parent, false)
 
@@ -23,14 +25,25 @@ class LiveSellerAdapter(
 	) {
 		with(holder) {
 
-			bind.root.setHapticClickListener {
-				mClicks.itemClick(position)
-			}
-
+			bind.radioBtn.isChecked = position == selectedPosition
 			bind.radioBtn.isVisible = true
 
-//			bind.title.text = item
+			bind.root.setHapticClickListener {
+				if (selectedPosition == position) {
+					selectedPosition = -1
+					notifyItemChanged(position)
+				} else {
+					val previousPosition = selectedPosition
+					selectedPosition = position
+					notifyItemChanged(position)
 
+					if (previousPosition != -1) {
+						notifyItemChanged(previousPosition)
+					}
+				}
+
+				mClicks.itemClick(position)
+			}
 		}
 	}
 }
