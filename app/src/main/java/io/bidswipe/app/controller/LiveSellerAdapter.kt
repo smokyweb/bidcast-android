@@ -7,6 +7,7 @@ import io.bidswipe.app.base.BaseAdapter
 import io.bidswipe.app.databinding.UserSelectorItemBinding
 import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.network.response.GetLiveSellerResponse
+import io.bidswipe.app.utils.loadUrl
 import io.bidswipe.app.utils.setHapticClickListener
 
 class LiveSellerAdapter(
@@ -24,6 +25,9 @@ class LiveSellerAdapter(
 		item: GetLiveSellerResponse.Data?,
 	) {
 		with(holder) {
+
+			bind.text.text = item?.name ?: "Unknown Seller"
+			bind.userImage.loadUrl(bind.root.context, item?.profileImage ?: "")
 
 			bind.radioBtn.isChecked = position == selectedPosition
 			bind.radioBtn.isVisible = true
