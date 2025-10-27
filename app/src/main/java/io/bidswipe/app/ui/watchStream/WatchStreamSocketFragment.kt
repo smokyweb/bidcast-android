@@ -262,6 +262,17 @@ class WatchStreamSocketFragment : BaseFragment<StreamViewModel, FragmentWatchStr
 			}
 		}
 
+		socketManager?.onFollowSellerStatus { obj ->
+			requireActivity().runOnUiThread {
+				if (obj.optString("room_id") == roomID && obj.optString("user_id") == userId){
+
+					log("IS FOLLOWING : ${obj.optString("is_followed")}")
+
+					bind.follow.isVisible = !obj.optBoolean("is_followed")
+				}
+			}
+		}
+
 		socketManager?.receiveRaid {obj ->
 			requireActivity().runOnUiThread {
 				if (obj.optString("source_room_id") == roomID){
@@ -470,9 +481,9 @@ class WatchStreamSocketFragment : BaseFragment<StreamViewModel, FragmentWatchStr
 			bind.liveCount.text = showData.viewerCount
 
 			bind.follow.setHapticClickListener {
-				bind.loader.isVisible = true
-				viewModel.followUser(sellerId?.request())
+				socketManager?.followSeller( userId,sellerId ?:"")
 			}
+
 			// Determine sale status once
 
 			/*val isSold = liveProduct?.status == "sold"

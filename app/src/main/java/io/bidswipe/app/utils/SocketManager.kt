@@ -320,25 +320,6 @@ class SocketManager private constructor(
 		}
 	}
 
-
-
-	/**
-	 * Listen for live show updates
-	 */
-	fun onLiveShowUpdate(listener: (liveShowJson: JSONObject) -> Unit) {
-		socket?.on("live_show_update") { args ->
-			val obj = args.firstOrNull()
-			if (obj is JSONObject) {
-				Log.d(TAG, "RECEIVED: live_show_update - $obj")
-				listener(obj)
-			}
-		}
-	}
-
-	/**
-	 * Listen for product status changes
-	 */
-
 	fun onProductStatusUpdate(listener: (productJson: JSONObject) -> Unit) {
 		socket?.on("product_status_update") { args ->
 			val obj = args.firstOrNull()
@@ -399,106 +380,6 @@ class SocketManager private constructor(
 	}
 
 	/**
-	 * Update highest bid in LiveSocketModel structure
-	 */
-	fun emitHighestBidUpdate(
-		liveSocket: LiveSocketModel,
-		highestBid: LiveSocketModel.HighestBid
-	) {
-		val payload = JSONObject().apply {
-			put("room_id", liveSocket.roomId)
-			put("show_id", liveSocket.showId)
-			put("highest_bid", highestBid.toJson())
-			put("timestamp", Utils.timestamp())
-		}
-
-		Log.d(
-			TAG,
-			"EMIT: highest_bid_update - RoomId: ${liveSocket.roomId}, BidAmount: ${highestBid.bidAmount}, UserId: ${highestBid.userId}"
-		)
-		socket?.emit("highest_bid_update", payload)
-	}
-
-	/**
-	 * Emit product status change (e.g., sold, live, etc.)
-	 */
-	fun emitProductStatusChange(
-		liveSocket: LiveSocketModel,
-		product: LiveSocketModel.Product,
-		newStatus: String
-	) {
-		val payload = JSONObject().apply {
-			put("room_id", liveSocket.roomId)
-			put("show_id", liveSocket.showId)
-			put("product_id", product.id)
-			put("product_name", product.name)
-			put("old_status", product.status)
-			put("new_status", newStatus)
-			put("timestamp", Utils.timestamp())
-		}
-
-		Log.d(
-			TAG,
-			"EMIT: product_status_change - RoomId: ${liveSocket.roomId}, ProductId: ${product.id}, Status: $newStatus"
-		)
-
-		socket?.emit("product_status_change", payload)
-	}
-
-	/**
-	 * Emit current product change
-	 */
-	fun emitCurrentProductChange(
-		liveSocket: LiveSocketModel,
-		newCurrentProduct: LiveSocketModel.Product
-	) {
-		val payload = JSONObject().apply {
-			put("room_id", liveSocket.roomId)
-			put("show_id", liveSocket.showId)
-			put("new_current_product", newCurrentProduct.toJson())
-			put("timestamp", Utils.timestamp())
-		}
-
-		Log.d(
-			TAG,
-			"EMIT: current_product_change - RoomId: ${liveSocket.roomId}, NewProductId: ${newCurrentProduct.id}"
-		)
-		socket?.emit("current_product_change", payload)
-	}
-
-	/**
-	 * Emit live show state update
-	 */
-	fun emitLiveShowStateUpdate(
-		liveSocket: LiveSocketModel,
-		isLive: Boolean
-	) {
-		val payload = JSONObject().apply {
-			put("room_id", liveSocket.roomId)
-			put("show_id", liveSocket.showId)
-			put("is_live", isLive)
-			put("timestamp", Utils.timestamp())
-		}
-
-		Log.d(TAG, "EMIT: live_show_state_update - RoomId: ${liveSocket.roomId}, IsLive: $isLive")
-		socket?.emit("live_show_state_update", payload)
-	}
-
-	/**
-	 * Emit complete LiveSocketModel update
-	 */
-
-
-	fun emitLiveSocketUpdate(liveSocket: LiveSocketModel) {
-		val payload = liveSocket.toJson()
-		Log.d(
-			TAG,
-			"EMIT: live_socket_update - RoomId: ${liveSocket.roomId}, ShowId: ${liveSocket.showId}"
-		)
-		socket?.emit("live_socket_update", payload)
-	}
-
-	/**
 	 * Listen for complete LiveSocketModel updates
 	 */
 	fun onLiveSocketUpdate(listener: (liveSocket: LiveSocketModel) -> Unit) {
@@ -524,18 +405,6 @@ class SocketManager private constructor(
 				listener(obj)
 			}
 		}
-	}
-
-	/*fun emitViewerJoin(roomId: String) {
-		val payload = JSONObject().apply { put("roomId", roomId) }
-		Log.d(TAG, "EMIT: viewer_join - RoomId: $roomId")
-		socket?.emit("viewer_join", payload)
-	}*/
-
-	fun emitViewerLeave(roomId: String) {
-		val payload = JSONObject().apply { put("roomId", roomId) }
-		Log.d(TAG, "EMIT: viewer_leave - RoomId: $roomId")
-		socket?.emit("viewer_leave", payload)
 	}
 
 	fun onMessage(listener: (message: JSONObject) -> Unit) {
@@ -596,17 +465,28 @@ class SocketManager private constructor(
 		socket?.emit("chat", payload)
 	}
 
-	fun emitTypedMessage(roomId: String, type: String, data: JSONObject) {
+	fun followSeller(
+		followerId: String,
+		followingId: String
+	) {
 		val payload = JSONObject().apply {
-			put("type", type)
-			put("roomId", roomId)
-			put("data", data)
-			put("timestamp", Utils.timestamp())
+			put("follower_id", followerId)
+			put("following_id", followingId)
 		}
-		Log.d(TAG, "EMIT: typed_message - RoomId: $roomId, Type: $type, Data: $data")
-		socket?.emit("message", payload)
+		Log.d(TAG, "EMIT: Follow Seller - $payload")
+		socket?.emit("follow_unfollow", payload)
 	}
 
+	fun onFollowSellerStatus(listener: (message: JSONObject) -> Unit) {
+		// Avoid duplicate message handlers on reconnect or re-entry
+		socket?.off("user_follow_status")
+		socket?.on("user_follow_status") { args ->
+			val obj = args.firstOrNull() as? JSONObject ?: return@on
+
+			Log.d(TAG, "RECEIVED: Seller Follow Status - $obj")
+			listener(obj)
+		}
+	}
 
 }
 
