@@ -1070,6 +1070,10 @@ class LiveShowSocketActivity : BaseActivity() {
 
 			addShowData(liveShowData !!)
 
+			bind.shop.strokeWidth = 4
+			bind.countBadge.isVisible = true
+			bind.countBadge.text = (liveShowData?.products?.size ?:0).toString()
+
 			socketManager?.sendMessage(
 				roomID ,
 				"Joined \uD83D\uDC4B" ,

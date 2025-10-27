@@ -30,11 +30,14 @@ import io.bidswipe.app.App
 import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseFragment
 import io.bidswipe.app.controller.CommentAdapter
+import io.bidswipe.app.controller.FirebaseProductAdapter
 import io.bidswipe.app.databinding.FragmentWatchStreamBinding
 import io.bidswipe.app.databinding.InputBottomSheetBinding
 import io.bidswipe.app.databinding.PaymentAndAddressSheetBinding
+import io.bidswipe.app.databinding.ProductSheetBinding
 import io.bidswipe.app.databinding.SendTipSheetBinding
 import io.bidswipe.app.interfaces.AlertClicks
+import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.model.LiveChatModel
 import io.bidswipe.app.model.LiveShowModel
 import io.bidswipe.app.network.Resource
@@ -94,6 +97,8 @@ class WatchStreamSocketFragment : BaseFragment<StreamViewModel, FragmentWatchStr
 	private var subscriberStateJob: Job? = null
 	val sourceVideoTracks: ArrayList<RemoteVideoTrack> = arrayListOf()
 	var audioTrack: RemoteAudioTrack? = null
+	private lateinit var productAdapter : FirebaseProductAdapter
+	private var productList = mutableListOf<LiveShowModel.Product?>()
 
 	companion object {
 		fun newInstance(roomID: String, streamID: String) = WatchStreamSocketFragment().apply {
@@ -312,6 +317,10 @@ class WatchStreamSocketFragment : BaseFragment<StreamViewModel, FragmentWatchStr
 			}
 		}
 
+		bind.shop.setHapticClickListener {
+			showProductSheet()
+		}
+
 		if (App.profileResponse.value?.buyerIdentityStatus != "verified") {
 			verificationDialog()
 		}
@@ -417,6 +426,11 @@ class WatchStreamSocketFragment : BaseFragment<StreamViewModel, FragmentWatchStr
 			val showData = LiveShowModel.fromJson(json)
 
 			log("SESSION UPDATE: $showData")
+
+			productList.clear()
+			productList.addAll(showData.products)
+			bind.countBadge.isVisible = true
+			bind.countBadge.text = productList.size.toString()
 
 			val liveProduct = showData.products.find { it?.isCurrent == true }
 
@@ -1161,6 +1175,30 @@ class WatchStreamSocketFragment : BaseFragment<StreamViewModel, FragmentWatchStr
 
 	}
 
+	private fun showProductSheet() {
+		val productSheetBind = ProductSheetBinding.bind(layoutInflater.inflate(R.layout.product_sheet , null , false))
+		val productSheet = Alerts.appBottomSheet(mCtx , true , productSheetBind)
+
+		productAdapter = FirebaseProductAdapter(productList , object : RecyclerClicks {
+			override fun itemClick(pos : Int , status : String?) {
+
+			}
+
+		})
+
+		productSheetBind.title.text = buildString {
+		append("Seller Products")
+	}
+
+		productSheetBind.recycler.adapter = productAdapter
+
+		productSheet.show()
+
+		productSheetBind.close.setHapticClickListener {
+			productSheet.dismiss()
+		}
+		productSheetBind.addBtn.isVisible = false
+	}
 
 }
 

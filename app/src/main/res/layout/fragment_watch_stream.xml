@@ -249,23 +249,48 @@
 
                                 </com.google.android.material.card.MaterialCardView>
 
+                                <androidx.constraintlayout.widget.ConstraintLayout
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content">
 
-                                <com.google.android.material.card.MaterialCardView
-                                    android:id="@+id/shop"
-                                    style="@style/cardStyle"
-                                    android:layout_width="48dp"
-                                    android:layout_height="48dp"
-                                    android:layout_marginBottom="@dimen/margin"
-                                    app:cardCornerRadius="100dp"
-                                    app:cardElevation="0dp">
+                                    <com.google.android.material.card.MaterialCardView
+                                        android:id="@+id/shop"
+                                        style="@style/cardStyle"
+                                        android:layout_width="48dp"
+                                        android:layout_height="48dp"
+                                        android:layout_marginBottom="@dimen/margin"
+                                        app:cardCornerRadius="100dp"
+                                        app:cardElevation="0dp"
+                                        app:strokeWidth="2dp"
+                                        app:strokeColor="@color/primary"
+                                        app:layout_constraintTop_toTopOf="parent"
+                                        app:layout_constraintBottom_toBottomOf="parent"
+                                        app:layout_constraintStart_toStartOf="parent"
+                                        app:layout_constraintEnd_toEndOf="parent">
 
-                                    <androidx.appcompat.widget.AppCompatImageView
-                                        android:layout_width="match_parent"
-                                        android:layout_height="match_parent"
-                                        android:padding="12dp"
-                                        android:src="@drawable/ic_shop" />
+                                        <androidx.appcompat.widget.AppCompatImageView
+                                            android:layout_width="match_parent"
+                                            android:layout_height="match_parent"
+                                            android:padding="12dp"
+                                            android:src="@drawable/ic_shop" />
 
-                                </com.google.android.material.card.MaterialCardView>
+                                    </com.google.android.material.card.MaterialCardView>
+
+                                    <TextView
+                                        android:id="@+id/count_badge"
+                                        style="@style/LabelMedium"
+                                        android:layout_width="18dp"
+                                        android:layout_height="18dp"
+                                        android:background="@drawable/card_16"
+                                        android:backgroundTint="@color/primary"
+                                        android:gravity="center"
+                                        android:text="1"
+                                        android:textColor="@color/onError"
+                                        app:layout_constraintTop_toTopOf="@id/shop"
+                                        app:layout_constraintEnd_toEndOf="parent"/>
+
+
+                                </androidx.constraintlayout.widget.ConstraintLayout>
 
                             </LinearLayout>
 
@@ -302,6 +327,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginHorizontal="@dimen/margin"
                             android:layout_marginBottom="@dimen/margin"
+                            android:backgroundTint="@color/black25"
                             app:layout_constraintBottom_toTopOf="@id/bidLayout"
                             app:layout_constraintStart_toStartOf="parent">
 
@@ -341,6 +367,7 @@
                                         style="@style/TitleLarge"
                                         android:layout_width="match_parent"
                                         android:layout_height="wrap_content"
+                                        android:textColor="@color/surface"
                                         android:text="White Sneakers" />
 
                                     <TextView
@@ -348,6 +375,7 @@
                                         style="@style/BodySmall"
                                         android:layout_width="match_parent"
                                         android:layout_height="wrap_content"
+                                        android:textColor="@color/surface"
                                         android:text="Sports &amp; Lifestyle" />
 
                                     <TextView
@@ -355,6 +383,7 @@
                                         style="@style/BodySmall"
                                         android:layout_width="match_parent"
                                         android:layout_height="wrap_content"
+                                        android:textColor="@color/surface"
                                         android:text="Quantity: 1" />
 
                                 </LinearLayout>
@@ -377,12 +406,14 @@
                                     style="@style/TitleLarge"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
+                                    android:textColor="@color/surface"
                                     android:text="Sold Out!" />
 
                                 <TextView
                                     style="@style/BodySmall"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
+                                    android:textColor="@color/surface"
                                     android:text="Please wait for next product" />
 
                             </LinearLayout>
