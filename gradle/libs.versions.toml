@@ -4,6 +4,7 @@ agp = "8.13.0"
 androidImageCropper = "4.5.0"
 androidSpinkit = "1.4.0"
 appcompat = "1.7.0"
+browser = "1.8.0"
 compiler = "4.16.0"
 constraintlayout = "2.2.0"
 converterGson = "2.11.0"
@@ -14,8 +15,10 @@ decorator = "2.1.0"
 easyvalidationCore = "1.0.4"
 expandablelayout = "2.9.2"
 expressVideo = "3.19.0"
+fullSdk = "4.6.0"
 millicastSdkAndroid = "2.5.2"
 mpandroidchart = "v3.1.0"
+numberKeyboard = "3.1.0"
 slidetoact = "0.11.0"
 flexbox = "3.0.0"
 #agora-rtc-sdk = "4.2.1"
@@ -62,6 +65,7 @@ zim = "2.21.1"
 
 [libraries]
 android-image-cropper = { module = "com.vanniktech:android-image-cropper", version.ref = "androidImageCropper" }
+androidx-browser = { module = "androidx.browser:browser", version.ref = "browser" }
 androidx-media3-exoplayer = { module = "androidx.media3:media3-exoplayer", version.ref = "media3Exoplayer" }
 androidx-media3-exoplayer-dash = { module = "androidx.media3:media3-exoplayer-dash", version.ref = "media3Exoplayer" }
 advancedCardView = { module = "com.github.sina-seyfi:AdvancedCardView", version.ref = "advancedcardview" }
@@ -86,6 +90,7 @@ easyvalidation-core = { module = "com.wajahatkarim:easyvalidation-core", version
 expandableLayout = { module = "com.github.cachapa:ExpandableLayout", version.ref = "expandablelayout" }
 
 express-video = { module = "im.zego:express-video", version.ref = "expressVideo" }
+agora-full-sdk = { module = "io.agora.rtc:full-sdk", version.ref = "fullSdk" }
 glide = { module = "com.github.bumptech.glide:glide", version.ref = "glide" }
 glide-transformations = { module = "jp.wasabeef:glide-transformations", version.ref = "glideTransformations" }
 hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hiltAndroid" }
@@ -100,6 +105,7 @@ material = { module = "com.google.android.material:material", version.ref = "mat
 material-calendar-view = { module = "com.applandeo:material-calendar-view", version.ref = "materialCalendarView" }
 millicast-sdk-android = { module = "com.millicast:millicast-sdk-android", version.ref = "millicastSdkAndroid" }
 mpandroidchart = { module = "com.github.PhilJay:MPAndroidChart", version.ref = "mpandroidchart" }
+number-keyboard = { module = "com.github.davidmigloz:number-keyboard", version.ref = "numberKeyboard" }
 recyclerview-animators = { module = "jp.wasabeef:recyclerview-animators", version.ref = "recyclerviewAnimators" }
 retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
 permissionx = { module = "com.guolindev.permissionx:permissionx", version.ref = "permissionx" }

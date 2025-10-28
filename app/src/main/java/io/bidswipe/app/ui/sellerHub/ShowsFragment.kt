@@ -20,6 +20,7 @@ import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.model.LiveShowModel
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.network.response.GetMyShowResponse
+import io.bidswipe.app.ui.agoraStream.AgoraPublisherActivity
 import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.ui.more.MoreActivity
 import io.bidswipe.app.ui.scheduleShow.LiveShowSocketActivity
@@ -115,7 +116,7 @@ class ShowsFragment : BaseFragment<SellerHubViewModel, FragmentShowsBinding>() {
 				)
 
 				startActivity(
-					Intent(mCtx, LiveShowSocketActivity::class.java).putExtra(
+					Intent(mCtx, AgoraPublisherActivity::class.java).putExtra(
 						"showData",
 						showData
 					).putExtra("time", showList[pos]?.time)
@@ -276,12 +277,7 @@ class ShowsFragment : BaseFragment<SellerHubViewModel, FragmentShowsBinding>() {
 				defaultAddress.isVisible = false
 			}
 			moreIcon.setHapticClickListener {
-				startActivity(
-					Intent(mCtx, MoreActivity::class.java).putExtra(
-						"slug",
-						"paymentShipping"
-					)
-				)
+				startActivity(Intent(mCtx, MoreActivity::class.java).putExtra("slug", "paymentShipping"))
 			}
 		}
 

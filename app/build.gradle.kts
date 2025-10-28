@@ -90,17 +90,18 @@ dependencies {
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.activity)
     implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.browser)
     implementation(libs.billing.ktx)
+
+
+    implementation(libs.firebase.messaging.ktx)
+    implementation(libs.firebase.database)
 
     //GOOGLE DEPENDENCIES
     implementation(libs.hilt.android)
     implementation(libs.material)
-    implementation(libs.navigation.fragment.ktx)
-    implementation(libs.navigation.ui.ktx)
-    implementation(libs.firebase.messaging.ktx)
-    implementation(libs.firebase.database)
-    ksp(libs.hilt.compiler)
     implementation(libs.flexbox)
+    ksp(libs.hilt.compiler)
 
     //KOTLIN DEPENDENCIES
     implementation(libs.kotlinx.coroutines.core)
@@ -145,19 +146,16 @@ dependencies {
     implementation(libs.immersionbar.ktx)
     implementation(libs.immersionbar)
     implementation(libs.powermenu)
-//    implementation(libs.socialview.autocomplete)
-//    implementation(libs.zim)
     implementation(libs.singledateandtimepicker)
     implementation(libs.mpandroidchart)
-
     implementation(libs.millicast.sdk.android)
+    implementation(libs.agora.full.sdk)
 
-    implementation("androidx.browser:browser:1.8.0")
-    implementation("com.github.davidmigloz:number-keyboard:3.1.0")
-//    implementation ("com.github.yoanngoular:numpadview:1.0.0")
+    implementation(libs.number.keyboard)
 
     //ZEGO CLOUD
 //    implementation(libs.express.video)
+//    implementation(libs.zim)
 
     // SOCKET.IO
     implementation("io.socket:socket.io-client:2.1.0") {

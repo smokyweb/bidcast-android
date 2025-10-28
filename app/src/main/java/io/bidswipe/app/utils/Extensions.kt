@@ -350,9 +350,7 @@ fun decimalLimiter(string : String , maxDecimal : Int) : String {
  * Returns the first product where isCurrent == true, or null if none.
  */
 
-fun List<LiveShowModelOld.Product?>?.getCurrentProduct() : LiveShowModelOld.Product? {
-	return this?.firstOrNull { it?.isCurrent == true }
-}
+fun List<LiveShowModelOld.Product?>?.getCurrentProduct() = this?.firstOrNull { it?.isCurrent == true }
 
 fun View.setHapticClickListener(onClick : (View) -> Unit) {
 	setOnClickListener {
