@@ -15,6 +15,7 @@ import io.bidswipe.app.network.response.CreateBidResponse
 import io.bidswipe.app.network.response.CreateShowResponse
 import io.bidswipe.app.network.response.FetchBidResponse
 import io.bidswipe.app.network.response.GenerateTokenResponse
+import io.bidswipe.app.network.response.GetAgoraTokenResponse
 import io.bidswipe.app.network.response.GetBlockedUsersResponse
 import io.bidswipe.app.network.response.GetCategoryResponse
 import io.bidswipe.app.network.response.GetHowToSellResponse
@@ -646,11 +647,27 @@ class DashViewModel @Inject constructor(
 		get() = _getLiveSellerResponse
 
 	fun getLiveSeller() = viewModelScope.launch {
-//		if (! networkMonitor.hasInternet()) {
-//			_getLiveSellerResponse.value = NO_INTERNET_ERROR
-//			return@launch
-//		}
+		if (! networkMonitor.hasInternet()) {
+			_getLiveSellerResponse.value = NO_INTERNET_ERROR
+			return@launch
+		}
 		_getLiveSellerResponse.value = repo.getLiveSeller()
+	}
+
+
+	private var _getAgoraTokenResponse = MutableLiveData<Resource<GetAgoraTokenResponse>>()
+	val getAgoraTokenRepo : MutableLiveData<Resource<GetAgoraTokenResponse>>
+		get() = _getAgoraTokenResponse
+
+	fun getAgoraToken(
+		channel : RequestBody ,
+		uId : RequestBody
+	) = viewModelScope.launch {
+		if (! networkMonitor.hasInternet()) {
+			_getAgoraTokenResponse.value = NO_INTERNET_ERROR
+			return@launch
+		}
+		_getAgoraTokenResponse.value = repo.getAgoraToken(channel, uId)
 	}
 
 }

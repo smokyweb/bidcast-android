@@ -5,12 +5,15 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.MotionEvent
+import android.view.SurfaceView
 import android.view.View
 import android.view.ViewGroup
+import android.widget.FrameLayout
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
+import androidx.lifecycle.lifecycleScope
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
@@ -18,16 +21,22 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import com.ncorti.slidetoact.SlideToActView
 import com.ncorti.slidetoact.SlideToActView.OnSlideCompleteListener
+import io.agora.rtc2.Constants
+import io.agora.rtc2.video.VideoCanvas
 import io.bidswipe.app.App
 import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseFragment
 import io.bidswipe.app.controller.CommentAdapter
+import io.bidswipe.app.controller.FirebaseProductAdapter
 import io.bidswipe.app.databinding.FragmentWatchStreamBinding
 import io.bidswipe.app.databinding.InputBottomSheetBinding
 import io.bidswipe.app.databinding.PaymentAndAddressSheetBinding
+import io.bidswipe.app.databinding.ProductSheetBinding
 import io.bidswipe.app.databinding.SendTipSheetBinding
 import io.bidswipe.app.interfaces.AlertClicks
+import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.model.LiveChatModel
+import io.bidswipe.app.model.LiveShowModel
 import io.bidswipe.app.model.LiveShowModelOld
 import io.bidswipe.app.model.ZIMExtendedData
 import io.bidswipe.app.network.Resource
@@ -35,10 +44,12 @@ import io.bidswipe.app.ui.custom.AlertType
 import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.ui.more.MoreActivity
 import io.bidswipe.app.ui.more.TrustedBuyerActivity
+import io.bidswipe.app.utils.AgoraManager
 import io.bidswipe.app.utils.Alerts
 import io.bidswipe.app.utils.ChatManager
 import io.bidswipe.app.utils.Const
 import io.bidswipe.app.utils.FireRef
+import io.bidswipe.app.utils.SocketManager
 import io.bidswipe.app.utils.Utils
 import io.bidswipe.app.utils.asCapital
 import io.bidswipe.app.utils.asMoney
@@ -48,10 +59,14 @@ import io.bidswipe.app.utils.finish
 import io.bidswipe.app.utils.hideKeyboard
 import io.bidswipe.app.utils.loadUrl
 import io.bidswipe.app.utils.parse
+import io.bidswipe.app.utils.request
 import io.bidswipe.app.utils.runSafe
 import io.bidswipe.app.utils.setHapticClickListener
 import io.bidswipe.app.utils.setMargins
 import io.bidswipe.app.utils.value
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import org.json.JSONObject
 import kotlin.math.abs
 
 class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBinding>() {
@@ -67,12 +82,24 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 	private lateinit var streamID: String
 	private var highestBidAmount: String? = ""
 	private var bidProductId: String? = ""
+	private lateinit var socketUrl: String
 	private var commentList = mutableListOf<LiveChatModel?>()
 	private lateinit var commentAdapter: CommentAdapter
 	private var product: LiveShowModelOld.Product? = null
 	private var inputSheet: BottomSheetDialog? = null
+	private var sellerId: String? = ""
 	private var isAllowBidForAll = true
 	private var chatManager: ChatManager? = null
+	private var socketManager: SocketManager? = null
+	private lateinit var productAdapter : FirebaseProductAdapter
+	private var productList = mutableListOf<LiveShowModel.Product?>()
+
+	private val agoraToken =
+		"007eJxTYKicxlR09KTuS64jV3WsXNo4rfeUFxn/m7RY16Pt4tWLyjMUGMwSDRKTzM1TUw1NLU2MU9IsTUyNTIwMDFPMki2NLczNa4WYMnsVmDJdhJtZGRkYGViAGASYwCQzmGSBkimpufmMDAYA9hoczg=="
+	private val channelName = "demo"
+	private val myAppId = "6a0ab77ee15943df94524201d6c93877"
+
+	private var manager: AgoraManager? = null
 
 	companion object {
 		fun newInstance(roomID: String, streamID: String) = WatchStreamFragment().apply {
@@ -83,73 +110,12 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 		}
 	}
 
-	private var eventListener = object : ValueEventListener {
-		@SuppressLint("NotifyDataSetChanged")
-		override fun onDataChange(snapshot: DataSnapshot) {
-
-			runSafe {
-				val data = LiveShowModelOld().fromMap(snapshot)
-
-				// Safely update highestBidAmount
-
-				if (data.highestBid != null) {
-
-					log("HIGHEST BID: ${data.highestBid}")
-					highestBidAmount = data.highestBid?.bidAmount ?: highestBidAmount
-
-					bind.bid.text = "Swipe to Bid ${newBidAmount(highestBidAmount?.toDouble()?.toInt() ?: 0).toString().asMoney()}"
-
-				}
-
-				// Show viewer count or default to 0
-				bind.liveCount.text = (data.viewerCount ?: 0).toString()
-
-				// Find the current product once
-				val currentProduct = data.products?.find { it?.id == data.highestBid?.productId }
-
-				log("CURRENT PRODUCT Value : $currentProduct")
-
-				// Determine sale status once
-				val isSold = currentProduct?.status == "sold"
-				bind.soldLayout.isVisible = isSold
-				bind.bidLayout.isVisible = !isSold
-
-				if (isSold) {
-					inputSheet?.dismiss()
-				}
-
-				bind.productLayout.isVisible = !isSold
-
-				if (isSold && data.highestBid?.userId == userId) {
-					bind.soldOutText.text = "You won the bid"
-				}
-
-				// Show bid countdown if available
-				val countdown = snapshot.child("bidCountDown").value?.toString()
-
-				if (!countdown.isNullOrEmpty()) {
-					bind.bidTime.isVisible = true
-					bind.bidTime.text = "Ends in $countdown"
-				} else {
-					bind.bidTime.isVisible = false
-				}
-
-				isAllowBidForAll = data.allowBidForAll ?: true
-
-			}
-
-		}
-
-		override fun onCancelled(error: DatabaseError) {
-			log("Firebase cancelled: ${error.message}")
-		}
-
-	}
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
 		roomID = requireArguments().getString("roomID") ?: ""
 		streamID = requireArguments().getString("streamID") ?: ""
+		socketUrl = Const.SOCKET_URL
 	}
 
 	@SuppressLint("ClickableViewAccessibility")
@@ -182,426 +148,228 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
 		bind.recycler.adapter = commentAdapter
 
-		FireRef.LIVE_SESSIONS.child(roomID).addValueEventListener(eventListener)
+		manager = AgoraManager(mCtx, myAppId, agoraToken, channelName)
 
-		FireRef.LIVE_SESSIONS.child(roomID).addChildEventListener(object : ChildEventListener {
-			override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
-
+		requestPerms(Const.PERMISSIONS) {
+			if (it) {
+				manager?.initializeAgoraSDK(Constants.CLIENT_ROLE_AUDIENCE)
+				manager?.joinSubscriberChannel(userId.toInt())
+			} else {
+				errorToast("Permissions not granted!")
 			}
+		}
 
-			override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
+		manager?.onUserJoin = { uId, elapsed ->
+			activity?.runOnUiThread {
+				setupRemoteVideo(uId)
 			}
+		}
 
-			override fun onChildRemoved(snapshot: DataSnapshot) {
-				if (snapshot.key == "highestBid") {
 
-					FireRef.LIVE_SESSIONS.child(roomID).addListenerForSingleValueEvent(object : ValueEventListener {
-						override fun onDataChange(snapshot: DataSnapshot) {
+		if (socketUrl.isNotEmpty()) {
+			socketManager = SocketManager.getInstance(requireContext())
+			socketManager?.initialize(socketUrl, mapOf("uid" to userId))
+			socketManager?.connect(onConnected = {
+				socketManager?.joinRoom(roomID, userId) {
+				}
+			}) { err -> log("Socket connect error: $err") }
 
-							runSafe {
-								val data = LiveShowModelOld().fromMap(snapshot)
+			socketManager?.onViewerCount { args ->
 
-								val currentProduct = data.products?.find { it?.isCurrent == true }
-
-								log("CURRENT PRODUCT : $currentProduct")
-
-								if (currentProduct != null) {
-									bind.productName.text = currentProduct.name?.asCapital()
-									bidProductId = currentProduct.id
-									bind.productImage.loadUrl(
-										mCtx,
-										currentProduct.image ?: "",
-										placeHolder = draw.product_img
-									)
-									bind.bidPrice.text = currentProduct.price.toString().asMoney()
-
-									highestBidAmount = currentProduct.price.toString()
-
-									bind.quantity.text = buildString {
-										append("Price: ")
-										append(currentProduct.price.toString().asMoney())
-									}
-
-									bind.bid.text = "Swipe to Bid ${newBidAmount(highestBidAmount?.toDouble()?.toInt() ?: 0).toString().asMoney()}"
-
-									bind.bid.setCompleted(completed = false, withAnimation = true)
-
-								}
-							}
-
+				runSafe {
+					if (args.optString("room_id") == roomID) {
+						requireActivity().runOnUiThread {
+							bind.liveCount.text = args.optString("count")
 						}
-
-						override fun onCancelled(error: DatabaseError) {
-
-						}
-					})
+					}
 
 				}
 			}
 
-			override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {
+			socketManager?.getHighestBid { json ->
+				handleBidUpdate(json)
 			}
 
-			override fun onCancelled(error: DatabaseError) {
+			socketManager?.getUpdatedProduct { json ->
+				runSafe {
+					requireActivity().runOnUiThread {
+
+						if (json.optString("room_id") == roomID) {
+							val products = LiveShowModel.fromJson(json)
+
+							updateProductUI(products.products.find { it?.isCurrent == true })
+
+							bind.bid.text = "Swipe to Bid ${
+								newBidAmount(
+									products.products.find { it?.isCurrent == true }?.price?.toDoubleOrNull()?.toInt() ?: 0
+								).toString().asMoney()
+							}"
+						}
+
+					}
+				}
+
 			}
 
-		})
+			socketManager?.getBidFinalize { json ->
+				runSafe {
+
+					requireActivity().runOnUiThread {
+
+						bind.bidTime.isVisible = false
+
+						val winner = json.getJSONObject("winner")
+
+						log("WINNER: $winner")
+
+						if (roomID == json.optString("room_id")) {
+							bind.soldLayout.isVisible = true
+							bind.bidLayout.isVisible = false
+							bind.productLayout.isVisible = false
+						}
+
+						if (userId == winner.optString("user_id")) {
+							bind.soldOutText.text = "You won the bid"
+						} else {
+							bind.soldOutText.text = "Bidder ${winner.optString("user_name")} won the bid"
+						}
+
+					}
+
+				}
+			}
+
+			// Optional room/session updates (current product, sold, allow flags, countdown)
+			socketManager?.onMessage { msg ->
+				log("${roomID}  MESSAGES $msg")
+
+				viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Main) {
+					commentList.add(
+						LiveChatModel(
+							msg.optString("user_image"),
+							msg.optString("user_name"),
+							msg.optString("user_id"),
+							msg.optString("message")
+						)
+					)
+					commentAdapter.notifyItemInserted(commentList.size - 1)
+					bind.recycler.scrollToPosition(commentList.size - 1)
+				}
+
+			}
+
+			socketManager?.onRoomEnded { json ->
+				runSafe {
+					if (json.optString("room_end") == roomID) {
+						finish()
+					}
+				}
+			}
+		}
+
+		socketManager?.onRoomCreated { obj ->
+			requireActivity().runOnUiThread {
+				if (obj.optString("room_id") == roomID){
+					updateSessionUI(obj)
+				}
+			}
+		}
+
+		socketManager?.onFollowSellerStatus { obj ->
+			requireActivity().runOnUiThread {
+				if (obj.optString("room_id") == roomID && obj.optString("user_id") == userId){
+
+					log("IS FOLLOWING : ${obj.optString("is_followed")}")
+
+					bind.follow.isVisible = !obj.optBoolean("is_followed")
+				}
+			}
+		}
+
+		socketManager?.receiveRaid {obj ->
+			requireActivity().runOnUiThread {
+				if (obj.optString("source_room_id") == roomID){
+					val targetRoomId = obj.optString("target_room_id")
+//					onRaid(targetRoomId)
+				}
+			}
+		}
 
 		bind.message.setEndIconOnClickListener {
 			if (bind.text.value().isNotEmpty()) {
-//                sendMessage(bind.text.value())
-
 				if (App.profileResponse.value?.buyerIdentityStatus == "verified") {
-					sendZimMessage(bind.text.value())
+					socketManager?.sendMessage(
+						roomID,
+						bind.text.value(),
+						userId,
+						userName,
+						userImage
+					)
+					bind.text.text.clear()
 				} else {
 					verificationDialog()
 				}
 			}
 		}
 
+		bind.wallet.setHapticClickListener {
+			showPaymentAndAddressSheet()
+		}
+
 		bind.gift.setHapticClickListener {
 			sendTipSheet()
 		}
 
-		bind.wallet.setHapticClickListener {
+		bind.share.setHapticClickListener {
+			val shareText = buildString {
+				append(Const.BASE_URL)
+				append("/live-show?roomId=$roomID")
+			}
 
-			showPaymentAndAddressSheet()
+			val shareIntent = Intent().apply {
+				action = Intent.ACTION_SEND
+				putExtra(Intent.EXTRA_TEXT, shareText)
+				type = "text/plain"
+			}
 
-		}
+			val chooserIntent = Intent.createChooser(shareIntent, "Share via")
 
-		viewModel.selectedStream.observe(viewLifecycleOwner) { stream ->
-			if (stream == roomID) {
-
-				/*bind.userImage.loadUrl(
-					mCtx ,
-					stream.seller?.image.toString() ,
-					placeHolder = draw.user_image
-				)*/
-
-//				product = stream.products?.find { it?.isCurrent == true }
-
-				bidProductId = product?.id.toString()
-
-				highestBidAmount = product?.price.toString()
-
-//				bind.userName.text = stream.seller?.name.toString()
-
-				bind.productName.text = product?.name?.asCapital()
-
-				bind.productImage.loadUrl(
-					mCtx,
-					product?.image.toString(),
-					placeHolder = draw.product_img
-				)
-
-				bind.bidPrice.text = (product?.price ?: "0").asMoney()
-
-				try {
-					bind.quantity.text = buildString {
-						append("Price: ")
-						append(product?.price.toString().asMoney())
-					}
-				} catch (e: Exception) {
-					e.printStackTrace()
-				}
-
-				/*if (stream.seller?.isFollowed == true) {
-					bind.follow.setBackgroundColor(ContextCompat.getColor(mCtx , R.color.outline))
-					bind.follow.setTextColor(ContextCompat.getColor(mCtx , R.color.onSurface))
-					bind.follow.text = "Unfollow"
-				} else {
-					bind.follow.setBackgroundColor(ContextCompat.getColor(mCtx , R.color.primary))
-					bind.follow.setTextColor(ContextCompat.getColor(mCtx , R.color.background))
-					bind.follow.text = "Follow"
-				}*/
-
-				bind.follow.setHapticClickListener {
-//					viewModel.followUser(stream.seller?.id?.request())
-				}
-
-				runSafe {
-					bind.bid.text = "Swipe to Bid ${newBidAmount(highestBidAmount?.toDouble()?.toInt() ?: 0).toString().asMoney()}"
-				}
-
-				bind.bid.onSlideCompleteListener = object : OnSlideCompleteListener {
-					override fun onSlideComplete(view: SlideToActView) {
-
-						if (isAllowBidForAll) {
-							attemptBid()
-						} else {
-
-							if (App.profileResponse.value?.buyerIdentityStatus == "verified") {
-								attemptBid()
-							} else {
-								verificationDialog()
-							}
-						}
-					}
-				}
-
-				bind.max.setHapticClickListener {
-
-					showInputSheet()
-
-				}
+			if (shareIntent.resolveActivity(requireActivity().packageManager) != null) {
+				startActivity(chooserIntent)
+			} else {
+				errorToast("No sharing apps available")
 			}
 		}
 
-		viewModel.createBidRepo.observe(viewLifecycleOwner) {
-			when (it) {
-				is Resource.Success -> {
-					viewModel.createBidRepo.value = null
-					bind.loader.isVisible = false
-					it.value.data
-				}
-
-				is Resource.Error -> {
-					bind.loader.isVisible = false
-
-					it.parse(mCtx, TAG, object : AlertClicks {
-						override fun primaryClick(dialog: AppBottomSheet) {
-							dialog.dismiss()
-
-						}
-
-						override fun secondaryClick(dialog: AppBottomSheet) {
-							dialog.dismiss()
-
-						}
-					})
-				}
-
-				else -> {}
-
-			}
-		}
-
-		viewModel.followUserShowRepo.observe(viewLifecycleOwner) {
-			when (it) {
-				is Resource.Success -> {
-
-					val mData = it.value.data
-					if (mData?.status == true) {
-						bind.follow.setBackgroundColor(ContextCompat.getColor(mCtx, R.color.outline))
-						bind.follow.setTextColor(ContextCompat.getColor(mCtx, R.color.onSurface))
-						bind.follow.text = "Unfollow"
-					} else {
-						bind.follow.setBackgroundColor(ContextCompat.getColor(mCtx, R.color.primary))
-						bind.follow.setTextColor(ContextCompat.getColor(mCtx, R.color.background))
-						bind.follow.text = "Follow"
-					}
-
-				}
-
-				is Resource.Error -> {
-					bind.loader.isVisible = false
-
-					it.parse(mCtx, TAG, object : AlertClicks {
-						override fun primaryClick(dialog: AppBottomSheet) {
-							dialog.dismiss()
-						}
-
-						override fun secondaryClick(dialog: AppBottomSheet) {
-							dialog.dismiss()
-						}
-					})
-
-				}
-
-				else -> {}
-
-			}
-		}
-
-		if (App.profileResponse.value?.buyerIdentityStatus != "verified") {
-			verificationDialog()
+		bind.shop.setHapticClickListener {
+			showProductSheet()
 		}
 
 	}
 
-	/*override fun onResume() {
+	override fun onResume() {
 		super.onResume()
-		loginAndPlay()
+//		loginAndPlay()
 	}
 
 	override fun onPause() {
 		super.onPause()
-		stopStream()
+//		stopStream()
 	}
-*/
 	override fun onDestroy() {
 		super.onDestroy()
-//		chatManager?.shutdown()
+		manager?.destroyEngine()
 	}
 
-	/*private fun loginAndPlay() {
-		val manager = StreamingManager.getInstance(requireContext())
-		manager.loginRoom(
-			roomId = roomID,
-			userId = userId,
-			userName = userName,
-			userImage = userImage
-		) { _, _ ->
-			manager.startPlayingStream(roomID, bind.hostView)
-		}
-		initializeChat()
+
+	private fun setupRemoteVideo(uid: Int) {
+		val surfaceView = SurfaceView(mCtx)
+		val videoCanvas = VideoCanvas(surfaceView, VideoCanvas.RENDER_MODE_HIDDEN, uid)
+		bind.hostView.addView(surfaceView)
+		log("CHILD : ${bind.hostView.childCount}")
+		manager?.mRtcEngine?.setupRemoteVideo(videoCanvas)
 	}
 
-	private fun stopStream() {
-		val manager = StreamingManager.getInstance(requireContext())
-		manager.stopPlayingStream(roomID)
-		manager.logoutRoom(roomID)
-	}
-
-	private fun destroyEngine() {
-		val manager = StreamingManager.getInstance(requireContext())
-		manager.destroyEngine()
-	}
-*/
-	private fun initializeChat() {
-		if (chatManager == null) {
-			chatManager = ChatManager(
-				application = requireActivity().application,
-				appId = Const.APP_ID.toLong(),
-				appSign = Const.APP_SIGN,
-				userId = userId,
-				userName = userName,
-				userImage = userImage
-			)
-		}
-
-		/*chatManager?.setListener(object : ChatManager.Listener {
-			override fun onMessageReceived(message: ZIMTextMessage) {
-				runSafe {
-					commentList.add(LiveChatModel.fromZIMMessage(message))
-					commentAdapter.notifyItemInserted(commentList.size - 1)
-					bind.recycler.post { bind.recycler.smoothScrollToPosition(commentList.size) }
-				}
-			}
-
-			override fun onRoomStateChanged(state: String) {
-				log("ROOM STATE CHANGED: $state")
-			}
-		})*/
-
-//		chatManager?.initializeAndLogin(roomID) {
-//			if (App.profileResponse.value?.preferences?.enablePrivateEntry == false) sendZimMessage("Joined \uD83D\uDC4B")
-//		}
-
-	}
-
-	// ZIM event handler moved into ChatManager
-
-	fun sendZimMessage(content: String) {
-		val extended = ZIMExtendedData(userImage, userId, userName).toJson()
-//		chatManager?.sendTextMessage(roomID, content, extended)
-		bind.text.setText("")
-	}
-
-	private fun verificationDialog() {
-		AppBottomSheet(
-			mCtx,
-			R.drawable.ic_info,
-			title = when (App.profileResponse.value?.buyerIdentityStatus) {
-
-				"null" -> {
-					"Become a Verified Buyer!"
-				}
-
-				"pending" -> {
-					"Verification Pending!"
-				}
-
-				"rejected" -> {
-					"Verification Rejected!"
-				}
-
-				else -> {
-					"Become a Verified Buyer!"
-				}
-			},
-			"Before you interact with lives shows, You need to become a Verified Buyer.",
-			primaryBtnText = "Okay",
-			secondaryBtnText = "Cancel",
-			canCancel = true,
-			showSecondary = false,
-			iconPadding = 16,
-			alertType = AlertType.INFO,
-			clicks = object : AlertClicks {
-				override fun primaryClick(dialog: AppBottomSheet) {
-					dialog.dismiss()
-					startActivity(Intent(mCtx, TrustedBuyerActivity::class.java).putExtra("slug", "buyer"))
-				}
-
-				override fun secondaryClick(dialog: AppBottomSheet) {
-					dialog.dismiss()
-				}
-			}
-		).show()
-	}
-
-	fun showInputSheet() {
-		val inputSheetBind = InputBottomSheetBinding.bind(
-			layoutInflater.inflate(
-				R.layout.input_bottom_sheet,
-				null,
-				false
-			)
-		)
-		inputSheet = Alerts.appBottomSheet(mCtx, true, inputSheetBind)
-
-		inputSheetBind.submitBtn.setHapticClickListener {
-			val ref = FireRef.LIVE_SESSIONS.child(roomID).child("highestBid")
-
-			ref.addListenerForSingleValueEvent(object : ValueEventListener {
-				override fun onDataChange(snapshot: DataSnapshot) {
-
-					runSafe {
-						val bidAmount = inputSheetBind.price.value().toDouble().toString()
-
-						if (inputSheetBind.price.value().isEmpty() || inputSheetBind.price.value().toDouble() < (highestBidAmount?.toDouble()
-								?: 0.0)
-						) {
-							Alerts.error(mCtx, "Bid amount must be greater than the current highest bid.")
-						} else {
-							val bidData = mutableMapOf<String, Any?>(
-								"bidAmount" to bidAmount,
-								"userName" to userName,
-								"userImage" to userImage,
-								"userId" to userId,
-								"productId" to bidProductId
-							)
-
-							// If startTime doesn't exist, it's a new bid; otherwise, update existing
-							if (!snapshot.hasChild("startTime")) {
-								bidData["startTime"] = Utils.timestamp().toString()
-								bidData["productStatus"] = "processed"
-							}
-
-							ref.updateChildren(bidData)
-
-							Alerts.success(mCtx, "Bid placed successfully")
-							sendZimMessage("New high bid: $$bidAmount")
-
-							inputSheet?.dismiss()
-						}
-					}
-
-				}
-
-				override fun onCancelled(error: DatabaseError) {
-					log("Firebase Error: ${error.message}")
-				}
-
-			})
-		}
-
-		inputSheetBind.close.setHapticClickListener {
-			inputSheet?.dismiss()
-		}
-
-		inputSheet?.show()
-	}
 
 	@SuppressLint("ClickableViewAccessibility")
 	fun setUpSwipe() {
@@ -667,6 +435,235 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
 	}
 
+	private fun handleBidUpdate(json: JSONObject) {
+		runSafe {
+			requireActivity().runOnUiThread {
+				if (json.optString("room_id") == roomID){
+					val highestBid = json.getJSONObject("get_highest_bid")
+					val bidAmount = highestBid.optString("bid_amount")
+					log("BID UPDATE: $bidAmount")
+					bind.bidPrice.text = bidAmount.asMoney()
+					bind.bid.text = "Swipe to Bid ${newBidAmount(bidAmount.toDoubleOrNull()?.toInt() ?: 0).toString().asMoney()}"
+					highestBidAmount = bidAmount
+					bidProductId = highestBid.optString("product_id")
+				}
+			}
+
+		}
+	}
+
+	fun newBidAmount(amount: Int): Int {
+
+		log("NEW BID AMOUNT: $amount")
+
+		return when {
+			amount in 1..30 -> amount + 1
+			amount in 31..50 -> amount + 2
+			amount in 51..100 -> amount + 3
+			amount in 101..300 -> amount + 5
+			amount in 301..1000 -> amount + 10
+			amount in 1001..2000 -> amount + 20
+			amount >= 2001 -> amount + 50
+			else -> 0
+		}
+	}
+
+	fun updateProductUI(liveProduct: LiveShowModel.Product?) {
+
+		activity?.runOnUiThread {
+			bind.soldLayout.isVisible = false
+			bind.bidLayout.isVisible = true
+			bind.productLayout.isVisible = true
+			bind.productName.text = liveProduct?.name?.asCapital()
+			bind.productCategory.text = liveProduct?.category?.asCapital()
+			bind.quantity.text = buildString {
+				append("Quantity: ")
+				append(liveProduct?.quantity ?:0)
+			}
+			bind.productImage.loadUrl(mCtx, liveProduct?.image ?: "")
+			val price = liveProduct?.price
+			bind.bidPrice.text = price?.asMoney()
+			highestBidAmount = price
+			bidProductId = liveProduct?.id
+		}
+
+	}
+
+	private fun updateSessionUI(json: JSONObject) {
+		runSafe {
+			val showData = LiveShowModel.fromJson(json)
+
+			log("SESSION UPDATE: $showData")
+
+			productList.clear()
+			productList.addAll(showData.products)
+			bind.countBadge.isVisible = true
+			bind.countBadge.text = productList.size.toString()
+
+			val liveProduct = showData.products.find { it?.isCurrent == true }
+
+			if (showData.highestBid.bidAmount?.isNotEmpty() == true) {
+				highestBidAmount = showData.highestBid.bidAmount
+				log("HIGHEST BID: ${highestBidAmount}")
+				bind.bid.text = "Swipe to Bid ${newBidAmount(highestBidAmount?.toDoubleOrNull()?.toInt() ?: 0).toString().asMoney()}"
+			} else {
+				highestBidAmount = ""
+				bind.bid.text = "Swipe to Bid ${newBidAmount(liveProduct?.price?.toDoubleOrNull()?.toInt() ?: 0).toString().asMoney()}"
+			}
+
+			updateProductUI(liveProduct)
+
+			isAllowBidForAll = json.optBoolean("allowBidForAll", true)
+
+
+			sellerId = showData.seller?.id.toString()
+
+			bind.userName.text = showData.seller?.name?.asCapital()
+			bind.userImage.loadUrl(mCtx, showData.seller?.image ?: "")
+
+			bind.liveCount.text = showData.viewerCount
+
+			bind.follow.setHapticClickListener {
+				socketManager?.followSeller( userId,sellerId ?:"")
+			}
+
+			log("ALLOW BID FOR ALL: $isAllowBidForAll")
+
+			bind.bid.onSlideCompleteListener = object : OnSlideCompleteListener {
+				override fun onSlideComplete(view: SlideToActView) {
+
+					if (App.profileResponse.value?.hasShippingAddress == true && App.profileResponse.value?.hasCardAdded == true){
+
+						if (isAllowBidForAll) {
+							attemptBid()
+						} else {
+							if (App.profileResponse.value?.buyerIdentityStatus == "verified") {
+								attemptBid()
+							} else {
+								verificationDialog()
+							}
+						}
+
+					}else{
+						showPaymentAndAddressSheet()
+					}
+
+				}
+			}
+
+			bind.max.setHapticClickListener {
+				showInputSheet()
+			}
+
+			socketManager?.getBidTimerUpdate { json ->
+				updateCountdown(json)
+			}
+
+			socketManager?.onAllowBidForAllUpdate { obj ->
+				if (roomID == obj.optString("room_id")) {
+					val allowBidForAll = obj.optBoolean("allow_bid_for_all")
+					isAllowBidForAll = allowBidForAll
+				}
+			}
+
+		}
+	}
+
+	private fun showProductSheet() {
+		val productSheetBind = ProductSheetBinding.bind(layoutInflater.inflate(R.layout.product_sheet , null , false))
+		val productSheet = Alerts.appBottomSheet(mCtx , true , productSheetBind)
+
+		productAdapter = FirebaseProductAdapter(productList , object : RecyclerClicks {
+			override fun itemClick(pos : Int , status : String?) {
+
+			}
+
+		})
+
+		productSheetBind.title.text = buildString {
+			append("Seller Products")
+		}
+
+		productSheetBind.recycler.adapter = productAdapter
+
+		productSheet.show()
+
+		productSheetBind.close.setHapticClickListener {
+			productSheet.dismiss()
+		}
+		productSheetBind.addBtn.isVisible = false
+	}
+
+	private fun verificationDialog() {
+		AppBottomSheet(
+			mCtx,
+			R.drawable.ic_info,
+			title = when (App.profileResponse.value?.buyerIdentityStatus) {
+
+				"null" -> {
+					"Become a Verified Buyer!"
+				}
+
+				"pending" -> {
+					"Verification Pending!"
+				}
+
+				"rejected" -> {
+					"Verification Rejected!"
+				}
+
+				else -> {
+					"Become a Verified Buyer!"
+				}
+			},
+			"Before you interact with lives shows, You need to become a Verified Buyer.",
+			primaryBtnText = "Okay",
+			secondaryBtnText = "Cancel",
+			canCancel = true,
+			showSecondary = false,
+			iconPadding = 16,
+			alertType = AlertType.INFO,
+			clicks = object : AlertClicks {
+				override fun primaryClick(dialog: AppBottomSheet) {
+					dialog.dismiss()
+					startActivity(Intent(mCtx, TrustedBuyerActivity::class.java).putExtra("slug", "buyer"))
+				}
+
+				override fun secondaryClick(dialog: AppBottomSheet) {
+					dialog.dismiss()
+				}
+			}
+		).show()
+	}
+
+	fun attemptBid() {
+		runSafe {
+			log("SWIPED")
+
+			val bidAmount = newBidAmount(highestBidAmount?.toDouble()?.toInt() ?: 0).toString()
+
+			socketManager?.emitBid(
+				roomId = roomID,
+				userId = userId,
+				userName = userName,
+				userImage = userImage,
+				productId = bidProductId,
+				bidAmount = bidAmount
+			)
+
+//            sendZimMessage("New high bid: $$bidAmount")
+			Alerts.success(mCtx, "Bid placed successfully")
+			/*	socketManager?.sendMessage(
+					roomID,
+					"New high bid: $$bidAmount",
+					userId,
+					userName,
+					userImage
+				)*/
+			bind.bid.setCompleted(completed = false, withAnimation = true)
+		}
+	}
+
 	fun showPaymentAndAddressSheet() {
 
 		val paymentAddressBind = PaymentAndAddressSheetBinding.bind(
@@ -719,11 +716,11 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 			if (hasCard) {
 				cardNumber.text = buildString {
 					append("•••• •••• •••• ")
-					append(App.profileResponse.value?.defaultCard?.last4)
+					append(App.profileResponse.value?.defaultCard?.last4 ?:"")
 				}
 
 				expiryDate.text = buildString {
-					append(App.profileResponse.value?.defaultCard?.expDate)
+					append(App.profileResponse.value?.defaultCard?.expDate?:"")
 				}
 			} else {
 				cardNumber.text = "Payment Cards Not Added"
@@ -743,56 +740,67 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 			makeOfferSheet.dismiss()
 		}
 
+		bind.bid.setCompleted(completed = false, withAnimation = true)
+
 		makeOfferSheet.show()
 
 	}
 
-	fun attemptBid() {
-		runSafe {
-			log("SWIPED")
+	private fun showInputSheet() {
 
-			val ref = FireRef.LIVE_SESSIONS.child(roomID).child("highestBid")
+		val inputSheetBind = InputBottomSheetBinding.bind(
+			layoutInflater.inflate(
+				R.layout.input_bottom_sheet,
+				null,
+				false
+			)
+		)
 
-			ref.addListenerForSingleValueEvent(object : ValueEventListener {
-				override fun onDataChange(snapshot: DataSnapshot) {
-					val bidAmount = newBidAmount(highestBidAmount?.toDouble()?.toInt() ?: 0).toString()
+		inputSheet = Alerts.appBottomSheet(mCtx, true, inputSheetBind)
 
-					val bidData = mutableMapOf<String, Any?>(
-						"bidAmount" to bidAmount,
-						"userName" to userName,
-						"userImage" to userImage,
-						"userId" to userId,
-						"productId" to bidProductId
-					)
+		inputSheetBind.submitBtn.setHapticClickListener {
+			val priceText = inputSheetBind.price.value()
+			val priceVal = priceText.toDoubleOrNull() ?: 0.0
+			val current = highestBidAmount?.toDoubleOrNull() ?: 0.0
+			if (priceVal <= current) {
+				Alerts.error(mCtx, "Bid amount must be greater than the current highest bid.")
+			} else {
+				socketManager?.emitBid(
+					roomId = roomID,
+					userId = userId,
+					userName = userName,
+					userImage = userImage,
+					productId = bidProductId,
+					bidAmount = priceText
+				)
+				Alerts.success(mCtx, "Bid placed successfully")
 
-					if (!snapshot.hasChild("startTime")) {
-						bidData["startTime"] = Utils.timestamp().toString()
-						bidData["productStatus"] = "processed"
-					}
-
-					ref.updateChildren(bidData)
-					sendZimMessage("New high bid: $$bidAmount")
-					Alerts.success(mCtx, "Bid placed successfully")
-					bind.bid.setCompleted(completed = false, withAnimation = true)
-				}
-
-				override fun onCancelled(error: DatabaseError) {
-					log("Firebase Error: ${error.message}")
-				}
-			})
+				/*	socketManager?.sendMessage(
+						roomID,
+						"New high bid: $$priceText",
+						userId,
+						userName,
+						userImage
+					)*/
+//                sendZimMessage("New high bid: $${priceVal}")
+				inputSheet?.dismiss()
+			}
 		}
+
+		inputSheetBind.close.setHapticClickListener { inputSheet?.dismiss() }
+		inputSheet?.show()
 	}
 
-	fun newBidAmount(amount: Int): Int {
-		return when {
-			amount in 1..30 -> amount + 1
-			amount in 31..50 -> amount + 2
-			amount in 51..100 -> amount + 3
-			amount in 101..300 -> amount + 5
-			amount in 301..1000 -> amount + 10
-			amount in 1001..2000 -> amount + 20
-			amount >= 2001 -> 50
-			else -> 0
+	private fun updateCountdown(json: JSONObject) {
+		val value = json.optString("remaining")
+		runSafe {
+			log("BID COUNTDOWN: $value")
+			requireActivity().runOnUiThread {
+				if (json.optString("room_id") == roomID) {
+					bind.bidTime.isVisible = true
+					bind.bidTime.text = "Ends in $value"
+				}
+			}
 		}
 	}
 
@@ -807,8 +815,88 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
 		val sendTipSheet = Alerts.appBottomSheet(mCtx, true, sendTipSheetBind)
 
+		sendTipSheetBind.root.setOnClickListener {
+			hideKeyboard(it)
+		}
+
+		sendTipSheetBind.btnTip5.setHapticClickListener {
+			sendTipSheetBind.customOffer.setText("5")
+		}
 		sendTipSheetBind.close.setHapticClickListener {
 			sendTipSheet.dismiss()
+		}
+
+		sendTipSheetBind.btnTip10.setHapticClickListener {
+			sendTipSheetBind.customOffer.setText("10")
+		}
+
+		sendTipSheetBind.btnTip25.setHapticClickListener {
+			sendTipSheetBind.customOffer.setText("25")
+		}
+
+		sendTipSheetBind.btnTip50.setHapticClickListener {
+			sendTipSheetBind.customOffer.setText("50")
+		}
+
+		sendTipSheetBind.paymentWallet.text = buildString {
+			append("Wallet - ")
+			append(App.profileResponse.value?.walletAmount ?: 0)
+		}
+
+		sendTipSheetBind.walletRadio.setOnCheckedChangeListener { _, isChecked ->
+			if (isChecked) {
+				sendTipSheetBind.cardRadio.isChecked = false
+			}
+		}
+
+		sendTipSheetBind.cardRadio.setOnCheckedChangeListener { _, isChecked ->
+			if (isChecked) {
+				sendTipSheetBind.walletRadio.isChecked = false
+			}
+		}
+
+		if (App.profileResponse.value?.defaultCard != null) {
+			sendTipSheetBind.paymentCard.text = buildString {
+				append("XXXX XXXX XXXX ")
+				append(App.profileResponse.value?.defaultCard?.last4 ?: 0)
+			}
+		} else {
+			sendTipSheetBind.cardRadio.isVisible = false
+			sendTipSheetBind.paymentCard.text = buildString {
+				append("Payment Method Not Added")
+			}
+		}
+
+		sendTipSheetBind.btnSendTip.setHapticClickListener {
+
+			with(sendTipSheetBind) {
+
+				if (!walletRadio.isChecked && !cardRadio.isChecked) {
+					Alerts.error(mCtx, "Please select a payment method")
+					return@setHapticClickListener
+				}
+
+				if (customOffer.text.toString().isEmpty()) {
+					Alerts.error(mCtx, "Please enter an amount")
+					return@setHapticClickListener
+				}
+
+				if (walletRadio.isChecked && customOffer.text.toString().toDouble() > ((App.profileResponse.value?.walletAmount ?: "0.0").toString()
+						.toDouble())
+				) {
+					Alerts.error(mCtx, "Insufficient balance")
+					return@setHapticClickListener
+				}
+			}
+
+			sendTipSheet.dismiss()
+			bind.loader.isVisible = true
+			viewModel.sendTipAmount(
+				sellerId!!.request(),
+				sendTipSheetBind.customOffer.text.toString().request(),
+				null
+			)
+
 		}
 
 		sendTipSheet.show()

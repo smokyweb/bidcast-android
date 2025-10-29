@@ -11,10 +11,15 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent" />-->
 
-    <com.millicast.video.TextureViewRenderer
+<!--    <com.millicast.video.TextureViewRenderer
         android:id="@+id/hostView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent" />-->
+
+    <FrameLayout
+        android:id = "@+id/hostView"
+        android:layout_width = "match_parent"
+        android:layout_height = "match_parent"/>
 
     <ViewFlipper
         android:id="@+id/view_flipper"

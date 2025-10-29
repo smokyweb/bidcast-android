@@ -20,11 +20,10 @@ class AgoraManager(
 	val channelName: String
 ) {
 
-	private var mRtcEngine: RtcEngine? = null
+	var mRtcEngine: RtcEngine? = null
 	private var isSwitched: Boolean = false
 	private var isMuted: Boolean = false
 	private var isCameraOff: Boolean = false
-
 
 	companion object {
 		const val TAG = "AGORA-MANAGER"
@@ -54,11 +53,12 @@ class AgoraManager(
 
 		override fun onError(err: Int) {
 			super.onError(err)
+			log(TAG, "Error: $err")
 			onEngineError?.invoke(err)
 		}
 	}
 
-	fun initializeAgoraSDK() {
+	fun initializeAgoraSDK(role:Int) {
 		runSafe {
 			val config = RtcEngineConfig().also {
 				it.mContext = mCtx
@@ -86,20 +86,34 @@ class AgoraManager(
 		val surfaceView = SurfaceView(mCtx)
 		val videoCanvas = VideoCanvas(surfaceView, VideoCanvas.RENDER_MODE_HIDDEN, 0)
 		videoCanvas.mirrorMode = Constants.VIDEO_MIRROR_MODE_AUTO
-
 		mView.addView(surfaceView)
 		mRtcEngine?.setupLocalVideo(videoCanvas)
 	}
 
-	fun joinChannel() {
+	fun joinChannel(userId : Int) {
 		val options = ChannelMediaOptions().also {
 			it.channelProfile = Constants.CHANNEL_PROFILE_LIVE_BROADCASTING
 			it.clientRoleType = Constants.CLIENT_ROLE_BROADCASTER
+			it.autoSubscribeAudio = false
+			it.autoSubscribeVideo = false
 			it.publishMicrophoneTrack = true
 			it.publishCameraTrack = true
 		}
 
-		mRtcEngine?.joinChannel(token, channelName, 0, options)
+		mRtcEngine?.joinChannel(token, channelName, userId, options)
+	}
+
+	fun joinSubscriberChannel(userId : Int) {
+		val options = ChannelMediaOptions().also {
+			it.channelProfile = Constants.CHANNEL_PROFILE_LIVE_BROADCASTING
+			it.clientRoleType = Constants.CLIENT_ROLE_BROADCASTER
+			it.autoSubscribeAudio = true
+			it.autoSubscribeVideo = true
+			it.publishMicrophoneTrack = false
+			it.publishCameraTrack = false
+		}
+
+		mRtcEngine?.joinChannel(token, channelName, userId, options)
 	}
 
 	fun turnOffCamera(callback: (isOff: Boolean) -> Unit) {
@@ -133,9 +147,9 @@ class AgoraManager(
 		it.orientationMode = VideoEncoderConfiguration.ORIENTATION_MODE.ORIENTATION_MODE_ADAPTIVE
 		it.degradationPrefer = VideoEncoderConfiguration.DEGRADATION_PREFERENCE.MAINTAIN_BALANCED
 		it.mirrorMode = VideoEncoderConfiguration.MIRROR_MODE_TYPE.MIRROR_MODE_AUTO
-		it.frameRate = VideoEncoderConfiguration.FRAME_RATE.FRAME_RATE_FPS_60.value
-		it.bitrate = VideoEncoderConfiguration.STANDARD_BITRATE
-		it.dimensions = VideoEncoderConfiguration.VD_1920x1080
+		it.frameRate = VideoEncoderConfiguration.FRAME_RATE.FRAME_RATE_FPS_24.value
+		it.bitrate = VideoEncoderConfiguration.DEFAULT_MIN_BITRATE_EQUAL_TO_TARGET_BITRATE
+		it.dimensions = VideoEncoderConfiguration.VD_640x480
 	}
 
 }

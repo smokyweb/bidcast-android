@@ -198,8 +198,6 @@ class LiveShowSocketActivity : BaseActivity() {
 
 		bind.clip.isVisible = App.profileResponse.value?.preferences?.enableClips == true
 
-		bind.hostImage.loadUrl(this , userImage)
-
 		bind.message.setEndIconOnClickListener {
 
 			if (! isShowLive) {

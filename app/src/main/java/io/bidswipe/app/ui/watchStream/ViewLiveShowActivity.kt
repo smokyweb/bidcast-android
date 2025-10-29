@@ -13,6 +13,7 @@ import io.bidswipe.app.base.BaseActivity
 import io.bidswipe.app.controller.StreamPagerAdapter
 import io.bidswipe.app.databinding.ActivityViewLiveShowBinding
 import io.bidswipe.app.model.LiveShowModel
+import io.bidswipe.app.utils.AgoraManager
 import io.bidswipe.app.utils.Const
 import io.bidswipe.app.utils.SocketManager
 import io.bidswipe.app.utils.bind
@@ -30,8 +31,14 @@ class ViewLiveShowActivity : BaseActivity() {
 	private var streamList = arrayListOf<String>()
 	private lateinit var viewPager: ViewPager2
 	private lateinit var streamPagerAdapter: StreamPagerAdapter
-
 	private lateinit var socketUrl: String
+
+	private val agoraToken =
+		"007eJxTYLhRKeN9+RFTmkHxf4W5ux8JPY0ynfq3K67ugK7d+7QdrwwUGMwSDRKTzM1TUw1NLU2MU9IsTUyNTIwMDFPMki2NLczNp21gzGwIZGQQjDnDyMgAgSA+K0NRfn6uIQMDAJjtH6M="
+	private val channelName = "room1"
+	private val myAppId = "6a0ab77ee15943df94524201d6c93877"
+
+	var manager: AgoraManager? = null
 
 	//    private var chatManager : ChatManager? = null
 	private var socketManager: SocketManager? = null
@@ -193,7 +200,7 @@ class ViewLiveShowActivity : BaseActivity() {
 	}
 
 	private fun destroyEngine() {
-		socketManager?.disconnect()
+//		socketManager?.disconnect()
 //		streamingManager?.destroyEngine()
 	}
 

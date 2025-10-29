@@ -17,6 +17,7 @@ import io.bidswipe.app.network.response.FetchReferralResponse
 import io.bidswipe.app.network.response.FetchSellerVerificationResponse
 import io.bidswipe.app.network.response.FollowUnfollowResponse
 import io.bidswipe.app.network.response.GenerateTokenResponse
+import io.bidswipe.app.network.response.GetAgoraTokenResponse
 import io.bidswipe.app.network.response.GetAllTipsResponse
 import io.bidswipe.app.network.response.GetAuctionTypeResponse
 import io.bidswipe.app.network.response.GetBlockedUsersResponse
@@ -683,6 +684,13 @@ interface ApiInterface {
 	@GET("api/get-live-seller")
 	suspend fun getLiveSeller(
 	): GetLiveSellerResponse
+
+	@Multipart
+	@POST("api/agora-token")
+	suspend fun getAgoraToken(
+		@Part("channel") channel: RequestBody,
+		@Part("uid") uId: RequestBody
+	) : GetAgoraTokenResponse
 
 }
 

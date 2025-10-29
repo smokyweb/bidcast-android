@@ -150,7 +150,7 @@ class WatchStreamSocketFragment : BaseFragment<StreamViewModel, FragmentWatchStr
 
 		initRenderer()
 
-		startSubscription()
+//		startSubscription()
 
 		// Initialize sockets
 		if (socketUrl.isNotEmpty()) {
@@ -886,12 +886,13 @@ class WatchStreamSocketFragment : BaseFragment<StreamViewModel, FragmentWatchStr
 	private fun initRenderer() {
 		// Prefer SDK-provided EGL context for subscriber per docs
 		eglBase = EglBase.create()
-		bind.hostView.init(Media.eglBaseContext, null)
-		bind.hostView.setMirror(false)
-		bind.hostView.setScalingType(RendererCommon.ScalingType.SCALE_ASPECT_FIT)
+//		bind.hostView.init(Media.eglBaseContext, null)
+//		bind.hostView.setMirror(false)
+//		bind.hostView.setScalingType(RendererCommon.ScalingType.SCALE_ASPECT_FIT)
 		log("Renderer initialized")
 	}
 
+/*
 	private fun startSubscription() {
 		viewModel.viewModelScope.launch {
 			try {
@@ -986,6 +987,7 @@ class WatchStreamSocketFragment : BaseFragment<StreamViewModel, FragmentWatchStr
 			}
 		}
 	}
+*/
 
 	override fun onDestroy() {
 		super.onDestroy()
@@ -1042,7 +1044,7 @@ class WatchStreamSocketFragment : BaseFragment<StreamViewModel, FragmentWatchStr
 		// Cleanup video view safely
 		runSafe {
 			runSafe {
-				bind.hostView.release()
+//				bind.hostView.release()
 			}
 		}
 
@@ -1172,7 +1174,7 @@ class WatchStreamSocketFragment : BaseFragment<StreamViewModel, FragmentWatchStr
 
 				subscriber = Core.createSubscriber()
 
-				startSubscription()
+//				startSubscription()
 
 				// 8. Join new socket room
 				socketManager?.joinRoom(roomID, userId) {
