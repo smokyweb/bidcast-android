@@ -5,11 +5,11 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import io.bidswipe.app.model.StreamModel
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.network.repository.DashRepository
 import io.bidswipe.app.network.response.CreateBidResponse
 import io.bidswipe.app.network.response.FollowUnfollowResponse
-import io.bidswipe.app.network.response.GetAgoraTokenResponse
 import io.bidswipe.app.network.response.SentTipAmountResponse
 import io.bidswipe.app.utils.Const.NO_INTERNET_ERROR
 import io.bidswipe.app.utils.NetworkMonitor
@@ -24,19 +24,19 @@ class StreamViewModel @Inject constructor(
 ) : ViewModel() {
 
 	// LiveData to hold the list or individual streams
-    private val _streams = MutableLiveData<List<String>>()
+    private val _streams = MutableLiveData<List<StreamModel>>()
 
-    val streams: LiveData<List<String>> = _streams
+    val streams: LiveData<List<StreamModel>> = _streams
 
-    fun setStreams(newStreams: List<String>) {
+    fun setStreams(newStreams: List<StreamModel>) {
 		_streams.value = newStreams
 	}
 
 	// Optionally, you can have a LiveData for the currently selected stream
-    private val _selectedStream = MutableLiveData<String>()
-    val selectedStream: LiveData<String> = _selectedStream
+    private val _selectedStream = MutableLiveData<StreamModel>()
+    val selectedStream: LiveData<StreamModel> = _selectedStream
 
-    fun selectStream(stream: String) {
+    fun selectStream(stream: StreamModel) {
 		_selectedStream.value = stream
 	}
 

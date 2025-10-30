@@ -47,6 +47,8 @@ data class GetMyShowResponse(
         val products: List<Product?>?,
 		@SerializedName("room_id")
         val roomId: String?,
+		@SerializedName("rtc_token")
+		val rtcToken: String?,
 		@SerializedName("thumbnail")
         val thumbnail: List<String?>?,
 		@SerializedName("time")

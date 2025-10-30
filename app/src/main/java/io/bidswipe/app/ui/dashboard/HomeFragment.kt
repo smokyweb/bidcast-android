@@ -20,6 +20,7 @@ import io.bidswipe.app.controller.HomeAdapter
 import io.bidswipe.app.databinding.FragmentHomeBinding
 import io.bidswipe.app.interfaces.AlertClicks
 import io.bidswipe.app.interfaces.RecyclerClicks
+import io.bidswipe.app.model.StreamModel
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.network.response.GetMyShowResponse
 import io.bidswipe.app.ui.custom.AppBottomSheet
@@ -34,6 +35,7 @@ import io.bidswipe.app.utils.request
 import io.bidswipe.app.utils.runSafe
 import io.bidswipe.app.utils.setHapticClickListener
 import io.bidswipe.app.utils.value
+import java.util.ArrayList
 
 @SuppressLint("NotifyDataSetChanged")
 class HomeFragment : BaseFragment<DashViewModel , FragmentHomeBinding>() {
@@ -47,6 +49,7 @@ class HomeFragment : BaseFragment<DashViewModel , FragmentHomeBinding>() {
 	private var showList = mutableListOf<GetMyShowResponse.Data?>()
 	private var categoriesList = mutableListOf<String?>()
 	private var romIdsList = mutableListOf<String>()
+	private var streamList = mutableListOf< StreamModel>()
 	private var page = 1
 	private var isLoading = false
 
@@ -70,7 +73,6 @@ class HomeFragment : BaseFragment<DashViewModel , FragmentHomeBinding>() {
 
 					val roomId = showList[pos]?.roomId.toString()
 
-
 					startActivity(
 						Intent(
 							mCtx ,
@@ -80,6 +82,10 @@ class HomeFragment : BaseFragment<DashViewModel , FragmentHomeBinding>() {
 							.putExtra(
 								"roomIdsList" ,
 								romIdsList.joinToString(",")
+							)
+							.putParcelableArrayListExtra(
+								"streamList" ,
+								ArrayList(streamList)
 							)
 					)
 
@@ -166,6 +172,7 @@ class HomeFragment : BaseFragment<DashViewModel , FragmentHomeBinding>() {
 				)
 			}
 		}
+
 		bind.searchLayout.isEndIconVisible = false
 
 		bind.search.addTextChangedListener(object : TextWatcher {
@@ -299,9 +306,11 @@ class HomeFragment : BaseFragment<DashViewModel , FragmentHomeBinding>() {
 
 					val mData = it.value.data
 
-					romIdsList.clear()
+//					romIdsList.clear()
+					streamList.clear()
 
 					mData?.forEach {
+						streamList.add(StreamModel(it?.roomId.toString() , it?.rtcToken ?:""))
 						romIdsList.add(it?.roomId.toString())
 					}
 

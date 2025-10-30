@@ -147,7 +147,7 @@ class AgoraPublisherActivity : BaseActivity() {
 
 		bind.loader.isVisible = true
 
-		viewModel.getAgoraToken(roomID.request(), userId.request())
+		viewModel.getAgoraToken(roomID.request())
 
 		commentAdapter = CommentAdapter(commentList)
 		bind.recycler.adapter = commentAdapter
@@ -350,9 +350,12 @@ class AgoraPublisherActivity : BaseActivity() {
 			when (it) {
 				is Resource.Success -> {
 					bind.loader.isVisible = false
-					val mData = it.value
+					val mData = it.value.data
 
-					manager = AgoraManager(this, myAppId, mData.token ?:"", mData.channel ?:"")
+					log("TOKEN: ${mData?.token}")
+					log("CHANNEL: ${mData?.channel}")
+
+					manager = AgoraManager(this, Const.APP_ID_AGORA, mData?.token ?: "", mData?.channel ?: "")
 
 					requestPerms(Const.PERMISSIONS) {
 						if (it) {
@@ -422,7 +425,9 @@ class AgoraPublisherActivity : BaseActivity() {
 			showConfirmationSheet.dismiss()
 
 			manager?.joinChannel(userId.toInt())
+
 			bind.startBtn.isVisible = false
+
 			bind.message.setMargins(
 				resources.dpToPx(16) ,
 				resources.dpToPx(16) ,
@@ -479,19 +484,24 @@ class AgoraPublisherActivity : BaseActivity() {
 		}
 
 		socketManager?.onDurationUpdate { obj ->
-			if (roomID == obj.optString("room_id")) {
-				val elapsedSeconds = obj.optString("elapsed").toLongOrNull() ?: 0L
-				val formattedTime = "%02d:%02d:%02d".format(
-					elapsedSeconds / 3600 ,
-					(elapsedSeconds / 60) % 60 ,
-					elapsedSeconds % 60
-				)
+			runOnUiThread {
 
-				bind.duration.text = buildString {
-					append("Show Time: ")
-					append(formattedTime)
+				if (roomID == obj.optString("room_id")) {
+					val elapsedSeconds = obj.optString("elapsed").toLongOrNull() ?: 0L
+					val formattedTime = "%02d:%02d:%02d".format(
+						elapsedSeconds / 3600 ,
+						(elapsedSeconds / 60) % 60 ,
+						elapsedSeconds % 60
+					)
+
+					bind.duration.text = buildString {
+						append("Show Time: ")
+						append(formattedTime)
+					}
 				}
+
 			}
+
 		}
 
 		socketManager?.onAllowBidForAllUpdate { obj ->
@@ -684,10 +694,12 @@ class AgoraPublisherActivity : BaseActivity() {
 				append(liveProduct?.quantity ?: 0)
 			}
 			bind.productImage.loadUrl(this , liveProduct?.image ?: "")
+
+			val price = liveProduct?.price
+			bind.bidPrice.text = price?.asMoney()
 		}
 
-		val price = liveProduct?.price
-		bind.bidPrice.text = price?.asMoney()
+
 	}
 
 	private fun updateCountdown(json : JSONObject) {
@@ -819,11 +831,8 @@ class AgoraPublisherActivity : BaseActivity() {
 
 						2 -> {
 							moreSheet.dismiss()
-//							showSellerSheet()
 							bind.loader.isVisible = true
-
 							viewModel.getLiveSeller()
-
 						}
 
 						else -> {
@@ -840,11 +849,15 @@ class AgoraPublisherActivity : BaseActivity() {
 
 		}
 
+		if (manager?.isMuted == false) {
+			moreSheetBind.muteIcon.setImageResource(draw.ic_mic)
+		} else {
+			moreSheetBind.muteIcon.setImageResource(draw.ic_mute)
+		}
+
 		log(liveShowData?.allowBidForAll.toString())
 
 		moreSheetBind.allowVerifiedUser.isChecked = liveShowData?.allowBidForAll == false
-
-
 
 		moreSheetBind.zoomInLayout.setHapticClickListener {
 //			zoomIn()
@@ -855,7 +868,15 @@ class AgoraPublisherActivity : BaseActivity() {
 
 			//NEED TO IMPLEMENT MUTE UNMUTE LOGIC
 
-			moreSheet.dismiss()
+			manager?.muteAudio {
+				if (it){
+					moreSheetBind.muteIcon.setImageResource(R.drawable.ic_mute)
+				}else{
+					moreSheetBind.muteIcon.setImageResource(R.drawable.ic_mic)
+				}
+			}
+
+//			moreSheet.dismiss()
 		}
 
 		moreSheetBind.zoomOut.setHapticClickListener {

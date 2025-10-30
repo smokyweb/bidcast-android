@@ -29,6 +29,9 @@ object Const {
     const val PUBLISHING_TOKEN = "3355b11d1201319117ffc14cef3f55ffe9c1054651735e8a03b0d09608a4127e"
     const val TOKEN_ID = "14730126"
 
+	//AGORA CONST
+	const val APP_ID_AGORA = "6a0ab77ee15943df94524201d6c93877"
+
 	const val SERVER_TIME_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
 	const val DD_MM_YYYY_HH_MM_SS = "dd-MM-yyyy HH:mm:ss"
 	const val DD_MMMM_YYYY = "dd MMMM yyyy"

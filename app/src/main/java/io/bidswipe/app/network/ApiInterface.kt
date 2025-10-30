@@ -689,7 +689,7 @@ interface ApiInterface {
 	@POST("api/agora-token")
 	suspend fun getAgoraToken(
 		@Part("channel") channel: RequestBody,
-		@Part("uid") uId: RequestBody
+		@Part("uid") uId: RequestBody?
 	) : GetAgoraTokenResponse
 
 }

@@ -22,7 +22,7 @@ class AgoraManager(
 
 	var mRtcEngine: RtcEngine? = null
 	private var isSwitched: Boolean = false
-	private var isMuted: Boolean = false
+	var isMuted: Boolean = false
 	private var isCameraOff: Boolean = false
 
 	companion object {
@@ -71,12 +71,11 @@ class AgoraManager(
 			mRtcEngine = RtcEngine.create(config).also {
 				it?.setChannelProfile(Constants.CHANNEL_PROFILE_COMMUNICATION)
 				it?.setVideoDenoiserOptions(true, VideoDenoiserOptions())
-				it?.setClientRole(Constants.CLIENT_ROLE_BROADCASTER)
+				it?.setClientRole(role)
 				it?.setVideoEncoderConfiguration(videoConfig())
 				it?.setVideoQualityParameters(false)
 				it?.enableVideo()
 				it?.startPreview()
-
 			}
 			log(TAG, "AGORA MANAGER INITIALIZED")
 		}
@@ -106,7 +105,7 @@ class AgoraManager(
 	fun joinSubscriberChannel(userId : Int) {
 		val options = ChannelMediaOptions().also {
 			it.channelProfile = Constants.CHANNEL_PROFILE_LIVE_BROADCASTING
-			it.clientRoleType = Constants.CLIENT_ROLE_BROADCASTER
+			it.clientRoleType = Constants.CLIENT_ROLE_AUDIENCE
 			it.autoSubscribeAudio = true
 			it.autoSubscribeVideo = true
 			it.publishMicrophoneTrack = false
@@ -114,6 +113,11 @@ class AgoraManager(
 		}
 
 		mRtcEngine?.joinChannel(token, channelName, userId, options)
+	}
+
+	fun zoomCamera(zoomLevel : Float, callback: (zoomLevel : Float) -> Unit){
+		mRtcEngine?.setCameraZoomFactor(zoomLevel)
+		callback.invoke(zoomLevel)
 	}
 
 	fun turnOffCamera(callback: (isOff: Boolean) -> Unit) {
@@ -130,6 +134,7 @@ class AgoraManager(
 	fun muteAudio(callback: (isMuted: Boolean) -> Unit) {
 		isMuted = !isMuted
 		mRtcEngine?.muteLocalAudioStream(isMuted)
+		callback(isMuted)
 	}
 
 	fun destroyEngine() {

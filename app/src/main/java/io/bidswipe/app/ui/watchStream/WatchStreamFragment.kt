@@ -94,11 +94,6 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 	private lateinit var productAdapter : FirebaseProductAdapter
 	private var productList = mutableListOf<LiveShowModel.Product?>()
 
-	private val agoraToken =
-		"007eJxTYKicxlR09KTuS64jV3WsXNo4rfeUFxn/m7RY16Pt4tWLyjMUGMwSDRKTzM1TUw1NLU2MU9IsTUyNTIwMDFPMki2NLczNa4WYMnsVmDJdhJtZGRkYGViAGASYwCQzmGSBkimpufmMDAYA9hoczg=="
-	private val channelName = "demo"
-	private val myAppId = "6a0ab77ee15943df94524201d6c93877"
-
 	private var manager: AgoraManager? = null
 
 	companion object {
@@ -123,6 +118,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 		super.onViewCreated(view, savedInstanceState)
 
 		log("RoomId: $roomID")
+		log("StreamToken: $streamID")
 
 		setUpSwipe()
 
@@ -148,7 +144,10 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
 		bind.recycler.adapter = commentAdapter
 
-		manager = AgoraManager(mCtx, myAppId, agoraToken, channelName)
+		log("TOKEN: ${streamID}")
+		log("CHANNEL: ${roomID}")
+
+		manager = AgoraManager(mCtx, Const.APP_ID_AGORA, streamID, roomID)
 
 		requestPerms(Const.PERMISSIONS) {
 			if (it) {
@@ -243,7 +242,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 			socketManager?.onMessage { msg ->
 				log("${roomID}  MESSAGES $msg")
 
-				viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Main) {
+				activity?.runOnUiThread {
 					commentList.add(
 						LiveChatModel(
 							msg.optString("user_image"),
@@ -254,6 +253,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 					)
 					commentAdapter.notifyItemInserted(commentList.size - 1)
 					bind.recycler.scrollToPosition(commentList.size - 1)
+
 				}
 
 			}
@@ -268,7 +268,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 		}
 
 		socketManager?.onRoomCreated { obj ->
-			requireActivity().runOnUiThread {
+			activity?.runOnUiThread {
 				if (obj.optString("room_id") == roomID){
 					updateSessionUI(obj)
 				}
@@ -276,7 +276,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 		}
 
 		socketManager?.onFollowSellerStatus { obj ->
-			requireActivity().runOnUiThread {
+			activity?.runOnUiThread {
 				if (obj.optString("room_id") == roomID && obj.optString("user_id") == userId){
 
 					log("IS FOLLOWING : ${obj.optString("is_followed")}")

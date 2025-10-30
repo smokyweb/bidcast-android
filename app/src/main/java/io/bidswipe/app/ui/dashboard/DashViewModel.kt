@@ -661,7 +661,7 @@ class DashViewModel @Inject constructor(
 
 	fun getAgoraToken(
 		channel : RequestBody ,
-		uId : RequestBody
+		uId : RequestBody? = null
 	) = viewModelScope.launch {
 		if (! networkMonitor.hasInternet()) {
 			_getAgoraTokenResponse.value = NO_INTERNET_ERROR

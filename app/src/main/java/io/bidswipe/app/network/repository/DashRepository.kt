@@ -536,7 +536,7 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
 
 	suspend fun getAgoraToken(
 		channel: RequestBody,
-		uId: RequestBody
+		uId: RequestBody?
 	) = call { api.getAgoraToken(channel, uId) }
 
 }
