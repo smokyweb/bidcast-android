@@ -5,10 +5,13 @@ import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.viewpager2.widget.ViewPager2
 import com.gyf.immersionbar.ktx.immersionBar
+import io.agora.rtc2.Constants
+import io.bidswipe.app.App
 import io.bidswipe.app.base.BaseActivity
 import io.bidswipe.app.controller.StreamPagerAdapter
 import io.bidswipe.app.databinding.ActivityViewLiveShowBinding
 import io.bidswipe.app.model.StreamModel
+import io.bidswipe.app.utils.AgoraManager
 import io.bidswipe.app.utils.Const
 import io.bidswipe.app.utils.SocketManager
 import io.bidswipe.app.utils.bind
@@ -50,6 +53,16 @@ class ViewLiveShowActivity : BaseActivity() {
 
 		log("STREAM LIST: ${streamList.get(0).streamId} ")
 
+		App.manager = AgoraManager(this, Const.APP_ID_AGORA)
+
+		requestPerms(Const.PERMISSIONS) {
+			if (it) {
+				App.manager.initializeAgoraSDK(Constants.CLIENT_ROLE_AUDIENCE)
+			} else {
+				errorToast("Permissions not granted!")
+			}
+		}
+
 		if (streamList.isEmpty()) {
 			finishAfterTransition()
 		}
@@ -63,11 +76,6 @@ class ViewLiveShowActivity : BaseActivity() {
 			}
 		}
 
-//		streamList.find { it.showId == showId }
-
-
-//		FireRef.LIVE_SESSIONS.addValueEventListener(eventListener)
-//		createEngine()
 
 
 		pos = streamList.indexOf(streamList.find { it.roomId == roomId })
@@ -112,9 +120,9 @@ class ViewLiveShowActivity : BaseActivity() {
 
 	override fun onDestroy() {
 		super.onDestroy()
+		App.manager.destroyEngine()
 //		FireRef.LIVE_SESSIONS.removeEventListener(eventListener)
 		destroyEngine()
-
 	}
 
 	private fun createEngine() {
@@ -128,7 +136,6 @@ class ViewLiveShowActivity : BaseActivity() {
 			log("Socket connect error: $err")
 
 		}
-
 
 		/*streamingManager = StreamingManager.getInstance(applicationContext)
 		streamingManager?.createEngine(

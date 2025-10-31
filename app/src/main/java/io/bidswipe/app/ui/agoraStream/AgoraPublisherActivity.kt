@@ -9,8 +9,6 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.util.Rational
-import android.view.SurfaceView
-import android.widget.FrameLayout
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
@@ -20,8 +18,6 @@ import androidx.core.view.isVisible
 import com.gyf.immersionbar.ktx.immersionBar
 import com.gyf.immersionbar.ktx.navigationBarHeight
 import io.agora.rtc2.Constants
-import io.agora.rtc2.IRtcEngineEventHandler
-import io.agora.rtc2.video.VideoCanvas
 import io.bidswipe.app.App
 import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseActivity
@@ -69,23 +65,18 @@ import io.bidswipe.app.utils.value
 import org.json.JSONObject
 import kotlin.getValue
 
-
 class AgoraPublisherActivity : BaseActivity() {
 
 	private val bind by bind(ActivityAgoraPublisherBinding::inflate)
 
 	private val viewModel by viewModels<DashViewModel>()
 
-	private val agoraToken =
-		"007eJxTYKicxlR09KTuS64jV3WsXNo4rfeUFxn/m7RY16Pt4tWLyjMUGMwSDRKTzM1TUw1NLU2MU9IsTUyNTIwMDFPMki2NLczNa4WYMnsVmDJdhJtZGRkYGViAGASYwCQzmGSBkimpufmMDAYA9hoczg=="
-	private val channelName = "demo"
-	private val myAppId = "6a0ab77ee15943df94524201d6c93877"
-
-	private var manager: AgoraManager? = null
 	private var liveShowData: LiveShowModel? = null
 	private var showId = ""
 	private var showTime = ""
 	private var roomID = ""
+	private var agoraToken = ""
+	private var channelName = ""
 	private var socketUrl : String = ""
 	private lateinit var commentAdapter : CommentAdapter
 	private var commentList = mutableListOf<LiveChatModel?>()
@@ -98,7 +89,7 @@ class AgoraPublisherActivity : BaseActivity() {
 	private var promotePlans = mutableListOf<GetPromotePlansResponse.Data?>()
 	private lateinit var sellerAdapter : LiveSellerAdapter
 	private var userList = mutableListOf<GetLiveSellerResponse.Data?>()
-
+	private var zoomLevel = 1.0f
 	private var socketManager : SocketManager? = null
 
 	override fun onCreate(savedInstanceState: Bundle?) {
@@ -145,6 +136,8 @@ class AgoraPublisherActivity : BaseActivity() {
 
 		initPip()
 
+		App.manager = AgoraManager(this, Const.APP_ID_AGORA)
+
 		bind.loader.isVisible = true
 
 		viewModel.getAgoraToken(roomID.request())
@@ -160,9 +153,9 @@ class AgoraPublisherActivity : BaseActivity() {
 		}
 
 		bind.cameraSwitch.setHapticClickListener {
-			manager?.switchCamera {
-
-		} }
+			App.manager.switchCamera {
+			}
+		}
 
 		bind.controls.setHapticClickListener {
 			hideKeyboard()
@@ -186,7 +179,6 @@ class AgoraPublisherActivity : BaseActivity() {
 		bind.more.setHapticClickListener {
 			showMoreSheet()
 		}
-
 
 		bind.promote.setHapticClickListener {
 			if (isShowLive && promotePlans.isNotEmpty()) {
@@ -224,7 +216,7 @@ class AgoraPublisherActivity : BaseActivity() {
 			if (isShowLive) {
 				endShowSheet()
 			} else {
-				manager?.destroyEngine()
+				App.manager.destroyEngine()
 				finishAfterTransition()
 			}
 		}
@@ -355,12 +347,13 @@ class AgoraPublisherActivity : BaseActivity() {
 					log("TOKEN: ${mData?.token}")
 					log("CHANNEL: ${mData?.channel}")
 
-					manager = AgoraManager(this, Const.APP_ID_AGORA, mData?.token ?: "", mData?.channel ?: "")
+					agoraToken = mData?.token ?: ""
+					channelName = mData?.channel ?: ""
 
 					requestPerms(Const.PERMISSIONS) {
 						if (it) {
-							manager?.initializeAgoraSDK(Constants.CLIENT_ROLE_BROADCASTER)
-							manager?.setupPublisherView(bind.publisherView)
+							App.manager.initializeAgoraSDK(Constants.CLIENT_ROLE_BROADCASTER)
+							App.manager.setupPublisherView(bind.publisherView)
 						} else {
 							errorToast("Permissions not granted!")
 						}
@@ -391,7 +384,7 @@ class AgoraPublisherActivity : BaseActivity() {
 	}
 
 	override fun onDestroy() {
-		manager?.destroyEngine()
+		App.manager.destroyEngine()
 
 		isShowLive = false
 		// Socket cleanup
@@ -424,7 +417,7 @@ class AgoraPublisherActivity : BaseActivity() {
 		showConfirmationSheetBind.startBtn.setHapticClickListener {
 			showConfirmationSheet.dismiss()
 
-			manager?.joinChannel(userId.toInt())
+			App.manager.joinChannel(userId.toInt(), agoraToken, channelName)
 
 			bind.startBtn.isVisible = false
 
@@ -849,7 +842,7 @@ class AgoraPublisherActivity : BaseActivity() {
 
 		}
 
-		if (manager?.isMuted == false) {
+		if (!App.manager.isMuted) {
 			moreSheetBind.muteIcon.setImageResource(draw.ic_mic)
 		} else {
 			moreSheetBind.muteIcon.setImageResource(draw.ic_mute)
@@ -860,7 +853,24 @@ class AgoraPublisherActivity : BaseActivity() {
 		moreSheetBind.allowVerifiedUser.isChecked = liveShowData?.allowBidForAll == false
 
 		moreSheetBind.zoomInLayout.setHapticClickListener {
-//			zoomIn()
+			if (zoomLevel<10){
+				zoomLevel += 0.5f
+				App.manager.zoomCamera(zoomLevel){
+
+				}
+			}
+
+		}
+
+		moreSheetBind.zoomOut.setHapticClickListener {
+			if (zoomLevel>1){
+				zoomLevel -= 0.5f
+				App.manager.zoomCamera(zoomLevel){
+				}
+			}
+		}
+
+		moreSheetBind.close.setHapticClickListener {
 			moreSheet.dismiss()
 		}
 
@@ -868,7 +878,7 @@ class AgoraPublisherActivity : BaseActivity() {
 
 			//NEED TO IMPLEMENT MUTE UNMUTE LOGIC
 
-			manager?.muteAudio {
+			App.manager.muteAudio {
 				if (it){
 					moreSheetBind.muteIcon.setImageResource(R.drawable.ic_mute)
 				}else{
@@ -879,10 +889,7 @@ class AgoraPublisherActivity : BaseActivity() {
 //			moreSheet.dismiss()
 		}
 
-		moreSheetBind.zoomOut.setHapticClickListener {
-//			zoomOut()
-			moreSheet.dismiss()
-		}
+
 
 		moreSheetBind.close.setHapticClickListener {
 			moreSheet.dismiss()
@@ -899,7 +906,7 @@ class AgoraPublisherActivity : BaseActivity() {
 		endShowSheetBind.endBtn.setHapticClickListener {
 			sheet.dismiss()
 			socketManager?.sendMessage(roomID , "end_show" , userId , userName , userImage)
-			manager?.destroyEngine()
+			App.manager.destroyEngine()
 			finishAfterTransition()
 		}
 		sheet.show()
@@ -932,7 +939,7 @@ class AgoraPublisherActivity : BaseActivity() {
 				log("Selected seller: ${selectedItem?.name}")
 				socketManager?.createRaid(roomID , selectedItem?.roomId.toString(), selectedItem?.id.toString(), userId)
 				liveSellerSheet.dismiss()
-				manager?.destroyEngine()
+				App.manager.destroyEngine()
 				finishAfterTransition()
 			} else {
 				Alerts.error(this@AgoraPublisherActivity , "Please select a seller")

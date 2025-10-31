@@ -15,9 +15,7 @@ import io.bidswipe.app.utils.Alerts.log
 
 class AgoraManager(
 	val mCtx: Context,
-	val appID: String,
-	val token: String,
-	val channelName: String
+	val appID: String
 ) {
 
 	var mRtcEngine: RtcEngine? = null
@@ -89,7 +87,7 @@ class AgoraManager(
 		mRtcEngine?.setupLocalVideo(videoCanvas)
 	}
 
-	fun joinChannel(userId : Int) {
+	fun joinChannel(userId : Int, token : String, channelName : String) {
 		val options = ChannelMediaOptions().also {
 			it.channelProfile = Constants.CHANNEL_PROFILE_LIVE_BROADCASTING
 			it.clientRoleType = Constants.CLIENT_ROLE_BROADCASTER
@@ -102,7 +100,7 @@ class AgoraManager(
 		mRtcEngine?.joinChannel(token, channelName, userId, options)
 	}
 
-	fun joinSubscriberChannel(userId : Int) {
+	fun joinSubscriberChannel(userId : Int, token : String, channelName : String) {
 		val options = ChannelMediaOptions().also {
 			it.channelProfile = Constants.CHANNEL_PROFILE_LIVE_BROADCASTING
 			it.clientRoleType = Constants.CLIENT_ROLE_AUDIENCE
@@ -111,7 +109,6 @@ class AgoraManager(
 			it.publishMicrophoneTrack = false
 			it.publishCameraTrack = false
 		}
-
 		mRtcEngine?.joinChannel(token, channelName, userId, options)
 	}
 
@@ -132,6 +129,16 @@ class AgoraManager(
 	}
 
 	fun muteAudio(callback: (isMuted: Boolean) -> Unit) {
+		isMuted = !isMuted
+		mRtcEngine?.muteLocalAudioStream(isMuted)
+		callback(isMuted)
+	}
+
+	fun leaveChannel() {
+		mRtcEngine?.leaveChannel()
+	}
+
+	fun destroyEngine(callback: (isMuted: Boolean) -> Unit) {
 		isMuted = !isMuted
 		mRtcEngine?.muteLocalAudioStream(isMuted)
 		callback(isMuted)

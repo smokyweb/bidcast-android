@@ -8,20 +8,14 @@ import android.view.MotionEvent
 import android.view.SurfaceView
 import android.view.View
 import android.view.ViewGroup
-import android.widget.FrameLayout
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
-import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.viewModelScope
 import com.google.android.material.bottomsheet.BottomSheetDialog
-import com.google.firebase.database.ChildEventListener
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.ValueEventListener
 import com.ncorti.slidetoact.SlideToActView
 import com.ncorti.slidetoact.SlideToActView.OnSlideCompleteListener
-import io.agora.rtc2.Constants
 import io.agora.rtc2.video.VideoCanvas
 import io.bidswipe.app.App
 import io.bidswipe.app.R
@@ -38,19 +32,15 @@ import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.model.LiveChatModel
 import io.bidswipe.app.model.LiveShowModel
 import io.bidswipe.app.model.LiveShowModelOld
-import io.bidswipe.app.model.ZIMExtendedData
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.ui.custom.AlertType
 import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.ui.more.MoreActivity
 import io.bidswipe.app.ui.more.TrustedBuyerActivity
-import io.bidswipe.app.utils.AgoraManager
 import io.bidswipe.app.utils.Alerts
 import io.bidswipe.app.utils.ChatManager
 import io.bidswipe.app.utils.Const
-import io.bidswipe.app.utils.FireRef
 import io.bidswipe.app.utils.SocketManager
-import io.bidswipe.app.utils.Utils
 import io.bidswipe.app.utils.asCapital
 import io.bidswipe.app.utils.asMoney
 import io.bidswipe.app.utils.dpToPx
@@ -64,7 +54,6 @@ import io.bidswipe.app.utils.runSafe
 import io.bidswipe.app.utils.setHapticClickListener
 import io.bidswipe.app.utils.setMargins
 import io.bidswipe.app.utils.value
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.json.JSONObject
 import kotlin.math.abs
@@ -93,9 +82,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 	private var socketManager: SocketManager? = null
 	private lateinit var productAdapter : FirebaseProductAdapter
 	private var productList = mutableListOf<LiveShowModel.Product?>()
-
-	private var manager: AgoraManager? = null
-
+	
 	companion object {
 		fun newInstance(roomID: String, streamID: String) = WatchStreamFragment().apply {
 			arguments = Bundle().apply {
@@ -104,7 +91,6 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 			}
 		}
 	}
-
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
@@ -144,26 +130,11 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
 		bind.recycler.adapter = commentAdapter
 
-		log("TOKEN: ${streamID}")
-		log("CHANNEL: ${roomID}")
-
-		manager = AgoraManager(mCtx, Const.APP_ID_AGORA, streamID, roomID)
-
-		requestPerms(Const.PERMISSIONS) {
-			if (it) {
-				manager?.initializeAgoraSDK(Constants.CLIENT_ROLE_AUDIENCE)
-				manager?.joinSubscriberChannel(userId.toInt())
-			} else {
-				errorToast("Permissions not granted!")
-			}
-		}
-
-		manager?.onUserJoin = { uId, elapsed ->
+		App.manager.onUserJoin = { uId, elapsed ->
 			activity?.runOnUiThread {
 				setupRemoteVideo(uId)
 			}
 		}
-
 
 		if (socketUrl.isNotEmpty()) {
 			socketManager = SocketManager.getInstance(requireContext())
@@ -290,7 +261,8 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 			requireActivity().runOnUiThread {
 				if (obj.optString("source_room_id") == roomID){
 					val targetRoomId = obj.optString("target_room_id")
-//					onRaid(targetRoomId)
+					val rtcToken = obj.optString("rtcToken")
+					onRaid(targetRoomId, rtcToken)
 				}
 			}
 		}
@@ -345,31 +317,102 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 			showProductSheet()
 		}
 
+		if (App.profileResponse.value?.buyerIdentityStatus != "verified") {
+			verificationDialog()
+		}
+
+		viewModel.sendTipAmountRepo.observe(viewLifecycleOwner) { it ->
+			when (it) {
+				is Resource.Success -> {
+					bind.loader.isVisible = false
+
+					it.value.data
+
+					Alerts.success(mCtx, "Tip sent successfully")
+
+
+				}
+
+				is Resource.Error -> {
+					it.parse(mCtx, TAG, object : AlertClicks {
+						override fun primaryClick(dialog: AppBottomSheet) {
+							dialog.dismiss()
+
+						}
+
+						override fun secondaryClick(dialog: AppBottomSheet) {
+							dialog.dismiss()
+						}
+					})
+				}
+
+				else -> {}
+			}
+		}
+
+		viewModel.followUserShowRepo.observe(viewLifecycleOwner) {
+			when (it) {
+				is Resource.Success -> {
+					bind.loader.isVisible = false
+					it.value.data
+
+					bind.follow.isVisible = false
+
+				}
+
+				is Resource.Error -> {
+					bind.loader.isVisible = false
+					it.parse(mCtx, TAG, object : AlertClicks {
+						override fun primaryClick(dialog: AppBottomSheet) {
+							dialog.dismiss()
+
+						}
+
+						override fun secondaryClick(dialog: AppBottomSheet) {
+							dialog.dismiss()
+
+						}
+					})
+				}
+
+				else -> {}
+
+			}
+		}
+
 	}
 
 	override fun onResume() {
 		super.onResume()
+		socketManager?.joinRoom(roomID, userId) {
+			socketManager?.sendMessage(roomID, "Joined \uD83D\uDC4B", userId, userName, userImage)
+		}
+		App.manager.joinSubscriberChannel(userId.toInt(),streamID,roomID)
 //		loginAndPlay()
 	}
 
 	override fun onPause() {
 		super.onPause()
+		socketManager?.leaveRoom(roomID, userId)
+		App.manager.leaveChannel()
 //		stopStream()
 	}
+
 	override fun onDestroy() {
 		super.onDestroy()
-		manager?.destroyEngine()
+		socketManager?.leaveRoom(roomID, userId)
+		socketManager?.disconnect()
+		App.manager.destroyEngine()
 	}
 
-
 	private fun setupRemoteVideo(uid: Int) {
+		bind.hostView.removeAllViews()
 		val surfaceView = SurfaceView(mCtx)
 		val videoCanvas = VideoCanvas(surfaceView, VideoCanvas.RENDER_MODE_HIDDEN, uid)
 		bind.hostView.addView(surfaceView)
 		log("CHILD : ${bind.hostView.childCount}")
-		manager?.mRtcEngine?.setupRemoteVideo(videoCanvas)
+		App.manager.mRtcEngine?.setupRemoteVideo(videoCanvas)
 	}
-
 
 	@SuppressLint("ClickableViewAccessibility")
 	fun setUpSwipe() {
@@ -822,6 +865,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 		sendTipSheetBind.btnTip5.setHapticClickListener {
 			sendTipSheetBind.customOffer.setText("5")
 		}
+
 		sendTipSheetBind.close.setHapticClickListener {
 			sendTipSheet.dismiss()
 		}
@@ -900,6 +944,28 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 		}
 
 		sendTipSheet.show()
+	}
+
+	private fun onRaid(targetRoomId: String, rtcToken: String){
+		viewModel.viewModelScope.launch {
+			try {
+				socketManager?.leaveRoom(roomID, userId)
+				commentList.clear()
+				commentAdapter.notifyDataSetChanged()
+				roomID = targetRoomId
+				streamID = rtcToken
+
+				App.manager.joinSubscriberChannel(userId.toInt(), streamID, roomID)
+
+				socketManager?.joinRoom(roomID, userId) {
+					socketManager?.sendMessage(roomID, "Joined \uD83D\uDC4B", userId, userName, userImage)
+				}
+			} catch (e: Exception) {
+				log("Raid failed: ${e.message}")
+				e.printStackTrace()
+			}
+		}
+
 	}
 
 }

@@ -13,6 +13,7 @@ import io.bidswipe.app.network.Resource
 import io.bidswipe.app.network.RetrofitService
 import io.bidswipe.app.network.repository.DashRepository
 import io.bidswipe.app.network.response.UserProfileResponse
+import io.bidswipe.app.utils.AgoraManager
 import io.bidswipe.app.utils.HapticManager
 import io.bidswipe.app.utils.Prefs
 import kotlinx.coroutines.CoroutineScope
@@ -25,12 +26,12 @@ class App : Application() {
 
 	companion object {
 
-		lateinit var mCtx : Context
-		private lateinit var TAG : String
-		var PIPMode : Boolean = false
-		var isUserOnChatScreen : Boolean = false
+		lateinit var mCtx: Context
+		private lateinit var TAG: String
+		var PIPMode: Boolean = false
+		var isUserOnChatScreen: Boolean = false
 		val profileResponse = MutableLiveData<UserProfileResponse.Data?>()
-		val interests = mutableListOf<String?>()
+		lateinit var manager: AgoraManager
 
 		fun getProfile() {
 			CoroutineScope(Dispatchers.IO).launch {
@@ -40,14 +41,14 @@ class App : Application() {
 				withContext(Dispatchers.Main) {
 					when (it) {
 						is Resource.Success -> {
-                            val mData = it.value.data
-                            profileResponse.value = mData
+							val mData = it.value.data
+							profileResponse.value = mData
 
-                            Log.d(
-                                TAG,
-                                " getProfile: HAPTIC FEEDBACK : ${mData?.preferences?.hapticFeedback} "
-                            )
-                            HapticManager.setEnabled(mData?.preferences?.hapticFeedback ?: false)
+							Log.d(
+								TAG,
+								" getProfile: HAPTIC FEEDBACK : ${mData?.preferences?.hapticFeedback} "
+							)
+							HapticManager.setEnabled(mData?.preferences?.hapticFeedback ?: false)
 						}
 
 						is Resource.Error -> {
@@ -66,7 +67,7 @@ class App : Application() {
 		mCtx = applicationContext
 		TAG = mCtx.packageName
 
-        Core.initialize()
+		Core.initialize()
 
 		FirebaseApp.initializeApp(applicationContext)
 
@@ -76,7 +77,7 @@ class App : Application() {
 
 	}
 
-	private fun isMainProcess() : Boolean {
+	private fun isMainProcess(): Boolean {
 		val pid = Process.myPid()
 		val manager = getSystemService(ACTIVITY_SERVICE) as ActivityManager
 		for (processInfo in manager.getRunningAppProcesses()) {
