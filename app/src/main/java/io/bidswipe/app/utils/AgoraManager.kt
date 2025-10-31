@@ -22,6 +22,8 @@ class AgoraManager(
 	private var isSwitched: Boolean = false
 	var isMuted: Boolean = false
 	private var isCameraOff: Boolean = false
+	private var isInitialized: Boolean = false
+	private val readyCallbacks = mutableListOf<() -> Unit>()
 
 	companion object {
 		const val TAG = "AGORA-MANAGER"
@@ -58,26 +60,45 @@ class AgoraManager(
 
 	fun initializeAgoraSDK(role:Int) {
 		runSafe {
+			if (isInitialized) {
+				log(TAG, "initializeAgoraSDK called while engine already active – restarting engine")
+				destroyEngine()
+			}
+
 			val config = RtcEngineConfig().also {
 				it.mContext = mCtx
 				it.mAppId = appID
 				it.mEventHandler = mRtcEventHandler
 			}
 
-			mRtcEngine = RtcEngine.create(config)
+			val engine = RtcEngine.create(config)
+			engine.setChannelProfile(Constants.CHANNEL_PROFILE_COMMUNICATION)
+			engine.setVideoDenoiserOptions(true, VideoDenoiserOptions())
+			engine.setClientRole(role)
+			engine.setVideoEncoderConfiguration(videoConfig())
+			engine.setVideoQualityParameters(false)
+			engine.enableVideo()
+			engine.startPreview()
 
-			mRtcEngine = RtcEngine.create(config).also {
-				it?.setChannelProfile(Constants.CHANNEL_PROFILE_COMMUNICATION)
-				it?.setVideoDenoiserOptions(true, VideoDenoiserOptions())
-				it?.setClientRole(role)
-				it?.setVideoEncoderConfiguration(videoConfig())
-				it?.setVideoQualityParameters(false)
-				it?.enableVideo()
-				it?.startPreview()
-			}
+			mRtcEngine = engine
+			isInitialized = true
 			log(TAG, "AGORA MANAGER INITIALIZED")
+			if (readyCallbacks.isNotEmpty()) {
+				readyCallbacks.toList().forEach { it.invoke() }
+				readyCallbacks.clear()
+			}
 		}
 	}
+
+	fun onReady(action: () -> Unit) {
+		if (isInitialized && mRtcEngine != null) {
+			action.invoke()
+		} else {
+			readyCallbacks.add(action)
+		}
+	}
+
+	fun isReady(): Boolean = isInitialized && mRtcEngine != null
 
 	fun setupPublisherView(mView: FrameLayout) {
 		val surfaceView = SurfaceView(mCtx)
@@ -146,11 +167,14 @@ class AgoraManager(
 
 	fun destroyEngine() {
 		log(TAG, "AGORA MANAGER DESTROYED")
+		readyCallbacks.clear()
 		if (mRtcEngine != null) {
 			mRtcEngine?.stopPreview()
 			mRtcEngine?.leaveChannel()
 			mRtcEngine = null
+			RtcEngine.destroy()
 		}
+		isInitialized = false
 	}
 
 	private fun videoConfig() = VideoEncoderConfiguration().also {

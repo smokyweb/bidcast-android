@@ -82,6 +82,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 	private var socketManager: SocketManager? = null
 	private lateinit var productAdapter : FirebaseProductAdapter
 	private var productList = mutableListOf<LiveShowModel.Product?>()
+	private var currentRemoteUid: Int? = null
 	
 	companion object {
 		fun newInstance(roomID: String, streamID: String) = WatchStreamFragment().apply {
@@ -130,10 +131,20 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
 		bind.recycler.adapter = commentAdapter
 
-		App.manager.onUserJoin = { uId, elapsed ->
+        App.manager.onUserJoin = { uId, _ ->
+            currentRemoteUid = uId
 			activity?.runOnUiThread {
 				setupRemoteVideo(uId)
 			}
+		}
+
+        App.manager.onUserLeave = { remoteUid, _ ->
+            if (currentRemoteUid == remoteUid) {
+                currentRemoteUid = null
+            }
+            activity?.runOnUiThread {
+                clearRemoteVideo()
+            }
 		}
 
 		if (socketUrl.isNotEmpty()) {
@@ -387,7 +398,25 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 		socketManager?.joinRoom(roomID, userId) {
 			socketManager?.sendMessage(roomID, "Joined \uD83D\uDC4B", userId, userName, userImage)
 		}
-		App.manager.joinSubscriberChannel(userId.toInt(),streamID,roomID)
+
+		if (streamID.isBlank()) {
+			log("Stream token missing – unable to join channel")
+			return
+		}
+
+        if (App.manager.isReady()) {
+            App.manager.joinSubscriberChannel(userId.toInt(), streamID, roomID)
+            currentRemoteUid?.let { uid ->
+                setupRemoteVideo(uid)
+            }
+        } else {
+            App.manager.onReady {
+                App.manager.joinSubscriberChannel(userId.toInt(), streamID, roomID)
+                currentRemoteUid?.let { uid ->
+                    setupRemoteVideo(uid)
+                }
+            }
+        }
 //		loginAndPlay()
 	}
 
@@ -412,6 +441,14 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 		bind.hostView.addView(surfaceView)
 		log("CHILD : ${bind.hostView.childCount}")
 		App.manager.mRtcEngine?.setupRemoteVideo(videoCanvas)
+        bind.soldLayout.isVisible = false
+        bind.productLayout.isVisible = true
+    }
+
+    private fun clearRemoteVideo() {
+        bind.hostView.removeAllViews()
+        bind.productLayout.isVisible = false
+        bind.soldLayout.isVisible = true
 	}
 
 	@SuppressLint("ClickableViewAccessibility")
@@ -952,6 +989,8 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 				socketManager?.leaveRoom(roomID, userId)
 				commentList.clear()
 				commentAdapter.notifyDataSetChanged()
+                currentRemoteUid = null
+                clearRemoteVideo()
 				roomID = targetRoomId
 				streamID = rtcToken
 

@@ -21,6 +21,7 @@ import io.bidswipe.app.model.LiveShowModel
 import io.bidswipe.app.model.TutorialShowModel
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.network.response.GetMyInventoryResponse
+import io.bidswipe.app.ui.agoraStream.AgoraPublisherActivity
 import io.bidswipe.app.ui.custom.AlertType
 import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.ui.sellerHub.SellerHubActivity
@@ -279,7 +280,7 @@ class AddProductFragment : BaseFragment<ScheduleShowViewModel, FragmentAddProduc
 						showTimer = "",
 					)
 
-					val intent = Intent(mCtx, LiveShowSocketActivity::class.java).putExtra(
+					val intent = Intent(mCtx, AgoraPublisherActivity::class.java).putExtra(
 						"showData",
 						showData
 					).putExtra("time", data?.time)

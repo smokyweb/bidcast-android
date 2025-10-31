@@ -350,10 +350,12 @@ class AgoraPublisherActivity : BaseActivity() {
 					agoraToken = mData?.token ?: ""
 					channelName = mData?.channel ?: ""
 
-					requestPerms(Const.PERMISSIONS) {
-						if (it) {
+					requestPerms(Const.PERMISSIONS) { granted ->
+						if (granted) {
 							App.manager.initializeAgoraSDK(Constants.CLIENT_ROLE_BROADCASTER)
-							App.manager.setupPublisherView(bind.publisherView)
+							App.manager.onReady {
+								App.manager.setupPublisherView(bind.publisherView)
+							}
 						} else {
 							errorToast("Permissions not granted!")
 						}
@@ -417,7 +419,15 @@ class AgoraPublisherActivity : BaseActivity() {
 		showConfirmationSheetBind.startBtn.setHapticClickListener {
 			showConfirmationSheet.dismiss()
 
-			App.manager.joinChannel(userId.toInt(), agoraToken, channelName)
+			val joinAction = {
+				App.manager.joinChannel(userId.toInt(), agoraToken, channelName)
+			}
+
+			if (App.manager.isReady()) {
+				joinAction.invoke()
+			} else {
+				App.manager.onReady(joinAction)
+			}
 
 			bind.startBtn.isVisible = false
 

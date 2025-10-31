@@ -13,6 +13,7 @@ import io.bidswipe.app.base.BaseFragment
 import io.bidswipe.app.controller.ProductTipsPagerAdapter
 import io.bidswipe.app.databinding.FragmentShowTipsBinding
 import io.bidswipe.app.model.LiveShowModel
+import io.bidswipe.app.ui.agoraStream.AgoraPublisherActivity
 import io.bidswipe.app.ui.dashboard.DashViewModel
 import io.bidswipe.app.ui.scheduleShow.LiveShowSocketActivity
 import io.bidswipe.app.utils.Utils
@@ -152,7 +153,7 @@ class ShowTipsFragment : BaseFragment<DashViewModel , FragmentShowTipsBinding>()
 							showTimer = "",
 						)
 
-						val intent = Intent(mCtx, LiveShowSocketActivity::class.java).putExtra(
+						val intent = Intent(mCtx, AgoraPublisherActivity::class.java).putExtra(
 							"showData",
 							showData
 						).putExtra("time", data?.time)
