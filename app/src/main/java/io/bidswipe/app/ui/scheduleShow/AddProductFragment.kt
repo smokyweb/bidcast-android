@@ -173,7 +173,7 @@ class AddProductFragment : BaseFragment<ScheduleShowViewModel, FragmentAddProduc
 					categoryId = viewModel.categoryId.request(),
 					auctionTypeId = viewModel.auctionId.request(),
 					thumbnails = imagePartList,
-					productIds = productIdList.joinToString(",").request()
+					productIds = productIdList
 				)
 			}
 

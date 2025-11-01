@@ -109,9 +109,7 @@ class PrepareYourShowFragment : BaseFragment<DashViewModel, FragmentPrepareYourS
 								return
 							}
 
-							val productIds = mData?.productIds?.split(",")?.map {
-								it.toInt()
-							}
+							val productIds = mData?.productIds?.split(",")?:mutableListOf()
 
 							bind.loader.isVisible = true
 
@@ -122,7 +120,7 @@ class PrepareYourShowFragment : BaseFragment<DashViewModel, FragmentPrepareYourS
 								mData?.categoryId?.request(),
 								mData?.actionId?.request(),
 								imagePartList,
-								productIds?.joinToString(",")?.request()
+								productIds.map { it.toInt() }
 							)
 
 						}

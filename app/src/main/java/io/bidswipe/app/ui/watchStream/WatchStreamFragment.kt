@@ -131,21 +131,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
 		bind.recycler.adapter = commentAdapter
 
-        App.manager.onUserJoin = { uId, _ ->
-            currentRemoteUid = uId
-			activity?.runOnUiThread {
-				setupRemoteVideo(uId)
-			}
-		}
-
-        App.manager.onUserLeave = { remoteUid, _ ->
-            if (currentRemoteUid == remoteUid) {
-                currentRemoteUid = null
-            }
-            activity?.runOnUiThread {
-                clearRemoteVideo()
-            }
-		}
+		attachAgoraCallbacks()
 
 		if (socketUrl.isNotEmpty()) {
 			socketManager = SocketManager.getInstance(requireContext())
@@ -395,6 +381,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
 	override fun onResume() {
 		super.onResume()
+		attachAgoraCallbacks()
 		socketManager?.joinRoom(roomID, userId) {
 			socketManager?.sendMessage(roomID, "Joined \uD83D\uDC4B", userId, userName, userImage)
 		}
@@ -431,7 +418,25 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 		super.onDestroy()
 		socketManager?.leaveRoom(roomID, userId)
 		socketManager?.disconnect()
-		App.manager.destroyEngine()
+		App.manager.leaveChannel()
+	}
+
+	private fun attachAgoraCallbacks() {
+		App.manager.onUserJoin = { uId, _ ->
+			currentRemoteUid = uId
+			activity?.runOnUiThread {
+				setupRemoteVideo(uId)
+			}
+		}
+
+		App.manager.onUserLeave = { remoteUid, _ ->
+			if (currentRemoteUid == remoteUid) {
+				currentRemoteUid = null
+			}
+			activity?.runOnUiThread {
+				clearRemoteVideo()
+			}
+		}
 	}
 
 	private fun setupRemoteVideo(uid: Int) {

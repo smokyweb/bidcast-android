@@ -120,7 +120,7 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
 		categoryId: RequestBody?,
 		auctionTypeId: RequestBody?,
 		thumbnails: List<MultipartBody.Part?>?,
-		productIds: RequestBody?,
+		productIds: List<Int>,
 	) = call {
 		api.storeScheduleShow(
 			title,
@@ -128,8 +128,8 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
 			time,
 			categoryId,
 			auctionTypeId,
+			productIds,
 			thumbnails,
-			productIds
 		)
 	}
 	

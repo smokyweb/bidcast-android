@@ -46,7 +46,7 @@ class ScheduleShowViewModel @Inject constructor(
 		categoryId: RequestBody?,
 		auctionTypeId: RequestBody?,
 		thumbnails: List<MultipartBody.Part?>?,
-		productIds: RequestBody?,
+		productIds: List<Int>,
 	) = viewModelScope.launch {
 		if (!networkMonitor.hasInternet()) {
 			_storeScheduleShowResponse.value = NO_INTERNET_ERROR

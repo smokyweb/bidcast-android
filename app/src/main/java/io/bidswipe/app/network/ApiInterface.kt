@@ -203,8 +203,8 @@ interface ApiInterface {
 		@Part("time") time : RequestBody? ,
 		@Part("category_id") categoryId : RequestBody? ,
 		@Part("auction_type_id") auctionTypeId : RequestBody? ,
+		@Part("product_ids[]") productIds :  List<Int> ,
 		@Part thumbnails : List<MultipartBody.Part?>? ,
-		@Part("product_ids[]") productIds : RequestBody? ,
 	) : CreateShowResponse
 
 	@GET("api/get-auction-type")
