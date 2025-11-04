@@ -242,12 +242,14 @@ object Utils {
 		return fileName
 	}
 
-	fun makeAChip(mCtx : Context , text : String , selected : Boolean) =
+	fun makeAChip(mCtx : Context , text : String , selected : Boolean,closeIconVisible : Boolean) =
 		Chip(mCtx , null , R.attr.entryChipStyleNew).apply {
 			setText(text)
 			id = text.hashCode()
 			isClickable = true
 			isCheckable = true
+			isCloseIconVisible = closeIconVisible
+			closeIconTint = ContextCompat.getColorStateList(mCtx , clr.error)
 			chipCornerRadius = mCtx.resources.dpToPx(50).toFloat()
 			chipStrokeWidth = mCtx.resources.dpToPx(2).toFloat()
 			chipStartPadding = mCtx.resources.dpToPx(18).toFloat()

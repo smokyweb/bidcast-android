@@ -62,7 +62,8 @@ class ShopFragment : BaseFragment<SellerViewModel , FragmentShopBinding>() {
 				Utils.makeAChip(
 					mCtx = mCtx ,
 					text = "For You" ,
-					selected = false
+					selected = false,
+					closeIconVisible = false
 				)
 			)
 		}

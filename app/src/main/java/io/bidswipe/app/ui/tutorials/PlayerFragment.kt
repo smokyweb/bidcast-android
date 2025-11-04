@@ -117,7 +117,7 @@ class PlayerFragment : BaseFragment<DashViewModel, FragmentPlayerBinding>() {
 
 					player?.setMediaItem(
 						MediaItem.Builder()
-							.setUri(lessonList[playPos].toString()).build()
+							.setUri(lessonList[playPos]).build()
 					)
 
 					player?.prepare()

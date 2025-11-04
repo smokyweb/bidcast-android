@@ -316,7 +316,6 @@
 									app:layout_constraintEnd_toEndOf = "parent"
 									app:layout_constraintTop_toTopOf = "@id/shop" />
 
-
 							</androidx.constraintlayout.widget.ConstraintLayout >
 
 						</LinearLayout >
@@ -353,7 +352,7 @@
 									android:id = "@+id/productImage"
 									android:layout_width = "match_parent"
 									android:layout_height = "match_parent"
-									android:scaleType = "fitXY"
+									android:scaleType = "centerCrop"
 									android:src = "@drawable/shoe" />
 
 							</com.google.android.material.card.MaterialCardView >

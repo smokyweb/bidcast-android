@@ -262,7 +262,8 @@ class HomeFragment : BaseFragment<DashViewModel , FragmentHomeBinding>() {
 							Utils.makeAChip(
 								mCtx = mCtx ,
 								text = it ?: "" ,
-								selected = false
+								selected = false,
+								closeIconVisible = false
 							)
 						)
 					}

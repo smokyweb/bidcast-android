@@ -150,7 +150,7 @@ class ShowTipsFragment : BaseFragment<DashViewModel , FragmentShowTipsBinding>()
 							showId = data?.id.toString(),
 							allowBidForAll = true,
 							bidCountDown = "",
-							showTimer = "",
+							showTimer = ""
 						)
 
 						val intent = Intent(mCtx, AgoraPublisherActivity::class.java).putExtra(

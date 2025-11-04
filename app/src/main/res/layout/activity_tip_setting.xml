@@ -1,0 +1,257 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".ui.scheduleShow.TipSettingActivity">
+
+    <io.bidswipe.app.ui.custom.Header
+        android:id="@+id/header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:headerMode="BACK_BUTTON_TITLE_ACTION"
+        app:headerTitle="Tip Setting"
+        app:layout_constraintTop_toTopOf="parent"
+        app:showBackButton="true" />
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:fillViewport="true"
+        app:layout_constraintTop_toBottomOf="@+id/header">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="@dimen/margin">
+
+            <!-- Description -->
+            <TextView
+                android:id="@+id/tvSubtitle"
+                style="@style/BodyMedium"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/margin"
+                android:text="Set default tip amounts that viewers can quickly select during your live shows."
+                android:textColor="@color/onSurfaceVariant" />
+
+            <!-- Saved Default Tips Section -->
+            <TextView
+                style="@style/TitleMedium"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/half_margin"
+                android:layout_marginBottom="@dimen/half_margin"
+                android:text="Your Default Tips"
+                android:textColor="@color/onSurface" />
+
+            <!-- ChipGroup for saved tip amounts as action chips -->
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/chipGroupDefaultTips"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="48dp"
+                android:paddingVertical="4dp"
+                app:chipSpacing="8dp"
+                app:chipSpacingHorizontal="8dp"
+                app:chipSpacingVertical="8dp"
+                app:singleLine="false"
+                app:singleSelection="false" />
+
+            <!-- Empty State -->
+            <io.bidswipe.app.ui.custom.NoDataView
+                android:id="@+id/noDataView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="@dimen/margin"
+                android:visibility="gone"
+                app:title_text="No default tips added"
+                />
+
+            <!-- Divider -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginVertical="@dimen/margin"
+                android:background="@color/surfaceVariant" />
+
+            <!-- Quick Add Section -->
+            <TextView
+                style="@style/TitleMedium"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/half_margin"
+                android:text="Quick Add"
+                android:textColor="@color/onSurface" />
+
+            <TextView
+                style="@style/BodySmall"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/half_margin"
+                android:text="Tap a preset amount to add it"
+                android:textColor="@color/onSurfaceVariant" />
+
+            <!-- Preset Tip Buttons -->
+
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/chipGroupQuickAddTips"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="48dp"
+                android:paddingVertical="4dp"
+                app:chipSpacing="8dp"
+                app:chipSpacingHorizontal="8dp"
+                app:chipSpacingVertical="8dp"
+                app:singleLine="false"
+                app:singleSelection="false" />
+          <!--  <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/margin"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:weightSum="4">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnTip5"
+                    style="@style/appBtnOutline"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="6dp"
+                    android:layout_weight="1"
+                    android:backgroundTint="@color/transparent"
+                    android:minHeight="52dp"
+                    android:text="$5"
+                    android:textSize="15sp"
+                    app:strokeWidth="1dp"
+                    app:strokeColor="@color/outline" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnTip10"
+                    style="@style/appBtnOutline"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="6dp"
+                    android:layout_weight="1"
+                    android:backgroundTint="@color/transparent"
+                    android:minHeight="52dp"
+                    android:text="$10"
+                    android:textSize="15sp"
+                    app:strokeWidth="1dp"
+                    app:strokeColor="@color/outline" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnTip25"
+                    style="@style/appBtnOutline"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="6dp"
+                    android:layout_weight="1"
+                    android:backgroundTint="@color/transparent"
+                    android:minHeight="52dp"
+                    android:text="$25"
+                    android:textSize="15sp"
+                    app:strokeWidth="1dp"
+                    app:strokeColor="@color/outline" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnTip50"
+                    style="@style/appBtnOutline"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:backgroundTint="@color/transparent"
+                    android:minHeight="52dp"
+                    android:text="$50"
+                    android:textSize="15sp"
+                    app:strokeWidth="1dp"
+                    app:strokeColor="@color/outline" />
+            </LinearLayout>-->
+
+            <!-- Divider -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginVertical="@dimen/margin"
+                android:background="@color/surfaceVariant" />
+
+            <!-- Custom Tip Amount Section -->
+            <TextView
+                style="@style/TitleMedium"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/half_margin"
+                android:text="Custom Amount"
+                android:textColor="@color/onSurface" />
+
+            <TextView
+                style="@style/BodySmall"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/half_margin"
+                android:text="Enter any custom tip amount"
+                android:textColor="@color/onSurfaceVariant" />
+
+            <!-- Custom Input Field -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/inputBoxStyle"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:hint="Amount"
+                    app:prefixText="$"
+                    app:prefixTextColor="@color/onSurfaceVariant">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etCustomTipAmount"
+                        style="@style/inputTextStyle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="0.00"
+                        android:inputType="numberDecimal"
+                        android:maxLines="1" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnAddCustomTip"
+                    style="@style/appBtn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/margin"
+                    android:minWidth="90dp"
+                    android:text="Add" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+    <!-- Submit Button - Fixed at Bottom -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnSubmit"
+        style="@style/appBtn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/margin"
+        android:minHeight="56dp"
+        android:text="Save Default Tips"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+    <io.bidswipe.app.ui.custom.LoaderView
+        android:id="@+id/loader"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

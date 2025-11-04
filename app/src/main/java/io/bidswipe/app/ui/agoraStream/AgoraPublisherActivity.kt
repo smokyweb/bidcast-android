@@ -44,6 +44,7 @@ import io.bidswipe.app.network.response.GetPromotePlansResponse
 import io.bidswipe.app.ui.custom.AlertType
 import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.ui.dashboard.DashViewModel
+import io.bidswipe.app.ui.scheduleShow.TipSettingActivity
 import io.bidswipe.app.utils.AgoraManager
 import io.bidswipe.app.utils.Alerts
 import io.bidswipe.app.utils.Const
@@ -830,6 +831,16 @@ class AgoraPublisherActivity : BaseActivity() {
 							} else {
 								finishAfterTransition()
 							}
+						}
+						1->{
+							moreSheet.dismiss()
+						/*	if (isShowLive) {
+								if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+									enterPictureInPictureMode(pipParams)
+								}
+							}*/
+
+							startActivity(Intent(this@AgoraPublisherActivity , TipSettingActivity::class.java))
 						}
 
 						2 -> {

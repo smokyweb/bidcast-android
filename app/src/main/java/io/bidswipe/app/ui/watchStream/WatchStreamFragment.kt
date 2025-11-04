@@ -8,6 +8,7 @@ import android.view.MotionEvent
 import android.view.SurfaceView
 import android.view.View
 import android.view.ViewGroup
+import android.widget.FrameLayout
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -16,10 +17,12 @@ import androidx.lifecycle.viewModelScope
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.ncorti.slidetoact.SlideToActView
 import com.ncorti.slidetoact.SlideToActView.OnSlideCompleteListener
+import io.agora.rtc2.Constants
 import io.agora.rtc2.video.VideoCanvas
 import io.bidswipe.app.App
 import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseFragment
+import io.bidswipe.app.utils.AgoraManager
 import io.bidswipe.app.controller.CommentAdapter
 import io.bidswipe.app.controller.FirebaseProductAdapter
 import io.bidswipe.app.databinding.FragmentWatchStreamBinding
@@ -107,6 +110,40 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 		log("RoomId: $roomID")
 		log("StreamToken: $streamID")
 
+		// Initialize AgoraManager for subscriber role
+		runSafe {
+			try {
+				// Check if manager exists
+				App.manager
+			} catch (e: UninitializedPropertyAccessException) {
+				// Manager not initialized, create it
+				App.manager = AgoraManager(mCtx, Const.APP_ID_AGORA)
+			}
+		}
+
+		requestPerms(Const.PERMISSIONS) { granted ->
+			if (granted) {
+				// Always initialize with AUDIENCE role (will recreate engine if already initialized)
+				App.manager.initializeAgoraSDK(Constants.CLIENT_ROLE_AUDIENCE)
+				attachAgoraCallbacks()
+				
+				// Join channel after initialization if streamID is available
+				if (streamID.isNotEmpty()) {
+					App.manager.onReady {
+						log("AgoraManager ready, joining subscriber channel")
+						App.manager.joinSubscriberChannel(userId.toInt(), streamID, roomID)
+						currentRemoteUid?.let { uid ->
+							setupRemoteVideo(uid)
+						}
+					}
+				} else {
+					log("Stream ID is empty, cannot join channel")
+				}
+			} else {
+				errorToast("Permissions not granted!")
+			}
+		}
+
 		setUpSwipe()
 
 		ViewCompat.setOnApplyWindowInsetsListener(requireActivity().window.decorView) { v, insets ->
@@ -130,8 +167,6 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 		commentAdapter = CommentAdapter(commentList)
 
 		bind.recycler.adapter = commentAdapter
-
-		attachAgoraCallbacks()
 
 		if (socketUrl.isNotEmpty()) {
 			socketManager = SocketManager.getInstance(requireContext())
@@ -229,6 +264,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 			socketManager?.onRoomEnded { json ->
 				runSafe {
 					if (json.optString("room_end") == roomID) {
+						App.manager.destroyEngine()
 						finish()
 					}
 				}
@@ -404,6 +440,8 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
                 }
             }
         }
+
+		log("TOKEN: ${streamID}")
 //		loginAndPlay()
 	}
 

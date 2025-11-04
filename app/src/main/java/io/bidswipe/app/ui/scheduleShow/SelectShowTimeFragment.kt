@@ -77,7 +77,8 @@ class SelectShowTimeFragment : BaseFragment<ScheduleShowViewModel , FragmentSele
 				Utils.makeAChip(
 					mCtx = mCtx ,
 					text = it ,
-					selected = false
+					selected = false,
+					closeIconVisible = false
 				)
 			)
 		}

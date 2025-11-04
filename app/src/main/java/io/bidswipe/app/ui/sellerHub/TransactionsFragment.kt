@@ -57,7 +57,8 @@ class TransactionsFragment : BaseFragment<SellerHubViewModel, FragmentTransactio
 				Utils.makeAChip(
 					mCtx = mCtx,
 					text = it,
-					selected = false
+					selected = false,
+					closeIconVisible = false
 				)
 			)
 		}
