@@ -1,3 +1,4 @@
+/*
 package io.bidswipe.app.ui.scheduleShow
 
 import android.os.Bundle
@@ -202,3 +203,4 @@ class DolbySubscribeActivity : BaseActivity() {
 }
 
 
+*/

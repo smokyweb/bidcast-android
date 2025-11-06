@@ -33,7 +33,6 @@ class BidsFragment : BaseFragment<DashViewModel , FragmentBidsBinding>() {
 
 	private var mClick = object : RecyclerClicks {
 		override fun itemClick(pos : Int , status : String?) {
-
 		}
 	}
 

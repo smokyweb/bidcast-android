@@ -38,9 +38,7 @@
         <item name="android:statusBarColor">@color/background</item>
         <item name="android:navigationBarColor">@color/background</item>
         <item name="android:windowLightNavigationBar" tools:targetApi="o_mr1">true</item>
-        <item name="android:windowOptOutEdgeToEdgeEnforcement" tools:targetApi="vanilla_ice_cream">
-            true
-        </item>
+        <item name="android:windowOptOutEdgeToEdgeEnforcement" tools:targetApi="vanilla_ice_cream">true</item>
 
         <item name="android:windowActivityTransitions">true</item>
         <item name="android:windowAnimationStyle">@style/CustomActivityAnimation</item>

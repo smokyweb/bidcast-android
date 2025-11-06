@@ -1,3 +1,4 @@
+/*
 package io.bidswipe.app.ui.scheduleShow
 
 import android.annotation.SuppressLint
@@ -684,12 +685,14 @@ class LiveShowSocketActivity : BaseActivity() {
 
 						productList.addAll(product.products)
 
-						/*productList.find { it?.id == product.id }.let {
+						*/
+/*productList.find { it?.id == product.id }.let {
 						val index = productList.indexOf(it)
 						if (index != -1) {
 							productList[index] = product
 						}
-					}*/
+					}*//*
+
 
 						val products = LiveShowModel.fromJson(json)
 						updateProductUI(products.products.find { it?.isCurrent == true })
@@ -789,7 +792,8 @@ class LiveShowSocketActivity : BaseActivity() {
 
 	fun addShowData(data : LiveShowModel) {
 
-		/*val user = data?.user
+		*/
+/*val user = data?.user
 
 		val products = data?.products?.map { it?.toLiveShowProduct() }
 
@@ -830,7 +834,8 @@ class LiveShowSocketActivity : BaseActivity() {
 			allowBidForAll = true,
 			bidCountDown = "",
 			showTimer = "",
-		)*/
+		)*//*
+
 		isShowLive = true
 		socketManager?.createRoom(roomID , data)
 
@@ -1025,7 +1030,8 @@ class LiveShowSocketActivity : BaseActivity() {
 			mList.add("")
 		}
 
-		/* shareSheetBind.optionList.adapter = ShareSheetAdapter(mList , object : RecyclerClicks {
+		*/
+/* shareSheetBind.optionList.adapter = ShareSheetAdapter(mList , object : RecyclerClicks {
  
 			 override fun itemClick(pos : Int , status : String?) {
 
@@ -1034,7 +1040,8 @@ class LiveShowSocketActivity : BaseActivity() {
 
 		 shareSheetBind.close.setHapticClickListener {
 			 shareSheet.dismiss()
-		 }*/
+		 }*//*
+
 
 		shareSheet.show()
 	}
@@ -1513,4 +1520,4 @@ class LiveShowSocketActivity : BaseActivity() {
 		liveSellerSheet.show()
 	}
 
-}
+}*/

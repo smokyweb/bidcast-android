@@ -9,12 +9,13 @@
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/swipeRefreshLayout"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="match_parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <LinearLayout
             android:layout_width="match_parent"
+            android:orientation="vertical"
             android:layout_height="match_parent">
 
             <androidx.recyclerview.widget.RecyclerView
@@ -26,7 +27,7 @@
                 app:layout_constraintBottom_toTopOf="@+id/bottomLoader"
                 app:layout_constraintTop_toTopOf="parent"
                 tools:itemCount="2"
-                tools:layout_editor_absoluteX="8dp"
+                android:layout_weight="1"
                 tools:listitem="@layout/bids_item" />
 
             <com.github.ybq.android.spinkit.SpinKitView
@@ -44,7 +45,7 @@
                 android:visibility="gone"
                 app:title_text="No Bids Found" />
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+        </LinearLayout>
 
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 

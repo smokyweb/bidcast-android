@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.view.isVisible
 import io.bidswipe.app.base.BaseFragment
 import io.bidswipe.app.controller.OffersAdapter
@@ -14,6 +15,7 @@ import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.network.response.GetOffersResponse
 import io.bidswipe.app.ui.custom.AppBottomSheet
+import io.bidswipe.app.utils.Alerts
 import io.bidswipe.app.utils.Utils
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request
@@ -30,6 +32,11 @@ class OfferFragment : BaseFragment<DashViewModel , FragmentOfferBinding>() {
 
 	private var mClick = object : RecyclerClicks {
 		override fun itemClick(pos : Int , status : String?) {
+			
+			
+			Toast.makeText(mCtx, "LICKED", Toast.LENGTH_SHORT).show()
+			Alerts.log(TAG, "kfjskldfhslkjlsdfjlksdfjkldfjsdkf")
+			
 			bind.loader.isVisible = true
 			if (status == "accept") {
 				bind.loader.isVisible=true

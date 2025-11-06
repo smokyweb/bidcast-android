@@ -15,12 +15,12 @@ fun getAPKName() = "Bid_Swipe_${SimpleDateFormat("dd-MM-yyyy").format(Date())}"
 
 android {
     namespace = "io.bidswipe.app"
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "io.bidswipe.app"
         minSdk = 25
-        targetSdk = 35
+        targetSdk = 36
         versionCode = 1
         versionName = "1.0"
 
@@ -73,6 +73,98 @@ android {
             )
         }
     }
+    
+    packaging {
+        jniLibs.excludes += setOf(
+            // armeabi-v7a
+            "lib/armeabi-v7a/libagora_lip_sync_extension.so",
+            "lib/armeabi-v7a/libagora_spatial_audio_extension.so",
+            "lib/armeabi-v7a/libagora_clear_vision_extension.so",
+            "lib/armeabi-v7a/libagora_segmentation_extension.so",
+            "lib/armeabi-v7a/libagora_face_capture_extension.so",
+            "lib/armeabi-v7a/libagora_content_inspect_extension.so",
+            "lib/armeabi-v7a/libagora_audio_beauty_extension.so",
+            "lib/armeabi-v7a/libagora_video_av1_encoder_extension.so",
+            "lib/armeabi-v7a/libvideo_enc.so",
+            "lib/armeabi-v7a/libvideo_dec.so",
+            "lib/armeabi-v7a/libagora_video_quality_analyzer_extension.so",
+            "lib/armeabi-v7a/libagora_video_av1_decoder_extension.so",
+            "lib/armeabi-v7a/libagora_face_detection_extension.so",
+            "lib/armeabi-v7a/libagora_ai_echo_cancellation_extension.so",
+            "lib/armeabi-v7a/libagora_ai_echo_cancellation_ll_extension.so",
+            "lib/armeabi-v7a/libagora_video_encoder_extension.so",
+            "lib/armeabi-v7a/libagora_video_decoder_extension.so",
+            "lib/armeabi-v7a/libagora_ai_noise_suppression_extension.so",
+            "lib/armeabi-v7a/libagora_ai_noise_suppression_ll_extension.so",
+            "lib/armeabi-v7a/libagora_screen_capture_extension.so",
+            
+            // arm64-v8a
+            "lib/arm64-v8a/libagora_lip_sync_extension.so",
+            "lib/arm64-v8a/libagora_spatial_audio_extension.so",
+            "lib/arm64-v8a/libagora_clear_vision_extension.so",
+            "lib/arm64-v8a/libagora_segmentation_extension.so",
+            "lib/arm64-v8a/libagora_face_capture_extension.so",
+            "lib/arm64-v8a/libagora_content_inspect_extension.so",
+            "lib/arm64-v8a/libagora_audio_beauty_extension.so",
+            "lib/arm64-v8a/libagora_video_av1_encoder_extension.so",
+            "lib/arm64-v8a/libvideo_enc.so",
+            "lib/arm64-v8a/libvideo_dec.so",
+            "lib/arm64-v8a/libagora_video_quality_analyzer_extension.so",
+            "lib/arm64-v8a/libagora_video_av1_decoder_extension.so",
+            "lib/arm64-v8a/libagora_face_detection_extension.so",
+            "lib/arm64-v8a/libagora_ai_echo_cancellation_extension.so",
+            "lib/arm64-v8a/libagora_ai_echo_cancellation_ll_extension.so",
+            "lib/arm64-v8a/libagora_video_encoder_extension.so",
+            "lib/arm64-v8a/libagora_video_decoder_extension.so",
+            "lib/arm64-v8a/libagora_ai_noise_suppression_extension.so",
+            "lib/arm64-v8a/libagora_ai_noise_suppression_ll_extension.so",
+            "lib/arm64-v8a/libagora_screen_capture_extension.so",
+            
+            // x86
+            "lib/x86/libagora_lip_sync_extension.so",
+            "lib/x86/libagora_spatial_audio_extension.so",
+            "lib/x86/libagora_clear_vision_extension.so",
+            "lib/x86/libagora_segmentation_extension.so",
+            "lib/x86/libagora_face_capture_extension.so",
+            "lib/x86/libagora_content_inspect_extension.so",
+            "lib/x86/libagora_audio_beauty_extension.so",
+            "lib/x86/libagora_video_av1_encoder_extension.so",
+            "lib/x86/libvideo_enc.so",
+            "lib/x86/libvideo_dec.so",
+            "lib/x86/libagora_video_quality_analyzer_extension.so",
+            "lib/x86/libagora_video_av1_decoder_extension.so",
+            "lib/x86/libagora_face_detection_extension.so",
+            "lib/x86/libagora_ai_echo_cancellation_extension.so",
+            "lib/x86/libagora_ai_echo_cancellation_ll_extension.so",
+            "lib/x86/libagora_video_encoder_extension.so",
+            "lib/x86/libagora_video_decoder_extension.so",
+            "lib/x86/libagora_ai_noise_suppression_extension.so",
+            "lib/x86/libagora_ai_noise_suppression_ll_extension.so",
+            "lib/x86/libagora_screen_capture_extension.so",
+            
+            // x86_64
+            "lib/x86_64/libagora_lip_sync_extension.so",
+            "lib/x86_64/libagora_spatial_audio_extension.so",
+            "lib/x86_64/libagora_clear_vision_extension.so",
+            "lib/x86_64/libagora_segmentation_extension.so",
+            "lib/x86_64/libagora_face_capture_extension.so",
+            "lib/x86_64/libagora_content_inspect_extension.so",
+            "lib/x86_64/libagora_audio_beauty_extension.so",
+            "lib/x86_64/libagora_video_av1_encoder_extension.so",
+            "lib/x86_64/libvideo_enc.so",
+            "lib/x86_64/libvideo_dec.so",
+            "lib/x86_64/libagora_video_quality_analyzer_extension.so",
+            "lib/x86_64/libagora_video_av1_decoder_extension.so",
+            "lib/x86_64/libagora_face_detection_extension.so",
+            "lib/x86_64/libagora_ai_echo_cancellation_extension.so",
+            "lib/x86_64/libagora_ai_echo_cancellation_ll_extension.so",
+            "lib/x86_64/libagora_video_encoder_extension.so",
+            "lib/x86_64/libagora_video_decoder_extension.so",
+            "lib/x86_64/libagora_ai_noise_suppression_extension.so",
+            "lib/x86_64/libagora_ai_noise_suppression_ll_extension.so",
+            "lib/x86_64/libagora_screen_capture_extension.so"
+        )
+    }
 }
 
 dependencies {
@@ -92,7 +184,6 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.browser)
     implementation(libs.billing.ktx)
-
 
     implementation(libs.firebase.messaging.ktx)
     implementation(libs.firebase.database)
@@ -149,7 +240,7 @@ dependencies {
     implementation(libs.powermenu)
     implementation(libs.singledateandtimepicker)
     implementation(libs.mpandroidchart)
-    implementation(libs.millicast.sdk.android)
+//    implementation(libs.millicast.sdk.android)
     implementation(libs.agora.full.sdk)
 
     implementation(libs.number.keyboard)

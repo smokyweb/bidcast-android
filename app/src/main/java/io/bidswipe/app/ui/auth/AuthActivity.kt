@@ -2,6 +2,9 @@ package io.bidswipe.app.ui.auth
 
 import android.net.Uri
 import android.os.Bundle
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsCompat.CONSUMED
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
@@ -22,7 +25,12 @@ class AuthActivity : BaseActivity() {
 	override fun onCreate(savedInstanceState : Bundle?) {
 		super.onCreate(savedInstanceState)
 		setContentView(bind.root)
-
+		
+		ViewCompat.setOnApplyWindowInsetsListener(window.decorView) { v, insets ->
+			val system = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+			bind.root.setPadding(0,system.top,0, system.bottom)
+			CONSUMED
+		}
 			val data: Uri? = intent.data
 			data?.let { uri ->
 				referralCode = uri.getQueryParameter("referralCode").toString()

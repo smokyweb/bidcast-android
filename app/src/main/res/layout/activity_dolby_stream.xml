@@ -7,11 +7,11 @@
     android:layout_height="match_parent"
     tools:context=".ui.scheduleShow.DolbyStreamActivity">
 
-    <org.webrtc.SurfaceViewRenderer
+ <!--   <org.webrtc.SurfaceViewRenderer
         android:id="@+id/remote_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
-
+-->
     <com.google.android.material.button.MaterialButton
         android:id="@+id/startBtn"
         style="@style/appBtn"

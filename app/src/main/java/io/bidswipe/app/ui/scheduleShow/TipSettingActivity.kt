@@ -3,6 +3,9 @@ package io.bidswipe.app.ui.scheduleShow
 import android.os.Bundle
 import android.os.PersistableBundle
 import androidx.activity.viewModels
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsCompat.CONSUMED
 import io.bidswipe.app.base.BaseActivity
 import io.bidswipe.app.databinding.ActivityTipSettingBinding
 import io.bidswipe.app.utils.Utils
@@ -18,6 +21,12 @@ class TipSettingActivity : BaseActivity() {
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
 		setContentView(bind.root)
+		
+		ViewCompat.setOnApplyWindowInsetsListener(window.decorView) { v, insets ->
+			val system = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+			bind.root.setPadding(0,system.top,0, system.bottom)
+			CONSUMED
+		}
 
 		repeat(5) {
 			bind.chipGroupDefaultTips.addView(

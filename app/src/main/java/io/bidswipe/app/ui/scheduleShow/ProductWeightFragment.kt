@@ -105,6 +105,7 @@ class ProductWeightFragment : BaseFragment<ScheduleShowViewModel, FragmentProduc
 		viewModel.storeProductMetaRepo.observe(viewLifecycleOwner) { it ->
 			when (it) {
 				is Resource.Success -> {
+					viewModel.storeProductMetaRepo.value=null
 					val imageData = it.value.data?.mapNotNull { data ->
 						if (data?.images != null && data.thumbnail != null) {
 							mapOf(
@@ -119,6 +120,7 @@ class ProductWeightFragment : BaseFragment<ScheduleShowViewModel, FragmentProduc
 				}
 
 				is Resource.Error -> {
+					viewModel.storeProductMetaRepo.value=null
 					bind.loader.isVisible = false
 					it.parse(mCtx, TAG, object : AlertClicks {
 						override fun primaryClick(dialog: AppBottomSheet) {
@@ -138,12 +140,14 @@ class ProductWeightFragment : BaseFragment<ScheduleShowViewModel, FragmentProduc
 		viewModel.storeProductRepo.observe(viewLifecycleOwner) { it ->
 			when (it) {
 				is Resource.Success -> {
+					viewModel.storeProductRepo.value=null
 					bind.loader.isVisible = false
 					findNavController().navigate(ids.addProductFragment)
 				}
 
 				is Resource.Error -> {
 					bind.loader.isVisible = false
+					viewModel.storeProductRepo.value=null
 					it.parse(mCtx, TAG, object : AlertClicks {
 						override fun primaryClick(dialog: AppBottomSheet) {
 							dialog.dismiss()

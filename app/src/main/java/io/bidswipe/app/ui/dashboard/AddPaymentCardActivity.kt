@@ -3,6 +3,9 @@ package io.bidswipe.app.ui.dashboard
 import android.os.Bundle
 import android.view.LayoutInflater
 import androidx.activity.viewModels
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsCompat.CONSUMED
 import androidx.core.view.isVisible
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.wajahatkarim3.easyvalidation.core.view_ktx.validator
@@ -38,7 +41,11 @@ class AddPaymentCardActivity : BaseActivity() {
 	override fun onCreate(savedInstanceState : Bundle?) {
 		super.onCreate(savedInstanceState)
 		setContentView(bind.root)
-
+		ViewCompat.setOnApplyWindowInsetsListener(window.decorView) { v, insets ->
+			val system = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+			bind.root.setPadding(0,system.top,0, system.bottom)
+			CONSUMED
+		}
 		log("GET PAYMENT CARD")
 
 		bind.header.onBackClick { finish() }

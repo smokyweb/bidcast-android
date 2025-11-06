@@ -2,6 +2,9 @@ package io.bidswipe.app.ui.dashboard
 
 import android.os.Bundle
 import androidx.activity.viewModels
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsCompat.CONSUMED
 import androidx.core.view.isVisible
 import com.canhub.cropper.CropImageContract
 import io.bidswipe.app.App
@@ -49,7 +52,13 @@ class UpdateAccountActivity : BaseActivity() {
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
 		setContentView(bind.root)
-
+		
+		ViewCompat.setOnApplyWindowInsetsListener(window.decorView) { v, insets ->
+			val system = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+			bind.root.setPadding(0,system.top,0, system.bottom)
+			CONSUMED
+		}
+		
 		bind.header.onBackClick {
 			finishAfterTransition()
 

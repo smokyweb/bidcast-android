@@ -1,3 +1,4 @@
+/*
 package io.bidswipe.app.ui.watchStream
 
 import android.annotation.SuppressLint
@@ -460,7 +461,8 @@ class WatchStreamSocketFragment : BaseFragment<StreamViewModel, FragmentWatchStr
 
 			// Safely update highestBidAmount
 
-			/*if (showData.highestBid != null) {
+			*/
+/*if (showData.highestBid != null) {
 
 				log("HIGHEST BID: ${showData.highestBid}")
 				highestBidAmount = showData.highestBid?.bidAmount ?: highestBidAmount
@@ -471,7 +473,8 @@ class WatchStreamSocketFragment : BaseFragment<StreamViewModel, FragmentWatchStr
 					).toString().asMoney()
 				}"
 
-			}*/
+			}*//*
+
 
 			sellerId = showData.seller?.id.toString()
 
@@ -486,7 +489,8 @@ class WatchStreamSocketFragment : BaseFragment<StreamViewModel, FragmentWatchStr
 
 			// Determine sale status once
 
-			/*val isSold = liveProduct?.status == "sold"
+			*/
+/*val isSold = liveProduct?.status == "sold"
 			bind.soldLayout.isVisible = isSold
 			bind.bidLayout.isVisible = !isSold
 
@@ -507,7 +511,8 @@ class WatchStreamSocketFragment : BaseFragment<StreamViewModel, FragmentWatchStr
 				 bind.bidTime.text = "Ends in $countdown"
 			 } else {
 				 bind.bidTime.isVisible = false
-			 }*/
+			 }*//*
+
 
 //			isAllowBidForAll = showData.allowBidForAll ?: true
 
@@ -595,13 +600,15 @@ class WatchStreamSocketFragment : BaseFragment<StreamViewModel, FragmentWatchStr
 				)
 				Alerts.success(mCtx, "Bid placed successfully")
 
-			/*	socketManager?.sendMessage(
+			*/
+/*	socketManager?.sendMessage(
 					roomID,
 					"New high bid: $$priceText",
 					userId,
 					userName,
 					userImage
-				)*/
+				)*//*
+
 //                sendZimMessage("New high bid: $${priceVal}")
 				inputSheet?.dismiss()
 			}
@@ -611,7 +618,8 @@ class WatchStreamSocketFragment : BaseFragment<StreamViewModel, FragmentWatchStr
 		inputSheet?.show()
 	}
 
-	/*
+	*/
+/*
 		private fun initializeChat() {
 			if (chatManager == null) {
 				chatManager = ChatManager(
@@ -628,7 +636,8 @@ class WatchStreamSocketFragment : BaseFragment<StreamViewModel, FragmentWatchStr
 				chatManager?.sendTextMessage(roomID , "Joined 👋" , extended)
 			}
 		}
-	*/
+	*//*
+
 
 	fun newBidAmount(amount: Int): Int {
 
@@ -663,13 +672,15 @@ class WatchStreamSocketFragment : BaseFragment<StreamViewModel, FragmentWatchStr
 
 //            sendZimMessage("New high bid: $$bidAmount")
 			Alerts.success(mCtx, "Bid placed successfully")
-		/*	socketManager?.sendMessage(
+		*/
+/*	socketManager?.sendMessage(
 				roomID,
 				"New high bid: $$bidAmount",
 				userId,
 				userName,
 				userImage
-			)*/
+			)*//*
+
 			bind.bid.setCompleted(completed = false, withAnimation = true)
 		}
 	}
@@ -892,6 +903,7 @@ class WatchStreamSocketFragment : BaseFragment<StreamViewModel, FragmentWatchStr
 		log("Renderer initialized")
 	}
 
+*/
 /*
 	private fun startSubscription() {
 		viewModel.viewModelScope.launch {
@@ -987,7 +999,8 @@ class WatchStreamSocketFragment : BaseFragment<StreamViewModel, FragmentWatchStr
 			}
 		}
 	}
-*/
+*//*
+
 
 	override fun onDestroy() {
 		super.onDestroy()
@@ -1216,3 +1229,4 @@ class WatchStreamSocketFragment : BaseFragment<StreamViewModel, FragmentWatchStr
 }
 
 
+*/

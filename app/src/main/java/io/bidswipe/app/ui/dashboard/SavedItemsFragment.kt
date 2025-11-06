@@ -59,6 +59,7 @@ class SavedItemsFragment : BaseFragment<DashViewModel , FragmentSavedItemsBindin
 				}
 			}
 		})
+		
 		bind.swipeRefreshLayout.setOnRefreshListener {
 			page = 1
 			viewModel.getSavedProductsByStatus("saved".request() , page.toString().request())

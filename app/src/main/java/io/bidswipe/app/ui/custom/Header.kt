@@ -1,29 +1,39 @@
 package io.bidswipe.app.ui.custom
 
+import android.app.Activity
 import android.content.Context
+import android.os.Build
 import android.util.AttributeSet
+import android.util.Log
 import android.view.LayoutInflater
 import android.widget.LinearLayout
 import androidx.annotation.DrawableRes
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.use
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
+import com.gyf.immersionbar.ImmersionBar
 import io.bidswipe.app.databinding.HeaderViewBinding
+import io.bidswipe.app.utils.dpToPx
 import io.bidswipe.app.utils.draw
 import io.bidswipe.app.utils.setHapticClickListener
+import io.bidswipe.app.utils.setMargins
 import io.bidswipe.app.utils.styleable
+import kotlin.math.log
 
 class Header @JvmOverloads constructor(
 	context : Context ,
 	attrs : AttributeSet? = null ,
 	defStyleAttr : Int = 0 ,
-) : LinearLayout(context , attrs , defStyleAttr) {
+) : ConstraintLayout(context , attrs , defStyleAttr) {
 
 	private val bind = HeaderViewBinding.inflate(LayoutInflater.from(context) , this , true)
 
 	init {
 		context.theme.obtainStyledAttributes(attrs , styleable.Header , 0 , 0).use {
-
+			
 			setHeaderText(it.getString(styleable.Header_headerTitle) ?: "")
 
 			// Configure the header mode (back button, app text, icons, etc.)

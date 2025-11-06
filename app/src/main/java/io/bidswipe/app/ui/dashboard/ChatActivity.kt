@@ -15,6 +15,9 @@ import androidx.activity.viewModels
 import androidx.core.content.ContextCompat
 import androidx.core.text.bold
 import androidx.core.text.buildSpannedString
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsCompat.CONSUMED
 import androidx.core.view.isVisible
 import androidx.lifecycle.viewModelScope
 import androidx.recyclerview.widget.ItemTouchHelper
@@ -126,7 +129,13 @@ class ChatActivity : BaseActivity() {
 		super.onCreate(savedInstanceState)
 
 		setContentView(bind.root)
-
+		
+		ViewCompat.setOnApplyWindowInsetsListener(window.decorView) { v, insets ->
+			val system = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+			bind.root.setPadding(0,system.top,0, system.bottom)
+			CONSUMED
+		}
+		
 		bind.chats.setOnTouchListener { _, _ ->
 			hideKeyboard()
 			return@setOnTouchListener false

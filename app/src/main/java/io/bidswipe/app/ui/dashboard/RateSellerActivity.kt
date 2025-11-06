@@ -2,6 +2,9 @@ package io.bidswipe.app.ui.dashboard
 
 import android.os.Bundle
 import androidx.activity.viewModels
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsCompat.CONSUMED
 import androidx.core.view.isVisible
 import io.bidswipe.app.base.BaseActivity
 import io.bidswipe.app.databinding.ActivityRateSellerBinding
@@ -30,7 +33,13 @@ class RateSellerActivity : BaseActivity() {
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
 		setContentView(bind.root)
-
+		
+		ViewCompat.setOnApplyWindowInsetsListener(window.decorView) { v, insets ->
+			val system = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+			bind.root.setPadding(0,system.top,0, system.bottom)
+			CONSUMED
+		}
+		
 		sellerId = intent.getStringExtra("sellerId") ?: ""
 		sellerName = intent.getStringExtra("sellerName") ?: ""
 		sellerImage = intent.getStringExtra("sellerImage") ?: ""

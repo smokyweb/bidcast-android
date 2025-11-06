@@ -8,6 +8,9 @@ import android.view.View
 import androidx.activity.viewModels
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsCompat.CONSUMED
 import androidx.core.view.isVisible
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
@@ -34,11 +37,13 @@ import io.bidswipe.app.utils.Alerts
 import io.bidswipe.app.utils.Const
 import io.bidswipe.app.utils.Prefs
 import io.bidswipe.app.utils.bind
+import io.bidswipe.app.utils.dpToPx
 import io.bidswipe.app.utils.draw
 import io.bidswipe.app.utils.ids
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request
 import io.bidswipe.app.utils.setHapticClickListener
+import io.bidswipe.app.utils.setMargins
 import io.bidswipe.app.utils.toListProduct
 import io.bidswipe.app.utils.toScheduleShow
 import io.bidswipe.app.utils.toTutorials
@@ -60,6 +65,12 @@ class DashActivity : BaseActivity(), NavController.OnDestinationChangedListener 
 
 		super.onCreate(savedInstanceState)
 		setContentView(bind.root)
+		
+		ViewCompat.setOnApplyWindowInsetsListener(window.decorView) { v, insets ->
+			val system = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+			bind.root.setPadding(0,system.top,0, system.bottom)
+				CONSUMED
+		}
 
 		navHostFragment =
 			supportFragmentManager.findFragmentById(ids.nav_host_fragment) as NavHostFragment

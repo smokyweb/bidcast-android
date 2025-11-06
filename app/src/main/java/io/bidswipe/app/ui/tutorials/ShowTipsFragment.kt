@@ -15,7 +15,7 @@ import io.bidswipe.app.databinding.FragmentShowTipsBinding
 import io.bidswipe.app.model.LiveShowModel
 import io.bidswipe.app.ui.agoraStream.AgoraPublisherActivity
 import io.bidswipe.app.ui.dashboard.DashViewModel
-import io.bidswipe.app.ui.scheduleShow.LiveShowSocketActivity
+//import io.bidswipe.app.ui.scheduleShow.LiveShowSocketActivity
 import io.bidswipe.app.utils.Utils
 import io.bidswipe.app.utils.finish
 import io.bidswipe.app.utils.ids

@@ -91,7 +91,8 @@ class InventoryFragment : BaseFragment<SellerHubViewModel , FragmentInventoryBin
 				}
 			}
 		})
-		bind.recycler.adapter = adapter
+		
+//		bind.recycler.adapter = adapter
 		bind.searchLayout.isEndIconVisible = false
 
 		bind.search.addTextChangedListener(object : TextWatcher {
@@ -133,6 +134,24 @@ class InventoryFragment : BaseFragment<SellerHubViewModel , FragmentInventoryBin
 		bind.root.setHapticClickListener {
 			hideKeyboard(it)
 		}
+		
+		bind.recycler.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+			override fun onScrolled(recyclerView : RecyclerView , dx : Int , dy : Int) {
+				super.onScrolled(recyclerView , dx , dy)
+				log("onScrolled")
+				val layoutManager = bind.recycler.layoutManager as LinearLayoutManager
+				val lastItemPosition = layoutManager.findLastVisibleItemPosition()
+				if (lastItemPosition == (filteredList.size - 1)) {
+					if (! isLoading) {
+						isLoading = true
+						page ++
+						bind.bottomLoader.isVisible = true
+						viewModel.getMyInventory(selectedTab.request() , page.toString().request())
+					}
+				}
+			}
+		})
+		
 		bind.recycler.adapter = adapter
 
 		bind.tabs.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
@@ -148,23 +167,7 @@ class InventoryFragment : BaseFragment<SellerHubViewModel , FragmentInventoryBin
 			override fun onTabUnselected(tab : TabLayout.Tab?) {}
 			override fun onTabReselected(tab : TabLayout.Tab?) {}
 		})
-
-		bind.recycler.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-			override fun onScrolled(recyclerView : RecyclerView , dx : Int , dy : Int) {
-				super.onScrolled(recyclerView , dx , dy)
-				val layoutManager = bind.recycler.layoutManager as LinearLayoutManager
-				val lastItemPosition = layoutManager.findLastVisibleItemPosition()
-				if (lastItemPosition == (filteredList.size - 1)) {
-					if (! isLoading) {
-						isLoading = true
-						page ++
-						bind.bottomLoader.isVisible = true
-						viewModel.getMyInventory(selectedTab.request() , page.toString().request())
-					}
-				}
-			}
-		})
-
+		
 		bind.swipeRefreshLayout.setOnRefreshListener {
 			bind.search.setText("")
 			page = 1
@@ -205,9 +208,9 @@ class InventoryFragment : BaseFragment<SellerHubViewModel , FragmentInventoryBin
 
 					if (page == 1) {
 						itemList.clear()
-						itemList.addAll(mData)
 					}
-
+					itemList.addAll(mData)
+					
 					filteredList.clear()
 					filteredList.addAll(itemList)
 

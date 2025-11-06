@@ -50,7 +50,7 @@
                 android:layout_height="wrap_content"
                 android:nestedScrollingEnabled="false"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                tools:itemCount="5"
+                tools:itemCount="2"
                 tools:listitem="@layout/product_list_item" />
 
             <io.bidswipe.app.ui.custom.NoDataView

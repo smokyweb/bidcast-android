@@ -58,4 +58,9 @@ class ProductAdapter(
 
 		}
 	}
+	
+	override fun getItemCount(): Int {
+		Log.d(TAG, "getItemCount: ${mList.size}")
+		return mList.size
+	}
 }

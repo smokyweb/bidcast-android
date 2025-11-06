@@ -189,13 +189,14 @@ class AddProductFragment : BaseFragment<ScheduleShowViewModel, FragmentAddProduc
 					bind.loader.isVisible = false
 
 					val mData = it.value.data
-
+log("DATATA ${mData?.size}")
 					productList.clear()
 
 					mData?.forEach {
 						productList.add(it)
 					}
-
+					
+					log("DATATA1 ${productList?.size}")
 					productAdapter.notifyDataSetChanged()
 
 					if (productList.isEmpty()) {

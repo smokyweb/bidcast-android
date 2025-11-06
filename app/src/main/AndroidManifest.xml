@@ -54,9 +54,6 @@
 			android:supportsPictureInPicture = "true"
 			android:windowSoftInputMode = "adjustResize"/>
 		<activity
-			android:name = ".ui.scheduleShow.ChooseModeActivity"
-			android:exported = "false" />
-		<activity
 			android:name = ".ui.scheduleShow.DolbyStreamActivity"
 			android:exported = "false" />
 		<activity
