@@ -8,7 +8,6 @@ import android.view.MotionEvent
 import android.view.SurfaceView
 import android.view.View
 import android.view.ViewGroup
-import android.widget.FrameLayout
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -17,12 +16,10 @@ import androidx.lifecycle.viewModelScope
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.ncorti.slidetoact.SlideToActView
 import com.ncorti.slidetoact.SlideToActView.OnSlideCompleteListener
-import io.agora.rtc2.Constants
 import io.agora.rtc2.video.VideoCanvas
 import io.bidswipe.app.App
 import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseFragment
-import io.bidswipe.app.utils.AgoraManager
 import io.bidswipe.app.controller.CommentAdapter
 import io.bidswipe.app.controller.FirebaseProductAdapter
 import io.bidswipe.app.databinding.FragmentWatchStreamBinding
@@ -34,14 +31,12 @@ import io.bidswipe.app.interfaces.AlertClicks
 import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.model.LiveChatModel
 import io.bidswipe.app.model.LiveShowModel
-import io.bidswipe.app.model.LiveShowModelOld
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.ui.custom.AlertType
 import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.ui.more.MoreActivity
 import io.bidswipe.app.ui.more.TrustedBuyerActivity
 import io.bidswipe.app.utils.Alerts
-import io.bidswipe.app.utils.ChatManager
 import io.bidswipe.app.utils.Const
 import io.bidswipe.app.utils.SocketManager
 import io.bidswipe.app.utils.asCapital
@@ -61,6 +56,7 @@ import kotlinx.coroutines.launch
 import org.json.JSONObject
 import kotlin.math.abs
 
+@SuppressLint("NotifyDataSetChanged")
 class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBinding>() {
 
 	override fun getModel(): Class<StreamViewModel> = StreamViewModel::class.java
@@ -77,16 +73,14 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 	private lateinit var socketUrl: String
 	private var commentList = mutableListOf<LiveChatModel?>()
 	private lateinit var commentAdapter: CommentAdapter
-	private var product: LiveShowModelOld.Product? = null
 	private var inputSheet: BottomSheetDialog? = null
 	private var sellerId: String? = ""
 	private var isAllowBidForAll = true
-	private var chatManager: ChatManager? = null
 	private var socketManager: SocketManager? = null
-	private lateinit var productAdapter : FirebaseProductAdapter
+	private lateinit var productAdapter: FirebaseProductAdapter
 	private var productList = mutableListOf<LiveShowModel.Product?>()
 	private var currentRemoteUid: Int? = null
-	
+
 	companion object {
 		fun newInstance(roomID: String, streamID: String) = WatchStreamFragment().apply {
 			arguments = Bundle().apply {
@@ -110,8 +104,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 		log("RoomId: $roomID")
 		log("StreamToken: $streamID")
 
-		// Initialize AgoraManager for subscriber role
-		runSafe {
+/*		runSafe {
 			try {
 				// Check if manager exists
 				App.manager
@@ -119,30 +112,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 				// Manager not initialized, create it
 				App.manager = AgoraManager(mCtx, Const.APP_ID_AGORA)
 			}
-		}
-
-		requestPerms(Const.PERMISSIONS) { granted ->
-			if (granted) {
-				// Always initialize with AUDIENCE role (will recreate engine if already initialized)
-				App.manager.initializeAgoraSDK(Constants.CLIENT_ROLE_AUDIENCE)
-				attachAgoraCallbacks()
-				
-				// Join channel after initialization if streamID is available
-				if (streamID.isNotEmpty()) {
-					App.manager.onReady {
-						log("AgoraManager ready, joining subscriber channel")
-						App.manager.joinSubscriberChannel(userId.toInt(), streamID, roomID)
-						currentRemoteUid?.let { uid ->
-							setupRemoteVideo(uid)
-						}
-					}
-				} else {
-					log("Stream ID is empty, cannot join channel")
-				}
-			} else {
-				errorToast("Permissions not granted!")
-			}
-		}
+		}*/
 
 		setUpSwipe()
 
@@ -230,10 +200,12 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 							bind.productLayout.isVisible = false
 						}
 
-						if (userId == winner.optString("user_id")) {
-							bind.soldOutText.text = "You won the bid"
-						} else {
-							bind.soldOutText.text = "Bidder ${winner.optString("user_name")} won the bid"
+						if (userId == winner.optString("user_id")) bind.soldOutText.text = buildString {
+							append("You won the bid")
+						} else bind.soldOutText.text = buildString {
+							append("Bidder ")
+							append(winner.optString("user_name"))
+							append(" won the bid")
 						}
 
 					}
@@ -243,20 +215,22 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
 			// Optional room/session updates (current product, sold, allow flags, countdown)
 			socketManager?.onMessage { msg ->
-				log("${roomID}  MESSAGES $msg")
+				log("$roomID  MESSAGES $msg")
 
-				activity?.runOnUiThread {
-					commentList.add(
-						LiveChatModel(
-							msg.optString("user_image"),
-							msg.optString("user_name"),
-							msg.optString("user_id"),
-							msg.optString("message")
+				if (msg.optString("room_id") == roomID) {
+					activity?.runOnUiThread {
+						commentList.add(
+							LiveChatModel(
+								msg.optString("user_image"),
+								msg.optString("user_name"),
+								msg.optString("user_id"),
+								msg.optString("message")
+							)
 						)
-					)
-					commentAdapter.notifyItemInserted(commentList.size - 1)
-					bind.recycler.scrollToPosition(commentList.size - 1)
+						commentAdapter.notifyItemInserted(commentList.size - 1)
+						bind.recycler.scrollToPosition(commentList.size - 1)
 
+					}
 				}
 
 			}
@@ -273,7 +247,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
 		socketManager?.onRoomCreated { obj ->
 			activity?.runOnUiThread {
-				if (obj.optString("room_id") == roomID){
+				if (obj.optString("room_id") == roomID) {
 					updateSessionUI(obj)
 				}
 			}
@@ -281,7 +255,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
 		socketManager?.onFollowSellerStatus { obj ->
 			activity?.runOnUiThread {
-				if (obj.optString("room_id") == roomID && obj.optString("user_id") == userId){
+				if (obj.optString("room_id") == roomID && obj.optString("user_id") == userId) {
 
 					log("IS FOLLOWING : ${obj.optString("is_followed")}")
 
@@ -290,9 +264,9 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 			}
 		}
 
-		socketManager?.receiveRaid {obj ->
+		socketManager?.receiveRaid { obj ->
 			requireActivity().runOnUiThread {
-				if (obj.optString("source_room_id") == roomID){
+				if (obj.optString("source_room_id") == roomID) {
 					val targetRoomId = obj.optString("target_room_id")
 					val rtcToken = obj.optString("rtcToken")
 					onRaid(targetRoomId, rtcToken)
@@ -427,21 +401,20 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 			return
 		}
 
-        if (App.manager.isReady()) {
-            App.manager.joinSubscriberChannel(userId.toInt(), streamID, roomID)
-            currentRemoteUid?.let { uid ->
-                setupRemoteVideo(uid)
-            }
-        } else {
-            App.manager.onReady {
-                App.manager.joinSubscriberChannel(userId.toInt(), streamID, roomID)
-                currentRemoteUid?.let { uid ->
-                    setupRemoteVideo(uid)
-                }
-            }
-        }
+		if (App.manager.isReady()) {
+			App.manager.joinSubscriberChannel( streamID, roomID)
+			currentRemoteUid?.let { uid ->
+				setupRemoteVideo(uid)
+			}
+		} else {
+			App.manager.joinSubscriberChannel( streamID, roomID)
+			currentRemoteUid?.let { uid ->
+				setupRemoteVideo(uid)
+			}
 
-		log("TOKEN: ${streamID}")
+		}
+
+		log("TOKEN: $streamID")
 //		loginAndPlay()
 	}
 
@@ -484,14 +457,14 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 		bind.hostView.addView(surfaceView)
 		log("CHILD : ${bind.hostView.childCount}")
 		App.manager.mRtcEngine?.setupRemoteVideo(videoCanvas)
-        bind.soldLayout.isVisible = false
-        bind.productLayout.isVisible = true
-    }
+		bind.soldLayout.isVisible = false
+		bind.productLayout.isVisible = true
+	}
 
-    private fun clearRemoteVideo() {
-        bind.hostView.removeAllViews()
-        bind.productLayout.isVisible = false
-        bind.soldLayout.isVisible = true
+	private fun clearRemoteVideo() {
+		bind.hostView.removeAllViews()
+		bind.productLayout.isVisible = false
+		bind.soldLayout.isVisible = true
 	}
 
 	@SuppressLint("ClickableViewAccessibility")
@@ -561,7 +534,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 	private fun handleBidUpdate(json: JSONObject) {
 		runSafe {
 			requireActivity().runOnUiThread {
-				if (json.optString("room_id") == roomID){
+				if (json.optString("room_id") == roomID) {
 					val highestBid = json.getJSONObject("get_highest_bid")
 					val bidAmount = highestBid.optString("bid_amount")
 					log("BID UPDATE: $bidAmount")
@@ -601,7 +574,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 			bind.productCategory.text = liveProduct?.category?.asCapital()
 			bind.quantity.text = buildString {
 				append("Quantity: ")
-				append(liveProduct?.quantity ?:0)
+				append(liveProduct?.quantity ?: 0)
 			}
 			bind.productImage.loadUrl(mCtx, liveProduct?.image ?: "")
 			val price = liveProduct?.price
@@ -627,7 +600,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
 			if (showData.highestBid.bidAmount?.isNotEmpty() == true) {
 				highestBidAmount = showData.highestBid.bidAmount
-				log("HIGHEST BID: ${highestBidAmount}")
+				log("HIGHEST BID: $highestBidAmount")
 				bind.bid.text = "Swipe to Bid ${newBidAmount(highestBidAmount?.toDoubleOrNull()?.toInt() ?: 0).toString().asMoney()}"
 			} else {
 				highestBidAmount = ""
@@ -647,7 +620,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 			bind.liveCount.text = showData.viewerCount
 
 			bind.follow.setHapticClickListener {
-				socketManager?.followSeller( userId,sellerId ?:"")
+				socketManager?.followSeller(userId, sellerId ?: "")
 			}
 
 			log("ALLOW BID FOR ALL: $isAllowBidForAll")
@@ -655,7 +628,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 			bind.bid.onSlideCompleteListener = object : OnSlideCompleteListener {
 				override fun onSlideComplete(view: SlideToActView) {
 
-					if (App.profileResponse.value?.hasShippingAddress == true && App.profileResponse.value?.hasCardAdded == true){
+					if (App.profileResponse.value?.hasShippingAddress == true && App.profileResponse.value?.hasCardAdded == true) {
 
 						if (isAllowBidForAll) {
 							attemptBid()
@@ -667,7 +640,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 							}
 						}
 
-					}else{
+					} else {
 						showPaymentAndAddressSheet()
 					}
 
@@ -693,11 +666,11 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 	}
 
 	private fun showProductSheet() {
-		val productSheetBind = ProductSheetBinding.bind(layoutInflater.inflate(R.layout.product_sheet , null , false))
-		val productSheet = Alerts.appBottomSheet(mCtx , true , productSheetBind)
+		val productSheetBind = ProductSheetBinding.bind(layoutInflater.inflate(R.layout.product_sheet, null, false))
+		val productSheet = Alerts.appBottomSheet(mCtx, true, productSheetBind)
 
-		productAdapter = FirebaseProductAdapter(productList , object : RecyclerClicks {
-			override fun itemClick(pos : Int , status : String?) {
+		productAdapter = FirebaseProductAdapter(productList, object : RecyclerClicks {
+			override fun itemClick(pos: Int, status: String?) {
 
 			}
 
@@ -814,7 +787,9 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 				type.text = addressData?.type
 				defaultAddress.isVisible = addressData?.isDefault == true
 			} else {
-				type.text = "Address Not Added"
+				type.text = buildString {
+					append("Address Not Added")
+				}
 				defaultAddress.isVisible = false
 			}
 
@@ -839,14 +814,16 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 			if (hasCard) {
 				cardNumber.text = buildString {
 					append("•••• •••• •••• ")
-					append(App.profileResponse.value?.defaultCard?.last4 ?:"")
+					append(App.profileResponse.value?.defaultCard?.last4 ?: "")
 				}
 
 				expiryDate.text = buildString {
-					append(App.profileResponse.value?.defaultCard?.expDate?:"")
+					append(App.profileResponse.value?.defaultCard?.expDate ?: "")
 				}
 			} else {
-				cardNumber.text = "Payment Cards Not Added"
+				cardNumber.text = buildString {
+					append("Payment Cards Not Added")
+				}
 			}
 
 			moreIcon.setHapticClickListener {
@@ -921,7 +898,10 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 			requireActivity().runOnUiThread {
 				if (json.optString("room_id") == roomID) {
 					bind.bidTime.isVisible = true
-					bind.bidTime.text = "Ends in $value"
+					bind.bidTime.text = buildString {
+						append("Ends in ")
+						append(value)
+					}
 				}
 			}
 		}
@@ -951,15 +931,21 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 		}
 
 		sendTipSheetBind.btnTip10.setHapticClickListener {
-			sendTipSheetBind.customOffer.setText("10")
+			sendTipSheetBind.customOffer.setText(buildString {
+				append("10")
+			})
 		}
 
 		sendTipSheetBind.btnTip25.setHapticClickListener {
-			sendTipSheetBind.customOffer.setText("25")
+			sendTipSheetBind.customOffer.setText(buildString {
+				append("25")
+			})
 		}
 
 		sendTipSheetBind.btnTip50.setHapticClickListener {
-			sendTipSheetBind.customOffer.setText("50")
+			sendTipSheetBind.customOffer.setText(buildString {
+				append("50")
+			})
 		}
 
 		sendTipSheetBind.paymentWallet.text = buildString {
@@ -1026,18 +1012,18 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 		sendTipSheet.show()
 	}
 
-	private fun onRaid(targetRoomId: String, rtcToken: String){
+	private fun onRaid(targetRoomId: String, rtcToken: String) {
 		viewModel.viewModelScope.launch {
 			try {
 				socketManager?.leaveRoom(roomID, userId)
 				commentList.clear()
 				commentAdapter.notifyDataSetChanged()
-                currentRemoteUid = null
-                clearRemoteVideo()
+				currentRemoteUid = null
+				clearRemoteVideo()
 				roomID = targetRoomId
 				streamID = rtcToken
 
-				App.manager.joinSubscriberChannel(userId.toInt(), streamID, roomID)
+				App.manager.joinSubscriberChannel( streamID, roomID)
 
 				socketManager?.joinRoom(roomID, userId) {
 					socketManager?.sendMessage(roomID, "Joined \uD83D\uDC4B", userId, userName, userImage)

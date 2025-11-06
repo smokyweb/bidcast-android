@@ -21,7 +21,6 @@ class AgoraManager(
 	var mRtcEngine: RtcEngine? = null
 	private var isSwitched: Boolean = false
 	var isMuted: Boolean = false
-	private var isCameraOff: Boolean = false
 	private var isInitialized: Boolean = false
 	private val readyCallbacks = mutableListOf<() -> Unit>()
 
@@ -29,7 +28,6 @@ class AgoraManager(
 		const val TAG = "AGORA-MANAGER"
 	}
 
-	//	var onPlayerStateChanged : ((ZegoPlayerState , Int) -> Unit)? = null
 	var onUserJoin: ((Int, Int) -> Unit)? = null
 	var onUserLeave: ((Int, Int) -> Unit)? = null
 	var onEngineError: ((Int) -> Unit)? = null
@@ -90,13 +88,13 @@ class AgoraManager(
 		}
 	}
 
-	fun onReady(action: () -> Unit) {
+	/*fun onReady(action: () -> Unit) {
 		if (isInitialized && mRtcEngine != null) {
 			action.invoke()
 		} else {
 			readyCallbacks.add(action)
 		}
-	}
+	}*/
 
 	fun isReady(): Boolean = isInitialized && mRtcEngine != null
 
@@ -108,7 +106,7 @@ class AgoraManager(
 		mRtcEngine?.setupLocalVideo(videoCanvas)
 	}
 
-	fun joinChannel(userId : Int, token : String, channelName : String) {
+	fun joinChannel( token : String, channelName : String) {
 		val options = ChannelMediaOptions().also {
 			it.channelProfile = Constants.CHANNEL_PROFILE_LIVE_BROADCASTING
 			it.clientRoleType = Constants.CLIENT_ROLE_BROADCASTER
@@ -118,10 +116,10 @@ class AgoraManager(
 			it.publishCameraTrack = true
 		}
 
-		mRtcEngine?.joinChannel(token, channelName, userId, options)
+		mRtcEngine?.joinChannel(token, channelName, 0, options)
 	}
 
-	fun joinSubscriberChannel(userId : Int, token : String, channelName : String) {
+	fun joinSubscriberChannel( token : String, channelName : String) {
 		val options = ChannelMediaOptions().also {
 			it.channelProfile = Constants.CHANNEL_PROFILE_LIVE_BROADCASTING
 			it.clientRoleType = Constants.CLIENT_ROLE_AUDIENCE
@@ -130,7 +128,7 @@ class AgoraManager(
 			it.publishMicrophoneTrack = false
 			it.publishCameraTrack = false
 		}
-		mRtcEngine?.joinChannel(token, channelName, userId, options)
+		mRtcEngine?.joinChannel(token, channelName, 0, options)
 	}
 
 	fun zoomCamera(zoomLevel : Float, callback: (zoomLevel : Float) -> Unit){
@@ -138,10 +136,10 @@ class AgoraManager(
 		callback.invoke(zoomLevel)
 	}
 
-	fun turnOffCamera(callback: (isOff: Boolean) -> Unit) {
+/*	fun turnOffCamera(callback: (isOff: Boolean) -> Unit) {
 		isCameraOff = !isCameraOff
 		mRtcEngine?.muteLocalVideoStream(isCameraOff)
-	}
+	}*/
 
 	fun switchCamera(callback: (isSwitched: Boolean) -> Unit) {
 		isSwitched = !isSwitched
@@ -157,12 +155,6 @@ class AgoraManager(
 
 	fun leaveChannel() {
 		mRtcEngine?.leaveChannel()
-	}
-
-	fun destroyEngine(callback: (isMuted: Boolean) -> Unit) {
-		isMuted = !isMuted
-		mRtcEngine?.muteLocalAudioStream(isMuted)
-		callback(isMuted)
 	}
 
 	fun destroyEngine() {

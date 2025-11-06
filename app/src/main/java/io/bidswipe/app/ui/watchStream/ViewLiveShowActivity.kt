@@ -47,11 +47,9 @@ class ViewLiveShowActivity : BaseActivity() {
 
 		roomId = intent.getStringExtra("roomId") ?: ""
 
-		val roomIds = intent.getStringExtra("roomIdsList")
-
 		streamList = intent.getParcelableArrayListExtra<StreamModel>("streamList") as ArrayList<StreamModel>
 
-		log("STREAM LIST: ${streamList.get(0).streamId} ")
+		log("STREAM LIST: ${streamList[0].streamId} ")
 
 		App.manager = AgoraManager(this, Const.APP_ID_AGORA)
 
@@ -76,14 +74,12 @@ class ViewLiveShowActivity : BaseActivity() {
 			}
 		}
 
-
-
 		pos = streamList.indexOf(streamList.find { it.roomId == roomId })
 
 		if (streamList.isNotEmpty()) {
 			viewPager = bind.viewPager
 			viewModel.setStreams(streamList)
-			log("STREAM LIST : ${streamList}")
+			log("STREAM LIST : $streamList")
 			streamPagerAdapter = StreamPagerAdapter(this@ViewLiveShowActivity, viewModel)
 			viewPager.adapter = streamPagerAdapter
 			viewPager.currentItem = pos
@@ -92,19 +88,19 @@ class ViewLiveShowActivity : BaseActivity() {
 			finishAfterTransition()
 		}
 
-/*
-		socketManager?.onRoomCreated { json ->
+		/*
+				socketManager?.onRoomCreated { json ->
 
-			val showData = LiveShowModel.fromJson(json)
+					val showData = LiveShowModel.fromJson(json)
 
-			if (!streamList.contains(StreamModel(showData.showId.toString(), showData.rtcToken))){
-				streamList.add(showData.showId.toString())
-			}
+					if (!streamList.contains(StreamModel(showData.showId.toString(), showData.rtcToken))){
+						streamList.add(showData.showId.toString())
+					}
 
-			streamPagerAdapter.notifyDataSetChanged()
+					streamPagerAdapter.notifyDataSetChanged()
 
-		}
-*/
+				}
+		*/
 
 		// Initialize ChatManager here if you want the ZIM SDK ready at Activity scope
 		/*chatManager = ChatManager(
@@ -121,8 +117,6 @@ class ViewLiveShowActivity : BaseActivity() {
 	override fun onDestroy() {
 		super.onDestroy()
 		App.manager.destroyEngine()
-//		FireRef.LIVE_SESSIONS.removeEventListener(eventListener)
-		destroyEngine()
 	}
 
 	private fun createEngine() {
@@ -137,17 +131,6 @@ class ViewLiveShowActivity : BaseActivity() {
 
 		}
 
-		/*streamingManager = StreamingManager.getInstance(applicationContext)
-		streamingManager?.createEngine(
-			appId = Const.APP_ID.toLong() ,
-			appSign = Const.APP_SIGN ,
-			scenario = ZegoScenario.BROADCAST
-		)*/
-
-	}
-
-	private fun destroyEngine() {
-//		socketManager?.disconnect()
 	}
 
 	fun moveItem(list: MutableList<String>, fromIndex: Int, toIndex: Int) {
