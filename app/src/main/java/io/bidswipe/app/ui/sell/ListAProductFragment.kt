@@ -9,7 +9,7 @@ import android.widget.ArrayAdapter
 import androidx.core.content.ContextCompat
 import androidx.core.text.buildSpannedString
 import androidx.core.view.isVisible
-import com.canhub.cropper.CropImageContract
+import androidx.recyclerview.widget.LinearLayoutManager
 import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseFragment
 import io.bidswipe.app.controller.CategoryListAdapter
@@ -27,6 +27,8 @@ import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.ui.dashboard.DashViewModel
 import io.bidswipe.app.utils.Alerts
 import io.bidswipe.app.utils.Const
+import io.bidswipe.app.utils.cropper.CustomCropImageContract
+import io.bidswipe.app.utils.cropper.CustomCropImageHelper
 import io.bidswipe.app.utils.Utils
 import io.bidswipe.app.utils.finish
 import io.bidswipe.app.utils.hideKeyboard
@@ -62,28 +64,31 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
 	private var packageWeight = 0.0
 	private var selectedMailClass: GetMailClassesResponse.Data.MailClasses? = null
 	
-	private val imageResult = registerForActivityResult(CropImageContract()) { result ->
-		if (result.isSuccessful) {
-			val imageUri = result.uriContent
-			val imagePath = result.getUriFilePath(mCtx, true)
+	private val cropImageLauncher = registerForActivityResult(
+		CustomCropImageContract()
+	) { uri ->
+		if (uri != null) {
+			val imagePath = CustomCropImageContract.getUriFilePath(mCtx, uri)
 			if (imagePath != null) {
-				
 				if (uploadItemIndex == -1) {
 					imageList.add(imagePath)
+					log("IMAGES $imageList")
+					bind.images.adapter?.notifyItemInserted(imageList.lastIndex)
 				} else {
 					imageList[uploadItemIndex] = imagePath
+					bind.images.adapter?.notifyItemChanged(uploadItemIndex)
 					uploadItemIndex = -1
 				}
-				
 				bind.imageLimit.text = "${imageList.size}/9"
-				
-				bind.images.adapter?.notifyDataSetChanged()
 				
 				// Save state to ViewModel
 				saveStateToViewModel()
 			}
 		}
 	}
+	
+	// Manager handles image picking (gallery/camera) internally
+	private val imagePickerManager = CustomCropImageHelper.createManager(this, cropImageLauncher)
 	
 	private val mClick = object : RecyclerClicks {
 		override fun itemClick(pos: Int, status: String?) {
@@ -181,6 +186,14 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
 			product = activity?.intent?.getSerializableExtra("product") as? GetMyInventoryResponse.Data
 		}
 		
+		bind.root.setOnClickListener {
+			hideKeyboard(it)
+		}
+		
+		bind.mainLayout.setOnClickListener {
+			hideKeyboard(it)
+		}
+		
 		// Only load product data if not restored from ViewModel
 		if (product != null && viewModel.productFormProduct == null) {
 			bind.saveDraft.isVisible = false
@@ -237,6 +250,8 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
 				uploadImage()
 			}
 		})
+		bind.images.layoutManager = LinearLayoutManager(mCtx, LinearLayoutManager.HORIZONTAL, false)
+		bind.images.setHasFixedSize(false)
 		
 		bind.addNewImage.setHapticClickListener {
 			uploadItemIndex = -1
@@ -457,44 +472,11 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
 		}
 	}
 	
-	/*private fun validatePackageDimensions() {
-		selectedMailClass?.let { mailClass ->
-			// Check if any dimension exceeds the mail class limits
-			val errors = mutableListOf<String>()
-
-			if (packageLength > (mailClass.maxLengthIn ?: 0.0)) {
-				errors.add("Length exceeds maximum of ${mailClass.maxLengthIn} inches")
-			}
-
-			if (packageWidth > (mailClass.maxWidthIn ?: 0.0)) {
-				errors.add("Width exceeds maximum of ${mailClass.maxWidthIn} inches")
-			}
-
-			if (packageHeight > (mailClass.maxHeightIn ?: 0.0)) {
-				errors.add("Height exceeds maximum of ${mailClass.maxHeightIn} inches")
-			}
-
-			if (packageWeight > (mailClass.maxWeightLbs ?: 0.0)) {
-				errors.add("Weight exceeds maximum of ${mailClass.maxWeightLbs} lbs")
-			}
-			val lengthPlusGirth = packageLength + (2 * packageWidth) + (2 * packageHeight)
-			if (lengthPlusGirth > (mailClass.maxLengthPlusGirthIn ?: 0.0)) {
-				errors.add("Length + girth exceeds maximum of ${mailClass.maxLengthPlusGirthIn} inches")
-			}
-
-			if (errors.isNotEmpty()) {
-				val errorMessage = "Package doesn't meet requirements for ${mailClass.label}:\n" +
-						errors.joinToString("\n")
-				Alerts.error(mCtx, errorMessage)
-			}
-		}
-	}*/
-	
 	fun uploadImage() {
 		if (imageList.size < 9) {
 			requestPerms(Const.STR_PERMS) { per ->
 				if (per) {
-					imageResult.launch(Utils.initCrop(mCtx, isCamera = true, isGallery = true))
+					imagePickerManager.launch(isCamera = true, isGallery = true)
 				}
 			}
 		} else {
@@ -639,6 +621,15 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
 							
 							is Resource.Error -> {
 								bind.loader.isVisible = false
+								it.parse(mCtx, TAG, object : AlertClicks {
+									override fun primaryClick(dialog: AppBottomSheet) {
+										dialog.dismiss()
+									}
+									
+									override fun secondaryClick(dialog: AppBottomSheet) {
+										dialog.dismiss()
+									}
+								})
 							}
 							
 							else -> {}

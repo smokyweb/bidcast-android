@@ -10,7 +10,6 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsCompat.CONSUMED
 import androidx.core.view.isVisible
-import com.canhub.cropper.CropImageContract
 import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseActivity
 import io.bidswipe.app.controller.SelectPaymentCardAdapter
@@ -22,6 +21,8 @@ import io.bidswipe.app.network.response.GetPaymentCardsResponse
 import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.utils.Alerts
 import io.bidswipe.app.utils.Const
+import io.bidswipe.app.utils.cropper.CustomCropImageContract
+import io.bidswipe.app.utils.cropper.CustomCropImageHelper
 import io.bidswipe.app.utils.Utils
 import io.bidswipe.app.utils.bind
 import io.bidswipe.app.utils.goToAddCard
@@ -51,12 +52,49 @@ class SellerVerificationActivity : BaseActivity() {
 
 	private lateinit var cardAdapter: SelectPaymentCardAdapter
 
+	private val idCropLauncher = registerForActivityResult(CustomCropImageContract()) { uri ->
+		if (uri != null) {
+			val imagePath = CustomCropImageContract.getUriFilePath(this, uri)
+			if (imagePath != null) {
+				bind.cardImage.isVisible = true
+				bind.cardImage.loadUrl(this, uri.toString())
+				cardImage = imagePath
+				if (cardImage.isNotEmpty() && selfie.isNotEmpty()) {
+					bind.verificationIcon.isVisible = true
+					bind.stepProgress.progress = 1
+					bind.stepCount.text = "1 of 3"
+				}
+				log("ImageUri = $uri")
+			}
+		}
+	}
+
+	private val selfieCropLauncher = registerForActivityResult(CustomCropImageContract()) { uri ->
+		if (uri != null) {
+			val imagePath = CustomCropImageContract.getUriFilePath(this, uri)
+			if (imagePath != null) {
+				bind.selfie.isVisible = true
+				bind.selfie.loadUrl(this, uri.toString())
+				selfie = imagePath
+				if (cardImage.isNotEmpty() && selfie.isNotEmpty()) {
+					bind.verificationIcon.isVisible = true
+					bind.stepProgress.progress = 1
+					bind.stepCount.text = "1 of 3"
+				}
+				log("ImageUri = $uri")
+			}
+		}
+	}
+	
 	private var addCardLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
 		if (result.resultCode == RESULT_OK) {
 			bind.loader.isVisible = true
 			viewModel.getPaymentCard()
 		}
 	}
+	
+	private val idImagePickerManager = CustomCropImageHelper.createManager(this, idCropLauncher)
+	private val selfieImagePickerManager = CustomCropImageHelper.createManager(this, selfieCropLauncher)
 
 	private val mClick = object : RecyclerClicks {
 		override fun itemClick(pos: Int, status: String?) {
@@ -73,54 +111,6 @@ class SellerVerificationActivity : BaseActivity() {
 
 		}
 
-	}
-
-	private val idResult = registerForActivityResult(CropImageContract()) { result ->
-		if (result.isSuccessful) {
-			val imageUri = result.uriContent
-			val imagePath = result.getUriFilePath(this, true)
-			if (imagePath != null) {
-
-				bind.cardImage.isVisible = true
-				bind.cardImage.loadUrl(this, imageUri.toString())
-
-				cardImage = imagePath
-
-				if (cardImage.isNotEmpty() && selfie.isNotEmpty()) {
-
-					bind.verificationIcon.isVisible = true
-					bind.stepProgress.progress = 1
-					bind.stepCount.text = "1 of 3"
-
-				}
-
-				log("ImageUri = $imageUri")
-
-			}
-		}
-	}
-
-	private val selfieResult = registerForActivityResult(CropImageContract()) { result ->
-		if (result.isSuccessful) {
-			val imageUri = result.uriContent
-			val imagePath = result.getUriFilePath(this, true)
-			if (imagePath != null) {
-
-				bind.selfie.isVisible = true
-				bind.selfie.loadUrl(this, imageUri.toString())
-
-				selfie = imagePath
-
-				if (cardImage.isNotEmpty() && selfie.isNotEmpty()) {
-					bind.verificationIcon.isVisible = true
-					bind.stepProgress.progress = 1
-					bind.stepCount.text = "1 of 3"
-				}
-
-				log("ImageUri = $imageUri")
-
-			}
-		}
 	}
 
 	@SuppressLint("ResourceAsColor")
@@ -592,7 +582,7 @@ class SellerVerificationActivity : BaseActivity() {
 	fun uploadUserId() {
 		requestPerms(Const.STR_PERMS) { per ->
 			if (per) {
-				idResult.launch(Utils.initCrop(this, isCamera = true, isGallery = true))
+				idImagePickerManager.launch(isCamera = true, isGallery = true)
 			}
 		}
 	}
@@ -600,7 +590,7 @@ class SellerVerificationActivity : BaseActivity() {
 	fun uploadUserSelfie() {
 		requestPerms(Const.STR_PERMS) { per ->
 			if (per) {
-				selfieResult.launch(Utils.initCrop(this, isCamera = true, isGallery = true))
+				selfieImagePickerManager.launch(isCamera = true, isGallery = true)
 			}
 		}
 	}

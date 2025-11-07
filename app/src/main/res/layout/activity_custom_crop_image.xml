@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".utils.cropper.CustomCropImageActivity">
+
+    <io.bidswipe.app.ui.custom.Header
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:headerMode="BACK_BUTTON_TITLE_ACTION"
+        app:headerTitle="Crop Image"
+        app:layout_constraintTop_toTopOf="parent"
+        app:primaryIconDrawable="@drawable/ic_check"
+        app:showBackButton="true"
+        app:showPrimaryIcon="true"
+        app:showSecondaryIcon="false" />
+
+    <com.canhub.cropper.CropImageView
+        android:id="@+id/cropImageView"
+        android:layout_width="0dp"
+        android:background="@color/surface"
+        android:layout_height="0dp"
+        android:fitsSystemWindows="false"
+        app:cropGuidelinesColor="@color/primary"
+        app:cropBorderLineColor="@color/primary"
+        app:cropBorderCornerColor="@color/primary"
+        app:layout_constraintTop_toBottomOf="@id/toolbar"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

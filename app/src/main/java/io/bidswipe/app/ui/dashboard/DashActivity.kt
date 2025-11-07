@@ -72,8 +72,7 @@ class DashActivity : BaseActivity(), NavController.OnDestinationChangedListener 
 				CONSUMED
 		}
 
-		navHostFragment =
-			supportFragmentManager.findFragmentById(ids.nav_host_fragment) as NavHostFragment
+		navHostFragment = supportFragmentManager.findFragmentById(ids.nav_host_fragment) as NavHostFragment
 		navController = navHostFragment.navController
 
 		navController.addOnDestinationChangedListener(this)

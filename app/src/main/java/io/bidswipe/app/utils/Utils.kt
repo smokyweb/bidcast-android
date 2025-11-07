@@ -113,28 +113,7 @@ object Utils {
 			name ,
 			file.asRequestBody("image/jpeg".toMediaTypeOrNull())
 		)
-
-	fun initCrop(mCtx : Context , isCamera : Boolean = false , isGallery : Boolean = false) =
-		CropImageContractOptions(
-			null , CropImageOptions(
-				activityBackgroundColor = ContextCompat.getColor(mCtx , clr.background) ,
-				toolbarBackButtonColor = ContextCompat.getColor(mCtx , clr.onSurface) ,
-				toolbarColor = ContextCompat.getColor(mCtx , clr.surface) ,
-				activityMenuTextColor = ContextCompat.getColor(mCtx , clr.onSurface) ,
-				activityMenuIconColor = ContextCompat.getColor(mCtx , clr.onSurface) ,
-				toolbarTitleColor = ContextCompat.getColor(mCtx , clr.onSurface) ,
-				borderCornerColor = ContextCompat.getColor(mCtx , clr.primary) ,
-				borderLineColor = ContextCompat.getColor(mCtx , clr.primary) ,
-				guidelinesColor = ContextCompat.getColor(mCtx , clr.primary) ,
-				outputCompressFormat = Bitmap.CompressFormat.JPEG ,
-				guidelines = CropImageView.Guidelines.ON ,
-				imageSourceIncludeGallery = isGallery ,
-				imageSourceIncludeCamera = isCamera ,
-				cropMenuCropButtonTitle = "Done" ,
-				outputCompressQuality = 70 ,
-			)
-		)
-
+	
 	fun getTimeAgo(time : String , format : String = Const.SERVER_TIME_FORMAT) : String {
 
 		val serverTime = time.ifEmpty { getSimpleDate(format).format(timestamp()).toString() }

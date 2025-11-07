@@ -33,6 +33,7 @@
             android:fillViewport="true">
 
             <LinearLayout
+                android:id="@+id/main_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/margin"
@@ -61,44 +62,44 @@
 
                 </LinearLayout>
 
-                <HorizontalScrollView
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:scrollbars="none">
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
 
                     <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal">
+                        android:id="@+id/add_new_image"
+                        android:layout_width="120dp"
+                        android:layout_height="120dp"
+                        android:background="@drawable/dashed_card_8_white"
+                        android:gravity="center">
 
-                        <androidx.recyclerview.widget.RecyclerView
-                            android:id="@+id/images"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:nestedScrollingEnabled="false"
-                            android:orientation="horizontal"
-                            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                            tools:itemCount="1"
-                            tools:listitem="@layout/upload_image_item" />
-
-                        <LinearLayout
-                            android:id="@+id/add_new_image"
-                            android:layout_width="120dp"
-                            android:layout_height="120dp"
-                            android:background="@drawable/dashed_card_8_white"
-                            android:gravity="center">
-
-                            <ImageView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="center"
-                                android:contentDescription="@string/app_name"
-                                android:src="@drawable/ic_add" />
-
-                        </LinearLayout>
+                        <androidx.appcompat.widget.AppCompatImageView
+                            android:layout_width="48dp"
+                            android:layout_height="38dp"
+                            android:layout_gravity="center"
+                            app:tint="@color/outlineVariant"
+                            android:contentDescription="@string/app_name"
+                            android:src="@drawable/ic_image" />
 
                     </LinearLayout>
-                </HorizontalScrollView>
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/images"
+                        android:layout_width="0dp"
+                        android:layout_marginStart="@dimen/half_margin"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:nestedScrollingEnabled="false"
+                        android:overScrollMode="never"
+                        android:orientation="horizontal"
+                        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                        tools:itemCount="3"
+                        tools:listitem="@layout/upload_image_item" />
+
+
+                </LinearLayout>
 
                 <io.bidswipe.app.ui.custom.Heading
                     android:layout_width="match_parent"

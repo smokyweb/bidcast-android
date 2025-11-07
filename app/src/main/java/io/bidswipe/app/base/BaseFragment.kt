@@ -12,12 +12,14 @@ import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.*
+import androidx.core.content.ContextCompat
 import androidx.navigation.fragment.findNavController
 import androidx.viewbinding.ViewBinding
 import com.permissionx.guolindev.PermissionX
 import io.bidswipe.app.App
 import io.bidswipe.app.utils.Alerts
 import io.bidswipe.app.utils.Prefs
+import io.bidswipe.app.utils.clr
 
 abstract class BaseFragment<VM : ViewModel, BIND : ViewBinding> : Fragment() {
 
@@ -36,6 +38,9 @@ abstract class BaseFragment<VM : ViewModel, BIND : ViewBinding> : Fragment() {
 	): View? {
         bind = getBind(inflater, view)
         mCtx = inflater.context
+
+        // Set fragment background to surface color
+        bind.root.setBackgroundColor(ContextCompat.getColor(mCtx, clr.surface))
 
         if (App.profileResponse.value?.preferences?.hapticFeedback == true) {
             applyHapticToAllClickableViews(bind.root)

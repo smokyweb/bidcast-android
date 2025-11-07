@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:padding="@dimen/margin"
+    android:background="@drawable/bottom_sheet_back"
+    android:orientation="vertical">
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/camera"
+        style="@style/appBtnTrans"
+        android:layout_width="match_parent"
+        android:textColor="@color/onSurface"
+        app:backgroundTint="@color/transparent"
+        android:layout_height="wrap_content"
+        android:text="Camera" />
+
+    <com.google.android.material.divider.MaterialDivider
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:layout_marginVertical="@dimen/half_margin" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/gallery"
+        style="@style/appBtnTrans"
+        android:textColor="@color/onSurface"
+        app:backgroundTint="@color/transparent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Gallery" />
+
+    <com.google.android.material.divider.MaterialDivider
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:layout_marginVertical="@dimen/half_margin" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/cancel"
+        style="@style/appBtnTrans"
+        app:backgroundTint="@color/transparent"
+        android:textColor="@color/error"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Cancel" />
+
+</LinearLayout>

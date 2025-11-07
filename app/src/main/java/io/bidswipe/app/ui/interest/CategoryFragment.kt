@@ -10,10 +10,13 @@ import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseFragment
 import io.bidswipe.app.controller.CategoryAdapter
 import io.bidswipe.app.databinding.FragmentCategoryBinding
+import io.bidswipe.app.interfaces.AlertClicks
 import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.network.response.GetCategoryResponse
+import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.ui.dashboard.DashViewModel
+import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.setHapticClickListener
 import io.bidswipe.app.utils.toDash
 
@@ -106,7 +109,15 @@ class CategoryFragment : BaseFragment<DashViewModel , FragmentCategoryBinding>()
 				}
 
 				is Resource.Error -> {
-					errorToast("Failed to load categories")
+					it.parse(mCtx, TAG, object : AlertClicks {
+						override fun primaryClick(dialog: AppBottomSheet) {
+							dialog.dismiss()
+						}
+						
+						override fun secondaryClick(dialog: AppBottomSheet) {
+							dialog.dismiss()
+						}
+					})
 				}
 
 				else -> {}

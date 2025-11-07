@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.navigation.fragment.findNavController
-import com.canhub.cropper.CropImageContract
 import io.bidswipe.app.base.BaseFragment
 import io.bidswipe.app.controller.GoodsExampleAdapter
 import io.bidswipe.app.controller.ThumbnailTipsAdapter
@@ -18,7 +17,8 @@ import io.bidswipe.app.network.response.GetAllTipsResponse
 import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.utils.Alerts
 import io.bidswipe.app.utils.Const
-import io.bidswipe.app.utils.Utils
+import io.bidswipe.app.utils.cropper.CustomCropImageContract
+import io.bidswipe.app.utils.cropper.CustomCropImageHelper
 import io.bidswipe.app.utils.ids
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request
@@ -38,24 +38,19 @@ class SelectThumbnailFragment :
 
 	private var goodsList = mutableListOf<String?>()
 
-	private val imageResult = registerForActivityResult(CropImageContract()) { result ->
-		if (result.isSuccessful) {
-			val imageUri = result.uriContent
-
+	private val cropImageLauncher = registerForActivityResult(CustomCropImageContract()) { uri ->
+		if (uri != null) {
 			bind.imgCard.isVisible = true
 			bind.pickImageLayout.isVisible = false
-
-			bind.img.setImageURI(imageUri)
-
-			val imagePath = result.getUriFilePath(mCtx, true)
-
+			bind.img.setImageURI(uri)
+			val imagePath = CustomCropImageContract.getUriFilePath(mCtx, uri)
 			if (imagePath != null) {
-
 				viewModel.thumbnail = imagePath
-
 			}
 		}
 	}
+
+	private val imagePickerManager = CustomCropImageHelper.createManager(this, cropImageLauncher)
 
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		super.onViewCreated(view, savedInstanceState)
@@ -79,7 +74,7 @@ class SelectThumbnailFragment :
 		bind.pickThumbnail.setHapticClickListener {
 			requestPerms(Const.STR_PERMS) { per ->
 				if (per) {
-					imageResult.launch(Utils.initCrop(mCtx, isCamera = true, isGallery = true))
+					imagePickerManager.launch(isCamera = true, isGallery = true)
 				}
 			}
 		}

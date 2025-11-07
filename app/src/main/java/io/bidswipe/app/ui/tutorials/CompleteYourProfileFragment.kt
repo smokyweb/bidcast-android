@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.navigation.fragment.findNavController
-import com.canhub.cropper.CropImageContract
 import io.bidswipe.app.App
 import io.bidswipe.app.base.BaseFragment
 import io.bidswipe.app.databinding.FragmentCompleteYourProfileBinding
@@ -15,6 +14,8 @@ import io.bidswipe.app.network.Resource
 import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.ui.dashboard.DashViewModel
 import io.bidswipe.app.utils.Const
+import io.bidswipe.app.utils.cropper.CustomCropImageContract
+import io.bidswipe.app.utils.cropper.CustomCropImageHelper
 import io.bidswipe.app.utils.Utils
 import io.bidswipe.app.utils.asCapital
 import io.bidswipe.app.utils.ids
@@ -36,19 +37,18 @@ class CompleteYourProfileFragment : BaseFragment<DashViewModel , FragmentComplet
 
 	private var imagePart: MultipartBody.Part? = null
 
-	private val imageResult = registerForActivityResult(CropImageContract()) { result ->
-		if (result.isSuccessful) {
-			val imageUri = result.uriContent
-
-			bind.userProfile.setImageURI(imageUri)
-
-			val imagePath = result.getUriFilePath(mCtx, true)
-
-			val name = System.currentTimeMillis().toString() + "_profile_gallery.jpeg"
-			imagePart = Utils.imagePart("profile_image", name, File(imagePath ?: ""))
-
+	private val cropImageLauncher = registerForActivityResult(CustomCropImageContract()) { uri ->
+		if (uri != null) {
+			bind.userProfile.setImageURI(uri)
+			val imagePath = CustomCropImageContract.getUriFilePath(mCtx, uri)
+			if (imagePath != null) {
+				val name = System.currentTimeMillis().toString() + "_profile_gallery.jpeg"
+				imagePart = Utils.imagePart("profile_image", name, File(imagePath))
+			}
 		}
 	}
+
+	private val imagePickerManager = CustomCropImageHelper.createManager(this, cropImageLauncher)
 
 	override fun onViewCreated(view : View , savedInstanceState : Bundle?) {
 		super.onViewCreated(view , savedInstanceState)
@@ -57,10 +57,10 @@ class CompleteYourProfileFragment : BaseFragment<DashViewModel , FragmentComplet
 			findNavController().navigate(ids.action_completeYourProfileFragment_to_prepareYourShowFragment)
 		}
 
-		bind.selectImg.setHapticClickListener {
+		bind.userProfile.setHapticClickListener {
 			requestPerms(Const.STR_PERMS) { per ->
 				if (per) {
-					imageResult.launch(Utils.initCrop(mCtx, isCamera = true, isGallery = true))
+					imagePickerManager.launch(isCamera = true, isGallery = true)
 				}
 			}
 		}

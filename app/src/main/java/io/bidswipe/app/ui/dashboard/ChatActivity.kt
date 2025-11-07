@@ -23,7 +23,6 @@ import androidx.lifecycle.viewModelScope
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.canhub.cropper.CropImageContract
 import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -43,15 +42,17 @@ import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.utils.Alerts
 import io.bidswipe.app.utils.Chats
 import io.bidswipe.app.utils.Const
+import io.bidswipe.app.utils.cropper.CustomCropImageContract
+import io.bidswipe.app.utils.cropper.CustomCropImageHelper
 import io.bidswipe.app.utils.FireRef
 import io.bidswipe.app.utils.MessageSwiper
 import io.bidswipe.app.utils.Prefs
-import io.bidswipe.app.utils.Utils
 import io.bidswipe.app.utils.asCapital
 import io.bidswipe.app.utils.bind
 import io.bidswipe.app.utils.clr
 import io.bidswipe.app.utils.hideKeyboard
 import io.bidswipe.app.utils.loadUrl
+import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request
 import io.bidswipe.app.utils.runSafe
 import io.bidswipe.app.utils.setHapticClickListener
@@ -106,23 +107,14 @@ class ChatActivity : BaseActivity() {
 		}
 	}
 
-	private val imageResult = registerForActivityResult(CropImageContract()) { result ->
-		if (result.isSuccessful) {
-			val profileUri = result.uriContent
-			Alerts.log(TAG, "URI $profileUri")
-
-			/*            if (profileUri != null) {
-							chats.sendImage(profileUri) {
-			//					viewModel.chatNotification(chatKey.request() , "Shared the image".request() , "image".request() , receiverId.request())
-							}
-						}
-						else {
-							errorToast("Couldn't select the image")
-						}*/
-		} else {
-			result.error?.printStackTrace()
+	private val cropImageLauncher = registerForActivityResult(CustomCropImageContract()) { uri ->
+		if (uri != null) {
+			Alerts.log(TAG, "URI $uri")
+			// TODO: send image using chats.sendImage if needed
 		}
 	}
+
+	private val imagePickerManager = CustomCropImageHelper.createManager(this, cropImageLauncher)
 
 
 	override fun onCreate(savedInstanceState: Bundle?) {
@@ -284,7 +276,7 @@ class ChatActivity : BaseActivity() {
 			hideKeyboard()
 			requestPerms(Const.PERMISSIONS) {
 				if (it) {
-					imageResult.launch(Utils.initCrop(this, isCamera = true, isGallery = true))
+					imagePickerManager.launch(isCamera = true, isGallery = true)
 				}
 			}
 		}
@@ -309,7 +301,15 @@ class ChatActivity : BaseActivity() {
 
 				is Resource.Error -> {
 					viewModel.blockUnblockUserRepo.value = null
-					errorToast("Something went wrong")
+					resource.parse(this, TAG, object : AlertClicks {
+						override fun primaryClick(dialog: AppBottomSheet) {
+							dialog.dismiss()
+						}
+						
+						override fun secondaryClick(dialog: AppBottomSheet) {
+							dialog.dismiss()
+						}
+					})
 				}
 
 				else -> {}
@@ -330,6 +330,15 @@ class ChatActivity : BaseActivity() {
 				}
 
 				is Resource.Error -> {
+					it.parse(this, TAG, object : AlertClicks {
+						override fun primaryClick(dialog: AppBottomSheet) {
+							dialog.dismiss()
+						}
+						
+						override fun secondaryClick(dialog: AppBottomSheet) {
+							dialog.dismiss()
+						}
+					})
 				}
 
 				else -> {}
@@ -590,7 +599,15 @@ class ChatActivity : BaseActivity() {
 
 				is Resource.Error -> {
 					viewModel.blockUnblockUserRepo.value = null
-					errorToast("Something went wrong")
+					resource.parse(this, TAG, object : AlertClicks {
+						override fun primaryClick(dialog: AppBottomSheet) {
+							dialog.dismiss()
+						}
+						
+						override fun secondaryClick(dialog: AppBottomSheet) {
+							dialog.dismiss()
+						}
+					})
 				}
 
 				else -> {}

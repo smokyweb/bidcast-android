@@ -10,10 +10,13 @@ import androidx.navigation.fragment.findNavController
 import io.bidswipe.app.base.BaseFragment
 import io.bidswipe.app.controller.SubCategoryRecyclerAdapter
 import io.bidswipe.app.databinding.FragmentSubcategoryBinding
+import io.bidswipe.app.interfaces.AlertClicks
 import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.network.response.GetSubCategoriesResponse
+import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.ui.dashboard.DashViewModel
+import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.setHapticClickListener
 import io.bidswipe.app.utils.toDash
 
@@ -75,7 +78,15 @@ class SubCategoryFragment : BaseFragment<DashViewModel , FragmentSubcategoryBind
 						}
 
 						is Resource.Error -> {
-							errorToast("Failed to save")
+							it.parse(mCtx, TAG, object : AlertClicks {
+								override fun primaryClick(dialog: AppBottomSheet) {
+									dialog.dismiss()
+								}
+								
+								override fun secondaryClick(dialog: AppBottomSheet) {
+									dialog.dismiss()
+								}
+							})
 						}
 
 						else -> {}
@@ -108,8 +119,15 @@ class SubCategoryFragment : BaseFragment<DashViewModel , FragmentSubcategoryBind
 
 					is Resource.Error -> {
 						bind.loader.isVisible = false
-						errorToast("Failed to load categories")
-
+						it.parse(mCtx, TAG, object : AlertClicks {
+							override fun primaryClick(dialog: AppBottomSheet) {
+								dialog.dismiss()
+							}
+							
+							override fun secondaryClick(dialog: AppBottomSheet) {
+								dialog.dismiss()
+							}
+						})
 					}
 
 					else -> {}

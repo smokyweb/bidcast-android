@@ -11,7 +11,6 @@ import androidx.core.os.bundleOf
 import androidx.core.text.buildSpannedString
 import androidx.core.view.isVisible
 import androidx.navigation.fragment.findNavController
-import com.canhub.cropper.CropImageContract
 import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseFragment
 import io.bidswipe.app.controller.CategoryListAdapter
@@ -28,7 +27,8 @@ import io.bidswipe.app.network.response.GetMyInventoryResponse
 import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.utils.Alerts
 import io.bidswipe.app.utils.Const
-import io.bidswipe.app.utils.Utils
+import io.bidswipe.app.utils.cropper.CustomCropImageContract
+import io.bidswipe.app.utils.cropper.CustomCropImageHelper
 import io.bidswipe.app.utils.hideKeyboard
 import io.bidswipe.app.utils.ids
 import io.bidswipe.app.utils.parse
@@ -56,11 +56,9 @@ class CreateProductFragment : BaseFragment<ScheduleShowViewModel, FragmentCreate
 	private val processingCategories = listOf("LETTERS", "FLATS", "MACHINABLE", "NONSTANDARD", "NON_MACHINABLE")
 	private var selectedProcessingCategory: String? = null
 
-	private val imageResult = registerForActivityResult(CropImageContract()) { result ->
-		if (result.isSuccessful) {
-			val imageUri = result.uriContent
-			val imagePath = result.getUriFilePath(mCtx, true)
-
+	private val cropImageLauncher = registerForActivityResult(CustomCropImageContract()) { uri ->
+		if (uri != null) {
+			val imagePath = CustomCropImageContract.getUriFilePath(mCtx, uri)
 			if (imagePath != null) {
 				if (uploadItemIndex == -1) {
 					if (imageList.size < 9) {
@@ -74,6 +72,8 @@ class CreateProductFragment : BaseFragment<ScheduleShowViewModel, FragmentCreate
 			}
 		}
 	}
+
+	private val imagePickerManager = CustomCropImageHelper.createManager(this, cropImageLauncher)
 
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		super.onViewCreated(view, savedInstanceState)
@@ -371,11 +371,11 @@ class CreateProductFragment : BaseFragment<ScheduleShowViewModel, FragmentCreate
 		}
 	}
 
-	private fun uploadImage() {
+	fun uploadImage() {
 		if (imageList.size < 9) {
 			requestPerms(Const.STR_PERMS) { per ->
 				if (per) {
-					imageResult.launch(Utils.initCrop(mCtx, isCamera = true, isGallery = true))
+					imagePickerManager.launch(isCamera = true, isGallery = true)
 				}
 			}
 		} else {
