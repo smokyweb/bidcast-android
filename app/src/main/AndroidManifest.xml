@@ -53,12 +53,7 @@
 			android:resizeableActivity = "true"
 			android:supportsPictureInPicture = "true"
 			android:windowSoftInputMode = "adjustResize"/>
-		<activity
-			android:name = ".ui.scheduleShow.DolbyStreamActivity"
-			android:exported = "false" />
-		<activity
-			android:name = ".ui.scheduleShow.DolbySubscribeActivity"
-			android:exported = "false" />
+
 		<activity
 			android:name = ".ui.interest.ChooseInterestActivity"
 			android:exported = "false"
@@ -79,20 +74,7 @@
 			android:name = ".ui.watchStream.ViewLiveShowActivity"
 			android:exported = "false"
 			android:windowSoftInputMode = "adjustResize" />
-<!--		<activity
-			android:name = ".ui.scheduleShow.LiveShowActivity"
-			android:configChanges = "screenSize|smallestScreenSize|screenLayout|orientation"
-			android:exported = "false"
-			android:supportsPictureInPicture = "true"
-			android:windowSoftInputMode = "adjustResize" />-->
-		<activity
-			android:name = ".ui.scheduleShow.LiveShowSocketActivity"
-			android:configChanges = "screenSize|smallestScreenSize|screenLayout|orientation"
-			android:exported = "false"
-			android:launchMode = "singleTop"
-			android:resizeableActivity = "true"
-			android:supportsPictureInPicture = "true"
-			android:windowSoftInputMode = "adjustResize" />
+
 		<activity
 			android:name = ".ui.dashboard.AddPaymentCardActivity"
 			android:exported = "false" />
@@ -120,7 +102,9 @@
 			android:exported = "false" />
 		<activity
 			android:name = ".ui.sell.ListAProductActivity"
-			android:exported = "false" />
+			android:exported = "false"
+			android:windowSoftInputMode="adjustResize"
+			/>
 		<activity
 			android:name = ".ui.dashboard.DashActivity"
 			android:exported = "true"
@@ -136,6 +120,7 @@
 				<data android:pathPrefix = "/live-show" />
 			</intent-filter >
 		</activity >
+
 		<activity
 			android:name = ".ui.SplashActivity"
 			android:exported = "true"
@@ -146,9 +131,11 @@
 				<category android:name = "android.intent.category.LAUNCHER" />
 			</intent-filter >
 		</activity >
+
 		<activity
 			android:name = ".ui.auth.AuthActivity"
-			android:exported = "true" >
+			android:exported = "true"
+			android:windowSoftInputMode="adjustResize">
 			<intent-filter android:autoVerify = "true" >
 				<action android:name = "android.intent.action.VIEW" />
 

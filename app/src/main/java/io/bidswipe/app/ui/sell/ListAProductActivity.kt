@@ -15,20 +15,20 @@ import io.bidswipe.app.utils.setHapticClickListener
 
 class ListAProductActivity : BaseActivity() {
 	private val bind by bind(ActivityListAproductBinding::inflate)
-	private lateinit var navHostFragment : NavHostFragment
-	private lateinit var navController : NavController
+	private lateinit var navHostFragment: NavHostFragment
+	private lateinit var navController: NavController
 
-	override fun onCreate(savedInstanceState : Bundle?) {
+	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
 		setContentView(bind.root)
-		
+
 		ViewCompat.setOnApplyWindowInsetsListener(window.decorView) { v, insets ->
 			val system = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-			bind.root.setPadding(0,system.top,0, system.bottom)
+			bind.root.setPadding(0, system.top, 0, system.bottom)
 			CONSUMED
 		}
-		
-        bind.main.setHapticClickListener {
+
+		bind.main.setHapticClickListener {
 			hideKeyboard()
 		}
 		navHostFragment = supportFragmentManager.findFragmentById(R.id.fragmentContainer) as NavHostFragment

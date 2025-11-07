@@ -146,7 +146,7 @@ interface ApiInterface {
 
 	@POST("api/get-subcategories")
 	suspend fun getSubCategories(
-		@Body getSubCategoriesModel : GetSubCategoriesRequest ,
+		@Body getSubCategoriesModel : GetSubCategoriesRequest
 	) : GetSubCategoriesResponse
 
 	@POST("api/user/favorite")

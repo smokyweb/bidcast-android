@@ -338,7 +338,7 @@
                     app:endIconMode="custom">
 
                     <com.google.android.material.textfield.MaterialAutoCompleteTextView
-                        android:id="@+id/procategory"
+                        android:id="@+id/proCategory"
                         style="@style/inputTextStyle"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"

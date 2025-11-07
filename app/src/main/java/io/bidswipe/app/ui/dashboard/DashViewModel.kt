@@ -62,6 +62,33 @@ class DashViewModel @Inject constructor(
 	var showData = MutableLiveData<TutorialShowModel>()
 
 	val selectedCategories = mutableListOf<GetCategoryResponse.Data>()
+	
+	// Product form state (persists across orientation changes)
+	var productFormImageList = mutableListOf<String?>()
+	var productFormCategoryId = ""
+	var productFormSubCategoryId = ""
+	var productFormVariantList = mutableListOf<GetCategoryResponse.Data.ExtraField?>()
+	var productFormPackageWidth = 0.0
+	var productFormPackageHeight = 0.0
+	var productFormPackageLength = 0.0
+	var productFormPackageWeight = 0.0
+	var productFormSelectedMailClass: GetMailClassesResponse.Data.MailClasses? = null
+	var productFormProduct: GetMyInventoryResponse.Data? = null
+	var productFormIsSubCategory = false
+	var productFormProductTitle = ""
+	var productFormDescription = ""
+	var productFormQuantity = ""
+	var productFormWidth = ""
+	var productFormHeight = ""
+	var productFormLength = ""
+	var productFormWeight = ""
+	var productFormMailClassText = ""
+	var productFormProcessingCategory = ""
+	var productFormPrice = ""
+	var productFormFlashSale = false
+	var productFormAcceptOffers = false
+	var productFormReserveForLive = false
+	var productFormCategoryText = ""
 	private var _logoutResponse = MutableLiveData<Resource<CommonResponse>>()
 	val logoutRepo : MutableLiveData<Resource<CommonResponse>>
 		get() = _logoutResponse
@@ -91,6 +118,24 @@ class DashViewModel @Inject constructor(
 		}
 		_getCategoryResponse.value = repo.getCategory(categoryId , type , search , getCount)
 	}
+
+	private var _getProductSubCategoryResponse = MutableLiveData<Resource<GetCategoryResponse>>()
+	val getProductSubCategoryRepo : MutableLiveData<Resource<GetCategoryResponse>>
+		get() = _getProductSubCategoryResponse
+
+	fun getProductSubCategory(
+		categoryId : String?  ,
+		type : String?,
+		search : String? = null ,
+		getCount : String? = null ,
+	) = viewModelScope.launch {
+		if (! networkMonitor.hasInternet()) {
+			_getProductSubCategoryResponse.value = NO_INTERNET_ERROR
+			return@launch
+		}
+		_getProductSubCategoryResponse.value = repo.getCategory(categoryId , type , search , getCount)
+	}
+
 
 	private var _getSubCategoriesResponse = MutableLiveData<Resource<GetSubCategoriesResponse>>()
 	val getSubCategoriesRepo : MutableLiveData<Resource<GetSubCategoriesResponse>>

@@ -79,6 +79,8 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
 				
 				bind.images.adapter?.notifyDataSetChanged()
 				
+				// Save state to ViewModel
+				saveStateToViewModel()
 			}
 		}
 	}
@@ -88,16 +90,108 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
 		}
 	}
 	
+	private fun restoreStateFromViewModel() {
+		// Restore from ViewModel if state exists
+		if (viewModel.productFormImageList.isNotEmpty() || viewModel.productFormCategoryId.isNotEmpty()) {
+			imageList.clear()
+			imageList.addAll(viewModel.productFormImageList)
+			categoryId = viewModel.productFormCategoryId
+			subCategoryId = viewModel.productFormSubCategoryId
+			variantList.clear()
+			variantList.addAll(viewModel.productFormVariantList)
+			packageWidth = viewModel.productFormPackageWidth
+			packageHeight = viewModel.productFormPackageHeight
+			packageLength = viewModel.productFormPackageLength
+			packageWeight = viewModel.productFormPackageWeight
+			selectedMailClass = viewModel.productFormSelectedMailClass
+			product = viewModel.productFormProduct
+			isSubCategory = viewModel.productFormIsSubCategory
+			
+			// Restore form fields
+			bind.productTitle.setText(viewModel.productFormProductTitle)
+			bind.description.setText(viewModel.productFormDescription)
+			bind.quantity.setText(viewModel.productFormQuantity)
+			bind.width.setText(viewModel.productFormWidth)
+			bind.height.setText(viewModel.productFormHeight)
+			bind.length.setText(viewModel.productFormLength)
+			bind.weight.setText(viewModel.productFormWeight)
+			bind.mailclass.setText(viewModel.productFormMailClassText, false)
+			bind.proCategory.setText(viewModel.productFormProcessingCategory, false)
+			bind.price.setText(viewModel.productFormPrice)
+			bind.flashSell.isChecked = viewModel.productFormFlashSale
+			bind.acceptOffers.isChecked = viewModel.productFormAcceptOffers
+			bind.reserveForLive.isChecked = viewModel.productFormReserveForLive
+			
+			if (viewModel.productFormCategoryText.isNotEmpty()) {
+				if (subCategoryId.isNotEmpty()) {
+					bind.category.setText(buildSpannedString {
+						append(viewModel.productFormCategoryText)
+						append("(${viewModel.productFormProduct})")
+					})
+				} else {
+					bind.category.setText(viewModel.productFormCategoryText,false)
+				}
+			}
+			
+			bind.imageLimit.text = "${imageList.size}/9"
+		}
+	}
+	
+	private fun saveStateToViewModel() {
+		// Save current state to ViewModel
+		viewModel.productFormImageList.clear()
+		viewModel.productFormImageList.addAll(imageList)
+		viewModel.productFormCategoryId = categoryId
+		viewModel.productFormSubCategoryId = subCategoryId
+		viewModel.productFormVariantList.clear()
+		viewModel.productFormVariantList.addAll(variantList)
+		viewModel.productFormPackageWidth = packageWidth
+		viewModel.productFormPackageHeight = packageHeight
+		viewModel.productFormPackageLength = packageLength
+		viewModel.productFormPackageWeight = packageWeight
+		viewModel.productFormSelectedMailClass = selectedMailClass
+		viewModel.productFormProduct = product
+		viewModel.productFormIsSubCategory = isSubCategory
+		
+		// Save form field values
+		viewModel.productFormProductTitle = bind.productTitle.value()
+		viewModel.productFormDescription = bind.description.value()
+		viewModel.productFormQuantity = bind.quantity.value()
+		viewModel.productFormWidth = bind.width.value()
+		viewModel.productFormHeight = bind.height.value()
+		viewModel.productFormLength = bind.length.value()
+		viewModel.productFormWeight = bind.weight.value()
+		viewModel.productFormMailClassText = bind.mailclass.value()
+		viewModel.productFormProcessingCategory = bind.proCategory.value()
+		viewModel.productFormPrice = bind.price.value()
+		viewModel.productFormFlashSale = bind.flashSell.isChecked
+		viewModel.productFormAcceptOffers = bind.acceptOffers.isChecked
+		viewModel.productFormReserveForLive = bind.reserveForLive.isChecked
+		viewModel.productFormCategoryText = bind.category.text?.toString() ?: ""
+	}
+	
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		super.onViewCreated(view, savedInstanceState)
 		
-		product = activity?.intent?.getSerializableExtra("product") as? GetMyInventoryResponse.Data
+		// Restore state from ViewModel if available
+		restoreStateFromViewModel()
 		
-		if (product != null) {
+		// Get product from intent only if not already restored
+		if (product == null) {
+			product = activity?.intent?.getSerializableExtra("product") as? GetMyInventoryResponse.Data
+		}
+		
+		// Only load product data if not restored from ViewModel
+		if (product != null && viewModel.productFormProduct == null) {
 			bind.saveDraft.isVisible = false
 			bind.publish.text = "Update"
 			bind.header.setHeaderText("Update Product")
 			addProductData(product)
+		} else if (product != null && viewModel.productFormProduct != null) {
+			// Restore UI state for edit mode
+			bind.saveDraft.isVisible = false
+			bind.publish.text = "Update"
+			bind.header.setHeaderText("Update Product")
 		}
 		
 		log(product.toString())
@@ -106,7 +200,14 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
 		
 		bind.variants.adapter = variantAdapter
 		
+		// Notify adapter if we restored variants
+		if (viewModel.productFormVariantList.isNotEmpty()) {
+			variantAdapter.notifyDataSetChanged()
+		}
+		
 		bind.header.onBackClick {
+			// Clear ViewModel state when leaving
+			clearViewModelState()
 			finish()
 		}
 		
@@ -116,18 +217,20 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
 			android.R.layout.simple_list_item_1,
 			processingCategories
 		)
-		bind.procategory.setAdapter(proCategoryAdapter)
+		bind.proCategory.setAdapter(proCategoryAdapter)
 		val proDrawable = ContextCompat.getDrawable(mCtx, R.drawable.card_8)
-		bind.procategory.setDropDownBackgroundDrawable(proDrawable)
+		bind.proCategory.setDropDownBackgroundDrawable(proDrawable)
 		var selectedProcessingCategory: String? = null
 		
-		bind.procategory.setOnItemClickListener { _, _, position, _ ->
+		bind.proCategory.setOnItemClickListener { _, _, position, _ ->
 			selectedProcessingCategory = processingCategories[position]
 			log("Selected processing category: $selectedProcessingCategory")
 		}
-		bind.procategory.setHapticClickListener {
-			bind.procategory.showDropDown()
+
+		bind.proCategory.setHapticClickListener {
+			bind.proCategory.showDropDown()
 		}
+
 		bind.images.adapter = ImageAdapter(imageList, object : RecyclerClicks {
 			override fun itemClick(pos: Int, status: String?) {
 				uploadItemIndex = pos
@@ -157,40 +260,16 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
 		viewModel.getCategoryRepo.observe(viewLifecycleOwner) {
 			when (it) {
 				is Resource.Success -> {
-					
+					viewModel.getCategoryRepo.value = null
 					bind.loader.isVisible = false
 					
 					val mData = it.value.data
-					
-					if (mData?.isNotEmpty() == true) {
-						if (isSubCategory) {
-							subCategoryList.clear()
-							subCategoryList.addAll(mData)
-							showCategorySheet(subCategoryList, "subCategory")
-						} else {
-							categoryList.clear()
-							categoryList.addAll(mData)
-//							isSubCategory = true
-						}
-					}
-					
-					isSubCategory = !isSubCategory
-					
-					/*val adapter = ArrayAdapter(
-						mCtx,
-						android.R.layout.simple_list_item_1,
-						categoryList.map { it?.name })
-					bind.category.setAdapter(adapter)
-					val draw = ContextCompat.getDrawable(mCtx, R.drawable.card_8)
-					bind.category.setDropDownBackgroundDrawable(draw)
 
-					bind.category.setOnItemClickListener { _, _, position, _ ->
-						categoryId = categoryList[position]?.id.toString()
+					if (mData?.isNotEmpty() == true) {
+						categoryList.clear()
+						categoryList.addAll(mData)
 					}
-					bind.category.setHapticClickListener {
-						bind.category.showDropDown()
-					}*/
-					
+
 				}
 				
 				is Resource.Error -> {
@@ -211,12 +290,49 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
 				
 			}
 		}
-		
+
+		viewModel.getProductSubCategoryRepo.observe(viewLifecycleOwner) {
+			when (it) {
+				is Resource.Success -> {
+					viewModel.getProductSubCategoryRepo.value = null
+					bind.loader.isVisible = false
+
+					val mData = it.value.data
+
+					if (mData?.isNotEmpty() == true) {
+						subCategoryList.clear()
+						subCategoryList.addAll(mData)
+						showCategorySheet(subCategoryList, "subCategory")
+					}
+
+				}
+
+				is Resource.Error -> {
+					it.parse(mCtx, TAG, object : AlertClicks {
+						override fun primaryClick(dialog: AppBottomSheet) {
+							dialog.dismiss()
+
+						}
+
+						override fun secondaryClick(dialog: AppBottomSheet) {
+							dialog.dismiss()
+						}
+					})
+
+				}
+
+				else -> {}
+
+			}
+		}
+
 		viewModel.storeProductRepo.observe(viewLifecycleOwner) {
 			bind.loader.isVisible = false
 			
 			when (it) {
 				is Resource.Success -> {
+					// Clear ViewModel state on successful save
+					clearViewModelState()
 					Alerts.showBottomSheet(
 						mCtx,
 						it.value.message ?: "Product added successfully",
@@ -263,17 +379,29 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
 						mailClassesList.addAll(mData.mailClasses)
 						setupMailClassDropdown()
 						
-						product?.let { pr->
+						// Restore selected mail class if available
+						if (selectedMailClass != null) {
 							val sel = mailClassesList.findLast { mailClass ->
-								log("CLASSSS ${pr.mailClass} ${mailClass?.label} ${pr.mailClass?.lowercase() == mailClass?.label?.lowercase()}")
-								pr.mailClass?.lowercase() == mailClass?.label?.lowercase()
+								selectedMailClass?.label?.lowercase() == mailClass?.label?.lowercase()
 							}
-							
 							if (sel != null) {
 								selectedMailClass = sel
-								bind.mailclass.setText(sel.label)
+								bind.mailclass.setText(sel.label,false)
 							}
-							log("Selected mail class: ${selectedMailClass}")
+						} else {
+							// Original logic for product edit mode
+							product?.let { pr->
+								val sel = mailClassesList.findLast { mailClass ->
+									log("CLASSSS ${pr.mailClass} ${mailClass?.label} ${pr.mailClass?.lowercase() == mailClass?.label?.lowercase()}")
+									pr.mailClass?.lowercase() == mailClass?.label?.lowercase()
+								}
+								
+								if (sel != null) {
+									selectedMailClass = sel
+									bind.mailclass.setText(sel.label,false)
+								}
+								log("Selected mail class: ${selectedMailClass}")
+							}
 						}
 						
 					}
@@ -316,6 +444,8 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
 		bind.mailclass.setOnItemClickListener { _, _, position, _ ->
 			selectedMailClass = mailClassesList[position]
 			log("Selected mail class: ${selectedMailClass?.label}")
+			// Save state to ViewModel
+			saveStateToViewModel()
 		}
 		
 		bind.mailclass.setHapticClickListener {
@@ -446,8 +576,8 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
 				Alerts.error(mCtx, "Please select a mail class")
 			}
 			
-			bind.procategory.value().isEmpty() -> {
-				bind.procategory.requestFocus()
+			bind.proCategory.value().isEmpty() -> {
+				bind.proCategory.requestFocus()
 				Alerts.error(mCtx, "Please enter processing category")
 			}
 			
@@ -468,6 +598,9 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
 			
 			else -> {
 				bind.loader.isVisible = true
+				// Save final state before submission
+				saveStateToViewModel()
+				
 				val imagePartList = mutableListOf<MultipartBody.Part>()
 				val thumbnailPartList = mutableListOf<MultipartBody.Part>()
 				imageList.filter { it?.contains(Const.BASE_URL) == false }.forEach { image ->
@@ -538,8 +671,8 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
 		bind.height.setText((product?.height?:"").toString())
 		bind.length.setText((product?.length?:"").toString())
 		bind.weight.setText((product?.weight?:"").toString())
-		bind.mailclass.setText(product?.mailClass?:"")
-		bind.procategory.setText(product?.processingCategory?:"")
+		bind.mailclass.setText(product?.mailClass?:"",false)
+		bind.proCategory.setText(product?.processingCategory?:"", false)
 		bind.price.setText((product?.pricing?:"").toString())
 		bind.flashSell.isChecked = product?.flashSale == true
 		bind.acceptOffers.isChecked = product?.acceptOffers == true
@@ -578,13 +711,12 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
 			object : RecyclerClicks {
 				
 				override fun itemClick(pos: Int, status: String?) {
-					
 					if (type == "category") {
 						categoryId = categoryList[pos]?.id.toString()
 						bind.category.setText(categoryList[pos]?.name.toString())
 						bind.loader.isVisible = true
 						subCategoryId = ""
-						viewModel.getCategory(categoryId, "subCategory")
+						viewModel.getProductSubCategory(categoryId, "subCategory")
 						isSubCategory = true
 						if (categoryList[pos]?.extraFields?.isNotEmpty() == true) {
 							variantList.addAll(categoryList[pos]?.extraFields ?: mutableListOf())
@@ -602,6 +734,8 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
 							variantAdapter.notifyDataSetChanged()
 						}
 					}
+					// Save state to ViewModel
+					saveStateToViewModel()
 					categorySheet.dismiss()
 				}
 			})
@@ -651,8 +785,29 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
 			length = bind.length.value(),
 			weight = bind.weight.value(),
 			mailClass = selectedMailClass?.label,
-			processingCategory = bind.procategory.value()
+			processingCategory = bind.proCategory.value()
 		)
 		
+	}
+	
+	private fun clearViewModelState() {
+		// Clear ViewModel state when leaving the fragment
+		viewModel.productFormImageList.clear()
+		viewModel.productFormCategoryId = ""
+		viewModel.productFormSubCategoryId = ""
+		viewModel.productFormVariantList.clear()
+		viewModel.productFormProduct = null
+		viewModel.productFormSelectedMailClass = null
+		viewModel.productFormProductTitle = ""
+		viewModel.productFormDescription = ""
+		viewModel.productFormQuantity = ""
+		viewModel.productFormPrice = ""
+		viewModel.productFormCategoryText = ""
+	}
+	
+	override fun onPause() {
+		super.onPause()
+		// Save state when fragment is paused (including orientation changes)
+		saveStateToViewModel()
 	}
 }
