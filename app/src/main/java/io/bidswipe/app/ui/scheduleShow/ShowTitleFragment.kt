@@ -55,7 +55,6 @@ class ShowTitleFragment : BaseFragment<ScheduleShowViewModel, FragmentShowTitleB
 		exampleAdapter = ExampleAdapter(exampleList)
 		bind.exampleRecycler.adapter = exampleAdapter
 
-
 		bind.continueBtn.setHapticClickListener {
 
 			when {
@@ -72,7 +71,6 @@ class ShowTitleFragment : BaseFragment<ScheduleShowViewModel, FragmentShowTitleB
 
 					if (from == "tips" || from == "showTutorial") {
 						findNavController().navigate(ids.goToSelectCategoryFragment)
-
 					} else {
 						findNavController().navigate(ids.goToSelectShowTimeFragment)
 					}

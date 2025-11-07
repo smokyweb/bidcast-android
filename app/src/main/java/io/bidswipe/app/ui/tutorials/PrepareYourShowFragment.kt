@@ -38,8 +38,7 @@ class PrepareYourShowFragment : BaseFragment<DashViewModel, FragmentPrepareYourS
 
 	var imagePartList = mutableListOf<MultipartBody.Part?>()
 
-	private var scheduleShowLauncher =
-		registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+	private var scheduleShowLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
 			if (result.resultCode == Activity.RESULT_OK) {
 
 				if (result.data != null) {
@@ -122,7 +121,6 @@ class PrepareYourShowFragment : BaseFragment<DashViewModel, FragmentPrepareYourS
 								imagePartList,
 								productIds.map { it.toInt() }
 							)
-
 						}
 
 						4 -> {

@@ -485,11 +485,11 @@
 
                 </LinearLayout>
 
-
                 <io.bidswipe.app.ui.custom.Heading
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/margin"
+                    android:visibility="gone"
                     app:title="Shipping" />
 
                 <TextView
@@ -497,6 +497,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="@dimen/half_margin"
+                    android:visibility="gone"
                     android:text="@string/shipping_profile" />
 
                 <com.google.android.material.textfield.TextInputLayout
@@ -504,6 +505,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="@dimen/margin"
+                    android:visibility="gone"
                     app:endIconDrawable="@drawable/ic_forward"
                     app:endIconMode="custom">
 
@@ -516,7 +518,6 @@
                         android:hint="@string/select_profile" />
 
                 </com.google.android.material.textfield.TextInputLayout>
-
 
             </LinearLayout>
 

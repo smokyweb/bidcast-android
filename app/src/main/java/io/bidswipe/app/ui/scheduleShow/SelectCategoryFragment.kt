@@ -39,8 +39,14 @@ class SelectCategoryFragment : BaseFragment<ScheduleShowViewModel, FragmentSelec
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		super.onViewCreated(view, savedInstanceState)
 
+		val from = activity?.intent?.getStringExtra("from").toString()
+
 		bind.header.onBackClick {
-			finish()
+			if (from == "dash") {
+				findNavController().popBackStack()
+			}else{
+				finish()
+			}
 		}
 
 		bind.continueBtn.setHapticClickListener {

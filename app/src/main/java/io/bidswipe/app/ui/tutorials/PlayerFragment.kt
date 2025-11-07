@@ -47,7 +47,6 @@ class PlayerFragment : BaseFragment<DashViewModel, FragmentPlayerBinding>() {
 		bind.player.setShowSubtitleButton(true)
 		bind.player.showController()
 		bind.nextButton.setHapticClickListener {
-
 			playPos = playPos + 1
 
 			if (playPos < lessonList.size) {
@@ -99,11 +98,12 @@ class PlayerFragment : BaseFragment<DashViewModel, FragmentPlayerBinding>() {
 		viewModel.getLessonRepo.observe(viewLifecycleOwner) {
 			when (it) {
 				is Resource.Success -> {
-
 					viewModel.getLessonRepo.value = null
 					bind.loader.isVisible = false
 
 					val mData = it.value.data
+
+					playPos = 0
 
 					lessonList.clear()
 

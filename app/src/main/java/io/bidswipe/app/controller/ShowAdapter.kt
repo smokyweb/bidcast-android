@@ -9,6 +9,7 @@ import io.bidswipe.app.base.BaseAdapter
 import io.bidswipe.app.databinding.ShowItemBinding
 import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.network.response.GetPrepareStepResponse
+import io.bidswipe.app.utils.asHtml
 import io.bidswipe.app.utils.setHapticClickListener
 
 class ShowAdapter(
@@ -24,10 +25,6 @@ class ShowAdapter(
 		item: GetPrepareStepResponse.Data?,
 	) {
 		with(holder) {
-
-			bind.root.setHapticClickListener {
-				mClicks.itemClick(position)
-			}
 
 			bind.setSchedule.setHapticClickListener {
 				mClicks.itemClick(position, "schedule")
@@ -93,7 +90,7 @@ class ShowAdapter(
 				}
 			}
 
-			bind.subTitle.text = item?.description ?: ""
+			bind.subTitle.text = (item?.description ?: "").asHtml()
 			bind.title.text = item?.title
 
 		}

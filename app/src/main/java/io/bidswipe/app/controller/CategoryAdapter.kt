@@ -12,22 +12,22 @@ import io.bidswipe.app.utils.loadUrl
 import io.bidswipe.app.utils.setHapticClickListener
 
 class CategoryAdapter(
-	items : List<GetCategoryResponse.Data?> ,
-	val mClicks : RecyclerClicks ,
-) : BaseAdapter<GetCategoryResponse.Data , CategoryItemBinding>(items) {
+	items: List<GetCategoryResponse.Data?>,
+	val mClicks: RecyclerClicks,
+) : BaseAdapter<GetCategoryResponse.Data, CategoryItemBinding>(items) {
 
-	override fun bindView(inflater : LayoutInflater , parent : ViewGroup) =
-		CategoryItemBinding.inflate(inflater , parent , false)
+	override fun bindView(inflater: LayoutInflater, parent: ViewGroup) =
+		CategoryItemBinding.inflate(inflater, parent, false)
 
 	override fun onBind(
-		holder : BaseViewHolder<CategoryItemBinding> ,
-		position : Int ,
-		item : GetCategoryResponse.Data? ,
+		holder: BaseViewHolder<CategoryItemBinding>,
+		position: Int,
+		item: GetCategoryResponse.Data?,
 	) {
 		with(holder.bind) {
 
-            root.setHapticClickListener {
-				mClicks.itemClick(position , null)
+			root.setHapticClickListener {
+				mClicks.itemClick(position, null)
 			}
 
 			if (item?.isSelected == true) {
@@ -40,7 +40,7 @@ class CategoryAdapter(
 				main.strokeWidth = 0
 			}
 			title.text = item?.name
-			categoryImage.loadUrl(mCtx , item?.image ?: "")
+			categoryImage.loadUrl(mCtx, item?.image ?: "")
 		}
 	}
 

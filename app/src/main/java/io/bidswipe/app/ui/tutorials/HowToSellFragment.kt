@@ -133,6 +133,8 @@ class HowToSellFragment : BaseFragment<DashViewModel, FragmentHowToSellBinding>(
 
 					bind.step.text = "Step 1 of ${tipList.size} "
 
+					bind.pager.currentItem = 1
+
 					pagerAdapter.notifyDataSetChanged()
 
 				}

@@ -37,13 +37,11 @@ import io.bidswipe.app.utils.Alerts
 import io.bidswipe.app.utils.Const
 import io.bidswipe.app.utils.Prefs
 import io.bidswipe.app.utils.bind
-import io.bidswipe.app.utils.dpToPx
 import io.bidswipe.app.utils.draw
 import io.bidswipe.app.utils.ids
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request
 import io.bidswipe.app.utils.setHapticClickListener
-import io.bidswipe.app.utils.setMargins
 import io.bidswipe.app.utils.toListProduct
 import io.bidswipe.app.utils.toScheduleShow
 import io.bidswipe.app.utils.toTutorials
@@ -58,8 +56,6 @@ class DashActivity : BaseActivity(), NavController.OnDestinationChangedListener 
 
 	private lateinit var navController: NavController
 	private lateinit var navHostFragment: NavHostFragment
-
-	private var isFirstShowCreated = false
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -242,6 +238,7 @@ class DashActivity : BaseActivity(), NavController.OnDestinationChangedListener 
 						} else {
 							this@DashActivity.toTutorials()
 						}
+
 						startActivity(intent)
 						imageSheet.state = BottomSheetBehavior.STATE_COLLAPSED
 					}
@@ -354,7 +351,9 @@ class DashActivity : BaseActivity(), NavController.OnDestinationChangedListener 
 				type.text = addressData?.type
 				defaultAddress.isVisible = addressData?.isDefault == true
 			} else {
-				type.text = "Address Not Added"
+				type.text = buildString {
+					append("Address Not Added")
+				}
 				defaultAddress.isVisible = false
 			}
 
@@ -366,7 +365,6 @@ class DashActivity : BaseActivity(), NavController.OnDestinationChangedListener 
 					)
 				)
 			}
-
 		}
 
 		with(paymentAddressBind.paymentCard) {
@@ -387,7 +385,9 @@ class DashActivity : BaseActivity(), NavController.OnDestinationChangedListener 
 				}
 
 			} else {
-				cardNumber.text = "Payment Cards Not Added"
+				cardNumber.text = buildString {
+					append("Payment Cards Not Added")
+				}
 			}
 
 			moreIcon.setHapticClickListener {

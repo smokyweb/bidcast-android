@@ -34,6 +34,5 @@ class ListAProductActivity : BaseActivity() {
 		navHostFragment = supportFragmentManager.findFragmentById(R.id.fragmentContainer) as NavHostFragment
 		navController = navHostFragment.navController
 
-
 	}
 }

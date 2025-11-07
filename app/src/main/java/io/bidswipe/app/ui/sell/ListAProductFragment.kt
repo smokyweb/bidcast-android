@@ -250,6 +250,7 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
 				uploadImage()
 			}
 		})
+
 		bind.images.layoutManager = LinearLayoutManager(mCtx, LinearLayoutManager.HORIZONTAL, false)
 		bind.images.setHasFixedSize(false)
 		
@@ -300,9 +301,7 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
 					})
 					
 				}
-				
 				else -> {}
-				
 			}
 		}
 
@@ -407,7 +406,7 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
 							// Original logic for product edit mode
 							product?.let { pr->
 								val sel = mailClassesList.findLast { mailClass ->
-									log("CLASSSS ${pr.mailClass} ${mailClass?.label} ${pr.mailClass?.lowercase() == mailClass?.label?.lowercase()}")
+									log("CLASS ${pr.mailClass} ${mailClass?.label} ${pr.mailClass?.lowercase() == mailClass?.label?.lowercase()}")
 									pr.mailClass?.lowercase() == mailClass?.label?.lowercase()
 								}
 								
@@ -415,7 +414,7 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
 									selectedMailClass = sel
 									bind.mailclass.setText(sel.label,false)
 								}
-								log("Selected mail class: ${selectedMailClass}")
+								log("Selected mail class: $selectedMailClass")
 							}
 						}
 						
@@ -423,6 +422,7 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
 				}
 				
 				is Resource.Error -> {
+					bind.loader.isVisible = false
 					it.parse(mCtx, TAG, object : AlertClicks {
 						override fun primaryClick(dialog: AppBottomSheet) {
 							dialog.dismiss()
@@ -603,6 +603,7 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
 				val productId = if (product != null) product?.id.toString() else null
 				if (imagePartList.isNotEmpty()) {
 					viewModel.storeProductMeta(imagePartList, thumbnailPartList)
+
 					viewModel.storeProductMetaRepo.observe(viewLifecycleOwner) {
 						when (it) {
 							is Resource.Success -> {
