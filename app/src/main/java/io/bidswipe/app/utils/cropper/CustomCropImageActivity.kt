@@ -2,123 +2,503 @@ package io.bidswipe.app.utils.cropper
 
 import android.content.Intent
 import android.graphics.Bitmap
+import android.graphics.PorterDuff
+import android.graphics.PorterDuffColorFilter
+import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Bundle
+import android.text.Spannable
+import android.text.SpannableString
+import android.text.style.ForegroundColorSpan
+import androidx.activity.addCallback
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
+import androidx.core.net.toUri
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
+import com.canhub.cropper.CropImage
+import com.canhub.cropper.CropImageOptions
 import com.canhub.cropper.CropImageView
+import com.canhub.cropper.parcelable
 import io.bidswipe.app.databinding.ActivityCustomCropImageBinding
 import io.bidswipe.app.utils.bind
 import java.io.File
 import java.io.FileOutputStream
+import android.graphics.drawable.Drawable
+import android.util.Log
+import android.view.KeyEvent
+import android.view.Menu
+import android.view.MenuItem
+import androidx.appcompat.app.AlertDialog
+import androidx.core.content.FileProvider.getUriForFile
+import androidx.core.graphics.BlendModeColorFilterCompat
+import androidx.core.graphics.BlendModeCompat
+import androidx.core.net.toUri
+import com.canhub.cropper.CropImageView.CropResult
+import com.canhub.cropper.CropImageView.OnCropImageCompleteListener
+import com.canhub.cropper.CropImageView.OnSetImageUriCompleteListener
+import com.canhub.cropper.databinding.CropImageActivityBinding
+import io.bidswipe.app.BuildConfig
+import io.bidswipe.app.R
+import io.bidswipe.app.utils.draw
+import io.bidswipe.app.utils.ids
 
-class CustomCropImageActivity : AppCompatActivity() {
+class CustomCropImageActivity :
+	AppCompatActivity(),
+	CropImageView.OnSetImageUriCompleteListener,
+	CropImageView.OnCropImageCompleteListener {
 	
-	private val bind by bind(ActivityCustomCropImageBinding::inflate)
-	private var imageUri: Uri? = null
+	/** Persist URI image to crop URI if specific permissions are required. */
+	private var cropImageUri: Uri? = null
 	
-	companion object {
-		const val EXTRA_IMAGE_URI = "extra_image_uri"
-		const val RESULT_CROPPED_URI = "result_cropped_uri"
+	/** The options that were set for the crop image*/
+	private lateinit var cropImageOptions: CropImageOptions
+	
+	/** The crop image view library widget used in the activity. */
+	private var cropImageView: CropImageView? = null
+	private lateinit var binding: ActivityCustomCropImageBinding
+	private var latestTmpUri: Uri? = null
+	private val pickImageGallery = registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
+		onPickImageResult(uri)
 	}
 	
-	override fun onCreate(savedInstanceState: Bundle?) {
+	private val takePicture = registerForActivityResult(ActivityResultContracts.TakePicture()) {
+		if (it) {
+			onPickImageResult(latestTmpUri)
+		} else {
+			onPickImageResult(null)
+		}
+	}
+	
+	public override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
-		enableEdgeToEdge()
-		setContentView(bind.root)
-		WindowInsetsControllerCompat(window, window.decorView).isAppearanceLightStatusBars = true
 		
-		ViewCompat.setOnApplyWindowInsetsListener(window.decorView) { v, insets ->
-			val system = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-			bind.root.setPadding(0, system.top, 0, system.bottom)
-			insets
-		}
+		binding = ActivityCustomCropImageBinding.inflate(layoutInflater)
+		setContentView(binding.root)
+		setCropImageView(binding.cropImageView)
+		val bundle = intent.getBundleExtra(CropImage.CROP_IMAGE_EXTRA_BUNDLE)
+		cropImageUri = bundle?.parcelable(CropImage.CROP_IMAGE_EXTRA_SOURCE)
+		cropImageOptions =
+			bundle?.parcelable(CropImage.CROP_IMAGE_EXTRA_OPTIONS) ?: CropImageOptions()
 		
-		// Get image URI from intent
-		imageUri = intent.getParcelableExtra(EXTRA_IMAGE_URI)
-		
-		if (imageUri == null) {
-			finish()
-			return
-		}
-		
-		bind.cropImageView.cropShape = CropImageView.CropShape.RECTANGLE
-		bind.cropImageView.setImageUriAsync(imageUri)
-		
-		bind.toolbar.onBackClick { finish() }
-		
-		bind.toolbar.onMorePrimaryClick {
-			cropImage()
-		}
-		
-	}
-	
-	private fun cropImage() {
-		val croppedBitmap = bind.cropImageView.getCroppedImage()
-		
-		if (croppedBitmap != null) {
-			// Save the cropped image
-			val outputUri = saveCroppedImage(croppedBitmap)
-			
-			if (outputUri != null) {
-				val resultIntent = Intent().apply {
-					putExtra(RESULT_CROPPED_URI, outputUri.toString())
+		if (savedInstanceState == null) {
+			if (cropImageUri == null || cropImageUri == Uri.EMPTY) {
+				when {
+					cropImageOptions.showIntentChooser -> showIntentChooser()
+					cropImageOptions.imageSourceIncludeGallery &&
+							  cropImageOptions.imageSourceIncludeCamera ->
+						showImageSourceDialog(::openSource)
+					cropImageOptions.imageSourceIncludeGallery ->
+						pickImageGallery.launch("image/*")
+					cropImageOptions.imageSourceIncludeCamera ->
+						openCamera()
+					else -> finish()
 				}
-				setResult(RESULT_OK, resultIntent)
-				finish()
 			} else {
-				// If save fails, return the bitmap via data
-				setResult(RESULT_CANCELED)
-				finish()
+				cropImageView?.setImageUriAsync(cropImageUri)
 			}
 		} else {
-			setResult(RESULT_CANCELED)
-			finish()
+			latestTmpUri = savedInstanceState.getString(BUNDLE_KEY_TMP_URI)?.toUri()
+		}
+		
+		setCustomizations()
+		
+		onCreateOptionsMenu(binding.toolbar.menu)
+		binding.toolbar.setOnMenuItemClickListener {
+			onOptionsItemSelected(it)
+		}
+		
+		binding.toolbar.setNavigationOnClickListener { finish() }
+		onBackPressedDispatcher.addCallback {
+			setResultCancel()
 		}
 	}
 	
-	private fun saveCroppedImage(bitmap: Bitmap): Uri? {
-		return try {
-			val outputDir = File(cacheDir, "cropped_images")
-			if (!outputDir.exists()) {
-				outputDir.mkdirs()
+	private fun setCustomizations() {
+		cropImageOptions.activityBackgroundColor.let { activityBackgroundColor ->
+			binding.root.setBackgroundColor(activityBackgroundColor)
+		}
+		
+		supportActionBar?.let {
+			title = cropImageOptions.activityTitle.ifEmpty { "" }
+			it.setDisplayHomeAsUpEnabled(true)
+			cropImageOptions.toolbarColor?.let { toolbarColor ->
+				it.setBackgroundDrawable(ColorDrawable(toolbarColor))
 			}
-			
-			val outputFile = File(outputDir, "cropped_${System.currentTimeMillis()}.jpg")
-			val outputStream = FileOutputStream(outputFile)
-			
-			bitmap.compress(Bitmap.CompressFormat.JPEG, 70, outputStream)
-			outputStream.flush()
-			outputStream.close()
-			
-			// Use FileProvider for Android 10+ compatibility
-			FileProvider.getUriForFile(
-				this,
-				"${packageName}.fileprovider",
-				outputFile
-			)
-		} catch (e: Exception) {
-			e.printStackTrace()
-			// Fallback to fromFile if FileProvider fails
-			try {
-				val outputDir = File(cacheDir, "cropped_images")
-				if (!outputDir.exists()) {
-					outputDir.mkdirs()
+			cropImageOptions.toolbarTitleColor?.let { toolbarTitleColor ->
+				val spannableTitle: Spannable = SpannableString(title)
+				spannableTitle.setSpan(
+					ForegroundColorSpan(toolbarTitleColor),
+					0,
+					spannableTitle.length,
+					Spannable.SPAN_EXCLUSIVE_EXCLUSIVE,
+				)
+				title = spannableTitle
+			}
+			cropImageOptions.toolbarBackButtonColor?.let { backBtnColor ->
+				try {
+					val upArrow = ContextCompat.getDrawable(
+						this,
+						draw.ic_back,
+					)
+					upArrow?.colorFilter = PorterDuffColorFilter(backBtnColor, PorterDuff.Mode.SRC_ATOP)
+					it.setHomeAsUpIndicator(upArrow)
+				} catch (e: Exception) {
+					e.printStackTrace()
 				}
-				val outputFile = File(outputDir, "cropped_${System.currentTimeMillis()}.jpg")
-				val outputStream = FileOutputStream(outputFile)
-				bitmap.compress(Bitmap.CompressFormat.JPEG, 70, outputStream)
-				outputStream.flush()
-				outputStream.close()
-				Uri.fromFile(outputFile)
-			} catch (e2: Exception) {
-				e2.printStackTrace()
-				null
 			}
 		}
+	}
+	
+	private fun showIntentChooser() {
+		val ciIntentChooser = CropImageChooser(
+			activity = this,
+			callback = object : CropImageChooser.ResultCallback {
+				override fun onSuccess(uri: Uri?) {
+					onPickImageResult(uri)
+				}
+				
+				override fun onCancelled() {
+					setResultCancel()
+				}
+			},
+		)
+		cropImageOptions.let { options ->
+			options.intentChooserTitle
+				?.takeIf { title ->
+					title.isNotBlank()
+				}
+				?.let { icTitle ->
+					ciIntentChooser.setIntentChooserTitle(icTitle)
+				}
+			options.intentChooserPriorityList
+				?.takeIf { appPriorityList -> appPriorityList.isNotEmpty() }
+				?.let { appsList ->
+					ciIntentChooser.setupPriorityAppsList(appsList)
+				}
+			val cameraUri: Uri? = if (options.imageSourceIncludeCamera) getTmpFileUri() else null
+			ciIntentChooser.showChooserIntent(
+				includeCamera = options.imageSourceIncludeCamera,
+				includeGallery = options.imageSourceIncludeGallery,
+				cameraImgUri = cameraUri,
+			)
+		}
+	}
+	
+	private fun openSource(source: Source) {
+		when (source) {
+			Source.CAMERA -> openCamera()
+			Source.GALLERY -> pickImageGallery.launch("image/*")
+		}
+	}
+	
+	private fun openCamera() {
+		getTmpFileUri().let { uri ->
+			latestTmpUri = uri
+			takePicture.launch(uri)
+		}
+	}
+	
+	private fun getTmpFileUri(): Uri {
+		val tmpFile = File.createTempFile("tmp_image_file", ".png", cacheDir).apply {
+			createNewFile()
+			deleteOnExit()
+		}
+		
+		return getUriForFile(this,  BuildConfig.APPLICATION_ID + ".provider",tmpFile)
+	}
+	
+	/**
+	 * This method show the dialog for user source choice, it is an open function so can be overridden
+	 * and customised with the app layout if you need.
+	 */
+	fun showImageSourceDialog(openSource: (Source) -> Unit) {
+		AlertDialog.Builder(this)
+			.setCancelable(false)
+			.setOnKeyListener { _, keyCode, keyEvent ->
+				if (keyCode == KeyEvent.KEYCODE_BACK && keyEvent.action == KeyEvent.ACTION_UP) {
+					setResultCancel()
+					finish()
+				}
+				true
+			}
+			.setTitle("Pick Image from")
+			.setItems(
+				arrayOf(
+					"Camera",
+					"Gallery",
+				),
+			) { _, position -> openSource(if (position == 0) Source.CAMERA else Source.GALLERY) }
+			.show()
+	}
+	
+	public override fun onStart() {
+		super.onStart()
+		cropImageView?.setOnSetImageUriCompleteListener(this)
+		cropImageView?.setOnCropImageCompleteListener(this)
+	}
+	
+	public override fun onStop() {
+		super.onStop()
+		cropImageView?.setOnSetImageUriCompleteListener(null)
+		cropImageView?.setOnCropImageCompleteListener(null)
+	}
+	
+	override fun onSaveInstanceState(outState: Bundle) {
+		super.onSaveInstanceState(outState)
+		outState.putString(BUNDLE_KEY_TMP_URI, latestTmpUri.toString())
+	}
+	
+	override fun onCreateOptionsMenu(menu: Menu): Boolean {
+		if (cropImageOptions.skipEditing) return true
+		menuInflater.inflate(R.menu.crop_image_menu, menu)
+		
+		if (!cropImageOptions.allowRotation) {
+			menu.removeItem(ids.ic_rotate_left_24_1)
+			menu.removeItem(ids.ic_rotate_right_24_1)
+		} else if (cropImageOptions.allowCounterRotation) {
+			menu.findItem(R.id.ic_rotate_left_24_1).isVisible = true
+		}
+		
+		if (!cropImageOptions.allowFlipping) menu.removeItem(R.id.ic_flip_24_1)
+		
+		if (cropImageOptions.cropMenuCropButtonTitle != null) {
+			menu.findItem(R.id.crop_image_menu_crop_1).title =
+				cropImageOptions.cropMenuCropButtonTitle
+		}
+		
+		var cropIcon: Drawable? = null
+		try {
+			if (cropImageOptions.cropMenuCropButtonIcon != 0) {
+				cropIcon = ContextCompat.getDrawable(this, cropImageOptions.cropMenuCropButtonIcon)
+				menu.findItem(R.id.crop_image_menu_crop_1).icon = cropIcon
+			}
+		} catch (e: Exception) {
+			Log.w("AIC", "Failed to read menu crop drawable", e)
+		}
+		
+		if (cropImageOptions.activityMenuIconColor != 0) {
+			updateMenuItemIconColor(
+				menu,
+				R.id.ic_rotate_left_24_1,
+				cropImageOptions.activityMenuIconColor,
+			)
+			updateMenuItemIconColor(
+				menu,
+				R.id.ic_rotate_right_24_1,
+				cropImageOptions.activityMenuIconColor,
+			)
+			updateMenuItemIconColor(menu, R.id.ic_flip_24_1, cropImageOptions.activityMenuIconColor)
+			
+			if (cropIcon != null) {
+				updateMenuItemIconColor(
+					menu,
+					R.id.crop_image_menu_crop_1,
+					cropImageOptions.activityMenuIconColor,
+				)
+			}
+		}
+		cropImageOptions.activityMenuTextColor?.let { menuItemsTextColor ->
+			val menuItemIds = listOf(
+				R.id.ic_rotate_left_24_1,
+				R.id.ic_rotate_right_24_1,
+				R.id.ic_flip_24_1,
+				R.id.ic_flip_24_horizontally_1,
+				R.id.ic_flip_24_vertically_1,
+				R.id.crop_image_menu_crop_1,
+			)
+			for (itemId in menuItemIds) {
+				updateMenuItemTextColor(menu, itemId, menuItemsTextColor)
+			}
+		}
+		return true
+	}
+	
+	override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
+		R.id.crop_image_menu_crop_1 -> {
+			cropImage()
+			true
+		}
+		R.id.ic_rotate_left_24_1 -> {
+			rotateImage(-cropImageOptions.rotationDegrees)
+			true
+		}
+		R.id.ic_rotate_right_24_1 -> {
+			rotateImage(cropImageOptions.rotationDegrees)
+			true
+		}
+		R.id.ic_flip_24_horizontally_1 -> {
+			cropImageView?.flipImageHorizontally()
+			true
+		}
+		R.id.ic_flip_24_vertically_1 -> {
+			cropImageView?.flipImageVertically()
+			true
+		}
+		android.R.id.home -> {
+			setResultCancel()
+			true
+		}
+		else -> super.onOptionsItemSelected(item)
+	}
+	
+	fun onPickImageResult(resultUri: Uri?) {
+		when (resultUri) {
+			null -> setResultCancel()
+			else -> {
+				cropImageUri = resultUri
+				cropImageView?.setImageUriAsync(cropImageUri)
+			}
+		}
+	}
+	
+	override fun onSetImageUriComplete(view: CropImageView, uri: Uri, error: Exception?) {
+		if (error == null) {
+			if (cropImageOptions.initialCropWindowRectangle != null) {
+				cropImageView?.cropRect = cropImageOptions.initialCropWindowRectangle
+			}
+			
+			if (cropImageOptions.initialRotation > 0) {
+				cropImageView?.rotatedDegrees = cropImageOptions.initialRotation
+			}
+			
+			if (cropImageOptions.skipEditing) {
+				cropImage()
+			}
+		} else {
+			setResult(null, error, 1)
+		}
+	}
+	
+	override fun onCropImageComplete(view: CropImageView, result: CropResult) {
+		setResult(result.uriContent, result.error, result.sampleSize)
+	}
+	
+	/**
+	 * Execute crop image and save the result tou output uri.
+	 */
+	fun cropImage() {
+		if (cropImageOptions.noOutputImage) {
+			setResult(null, null, 1)
+		} else {
+			cropImageView?.croppedImageAsync(
+				saveCompressFormat = cropImageOptions.outputCompressFormat,
+				saveCompressQuality = cropImageOptions.outputCompressQuality,
+				reqWidth = cropImageOptions.outputRequestWidth,
+				reqHeight = cropImageOptions.outputRequestHeight,
+				options = cropImageOptions.outputRequestSizeOptions,
+				customOutputUri = cropImageOptions.customOutputUri,
+			)
+		}
+	}
+	
+	/**
+	 * When extending this activity, please set your own ImageCropView
+	 */
+	open fun setCropImageView(cropImageView: CropImageView) {
+		this.cropImageView = cropImageView
+	}
+	
+	/**
+	 * Rotate the image in the crop image view.
+	 */
+	open fun rotateImage(degrees: Int) {
+		cropImageView?.rotateImage(degrees)
+	}
+	
+	/**
+	 * Result with cropped image data or error if failed.
+	 */
+	open fun setResult(uri: Uri?, error: Exception?, sampleSize: Int) {
+		setResult(
+			error?.let { CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE } ?: RESULT_OK,
+			getResultIntent(uri, error, sampleSize),
+		)
+		finish()
+	}
+	
+	/**
+	 * Cancel of cropping activity.
+	 */
+	open fun setResultCancel() {
+		setResult(RESULT_CANCELED)
+		finish()
+	}
+	
+	/**
+	 * Get intent instance to be used for the result of this activity.
+	 */
+	open fun getResultIntent(uri: Uri?, error: Exception?, sampleSize: Int): Intent {
+		val result = CropImage.ActivityResult(
+			originalUri = cropImageView?.imageUri,
+			uriContent = uri,
+			error = error,
+			cropPoints = cropImageView?.cropPoints,
+			cropRect = cropImageView?.cropRect,
+			rotation = cropImageView?.rotatedDegrees ?: 0,
+			wholeImageRect = cropImageView?.wholeImageRect,
+			sampleSize = sampleSize,
+		)
+		val intent = Intent()
+		intent.extras?.let(intent::putExtras)
+		intent.putExtra(CropImage.CROP_IMAGE_EXTRA_RESULT, result)
+		return intent
+	}
+	
+	/**
+	 * Update the color of a specific menu item to the given color.
+	 */
+	open fun updateMenuItemIconColor(menu: Menu, itemId: Int, color: Int) {
+		val menuItem = menu.findItem(itemId)
+		if (menuItem != null) {
+			val menuItemIcon = menuItem.icon
+			if (menuItemIcon != null) {
+				try {
+					menuItemIcon.apply {
+						mutate()
+						colorFilter = BlendModeColorFilterCompat.createBlendModeColorFilterCompat(
+							color,
+							BlendModeCompat.SRC_ATOP,
+						)
+					}
+					menuItem.icon = menuItemIcon
+				} catch (e: Exception) {
+					Log.w("AIC", "Failed to update menu item color", e)
+				}
+			}
+		}
+	}
+	
+	/**
+	 * Update the color of a specific menu item to the given color.
+	 */
+	open fun updateMenuItemTextColor(menu: Menu, itemId: Int, color: Int) {
+		val menuItem = menu.findItem(itemId) ?: return
+		val menuTitle = menuItem.title
+		if (menuTitle?.isNotBlank() == true) {
+			try {
+				val spannableTitle: Spannable = SpannableString(menuTitle)
+				spannableTitle.setSpan(
+					ForegroundColorSpan(color),
+					0,
+					spannableTitle.length,
+					Spannable.SPAN_EXCLUSIVE_EXCLUSIVE,
+				)
+				menuItem.title = spannableTitle
+			} catch (e: Exception) {
+				Log.w("AIC", "Failed to update menu item color", e)
+			}
+		}
+	}
+	
+	enum class Source { CAMERA, GALLERY }
+	
+	private companion object {
+		
+		const val BUNDLE_KEY_TMP_URI = "bundle_key_tmp_uri"
 	}
 }

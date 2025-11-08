@@ -4,10 +4,17 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.os.Bundle
 import android.provider.OpenableColumns
 import androidx.activity.result.contract.ActivityResultContract
+import com.canhub.cropper.CropImage
+import com.canhub.cropper.CropImageContractOptions
+import com.canhub.cropper.CropImageOptions
+import com.canhub.cropper.CropImageView
+import com.canhub.cropper.parcelable
 import io.bidswipe.app.utils.cropper.CustomCropImageActivity
 import java.io.File
+/*
 
 class CustomCropImageContract(
 ) : ActivityResultContract<Uri?, Uri?>() {
@@ -28,9 +35,11 @@ class CustomCropImageContract(
 	}
 
 	companion object {
-		/**
+		*/
+/**
 		 * Get file path from URI (handles both file:// and content:// URIs)
-		 */
+		 *//*
+
 		fun getUriFilePath(context: Context, uri: Uri?): String? {
 			if (uri == null) return null
 			
@@ -75,3 +84,34 @@ class CustomCropImageContract(
 		}
 	}
 }
+*/
+
+class CustomCropImageContract : ActivityResultContract<CropOptions, CropImageView.CropResult>() {
+	override fun createIntent(context: Context, input: CropOptions) = Intent(context, CustomCropImageActivity::class.java).apply {
+		putExtra(
+			CropImage.CROP_IMAGE_EXTRA_BUNDLE,
+			Bundle(2).apply {
+				putParcelable(CropImage.CROP_IMAGE_EXTRA_SOURCE, input.uri)
+				putParcelable(CropImage.CROP_IMAGE_EXTRA_OPTIONS, input.cropImageOptions)
+			},
+		)
+	}
+	
+	override fun parseResult(
+		resultCode: Int,
+		intent: Intent?,
+	): CropImageView.CropResult {
+		val result = intent?.parcelable<CropImage.ActivityResult>(CropImage.CROP_IMAGE_EXTRA_RESULT)
+		
+		return if (result == null || resultCode == Activity.RESULT_CANCELED) {
+			CropImage.CancelledResult
+		} else {
+			result
+		}
+	}
+}
+
+data class CropOptions(
+	val uri: Uri?,
+	val cropImageOptions: CropImageOptions,
+)

@@ -4,6 +4,7 @@ import android.content.res.ColorStateList
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.core.content.ContextCompat
+import androidx.core.net.toUri
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsCompat.CONSUMED
@@ -16,10 +17,10 @@ import io.bidswipe.app.network.Resource
 import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.utils.Alerts
 import io.bidswipe.app.utils.Const
-import io.bidswipe.app.utils.cropper.CustomCropImageContract
-import io.bidswipe.app.utils.cropper.CustomCropImageHelper
+
 import io.bidswipe.app.utils.Utils
 import io.bidswipe.app.utils.bind
+import io.bidswipe.app.utils.cropper.CustomCropImageContract
 import io.bidswipe.app.utils.loadUrl
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.runSafe
@@ -30,20 +31,32 @@ class TrustedBuyerActivity : BaseActivity() {
 	private val bind by bind(ActivityTrustedBuyerBinding::inflate)
 	private val viewModel by viewModels<MoreViewModel>()
 	private var idPhoto = ""
-
-	private val cropImageLauncher = registerForActivityResult(CustomCropImageContract()) { uri ->
-		if (uri != null) {
-			bind.uploadLayout.isVisible = false
-			bind.imgCard.isVisible = true
-			bind.img.setImageURI(uri)
-			val imagePath = CustomCropImageContract.getUriFilePath(this, uri)
+	
+	private val imageResult = registerForActivityResult(CustomCropImageContract()) { result ->
+		if (result.isSuccessful) {
+			val imagePath = result.getUriFilePath(this, true)
 			if (imagePath != null) {
+				bind.uploadLayout.isVisible = false
+				bind.imgCard.isVisible = true
+				bind.img.setImageURI(imagePath.toUri())
 				idPhoto = imagePath
 			}
 		}
 	}
 
-	private val imagePickerManager = CustomCropImageHelper.createManager(this, cropImageLauncher)
+//	private val cropImageLauncher = registerForActivityResult(CustomCropImageContract()) { uri ->
+//		if (uri != null) {
+//			bind.uploadLayout.isVisible = false
+//			bind.imgCard.isVisible = true
+//			bind.img.setImageURI(uri)
+//			val imagePath = CustomCropImageContract.getUriFilePath(this, uri)
+//			if (imagePath != null) {
+//				idPhoto = imagePath
+//			}
+//		}
+//	}
+//
+//	private val imagePickerManager = CustomCropImageHelper.createManager(this, cropImageLauncher)
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
@@ -60,7 +73,7 @@ class TrustedBuyerActivity : BaseActivity() {
 		bind.fileBtn.setHapticClickListener {
 			requestPerms(Const.STR_PERMS) { per ->
 				if (per) {
-					imagePickerManager.launch(isCamera = true, isGallery = true)
+					imageResult.launch(Utils.initCrop(this, isCamera = true, isGallery = true))
 				}
 			}
 		}
@@ -68,7 +81,7 @@ class TrustedBuyerActivity : BaseActivity() {
 		bind.imgCard.setHapticClickListener {
 			requestPerms(Const.STR_PERMS) { per ->
 				if (per) {
-					imagePickerManager.launch(isCamera = true, isGallery = true)
+					imageResult.launch(Utils.initCrop(this, isCamera = true, isGallery = true))
 				}
 			}
 		}

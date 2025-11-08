@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.net.toUri
 import androidx.core.view.isVisible
 import androidx.navigation.fragment.findNavController
 import io.bidswipe.app.base.BaseFragment
@@ -17,8 +18,9 @@ import io.bidswipe.app.network.response.GetAllTipsResponse
 import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.utils.Alerts
 import io.bidswipe.app.utils.Const
+import io.bidswipe.app.utils.Utils
 import io.bidswipe.app.utils.cropper.CustomCropImageContract
-import io.bidswipe.app.utils.cropper.CustomCropImageHelper
+
 import io.bidswipe.app.utils.ids
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request
@@ -37,21 +39,19 @@ class SelectThumbnailFragment :
 	private var tipsList = mutableListOf<GetAllTipsResponse.Data.Tip?>()
 
 	private var goodsList = mutableListOf<String?>()
-
-	private val cropImageLauncher = registerForActivityResult(CustomCropImageContract()) { uri ->
-		if (uri != null) {
-			bind.imgCard.isVisible = true
-			bind.pickImageLayout.isVisible = false
-			bind.img.setImageURI(uri)
-			val imagePath = CustomCropImageContract.getUriFilePath(mCtx, uri)
+	
+	private val imageResult = registerForActivityResult(CustomCropImageContract()) { result ->
+		if (result.isSuccessful) {
+			val imagePath = result.getUriFilePath(mCtx, true)
 			if (imagePath != null) {
+				bind.imgCard.isVisible = true
+				bind.pickImageLayout.isVisible = false
+				bind.img.setImageURI(imagePath.toUri())
 				viewModel.thumbnail = imagePath
 			}
 		}
 	}
-
-	private val imagePickerManager = CustomCropImageHelper.createManager(this, cropImageLauncher)
-
+	
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		super.onViewCreated(view, savedInstanceState)
 
@@ -61,20 +61,10 @@ class SelectThumbnailFragment :
 			findNavController().popBackStack()
 		}
 
-//        tipsList.clear()
-		/* tipsList.addAll(
-			 listOf(
-				 SellModel(R.drawable.ic_bulb,R.color.secondaryContainer,"Good Lighting","Ensure your main item is well-lit and clearly visible. Natural lighting works best."),
-				 SellModel(R.drawable.ic_composition,R.color.tertiaryContainer,"Proper Composition","Center your main item and keep the background clean and uncluttered."),
-				 SellModel(R.drawable.camera,R.color.successContainer,"High Quality","Use a high-resolution image that's sharp and clear. Avoid blurry photos."),
-				 SellModel(R.drawable.ic_colour_trey,R.color.successContainer,"Attractive Colors","Choose images with vibrant colors that catch attention but aren't overwhelming."),
-			 )
-		 )*/
-
 		bind.pickThumbnail.setHapticClickListener {
 			requestPerms(Const.STR_PERMS) { per ->
 				if (per) {
-					imagePickerManager.launch(isCamera = true, isGallery = true)
+					imageResult.launch(Utils.initCrop(mCtx, isCamera = true, isGallery = true))
 				}
 			}
 		}

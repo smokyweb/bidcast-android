@@ -42,14 +42,15 @@ import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.utils.Alerts
 import io.bidswipe.app.utils.Chats
 import io.bidswipe.app.utils.Const
-import io.bidswipe.app.utils.cropper.CustomCropImageContract
-import io.bidswipe.app.utils.cropper.CustomCropImageHelper
+
 import io.bidswipe.app.utils.FireRef
 import io.bidswipe.app.utils.MessageSwiper
 import io.bidswipe.app.utils.Prefs
+import io.bidswipe.app.utils.Utils
 import io.bidswipe.app.utils.asCapital
 import io.bidswipe.app.utils.bind
 import io.bidswipe.app.utils.clr
+import io.bidswipe.app.utils.cropper.CustomCropImageContract
 import io.bidswipe.app.utils.hideKeyboard
 import io.bidswipe.app.utils.loadUrl
 import io.bidswipe.app.utils.parse
@@ -106,15 +107,24 @@ class ChatActivity : BaseActivity() {
 			}
 		}
 	}
-
-	private val cropImageLauncher = registerForActivityResult(CustomCropImageContract()) { uri ->
-		if (uri != null) {
-			Alerts.log(TAG, "URI $uri")
-			// TODO: send image using chats.sendImage if needed
+	
+	private val imageResult = registerForActivityResult(CustomCropImageContract()) { result ->
+		if (result.isSuccessful) {
+			val profileUri = result.uriContent
+			Alerts.log(TAG, "URI $profileUri")
+			
+			/*            if (profileUri != null) {
+							chats.sendImage(profileUri) {
+			//					viewModel.chatNotification(chatKey.request() , "Shared the image".request() , "image".request() , receiverId.request())
+							}
+						}
+						else {
+							errorToast("Couldn't select the image")
+						}*/
+		} else {
+			result.error?.printStackTrace()
 		}
 	}
-
-	private val imagePickerManager = CustomCropImageHelper.createManager(this, cropImageLauncher)
 
 
 	override fun onCreate(savedInstanceState: Bundle?) {
@@ -276,7 +286,7 @@ class ChatActivity : BaseActivity() {
 			hideKeyboard()
 			requestPerms(Const.PERMISSIONS) {
 				if (it) {
-					imagePickerManager.launch(isCamera = true, isGallery = true)
+					imageResult.launch(Utils.initCrop(this, isCamera = true, isGallery = true))
 				}
 			}
 		}

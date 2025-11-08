@@ -2,6 +2,7 @@ package io.bidswipe.app.ui.dashboard
 
 import android.os.Bundle
 import androidx.activity.viewModels
+import androidx.core.net.toUri
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsCompat.CONSUMED
@@ -14,11 +15,10 @@ import io.bidswipe.app.network.Resource
 import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.utils.Alerts
 import io.bidswipe.app.utils.Const
-import io.bidswipe.app.utils.cropper.CustomCropImageContract
-import io.bidswipe.app.utils.cropper.CustomCropImageHelper
 import io.bidswipe.app.utils.Utils
 import io.bidswipe.app.utils.asCapital
 import io.bidswipe.app.utils.bind
+import io.bidswipe.app.utils.cropper.CustomCropImageContract
 import io.bidswipe.app.utils.hideKeyboard
 import io.bidswipe.app.utils.loadUrl
 import io.bidswipe.app.utils.parse
@@ -29,56 +29,67 @@ import okhttp3.MultipartBody
 import java.io.File
 
 class UpdateAccountActivity : BaseActivity() {
-
+	
 	private val bind by bind(ActivityUpdateAccountBinding::inflate)
-
+	
 	private val viewModel by viewModels<DashViewModel>()
-
+	
 	private var imagePart: MultipartBody.Part? = null
-
-	private val cropImageLauncher = registerForActivityResult(CustomCropImageContract()) { uri ->
-		if (uri != null) {
-			bind.userProfile.setImageURI(uri)
-			val imagePath = CustomCropImageContract.getUriFilePath(this, uri)
+	
+	private val imageResult = registerForActivityResult(CustomCropImageContract()) { result ->
+		if (result.isSuccessful) {
+			val imagePath = result.getUriFilePath(this, true)
 			if (imagePath != null) {
+				bind.userProfile.setImageURI(imagePath.toUri())
 				val name = System.currentTimeMillis().toString() + "_profile_gallery.jpeg"
 				imagePart = Utils.imagePart("profile_image", name, File(imagePath))
 			}
 		}
 	}
 
-	private val imagePickerManager = CustomCropImageHelper.createManager(this, cropImageLauncher)
-
+//	private val cropImageLauncher = registerForActivityResult(CustomCropImageContract()) { uri ->
+//		if (uri != null) {
+//			bind.userProfile.setImageURI(uri)
+//			val imagePath = CustomCropImageContract.getUriFilePath(this, uri)
+//			if (imagePath != null) {
+//				val name = System.currentTimeMillis().toString() + "_profile_gallery.jpeg"
+//				imagePart = Utils.imagePart("profile_image", name, File(imagePath))
+//			}
+//		}
+//	}
+//
+//	private val imagePickerManager = CustomCropImageHelper.createManager(this, cropImageLauncher)
+	
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
 		setContentView(bind.root)
 		
 		ViewCompat.setOnApplyWindowInsetsListener(window.decorView) { v, insets ->
 			val system = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-			bind.root.setPadding(0,system.top,0, system.bottom)
+			bind.root.setPadding(0, system.top, 0, system.bottom)
 			CONSUMED
 		}
 		
 		bind.header.onBackClick {
 			finishAfterTransition()
-
+			
 		}
 		bind.root.setHapticClickListener {
 			hideKeyboard()
 		}
-
+		
 		bind.layout.setHapticClickListener {
 			hideKeyboard()
 		}
-
+		
 		bind.selectImg.setHapticClickListener {
 			requestPerms(Const.STR_PERMS) { per ->
 				if (per) {
-					imagePickerManager.launch(isCamera = true, isGallery = true)
+					imageResult.launch(Utils.initCrop(this, isCamera = true, isGallery = true))
 				}
 			}
 		}
-
+		
 		bind.update.setHapticClickListener {
 			bind.loader.isVisible = true
 			viewModel.updateProfile(
@@ -89,9 +100,9 @@ class UpdateAccountActivity : BaseActivity() {
 				bind.bio.value().request()
 			)
 		}
-
+		
 		bind.loader.isVisible = true
-
+		
 		viewModel.getUserProfile()
 		viewModel.getUserProfileRepo.observe(this) {
 			when (it) {
@@ -105,7 +116,7 @@ class UpdateAccountActivity : BaseActivity() {
 					bind.bio.setText(mData?.bio)
 					bind.userProfile.loadUrl(this, mData?.profileImage.toString())
 				}
-
+				
 				is Resource.Error -> {
 					bind.loader.isVisible = false
 					viewModel.getUserProfileRepo.value = null
@@ -113,17 +124,17 @@ class UpdateAccountActivity : BaseActivity() {
 						override fun primaryClick(dialog: AppBottomSheet) {
 							dialog.dismiss()
 						}
-
+						
 						override fun secondaryClick(dialog: AppBottomSheet) {
 							dialog.dismiss()
 						}
 					})
 				}
-
+				
 				else -> {}
 			}
 		}
-
+		
 		viewModel.updateProfileRepo.observe(this) {
 			when (it) {
 				is Resource.Success -> {
@@ -132,24 +143,24 @@ class UpdateAccountActivity : BaseActivity() {
 					App.getProfile()
 					Alerts.success(this, "Profile Updated")
 				}
-
+				
 				is Resource.Error -> {
 					viewModel.getUserProfileRepo.value = null
 					it.parse(this, TAG, object : AlertClicks {
 						override fun primaryClick(dialog: AppBottomSheet) {
 							dialog.dismiss()
 						}
-
+						
 						override fun secondaryClick(dialog: AppBottomSheet) {
 							dialog.dismiss()
 						}
 					})
 				}
-
+				
 				else -> {}
-
+				
 			}
 		}
-
+		
 	}
 }

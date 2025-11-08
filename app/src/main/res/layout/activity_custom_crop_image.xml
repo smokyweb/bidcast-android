@@ -6,17 +6,16 @@
     android:layout_height="match_parent"
     tools:context=".utils.cropper.CustomCropImageActivity">
 
-    <io.bidswipe.app.ui.custom.Header
-        android:id="@+id/toolbar"
+    <com.google.android.material.appbar.MaterialToolbar
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:headerMode="BACK_BUTTON_TITLE_ACTION"
-        app:headerTitle="Crop Image"
         app:layout_constraintTop_toTopOf="parent"
-        app:primaryIconDrawable="@drawable/ic_check"
-        app:showBackButton="true"
-        app:showPrimaryIcon="true"
-        app:showSecondaryIcon="false" />
+        android:id="@+id/toolbar"
+        app:title="Crop Image"
+        app:navigationIcon="@drawable/ic_back"
+        app:titleTextAppearance="@style/TitleLarge"
+        app:titleCentered="true"
+        />
 
     <com.canhub.cropper.CropImageView
         android:id="@+id/cropImageView"

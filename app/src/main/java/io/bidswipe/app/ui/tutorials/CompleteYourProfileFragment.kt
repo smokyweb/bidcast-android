@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.net.toUri
 import androidx.core.view.isVisible
 import androidx.navigation.fragment.findNavController
 import io.bidswipe.app.App
@@ -14,10 +15,10 @@ import io.bidswipe.app.network.Resource
 import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.ui.dashboard.DashViewModel
 import io.bidswipe.app.utils.Const
-import io.bidswipe.app.utils.cropper.CustomCropImageContract
-import io.bidswipe.app.utils.cropper.CustomCropImageHelper
+
 import io.bidswipe.app.utils.Utils
 import io.bidswipe.app.utils.asCapital
+import io.bidswipe.app.utils.cropper.CustomCropImageContract
 import io.bidswipe.app.utils.ids
 import io.bidswipe.app.utils.loadUrl
 import io.bidswipe.app.utils.parse
@@ -36,19 +37,31 @@ class CompleteYourProfileFragment : BaseFragment<DashViewModel , FragmentComplet
     ) = FragmentCompleteYourProfileBinding.inflate(inflater , view , false)
 
 	private var imagePart: MultipartBody.Part? = null
-
-	private val cropImageLauncher = registerForActivityResult(CustomCropImageContract()) { uri ->
-		if (uri != null) {
-			bind.userProfile.setImageURI(uri)
-			val imagePath = CustomCropImageContract.getUriFilePath(mCtx, uri)
+	
+	
+	private val imageResult = registerForActivityResult(CustomCropImageContract()) { result ->
+		if (result.isSuccessful) {
+			val imagePath = result.getUriFilePath(mCtx, true)
 			if (imagePath != null) {
+				bind.userProfile.setImageURI(imagePath.toUri())
 				val name = System.currentTimeMillis().toString() + "_profile_gallery.jpeg"
 				imagePart = Utils.imagePart("profile_image", name, File(imagePath))
 			}
 		}
 	}
 
-	private val imagePickerManager = CustomCropImageHelper.createManager(this, cropImageLauncher)
+//	private val cropImageLauncher = registerForActivityResult(CustomCropImageContract()) { uri ->
+//		if (uri != null) {
+//			bind.userProfile.setImageURI(uri)
+//			val imagePath = CustomCropImageContract.getUriFilePath(mCtx, uri)
+//			if (imagePath != null) {
+//				val name = System.currentTimeMillis().toString() + "_profile_gallery.jpeg"
+//				imagePart = Utils.imagePart("profile_image", name, File(imagePath))
+//			}
+//		}
+//	}
+//
+//	private val imagePickerManager = CustomCropImageHelper.createManager(this, cropImageLauncher)
 
 	override fun onViewCreated(view : View , savedInstanceState : Bundle?) {
 		super.onViewCreated(view , savedInstanceState)
@@ -56,11 +69,11 @@ class CompleteYourProfileFragment : BaseFragment<DashViewModel , FragmentComplet
 		bind.header.onBackClick {
 			findNavController().navigate(ids.action_completeYourProfileFragment_to_prepareYourShowFragment)
 		}
-
+		
 		bind.userProfile.setHapticClickListener {
 			requestPerms(Const.STR_PERMS) { per ->
 				if (per) {
-					imagePickerManager.launch(isCamera = true, isGallery = true)
+					imageResult.launch(Utils.initCrop(mCtx, isCamera = true, isGallery = true))
 				}
 			}
 		}

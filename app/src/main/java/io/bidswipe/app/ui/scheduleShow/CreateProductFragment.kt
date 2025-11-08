@@ -27,8 +27,9 @@ import io.bidswipe.app.network.response.GetMyInventoryResponse
 import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.utils.Alerts
 import io.bidswipe.app.utils.Const
+import io.bidswipe.app.utils.Utils
 import io.bidswipe.app.utils.cropper.CustomCropImageContract
-import io.bidswipe.app.utils.cropper.CustomCropImageHelper
+
 import io.bidswipe.app.utils.hideKeyboard
 import io.bidswipe.app.utils.ids
 import io.bidswipe.app.utils.parse
@@ -55,10 +56,10 @@ class CreateProductFragment : BaseFragment<ScheduleShowViewModel, FragmentCreate
 	private lateinit var variantAdapter: ProductVariantAdapter
 	private val processingCategories = listOf("LETTERS", "FLATS", "MACHINABLE", "NONSTANDARD", "NON_MACHINABLE")
 	private var selectedProcessingCategory: String? = null
-
-	private val cropImageLauncher = registerForActivityResult(CustomCropImageContract()) { uri ->
-		if (uri != null) {
-			val imagePath = CustomCropImageContract.getUriFilePath(mCtx, uri)
+	
+	private val imageResult = registerForActivityResult(CustomCropImageContract()) { result ->
+		if (result.isSuccessful) {
+			val imagePath = result.getUriFilePath(mCtx, true)
 			if (imagePath != null) {
 				if (uploadItemIndex == -1) {
 					if (imageList.size < 9) {
@@ -72,8 +73,6 @@ class CreateProductFragment : BaseFragment<ScheduleShowViewModel, FragmentCreate
 			}
 		}
 	}
-
-	private val imagePickerManager = CustomCropImageHelper.createManager(this, cropImageLauncher)
 
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		super.onViewCreated(view, savedInstanceState)
@@ -375,7 +374,7 @@ class CreateProductFragment : BaseFragment<ScheduleShowViewModel, FragmentCreate
 		if (imageList.size < 9) {
 			requestPerms(Const.STR_PERMS) { per ->
 				if (per) {
-					imagePickerManager.launch(isCamera = true, isGallery = true)
+					imageResult.launch(Utils.initCrop(mCtx, isCamera = true, isGallery = true))
 				}
 			}
 		} else {

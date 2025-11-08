@@ -54,7 +54,7 @@ class ProductAdapter(
 				append(item?.quantity)
 			}
 
-			bind.img.loadUrl(mCtx , item?.images.toString())
+			bind.img.loadUrl(mCtx , item?.images?.first()?:"")
 
 		}
 	}

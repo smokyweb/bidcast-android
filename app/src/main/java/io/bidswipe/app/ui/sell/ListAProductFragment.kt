@@ -27,9 +27,9 @@ import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.ui.dashboard.DashViewModel
 import io.bidswipe.app.utils.Alerts
 import io.bidswipe.app.utils.Const
-import io.bidswipe.app.utils.cropper.CustomCropImageContract
-import io.bidswipe.app.utils.cropper.CustomCropImageHelper
+
 import io.bidswipe.app.utils.Utils
+import io.bidswipe.app.utils.cropper.CustomCropImageContract
 import io.bidswipe.app.utils.finish
 import io.bidswipe.app.utils.hideKeyboard
 import io.bidswipe.app.utils.parse
@@ -64,9 +64,26 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
 	private var packageWeight = 0.0
 	private var selectedMailClass: GetMailClassesResponse.Data.MailClasses? = null
 	
-	private val cropImageLauncher = registerForActivityResult(
-		CustomCropImageContract()
-	) { uri ->
+	private val imageResult = registerForActivityResult(CustomCropImageContract()) { result ->
+		if (result.isSuccessful) {
+			val imagePath = result.getUriFilePath(mCtx, true)
+			if (imagePath != null) {
+				
+				if (uploadItemIndex == -1) {
+					imageList.add(imagePath)
+				} else {
+					imageList[uploadItemIndex] = imagePath
+					uploadItemIndex = -1
+				}
+				
+				bind.imageLimit.text = "${imageList.size}/9"
+				
+				bind.images.adapter?.notifyDataSetChanged()
+			}
+		}
+	}
+	
+/*	private val cropImageLauncher = registerForActivityResult(CustomCropImageContract()) { uri ->
 		if (uri != null) {
 			val imagePath = CustomCropImageContract.getUriFilePath(mCtx, uri)
 			if (imagePath != null) {
@@ -89,7 +106,7 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
 	
 	// Manager handles image picking (gallery/camera) internally
 	private val imagePickerManager = CustomCropImageHelper.createManager(this, cropImageLauncher)
-	
+	*/
 	private val mClick = object : RecyclerClicks {
 		override fun itemClick(pos: Int, status: String?) {
 		}
@@ -476,7 +493,7 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
 		if (imageList.size < 9) {
 			requestPerms(Const.STR_PERMS) { per ->
 				if (per) {
-					imagePickerManager.launch(isCamera = true, isGallery = true)
+					imageResult.launch(Utils.initCrop(mCtx, isCamera = true, isGallery = true))
 				}
 			}
 		} else {

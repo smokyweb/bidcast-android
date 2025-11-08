@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <paths xmlns:android="http://schemas.android.com/apk/res/android">
-    <!-- Cache directory for cropped images -->
+    <!-- Cache directory root for runtime temp files (camera captures, crops) -->
+    <cache-path name="cache" path="." />
+
+    <!-- Cache subdirectory for cropped image exports -->
     <cache-path name="cropped_images" path="cropped_images/" />
     
     <!-- External files directory for camera photos -->

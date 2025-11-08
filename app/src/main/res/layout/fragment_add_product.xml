@@ -24,18 +24,23 @@
         style="@style/TitleSmall"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/margin"
         android:layout_marginEnd="@dimen/margin"
         android:text="@string/cancel"
         android:textColor="@color/secondary"
+        app:layout_constraintBottom_toBottomOf="@id/header"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="@id/header" />
 
-    <ScrollView
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/contentScrollView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:clipToPadding="false"
         android:fillViewport="true"
+        android:paddingBottom="@dimen/margin"
         app:layout_constraintBottom_toTopOf="@id/buttonLayout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/header">
 
         <LinearLayout
@@ -50,7 +55,7 @@
                 android:layout_height="wrap_content"
                 android:nestedScrollingEnabled="false"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                tools:itemCount="2"
+                tools:itemCount="12"
                 tools:listitem="@layout/product_list_item" />
 
             <io.bidswipe.app.ui.custom.NoDataView
@@ -86,7 +91,7 @@
             <LinearLayout
                 android:id="@+id/addProductLayout"
                 android:layout_width="match_parent"
-                android:layout_height="200dp"
+                android:layout_height="120dp"
                 android:layout_margin="@dimen/half_margin"
                 android:background="@drawable/dashed_card_8_white"
                 android:gravity="center"
@@ -112,7 +117,7 @@
             <LinearLayout
                 android:id="@+id/selectInventoryLayout"
                 android:layout_width="match_parent"
-                android:layout_height="200dp"
+                android:layout_height="120dp"
                 android:layout_margin="@dimen/half_margin"
                 android:background="@drawable/dashed_card_8_white"
                 android:gravity="center"
@@ -137,7 +142,7 @@
 
         </LinearLayout>
 
-    </ScrollView>
+    </androidx.core.widget.NestedScrollView>
 
     <LinearLayout
         android:id="@+id/buttonLayout"
@@ -145,7 +150,9 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:visibility="visible"
-        app:layout_constraintBottom_toBottomOf="parent">
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/finishBtn"
