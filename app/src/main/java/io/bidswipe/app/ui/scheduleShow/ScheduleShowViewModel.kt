@@ -35,6 +35,23 @@ class ScheduleShowViewModel @Inject constructor(
 	var thumbnail = ""
 	var variantData = mutableListOf<Map<String?, Any?>>()
 
+	var productTitle = ""
+	var productDescription = ""
+	var productCategoryId = ""
+	var productCategoryName = ""
+	var productSubCategoryId = ""
+	var productSubCategoryName = ""
+	var productQuantity = 1
+	var productWidth = ""
+	var productHeight = ""
+	var productLength = ""
+	var productWeight = ""
+	val productImages = mutableListOf<String?>()
+	var productProcessingCategory: String? = null
+	var productMailClass: GetMailClassesResponse.Data.MailClasses? = null
+	var productSalesFormat: String = ""
+	var productPrice: String = ""
+
 	private var _storeScheduleShowResponse = MutableLiveData<Resource<CreateShowResponse>>()
 	val storeScheduleShowRepo: MutableLiveData<Resource<CreateShowResponse>>
 		get() = _storeScheduleShowResponse

@@ -31,8 +31,6 @@ class ProductWeightFragment : BaseFragment<ScheduleShowViewModel, FragmentProduc
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		super.onViewCreated(view, savedInstanceState)
 
-		val productData = arguments
-
 		bind.header.onBackClick {
 			findNavController().popBackStack()
 		}
@@ -42,11 +40,10 @@ class ProductWeightFragment : BaseFragment<ScheduleShowViewModel, FragmentProduc
 
 		bind.continueBtn.setHapticClickListener {
 			bind.loader.isVisible = true
-			val imagePaths = productData?.getString("imagePaths")
-			val imageFiles = imagePaths?.split(",")?.map { File(it) } ?: emptyList()
+			val imageFiles = viewModel.productImages.filterNotNull().map { File(it) }
 
 			if (imageFiles.isEmpty()) {
-				createProduct(productData, null)
+				createProduct(null)
 				return@setHapticClickListener
 			}
 
@@ -74,28 +71,28 @@ class ProductWeightFragment : BaseFragment<ScheduleShowViewModel, FragmentProduc
 		viewModel.storeProductMeta(imagePartList, thumbnailPartList)
 	}
 
-	private fun createProduct(productData: Bundle?, imageUrls: List<Map<String, String>>?) {
+	private fun createProduct(imageUrls: List<Map<String, String>>?) {
 
 		viewModel.storeProduct(
-			categoryId = productData?.getString("categoryId") ?: "",
-			title = productData?.getString("title") ?: "",
-			description = productData?.getString("description") ?: "",
-			quantity = (productData?.getInt("quantity") ?: 1).toString(),
-			pricing = productData?.getString("price") ?: "1",
+			categoryId = viewModel.productCategoryId,
+			title = viewModel.productTitle,
+			description = viewModel.productDescription,
+			quantity = viewModel.productQuantity.toString(),
+			pricing = viewModel.productPrice.ifEmpty { "1" },
 			flashSale = "0",
 			acceptOffers = "0",
 			reserveForLive = "0",
 			shippingProfileId = "4",
 			status = "active",
 			productImages = imageUrls,
-			subCategoryId = productData?.getString("subCategoryId")?.ifEmpty { null }?.toInt(),
+			subCategoryId = viewModel.productSubCategoryId.ifEmpty { null }?.toInt(),
 			variant = viewModel.variantData,
-			weight = productData?.getString("weight") ?: "",
-			height = productData?.getString("height") ?: "",
-			length = productData?.getString("length") ?: "",
-			width = productData?.getString("width") ?: "",
-			mailClass = productData?.getString("mailClass") ?: "",
-			processingCategory = productData?.getString("processingCategory") ?: "",
+			weight = viewModel.productWeight,
+			height = viewModel.productHeight,
+			length = viewModel.productLength,
+			width = viewModel.productWidth,
+			mailClass = viewModel.productMailClass?.label ?: "",
+			processingCategory = viewModel.productProcessingCategory ?: "",
 
 			)
 
@@ -115,8 +112,7 @@ class ProductWeightFragment : BaseFragment<ScheduleShowViewModel, FragmentProduc
 							null
 						}
 					}
-					val productData = arguments
-					createProduct(productData, imageData)
+					createProduct(imageData)
 				}
 
 				is Resource.Error -> {

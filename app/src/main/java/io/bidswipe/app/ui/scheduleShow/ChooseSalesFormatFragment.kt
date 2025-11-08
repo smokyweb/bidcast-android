@@ -1,6 +1,5 @@
 package io.bidswipe.app.ui.scheduleShow
 
-import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -25,7 +24,6 @@ class ChooseSalesFormatFragment : BaseFragment<ScheduleShowViewModel , FragmentC
 
 	private var formatList = mutableListOf<FormatModel>()
 	private lateinit var adapter : FormatAdapter
-	private var productData : Bundle? = null
 
 	private val mClick = object : RecyclerClicks {
 
@@ -36,18 +34,15 @@ class ChooseSalesFormatFragment : BaseFragment<ScheduleShowViewModel , FragmentC
 			}
 
 			bind.offerLayout.isVisible = pos == 1
+			viewModel.productSalesFormat = formatList[pos].title ?:""
 
 			adapter.notifyDataSetChanged()
 
 		}
 	}
 
-	override fun onViewCreated(view : View , savedInstanceState : Bundle?) {
+	override fun onViewCreated(view : View , savedInstanceState : android.os.Bundle?) {
 		super.onViewCreated(view , savedInstanceState)
-
-		if (arguments != null) {
-			productData = requireArguments()
-		}
 
 		bind.header.onBackClick {
 			findNavController().popBackStack()
@@ -59,15 +54,26 @@ class ChooseSalesFormatFragment : BaseFragment<ScheduleShowViewModel , FragmentC
 
 		adapter = FormatAdapter(formatList , mClick)
 
+		preselectFormat()
 		bind.recycler.adapter = adapter
+		bind.bidPrice.setText(viewModel.productPrice)
 
         bind.continueBtn.setHapticClickListener {
 			val selectedFormat = formatList.firstOrNull { it.selected == true }?.title ?: ""
-			val bundle = productData
-			bundle?.putString("salesFormat" , selectedFormat)
-			bundle?.putString("price" , bind.bidPrice.text.toString().trim())
+			viewModel.productSalesFormat = selectedFormat
+			viewModel.productPrice = bind.bidPrice.text.toString().trim()
 
-			findNavController().navigate(ids.goToProductWeightFragment , bundle)
+			findNavController().navigate(ids.goToProductWeightFragment)
+		}
+	}
+
+	private fun preselectFormat() {
+		if (viewModel.productSalesFormat.isEmpty()) return
+		formatList.forEachIndexed { index, formatModel ->
+			if (formatModel.title.equals(viewModel.productSalesFormat, ignoreCase = true)) {
+				formatModel.selected = true
+				bind.offerLayout.isVisible = index == 1
+			}
 		}
 	}
 

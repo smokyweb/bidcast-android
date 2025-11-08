@@ -44,28 +44,16 @@ class TrustedBuyerActivity : BaseActivity() {
 		}
 	}
 
-//	private val cropImageLauncher = registerForActivityResult(CustomCropImageContract()) { uri ->
-//		if (uri != null) {
-//			bind.uploadLayout.isVisible = false
-//			bind.imgCard.isVisible = true
-//			bind.img.setImageURI(uri)
-//			val imagePath = CustomCropImageContract.getUriFilePath(this, uri)
-//			if (imagePath != null) {
-//				idPhoto = imagePath
-//			}
-//		}
-//	}
-//
-//	private val imagePickerManager = CustomCropImageHelper.createManager(this, cropImageLauncher)
-
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
 		setContentView(bind.root)
+
 		ViewCompat.setOnApplyWindowInsetsListener(window.decorView) { v, insets ->
 			val system = insets.getInsets(WindowInsetsCompat.Type.systemBars())
 			bind.root.setPadding(0,system.top,0, system.bottom)
 			CONSUMED
 		}
+
 		bind.header.onBackClick {
 			finish()
 		}
@@ -101,7 +89,6 @@ class TrustedBuyerActivity : BaseActivity() {
 			}
 
 		}
-
 
 		bind.loader.isVisible = true
 
@@ -247,7 +234,6 @@ class TrustedBuyerActivity : BaseActivity() {
 				else -> {}
 			}
 		}
-
 
 		viewModel.storeBuyerIdentityRepo.observe(this) {
 			when (it) {

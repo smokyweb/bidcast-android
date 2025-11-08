@@ -7,9 +7,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import androidx.core.content.ContextCompat
-import androidx.core.os.bundleOf
-import androidx.core.text.buildSpannedString
 import androidx.core.view.isVisible
+import androidx.core.widget.doAfterTextChanged
 import androidx.navigation.fragment.findNavController
 import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseFragment
@@ -34,7 +33,6 @@ import io.bidswipe.app.utils.hideKeyboard
 import io.bidswipe.app.utils.ids
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.setHapticClickListener
-import io.bidswipe.app.utils.value
 
 class CreateProductFragment : BaseFragment<ScheduleShowViewModel, FragmentCreateProductBinding>() {
 	override fun getModel(): Class<ScheduleShowViewModel> = ScheduleShowViewModel::class.java
@@ -45,14 +43,10 @@ class CreateProductFragment : BaseFragment<ScheduleShowViewModel, FragmentCreate
 	private var categoryList = mutableListOf<GetCategoryResponse.Data?>()
 	private var subCategoryList = mutableListOf<GetCategoryResponse.Data?>()
 	private var mailClassesList = mutableListOf<GetMailClassesResponse.Data.MailClasses?>()
-	private var currentQuantity = 1
-	private var imageList = mutableListOf<String?>()
 	private var uploadItemIndex = -1
 	var isSubCategory = false
-	private var categoryId = ""
-	private var subCategoryId = ""
-	private var selectedMailClass: GetMailClassesResponse.Data.MailClasses? = null
 	var variantList = mutableListOf<GetCategoryResponse.Data.ExtraField?>()
+	private val imageList get() = viewModel.productImages
 	private lateinit var variantAdapter: ProductVariantAdapter
 	private val processingCategories = listOf("LETTERS", "FLATS", "MACHINABLE", "NONSTANDARD", "NON_MACHINABLE")
 	private var selectedProcessingCategory: String? = null
@@ -83,8 +77,6 @@ class CreateProductFragment : BaseFragment<ScheduleShowViewModel, FragmentCreate
 		}
 
 		Log.d(TAG, "onViewCreated: oncreate")
-		imageList.clear()
-//		imageList.add(null)
 
 		variantAdapter = ProductVariantAdapter(variantList, object : RecyclerClicks {
 			override fun itemClick(pos: Int, status: String?) {
@@ -94,6 +86,40 @@ class CreateProductFragment : BaseFragment<ScheduleShowViewModel, FragmentCreate
 		bind.addVariant.setHapticClickListener {
 
 		}
+		bind.productTitle.setText(viewModel.productTitle)
+		bind.description.setText(viewModel.productDescription)
+		bind.quantity.setText(viewModel.productQuantity.toString())
+		bind.width.setText(viewModel.productWidth)
+		bind.height.setText(viewModel.productHeight)
+		bind.length.setText(viewModel.productLength)
+		bind.weight.setText(viewModel.productWeight)
+		updateCategoryField()
+		viewModel.productMailClass?.let {
+			bind.mailClass.setText(it.label, false)
+		}
+		viewModel.productProcessingCategory?.let {
+			bind.procategory.setText(it, false)
+		}
+
+		bind.productTitle.doAfterTextChanged {
+			viewModel.productTitle = it?.toString()?.trim().orEmpty()
+		}
+		bind.description.doAfterTextChanged {
+			viewModel.productDescription = it?.toString()?.trim().orEmpty()
+		}
+		bind.width.doAfterTextChanged {
+			viewModel.productWidth = it?.toString()?.trim().orEmpty()
+		}
+		bind.height.doAfterTextChanged {
+			viewModel.productHeight = it?.toString()?.trim().orEmpty()
+		}
+		bind.length.doAfterTextChanged {
+			viewModel.productLength = it?.toString()?.trim().orEmpty()
+		}
+		bind.weight.doAfterTextChanged {
+			viewModel.productWeight = it?.toString()?.trim().orEmpty()
+		}
+
 		bind.root.setHapticClickListener {
 			hideKeyboard(it)
 		}
@@ -114,25 +140,23 @@ class CreateProductFragment : BaseFragment<ScheduleShowViewModel, FragmentCreate
 			uploadImage()
 		}
 
-		bind.quantity.setText(currentQuantity.toString())
-
 		bind.increaseQuantity.setHapticClickListener {
-			currentQuantity++
-			bind.quantity.setText(currentQuantity.toString())
+			viewModel.productQuantity++
+			bind.quantity.setText(viewModel.productQuantity.toString())
 		}
 
 		bind.decreaseQuantity.setHapticClickListener {
-			if (currentQuantity > 1) {
-				currentQuantity--
-				bind.quantity.setText(currentQuantity.toString())
+			if (viewModel.productQuantity > 1) {
+				viewModel.productQuantity--
+				bind.quantity.setText(viewModel.productQuantity.toString())
 			}
 		}
 
 		bind.quantity.setOnFocusChangeListener { _, hasFocus ->
 			if (!hasFocus) {
 				val input = bind.quantity.text.toString().toIntOrNull() ?: 1
-				currentQuantity = if (input < 1) 1 else input
-				bind.quantity.setText(currentQuantity.toString())
+				viewModel.productQuantity = if (input < 1) 1 else input
+				bind.quantity.setText(viewModel.productQuantity.toString())
 			}
 		}
 
@@ -145,32 +169,13 @@ class CreateProductFragment : BaseFragment<ScheduleShowViewModel, FragmentCreate
 		}
 
 		bind.continueBtn.setHapticClickListener {
+			viewModel.productQuantity = bind.quantity.text.toString().toIntOrNull()?.coerceAtLeast(1) ?: 1
+			bind.quantity.setText(viewModel.productQuantity.toString())
 			if (validateAndNavigate()) {
-				val imagePaths = ArrayList(imageList.filterNotNull())
 				viewModel.variantData = variantAdapter.getAllVariantData().toMutableList()
 
-				val bundle = bundleOf(
-					"categoryId" to categoryId,
-					"subCategoryId" to subCategoryId,
-					"title" to bind.productTitle.text.toString().trim(),
-					"description" to bind.description.text.toString().trim(),
-					"quantity" to currentQuantity,
-					"imagePaths" to imagePaths.joinToString(","),
-					"width" to bind.width.value(),
-					"height" to bind.height.value(),
-					"length" to bind.length.value(),
-					"weight" to bind.weight.value(),
-					"mailClass" to selectedMailClass?.label,
-					"processingCategory" to selectedProcessingCategory
-				)
-				Log.d(TAG, "onViewCreated: $bundle")
-
-				try {
-					findNavController().navigate(ids.goToChooseSalesFormatFragment, bundle)
-				} catch (_: Exception) {
-					bind.loader.isVisible = false
-					errorToast("Error navigating to next screen")
-				}
+				Log.d(TAG, "onViewCreated: navigating to choose sales format")
+				findNavController().navigate(ids.goToChooseSalesFormatFragment)
 			}
 		}
 
@@ -334,11 +339,15 @@ class CreateProductFragment : BaseFragment<ScheduleShowViewModel, FragmentCreate
 		bind.procategory.setDropDownBackgroundDrawable(proDrawable)
 
 		bind.procategory.setOnItemClickListener { _, _, position, _ ->
-			selectedProcessingCategory = processingCategories[position]
-			log("Selected processing category: $selectedProcessingCategory")
+			viewModel.productProcessingCategory = processingCategories[position]
+			log("Selected processing category: ${viewModel.productProcessingCategory}")
+			bind.procategory.setText(viewModel.productProcessingCategory, false)
 		}
 		bind.procategory.setHapticClickListener {
 			bind.procategory.showDropDown()
+		}
+		viewModel.productProcessingCategory?.let {
+			bind.procategory.setText(it, false)
 		}
 	}
 
@@ -357,8 +366,11 @@ class CreateProductFragment : BaseFragment<ScheduleShowViewModel, FragmentCreate
 		bind.mailClass.setDropDownBackgroundDrawable(drawable)
 
 		bind.mailClass.setOnItemClickListener { _, _, position, _ ->
-			selectedMailClass = mailClassesList[position]
-			log("Selected mail class: ${selectedMailClass?.label}")
+			viewModel.productMailClass = mailClassesList[position]
+			log("Selected mail class: ${viewModel.productMailClass?.label}")
+			viewModel.productMailClass?.label?.let { label ->
+				bind.mailClass.setText(label, false)
+			}
 		}
 
 		bind.mailClass.setHapticClickListener {
@@ -367,6 +379,10 @@ class CreateProductFragment : BaseFragment<ScheduleShowViewModel, FragmentCreate
 			} else {
 				viewModel.getMailClasses()
 			}
+		}
+
+		viewModel.productMailClass?.label?.let {
+			bind.mailClass.setText(it, false)
 		}
 	}
 
@@ -383,12 +399,12 @@ class CreateProductFragment : BaseFragment<ScheduleShowViewModel, FragmentCreate
 	}
 
 	private fun validateAndNavigate(): Boolean {
-		val title = bind.productTitle.text.toString().trim()
-		val description = bind.description.text.toString().trim()
-		val width = bind.width.value()
-		val height = bind.height.value()
-		val length = bind.length.value()
-		val weight = bind.weight.value()
+		val title = viewModel.productTitle
+		val description = viewModel.productDescription
+		val width = viewModel.productWidth
+		val height = viewModel.productHeight
+		val length = viewModel.productLength
+		val weight = viewModel.productWeight
 
 		if (title.isEmpty()) {
 			errorToast("Please enter product title")
@@ -400,7 +416,7 @@ class CreateProductFragment : BaseFragment<ScheduleShowViewModel, FragmentCreate
 			return false
 		}
 
-		if (categoryId.isEmpty()) {
+		if (viewModel.productCategoryId.isEmpty()) {
 			errorToast("Please select a category")
 			return false
 		}
@@ -410,11 +426,11 @@ class CreateProductFragment : BaseFragment<ScheduleShowViewModel, FragmentCreate
 			return false
 		}
 
-		if (selectedMailClass == null) {
+		if (viewModel.productMailClass == null) {
 			errorToast("Please select a mail class")
 			return false
 		}
-		if (selectedProcessingCategory == null) {
+		if (viewModel.productProcessingCategory == null) {
 			errorToast("Please select a processing category")
 			return false
 		}
@@ -429,7 +445,7 @@ class CreateProductFragment : BaseFragment<ScheduleShowViewModel, FragmentCreate
 			val packageLength = length.toDouble()
 			val packageWeight = weight.toDouble()
 
-			selectedMailClass?.let { mailClass ->
+			viewModel.productMailClass?.let { mailClass ->
 				val errors = mutableListOf<String>()
 
 				if (mailClass.maxLengthIn != null && packageLength > mailClass.maxLengthIn) {
@@ -484,10 +500,12 @@ class CreateProductFragment : BaseFragment<ScheduleShowViewModel, FragmentCreate
 			object : RecyclerClicks {
 				override fun itemClick(pos: Int, status: String?) {
 					if (type == "category") {
-						categoryId = categoryList[pos]?.id.toString()
-						bind.category.setText(categoryList[pos]?.name.toString())
+						viewModel.productCategoryId = categoryList[pos]?.id.toString()
+						viewModel.productCategoryName = categoryList[pos]?.name.orEmpty()
+						viewModel.productSubCategoryId = ""
+						viewModel.productSubCategoryName = ""
 						bind.loader.isVisible = true
-						viewModel.getCategory(categoryId)
+						viewModel.getCategory(viewModel.productCategoryId)
 						isSubCategory = true
 
 						if (categoryList[pos]?.extraFields?.isNotEmpty() == true) {
@@ -495,11 +513,8 @@ class CreateProductFragment : BaseFragment<ScheduleShowViewModel, FragmentCreate
 							variantAdapter.notifyDataSetChanged()
 						}
 					} else {
-						bind.category.setText(buildSpannedString {
-							append(bind.category.text)
-							append("(${subCategoryList[pos]?.name.toString()})")
-						})
-						subCategoryId = subCategoryList[pos]?.id.toString()
+						viewModel.productSubCategoryId = subCategoryList[pos]?.id.toString()
+						viewModel.productSubCategoryName = subCategoryList[pos]?.name.orEmpty()
 						isSubCategory = false
 
 						if (subCategoryList[pos]?.extraFields?.isNotEmpty() == true) {
@@ -507,6 +522,7 @@ class CreateProductFragment : BaseFragment<ScheduleShowViewModel, FragmentCreate
 							variantAdapter.notifyDataSetChanged()
 						}
 					}
+					updateCategoryField()
 					categorySheet.dismiss()
 				}
 			})
@@ -520,6 +536,24 @@ class CreateProductFragment : BaseFragment<ScheduleShowViewModel, FragmentCreate
 			categorySheet.dismiss()
 		}
 		categorySheet.show()
+	}
+
+	private fun updateCategoryField() {
+		val categoryName = viewModel.productCategoryName
+		val subCategoryName = viewModel.productSubCategoryName
+
+		if (categoryName.isEmpty()) {
+			bind.category.setText("")
+			return
+		}
+
+		val displayText = if (subCategoryName.isEmpty()) {
+			categoryName
+		} else {
+			"$categoryName ($subCategoryName)"
+		}
+
+		bind.category.setText(displayText)
 	}
 
 }

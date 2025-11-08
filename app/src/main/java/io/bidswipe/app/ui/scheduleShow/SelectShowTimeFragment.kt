@@ -18,9 +18,9 @@ import io.bidswipe.app.utils.Alerts
 import io.bidswipe.app.utils.Utils
 import io.bidswipe.app.utils.draw
 import io.bidswipe.app.utils.finish
-import io.bidswipe.app.utils.runSafe
 import io.bidswipe.app.utils.setHapticClickListener
 import java.util.Calendar
+import java.util.Locale
 
 class SelectShowTimeFragment : BaseFragment<ScheduleShowViewModel , FragmentSelectShowTimeBinding>() {
 
@@ -31,7 +31,7 @@ class SelectShowTimeFragment : BaseFragment<ScheduleShowViewModel , FragmentSele
         view : ViewGroup? ,
     ) = FragmentSelectShowTimeBinding.inflate(inflater , view , false)
 
-	private var timeList = mutableListOf("07:00" , "09:00" , "11:00" , "13:00" , "15:00" , "17:00" , "19:00" , "21:00" , "23:00" , "01:00")
+	private var timeList = mutableListOf<String>()
 
 	override fun onViewCreated(view : View , savedInstanceState : Bundle?) {
 		super.onViewCreated(view , savedInstanceState)
@@ -55,6 +55,8 @@ class SelectShowTimeFragment : BaseFragment<ScheduleShowViewModel , FragmentSele
 			viewModel.date = date.toString()
 		}
 
+		updateTimeSlots()
+
 		bind.calenderView.setOnCalendarDayClickListener(object : OnCalendarDayClickListener {
 			override fun onClick(calendarDay : CalendarDay) {
 
@@ -63,7 +65,7 @@ class SelectShowTimeFragment : BaseFragment<ScheduleShowViewModel , FragmentSele
 
 				viewModel.date = date
 
-				log("DATE : $date")
+				updateTimeSlots()
 
 			}
 		})
@@ -72,27 +74,18 @@ class SelectShowTimeFragment : BaseFragment<ScheduleShowViewModel , FragmentSele
 			if (from == "tutorial") finish() else findNavController().popBackStack()
 		}
 
-		timeList.forEach {
-			bind.chipGroup.addView(
-				Utils.makeAChip(
-					mCtx = mCtx ,
-					text = it ,
-					selected = false,
-					closeIconVisible = false
-				)
-			)
-		}
-
 		bind.chipGroup.setOnCheckedStateChangeListener { chipGroup , _ ->
-			runSafe {
-				val chipId = chipGroup.checkedChipId
-				val index = chipGroup.indexOfChild(chipGroup.findViewById(chipId))
-
-				val chip : Chip = bind.chipGroup.getChildAt(index) as Chip
-
-				viewModel.time = chip.text.toString()
-
+			val chipId = chipGroup.checkedChipId
+			if (chipId == View.NO_ID) {
+				viewModel.time = ""
+				return@setOnCheckedStateChangeListener
 			}
+
+			val chip : Chip? = chipGroup.findViewById(chipId)
+			chip?.let {
+				viewModel.time = it.text.toString()
+			}
+
 		}
 
         bind.continueBtn.setHapticClickListener {
@@ -123,6 +116,82 @@ class SelectShowTimeFragment : BaseFragment<ScheduleShowViewModel , FragmentSele
 		}
 
 
+	}
+
+	private fun updateTimeSlots() {
+		val slots = generateTimeSlots(viewModel.date)
+		timeList.clear()
+		timeList.addAll(slots)
+
+		if (!timeList.contains(viewModel.time)) {
+			viewModel.time = ""
+		}
+
+		bind.chipGroup.removeAllViews()
+
+		timeList.forEach { time ->
+			bind.chipGroup.addView(
+				Utils.makeAChip(
+					mCtx = mCtx ,
+					text = time ,
+					selected = time == viewModel.time,
+					closeIconVisible = false
+				)
+			)
+		}
+
+		if (viewModel.time.isNotEmpty()) {
+			bind.chipGroup.check(viewModel.time.hashCode())
+		} else {
+			bind.chipGroup.clearCheck()
+		}
+	}
+
+	private fun generateTimeSlots(selectedDate : String?) : List<String> {
+		if (selectedDate.isNullOrEmpty()) return emptyList()
+
+		return try {
+			val date = Utils.getSimpleDate("yyyy-MM-dd").parse(selectedDate) ?: return emptyList()
+
+			val baseCalendar = Calendar.getInstance().apply {
+				time = date
+				set(Calendar.HOUR_OF_DAY , 0)
+				set(Calendar.MINUTE , 0)
+				set(Calendar.SECOND , 0)
+				set(Calendar.MILLISECOND , 0)
+			}
+
+			val current = Calendar.getInstance()
+			val slots = mutableListOf<String>()
+
+			for (hour in 0 until 24) {
+				val slot = baseCalendar.clone() as Calendar
+				slot.set(Calendar.HOUR_OF_DAY , hour)
+				slot.set(Calendar.MINUTE , 0)
+				slot.set(Calendar.SECOND , 0)
+				slot.set(Calendar.MILLISECOND , 0)
+
+				val isSameDay = isSameDay(slot , current)
+				if (isSameDay && !slot.after(current)) {
+					continue
+				}
+
+				val displayTime = Utils.getSimpleDate("HH:mm").apply {
+					timeZone = slot.timeZone
+				}.format(slot.time)
+				slots.add(displayTime.uppercase(Locale.getDefault()))
+			}
+
+			slots
+		} catch (e : Exception) {
+			Alerts.log("SelectShowTimeFragment" , "Failed to generate time slots: ${e.localizedMessage}")
+			emptyList()
+		}
+	}
+
+	private fun isSameDay(first : Calendar , second : Calendar) : Boolean {
+		return first.get(Calendar.YEAR) == second.get(Calendar.YEAR) &&
+			first.get(Calendar.DAY_OF_YEAR) == second.get(Calendar.DAY_OF_YEAR)
 	}
 
 }
