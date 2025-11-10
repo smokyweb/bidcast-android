@@ -13,7 +13,6 @@ import io.bidswipe.app.databinding.ActivityViewLiveShowBinding
 import io.bidswipe.app.model.StreamModel
 import io.bidswipe.app.utils.AgoraManager
 import io.bidswipe.app.utils.Const
-import io.bidswipe.app.utils.SocketManager
 import io.bidswipe.app.utils.bind
 import io.bidswipe.app.utils.clr
 
@@ -27,10 +26,6 @@ class ViewLiveShowActivity : BaseActivity() {
 	private var streamList = arrayListOf<StreamModel>()
 	private lateinit var viewPager: ViewPager2
 	private lateinit var streamPagerAdapter: StreamPagerAdapter
-	private lateinit var socketUrl: String
-
-	//    private var chatManager : ChatManager? = null
-	private var socketManager: SocketManager? = null
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
@@ -68,15 +63,25 @@ class ViewLiveShowActivity : BaseActivity() {
 		if (roomId.isNotEmpty()) {
 			val data: Uri? = intent.data
 			data?.let { uri ->
-				roomId = uri.getQueryParameter("showId").toString()
-				// Use the param or the path to navigate or update UI
+				uri.getQueryParameter("showId")?.takeIf { it.isNotEmpty() }?.let { deepLinkRoomId ->
+					roomId = deepLinkRoomId
+				}
 				log(" SHOW ID : $roomId")
 			}
 		}
 
-		pos = streamList.indexOf(streamList.find { it.roomId == roomId })
-
 		if (streamList.isNotEmpty()) {
+			val targetIndex = streamList.indexOfFirst { it.roomId == roomId }
+
+			if (targetIndex > 0) {
+				val selectedStream = streamList[targetIndex]
+				streamList[targetIndex] = streamList[0]
+				streamList[0] = selectedStream
+				pos = 0
+			} else {
+				pos = targetIndex.takeIf { it >= 0 } ?: 0
+			}
+
 			viewPager = bind.viewPager
 			viewModel.setStreams(streamList)
 			log("STREAM LIST : $streamList")
@@ -87,57 +92,11 @@ class ViewLiveShowActivity : BaseActivity() {
 		} else {
 			finishAfterTransition()
 		}
-
-		/*
-				socketManager?.onRoomCreated { json ->
-
-					val showData = LiveShowModel.fromJson(json)
-
-					if (!streamList.contains(StreamModel(showData.showId.toString(), showData.rtcToken))){
-						streamList.add(showData.showId.toString())
-					}
-
-					streamPagerAdapter.notifyDataSetChanged()
-
-				}
-		*/
-
-		// Initialize ChatManager here if you want the ZIM SDK ready at Activity scope
-		/*chatManager = ChatManager(
-			application = application ,
-			appId = Const.APP_ID.toLong() ,
-			appSign = Const.APP_SIGN ,
-			userId = userId ,
-			userName = userName ,
-			userImage = userImage
-		)
-*/
 	}
 
 	override fun onDestroy() {
 		super.onDestroy()
 		App.manager.destroyEngine()
-	}
-
-	private fun createEngine() {
-
-		socketUrl = Const.SOCKET_URL
-		socketManager = SocketManager.getInstance(this)
-		socketManager?.initialize(socketUrl, mapOf("uid" to userId))
-		socketManager?.connect(onConnected = {
-//                socketManager?.emitViewerJoin(roomID)
-		}) { err ->
-			log("Socket connect error: $err")
-
-		}
-
-	}
-
-	fun moveItem(list: MutableList<String>, fromIndex: Int, toIndex: Int) {
-		if (fromIndex in list.indices && toIndex in list.indices) {
-			val item = list.removeAt(fromIndex)
-			list.add(toIndex, item)
-		}
 	}
 
 }

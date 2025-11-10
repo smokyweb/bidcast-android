@@ -23,6 +23,7 @@
         android:id="@+id/player"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        app:animation_enabled="false"
         app:auto_show="true"
         app:controller_layout_id="@layout/plyer_controller"
         app:hide_on_touch="false"

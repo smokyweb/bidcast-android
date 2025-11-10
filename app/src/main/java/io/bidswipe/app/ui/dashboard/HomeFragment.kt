@@ -35,7 +35,6 @@ import io.bidswipe.app.utils.request
 import io.bidswipe.app.utils.runSafe
 import io.bidswipe.app.utils.setHapticClickListener
 import io.bidswipe.app.utils.value
-import java.util.ArrayList
 
 @SuppressLint("NotifyDataSetChanged")
 class HomeFragment : BaseFragment<DashViewModel , FragmentHomeBinding>() {
@@ -71,45 +70,23 @@ class HomeFragment : BaseFragment<DashViewModel , FragmentHomeBinding>() {
 
 				"viewShow" -> {
 
-					val roomId = showList[pos]?.roomId.toString()
-
-					startActivity(
-						Intent(
-							mCtx ,
-							ViewLiveShowActivity::class.java
-						).putExtra("roomId" , roomId)
-							.putExtra("userId" , showList[pos]?.userId.toString())
-							.putExtra(
-								"roomIdsList" ,
-								romIdsList.joinToString(",")
-							)
-							.putParcelableArrayListExtra(
-								"streamList" ,
-								ArrayList(streamList)
-							)
-					)
-
-				/*	if (showList[pos]?.isLive == true) {
+					if (showList[pos]?.isLive == true) {
 						val roomId = showList[pos]?.roomId.toString()
-						print("ROOM $romIdsList")
+
 						if (App.PIPMode) {
 							Alerts.error(mCtx , "You are already in Live show")
 						} else {
 							startActivity(
-								Intent(
-									mCtx ,
-									ViewLiveShowActivity::class.java
-								).putExtra("roomId" , roomId)
-									.putExtra("userId" , showList[pos]?.userId.toString())
-									.putExtra(
-										"roomIdsList" ,
-										romIdsList.joinToString(",")
-									)
+								Intent(mCtx, ViewLiveShowActivity::class.java)
+									.putExtra("roomId", roomId)
+									.putExtra("userId", showList[pos]?.userId.toString())
+									.putExtra("roomIdsList", romIdsList.joinToString(","))
 							)
 						}
-					}*/
+					}
 				}
 			}
+
 		}
 	}
 
@@ -140,7 +117,6 @@ class HomeFragment : BaseFragment<DashViewModel , FragmentHomeBinding>() {
 		bind.recycler.adapter = homeAdapter
 
 		bind.header.onMorePrimaryClick {
-//            mCtx.startActivity(Intent(mCtx, SpoofSocketActivity::class.java))
 			startActivity(
 				Intent(mCtx , NotificationActivity::class.java).putExtra(
 					"slug" ,
@@ -194,6 +170,7 @@ class HomeFragment : BaseFragment<DashViewModel , FragmentHomeBinding>() {
 				}
 			}
 		})
+
 		bind.searchLayout.setEndIconOnClickListener {
 			bind.search.setText("")
 			bind.searchLayout.isEndIconVisible = false
@@ -404,32 +381,5 @@ class HomeFragment : BaseFragment<DashViewModel , FragmentHomeBinding>() {
 			}
 		}
 	}
-
-//	private var eventListener = object : ChildEventListener {
-//		override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
-//			if (selectedTabText == "live"){
-//				viewModel.getLiveShow(selectedTabText.request(), selectedCategory.request(), page = page.toString().request())
-//			}
-//		}
-//
-//		override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
-//			if (selectedTabText == "live") {
-//				viewModel.getLiveShow(selectedTabText.request(), selectedCategory.request(), page = page.toString().request())
-//			}
-//		}
-//
-//		override fun onChildRemoved(snapshot: DataSnapshot) {
-//
-//		}
-//
-//		override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {
-//
-//		}
-//
-//		override fun onCancelled(error: DatabaseError) {
-//		}
-//
-//
-//	}
 
 }

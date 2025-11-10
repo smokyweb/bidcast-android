@@ -492,28 +492,13 @@ class DashViewModel @Inject constructor(
 	fun getUserProducts(
 		userId : RequestBody? = null ,
 		categoryId : RequestBody? = null ,
+		page : RequestBody? = null
 	) = viewModelScope.launch {
 		if (! networkMonitor.hasInternet()) {
 			_getUserProductsResponse.value = NO_INTERNET_ERROR
 			return@launch
 		}
-		_getUserProductsResponse.value = repo.getUserProducts(userId , categoryId)
-	}
-
-	private var _getMyInventoryResponse = MutableLiveData<Resource<GetMyInventoryResponse>>()
-	val getMyInventoryRepo : MutableLiveData<Resource<GetMyInventoryResponse>>
-		get() = _getMyInventoryResponse
-
-	fun getMyInventory(
-		status : RequestBody? ,
-		page : RequestBody? ,
-		search : RequestBody? = null ,
-	) = viewModelScope.launch {
-		if (! networkMonitor.hasInternet()) {
-			_getMyInventoryResponse.value = NO_INTERNET_ERROR
-			return@launch
-		}
-		_getMyInventoryResponse.value = repo.getMyInventory(status , page , search)
+		_getUserProductsResponse.value = repo.getUserProducts(userId , categoryId, page)
 	}
 
 	private var _storeScheduleShowResponse = MutableLiveData<Resource<CreateShowResponse>>()

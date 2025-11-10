@@ -31,7 +31,7 @@ class TrustedBuyerActivity : BaseActivity() {
 	private val bind by bind(ActivityTrustedBuyerBinding::inflate)
 	private val viewModel by viewModels<MoreViewModel>()
 	private var idPhoto = ""
-	
+
 	private val imageResult = registerForActivityResult(CustomCropImageContract()) { result ->
 		if (result.isSuccessful) {
 			val imagePath = result.getUriFilePath(this, true)
@@ -50,7 +50,7 @@ class TrustedBuyerActivity : BaseActivity() {
 
 		ViewCompat.setOnApplyWindowInsetsListener(window.decorView) { v, insets ->
 			val system = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-			bind.root.setPadding(0,system.top,0, system.bottom)
+			bind.root.setPadding(0, system.top, 0, system.bottom)
 			CONSUMED
 		}
 

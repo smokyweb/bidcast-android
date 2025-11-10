@@ -47,12 +47,13 @@ class SellerViewModel @Inject constructor(
 	fun getUserProducts(
 		userId: RequestBody? = null,
 		categoryId: RequestBody? = null,
+		page: RequestBody? = null
 	) = viewModelScope.launch {
 		if (!networkMonitor.hasInternet()) {
 			_getUserProductsResponse.value = NO_INTERNET_ERROR
 			return@launch
 		}
-		_getUserProductsResponse.value = repo.getUserProducts(userId, categoryId)
+		_getUserProductsResponse.value = repo.getUserProducts(userId, categoryId, page)
 	}
 
 	private var _followUserResponse = MutableLiveData<Resource<FollowUnfollowResponse>>()

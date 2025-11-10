@@ -55,7 +55,7 @@ class PlayerFragment : BaseFragment<DashViewModel, FragmentPlayerBinding>() {
 
 				player?.setMediaItem(
 					MediaItem.Builder()
-						.setUri(lessonList[playPos].toString()).build()
+						.setUri(lessonList[playPos]).build()
 				)
 
 				player?.prepare()
@@ -64,32 +64,7 @@ class PlayerFragment : BaseFragment<DashViewModel, FragmentPlayerBinding>() {
 			} else {
 				findNavController().navigate(ids.goToSellFragment)
 			}
-//
 		}
-
-		/* val playerControlView = bind.player.findViewById<TextView>(R.id.mute)
-
-		 playerControlView.setHapticClickListener {
-
-			 playerControlView.setHapticClickListener {
-				 // Toggle mute state
-				 val currentMuteState = player?.isDeviceMuted
-				 currentMuteState?.let { it1 -> player?.setDeviceMuted(!it1) }
-
-				 // Change the button text based on the new mute state
-				 if (currentMuteState == true) {
-					 playerControlView.text = "Unmute"
-				 } else {
-					 playerControlView.text = "Mute"
-				 }
-			 }
-
-
-		 }*/
-
-
-		// Check if PlayerControlView is available
-
 
 		bind.loader.isVisible = true
 
@@ -152,8 +127,8 @@ class PlayerFragment : BaseFragment<DashViewModel, FragmentPlayerBinding>() {
 
 	override fun onDestroy() {
 		super.onDestroy()
-		player = null
 		player?.release()
+		player = null
 	}
 
 }

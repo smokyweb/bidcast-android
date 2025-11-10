@@ -221,6 +221,7 @@ interface ApiInterface {
 	suspend fun getUserProducts(
 		@Part("user_id") userId : RequestBody? ,
 		@Part("category_id") categoryId : RequestBody? ,
+		@Part("page") page : RequestBody?
 	) : GetProductsResponse
 
 	@Multipart

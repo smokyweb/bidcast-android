@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.view.isVisible
+import androidx.core.widget.NestedScrollView
 import androidx.navigation.fragment.findNavController
 import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseFragment
@@ -46,6 +47,8 @@ class AddProductFragment : BaseFragment<ScheduleShowViewModel, FragmentAddProduc
 	private lateinit var productAdapter: ProductAdapter
 	private var productList = mutableListOf<GetMyInventoryResponse.Data?>()
 	private var imagePartList = mutableListOf<MultipartBody.Part?>()
+	private var page = 1
+	private var isLoading = false
 
 	private val inventoryLauncher =
 		registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -65,7 +68,7 @@ class AddProductFragment : BaseFragment<ScheduleShowViewModel, FragmentAddProduc
 				productAdapter.notifyDataSetChanged()
 
 				if (productList.isNotEmpty()) {
-					bind.noData.isVisible = false
+//					bind.noData.isVisible = false
 					bind.recycler.isVisible = true
 				}
 			}
@@ -102,6 +105,23 @@ class AddProductFragment : BaseFragment<ScheduleShowViewModel, FragmentAddProduc
 		bind.header.onBackClick {
 			findNavController().popBackStack()
 		}
+
+		bind.contentScrollView.setOnScrollChangeListener { v: NestedScrollView?, _: Int, scrollY: Int, _: Int, oldScrollY: Int ->
+			val nestedScrollView = checkNotNull(v) {
+				return@setOnScrollChangeListener
+			}
+			val lastChild = nestedScrollView.getChildAt(nestedScrollView.childCount - 1)
+			if (lastChild != null) {
+				if ((scrollY >= (lastChild.measuredHeight - nestedScrollView.measuredHeight)) && scrollY > oldScrollY) {
+					if (!isLoading){
+						isLoading = true
+						page++
+						viewModel.getUserProducts(userId.request(), categoryId = viewModel.categoryId.request(), page.toString().request())
+					}
+				}
+			}
+		}
+
 
 		productAdapter = ProductAdapter(productList, mClick)
 		bind.recycler.adapter = productAdapter
@@ -157,10 +177,6 @@ class AddProductFragment : BaseFragment<ScheduleShowViewModel, FragmentAddProduc
 						productIdList.joinToString(",")
 					)
 				)
-//                data.putExtra("categoryId" , )
-//                data.putExtra("auctionTypeId" , )
-//                data.putExtra("thumbnails" , )
-//                data.putExtra("productIds" , )
 
 				activity?.setResult(Activity.RESULT_OK, data)
 				finish()
@@ -181,7 +197,7 @@ class AddProductFragment : BaseFragment<ScheduleShowViewModel, FragmentAddProduc
 
 		bind.loader.isVisible = true
 
-		viewModel.getUserProducts(userId.request(), categoryId = viewModel.categoryId.request())
+		viewModel.getUserProducts(userId.request(), categoryId = viewModel.categoryId.request(), page.toString().request())
 
 		viewModel.getUserProductsRepo.observe(viewLifecycleOwner) {
 			when (it) {
@@ -189,23 +205,26 @@ class AddProductFragment : BaseFragment<ScheduleShowViewModel, FragmentAddProduc
 					bind.loader.isVisible = false
 
 					val mData = it.value.data
-log("DATATA ${mData?.size}")
-					productList.clear()
+
+					if (page == 1) productList.clear()
 
 					mData?.forEach {
 						productList.add(it)
 					}
-					
-					log("DATATA1 ${productList?.size}")
+
+					log("DATA ${productList.size}")
+
 					productAdapter.notifyDataSetChanged()
 
-					if (productList.isEmpty()) {
-						bind.noData.isVisible = true
+					isLoading = page >= (it.value.totalPage ?: 0)
+
+					/*if (productList.isEmpty()) {
+//						bind.noData.isVisible = true
 						bind.recycler.isVisible = false
 					} else {
-						bind.noData.isVisible = false
+//						bind.noData.isVisible = false
 						bind.recycler.isVisible = true
-					}
+					}*/
 
 				}
 
@@ -215,7 +234,6 @@ log("DATATA ${mData?.size}")
 					it.parse(mCtx, TAG, object : AlertClicks {
 						override fun primaryClick(dialog: AppBottomSheet) {
 							dialog.dismiss()
-
 						}
 
 						override fun secondaryClick(dialog: AppBottomSheet) {
@@ -316,10 +334,10 @@ log("DATATA ${mData?.size}")
 
 					it.value.data
 
-					viewModel.getUserProducts(
+					/*viewModel.getUserProducts(
 						userId.request(),
 						categoryId = viewModel.categoryId.request()
-					)
+					)*/
 
 				}
 

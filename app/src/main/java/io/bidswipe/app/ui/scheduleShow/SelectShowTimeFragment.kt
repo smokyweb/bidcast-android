@@ -60,8 +60,7 @@ class SelectShowTimeFragment : BaseFragment<ScheduleShowViewModel , FragmentSele
 		bind.calenderView.setOnCalendarDayClickListener(object : OnCalendarDayClickListener {
 			override fun onClick(calendarDay : CalendarDay) {
 
-				val date = Utils.getFormattedDateTime("dd-MM-yyyy" , "yyyy-MM-dd" , Utils.getDateFromTimestamp(calendarDay.calendar.timeInMillis))
-					.toString()
+				val date = Utils.getFormattedDateTime("dd-MM-yyyy" , "yyyy-MM-dd" , Utils.getDateFromTimestamp(calendarDay.calendar.timeInMillis)).toString()
 
 				viewModel.date = date
 
