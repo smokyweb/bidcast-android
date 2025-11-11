@@ -60,11 +60,10 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
 		length: String? = null,
 		weight: String? = null,
 		mailClass: String? = null,
-		processingCategory: String? = null,
+		processingCategory: String? = null
 	) = call {
 		api.storeProduct(
-			StoreProductRequest
-				(
+			StoreProductRequest(
 				categoryId = categoryId,
 				title = title,
 				description = description,
@@ -104,8 +103,7 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
 	suspend fun getPrepareStep() = call { api.getPrepareStep() }
 	
 	suspend fun getFAQ() = call { api.getFAQ() }
-	
-	
+
 	suspend fun contactUs(
 		name: RequestBody?,
 		email: RequestBody?,
@@ -120,7 +118,7 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
 		categoryId: RequestBody?,
 		auctionTypeId: RequestBody?,
 		thumbnails: List<MultipartBody.Part?>?,
-		productIds: List<Int>,
+		productIds: List<Int>
 	) = call {
 		api.storeScheduleShow(
 			title,
@@ -288,20 +286,9 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
 		image: MultipartBody.Part?,
 	) = call { api.storeBuyerIdentity(image) }
 	
-	suspend fun generateToken(
-		showId: RequestBody?,
-	) = call { api.generateToken(showId) }
-	
-	
 	suspend fun storeDeviceDetails(
 		deviceToken: RequestBody?,
 	) = call { api.storeDeviceDetails(deviceToken) }
-	
-	
-	suspend fun updateLiveStatus(
-		showId: RequestBody?,
-		isLive: RequestBody?,
-	) = call { api.updateLiveStatus(showId, isLive) }
 	
 	suspend fun createBid(
 		showId: RequestBody?,
@@ -309,8 +296,7 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
 		productId: RequestBody?,
 		bidPrice: RequestBody?,
 	) = call { api.createBid(showId, userId, productId, bidPrice) }
-	
-	
+
 	suspend fun getUserProfile(
 	) = call { api.getUserProfile() }
 	

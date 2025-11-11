@@ -1,5 +1,6 @@
 package io.bidswipe.app.ui.scheduleShow
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -34,6 +35,7 @@ import io.bidswipe.app.utils.ids
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.setHapticClickListener
 
+@SuppressLint("NotifyDataSetChanged")
 class CreateProductFragment : BaseFragment<ScheduleShowViewModel, FragmentCreateProductBinding>() {
 	override fun getModel(): Class<ScheduleShowViewModel> = ScheduleShowViewModel::class.java
 
@@ -49,8 +51,7 @@ class CreateProductFragment : BaseFragment<ScheduleShowViewModel, FragmentCreate
 	private val imageList get() = viewModel.productImages
 	private lateinit var variantAdapter: ProductVariantAdapter
 	private val processingCategories = listOf("LETTERS", "FLATS", "MACHINABLE", "NONSTANDARD", "NON_MACHINABLE")
-	private var selectedProcessingCategory: String? = null
-	
+
 	private val imageResult = registerForActivityResult(CustomCropImageContract()) { result ->
 		if (result.isSuccessful) {
 			val imagePath = result.getUriFilePath(mCtx, true)
@@ -75,8 +76,6 @@ class CreateProductFragment : BaseFragment<ScheduleShowViewModel, FragmentCreate
 		if (productData != null) {
 			productData.getSerializable("product") as GetMyInventoryResponse.Data
 		}
-
-		Log.d(TAG, "onViewCreated: oncreate")
 
 		variantAdapter = ProductVariantAdapter(variantList, object : RecyclerClicks {
 			override fun itemClick(pos: Int, status: String?) {
@@ -183,15 +182,6 @@ class CreateProductFragment : BaseFragment<ScheduleShowViewModel, FragmentCreate
 			findNavController().navigate(ids.createProductAddProductFragment)
 		}
 
-		/*	bind.category.setHapticClickListener {
-				bind.category.showDropDown()
-			}
-	*/
-		/*bind.category.setOnItemClickListener { _, _, position, _ ->
-			categoryId = categoryList[position]?.id.toString()
-			bind.category.setText(categoryList[position]?.name)
-		}*/
-
 		setupMailClassDropdown()
 
 		viewModel.getMailClasses()
@@ -238,34 +228,11 @@ class CreateProductFragment : BaseFragment<ScheduleShowViewModel, FragmentCreate
 					val mData = it.value.data
 
 					if (mData?.isNotEmpty() == true) {
-						if (isSubCategory) {
-							subCategoryList.clear()
-							subCategoryList.addAll(mData)
-							showCategorySheet(subCategoryList, "subCategory")
-						} else {
-							categoryList.clear()
-							categoryList.addAll(mData)
-//							isSubCategory = true
-						}
-					}
 
-					isSubCategory = !isSubCategory
-
-
-					/*if (it.value.data?.isNotEmpty() == true) {
 						categoryList.clear()
-						categoryList.addAll(it.value.data)
+						categoryList.addAll(mData)
 
-						val adapter = ArrayAdapter(
-							mCtx,
-							R.layout.simple_list_item_1,
-							categoryList.map { it?.name }
-						)
-						bind.category.setAdapter(adapter)
-						val draw =
-							ContextCompat.getDrawable(mCtx, io.bidswipe.app.R.drawable.card_8)
-						bind.category.setDropDownBackgroundDrawable(draw)
-					}*/
+					}
 				}
 
 				is Resource.Error -> {
@@ -286,45 +253,40 @@ class CreateProductFragment : BaseFragment<ScheduleShowViewModel, FragmentCreate
 			}
 		}
 
-		/*viewModel.storeProductRepo.observe(viewLifecycleOwner) {
+		viewModel.getProductSubCategoryRepo.observe(viewLifecycleOwner) {
 			when (it) {
 				is Resource.Success -> {
-					Alerts.showBottomSheet(
-						mCtx,
-						it.value.message ?: "Product created successfully",
-						"Success",
-						false,
-						object : AlertClicks {
-							override fun primaryClick(dialog: AppBottomSheet) {
-								dialog.dismiss()
-								findNavController().navigate(ids.goToChooseSalesFormatFragment)
-							}
+					viewModel.getProductSubCategoryRepo.value = null
+					bind.loader.isVisible = false
 
-							override fun secondaryClick(dialog: AppBottomSheet) {
-								dialog.dismiss()
-							}
-						})
+					val mData = it.value.data
+
+					if (mData?.isNotEmpty() == true) {
+						subCategoryList.clear()
+						subCategoryList.addAll(mData)
+						showCategorySheet(subCategoryList, "subCategory")
+					}
+
 				}
 
 				is Resource.Error -> {
-					if (it.isNetworkError) {
-						errorToast(getString(io.bidswipe.app.R.string.no_internet))
-					} else {
-						it.parse(mCtx, TAG, object : AlertClicks {
-							override fun primaryClick(dialog: AppBottomSheet) {
-								dialog.dismiss()
-							}
+					it.parse(mCtx, TAG, object : AlertClicks {
+						override fun primaryClick(dialog: AppBottomSheet) {
+							dialog.dismiss()
 
-							override fun secondaryClick(dialog: AppBottomSheet) {
-								dialog.dismiss()
-							}
-						})
-					}
+						}
+
+						override fun secondaryClick(dialog: AppBottomSheet) {
+							dialog.dismiss()
+						}
+					})
+
 				}
 
 				else -> {}
+
 			}
-		}*/
+		}
 
 	}
 
@@ -430,6 +392,7 @@ class CreateProductFragment : BaseFragment<ScheduleShowViewModel, FragmentCreate
 			errorToast("Please select a mail class")
 			return false
 		}
+
 		if (viewModel.productProcessingCategory == null) {
 			errorToast("Please select a processing category")
 			return false
@@ -505,7 +468,8 @@ class CreateProductFragment : BaseFragment<ScheduleShowViewModel, FragmentCreate
 						viewModel.productSubCategoryId = ""
 						viewModel.productSubCategoryName = ""
 						bind.loader.isVisible = true
-						viewModel.getCategory(viewModel.productCategoryId)
+
+						viewModel.getProductSubCategory(viewModel.productCategoryId, "subCategory")
 						isSubCategory = true
 
 						if (categoryList[pos]?.extraFields?.isNotEmpty() == true) {
@@ -528,10 +492,15 @@ class CreateProductFragment : BaseFragment<ScheduleShowViewModel, FragmentCreate
 			})
 
 		if (type == "subCategory") {
-			categorySheetBind.sheetTitle.text = "Select Product Sub Category"
+			categorySheetBind.sheetTitle.text = buildString {
+				append("Select Product Sub Category")
+			}
 		} else {
-			categorySheetBind.sheetTitle.text = "Select Product Category"
+			categorySheetBind.sheetTitle.text = buildString {
+				append("Select Product Category")
+			}
 		}
+
 		categorySheetBind.close.setHapticClickListener {
 			categorySheet.dismiss()
 		}

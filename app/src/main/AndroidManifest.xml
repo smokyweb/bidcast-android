@@ -153,11 +153,7 @@
 		<activity
 			android:name = ".ui.sellerHub.SellerVerificationActivity"
 			android:exported = "false" />
-		<!--<activity
-			android:name = "com.canhub.cropper.CropImageActivity"
-			android:theme = "@style/Theme.Bidswipe.ActionBar"
-			android:windowSoftInputMode = "adjustResize"
-			tools:ignore = "LockedOrientationActivity" />-->
+
 		<activity
 			android:name = ".utils.cropper.CustomCropImageActivity"
 			android:theme = "@style/Theme.Bidswipe"

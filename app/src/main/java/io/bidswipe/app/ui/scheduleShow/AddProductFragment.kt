@@ -122,7 +122,6 @@ class AddProductFragment : BaseFragment<ScheduleShowViewModel, FragmentAddProduc
 			}
 		}
 
-
 		productAdapter = ProductAdapter(productList, mClick)
 		bind.recycler.adapter = productAdapter
 
@@ -218,13 +217,13 @@ class AddProductFragment : BaseFragment<ScheduleShowViewModel, FragmentAddProduc
 
 					isLoading = page >= (it.value.totalPage ?: 0)
 
-					/*if (productList.isEmpty()) {
-//						bind.noData.isVisible = true
+					if (productList.isEmpty()) {
+						bind.noData.isVisible = true
 						bind.recycler.isVisible = false
 					} else {
-//						bind.noData.isVisible = false
+						bind.noData.isVisible = false
 						bind.recycler.isVisible = true
-					}*/
+					}
 
 				}
 

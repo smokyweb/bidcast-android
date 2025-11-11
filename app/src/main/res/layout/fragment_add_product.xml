@@ -56,6 +56,12 @@
                 tools:itemCount="12"
                 tools:listitem="@layout/product_list_item" />
 
+            <io.bidswipe.app.ui.custom.NoDataView
+                android:id="@+id/noData"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone"/>
+
             <LinearLayout
                 android:id="@+id/addNewProductLayout"
                 android:layout_width="match_parent"

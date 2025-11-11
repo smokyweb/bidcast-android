@@ -14,7 +14,7 @@
         app:title="Crop Image"
         app:navigationIcon="@drawable/ic_back"
         app:titleTextAppearance="@style/TitleLarge"
-        app:titleCentered="true"
+        app:titleCentered="false"
         />
 
     <com.canhub.cropper.CropImageView

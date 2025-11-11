@@ -58,14 +58,13 @@ class DashActivity : BaseActivity(), NavController.OnDestinationChangedListener 
 	private lateinit var navHostFragment: NavHostFragment
 
 	override fun onCreate(savedInstanceState: Bundle?) {
-
 		super.onCreate(savedInstanceState)
 		setContentView(bind.root)
-		
+
 		ViewCompat.setOnApplyWindowInsetsListener(window.decorView) { v, insets ->
 			val system = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-			bind.root.setPadding(0,system.top,0, system.bottom)
-				CONSUMED
+			bind.root.setPadding(0, system.top, 0, system.bottom)
+			CONSUMED
 		}
 
 		navHostFragment = supportFragmentManager.findFragmentById(ids.nav_host_fragment) as NavHostFragment

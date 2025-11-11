@@ -9,12 +9,9 @@ import io.bidswipe.app.model.TutorialShowModel
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.network.repository.DashRepository
 import io.bidswipe.app.network.response.BlockedUnblockedResponse
-import io.bidswipe.app.network.response.CheckKycResponse
 import io.bidswipe.app.network.response.CommonResponse
-import io.bidswipe.app.network.response.CreateBidResponse
 import io.bidswipe.app.network.response.CreateShowResponse
 import io.bidswipe.app.network.response.FetchBidResponse
-import io.bidswipe.app.network.response.GenerateTokenResponse
 import io.bidswipe.app.network.response.GetAgoraTokenResponse
 import io.bidswipe.app.network.response.GetBlockedUsersResponse
 import io.bidswipe.app.network.response.GetCategoryResponse
@@ -27,23 +24,19 @@ import io.bidswipe.app.network.response.GetMyShowResponse
 import io.bidswipe.app.network.response.GetOffersResponse
 import io.bidswipe.app.network.response.GetPrepareStepResponse
 import io.bidswipe.app.network.response.GetProductsByStatusResponse
-import io.bidswipe.app.network.response.GetProductsResponse
 import io.bidswipe.app.network.response.GetPromotePlansResponse
 import io.bidswipe.app.network.response.GetSubCategoriesResponse
 import io.bidswipe.app.network.response.PageUrlResponse
 import io.bidswipe.app.network.response.StoreProductResponse
-import io.bidswipe.app.network.response.UpdateLiveStatusResponse
 import io.bidswipe.app.network.response.UpdateOfferResponse
 import io.bidswipe.app.network.response.UserDeviceResponse
 import io.bidswipe.app.network.response.UserProfileResponse
 import io.bidswipe.app.utils.Const.NO_INTERNET_ERROR
 import io.bidswipe.app.utils.NetworkMonitor
-import io.bidswipe.app.utils.request
 import kotlinx.coroutines.launch
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import javax.inject.Inject
-
 
 @HiltViewModel
 class DashViewModel @Inject constructor(
@@ -160,20 +153,6 @@ class DashViewModel @Inject constructor(
 			return@launch
 		}
 		_userFavoriteResponse.value = repo.userFavorite(categoryIds , subcategoriesIds)
-	}
-
-	private var _getSubCategoryResponse = MutableLiveData<Resource<GetCategoryResponse>>()
-	val getSubCategoryRepo : MutableLiveData<Resource<GetCategoryResponse>>
-		get() = _getSubCategoryResponse
-
-	fun getSubCategory(
-		categoryId : String? = null ,
-	) = viewModelScope.launch {
-		if (! networkMonitor.hasInternet()) {
-			_getSubCategoryResponse.value = NO_INTERNET_ERROR
-			return@launch
-		}
-		_getSubCategoryResponse.value = repo.getCategory(categoryId)
 	}
 
 	private var _getLessonResponse = MutableLiveData<Resource<GetLessonsResponse>>()
@@ -338,20 +317,6 @@ class DashViewModel @Inject constructor(
 		_addPaymentCardResponse.value = repo.addPaymentCard(data)
 	}
 
-	private var _generateTokenResponse = MutableLiveData<Resource<GenerateTokenResponse>>()
-	val generateTokenRepo : MutableLiveData<Resource<GenerateTokenResponse>>
-		get() = _generateTokenResponse
-
-	fun generateToken(
-		showId : RequestBody? ,
-	) = viewModelScope.launch {
-		if (! networkMonitor.hasInternet()) {
-			_generateTokenResponse.value = NO_INTERNET_ERROR
-			return@launch
-		}
-		_generateTokenResponse.value = repo.generateToken(showId)
-	}
-
 	private var _storeDeviceDetailsResponse = MutableLiveData<Resource<UserDeviceResponse>>()
 	val storeDeviceDetailsRepo : MutableLiveData<Resource<UserDeviceResponse>>
 		get() = _storeDeviceDetailsResponse
@@ -365,34 +330,6 @@ class DashViewModel @Inject constructor(
 		}
 		_storeDeviceDetailsResponse.value = repo.storeDeviceDetails(deviceToken)
 	}
-
-	private var _updateLiveStatusResponse = MutableLiveData<Resource<UpdateLiveStatusResponse>>()
-	val updateLiveStatusRepo : MutableLiveData<Resource<UpdateLiveStatusResponse>>
-		get() = _updateLiveStatusResponse
-
-	fun updateLiveStatus(
-		showId : RequestBody? ,
-		isLive : RequestBody? ,
-	) = viewModelScope.launch {
-		if (! networkMonitor.hasInternet()) {
-			_updateLiveStatusResponse.value = NO_INTERNET_ERROR
-			return@launch
-		}
-		_updateLiveStatusResponse.value = repo.updateLiveStatus(showId , isLive)
-	}
-
-
-	/*private var _updateLiveStatusResponse = MutableLiveData<Resource<UpdateLiveStatusResponse>>()
-	val updateLiveStatusRepo: MutableLiveData<Resource<UpdateLiveStatusResponse>>
-		get() = _updateLiveStatusResponse
-
-	fun updateLiveStatus(
-		showId: RequestBody?,
-		isLive: RequestBody?
-	) = viewModelScope.launch {
-		_updateLiveStatusResponse.value = repo.(showId,isLive)
-	}*/
-
 
 	private var _getUserProfileResponse = MutableLiveData<Resource<UserProfileResponse>>()
 	val getUserProfileRepo : MutableLiveData<Resource<UserProfileResponse>>
@@ -453,20 +390,6 @@ class DashViewModel @Inject constructor(
 		_getSavedProductsByStatusResponse.value = repo.getProductsByStatus(type , page)
 	}
 
-	private var _checkKycResponse = MutableLiveData<Resource<CheckKycResponse>>()
-	val checkKycRepo : MutableLiveData<Resource<CheckKycResponse>>
-		get() = _checkKycResponse
-
-	fun checkKyc(
-	) = viewModelScope.launch {
-		if (! networkMonitor.hasInternet()) {
-			_checkKycResponse.value = NO_INTERNET_ERROR
-			return@launch
-		}
-		_checkKycResponse.value = repo.checkKyc()
-	}
-
-
 	private var _updateProfileResponse = MutableLiveData<Resource<CommonResponse>>()
 	val updateProfileRepo : MutableLiveData<Resource<CommonResponse>>
 		get() = _updateProfileResponse
@@ -483,22 +406,6 @@ class DashViewModel @Inject constructor(
 			return@launch
 		}
 		_updateProfileResponse.value = repo.updateProfile(firstName , lastName , image , userName , bio)
-	}
-
-	private var _getUserProductsResponse = MutableLiveData<Resource<GetProductsResponse>>()
-	val getUserProductsRepo : MutableLiveData<Resource<GetProductsResponse>>
-		get() = _getUserProductsResponse
-
-	fun getUserProducts(
-		userId : RequestBody? = null ,
-		categoryId : RequestBody? = null ,
-		page : RequestBody? = null
-	) = viewModelScope.launch {
-		if (! networkMonitor.hasInternet()) {
-			_getUserProductsResponse.value = NO_INTERNET_ERROR
-			return@launch
-		}
-		_getUserProductsResponse.value = repo.getUserProducts(userId , categoryId, page)
 	}
 
 	private var _storeScheduleShowResponse = MutableLiveData<Resource<CreateShowResponse>>()
@@ -581,24 +488,6 @@ class DashViewModel @Inject constructor(
 			return@launch
 		}
 		_pageUrlResponse.value = repo.getPageUrl(slug)
-	}
-
-
-	private var _createBidResponse = MutableLiveData<Resource<CreateBidResponse>>()
-	val createBidRepo : MutableLiveData<Resource<CreateBidResponse>>
-		get() = _createBidResponse
-
-	fun createBid(
-		showId : RequestBody? ,
-		userId : RequestBody? ,
-		productId : RequestBody? ,
-		bidPrice : RequestBody? ,
-	) = viewModelScope.launch {
-		if (! networkMonitor.hasInternet()) {
-			_createBidResponse.value = NO_INTERNET_ERROR
-			return@launch
-		}
-		_createBidResponse.value = repo.createBid(showId , userId , productId , bidPrice)
 	}
 
 	companion object {

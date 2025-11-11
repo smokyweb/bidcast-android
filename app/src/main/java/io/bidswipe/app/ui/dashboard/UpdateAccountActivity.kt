@@ -46,19 +46,6 @@ class UpdateAccountActivity : BaseActivity() {
 			}
 		}
 	}
-
-//	private val cropImageLauncher = registerForActivityResult(CustomCropImageContract()) { uri ->
-//		if (uri != null) {
-//			bind.userProfile.setImageURI(uri)
-//			val imagePath = CustomCropImageContract.getUriFilePath(this, uri)
-//			if (imagePath != null) {
-//				val name = System.currentTimeMillis().toString() + "_profile_gallery.jpeg"
-//				imagePart = Utils.imagePart("profile_image", name, File(imagePath))
-//			}
-//		}
-//	}
-//
-//	private val imagePickerManager = CustomCropImageHelper.createManager(this, cropImageLauncher)
 	
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
@@ -102,7 +89,7 @@ class UpdateAccountActivity : BaseActivity() {
 		}
 		
 		bind.loader.isVisible = true
-		
+
 		viewModel.getUserProfile()
 		viewModel.getUserProfileRepo.observe(this) {
 			when (it) {
@@ -116,7 +103,7 @@ class UpdateAccountActivity : BaseActivity() {
 					bind.bio.setText(mData?.bio)
 					bind.userProfile.loadUrl(this, mData?.profileImage.toString())
 				}
-				
+
 				is Resource.Error -> {
 					bind.loader.isVisible = false
 					viewModel.getUserProfileRepo.value = null
@@ -124,13 +111,13 @@ class UpdateAccountActivity : BaseActivity() {
 						override fun primaryClick(dialog: AppBottomSheet) {
 							dialog.dismiss()
 						}
-						
+
 						override fun secondaryClick(dialog: AppBottomSheet) {
 							dialog.dismiss()
 						}
 					})
 				}
-				
+
 				else -> {}
 			}
 		}

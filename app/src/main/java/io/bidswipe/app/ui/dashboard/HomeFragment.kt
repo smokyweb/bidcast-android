@@ -35,6 +35,7 @@ import io.bidswipe.app.utils.request
 import io.bidswipe.app.utils.runSafe
 import io.bidswipe.app.utils.setHapticClickListener
 import io.bidswipe.app.utils.value
+import java.util.ArrayList
 
 @SuppressLint("NotifyDataSetChanged")
 class HomeFragment : BaseFragment<DashViewModel , FragmentHomeBinding>() {
@@ -81,6 +82,10 @@ class HomeFragment : BaseFragment<DashViewModel , FragmentHomeBinding>() {
 									.putExtra("roomId", roomId)
 									.putExtra("userId", showList[pos]?.userId.toString())
 									.putExtra("roomIdsList", romIdsList.joinToString(","))
+									.putParcelableArrayListExtra(
+										"streamList" ,
+										ArrayList(streamList)
+									)
 							)
 						}
 					}

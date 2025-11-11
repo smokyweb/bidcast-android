@@ -38,6 +38,7 @@ import io.bidswipe.app.utils.value
 import okhttp3.MultipartBody
 import java.io.File
 
+@SuppressLint("NotifyDataSetChanged")
 class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBinding>() {
 	
 	override fun getModel(): Class<DashViewModel> = DashViewModel::class.java
@@ -75,38 +76,17 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
 					imageList[uploadItemIndex] = imagePath
 					uploadItemIndex = -1
 				}
-				
-				bind.imageLimit.text = "${imageList.size}/9"
-				
+
+				bind.imageLimit.text = buildString {
+					append(imageList.size)
+					append("/9")
+				}
+
 				bind.images.adapter?.notifyDataSetChanged()
 			}
 		}
 	}
-	
-/*	private val cropImageLauncher = registerForActivityResult(CustomCropImageContract()) { uri ->
-		if (uri != null) {
-			val imagePath = CustomCropImageContract.getUriFilePath(mCtx, uri)
-			if (imagePath != null) {
-				if (uploadItemIndex == -1) {
-					imageList.add(imagePath)
-					log("IMAGES $imageList")
-					bind.images.adapter?.notifyItemInserted(imageList.lastIndex)
-				} else {
-					imageList[uploadItemIndex] = imagePath
-					bind.images.adapter?.notifyItemChanged(uploadItemIndex)
-					uploadItemIndex = -1
-				}
-				bind.imageLimit.text = "${imageList.size}/9"
-				
-				// Save state to ViewModel
-				saveStateToViewModel()
-			}
-		}
-	}
-	
-	// Manager handles image picking (gallery/camera) internally
-	private val imagePickerManager = CustomCropImageHelper.createManager(this, cropImageLauncher)
-	*/
+
 	private val mClick = object : RecyclerClicks {
 		override fun itemClick(pos: Int, status: String?) {
 		}
@@ -154,8 +134,11 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
 					bind.category.setText(viewModel.productFormCategoryText,false)
 				}
 			}
-			
-			bind.imageLimit.text = "${imageList.size}/9"
+
+			bind.imageLimit.text = buildString {
+				append(imageList.size)
+				append("/9")
+			}
 		}
 	}
 	
@@ -214,13 +197,17 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
 		// Only load product data if not restored from ViewModel
 		if (product != null && viewModel.productFormProduct == null) {
 			bind.saveDraft.isVisible = false
-			bind.publish.text = "Update"
+			bind.publish.text = buildString {
+				append("Update")
+			}
 			bind.header.setHeaderText("Update Product")
 			addProductData(product)
 		} else if (product != null && viewModel.productFormProduct != null) {
 			// Restore UI state for edit mode
 			bind.saveDraft.isVisible = false
-			bind.publish.text = "Update"
+			bind.publish.text = buildString {
+				append("Update")
+			}
 			bind.header.setHeaderText("Update Product")
 		}
 		
@@ -250,10 +237,9 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
 		bind.proCategory.setAdapter(proCategoryAdapter)
 		val proDrawable = ContextCompat.getDrawable(mCtx, R.drawable.card_8)
 		bind.proCategory.setDropDownBackgroundDrawable(proDrawable)
-		var selectedProcessingCategory: String? = null
-		
+
 		bind.proCategory.setOnItemClickListener { _, _, position, _ ->
-			selectedProcessingCategory = processingCategories[position]
+			val selectedProcessingCategory = processingCategories[position]
 			log("Selected processing category: $selectedProcessingCategory")
 		}
 
@@ -627,10 +613,10 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
 								createProduct(
 									productId,
 									type,
-									it.value.data?.map {
+									it.value.data?.map {productMeta ->
 										mapOf(
-											"image" to it?.images,
-											"thumbnail" to it?.thumbnail
+											"image" to productMeta?.images,
+											"thumbnail" to productMeta?.thumbnail
 										)
 									},
 									variantData
@@ -694,12 +680,14 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
 				}
 			}
 		}
-		
-		bind.imageLimit.text = "${imageList.size}/9"
+
+		bind.imageLimit.text = buildString {
+			append(imageList.size)
+			append("/9")
+		}
 		bind.images.adapter?.notifyDataSetChanged()
 	}
-	
-	@SuppressLint("NotifyDataSetChanged")
+
 	private fun showCategorySheet(
 		categoryList: MutableList<GetCategoryResponse.Data?>,
 		type: String,
@@ -748,11 +736,15 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
 					categorySheet.dismiss()
 				}
 			})
-		
+
 		if (type == "subCategory") {
-			categorySheetBind.sheetTitle.text = "Select Product Sub Category"
+			categorySheetBind.sheetTitle.text = buildString {
+				append("Select Product Sub Category")
+			}
 		} else {
-			categorySheetBind.sheetTitle.text = "Select Product Category"
+			categorySheetBind.sheetTitle.text = buildString {
+				append("Select Product Category")
+			}
 		}
 		
 		categorySheetBind.close.setHapticClickListener {

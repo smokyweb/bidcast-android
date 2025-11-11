@@ -94,6 +94,23 @@ class ScheduleShowViewModel @Inject constructor(
 		_getCategoryResponse.value = repo.getCategory(categoryId)
 	}
 
+	private var _getProductSubCategoryResponse = MutableLiveData<Resource<GetCategoryResponse>>()
+	val getProductSubCategoryRepo : MutableLiveData<Resource<GetCategoryResponse>>
+		get() = _getProductSubCategoryResponse
+
+	fun getProductSubCategory(
+		categoryId : String?  ,
+		type : String?,
+		search : String? = null ,
+		getCount : String? = null ,
+	) = viewModelScope.launch {
+		if (! networkMonitor.hasInternet()) {
+			_getProductSubCategoryResponse.value = NO_INTERNET_ERROR
+			return@launch
+		}
+		_getProductSubCategoryResponse.value = repo.getCategory(categoryId , type , search , getCount)
+	}
+
 	private var _getAuctionTypeResponse = MutableLiveData<Resource<GetAuctionTypeResponse>>()
 	val getAuctionTypeRepo: MutableLiveData<Resource<GetAuctionTypeResponse>>
 		get() = _getAuctionTypeResponse

@@ -1,7 +1,6 @@
 package io.bidswipe.app.utils.cropper
 
 import android.content.Intent
-import android.graphics.Bitmap
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
 import android.graphics.drawable.ColorDrawable
@@ -11,23 +10,16 @@ import android.text.Spannable
 import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
 import androidx.activity.addCallback
-import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import androidx.core.content.FileProvider
 import androidx.core.net.toUri
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.WindowInsetsControllerCompat
 import com.canhub.cropper.CropImage
 import com.canhub.cropper.CropImageOptions
 import com.canhub.cropper.CropImageView
 import com.canhub.cropper.parcelable
 import io.bidswipe.app.databinding.ActivityCustomCropImageBinding
-import io.bidswipe.app.utils.bind
 import java.io.File
-import java.io.FileOutputStream
 import android.graphics.drawable.Drawable
 import android.util.Log
 import android.view.KeyEvent
@@ -37,11 +29,10 @@ import androidx.appcompat.app.AlertDialog
 import androidx.core.content.FileProvider.getUriForFile
 import androidx.core.graphics.BlendModeColorFilterCompat
 import androidx.core.graphics.BlendModeCompat
-import androidx.core.net.toUri
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsCompat.CONSUMED
 import com.canhub.cropper.CropImageView.CropResult
-import com.canhub.cropper.CropImageView.OnCropImageCompleteListener
-import com.canhub.cropper.CropImageView.OnSetImageUriCompleteListener
-import com.canhub.cropper.databinding.CropImageActivityBinding
 import io.bidswipe.app.BuildConfig
 import io.bidswipe.app.R
 import io.bidswipe.app.utils.draw
@@ -76,9 +67,15 @@ class CustomCropImageActivity :
 	
 	public override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
-		
 		binding = ActivityCustomCropImageBinding.inflate(layoutInflater)
 		setContentView(binding.root)
+
+		ViewCompat.setOnApplyWindowInsetsListener(window.decorView) { v, insets ->
+			val system = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+			binding.root.setPadding(0,system.top,0, system.bottom)
+			CONSUMED
+		}
+
 		setCropImageView(binding.cropImageView)
 		val bundle = intent.getBundleExtra(CropImage.CROP_IMAGE_EXTRA_BUNDLE)
 		cropImageUri = bundle?.parcelable(CropImage.CROP_IMAGE_EXTRA_SOURCE)
@@ -139,6 +136,7 @@ class CustomCropImageActivity :
 				)
 				title = spannableTitle
 			}
+
 			cropImageOptions.toolbarBackButtonColor?.let { backBtnColor ->
 				try {
 					val upArrow = ContextCompat.getDrawable(
@@ -151,6 +149,7 @@ class CustomCropImageActivity :
 					e.printStackTrace()
 				}
 			}
+
 		}
 	}
 	
