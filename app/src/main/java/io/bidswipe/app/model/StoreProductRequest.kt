@@ -1,6 +1,7 @@
 package io.bidswipe.app.model
 
 import androidx.annotation.Keep
+import androidx.navigation.NavType
 import com.google.gson.annotations.SerializedName
 
 @Keep
@@ -23,6 +24,8 @@ data class StoreProductRequest(
 	val reserveForLive : String? ,
 	@SerializedName("shipping_profile_id")
 	val shippingProfileId : String? ,
+	@SerializedName("type")
+	val type: String? ,
 	@SerializedName("status")
 	val status : String? ,
 	@SerializedName("images")

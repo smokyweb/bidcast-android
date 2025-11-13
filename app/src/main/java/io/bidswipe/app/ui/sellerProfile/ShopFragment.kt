@@ -43,7 +43,7 @@ class ShopFragment : BaseFragment<SellerViewModel , FragmentShopBinding>() {
 			bind.noInternet.isVisible = false
 			bind.loader.isVisible = true
 			page = 1
-			viewModel.getUserProducts(sellerId.request())
+			viewModel.getUserProducts( userId = sellerId.request(), type = "offer".request())
 		} else {
 			bind.recycler.isVisible = false
 			bind.noData.isVisible = false
@@ -74,12 +74,12 @@ class ShopFragment : BaseFragment<SellerViewModel , FragmentShopBinding>() {
 				chipGroup.indexOfChild(chipGroup.findViewById(chipId))
 			}
 		}
+
 		bind.noInternet.onClick {
 			bind.loader.isVisible = true
 			bind.noInternet.isVisible = false
 			page = 1
 			viewModel.getUserProducts(sellerId.request())
-
 		}
 
 		shopAdapter = ShopAdapter(productList , mClick)

@@ -22,6 +22,7 @@ import io.bidswipe.app.interfaces.AlertClicks
 import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.network.response.GetMyInventoryResponse
+import io.bidswipe.app.ui.custom.AlertType
 import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.utils.finish
 import io.bidswipe.app.utils.hideKeyboard
@@ -82,11 +83,16 @@ class InventoryFragment : BaseFragment<SellerHubViewModel , FragmentInventoryBin
 		adapter = InventoryAdapter(filteredList , isSelectionMode , object : RecyclerClicks {
 			override fun itemClick(pos : Int , status : String?) {
 				filteredList[pos]?.let { item ->
-					if (isSelectionMode) {
-						item.selected = ! (item.selected ?: false)
-						adapter.notifyItemChanged(pos)
-					} else {
-						startActivity(mCtx.toListProduct().putExtra("product" , item))
+
+					if (status == "delete"){
+						deleteProductDialog(item.id.toString(),pos)
+					}else{
+						if (isSelectionMode) {
+							item.selected = ! (item.selected ?: false)
+							adapter.notifyItemChanged(pos)
+						} else {
+							startActivity(mCtx.toListProduct().putExtra("product" , item))
+						}
 					}
 				}
 			}
@@ -259,6 +265,67 @@ class InventoryFragment : BaseFragment<SellerHubViewModel , FragmentInventoryBin
 				else -> {}
 			}
 		}
+
+		viewModel.deleteProductRepo.observe(viewLifecycleOwner) {
+			when (it) {
+				is Resource.Success -> {
+					bind.loader.isVisible = false
+					it.value.data
+
+				}
+
+				is Resource.Error -> {
+					bind.loader.isVisible = false
+
+					it.parse(mCtx, TAG, object : AlertClicks {
+						override fun primaryClick(dialog: AppBottomSheet) {
+							dialog.dismiss()
+
+						}
+
+						override fun secondaryClick(dialog: AppBottomSheet) {
+							dialog.dismiss()
+
+						}
+					})
+
+				}
+
+				else -> {}
+
+			}
+		}
+
+	}
+
+	private fun deleteProductDialog(productId: String, position: Int) {
+		AppBottomSheet(
+			mCtx,
+			R.drawable.trash,
+			"Delete!",
+			"Are you sure you want to delete?",
+			primaryBtnText = "Yes",
+			secondaryBtnText = "No",
+			canCancel = true,
+			showSecondary = true,
+			iconPadding = 16,
+			alertType = AlertType.ERROR,
+			clicks = object : AlertClicks {
+				override fun primaryClick(dialog: AppBottomSheet) {
+					dialog.dismiss()
+					bind.loader.isVisible = true
+					viewModel.deleteProduct(productId)
+
+					filteredList.removeAt(position)
+					adapter.notifyItemRemoved(position)
+				}
+
+				override fun secondaryClick(dialog: AppBottomSheet) {
+					dialog.dismiss()
+				}
+			}
+
+		).show()
 
 	}
 

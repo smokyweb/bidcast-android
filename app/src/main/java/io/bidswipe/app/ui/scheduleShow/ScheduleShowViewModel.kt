@@ -4,9 +4,11 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import io.bidswipe.app.model.LiveShowModel
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.network.repository.DashRepository
 import io.bidswipe.app.network.response.CommonResponse
+import io.bidswipe.app.network.response.CreateProductResponse
 import io.bidswipe.app.network.response.CreateShowResponse
 import io.bidswipe.app.network.response.GetAllTipsResponse
 import io.bidswipe.app.network.response.GetAuctionTypeResponse
@@ -20,12 +22,15 @@ import kotlinx.coroutines.launch
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import javax.inject.Inject
+import kotlin.collections.mutableListOf
 
 @HiltViewModel
 class ScheduleShowViewModel @Inject constructor(
 	val repo: DashRepository,
 	private val networkMonitor: NetworkMonitor
 ) : ViewModel() {
+
+	var currentProducts = mutableListOf<LiveShowModel.Product>()
 
 	var showTitle = ""
 	var date = ""
@@ -34,7 +39,6 @@ class ScheduleShowViewModel @Inject constructor(
 	var auctionId = ""
 	var thumbnail = ""
 	var variantData = mutableListOf<Map<String?, Any?>>()
-
 	var productTitle = ""
 	var productDescription = ""
 	var productCategoryId = ""
@@ -145,17 +149,18 @@ class ScheduleShowViewModel @Inject constructor(
 	fun getUserProducts(
 		userId: RequestBody? = null,
 		categoryId: RequestBody? = null,
-		page: RequestBody? = null
+		page: RequestBody? = null,
+		type: RequestBody? = null
 	) = viewModelScope.launch {
 		if (!networkMonitor.hasInternet()) {
 			_getUserProductsResponse.value = NO_INTERNET_ERROR
 			return@launch
 		}
-		_getUserProductsResponse.value = repo.getUserProducts(userId, categoryId, page)
+		_getUserProductsResponse.value = repo.getUserProducts(userId, categoryId, page, type)
 	}
 
-	private var _storeProductResponse = MutableLiveData<Resource<CommonResponse>>()
-	val storeProductRepo: MutableLiveData<Resource<CommonResponse>>
+	private var _storeProductResponse = MutableLiveData<Resource<CreateProductResponse>>()
+	val storeProductRepo: MutableLiveData<Resource<CreateProductResponse>>
 		get() = _storeProductResponse
 
 	fun storeProduct(
@@ -168,6 +173,7 @@ class ScheduleShowViewModel @Inject constructor(
 		acceptOffers: String?,
 		reserveForLive: String?,
 		shippingProfileId: String?,
+		type: String?,
 		status: String?,
 		productImages: List<Map<String, String?>>?,
 		subCategoryId: Int? = null,
@@ -194,6 +200,7 @@ class ScheduleShowViewModel @Inject constructor(
 			acceptOffers = acceptOffers,
 			reserveForLive = reserveForLive,
 			shippingProfileId = shippingProfileId,
+			type = type,
 			status = status,
 			productImages = productImages,
 			subCategoryId = subCategoryId,

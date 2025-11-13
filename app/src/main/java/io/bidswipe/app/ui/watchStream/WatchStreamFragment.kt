@@ -104,15 +104,15 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 		log("RoomId: $roomID")
 		log("StreamToken: $streamID")
 
-/*		runSafe {
-			try {
-				// Check if manager exists
-				App.manager
-			} catch (e: UninitializedPropertyAccessException) {
-				// Manager not initialized, create it
-				App.manager = AgoraManager(mCtx, Const.APP_ID_AGORA)
-			}
-		}*/
+		/*		runSafe {
+					try {
+						// Check if manager exists
+						App.manager
+					} catch (e: UninitializedPropertyAccessException) {
+						// Manager not initialized, create it
+						App.manager = AgoraManager(mCtx, Const.APP_ID_AGORA)
+					}
+				}*/
 
 		setUpSwipe()
 
@@ -402,12 +402,12 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 		}
 
 		if (App.manager.isReady()) {
-			App.manager.joinSubscriberChannel( streamID, roomID)
+			App.manager.joinSubscriberChannel(streamID, roomID)
 			currentRemoteUid?.let { uid ->
 				setupRemoteVideo(uid)
 			}
 		} else {
-			App.manager.joinSubscriberChannel( streamID, roomID)
+			App.manager.joinSubscriberChannel(streamID, roomID)
 			currentRemoteUid?.let { uid ->
 				setupRemoteVideo(uid)
 			}
@@ -567,20 +567,28 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 	fun updateProductUI(liveProduct: LiveShowModel.Product?) {
 
 		activity?.runOnUiThread {
-			bind.soldLayout.isVisible = false
-			bind.bidLayout.isVisible = true
-			bind.productLayout.isVisible = true
-			bind.productName.text = liveProduct?.name?.asCapital()
-			bind.productCategory.text = liveProduct?.category?.asCapital()
-			bind.quantity.text = buildString {
-				append("Quantity: ")
-				append(liveProduct?.quantity ?: 0)
+			if (liveProduct != null) {
+				bind.soldLayout.isVisible = false
+				bind.bidLayout.isVisible = true
+				bind.productLayout.isVisible = true
+				bind.productName.text = liveProduct.name?.asCapital()
+				bind.productCategory.text = liveProduct.category?.asCapital()
+				bind.quantity.text = buildString {
+					append("Quantity: ")
+					append(liveProduct.quantity ?: 0)
+				}
+				bind.productImage.loadUrl(mCtx, liveProduct.image ?: "")
+				val price = liveProduct.price
+				bind.bidPrice.text = price?.asMoney()
+				highestBidAmount = price
+				bidProductId = liveProduct.id
+
+
+			} else {
+				bind.soldLayout.isVisible = true
+				bind.bidLayout.isVisible = false
+				bind.productLayout.isVisible = false
 			}
-			bind.productImage.loadUrl(mCtx, liveProduct?.image ?: "")
-			val price = liveProduct?.price
-			bind.bidPrice.text = price?.asMoney()
-			highestBidAmount = price
-			bidProductId = liveProduct?.id
 		}
 
 	}
@@ -610,7 +618,6 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 			updateProductUI(liveProduct)
 
 			isAllowBidForAll = json.optBoolean("allowBidForAll", true)
-
 
 			sellerId = showData.seller?.id.toString()
 
@@ -1023,7 +1030,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 				roomID = targetRoomId
 				streamID = rtcToken
 
-				App.manager.joinSubscriberChannel( streamID, roomID)
+				App.manager.joinSubscriberChannel(streamID, roomID)
 
 				socketManager?.joinRoom(roomID, userId) {
 					socketManager?.sendMessage(roomID, "Joined \uD83D\uDC4B", userId, userName, userImage)

@@ -10,6 +10,7 @@ import io.bidswipe.app.base.BaseFragment
 import io.bidswipe.app.controller.WeightAdapter
 import io.bidswipe.app.databinding.FragmentProductWeightBinding
 import io.bidswipe.app.interfaces.AlertClicks
+import io.bidswipe.app.model.LiveShowModel
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.utils.Utils
@@ -83,6 +84,7 @@ class ProductWeightFragment : BaseFragment<ScheduleShowViewModel, FragmentProduc
 			acceptOffers = "0",
 			reserveForLive = "0",
 			shippingProfileId = "4",
+			type = "live",
 			status = "active",
 			productImages = imageUrls,
 			subCategoryId = viewModel.productSubCategoryId.ifEmpty { null }?.toInt(),
@@ -93,7 +95,6 @@ class ProductWeightFragment : BaseFragment<ScheduleShowViewModel, FragmentProduc
 			width = viewModel.productWidth,
 			mailClass = viewModel.productMailClass?.label ?: "",
 			processingCategory = viewModel.productProcessingCategory ?: "",
-
 			)
 
 	}
@@ -138,6 +139,22 @@ class ProductWeightFragment : BaseFragment<ScheduleShowViewModel, FragmentProduc
 				is Resource.Success -> {
 					viewModel.storeProductRepo.value=null
 					bind.loader.isVisible = false
+
+					val data = it.value.data
+
+					val product =
+						LiveShowModel.Product(
+							data?.category?.name,
+							data?.id.toString(),
+							data?.images?.get(0),
+							data?.status,
+							data?.title,
+							data?.pricing,
+							data?.quantity
+						)
+
+					viewModel.currentProducts.add(product)
+
 					findNavController().navigate(ids.addProductFragment)
 				}
 

@@ -97,6 +97,7 @@
                         android:layout_width="60dp"
                         android:layout_height="60dp"
                         app:cardBackgroundColor="@color/tertiaryContainer"
+                        app:cardCornerRadius="100dp"
                         app:cardElevation="0dp">
 
                         <androidx.appcompat.widget.AppCompatImageView
@@ -320,7 +321,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="@dimen/half_margin"
                     android:alpha="0.8"
-                    android:text="12 Main Road Enginnering Churaha" />
+                    android:text="12 Main Road Engineering Churaha" />
             </LinearLayout>
 
             <LinearLayout

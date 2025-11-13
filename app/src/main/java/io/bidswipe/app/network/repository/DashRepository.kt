@@ -8,6 +8,7 @@ import io.bidswipe.app.network.ApiInterface
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import javax.inject.Inject
+import kotlin.reflect.typeOf
 
 class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRepository() {
 	
@@ -51,6 +52,7 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
 		acceptOffers: String?,
 		reserveForLive: String?,
 		shippingProfileId: String?,
+		type: String?,
 		status: String?,
 		productImages: List<Map<String, String?>>?,
 		subCategoryId: Int? = null,
@@ -73,6 +75,7 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
 				acceptOffers = acceptOffers,
 				reserveForLive = reserveForLive,
 				shippingProfileId = shippingProfileId,
+				type = type,
 				status = status,
 				images = productImages,
 				subCategoryId = subCategoryId,
@@ -142,8 +145,9 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
 	suspend fun getUserProducts(
 		userId: RequestBody?,
 		categoryId: RequestBody?,
-		page: RequestBody?
-	) = call { api.getUserProducts(userId, categoryId, page) }
+		page: RequestBody?,
+		type: RequestBody?
+	) = call { api.getUserProducts(userId, categoryId, page, type) }
 	
 	suspend fun getMyScheduledShow(
 		type: RequestBody?,

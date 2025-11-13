@@ -436,13 +436,14 @@
 								style = "@style/TitleLarge"
 								android:layout_width = "wrap_content"
 								android:layout_height = "wrap_content"
-								android:text = "Sold Out!" />
+								android:text = "Sold Out!"
+								android:textColor = "@color/surface"/>
 
 							<TextView
 								style = "@style/BodySmall"
 								android:layout_width = "wrap_content"
 								android:layout_height = "wrap_content"
-								android:text = "Please wait for next product" />
+								android:text = "Please select for next product" />
 
 						</LinearLayout >
 

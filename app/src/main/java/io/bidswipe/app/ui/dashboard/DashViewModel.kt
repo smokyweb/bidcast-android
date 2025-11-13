@@ -10,6 +10,7 @@ import io.bidswipe.app.network.Resource
 import io.bidswipe.app.network.repository.DashRepository
 import io.bidswipe.app.network.response.BlockedUnblockedResponse
 import io.bidswipe.app.network.response.CommonResponse
+import io.bidswipe.app.network.response.CreateProductResponse
 import io.bidswipe.app.network.response.CreateShowResponse
 import io.bidswipe.app.network.response.FetchBidResponse
 import io.bidswipe.app.network.response.GetAgoraTokenResponse
@@ -167,8 +168,8 @@ class DashViewModel @Inject constructor(
 		_getLessonResponse.value = repo.getLesson()
 	}
 
-	private var _storeProductResponse = MutableLiveData<Resource<CommonResponse>>()
-	val storeProductRepo : MutableLiveData<Resource<CommonResponse>>
+	private var _storeProductResponse = MutableLiveData<Resource<CreateProductResponse>>()
+	val storeProductRepo : MutableLiveData<Resource<CreateProductResponse>>
 		get() = _storeProductResponse
 
 	fun storeProduct(
@@ -181,19 +182,20 @@ class DashViewModel @Inject constructor(
 		acceptOffers : String? ,
 		reserveForLive : String? ,
 		shippingProfileId : String? ,
+		type : String? = null ,
 		status : String? ,
 		productImages : List<Map<String , String?>>? ,
 		subCategoryId : Int? = null ,
 		productId : String? = null ,
-		variant : List<Map<String? , Any?>>? = null , width : String? = null ,
+		variant : List<Map<String? , Any?>>? = null ,
+		width : String? = null ,
 		height : String? = null ,
 		length : String? = null ,
 		weight : String? = null ,
 		mailClass : String? = null ,
-		processingCategory : String? = null ,
-
+		processingCategory : String? = null
 		) = viewModelScope.launch {
-		if (! networkMonitor.hasInternet()) {
+		if (!networkMonitor.hasInternet()) {
 			_storeProductResponse.value = NO_INTERNET_ERROR
 			return@launch
 		}
@@ -207,6 +209,7 @@ class DashViewModel @Inject constructor(
 			acceptOffers ,
 			reserveForLive ,
 			shippingProfileId ,
+			type ,
 			status ,
 			productImages ,
 			subCategoryId ,
@@ -468,8 +471,7 @@ class DashViewModel @Inject constructor(
 
 	fun sendChatNotification(
 		receiverId : RequestBody ,
-		message : RequestBody ,
-
+		message : RequestBody
 		) = viewModelScope.launch {
 		if (! networkMonitor.hasInternet()) {
 			_sendChatNotificationResponse.value = NO_INTERNET_ERROR

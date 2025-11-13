@@ -448,4 +448,18 @@ class SellerHubViewModel @Inject constructor(
 		getSalesPerformanceResponse.value = repo.getSalesPerformance()
 	}
 
+	private var _deleteProductResponse = MutableLiveData<Resource<CommonResponse>>()
+	val deleteProductRepo: MutableLiveData<Resource<CommonResponse>>
+		get() = _deleteProductResponse
+
+	fun deleteProduct(
+		productId: String?,
+	) = viewModelScope.launch {
+		if (!networkMonitor.hasInternet()) {
+			_deleteProductResponse.value = NO_INTERNET_ERROR
+			return@launch
+		}
+		_deleteProductResponse.value = repo.deleteProduct(productId)
+	}
+
 }

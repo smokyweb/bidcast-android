@@ -3,6 +3,7 @@ package io.bidswipe.app.controller
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
+import com.zerobranch.layout.SwipeLayout
 import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseAdapter
 import io.bidswipe.app.databinding.InventoryItemBinding
@@ -18,6 +19,8 @@ class InventoryAdapter(
 	private val isSelectionMode: Boolean,
 	val mClicks: RecyclerClicks,
 ) : BaseAdapter<GetMyInventoryResponse.Data?, InventoryItemBinding>(mList) {
+
+	val posList = mutableListOf<Int>()
 
 	override fun bindView(inflater: LayoutInflater, parent: ViewGroup) =
 		InventoryItemBinding.inflate(inflater, parent, false)
@@ -38,6 +41,24 @@ class InventoryAdapter(
 				append(item?.quantity ?:0)
 			}
 
+			bind.swipeLayout.close()
+
+			bind.swipeLayout.setOnActionsListener(object : SwipeLayout.SwipeActionsListener {
+				override fun onOpen(direction: Int, isContinuous: Boolean) {
+					if (posList.isNotEmpty()) {
+						val posi = posList.first()
+						posList.clear()
+						notifyItemChanged(posi)
+					}
+					posList.add(position)
+				}
+
+				override fun onClose() {
+					posList.remove(position)
+				}
+
+			})
+
 			if (isSelectionMode) {
 				if (item?.selected == true) {
 					bind.root.setBackgroundColor(ContextCompat.getColor(mCtx, R.color.secondaryContainer))
@@ -48,16 +69,21 @@ class InventoryAdapter(
 					bind.root.strokeWidth = 0
 				}
 
-				bind.root.setHapticClickListener {
+				bind.click.setHapticClickListener {
 					mClicks.itemClick(position, "toggle")
 				}
 			} else {
 				bind.root.setBackgroundColor(ContextCompat.getColor(mCtx, R.color.surface))
 				bind.root.strokeWidth = 0
-				bind.root.setHapticClickListener {
+				bind.click.setHapticClickListener {
 					mClicks.itemClick(position)
+				}
+
+				bind.deleteNotification.setHapticClickListener {
+					mClicks.itemClick(position, "delete")
 				}
 			}
 		}
 	}
+
 }

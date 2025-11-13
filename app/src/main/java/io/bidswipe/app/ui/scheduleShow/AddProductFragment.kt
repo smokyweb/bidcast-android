@@ -10,7 +10,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.view.isVisible
-import androidx.core.widget.NestedScrollView
 import androidx.navigation.fragment.findNavController
 import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseFragment
@@ -45,8 +44,8 @@ class AddProductFragment : BaseFragment<ScheduleShowViewModel, FragmentAddProduc
 		FragmentAddProductBinding.inflate(inflater, view, false)
 
 	private lateinit var productAdapter: ProductAdapter
-	private var productList = mutableListOf<GetMyInventoryResponse.Data?>()
-	private var imagePartList = mutableListOf<MultipartBody.Part?>()
+
+	//	private var productList = mutableListOf<GetMyInventoryResponse.Data?>()
 	private var page = 1
 	private var isLoading = false
 
@@ -58,16 +57,28 @@ class AddProductFragment : BaseFragment<ScheduleShowViewModel, FragmentAddProduc
 					data?.getSerializableExtra("selectedProducts") as? ArrayList<GetMyInventoryResponse.Data>
 
 				Log.d(TAG, "$selectedProducts ")
-				selectedProducts?.forEach {
-					it.selected = true
-					if (!productList.any { existing -> existing?.id == it.id }) {
-						productList.add(it)
+				selectedProducts?.forEach { data ->
+
+					val product =
+						LiveShowModel.Product(
+							data.category?.name,
+							data.id.toString(),
+							data.images?.get(0),
+							data.status,
+							data.title,
+							data.pricing.toString(),
+							data.quantity.toString(),
+							selected = true
+						)
+
+					if (!viewModel.currentProducts.any { existing -> existing.id == product.id }) {
+						viewModel.currentProducts.add(product)
 					}
 				}
 
 				productAdapter.notifyDataSetChanged()
 
-				if (productList.isNotEmpty()) {
+				if (viewModel.currentProducts.isNotEmpty()) {
 //					bind.noData.isVisible = false
 					bind.recycler.isVisible = true
 				}
@@ -80,17 +91,18 @@ class AddProductFragment : BaseFragment<ScheduleShowViewModel, FragmentAddProduc
 		override fun itemClick(pos: Int, status: String?) {
 			when (status) {
 				"select" -> {
-					productList[pos]?.selected = true
+					viewModel.currentProducts[pos].selected = true
 					productAdapter.notifyItemChanged(pos)
 				}
 
 				"edit" -> {
-					startActivity(mCtx.toListProduct().putExtra("product", productList[pos]))
+					startActivity(mCtx.toListProduct().putExtra("product", viewModel.currentProducts[pos]))
 				}
 
 				"delete" -> {
 
-					deleteProductDialog(productList[pos]?.id.toString())
+					viewModel.currentProducts.removeAt(pos)
+					productAdapter.notifyItemRemoved(pos)
 
 				}
 			}
@@ -106,7 +118,7 @@ class AddProductFragment : BaseFragment<ScheduleShowViewModel, FragmentAddProduc
 			findNavController().popBackStack()
 		}
 
-		bind.contentScrollView.setOnScrollChangeListener { v: NestedScrollView?, _: Int, scrollY: Int, _: Int, oldScrollY: Int ->
+		/*bind.contentScrollView.setOnScrollChangeListener { v: NestedScrollView?, _: Int, scrollY: Int, _: Int, oldScrollY: Int ->
 			val nestedScrollView = checkNotNull(v) {
 				return@setOnScrollChangeListener
 			}
@@ -120,9 +132,9 @@ class AddProductFragment : BaseFragment<ScheduleShowViewModel, FragmentAddProduc
 					}
 				}
 			}
-		}
+		}*/
 
-		productAdapter = ProductAdapter(productList, mClick)
+		productAdapter = ProductAdapter(viewModel.currentProducts, mClick)
 		bind.recycler.adapter = productAdapter
 
 		bind.addProductLayout.setHapticClickListener {
@@ -142,9 +154,9 @@ class AddProductFragment : BaseFragment<ScheduleShowViewModel, FragmentAddProduc
 			val imagePartList = mutableListOf<MultipartBody.Part?>()
 			val productIdList = mutableListOf<Int>()
 
-			productList.forEach {
-				if (it?.selected == true) {
-					productIdList.add(it.id ?: 0)
+			viewModel.currentProducts.forEach {
+				if (it.selected == true) {
+					productIdList.add(it.id?.toInt() ?: 0)
 				}
 			}
 
@@ -194,18 +206,19 @@ class AddProductFragment : BaseFragment<ScheduleShowViewModel, FragmentAddProduc
 
 		}
 
-		bind.loader.isVisible = true
 
-		viewModel.getUserProducts(userId.request(), categoryId = viewModel.categoryId.request(), page.toString().request())
+//		bind.loader.isVisible = true
+//
+//		viewModel.getUserProducts(userId.request(), categoryId = viewModel.categoryId.request(), page.toString().request())
 
 		viewModel.getUserProductsRepo.observe(viewLifecycleOwner) {
 			when (it) {
 				is Resource.Success -> {
 					bind.loader.isVisible = false
 
-					val mData = it.value.data
+					it.value.data
 
-					if (page == 1) productList.clear()
+					/*if (page == 1) productList.clear()
 
 					mData?.forEach {
 						productList.add(it)
@@ -223,7 +236,7 @@ class AddProductFragment : BaseFragment<ScheduleShowViewModel, FragmentAddProduc
 					} else {
 						bind.noData.isVisible = false
 						bind.recycler.isVisible = true
-					}
+					}*/
 
 				}
 
@@ -363,33 +376,4 @@ class AddProductFragment : BaseFragment<ScheduleShowViewModel, FragmentAddProduc
 		}
 
 	}
-
-	private fun deleteProductDialog(productId: String) {
-		AppBottomSheet(
-			mCtx,
-			R.drawable.trash,
-			"Delete!",
-			"Are you sure you want to delete?",
-			primaryBtnText = "Yes",
-			secondaryBtnText = "No",
-			canCancel = true,
-			showSecondary = true,
-			iconPadding = 16,
-			alertType = AlertType.ERROR,
-			clicks = object : AlertClicks {
-				override fun primaryClick(dialog: AppBottomSheet) {
-					dialog.dismiss()
-					bind.loader.isVisible = true
-					viewModel.deleteProduct(productId)
-				}
-
-				override fun secondaryClick(dialog: AppBottomSheet) {
-					dialog.dismiss()
-				}
-			}
-
-		).show()
-
-	}
-
 }

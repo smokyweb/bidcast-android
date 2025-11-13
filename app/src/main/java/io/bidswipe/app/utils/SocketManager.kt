@@ -3,7 +3,6 @@ package io.bidswipe.app.utils
 import android.content.Context
 import android.util.Log
 import io.bidswipe.app.model.LiveShowModel
-import io.bidswipe.app.model.LiveSocketModel
 import io.socket.client.IO
 import io.socket.client.Socket
 import org.json.JSONObject
@@ -107,7 +106,7 @@ class SocketManager private constructor(
 		viewerJoinEmitted = false
 	}
 
-	fun createRoom(roomId: String, liveShowData: LiveShowModel) {
+	fun createRoom(liveShowData: LiveShowModel) {
 		val payload = JSONObject().apply {}
 		Log.d(TAG, "EMIT: room_created - RoomId: $payload")
 		liveShowData.products.first()?.isCurrent = true
@@ -320,82 +319,9 @@ class SocketManager private constructor(
 		}
 	}
 
-	fun onProductStatusUpdate(listener: (productJson: JSONObject) -> Unit) {
-		socket?.on("product_status_update") { args ->
-			val obj = args.firstOrNull()
-			if (obj is JSONObject) {
-				Log.d(TAG, "RECEIVED: product_status_update - $obj")
-				listener(obj)
-			}
-		}
-	}
-
-	/**
-	 * Listen for current product changes
-	 */
-	fun onCurrentProductChange(listener: (productJson: JSONObject) -> Unit) {
-		socket?.on("current_product_change") { args ->
-			val obj = args.firstOrNull()
-			if (obj is JSONObject) {
-				Log.d(TAG, "RECEIVED: current_product_change - $obj")
-				listener(obj)
-			}
-		}
-	}
-
 	/**
 	 * Place a bid using LiveSocketModel structure
 	 */
-	fun emitBidWithLiveSocketModel(
-		liveSocket: LiveSocketModel,
-		userId: String,
-		userName: String,
-		userImage: String,
-		bidAmount: String
-	) {
-		val currentProduct = liveSocket.products.find { it?.isCurrent == true }
-		if (currentProduct == null) {
-			Log.w(TAG, "No current product found in live socket for bidding")
-			return
-		}
-
-		val payload = JSONObject().apply {
-			put("room_id", liveSocket.roomId)
-			put("show_id", liveSocket.showId)
-			put("user_id", userId)
-			put("user_name", userName)
-			put("user_image", userImage)
-			put("product_id", currentProduct.id)
-			put("product_name", currentProduct.name)
-			put("bid_amount", bidAmount)
-			put("timestamp", Utils.timestamp())
-			put("allow_bid_for_all", liveSocket.allowBidForAll)
-		}
-
-		Log.d(
-			TAG,
-			"EMIT: place_bid_with_liveSocket - RoomId: ${liveSocket.roomId}, ShowId: ${liveSocket.showId}, ProductId: ${currentProduct.id}, BidAmount: $bidAmount"
-		)
-		socket?.emit("place_bid", payload)
-	}
-
-	/**
-	 * Listen for complete LiveSocketModel updates
-	 */
-	fun onLiveSocketUpdate(listener: (liveSocket: LiveSocketModel) -> Unit) {
-		socket?.on("live_socket_update") { args ->
-			val obj = args.firstOrNull()
-			if (obj is JSONObject) {
-				try {
-					val liveSocket = LiveSocketModel.fromJson(obj)
-					Log.d(TAG, "RECEIVED: live_socket_update - RoomId: ${liveSocket.roomId}")
-					listener(liveSocket)
-				} catch (e: Exception) {
-					Log.e(TAG, "Error parsing live_socket_update: ${e.message}")
-				}
-			}
-		}
-	}
 
 	fun onViewerCount(listener: (count: JSONObject) -> Unit) {
 		socket?.on("viewerCount") { args ->

@@ -7,14 +7,14 @@ import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseAdapter
 import io.bidswipe.app.databinding.ProductListItemBinding
 import io.bidswipe.app.interfaces.RecyclerClicks
-import io.bidswipe.app.network.response.GetMyInventoryResponse
+import io.bidswipe.app.model.LiveShowModel
 import io.bidswipe.app.utils.asCapital
 import io.bidswipe.app.utils.loadUrl
 import io.bidswipe.app.utils.setHapticClickListener
 
 class ProductAdapter(
-	val mList: MutableList<GetMyInventoryResponse.Data?>, val mClicks: RecyclerClicks,
-) : BaseAdapter<GetMyInventoryResponse.Data?, ProductListItemBinding>(mList) {
+	val mList: MutableList<LiveShowModel.Product>, val mClicks: RecyclerClicks,
+) : BaseAdapter<LiveShowModel.Product?, ProductListItemBinding>(mList) {
 
 	override fun bindView(inflater: LayoutInflater, parent: ViewGroup) =
 		ProductListItemBinding.inflate(inflater, parent, false)
@@ -22,7 +22,7 @@ class ProductAdapter(
 	override fun onBind(
 		holder: BaseViewHolder<ProductListItemBinding>,
 		position: Int,
-		item: GetMyInventoryResponse.Data?,
+		item: LiveShowModel.Product?,
 	) {
 		with(holder) {
 
@@ -33,14 +33,14 @@ class ProductAdapter(
 				bind.root.strokeWidth = 0
 			}
 
-			bind.productName.text = item?.title?.asCapital()
-			bind.prodSubTitle.text = item?.category?.name
+			bind.productName.text = item?.name?.asCapital()
+			bind.prodSubTitle.text = item?.category
 			bind.quantity.text = buildString {
 				append("Quantity: ")
 				append(item?.quantity)
 			}
 
-			bind.img.loadUrl(mCtx, item?.images?.first() ?: "")
+			bind.img.loadUrl(mCtx, item?.image ?:"")
 
 			bind.root.setHapticClickListener {
 				mClicks.itemClick(position, "select")

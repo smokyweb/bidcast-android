@@ -10,6 +10,7 @@ import io.bidswipe.app.network.response.CheckKycResponse
 import io.bidswipe.app.network.response.CommonResponse
 import io.bidswipe.app.network.response.CreateBidResponse
 import io.bidswipe.app.network.response.CreateOrderResponse
+import io.bidswipe.app.network.response.CreateProductResponse
 import io.bidswipe.app.network.response.CreateShowResponse
 import io.bidswipe.app.network.response.FAQResponse
 import io.bidswipe.app.network.response.FetchBidResponse
@@ -168,7 +169,7 @@ interface ApiInterface {
 	suspend fun storeProduct(
 		@Body storeProductModel : StoreProductRequest ,
 		@Query("product_id") productId : String? = null ,
-	) : CommonResponse
+	) : CreateProductResponse
 
 	@Multipart
 	@POST("api/store-product-meta")
@@ -221,7 +222,8 @@ interface ApiInterface {
 	suspend fun getUserProducts(
 		@Part("user_id") userId : RequestBody? ,
 		@Part("category_id") categoryId : RequestBody? ,
-		@Part("page") page : RequestBody?
+		@Part("page") page : RequestBody?,
+		@Part("type") type : RequestBody? ,
 	) : GetProductsResponse
 
 	@Multipart

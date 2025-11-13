@@ -476,6 +476,7 @@ class CreateProductFragment : BaseFragment<ScheduleShowViewModel, FragmentCreate
 							variantList.addAll(categoryList[pos]?.extraFields ?: mutableListOf())
 							variantAdapter.notifyDataSetChanged()
 						}
+
 					} else {
 						viewModel.productSubCategoryId = subCategoryList[pos]?.id.toString()
 						viewModel.productSubCategoryName = subCategoryList[pos]?.name.orEmpty()

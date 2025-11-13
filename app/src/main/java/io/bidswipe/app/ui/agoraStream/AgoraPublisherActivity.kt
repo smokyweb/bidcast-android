@@ -2,9 +2,12 @@ package io.bidswipe.app.ui.agoraStream
 
 import android.annotation.SuppressLint
 import android.app.PictureInPictureParams
+import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
+import android.graphics.Bitmap
 import android.graphics.Rect
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
@@ -13,9 +16,11 @@ import android.util.Rational
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
+import androidx.core.content.FileProvider
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
+import com.bumptech.glide.Glide
 import com.gyf.immersionbar.ktx.immersionBar
 import com.gyf.immersionbar.ktx.navigationBarHeight
 import io.agora.rtc2.Constants
@@ -65,6 +70,8 @@ import io.bidswipe.app.utils.setHapticClickListener
 import io.bidswipe.app.utils.setMargins
 import io.bidswipe.app.utils.value
 import org.json.JSONObject
+import java.io.File
+import java.io.FileOutputStream
 
 @SuppressLint("NotifyDataSetChanged")
 class AgoraPublisherActivity : BaseActivity() {
@@ -104,8 +111,20 @@ class AgoraPublisherActivity : BaseActivity() {
 			keyboardEnable(true)
 		}
 
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) { // Android 15+
+			window.decorView.setOnApplyWindowInsetsListener { view, insets ->
+
+				insets
+			}
+		} else {
+			// For Android 14 and below
+//			window.statusBarColor = color
+		}
+
 		ViewCompat.setOnApplyWindowInsetsListener(window.decorView) { v, insets ->
+
 			val system = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+
 			bind.profileLayout.setMargins(
 				top = system.top,
 				left = resources.dpToPx(16),
@@ -193,15 +212,22 @@ class AgoraPublisherActivity : BaseActivity() {
 		}
 
 		bind.share.setHapticClickListener {
+
 			val shareText = buildString {
 				append(Const.BASE_URL)
 				append("/live-show?roomId=$roomID")
 			}
 
+			val url = "https://d1x5wefrtbfk2a.cloudfront.net/67/53/proff/raw/images/DSC07180.jpg"
+
+//			shareLiveShow(this, "Live Show", shareText, url)
+
 			val shareIntent = Intent().apply {
 				action = Intent.ACTION_SEND
+				putExtra(Intent.EXTRA_STREAM, url)
 				putExtra(Intent.EXTRA_TEXT, shareText)
-				type = "text/plain"
+				type = "image/*"
+				addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
 			}
 
 			val chooserIntent = Intent.createChooser(shareIntent, "Share via")
@@ -211,6 +237,7 @@ class AgoraPublisherActivity : BaseActivity() {
 			} else {
 				errorToast("No sharing apps available")
 			}
+
 		}
 
 		bind.cutButton.setHapticClickListener {
@@ -424,7 +451,6 @@ class AgoraPublisherActivity : BaseActivity() {
 
 			App.manager.joinChannel(agoraToken, channelName)
 
-
 			/*val joinAction = {
 				App.manager.joinChannel(userId.toInt(), agoraToken, channelName)
 			}
@@ -469,7 +495,7 @@ class AgoraPublisherActivity : BaseActivity() {
 	fun addShowData(data: LiveShowModel) {
 
 		isShowLive = true
-		socketManager?.createRoom(roomID, data)
+		socketManager?.createRoom(data)
 
 		socketManager?.onRoomCreated { obj ->
 			runSafe {
@@ -603,13 +629,6 @@ class AgoraPublisherActivity : BaseActivity() {
 
 						productList.addAll(product.products)
 
-						/*productList.find { it?.id == product.id }.let {
-						val index = productList.indexOf(it)
-						if (index != -1) {
-							productList[index] = product
-						}
-					}*/
-
 						val products = LiveShowModel.fromJson(json)
 						updateProductUI(products.products.find { it?.isCurrent == true })
 
@@ -693,19 +712,27 @@ class AgoraPublisherActivity : BaseActivity() {
 	fun updateProductUI(liveProduct: LiveShowModel.Product?) {
 
 		runOnUiThread {
-			log("updateProductUI : $liveProduct")
-			bind.product.isVisible = true
-			bind.productLayout.isVisible = true
-			bind.productName.text = liveProduct?.name?.asCapital()
-			bind.productCategory.text = liveProduct?.category?.asCapital()
-			bind.quantity.text = buildString {
-				append("Quantity: ")
-				append(liveProduct?.quantity ?: 0)
-			}
-			bind.productImage.loadUrl(this, liveProduct?.image ?: "")
 
-			val price = liveProduct?.price
-			bind.bidPrice.text = price?.asMoney()
+			if (liveProduct != null) {
+				log("updateProductUI : $liveProduct")
+				bind.product.isVisible = true
+				bind.productLayout.isVisible = true
+				bind.productName.text = liveProduct.name?.asCapital()
+				bind.productCategory.text = liveProduct.category?.asCapital()
+				bind.quantity.text = buildString {
+					append("Quantity: ")
+					append(liveProduct.quantity ?: 0)
+				}
+				bind.productImage.loadUrl(this, liveProduct.image ?: "")
+
+				val price = liveProduct.price
+				bind.bidPrice.text = price?.asMoney()
+			} else {
+				bind.soldLayout.isVisible = true
+				bind.productLayout.isVisible = false
+				bind.productLayout.isVisible = false
+			}
+
 		}
 
 
@@ -1026,6 +1053,50 @@ class AgoraPublisherActivity : BaseActivity() {
 		}
 
 		clipSheet.show()
+	}
+
+	fun shareLiveShow(context: Context, showTitle: String, showUrl: String, imageUrl: String) {
+		Thread {
+			try {
+				// 1️⃣ Download image from URL as Bitmap
+				val bitmap = Glide.with(context)
+					.asBitmap()
+					.load(imageUrl)
+					.submit()
+					.get()
+
+				// 2️⃣ Save it as a temporary file
+				val cachePath = File(context.cacheDir, "images")
+				cachePath.mkdirs()
+				val imageFile = File(cachePath, "thumb.png")
+				FileOutputStream(imageFile).use { out ->
+					bitmap.compress(Bitmap.CompressFormat.PNG, 100, out)
+				}
+
+				// 3️⃣ Get content URI using FileProvider
+				val imageUri: Uri = FileProvider.getUriForFile(
+					context,
+					"${context.packageName}.fileprovider",
+					imageFile
+				)
+
+				// 4️⃣ Create share intent
+				val shareIntent = Intent(Intent.ACTION_SEND).apply {
+					type = "image/*"
+					putExtra(Intent.EXTRA_STREAM, imageUri)
+					putExtra(Intent.EXTRA_TEXT, "$showTitle\n$showUrl")
+					addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+				}
+
+				// 5️⃣ Start share sheet on main thread
+				(context as? android.app.Activity)?.runOnUiThread {
+					context.startActivity(Intent.createChooser(shareIntent, "Share Live Show via"))
+				}
+
+			} catch (e: Exception) {
+				e.printStackTrace()
+			}
+		}.start()
 	}
 
 }
