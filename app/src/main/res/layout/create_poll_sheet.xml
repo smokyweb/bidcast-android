@@ -107,30 +107,6 @@
             tools:itemCount="3"
             tools:listitem="@layout/variant_item" />
 
-       <!-- <TextView
-            style="@style/TitleSmall"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/half_margin"
-            android:text="@string/option_1" />
-
-        <com.google.android.material.textfield.TextInputLayout
-            style="@style/inputBoxStyle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/margin">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/option1"
-                style="@style/inputTextStyle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="@string/enter_option_1"
-                android:inputType="text" />
-
-        </com.google.android.material.textfield.TextInputLayout>-->
-
-
         <TextView
             style="@style/TitleSmall"
             android:layout_width="match_parent"

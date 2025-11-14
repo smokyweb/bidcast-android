@@ -430,6 +430,61 @@ class SocketManager private constructor(
 		socket?.emit("create_poll", payload)
 	}
 
+	fun onPollCreated(listener: (pollJson: JSONObject) -> Unit) {
+		socket?.off("poll_created")
+		socket?.on("poll_created") { args ->
+			val obj = args.firstOrNull()
+			if (obj is JSONObject) {
+				Log.d(TAG, "RECEIVED: poll_created - $obj")
+				listener(obj)
+			}
+		}
+	}
+
+	fun onPollUpdate(listener: (pollJson: JSONObject) -> Unit) {
+		socket?.off("poll_update")
+		socket?.on("poll_update") { args ->
+			val obj = args.firstOrNull()
+			if (obj is JSONObject) {
+				Log.d(TAG, "RECEIVED: poll_update - $obj")
+				listener(obj)
+			}
+		}
+	}
+
+	fun onPollEnded(listener: (pollJson: JSONObject) -> Unit) {
+		socket?.off("poll_ended")
+		socket?.on("poll_ended") { args ->
+			val obj = args.firstOrNull()
+			if (obj is JSONObject) {
+				Log.d(TAG, "RECEIVED: poll_ended - $obj")
+				listener(obj)
+			}
+		}
+	}
+
+	fun votePoll(roomId: String, pollId: String, optionIndex: Int, userId: String) {
+		val payload = JSONObject().apply {
+			put("room_id", roomId)
+			put("poll_id", pollId)
+			put("option_index", optionIndex)
+			put("user_id", userId)
+		}
+		Log.d(TAG, "EMIT: vote_poll - RoomId: $roomId, PollId: $pollId, OptionIndex: $optionIndex")
+		socket?.emit("vote_poll", payload)
+	}
+
+	fun onPollVoteResult(listener: (resultJson: JSONObject) -> Unit) {
+		socket?.off("poll_vote_result")
+		socket?.on("poll_vote_result") { args ->
+			val obj = args.firstOrNull()
+			if (obj is JSONObject) {
+				Log.d(TAG, "RECEIVED: poll_vote_result - $obj")
+				listener(obj)
+			}
+		}
+	}
+
 }
 
 

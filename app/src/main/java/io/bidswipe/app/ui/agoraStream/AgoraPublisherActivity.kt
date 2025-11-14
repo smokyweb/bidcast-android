@@ -30,6 +30,7 @@ import io.bidswipe.app.base.BaseActivity
 import io.bidswipe.app.controller.CommentAdapter
 import io.bidswipe.app.controller.FirebaseProductAdapter
 import io.bidswipe.app.controller.LiveMoreAdapter
+import io.bidswipe.app.controller.LivePollOptionAdapter
 import io.bidswipe.app.controller.LiveSellerAdapter
 import io.bidswipe.app.controller.PollOptionAdapter
 import io.bidswipe.app.controller.PromoteSheetAdapter
@@ -39,6 +40,7 @@ import io.bidswipe.app.databinding.CreatePollSheetBinding
 import io.bidswipe.app.databinding.EndShowSheetBinding
 import io.bidswipe.app.databinding.LiveSellerSheetBinding
 import io.bidswipe.app.databinding.LiveShowMoreMenuBinding
+import io.bidswipe.app.databinding.PollDetailsSheetBinding
 import io.bidswipe.app.databinding.ProductSheetBinding
 import io.bidswipe.app.databinding.PromoteShowSheetBinding
 import io.bidswipe.app.databinding.ShowConfirmationAlertBinding
@@ -46,6 +48,7 @@ import io.bidswipe.app.interfaces.AlertClicks
 import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.model.LiveChatModel
 import io.bidswipe.app.model.LiveShowModel
+import io.bidswipe.app.model.PollModel
 import io.bidswipe.app.model.PollOptionModel
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.network.response.GetLiveSellerResponse
@@ -104,7 +107,9 @@ class AgoraPublisherActivity : BaseActivity() {
 	private var zoomLevel = 1.0f
 	private var socketManager: SocketManager? = null
 	private var pollOptionList = mutableListOf<PollOptionModel?>()
+	private var livePollOptionList = mutableListOf<PollModel.PollOption>()
 	private lateinit var pollOptionAdapter: PollOptionAdapter
+	private lateinit var livePollAdapter : LivePollOptionAdapter
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
@@ -178,9 +183,12 @@ class AgoraPublisherActivity : BaseActivity() {
 
 		pollOptionAdapter = PollOptionAdapter(pollOptionList, object : RecyclerClicks {
 			override fun itemClick(pos: Int, status: String?) {
-
 			}
+		})
 
+		livePollAdapter = LivePollOptionAdapter(livePollOptionList, object : RecyclerClicks {
+			override fun itemClick(pos: Int, status: String?) {
+			}
 		})
 
 		socketUrl = Const.SOCKET_URL
@@ -256,6 +264,21 @@ class AgoraPublisherActivity : BaseActivity() {
 			}
 
 		}
+
+		bind.poll.setHapticClickListener {
+			if (isShowLive) {
+				pollDetailSheet()
+			}else{
+				Alerts.error(this, "Please start live show to access this feature")
+			}
+		}
+
+		/*val animator = ObjectAnimator.ofFloat(bind.poll, "alpha", 1f, 0f).apply {
+			duration = 500
+			repeatMode = ObjectAnimator.REVERSE
+			repeatCount = ObjectAnimator.INFINITE
+		}
+		animator.start()*/
 
 		bind.cutButton.setHapticClickListener {
 
@@ -1067,6 +1090,7 @@ class AgoraPublisherActivity : BaseActivity() {
 				false
 			)
 		)
+
 		val clipSheet = Alerts.appBottomSheet(this, true, clipSheetBind)
 		val mList = mutableListOf<String?>()
 
@@ -1142,6 +1166,37 @@ class AgoraPublisherActivity : BaseActivity() {
 			successToast("Poll created successfully!")
 
 			// Dismiss the sheet
+			pollSheet.dismiss()
+		}
+
+		pollSheet.show()
+	}
+
+	private fun pollDetailSheet() {
+
+		val pollDetailSheetBind = PollDetailsSheetBinding.bind(
+			layoutInflater.inflate(
+				R.layout.poll_details_sheet,
+				null,
+				false
+			)
+		)
+
+		val pollSheet = Alerts.appBottomSheet(this, true, pollDetailSheetBind)
+
+		livePollOptionList.clear()
+
+		repeat(4){
+			livePollOptionList.add(PollModel.PollOption(
+				text = "Option ${it + 1}",
+				voteCount = 57,
+				isSelected = false
+			))
+		}
+
+		pollDetailSheetBind.optionRecycler.adapter = livePollAdapter
+
+		pollDetailSheetBind.close.setHapticClickListener {
 			pollSheet.dismiss()
 		}
 

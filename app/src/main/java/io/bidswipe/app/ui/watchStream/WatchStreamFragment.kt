@@ -22,15 +22,18 @@ import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseFragment
 import io.bidswipe.app.controller.CommentAdapter
 import io.bidswipe.app.controller.FirebaseProductAdapter
+import io.bidswipe.app.controller.LivePollOptionAdapter
 import io.bidswipe.app.databinding.FragmentWatchStreamBinding
 import io.bidswipe.app.databinding.InputBottomSheetBinding
 import io.bidswipe.app.databinding.PaymentAndAddressSheetBinding
+import io.bidswipe.app.databinding.PollDetailsSheetBinding
 import io.bidswipe.app.databinding.ProductSheetBinding
 import io.bidswipe.app.databinding.SendTipSheetBinding
 import io.bidswipe.app.interfaces.AlertClicks
 import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.model.LiveChatModel
 import io.bidswipe.app.model.LiveShowModel
+import io.bidswipe.app.model.PollModel
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.ui.custom.AlertType
 import io.bidswipe.app.ui.custom.AppBottomSheet
@@ -80,6 +83,12 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 	private lateinit var productAdapter: FirebaseProductAdapter
 	private var productList = mutableListOf<LiveShowModel.Product?>()
 	private var currentRemoteUid: Int? = null
+	private var currentPoll: PollModel? = null
+	private var pollSheet: BottomSheetDialog? = null
+	private var pollSheetBinding: PollDetailsSheetBinding? = null
+	private lateinit var livePollOptionAdapter: LivePollOptionAdapter
+	private var livePollOptionList = mutableListOf<PollModel.PollOption>()
+	private lateinit var livePollAdapter : LivePollOptionAdapter
 
 	companion object {
 		fun newInstance(roomID: String, streamID: String) = WatchStreamFragment().apply {
@@ -135,6 +144,11 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 		}
 
 		commentAdapter = CommentAdapter(commentList)
+
+		livePollAdapter = LivePollOptionAdapter(livePollOptionList, object : RecyclerClicks {
+			override fun itemClick(pos: Int, status: String?) {
+			}
+		})
 
 		bind.recycler.adapter = commentAdapter
 
@@ -272,6 +286,14 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 					onRaid(targetRoomId, rtcToken)
 				}
 			}
+		}
+
+		// Poll listeners
+		setupPollListeners()
+
+		// Poll card click listener
+		bind.poll.setHapticClickListener {
+			showPollDetailsSheet()
 		}
 
 		bind.message.setEndIconOnClickListener {
@@ -1041,6 +1063,175 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 			}
 		}
 
+	}
+
+	private fun setupPollListeners() {
+		// Listen for poll creation
+		socketManager?.onPollCreated { json ->
+			runSafe {
+				if (json.optString("room_id") == roomID) {
+					requireActivity().runOnUiThread {
+						currentPoll = PollModel.fromJson(json)
+						showPollCard()
+						updatePollUI()
+					}
+				}
+			}
+		}
+
+		// Listen for poll updates (vote counts, timer)
+		socketManager?.onPollUpdate { json ->
+			runSafe {
+				if (json.optString("room_id") == roomID) {
+					requireActivity().runOnUiThread {
+						currentPoll = PollModel.fromJson(json)
+						updatePollUI() // Update poll card preview
+						updatePollSheet() // Update poll details sheet if open
+					}
+				}
+			}
+		}
+
+		// Listen for poll ended
+		socketManager?.onPollEnded { json ->
+			runSafe {
+				if (json.optString("room_id") == roomID) {
+					requireActivity().runOnUiThread {
+						currentPoll = null
+						hidePollCard()
+						pollSheet?.dismiss()
+						pollSheetBinding = null
+					}
+				}
+			}
+		}
+
+		// Listen for vote result
+		socketManager?.onPollVoteResult { json ->
+			runSafe {
+				if (json.optString("room_id") == roomID) {
+					requireActivity().runOnUiThread {
+						val success = json.optBoolean("success", false)
+						if (success) {
+							Alerts.success(mCtx, "Vote submitted successfully!")
+							// Poll will be updated via poll_update event
+						} else {
+							val message = json.optString("message", "Failed to submit vote")
+							Alerts.error(mCtx, message)
+						}
+					}
+				}
+			}
+		}
+	}
+
+	private fun showPollCard() {
+		requireActivity().runOnUiThread {
+			bind.poll.isVisible = true
+			updatePollUI()
+		}
+	}
+
+	private fun hidePollCard() {
+		requireActivity().runOnUiThread {
+			bind.poll.isVisible = false
+		}
+	}
+
+	private fun updatePollUI() {
+		currentPoll?.let { poll ->
+			requireActivity().runOnUiThread {
+				bind.pollQuestionPreview.text = poll.question ?: "Poll Question"
+				bind.pollTimerPreview.text = poll.remainingTime ?: "00:00 remaining"
+				bind.pollTotalVotesPreview.text = "${poll.totalVotes} ${if (poll.totalVotes == 1) "vote" else "votes"}"
+			}
+		}
+	}
+
+	private fun showPollDetailsSheet() {
+
+		log("SHOW POLL DETAILS")
+
+		val pollDetailSheetBind = PollDetailsSheetBinding.bind(
+			layoutInflater.inflate(
+				R.layout.poll_details_sheet,
+				null,
+				false
+			)
+		)
+
+		val pollSheet = Alerts.appBottomSheet(mCtx, true, pollDetailSheetBind)
+
+		livePollOptionList.clear()
+
+		repeat(4){
+			livePollOptionList.add(PollModel.PollOption(
+				text = "Option ${it + 1}",
+				voteCount = 57,
+				isSelected = false
+			))
+		}
+
+		pollDetailSheetBind.optionRecycler.adapter = livePollAdapter
+
+		pollDetailSheetBind.endPollBtn.isVisible = false
+
+		pollDetailSheetBind.close.setHapticClickListener {
+			pollSheet.dismiss()
+		}
+
+		pollSheet.show()
+	}
+
+	private fun updatePollSheet() {
+		val poll = currentPoll ?: return
+		pollSheetBinding?.let { binding ->
+			// Update poll header data
+			binding.pollQuestionDetail.text = poll.question ?: "No question"
+			binding.pollTimerDetail.text = poll.remainingTime ?: "00:00 remaining"
+			binding.pollTotalVotesDetail.text = "${poll.totalVotes} total votes"
+			
+			// Update adapter if initialized
+			if (::livePollOptionAdapter.isInitialized) {
+				livePollOptionList.clear()
+				livePollOptionList.addAll(poll.options)
+				livePollOptionAdapter.notifyDataSetChanged()
+			}
+		}
+	}
+
+	private fun updatePollSheetData(binding: PollDetailsSheetBinding, poll: PollModel) {
+		binding.pollQuestionDetail.text = poll.question ?: "No question"
+		binding.pollTimerDetail.text = poll.remainingTime ?: "00:00 remaining"
+		binding.pollTotalVotesDetail.text = "${poll.totalVotes} total votes"
+
+		// Update adapter with new data
+		livePollOptionList.clear()
+		livePollOptionList.addAll(poll.options)
+		livePollOptionAdapter.notifyDataSetChanged()
+		binding.optionRecycler.adapter = livePollOptionAdapter
+	}
+
+	private fun voteOnPoll(optionIndex: Int) {
+		val poll = currentPoll ?: return
+
+		if (poll.userVotedOption != null) {
+			Alerts.error(mCtx, "You have already voted on this poll")
+			return
+		}
+
+		if (!poll.isActive) {
+			Alerts.error(mCtx, "This poll has ended")
+			return
+		}
+
+		// Emit vote
+		socketManager?.votePoll(
+			roomId = roomID,
+			pollId = poll.pollId ?: "",
+			optionIndex = optionIndex,
+			userId = userId
+		)
 	}
 
 }
