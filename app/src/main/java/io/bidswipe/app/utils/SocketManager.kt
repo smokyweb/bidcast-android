@@ -414,6 +414,22 @@ class SocketManager private constructor(
 		}
 	}
 
+	fun createPoll(
+		roomId: String,
+		question: String,
+		options: List<String>,
+		duration: Int
+	) {
+		val payload = JSONObject().apply {
+			put("room_id", roomId)
+			put("question", question)
+			put("options", org.json.JSONArray(options))
+			put("duration", duration)
+		}
+		Log.d(TAG, "EMIT: create_poll - RoomId: $roomId, Question: $question")
+		socket?.emit("create_poll", payload)
+	}
+
 }
 
 

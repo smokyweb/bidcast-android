@@ -409,6 +409,21 @@
 	<string name = "create_clip" >Create Clip</string >
 	<string name = "trim_clip" >Trim Clip</string >
 	<string name = "share_show" >Share Show</string >
+	<string name = "create_poll" >Create Poll</string >
+	<string name = "create_poll_description" >Engage your audience by creating a poll. Ask a question and let viewers vote!</string >
+	<string name = "poll_question" >Poll Question</string >
+	<string name = "enter_poll_question" >Enter your poll question here</string >
+	<string name = "poll_options" >Poll Options</string >
+	<string name = "option_1" >Option 1</string >
+	<string name = "option_2" >Option 2</string >
+	<string name = "option_3_optional" >Option 3 (Optional)</string >
+	<string name = "option_4_optional" >Option 4 (Optional)</string >
+	<string name = "enter_option_1" >Enter option 1</string >
+	<string name = "enter_option_2" >Enter option 2</string >
+	<string name = "enter_option_3" >Enter option 3</string >
+	<string name = "enter_option_4" >Enter option 4</string >
+	<string name = "poll_duration" >Poll Duration</string >
+	<string name = "select_duration" >Select duration (minutes)</string >
 	<string name = "create_a_raid" >Create a raid</string >
 	<!-- TODO: Remove or change this placeholder text -->
 	<string name = "hello_blank_fragment" >Hello blank fragment</string >

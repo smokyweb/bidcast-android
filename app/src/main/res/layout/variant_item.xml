@@ -17,7 +17,7 @@
         style="@style/inputBoxStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/margin">
+        android:layout_marginBottom="@dimen/half_margin">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/quantity"

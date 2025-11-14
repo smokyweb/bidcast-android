@@ -106,7 +106,7 @@ object Const {
 //		LiveMoreOption("Multicast" , false , draw.ic_multicast) ,
 //		LiveMoreOption("Add Coupons" , false , draw.ic_coupon) ,
 		LiveMoreOption("Raid" , false , draw.ic_people) ,
-//		LiveMoreOption("Create Poll" , false , draw.ic_poll)
+		LiveMoreOption("Create Poll" , false , draw.ic_poll)
 	)
 
 }

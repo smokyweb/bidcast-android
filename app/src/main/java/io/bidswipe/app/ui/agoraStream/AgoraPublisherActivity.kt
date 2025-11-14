@@ -31,9 +31,11 @@ import io.bidswipe.app.controller.CommentAdapter
 import io.bidswipe.app.controller.FirebaseProductAdapter
 import io.bidswipe.app.controller.LiveMoreAdapter
 import io.bidswipe.app.controller.LiveSellerAdapter
+import io.bidswipe.app.controller.PollOptionAdapter
 import io.bidswipe.app.controller.PromoteSheetAdapter
 import io.bidswipe.app.databinding.ActivityAgoraPublisherBinding
 import io.bidswipe.app.databinding.CreateClipSheetBinding
+import io.bidswipe.app.databinding.CreatePollSheetBinding
 import io.bidswipe.app.databinding.EndShowSheetBinding
 import io.bidswipe.app.databinding.LiveSellerSheetBinding
 import io.bidswipe.app.databinding.LiveShowMoreMenuBinding
@@ -44,6 +46,7 @@ import io.bidswipe.app.interfaces.AlertClicks
 import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.model.LiveChatModel
 import io.bidswipe.app.model.LiveShowModel
+import io.bidswipe.app.model.PollOptionModel
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.network.response.GetLiveSellerResponse
 import io.bidswipe.app.network.response.GetPromotePlansResponse
@@ -100,6 +103,8 @@ class AgoraPublisherActivity : BaseActivity() {
 	private var userList = mutableListOf<GetLiveSellerResponse.Data?>()
 	private var zoomLevel = 1.0f
 	private var socketManager: SocketManager? = null
+	private var pollOptionList = mutableListOf<PollOptionModel?>()
+	private lateinit var pollOptionAdapter: PollOptionAdapter
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
@@ -165,6 +170,18 @@ class AgoraPublisherActivity : BaseActivity() {
 
 		commentAdapter = CommentAdapter(commentList)
 		bind.recycler.adapter = commentAdapter
+
+		pollOptionList.add(PollOptionModel(
+			title = "Option 1",
+			hint = "Enter your option"
+		))
+
+		pollOptionAdapter = PollOptionAdapter(pollOptionList, object : RecyclerClicks {
+			override fun itemClick(pos: Int, status: String?) {
+
+			}
+
+		})
 
 		socketUrl = Const.SOCKET_URL
 		initializeSocket()
@@ -885,6 +902,15 @@ class AgoraPublisherActivity : BaseActivity() {
 							viewModel.getLiveSeller()
 						}
 
+						3 -> {
+							moreSheet.dismiss()
+							if (isShowLive) {
+								createPollSheet()
+							} else {
+								Alerts.error(this@AgoraPublisherActivity, "Please start live show to create a poll")
+							}
+						}
+
 						else -> {
 
 						}
@@ -1055,6 +1081,73 @@ class AgoraPublisherActivity : BaseActivity() {
 		clipSheet.show()
 	}
 
+	private fun createPollSheet() {
+		val pollSheetBind = CreatePollSheetBinding.bind(
+			layoutInflater.inflate(
+				R.layout.create_poll_sheet,
+				null,
+				false
+			)
+		)
+		val pollSheet = Alerts.appBottomSheet(this, true, pollSheetBind)
+
+		// Duration options in minutes
+		val durationOptions = listOf("1", "2", "3", "5", "10", "15", "30")
+		var selectedDuration = 5 // Default 5 minutes
+
+		pollSheetBind.pollOptions.adapter = pollOptionAdapter
+
+		pollOptionAdapter.notifyDataSetChanged()
+		
+		// Set default duration text
+		pollSheetBind.pollDuration.setText("${selectedDuration} minutes")
+
+		pollSheetBind.addOption.setOnClickListener {
+			pollOptionList.add(PollOptionModel(
+				title = "Option ${pollOptionList.size + 1}",
+				hint = "Enter your option"
+			))
+			pollSheetBind.pollOptions.adapter?.notifyItemInserted(pollOptionList.size - 1)
+		}
+
+		pollSheetBind.pollDuration.setOnClickListener {
+			val options = durationOptions.toTypedArray()
+			android.app.AlertDialog.Builder(this)
+				.setTitle("Select Duration")
+				.setItems(options) { _, which ->
+					selectedDuration = durationOptions[which].toInt()
+					pollSheetBind.pollDuration.setText("${selectedDuration} minutes")
+				}
+				.show()
+		}
+
+		pollSheetBind.close.setHapticClickListener {
+			pollSheet.dismiss()
+		}
+
+		pollSheetBind.createPollBtn.setHapticClickListener {
+			val question = pollSheetBind.pollQuestion.text?.toString()?.trim() ?: ""
+			val options = getVariantData()
+
+			// Validation
+			if (question.isEmpty()) {
+				Alerts.error(this, "Please enter a poll question")
+				return@setHapticClickListener
+			}
+
+			// Emit poll creation via socket
+			socketManager?.createPoll(roomID, question,options , selectedDuration)
+
+			// Show success message
+			successToast("Poll created successfully!")
+
+			// Dismiss the sheet
+			pollSheet.dismiss()
+		}
+
+		pollSheet.show()
+	}
+
 	fun shareLiveShow(context: Context, showTitle: String, showUrl: String, imageUrl: String) {
 		Thread {
 			try {
@@ -1097,6 +1190,11 @@ class AgoraPublisherActivity : BaseActivity() {
 				e.printStackTrace()
 			}
 		}.start()
+	}
+
+	fun getVariantData(): List<String> {
+		return (pollOptionAdapter as PollOptionAdapter)
+			.getAllVariantData()
 	}
 
 }
