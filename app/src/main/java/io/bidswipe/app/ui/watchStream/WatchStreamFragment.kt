@@ -147,6 +147,12 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
 		livePollAdapter = LivePollOptionAdapter(livePollOptionList, object : RecyclerClicks {
 			override fun itemClick(pos: Int, status: String?) {
+
+				log("OPTION CLICKED: $pos")
+
+				voteOnPoll(pos-1)
+
+
 			}
 		})
 
@@ -1082,27 +1088,25 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 		// Listen for poll updates (vote counts, timer)
 		socketManager?.onPollUpdate { json ->
 			runSafe {
-				if (json.optString("room_id") == roomID) {
-					requireActivity().runOnUiThread {
-						currentPoll = PollModel.fromJson(json)
-						updatePollUI() // Update poll card preview
-						updatePollSheet() // Update poll details sheet if open
-					}
+				requireActivity().runOnUiThread {
+					currentPoll = PollModel.fromJson(json)
+					updatePollUI() // Update poll card preview
+					updatePollSheet() // Update poll details sheet if open
 				}
+
 			}
 		}
 
 		// Listen for poll ended
 		socketManager?.onPollEnded { json ->
 			runSafe {
-				if (json.optString("room_id") == roomID) {
-					requireActivity().runOnUiThread {
-						currentPoll = null
-						hidePollCard()
-						pollSheet?.dismiss()
-						pollSheetBinding = null
-					}
+				requireActivity().runOnUiThread {
+					currentPoll = null
+					hidePollCard()
+					pollSheet?.dismiss()
+					pollSheetBinding = null
 				}
+
 			}
 		}
 
@@ -1141,7 +1145,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 	private fun updatePollUI() {
 		currentPoll?.let { poll ->
 			requireActivity().runOnUiThread {
-				bind.pollQuestionPreview.text = poll.question ?: "Poll Question"
+//				bind.pollQuestionPreview.text = poll.question ?: "Poll Question"
 				bind.pollTimerPreview.text = poll.remainingTime ?: "00:00 remaining"
 				bind.pollTotalVotesPreview.text = "${poll.totalVotes} ${if (poll.totalVotes == 1) "vote" else "votes"}"
 			}
@@ -1187,8 +1191,16 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 		val poll = currentPoll ?: return
 		pollSheetBinding?.let { binding ->
 			// Update poll header data
+
+			val elapsedSeconds = poll.remainingTime?.toLongOrNull() ?: 0L
+			val formattedTime = "%02d:%02d:%02d".format(
+				elapsedSeconds / 3600,
+				(elapsedSeconds / 60) % 60,
+				elapsedSeconds % 60
+			)
+
 			binding.pollQuestionDetail.text = poll.question ?: "No question"
-			binding.pollTimerDetail.text = poll.remainingTime ?: "00:00 remaining"
+			binding.pollTimerDetail.text = formattedTime ?: "00:00 remaining"
 			binding.pollTotalVotesDetail.text = "${poll.totalVotes} total votes"
 			
 			// Update adapter if initialized

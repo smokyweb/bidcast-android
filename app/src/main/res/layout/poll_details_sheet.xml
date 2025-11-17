@@ -64,7 +64,7 @@
                 android:padding="@dimen/margin">
 
                 <TextView
-                    style="@style/BodySmall"
+                    style="@style/TitleLarge"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="@dimen/half_margin"
@@ -74,7 +74,7 @@
 
                 <TextView
                     android:id="@+id/pollQuestionDetail"
-                    style="@style/HeadlineSmall"
+                    style="@style/BodyMedium"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="What do you prefer?"

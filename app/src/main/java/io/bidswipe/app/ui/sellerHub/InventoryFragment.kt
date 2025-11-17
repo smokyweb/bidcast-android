@@ -55,7 +55,9 @@ class InventoryFragment : BaseFragment<SellerHubViewModel , FragmentInventoryBin
 
 		if (isSelectionMode) {
 			bind.tabs.isVisible = false
-			bind.addNewProduct.text = "Add Selected"
+			bind.addNewProduct.text = buildString {
+				append("Add Selected")
+			}
 			bind.addNewProduct.setHapticClickListener {
 				val selectedItems = itemList.filter { it?.selected == true }
 				if (selectedItems.isEmpty()) {
@@ -144,7 +146,6 @@ class InventoryFragment : BaseFragment<SellerHubViewModel , FragmentInventoryBin
 		bind.recycler.addOnScrollListener(object : RecyclerView.OnScrollListener() {
 			override fun onScrolled(recyclerView : RecyclerView , dx : Int , dy : Int) {
 				super.onScrolled(recyclerView , dx , dy)
-				log("onScrolled")
 				val layoutManager = bind.recycler.layoutManager as LinearLayoutManager
 				val lastItemPosition = layoutManager.findLastVisibleItemPosition()
 				if (lastItemPosition == (filteredList.size - 1)) {

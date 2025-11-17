@@ -426,7 +426,7 @@ class SocketManager private constructor(
 			put("options", org.json.JSONArray(options))
 			put("duration", duration)
 		}
-		Log.d(TAG, "EMIT: create_poll - RoomId: $roomId, Question: $question")
+		Log.d(TAG, "EMIT: create_poll - RoomId: $roomId, Question: $question , Options: $options, Duration: $duration")
 		socket?.emit("create_poll", payload)
 	}
 
@@ -442,11 +442,11 @@ class SocketManager private constructor(
 	}
 
 	fun onPollUpdate(listener: (pollJson: JSONObject) -> Unit) {
-		socket?.off("poll_update")
-		socket?.on("poll_update") { args ->
+		socket?.off("poll_vote_update")
+		socket?.on("poll_vote_update") { args ->
 			val obj = args.firstOrNull()
 			if (obj is JSONObject) {
-				Log.d(TAG, "RECEIVED: poll_update - $obj")
+				Log.d(TAG, "RECEIVED: poll_vote_update - $obj")
 				listener(obj)
 			}
 		}
@@ -457,7 +457,7 @@ class SocketManager private constructor(
 		socket?.on("poll_ended") { args ->
 			val obj = args.firstOrNull()
 			if (obj is JSONObject) {
-				Log.d(TAG, "RECEIVED: poll_ended - $obj")
+				Log.d(TAG, "RECEIVED: poll_ended  - $obj")
 				listener(obj)
 			}
 		}
@@ -465,7 +465,6 @@ class SocketManager private constructor(
 
 	fun votePoll(roomId: String, pollId: String, optionIndex: Int, userId: String) {
 		val payload = JSONObject().apply {
-			put("room_id", roomId)
 			put("poll_id", pollId)
 			put("option_index", optionIndex)
 			put("user_id", userId)

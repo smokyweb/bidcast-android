@@ -45,16 +45,6 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <!--	<TextView
-                android:id="@+id/appText"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/poppins_extra_bold"
-                android:text="@string/app_name"
-                android:textAllCaps="false"
-                android:textColor="@color/primary"
-                android:textSize="24sp" />-->
-
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/appText"
             android:layout_width="wrap_content"

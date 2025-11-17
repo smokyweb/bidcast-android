@@ -25,7 +25,7 @@ data class PollModel(
             var pollId = json.optString("poll_id", null)
             var roomId = json.optString("room_id", null)
             var question = json.optString("question", null)
-            var remainingTime = json.optString("remaining_time", null)
+            var remainingTime = json.optString("remaining_seconds", null)
             var isActive = json.optBoolean("is_active", true)
             var userVotedOption = if (json.has("user_voted_option")) {
                 json.optInt("user_voted_option", -1)

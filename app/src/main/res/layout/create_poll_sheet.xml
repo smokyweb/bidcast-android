@@ -122,15 +122,14 @@
             app:endIconDrawable="@drawable/ic_forward"
             app:endIconMode="custom">
 
-            <com.google.android.material.textfield.TextInputEditText
+            <com.google.android.material.textfield.MaterialAutoCompleteTextView
                 android:id="@+id/pollDuration"
                 style="@style/inputTextStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:clickable="true"
                 android:focusable="false"
-                android:hint="@string/select_duration"
-                android:inputType="none" />
+                android:focusableInTouchMode="false"
+                android:hint="@string/select_duration" />
 
         </com.google.android.material.textfield.TextInputLayout>
 

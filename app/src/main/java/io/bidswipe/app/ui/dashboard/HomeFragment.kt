@@ -56,14 +56,14 @@ class HomeFragment : BaseFragment<DashViewModel , FragmentHomeBinding>() {
 	private var selectedCategory = ""
 
 	private val mClick = object : RecyclerClicks {
-		override fun itemClick(pos : Int , status : String?) {
+		override fun itemClick(pos: Int, status: String?) {
 
 			when (status) {
 
 				"user" -> {
 					startActivity(
-						Intent(mCtx , SellerProfileActivity::class.java).putExtra(
-							"userId" ,
+						Intent(mCtx, SellerProfileActivity::class.java).putExtra(
+							"userId",
 							showList[pos]?.userId.toString()
 						)
 					)
@@ -75,7 +75,7 @@ class HomeFragment : BaseFragment<DashViewModel , FragmentHomeBinding>() {
 						val roomId = showList[pos]?.roomId.toString()
 
 						if (App.PIPMode) {
-							Alerts.error(mCtx , "You are already in Live show")
+							Alerts.error(mCtx, "You are already in Live show")
 						} else {
 							startActivity(
 								Intent(mCtx, ViewLiveShowActivity::class.java)
@@ -83,7 +83,7 @@ class HomeFragment : BaseFragment<DashViewModel , FragmentHomeBinding>() {
 									.putExtra("userId", showList[pos]?.userId.toString())
 									.putExtra("roomIdsList", romIdsList.joinToString(","))
 									.putParcelableArrayListExtra(
-										"streamList" ,
+										"streamList",
 										ArrayList(streamList)
 									)
 							)
@@ -198,7 +198,9 @@ class HomeFragment : BaseFragment<DashViewModel , FragmentHomeBinding>() {
 		selectTab(bind.live , true)
 
 		bind.live.setHapticClickListener { selectTab(it as TextView , false) }
+
 		bind.popular.setHapticClickListener { selectTab(it as TextView , false) }
+
 		bind.comingSoon.setHapticClickListener { selectTab(it as TextView , false) }
 
 		bind.chipGroup.setOnCheckedStateChangeListener { chipGroup , _ ->
@@ -242,8 +244,8 @@ class HomeFragment : BaseFragment<DashViewModel , FragmentHomeBinding>() {
 					categoriesList.forEach {
 						bind.chipGroup.addView(
 							Utils.makeAChip(
-								mCtx = mCtx ,
-								text = it ?: "" ,
+								mCtx = mCtx,
+								text = it ?: "",
 								selected = false,
 								closeIconVisible = false
 							)

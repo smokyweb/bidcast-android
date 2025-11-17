@@ -13,6 +13,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.util.Rational
+import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
@@ -110,6 +111,8 @@ class AgoraPublisherActivity : BaseActivity() {
 	private var livePollOptionList = mutableListOf<PollModel.PollOption>()
 	private lateinit var pollOptionAdapter: PollOptionAdapter
 	private lateinit var livePollAdapter : LivePollOptionAdapter
+	private var currentPoll: PollModel? = null
+	private var pollSheetBinding: PollDetailsSheetBinding? = null
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
@@ -450,6 +453,41 @@ class AgoraPublisherActivity : BaseActivity() {
 			}
 		}
 
+		socketManager?.onPollCreated { json ->
+			runSafe {
+					runOnUiThread {
+						currentPoll = PollModel.fromJson(json)
+						showPollCard()
+						updatePollUI()
+					}
+
+			}
+		}
+
+		socketManager?.onPollUpdate { json ->
+			runSafe {
+				runOnUiThread {
+					currentPoll = PollModel.fromJson(json)
+					updatePollUI() // Update poll card preview
+					updatePollSheet() // Update poll details sheet if open
+				}
+
+			}
+		}
+
+		// Listen for poll ended
+		socketManager?.onPollEnded { json ->
+			runSafe {
+				if (json.optString("room_id") == roomID) {
+					runOnUiThread {
+						currentPoll = null
+						hidePollCard()
+						pollSheetBinding = null
+					}
+				}
+			}
+		}
+
 	}
 
 	override fun onDestroy() {
@@ -690,7 +728,6 @@ class AgoraPublisherActivity : BaseActivity() {
 		}
 
 	}
-
 
 	// Product selection (simplified socket mirroring)
 	private fun showProductSheet() {
@@ -1124,7 +1161,7 @@ class AgoraPublisherActivity : BaseActivity() {
 		pollOptionAdapter.notifyDataSetChanged()
 		
 		// Set default duration text
-		pollSheetBind.pollDuration.setText("${selectedDuration} minutes")
+		pollSheetBind.pollDuration.setText("${selectedDuration} minutes", false)
 
 		pollSheetBind.addOption.setOnClickListener {
 			pollOptionList.add(PollOptionModel(
@@ -1134,15 +1171,20 @@ class AgoraPublisherActivity : BaseActivity() {
 			pollSheetBind.pollOptions.adapter?.notifyItemInserted(pollOptionList.size - 1)
 		}
 
-		pollSheetBind.pollDuration.setOnClickListener {
-			val options = durationOptions.toTypedArray()
-			android.app.AlertDialog.Builder(this)
-				.setTitle("Select Duration")
-				.setItems(options) { _, which ->
-					selectedDuration = durationOptions[which].toInt()
-					pollSheetBind.pollDuration.setText("${selectedDuration} minutes")
-				}
-				.show()
+		val durationAdapter = ArrayAdapter(
+			this,
+			android.R.layout.simple_list_item_1,
+			durationOptions
+		)
+		pollSheetBind.pollDuration.setAdapter(durationAdapter)
+
+		pollSheetBind.pollDuration.setOnItemClickListener { _, _, position, _ ->
+			selectedDuration = durationOptions[position].toInt()
+			pollSheetBind.pollDuration.setText("${selectedDuration} minutes", false)
+		}
+
+		pollSheetBind.pollDuration.setHapticClickListener {
+			pollSheetBind.pollDuration.showDropDown()
 		}
 
 		pollSheetBind.close.setHapticClickListener {
@@ -1159,8 +1201,15 @@ class AgoraPublisherActivity : BaseActivity() {
 				return@setHapticClickListener
 			}
 
+			if (options.size < 2) {
+				Alerts.error(this, "Please add at least 2 options")
+				return@setHapticClickListener
+			}
+
+			val duration = selectedDuration*60
+
 			// Emit poll creation via socket
-			socketManager?.createPoll(roomID, question,options , selectedDuration)
+			socketManager?.createPoll(roomID, question,options , duration)
 
 			// Show success message
 			successToast("Poll created successfully!")
@@ -1248,8 +1297,55 @@ class AgoraPublisherActivity : BaseActivity() {
 	}
 
 	fun getVariantData(): List<String> {
-		return (pollOptionAdapter as PollOptionAdapter)
-			.getAllVariantData()
+		return pollOptionAdapter.getAllVariantData()
+	}
+
+	private fun showPollCard() {
+		runOnUiThread {
+			bind.poll.isVisible = true
+			updatePollUI()
+		}
+	}
+
+	private fun hidePollCard() {
+		runOnUiThread {
+			bind.poll.isVisible = false
+		}
+	}
+
+	private fun updatePollUI() {
+		currentPoll?.let { poll ->
+			runOnUiThread {
+
+				val elapsedSeconds = poll.remainingTime?.toLongOrNull() ?: 0L
+				val formattedTime = "%02d:%02d:%02d".format(
+					elapsedSeconds / 3600,
+					(elapsedSeconds / 60) % 60,
+					elapsedSeconds % 60
+				)
+
+//				bind.pollQuestionPreview.text = poll.question ?: "Poll Question"
+				bind.pollTimerPreview.text = formattedTime ?: "00:00 remaining"
+				bind.pollTotalVotesPreview.text = "${poll.totalVotes} ${if (poll.totalVotes == 1) "vote" else "votes"}"
+			}
+		}
+	}
+
+	private fun updatePollSheet() {
+		val poll = currentPoll ?: return
+		pollSheetBinding?.let { binding ->
+			// Update poll header data
+			binding.pollQuestionDetail.text = poll.question ?: "No question"
+			binding.pollTimerDetail.text = poll.remainingTime ?: "00:00 remaining"
+			binding.pollTotalVotesDetail.text = "${poll.totalVotes} total votes"
+
+			// Update adapter if initialized
+			if (::livePollAdapter.isInitialized) {
+				livePollOptionList.clear()
+				livePollOptionList.addAll(poll.options)
+				livePollAdapter.notifyDataSetChanged()
+			}
+		}
 	}
 
 }
