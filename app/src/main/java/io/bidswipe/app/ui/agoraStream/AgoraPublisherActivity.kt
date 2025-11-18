@@ -246,13 +246,11 @@ class AgoraPublisherActivity : BaseActivity() {
 				append("/live-show?roomId=$roomID")
 			}
 
-			val url = "https://d1x5wefrtbfk2a.cloudfront.net/67/53/proff/raw/images/DSC07180.jpg"
 
 //			shareLiveShow(this, "Live Show", shareText, url)
 
 			val shareIntent = Intent().apply {
 				action = Intent.ACTION_SEND
-				putExtra(Intent.EXTRA_STREAM, url)
 				putExtra(Intent.EXTRA_TEXT, shareText)
 				type = "image/*"
 				addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
@@ -455,11 +453,12 @@ class AgoraPublisherActivity : BaseActivity() {
 
 		socketManager?.onPollCreated { json ->
 			runSafe {
-					runOnUiThread {
-						currentPoll = PollModel.fromJson(json)
-						showPollCard()
-						updatePollUI()
-					}
+				runOnUiThread {
+					currentPoll = PollModel.fromJson(json)
+					showPollCard()
+					updatePollUI()
+					updatePollSheet()
+				}
 
 			}
 		}
@@ -1223,7 +1222,7 @@ class AgoraPublisherActivity : BaseActivity() {
 
 	private fun pollDetailSheet() {
 
-		val pollDetailSheetBind = PollDetailsSheetBinding.bind(
+		pollSheetBinding = PollDetailsSheetBinding.bind(
 			layoutInflater.inflate(
 				R.layout.poll_details_sheet,
 				null,
@@ -1231,7 +1230,7 @@ class AgoraPublisherActivity : BaseActivity() {
 			)
 		)
 
-		val pollSheet = Alerts.appBottomSheet(this, true, pollDetailSheetBind)
+		val pollSheet = Alerts.appBottomSheet(this, true, pollSheetBinding!!)
 
 		livePollOptionList.clear()
 
@@ -1243,9 +1242,9 @@ class AgoraPublisherActivity : BaseActivity() {
 			))
 		}
 
-		pollDetailSheetBind.optionRecycler.adapter = livePollAdapter
+		pollSheetBinding?.optionRecycler?.adapter = livePollAdapter
 
-		pollDetailSheetBind.close.setHapticClickListener {
+		pollSheetBinding?.close?.setHapticClickListener {
 			pollSheet.dismiss()
 		}
 
@@ -1315,35 +1314,27 @@ class AgoraPublisherActivity : BaseActivity() {
 
 	private fun updatePollUI() {
 		currentPoll?.let { poll ->
-			runOnUiThread {
-
-				val elapsedSeconds = poll.remainingTime?.toLongOrNull() ?: 0L
-				val formattedTime = "%02d:%02d:%02d".format(
-					elapsedSeconds / 3600,
-					(elapsedSeconds / 60) % 60,
-					elapsedSeconds % 60
-				)
-
-//				bind.pollQuestionPreview.text = poll.question ?: "Poll Question"
-				bind.pollTimerPreview.text = formattedTime ?: "00:00 remaining"
+			if (poll.roomId == roomID) {
+				bind.pollQuestionPreview.text = poll.question ?: "Poll Question"
+				bind.pollTimerPreview.text = poll.remainingTime ?: "00:00 remaining"
 				bind.pollTotalVotesPreview.text = "${poll.totalVotes} ${if (poll.totalVotes == 1) "vote" else "votes"}"
+
 			}
 		}
 	}
 
 	private fun updatePollSheet() {
-		val poll = currentPoll ?: return
-		pollSheetBinding?.let { binding ->
-			// Update poll header data
-			binding.pollQuestionDetail.text = poll.question ?: "No question"
-			binding.pollTimerDetail.text = poll.remainingTime ?: "00:00 remaining"
-			binding.pollTotalVotesDetail.text = "${poll.totalVotes} total votes"
-
-			// Update adapter if initialized
-			if (::livePollAdapter.isInitialized) {
-				livePollOptionList.clear()
-				livePollOptionList.addAll(poll.options)
-				livePollAdapter.notifyDataSetChanged()
+		val poll = currentPoll
+		if (poll?.roomId == roomID){
+			pollSheetBinding?.let { binding ->
+				binding.pollQuestionDetail.text = poll.question ?: "No question"
+				binding.pollTimerDetail.text = poll.remainingTime ?: "00:00 remaining"
+				binding.pollTotalVotesDetail.text = "${poll.totalVotes} total votes"
+				if (::livePollAdapter.isInitialized) {
+					livePollOptionList.clear()
+					livePollOptionList.addAll(poll.options)
+					livePollAdapter.notifyDataSetChanged()
+				}
 			}
 		}
 	}

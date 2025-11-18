@@ -910,14 +910,6 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 				)
 				Alerts.success(mCtx, "Bid placed successfully")
 
-				/*	socketManager?.sendMessage(
-						roomID,
-						"New high bid: $$priceText",
-						userId,
-						userName,
-						userImage
-					)*/
-//                sendZimMessage("New high bid: $${priceVal}")
 				inputSheet?.dismiss()
 			}
 		}
@@ -1240,7 +1232,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 		// Emit vote
 		socketManager?.votePoll(
 			roomId = roomID,
-			pollId = poll.pollId ?: "",
+			pollId = poll.pollId?.toString() ?: "",
 			optionIndex = optionIndex,
 			userId = userId
 		)

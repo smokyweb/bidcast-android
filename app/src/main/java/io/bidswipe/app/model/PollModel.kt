@@ -4,7 +4,7 @@ import org.json.JSONArray
 import org.json.JSONObject
 
 data class PollModel(
-    var pollId: String?,
+    var pollId: Int?,
     var roomId: String?,
     var question: String?,
     var options: List<PollOption>,
@@ -22,38 +22,36 @@ data class PollModel(
 
     companion object {
         fun fromJson(json: JSONObject): PollModel {
-            var pollId = json.optString("poll_id", null)
-            var roomId = json.optString("room_id", null)
-            var question = json.optString("question", null)
-            var remainingTime = json.optString("remaining_seconds", null)
-            var isActive = json.optBoolean("is_active", true)
-            var userVotedOption = if (json.has("user_voted_option")) {
-                json.optInt("user_voted_option", -1)
-            } else null
-
-            var optionsArray = json.optJSONArray("options") ?: JSONArray()
-            var votesArray = json.optJSONArray("votes") ?: JSONArray()
-            var totalVotes = json.optInt("total_votes", 0)
+            // Handle pollId as Int (can be null if not present)
+            val pollId = if (json.has("pollId")) {
+                json.optInt("pollId")
+            } else {
+                null
+            }
+            
+            val roomId = json.optString("roomId", null)
+            val question = json.optString("question", null)
+            val remainingTime = json.optString("remainingTime", null)
+            val isActive = json.optBoolean("isActive", true)
+            val totalVotes = json.optInt("totalVotes", 0)
+            val optionsArray = json.optJSONArray("options") ?: JSONArray()
 
             val options = mutableListOf<PollOption>()
             for (i in 0 until optionsArray.length()) {
-                val optionText = optionsArray.optString(i, "")
-                val voteCount = if (i < votesArray.length()) {
-                    votesArray.optInt(i, 0)
-                } else 0
+                val optionObj = optionsArray.optJSONObject(i)
+                if (optionObj != null) {
+                    val optionText = optionObj.optString("text", "")
+                    val voteCount = optionObj.optInt("voteCount", 0)
+                    val percentage = optionObj.optInt("percentage", 0)
 
-                val percentage = if (totalVotes > 0) {
-                    (voteCount * 100 / totalVotes)
-                } else 0
-
-                options.add(
-                    PollOption(
-                        text = optionText,
-                        voteCount = voteCount,
-                        percentage = percentage,
-                        isSelected = userVotedOption == i
+                    options.add(
+                        PollOption(
+                            text = optionText,
+                            voteCount = voteCount,
+                            percentage = percentage,
+                        )
                     )
-                )
+                }
             }
 
             return PollModel(
@@ -63,8 +61,7 @@ data class PollModel(
                 options = options,
                 totalVotes = totalVotes,
                 remainingTime = remainingTime,
-                isActive = isActive,
-                userVotedOption = userVotedOption
+                isActive = isActive
             )
         }
     }

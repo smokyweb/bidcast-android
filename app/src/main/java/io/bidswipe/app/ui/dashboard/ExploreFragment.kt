@@ -64,14 +64,14 @@ class ExploreFragment : BaseFragment<DashViewModel , FragmentExploreBinding>() {
 		exploreAdapter = ExploreAdapter(exploreList , mClick)
 		bind.recycler.adapter = exploreAdapter
 
-		bind.header.onMoreSecondaryClick {
+		/*bind.header.onMoreSecondaryClick {
 			bind.searchExpandLayout.toggle()
 			if (bind.searchExpandLayout.isExpanded) {
 				bind.search.requestFocus()
 			}
-		}
+		}*/
 
-		bind.header.onMorePrimaryClick {
+		bind.notification.setHapticClickListener {
 			startActivity(
 				Intent(mCtx , NotificationActivity::class.java).putExtra(
 					"slug" ,

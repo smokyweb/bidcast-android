@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     tools:context=".ui.dashboard.ExploreFragment">
 
-    <io.bidswipe.app.ui.custom.Header
+   <!-- <io.bidswipe.app.ui.custom.Header
         android:id="@+id/header"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -14,9 +14,68 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:showBackButton="false" />
+        app:showBackButton="false" />-->
 
-    <net.cachapa.expandablelayout.ExpandableLayout
+    <LinearLayout
+        android:id="@+id/header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:paddingHorizontal="8dp"
+        android:paddingVertical="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/searchLayout"
+            style="@style/inputBoxStyle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:boxStrokeWidth="2dp"
+            android:layout_weight="1"
+            android:layout_marginStart="@dimen/half_margin"
+            app:endIconMode="clear_text"
+            app:endIconTint="@color/scrim"
+            app:startIconDrawable="@drawable/search"
+            app:startIconTint="@color/scrim">
+
+            <com.google.android.material.textfield.MaterialAutoCompleteTextView
+                android:id="@+id/search"
+                style="@style/inputTextStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/what_are_you_looking_for"
+                android:inputType="textEmailAddress" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/primary"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_marginStart="@dimen/half_margin"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/notification"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="4dp"
+                android:src="@drawable/notification"
+                android:visibility="visible"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:tint="@color/onBackground" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </LinearLayout>
+
+
+    <!--<net.cachapa.expandablelayout.ExpandableLayout
         android:id="@+id/searchExpandLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -49,7 +108,7 @@
                 android:inputType="textEmailAddress" />
         </com.google.android.material.textfield.TextInputLayout>
 
-    </net.cachapa.expandablelayout.ExpandableLayout>
+    </net.cachapa.expandablelayout.ExpandableLayout>-->
 
     <LinearLayout
         android:id="@+id/heading"
@@ -60,7 +119,7 @@
         android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/searchExpandLayout">
+        app:layout_constraintTop_toBottomOf="@id/header">
 
         <TextView
             android:id="@+id/recommended"
