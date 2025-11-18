@@ -92,6 +92,8 @@
 	<string name = "oz" >Oz</string >
 	<string name = "password" >Password</string >
 	<string name = "pick_a_date_and_time_for_your_live_show" >Pick a date and time for your live show</string >
+	<string name="for_you_tile">For You</string>
+	<string name="see_all_categories_tile">See All&#10;Categories</string>
 	<string name = "please_enter_the_email_address_associated_with_your_account" >Please enter the email address associated with your account.</string >
 	<string name = "privacy_policy" >Privacy Policy </string >
 	<string name = "products" >Products</string >

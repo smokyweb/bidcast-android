@@ -38,7 +38,7 @@ class SavedItemAdapter(
 				append(" #")
 				append(item?.product?.id.toString())
 			}
-			bind.prodSubTitle.text = buildString {
+			bind.sellerUsername.text = buildString {
 				append("Seller: ")
 				append(item?.product?.seller?.name?.asCapital())
 			}

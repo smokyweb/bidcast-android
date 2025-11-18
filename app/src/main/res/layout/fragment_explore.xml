@@ -6,22 +6,13 @@
     android:layout_height="match_parent"
     tools:context=".ui.dashboard.ExploreFragment">
 
-   <!-- <io.bidswipe.app.ui.custom.Header
-        android:id="@+id/header"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:headerMode="APP_TEXT_ACTION"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:showBackButton="false" />-->
-
     <LinearLayout
         android:id="@+id/header"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
         android:orientation="horizontal"
+        android:background="@color/background"
         android:paddingHorizontal="8dp"
         android:paddingVertical="8dp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -37,6 +28,10 @@
             android:layout_weight="1"
             android:layout_marginStart="@dimen/half_margin"
             app:endIconMode="clear_text"
+            app:boxCornerRadiusBottomEnd="24dp"
+            app:boxCornerRadiusBottomStart="24dp"
+            app:boxCornerRadiusTopEnd="24dp"
+            app:boxCornerRadiusTopStart="24dp"
             app:endIconTint="@color/scrim"
             app:startIconDrawable="@drawable/search"
             app:startIconTint="@color/scrim">
@@ -75,89 +70,26 @@
     </LinearLayout>
 
 
-    <!--<net.cachapa.expandablelayout.ExpandableLayout
-        android:id="@+id/searchExpandLayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/half_margin"
-        app:el_duration="500"
-        app:el_expanded="true"
-        app:el_parallax="1"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/header">
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/searchLayout"
-            style="@style/inputBoxStyle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="@dimen/margin"
-            app:boxStrokeWidth="2dp"
-            app:endIconMode="clear_text"
-            app:endIconTint="@color/scrim"
-            app:startIconDrawable="@drawable/search"
-            app:startIconTint="@color/scrim">
-
-            <com.google.android.material.textfield.MaterialAutoCompleteTextView
-                android:id="@+id/search"
-                style="@style/inputTextStyle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="@string/what_are_you_looking_for"
-                android:inputType="textEmailAddress" />
-        </com.google.android.material.textfield.TextInputLayout>
-
-    </net.cachapa.expandablelayout.ExpandableLayout>-->
-
-    <LinearLayout
+    <HorizontalScrollView
         android:id="@+id/heading"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:scrollbars="none"
         android:layout_marginHorizontal="@dimen/margin"
-        android:layout_marginVertical="@dimen/half_margin"
-        android:orientation="horizontal"
+        android:layout_marginTop="@dimen/half_margin"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/header">
 
-        <TextView
-            android:id="@+id/recommended"
-            style="@style/TitleLarge"
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/chipGroup"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:text="@string/recommended" />
+            app:selectionRequired="true"
+            app:singleLine="true"
+            app:singleSelection="true" />
 
-        <com.google.android.material.divider.MaterialDivider
-            android:layout_width="2dp"
-            android:layout_height="match_parent"
-            android:layout_marginHorizontal="@dimen/half_margin"
-            android:layout_marginVertical="4dp" />
-
-        <TextView
-            android:id="@+id/popular"
-            style="@style/TitleLarge"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:text="@string/popular" />
-
-        <com.google.android.material.divider.MaterialDivider
-            android:layout_width="2dp"
-            android:layout_height="match_parent"
-            android:layout_marginHorizontal="@dimen/half_margin"
-            android:layout_marginVertical="4dp" />
-
-        <TextView
-            android:id="@+id/all"
-            style="@style/TitleLarge"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:text="@string/all" />
-
-    </LinearLayout>
+    </HorizontalScrollView>
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/swipeRefreshLayout"
@@ -175,9 +107,10 @@
                 android:id="@+id/recycler"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_margin="@dimen/half_margin"
+                android:layout_margin="12dp"
                 android:orientation="vertical"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+                app:spanCount="3"
                 tools:itemCount="6"
                 tools:listitem="@layout/explore_item" />
 

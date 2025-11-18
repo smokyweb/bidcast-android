@@ -11,6 +11,8 @@ import io.bidswipe.app.base.BaseFragment
 import io.bidswipe.app.controller.ViewPagerAdapter
 import io.bidswipe.app.databinding.FragmentActivityBinding
 import io.bidswipe.app.ui.more.NotificationActivity
+import io.bidswipe.app.utils.Utils
+import androidx.core.view.isNotEmpty
 
 class ActivityFragment : BaseFragment<DashViewModel , FragmentActivityBinding>() {
 	override fun getModel() : Class<DashViewModel> = DashViewModel::class.java
@@ -44,7 +46,7 @@ class ActivityFragment : BaseFragment<DashViewModel , FragmentActivityBinding>()
 						is MessagesFragment -> fragment.reloadData()
 						is BidsFragment -> fragment.reloadData()
 						is OfferFragment -> fragment.reloadData()
-						is PurchasesFragment -> fragment.reloadData()
+						is PurchasesFragment -> { fragment.reloadData() }
 						is SavedItemsFragment -> fragment.reloadData()
 					}
 				}
@@ -55,5 +57,16 @@ class ActivityFragment : BaseFragment<DashViewModel , FragmentActivityBinding>()
 			startActivity(Intent(mCtx , NotificationActivity::class.java).putExtra("slug" , "notification"))
 		}
 
+		bind.header.onMoreSecondaryClick {
+			// Search functionality
+		}
+
+		// Hide logo in header
+		bind.header.hideLogo()
+
+		// Initially hide filter chips
+//		bind.chipScroll.visibility = View.GONE
+
 	}
+
 }

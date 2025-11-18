@@ -41,6 +41,7 @@
     <color name="successContainer">#D1FAE5</color>
     <color name="onSuccessContainer">#00270F</color>
 
+    <color name="yellowWarningClr">#FFC107</color>
     <color name="warningClr">#ED8430</color>
     <color name="onSecWarning">#DDD0C3</color>
     <color name="backgroundClr">#E5E7EB</color>

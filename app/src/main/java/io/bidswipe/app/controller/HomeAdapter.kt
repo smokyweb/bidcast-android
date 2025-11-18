@@ -44,7 +44,10 @@ class HomeAdapter(
 
 			bind.title.text = item?.title.toString().asCapital()
 
-			bind.category.text = item?.category?.name
+			// Category with bullet separator style
+			bind.category.text = buildString {
+				append(item?.category?.name ?: "")
+			}
 
 			Log.d(TAG, "onBind: ${item?.user?.name}")
 
@@ -54,7 +57,13 @@ class HomeAdapter(
 				}
 			}
 
-			bind.liveCard.isVisible = item?.isLive == true
+			// Live badge with viewer count
+			val isLive = item?.isLive == true
+			bind.liveCard.isVisible = isLive
+			if (isLive) {
+				val viewerCount = item?.viewerCount ?: 0
+				bind.viewerCount.text = "Live • ${viewerCount}"
+			}
 
 		}
 	}

@@ -3,33 +3,34 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="@dimen/half_margin">
+    android:layout_margin="4dp">
 
     <LinearLayout
         android:id="@+id/userInfo"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:paddingBottom="@dimen/half_margin"
+        android:gravity="center_vertical"
+        android:paddingBottom="4dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
         <com.makeramen.roundedimageview.RoundedImageView
             android:id="@+id/userImage"
-            android:layout_width="28dp"
-            android:layout_height="28dp"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
             android:scaleType="centerCrop"
             android:src="@drawable/user_image"
             app:riv_corner_radius="100dp" />
 
         <TextView
             android:id="@+id/userName"
-            style="@style/TitleMedium"
+            style="@style/BodySmall"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:layout_marginStart="@dimen/half_margin"
+            android:layout_marginStart="6dp"
             android:layout_weight="1"
             android:maxLines="1"
             android:text="@string/username" />
@@ -42,7 +43,8 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:cardBackgroundColor="@color/inverseSurface"
-        app:cardCornerRadius="8dp"
+        app:cardCornerRadius="12dp"
+        app:cardElevation="0dp"
         app:layout_constraintDimensionRatio="2:3"
         app:layout_constraintTop_toBottomOf="@+id/userInfo">
 
@@ -61,30 +63,42 @@
         style="@style/cardStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:backgroundTint="@color/error"
         android:visibility="gone"
-        app:layout_constraintTop_toTopOf="@id/cardView"
-        app:layout_constraintEnd_toEndOf="@id/cardView"
-        android:layout_marginEnd="@dimen/half_margin"
-        android:layout_marginTop="@dimen/half_margin"
-        android:backgroundTint="@color/error">
+        app:cardCornerRadius="8dp"
+        app:cardElevation="0dp"
+        app:layout_constraintStart_toStartOf="@id/cardView"
+        app:layout_constraintTop_toTopOf="@id/cardView">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@color/surface"
-            android:paddingVertical="4dp"
-            android:paddingHorizontal="@dimen/half_margin"
-            android:text="Live"/>
+            <TextView
+                android:id="@+id/viewerCount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
+                android:text="• 0"
+                android:paddingVertical="4dp"
+                android:paddingHorizontal="8dp"
+                android:textColor="@color/onError"
+                android:textSize="11sp"
+                android:textStyle="bold" />
+
 
     </com.google.android.material.card.MaterialCardView>
 
     <TextView
         android:id="@+id/title"
-        style="@style/TitleMedium"
+        style="@style/BodyMedium"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
+        android:layout_marginTop="6dp"
         android:text="@string/stream_title"
+        android:textSize="13sp"
+        android:textStyle="normal"
+        android:textColor="@color/onSurface"
+        android:maxLines="2"
+        android:ellipsize="end"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/cardView" />
@@ -94,8 +108,11 @@
         style="@style/BodySmall"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
         android:text="@string/category"
+        android:textSize="11sp"
+        android:lineSpacingExtra="0dp"
+        android:lineHeight="0dp"
+        android:textColor="@color/outlineVariant"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/title" />

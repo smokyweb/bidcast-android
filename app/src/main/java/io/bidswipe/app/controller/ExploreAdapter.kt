@@ -32,15 +32,11 @@ class ExploreAdapter(
 
 			bind.title.text = item?.name
 			bind.subTitle.text = buildString {
-				append(item?.liveCount)
+				append(item?.liveCount ?: "0")
 				append(" ")
-				append("Live")
+				append("Viewers")
 			}
 			bind.icon.loadUrl(mCtx, item?.image ?: "")
-			bind.iconCard.setCardBackgroundColor(
-				item?.color?.toColorInt() ?: ContextCompat.getColor(mCtx, R.color.primary)
-			)
-
 		}
 	}
 }

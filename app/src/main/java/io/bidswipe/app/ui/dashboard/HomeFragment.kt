@@ -10,13 +10,15 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.content.ContextCompat
-import androidx.core.view.get
 import androidx.core.view.isVisible
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import io.bidswipe.app.App
 import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseFragment
 import io.bidswipe.app.controller.HomeAdapter
+import io.bidswipe.app.controller.HomeCategoryAdapter
 import io.bidswipe.app.databinding.FragmentHomeBinding
 import io.bidswipe.app.interfaces.AlertClicks
 import io.bidswipe.app.interfaces.RecyclerClicks
@@ -28,365 +30,439 @@ import io.bidswipe.app.ui.more.NotificationActivity
 import io.bidswipe.app.ui.sellerProfile.SellerProfileActivity
 import io.bidswipe.app.ui.watchStream.ViewLiveShowActivity
 import io.bidswipe.app.utils.Alerts
-import io.bidswipe.app.utils.Utils
 import io.bidswipe.app.utils.hideKeyboard
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request
-import io.bidswipe.app.utils.runSafe
 import io.bidswipe.app.utils.setHapticClickListener
 import io.bidswipe.app.utils.value
-import java.util.ArrayList
 
 @SuppressLint("NotifyDataSetChanged")
-class HomeFragment : BaseFragment<DashViewModel , FragmentHomeBinding>() {
+class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
 
-	override fun getModel() : Class<DashViewModel> = DashViewModel::class.java
+    override fun getModel(): Class<DashViewModel> = DashViewModel::class.java
 
-	override fun getBind(inflater : LayoutInflater , view : ViewGroup?) =
-		FragmentHomeBinding.inflate(inflater , view , false)
+    override fun getBind(inflater: LayoutInflater, view: ViewGroup?) =
+        FragmentHomeBinding.inflate(inflater, view, false)
 
-	private lateinit var homeAdapter : HomeAdapter
-	private var showList = mutableListOf<GetMyShowResponse.Data?>()
-	private var categoriesList = mutableListOf<String?>()
-	private var romIdsList = mutableListOf<String>()
-	private var streamList = mutableListOf< StreamModel>()
-	private var page = 1
-	private var isLoading = false
+    private lateinit var homeAdapter: HomeAdapter
+    private lateinit var categoryAdapter: HomeCategoryAdapter
+    private var showList = mutableListOf<GetMyShowResponse.Data?>()
+    private val categoryTiles = mutableListOf<HomeCategoryAdapter.CategoryTile>()
+    private var romIdsList = mutableListOf<String>()
+    private var streamList = mutableListOf<StreamModel>()
+    private var page = 1
+    private var isLoading = false
 
-	private var selectedCategory = ""
+    private var selectedCategory = "for_you"
+    private var selectedCategoryTileId = "for_you"
+    private var hasInitializedCategories = false
 
-	private val mClick = object : RecyclerClicks {
-		override fun itemClick(pos: Int, status: String?) {
+    private val mClick = object : RecyclerClicks {
+        override fun itemClick(pos: Int, status: String?) {
 
-			when (status) {
+            when (status) {
 
-				"user" -> {
-					startActivity(
-						Intent(mCtx, SellerProfileActivity::class.java).putExtra(
-							"userId",
-							showList[pos]?.userId.toString()
-						)
-					)
-				}
+                "user" -> {
+                    startActivity(
+                        Intent(mCtx, SellerProfileActivity::class.java).putExtra(
+                            "userId",
+                            showList[pos]?.userId.toString()
+                        )
+                    )
+                }
 
-				"viewShow" -> {
+                "viewShow" -> {
 
-					if (showList[pos]?.isLive == true) {
-						val roomId = showList[pos]?.roomId.toString()
+                    if (showList[pos]?.isLive == true) {
+                        val roomId = showList[pos]?.roomId.toString()
 
-						if (App.PIPMode) {
-							Alerts.error(mCtx, "You are already in Live show")
-						} else {
-							startActivity(
-								Intent(mCtx, ViewLiveShowActivity::class.java)
-									.putExtra("roomId", roomId)
-									.putExtra("userId", showList[pos]?.userId.toString())
-									.putExtra("roomIdsList", romIdsList.joinToString(","))
-									.putParcelableArrayListExtra(
-										"streamList",
-										ArrayList(streamList)
-									)
-							)
-						}
-					}
-				}
-			}
+                        if (App.PIPMode) {
+                            Alerts.error(mCtx, "You are already in Live show")
+                        } else {
+                            startActivity(
+                                Intent(mCtx, ViewLiveShowActivity::class.java)
+                                    .putExtra("roomId", roomId)
+                                    .putExtra("userId", showList[pos]?.userId.toString())
+                                    .putExtra("roomIdsList", romIdsList.joinToString(","))
+                                    .putParcelableArrayListExtra(
+                                        "streamList",
+                                        ArrayList(streamList)
+                                    )
+                            )
+                        }
+                    }
+                }
+            }
 
-		}
-	}
+        }
+    }
 
-	private var selectedTabText = "live"
+    private var selectedTabText = "live"
 
-	override fun onViewCreated(view : View , savedInstanceState : Bundle?) {
-		super.onViewCreated(view , savedInstanceState)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
-		bind.header.setHapticClickListener {
-			hideKeyboard(it)
-		}
+        bind.header.setHapticClickListener {
+            hideKeyboard(it)
+        }
 
-		bind.searchLayout.setEndIconOnClickListener {
-			bind.search.setText("")
-			hideKeyboard(it)
-		}
+        bind.searchLayout.setEndIconOnClickListener {
+            bind.search.setText("")
+            hideKeyboard(it)
+        }
 
-		bind.main.setHapticClickListener {
-			hideKeyboard(it)
-		}
+        bind.main.setHapticClickListener {
+            hideKeyboard(it)
+        }
 
-		bind.recycler.setHapticClickListener {
-			hideKeyboard(it)
-		}
+        bind.recycler.setHapticClickListener {
+            hideKeyboard(it)
+        }
 
-		homeAdapter = HomeAdapter(showList , mClick)
+        homeAdapter = HomeAdapter(showList, mClick)
 
-		bind.recycler.adapter = homeAdapter
+        bind.recycler.adapter = homeAdapter
 
-		bind.header.onMorePrimaryClick {
-			startActivity(
-				Intent(mCtx , NotificationActivity::class.java).putExtra(
-					"slug" ,
-					"notification"
-				)
-			)
-		}
+        categoryAdapter = HomeCategoryAdapter(categoryTiles, object : RecyclerClicks {
+            override fun itemClick(pos: Int, status: String?) {
+                val tile = categoryTiles[pos]
+                categoryTiles.forEachIndexed { index, tile ->
+                    tile.isSelected = index == pos
+                    categoryAdapter.notifyItemChanged(index)
+                }
+                when (tile.tileType) {
+                    HomeCategoryAdapter.TileType.SEE_ALL -> {
+                        findNavController().navigate(R.id.goToExploreFragment)
+                    }
 
-		bind.header.onMoreSecondaryClick {
-			bind.searchExpandLayout.toggle()
-		}
+                    else -> handleCategorySelection(tile, true)
+                }
+            }
+        })
 
-//		FireRef.LIVE_SESSIONS.addChildEventListener(eventListener)
+        bind.categoryRecycler.layoutManager =
+            LinearLayoutManager(mCtx, LinearLayoutManager.HORIZONTAL, false)
+        bind.categoryRecycler.adapter = categoryAdapter
 
-		bind.recycler.setOnScrollChangeListener { _ , _ , _ , _ , _ ->
-			val layoutManager = bind.recycler.layoutManager as GridLayoutManager
-			val lastItemPosition = layoutManager.findLastVisibleItemPosition()
+        bind.notification.setHapticClickListener {
+            startActivity(
+                Intent(mCtx, NotificationActivity::class.java).putExtra(
+                    "slug",
+                    "notification"
+                )
+            )
+        }
 
-			val listSize = showList.size
+        bind.recycler.setOnScrollChangeListener { _, _, _, _, _ ->
+            val layoutManager = bind.recycler.layoutManager as GridLayoutManager
+            val lastItemPosition = layoutManager.findLastVisibleItemPosition()
 
-			if (lastItemPosition == listSize - 1 && ! isLoading) {
-				isLoading = true
-				page ++
-				viewModel.getLiveShow(
-					selectedTabText.request() ,
-					selectedCategory.request() ,
-					bind.search.value().ifEmpty { null }?.request() ,
-					page.toString().request()
-				)
-			}
-		}
+            val listSize = showList.size
 
-		bind.searchLayout.isEndIconVisible = false
+            if (lastItemPosition == listSize - 1 && !isLoading) {
+                isLoading = true
+                page++
+                viewModel.getLiveShow(
+                    selectedTabText.request(),
+                    selectedCategory.request(),
+                    bind.search.value().ifEmpty { null }?.request(),
+                    page.toString().request()
+                )
+            }
+        }
 
-		bind.search.addTextChangedListener(object : TextWatcher {
-			override fun beforeTextChanged(s : CharSequence? , start : Int , count : Int , after : Int) {}
-			override fun onTextChanged(s : CharSequence? , start : Int , before : Int , count : Int) {}
-			override fun afterTextChanged(s : Editable?) {
-				val query = s?.toString()?.trim() ?: ""
-				bind.searchLayout.isEndIconVisible = query.isNotEmpty()
+        bind.searchLayout.isEndIconVisible = false
 
-				if (! s.isNullOrEmpty()) {
-					bind.loader.isVisible = true
-					page = 1
-					viewModel.getLiveShow(
-						selectedTabText.request() ,
-						selectedCategory.request() ,
-						s.toString().request() ,
-						page.toString().request()
-					)
-				}
-			}
-		})
+        bind.search.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+            override fun afterTextChanged(s: Editable?) {
+                val query = s?.toString()?.trim() ?: ""
+                bind.searchLayout.isEndIconVisible = query.isNotEmpty()
 
-		bind.searchLayout.setEndIconOnClickListener {
-			bind.search.setText("")
-			bind.searchLayout.isEndIconVisible = false
-			hideKeyboard(it)
-		}
+                if (!s.isNullOrEmpty()) {
+                    bind.loader.isVisible = true
+                    page = 1
+                    viewModel.getLiveShow(
+                        selectedTabText.request(),
+                        selectedCategory.request(),
+                        s.toString().request(),
+                        page.toString().request()
+                    )
+                }
+            }
+        })
 
-		bind.swipeRefreshLayout.setOnRefreshListener {
-			page = 1
-			viewModel.getLiveShow(selectedTabText.request() , selectedCategory.request() , page = page.toString().request())
-			viewModel.getCategory()
-		}
+        bind.searchLayout.setEndIconOnClickListener {
+            bind.search.setText("")
+            bind.searchLayout.isEndIconVisible = false
+            hideKeyboard(it)
+        }
 
-		bind.noInternet.onClick {
-			bind.loader.isVisible = false
-			bind.noInternet.isVisible = false
-			viewModel.getLiveShow(selectedTabText.request() , selectedCategory.request() , page = page.toString().request())
-			viewModel.getCategory()
-		}
+        bind.swipeRefreshLayout.setOnRefreshListener {
+            page = 1
+            viewModel.getLiveShow(
+                selectedTabText.request(),
+                selectedCategory.request(),
+                page = page.toString().request()
+            )
+            viewModel.getCategory()
+        }
 
-		selectTab(bind.live , true)
+        bind.noInternet.onClick {
+            bind.loader.isVisible = false
+            bind.noInternet.isVisible = false
+            viewModel.getLiveShow(
+                selectedTabText.request(),
+                selectedCategory.request(),
+                page = page.toString().request()
+            )
+            viewModel.getCategory()
+        }
 
-		bind.live.setHapticClickListener { selectTab(it as TextView , false) }
+        selectTab(bind.live, true)
 
-		bind.popular.setHapticClickListener { selectTab(it as TextView , false) }
+        bind.live.setHapticClickListener { selectTab(it as TextView, false) }
 
-		bind.comingSoon.setHapticClickListener { selectTab(it as TextView , false) }
+        bind.popular.setHapticClickListener { selectTab(it as TextView, false) }
 
-		bind.chipGroup.setOnCheckedStateChangeListener { chipGroup , _ ->
-			runSafe {
-				val chipId = chipGroup.checkedChipId
-				val index = chipGroup.indexOfChild(chipGroup.findViewById(chipId))
-				selectedCategory = if (categoriesList[index].toString() == "For You") {
-					"for_you"
-				} else {
-					categoriesList[index].toString()
-				}
-				bind.search.setText("")
-				bind.loader.isVisible = true
-				viewModel.getLiveShow(
-					selectedTabText.request() ,
-					selectedCategory.request() ,
-					page = page.toString().request()
-				)
-			}
-		}
+        bind.comingSoon.setHapticClickListener { selectTab(it as TextView, false) }
 
-		bind.loader.isVisible = false
+        bind.loader.isVisible = false
 
-		viewModel.getCategory()
-		viewModel.getCategoryRepo.observe(viewLifecycleOwner) { it ->
-			when (it) {
-				is Resource.Success -> {
-					bind.loader.isVisible = false
-					bind.noInternet.isVisible = false
-					bind.noData.isVisible = false
-					viewModel.getCategoryRepo.value = null
+        viewModel.getCategory()
+        viewModel.getCategoryRepo.observe(viewLifecycleOwner) { it ->
+            when (it) {
+                is Resource.Success -> {
+                    bind.loader.isVisible = false
+                    bind.noInternet.isVisible = false
+                    bind.noData.isVisible = false
+                    viewModel.getCategoryRepo.value = null
 
-					val mData = it.value.data
-					bind.chipGroup.removeAllViews()
-					categoriesList.clear()
+                    val mData = it.value.data
+                    categoryTiles.clear()
+                    categoryTiles.add(
+                        HomeCategoryAdapter.CategoryTile(
+                            id = "for_you",
+                            title = getString(R.string.for_you_tile),
+                            iconRes = R.drawable.profile_circle,
+                            tileType = HomeCategoryAdapter.TileType.FOR_YOU,
+                            isSelected = true
+                        )
+                    )
 
-					categoriesList.add("For You")
-					categoriesList.addAll(mData?.filter { it?.isSelected == true }
-						?.map { category -> category?.name } ?: emptyList())
+                    categoryTiles.addAll(
+                        mData?.filter { data -> data?.isSelected == true }?.mapNotNull { category ->
+                            val name = category?.name ?: return@mapNotNull null
+                            HomeCategoryAdapter.CategoryTile(
+                                id = name,
+                                title = name,
+                                imageUrl = category.image,
+                                tileType = HomeCategoryAdapter.TileType.CATEGORY,
+                            )
+                        } ?: emptyList()
+                    )
 
-					categoriesList.forEach {
-						bind.chipGroup.addView(
-							Utils.makeAChip(
-								mCtx = mCtx,
-								text = it ?: "",
-								selected = false,
-								closeIconVisible = false
-							)
-						)
-					}
+                    categoryTiles.add(
+                        HomeCategoryAdapter.CategoryTile(
+                            id = "see_all",
+                            title = getString(R.string.see_all_categories_tile),
+                            iconRes = R.drawable.ic_tile_grid,
+                            tileType = HomeCategoryAdapter.TileType.SEE_ALL,
+                        )
+                    )
 
-					bind.chipGroup.check(bind.chipGroup[0].id)
+                    categoryAdapter.notifyDataSetChanged()
 
-				}
+                    val tileToSelect =
+                        categoryTiles.firstOrNull { it.id == selectedCategoryTileId && it.tileType != HomeCategoryAdapter.TileType.SEE_ALL }
+                            ?: categoryTiles.firstOrNull { it.tileType != HomeCategoryAdapter.TileType.SEE_ALL }
 
-				is Resource.Error -> {
-					if (it.isNetworkError) {
-						bind.noInternet.isVisible = true
-						bind.noData.isVisible = false
-						bind.recycler.isVisible = false
+                    tileToSelect?.let { tile ->
+                        val shouldFetch =
+                            !hasInitializedCategories || tile.id != selectedCategoryTileId
+                        handleCategorySelection(tile, shouldFetch)
+                        hasInitializedCategories = true
+                    }
 
-					} else {
-						it.parse(mCtx , TAG , object : AlertClicks {
-							override fun primaryClick(dialog : AppBottomSheet) {
-								dialog.dismiss()
+                }
 
-							}
+                is Resource.Error -> {
+                    if (it.isNetworkError) {
+                        bind.noInternet.isVisible = true
+                        bind.noData.isVisible = false
+                        bind.recycler.isVisible = false
 
-							override fun secondaryClick(dialog : AppBottomSheet) {
-								dialog.dismiss()
+                    } else {
+                        it.parse(mCtx, TAG, object : AlertClicks {
+                            override fun primaryClick(dialog: AppBottomSheet) {
+                                dialog.dismiss()
 
-							}
-						})
-					}
-				}
+                            }
 
-				else -> {}
-			}
-		}
+                            override fun secondaryClick(dialog: AppBottomSheet) {
+                                dialog.dismiss()
 
-		viewModel.getLiveShowRepo.observe(viewLifecycleOwner) { it ->
-			when (it) {
-				is Resource.Success -> {
-					bind.loader.isVisible = false
-					bind.swipeRefreshLayout.isRefreshing = false
-					bind.noInternet.isVisible = false
-					bind.noData.isVisible = false
+                            }
+                        })
+                    }
+                }
 
-					val mData = it.value.data
+                else -> {}
+            }
+        }
+
+        viewModel.getLiveShowRepo.observe(viewLifecycleOwner) { it ->
+            when (it) {
+                is Resource.Success -> {
+                    bind.loader.isVisible = false
+                    bind.swipeRefreshLayout.isRefreshing = false
+                    bind.noInternet.isVisible = false
+                    bind.noData.isVisible = false
+
+                    val mData = it.value.data
 
 //					romIdsList.clear()
-					streamList.clear()
+                    streamList.clear()
 
-					mData?.forEach {
-						streamList.add(StreamModel(it?.roomId.toString() , it?.rtcToken ?:""))
-						romIdsList.add(it?.roomId.toString())
-					}
+                    mData?.forEach {
+                        streamList.add(StreamModel(it?.roomId.toString(), it?.rtcToken ?: ""))
+                        romIdsList.add(it?.roomId.toString())
+                    }
 
-					if (page == 1) {
-						showList.clear()
-					}
+                    if (page == 1) {
+                        showList.clear()
+                    }
 
-					mData?.forEach {
-						if (it?.user != null) {
-							showList.add(it)
-						}
-					}
+                    mData?.forEach {
+                        if (it?.user != null) {
+                            showList.add(it)
+                        }
+                    }
 
-					if (showList.isEmpty()) {
-						bind.noData.isVisible = true
-						bind.recycler.isVisible = false
-						bind.noInternet.isVisible = false
+                    if (showList.isEmpty()) {
+                        bind.noData.isVisible = true
+                        bind.recycler.isVisible = false
+                        bind.noInternet.isVisible = false
 
-					} else {
-						bind.noData.isVisible = false
-						bind.recycler.isVisible = true
-						bind.noInternet.isVisible = false
-					}
+                    } else {
+                        bind.noData.isVisible = false
+                        bind.recycler.isVisible = true
+                        bind.noInternet.isVisible = false
+                    }
 
-					homeAdapter.notifyDataSetChanged()
+                    homeAdapter.notifyDataSetChanged()
 
-					isLoading = page >= (it.value.totalPage ?: 0)
+                    isLoading = page >= (it.value.totalPage ?: 0)
 
-				}
+                }
 
-				is Resource.Error -> {
-					bind.swipeRefreshLayout.isRefreshing = false
-					bind.loader.isVisible = false
+                is Resource.Error -> {
+                    bind.swipeRefreshLayout.isRefreshing = false
+                    bind.loader.isVisible = false
 
-					if (it.isNetworkError) {
-						bind.noInternet.isVisible = true
-						bind.recycler.isVisible = false
-						bind.noData.isVisible = false
-					} else {
-						it.parse(mCtx , TAG , object : AlertClicks {
-							override fun primaryClick(dialog : AppBottomSheet) {
-								dialog.dismiss()
-							}
+                    if (it.isNetworkError) {
+                        bind.noInternet.isVisible = true
+                        bind.recycler.isVisible = false
+                        bind.noData.isVisible = false
+                    } else {
+                        it.parse(mCtx, TAG, object : AlertClicks {
+                            override fun primaryClick(dialog: AppBottomSheet) {
+                                dialog.dismiss()
+                            }
 
-							override fun secondaryClick(dialog : AppBottomSheet) {
-								dialog.dismiss()
+                            override fun secondaryClick(dialog: AppBottomSheet) {
+                                dialog.dismiss()
 
-							}
-						})
-					}
-				}
+                            }
+                        })
+                    }
+                }
 
-				else -> {}
+                else -> {}
 
-			}
-		}
+            }
+        }
 
-	}
+    }
 
-	fun selectTab(selectedTab : TextView , isFirst : Boolean) {
-		val tabs = listOf(bind.live , bind.popular , bind.comingSoon)
-		tabs.forEach {
-			it.setTextAppearance(R.style.TitleMedium)
-			it.setTextColor(ContextCompat.getColor(mCtx , R.color.outlineVariant))
-		}
-		selectedTab.setTextColor(ContextCompat.getColor(mCtx , R.color.scrim))
-		selectedTab.setTextAppearance(R.style.TitleLarge)
+    private fun handleCategorySelection(
+        tile: HomeCategoryAdapter.CategoryTile,
+        shouldFetch: Boolean
+    ) {
+        if (tile.tileType == HomeCategoryAdapter.TileType.SEE_ALL) return
 
-		bind.search.setText("")
-		bind.loader.isVisible = true
+        selectedCategoryTileId = tile.id
+        selectedCategory = if (tile.tileType == HomeCategoryAdapter.TileType.FOR_YOU) {
+            "for_you"
+        } else {
+            tile.id
+        }
 
-		page = 1
+        if (shouldFetch) {
+            page = 1
+            bind.search.setText("")
+            bind.loader.isVisible = true
+            viewModel.getLiveShow(
+                selectedTabText.request(),
+                selectedCategory.request(),
+                page = page.toString().request()
+            )
+        }
+    }
 
-		when (selectedTab) {
-			bind.live -> {
-				selectedTabText = "live"
-				if (! isFirst) {
-					viewModel.getLiveShow("live".request() , selectedCategory.request() , page = page.toString().request())
-				}
-			}
+    fun selectTab(selectedTab: TextView, isFirst: Boolean) {
+        val tabs = listOf(bind.live, bind.popular, bind.comingSoon)
+        tabs.forEach {
+            it.setTextAppearance(R.style.TitleMedium)
+            it.setTextColor(ContextCompat.getColor(mCtx, R.color.outlineVariant))
+            it.typeface = android.graphics.Typeface.create(
+                android.graphics.Typeface.DEFAULT,
+                android.graphics.Typeface.NORMAL
+            )
+        }
+        selectedTab.setTextColor(ContextCompat.getColor(mCtx, R.color.scrim))
+        selectedTab.setTextAppearance(R.style.TitleMedium)
+        selectedTab.typeface = android.graphics.Typeface.create(
+            android.graphics.Typeface.DEFAULT,
+            android.graphics.Typeface.BOLD
+        )
 
-			bind.popular -> {
-				selectedTabText = "popular"
-				viewModel.getLiveShow("popular".request() , selectedCategory.request() , page = page.toString().request())
-			}
+        bind.search.setText("")
+        bind.loader.isVisible = true
 
-			bind.comingSoon -> {
-				selectedTabText = "upcoming"
-				viewModel.getLiveShow("upcoming".request() , selectedCategory.request() , page = page.toString().request())
-			}
-		}
-	}
+        page = 1
+
+        when (selectedTab) {
+            bind.live -> {
+                selectedTabText = "live"
+                if (!isFirst) {
+                    viewModel.getLiveShow(
+                        "live".request(),
+                        selectedCategory.request(),
+                        page = page.toString().request()
+                    )
+                }
+            }
+
+            bind.popular -> {
+                selectedTabText = "popular"
+                viewModel.getLiveShow(
+                    "popular".request(),
+                    selectedCategory.request(),
+                    page = page.toString().request()
+                )
+            }
+
+            bind.comingSoon -> {
+                selectedTabText = "upcoming"
+                viewModel.getLiveShow(
+                    "upcoming".request(),
+                    selectedCategory.request(),
+                    page = page.toString().request()
+                )
+            }
+        }
+    }
 
 }

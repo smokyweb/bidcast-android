@@ -3,65 +3,66 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     style="@style/cardStyle"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_margin="@dimen/half_margin">
+    android:layout_height="160dp"
+    android:layout_margin="4dp">
 
     <LinearLayout
         android:id="@+id/click"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/card_8"
-        android:gravity="center_vertical"
-        android:paddingHorizontal="@dimen/margin"
-        android:paddingVertical="16dp">
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="@dimen/half_margin"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
 
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/icon_card"
-            style="@style/cardStyle"
-            android:layout_width="56dp"
-            android:layout_height="56dp"
-            app:cardBackgroundColor="@color/primaryContainer"
-            app:cardElevation="0dp">
+        <TextView
+            android:id="@+id/title"
+            style="@style/TitleSmall"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/app_name"
+            android:textColor="@color/onSurface"
+            android:textStyle="bold" />
 
-            <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/icon"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:scaleType="centerCrop"
-                android:src="@drawable/placeholder_square" />
-
-        </com.google.android.material.card.MaterialCardView>
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/icon"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:scaleType="centerCrop"
+            android:layout_gravity="center"
+            android:src="@drawable/placeholder_square"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_marginHorizontal="@dimen/margin"
-            android:gravity="center"
-            android:layout_weight="1"
-            android:orientation="vertical">
+            android:id="@+id/viewer_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
 
-            <TextView
-                android:id="@+id/title"
-                style="@style/TitleLarge"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/app_name"
-                android:textSize="16sp" />
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/broadcast_icon"
+                android:layout_width="14dp"
+                android:layout_height="14dp"
+                android:layout_marginEnd="4dp"
+                android:background="@drawable/card_16"
+                android:backgroundTint="@color/error"
+                android:tint="@color/onError"
+                android:padding="3dp"
+                android:contentDescription="@string/live_now"
+                android:src="@drawable/ic_broadcast" />
 
             <TextView
                 android:id="@+id/sub_title"
-                style="@style/BodyMedium"
-                android:layout_width="match_parent"
+                style="@style/TextAppearance.Material3.LabelSmall"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/app_name" />
+                android:text="@string/app_name"/>
 
         </LinearLayout>
-
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/next"
-            android:layout_width="18dp"
-            android:layout_height="18dp"
-            android:src="@drawable/ic_forward" />
 
     </LinearLayout>
 

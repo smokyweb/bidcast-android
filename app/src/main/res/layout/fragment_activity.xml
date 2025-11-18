@@ -12,14 +12,15 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:headerMode="APP_TEXT_ACTION"
+        app:headerTitle="Activity"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:primaryIconDrawable="@drawable/notification"
         app:secondaryIconDrawable="@drawable/search"
-        app:showAppTitle="false"
         app:showBackButton="false"
-        app:showPrimaryIcon="true" />
+        app:showPrimaryIcon="true"
+        app:showSecondaryIcon="false" />
 
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/tab_layout"
@@ -28,14 +29,19 @@
         android:background="@color/background"
         app:layout_constraintTop_toBottomOf="@id/header"
         app:tabIndicatorColor="@color/secondary"
+        app:tabIndicatorHeight="0dp"
         app:tabMode="scrollable"
-        app:tabSelectedTextAppearance="@style/TitleMedium"
-        app:tabSelectedTextColor="@color/secondary"
+        app:tabPaddingStart="4dp"
+        app:tabPaddingEnd="4dp"
+        app:tabSelectedTextAppearance="@style/TitleLarge"
+        app:tabSelectedTextColor="@color/primary"
+        app:tabTextColor="@color/outlineVariant"
         app:tabTextAppearance="@style/TitleSmall">
 
         <com.google.android.material.tabs.TabItem
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:minWidth="0dp"
             android:text="@string/messages" />
 
         <com.google.android.material.tabs.TabItem
@@ -66,6 +72,5 @@
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tab_layout" />
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

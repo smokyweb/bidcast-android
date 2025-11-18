@@ -41,7 +41,7 @@ class Header @JvmOverloads constructor(
 
 			// Set icons
 			setBackIcon(it.getResourceId(styleable.Header_backIconDrawable , draw.ic_back))
-			setPrimaryIcon(it.getResourceId(styleable.Header_primaryIconDrawable , draw.ic_delete))
+			setPrimaryIcon(it.getResourceId(styleable.Header_primaryIconDrawable , draw.notification))
 			setSecondaryIcon(
 				it.getResourceId(
 					styleable.Header_secondaryIconDrawable ,
@@ -154,13 +154,17 @@ class Header @JvmOverloads constructor(
 			bind.backIcon.visibility = VISIBLE
 		} else {
 			bind.backIcon.isEnabled = false
-			bind.back.visibility = GONE
-			bind.backIcon.visibility = GONE
+			bind.back.visibility = INVISIBLE
+			bind.backIcon.visibility =  INVISIBLE
 			bind.appText.setPadding(20 , 0 , 0 , 0)
 		}
 	}
 
 	fun background(color : Int) {
 		bind.header.setBackgroundColor(ContextCompat.getColor(context , color))
+	}
+
+	fun hideLogo() {
+		bind.appText.visibility = GONE
 	}
 }
