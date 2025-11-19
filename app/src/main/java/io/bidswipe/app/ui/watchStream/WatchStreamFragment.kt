@@ -86,7 +86,6 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 	private var currentPoll: PollModel? = null
 	private var pollSheet: BottomSheetDialog? = null
 	private var pollSheetBinding: PollDetailsSheetBinding? = null
-	private lateinit var livePollOptionAdapter: LivePollOptionAdapter
 	private var livePollOptionList = mutableListOf<PollModel.PollOption>()
 	private lateinit var livePollAdapter : LivePollOptionAdapter
 
@@ -150,8 +149,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
 				log("OPTION CLICKED: $pos")
 
-				voteOnPoll(pos-1)
-
+				voteOnPoll(pos)
 
 			}
 		})
@@ -290,6 +288,14 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 					val targetRoomId = obj.optString("target_room_id")
 					val rtcToken = obj.optString("rtcToken")
 					onRaid(targetRoomId, rtcToken)
+				}
+			}
+		}
+
+		socketManager?.onVoteErrorResult { obj ->
+			requireActivity().runOnUiThread {
+				if (obj.optString("roomId") == roomID) {
+					Alerts.error(mCtx,"Vote failed")
 				}
 			}
 		}
@@ -1067,7 +1073,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 		// Listen for poll creation
 		socketManager?.onPollCreated { json ->
 			runSafe {
-				if (json.optString("room_id") == roomID) {
+				if (json.optString("roomId") == roomID) {
 					requireActivity().runOnUiThread {
 						currentPoll = PollModel.fromJson(json)
 						showPollCard()
@@ -1082,6 +1088,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 			runSafe {
 				requireActivity().runOnUiThread {
 					currentPoll = PollModel.fromJson(json)
+					showPollCard()
 					updatePollUI() // Update poll card preview
 					updatePollSheet() // Update poll details sheet if open
 				}
@@ -1093,12 +1100,13 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 		socketManager?.onPollEnded { json ->
 			runSafe {
 				requireActivity().runOnUiThread {
-					currentPoll = null
-					hidePollCard()
-					pollSheet?.dismiss()
-					pollSheetBinding = null
+					if (json.optString("roomId") == roomID) {
+						currentPoll = null
+						hidePollCard()
+						pollSheet?.dismiss()
+						pollSheetBinding = null
+					}
 				}
-
 			}
 		}
 
@@ -1136,8 +1144,8 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
 	private fun updatePollUI() {
 		currentPoll?.let { poll ->
-			requireActivity().runOnUiThread {
-//				bind.pollQuestionPreview.text = poll.question ?: "Poll Question"
+			if (poll.roomId == roomID) {
+				bind.pollQuestionPreview.text = poll.question ?: "Poll Question"
 				bind.pollTimerPreview.text = poll.remainingTime ?: "00:00 remaining"
 				bind.pollTotalVotesPreview.text = "${poll.totalVotes} ${if (poll.totalVotes == 1) "vote" else "votes"}"
 			}
@@ -1148,7 +1156,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
 		log("SHOW POLL DETAILS")
 
-		val pollDetailSheetBind = PollDetailsSheetBinding.bind(
+		pollSheetBinding = PollDetailsSheetBinding.bind(
 			layoutInflater.inflate(
 				R.layout.poll_details_sheet,
 				null,
@@ -1156,23 +1164,16 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 			)
 		)
 
-		val pollSheet = Alerts.appBottomSheet(mCtx, true, pollDetailSheetBind)
+		val pollSheet = Alerts.appBottomSheet(mCtx, true, pollSheetBinding!!)
 
 		livePollOptionList.clear()
+		livePollOptionList.addAll(currentPoll?.options ?: mutableListOf())
 
-		repeat(4){
-			livePollOptionList.add(PollModel.PollOption(
-				text = "Option ${it + 1}",
-				voteCount = 57,
-				isSelected = false
-			))
-		}
+		pollSheetBinding?.optionRecycler?.adapter = livePollAdapter
 
-		pollDetailSheetBind.optionRecycler.adapter = livePollAdapter
+		pollSheetBinding?.endPollBtn?.isVisible = false
 
-		pollDetailSheetBind.endPollBtn.isVisible = false
-
-		pollDetailSheetBind.close.setHapticClickListener {
+		pollSheetBinding?.close?.setHapticClickListener {
 			pollSheet.dismiss()
 		}
 
@@ -1184,55 +1185,25 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 		pollSheetBinding?.let { binding ->
 			// Update poll header data
 
-			val elapsedSeconds = poll.remainingTime?.toLongOrNull() ?: 0L
-			val formattedTime = "%02d:%02d:%02d".format(
-				elapsedSeconds / 3600,
-				(elapsedSeconds / 60) % 60,
-				elapsedSeconds % 60
-			)
-
 			binding.pollQuestionDetail.text = poll.question ?: "No question"
-			binding.pollTimerDetail.text = formattedTime ?: "00:00 remaining"
+			binding.pollTimerDetail.text = poll.remainingTime ?: "00:00 remaining"
 			binding.pollTotalVotesDetail.text = "${poll.totalVotes} total votes"
 			
-			// Update adapter if initialized
-			if (::livePollOptionAdapter.isInitialized) {
+			if (::livePollAdapter.isInitialized) {
 				livePollOptionList.clear()
 				livePollOptionList.addAll(poll.options)
-				livePollOptionAdapter.notifyDataSetChanged()
+				livePollAdapter.notifyDataSetChanged()
 			}
 		}
-	}
-
-	private fun updatePollSheetData(binding: PollDetailsSheetBinding, poll: PollModel) {
-		binding.pollQuestionDetail.text = poll.question ?: "No question"
-		binding.pollTimerDetail.text = poll.remainingTime ?: "00:00 remaining"
-		binding.pollTotalVotesDetail.text = "${poll.totalVotes} total votes"
-
-		// Update adapter with new data
-		livePollOptionList.clear()
-		livePollOptionList.addAll(poll.options)
-		livePollOptionAdapter.notifyDataSetChanged()
-		binding.optionRecycler.adapter = livePollOptionAdapter
 	}
 
 	private fun voteOnPoll(optionIndex: Int) {
 		val poll = currentPoll ?: return
 
-		if (poll.userVotedOption != null) {
-			Alerts.error(mCtx, "You have already voted on this poll")
-			return
-		}
-
-		if (!poll.isActive) {
-			Alerts.error(mCtx, "This poll has ended")
-			return
-		}
-
 		// Emit vote
 		socketManager?.votePoll(
 			roomId = roomID,
-			pollId = poll.pollId?.toString() ?: "",
+			pollId = poll.pollId ?: 0,
 			optionIndex = optionIndex,
 			userId = userId
 		)

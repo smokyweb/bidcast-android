@@ -463,12 +463,14 @@ class SocketManager private constructor(
 		}
 	}
 
-	fun votePoll(roomId: String, pollId: String, optionIndex: Int, userId: String) {
+	fun votePoll(roomId: String, pollId: Int, optionIndex: Int, userId: String) {
 		val payload = JSONObject().apply {
 			put("poll_id", pollId)
 			put("option_index", optionIndex)
 			put("user_id", userId)
+			put("room_id", roomId)
 		}
+
 		Log.d(TAG, "EMIT: vote_poll - RoomId: $roomId, PollId: $pollId, OptionIndex: $optionIndex")
 		socket?.emit("vote_poll", payload)
 	}
@@ -482,6 +484,27 @@ class SocketManager private constructor(
 				listener(obj)
 			}
 		}
+	}
+
+	fun onVoteErrorResult(listener: (resultJson: JSONObject) -> Unit) {
+		socket?.off("vote_error")
+		socket?.on("vote_error") { args ->
+			val obj = args.firstOrNull()
+			if (obj is JSONObject) {
+				Log.d(TAG, "RECEIVED: vote_error - $obj")
+				listener(obj)
+			}
+		}
+	}
+
+	fun endPoll(roomId: String, pollId: String) {
+		val payload = JSONObject().apply {
+			put("poll_id", pollId)
+			put("room_id", roomId)
+		}
+
+		Log.d(TAG, "EMIT: end_poll - RoomId: $roomId, PollId: $pollId")
+		socket?.emit("end_poll", payload)
 	}
 
 }

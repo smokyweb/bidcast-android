@@ -191,6 +191,7 @@ class AgoraPublisherActivity : BaseActivity() {
 
 		livePollAdapter = LivePollOptionAdapter(livePollOptionList, object : RecyclerClicks {
 			override fun itemClick(pos: Int, status: String?) {
+
 			}
 		})
 
@@ -454,10 +455,12 @@ class AgoraPublisherActivity : BaseActivity() {
 		socketManager?.onPollCreated { json ->
 			runSafe {
 				runOnUiThread {
-					currentPoll = PollModel.fromJson(json)
-					showPollCard()
-					updatePollUI()
-					updatePollSheet()
+					if (json.optString("roomId") == roomID) {
+						currentPoll = PollModel.fromJson(json)
+						showPollCard()
+						updatePollUI()
+						updatePollSheet()
+					}
 				}
 
 			}
@@ -477,7 +480,7 @@ class AgoraPublisherActivity : BaseActivity() {
 		// Listen for poll ended
 		socketManager?.onPollEnded { json ->
 			runSafe {
-				if (json.optString("room_id") == roomID) {
+				if (json.optString("roomId") == roomID) {
 					runOnUiThread {
 						currentPoll = null
 						hidePollCard()
@@ -964,7 +967,11 @@ class AgoraPublisherActivity : BaseActivity() {
 						3 -> {
 							moreSheet.dismiss()
 							if (isShowLive) {
-								createPollSheet()
+								if (currentPoll == null){
+									createPollSheet()
+								}else{
+									Alerts.error(this@AgoraPublisherActivity, "Poll already created")
+								}
 							} else {
 								Alerts.error(this@AgoraPublisherActivity, "Please start live show to create a poll")
 							}
@@ -1233,18 +1240,16 @@ class AgoraPublisherActivity : BaseActivity() {
 		val pollSheet = Alerts.appBottomSheet(this, true, pollSheetBinding!!)
 
 		livePollOptionList.clear()
-
-		repeat(4){
-			livePollOptionList.add(PollModel.PollOption(
-				text = "Option ${it + 1}",
-				voteCount = 57,
-				isSelected = false
-			))
-		}
+		livePollOptionList.addAll(currentPoll?.options ?: mutableListOf())
 
 		pollSheetBinding?.optionRecycler?.adapter = livePollAdapter
 
 		pollSheetBinding?.close?.setHapticClickListener {
+			pollSheet.dismiss()
+		}
+
+		pollSheetBinding?.endPollBtn?.setHapticClickListener {
+			socketManager?.endPoll(roomID, currentPoll?.pollId.toString())
 			pollSheet.dismiss()
 		}
 

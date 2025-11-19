@@ -2,7 +2,6 @@ package io.bidswipe.app.controller
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.core.view.isVisible
 import io.bidswipe.app.base.BaseAdapter
 import io.bidswipe.app.databinding.PollOptionItemBinding
 import io.bidswipe.app.interfaces.RecyclerClicks
@@ -30,17 +29,15 @@ class LivePollOptionAdapter(
 				bind.optionProgress.progress = option.percentage
 				bind.optionCount.text = "${option.voteCount} ${if (option.voteCount == 1) "vote" else "votes"}"
 
-				// Show selected icon if user voted for this option
+				/*// Show selected icon if user voted for this option
 				bind.selectedIcon.isVisible = option.isSelected
 
 				// Make clickable only if user hasn't voted and voting is allowed
 				bind.root.isClickable = canVote && !option.isSelected
 				bind.root.isFocusable = canVote && !option.isSelected
-
-				bind.root.setHapticClickListener {
-					if (canVote && !option.isSelected) {
+*/
+				bind.option.setHapticClickListener {
 						mClicks.itemClick(position)
-					}
 				}
 			}
 		}
