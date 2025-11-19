@@ -16,6 +16,8 @@ import androidx.lifecycle.viewModelScope
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.ncorti.slidetoact.SlideToActView
 import com.ncorti.slidetoact.SlideToActView.OnSlideCompleteListener
+import com.zerobranch.layout.SwipeLayout
+import com.zerobranch.layout.SwipeLayout.SwipeActionsListener
 import io.agora.rtc2.video.VideoCanvas
 import io.bidswipe.app.App
 import io.bidswipe.app.R
@@ -39,6 +41,7 @@ import io.bidswipe.app.ui.custom.AlertType
 import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.ui.more.MoreActivity
 import io.bidswipe.app.ui.more.TrustedBuyerActivity
+import io.bidswipe.app.ui.product.ProductDetailsActivity
 import io.bidswipe.app.utils.Alerts
 import io.bidswipe.app.utils.Const
 import io.bidswipe.app.utils.SocketManager
@@ -58,6 +61,7 @@ import io.bidswipe.app.utils.value
 import kotlinx.coroutines.launch
 import org.json.JSONObject
 import kotlin.math.abs
+
 
 @SuppressLint("NotifyDataSetChanged")
 class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBinding>() {
@@ -142,7 +146,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 			return@setOnTouchListener false
 		}
 
-		commentAdapter = CommentAdapter(commentList)
+		commentAdapter = CommentAdapter(commentList,roomID.split("_")[2]?:"0")
 
 		livePollAdapter = LivePollOptionAdapter(livePollOptionList, object : RecyclerClicks {
 			override fun itemClick(pos: Int, status: String?) {
@@ -186,14 +190,9 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
 						if (json.optString("room_id") == roomID) {
 							val products = LiveShowModel.fromJson(json)
-
-							updateProductUI(products.products.find { it?.isCurrent == true })
-
-							bind.bid.text = "Swipe to Bid ${
-								newBidAmount(
-									products.products.find { it?.isCurrent == true }?.price?.toDoubleOrNull()?.toInt() ?: 0
-								).toString().asMoney()
-							}"
+							val currentProduct = products.products.find { it?.isCurrent == true }
+							updateProductUI(currentProduct)
+							setBidText(currentProduct?.price)
 						}
 
 					}
@@ -572,8 +571,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 					val highestBid = json.getJSONObject("get_highest_bid")
 					val bidAmount = highestBid.optString("bid_amount")
 					log("BID UPDATE: $bidAmount")
-					bind.bidPrice.text = bidAmount.asMoney()
-					bind.bid.text = "Swipe to Bid ${newBidAmount(bidAmount.toDoubleOrNull()?.toInt() ?: 0).toString().asMoney()}"
+					setBidText(bidAmount)
 					highestBidAmount = bidAmount
 					bidProductId = highestBid.optString("product_id")
 				}
@@ -582,7 +580,12 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 		}
 	}
 
-	fun newBidAmount(amount: Int): Int {
+	private fun setBidText(bidAmount: String?) {
+		bind.bidPrice.text = bidAmount?.asMoney()
+		bind.bidButton.text = "Bid : ${newBidAmount(bidAmount?.toDoubleOrNull()?.toInt() ?: 0).toString().asMoney()} >>"
+	}
+
+	private fun newBidAmount(amount: Int): Int {
 
 		log("NEW BID AMOUNT: $amount")
 
@@ -598,7 +601,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 		}
 	}
 
-	fun updateProductUI(liveProduct: LiveShowModel.Product?) {
+	private fun updateProductUI(liveProduct: LiveShowModel.Product?) {
 
 		activity?.runOnUiThread {
 			if (liveProduct != null) {
@@ -613,10 +616,15 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 				}
 				bind.productImage.loadUrl(mCtx, liveProduct.image ?: "")
 				val price = liveProduct.price
-				bind.bidPrice.text = price?.asMoney()
+				bind.price.text = price?.asMoney() ?: "0.0" +"Shipping + Taxes"
+
 				highestBidAmount = price
 				bidProductId = liveProduct.id
+				setBidText(highestBidAmount)
 
+				bind.productLayout.setHapticClickListener {
+					startActivity(Intent(mCtx , ProductDetailsActivity::class.java).putExtra("productId" , liveProduct.id.toString()))
+				}
 
 			} else {
 				bind.soldLayout.isVisible = true
@@ -643,10 +651,10 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 			if (showData.highestBid.bidAmount?.isNotEmpty() == true) {
 				highestBidAmount = showData.highestBid.bidAmount
 				log("HIGHEST BID: $highestBidAmount")
-				bind.bid.text = "Swipe to Bid ${newBidAmount(highestBidAmount?.toDoubleOrNull()?.toInt() ?: 0).toString().asMoney()}"
+				setBidText(highestBidAmount)
 			} else {
 				highestBidAmount = ""
-				bind.bid.text = "Swipe to Bid ${newBidAmount(liveProduct?.price?.toDoubleOrNull()?.toInt() ?: 0).toString().asMoney()}"
+				setBidText((liveProduct?.price?.toDoubleOrNull()?.toInt() ?: 0).toString())
 			}
 
 			updateProductUI(liveProduct)
@@ -656,6 +664,8 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 			sellerId = showData.seller?.id.toString()
 
 			bind.userName.text = showData.seller?.name?.asCapital()
+			bind.rating.text = showData.seller?.rating?.ifEmpty { "0.0"}
+
 			bind.userImage.loadUrl(mCtx, showData.seller?.image ?: "")
 
 			bind.liveCount.text = showData.viewerCount
@@ -666,7 +676,32 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
 			log("ALLOW BID FOR ALL: $isAllowBidForAll")
 
-			bind.bid.onSlideCompleteListener = object : OnSlideCompleteListener {
+			bind.bidSwipeLayout.setOnActionsListener(object : SwipeActionsListener {
+				override fun onOpen(direction: Int, isContinuous: Boolean) {
+					if (direction == SwipeLayout.RIGHT) {
+						if (App.profileResponse.value?.hasShippingAddress == true && App.profileResponse.value?.hasCardAdded == true) {
+
+							if (isAllowBidForAll) {
+								attemptBid()
+							} else {
+								if (App.profileResponse.value?.buyerIdentityStatus == "verified") {
+									attemptBid()
+								} else {
+									verificationDialog()
+								}
+							}
+						} else {
+							showPaymentAndAddressSheet()
+						}
+					}
+				}
+
+				override fun onClose() {
+					// the main view has returned to the default state
+				}
+			});
+
+			bind.bid1.onSlideCompleteListener = object : OnSlideCompleteListener {
 				override fun onSlideComplete(view: SlideToActView) {
 
 					if (App.profileResponse.value?.hasShippingAddress == true && App.profileResponse.value?.hasCardAdded == true) {
@@ -797,7 +832,9 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 					userName,
 					userImage
 				)*/
-			bind.bid.setCompleted(completed = false, withAnimation = true)
+			bind.bid1.setCompleted(completed = false, withAnimation = true)
+			bind.bidSwipeLayout.close()
+
 		}
 	}
 
@@ -881,7 +918,8 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 			makeOfferSheet.dismiss()
 		}
 
-		bind.bid.setCompleted(completed = false, withAnimation = true)
+		bind.bid1.setCompleted(completed = false, withAnimation = true)
+		bind.bidSwipeLayout.close()
 
 		makeOfferSheet.show()
 

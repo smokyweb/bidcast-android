@@ -6,20 +6,10 @@
     android:layout_height="match_parent"
     tools:context=".ui.watchStream.WatchStreamFragment">
 
-    <!--    <TextureView
-            android:id="@+id/hostView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />-->
-
-<!--    <com.millicast.video.TextureViewRenderer
+    <FrameLayout
         android:id="@+id/hostView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />-->
-
-    <FrameLayout
-        android:id = "@+id/hostView"
-        android:layout_width = "match_parent"
-        android:layout_height = "match_parent"/>
+        android:layout_height="match_parent" />
 
     <ViewFlipper
         android:id="@+id/view_flipper"
@@ -29,14 +19,13 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/controls_view"
             android:layout_width="match_parent"
-            android:background="@drawable/center_gradient"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:background="@drawable/center_gradient">
 
             <LinearLayout
                 android:id="@+id/profileLayout"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:gravity="center_vertical"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
@@ -44,8 +33,8 @@
                 <com.google.android.material.card.MaterialCardView
                     android:id="@+id/icon_card"
                     style="@style/cardStyle"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
+                    android:layout_width="42dp"
+                    android:layout_height="42dp"
                     app:cardCornerRadius="100dp"
                     app:cardElevation="0dp">
 
@@ -67,23 +56,67 @@
 
                     <TextView
                         android:id="@+id/userName"
-                        style="@style/TitleLarge"
+                        style="@style/TitleMedium"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="@string/username"
                         android:textColor="@color/surface"
                         android:textSize="16sp" />
 
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/follow"
-                        style="@style/appBtn"
-                        android:layout_width="wrap_content"
+                    <LinearLayout
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginEnd="@dimen/half_margin"
-                        android:minHeight="0dp"
-                        android:padding="6dp"
-                        android:text="Follow"
-                        android:textSize="14sp" />
+                        android:layout_marginEnd="@dimen/half_margin">
+
+                        <TextView
+                            android:id="@+id/rating"
+                            style="@style/TitleSmall"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:drawableStart="@drawable/ic_star"
+                            android:drawablePadding="2dp"
+                            android:drawableTint="@color/onPrimary"
+                            android:gravity="center_vertical"
+                            android:text="5.0"
+                            android:textColor="@color/onPrimary" />
+
+                        <TextView
+                            style="@style/TitleSmall"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginHorizontal="2dp"
+                            android:gravity="center_vertical"
+                            android:text="•"
+                            android:textColor="@color/onPrimary" />
+
+
+                        <TextView
+                            android:id="@+id/shipping"
+                            style="@style/TitleSmall"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="@dimen/half_margin"
+                            android:drawableStart="@drawable/ic_shipping"
+                            android:drawablePadding="2dp"
+                            android:drawableTint="@color/onPrimary"
+                            android:gravity="center_vertical"
+                            android:text="1d"
+                            android:textColor="@color/onPrimary" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/follow"
+                            style="@style/appBtn"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:minWidth="0dp"
+                            android:minHeight="0dp"
+                            android:paddingHorizontal="12dp"
+                            android:paddingVertical="2dp"
+                            android:text="Follow"
+                            android:textSize="14sp"
+                            app:cornerRadius="24dp" />
+                    </LinearLayout>
+
 
                 </LinearLayout>
 
@@ -93,19 +126,28 @@
                     style="@style/appTonalBtn"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="bottom"
                     android:layout_marginEnd="@dimen/half_margin"
-                    android:minWidth="45dp"
+                    android:minWidth="0dp"
                     android:minHeight="0dp"
-                    android:padding="6dp"
-                    android:paddingHorizontal="@dimen/half_margin"
+                    android:paddingHorizontal="8dp"
+                    android:paddingVertical="4dp"
                     android:text="0"
-                    android:textSize="14sp" />
+                    android:textSize="12sp"
+                    app:backgroundTint="@color/black25"
+                    app:cornerRadius="24dp"
+                    app:icon="@drawable/ic_broadcast"
+                    app:iconPadding="2dp"
+                    app:iconSize="20sp"
+                    app:iconTint="@null" />
 
                 <com.google.android.material.card.MaterialCardView
                     android:id="@+id/rehearsal"
                     style="@style/cardStyle"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
+                    android:layout_gravity="bottom"
+                    app:cardBackgroundColor="@color/black25"
                     app:cardCornerRadius="100dp"
                     app:cardElevation="0dp">
 
@@ -113,8 +155,9 @@
                         android:id="@+id/cutButton"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:padding="12dp"
-                        android:src="@drawable/close_ic" />
+                        android:padding="6dp"
+                        android:src="@drawable/ic_down"
+                        android:tint="@color/surface" />
 
                 </com.google.android.material.card.MaterialCardView>
 
@@ -154,21 +197,53 @@
                             android:gravity="bottom"
                             android:orientation="horizontal">
 
-                            <androidx.recyclerview.widget.RecyclerView
-                                android:id="@+id/recycler"
+                            <LinearLayout
                                 android:layout_width="0dp"
-                                android:layout_height="200dp"
-                                android:layout_gravity="bottom"
-                                android:layout_marginEnd="32dp"
+                                android:layout_height="wrap_content"
                                 android:layout_weight="1"
-                                android:nestedScrollingEnabled="true"
-                                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                                app:layout_constraintBottom_toTopOf="@id/message"
-                                app:layout_constraintDimensionRatio="1:1"
-                                app:reverseLayout="false"
-                                app:stackFromEnd="true"
-                                tools:itemCount="10"
-                                tools:listitem="@layout/live_comment_item" />
+                                android:orientation="vertical">
+
+                                <androidx.recyclerview.widget.RecyclerView
+                                    android:id="@+id/recycler"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="200dp"
+                                    android:layout_gravity="bottom"
+                                    android:layout_marginEnd="32dp"
+                                    android:nestedScrollingEnabled="true"
+                                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                                    app:layout_constraintBottom_toTopOf="@id/message"
+                                    app:layout_constraintDimensionRatio="1:1"
+                                    app:reverseLayout="false"
+                                    app:stackFromEnd="true"
+                                    tools:itemCount="10"
+                                    tools:listitem="@layout/live_comment_item" />
+
+                                <com.google.android.material.textfield.TextInputLayout
+                                    android:id="@+id/message"
+                                    style="@style/inputBoxStyle"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginHorizontal="@dimen/margin"
+                                    android:layout_marginBottom="@dimen/half_margin"
+                                    app:boxBackgroundColor="@color/transparent"
+                                    app:boxStrokeColor="@color/input_box_stroke_color_surface"
+                                    app:endIconDrawable="@drawable/ic_forward"
+                                    app:endIconMode="custom"
+                                    app:layout_constraintBottom_toTopOf="@+id/product">
+
+                                    <com.google.android.material.textfield.MaterialAutoCompleteTextView
+                                        android:id="@+id/text"
+                                        style="@style/inputTextStyle"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:hint="@string/say_something"
+                                        android:inputType="text"
+                                        android:textColor="@color/surface"
+                                        android:textColorHint="@color/surfaceVariant" />
+
+                                </com.google.android.material.textfield.TextInputLayout>
+
+                            </LinearLayout>
 
                             <LinearLayout
                                 android:layout_width="wrap_content"
@@ -186,6 +261,7 @@
                                     android:layout_width="48dp"
                                     android:layout_height="48dp"
                                     android:layout_marginBottom="@dimen/half_margin"
+                                    app:cardBackgroundColor="@color/transparent"
                                     app:cardCornerRadius="100dp"
                                     app:cardElevation="0dp">
 
@@ -193,8 +269,8 @@
                                         android:layout_width="match_parent"
                                         android:layout_height="match_parent"
                                         android:padding="12dp"
-                                        android:src="@drawable/ic_gift"
-                                        android:tint="@color/scrim" />
+                                        android:src="@drawable/ic_gift_outlined"
+                                        android:tint="@color/surface" />
 
                                 </com.google.android.material.card.MaterialCardView>
 
@@ -205,6 +281,7 @@
                                     android:layout_width="48dp"
                                     android:layout_height="48dp"
                                     android:layout_marginBottom="@dimen/half_margin"
+                                    app:cardBackgroundColor="@color/transparent"
                                     app:cardCornerRadius="100dp"
                                     app:cardElevation="0dp">
 
@@ -212,49 +289,84 @@
                                         android:layout_width="match_parent"
                                         android:layout_height="match_parent"
                                         android:padding="12dp"
-                                        android:src="@drawable/ic_clip"
-                                        android:tint="@color/scrim" />
+                                        android:src="@drawable/ic_clip_new"
+                                        android:tint="@color/surface" />
 
                                 </com.google.android.material.card.MaterialCardView>
 
-
-                                <com.google.android.material.card.MaterialCardView
+                                <LinearLayout
                                     android:id="@+id/share"
-                                    style="@style/cardStyle"
-                                    android:layout_width="48dp"
-                                    android:layout_height="48dp"
-                                    android:layout_marginBottom="@dimen/half_margin"
-                                    app:cardCornerRadius="100dp"
-                                    app:cardElevation="0dp">
+                                    android:layout_width="wrap_content"
+                                    android:orientation="vertical"
+                                    android:layout_height="wrap_content">
 
                                     <androidx.appcompat.widget.AppCompatImageView
-                                        android:layout_width="match_parent"
-                                        android:layout_height="match_parent"
-                                        android:padding="12dp"
-                                        android:src="@drawable/share_arrow"
-                                        android:tint="@color/scrim" />
+                                        android:layout_width="28dp"
+                                        android:layout_height="28dp"
+                                        android:src="@drawable/share"
+                                        android:tint="@color/surface" />
 
-                                </com.google.android.material.card.MaterialCardView>
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="Share"
+                                        style="@style/LabelMedium"
+                                        android:textColor="@color/surface"
+                                        />
 
-                                <com.google.android.material.card.MaterialCardView
-                                    android:id="@+id/wallet"
-                                    style="@style/cardStyle"
-                                    android:layout_width="48dp"
-                                    android:layout_height="48dp"
-                                    android:layout_marginBottom="@dimen/half_margin"
-                                    app:cardCornerRadius="100dp"
-                                    app:cardElevation="0dp">
+                                </LinearLayout>
 
-                                    <androidx.appcompat.widget.AppCompatImageView
-                                        android:layout_width="match_parent"
-                                        android:layout_height="match_parent"
-                                        android:padding="12dp"
-                                        android:src="@drawable/ic_walllet"
-                                        android:tint="@color/scrim" />
+                                <LinearLayout
+                                        android:id="@+id/share"
+                                        android:layout_width="wrap_content"
+                                        android:orientation="vertical"
+                                        android:layout_height="wrap_content">
 
-                                </com.google.android.material.card.MaterialCardView>
+                                        <androidx.appcompat.widget.AppCompatImageView
+                                            android:layout_width="28dp"
+                                            android:layout_height="28dp"
+                                            android:src="@drawable/share"
+                                            android:tint="@color/surface" />
+
+                                        <TextView
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:text="Share"
+                                            style="@style/LabelMedium"
+                                            android:textColor="@color/surface"
+                                            />
+
+                                    </LinearLayout>
+
+                                    <LinearLayout
+                                        android:id="@+id/wallet"
+                                        android:layout_width="wrap_content"
+                                        android:orientation="vertical"
+                                        android:layout_height="wrap_content">
+
+                                        <androidx.appcompat.widget.AppCompatImageView
+                                            android:layout_width="28dp"
+                                            android:layout_height="28dp"
+                                            android:src="@drawable/ic_wallet_outlined"
+                                            android:tint="@color/surface" />
+
+                                        <TextView
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:text="Wallet"
+                                            style="@style/LabelMedium"
+                                            android:textColor="@color/surface"
+                                            />
+
+                                    </LinearLayout>
+
 
                                 <androidx.constraintlayout.widget.ConstraintLayout
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content">
+
+                                </androidx.constraintlayout.widget.ConstraintLayout>
+   <androidx.constraintlayout.widget.ConstraintLayout
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content">
 
@@ -290,9 +402,10 @@
                                         android:backgroundTint="@color/primary"
                                         android:gravity="center"
                                         android:text="1"
+                                        android:layout_marginTop=""
                                         android:textColor="@color/onError"
-                                        app:layout_constraintTop_toTopOf="@id/shop"
-                                        app:layout_constraintEnd_toEndOf="parent"/>
+                                        app:layout_constraintEnd_toEndOf="parent"
+                                        app:layout_constraintTop_toTopOf="parent" />
 
 
                                 </androidx.constraintlayout.widget.ConstraintLayout>
@@ -301,54 +414,30 @@
 
                         </LinearLayout>
 
-                        <com.google.android.material.textfield.TextInputLayout
-                            android:id="@+id/message"
-                            style="@style/inputBoxStyle"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginHorizontal="@dimen/margin"
-                            android:layout_marginVertical="@dimen/margin"
-                            app:boxBackgroundColor="@color/black25"
-                            app:boxStrokeWidth="0dp"
-                            app:endIconDrawable="@drawable/ic_forward"
-                            app:endIconMode="custom"
-                            app:layout_constraintBottom_toTopOf="@+id/product">
-
-                            <com.google.android.material.textfield.MaterialAutoCompleteTextView
-                                android:id="@+id/text"
-                                style="@style/inputTextStyle"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:hint="@string/say_something"
-                                android:inputType="text"
-                                android:textColor="@color/surface" />
-
-                        </com.google.android.material.textfield.TextInputLayout>
-
                         <com.google.android.material.card.MaterialCardView
                             android:id="@+id/poll"
                             style="@style/cardStyle"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:backgroundTint="@color/black25"
-                            android:layout_marginBottom="@dimen/margin"
                             android:layout_marginHorizontal="@dimen/margin"
+                            android:layout_marginBottom="@dimen/margin"
+                            android:backgroundTint="@color/black25"
                             android:visibility="gone">
 
                             <LinearLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
+                                android:gravity="center_vertical"
                                 android:orientation="horizontal"
-                                android:padding="@dimen/half_margin"
-                                android:gravity="center_vertical">
+                                android:padding="@dimen/half_margin">
 
                                 <com.google.android.material.card.MaterialCardView
                                     style="@style/cardStyle"
                                     android:layout_width="48dp"
                                     android:layout_height="48dp"
+                                    android:backgroundTint="@color/primaryContainer"
                                     app:cardCornerRadius="12dp"
-                                    app:cardElevation="0dp"
-                                    android:backgroundTint="@color/primaryContainer">
+                                    app:cardElevation="0dp">
 
                                     <androidx.appcompat.widget.AppCompatImageView
                                         android:layout_width="match_parent"
@@ -362,8 +451,8 @@
                                 <LinearLayout
                                     android:layout_width="0dp"
                                     android:layout_height="wrap_content"
-                                    android:layout_weight="1"
                                     android:layout_marginStart="@dimen/margin"
+                                    android:layout_weight="1"
                                     android:orientation="vertical">
 
                                     <TextView
@@ -371,17 +460,17 @@
                                         style="@style/TitleMedium"
                                         android:layout_width="match_parent"
                                         android:layout_height="wrap_content"
-                                        android:text="What do you prefer?"
-                                        android:textColor="@color/surface"
+                                        android:ellipsize="end"
                                         android:maxLines="1"
-                                        android:ellipsize="end" />
+                                        android:text="What do you prefer?"
+                                        android:textColor="@color/surface" />
 
                                     <LinearLayout
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
                                         android:layout_marginTop="4dp"
-                                        android:orientation="horizontal"
-                                        android:gravity="center_vertical">
+                                        android:gravity="center_vertical"
+                                        android:orientation="horizontal">
 
                                         <TextView
                                             android:id="@+id/pollTimerPreview"
@@ -396,18 +485,18 @@
                                             android:layout_width="4dp"
                                             android:layout_height="4dp"
                                             android:layout_marginHorizontal="8dp"
+                                            android:alpha="0.5"
                                             android:background="@drawable/card_16"
-                                            android:backgroundTint="@color/surface"
-                                            android:alpha="0.5" />
+                                            android:backgroundTint="@color/surface" />
 
                                         <TextView
                                             android:id="@+id/pollTotalVotesPreview"
                                             style="@style/BodySmall"
                                             android:layout_width="wrap_content"
                                             android:layout_height="wrap_content"
+                                            android:alpha="0.7"
                                             android:text="125 votes"
                                             android:textColor="@color/surface"
-                                            android:alpha="0.7"
                                             android:textSize="12sp" />
 
                                     </LinearLayout>
@@ -418,9 +507,9 @@
                                     android:layout_width="18dp"
                                     android:layout_height="18dp"
                                     android:layout_marginStart="@dimen/half_margin"
+                                    android:alpha="0.7"
                                     android:src="@drawable/ic_forward"
-                                    android:tint="@color/surface"
-                                    android:alpha="0.7" />
+                                    android:tint="@color/surface" />
 
                             </LinearLayout>
 
@@ -433,7 +522,9 @@
                             android:layout_height="wrap_content"
                             android:layout_marginHorizontal="@dimen/margin"
                             android:layout_marginBottom="@dimen/margin"
-                            android:backgroundTint="@color/black25"
+                            android:backgroundTint="@color/transparent"
+                            android:elevation="0dp"
+                            app:cardElevation="0dp"
                             app:layout_constraintBottom_toTopOf="@id/bidLayout"
                             app:layout_constraintStart_toStartOf="parent">
 
@@ -441,14 +532,13 @@
                                 android:id="@+id/product_layout"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:layout_margin="@dimen/half_margin"
                                 android:orientation="horizontal">
 
                                 <com.google.android.material.card.MaterialCardView
                                     style="@style/cardStyle"
-                                    android:layout_width="80dp"
-                                    android:layout_height="80dp"
-                                    app:cardCornerRadius="10dp"
+                                    android:layout_width="72dp"
+                                    android:layout_height="72dp"
+                                    app:cardCornerRadius="8dp"
                                     app:cardElevation="0dp">
 
                                     <androidx.appcompat.widget.AppCompatImageView
@@ -463,34 +553,70 @@
                                 <LinearLayout
                                     android:layout_width="0dp"
                                     android:layout_height="match_parent"
-                                    android:layout_marginHorizontal="@dimen/half_margin"
+                                    android:layout_marginStart="@dimen/half_margin"
                                     android:layout_weight="1"
                                     android:gravity="center_vertical"
                                     android:orientation="vertical">
 
                                     <TextView
                                         android:id="@+id/productName"
-                                        style="@style/TitleLarge"
+                                        style="@style/TitleMedium"
                                         android:layout_width="match_parent"
                                         android:layout_height="wrap_content"
-                                        android:textColor="@color/surface"
-                                        android:text="White Sneakers" />
+                                        android:text="White Sneakers"
+                                        android:textColor="@color/surface" />
 
                                     <TextView
                                         android:id="@+id/product_category"
                                         style="@style/BodySmall"
                                         android:layout_width="match_parent"
                                         android:layout_height="wrap_content"
-                                        android:textColor="@color/surface"
-                                        android:text="Sports &amp; Lifestyle" />
+                                        android:text="Sports &amp; Lifestyle"
+                                        android:textColor="@color/surface" />
 
                                     <TextView
                                         android:id="@+id/quantity"
                                         style="@style/BodySmall"
                                         android:layout_width="match_parent"
                                         android:layout_height="wrap_content"
+                                        android:text="Quantity: 1"
                                         android:textColor="@color/surface"
-                                        android:text="Quantity: 1" />
+                                        android:visibility="gone" />
+
+                                    <TextView
+                                        android:id="@+id/price"
+                                        style="@style/LabelLarge"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:text="$1"
+                                        android:textColor="@color/surface" />
+
+                                </LinearLayout>
+
+                                <LinearLayout
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center_vertical"
+                                    android:layout_marginStart="4dp"
+                                    android:gravity="center"
+                                    android:orientation="vertical">
+
+                                    <TextView
+                                        android:id="@+id/bid_price"
+                                        style="@style/TitleMedium"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="$20"
+                                        android:textColor="@color/onPrimary" />
+
+                                    <TextView
+                                        android:id="@+id/bid_time"
+                                        style="@style/BodyMedium"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="10 Sec"
+                                        android:textColor="@color/error"
+                                        android:visibility="gone" />
 
                                 </LinearLayout>
 
@@ -512,15 +638,15 @@
                                     style="@style/TitleLarge"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:textColor="@color/surface"
-                                    android:text="Sold Out!" />
+                                    android:text="Sold Out!"
+                                    android:textColor="@color/surface" />
 
                                 <TextView
                                     style="@style/BodySmall"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:textColor="@color/surface"
-                                    android:text="Please wait for next product" />
+                                    android:text="Please wait for next product"
+                                    android:textColor="@color/surface" />
 
                             </LinearLayout>
 
@@ -531,29 +657,34 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginHorizontal="@dimen/margin"
-                            android:gravity="center_vertical"
                             android:layout_marginBottom="@dimen/half_margin"
+                            android:gravity="center_vertical"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintStart_toStartOf="parent">
 
                             <com.google.android.material.button.MaterialButton
                                 android:id="@+id/max"
-                                style="@style/appTonalBtn"
+                                style="@style/appBtnOutline"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginEnd="@dimen/half_margin"
-                                android:minWidth="45dp"
+                                android:backgroundTint="@color/transparent"
                                 android:minHeight="0dp"
                                 android:paddingHorizontal="@dimen/half_margin"
-                                android:paddingVertical="12dp"
-                                android:text="Max"
-                                android:textSize="14sp" />
+                                android:paddingVertical="8dp"
+                                android:text="Custom"
+                                android:textColor="@color/surfaceVariant"
+                                android:textSize="14sp"
+                                app:cornerRadius="24dp"
+                                app:strokeColor="@color/surfaceVariant"
+                                app:strokeWidth="1dp" />
 
                             <com.ncorti.slidetoact.SlideToActView
-                                android:id="@+id/bid"
+                                android:id="@+id/bid1"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
+                                android:visibility="gone"
                                 app:animation_duration="250"
                                 app:area_margin="4dp"
                                 app:border_radius="8dp"
@@ -568,35 +699,49 @@
                                 app:text="Swipe to Bid"
                                 app:text_appearance="@style/SlideButtonTitle" />
 
-                            <LinearLayout
-                                android:layout_width="wrap_content"
+
+                            <com.google.android.material.card.MaterialCardView
+                                style="@style/cardStyle"
+                                android:layout_width="0dp"
                                 android:layout_height="wrap_content"
-                                android:layout_marginStart="@dimen/half_margin"
-                                android:background="@drawable/card_8"
-                                android:backgroundTint="@color/black25"
-                                android:gravity="center"
-                                android:paddingVertical="4dp"
-                                android:paddingHorizontal="16dp"
-                                android:orientation="vertical">
+                                android:layout_weight="1"
+                                app:cardBackgroundColor="@color/transparent"
+                                app:cardCornerRadius="28dp"
+                                app:cardElevation="0dp"
+                                app:strokeColor="@color/primary"
+                                app:strokeWidth="1.5dp">
 
-                                <TextView
-                                    android:id="@+id/bid_price"
-                                    style="@style/TitleMedium"
-                                    android:textColor="@color/onPrimary"
-                                    android:layout_width="wrap_content"
+                                <com.zerobranch.layout.SwipeLayout
+                                    android:id="@+id/bid_swipe_layout"
+                                    android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
-                                    android:text="$20" />
+                                    android:layout_margin="3dp"
+                                    app:draggedItem="@id/bid_button"
+                                    app:layout_constraintStart_toStartOf="parent"
+                                    app:layout_constraintTop_toTopOf="parent"
+                                    app:leftItem="@id/lefttt"
+                                    app:swipeDirection="right">
 
-                                <TextView
-                                    android:id="@+id/bid_time"
-                                    style="@style/BodyMedium"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:visibility="gone"
-                                    android:text="10 Sec"
-                                    android:textColor="@color/error" />
+                                    <com.google.android.material.button.MaterialButton
+                                        android:id="@+id/bid_button"
+                                        style="@style/appBtn"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginEnd="64dp"
+                                        android:minHeight="0dp"
+                                        android:paddingVertical="6dp"
+                                        android:text="bid"
+                                        app:cornerRadius="28dp" />
 
-                            </LinearLayout>
+                                    <View
+                                        android:id="@+id/lefttt"
+                                        android:layout_width="64dp"
+                                        android:layout_height="24dp" />
+
+                                </com.zerobranch.layout.SwipeLayout>
+
+                            </com.google.android.material.card.MaterialCardView>
+
 
                         </LinearLayout>
 

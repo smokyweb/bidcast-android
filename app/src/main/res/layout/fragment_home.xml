@@ -25,14 +25,9 @@
             style="@style/inputBoxStyle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            app:boxStrokeWidth="2dp"
             android:layout_weight="1"
             android:layout_marginStart="@dimen/half_margin"
             app:endIconMode="clear_text"
-            app:boxCornerRadiusBottomEnd="28dp"
-            app:boxCornerRadiusBottomStart="28dp"
-            app:boxCornerRadiusTopEnd="28dp"
-            app:boxCornerRadiusTopStart="28dp"
             app:endIconTint="@color/scrim"
             app:startIconDrawable="@drawable/search"
             app:startIconTint="@color/scrim">
@@ -44,6 +39,7 @@
                 android:layout_height="wrap_content"
                 android:hint="@string/what_are_you_looking_for"
                 android:inputType="textEmailAddress" />
+
         </com.google.android.material.textfield.TextInputLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout

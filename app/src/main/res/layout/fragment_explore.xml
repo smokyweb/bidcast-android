@@ -28,10 +28,6 @@
             android:layout_weight="1"
             android:layout_marginStart="@dimen/half_margin"
             app:endIconMode="clear_text"
-            app:boxCornerRadiusBottomEnd="24dp"
-            app:boxCornerRadiusBottomStart="24dp"
-            app:boxCornerRadiusTopEnd="24dp"
-            app:boxCornerRadiusTopStart="24dp"
             app:endIconTint="@color/scrim"
             app:startIconDrawable="@drawable/search"
             app:startIconTint="@color/scrim">

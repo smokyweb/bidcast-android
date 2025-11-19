@@ -395,7 +395,7 @@
 	<string name = "clip" >Clip</string >
 	<string name = "share" >Share</string >
 	<string name = "start_now" >Start Now</string >
-	<string name = "say_something" >Say Something</string >
+	<string name = "say_something" >Say Something...</string >
 	<string name = "more_option" >More Option</string >
 	<string name = "verified_buyers" >Verified Buyers</string >
 	<string name = "when_on_allows_bids_from_verified_buyers_only" >When on, allows bids from verified buyers only</string >

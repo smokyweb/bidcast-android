@@ -54,6 +54,7 @@ data class LiveShowModel(
             )
         }
     }
+
 	data class Seller(
         val id: String? = null,
         val image: String? = null,

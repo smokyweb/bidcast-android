@@ -126,10 +126,12 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
         categoryAdapter = HomeCategoryAdapter(categoryTiles, object : RecyclerClicks {
             override fun itemClick(pos: Int, status: String?) {
                 val tile = categoryTiles[pos]
+
                 categoryTiles.forEachIndexed { index, tile ->
                     tile.isSelected = index == pos
                     categoryAdapter.notifyItemChanged(index)
                 }
+
                 when (tile.tileType) {
                     HomeCategoryAdapter.TileType.SEE_ALL -> {
                         findNavController().navigate(R.id.goToExploreFragment)
@@ -228,87 +230,137 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
 
         bind.comingSoon.setHapticClickListener { selectTab(it as TextView, false) }
 
-        bind.loader.isVisible = false
+        if(App.categoryList.isNotEmpty()){
 
-        viewModel.getCategory()
-        viewModel.getCategoryRepo.observe(viewLifecycleOwner) { it ->
-            when (it) {
-                is Resource.Success -> {
-                    bind.loader.isVisible = false
-                    bind.noInternet.isVisible = false
-                    bind.noData.isVisible = false
-                    viewModel.getCategoryRepo.value = null
+            bind.loader.isVisible = false
+            val mData =App.categoryList
+            categoryTiles.clear()
+            categoryTiles.add(
+                HomeCategoryAdapter.CategoryTile(
+                    id = "for_you",
+                    title = getString(R.string.for_you_tile),
+                    iconRes = R.drawable.profile_circle,
+                    tileType = HomeCategoryAdapter.TileType.FOR_YOU,
+                    isSelected = true
+                )
+            )
 
-                    val mData = it.value.data
-                    categoryTiles.clear()
-                    categoryTiles.add(
+            categoryTiles.addAll(
+                mData.filter { data -> data?.isSelected == true }.mapNotNull { category ->
+                        val name = category?.name ?: return@mapNotNull null
                         HomeCategoryAdapter.CategoryTile(
-                            id = "for_you",
-                            title = getString(R.string.for_you_tile),
-                            iconRes = R.drawable.profile_circle,
-                            tileType = HomeCategoryAdapter.TileType.FOR_YOU,
-                            isSelected = true
+                            id = name,
+                            title = name,
+                            imageUrl = category.image,
+                            tileType = HomeCategoryAdapter.TileType.CATEGORY,
                         )
-                    )
+                    } ?: emptyList()
+            )
 
-                    categoryTiles.addAll(
-                        mData?.filter { data -> data?.isSelected == true }?.mapNotNull { category ->
-                            val name = category?.name ?: return@mapNotNull null
-                            HomeCategoryAdapter.CategoryTile(
-                                id = name,
-                                title = name,
-                                imageUrl = category.image,
-                                tileType = HomeCategoryAdapter.TileType.CATEGORY,
-                            )
-                        } ?: emptyList()
-                    )
+            categoryTiles.add(
+                HomeCategoryAdapter.CategoryTile(
+                    id = "see_all",
+                    title = getString(R.string.see_all_categories_tile),
+                    iconRes = R.drawable.ic_tile_grid,
+                    tileType = HomeCategoryAdapter.TileType.SEE_ALL,
+                )
+            )
 
-                    categoryTiles.add(
-                        HomeCategoryAdapter.CategoryTile(
-                            id = "see_all",
-                            title = getString(R.string.see_all_categories_tile),
-                            iconRes = R.drawable.ic_tile_grid,
-                            tileType = HomeCategoryAdapter.TileType.SEE_ALL,
-                        )
-                    )
+            categoryAdapter.notifyDataSetChanged()
+            val tileToSelect =
+                categoryTiles.firstOrNull { it.id == selectedCategoryTileId && it.tileType != HomeCategoryAdapter.TileType.SEE_ALL }
+                    ?: categoryTiles.firstOrNull { it.tileType != HomeCategoryAdapter.TileType.SEE_ALL }
 
-                    categoryAdapter.notifyDataSetChanged()
+            tileToSelect?.let { tile ->
+                val shouldFetch =
+                    !hasInitializedCategories || tile.id != selectedCategoryTileId
+                handleCategorySelection(tile, shouldFetch)
+                hasInitializedCategories = true
+            }
 
-                    val tileToSelect =
-                        categoryTiles.firstOrNull { it.id == selectedCategoryTileId && it.tileType != HomeCategoryAdapter.TileType.SEE_ALL }
-                            ?: categoryTiles.firstOrNull { it.tileType != HomeCategoryAdapter.TileType.SEE_ALL }
-
-                    tileToSelect?.let { tile ->
-                        val shouldFetch =
-                            !hasInitializedCategories || tile.id != selectedCategoryTileId
-                        handleCategorySelection(tile, shouldFetch)
-                        hasInitializedCategories = true
-                    }
-
-                }
-
-                is Resource.Error -> {
-                    if (it.isNetworkError) {
-                        bind.noInternet.isVisible = true
+        }else {
+            bind.loader.isVisible = false
+            viewModel.getCategory()
+            viewModel.getCategoryRepo.observe(viewLifecycleOwner) { it ->
+                when (it) {
+                    is Resource.Success -> {
+                        bind.loader.isVisible = false
+                        bind.noInternet.isVisible = false
                         bind.noData.isVisible = false
-                        bind.recycler.isVisible = false
+                        viewModel.getCategoryRepo.value = null
 
-                    } else {
-                        it.parse(mCtx, TAG, object : AlertClicks {
-                            override fun primaryClick(dialog: AppBottomSheet) {
-                                dialog.dismiss()
+                        val mData = it.value.data
+                        categoryTiles.clear()
+                        categoryTiles.add(
+                            HomeCategoryAdapter.CategoryTile(
+                                id = "for_you",
+                                title = getString(R.string.for_you_tile),
+                                iconRes = R.drawable.profile_circle,
+                                tileType = HomeCategoryAdapter.TileType.FOR_YOU,
+                                isSelected = true
+                            )
+                        )
 
-                            }
+                        categoryTiles.addAll(
+                            mData?.filter { data -> data?.isSelected == true }
+                                ?.mapNotNull { category ->
+                                    val name = category?.name ?: return@mapNotNull null
+                                    HomeCategoryAdapter.CategoryTile(
+                                        id = name,
+                                        title = name,
+                                        imageUrl = category.image,
+                                        tileType = HomeCategoryAdapter.TileType.CATEGORY,
+                                    )
+                                } ?: emptyList()
+                        )
 
-                            override fun secondaryClick(dialog: AppBottomSheet) {
-                                dialog.dismiss()
+                        categoryTiles.add(
+                            HomeCategoryAdapter.CategoryTile(
+                                id = "see_all",
+                                title = getString(R.string.see_all_categories_tile),
+                                iconRes = R.drawable.ic_tile_grid,
+                                tileType = HomeCategoryAdapter.TileType.SEE_ALL,
+                            )
+                        )
 
-                            }
-                        })
+                        categoryAdapter.notifyDataSetChanged()
+
+                        val tileToSelect =
+                            categoryTiles.firstOrNull { it.id == selectedCategoryTileId && it.tileType != HomeCategoryAdapter.TileType.SEE_ALL }
+                                ?: categoryTiles.firstOrNull { it.tileType != HomeCategoryAdapter.TileType.SEE_ALL }
+
+                        tileToSelect?.let { tile ->
+                            val shouldFetch =
+                                !hasInitializedCategories || tile.id != selectedCategoryTileId
+                            handleCategorySelection(tile, shouldFetch)
+                            hasInitializedCategories = true
+                        }
+
                     }
-                }
 
-                else -> {}
+                    is Resource.Error -> {
+                        if (it.isNetworkError) {
+                            bind.noInternet.isVisible = true
+                            bind.noData.isVisible = false
+                            bind.recycler.isVisible = false
+
+                        } else {
+                            it.parse(mCtx, TAG, object : AlertClicks {
+                                override fun primaryClick(dialog: AppBottomSheet) {
+                                    dialog.dismiss()
+
+                                }
+
+                                override fun secondaryClick(dialog: AppBottomSheet) {
+                                    dialog.dismiss()
+
+                                }
+                            })
+                        }
+                    }
+
+                    else -> {}
+                }
             }
         }
 

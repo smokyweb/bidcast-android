@@ -221,7 +221,7 @@ class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
 		gridList.add(MoreModel(R.drawable.ic_box, "Inventory", "inventory"))
 		gridList.add(MoreModel(R.drawable.ic_mic, "Shows", "shows"))
 		gridList.add(MoreModel(R.drawable.ic_order, "My Order", "order"))
-		gridList.add(MoreModel(R.drawable.ic_walllet, "Wallet", "wallet"))
+		gridList.add(MoreModel(R.drawable.ic_wallet, "Wallet", "wallet"))
 		gridList.add(MoreModel(R.drawable.ic_tag, "Offers", "offers"))
 		gridList.add(MoreModel(R.drawable.ic_tag, "Tips", "tips"))
 		gridList.add(MoreModel(R.drawable.ic_shipping, "Shipping", "shipping"))

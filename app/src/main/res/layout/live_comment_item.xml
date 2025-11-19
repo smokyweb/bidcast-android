@@ -30,15 +30,29 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/half_margin"
         android:orientation="vertical">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
         <TextView
             android:id="@+id/userName"
             style="@style/TitleMedium"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/username"
             android:textColor="@color/onPrimary" />
-
+        <TextView
+            android:id="@+id/host_view"
+            style="@style/LabelMedium"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Host"
+            android:visibility="gone"
+            android:paddingHorizontal="6dp"
+            android:background="@drawable/card_8"
+            android:backgroundTint="@color/primary"
+            android:textColor="@color/onPrimary" />
+    </LinearLayout>
         <TextView
             android:id="@+id/message"
             style="@style/BodySmall"

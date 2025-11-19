@@ -29,7 +29,7 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:scaleType="centerCrop"
+            android:scaleType="fitCenter"
             android:layout_gravity="center"
             android:src="@drawable/placeholder_square"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -48,10 +48,6 @@
                 android:layout_width="14dp"
                 android:layout_height="14dp"
                 android:layout_marginEnd="4dp"
-                android:background="@drawable/card_16"
-                android:backgroundTint="@color/error"
-                android:tint="@color/onError"
-                android:padding="3dp"
                 android:contentDescription="@string/live_now"
                 android:src="@drawable/ic_broadcast" />
 

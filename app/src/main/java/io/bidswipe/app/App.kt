@@ -11,6 +11,7 @@ import dagger.hilt.android.HiltAndroidApp
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.network.RetrofitService
 import io.bidswipe.app.network.repository.DashRepository
+import io.bidswipe.app.network.response.GetCategoryResponse
 import io.bidswipe.app.network.response.UserProfileResponse
 import io.bidswipe.app.utils.AgoraManager
 import io.bidswipe.app.utils.HapticManager
@@ -30,6 +31,8 @@ class App : Application() {
 		var PIPMode: Boolean = false
 		var isUserOnChatScreen: Boolean = false
 		val profileResponse = MutableLiveData<UserProfileResponse.Data?>()
+		var categoryList = mutableListOf<GetCategoryResponse.Data?>()
+
 		lateinit var manager: AgoraManager
 
 		fun getProfile() {
@@ -58,6 +61,28 @@ class App : Application() {
 			}
 		}
 
+	fun getCategories() {
+			CoroutineScope(Dispatchers.IO).launch {
+				val repo = DashRepository(RetrofitService(mCtx).build())
+				val it = repo.getCategory()
+
+				withContext(Dispatchers.Main) {
+					when (it) {
+						is Resource.Success -> {
+							val mData = it.value.data
+							mData?.forEach {
+								categoryList.add(it)
+							}
+						}
+
+						is Resource.Error -> {
+							profileResponse.value = null
+						}
+					}
+				}
+			}
+		}
+
 	}
 
 	override fun onCreate() {
@@ -70,6 +95,7 @@ class App : Application() {
 
 		if (Prefs(mCtx).token().isNotEmpty()) {
 			getProfile()
+			getCategories()
 		}
 
 	}

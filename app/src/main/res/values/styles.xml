@@ -11,10 +11,6 @@
     <style name="inputBoxStyle" parent="Widget.Material3.TextInputLayout.OutlinedBox">
         <!--TEXT STYLE-->
         <item name="android:textAppearance">@style/BodyMedium</item>
-        <item name="android:textColor">@color/onBackground</item>
-        <!--        <item name="android:maxLines">5</item>-->
-        <!--        <item name="android:minLines">4</item>-->
-        <!--        <item name="maxLines">5</item>-->
 
         <!--TEXT BOX STYLE-->
         <item name="boxStrokeColor">@color/input_box_stroke_color_state</item>
@@ -24,12 +20,12 @@
         <item name="thumbColor">@color/onBackground</item>
         <item name="colorAccent">@color/primary</item>
         <item name="expandedHintEnabled">false</item>
-        <item name="boxStrokeWidth">2dp</item>
-        <item name="boxStrokeWidthFocused">2dp</item>
-        <item name="boxCornerRadiusBottomStart">6dp</item>
-        <item name="boxCornerRadiusBottomEnd">6dp</item>
-        <item name="boxCornerRadiusTopStart">6dp</item>
-        <item name="boxCornerRadiusTopEnd">6dp</item>
+        <item name="boxStrokeWidth">1.5dp</item>
+        <item name="boxStrokeWidthFocused">1.5dp</item>
+        <item name="boxCornerRadiusBottomStart">32dp</item>
+        <item name="boxCornerRadiusBottomEnd">32dp</item>
+        <item name="boxCornerRadiusTopStart">32dp</item>
+        <item name="boxCornerRadiusTopEnd">32dp</item>
 
         <!--MISC. COLOR-->
         <item name="hintTextColor">@color/outline</item>
@@ -48,19 +44,13 @@
         <item name="android:colorControlNormal">@color/primary</item>
         <item name="android:colorControlHighlight">@color/primary</item>
 
-    </style>
-
-    <style name="inputText" parent="BodyMedium">
-        <!--		<item name="android:paddingVertical">18dp</item>-->
-        <!--		<item name="android:paddingHorizontal">12dp</item>-->
-        <item name="android:textAppearance">@style/BodyLarge</item>
-        <item name="android:textColor">@color/onPrimary</item>
-        <item name="android:textColorHint">@color/outline</item>
-        <item name="thumbColor">@color/primary</item>
+        <item name="minHeight">0dp</item>
     </style>
 
     <style name="inputTextStyle" parent="BodyMedium">
-        <item name="android:padding">16dp</item>
+        <item name="minHeight">0dp</item>
+        <item name="android:paddingVertical">8dp</item>
+        <item name="android:paddingHorizontal">12dp</item>
         <item name="android:textAppearance">@style/BodySmall</item>
         <item name="android:textColor">@color/onSurface</item>
         <item name="android:textColorHint">@color/outlineVariant</item>

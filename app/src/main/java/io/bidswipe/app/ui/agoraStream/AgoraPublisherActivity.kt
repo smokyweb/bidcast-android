@@ -176,7 +176,7 @@ class AgoraPublisherActivity : BaseActivity() {
 
 		viewModel.getAgoraToken(roomID.request())
 
-		commentAdapter = CommentAdapter(commentList)
+		commentAdapter = CommentAdapter(commentList,userId)
 		bind.recycler.adapter = commentAdapter
 
 		pollOptionList.add(PollOptionModel(
