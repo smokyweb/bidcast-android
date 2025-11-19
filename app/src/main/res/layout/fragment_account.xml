@@ -100,49 +100,40 @@
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <LinearLayout
+            <com.google.android.material.card.MaterialCardView
+                style="@style/cardStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/background"
-                android:paddingHorizontal="8dp"
-                android:paddingVertical="8dp">
+                android:layout_marginHorizontal="@dimen/half_margin"
+                app:cardBackgroundColor="@color/surfaceVariant"
+                app:cardCornerRadius="8dp"
+                app:cardElevation="0dp">
 
-                <com.google.android.material.card.MaterialCardView
-                    style="@style/cardStyle"
+                <com.google.android.material.tabs.TabLayout
+                    android:id="@+id/tabs"
+                    style="@style/tabStyle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_margin="@dimen/half_margin"
-                    app:cardBackgroundColor="@color/surfaceVariant"
-                    app:cardCornerRadius="8dp"
-                    app:cardElevation="0dp">
+                    android:layout_margin="5dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:tabPadding="0dp">
 
-                    <com.google.android.material.tabs.TabLayout
-                        android:id="@+id/tabs"
-                        style="@style/tabStyle"
-                        android:layout_width="match_parent"
+                    <com.google.android.material.tabs.TabItem
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_margin="5dp"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:tabPadding="0dp">
+                        android:text="@string/seller_hub" />
 
-                        <com.google.android.material.tabs.TabItem
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/seller_hub" />
+                    <com.google.android.material.tabs.TabItem
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/my_account" />
 
-                        <com.google.android.material.tabs.TabItem
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/my_account" />
+                </com.google.android.material.tabs.TabLayout>
 
-                    </com.google.android.material.tabs.TabLayout>
-
-                </com.google.android.material.card.MaterialCardView>
-
-            </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
 
             <ViewSwitcher
                 android:id="@+id/switcher"

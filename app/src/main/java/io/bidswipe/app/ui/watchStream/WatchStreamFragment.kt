@@ -3,11 +3,13 @@ package io.bidswipe.app.ui.watchStream
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
+import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.SurfaceView
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.EditorInfo
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -307,7 +309,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 			showPollDetailsSheet()
 		}
 
-		bind.message.setEndIconOnClickListener {
+/*		bind.message.setEndIconOnClickListener {
 			if (bind.text.value().isNotEmpty()) {
 				if (App.profileResponse.value?.buyerIdentityStatus == "verified") {
 					socketManager?.sendMessage(
@@ -317,11 +319,48 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 						userName,
 						userImage
 					)
-					bind.text.text.clear()
+					bind.text.setText("")
 				} else {
 					verificationDialog()
 				}
 			}
+		}*/
+
+		bind.messageText.setOnEditorActionListener { v, actionId, event ->
+			if (actionId == EditorInfo.IME_ACTION_SEND) {
+				if (bind.messageText.value().isNotEmpty()) {
+					if (App.profileResponse.value?.buyerIdentityStatus == "verified") {
+						socketManager?.sendMessage(
+							roomID,
+							bind.messageText.value(),
+							userId,
+							userName,
+							userImage
+						)
+						bind.messageText.setText("")
+					} else {
+						verificationDialog()
+					}
+				}
+				true
+			} else {
+				false
+			}
+		}
+
+		ViewCompat.setOnApplyWindowInsetsListener(bind.root) { _, insets ->
+			val imeVisible = insets.isVisible(WindowInsetsCompat.Type.ime())
+
+			if (imeVisible) {
+				bind.product.isVisible=false
+				bind.bidLayout.isVisible=false
+				bind.sideOptions.isVisible=false
+			} else {
+				bind.product.isVisible=true
+				bind.bidLayout.isVisible=true
+				bind.sideOptions.isVisible=true
+			}
+			insets
 		}
 
 		bind.wallet.setHapticClickListener {
@@ -609,12 +648,14 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 				bind.bidLayout.isVisible = true
 				bind.productLayout.isVisible = true
 				bind.productName.text = liveProduct.name?.asCapital()
+				log("CATEGORY ${liveProduct.category}")
 				bind.productCategory.text = liveProduct.category?.asCapital()
 				bind.quantity.text = buildString {
 					append("Quantity: ")
 					append(liveProduct.quantity ?: 0)
 				}
 				bind.productImage.loadUrl(mCtx, liveProduct.image ?: "")
+				bind.productImageShop.loadUrl(mCtx, liveProduct.image ?: "")
 				val price = liveProduct.price
 				bind.price.text = price?.asMoney() ?: "0.0" +"Shipping + Taxes"
 
@@ -667,7 +708,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 			bind.rating.text = showData.seller?.rating?.ifEmpty { "0.0"}
 
 			bind.userImage.loadUrl(mCtx, showData.seller?.image ?: "")
-
+log("IMAGE ${showData.seller?.image}")
 			bind.liveCount.text = showData.viewerCount
 
 			bind.follow.setHapticClickListener {

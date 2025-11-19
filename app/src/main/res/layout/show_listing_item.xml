@@ -4,7 +4,8 @@
     style="@style/cardStyle"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="@dimen/half_margin"
+    android:layout_marginVertical="4dp"
+    android:layout_marginHorizontal="@dimen/half_margin"
     app:cardCornerRadius="12dp"
     app:cardBackgroundColor="@color/background">
 
@@ -17,8 +18,8 @@
 
         <com.google.android.material.card.MaterialCardView
             style="@style/cardStyle"
-            android:layout_width="120dp"
-            android:layout_height="120dp"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
             app:cardCornerRadius="10dp"
             app:cardElevation="0dp">
 
@@ -41,7 +42,7 @@
 
             <TextView
                 android:id="@+id/name"
-                style="@style/TitleLarge"
+                style="@style/TitleMedium"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Show Name" />
@@ -55,18 +56,18 @@
 
             <TextView
                 android:id="@+id/rsvp"
-                style="@style/BodyLarge"
+                style="@style/BodyMedium"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:drawablePadding="@dimen/half_margin"
-                android:layout_marginVertical="8dp"
+                android:drawablePadding="4dp"
                 android:text="135 RSVPs"
+                android:layout_marginBottom="4dp"
                 app:drawableStartCompat="@drawable/ic_person_outlined"
                 app:drawableTint="@color/onSurface" />
 
                 <TextView
                     android:id="@+id/time"
-                    style="@style/BodyMedium"
+                    style="@style/BodySmall"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:drawablePadding="@dimen/half_margin"

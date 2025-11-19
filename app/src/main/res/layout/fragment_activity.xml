@@ -28,7 +28,7 @@
         android:layout_height="wrap_content"
         android:background="@color/background"
         app:layout_constraintTop_toBottomOf="@id/header"
-        app:tabIndicatorColor="@color/secondary"
+        app:tabIndicatorColor="@color/scrim"
         app:tabIndicatorHeight="0dp"
         app:tabMode="scrollable"
         app:tabPaddingStart="4dp"

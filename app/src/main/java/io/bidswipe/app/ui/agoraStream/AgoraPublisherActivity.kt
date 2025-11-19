@@ -13,6 +13,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.util.Rational
+import android.view.inputmethod.EditorInfo
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
@@ -110,7 +111,7 @@ class AgoraPublisherActivity : BaseActivity() {
 	private var pollOptionList = mutableListOf<PollOptionModel?>()
 	private var livePollOptionList = mutableListOf<PollModel.PollOption>()
 	private lateinit var pollOptionAdapter: PollOptionAdapter
-	private lateinit var livePollAdapter : LivePollOptionAdapter
+	private lateinit var livePollAdapter: LivePollOptionAdapter
 	private var currentPoll: PollModel? = null
 	private var pollSheetBinding: PollDetailsSheetBinding? = null
 
@@ -176,13 +177,15 @@ class AgoraPublisherActivity : BaseActivity() {
 
 		viewModel.getAgoraToken(roomID.request())
 
-		commentAdapter = CommentAdapter(commentList,userId)
+		commentAdapter = CommentAdapter(commentList, userId)
 		bind.recycler.adapter = commentAdapter
 
-		pollOptionList.add(PollOptionModel(
-			title = "Option 1",
-			hint = "Enter your option"
-		))
+		pollOptionList.add(
+			PollOptionModel(
+				title = "Option 1",
+				hint = "Enter your option"
+			)
+		)
 
 		pollOptionAdapter = PollOptionAdapter(pollOptionList, object : RecyclerClicks {
 			override fun itemClick(pos: Int, status: String?) {
@@ -213,19 +216,37 @@ class AgoraPublisherActivity : BaseActivity() {
 
 		bind.clip.isVisible = App.profileResponse.value?.preferences?.enableClips == true
 
-		bind.message.setEndIconOnClickListener {
+		bind.messageText.setOnEditorActionListener { v, actionId, event ->
+			if (actionId == EditorInfo.IME_ACTION_SEND) {
+				if (!isShowLive) {
+					Alerts.error(this, "Please start live show to send message")
+				}
 
-			if (!isShowLive) {
-				Alerts.error(this, "Please start live show to send message")
-				return@setEndIconOnClickListener
-			}
-
-			if (bind.text.value().isNotEmpty()) {
-				socketManager?.sendMessage(roomID, bind.text.value(), userId, userName, userImage)
-				bind.text.text.clear()
+				if (bind.messageText.value().isNotEmpty()) {
+					socketManager?.sendMessage(roomID, bind.messageText.value(), userId, userName, userImage)
+					bind.messageText.setText("")
+				}
+				true
+			} else {
+				false
 			}
 		}
 
+		ViewCompat.setOnApplyWindowInsetsListener(bind.root) { _, insets ->
+			val imeVisible = insets.isVisible(WindowInsetsCompat.Type.ime())
+			if (isShowLive) {
+				if (imeVisible) {
+					bind.product.isVisible = false
+					bind.startBtn.isVisible = false
+					bind.menuLayout.isVisible = false
+				} else {
+					bind.product.isVisible = true
+					bind.menuLayout.isVisible = true
+				}
+			}
+
+			insets
+		}
 		bind.more.setHapticClickListener {
 			showMoreSheet()
 		}
@@ -270,7 +291,7 @@ class AgoraPublisherActivity : BaseActivity() {
 		bind.poll.setHapticClickListener {
 			if (isShowLive) {
 				pollDetailSheet()
-			}else{
+			} else {
 				Alerts.error(this, "Please start live show to access this feature")
 			}
 		}
@@ -803,6 +824,7 @@ class AgoraPublisherActivity : BaseActivity() {
 					append(liveProduct.quantity ?: 0)
 				}
 				bind.productImage.loadUrl(this, liveProduct.image ?: "")
+				bind.productImageShop.loadUrl(this, liveProduct.image ?: "")
 
 				val price = liveProduct.price
 				bind.bidPrice.text = price?.asMoney()
@@ -967,9 +989,9 @@ class AgoraPublisherActivity : BaseActivity() {
 						3 -> {
 							moreSheet.dismiss()
 							if (isShowLive) {
-								if (currentPoll == null){
+								if (currentPoll == null) {
 									createPollSheet()
-								}else{
+								} else {
 									Alerts.error(this@AgoraPublisherActivity, "Poll already created")
 								}
 							} else {
@@ -1165,15 +1187,17 @@ class AgoraPublisherActivity : BaseActivity() {
 		pollSheetBind.pollOptions.adapter = pollOptionAdapter
 
 		pollOptionAdapter.notifyDataSetChanged()
-		
+
 		// Set default duration text
 		pollSheetBind.pollDuration.setText("${selectedDuration} minutes", false)
 
 		pollSheetBind.addOption.setOnClickListener {
-			pollOptionList.add(PollOptionModel(
-				title = "Option ${pollOptionList.size + 1}",
-				hint = "Enter your option"
-			))
+			pollOptionList.add(
+				PollOptionModel(
+					title = "Option ${pollOptionList.size + 1}",
+					hint = "Enter your option"
+				)
+			)
 			pollSheetBind.pollOptions.adapter?.notifyItemInserted(pollOptionList.size - 1)
 		}
 
@@ -1212,10 +1236,10 @@ class AgoraPublisherActivity : BaseActivity() {
 				return@setHapticClickListener
 			}
 
-			val duration = selectedDuration*60
+			val duration = selectedDuration * 60
 
 			// Emit poll creation via socket
-			socketManager?.createPoll(roomID, question,options , duration)
+			socketManager?.createPoll(roomID, question, options, duration)
 
 			// Show success message
 			successToast("Poll created successfully!")
@@ -1330,7 +1354,7 @@ class AgoraPublisherActivity : BaseActivity() {
 
 	private fun updatePollSheet() {
 		val poll = currentPoll
-		if (poll?.roomId == roomID){
+		if (poll?.roomId == roomID) {
 			pollSheetBinding?.let { binding ->
 				binding.pollQuestionDetail.text = poll.question ?: "No question"
 				binding.pollTimerDetail.text = poll.remainingTime ?: "00:00 remaining"

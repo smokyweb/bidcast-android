@@ -49,7 +49,7 @@
 
     <style name="inputTextStyle" parent="BodyMedium">
         <item name="minHeight">0dp</item>
-        <item name="android:paddingVertical">8dp</item>
+        <item name="android:paddingVertical">12dp</item>
         <item name="android:paddingHorizontal">12dp</item>
         <item name="android:textAppearance">@style/BodySmall</item>
         <item name="android:textColor">@color/onSurface</item>
@@ -155,7 +155,7 @@
     <style name="shadowStyle">
         <item name="android:elevation">2dp</item>
         <item name="cardBackgroundColor">@color/background</item>
-        <item name="android:outlineSpotShadowColor" tools:targetApi="p">@color/outline</item>
+        <item name="android:outlineSpotShadowColor" tools:targetApi="p">@color/onSurfaceVariant</item>
         <item name="android:outlineAmbientShadowColor" tools:targetApi="p">@color/onSurfaceVariant
         </item>
     </style>

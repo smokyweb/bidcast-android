@@ -8,8 +8,7 @@
     android:layout_marginVertical="4dp"
     android:background="@drawable/card_8"
     android:orientation="horizontal"
-    android:paddingHorizontal="16dp"
-    android:paddingVertical="20dp">
+    android:padding="12dp">
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/icon_card"

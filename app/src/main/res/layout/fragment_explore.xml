@@ -35,6 +35,7 @@
             <com.google.android.material.textfield.MaterialAutoCompleteTextView
                 android:id="@+id/search"
                 style="@style/inputTextStyle"
+                android:paddingVertical="6dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/what_are_you_looking_for"
