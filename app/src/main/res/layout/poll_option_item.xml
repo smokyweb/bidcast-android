@@ -5,7 +5,7 @@
     android:layout_height="wrap_content"
     style="@style/cardStyle"
     app:cardBackgroundColor="@color/background"
-    android:layout_margin="@dimen/half_margin">
+    android:layout_marginVertical="@dimen/half_margin">
 
     <LinearLayout
         android:id="@+id/option"

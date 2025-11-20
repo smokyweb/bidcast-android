@@ -18,7 +18,11 @@ import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
+import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
+import androidx.core.text.bold
+import androidx.core.text.buildSpannedString
+import androidx.core.text.color
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
@@ -490,9 +494,12 @@ class AgoraPublisherActivity : BaseActivity() {
 		socketManager?.onPollUpdate { json ->
 			runSafe {
 				runOnUiThread {
-					currentPoll = PollModel.fromJson(json)
-					updatePollUI() // Update poll card preview
-					updatePollSheet() // Update poll details sheet if open
+					if (json.optString("roomId") == roomID) {
+						currentPoll = PollModel.fromJson(json)
+						showPollCard()
+						updatePollUI() // Update poll card preview
+						updatePollSheet() // Update poll details sheet if open
+					}
 				}
 
 			}
@@ -517,8 +524,14 @@ class AgoraPublisherActivity : BaseActivity() {
 		App.manager.destroyEngine()
 
 		isShowLive = false
+
 		// Socket cleanup
 		runSafe {
+
+			if (currentPoll!=null){
+				socketManager?.endPoll(roomID, currentPoll?.pollId.toString())
+			}
+
 			socketManager?.emitEndRoom(roomID)
 			socketManager?.leaveRoom(roomID, userId)
 			socketManager?.disconnect()
@@ -704,8 +717,23 @@ class AgoraPublisherActivity : BaseActivity() {
 						val winner = json.getJSONObject("winner")
 						val product = productList.find { it?.id == winner.optString("product_id") }
 
+						val bidderName = winner.optString("user_name")
+						val bidderImage = winner.optString("user_image")
+
+						bind.winningLayout.isVisible = true
+
+						bind.userImage.loadUrl(this, bidderImage)
+						bind.winning.text = buildSpannedString {
+							append( bidderName)
+							color(ContextCompat.getColor(this@AgoraPublisherActivity, R.color.primary)){
+								bold { append(" has won!") }
+							}
+						}
+
 						product?.status = "sold"
 						product?.isCurrent = false
+
+						bind.status.isVisible = true
 
 //						log("UPDATED PRODUCT LIST : ${productList} ")
 
@@ -825,17 +853,12 @@ class AgoraPublisherActivity : BaseActivity() {
 				}
 				bind.productImage.loadUrl(this, liveProduct.image ?: "")
 				bind.productImageShop.loadUrl(this, liveProduct.image ?: "")
-
 				val price = liveProduct.price
 				bind.bidPrice.text = price?.asMoney()
-			} else {
-				bind.soldLayout.isVisible = true
-				bind.productLayout.isVisible = false
-				bind.productLayout.isVisible = false
+				bind.status.isVisible = false
 			}
 
 		}
-
 
 	}
 
@@ -844,14 +867,19 @@ class AgoraPublisherActivity : BaseActivity() {
 		runSafe {
 			this.runOnUiThread {
 				if (json.optString("room_id") == roomID) {
-					log("BID TIMER UPDATE : $value")
 					bind.bidTime.isVisible = true
-					bind.bidTime.text = buildString {
-						append("Ends in ")
-						append(value)
+					log("BID TIMER UPDATE : $value")
+					val color = if (value.toInt() <= 10) {
+						ContextCompat.getColor(this@AgoraPublisherActivity, R.color.error)
+					} else {
+						ContextCompat.getColor(this@AgoraPublisherActivity, R.color.background)
 					}
-				} else {
-					bind.bidTime.isVisible = false
+					bind.bidTime.text = buildSpannedString {
+						color(color){
+							append("Ends in ")
+							append(value)
+						}
+					}
 				}
 			}
 		}
@@ -863,7 +891,21 @@ class AgoraPublisherActivity : BaseActivity() {
 				if (json.optString("room_id") == roomID) {
 					val highestBid = json.getJSONObject("get_highest_bid")
 					val bidAmount = highestBid.optString("bid_amount")
+					val bidderName = highestBid.optString("user_name")
+					val bidderImage = highestBid.optString("user_image")
+
 					log("BID UPDATE: $bidAmount")
+
+					bind.winningLayout.isVisible = true
+
+					bind.userImage.loadUrl(this, bidderImage)
+					bind.winning.text = buildSpannedString {
+						append( bidderName)
+						color(ContextCompat.getColor(this@AgoraPublisherActivity, R.color.primary)){
+							bold { append(" is winning!") }
+						}
+					}
+
 					bind.bidPrice.text = bidAmount.asMoney()
 				}
 			}
@@ -1186,6 +1228,8 @@ class AgoraPublisherActivity : BaseActivity() {
 
 		pollSheetBind.pollOptions.adapter = pollOptionAdapter
 
+		pollOptionAdapter.holderList.clear()
+
 		pollOptionAdapter.notifyDataSetChanged()
 
 		// Set default duration text
@@ -1213,6 +1257,7 @@ class AgoraPublisherActivity : BaseActivity() {
 			pollSheetBind.pollDuration.setText("${selectedDuration} minutes", false)
 		}
 
+
 		pollSheetBind.pollDuration.setHapticClickListener {
 			pollSheetBind.pollDuration.showDropDown()
 		}
@@ -1228,6 +1273,11 @@ class AgoraPublisherActivity : BaseActivity() {
 			// Validation
 			if (question.isEmpty()) {
 				Alerts.error(this, "Please enter a poll question")
+				return@setHapticClickListener
+			}
+
+			if (options.isEmpty()) {
+				Alerts.error(this, "Please add at least 2 options")
 				return@setHapticClickListener
 			}
 

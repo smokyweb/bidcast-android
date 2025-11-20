@@ -24,9 +24,9 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/margin"
-                android:layout_marginTop="@dimen/half_margin"
                 android:layout_marginEnd="@dimen/half_margin"
                 android:layout_weight="1"
+                android:layout_marginVertical="@dimen/half_margin"
                 android:background="@drawable/card_8"
                 android:orientation="vertical"
                 android:padding="@dimen/margin">
@@ -61,9 +61,8 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:layout_marginTop="@dimen/half_margin"
-                android:layout_marginHorizontal="@dimen/half_margin"
                 android:background="@drawable/card_8"
+                android:layout_margin="@dimen/half_margin"
                 android:orientation="vertical"
                 android:padding="@dimen/margin">
 
@@ -104,7 +103,8 @@
             android:id="@+id/gridRecycler"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="8dp"
+            android:paddingHorizontal="@dimen/half_margin"
+            android:layout_marginBottom="@dimen/half_margin"
             app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
             app:spanCount="2"
             tools:itemCount="8"

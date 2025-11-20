@@ -117,9 +117,7 @@
                             app:cornerRadius="24dp" />
                     </LinearLayout>
 
-
                 </LinearLayout>
-
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/liveCount"
@@ -549,95 +547,154 @@
                                 android:id="@+id/product_layout"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:orientation="horizontal">
-
-                                <com.google.android.material.card.MaterialCardView
-                                    style="@style/cardStyle"
-                                    android:layout_width="72dp"
-                                    android:layout_height="72dp"
-                                    app:cardCornerRadius="8dp"
-                                    app:cardElevation="0dp">
-
-                                    <androidx.appcompat.widget.AppCompatImageView
-                                        android:id="@+id/productImage"
-                                        android:layout_width="match_parent"
-                                        android:layout_height="match_parent"
-                                        android:scaleType="centerCrop"
-                                        android:src="@drawable/shoe" />
-
-                                </com.google.android.material.card.MaterialCardView>
+                                android:orientation="vertical">
 
                                 <LinearLayout
-                                    android:layout_width="0dp"
-                                    android:layout_height="match_parent"
-                                    android:layout_marginStart="@dimen/half_margin"
-                                    android:layout_weight="1"
-                                    android:gravity="center_vertical"
-                                    android:orientation="vertical">
-
-                                    <TextView
-                                        android:id="@+id/productName"
-                                        style="@style/TitleMedium"
-                                        android:layout_width="match_parent"
-                                        android:layout_height="wrap_content"
-                                        android:text="White Sneakers"
-                                        android:textColor="@color/surface" />
-
-                                    <TextView
-                                        android:id="@+id/product_category"
-                                        style="@style/BodySmall"
-                                        android:layout_width="match_parent"
-                                        android:layout_height="wrap_content"
-                                        android:text="Sports &amp; Lifestyle"
-                                        android:textColor="@color/surface" />
-
-                                    <TextView
-                                        android:id="@+id/quantity"
-                                        style="@style/BodySmall"
-                                        android:layout_width="match_parent"
-                                        android:layout_height="wrap_content"
-                                        android:text="Quantity: 1"
-                                        android:textColor="@color/surface"
-                                        android:visibility="gone" />
-
-                                    <TextView
-                                        android:id="@+id/price"
-                                        style="@style/LabelLarge"
-                                        android:layout_width="match_parent"
-                                        android:layout_height="wrap_content"
-                                        android:text="$1"
-                                        android:textColor="@color/surface" />
-
-                                </LinearLayout>
-
-                                <LinearLayout
-                                    android:layout_width="wrap_content"
+                                    android:id="@+id/winningLayout"
+                                    android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
-                                    android:layout_gravity="center_vertical"
-                                    android:layout_marginStart="4dp"
-                                    android:gravity="center"
-                                    android:orientation="vertical">
+                                    android:orientation="horizontal"
+                                    android:paddingVertical="4dp"
+                                    android:visibility="gone">
+
+                                    <com.google.android.material.card.MaterialCardView
+                                        style="@style/cardStyle"
+                                        android:layout_width="24dp"
+                                        android:layout_height="24dp"
+                                        android:background="@color/transparent"
+                                        app:cardCornerRadius="100dp"
+                                        app:cardElevation="0dp">
+
+                                        <androidx.appcompat.widget.AppCompatImageView
+                                            android:id="@+id/winnerImage"
+                                            android:layout_width="match_parent"
+                                            android:layout_height="match_parent"
+                                            android:scaleType="centerCrop"
+                                            android:src="@drawable/placeholder_user" />
+
+                                    </com.google.android.material.card.MaterialCardView>
 
                                     <TextView
-                                        android:id="@+id/bid_price"
-                                        style="@style/TitleMedium"
+                                        android:id="@+id/winning"
+                                        style="@style/TitleSmall"
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
-                                        android:text="$20"
+                                        android:layout_gravity="center_vertical"
+                                        android:layout_marginStart="@dimen/half_margin"
+                                        android:text="Jack lee is winning!"
                                         android:textColor="@color/onPrimary" />
 
-                                    <TextView
-                                        android:id="@+id/bid_time"
-                                        style="@style/BodyMedium"
+                                </LinearLayout>
+
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:orientation="horizontal">
+
+                                    <com.google.android.material.card.MaterialCardView
+                                        style="@style/cardStyle"
+                                        android:layout_width="72dp"
+                                        android:layout_height="72dp"
+                                        app:cardCornerRadius="8dp"
+                                        app:cardElevation="0dp">
+
+                                        <androidx.appcompat.widget.AppCompatImageView
+                                            android:id="@+id/productImage"
+                                            android:layout_width="match_parent"
+                                            android:layout_height="match_parent"
+                                            android:scaleType="centerCrop"
+                                            android:src="@drawable/shoe" />
+
+                                    </com.google.android.material.card.MaterialCardView>
+
+                                    <LinearLayout
+                                        android:layout_width="0dp"
+                                        android:layout_height="match_parent"
+                                        android:layout_marginStart="@dimen/half_margin"
+                                        android:layout_weight="1"
+                                        android:gravity="center_vertical"
+                                        android:orientation="vertical">
+
+                                        <TextView
+                                            android:id="@+id/productName"
+                                            style="@style/TitleMedium"
+                                            android:layout_width="match_parent"
+                                            android:layout_height="wrap_content"
+                                            android:text="White Sneakers"
+                                            android:textColor="@color/surface" />
+
+                                        <TextView
+                                            android:id="@+id/product_category"
+                                            style="@style/BodySmall"
+                                            android:layout_width="match_parent"
+                                            android:layout_height="wrap_content"
+                                            android:text="Sports &amp; Lifestyle"
+                                            android:textColor="@color/surface" />
+
+                                        <TextView
+                                            android:id="@+id/quantity"
+                                            style="@style/BodySmall"
+                                            android:layout_width="match_parent"
+                                            android:layout_height="wrap_content"
+                                            android:text="Quantity: 1"
+                                            android:textColor="@color/surface"
+                                            android:visibility="gone" />
+
+                                        <TextView
+                                            android:id="@+id/price"
+                                            style="@style/LabelLarge"
+                                            android:layout_width="match_parent"
+                                            android:layout_height="wrap_content"
+                                            android:text="$1"
+                                            android:textColor="@color/surface" />
+
+                                    </LinearLayout>
+
+                                    <LinearLayout
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
-                                        android:text="10 Sec"
-                                        android:textColor="@color/error"
-                                        android:visibility="gone" />
+                                        android:layout_gravity="center_vertical"
+                                        android:layout_marginStart="4dp"
+                                        android:gravity="center"
+                                        android:orientation="vertical">
+
+                                        <TextView
+                                            android:id="@+id/bid_price"
+                                            style="@style/TitleMedium"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:text="$20"
+                                            android:textColor="@color/onPrimary" />
+
+                                        <TextView
+                                            android:id="@+id/bid_time"
+                                            style="@style/BodySmall"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_gravity="center"
+                                            android:drawableStart="@drawable/skull"
+                                            android:drawablePadding="4dp"
+                                            android:text="00:00:00"
+                                            android:visibility="gone"
+                                            android:textColor="@color/error" />
+
+                                        <TextView
+                                            android:id="@+id/status"
+                                            style="@style/BodySmall"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_gravity="center"
+                                            android:text="Sold"
+                                            android:visibility="gone"
+                                            android:textColor="@color/error" />
+
+                                    </LinearLayout>
 
                                 </LinearLayout>
 
+
                             </LinearLayout>
+
 
                             <LinearLayout
                                 android:id="@+id/sold_layout"
