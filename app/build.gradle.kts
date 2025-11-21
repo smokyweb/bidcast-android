@@ -253,4 +253,6 @@ dependencies {
     implementation("io.socket:socket.io-client:2.1.0") {
         exclude(group = "org.json", module = "json")
     }
+
+    implementation(libs.arindicatorview)
 }
