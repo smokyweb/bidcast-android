@@ -104,7 +104,7 @@
                 style="@style/cardStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="@dimen/half_margin"
+                android:layout_marginHorizontal="@dimen/margin"
                 app:cardBackgroundColor="@color/surfaceVariant"
                 app:cardCornerRadius="8dp"
                 app:cardElevation="0dp">

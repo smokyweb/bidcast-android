@@ -3,7 +3,6 @@ package io.bidswipe.app.ui.watchStream
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
-import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.SurfaceView
@@ -11,6 +10,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import androidx.core.content.ContextCompat
+import androidx.core.text.bold
+import androidx.core.text.buildSpannedString
+import androidx.core.text.color
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
@@ -125,6 +127,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 					} catch (e: UninitializedPropertyAccessException) {
 						// Manager not initialized, create it
 						App.manager = AgoraManager(mCtx, Const.APP_ID_AGORA)
+
 					}
 				}*/
 
@@ -148,7 +151,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 			return@setOnTouchListener false
 		}
 
-		commentAdapter = CommentAdapter(commentList,roomID.split("_")[2]?:"0")
+		commentAdapter = CommentAdapter(commentList,roomID.split("_")[2] ?: "0" )
 
 		livePollAdapter = LivePollOptionAdapter(livePollOptionList, object : RecyclerClicks {
 			override fun itemClick(pos: Int, status: String?) {
@@ -207,24 +210,36 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
 					requireActivity().runOnUiThread {
 
-						bind.bidTime.isVisible = false
-
 						val winner = json.getJSONObject("winner")
-
 						log("WINNER: $winner")
 
 						if (roomID == json.optString("room_id")) {
-							bind.soldLayout.isVisible = true
+							bind.bidTime.isVisible = false
+//							bind.soldLayout.isVisible = true
 							bind.bidLayout.isVisible = false
-							bind.productLayout.isVisible = false
+//							bind.productLayout.isVisible = false
 						}
 
-						if (userId == winner.optString("user_id")) bind.soldOutText.text = buildString {
-							append("You won the bid")
-						} else bind.soldOutText.text = buildString {
-							append("Bidder ")
-							append(winner.optString("user_name"))
-							append(" won the bid")
+						val bidderName = winner.optString("user_name")
+						val bidderImage = winner.optString("user_image")
+
+						bind.winningLayout.isVisible = true
+
+						bind.userImage.loadUrl(mCtx, bidderImage)
+
+						if (userId == winner.optString("user_id")) {
+							bind.winning.text = buildSpannedString {
+								color(ContextCompat.getColor(mCtx, R.color.primary)){
+									bold { append(" you won!") }
+								}
+							}
+						} else{
+							bind.winning.text = buildSpannedString {
+								append( bidderName)
+								color(ContextCompat.getColor(mCtx, R.color.primary)){
+									bold { append(" has won!") }
+								}
+							}
 						}
 
 					}
@@ -610,6 +625,22 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 					val highestBid = json.getJSONObject("get_highest_bid")
 					val bidAmount = highestBid.optString("bid_amount")
 					log("BID UPDATE: $bidAmount")
+
+					val bidderName = highestBid.optString("user_name")
+					val bidderImage = highestBid.optString("user_image")
+
+					log("BID UPDATE: $bidAmount")
+
+					bind.winningLayout.isVisible = true
+
+					bind.userImage.loadUrl(mCtx, bidderImage)
+					bind.winning.text = buildSpannedString {
+						append( bidderName)
+						color(ContextCompat.getColor(mCtx, R.color.primary)){
+							bold { append(" is winning!") }
+						}
+					}
+
 					setBidText(bidAmount)
 					highestBidAmount = bidAmount
 					bidProductId = highestBid.optString("product_id")
@@ -645,6 +676,8 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 		activity?.runOnUiThread {
 			if (liveProduct != null) {
 				bind.soldLayout.isVisible = false
+				bind.winningLayout.isVisible = false
+				bind.status.isVisible = false
 				bind.bidLayout.isVisible = true
 				bind.productLayout.isVisible = true
 				bind.productName.text = liveProduct.name?.asCapital()
@@ -668,9 +701,11 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 				}
 
 			} else {
-				bind.soldLayout.isVisible = true
-				bind.bidLayout.isVisible = false
-				bind.productLayout.isVisible = false
+
+				bind.status.isVisible = true
+
+				/*bind.bidLayout.isVisible = false
+				bind.productLayout.isVisible = false*/
 			}
 		}
 
@@ -740,7 +775,7 @@ log("IMAGE ${showData.seller?.image}")
 				override fun onClose() {
 					// the main view has returned to the default state
 				}
-			});
+			})
 
 			bind.bid1.onSlideCompleteListener = object : OnSlideCompleteListener {
 				override fun onSlideComplete(view: SlideToActView) {
@@ -1010,9 +1045,17 @@ log("IMAGE ${showData.seller?.image}")
 			requireActivity().runOnUiThread {
 				if (json.optString("room_id") == roomID) {
 					bind.bidTime.isVisible = true
-					bind.bidTime.text = buildString {
-						append("Ends in ")
-						append(value)
+					val color = if (value.toInt() <= 10) {
+						ContextCompat.getColor(mCtx, R.color.error)
+					} else {
+						ContextCompat.getColor(mCtx, R.color.background)
+					}
+
+					bind.bidTime.text = buildSpannedString {
+						color(color){
+							append("Ends in ")
+							append(value)
+						}
 					}
 				}
 			}

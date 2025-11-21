@@ -32,7 +32,7 @@ class PollOptionAdapter (
 			bind.quantityBox.isVisible = true
 			bind.quantity.inputType = InputType.TYPE_CLASS_TEXT
 			bind.radioGroup.isVisible = false
-			bind.quantity.setHint("Enter ${item?.hint}")
+			bind.quantity.setHint(item?.hint)
 			bind.root.setHapticClickListener {
 				mClicks.itemClick(position)
 			}
@@ -48,8 +48,10 @@ class PollOptionAdapter (
 
 			viewHolder.let { holder ->
 				variant?.let {
-					val value = holder.bind.quantity.text?.toString() ?: ""
-					result.add(value)
+					val value = holder.bind.quantity.text ?: ""
+					if (value.isNotEmpty()){
+						result.add(value.toString())
+					}
 				}
 			}
 		}

@@ -9,7 +9,6 @@ import io.bidswipe.app.databinding.HomeCategoryTileBinding
 import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.utils.loadUrl
 
-
 class HomeCategoryAdapter(
     mList: MutableList<CategoryTile>,
     private val mClick: RecyclerClicks,
