@@ -671,7 +671,6 @@ class AgoraPublisherActivity : BaseActivity() {
 		socketManager?.connect(onConnected = {
 			socketManager?.joinRoom(roomID, userId) {
 
-
 			}
 //			socketManager?.emitViewerJoin(roomID)
 		}) { err ->

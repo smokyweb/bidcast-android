@@ -10,6 +10,7 @@ import io.bidswipe.app.network.Resource
 import io.bidswipe.app.network.repository.DashRepository
 import io.bidswipe.app.network.response.CreateBidResponse
 import io.bidswipe.app.network.response.FollowUnfollowResponse
+import io.bidswipe.app.network.response.SellerInfoResponseX
 import io.bidswipe.app.network.response.SentTipAmountResponse
 import io.bidswipe.app.utils.Const.NO_INTERNET_ERROR
 import io.bidswipe.app.utils.NetworkMonitor
@@ -87,22 +88,18 @@ class StreamViewModel @Inject constructor(
 		_sendTipAmountResponse.value = repo.sendTipAmount(sellerId, amount, cardNumber)
 	}
 
+	private var _getSellerInfoResponse = MutableLiveData<Resource<SellerInfoResponseX>>()
+	val getSellerInfoRepo : MutableLiveData<Resource<SellerInfoResponseX>>
+		get() = _getSellerInfoResponse
 
-/*
-	private var _getAgoraTokenResponse = MutableLiveData<Resource<GetAgoraTokenResponse>>()
-	val getAgoraTokenRepo : MutableLiveData<Resource<GetAgoraTokenResponse>>
-		get() = _getAgoraTokenResponse
-
-	fun getAgoraToken(
-		channel : RequestBody ,
-		uId : RequestBody
+	fun getSellerInfo(
+		sellerId : String
 	) = viewModelScope.launch {
 		if (! networkMonitor.hasInternet()) {
-			_getAgoraTokenResponse.value = NO_INTERNET_ERROR
+			_getSellerInfoResponse.value = NO_INTERNET_ERROR
 			return@launch
 		}
-		_getAgoraTokenResponse.value = repo.getAgoraToken(channel, uId)
+		_getSellerInfoResponse.value = repo.getSellerInfo(sellerId)
 	}
-*/
 
 }

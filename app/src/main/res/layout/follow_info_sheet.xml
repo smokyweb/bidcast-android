@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bottom_sheet_back"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:paddingHorizontal="@dimen/padding"
+    android:paddingVertical="32dp">
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/imageCard"
+        style="@style/cardStyle"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:layout_gravity="center"
+        android:backgroundTint="@color/transparent"
+        app:cardCornerRadius="100dp"
+        app:cardElevation="0dp">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/image"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"
+            android:gravity="center"
+            android:src="@drawable/ic_delete" />
+
+    </com.google.android.material.card.MaterialCardView>
+
+    <TextView
+        android:id="@+id/title"
+        style="@style/TitleLarge"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/padding"
+        android:layout_marginBottom="8dp"
+        android:gravity="center"
+        android:textAllCaps="false"
+        tools:text="Follow This Seller!" />
+
+    <TextView
+        android:id="@+id/message"
+        style="@style/TitleMedium"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/padding"
+        android:alpha="0.7"
+        android:gravity="center"
+        android:padding="8dp"
+        android:textStyle="bold"
+        tools:text="Message" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:weightSum="2"
+        android:orientation="horizontal">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/secondaryBtn"
+            style="@style/appBtnOutline"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:backgroundTint="@color/transparent"
+            android:layout_marginEnd="@dimen/half_margin"
+            android:text="Not Now"
+            android:visibility="visible" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/primaryBtn"
+            style="@style/appBtn"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginStart="@dimen/half_margin"
+            android:layout_marginBottom="@dimen/margin"
+            android:text="Follow Seller" />
+
+    </LinearLayout>
+
+
+
+
+</LinearLayout>

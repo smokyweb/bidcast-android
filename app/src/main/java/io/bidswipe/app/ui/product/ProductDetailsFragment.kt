@@ -42,7 +42,8 @@ import io.bidswipe.app.utils.setHapticClickListener
 import io.bidswipe.app.utils.value
 
 class ProductDetailsFragment : BaseFragment<ProductViewModel, FragmentProductDetailsBinding>() {
-    override fun getModel(): Class<ProductViewModel> = ProductViewModel::class.java
+
+	override fun getModel(): Class<ProductViewModel> = ProductViewModel::class.java
 
     override fun getBind(inflater: LayoutInflater, view: ViewGroup?) =
         FragmentProductDetailsBinding.inflate(inflater, view, false)

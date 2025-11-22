@@ -530,4 +530,8 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
 		uId: RequestBody?
 	) = call { api.getAgoraToken(channel, uId) }
 
+	suspend fun getSellerInfo(
+		sellerId: String
+	) = call { api.getSellerInfo( sellerId) }
+
 }

@@ -3,6 +3,8 @@ package io.bidswipe.app.ui.watchStream
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.SurfaceView
@@ -29,18 +31,24 @@ import io.bidswipe.app.base.BaseFragment
 import io.bidswipe.app.controller.CommentAdapter
 import io.bidswipe.app.controller.FirebaseProductAdapter
 import io.bidswipe.app.controller.LivePollOptionAdapter
+import io.bidswipe.app.controller.SellerMenuInfoAdapter
+import io.bidswipe.app.databinding.FollowInfoSheetBinding
 import io.bidswipe.app.databinding.FragmentWatchStreamBinding
 import io.bidswipe.app.databinding.InputBottomSheetBinding
 import io.bidswipe.app.databinding.PaymentAndAddressSheetBinding
 import io.bidswipe.app.databinding.PollDetailsSheetBinding
 import io.bidswipe.app.databinding.ProductSheetBinding
+import io.bidswipe.app.databinding.SellerInfoSheetBinding
 import io.bidswipe.app.databinding.SendTipSheetBinding
 import io.bidswipe.app.interfaces.AlertClicks
 import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.model.LiveChatModel
 import io.bidswipe.app.model.LiveShowModel
+import io.bidswipe.app.model.MoreModel
 import io.bidswipe.app.model.PollModel
 import io.bidswipe.app.network.Resource
+import io.bidswipe.app.network.response.SellerInfoResponse
+import io.bidswipe.app.network.response.SellerInfoResponseX
 import io.bidswipe.app.ui.custom.AlertType
 import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.ui.more.MoreActivity
@@ -66,7 +74,6 @@ import kotlinx.coroutines.launch
 import org.json.JSONObject
 import kotlin.math.abs
 
-
 @SuppressLint("NotifyDataSetChanged")
 class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBinding>() {
 
@@ -86,7 +93,10 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 	private lateinit var commentAdapter: CommentAdapter
 	private var inputSheet: BottomSheetDialog? = null
 	private var sellerId: String? = ""
+	private var sellerName: String? = ""
+	private var sellerImage: String? = ""
 	private var isAllowBidForAll = true
+	private var isFollowing = false
 	private var socketManager: SocketManager? = null
 	private lateinit var productAdapter: FirebaseProductAdapter
 	private var productList = mutableListOf<LiveShowModel.Product?>()
@@ -95,7 +105,9 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 	private var pollSheet: BottomSheetDialog? = null
 	private var pollSheetBinding: PollDetailsSheetBinding? = null
 	private var livePollOptionList = mutableListOf<PollModel.PollOption>()
-	private lateinit var livePollAdapter : LivePollOptionAdapter
+	private lateinit var livePollAdapter: LivePollOptionAdapter
+	private var followSheetRunnable: Runnable? = null
+	private val followSheetHandler = Handler(Looper.getMainLooper())
 
 	companion object {
 		fun newInstance(roomID: String, streamID: String) = WatchStreamFragment().apply {
@@ -146,12 +158,27 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 			finish()
 		}
 
+		bind.iconCard.setHapticClickListener {
+
+			if (sellerId?.isNotEmpty() == true){
+				bind.loader.isVisible = true
+				viewModel.getSellerInfo(sellerId!!)
+			}
+
+
+		}
+
+		bind.userName.setHapticClickListener {
+			bind.loader.isVisible = true
+			viewModel.getSellerInfo(sellerId!!)
+		}
+
 		bind.recycler.setOnTouchListener { view, event ->
 			hideKeyboard(view)
 			return@setOnTouchListener false
 		}
 
-		commentAdapter = CommentAdapter(commentList,roomID.split("_")[2] ?: "0" )
+		commentAdapter = CommentAdapter(commentList, roomID.split("_")[2] ?: "0")
 
 		livePollAdapter = LivePollOptionAdapter(livePollOptionList, object : RecyclerClicks {
 			override fun itemClick(pos: Int, status: String?) {
@@ -229,14 +256,14 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
 						if (userId == winner.optString("user_id")) {
 							bind.winning.text = buildSpannedString {
-								color(ContextCompat.getColor(mCtx, R.color.primary)){
+								color(ContextCompat.getColor(mCtx, R.color.primary)) {
 									bold { append(" you won!") }
 								}
 							}
-						} else{
+						} else {
 							bind.winning.text = buildSpannedString {
-								append( bidderName)
-								color(ContextCompat.getColor(mCtx, R.color.primary)){
+								append(bidderName)
+								color(ContextCompat.getColor(mCtx, R.color.primary)) {
 									bold { append(" has won!") }
 								}
 							}
@@ -293,6 +320,8 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
 					log("IS FOLLOWING : ${obj.optString("is_followed")}")
 
+					isFollowing = obj.optBoolean("is_followed")
+
 					bind.follow.isVisible = !obj.optBoolean("is_followed")
 				}
 			}
@@ -311,7 +340,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 		socketManager?.onVoteErrorResult { obj ->
 			requireActivity().runOnUiThread {
 				if (obj.optString("roomId") == roomID) {
-					Alerts.error(mCtx,"Vote failed")
+					Alerts.error(mCtx, "Vote failed")
 				}
 			}
 		}
@@ -324,22 +353,22 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 			showPollDetailsSheet()
 		}
 
-/*		bind.message.setEndIconOnClickListener {
-			if (bind.text.value().isNotEmpty()) {
-				if (App.profileResponse.value?.buyerIdentityStatus == "verified") {
-					socketManager?.sendMessage(
-						roomID,
-						bind.text.value(),
-						userId,
-						userName,
-						userImage
-					)
-					bind.text.setText("")
-				} else {
-					verificationDialog()
-				}
-			}
-		}*/
+		/*		bind.message.setEndIconOnClickListener {
+					if (bind.text.value().isNotEmpty()) {
+						if (App.profileResponse.value?.buyerIdentityStatus == "verified") {
+							socketManager?.sendMessage(
+								roomID,
+								bind.text.value(),
+								userId,
+								userName,
+								userImage
+							)
+							bind.text.setText("")
+						} else {
+							verificationDialog()
+						}
+					}
+				}*/
 
 		bind.messageText.setOnEditorActionListener { v, actionId, event ->
 			if (actionId == EditorInfo.IME_ACTION_SEND) {
@@ -367,13 +396,13 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 			val imeVisible = insets.isVisible(WindowInsetsCompat.Type.ime())
 
 			if (imeVisible) {
-				bind.product.isVisible=false
-				bind.bidLayout.isVisible=false
-				bind.sideOptions.isVisible=false
+				bind.product.isVisible = false
+				bind.bidLayout.isVisible = false
+				bind.sideOptions.isVisible = false
 			} else {
-				bind.product.isVisible=true
-				bind.bidLayout.isVisible=true
-				bind.sideOptions.isVisible=true
+				bind.product.isVisible = true
+				bind.bidLayout.isVisible = true
+				bind.sideOptions.isVisible = true
 			}
 			insets
 		}
@@ -415,6 +444,41 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 			verificationDialog()
 		}
 
+		viewModel.getSellerInfoRepo.observe(viewLifecycleOwner) { it ->
+			when (it) {
+				is Resource.Success -> {
+					bind.loader.isVisible = false
+					val mData = it.value.data
+
+					if (mData!=null){
+						sellerInfoSheet(mData)
+					}
+
+
+
+					Alerts.success(mCtx, "Tip sent successfully")
+
+				}
+
+				is Resource.Error -> {
+					bind.loader.isVisible = false
+
+					it.parse(mCtx, TAG, object : AlertClicks {
+						override fun primaryClick(dialog: AppBottomSheet) {
+							dialog.dismiss()
+
+						}
+
+						override fun secondaryClick(dialog: AppBottomSheet) {
+							dialog.dismiss()
+						}
+					})
+				}
+
+				else -> {}
+			}
+		}
+
 		viewModel.sendTipAmountRepo.observe(viewLifecycleOwner) { it ->
 			when (it) {
 				is Resource.Success -> {
@@ -428,6 +492,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 				}
 
 				is Resource.Error -> {
+					bind.loader.isVisible = false
 					it.parse(mCtx, TAG, object : AlertClicks {
 						override fun primaryClick(dialog: AppBottomSheet) {
 							dialog.dismiss()
@@ -478,9 +543,22 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
 	override fun onResume() {
 		super.onResume()
+
 		attachAgoraCallbacks()
+
 		socketManager?.joinRoom(roomID, userId) {
 			socketManager?.sendMessage(roomID, "Joined \uD83D\uDC4B", userId, userName, userImage)
+
+			followSheetRunnable = object : Runnable {
+				override fun run() {
+					followSheet()
+				}
+			}
+
+			if (!isFollowing) {
+				followSheetRunnable?.let { followSheetHandler.postDelayed(it,30000) }
+			}
+
 		}
 
 		if (streamID.isBlank()) {
@@ -509,6 +587,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 		super.onPause()
 		socketManager?.leaveRoom(roomID, userId)
 		App.manager.leaveChannel()
+		followSheetRunnable?.let { followSheetHandler.removeCallbacks(it) }
 //		stopStream()
 	}
 
@@ -635,8 +714,8 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
 					bind.userImage.loadUrl(mCtx, bidderImage)
 					bind.winning.text = buildSpannedString {
-						append( bidderName)
-						color(ContextCompat.getColor(mCtx, R.color.primary)){
+						append(bidderName)
+						color(ContextCompat.getColor(mCtx, R.color.primary)) {
 							bold { append(" is winning!") }
 						}
 					}
@@ -690,14 +769,14 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 				bind.productImage.loadUrl(mCtx, liveProduct.image ?: "")
 				bind.productImageShop.loadUrl(mCtx, liveProduct.image ?: "")
 				val price = liveProduct.price
-				bind.price.text = price?.asMoney() ?: "0.0" +"Shipping + Taxes"
+				bind.price.text = price?.asMoney() ?: "0.0" + "Shipping + Taxes"
 
 				highestBidAmount = price
 				bidProductId = liveProduct.id
 				setBidText(highestBidAmount)
 
 				bind.productLayout.setHapticClickListener {
-					startActivity(Intent(mCtx , ProductDetailsActivity::class.java).putExtra("productId" , liveProduct.id.toString()))
+					startActivity(Intent(mCtx, ProductDetailsActivity::class.java).putExtra("productId", liveProduct.id.toString()))
 				}
 
 			} else {
@@ -739,11 +818,14 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
 			sellerId = showData.seller?.id.toString()
 
+			sellerName = showData.seller?.name.toString()
+			sellerImage = showData.seller?.image.toString()
+
 			bind.userName.text = showData.seller?.name?.asCapital()
-			bind.rating.text = showData.seller?.rating?.ifEmpty { "0.0"}
+			bind.rating.text = showData.seller?.rating?.ifEmpty { "0.0" }
 
 			bind.userImage.loadUrl(mCtx, showData.seller?.image ?: "")
-log("IMAGE ${showData.seller?.image}")
+			log("IMAGE ${showData.seller?.image}")
 			bind.liveCount.text = showData.viewerCount
 
 			bind.follow.setHapticClickListener {
@@ -1052,7 +1134,7 @@ log("IMAGE ${showData.seller?.image}")
 					}
 
 					bind.bidTime.text = buildSpannedString {
-						color(color){
+						color(color) {
 							append("Ends in ")
 							append(value)
 						}
@@ -1302,6 +1384,87 @@ log("IMAGE ${showData.seller?.image}")
 		pollSheet.show()
 	}
 
+	private fun sellerInfoSheet(data : SellerInfoResponseX.Data) {
+
+		val sellerInfoSheetBinding = SellerInfoSheetBinding.bind(
+			layoutInflater.inflate(
+				R.layout.seller_info_sheet,
+				null,
+				false
+			)
+		)
+
+		val sellerInfoSheet = Alerts.appBottomSheet(mCtx, true, sellerInfoSheetBinding)
+
+		val sellerMenuList = mutableListOf<MoreModel>()
+
+		sellerMenuList.add(MoreModel(R.drawable.ic_flying_money, "Tip or Boost", "tip"))
+		sellerMenuList.add(MoreModel(R.drawable.ic_rounded_profile, "View Profile", "profile"))
+		sellerMenuList.add(MoreModel(R.drawable.ic_outlined_message, "Message", "message"))
+		sellerMenuList.add(MoreModel(R.drawable.ic_mention, "Mention in Chat", "mention"))
+		sellerMenuList.add(MoreModel(R.drawable.ic_block, "Block", "block"))
+		sellerMenuList.add(MoreModel(R.drawable.ic_report_problem, "Report", "report"))
+
+		sellerInfoSheetBinding.menuRecycler.adapter = SellerMenuInfoAdapter(sellerMenuList, object : RecyclerClicks {
+			override fun itemClick(pos: Int, status: String?) {
+			}
+
+		})
+
+		sellerInfoSheetBinding.userName.text = data.sellerDetails?.name
+		sellerInfoSheetBinding.rating.text = (data.ratingAvg ?: 0).toString()
+		sellerInfoSheetBinding.review.text = (data.review ?: 0).toString()
+		sellerInfoSheetBinding.sold.text = (data.soldAvg ?: 0).toString()
+		sellerInfoSheetBinding.shipping.text = (data.avgShip ?: 0).toString()
+		sellerInfoSheetBinding.userImage.loadUrl(mCtx, data.sellerDetails?.profileImage ?:"")
+
+		sellerInfoSheetBinding.follow.setHapticClickListener {
+			socketManager?.followSeller(userId, sellerId ?: "")
+			sellerInfoSheet.dismiss()
+		}
+
+		sellerInfoSheet.show()
+	}
+
+	private fun followSheet() {
+
+		val followSheetBinding = FollowInfoSheetBinding.bind(
+			layoutInflater.inflate(
+				R.layout.follow_info_sheet,
+				null,
+				false
+			)
+		)
+
+		val followSheet = Alerts.appBottomSheet(mCtx, true, followSheetBinding)
+
+		followSheetBinding.image.loadUrl(mCtx, sellerImage ?: "")
+
+		followSheetBinding.title.text = "Follow This Seller!"
+
+		followSheetBinding.message.text = buildSpannedString {
+			append("Like what you see? Follow ")
+			color(ContextCompat.getColor(mCtx, R.color.primary)) {
+				append(sellerName)
+			}
+			append(" to get notifications when they go live!")
+		}
+
+		followSheetBinding.primaryBtn.setHapticClickListener {
+			socketManager?.followSeller(userId, sellerId ?: "")
+			followSheet.dismiss()
+		}
+
+		followSheetBinding.secondaryBtn.setHapticClickListener {
+			followSheet.dismiss()
+		}
+
+
+
+		followSheet.show()
+	}
+
+
 	private fun updatePollSheet() {
 		val poll = currentPoll ?: return
 		pollSheetBinding?.let { binding ->
@@ -1310,7 +1473,7 @@ log("IMAGE ${showData.seller?.image}")
 			binding.pollQuestionDetail.text = poll.question ?: "No question"
 			binding.pollTimerDetail.text = poll.remainingTime ?: "00:00 remaining"
 			binding.pollTotalVotesDetail.text = "${poll.totalVotes} total votes"
-			
+
 			if (::livePollAdapter.isInitialized) {
 				livePollOptionList.clear()
 				livePollOptionList.addAll(poll.options)

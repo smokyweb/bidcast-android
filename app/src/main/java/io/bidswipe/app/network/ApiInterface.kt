@@ -66,6 +66,8 @@ import io.bidswipe.app.network.response.PageUrlResponse
 import io.bidswipe.app.network.response.PayoutHistoryResponse
 import io.bidswipe.app.network.response.SalesAnalyticsResponse
 import io.bidswipe.app.network.response.SellerAnalyticsResponse
+import io.bidswipe.app.network.response.SellerInfoResponse
+import io.bidswipe.app.network.response.SellerInfoResponseX
 import io.bidswipe.app.network.response.SellerStatusResponse
 import io.bidswipe.app.network.response.SentTipAmountResponse
 import io.bidswipe.app.network.response.SetDefaultAddressResponse
@@ -694,6 +696,11 @@ interface ApiInterface {
 		@Part("channel") channel: RequestBody,
 		@Part("uid") uId: RequestBody?
 	) : GetAgoraTokenResponse
+
+	@GET("api/get-seller-info")
+	suspend fun getSellerInfo(
+		@Query("seller_id") sellerId : String? ,
+	) : SellerInfoResponseX
 
 }
 
