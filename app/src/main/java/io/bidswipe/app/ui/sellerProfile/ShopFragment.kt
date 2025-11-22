@@ -43,7 +43,7 @@ class ShopFragment : BaseFragment<SellerViewModel , FragmentShopBinding>() {
 			bind.noInternet.isVisible = false
 			bind.loader.isVisible = true
 			page = 1
-			viewModel.getUserProducts( userId = sellerId.request(), type = "offer".request())
+			viewModel.getUserProducts( userId = sellerId.request())
 		} else {
 			bind.recycler.isVisible = false
 			bind.noData.isVisible = false

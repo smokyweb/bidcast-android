@@ -11,6 +11,7 @@ import io.bidswipe.app.network.response.CreateOrderResponse
 import io.bidswipe.app.network.response.GetOrderDetailsResponse
 import io.bidswipe.app.network.response.GetPaymentCardsResponse
 import io.bidswipe.app.network.response.GetProductDetailsResponse
+import io.bidswipe.app.network.response.GetProductsResponse
 import io.bidswipe.app.network.response.GetPurchaseDetail
 import io.bidswipe.app.network.response.GetShippingAddressResponse
 import io.bidswipe.app.network.response.UserSearchingResponse
@@ -28,27 +29,6 @@ class ProductViewModel @Inject constructor(
 
 	var product: GetProductDetailsResponse.Data? = null
 	var checkoutData: GetPurchaseDetail.Data? = null
-
-	/*    private var _createOrderResponse = MutableLiveData<Resource<CommonResponse>>()
-		val createOrderRepo: MutableLiveData<Resource<CommonResponse>>
-			get() = _createOrderResponse
-
-		fun createOrder(
-			shippingId : RequestBody?,
-			productId : RequestBody?,
-			cardId : RequestBody?,
-			promoCode : RequestBody?,
-			sendAsGift : RequestBody?,
-			giftUserId : RequestBody?,
-			giftMsg : RequestBody?,
-			shippingCharges : RequestBody?,
-			taxAmount : RequestBody?,
-			subTotal : RequestBody?,
-			total : RequestBody?,
-			discount : RequestBody?
-		) = viewModelScope.launch {
-			_createOrderResponse.value = repo.createOrder(shippingId,productId,cardId,promoCode,sendAsGift,giftUserId,giftMsg,shippingCharges,taxAmount,subTotal,total,discount)
-		}*/
 
 	private var _getProductResponse = MutableLiveData<Resource<CommonResponse>>()
 	val getProductRepo: MutableLiveData<Resource<CommonResponse>>
@@ -226,6 +206,23 @@ class ProductViewModel @Inject constructor(
 			return@launch
 		}
 		_saveSellerProductResponse.value = repo.saveSellerProduct(productId)
+	}
+
+	private var _getUserProductsResponse = MutableLiveData<Resource<GetProductsResponse>>()
+	val getUserProductsRepo: MutableLiveData<Resource<GetProductsResponse>>
+		get() = _getUserProductsResponse
+
+	fun getUserProducts(
+		userId: RequestBody? = null,
+		categoryId: RequestBody? = null,
+		page: RequestBody? = null,
+		type: RequestBody? = null
+	) = viewModelScope.launch {
+		if (!networkMonitor.hasInternet()) {
+			_getUserProductsResponse.value = NO_INTERNET_ERROR
+			return@launch
+		}
+		_getUserProductsResponse.value = repo.getUserProducts(userId, categoryId, page, type)
 	}
 
 }

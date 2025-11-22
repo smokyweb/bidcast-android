@@ -72,7 +72,11 @@
 			android:exported = "false" />
 		<activity
 			android:name = ".ui.watchStream.ViewLiveShowActivity"
+			android:configChanges = "screenSize|smallestScreenSize|screenLayout|orientation"
 			android:exported = "false"
+			android:launchMode = "singleTop"
+			android:resizeableActivity = "true"
+			android:supportsPictureInPicture = "true"
 			android:windowSoftInputMode = "adjustResize" />
 
 		<activity
@@ -84,6 +88,7 @@
 			android:windowSoftInputMode = "adjustResize" />
 		<activity
 			android:name = ".ui.product.ProductDetailsActivity"
+			android:supportsPictureInPicture = "false"
 			android:exported = "false" />
 		<activity
 			android:name = ".ui.sellerHub.SellerHubActivity"

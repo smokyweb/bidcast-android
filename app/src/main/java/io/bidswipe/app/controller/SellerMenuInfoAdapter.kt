@@ -28,7 +28,7 @@ class SellerMenuInfoAdapter (
 
 			bind.root.setHapticClickListener {
 
-				mClicks.itemClick(position)
+				mClicks.itemClick(position,item.slug)
 
 			}
 

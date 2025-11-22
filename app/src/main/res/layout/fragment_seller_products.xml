@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     android:background="@drawable/bottom_sheet_back"
     tools:context=".ui.product.SellerProductsFragment">
 
@@ -12,16 +12,32 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
+        android:layout_margin="@dimen/margin"
         android:orientation="horizontal"
-        android:padding="@dimen/margin"
         app:layout_constraintTop_toTopOf="parent">
 
-        <TextView
-            style="@style/TitleLarge"
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/searchLayout"
+            style="@style/inputBoxStyle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            app:boxBackgroundColor="@color/surface"
+            app:boxStrokeWidth="2dp"
             android:layout_weight="1"
-            android:text="@string/shop" />
+            app:endIconMode="custom"
+            app:endIconTint="@color/scrim"
+            app:layout_constraintTop_toBottomOf="@id/divider"
+            app:startIconDrawable="@drawable/search">
+
+            <com.google.android.material.textfield.MaterialAutoCompleteTextView
+                android:id="@+id/search"
+                style="@style/inputTextStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/search_products"
+                android:inputType="textEmailAddress" />
+
+        </com.google.android.material.textfield.TextInputLayout>
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/close"
@@ -34,52 +50,13 @@
 
     </LinearLayout>
 
-    <com.google.android.material.divider.MaterialDivider
-        android:id="@+id/divider"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        app:dividerColor="@color/outline"
-        app:layout_constraintTop_toBottomOf="@id/header" />
-
-    <LinearLayout
-        android:id="@+id/contentLayout"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:orientation="vertical"
-        app:layout_constraintDimensionRatio="3:7"
-        app:layout_constraintTop_toBottomOf="@id/divider">
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/searchLayout"
-            style="@style/inputBoxStyle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/margin"
-            android:layout_marginBottom="@dimen/margin"
-            app:boxBackgroundColor="@color/surface"
-            app:boxStrokeWidth="2dp"
-            app:endIconMode="custom"
-            app:endIconTint="@color/scrim"
-            app:layout_constraintTop_toBottomOf="@id/divider"
-            app:startIconDrawable="@drawable/search">
-
-            <com.google.android.material.textfield.MaterialAutoCompleteTextView
-                android:id="@+id/email"
-                style="@style/inputTextStyle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="@string/search_products"
-                android:inputType="textEmailAddress" />
-
-        </com.google.android.material.textfield.TextInputLayout>
-
         <HorizontalScrollView
             android:id="@+id/chipGroupScroll"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/margin"
             android:scrollbars="none"
-            app:layout_constraintTop_toBottomOf="@id/searchLayout">
+            app:layout_constraintTop_toBottomOf="@id/header">
 
             <com.google.android.material.chip.ChipGroup
                 android:id="@+id/chipGroup"
@@ -93,34 +70,22 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycler"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
             android:layout_margin="@dimen/half_margin"
             android:nestedScrollingEnabled="false"
             android:orientation="vertical"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toBottomOf="@id/chipGroupScroll"
+            app:layout_constraintBottom_toBottomOf="parent"
             tools:itemCount="5"
             tools:listitem="@layout/shop_sheet_item" />
 
-    </LinearLayout>
-
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="@dimen/padding"
-        android:layout_marginBottom="@dimen/padding"
-        android:src="@drawable/ic_add"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
 
     <io.bidswipe.app.ui.custom.LoaderView
         android:id="@+id/loader"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/divider" />
+        android:layout_height="match_parent"
+        android:visibility="gone" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

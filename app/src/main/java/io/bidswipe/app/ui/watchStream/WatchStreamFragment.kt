@@ -1,10 +1,14 @@
 package io.bidswipe.app.ui.watchStream
 
 import android.annotation.SuppressLint
+import android.app.PictureInPictureParams
 import android.content.Intent
+import android.graphics.Rect
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.util.Rational
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.SurfaceView
@@ -51,9 +55,11 @@ import io.bidswipe.app.network.response.SellerInfoResponse
 import io.bidswipe.app.network.response.SellerInfoResponseX
 import io.bidswipe.app.ui.custom.AlertType
 import io.bidswipe.app.ui.custom.AppBottomSheet
+import io.bidswipe.app.ui.dashboard.ChatActivity
 import io.bidswipe.app.ui.more.MoreActivity
 import io.bidswipe.app.ui.more.TrustedBuyerActivity
 import io.bidswipe.app.ui.product.ProductDetailsActivity
+import io.bidswipe.app.ui.sellerProfile.SellerProfileActivity
 import io.bidswipe.app.utils.Alerts
 import io.bidswipe.app.utils.Const
 import io.bidswipe.app.utils.SocketManager
@@ -108,6 +114,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 	private lateinit var livePollAdapter: LivePollOptionAdapter
 	private var followSheetRunnable: Runnable? = null
 	private val followSheetHandler = Handler(Looper.getMainLooper())
+	private lateinit var pipParams: PictureInPictureParams
 
 	companion object {
 		fun newInstance(roomID: String, streamID: String) = WatchStreamFragment().apply {
@@ -144,6 +151,8 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 				}*/
 
 		setUpSwipe()
+
+		initPip()
 
 		ViewCompat.setOnApplyWindowInsetsListener(requireActivity().window.decorView) { v, insets ->
 			val system = insets.getInsets(WindowInsetsCompat.Type.systemBars())
@@ -314,7 +323,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 			}
 		}
 
-		socketManager?.onFollowSellerStatus { obj ->
+/*		socketManager?.onFollowSellerStatus { obj ->
 			activity?.runOnUiThread {
 				if (obj.optString("room_id") == roomID && obj.optString("user_id") == userId) {
 
@@ -325,7 +334,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 					bind.follow.isVisible = !obj.optBoolean("is_followed")
 				}
 			}
-		}
+		}*/
 
 		socketManager?.receiveRaid { obj ->
 			requireActivity().runOnUiThread {
@@ -437,7 +446,14 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 		}
 
 		bind.shop.setHapticClickListener {
-			showProductSheet()
+
+		/*	if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+				(requireActivity() as ViewLiveShowActivity).enterPictureInPictureMode(pipParams)
+			}*/
+
+			startActivity(Intent(mCtx, ProductDetailsActivity::class.java).putExtra("type", "shop"))
+
+
 		}
 
 		if (App.profileResponse.value?.buyerIdentityStatus != "verified") {
@@ -453,10 +469,6 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 					if (mData!=null){
 						sellerInfoSheet(mData)
 					}
-
-
-
-					Alerts.success(mCtx, "Tip sent successfully")
 
 				}
 
@@ -513,7 +525,9 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 			when (it) {
 				is Resource.Success -> {
 					bind.loader.isVisible = false
-					it.value.data
+					 val mData = it.value.data
+
+					isFollowing = true
 
 					bind.follow.isVisible = false
 
@@ -829,7 +843,8 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 			bind.liveCount.text = showData.viewerCount
 
 			bind.follow.setHapticClickListener {
-				socketManager?.followSeller(userId, sellerId ?: "")
+				bind.loader.isVisible = true
+				viewModel.followUser(sellerId?.request())
 			}
 
 			log("ALLOW BID FOR ALL: $isAllowBidForAll")
@@ -1401,14 +1416,35 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 		sellerMenuList.add(MoreModel(R.drawable.ic_flying_money, "Tip or Boost", "tip"))
 		sellerMenuList.add(MoreModel(R.drawable.ic_rounded_profile, "View Profile", "profile"))
 		sellerMenuList.add(MoreModel(R.drawable.ic_outlined_message, "Message", "message"))
-		sellerMenuList.add(MoreModel(R.drawable.ic_mention, "Mention in Chat", "mention"))
+//		sellerMenuList.add(MoreModel(R.drawable.ic_mention, "Mention in Chat", "mention"))
 		sellerMenuList.add(MoreModel(R.drawable.ic_block, "Block", "block"))
 		sellerMenuList.add(MoreModel(R.drawable.ic_report_problem, "Report", "report"))
 
 		sellerInfoSheetBinding.menuRecycler.adapter = SellerMenuInfoAdapter(sellerMenuList, object : RecyclerClicks {
 			override fun itemClick(pos: Int, status: String?) {
-			}
 
+				sellerInfoSheet.dismiss()
+
+				when (status) {
+					"tip" -> {
+						sendTipSheet()
+					}
+					"profile" -> {
+						startActivity(Intent(mCtx, SellerProfileActivity::class.java).putExtra("userId", sellerId))
+					}
+					"message" -> {
+						startActivity(Intent(mCtx, ChatActivity::class.java).putExtra("id", sellerId).
+						putExtra("name", sellerName).
+						putExtra("image", sellerImage))
+					}
+					"mention" -> {
+					}
+
+					"block" -> {
+						showBlockConfirmation()
+					}
+				}
+			}
 		})
 
 		sellerInfoSheetBinding.userName.text = data.sellerDetails?.name
@@ -1419,7 +1455,8 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 		sellerInfoSheetBinding.userImage.loadUrl(mCtx, data.sellerDetails?.profileImage ?:"")
 
 		sellerInfoSheetBinding.follow.setHapticClickListener {
-			socketManager?.followSeller(userId, sellerId ?: "")
+			bind.loader.isVisible = true
+			viewModel.followUser(sellerId?.request())
 			sellerInfoSheet.dismiss()
 		}
 
@@ -1427,6 +1464,8 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 	}
 
 	private fun followSheet() {
+
+		if(App.PIPMode) return
 
 		val followSheetBinding = FollowInfoSheetBinding.bind(
 			layoutInflater.inflate(
@@ -1451,7 +1490,8 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 		}
 
 		followSheetBinding.primaryBtn.setHapticClickListener {
-			socketManager?.followSeller(userId, sellerId ?: "")
+			bind.loader.isVisible = true
+			viewModel.followUser(sellerId?.request())
 			followSheet.dismiss()
 		}
 
@@ -1493,5 +1533,85 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 			userId = userId
 		)
 	}
+
+	private fun initPip() {
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+			val visibleRect = Rect()
+
+
+			(requireActivity() as ViewLiveShowActivity).bind.root.getGlobalVisibleRect(visibleRect)
+			pipParams = PictureInPictureParams.Builder().apply {
+				setAspectRatio(Rational(100, 200))
+//                setAspectRatio(Rational(2, 5))
+				setSourceRectHint(visibleRect)
+
+				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+					setAutoEnterEnabled(true)
+				}
+			}.build()
+
+			activity?.setPictureInPictureParams(pipParams)
+		}
+	}
+
+	private fun showBlockConfirmation() {
+		AppBottomSheet(
+			mCtx,
+			R.drawable.ic_block,
+			"Block Seller",
+			"Are you sure you want to block this seller?",
+			primaryBtnText = "Block",
+			secondaryBtnText = "Cancel",
+			canCancel = true,
+			showSecondary = true,
+			iconPadding = 16,
+			alertType = AlertType.WARNING,
+			clicks = object : AlertClicks {
+				override fun primaryClick(dialog: AppBottomSheet) {
+					dialog.dismiss()
+					blockUser()
+				}
+
+				override fun secondaryClick(dialog: AppBottomSheet) {
+					dialog.dismiss()
+				}
+			}).show()
+	}
+
+	private fun blockUser() {
+		bind.loader.isVisible = true
+		viewModel.blockUnblockUser(sellerId?.request()!!)
+
+		viewModel.blockUnblockUserRepo.observe(this) {
+			when (it) {
+				is Resource.Success -> {
+					bind.loader.isVisible = false
+					it.value.data
+					if (it.value.status == "success") {
+						Alerts.success(mCtx, it.value.message ?: "User blocked successfully")
+						finish()
+					} else {
+						Alerts.error(mCtx, it.value.message ?: "Failed to block user")
+					}
+				}
+
+				is Resource.Error -> {
+					bind.loader.isVisible = false
+					it.parse(mCtx, TAG, object : AlertClicks {
+						override fun primaryClick(dialog: AppBottomSheet) {
+							dialog.dismiss()
+						}
+
+						override fun secondaryClick(dialog: AppBottomSheet) {
+							dialog.dismiss()
+						}
+					})
+				}
+
+				else -> {}
+			}
+		}
+	}
+
 
 }

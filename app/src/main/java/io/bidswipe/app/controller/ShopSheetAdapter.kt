@@ -3,6 +3,7 @@ package io.bidswipe.app.controller
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.text.buildSpannedString
+import androidx.core.view.isVisible
 import io.bidswipe.app.base.BaseAdapter
 import io.bidswipe.app.databinding.ShopSheetItemBinding
 import io.bidswipe.app.interfaces.RecyclerClicks
@@ -12,7 +13,8 @@ import io.bidswipe.app.utils.loadUrl
 import io.bidswipe.app.utils.setHapticClickListener
 
 class ShopSheetAdapter(
-	mList : MutableList<GetMyInventoryResponse.Data?> , val mClicks : RecyclerClicks ,
+	mList : MutableList<GetMyInventoryResponse.Data?> ,type : String
+	, val mClicks : RecyclerClicks
 ) : BaseAdapter<GetMyInventoryResponse.Data? , ShopSheetItemBinding>(mList) {
 
 	override fun bindView(inflater : LayoutInflater , parent : ViewGroup) =
@@ -24,6 +26,9 @@ class ShopSheetAdapter(
 		item : GetMyInventoryResponse.Data? ,
 	) {
 		with(holder) {
+
+			bind.primary.isVisible = false
+			bind.secondary.isVisible = false
 
 			bind.img.loadUrl(mCtx , item?.images?.get(0).toString())
 

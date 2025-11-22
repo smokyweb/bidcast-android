@@ -16,7 +16,6 @@ import android.provider.OpenableColumns
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
-import com.canhub.cropper.CropImageContractOptions
 import com.canhub.cropper.CropImageOptions
 import com.canhub.cropper.CropImageView
 import com.google.android.material.chip.Chip
@@ -49,19 +48,6 @@ object Utils {
 	} else {
 		System.currentTimeMillis() / 1000L
 	}
-
-	/*fun getAlarmChannel() =
-		NotificationChannel(Const.ALARM_CHANNEL_ID , Const.ALARM_CHANNEL_NAME , NotificationManager.IMPORTANCE_HIGH).also {
-			it.lockscreenVisibility = Notification.VISIBILITY_PUBLIC
-			it.enableVibration(true)
-			it.enableLights(false)
-		}*/
-
-	/*fun notificationChannel() = NotificationChannel(Const.CHANNEL_ID , Const.CHANNEL_NAME , NotificationManager.IMPORTANCE_HIGH).also {
-		it.lockscreenVisibility = Notification.VISIBILITY_PUBLIC
-		it.enableVibration(true)
-		it.enableLights(false)
-	}*/
 
 	fun getTimeFromTimestamp(millis : Long , format : String = "hh:mm a") =
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -243,7 +229,7 @@ object Utils {
 		return fileName
 	}
 
-	fun makeAChip(mCtx : Context , text : String , selected : Boolean,closeIconVisible : Boolean,minHeight:Int=36,chipPadding:Int=12,strokeWidth:Int=0,chipId:Int?=null) =
+	fun makeAChip(mCtx : Context , text : String , selected : Boolean,closeIconVisible : Boolean,minHeight:Int=36,chipPadding:Int=12,strokeWidth:Int=0,chipId:Int?=null, iconRes: Int? = null) =
 		Chip(mCtx , null , R.attr.entryChipStyleNew).apply {
 			setText(text)
 			id = chipId?:text.hashCode()
@@ -258,6 +244,11 @@ object Utils {
 			chipMinHeight = mCtx.resources.dpToPx(minHeight).toFloat()
 			isChecked = selected // Set the checked state
 			isCheckedIconVisible = false
+
+			iconRes?.let {
+				chipIcon = ContextCompat.getDrawable(mCtx, it)
+				isChipIconVisible = true
+			}
 		}
 
 	fun validateEmail(email : String?) : Boolean {

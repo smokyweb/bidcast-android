@@ -1,7 +1,12 @@
 package io.bidswipe.app.ui.watchStream
 
+import android.app.PictureInPictureParams
+import android.content.Intent
+import android.content.res.Configuration
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.util.Rational
 import androidx.activity.viewModels
 import androidx.viewpager2.widget.ViewPager2
 import com.gyf.immersionbar.ktx.immersionBar
@@ -11,6 +16,7 @@ import io.bidswipe.app.base.BaseActivity
 import io.bidswipe.app.controller.StreamPagerAdapter
 import io.bidswipe.app.databinding.ActivityViewLiveShowBinding
 import io.bidswipe.app.model.StreamModel
+import io.bidswipe.app.ui.product.ProductDetailsActivity
 import io.bidswipe.app.utils.AgoraManager
 import io.bidswipe.app.utils.Const
 import io.bidswipe.app.utils.bind
@@ -18,7 +24,7 @@ import io.bidswipe.app.utils.clr
 
 class ViewLiveShowActivity : BaseActivity() {
 
-	private val bind by bind(ActivityViewLiveShowBinding::inflate)
+	 val bind by bind(ActivityViewLiveShowBinding::inflate)
 	private val viewModel by viewModels<StreamViewModel>()
 
 	private var pos = 0
@@ -26,6 +32,9 @@ class ViewLiveShowActivity : BaseActivity() {
 	private var streamList = arrayListOf<StreamModel>()
 	private lateinit var viewPager: ViewPager2
 	private lateinit var streamPagerAdapter: StreamPagerAdapter
+	
+	// Callback for PIP mode entry confirmation
+	private var pipModeEnteredCallback: (() -> Unit)? = null
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
@@ -97,6 +106,34 @@ class ViewLiveShowActivity : BaseActivity() {
 	override fun onDestroy() {
 		super.onDestroy()
 		App.manager.destroyEngine()
+	}
+
+	override fun onPictureInPictureModeChanged(isInPictureInPictureMode: Boolean, newConfig: Configuration) {
+		super.onPictureInPictureModeChanged(isInPictureInPictureMode, newConfig)
+		App.PIPMode = isInPictureInPictureMode
+		
+		if (isInPictureInPictureMode) {
+			log("Entered PIP mode")
+//			startActivity(Intent(this, ProductDetailsActivity::class.java).putExtra("type", "shop"))
+
+			// Notify callback that PIP mode has been entered
+			pipModeEnteredCallback?.invoke()
+			pipModeEnteredCallback = null
+			// Hide unnecessary UI elements when in PIP mode
+		} else {
+			log("Exited PIP mode")
+			// Restore UI elements when exiting PIP mode
+		}
+	}
+	
+	fun setPipModeEnteredCallback(callback: (() -> Unit)?) {
+		pipModeEnteredCallback = callback
+	}
+
+	override fun onUserLeaveHint() {
+		super.onUserLeaveHint()
+		// This is called when user presses Home button or opens another app
+		// You can optionally enter PIP here, but we're doing it manually on shop click
 	}
 
 }

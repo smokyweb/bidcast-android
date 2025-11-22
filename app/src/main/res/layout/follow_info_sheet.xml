@@ -10,6 +10,8 @@
     android:paddingHorizontal="@dimen/padding"
     android:paddingVertical="32dp">
 
+
+
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/imageCard"
         style="@style/cardStyle"

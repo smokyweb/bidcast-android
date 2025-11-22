@@ -8,6 +8,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import io.bidswipe.app.model.StreamModel
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.network.repository.DashRepository
+import io.bidswipe.app.network.response.BlockedUnblockedResponse
 import io.bidswipe.app.network.response.CreateBidResponse
 import io.bidswipe.app.network.response.FollowUnfollowResponse
 import io.bidswipe.app.network.response.SellerInfoResponseX
@@ -100,6 +101,20 @@ class StreamViewModel @Inject constructor(
 			return@launch
 		}
 		_getSellerInfoResponse.value = repo.getSellerInfo(sellerId)
+	}
+
+	private var _blockUnblockUserResponse = MutableLiveData<Resource<BlockedUnblockedResponse>>()
+	val blockUnblockUserRepo: MutableLiveData<Resource<BlockedUnblockedResponse>>
+		get() = _blockUnblockUserResponse
+
+	fun blockUnblockUser(
+		blockedID: RequestBody,
+	) = viewModelScope.launch {
+		if (!networkMonitor.hasInternet()) {
+			_blockUnblockUserResponse.value = NO_INTERNET_ERROR
+			return@launch
+		}
+		_blockUnblockUserResponse.value = repo.blockUnblockUser(blockedID)
 	}
 
 }
