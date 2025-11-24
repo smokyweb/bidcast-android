@@ -11,6 +11,15 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/thumbnailView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/surface"
+        android:contentDescription="@string/app_name"
+        android:scaleType="centerCrop"
+        android:visibility="visible" />
+
     <ViewFlipper
         android:id="@+id/view_flipper"
         android:layout_width="match_parent"
@@ -73,12 +82,12 @@
                             style="@style/TitleSmall"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:drawableStart="@drawable/ic_star"
                             android:drawablePadding="2dp"
-                            android:drawableTint="@color/onPrimary"
                             android:gravity="center_vertical"
                             android:text="5.0"
-                            android:textColor="@color/onPrimary" />
+                            android:textColor="@color/onPrimary"
+                            app:drawableStartCompat="@drawable/ic_star"
+                            app:drawableTint="@color/onPrimary" />
 
                         <TextView
                             style="@style/TitleSmall"
@@ -89,19 +98,18 @@
                             android:text="•"
                             android:textColor="@color/onPrimary" />
 
-
                         <TextView
                             android:id="@+id/shipping"
                             style="@style/TitleSmall"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginEnd="@dimen/half_margin"
-                            android:drawableStart="@drawable/ic_shipping"
                             android:drawablePadding="2dp"
                             android:drawableTint="@color/onPrimary"
                             android:gravity="center_vertical"
                             android:text="1d"
-                            android:textColor="@color/onPrimary" />
+                            android:textColor="@color/onPrimary"
+                            app:drawableStartCompat="@drawable/ic_shipping" />
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/follow"

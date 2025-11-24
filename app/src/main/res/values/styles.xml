@@ -96,7 +96,7 @@
 
     <!--BUTTON STYLES-->
     <style name="appBtn" parent="Widget.Material3.Button.UnelevatedButton">
-        <item name="cornerRadius">8dp</item>
+        <item name="cornerRadius">50dp</item>
         <item name="backgroundTint">@color/primary</item>
         <item name="rippleColor">@color/outline</item>
         <item name="android:textColor">@color/onPrimary</item>

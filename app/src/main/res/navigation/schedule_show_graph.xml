@@ -39,6 +39,7 @@
             app:popEnterAnim="@anim/slide_in_left"
             app:popExitAnim="@anim/slide_out_right" />
     </fragment>
+
     <fragment
         android:id="@+id/selectCategoryFragment"
         android:name="io.bidswipe.app.ui.scheduleShow.SelectCategoryFragment"

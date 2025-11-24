@@ -15,6 +15,7 @@ import android.view.SurfaceView
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
+import android.widget.ArrayAdapter
 import androidx.core.content.ContextCompat
 import androidx.core.text.bold
 import androidx.core.text.buildSpannedString
@@ -36,6 +37,7 @@ import io.bidswipe.app.controller.CommentAdapter
 import io.bidswipe.app.controller.FirebaseProductAdapter
 import io.bidswipe.app.controller.LivePollOptionAdapter
 import io.bidswipe.app.controller.SellerMenuInfoAdapter
+import io.bidswipe.app.databinding.AppReportViewBinding
 import io.bidswipe.app.databinding.FollowInfoSheetBinding
 import io.bidswipe.app.databinding.FragmentWatchStreamBinding
 import io.bidswipe.app.databinding.InputBottomSheetBinding
@@ -51,8 +53,8 @@ import io.bidswipe.app.model.LiveShowModel
 import io.bidswipe.app.model.MoreModel
 import io.bidswipe.app.model.PollModel
 import io.bidswipe.app.network.Resource
+import io.bidswipe.app.network.response.GetReportCategoriesResponse
 import io.bidswipe.app.network.response.SellerInfoResponse
-import io.bidswipe.app.network.response.SellerInfoResponseX
 import io.bidswipe.app.ui.custom.AlertType
 import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.ui.dashboard.ChatActivity
@@ -92,6 +94,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
 	private lateinit var roomID: String
 	private lateinit var streamID: String
+	private lateinit var thumbnail: String
 	private var highestBidAmount: String? = ""
 	private var bidProductId: String? = ""
 	private lateinit var socketUrl: String
@@ -115,12 +118,15 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 	private var followSheetRunnable: Runnable? = null
 	private val followSheetHandler = Handler(Looper.getMainLooper())
 	private lateinit var pipParams: PictureInPictureParams
+	private var isSocketDataLoaded = false
+	private var showThumbnail: String? = null
 
 	companion object {
-		fun newInstance(roomID: String, streamID: String) = WatchStreamFragment().apply {
+		fun newInstance(roomID: String, streamID: String, thumbnail: String? = null) = WatchStreamFragment().apply {
 			arguments = Bundle().apply {
 				putString("roomID", roomID)
 				putString("streamID", streamID)
+				putString("thumbnail", thumbnail)
 			}
 		}
 	}
@@ -129,6 +135,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 		super.onCreate(savedInstanceState)
 		roomID = requireArguments().getString("roomID") ?: ""
 		streamID = requireArguments().getString("streamID") ?: ""
+		thumbnail = requireArguments().getString("thumbnail") ?: ""
 		socketUrl = Const.SOCKET_URL
 	}
 
@@ -139,20 +146,14 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 		log("RoomId: $roomID")
 		log("StreamToken: $streamID")
 
-		/*		runSafe {
-					try {
-						// Check if manager exists
-						App.manager
-					} catch (e: UninitializedPropertyAccessException) {
-						// Manager not initialized, create it
-						App.manager = AgoraManager(mCtx, Const.APP_ID_AGORA)
-
-					}
-				}*/
-
 		setUpSwipe()
 
 		initPip()
+		// Initialize thumbnail view - show it initially
+
+		bind.thumbnailView.loadUrl(mCtx, thumbnail , R.drawable.placeholder_rect)
+
+		showThumbnail()
 
 		ViewCompat.setOnApplyWindowInsetsListener(requireActivity().window.decorView) { v, insets ->
 			val system = insets.getInsets(WindowInsetsCompat.Type.systemBars())
@@ -187,7 +188,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 			return@setOnTouchListener false
 		}
 
-		commentAdapter = CommentAdapter(commentList, roomID.split("_")[2] ?: "0")
+		commentAdapter = CommentAdapter(commentList, roomID.split("_")[2])
 
 		livePollAdapter = LivePollOptionAdapter(livePollOptionList, object : RecyclerClicks {
 			override fun itemClick(pos: Int, status: String?) {
@@ -323,7 +324,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 			}
 		}
 
-/*		socketManager?.onFollowSellerStatus { obj ->
+		socketManager?.onFollowSellerStatus { obj ->
 			activity?.runOnUiThread {
 				if (obj.optString("room_id") == roomID && obj.optString("user_id") == userId) {
 
@@ -334,7 +335,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 					bind.follow.isVisible = !obj.optBoolean("is_followed")
 				}
 			}
-		}*/
+		}
 
 		socketManager?.receiveRaid { obj ->
 			requireActivity().runOnUiThread {
@@ -361,23 +362,6 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 		bind.poll.setHapticClickListener {
 			showPollDetailsSheet()
 		}
-
-		/*		bind.message.setEndIconOnClickListener {
-					if (bind.text.value().isNotEmpty()) {
-						if (App.profileResponse.value?.buyerIdentityStatus == "verified") {
-							socketManager?.sendMessage(
-								roomID,
-								bind.text.value(),
-								userId,
-								userName,
-								userImage
-							)
-							bind.text.setText("")
-						} else {
-							verificationDialog()
-						}
-					}
-				}*/
 
 		bind.messageText.setOnEditorActionListener { v, actionId, event ->
 			if (actionId == EditorInfo.IME_ACTION_SEND) {
@@ -452,7 +436,6 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 			}*/
 
 			startActivity(Intent(mCtx, ProductDetailsActivity::class.java).putExtra("type", "shop"))
-
 
 		}
 
@@ -553,6 +536,66 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 			}
 		}
 
+		viewModel.getReportCategoriesRepo.observe(viewLifecycleOwner) {
+			when (it) {
+				is Resource.Success -> {
+
+					bind.loader.isVisible = false
+					val mData = it.value.data
+
+					if (mData != null) {
+						reportUserDialog(mData)
+					}
+
+				}
+
+				is Resource.Error -> {
+					bind.loader.isVisible = false
+					it.parse(mCtx, TAG, object : AlertClicks {
+						override fun primaryClick(dialog: AppBottomSheet) {
+							dialog.dismiss()
+						}
+
+						override fun secondaryClick(dialog: AppBottomSheet) {
+							dialog.dismiss()
+						}
+					})
+				}
+
+				else -> {}
+
+			}
+		}
+
+		viewModel.reportSellerRepo.observe(viewLifecycleOwner) {
+			when (it) {
+				is Resource.Success -> {
+
+					bind.loader.isVisible = false
+					val mData = it.value.data
+
+					Alerts.success(mCtx, "Report sent successfully")
+
+				}
+
+				is Resource.Error -> {
+					bind.loader.isVisible = false
+					it.parse(mCtx, TAG, object : AlertClicks {
+						override fun primaryClick(dialog: AppBottomSheet) {
+							dialog.dismiss()
+						}
+
+						override fun secondaryClick(dialog: AppBottomSheet) {
+							dialog.dismiss()
+						}
+					})
+				}
+
+				else -> {}
+
+			}
+		}
+
 	}
 
 	override fun onResume() {
@@ -639,12 +682,19 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 		App.manager.mRtcEngine?.setupRemoteVideo(videoCanvas)
 		bind.soldLayout.isVisible = false
 		bind.productLayout.isVisible = true
+		// Hide thumbnail when video is ready
+		hideThumbnail()
 	}
 
 	private fun clearRemoteVideo() {
 		bind.hostView.removeAllViews()
 		bind.productLayout.isVisible = false
 		bind.soldLayout.isVisible = true
+		
+		// Show thumbnail again when video is cleared
+		if (!isSocketDataLoaded) {
+			showThumbnail()
+		}
 	}
 
 	@SuppressLint("ClickableViewAccessibility")
@@ -809,6 +859,16 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 			val showData = LiveShowModel.fromJson(json)
 
 			log("SESSION UPDATE: $showData")
+
+			// Mark socket data as loaded and show thumbnail if available
+			isSocketDataLoaded = true
+		/*	showThumbnail = showData.thumbnail
+			
+			// Display thumbnail if available
+			if (!showThumbnail.isNullOrEmpty()) {
+				bind.thumbnailView.loadUrl(mCtx, showThumbnail!!)
+				bind.thumbnailView.isVisible = true
+			}*/
 
 			productList.clear()
 			productList.addAll(showData.products)
@@ -1399,7 +1459,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 		pollSheet.show()
 	}
 
-	private fun sellerInfoSheet(data : SellerInfoResponseX.Data) {
+	private fun sellerInfoSheet(data : SellerInfoResponse.Data) {
 
 		val sellerInfoSheetBinding = SellerInfoSheetBinding.bind(
 			layoutInflater.inflate(
@@ -1443,6 +1503,10 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 					"block" -> {
 						showBlockConfirmation()
 					}
+					"report" -> {
+						bind.loader.isVisible = true
+						viewModel.getReportCategories()
+					}
 				}
 			}
 		})
@@ -1450,7 +1514,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 		sellerInfoSheetBinding.userName.text = data.sellerDetails?.name
 		sellerInfoSheetBinding.rating.text = (data.ratingAvg ?: 0).toString()
 		sellerInfoSheetBinding.review.text = (data.review ?: 0).toString()
-		sellerInfoSheetBinding.sold.text = (data.soldAvg ?: 0).toString()
+		sellerInfoSheetBinding.sold.text = (data.soldCount ?: 0).toString()
 		sellerInfoSheetBinding.shipping.text = (data.avgShip ?: 0).toString()
 		sellerInfoSheetBinding.userImage.loadUrl(mCtx, data.sellerDetails?.profileImage ?:"")
 
@@ -1578,6 +1642,18 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 			}).show()
 	}
 
+	private fun showThumbnail() {
+		if (!showThumbnail.isNullOrEmpty()) {
+			bind.thumbnailView.isVisible = true
+			bind.hostView.isVisible = false
+		}
+	}
+
+	private fun hideThumbnail() {
+		bind.thumbnailView.isVisible = false
+		bind.hostView.isVisible = true
+	}
+
 	private fun blockUser() {
 		bind.loader.isVisible = true
 		viewModel.blockUnblockUser(sellerId?.request()!!)
@@ -1613,5 +1689,54 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 		}
 	}
 
+	fun reportUserDialog(data: List<GetReportCategoriesResponse.Data?>) {
+		val mBind = AppReportViewBinding.bind(
+			layoutInflater.inflate(
+				R.layout.app_report_view, null, false
+			)
+		)
+		val sheet = Alerts.appBottomSheet(mCtx, true, mBind)
+
+		val reportCategoryAdapter = ArrayAdapter(
+			mCtx,
+			R.layout.app_report_view,
+			data.map { it?.name?.asCapital() }
+		)
+
+		mBind.reason.setAdapter(reportCategoryAdapter)
+		val reportDrawable = ContextCompat.getDrawable(mCtx, R.drawable.card_8)
+		mBind.reason.setDropDownBackgroundDrawable(reportDrawable)
+
+		mBind.reason.setOnItemClickListener { _, _, position, _ ->
+			val selectedProcessingCategory = data[position]
+			log("Selected processing category: $selectedProcessingCategory")
+		}
+
+		mBind.reason.setHapticClickListener {
+			mBind.reason.showDropDown()
+		}
+
+		mBind.submitReport.setHapticClickListener {
+
+			if (mBind.reason.text.toString().isEmpty()) {
+				Alerts.error(mCtx, "Please select a reason")
+				return@setHapticClickListener
+			}
+
+			if (mBind.tellMore.text.toString().isEmpty()) {
+				Alerts.error(mCtx, "Please tell us more")
+				return@setHapticClickListener
+			}
+
+			val reasonId = data.find { it?.name?.asCapital() == mBind.reason.text.toString() }?.id.toString()
+
+			bind.loader.isVisible = true
+			viewModel.reportSeller(sellerId?.request()!!, reasonId.request(), mBind.tellMore.text.toString().request())
+
+			sheet.dismiss()
+		}
+
+		sheet.show()
+	}
 
 }

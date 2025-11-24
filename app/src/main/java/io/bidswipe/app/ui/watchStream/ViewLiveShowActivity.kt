@@ -1,12 +1,9 @@
 package io.bidswipe.app.ui.watchStream
 
-import android.app.PictureInPictureParams
-import android.content.Intent
+
 import android.content.res.Configuration
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
-import android.util.Rational
 import androidx.activity.viewModels
 import androidx.viewpager2.widget.ViewPager2
 import com.gyf.immersionbar.ktx.immersionBar
@@ -16,7 +13,6 @@ import io.bidswipe.app.base.BaseActivity
 import io.bidswipe.app.controller.StreamPagerAdapter
 import io.bidswipe.app.databinding.ActivityViewLiveShowBinding
 import io.bidswipe.app.model.StreamModel
-import io.bidswipe.app.ui.product.ProductDetailsActivity
 import io.bidswipe.app.utils.AgoraManager
 import io.bidswipe.app.utils.Const
 import io.bidswipe.app.utils.bind
@@ -24,7 +20,7 @@ import io.bidswipe.app.utils.clr
 
 class ViewLiveShowActivity : BaseActivity() {
 
-	 val bind by bind(ActivityViewLiveShowBinding::inflate)
+	val bind by bind(ActivityViewLiveShowBinding::inflate)
 	private val viewModel by viewModels<StreamViewModel>()
 
 	private var pos = 0

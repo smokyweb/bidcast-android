@@ -83,6 +83,7 @@ class ProductWeightFragment : BaseFragment<ScheduleShowViewModel, FragmentProduc
 			flashSale = "0",
 			acceptOffers = "0",
 			reserveForLive = "0",
+			auction = viewModel.productSalesFormat == "auction",
 			shippingProfileId = "4",
 			type = "live",
 			status = "active",

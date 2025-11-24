@@ -51,6 +51,7 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
 		flashSale: String?,
 		acceptOffers: String?,
 		reserveForLive: String?,
+		auction: Boolean?,
 		shippingProfileId: String?,
 		type: String?,
 		status: String?,
@@ -74,6 +75,7 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
 				flashSale = flashSale,
 				acceptOffers = acceptOffers,
 				reserveForLive = reserveForLive,
+				auction = auction,
 				shippingProfileId = shippingProfileId,
 				type = type,
 				status = status,
@@ -533,5 +535,14 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
 	suspend fun getSellerInfo(
 		sellerId: String
 	) = call { api.getSellerInfo( sellerId) }
+
+	suspend fun getReportCategories(
+	) = call { api.getReportCategories() }
+
+	suspend fun reportSeller(
+		sellerId: RequestBody,
+		categoryId: RequestBody?,
+		notes: RequestBody?
+	) = call { api.reportSeller(sellerId, categoryId, notes) }
 
 }

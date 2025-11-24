@@ -22,6 +22,8 @@ data class StoreProductRequest(
 	val acceptOffers : String? ,
 	@SerializedName("reserve_for_live")
 	val reserveForLive : String? ,
+	@SerializedName("auction")
+	val auction : Boolean? ,
 	@SerializedName("shipping_profile_id")
 	val shippingProfileId : String? ,
 	@SerializedName("type")

@@ -9,9 +9,11 @@ import io.bidswipe.app.model.StreamModel
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.network.repository.DashRepository
 import io.bidswipe.app.network.response.BlockedUnblockedResponse
+import io.bidswipe.app.network.response.CommonResponse
 import io.bidswipe.app.network.response.CreateBidResponse
 import io.bidswipe.app.network.response.FollowUnfollowResponse
-import io.bidswipe.app.network.response.SellerInfoResponseX
+import io.bidswipe.app.network.response.GetReportCategoriesResponse
+import io.bidswipe.app.network.response.SellerInfoResponse
 import io.bidswipe.app.network.response.SentTipAmountResponse
 import io.bidswipe.app.utils.Const.NO_INTERNET_ERROR
 import io.bidswipe.app.utils.NetworkMonitor
@@ -89,8 +91,8 @@ class StreamViewModel @Inject constructor(
 		_sendTipAmountResponse.value = repo.sendTipAmount(sellerId, amount, cardNumber)
 	}
 
-	private var _getSellerInfoResponse = MutableLiveData<Resource<SellerInfoResponseX>>()
-	val getSellerInfoRepo : MutableLiveData<Resource<SellerInfoResponseX>>
+	private var _getSellerInfoResponse = MutableLiveData<Resource<SellerInfoResponse>>()
+	val getSellerInfoRepo : MutableLiveData<Resource<SellerInfoResponse>>
 		get() = _getSellerInfoResponse
 
 	fun getSellerInfo(
@@ -115,6 +117,36 @@ class StreamViewModel @Inject constructor(
 			return@launch
 		}
 		_blockUnblockUserResponse.value = repo.blockUnblockUser(blockedID)
+	}
+
+
+	private var _getReportCategoriesResponse = MutableLiveData<Resource<GetReportCategoriesResponse>>()
+	val getReportCategoriesRepo: MutableLiveData<Resource<GetReportCategoriesResponse>>
+		get() = _getReportCategoriesResponse
+
+	fun getReportCategories(
+	) = viewModelScope.launch {
+		if (!networkMonitor.hasInternet()) {
+			_getReportCategoriesResponse.value = NO_INTERNET_ERROR
+			return@launch
+		}
+		_getReportCategoriesResponse.value = repo.getReportCategories()
+	}
+
+	private var _reportSellerResponse = MutableLiveData<Resource<CommonResponse>>()
+	val reportSellerRepo: MutableLiveData<Resource<CommonResponse>>
+		get() = _reportSellerResponse
+
+	fun reportSeller(
+		sellerId: RequestBody,
+		categoryId: RequestBody?,
+		notes: RequestBody?
+	) = viewModelScope.launch {
+		if (!networkMonitor.hasInternet()) {
+			_reportSellerResponse.value = NO_INTERNET_ERROR
+			return@launch
+		}
+		_reportSellerResponse.value = repo.reportSeller(sellerId, categoryId, notes)
 	}
 
 }

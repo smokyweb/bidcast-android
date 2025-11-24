@@ -10,20 +10,20 @@ import io.bidswipe.app.utils.setHapticClickListener
 
 class SelectAddressAdapter(
 
-	mList : MutableList<GetShippingAddressResponse.Data?> , val mClicks : RecyclerClicks ,
-) : BaseAdapter<GetShippingAddressResponse.Data? , SelectableAddressItemBinding>(mList) {
+	mList: MutableList<GetShippingAddressResponse.Data?>, val mClicks: RecyclerClicks,
+) : BaseAdapter<GetShippingAddressResponse.Data?, SelectableAddressItemBinding>(mList) {
 
-	override fun bindView(inflater : LayoutInflater , parent : ViewGroup) =
-		SelectableAddressItemBinding.inflate(inflater , parent , false)
+	override fun bindView(inflater: LayoutInflater, parent: ViewGroup) =
+		SelectableAddressItemBinding.inflate(inflater, parent, false)
 
 	override fun onBind(
-		holder : BaseViewHolder<SelectableAddressItemBinding> ,
-		position : Int ,
-		item : GetShippingAddressResponse.Data? ,
+		holder: BaseViewHolder<SelectableAddressItemBinding>,
+		position: Int,
+		item: GetShippingAddressResponse.Data?,
 	) {
 		with(holder) {
 
-            bind.root.setHapticClickListener {
+			bind.root.setHapticClickListener {
 				mClicks.itemClick(position)
 			}
 

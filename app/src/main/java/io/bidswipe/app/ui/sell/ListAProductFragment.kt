@@ -234,6 +234,7 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
 			android.R.layout.simple_list_item_1,
 			processingCategories
 		)
+
 		bind.proCategory.setAdapter(proCategoryAdapter)
 		val proDrawable = ContextCompat.getDrawable(mCtx, R.drawable.card_8)
 		bind.proCategory.setDropDownBackgroundDrawable(proDrawable)
@@ -777,6 +778,7 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
 			flashSale = (if (bind.flashSell.isChecked) "1" else "0"),
 			acceptOffers = (if (bind.acceptOffers.isChecked) "1" else "0"),
 			reserveForLive = (if (bind.reserveForLive.isChecked) "1" else "0"),
+			auction =  false,
 			shippingProfileId = "4",
 			status = type,
 			productImages = images,

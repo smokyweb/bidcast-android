@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import android.widget.ArrayAdapter
 import android.widget.PopupMenu
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
@@ -24,6 +25,7 @@ import io.bidswipe.app.databinding.NotificationSheetBinding
 import io.bidswipe.app.databinding.SendTipSheetBinding
 import io.bidswipe.app.interfaces.AlertClicks
 import io.bidswipe.app.network.Resource
+import io.bidswipe.app.network.response.GetReportCategoriesResponse
 import io.bidswipe.app.ui.custom.AlertType
 import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.ui.dashboard.ChatActivity
@@ -39,6 +41,8 @@ import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request
 import io.bidswipe.app.utils.setHapticClickListener
 import kotlin.math.abs
+
+@SuppressLint("InflateParams", "SetTextI18n")
 
 class SellerProfileActivity : BaseActivity() {
 
@@ -82,7 +86,8 @@ class SellerProfileActivity : BaseActivity() {
 				}
 
 				ids.reportUser -> {
-					reportUserDialog()
+					bind.loader.isVisible = true
+					viewModel.getReportCategories()
 				}
 
 			}
@@ -111,8 +116,8 @@ class SellerProfileActivity : BaseActivity() {
 				}
 
 				ids.reportUser -> {
-					reportUserDialog()
-
+					bind.loader.isVisible = true
+					viewModel.getReportCategories()
 				}
 
 			}
@@ -352,9 +357,68 @@ class SellerProfileActivity : BaseActivity() {
 			}
 		}
 
+		viewModel.getReportCategoriesRepo.observe(this) {
+			when (it) {
+				is Resource.Success -> {
+
+					bind.loader.isVisible = false
+					val mData = it.value.data
+
+					if (mData != null) {
+						reportUserDialog(mData)
+					}
+
+				}
+
+				is Resource.Error -> {
+					bind.loader.isVisible = false
+					it.parse(this, TAG, object : AlertClicks {
+						override fun primaryClick(dialog: AppBottomSheet) {
+							dialog.dismiss()
+						}
+
+						override fun secondaryClick(dialog: AppBottomSheet) {
+							dialog.dismiss()
+						}
+					})
+				}
+
+				else -> {}
+
+			}
+		}
+
+		viewModel.reportSellerRepo.observe(this) {
+			when (it) {
+				is Resource.Success -> {
+
+					bind.loader.isVisible = false
+					val mData = it.value.data
+
+					Alerts.success(this, "Report sent successfully")
+
+				}
+
+				is Resource.Error -> {
+					bind.loader.isVisible = false
+					it.parse(this, TAG, object : AlertClicks {
+						override fun primaryClick(dialog: AppBottomSheet) {
+							dialog.dismiss()
+						}
+
+						override fun secondaryClick(dialog: AppBottomSheet) {
+							dialog.dismiss()
+						}
+					})
+				}
+
+				else -> {}
+
+			}
+		}
+
 	}
 
-	@SuppressLint("InflateParams", "SetTextI18n")
 	fun showNotificationSheet() {
 		val notificationSheetBind = NotificationSheetBinding.bind(
 			layoutInflater.inflate(
@@ -431,8 +495,7 @@ class SellerProfileActivity : BaseActivity() {
 
 	}
 
-	@SuppressLint("InflateParams")
-	fun reportUserDialog() {
+	fun reportUserDialog(data: List<GetReportCategoriesResponse.Data?>) {
 		val mBind = AppReportViewBinding.bind(
 			layoutInflater.inflate(
 				R.layout.app_report_view, null, false
@@ -440,7 +503,43 @@ class SellerProfileActivity : BaseActivity() {
 		)
 		val sheet = Alerts.appBottomSheet(this, true, mBind)
 
+		val reportCategoryAdapter = ArrayAdapter(
+			this,
+			android.R.layout.simple_list_item_1,
+			data.map { it?.name?.asCapital() }
+		)
+
+		mBind.reason.setAdapter(reportCategoryAdapter)
+		val reportDrawable = ContextCompat.getDrawable(this, R.drawable.card_8)
+		mBind.reason.setDropDownBackgroundDrawable(reportDrawable)
+
+		mBind.reason.setOnItemClickListener { _, _, position, _ ->
+			val selectedProcessingCategory = data[position]
+			log("Selected processing category: $selectedProcessingCategory")
+		}
+
+		mBind.reason.setHapticClickListener {
+			mBind.reason.showDropDown()
+		}
+
 		mBind.submitReport.setHapticClickListener {
+
+			if (mBind.reason.text.toString().isEmpty()) {
+				Alerts.error(this, "Please select a reason")
+				return@setHapticClickListener
+			}
+
+			if (mBind.tellMore.text.toString().isEmpty()) {
+				Alerts.error(this, "Please tell us more")
+				return@setHapticClickListener
+			}
+
+			val reasonId = data.find { it?.name?.asCapital() == mBind.reason.text.toString() }?.id.toString()
+
+
+			bind.loader.isVisible = true
+			viewModel.reportSeller(sellerId.request(), reasonId.request(), mBind.tellMore.text.toString().request())
+
 			sheet.dismiss()
 		}
 

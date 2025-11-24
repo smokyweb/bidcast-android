@@ -10,9 +10,11 @@ import io.bidswipe.app.controller.FormatAdapter
 import io.bidswipe.app.databinding.FragmentChooseSalesFormatBinding
 import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.model.FormatModel
+import io.bidswipe.app.utils.Alerts
 import io.bidswipe.app.utils.draw
 import io.bidswipe.app.utils.ids
 import io.bidswipe.app.utils.setHapticClickListener
+import io.bidswipe.app.utils.value
 
 class ChooseSalesFormatFragment : BaseFragment<ScheduleShowViewModel , FragmentChooseSalesFormatBinding>() {
 	override fun getModel() : Class<ScheduleShowViewModel> = ScheduleShowViewModel::class.java
@@ -60,6 +62,17 @@ class ChooseSalesFormatFragment : BaseFragment<ScheduleShowViewModel , FragmentC
 
         bind.continueBtn.setHapticClickListener {
 			val selectedFormat = formatList.firstOrNull { it.selected == true }?.title ?: ""
+
+	        if (selectedFormat.isEmpty()){
+		        Alerts.error(mCtx,"Please select a format")
+		        return@setHapticClickListener
+	        }
+
+	        if (bind.bidPrice.value().isEmpty()){
+				Alerts.error(mCtx,"Please enter a bid price")
+		        return@setHapticClickListener
+	        }
+
 			viewModel.productSalesFormat = selectedFormat
 			viewModel.productPrice = bind.bidPrice.text.toString().trim()
 

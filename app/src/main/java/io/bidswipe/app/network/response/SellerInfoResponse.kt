@@ -22,13 +22,13 @@ data class SellerInfoResponse(
         @SerializedName("is_following")
         val isFollowing: Boolean?,
         @SerializedName("rating_avg")
-        val ratingAvg: Int?,
+        val ratingAvg: Double?,
         @SerializedName("review")
         val review: Any?,
         @SerializedName("seller_details")
         val sellerDetails: SellerDetails?,
-        @SerializedName("sold_avg")
-        val soldAvg: Int?
+        @SerializedName("sold_count")
+        val soldCount: Double?
     ) {
         @Keep
         data class SellerDetails(

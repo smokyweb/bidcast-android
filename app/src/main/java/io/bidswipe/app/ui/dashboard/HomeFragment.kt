@@ -247,14 +247,14 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
 
             categoryTiles.addAll(
                 mData.filter { data -> data?.isSelected == true }.mapNotNull { category ->
-                        val name = category?.name ?: return@mapNotNull null
-                        HomeCategoryAdapter.CategoryTile(
-                            id = name,
-                            title = name,
-                            imageUrl = category.image,
-                            tileType = HomeCategoryAdapter.TileType.CATEGORY,
-                        )
-                    } ?: emptyList()
+                    val name = category?.name ?: return@mapNotNull null
+                    HomeCategoryAdapter.CategoryTile(
+                        id = name,
+                        title = name,
+                        imageUrl = category.image,
+                        tileType = HomeCategoryAdapter.TileType.CATEGORY,
+                    )
+                }
             )
 
             categoryTiles.add(
@@ -378,7 +378,7 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
                     streamList.clear()
 
                     mData?.forEach {
-                        streamList.add(StreamModel(it?.roomId.toString(), it?.rtcToken ?: ""))
+                        streamList.add(StreamModel(it?.roomId.toString(), it?.rtcToken ?: "", thumbnail = it?.thumbnail?.get(0)))
                         romIdsList.add(it?.roomId.toString())
                     }
 

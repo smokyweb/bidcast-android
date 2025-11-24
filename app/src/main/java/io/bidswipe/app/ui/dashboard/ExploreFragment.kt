@@ -116,7 +116,6 @@ class ExploreFragment : BaseFragment<DashViewModel, FragmentExploreBinding>() {
 
         setUpChips()
 
-
         viewModel.getCategoryRepo.observe(viewLifecycleOwner) {
             when (it) {
                 is Resource.Success -> {

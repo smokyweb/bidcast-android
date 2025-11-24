@@ -39,11 +39,12 @@
             app:endIconMode="dropdown_menu">
 
             <com.google.android.material.textfield.MaterialAutoCompleteTextView
-                android:id="@+id/spinner"
+                android:id="@+id/reason"
                 style="@style/inputTextStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:focusable="false"
+                android:hint="Select Reason"
                 android:focusableInTouchMode="false"
                 android:imeOptions="actionNext"
                 android:textAppearance="@color/inverseSurface" />
