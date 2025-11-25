@@ -151,7 +151,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 		initPip()
 		// Initialize thumbnail view - show it initially
 
-		bind.thumbnailView.loadUrl(mCtx, thumbnail , R.drawable.placeholder_rect)
+		bind.thumbnailView.loadUrl(mCtx, thumbnail, R.drawable.placeholder_rect)
 
 		showThumbnail()
 
@@ -170,7 +170,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
 		bind.iconCard.setHapticClickListener {
 
-			if (sellerId?.isNotEmpty() == true){
+			if (sellerId?.isNotEmpty() == true) {
 				bind.loader.isVisible = true
 				viewModel.getSellerInfo(sellerId!!)
 			}
@@ -431,11 +431,11 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
 		bind.shop.setHapticClickListener {
 
-		/*	if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-				(requireActivity() as ViewLiveShowActivity).enterPictureInPictureMode(pipParams)
-			}*/
+			/*	if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+					(requireActivity() as ViewLiveShowActivity).enterPictureInPictureMode(pipParams)
+				}*/
 
-			startActivity(Intent(mCtx, ProductDetailsActivity::class.java).putExtra("type", "shop"))
+			startActivity(Intent(mCtx, ProductDetailsActivity::class.java).putExtra("type", "shop").putExtra("sellerId", sellerId))
 
 		}
 
@@ -449,7 +449,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 					bind.loader.isVisible = false
 					val mData = it.value.data
 
-					if (mData!=null){
+					if (mData != null) {
 						sellerInfoSheet(mData)
 					}
 
@@ -508,7 +508,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 			when (it) {
 				is Resource.Success -> {
 					bind.loader.isVisible = false
-					 val mData = it.value.data
+					it.value.data
 
 					isFollowing = true
 
@@ -572,7 +572,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 				is Resource.Success -> {
 
 					bind.loader.isVisible = false
-					val mData = it.value.data
+					it.value.data
 
 					Alerts.success(mCtx, "Report sent successfully")
 
@@ -613,7 +613,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 			}
 
 			if (!isFollowing) {
-				followSheetRunnable?.let { followSheetHandler.postDelayed(it,30000) }
+				followSheetRunnable?.let { followSheetHandler.postDelayed(it, 30000) }
 			}
 
 		}
@@ -690,7 +690,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 		bind.hostView.removeAllViews()
 		bind.productLayout.isVisible = false
 		bind.soldLayout.isVisible = true
-		
+
 		// Show thumbnail again when video is cleared
 		if (!isSocketDataLoaded) {
 			showThumbnail()
@@ -862,13 +862,13 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
 			// Mark socket data as loaded and show thumbnail if available
 			isSocketDataLoaded = true
-		/*	showThumbnail = showData.thumbnail
-			
-			// Display thumbnail if available
-			if (!showThumbnail.isNullOrEmpty()) {
-				bind.thumbnailView.loadUrl(mCtx, showThumbnail!!)
-				bind.thumbnailView.isVisible = true
-			}*/
+			/*	showThumbnail = showData.thumbnail
+
+				// Display thumbnail if available
+				if (!showThumbnail.isNullOrEmpty()) {
+					bind.thumbnailView.loadUrl(mCtx, showThumbnail!!)
+					bind.thumbnailView.isVisible = true
+				}*/
 
 			productList.clear()
 			productList.addAll(showData.products)
@@ -1459,7 +1459,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 		pollSheet.show()
 	}
 
-	private fun sellerInfoSheet(data : SellerInfoResponse.Data) {
+	private fun sellerInfoSheet(data: SellerInfoResponse.Data) {
 
 		val sellerInfoSheetBinding = SellerInfoSheetBinding.bind(
 			layoutInflater.inflate(
@@ -1489,20 +1489,25 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 					"tip" -> {
 						sendTipSheet()
 					}
+
 					"profile" -> {
 						startActivity(Intent(mCtx, SellerProfileActivity::class.java).putExtra("userId", sellerId))
 					}
+
 					"message" -> {
-						startActivity(Intent(mCtx, ChatActivity::class.java).putExtra("id", sellerId).
-						putExtra("name", sellerName).
-						putExtra("image", sellerImage))
+						startActivity(
+							Intent(mCtx, ChatActivity::class.java).putExtra("id", sellerId).putExtra("name", sellerName)
+								.putExtra("image", sellerImage)
+						)
 					}
+
 					"mention" -> {
 					}
 
 					"block" -> {
 						showBlockConfirmation()
 					}
+
 					"report" -> {
 						bind.loader.isVisible = true
 						viewModel.getReportCategories()
@@ -1516,7 +1521,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 		sellerInfoSheetBinding.review.text = (data.review ?: 0).toString()
 		sellerInfoSheetBinding.sold.text = (data.soldCount ?: 0).toString()
 		sellerInfoSheetBinding.shipping.text = (data.avgShip ?: 0).toString()
-		sellerInfoSheetBinding.userImage.loadUrl(mCtx, data.sellerDetails?.profileImage ?:"")
+		sellerInfoSheetBinding.userImage.loadUrl(mCtx, data.sellerDetails?.profileImage ?: "")
 
 		sellerInfoSheetBinding.follow.setHapticClickListener {
 			bind.loader.isVisible = true
@@ -1529,7 +1534,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
 	private fun followSheet() {
 
-		if(App.PIPMode) return
+		if (App.PIPMode) return
 
 		val followSheetBinding = FollowInfoSheetBinding.bind(
 			layoutInflater.inflate(
@@ -1562,8 +1567,6 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 		followSheetBinding.secondaryBtn.setHapticClickListener {
 			followSheet.dismiss()
 		}
-
-
 
 		followSheet.show()
 	}
@@ -1690,6 +1693,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 	}
 
 	fun reportUserDialog(data: List<GetReportCategoriesResponse.Data?>) {
+
 		val mBind = AppReportViewBinding.bind(
 			layoutInflater.inflate(
 				R.layout.app_report_view, null, false
@@ -1699,7 +1703,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
 		val reportCategoryAdapter = ArrayAdapter(
 			mCtx,
-			R.layout.app_report_view,
+			android.R.layout.simple_list_item_1,
 			data.map { it?.name?.asCapital() }
 		)
 

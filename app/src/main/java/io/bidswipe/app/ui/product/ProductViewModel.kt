@@ -14,6 +14,7 @@ import io.bidswipe.app.network.response.GetProductDetailsResponse
 import io.bidswipe.app.network.response.GetProductsResponse
 import io.bidswipe.app.network.response.GetPurchaseDetail
 import io.bidswipe.app.network.response.GetShippingAddressResponse
+import io.bidswipe.app.network.response.SellerInfoResponse
 import io.bidswipe.app.network.response.UserSearchingResponse
 import io.bidswipe.app.utils.Const.NO_INTERNET_ERROR
 import io.bidswipe.app.utils.NetworkMonitor
@@ -216,13 +217,30 @@ class ProductViewModel @Inject constructor(
 		userId: RequestBody? = null,
 		categoryId: RequestBody? = null,
 		page: RequestBody? = null,
-		type: RequestBody? = null
+		type: RequestBody? = null,
+		saleType: RequestBody? = null,
+		sortBy: RequestBody? = null,
+		search: RequestBody? = null
 	) = viewModelScope.launch {
 		if (!networkMonitor.hasInternet()) {
 			_getUserProductsResponse.value = NO_INTERNET_ERROR
 			return@launch
 		}
-		_getUserProductsResponse.value = repo.getUserProducts(userId, categoryId, page, type)
+		_getUserProductsResponse.value = repo.getUserProducts(userId, categoryId, page, type, saleType, sortBy, search)
+	}
+
+	private var _getSellerInfoResponse = MutableLiveData<Resource<SellerInfoResponse>>()
+	val getSellerInfoRepo : MutableLiveData<Resource<SellerInfoResponse>>
+		get() = _getSellerInfoResponse
+
+	fun getSellerInfo(
+		sellerId : String
+	) = viewModelScope.launch {
+		if (! networkMonitor.hasInternet()) {
+			_getSellerInfoResponse.value = NO_INTERNET_ERROR
+			return@launch
+		}
+		_getSellerInfoResponse.value = repo.getSellerInfo(sellerId)
 	}
 
 }

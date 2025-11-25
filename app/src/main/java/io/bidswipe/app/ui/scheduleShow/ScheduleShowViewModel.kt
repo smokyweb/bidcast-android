@@ -150,13 +150,16 @@ class ScheduleShowViewModel @Inject constructor(
 		userId: RequestBody? = null,
 		categoryId: RequestBody? = null,
 		page: RequestBody? = null,
-		type: RequestBody? = null
+		type: RequestBody? = null,
+		saleType: RequestBody? = null,
+		sortBy: RequestBody? = null,
+		search: RequestBody? = null
 	) = viewModelScope.launch {
 		if (!networkMonitor.hasInternet()) {
 			_getUserProductsResponse.value = NO_INTERNET_ERROR
 			return@launch
 		}
-		_getUserProductsResponse.value = repo.getUserProducts(userId, categoryId, page, type)
+		_getUserProductsResponse.value = repo.getUserProducts(userId, categoryId, page, type, saleType, sortBy, search)
 	}
 
 	private var _storeProductResponse = MutableLiveData<Resource<CreateProductResponse>>()

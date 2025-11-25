@@ -149,7 +149,7 @@ class SellerProfileActivity : BaseActivity() {
 			}
 		}
 
-		sellerId = intent?.getStringExtra("userId") ?: ""
+		sellerId = intent?.getStringExtra("sellerId") ?: ""
 
 		bind.backBtnCard.setHapticClickListener {
 			finish()

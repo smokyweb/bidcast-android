@@ -65,7 +65,7 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
                 "user" -> {
                     startActivity(
                         Intent(mCtx, SellerProfileActivity::class.java).putExtra(
-                            "userId",
+                            "sellerId",
                             showList[pos]?.userId.toString()
                         )
                     )
@@ -267,6 +267,7 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
             )
 
             categoryAdapter.notifyDataSetChanged()
+
             val tileToSelect =
                 categoryTiles.firstOrNull { it.id == selectedCategoryTileId && it.tileType != HomeCategoryAdapter.TileType.SEE_ALL }
                     ?: categoryTiles.firstOrNull { it.tileType != HomeCategoryAdapter.TileType.SEE_ALL }

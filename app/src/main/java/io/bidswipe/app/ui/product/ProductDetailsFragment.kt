@@ -13,7 +13,6 @@ import androidx.core.text.buildSpannedString
 import androidx.core.text.color
 import androidx.core.view.isVisible
 import androidx.navigation.fragment.findNavController
-import com.google.android.gms.common.wrappers.Wrappers.packageManager
 import com.skydoves.powermenu.PowerMenuItem
 import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseFragment
@@ -108,13 +107,16 @@ class ProductDetailsFragment : BaseFragment<ProductViewModel, FragmentProductDet
         viewModel.getProductDetailsRepo.observe(viewLifecycleOwner) {
             when (it) {
                 is Resource.Success -> {
-                    bind.loader.isVisible = false
+//                    bind.loader.isVisible = false
 
                     val mData = it.value.data
 
                     viewModel.product = mData
 
                     bind.userName.text = mData?.user?.name?.asCapital()
+
+                    viewModel.getSellerInfo(sellerId = mData?.userId.toString())
+
 
 //                    if (mData?.user?.sellerVerification == true) {
 //                        bind.sellerStatus.text = "Verified Seller"
@@ -170,7 +172,7 @@ class ProductDetailsFragment : BaseFragment<ProductViewModel, FragmentProductDet
 
                     bind.userImage.loadUrl(mCtx, mData?.user?.profileImage.toString())
 
-                    bind.recyclerView.onFlingListener = null;
+                    bind.recyclerView.onFlingListener = null
                     bind.recyclerView.adapter =
                         ProductImageAdapter(mData?.images?.toMutableList() ?: mutableListOf())
                     bind.indicatorv.attachTo(bind.recyclerView, true)
@@ -294,6 +296,40 @@ class ProductDetailsFragment : BaseFragment<ProductViewModel, FragmentProductDet
 
             }
         }
+
+        viewModel.getSellerInfoRepo.observe(viewLifecycleOwner) { it ->
+            when (it) {
+                is Resource.Success -> {
+                    bind.loader.isVisible = false
+                    val mData = it.value.data
+
+                    bind.rating.text = (mData?.ratingAvg ?: 0).toString()
+                    bind.review.text = (mData?.review ?: 0).toString()
+                    bind.sold.text = (mData?.soldCount ?: 0).toString()
+                    bind.shipping.text = (mData?.avgShip ?: 0).toString()
+                    bind.userImage.loadUrl(mCtx, mData?.sellerDetails?.profileImage ?: "")
+
+                }
+
+                is Resource.Error -> {
+                    bind.loader.isVisible = false
+
+                    it.parse(mCtx, TAG, object : AlertClicks {
+                        override fun primaryClick(dialog: AppBottomSheet) {
+                            dialog.dismiss()
+
+                        }
+
+                        override fun secondaryClick(dialog: AppBottomSheet) {
+                            dialog.dismiss()
+                        }
+                    })
+                }
+
+                else -> {}
+            }
+        }
+
 
     }
 

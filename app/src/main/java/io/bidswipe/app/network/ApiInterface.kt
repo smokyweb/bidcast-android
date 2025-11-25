@@ -226,6 +226,9 @@ interface ApiInterface {
 		@Part("category_id") categoryId : RequestBody? ,
 		@Part("page") page : RequestBody?,
 		@Part("type") type : RequestBody? ,
+		@Part("sale_type") saleType : RequestBody? ,
+		@Part("sort_by") sortBy : RequestBody? ,
+		@Part("search") search : RequestBody?
 	) : GetProductsResponse
 
 	@Multipart
@@ -374,7 +377,7 @@ interface ApiInterface {
 	@POST("api/upsert-device-details")
 	suspend fun storeDeviceDetails(
 		@Part("device_token") deviceToken : RequestBody? ,
-		@Part("platform") plateform : RequestBody = "android".request() ,
+		@Part("platform") platform : RequestBody = "android".request() ,
 		@Part("app_version") appVersion : RequestBody = BuildConfig.VERSION_NAME.request() ,
 		@Part("time_zone") timeZone : RequestBody = Utils.timezone.request() ,
 	) : UserDeviceResponse
@@ -575,7 +578,7 @@ interface ApiInterface {
 	@GET("api/get-pages-url/{slug}")
 	suspend fun getPageUrl(
 		@Path("slug") slug : String ,
-		@Query("noheader") noheader : String = "1" ,
+		@Query("noheader") noHeader : String = "1" ,
 	) : PageUrlResponse
 
 	@GET("api/seller-status")

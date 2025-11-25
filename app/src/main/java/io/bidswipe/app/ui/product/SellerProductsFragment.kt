@@ -1,10 +1,14 @@
 package io.bidswipe.app.ui.product
 
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import io.bidswipe.app.base.BaseFragment
 import io.bidswipe.app.controller.ShopSheetAdapter
 import io.bidswipe.app.controller.SortingOptionAdapter
@@ -23,6 +27,7 @@ import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request
 import io.bidswipe.app.utils.runSafe
 import io.bidswipe.app.utils.setHapticClickListener
+import io.bidswipe.app.utils.value
 
 class SellerProductsFragment : BaseFragment<ProductViewModel, FragmentSellerProductsBinding>() {
 	override fun getModel(): Class<ProductViewModel> = ProductViewModel::class.java
@@ -32,10 +37,13 @@ class SellerProductsFragment : BaseFragment<ProductViewModel, FragmentSellerProd
 	): FragmentSellerProductsBinding = FragmentSellerProductsBinding.inflate(inflater, view, false)
 
 	private lateinit var shopSheetAdapter: ShopSheetAdapter
-
 	private var productList = mutableListOf<GetMyInventoryResponse.Data?>()
-
+	private val optionList = mutableListOf<LiveMoreOption?>()
 	private var sellerId = ""
+	private var sortBy = ""
+	private var saleType = ""
+	private var page  = 1
+	private var isLoading = false
 
 	private val mClick = object : RecyclerClicks {
 		override fun itemClick(pos: Int, status: String?) {
@@ -49,6 +57,45 @@ class SellerProductsFragment : BaseFragment<ProductViewModel, FragmentSellerProd
 
 		setUpChips()
 
+
+		optionList.add(LiveMoreOption("Title (A–Z)", isSelected = false))
+		optionList.add(LiveMoreOption("Title (Z–A)", isSelected = false))
+		optionList.add(LiveMoreOption("Price (Low to High)", isSelected = false))
+		optionList.add(LiveMoreOption("Price (High to Low)", isSelected = false))
+		optionList.add(LiveMoreOption("Newest", isSelected = false))
+		optionList.add(LiveMoreOption("Oldest", isSelected = false))
+
+		bind.recycler.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+			override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+				super.onScrolled(recyclerView, dx, dy)
+				val layoutManager = bind.recycler.layoutManager as LinearLayoutManager
+				val lastItemPosition = layoutManager.findLastVisibleItemPosition()
+				if (lastItemPosition == (productList.size - 1)) {
+					if (!isLoading) {
+						isLoading = true
+						page++
+						bind.bottomLoader.isVisible = true
+						loadData()
+					}
+				}
+			}
+		})
+
+		bind.search.addTextChangedListener(object : TextWatcher {
+			override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+			override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+			override fun afterTextChanged(s: Editable?) {
+				val query = s?.toString()?.trim() ?: ""
+				bind.searchLayout.isEndIconVisible = query.isNotEmpty()
+
+				if (!s.isNullOrEmpty()) {
+					bind.loader.isVisible = true
+					page = 1
+					loadData()
+				}
+			}
+		})
+
 		shopSheetAdapter = ShopSheetAdapter(mList = productList, type = "shop", mClick)
 
 		bind.recycler.adapter = shopSheetAdapter
@@ -59,27 +106,40 @@ class SellerProductsFragment : BaseFragment<ProductViewModel, FragmentSellerProd
 
 		bind.loader.isVisible = true
 
-		viewModel.getUserProducts(sellerId.request())
+		viewModel.getUserProducts(userId = sellerId.request(), page = page.toString().request())
 
 		viewModel.getUserProductsRepo.observe(viewLifecycleOwner) { it ->
 
 			when (it) {
 				is Resource.Success -> {
 					bind.loader.isVisible = false
+					bind.bottomLoader.isVisible = false
+
 					val mData = it.value.data
 
-					if (mData != null) {
-
+					if (page == 1){
 						productList.clear()
-						productList.addAll(mData)
-
-						shopSheetAdapter.notifyDataSetChanged()
-
 					}
+
+					if (mData != null) {
+						productList.addAll(mData)
+						shopSheetAdapter.notifyDataSetChanged()
+					}
+
+					if (productList.isEmpty()){
+						bind.noDataView.isVisible = true
+						bind.recycler.isVisible = false
+					}else{
+						bind.noDataView.isVisible = false
+						bind.recycler.isVisible = true
+					}
+
+					isLoading = page >= (it.value.totalPage ?: 0)
 
 				}
 
 				is Resource.Error -> {
+					bind.bottomLoader.isVisible = false
 					bind.loader.isVisible = false
 
 					it.parse(mCtx, TAG, object : AlertClicks {
@@ -116,7 +176,7 @@ class SellerProductsFragment : BaseFragment<ProductViewModel, FragmentSellerProd
 			)
 		)
 
-		listOf("Auction", "Buy Now", "Sold").forEach {
+		listOf("Auction", "Buy Now").forEach {
 			bind.chipGroup.addView(
 				Utils.makeAChip(
 					mCtx = mCtx,
@@ -130,16 +190,37 @@ class SellerProductsFragment : BaseFragment<ProductViewModel, FragmentSellerProd
 
 		bind.chipGroup.setOnCheckedStateChangeListener { chipGroup, _ ->
 			runSafe {
+
 				val chipId = chipGroup.checkedChipId
 				val index = chipGroup.indexOfChild(chipGroup.findViewById(chipId))
 
-				when (index) {
+				log("Index: $index")
 
+				if (index == -1) return@runSafe
+
+				bind.search.setText("")
+				saleType = ""
+				sortBy = ""
+				page = 1
+
+				when (index) {
 					0 -> {
 						sortOptionSheet()
 					}
 
+					1 ->{
+						saleType = "auction"
+					}
+
+					2 ->{
+						saleType = "accept_offers"
+					}
+
 				}
+
+				bind.loader.isVisible = true
+
+				loadData()
 			}
 		}
 
@@ -157,34 +238,55 @@ class SellerProductsFragment : BaseFragment<ProductViewModel, FragmentSellerProd
 
 		val sortingOptionSheet = Alerts.appBottomSheet(mCtx, true, sortingOptionSheetBinding)
 
-		val optionList = mutableListOf<LiveMoreOption?>()
-
-		optionList.add(LiveMoreOption("Title (A–Z)", isSelected = false))
-		optionList.add(LiveMoreOption("Title (Z–A)", isSelected = false))
-		optionList.add(LiveMoreOption("Price (Low to High)", isSelected = false))
-		optionList.add(LiveMoreOption("Price (High to Low)", isSelected = false))
-		optionList.add(LiveMoreOption("Newest", isSelected = false))
-		optionList.add(LiveMoreOption("Oldest", isSelected = false))
-
 		sortingOptionSheetBinding.optionRecycler.adapter = SortingOptionAdapter(optionList, object : RecyclerClicks {
 			override fun itemClick(pos: Int, status: String?) {
 
 				optionList.forEachIndexed { index, item ->
-
 					item?.isSelected = index == pos
+				}
 
-					sortingOptionSheetBinding.optionRecycler.adapter?.notifyDataSetChanged()
+				sortingOptionSheetBinding.optionRecycler.adapter?.notifyDataSetChanged()
 
-					sortingOptionSheet.dismiss()
+				bind.search.setText("")
+				saleType = ""
+				sortBy = ""
+				page = 1
+
+				when (pos) {
+					0 -> {
+						sortBy = "title_asc"
+					}
+
+					1 -> {
+						sortBy = "title_desc"
+					}
+
+					2 -> {
+						sortBy = "price_low_high"
+					}
+
+					3 -> {
+						sortBy = "price_high_low"
+					}
+
+					4 -> {
+						sortBy = "newest"
+					}
+
+					5 -> {
+						sortBy = "oldest"
+					}
 
 				}
 
+				bind.loader.isVisible = true
+
+				loadData()
+
+				sortingOptionSheet.dismiss()
+
 			}
 		})
-
-
-
-
 
 		sortingOptionSheetBinding.close.setHapticClickListener {
 			sortingOptionSheet.dismiss()
@@ -192,6 +294,10 @@ class SellerProductsFragment : BaseFragment<ProductViewModel, FragmentSellerProd
 
 		sortingOptionSheet.show()
 
+	}
+
+	private fun loadData(){
+		viewModel.getUserProducts(userId = sellerId.request(),saleType = saleType.ifEmpty { null }?.request(), sortBy = sortBy.ifEmpty { null }?.request(), page = page.toString().request(), search = bind.search.value().ifEmpty{null}?.request())
 	}
 
 }

@@ -43,7 +43,6 @@ class HomeCategoryAdapter(
                 }
             }
 
-
             val bgColor = if (item?.isSelected == true) R.color.yellowWarningClr else R.color.surfaceVariant
             if (item?.isSelected == true) {
                 bind.root.setBackgroundDrawable(
@@ -57,14 +56,13 @@ class HomeCategoryAdapter(
                 bind.root.setCardBackgroundColor(ContextCompat.getColor(mCtx, bgColor))
                 bind.root.strokeWidth = 0
             }
+
             bind.title.setTextColor(
                 ContextCompat.getColor(
                     mCtx,
                     if (item?.isSelected == true) R.color.scrim else R.color.onSurface
                 )
             )
-
-
 
             bind.root.setOnClickListener {
                 mClick.itemClick(position)
@@ -86,5 +84,6 @@ class HomeCategoryAdapter(
         CATEGORY,
         SEE_ALL,
     }
+
 }
 
