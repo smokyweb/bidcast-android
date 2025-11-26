@@ -333,6 +333,16 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 					isFollowing = obj.optBoolean("is_followed")
 
 					bind.follow.isVisible = !obj.optBoolean("is_followed")
+
+					followSheetRunnable = object : Runnable {
+						override fun run() {
+							followSheet()
+						}
+					}
+
+					if (!isFollowing) {
+						followSheetRunnable?.let { followSheetHandler.postDelayed(it, 30000) }
+					}
 				}
 			}
 		}
@@ -605,17 +615,6 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
 		socketManager?.joinRoom(roomID, userId) {
 			socketManager?.sendMessage(roomID, "Joined \uD83D\uDC4B", userId, userName, userImage)
-
-			followSheetRunnable = object : Runnable {
-				override fun run() {
-					followSheet()
-				}
-			}
-
-			if (!isFollowing) {
-				followSheetRunnable?.let { followSheetHandler.postDelayed(it, 30000) }
-			}
-
 		}
 
 		if (streamID.isBlank()) {
@@ -1515,6 +1514,8 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 				}
 			}
 		})
+
+		sellerInfoSheetBinding.follow.isVisible = !isFollowing
 
 		sellerInfoSheetBinding.userName.text = data.sellerDetails?.name
 		sellerInfoSheetBinding.rating.text = (data.ratingAvg ?: 0).toString()

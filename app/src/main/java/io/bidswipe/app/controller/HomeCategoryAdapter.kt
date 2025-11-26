@@ -39,11 +39,10 @@ class HomeCategoryAdapter(
 
                 TileType.SEE_ALL -> {
                     if (item?.iconRes != null) bind.icon.setImageResource(item.iconRes)
-                    bind.icon.setColorFilter(ContextCompat.getColor(mCtx, R.color.onPrimary))
+//                    bind.icon.setColorFilter(ContextCompat.getColor(mCtx, R.color.onPrimary))
                 }
             }
 
-            val bgColor = if (item?.isSelected == true) R.color.yellowWarningClr else R.color.surfaceVariant
             if (item?.isSelected == true) {
                 bind.root.setBackgroundDrawable(
                     ContextCompat.getDrawable(
@@ -51,10 +50,16 @@ class HomeCategoryAdapter(
                         R.drawable.category_selected_background
                     )
                 )
-                bind.root.strokeWidth = 0
+
             } else {
-                bind.root.setCardBackgroundColor(ContextCompat.getColor(mCtx, bgColor))
-                bind.root.strokeWidth = 0
+
+                bind.root.setBackgroundDrawable(
+                    ContextCompat.getDrawable(
+                        mCtx,
+                        R.drawable.card_8
+                    )
+                )
+
             }
 
             bind.title.setTextColor(
