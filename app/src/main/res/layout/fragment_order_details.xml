@@ -1,0 +1,856 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.product.OrderDetailsFragment">
+
+    <io.bidswipe.app.ui.custom.Header
+        android:id="@+id/header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:headerMode="BACK_BUTTON_TITLE_ACTION"
+        app:headerTitle="Product Name"
+        app:layout_constraintTop_toTopOf="parent"
+        app:secondaryIconDrawable="@drawable/search"
+        app:showBackButton="true"
+        app:showPrimaryIcon="false"
+        app:showSecondaryIcon="false" />
+
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/nestedScrollView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginHorizontal="@dimen/half_margin"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/header">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <LinearLayout
+                style="@style/shadowStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/half_margin"
+                android:background="@drawable/card_16"
+                android:gravity="center_vertical"
+                android:orientation="vertical"
+                android:padding="@dimen/margin">
+
+                <TextView
+                    style="@style/HeadlineSmall"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Preparing Package" />
+
+                <TextView
+                    style="@style/TitleLarge"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Typically ships in 1 day" />
+
+                <com.google.android.material.progressindicator.LinearProgressIndicator
+                    android:id="@+id/stepProgress"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingVertical="@dimen/margin"
+                    android:progress="15"
+                    android:progressTint="@color/secondary"
+                    app:layout_constraintTop_toBottomOf="@id/header"
+                    app:trackCornerRadius="6dp"
+                    app:trackThickness="8dp" />
+
+                <TextView
+                    android:id="@+id/productColor"
+                    style="@style/BodyMedium"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="The seller is preparing your package to ship. They typically ship in 1 day. Once the package is scanned, you'll
+                    receive tracking updates to follow its journey to you." />
+
+                <TextView
+                    style="@style/TitleMedium"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginVertical="@dimen/half_margin"
+                    android:drawableEnd="@drawable/ic_down"
+                    android:drawableTint="@color/primary"
+                    android:text="Bundled with 5 other items "
+                    android:textColor="@color/primary" />
+
+                <TextView
+                    style="@style/BodyLarge"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Order placed Nov 25, 2025 at 10:10 PM" />
+
+                <LinearLayout
+                    style="@style/shadowStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginVertical="@dimen/half_margin"
+                    android:backgroundTint="@color/inverseOnSurface"
+                    android:gravity="center_vertical">
+
+                    <com.google.android.material.card.MaterialCardView
+                        style="@style/cardStyle"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        app:cardBackgroundColor="@color/backgroundClr"
+                        app:cardCornerRadius="100dp"
+                        app:cardElevation="0dp">
+
+                        <androidx.appcompat.widget.AppCompatImageView
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:backgroundTint="@color/onSecondary"
+                            android:padding="12dp"
+                            android:src="@drawable/ic_location_marker" />
+
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="@dimen/half_margin"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            style="@style/TitleMedium"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Shipping to" />
+
+                        <TextView
+                            android:id="@+id/shippingAddress"
+                            style="@style/BodySmall"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Mark Lee \n 1501 ave, \n Knoxville, Tenesse" />
+
+                    </LinearLayout>
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:layout_width="18dp"
+                        android:layout_height="18dp"
+                        android:src="@drawable/ic_forward" />
+
+                </LinearLayout>
+
+                <com.google.android.material.divider.MaterialDivider
+                    android:layout_width="match_parent"
+                    android:layout_height="2dp"
+                    android:layout_marginVertical="@dimen/half_margin"
+                    android:alpha="0.2" />
+
+                <LinearLayout
+                    style="@style/shadowStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginVertical="@dimen/half_margin"
+                    android:backgroundTint="@color/inverseOnSurface"
+                    android:gravity="center_vertical">
+
+                    <com.google.android.material.card.MaterialCardView
+                        style="@style/cardStyle"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        app:cardBackgroundColor="@color/backgroundClr"
+                        app:cardCornerRadius="100dp"
+                        app:cardElevation="0dp">
+
+                        <androidx.appcompat.widget.AppCompatImageView
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:backgroundTint="@color/onSecondary"
+                            android:padding="12dp"
+                            android:src="@drawable/ic_outlined_message" />
+
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <TextView
+                        style="@style/TitleMedium"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="@dimen/half_margin"
+                        android:layout_weight="1"
+                        android:text="Message the Seller" />
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:layout_width="18dp"
+                        android:layout_height="18dp"
+                        android:src="@drawable/ic_forward" />
+
+                </LinearLayout>
+
+                <com.google.android.material.divider.MaterialDivider
+                    android:layout_width="match_parent"
+                    android:layout_height="2dp"
+                    android:layout_marginVertical="@dimen/half_margin"
+                    android:alpha="0.2" />
+
+                <LinearLayout
+                    style="@style/shadowStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginVertical="@dimen/half_margin"
+                    android:backgroundTint="@color/inverseOnSurface"
+                    android:gravity="center_vertical">
+
+                    <com.google.android.material.card.MaterialCardView
+                        style="@style/cardStyle"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        app:cardBackgroundColor="@color/backgroundClr"
+                        app:cardCornerRadius="100dp"
+                        app:cardElevation="0dp">
+
+                        <androidx.appcompat.widget.AppCompatImageView
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:backgroundTint="@color/onSecondary"
+                            android:padding="12dp"
+                            android:src="@drawable/ic_question" />
+
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="@dimen/half_margin"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            style="@style/TitleMedium"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Get help with this purchase" />
+
+                        <TextView
+                            style="@style/BodySmall"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Eligible for a refund within 7 days of delivery" />
+
+                    </LinearLayout>
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:layout_width="18dp"
+                        android:layout_height="18dp"
+                        android:src="@drawable/ic_forward" />
+
+                </LinearLayout>
+
+                <com.google.android.material.divider.MaterialDivider
+                    android:layout_width="match_parent"
+                    android:layout_height="2dp"
+                    android:layout_marginVertical="@dimen/half_margin"
+                    android:alpha="0.2" />
+
+                <LinearLayout
+                    style="@style/shadowStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginVertical="@dimen/half_margin"
+                    android:backgroundTint="@color/inverseOnSurface"
+                    android:gravity="center_vertical">
+
+                    <com.google.android.material.card.MaterialCardView
+                        style="@style/cardStyle"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        app:cardBackgroundColor="@color/backgroundClr"
+                        app:cardCornerRadius="100dp"
+                        app:cardElevation="0dp">
+
+                        <androidx.appcompat.widget.AppCompatImageView
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:backgroundTint="@color/onSecondary"
+                            android:padding="12dp"
+                            android:src="@drawable/ic_gift_outlined" />
+
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="@dimen/half_margin"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            style="@style/TitleMedium"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Refer a buyer, earn $5!" />
+
+                        <TextView
+                            style="@style/BodySmall"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Get credit towards your next purchase " />
+
+                    </LinearLayout>
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:layout_width="18dp"
+                        android:layout_height="18dp"
+                        android:src="@drawable/ic_forward" />
+
+                </LinearLayout>
+
+
+            </LinearLayout>
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/materialCardView"
+                style="@style/cardStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/margin"
+                android:layout_marginTop="@dimen/half_margin"
+                android:backgroundTint="@color/background"
+                app:cardCornerRadius="12dp">
+
+                <ImageView
+                    android:id="@+id/productImage"
+                    android:layout_width="160dp"
+                    android:layout_height="160dp"
+                    android:layout_gravity="center"
+                    android:contentDescription="@string/app_name"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/product_img" />
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <TextView
+                android:id="@+id/productName"
+                style="@style/TitleLarge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/half_margin"
+                android:layout_marginTop="@dimen/half_margin"
+                android:text="Product Name" />
+
+            <TextView
+                android:id="@+id/productDescription"
+                style="@style/BodyLarge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/half_margin"
+                android:text="Near Mint"
+                android:textAlignment="center" />
+
+            <LinearLayout
+                style="@style/shadowStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/half_margin"
+                android:background="@drawable/card_16"
+                android:gravity="center_vertical"
+                android:orientation="vertical"
+                android:padding="@dimen/margin">
+
+                <TextView
+                    android:id="@+id/title"
+                    style="@style/TitleLarge"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Order Details" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/half_margin"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        style="@style/BodyLarge"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="@dimen/margin"
+                        android:layout_weight="1"
+                        android:alpha="0.7"
+                        android:text="@string/order_id" />
+
+                    <TextView
+                        android:id="@+id/orderId"
+                        style="@style/TitleMedium"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="?selectableItemBackground"
+                        android:text="#48643546" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/half_margin"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        style="@style/BodyLarge"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="@dimen/margin"
+                        android:layout_weight="1"
+                        android:alpha="0.7"
+                        android:text="@string/order_date" />
+
+                    <TextView
+                        android:id="@+id/orderDate"
+                        style="@style/TitleMedium"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="?selectableItemBackground"
+                        android:text="Jan 15, 2025" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginVertical="@dimen/half_margin"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        style="@style/TitleMedium"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="@dimen/margin"
+                        android:layout_weight="1"
+                        android:alpha="0.7"
+                        android:text="@string/sold_by" />
+
+                    <TextView
+                        android:id="@+id/soldBy"
+                        style="@style/BodyLarge"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="?selectableItemBackground"
+                        android:text="TechGear Pro" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/half_margin"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        style="@style/BodyLarge"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="@dimen/margin"
+                        android:layout_weight="1"
+                        android:alpha="0.7"
+                        android:text="@string/quantity" />
+
+                    <TextView
+                        android:id="@+id/quantity"
+                        style="@style/TitleMedium"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="?selectableItemBackground"
+                        android:text="1" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/half_margin"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        style="@style/BodyLarge"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="@dimen/margin"
+                        android:layout_weight="1"
+                        android:alpha="0.7"
+                        android:text="@string/category" />
+
+                    <TextView
+                        android:id="@+id/category"
+                        style="@style/TitleMedium"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="?selectableItemBackground"
+                        android:text="Electronics" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    style="@style/shadowStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginVertical="@dimen/margin"
+                    android:backgroundTint="@color/inverseOnSurface"
+                    android:gravity="center_vertical">
+
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/icon_card"
+                        style="@style/cardStyle"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        app:cardBackgroundColor="@color/backgroundClr"
+                        app:cardCornerRadius="100dp"
+                        app:cardElevation="0dp">
+
+                        <androidx.appcompat.widget.AppCompatImageView
+                            android:id="@+id/icon"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:backgroundTint="@color/onSecondary"
+                            android:padding="12dp"
+                            android:src="@drawable/notification" />
+
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <TextView
+                        style="@style/TitleMedium"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="@dimen/half_margin"
+                        android:layout_weight="1"
+                        android:text="Reciept &amp; shipping details" />
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/next"
+                        android:layout_width="18dp"
+                        android:layout_height="18dp"
+                        android:src="@drawable/ic_forward" />
+
+                </LinearLayout>
+
+                <com.google.android.material.divider.MaterialDivider
+                    android:layout_width="match_parent"
+                    android:layout_height="2dp"
+                    android:layout_marginVertical="@dimen/half_margin"
+                    android:alpha="0.2" />
+
+                <LinearLayout
+                    style="@style/shadowStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginVertical="@dimen/half_margin"
+                    android:backgroundTint="@color/inverseOnSurface"
+                    android:gravity="center_vertical">
+
+                    <com.google.android.material.card.MaterialCardView
+                        style="@style/cardStyle"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        app:cardBackgroundColor="@color/backgroundClr"
+                        app:cardCornerRadius="100dp"
+                        app:cardElevation="0dp">
+
+                        <androidx.appcompat.widget.AppCompatImageView
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:backgroundTint="@color/onSecondary"
+                            android:padding="12dp"
+                            android:src="@drawable/notification" />
+
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="@dimen/half_margin"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            style="@style/TitleMedium"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Video Reciept" />
+
+                        <TextView
+                            android:id="@+id/sub_title"
+                            style="@style/BodySmall"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Video receipt available for 60 more days" />
+
+                    </LinearLayout>
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:layout_width="18dp"
+                        android:layout_height="18dp"
+                        android:src="@drawable/ic_forward" />
+
+                </LinearLayout>
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                style="@style/shadowStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/half_margin"
+                android:background="@drawable/card_16"
+                android:gravity="center_vertical"
+                android:orientation="vertical"
+                android:padding="@dimen/margin">
+
+                <TextView
+                    style="@style/TitleLarge"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Buyer Protections" />
+
+                <LinearLayout
+                    style="@style/shadowStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginVertical="@dimen/half_margin"
+                    android:backgroundTint="@color/inverseOnSurface"
+                    android:gravity="center_vertical">
+
+                    <com.google.android.material.card.MaterialCardView
+                        style="@style/cardStyle"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        app:cardBackgroundColor="@color/backgroundClr"
+                        app:cardCornerRadius="100dp"
+                        app:cardElevation="0dp">
+
+                        <androidx.appcompat.widget.AppCompatImageView
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:backgroundTint="@color/onSecondary"
+                            android:padding="12dp"
+                            android:src="@drawable/ic_gift_outlined" />
+
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="@dimen/half_margin"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            style="@style/TitleMedium"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Bidswipe Buyer Guarantee" />
+
+                        <TextView
+                            style="@style/BodySmall"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Receive your purchase on time and as described or we'll make it right." />
+
+                    </LinearLayout>
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:layout_width="18dp"
+                        android:layout_height="18dp"
+                        android:src="@drawable/ic_forward" />
+
+                </LinearLayout>
+
+
+            </LinearLayout>
+
+            <com.google.android.material.card.MaterialCardView
+                style="@style/cardStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/half_margin"
+                android:layout_marginVertical="@dimen/half_margin"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="0dp">
+
+                <LinearLayout
+                    android:id="@+id/userInfo"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:backgroundTint="@color/outlineVariant"
+                    android:gravity="center_vertical"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@color/outline"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:padding="12dp">
+
+                        <com.makeramen.roundedimageview.RoundedImageView
+                            android:id="@+id/userImage"
+                            android:layout_width="36dp"
+                            android:layout_height="36dp"
+                            android:scaleType="centerCrop"
+                            android:src="@drawable/placeholder_user"
+                            app:riv_corner_radius="100dp" />
+
+                        <TextView
+                            android:id="@+id/userName"
+                            style="@style/TitleMedium"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            android:layout_marginStart="@dimen/half_margin"
+                            android:layout_weight="1"
+                            android:text="@string/username" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@color/background"
+                        android:orientation="horizontal"
+                        android:padding="@dimen/half_margin">
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginHorizontal="@dimen/half_margin"
+                            android:layout_weight="1"
+                            android:gravity="center_horizontal"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:id="@+id/rating"
+                                style="@style/TitleSmall"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:drawableStart="@drawable/ic_star"
+                                android:drawablePadding="2dp"
+                                android:gravity="center_vertical"
+                                android:text="5.0" />
+
+                            <TextView
+                                style="@style/BodySmall"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/rating" />
+
+                        </LinearLayout>
+
+                        <com.google.android.material.divider.MaterialDivider
+                            android:layout_width="2dp"
+                            android:layout_height="match_parent"
+                            android:alpha="0.2" />
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginHorizontal="@dimen/half_margin"
+                            android:layout_weight="1"
+                            android:gravity="center_horizontal"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:id="@+id/review"
+                                style="@style/TitleSmall"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:gravity="center_vertical"
+                                android:text="1.8K" />
+
+                            <TextView
+                                style="@style/BodySmall"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/reviews" />
+
+                        </LinearLayout>
+
+                        <com.google.android.material.divider.MaterialDivider
+                            android:layout_width="2dp"
+                            android:layout_height="match_parent"
+                            android:alpha="0.2" />
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginHorizontal="@dimen/half_margin"
+                            android:layout_weight="1"
+                            android:gravity="center_horizontal"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:id="@+id/sold"
+                                style="@style/TitleSmall"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:gravity="center_vertical"
+                                android:text="5.5k" />
+
+                            <TextView
+                                style="@style/BodySmall"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Sold" />
+
+                        </LinearLayout>
+
+                        <com.google.android.material.divider.MaterialDivider
+                            android:layout_width="2dp"
+                            android:layout_height="match_parent"
+                            android:alpha="0.2" />
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginHorizontal="@dimen/half_margin"
+                            android:layout_weight="1"
+                            android:gravity="center_horizontal"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:id="@+id/shipping"
+                                style="@style/TitleSmall"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:drawableStart="@drawable/ic_vehicle"
+                                android:drawablePadding="2dp"
+                                android:drawableTint="@color/onSurface"
+                                android:gravity="center_vertical"
+                                android:text="5.0" />
+
+                            <TextView
+                                style="@style/BodySmall"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Avg ship" />
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+    <io.bidswipe.app.ui.custom.LoaderView
+        android:id="@+id/loader"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"/>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

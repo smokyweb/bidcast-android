@@ -149,8 +149,8 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 		setUpSwipe()
 
 		initPip()
-		// Initialize thumbnail view - show it initially
 
+		// Initialize thumbnail view - show it initially
 		bind.thumbnailView.loadUrl(mCtx, thumbnail, R.drawable.placeholder_rect)
 
 		showThumbnail()

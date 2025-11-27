@@ -8,7 +8,6 @@ import io.bidswipe.app.network.ApiInterface
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import javax.inject.Inject
-import kotlin.reflect.typeOf
 
 class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRepository() {
 	
@@ -546,5 +545,10 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
 		categoryId: RequestBody?,
 		notes: RequestBody?
 	) = call { api.reportSeller(sellerId, categoryId, notes) }
+
+	suspend fun fetchOrderDetail(
+		productId: String?,
+		orderId: String?
+	) = call { api.fetchOrderDetail( productId ,orderId) }
 
 }

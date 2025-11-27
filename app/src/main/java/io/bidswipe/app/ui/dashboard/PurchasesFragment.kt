@@ -18,6 +18,7 @@ import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.network.response.GetProductsByStatusResponse
 import io.bidswipe.app.ui.custom.AppBottomSheet
+import io.bidswipe.app.ui.product.ProductDetailsActivity
 import io.bidswipe.app.ui.sellerProfile.SellerProfileActivity
 import io.bidswipe.app.utils.Utils
 import io.bidswipe.app.utils.parse
@@ -38,14 +39,35 @@ class PurchasesFragment : BaseFragment<DashViewModel, FragmentPurchasesBinding>(
 
     private var mClick = object : RecyclerClicks {
         override fun itemClick(pos: Int, status: String?) {
-            if(mList[pos]?.product?.seller!=null) {
-                startActivity(
-                    Intent(mCtx, SellerProfileActivity::class.java).putExtra(
-                        "userId",
-                        mList[pos]?.product?.seller?.id.toString()
+
+            when(status){
+
+                "product" -> {
+                    startActivity(
+                        Intent(mCtx, ProductDetailsActivity::class.java).putExtra(
+                            "productId",
+                            mList[pos]?.product?.id.toString()).putExtra(
+                                "type",
+                                "orderDetail"
+                            ).putExtra("orderId", mList[pos]?.orderId.toString())
                     )
-                )
+                }
+
+                "profile" -> {
+                    if (mList[pos]?.product?.seller != null) {
+                        startActivity(
+                            Intent(mCtx, SellerProfileActivity::class.java).putExtra(
+                                "sellerId",
+                                mList[pos]?.product?.seller?.id.toString()
+                            )
+                        )
+
+                    }
+                }
+
             }
+
+
         }
     }
 

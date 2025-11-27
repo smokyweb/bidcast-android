@@ -36,6 +36,7 @@ class ProductDetailsActivity : BaseActivity() {
 
 		val id = when (type.trim()) {
 			"shop" -> R.id.sellerProductsFragment
+			"orderDetail" -> R.id.orderDetailsFragment
 			else -> {
 				R.id.productDetailsFragment
 			}

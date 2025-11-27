@@ -93,7 +93,6 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
                     }
                 }
             }
-
         }
     }
 

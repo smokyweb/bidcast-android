@@ -31,9 +31,14 @@ class PurchasesAdapter(
 	) {
 		with(holder) {
 
-			bind.root.setHapticClickListener {
-				mClicks.itemClick(position)
+			bind.sellerLayout.setHapticClickListener {
+				mClicks.itemClick(position, "profile")
 			}
+
+			bind.view.setHapticClickListener {
+				mClicks.itemClick(position, "product")
+			}
+
 
 			// Price formatting - bold, below title
 			bind.price.text =

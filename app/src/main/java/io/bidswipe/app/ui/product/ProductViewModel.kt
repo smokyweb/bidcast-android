@@ -8,6 +8,7 @@ import io.bidswipe.app.network.Resource
 import io.bidswipe.app.network.repository.DashRepository
 import io.bidswipe.app.network.response.CommonResponse
 import io.bidswipe.app.network.response.CreateOrderResponse
+import io.bidswipe.app.network.response.FetchOrderDetailResponse
 import io.bidswipe.app.network.response.GetOrderDetailsResponse
 import io.bidswipe.app.network.response.GetPaymentCardsResponse
 import io.bidswipe.app.network.response.GetProductDetailsResponse
@@ -241,6 +242,21 @@ class ProductViewModel @Inject constructor(
 			return@launch
 		}
 		_getSellerInfoResponse.value = repo.getSellerInfo(sellerId)
+	}
+
+	private var _fetchOrderDetailResponse = MutableLiveData<Resource<FetchOrderDetailResponse>>()
+	val fetchOrderDetailRepo : MutableLiveData<Resource<FetchOrderDetailResponse>>
+		get() = _fetchOrderDetailResponse
+
+	fun fetchOrderDetail(
+		productId: String?,
+		orderId: String?
+	) = viewModelScope.launch {
+		if (! networkMonitor.hasInternet()) {
+			_fetchOrderDetailResponse.value = NO_INTERNET_ERROR
+			return@launch
+		}
+		_fetchOrderDetailResponse.value = repo.fetchOrderDetail(productId, orderId)
 	}
 
 }

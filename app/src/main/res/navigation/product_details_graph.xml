@@ -66,6 +66,11 @@
         android:name="io.bidswipe.app.ui.product.SellerProductsFragment"
         android:label="fragment_seller_products"
         tools:layout="@layout/fragment_seller_products" />
+    <fragment
+        android:id="@+id/orderDetailsFragment"
+        android:name="io.bidswipe.app.ui.product.OrderDetailsFragment"
+        android:label="fragment_order_details"
+        tools:layout="@layout/fragment_order_details" />
 
 
 </navigation>

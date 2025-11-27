@@ -14,6 +14,7 @@ import io.bidswipe.app.network.response.CreateProductResponse
 import io.bidswipe.app.network.response.CreateShowResponse
 import io.bidswipe.app.network.response.FAQResponse
 import io.bidswipe.app.network.response.FetchBidResponse
+import io.bidswipe.app.network.response.FetchOrderDetailResponse
 import io.bidswipe.app.network.response.FetchReferralResponse
 import io.bidswipe.app.network.response.FetchSellerVerificationResponse
 import io.bidswipe.app.network.response.FollowUnfollowResponse
@@ -716,6 +717,12 @@ interface ApiInterface {
 		@Part("category_id") categoryId: RequestBody?,
 		@Part("notes") notes: RequestBody?
 	) : CommonResponse
+
+	@GET("api/order-details-with-shipping")
+	suspend fun fetchOrderDetail(
+		@Query("product_id") productId: String?,
+		@Query("order_id") orderId: String?
+	) : FetchOrderDetailResponse
 
 
 }
