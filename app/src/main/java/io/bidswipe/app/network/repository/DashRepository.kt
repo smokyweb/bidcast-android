@@ -372,7 +372,8 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
 	suspend fun getProductsByStatus(
 		type: RequestBody?,
 		page: RequestBody?,
-	) = call { api.getProductsByStatus(type, page) }
+		status: RequestBody?
+	) = call { api.getProductsByStatus(type, page, status) }
 	
 	suspend fun deleteNotification(
 		id: RequestBody?,

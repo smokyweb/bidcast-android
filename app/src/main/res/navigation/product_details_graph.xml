@@ -70,7 +70,15 @@
         android:id="@+id/orderDetailsFragment"
         android:name="io.bidswipe.app.ui.product.OrderDetailsFragment"
         android:label="fragment_order_details"
-        tools:layout="@layout/fragment_order_details" />
+        tools:layout="@layout/fragment_order_details" >
+        <action
+            android:id="@+id/orderDetailToOrderStatusFragment"
+            app:destination="@id/orderStatusFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+    </fragment>
 
 
 </navigation>

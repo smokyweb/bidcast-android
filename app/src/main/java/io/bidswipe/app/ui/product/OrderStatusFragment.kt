@@ -45,6 +45,7 @@ class OrderStatusFragment : BaseFragment<ProductViewModel, FragmentOrderStatusBi
 
 		orderId = arguments?.getString("orderId") ?: ""
 		val from = arguments?.getString("from") ?: ""
+
 		bind.homeBtn.isVisible = from != "my_orders"
 
 		bind.header.onBackClick {

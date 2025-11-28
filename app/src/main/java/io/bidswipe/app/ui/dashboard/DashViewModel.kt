@@ -371,12 +371,13 @@ class DashViewModel @Inject constructor(
 	fun getPurchasedProductsByStatus(
 		type : RequestBody? ,
 		page : RequestBody? ,
+		status : RequestBody?  = null,
 	) = viewModelScope.launch {
 		if (! networkMonitor.hasInternet()) {
 			_getPurchasedProductsByStatusResponse.value = NO_INTERNET_ERROR
 			return@launch
 		}
-		_getPurchasedProductsByStatusResponse.value = repo.getProductsByStatus(type , page)
+		_getPurchasedProductsByStatusResponse.value = repo.getProductsByStatus(type , page, status)
 	}
 
 	private var _getSavedProductsByStatusResponse =
@@ -387,12 +388,13 @@ class DashViewModel @Inject constructor(
 	fun getSavedProductsByStatus(
 		type : RequestBody? ,
 		page : RequestBody? ,
+		status : RequestBody? = null
 	) = viewModelScope.launch {
 		if (! networkMonitor.hasInternet()) {
 			_getSavedProductsByStatusResponse.value = NO_INTERNET_ERROR
 			return@launch
 		}
-		_getSavedProductsByStatusResponse.value = repo.getProductsByStatus(type , page)
+		_getSavedProductsByStatusResponse.value = repo.getProductsByStatus(type , page, status)
 	}
 
 	private var _updateProfileResponse = MutableLiveData<Resource<CommonResponse>>()

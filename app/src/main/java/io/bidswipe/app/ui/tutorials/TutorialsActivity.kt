@@ -64,6 +64,7 @@ class TutorialsActivity : BaseActivity() {
 
 		val id = when (type.trim()) {
 			"promoteTools" -> R.id.howToSellFragment
+			"refer" -> R.id.referFriendFragment
 			else -> {
 				R.id.getStartedFragment
 			}

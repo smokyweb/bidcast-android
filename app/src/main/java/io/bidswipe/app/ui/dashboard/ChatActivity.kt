@@ -169,7 +169,6 @@ class ChatActivity : BaseActivity() {
 			}
 		}
 
-
 		chatKey = if (userId > receiverId) {
 			receiverId + "_chats_" + userId
 		} else {
@@ -178,9 +177,9 @@ class ChatActivity : BaseActivity() {
 
 		chatRef = FireRef.CHAT.child(chatKey)
 
-		// Reset unread count when opening chat
+		/*// Reset unread count when opening chat
 		FireRef.CHAT_LIST.child(userId).child(receiverId)
-			.updateChildren(mapOf("unreadCount" to 0))
+			.updateChildren(mapOf("unreadCount" to 0))*/
 
 		bind.title.text = receiverName.asCapital()
 		bind.userImage.loadUrl(this, receiverImage)
@@ -294,9 +293,9 @@ class ChatActivity : BaseActivity() {
 		bind.cancel.setHapticClickListener {
 			showReply(false)
 		}
+
 		checkBlockStatus()
 		getChats()
-
 
 		viewModel.blockUnblockUserRepo.observe(this) { resource ->
 			bind.loader.isVisible = false

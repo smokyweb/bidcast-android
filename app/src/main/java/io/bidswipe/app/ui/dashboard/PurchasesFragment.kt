@@ -35,7 +35,8 @@ class PurchasesFragment : BaseFragment<DashViewModel, FragmentPurchasesBinding>(
     private var mList = mutableListOf<GetProductsByStatusResponse.Data?>()
     private var page = 1
     private var isLoading = false
-    private var currentFilter = "purchased"
+    private var currentFilter = ""
+    private var type = "purchased"
 
     private var mClick = object : RecyclerClicks {
         override fun itemClick(pos: Int, status: String?) {
@@ -43,14 +44,16 @@ class PurchasesFragment : BaseFragment<DashViewModel, FragmentPurchasesBinding>(
             when(status){
 
                 "product" -> {
-                    startActivity(
-                        Intent(mCtx, ProductDetailsActivity::class.java).putExtra(
-                            "productId",
-                            mList[pos]?.product?.id.toString()).putExtra(
+                    if (mList[pos]?.orderId?.isNotEmpty() == true){
+                        startActivity(
+                            Intent(mCtx, ProductDetailsActivity::class.java).putExtra(
+                                "productId",
+                                mList[pos]?.product?.id.toString()).putExtra(
                                 "type",
                                 "orderDetail"
                             ).putExtra("orderId", mList[pos]?.orderId.toString())
-                    )
+                        )
+                    }
                 }
 
                 "profile" -> {
@@ -61,7 +64,6 @@ class PurchasesFragment : BaseFragment<DashViewModel, FragmentPurchasesBinding>(
                                 mList[pos]?.product?.seller?.id.toString()
                             )
                         )
-
                     }
                 }
 
@@ -189,19 +191,16 @@ class PurchasesFragment : BaseFragment<DashViewModel, FragmentPurchasesBinding>(
 
     fun filterByStatus(filter: String) {
         currentFilter = when (filter) {
-            "all" -> "purchased"
             "in_progress" -> "in_progress"
             "completed" -> "completed"
-            "refunds" -> "refunded"
-            "cancelled" -> "cancelled"
-            else -> "purchased"
+            else -> ""
         }
         page = 1
         loadData()
     }
 
     private fun loadData() {
-        viewModel.getPurchasedProductsByStatus(currentFilter.request(), page.toString().request())
+        viewModel.getPurchasedProductsByStatus(type.request(), page.toString().request(),currentFilter.ifEmpty { null }?.request())
     }
 
     private fun setupFilterChips() {
@@ -209,7 +208,7 @@ class PurchasesFragment : BaseFragment<DashViewModel, FragmentPurchasesBinding>(
             return // Already set up
         }
 
-        val filters = listOf("All", "In Progress", "Completed", "Refunds", "Cancelled")
+        val filters = listOf( "All", "In Progress", "Completed")
         filters.forEachIndexed { index, filter ->
             val chip = Utils.makeAChip(
                 mCtx = mCtx,

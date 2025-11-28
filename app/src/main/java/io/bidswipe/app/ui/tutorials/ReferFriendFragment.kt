@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.navigation.fragment.findNavController
 import io.bidswipe.app.App
 import io.bidswipe.app.R
@@ -17,6 +18,7 @@ import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.model.SellModel
 import io.bidswipe.app.ui.dashboard.DashViewModel
 import io.bidswipe.app.utils.Const
+import io.bidswipe.app.utils.finish
 import io.bidswipe.app.utils.ids
 import io.bidswipe.app.utils.setHapticClickListener
 
@@ -30,8 +32,12 @@ class ReferFriendFragment : BaseFragment<DashViewModel, FragmentReferFriendBindi
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		super.onViewCreated(view, savedInstanceState)
 
+		val type = requireActivity().intent.getStringExtra("type")
+
+		bind.continueBtn.isVisible = type != "refer"
+
 		bind.header.onBackClick {
-			findNavController().popBackStack()
+			if ( type == "refer") finish() else findNavController().popBackStack()
 		}
 
 		tipsList.clear()

@@ -25,7 +25,7 @@ data class FetchBidResponse(
 	@Keep
 	data class Data(
 		@SerializedName("bid_price")
-		val bidPrice : Int? ,
+		val bidPrice : Double? ,
 		@SerializedName("created_at")
 		val createdAt : String? ,
 		@SerializedName("created_by")

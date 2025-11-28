@@ -63,9 +63,9 @@ class PurchasesAdapter(
 				append("Purchased: ")
 				append(
 					Utils.getFormattedDateTime(
-						"dd-MM-yyyy HH:mm:ss",
+						"yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'",
 						"MM/dd/yy",
-						item?.product?.createdAt.toString()
+						item?.createdAt.toString()
 					)
 				)
 			}

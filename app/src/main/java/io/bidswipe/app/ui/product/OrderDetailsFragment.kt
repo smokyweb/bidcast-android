@@ -1,20 +1,31 @@
 package io.bidswipe.app.ui.product
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.core.text.buildSpannedString
 import androidx.core.view.isVisible
+import androidx.navigation.fragment.findNavController
 import io.bidswipe.app.base.BaseFragment
 import io.bidswipe.app.databinding.FragmentOrderDetailsBinding
 import io.bidswipe.app.interfaces.AlertClicks
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.ui.custom.AppBottomSheet
+import io.bidswipe.app.ui.dashboard.ChatActivity
+import io.bidswipe.app.ui.more.MoreActivity
+import io.bidswipe.app.ui.sellerProfile.SellerProfileActivity
+import io.bidswipe.app.ui.tutorials.TutorialsActivity
+import io.bidswipe.app.utils.Utils
 import io.bidswipe.app.utils.asCapital
 import io.bidswipe.app.utils.finish
+import io.bidswipe.app.utils.ids
 import io.bidswipe.app.utils.loadUrl
 import io.bidswipe.app.utils.parse
+import io.bidswipe.app.utils.setHapticClickListener
+import kotlin.jvm.java
 
 class OrderDetailsFragment : BaseFragment<ProductViewModel, FragmentOrderDetailsBinding>() {
 	override fun getModel(): Class<ProductViewModel> = ProductViewModel::class.java
@@ -25,7 +36,11 @@ class OrderDetailsFragment : BaseFragment<ProductViewModel, FragmentOrderDetails
 	): FragmentOrderDetailsBinding  = FragmentOrderDetailsBinding.inflate(inflater, view, false)
 
 	private var orderId : String? = null
+	private var order : String? = null
+	private var sellerId : String? = null
 	private var productId : String? = null
+	private var sellerName : String? = null
+	private var sellerImage : String? = null
 
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		super.onViewCreated(view, savedInstanceState)
@@ -37,9 +52,53 @@ class OrderDetailsFragment : BaseFragment<ProductViewModel, FragmentOrderDetails
 			finish()
 		}
 
+		bind.messageToSeller.setOnClickListener {
+			val intent = Intent(mCtx, ChatActivity::class.java).apply {
+				putExtra("id", sellerId)
+				putExtra("name", sellerName)
+				putExtra("image", sellerImage)
+			}
+			startActivity(intent)
+		}
+
+		bind.getHelp.setHapticClickListener {
+			startActivity(Intent(mCtx, MoreActivity::class.java).putExtra("slug", "contactUs"))
+		}
+
+		bind.refer.setHapticClickListener {
+			startActivity(Intent(mCtx, TutorialsActivity::class.java).putExtra("type", "refer"))
+		}
+
+		bind.userProfile.setHapticClickListener {
+			startActivity(
+				Intent(mCtx, SellerProfileActivity::class.java).putExtra(
+					"sellerId",
+					sellerId
+				)
+			)
+		}
+
+		bind.shippingDetail.setHapticClickListener {
+			findNavController().navigate(
+				ids.orderDetailToOrderStatusFragment,
+				bundleOf("orderId" to order)
+			)
+		}
+
+		bind.viewProduct.setHapticClickListener {
+			bind.expandView.toggle()
+		}
+
+
+		bind.videoReceipt.setHapticClickListener {
+
+
+		}
+
+
 		bind.loader.isVisible = true
 
-		viewModel.fetchOrderDetail(productId,orderId )
+		viewModel.fetchOrderDetail(productId,orderId)
 
 		viewModel.fetchOrderDetailRepo.observe(viewLifecycleOwner) {
 			when (it) {
@@ -65,11 +124,35 @@ class OrderDetailsFragment : BaseFragment<ProductViewModel, FragmentOrderDetails
 					bind.productDescription.text = mData?.order?.product?.description
 
 					bind.orderId.text = mData?.order?.id.toString()
-					bind.orderDate.text = mData?.order?.createdAt
+
+					bind.orderTime.text = buildSpannedString {
+						append("Order placed ")
+						append(	 Utils.getFormattedDateTime(
+							"yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'",
+							"MMM dd, yyyy 'at' hh:mm a",
+							mData?.order?.createdAt.toString()
+						))
+					}
+
+					bind.orderDate.text = Utils.getFormattedDateTime(
+						"yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'",
+						"MMM dd, yyyy",
+						mData?.order?.createdAt.toString()
+					)
+
 					bind.soldBy.text = mData?.sellerDetails?.name
 					bind.quantity.text = mData?.order?.product?.quantity.toString()
 					bind.category.text = mData?.order?.product?.category?.name
 
+					bind.productCategory.text = mData?.order?.product?.category?.name
+					bind.price.text = mData?.order?.product?.pricing.toString()
+
+
+					order = mData?.order?.id.toString()
+
+					sellerId = mData?.sellerDetails?.id.toString()
+					sellerName = mData?.sellerDetails?.name.toString()
+					sellerImage = mData?.sellerDetails?.profileImage.toString()
 					bind.userName.text = mData?.sellerDetails?.name
 					bind.userImage.loadUrl(mCtx, mData?.sellerDetails?.profileImage ?:"")
 

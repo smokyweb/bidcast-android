@@ -497,6 +497,7 @@ interface ApiInterface {
 	suspend fun getProductsByStatus(
 		@Part("type") type : RequestBody? ,
 		@Part("page") page : RequestBody? ,
+		@Part("status") status : RequestBody?
 	) : GetProductsByStatusResponse
 
 	@Multipart
