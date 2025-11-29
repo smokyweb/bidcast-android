@@ -34,9 +34,9 @@
                 style="@style/shadowStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/card_16"
-                android:layout_marginVertical="@dimen/margin"
                 android:layout_marginHorizontal="@dimen/margin"
+                android:layout_marginVertical="@dimen/margin"
+                android:background="@drawable/card_16"
                 android:gravity="center_vertical"
                 android:orientation="vertical"
                 android:padding="@dimen/margin">
@@ -354,8 +354,8 @@
                 style="@style/TitleMedium"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:drawableEnd="@drawable/ic_down"
                 android:layout_marginHorizontal="@dimen/margin"
+                android:drawableEnd="@drawable/ic_down"
                 android:drawableTint="@color/primary"
                 android:text="View Product Details "
                 android:textColor="@color/primary" />
@@ -372,8 +372,8 @@
                     style="@style/shadowStyle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/half_margin"
                     android:layout_marginHorizontal="@dimen/margin"
+                    android:layout_marginTop="@dimen/half_margin"
                     android:background="@drawable/card_16"
                     android:gravity="center_vertical"
                     android:orientation="vertical"
@@ -388,8 +388,8 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:gravity="center"
                         android:layout_marginTop="@dimen/half_margin"
+                        android:gravity="center"
                         android:orientation="horizontal">
 
                         <TextView
@@ -439,16 +439,14 @@
 
                 </LinearLayout>
 
-
             </net.cachapa.expandablelayout.ExpandableLayout>
-
 
             <LinearLayout
                 style="@style/shadowStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginVertical="@dimen/margin"
                 android:layout_marginHorizontal="@dimen/margin"
+                android:layout_marginVertical="@dimen/margin"
                 android:background="@drawable/card_16"
                 android:gravity="center_vertical"
                 android:orientation="vertical"
@@ -464,8 +462,8 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="center"
                     android:layout_marginTop="@dimen/half_margin"
+                    android:gravity="center"
                     android:orientation="horizontal">
 
                     <TextView
@@ -516,8 +514,8 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="center"
                     android:layout_marginTop="@dimen/half_margin"
+                    android:gravity="center"
                     android:orientation="horizontal">
 
                     <TextView
@@ -636,6 +634,7 @@
                 </LinearLayout>
 
                 <com.google.android.material.divider.MaterialDivider
+                    android:id="@+id/videoReceiptDivider"
                     android:layout_width="match_parent"
                     android:layout_height="2dp"
                     android:layout_marginVertical="@dimen/margin"
@@ -702,8 +701,8 @@
                 style="@style/shadowStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginVertical="@dimen/half_margin"
                 android:layout_marginHorizontal="@dimen/margin"
+                android:layout_marginVertical="@dimen/half_margin"
                 android:background="@drawable/card_16"
                 android:gravity="center_vertical"
                 android:orientation="vertical"
@@ -761,10 +760,7 @@
 
                     </LinearLayout>
 
-                    <androidx.appcompat.widget.AppCompatImageView
-                        android:layout_width="18dp"
-                        android:layout_height="18dp"
-                        android:src="@drawable/ic_forward" />
+                 ?
 
                 </LinearLayout>
 
@@ -954,7 +950,7 @@
         android:id="@+id/loader"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone"/>
+        android:visibility="gone" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

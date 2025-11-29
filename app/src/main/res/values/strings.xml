@@ -30,6 +30,11 @@
     <string name="buy_it_now_price">Buy It Now Price</string>
     <string name="cancel">Cancel</string>
     <string name="caption">Caption</string>
+    <string name="play_pause">Play/Pause</string>
+    <string name="mute">Mute</string>
+    <string name="unmute">Unmute</string>
+    <string name="subtitles_on">Subtitles On</string>
+    <string name="subtitles_off">Subtitles Off</string>
     <string name="category">Category</string>
     <string name="confirm_password">Confirm Password</string>
     <string name="continue_to_next_step">Continue to Next Step</string>
@@ -61,7 +66,7 @@
     <string name="flash_sell">Flash Sell</string>
     <string name="forgot_password">Forgot Password</string>
     <string name="full_name">Full Name</string>
-    <string name="goods_examples">Goods Examples</string>
+    <string name="goods_examples">Good Examples</string>
     <string name="hazardous_material">Hazardous Material</string>
     <string name="home">Home</string>
     <string name="how_it_works">How It Works</string>

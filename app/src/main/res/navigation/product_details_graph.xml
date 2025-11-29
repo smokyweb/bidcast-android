@@ -11,10 +11,6 @@
         android:label="fragment_product_details"
         tools:layout="@layout/fragment_product_details">
 
-        <!--<action
-            android:id="@+id/productDetailToOrderStatusFragment"
-            app:destination="@id/orderStatusFragment"
-            />-->
         <action
             android:id="@+id/goToBuyNowFragment"
             app:destination="@id/buyNowFragment"
@@ -70,7 +66,7 @@
         android:id="@+id/orderDetailsFragment"
         android:name="io.bidswipe.app.ui.product.OrderDetailsFragment"
         android:label="fragment_order_details"
-        tools:layout="@layout/fragment_order_details" >
+        tools:layout="@layout/fragment_order_details">
         <action
             android:id="@+id/orderDetailToOrderStatusFragment"
             app:destination="@id/orderStatusFragment"
@@ -78,7 +74,20 @@
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@anim/slide_in_left"
             app:popExitAnim="@anim/slide_out_right" />
+        <action
+            android:id="@+id/orderDetailToVideoReceiptPlayerFragment"
+            app:destination="@id/videoReceiptPlayerFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
     </fragment>
+
+    <fragment
+        android:id="@+id/videoReceiptPlayerFragment"
+        android:name="io.bidswipe.app.ui.product.VideoReceiptPlayerFragment"
+        android:label="fragment_video_receipt_player"
+        tools:layout="@layout/fragment_video_receipt_player" />
 
 
 </navigation>

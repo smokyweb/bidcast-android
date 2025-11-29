@@ -32,7 +32,9 @@ data class FetchOrderDetailResponse(
         @SerializedName("shipping_address")
         val shippingAddress: ShippingAddress?,
         @SerializedName("sold_count")
-        val soldCount: Int?
+        val soldCount: Int?,
+        @SerializedName("bid_video_url")
+        val bidVideoUrl: String?
     ) {
         @Keep
         data class Order(

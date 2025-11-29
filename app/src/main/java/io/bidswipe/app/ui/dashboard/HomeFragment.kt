@@ -444,6 +444,15 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
     ) {
         if (tile.tileType == HomeCategoryAdapter.TileType.SEE_ALL) return
 
+        // Update selection state for all tiles - ensure only one is selected
+        categoryTiles.forEachIndexed { index, categoryTile ->
+            val shouldSelect = categoryTile.id == tile.id
+            if (categoryTile.isSelected != shouldSelect) {
+                categoryTile.isSelected = shouldSelect
+                categoryAdapter.notifyItemChanged(index)
+            }
+        }
+
         selectedCategoryTileId = tile.id
         selectedCategory = if (tile.tileType == HomeCategoryAdapter.TileType.FOR_YOU) {
             "for_you"

@@ -8,7 +8,9 @@ import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.core.text.buildSpannedString
 import androidx.core.view.isVisible
+import androidx.media3.exoplayer.ExoPlayer
 import androidx.navigation.fragment.findNavController
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import io.bidswipe.app.base.BaseFragment
 import io.bidswipe.app.databinding.FragmentOrderDetailsBinding
 import io.bidswipe.app.interfaces.AlertClicks
@@ -41,6 +43,9 @@ class OrderDetailsFragment : BaseFragment<ProductViewModel, FragmentOrderDetails
 	private var productId : String? = null
 	private var sellerName : String? = null
 	private var sellerImage : String? = null
+	private var videoUrl : String? = null
+	private var videoPlayerBottomSheet : BottomSheetDialog? = null
+	private var exoPlayer : ExoPlayer? = null
 
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		super.onViewCreated(view, savedInstanceState)
@@ -92,9 +97,12 @@ class OrderDetailsFragment : BaseFragment<ProductViewModel, FragmentOrderDetails
 
 		bind.videoReceipt.setHapticClickListener {
 
+			findNavController().navigate(ids.orderDetailToVideoReceiptPlayerFragment,bundleOf("videoUrl" to videoUrl))
 
+			/*videoUrl?.let { url ->
+				showVideoPlayerBottomSheet(url)
+			}*/
 		}
-
 
 		bind.loader.isVisible = true
 
@@ -146,8 +154,7 @@ class OrderDetailsFragment : BaseFragment<ProductViewModel, FragmentOrderDetails
 
 					bind.productCategory.text = mData?.order?.product?.category?.name
 					bind.price.text = mData?.order?.product?.pricing.toString()
-
-
+					
 					order = mData?.order?.id.toString()
 
 					sellerId = mData?.sellerDetails?.id.toString()
@@ -163,6 +170,14 @@ class OrderDetailsFragment : BaseFragment<ProductViewModel, FragmentOrderDetails
 					bind.sold.text = (mData?.soldCount ?:0).toString()
 
 					bind.shipping.text = mData?.avgShip ?:"0"
+					
+					// Store video URL and show/hide video receipt button
+					videoUrl = mData?.bidVideoUrl
+
+					bind.videoReceipt.isVisible = !videoUrl.isNullOrEmpty()
+
+					bind.videoReceiptDivider.isVisible = !videoUrl.isNullOrEmpty()
+
 				}
 
 				is Resource.Error -> {
@@ -184,8 +199,17 @@ class OrderDetailsFragment : BaseFragment<ProductViewModel, FragmentOrderDetails
 
 		}
 
-
-
+	}
+	
+	private fun releasePlayer() {
+		exoPlayer?.release()
+		exoPlayer = null
+		videoPlayerBottomSheet = null
+	}
+	
+	override fun onDestroyView() {
+		super.onDestroyView()
+		releasePlayer()
 	}
 
 }

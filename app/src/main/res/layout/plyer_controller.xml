@@ -9,47 +9,74 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
-        android:background="@color/onSurface"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:background="@color/black25"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp">
 
         <androidx.media3.ui.DefaultTimeBar
             android:id="@id/exo_progress"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="4dp"
+            android:layout_marginStart="@dimen/margin"
+            android:layout_marginEnd="@dimen/margin"
+            android:layout_marginBottom="12dp"
+            app:bar_height="4dp"
+            app:buffered_color="@color/surfaceVariant"
+            app:played_color="@color/primary"
+            app:scrubber_color="@color/primary"
+            app:scrubber_dragged_size="16dp"
+            app:scrubber_enabled_size="12dp"
+            app:unplayed_color="@color/surfaceVariant" />
 
         <LinearLayout
             android:id="@+id/buttonLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/margin"
+            android:layout_marginStart="@dimen/margin"
+            android:layout_marginEnd="@dimen/margin"
+            android:weightSum="3"
             android:gravity="center_vertical"
-            android:orientation="horizontal"
-            android:weightSum="3">
+            android:orientation="horizontal">
 
             <ImageButton
                 android:id="@id/exo_play_pause"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/play_pause"
+                android:padding="@dimen/half_margin"
                 android:layout_weight="1"
-                android:background="@null"
-                android:src="@drawable/exo_icon_play" />
+                android:scaleType="fitCenter"
+                android:src="@drawable/exo_icon_play"
+                app:tint="@color/onSurface" />
 
-            <TextView
-                android:layout_width="match_parent"
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnSound"
+                style="@style/Widget.Material3.Button.TextButton"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:drawablePadding="@dimen/half_margin"
                 android:text="@string/sound"
-                app:drawableStartCompat="@drawable/ic_sound" />
+                android:textColor="@color/onSurface"
+                app:icon="@drawable/ic_sound"
+                android:layout_weight="1"
+                app:iconGravity="textStart"
+                app:iconPadding="8dp"
+                app:iconTint="@color/onSurface" />
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:drawablePadding="@dimen/half_margin"
-            android:text="@string/caption"
-            app:drawableStartCompat="@drawable/ic_cc" />
-
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnCaption"
+                style="@style/Widget.Material3.Button.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/caption"
+                android:layout_weight="1"
+                android:textColor="@color/onSurface"
+                app:icon="@drawable/ic_cc"
+                app:iconGravity="textStart"
+                app:iconPadding="8dp"
+                app:iconTint="@color/onSurface" />
 
         </LinearLayout>
 
