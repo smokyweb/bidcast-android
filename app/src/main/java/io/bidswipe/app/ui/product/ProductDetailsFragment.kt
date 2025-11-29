@@ -389,7 +389,7 @@ class ProductDetailsFragment : BaseFragment<ProductViewModel, FragmentProductDet
 
     private fun shareSellerProfile(productName:String,productImage:String) {
         val shareText = buildString {
-            append("Check out ${productName}")
+            append("Check out $productName")
             append("Username: @${bind.userName.text}\n")
             append(productImage.takeIf { it.isNotEmpty() }?.let { "Profile image: $it" } ?: "")
         }

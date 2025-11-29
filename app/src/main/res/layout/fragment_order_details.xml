@@ -54,10 +54,10 @@
                     android:text="Typically ships in 1 day" />
 
                 <com.google.android.material.progressindicator.LinearProgressIndicator
-                    android:id="@+id/stepProgress"
+                    android:id="@+id/orderProgress"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingVertical="@dimen/margin"
+                    android:paddingVertical="@dimen/half_margin"
                     android:progress="15"
                     android:progressTint="@color/secondary"
                     app:layout_constraintTop_toBottomOf="@id/header"
@@ -321,12 +321,11 @@
                 android:backgroundTint="@color/background"
                 app:cardCornerRadius="12dp">
 
-                <ImageView
+                <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/productImage"
                     android:layout_width="160dp"
                     android:layout_height="160dp"
                     android:layout_gravity="center"
-                    android:contentDescription="@string/app_name"
                     android:scaleType="centerCrop"
                     android:src="@drawable/product_img" />
 
@@ -760,10 +759,7 @@
 
                     </LinearLayout>
 
-                 ?
-
                 </LinearLayout>
-
 
             </LinearLayout>
 

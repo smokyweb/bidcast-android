@@ -131,6 +131,8 @@ class OrderDetailsFragment : BaseFragment<ProductViewModel, FragmentOrderDetails
 					bind.productName.text = mData?.order?.product?.title
 					bind.productDescription.text = mData?.order?.product?.description
 
+					bind.orderProgress.setProgress(mData?.order?.orderStatusPercentage ?: 0 , true)
+
 					bind.orderId.text = mData?.order?.id.toString()
 
 					bind.orderTime.text = buildSpannedString {

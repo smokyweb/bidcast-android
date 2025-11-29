@@ -501,6 +501,7 @@
             </LinearLayout>
 
         </LinearLayout>
+
     </ScrollView>
 
     <io.bidswipe.app.ui.custom.LoaderView

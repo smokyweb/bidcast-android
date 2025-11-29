@@ -67,7 +67,9 @@ data class FetchOrderDetailResponse(
             @SerializedName("status")
             val status: String?,
             @SerializedName("user_id")
-            val userId: Int?
+            val userId: Int?,
+            @SerializedName("order_status_percentage")
+            val orderStatusPercentage: Int?
         ) {
             @Keep
             data class Product(
