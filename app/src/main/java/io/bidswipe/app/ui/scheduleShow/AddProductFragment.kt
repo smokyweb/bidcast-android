@@ -11,7 +11,6 @@ import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.view.isVisible
 import androidx.navigation.fragment.findNavController
-import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseFragment
 import io.bidswipe.app.controller.ProductAdapter
 import io.bidswipe.app.databinding.FragmentAddProductBinding
@@ -22,7 +21,6 @@ import io.bidswipe.app.model.TutorialShowModel
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.network.response.GetMyInventoryResponse
 import io.bidswipe.app.ui.agoraStream.AgoraPublisherActivity
-import io.bidswipe.app.ui.custom.AlertType
 import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.ui.sellerHub.SellerHubActivity
 import io.bidswipe.app.utils.Alerts

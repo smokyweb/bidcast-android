@@ -20,21 +20,21 @@ import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.setHapticClickListener
 import io.bidswipe.app.utils.toDash
 
-class CategoryFragment : BaseFragment<DashViewModel , FragmentCategoryBinding>() {
+class CategoryFragment : BaseFragment<DashViewModel, FragmentCategoryBinding>() {
 
 	override fun getModel() = DashViewModel::class.java
 
 	override fun getBind(
-		inflater : LayoutInflater ,
-		view : ViewGroup? ,
-	) = FragmentCategoryBinding.inflate(inflater , view , false)
+		inflater: LayoutInflater,
+		view: ViewGroup?,
+	) = FragmentCategoryBinding.inflate(inflater, view, false)
 
-	private lateinit var categoryAdapter : CategoryAdapter
+	private lateinit var categoryAdapter: CategoryAdapter
 	private val categoryList = mutableListOf<GetCategoryResponse.Data?>()
 
 	private val categoryClicks = object : RecyclerClicks {
-		override fun itemClick(pos : Int , status : String?) {
-			categoryList[pos]?.isSelected = ! (categoryList[pos]?.isSelected ?: false)
+		override fun itemClick(pos: Int, status: String?) {
+			categoryList[pos]?.isSelected = !(categoryList[pos]?.isSelected ?: false)
 			categoryList.getOrNull(pos)?.let { category ->
 				if (viewModel.selectedCategories.contains(category)) {
 					viewModel.selectedCategories.remove(category)
@@ -47,15 +47,15 @@ class CategoryFragment : BaseFragment<DashViewModel , FragmentCategoryBinding>()
 		}
 	}
 
-	override fun onViewCreated(view : View , savedInstanceState : Bundle?) {
-		super.onViewCreated(view , savedInstanceState)
+	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+		super.onViewCreated(view, savedInstanceState)
 
-		categoryAdapter = CategoryAdapter(categoryList , categoryClicks)
+		categoryAdapter = CategoryAdapter(categoryList, categoryClicks)
 		bind.recyclerView.adapter = categoryAdapter
 
-		val isFirstTimeLogin = activity?.intent?.getBooleanExtra("isFirstTimeLogin" , false) ?: false
+		val isFirstTimeLogin = activity?.intent?.getBooleanExtra("isFirstTimeLogin", false) ?: false
 
-        bind.header.setHapticClickListener {
+		bind.header.setHapticClickListener {
 			when {
 				isFirstTimeLogin -> {
 					startActivity(mCtx.toDash())
@@ -68,17 +68,17 @@ class CategoryFragment : BaseFragment<DashViewModel , FragmentCategoryBinding>()
 			}
 		}
 
-        bind.nextButton.setHapticClickListener {
+		bind.nextButton.setHapticClickListener {
 			if (viewModel.selectedCategories.isEmpty()) {
 				errorToast("Please select at least one category")
 			} else {
 				val bundle = Bundle().apply {
 					putBoolean(
-						"fromAccount" ,
-						requireActivity().intent.getBooleanExtra("fromAccount" , false)
+						"fromAccount",
+						requireActivity().intent.getBooleanExtra("fromAccount", false)
 					)
 				}
-				findNavController().navigate(R.id.gotoSubcategory , bundle)
+				findNavController().navigate(R.id.gotoSubcategory, bundle)
 			}
 
 		}
@@ -98,7 +98,7 @@ class CategoryFragment : BaseFragment<DashViewModel , FragmentCategoryBinding>()
 					categoryList.addAll(it.value.data ?: emptyList())
 					viewModel.selectedCategories.clear()
 					val preSelectedIndexes = mutableListOf<Int>()
-					categoryList.forEachIndexed { index , category ->
+					categoryList.forEachIndexed { index, category ->
 						if (category?.isSelected == true) {
 							viewModel.selectedCategories.add(category)
 							preSelectedIndexes.add(index)
@@ -113,7 +113,7 @@ class CategoryFragment : BaseFragment<DashViewModel , FragmentCategoryBinding>()
 						override fun primaryClick(dialog: AppBottomSheet) {
 							dialog.dismiss()
 						}
-						
+
 						override fun secondaryClick(dialog: AppBottomSheet) {
 							dialog.dismiss()
 						}

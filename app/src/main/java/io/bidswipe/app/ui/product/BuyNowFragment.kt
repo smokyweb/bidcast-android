@@ -1,5 +1,6 @@
 package io.bidswipe.app.ui.product
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
@@ -38,6 +39,7 @@ import io.bidswipe.app.utils.request
 import io.bidswipe.app.utils.setHapticClickListener
 import io.bidswipe.app.utils.value
 
+@SuppressLint("InflateParams", "NotifyDataSetChanged")
 class BuyNowFragment : BaseFragment<ProductViewModel, FragmentBuyNowBinding>() {
 	override fun getModel(): Class<ProductViewModel> = ProductViewModel::class.java
 
@@ -141,7 +143,7 @@ class BuyNowFragment : BaseFragment<ProductViewModel, FragmentBuyNowBinding>() {
 							bundleOf(
 								"shippingId" to shippingId.toString(),
 								"productId" to viewModel.product?.id.toString(),
-								"cardId" to cardList[0]?.customerPaymentProfileId?.toString(),
+								"cardId" to cardList[0]?.customerPaymentProfileId,
 								"promoCode" to bind.promoCode.value()
 							)
 						)
@@ -167,12 +169,12 @@ class BuyNowFragment : BaseFragment<ProductViewModel, FragmentBuyNowBinding>() {
 			}
 		}
 
-		viewModel.getShippingAddressRepo.observe(viewLifecycleOwner) {
-			when (it) {
+		viewModel.getShippingAddressRepo.observe(viewLifecycleOwner) { response ->
+			when (response) {
 				is Resource.Success -> {
 					bind.loader.isVisible = false
 
-					val mData = it.value.data
+					val mData = response.value.data
 
 					addressList.clear()
 
@@ -197,8 +199,12 @@ class BuyNowFragment : BaseFragment<ProductViewModel, FragmentBuyNowBinding>() {
 					}
 
 					if (addressList.isEmpty()) {
-						bind.address.text = "Address not Found"
-						bind.changeAddress.text = "Add Address"
+						bind.address.text = buildString {
+							append("Address not Found")
+						}
+						bind.changeAddress.text = buildString {
+							append("Add Address")
+						}
 					}
 
 //					shippingAddressAdapter.notifyDataSetChanged()
@@ -207,7 +213,7 @@ class BuyNowFragment : BaseFragment<ProductViewModel, FragmentBuyNowBinding>() {
 
 				is Resource.Error -> {
 					bind.loader.isVisible = false
-					it.parse(mCtx, TAG, object : AlertClicks {
+					response.parse(mCtx, TAG, object : AlertClicks {
 						override fun primaryClick(dialog: AppBottomSheet) {
 							dialog.dismiss()
 						}
@@ -239,9 +245,13 @@ class BuyNowFragment : BaseFragment<ProductViewModel, FragmentBuyNowBinding>() {
 
 					if (cardList.isEmpty()) {
 
-						bind.cardNumber.text = "No Cards Found"
+						bind.cardNumber.text = buildString {
+							append("No Cards Found")
+						}
 
-						bind.changePayment.text = "Add Card"
+						bind.changePayment.text = buildString {
+							append("Add Card")
+						}
 
 					} else {
 						bind.cardNumber.text = buildString {
@@ -353,6 +363,7 @@ class BuyNowFragment : BaseFragment<ProductViewModel, FragmentBuyNowBinding>() {
 				else -> {}
 			}
 		}
+
 	}
 
 	private fun showPaymentMethodSheet() {
@@ -400,9 +411,9 @@ class BuyNowFragment : BaseFragment<ProductViewModel, FragmentBuyNowBinding>() {
 	}
 
 	private fun showAddressSheet() {
-		var addressSheetBind =
+		val addressSheetBind =
 			AddressSheetBinding.bind(layoutInflater.inflate(R.layout.address_sheet, null, false))
-		var addressSheet = Alerts.appBottomSheet(mCtx, true, addressSheetBind)
+		val addressSheet = Alerts.appBottomSheet(mCtx, true, addressSheetBind)
 
 		addressSheetBind.recycler.adapter =
 			SelectAddressAdapter(addressList, object : RecyclerClicks {
@@ -421,8 +432,7 @@ class BuyNowFragment : BaseFragment<ProductViewModel, FragmentBuyNowBinding>() {
 
 
 						shippingId = addressList.find { it?.isDefault == true }?.id
-							?: (addressList[pos]?.id?.toInt()
-								?: 0)
+							?: (addressList[pos]?.id ?: 0)
 
 						addressList[pos]?.selected = true
 

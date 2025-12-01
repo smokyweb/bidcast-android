@@ -2,9 +2,6 @@ package io.bidswipe.app.controller
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat
-import androidx.core.graphics.toColorInt
-import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseAdapter
 import io.bidswipe.app.databinding.ExploreItemBinding
 import io.bidswipe.app.interfaces.RecyclerClicks

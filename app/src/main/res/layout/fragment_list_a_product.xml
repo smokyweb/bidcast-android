@@ -311,7 +311,7 @@
                     app:endIconMode="custom">
 
                     <com.google.android.material.textfield.MaterialAutoCompleteTextView
-                        android:id="@+id/mailclass"
+                        android:id="@+id/mailClass"
                         style="@style/inputTextStyle"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"

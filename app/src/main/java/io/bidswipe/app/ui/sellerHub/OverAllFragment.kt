@@ -105,12 +105,12 @@ class OverAllFragment : BaseFragment<SellerHubViewModel , FragmentOverAllBinding
 			}
 		}
 
-		viewModel.getSalesPerformanceRepo.observe(viewLifecycleOwner) {
-			when (it) {
+		viewModel.getSalesPerformanceRepo.observe(viewLifecycleOwner) { resource ->
+			when (resource) {
 				is Resource.Success -> {
 					bind.loader.isVisible = false
 
-					val mData = it.value.data?.chart?.toMutableList()
+					val mData = resource.value.data?.chart?.toMutableList()
 
 					if (mData?.isNotEmpty() == true) {
 						if (mData.size == 1) {
@@ -133,7 +133,7 @@ class OverAllFragment : BaseFragment<SellerHubViewModel , FragmentOverAllBinding
 				is Resource.Error -> {
 					bind.loader.isVisible = false
 
-					it.parse(mCtx , TAG , object : AlertClicks {
+					resource.parse(mCtx , TAG , object : AlertClicks {
 						override fun primaryClick(dialog : AppBottomSheet) {
 							dialog.dismiss()
 
@@ -178,7 +178,7 @@ class OverAllFragment : BaseFragment<SellerHubViewModel , FragmentOverAllBinding
 						bind.visitorChart.isVisible = false
 						bind.noDataVisitors.isVisible = true
 					}
-					log("VISITORS DATA : ${mData}")
+					log("VISITORS DATA : $mData")
 				}
 
 				is Resource.Error -> {

@@ -17,29 +17,29 @@ import io.bidswipe.app.utils.runSafe
 import io.bidswipe.app.utils.setHapticClickListener
 
 enum class AlertType {
-	SUCCESS ,
-	WARNING ,
-	ERROR ,
+	SUCCESS,
+	WARNING,
+	ERROR,
 	INFO
 }
 
 class AppBottomSheet(
-	private val mCtx : Context ,
-	var image : Int ,
-	title : String ,
-	message : String ,
-	primaryBtnText : String = "Confirm" ,
-	secondaryBtnText : String = "Cancel" ,
-	canCancel : Boolean ,
-	showSecondary : Boolean ,
-	iconPadding : Int = 0 ,
-	clicks : AlertClicks ,
-	alertType : AlertType = AlertType.SUCCESS ,
+	private val mCtx: Context,
+	var image: Int,
+	title: String,
+	message: String,
+	primaryBtnText: String = "Confirm",
+	secondaryBtnText: String = "Cancel",
+	canCancel: Boolean,
+	showSecondary: Boolean,
+	iconPadding: Int = 0,
+	clicks: AlertClicks,
+	alertType: AlertType = AlertType.SUCCESS,
 ) : BottomSheetDialog(mCtx) {
 
 	@SuppressLint("InflateParams")
 	private val bind = AppAlertViewBinding.bind(
-		LayoutInflater.from(mCtx).inflate(layout.app_alert_view , null , false)
+		LayoutInflater.from(mCtx).inflate(layout.app_alert_view, null, false)
 	)
 
 	init {
@@ -48,7 +48,7 @@ class AppBottomSheet(
 		setCanceledOnTouchOutside(canCancel)
 
 		runSafe {
-			window?.navigationBarColor = ContextCompat.getColor(mCtx , clr.onPrimary)
+			window?.navigationBarColor = ContextCompat.getColor(mCtx, clr.onPrimary)
 			window?.setDimAmount(0.65f)
 		}
 
@@ -58,7 +58,7 @@ class AppBottomSheet(
 				bind.secondaryBtn.setErrorStyle(true)
 				bind.imageCard.setCardBackgroundColor(
 					ContextCompat.getColorStateList(
-						mCtx ,
+						mCtx,
 						clr.error
 					)
 				)
@@ -69,7 +69,7 @@ class AppBottomSheet(
 				bind.secondaryBtn.setSuccessStyle(true)
 				bind.imageCard.setCardBackgroundColor(
 					ContextCompat.getColorStateList(
-						mCtx ,
+						mCtx,
 						clr.success
 					)
 				)
@@ -80,7 +80,7 @@ class AppBottomSheet(
 				bind.secondaryBtn.setWarningStyle(true)
 				bind.imageCard.setCardBackgroundColor(
 					ContextCompat.getColorStateList(
-						mCtx ,
+						mCtx,
 						clr.warningClr
 					)
 				)
@@ -91,7 +91,7 @@ class AppBottomSheet(
 				bind.secondaryBtn.setInfoStyle(true)
 				bind.imageCard.setCardBackgroundColor(
 					ContextCompat.getColorStateList(
-						mCtx ,
+						mCtx,
 						clr.primary
 					)
 				)
@@ -109,55 +109,55 @@ class AppBottomSheet(
 		bind.primaryBtn.text = primaryBtnText.asCapital()
 		bind.secondaryBtn.text = secondaryBtnText.asCapital()
 
-        bind.primaryBtn.setHapticClickListener { clicks.primaryClick(this) }
-        bind.secondaryBtn.setHapticClickListener { clicks.secondaryClick(this) }
+		bind.primaryBtn.setHapticClickListener { clicks.primaryClick(this) }
+		bind.secondaryBtn.setHapticClickListener { clicks.secondaryClick(this) }
 	}
 
-	private fun MaterialButton.setErrorStyle(isOutline : Boolean = false) {
+	private fun MaterialButton.setErrorStyle(isOutline: Boolean = false) {
 		if (isOutline) {
-			strokeColor = ContextCompat.getColorStateList(mCtx , clr.error)
-			rippleColor = ContextCompat.getColorStateList(mCtx , clr.error)
-			setTextColor(ContextCompat.getColor(mCtx , clr.error))
+			strokeColor = ContextCompat.getColorStateList(mCtx, clr.error)
+			rippleColor = ContextCompat.getColorStateList(mCtx, clr.error)
+			setTextColor(ContextCompat.getColor(mCtx, clr.error))
 		} else {
-			setBackgroundColor(ContextCompat.getColor(mCtx , clr.error))
-			setTextColor(ContextCompat.getColor(mCtx , clr.onError))
-			rippleColor = ContextCompat.getColorStateList(mCtx , clr.onErrorContainer)
+			setBackgroundColor(ContextCompat.getColor(mCtx, clr.error))
+			setTextColor(ContextCompat.getColor(mCtx, clr.onError))
+			rippleColor = ContextCompat.getColorStateList(mCtx, clr.onErrorContainer)
 		}
 	}
 
-	private fun MaterialButton.setWarningStyle(isOutline : Boolean = false) {
+	private fun MaterialButton.setWarningStyle(isOutline: Boolean = false) {
 		if (isOutline) {
-			strokeColor = ContextCompat.getColorStateList(mCtx , clr.warningClr)
-			rippleColor = ContextCompat.getColorStateList(mCtx , clr.warningClr)
-			setTextColor(ContextCompat.getColor(mCtx , clr.warningClr))
+			strokeColor = ContextCompat.getColorStateList(mCtx, clr.warningClr)
+			rippleColor = ContextCompat.getColorStateList(mCtx, clr.warningClr)
+			setTextColor(ContextCompat.getColor(mCtx, clr.warningClr))
 		} else {
-			setBackgroundColor(ContextCompat.getColor(mCtx , clr.warningClr))
-			setTextColor(ContextCompat.getColor(mCtx , clr.onError))
-			rippleColor = ContextCompat.getColorStateList(mCtx , clr.onErrorContainer)
+			setBackgroundColor(ContextCompat.getColor(mCtx, clr.warningClr))
+			setTextColor(ContextCompat.getColor(mCtx, clr.onError))
+			rippleColor = ContextCompat.getColorStateList(mCtx, clr.onErrorContainer)
 		}
 	}
 
-	private fun MaterialButton.setInfoStyle(isOutline : Boolean = false) {
+	private fun MaterialButton.setInfoStyle(isOutline: Boolean = false) {
 		if (isOutline) {
-			strokeColor = ContextCompat.getColorStateList(mCtx , clr.primary)
-			rippleColor = ContextCompat.getColorStateList(mCtx , clr.primaryContainer)
-			setTextColor(ContextCompat.getColor(mCtx , clr.primary))
+			strokeColor = ContextCompat.getColorStateList(mCtx, clr.primary)
+			rippleColor = ContextCompat.getColorStateList(mCtx, clr.primaryContainer)
+			setTextColor(ContextCompat.getColor(mCtx, clr.primary))
 		} else {
-			setBackgroundColor(ContextCompat.getColor(mCtx , clr.primary))
-			setTextColor(ContextCompat.getColor(mCtx , clr.surface))
-			rippleColor = ContextCompat.getColorStateList(mCtx , clr.primaryContainer)
+			setBackgroundColor(ContextCompat.getColor(mCtx, clr.primary))
+			setTextColor(ContextCompat.getColor(mCtx, clr.surface))
+			rippleColor = ContextCompat.getColorStateList(mCtx, clr.primaryContainer)
 		}
 	}
 
-	private fun MaterialButton.setSuccessStyle(isOutline : Boolean = false) {
+	private fun MaterialButton.setSuccessStyle(isOutline: Boolean = false) {
 		if (isOutline) {
-			strokeColor = ContextCompat.getColorStateList(mCtx , clr.success)
-			rippleColor = ContextCompat.getColorStateList(mCtx , clr.success)
-			setTextColor(ContextCompat.getColor(mCtx , clr.success))
+			strokeColor = ContextCompat.getColorStateList(mCtx, clr.success)
+			rippleColor = ContextCompat.getColorStateList(mCtx, clr.success)
+			setTextColor(ContextCompat.getColor(mCtx, clr.success))
 		} else {
-			setBackgroundColor(ContextCompat.getColor(mCtx , clr.success))
-			setTextColor(ContextCompat.getColor(mCtx , clr.onSuccess))
-			rippleColor = ContextCompat.getColorStateList(mCtx , clr.successContainer)
+			setBackgroundColor(ContextCompat.getColor(mCtx, clr.success))
+			setTextColor(ContextCompat.getColor(mCtx, clr.onSuccess))
+			rippleColor = ContextCompat.getColorStateList(mCtx, clr.successContainer)
 		}
 	}
 

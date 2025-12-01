@@ -357,7 +357,10 @@ class ChatActivity : BaseActivity() {
 
 	private fun updateChatUI() {
 		if (isBlockedByOther) {
-			bind.userBlocked.text = "You are blocked by $receiverName"
+			bind.userBlocked.text = buildString {
+				append("You are blocked by ")
+				append(receiverName)
+			}
 			bind.userBlocked.isVisible = true
 			bind.chatBox.isVisible = false
 			bind.send.isVisible = false

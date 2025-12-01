@@ -1,6 +1,5 @@
 package io.bidswipe.app.ui.tutorials
 
-import android.app.Activity
 import android.os.Bundle
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
@@ -16,7 +15,6 @@ import io.bidswipe.app.model.TutorialShowModel
 import io.bidswipe.app.ui.dashboard.DashViewModel
 import io.bidswipe.app.utils.bind
 import io.bidswipe.app.utils.setNewStart
-import kotlin.getValue
 
 class TutorialsActivity : BaseActivity() {
 
@@ -24,12 +22,12 @@ class TutorialsActivity : BaseActivity() {
 	private val viewModel by viewModels<DashViewModel>()
 
 	private var type = ""
-	private lateinit var navController : NavController
-	private lateinit var navHostFragment : NavHostFragment
+	private lateinit var navController: NavController
+	private lateinit var navHostFragment: NavHostFragment
 
 	var scheduleShowLauncher =
 		registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-			if (result.resultCode == Activity.RESULT_OK) {
+			if (result.resultCode == RESULT_OK) {
 
 				if (result.data != null) {
 					viewModel.currentStep = 2
@@ -46,13 +44,13 @@ class TutorialsActivity : BaseActivity() {
 
 		}
 
-	override fun onCreate(savedInstanceState : Bundle?) {
+	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
 		setContentView(bind.root)
-		
+
 		ViewCompat.setOnApplyWindowInsetsListener(window.decorView) { v, insets ->
 			val system = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-			bind.root.setPadding(0,system.top,0, system.bottom)
+			bind.root.setPadding(0, system.top, 0, system.bottom)
 			CONSUMED
 		}
 
@@ -69,7 +67,7 @@ class TutorialsActivity : BaseActivity() {
 				R.id.getStartedFragment
 			}
 		}
-		navController.setNewStart(id , R.navigation.tutorials_nav_graph)
+		navController.setNewStart(id, R.navigation.tutorials_nav_graph)
 
 	}
 }

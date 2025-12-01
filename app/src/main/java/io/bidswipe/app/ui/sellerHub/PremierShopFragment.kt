@@ -101,7 +101,7 @@ class PremierShopFragment : BaseFragment<SellerHubViewModel, FragmentPremierShop
 
 					val progress = mData?.currentProgress?.replace("%", "")?.toInt() ?: 0
 
-					bind.stepProgress.progress = progress ?: 0
+					bind.stepProgress.progress = progress
 
 					if (progress < 100) {
 						bind.applyBtn.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(mCtx, R.color.outlineVariant))

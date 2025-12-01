@@ -1,5 +1,6 @@
 package io.bidswipe.app.ui.dashboard
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
@@ -26,6 +27,7 @@ import io.bidswipe.app.utils.request
 import io.bidswipe.app.utils.setHapticClickListener
 import io.bidswipe.app.utils.showKeyboard
 
+@SuppressLint("NotifyDataSetChanged")
 class SearchShowFragment : BaseFragment<DashViewModel, FragmentSearchShowBinding>() {
 	override fun getModel(): Class<DashViewModel> = DashViewModel::class.java
 
@@ -112,16 +114,15 @@ class SearchShowFragment : BaseFragment<DashViewModel, FragmentSearchShowBinding
 				bind.loader.isVisible = true
 				viewModel.getLiveShow(search = p0.toString().request())
 
-
 			}
 		})
 
-		viewModel.getLiveShowRepo.observe(viewLifecycleOwner) {
-			when (it) {
+		viewModel.getLiveShowRepo.observe(viewLifecycleOwner) { resource ->
+			when (resource) {
 				is Resource.Success -> {
 					bind.loader.isVisible = false
 
-					val mData = it.value.data
+					val mData = resource.value.data
 
 					mData?.forEach {
 						romIdsList.add(StreamModel(it?.roomId.toString(), ""))
@@ -149,7 +150,7 @@ class SearchShowFragment : BaseFragment<DashViewModel, FragmentSearchShowBinding
 				is Resource.Error -> {
 					bind.loader.isVisible = false
 
-					it.parse(mCtx, TAG, object : AlertClicks {
+					resource.parse(mCtx, TAG, object : AlertClicks {
 						override fun primaryClick(dialog: AppBottomSheet) {
 							dialog.dismiss()
 

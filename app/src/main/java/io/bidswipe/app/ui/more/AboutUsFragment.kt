@@ -1,6 +1,6 @@
 package io.bidswipe.app.ui.more
 
-import android.net.Uri
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.browser.customtabs.CustomTabColorSchemeParams
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.core.content.ContextCompat
+import androidx.core.net.toUri
 import androidx.core.view.isVisible
 import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseFragment
@@ -24,6 +25,7 @@ import io.bidswipe.app.utils.finish
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.setHapticClickListener
 
+@SuppressLint("NotifyDataSetChanged")
 class AboutUsFragment : BaseFragment<MoreViewModel, FragmentAboutUsBinding>() {
 	override fun getModel(): Class<MoreViewModel> = MoreViewModel::class.java
 
@@ -87,13 +89,14 @@ class AboutUsFragment : BaseFragment<MoreViewModel, FragmentAboutUsBinding>() {
 
 		viewModel.aboutUs()
 
-		viewModel.aboutUsRepo.observe(viewLifecycleOwner) {
-			when (it) {
+		viewModel.aboutUsRepo.observe(viewLifecycleOwner) { resource ->
+
+			when (resource) {
 				is Resource.Success -> {
 					bind.loader.isVisible = false
 					viewModel.getTermsConditionsRepo.value = null
 
-					val mData = it.value.data
+					val mData = resource.value.data
 					bind.mission.text = mData?.mission
 
 					mData?.impact?.forEach {
@@ -146,7 +149,7 @@ class AboutUsFragment : BaseFragment<MoreViewModel, FragmentAboutUsBinding>() {
 				is Resource.Error -> {
 					bind.loader.isVisible = false
 					viewModel.getTermsConditionsRepo.value = null
-					it.parse(mCtx, TAG, object : AlertClicks {
+					resource.parse(mCtx, TAG, object : AlertClicks {
 						override fun primaryClick(dialog: AppBottomSheet) {
 							dialog.dismiss()
 
@@ -188,7 +191,7 @@ class AboutUsFragment : BaseFragment<MoreViewModel, FragmentAboutUsBinding>() {
 
 		customBuilder.intent.setPackage("com.android.chrome")
 
-		customBuilder.launchUrl(requireActivity(), Uri.parse(url))
+		customBuilder.launchUrl(requireActivity(), url.toUri())
 
 	}
 

@@ -11,22 +11,20 @@ import io.bidswipe.app.base.BaseFragment
 import io.bidswipe.app.controller.ViewPagerAdapter
 import io.bidswipe.app.databinding.FragmentActivityBinding
 import io.bidswipe.app.ui.more.NotificationActivity
-import io.bidswipe.app.utils.Utils
-import androidx.core.view.isNotEmpty
 
-class ActivityFragment : BaseFragment<DashViewModel , FragmentActivityBinding>() {
-	override fun getModel() : Class<DashViewModel> = DashViewModel::class.java
+class ActivityFragment : BaseFragment<DashViewModel, FragmentActivityBinding>() {
+	override fun getModel(): Class<DashViewModel> = DashViewModel::class.java
 
-	override fun getBind(inflater : LayoutInflater , view : ViewGroup?) = FragmentActivityBinding.inflate(inflater , view , false)
+	override fun getBind(inflater: LayoutInflater, view: ViewGroup?) = FragmentActivityBinding.inflate(inflater, view, false)
 
-	override fun onViewCreated(view : View , savedInstanceState : Bundle?) {
-		super.onViewCreated(view , savedInstanceState)
+	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+		super.onViewCreated(view, savedInstanceState)
 
-		val adapter = ViewPagerAdapter(requireActivity() , "Activity")
+		val adapter = ViewPagerAdapter(requireActivity(), "Activity")
 		bind.pager.adapter = adapter
 		bind.pager.isUserInputEnabled = false
 
-		TabLayoutMediator(bind.tabLayout , bind.pager) { tab , position ->
+		TabLayoutMediator(bind.tabLayout, bind.pager) { tab, position ->
 			tab.text = when (position) {
 				0 -> "Messages"
 				1 -> "Bids"
@@ -38,7 +36,7 @@ class ActivityFragment : BaseFragment<DashViewModel , FragmentActivityBinding>()
 		}.attach()
 
 		bind.pager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
-			override fun onPageSelected(position : Int) {
+			override fun onPageSelected(position: Int) {
 				super.onPageSelected(position)
 				val fragment = adapter.getFragment(position)
 				if (fragment.isAdded) {
@@ -46,7 +44,10 @@ class ActivityFragment : BaseFragment<DashViewModel , FragmentActivityBinding>()
 						is MessagesFragment -> fragment.reloadData()
 						is BidsFragment -> fragment.reloadData()
 						is OfferFragment -> fragment.reloadData()
-						is PurchasesFragment -> { fragment.reloadData() }
+						is PurchasesFragment -> {
+							fragment.reloadData()
+						}
+
 						is SavedItemsFragment -> fragment.reloadData()
 					}
 				}
@@ -54,7 +55,7 @@ class ActivityFragment : BaseFragment<DashViewModel , FragmentActivityBinding>()
 		})
 
 		bind.header.onMorePrimaryClick {
-			startActivity(Intent(mCtx , NotificationActivity::class.java).putExtra("slug" , "notification"))
+			startActivity(Intent(mCtx, NotificationActivity::class.java).putExtra("slug", "notification"))
 		}
 
 		bind.header.onMoreSecondaryClick {

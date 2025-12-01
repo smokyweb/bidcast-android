@@ -1,5 +1,6 @@
 package io.bidswipe.app.ui.scheduleShow
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -36,6 +37,7 @@ class ShowTitleFragment : BaseFragment<ScheduleShowViewModel, FragmentShowTitleB
 	private var titleList = mutableListOf<GetAllTipsResponse.Data.Tip?>()
 	private var exampleList = mutableListOf<String?>()
 
+	@SuppressLint("NotifyDataSetChanged")
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		super.onViewCreated(view, savedInstanceState)
 
@@ -92,12 +94,12 @@ class ShowTitleFragment : BaseFragment<ScheduleShowViewModel, FragmentShowTitleB
 					titleList.clear()
 					exampleList.clear()
 
-					mData?.tips?.forEach {
-						titleList.add(it)
+					mData?.tips?.forEach { tip ->
+						titleList.add(tip)
 					}
 
-					mData?.example?.forEach {
-						exampleList.add(it)
+					mData?.example?.forEach { example ->
+						exampleList.add(example)
 					}
 
 					titleAdapter.notifyDataSetChanged()

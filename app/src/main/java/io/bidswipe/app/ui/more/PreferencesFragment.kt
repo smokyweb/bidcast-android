@@ -1,5 +1,6 @@
 package io.bidswipe.app.ui.more
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.text.TextUtils
 import android.view.LayoutInflater
@@ -26,6 +27,7 @@ import io.bidswipe.app.utils.request
 import io.bidswipe.app.utils.setHapticClickListener
 import java.util.Locale
 
+@SuppressLint("NotifyDataSetChanged")
 class PreferencesFragment : BaseFragment<MoreViewModel, FragmentPreferencesBinding>() {
 
 	override fun getModel(): Class<MoreViewModel> = MoreViewModel::class.java

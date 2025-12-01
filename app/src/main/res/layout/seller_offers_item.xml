@@ -64,7 +64,7 @@
                 android:id="@+id/chat"
                 android:layout_width="36dp"
                 android:layout_height="36dp"
-                android:src="@drawable/ic_chat"/>
+                android:src="@drawable/ic_outlined_message"/>
 
         </LinearLayout>
 

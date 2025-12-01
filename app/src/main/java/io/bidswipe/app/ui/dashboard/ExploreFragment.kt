@@ -12,7 +12,6 @@ import androidx.core.os.bundleOf
 import androidx.core.view.get
 import androidx.core.view.isVisible
 import androidx.navigation.fragment.findNavController
-import com.google.android.material.chip.Chip
 import io.bidswipe.app.base.BaseFragment
 import io.bidswipe.app.controller.ExploreAdapter
 import io.bidswipe.app.databinding.FragmentExploreBinding
@@ -38,7 +37,6 @@ class ExploreFragment : BaseFragment<DashViewModel, FragmentExploreBinding>() {
 
     private lateinit var exploreAdapter: ExploreAdapter
     private var exploreList = mutableListOf<GetCategoryResponse.Data?>()
-    private var currentSelectedTab: Chip? = null
     private var selectedTabText = "recommended"
 
     private val mClick = object : RecyclerClicks {

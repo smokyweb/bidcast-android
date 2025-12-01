@@ -20,51 +20,53 @@ import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.setHapticClickListener
 import io.bidswipe.app.utils.toDash
 
-class SubCategoryFragment : BaseFragment<DashViewModel , FragmentSubcategoryBinding>() {
+class SubCategoryFragment : BaseFragment<DashViewModel, FragmentSubcategoryBinding>() {
 
 	override fun getModel() = DashViewModel::class.java
 
 	override fun getBind(
-		inflater : LayoutInflater ,
-		view : ViewGroup? ,
-	) = FragmentSubcategoryBinding.inflate(inflater , view , false)
+		inflater: LayoutInflater,
+		view: ViewGroup?,
+	) = FragmentSubcategoryBinding.inflate(inflater, view, false)
 
-	private lateinit var subCategoryRecyclerAdapter : SubCategoryRecyclerAdapter
+	private lateinit var subCategoryRecyclerAdapter: SubCategoryRecyclerAdapter
 	private val subCategoryList = mutableListOf<GetSubCategoriesResponse.Data?>()
 
 	private val categoryClicks = object : RecyclerClicks {
-		override fun itemClick(pos : Int , status : String?) {
+		override fun itemClick(pos: Int, status: String?) {
 			if (status != null) {
 				subCategoryList[pos]?.subcategories?.get(status.toInt())?.isSelected =
-					! (subCategoryList[pos]?.subcategories?.get(status.toInt())?.isSelected ?: false)
+					!(subCategoryList[pos]?.subcategories?.get(status.toInt())?.isSelected ?: false)
 				subCategoryRecyclerAdapter.notifyItemChanged(pos)
 			}
 		}
 	}
 
 	@SuppressLint("NotifyDataSetChanged")
-	override fun onViewCreated(view : View , savedInstanceState : Bundle?) {
-		super.onViewCreated(view , savedInstanceState)
+	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+		super.onViewCreated(view, savedInstanceState)
 
-		subCategoryRecyclerAdapter = SubCategoryRecyclerAdapter(subCategoryList , categoryClicks)
+		subCategoryRecyclerAdapter = SubCategoryRecyclerAdapter(subCategoryList, categoryClicks)
 		bind.recyclerView.adapter = subCategoryRecyclerAdapter
 
-        bind.header.setHapticClickListener {
+		bind.header.setHapticClickListener {
 			findNavController().popBackStack()
 		}
-        bind.confirmButton.setHapticClickListener {
-			val selectedSubCategories = subCategoryList.filter { it?.subcategories?.filter { it1 -> it1?.isSelected == true }?.isNotEmpty() == true }.toList()
+		bind.confirmButton.setHapticClickListener {
+			val selectedSubCategories =
+				subCategoryList.filter { it?.subcategories?.filter { it1 -> it1?.isSelected == true }?.isNotEmpty() == true }.toList()
 			if (selectedSubCategories.isNotEmpty()) {
 				val selectedCategoryIds = viewModel.selectedCategories.mapNotNull { it.id }
 				val selectedSubCategoryIds = mutableListOf<Int>()
 				selectedSubCategories.forEach {
-					it?.subcategories?.filter { it1 -> it1?.isSelected == true }?.map { it?.id?.let { element -> selectedSubCategoryIds.add(element) } }
+					it?.subcategories?.filter { it1 -> it1?.isSelected == true }
+						?.map { it?.id?.let { element -> selectedSubCategoryIds.add(element) } }
 				}
 				viewModel.userFavorite(
-					categoryIds = selectedCategoryIds ,
+					categoryIds = selectedCategoryIds,
 					subcategoriesIds = selectedSubCategoryIds
 				)
-				val fromAccount = arguments?.getBoolean("fromAccount" , false)
+				val fromAccount = arguments?.getBoolean("fromAccount", false)
 				viewModel.userFavoriteRepo.observe(viewLifecycleOwner) {
 					when (it) {
 						is Resource.Success -> {
@@ -82,7 +84,7 @@ class SubCategoryFragment : BaseFragment<DashViewModel , FragmentSubcategoryBind
 								override fun primaryClick(dialog: AppBottomSheet) {
 									dialog.dismiss()
 								}
-								
+
 								override fun secondaryClick(dialog: AppBottomSheet) {
 									dialog.dismiss()
 								}
@@ -110,7 +112,7 @@ class SubCategoryFragment : BaseFragment<DashViewModel , FragmentSubcategoryBind
 
 						val sortedList = (it.value.data ?: emptyList())
 							.sortedByDescending { category ->
-								! category?.subcategories.isNullOrEmpty()
+								!category?.subcategories.isNullOrEmpty()
 							}
 
 						subCategoryList.addAll(sortedList)
@@ -123,7 +125,7 @@ class SubCategoryFragment : BaseFragment<DashViewModel , FragmentSubcategoryBind
 							override fun primaryClick(dialog: AppBottomSheet) {
 								dialog.dismiss()
 							}
-							
+
 							override fun secondaryClick(dialog: AppBottomSheet) {
 								dialog.dismiss()
 							}

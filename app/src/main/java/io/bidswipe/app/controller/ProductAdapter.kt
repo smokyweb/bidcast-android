@@ -39,8 +39,7 @@ class ProductAdapter(
 				append("Quantity: ")
 				append(item?.quantity)
 			}
-
-			bind.img.loadUrl(mCtx, item?.image ?:"")
+			bind.img.loadUrl(mCtx, item?.image ?: "")
 
 			bind.root.setHapticClickListener {
 				mClicks.itemClick(position, "select")

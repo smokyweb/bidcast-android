@@ -43,7 +43,6 @@ import io.bidswipe.app.utils.setHapticClickListener
 import kotlin.math.abs
 
 @SuppressLint("InflateParams", "SetTextI18n")
-
 class SellerProfileActivity : BaseActivity() {
 
 	private val bind by bind(ActivitySellerProfileBinding::inflate)
@@ -393,7 +392,6 @@ class SellerProfileActivity : BaseActivity() {
 				is Resource.Success -> {
 
 					bind.loader.isVisible = false
-					val mData = it.value.data
 
 					Alerts.success(this, "Report sent successfully")
 

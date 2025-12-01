@@ -1,5 +1,6 @@
 package io.bidswipe.app.ui.tutorials
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -31,8 +32,7 @@ class HowToSellFragment : BaseFragment<DashViewModel, FragmentHowToSellBinding>(
 
 	private var type = ""
 
-	private var tipPos = 1
-
+	@SuppressLint("NotifyDataSetChanged")
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		super.onViewCreated(view, savedInstanceState)
 
@@ -121,9 +121,9 @@ class HowToSellFragment : BaseFragment<DashViewModel, FragmentHowToSellBinding>(
 					val mData = it.value.data
 					tipList.clear()
 
-					mData?.forEach {
+					mData?.forEach { data ->
 
-						tipList.add(it)
+						tipList.add(data)
 
 					}
 
@@ -131,7 +131,11 @@ class HowToSellFragment : BaseFragment<DashViewModel, FragmentHowToSellBinding>(
 
 					bind.track.progress = 1
 
-					bind.step.text = "Step 1 of ${tipList.size} "
+					bind.step.text = buildString {
+						append("Step 1 of ")
+						append(tipList.size)
+						append(" ")
+					}
 
 					bind.pager.currentItem = 1
 

@@ -36,6 +36,7 @@ import io.bidswipe.app.utils.value
 import java.io.File
 import java.util.Locale
 
+@SuppressLint("NotifyDataSetChanged", "ResourceAsColor", "ClickableViewAccessibility")
 class SellerVerificationActivity : BaseActivity() {
 
 	private val bind by bind(ActivitySellerVerificationBinding::inflate)
@@ -51,7 +52,7 @@ class SellerVerificationActivity : BaseActivity() {
 	var paymentCardId = ""
 
 	private lateinit var cardAdapter: SelectPaymentCardAdapter
-	
+
 	private val idResult = registerForActivityResult(CustomCropImageContract()) { result ->
 		if (result.isSuccessful) {
 			val imagePath = result.getUriFilePath(this, true)
@@ -62,13 +63,15 @@ class SellerVerificationActivity : BaseActivity() {
 				if (cardImage.isNotEmpty() && selfie.isNotEmpty()) {
 					bind.verificationIcon.isVisible = true
 					bind.stepProgress.progress = 1
-					bind.stepCount.text = "1 of 3"
+					bind.stepCount.text = buildString {
+						append("1 of 3")
+					}
 				}
 				log("ImageUri = $imagePath ")
 			}
 		}
 	}
-	
+
 	private val selfieResult = registerForActivityResult(CustomCropImageContract()) { result ->
 		if (result.isSuccessful) {
 			val imagePath = result.getUriFilePath(this, true)
@@ -79,14 +82,16 @@ class SellerVerificationActivity : BaseActivity() {
 				if (cardImage.isNotEmpty() && selfie.isNotEmpty()) {
 					bind.verificationIcon.isVisible = true
 					bind.stepProgress.progress = 1
-					bind.stepCount.text = "1 of 3"
+					bind.stepCount.text = buildString {
+						append("1 of 3")
+					}
 				}
 				log("ImageUri = $imagePath")
-			
+
 			}
 		}
 	}
-	
+
 
 	private var addCardLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
 		if (result.resultCode == RESULT_OK) {
@@ -94,7 +99,7 @@ class SellerVerificationActivity : BaseActivity() {
 			viewModel.getPaymentCard()
 		}
 	}
-	
+
 
 	private val mClick = object : RecyclerClicks {
 		override fun itemClick(pos: Int, status: String?) {
@@ -113,13 +118,12 @@ class SellerVerificationActivity : BaseActivity() {
 
 	}
 
-	@SuppressLint("ResourceAsColor")
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
 		setContentView(bind.root)
 		ViewCompat.setOnApplyWindowInsetsListener(window.decorView) { v, insets ->
 			val system = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-			bind.root.setPadding(0,system.top,0, system.bottom)
+			bind.root.setPadding(0, system.top, 0, system.bottom)
 			CONSUMED
 		}
 		bind.header.onBackClick {
@@ -129,12 +133,12 @@ class SellerVerificationActivity : BaseActivity() {
 		bind.root.setHapticClickListener {
 			hideKeyboard()
 		}
-		
+
 		bind.main.setOnTouchListener { _, _ ->
 			hideKeyboard()
 			return@setOnTouchListener true
 		}
-		
+
 		cardAdapter = SelectPaymentCardAdapter(cardList, mClick)
 
 		bind.recycler.adapter = cardAdapter
@@ -163,10 +167,10 @@ class SellerVerificationActivity : BaseActivity() {
 					bind.loader.isVisible = true
 
 					val idName = System.currentTimeMillis().toString() + "_id_card.jpeg"
-					val imagePart = Utils.imagePart("id_card", idName, File(cardImage ?: ""))
+					val imagePart = Utils.imagePart("id_card", idName, File(cardImage))
 
 					val imageName = System.currentTimeMillis().toString() + "_selfie_image.jpeg"
-					val selfiePart = Utils.imagePart("image", imageName, File(selfie ?: ""))
+					val selfiePart = Utils.imagePart("image", imageName, File(selfie))
 
 					log("SELFIE PART : $selfiePart")
 
@@ -246,10 +250,10 @@ class SellerVerificationActivity : BaseActivity() {
 					bind.loader.isVisible = true
 
 					val idName = System.currentTimeMillis().toString() + "_id_card.jpeg"
-					val imagePart = Utils.imagePart("id_card", idName, File(cardImage ?: ""))
+					val imagePart = Utils.imagePart("id_card", idName, File(cardImage))
 
 					val imageName = System.currentTimeMillis().toString() + "_selfie_image.jpeg"
-					val selfiePart = Utils.imagePart("image", imageName, File(selfie ?: ""))
+					val selfiePart = Utils.imagePart("image", imageName, File(selfie))
 
 					viewModel.storeSellerVerification(imagePart, selfiePart, "1".request(), paymentCardId.request())
 				}
@@ -259,7 +263,9 @@ class SellerVerificationActivity : BaseActivity() {
 		bind.editPhone.setHapticClickListener {
 			bind.phoneNumberLayout.isVisible = true
 			bind.verifyPhoneTitle.isVisible = true
-			bind.verifyPhoneTitle.text = "Enter phone number"
+			bind.verifyPhoneTitle.text = buildString {
+				append("Enter phone number")
+			}
 			bind.otpLayout.isVisible = false
 			bind.verifyOtp.isVisible = false
 			bind.verifyPhone.isVisible = true
@@ -284,7 +290,9 @@ class SellerVerificationActivity : BaseActivity() {
 					it.value.data
 					bind.stepProgress.progress = 2
 
-					bind.stepCount.text = "2 of 3"
+					bind.stepCount.text = buildString {
+						append("2 of 3")
+					}
 
 					bind.completeVerification.isVisible = false
 
@@ -341,7 +349,9 @@ class SellerVerificationActivity : BaseActivity() {
 						"pending" -> {
 							bind.verificationIcon.isVisible = true
 							bind.stepProgress.progress = 3
-							bind.stepCount.text = "2 of 3"
+							bind.stepCount.text = buildString {
+								append("2 of 3")
+							}
 							bind.addCardBtn.isVisible = false
 							bind.phoneNumberLayout.isVisible = false
 							bind.otpLayout.isVisible = false
@@ -366,7 +376,9 @@ class SellerVerificationActivity : BaseActivity() {
 							bind.addCardBtn.isVisible = false
 							bind.verifyPhoneTitle.isVisible = false
 							bind.stepProgress.progress = 3
-							bind.stepCount.text = "3 of 3"
+							bind.stepCount.text = buildString {
+								append("3 of 3")
+							}
 							bind.status.setTextColor(ContextCompat.getColor(this, R.color.success))
 							bind.completeVerification.isVisible = false
 							bind.uploadId.isClickable = false
@@ -374,7 +386,9 @@ class SellerVerificationActivity : BaseActivity() {
 						}
 
 						"rejected" -> {
-							bind.stepCount.text = "0 of 3"
+							bind.stepCount.text = buildString {
+								append("0 of 3")
+							}
 							bind.addCardBtn.isVisible = false
 							bind.status.setTextColor(ContextCompat.getColor(this, R.color.error))
 							bind.statusDescription.text = mData.reason.toString()
@@ -419,7 +433,10 @@ class SellerVerificationActivity : BaseActivity() {
 					bind.verifyPhone.isVisible = false
 					bind.verifyOtp.isVisible = true
 					phoneNumber = mData?.phoneNumer.toString()
-					bind.verifyPhoneTitle.text = "OTP has been sent on ******${mData?.phoneNumer?.drop(6)}"
+					bind.verifyPhoneTitle.text = buildString {
+						append("OTP has been sent on ******")
+						append(mData?.phoneNumer?.drop(6))
+					}
 					bind.editPhone.isVisible = true
 					bind.resend.isVisible = true
 					bind.phoneNumberLayout.isVisible = false
@@ -455,7 +472,9 @@ class SellerVerificationActivity : BaseActivity() {
 					it.value.data
 					isPhoneVerified = true
 					bind.stepProgress.progress = 2
-					bind.stepCount.text = "2 of 3"
+					bind.stepCount.text = buildString {
+						append("2 of 3")
+					}
 
 					bind.phoneNumberLayout.isVisible = false
 					bind.verifyPhoneTitle.isVisible = false
@@ -551,7 +570,9 @@ class SellerVerificationActivity : BaseActivity() {
 
 					bind.stepProgress.progress = 3
 
-					bind.stepCount.text = "3 of 3"
+					bind.stepCount.text = buildString {
+						append("3 of 3")
+					}
 
 					bind.completeVerification.isVisible = false
 

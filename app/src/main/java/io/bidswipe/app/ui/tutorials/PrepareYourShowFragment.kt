@@ -155,9 +155,9 @@ class PrepareYourShowFragment : BaseFragment<DashViewModel, FragmentPrepareYourS
 					val mData = it.value.data
 					viewModel.showList.clear()
 
-					mData?.forEach {
+					mData?.forEach { data ->
 
-						viewModel.showList.add(it)
+						viewModel.showList.add(data)
 
 					}
 

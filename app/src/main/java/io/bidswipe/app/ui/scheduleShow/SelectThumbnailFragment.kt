@@ -1,5 +1,6 @@
 package io.bidswipe.app.ui.scheduleShow
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -26,6 +27,7 @@ import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request
 import io.bidswipe.app.utils.setHapticClickListener
 
+@SuppressLint("NotifyDataSetChanged")
 class SelectThumbnailFragment :
 	BaseFragment<ScheduleShowViewModel, FragmentSelectThumbnailBinding>() {
 
@@ -115,12 +117,12 @@ class SelectThumbnailFragment :
 					tipsList.clear()
 					goodsList.clear()
 
-					mData?.tips?.forEach {
-						tipsList.add(it)
+					mData?.tips?.forEach { tip ->
+						tipsList.add(tip)
 					}
 
-					mData?.example?.forEach {
-						goodsList.add(it)
+					mData?.example?.forEach { example->
+						goodsList.add(example)
 					}
 
 					goodsAdapter.notifyDataSetChanged()

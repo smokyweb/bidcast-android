@@ -82,7 +82,7 @@ import kotlinx.coroutines.launch
 import org.json.JSONObject
 import kotlin.math.abs
 
-@SuppressLint("NotifyDataSetChanged")
+@SuppressLint("NotifyDataSetChanged", "InflateParams")
 class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBinding>() {
 
 	override fun getModel(): Class<StreamViewModel> = StreamViewModel::class.java
@@ -334,11 +334,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
 					bind.follow.isVisible = !obj.optBoolean("is_followed")
 
-					followSheetRunnable = object : Runnable {
-						override fun run() {
-							followSheet()
-						}
-					}
+					followSheetRunnable = Runnable { followSheet() }
 
 					if (!isFollowing) {
 						followSheetRunnable?.let { followSheetHandler.postDelayed(it, 30000) }
@@ -794,7 +790,11 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
 	private fun setBidText(bidAmount: String?) {
 		bind.bidPrice.text = bidAmount?.asMoney()
-		bind.bidButton.text = "Bid : ${newBidAmount(bidAmount?.toDoubleOrNull()?.toInt() ?: 0).toString().asMoney()} >>"
+		bind.bidButton.text = buildString {
+			append("Bid : ")
+			append(newBidAmount(bidAmount?.toDoubleOrNull()?.toInt() ?: 0).toString().asMoney())
+			append(" >>")
+		}
 	}
 
 	private fun newBidAmount(amount: Int): Int {
@@ -832,7 +832,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 				bind.productImage.loadUrl(mCtx, liveProduct.image ?: "")
 				bind.productImageShop.loadUrl(mCtx, liveProduct.image ?: "")
 				val price = liveProduct.price
-				bind.price.text = price?.asMoney() ?: "0.0" + "Shipping + Taxes"
+				bind.price.text = price?.asMoney() ?: ("0.0" + "Shipping + Taxes")
 
 				highestBidAmount = price
 				bidProductId = liveProduct.id
@@ -1425,7 +1425,11 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 			if (poll.roomId == roomID) {
 				bind.pollQuestionPreview.text = poll.question ?: "Poll Question"
 				bind.pollTimerPreview.text = poll.remainingTime ?: "00:00 remaining"
-				bind.pollTotalVotesPreview.text = "${poll.totalVotes} ${if (poll.totalVotes == 1) "vote" else "votes"}"
+				bind.pollTotalVotesPreview.text = buildString {
+					append(poll.totalVotes)
+					append(" ")
+					append(if (poll.totalVotes == 1) "vote" else "votes")
+				}
 			}
 		}
 	}
@@ -1549,7 +1553,9 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
 		followSheetBinding.image.loadUrl(mCtx, sellerImage ?: "")
 
-		followSheetBinding.title.text = "Follow This Seller!"
+		followSheetBinding.title.text = buildString {
+			append("Follow This Seller!")
+		}
 
 		followSheetBinding.message.text = buildSpannedString {
 			append("Like what you see? Follow ")
@@ -1580,7 +1586,10 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
 			binding.pollQuestionDetail.text = poll.question ?: "No question"
 			binding.pollTimerDetail.text = poll.remainingTime ?: "00:00 remaining"
-			binding.pollTotalVotesDetail.text = "${poll.totalVotes} total votes"
+			binding.pollTotalVotesDetail.text = buildString {
+				append(poll.totalVotes)
+				append(" total votes")
+			}
 
 			if (::livePollAdapter.isInitialized) {
 				livePollOptionList.clear()

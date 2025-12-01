@@ -117,7 +117,7 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
 			bind.height.setText(viewModel.productFormHeight)
 			bind.length.setText(viewModel.productFormLength)
 			bind.weight.setText(viewModel.productFormWeight)
-			bind.mailclass.setText(viewModel.productFormMailClassText, false)
+			bind.mailClass.setText(viewModel.productFormMailClassText, false)
 			bind.proCategory.setText(viewModel.productFormProcessingCategory, false)
 			bind.price.setText(viewModel.productFormPrice)
 			bind.flashSell.isChecked = viewModel.productFormFlashSale
@@ -166,7 +166,7 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
 		viewModel.productFormHeight = bind.height.value()
 		viewModel.productFormLength = bind.length.value()
 		viewModel.productFormWeight = bind.weight.value()
-		viewModel.productFormMailClassText = bind.mailclass.value()
+		viewModel.productFormMailClassText = bind.mailClass.value()
 		viewModel.productFormProcessingCategory = bind.proCategory.value()
 		viewModel.productFormPrice = bind.price.value()
 		viewModel.productFormFlashSale = bind.flashSell.isChecked
@@ -346,7 +346,7 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
 
 		viewModel.storeProductRepo.observe(viewLifecycleOwner) {
 			bind.loader.isVisible = false
-			
+
 			when (it) {
 				is Resource.Success -> {
 					// Clear ViewModel state on successful save
@@ -404,7 +404,7 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
 							}
 							if (sel != null) {
 								selectedMailClass = sel
-								bind.mailclass.setText(sel.label,false)
+								bind.mailClass.setText(sel.label,false)
 							}
 						} else {
 							// Original logic for product edit mode
@@ -416,7 +416,7 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
 								
 								if (sel != null) {
 									selectedMailClass = sel
-									bind.mailclass.setText(sel.label,false)
+									bind.mailClass.setText(sel.label,false)
 								}
 								log("Selected mail class: $selectedMailClass")
 							}
@@ -455,21 +455,21 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
 			mailClassNames
 		)
 		
-		bind.mailclass.setAdapter(adapter)
+		bind.mailClass.setAdapter(adapter)
 		
 		val drawable = ContextCompat.getDrawable(mCtx, R.drawable.card_8)
-		bind.mailclass.setDropDownBackgroundDrawable(drawable)
+		bind.mailClass.setDropDownBackgroundDrawable(drawable)
 		
-		bind.mailclass.setOnItemClickListener { _, _, position, _ ->
+		bind.mailClass.setOnItemClickListener { _, _, position, _ ->
 			selectedMailClass = mailClassesList[position]
 			log("Selected mail class: ${selectedMailClass?.label}")
 			// Save state to ViewModel
 			saveStateToViewModel()
 		}
 		
-		bind.mailclass.setHapticClickListener {
+		bind.mailClass.setHapticClickListener {
 			if (mailClassesList.isNotEmpty()) {
-				bind.mailclass.showDropDown()
+				bind.mailClass.showDropDown()
 			} else {
 				viewModel.getMailClasses()
 			}
@@ -667,7 +667,7 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
 		bind.height.setText((product?.height?:"").toString())
 		bind.length.setText((product?.length?:"").toString())
 		bind.weight.setText((product?.weight?:"").toString())
-		bind.mailclass.setText(product?.mailClass?:"",false)
+		bind.mailClass.setText(product?.mailClass?:"",false)
 		bind.proCategory.setText(product?.processingCategory?:"", false)
 		bind.price.setText((product?.pricing?:"").toString())
 		bind.flashSell.isChecked = product?.flashSale == true

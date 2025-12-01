@@ -1,5 +1,8 @@
 package io.bidswipe.app.ui.product
 
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context.CLIPBOARD_SERVICE
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -20,8 +23,10 @@ import io.bidswipe.app.ui.dashboard.ChatActivity
 import io.bidswipe.app.ui.more.MoreActivity
 import io.bidswipe.app.ui.sellerProfile.SellerProfileActivity
 import io.bidswipe.app.ui.tutorials.TutorialsActivity
+import io.bidswipe.app.utils.Const
 import io.bidswipe.app.utils.Utils
 import io.bidswipe.app.utils.asCapital
+import io.bidswipe.app.utils.asMoney
 import io.bidswipe.app.utils.finish
 import io.bidswipe.app.utils.ids
 import io.bidswipe.app.utils.loadUrl
@@ -74,6 +79,12 @@ class OrderDetailsFragment : BaseFragment<ProductViewModel, FragmentOrderDetails
 			startActivity(Intent(mCtx, TutorialsActivity::class.java).putExtra("type", "refer"))
 		}
 
+		bind.orderId.setHapticClickListener {
+			val clipboard = context?.getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
+			val clip = ClipData.newPlainText("label", bind.orderId.text)
+			clipboard.setPrimaryClip(clip)
+		}
+
 		bind.userProfile.setHapticClickListener {
 			startActivity(
 				Intent(mCtx, SellerProfileActivity::class.java).putExtra(
@@ -94,14 +105,10 @@ class OrderDetailsFragment : BaseFragment<ProductViewModel, FragmentOrderDetails
 			bind.expandView.toggle()
 		}
 
-
 		bind.videoReceipt.setHapticClickListener {
 
 			findNavController().navigate(ids.orderDetailToVideoReceiptPlayerFragment,bundleOf("videoUrl" to videoUrl))
 
-			/*videoUrl?.let { url ->
-				showVideoPlayerBottomSheet(url)
-			}*/
 		}
 
 		bind.loader.isVisible = true
@@ -133,19 +140,19 @@ class OrderDetailsFragment : BaseFragment<ProductViewModel, FragmentOrderDetails
 
 					bind.orderProgress.setProgress(mData?.order?.orderStatusPercentage ?: 0 , true)
 
-					bind.orderId.text = mData?.order?.id.toString()
+					bind.orderId.text = mData?.order?.orderId.toString()
 
 					bind.orderTime.text = buildSpannedString {
 						append("Order placed ")
 						append(	 Utils.getFormattedDateTime(
-							"yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'",
+							Const.SERVER_TIME_FORMAT,
 							"MMM dd, yyyy 'at' hh:mm a",
 							mData?.order?.createdAt.toString()
 						))
 					}
 
 					bind.orderDate.text = Utils.getFormattedDateTime(
-						"yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'",
+						Const.SERVER_TIME_FORMAT,
 						"MMM dd, yyyy",
 						mData?.order?.createdAt.toString()
 					)
@@ -155,7 +162,7 @@ class OrderDetailsFragment : BaseFragment<ProductViewModel, FragmentOrderDetails
 					bind.category.text = mData?.order?.product?.category?.name
 
 					bind.productCategory.text = mData?.order?.product?.category?.name
-					bind.price.text = mData?.order?.product?.pricing.toString()
+					bind.price.text = mData?.order?.product?.pricing.toString().asMoney()
 					
 					order = mData?.order?.id.toString()
 

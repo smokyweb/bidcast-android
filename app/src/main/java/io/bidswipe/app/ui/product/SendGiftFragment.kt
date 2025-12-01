@@ -85,7 +85,7 @@ class SendGiftFragment : BaseFragment<ProductViewModel, FragmentSendGiftBinding>
 			override fun afterTextChanged(p0: Editable?) {
 				if (p0?.toString()?.isNotEmpty() == true && p0.trim().toString() != oldText) {
 					oldText = p0.trim().toString()
-					if (isLoading == false) {
+					if (!isLoading) {
 						isLoading = true
 						viewModel.searchUsers(search = p0.toString().request())
 					}
@@ -120,7 +120,7 @@ class SendGiftFragment : BaseFragment<ProductViewModel, FragmentSendGiftBinding>
 					bind.loader.isVisible = true
 
 					viewModel.createOrder(
-						shippingId.toString().request(),
+						shippingId.request(),
 						productId.request(),
 						cardId.request(),
 						promoCode.ifEmpty { null }?.request(),

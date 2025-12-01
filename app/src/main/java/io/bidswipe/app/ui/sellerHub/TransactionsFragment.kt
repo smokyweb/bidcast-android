@@ -1,5 +1,6 @@
 package io.bidswipe.app.ui.sellerHub
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -21,6 +22,7 @@ import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request
 import io.bidswipe.app.utils.runSafe
 
+@SuppressLint("NotifyDataSetChanged")
 class TransactionsFragment : BaseFragment<SellerHubViewModel, FragmentTransactionsBinding>() {
 	override fun getModel(): Class<SellerHubViewModel> = SellerHubViewModel::class.java
 
@@ -122,7 +124,7 @@ class TransactionsFragment : BaseFragment<SellerHubViewModel, FragmentTransactio
 						transactionList.addAll(mData)
 					}
 
-					log("Transactions : ${transactionList}")
+					log("Transactions : $transactionList")
 
 					if (transactionList.isEmpty()) {
 						bind.noData.isVisible = true

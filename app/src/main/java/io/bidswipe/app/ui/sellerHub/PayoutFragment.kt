@@ -61,14 +61,14 @@ class PayoutFragment : BaseFragment<SellerHubViewModel, FragmentPayoutBinding>()
 				}
 				
 				current += number
-				bind.amount.setText("$current")
+				bind.amount.setText(current)
 			}
 			
 			override fun onLeftAuxButtonClicked() {
 				var current = bind.amount.text.toString()
 				if (!current.contains(".")) {
 					current += "."
-					bind.amount.setText("$current")
+					bind.amount.setText(current)
 				}
 			}
 			
@@ -76,7 +76,7 @@ class PayoutFragment : BaseFragment<SellerHubViewModel, FragmentPayoutBinding>()
 				var current = bind.amount.text.toString()
 				if (current.isNotEmpty()) {
 					current = current.dropLast(1)
-					bind.amount.setText((if (current.isEmpty()) "" else "$current"))
+					bind.amount.setText((current.ifEmpty { "" }))
 				}
 			}
 		})

@@ -6,7 +6,6 @@
     android:layout_height="match_parent"
     tools:context=".ui.sellerHub.SellerOffersFragment">
 
-
     <io.bidswipe.app.ui.custom.Header
         android:id="@+id/header"
         android:layout_width="match_parent"
@@ -125,6 +124,7 @@
             </LinearLayout>
 
         </com.google.android.material.card.MaterialCardView>
+
     </LinearLayout>
 
     <LinearLayout
@@ -150,6 +150,7 @@
             android:layout_height="wrap_content"
             android:visibility="gone"
             app:title_text="No Data Found" />
+
     </LinearLayout>
 
     <io.bidswipe.app.ui.custom.LoaderView

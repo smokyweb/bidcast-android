@@ -2,7 +2,6 @@ package io.bidswipe.app.controller
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.core.text.bold
 import androidx.core.text.buildSpannedString
 import io.bidswipe.app.R
@@ -10,7 +9,6 @@ import io.bidswipe.app.base.BaseAdapter
 import io.bidswipe.app.databinding.BidsItemBinding
 import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.network.response.FetchBidResponse
-import io.bidswipe.app.utils.Alerts
 import io.bidswipe.app.utils.Const
 import io.bidswipe.app.utils.Utils
 import io.bidswipe.app.utils.asCapital

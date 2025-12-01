@@ -78,13 +78,13 @@ class OrderStatusFragment : BaseFragment<ProductViewModel, FragmentOrderStatusBi
 		viewModel.getOrderDetailsRepo.observe(viewLifecycleOwner) {
 			when (it) {
 				is Resource.Success -> {
-					viewModel.getOrderDetailsRepo.value=null
+					viewModel.getOrderDetailsRepo.value = null
 					bind.loader.isVisible = false
 
 					val mData = it.value.data
 
 					bind.productName.text = mData?.product?.title?.asCapital()
-					bind.address.text = mData?.shippingAddress?:"N/A"
+					bind.address.text = mData?.shippingAddress ?: "N/A"
 					bind.productImage.loadUrl(mCtx, mData?.product?.images?.get(0).toString())
 					bind.productColor.text = mData?.product?.category?.name
 					bind.category.text = mData?.product?.category?.name
@@ -104,7 +104,7 @@ class OrderStatusFragment : BaseFragment<ProductViewModel, FragmentOrderStatusBi
 				}
 
 				is Resource.Error -> {
-					viewModel.getOrderDetailsRepo.value=null
+					viewModel.getOrderDetailsRepo.value = null
 					bind.loader.isVisible = false
 					it.parse(mCtx, TAG, object : AlertClicks {
 						override fun primaryClick(dialog: AppBottomSheet) {

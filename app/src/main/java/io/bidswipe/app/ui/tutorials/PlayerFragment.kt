@@ -82,9 +82,9 @@ class PlayerFragment : BaseFragment<DashViewModel, FragmentPlayerBinding>() {
 
 					lessonList.clear()
 
-					mData?.forEach {
+					mData?.forEach { data ->
 
-						lessonList.add(it?.video.toString())
+						lessonList.add(data?.video.toString())
 
 					}
 

@@ -1,5 +1,6 @@
 package io.bidswipe.app.ui.more
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -18,6 +19,7 @@ import io.bidswipe.app.utils.finish
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.runSafe
 
+@SuppressLint("NotifyDataSetChanged")
 class FAQFragment : BaseFragment<MoreViewModel, FragmentFAQBinding>() {
 	override fun getModel(): Class<MoreViewModel> = MoreViewModel::class.java
 
@@ -86,12 +88,11 @@ class FAQFragment : BaseFragment<MoreViewModel, FragmentFAQBinding>() {
 					val mData = it.value.data
 					faqList.clear()
 
-					mData?.forEach {
+					mData?.forEach { faq ->
 
-						faqList.add(it)
+						faqList.add(faq)
 
 					}
-
 
 					adapter.notifyDataSetChanged()
 

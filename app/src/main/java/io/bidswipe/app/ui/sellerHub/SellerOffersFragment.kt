@@ -1,5 +1,6 @@
 package io.bidswipe.app.ui.sellerHub
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -17,6 +18,7 @@ import io.bidswipe.app.utils.finish
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request
 
+@SuppressLint("NotifyDataSetChanged")
 class SellerOffersFragment : BaseFragment<SellerHubViewModel, FragmentSellerOffersBinding>() {
 	override fun getModel(): Class<SellerHubViewModel> = SellerHubViewModel::class.java
 
@@ -85,9 +87,9 @@ class SellerOffersFragment : BaseFragment<SellerHubViewModel, FragmentSellerOffe
 						bind.pendingCount.text = (it.value.pending ?: 0).toString()
 						bind.acceptedCount.text = (it.value.accepted ?: 0).toString()
 						bind.declinedCount.text = (it.value.declined ?: 0).toString()
-						it.value.data.forEach {
-							if (it != null) {
-								itemList.add(it)
+						it.value.data.forEach { offer ->
+							if (offer != null) {
+								itemList.add(offer)
 							}
 						}
 						adapter.notifyDataSetChanged()
