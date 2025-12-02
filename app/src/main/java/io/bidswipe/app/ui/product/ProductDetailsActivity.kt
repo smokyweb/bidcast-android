@@ -15,6 +15,10 @@ import io.bidswipe.app.utils.setNewStart
 class ProductDetailsActivity : BaseActivity() {
 	private val bind by bind(ActivityProductDetailsBinding::inflate)
 
+	companion object {
+		var instance: ProductDetailsActivity? = null
+	}
+
 	private lateinit var navHostFragment : NavHostFragment
 	private lateinit var navController : NavController
 	private var type  = ""
@@ -28,6 +32,8 @@ class ProductDetailsActivity : BaseActivity() {
 			bind.root.setPadding(0,system.top,0, system.bottom)
 			CONSUMED
 		}
+
+		instance = this
 
 		type = intent.getStringExtra("type") ?:""
 

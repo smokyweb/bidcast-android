@@ -27,7 +27,6 @@ import io.bidswipe.app.utils.runSafe
 import io.bidswipe.app.utils.setHapticClickListener
 import io.bidswipe.app.utils.showKeyboard
 import io.bidswipe.app.utils.value
-import kotlin.getValue
 
 class AddPaymentCardActivity : BaseActivity() {
 
@@ -35,64 +34,64 @@ class AddPaymentCardActivity : BaseActivity() {
 
 	private val viewModel by viewModels<DashViewModel>()
 
-	private var mSheet : BottomSheetDialog? = null
+	private var mSheet: BottomSheetDialog? = null
 	private var isShowing = false
 
-	override fun onCreate(savedInstanceState : Bundle?) {
+	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
 		setContentView(bind.root)
 		ViewCompat.setOnApplyWindowInsetsListener(window.decorView) { v, insets ->
 			val system = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-			bind.root.setPadding(0,system.top,0, system.bottom)
+			bind.root.setPadding(0, system.top, 0, system.bottom)
 			CONSUMED
 		}
 		log("GET PAYMENT CARD")
 
 		bind.header.onBackClick { finish() }
 
-        bind.expiryDate.setHapticClickListener {
+		bind.expiryDate.setHapticClickListener {
 			showDatePicker {
 				bind.expiryDate.setText(it)
 			}
 		}
 
 
-        bind.addCard.setHapticClickListener {
+		bind.addCard.setHapticClickListener {
 
 			when {
 
 				bind.name.value().validator().nonEmpty().check().not() -> {
-					Alerts.error(this , "Enter Card Holder Name")
+					Alerts.error(this, "Enter Card Holder Name")
 					bind.name.requestFocus()
 					showKeyboard(bind.name)
 				}
 
 				bind.cardNumber.value().validator().nonEmpty().check().not() -> {
-					Alerts.error(this , "Enter Card Number")
+					Alerts.error(this, "Enter Card Number")
 					bind.cardNumber.requestFocus()
 					showKeyboard(bind.cardNumber)
 				}
 
 				bind.cardNumber.value().validator().minLength(16).check().not() -> {
-					Alerts.error(this , "Card Digit should be 12")
+					Alerts.error(this, "Card Digit should be 12")
 					bind.cardNumber.requestFocus()
 					showKeyboard(bind.cardNumber)
 				}
 
 				bind.expiryDate.value().validator().nonEmpty().check().not() -> {
-					Alerts.error(this , "Enter Expiry Date")
+					Alerts.error(this, "Enter Expiry Date")
 					bind.expiryDate.requestFocus()
 					showKeyboard(bind.expiryDate)
 				}
 
 				bind.csv.value().validator().nonEmpty().check().not() -> {
-					Alerts.error(this , "Enter CVV")
+					Alerts.error(this, "Enter CVV")
 					bind.csv.requestFocus()
 					showKeyboard(bind.csv)
 				}
 
 				bind.csv.value().validator().minLength(3).check().not() -> {
-					Alerts.error(this , "Enter Valid CVV")
+					Alerts.error(this, "Enter Valid CVV")
 					bind.csv.requestFocus()
 					showKeyboard(bind.csv)
 				}
@@ -104,8 +103,8 @@ class AddPaymentCardActivity : BaseActivity() {
 					bind.loader.isVisible = true
 
 					val cardData = PaymentCardModel(
-						bind.cardNumber.value().replace(" " , "") ,
-						bind.csv.value() ,
+						bind.cardNumber.value().replace(" ", ""),
+						bind.csv.value(),
 						bind.expiryDate.value()
 					)
 
@@ -132,7 +131,7 @@ class AddPaymentCardActivity : BaseActivity() {
 					runSafe {
 						bind.loader.isVisible = false
 
-						Alerts.success(this , "Payment card Added")
+						Alerts.success(this, "Payment card Added")
 
 						App.getProfile()
 
@@ -145,12 +144,12 @@ class AddPaymentCardActivity : BaseActivity() {
 
 				is Resource.Error -> {
 					bind.loader.isVisible = false
-					it.parse(this , TAG , object : AlertClicks {
-						override fun primaryClick(dialog : AppBottomSheet) {
+					it.parse(this, TAG, object : AlertClicks {
+						override fun primaryClick(dialog: AppBottomSheet) {
 							dialog.dismiss()
 						}
 
-						override fun secondaryClick(dialog : AppBottomSheet) {
+						override fun secondaryClick(dialog: AppBottomSheet) {
 							dialog.dismiss()
 						}
 					})
@@ -163,10 +162,10 @@ class AddPaymentCardActivity : BaseActivity() {
 	}
 
 
-	private fun showDatePicker(call : (String) -> Unit) {
-		val alBind = DatePickerLayoutBinding.bind(LayoutInflater.from(this).inflate(layout.date_picker_layout , null))
+	private fun showDatePicker(call: (String) -> Unit) {
+		val alBind = DatePickerLayoutBinding.bind(LayoutInflater.from(this).inflate(layout.date_picker_layout, null))
 
-		mSheet = Alerts.appBottomSheet(this , false , alBind)
+		mSheet = Alerts.appBottomSheet(this, false, alBind)
 
 		isShowing = if (mSheet?.isShowing == true) {
 			mSheet?.dismiss()
@@ -176,12 +175,12 @@ class AddPaymentCardActivity : BaseActivity() {
 			true
 		}
 
-        alBind.cancel.setHapticClickListener {
+		alBind.cancel.setHapticClickListener {
 			mSheet?.dismiss()
 			isShowing = false
 		}
 
-        alBind.select.setHapticClickListener {
+		alBind.select.setHapticClickListener {
 			val date = alBind.timePicker.date
 			mSheet?.dismiss()
 			isShowing = false

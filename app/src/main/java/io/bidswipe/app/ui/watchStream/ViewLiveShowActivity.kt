@@ -1,7 +1,5 @@
 package io.bidswipe.app.ui.watchStream
 
-
-import android.content.res.Configuration
 import android.net.Uri
 import android.os.Bundle
 import androidx.activity.viewModels
@@ -104,23 +102,6 @@ class ViewLiveShowActivity : BaseActivity() {
 		App.manager.destroyEngine()
 	}
 
-	override fun onPictureInPictureModeChanged(isInPictureInPictureMode: Boolean, newConfig: Configuration) {
-		super.onPictureInPictureModeChanged(isInPictureInPictureMode, newConfig)
-		App.PIPMode = isInPictureInPictureMode
-		
-		if (isInPictureInPictureMode) {
-			log("Entered PIP mode")
-//			startActivity(Intent(this, ProductDetailsActivity::class.java).putExtra("type", "shop"))
-
-			// Notify callback that PIP mode has been entered
-			pipModeEnteredCallback?.invoke()
-			pipModeEnteredCallback = null
-			// Hide unnecessary UI elements when in PIP mode
-		} else {
-			log("Exited PIP mode")
-			// Restore UI elements when exiting PIP mode
-		}
-	}
 	
 	fun setPipModeEnteredCallback(callback: (() -> Unit)?) {
 		pipModeEnteredCallback = callback

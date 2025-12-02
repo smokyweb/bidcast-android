@@ -30,6 +30,10 @@ class App : Application() {
 		private lateinit var TAG: String
 		var PIPMode: Boolean = false
 		var isUserOnChatScreen: Boolean = false
+
+		var isWatchStreamInPIP = MutableLiveData<Boolean>(false)
+		var currentSellerId : String? = ""
+
 		val profileResponse = MutableLiveData<UserProfileResponse.Data?>()
 		var categoryList = mutableListOf<GetCategoryResponse.Data?>()
 

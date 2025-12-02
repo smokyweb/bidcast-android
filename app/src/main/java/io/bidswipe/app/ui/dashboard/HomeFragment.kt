@@ -27,6 +27,7 @@ import io.bidswipe.app.network.Resource
 import io.bidswipe.app.network.response.GetMyShowResponse
 import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.ui.more.NotificationActivity
+import io.bidswipe.app.ui.product.ProductDetailsActivity
 import io.bidswipe.app.ui.sellerProfile.SellerProfileActivity
 import io.bidswipe.app.ui.watchStream.ViewLiveShowActivity
 import io.bidswipe.app.utils.Alerts
@@ -52,10 +53,27 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
 	private var streamList = mutableListOf<StreamModel>()
 	private var page = 1
 	private var isLoading = false
-
 	private var selectedCategory = "for_you"
 	private var selectedCategoryTileId = "for_you"
 	private var hasInitializedCategories = false
+
+/*	private val streamingResultLauncher = registerForActivityResult(
+		ActivityResultContracts.StartActivityForResult()
+	) { result ->
+
+		log( "result: $result")
+
+		if (result.resultCode == Activity.RESULT_OK) {
+
+			val data = result.data
+			val sellerId = data?.getStringExtra("sellerId")
+			val type = data?.getStringExtra("type")
+
+			startActivity(Intent(mCtx, ProductDetailsActivity::class.java).putExtra("type", "shop").putExtra("sellerId", sellerId))
+
+		}
+
+	}*/
 
 	private val mClick = object : RecyclerClicks {
 		override fun itemClick(pos: Int, status: String?) {
@@ -100,6 +118,13 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
 
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		super.onViewCreated(view, savedInstanceState)
+
+		App.isWatchStreamInPIP.observe(viewLifecycleOwner){
+			if (it){
+				App.isWatchStreamInPIP.value = false
+				startActivity(Intent(mCtx, ProductDetailsActivity::class.java).putExtra("type", "shop").putExtra("sellerId", App.currentSellerId))
+			}
+		}
 
 		bind.header.setHapticClickListener {
 			hideKeyboard(it)

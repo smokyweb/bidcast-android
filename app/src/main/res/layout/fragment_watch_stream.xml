@@ -189,6 +189,7 @@
                         app:layout_constraintBottom_toTopOf="@id/controls" />
 
                     <LinearLayout
+                        android:id="@+id/bottomUI"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="vertical"

@@ -82,7 +82,7 @@ import kotlinx.coroutines.launch
 import org.json.JSONObject
 import kotlin.math.abs
 
-@SuppressLint("NotifyDataSetChanged", "InflateParams")
+@SuppressLint("NotifyDataSetChanged", "InflateParams", "ClickableViewAccessibility")
 class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBinding>() {
 
 	override fun getModel(): Class<StreamViewModel> = StreamViewModel::class.java
@@ -139,7 +139,6 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 		socketUrl = Const.SOCKET_URL
 	}
 
-	@SuppressLint("ClickableViewAccessibility")
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		super.onViewCreated(view, savedInstanceState)
 
@@ -153,7 +152,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 		// Initialize thumbnail view - show it initially
 		bind.thumbnailView.loadUrl(mCtx, thumbnail, R.drawable.placeholder_rect)
 
-		showThumbnail()
+//		showThumbnail()
 
 		ViewCompat.setOnApplyWindowInsetsListener(requireActivity().window.decorView) { v, insets ->
 			val system = insets.getInsets(WindowInsetsCompat.Type.systemBars())
@@ -437,11 +436,19 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
 		bind.shop.setHapticClickListener {
 
-			/*	if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-					(requireActivity() as ViewLiveShowActivity).enterPictureInPictureMode(pipParams)
-				}*/
+			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+				(requireActivity() as ViewLiveShowActivity).enterPictureInPictureMode(pipParams)
+			}
 
-			startActivity(Intent(mCtx, ProductDetailsActivity::class.java).putExtra("type", "shop").putExtra("sellerId", sellerId))
+//			requireActivity().setResult(Activity.RESULT_OK, Intent().putExtra("sellerId", sellerId).putExtra("type", "shop"))
+
+			App.isWatchStreamInPIP.value = true
+			App.currentSellerId = sellerId
+
+//			requireActivity().finish()
+
+
+//			startActivity(Intent(mCtx, ProductDetailsActivity::class.java).putExtra("type", "shop").putExtra("sellerId", sellerId).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
 
 		}
 
@@ -637,8 +644,8 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
 	override fun onPause() {
 		super.onPause()
-		socketManager?.leaveRoom(roomID, userId)
-		App.manager.leaveChannel()
+		/*socketManager?.leaveRoom(roomID, userId)
+		App.manager.leaveChannel()*/
 		followSheetRunnable?.let { followSheetHandler.removeCallbacks(it) }
 //		stopStream()
 	}
@@ -687,12 +694,11 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 		bind.soldLayout.isVisible = true
 
 		// Show thumbnail again when video is cleared
-		if (!isSocketDataLoaded) {
+		/*if (!isSocketDataLoaded) {
 			showThumbnail()
-		}
+		}*/
 	}
 
-	@SuppressLint("ClickableViewAccessibility")
 	fun setUpSwipe() {
 
 		var downX = 0f
@@ -1578,7 +1584,6 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 		followSheet.show()
 	}
 
-
 	private fun updatePollSheet() {
 		val poll = currentPoll ?: return
 		pollSheetBinding?.let { binding ->
@@ -1596,6 +1601,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 				livePollOptionList.addAll(poll.options)
 				livePollAdapter.notifyDataSetChanged()
 			}
+
 		}
 	}
 
@@ -1615,7 +1621,6 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 			val visibleRect = Rect()
 
-
 			(requireActivity() as ViewLiveShowActivity).bind.root.getGlobalVisibleRect(visibleRect)
 			pipParams = PictureInPictureParams.Builder().apply {
 				setAspectRatio(Rational(100, 200))
@@ -1623,11 +1628,30 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 				setSourceRectHint(visibleRect)
 
 				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-					setAutoEnterEnabled(true)
+					setAutoEnterEnabled(false)
 				}
 			}.build()
 
 			activity?.setPictureInPictureParams(pipParams)
+		}
+	}
+
+	override fun onPictureInPictureModeChanged(isInPictureInPictureMode: Boolean) {
+		super.onPictureInPictureModeChanged(isInPictureInPictureMode)
+
+		if (isInPictureInPictureMode) {
+			App.PIPMode = true
+			bind.profileLayout.isVisible = false
+			bind.bottomUI.isVisible = false
+			log("PIP MODE ON")
+		} else {
+			App.PIPMode = false
+			bind.profileLayout.isVisible = true
+			bind.bottomUI.isVisible = false
+
+			ProductDetailsActivity.instance?.finish()
+
+			log("PIP MODE OFF")
 		}
 	}
 
