@@ -64,8 +64,8 @@
     <View
         android:id="@+id/view"
         android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:alpha="0.5"
+        android:layout_height="2dp"
+        android:alpha="0.2"
         android:background="@color/outlineVariant"
         app:layout_constraintTop_toBottomOf="@id/tab_layout" />
 

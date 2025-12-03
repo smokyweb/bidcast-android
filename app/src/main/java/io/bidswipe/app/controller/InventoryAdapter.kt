@@ -73,7 +73,7 @@ class InventoryAdapter(
 					mClicks.itemClick(position, "toggle")
 				}
 			} else {
-				bind.root.setBackgroundColor(ContextCompat.getColor(mCtx, R.color.surface))
+//				bind.root.setBackgroundColor(ContextCompat.getColor(mCtx, R.color.surface))
 				bind.root.strokeWidth = 0
 				bind.click.setHapticClickListener {
 					mClicks.itemClick(position)

@@ -34,7 +34,6 @@ class ViewPagerAdapter(fragmentActivity : FragmentActivity , type : String) :
 				OverAllFragment() ,
 				OverAllFragment() ,
 				OverAllFragment()
-
 			)
 		}
 

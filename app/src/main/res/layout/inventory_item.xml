@@ -45,7 +45,7 @@
             android:id="@+id/click"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/onPrimary"
+            android:background="@drawable/card_8"
             android:padding="@dimen/half_margin"
             android:gravity="center_vertical"
             android:orientation="horizontal">

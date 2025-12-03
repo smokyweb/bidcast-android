@@ -644,8 +644,11 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
 	override fun onPause() {
 		super.onPause()
-		/*socketManager?.leaveRoom(roomID, userId)
-		App.manager.leaveChannel()*/
+		if (!App.PIPMode){
+			socketManager?.leaveRoom(roomID, userId)
+			App.manager.leaveChannel()
+		}
+
 		followSheetRunnable?.let { followSheetHandler.removeCallbacks(it) }
 //		stopStream()
 	}
@@ -1647,7 +1650,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 		} else {
 			App.PIPMode = false
 			bind.profileLayout.isVisible = true
-			bind.bottomUI.isVisible = false
+			bind.bottomUI.isVisible = true
 
 			ProductDetailsActivity.instance?.finish()
 

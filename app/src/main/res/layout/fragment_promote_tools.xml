@@ -29,9 +29,10 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="@dimen/margin"
                 android:gravity="center_vertical"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:layout_marginHorizontal="@dimen/margin"
+                android:layout_marginVertical="@dimen/half_margin">
 
                 <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/icon"
@@ -73,9 +74,10 @@
                 app:layout_constraintTop_toBottomOf="@+id/header">
 
                 <LinearLayout
+                    style="@style/shadowStyle"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_marginHorizontal="@dimen/half_margin"
+                    android:layout_margin="@dimen/half_margin"
                     android:layout_weight="1"
                     android:background="@drawable/card_8"
                     android:orientation="vertical"
@@ -100,12 +102,13 @@
                 </LinearLayout>
 
                 <LinearLayout
+                    style="@style/shadowStyle"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_marginHorizontal="@dimen/half_margin"
                     android:layout_weight="1"
                     android:background="@drawable/card_8"
                     android:orientation="vertical"
+                    android:layout_margin="@dimen/half_margin"
                     android:padding="@dimen/half_margin">
 
                     <TextView
@@ -127,9 +130,10 @@
                 </LinearLayout>
 
                 <LinearLayout
+                    style="@style/shadowStyle"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_marginHorizontal="@dimen/half_margin"
+                    android:layout_margin="@dimen/half_margin"
                     android:layout_weight="1"
                     android:background="@drawable/card_8"
                     android:orientation="vertical"
@@ -159,7 +163,7 @@
                 android:id="@+id/gridRecycler"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="8dp"
+                android:layout_marginHorizontal="@dimen/half_margin"
                 app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
                 app:spanCount="2"
                 tools:itemCount="4"

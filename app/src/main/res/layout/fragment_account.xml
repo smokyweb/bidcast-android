@@ -31,10 +31,10 @@
             tools:context=".ui.dashboard.AccountFragment">
 
             <androidx.constraintlayout.widget.ConstraintLayout
+                style="@style/shadowStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="@dimen/margin"
-                android:layout_marginVertical="@dimen/half_margin"
+                android:layout_margin="@dimen/margin"
                 android:background="@drawable/card_8"
                 android:paddingHorizontal="@dimen/margin"
                 android:paddingVertical="@dimen/half_margin">

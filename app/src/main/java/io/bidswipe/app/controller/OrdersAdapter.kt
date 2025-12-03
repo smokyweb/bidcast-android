@@ -6,6 +6,7 @@ import io.bidswipe.app.base.BaseAdapter
 import io.bidswipe.app.databinding.MyOrdersItemBinding
 import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.network.response.GetOrdersResponse
+import io.bidswipe.app.utils.Const
 import io.bidswipe.app.utils.Utils
 import io.bidswipe.app.utils.asCapital
 import io.bidswipe.app.utils.asMoney
@@ -31,7 +32,7 @@ class OrdersAdapter(
 			bind.orderAmount.text = item?.product?.pricing.toString().asMoney()
 			
 			bind.orderDate.text = Utils.getFormattedDateTime(
-				"yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'",
+				Const.SERVER_TIME_FORMAT,
 				"MMM dd, yyyy, HH:mm",
 				item?.createdAt.toString()
 			)
