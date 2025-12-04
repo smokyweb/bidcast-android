@@ -325,4 +325,7 @@
     <string name="product_detail_description">Detailed product listings help buyers make informed decisions and increase your chances of making a sale.</string>
     <string name="select_from_product_inventory">Select from product Inventory</string>
     <string name="enter_referral_code">Enter Referral Code</string>
+    <string name="overview">Overview</string>
+    <string name="watch_vod">Watch VOD</string>
+    <string name="enable_free_pickup">enable Free Pickup</string>
 </resources>

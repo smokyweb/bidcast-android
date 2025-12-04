@@ -40,12 +40,29 @@
         android:id="@+id/showsFragment"
         android:name="io.bidswipe.app.ui.sellerHub.ShowsFragment"
         android:label="fragment_shows"
-        tools:layout="@layout/fragment_shows" />
+        tools:layout="@layout/fragment_shows" >
+        <action
+            android:id="@+id/toShowDetails"
+            app:destination="@id/showDetailsFragment" />
+    </fragment>
     <fragment
         android:id="@+id/shippingFragment"
-        android:name="io.bidswipe.app.ui.sellerHub.ShippingFragment"
+        android:name="io.bidswipe.app.ui.sellerHub.shipping.ShippingFragment"
         android:label="fragment_shipping"
-        tools:layout="@layout/fragment_shipping" />
+        tools:layout="@layout/fragment_shipping" >
+        <action
+            android:id="@+id/toFreePickup"
+            app:destination="@id/freePIckupFragment" />
+        <action
+            android:id="@+id/toDomesticShipments"
+            app:destination="@id/domesticShipmentsFragment" />
+        <action
+            android:id="@+id/toShippingProfiles"
+            app:destination="@id/shippingProfilesFragment" />
+        <action
+            android:id="@+id/toShippingCost"
+            app:destination="@id/shippingCostsFragment" />
+    </fragment>
     <fragment
         android:id="@+id/tipsFragment"
         android:name="io.bidswipe.app.ui.sellerHub.TipsFragment"
@@ -101,5 +118,38 @@
         android:name="io.bidswipe.app.ui.product.OrderStatusFragment"
         android:label="fragment_order_status"
         tools:layout="@layout/fragment_order_status" />
+    <fragment
+        android:id="@+id/showDetailsFragment"
+        android:name="io.bidswipe.app.ui.sellerHub.ShowDetailsFragment"
+        android:label="fragment_show_details"
+        tools:layout="@layout/fragment_show_details" />
+    <fragment
+        android:id="@+id/freePIckupFragment"
+        android:name="io.bidswipe.app.ui.sellerHub.shipping.FreePickupFragment"
+        android:label="FreePIckupFragment" />
+    <fragment
+        android:id="@+id/domesticShipmentsFragment"
+        android:name="io.bidswipe.app.ui.sellerHub.shipping.DomesticShipmentsFragment"
+        android:label="fragment_domestic_shipments"
+        tools:layout="@layout/fragment_domestic_shipments" />
+    <fragment
+        android:id="@+id/createShippingProfileFragment"
+        android:name="io.bidswipe.app.ui.sellerHub.shipping.CreateShippingProfileFragment"
+        android:label="fragment_create_shipping_profile"
+        tools:layout="@layout/fragment_create_shipping_profile" />
+    <fragment
+        android:id="@+id/shippingProfilesFragment"
+        android:name="io.bidswipe.app.ui.sellerHub.shipping.ShippingProfilesFragment"
+        android:label="fragment_shipping_profiles"
+        tools:layout="@layout/fragment_shipping_profiles" >
+        <action
+            android:id="@+id/toCreateShippingProfile"
+            app:destination="@id/createShippingProfileFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/shippingCostsFragment"
+        android:name="io.bidswipe.app.ui.sellerHub.shipping.ShippingCostsFragment"
+        android:label="fragment_shipping_costs"
+        tools:layout="@layout/fragment_shipping_costs" />
 
 </navigation>

@@ -520,4 +520,7 @@
     <string name="product_deleted">Product Deleted</string>
     <string name="product_no_longer_available">This product is no longer available</string>
     <string name="deleted_product_message">The seller has removed this product</string>
+    <string name="overview">Overview</string>
+    <string name="watch_vod">Watch VOD</string>
+    <string name="enable_free_pickup">Enable Free Pickup</string>
 </resources>
