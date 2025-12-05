@@ -2,12 +2,8 @@ package io.bidswipe.app.controller
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat
-import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseAdapter
-import io.bidswipe.app.databinding.BenifitsItemBinding
 import io.bidswipe.app.databinding.InventoryFilterInnnerIitemBinding
-import io.bidswipe.app.databinding.InventoryFilterItemBinding
 import io.bidswipe.app.interfaces.RecyclerClicks
 
 class InventoryFilterInnerAdapter(
@@ -26,6 +22,7 @@ class InventoryFilterInnerAdapter(
             bind.checkbox.text = item?.title
 
             bind.checkbox.setOnCheckedChangeListener { _,_->
+
 
             }
         }

@@ -28,6 +28,8 @@ data class GetMyInventoryResponse(
 	data class Data(
         @SerializedName("accept_offers")
         val acceptOffers : Boolean? ,
+        @SerializedName("auction")
+        val auction : Boolean? ,
         @SerializedName("category")
         val category : Category? ,
         @SerializedName("category_id")

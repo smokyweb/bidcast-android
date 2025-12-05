@@ -38,12 +38,11 @@ class InventoryFilterAdapter(
 
             bind.innerLayout.isExpanded = item?.isOpened ?: false
 
-            bind.innerRecycler.adapter =
-                InventoryFilterInnerAdapter(item?.list ?: mutableListOf(), object : RecyclerClicks {
-                    override fun itemClick(pos: Int, status: String?) {
+            bind.innerRecycler.adapter = InventoryFilterInnerAdapter(item?.list ?: mutableListOf(), object : RecyclerClicks {
+                override fun itemClick(pos: Int, status: String?) {
 
-                    }
-                })
+                }
+            })
         }
     }
 }

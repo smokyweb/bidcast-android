@@ -63,7 +63,7 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
 		weight: String? = null,
 		mailClass: String? = null,
 		processingCategory: String? = null,
-		productCondition: String? = null
+		productCondition: String? = null,
 	) = call {
 		api.storeProduct(
 			StoreProductRequest(
@@ -88,7 +88,7 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
 				weight = weight,
 				mailClass = mailClass,
 				processingCategory = processingCategory,
-				productCondition = productCondition
+				productCondition = productCondition,
 			),
 			productId
 		)
@@ -560,5 +560,14 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
 		productId: RequestBody?,
 		status: RequestBody?
 	) = call { api.updateProductStatus( productId ,status) }
+
+	suspend fun storeShippingProfile(
+		name: RequestBody?,
+		size : RequestBody?,
+		weight : RequestBody?
+	) = call { api.storeShippingProfile( name, size, weight) }
+
+	suspend fun getShippingProfile(
+	) = call { api.getShippingProfile() }
 
 }

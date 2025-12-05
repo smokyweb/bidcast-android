@@ -12,7 +12,6 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-
         <View
             android:layout_width="64dp"
             android:layout_height="4dp"
@@ -25,12 +24,12 @@
             android:id="@+id/profileLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="@dimen/half_margin"
+            android:paddingHorizontal="@dimen/half_margin"
             android:orientation="horizontal">
 
             <TextView
                 android:id="@+id/title"
-                style="@style/HeadlineMedium"
+                style="@style/HeadlineSmall"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Sort By"

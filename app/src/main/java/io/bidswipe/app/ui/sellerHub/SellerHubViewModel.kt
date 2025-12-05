@@ -18,6 +18,7 @@ import io.bidswipe.app.network.response.GetOrdersResponse
 import io.bidswipe.app.network.response.GetPaymentCardsResponse
 import io.bidswipe.app.network.response.GetPremierShopResponse
 import io.bidswipe.app.network.response.GetPromoteToolsResponse
+import io.bidswipe.app.network.response.GetShippingProfilesResponse
 import io.bidswipe.app.network.response.GetTipAmountResponse
 import io.bidswipe.app.network.response.GetTransactionsHistoryResponse
 import io.bidswipe.app.network.response.PayoutHistoryResponse
@@ -478,6 +479,35 @@ class SellerHubViewModel @Inject constructor(
 			return@launch
 		}
 		_updateProductStatusResponse.value = repo.updateProductStatus(productId,status)
+	}
+
+	private var _storeShippingProfileResponse = MutableLiveData<Resource<CommonResponse>>()
+	val storeShippingProfileRepo: MutableLiveData<Resource<CommonResponse>>
+		get() = _storeShippingProfileResponse
+
+	fun storeShippingProfile(
+		name: RequestBody?,
+		size : RequestBody?,
+		weight : RequestBody?
+	) = viewModelScope.launch {
+		if (!networkMonitor.hasInternet()) {
+			_storeShippingProfileResponse.value = NO_INTERNET_ERROR
+			return@launch
+		}
+		_storeShippingProfileResponse.value = repo.storeShippingProfile(name,size,weight)
+	}
+
+	private var _getShippingProfileResponse = MutableLiveData<Resource<GetShippingProfilesResponse>>()
+	val getShippingProfileRepo: MutableLiveData<Resource<GetShippingProfilesResponse>>
+		get() = _getShippingProfileResponse
+
+	fun getShippingProfile(
+	) = viewModelScope.launch {
+		if (!networkMonitor.hasInternet()) {
+			_getShippingProfileResponse.value = NO_INTERNET_ERROR
+			return@launch
+		}
+		_getShippingProfileResponse.value = repo.getShippingProfile()
 	}
 
 }

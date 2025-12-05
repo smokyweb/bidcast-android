@@ -26,6 +26,7 @@ import io.bidswipe.app.network.response.GetOffersResponse
 import io.bidswipe.app.network.response.GetPrepareStepResponse
 import io.bidswipe.app.network.response.GetProductsByStatusResponse
 import io.bidswipe.app.network.response.GetPromotePlansResponse
+import io.bidswipe.app.network.response.GetShippingProfilesResponse
 import io.bidswipe.app.network.response.GetSubCategoriesResponse
 import io.bidswipe.app.network.response.PageUrlResponse
 import io.bidswipe.app.network.response.StoreProductResponse
@@ -57,7 +58,7 @@ class DashViewModel @Inject constructor(
 	var showData = MutableLiveData<TutorialShowModel>()
 
 	val selectedCategories = mutableListOf<GetCategoryResponse.Data>()
-	
+
 	// Product form state (persists across orientation changes)
 	var productFormImageList = mutableListOf<String?>()
 	var productFormCategoryId = ""
@@ -224,8 +225,7 @@ class DashViewModel @Inject constructor(
 			weight ,
 			mailClass ,
 			processingCategory,
-			productCondition
-		)
+			productCondition)
 	}
 
 	private var _storeProductMetaResponse = MutableLiveData<Resource<StoreProductResponse>>()
@@ -596,6 +596,19 @@ class DashViewModel @Inject constructor(
 			return@launch
 		}
 		_getAgoraTokenResponse.value = repo.getAgoraToken(channel, uId)
+	}
+
+	private var _getShippingProfileResponse = MutableLiveData<Resource<GetShippingProfilesResponse>>()
+	val getShippingProfileRepo: MutableLiveData<Resource<GetShippingProfilesResponse>>
+		get() = _getShippingProfileResponse
+
+	fun getShippingProfile(
+	) = viewModelScope.launch {
+		if (!networkMonitor.hasInternet()) {
+			_getShippingProfileResponse.value = NO_INTERNET_ERROR
+			return@launch
+		}
+		_getShippingProfileResponse.value = repo.getShippingProfile()
 	}
 
 }

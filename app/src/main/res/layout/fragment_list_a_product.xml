@@ -512,7 +512,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/margin"
-                    android:visibility="gone"
                     app:title="Shipping" />
 
                 <TextView
@@ -520,7 +519,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="@dimen/half_margin"
-                    android:visibility="gone"
                     android:text="@string/shipping_profile" />
 
                 <com.google.android.material.textfield.TextInputLayout
@@ -528,17 +526,17 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="@dimen/margin"
-                    android:visibility="gone"
                     app:endIconDrawable="@drawable/ic_forward"
                     app:endIconMode="custom">
 
-                    <com.google.android.material.textfield.TextInputEditText
+                    <com.google.android.material.textfield.MaterialAutoCompleteTextView
                         android:id="@+id/shipping_profile"
                         style="@style/inputTextStyle"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:editable="false"
-                        android:hint="@string/select_profile" />
+                        android:hint="@string/select_profile"
+                        android:focusable="false"
+                        android:focusableInTouchMode="false"/>
 
                 </com.google.android.material.textfield.TextInputLayout>
 

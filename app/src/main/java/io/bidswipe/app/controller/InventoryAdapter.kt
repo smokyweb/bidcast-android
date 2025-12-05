@@ -3,6 +3,7 @@ package io.bidswipe.app.controller
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
+import androidx.core.text.buildSpannedString
 import androidx.core.view.isVisible
 import com.zerobranch.layout.SwipeLayout
 import io.bidswipe.app.R
@@ -10,6 +11,7 @@ import io.bidswipe.app.base.BaseAdapter
 import io.bidswipe.app.databinding.InventoryItemBinding
 import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.network.response.GetMyInventoryResponse
+import io.bidswipe.app.utils.Const
 import io.bidswipe.app.utils.asCapital
 import io.bidswipe.app.utils.asMoney
 import io.bidswipe.app.utils.loadUrl
@@ -37,13 +39,22 @@ class InventoryAdapter(
 			bind.bidsCount.isVisible = item?.status == "inactive"
 
 			bind.productName.text = item?.title?.asCapital()
-			bind.prodSubTitle.text = item?.category?.name
-
-			if (item?.images?.isNotEmpty() == true){
-				bind.productImage.loadUrl(mCtx, item.images.get(0)?:"", placeHolder = R.drawable.placeholder_rect)
+			bind.prodSubTitle.text = buildSpannedString {
+				append(item?.productCondition ?:"Condition")
+				append(Const.BULLET)
+				append(item?.category?.name)
 			}
 
-			bind.price.text = (item?.pricing ?: "0").asMoney()
+			if (item?.images?.isNotEmpty() == true){
+				bind.productImage.loadUrl(mCtx, item.images[0] ?:"", placeHolder = R.drawable.placeholder_rect)
+			}
+
+			bind.price.text = buildSpannedString {
+				append((item?.pricing ?:"0").asMoney())
+//				append(Const.BULLET)
+//				append(if (item?.auction == true) "Auction" else "MarketPlace")
+			}
+
 			bind.stockCount.text =buildString {
 				append("Stock: ")
 				append(item?.quantity ?:0)

@@ -48,6 +48,7 @@ import io.bidswipe.app.network.response.GetPurchaseDetail
 import io.bidswipe.app.network.response.GetRatingResponse
 import io.bidswipe.app.network.response.GetReportCategoriesResponse
 import io.bidswipe.app.network.response.GetShippingAddressResponse
+import io.bidswipe.app.network.response.GetShippingProfilesResponse
 import io.bidswipe.app.network.response.GetStatesResponse
 import io.bidswipe.app.network.response.GetSubCategoriesResponse
 import io.bidswipe.app.network.response.GetTipAmountResponse
@@ -733,6 +734,20 @@ interface ApiInterface {
 		@Part("product_id") productId: RequestBody?,
 		@Part("status") status: RequestBody?
 	) : CommonResponse
+
+	@Multipart
+	@POST("api/store-shipping-profile")
+	suspend fun storeShippingProfile(
+		@Part("name") name: RequestBody?,
+		@Part("size") size: RequestBody?,
+		@Part("weight") weight: RequestBody?
+	) : CommonResponse
+
+	@GET("api/get-shipping-profile")
+	suspend fun getShippingProfile(
+	) : GetShippingProfilesResponse
+
+
 
 
 }

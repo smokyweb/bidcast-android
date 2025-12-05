@@ -23,6 +23,7 @@ import io.bidswipe.app.network.Resource
 import io.bidswipe.app.network.response.GetCategoryResponse
 import io.bidswipe.app.network.response.GetMailClassesResponse
 import io.bidswipe.app.network.response.GetMyInventoryResponse
+import io.bidswipe.app.network.response.GetShippingProfilesResponse
 import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.ui.dashboard.DashViewModel
 import io.bidswipe.app.utils.Alerts
@@ -56,6 +57,7 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
 	
 	private var categoryId = ""
 	private var selectedCondition = ""
+	private var profileId = ""
 	private var subCategoryId = ""
 	var variantList = mutableListOf<GetCategoryResponse.Data.ExtraField?>()
 	private lateinit var variantAdapter: ProductVariantAdapter
@@ -65,7 +67,8 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
 	private var packageLength = 0.0
 	private var packageWeight = 0.0
 	private var selectedMailClass: GetMailClassesResponse.Data.MailClasses? = null
-	
+	private var profiles = mutableListOf<GetShippingProfilesResponse.Data?>()
+
 	private val imageResult = registerForActivityResult(CustomCropImageContract()) { result ->
 		if (result.isSuccessful) {
 			val imagePath = result.getUriFilePath(mCtx, true)
@@ -297,7 +300,57 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
 		}
 
 		viewModel.getCategory()
-		
+
+		viewModel.getShippingProfile()
+
+		viewModel.getShippingProfileRepo.observe(viewLifecycleOwner) {
+			when (it) {
+				is Resource.Success -> {
+					viewModel.getShippingProfileRepo.value = null
+					bind.loader.isVisible = false
+
+					val mData = it.value.data
+
+					if (mData?.isNotEmpty() == true) {
+						profiles.clear()
+						profiles.addAll(mData)
+					}
+
+					val profileAdapter = ArrayAdapter(mCtx, android.R.layout.simple_list_item_1, profiles.map { it?.name })
+					bind.shippingProfile.setAdapter(profileAdapter)
+					bind.shippingProfile.setDropDownBackgroundDrawable(draw)
+
+					bind.shippingProfile.setOnItemClickListener { _, _, position, _ ->
+
+						profileId = profiles[position]?.id.toString()
+
+						bind.shippingProfile.setText(profiles[position]?.name, false)
+
+					}
+
+					bind.shippingProfile.setHapticClickListener {
+						bind.shippingProfile.showDropDown()
+					}
+
+				}
+
+				is Resource.Error -> {
+					it.parse(mCtx, TAG, object : AlertClicks {
+						override fun primaryClick(dialog: AppBottomSheet) {
+							dialog.dismiss()
+
+						}
+
+						override fun secondaryClick(dialog: AppBottomSheet) {
+							dialog.dismiss()
+						}
+					})
+
+				}
+				else -> {}
+			}
+		}
+
 		viewModel.getCategoryRepo.observe(viewLifecycleOwner) {
 			when (it) {
 				is Resource.Success -> {
@@ -766,7 +819,7 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
 			acceptOffers = (if (bind.acceptOffers.isChecked) "1" else "0"),
 			reserveForLive = (if (bind.reserveForLive.isChecked) "1" else "0"),
 			auction =  false,
-			shippingProfileId = "4",
+			shippingProfileId = profileId.ifEmpty { null },
 			status = type,
 			productImages = images,
 			variant = variantData,

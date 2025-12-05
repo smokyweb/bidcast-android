@@ -28,10 +28,17 @@
             android:layout_weight="1"
             android:id="@+id/shipping_profiles"
             android:nestedScrollingEnabled="false"
-            android:layout_marginHorizontal="@dimen/margin"
+            android:layout_marginHorizontal="@dimen/half_margin"
             tools:itemCount="2"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             tools:listitem="@layout/shipping_profile_item" />
+
+        <io.bidswipe.app.ui.custom.NoDataView
+            android:id="@+id/noData"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:title_text="No Profiles Found"
+            android:visibility="gone"/>
 
         <com.github.ybq.android.spinkit.SpinKitView
             android:id="@+id/bottomLoader"
@@ -41,6 +48,12 @@
             android:visibility="gone" />
 
     </LinearLayout>
+
+    <io.bidswipe.app.ui.custom.LoaderView
+        android:id="@+id/loader"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"/>
 
 
     <com.google.android.material.button.MaterialButton

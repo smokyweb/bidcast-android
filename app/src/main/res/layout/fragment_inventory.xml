@@ -76,32 +76,61 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
-                <com.google.android.material.textfield.TextInputLayout
+                <LinearLayout
                     android:id="@+id/searchLayout"
-                    style="@style/inputBoxStyle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingTop="@dimen/half_margin"
-                    android:paddingBottom="@dimen/half_margin"
-                    app:boxBackgroundColor="@color/surface"
-                    app:boxStrokeWidth="2dp"
-                    app:endIconMode="clear_text"
-                    app:endIconTint="@color/scrim"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:startIconDrawable="@drawable/search"
-                    app:startIconTint="@color/scrim">
+                    android:orientation="horizontal">
 
-                    <com.google.android.material.textfield.MaterialAutoCompleteTextView
-                        android:id="@+id/search"
-                        style="@style/inputTextStyle"
-                        android:layout_width="match_parent"
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/searchBox"
+                        style="@style/inputBoxStyle"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="@dimen/half_margin"
-                        android:layout_marginEnd="@dimen/half_margin"
-                        android:hint="@string/what_are_you_looking_for"
-                        android:inputType="textEmailAddress" />
+                        android:paddingTop="@dimen/half_margin"
+                        android:paddingBottom="@dimen/half_margin"
+                        app:boxBackgroundColor="@color/surface"
+                        app:boxStrokeWidth="2dp"
+                        app:endIconMode="clear_text"
+                        app:endIconTint="@color/scrim"
+                        android:layout_weight="1"
+                        app:startIconDrawable="@drawable/search"
+                        app:startIconTint="@color/scrim">
 
-                </com.google.android.material.textfield.TextInputLayout>
+                        <com.google.android.material.textfield.MaterialAutoCompleteTextView
+                            android:id="@+id/search"
+                            style="@style/inputTextStyle"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/half_margin"
+                            android:layout_marginEnd="@dimen/half_margin"
+                            android:hint="@string/what_are_you_looking_for"
+                            android:inputType="textEmailAddress" />
+
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <com.google.android.material.card.MaterialCardView
+                        style="@style/cardStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginEnd="@dimen/half_margin"
+                        app:cardBackgroundColor="@color/surface"
+                        app:cardCornerRadius="32dp">
+
+                        <androidx.appcompat.widget.AppCompatImageView
+                            android:id="@+id/close"
+                            android:layout_width="44dp"
+                            android:layout_height="44dp"
+                            android:alpha="0.7"
+                            android:padding="12dp"
+                            android:src="@drawable/ic_product_filter"
+                            app:tint="@color/tertiary" />
+
+                    </com.google.android.material.card.MaterialCardView>
+
+                </LinearLayout>
 
                 <HorizontalScrollView
                     android:id="@+id/chip_scroll"
@@ -109,6 +138,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="@dimen/margin"
                     android:layout_marginTop="@dimen/half_margin"
+                    android:visibility="gone"
                     app:layout_constraintTop_toBottomOf="@id/searchLayout"
                     android:scrollbars="none">
 

@@ -5,8 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:gravity="center_vertical"
-    android:layout_marginHorizontal="@dimen/half_margin"
-    android:padding="@dimen/half_margin">
+    android:layout_marginHorizontal="@dimen/half_margin">
 
     <RadioButton
         android:id="@+id/selectBtn"

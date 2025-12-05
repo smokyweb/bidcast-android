@@ -4,40 +4,21 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/top_curve"
     android:backgroundTint="@android:color/white"
     android:elevation="4dp"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    tools:context=".ui.sellerHub.InventoryFilterSheetFragment">
 
-    <LinearLayout
-        android:id="@+id/headingCon"
+    <io.bidswipe.app.ui.custom.Header
+        android:id="@+id/header"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
-        android:layout_marginTop="@dimen/margin"
-        android:orientation="horizontal">
+        app:headerMode="BACK_BUTTON_TITLE_ACTION"
+        app:headerTitle="Inventory"
+        app:layout_constraintTop_toTopOf="parent"
+        app:showBackButton="true" />
 
-        <TextView
-            android:id="@+id/sheetTitle"
-            style="@style/TitleLarge"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginHorizontal="@dimen/margin"
-            android:layout_weight="1"
-            android:text="Filter" />
-
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/close"
-            android:layout_width="44dp"
-            android:layout_height="44dp"
-            android:padding="12dp"
-            android:scaleType="centerCrop"
-            android:src="@drawable/close_ic" />
-
-    </LinearLayout>
-
-    <androidx.core.widget.NestedScrollView
+    <ScrollView
         android:layout_width="match_parent"
         android:fillViewport="true"
         android:scrollbars="none"
@@ -186,17 +167,17 @@
                 tools:itemCount="3"
                 tools:listitem="@layout/inventory_filter_item" />
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/select"
-                style="@style/appBtn"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/margin"
-                android:text="Apply Filter"
-                app:layout_constraintBottom_toBottomOf="parent" />
-
         </LinearLayout>
 
-    </androidx.core.widget.NestedScrollView>
+    </ScrollView>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/select"
+        style="@style/appBtn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/margin"
+        android:text="Apply Filter"
+        app:layout_constraintBottom_toBottomOf="parent" />
 
 </LinearLayout>

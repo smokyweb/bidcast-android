@@ -1,26 +1,17 @@
 package io.bidswipe.app.controller
 
-import android.graphics.Typeface
-import android.text.SpannableString
-import android.text.Spanned
-import android.text.TextPaint
-import android.text.method.LinkMovementMethod
-import android.text.style.ClickableSpan
-import android.text.style.StyleSpan
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import androidx.core.view.isVisible
-import io.bidswipe.app.R
+import androidx.core.text.bold
+import androidx.core.text.buildSpannedString
 import io.bidswipe.app.base.BaseAdapter
-import io.bidswipe.app.databinding.DomesticShipmentItemBinding
 import io.bidswipe.app.databinding.ShippingProfileItemBinding
 import io.bidswipe.app.interfaces.RecyclerClicks
-import io.bidswipe.app.utils.setHapticClickListener
+import io.bidswipe.app.network.response.GetShippingProfilesResponse
 
 class ShippingProfileAdapter(
-    mList: MutableList<String>, val mClicks: RecyclerClicks,
-) : BaseAdapter<String?, ShippingProfileItemBinding>(mList) {
+    mList: MutableList<GetShippingProfilesResponse.Data?>, val mClicks: RecyclerClicks,
+) : BaseAdapter<GetShippingProfilesResponse.Data?, ShippingProfileItemBinding>(mList) {
 
     override fun bindView(inflater: LayoutInflater, parent: ViewGroup) =
         ShippingProfileItemBinding.inflate(inflater, parent, false)
@@ -28,10 +19,22 @@ class ShippingProfileAdapter(
     override fun onBind(
         holder: BaseViewHolder<ShippingProfileItemBinding>,
         position: Int,
-        item: String?,
+        item: GetShippingProfilesResponse.Data?,
     ) {
         with(holder) {
+            bind.itemName.text = item?.name
+            bind.itemWeight.text = buildSpannedString {
+                bold { append("Weight: ")}
+                append(item?.weight)
+            }
 
+            bind.itemScale.text = buildSpannedString {
+               bold { append("Scale: ") }
+                append(item?.size)
+            }
+
+            bind.bundlingOptionYesNo.text = "No"
+            bind.additionalWeightYesNo.text = "No"
         }
     }
 }
