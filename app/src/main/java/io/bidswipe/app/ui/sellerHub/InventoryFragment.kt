@@ -25,12 +25,10 @@ import io.bidswipe.app.controller.InventoryFilterAdapter
 import io.bidswipe.app.controller.InventoryFilterModel
 import io.bidswipe.app.controller.SortingOptionAdapter
 import io.bidswipe.app.databinding.FragmentInventoryBinding
-import io.bidswipe.app.databinding.InventoryFilterSheetBinding
 import io.bidswipe.app.databinding.SortingOptionSheetBinding
 import io.bidswipe.app.interfaces.AlertClicks
 import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.model.LiveMoreOption
-import io.bidswipe.app.model.SellModel
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.network.response.GetMyInventoryResponse
 import io.bidswipe.app.ui.custom.AlertType
@@ -39,13 +37,10 @@ import io.bidswipe.app.utils.Alerts
 import io.bidswipe.app.utils.Utils
 import io.bidswipe.app.utils.finish
 import io.bidswipe.app.utils.hideKeyboard
-import io.bidswipe.app.utils.ids
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request
 import io.bidswipe.app.utils.setHapticClickListener
 import io.bidswipe.app.utils.toListProduct
-import io.bidswipe.app.utils.toScheduleShow
-import io.bidswipe.app.utils.toTutorials
 
 @SuppressLint("NotifyDataSetChanged")
 class InventoryFragment : BaseFragment<SellerHubViewModel, FragmentInventoryBinding>() {
@@ -616,13 +611,13 @@ class InventoryFragment : BaseFragment<SellerHubViewModel, FragmentInventoryBind
 
 		val filterList = mutableListOf(
 			InventoryFilterModel(
-				R.drawable.ic_more,
+				R.drawable.ic_tile_grid,
 				"Category",
 				"category",
 				App.categoryList.map { InventoryFilterModel.InnerModel(it?.id, it?.name) }
 					.toMutableList()
 			),
-			InventoryFilterModel(R.drawable.ic_more, "Condition", "condition", conditionList),
+			InventoryFilterModel(R.drawable.ic_star, "Condition", "condition", conditionList),
 			InventoryFilterModel(R.drawable.ic_product_filter, "Sort By", "sort", sortList),
 		)
 
@@ -631,12 +626,12 @@ class InventoryFragment : BaseFragment<SellerHubViewModel, FragmentInventoryBind
 				override fun itemClick(pos: Int, status: String?) {
 					when (status) {
 						"open" -> {
-							if(filterList[pos].isOpened){
-								filterList[pos].isOpened=false
+							if (filterList[pos].isOpened) {
+								filterList[pos].isOpened = false
 								bind.filtersheet.recycler.adapter?.notifyItemChanged(
 									pos
 								)
-							}else {
+							} else {
 								filterList.forEachIndexed { index, model ->
 									model.isOpened = pos == index
 									bind.filtersheet.recycler.adapter?.notifyItemChanged(
