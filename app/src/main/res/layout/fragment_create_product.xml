@@ -184,152 +184,178 @@
                     android:hint="@string/describe_your_product"
                     android:minLines="4" />
 
-                <TextView
-                    style="@style/TitleSmall"
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <TextView
+                style="@style/TitleSmall"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/half_margin"
+                android:text="Condition" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/inputBoxStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/margin"
+                app:endIconDrawable="@drawable/ic_forward"
+                app:endIconMode="custom">
+
+                <com.google.android.material.textfield.MaterialAutoCompleteTextView
+                    android:id="@+id/condition"
+                    style="@style/inputTextStyle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/margin"
-                    android:layout_marginBottom="@dimen/half_margin"
-                    android:text="Width" />
+                    android:hint="Select Product Condition"
+                    android:focusable="false"
+                    android:focusableInTouchMode="false"/>
 
-                <com.google.android.material.textfield.TextInputLayout
-                    style="@style/inputBoxStyle"
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <TextView
+                style="@style/TitleSmall"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margin"
+                android:layout_marginBottom="@dimen/half_margin"
+                android:text="Width" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/inputBoxStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/margin">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/width"
+                    style="@style/inputTextStyle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="@dimen/margin">
+                    android:hint="Enter Width (cm)"
+                    android:inputType="number" />
 
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/width"
-                        style="@style/inputTextStyle"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:hint="Enter Width (cm)"
-                        android:inputType="number" />
+            </com.google.android.material.textfield.TextInputLayout>
 
-                </com.google.android.material.textfield.TextInputLayout>
+            <TextView
+                style="@style/TitleSmall"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/half_margin"
+                android:text="Height" />
 
-                <TextView
-                    style="@style/TitleSmall"
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/inputBoxStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/margin">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/height"
+                    style="@style/inputTextStyle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="@dimen/half_margin"
-                    android:text="Height" />
+                    android:hint="Enter Height (cm)"
+                    android:inputType="number" />
 
-                <com.google.android.material.textfield.TextInputLayout
-                    style="@style/inputBoxStyle"
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <TextView
+                style="@style/TitleSmall"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/half_margin"
+                android:text="Length" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/inputBoxStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/margin">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/length"
+                    style="@style/inputTextStyle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="@dimen/margin">
+                    android:hint="Enter Length (cm)"
+                    android:inputType="number" />
 
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/height"
-                        style="@style/inputTextStyle"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:hint="Enter Height (cm)"
-                        android:inputType="number" />
+            </com.google.android.material.textfield.TextInputLayout>
 
-                </com.google.android.material.textfield.TextInputLayout>
+            <TextView
+                style="@style/TitleSmall"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/half_margin"
+                android:text="Weight" />
 
-                <TextView
-                    style="@style/TitleSmall"
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/inputBoxStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/margin">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/weight"
+                    style="@style/inputTextStyle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="@dimen/half_margin"
-                    android:text="Length" />
+                    android:hint="Enter Weight (lbs)"
+                    android:inputType="number" />
 
-                <com.google.android.material.textfield.TextInputLayout
-                    style="@style/inputBoxStyle"
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <TextView
+                style="@style/TitleSmall"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margin"
+                android:layout_marginBottom="@dimen/half_margin"
+                android:text="Mail Class" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/inputBoxStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/margin"
+                app:endIconDrawable="@drawable/ic_forward"
+                app:endIconMode="custom">
+
+                <com.google.android.material.textfield.MaterialAutoCompleteTextView
+                    android:id="@+id/mailClass"
+                    style="@style/inputTextStyle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="@dimen/margin">
+                    android:focusable="false"
+                    android:focusableInTouchMode="false"
+                    android:hint="Select Mail Class" />
 
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/length"
-                        style="@style/inputTextStyle"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:hint="Enter Length (cm)"
-                        android:inputType="number" />
+            </com.google.android.material.textfield.TextInputLayout>
 
-                </com.google.android.material.textfield.TextInputLayout>
+            <TextView
+                style="@style/TitleSmall"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margin"
+                android:layout_marginBottom="@dimen/half_margin"
+                android:text="Processing Category" />
 
-                <TextView
-                    style="@style/TitleSmall"
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/inputBoxStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/margin"
+                app:endIconDrawable="@drawable/ic_forward"
+                app:endIconMode="custom">
+
+                <com.google.android.material.textfield.MaterialAutoCompleteTextView
+                    android:id="@+id/procategory"
+                    style="@style/inputTextStyle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="@dimen/half_margin"
-                    android:text="Weight" />
-
-                <com.google.android.material.textfield.TextInputLayout
-                    style="@style/inputBoxStyle"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="@dimen/margin">
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/weight"
-                        style="@style/inputTextStyle"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:hint="Enter Weight (lbs)"
-                        android:inputType="number" />
-
-                </com.google.android.material.textfield.TextInputLayout>
-
-                <TextView
-                    style="@style/TitleSmall"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/margin"
-                    android:layout_marginBottom="@dimen/half_margin"
-                    android:text="Mail Class" />
-
-                <com.google.android.material.textfield.TextInputLayout
-                    style="@style/inputBoxStyle"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="@dimen/margin"
-                    app:endIconDrawable="@drawable/ic_forward"
-                    app:endIconMode="custom">
-
-                    <com.google.android.material.textfield.MaterialAutoCompleteTextView
-                        android:id="@+id/mailClass"
-                        style="@style/inputTextStyle"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:focusable="false"
-                        android:focusableInTouchMode="false"
-                        android:hint="Select Mail Class" />
-
-                </com.google.android.material.textfield.TextInputLayout>
-
-                <TextView
-                    style="@style/TitleSmall"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/margin"
-                    android:layout_marginBottom="@dimen/half_margin"
-                    android:text="Processing Category" />
-
-                <com.google.android.material.textfield.TextInputLayout
-                    style="@style/inputBoxStyle"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="@dimen/margin"
-                    app:endIconDrawable="@drawable/ic_forward"
-                    app:endIconMode="custom">
-
-                    <com.google.android.material.textfield.MaterialAutoCompleteTextView
-                        android:id="@+id/procategory"
-                        style="@style/inputTextStyle"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:focusable="false"
-                        android:focusableInTouchMode="false"
-                        android:hint="@string/select_category" />
-
-                </com.google.android.material.textfield.TextInputLayout>
+                    android:focusable="false"
+                    android:focusableInTouchMode="false"
+                    android:hint="@string/select_category" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -375,8 +401,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:inputType="number"
-                        android:text="1"
                         android:maxLength="2"
+                        android:text="1"
                         android:textAlignment="center"
                         android:textSize="18sp" />
 

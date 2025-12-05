@@ -43,7 +43,7 @@ data class GetMyInventoryResponse(
         @SerializedName("images")
         val images : List<String?>? ,
         @SerializedName("pricing")
-        val pricing : Double? ,
+        val pricing : String? ,
         @SerializedName("product_show")
         val productShow : String? ,
         @SerializedName("purchased_quantity")
@@ -62,6 +62,8 @@ data class GetMyInventoryResponse(
         val mailClass : String? ,
         @SerializedName("processing_category")
         val processingCategory : String? ,
+        @SerializedName("product_condition")
+        val productCondition : String? ,
         @SerializedName("reserve_for_live")
         val reserveForLive : Boolean? ,
         @SerializedName("shipping_profile_id")

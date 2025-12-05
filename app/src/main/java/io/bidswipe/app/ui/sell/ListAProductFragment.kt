@@ -55,6 +55,7 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
 	private var mailClassesList = mutableListOf<GetMailClassesResponse.Data.MailClasses?>()
 	
 	private var categoryId = ""
+	private var selectedCondition = ""
 	private var subCategoryId = ""
 	var variantList = mutableListOf<GetCategoryResponse.Data.ExtraField?>()
 	private lateinit var variantAdapter: ProductVariantAdapter
@@ -264,17 +265,37 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
 		}
 		
 		bind.publish.setHapticClickListener {
-			saveProduct()
+			validateProductData()
 		}
 		
 		bind.saveDraft.setHapticClickListener {
-			saveProduct("draft")
+			validateProductData("draft")
 		}
 		
 		bind.category.setHapticClickListener {
 			showCategorySheet(categoryList, "category")
 		}
-		
+
+		val conditionList = mutableListOf<String>("New",
+				"Like New",
+				"Gently Loved",
+				"Well Loved",
+				"Other",
+				"Trending")
+
+		val adapter = ArrayAdapter(mCtx, android.R.layout.simple_list_item_1, conditionList)
+		bind.condition.setAdapter(adapter)
+		val draw = ContextCompat.getDrawable(mCtx, R.drawable.card_8)
+		bind.condition.setDropDownBackgroundDrawable(draw)
+
+		bind.condition.setOnItemClickListener { _, _, position, _ ->
+			selectedCondition = conditionList[position].replace(" ", "_")
+		}
+
+		bind.condition.setHapticClickListener {
+			bind.condition.showDropDown()
+		}
+
 		viewModel.getCategory()
 		
 		viewModel.getCategoryRepo.observe(viewLifecycleOwner) {
@@ -488,7 +509,7 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
 		}
 	}
 	
-	fun saveProduct(type: String = "active") {
+	fun validateProductData(type: String = "active") {
 		hideKeyboard(bind.root)
 		try {
 			packageWidth = bind.width.value().toDoubleOrNull() ?: 0.0
@@ -500,153 +521,119 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
 			return
 		}
 		
-		val variantData = getVariantData()
-		when {
-			
-			imageList.filterNotNull().isEmpty() -> {
-				Alerts.error(mCtx, "Please select at least one image")
+
+
+		if (type == "draft") {
+
+			when {
+
+				categoryId.isEmpty() -> {
+					Alerts.error(mCtx, "Please select category")
+				}
+
+				bind.productTitle.value().isEmpty() -> {
+					bind.productTitle.requestFocus()
+					Alerts.error(mCtx, "Please enter product title")
+				}
+
+				else -> {
+
+					saveProduct("draft")
+
+				}
 			}
-			
-			categoryId.isEmpty() -> {
-				Alerts.error(mCtx, "Please select category")
-			}
-			
-			bind.productTitle.value().isEmpty() -> {
-				bind.productTitle.requestFocus()
-				Alerts.error(mCtx, "Please enter product title")
-			}
-			
-			bind.description.value().isEmpty() -> {
-				bind.description.requestFocus()
-				Alerts.error(mCtx, "Please enter description")
-			}
-			
-			
-			packageWidth <= 0 || packageHeight <= 0 || packageLength <= 0 || packageWeight <= 0 -> {
-				Alerts.error(mCtx, "Please enter all package dimensions")
-			}
-			
-			selectedMailClass?.maxWidthIn != null && (packageWidth > (selectedMailClass?.maxWidthIn
-				?: 0.0)) -> {
-				Alerts.error(
-					mCtx,
-					"Width exceeds maximum of ${selectedMailClass?.maxWidthIn} cm"
-				)
-			}
-			
-			selectedMailClass?.maxHeightIn != null && (packageHeight > (selectedMailClass?.maxHeightIn
-				?: 0.0)) -> {
-				Alerts.error(
-					mCtx,
-					"Height exceeds maximum of ${selectedMailClass?.maxHeightIn} cm"
-				)
-			}
-			
-			selectedMailClass?.maxLengthIn != null && (packageLength > (selectedMailClass?.maxLengthIn
-				?: 0.0)) -> {
-				Alerts.error(
-					mCtx,
-					"Length exceeds maximum of ${selectedMailClass?.maxLengthIn} cm"
-				)
-			}
-			
-			selectedMailClass?.maxWeightLbs != null && (packageWeight > (selectedMailClass?.maxWeightLbs
-				?: 0.0)) -> {
-				Alerts.error(
-					mCtx,
-					"Weight exceeds maximum of ${selectedMailClass?.maxWeightLbs} lbs"
-				)
-			}
-			
-			selectedMailClass == null -> {
-				Alerts.error(mCtx, "Please select a mail class")
-			}
-			
-			bind.proCategory.value().isEmpty() -> {
-				bind.proCategory.requestFocus()
-				Alerts.error(mCtx, "Please enter processing category")
-			}
-			
-			bind.quantity.value().isEmpty() -> {
-				bind.quantity.requestFocus()
-				Alerts.error(mCtx, "Please enter quantity")
-			}
-			
-			bind.price.value().isEmpty() -> {
-				bind.price.requestFocus()
-				Alerts.error(mCtx, "Please enter price")
-			}
-			
-			/*	bind.shippingProfile.value().isEmpty() -> {
+
+		}else{
+
+			when {
+
+				imageList.filterNotNull().isEmpty() -> {
+					Alerts.error(mCtx, "Please select at least one image")
+				}
+
+				categoryId.isEmpty() -> {
+					Alerts.error(mCtx, "Please select category")
+				}
+
+				bind.productTitle.value().isEmpty() -> {
+					bind.productTitle.requestFocus()
+					Alerts.error(mCtx, "Please enter product title")
+				}
+
+				bind.description.value().isEmpty() -> {
+					bind.description.requestFocus()
+					Alerts.error(mCtx, "Please enter description")
+				}
+
+
+				packageWidth <= 0 || packageHeight <= 0 || packageLength <= 0 || packageWeight <= 0 -> {
+					Alerts.error(mCtx, "Please enter all package dimensions")
+				}
+
+				selectedMailClass?.maxWidthIn != null && (packageWidth > (selectedMailClass?.maxWidthIn
+					?: 0.0)) -> {
+					Alerts.error(
+						mCtx,
+						"Width exceeds maximum of ${selectedMailClass?.maxWidthIn} cm"
+					)
+				}
+
+				selectedMailClass?.maxHeightIn != null && (packageHeight > (selectedMailClass?.maxHeightIn
+					?: 0.0)) -> {
+					Alerts.error(
+						mCtx,
+						"Height exceeds maximum of ${selectedMailClass?.maxHeightIn} cm"
+					)
+				}
+
+				selectedMailClass?.maxLengthIn != null && (packageLength > (selectedMailClass?.maxLengthIn
+					?: 0.0)) -> {
+					Alerts.error(
+						mCtx,
+						"Length exceeds maximum of ${selectedMailClass?.maxLengthIn} cm"
+					)
+				}
+
+				selectedMailClass?.maxWeightLbs != null && (packageWeight > (selectedMailClass?.maxWeightLbs
+					?: 0.0)) -> {
+					Alerts.error(
+						mCtx,
+						"Weight exceeds maximum of ${selectedMailClass?.maxWeightLbs} lbs"
+					)
+				}
+
+				selectedMailClass == null -> {
+					Alerts.error(mCtx, "Please select a mail class")
+				}
+
+				bind.proCategory.value().isEmpty() -> {
+					bind.proCategory.requestFocus()
+					Alerts.error(mCtx, "Please enter processing category")
+				}
+
+				bind.quantity.value().isEmpty() -> {
+					bind.quantity.requestFocus()
+					Alerts.error(mCtx, "Please enter quantity")
+				}
+
+				bind.price.value().isEmpty() -> {
+					bind.price.requestFocus()
+					Alerts.error(mCtx, "Please enter price")
+				}
+
+				bind.shippingProfile.value().isEmpty() -> {
 					Alerts.error(mCtx, "Please select shipping")
 				}
-				*/
-			
-			else -> {
-				bind.loader.isVisible = true
-				// Save final state before submission
-				saveStateToViewModel()
-				
-				val imagePartList = mutableListOf<MultipartBody.Part>()
-				val thumbnailPartList = mutableListOf<MultipartBody.Part>()
-				imageList.filter { it?.contains(Const.BASE_URL) == false }.forEach { image ->
-					if (image != null) {
-						val name = System.currentTimeMillis().toString() + "_product_gallery.jpeg"
-						val thumbnailName =
-							System.currentTimeMillis().toString() + "_product_thumbnail.jpeg"
-						
-						val imagePart = Utils.imagePart("images[]", name, File(image))
-						imagePart.let { element -> imagePartList.add(element) }
-						
-						val thumbnailFile = File(image)
-						val thumbnailPart =
-							Utils.imagePart("thumbnails[]", thumbnailName, thumbnailFile)
-						thumbnailPart.let { element -> thumbnailPartList.add(element) }
-					}
-				}
-				val productId = if (product != null) product?.id.toString() else null
-				if (imagePartList.isNotEmpty()) {
-					viewModel.storeProductMeta(imagePartList, thumbnailPartList)
 
-					viewModel.storeProductMetaRepo.observe(viewLifecycleOwner) {
-						when (it) {
-							is Resource.Success -> {
-								createProduct(
-									productId,
-									type,
-									it.value.data?.map {productMeta ->
-										mapOf(
-											"image" to productMeta?.images,
-											"thumbnail" to productMeta?.thumbnail
-										)
-									},
-									variantData
-								)
-							}
-							
-							is Resource.Error -> {
-								bind.loader.isVisible = false
-								it.parse(mCtx, TAG, object : AlertClicks {
-									override fun primaryClick(dialog: AppBottomSheet) {
-										dialog.dismiss()
-									}
-									
-									override fun secondaryClick(dialog: AppBottomSheet) {
-										dialog.dismiss()
-									}
-								})
-							}
-							
-							else -> {}
-						}
-					}
-					
-				} else {
-					createProduct(productId.toString(), type, emptyList(), variantData)
+
+				else -> {
+					saveProduct("active")
 				}
-				
 			}
+
 		}
+
+
 	}
 	
 	private fun addProductData(product: GetMyInventoryResponse.Data?) {
@@ -768,7 +755,7 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
 		variantData: List<Map<String?, Any?>>? = null,
 	) {
 		viewModel.storeProduct(
-			productId = productId,
+			productId = productId?.ifEmpty { null },
 			categoryId = categoryId,
 			subCategoryId = if(subCategoryId.isEmpty()) null else subCategoryId.toInt(),
 			title = bind.productTitle.value(),
@@ -788,7 +775,8 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
 			length = bind.length.value(),
 			weight = bind.weight.value(),
 			mailClass = selectedMailClass?.label,
-			processingCategory = bind.proCategory.value()
+			processingCategory = bind.proCategory.value(),
+			productCondition = selectedCondition
 		)
 		
 	}
@@ -806,6 +794,74 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
 		viewModel.productFormQuantity = ""
 		viewModel.productFormPrice = ""
 		viewModel.productFormCategoryText = ""
+	}
+
+	private fun saveProduct(type: String = "active"){
+
+		val variantData = getVariantData()
+
+		bind.loader.isVisible = true
+		// Save final state before submission
+		saveStateToViewModel()
+
+		val imagePartList = mutableListOf<MultipartBody.Part>()
+		val thumbnailPartList = mutableListOf<MultipartBody.Part>()
+		imageList.filter { it?.contains(Const.BASE_URL) == false }.forEach { image ->
+			if (image != null) {
+				val name = System.currentTimeMillis().toString() + "_product_gallery.jpeg"
+				val thumbnailName =
+					System.currentTimeMillis().toString() + "_product_thumbnail.jpeg"
+
+				val imagePart = Utils.imagePart("images[]", name, File(image))
+				imagePart.let { element -> imagePartList.add(element) }
+
+				val thumbnailFile = File(image)
+				val thumbnailPart =
+					Utils.imagePart("thumbnails[]", thumbnailName, thumbnailFile)
+				thumbnailPart.let { element -> thumbnailPartList.add(element) }
+			}
+		}
+		val productId = if (product != null) product?.id.toString() else ""
+		if (imagePartList.isNotEmpty()) {
+			viewModel.storeProductMeta(imagePartList, thumbnailPartList)
+
+			viewModel.storeProductMetaRepo.observe(viewLifecycleOwner) {
+				when (it) {
+					is Resource.Success -> {
+						createProduct(
+							productId,
+							type,
+							it.value.data?.map {productMeta ->
+								mapOf(
+									"image" to productMeta?.images,
+									"thumbnail" to productMeta?.thumbnail
+								)
+							},
+							variantData
+						)
+					}
+
+					is Resource.Error -> {
+						bind.loader.isVisible = false
+						it.parse(mCtx, TAG, object : AlertClicks {
+							override fun primaryClick(dialog: AppBottomSheet) {
+								dialog.dismiss()
+							}
+
+							override fun secondaryClick(dialog: AppBottomSheet) {
+								dialog.dismiss()
+							}
+						})
+					}
+
+					else -> {}
+				}
+			}
+
+		} else {
+			createProduct(productId.toString(), type, emptyList(), variantData)
+		}
+
 	}
 	
 	override fun onPause() {

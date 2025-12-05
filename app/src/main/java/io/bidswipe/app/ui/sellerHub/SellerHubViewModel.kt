@@ -75,6 +75,8 @@ class SellerHubViewModel @Inject constructor(
 
 	fun getMyInventory(
         status : RequestBody? ,
+        category: RequestBody? = null,
+        formate: RequestBody? = null,
         page : RequestBody? ,
 		search : RequestBody? = null
     ) = viewModelScope.launch {
@@ -82,7 +84,7 @@ class SellerHubViewModel @Inject constructor(
 			_getMyInventoryResponse.value = NO_INTERNET_ERROR
 			return@launch
 		}
-		_getMyInventoryResponse.value = repo.getMyInventory(status , page, search)
+		_getMyInventoryResponse.value = repo.getMyInventory(status , category , formate , page, search)
 	}
 
 	private var _getOrderListingResponse = MutableLiveData<Resource<GetOrdersResponse>>()
@@ -460,6 +462,22 @@ class SellerHubViewModel @Inject constructor(
 			return@launch
 		}
 		_deleteProductResponse.value = repo.deleteProduct(productId)
+	}
+
+
+	private var _updateProductStatusResponse = MutableLiveData<Resource<CommonResponse>>()
+	val updateProductStatusRepo: MutableLiveData<Resource<CommonResponse>>
+		get() = _updateProductStatusResponse
+
+	fun updateProductStatus(
+		productId: RequestBody?,
+		status: RequestBody?
+	) = viewModelScope.launch {
+		if (!networkMonitor.hasInternet()) {
+			_updateProductStatusResponse.value = NO_INTERNET_ERROR
+			return@launch
+		}
+		_updateProductStatusResponse.value = repo.updateProductStatus(productId,status)
 	}
 
 }
