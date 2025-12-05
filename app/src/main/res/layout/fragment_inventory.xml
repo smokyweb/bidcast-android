@@ -210,6 +210,16 @@
 
     </LinearLayout>
 
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <include
+            android:id="@+id/filtersheet"
+            layout="@layout/inventory_filter_sheet"/>
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
     <io.bidswipe.app.ui.custom.LoaderView
         android:id="@+id/loader"
         android:layout_width="match_parent"

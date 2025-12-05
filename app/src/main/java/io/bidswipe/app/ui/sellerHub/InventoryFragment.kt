@@ -10,10 +10,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isNotEmpty
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.tabs.TabLayout
 import io.bidswipe.app.App
 import io.bidswipe.app.R
@@ -28,6 +30,7 @@ import io.bidswipe.app.databinding.SortingOptionSheetBinding
 import io.bidswipe.app.interfaces.AlertClicks
 import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.model.LiveMoreOption
+import io.bidswipe.app.model.SellModel
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.network.response.GetMyInventoryResponse
 import io.bidswipe.app.ui.custom.AlertType
@@ -36,10 +39,13 @@ import io.bidswipe.app.utils.Alerts
 import io.bidswipe.app.utils.Utils
 import io.bidswipe.app.utils.finish
 import io.bidswipe.app.utils.hideKeyboard
+import io.bidswipe.app.utils.ids
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request
 import io.bidswipe.app.utils.setHapticClickListener
 import io.bidswipe.app.utils.toListProduct
+import io.bidswipe.app.utils.toScheduleShow
+import io.bidswipe.app.utils.toTutorials
 
 @SuppressLint("NotifyDataSetChanged")
 class InventoryFragment : BaseFragment<SellerHubViewModel, FragmentInventoryBinding>() {
@@ -56,6 +62,8 @@ class InventoryFragment : BaseFragment<SellerHubViewModel, FragmentInventoryBind
 	private val optionList = mutableListOf<LiveMoreOption?>()
 	private var selectedTab = "active"
 
+	private lateinit var filterSheet: BottomSheetBehavior<ConstraintLayout>
+
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		super.onViewCreated(view, savedInstanceState)
 		val from = requireActivity().intent.getStringExtra("from")
@@ -63,7 +71,6 @@ class InventoryFragment : BaseFragment<SellerHubViewModel, FragmentInventoryBind
 //        from = arguments?.getString("from")
 
 //		setupFilterChips()
-
 
 		val isSelectionMode = from == "addProduct"
 
@@ -165,11 +172,9 @@ class InventoryFragment : BaseFragment<SellerHubViewModel, FragmentInventoryBind
 			hideKeyboard(it)
 		}
 
+		setUpfilterSheet()
 		bind.close.setHapticClickListener {
-
-			val myBottomSheetFragment = InventoryFilterSheetFragment()
-			myBottomSheetFragment.show(parentFragmentManager, "TAG")
-//			showFilterSheet()
+			filterSheet.state = BottomSheetBehavior.STATE_EXPANDED
 		}
 
 		bind.recycler.addOnScrollListener(object : RecyclerView.OnScrollListener() {
@@ -582,12 +587,17 @@ class InventoryFragment : BaseFragment<SellerHubViewModel, FragmentInventoryBind
 		sortingOptionSheet.show()
 	}
 
-	private fun showFilterSheet() {
+	private fun setUpfilterSheet() {
+		BottomSheetBehavior.from(bind.filtersheet.root)
 
-		val filterSheetBind = InventoryFilterSheetBinding.bind(
-			layoutInflater.inflate(R.layout.inventory_filter_sheet, null, false)
-		)
-		val filterSheet = Alerts.appBottomSheet(mCtx, false, filterSheetBind)
+		filterSheet = BottomSheetBehavior.from(bind.filtersheet.root).also {
+			it.peekHeight = 0
+			it.isHideable = true
+			it.isDraggable = false
+			it.isFitToContents = false
+		}
+
+		filterSheet.state = BottomSheetBehavior.STATE_COLLAPSED
 
 		val conditionList = mutableListOf(
 			InventoryFilterModel.InnerModel(null, "New"),
@@ -597,7 +607,6 @@ class InventoryFragment : BaseFragment<SellerHubViewModel, FragmentInventoryBind
 			InventoryFilterModel.InnerModel(null, "Other"),
 			InventoryFilterModel.InnerModel(null, "Trending"),
 		)
-
 		val sortList = mutableListOf(
 			InventoryFilterModel.InnerModel(null, "Newest First"),
 			InventoryFilterModel.InnerModel(null, "Oldest First"),
@@ -617,20 +626,20 @@ class InventoryFragment : BaseFragment<SellerHubViewModel, FragmentInventoryBind
 			InventoryFilterModel(R.drawable.ic_product_filter, "Sort By", "sort", sortList),
 		)
 
-		filterSheetBind.recycler.adapter =
+		bind.filtersheet.recycler.adapter =
 			InventoryFilterAdapter(filterList, object : RecyclerClicks {
 				override fun itemClick(pos: Int, status: String?) {
 					when (status) {
 						"open" -> {
-							if (filterList[pos].isOpened) {
-								filterList[pos].isOpened = false
-								filterSheetBind.recycler.adapter?.notifyItemChanged(
+							if(filterList[pos].isOpened){
+								filterList[pos].isOpened=false
+								bind.filtersheet.recycler.adapter?.notifyItemChanged(
 									pos
 								)
-							} else {
+							}else {
 								filterList.forEachIndexed { index, model ->
 									model.isOpened = pos == index
-									filterSheetBind.recycler.adapter?.notifyItemChanged(
+									bind.filtersheet.recycler.adapter?.notifyItemChanged(
 										index,
 										model
 									)
@@ -641,16 +650,14 @@ class InventoryFragment : BaseFragment<SellerHubViewModel, FragmentInventoryBind
 				}
 			})
 
-		filterSheetBind.priceMoreIcon.setOnClickListener {
-			filterSheetBind.priceLayout.isExpanded = !filterSheetBind.priceLayout.isExpanded
+		bind.filtersheet.priceMoreIcon.setOnClickListener {
+			bind.filtersheet.priceLayout.isExpanded = !bind.filtersheet.priceLayout.isExpanded
 		}
 
-		filterSheetBind.close.setHapticClickListener {
-			filterSheet.dismiss()
+		bind.filtersheet.close.setHapticClickListener {
+			filterSheet.state = BottomSheetBehavior.STATE_COLLAPSED
 		}
 
-		filterSheet.show()
+
 	}
-
-
 }

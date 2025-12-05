@@ -67,7 +67,8 @@ class CreateShippingProfileFragment : BaseFragment<SellerHubViewModel, FragmentC
 			bind.weightUnits.showDropDown()
 		}
 
-		bind.save.setHapticClickListener {
+
+    bind.save.setHapticClickListener {
 
 			when {
 
