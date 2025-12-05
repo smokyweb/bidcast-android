@@ -412,6 +412,8 @@ interface ApiInterface {
 	@POST("api/get-my-inventory")
 	suspend fun getMyInventory(
 		@Part("status") status : RequestBody? ,
+		@Part("category") category : RequestBody? ,
+		@Part("formate") format : RequestBody? ,
 		@Part("page") page : RequestBody? ,
 		@Part("search") search : RequestBody? ,
 	) : GetMyInventoryResponse
@@ -724,6 +726,13 @@ interface ApiInterface {
 		@Query("product_id") productId: String?,
 		@Query("order_id") orderId: String?
 	) : FetchOrderDetailResponse
+
+	@Multipart
+	@POST("api/update-product-status")
+	suspend fun updateProductStatus(
+		@Part("product_id") productId: RequestBody?,
+		@Part("status") status: RequestBody?
+	) : CommonResponse
 
 
 }

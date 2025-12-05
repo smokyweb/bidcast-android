@@ -96,7 +96,8 @@ class ProductWeightFragment : BaseFragment<ScheduleShowViewModel, FragmentProduc
 			width = viewModel.productWidth,
 			mailClass = viewModel.productMailClass?.label ?: "",
 			processingCategory = viewModel.productProcessingCategory ?: "",
-			)
+			productCondition = viewModel.condition ,
+		)
 
 	}
 

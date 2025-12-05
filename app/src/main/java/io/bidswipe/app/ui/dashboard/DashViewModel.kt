@@ -194,7 +194,8 @@ class DashViewModel @Inject constructor(
 		length : String? = null ,
 		weight : String? = null ,
 		mailClass : String? = null ,
-		processingCategory : String? = null
+		processingCategory : String? = null,
+		productCondition : String? = null
 		) = viewModelScope.launch {
 		if (!networkMonitor.hasInternet()) {
 			_storeProductResponse.value = NO_INTERNET_ERROR
@@ -222,7 +223,8 @@ class DashViewModel @Inject constructor(
 			length ,
 			weight ,
 			mailClass ,
-			processingCategory
+			processingCategory,
+			productCondition
 		)
 	}
 

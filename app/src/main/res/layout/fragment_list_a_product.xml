@@ -207,6 +207,32 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="@dimen/half_margin"
+                    android:text="Condition" />
+
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/inputBoxStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/margin"
+                    app:endIconDrawable="@drawable/ic_forward"
+                    app:endIconMode="custom">
+
+                    <com.google.android.material.textfield.MaterialAutoCompleteTextView
+                        android:id="@+id/condition"
+                        style="@style/inputTextStyle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="Select Product Condition"
+                        android:focusable="false"
+                        android:focusableInTouchMode="false"/>
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <TextView
+                    style="@style/TitleSmall"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/half_margin"
                     android:text="Width" />
 
                 <com.google.android.material.textfield.TextInputLayout
@@ -298,7 +324,6 @@
                     style="@style/TitleSmall"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/margin"
                     android:layout_marginBottom="@dimen/half_margin"
                     android:text="Mail Class" />
 
@@ -321,12 +346,10 @@
 
                 </com.google.android.material.textfield.TextInputLayout>
 
-
                 <TextView
                     style="@style/TitleSmall"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/margin"
                     android:layout_marginBottom="@dimen/half_margin"
                     android:text="Processing Category" />
 
@@ -364,6 +387,7 @@
                 <com.google.android.material.card.MaterialCardView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:visibility="gone"
                     app:strokeWidth="2dp">
 
                     <LinearLayout
@@ -392,7 +416,6 @@
                 <io.bidswipe.app.ui.custom.Heading
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/margin"
                     app:title="Pricing" />
 
                 <TextView

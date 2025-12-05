@@ -46,6 +46,7 @@ class CreateProductFragment : BaseFragment<ScheduleShowViewModel, FragmentCreate
 	private var subCategoryList = mutableListOf<GetCategoryResponse.Data?>()
 	private var mailClassesList = mutableListOf<GetMailClassesResponse.Data.MailClasses?>()
 	private var uploadItemIndex = -1
+	private var selectedCondition = ""
 	var isSubCategory = false
 	var variantList = mutableListOf<GetCategoryResponse.Data.ExtraField?>()
 	private val imageList get() = viewModel.productImages
@@ -85,9 +86,31 @@ class CreateProductFragment : BaseFragment<ScheduleShowViewModel, FragmentCreate
 		bind.addVariant.setHapticClickListener {
 
 		}
+
+		val conditionList = mutableListOf<String>("New",
+			"Like New",
+			"Gently Loved",
+			"Well Loved",
+			"Other",
+			"Trending")
+
+		val adapter = ArrayAdapter(mCtx, android.R.layout.simple_list_item_1, conditionList)
+		bind.condition.setAdapter(adapter)
+		val draw = ContextCompat.getDrawable(mCtx, R.drawable.card_8)
+		bind.condition.setDropDownBackgroundDrawable(draw)
+
+		bind.condition.setOnItemClickListener { _, _, position, _ ->
+			viewModel.condition = conditionList[position].replace(" ", "_")
+		}
+
+		bind.condition.setHapticClickListener {
+			bind.condition.showDropDown()
+		}
+
 		bind.productTitle.setText(viewModel.productTitle)
 		bind.description.setText(viewModel.productDescription)
 		bind.quantity.setText(viewModel.productQuantity.toString())
+		bind.condition.setText(viewModel.condition.toString())
 		bind.width.setText(viewModel.productWidth)
 		bind.height.setText(viewModel.productHeight)
 		bind.length.setText(viewModel.productLength)
@@ -105,6 +128,9 @@ class CreateProductFragment : BaseFragment<ScheduleShowViewModel, FragmentCreate
 		}
 		bind.description.doAfterTextChanged {
 			viewModel.productDescription = it?.toString()?.trim().orEmpty()
+		}
+		bind.condition.doAfterTextChanged {
+			viewModel.condition = it?.toString()?.trim().orEmpty()
 		}
 		bind.width.doAfterTextChanged {
 			viewModel.productWidth = it?.toString()?.trim().orEmpty()

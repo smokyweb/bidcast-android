@@ -46,6 +46,7 @@ class ScheduleShowViewModel @Inject constructor(
 	var productSubCategoryId = ""
 	var productSubCategoryName = ""
 	var productQuantity = 1
+	var condition = ""
 	var productWidth = ""
 	var productHeight = ""
 	var productLength = ""
@@ -189,6 +190,7 @@ class ScheduleShowViewModel @Inject constructor(
 		weight: String? = null,
 		mailClass: String? = null,
 		processingCategory: String? = null,
+		productCondition: String? = null
 	) = viewModelScope.launch {
 		if (!networkMonitor.hasInternet()) {
 			_storeProductResponse.value = NO_INTERNET_ERROR
@@ -216,7 +218,8 @@ class ScheduleShowViewModel @Inject constructor(
 			length = length,
 			weight = weight,
 			mailClass = mailClass,
-			processingCategory = processingCategory
+			processingCategory = processingCategory,
+			productCondition = productCondition
 		)
 	}
 

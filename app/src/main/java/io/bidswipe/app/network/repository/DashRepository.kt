@@ -62,7 +62,8 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
 		length: String? = null,
 		weight: String? = null,
 		mailClass: String? = null,
-		processingCategory: String? = null
+		processingCategory: String? = null,
+		productCondition: String? = null
 	) = call {
 		api.storeProduct(
 			StoreProductRequest(
@@ -86,7 +87,8 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
 				length = length,
 				weight = weight,
 				mailClass = mailClass,
-				processingCategory = processingCategory
+				processingCategory = processingCategory,
+				productCondition = productCondition
 			),
 			productId
 		)
@@ -312,9 +314,11 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
 	
 	suspend fun getMyInventory(
 		status: RequestBody?,
+		category: RequestBody?,
+		formate: RequestBody?,
 		page: RequestBody?,
 		search: RequestBody?,
-	) = call { api.getMyInventory(status, page, search) }
+	) = call { api.getMyInventory(status,category,formate, page, search) }
 	
 	suspend fun getOrderListing(
 		page: RequestBody?,
@@ -551,5 +555,10 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
 		productId: String?,
 		orderId: String?
 	) = call { api.fetchOrderDetail( productId ,orderId) }
+
+	suspend fun updateProductStatus(
+		productId: RequestBody?,
+		status: RequestBody?
+	) = call { api.updateProductStatus( productId ,status) }
 
 }

@@ -48,5 +48,6 @@ data class StoreProductRequest(
 	val mailClass : String? = null ,
 	@SerializedName("processing_category")
 	val processingCategory : String? = null ,
-
+	@SerializedName("product_condition")
+	val productCondition : String? = null ,
 	)

@@ -17,7 +17,8 @@ data class LiveShowModel(
     val showId: String?,
     var allowBidForAll: Boolean? = true,
     val bidCountDown: String?,
-    val showTimer: String?
+    val showTimer: String?,
+    val platform: String? = "android",
 ) : Serializable {
 	data class Product(
         val category: String? = null,

@@ -3,6 +3,7 @@ package io.bidswipe.app.controller
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import com.zerobranch.layout.SwipeLayout
 import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseAdapter
@@ -32,10 +33,17 @@ class InventoryAdapter(
 	) {
 		with(holder) {
 
+			bind.statusCard.isVisible = item?.status == "inactive"
+			bind.bidsCount.isVisible = item?.status == "inactive"
+
 			bind.productName.text = item?.title?.asCapital()
 			bind.prodSubTitle.text = item?.category?.name
-			bind.price.text = item?.pricing.toString().asMoney()
-			bind.productImage.loadUrl(mCtx, item?.images?.get(0).toString())
+
+			if (item?.images?.isNotEmpty() == true){
+				bind.productImage.loadUrl(mCtx, item.images.get(0)?:"", placeHolder = R.drawable.placeholder_rect)
+			}
+
+			bind.price.text = (item?.pricing ?: "0").asMoney()
 			bind.stockCount.text =buildString {
 				append("Stock: ")
 				append(item?.quantity ?:0)
@@ -83,6 +91,12 @@ class InventoryAdapter(
 					mClicks.itemClick(position, "delete")
 				}
 			}
+
+			bind.click.setOnLongClickListener {
+				mClicks.itemClick(position, "longClick")
+				true
+			}
+
 		}
 	}
 
