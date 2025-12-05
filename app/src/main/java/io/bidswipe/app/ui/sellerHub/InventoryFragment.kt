@@ -13,17 +13,24 @@ import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.tabs.TabLayout
+import io.bidswipe.app.App
 import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseFragment
 import io.bidswipe.app.controller.InventoryAdapter
+import io.bidswipe.app.controller.InventoryFilterAdapter
+import io.bidswipe.app.controller.InventoryFilterModel
+import io.bidswipe.app.databinding.CategoryBottomSheetBinding
 import io.bidswipe.app.databinding.FragmentInventoryBinding
+import io.bidswipe.app.databinding.InventoryFilterSheetBinding
 import io.bidswipe.app.interfaces.AlertClicks
 import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.network.response.GetMyInventoryResponse
 import io.bidswipe.app.ui.custom.AlertType
 import io.bidswipe.app.ui.custom.AppBottomSheet
+import io.bidswipe.app.utils.Alerts
 import io.bidswipe.app.utils.finish
 import io.bidswipe.app.utils.hideKeyboard
 import io.bidswipe.app.utils.parse
@@ -32,302 +39,379 @@ import io.bidswipe.app.utils.setHapticClickListener
 import io.bidswipe.app.utils.toListProduct
 
 @SuppressLint("NotifyDataSetChanged")
-class InventoryFragment : BaseFragment<SellerHubViewModel , FragmentInventoryBinding>() {
-	override fun getModel() : Class<SellerHubViewModel> = SellerHubViewModel::class.java
+class InventoryFragment : BaseFragment<SellerHubViewModel, FragmentInventoryBinding>() {
+    override fun getModel(): Class<SellerHubViewModel> = SellerHubViewModel::class.java
 
-	override fun getBind(inflater : LayoutInflater , view : ViewGroup?) =
-		FragmentInventoryBinding.inflate(inflater , view , false)
+    override fun getBind(inflater: LayoutInflater, view: ViewGroup?) =
+        FragmentInventoryBinding.inflate(inflater, view, false)
 
-	private var itemList = mutableListOf<GetMyInventoryResponse.Data?>()
-	private var filteredList = mutableListOf<GetMyInventoryResponse.Data?>()
-	private lateinit var adapter : InventoryAdapter
-	private var isLoading = false
-	private var page = 1
-	private var selectedTab = "active"
+    private var itemList = mutableListOf<GetMyInventoryResponse.Data?>()
+    private var filteredList = mutableListOf<GetMyInventoryResponse.Data?>()
+    private lateinit var adapter: InventoryAdapter
+    private var isLoading = false
+    private var page = 1
+    private var selectedTab = "active"
 
-	override fun onViewCreated(view : View , savedInstanceState : Bundle?) {
-		super.onViewCreated(view , savedInstanceState)
-		val from = requireActivity().intent.getStringExtra("from")
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        val from = requireActivity().intent.getStringExtra("from")
 
 //        from = arguments?.getString("from")
 
-		val isSelectionMode = from == "addProduct"
+        val isSelectionMode = from == "addProduct"
 
-		if (isSelectionMode) {
-			bind.tabs.isVisible = false
-			bind.addNewProduct.text = buildString {
-				append("Add Selected")
-			}
-			bind.addNewProduct.setHapticClickListener {
-				val selectedItems = itemList.filter { it?.selected == true }
-				if (selectedItems.isEmpty()) {
-					Toast.makeText(mCtx , "Please select at least one product" , Toast.LENGTH_SHORT).show()
-					return@setHapticClickListener
-				}
+        if (isSelectionMode) {
+            bind.tabs.isVisible = false
+            bind.addNewProduct.text = buildString {
+                append("Add Selected")
+            }
+            bind.addNewProduct.setHapticClickListener {
+                val selectedItems = itemList.filter { it?.selected == true }
+                if (selectedItems.isEmpty()) {
+                    Toast.makeText(mCtx, "Please select at least one product", Toast.LENGTH_SHORT)
+                        .show()
+                    return@setHapticClickListener
+                }
 
-				val selectedList = ArrayList<GetMyInventoryResponse.Data>()
-				selectedItems.forEach { it?.let { selectedList.add(it) } }
+                val selectedList = ArrayList<GetMyInventoryResponse.Data>()
+                selectedItems.forEach { it?.let { selectedList.add(it) } }
 
-				val intent = Intent()
-				intent.putExtra("selectedProducts" , selectedList)
-				activity?.setResult(Activity.RESULT_OK , intent)
-				finish()
-			}
+                val intent = Intent()
+                intent.putExtra("selectedProducts", selectedList)
+                activity?.setResult(Activity.RESULT_OK, intent)
+                finish()
+            }
 
-		} else {
-			bind.addNewProduct.text = getString(R.string.new_product)
-			bind.addNewProduct.setHapticClickListener {
-				startActivity(mCtx.toListProduct())
-			}
+        } else {
+            bind.addNewProduct.text = getString(R.string.new_product)
+            bind.addNewProduct.setHapticClickListener {
+                startActivity(mCtx.toListProduct())
+            }
 
-		}
+        }
 
-		adapter = InventoryAdapter(filteredList , isSelectionMode , object : RecyclerClicks {
-			override fun itemClick(pos : Int , status : String?) {
-				filteredList[pos]?.let { item ->
+        adapter = InventoryAdapter(filteredList, isSelectionMode, object : RecyclerClicks {
+            override fun itemClick(pos: Int, status: String?) {
+                filteredList[pos]?.let { item ->
 
-					if (status == "delete"){
-						deleteProductDialog(item.id.toString(),pos)
-					}else{
-						if (isSelectionMode) {
-							item.selected = ! (item.selected ?: false)
-							adapter.notifyItemChanged(pos)
-						} else {
-							startActivity(mCtx.toListProduct().putExtra("product" , item))
-						}
-					}
-				}
-			}
-		})
-		
+                    if (status == "delete") {
+                        deleteProductDialog(item.id.toString(), pos)
+                    } else {
+                        if (isSelectionMode) {
+                            item.selected = !(item.selected ?: false)
+                            adapter.notifyItemChanged(pos)
+                        } else {
+                            startActivity(mCtx.toListProduct().putExtra("product", item))
+                        }
+                    }
+                }
+            }
+        })
+
 //		bind.recycler.adapter = adapter
-		bind.searchLayout.isEndIconVisible = false
+        bind.searchLayout.isEndIconVisible = false
 
-		bind.search.addTextChangedListener(object : TextWatcher {
-			override fun beforeTextChanged(s : CharSequence? , start : Int , count : Int , after : Int) {}
-			override fun onTextChanged(s : CharSequence? , start : Int , before : Int , count : Int) {}
-			override fun afterTextChanged(s : Editable?) {
-				val query = s?.toString()?.trim() ?: ""
-				bind.searchLayout.isEndIconVisible = query.isNotEmpty()
+        bind.search.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+            override fun afterTextChanged(s: Editable?) {
+                val query = s?.toString()?.trim() ?: ""
+                bind.searchLayout.isEndIconVisible = query.isNotEmpty()
 
-				page = 1
-				isLoading = false
+                page = 1
+                isLoading = false
 
-				bind.loader.isVisible = true
-				bind.recycler.isVisible = false
-				bind.noData.isVisible = false
+                bind.loader.isVisible = true
+                bind.recycler.isVisible = false
+                bind.noData.isVisible = false
 
-				if (query.isNotEmpty()) {
-					viewModel.getMyInventory(selectedTab.request() , page.toString().request() , query.request())
-				} else {
-					viewModel.getMyInventory(selectedTab.request() , page.toString().request())
-				}
-			}
-		})
+                if (query.isNotEmpty()) {
+                    viewModel.getMyInventory(
+                        selectedTab.request(),
+                        page.toString().request(),
+                        query.request()
+                    )
+                } else {
+                    viewModel.getMyInventory(selectedTab.request(), page.toString().request())
+                }
+            }
+        })
 
-		bind.searchLayout.setEndIconOnClickListener {
-			bind.search.text?.clear()
-			bind.searchLayout.isEndIconVisible = false
-			page = 1
-			viewModel.getMyInventory(selectedTab.request() , page.toString().request())
-		}
+        bind.searchLayout.setEndIconOnClickListener {
+            bind.search.text?.clear()
+            bind.searchLayout.isEndIconVisible = false
+            page = 1
+            viewModel.getMyInventory(selectedTab.request(), page.toString().request())
+        }
 
-		bind.header.onBackClick {
-			finish()
-		}
+        bind.header.onBackClick {
+            finish()
+        }
 
-		bind.main.setHapticClickListener {
-			hideKeyboard(it)
-		}
-		bind.root.setHapticClickListener {
-			hideKeyboard(it)
-		}
-		
-		bind.recycler.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-			override fun onScrolled(recyclerView : RecyclerView , dx : Int , dy : Int) {
-				super.onScrolled(recyclerView , dx , dy)
-				val layoutManager = bind.recycler.layoutManager as LinearLayoutManager
-				val lastItemPosition = layoutManager.findLastVisibleItemPosition()
-				if (lastItemPosition == (filteredList.size - 1)) {
-					if (! isLoading) {
-						isLoading = true
-						page ++
-						bind.bottomLoader.isVisible = true
-						viewModel.getMyInventory(selectedTab.request() , page.toString().request())
-					}
-				}
-			}
-		})
-		
-		bind.recycler.adapter = adapter
+        bind.main.setHapticClickListener {
+            hideKeyboard(it)
+        }
+        bind.root.setHapticClickListener {
+            hideKeyboard(it)
+        }
 
-		bind.tabs.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
-			override fun onTabSelected(tab : TabLayout.Tab?) {
-				selectedTab = tab?.text.toString().lowercase()
-				page = 1
-				bind.search.text?.clear()
-				bind.searchLayout.isEndIconVisible = false
-				bind.loader.isVisible = true
-				viewModel.getMyInventory(selectedTab.request() , page.toString().request())
-			}
+//        bind.filter.setOnClickListener {
+//            showFilterSheet()
+//        }
 
-			override fun onTabUnselected(tab : TabLayout.Tab?) {}
-			override fun onTabReselected(tab : TabLayout.Tab?) {}
-		})
-		
-		bind.swipeRefreshLayout.setOnRefreshListener {
-			bind.search.setText("")
-			page = 1
-			isLoading = false
-			itemList.clear()
-			filteredList.clear()
-			bind.recycler.isVisible = false
-			bind.noData.isVisible = false
-			viewModel.getMyInventory(selectedTab.request() , page.toString().request())
-		}
-		bind.noInternet.onClick {
-			bind.noInternet.isVisible = false
-			bind.bottomLoader.isVisible = false
-			bind.loader.isVisible = true
+        bind.recycler.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+                val layoutManager = bind.recycler.layoutManager as LinearLayoutManager
+                val lastItemPosition = layoutManager.findLastVisibleItemPosition()
+                if (lastItemPosition == (filteredList.size - 1)) {
+                    if (!isLoading) {
+                        isLoading = true
+                        page++
+                        bind.bottomLoader.isVisible = true
+                        viewModel.getMyInventory(selectedTab.request(), page.toString().request())
+                    }
+                }
+            }
+        })
 
-			page = 1
-			isLoading = false
-			itemList.clear()
-			filteredList.clear()
-			bind.recycler.isVisible = false
-			bind.noData.isVisible = false
-			viewModel.getMyInventory(selectedTab.request() , page.toString().request())
-		}
+        bind.recycler.adapter = adapter
 
-		bind.loader.isVisible = true
+        bind.tabs.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+            override fun onTabSelected(tab: TabLayout.Tab?) {
+                selectedTab = tab?.text.toString().lowercase()
+                page = 1
+                bind.search.text?.clear()
+                bind.searchLayout.isEndIconVisible = false
+                bind.loader.isVisible = true
+                viewModel.getMyInventory(selectedTab.request(), page.toString().request())
+            }
 
-		viewModel.getMyInventory("active".request() , "1".request())
-		viewModel.getMyInventoryRepo.observe(viewLifecycleOwner) {
-			when (it) {
-				is Resource.Success -> {
-					bind.loader.isVisible = false
-					bind.bottomLoader.isVisible = false
-					bind.noInternet.isVisible = false
-					bind.swipeRefreshLayout.isRefreshing = false
-					bind.addNewProduct.isVisible = true
+            override fun onTabUnselected(tab: TabLayout.Tab?) {}
+            override fun onTabReselected(tab: TabLayout.Tab?) {}
+        })
 
-					val mData = it.value.data ?: emptyList()
+        bind.swipeRefreshLayout.setOnRefreshListener {
+            bind.search.setText("")
+            page = 1
+            isLoading = false
+            itemList.clear()
+            filteredList.clear()
+            bind.recycler.isVisible = false
+            bind.noData.isVisible = false
+            viewModel.getMyInventory(selectedTab.request(), page.toString().request())
+        }
+        bind.noInternet.onClick {
+            bind.noInternet.isVisible = false
+            bind.bottomLoader.isVisible = false
+            bind.loader.isVisible = true
 
-					if (page == 1) {
-						itemList.clear()
-					}
-					itemList.addAll(mData)
-					
-					filteredList.clear()
-					filteredList.addAll(itemList)
+            page = 1
+            isLoading = false
+            itemList.clear()
+            filteredList.clear()
+            bind.recycler.isVisible = false
+            bind.noData.isVisible = false
+            viewModel.getMyInventory(selectedTab.request(), page.toString().request())
+        }
 
-					if (filteredList.isNotEmpty()) {
-						bind.recycler.isVisible = true
-						bind.noData.isVisible = false
-					} else {
-						bind.recycler.isVisible = false
-						bind.noData.isVisible = true
-						bind.addNewProduct.isVisible = false
-					}
+        bind.loader.isVisible = true
 
-					isLoading = page >= (it.value.totalPage ?: 0)
-					adapter.notifyDataSetChanged()
+        viewModel.getMyInventory("active".request(), "1".request())
+        viewModel.getMyInventoryRepo.observe(viewLifecycleOwner) {
+            when (it) {
+                is Resource.Success -> {
+                    bind.loader.isVisible = false
+                    bind.bottomLoader.isVisible = false
+                    bind.noInternet.isVisible = false
+                    bind.swipeRefreshLayout.isRefreshing = false
+                    bind.addNewProduct.isVisible = true
 
-				}
+                    val mData = it.value.data ?: emptyList()
 
-				is Resource.Error -> {
-					bind.loader.isVisible = false
-					bind.bottomLoader.isVisible = false
-					bind.swipeRefreshLayout.isRefreshing = false
+                    if (page == 1) {
+                        itemList.clear()
+                    }
+                    itemList.addAll(mData)
 
-					if (it.isNetworkError) {
-						bind.loader.isVisible = false
-						bind.noInternet.isVisible = true
-						bind.recycler.isVisible = false
-						bind.addNewProduct.isVisible = false
+                    filteredList.clear()
+                    filteredList.addAll(itemList)
 
-					} else {
-						bind.noInternet.isVisible = false
-						bind.addNewProduct.isVisible = true
-						it.parse(mCtx , TAG , object : AlertClicks {
-							override fun primaryClick(dialog : AppBottomSheet) {
-								dialog.dismiss()
+                    if (filteredList.isNotEmpty()) {
+                        bind.recycler.isVisible = true
+                        bind.noData.isVisible = false
+                    } else {
+                        bind.recycler.isVisible = false
+                        bind.noData.isVisible = true
+                        bind.addNewProduct.isVisible = false
+                    }
 
-							}
+                    isLoading = page >= (it.value.totalPage ?: 0)
+                    adapter.notifyDataSetChanged()
 
-							override fun secondaryClick(dialog : AppBottomSheet) {
-								dialog.dismiss()
+                }
 
-							}
-						})
-					}
-				}
+                is Resource.Error -> {
+                    bind.loader.isVisible = false
+                    bind.bottomLoader.isVisible = false
+                    bind.swipeRefreshLayout.isRefreshing = false
 
-				else -> {}
-			}
-		}
+                    if (it.isNetworkError) {
+                        bind.loader.isVisible = false
+                        bind.noInternet.isVisible = true
+                        bind.recycler.isVisible = false
+                        bind.addNewProduct.isVisible = false
 
-		viewModel.deleteProductRepo.observe(viewLifecycleOwner) {
-			when (it) {
-				is Resource.Success -> {
-					bind.loader.isVisible = false
-					it.value.data
+                    } else {
+                        bind.noInternet.isVisible = false
+                        bind.addNewProduct.isVisible = true
+                        it.parse(mCtx, TAG, object : AlertClicks {
+                            override fun primaryClick(dialog: AppBottomSheet) {
+                                dialog.dismiss()
 
-				}
+                            }
 
-				is Resource.Error -> {
-					bind.loader.isVisible = false
+                            override fun secondaryClick(dialog: AppBottomSheet) {
+                                dialog.dismiss()
 
-					it.parse(mCtx, TAG, object : AlertClicks {
-						override fun primaryClick(dialog: AppBottomSheet) {
-							dialog.dismiss()
+                            }
+                        })
+                    }
+                }
 
-						}
+                else -> {}
+            }
+        }
 
-						override fun secondaryClick(dialog: AppBottomSheet) {
-							dialog.dismiss()
+        viewModel.deleteProductRepo.observe(viewLifecycleOwner) {
+            when (it) {
+                is Resource.Success -> {
+                    bind.loader.isVisible = false
+                    it.value.data
 
-						}
-					})
+                }
 
-				}
+                is Resource.Error -> {
+                    bind.loader.isVisible = false
 
-				else -> {}
+                    it.parse(mCtx, TAG, object : AlertClicks {
+                        override fun primaryClick(dialog: AppBottomSheet) {
+                            dialog.dismiss()
 
-			}
-		}
+                        }
 
-	}
+                        override fun secondaryClick(dialog: AppBottomSheet) {
+                            dialog.dismiss()
 
-	private fun deleteProductDialog(productId: String, position: Int) {
-		AppBottomSheet(
-			mCtx,
-			R.drawable.trash,
-			"Delete!",
-			"Are you sure you want to delete?",
-			primaryBtnText = "Yes",
-			secondaryBtnText = "No",
-			canCancel = true,
-			showSecondary = true,
-			iconPadding = 16,
-			alertType = AlertType.ERROR,
-			clicks = object : AlertClicks {
-				override fun primaryClick(dialog: AppBottomSheet) {
-					dialog.dismiss()
-					bind.loader.isVisible = true
-					viewModel.deleteProduct(productId)
+                        }
+                    })
 
-					filteredList.removeAt(position)
-					adapter.notifyItemRemoved(position)
-				}
+                }
 
-				override fun secondaryClick(dialog: AppBottomSheet) {
-					dialog.dismiss()
-				}
-			}
+                else -> {}
 
-		).show()
+            }
+        }
 
-	}
+    }
+
+    private fun deleteProductDialog(productId: String, position: Int) {
+        AppBottomSheet(
+            mCtx,
+            R.drawable.trash,
+            "Delete!",
+            "Are you sure you want to delete?",
+            primaryBtnText = "Yes",
+            secondaryBtnText = "No",
+            canCancel = true,
+            showSecondary = true,
+            iconPadding = 16,
+            alertType = AlertType.ERROR,
+            clicks = object : AlertClicks {
+                override fun primaryClick(dialog: AppBottomSheet) {
+                    dialog.dismiss()
+                    bind.loader.isVisible = true
+                    viewModel.deleteProduct(productId)
+
+                    filteredList.removeAt(position)
+                    adapter.notifyItemRemoved(position)
+                }
+
+                override fun secondaryClick(dialog: AppBottomSheet) {
+                    dialog.dismiss()
+                }
+            }
+
+        ).show()
+    }
+
+    private fun showFilterSheet() {
+        val filterSheetBind = InventoryFilterSheetBinding.bind(
+            layoutInflater.inflate(R.layout.inventory_filter_sheet, null, false)
+        )
+        val filterSheet = Alerts.appBottomSheet(mCtx, true, filterSheetBind)
+
+
+        val conditionList = mutableListOf(
+            InventoryFilterModel.InnerModel(null, "New"),
+            InventoryFilterModel.InnerModel(null, "Like New"),
+            InventoryFilterModel.InnerModel(null, "Gently Loved"),
+            InventoryFilterModel.InnerModel(null, "Well Loved"),
+            InventoryFilterModel.InnerModel(null, "Other"),
+            InventoryFilterModel.InnerModel(null, "Trending"),
+        )
+        val sortList = mutableListOf(
+            InventoryFilterModel.InnerModel(null, "Newest First"),
+            InventoryFilterModel.InnerModel(null, "Oldest First"),
+            InventoryFilterModel.InnerModel(null, "Price: Low to High"),
+            InventoryFilterModel.InnerModel(null, "Price: High to Low"),
+        )
+
+        val filterList = mutableListOf(
+            InventoryFilterModel(
+                R.drawable.ic_more,
+                "Category",
+                "category",
+                App.categoryList.map { InventoryFilterModel.InnerModel(it?.id, it?.name) }
+                    .toMutableList()
+            ),
+            InventoryFilterModel(R.drawable.ic_more, "Condition", "condition", conditionList),
+            InventoryFilterModel(R.drawable.ic_product_filter, "Sort By", "sort", sortList),
+        )
+
+        filterSheetBind.recycler.adapter =
+            InventoryFilterAdapter(filterList, object : RecyclerClicks {
+                override fun itemClick(pos: Int, status: String?) {
+                    when (status) {
+                        "open" -> {
+                            if(filterList[pos].isOpened){
+                                filterList[pos].isOpened=false
+                                filterSheetBind.recycler.adapter?.notifyItemChanged(
+                                    pos
+                                )
+                            }else {
+                                filterList.forEachIndexed { index, model ->
+                                    model.isOpened = pos == index
+                                    filterSheetBind.recycler.adapter?.notifyItemChanged(
+                                        index,
+                                        model
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
+            })
+
+        filterSheetBind.priceMoreIcon.setOnClickListener {
+            filterSheetBind.priceLayout.isExpanded = !filterSheetBind.priceLayout.isExpanded
+        }
+
+        filterSheetBind.close.setHapticClickListener {
+            filterSheet.dismiss()
+        }
+
+        filterSheet.show()
+    }
 
 }
