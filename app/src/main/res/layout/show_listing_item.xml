@@ -33,7 +33,7 @@
         </com.google.android.material.card.MaterialCardView>
 
         <LinearLayout
-            android:layout_marginStart="16dp"
+            android:layout_marginStart="@dimen/half_margin"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -59,10 +59,7 @@
                 style="@style/BodyMedium"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:drawablePadding="4dp"
                 android:text="135 RSVPs"
-                android:layout_marginBottom="4dp"
-                app:drawableStartCompat="@drawable/ic_person_outlined"
                 app:drawableTint="@color/onSurface" />
 
                 <TextView
@@ -70,9 +67,7 @@
                     style="@style/BodySmall"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:drawablePadding="@dimen/half_margin"
-                    android:text="8:00 PM EST"
-                    app:drawableStartCompat="@drawable/ic_clock" />
+                    android:text="8:00 PM EST" />
 
         </LinearLayout>
 

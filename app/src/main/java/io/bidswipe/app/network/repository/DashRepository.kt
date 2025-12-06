@@ -7,6 +7,7 @@ import io.bidswipe.app.model.StoreProductRequest
 import io.bidswipe.app.network.ApiInterface
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
+import retrofit2.http.Part
 import javax.inject.Inject
 
 class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRepository() {
@@ -315,10 +316,14 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
 	suspend fun getMyInventory(
 		status: RequestBody?,
 		category: RequestBody?,
-		formate: RequestBody?,
+		format: RequestBody?,
 		page: RequestBody?,
 		search: RequestBody?,
-	) = call { api.getMyInventory(status,category,formate, page, search) }
+		categoryIds : RequestBody? ,
+		conditions : RequestBody? ,
+		minPrice : RequestBody? ,
+		maxPrice : RequestBody? ,
+	) = call { api.getMyInventory(status,category,format, page, search, categoryIds, conditions, minPrice, maxPrice) }
 	
 	suspend fun getOrderListing(
 		page: RequestBody?,

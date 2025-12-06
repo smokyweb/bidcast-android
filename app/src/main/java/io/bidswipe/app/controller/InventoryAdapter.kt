@@ -41,12 +41,14 @@ class InventoryAdapter(
 			bind.productName.text = item?.title?.asCapital()
 			bind.prodSubTitle.text = buildSpannedString {
 				append(item?.productCondition ?:"Condition")
+				append(" ")
 				append(Const.BULLET)
+				append(" ")
 				append(item?.category?.name)
 			}
 
 			if (item?.images?.isNotEmpty() == true){
-				bind.productImage.loadUrl(mCtx, item.images[0] ?:"", placeHolder = R.drawable.placeholder_rect)
+			 	bind.productImage.loadUrl(mCtx, item.images[0] ?:"", placeHolder = R.drawable.placeholder_rect)
 			}
 
 			bind.price.text = buildSpannedString {

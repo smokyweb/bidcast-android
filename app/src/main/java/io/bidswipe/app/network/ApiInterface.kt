@@ -414,9 +414,13 @@ interface ApiInterface {
 	suspend fun getMyInventory(
 		@Part("status") status : RequestBody? ,
 		@Part("category") category : RequestBody? ,
-		@Part("formate") format : RequestBody? ,
+		@Part("format") format : RequestBody? ,
 		@Part("page") page : RequestBody? ,
 		@Part("search") search : RequestBody? ,
+		@Part("category_ids") categoryIds : RequestBody? ,
+		@Part("conditions") conditions : RequestBody? ,
+		@Part("min_price") minPrice : RequestBody? ,
+		@Part("max_price") maxPrice : RequestBody? ,
 	) : GetMyInventoryResponse
 
 	@Multipart

@@ -7,7 +7,7 @@
     android:background="@android:color/white"
     app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/headingCon"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -20,20 +20,46 @@
             style="@style/TitleLarge"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             android:layout_gravity="center"
+            android:gravity="center"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
             android:layout_marginHorizontal="@dimen/margin"
             android:layout_weight="1"
-            android:text="Filter" />
+            android:text="Filters" />
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/close"
-            android:layout_width="44dp"
-            android:layout_height="44dp"
-            android:padding="12dp"
+            android:layout_width="32dp"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_height="32dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:padding="4dp"
             android:scaleType="centerCrop"
-            android:src="@drawable/close_ic" />
+            android:src="@drawable/ic_back" />
 
-    </LinearLayout>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/clear_filter"
+            style="@style/appBtnTrans"
+            android:layout_width="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/margin"
+            android:minWidth="0dp"
+            android:minHeight="0dp"
+            android:padding="0dp"
+            android:text="Clear Filters"
+            android:textColor="@color/primary"
+            android:textSize="14dp"
+            app:backgroundTint="@color/transparent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
@@ -41,7 +67,7 @@
         android:layout_weight="1"
         android:fillViewport="true"
         android:scrollbars="none"
-        app:layout_constraintBottom_toTopOf="@+id/select"
+        app:layout_constraintBottom_toTopOf="@+id/apply_filter"
         app:layout_constraintTop_toBottomOf="@+id/headingCon">
 
         <LinearLayout
@@ -120,7 +146,6 @@
 
                         </com.google.android.material.textfield.TextInputLayout>
 
-
                         <com.google.android.material.textfield.TextInputLayout
                             style="@style/inputBoxStyle"
                             android:layout_width="0dp"
@@ -191,12 +216,12 @@
     </androidx.core.widget.NestedScrollView>
 
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/select"
+        android:id="@+id/apply_filter"
         style="@style/appBtn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/margin"
-        android:text="Apply Filter"
+        android:text="Apply Filters"
         app:layout_constraintBottom_toBottomOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

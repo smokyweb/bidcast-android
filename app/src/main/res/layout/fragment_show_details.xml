@@ -57,7 +57,8 @@
 
                     <TextView
                         android:id="@+id/duration"
-                        style="@style/BodyMedium"
+                        style="@style/BodySmall"
+                        android:alpha="0.8"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="Show Duration: 56m" />
@@ -89,19 +90,21 @@
                     style="@style/shadowStyle"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginVertical="@dimen/half_margin"
                     android:layout_marginStart="@dimen/margin"
-                    android:layout_marginEnd="@dimen/half_margin"
+                    android:layout_marginVertical="4dp"
+                    android:layout_marginEnd="4dp"
                     android:layout_weight="1"
                     android:background="@drawable/card_8"
                     android:orientation="vertical"
-                    android:padding="@dimen/margin">
+                    android:paddingHorizontal="@dimen/margin"
+                    android:paddingVertical="@dimen/half_margin">
 
                     <TextView
-                        style="@style/BodyLarge"
+                        style="@style/BodySmall"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="@string/sales"
+                        android:alpha="0.8"
                         android:textColor="@color/tertiary"
                         app:layout_constraintEnd_toEndOf="@+id/view"
                         app:layout_constraintStart_toStartOf="@+id/view"
@@ -125,19 +128,21 @@
                     style="@style/shadowStyle"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginVertical="@dimen/half_margin"
-                    android:layout_marginStart="@dimen/half_margin"
+                    android:layout_marginVertical="4dp"
+                    android:layout_marginStart="4dp"
                     android:layout_marginEnd="@dimen/margin"
                     android:layout_weight="1"
                     android:background="@drawable/card_8"
                     android:orientation="vertical"
-                    android:padding="@dimen/margin">
+                    android:paddingHorizontal="@dimen/margin"
+                    android:paddingVertical="@dimen/half_margin">
 
                     <TextView
-                        style="@style/BodyLarge"
+                        style="@style/BodySmall"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="Orders"
+                        android:alpha="0.8"
                         android:textColor="@color/tertiary"
                         app:layout_constraintEnd_toEndOf="@+id/view"
                         app:layout_constraintStart_toStartOf="@+id/view"
@@ -170,16 +175,17 @@
                     style="@style/shadowStyle"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginVertical="@dimen/half_margin"
+                    android:layout_marginVertical="4dp"
                     android:layout_marginStart="@dimen/margin"
-                    android:layout_marginEnd="@dimen/half_margin"
+                    android:layout_marginEnd="4dp"
                     android:layout_weight="1"
                     android:background="@drawable/card_8"
                     android:orientation="vertical"
-                    android:padding="@dimen/margin">
+                    android:paddingHorizontal="@dimen/margin"
+                    android:paddingVertical="@dimen/half_margin">
 
                     <TextView
-                        style="@style/BodyLarge"
+                        style="@style/BodySmall"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="Show Duration"
@@ -206,16 +212,17 @@
                     style="@style/shadowStyle"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginVertical="@dimen/half_margin"
-                    android:layout_marginStart="@dimen/half_margin"
+                    android:layout_marginVertical="4dp"
+                    android:layout_marginStart="4dp"
                     android:layout_marginEnd="@dimen/margin"
                     android:layout_weight="1"
                     android:background="@drawable/card_8"
                     android:orientation="vertical"
-                    android:padding="@dimen/margin">
+                    android:paddingHorizontal="@dimen/margin"
+                    android:paddingVertical="@dimen/half_margin">
 
                     <TextView
-                        style="@style/BodyLarge"
+                        style="@style/BodySmall"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="Shares"
@@ -255,26 +262,27 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:baselineAligned="false"
                 android:weightSum="2">
 
                 <LinearLayout
                     style="@style/shadowStyle"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginVertical="@dimen/half_margin"
+                    android:layout_marginVertical="4dp"
                     android:layout_marginStart="@dimen/margin"
-                    android:layout_marginEnd="@dimen/half_margin"
+                    android:layout_marginEnd="4dp"
                     android:layout_weight="1"
                     android:background="@drawable/card_8"
                     android:orientation="vertical"
-                    android:padding="@dimen/margin">
+                    android:paddingHorizontal="@dimen/margin"
+                    android:paddingVertical="@dimen/half_margin">
 
                     <TextView
-                        style="@style/BodyLarge"
+                        style="@style/BodySmall"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="Viewers"
+                        android:alpha="0.8"
                         android:textColor="@color/tertiary"
                         app:layout_constraintEnd_toEndOf="@+id/view"
                         app:layout_constraintStart_toStartOf="@+id/view"
@@ -298,19 +306,21 @@
                     style="@style/shadowStyle"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginVertical="@dimen/half_margin"
-                    android:layout_marginStart="@dimen/half_margin"
-                    android:layout_marginEnd="@dimen/half_margin"
+                    android:layout_marginVertical="4dp"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginEnd="@dimen/margin"
                     android:layout_weight="1"
                     android:background="@drawable/card_8"
                     android:orientation="vertical"
-                    android:padding="@dimen/margin">
+                    android:paddingHorizontal="@dimen/margin"
+                    android:paddingVertical="@dimen/half_margin">
 
                     <TextView
-                        style="@style/BodyLarge"
+                        style="@style/BodySmall"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="New Followers"
+                        android:alpha="0.8"
                         android:textColor="@color/tertiary"
                         app:layout_constraintEnd_toEndOf="@+id/view"
                         app:layout_constraintStart_toStartOf="@+id/view"
@@ -337,19 +347,21 @@
                 style="@style/shadowStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginVertical="@dimen/half_margin"
+                android:layout_marginVertical="4dp"
                 android:layout_marginHorizontal="@dimen/margin"
                 android:background="@drawable/card_8"
                 android:orientation="vertical"
-                android:padding="@dimen/margin">
+                android:paddingHorizontal="@dimen/margin"
+                android:paddingVertical="@dimen/half_margin">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
                     <TextView
-                        style="@style/BodyLarge"
+                        style="@style/BodySmall"
                         android:layout_width="0dp"
                         android:layout_weight="1"
+                        android:alpha="0.8"
                         android:layout_height="wrap_content"
                         android:text="Contributions Total"
                         android:textColor="@color/tertiary"
@@ -382,18 +394,20 @@
                 style="@style/shadowStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginVertical="@dimen/half_margin"
+                android:layout_marginVertical="4dp"
                 android:layout_marginHorizontal="@dimen/margin"
                 android:layout_weight="1"
                 android:background="@drawable/card_8"
                 android:orientation="vertical"
-                android:padding="@dimen/margin">
+                android:paddingHorizontal="@dimen/margin"
+                android:paddingVertical="@dimen/half_margin">
 
                 <TextView
-                    style="@style/BodyLarge"
+                    style="@style/BodySmall"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Total Bids"
+                    android:alpha="0.8"
                     android:textColor="@color/tertiary"
                     app:layout_constraintEnd_toEndOf="@+id/view"
                     app:layout_constraintStart_toStartOf="@+id/view"

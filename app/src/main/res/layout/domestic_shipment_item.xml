@@ -11,6 +11,7 @@
         android:layout_height="48dp"
         android:id="@+id/image"
         android:layout_marginEnd="@dimen/half_margin"
+        android:scaleType="centerCrop"
         android:src="@drawable/placeholder_square"/>
 
         <LinearLayout
@@ -24,6 +25,7 @@
                 style="@style/TitleLarge"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:textSize="16dp"
                 android:text="USPS First-Class Mail Letter" />
 
             <TextView
@@ -31,6 +33,7 @@
                 style="@style/BodySmall"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:alpha="0.8"
                 android:text="For shipments under $20 that weigh 3 oz or less in Trading Card Games, Sports Cards, or Stickers categories. View the full criteria here." />
 
         </LinearLayout>

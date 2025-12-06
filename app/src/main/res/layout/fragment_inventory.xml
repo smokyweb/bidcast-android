@@ -168,7 +168,7 @@
                     style="@style/appLoader"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:visibility="visible"
+                    android:visibility="gone"
                     app:layout_constraintBottom_toTopOf="@id/addNewProduct"
                     app:layout_constraintTop_toBottomOf="@+id/recycler" />
 

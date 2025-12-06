@@ -20,9 +20,10 @@ class InventoryFilterInnerAdapter(
     ) {
         with(holder) {
             bind.checkbox.text = item?.title
+            bind.checkbox.isChecked = item?.selected ?: false
 
-            bind.checkbox.setOnCheckedChangeListener { _,_->
-
+            bind.checkbox.setOnCheckedChangeListener { _, _ ->
+                mClicks.itemClick(position)
 
             }
         }

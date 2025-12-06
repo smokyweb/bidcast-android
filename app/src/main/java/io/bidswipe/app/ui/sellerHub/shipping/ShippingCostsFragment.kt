@@ -52,12 +52,11 @@ class ShippingCostsFragment :
             override fun itemClick(pos: Int, status: String?) {
                 costList.forEachIndexed { index, item ->
                     item.isSelected = index == pos
-                    (bind.costRecycler.adapter as ShippingProfileAdapter).notifyItemChanged(
+                    (bind.costRecycler.adapter as DomesticShipmentAdapter).notifyItemChanged(
                         index,
                         item
                     )
                 }
-
             }
         })
 
