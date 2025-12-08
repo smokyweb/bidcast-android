@@ -80,12 +80,10 @@ class ProductWeightFragment : BaseFragment<ScheduleShowViewModel, FragmentProduc
 			description = viewModel.productDescription,
 			quantity = viewModel.productQuantity.toString(),
 			pricing = viewModel.productPrice.ifEmpty { "1" },
-			flashSale = "0",
-			acceptOffers = "0",
-			reserveForLive = "0",
-			auction = viewModel.productSalesFormat == "auction",
+			flashSale = (if(viewModel.productFormAcceptOffers) "1" else "0"),
+			acceptOffers = (if(viewModel.productFormAcceptOffers) "1" else "0"),
+			reserveForLive = (if(viewModel.productFormReserveForLive) "1" else "0") ,
 			shippingProfileId = "4",
-			type = "live",
 			status = "active",
 			productImages = imageUrls,
 			subCategoryId = viewModel.productSubCategoryId.ifEmpty { null }?.toInt(),
@@ -96,7 +94,7 @@ class ProductWeightFragment : BaseFragment<ScheduleShowViewModel, FragmentProduc
 			width = viewModel.productWidth,
 			mailClass = viewModel.productMailClass?.label ?: "",
 			processingCategory = viewModel.productProcessingCategory ?: "",
-			productCondition = viewModel.condition ,
+			productCondition = viewModel.condition
 		)
 
 	}

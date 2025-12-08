@@ -39,7 +39,7 @@ class MyOrdersFragment : BaseFragment<SellerHubViewModel , FragmentMyOrdersBindi
 
 	private val mClick = object : RecyclerClicks {
 		override fun itemClick(pos : Int , status : String?) {
-			findNavController().navigate(R.id.toOrderStatus , bundleOf("orderId" to orderList[pos]?.id.toString() , "from" to "my_orders"))
+//			findNavController().navigate(R.id.toOrderStatus , bundleOf("orderId" to orderList[pos]?.id.toString() , "from" to "my_orders"))
 		}
 	}
 
@@ -50,6 +50,7 @@ class MyOrdersFragment : BaseFragment<SellerHubViewModel , FragmentMyOrdersBindi
 		bind.header.onBackClick {
 			finish()
 		}
+
 		bind.header.onMoreSecondaryClick {
 			showDeleteConfirmationDialog()
 		}

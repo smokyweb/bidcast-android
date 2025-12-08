@@ -1,31 +1,98 @@
 package io.bidswipe.app.ui.sellerHub
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
+import androidx.core.view.isVisible
 import androidx.navigation.fragment.findNavController
 import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseFragment
 import io.bidswipe.app.databinding.FragmentShowDetailsBinding
-import io.bidswipe.app.databinding.FragmentShowsBinding
+import io.bidswipe.app.interfaces.AlertClicks
+import io.bidswipe.app.network.Resource
+import io.bidswipe.app.ui.custom.AppBottomSheet
+import io.bidswipe.app.utils.asMoney
+import io.bidswipe.app.utils.parse
 
 class ShowDetailsFragment : BaseFragment<SellerHubViewModel, FragmentShowDetailsBinding>() {
-    override fun getModel(): Class<SellerHubViewModel> = SellerHubViewModel::class.java
+	override fun getModel(): Class<SellerHubViewModel> = SellerHubViewModel::class.java
 
-    override fun getBind(
-        inflater: LayoutInflater,
-        view: ViewGroup?,
-    ) = FragmentShowDetailsBinding.inflate(inflater, view, false)
+	override fun getBind(
+		inflater: LayoutInflater,
+		view: ViewGroup?,
+	) = FragmentShowDetailsBinding.inflate(inflater, view, false)
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+	private var showId = ""
+	private var videoUrl = ""
 
-        bind.header.onBackClick {
-            findNavController().popBackStack()
-        }
+	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+		super.onViewCreated(view, savedInstanceState)
+
+		showId = arguments?.getString("showId") ?: ""
+
+		bind.header.onBackClick {
+			findNavController().popBackStack()
+		}
+
+		bind.watchVideo.setOnClickListener {
+
+//			findNavController().navigate(R.id.showDetailsVideoReceiptPlayerFragment2, bundleOf("videoUrl" to ))
+
+		}
+
+		bind.loader.isVisible = true
+		viewModel.getShowDetail(showId)
+
+		viewModel.getShowDetailRepo.observe(viewLifecycleOwner) {
+			when (it) {
+				is Resource.Success -> {
+					bind.loader.isVisible = false
+
+					val mData = it.value.data
+
+					log("data: $mData")
 
 
-    }
+					bind.duration.text = buildString {
+						append("Show Duration: ")
+						append(mData?.videoDuration)
+					}
+
+					bind.sales.text = mData?.totalSales?.asMoney()
+					bind.orders.text = mData?.orderCount.toString()
+					bind.durationShow.text = mData?.videoDuration
+					bind.shares.text = mData?.shareCount.toString()
+					bind.viewers.text = mData?.viewerCount.toString()
+					bind.newFollowers.text = mData?.newFollowers.toString()
+					bind.contributions.text = mData?.contributionsCount.toString().asMoney()
+					bind.bids.text = mData?.totalBids.toString()
+
+				}
+
+				is Resource.Error -> {
+					bind.loader.isVisible = false
+
+					it.parse(mCtx, TAG, object : AlertClicks {
+						override fun primaryClick(dialog: AppBottomSheet) {
+							dialog.dismiss()
+
+						}
+
+						override fun secondaryClick(dialog: AppBottomSheet) {
+							dialog.dismiss()
+
+						}
+					})
+
+				}
+
+				else -> {}
+
+			}
+		}
+
+
+	}
 }

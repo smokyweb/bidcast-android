@@ -154,18 +154,18 @@ class PreferencesFragment : BaseFragment<MoreViewModel, FragmentPreferencesBindi
 		bind.loader.isVisible = true
 		App.getProfile()
 		viewModel.settingsStore(
-			bind.country.text.toString().request(),
-			if (bind.directMessages.isChecked) "1".request() else "0".request(),
-			if (bind.receiveGifts.isChecked) "1".request() else "0".request(),
-			if (bind.privateEntry.isChecked) "1".request() else "0".request(),
-			if (bind.rewardStatus.isChecked) "1".request() else "0".request(),
-			if (bind.sellerTools.isChecked) "1".request() else "0".request(),
-			if (bind.enableClips.isChecked) "1".request() else "0".request(),
-			if (bind.savePastShows.isChecked) "1".request() else "0".request(),
-			if (bind.activityStatus.isChecked) "1".request() else "0".request(),
-			"0".request(),
-			"0".request(),
-			if (bind.hapticFeedback.isChecked) "1".request() else "0".request()
+			countryOfResidence = bind.country.text.toString().request(),
+			directMessage = if (bind.directMessages.isChecked) "1".request() else "0".request(),
+			receiveGifts = if (bind.receiveGifts.isChecked) "1".request() else "0".request(),
+			enablePrivateEntry = if (bind.privateEntry.isChecked) "1".request() else "0".request(),
+			showRewardStatus = if (bind.rewardStatus.isChecked) "1".request() else "0".request(),
+			showSellerTools = if (bind.sellerTools.isChecked) "1".request() else "0".request(),
+			enableClips = if (bind.enableClips.isChecked) "1".request() else "0".request(),
+			savePastShows = if (bind.savePastShows.isChecked) "1".request() else "0".request(),
+			activityStatus = if (bind.activityStatus.isChecked) "1".request() else "0".request(),
+			syncPhoneContacts = "0".request(),
+			suggestMyAccount = "0".request(),
+			hapticFeedback = if (bind.hapticFeedback.isChecked) "1".request() else "0".request()
 		)
 	}
 

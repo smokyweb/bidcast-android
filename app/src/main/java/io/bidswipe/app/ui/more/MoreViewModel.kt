@@ -164,18 +164,19 @@ class MoreViewModel @Inject constructor(
 		get() = _settingsStoreResponse
 
 	fun settingsStore(
-		countryOfResidence: RequestBody?,
-		directMessage: RequestBody?,
-		receiveGifts: RequestBody?,
-		enablePrivateEntry: RequestBody?,
-		showRewardStatus: RequestBody?,
-		showSellerTools: RequestBody?,
-		enableClips: RequestBody?,
-		savePastShows: RequestBody?,
-		activityStatus: RequestBody?,
-		syncPhoneContacts: RequestBody?,
-		suggestMyAccount: RequestBody?,
-		hapticFeedback: RequestBody?,
+		countryOfResidence: RequestBody? = null,
+		directMessage: RequestBody? = null,
+		receiveGifts: RequestBody? = null,
+		enablePrivateEntry: RequestBody? = null,
+		showRewardStatus: RequestBody? = null,
+		showSellerTools: RequestBody? = null,
+		enableClips: RequestBody? = null,
+		savePastShows: RequestBody? = null,
+		activityStatus: RequestBody? = null,
+		syncPhoneContacts: RequestBody? = null,
+		suggestMyAccount: RequestBody? = null,
+		hapticFeedback: RequestBody? = null,
+		freeShipping: RequestBody? = null
 	) = viewModelScope.launch {
 		if (!networkMonitor.hasInternet()) {
 			_settingsStoreResponse.value = NO_INTERNET_ERROR
@@ -193,7 +194,8 @@ class MoreViewModel @Inject constructor(
 			activityStatus,
 			syncPhoneContacts,
 			suggestMyAccount,
-			hapticFeedback
+			hapticFeedback,
+			freeShipping
 		)
 	}
 

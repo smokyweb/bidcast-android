@@ -51,9 +51,7 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
 		flashSale: String?,
 		acceptOffers: String?,
 		reserveForLive: String?,
-		auction: Boolean?,
 		shippingProfileId: String?,
-		type: String?,
 		status: String?,
 		productImages: List<Map<String, String?>>?,
 		subCategoryId: Int? = null,
@@ -76,9 +74,7 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
 				flashSale = flashSale,
 				acceptOffers = acceptOffers,
 				reserveForLive = reserveForLive,
-				auction = auction,
 				shippingProfileId = shippingProfileId,
-				type = type,
 				status = status,
 				images = productImages,
 				subCategoryId = subCategoryId,
@@ -240,6 +236,7 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
 		syncPhoneContacts: RequestBody?,
 		suggestMyAccount: RequestBody?,
 		hapticFeedback: RequestBody?,
+		freeShipping: RequestBody?
 	) = call {
 		api.settingsStore(
 			countryOfResidence,
@@ -253,7 +250,8 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
 			activityStatus,
 			syncPhoneContacts,
 			suggestMyAccount,
-			hapticFeedback
+			hapticFeedback,
+			freeShipping
 		)
 	}
 	
@@ -574,5 +572,11 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
 
 	suspend fun getShippingProfile(
 	) = call { api.getShippingProfile() }
+
+	suspend fun getShowDetail(
+		showId: String
+	) = call { api.getShowDetail( showId ) }
+
+
 
 }

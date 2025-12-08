@@ -122,7 +122,11 @@
         android:id="@+id/showDetailsFragment"
         android:name="io.bidswipe.app.ui.sellerHub.ShowDetailsFragment"
         android:label="fragment_show_details"
-        tools:layout="@layout/fragment_show_details" />
+        tools:layout="@layout/fragment_show_details" >
+        <action
+            android:id="@+id/showDetailsVideoReceiptPlayerFragment2"
+            app:destination="@id/videoReceiptPlayerFragment2" />
+    </fragment>
     <fragment
         android:id="@+id/freePIckupFragment"
         android:name="io.bidswipe.app.ui.sellerHub.shipping.FreePickupFragment"
@@ -151,5 +155,10 @@
         android:name="io.bidswipe.app.ui.sellerHub.shipping.ShippingCostsFragment"
         android:label="fragment_shipping_costs"
         tools:layout="@layout/fragment_shipping_costs" />
+    <fragment
+        android:id="@+id/videoReceiptPlayerFragment2"
+        android:name="io.bidswipe.app.ui.product.VideoReceiptPlayerFragment"
+        android:label="fragment_video_receipt_player"
+        tools:layout="@layout/fragment_video_receipt_player" />
 
 </navigation>

@@ -29,6 +29,7 @@
             android:orientation="vertical">
 
             <LinearLayout
+                android:id="@+id/watchVideo"
                 style="@style/shadowStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -162,7 +163,6 @@
 
                 </LinearLayout>
 
-
             </LinearLayout>
 
             <LinearLayout
@@ -245,11 +245,7 @@
 
                 </LinearLayout>
 
-
             </LinearLayout>
-
-
-
 
             <TextView
                 style="@style/HeadlineSmall"
@@ -340,7 +336,6 @@
 
                 </LinearLayout>
 
-
             </LinearLayout>
 
             <LinearLayout
@@ -374,7 +369,6 @@
                         android:layout_height="wrap_content"
                         android:src="@drawable/ic_info"/>
                 </LinearLayout>
-
 
                 <TextView
                     android:id="@+id/contributions"
@@ -477,5 +471,10 @@
 
     </ScrollView>
 
+    <io.bidswipe.app.ui.custom.LoaderView
+        android:id="@+id/loader"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

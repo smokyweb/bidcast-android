@@ -170,7 +170,7 @@ class InventoryFragment : BaseFragment<SellerHubViewModel, FragmentInventoryBind
             hideKeyboard(it)
         }
 
-        setUpfilterSheet()
+        setUpFilterSheet()
         bind.close.setHapticClickListener {
             filterSheet.state = BottomSheetBehavior.STATE_EXPANDED
         }
@@ -512,7 +512,7 @@ class InventoryFragment : BaseFragment<SellerHubViewModel, FragmentInventoryBind
 
     }
 
-    private fun setUpfilterSheet() {
+    private fun setUpFilterSheet() {
         BottomSheetBehavior.from(bind.filtersheet.root)
 
         filterSheet = BottomSheetBehavior.from(bind.filtersheet.root).also {

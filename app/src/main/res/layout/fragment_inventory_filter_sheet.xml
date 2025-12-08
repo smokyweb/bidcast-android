@@ -120,7 +120,7 @@
                         </com.google.android.material.textfield.TextInputLayout>
 
                     </LinearLayout>
-
+<!--
                     <TextView
                         style="@style/TitleSmall"
                         android:layout_width="match_parent"
@@ -150,7 +150,7 @@
                         android:paddingVertical="4dp"
                         android:progress="80"
                         android:progressTint="@color/primary"
-                        android:thumbTint="@color/primary" />
+                        android:thumbTint="@color/primary" />-->
                 </LinearLayout>
 
             </net.cachapa.expandablelayout.ExpandableLayout>

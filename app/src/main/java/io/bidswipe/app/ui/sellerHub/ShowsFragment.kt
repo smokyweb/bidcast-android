@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
+import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.tabs.TabLayout
@@ -65,7 +66,7 @@ class ShowsFragment : BaseFragment<SellerHubViewModel, FragmentShowsBinding>() {
             if (App.PIPMode) {
                 Alerts.error(mCtx, "You are already in Live show")
             } else if (bind.tabs.selectedTabPosition == 1) {
-                findNavController().animatedNav(R.id.toShowDetails)
+                findNavController().animatedNav(R.id.toShowDetails, bundleOf("showId" to showList[pos]?.id.toString()))
             } else {
 
                 val data = showList[pos]

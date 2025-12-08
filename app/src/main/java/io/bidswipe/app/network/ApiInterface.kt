@@ -49,6 +49,7 @@ import io.bidswipe.app.network.response.GetRatingResponse
 import io.bidswipe.app.network.response.GetReportCategoriesResponse
 import io.bidswipe.app.network.response.GetShippingAddressResponse
 import io.bidswipe.app.network.response.GetShippingProfilesResponse
+import io.bidswipe.app.network.response.GetShowDetailResponse
 import io.bidswipe.app.network.response.GetStatesResponse
 import io.bidswipe.app.network.response.GetSubCategoriesResponse
 import io.bidswipe.app.network.response.GetTipAmountResponse
@@ -336,6 +337,7 @@ interface ApiInterface {
 		@Part("sync_phone_contacts") syncPhoneContacts : RequestBody? ,
 		@Part("suggest_my_account") suggestMyAccount : RequestBody? ,
 		@Part("haptic_feedback") hapticFeedback : RequestBody? ,
+		@Part("free_shipping") freeShipping : RequestBody?
 	) : CommonResponse
 
 	@Multipart
@@ -751,6 +753,11 @@ interface ApiInterface {
 	suspend fun getShippingProfile(
 	) : GetShippingProfilesResponse
 
+
+	@GET("api/get-show-overview")
+	suspend fun getShowDetail(
+		@Query("show_id") showId : String?
+	) : GetShowDetailResponse
 
 
 
