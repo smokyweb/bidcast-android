@@ -31,127 +31,6 @@
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/half_margin"
             android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/headLine"
-                style="@style/HeadlineMedium"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_horizontal"
-                android:text="Earn $100 Per Referral" />
-
-            <androidx.appcompat.widget.AppCompatImageView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:src="@drawable/referrals"
-                android:adjustViewBounds="true"
-                />
-
-            <TextView
-                style="@style/BodyLarge"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_horizontal"
-                android:text="Invite sellers and earn rewards when they succeed" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/margin"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
-
-                <com.google.android.material.card.MaterialCardView
-                    android:id="@+id/icon_card"
-                    style="@style/cardStyle"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    app:cardBackgroundColor="@color/inversePrimary"
-                    app:cardCornerRadius="100dp"
-                    app:cardElevation="0dp">
-
-                    <androidx.appcompat.widget.AppCompatImageView
-                        android:id="@+id/icon"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:padding="12dp"
-                        android:src="@drawable/ic_link" />
-
-                </com.google.android.material.card.MaterialCardView>
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="@dimen/half_margin"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:id="@+id/title"
-                        style="@style/TitleLarge"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="@string/share_your_link" />
-
-                    <TextView
-                        android:id="@+id/sub_title"
-                        style="@style/BodyLarge"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Invite sellers using your unique code" />
-
-                </LinearLayout>
-
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="@dimen/margin"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:id="@+id/referral_code"
-                    style="@style/TitleMedium"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/half_margin"
-                    android:layout_weight="1"
-                    android:text="ABCDEFGH123456" />
-
-                <ImageButton
-                    android:id="@+id/copy_btn"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="@dimen/half_margin"
-                    android:backgroundTint="@color/transparent"
-                    android:src="@drawable/ic_copy"
-                    app:cornerRadius="8dp"
-                    app:tint="@color/primary" />
-
-            </LinearLayout>
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/share"
-                style="@style/appBtn"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/margin"
-                android:text="@string/share_invite_link" />
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recycler"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="@dimen/half_margin"
-                android:nestedScrollingEnabled="false"
-                android:orientation="vertical"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                tools:itemCount="3"
-                tools:listitem="@layout/sell_sheet_item" />
-
             <TextView
                 style="@style/TitleLarge"
                 android:layout_width="match_parent"
@@ -236,6 +115,257 @@
                 </com.google.android.material.card.MaterialCardView>
 
             </LinearLayout>
+
+            <TextView
+                android:id="@+id/headLine"
+                style="@style/HeadlineSmall"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/half_margin"
+                android:text="Earn Rewards &amp; Unlock Perks" />
+
+            <LinearLayout
+                style="@style/shadowStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/card_8"
+                android:layout_margin="@dimen/half_margin"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    style="@style/TitleLarge"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Give new buyers $15 credit to shop your shows!" />
+
+               <TextView
+                    style="@style/TitleSmall"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                   android:alpha="0.7"
+                    android:text="View Buyer Referral History >" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/buyer_benefits"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:nestedScrollingEnabled="false"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    tools:itemCount="3"
+                    tools:listitem="@layout/referral_benefits_item"
+                    android:paddingBottom="12dp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/card_8_outline"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:padding="8dp">
+
+                    <TextView
+                        android:id="@+id/referral_buyer"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="referral_code"
+                        android:textColor="@android:color/black" />
+
+                    <ImageButton
+                        android:id="@+id/copy_buyer"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:backgroundTint="@color/transparent"
+                        android:src="@drawable/ic_copy"
+                        app:cornerRadius="8dp"
+                        android:tooltipText="Copy"
+                        app:tint="@color/primary" />
+                </LinearLayout>
+
+                <Button
+                    android:id="@+id/buyerInvite"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    style="@style/appBtn"
+                    android:text="Invite Buyer" />
+
+            </LinearLayout>
+
+     <LinearLayout
+                style="@style/shadowStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/card_8"
+                android:layout_margin="@dimen/half_margin"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    style="@style/TitleLarge"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Invite a seller, earn $100" />
+
+               <TextView
+                    style="@style/TitleSmall"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                   android:alpha="0.7"
+                    android:text="View Seller Referral History >" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/seller_benefits"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:nestedScrollingEnabled="false"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    tools:itemCount="3"
+                    tools:listitem="@layout/referral_benefits_item"
+                    android:paddingBottom="12dp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/card_8_outline"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:padding="8dp">
+
+                    <TextView
+                        android:id="@+id/referral_seller"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="referral_code"
+                        android:textColor="@android:color/black" />
+
+                    <ImageButton
+                        android:id="@+id/copy_seller"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:backgroundTint="@color/transparent"
+                        android:src="@drawable/ic_copy"
+                        app:cornerRadius="8dp"
+                        android:tooltipText="Copy"
+                        app:tint="@color/primary" />
+                </LinearLayout>
+
+                <Button
+                    android:id="@+id/sellerInvite"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    style="@style/appBtn"
+                    android:text="Invite Seller"/>
+
+            </LinearLayout>
+
+        <LinearLayout
+            style="@style/shadowStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/card_8"
+            android:layout_margin="@dimen/half_margin"
+            android:orientation="vertical"
+            android:padding="16dp">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/icon_card"
+                    style="@style/cardStyle"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    app:cardBackgroundColor="@color/inversePrimary"
+                    app:cardCornerRadius="100dp"
+                    app:cardElevation="0dp">
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/icon"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:padding="12dp"
+                        android:src="@drawable/ic_link" />
+
+                </com.google.android.material.card.MaterialCardView>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/half_margin"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/title"
+                        style="@style/TitleLarge"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/share_your_link" />
+
+                    <TextView
+                        android:id="@+id/sub_title"
+                        style="@style/BodyLarge"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Invite sellers using your unique code" />
+
+                </LinearLayout>
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/referral_code"
+                    style="@style/TitleMedium"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/half_margin"
+                    android:layout_weight="1"
+                    android:text="ABCDEFGH123456" />
+
+                <ImageButton
+                    android:id="@+id/copy_btn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/half_margin"
+                    android:backgroundTint="@color/transparent"
+                    android:src="@drawable/ic_copy"
+                    app:cornerRadius="8dp"
+                    app:tint="@color/primary" />
+
+            </LinearLayout>
+
+            <com.google.android.material.button.MaterialButton
+            android:id="@+id/share"
+            style="@style/appBtn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/share_invite_link" />
+
+        </LinearLayout>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycler"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/half_margin"
+                android:nestedScrollingEnabled="false"
+                android:orientation="vertical"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                tools:itemCount="3"
+                tools:listitem="@layout/sell_sheet_item" />
 
         </LinearLayout>
 

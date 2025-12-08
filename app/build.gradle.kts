@@ -19,7 +19,7 @@ android {
 
     defaultConfig {
         applicationId = "io.bidswipe.app"
-        minSdk = 25
+        minSdk = 26
         targetSdk = 36
         versionCode = 1
         versionName = "1.0"
@@ -255,4 +255,5 @@ dependencies {
     }
 
     implementation(libs.arindicatorview)
+    implementation("com.github.caneryilmaz52:LuckyWheelView:1.1.6")
 }

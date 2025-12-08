@@ -11,6 +11,8 @@ import android.view.ViewGroup
 import androidx.core.view.isVisible
 import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseFragment
+import io.bidswipe.app.controller.BenefitItem
+import io.bidswipe.app.controller.ReferralBenefitsAdapter
 import io.bidswipe.app.controller.SellAdapter
 import io.bidswipe.app.databinding.FragmentAffiliateProgramBinding
 import io.bidswipe.app.interfaces.AlertClicks
@@ -42,12 +44,38 @@ class AffiliateProgramFragment : BaseFragment<SellerHubViewModel, FragmentAffili
 			finish()
 		}
 
-		val adapter = SellAdapter(mList = mList, "affiliate", object : RecyclerClicks {
+		val buyerBenefits = mutableListOf(
+			BenefitItem(
+				R.drawable.ic_people,
+				"Make Referrals",
+				"Each referred buyer gets $15 to shop your shows, you get $5"
+			),
+			BenefitItem(R.drawable.ic_people, "Build your audience", "Referred buyers auto follow you and bookmark your next show"),
+			BenefitItem(R.drawable.ic_people, "Prioritize your show", "When they join, your shows will be highlighted in their feed")
+		)
 
+		val buyerAdapter = ReferralBenefitsAdapter( buyerBenefits )
+		bind.buyerBenefits.adapter = buyerAdapter
+
+
+		val sellerBenefits = mutableListOf(
+			BenefitItem(
+				R.drawable.ic_people,
+				"Share your invite link",
+				"Send your referral link to friends and followers and invite them to sell"
+			),
+			BenefitItem(R.drawable.ic_people, "You earn \$100", "Receive \$100 after your referrals make their"),
+			BenefitItem(R.drawable.ic_people, "They earn too", "Your referrals will earn a bonus of up to \$150 in matched earnings during their first week")
+		)
+
+		val sellerAdapter = ReferralBenefitsAdapter( sellerBenefits )
+		bind.sellerBenefits.adapter = sellerAdapter
+
+
+		val adapter = SellAdapter(mList = mList, "affiliate", object : RecyclerClicks {
 			override fun itemClick(pos: Int, status: String?) {
 
 			}
-
 		})
 
 		bind.recycler.adapter = adapter
