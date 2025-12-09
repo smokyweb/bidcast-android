@@ -89,13 +89,13 @@ data class GetMyShowResponse(
             @SerializedName("flash_sale")
             val flashSale: Boolean?,
             @SerializedName("height")
-            val height: Int?,
+            val height: Double?,
             @SerializedName("id")
             val id: Int?,
             @SerializedName("images")
             val images: List<String?>?,
             @SerializedName("length")
-            val length: Int?,
+            val length: Double?,
             @SerializedName("mail_class")
             val mailClass: String?,
             @SerializedName("pricing")
@@ -125,9 +125,9 @@ data class GetMyShowResponse(
             @SerializedName("variant")
             val variant: Any?,
             @SerializedName("weight")
-            val weight: Int?,
+            val weight: Double?,
             @SerializedName("width")
-            val width: Int?
+            val width: Double?
         ) : Serializable {
 
             fun toLiveShowProduct(): LiveShowModel.Product {

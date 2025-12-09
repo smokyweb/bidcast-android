@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="@dimen/padding">
+
+    <TextView
+        style="@style/TitleLarge"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Randomizer" />
+
+
+    <com.google.android.material.button.MaterialButton
+        style="@style/appBtn"
+        android:id="@+id/show_spin"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginVertical="@dimen/margin"
+        android:text="Show SpinWheel" />
+
+    <LinearLayout
+        android:id="@+id/spin_controllers_view"
+        android:layout_width="match_parent"
+        android:visibility="invisible"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <com.google.android.material.button.MaterialButton
+                style="@style/appBtn"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginEnd="8dp"
+                android:layout_weight="1"
+                android:paddingVertical="12dp"
+                android:text="Hide SpinWheel"
+                android:textAppearance="@style/BodySmall"
+                app:cornerRadius="@dimen/half_margin" />
+
+            <com.google.android.material.button.MaterialButton
+                style="@style/appBtn"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginEnd="8dp"
+                android:layout_weight="1"
+                android:paddingVertical="12dp"
+                android:text="Shuffle Entries"
+                android:textAppearance="@style/BodySmall"
+                app:cornerRadius="@dimen/half_margin" />
+
+            <com.google.android.material.button.MaterialButton
+                style="@style/appBtn"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:paddingVertical="12dp"
+                android:text="Spin Wheel"
+                android:textAppearance="@style/BodySmall"
+                app:cornerRadius="@dimen/half_margin" />
+
+        </LinearLayout>
+
+
+        <TextView
+            style="@style/TitleSmall"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="@dimen/half_margin"
+            android:text="Options" />
+
+        <TextView
+            style="@style/TitleSmall"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/half_margin"
+            android:text="Manual Entries" />
+
+
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/inputBoxStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/margin"
+            app:boxCornerRadiusBottomEnd="@dimen/margin"
+            app:boxCornerRadiusBottomStart="@dimen/margin"
+            app:boxCornerRadiusTopEnd="@dimen/margin"
+            app:boxCornerRadiusTopStart="@dimen/margin">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/description"
+                style="@style/inputTextStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="top"
+                android:hint="Enter manual entries here separated by next line..."
+                android:minLines="4" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.button.MaterialButton
+            style="@style/appBtn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/margin"
+            android:text="Remove All" />
+
+    </LinearLayout>
+
+</LinearLayout>

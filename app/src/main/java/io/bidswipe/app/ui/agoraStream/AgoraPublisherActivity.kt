@@ -6,7 +6,10 @@ import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
 import android.graphics.Bitmap
+import android.graphics.Color
 import android.graphics.Rect
+import android.graphics.drawable.BitmapDrawable
+import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -27,6 +30,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
 import com.bumptech.glide.Glide
+import com.caneryilmaz.apps.luckywheel.data.WheelData
 import com.gyf.immersionbar.ktx.immersionBar
 import com.gyf.immersionbar.ktx.navigationBarHeight
 import io.agora.rtc2.Constants
@@ -49,6 +53,7 @@ import io.bidswipe.app.databinding.LiveShowMoreMenuBinding
 import io.bidswipe.app.databinding.PollDetailsSheetBinding
 import io.bidswipe.app.databinding.ProductSheetBinding
 import io.bidswipe.app.databinding.PromoteShowSheetBinding
+import io.bidswipe.app.databinding.RandomizerSheetBinding
 import io.bidswipe.app.databinding.ShowConfirmationAlertBinding
 import io.bidswipe.app.interfaces.AlertClicks
 import io.bidswipe.app.interfaces.RecyclerClicks
@@ -71,6 +76,7 @@ import io.bidswipe.app.utils.Utils
 import io.bidswipe.app.utils.asCapital
 import io.bidswipe.app.utils.asMoney
 import io.bidswipe.app.utils.bind
+import io.bidswipe.app.utils.clr
 import io.bidswipe.app.utils.dpToPx
 import io.bidswipe.app.utils.draw
 import io.bidswipe.app.utils.hideKeyboard
@@ -86,7 +92,7 @@ import java.io.File
 import java.io.FileOutputStream
 
 @SuppressLint("NotifyDataSetChanged")
-class AgoraPublisherActivity : BaseActivity() {
+class AgoraPublisherActivity : BaseActivity()  {
 
 	private val bind by bind(ActivityAgoraPublisherBinding::inflate)
 
@@ -164,6 +170,8 @@ class AgoraPublisherActivity : BaseActivity() {
 				intent.getSerializableExtra("showData") as LiveShowModel
 			}
 		}
+
+		setUpWheel()
 
 		showId = liveShowData?.showId ?: ""
 		showTime = intent.getStringExtra("time") ?: ""
@@ -1040,6 +1048,10 @@ class AgoraPublisherActivity : BaseActivity() {
 							}
 						}
 
+						4-> {
+							showRandomizerSheet()
+						}
+
 						else -> {
 
 						}
@@ -1100,8 +1112,6 @@ class AgoraPublisherActivity : BaseActivity() {
 
 //			moreSheet.dismiss()
 		}
-
-
 
 		moreSheetBind.close.setHapticClickListener {
 			moreSheet.dismiss()
@@ -1417,4 +1427,68 @@ class AgoraPublisherActivity : BaseActivity() {
 		}
 	}
 
+	fun setUpWheel() {
+		val drawable: Drawable? = ContextCompat.getDrawable(this, R.drawable.ic_whatsapp)
+		val bitmap = (drawable as? BitmapDrawable)?.bitmap
+
+		if (bitmap == null) {
+			log("LuckyWheel :  Failed to get bitmap from drawable")
+		}
+
+		val colors = listOf(
+			Color.parseColor("#FFC107"), // Amber
+			Color.parseColor("#4CAF50"), // Green
+			Color.parseColor("#2196F3"), // Blue
+			Color.parseColor("#9C27B0"), // Purple
+			Color.parseColor("#F44336"), // Red
+			Color.parseColor("#00BCD4"), // Cyan
+			Color.parseColor("#E91E63"), // Pink
+			Color.parseColor("#FF9800"), // Orange
+			Color.parseColor("#3F51B5"), // Indigo
+			Color.parseColor("#8BC34A"), // Light Green
+			Color.parseColor("#009688"), // Teal
+			Color.parseColor("#673AB7")  // Deep Purple
+		)
+
+		val wheelColors = colors.shuffled().distinct()
+
+		val wheelOptions = listOf("Option 1", "Option 2", "Option 3", "Option 4", "Option 5")
+
+		val wheelData = ArrayList(wheelOptions.map {
+			WheelData(
+				text = it,
+				textColor = intArrayOf(Color.BLACK),
+				backgroundColor = intArrayOf(wheelColors[wheelOptions.indexOf(it) % wheelColors.size]),
+				icon = bitmap,
+			)
+		})
+
+		bind.luckyWheel.apply {
+			setCenterPointRadius(50f)
+			setWheelData(wheelData = wheelData)
+
+			setWheelCenterText("HELLO")
+			setWheelCenterTextColor(intArrayOf(clr.secondary))
+
+			setCornerPointsRadius(20f)
+
+			setRotationCompleteListener { wheelData ->
+				// Handle rotation completion if needed
+			}
+		}
+
+		bind.luckyWheel.setOnClickListener {
+			bind.luckyWheel.rotateWheel()
+		}
+	}
+
+	fun showRandomizerSheet(){
+		val randomizerSheetBind = RandomizerSheetBinding.bind(layoutInflater.inflate(R.layout.randomizer_sheet, null, false))
+		val randomSheet = Alerts.appBottomSheet(this, true, randomizerSheetBind)
+
+		randomSheet.show()
+
+        randomizerSheetBind.description
+
+	}
 }
