@@ -43,6 +43,8 @@ data class SettingListResponse(
 		val suggestMyAccount : Boolean? ,
 		@SerializedName("sync_phone_contacts")
 		val syncPhoneContacts : Boolean? ,
+		@SerializedName("free_shipping")
+		val freeShipping : Boolean? ,
 		@SerializedName("user_id")
         val userId: Int?
 	)

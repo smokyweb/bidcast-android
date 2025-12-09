@@ -56,6 +56,9 @@ class ScheduleShowViewModel @Inject constructor(
 	var productMailClass: GetMailClassesResponse.Data.MailClasses? = null
 	var productSalesFormat: String = ""
 	var productPrice: String = ""
+	var productFormFlashSale = false
+	var productFormAcceptOffers = false
+	var productFormReserveForLive = false
 
 	private var _storeScheduleShowResponse = MutableLiveData<Resource<CreateShowResponse>>()
 	val storeScheduleShowRepo: MutableLiveData<Resource<CreateShowResponse>>
@@ -176,9 +179,7 @@ class ScheduleShowViewModel @Inject constructor(
 		flashSale: String?,
 		acceptOffers: String?,
 		reserveForLive: String?,
-		auction: Boolean?,
 		shippingProfileId: String?,
-		type: String?,
 		status: String?,
 		productImages: List<Map<String, String?>>?,
 		subCategoryId: Int? = null,
@@ -205,9 +206,7 @@ class ScheduleShowViewModel @Inject constructor(
 			flashSale = flashSale,
 			acceptOffers = acceptOffers,
 			reserveForLive = reserveForLive,
-			auction = auction,
 			shippingProfileId = shippingProfileId,
-			type = type,
 			status = status,
 			productImages = productImages,
 			subCategoryId = subCategoryId,

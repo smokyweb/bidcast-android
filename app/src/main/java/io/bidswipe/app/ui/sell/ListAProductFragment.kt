@@ -200,7 +200,9 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
 		
 		// Only load product data if not restored from ViewModel
 		if (product != null && viewModel.productFormProduct == null) {
-			bind.saveDraft.isVisible = false
+
+			bind.saveDraft.isVisible = product?.status == "draft"
+
 			bind.publish.text = buildString {
 				append("Update")
 			}
@@ -208,7 +210,8 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
 			addProductData(product)
 		} else if (product != null && viewModel.productFormProduct != null) {
 			// Restore UI state for edit mode
-			bind.saveDraft.isVisible = false
+			bind.saveDraft.isVisible = product?.status == "draft"
+
 			bind.publish.text = buildString {
 				append("Update")
 			}
@@ -231,13 +234,32 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
 			clearViewModelState()
 			finish()
 		}
-		
+
 		val processingCategories = listOf("LETTERS", "FLATS", "MACHINABLE", "NONSTANDARD", "NON_MACHINABLE")
 		val proCategoryAdapter = ArrayAdapter(
 			mCtx,
 			android.R.layout.simple_list_item_1,
 			processingCategories
 		)
+
+		bind.reserveForLive.setOnCheckedChangeListener { view , isChecked ->
+			if (isChecked) {
+				bind.acceptOffers.isChecked = false
+				bind.flashSell.isChecked = false
+			}
+		}
+
+		bind.acceptOffers.setOnCheckedChangeListener { _, isChecked ->
+			if (isChecked) {
+				bind.reserveForLive.isChecked = false
+			}
+		}
+
+		bind.flashSell.setOnCheckedChangeListener { _, isChecked ->
+			if (isChecked) {
+				bind.reserveForLive.isChecked = false
+			}
+		}
 
 		bind.proCategory.setAdapter(proCategoryAdapter)
 		val proDrawable = ContextCompat.getDrawable(mCtx, R.drawable.card_8)
@@ -573,8 +595,6 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
 			Alerts.error(mCtx, "Please enter valid numeric values for dimensions")
 			return
 		}
-		
-
 
 		if (type == "draft") {
 
@@ -631,16 +651,14 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
 					)
 				}
 
-				selectedMailClass?.maxHeightIn != null && (packageHeight > (selectedMailClass?.maxHeightIn
-					?: 0.0)) -> {
+				selectedMailClass?.maxHeightIn != null && (packageHeight > (selectedMailClass?.maxHeightIn ?: 0.0)) -> {
 					Alerts.error(
 						mCtx,
 						"Height exceeds maximum of ${selectedMailClass?.maxHeightIn} cm"
 					)
 				}
 
-				selectedMailClass?.maxLengthIn != null && (packageLength > (selectedMailClass?.maxLengthIn
-					?: 0.0)) -> {
+				selectedMailClass?.maxLengthIn != null && (packageLength > (selectedMailClass?.maxLengthIn ?: 0.0)) -> {
 					Alerts.error(
 						mCtx,
 						"Length exceeds maximum of ${selectedMailClass?.maxLengthIn} cm"
@@ -686,7 +704,6 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
 
 		}
 
-
 	}
 	
 	private fun addProductData(product: GetMyInventoryResponse.Data?) {
@@ -709,7 +726,7 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
 		bind.weight.setText((product?.weight?:"").toString())
 		bind.mailClass.setText(product?.mailClass?:"",false)
 		bind.proCategory.setText(product?.processingCategory?:"", false)
-		bind.price.setText((product?.pricing?:"").toString())
+		bind.price.setText((product?.pricing?:""))
 		bind.flashSell.isChecked = product?.flashSale == true
 		bind.acceptOffers.isChecked = product?.acceptOffers == true
 		bind.reserveForLive.isChecked = product?.reserveForLive == true
@@ -818,7 +835,6 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
 			flashSale = (if (bind.flashSell.isChecked) "1" else "0"),
 			acceptOffers = (if (bind.acceptOffers.isChecked) "1" else "0"),
 			reserveForLive = (if (bind.reserveForLive.isChecked) "1" else "0"),
-			auction =  false,
 			shippingProfileId = profileId.ifEmpty { null },
 			status = type,
 			productImages = images,

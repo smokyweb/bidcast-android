@@ -11,8 +11,8 @@
         android:id="@+id/view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
         android:background="@color/background"
+        android:orientation="horizontal"
 
         android:padding="@dimen/half_margin">
 
@@ -49,21 +49,22 @@
                 style="@style/LabelLarge"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Completed"
-                android:textStyle="bold"
-                android:paddingHorizontal="@dimen/half_margin"
                 android:background="@drawable/card_8"
                 android:backgroundTint="@color/successContainer"
-                android:textColor="@color/success" />
-   <TextView
+                android:paddingHorizontal="@dimen/half_margin"
+                android:text="Completed"
+                android:textColor="@color/success"
+                android:textStyle="bold" />
+
+            <TextView
                 android:id="@+id/product_id"
                 style="@style/TitleLarge"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Cyber Punk #3429"
-                android:textStyle="bold"
+                android:textColor="@color/onSurface"
                 android:textSize="14sp"
-                android:textColor="@color/onSurface" />
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/price"
@@ -72,7 +73,7 @@
                 android:layout_height="wrap_content"
                 android:text="$45.00"
                 android:textColor="@color/outlineVariant"
-                android:textSize="14sp"/>
+                android:textSize="14sp" />
 
             <TextView
                 android:id="@+id/date"
@@ -80,30 +81,30 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Purchased: 12/22/24"
-                android:textSize="12sp"
-                android:textColor="@color/outlineVariant" />
+                android:textColor="@color/outlineVariant"
+                android:textSize="12sp" />
 
             <LinearLayout
                 android:id="@+id/sellerLayout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_vertical">
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="From: "
-                    android:textSize="12sp"
-                    android:textColor="@color/outlineVariant" />
+                    android:textColor="@color/outlineVariant"
+                    android:textSize="12sp" />
 
                 <TextView
                     android:id="@+id/seller_username"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="seller_username"
-                    android:textSize="12sp"
                     android:textColor="@color/primary"
+                    android:textSize="12sp"
                     android:textStyle="bold" />
 
             </LinearLayout>

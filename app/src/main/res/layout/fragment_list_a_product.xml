@@ -506,6 +506,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content" />
 
+
                 </LinearLayout>
 
                 <io.bidswipe.app.ui.custom.Heading

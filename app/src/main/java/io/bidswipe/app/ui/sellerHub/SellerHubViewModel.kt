@@ -19,12 +19,14 @@ import io.bidswipe.app.network.response.GetPaymentCardsResponse
 import io.bidswipe.app.network.response.GetPremierShopResponse
 import io.bidswipe.app.network.response.GetPromoteToolsResponse
 import io.bidswipe.app.network.response.GetShippingProfilesResponse
+import io.bidswipe.app.network.response.GetShowDetailResponse
 import io.bidswipe.app.network.response.GetTipAmountResponse
 import io.bidswipe.app.network.response.GetTransactionsHistoryResponse
 import io.bidswipe.app.network.response.PayoutHistoryResponse
 import io.bidswipe.app.network.response.SalesAnalyticsResponse
 import io.bidswipe.app.network.response.SellerAnalyticsResponse
 import io.bidswipe.app.network.response.SellerStatusResponse
+import io.bidswipe.app.network.response.SettingListResponse
 import io.bidswipe.app.network.response.StorePhoneNumberResponse
 import io.bidswipe.app.network.response.StoreSellerIdResponse
 import io.bidswipe.app.network.response.UpdateOfferResponse
@@ -512,6 +514,73 @@ class SellerHubViewModel @Inject constructor(
 			return@launch
 		}
 		_getShippingProfileResponse.value = repo.getShippingProfile()
+	}
+
+	private var _settingsStoreResponse = MutableLiveData<Resource<CommonResponse>>()
+	val settingsStoreRepo: MutableLiveData<Resource<CommonResponse>>
+		get() = _settingsStoreResponse
+
+	fun settingsStore(
+		countryOfResidence: RequestBody? = null,
+		directMessage: RequestBody? = null,
+		receiveGifts: RequestBody? = null,
+		enablePrivateEntry: RequestBody? = null,
+		showRewardStatus: RequestBody? = null,
+		showSellerTools: RequestBody? = null,
+		enableClips: RequestBody? = null,
+		savePastShows: RequestBody? = null,
+		activityStatus: RequestBody? = null,
+		syncPhoneContacts: RequestBody? = null,
+		suggestMyAccount: RequestBody? = null,
+		hapticFeedback: RequestBody? = null,
+		freeShipping: RequestBody? = null
+	) = viewModelScope.launch {
+		if (!networkMonitor.hasInternet()) {
+			_settingsStoreResponse.value = NO_INTERNET_ERROR
+			return@launch
+		}
+		_settingsStoreResponse.value = repo.settingsStore(
+			countryOfResidence,
+			directMessage,
+			receiveGifts,
+			enablePrivateEntry,
+			showRewardStatus,
+			showSellerTools,
+			enableClips,
+			savePastShows,
+			activityStatus,
+			syncPhoneContacts,
+			suggestMyAccount,
+			hapticFeedback,
+			freeShipping
+		)
+	}
+
+	private var _settingsListResponse = MutableLiveData<Resource<SettingListResponse>>()
+	val settingsListRepo: MutableLiveData<Resource<SettingListResponse>>
+		get() = _settingsListResponse
+
+	fun settingsList(
+	) = viewModelScope.launch {
+		if (!networkMonitor.hasInternet()) {
+			_settingsListResponse.value = NO_INTERNET_ERROR
+			return@launch
+		}
+		_settingsListResponse.value = repo.settingsList()
+	}
+
+	private var _getShowDetailResponse = MutableLiveData<Resource<GetShowDetailResponse>>()
+	val getShowDetailRepo: MutableLiveData<Resource<GetShowDetailResponse>>
+		get() = _getShowDetailResponse
+
+	fun getShowDetail(
+		showId : String
+	) = viewModelScope.launch {
+		if (!networkMonitor.hasInternet()) {
+			_getShowDetailResponse.value = NO_INTERNET_ERROR
+			return@launch
+		}
+		_getShowDetailResponse.value = repo.getShowDetail(showId)
 	}
 
 }

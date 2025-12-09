@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.sellerHub.FreePickupFragment">
+    tools:context=".ui.sellerHub.shipping.FreePickupFragment">
 
     <io.bidswipe.app.ui.custom.Header
         android:id="@+id/header"
@@ -60,6 +60,12 @@
 
         </LinearLayout>
     </LinearLayout>
+
+    <io.bidswipe.app.ui.custom.LoaderView
+        android:id="@+id/loader"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"/>
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/save"

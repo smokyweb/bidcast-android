@@ -23,11 +23,13 @@ class ChooseSalesFormatFragment : BaseFragment<ScheduleShowViewModel, FragmentCh
 
 	override fun getBind(
 		inflater: LayoutInflater,
-		view: ViewGroup?,
+		view: ViewGroup?
 	) = FragmentChooseSalesFormatBinding.inflate(inflater, view, false)
 
 	private var formatList = mutableListOf<FormatModel>()
 	private lateinit var adapter: FormatAdapter
+	private var reserveForLive = false
+	private var flashShell = false
 
 	private val mClick = object : RecyclerClicks {
 
@@ -39,6 +41,18 @@ class ChooseSalesFormatFragment : BaseFragment<ScheduleShowViewModel, FragmentCh
 
 			bind.offerLayout.isVisible = pos == 1
 			viewModel.productSalesFormat = formatList[pos].title ?: ""
+
+			when(formatList[pos].title){
+				"Auction"->{
+					reserveForLive = true
+					flashShell = false
+				}else -> {
+					reserveForLive = false
+					flashShell = true
+				}
+			}
+
+			bind.allowOffer.isChecked = false
 
 			adapter.notifyDataSetChanged()
 
@@ -77,6 +91,7 @@ class ChooseSalesFormatFragment : BaseFragment<ScheduleShowViewModel, FragmentCh
 
 			viewModel.productSalesFormat = selectedFormat
 			viewModel.productPrice = bind.bidPrice.text.toString().trim()
+			viewModel.productFormAcceptOffers = bind.allowOffer.isChecked
 
 			findNavController().navigate(ids.goToProductWeightFragment)
 		}
