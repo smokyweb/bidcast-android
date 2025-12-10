@@ -7,41 +7,40 @@ import io.bidswipe.app.model.StoreProductRequest
 import io.bidswipe.app.network.ApiInterface
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
-import retrofit2.http.Part
 import javax.inject.Inject
 
 class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRepository() {
-	
+
 	suspend fun logout() = call {
 		api.logout()
 	}
-	
+
 	suspend fun aboutUs() = call { api.aboutUs() }
-	
+
 	suspend fun getTermsConditions() = call { api.getTermsConditions() }
-	
+
 	suspend fun getPrivacyPolicy() = call { api.getPrivacyPolicy() }
-	
+
 	suspend fun getCategory(
 		categoryId: String? = null,
 		type: String? = null,
 		search: String? = null,
 		getCount: String? = null
 	) = call { api.getCategory(categoryId, type, search, getCount) }
-	
+
 	suspend fun getSubCategories(
 		categoryIds: List<Int>, subCategoryIds: List<Int>? = null,
 	) = call { api.getSubCategories(GetSubCategoriesRequest(categoryIds, subCategoryIds)) }
-	
+
 	suspend fun userFavorite(
 		categoryIds: List<Int>,
 		subcategoriesIds: List<Int>? = null,
 	) = call { api.userFavorite(GetSubCategoriesRequest(categoryIds, subcategoriesIds)) }
-	
+
 	suspend fun getLesson() = call { api.getLesson() }
-	
+
 	suspend fun getProduct(categoryId: RequestBody?) = call { api.getProduct(categoryId) }
-	
+
 	suspend fun storeProduct(
 		categoryId: String?,
 		title: String?,
@@ -90,7 +89,7 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
 			productId
 		)
 	}
-	
+
 	suspend fun storeProductMeta(
 		productImages: List<MultipartBody.Part?>?,
 		thumbnail: List<MultipartBody.Part?>? = null,
@@ -100,11 +99,11 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
 			thumbnail
 		)
 	}
-	
+
 	suspend fun getHowToSellStep() = call { api.getHowToSellStep() }
-	
+
 	suspend fun getPrepareStep() = call { api.getPrepareStep() }
-	
+
 	suspend fun getFAQ() = call { api.getFAQ() }
 
 	suspend fun contactUs(
@@ -113,7 +112,7 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
 		subject: RequestBody?,
 		message: RequestBody?,
 	) = call { api.contactUs(name, email, subject, message) }
-	
+
 	suspend fun storeScheduleShow(
 		title: RequestBody?,
 		date: RequestBody?,
@@ -128,15 +127,16 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
 			date,
 			time,
 			categoryId,
+			null,
 			auctionTypeId,
 			productIds,
 			thumbnails,
 		)
 	}
-	
+
 	suspend fun getAuctionType() = call { api.getAuctionType() }
-	
-	
+
+
 	suspend fun getAllTips(
 		type: RequestBody?,
 	) = call { api.getAllTips(type) }
@@ -150,48 +150,48 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
 		sortBy: RequestBody?,
 		search: RequestBody?,
 	) = call { api.getUserProducts(userId, categoryId, page, type, saleType, sortBy, search) }
-	
+
 	suspend fun getMyScheduledShow(
 		type: RequestBody?,
 	) = call { api.getMyScheduledShow(type) }
-	
+
 	suspend fun getProfileById(
 		userId: RequestBody?,
 	) = call { api.getProfileById(userId) }
-	
+
 	suspend fun followUser(
 		userId: RequestBody?,
 	) = call { api.followUser(userId) }
-	
+
 	suspend fun makeOffer(
 		amount: RequestBody?,
 		productId: RequestBody?,
 	) = call { api.makeOffer(amount, productId) }
-	
+
 	suspend fun offerList(
 		page: Int?,
 	) = call { api.offerList(page) }
-	
+
 	suspend fun offerUpdateStatus(
 		offerId: RequestBody?,
 		status: RequestBody?,
 	) = call { api.offerUpdateStatus(offerId, status) }
-	
+
 	suspend fun getLiveShow(
 		type: RequestBody?,
 		category: RequestBody?,
 		search: RequestBody?,
 		page: RequestBody?
 	) = call { api.getLiveShow(type, category, search, page) }
-	
+
 	suspend fun notifyLiveUser(
 		liveUserId: RequestBody?,
 	) = call { api.notifyLiveUser(liveUserId) }
-	
+
 	suspend fun getProductDetails(
 		productId: RequestBody?,
 	) = call { api.getProductDetails(productId) }
-	
+
 	suspend fun addShippingAddress(
 		type: RequestBody?,
 		name: RequestBody?,
@@ -211,18 +211,18 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
 			state
 		)
 	}
-	
+
 	suspend fun getShippingAddress() = call { api.getShippingAddress() }
-	
+
 	suspend fun addPaymentCard(
 		data: PaymentCardModel,
 	) = call { api.addPaymentCard(data) }
-	
+
 	suspend fun getPaymentCard(
 	) = call { api.getPaymentCard() }
-	
+
 	suspend fun settingsList() = call { api.settingsList() }
-	
+
 	suspend fun settingsStore(
 		countryOfResidence: RequestBody?,
 		directMessage: RequestBody?,
@@ -254,12 +254,12 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
 			freeShipping
 		)
 	}
-	
+
 	suspend fun getPurchaseProduct(
 		shippingId: RequestBody?,
 		productId: RequestBody?,
 	) = call { api.getPurchaseProduct(shippingId, productId) }
-	
+
 	suspend fun createOrder(
 		shippingId: RequestBody?,
 		productId: RequestBody?,
@@ -289,15 +289,15 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
 			discount
 		)
 	}
-	
+
 	suspend fun storeBuyerIdentity(
 		image: MultipartBody.Part?,
 	) = call { api.storeBuyerIdentity(image) }
-	
+
 	suspend fun storeDeviceDetails(
 		deviceToken: RequestBody?,
 	) = call { api.storeDeviceDetails(deviceToken) }
-	
+
 	suspend fun createBid(
 		showId: RequestBody?,
 		userId: RequestBody?,
@@ -307,51 +307,51 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
 
 	suspend fun getUserProfile(
 	) = call { api.getUserProfile() }
-	
+
 	suspend fun fetchSellerVerification(
 	) = call { api.fetchSellerVerification() }
-	
+
 	suspend fun getMyInventory(
 		status: RequestBody?,
 		category: RequestBody?,
 		format: RequestBody?,
 		page: RequestBody?,
 		search: RequestBody?,
-		categoryIds : RequestBody? ,
-		conditions : RequestBody? ,
-		minPrice : RequestBody? ,
-		maxPrice : RequestBody? ,
-	) = call { api.getMyInventory(status,category,format, page, search, categoryIds, conditions, minPrice, maxPrice) }
-	
+		categoryIds: RequestBody?,
+		conditions: RequestBody?,
+		minPrice: RequestBody?,
+		maxPrice: RequestBody?,
+	) = call { api.getMyInventory(status, category, format, page, search, categoryIds, conditions, minPrice, maxPrice) }
+
 	suspend fun getOrderListing(
 		page: RequestBody?,
 		type: RequestBody?,
 		search: RequestBody?,
-	) = call { api.getOrderListing(page,type, search) }
-	
+	) = call { api.getOrderListing(page, type, search) }
+
 	suspend fun storeSellerId(
 		idCard: MultipartBody.Part,
 		image: MultipartBody.Part,
 	) = call { api.storeSellerId(idCard, image) }
-	
+
 	suspend fun storePhoneNumber(
 		phoneNumber: RequestBody?,
 	) = call { api.storePhoneNumber(phoneNumber) }
-	
+
 	suspend fun verifyNumberOtp(
 		otp: RequestBody?,
 	) = call { api.verifyNumberOtp(otp) }
-	
+
 	suspend fun storePaymentMethod(
 		cardToken: RequestBody?,
 	) = call { api.storePaymentMethod(cardToken) }
-	
+
 	suspend fun fetchBuyerIdentity(
 	) = call { api.fetchBuyerIdentity() }
-	
+
 	suspend fun getNotification(
 	) = call { api.getNotification() }
-	
+
 	suspend fun fetchBids(
 		page: String?,
 	) = call {
@@ -359,52 +359,52 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
 			page
 		)
 	}
-	
+
 	suspend fun getOrderReceipt(
 		orderId: RequestBody?,
 	) = call { api.getOrderReceipt(orderId) }
-	
+
 	suspend fun getOrderDetails(
 		orderId: RequestBody?,
 	) = call { api.getOrderDetails(orderId) }
-	
+
 	suspend fun searchUsers(
 		search: RequestBody?,
 	) = call { api.searchUsers(search) }
-	
+
 	suspend fun saveSellerProduct(
 		productId: RequestBody?,
 	) = call { api.saveSellerProduct(productId) }
-	
+
 	suspend fun getProductsByStatus(
 		type: RequestBody?,
 		page: RequestBody?,
 		status: RequestBody?
 	) = call { api.getProductsByStatus(type, page, status) }
-	
+
 	suspend fun deleteNotification(
 		id: RequestBody?,
 	) = call { api.deleteNotification(id) }
-	
+
 	suspend fun getKYCDetails(
 	) = call { api.getKYCDetails() }
-	
+
 	suspend fun checkKyc(
 	) = call { api.checkKyc() }
-	
+
 	suspend fun fundTransfer(
 		amount: RequestBody?,
 	) = call { api.fundTransfer(amount) }
-	
+
 	suspend fun getPayoutHistory(
 	) = call { api.getPayoutHistory() }
-	
-	
+
+
 	suspend fun getTransactionsHistory(
 		page: RequestBody?,
 		status: RequestBody?,
 	) = call { api.getTransactionsHistory(page, status) }
-	
+
 	suspend fun updateProfile(
 		firstName: RequestBody,
 		lastName: RequestBody,
@@ -412,10 +412,10 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
 		userName: RequestBody,
 		bio: RequestBody,
 	) = call { api.updateProfile(firstName, lastName, image, userName, bio) }
-	
+
 	suspend fun fetchReferral(
 	) = call { api.fetchReferral() }
-	
+
 	suspend fun storeSellerRating(
 		sellerId: RequestBody,
 		overAllRating: RequestBody,
@@ -433,20 +433,20 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
 			comment
 		)
 	}
-	
+
 	suspend fun getSellerRating(
 		sellerId: String?,
 	) = call { api.getSellerRating(sellerId) }
-	
+
 	suspend fun sendChatNotification(
 		receiverId: RequestBody,
 		message: RequestBody,
 	) = call { api.sendChatNotification(receiverId, message) }
-	
+
 	suspend fun getPageUrl(
 		slug: String,
 	) = call { api.getPageUrl(slug) }
-	
+
 	suspend fun storeSellerVerification(
 		id: MultipartBody.Part?,
 		image: MultipartBody.Part?,
@@ -457,64 +457,64 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
 			id, image, phoneVerification, cardId
 		)
 	}
-	
-	
+
+
 	suspend fun getSellerStatus(
 	) = call { api.getSellerStatus() }
-	
+
 	suspend fun setDefaultShippingAddress(
 		addressId: RequestBody?,
 	) = call { api.setDefaultShippingAddress(addressId) }
-	
+
 	suspend fun setDefaultCard(
 		cardId: RequestBody?,
 	) = call { api.setDefaultCard(cardId) }
-	
+
 	suspend fun deleteCard(
 		cardId: RequestBody?,
 	) = call { api.deleteCard(cardId) }
-	
+
 	suspend fun deleteAddress(
 		addressId: RequestBody?,
 	) = call { api.deleteAddress(addressId) }
-	
+
 	suspend fun getStates() = call { api.getStates() }
-	
+
 	suspend fun deleteProduct(productId: String?) = call { api.deleteProduct(productId) }
-	
+
 	suspend fun blockUnblockUser(
 		blockedID: RequestBody,
 	) = call { api.blockUnblockUser(blockedID) }
-	
+
 	suspend fun getBlockedUsers(
 	) = call { api.getBlockedUsers() }
-	
+
 	suspend fun getMailClasses(
 	) = call { api.getMailClasses() }
-	
+
 	suspend fun getPremierShop(
 	) = call { api.getPremierShop() }
-	
+
 	suspend fun getPromoteTools(
 	) = call { api.getPromoteTools() }
-	
+
 	suspend fun getPromoteShowList() = call { api.getPromoteShowList() }
-	
+
 	suspend fun promoteShow(
-		scheduleShowId : RequestBody,
-		promoteShowId : RequestBody
-	) = call { api.promoteShow(scheduleShowId,promoteShowId) }
-	
+		scheduleShowId: RequestBody,
+		promoteShowId: RequestBody
+	) = call { api.promoteShow(scheduleShowId, promoteShowId) }
+
 	suspend fun sendTipAmount(
 		sellerId: RequestBody,
 		amount: RequestBody,
 		cardNumber: RequestBody?
 	) = call { api.sendTipAmount(sellerId, amount, cardNumber) }
-	
+
 	suspend fun payout(
 		amount: RequestBody,
-	) = call { api.payout( amount) }
-	
+	) = call { api.payout(amount) }
+
 	suspend fun applyPremierShop(
 	) = call { api.applyPremierShop() }
 
@@ -543,7 +543,7 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
 
 	suspend fun getSellerInfo(
 		sellerId: String
-	) = call { api.getSellerInfo( sellerId) }
+	) = call { api.getSellerInfo(sellerId) }
 
 	suspend fun getReportCategories(
 	) = call { api.getReportCategories() }
@@ -557,26 +557,30 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
 	suspend fun fetchOrderDetail(
 		productId: String?,
 		orderId: String?
-	) = call { api.fetchOrderDetail( productId ,orderId) }
+	) = call { api.fetchOrderDetail(productId, orderId) }
 
 	suspend fun updateProductStatus(
 		productId: RequestBody?,
 		status: RequestBody?
-	) = call { api.updateProductStatus( productId ,status) }
+	) = call { api.updateProductStatus(productId, status) }
 
 	suspend fun storeShippingProfile(
 		name: RequestBody?,
-		size : RequestBody?,
-		weight : RequestBody?
-	) = call { api.storeShippingProfile( name, size, weight) }
+		size: RequestBody?,
+		weight: RequestBody?
+	) = call { api.storeShippingProfile(name, size, weight) }
 
 	suspend fun getShippingProfile(
 	) = call { api.getShippingProfile() }
 
 	suspend fun getShowDetail(
 		showId: String
-	) = call { api.getShowDetail( showId ) }
+	) = call { api.getShowDetail(showId) }
 
-
+	suspend fun raiseTicket(
+		orderId: RequestBody?,
+		subject: RequestBody?,
+		message: RequestBody?
+	) = call { api.raiseTicket(orderId, subject, message) }
 
 }

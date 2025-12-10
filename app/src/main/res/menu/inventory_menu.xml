@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/edit"
+        android:title="Edit"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/active"
+        android:title="Activate"
+        app:showAsAction="ifRoom"
+        android:visible="false"/>
+
+    <item
+        android:id="@+id/deActive"
+        android:title="Deactivate"
+        app:showAsAction="ifRoom"
+        android:visible="false"/>
+
+    <item
+        android:id="@+id/delete"
+        android:title="Delete"
+        app:showAsAction="ifRoom" />
+
+</menu>

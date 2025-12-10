@@ -108,23 +108,32 @@ class InventoryFragment : BaseFragment<SellerHubViewModel, FragmentInventoryBind
 
                 log("POSITION : $pos STATUS : ${filteredList.size}")
                 filteredList[pos]?.let { item ->
-                    if (status == "delete") {
-                        deleteProductDialog(item.id.toString(), pos)
-                    } else if (status == "longClick") {
+	                when (status) {
+		                "delete" -> {
+			                deleteProductDialog(item.id.toString(), pos)
+		                }
+		                "active", "inactive" -> {
 
-                        log("LONG CLICK")
+			                bind.loader.isVisible = true
 
-                        sortOptionSheet(item, pos)
+			                viewModel.updateProductStatus(
+				                item.id.toString().request(),
+				                status.request()
+			                )
 
-
-                    } else {
-                        if (isSelectionMode) {
-                            item.selected = !(item.selected ?: false)
-                            adapter.notifyItemChanged(pos)
-                        } else {
-//							startActivity(mCtx.toListProduct().putExtra("product" , item))
-                        }
-                    }
+		                }
+		                "edit" -> {
+			                startActivity(mCtx.toListProduct().putExtra("product" , item))
+		                }
+		                else -> {
+			                if (isSelectionMode) {
+				                item.selected = !(item.selected ?: false)
+				                adapter.notifyItemChanged(pos)
+			                } else {
+                //							startActivity(mCtx.toListProduct().putExtra("product" , item))
+			                }
+		                }
+	                }
                 }
             }
         })

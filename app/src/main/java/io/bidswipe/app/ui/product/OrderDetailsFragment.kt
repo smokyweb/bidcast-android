@@ -8,12 +8,15 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.widget.AppCompatImageView
+import androidx.appcompat.widget.PopupMenu
 import androidx.core.os.bundleOf
 import androidx.core.text.buildSpannedString
 import androidx.core.view.isVisible
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseFragment
 import io.bidswipe.app.databinding.FragmentOrderDetailsBinding
 import io.bidswipe.app.interfaces.AlertClicks
@@ -43,6 +46,7 @@ class OrderDetailsFragment : BaseFragment<ProductViewModel, FragmentOrderDetails
 	): FragmentOrderDetailsBinding  = FragmentOrderDetailsBinding.inflate(inflater, view, false)
 
 	private var orderId : String? = null
+	private var primaryOrderId : String? = null
 	private var order : String? = null
 	private var sellerId : String? = null
 	private var productId : String? = null
@@ -109,6 +113,30 @@ class OrderDetailsFragment : BaseFragment<ProductViewModel, FragmentOrderDetails
 
 			findNavController().navigate(ids.orderDetailToVideoReceiptPlayerFragment,bundleOf("videoUrl" to videoUrl))
 
+		}
+
+		val menu = PopupMenu(mCtx, bind.header.findViewById<AppCompatImageView>(R.id.primaryIcon))
+
+		menu.menuInflater.inflate(R.menu.order_menu, menu.menu)
+
+		menu.setOnMenuItemClickListener {
+			when (it.itemId) {
+				ids.cancel -> {
+
+				}
+
+				ids.raiseTicket -> {
+
+					findNavController().navigate(ids.orderDetailToRaiseTicketFragment,bundleOf("orderId" to primaryOrderId))
+
+				}
+
+			}
+			return@setOnMenuItemClickListener true
+		}
+
+		bind.header.onMorePrimaryClick {
+			menu.show()
 		}
 
 		bind.loader.isVisible = true
@@ -186,6 +214,10 @@ class OrderDetailsFragment : BaseFragment<ProductViewModel, FragmentOrderDetails
 					bind.videoReceipt.isVisible = !videoUrl.isNullOrEmpty()
 
 					bind.videoReceiptDivider.isVisible = !videoUrl.isNullOrEmpty()
+
+					primaryOrderId = mData?.order?.id.toString()
+
+
 
 				}
 

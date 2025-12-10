@@ -15,6 +15,7 @@ import io.bidswipe.app.network.response.GetProductDetailsResponse
 import io.bidswipe.app.network.response.GetProductsResponse
 import io.bidswipe.app.network.response.GetPurchaseDetail
 import io.bidswipe.app.network.response.GetShippingAddressResponse
+import io.bidswipe.app.network.response.RaiseTicketResponse
 import io.bidswipe.app.network.response.SellerInfoResponse
 import io.bidswipe.app.network.response.UserSearchingResponse
 import io.bidswipe.app.utils.Const.NO_INTERNET_ERROR
@@ -257,6 +258,22 @@ class ProductViewModel @Inject constructor(
 			return@launch
 		}
 		_fetchOrderDetailResponse.value = repo.fetchOrderDetail(productId, orderId)
+	}
+
+	private var _raiseTicketResponse = MutableLiveData<Resource<RaiseTicketResponse>>()
+	val raiseTicketRepo : MutableLiveData<Resource<RaiseTicketResponse>>
+		get() = _raiseTicketResponse
+
+	fun raiseTicket(
+		orderId: RequestBody?,
+		subject: RequestBody?,
+		message: RequestBody?
+	) = viewModelScope.launch {
+		if (! networkMonitor.hasInternet()) {
+			_raiseTicketResponse.value = NO_INTERNET_ERROR
+			return@launch
+		}
+		_raiseTicketResponse.value = repo.raiseTicket( orderId, subject, message)
 	}
 
 }

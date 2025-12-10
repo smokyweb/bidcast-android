@@ -74,33 +74,56 @@
                 android:gravity="center_vertical"
                 android:orientation="vertical">
 
-                <com.google.android.material.card.MaterialCardView
-                    android:id="@+id/statusCard"
-                    style="@style/cardStyle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    app:cardBackgroundColor="@color/errorContainer"
-                    app:cardElevation="0dp"
-                    app:cardCornerRadius="100dp">
-
-                    <TextView
-                        android:id="@+id/status"
-                        style="@style/TitleSmall"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginHorizontal="@dimen/margin"
-                        android:text="Out of Stock"
-                        android:textColor="@color/error" />
-
-                </com.google.android.material.card.MaterialCardView>
-
-                <TextView
-                    android:id="@+id/productName"
-                    style="@style/TitleMedium"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:maxLines="2"
-                    android:text="Product Name" />
+                    android:orientation="horizontal">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <com.google.android.material.card.MaterialCardView
+                            android:id="@+id/statusCard"
+                            style="@style/cardStyle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            app:cardBackgroundColor="@color/errorContainer"
+                            app:cardElevation="0dp"
+                            app:cardCornerRadius="100dp">
+
+                            <TextView
+                                android:id="@+id/status"
+                                style="@style/TitleSmall"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginHorizontal="@dimen/margin"
+                                android:text="Out of Stock"
+                                android:textColor="@color/error" />
+
+                        </com.google.android.material.card.MaterialCardView>
+
+                        <TextView
+                            android:id="@+id/productName"
+                            style="@style/TitleMedium"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:maxLines="2"
+                            android:text="Product Name" />
+
+                    </LinearLayout>
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/moreMenu"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_vertical_menu"
+                        app:tint="@color/onSurface" />
+                </LinearLayout>
+
+
 
                 <TextView
                     android:id="@+id/prod_sub_title"

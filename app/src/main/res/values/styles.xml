@@ -365,6 +365,7 @@
         <item name="android:color">@color/transparent</item>
     </style>
 
+
     <style name="timePickerStyle">
         <item name="picker_curved">true</item>
         <item name="picker_curvedMaxAngle">65</item>

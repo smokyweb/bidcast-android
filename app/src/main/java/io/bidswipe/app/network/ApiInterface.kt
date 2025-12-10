@@ -68,6 +68,7 @@ import io.bidswipe.app.network.response.UserProfileResponse
 import io.bidswipe.app.network.response.UserSearchingResponse
 import io.bidswipe.app.network.response.PageUrlResponse
 import io.bidswipe.app.network.response.PayoutHistoryResponse
+import io.bidswipe.app.network.response.RaiseTicketResponse
 import io.bidswipe.app.network.response.SalesAnalyticsResponse
 import io.bidswipe.app.network.response.SellerAnalyticsResponse
 import io.bidswipe.app.network.response.SellerInfoResponse
@@ -208,6 +209,7 @@ interface ApiInterface {
 		@Part("date") date : RequestBody? ,
 		@Part("time") time : RequestBody? ,
 		@Part("category_id") categoryId : RequestBody? ,
+		@Part("show_discoverability") showDiscoverability : RequestBody? ,
 		@Part("auction_type_id") auctionTypeId : RequestBody? ,
 		@Part("product_ids[]") productIds :  List<Int> ,
 		@Part thumbnails : List<MultipartBody.Part?>? ,
@@ -759,7 +761,13 @@ interface ApiInterface {
 		@Query("show_id") showId : String?
 	) : GetShowDetailResponse
 
-
+	@Multipart
+	@POST("api/raise-ticket")
+	suspend fun raiseTicket(
+		@Part("order_id") productId: RequestBody?,
+		@Part("subject") subject: RequestBody?,
+		@Part("message") message: RequestBody?
+	) : RaiseTicketResponse
 
 }
 

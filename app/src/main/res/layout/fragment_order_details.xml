@@ -13,9 +13,9 @@
         app:headerMode="BACK_BUTTON_TITLE_ACTION"
         app:headerTitle="Product Name"
         app:layout_constraintTop_toTopOf="parent"
-        app:secondaryIconDrawable="@drawable/search"
+        app:primaryIconDrawable="@drawable/ic_vertical_menu"
         app:showBackButton="true"
-        app:showPrimaryIcon="false"
+        app:showPrimaryIcon="true"
         app:showSecondaryIcon="false" />
 
     <androidx.core.widget.NestedScrollView

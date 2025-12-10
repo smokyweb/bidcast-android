@@ -81,6 +81,13 @@
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@anim/slide_in_left"
             app:popExitAnim="@anim/slide_out_right" />
+        <action
+            android:id="@+id/orderDetailToRaiseTicketFragment"
+            app:destination="@id/raiseTicketFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"/>
     </fragment>
 
     <fragment
@@ -88,6 +95,11 @@
         android:name="io.bidswipe.app.ui.product.VideoReceiptPlayerFragment"
         android:label="fragment_video_receipt_player"
         tools:layout="@layout/fragment_video_receipt_player" />
+    <fragment
+        android:id="@+id/raiseTicketFragment"
+        android:name="io.bidswipe.app.ui.product.RaiseTicketFragment"
+        android:label="fragment_raise_ticket"
+        tools:layout="@layout/fragment_raise_ticket" />
 
 
 </navigation>

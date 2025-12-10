@@ -10,7 +10,6 @@ import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.navigation.fragment.findNavController
-import com.skydoves.powermenu.PowerMenuItem
 import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseFragment
 import io.bidswipe.app.databinding.FragmentShowDetailsBinding
@@ -32,7 +31,6 @@ class ShowDetailsFragment : BaseFragment<SellerHubViewModel, FragmentShowDetails
 
 	private var showId = ""
 	private var videoUrl = ""
-	private var actionList = mutableListOf<PowerMenuItem>()
 
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		super.onViewCreated(view, savedInstanceState)
@@ -44,10 +42,6 @@ class ShowDetailsFragment : BaseFragment<SellerHubViewModel, FragmentShowDetails
 		}
 
 		bind.header.setHeaderText(viewModel.selectedShow?.showDetail ?:"Show Details")
-
-		actionList.clear()
-		actionList.add(PowerMenuItem(title = "View Shipment"))
-		actionList.add(PowerMenuItem(title = "Restart Show"))
 
 		val menu = PopupMenu(mCtx, bind.header.findViewById<AppCompatImageView>(R.id.primaryIcon))
 		menu.menuInflater.inflate(R.menu.show_menu, menu.menu)
@@ -79,7 +73,6 @@ class ShowDetailsFragment : BaseFragment<SellerHubViewModel, FragmentShowDetails
 			if (videoUrl.isNotEmpty()){
 				findNavController().navigate(R.id.showDetailsVideoReceiptPlayerFragment2, bundleOf("videoUrl" to videoUrl))
 			}else{
-
 				successToast("Video is not available")
 			}
 
@@ -121,12 +114,10 @@ class ShowDetailsFragment : BaseFragment<SellerHubViewModel, FragmentShowDetails
 					it.parse(mCtx, TAG, object : AlertClicks {
 						override fun primaryClick(dialog: AppBottomSheet) {
 							dialog.dismiss()
-
 						}
 
 						override fun secondaryClick(dialog: AppBottomSheet) {
 							dialog.dismiss()
-
 						}
 					})
 
@@ -137,6 +128,6 @@ class ShowDetailsFragment : BaseFragment<SellerHubViewModel, FragmentShowDetails
 			}
 		}
 
-
 	}
+
 }

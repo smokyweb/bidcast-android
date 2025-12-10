@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".ui.product.RaiseTicketFragment">
+
+    <io.bidswipe.app.ui.custom.Header
+        android:id="@+id/header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:headerMode="BACK_BUTTON_TITLE_ACTION"
+        app:headerTitle="Raise Ticket"
+        app:layout_constraintTop_toTopOf="parent"
+        app:primaryIconDrawable="@drawable/notification"
+        app:secondaryIconDrawable="@drawable/search"
+        app:showBackButton="true"
+        app:showPrimaryIcon="false"
+        app:showSecondaryIcon="false" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:fillViewport="true"
+        android:scrollbars="none"
+        android:layout_marginBottom="@dimen/margin"
+        app:layout_constraintBottom_toTopOf="@id/submit"
+        app:layout_constraintTop_toBottomOf="@id/header">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/half_margin"
+            android:layout_marginVertical="@dimen/half_margin"
+            android:orientation="vertical"
+            app:layout_constraintTop_toBottomOf="@id/header">
+
+
+            <com.google.android.material.card.MaterialCardView
+                style="@style/cardStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/half_margin"
+                android:backgroundTint="@color/surface"
+                app:contentPadding="@dimen/margin">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        style="@style/TitleLarge"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Describe Your Issue" />
+
+                    <TextView
+                        style="@style/BodyMedium"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Provide a detailed description of the problem you're facing. The more information you provide, the faster we can resolve it."
+                        android:textColor="@color/secondary" />
+
+                </LinearLayout>
+
+
+            </com.google.android.material.card.MaterialCardView>
+
+
+            <TextView
+                style="@style/TitleSmall"
+                android:layout_width="match_parent"
+                android:layout_marginTop="@dimen/half_margin"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/half_margin"
+                android:text="@string/subject" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/inputBoxStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/half_margin"
+                android:layout_marginBottom="@dimen/margin">
+
+                <com.google.android.material.textfield.MaterialAutoCompleteTextView
+                    android:id="@+id/subject"
+                    style="@style/inputTextStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Enter subject"
+                    android:inputType="text" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <TextView
+                style="@style/TitleSmall"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/half_margin"
+                android:text="@string/messages" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/inputBoxStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/half_margin"
+                android:layout_marginBottom="@dimen/margin">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/description"
+                    style="@style/inputTextStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="top"
+                    android:hint="@string/enter_your_message_here"
+                    android:minLines="4" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+        </LinearLayout>
+
+    </ScrollView>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/submit"
+        style="@style/appBtn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/margin"
+        android:text="Raise Ticket"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+    <io.bidswipe.app.ui.custom.LoaderView
+        android:id="@+id/loader"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
