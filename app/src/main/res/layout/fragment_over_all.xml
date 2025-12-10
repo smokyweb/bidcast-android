@@ -14,169 +14,371 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingBottom="@dimen/margin">
 
+            <!-- Seller Analytics Header with Date Range -->
             <LinearLayout
-                android:id="@+id/orders"
+                style="@style/shadowStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="@dimen/half_margin"
-                android:orientation="horizontal">
+                android:layout_marginHorizontal="@dimen/margin"
+                android:layout_marginTop="@dimen/margin"
+                android:background="@drawable/card_8"
+                android:orientation="vertical"
+                android:padding="@dimen/padding">
 
+                <TextView
+                    style="@style/TitleLarge"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Seller Analytics"
+                    android:textStyle="bold" />
+
+                <!-- Date Range Display -->
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_marginHorizontal="@dimen/half_margin"
-                    android:layout_weight="1"
-                    android:background="@drawable/card_8"
-                    android:orientation="vertical"
-                    android:padding="@dimen/half_margin">
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/half_margin"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
 
                     <TextView
-                        android:id="@+id/items"
-                        style="@style/HeadlineMedium"
-                        android:layout_width="match_parent"
+                        android:id="@+id/dateRange"
+                        style="@style/BodyMedium"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:text="N/A"
-                        android:textColor="@color/primary" />
+                        android:layout_weight="1"
+                        android:text="Nov 18, 2025 - Dec 2, 2025"
+                        android:textColor="@color/onSurface" />
 
-                    <TextView
-                        style="@style/BodySmall"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:text="@string/items" />
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/btnPrevDate"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_marginStart="@dimen/half_margin"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:padding="4dp"
+                        android:src="@drawable/ic_previous"
+                        android:tint="@color/onSurface" />
 
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/btnNextDate"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_marginStart="8dp"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:padding="4dp"
+                        android:src="@drawable/ic_forward"
+                        android:tint="@color/onSurface" />
                 </LinearLayout>
 
+                <!-- Date Range Controls -->
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_marginHorizontal="@dimen/half_margin"
-                    android:layout_weight="1"
-                    android:background="@drawable/card_8"
-                    android:orientation="vertical"
-                    android:padding="@dimen/half_margin">
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
 
-                    <TextView
-                        android:id="@+id/revenue"
-                        style="@style/HeadlineMedium"
-                        android:layout_width="match_parent"
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnEditDates"
+                        style="@style/appTonalBtn"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:text="N/A"
-                        android:textColor="@color/primary" />
+                        android:minWidth="0dp"
+                        android:minHeight="0dp"
+                        android:paddingStart="12dp"
+                        android:paddingEnd="12dp"
+                        android:text="Edit Dates"
+                        android:textSize="12sp" />
 
                     <TextView
+                        android:id="@+id/linkMetricsInfo"
                         style="@style/BodySmall"
-                        android:layout_width="match_parent"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:text="@string/revenue" />
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_marginHorizontal="@dimen/half_margin"
-                    android:layout_weight="1"
-                    android:background="@drawable/card_8"
-                    android:orientation="vertical"
-                    android:padding="@dimen/half_margin">
-
-                    <TextView
-                        android:id="@+id/rating"
-                        style="@style/HeadlineMedium"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:text="N/A"
+                        android:layout_marginStart="@dimen/half_margin"
+                        android:layout_weight="1"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:gravity="end"
+                        android:text="What do these metrics mean?"
                         android:textColor="@color/primary" />
-
-                    <TextView
-                        style="@style/BodySmall"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:text="@string/rating" />
 
                 </LinearLayout>
 
             </LinearLayout>
 
+            <!-- Estimated Sales Card (Single Card) -->
+            <LinearLayout
+                style="@style/shadowStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/margin"
+                android:layout_marginTop="@dimen/margin"
+                android:background="@drawable/card_8"
+                android:orientation="vertical"
+                android:padding="@dimen/padding">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/estimatedSales"
+                        style="@style/HeadlineMedium"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="$126.00"
+                        android:textColor="@color/onSurface"
+                        android:textSize="24sp"
+                        android:textStyle="bold" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnSalesMore"
+                        style="@style/appBtnTrans"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:minWidth="0dp"
+                        android:minHeight="0dp"
+                        android:paddingStart="4dp"
+                        android:paddingEnd="4dp"
+                        android:text="More"
+                        android:textColor="@color/primary"
+                        android:textSize="12sp"
+                        app:backgroundTint="@color/transparent"
+                        app:icon="@drawable/ic_down_arrow"
+                        app:iconGravity="textEnd"
+                        app:iconTint="@color/primary"
+                        app:iconSize="16dp" />
+
+                </LinearLayout>
+
+                <TextView
+                    style="@style/BodySmall"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:alpha="0.8"
+                    android:text="Estimated Sales" />
+
+            </LinearLayout>
+
+            <!-- Chart Section -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/margin"
+                android:layout_marginTop="@dimen/margin"
+                android:orientation="vertical">
+
+                <!-- All Dropdown -->
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/chartFilterLayout"
+                    style="@style/inputBoxStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:hint="All"
+                    android:paddingVertical="0dp"
+                    android:minHeight="0dp"
+                    app:endIconDrawable="@drawable/ic_down_arrow"
+                    app:endIconMode="dropdown_menu">
+
+                    <com.google.android.material.textfield.MaterialAutoCompleteTextView
+                        android:id="@+id/chartFilter"
+                        style="@style/inputTextStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:clickable="true"
+                        android:focusable="false"
+                        android:minHeight="0dp"
+                        android:paddingVertical="4dp"
+                        android:text="All" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/half_margin"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <io.bidswipe.app.ui.custom.NoDataView
+                        android:id="@+id/no_data"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:alpha="0.6"
+                        android:visibility="gone"
+                        app:desc_text="No Sales Data Available"
+                        app:icon="@drawable/ic_graph"
+                        app:iconSize="48dp" />
+
+                    <com.github.mikephil.charting.charts.BarChart
+                        android:id="@+id/salesChart"
+                        android:layout_width="match_parent"
+                        android:layout_height="240dp" />
+
+                    <!-- Chart Legend -->
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:orientation="horizontal">
+
+                        <View
+                            android:layout_width="12dp"
+                            android:layout_height="12dp"
+                            android:layout_gravity="center_vertical"
+                            android:layout_marginEnd="4dp"
+                            android:background="@drawable/card_8"
+                            android:backgroundTint="@color/primary" />
+
+                        <TextView
+                            style="@style/BodySmall"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="16dp"
+                            android:text="Livestream"
+                            android:textColor="@color/onSurface" />
+
+                        <View
+                            android:layout_width="12dp"
+                            android:layout_height="12dp"
+                            android:layout_gravity="center_vertical"
+                            android:layout_marginEnd="4dp"
+                            android:background="@drawable/card_8"
+                            android:backgroundTint="@color/secondary" />
+
+                        <TextView
+                            style="@style/BodySmall"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Marketplace"
+                            android:textColor="@color/onSurface" />
+
+                    </LinearLayout>
+
+                    <!-- Chart Footer -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:gravity="end"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            style="@style/BodySmall"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Time Zone: PST"
+                            android:textColor="@color/outlineVariant" />
+
+                        <TextView
+                            style="@style/BodySmall"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="8dp"
+                            android:text="May take 1-2 days for data to update"
+                            android:textColor="@color/outlineVariant" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <!-- Who is watching my live shows? Section -->
             <TextView
                 style="@style/TitleLarge"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="@dimen/half_margin"
-                android:text="@string/sales_performance" />
+                android:layout_marginHorizontal="@dimen/margin"
+                android:layout_marginTop="@dimen/margin"
+                android:text="Who is watching my live shows?"
+                android:textStyle="bold" />
 
+            <!-- Top Buyers by Sales -->
             <LinearLayout
+                style="@style/shadowStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center"
-                android:orientation="vertical">
+                android:layout_marginHorizontal="@dimen/margin"
+                android:layout_marginVertical="@dimen/margin"
+                android:background="@drawable/card_8"
+                android:orientation="vertical"
+                android:padding="@dimen/padding">
 
-                <io.bidswipe.app.ui.custom.NoDataView
-                    android:id="@+id/no_data"
+                <TextView
+                    style="@style/TitleLarge"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:alpha="0.6"
-                    android:visibility="gone"
-                    app:desc_text="No Sales Data Available"
-                    app:icon="@drawable/ic_graph"
-                    app:iconSize="48dp" />
+                    android:text="Top Buyers by Sales"
+                    android:textStyle="bold" />
 
-                <com.github.mikephil.charting.charts.LineChart
-                    android:id="@+id/salesChart"
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/topBuyersBySalesRecycler"
                     android:layout_width="match_parent"
-                    android:layout_height="240dp" />
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/half_margin"
+                    android:nestedScrollingEnabled="false"
+                    tools:listitem="@layout/item_top_buyer" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnExportSales"
+                    style="@style/appBtnOutline"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/half_margin"
+                    android:text="Export Data"
+                    android:textSize="12sp" />
 
             </LinearLayout>
 
-            <TextView
-                style="@style/TitleLarge"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/half_margin"
-                android:text="@string/visitor_analytics" />
-
+            <!-- Top Buyers by Orders -->
             <LinearLayout
+                style="@style/shadowStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center"
-                android:orientation="vertical">
+                android:layout_marginHorizontal="@dimen/margin"
+                android:layout_marginBottom="@dimen/margin"
+                android:background="@drawable/card_8"
+                android:orientation="vertical"
+                android:padding="@dimen/padding">
 
-                <io.bidswipe.app.ui.custom.NoDataView
-                    android:id="@+id/no_data_visitors"
+                <TextView
+                    style="@style/TitleLarge"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:alpha="0.6"
-                    android:visibility="gone"
-                    app:desc_text="No Sales Data Available"
-                    app:icon="@drawable/ic_graph"
-                    app:iconSize="48dp" />
+                    android:text="Top Buyers by Orders"
+                    android:textStyle="bold" />
 
-                <com.github.mikephil.charting.charts.LineChart
-                    android:id="@+id/visitorChart"
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/topBuyersByOrdersRecycler"
                     android:layout_width="match_parent"
-                    android:layout_height="240dp" />
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/half_margin"
+                    android:nestedScrollingEnabled="false"
+                    tools:itemCount="2"
+                    tools:listitem="@layout/item_top_buyer" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnExportOrders"
+                    style="@style/appBtnOutline"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/half_margin"
+                    android:text="Export Data"
+                    android:textSize="12sp" />
 
             </LinearLayout>
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/gridRecycler"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="8dp"
-                app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-                android:nestedScrollingEnabled="false"
-                app:spanCount="2"
-                tools:itemCount="4"
-                tools:listitem="@layout/benifits_item" />
 
         </LinearLayout>
 
@@ -188,6 +390,5 @@
         android:layout_height="0dp"
         android:layout_weight="1"
         android:visibility="gone" />
-
 
 </LinearLayout>

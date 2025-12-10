@@ -244,6 +244,7 @@ dependencies {
     implementation(libs.agora.full.sdk)
 
     implementation(libs.number.keyboard)
+    implementation(libs.aztec)
 
     //ZEGO CLOUD
 //    implementation(libs.express.video)
@@ -256,4 +257,5 @@ dependencies {
 
     implementation(libs.arindicatorview)
     implementation("com.github.caneryilmaz52:LuckyWheelView:1.1.6")
+
 }

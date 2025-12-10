@@ -10,286 +10,304 @@ import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.isVisible
-import com.github.mikephil.charting.charts.LineChart
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.github.mikephil.charting.charts.BarChart
 import com.github.mikephil.charting.components.AxisBase
 import com.github.mikephil.charting.components.XAxis
-import com.github.mikephil.charting.data.Entry
-import com.github.mikephil.charting.data.LineData
-import com.github.mikephil.charting.data.LineDataSet
+import com.github.mikephil.charting.data.BarData
+import com.github.mikephil.charting.data.BarDataSet
+import com.github.mikephil.charting.data.BarEntry
 import com.github.mikephil.charting.formatter.ValueFormatter
-import com.github.mikephil.charting.interfaces.datasets.ILineDataSet
 import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseFragment
-import io.bidswipe.app.controller.AnalyticsGridAdapter
+import io.bidswipe.app.controller.TopBuyerAdapter
 import io.bidswipe.app.databinding.FragmentOverAllBinding
 import io.bidswipe.app.interfaces.AlertClicks
 import io.bidswipe.app.interfaces.RecyclerClicks
-import io.bidswipe.app.model.SellModel
+import io.bidswipe.app.model.TopBuyerModel
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.network.response.SalesAnalyticsResponse
 import io.bidswipe.app.network.response.VisitorsAnalyticsResponse
 import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.utils.asMoney
 import io.bidswipe.app.utils.parse
+import io.bidswipe.app.utils.setHapticClickListener
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Locale
 
 @SuppressLint("NotifyDataSetChanged")
-class OverAllFragment : BaseFragment<SellerHubViewModel , FragmentOverAllBinding>() {
-	override fun getModel() : Class<SellerHubViewModel> = SellerHubViewModel::class.java
+class OverAllFragment : BaseFragment<SellerHubViewModel, FragmentOverAllBinding>() {
+    override fun getModel(): Class<SellerHubViewModel> = SellerHubViewModel::class.java
 
-	override fun getBind(
-		inflater : LayoutInflater ,
-		view : ViewGroup? ,
-	) = FragmentOverAllBinding.inflate(inflater , view , false)
+    override fun getBind(
+        inflater: LayoutInflater,
+        view: ViewGroup?,
+    ) = FragmentOverAllBinding.inflate(inflater, view, false)
 
-	private var gridList = mutableListOf<SellModel>()
-	private lateinit var gridAdapter : AnalyticsGridAdapter
+    private var topBuyersBySalesList = mutableListOf<TopBuyerModel>()
+    private lateinit var topBuyersBySalesAdapter: TopBuyerAdapter
 
-	private val mClick = object : RecyclerClicks {
-		override fun itemClick(pos : Int , status : String?) {
-		}
-	}
+    private var topBuyersByOrdersList = mutableListOf<TopBuyerModel>()
+    private lateinit var topBuyersByOrdersAdapter: TopBuyerAdapter
 
-	override fun onViewCreated(view : View , savedInstanceState : Bundle?) {
-		super.onViewCreated(view , savedInstanceState)
-		gridAdapter = AnalyticsGridAdapter(gridList , mClick)
-		bind.gridRecycler.adapter = gridAdapter
+    private val mClick = object : RecyclerClicks {
+        override fun itemClick(pos: Int, status: String?) {
+        }
+    }
 
+    private var startDate: Calendar = Calendar.getInstance().apply {
+        add(Calendar.DAY_OF_MONTH, -14) // Default: last 14 days
+    }
+    private var endDate: Calendar = Calendar.getInstance()
 
-		bind.loader.isVisible = true
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
-		viewModel.getSellerAnalytics()
+        setupRecyclerViews()
+        setupDateRange()
+        setupClickListeners()
 
-		viewModel.getSalesPerformance()
+        bind.loader.isVisible = true
 
-		viewModel.getVisitorsAnalytics()
+        viewModel.getSellerAnalytics()
+        viewModel.getSalesPerformance()
+        viewModel.getVisitorsAnalytics()
 
-		viewModel.getSellerAnalyticsRepo.observe(viewLifecycleOwner) {
-			when (it) {
-				is Resource.Success -> {
-					bind.loader.isVisible = false
+        viewModel.getSellerAnalyticsRepo.observe(viewLifecycleOwner) {
+            when (it) {
+                is Resource.Success -> {
+                    bind.loader.isVisible = false
+                    val mData = it.value.data
 
-					val mData = it.value.data
+                    // Update metric cards
+                    bind.estimatedSales.text = (mData?.stats?.revenue ?: "0").asMoney()
 
-					bind.items.text = (mData?.stats?.totalItems ?: 0).toString()
-					bind.revenue.text = (mData?.stats?.revenue ?: "0").asMoney()
-					bind.rating.text = (mData?.stats?.rating ?: 0).toDouble().toString()
+                    // TODO: Update top buyers lists from API
+                    updateTopBuyers()
+                }
 
-					gridList.clear()
-					gridList.add(SellModel(R.drawable.ic_people , 0 , "Total Followers" , ((mData?.stats?.followers ?: 0).toString())))
-					gridList.add(SellModel(R.drawable.ic_star , 0 , "Avg Rating" , ("${(mData?.stats?.rating ?: 0)}/5")))
-					gridList.add(SellModel(R.drawable.ic_video , 0 , "Live Sessions" , (mData?.stats?.liveSessions ?: 0).toString()))
-					gridList.add(SellModel(R.drawable.ic_cart , 0 , "Total Sales" , (mData?.stats?.totalSales ?: 0).toString()))
+                is Resource.Error -> {
+                    bind.loader.isVisible = false
+                    it.parse(mCtx, TAG, object : AlertClicks {
+                        override fun primaryClick(dialog: AppBottomSheet) {
+                            dialog.dismiss()
+                        }
 
-					gridAdapter.notifyDataSetChanged()
+                        override fun secondaryClick(dialog: AppBottomSheet) {
+                            dialog.dismiss()
+                        }
+                    })
+                }
 
-				}
+                else -> {}
+            }
+        }
 
-				is Resource.Error -> {
-					bind.loader.isVisible = false
+        viewModel.getSalesPerformanceRepo.observe(viewLifecycleOwner) { resource ->
+            when (resource) {
+                is Resource.Success -> {
+                    bind.loader.isVisible = false
+                    val mData = resource.value.data?.chart?.toMutableList()
 
-					it.parse(mCtx , TAG , object : AlertClicks {
-						override fun primaryClick(dialog : AppBottomSheet) {
-							dialog.dismiss()
+                    if (mData?.isNotEmpty() == true) {
+                        setUpBarChart(mCtx, bind.salesChart, mData)
+                        bind.salesChart.isVisible = true
+                        bind.noData.isVisible = false
+                    } else {
+                        bind.salesChart.isVisible = false
+                        bind.noData.isVisible = true
+                    }
+                }
 
-						}
+                is Resource.Error -> {
+                    bind.loader.isVisible = false
+                    resource.parse(mCtx, TAG, object : AlertClicks {
+                        override fun primaryClick(dialog: AppBottomSheet) {
+                            dialog.dismiss()
+                        }
 
-						override fun secondaryClick(dialog : AppBottomSheet) {
-							dialog.dismiss()
+                        override fun secondaryClick(dialog: AppBottomSheet) {
+                            dialog.dismiss()
+                        }
+                    })
+                }
 
-						}
-					})
-				}
+                else -> {}
+            }
+        }
 
-				else -> {}
+        viewModel.getVisitorsAnalyticsRepo.observe(viewLifecycleOwner) {
+            // Visitor analytics can be removed or kept for future use
+        }
+    }
 
-			}
-		}
+    private fun setupRecyclerViews() {
+        // Remove gridRecycler setup as it's no longer in the layout
+        // gridAdapter = AnalyticsGridAdapter(gridList, mClick)
+        // bind.gridRecycler.adapter = gridAdapter
 
-		viewModel.getSalesPerformanceRepo.observe(viewLifecycleOwner) { resource ->
-			when (resource) {
-				is Resource.Success -> {
-					bind.loader.isVisible = false
+        topBuyersBySalesAdapter = TopBuyerAdapter(topBuyersBySalesList, mClick)
+        bind.topBuyersBySalesRecycler.layoutManager = LinearLayoutManager(mCtx)
+        bind.topBuyersBySalesRecycler.adapter = topBuyersBySalesAdapter
+        bind.topBuyersBySalesRecycler.isNestedScrollingEnabled = false
 
-					val mData = resource.value.data?.chart?.toMutableList()
+        topBuyersByOrdersAdapter = TopBuyerAdapter(topBuyersByOrdersList, mClick)
+        bind.topBuyersByOrdersRecycler.layoutManager = LinearLayoutManager(mCtx)
+        bind.topBuyersByOrdersRecycler.adapter = topBuyersByOrdersAdapter
+        bind.topBuyersByOrdersRecycler.isNestedScrollingEnabled = false
+    }
 
-					if (mData?.isNotEmpty() == true) {
-						if (mData.size == 1) {
-							mData.add(0 , SalesAnalyticsResponse.Data.Chart("" , "0" , 0))
-						}
-						val entries = ArrayList<Entry>()
-						mData.forEachIndexed { index , chartData ->
-							entries.add(Entry(index.toFloat() , chartData?.totalSales?.toFloat() ?: 0f , chartData?.totalSales))
-						}
+    private fun setupDateRange() {
+        updateDateRangeDisplay()
+    }
 
-						setUpChart(mCtx , bind.salesChart , entries , mData.map { (it?.label ?: "").removePrefix("day ") }.toMutableList())
-						bind.salesChart.isVisible = true
-						bind.noData.isVisible = false
-					} else {
-						bind.salesChart.isVisible = false
-						bind.noData.isVisible = true
-					}
-				}
+    private fun setupClickListeners() {
+        bind.btnEditDates.setHapticClickListener {
+            // TODO: Open date picker dialog
+        }
 
-				is Resource.Error -> {
-					bind.loader.isVisible = false
+        bind.btnPrevDate.setHapticClickListener {
+            // Move date range back
+            val daysDiff = ((endDate.timeInMillis - startDate.timeInMillis) / (1000 * 60 * 60 * 24)).toInt()
+            endDate.add(Calendar.DAY_OF_MONTH, -daysDiff)
+            startDate.add(Calendar.DAY_OF_MONTH, -daysDiff)
+            updateDateRangeDisplay()
+            loadDataForDateRange()
+        }
 
-					resource.parse(mCtx , TAG , object : AlertClicks {
-						override fun primaryClick(dialog : AppBottomSheet) {
-							dialog.dismiss()
+        bind.btnNextDate.setHapticClickListener {
+            // Move date range forward
+            val daysDiff = ((endDate.timeInMillis - startDate.timeInMillis) / (1000 * 60 * 60 * 24)).toInt()
+            startDate.add(Calendar.DAY_OF_MONTH, daysDiff)
+            endDate.add(Calendar.DAY_OF_MONTH, daysDiff)
+            // Don't allow future dates
+            if (endDate.after(Calendar.getInstance())) {
+                endDate = Calendar.getInstance()
+                startDate = Calendar.getInstance().apply {
+                    add(Calendar.DAY_OF_MONTH, -daysDiff)
+                }
+            }
+            updateDateRangeDisplay()
+            loadDataForDateRange()
+        }
 
-						}
+        bind.linkMetricsInfo.setHapticClickListener {
+            // TODO: Show metrics info dialog
+        }
 
-						override fun secondaryClick(dialog : AppBottomSheet) {
-							dialog.dismiss()
+        bind.btnExportSales.setHapticClickListener {
+            // TODO: Export sales data
+        }
 
-						}
-					})
-				}
+        bind.btnExportOrders.setHapticClickListener {
+            // TODO: Export orders data
+        }
+    }
 
-				else -> {}
+    private fun updateDateRangeDisplay() {
+        val dateFormat = SimpleDateFormat("MMM dd, yyyy", Locale.getDefault())
+        val dateRangeText = "${dateFormat.format(startDate.time)} - ${dateFormat.format(endDate.time)}"
+        bind.dateRange.text = dateRangeText
+    }
 
-			}
-		}
+    private fun loadDataForDateRange() {
+        bind.loader.isVisible = true
+        viewModel.getSalesPerformance()
+        // TODO: Call API with date range parameters
+    }
 
-		viewModel.getVisitorsAnalyticsRepo.observe(viewLifecycleOwner) {
-			when (it) {
-				is Resource.Success -> {
-					bind.loader.isVisible = false
+    private fun updateTopBuyers() {
+        // TODO: Replace with actual API data
+        topBuyersBySalesList.clear()
+        topBuyersBySalesList.add(TopBuyerModel(1, "sarah0131", null, "$72.00"))
+        topBuyersBySalesList.add(TopBuyerModel(2, "auctionfactory_com", null, "$36.00"))
+        topBuyersBySalesList.add(TopBuyerModel(3, "domjaden", null, "$18.00"))
+        topBuyersBySalesAdapter.notifyDataSetChanged()
 
-					val mData = it.value.data?.chart?.toMutableList()
+        topBuyersByOrdersList.clear()
+        topBuyersByOrdersList.add(TopBuyerModel(1, "sarah0131", null, "11"))
+        topBuyersByOrdersList.add(TopBuyerModel(2, "auctionfactory_com", null, "9"))
+        topBuyersByOrdersList.add(TopBuyerModel(3, "domjaden", null, "2"))
+        topBuyersByOrdersAdapter.notifyDataSetChanged()
+    }
 
-					if (mData?.isNotEmpty() == true) {
-						if (mData.size == 1) {
-							mData.add(0 , VisitorsAnalyticsResponse.Data.Chart("" , "0"))
-						}
-						val entries = ArrayList<Entry>()
-						mData.forEachIndexed { index , chartData ->
-							entries.add(Entry(index.toFloat() , chartData?.totalVisitors?.toFloat() ?: 0f , chartData?.totalVisitors?.toInt()))
-						}
-						val labels = try {
-							mData.map { (it?.label ?: "").removePrefix("day ") }.toMutableList()
-						} catch (_: Exception) {
-							mutableListOf()
-						}
-						setUpChart(mCtx, bind.visitorChart, entries, labels)
-						bind.visitorChart.isVisible = true
-						bind.noDataVisitors.isVisible = false
-					} else {
-						bind.visitorChart.isVisible = false
-						bind.noDataVisitors.isVisible = true
-					}
-					log("VISITORS DATA : $mData")
-				}
+    fun setUpBarChart(
+        mCtx: Context,
+        chart: BarChart,
+        chartData: MutableList<SalesAnalyticsResponse.Data.Chart?>,
+    ) {
+        val defFont = ResourcesCompat.getFont(mCtx, R.font.poppins_regular)!!
+        chart.also {
+            it.clear()
+            it.invalidate()
 
-				is Resource.Error -> {
-					bind.loader.isVisible = false
+            it.setBackgroundColor(Color.WHITE)
+            it.animateY(2000)
+            it.description.isEnabled = false
+            it.setDrawGridBackground(false)
+            it.axisRight.isEnabled = false
+            it.setScaleEnabled(false)
+            it.setTouchEnabled(false)
+            it.isDragEnabled = false
+            it.setPinchZoom(false)
 
-					it.parse(mCtx , TAG , object : AlertClicks {
-						override fun primaryClick(dialog : AppBottomSheet) {
-							dialog.dismiss()
+            val entries = ArrayList<BarEntry>()
+            val labels = mutableListOf<String>()
 
-						}
+            chartData.forEachIndexed { index, chartItem ->
+                val revenue = chartItem?.totalRevenue?.toFloatOrNull() ?: 0f
+                entries.add(BarEntry(index.toFloat(), revenue))
+                labels.add(chartItem?.label?.removePrefix("day ") ?: "")
+            }
 
-						override fun secondaryClick(dialog : AppBottomSheet) {
-							dialog.dismiss()
+            it.xAxis.setLabelCount(labels.size, true)
+            it.xAxis.valueFormatter = object : ValueFormatter() {
+                override fun getAxisLabel(value: Float, axis: AxisBase?): String {
+                    return if (value.toInt() < labels.size) {
+                        try {
+                            labels[value.toInt()]
+                        } catch (_: Exception) {
+                            ""
+                        }
+                    } else ""
+                }
+            }
 
-						}
-					})
-				}
+            it.xAxis.also { xAxis ->
+                xAxis.axisLineColor = ContextCompat.getColor(mCtx, R.color.inversePrimary)
+                xAxis.gridColor = ContextCompat.getColor(mCtx, R.color.inversePrimary)
+                xAxis.textColor = ContextCompat.getColor(mCtx, R.color.primary)
+                xAxis.position = XAxis.XAxisPosition.BOTTOM
+                xAxis.setDrawLimitLinesBehindData(false)
+                xAxis.setDrawAxisLine(false)
+                xAxis.gridLineWidth = 0f
+                xAxis.typeface = defFont
+                xAxis.textSize = 10f
+            }
 
-				else -> {}
+            it.axisLeft.also { yAxis ->
+                yAxis.axisLineColor = ContextCompat.getColor(mCtx, R.color.inversePrimary)
+                yAxis.gridColor = ContextCompat.getColor(mCtx, R.color.inversePrimary)
+                yAxis.textColor = ContextCompat.getColor(mCtx, R.color.primary)
+                yAxis.setDrawLimitLinesBehindData(false)
+                yAxis.setDrawGridLines(true)
+                yAxis.gridLineWidth = 1f
+                yAxis.typeface = defFont
+                yAxis.textSize = 10f
+            }
 
-			}
-		}
+            val legend = chart.legend
+            legend.isEnabled = false
 
-	}
+            val dataSet = BarDataSet(entries, "").also { set ->
+                set.color = ContextCompat.getColor(mCtx, R.color.primary)
+                set.valueTextSize = 0f
+                set.setDrawValues(false)
+            }
 
-	fun setUpChart(
-		mCtx : Context ,
-		chart : LineChart ,
-		values : MutableList<Entry> ,
-		labels : MutableList<String>? = mutableListOf() ,
-	) {
-		val labelCount = labels?.size ?: 0
-		val defFont = ResourcesCompat.getFont(mCtx , R.font.poppins_regular) !!
-		chart.also {
-			it.clear()
-			it.invalidate()
-
-			it.setBackgroundColor(Color.WHITE)
-			it.animateX(2000)
-			it.description.isEnabled = false
-			it.setDrawGridBackground(false)
-			it.axisRight.isEnabled = false
-			it.setScaleEnabled(false)
-			it.setTouchEnabled(false)
-			it.isDragEnabled = false
-			it.setPinchZoom(false)
-
-			it.xAxis.setLabelCount(labelCount , true)
-
-			if (! labels.isNullOrEmpty()) {
-				it.xAxis.valueFormatter = object : ValueFormatter() {
-					override fun getAxisLabel(value : Float , axis : AxisBase?) : String {
-						return if (value.toInt() < (labels.size)) {
-							try {
-								labels[value.toInt()]
-							} catch (_ : Exception) {
-								""
-							}
-						} else ""
-					}
-				}
-			}
-
-			it.xAxis.also { xAxis ->
-				xAxis.axisLineColor = ContextCompat.getColor(mCtx , R.color.inversePrimary)
-				xAxis.gridColor = ContextCompat.getColor(mCtx , R.color.inversePrimary)
-				xAxis.textColor = ContextCompat.getColor(mCtx , R.color.primary)
-				xAxis.position = XAxis.XAxisPosition.BOTTOM
-				xAxis.setDrawLimitLinesBehindData(false)
-				xAxis.setDrawAxisLine(false)
-				xAxis.gridLineWidth = 0f
-				xAxis.typeface = defFont
-				xAxis.textSize = 10f
-			}
-
-			it.axisLeft.also { yAxis ->
-				yAxis.axisLineColor = ContextCompat.getColor(mCtx , R.color.inversePrimary)
-				yAxis.gridColor = ContextCompat.getColor(mCtx , R.color.inversePrimary)
-				yAxis.textColor = ContextCompat.getColor(mCtx , R.color.primary)
-				yAxis.setDrawLimitLinesBehindData(false)
-				yAxis.setDrawGridLines(false)
-				yAxis.typeface = defFont
-				yAxis.textSize = 10f
-			}
-		}
-
-		val legend = chart.legend
-		legend.isEnabled = false
-
-		val mDataSet = LineDataSet(values , "").also { set ->
-			set.lineWidth = 1.5f
-			set.circleRadius = 1f
-			set.valueTextSize = 0f
-			set.setDrawFilled(true)
-			set.setDrawCircles(false)
-			set.mode = LineDataSet.Mode.HORIZONTAL_BEZIER
-			set.setColors(ContextCompat.getColor(mCtx , R.color.primary))
-			set.enableDashedHighlightLine(15f , 2f , 10f)
-			set.highLightColor = ContextCompat.getColor(mCtx , R.color.primary)
-			set.fillColor = ContextCompat.getColor(mCtx , R.color.primaryContainer)
-			set.fillAlpha = 80
-		}
-
-		chart.data = LineData(arrayListOf<ILineDataSet>(mDataSet))
-		chart.animateX(1500)
-
-		chart.isNestedScrollingEnabled = true
-		chart.setVisibleXRangeMaximum(10F)
-
-		chart.moveViewToX(values.size - 6f)
-
-	}
-
+            chart.data = BarData(dataSet)
+            chart.animateY(1500)
+        }
+    }
 }

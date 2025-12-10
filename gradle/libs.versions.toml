@@ -58,6 +58,7 @@ firebaseMessagingKtx = "24.1.1"
 googleGmsGoogleServices = "4.4.2"
 firebaseDatabase = "21.0.0"
 arindicatorview = "2.0.0"
+aztec = "v2.1.5"
 
 [libraries]
 android-image-cropper = { module = "com.vanniktech:android-image-cropper", version.ref = "androidImageCropper" }
@@ -122,6 +123,7 @@ flexbox = { module = "com.google.android.flexbox:flexbox", version.ref = "flexbo
 firebase-messaging-ktx = { group = "com.google.firebase", name = "firebase-messaging-ktx", version.ref = "firebaseMessagingKtx" }
 firebase-database = { group = "com.google.firebase", name = "firebase-database", version.ref = "firebaseDatabase" }
 arindicatorview = { module = "com.github.martinstamenkovski:ARIndicatorView", version.ref = "arindicatorview" }
+aztec = { module = "org.wordpress:aztec", version.ref = "aztec" }
 
 
 

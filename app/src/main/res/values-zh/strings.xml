@@ -328,4 +328,6 @@
     <string name="overview">Overview</string>
     <string name="watch_vod">Watch VOD</string>
     <string name="enable_free_pickup">enable Free Pickup</string>
+    <string name="show_notes">Show Notes</string>
+    <string name="show_nnotes">Show\nNotes</string>
 </resources>

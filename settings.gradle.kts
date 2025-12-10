@@ -12,6 +12,7 @@ pluginManagement {
         mavenCentral()
         gradlePluginPortal()
         maven("https://jitpack.io")
+        maven  ("https://a8c-libs.s3.amazonaws.com/android")
     }
 }
 dependencyResolutionManagement {
@@ -20,7 +21,7 @@ dependencyResolutionManagement {
         google()
         mavenCentral()
         maven("https://jitpack.io")
-        maven { url = uri("https://storage.zego.im/maven") }
+        maven  ("https://a8c-libs.s3.amazonaws.com/android")
     }
 }
 
