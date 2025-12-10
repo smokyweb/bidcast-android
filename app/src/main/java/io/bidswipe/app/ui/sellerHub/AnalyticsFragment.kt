@@ -19,6 +19,7 @@ class AnalyticsFragment : BaseFragment<SellerHubViewModel , FragmentAnalyticsBin
 	override fun getBind(
         inflater : LayoutInflater ,
         view : ViewGroup? ,
+
     ) = FragmentAnalyticsBinding.inflate(inflater , view , false)
 
 	override fun onViewCreated(view : View , savedInstanceState : Bundle?) {

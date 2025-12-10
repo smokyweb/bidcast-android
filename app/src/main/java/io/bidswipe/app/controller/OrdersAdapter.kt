@@ -41,7 +41,12 @@ class OrdersAdapter(
 			
 			bind.productName.text = item?.product?.title?.asCapital()
 			bind.category.text = item?.product?.category?.name
-			
+
+			bind.buyerName.text = item?.user?.name?.asCapital()
+
+			bind.buyerLayout.setOnClickListener {
+				mClicks.itemClick(position,"buyerInfo")
+			}
 		}
 	}
 }

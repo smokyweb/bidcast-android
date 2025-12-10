@@ -4,6 +4,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import io.bidswipe.app.model.LiveShowModel
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.network.repository.DashRepository
 import io.bidswipe.app.network.response.CheckKycResponse
@@ -44,6 +45,10 @@ class SellerHubViewModel @Inject constructor(
 	val repo : DashRepository,
 	private val networkMonitor : NetworkMonitor
 ) : ViewModel() {
+
+	var selectedShow : LiveShowModel ?= null
+
+	var showTime : String ?= null
 
 	private var _getMyScheduledShowResponse = MutableLiveData<Resource<GetMyShowResponse>>()
 	val getMyScheduledShowRepo : MutableLiveData<Resource<GetMyShowResponse>>

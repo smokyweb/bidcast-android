@@ -15,7 +15,9 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:showBackButton="true" />
+        app:showBackButton="true"
+        app:showPrimaryIcon="true"
+        app:primaryIconDrawable="@drawable/ic_vertical_menu"/>
 
     <ScrollView
         android:layout_width="match_parent"

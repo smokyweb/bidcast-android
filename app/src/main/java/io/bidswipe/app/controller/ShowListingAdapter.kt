@@ -9,6 +9,7 @@ import io.bidswipe.app.network.response.GetMyShowResponse
 import io.bidswipe.app.utils.Const
 import io.bidswipe.app.utils.Utils
 import io.bidswipe.app.utils.asCapital
+import io.bidswipe.app.utils.asMoney
 import io.bidswipe.app.utils.loadUrl
 import io.bidswipe.app.utils.setHapticClickListener
 
@@ -54,9 +55,12 @@ class ShowListingAdapter(
 				)
 			}
 
-			bind.rsvp.text = buildString {
-				append(item?.viewerCount ?: 0)
-				append(" RSVPs")
+			bind.sales.text = buildString {
+				append((item?.totalSalesAmount ?: 0).toString().asMoney())
+				append(" sales ")
+				append(Const.BULLET + " ")
+				append(item?.totalOrders ?: 0)
+				append(" orders")
 			}
 
 			bind.image.loadUrl(mCtx, item?.imgThumbnail?.first() ?: "")

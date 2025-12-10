@@ -63,61 +63,66 @@ class ShowsFragment : BaseFragment<SellerHubViewModel, FragmentShowsBinding>() {
                 return
             }
 
+            val data = showList[pos]
+
+            val user = data?.user
+
+            val products = data?.products?.map { it?.toLiveShowProduct() }
+
+            if (products?.isEmpty() == true) {
+                Alerts.error(mCtx, "No products found for this Show")
+                return
+            } else {
+                products?.first()?.isCurrent = true
+            }
+
+            val showData = LiveShowModel(
+                seller = LiveShowModel.Seller(
+                    id = user?.id.toString(),
+                    image = user?.profileImage,
+                    name = user?.name,
+                    rating = user?.rating ?: ""
+                ),
+                products = products?.map { p ->
+                    LiveShowModel.Product(
+                        data.category?.name,
+                        p?.id,
+                        p?.image,
+                        p?.status,
+                        p?.name,
+                        p?.price,
+                        "1",
+                    )
+                }?.toList() ?: mutableListOf(),
+                roomId = "live_room_${userId}_${data?.id.toString()}",
+                showDetail = data?.title ?:"",
+                thumbnail = data?.thumbnail?.getOrNull(0) ?: "",
+                viewerCount = "1",
+                highestBid = LiveShowModel.HighestBid(
+                    bidAmount = "",
+                    userName = "",
+                    userImage = "",
+                    userId = "",
+                    productId = ""
+                ),
+                isLive = true,
+                time = Utils.timestamp().toString(),
+                showId = data?.id.toString(),
+                allowBidForAll = true,
+                bidCountDown = "",
+                showTimer = "",
+            )
+
             if (App.PIPMode) {
                 Alerts.error(mCtx, "You are already in Live show")
             } else if (bind.tabs.selectedTabPosition == 1) {
+
+                viewModel.selectedShow = showData
+
+                viewModel.showTime = showList[pos]?.time
+
                 findNavController().animatedNav(R.id.toShowDetails, bundleOf("showId" to showList[pos]?.id.toString()))
             } else {
-
-                val data = showList[pos]
-
-                val user = data?.user
-
-                val products = data?.products?.map { it?.toLiveShowProduct() }
-
-                if (products?.isEmpty() == true) {
-                    Alerts.error(mCtx, "No products found for this Show")
-                    return
-                } else {
-                    products?.first()?.isCurrent = true
-                }
-
-                val showData = LiveShowModel(
-                    seller = LiveShowModel.Seller(
-                        id = user?.id.toString(),
-                        image = user?.profileImage,
-                        name = user?.name,
-                        rating = user?.rating ?: ""
-                    ),
-                    products = products?.map { p ->
-                        LiveShowModel.Product(
-                            data.category?.name,
-                            p?.id,
-                            p?.image,
-                            p?.status,
-                            p?.name,
-                            p?.price,
-                            "1",
-                        )
-                    }?.toList() ?: mutableListOf(),
-                    roomId = "live_room_${userId}_${data?.id.toString()}",
-                    showDetail = "Test Details",
-                    thumbnail = data?.thumbnail?.getOrNull(0) ?: "",
-                    viewerCount = "1",
-                    highestBid = LiveShowModel.HighestBid(
-                        bidAmount = "",
-                        userName = "",
-                        userImage = "",
-                        userId = "",
-                        productId = ""
-                    ),
-                    isLive = true,
-                    time = Utils.timestamp().toString(),
-                    showId = data?.id.toString(),
-                    allowBidForAll = true,
-                    bidCountDown = "",
-                    showTimer = "",
-                )
 
                 startActivity(
                     Intent(mCtx, AgoraPublisherActivity::class.java).putExtra(

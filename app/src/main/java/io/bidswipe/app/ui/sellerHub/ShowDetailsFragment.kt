@@ -1,19 +1,25 @@
 package io.bidswipe.app.ui.sellerHub
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.PopupMenu
+import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.navigation.fragment.findNavController
+import com.skydoves.powermenu.PowerMenuItem
 import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseFragment
 import io.bidswipe.app.databinding.FragmentShowDetailsBinding
 import io.bidswipe.app.interfaces.AlertClicks
 import io.bidswipe.app.network.Resource
+import io.bidswipe.app.ui.agoraStream.AgoraPublisherActivity
 import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.utils.asMoney
+import io.bidswipe.app.utils.ids
 import io.bidswipe.app.utils.parse
 
 class ShowDetailsFragment : BaseFragment<SellerHubViewModel, FragmentShowDetailsBinding>() {
@@ -26,6 +32,7 @@ class ShowDetailsFragment : BaseFragment<SellerHubViewModel, FragmentShowDetails
 
 	private var showId = ""
 	private var videoUrl = ""
+	private var actionList = mutableListOf<PowerMenuItem>()
 
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		super.onViewCreated(view, savedInstanceState)
@@ -36,9 +43,45 @@ class ShowDetailsFragment : BaseFragment<SellerHubViewModel, FragmentShowDetails
 			findNavController().popBackStack()
 		}
 
+		bind.header.setHeaderText(viewModel.selectedShow?.showDetail ?:"Show Details")
+
+		actionList.clear()
+		actionList.add(PowerMenuItem(title = "View Shipment"))
+		actionList.add(PowerMenuItem(title = "Restart Show"))
+
+		val menu = PopupMenu(mCtx, bind.header.findViewById<AppCompatImageView>(R.id.primaryIcon))
+		menu.menuInflater.inflate(R.menu.show_menu, menu.menu)
+
+		menu.setOnMenuItemClickListener {
+			when (it.itemId) {
+				ids.restart_show -> {
+
+					startActivity(
+						Intent(mCtx, AgoraPublisherActivity::class.java).putExtra(
+							"showData",
+							viewModel.selectedShow
+						).putExtra("time", viewModel.showTime)
+					)
+
+
+				}
+
+			}
+			return@setOnMenuItemClickListener true
+		}
+
+		bind.header.onMorePrimaryClick {
+			menu.show()
+		}
+
 		bind.watchVideo.setOnClickListener {
 
-//			findNavController().navigate(R.id.showDetailsVideoReceiptPlayerFragment2, bundleOf("videoUrl" to ))
+			if (videoUrl.isNotEmpty()){
+				findNavController().navigate(R.id.showDetailsVideoReceiptPlayerFragment2, bundleOf("videoUrl" to videoUrl))
+			}else{
+
+				successToast("Video is not available")
+			}
 
 		}
 
@@ -54,6 +97,7 @@ class ShowDetailsFragment : BaseFragment<SellerHubViewModel, FragmentShowDetails
 
 					log("data: $mData")
 
+					videoUrl = mData?.fileUrl ?:""
 
 					bind.duration.text = buildString {
 						append("Show Duration: ")

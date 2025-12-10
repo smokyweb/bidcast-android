@@ -101,21 +101,48 @@
 
                 <TextView
                     android:id="@+id/productName"
-                    style="@style/TitleLarge"
+                    style="@style/TitleMedium"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="John Smith" />
 
                 <TextView
                     android:id="@+id/category"
-                    style="@style/BodyLarge"
+                    style="@style/BodyMedium"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:alpha="0.7"
                     android:text="Los Angeles, CA"
                     android:textColor="@color/tertiary" />
 
+                <LinearLayout
+                    android:id="@+id/buyerLayout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Buyer: "
+                        android:textColor="@color/outlineVariant"
+                        android:textSize="12sp" />
+
+                    <TextView
+                        android:id="@+id/buyerName"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="seller_username"
+                        android:textColor="@color/primary"
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
+
+                </LinearLayout>
+
             </LinearLayout>
+
+
 
         </LinearLayout>
 

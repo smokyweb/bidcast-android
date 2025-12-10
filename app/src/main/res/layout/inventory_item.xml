@@ -68,7 +68,7 @@
 
             <LinearLayout
                 android:layout_width="0dp"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/half_margin"
                 android:layout_weight="1"
                 android:gravity="center_vertical"
@@ -109,18 +109,25 @@
                     android:layout_height="wrap_content"
                     android:text="Condition - Category" />
 
+                <TextView
+                    android:id="@+id/price"
+                    style="@style/TitleMedium"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="14dp"
+                    android:text="$355 - Auction" />
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 
                     <TextView
-                        android:id="@+id/price"
-                        style="@style/TitleMedium"
-                        android:layout_width="0dp"
+                        android:id="@+id/bidsCount"
+                        style="@style/BodySmall"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:textSize="14dp"
-                        android:text="$355 - Auction" />
+                        android:text="0 bids" />
 
                     <TextView
                         android:id="@+id/stockCount"
@@ -131,13 +138,7 @@
 
                 </LinearLayout>
 
-                <TextView
-                    android:id="@+id/bidsCount"
-                    style="@style/BodySmall"
-                    android:visibility="gone"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="0 bids" />
+
 
             </LinearLayout>
 

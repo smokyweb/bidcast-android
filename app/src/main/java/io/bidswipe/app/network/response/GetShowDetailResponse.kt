@@ -20,6 +20,8 @@ data class GetShowDetailResponse(
         val contributionsCount: Int?,
         @SerializedName("new_followers")
         val newFollowers: Int?,
+        @SerializedName("file_url")
+        val fileUrl: String?,
         @SerializedName("order_count")
         val orderCount: Int?,
         @SerializedName("share_count")

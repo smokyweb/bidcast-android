@@ -36,7 +36,7 @@ class InventoryAdapter(
 		with(holder) {
 
 			bind.statusCard.isVisible = item?.status == "inactive"
-			bind.bidsCount.isVisible = item?.status == "inactive"
+			bind.stockCount.isVisible = item?.status != "inactive"
 
 			bind.productName.text = item?.title?.asCapital()
 			bind.prodSubTitle.text = buildSpannedString {
@@ -109,6 +109,7 @@ class InventoryAdapter(
 				mClicks.itemClick(position, "longClick")
 				true
 			}
+
 
 		}
 	}

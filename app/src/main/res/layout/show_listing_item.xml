@@ -55,11 +55,11 @@
                 android:text="Gaming" />
 
             <TextView
-                android:id="@+id/rsvp"
+                android:id="@+id/sales"
                 style="@style/BodyMedium"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="135 RSVPs"
+                android:text="sales and order"
                 app:drawableTint="@color/onSurface" />
 
                 <TextView

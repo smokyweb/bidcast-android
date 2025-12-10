@@ -7,9 +7,7 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import io.bidswipe.app.R
@@ -26,26 +24,34 @@ import io.bidswipe.app.utils.finish
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request
 
-class MyOrdersFragment : BaseFragment<SellerHubViewModel , FragmentMyOrdersBinding>() {
-	override fun getModel() : Class<SellerHubViewModel> = SellerHubViewModel::class.java
+class MyOrdersFragment : BaseFragment<SellerHubViewModel, FragmentMyOrdersBinding>() {
+	override fun getModel(): Class<SellerHubViewModel> = SellerHubViewModel::class.java
 
-	override fun getBind(inflater : LayoutInflater , view : ViewGroup?) =
-		FragmentMyOrdersBinding.inflate(inflater , view , false)
+	override fun getBind(inflater: LayoutInflater, view: ViewGroup?) =
+		FragmentMyOrdersBinding.inflate(inflater, view, false)
 
 	private var orderList = mutableListOf<GetOrdersResponse.Data?>()
-	private lateinit var adapter : OrdersAdapter
+	private lateinit var adapter: OrdersAdapter
 	private var page = 1
 	private var isLoading = false
 
 	private val mClick = object : RecyclerClicks {
-		override fun itemClick(pos : Int , status : String?) {
-//			findNavController().navigate(R.id.toOrderStatus , bundleOf("orderId" to orderList[pos]?.id.toString() , "from" to "my_orders"))
+		override fun itemClick(pos: Int, status: String?) {
+
+			when (status) {
+				"buyerInfo" -> {
+
+					log("Buyer Info Click")
+
+				}
+			}
+
 		}
 	}
 
 	@SuppressLint("NotifyDataSetChanged")
-	override fun onViewCreated(view : View , savedInstanceState : Bundle?) {
-		super.onViewCreated(view , savedInstanceState)
+	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+		super.onViewCreated(view, savedInstanceState)
 
 		bind.header.onBackClick {
 			finish()
@@ -55,7 +61,7 @@ class MyOrdersFragment : BaseFragment<SellerHubViewModel , FragmentMyOrdersBindi
 			showDeleteConfirmationDialog()
 		}
 
-		adapter = OrdersAdapter(orderList , mClick)
+		adapter = OrdersAdapter(orderList, mClick)
 
 		bind.recycler.adapter = adapter
 
@@ -64,29 +70,29 @@ class MyOrdersFragment : BaseFragment<SellerHubViewModel , FragmentMyOrdersBindi
 		bind.swipeRefreshLayout.setOnRefreshListener {
 			bind.search.setText("")
 			page = 1
-			viewModel.getOrderListing(page = page.toString().request() , "".request())
+			viewModel.getOrderListing(page = page.toString().request(), "".request())
 		}
 
 		bind.recycler.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-			override fun onScrolled(recyclerView : RecyclerView , dx : Int , dy : Int) {
-				super.onScrolled(recyclerView , dx , dy)
+			override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+				super.onScrolled(recyclerView, dx, dy)
 				val layoutManager = bind.recycler.layoutManager as LinearLayoutManager
 				val lastItemPosition = layoutManager.findLastVisibleItemPosition()
 				if (lastItemPosition == (orderList.size - 1)) {
-					if (! isLoading) {
+					if (!isLoading) {
 						isLoading = true
-						page ++
+						page++
 						bind.bottomLoader.isVisible = true
-						viewModel.getOrderListing(page = page.toString().request() , "".request())
+						viewModel.getOrderListing(page = page.toString().request(), "".request())
 					}
 				}
 			}
 		})
 
 		bind.search.addTextChangedListener(object : TextWatcher {
-			override fun beforeTextChanged(s : CharSequence? , start : Int , count : Int , after : Int) {}
-			override fun onTextChanged(s : CharSequence? , start : Int , before : Int , count : Int) {}
-			override fun afterTextChanged(s : Editable?) {
+			override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+			override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+			override fun afterTextChanged(s: Editable?) {
 				val query = s?.toString()?.trim() ?: ""
 				bind.searchLayout.isEndIconVisible = query.isNotEmpty()
 
@@ -97,11 +103,10 @@ class MyOrdersFragment : BaseFragment<SellerHubViewModel , FragmentMyOrdersBindi
 				bind.recycler.isVisible = false
 				bind.noData.isVisible = false
 
-				if (! s.isNullOrEmpty()) {
-					viewModel.getOrderListing(page.toString().request() , "".request() , s.toString().request())
-				}
-				else {
-					viewModel.getOrderListing(page.toString().request() , "".request())
+				if (!s.isNullOrEmpty()) {
+					viewModel.getOrderListing(page.toString().request(), "".request(), s.toString().request())
+				} else {
+					viewModel.getOrderListing(page.toString().request(), "".request())
 				}
 			}
 		})
@@ -110,16 +115,16 @@ class MyOrdersFragment : BaseFragment<SellerHubViewModel , FragmentMyOrdersBindi
 			bind.search.setText("")
 			bind.searchLayout.isEndIconVisible = false
 			page = 1
-			viewModel.getOrderListing(page = page.toString().request() , "".request())
+			viewModel.getOrderListing(page = page.toString().request(), "".request())
 		}
 
 		bind.noInternet.onClick {
 			bind.loader.isVisible = true
 			bind.noInternet.isVisible = false
-			viewModel.getOrderListing(page = page.toString().request() , "".request())
+			viewModel.getOrderListing(page = page.toString().request(), "".request())
 		}
 
-		viewModel.getOrderListing(page = page.toString().request() , "".request())
+		viewModel.getOrderListing(page = page.toString().request(), "".request())
 		viewModel.getOrderListingRepo.observe(viewLifecycleOwner) {
 			when (it) {
 				is Resource.Success -> {
@@ -173,12 +178,12 @@ class MyOrdersFragment : BaseFragment<SellerHubViewModel , FragmentMyOrdersBindi
 						bind.recycler.isVisible = false
 
 					} else {
-						it.parse(mCtx , TAG , object : AlertClicks {
-							override fun primaryClick(dialog : AppBottomSheet) {
+						it.parse(mCtx, TAG, object : AlertClicks {
+							override fun primaryClick(dialog: AppBottomSheet) {
 								dialog.dismiss()
 							}
 
-							override fun secondaryClick(dialog : AppBottomSheet) {
+							override fun secondaryClick(dialog: AppBottomSheet) {
 								dialog.dismiss()
 
 							}
@@ -195,26 +200,26 @@ class MyOrdersFragment : BaseFragment<SellerHubViewModel , FragmentMyOrdersBindi
 
 	private fun showDeleteConfirmationDialog() {
 		AppBottomSheet(
-			mCtx ,
-			R.drawable.ic_delete ,
-			"Delete Order" ,
-			"Are you sure you want to delete all orders?" ,
-			primaryBtnText = "Delete" ,
-			secondaryBtnText = "Cancel" ,
-			canCancel = true ,
-			showSecondary = true ,
-			alertType = AlertType.ERROR ,
+			mCtx,
+			R.drawable.ic_delete,
+			"Delete Order",
+			"Are you sure you want to delete all orders?",
+			primaryBtnText = "Delete",
+			secondaryBtnText = "Cancel",
+			canCancel = true,
+			showSecondary = true,
+			alertType = AlertType.ERROR,
 			clicks = object : AlertClicks {
-				override fun primaryClick(dialog : AppBottomSheet) {
+				override fun primaryClick(dialog: AppBottomSheet) {
 					dialog.dismiss()
 					bind.loader.isVisible = false
 				}
 
-				override fun secondaryClick(dialog : AppBottomSheet) {
+				override fun secondaryClick(dialog: AppBottomSheet) {
 					dialog.dismiss()
 				}
 
-			} ,
+			},
 
 			).show()
 	}
