@@ -40,9 +40,7 @@ class MyOrdersFragment : BaseFragment<SellerHubViewModel, FragmentMyOrdersBindin
 
 			when (status) {
 				"buyerInfo" -> {
-
 					log("Buyer Info Click")
-
 				}
 			}
 

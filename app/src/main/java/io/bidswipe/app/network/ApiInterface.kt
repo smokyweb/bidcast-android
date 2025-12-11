@@ -732,7 +732,7 @@ interface ApiInterface {
 		@Part("notes") notes: RequestBody?
 	) : CommonResponse
 
-	@GET("api/v1/get-order-details")
+	@POST("api/v1/get-order-details")
 	suspend fun fetchOrderDetail(
 		@Query("product_id") productId: String?,
 		@Query("order_id") orderId: String?

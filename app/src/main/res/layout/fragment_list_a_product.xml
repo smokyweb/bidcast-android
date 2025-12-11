@@ -104,19 +104,15 @@
 
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/images"
-                        android:layout_width="0dp"
-                        android:visibility="gone"
+                        android:layout_width="match_parent"
+                        android:visibility="visible"
                         android:layout_marginStart="@dimen/half_margin"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:nestedScrollingEnabled="false"
-                        android:overScrollMode="never"
                         android:orientation="horizontal"
                         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                         tools:itemCount="3"
+                        android:layout_marginTop="8dp"
                         tools:listitem="@layout/upload_image_item" />
-
-
 
                 <io.bidswipe.app.ui.custom.Heading
                     android:layout_width="match_parent"
