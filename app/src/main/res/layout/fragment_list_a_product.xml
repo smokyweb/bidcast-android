@@ -30,6 +30,7 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
+            android:scrollbars="none"
             android:fillViewport="true">
 
             <LinearLayout
@@ -44,50 +45,67 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/half_margin"
-                    android:orientation="horizontal">
+                    android:orientation="vertical">
 
-                    <io.bidswipe.app.ui.custom.Heading
-                        android:layout_width="0dp"
+                    <LinearLayout
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        app:title="Media" />
+                        android:orientation="horizontal">
+
+                        <io.bidswipe.app.ui.custom.Heading
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            app:title="Media" />
+
+                    </LinearLayout>
 
                     <TextView
                         android:id="@+id/image_limit"
                         style="@style/TitleMedium"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
-                        android:text="0/9" />
+                        android:layout_marginTop="4dp"
+                        android:text="Photos: 0/8  Video: 0/1" />
 
                 </LinearLayout>
-
                 <LinearLayout
+                    android:id="@+id/add_new_image"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical">
+                    android:background="@drawable/card_8_outline"
+                    android:orientation="vertical"
+                    android:padding="@dimen/padding"
+                    android:gravity="center">
 
-                    <LinearLayout
-                        android:id="@+id/add_new_image"
-                        android:layout_width="120dp"
-                        android:layout_height="120dp"
-                        android:background="@drawable/dashed_card_8_white"
-                        android:gravity="center">
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:layout_width="48dp"
+                        android:layout_height="38dp"
+                        android:layout_gravity="center"
+                        app:tint="@color/outlineVariant"
+                        android:contentDescription="@string/app_name"
+                        android:src="@drawable/ic_image" />
+                    <TextView
+                        style="@style/TitleMedium"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textSize="14sp"
+                        android:gravity="center"
+                        android:text="Photos/Videos" />
+                    <TextView
+                        style="@style/BodySmall"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="Minimum 1 photo required" />
 
-                        <androidx.appcompat.widget.AppCompatImageView
-                            android:layout_width="48dp"
-                            android:layout_height="38dp"
-                            android:layout_gravity="center"
-                            app:tint="@color/outlineVariant"
-                            android:contentDescription="@string/app_name"
-                            android:src="@drawable/ic_image" />
 
-                    </LinearLayout>
+                </LinearLayout>
 
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/images"
                         android:layout_width="0dp"
+                        android:visibility="gone"
                         android:layout_marginStart="@dimen/half_margin"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
@@ -99,7 +117,6 @@
                         tools:listitem="@layout/upload_image_item" />
 
 
-                </LinearLayout>
 
                 <io.bidswipe.app.ui.custom.Heading
                     android:layout_width="match_parent"
@@ -515,18 +532,10 @@
                     android:layout_marginTop="@dimen/margin"
                     app:title="Shipping" />
 
-                <TextView
-                    style="@style/TitleSmall"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="@dimen/half_margin"
-                    android:text="@string/shipping_profile" />
-
                 <com.google.android.material.textfield.TextInputLayout
                     style="@style/inputBoxStyle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="@dimen/margin"
                     app:endIconDrawable="@drawable/ic_forward"
                     app:endIconMode="custom">
 
@@ -540,6 +549,55 @@
                         android:focusableInTouchMode="false"/>
 
                 </com.google.android.material.textfield.TextInputLayout>
+
+                <TextView
+                    style="@style/BodySmall"
+                    android:layout_width="match_parent"
+                    android:layout_marginStart="@dimen/margin"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/half_margin"
+                    android:alpha="0.5"
+                    android:text="Sellers covers ny shipping adjustments." />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/card_8_outline"
+                    android:padding="@dimen/margin"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            style="@style/TitleMedium"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Hazardous Materials" />
+
+                        <TextView
+                            android:id="@+id/hazardous_desc"
+                            style="@style/BodySmall"
+                            android:textStyle="bold"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Carriers restrict shipping items that may pose risk to safety, like lithium batteries." />
+
+                    </LinearLayout>
+
+                    <com.google.android.material.materialswitch.MaterialSwitch
+                        android:id="@+id/is_hazardous"
+                        style="@style/appSwitch"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="@style/TitleLarge" />
+
+                </LinearLayout>
+
 
             </LinearLayout>
 

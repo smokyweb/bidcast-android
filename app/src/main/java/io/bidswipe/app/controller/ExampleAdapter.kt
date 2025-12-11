@@ -5,6 +5,7 @@ import android.view.ViewGroup
 import androidx.core.view.isVisible
 import io.bidswipe.app.base.BaseAdapter
 import io.bidswipe.app.databinding.TitleItemBinding
+import io.bidswipe.app.utils.Const
 
 class ExampleAdapter(
 	mList : MutableList<String?> ,
@@ -21,9 +22,7 @@ class ExampleAdapter(
 		with(holder) {
 
 			bind.icon.isVisible = false
-
-			bind.title.setHtmlFromString("${item}" , false)
-
+			bind.title.setHtmlFromString("${Const.BULLET} $item" , false)
 
 		}
 	}

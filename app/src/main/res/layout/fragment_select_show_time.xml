@@ -28,14 +28,21 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            tools:layout_editor_absoluteX="0dp">
+            android:orientation="vertical">
 
-            <com.applandeo.materialcalendarview.CalendarView
-                android:id="@+id/calenderView"
-                style="@style/calendarStyle"
+            <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_margin="@dimen/margin"
+                style="@style/cardStyle"
+                android:layout_height="wrap_content">
+
+                <com.applandeo.materialcalendarview.CalendarView
+                    android:id="@+id/calenderView"
+                    style="@style/calendarStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+            </com.google.android.material.card.MaterialCardView>
 
             <TextView
                 style="@style/TitleMedium"
@@ -46,13 +53,26 @@
                 android:layout_marginTop="@dimen/margin"
                 android:text="@string/select_time" />
 
-            <com.google.android.material.chip.ChipGroup
-                android:id="@+id/chipGroup"
+
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/inputBoxStyle"
+                android:id="@+id/time_box"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/margin"
-                app:alignContent="space_between"
-                app:singleSelection="true" />
+                android:layout_marginBottom="@dimen/half_margin">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/time"
+                    style="@style/inputTextStyle"
+                    android:focusable="false"
+                    android:editable="false"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/select_time" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
 
             <TextView
                 style="@style/TitleLarge"
@@ -67,21 +87,23 @@
                 app:drawableTint="@color/warningClr" />
 
             <TextView
-                style="@style/BodyLarge"
+                style="@style/BodyMedium"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginStart="32dp"
+                android:layout_marginEnd="@dimen/margin"
                 android:drawablePadding="@dimen/half_margin"
                 android:text="@string/more_potential_buyers_can_plan_to_attend"
                 app:drawableStartCompat="@drawable/ic_tick"
                 app:drawableTint="@color/success" />
 
             <TextView
-                style="@style/BodyLarge"
+                style="@style/BodyMedium"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
+                android:layout_marginEnd="@dimen/margin"
                 android:layout_marginStart="32dp"
                 android:drawablePadding="@dimen/half_margin"
                 android:text="@string/better_promotion_opportunities"
@@ -89,11 +111,12 @@
                 app:drawableTint="@color/success" />
 
             <TextView
-                style="@style/BodyLarge"
+                style="@style/BodyMedium"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginStart="32dp"
+                android:layout_marginEnd="@dimen/margin"
                 android:drawablePadding="@dimen/half_margin"
                 android:text="@string/time_to_prepare_your_items_properly"
                 app:drawableStartCompat="@drawable/ic_tick"

@@ -35,7 +35,6 @@
                 android:src="@drawable/close_ic"
                 app:tint="@color/tertiary" />
 
-
         </LinearLayout>
 
         <com.google.android.material.divider.MaterialDivider
@@ -43,193 +42,90 @@
             android:layout_height="1dp"
             app:dividerColor="@color/outline" />
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/margin"
-            android:gravity="center_vertical"
-            android:orientation="horizontal">
-
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/icon_card"
-                style="@style/cardStyle"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                app:cardCornerRadius="100dp"
-                app:cardElevation="0dp">
-
-                <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/user_image"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:scaleType="centerCrop"
-                    android:src="@drawable/placeholder_user" />
-
-            </com.google.android.material.card.MaterialCardView>
-
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_marginHorizontal="@dimen/half_margin"
-                android:layout_weight="1"
-                android:orientation="vertical">
-
-                <TextView
-                    android:id="@+id/user_name"
-                    style="@style/TitleLarge"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="John Smith" />
-
-                <TextView
-                    android:id="@+id/sub_title"
-                    style="@style/BodySmall"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Place a Bid . 2 hour ago" />
-
-            </LinearLayout>
-
-        </LinearLayout>
-
+        <!-- Preview Card -->
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginVertical="@dimen/margin">
+            android:layout_marginTop="@dimen/margin"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="0dp">
 
-            <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/showImg"
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="200dp"
-                android:scaleType="centerCrop"
-                android:src="@drawable/placeholder_square" />
+                android:layout_height="wrap_content">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/showImg"
+                    android:layout_width="match_parent"
+                    android:layout_height="200dp"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/placeholder_square"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/liveBadge"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="12dp"
+                    android:background="@drawable/card_8"
+                    android:backgroundTint="@color/error"
+                    android:paddingHorizontal="12dp"
+                    android:paddingVertical="6dp"
+                    android:text="Live"
+                    android:textColor="@android:color/white"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <LinearLayout
+                    android:id="@+id/previewInfo"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="#80000000"
+                    android:orientation="vertical"
+                    android:padding="16dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/showImg">
+
+                    <TextView
+                        android:id="@+id/showTitle"
+                        style="@style/TitleLarge"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="@android:color/white"
+                        android:text="Show Title" />
+
+                    <TextView
+                        android:id="@+id/showSubtitle"
+                        style="@style/BodySmall"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:text="Shop Live Now!"
+                        android:textColor="@android:color/white" />
+
+                </LinearLayout>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
         </com.google.android.material.card.MaterialCardView>
 
         <TextView
-            style="@style/BodyMedium"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:alpha="0.7"
-            android:text="Live auction starting in 5 minutes! Don't miss out on exclusive items." />
+            android:layout_marginTop="@dimen/margin"
+            android:text="Quick Share"
+            style="@style/TitleMedium" />
 
-<!--        <LinearLayout-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_marginVertical="@dimen/half_margin"-->
-<!--            android:weightSum="4">-->
-
-
-<!--            <LinearLayout-->
-<!--                style="@style/shadowStyle"-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:layout_weight="1"-->
-<!--                android:gravity="center"-->
-<!--                android:orientation="vertical">-->
-
-<!--                <ImageView-->
-<!--                    android:layout_width="28dp"-->
-<!--                    android:layout_height="28dp"-->
-<!--                    android:layout_marginBottom="@dimen/half_margin"-->
-<!--                    android:gravity="center"-->
-<!--                    android:src="@drawable/ic_whatsapp" />-->
-
-<!--                <TextView-->
-<!--                    style="@style/BodyMedium"-->
-<!--                    android:layout_width="match_parent"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:gravity="center"-->
-<!--                    android:text="WhatsApp" />-->
-
-<!--            </LinearLayout>-->
-
-<!--            <LinearLayout-->
-<!--                style="@style/shadowStyle"-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:layout_weight="1"-->
-<!--                android:gravity="center"-->
-<!--                android:orientation="vertical">-->
-
-<!--                <ImageView-->
-<!--                    android:layout_width="28dp"-->
-<!--                    android:layout_height="28dp"-->
-<!--                    android:layout_marginBottom="@dimen/half_margin"-->
-<!--                    android:gravity="center"-->
-<!--                    android:src="@drawable/ic_facebook" />-->
-
-<!--                <TextView-->
-<!--                    style="@style/BodyLarge"-->
-<!--                    android:layout_width="match_parent"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:gravity="center"-->
-<!--                    android:text="Facebook"-->
-<!--                    app:layout_constraintEnd_toEndOf="@+id/view"-->
-<!--                    app:layout_constraintStart_toStartOf="@+id/view"-->
-<!--                    app:layout_constraintTop_toBottomOf="@+id/view" />-->
-
-<!--            </LinearLayout>-->
-
-<!--            <LinearLayout-->
-<!--                style="@style/shadowStyle"-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:layout_weight="1"-->
-<!--                android:gravity="center"-->
-<!--                android:orientation="vertical">-->
-
-<!--                <ImageView-->
-<!--                    android:layout_width="28dp"-->
-<!--                    android:layout_height="28dp"-->
-<!--                    android:layout_marginBottom="@dimen/half_margin"-->
-<!--                    android:gravity="center"-->
-<!--                    android:src="@drawable/ic_twitter" />-->
-
-<!--                <TextView-->
-<!--                    style="@style/BodyLarge"-->
-<!--                    android:layout_width="match_parent"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:gravity="center"-->
-<!--                    android:text="Twitter" />-->
-
-<!--            </LinearLayout>-->
-
-<!--            <LinearLayout-->
-<!--                style="@style/shadowStyle"-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:layout_weight="1"-->
-<!--                android:gravity="center"-->
-<!--                android:orientation="vertical">-->
-
-<!--                <ImageView-->
-<!--                    android:id="@+id/image"-->
-<!--                    android:layout_width="28dp"-->
-<!--                    android:layout_height="28dp"-->
-<!--                    android:layout_marginBottom="@dimen/half_margin"-->
-<!--                    android:gravity="center"-->
-<!--                    android:src="@drawable/ic_link" />-->
-
-<!--                <TextView-->
-<!--                    android:id="@+id/title"-->
-<!--                    style="@style/BodyLarge"-->
-<!--                    android:layout_width="match_parent"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:gravity="center"-->
-<!--                    android:text="Copy Link" />-->
-
-<!--            </LinearLayout>-->
-
-<!--        </LinearLayout>-->
-
-<!--        <androidx.recyclerview.widget.RecyclerView-->
-<!--            android:id="@+id/optionList"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"-->
-<!--            tools:itemCount="2"-->
-<!--            tools:listitem="@layout/share_item" />-->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/shareTargetsRecycler"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/half_margin"
+            app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+            app:spanCount="4"
+            tools:itemCount="8"
+            tools:listitem="@layout/share_target_item" />
 
     </LinearLayout>
 

@@ -305,6 +305,7 @@
         <item name="type">one_day_picker</item>
         <item name="firstDayOfWeek">sunday</item>
         <item name="background">@drawable/card_16</item>
+        <item name="android:rowHeight">10dp</item>
     </style>
 
     <!--<style name="calendarStyle">

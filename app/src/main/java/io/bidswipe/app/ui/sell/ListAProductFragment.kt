@@ -1,13 +1,21 @@
 package io.bidswipe.app.ui.sell
 
 import android.annotation.SuppressLint
+import android.content.ContentUris
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
+import android.provider.MediaStore
+import android.provider.OpenableColumns
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
+import androidx.core.net.toUri
 import androidx.core.text.buildSpannedString
+import androidx.core.text.color
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.bidswipe.app.R
@@ -28,7 +36,6 @@ import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.ui.dashboard.DashViewModel
 import io.bidswipe.app.utils.Alerts
 import io.bidswipe.app.utils.Const
-
 import io.bidswipe.app.utils.Utils
 import io.bidswipe.app.utils.cropper.CustomCropImageContract
 import io.bidswipe.app.utils.finish
@@ -38,904 +45,1120 @@ import io.bidswipe.app.utils.setHapticClickListener
 import io.bidswipe.app.utils.value
 import okhttp3.MultipartBody
 import java.io.File
+import java.io.FileOutputStream
+
+// Data class to track media type
+data class MediaItem(
+    val path: String,
+    val isVideo: Boolean = false
+)
 
 @SuppressLint("NotifyDataSetChanged")
 class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBinding>() {
-	
-	override fun getModel(): Class<DashViewModel> = DashViewModel::class.java
-	
-	override fun getBind(inflater: LayoutInflater, view: ViewGroup?) =
-		FragmentListAProductBinding.inflate(inflater, view, false)
-	
-	var imageList = mutableListOf<String?>()
-	var uploadItemIndex = -1
-	var isSubCategory = false
-	private var product: GetMyInventoryResponse.Data? = null
-	private var categoryList = mutableListOf<GetCategoryResponse.Data?>()
-	private var subCategoryList = mutableListOf<GetCategoryResponse.Data?>()
-	private var mailClassesList = mutableListOf<GetMailClassesResponse.Data.MailClasses?>()
-	
-	private var categoryId = ""
-	private var selectedCondition = ""
-	private var profileId = ""
-	private var subCategoryId = ""
-	var variantList = mutableListOf<GetCategoryResponse.Data.ExtraField?>()
-	private lateinit var variantAdapter: ProductVariantAdapter
-	
-	private var packageWidth = 0.0
-	private var packageHeight = 0.0
-	private var packageLength = 0.0
-	private var packageWeight = 0.0
-	private var selectedMailClass: GetMailClassesResponse.Data.MailClasses? = null
-	private var profiles = mutableListOf<GetShippingProfilesResponse.Data?>()
-
-	private val imageResult = registerForActivityResult(CustomCropImageContract()) { result ->
-		if (result.isSuccessful) {
-			val imagePath = result.getUriFilePath(mCtx, true)
-			if (imagePath != null) {
-				
-				if (uploadItemIndex == -1) {
-					imageList.add(imagePath)
-				} else {
-					imageList[uploadItemIndex] = imagePath
-					uploadItemIndex = -1
-				}
-
-				bind.imageLimit.text = buildString {
-					append(imageList.size)
-					append("/9")
-				}
-
-				bind.images.adapter?.notifyDataSetChanged()
-			}
-		}
-	}
-
-	private val mClick = object : RecyclerClicks {
-		override fun itemClick(pos: Int, status: String?) {
-		}
-	}
-	
-	private fun restoreStateFromViewModel() {
-		// Restore from ViewModel if state exists
-		if (viewModel.productFormImageList.isNotEmpty() || viewModel.productFormCategoryId.isNotEmpty()) {
-			imageList.clear()
-			imageList.addAll(viewModel.productFormImageList)
-			categoryId = viewModel.productFormCategoryId
-			subCategoryId = viewModel.productFormSubCategoryId
-			variantList.clear()
-			variantList.addAll(viewModel.productFormVariantList)
-			packageWidth = viewModel.productFormPackageWidth
-			packageHeight = viewModel.productFormPackageHeight
-			packageLength = viewModel.productFormPackageLength
-			packageWeight = viewModel.productFormPackageWeight
-			selectedMailClass = viewModel.productFormSelectedMailClass
-			product = viewModel.productFormProduct
-			isSubCategory = viewModel.productFormIsSubCategory
-			
-			// Restore form fields
-			bind.productTitle.setText(viewModel.productFormProductTitle)
-			bind.description.setText(viewModel.productFormDescription)
-			bind.quantity.setText(viewModel.productFormQuantity)
-			bind.width.setText(viewModel.productFormWidth)
-			bind.height.setText(viewModel.productFormHeight)
-			bind.length.setText(viewModel.productFormLength)
-			bind.weight.setText(viewModel.productFormWeight)
-			bind.mailClass.setText(viewModel.productFormMailClassText, false)
-			bind.proCategory.setText(viewModel.productFormProcessingCategory, false)
-			bind.price.setText(viewModel.productFormPrice)
-			bind.flashSell.isChecked = viewModel.productFormFlashSale
-			bind.acceptOffers.isChecked = viewModel.productFormAcceptOffers
-			bind.reserveForLive.isChecked = viewModel.productFormReserveForLive
-			
-			if (viewModel.productFormCategoryText.isNotEmpty()) {
-				if (subCategoryId.isNotEmpty()) {
-					bind.category.setText(buildSpannedString {
-						append(viewModel.productFormCategoryText)
-						append("(${viewModel.productFormProduct})")
-					})
-				} else {
-					bind.category.setText(viewModel.productFormCategoryText,false)
-				}
-			}
-
-			bind.imageLimit.text = buildString {
-				append(imageList.size)
-				append("/9")
-			}
-		}
-	}
-	
-	private fun saveStateToViewModel() {
-		// Save current state to ViewModel
-		viewModel.productFormImageList.clear()
-		viewModel.productFormImageList.addAll(imageList)
-		viewModel.productFormCategoryId = categoryId
-		viewModel.productFormSubCategoryId = subCategoryId
-		viewModel.productFormVariantList.clear()
-		viewModel.productFormVariantList.addAll(variantList)
-		viewModel.productFormPackageWidth = packageWidth
-		viewModel.productFormPackageHeight = packageHeight
-		viewModel.productFormPackageLength = packageLength
-		viewModel.productFormPackageWeight = packageWeight
-		viewModel.productFormSelectedMailClass = selectedMailClass
-		viewModel.productFormProduct = product
-		viewModel.productFormIsSubCategory = isSubCategory
-		
-		// Save form field values
-		viewModel.productFormProductTitle = bind.productTitle.value()
-		viewModel.productFormDescription = bind.description.value()
-		viewModel.productFormQuantity = bind.quantity.value()
-		viewModel.productFormWidth = bind.width.value()
-		viewModel.productFormHeight = bind.height.value()
-		viewModel.productFormLength = bind.length.value()
-		viewModel.productFormWeight = bind.weight.value()
-		viewModel.productFormMailClassText = bind.mailClass.value()
-		viewModel.productFormProcessingCategory = bind.proCategory.value()
-		viewModel.productFormPrice = bind.price.value()
-		viewModel.productFormFlashSale = bind.flashSell.isChecked
-		viewModel.productFormAcceptOffers = bind.acceptOffers.isChecked
-		viewModel.productFormReserveForLive = bind.reserveForLive.isChecked
-		viewModel.productFormCategoryText = bind.category.text?.toString() ?: ""
-	}
-	
-	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-		super.onViewCreated(view, savedInstanceState)
-		
-		// Restore state from ViewModel if available
-		restoreStateFromViewModel()
-		
-		// Get product from intent only if not already restored
-		if (product == null) {
-			product = activity?.intent?.getSerializableExtra("product") as? GetMyInventoryResponse.Data
-		}
-		
-		bind.root.setOnClickListener {
-			hideKeyboard(it)
-		}
-		
-		bind.mainLayout.setOnClickListener {
-			hideKeyboard(it)
-		}
-		
-		// Only load product data if not restored from ViewModel
-		if (product != null && viewModel.productFormProduct == null) {
-
-			bind.saveDraft.isVisible = product?.status == "draft"
-
-			bind.publish.text = buildString {
-				append("Update")
-			}
-			bind.header.setHeaderText("Update Product")
-			addProductData(product)
-		} else if (product != null && viewModel.productFormProduct != null) {
-			// Restore UI state for edit mode
-			bind.saveDraft.isVisible = product?.status == "draft"
-
-			bind.publish.text = buildString {
-				append("Update")
-			}
-			bind.header.setHeaderText("Update Product")
-		}
-		
-		log(product.toString())
-		
-		variantAdapter = ProductVariantAdapter(variantList, mClick)
-		
-		bind.variants.adapter = variantAdapter
-		
-		// Notify adapter if we restored variants
-		if (viewModel.productFormVariantList.isNotEmpty()) {
-			variantAdapter.notifyDataSetChanged()
-		}
-		
-		bind.header.onBackClick {
-			// Clear ViewModel state when leaving
-			clearViewModelState()
-			finish()
-		}
-
-		val processingCategories = listOf("LETTERS", "FLATS", "MACHINABLE", "NONSTANDARD", "NON_MACHINABLE")
-		val proCategoryAdapter = ArrayAdapter(
-			mCtx,
-			android.R.layout.simple_list_item_1,
-			processingCategories
-		)
-
-		bind.reserveForLive.setOnCheckedChangeListener { view , isChecked ->
-			if (isChecked) {
-				bind.acceptOffers.isChecked = false
-				bind.flashSell.isChecked = false
-			}
-		}
-
-		bind.acceptOffers.setOnCheckedChangeListener { _, isChecked ->
-			if (isChecked) {
-				bind.reserveForLive.isChecked = false
-			}
-		}
-
-		bind.flashSell.setOnCheckedChangeListener { _, isChecked ->
-			if (isChecked) {
-				bind.reserveForLive.isChecked = false
-			}
-		}
-
-		bind.proCategory.setAdapter(proCategoryAdapter)
-		val proDrawable = ContextCompat.getDrawable(mCtx, R.drawable.card_8)
-		bind.proCategory.setDropDownBackgroundDrawable(proDrawable)
-
-		bind.proCategory.setOnItemClickListener { _, _, position, _ ->
-			val selectedProcessingCategory = processingCategories[position]
-			log("Selected processing category: $selectedProcessingCategory")
-		}
-
-		bind.proCategory.setHapticClickListener {
-			bind.proCategory.showDropDown()
-		}
-
-		bind.images.adapter = ImageAdapter(imageList, object : RecyclerClicks {
-			override fun itemClick(pos: Int, status: String?) {
-				uploadItemIndex = pos
-				uploadImage()
-			}
-		})
-
-		bind.images.layoutManager = LinearLayoutManager(mCtx, LinearLayoutManager.HORIZONTAL, false)
-		bind.images.setHasFixedSize(false)
-		
-		bind.addNewImage.setHapticClickListener {
-			uploadItemIndex = -1
-			uploadImage()
-		}
-		
-		bind.publish.setHapticClickListener {
-			validateProductData()
-		}
-		
-		bind.saveDraft.setHapticClickListener {
-			validateProductData("draft")
-		}
-		
-		bind.category.setHapticClickListener {
-			showCategorySheet(categoryList, "category")
-		}
-
-		val conditionList = mutableListOf<String>("New",
-				"Like New",
-				"Gently Loved",
-				"Well Loved",
-				"Other",
-				"Trending")
-
-		val adapter = ArrayAdapter(mCtx, android.R.layout.simple_list_item_1, conditionList)
-		bind.condition.setAdapter(adapter)
-		val draw = ContextCompat.getDrawable(mCtx, R.drawable.card_8)
-		bind.condition.setDropDownBackgroundDrawable(draw)
-
-		bind.condition.setOnItemClickListener { _, _, position, _ ->
-			selectedCondition = conditionList[position].replace(" ", "_")
-		}
-
-		bind.condition.setHapticClickListener {
-			bind.condition.showDropDown()
-		}
-
-		viewModel.getCategory()
-
-		viewModel.getShippingProfile()
-
-		viewModel.getShippingProfileRepo.observe(viewLifecycleOwner) {
-			when (it) {
-				is Resource.Success -> {
-					viewModel.getShippingProfileRepo.value = null
-					bind.loader.isVisible = false
-
-					val mData = it.value.data
-
-					if (mData?.isNotEmpty() == true) {
-						profiles.clear()
-						profiles.addAll(mData)
-					}
-
-					val profileAdapter = ArrayAdapter(mCtx, android.R.layout.simple_list_item_1, profiles.map { it?.name })
-					bind.shippingProfile.setAdapter(profileAdapter)
-					bind.shippingProfile.setDropDownBackgroundDrawable(draw)
-
-					bind.shippingProfile.setOnItemClickListener { _, _, position, _ ->
-
-						profileId = profiles[position]?.id.toString()
-
-						bind.shippingProfile.setText(profiles[position]?.name, false)
-
-					}
-
-					bind.shippingProfile.setHapticClickListener {
-						bind.shippingProfile.showDropDown()
-					}
-
-				}
-
-				is Resource.Error -> {
-					it.parse(mCtx, TAG, object : AlertClicks {
-						override fun primaryClick(dialog: AppBottomSheet) {
-							dialog.dismiss()
-
-						}
-
-						override fun secondaryClick(dialog: AppBottomSheet) {
-							dialog.dismiss()
-						}
-					})
-
-				}
-				else -> {}
-			}
-		}
-
-		viewModel.getCategoryRepo.observe(viewLifecycleOwner) {
-			when (it) {
-				is Resource.Success -> {
-					viewModel.getCategoryRepo.value = null
-					bind.loader.isVisible = false
-					
-					val mData = it.value.data
-
-					if (mData?.isNotEmpty() == true) {
-						categoryList.clear()
-						categoryList.addAll(mData)
-					}
-
-				}
-				
-				is Resource.Error -> {
-					it.parse(mCtx, TAG, object : AlertClicks {
-						override fun primaryClick(dialog: AppBottomSheet) {
-							dialog.dismiss()
-							
-						}
-						
-						override fun secondaryClick(dialog: AppBottomSheet) {
-							dialog.dismiss()
-						}
-					})
-					
-				}
-				else -> {}
-			}
-		}
-
-		viewModel.getProductSubCategoryRepo.observe(viewLifecycleOwner) {
-			when (it) {
-				is Resource.Success -> {
-					viewModel.getProductSubCategoryRepo.value = null
-					bind.loader.isVisible = false
-
-					val mData = it.value.data
-
-					if (mData?.isNotEmpty() == true) {
-						subCategoryList.clear()
-						subCategoryList.addAll(mData)
-						showCategorySheet(subCategoryList, "subCategory")
-					}
-
-				}
-
-				is Resource.Error -> {
-					it.parse(mCtx, TAG, object : AlertClicks {
-						override fun primaryClick(dialog: AppBottomSheet) {
-							dialog.dismiss()
-
-						}
-
-						override fun secondaryClick(dialog: AppBottomSheet) {
-							dialog.dismiss()
-						}
-					})
-
-				}
-
-				else -> {}
-
-			}
-		}
-
-		viewModel.storeProductRepo.observe(viewLifecycleOwner) {
-			bind.loader.isVisible = false
-
-			when (it) {
-				is Resource.Success -> {
-					// Clear ViewModel state on successful save
-					clearViewModelState()
-					Alerts.showBottomSheet(
-						mCtx,
-						it.value.message ?: "Product added successfully",
-						"Success",
-						false,
-						object : AlertClicks {
-							override fun primaryClick(dialog: AppBottomSheet) {
-								finish()
-								dialog.dismiss()
-							}
-							
-							override fun secondaryClick(dialog: AppBottomSheet) {
-								dialog.dismiss()
-							}
-						})
-				}
-				
-				is Resource.Error -> {
-					it.parse(mCtx, TAG, object : AlertClicks {
-						override fun primaryClick(dialog: AppBottomSheet) {
-							dialog.dismiss()
-						}
-						
-						override fun secondaryClick(dialog: AppBottomSheet) {
-							dialog.dismiss()
-						}
-					})
-				}
-				
-				else -> {}
-				
-			}
-		}
-		
-		viewModel.getMailClasses()
-		viewModel.getMailClassesRepo.observe(viewLifecycleOwner) {
-			when (it) {
-				is Resource.Success -> {
-					bind.loader.isVisible = false
-					mailClassesList.clear()
-					
-					val mData = it.value.data
-					if (mData?.mailClasses?.isNotEmpty() == true) {
-						mailClassesList.addAll(mData.mailClasses)
-						setupMailClassDropdown()
-						
-						// Restore selected mail class if available
-						if (selectedMailClass != null) {
-							val sel = mailClassesList.findLast { mailClass ->
-								selectedMailClass?.label?.lowercase() == mailClass?.label?.lowercase()
-							}
-							if (sel != null) {
-								selectedMailClass = sel
-								bind.mailClass.setText(sel.label,false)
-							}
-						} else {
-							// Original logic for product edit mode
-							product?.let { pr->
-								val sel = mailClassesList.findLast { mailClass ->
-									log("CLASS ${pr.mailClass} ${mailClass?.label} ${pr.mailClass?.lowercase() == mailClass?.label?.lowercase()}")
-									pr.mailClass?.lowercase() == mailClass?.label?.lowercase()
-								}
-								
-								if (sel != null) {
-									selectedMailClass = sel
-									bind.mailClass.setText(sel.label,false)
-								}
-								log("Selected mail class: $selectedMailClass")
-							}
-						}
-						
-					}
-				}
-				
-				is Resource.Error -> {
-					bind.loader.isVisible = false
-					it.parse(mCtx, TAG, object : AlertClicks {
-						override fun primaryClick(dialog: AppBottomSheet) {
-							dialog.dismiss()
-						}
-						
-						override fun secondaryClick(dialog: AppBottomSheet) {
-							dialog.dismiss()
-						}
-					})
-					
-				}
-				
-				else -> {}
-			}
-			
-		}
-		
-	}
-	
-	private fun setupMailClassDropdown() {
-		val mailClassNames = mailClassesList.map { it?.label ?: "" }.toTypedArray()
-		
-		val adapter = ArrayAdapter(
-			mCtx,
-			android.R.layout.simple_list_item_1,
-			mailClassNames
-		)
-		
-		bind.mailClass.setAdapter(adapter)
-		
-		val drawable = ContextCompat.getDrawable(mCtx, R.drawable.card_8)
-		bind.mailClass.setDropDownBackgroundDrawable(drawable)
-		
-		bind.mailClass.setOnItemClickListener { _, _, position, _ ->
-			selectedMailClass = mailClassesList[position]
-			log("Selected mail class: ${selectedMailClass?.label}")
-			// Save state to ViewModel
-			saveStateToViewModel()
-		}
-		
-		bind.mailClass.setHapticClickListener {
-			if (mailClassesList.isNotEmpty()) {
-				bind.mailClass.showDropDown()
-			} else {
-				viewModel.getMailClasses()
-			}
-		}
-	}
-	
-	fun uploadImage() {
-		if (imageList.size < 9) {
-			requestPerms(Const.STR_PERMS) { per ->
-				if (per) {
-					imageResult.launch(Utils.initCrop(mCtx, isCamera = true, isGallery = true))
-				}
-			}
-		} else {
-			Alerts.error(mCtx, "You can select max 9 images only")
-		}
-	}
-	
-	fun validateProductData(type: String = "active") {
-		hideKeyboard(bind.root)
-		try {
-			packageWidth = bind.width.value().toDoubleOrNull() ?: 0.0
-			packageHeight = bind.height.value().toDoubleOrNull() ?: 0.0
-			packageLength = bind.length.value().toDoubleOrNull() ?: 0.0
-			packageWeight = bind.weight.value().toDoubleOrNull() ?: 0.0
-		} catch (_: NumberFormatException) {
-			Alerts.error(mCtx, "Please enter valid numeric values for dimensions")
-			return
-		}
-
-		if (type == "draft") {
-
-			when {
-
-				categoryId.isEmpty() -> {
-					Alerts.error(mCtx, "Please select category")
-				}
-
-				bind.productTitle.value().isEmpty() -> {
-					bind.productTitle.requestFocus()
-					Alerts.error(mCtx, "Please enter product title")
-				}
-
-				else -> {
-
-					saveProduct("draft")
-
-				}
-			}
-
-		}else{
-
-			when {
-
-				imageList.filterNotNull().isEmpty() -> {
-					Alerts.error(mCtx, "Please select at least one image")
-				}
-
-				categoryId.isEmpty() -> {
-					Alerts.error(mCtx, "Please select category")
-				}
-
-				bind.productTitle.value().isEmpty() -> {
-					bind.productTitle.requestFocus()
-					Alerts.error(mCtx, "Please enter product title")
-				}
-
-				bind.description.value().isEmpty() -> {
-					bind.description.requestFocus()
-					Alerts.error(mCtx, "Please enter description")
-				}
-
-
-				packageWidth <= 0 || packageHeight <= 0 || packageLength <= 0 || packageWeight <= 0 -> {
-					Alerts.error(mCtx, "Please enter all package dimensions")
-				}
-
-				selectedMailClass?.maxWidthIn != null && (packageWidth > (selectedMailClass?.maxWidthIn
-					?: 0.0)) -> {
-					Alerts.error(
-						mCtx,
-						"Width exceeds maximum of ${selectedMailClass?.maxWidthIn} cm"
-					)
-				}
-
-				selectedMailClass?.maxHeightIn != null && (packageHeight > (selectedMailClass?.maxHeightIn ?: 0.0)) -> {
-					Alerts.error(
-						mCtx,
-						"Height exceeds maximum of ${selectedMailClass?.maxHeightIn} cm"
-					)
-				}
-
-				selectedMailClass?.maxLengthIn != null && (packageLength > (selectedMailClass?.maxLengthIn ?: 0.0)) -> {
-					Alerts.error(
-						mCtx,
-						"Length exceeds maximum of ${selectedMailClass?.maxLengthIn} cm"
-					)
-				}
-
-				selectedMailClass?.maxWeightLbs != null && (packageWeight > (selectedMailClass?.maxWeightLbs
-					?: 0.0)) -> {
-					Alerts.error(
-						mCtx,
-						"Weight exceeds maximum of ${selectedMailClass?.maxWeightLbs} lbs"
-					)
-				}
-
-				selectedMailClass == null -> {
-					Alerts.error(mCtx, "Please select a mail class")
-				}
-
-				bind.proCategory.value().isEmpty() -> {
-					bind.proCategory.requestFocus()
-					Alerts.error(mCtx, "Please enter processing category")
-				}
-
-				bind.quantity.value().isEmpty() -> {
-					bind.quantity.requestFocus()
-					Alerts.error(mCtx, "Please enter quantity")
-				}
-
-				bind.price.value().isEmpty() -> {
-					bind.price.requestFocus()
-					Alerts.error(mCtx, "Please enter price")
-				}
-
-				bind.shippingProfile.value().isEmpty() -> {
-					Alerts.error(mCtx, "Please select shipping")
-				}
-
-
-				else -> {
-					saveProduct("active")
-				}
-			}
-
-		}
-
-	}
-	
-	private fun addProductData(product: GetMyInventoryResponse.Data?) {
-		categoryId = if(product?.categoryId!=null) product.categoryId.toString() else ""
-		subCategoryId = product?.subCategoryId?:""
-		if (product?.subCategory != null) {
-			bind.category.setText(buildSpannedString {
-				append(product.category?.name)
-				append("(${product.subCategory.name})")
-			})
-		} else {
-			bind.category.setText(product?.category?.name)
-		}
-		bind.productTitle.setText(product?.title?:"")
-		bind.description.setText(product?.description?:"")
-		bind.quantity.setText((product?.quantity?:"").toString())
-		bind.width.setText((product?.width?:"").toString())
-		bind.height.setText((product?.height?:"").toString())
-		bind.length.setText((product?.length?:"").toString())
-		bind.weight.setText((product?.weight?:"").toString())
-		bind.mailClass.setText(product?.mailClass?:"",false)
-		bind.proCategory.setText(product?.processingCategory?:"", false)
-		bind.price.setText((product?.pricing?:""))
-		bind.flashSell.isChecked = product?.flashSale == true
-		bind.acceptOffers.isChecked = product?.acceptOffers == true
-		bind.reserveForLive.isChecked = product?.reserveForLive == true
-		imageList.clear()
-		product?.images?.forEachIndexed { index, imageUrl ->
-			imageUrl?.let {
-				if (imageList.size < 9) {
-					imageList.add(it)
-				}
-			}
-		}
-
-		bind.imageLimit.text = buildString {
-			append(imageList.size)
-			append("/9")
-		}
-		bind.images.adapter?.notifyDataSetChanged()
-	}
-
-	private fun showCategorySheet(
-		categoryList: MutableList<GetCategoryResponse.Data?>,
-		type: String,
-	) {
-		val categorySheetBind =
-			CategoryBottomSheetBinding.bind(
-				layoutInflater.inflate(
-					R.layout.category_bottom_sheet,
-					null,
-					false
-				)
-			)
-		val categorySheet = Alerts.appBottomSheet(mCtx, true, categorySheetBind)
-		variantList.clear()
-		variantAdapter.notifyDataSetChanged()
-		categorySheetBind.recycler.adapter = CategoryListAdapter(
-			if (type == "category") categoryList else subCategoryList,
-			object : RecyclerClicks {
-				
-				override fun itemClick(pos: Int, status: String?) {
-					if (type == "category") {
-						categoryId = categoryList[pos]?.id.toString()
-						bind.category.setText(categoryList[pos]?.name.toString())
-						bind.loader.isVisible = true
-						subCategoryId = ""
-						viewModel.getProductSubCategory(categoryId, "subCategory")
-						isSubCategory = true
-						if (categoryList[pos]?.extraFields?.isNotEmpty() == true) {
-							variantList.addAll(categoryList[pos]?.extraFields ?: mutableListOf())
-							variantAdapter.notifyDataSetChanged()
-						}
-					} else {
-						bind.category.setText(buildSpannedString {
-							append(bind.category.text)
-							append("(${subCategoryList[pos]?.name.toString()})")
-						})
-						subCategoryId = subCategoryList[pos]?.id.toString()
-						isSubCategory = false
-						if (subCategoryList[pos]?.extraFields?.isNotEmpty() == true) {
-							variantList.addAll(subCategoryList[pos]?.extraFields ?: mutableListOf())
-							variantAdapter.notifyDataSetChanged()
-						}
-					}
-					// Save state to ViewModel
-					saveStateToViewModel()
-					categorySheet.dismiss()
-				}
-			})
-
-		if (type == "subCategory") {
-			categorySheetBind.sheetTitle.text = buildString {
-				append("Select Product Sub Category")
-			}
-		} else {
-			categorySheetBind.sheetTitle.text = buildString {
-				append("Select Product Category")
-			}
-		}
-		
-		categorySheetBind.close.setHapticClickListener {
-			categorySheet.dismiss()
-		}
-		
-		categorySheet.show()
-		
-	}
-	
-	fun getVariantData(): List<Map<String?, Any?>> {
-		return (bind.variants.adapter as ProductVariantAdapter)
-			.getAllVariantData()
-	}
-	
-	fun createProduct(
-		productId: String?,
-		type: String,
-		images: List<Map<String, String?>>? = null,
-		variantData: List<Map<String?, Any?>>? = null,
-	) {
-		viewModel.storeProduct(
-			productId = productId?.ifEmpty { null },
-			categoryId = categoryId,
-			subCategoryId = if(subCategoryId.isEmpty()) null else subCategoryId.toInt(),
-			title = bind.productTitle.value(),
-			description = bind.description.value(),
-			quantity = bind.quantity.value(),
-			pricing = bind.price.value(),
-			flashSale = (if (bind.flashSell.isChecked) "1" else "0"),
-			acceptOffers = (if (bind.acceptOffers.isChecked) "1" else "0"),
-			reserveForLive = (if (bind.reserveForLive.isChecked) "1" else "0"),
-			shippingProfileId = profileId.ifEmpty { null },
-			status = type,
-			productImages = images,
-			variant = variantData,
-			width = bind.width.value(),
-			height = bind.height.value(),
-			length = bind.length.value(),
-			weight = bind.weight.value(),
-			mailClass = selectedMailClass?.label,
-			processingCategory = bind.proCategory.value(),
-			productCondition = selectedCondition
-		)
-		
-	}
-	
-	private fun clearViewModelState() {
-		// Clear ViewModel state when leaving the fragment
-		viewModel.productFormImageList.clear()
-		viewModel.productFormCategoryId = ""
-		viewModel.productFormSubCategoryId = ""
-		viewModel.productFormVariantList.clear()
-		viewModel.productFormProduct = null
-		viewModel.productFormSelectedMailClass = null
-		viewModel.productFormProductTitle = ""
-		viewModel.productFormDescription = ""
-		viewModel.productFormQuantity = ""
-		viewModel.productFormPrice = ""
-		viewModel.productFormCategoryText = ""
-	}
-
-	private fun saveProduct(type: String = "active"){
-
-		val variantData = getVariantData()
-
-		bind.loader.isVisible = true
-		// Save final state before submission
-		saveStateToViewModel()
-
-		val imagePartList = mutableListOf<MultipartBody.Part>()
-		val thumbnailPartList = mutableListOf<MultipartBody.Part>()
-		imageList.filter { it?.contains(Const.BASE_URL) == false }.forEach { image ->
-			if (image != null) {
-				val name = System.currentTimeMillis().toString() + "_product_gallery.jpeg"
-				val thumbnailName =
-					System.currentTimeMillis().toString() + "_product_thumbnail.jpeg"
-
-				val imagePart = Utils.imagePart("images[]", name, File(image))
-				imagePart.let { element -> imagePartList.add(element) }
-
-				val thumbnailFile = File(image)
-				val thumbnailPart =
-					Utils.imagePart("thumbnails[]", thumbnailName, thumbnailFile)
-				thumbnailPart.let { element -> thumbnailPartList.add(element) }
-			}
-		}
-		val productId = if (product != null) product?.id.toString() else ""
-		if (imagePartList.isNotEmpty()) {
-			viewModel.storeProductMeta(imagePartList, thumbnailPartList)
-
-			viewModel.storeProductMetaRepo.observe(viewLifecycleOwner) {
-				when (it) {
-					is Resource.Success -> {
-						createProduct(
-							productId,
-							type,
-							it.value.data?.map {productMeta ->
-								mapOf(
-									"image" to productMeta?.images,
-									"thumbnail" to productMeta?.thumbnail
-								)
-							},
-							variantData
-						)
-					}
-
-					is Resource.Error -> {
-						bind.loader.isVisible = false
-						it.parse(mCtx, TAG, object : AlertClicks {
-							override fun primaryClick(dialog: AppBottomSheet) {
-								dialog.dismiss()
-							}
-
-							override fun secondaryClick(dialog: AppBottomSheet) {
-								dialog.dismiss()
-							}
-						})
-					}
-
-					else -> {}
-				}
-			}
-
-		} else {
-			createProduct(productId.toString(), type, emptyList(), variantData)
-		}
-
-	}
-	
-	override fun onPause() {
-		super.onPause()
-		// Save state when fragment is paused (including orientation changes)
-		saveStateToViewModel()
-	}
+
+    override fun getModel(): Class<DashViewModel> = DashViewModel::class.java
+
+    override fun getBind(inflater: LayoutInflater, view: ViewGroup?) =
+        FragmentListAProductBinding.inflate(inflater, view, false)
+
+    // Change to track MediaItem instead of just String
+    var imageList = mutableListOf<MediaItem>()
+    var uploadItemIndex = -1
+    var isSubCategory = false
+    private var product: GetMyInventoryResponse.Data? = null
+    private var categoryList = mutableListOf<GetCategoryResponse.Data?>()
+    private var subCategoryList = mutableListOf<GetCategoryResponse.Data?>()
+    private var mailClassesList = mutableListOf<GetMailClassesResponse.Data.MailClasses?>()
+
+    private var categoryId = ""
+    private var selectedCondition = ""
+    private var profileId = ""
+    private var subCategoryId = ""
+    var variantList = mutableListOf<GetCategoryResponse.Data.ExtraField?>()
+    private lateinit var variantAdapter: ProductVariantAdapter
+
+    private var packageWidth = 0.0
+    private var packageHeight = 0.0
+    private var packageLength = 0.0
+    private var packageWeight = 0.0
+    private var selectedMailClass: GetMailClassesResponse.Data.MailClasses? = null
+    private var profiles = mutableListOf<GetShippingProfilesResponse.Data?>()
+
+    // Helper functions to get photo and video counts
+    private fun getPhotoCount(): Int = imageList.count { !it.isVideo }
+    private fun getVideoCount(): Int = imageList.count { it.isVideo }
+
+    private fun updateMediaCounts() {
+        bind.imageLimit.text = buildSpannedString {
+            append("Photos: ")
+            color(ContextCompat.getColor(mCtx, R.color.primary)) {
+                append("${getPhotoCount()}/8")
+            }
+            append("  ")
+            append("Video: ")
+            color(ContextCompat.getColor(mCtx, R.color.primary)) {
+                append("${getVideoCount()}/1")
+            }
+        }
+    }
+
+    private val imageResult = registerForActivityResult(CustomCropImageContract()) { result ->
+        if (result.isSuccessful) {
+            val imagePath = result.getUriFilePath(mCtx, true)
+            if (imagePath != null) {
+                val photoCount = getPhotoCount()
+                if (photoCount >= 8) {
+                    Alerts.error(mCtx, "You can select max 8 photos only")
+                    return@registerForActivityResult
+                }
+
+                if (uploadItemIndex == -1) {
+                    imageList.add(MediaItem(imagePath, isVideo = false))
+                } else {
+                    val existingItem = imageList[uploadItemIndex]
+                    // Only allow replacing with same type
+                    if (!existingItem.isVideo) {
+                        imageList[uploadItemIndex] = MediaItem(imagePath, isVideo = false)
+                        uploadItemIndex = -1
+                    } else {
+                        Alerts.error(mCtx, "Cannot replace video with photo")
+                        uploadItemIndex = -1
+                        return@registerForActivityResult
+                    }
+                }
+
+                updateMediaCounts()
+                bind.images.adapter?.notifyDataSetChanged()
+                bind.images.isVisible=true
+            }
+        }
+    }
+
+    // Video picker contract
+    private val videoPicker = registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
+        uri?.let {
+            val videoPath = getVideoFilePath(it)
+            if (videoPath != null) {
+                val videoCount = getVideoCount()
+                if (videoCount >= 1) {
+                    Alerts.error(mCtx, "You can select max 1 video only")
+                    return@registerForActivityResult
+                }
+
+                if (uploadItemIndex == -1) {
+                    imageList.add(MediaItem(videoPath, isVideo = true))
+                } else {
+                    val existingItem = imageList[uploadItemIndex]
+                    // Only allow replacing with same type
+                    if (existingItem.isVideo) {
+                        imageList[uploadItemIndex] = MediaItem(videoPath, isVideo = true)
+                        uploadItemIndex = -1
+                    } else {
+                        Alerts.error(mCtx, "Cannot replace photo with video")
+                        uploadItemIndex = -1
+                        return@registerForActivityResult
+                    }
+                }
+
+                updateMediaCounts()
+                bind.images.adapter?.notifyDataSetChanged()
+            }
+        }
+    }
+
+    private fun getVideoFilePath(uri: Uri): String? {
+        return try {
+            if (uri.scheme == "content") {
+                val cursor = mCtx.contentResolver.query(uri, null, null, null, null)
+                cursor?.use {
+                    if (it.moveToFirst()) {
+                        val nameIndex = it.getColumnIndex(OpenableColumns.DISPLAY_NAME)
+                        if (nameIndex != -1) {
+                            val name = it.getString(nameIndex) ?: "video_${System.currentTimeMillis()}.mp4"
+                            val cacheFile = File(mCtx.cacheDir, name)
+                            mCtx.contentResolver.openInputStream(uri)?.use { input ->
+                                FileOutputStream(cacheFile).use { output ->
+                                    input.copyTo(output)
+                                }
+                            }
+                            if (cacheFile.exists()) return cacheFile.absolutePath
+                        }
+                    }
+                }
+                // Fallback
+                val file = File(mCtx.cacheDir, "video_${System.currentTimeMillis()}.mp4")
+                mCtx.contentResolver.openInputStream(uri)?.use { input ->
+                    FileOutputStream(file).use { output ->
+                        input.copyTo(output)
+                    }
+                }
+                if (file.exists()) file.absolutePath else null
+            } else if (uri.scheme == "file") {
+                val file = File(uri.path ?: return null)
+                if (file.exists()) file.absolutePath else null
+            } else {
+                null
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        }
+    }
+
+    private val mClick = object : RecyclerClicks {
+        override fun itemClick(pos: Int, status: String?) {
+            uploadItemIndex = pos
+            val item = imageList[pos]
+            if (item.isVideo) {
+                uploadVideo()
+            } else {
+                uploadImage()
+            }
+        }
+    }
+
+    private fun restoreStateFromViewModel() {
+        // Restore from ViewModel if state exists
+        if (viewModel.productFormImageList.isNotEmpty() || viewModel.productFormCategoryId.isNotEmpty()) {
+            imageList.clear()
+            // Convert String list to MediaItem list (assume all are photos for backward compatibility)
+            // You may need to store type info in ViewModel if needed
+            imageList.addAll(viewModel.productFormImageList.map { MediaItem(it ?: "", isVideo = false) })
+            categoryId = viewModel.productFormCategoryId
+            subCategoryId = viewModel.productFormSubCategoryId
+            variantList.clear()
+            variantList.addAll(viewModel.productFormVariantList)
+            packageWidth = viewModel.productFormPackageWidth
+            packageHeight = viewModel.productFormPackageHeight
+            packageLength = viewModel.productFormPackageLength
+            packageWeight = viewModel.productFormPackageWeight
+            selectedMailClass = viewModel.productFormSelectedMailClass
+            product = viewModel.productFormProduct
+            isSubCategory = viewModel.productFormIsSubCategory
+
+            // Restore form fields
+            bind.productTitle.setText(viewModel.productFormProductTitle)
+            bind.description.setText(viewModel.productFormDescription)
+            bind.quantity.setText(viewModel.productFormQuantity)
+            bind.width.setText(viewModel.productFormWidth)
+            bind.height.setText(viewModel.productFormHeight)
+            bind.length.setText(viewModel.productFormLength)
+            bind.weight.setText(viewModel.productFormWeight)
+            bind.mailClass.setText(viewModel.productFormMailClassText, false)
+            bind.proCategory.setText(viewModel.productFormProcessingCategory, false)
+            bind.price.setText(viewModel.productFormPrice)
+            bind.flashSell.isChecked = viewModel.productFormFlashSale
+            bind.acceptOffers.isChecked = viewModel.productFormAcceptOffers
+            bind.reserveForLive.isChecked = viewModel.productFormReserveForLive
+
+            if (viewModel.productFormCategoryText.isNotEmpty()) {
+                if (subCategoryId.isNotEmpty()) {
+                    bind.category.setText(buildSpannedString {
+                        append(viewModel.productFormCategoryText)
+                        append("(${viewModel.productFormProduct})")
+                    })
+                } else {
+                    bind.category.setText(viewModel.productFormCategoryText, false)
+                }
+            }
+
+            updateMediaCounts()
+        }
+    }
+
+    private fun saveStateToViewModel() {
+        // Save current state to ViewModel
+        viewModel.productFormImageList.clear()
+        // Convert MediaItem list back to String list
+        viewModel.productFormImageList.addAll(imageList.map { it.path })
+        viewModel.productFormCategoryId = categoryId
+        viewModel.productFormSubCategoryId = subCategoryId
+        viewModel.productFormVariantList.clear()
+        viewModel.productFormVariantList.addAll(variantList)
+        viewModel.productFormPackageWidth = packageWidth
+        viewModel.productFormPackageHeight = packageHeight
+        viewModel.productFormPackageLength = packageLength
+        viewModel.productFormPackageWeight = packageWeight
+        viewModel.productFormSelectedMailClass = selectedMailClass
+        viewModel.productFormProduct = product
+        viewModel.productFormIsSubCategory = isSubCategory
+
+        // Save form field values
+        viewModel.productFormProductTitle = bind.productTitle.value()
+        viewModel.productFormDescription = bind.description.value()
+        viewModel.productFormQuantity = bind.quantity.value()
+        viewModel.productFormWidth = bind.width.value()
+        viewModel.productFormHeight = bind.height.value()
+        viewModel.productFormLength = bind.length.value()
+        viewModel.productFormWeight = bind.weight.value()
+        viewModel.productFormMailClassText = bind.mailClass.value()
+        viewModel.productFormProcessingCategory = bind.proCategory.value()
+        viewModel.productFormPrice = bind.price.value()
+        viewModel.productFormFlashSale = bind.flashSell.isChecked
+        viewModel.productFormAcceptOffers = bind.acceptOffers.isChecked
+        viewModel.productFormReserveForLive = bind.reserveForLive.isChecked
+        viewModel.productFormCategoryText = bind.category.text?.toString() ?: ""
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        // Restore state from ViewModel if available
+        restoreStateFromViewModel()
+
+        // Get product from intent only if not already restored
+        if (product == null) {
+            product =
+                activity?.intent?.getSerializableExtra("product") as? GetMyInventoryResponse.Data
+        }
+
+        bind.root.setOnClickListener {
+            hideKeyboard(it)
+        }
+
+        bind.mainLayout.setOnClickListener {
+            hideKeyboard(it)
+        }
+
+        // Only load product data if not restored from ViewModel
+        if (product != null && viewModel.productFormProduct == null) {
+
+            bind.saveDraft.isVisible = product?.status == "draft"
+
+            bind.publish.text = buildSpannedString {
+                append("Update")
+            }
+            bind.header.setHeaderText("Update Product")
+            addProductData(product)
+        } else if (product != null && viewModel.productFormProduct != null) {
+            // Restore UI state for edit mode
+            bind.saveDraft.isVisible = product?.status == "draft"
+
+            bind.publish.text = buildSpannedString {
+                append("Update")
+            }
+            bind.header.setHeaderText("Update Product")
+        }
+
+        bind.hazardousDesc.text = buildSpannedString {
+            append("Carriers restrict shipping ")
+            color(ContextCompat.getColor(mCtx, R.color.primary)) {
+                append("items that may pose risk to safety")
+            }
+           append (", like lithium batteries.")
+        }
+
+        log(product.toString())
+
+        variantAdapter = ProductVariantAdapter(variantList, mClick)
+
+        bind.variants.adapter = variantAdapter
+
+        // Notify adapter if we restored variants
+        if (viewModel.productFormVariantList.isNotEmpty()) {
+            variantAdapter.notifyDataSetChanged()
+        }
+
+        bind.header.onBackClick {
+            // Clear ViewModel state when leaving
+            clearViewModelState()
+            finish()
+        }
+
+        val processingCategories =
+            listOf("LETTERS", "FLATS", "MACHINABLE", "NONSTANDARD", "NON_MACHINABLE")
+        val proCategoryAdapter = ArrayAdapter(
+            mCtx,
+            android.R.layout.simple_list_item_1,
+            processingCategories
+        )
+
+        bind.reserveForLive.setOnCheckedChangeListener { view, isChecked ->
+            if (isChecked) {
+                bind.acceptOffers.isChecked = false
+                bind.flashSell.isChecked = false
+            }
+        }
+
+        bind.acceptOffers.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
+                bind.reserveForLive.isChecked = false
+            }
+        }
+
+        bind.flashSell.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
+                bind.reserveForLive.isChecked = false
+            }
+        }
+
+        bind.proCategory.setAdapter(proCategoryAdapter)
+        val proDrawable = ContextCompat.getDrawable(mCtx, R.drawable.card_8)
+        bind.proCategory.setDropDownBackgroundDrawable(proDrawable)
+
+        bind.proCategory.setOnItemClickListener { _, _, position, _ ->
+            val selectedProcessingCategory = processingCategories[position]
+            log("Selected processing category: $selectedProcessingCategory")
+        }
+
+        bind.proCategory.setHapticClickListener {
+            bind.proCategory.showDropDown()
+        }
+
+        // Update ImageAdapter to work with MediaItem
+        bind.images.adapter = ImageAdapter(
+            imageList.map { it.path }.toMutableList(), 
+            object : RecyclerClicks {
+                override fun itemClick(pos: Int, status: String?) {
+                    uploadItemIndex = pos
+                    val item = imageList[pos]
+                    if (item.isVideo) {
+                        uploadVideo()
+                    } else {
+                        uploadImage()
+                    }
+                }
+            }
+        )
+
+        bind.images.layoutManager = LinearLayoutManager(mCtx, LinearLayoutManager.HORIZONTAL, false)
+        bind.images.setHasFixedSize(false)
+
+        bind.addNewImage.setHapticClickListener {
+            uploadItemIndex = -1
+            showMediaSelectionDialog()
+        }
+
+        bind.publish.setHapticClickListener {
+            validateProductData()
+        }
+
+        bind.saveDraft.setHapticClickListener {
+            validateProductData("draft")
+        }
+
+        bind.category.setHapticClickListener {
+            showCategorySheet(categoryList, "category")
+        }
+
+        val conditionList = mutableListOf<String>(
+            "New",
+            "Like New",
+            "Gently Loved",
+            "Well Loved",
+            "Other",
+            "Trending"
+        )
+
+        val adapter = ArrayAdapter(mCtx, android.R.layout.simple_list_item_1, conditionList)
+        bind.condition.setAdapter(adapter)
+        val draw = ContextCompat.getDrawable(mCtx, R.drawable.card_8)
+        bind.condition.setDropDownBackgroundDrawable(draw)
+
+        bind.condition.setOnItemClickListener { _, _, position, _ ->
+            selectedCondition = conditionList[position].replace(" ", "_")
+        }
+
+        bind.condition.setHapticClickListener {
+            bind.condition.showDropDown()
+        }
+
+        viewModel.getCategory()
+
+        viewModel.getShippingProfile()
+
+        viewModel.getShippingProfileRepo.observe(viewLifecycleOwner) {
+            when (it) {
+                is Resource.Success -> {
+                    viewModel.getShippingProfileRepo.value = null
+                    bind.loader.isVisible = false
+
+                    val mData = it.value.data
+
+                    if (mData?.isNotEmpty() == true) {
+                        profiles.clear()
+                        profiles.addAll(mData)
+                    }
+
+                    val profileAdapter = ArrayAdapter(
+                        mCtx,
+                        android.R.layout.simple_list_item_1,
+                        profiles.map { it?.name })
+                    bind.shippingProfile.setAdapter(profileAdapter)
+                    bind.shippingProfile.setDropDownBackgroundDrawable(draw)
+
+                    bind.shippingProfile.setOnItemClickListener { _, _, position, _ ->
+
+                        profileId = profiles[position]?.id.toString()
+
+                        bind.shippingProfile.setText(profiles[position]?.name, false)
+
+                    }
+
+                    bind.shippingProfile.setHapticClickListener {
+                        bind.shippingProfile.showDropDown()
+                    }
+
+                }
+
+                is Resource.Error -> {
+                    it.parse(mCtx, TAG, object : AlertClicks {
+                        override fun primaryClick(dialog: AppBottomSheet) {
+                            dialog.dismiss()
+
+                        }
+
+                        override fun secondaryClick(dialog: AppBottomSheet) {
+                            dialog.dismiss()
+                        }
+                    })
+
+                }
+
+                else -> {}
+            }
+        }
+
+        viewModel.getCategoryRepo.observe(viewLifecycleOwner) {
+            when (it) {
+                is Resource.Success -> {
+                    viewModel.getCategoryRepo.value = null
+                    bind.loader.isVisible = false
+
+                    val mData = it.value.data
+
+                    if (mData?.isNotEmpty() == true) {
+                        categoryList.clear()
+                        categoryList.addAll(mData)
+                    }
+
+                }
+
+                is Resource.Error -> {
+                    it.parse(mCtx, TAG, object : AlertClicks {
+                        override fun primaryClick(dialog: AppBottomSheet) {
+                            dialog.dismiss()
+
+                        }
+
+                        override fun secondaryClick(dialog: AppBottomSheet) {
+                            dialog.dismiss()
+                        }
+                    })
+
+                }
+
+                else -> {}
+            }
+        }
+
+        viewModel.getProductSubCategoryRepo.observe(viewLifecycleOwner) {
+            when (it) {
+                is Resource.Success -> {
+                    viewModel.getProductSubCategoryRepo.value = null
+                    bind.loader.isVisible = false
+
+                    val mData = it.value.data
+
+                    if (mData?.isNotEmpty() == true) {
+                        subCategoryList.clear()
+                        subCategoryList.addAll(mData)
+                        showCategorySheet(subCategoryList, "subCategory")
+                    }
+
+                }
+
+                is Resource.Error -> {
+                    it.parse(mCtx, TAG, object : AlertClicks {
+                        override fun primaryClick(dialog: AppBottomSheet) {
+                            dialog.dismiss()
+
+                        }
+
+                        override fun secondaryClick(dialog: AppBottomSheet) {
+                            dialog.dismiss()
+                        }
+                    })
+
+                }
+
+                else -> {}
+
+            }
+        }
+
+        viewModel.storeProductRepo.observe(viewLifecycleOwner) {
+            bind.loader.isVisible = false
+
+            when (it) {
+                is Resource.Success -> {
+                    // Clear ViewModel state on successful save
+                    clearViewModelState()
+                    Alerts.showBottomSheet(
+                        mCtx,
+                        it.value.message ?: "Product added successfully",
+                        "Success",
+                        false,
+                        object : AlertClicks {
+                            override fun primaryClick(dialog: AppBottomSheet) {
+                                finish()
+                                dialog.dismiss()
+                            }
+
+                            override fun secondaryClick(dialog: AppBottomSheet) {
+                                dialog.dismiss()
+                            }
+                        })
+                }
+
+                is Resource.Error -> {
+                    it.parse(mCtx, TAG, object : AlertClicks {
+                        override fun primaryClick(dialog: AppBottomSheet) {
+                            dialog.dismiss()
+                        }
+
+                        override fun secondaryClick(dialog: AppBottomSheet) {
+                            dialog.dismiss()
+                        }
+                    })
+                }
+
+                else -> {}
+            }
+        }
+
+        viewModel.getMailClasses()
+        viewModel.getMailClassesRepo.observe(viewLifecycleOwner) {
+            when (it) {
+                is Resource.Success -> {
+                    bind.loader.isVisible = false
+                    mailClassesList.clear()
+
+                    val mData = it.value.data
+                    if (mData?.mailClasses?.isNotEmpty() == true) {
+                        mailClassesList.addAll(mData.mailClasses)
+                        setupMailClassDropdown()
+
+                        // Restore selected mail class if available
+                        if (selectedMailClass != null) {
+                            val sel = mailClassesList.findLast { mailClass ->
+                                selectedMailClass?.label?.lowercase() == mailClass?.label?.lowercase()
+                            }
+                            if (sel != null) {
+                                selectedMailClass = sel
+                                bind.mailClass.setText(sel.label, false)
+                            }
+                        } else {
+                            // Original logic for product edit mode
+                            product?.let { pr ->
+                                val sel = mailClassesList.findLast { mailClass ->
+                                    log("CLASS ${pr.mailClass} ${mailClass?.label} ${pr.mailClass?.lowercase() == mailClass?.label?.lowercase()}")
+                                    pr.mailClass?.lowercase() == mailClass?.label?.lowercase()
+                                }
+
+                                if (sel != null) {
+                                    selectedMailClass = sel
+                                    bind.mailClass.setText(sel.label, false)
+                                }
+                                log("Selected mail class: $selectedMailClass")
+                            }
+                        }
+
+                    }
+                }
+
+                is Resource.Error -> {
+                    bind.loader.isVisible = false
+                    it.parse(mCtx, TAG, object : AlertClicks {
+                        override fun primaryClick(dialog: AppBottomSheet) {
+                            dialog.dismiss()
+                        }
+
+                        override fun secondaryClick(dialog: AppBottomSheet) {
+                            dialog.dismiss()
+                        }
+                    })
+
+                }
+
+                else -> {}
+            }
+
+        }
+
+    }
+
+    private fun setupMailClassDropdown() {
+        val mailClassNames = mailClassesList.map { it?.label ?: "" }.toTypedArray()
+
+        val adapter = ArrayAdapter(
+            mCtx,
+            android.R.layout.simple_list_item_1,
+            mailClassNames
+        )
+
+        bind.mailClass.setAdapter(adapter)
+
+        val drawable = ContextCompat.getDrawable(mCtx, R.drawable.card_8)
+        bind.mailClass.setDropDownBackgroundDrawable(drawable)
+
+        bind.mailClass.setOnItemClickListener { _, _, position, _ ->
+            selectedMailClass = mailClassesList[position]
+            log("Selected mail class: ${selectedMailClass?.label}")
+            // Save state to ViewModel
+            saveStateToViewModel()
+        }
+
+        bind.mailClass.setHapticClickListener {
+            if (mailClassesList.isNotEmpty()) {
+                bind.mailClass.showDropDown()
+            } else {
+                viewModel.getMailClasses()
+            }
+        }
+    }
+
+    private fun showMediaSelectionDialog() {
+        val photoCount = getPhotoCount()
+        val videoCount = getVideoCount()
+        
+        val options = mutableListOf<String>()
+        if (photoCount < 8) {
+            options.add("Add Photo")
+        }
+        if (videoCount < 1) {
+            options.add("Add Video")
+        }
+        
+        if (options.isEmpty()) {
+            Alerts.error(mCtx, "Maximum media limit reached (8 photos, 1 video)")
+            return
+        }
+        
+        if (options.size == 1) {
+            // Only one option available, directly call it
+            if (options[0] == "Add Photo") {
+                uploadImage()
+            } else {
+                uploadVideo()
+            }
+        } else {
+            // Show dialog to choose
+            Alerts.showBottomSheet(
+                mCtx,
+                "Select media type",
+                "Choose",
+                false,
+                object : AlertClicks {
+                    override fun primaryClick(dialog: AppBottomSheet) {
+                        uploadImage()
+                        dialog.dismiss()
+                    }
+
+                    override fun secondaryClick(dialog: AppBottomSheet) {
+                        uploadVideo()
+                        dialog.dismiss()
+                    }
+                }
+            )
+        }
+    }
+
+    fun uploadImage() {
+        val photoCount = getPhotoCount()
+        if (photoCount >= 8) {
+            Alerts.error(mCtx, "You can select max 8 photos only")
+            return
+        }
+        
+        requestPerms(Const.STR_PERMS) { per ->
+            if (per) {
+                imageResult.launch(Utils.initCrop(mCtx, isCamera = true, isGallery = true))
+            }
+        }
+    }
+
+    fun uploadVideo() {
+        val videoCount = getVideoCount()
+        if (videoCount >= 1) {
+            Alerts.error(mCtx, "You can select max 1 video only")
+            return
+        }
+        
+        requestPerms(Const.STR_PERMS) { per ->
+            if (per) {
+                videoPicker.launch("video/*")
+            }
+        }
+    }
+
+    fun validateProductData(type: String = "active") {
+        hideKeyboard(bind.root)
+        try {
+            packageWidth = bind.width.value().toDoubleOrNull() ?: 0.0
+            packageHeight = bind.height.value().toDoubleOrNull() ?: 0.0
+            packageLength = bind.length.value().toDoubleOrNull() ?: 0.0
+            packageWeight = bind.weight.value().toDoubleOrNull() ?: 0.0
+        } catch (_: NumberFormatException) {
+            Alerts.error(mCtx, "Please enter valid numeric values for dimensions")
+            return
+        }
+
+        if (type == "draft") {
+
+            when {
+
+                categoryId.isEmpty() -> {
+                    Alerts.error(mCtx, "Please select category")
+                }
+
+                bind.productTitle.value().isEmpty() -> {
+                    bind.productTitle.requestFocus()
+                    Alerts.error(mCtx, "Please enter product title")
+                }
+
+                else -> {
+
+                    saveProduct("draft")
+
+                }
+            }
+
+        } else {
+
+            when {
+
+                imageList.filter { !it.isVideo }.isEmpty() -> {
+                    Alerts.error(mCtx, "Please select at least one photo")
+                }
+
+                categoryId.isEmpty() -> {
+                    Alerts.error(mCtx, "Please select category")
+                }
+
+                bind.productTitle.value().isEmpty() -> {
+                    bind.productTitle.requestFocus()
+                    Alerts.error(mCtx, "Please enter product title")
+                }
+
+                bind.description.value().isEmpty() -> {
+                    bind.description.requestFocus()
+                    Alerts.error(mCtx, "Please enter description")
+                }
+
+
+                packageWidth <= 0 || packageHeight <= 0 || packageLength <= 0 || packageWeight <= 0 -> {
+                    Alerts.error(mCtx, "Please enter all package dimensions")
+                }
+
+                selectedMailClass?.maxWidthIn != null && (packageWidth > (selectedMailClass?.maxWidthIn
+                    ?: 0.0)) -> {
+                    Alerts.error(
+                        mCtx,
+                        "Width exceeds maximum of ${selectedMailClass?.maxWidthIn} cm"
+                    )
+                }
+
+                selectedMailClass?.maxHeightIn != null && (packageHeight > (selectedMailClass?.maxHeightIn
+                    ?: 0.0)) -> {
+                    Alerts.error(
+                        mCtx,
+                        "Height exceeds maximum of ${selectedMailClass?.maxHeightIn} cm"
+                    )
+                }
+
+                selectedMailClass?.maxLengthIn != null && (packageLength > (selectedMailClass?.maxLengthIn
+                    ?: 0.0)) -> {
+                    Alerts.error(
+                        mCtx,
+                        "Length exceeds maximum of ${selectedMailClass?.maxLengthIn} cm"
+                    )
+                }
+
+                selectedMailClass?.maxWeightLbs != null && (packageWeight > (selectedMailClass?.maxWeightLbs
+                    ?: 0.0)) -> {
+                    Alerts.error(
+                        mCtx,
+                        "Weight exceeds maximum of ${selectedMailClass?.maxWeightLbs} lbs"
+                    )
+                }
+
+                selectedMailClass == null -> {
+                    Alerts.error(mCtx, "Please select a mail class")
+                }
+
+                bind.proCategory.value().isEmpty() -> {
+                    bind.proCategory.requestFocus()
+                    Alerts.error(mCtx, "Please enter processing category")
+                }
+
+                bind.quantity.value().isEmpty() -> {
+                    bind.quantity.requestFocus()
+                    Alerts.error(mCtx, "Please enter quantity")
+                }
+
+                bind.price.value().isEmpty() -> {
+                    bind.price.requestFocus()
+                    Alerts.error(mCtx, "Please enter price")
+                }
+
+                bind.shippingProfile.value().isEmpty() -> {
+                    Alerts.error(mCtx, "Please select shipping")
+                }
+
+
+                else -> {
+                    saveProduct("active")
+                }
+            }
+
+        }
+
+    }
+
+    private fun addProductData(product: GetMyInventoryResponse.Data?) {
+        categoryId = if (product?.categoryId != null) product.categoryId.toString() else ""
+        subCategoryId = product?.subCategoryId ?: ""
+        if (product?.subCategory != null) {
+            bind.category.setText(buildSpannedString {
+                append(product.category?.name)
+                append("(${product.subCategory.name})")
+            })
+        } else {
+            bind.category.setText(product?.category?.name)
+        }
+        bind.productTitle.setText(product?.title ?: "")
+        bind.description.setText(product?.description ?: "")
+        bind.quantity.setText((product?.quantity ?: "").toString())
+        bind.width.setText((product?.width ?: "").toString())
+        bind.height.setText((product?.height ?: "").toString())
+        bind.length.setText((product?.length ?: "").toString())
+        bind.weight.setText((product?.weight ?: "").toString())
+        bind.mailClass.setText(product?.mailClass ?: "", false)
+        bind.proCategory.setText(product?.processingCategory ?: "", false)
+        bind.price.setText((product?.pricing ?: ""))
+        bind.flashSell.isChecked = product?.flashSale == true
+        bind.acceptOffers.isChecked = product?.acceptOffers == true
+        bind.reserveForLive.isChecked = product?.reserveForLive == true
+        imageList.clear()
+        product?.images?.forEachIndexed { index, imageUrl ->
+            imageUrl?.let {
+                val photoCount = getPhotoCount()
+                if (photoCount < 8) {
+                    imageList.add(MediaItem(it, isVideo = false))
+                }
+            }
+        }
+        // Note: If product has video, you'll need to add it here
+        // For now assuming all existing items are photos
+
+        updateMediaCounts()
+        bind.images.adapter?.notifyDataSetChanged()
+    }
+
+    private fun showCategorySheet(
+        categoryList: MutableList<GetCategoryResponse.Data?>,
+        type: String,
+    ) {
+        val categorySheetBind =
+            CategoryBottomSheetBinding.bind(
+                layoutInflater.inflate(
+                    R.layout.category_bottom_sheet,
+                    null,
+                    false
+                )
+            )
+        val categorySheet = Alerts.appBottomSheet(mCtx, true, categorySheetBind)
+        variantList.clear()
+        variantAdapter.notifyDataSetChanged()
+        categorySheetBind.recycler.adapter = CategoryListAdapter(
+            if (type == "category") categoryList else subCategoryList,
+            object : RecyclerClicks {
+
+                override fun itemClick(pos: Int, status: String?) {
+                    if (type == "category") {
+                        categoryId = categoryList[pos]?.id.toString()
+                        bind.category.setText(categoryList[pos]?.name.toString())
+                        bind.loader.isVisible = true
+                        subCategoryId = ""
+                        viewModel.getProductSubCategory(categoryId, "subCategory")
+                        isSubCategory = true
+                        if (categoryList[pos]?.extraFields?.isNotEmpty() == true) {
+                            variantList.addAll(categoryList[pos]?.extraFields ?: mutableListOf())
+                            variantAdapter.notifyDataSetChanged()
+                        }
+                    } else {
+                        bind.category.setText(buildSpannedString {
+                            append(bind.category.text)
+                            append("(${subCategoryList[pos]?.name.toString()})")
+                        })
+                        subCategoryId = subCategoryList[pos]?.id.toString()
+                        isSubCategory = false
+                        if (subCategoryList[pos]?.extraFields?.isNotEmpty() == true) {
+                            variantList.addAll(subCategoryList[pos]?.extraFields ?: mutableListOf())
+                            variantAdapter.notifyDataSetChanged()
+                        }
+                    }
+                    // Save state to ViewModel
+                    saveStateToViewModel()
+                    categorySheet.dismiss()
+                }
+            })
+
+        if (type == "subCategory") {
+            categorySheetBind.sheetTitle.text = buildString {
+                append("Select Product Sub Category")
+            }
+        } else {
+            categorySheetBind.sheetTitle.text = buildString {
+                append("Select Product Category")
+            }
+        }
+
+        categorySheetBind.close.setHapticClickListener {
+            categorySheet.dismiss()
+        }
+
+        categorySheet.show()
+
+    }
+
+    fun getVariantData(): List<Map<String?, Any?>> {
+        return (bind.variants.adapter as ProductVariantAdapter)
+            .getAllVariantData()
+    }
+
+    fun createProduct(
+        productId: String?,
+        type: String,
+        images: List<Map<String, String?>>? = null,
+        variantData: List<Map<String?, Any?>>? = null,
+    ) {
+        viewModel.storeProduct(
+            productId = productId?.ifEmpty { null },
+            categoryId = categoryId,
+            subCategoryId = if (subCategoryId.isEmpty()) null else subCategoryId.toInt(),
+            title = bind.productTitle.value(),
+            description = bind.description.value(),
+            quantity = bind.quantity.value(),
+            pricing = bind.price.value(),
+            flashSale = (if (bind.flashSell.isChecked) "1" else "0"),
+            acceptOffers = (if (bind.acceptOffers.isChecked) "1" else "0"),
+            reserveForLive = (if (bind.reserveForLive.isChecked) "1" else "0"),
+            shippingProfileId = profileId.ifEmpty { null },
+            status = type,
+            productImages = images,
+            variant = variantData,
+            width = bind.width.value(),
+            height = bind.height.value(),
+            length = bind.length.value(),
+            weight = bind.weight.value(),
+            mailClass = selectedMailClass?.label,
+            processingCategory = bind.proCategory.value(),
+            productCondition = selectedCondition
+        )
+
+    }
+
+    private fun clearViewModelState() {
+        // Clear ViewModel state when leaving the fragment
+        viewModel.productFormImageList.clear()
+        viewModel.productFormCategoryId = ""
+        viewModel.productFormSubCategoryId = ""
+        viewModel.productFormVariantList.clear()
+        viewModel.productFormProduct = null
+        viewModel.productFormSelectedMailClass = null
+        viewModel.productFormProductTitle = ""
+        viewModel.productFormDescription = ""
+        viewModel.productFormQuantity = ""
+        viewModel.productFormPrice = ""
+        viewModel.productFormCategoryText = ""
+    }
+
+    private fun saveProduct(type: String = "active") {
+
+        val variantData = getVariantData()
+
+        bind.loader.isVisible = true
+        // Save final state before submission
+        saveStateToViewModel()
+
+        val imagePartList = mutableListOf<MultipartBody.Part>()
+        val thumbnailPartList = mutableListOf<MultipartBody.Part>()
+        val videoPartList = mutableListOf<MultipartBody.Part>()
+        
+        // Separate photos and videos
+        imageList.filter { it.path.contains(Const.BASE_URL) == false }.forEach { mediaItem ->
+            if (mediaItem.path.isNotEmpty()) {
+                if (mediaItem.isVideo) {
+                    // Handle video upload
+                    val name = System.currentTimeMillis().toString() + "_product_video.mp4"
+                    val videoPart = Utils.imagePart("videos[]", name, File(mediaItem.path))
+                    videoPart.let { element -> videoPartList.add(element) }
+                } else {
+                    // Handle photo upload
+                    val name = System.currentTimeMillis().toString() + "_product_gallery.jpeg"
+                    val thumbnailName =
+                        System.currentTimeMillis().toString() + "_product_thumbnail.jpeg"
+
+                    val imagePart = Utils.imagePart("images[]", name, File(mediaItem.path))
+                    imagePart.let { element -> imagePartList.add(element) }
+
+                    val thumbnailFile = File(mediaItem.path)
+                    val thumbnailPart =
+                        Utils.imagePart("thumbnails[]", thumbnailName, thumbnailFile)
+                    thumbnailPart.let { element -> thumbnailPartList.add(element) }
+                }
+            }
+        }
+        
+        val productId = if (product != null) product?.id.toString() else ""
+        if (imagePartList.isNotEmpty() || videoPartList.isNotEmpty()) {
+            // You may need to update storeProductMeta to handle videos
+            viewModel.storeProductMeta(imagePartList, thumbnailPartList)
+
+            viewModel.storeProductMetaRepo.observe(viewLifecycleOwner) {
+                when (it) {
+                    is Resource.Success -> {
+                        createProduct(
+                            productId,
+                            type,
+                            it.value.data?.map { productMeta ->
+                                mapOf(
+                                    "image" to productMeta?.images,
+                                    "thumbnail" to productMeta?.thumbnail
+                                )
+                            },
+                            variantData
+                        )
+                    }
+
+                    is Resource.Error -> {
+                        bind.loader.isVisible = false
+                        it.parse(mCtx, TAG, object : AlertClicks {
+                            override fun primaryClick(dialog: AppBottomSheet) {
+                                dialog.dismiss()
+                            }
+
+                            override fun secondaryClick(dialog: AppBottomSheet) {
+                                dialog.dismiss()
+                            }
+                        })
+                    }
+
+                    else -> {}
+                }
+            }
+
+        } else {
+            createProduct(productId.toString(), type, emptyList(), variantData)
+        }
+
+    }
+
+    override fun onPause() {
+        super.onPause()
+        // Save state when fragment is paused (including orientation changes)
+        saveStateToViewModel()
+    }
 }

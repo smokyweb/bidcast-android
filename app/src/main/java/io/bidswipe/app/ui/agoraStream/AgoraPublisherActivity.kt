@@ -2,6 +2,8 @@ package io.bidswipe.app.ui.agoraStream
 
 import android.annotation.SuppressLint
 import android.app.PictureInPictureParams
+import android.content.ClipData
+import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
@@ -30,8 +32,10 @@ import androidx.core.text.color
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
+import androidx.recyclerview.widget.GridLayoutManager
 import com.bumptech.glide.Glide
 import com.caneryilmaz.apps.luckywheel.data.WheelData
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.gyf.immersionbar.ktx.immersionBar
 import com.gyf.immersionbar.ktx.navigationBarHeight
 import com.gyf.immersionbar.ktx.statusBarHeight
@@ -46,6 +50,8 @@ import io.bidswipe.app.controller.LivePollOptionAdapter
 import io.bidswipe.app.controller.LiveSellerAdapter
 import io.bidswipe.app.controller.PollOptionAdapter
 import io.bidswipe.app.controller.PromoteSheetAdapter
+import io.bidswipe.app.controller.ShareTarget
+import io.bidswipe.app.controller.ShareTargetAdapter
 import io.bidswipe.app.databinding.ActivityAgoraPublisherBinding
 import io.bidswipe.app.databinding.CreateClipSheetBinding
 import io.bidswipe.app.databinding.CreatePollSheetBinding
@@ -56,6 +62,7 @@ import io.bidswipe.app.databinding.PollDetailsSheetBinding
 import io.bidswipe.app.databinding.ProductSheetBinding
 import io.bidswipe.app.databinding.PromoteShowSheetBinding
 import io.bidswipe.app.databinding.RandomizerSheetBinding
+import io.bidswipe.app.databinding.ShareSheetBinding
 import io.bidswipe.app.databinding.ShowConfirmationAlertBinding
 import io.bidswipe.app.databinding.ShowNotesSheetBinding
 import io.bidswipe.app.interfaces.AlertClicks
@@ -106,6 +113,8 @@ class AgoraPublisherActivity : BaseActivity() {
 
     private var liveShowData: LiveShowModel? = null
     private var showId = ""
+    private var showTitle: String? = null
+    private var showThumbnail: String? = null
     private var showTime = ""
     private var roomID = ""
     private var agoraToken = ""
@@ -286,14 +295,13 @@ class AgoraPublisherActivity : BaseActivity() {
         }
 
         bind.share.setHapticClickListener {
+//            showShareBottomSheet()
+
 
             val shareText = buildString {
                 append(Const.BASE_URL)
                 append("/live-show?roomId=$roomID")
             }
-
-
-//			shareLiveShow(this, "Live Show", shareText, url)
 
             val shareIntent = Intent().apply {
                 action = Intent.ACTION_SEND
@@ -309,6 +317,7 @@ class AgoraPublisherActivity : BaseActivity() {
             } else {
                 errorToast("No sharing apps available")
             }
+
 
         }
 
@@ -1613,4 +1622,199 @@ class AgoraPublisherActivity : BaseActivity() {
         randomizerSheetBind.description
 
     }
+
+    private fun showShareBottomSheet() {
+
+        if (showId == null) {
+            errorToast("Show information not available")
+            return
+        }
+
+        val shareUrl = buildString {
+            append(Const.BASE_URL)
+            append("/live-show?showId=$showId")
+        }
+
+        val sheet = BottomSheetDialog(this)
+        val binding = ShareSheetBinding.inflate(layoutInflater)
+        sheet.setContentView(binding.root)
+
+        // Populate preview card
+        binding.showTitle.text = showTitle ?: "Live Show"
+        binding.showSubtitle.text = "Shop Live Now!"
+
+        if (!showThumbnail.isNullOrEmpty()) {
+            binding.showImg.loadUrl(this, showThumbnail!!)
+        }
+
+        // Setup share targets
+        val shareTargets = mutableListOf<ShareTarget>().apply {
+            add(ShareTarget(R.drawable.placeholder_square, "Search", "search"))
+            add(ShareTarget(R.drawable.placeholder_square, "Messages", "sms"))
+            add(ShareTarget(R.drawable.placeholder_square, "Copy Link", "copy"))
+            add(ShareTarget(R.drawable.placeholder_square, "IG Stories", "ig_stories"))
+            add(ShareTarget(R.drawable.placeholder_square, "Instagram", "instagram"))
+            add(ShareTarget(R.drawable.placeholder_square, "Messenger", "messenger"))
+            add(ShareTarget(R.drawable.placeholder_square, "WhatsApp", "whatsapp"))
+            add(ShareTarget(R.drawable.placeholder_square, "More", "more"))
+        }
+
+        binding.shareTargetsRecycler.layoutManager = GridLayoutManager(this, 4)
+        val adapter = ShareTargetAdapter(shareTargets, object : RecyclerClicks {
+            override fun itemClick(pos: Int, status: String?) {
+                handleShareTarget(status ?: "", shareUrl, showTitle ?: "Live Show")
+                sheet.dismiss()
+            }
+        })
+        binding.shareTargetsRecycler.adapter = adapter
+
+        binding.close.setHapticClickListener {
+            sheet.dismiss()
+        }
+
+        sheet.show()
+    }
+
+    private fun handleShareTarget(type: String, shareUrl: String, showTitle: String) {
+        when (type) {
+            "search" -> {
+                // Navigate to search or show search dialog
+                // Implementation depends on your app's search functionality
+                errorToast("Search functionality to be implemented")
+            }
+            "sms" -> {
+                val intent = Intent(Intent.ACTION_SENDTO).apply {
+                    data = Uri.parse("smsto:")
+                    putExtra("sms_body", "$showTitle\n$shareUrl")
+                }
+                if (intent.resolveActivity(packageManager) != null) {
+                    startActivity(intent)
+                } else {
+                    errorToast("SMS app not available")
+                }
+            }
+            "copy" -> {
+                val clipboard = this?.getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
+                val clip = ClipData.newPlainText("Share Link", shareUrl)
+                clipboard.setPrimaryClip(clip)
+                successToast("Link copied to clipboard")
+            }
+            "ig_stories" -> {
+                shareToInstagramStories(showTitle, shareUrl)
+            }
+            "instagram" -> {
+                shareToInstagram(showTitle, shareUrl)
+            }
+            "messenger" -> {
+                shareToMessenger(showTitle, shareUrl)
+            }
+            "whatsapp" -> {
+                shareToWhatsApp(showTitle, shareUrl)
+            }
+            "more" -> {
+                val shareIntent = Intent().apply {
+                    action = Intent.ACTION_SEND
+                    putExtra(Intent.EXTRA_TEXT, "$showTitle\n$shareUrl")
+                    setType( "text/plain")
+                }
+                val chooserIntent = Intent.createChooser(shareIntent, "Share via")
+                if (shareIntent.resolveActivity(packageManager) != null) {
+                    startActivity(chooserIntent)
+                } else {
+                    errorToast("No sharing apps available")
+                }
+            }
+        }
+    }
+
+    private fun shareToInstagramStories(showTitle: String, shareUrl: String) {
+        if (showThumbnail.isNullOrEmpty()) {
+            shareToInstagram(showTitle, shareUrl)
+            return
+        }
+
+        Thread {
+            try {
+                val bitmap = Glide.with(this)
+                    .asBitmap()
+                    .load(showThumbnail)
+                    .submit()
+                    .get()
+
+                val cachePath = File(this.cacheDir, "images")
+                cachePath.mkdirs()
+                val imageFile = File(cachePath, "share_thumb.png")
+                FileOutputStream(imageFile).use { out ->
+                    bitmap.compress(android.graphics.Bitmap.CompressFormat.PNG, 100, out)
+                }
+
+                val imageUri: Uri = FileProvider.getUriForFile(
+                    this,
+                    "${this.packageName}.fileprovider",
+                    imageFile
+                )
+
+                val shareIntent = Intent("com.instagram.share.ADD_TO_STORY").apply {
+                    setDataAndType(imageUri, "image/*")
+                    putExtra(Intent.EXTRA_STREAM, imageUri)
+                    putExtra("content_url", shareUrl)
+                    putExtra("top_background_color", "#000000")
+                    putExtra("bottom_background_color", "#000000")
+                    addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                }
+
+               runOnUiThread {
+                    if (shareIntent.resolveActivity(packageManager) != null) {
+                        startActivity(shareIntent)
+                    } else {
+                        shareToInstagram(showTitle, shareUrl)
+                    }
+                }
+            } catch (e: Exception) {
+                runOnUiThread {
+                    shareToInstagram(showTitle, shareUrl)
+                }
+            }
+        }.start()
+    }
+
+    private fun shareToInstagram(showTitle: String, shareUrl: String) {
+        val intent = Intent(Intent.ACTION_SEND).apply {
+            type = "text/plain"
+            setPackage("com.instagram.android")
+            putExtra(Intent.EXTRA_TEXT, "$showTitle\n$shareUrl")
+        }
+        if (intent.resolveActivity(packageManager) != null) {
+            startActivity(intent)
+        } else {
+            errorToast("Instagram not installed")
+        }
+    }
+
+    private fun shareToMessenger(showTitle: String, shareUrl: String) {
+        val intent = Intent(Intent.ACTION_SEND).apply {
+            type = "text/plain"
+            setPackage("com.facebook.orca")
+            putExtra(Intent.EXTRA_TEXT, "$showTitle\n$shareUrl")
+        }
+        if (intent.resolveActivity(packageManager) != null) {
+            startActivity(intent)
+        } else {
+            errorToast("Messenger not installed")
+        }
+    }
+
+    private fun shareToWhatsApp(showTitle: String, shareUrl: String) {
+        val intent = Intent(Intent.ACTION_SEND).apply {
+            type = "text/plain"
+            setPackage("com.whatsapp")
+            putExtra(Intent.EXTRA_TEXT, "$showTitle\n$shareUrl")
+        }
+        if (intent.resolveActivity(packageManager) != null) {
+            startActivity(intent)
+        } else {
+            errorToast("WhatsApp not installed")
+        }
+    }
+
 }
