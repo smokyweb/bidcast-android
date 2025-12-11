@@ -19,76 +19,316 @@
         app:showPrimaryIcon="false"
         app:showSecondaryIcon="false" />
 
-    <LinearLayout
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginHorizontal="@dimen/margin"
-        android:layout_marginVertical="@dimen/half_margin"
-        android:orientation="vertical"
-        app:layout_constraintTop_toBottomOf="@id/header">
+        android:fillViewport="true"
+        android:layout_marginBottom="@dimen/margin"
+        app:layout_constraintTop_toBottomOf="@id/header"
+        app:layout_constraintBottom_toTopOf="@id/continueBtn">
 
-
-        <TextView
-            style="@style/BodyLarge"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:text="@string/select_the_category_the_most_accurately_describes_your_show_and_how_you_would_like_to_sell" />
+            android:layout_marginHorizontal="@dimen/margin"
+            android:layout_marginVertical="@dimen/half_margin"
+            android:orientation="vertical">
 
-        <TextView
-            style="@style/TitleSmall"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/margin"
-            android:layout_marginBottom="@dimen/half_margin"
-            android:text="@string/show_category" />
 
-        <com.google.android.material.textfield.TextInputLayout
-            style="@style/inputBoxStyle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/margin"
-            app:endIconDrawable="@drawable/ic_forward"
-            app:endIconMode="custom">
-
-            <com.google.android.material.textfield.MaterialAutoCompleteTextView
-                android:id="@+id/category"
-                style="@style/inputTextStyle"
+            <TextView
+                style="@style/BodyLarge"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:focusable="false"
-                android:focusableInTouchMode="false"
-                android:hint="@string/select_category" />
+                android:layout_gravity="center"
 
-        </com.google.android.material.textfield.TextInputLayout>
+                android:text="@string/select_the_category_the_most_accurately_describes_your_show_and_how_you_would_like_to_sell" />
 
-        <TextView
-            style="@style/TitleSmall"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/half_margin"
-            android:text="@string/auction_type" />
-
-        <com.google.android.material.textfield.TextInputLayout
-            style="@style/inputBoxStyle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/margin"
-            app:endIconDrawable="@drawable/ic_forward"
-            app:endIconMode="custom">
-
-            <androidx.appcompat.widget.AppCompatAutoCompleteTextView
-                android:id="@+id/auctionType"
-                style="@style/inputTextStyle"
+            <TextView
+                style="@style/TitleSmall"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:focusable="false"
-                android:focusableInTouchMode="false"
-                android:hint="@string/select_auction_type" />
+                android:layout_marginTop="@dimen/margin"
+                android:layout_marginBottom="@dimen/half_margin"
+                android:text="@string/show_category" />
 
-        </com.google.android.material.textfield.TextInputLayout>
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/inputBoxStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/margin"
+                app:endIconDrawable="@drawable/ic_forward"
+                app:endIconMode="custom">
 
-    </LinearLayout>
+                <com.google.android.material.textfield.MaterialAutoCompleteTextView
+                    android:id="@+id/category"
+                    style="@style/inputTextStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:focusable="false"
+                    android:focusableInTouchMode="false"
+                    android:hint="@string/select_category" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <TextView
+                style="@style/TitleSmall"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/half_margin"
+                android:text="@string/auction_type" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/inputBoxStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/margin"
+                app:endIconDrawable="@drawable/ic_forward"
+                app:endIconMode="custom">
+
+                <androidx.appcompat.widget.AppCompatAutoCompleteTextView
+                    android:id="@+id/auctionType"
+                    style="@style/inputTextStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:focusable="false"
+                    android:focusableInTouchMode="false"
+                    android:hint="@string/select_auction_type" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <TextView
+                style="@style/TitleSmall"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/half_margin"
+                android:text="@string/repeats" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/inputBoxStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/margin"
+                app:endIconDrawable="@drawable/ic_forward"
+                app:endIconMode="custom">
+
+                <androidx.appcompat.widget.AppCompatAutoCompleteTextView
+                    android:id="@+id/repeat"
+                    style="@style/inputTextStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:focusable="false"
+                    android:focusableInTouchMode="false"
+                    android:hint="Select Repeat" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <TextView
+                style="@style/TitleLarge"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/half_margin"
+                android:text="Content Setting" />
+
+            <TextView
+                style="@style/TitleSmall"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Explicit Content" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    style="@style/BodyMedium"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_gravity="center_vertical"
+                    android:alpha="0.7"
+                    android:text="Turn this on if your stream contains explicit content" />
+
+                <com.google.android.material.materialswitch.MaterialSwitch
+                    android:id="@+id/explicitSwitch"
+                    style="@style/appSwitch"
+                    android:layout_gravity="center_vertical"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+            </LinearLayout>
+
+            <TextView
+                style="@style/TitleLarge"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margin"
+                android:text="Primary Language" />
+
+            <TextView
+                style="@style/BodyMedium"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:alpha="0.7"
+                android:text="Set the primary language of your show to help users find your show." />
+
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/inputBoxStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/margin"
+                app:endIconDrawable="@drawable/ic_forward"
+                app:endIconMode="custom">
+
+                <androidx.appcompat.widget.AppCompatAutoCompleteTextView
+                    android:id="@+id/language"
+                    style="@style/inputTextStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:focusable="false"
+                    android:focusableInTouchMode="false"
+                    android:hint="Select Language" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <TextView
+                style="@style/TitleLarge"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Show Discoverability" />
+
+            <TextView
+                style="@style/BodyMedium"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:alpha="0.7"
+                android:text="Choose how you want your show to be discovered." />
+
+            <LinearLayout
+                android:id="@+id/publicButtonLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:paddingVertical="4dp">
+
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/iconLayout"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    style="@style/cardStyle"
+                    android:layout_margin="@dimen/half_margin"
+                    app:cardCornerRadius="100dp"
+                    app:cardBackgroundColor="@color/background">
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/icon"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:scaleType="centerCrop"
+                        android:layout_gravity="center"
+                        android:padding="4dp"
+                        android:src="@drawable/ic_broadcast" />
+
+
+                </com.google.android.material.card.MaterialCardView>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        style="@style/TitleMedium"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Public"/>
+
+                    <TextView
+                        style="@style/BodyMedium"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:alpha="0.7"
+                        android:text="Discoverable by everyone" />
+
+                </LinearLayout>
+
+                <RadioButton
+                    android:id="@+id/publicButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:buttonTint="@color/primary"
+                    android:enabled="false"/>
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/privateButtonLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:paddingVertical="4dp">
+
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    style="@style/cardStyle"
+                    android:layout_margin="@dimen/half_margin"
+                    app:cardCornerRadius="100dp"
+                    app:cardBackgroundColor="@color/background">
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:scaleType="centerCrop"
+                        android:layout_gravity="center"
+                        android:padding="4dp"
+                        app:tint="@color/onSurface"
+                        android:src="@drawable/ic_lock" />
+
+
+                </com.google.android.material.card.MaterialCardView>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        style="@style/TitleMedium"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Private"/>
+
+                    <TextView
+                        style="@style/BodyMedium"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:alpha="0.7"
+                        android:text="Only discoverable through sharing" />
+
+                </LinearLayout>
+
+                <RadioButton
+                    android:id="@+id/privateButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:buttonTint="@color/primary"
+                    android:enabled="false"/>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </ScrollView>
+
+
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/continueBtn"

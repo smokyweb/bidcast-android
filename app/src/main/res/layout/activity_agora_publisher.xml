@@ -210,6 +210,8 @@
                                 android:layout_marginStart="@dimen/margin"
                                 android:layout_marginBottom="@dimen/margin"
                                 app:boxBackgroundColor="@color/transparent"
+                                app:endIconDrawable="@drawable/ic_forward"
+                                app:endIconMode="custom"
                                 app:boxStrokeColor="@color/input_box_stroke_color_surface"
                                 app:layout_constraintBottom_toTopOf="@+id/product">
 

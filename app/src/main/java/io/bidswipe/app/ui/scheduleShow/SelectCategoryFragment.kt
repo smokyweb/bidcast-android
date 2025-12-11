@@ -17,10 +17,12 @@ import io.bidswipe.app.network.response.GetAuctionTypeResponse
 import io.bidswipe.app.network.response.GetCategoryResponse
 import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.utils.Alerts
+import io.bidswipe.app.utils.Const
 import io.bidswipe.app.utils.finish
 import io.bidswipe.app.utils.ids
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.setHapticClickListener
+import io.bidswipe.app.utils.value
 
 class SelectCategoryFragment : BaseFragment<ScheduleShowViewModel, FragmentSelectCategoryBinding>() {
 	override fun getModel(): Class<ScheduleShowViewModel> = ScheduleShowViewModel::class.java
@@ -32,6 +34,7 @@ class SelectCategoryFragment : BaseFragment<ScheduleShowViewModel, FragmentSelec
 
 	private var categoryList = mutableListOf<GetCategoryResponse.Data?>()
 	private var auctionTypeList = mutableListOf<GetAuctionTypeResponse.Data?>()
+	private var repeatModes = mutableListOf("Daily", "Weekly")
 
 	private var categoryId = ""
 	private var auctionId = ""
@@ -49,6 +52,8 @@ class SelectCategoryFragment : BaseFragment<ScheduleShowViewModel, FragmentSelec
 			}
 		}
 
+		bind.publicButton.isChecked = true
+
 		bind.continueBtn.setHapticClickListener {
 			when {
 				categoryId.isEmpty() -> {
@@ -63,6 +68,20 @@ class SelectCategoryFragment : BaseFragment<ScheduleShowViewModel, FragmentSelec
 
 					viewModel.auctionId = auctionId
 					viewModel.categoryId = categoryId
+					viewModel.repeatMode = if (bind.repeat.value().isEmpty())"0"  else "1"
+					viewModel.repeatType = bind.repeat.value().ifEmpty { null }.toString()
+					viewModel.explicitContent = if (bind.explicitSwitch.isChecked) "1" else "0"
+					viewModel.primaryLanguage = bind.language.value().ifEmpty { null }.toString()
+
+					if (bind.publicButton.isChecked){
+						viewModel.discoverability = "public"
+					}else{
+						viewModel.discoverability = "private"
+					}
+
+
+
+
 					findNavController().navigate(ids.goToSelectThumbnailFragment)
 				}
 
@@ -83,6 +102,49 @@ class SelectCategoryFragment : BaseFragment<ScheduleShowViewModel, FragmentSelec
 
 		bind.auctionType.setHapticClickListener {
 			bind.auctionType.showDropDown()
+		}
+
+		val repeatModeAdapter = ArrayAdapter(mCtx, android.R.layout.simple_list_item_1, repeatModes.map { it })
+		bind.repeat.setAdapter(repeatModeAdapter)
+		val draw = ContextCompat.getDrawable(mCtx, R.drawable.card_8)
+		bind.repeat.setDropDownBackgroundDrawable(draw)
+		bind.repeat.setOnItemClickListener { _, _, position, _ ->
+			viewModel.repeatMode = repeatModes[position]
+		}
+
+		bind.repeat.setHapticClickListener {
+			bind.repeat.showDropDown()
+		}
+
+		val languageAdapter = ArrayAdapter(mCtx, android.R.layout.simple_list_item_1, Const.languages.map { it.title })
+		bind.language.setAdapter(languageAdapter)
+		bind.language.setDropDownBackgroundDrawable(draw)
+		bind.language.setOnItemClickListener { _, _, position, _ ->
+
+		}
+
+		bind.language.setHapticClickListener {
+			bind.language.showDropDown()
+		}
+
+		bind.publicButton.setOnCheckedChangeListener { _,isChecked ->
+			if (isChecked){
+				bind.privateButton.isChecked = false
+			}
+		}
+
+		bind.privateButton.setOnCheckedChangeListener { _,isChecked ->
+			if (isChecked){
+				bind.publicButton.isChecked = false
+			}
+		}
+
+		bind.publicButtonLayout.setHapticClickListener {
+			bind.publicButton.isChecked = true
+		}
+
+		bind.privateButtonLayout.setHapticClickListener {
+			bind.privateButton.isChecked = true
 		}
 
 		bind.loader.isVisible = true

@@ -20,7 +20,6 @@ import io.bidswipe.app.utils.asMoney
 import io.bidswipe.app.utils.ids
 import io.bidswipe.app.utils.loadUrl
 import io.bidswipe.app.utils.setHapticClickListener
-import io.bidswipe.app.utils.style
 
 class InventoryAdapter(
 	mList: MutableList<GetMyInventoryResponse.Data?>,

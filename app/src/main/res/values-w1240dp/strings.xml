@@ -5,4 +5,5 @@
     <string name="enable_free_pickup">enable Free Pickup</string>
     <string name="show_notes">Show Notes</string>
     <string name="show_nnotes">Show\nNotes</string>
+    <string name="repeats">Repeats</string>
 </resources>

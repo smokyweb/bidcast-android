@@ -161,7 +161,6 @@ interface ApiInterface {
 		@Body storeProductModel : GetSubCategoriesRequest ,
 	) : CommonResponse
 
-
 	@GET("api/get-lesson")
 	suspend fun getLesson() : GetLessonsResponse
 
@@ -169,7 +168,6 @@ interface ApiInterface {
 	suspend fun getProduct(
 		@Part("category_id") categoryId : RequestBody? ,
 	) : CommonResponse
-
 
 	@POST("api/store-product")
 	suspend fun storeProduct(
@@ -213,6 +211,10 @@ interface ApiInterface {
 		@Part("auction_type_id") auctionTypeId : RequestBody? ,
 		@Part("product_ids[]") productIds :  List<Int> ,
 		@Part thumbnails : List<MultipartBody.Part?>? ,
+		@Part("is_repeat") isRepeat : RequestBody? ,
+		@Part("repeat_value") repeatValue : RequestBody? ,
+		@Part("language") language : RequestBody? ,
+		@Part("is_explicit") isExplicit : RequestBody?
 	) : CreateShowResponse
 
 	@GET("api/get-auction-type")
@@ -290,7 +292,7 @@ interface ApiInterface {
 	) : CommonResponse
 
 	@Multipart
-	@POST("api/fetch-product")
+	@POST("api/v1/get-product-details")
 	suspend fun getProductDetails(
 		@Part("product_id") productId : RequestBody? ,
 	) : GetProductDetailsResponse
@@ -343,14 +345,14 @@ interface ApiInterface {
 	) : CommonResponse
 
 	@Multipart
-	@POST("api/product/purchase-details")
+	@POST("api/v1/checkout-product-detail")
 	suspend fun getPurchaseProduct(
 		@Part("shipping_id") shippingId : RequestBody? ,
 		@Part("product_id") productId : RequestBody? ,
 	) : GetPurchaseDetail
 
 	@Multipart
-	@POST("api/product/order")
+	@POST("api/v1/place-order")
 	suspend fun createOrder(
 		@Part("shipping_id") shippingId : RequestBody? ,
 		@Part("product_id") productId : RequestBody? ,
@@ -428,7 +430,7 @@ interface ApiInterface {
 	) : GetMyInventoryResponse
 
 	@Multipart
-	@POST("api/product/order-listing")
+	@POST("api/v1/get-my-orders")
 	suspend fun getOrderListing(
 		@Part("page") page : RequestBody? ,
 		@Part("type") type : RequestBody? ,
@@ -474,13 +476,13 @@ interface ApiInterface {
 	) : FetchBidResponse
 
 	@Multipart
-	@POST("api/product/order-receipt")
+	@POST("api/v1/get-order-receipt")
 	suspend fun getOrderReceipt(
 		@Part("order_id") orderId : RequestBody? ,
 	) : CommonResponse
 
 	@Multipart
-	@POST("api/product/order-details")
+	@POST("api/v1/get-order-status")
 	suspend fun getOrderDetails(
 		@Part("order_id") orderId : RequestBody? ,
 	) : GetOrderDetailsResponse
@@ -504,7 +506,7 @@ interface ApiInterface {
 	) : CommonResponse
 
 	@Multipart
-	@POST("api/product/fetch-by-status")
+	@POST("api/v1/get-my-purchases-orders")
 	suspend fun getProductsByStatus(
 		@Part("type") type : RequestBody? ,
 		@Part("page") page : RequestBody? ,
@@ -730,7 +732,7 @@ interface ApiInterface {
 		@Part("notes") notes: RequestBody?
 	) : CommonResponse
 
-	@GET("api/order-details-with-shipping")
+	@GET("api/v1/get-order-details")
 	suspend fun fetchOrderDetail(
 		@Query("product_id") productId: String?,
 		@Query("order_id") orderId: String?

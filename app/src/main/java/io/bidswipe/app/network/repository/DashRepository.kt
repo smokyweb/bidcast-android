@@ -118,19 +118,29 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
 		date: RequestBody?,
 		time: RequestBody?,
 		categoryId: RequestBody?,
+		showDiscoverability: RequestBody?,
 		auctionTypeId: RequestBody?,
 		thumbnails: List<MultipartBody.Part?>?,
-		productIds: List<Int>
+		productIds: List<Int>,
+		isRepeat: RequestBody?,
+		repeatValue: RequestBody?,
+		language: RequestBody?,
+		isExplicit: RequestBody?,
+
 	) = call {
 		api.storeScheduleShow(
 			title,
 			date,
 			time,
 			categoryId,
-			null,
+			showDiscoverability,
 			auctionTypeId,
 			productIds,
 			thumbnails,
+			isRepeat,
+			repeatValue,
+			language,
+			isExplicit
 		)
 	}
 

@@ -196,9 +196,14 @@ class AddProductFragment : BaseFragment<ScheduleShowViewModel, FragmentAddProduc
 					date = viewModel.date.request(),
 					time = viewModel.time.request(),
 					categoryId = viewModel.categoryId.request(),
+					showDiscoverability = viewModel.discoverability.request(),
 					auctionTypeId = viewModel.auctionId.request(),
 					thumbnails = imagePartList,
-					productIds = productIdList
+					productIds = productIdList,
+					isRepeat = viewModel.repeatMode.request(),
+					repeatValue = viewModel.repeatType.request(),
+					language = viewModel.primaryLanguage.request(),
+					isExplicit = viewModel.explicitContent.request()
 				)
 			}
 

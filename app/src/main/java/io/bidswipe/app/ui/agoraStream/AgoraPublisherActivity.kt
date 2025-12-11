@@ -225,6 +225,7 @@ class AgoraPublisherActivity : BaseActivity() {
             }
         })
 
+
         socketUrl = Const.SOCKET_URL
         initializeSocket()
 
@@ -242,6 +243,24 @@ class AgoraPublisherActivity : BaseActivity() {
         }
 
         bind.clip.isVisible = App.profileResponse.value?.preferences?.enableClips == true
+
+        bind.message.setEndIconOnClickListener {
+            if (!isShowLive) {
+                Alerts.error(this, "Please start live show to send message")
+            }
+
+            if (bind.messageText.value().isNotEmpty()) {
+                socketManager?.sendMessage(
+                    roomID,
+                    bind.messageText.value(),
+                    userId,
+                    userName,
+                    userImage
+                )
+                bind.messageText.setText("")
+            }
+            true
+        }
 
         bind.messageText.setOnEditorActionListener { v, actionId, event ->
             if (actionId == EditorInfo.IME_ACTION_SEND) {

@@ -59,6 +59,12 @@ class DashViewModel @Inject constructor(
 
 	val selectedCategories = mutableListOf<GetCategoryResponse.Data>()
 
+	var repeatMode = ""
+	var repeatType = ""
+	var explicitContent = ""
+	var primaryLanguage = ""
+	var discoverability = ""
+
 	// Product form state (persists across orientation changes)
 	var productFormImageList = mutableListOf<String?>()
 	var productFormCategoryId = ""
@@ -422,9 +428,14 @@ class DashViewModel @Inject constructor(
 		date : RequestBody? ,
 		time : RequestBody? ,
 		categoryId : RequestBody? ,
+		showDiscoverability : RequestBody? ,
 		auctionTypeId : RequestBody? ,
 		thumbnails : List<MultipartBody.Part?>? ,
 		productIds : List<Int> ,
+		isRepeat : RequestBody? ,
+		repeatValue : RequestBody? ,
+		language : RequestBody? ,
+		isExplicit : RequestBody? ,
 	) = viewModelScope.launch {
 		if (! networkMonitor.hasInternet()) {
 			_storeScheduleShowResponse.value = NO_INTERNET_ERROR
@@ -435,9 +446,14 @@ class DashViewModel @Inject constructor(
 			date ,
 			time ,
 			categoryId ,
+			showDiscoverability ,
 			auctionTypeId ,
 			thumbnails ,
-			productIds
+			productIds,
+			isRepeat ,
+			repeatValue ,
+			language,
+			isExplicit
 		)
 	}
 

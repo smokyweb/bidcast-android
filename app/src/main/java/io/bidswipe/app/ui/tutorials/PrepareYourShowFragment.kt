@@ -108,7 +108,7 @@ class PrepareYourShowFragment : BaseFragment<DashViewModel, FragmentPrepareYourS
 								return
 							}
 
-							val productIds = mData?.productIds?.split(",")?:mutableListOf()
+							val productIds = mData?.productIds?.split(",") ?: mutableListOf()
 
 							bind.loader.isVisible = true
 
@@ -117,9 +117,14 @@ class PrepareYourShowFragment : BaseFragment<DashViewModel, FragmentPrepareYourS
 								viewModel.showDate.request(),
 								viewModel.showTime.request(),
 								mData?.categoryId?.request(),
+								viewModel.discoverability.request(),
 								mData?.actionId?.request(),
 								imagePartList,
-								productIds.map { it.toInt() }
+								productIds.map { it.toInt() },
+								viewModel.repeatMode.request(),
+								viewModel.repeatType.request(),
+								viewModel.primaryLanguage.request(),
+								viewModel.explicitContent.request()
 							)
 						}
 

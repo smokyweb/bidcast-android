@@ -383,6 +383,24 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 			showPollDetailsSheet()
 		}
 
+		bind.message.setEndIconOnClickListener {
+			if (bind.messageText.value().isNotEmpty()) {
+				if (App.profileResponse.value?.buyerIdentityStatus == "verified") {
+					socketManager?.sendMessage(
+						roomID,
+						bind.messageText.value(),
+						userId,
+						userName,
+						userImage
+					)
+					bind.messageText.setText("")
+				} else {
+					verificationDialog()
+				}
+			}
+			true
+		}
+
 		bind.messageText.setOnEditorActionListener { v, actionId, event ->
 			if (actionId == EditorInfo.IME_ACTION_SEND) {
 				if (bind.messageText.value().isNotEmpty()) {
