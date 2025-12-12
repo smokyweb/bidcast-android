@@ -127,11 +127,11 @@
     </style>
 
     <style name="appBtnTrans" parent="appBtn">
-        <item name="backgroundTint">@color/surface</item>
+        <item name="backgroundTint">@color/transparent</item>
         <item name="rippleColor">@color/outline</item>
         <item name="strokeColor">@color/background</item>
         <item name="strokeWidth">2dp</item>
-        <item name="android:textColor">@color/background</item>
+        <item name="android:textColor">@color/primary</item>
     </style>
 
     <!--BOTTOM-SHEET STYLE-->

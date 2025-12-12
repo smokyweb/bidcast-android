@@ -1,11 +1,8 @@
 package io.bidswipe.app.ui.sell
 
 import android.annotation.SuppressLint
-import android.content.ContentUris
-import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.provider.MediaStore
 import android.provider.OpenableColumns
 import android.view.LayoutInflater
 import android.view.View
@@ -13,7 +10,6 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
-import androidx.core.net.toUri
 import androidx.core.text.buildSpannedString
 import androidx.core.text.color
 import androidx.core.view.isVisible
@@ -23,6 +19,7 @@ import io.bidswipe.app.base.BaseFragment
 import io.bidswipe.app.controller.CategoryListAdapter
 import io.bidswipe.app.controller.ImageAdapter
 import io.bidswipe.app.controller.ProductVariantAdapter
+import io.bidswipe.app.databinding.AttachmentChooserSheetBinding
 import io.bidswipe.app.databinding.CategoryBottomSheetBinding
 import io.bidswipe.app.databinding.FragmentListAProductBinding
 import io.bidswipe.app.interfaces.AlertClicks
@@ -47,7 +44,6 @@ import okhttp3.MultipartBody
 import java.io.File
 import java.io.FileOutputStream
 
-// Data class to track media type
 data class MediaItem(
     val path: String,
     val isVideo: Boolean = false
@@ -61,8 +57,8 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
     override fun getBind(inflater: LayoutInflater, view: ViewGroup?) =
         FragmentListAProductBinding.inflate(inflater, view, false)
 
-    // Change to track MediaItem instead of just String
     var imageList = mutableListOf<MediaItem>()
+    lateinit var imageAdapter: ImageAdapter
     var uploadItemIndex = -1
     var isSubCategory = false
     private var product: GetMyInventoryResponse.Data? = null
@@ -100,6 +96,18 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
                 append("${getVideoCount()}/1")
             }
         }
+
+        // Update RecyclerView visibility
+        bind.images.isVisible = imageList.isNotEmpty()
+
+        if (::imageAdapter.isInitialized) {
+            val adapterList = imageList.map { it.path }.toMutableList()
+            imageAdapter.mList.clear()
+            imageAdapter.mList.addAll(adapterList)
+            imageAdapter.notifyDataSetChanged()
+        }
+        
+        log("imageList ${imageList.size}")
     }
 
     private val imageResult = registerForActivityResult(CustomCropImageContract()) { result ->
@@ -128,43 +136,40 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
                 }
 
                 updateMediaCounts()
-                bind.images.adapter?.notifyDataSetChanged()
-                bind.images.isVisible=true
             }
         }
     }
 
     // Video picker contract
-    private val videoPicker = registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
-        uri?.let {
-            val videoPath = getVideoFilePath(it)
-            if (videoPath != null) {
-                val videoCount = getVideoCount()
-                if (videoCount >= 1) {
-                    Alerts.error(mCtx, "You can select max 1 video only")
-                    return@registerForActivityResult
-                }
-
-                if (uploadItemIndex == -1) {
-                    imageList.add(MediaItem(videoPath, isVideo = true))
-                } else {
-                    val existingItem = imageList[uploadItemIndex]
-                    // Only allow replacing with same type
-                    if (existingItem.isVideo) {
-                        imageList[uploadItemIndex] = MediaItem(videoPath, isVideo = true)
-                        uploadItemIndex = -1
-                    } else {
-                        Alerts.error(mCtx, "Cannot replace photo with video")
-                        uploadItemIndex = -1
+    private val videoPicker =
+        registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
+            uri?.let {
+                val videoPath = getVideoFilePath(it)
+                if (videoPath != null) {
+                    val videoCount = getVideoCount()
+                    if (videoCount >= 1 && !(imageList[uploadItemIndex].isVideo)) {
+                        Alerts.error(mCtx, "You can select max 1 video only")
                         return@registerForActivityResult
                     }
-                }
 
-                updateMediaCounts()
-                bind.images.adapter?.notifyDataSetChanged()
+                    if (uploadItemIndex == -1) {
+                        imageList.add(MediaItem(videoPath, isVideo = true))
+                    } else {
+                        val existingItem = imageList[uploadItemIndex]
+                        if (existingItem.isVideo) {
+                            imageList[uploadItemIndex] = MediaItem(videoPath, isVideo = true)
+                            uploadItemIndex = -1
+                        } else {
+                            Alerts.error(mCtx, "Cannot replace photo with video")
+                            uploadItemIndex = -1
+                            return@registerForActivityResult
+                        }
+                    }
+
+                    updateMediaCounts()
+                }
             }
         }
-    }
 
     private fun getVideoFilePath(uri: Uri): String? {
         return try {
@@ -174,7 +179,8 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
                     if (it.moveToFirst()) {
                         val nameIndex = it.getColumnIndex(OpenableColumns.DISPLAY_NAME)
                         if (nameIndex != -1) {
-                            val name = it.getString(nameIndex) ?: "video_${System.currentTimeMillis()}.mp4"
+                            val name =
+                                it.getString(nameIndex) ?: "video_${System.currentTimeMillis()}.mp4"
                             val cacheFile = File(mCtx.cacheDir, name)
                             mCtx.contentResolver.openInputStream(uri)?.use { input ->
                                 FileOutputStream(cacheFile).use { output ->
@@ -205,25 +211,18 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
         }
     }
 
-    private val mClick = object : RecyclerClicks {
-        override fun itemClick(pos: Int, status: String?) {
-            uploadItemIndex = pos
-            val item = imageList[pos]
-            if (item.isVideo) {
-                uploadVideo()
-            } else {
-                uploadImage()
-            }
-        }
-    }
-
     private fun restoreStateFromViewModel() {
         // Restore from ViewModel if state exists
         if (viewModel.productFormImageList.isNotEmpty() || viewModel.productFormCategoryId.isNotEmpty()) {
             imageList.clear()
             // Convert String list to MediaItem list (assume all are photos for backward compatibility)
             // You may need to store type info in ViewModel if needed
-            imageList.addAll(viewModel.productFormImageList.map { MediaItem(it ?: "", isVideo = false) })
+            imageList.addAll(viewModel.productFormImageList.map {
+                MediaItem(
+                    it ?: "",
+                    isVideo = false
+                )
+            })
             categoryId = viewModel.productFormCategoryId
             subCategoryId = viewModel.productFormSubCategoryId
             variantList.clear()
@@ -345,12 +344,16 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
             color(ContextCompat.getColor(mCtx, R.color.primary)) {
                 append("items that may pose risk to safety")
             }
-           append (", like lithium batteries.")
+            append(", like lithium batteries.")
         }
 
         log(product.toString())
 
-        variantAdapter = ProductVariantAdapter(variantList, mClick)
+        variantAdapter = ProductVariantAdapter(variantList, object : RecyclerClicks{
+            override fun itemClick(pos: Int, status: String?) {
+
+            }
+        })
 
         bind.variants.adapter = variantAdapter
 
@@ -406,23 +409,29 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
         }
 
         // Update ImageAdapter to work with MediaItem
-        bind.images.adapter = ImageAdapter(
-            imageList.map { it.path }.toMutableList(), 
+        imageAdapter = ImageAdapter(
+            imageList.map { it.path }.toMutableList(),
             object : RecyclerClicks {
                 override fun itemClick(pos: Int, status: String?) {
                     uploadItemIndex = pos
                     val item = imageList[pos]
                     if (item.isVideo) {
-                        uploadVideo()
+                        uploadVideo(true)
                     } else {
                         uploadImage()
                     }
                 }
             }
         )
-
+        bind.images.adapter = imageAdapter
         bind.images.layoutManager = LinearLayoutManager(mCtx, LinearLayoutManager.HORIZONTAL, false)
         bind.images.setHasFixedSize(false)
+        
+        // Set initial visibility
+        bind.images.isVisible = imageList.isNotEmpty()
+        
+        // Update counts initially
+        updateMediaCounts()
 
         bind.addNewImage.setHapticClickListener {
             uploadItemIndex = -1
@@ -721,7 +730,7 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
     private fun showMediaSelectionDialog() {
         val photoCount = getPhotoCount()
         val videoCount = getVideoCount()
-        
+
         val options = mutableListOf<String>()
         if (photoCount < 8) {
             options.add("Add Photo")
@@ -729,12 +738,12 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
         if (videoCount < 1) {
             options.add("Add Video")
         }
-        
+
         if (options.isEmpty()) {
             Alerts.error(mCtx, "Maximum media limit reached (8 photos, 1 video)")
             return
         }
-        
+
         if (options.size == 1) {
             // Only one option available, directly call it
             if (options[0] == "Add Photo") {
@@ -744,23 +753,29 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
             }
         } else {
             // Show dialog to choose
-            Alerts.showBottomSheet(
-                mCtx,
-                "Select media type",
-                "Choose",
-                false,
-                object : AlertClicks {
-                    override fun primaryClick(dialog: AppBottomSheet) {
-                        uploadImage()
-                        dialog.dismiss()
-                    }
+            val attachmentSheetBind =
+                AttachmentChooserSheetBinding.bind(
+                    layoutInflater.inflate(
+                        R.layout.attachment_chooser_sheet,
+                        null,
+                        false
+                    )
+                )
+            val attachmentSheet = Alerts.appBottomSheet(mCtx, true, attachmentSheetBind)
 
-                    override fun secondaryClick(dialog: AppBottomSheet) {
-                        uploadVideo()
-                        dialog.dismiss()
-                    }
-                }
-            )
+            attachmentSheetBind.image.setHapticClickListener {
+                attachmentSheet.dismiss()
+                uploadImage()
+            }
+            attachmentSheetBind.video.setHapticClickListener {
+                attachmentSheet.dismiss()
+                uploadVideo()
+            }
+            attachmentSheetBind.cancel.setHapticClickListener {
+                attachmentSheet.dismiss()
+            }
+            attachmentSheet.show()
+
         }
     }
 
@@ -770,7 +785,7 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
             Alerts.error(mCtx, "You can select max 8 photos only")
             return
         }
-        
+
         requestPerms(Const.STR_PERMS) { per ->
             if (per) {
                 imageResult.launch(Utils.initCrop(mCtx, isCamera = true, isGallery = true))
@@ -778,13 +793,13 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
         }
     }
 
-    fun uploadVideo() {
+    fun uploadVideo(isReplace: Boolean=false) {
         val videoCount = getVideoCount()
-        if (videoCount >= 1) {
+        if (videoCount >= 1 && !isReplace) {
             Alerts.error(mCtx, "You can select max 1 video only")
             return
         }
-        
+
         requestPerms(Const.STR_PERMS) { per ->
             if (per) {
                 videoPicker.launch("video/*")
@@ -950,10 +965,14 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
             }
         }
         // Note: If product has video, you'll need to add it here
-        // For now assuming all existing items are photos
 
         updateMediaCounts()
-        bind.images.adapter?.notifyDataSetChanged()
+        // Update adapter if initialized
+        if (::imageAdapter.isInitialized) {
+            imageAdapter.mList.clear()
+            imageAdapter.mList.addAll(imageList.map { it.path })
+            imageAdapter.notifyDataSetChanged()
+        }
     }
 
     private fun showCategorySheet(
@@ -1086,7 +1105,7 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
         val imagePartList = mutableListOf<MultipartBody.Part>()
         val thumbnailPartList = mutableListOf<MultipartBody.Part>()
         val videoPartList = mutableListOf<MultipartBody.Part>()
-        
+
         // Separate photos and videos
         imageList.filter { it.path.contains(Const.BASE_URL) == false }.forEach { mediaItem ->
             if (mediaItem.path.isNotEmpty()) {
@@ -1111,7 +1130,7 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
                 }
             }
         }
-        
+
         val productId = if (product != null) product?.id.toString() else ""
         if (imagePartList.isNotEmpty() || videoPartList.isNotEmpty()) {
             // You may need to update storeProductMeta to handle videos
