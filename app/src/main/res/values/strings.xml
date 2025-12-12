@@ -108,7 +108,7 @@
     <string name="rating">Rating</string>
     <string name="rehearsal">Rehearsal</string>
     <string name="remember_me">Remember Me</string>
-    <string name="reserve_for_live">Reserve For Live</string>
+    <string name="reserve_for_live">Reserve for Live</string>
     <string name="reset_password">Reset Password</string>
     <string name="retry">Retry</string>
     <string name="revenue">Revenue</string>
@@ -526,4 +526,7 @@
     <string name="show_notes">Show Notes</string>
     <string name="show_nnotes">Show\nNotes</string>
     <string name="repeats">Repeats</string>
+    <string name="buy_it_now">Buy It Now</string>
+    <string name="optional_fields">Optional Fields</string>
+    <string name="sellers_covers_ny_shipping_adjustments">Sellers cover any shipping adjustments.</string>
 </resources>

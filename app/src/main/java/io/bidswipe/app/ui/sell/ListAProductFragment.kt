@@ -4,6 +4,8 @@ import android.annotation.SuppressLint
 import android.net.Uri
 import android.os.Bundle
 import android.provider.OpenableColumns
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,6 +16,7 @@ import androidx.core.text.buildSpannedString
 import androidx.core.text.color
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.tabs.TabLayout
 import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseFragment
 import io.bidswipe.app.controller.CategoryListAdapter
@@ -24,6 +27,7 @@ import io.bidswipe.app.databinding.CategoryBottomSheetBinding
 import io.bidswipe.app.databinding.FragmentListAProductBinding
 import io.bidswipe.app.interfaces.AlertClicks
 import io.bidswipe.app.interfaces.RecyclerClicks
+import io.bidswipe.app.model.StoreProductRequest
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.network.response.GetCategoryResponse
 import io.bidswipe.app.network.response.GetMailClassesResponse
@@ -106,7 +110,7 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
             imageAdapter.mList.addAll(adapterList)
             imageAdapter.notifyDataSetChanged()
         }
-        
+
         log("imageList ${imageList.size}")
     }
 
@@ -285,7 +289,7 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
         // Save form field values
         viewModel.productFormProductTitle = bind.productTitle.value()
         viewModel.productFormDescription = bind.description.value()
-        viewModel.productFormQuantity = bind.quantity.value()
+        viewModel.productFormQuantity = bind.quantity.value().toIntOrNull() ?: 1
         viewModel.productFormWidth = bind.width.value()
         viewModel.productFormHeight = bind.height.value()
         viewModel.productFormLength = bind.length.value()
@@ -349,7 +353,7 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
 
         log(product.toString())
 
-        variantAdapter = ProductVariantAdapter(variantList, object : RecyclerClicks{
+        variantAdapter = ProductVariantAdapter(variantList, object : RecyclerClicks {
             override fun itemClick(pos: Int, status: String?) {
 
             }
@@ -426,10 +430,10 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
         bind.images.adapter = imageAdapter
         bind.images.layoutManager = LinearLayoutManager(mCtx, LinearLayoutManager.HORIZONTAL, false)
         bind.images.setHasFixedSize(false)
-        
+
         // Set initial visibility
         bind.images.isVisible = imageList.isNotEmpty()
-        
+
         // Update counts initially
         updateMediaCounts()
 
@@ -471,6 +475,66 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
         bind.condition.setHapticClickListener {
             bind.condition.showDropDown()
         }
+
+        bind.tabs.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+            override fun onTabSelected(tab: TabLayout.Tab?) {
+
+                bind.flashSell.isChecked = false
+                bind.acceptOffers.isChecked = false
+                bind.reserveForLive.isChecked = false
+                when (tab?.position) {
+                    0 -> {
+                        bind.acceptOffersLayout.isVisible = true
+                        bind.flashLayout.isVisible = true
+                        bind.reserveLayout.isVisible = false
+                    }
+
+                    1 -> {
+                        bind.acceptOffersLayout.isVisible = false
+                        bind.flashLayout.isVisible = false
+                        bind.reserveLayout.isVisible = true
+                    }
+                }
+            }
+
+            override fun onTabUnselected(tab: TabLayout.Tab?) {}
+
+            override fun onTabReselected(tab: TabLayout.Tab?) {
+                onTabSelected(tab)
+            }
+
+        })
+
+        bind.seeOtherOptions.setHapticClickListener {
+            bind.otherOptions.isExpanded = !bind.otherOptions.isExpanded
+            if (bind.otherOptions.isExpanded) {
+                bind.scroll.post {
+                    bind.scroll.fullScroll(View.FOCUS_DOWN)
+                }
+            }
+        }
+
+        bind.increaseQuantity.setHapticClickListener {
+            viewModel.productFormQuantity++
+            bind.quantity.setText(viewModel.productFormQuantity.toString())
+        }
+
+        bind.decreaseQuantity.setHapticClickListener {
+            if (viewModel.productFormQuantity > 1) {
+                viewModel.productFormQuantity--
+                bind.quantity.setText(viewModel.productFormQuantity.toString())
+            }
+        }
+
+        bind.quantity.setText(viewModel.productFormQuantity.toString())
+        bind.quantity.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+            override fun afterTextChanged(s: Editable?) {
+                val input = s?.trim().toString().toIntOrNull() ?: 1
+                viewModel.productFormQuantity = if (input < 1) 1 else input
+            }
+        })
 
         viewModel.getCategory()
 
@@ -793,7 +857,7 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
         }
     }
 
-    fun uploadVideo(isReplace: Boolean=false) {
+    fun uploadVideo(isReplace: Boolean = false) {
         val videoCount = getVideoCount()
         if (videoCount >= 1 && !isReplace) {
             Alerts.error(mCtx, "You can select max 1 video only")
@@ -1054,27 +1118,32 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
         variantData: List<Map<String?, Any?>>? = null,
     ) {
         viewModel.storeProduct(
+            StoreProductRequest(
+                categoryId = categoryId,
+                subCategoryId = if (subCategoryId.isEmpty()) null else subCategoryId.toInt(),
+                title = bind.productTitle.value(),
+                description = bind.description.value(),
+                quantity = bind.quantity.value(),
+                pricing = bind.price.value(),
+                flashSale = bind.flashSell.isChecked,
+                acceptOffers = bind.acceptOffers.isChecked,
+                reserveForLive = bind.reserveForLive.isChecked,
+                shippingProfileId = profileId.ifEmpty { null },
+                status = type,
+                images = images,
+                variant = variantData,
+                width = bind.width.value(),
+                height = bind.height.value(),
+                length = bind.length.value(),
+                weight = bind.weight.value(),
+                mailClass = selectedMailClass?.label,
+                processingCategory = bind.proCategory.value(),
+                productCondition = selectedCondition,
+                hazardousMaterial = bind.isHazardous.isChecked,
+                sku = bind.sku.value(),
+                costPerItem = bind.costPerItem.value(),
+            ),
             productId = productId?.ifEmpty { null },
-            categoryId = categoryId,
-            subCategoryId = if (subCategoryId.isEmpty()) null else subCategoryId.toInt(),
-            title = bind.productTitle.value(),
-            description = bind.description.value(),
-            quantity = bind.quantity.value(),
-            pricing = bind.price.value(),
-            flashSale = (if (bind.flashSell.isChecked) "1" else "0"),
-            acceptOffers = (if (bind.acceptOffers.isChecked) "1" else "0"),
-            reserveForLive = (if (bind.reserveForLive.isChecked) "1" else "0"),
-            shippingProfileId = profileId.ifEmpty { null },
-            status = type,
-            productImages = images,
-            variant = variantData,
-            width = bind.width.value(),
-            height = bind.height.value(),
-            length = bind.length.value(),
-            weight = bind.weight.value(),
-            mailClass = selectedMailClass?.label,
-            processingCategory = bind.proCategory.value(),
-            productCondition = selectedCondition
         )
 
     }
@@ -1089,7 +1158,7 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
         viewModel.productFormSelectedMailClass = null
         viewModel.productFormProductTitle = ""
         viewModel.productFormDescription = ""
-        viewModel.productFormQuantity = ""
+        viewModel.productFormQuantity = 1
         viewModel.productFormPrice = ""
         viewModel.productFormCategoryText = ""
     }

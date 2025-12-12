@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="repeats">Repeats</string>
+    <string name="buy_it_now">Buy It Now</string>
+    <string name="optional_fields">Optional Fields</string>
+    <string name="sellers_covers_ny_shipping_adjustments">Sellers covers ny shipping adjustments.</string>
 </resources>

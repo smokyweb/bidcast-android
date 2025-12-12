@@ -17,11 +17,11 @@ data class StoreProductRequest(
 	@SerializedName("pricing")
 	val pricing : String? ,
 	@SerializedName("flash_sale")
-	val flashSale : String? ,
+	val flashSale : Boolean? ,
 	@SerializedName("accept_offers")
-	val acceptOffers : String? ,
+	val acceptOffers : Boolean? ,
 	@SerializedName("reserve_for_live")
-	val reserveForLive : String? ,
+	val reserveForLive : Boolean? ,
 	@SerializedName("shipping_profile_id")
 	val shippingProfileId : String? ,
 	@SerializedName("status")
@@ -46,4 +46,11 @@ data class StoreProductRequest(
 	val processingCategory : String? = null ,
 	@SerializedName("product_condition")
 	val productCondition : String? = null ,
+	@SerializedName("hazardous_material")
+	val hazardousMaterial : Boolean? = null ,
+	@SerializedName("sku")
+	val sku : String? = null,
+	@SerializedName("cost_per_item")
+	val costPerItem : String? = null ,
+
 	)

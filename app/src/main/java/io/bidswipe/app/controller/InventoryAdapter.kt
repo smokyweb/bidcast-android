@@ -44,10 +44,11 @@ class InventoryAdapter(
 
 			bind.productName.text = item?.title?.asCapital()
 			bind.prodSubTitle.text = buildSpannedString {
-				append(item?.productCondition ?:"Condition")
+				if(item?.productCondition != null) {
+				append((item?.productCondition?.replace("_"," ")) ?:"Condition")
 				append(" ")
 				append(Const.BULLET)
-				append(" ")
+				append(" ")}
 				append(item?.category?.name)
 			}
 

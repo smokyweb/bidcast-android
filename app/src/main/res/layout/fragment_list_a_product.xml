@@ -82,11 +82,11 @@
                 <TextView
                     android:id="@+id/image_limit"
                     style="@style/TitleMedium"
-                    android:textSize="14sp"
-                    android:layout_marginTop="4dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Photos: 0/8  Video: 0/1" />
+                    android:layout_marginTop="4dp"
+                    android:text="Photos: 0/8  Video: 0/1"
+                    android:textSize="14sp" />
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/images"
@@ -142,14 +142,17 @@
                     style="@style/inputBoxStyle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="@dimen/margin">
+                    app:counterEnabled="true"
+                    app:counterMaxLength="150">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/product_title"
                         style="@style/inputTextStyle"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="@string/enter_product_title" />
+                        android:hint="@string/enter_product_title"
+                        android:maxLines="3"
+                        android:minLines="1" />
 
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -167,7 +170,9 @@
                     app:boxCornerRadiusBottomEnd="@dimen/margin"
                     app:boxCornerRadiusBottomStart="@dimen/margin"
                     app:boxCornerRadiusTopEnd="@dimen/margin"
-                    app:boxCornerRadiusTopStart="@dimen/margin">
+                    app:boxCornerRadiusTopStart="@dimen/margin"
+                    app:counterEnabled="true"
+                    app:counterMaxLength="1000">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/description"
@@ -180,27 +185,79 @@
 
                 </com.google.android.material.textfield.TextInputLayout>
 
-                <TextView
-                    style="@style/TitleSmall"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/quantity_available" />
+                    android:layout_marginBottom="@dimen/margin"
+                    android:gravity="center_vertical">
 
-                <com.google.android.material.textfield.TextInputLayout
-                    style="@style/inputBoxStyle"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="@dimen/margin">
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/quantity"
-                        style="@style/inputTextStyle"
-                        android:layout_width="match_parent"
+                    <TextView
+                        style="@style/TitleMedium"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:hint="@string/enter_quantity"
-                        android:inputType="number" />
+                        android:layout_weight="1"
+                        android:text="@string/quantity_available" />
 
-                </com.google.android.material.textfield.TextInputLayout>
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/card_8_outline"
+                        android:padding="2dp">
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/decreaseQuantity"
+                            style="@style/appBtnTrans"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="4dp"
+                            android:minWidth="0dp"
+                            android:minHeight="0dp"
+                            android:paddingHorizontal="@dimen/margin"
+                            android:paddingVertical="4dp"
+                            android:text="-" />
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            style="@style/inputBoxStyle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginHorizontal="@dimen/half_margin"
+                            android:minWidth="0dp"
+                            android:minHeight="0dp"
+                            android:paddingHorizontal="0dp"
+                            app:boxStrokeWidthFocused="0dp"
+                            android:paddingVertical="0dp"
+                            app:boxStrokeWidth="0dp">
+
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/quantity"
+                                style="@style/inputTextStyle"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:inputType="number"
+                                android:maxLength="5"
+                                android:minHeight="0dp"
+                                android:padding="0dp"
+                                android:text="1"
+                                android:textAlignment="center"
+                                android:textSize="18sp" />
+
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/increaseQuantity"
+                            style="@style/appBtnTrans"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="4dp"
+                            android:minWidth="0dp"
+                            android:minHeight="0dp"
+                            android:paddingHorizontal="@dimen/margin"
+                            android:paddingVertical="4dp"
+                            android:text="+" />
+                    </LinearLayout>
+
+                </LinearLayout>
+
 
                 <TextView
                     style="@style/TitleSmall"
@@ -412,12 +469,47 @@
                     android:layout_height="wrap_content"
                     app:title="Pricing" />
 
+                <com.google.android.material.card.MaterialCardView
+                    style="@style/cardStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:cardBackgroundColor="@color/surfaceVariant"
+                    app:cardCornerRadius="8dp"
+                    app:cardElevation="0dp">
+
+                    <com.google.android.material.tabs.TabLayout
+                        android:id="@+id/tabs"
+                        style="@style/tabStyle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="5dp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:tabPadding="0dp">
+
+                        <com.google.android.material.tabs.TabItem
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/buy_it_now" />
+
+                        <com.google.android.material.tabs.TabItem
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/auction" />
+
+                    </com.google.android.material.tabs.TabLayout>
+
+                </com.google.android.material.card.MaterialCardView>
+
                 <TextView
+                    android:id="@+id/title_price"
                     style="@style/TitleSmall"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="@dimen/half_margin"
-                    android:text="@string/buy_it_now_price" />
+                    android:layout_marginTop="@dimen/half_margin"
+                    android:text="Price" />
 
                 <com.google.android.material.textfield.TextInputLayout
                     style="@style/inputBoxStyle"
@@ -442,15 +534,33 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:orientation="horizontal">
+                    android:background="@drawable/card_8_outline"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:id="@+id/flash_layout"
+                    android:padding="@dimen/margin">
 
-                    <TextView
-                        style="@style/TitleMedium"
+                    <LinearLayout
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="@string/flash_sell" />
+                        android:layout_marginEnd="@dimen/half_margin"
+                        android:orientation="vertical">
+
+                        <TextView
+                            style="@style/TitleMedium"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Flash Sale" />
+
+                        <TextView
+                            style="@style/BodySmall"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Turn this on to enable flash sale on this product."
+                            android:textStyle="bold" />
+
+                    </LinearLayout>
 
                     <com.google.android.material.materialswitch.MaterialSwitch
                         android:id="@+id/flashSell"
@@ -463,15 +573,34 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:orientation="horizontal">
+                    android:background="@drawable/card_8_outline"
+                    android:gravity="center_vertical"
+                    android:layout_marginVertical="@dimen/half_margin"
+                    android:id="@+id/accept_offers_layout"
+                    android:orientation="horizontal"
+                    android:padding="@dimen/margin">
 
-                    <TextView
-                        style="@style/TitleMedium"
+                    <LinearLayout
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
+                        android:layout_marginEnd="@dimen/half_margin"
                         android:layout_weight="1"
-                        android:text="@string/accept_offers" />
+                        android:orientation="vertical">
+
+                        <TextView
+                            style="@style/TitleMedium"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@string/accept_offers" />
+
+                        <TextView
+                            style="@style/BodySmall"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Turn this on to accept offers. You can accept, counter, or decline the offers."
+                            android:textStyle="bold" />
+
+                    </LinearLayout>
 
                     <com.google.android.material.materialswitch.MaterialSwitch
                         android:id="@+id/acceptOffers"
@@ -484,22 +613,40 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:orientation="horizontal">
+                    android:background="@drawable/card_8_outline"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:visibility="gone"
+                    android:id="@+id/reserve_layout"
+                    android:padding="@dimen/margin">
 
-                    <TextView
-                        style="@style/TitleMedium"
+                    <LinearLayout
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="@string/reserve_for_live" />
+                        android:layout_marginEnd="@dimen/half_margin"
+                        android:orientation="vertical">
+
+                        <TextView
+                            style="@style/TitleMedium"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@string/reserve_for_live" />
+
+                        <TextView
+                            style="@style/BodySmall"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Turn this on to make this product only purchasable within a show."
+                            android:textStyle="bold" />
+
+                    </LinearLayout>
 
                     <com.google.android.material.materialswitch.MaterialSwitch
                         android:id="@+id/reserveForLive"
                         style="@style/appSwitch"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content" />
-
 
                 </LinearLayout>
 
@@ -534,7 +681,7 @@
                     android:layout_marginStart="@dimen/margin"
                     android:layout_marginBottom="@dimen/half_margin"
                     android:alpha="0.5"
-                    android:text="Sellers covers ny shipping adjustments." />
+                    android:text="@string/sellers_covers_ny_shipping_adjustments" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -548,6 +695,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
+                        android:layout_marginEnd="@dimen/half_margin"
                         android:orientation="vertical">
 
                         <TextView
@@ -575,6 +723,96 @@
 
                 </LinearLayout>
 
+                <io.bidswipe.app.ui.custom.Heading
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/margin"
+                    app:title="@string/optional_fields" />
+
+                <TextView
+                    style="@style/BodySmall"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:alpha="0.8"
+                    android:text="Set your cost per item and a SKU. This information can only be seen by you."
+                    android:textStyle="bold" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/see_other_options"
+                    style="@style/appBtnTrans"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="4dp"
+                    android:paddingHorizontal="0dp"
+                    app:icon="@drawable/ic_arrow_down_2"
+                    app:iconGravity="textEnd"
+                    android:textSize="14sp"
+                    app:iconPadding="0dp"
+                    android:paddingVertical="@dimen/half_margin"
+                    app:iconTint="@color/primary"
+                    android:text="See Options" />
+
+                <net.cachapa.expandablelayout.ExpandableLayout
+                    android:id="@+id/otherOptions"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:el_duration="400"
+                    app:el_expanded="false"
+                    app:el_parallax="1">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="vertical">
+
+                        <TextView
+                            style="@style/TitleSmall"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Cost per item" />
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            style="@style/inputBoxStyle"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="@dimen/margin">
+
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/cost_per_item"
+                                style="@style/inputTextStyle"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:hint="Enter cost per item"
+                                android:inputType="numberDecimal" />
+
+                        </com.google.android.material.textfield.TextInputLayout>
+
+
+                        <TextView
+                            style="@style/TitleSmall"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="SKU / Internal Reference" />
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            style="@style/inputBoxStyle"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="@dimen/margin">
+
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/sku"
+                                style="@style/inputTextStyle"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:hint="Enter SKU / Internal Reference"
+                                android:inputType="text" />
+
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                    </LinearLayout>
+                </net.cachapa.expandablelayout.ExpandableLayout>
 
             </LinearLayout>
 
@@ -584,9 +822,9 @@
             android:id="@+id/buttonLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_margin="@dimen/margin"
             android:orientation="horizontal"
             android:visibility="visible"
-            android:layout_margin="@dimen/margin"
             android:weightSum="2">
 
             <com.google.android.material.button.MaterialButton

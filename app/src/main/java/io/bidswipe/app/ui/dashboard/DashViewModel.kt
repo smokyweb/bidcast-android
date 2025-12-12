@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.bidswipe.app.model.PaymentCardModel
+import io.bidswipe.app.model.StoreProductRequest
 import io.bidswipe.app.model.TutorialShowModel
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.network.repository.DashRepository
@@ -64,7 +65,6 @@ class DashViewModel @Inject constructor(
 	var explicitContent = ""
 	var primaryLanguage = ""
 	var discoverability = ""
-
 	// Product form state (persists across orientation changes)
 	var productFormImageList = mutableListOf<String?>()
 	var productFormCategoryId = ""
@@ -79,7 +79,7 @@ class DashViewModel @Inject constructor(
 	var productFormIsSubCategory = false
 	var productFormProductTitle = ""
 	var productFormDescription = ""
-	var productFormQuantity = ""
+	var productFormQuantity = 1
 	var productFormWidth = ""
 	var productFormHeight = ""
 	var productFormLength = ""
@@ -180,54 +180,13 @@ class DashViewModel @Inject constructor(
 		get() = _storeProductResponse
 
 	fun storeProduct(
-		categoryId : String? ,
-		title : String? ,
-		description : String? ,
-		quantity : String? ,
-		pricing : String? ,
-		flashSale : String? ,
-		acceptOffers : String? ,
-		reserveForLive : String? ,
-		shippingProfileId : String? ,
-		status : String? ,
-		productImages : List<Map<String , String?>>? ,
-		subCategoryId : Int? = null ,
-		productId : String? = null ,
-		variant : List<Map<String? , Any?>>? = null ,
-		width : String? = null ,
-		height : String? = null ,
-		length : String? = null ,
-		weight : String? = null ,
-		mailClass : String? = null ,
-		processingCategory : String? = null,
-		productCondition : String? = null
-		) = viewModelScope.launch {
+		storeProductModel : StoreProductRequest ,productId : String?
+	) = viewModelScope.launch {
 		if (!networkMonitor.hasInternet()) {
 			_storeProductResponse.value = NO_INTERNET_ERROR
 			return@launch
 		}
-		_storeProductResponse.value = repo.storeProduct(
-			categoryId ,
-			title ,
-			description ,
-			quantity ,
-			pricing ,
-			flashSale ,
-			acceptOffers ,
-			reserveForLive ,
-			shippingProfileId ,
-			status ,
-			productImages ,
-			subCategoryId ,
-			productId ,
-			variant ,
-			width ,
-			height ,
-			length ,
-			weight ,
-			mailClass ,
-			processingCategory,
-			productCondition)
+		_storeProductResponse.value = repo.storeProduct(storeProductModel,productId)
 	}
 
 	private var _storeProductMetaResponse = MutableLiveData<Resource<StoreProductResponse>>()

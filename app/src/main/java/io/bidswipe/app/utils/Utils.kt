@@ -119,9 +119,9 @@ object Utils {
 		MultipartBody.Part.Companion.createFormData(
 			param ,
 			name ,
-			file.asRequestBody("image/jpeg".toMediaTypeOrNull())
+			file.asRequestBody("*/*".toMediaTypeOrNull())
 		)
-	
+
 	fun getTimeAgo(time : String , format : String = Const.SERVER_TIME_FORMAT) : String {
 
 		val serverTime = time.ifEmpty { getSimpleDate(format).format(timestamp()).toString() }

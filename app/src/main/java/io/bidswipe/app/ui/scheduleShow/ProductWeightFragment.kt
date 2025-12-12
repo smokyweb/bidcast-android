@@ -11,6 +11,7 @@ import io.bidswipe.app.controller.WeightAdapter
 import io.bidswipe.app.databinding.FragmentProductWeightBinding
 import io.bidswipe.app.interfaces.AlertClicks
 import io.bidswipe.app.model.LiveShowModel
+import io.bidswipe.app.model.StoreProductRequest
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.utils.Utils
@@ -74,18 +75,18 @@ class ProductWeightFragment : BaseFragment<ScheduleShowViewModel, FragmentProduc
 
 	private fun createProduct(imageUrls: List<Map<String, String>>?) {
 
-		viewModel.storeProduct(
+		viewModel.storeProduct(StoreProductRequest(
 			categoryId = viewModel.productCategoryId,
 			title = viewModel.productTitle,
 			description = viewModel.productDescription,
 			quantity = viewModel.productQuantity.toString(),
 			pricing = viewModel.productPrice.ifEmpty { "1" },
-			flashSale = (if(viewModel.productFormAcceptOffers) "1" else "0"),
-			acceptOffers = (if(viewModel.productFormAcceptOffers) "1" else "0"),
-			reserveForLive = (if(viewModel.productFormReserveForLive) "1" else "0") ,
+			flashSale = viewModel.productFormAcceptOffers,
+			acceptOffers = viewModel.productFormAcceptOffers,
+			reserveForLive = viewModel.productFormReserveForLive ,
 			shippingProfileId = "4",
 			status = "active",
-			productImages = imageUrls,
+			images = imageUrls,
 			subCategoryId = viewModel.productSubCategoryId.ifEmpty { null }?.toInt(),
 			variant = viewModel.variantData,
 			weight = viewModel.productWeight,
@@ -94,7 +95,7 @@ class ProductWeightFragment : BaseFragment<ScheduleShowViewModel, FragmentProduc
 			width = viewModel.productWidth,
 			mailClass = viewModel.productMailClass?.label ?: "",
 			processingCategory = viewModel.productProcessingCategory ?: "",
-			productCondition = viewModel.condition
+			productCondition = viewModel.condition), productId = null
 		)
 
 	}

@@ -42,53 +42,9 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
 	suspend fun getProduct(categoryId: RequestBody?) = call { api.getProduct(categoryId) }
 
 	suspend fun storeProduct(
-		categoryId: String?,
-		title: String?,
-		description: String?,
-		quantity: String?,
-		pricing: String?,
-		flashSale: String?,
-		acceptOffers: String?,
-		reserveForLive: String?,
-		shippingProfileId: String?,
-		status: String?,
-		productImages: List<Map<String, String?>>?,
-		subCategoryId: Int? = null,
-		productId: String? = null,
-		variant: List<Map<String?, Any?>>? = null, width: String? = null,
-		height: String? = null,
-		length: String? = null,
-		weight: String? = null,
-		mailClass: String? = null,
-		processingCategory: String? = null,
-		productCondition: String? = null,
-	) = call {
-		api.storeProduct(
-			StoreProductRequest(
-				categoryId = categoryId,
-				title = title,
-				description = description,
-				quantity = quantity,
-				pricing = pricing,
-				flashSale = flashSale,
-				acceptOffers = acceptOffers,
-				reserveForLive = reserveForLive,
-				shippingProfileId = shippingProfileId,
-				status = status,
-				images = productImages,
-				subCategoryId = subCategoryId,
-				variant = variant,
-				width = width,
-				height = height,
-				length = length,
-				weight = weight,
-				mailClass = mailClass,
-				processingCategory = processingCategory,
-				productCondition = productCondition,
-			),
-			productId
-		)
-	}
+		storeProductModel : StoreProductRequest ,
+		productId : String?
+	) = call { api.storeProduct(storeProductModel,productId) }
 
 	suspend fun storeProductMeta(
 		productImages: List<MultipartBody.Part?>?,
