@@ -53,6 +53,8 @@ class ProductDetailsFragment : BaseFragment<ProductViewModel, FragmentProductDet
 	private var offerList = mutableListOf<OfferModel>()
 	private var actionList = mutableListOf<PowerMenuItem>()
 
+	lateinit var mediaAdapter: ProductImageAdapter
+
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		super.onViewCreated(view, savedInstanceState)
 
@@ -182,9 +184,10 @@ class ProductDetailsFragment : BaseFragment<ProductViewModel, FragmentProductDet
 					bind.userImage.loadUrl(mCtx, mData?.user?.profileImage.toString())
 
 					bind.recyclerView.onFlingListener = null
-					bind.recyclerView.adapter =
-						ProductImageAdapter(mData?.images?.toMutableList() ?: mutableListOf())
-					bind.indicatorv.attachTo(bind.recyclerView, true)
+					val images =mData?.images?.toMutableList()
+				mediaAdapter =	ProductImageAdapter( images?: mutableListOf())
+					bind.recyclerView.adapter = mediaAdapter
+						bind.indicatorv.attachTo(bind.recyclerView, true)
 
 					bind.posted.text =
 						Utils.getTimeAgo(mData?.createdAt ?: "", Const.DD_MM_YYYY_HH_MM_SS)
@@ -415,6 +418,11 @@ class ProductDetailsFragment : BaseFragment<ProductViewModel, FragmentProductDet
 		} else {
 			errorToast("No sharing apps available")
 		}
+	}
+
+	override fun onDestroy() {
+		super.onDestroy()
+		mediaAdapter.onDestroy()
 	}
 }
 
