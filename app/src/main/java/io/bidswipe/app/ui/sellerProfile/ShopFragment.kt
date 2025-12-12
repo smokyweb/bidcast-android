@@ -21,6 +21,7 @@ import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.model.LiveMoreOption
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.network.response.GetMyInventoryResponse
+import io.bidswipe.app.network.response.GetProductsResponse
 import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.ui.product.ProductDetailsActivity
 import io.bidswipe.app.utils.Alerts
@@ -36,7 +37,7 @@ class ShopFragment : BaseFragment<SellerViewModel , FragmentShopBinding>() {
 	override fun getModel() : Class<SellerViewModel> = SellerViewModel::class.java
 
 	override fun getBind(inflater : LayoutInflater , view : ViewGroup?) = FragmentShopBinding.inflate(inflater , view , false)
-	private var productList = mutableListOf<GetMyInventoryResponse.Data?>()
+	private var productList = mutableListOf<GetProductsResponse.Data?>()
 	private lateinit var shopAdapter : ShopAdapter
 	private val optionList = mutableListOf<LiveMoreOption?>()
 	private var sellerId = ""
@@ -105,12 +106,12 @@ class ShopFragment : BaseFragment<SellerViewModel , FragmentShopBinding>() {
 			bind.loader.isVisible = true
 			bind.noInternet.isVisible = false
 			page = 1
-			viewModel.getUserProducts(sellerId.request())
+			viewModel.getUserProducts(userId =sellerId.request(),page = page.toString().request())
 		}
 
 		shopAdapter = ShopAdapter(productList , mClick)
 		bind.recycler.adapter = shopAdapter
-		viewModel.getUserProducts(sellerId.request(), page = page.toString().request())
+		viewModel.getUserProducts(userId = sellerId.request(), page = page.toString().request())
 		viewModel.getUserProductsRepo.observe(viewLifecycleOwner) {
 			when (it) {
 				is Resource.Success -> {

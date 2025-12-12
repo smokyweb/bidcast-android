@@ -164,11 +164,6 @@ interface ApiInterface {
 	@GET("api/get-lesson")
 	suspend fun getLesson() : GetLessonsResponse
 
-	@GET("api/get-product")
-	suspend fun getProduct(
-		@Part("category_id") categoryId : RequestBody? ,
-	) : CommonResponse
-
 	@POST("api/store-product")
 	suspend fun storeProduct(
 		@Body storeProductModel : StoreProductRequest ,
@@ -416,8 +411,9 @@ interface ApiInterface {
 
 
 	@Multipart
-	@POST("api/get-my-inventory")
-	suspend fun getMyInventory(
+	@POST("api/v1/get-product")
+	suspend fun getProducts(
+		@Part("user_id") userId : RequestBody? ,
 		@Part("status") status : RequestBody? ,
 		@Part("category") category : RequestBody? ,
 		@Part("format") format : RequestBody? ,
@@ -427,7 +423,11 @@ interface ApiInterface {
 		@Part("conditions") conditions : RequestBody? ,
 		@Part("min_price") minPrice : RequestBody? ,
 		@Part("max_price") maxPrice : RequestBody? ,
-	) : GetMyInventoryResponse
+		@Part("marketplace") marketPlace : RequestBody? ,
+		@Part("type") type : RequestBody? ,
+		@Part("sale_type") saleType : RequestBody? ,
+		@Part("sort_by") sortBy : RequestBody?
+	) : GetProductsResponse
 
 	@Multipart
 	@POST("api/v1/get-my-orders")

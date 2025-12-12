@@ -12,12 +12,12 @@ import io.bidswipe.app.network.response.CommonResponse
 import io.bidswipe.app.network.response.FetchReferralResponse
 import io.bidswipe.app.network.response.FetchSellerVerificationResponse
 import io.bidswipe.app.network.response.GetKYCDetailsRespnse
-import io.bidswipe.app.network.response.GetMyInventoryResponse
 import io.bidswipe.app.network.response.GetMyShowResponse
 import io.bidswipe.app.network.response.GetOffersResponse
 import io.bidswipe.app.network.response.GetOrdersResponse
 import io.bidswipe.app.network.response.GetPaymentCardsResponse
 import io.bidswipe.app.network.response.GetPremierShopResponse
+import io.bidswipe.app.network.response.GetProductsResponse
 import io.bidswipe.app.network.response.GetPromoteToolsResponse
 import io.bidswipe.app.network.response.GetShippingProfilesResponse
 import io.bidswipe.app.network.response.GetShowDetailResponse
@@ -77,12 +77,13 @@ class SellerHubViewModel @Inject constructor(
 		_fetchSellerVerificationResponse.value = repo.fetchSellerVerification()
 	}
 
-	private var _getMyInventoryResponse = MutableLiveData<Resource<GetMyInventoryResponse>>()
-	val getMyInventoryRepo : MutableLiveData<Resource<GetMyInventoryResponse>>
+	private var _getMyInventoryResponse = MutableLiveData<Resource<GetProductsResponse>>()
+	val getMyInventoryRepo : MutableLiveData<Resource<GetProductsResponse>>
 		get() = _getMyInventoryResponse
 
-	fun getMyInventory(
-        status : RequestBody? ,
+	fun getProducts(
+		userId : RequestBody? = null,
+        status : RequestBody? = null,
         category: RequestBody? = null,
         format: RequestBody? = null,
         page : RequestBody? ,
@@ -91,12 +92,16 @@ class SellerHubViewModel @Inject constructor(
 		conditions : RequestBody? =null,
 		minPrice : RequestBody? =null,
 		maxPrice : RequestBody? =null,
+		marketPlace : RequestBody? =null,
+		type : RequestBody? =null,
+		saleType : RequestBody? =null,
+		sortBy : RequestBody? =null
     ) = viewModelScope.launch {
 		if (!networkMonitor.hasInternet()) {
 			_getMyInventoryResponse.value = NO_INTERNET_ERROR
 			return@launch
 		}
-		_getMyInventoryResponse.value = repo.getMyInventory(status , category , format , page, search,categoryIds,conditions,minPrice,maxPrice)
+		_getMyInventoryResponse.value = repo.getProducts(userId, status , category , format , page, search,categoryIds,conditions,minPrice,maxPrice,marketPlace,type,saleType,sortBy)
 	}
 
 	private var _getOrderListingResponse = MutableLiveData<Resource<GetOrdersResponse>>()
