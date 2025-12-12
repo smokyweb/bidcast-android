@@ -6,15 +6,16 @@ import androidx.core.text.buildSpannedString
 import io.bidswipe.app.base.BaseAdapter
 import io.bidswipe.app.databinding.ShopItemBinding
 import io.bidswipe.app.interfaces.RecyclerClicks
-import io.bidswipe.app.network.response.GetMyInventoryResponse
+import io.bidswipe.app.network.response.GetProductsResponse
+import io.bidswipe.app.utils.Const
 import io.bidswipe.app.utils.asCapital
 import io.bidswipe.app.utils.asMoney
 import io.bidswipe.app.utils.loadUrl
 import io.bidswipe.app.utils.setHapticClickListener
 
 class ShopAdapter(
-	mList : MutableList<GetMyInventoryResponse.Data?> , val mClicks : RecyclerClicks ,
-) : BaseAdapter<GetMyInventoryResponse.Data? , ShopItemBinding>(mList) {
+	mList : MutableList<GetProductsResponse.Data?>, val mClicks : RecyclerClicks,
+) : BaseAdapter<GetProductsResponse.Data? , ShopItemBinding>(mList) {
 
 	override fun bindView(inflater : LayoutInflater , parent : ViewGroup) =
 		ShopItemBinding.inflate(inflater , parent , false)
@@ -22,22 +23,28 @@ class ShopAdapter(
 	override fun onBind(
 		holder : BaseViewHolder<ShopItemBinding> ,
 		position : Int ,
-		item : GetMyInventoryResponse.Data? ,
+		item : GetProductsResponse.Data? ,
 	) {
 		with(holder) {
             bind.root.setHapticClickListener {
 				mClicks.itemClick(position)
 			}
 
-			bind.productImage.loadUrl(mCtx , item?.images?.get(0).toString())
+			bind.productImage.loadUrl(mCtx , item?.image?.get(0).toString())
 
 			bind.productName.text = item?.title.toString().asCapital()
 
-			bind.category.text = buildSpannedString {
-				append(item?.description)
+			if (item?.condition != null) {
+				bind.category.text = buildSpannedString {
+					append(item.category.toString().asCapital() + " ")
+					append(Const.BULLET)
+					append( " "+item.condition)
+				}
+			} else {
+				bind.category.text = item?.category.toString().asCapital()
 			}
 
-			bind.price.text = item?.pricing.toString().asMoney()
+			bind.price.text = item?.price.toString().asMoney()
 
 		}
 	}

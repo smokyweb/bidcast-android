@@ -33,19 +33,6 @@ class ProductViewModel @Inject constructor(
 	var product: GetProductDetailsResponse.Data? = null
 	var checkoutData: GetPurchaseDetail.Data? = null
 
-	private var _getProductResponse = MutableLiveData<Resource<CommonResponse>>()
-	val getProductRepo: MutableLiveData<Resource<CommonResponse>>
-		get() = _getProductResponse
-
-	fun getProduct(categoryId: RequestBody?) = viewModelScope.launch {
-		if (!networkMonitor.hasInternet()) {
-			_getProductResponse.value = NO_INTERNET_ERROR
-			return@launch
-		}
-		_getProductResponse.value = repo.getProduct(categoryId)
-	}
-
-
 	private var _getShippingAddressResponse =
 		MutableLiveData<Resource<GetShippingAddressResponse>>()
 	val getShippingAddressRepo: MutableLiveData<Resource<GetShippingAddressResponse>>
@@ -216,19 +203,26 @@ class ProductViewModel @Inject constructor(
 		get() = _getUserProductsResponse
 
 	fun getUserProducts(
-		userId: RequestBody? = null,
-		categoryId: RequestBody? = null,
-		page: RequestBody? = null,
-		type: RequestBody? = null,
-		saleType: RequestBody? = null,
-		sortBy: RequestBody? = null,
-		search: RequestBody? = null
+		userId : RequestBody? = null,
+		status : RequestBody? = null,
+		category: RequestBody? = null,
+		format: RequestBody? = null,
+		page : RequestBody? ,
+		search : RequestBody? = null,
+		categoryIds : RequestBody? =null,
+		conditions : RequestBody? =null,
+		minPrice : RequestBody? =null,
+		maxPrice : RequestBody? =null,
+		marketPlace : RequestBody? =null,
+		type : RequestBody? =null,
+		saleType : RequestBody? =null,
+		sortBy : RequestBody? =null
 	) = viewModelScope.launch {
 		if (!networkMonitor.hasInternet()) {
 			_getUserProductsResponse.value = NO_INTERNET_ERROR
 			return@launch
 		}
-		_getUserProductsResponse.value = repo.getUserProducts(userId, categoryId, page, type, saleType, sortBy, search)
+		_getUserProductsResponse.value = repo.getProducts(userId, status, category, format, page, search, categoryIds, conditions, minPrice, maxPrice,marketPlace, type, saleType, sortBy)
 	}
 
 	private var _getSellerInfoResponse = MutableLiveData<Resource<SellerInfoResponse>>()

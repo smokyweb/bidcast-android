@@ -10,4 +10,9 @@ data class TutorialShowModel(
 	var actionId : String? = null ,
 	var thumbnail : String? = null ,
 	var productIds : String? = null ,
+	var repeatMode : String = "",
+	var repeatType : String = "",
+	var explicitContent : String = "",
+	var primaryLanguage : String = "",
+	var discoverability : String = ""
 ) : Parcelable

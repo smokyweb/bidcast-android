@@ -80,8 +80,6 @@ class SelectCategoryFragment : BaseFragment<ScheduleShowViewModel, FragmentSelec
 					}
 
 
-
-
 					findNavController().navigate(ids.goToSelectThumbnailFragment)
 				}
 

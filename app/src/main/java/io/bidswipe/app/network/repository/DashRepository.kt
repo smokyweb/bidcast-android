@@ -7,6 +7,7 @@ import io.bidswipe.app.model.StoreProductRequest
 import io.bidswipe.app.network.ApiInterface
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
+import retrofit2.http.Part
 import javax.inject.Inject
 
 class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRepository() {
@@ -38,8 +39,6 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
 	) = call { api.userFavorite(GetSubCategoriesRequest(categoryIds, subcategoriesIds)) }
 
 	suspend fun getLesson() = call { api.getLesson() }
-
-	suspend fun getProduct(categoryId: RequestBody?) = call { api.getProduct(categoryId) }
 
 	suspend fun storeProduct(
 		storeProductModel : StoreProductRequest ,
@@ -107,7 +106,7 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
 		type: RequestBody?,
 	) = call { api.getAllTips(type) }
 
-	suspend fun getUserProducts(
+/*	suspend fun getUserProducts(
 		userId: RequestBody?,
 		categoryId: RequestBody?,
 		page: RequestBody?,
@@ -115,7 +114,9 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
 		saleType: RequestBody?,
 		sortBy: RequestBody?,
 		search: RequestBody?,
-	) = call { api.getUserProducts(userId, categoryId, page, type, saleType, sortBy, search) }
+
+
+	) = call { api.getProducts(userId, categoryId, page, type, saleType, sortBy, search) }*/
 
 	suspend fun getMyScheduledShow(
 		type: RequestBody?,
@@ -277,17 +278,22 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
 	suspend fun fetchSellerVerification(
 	) = call { api.fetchSellerVerification() }
 
-	suspend fun getMyInventory(
-		status: RequestBody?,
-		category: RequestBody?,
-		format: RequestBody?,
-		page: RequestBody?,
-		search: RequestBody?,
-		categoryIds: RequestBody?,
-		conditions: RequestBody?,
-		minPrice: RequestBody?,
-		maxPrice: RequestBody?,
-	) = call { api.getMyInventory(status, category, format, page, search, categoryIds, conditions, minPrice, maxPrice) }
+	suspend fun getProducts(
+		userId: RequestBody?,
+		 status : RequestBody? ,
+		 category : RequestBody? ,
+		 format : RequestBody? ,
+		page : RequestBody? ,
+		 search : RequestBody? ,
+		 categoryIds : RequestBody? ,
+		 conditions : RequestBody? ,
+		 minPrice : RequestBody? ,
+		 maxPrice : RequestBody? ,
+		 marketPlace : RequestBody? ,
+		type : RequestBody? ,
+		 saleType : RequestBody? ,
+		 sortBy : RequestBody?
+	) = call { api.getProducts(userId, status, category, format, page, search, categoryIds, conditions, minPrice, maxPrice,marketPlace, type, saleType, sortBy) }
 
 	suspend fun getOrderListing(
 		page: RequestBody?,

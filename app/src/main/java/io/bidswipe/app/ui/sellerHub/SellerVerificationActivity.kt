@@ -178,6 +178,7 @@ class SellerVerificationActivity : BaseActivity() {
 						imagePart,
 						selfiePart
 					)
+
 				}
 
 			}

@@ -8,14 +8,15 @@ import io.bidswipe.app.base.BaseAdapter
 import io.bidswipe.app.databinding.ShopSheetItemBinding
 import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.network.response.GetMyInventoryResponse
+import io.bidswipe.app.network.response.GetProductsResponse
 import io.bidswipe.app.utils.asCapital
 import io.bidswipe.app.utils.loadUrl
 import io.bidswipe.app.utils.setHapticClickListener
 
 class ShopSheetAdapter(
-	mList : MutableList<GetMyInventoryResponse.Data?> ,type : String
+	mList : MutableList<GetProductsResponse.Data?>, type : String
 	, val mClicks : RecyclerClicks
-) : BaseAdapter<GetMyInventoryResponse.Data? , ShopSheetItemBinding>(mList) {
+) : BaseAdapter<GetProductsResponse.Data? , ShopSheetItemBinding>(mList) {
 
 	override fun bindView(inflater : LayoutInflater , parent : ViewGroup) =
 		ShopSheetItemBinding.inflate(inflater , parent , false)
@@ -23,19 +24,19 @@ class ShopSheetAdapter(
 	override fun onBind(
 		holder : BaseViewHolder<ShopSheetItemBinding> ,
 		position : Int ,
-		item : GetMyInventoryResponse.Data? ,
+		item : GetProductsResponse.Data? ,
 	) {
 		with(holder) {
 
 			bind.primary.isVisible = false
 			bind.secondary.isVisible = false
 
-			bind.img.loadUrl(mCtx , item?.images?.get(0).toString())
+			bind.img.loadUrl(mCtx , item?.image?.get(0).toString())
 
 			bind.productName.text = item?.title?.asCapital()
 
 			bind.price.text = buildSpannedString {
-				append(item?.description)
+//				append(item?.description)
 			}
 
 			if (item?.selected == true) {

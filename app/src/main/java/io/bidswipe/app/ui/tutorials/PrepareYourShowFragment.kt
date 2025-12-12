@@ -121,10 +121,11 @@ class PrepareYourShowFragment : BaseFragment<DashViewModel, FragmentPrepareYourS
 								mData?.actionId?.request(),
 								imagePartList,
 								productIds.map { it.toInt() },
-								viewModel.repeatMode.request(),
-								viewModel.repeatType.request(),
-								viewModel.primaryLanguage.request(),
-								viewModel.explicitContent.request()
+								mData?.repeatMode?.request(),
+								mData?.repeatType?.request(),
+								mData?.primaryLanguage?.request(),
+								mData?.explicitContent?.request()
+
 							)
 						}
 

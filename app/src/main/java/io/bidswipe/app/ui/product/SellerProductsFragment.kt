@@ -19,6 +19,7 @@ import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.model.LiveMoreOption
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.network.response.GetMyInventoryResponse
+import io.bidswipe.app.network.response.GetProductsResponse
 import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.utils.Alerts
 import io.bidswipe.app.utils.Utils
@@ -37,7 +38,7 @@ class SellerProductsFragment : BaseFragment<ProductViewModel, FragmentSellerProd
 	): FragmentSellerProductsBinding = FragmentSellerProductsBinding.inflate(inflater, view, false)
 
 	private lateinit var shopSheetAdapter: ShopSheetAdapter
-	private var productList = mutableListOf<GetMyInventoryResponse.Data?>()
+	private var productList = mutableListOf<GetProductsResponse.Data?>()
 	private val optionList = mutableListOf<LiveMoreOption?>()
 	private var sellerId = ""
 	private var sortBy = ""

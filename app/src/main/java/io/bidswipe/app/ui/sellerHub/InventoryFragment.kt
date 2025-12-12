@@ -31,6 +31,7 @@ import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.model.LiveMoreOption
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.network.response.GetMyInventoryResponse
+import io.bidswipe.app.network.response.GetProductsResponse
 import io.bidswipe.app.ui.custom.AlertType
 import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.utils.Alerts
@@ -50,8 +51,8 @@ class InventoryFragment : BaseFragment<SellerHubViewModel, FragmentInventoryBind
     override fun getBind(inflater: LayoutInflater, view: ViewGroup?) =
         FragmentInventoryBinding.inflate(inflater, view, false)
 
-    private var itemList = mutableListOf<GetMyInventoryResponse.Data?>()
-    private var filteredList = mutableListOf<GetMyInventoryResponse.Data?>()
+    private var itemList = mutableListOf<GetProductsResponse.Data?>()
+    private var filteredList = mutableListOf<GetProductsResponse.Data?>()
     private lateinit var adapter: InventoryAdapter
     private var isLoading = false
     private var page = 1
@@ -86,7 +87,7 @@ class InventoryFragment : BaseFragment<SellerHubViewModel, FragmentInventoryBind
                     return@setHapticClickListener
                 }
 
-                val selectedList = ArrayList<GetMyInventoryResponse.Data>()
+                val selectedList = ArrayList<GetProductsResponse.Data>()
                 selectedItems.forEach { it?.let { selectedList.add(it) } }
 
                 val intent = Intent()
@@ -106,13 +107,15 @@ class InventoryFragment : BaseFragment<SellerHubViewModel, FragmentInventoryBind
         adapter = InventoryAdapter(filteredList, isSelectionMode, object : RecyclerClicks {
             override fun itemClick(pos: Int, status: String?) {
 
-                log("POSITION : $pos STATUS : ${filteredList.size}")
+                log("POSITION : $pos STATUS : ${status}")
                 filteredList[pos]?.let { item ->
 	                when (status) {
 		                "delete" -> {
 			                deleteProductDialog(item.id.toString(), pos)
 		                }
 		                "active", "inactive" -> {
+
+                            log("Status : $status")
 
 			                bind.loader.isVisible = true
 
@@ -672,7 +675,7 @@ class InventoryFragment : BaseFragment<SellerHubViewModel, FragmentInventoryBind
 
     fun getInventory(search: String? = null) {
 
-        viewModel.getMyInventory(
+        viewModel.getProducts(
             status = selectedTab.request(), page = page.toString().request(),
             search = search?.request(),
             categoryIds = if (categoryIds.isEmpty()) null else categoryIds.joinToString(",").request(),

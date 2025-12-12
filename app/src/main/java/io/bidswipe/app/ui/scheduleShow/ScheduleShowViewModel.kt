@@ -165,21 +165,27 @@ class ScheduleShowViewModel @Inject constructor(
     val getUserProductsRepo: MutableLiveData<Resource<GetProductsResponse>>
         get() = _getUserProductsResponse
 
-    fun getUserProducts(
-        userId: RequestBody? = null,
-        categoryId: RequestBody? = null,
-        page: RequestBody? = null,
-        type: RequestBody? = null,
-        saleType: RequestBody? = null,
-        sortBy: RequestBody? = null,
-        search: RequestBody? = null
-    ) = viewModelScope.launch {
-        if (!networkMonitor.hasInternet()) {
-            _getUserProductsResponse.value = NO_INTERNET_ERROR
-            return@launch
-        }
-        _getUserProductsResponse.value =
-            repo.getUserProducts(userId, categoryId, page, type, saleType, sortBy, search)
+	fun getUserProducts(
+		userId : RequestBody? = null,
+		status : RequestBody? = null,
+		category: RequestBody? = null,
+		format: RequestBody? = null,
+		page : RequestBody? ,
+		search : RequestBody? = null,
+		categoryIds : RequestBody? =null,
+		conditions : RequestBody? =null,
+		minPrice : RequestBody? =null,
+		maxPrice : RequestBody? =null,
+		marketPlace : RequestBody? =null,
+		type : RequestBody? =null,
+		saleType : RequestBody? =null,
+		sortBy : RequestBody? =null
+	) = viewModelScope.launch {
+		if (!networkMonitor.hasInternet()) {
+			_getUserProductsResponse.value = NO_INTERNET_ERROR
+			return@launch
+		}
+		_getUserProductsResponse.value = repo.getProducts(userId, status, category, format, page, search, categoryIds, conditions, minPrice, maxPrice,marketPlace, type, saleType, sortBy)
     }
 
     private var _storeProductResponse = MutableLiveData<Resource<CreateProductResponse>>()

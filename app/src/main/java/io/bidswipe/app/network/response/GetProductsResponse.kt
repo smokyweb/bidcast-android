@@ -2,54 +2,54 @@ package io.bidswipe.app.network.response
 
 import com.google.gson.annotations.SerializedName
 import androidx.annotation.Keep
+import java.io.Serializable
 
 @Keep
 data class GetProductsResponse(
 	@SerializedName("currentPage")
-	val currentPage : Int? ,
+	val currentPage: Int?,
 	@SerializedName("data")
-	val `data` : List<GetMyInventoryResponse.Data?>? ,
+	val `data`: List<Data?>?,
 	@SerializedName("error_type")
-	val errorType : String? ,
+	val errorType: String?,
 	@SerializedName("message")
-	val message : String? ,
+	val message: String?,
 	@SerializedName("perPage")
-	val perPage : Int? ,
+	val perPage: Int?,
 	@SerializedName("status")
-	val status : String? ,
+	val status: String?,
 	@SerializedName("total")
-	val total : Int? ,
+	val total: Int?,
 	@SerializedName("totalPage")
-	val totalPage : Int? ,
-) /*{
-    @Keep
-    data class Data(
-        @SerializedName("accept_offers")
-        val acceptOffers: Boolean?,
-        @SerializedName("category_id")
-        val categoryId: Int?,
-        @SerializedName("description")
-        val description: String?,
-        @SerializedName("flash_sale")
-        val flashSale: Boolean?,
-        @SerializedName("id")
-        val id: Int?,
-        @SerializedName("images")
-        val images: List<String?>?,
-        @SerializedName("pricing")
-        val pricing: String?,
-        @SerializedName("quantity")
-        val quantity: Int?,
-        @SerializedName("reserve_for_live")
-        val reserveForLive: Boolean?,
-        @SerializedName("shipping_profile_id")
-        val shippingProfileId: Int?,
-        @SerializedName("status")
-        val status: String?,
-        @SerializedName("title")
-        val title: String?,
-        @SerializedName("user_id")
-        val userId: Int?,
-        var selected: Boolean? = false,
-    )
-}*/
+	val totalPage: Int?
+) {
+	@Keep
+	data class Data(
+		@SerializedName("bids")
+		val bids: Int?,
+		@SerializedName("category")
+		val category: String?,
+		@SerializedName("condition")
+		val condition: String?,
+		@SerializedName("id")
+		val id: Int?,
+		@SerializedName("image")
+		val image: String?,
+		@SerializedName("price")
+		val price: String?,
+		@SerializedName("quantity")
+		val quantity: String?,
+		@SerializedName("seller_id")
+		val sellerId: Int?,
+		@SerializedName("seller_name")
+		val sellerName: String?,
+		@SerializedName("status")
+		val status: String?,
+		@SerializedName("thumbanail")
+		val thumbanail: String?,
+		@SerializedName("title")
+		val title: String?,
+		var selected : Boolean = false
+
+	): Serializable
+}

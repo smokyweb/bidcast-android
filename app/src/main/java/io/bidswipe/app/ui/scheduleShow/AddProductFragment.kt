@@ -99,8 +99,11 @@ class AddProductFragment : BaseFragment<ScheduleShowViewModel, FragmentAddProduc
 
 				"delete" -> {
 
+					log("position : $pos , ${viewModel.currentProducts.size}")
+
 					viewModel.currentProducts.removeAt(pos)
 					productAdapter.notifyItemRemoved(pos)
+					productAdapter.notifyItemRangeChanged(pos, viewModel.currentProducts.size)
 
 				}
 			}
@@ -183,7 +186,12 @@ class AddProductFragment : BaseFragment<ScheduleShowViewModel, FragmentAddProduc
 						viewModel.categoryId,
 						viewModel.auctionId,
 						viewModel.thumbnail,
-						productIdList.joinToString(",")
+						productIdList.joinToString(","),
+						viewModel.repeatMode,
+						viewModel.repeatType,
+						viewModel.explicitContent,
+						viewModel.primaryLanguage,
+						viewModel.discoverability
 					)
 				)
 
