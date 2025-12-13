@@ -557,6 +557,7 @@
                             style="@style/BodySmall"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:alpha="0.7"
                             android:text="Turn this on to enable flash sale on this product."
                             android:textStyle="bold" />
 
@@ -597,6 +598,7 @@
                             style="@style/BodySmall"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:alpha="0.7"
                             android:text="Turn this on to accept offers. You can accept, counter, or decline the offers."
                             android:textStyle="bold" />
 
@@ -709,6 +711,7 @@
                             style="@style/BodySmall"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:alpha="0.7"
                             android:text="Carriers restrict shipping items that may pose risk to safety, like lithium batteries."
                             android:textStyle="bold" />
 
@@ -733,7 +736,7 @@
                     style="@style/BodySmall"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:alpha="0.8"
+                    android:alpha="0.7"
                     android:text="Set your cost per item and a SKU. This information can only be seen by you."
                     android:textStyle="bold" />
 

@@ -52,6 +52,7 @@ class ProductDetailsFragment : BaseFragment<ProductViewModel, FragmentProductDet
 	private var productId = ""
 	private var offerList = mutableListOf<OfferModel>()
 	private var actionList = mutableListOf<PowerMenuItem>()
+	private var images = mutableListOf<String?>()
 
 	lateinit var mediaAdapter: ProductImageAdapter
 
@@ -70,6 +71,9 @@ class ProductDetailsFragment : BaseFragment<ProductViewModel, FragmentProductDet
 
 		actionList.clear()
 		actionList.add(PowerMenuItem(title = "Save Product"))
+
+		mediaAdapter =	ProductImageAdapter( images)
+		bind.recyclerView.adapter = mediaAdapter
 
 		val menu = PopupMenu(mCtx, bind.header.findViewById<AppCompatImageView>(R.id.primaryIcon))
 		menu.menuInflater.inflate(R.menu.action_menu, menu.menu)
@@ -184,10 +188,12 @@ class ProductDetailsFragment : BaseFragment<ProductViewModel, FragmentProductDet
 					bind.userImage.loadUrl(mCtx, mData?.user?.profileImage.toString())
 
 					bind.recyclerView.onFlingListener = null
-					val images =mData?.images?.toMutableList()
-				mediaAdapter =	ProductImageAdapter( images?: mutableListOf())
-					bind.recyclerView.adapter = mediaAdapter
-						bind.indicatorv.attachTo(bind.recyclerView, true)
+
+					images.clear()
+					images.addAll(mData?.images ?: emptyList())
+					mediaAdapter.notifyDataSetChanged()
+
+					bind.indicatorv.attachTo(bind.recyclerView, true)
 
 					bind.posted.text =
 						Utils.getTimeAgo(mData?.createdAt ?: "", Const.DD_MM_YYYY_HH_MM_SS)
