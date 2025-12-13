@@ -26,6 +26,7 @@ import io.bidswipe.app.network.response.GetMyShowResponse
 import io.bidswipe.app.network.response.GetOffersResponse
 import io.bidswipe.app.network.response.GetPrepareStepResponse
 import io.bidswipe.app.network.response.GetProductsByStatusResponse
+import io.bidswipe.app.network.response.GetProductsResponse
 import io.bidswipe.app.network.response.GetPromotePlansResponse
 import io.bidswipe.app.network.response.GetShippingProfilesResponse
 import io.bidswipe.app.network.response.GetSubCategoriesResponse
@@ -36,6 +37,7 @@ import io.bidswipe.app.network.response.UserDeviceResponse
 import io.bidswipe.app.network.response.UserProfileResponse
 import io.bidswipe.app.utils.Const.NO_INTERNET_ERROR
 import io.bidswipe.app.utils.NetworkMonitor
+import io.bidswipe.app.utils.request
 import kotlinx.coroutines.launch
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -53,6 +55,7 @@ class DashViewModel @Inject constructor(
 	var currentShowData : CreateShowResponse.Data? = null
 	var showList = mutableListOf<GetPrepareStepResponse.Data?>()
 	var currentStep = 0
+	var categoryId = -1
 
 	var lastIndex = MutableLiveData(0)
 
@@ -582,4 +585,30 @@ class DashViewModel @Inject constructor(
 		_getShippingProfileResponse.value = repo.getShippingProfile()
 	}
 
+	private var _getUserProductsResponse = MutableLiveData<Resource<GetProductsResponse>>()
+	val getUserProductsRepo: MutableLiveData<Resource<GetProductsResponse>>
+		get() = _getUserProductsResponse
+
+	fun getUserProducts(
+		userId : RequestBody? = null,
+		status : RequestBody? = null,
+		category: RequestBody? = null,
+		format: RequestBody? = null,
+		page : RequestBody?  = "1".request(),
+		search : RequestBody? = null,
+		categoryIds : RequestBody? =null,
+		conditions : RequestBody? =null,
+		minPrice : RequestBody? =null,
+		maxPrice : RequestBody? =null,
+		marketPlace : RequestBody? =null,
+		type : RequestBody? =null,
+		saleType : RequestBody? =null,
+		sortBy : RequestBody? =null
+	) = viewModelScope.launch {
+		if (!networkMonitor.hasInternet()) {
+			_getUserProductsResponse.value = NO_INTERNET_ERROR
+			return@launch
+		}
+		_getUserProductsResponse.value = repo.getProducts(userId, status, category, format, page, search, categoryIds, conditions, minPrice, maxPrice,marketPlace, type, saleType, sortBy)
+	}
 }

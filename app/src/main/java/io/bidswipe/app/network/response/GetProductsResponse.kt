@@ -49,7 +49,8 @@ data class GetProductsResponse(
 		val thumbanail: String?,
 		@SerializedName("title")
 		val title: String?,
-		var selected : Boolean = false
+		var selected : Boolean = false,
+		var isCurrent: Boolean? = false,
 
 	): Serializable
 }

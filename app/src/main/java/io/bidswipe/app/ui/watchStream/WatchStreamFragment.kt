@@ -1023,7 +1023,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 	}
 
 	private fun showProductSheet() {
-		val productSheetBind = ProductSheetBinding.bind(layoutInflater.inflate(R.layout.product_sheet, null, false))
+		/*val productSheetBind = ProductSheetBinding.bind(layoutInflater.inflate(R.layout.product_sheet, null, false))
 		val productSheet = Alerts.appBottomSheet(mCtx, true, productSheetBind)
 
 		productAdapter = FirebaseProductAdapter(productList, object : RecyclerClicks {
@@ -1044,7 +1044,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 		productSheetBind.close.setHapticClickListener {
 			productSheet.dismiss()
 		}
-		productSheetBind.addBtn.isVisible = false
+		productSheetBind.addBtn.isVisible = false*/
 	}
 
 	private fun verificationDialog() {

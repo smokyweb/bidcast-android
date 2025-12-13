@@ -840,7 +840,14 @@ class AgoraPublisherActivity : BaseActivity() {
 
     // Product selection (simplified socket mirroring)
     private fun showProductSheet() {
-        val productSheetBind =
+
+        val bottomSheetFragment = ProductsForLiveShowFragment()
+        bottomSheetFragment.show(supportFragmentManager, "BOTTOM_SHEET_TAG")
+
+//        viewModel.categoryId = liveShowData.
+
+
+        /*val productSheetBind =
             ProductSheetBinding.bind(layoutInflater.inflate(R.layout.product_sheet, null, false))
         val productSheet = Alerts.appBottomSheet(this, true, productSheetBind)
 
@@ -893,7 +900,7 @@ class AgoraPublisherActivity : BaseActivity() {
             socketManager?.setNextProduct(roomID, selectedProduct?.id)
             productSheet.dismiss()
 
-        }
+        }*/
     }
 
     fun updateProductUI(liveProduct: LiveShowModel.Product?) {

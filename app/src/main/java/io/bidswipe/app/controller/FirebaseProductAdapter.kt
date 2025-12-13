@@ -1,5 +1,6 @@
 package io.bidswipe.app.controller
 
+import android.annotation.SuppressLint
 import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -12,8 +13,7 @@ import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseAdapter
 import io.bidswipe.app.databinding.ProductSelectionItemBinding
 import io.bidswipe.app.interfaces.RecyclerClicks
-import io.bidswipe.app.model.LiveShowModel
-import io.bidswipe.app.model.LiveShowModelOld
+import io.bidswipe.app.network.response.GetProductsResponse
 import io.bidswipe.app.utils.asCapital
 import io.bidswipe.app.utils.asMoney
 import io.bidswipe.app.utils.dpToPx
@@ -21,57 +21,77 @@ import io.bidswipe.app.utils.loadUrl
 import io.bidswipe.app.utils.setHapticClickListener
 
 class FirebaseProductAdapter(
-	val mList: MutableList<LiveShowModel.Product?>, val mClicks: RecyclerClicks,
-) : BaseAdapter<LiveShowModel.Product?, ProductSelectionItemBinding>(mList) {
+    val from: String = "",
+    val mList: MutableList<GetProductsResponse.Data?>, val mClicks: RecyclerClicks,
+) : BaseAdapter<GetProductsResponse.Data?, ProductSelectionItemBinding>(mList) {
 
-	override fun bindView(inflater : LayoutInflater , parent : ViewGroup) =
-		ProductSelectionItemBinding.inflate(inflater , parent , false)
+    override fun bindView(inflater: LayoutInflater, parent: ViewGroup) =
+        ProductSelectionItemBinding.inflate(inflater, parent, false)
 
-	override fun onBind(
+    @SuppressLint("SetTextI18n")
+    override fun onBind(
         holder: BaseViewHolder<ProductSelectionItemBinding>,
         position: Int,
-        item: LiveShowModel.Product?,
-	) {
-		with(holder) {
+        item: GetProductsResponse.Data?,
+    ) {
+        with(holder) {
 
             bind.root.setHapticClickListener {
-				mClicks.itemClick(position , "select")
-			}
+                mClicks.itemClick(position, "select")
+            }
 
-			bind.root.alpha = if (item?.status == "sold") 0.5f else 1f
+            bind.root.alpha = if (item?.status == "sold") 0.5f else 1f
 
-			bind.quantity.text = buildSpannedString {
-				append("Status: ")
-				if (item?.status == "sold") {
-					bold {
-						color(Color.RED) {
-							append(item.status?.asCapital())
-						}
-					}
-				} else {
-					bold { append(item?.status?.asCapital()) }
-				}
-			}
+            bind.quantity.text = buildSpannedString {
+                append("Status: ")
+                if (item?.status == "sold") {
+                    bold {
+                        color(Color.RED) {
+                            append(item.status.asCapital())
+                        }
+                    }
+                } else {
+                    bold { append(item?.status?.asCapital()) }
+                }
+            }
 
-			if (item?.selected == true) {
-				bind.root.strokeWidth = mCtx.resources.dpToPx(4)
-				bind.root.strokeColor = ContextCompat.getColor(mCtx , R.color.primary)
-				bind.root.setCardBackgroundColor(ContextCompat.getColor(mCtx , R.color.primaryContainer))
-			} else {
-				bind.root.strokeWidth = 0
-				bind.root.strokeColor = ContextCompat.getColor(mCtx , R.color.background)
-				bind.root.setCardBackgroundColor(ContextCompat.getColor(mCtx , R.color.background))
-			}
+            if (item?.selected == true) {
+                bind.root.strokeWidth = mCtx.resources.dpToPx(4)
+                bind.root.strokeColor = ContextCompat.getColor(mCtx, R.color.primary)
+                bind.root.setCardBackgroundColor(
+                    ContextCompat.getColor(
+                        mCtx,
+                        R.color.primaryContainer
+                    )
+                )
+            } else {
+                bind.root.strokeWidth = 0
+                bind.root.strokeColor = ContextCompat.getColor(mCtx, R.color.background)
+                bind.root.setCardBackgroundColor(ContextCompat.getColor(mCtx, R.color.background))
+            }
 
-			bind.productStatus.isVisible = item?.isCurrent == true
+            bind.productStatus.isVisible = item?.isCurrent == true
 
-			bind.prodSubTitle.text = buildString {
-				append(item?.price?.asMoney())
-			}
+            bind.prodSubTitle.text = buildString {
+                append(item?.price?.asMoney())
+            }
 
-			bind.productName.text = item?.name?.asCapital()
+            bind.productName.text = item?.title?.asCapital()
 
-			bind.img.loadUrl(mCtx , item?.image ?: "")
-		}
-	}
+            bind.img.loadUrl(mCtx, item?.image ?: "")
+
+
+            bind.category.text = buildString {
+                append(item?.category?.asCapital())
+                append(" • ")
+                append(item?.condition?.asCapital() ?:"N/A")
+            }
+
+            bind.price.text = buildString {
+                append(item?.price?.asMoney())
+            }
+
+            bind.bid.text = "${item?.bids} bids"
+        }
+    }
 }
