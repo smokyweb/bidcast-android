@@ -1,39 +1,196 @@
 package io.bidswipe.app.controller
 
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import io.bidswipe.app.base.BaseAdapter
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import io.bidswipe.app.R
 import io.bidswipe.app.databinding.ExploreItemBinding
+import io.bidswipe.app.databinding.SubcategoryExpandedRowBinding
 import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.network.response.GetCategoryResponse
+import io.bidswipe.app.network.response.GetSubCategoriesResponse
+import io.bidswipe.app.utils.dpToPx
 import io.bidswipe.app.utils.loadUrl
 import io.bidswipe.app.utils.setHapticClickListener
 
+// Sealed class to represent different item types
+sealed class ExploreItem {
+	data class CategoryItem(val data: GetCategoryResponse.Data?) : ExploreItem()
+	data class SubcategoryRowItem(val subcategories: List<GetSubCategoriesResponse.Data.Subcategory?>) : ExploreItem()
+}
+
 class ExploreAdapter(
-	val mList: MutableList<GetCategoryResponse.Data?>, val mClicks: RecyclerClicks,
-) : BaseAdapter<GetCategoryResponse.Data?, ExploreItemBinding>(mList) {
+	val mList: MutableList<GetCategoryResponse.Data?>,
+	val mClicks: RecyclerClicks,
+) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-	override fun bindView(inflater: LayoutInflater, parent: ViewGroup) =
-		ExploreItemBinding.inflate(inflater, parent, false)
+	companion object {
+		private const val VIEW_TYPE_CATEGORY = 0
+		private const val VIEW_TYPE_SUBCATEGORY_ROW = 1
+	}
 
-	override fun onBind(
-		holder: BaseViewHolder<ExploreItemBinding>,
-		position: Int,
-		item: GetCategoryResponse.Data??,
-	) {
-		with(holder) {
+	private lateinit var mCtx: Context
 
-			bind.root.setHapticClickListener {
-				mClicks.itemClick(position)
+	private var selectedPosition: Int = -1
+	private var subcategories: List<GetSubCategoriesResponse.Data.Subcategory?> = emptyList()
+
+	private var subcategoryAdapter: SubCategoryListAdapter? = null
+
+	// 🔥 Cached display list
+	private val displayItems = mutableListOf<ExploreItem>()
+
+	/* ---------------- DISPLAY LIST ---------------- */
+
+	private fun rebuildDisplayItems() {
+		displayItems.clear()
+		mList.forEachIndexed { index, category ->
+			displayItems.add(ExploreItem.CategoryItem(category))
+			if (index == selectedPosition && subcategories.isNotEmpty()) {
+				displayItems.add(ExploreItem.SubcategoryRowItem(subcategories))
 			}
-
-			bind.title.text = item?.name
-			bind.subTitle.text = buildString {
-				append(item?.liveCount ?: "0")
-				append(" ")
-				append("Viewers")
-			}
-			bind.icon.loadUrl(mCtx, item?.image ?: "")
 		}
 	}
+
+	/* ---------------- ADAPTER OVERRIDES ---------------- */
+
+	override fun getItemCount(): Int {
+		rebuildDisplayItems()
+		return displayItems.size
+	}
+
+	override fun getItemViewType(position: Int): Int {
+		rebuildDisplayItems()
+		return when (displayItems[position]) {
+			is ExploreItem.CategoryItem -> VIEW_TYPE_CATEGORY
+			is ExploreItem.SubcategoryRowItem -> VIEW_TYPE_SUBCATEGORY_ROW
+		}
+	}
+
+	override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+		mCtx = parent.context
+		return when (viewType) {
+			VIEW_TYPE_CATEGORY ->
+				CategoryViewHolder(
+					ExploreItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+				)
+			VIEW_TYPE_SUBCATEGORY_ROW ->
+				SubcategoryRowViewHolder(
+					SubcategoryExpandedRowBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+				)
+			else -> error("Unknown view type")
+		}
+	}
+
+	override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+		when (val item = displayItems[position]) {
+			is ExploreItem.CategoryItem -> {
+				val categoryIndex = getCategoryIndex(position)
+				(holder as CategoryViewHolder).bind(item.data, categoryIndex)
+			}
+			is ExploreItem.SubcategoryRowItem -> {
+				val categoryIndex = getCategoryIndex(position)
+				(holder as SubcategoryRowViewHolder).bind(item.subcategories, categoryIndex)
+			}
+		}
+	}
+
+	/* ---------------- POSITION MAPPING ---------------- */
+
+	private fun getCategoryIndex(displayPosition: Int): Int {
+		var categoryIndex = 0
+		var pos = 0
+		while (pos < displayPosition) {
+			if (categoryIndex == selectedPosition && subcategories.isNotEmpty()) {
+				pos++
+				if (pos == displayPosition) break
+			}
+			categoryIndex++
+			pos++
+		}
+		return categoryIndex.coerceAtLeast(0)
+	}
+
+	/* ---------------- VIEW HOLDERS ---------------- */
+
+	inner class CategoryViewHolder(val bind: ExploreItemBinding) :
+		RecyclerView.ViewHolder(bind.root) {
+
+		fun bind(item: GetCategoryResponse.Data?, categoryIndex: Int) {
+
+			bind.title.text = item?.name
+			bind.subTitle.text = "${item?.liveCount ?: "0"} Viewers"
+			bind.icon.loadUrl(mCtx, item?.image ?: "")
+
+			val isSelected = selectedPosition == categoryIndex
+
+			if (isSelected) {
+				bind.root.setCardBackgroundColor(mCtx.getColor(R.color.yellowWarningClr))
+				bind.root.strokeColor = mCtx.getColor(R.color.yellowWarningClr)
+				bind.root.strokeWidth = mCtx.resources.dpToPx(4)
+			} else {
+				bind.root.setCardBackgroundColor(mCtx.getColor(R.color.background))
+				bind.root.strokeColor = mCtx.getColor(R.color.transparent)
+				bind.root.strokeWidth = 0
+			}
+
+			bind.click.setHapticClickListener {
+				mClicks.itemClick(categoryIndex)
+			}
+
+		}
+	}
+
+	inner class SubcategoryRowViewHolder(val bind: SubcategoryExpandedRowBinding) :
+		RecyclerView.ViewHolder(bind.root) {
+
+		fun bind(
+			subcategories: List<GetSubCategoriesResponse.Data.Subcategory?>,
+			categoryIndex: Int
+		) {
+			if (bind.subcategoryRecyclerView.layoutManager == null) {
+				bind.subcategoryRecyclerView.layoutManager = LinearLayoutManager(mCtx)
+			}
+
+			if (subcategoryAdapter == null) {
+				subcategoryAdapter = SubCategoryListAdapter(
+					items = subcategories,
+					mClicks = object : RecyclerClicks {
+						override fun itemClick(pos: Int, status: String?) {
+							mClicks.itemClick(categoryIndex, pos.toString())
+						}
+					}
+				)
+				bind.subcategoryRecyclerView.adapter = subcategoryAdapter
+			} else {
+				subcategoryAdapter?.updateItems(subcategories)
+			}
+		}
+	}
+
+	/* ---------------- PUBLIC API (UNCHANGED) ---------------- */
+
+	fun setSelectedPosition(
+		position: Int,
+		subcategories: List<GetSubCategoriesResponse.Data.Subcategory?>
+	) {
+		selectedPosition = position
+		this.subcategories = subcategories
+		notifyDataSetChanged()
+	}
+
+	fun getSelectedPosition(): Int = selectedPosition
+
+	fun getSubcategoryAt(position: Int): GetSubCategoriesResponse.Data.Subcategory? =
+		subcategories.getOrNull(position)
+
+
+	fun clearSelection() {
+		selectedPosition = -1
+		subcategories = emptyList()
+		subcategoryAdapter = null
+		notifyDataSetChanged()
+	}
 }
+

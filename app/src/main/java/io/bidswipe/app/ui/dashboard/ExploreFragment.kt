@@ -12,6 +12,8 @@ import androidx.core.os.bundleOf
 import androidx.core.view.get
 import androidx.core.view.isVisible
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import io.bidswipe.app.base.BaseFragment
 import io.bidswipe.app.controller.ExploreAdapter
 import io.bidswipe.app.databinding.FragmentExploreBinding
@@ -19,6 +21,7 @@ import io.bidswipe.app.interfaces.AlertClicks
 import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.network.response.GetCategoryResponse
+import io.bidswipe.app.network.response.GetSubCategoriesResponse
 import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.ui.more.NotificationActivity
 import io.bidswipe.app.utils.Utils
@@ -38,17 +41,61 @@ class ExploreFragment : BaseFragment<DashViewModel, FragmentExploreBinding>() {
     private lateinit var exploreAdapter: ExploreAdapter
     private var exploreList = mutableListOf<GetCategoryResponse.Data?>()
     private var selectedTabText = "recommended"
+    private var loadingSubcategoriesForPosition: Int? = null
 
     private val mClick = object : RecyclerClicks {
-        override fun itemClick(pos: Int, status: String?) {
-            val category = exploreList[pos]?.name
-            findNavController().navigate(
-                ids.goTopExploreType,
-                bundleOf("category" to category)
-            )
 
+        override fun itemClick(pos: Int, status: String?) {
+
+            val category = exploreList.getOrNull(pos)
+            if (category == null) return
+
+            // ---------------- SUBCATEGORY CLICK ----------------
+            if (!status.isNullOrEmpty()) {
+
+                val subcategoryPos = status.toIntOrNull() ?: return
+                val subcategory = exploreAdapter.getSubcategoryAt(subcategoryPos) ?: return
+
+                findNavController().navigate(
+                    ids.goTopExploreType,
+                    bundleOf(
+                        "category" to category.name,
+                        "subcategory" to subcategory.name
+                    )
+                )
+                return
+            }
+
+            // ---------------- CATEGORY CLICK ----------------
+
+            val selectedPos = exploreAdapter.getSelectedPosition()
+            val categoryId = category.id
+
+            // Toggle OFF (already selected)
+            if (selectedPos == pos && selectedPos != -1) {
+                exploreAdapter.clearSelection()
+
+                (bind.recycler.layoutManager as? GridLayoutManager)
+                    ?.spanSizeLookup
+                    ?.invalidateSpanIndexCache()
+
+                return
+            }
+
+            // Toggle ON (fetch subcategories)
+            if (categoryId != null) {
+                loadingSubcategoriesForPosition = pos
+                viewModel.getSubCategories(listOf(categoryId))
+            } else {
+                // No category ID → navigate directly
+                findNavController().navigate(
+                    ids.goTopExploreType,
+                    bundleOf("category" to category.name)
+                )
+            }
         }
     }
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -59,8 +106,37 @@ class ExploreFragment : BaseFragment<DashViewModel, FragmentExploreBinding>() {
         bind.main.setHapticClickListener {
             hideKeyboard(it)
         }
+
         exploreAdapter = ExploreAdapter(exploreList, mClick)
-        bind.recycler.adapter = exploreAdapter
+
+        val gridLayoutManager = GridLayoutManager(mCtx, 3).apply {
+
+            spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
+
+                override fun getSpanSize(position: Int): Int {
+                    // Prevent crashes during layout recalculations
+                    if (position == RecyclerView.NO_POSITION ||
+                        position >= exploreAdapter.itemCount
+                    ) {
+                        return 1
+                    }
+
+                    return if (exploreAdapter.getItemViewType(position) == 1) {
+                        spanCount
+                    } else {
+                        1
+                    }
+                }
+            }
+
+            spanSizeLookup.isSpanIndexCacheEnabled = true
+        }
+
+        bind.recycler.apply {
+            setHasFixedSize(false)
+            layoutManager = gridLayoutManager
+            adapter = exploreAdapter
+        }
 
         bind.notification.setHapticClickListener {
             startActivity(
@@ -73,7 +149,6 @@ class ExploreFragment : BaseFragment<DashViewModel, FragmentExploreBinding>() {
 
 
         bind.searchLayout.isEndIconVisible = false
-
 
         bind.search.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
@@ -114,6 +189,63 @@ class ExploreFragment : BaseFragment<DashViewModel, FragmentExploreBinding>() {
 
         setUpChips()
 
+        // Observe subcategories response
+        viewModel.getSubCategoriesRepo.observe(viewLifecycleOwner) {
+            when (it) {
+                is Resource.Success -> {
+                    loadingSubcategoriesForPosition?.let { position ->
+                        val subcategoriesData = it.value.data?.firstOrNull()
+                        val subcategories = subcategoriesData?.subcategories ?: emptyList()
+                        val category = exploreList.getOrNull(position)
+                        
+                        // Build subcategory list - add "All [Category Name]" as first item
+                        val subcategoryList = mutableListOf<GetSubCategoriesResponse.Data.Subcategory?>()
+                        
+                        // Add "All" option with parent category info (matching screenshot)
+                        if (category != null) {
+                            val allCategory = GetSubCategoriesResponse.Data.Subcategory(
+                                id = category.id,
+                                categoryId = category.id,
+                                name = "All ${category.name}",
+                                image = category.image,
+                                thumbnail = category.thumbnail,
+                                color = category.color,
+                                extraFields = null,
+                                isSelected = false
+                            )
+                            subcategoryList.add(allCategory)
+                        }
+                        
+                        // Add actual subcategories
+                        subcategoryList.addAll(subcategories)
+                        
+                        // Update adapter with selected position and subcategories
+                        exploreAdapter.setSelectedPosition(position, subcategoryList)
+                        
+                        // Invalidate span size cache after dataset changes
+                        (bind.recycler.layoutManager as? GridLayoutManager)
+                            ?.spanSizeLookup?.invalidateSpanIndexCache()
+                        
+                        loadingSubcategoriesForPosition = null
+                    }
+                }
+                is Resource.Error -> {
+                    loadingSubcategoriesForPosition?.let { position ->
+                        // Clear selection on error
+                        exploreAdapter.clearSelection()
+                        // Still allow navigation to category
+                        val category = exploreList[position]?.name
+                        findNavController().navigate(
+                            ids.goTopExploreType,
+                            bundleOf("category" to category)
+                        )
+                        loadingSubcategoriesForPosition = null
+                    }
+                }
+                else -> {}
+            }
+        }
+
         viewModel.getCategoryRepo.observe(viewLifecycleOwner) {
             when (it) {
                 is Resource.Success -> {
@@ -131,6 +263,10 @@ class ExploreFragment : BaseFragment<DashViewModel, FragmentExploreBinding>() {
                         bind.recycler.isVisible = false
                         bind.noData.isVisible = true
                     }
+                    
+                    // Clear selection when categories refresh
+                    exploreAdapter.clearSelection()
+                    
                     exploreAdapter.notifyDataSetChanged()
 
                     bind.noData.isVisible = exploreList.isEmpty()
