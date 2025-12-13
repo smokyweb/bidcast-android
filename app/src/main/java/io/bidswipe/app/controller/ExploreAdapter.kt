@@ -45,11 +45,37 @@ class ExploreAdapter(
 
 	private fun rebuildDisplayItems() {
 		displayItems.clear()
+		
+		// Calculate where to insert subcategory row to maintain 3-items-per-row
+		// We need to insert it after the row containing the selected category is complete
+		val subcategoryInsertAfterIndex = if (selectedPosition != -1 && subcategories.isNotEmpty()) {
+			// Find the end of the row containing the selected category
+			// Row 0: positions 0, 1, 2
+			// Row 1: positions 3, 4, 5
+			// Row 2: positions 6, 7, 8
+			// If selectedPosition is in row N, the row ends at: (N + 1) * 3 - 1
+			val rowNumber = selectedPosition / 3
+			val endOfRowIndex = (rowNumber + 1) * 3 - 1
+			// Insert after the last item in the row (or at end of list if shorter)
+			minOf(endOfRowIndex, mList.size - 1)
+		} else {
+			-1
+		}
+		
 		mList.forEachIndexed { index, category ->
 			displayItems.add(ExploreItem.CategoryItem(category))
-			if (index == selectedPosition && subcategories.isNotEmpty()) {
+			// Insert subcategory row after the row containing selected category is complete
+			if (index == subcategoryInsertAfterIndex && subcategoryInsertAfterIndex != -1) {
 				displayItems.add(ExploreItem.SubcategoryRowItem(subcategories))
 			}
+		}
+		
+		// Edge case: If selected category is at the very end and we haven't inserted yet
+		if (selectedPosition != -1 && subcategories.isNotEmpty() && 
+			selectedPosition == mList.size - 1 && 
+			subcategoryInsertAfterIndex == mList.size - 1 &&
+			displayItems.lastOrNull() !is ExploreItem.SubcategoryRowItem) {
+			displayItems.add(ExploreItem.SubcategoryRowItem(subcategories))
 		}
 	}
 
@@ -99,17 +125,27 @@ class ExploreAdapter(
 	/* ---------------- POSITION MAPPING ---------------- */
 
 	private fun getCategoryIndex(displayPosition: Int): Int {
-		var categoryIndex = 0
-		var pos = 0
-		while (pos < displayPosition) {
-			if (categoryIndex == selectedPosition && subcategories.isNotEmpty()) {
-				pos++
-				if (pos == displayPosition) break
-			}
-			categoryIndex++
-			pos++
+		rebuildDisplayItems()
+		if (displayPosition >= displayItems.size) {
+			return mList.size - 1
 		}
-		return categoryIndex.coerceAtLeast(0)
+		
+		when (val item = displayItems[displayPosition]) {
+			is ExploreItem.CategoryItem -> {
+				// Count how many category items come before this position
+				var categoryCount = 0
+				for (i in 0 until displayPosition) {
+					if (displayItems[i] is ExploreItem.CategoryItem) {
+						categoryCount++
+					}
+				}
+				return categoryCount
+			}
+			is ExploreItem.SubcategoryRowItem -> {
+				// Subcategory row belongs to the selected category
+				return selectedPosition
+			}
+		}
 	}
 
 	/* ---------------- VIEW HOLDERS ---------------- */
@@ -153,19 +189,20 @@ class ExploreAdapter(
 				bind.subcategoryRecyclerView.layoutManager = LinearLayoutManager(mCtx)
 			}
 
-			if (subcategoryAdapter == null) {
-				subcategoryAdapter = SubCategoryListAdapter(
-					items = subcategories,
-					mClicks = object : RecyclerClicks {
-						override fun itemClick(pos: Int, status: String?) {
-							mClicks.itemClick(categoryIndex, pos.toString())
-						}
+			// Always create a fresh adapter to ensure data is updated
+			// This is necessary because RecyclerView might reuse ViewHolders
+			val newAdapter = SubCategoryListAdapter(
+				items = subcategories,
+				mClicks = object : RecyclerClicks {
+					override fun itemClick(pos: Int, status: String?) {
+						mClicks.itemClick(categoryIndex, pos.toString())
 					}
-				)
-				bind.subcategoryRecyclerView.adapter = subcategoryAdapter
-			} else {
-				subcategoryAdapter?.updateItems(subcategories)
-			}
+				}
+			)
+			
+			// Always set the adapter to ensure it's updated with latest data
+			bind.subcategoryRecyclerView.adapter = newAdapter
+			subcategoryAdapter = newAdapter
 		}
 	}
 

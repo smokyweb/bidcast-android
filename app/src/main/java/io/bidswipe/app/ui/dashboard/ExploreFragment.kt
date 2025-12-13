@@ -75,9 +75,12 @@ class ExploreFragment : BaseFragment<DashViewModel, FragmentExploreBinding>() {
             if (selectedPos == pos && selectedPos != -1) {
                 exploreAdapter.clearSelection()
 
-                (bind.recycler.layoutManager as? GridLayoutManager)
-                    ?.spanSizeLookup
-                    ?.invalidateSpanIndexCache()
+                (bind.recycler.layoutManager as? GridLayoutManager)?.apply {
+                    spanSizeLookup.invalidateSpanIndexCache()
+                    bind.recycler.post {
+                        requestLayout()
+                    }
+                }
 
                 return
             }
@@ -121,15 +124,19 @@ class ExploreFragment : BaseFragment<DashViewModel, FragmentExploreBinding>() {
                         return 1
                     }
 
-                    return if (exploreAdapter.getItemViewType(position) == 1) {
-                        spanCount
-                    } else {
-                        1
+                    val viewType = exploreAdapter.getItemViewType(position)
+                    
+                    // Subcategory row always takes full width on a new line
+                    if (viewType == 1) {
+                        return spanCount
                     }
+                    
+                    // Category items always span 1 column
+                    return 1
                 }
             }
 
-            spanSizeLookup.isSpanIndexCacheEnabled = true
+            spanSizeLookup.isSpanIndexCacheEnabled = false // Disable cache to recalculate on data changes
         }
 
         bind.recycler.apply {
@@ -222,9 +229,14 @@ class ExploreFragment : BaseFragment<DashViewModel, FragmentExploreBinding>() {
                         // Update adapter with selected position and subcategories
                         exploreAdapter.setSelectedPosition(position, subcategoryList)
                         
-                        // Invalidate span size cache after dataset changes
-                        (bind.recycler.layoutManager as? GridLayoutManager)
-                            ?.spanSizeLookup?.invalidateSpanIndexCache()
+                        // Invalidate span size cache and request layout recalculation
+                        (bind.recycler.layoutManager as? GridLayoutManager)?.apply {
+                            spanSizeLookup.invalidateSpanIndexCache()
+                            // Request layout to ensure proper grid recalculation
+                            bind.recycler.post {
+                                requestLayout()
+                            }
+                        }
                         
                         loadingSubcategoriesForPosition = null
                     }
