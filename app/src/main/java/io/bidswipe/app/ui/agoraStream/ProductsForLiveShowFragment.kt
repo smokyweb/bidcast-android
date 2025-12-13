@@ -35,7 +35,7 @@ import io.bidswipe.app.utils.value
 class ProductsForLiveShowFragment : BottomSheetDialogFragment() {
 
     private lateinit var productAdapter: FirebaseProductAdapter
-    private var productList = mutableListOf<GetProductsResponse.Data?>()
+    private var productList = mutableListOf<GetProductsResponse.Data>()
 
     private lateinit var mCtx: Context
 
@@ -99,6 +99,7 @@ class ProductsForLiveShowFragment : BottomSheetDialogFragment() {
                     closeIconVisible = false
                 )
             )
+
             setOnCheckedStateChangeListener { chipGroup, _ ->
                 runSafe {
                     val chipId = chipGroup.checkedChipId
@@ -109,7 +110,7 @@ class ProductsForLiveShowFragment : BottomSheetDialogFragment() {
                         0 -> "auction"
                         1 -> "buy_now"
                         2 -> "sold"
-                        3 -> "offers"
+                        3 -> "accept_offers"
                         else -> ""
                     }
 
@@ -119,10 +120,13 @@ class ProductsForLiveShowFragment : BottomSheetDialogFragment() {
             }
         }
 
+
         bind.chipGroup.check(bind.chipGroup[0].id)
 
-        bind.bottomLoader.isVisible = true
-        loadData()
+
+
+//        bind.bottomLoader.isVisible = true
+//        loadData()
 
         viewModel.getUserProductsRepo.observe(viewLifecycleOwner) {
             when (it) {
@@ -135,7 +139,7 @@ class ProductsForLiveShowFragment : BottomSheetDialogFragment() {
                     }
 
                     if (mData != null) {
-                        productList.addAll(mData)
+//                        productList.addAll(mData)
                         productAdapter.notifyDataSetChanged()
                     }
 
@@ -198,7 +202,7 @@ class ProductsForLiveShowFragment : BottomSheetDialogFragment() {
             }
         })
 
-        productAdapter =
+      /*  productAdapter =
             FirebaseProductAdapter(
                 from = "live_show",
                 mList = productList,
@@ -216,7 +220,7 @@ class ProductsForLiveShowFragment : BottomSheetDialogFragment() {
                         }
                     }
 
-                })
+                })*/
 
         bind.recycler.adapter = productAdapter
 
@@ -250,9 +254,9 @@ class ProductsForLiveShowFragment : BottomSheetDialogFragment() {
     private fun loadData() {
         viewModel.getUserProducts(
             page = page.toString().request(),
-            category = "14".request(),
             saleType = saleType.ifEmpty { null }?.request(),
-            search = bind.search.value().ifEmpty { null }?.request()
+            search = bind.search.value().ifEmpty { null }?.request(),
+            categoryIds = "14".request()
         )
     }
 

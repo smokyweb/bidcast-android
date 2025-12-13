@@ -13,6 +13,7 @@ import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseAdapter
 import io.bidswipe.app.databinding.ProductSelectionItemBinding
 import io.bidswipe.app.interfaces.RecyclerClicks
+import io.bidswipe.app.model.LiveShowModel
 import io.bidswipe.app.network.response.GetProductsResponse
 import io.bidswipe.app.utils.asCapital
 import io.bidswipe.app.utils.asMoney
@@ -22,8 +23,8 @@ import io.bidswipe.app.utils.setHapticClickListener
 
 class FirebaseProductAdapter(
     val from: String = "",
-    val mList: MutableList<GetProductsResponse.Data?>, val mClicks: RecyclerClicks,
-) : BaseAdapter<GetProductsResponse.Data?, ProductSelectionItemBinding>(mList) {
+    val mList: MutableList<LiveShowModel.Product?>, val mClicks: RecyclerClicks,
+) : BaseAdapter<LiveShowModel.Product?, ProductSelectionItemBinding>(mList) {
 
     override fun bindView(inflater: LayoutInflater, parent: ViewGroup) =
         ProductSelectionItemBinding.inflate(inflater, parent, false)
@@ -32,7 +33,7 @@ class FirebaseProductAdapter(
     override fun onBind(
         holder: BaseViewHolder<ProductSelectionItemBinding>,
         position: Int,
-        item: GetProductsResponse.Data?,
+        item: LiveShowModel.Product?,
     ) {
         with(holder) {
 
@@ -47,7 +48,7 @@ class FirebaseProductAdapter(
                 if (item?.status == "sold") {
                     bold {
                         color(Color.RED) {
-                            append(item.status.asCapital())
+                            append(item.status?.asCapital())
                         }
                     }
                 } else {
@@ -76,22 +77,22 @@ class FirebaseProductAdapter(
                 append(item?.price?.asMoney())
             }
 
-            bind.productName.text = item?.title?.asCapital()
+            bind.productName.text = item?.name?.asCapital()
 
             bind.img.loadUrl(mCtx, item?.image ?: "")
 
 
             bind.category.text = buildString {
                 append(item?.category?.asCapital())
-                append(" • ")
-                append(item?.condition?.asCapital() ?:"N/A")
+//                append(" • ")
+//                append(item?.condition?.asCapital() ?:"N/A")
             }
 
             bind.price.text = buildString {
                 append(item?.price?.asMoney())
             }
 
-            bind.bid.text = "${item?.bids} bids"
+            bind.bid.text = "0 bids"
         }
     }
 }

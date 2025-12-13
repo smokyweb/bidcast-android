@@ -415,7 +415,6 @@ interface ApiInterface {
 	suspend fun getProducts(
 		@Part("user_id") userId : RequestBody? ,
 		@Part("status") status : RequestBody? ,
-		@Part("category") category : RequestBody? ,
 		@Part("format") format : RequestBody? ,
 		@Part("page") page : RequestBody? ,
 		@Part("search") search : RequestBody? ,

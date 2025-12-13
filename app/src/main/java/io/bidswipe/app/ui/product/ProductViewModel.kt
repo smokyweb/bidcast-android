@@ -205,7 +205,6 @@ class ProductViewModel @Inject constructor(
 	fun getUserProducts(
 		userId : RequestBody? = null,
 		status : RequestBody? = null,
-		category: RequestBody? = null,
 		format: RequestBody? = null,
 		page : RequestBody? ,
 		search : RequestBody? = null,
@@ -222,7 +221,7 @@ class ProductViewModel @Inject constructor(
 			_getUserProductsResponse.value = NO_INTERNET_ERROR
 			return@launch
 		}
-		_getUserProductsResponse.value = repo.getProducts(userId, status, category, format, page, search, categoryIds, conditions, minPrice, maxPrice,marketPlace, type, saleType, sortBy)
+		_getUserProductsResponse.value = repo.getProducts(userId, status,  format, page, search, categoryIds, conditions, minPrice, maxPrice,marketPlace, type, saleType, sortBy)
 	}
 
 	private var _getSellerInfoResponse = MutableLiveData<Resource<SellerInfoResponse>>()

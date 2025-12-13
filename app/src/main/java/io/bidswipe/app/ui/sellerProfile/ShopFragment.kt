@@ -43,6 +43,7 @@ class ShopFragment : BaseFragment<SellerViewModel, FragmentShopBinding>() {
     private var sellerId = ""
     private var sortBy = ""
     private var saleType = ""
+    private var status = ""
     private var page = 1
     private var isLoading = false
 
@@ -255,10 +256,11 @@ class ShopFragment : BaseFragment<SellerViewModel, FragmentShopBinding>() {
                     }
 
                     2 -> {
-                        saleType = "accept_offers"
+                        saleType = "buy_now"
                     }
 
                     3 -> {
+                        status = "inactive"
 
                     }
 

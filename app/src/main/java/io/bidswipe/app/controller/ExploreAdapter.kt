@@ -45,18 +45,11 @@ class ExploreAdapter(
 
 	private fun rebuildDisplayItems() {
 		displayItems.clear()
-		
-		// Calculate where to insert subcategory row to maintain 3-items-per-row
-		// We need to insert it after the row containing the selected category is complete
+
 		val subcategoryInsertAfterIndex = if (selectedPosition != -1 && subcategories.isNotEmpty()) {
-			// Find the end of the row containing the selected category
-			// Row 0: positions 0, 1, 2
-			// Row 1: positions 3, 4, 5
-			// Row 2: positions 6, 7, 8
-			// If selectedPosition is in row N, the row ends at: (N + 1) * 3 - 1
+
 			val rowNumber = selectedPosition / 3
 			val endOfRowIndex = (rowNumber + 1) * 3 - 1
-			// Insert after the last item in the row (or at end of list if shorter)
 			minOf(endOfRowIndex, mList.size - 1)
 		} else {
 			-1

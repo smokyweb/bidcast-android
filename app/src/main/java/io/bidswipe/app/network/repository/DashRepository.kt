@@ -281,7 +281,6 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
 	suspend fun getProducts(
 		userId: RequestBody?,
 		 status : RequestBody? ,
-		 category : RequestBody? ,
 		 format : RequestBody? ,
 		page : RequestBody? ,
 		 search : RequestBody? ,
@@ -293,7 +292,7 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
 		type : RequestBody? ,
 		 saleType : RequestBody? ,
 		 sortBy : RequestBody?
-	) = call { api.getProducts(userId, status, category, format, page, search, categoryIds, conditions, minPrice, maxPrice,marketPlace, type, saleType, sortBy) }
+	) = call { api.getProducts(userId, status, format, page, search, categoryIds, conditions, minPrice, maxPrice,marketPlace, type, saleType, sortBy) }
 
 	suspend fun getOrderListing(
 		page: RequestBody?,

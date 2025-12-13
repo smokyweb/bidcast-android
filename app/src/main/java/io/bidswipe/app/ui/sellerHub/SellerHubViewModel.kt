@@ -84,7 +84,6 @@ class SellerHubViewModel @Inject constructor(
 	fun getProducts(
 		userId : RequestBody? = null,
         status : RequestBody? = null,
-        category: RequestBody? = null,
         format: RequestBody? = null,
         page : RequestBody? ,
 		search : RequestBody? = null,
@@ -101,7 +100,7 @@ class SellerHubViewModel @Inject constructor(
 			_getMyInventoryResponse.value = NO_INTERNET_ERROR
 			return@launch
 		}
-		_getMyInventoryResponse.value = repo.getProducts(userId, status , category , format , page, search,categoryIds,conditions,minPrice,maxPrice,marketPlace,type,saleType,sortBy)
+		_getMyInventoryResponse.value = repo.getProducts(userId, status ,  format , page, search,categoryIds,conditions,minPrice,maxPrice,marketPlace,type,saleType,sortBy)
 	}
 
 	private var _getOrderListingResponse = MutableLiveData<Resource<GetOrdersResponse>>()
