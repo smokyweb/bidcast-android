@@ -4,27 +4,44 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
+    android:background="@drawable/bottom_sheet_back"
     android:padding="@dimen/padding">
 
-    <TextView
-        style="@style/TitleLarge"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Randomizer" />
+        android:layout_marginVertical="@dimen/margin"
+        android:gravity="center_vertical"
+        android:layout_height="wrap_content">
+        <TextView
+            style="@style/TitleLarge"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Randomizer" />
 
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/close"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:padding="@dimen/half_margin"
+            android:scaleType="centerCrop"
+            android:src="@drawable/ic_close"
+            app:tint="@color/onSurface"/>
+
+    </LinearLayout>
 
     <com.google.android.material.button.MaterialButton
         style="@style/appBtn"
         android:id="@+id/show_spin"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginVertical="@dimen/margin"
         android:text="Show SpinWheel" />
 
     <LinearLayout
         android:id="@+id/spin_controllers_view"
         android:layout_width="match_parent"
         android:visibility="invisible"
+        android:layout_marginTop="@dimen/margin"
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
@@ -40,6 +57,7 @@
                 android:layout_marginEnd="8dp"
                 android:layout_weight="1"
                 android:paddingVertical="12dp"
+                android:id="@+id/hide_wheel"
                 android:text="Hide SpinWheel"
                 android:textAppearance="@style/BodySmall"
                 app:cornerRadius="@dimen/half_margin" />
@@ -52,6 +70,7 @@
                 android:layout_weight="1"
                 android:paddingVertical="12dp"
                 android:text="Shuffle Entries"
+                android:id="@+id/shuffle_entries"
                 android:textAppearance="@style/BodySmall"
                 app:cornerRadius="@dimen/half_margin" />
 
@@ -61,6 +80,7 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:paddingVertical="12dp"
+                android:id="@+id/spin_wheel"
                 android:text="Spin Wheel"
                 android:textAppearance="@style/BodySmall"
                 app:cornerRadius="@dimen/half_margin" />

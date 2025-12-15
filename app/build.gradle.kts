@@ -9,6 +9,7 @@ plugins {
     alias(libs.plugins.hiltAndroid)
     alias(libs.plugins.devtools)
     alias(libs.plugins.google.gms.google.services)
+    alias(libs.plugins.crashlytics)
 }
 
 fun getAPKName() = "Bid_Swipe_${SimpleDateFormat("dd-MM-yyyy").format(Date())}"
@@ -185,8 +186,10 @@ dependencies {
     implementation(libs.androidx.browser)
     implementation(libs.billing.ktx)
 
+    implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.messaging.ktx)
     implementation(libs.firebase.database)
+    implementation(libs.firebase.crashlytics)
 
     //GOOGLE DEPENDENCIES
     implementation(libs.hilt.android)

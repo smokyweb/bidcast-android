@@ -1,7 +1,7 @@
 package io.bidswipe.app.utils
 
-import com.google.firebase.database.ktx.database
-import com.google.firebase.ktx.Firebase
+import com.google.firebase.database.database
+import com.google.firebase.Firebase
 
 object FireRef {
 	private val dbRef = Firebase.database.reference

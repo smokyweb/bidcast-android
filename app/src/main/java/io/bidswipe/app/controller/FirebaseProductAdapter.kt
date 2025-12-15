@@ -80,7 +80,7 @@ class FirebaseProductAdapter(
 
             bind.img.loadUrl(mCtx, item?.image ?: "")
 
-
+            bind.category.isVisible = item?.category.isNullOrEmpty() == false
             bind.category.text = buildString {
                 append(item?.category?.asCapital())
 //                append(" • ")

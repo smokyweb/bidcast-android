@@ -309,6 +309,26 @@ class SocketManager private constructor(
 		socket?.emit("createRaid", payload)
 	}
 
+
+	fun addShowNotes(roomId: String, note: String) {
+		val payload = JSONObject().apply {
+			put("room_id", roomId)
+			put("note", note)
+		}
+		socket?.emit("addShowNote", payload)
+	}
+
+
+	fun receiveShowNotes(listener: (count: JSONObject) -> Unit) {
+		socket?.on("showNotes") { args ->
+			val obj = args.firstOrNull()
+			if (obj is JSONObject) {
+				listener(obj)
+			}
+		}
+	}
+
+
 	fun receiveRaid(listener: (json: JSONObject) -> Unit) {
 		socket?.on("receiveRaid") { args ->
 			val obj = args.firstOrNull()

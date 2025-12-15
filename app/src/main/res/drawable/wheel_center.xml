@@ -1,0 +1,22 @@
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Black Circle -->
+    <item  android:top="10dp">
+        <shape android:shape="oval">
+            <solid android:color="#000000"/>
+            <size android:width="100dp" android:height="100dp"/>
+        </shape>
+    </item>
+
+    <item android:right="5dp" android:left="5dp" android:top="-10dp">
+        <vector xmlns:android="http://schemas.android.com/apk/res/android"
+            android:width="50dp"
+            android:height="50dp"
+            android:viewportWidth="100"
+            android:viewportHeight="100">
+            <path
+                android:fillColor="#000"
+                android:pathData="M50,10 L70,30 L50,50 L30,30 Z" />
+        </vector>
+    </item>
+
+</layer-list>

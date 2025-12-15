@@ -9,15 +9,15 @@ import android.content.Intent
 import android.content.res.Configuration
 import android.graphics.Bitmap
 import android.graphics.Color
+import android.graphics.PorterDuff
 import android.graphics.Rect
-import android.graphics.drawable.BitmapDrawable
-import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.util.Rational
+import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.ArrayAdapter
@@ -34,6 +34,7 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.GridLayoutManager
 import com.bumptech.glide.Glide
+import com.caneryilmaz.apps.luckywheel.constant.ArrowPosition
 import com.caneryilmaz.apps.luckywheel.data.WheelData
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.gyf.immersionbar.ktx.immersionBar
@@ -186,7 +187,7 @@ class AgoraPublisherActivity : BaseActivity() {
             }
         }
 
-        setUpWheel()
+        setUpWheel(listOf("Option 1", "Option 2", "Option 3", "Option 4", "Option 5"))
 
         showId = liveShowData?.showId ?: ""
         showTime = intent.getStringExtra("time") ?: ""
@@ -841,8 +842,8 @@ class AgoraPublisherActivity : BaseActivity() {
     // Product selection (simplified socket mirroring)
     private fun showProductSheet() {
 
-      /*  val bottomSheetFragment = ProductsForLiveShowFragment()
-        bottomSheetFragment.show(supportFragmentManager, "BOTTOM_SHEET_TAG")*/
+        /*  val bottomSheetFragment = ProductsForLiveShowFragment()
+          bottomSheetFragment.show(supportFragmentManager, "BOTTOM_SHEET_TAG")*/
 
 //        viewModel.categoryId = liveShowData.
 
@@ -853,7 +854,7 @@ class AgoraPublisherActivity : BaseActivity() {
 
         var selectedPos = -1
 
-        productAdapter = FirebaseProductAdapter("live_show",productList, object : RecyclerClicks {
+        productAdapter = FirebaseProductAdapter("live_show", productList, object : RecyclerClicks {
             override fun itemClick(pos: Int, status: String?) {
 
                 if (productList[pos]?.status == "sold") {
@@ -1124,6 +1125,7 @@ class AgoraPublisherActivity : BaseActivity() {
                         }
 
                         4 -> {
+                            moreSheet.dismiss()
                             showRandomizerSheet()
                         }
 
@@ -1218,12 +1220,20 @@ class AgoraPublisherActivity : BaseActivity() {
             )
         )
         val newHeight = window?.decorView?.measuredHeight
-        val viewGroupLayoutParams = showNotesSheetBind.root.layoutParams ?: ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
+        val viewGroupLayoutParams = showNotesSheetBind.root.layoutParams ?: ViewGroup.LayoutParams(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.MATCH_PARENT
+        )
 
-        viewGroupLayoutParams.height = (newHeight?:0 )- (statusBarHeight)
+        viewGroupLayoutParams.height = (newHeight ?: 0) - (statusBarHeight)
         showNotesSheetBind.root.layoutParams = viewGroupLayoutParams
 
-        showNotesSheetBind.post.setMargins(resources.dpToPx(16),resources.dpToPx(16),resources.dpToPx(16),navigationBarHeight)
+        showNotesSheetBind.post.setMargins(
+            resources.dpToPx(16),
+            resources.dpToPx(16),
+            resources.dpToPx(16),
+            navigationBarHeight
+        )
 
         val sheet = Alerts.appBottomSheet(this, false, showNotesSheetBind)
         Aztec.with(
@@ -1237,8 +1247,18 @@ class AgoraPublisherActivity : BaseActivity() {
         }
 
         showNotesSheetBind.post.setHapticClickListener {
-            sheet.dismiss()
-            bind.showNotes.isVisible = true
+            val notes = showNotesSheetBind.showNotes.text.toString()
+
+            if (notes.isEmpty()) {
+                errorToast("Please enter some notes")
+            } else {
+                socketManager?.addShowNotes(
+                    roomID,
+                    notes
+                )
+                sheet.dismiss()
+                bind.showNotes.isVisible = true
+            }
         }
 
         sheet.show()
@@ -1578,58 +1598,57 @@ class AgoraPublisherActivity : BaseActivity() {
         }
     }
 
-    fun setUpWheel() {
-        val drawable: Drawable? = ContextCompat.getDrawable(this, R.drawable.ic_whatsapp)
-        val bitmap = (drawable as? BitmapDrawable)?.bitmap
-
-        if (bitmap == null) {
-            log("LuckyWheel :  Failed to get bitmap from drawable")
-        }
+    fun setUpWheel(options: List<String>) {
+        if (options.isEmpty()) return
 
         val colors = listOf(
-            Color.parseColor("#FFC107"), // Amber
-            Color.parseColor("#4CAF50"), // Green
-            Color.parseColor("#2196F3"), // Blue
-            Color.parseColor("#9C27B0"), // Purple
-            Color.parseColor("#F44336"), // Red
-            Color.parseColor("#00BCD4"), // Cyan
-            Color.parseColor("#E91E63"), // Pink
-            Color.parseColor("#FF9800"), // Orange
-            Color.parseColor("#3F51B5"), // Indigo
-            Color.parseColor("#8BC34A"), // Light Green
-            Color.parseColor("#009688"), // Teal
-            Color.parseColor("#673AB7")  // Deep Purple
+            Color.parseColor("#B28704"), // Amber
+            Color.parseColor("#388E3C"), // Green
+            Color.parseColor("#1976D2"), // Blue
+            Color.parseColor("#6A1B9A"), // Purple
+            Color.parseColor("#D32F2F"), // Red
+            Color.parseColor("#0097A7"), // Cyan
+            Color.parseColor("#C2185B"), // Pink
+            Color.parseColor("#F57C00"), // Orange
+            Color.parseColor("#303F9F"), // Indigo
+            Color.parseColor("#689F38"), // Light Green
+            Color.parseColor("#00796B"), // Teal
+            Color.parseColor("#512DA8")  // Deep Purple
         )
 
-        val wheelColors = colors.shuffled().distinct()
-
-        val wheelOptions = listOf("Option 1", "Option 2", "Option 3", "Option 4", "Option 5")
-
-        val wheelData = ArrayList(wheelOptions.map {
-            WheelData(
-                text = it,
-                textColor = intArrayOf(Color.BLACK),
-                backgroundColor = intArrayOf(wheelColors[wheelOptions.indexOf(it) % wheelColors.size]),
-                icon = bitmap,
-            )
-        })
+        val wheelData = ArrayList(
+            options.mapIndexed { index, rawText ->
+                val text = rawText.trim()
+                WheelData(
+                    text = text,
+                    textColor = intArrayOf(Color.BLACK),
+                    backgroundColor = intArrayOf(colors[index % colors.size])
+                )
+            }
+        )
 
         bind.luckyWheel.apply {
             setCenterPointRadius(50f)
             setWheelData(wheelData = wheelData)
-
-            setWheelCenterText("HELLO")
             setWheelCenterTextColor(intArrayOf(clr.secondary))
-
             setCornerPointsRadius(20f)
+            setRotationCompleteListener {
 
-            setRotationCompleteListener { wheelData ->
-                // Handle rotation completion if needed
             }
-        }
 
-        bind.luckyWheel.setOnClickListener {
-            bind.luckyWheel.rotateWheel()
+            setArrowPosition(ArrowPosition.CENTER)
+
+            setWheelCenterArrow(
+                ContextCompat.getDrawable(this@AgoraPublisherActivity, R.drawable.wheel_center)!!,
+                44f, 44f,
+                ContextCompat.getColor(this@AgoraPublisherActivity, clr.primary),
+                0f, 0f
+            )
+
+            val drawable = ContextCompat.getDrawable(this@AgoraPublisherActivity, R.drawable.ic_dollar)!!
+            val color = ContextCompat.getColor(this@AgoraPublisherActivity, R.color.onPrimary)
+            drawable.setColorFilter(color, PorterDuff.Mode.SRC_IN)
+            setWheelCenterImage(drawable, 12f, 12f)
         }
     }
 
@@ -1641,12 +1660,73 @@ class AgoraPublisherActivity : BaseActivity() {
                 false
             )
         )
-        val randomSheet = Alerts.appBottomSheet(this, true, randomizerSheetBind)
+
+        val randomSheet = Alerts.appBottomSheet(this, false, randomizerSheetBind)
+
+        var currentEntries = mutableListOf<String>()
+
+        randomizerSheetBind.close.setHapticClickListener {
+            randomSheet.dismiss()
+        }
 
         randomSheet.show()
 
-        randomizerSheetBind.description
+        randomizerSheetBind.showSpin.setHapticClickListener {
+         /*   val rawText = randomizerSheetBind.description.text?.toString().orEmpty()
 
+            currentEntries = rawText
+                .lines()
+                .map { it.trim() }
+                .filter { it.isNotEmpty() }
+                .toMutableList()
+
+            if (currentEntries.isEmpty()) {
+                Alerts.error(this, "Please enter at least one entry")
+                return@setHapticClickListener
+            }
+
+            // Update wheel with these entries
+            setUpWheel(currentEntries)
+*/
+            // Show wheel and controls
+            bind.luckyWheelLayout.isVisible = true
+            randomizerSheetBind.spinControllersView.isVisible = true
+            randomizerSheetBind.showSpin.isVisible = false
+        }
+
+
+
+        // Hide wheel
+        randomizerSheetBind.hideWheel.setHapticClickListener {
+            bind.luckyWheelLayout.isVisible = false
+            randomizerSheetBind.spinControllersView.visibility = View.INVISIBLE
+            randomizerSheetBind.showSpin.isVisible = true
+        }
+
+         randomizerSheetBind.shuffleEntries.setHapticClickListener {
+            if (currentEntries.isEmpty()) {
+                val rawText = randomizerSheetBind.description.text?.toString().orEmpty()
+                currentEntries = rawText
+                    .lines()
+                    .map { it.trim() }
+                    .filter { it.isNotEmpty() }
+                    .toMutableList()
+            }
+
+            if (currentEntries.isEmpty()) {
+                Alerts.error(this, "Please enter entries to shuffle")
+                return@setHapticClickListener
+            }
+
+            currentEntries.shuffle()
+            randomizerSheetBind.description.setText(currentEntries.joinToString("\n"))
+            setUpWheel(currentEntries)
+        }
+
+        // Spin the wheel
+        randomizerSheetBind.spinWheel.setOnClickListener {
+            bind.luckyWheel.rotateWheel()
+        }
     }
 
     private fun showShareBottomSheet() {
@@ -1708,6 +1788,7 @@ class AgoraPublisherActivity : BaseActivity() {
                 // Implementation depends on your app's search functionality
                 errorToast("Search functionality to be implemented")
             }
+
             "sms" -> {
                 val intent = Intent(Intent.ACTION_SENDTO).apply {
                     data = Uri.parse("smsto:")
@@ -1719,29 +1800,35 @@ class AgoraPublisherActivity : BaseActivity() {
                     errorToast("SMS app not available")
                 }
             }
+
             "copy" -> {
                 val clipboard = this?.getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
                 val clip = ClipData.newPlainText("Share Link", shareUrl)
                 clipboard.setPrimaryClip(clip)
                 successToast("Link copied to clipboard")
             }
+
             "ig_stories" -> {
                 shareToInstagramStories(showTitle, shareUrl)
             }
+
             "instagram" -> {
                 shareToInstagram(showTitle, shareUrl)
             }
+
             "messenger" -> {
                 shareToMessenger(showTitle, shareUrl)
             }
+
             "whatsapp" -> {
                 shareToWhatsApp(showTitle, shareUrl)
             }
+
             "more" -> {
                 val shareIntent = Intent().apply {
                     action = Intent.ACTION_SEND
                     putExtra(Intent.EXTRA_TEXT, "$showTitle\n$shareUrl")
-                    setType( "text/plain")
+                    setType("text/plain")
                 }
                 val chooserIntent = Intent.createChooser(shareIntent, "Share via")
                 if (shareIntent.resolveActivity(packageManager) != null) {
@@ -1771,7 +1858,7 @@ class AgoraPublisherActivity : BaseActivity() {
                 cachePath.mkdirs()
                 val imageFile = File(cachePath, "share_thumb.png")
                 FileOutputStream(imageFile).use { out ->
-                    bitmap.compress(android.graphics.Bitmap.CompressFormat.PNG, 100, out)
+                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, out)
                 }
 
                 val imageUri: Uri = FileProvider.getUriForFile(
@@ -1789,7 +1876,7 @@ class AgoraPublisherActivity : BaseActivity() {
                     addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
                 }
 
-               runOnUiThread {
+                runOnUiThread {
                     if (shareIntent.resolveActivity(packageManager) != null) {
                         startActivity(shareIntent)
                     } else {

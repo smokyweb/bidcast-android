@@ -106,8 +106,8 @@
                     <TextView
                         android:id="@+id/status"
                         style="@style/TitleSmall"
-                        android:paddingVertical="6dp"
-                        android:paddingHorizontal="@dimen/half_margin"
+                        android:paddingVertical="4dp"
+                        android:paddingHorizontal="6dp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginHorizontal="@dimen/margin"
@@ -116,24 +116,19 @@
                 </com.google.android.material.card.MaterialCardView>
 
 
-                <com.google.android.material.card.MaterialCardView
-                    style="@style/cardStyle"
-                    android:id="@+id/pin"
-                    android:layout_marginStart="12dp"
-                    app:cardCornerRadius="100dp"
-                    app:cardBackgroundColor="@color/primary"
-                    android:layout_width="36dp"
-                    android:layout_height="36dp">
 
                     <androidx.appcompat.widget.AppCompatImageView
-                        android:layout_width="wrap_content"
+                        android:layout_width="32dp"
                         android:src="@drawable/ic_pin"
-                        android:padding="8dp"
+                        android:padding="6dp"
+                        android:id="@+id/pin"
                         android:tint="@color/onPrimary"
+                        android:layout_marginStart="@dimen/half_margin"
                         android:layout_gravity="center"
-                        android:layout_height="wrap_content"/>
+                        android:background="@drawable/card_16"
+                        android:backgroundTint="@color/primary"
+                        android:layout_height="32dp"/>
 
-                </com.google.android.material.card.MaterialCardView>
 
 
             </LinearLayout>
