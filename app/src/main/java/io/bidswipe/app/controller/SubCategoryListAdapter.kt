@@ -38,12 +38,6 @@ class SubCategoryListAdapter(
 			}
 		}
 	}
-
-	fun updateItems(newItems: List<GetSubCategoriesResponse.Data.Subcategory?>) {
-		data.clear()
-		data.addAll(newItems)
-		notifyDataSetChanged()
-	}
 }
 
 

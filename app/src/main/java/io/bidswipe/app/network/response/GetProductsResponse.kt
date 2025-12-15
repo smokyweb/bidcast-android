@@ -36,7 +36,7 @@ data class GetProductsResponse(
 		@SerializedName("image")
 		val image: String?,
 		@SerializedName("price")
-		val price: String?,
+		val price: Double?,
 		@SerializedName("quantity")
 		val quantity: String?,
 		@SerializedName("seller_id")
@@ -51,6 +51,5 @@ data class GetProductsResponse(
 		val title: String?,
 		var selected : Boolean = false,
 		var isCurrent: Boolean? = false,
-
 	): Serializable
 }

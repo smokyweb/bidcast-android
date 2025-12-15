@@ -25,13 +25,14 @@ import io.bidswipe.app.network.response.GetMyInventoryResponse
 import io.bidswipe.app.network.response.GetMyShowResponse
 import io.bidswipe.app.network.response.GetOffersResponse
 import io.bidswipe.app.network.response.GetPrepareStepResponse
+import io.bidswipe.app.network.response.GetProductDetailsResponse
 import io.bidswipe.app.network.response.GetProductsByStatusResponse
 import io.bidswipe.app.network.response.GetProductsResponse
 import io.bidswipe.app.network.response.GetPromotePlansResponse
 import io.bidswipe.app.network.response.GetShippingProfilesResponse
 import io.bidswipe.app.network.response.GetSubCategoriesResponse
 import io.bidswipe.app.network.response.PageUrlResponse
-import io.bidswipe.app.network.response.StoreProductResponse
+import io.bidswipe.app.network.response.StoreProductMetaResponse
 import io.bidswipe.app.network.response.UpdateOfferResponse
 import io.bidswipe.app.network.response.UserDeviceResponse
 import io.bidswipe.app.network.response.UserProfileResponse
@@ -78,7 +79,7 @@ class DashViewModel @Inject constructor(
 	var productFormPackageLength = 0.0
 	var productFormPackageWeight = 0.0
 	var productFormSelectedMailClass: GetMailClassesResponse.Data.MailClasses? = null
-	var productFormProduct: GetMyInventoryResponse.Data? = null
+	var productFormProduct: GetProductsResponse.Data? = null
 	var productFormIsSubCategory = false
 	var productFormProductTitle = ""
 	var productFormDescription = ""
@@ -192,16 +193,16 @@ class DashViewModel @Inject constructor(
 		_storeProductResponse.value = repo.storeProduct(storeProductModel,productId)
 	}
 
-	private var _storeProductMetaResponse = MutableLiveData<Resource<StoreProductResponse>>()
-	val storeProductMetaRepo : MutableLiveData<Resource<StoreProductResponse>>
+	private var _storeProductMetaResponse = MutableLiveData<Resource<StoreProductMetaResponse>>()
+	val storeProductMetaRepo : MutableLiveData<Resource<StoreProductMetaResponse>>
 		get() = _storeProductMetaResponse
 
-	fun storeProductMeta(productImages : List<MultipartBody.Part>? , thumbnail : List<MultipartBody.Part>?) = viewModelScope.launch {
+	fun storeProductMeta(productImages : List<MultipartBody.Part>?, videos : List<MultipartBody.Part>?, thumbnails: List<MultipartBody.Part?>? ) = viewModelScope.launch {
 		if (! networkMonitor.hasInternet()) {
 			_storeProductMetaResponse.value = NO_INTERNET_ERROR
 			return@launch
 		}
-		_storeProductMetaResponse.value = repo.storeProductMeta(productImages , thumbnail)
+		_storeProductMetaResponse.value = repo.storeProductMeta(productImages , videos, thumbnails)
 	}
 
 	private var _getHowToSellStepResponse = MutableLiveData<Resource<GetHowToSellResponse>>()
@@ -610,4 +611,20 @@ class DashViewModel @Inject constructor(
 		}
 		_getUserProductsResponse.value = repo.getProducts(userId, status,  format, page, search, categoryIds, conditions, minPrice, maxPrice,marketPlace, type, saleType, sortBy)
 	}
+
+
+	private var _getProductDetailsResponse = MutableLiveData<Resource<GetProductDetailsResponse>>()
+	val getProductDetailsRepo: MutableLiveData<Resource<GetProductDetailsResponse>>
+		get() = _getProductDetailsResponse
+
+	fun getProductDetails(
+		productId: RequestBody?,
+	) = viewModelScope.launch {
+		if (!networkMonitor.hasInternet()) {
+			_getProductDetailsResponse.value = NO_INTERNET_ERROR
+			return@launch
+		}
+		_getProductDetailsResponse.value = repo.getProductDetails(productId)
+	}
+
 }

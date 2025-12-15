@@ -16,7 +16,7 @@ import io.bidswipe.app.network.response.GetAuctionTypeResponse
 import io.bidswipe.app.network.response.GetCategoryResponse
 import io.bidswipe.app.network.response.GetMailClassesResponse
 import io.bidswipe.app.network.response.GetProductsResponse
-import io.bidswipe.app.network.response.StoreProductResponse
+import io.bidswipe.app.network.response.StoreProductMetaResponse
 import io.bidswipe.app.utils.Const.NO_INTERNET_ERROR
 import io.bidswipe.app.utils.NetworkMonitor
 import kotlinx.coroutines.launch
@@ -203,8 +203,8 @@ class ScheduleShowViewModel @Inject constructor(
         )
     }
 
-    private var _storeProductMetaResponse = MutableLiveData<Resource<StoreProductResponse>>()
-    val storeProductMetaRepo: MutableLiveData<Resource<StoreProductResponse>>
+    private var _storeProductMetaResponse = MutableLiveData<Resource<StoreProductMetaResponse>>()
+    val storeProductMetaRepo: MutableLiveData<Resource<StoreProductMetaResponse>>
         get() = _storeProductMetaResponse
 
     fun storeProductMeta(

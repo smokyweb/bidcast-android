@@ -52,9 +52,10 @@ class SubCategoryFragment : BaseFragment<DashViewModel, FragmentSubcategoryBindi
 		bind.header.setHapticClickListener {
 			findNavController().popBackStack()
 		}
+
 		bind.confirmButton.setHapticClickListener {
-			val selectedSubCategories =
-				subCategoryList.filter { it?.subcategories?.filter { it1 -> it1?.isSelected == true }?.isNotEmpty() == true }.toList()
+			val selectedSubCategories = subCategoryList.filter { it?.subcategories?.filter { it1 -> it1?.isSelected == true }?.isNotEmpty() == true }.toList()
+
 			if (selectedSubCategories.isNotEmpty()) {
 				val selectedCategoryIds = viewModel.selectedCategories.mapNotNull { it.id }
 				val selectedSubCategoryIds = mutableListOf<Int>()
@@ -62,10 +63,12 @@ class SubCategoryFragment : BaseFragment<DashViewModel, FragmentSubcategoryBindi
 					it?.subcategories?.filter { it1 -> it1?.isSelected == true }
 						?.map { it?.id?.let { element -> selectedSubCategoryIds.add(element) } }
 				}
+
 				viewModel.userFavorite(
 					categoryIds = selectedCategoryIds,
 					subcategoriesIds = selectedSubCategoryIds
 				)
+
 				val fromAccount = arguments?.getBoolean("fromAccount", false)
 				viewModel.userFavoriteRepo.observe(viewLifecycleOwner) {
 					when (it) {

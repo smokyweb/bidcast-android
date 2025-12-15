@@ -43,12 +43,15 @@ class ExploreFragment : BaseFragment<DashViewModel, FragmentExploreBinding>() {
     private var selectedTabText = "recommended"
     private var loadingSubcategoriesForPosition: Int? = null
 
+    private var selectedCategory : GetCategoryResponse.Data?  = null
+
     private val mClick = object : RecyclerClicks {
 
         override fun itemClick(pos: Int, status: String?) {
 
-            val category = exploreList.getOrNull(pos)
-            if (category == null) return
+            selectedCategory = exploreList.getOrNull(pos)
+
+            if (selectedCategory == null) return
 
             // ---------------- SUBCATEGORY CLICK ----------------
             if (!status.isNullOrEmpty()) {
@@ -59,7 +62,7 @@ class ExploreFragment : BaseFragment<DashViewModel, FragmentExploreBinding>() {
                 findNavController().navigate(
                     ids.goTopExploreType,
                     bundleOf(
-                        "category" to category.name,
+                        "category" to selectedCategory?.name,
                         "subcategory" to subcategory.name
                     )
                 )
@@ -69,7 +72,7 @@ class ExploreFragment : BaseFragment<DashViewModel, FragmentExploreBinding>() {
             // ---------------- CATEGORY CLICK ----------------
 
             val selectedPos = exploreAdapter.getSelectedPosition()
-            val categoryId = category.id
+            val categoryId = selectedCategory?.id
 
             // Toggle OFF (already selected)
             if (selectedPos == pos && selectedPos != -1) {
@@ -93,7 +96,7 @@ class ExploreFragment : BaseFragment<DashViewModel, FragmentExploreBinding>() {
                 // No category ID → navigate directly
                 findNavController().navigate(
                     ids.goTopExploreType,
-                    bundleOf("category" to category.name)
+                    bundleOf("category" to selectedCategory?.name)
                 )
             }
         }
@@ -154,7 +157,6 @@ class ExploreFragment : BaseFragment<DashViewModel, FragmentExploreBinding>() {
             )
         }
 
-
         bind.searchLayout.isEndIconVisible = false
 
         bind.search.addTextChangedListener(object : TextWatcher {
@@ -200,48 +202,67 @@ class ExploreFragment : BaseFragment<DashViewModel, FragmentExploreBinding>() {
         viewModel.getSubCategoriesRepo.observe(viewLifecycleOwner) {
             when (it) {
                 is Resource.Success -> {
+
+                    viewModel.getSubCategoriesRepo.value = null
+
                     loadingSubcategoriesForPosition?.let { position ->
                         val subcategoriesData = it.value.data?.firstOrNull()
-                        val subcategories = subcategoriesData?.subcategories ?: emptyList()
-                        val category = exploreList.getOrNull(position)
-                        
-                        // Build subcategory list - add "All [Category Name]" as first item
-                        val subcategoryList = mutableListOf<GetSubCategoriesResponse.Data.Subcategory?>()
-                        
-                        // Add "All" option with parent category info (matching screenshot)
-                        if (category != null) {
-                            val allCategory = GetSubCategoriesResponse.Data.Subcategory(
-                                id = category.id,
-                                categoryId = category.id,
-                                name = "All ${category.name}",
-                                image = category.image,
-                                thumbnail = category.thumbnail,
-                                color = category.color,
-                                extraFields = null,
-                                isSelected = false
-                            )
-                            subcategoryList.add(allCategory)
-                        }
-                        
-                        // Add actual subcategories
-                        subcategoryList.addAll(subcategories)
-                        
-                        // Update adapter with selected position and subcategories
-                        exploreAdapter.setSelectedPosition(position, subcategoryList)
-                        
-                        // Invalidate span size cache and request layout recalculation
-                        (bind.recycler.layoutManager as? GridLayoutManager)?.apply {
-                            spanSizeLookup.invalidateSpanIndexCache()
-                            // Request layout to ensure proper grid recalculation
-                            bind.recycler.post {
-                                requestLayout()
+
+                        log("SubCategories : ${subcategoriesData?.subcategories}")
+
+                        if (subcategoriesData?.subcategories?.isNotEmpty() == true){
+                            val subcategories = subcategoriesData.subcategories
+                            val category = exploreList.getOrNull(position)
+
+                            // Build subcategory list - add "All [Category Name]" as first item
+                            val subcategoryList = mutableListOf<GetSubCategoriesResponse.Data.Subcategory?>()
+
+                            // Add "All" option with parent category info (matching screenshot)
+                            if (category != null) {
+                                val allCategory = GetSubCategoriesResponse.Data.Subcategory(
+                                    id = category.id,
+                                    categoryId = category.id,
+                                    name = "All ${category.name}",
+                                    image = category.image,
+                                    thumbnail = category.thumbnail,
+                                    color = category.color,
+                                    extraFields = null,
+                                    isSelected = false
+                                )
+                                subcategoryList.add(allCategory)
                             }
+
+                            // Add actual subcategories
+                            subcategoryList.addAll(subcategories)
+
+                            // Update adapter with selected position and subcategories
+                            exploreAdapter.setSelectedPosition(position, subcategoryList)
+
+                            // Invalidate span size cache and request layout recalculation
+                            (bind.recycler.layoutManager as? GridLayoutManager)?.apply {
+                                spanSizeLookup.invalidateSpanIndexCache()
+                                // Request layout to ensure proper grid recalculation
+                                bind.recycler.post {
+                                    requestLayout()
+                                }
+                            }
+
+                            loadingSubcategoriesForPosition = null
+                        }else{
+                            findNavController().navigate(
+                                ids.goTopExploreType,
+                                bundleOf(
+                                    "category" to selectedCategory?.name,
+                                    "subcategory" to selectedCategory?.name
+                                )
+                            )
                         }
-                        
-                        loadingSubcategoriesForPosition = null
+
                     }
                 }
                 is Resource.Error -> {
+                    viewModel.getSubCategoriesRepo.value = null
+
                     loadingSubcategoriesForPosition?.let { position ->
                         // Clear selection on error
                         exploreAdapter.clearSelection()

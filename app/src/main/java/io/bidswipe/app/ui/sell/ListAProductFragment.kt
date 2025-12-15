@@ -17,6 +17,7 @@ import androidx.core.text.color
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.tabs.TabLayout
+import io.bidswipe.app.App
 import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseFragment
 import io.bidswipe.app.controller.CategoryListAdapter
@@ -31,7 +32,8 @@ import io.bidswipe.app.model.StoreProductRequest
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.network.response.GetCategoryResponse
 import io.bidswipe.app.network.response.GetMailClassesResponse
-import io.bidswipe.app.network.response.GetMyInventoryResponse
+import io.bidswipe.app.network.response.GetProductDetailsResponse
+import io.bidswipe.app.network.response.GetProductsResponse
 import io.bidswipe.app.network.response.GetShippingProfilesResponse
 import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.ui.dashboard.DashViewModel
@@ -42,6 +44,7 @@ import io.bidswipe.app.utils.cropper.CustomCropImageContract
 import io.bidswipe.app.utils.finish
 import io.bidswipe.app.utils.hideKeyboard
 import io.bidswipe.app.utils.parse
+import io.bidswipe.app.utils.request
 import io.bidswipe.app.utils.setHapticClickListener
 import io.bidswipe.app.utils.value
 import okhttp3.MultipartBody
@@ -65,7 +68,7 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
     lateinit var imageAdapter: ImageAdapter
     var uploadItemIndex = -1
     var isSubCategory = false
-    private var product: GetMyInventoryResponse.Data? = null
+    private var product: GetProductsResponse.Data? = null
     private var categoryList = mutableListOf<GetCategoryResponse.Data?>()
     private var subCategoryList = mutableListOf<GetCategoryResponse.Data?>()
     private var mailClassesList = mutableListOf<GetMailClassesResponse.Data.MailClasses?>()
@@ -311,8 +314,7 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
 
         // Get product from intent only if not already restored
         if (product == null) {
-            product =
-                activity?.intent?.getSerializableExtra("product") as? GetMyInventoryResponse.Data
+            product = activity?.intent?.getSerializableExtra("product") as? GetProductsResponse.Data
         }
 
         bind.root.setOnClickListener {
@@ -332,7 +334,6 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
                 append("Update")
             }
             bind.header.setHeaderText("Update Product")
-            addProductData(product)
         } else if (product != null && viewModel.productFormProduct != null) {
             // Restore UI state for edit mode
             bind.saveDraft.isVisible = product?.status == "draft"
@@ -427,6 +428,7 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
                 }
             }
         )
+
         bind.images.adapter = imageAdapter
         bind.images.layoutManager = LinearLayoutManager(mCtx, LinearLayoutManager.HORIZONTAL, false)
         bind.images.setHasFixedSize(false)
@@ -527,6 +529,7 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
         }
 
         bind.quantity.setText(viewModel.productFormQuantity.toString())
+
         bind.quantity.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
@@ -536,9 +539,13 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
             }
         })
 
+        viewModel.getProductDetails(product?.id.toString().request())
+
         viewModel.getCategory()
 
         viewModel.getShippingProfile()
+
+        viewModel.getMailClasses()
 
         viewModel.getShippingProfileRepo.observe(viewLifecycleOwner) {
             when (it) {
@@ -700,7 +707,6 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
             }
         }
 
-        viewModel.getMailClasses()
         viewModel.getMailClassesRepo.observe(viewLifecycleOwner) {
             when (it) {
                 is Resource.Success -> {
@@ -723,7 +729,7 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
                             }
                         } else {
                             // Original logic for product edit mode
-                            product?.let { pr ->
+                           /* product?.let { pr ->
                                 val sel = mailClassesList.findLast { mailClass ->
                                     log("CLASS ${pr.mailClass} ${mailClass?.label} ${pr.mailClass?.lowercase() == mailClass?.label?.lowercase()}")
                                     pr.mailClass?.lowercase() == mailClass?.label?.lowercase()
@@ -734,7 +740,7 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
                                     bind.mailClass.setText(sel.label, false)
                                 }
                                 log("Selected mail class: $selectedMailClass")
-                            }
+                            }*/
                         }
 
                     }
@@ -757,6 +763,34 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
                 else -> {}
             }
 
+        }
+
+        viewModel.getProductDetailsRepo.observe(viewLifecycleOwner) {
+            bind.loader.isVisible = false
+
+            when (it) {
+                is Resource.Success -> {
+                    // Clear ViewModel state on successful save
+                    val mData = it.value.data
+
+                    addProductData(mData)
+
+                }
+
+                is Resource.Error -> {
+                    it.parse(mCtx, TAG, object : AlertClicks {
+                        override fun primaryClick(dialog: AppBottomSheet) {
+                            dialog.dismiss()
+                        }
+
+                        override fun secondaryClick(dialog: AppBottomSheet) {
+                            dialog.dismiss()
+                        }
+                    })
+                }
+
+                else -> {}
+            }
         }
 
     }
@@ -995,20 +1029,27 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
 
     }
 
-    private fun addProductData(product: GetMyInventoryResponse.Data?) {
+    private fun addProductData(product: GetProductDetailsResponse.Data?) {
+
         categoryId = if (product?.categoryId != null) product.categoryId.toString() else ""
-        subCategoryId = product?.subCategoryId ?: ""
-        if (product?.subCategory != null) {
+
+        subCategoryId = if (product?.subCategoryId != null) product.subCategoryId.toString() else ""
+
+        val categoryName = if (categoryId.isNotEmpty()) App.categoryList.find { it?.id == categoryId.toInt() }?.name ?:"" else ""
+
+        if (subCategoryId.isNotEmpty()) {
+//            val subCategoryName = App.categoryList.find { it?. == categoryId.toInt() }?.name
+
             bind.category.setText(buildSpannedString {
-                append(product.category?.name)
-                append("(${product.subCategory.name})")
+                append(categoryName)
+//                append("(${product.subCategory.name})")
             })
         } else {
-            bind.category.setText(product?.category?.name)
+            bind.category.setText(categoryName)
         }
         bind.productTitle.setText(product?.title ?: "")
         bind.description.setText(product?.description ?: "")
-        bind.quantity.setText((product?.quantity ?: "").toString())
+        bind.quantity.setText((product?.quantity ?: ""))
         bind.width.setText((product?.width ?: "").toString())
         bind.height.setText((product?.height ?: "").toString())
         bind.length.setText((product?.length ?: "").toString())
@@ -1115,6 +1156,7 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
         productId: String?,
         type: String,
         images: List<Map<String, String?>>? = null,
+        videos: List<Map<String, String?>>? = null,
         variantData: List<Map<String?, Any?>>? = null,
     ) {
         viewModel.storeProduct(
@@ -1131,6 +1173,7 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
                 shippingProfileId = profileId.ifEmpty { null },
                 status = type,
                 images = images,
+                videos = videos,
                 variant = variantData,
                 width = bind.width.value(),
                 height = bind.height.value(),
@@ -1203,7 +1246,7 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
         val productId = if (product != null) product?.id.toString() else ""
         if (imagePartList.isNotEmpty() || videoPartList.isNotEmpty()) {
             // You may need to update storeProductMeta to handle videos
-            viewModel.storeProductMeta(imagePartList, thumbnailPartList)
+            viewModel.storeProductMeta(imagePartList, videoPartList, thumbnailPartList)
 
             viewModel.storeProductMetaRepo.observe(viewLifecycleOwner) {
                 when (it) {
@@ -1211,10 +1254,16 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
                         createProduct(
                             productId,
                             type,
-                            it.value.data?.map { productMeta ->
+                            it.value.data?.images?.map { productMeta ->
                                 mapOf(
                                     "image" to productMeta?.images,
                                     "thumbnail" to productMeta?.thumbnail
+                                )
+                            },
+
+                            it.value.data?.videos?.map { productMeta ->
+                                mapOf(
+                                    "videos" to productMeta?.videos,
                                 )
                             },
                             variantData
@@ -1239,7 +1288,7 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
             }
 
         } else {
-            createProduct(productId.toString(), type, emptyList(), variantData)
+            createProduct(productId.toString(), type, emptyList(), emptyList(), variantData)
         }
 
     }

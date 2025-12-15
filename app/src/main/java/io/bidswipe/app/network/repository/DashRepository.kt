@@ -47,10 +47,12 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
 
 	suspend fun storeProductMeta(
 		productImages: List<MultipartBody.Part?>?,
+		videos: List<MultipartBody.Part?>?,
 		thumbnail: List<MultipartBody.Part?>? = null,
 	) = call {
 		api.storeProductMeta(
 			productImages,
+			videos,
 			thumbnail
 		)
 	}

@@ -42,7 +42,8 @@ class ExploreTypeFragment : BaseFragment<DashViewModel , FragmentExploreTypeBind
 	private lateinit var homeAdapter : HomeAdapter
 	private var categoriesList = mutableListOf<String>()
 	private var showList = mutableListOf<GetMyShowResponse.Data?>()
-	private var romIdsList = mutableListOf<StreamModel>()
+	private var romIdsList = mutableListOf<String>()
+	private var streamList = mutableListOf<StreamModel>()
 	private var category = ""
 
 	private var selectedTabText = "live"
@@ -71,11 +72,12 @@ class ExploreTypeFragment : BaseFragment<DashViewModel , FragmentExploreTypeBind
 								Intent(
 									mCtx ,
 									ViewLiveShowActivity::class.java
-								).putExtra("roomId" , roomId)
-									.putExtra("userId" , showList[pos]?.userId.toString())
-									.putExtra(
-										"roomIdsList" ,
-										romIdsList.joinToString(",") { it.roomId }
+								) .putExtra("roomId", roomId)
+									.putExtra("userId", showList[pos]?.userId.toString())
+									.putExtra("roomIdsList", romIdsList.joinToString(","))
+									.putParcelableArrayListExtra(
+										"streamList",
+										ArrayList(streamList)
 									)
 							)
 						}
@@ -169,13 +171,26 @@ class ExploreTypeFragment : BaseFragment<DashViewModel , FragmentExploreTypeBind
 
 					val mData = it.value.data
 
-					mData?.forEach {
+					/*mData?.forEach {
 						romIdsList.add(StreamModel(it?.roomId.toString() , ""))
-					}
+					}*/
 
 					showList.clear()
 					mData?.forEach {
 						showList.add(it)
+					}
+
+					streamList.clear()
+
+					mData?.forEach {
+						streamList.add(
+							StreamModel(
+								it?.roomId.toString(),
+								it?.rtcToken ?: "",
+								thumbnail = it?.thumbnail?.get(0)
+							)
+						)
+						romIdsList.add(it?.roomId.toString())
 					}
 
 					if (showList.isEmpty()) {

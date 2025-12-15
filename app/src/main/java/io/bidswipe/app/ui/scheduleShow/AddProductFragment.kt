@@ -19,7 +19,7 @@ import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.model.LiveShowModel
 import io.bidswipe.app.model.TutorialShowModel
 import io.bidswipe.app.network.Resource
-import io.bidswipe.app.network.response.GetMyInventoryResponse
+import io.bidswipe.app.network.response.GetProductsResponse
 import io.bidswipe.app.ui.agoraStream.AgoraPublisherActivity
 import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.ui.sellerHub.SellerHubActivity
@@ -52,19 +52,19 @@ class AddProductFragment : BaseFragment<ScheduleShowViewModel, FragmentAddProduc
 			if (result.resultCode == Activity.RESULT_OK) {
 				val data = result.data
 				val selectedProducts =
-					data?.getSerializableExtra("selectedProducts") as? ArrayList<GetMyInventoryResponse.Data>
+					data?.getSerializableExtra("selectedProducts") as? ArrayList<GetProductsResponse.Data>
 
 				Log.d(TAG, "$selectedProducts ")
 				selectedProducts?.forEach { data ->
 
 					val product =
 						LiveShowModel.Product(
-							data.category?.name,
+							data.category,
 							data.id.toString(),
-							data.images?.get(0),
+							data.image,
 							data.status,
 							data.title,
-							data.pricing.toString(),
+							data.price.toString(),
 							data.quantity.toString(),
 							selected = true
 						)

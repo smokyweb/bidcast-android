@@ -45,7 +45,7 @@ class ProductWeightFragment : BaseFragment<ScheduleShowViewModel, FragmentProduc
 			val imageFiles = viewModel.productImages.filterNotNull().map { File(it) }
 
 			if (imageFiles.isEmpty()) {
-				createProduct(null)
+				createProduct(null, null)
 				return@setHapticClickListener
 			}
 
@@ -73,7 +73,7 @@ class ProductWeightFragment : BaseFragment<ScheduleShowViewModel, FragmentProduc
 		viewModel.storeProductMeta(imagePartList, thumbnailPartList)
 	}
 
-	private fun createProduct(imageUrls: List<Map<String, String>>?) {
+	private fun createProduct(imageUrls: List<Map<String, String>>?, videoUrls: List<Map<String, String>>?) {
 
 		viewModel.storeProduct(StoreProductRequest(
 			categoryId = viewModel.productCategoryId,
@@ -87,6 +87,7 @@ class ProductWeightFragment : BaseFragment<ScheduleShowViewModel, FragmentProduc
 			shippingProfileId = "4",
 			status = "active",
 			images = imageUrls,
+			videos = videoUrls,
 			subCategoryId = viewModel.productSubCategoryId.ifEmpty { null }?.toInt(),
 			variant = viewModel.variantData,
 			weight = viewModel.productWeight,
@@ -104,8 +105,9 @@ class ProductWeightFragment : BaseFragment<ScheduleShowViewModel, FragmentProduc
 		viewModel.storeProductMetaRepo.observe(viewLifecycleOwner) { it ->
 			when (it) {
 				is Resource.Success -> {
+
 					viewModel.storeProductMetaRepo.value=null
-					val imageData = it.value.data?.mapNotNull { data ->
+					val imageData = it.value.data?.images?.mapNotNull { data ->
 						if (data?.images != null && data.thumbnail != null) {
 							mapOf(
 								"image" to data.images, "thumbnail" to data.thumbnail
@@ -114,7 +116,18 @@ class ProductWeightFragment : BaseFragment<ScheduleShowViewModel, FragmentProduc
 							null
 						}
 					}
-					createProduct(imageData)
+
+					val videoData = it.value.data?.videos?.mapNotNull { data ->
+						if (data?.videos != null ) {
+							mapOf(
+								"videos" to data.videos
+							)
+						} else {
+							null
+						}
+					}
+
+					createProduct(imageData, videoData )
 				}
 
 				is Resource.Error -> {

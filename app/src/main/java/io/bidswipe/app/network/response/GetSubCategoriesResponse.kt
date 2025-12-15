@@ -49,7 +49,7 @@ data class GetSubCategoriesResponse(
             @SerializedName("color")
             val color : String? ,
             @SerializedName("is_selected")
-            var isSelected : Boolean? = false ,
+            var isSelected : Boolean? = false
         ) {
 			@Keep
 			data class ExtraField(

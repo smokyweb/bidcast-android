@@ -14,7 +14,6 @@ import io.bidswipe.app.base.BaseAdapter
 import io.bidswipe.app.databinding.ProductSelectionItemBinding
 import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.model.LiveShowModel
-import io.bidswipe.app.network.response.GetProductsResponse
 import io.bidswipe.app.utils.asCapital
 import io.bidswipe.app.utils.asMoney
 import io.bidswipe.app.utils.dpToPx

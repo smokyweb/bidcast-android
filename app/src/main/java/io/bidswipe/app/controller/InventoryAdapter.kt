@@ -49,7 +49,7 @@ class InventoryAdapter(
 				append(" ")
 				append(Const.BULLET)
 				append(" ")}
-				append(item?.category)
+				append(item?.category ?:"")
 			}
 
 			if (item?.image?.isNotEmpty() == true){
@@ -57,7 +57,7 @@ class InventoryAdapter(
 			}
 
 			bind.price.text = buildSpannedString {
-				append((item?.price ?:"0").asMoney())
+				append((item?.price ?: 0.0).toString().asMoney())
 //				append(Const.BULLET)
 //				append(if (item?.auction == true) "Auction" else "MarketPlace")
 			}

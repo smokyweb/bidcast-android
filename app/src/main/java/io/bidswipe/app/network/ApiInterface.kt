@@ -75,7 +75,7 @@ import io.bidswipe.app.network.response.SellerInfoResponse
 import io.bidswipe.app.network.response.SellerStatusResponse
 import io.bidswipe.app.network.response.SentTipAmountResponse
 import io.bidswipe.app.network.response.SetDefaultAddressResponse
-import io.bidswipe.app.network.response.StoreProductResponse
+import io.bidswipe.app.network.response.StoreProductMetaResponse
 import io.bidswipe.app.network.response.VisitorsAnalyticsResponse
 import io.bidswipe.app.network.response.WalletInfoResponse
 import io.bidswipe.app.utils.Utils
@@ -174,8 +174,9 @@ interface ApiInterface {
 	@POST("api/store-product-meta")
 	suspend fun storeProductMeta(
 		@Part productImages : List<MultipartBody.Part?>? ,
+		@Part videos : List<MultipartBody.Part?>? ,
 		@Part thumbnail : List<MultipartBody.Part?>? ,
-	) : StoreProductResponse
+	) : StoreProductMetaResponse
 
 	@GET("api/how-to-sell")
 	suspend fun getHowToSellStep() : GetHowToSellResponse
@@ -503,6 +504,12 @@ interface ApiInterface {
 	suspend fun saveSellerProduct(
 		@Part("product_id") productId : RequestBody? ,
 	) : CommonResponse
+
+	/*@Multipart
+	@POST("api/fetch-product")
+	suspend fun getProductDetails(
+		@Part("product_id") productId : RequestBody?
+	) : CommonResponse*/
 
 	@Multipart
 	@POST("api/v1/get-my-purchases-orders")

@@ -198,7 +198,7 @@ class ProductDetailsFragment : BaseFragment<ProductViewModel, FragmentProductDet
 					bind.posted.text =
 						Utils.getTimeAgo(mData?.createdAt ?: "", Const.DD_MM_YYYY_HH_MM_SS)
 
-					bind.address.text = mData?.shippingAddress?.streetAddress ?: "--"
+					bind.address.text = mData?.shippingAdress?.streetAddress ?: "--"
 
 					offerList.clear()
 

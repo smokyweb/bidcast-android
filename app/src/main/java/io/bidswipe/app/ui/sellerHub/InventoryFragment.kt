@@ -67,7 +67,6 @@ class InventoryFragment : BaseFragment<SellerHubViewModel, FragmentInventoryBind
     private var maxPrice: String? = null
     private var sort: String? = null
 
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 

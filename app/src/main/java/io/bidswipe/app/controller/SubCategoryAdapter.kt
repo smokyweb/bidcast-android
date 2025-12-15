@@ -12,27 +12,27 @@ import io.bidswipe.app.utils.loadUrl
 import io.bidswipe.app.utils.setHapticClickListener
 
 class SubCategoryAdapter(
-	items : List<GetSubCategoriesResponse.Data.Subcategory?> ,
-	val mClicks : RecyclerClicks ,
-) : BaseAdapter<GetSubCategoriesResponse.Data.Subcategory , CategoryItemBinding>(items) {
+	items: List<GetSubCategoriesResponse.Data.Subcategory?>,
+	val mClicks: RecyclerClicks,
+) : BaseAdapter<GetSubCategoriesResponse.Data.Subcategory, CategoryItemBinding>(items) {
 
 	override fun bindView(
-		inflater : LayoutInflater ,
-		parent : ViewGroup ,
-	) = CategoryItemBinding.inflate(inflater , parent , false)
+		inflater: LayoutInflater,
+		parent: ViewGroup,
+	) = CategoryItemBinding.inflate(inflater, parent, false)
 
 	override fun onBind(
-		holder : BaseViewHolder<CategoryItemBinding> ,
-		position : Int ,
-		item : GetSubCategoriesResponse.Data.Subcategory? ,
+		holder: BaseViewHolder<CategoryItemBinding>,
+		position: Int,
+		item: GetSubCategoriesResponse.Data.Subcategory?,
 	) {
 		with(holder.bind) {
-            root.setHapticClickListener {
+			root.setHapticClickListener {
 				mClicks.itemClick(position)
 			}
 
 			title.text = item?.name
-			categoryImage.loadUrl(mCtx , item?.image ?: "")
+			categoryImage.loadUrl(mCtx, item?.image ?: "")
 
 			if (item?.isSelected == true) {
 				main.setCardBackgroundColor(mCtx.getColor(R.color.primaryContainer))

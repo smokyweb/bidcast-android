@@ -10,32 +10,32 @@ import io.bidswipe.app.utils.loadUrl
 import io.bidswipe.app.utils.setHapticClickListener
 
 class SubCategoryRecyclerAdapter(
-	items : List<GetSubCategoriesResponse.Data?> ,
-	val mClicks : RecyclerClicks ,
-) : BaseAdapter<GetSubCategoriesResponse.Data , SubcategoryRecyclerItemBinding>(items) {
+	items: List<GetSubCategoriesResponse.Data?>,
+	val mClicks: RecyclerClicks,
+) : BaseAdapter<GetSubCategoriesResponse.Data, SubcategoryRecyclerItemBinding>(items) {
 	override fun bindView(
-		inflater : LayoutInflater ,
-		parent : ViewGroup ,
-	) = SubcategoryRecyclerItemBinding.inflate(inflater , parent , false)
+		inflater: LayoutInflater,
+		parent: ViewGroup,
+	) = SubcategoryRecyclerItemBinding.inflate(inflater, parent, false)
 
-	lateinit var subCategoryAdapter : SubCategoryAdapter
+	lateinit var subCategoryAdapter: SubCategoryAdapter
 
 	override fun onBind(
-		holder : BaseViewHolder<SubcategoryRecyclerItemBinding> ,
-		position : Int ,
-		item : GetSubCategoriesResponse.Data? ,
+		holder: BaseViewHolder<SubcategoryRecyclerItemBinding>,
+		position: Int,
+		item: GetSubCategoriesResponse.Data?,
 	) {
 		with(holder.bind) {
-            root.setHapticClickListener {
+			root.setHapticClickListener {
 				mClicks.itemClick(position)
 			}
 
 			heading.text = item?.name
-			headingImage.loadUrl(mCtx , item?.image ?: "")
+			headingImage.loadUrl(mCtx, item?.image ?: "")
 
-			subCategoryAdapter = SubCategoryAdapter(item?.subcategories ?: mutableListOf() , object : RecyclerClicks {
-				override fun itemClick(pos : Int , status : String?) {
-					mClicks.itemClick(position , pos.toString())
+			subCategoryAdapter = SubCategoryAdapter(item?.subcategories ?: mutableListOf(), object : RecyclerClicks {
+				override fun itemClick(pos: Int, status: String?) {
+					mClicks.itemClick(position, pos.toString())
 				}
 			})
 			recyclerView.adapter = subCategoryAdapter
