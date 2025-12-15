@@ -393,7 +393,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
                 if (args.optString("room_id") == roomID) {
                     requireActivity().runOnUiThread {
                         bind.showNotes.isVisible=true
-                     showNotes=   args.optString("note")?:""
+                     showNotes=   args.optString("show_note")?:""
                     }
                 }
             }
