@@ -16,7 +16,10 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Rational
+import android.view.KeyEvent
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
@@ -338,12 +341,15 @@ class AgoraPublisherActivity : BaseActivity() {
                 errorToast("No sharing apps available")
             }
 
-
         }
 
         bind.showNotes.setHapticClickListener {
-            showNotesSheet()
-            bind.showNotes.isVisible = false
+            if(isShowLive) {
+                showNotesSheet()
+                bind.showNotes.isVisible = false
+            }else{
+                errorToast( "Please start live show to access this feature")
+            }
         }
 
         bind.poll.setHapticClickListener {
@@ -1219,6 +1225,7 @@ class AgoraPublisherActivity : BaseActivity() {
                 false
             )
         )
+
         val newHeight = window?.decorView?.measuredHeight
         val viewGroupLayoutParams = showNotesSheetBind.root.layoutParams ?: ViewGroup.LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT,
@@ -1232,7 +1239,7 @@ class AgoraPublisherActivity : BaseActivity() {
             resources.dpToPx(16),
             resources.dpToPx(16),
             resources.dpToPx(16),
-            navigationBarHeight
+            navigationBarHeight+resources.dpToPx(32)
         )
 
         val sheet = Alerts.appBottomSheet(this, false, showNotesSheetBind)
@@ -1627,6 +1634,7 @@ class AgoraPublisherActivity : BaseActivity() {
             }
         )
 
+
         bind.luckyWheel.apply {
             setCenterPointRadius(50f)
             setWheelData(wheelData = wheelData)
@@ -1645,7 +1653,8 @@ class AgoraPublisherActivity : BaseActivity() {
                 0f, 0f
             )
 
-            val drawable = ContextCompat.getDrawable(this@AgoraPublisherActivity, R.drawable.ic_dollar)!!
+            val drawable =
+                ContextCompat.getDrawable(this@AgoraPublisherActivity, R.drawable.ic_dollar)!!
             val color = ContextCompat.getColor(this@AgoraPublisherActivity, R.color.onPrimary)
             drawable.setColorFilter(color, PorterDuff.Mode.SRC_IN)
             setWheelCenterImage(drawable, 12f, 12f)
@@ -1663,6 +1672,14 @@ class AgoraPublisherActivity : BaseActivity() {
 
         val randomSheet = Alerts.appBottomSheet(this, false, randomizerSheetBind)
 
+        if(bind.luckyWheelLayout.isVisible){
+            randomizerSheetBind.spinControllersView.isVisible=true
+            randomizerSheetBind.showSpin.isVisible=false
+        }else{
+            randomizerSheetBind.spinControllersView.visibility = View.INVISIBLE
+            randomizerSheetBind.showSpin.isVisible = true
+        }
+
         var currentEntries = mutableListOf<String>()
 
         randomizerSheetBind.close.setHapticClickListener {
@@ -1672,29 +1689,40 @@ class AgoraPublisherActivity : BaseActivity() {
         randomSheet.show()
 
         randomizerSheetBind.showSpin.setHapticClickListener {
-         /*   val rawText = randomizerSheetBind.description.text?.toString().orEmpty()
 
-            currentEntries = rawText
-                .lines()
-                .map { it.trim() }
-                .filter { it.isNotEmpty() }
-                .toMutableList()
-
-            if (currentEntries.isEmpty()) {
-                Alerts.error(this, "Please enter at least one entry")
-                return@setHapticClickListener
-            }
-
-            // Update wheel with these entries
-            setUpWheel(currentEntries)
-*/
             // Show wheel and controls
             bind.luckyWheelLayout.isVisible = true
             randomizerSheetBind.spinControllersView.isVisible = true
             randomizerSheetBind.showSpin.isVisible = false
         }
 
+        randomizerSheetBind.manualEntry.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(charSequence: CharSequence?, start: Int, count: Int, after: Int) {
 
+            }
+
+            override fun onTextChanged(charSequence: CharSequence?, start: Int, before: Int, count: Int) {
+                // Handle text changes as the user types
+                val rawText = randomizerSheetBind.manualEntry.text?.toString().orEmpty()
+
+                // Split text into lines
+                currentEntries = rawText
+                    .lines()
+                    .map { it.trim() }
+                    .filter { it.isNotEmpty() }
+                    .toMutableList()
+
+                if (currentEntries.isEmpty()) {
+                    Alerts.error(this@AgoraPublisherActivity, "Please enter at least one entry")
+                } else {
+                    setUpWheel(currentEntries)
+                }
+            }
+
+            override fun afterTextChanged(editable: Editable?) {
+
+            }
+        })
 
         // Hide wheel
         randomizerSheetBind.hideWheel.setHapticClickListener {
@@ -1703,9 +1731,9 @@ class AgoraPublisherActivity : BaseActivity() {
             randomizerSheetBind.showSpin.isVisible = true
         }
 
-         randomizerSheetBind.shuffleEntries.setHapticClickListener {
+        randomizerSheetBind.shuffleEntries.setHapticClickListener {
             if (currentEntries.isEmpty()) {
-                val rawText = randomizerSheetBind.description.text?.toString().orEmpty()
+                val rawText = randomizerSheetBind.manualEntry.text?.toString().orEmpty()
                 currentEntries = rawText
                     .lines()
                     .map { it.trim() }
@@ -1719,7 +1747,13 @@ class AgoraPublisherActivity : BaseActivity() {
             }
 
             currentEntries.shuffle()
-            randomizerSheetBind.description.setText(currentEntries.joinToString("\n"))
+            randomizerSheetBind.manualEntry.setText(currentEntries.joinToString("\n"))
+            setUpWheel(currentEntries)
+        }
+
+        randomizerSheetBind.removeAll.setOnClickListener {
+            currentEntries.clear()
+            randomizerSheetBind.manualEntry.setText("")
             setUpWheel(currentEntries)
         }
 
@@ -1727,6 +1761,7 @@ class AgoraPublisherActivity : BaseActivity() {
         randomizerSheetBind.spinWheel.setOnClickListener {
             bind.luckyWheel.rotateWheel()
         }
+
     }
 
     private fun showShareBottomSheet() {

@@ -12,6 +12,7 @@
         android:layout_marginVertical="@dimen/margin"
         android:gravity="center_vertical"
         android:layout_height="wrap_content">
+
         <TextView
             style="@style/TitleLarge"
             android:layout_weight="1"
@@ -105,6 +106,7 @@
 
         <com.google.android.material.textfield.TextInputLayout
             style="@style/inputBoxStyle"
+            android:id="@+id/manual_entry_box"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/margin"
@@ -114,11 +116,12 @@
             app:boxCornerRadiusTopStart="@dimen/margin">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/description"
+                android:id="@+id/manual_entry"
                 style="@style/inputTextStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="top"
+                android:inputType="textMultiLine"
                 android:hint="Enter manual entries here separated by next line..."
                 android:minLines="4" />
 
@@ -127,10 +130,9 @@
         <com.google.android.material.button.MaterialButton
             style="@style/appBtn"
             android:layout_width="match_parent"
+            android:id="@+id/remove_all"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/margin"
             android:text="Remove All" />
-
     </LinearLayout>
-
 </LinearLayout>

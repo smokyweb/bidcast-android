@@ -215,6 +215,10 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
             bind.showNotes.isVisible = false
         }
 
+        bind.giveawayLayout.setOnClickListener {
+            successToast("Coming Soon..")
+        }
+
         commentAdapter = CommentAdapter(commentList, roomID.split("_")[2])
 
         livePollAdapter = LivePollOptionAdapter(livePollOptionList, object : RecyclerClicks {

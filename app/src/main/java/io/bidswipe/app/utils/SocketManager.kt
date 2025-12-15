@@ -315,12 +315,14 @@ class SocketManager private constructor(
 			put("room_id", roomId)
 			put("note", note)
 		}
-		socket?.emit("addShowNote", payload)
+		Log.d(TAG, "EMIT: SHOW NOTE  - $payload")
+
+		socket?.emit("add_show_note", payload)
 	}
 
 
 	fun receiveShowNotes(listener: (count: JSONObject) -> Unit) {
-		socket?.on("showNotes") { args ->
+		socket?.on("get_show_note") { args ->
 			val obj = args.firstOrNull()
 			if (obj is JSONObject) {
 				listener(obj)

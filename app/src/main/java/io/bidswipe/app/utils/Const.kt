@@ -107,7 +107,7 @@ object Const {
 //		LiveMoreOption("Add Coupons" , false , draw.ic_coupon) ,
         LiveMoreOption("Raid", false, draw.ic_people),
         LiveMoreOption("Create Poll", false, draw.ic_poll),
-        LiveMoreOption("Randomizer", false, draw.ic_crown),
+        LiveMoreOption("Randomizer", false, draw.ic_spin_wheel),
     )
 
 }
