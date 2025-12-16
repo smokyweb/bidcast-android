@@ -82,6 +82,8 @@ import io.bidswipe.app.utils.Utils
 import io.bidswipe.app.utils.request
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
+import okhttp3.ResponseBody
+import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Multipart
@@ -784,6 +786,14 @@ interface ApiInterface {
 		@Query("start_date") startDate : String?,
 		@Query("end_date") endDate : String?
 	) : CommonResponse
+
+	@GET("api/export-deatils")
+	 fun exportAnalyticsDataD(
+		@Query("type") type : String?,
+		@Query("filter") filter : String?,
+		@Query("start_date") startDate : String?,
+		@Query("end_date") endDate : String?
+	) : Call<ResponseBody>
 
 }
 

@@ -1,9 +1,14 @@
 package io.bidswipe.app.ui.sellerHub
 
 import android.annotation.SuppressLint
+import android.content.ContentValues
 import android.content.Context
 import android.graphics.Color
+import android.os.AsyncTask
 import android.os.Bundle
+import android.os.Environment
+import android.provider.MediaStore
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,6 +23,7 @@ import com.github.mikephil.charting.data.BarData
 import com.github.mikephil.charting.data.BarDataSet
 import com.github.mikephil.charting.data.BarEntry
 import com.github.mikephil.charting.formatter.ValueFormatter
+import com.google.android.material.datepicker.MaterialDatePicker
 import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseFragment
 import io.bidswipe.app.controller.TopBuyerAdapter
@@ -26,13 +32,25 @@ import io.bidswipe.app.interfaces.AlertClicks
 import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.model.TopBuyerModel
 import io.bidswipe.app.network.Resource
+import io.bidswipe.app.network.RetrofitService
 import io.bidswipe.app.network.response.SalesAnalyticsResponse
 import io.bidswipe.app.network.response.SellerAnalyticsResponse
 import io.bidswipe.app.ui.custom.AppBottomSheet
+import io.bidswipe.app.utils.Alerts
 import io.bidswipe.app.utils.Utils
 import io.bidswipe.app.utils.Utils.timestamp
+import io.bidswipe.app.utils.asMoney
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.setHapticClickListener
+import okhttp3.ResponseBody
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import java.io.File
+import java.io.FileOutputStream
+import java.io.IOException
+import java.io.InputStream
+import java.io.OutputStream
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
@@ -64,6 +82,23 @@ class OverAllFragment : BaseFragment<SellerHubViewModel, FragmentOverAllBinding>
     }
     private var endDate: Calendar = Calendar.getInstance()
 
+    // Track when all analytics calls have finished so we can hide the loader only once
+    private var isSellerAnalyticsLoaded = false
+    private var isSalesPerformanceLoaded = false
+    private var isVisitorsAnalyticsLoaded = false
+
+    private fun resetAnalyticsLoadingState() {
+        isSellerAnalyticsLoaded = false
+        isSalesPerformanceLoaded = false
+        isVisitorsAnalyticsLoaded = false
+        bind.loader.isVisible = true
+    }
+
+    private fun updateAnalyticsLoader() {
+        bind.loader.isVisible =
+            !(isSellerAnalyticsLoaded && isSalesPerformanceLoaded && isVisitorsAnalyticsLoaded)
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -73,11 +108,29 @@ class OverAllFragment : BaseFragment<SellerHubViewModel, FragmentOverAllBinding>
 
         bind.btnExportSales.setHapticClickListener {
             bind.loader.isVisible = true
-            viewModel.exportAnalyticsData("sale" , "custom" , Utils.getSimpleDate("yyyy-MM-dd").format(startDate.timeInMillis),Utils.getSimpleDate("yyyy-MM-dd").format(endDate.timeInMillis))
+//            viewModel.exportAnalyticsData("sale" , "custom" , Utils.getSimpleDate("yyyy-MM-dd").format(startDate.timeInMillis),Utils.getSimpleDate("yyyy-MM-dd").format(endDate.timeInMillis))
+           downloadFile(mCtx,"sale"){
+               bind.loader.isVisible = false
+               if(it) {
+                   Alerts.success(mCtx, "File downloaded successfully!")
+               }else{
+                   Alerts.error(mCtx, "Something went wrong!")
+               }
+           }
+
         }
 
         bind.btnExportOrders.setHapticClickListener {
-            viewModel.exportAnalyticsData("order" , "custom" , Utils.convertWeatherTimeINFormat("yyyy-MM-dd",startDate.timeInMillis), Utils.convertWeatherTimeINFormat("yyyy-MM-dd",endDate.timeInMillis) )
+            bind.loader.isVisible = true
+            downloadFile(mCtx, "order") {
+                bind.loader.isVisible = false
+                if (it) {
+                    Alerts.success(mCtx, "File downloaded successfully!")
+                } else {
+                    Alerts.error(mCtx, "Something went wrong!")
+                }
+            }
+            //            viewModel.exportAnalyticsData("order" , "custom" , Utils.getSimpleDate("yyyy-MM-dd").format(startDate.timeInMillis),Utils.getSimpleDate("yyyy-MM-dd").format(endDate.timeInMillis))
         }
 
        /* val adapter = ArrayAdapter(
@@ -106,8 +159,8 @@ class OverAllFragment : BaseFragment<SellerHubViewModel, FragmentOverAllBinding>
             }
         }*/
 
-        bind.loader.isVisible = true
-
+        // Initial load: show loader until all 3 analytics calls complete
+        resetAnalyticsLoadingState()
         viewModel.getSellerAnalytics()
         viewModel.getSalesPerformance()
         viewModel.getVisitorsAnalytics()
@@ -115,18 +168,18 @@ class OverAllFragment : BaseFragment<SellerHubViewModel, FragmentOverAllBinding>
         viewModel.getSellerAnalyticsRepo.observe(viewLifecycleOwner) {
             when (it) {
                 is Resource.Success -> {
-                    bind.loader.isVisible = false
+                    isSellerAnalyticsLoaded = true
+                    updateAnalyticsLoader()
                     val mData = it.value.data
 
-                    // Update metric cards
                     bind.estimatedSales.text = (mData?.stats?.revenue ?: "0")
 
-                    // TODO: Update top buyers lists from API
                     updateTopBuyers(mData?.topBuyersBySales , mData?.topBuyersByOrders)
                 }
 
                 is Resource.Error -> {
-                    bind.loader.isVisible = false
+                    isSellerAnalyticsLoaded = true
+                    updateAnalyticsLoader()
                     it.parse(mCtx, TAG, object : AlertClicks {
                         override fun primaryClick(dialog: AppBottomSheet) {
                             dialog.dismiss()
@@ -145,9 +198,9 @@ class OverAllFragment : BaseFragment<SellerHubViewModel, FragmentOverAllBinding>
         viewModel.getSalesPerformanceRepo.observe(viewLifecycleOwner) { resource ->
             when (resource) {
                 is Resource.Success -> {
-                    bind.loader.isVisible = false
+                    isSalesPerformanceLoaded = true
+                    updateAnalyticsLoader()
                     val mData = resource.value.data?.chart?.toMutableList()
-
                     if (mData?.isNotEmpty() == true) {
                         setUpBarChart(mCtx, bind.salesChart, mData)
                         bind.salesChart.isVisible = true
@@ -159,7 +212,8 @@ class OverAllFragment : BaseFragment<SellerHubViewModel, FragmentOverAllBinding>
                 }
 
                 is Resource.Error -> {
-                    bind.loader.isVisible = false
+                    isSalesPerformanceLoaded = true
+                    updateAnalyticsLoader()
                     resource.parse(mCtx, TAG, object : AlertClicks {
                         override fun primaryClick(dialog: AppBottomSheet) {
                             dialog.dismiss()
@@ -176,7 +230,16 @@ class OverAllFragment : BaseFragment<SellerHubViewModel, FragmentOverAllBinding>
         }
 
         viewModel.getVisitorsAnalyticsRepo.observe(viewLifecycleOwner) {
-            // Visitor analytics can be removed or kept for future use
+            when (it) {
+                is Resource.Success,
+                is Resource.Error -> {
+                    // Mark visitors analytics as done (success or error)
+                    isVisitorsAnalyticsLoaded = true
+                    updateAnalyticsLoader()
+                }
+
+                else -> {}
+            }
         }
 
         viewModel.exportAnalyticsDataRepo.observe(viewLifecycleOwner) {
@@ -209,9 +272,6 @@ class OverAllFragment : BaseFragment<SellerHubViewModel, FragmentOverAllBinding>
     }
 
     private fun setupRecyclerViews() {
-        // Remove gridRecycler setup as it's no longer in the layout
-        // gridAdapter = AnalyticsGridAdapter(gridList, mClick)
-        // bind.gridRecycler.adapter = gridAdapter
 
         topBuyersBySalesAdapter = TopBuyerAdapter(topBuyersBySalesList, mClick)
         bind.topBuyersBySalesRecycler.layoutManager = LinearLayoutManager(mCtx)
@@ -230,11 +290,32 @@ class OverAllFragment : BaseFragment<SellerHubViewModel, FragmentOverAllBinding>
 
     private fun setupClickListeners() {
         bind.btnEditDates.setHapticClickListener {
-            // TODO: Open date picker dialog
+            val builder = MaterialDatePicker.Builder.dateRangePicker()
+                .setTitleText("Select Date Range")
+                .setSelection(
+                    androidx.core.util.Pair<Long, Long>(
+                        MaterialDatePicker.todayInUtcMilliseconds(),
+                        MaterialDatePicker.todayInUtcMilliseconds() + (7 * 24 * 60 * 60 * 1000)
+                    )
+                )
+
+            val picker = builder.build()
+            picker.addOnPositiveButtonClickListener { selection ->
+                startDate = Calendar.getInstance().apply {
+                    timeInMillis = selection.first
+                }
+                endDate = Calendar.getInstance().apply {
+                    timeInMillis = selection.second
+                }
+
+                updateDateRangeDisplay()
+
+            }
+            // Show the picker
+            picker.show(parentFragmentManager, picker.toString())
         }
 
         bind.btnPrevDate.setHapticClickListener {
-            // Move date range back
             val daysDiff = ((endDate.timeInMillis - startDate.timeInMillis) / (1000 * 60 * 60 * 24)).toInt()
             endDate.add(Calendar.DAY_OF_MONTH, -daysDiff)
             startDate.add(Calendar.DAY_OF_MONTH, -daysDiff)
@@ -278,20 +359,21 @@ class OverAllFragment : BaseFragment<SellerHubViewModel, FragmentOverAllBinding>
     }
 
     private fun loadDataForDateRange() {
+        // For date range changes we only refetch sales performance.
+        // Mark just that one as loading; the others stay as-is.
         bind.loader.isVisible = true
+        isSalesPerformanceLoaded = false
         viewModel.getSalesPerformance()
         // TODO: Call API with date range parameters
     }
 
     private fun updateTopBuyers(topBuyersBySalesListData: List<SellerAnalyticsResponse.Data.TopBuyersBySale?>?, topBuyersByOrdersListData: List<SellerAnalyticsResponse.Data.TopBuyersByOrder?>?,) {
-        // TODO: Replace with actual API data
         topBuyersBySalesList.clear()
-
         var rank  = 0
 
         topBuyersBySalesListData?.forEach {
             rank = rank+1
-            topBuyersBySalesList.add(TopBuyerModel( rank ,it?.user?.name.toString() , it?.user?.profileImage , it?.total.toString()))
+            topBuyersBySalesList.add(TopBuyerModel( rank ,it?.user?.name.toString() , it?.user?.profileImage , it?.total?.asMoney().toString()))
         }
 
         topBuyersBySalesAdapter.notifyDataSetChanged()
@@ -384,4 +466,78 @@ class OverAllFragment : BaseFragment<SellerHubViewModel, FragmentOverAllBinding>
             chart.animateY(1500)
         }
     }
+
+    fun downloadFile(mCtx: Context,type:String, callback: (status: Boolean)->Unit) {
+        val apiService = RetrofitService(mCtx).build()
+        val call = apiService.exportAnalyticsDataD(type , "custom" , Utils.getSimpleDate("yyyy-MM-dd").format(startDate.timeInMillis),Utils.getSimpleDate("yyyy-MM-dd").format(endDate.timeInMillis))
+
+        call.enqueue(object : Callback<ResponseBody> {
+            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                if (response.isSuccessful) {
+                    // Start saving the file to local storage
+                    response.body()?.let { body ->
+                        SaveFileTask(mCtx){
+                            callback(it)
+                        }.execute(body)
+                    }
+                } else {
+                    Log.e("FileDownload", "Error: ${response.message()}")
+                }
+            }
+
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                Log.e("FileDownload", "Failure: ${t.message}")
+            }
+        })
+    }
+
+    class SaveFileTask(val context: Context,val callback: (status: Boolean)->Unit) : AsyncTask<ResponseBody, Void, Boolean>() {
+        override fun doInBackground(vararg params: ResponseBody?): Boolean {
+            val inputStream: InputStream?
+            val outputStream: OutputStream?
+            try {
+                // Get the input stream from the response body
+                inputStream = params[0]?.byteStream()
+
+                // Create ContentValues to specify the file's metadata
+                val contentValues = ContentValues().apply {
+                    put(MediaStore.MediaColumns.DISPLAY_NAME, "sale_top_buyers_report.csv") // The name of the file
+                    put(MediaStore.MediaColumns.MIME_TYPE, "text/csv") // The MIME type of the file
+                    put(MediaStore.MediaColumns.RELATIVE_PATH, "${Environment.DIRECTORY_DOWNLOADS}/Bidcast") // Save in app folder in Downloads
+                }
+
+                // Get the URI to insert the file into Downloads
+                val uri = context.contentResolver.insert(MediaStore.Files.getContentUri("external"), contentValues)
+                outputStream = context.contentResolver.openOutputStream(uri!!) // Open output stream
+
+                // Read data from the input stream and write it to the output stream
+                val buffer = ByteArray(4096)
+                var bytesRead: Int
+                while (inputStream?.read(buffer).also { bytesRead = it ?: -1 } != -1) {
+                    outputStream?.write(buffer, 0, bytesRead)
+                }
+
+                outputStream?.close()
+                inputStream?.close()
+
+                return true
+            } catch (e: Exception) {
+                e.printStackTrace()
+                return false
+            }
+        }
+
+        override fun onPostExecute(result: Boolean) {
+            if (result) {
+                callback(true)
+                Log.d("FileDownload", "File downloaded successfully!")
+                Alerts.success(context, "File downloaded successfully!")
+            } else {
+                callback(false)
+                Log.e("FileDownload", "Failed to download file.")
+            }
+        }
+    }
+
 }
+
