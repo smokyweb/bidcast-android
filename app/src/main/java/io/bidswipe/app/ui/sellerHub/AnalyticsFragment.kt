@@ -50,6 +50,7 @@ class AnalyticsFragment : BaseFragment<SellerHubViewModel , FragmentAnalyticsBin
 
 		bind.profileImage.loadUrl(mCtx,userData?.profileImage ?:"")
 
+
 	}
 
 }

@@ -556,4 +556,11 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
 		message: RequestBody?
 	) = call { api.raiseTicket(orderId, subject, message) }
 
+	suspend fun exportAnalyticsData(
+		type: String?,
+		filter: String?,
+		startDate: String?,
+		endDate: String?
+	) = call { api.exportAnalyticsData(type, filter, startDate, endDate) }
+
 }

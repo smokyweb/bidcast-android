@@ -111,6 +111,7 @@ class ShowsFragment : BaseFragment<SellerHubViewModel, FragmentShowsBinding>() {
                 allowBidForAll = true,
                 bidCountDown = "",
                 showTimer = "",
+                categoryId = data?.category?.id
             )
 
             if (App.PIPMode) {

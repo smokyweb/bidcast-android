@@ -41,7 +41,6 @@ class CategoryFragment : BaseFragment<DashViewModel, FragmentCategoryBinding>() 
 				} else {
 					viewModel.selectedCategories.add(category)
 				}
-
 			}
 			categoryAdapter.notifyItemChanged(pos)
 		}

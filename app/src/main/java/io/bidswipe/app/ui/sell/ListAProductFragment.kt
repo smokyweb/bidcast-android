@@ -1043,9 +1043,9 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
             bind.category.setText(buildSpannedString {
                 append(categoryName)
 //                append("(${product.subCategory.name})")
-            })
+            },false)
         } else {
-            bind.category.setText(categoryName)
+            bind.category.setText(categoryName, false)
         }
         bind.productTitle.setText(product?.title ?: "")
         bind.description.setText(product?.description ?: "")
@@ -1066,6 +1066,15 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
                 val photoCount = getPhotoCount()
                 if (photoCount < 8) {
                     imageList.add(MediaItem(it, isVideo = false))
+                }
+            }
+        }
+
+        product?.videos?.forEachIndexed { index, videoUrl ->
+            videoUrl?.let {
+                val videoCount = getVideoCount()
+                if (videoCount < 1) {
+                    imageList.add(MediaItem(it , isVideo = true))
                 }
             }
         }

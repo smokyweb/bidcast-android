@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ArrayAdapter
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.isVisible
@@ -27,7 +28,7 @@ import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.model.TopBuyerModel
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.network.response.SalesAnalyticsResponse
-import io.bidswipe.app.network.response.VisitorsAnalyticsResponse
+import io.bidswipe.app.network.response.SellerAnalyticsResponse
 import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.utils.asMoney
 import io.bidswipe.app.utils.parse
@@ -44,6 +45,8 @@ class OverAllFragment : BaseFragment<SellerHubViewModel, FragmentOverAllBinding>
         inflater: LayoutInflater,
         view: ViewGroup?,
     ) = FragmentOverAllBinding.inflate(inflater, view, false)
+
+    private val filterList = listOf("All", "Monthly", "Yearly", "Last 30 Days")
 
     private var topBuyersBySalesList = mutableListOf<TopBuyerModel>()
     private lateinit var topBuyersBySalesAdapter: TopBuyerAdapter
@@ -68,6 +71,43 @@ class OverAllFragment : BaseFragment<SellerHubViewModel, FragmentOverAllBinding>
         setupDateRange()
         setupClickListeners()
 
+        bind.btnExportSales.setHapticClickListener {
+
+            bind.loader.isVisible = true
+            viewModel.exportAnalyticsData("sale" , "custom" , startDate.timeInMillis.toString() , endDate.timeInMillis.toString() )
+
+        }
+
+        bind.btnExportOrders.setHapticClickListener {
+            viewModel.exportAnalyticsData("order" , "custom" , startDate.timeInMillis.toString() , endDate.timeInMillis.toString() )
+        }
+
+       /* val adapter = ArrayAdapter(
+            mCtx,
+            android.R.layout.simple_list_item_1,
+            mailClassNames
+        )
+
+        bind.mailClass.setAdapter(adapter)
+
+        val drawable = ContextCompat.getDrawable(mCtx, R.drawable.card_8)
+        bind.mailClass.setDropDownBackgroundDrawable(drawable)
+
+        bind.mailClass.setOnItemClickListener { _, _, position, _ ->
+            selectedMailClass = mailClassesList[position]
+            log("Selected mail class: ${selectedMailClass?.label}")
+            // Save state to ViewModel
+            saveStateToViewModel()
+        }
+
+        bind.mailClass.setHapticClickListener {
+            if (mailClassesList.isNotEmpty()) {
+                bind.mailClass.showDropDown()
+            } else {
+                viewModel.getMailClasses()
+            }
+        }*/
+
         bind.loader.isVisible = true
 
         viewModel.getSellerAnalytics()
@@ -81,10 +121,10 @@ class OverAllFragment : BaseFragment<SellerHubViewModel, FragmentOverAllBinding>
                     val mData = it.value.data
 
                     // Update metric cards
-                    bind.estimatedSales.text = (mData?.stats?.revenue ?: "0").asMoney()
+                    bind.estimatedSales.text = (mData?.stats?.revenue ?: "0")
 
                     // TODO: Update top buyers lists from API
-                    updateTopBuyers()
+                    updateTopBuyers(mData?.topBuyersBySales , mData?.topBuyersByOrders)
                 }
 
                 is Resource.Error -> {
@@ -140,6 +180,12 @@ class OverAllFragment : BaseFragment<SellerHubViewModel, FragmentOverAllBinding>
         viewModel.getVisitorsAnalyticsRepo.observe(viewLifecycleOwner) {
             // Visitor analytics can be removed or kept for future use
         }
+
+        viewModel.exportAnalyticsDataRepo.observe(viewLifecycleOwner) {
+
+        }
+
+
     }
 
     private fun setupRecyclerViews() {
@@ -217,18 +263,26 @@ class OverAllFragment : BaseFragment<SellerHubViewModel, FragmentOverAllBinding>
         // TODO: Call API with date range parameters
     }
 
-    private fun updateTopBuyers() {
+    private fun updateTopBuyers(topBuyersBySalesListData: List<SellerAnalyticsResponse.Data.TopBuyersBySale?>?, topBuyersByOrdersListData: List<SellerAnalyticsResponse.Data.TopBuyersByOrder?>?,) {
         // TODO: Replace with actual API data
         topBuyersBySalesList.clear()
-        topBuyersBySalesList.add(TopBuyerModel(1, "sarah0131", null, "$72.00"))
-        topBuyersBySalesList.add(TopBuyerModel(2, "auctionfactory_com", null, "$36.00"))
-        topBuyersBySalesList.add(TopBuyerModel(3, "domjaden", null, "$18.00"))
+
+        var rank  = 0
+
+        topBuyersBySalesListData?.forEach {
+            rank = rank+1
+            topBuyersBySalesList.add(TopBuyerModel( rank ,it?.user?.name.toString() , it?.user?.profileImage , it?.total.toString()))
+        }
+
         topBuyersBySalesAdapter.notifyDataSetChanged()
 
         topBuyersByOrdersList.clear()
-        topBuyersByOrdersList.add(TopBuyerModel(1, "sarah0131", null, "11"))
-        topBuyersByOrdersList.add(TopBuyerModel(2, "auctionfactory_com", null, "9"))
-        topBuyersByOrdersList.add(TopBuyerModel(3, "domjaden", null, "2"))
+
+        rank = 0
+        topBuyersByOrdersListData?.forEach {
+            rank = rank+1
+            topBuyersByOrdersList.add(TopBuyerModel(rank ,  it?.user?.name.toString() , it?.user?.profileImage , it?.totalOrders.toString()))
+        }
         topBuyersByOrdersAdapter.notifyDataSetChanged()
     }
 

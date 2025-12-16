@@ -777,5 +777,13 @@ interface ApiInterface {
 		@Part("message") message: RequestBody?
 	) : RaiseTicketResponse
 
+	@GET("api/export-deatils")
+	suspend fun exportAnalyticsData(
+		@Query("type") type : String?,
+		@Query("filter") filter : String?,
+		@Query("start_date") startDate : String?,
+		@Query("end_date") endDate : String?
+	) : CommonResponse
+
 }
 

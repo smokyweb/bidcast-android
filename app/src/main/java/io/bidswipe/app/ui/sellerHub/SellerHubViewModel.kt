@@ -592,4 +592,21 @@ class SellerHubViewModel @Inject constructor(
 		_getShowDetailResponse.value = repo.getShowDetail(showId)
 	}
 
+	private var _exportAnalyticsDataResponse = MutableLiveData<Resource<CommonResponse>>()
+	val exportAnalyticsDataRepo: MutableLiveData<Resource<CommonResponse>>
+		get() = _exportAnalyticsDataResponse
+
+	fun exportAnalyticsData(
+		type: String?,
+		filter: String?,
+		startDate: String?,
+		endDate: String?
+	) = viewModelScope.launch {
+		if (!networkMonitor.hasInternet()) {
+			_exportAnalyticsDataResponse.value = NO_INTERNET_ERROR
+			return@launch
+		}
+		_exportAnalyticsDataResponse.value = repo.exportAnalyticsData( type, filter, startDate, endDate)
+	}
+
 }

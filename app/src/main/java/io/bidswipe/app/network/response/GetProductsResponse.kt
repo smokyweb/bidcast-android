@@ -46,7 +46,7 @@ data class GetProductsResponse(
 		@SerializedName("status")
 		val status: String?,
 		@SerializedName("thumbanail")
-		val thumbanail: String?,
+		val thumbnail: String?,
 		@SerializedName("title")
 		val title: String?,
 		var selected : Boolean = false,

@@ -14,6 +14,7 @@ import io.bidswipe.app.base.BaseAdapter
 import io.bidswipe.app.databinding.ProductSelectionItemBinding
 import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.model.LiveShowModel
+import io.bidswipe.app.network.response.GetProductsResponse
 import io.bidswipe.app.utils.asCapital
 import io.bidswipe.app.utils.asMoney
 import io.bidswipe.app.utils.dpToPx
@@ -22,8 +23,8 @@ import io.bidswipe.app.utils.setHapticClickListener
 
 class FirebaseProductAdapter(
     val from: String = "",
-    val mList: MutableList<LiveShowModel.Product?>, val mClicks: RecyclerClicks,
-) : BaseAdapter<LiveShowModel.Product?, ProductSelectionItemBinding>(mList) {
+    val mList: MutableList<GetProductsResponse.Data?>, val mClicks: RecyclerClicks,
+) : BaseAdapter<GetProductsResponse.Data?, ProductSelectionItemBinding>(mList) {
 
     override fun bindView(inflater: LayoutInflater, parent: ViewGroup) =
         ProductSelectionItemBinding.inflate(inflater, parent, false)
@@ -32,7 +33,7 @@ class FirebaseProductAdapter(
     override fun onBind(
         holder: BaseViewHolder<ProductSelectionItemBinding>,
         position: Int,
-        item: LiveShowModel.Product?,
+        item: GetProductsResponse.Data?,
     ) {
         with(holder) {
 
@@ -73,10 +74,10 @@ class FirebaseProductAdapter(
             bind.productStatus.isVisible = item?.isCurrent == true
 
             bind.prodSubTitle.text = buildString {
-                append(item?.price?.asMoney())
+                append(item?.price?.toString()?.asMoney())
             }
 
-            bind.productName.text = item?.name?.asCapital()
+            bind.productName.text = item?.title?.asCapital()
 
             bind.img.loadUrl(mCtx, item?.image ?: "")
 
@@ -88,7 +89,7 @@ class FirebaseProductAdapter(
             }
 
             bind.price.text = buildString {
-                append(item?.price?.asMoney())
+                append(item?.price?.toString()?.asMoney())
             }
 
             bind.bid.text = "0 bids"

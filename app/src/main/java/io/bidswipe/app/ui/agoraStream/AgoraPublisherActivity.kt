@@ -19,7 +19,6 @@ import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Rational
-import android.view.KeyEvent
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
@@ -63,7 +62,6 @@ import io.bidswipe.app.databinding.EndShowSheetBinding
 import io.bidswipe.app.databinding.LiveSellerSheetBinding
 import io.bidswipe.app.databinding.LiveShowMoreMenuBinding
 import io.bidswipe.app.databinding.PollDetailsSheetBinding
-import io.bidswipe.app.databinding.ProductSheetBinding
 import io.bidswipe.app.databinding.PromoteShowSheetBinding
 import io.bidswipe.app.databinding.RandomizerSheetBinding
 import io.bidswipe.app.databinding.ShareSheetBinding
@@ -626,16 +624,6 @@ class AgoraPublisherActivity : BaseActivity() {
 
             App.manager.joinChannel(agoraToken, channelName)
 
-            /*val joinAction = {
-                App.manager.joinChannel(userId.toInt(), agoraToken, channelName)
-            }
-
-            if (App.manager.isReady()) {
-                joinAction.invoke()
-            } else {
-                App.manager.onReady(joinAction)
-            }*/
-
             bind.startBtn.isVisible = false
 
             bind.message.setMargins(
@@ -848,13 +836,13 @@ class AgoraPublisherActivity : BaseActivity() {
     // Product selection (simplified socket mirroring)
     private fun showProductSheet() {
 
-        /*  val bottomSheetFragment = ProductsForLiveShowFragment()
-          bottomSheetFragment.show(supportFragmentManager, "BOTTOM_SHEET_TAG")*/
+          val bottomSheetFragment = ProductsForLiveShowFragment()
+          bottomSheetFragment.show(supportFragmentManager, "BOTTOM_SHEET_TAG")
 
 //        viewModel.categoryId = liveShowData.
 
 
-        val productSheetBind =
+  /*      val productSheetBind =
             ProductSheetBinding.bind(layoutInflater.inflate(R.layout.product_sheet, null, false))
         val productSheet = Alerts.appBottomSheet(this, true, productSheetBind)
 
@@ -907,7 +895,7 @@ class AgoraPublisherActivity : BaseActivity() {
             socketManager?.setNextProduct(roomID, selectedProduct?.id)
             productSheet.dismiss()
 
-        }
+        }*/
     }
 
     fun updateProductUI(liveProduct: LiveShowModel.Product?) {
@@ -1254,7 +1242,7 @@ class AgoraPublisherActivity : BaseActivity() {
         }
 
         showNotesSheetBind.post.setHapticClickListener {
-            val notes = showNotesSheetBind.showNotes.text.toString()
+            val notes =showNotesSheetBind.showNotes.toFormattedHtml()
 
             if (notes.isEmpty()) {
                 errorToast("Please enter some notes")
@@ -1605,6 +1593,7 @@ class AgoraPublisherActivity : BaseActivity() {
         }
     }
 
+    @SuppressLint("UseKtx")
     fun setUpWheel(options: List<String>) {
         if (options.isEmpty()) return
 
@@ -1633,7 +1622,6 @@ class AgoraPublisherActivity : BaseActivity() {
                 )
             }
         )
-
 
         bind.luckyWheel.apply {
             setCenterPointRadius(50f)

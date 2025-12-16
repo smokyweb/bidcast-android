@@ -35,7 +35,7 @@ import io.bidswipe.app.utils.value
 class ProductsForLiveShowFragment : BottomSheetDialogFragment() {
 
     private lateinit var productAdapter: FirebaseProductAdapter
-    private var productList = mutableListOf<GetProductsResponse.Data>()
+    private var productList = mutableListOf<GetProductsResponse.Data?>()
 
     private lateinit var mCtx: Context
 
@@ -139,7 +139,7 @@ class ProductsForLiveShowFragment : BottomSheetDialogFragment() {
                     }
 
                     if (mData != null) {
-//                        productList.addAll(mData)
+                        productList.addAll(mData)
                         productAdapter.notifyDataSetChanged()
                     }
 
@@ -202,7 +202,7 @@ class ProductsForLiveShowFragment : BottomSheetDialogFragment() {
             }
         })
 
-      /*  productAdapter =
+        productAdapter =
             FirebaseProductAdapter(
                 from = "live_show",
                 mList = productList,
@@ -220,7 +220,7 @@ class ProductsForLiveShowFragment : BottomSheetDialogFragment() {
                         }
                     }
 
-                })*/
+                })
 
         bind.recycler.adapter = productAdapter
 

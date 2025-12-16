@@ -18,7 +18,7 @@ data class LiveShowModel(
     var allowBidForAll: Boolean? = true,
     val bidCountDown: String?,
     val showTimer: String?,
-    val platform: String? = "android",
+    val categoryId : Int? = null
 ) : Serializable {
 	data class Product(
         val category: String? = null,
@@ -41,7 +41,6 @@ data class LiveShowModel(
             put("quantity", quantity)
             put("is_current", isCurrent)
 		}
-
         companion object {
             fun fromJson(json: JSONObject) = Product(
                 category = json.optString("category", null),
@@ -54,6 +53,7 @@ data class LiveShowModel(
                 isCurrent = if (json.has("is_current")) json.optBoolean("is_current") else false
             )
         }
+
     }
 
 	data class Seller(
