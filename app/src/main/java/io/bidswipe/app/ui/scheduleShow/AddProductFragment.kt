@@ -59,12 +59,12 @@ class AddProductFragment : BaseFragment<ScheduleShowViewModel, FragmentAddProduc
 
 					val product =
 						LiveShowModel.Product(
-							data.category,
+							data.category?.name,
 							data.id.toString(),
-							data.image,
+							data.images?.get(0),
 							data.status,
 							data.title,
-							data.price.toString(),
+							data.pricing.toString(),
 							data.quantity.toString(),
 							selected = true
 						)

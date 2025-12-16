@@ -7,7 +7,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ArrayAdapter
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.isVisible
@@ -30,7 +29,6 @@ import io.bidswipe.app.network.Resource
 import io.bidswipe.app.network.response.SalesAnalyticsResponse
 import io.bidswipe.app.network.response.SellerAnalyticsResponse
 import io.bidswipe.app.ui.custom.AppBottomSheet
-import io.bidswipe.app.utils.asMoney
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.setHapticClickListener
 import java.text.SimpleDateFormat

@@ -74,22 +74,22 @@ class FirebaseProductAdapter(
             bind.productStatus.isVisible = item?.isCurrent == true
 
             bind.prodSubTitle.text = buildString {
-                append(item?.price?.toString()?.asMoney())
+                append(item?.pricing?.asMoney())
             }
 
             bind.productName.text = item?.title?.asCapital()
 
-            bind.img.loadUrl(mCtx, item?.image ?: "")
+            bind.img.loadUrl(mCtx, item?.images?.get(0) ?: "")
 
-            bind.category.isVisible = item?.category.isNullOrEmpty() == false
+            bind.category.isVisible = item?.category == null
             bind.category.text = buildString {
-                append(item?.category?.asCapital())
+                append(item?.category?.name?.asCapital())
 //                append(" • ")
 //                append(item?.condition?.asCapital() ?:"N/A")
             }
 
             bind.price.text = buildString {
-                append(item?.price?.toString()?.asMoney())
+                append(item?.pricing?.asMoney())
             }
 
             bind.bid.text = "0 bids"

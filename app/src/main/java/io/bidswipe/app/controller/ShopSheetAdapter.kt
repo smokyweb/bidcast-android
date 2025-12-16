@@ -31,7 +31,7 @@ class ShopSheetAdapter(
 			bind.primary.isVisible = false
 			bind.secondary.isVisible = false
 
-			bind.img.loadUrl(mCtx , item?.image?.get(0).toString())
+			bind.img.loadUrl(mCtx , item?.images?.get(0).toString())
 
 			bind.productName.text = item?.title?.asCapital()
 

@@ -30,21 +30,21 @@ class ShopAdapter(
 				mClicks.itemClick(position)
 			}
 
-			bind.productImage.loadUrl(mCtx , item?.image?.get(0).toString())
+			bind.productImage.loadUrl(mCtx , item?.images?.get(0).toString())
 
 			bind.productName.text = item?.title.toString().asCapital()
 
-			if (item?.condition != null) {
+			if (item?.productCondition != null) {
 				bind.category.text = buildSpannedString {
 					append(item.category.toString().asCapital() + " ")
 					append(Const.BULLET)
-					append( " "+item.condition)
+					append( " "+item.productCondition)
 				}
 			} else {
 				bind.category.text = item?.category.toString().asCapital()
 			}
 
-			bind.price.text = item?.price.toString().asMoney()
+			bind.price.text = item?.pricing.toString().asMoney()
 
 		}
 	}
