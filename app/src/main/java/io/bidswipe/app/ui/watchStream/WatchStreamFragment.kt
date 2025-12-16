@@ -399,6 +399,12 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
             }
         }
 
+        socketManager?.onSaveTipSettingResult { obj ->
+            requireActivity().runOnUiThread {
+               log("Message : ${obj.optString("tip_message")} ")
+            }
+        }
+
         // Poll listeners
         setupPollListeners()
 
@@ -1395,12 +1401,21 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
             }
 
             sendTipSheet.dismiss()
-            bind.loader.isVisible = true
+
+            socketManager?.sendTip(
+                roomId = roomID,
+                showId = showId.toString(),
+                userId = userId,
+                sellerId = sellerId.toString(),
+                amount = sendTipSheetBind.customOffer.text.toString()
+            )
+
+            /*bind.loader.isVisible = true
             viewModel.sendTipAmount(
                 sellerId!!.request(),
                 sendTipSheetBind.customOffer.text.toString().request(),
                 null
-            )
+            )*/
 
         }
 

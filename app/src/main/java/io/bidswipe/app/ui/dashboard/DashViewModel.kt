@@ -55,7 +55,7 @@ class DashViewModel @Inject constructor(
 	var currentShowData : CreateShowResponse.Data? = null
 	var showList = mutableListOf<GetPrepareStepResponse.Data?>()
 	var currentStep = 0
-	var categoryId = -1
+	var categoryId = ""
 
 	var lastIndex = MutableLiveData(0)
 

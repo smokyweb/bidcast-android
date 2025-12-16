@@ -63,7 +63,6 @@ import io.bidswipe.app.databinding.EndShowSheetBinding
 import io.bidswipe.app.databinding.LiveSellerSheetBinding
 import io.bidswipe.app.databinding.LiveShowMoreMenuBinding
 import io.bidswipe.app.databinding.PollDetailsSheetBinding
-import io.bidswipe.app.databinding.ProductSheetBinding
 import io.bidswipe.app.databinding.PromoteShowSheetBinding
 import io.bidswipe.app.databinding.RandomizerSheetBinding
 import io.bidswipe.app.databinding.SellerTipSettingsSheetBinding
@@ -196,6 +195,8 @@ class AgoraPublisherActivity : BaseActivity() {
         showTime = intent.getStringExtra("time") ?: ""
 
         roomID = "live_room_${userId}_${showId}"
+
+        viewModel.categoryId = liveShowData?.categoryId ?:""
 
         bind.hostName.text = userName.asCapital()
         bind.hostImage.loadUrl(this, userImage)
@@ -616,8 +617,7 @@ class AgoraPublisherActivity : BaseActivity() {
 
         val showConfirmationSheet = Alerts.appBottomSheet(this, true, showConfirmationSheetBind)
 
-        showConfirmationSheetBind.timing.text =
-            buildString {
+        showConfirmationSheetBind.timing.text = buildString {
                 append("Show Starts at ")
                 append(Utils.getFormattedDateTime("HH:mm:ss", "hh:mm a", showTime))
             }
@@ -1018,7 +1018,6 @@ class AgoraPublisherActivity : BaseActivity() {
         }
     }
 
-
     override fun onPictureInPictureModeChanged(
         isInPictureInPictureMode: Boolean,
         newConfig: Configuration,
@@ -1218,9 +1217,27 @@ class AgoraPublisherActivity : BaseActivity() {
             )
         val sheet = Alerts.appBottomSheet(this, true, tipSettingsSheetBind)
         tipSettingsSheetBind.close.setHapticClickListener { sheet.dismiss() }
+
         tipSettingsSheetBind.save.setHapticClickListener {
-            /*    tipSettingsSheetBind.tipMessage.value()
-                tipSettingsSheetBind.showLiveChat.isChecked */
+
+            when {
+                tipSettingsSheetBind.tipMessage.value().isEmpty() -> {
+                    errorToast("Please enter a tip message")
+                }
+
+                else -> {
+                    socketManager?.saveTipSetting(
+                        liveShowData?.showId.toString(),
+                        tipSettingsSheetBind.tipMessage.value(),
+                        tipSettingsSheetBind.showLiveChat.isChecked
+                    )
+                    sheet.dismiss()
+                }
+
+            }
+
+            tipSettingsSheetBind.tipMessage.value()
+            tipSettingsSheetBind.showLiveChat.isChecked
         }
         sheet.show()
     }

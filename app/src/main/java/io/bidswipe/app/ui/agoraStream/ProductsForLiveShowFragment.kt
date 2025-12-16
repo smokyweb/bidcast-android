@@ -8,6 +8,7 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ArrayAdapter
 import androidx.core.view.get
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
@@ -15,7 +16,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
+import io.bidswipe.app.R
 import io.bidswipe.app.controller.FirebaseProductAdapter
+import io.bidswipe.app.databinding.AuctionSettingsSheetBinding
 import io.bidswipe.app.databinding.FragmentProductsForLiveShowBinding
 import io.bidswipe.app.interfaces.AlertClicks
 import io.bidswipe.app.interfaces.RecyclerClicks
@@ -62,7 +65,6 @@ class ProductsForLiveShowFragment : BottomSheetDialogFragment() {
     @SuppressLint("NotifyDataSetChanged")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
 
         saleType = "auction"
 
@@ -212,7 +214,7 @@ class ProductsForLiveShowFragment : BottomSheetDialogFragment() {
                         if (productList[pos]?.status == "sold") {
                             Alerts.error(mCtx, "This product is already sold")
                         }  else if (status == "start_auction") {
-//                            auctionSettingsSheet()
+                            auctionSettingsSheet()
                         } else {
 //                            productList.forEachIndexed { index, item ->
 //                                item?.selected = index == pos
@@ -259,13 +261,74 @@ class ProductsForLiveShowFragment : BottomSheetDialogFragment() {
             page = page.toString().request(),
             saleType = saleType.ifEmpty { null }?.request(),
             search = bind.search.value().ifEmpty { null }?.request(),
-            categoryIds = "14".request()
+            categoryIds = viewModel.categoryId.request()
         )
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    private fun auctionSettingsSheet() {
+        var selectedCounterTimer = 0
+        var selectedRequiredTime = 0
+
+        val auctionSettingsSheetBind =
+            AuctionSettingsSheetBinding.bind(
+                layoutInflater.inflate(
+                    R.layout.auction_settings_sheet,
+                    null,
+                    false
+                )
+            )
+
+        val sheet = Alerts.appBottomSheet(mCtx, true, auctionSettingsSheetBind)
+
+        val extraTimer = listOf(5, 7, 10)
+        extraTimer.forEachIndexed { index, time ->
+            val chip = Utils.makeAChip(
+                mCtx = mCtx,
+                text = "${time}s",
+                selected = index == 0,
+                closeIconVisible = false,
+                chipPadding = 12,
+            )
+            chip.setOnClickListener {
+                auctionSettingsSheetBind.timerChips.check(chip.id)
+                selectedCounterTimer = time
+            }
+            auctionSettingsSheetBind.timerChips.addView(chip)
+        }
+
+        val requiredTimeList = listOf(15, 30, 45)
+        val requiredTimeAdapter = ArrayAdapter(
+            mCtx,
+            android.R.layout.simple_list_item_1,
+            requiredTimeList
+        )
+
+        auctionSettingsSheetBind.requiredTime.setAdapter(requiredTimeAdapter)
+
+        auctionSettingsSheetBind.requiredTime.setOnItemClickListener { _, _, position, _ ->
+            selectedRequiredTime = requiredTimeList[position]
+            auctionSettingsSheetBind.requiredTime.setText("${requiredTimeList[position]}s", false)
+        }
+
+        auctionSettingsSheetBind.requiredTime.setHapticClickListener {
+            auctionSettingsSheetBind.requiredTime.showDropDown()
+        }
+
+        auctionSettingsSheetBind.close.setHapticClickListener { sheet.dismiss() }
+        auctionSettingsSheetBind.start.setHapticClickListener {
+            /* auctionSettingsSheetBind.startingBid.value()
+             selectedRequiredTime
+             selectedCounterTimer
+             auctionSettingsSheetBind.suddenDeath.isChecked*/
+        }
+
+        sheet.show()
+
     }
 
 }

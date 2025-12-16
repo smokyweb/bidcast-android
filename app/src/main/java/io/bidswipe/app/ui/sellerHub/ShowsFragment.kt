@@ -83,7 +83,8 @@ class ShowsFragment : BaseFragment<SellerHubViewModel, FragmentShowsBinding>() {
                     name = user?.name,
                     rating = user?.rating ?: ""
                 ),
-                products = products?.map { p ->
+                products = emptyList<LiveShowModel.Product>(),
+               /* products = products?.map { p ->
                     LiveShowModel.Product(
                         data.category?.name,
                         p?.id,
@@ -93,7 +94,7 @@ class ShowsFragment : BaseFragment<SellerHubViewModel, FragmentShowsBinding>() {
                         p?.price,
                         "1",
                     )
-                }?.toList() ?: mutableListOf(),
+                }?.toList() ?: mutableListOf(),*/
                 roomId = "live_room_${userId}_${data?.id.toString()}",
                 showDetail = data?.title ?:"",
                 thumbnail = data?.thumbnail?.getOrNull(0) ?: "",
@@ -111,7 +112,7 @@ class ShowsFragment : BaseFragment<SellerHubViewModel, FragmentShowsBinding>() {
                 allowBidForAll = true,
                 bidCountDown = "",
                 showTimer = "",
-                categoryId = data?.category?.id
+                categoryId = data?.category?.id.toString()
             )
 
             if (App.PIPMode) {

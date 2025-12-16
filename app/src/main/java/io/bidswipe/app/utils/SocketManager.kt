@@ -109,7 +109,7 @@ class SocketManager private constructor(
 	fun createRoom(liveShowData: LiveShowModel) {
 		val payload = JSONObject().apply {}
 		Log.d(TAG, "EMIT: room_created - RoomId: $liveShowData")
-		liveShowData.products.first()?.isCurrent = true
+//		liveShowData.products.first()?.isCurrent = true
 		socket?.emit("room_create", liveShowData.toJson())
 	}
 
@@ -528,6 +528,40 @@ class SocketManager private constructor(
 
 		Log.d(TAG, "EMIT: end_poll - RoomId: $roomId, PollId: $pollId")
 		socket?.emit("end_poll", payload)
+	}
+
+	fun saveTipSetting(showId: String, tipMessage: String, showInLiveChat : Boolean) {
+		val payload = JSONObject().apply {
+			put("show_id", showId)
+			put("tip_message", tipMessage)
+			put("show_in_live_chat", showInLiveChat)
+		}
+
+		Log.d(TAG, "EMIT:tip_setting_save  - showId: $showId, message: $tipMessage")
+		socket?.emit("tip_setting_save", payload)
+	}
+
+	fun onSaveTipSettingResult(listener: (resultJson : JSONObject) -> Unit) {
+		socket?.off("tip_setting_updated")
+		socket?.on("tip_setting_updated") { args ->
+			val obj = args.firstOrNull()
+			if (obj is JSONObject) {
+				Log.d(TAG, "RECEIVED: tipSettingUpdated - $obj")
+				listener(obj)
+			}
+		}
+	}
+
+	fun sendTip(roomId : String, showId : String, userId : String, sellerId : String, amount : String, cardNumber : String ? =null) {
+		val payload = JSONObject().apply {
+			put("show_id", showId)
+			put("seller_id", sellerId)
+			put("amount", amount)
+			put("card_number", cardNumber )
+		}
+
+		Log.d(TAG, "EMIT: send_tip  - showId: $showId, showId : $showId, userId : $userId, sellerId : $sellerId, amount : $amount, cardNumber: $cardNumber")
+		socket?.emit("send_tip", payload)
 	}
 
 }

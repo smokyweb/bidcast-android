@@ -18,7 +18,7 @@ data class LiveShowModel(
     var allowBidForAll: Boolean? = true,
     val bidCountDown: String?,
     val showTimer: String?,
-    val categoryId : Int? = null
+    val categoryId : String? = null
 ) : Serializable {
 	data class Product(
         val category: String? = null,
@@ -118,6 +118,7 @@ data class LiveShowModel(
         put("allow_bid_for_all", allowBidForAll)
         put("bid_count_down", bidCountDown)
         put("show_timer", showTimer)
+        put("category_id", categoryId)
 	}
 
     companion object {
@@ -140,7 +141,8 @@ data class LiveShowModel(
             showId = json.optString("show_id", null),
             allowBidForAll = if (json.has("allow_bid_for_all")) json.optBoolean("allow_bid_for_all") else true,
             bidCountDown = json.optString("bid_count_down", null),
-            showTimer = json.optString("show_timer", null)
+            showTimer = json.optString("show_timer", null),
+            categoryId = json.optString("category_id", null)
 		)
 	}
 }
