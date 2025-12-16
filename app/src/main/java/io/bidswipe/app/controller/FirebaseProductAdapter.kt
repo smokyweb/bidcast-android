@@ -41,6 +41,14 @@ class FirebaseProductAdapter(
                 mClicks.itemClick(position, "select")
             }
 
+            bind.startAuction.setHapticClickListener {
+                mClicks.itemClick(position, "start_auction")
+            }
+
+            bind.setForNext.setHapticClickListener {
+                mClicks.itemClick(position, "set_next")
+            }
+
             bind.root.alpha = if (item?.status == "sold") 0.5f else 1f
 
             bind.quantity.text = buildSpannedString {
@@ -57,12 +65,12 @@ class FirebaseProductAdapter(
             }
 
             if (item?.selected == true) {
-                bind.root.strokeWidth = mCtx.resources.dpToPx(4)
+                bind.root.strokeWidth = mCtx.resources.dpToPx(2)
                 bind.root.strokeColor = ContextCompat.getColor(mCtx, R.color.primary)
                 bind.root.setCardBackgroundColor(
                     ContextCompat.getColor(
                         mCtx,
-                        R.color.primaryContainer
+                        R.color.background
                     )
                 )
             } else {

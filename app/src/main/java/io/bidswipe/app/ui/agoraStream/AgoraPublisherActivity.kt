@@ -56,14 +56,17 @@ import io.bidswipe.app.controller.PromoteSheetAdapter
 import io.bidswipe.app.controller.ShareTarget
 import io.bidswipe.app.controller.ShareTargetAdapter
 import io.bidswipe.app.databinding.ActivityAgoraPublisherBinding
+import io.bidswipe.app.databinding.AuctionSettingsSheetBinding
 import io.bidswipe.app.databinding.CreateClipSheetBinding
 import io.bidswipe.app.databinding.CreatePollSheetBinding
 import io.bidswipe.app.databinding.EndShowSheetBinding
 import io.bidswipe.app.databinding.LiveSellerSheetBinding
 import io.bidswipe.app.databinding.LiveShowMoreMenuBinding
 import io.bidswipe.app.databinding.PollDetailsSheetBinding
+import io.bidswipe.app.databinding.ProductSheetBinding
 import io.bidswipe.app.databinding.PromoteShowSheetBinding
 import io.bidswipe.app.databinding.RandomizerSheetBinding
+import io.bidswipe.app.databinding.SellerTipSettingsSheetBinding
 import io.bidswipe.app.databinding.ShareSheetBinding
 import io.bidswipe.app.databinding.ShowConfirmationAlertBinding
 import io.bidswipe.app.databinding.ShowNotesSheetBinding
@@ -79,7 +82,6 @@ import io.bidswipe.app.network.response.GetPromotePlansResponse
 import io.bidswipe.app.ui.custom.AlertType
 import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.ui.dashboard.DashViewModel
-import io.bidswipe.app.ui.scheduleShow.TipSettingActivity
 import io.bidswipe.app.utils.AgoraManager
 import io.bidswipe.app.utils.Alerts
 import io.bidswipe.app.utils.Const
@@ -301,14 +303,15 @@ class AgoraPublisherActivity : BaseActivity() {
 
             insets
         }
+
         bind.more.setHapticClickListener {
             showMoreSheet()
         }
 
         bind.promote.setHapticClickListener {
-            if (isShowLive && promotePlans.isNotEmpty()) {
+//            if (isShowLive && promotePlans.isNotEmpty()) {
                 showPromoteSheet()
-            }
+//            }
         }
 
         bind.clip.setHapticClickListener {
@@ -342,11 +345,11 @@ class AgoraPublisherActivity : BaseActivity() {
         }
 
         bind.showNotes.setHapticClickListener {
-            if(isShowLive) {
+            if (isShowLive) {
                 showNotesSheet()
                 bind.showNotes.isVisible = false
-            }else{
-                errorToast( "Please start live show to access this feature")
+            } else {
+                errorToast("Please start live show to access this feature")
             }
         }
 
@@ -833,39 +836,44 @@ class AgoraPublisherActivity : BaseActivity() {
 
     }
 
-    // Product selection (simplified socket mirroring)
     private fun showProductSheet() {
+        val bottomSheetFragment = ProductsForLiveShowFragment()
+        bottomSheetFragment.show(supportFragmentManager, "BOTTOM_SHEET_TAG")
 
-          val bottomSheetFragment = ProductsForLiveShowFragment()
-          bottomSheetFragment.show(supportFragmentManager, "BOTTOM_SHEET_TAG")
+/*        val productSheetBind = ProductSheetBinding.bind(layoutInflater.inflate(R.layout.product_sheet, null, false))
 
-//        viewModel.categoryId = liveShowData.
+        val newHeight = window?.decorView?.measuredHeight
+        val viewGroupLayoutParams = productSheetBind.root.layoutParams ?: ViewGroup.LayoutParams(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.MATCH_PARENT
+        )
 
+        viewGroupLayoutParams.height = (newHeight ?: 0) - (statusBarHeight + navigationBarHeight)
+        productSheetBind.root.layoutParams = viewGroupLayoutParams
 
-  /*      val productSheetBind =
-            ProductSheetBinding.bind(layoutInflater.inflate(R.layout.product_sheet, null, false))
         val productSheet = Alerts.appBottomSheet(this, true, productSheetBind)
 
         var selectedPos = -1
 
-        productAdapter = FirebaseProductAdapter("live_show", productList, object : RecyclerClicks {
+   productAdapter = FirebaseProductAdapter("live_show", productList, object : RecyclerClicks {
             override fun itemClick(pos: Int, status: String?) {
 
                 if (productList[pos]?.status == "sold") {
-
                     Alerts.error(this@AgoraPublisherActivity, "This product is already sold")
+                } else if (status == "start_auction") {
+                    auctionSettingsSheet()
+                } else if (status == "set_next") {
 
                 } else {
-                    productList.forEachIndexed { index, item ->
-
-                        item?.selected = index == pos
-                        productSheetBind.recycler.adapter?.notifyDataSetChanged()
-
-                    }
+//                    productList.forEachIndexed { index, item ->
+//
+//                        item?.selected = index == pos
+//                        productSheetBind.recycler.adapter?.notifyDataSetChanged()
+//
+//                    }
                     selectedPos = pos
                 }
             }
-
         })
 
         productSheetBind.recycler.adapter = productAdapter
@@ -1060,8 +1068,8 @@ class AgoraPublisherActivity : BaseActivity() {
                 false
             )
         )
-        val moreSheet = Alerts.appBottomSheet(this, true, moreSheetBind)
 
+        val moreSheet = Alerts.appBottomSheet(this, true, moreSheetBind)
         moreSheetBind.optionList.adapter =
             LiveMoreAdapter(Const.liveMoreMenu, object : RecyclerClicks {
                 override fun itemClick(pos: Int, status: String?) {
@@ -1072,6 +1080,7 @@ class AgoraPublisherActivity : BaseActivity() {
                             if (isShowLive) {
                                 endShowSheet()
                                 moreSheet.dismiss()
+
                             } else {
                                 finishAfterTransition()
                             }
@@ -1079,18 +1088,11 @@ class AgoraPublisherActivity : BaseActivity() {
 
                         1 -> {
                             moreSheet.dismiss()
-                            /*	if (isShowLive) {
-                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                                        enterPictureInPictureMode(pipParams)
-                                    }
-                                }*/
-
-                            startActivity(
-                                Intent(
-                                    this@AgoraPublisherActivity,
-                                    TipSettingActivity::class.java
-                                )
-                            )
+                            if (isShowLive) {
+                                tipSettingsSheet()
+                            } else {
+                                errorToast("Please start live show to access this feature")
+                            }
                         }
 
                         2 -> {
@@ -1205,6 +1207,85 @@ class AgoraPublisherActivity : BaseActivity() {
         sheet.show()
     }
 
+    private fun tipSettingsSheet() {
+        val tipSettingsSheetBind =
+            SellerTipSettingsSheetBinding.bind(
+                layoutInflater.inflate(
+                    R.layout.seller_tip_settings_sheet,
+                    null,
+                    false
+                )
+            )
+        val sheet = Alerts.appBottomSheet(this, true, tipSettingsSheetBind)
+        tipSettingsSheetBind.close.setHapticClickListener { sheet.dismiss() }
+        tipSettingsSheetBind.save.setHapticClickListener {
+            /*    tipSettingsSheetBind.tipMessage.value()
+                tipSettingsSheetBind.showLiveChat.isChecked */
+        }
+        sheet.show()
+    }
+
+    private fun auctionSettingsSheet() {
+        var selectedCounterTimer = 0
+        var selectedRequiredTime = 0
+
+        val auctionSettingsSheetBind =
+            AuctionSettingsSheetBinding.bind(
+                layoutInflater.inflate(
+                    R.layout.auction_settings_sheet,
+                    null,
+                    false
+                )
+            )
+
+        val sheet = Alerts.appBottomSheet(this, true, auctionSettingsSheetBind)
+
+        val extraTimer = listOf(5, 7, 10)
+        extraTimer.forEachIndexed { index, time ->
+            val chip = Utils.makeAChip(
+                mCtx = this,
+                text = "${time}s",
+                selected = index == 0,
+                closeIconVisible = false,
+                chipPadding = 12,
+            )
+            chip.setOnClickListener {
+                auctionSettingsSheetBind.timerChips.check(chip.id)
+                selectedCounterTimer = time
+            }
+            auctionSettingsSheetBind.timerChips.addView(chip)
+        }
+
+        val requiredTimeList = listOf(15, 30, 45)
+        val requiredTimeAdapter = ArrayAdapter(
+            this,
+            android.R.layout.simple_list_item_1,
+            requiredTimeList
+        )
+
+        auctionSettingsSheetBind.requiredTime.setAdapter(requiredTimeAdapter)
+
+        auctionSettingsSheetBind.requiredTime.setOnItemClickListener { _, _, position, _ ->
+            selectedRequiredTime = requiredTimeList[position]
+            auctionSettingsSheetBind.requiredTime.setText("${requiredTimeList[position]}s", false)
+        }
+
+        auctionSettingsSheetBind.requiredTime.setHapticClickListener {
+            auctionSettingsSheetBind.requiredTime.showDropDown()
+        }
+
+        auctionSettingsSheetBind.close.setHapticClickListener { sheet.dismiss() }
+        auctionSettingsSheetBind.start.setHapticClickListener {
+            /* auctionSettingsSheetBind.startingBid.value()
+             selectedRequiredTime
+             selectedCounterTimer
+             auctionSettingsSheetBind.suddenDeath.isChecked*/
+        }
+
+        sheet.show()
+
+    }
+
     private fun showNotesSheet() {
         val showNotesSheetBind = ShowNotesSheetBinding.bind(
             layoutInflater.inflate(
@@ -1227,10 +1308,15 @@ class AgoraPublisherActivity : BaseActivity() {
             resources.dpToPx(16),
             resources.dpToPx(16),
             resources.dpToPx(16),
-            navigationBarHeight+resources.dpToPx(32)
+            navigationBarHeight + resources.dpToPx(32)
         )
 
-        val sheet = Alerts.appBottomSheet(this, false, showNotesSheetBind)
+        val sheet = Alerts.appBottomSheet(this, true, showNotesSheetBind)
+
+        sheet.setOnDismissListener {
+            bind.showNotes.isVisible = true
+        }
+
         Aztec.with(
             showNotesSheetBind.showNotes,
             showNotesSheetBind.formattingToolbar,
@@ -1243,7 +1329,6 @@ class AgoraPublisherActivity : BaseActivity() {
 
         showNotesSheetBind.post.setHapticClickListener {
             val notes =showNotesSheetBind.showNotes.toFormattedHtml()
-
             if (notes.isEmpty()) {
                 errorToast("Please enter some notes")
             } else {
@@ -1341,6 +1426,23 @@ class AgoraPublisherActivity : BaseActivity() {
                 false
             )
         )
+
+        val newHeight = window?.decorView?.measuredHeight
+        val viewGroupLayoutParams = promoteSheetBind.root.layoutParams ?: ViewGroup.LayoutParams(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.MATCH_PARENT
+        )
+
+        viewGroupLayoutParams.height = (newHeight ?: 0) - (statusBarHeight)
+        promoteSheetBind.root.layoutParams = viewGroupLayoutParams
+
+        promoteSheetBind.bottomText.setMargins(
+            0,
+            0,
+           0,
+            navigationBarHeight + resources.dpToPx(32)
+        )
+
 
         val promoteSheet = Alerts.appBottomSheet(this, true, promoteSheetBind)
 
@@ -1658,12 +1760,12 @@ class AgoraPublisherActivity : BaseActivity() {
             )
         )
 
-        val randomSheet = Alerts.appBottomSheet(this, false, randomizerSheetBind)
+        val randomSheet = Alerts.appBottomSheet(this, true, randomizerSheetBind)
 
-        if(bind.luckyWheelLayout.isVisible){
-            randomizerSheetBind.spinControllersView.isVisible=true
-            randomizerSheetBind.showSpin.isVisible=false
-        }else{
+        if (bind.luckyWheelLayout.isVisible) {
+            randomizerSheetBind.spinControllersView.isVisible = true
+            randomizerSheetBind.showSpin.isVisible = false
+        } else {
             randomizerSheetBind.spinControllersView.visibility = View.INVISIBLE
             randomizerSheetBind.showSpin.isVisible = true
         }
@@ -1685,11 +1787,21 @@ class AgoraPublisherActivity : BaseActivity() {
         }
 
         randomizerSheetBind.manualEntry.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(charSequence: CharSequence?, start: Int, count: Int, after: Int) {
+            override fun beforeTextChanged(
+                charSequence: CharSequence?,
+                start: Int,
+                count: Int,
+                after: Int
+            ) {
 
             }
 
-            override fun onTextChanged(charSequence: CharSequence?, start: Int, before: Int, count: Int) {
+            override fun onTextChanged(
+                charSequence: CharSequence?,
+                start: Int,
+                before: Int,
+                count: Int
+            ) {
                 // Handle text changes as the user types
                 val rawText = randomizerSheetBind.manualEntry.text?.toString().orEmpty()
 

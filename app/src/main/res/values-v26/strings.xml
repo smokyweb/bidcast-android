@@ -4,4 +4,7 @@
     <string name="buy_it_now">Buy It Now</string>
     <string name="optional_fields">Optional Fields</string>
     <string name="sellers_covers_ny_shipping_adjustments">Sellers covers ny shipping adjustments.</string>
+    <string name="try_something_like_tip_for_a_shoutout">Try something like \"Tip for a shoutout\"</string>
+    <string name="save">Save</string>
+    <string name="start_auction">Start Auction</string>
 </resources>

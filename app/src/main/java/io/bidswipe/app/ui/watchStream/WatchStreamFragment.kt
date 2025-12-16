@@ -2074,7 +2074,6 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
         }
     }
 
-
     private fun showNotesSheet() {
         val showNotesSheetBind = ViewerShowNotesSheetBinding.bind(
             layoutInflater.inflate(
@@ -2083,6 +2082,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
                 false
             )
         )
+
         val newHeight = requireActivity().window?.decorView?.measuredHeight
         val viewGroupLayoutParams = showNotesSheetBind.root.layoutParams ?: ViewGroup.LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT,

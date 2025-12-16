@@ -3,13 +3,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     android:backgroundTint="@color/surface"
     android:background="@drawable/bottom_sheet_back">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:orientation="vertical"
         android:padding="@dimen/margin"
         app:layout_constraintTop_toTopOf="parent">
@@ -40,18 +40,20 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/optionList"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight="1"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             tools:itemCount="2"
             tools:listitem="@layout/promote_item" />
 
         <TextView
+            android:id="@+id/bottom_text"
             style="@style/BodyMedium"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:alpha="0.7"
+            android:gravity="center_horizontal"
             android:text="@string/prices_shown_in_usd_actual_boost_duration_may_vary" />
-
 
     </LinearLayout>
 

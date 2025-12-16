@@ -10,6 +10,8 @@ import android.graphics.Color
 import android.graphics.ColorFilter
 import android.graphics.LightingColorFilter
 import android.graphics.Paint
+import android.graphics.drawable.BitmapDrawable
+import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Build
 import android.provider.OpenableColumns
@@ -19,6 +21,7 @@ import androidx.core.content.ContextCompat
 import com.canhub.cropper.CropImageOptions
 import com.canhub.cropper.CropImageView
 import com.google.android.material.chip.Chip
+import com.stripe.android.customersheet.injection.CustomerSheetViewModelModule_Companion_ResourcesFactory.resources
 import io.bidswipe.app.R
 import io.bidswipe.app.utils.cropper.CropOptions
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -273,6 +276,31 @@ object Utils {
 		it.lockscreenVisibility = Notification.VISIBILITY_PUBLIC
 		it.enableVibration(true)
 		it.enableLights(false)
+	}
+
+	fun generateTextDrawable(mCtx: Context,text: String): Drawable {
+		val textSize = 40f
+		val bgColor = Color.LTGRAY
+		val textColor = Color.WHITE
+
+		val paint = Paint()
+		paint.textSize = textSize
+		paint.color = textColor
+		paint.textAlign = Paint.Align.CENTER
+
+		// Create a bitmap to draw text on
+		val width = 100
+		val height = 100
+		val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+		val canvas = Canvas(bitmap)
+
+		// Fill the canvas with the background color
+		canvas.drawColor(bgColor)
+
+		// Draw the first letter of the user's name
+		canvas.drawText(text, width / 2f, height / 2f - (paint.descent() + paint.ascent()) / 2, paint)
+
+		return BitmapDrawable(mCtx.resources, bitmap)
 	}
 
 }

@@ -3,14 +3,19 @@ package io.bidswipe.app.utils
 import android.content.Context
 import android.graphics.drawable.ColorDrawable
 import android.util.Log
+import android.view.View
+import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.viewbinding.ViewBinding
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.gyf.immersionbar.ktx.navigationBarHeight
+import com.gyf.immersionbar.ktx.statusBarHeight
 import es.dmoral.toasty.Toasty
 import io.bidswipe.app.BuildConfig
+import io.bidswipe.app.R
 import io.bidswipe.app.interfaces.AlertClicks
 import io.bidswipe.app.ui.custom.AppBottomSheet
 
@@ -51,13 +56,16 @@ object Alerts {
 			it.window?.setDimAmount(0.6f)
 		}
 
-	fun appBottomSheet(mCtx : Context , isCancelable : Boolean , view : ViewBinding) =
-		BottomSheetDialog(mCtx , style.BottomSheetDialogStyle).apply {
-			setContentView(view.root)
-			dismissWithAnimation = true
-			setCancelable(isCancelable)
-			behavior.state = BottomSheetBehavior.STATE_EXPANDED
-		}
+    fun appBottomSheet(mCtx : Context , isCancelable : Boolean , view : ViewBinding) =
+        BottomSheetDialog(mCtx , style.BottomSheetDialogStyle).apply {
+            setContentView(view.root)
+            dismissWithAnimation = true
+            setCancelable(isCancelable)
+
+            behavior.state = BottomSheetBehavior.STATE_EXPANDED
+            behavior.skipCollapsed = true
+            behavior.isFitToContents = true
+        }
 
 	fun showBottomSheet(
         mCtx : Context ,

@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/bottom_sheet_back"
+    android:padding="@dimen/padding">
+
+    <View
+        android:layout_width="64dp"
+        android:layout_height="4dp"
+        android:background="@drawable/card_16"
+        android:backgroundTint="@color/outlineVariant"
+        android:layout_gravity="center_horizontal"/>
+
+    <TextView
+        style="@style/TitleLarge"
+        android:layout_weight="1"
+        android:layout_width="match_parent"
+        android:layout_marginVertical="@dimen/margin"
+        android:layout_height="wrap_content"
+        android:text="Tip Settings" />
+
+
+    <TextView
+        style="@style/TitleSmall"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/half_margin"
+        android:text="Personalize your tips" />
+
+
+    <com.google.android.material.textfield.TextInputLayout
+        style="@style/inputBoxStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:counterEnabled="true"
+        app:counterMaxLength="24">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/tip_message"
+            style="@style/inputTextStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/try_something_like_tip_for_a_shoutout"
+           />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <TextView
+        style="@style/BodySmall"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/half_margin"
+        android:textColor="@color/onSurfaceVariant"
+        android:drawableStart="@drawable/ic_shine"
+        android:drawablePadding="4dp"
+        android:text="Showcase your personality and boost your chances of receiving tips. This will be displayed in your live store." />
+
+  <TextView
+        style="@style/TitleSemiBold"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/half_margin"
+        android:text="Show buyer tip messages in live chat" />
+
+    <com.google.android.material.materialswitch.MaterialSwitch
+        android:id="@+id/show_live_chat"
+        style="@style/appSwitch"
+        android:textColor="@color/onSurfaceVariant"
+        android:textAppearance="@style/BodySmall"
+        android:text="Turn this on if you'd like buyer's tip messages to be displayed in the live chat for all viewers."
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:gravity="center_vertical"
+        android:layout_marginTop="@dimen/margin"
+        android:layout_height="wrap_content">
+
+
+        <com.google.android.material.button.MaterialButton
+            style="@style/appBtnOutline"
+            android:id="@+id/close"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/half_margin"
+            android:text="@string/cancel" />
+
+        <com.google.android.material.button.MaterialButton
+            style="@style/appBtn"
+            android:id="@+id/save"
+            android:layout_width="0dp"
+            android:layout_marginStart="@dimen/half_margin"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="@string/save" />
+
+    </LinearLayout>
+</LinearLayout>

@@ -83,13 +83,19 @@ fun Resources.dp(value : Float) : Int {
 }
 
 
-fun ImageView.loadUrl(mCtx : Context , url : String , placeHolder : Int? = null) {
+fun ImageView.loadUrl(mCtx : Context , url : String , placeHolder : Int? = null,userName:String?=null) {
 	runSafe {
-		Glide.with(mCtx)
-			.load(url)
-			.placeholder(placeHolder ?: R.drawable.placeholder_square)
-			.error(placeHolder)
-			.into(this)
+		if (url.isEmpty() && !userName.isNullOrEmpty()) {
+			val firstLetter = userName.firstOrNull()?.toString() ?: ""
+			val drawable =Utils.generateTextDrawable(mCtx,firstLetter)
+			this.setImageDrawable(drawable)
+		}else {
+			Glide.with(mCtx)
+				.load(url)
+				.placeholder(placeHolder ?: R.drawable.placeholder_square)
+				.error(placeHolder)
+				.into(this)
+		}
 	}
 }
 

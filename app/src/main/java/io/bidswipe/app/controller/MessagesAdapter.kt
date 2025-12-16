@@ -2,6 +2,7 @@ package io.bidswipe.app.controller
 
 import android.os.Build
 import android.text.format.DateFormat
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.Toast
@@ -44,10 +45,10 @@ class MessagesAdapter(
 
 			if (item?.users?.senderId == Prefs(mCtx).getUserData()?.id.toString()) {
 				bind.name.text = item.users?.receiverName?.asCapital()
-				if (item.users?.receiverImage?.isEmpty() == false) bind.icon.loadUrl(mCtx, item.users?.receiverImage ?: "", draw.placeholder_user)
+				if (item.users?.receiverImage?.isEmpty() == false) bind.icon.loadUrl(mCtx, item.users?.receiverImage ?: "", draw.placeholder_user,bind.name.text.toString())
 			} else {
 				bind.name.text = item?.users?.senderName?.asCapital()
-				if (item?.users?.receiverImage?.isEmpty() == false) bind.icon.loadUrl(mCtx, item.users?.senderImage ?: "", draw.placeholder_user)
+				if (item?.users?.receiverImage?.isEmpty() == false) bind.icon.loadUrl(mCtx, item.users?.senderImage ?: "", draw.placeholder_user,bind.name.text.toString())
 			}
 
 			bind.message.text = item?.message

@@ -182,7 +182,7 @@ class ChatActivity : BaseActivity() {
 			.updateChildren(mapOf("unreadCount" to 0))*/
 
 		bind.title.text = receiverName.asCapital()
-		bind.userImage.loadUrl(this, receiverImage)
+		bind.userImage.loadUrl(this, receiverImage,userName = receiverName)
 
 		chats = Chats(
 			this, chatKey, ChatModel.Users(

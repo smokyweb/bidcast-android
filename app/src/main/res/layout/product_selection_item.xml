@@ -10,8 +10,8 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
         android:gravity="center"
+        android:orientation="horizontal"
         android:paddingHorizontal="@dimen/margin"
         android:paddingTop="@dimen/margin"
         android:paddingBottom="8dp">
@@ -50,13 +50,6 @@
                 android:layout_height="wrap_content"
                 android:text="@string/enter_product_title" />
 
-            <!-- <View
-                 android:id="@+id/view"
-                 android:layout_width="1dp"
-                 android:visibility="gone"
-                 android:layout_height="0dp"
-                 android:layout_weight="0.5" />-->
-
             <TextView
                 android:id="@+id/category"
                 style="@style/BodySmall"
@@ -88,52 +81,36 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:orientation="horizontal"
+                android:layout_height="wrap_content"
                 android:gravity="center_vertical"
-                android:layout_height="wrap_content">
+                android:orientation="horizontal">
 
-                <com.google.android.material.card.MaterialCardView
-                    android:id="@+id/statusCard"
-                    style="@style/cardStyle"
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/start_auction"
+                    style="@style/appBtn"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/half_margin"
-                    app:cardBackgroundColor="@color/surface"
-                    android:layout_marginBottom="@dimen/half_margin"
-                    app:cardElevation="0dp"
-                    app:cardCornerRadius="100dp">
+                    android:minHeight="0dp"
+                    android:paddingHorizontal="@dimen/margin"
+                    android:paddingVertical="4dp"
+                    android:text="Start Auction"
+                    android:textAppearance="@style/BodySmall"
+                    android:textColor="@color/onSurface"
+                    app:backgroundTint="@color/outline"/>
 
-                    <TextView
-                        android:id="@+id/status"
-                        style="@style/TitleSmall"
-                        android:paddingVertical="4dp"
-                        android:paddingHorizontal="6dp"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginHorizontal="@dimen/margin"
-                        android:text="Start Auction" />
-
-                </com.google.android.material.card.MaterialCardView>
-
-
-
-                    <androidx.appcompat.widget.AppCompatImageView
-                        android:layout_width="32dp"
-                        android:src="@drawable/ic_pin"
-                        android:padding="6dp"
-                        android:id="@+id/pin"
-                        android:tint="@color/onPrimary"
-                        android:layout_marginStart="@dimen/half_margin"
-                        android:layout_gravity="center"
-                        android:background="@drawable/card_16"
-                        android:backgroundTint="@color/primary"
-                        android:layout_height="32dp"/>
-
-
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/set_for_next"
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
+                    android:layout_gravity="center"
+                    android:layout_marginStart="@dimen/half_margin"
+                    android:background="@drawable/card_16"
+                    android:backgroundTint="@color/outline"
+                    android:padding="6dp"
+                    android:src="@drawable/ic_pin"
+                    android:tint="@color/onSurface" />
 
             </LinearLayout>
-
-
 
         </LinearLayout>
 

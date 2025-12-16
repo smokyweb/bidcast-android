@@ -14,44 +14,51 @@ import io.bidswipe.app.utils.loadUrl
 import io.bidswipe.app.utils.setHapticClickListener
 
 class TipsAdapter(
-	mList : MutableList<GetTipAmountResponse.Data.Tip?> , val mClicks : RecyclerClicks
-) : BaseAdapter< GetTipAmountResponse.Data.Tip , TipsItemBinding>(mList) {
+    mList: MutableList<GetTipAmountResponse.Data.Tip?>, val mClicks: RecyclerClicks
+) : BaseAdapter<GetTipAmountResponse.Data.Tip, TipsItemBinding>(mList) {
 
-	override fun bindView(inflater : LayoutInflater , parent : ViewGroup) =
-		TipsItemBinding.inflate(inflater , parent , false)
+    override fun bindView(inflater: LayoutInflater, parent: ViewGroup) =
+        TipsItemBinding.inflate(inflater, parent, false)
 
-	override fun onBind(
-		holder: BaseViewHolder<TipsItemBinding>,
-		position: Int,
-		item: GetTipAmountResponse.Data.Tip?
-	) {
-		with(holder) {
+    override fun onBind(
+        holder: BaseViewHolder<TipsItemBinding>,
+        position: Int,
+        item: GetTipAmountResponse.Data.Tip?
+    ) {
+        with(holder) {
+            bind.root.setHapticClickListener {
+                mClicks.itemClick(position)
+            }
 
-			bind.userName.text = item?.user?.name?.asCapital()
+            bind.chat.setHapticClickListener {
+                mClicks.itemClick(position, "chat")
+            }
+
+            bind.userName.text =
+                item?.user?.name?.asCapital() + " tipped " + item?.total.toString().asMoney()
 //			bind.date.text = item?.createdAt
 
-			bind.date.text = buildString {
-				append(	Utils.getFormattedDateTime(
-					Const.SERVER_TIME_FORMAT ,
-					"MM/dd/yyyy",
-					item?.createdAt.toString()
-				))
-				append(Const.BULLET)
-				append(Utils.getFormattedDateTime(
-					Const.SERVER_TIME_FORMAT ,
-					"hh:mm a",
-					item?.createdAt.toString()
-				))
-			}
+            bind.date.text = buildString {
+                append(
+                    Utils.getFormattedDateTime(
+                        Const.SERVER_TIME_FORMAT,
+                        "MM/dd/yyyy",
+                        item?.createdAt.toString()
+                    )
+                )
+                append(" " + Const.BULLET + " ")
+                append(
+                    Utils.getFormattedDateTime(
+                        Const.SERVER_TIME_FORMAT,
+                        "hh:mm a",
+                        item?.createdAt.toString()
+                    )
+                )
+            }
 
-			bind.amount.text = item?.total.toString().asMoney()
+            bind.icon.loadUrl(mCtx, item?.user?.profileImage ?: "", userName = item?.user?.name)
 
-			bind.icon.loadUrl(mCtx, item?.user?.profileImage ?:"")
+            }
 
-			bind.root.setHapticClickListener {
-				mClicks.itemClick(position)
-			}
-		}
-
-	}
-}
+        }
+    }

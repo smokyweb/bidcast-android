@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginVertical="@dimen/half_margin"
-    android:background="@color/cardview_dark_background"
+    android:background="@drawable/card_8_outline"
     android:orientation="vertical"
     android:padding="@dimen/padding">
 
@@ -13,21 +13,21 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_vertical">
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/titleIcon"
+            android:layout_width="22dp"
+            android:layout_height="22dp"
+            android:layout_marginEnd="@dimen/half_margin"
+            android:tint="@color/onSurface"
+            android:src="@drawable/ic_quick" />
 
         <TextView
             android:id="@+id/title"
-            style="@style/HeadlineSmall"
+            style="@style/TitleLarge"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="15 Minute Boost"
-            android:textColor="@color/onPrimary" />
-
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/titleIcon"
-            android:layout_width="28dp"
-            android:layout_height="28dp"
-            android:src="@drawable/ic_quick" />
+            android:text="15 Minute Boost" />
 
     </LinearLayout>
 
@@ -36,30 +36,26 @@
         style="@style/BodyMedium"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/quick_visibility_boost"
-        android:textColor="@color/onPrimary" />
+        android:visibility="gone"
+        android:text="@string/quick_visibility_boost" />
 
     <TextView
         android:id="@+id/description"
         style="@style/BodyMedium"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/half_margin"
-        android:text="@string/get_featured_in_the_top_shows_for_15_minutes"
-        android:textColor="@color/onPrimary" />
+        android:layout_marginVertical="@dimen/half_margin"
+        android:text="@string/get_featured_in_the_top_shows_for_15_minutes" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/amount"
         style="@style/appBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/margin"
-        android:backgroundTint="@color/background"
         android:minHeight="0dp"
         android:paddingHorizontal="16dp"
+        android:textAppearance="@style/TitleSemiBold"
         android:paddingVertical="6dp"
-        android:text="Select $3.99"
-        android:textColor="@color/primary"
-        app:cornerRadius="24dp" />
+        android:text="Select $3.99"/>
 
 </LinearLayout>

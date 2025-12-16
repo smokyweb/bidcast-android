@@ -23,7 +23,14 @@
         <item name="android:includeFontPadding">false</item>
     </style>
 
-    <style name="TitleMedium" parent="TextAppearance.Material3.TitleMedium">
+    <style name="TitleSemiBold" parent="TextAppearance.Material3.TitleMedium">
+        <item name="fontFamily">@font/poppins_semi_bold</item>
+        <item name="android:fontFamily">@font/poppins_semi_bold</item>
+        <item name="android:textColor">@color/onSurface</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+
+ <style name="TitleMedium" parent="TextAppearance.Material3.TitleMedium">
         <item name="fontFamily">@font/poppins_medium</item>
         <item name="android:fontFamily">@font/poppins_medium</item>
         <item name="android:textColor">@color/onSurface</item>

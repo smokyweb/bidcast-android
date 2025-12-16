@@ -37,24 +37,24 @@ class PromoteSheetAdapter(
 			bind.subTitle.text = item?.subTitle
 			bind.description.text = item?.description
 			bind.titleIcon.loadUrl(mCtx, item?.icon ?: "", R.drawable.ic_flash)
-			bind.amount.setTextColor((item?.colors?.start?.toColorInt() ?: ContextCompat.getColor(mCtx, R.color.boost_full_start)))
+//			bind.amount.setTextColor((item?.colors?.start?.toColorInt() ?: ContextCompat.getColor(mCtx, R.color.boost_full_start)))
 			
 			bind.amount.text = buildString {
-				append("Select")
+				append("Promote Show")
 				append(" • ")
 				append(item?.price?.asMoney())
 			}
 			
-			val gradientDrawable = GradientDrawable(
-				GradientDrawable.Orientation.LEFT_RIGHT,
-				intArrayOf(
-					item?.colors?.start?.toColorInt() ?: ContextCompat.getColor(mCtx, R.color.boost_full_start),
-					item?.colors?.end?.toColorInt() ?: ContextCompat.getColor(mCtx, R.color.boost_full_end)
-				)
-			)
-			
-			gradientDrawable.cornerRadius = mCtx.resources.dpToPx(16).toFloat()
-			bind.mainLayout.background = gradientDrawable
+//			val gradientDrawable = GradientDrawable(
+//				GradientDrawable.Orientation.LEFT_RIGHT,
+//				intArrayOf(
+//					item?.colors?.start?.toColorInt() ?: ContextCompat.getColor(mCtx, R.color.boost_full_start),
+//					item?.colors?.end?.toColorInt() ?: ContextCompat.getColor(mCtx, R.color.boost_full_end)
+//				)
+//			)
+//
+//			gradientDrawable.cornerRadius = mCtx.resources.dpToPx(16).toFloat()
+//			bind.mainLayout.background = gradientDrawable
 			
 		}
 	}

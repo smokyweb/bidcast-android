@@ -29,6 +29,8 @@ import io.bidswipe.app.network.Resource
 import io.bidswipe.app.network.response.SalesAnalyticsResponse
 import io.bidswipe.app.network.response.SellerAnalyticsResponse
 import io.bidswipe.app.ui.custom.AppBottomSheet
+import io.bidswipe.app.utils.Utils
+import io.bidswipe.app.utils.Utils.timestamp
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.setHapticClickListener
 import java.text.SimpleDateFormat
@@ -70,14 +72,12 @@ class OverAllFragment : BaseFragment<SellerHubViewModel, FragmentOverAllBinding>
         setupClickListeners()
 
         bind.btnExportSales.setHapticClickListener {
-
             bind.loader.isVisible = true
-            viewModel.exportAnalyticsData("sale" , "custom" , startDate.timeInMillis.toString() , endDate.timeInMillis.toString() )
-
+            viewModel.exportAnalyticsData("sale" , "custom" , Utils.getSimpleDate("yyyy-MM-dd").format(startDate.timeInMillis),Utils.getSimpleDate("yyyy-MM-dd").format(endDate.timeInMillis))
         }
 
         bind.btnExportOrders.setHapticClickListener {
-            viewModel.exportAnalyticsData("order" , "custom" , startDate.timeInMillis.toString() , endDate.timeInMillis.toString() )
+            viewModel.exportAnalyticsData("order" , "custom" , Utils.convertWeatherTimeINFormat("yyyy-MM-dd",startDate.timeInMillis), Utils.convertWeatherTimeINFormat("yyyy-MM-dd",endDate.timeInMillis) )
         }
 
        /* val adapter = ArrayAdapter(
@@ -180,6 +180,28 @@ class OverAllFragment : BaseFragment<SellerHubViewModel, FragmentOverAllBinding>
         }
 
         viewModel.exportAnalyticsDataRepo.observe(viewLifecycleOwner) {
+            viewModel.exportAnalyticsDataRepo.value=null
+            when (it) {
+                is Resource.Success -> {
+                    bind.loader.isVisible = false
+
+                }
+
+                is Resource.Error -> {
+                    bind.loader.isVisible = false
+                    it.parse(mCtx, TAG, object : AlertClicks {
+                        override fun primaryClick(dialog: AppBottomSheet) {
+                            dialog.dismiss()
+                        }
+
+                        override fun secondaryClick(dialog: AppBottomSheet) {
+                            dialog.dismiss()
+                        }
+                    })
+                }
+
+                else -> {}
+            }
 
         }
 

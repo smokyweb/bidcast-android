@@ -211,13 +211,16 @@ class ProductsForLiveShowFragment : BottomSheetDialogFragment() {
                     override fun itemClick(pos: Int, status: String?) {
                         if (productList[pos]?.status == "sold") {
                             Alerts.error(mCtx, "This product is already sold")
+                        }  else if (status == "start_auction") {
+//                            auctionSettingsSheet()
                         } else {
-                            productList.forEachIndexed { index, item ->
-                                item?.selected = index == pos
-                                bind.recycler.adapter?.notifyDataSetChanged()
-                            }
-                            selectedPos = pos
+//                            productList.forEachIndexed { index, item ->
+//                                item?.selected = index == pos
+//                                bind.recycler.adapter?.notifyDataSetChanged()
+//                            }
+//                            selectedPos = pos
                         }
+
                     }
 
                 })

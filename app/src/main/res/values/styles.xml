@@ -119,7 +119,7 @@
 
     <style name="appBtnOutline" parent="appBtn">
         <item name="backgroundTint">@color/transparent</item>
-        <item name="android:backgroundTint">@color/surface</item>
+        <item name="android:backgroundTint">@color/transparent</item>
         <item name="rippleColor">@color/primaryContainer</item>
         <item name="android:textColor">@color/primary</item>
         <item name="strokeColor">@color/primary</item>
