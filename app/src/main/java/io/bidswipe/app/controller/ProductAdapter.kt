@@ -34,7 +34,7 @@ class ProductAdapter(
 			}
 
 			bind.productName.text = item?.name?.asCapital()
-			bind.prodSubTitle.text = item?.category
+			bind.prodSubTitle.text = item?.category?.name
 			bind.quantity.text = buildString {
 				append("Quantity: ")
 				append(item?.quantity)

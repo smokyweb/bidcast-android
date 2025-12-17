@@ -19,8 +19,8 @@ import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.model.LiveShowModel
 import io.bidswipe.app.model.TutorialShowModel
 import io.bidswipe.app.network.Resource
-import io.bidswipe.app.network.response.GetProductsResponse
-import io.bidswipe.app.ui.agoraStream.AgoraPublisherActivity
+import io.bidswipe.app.network.response.Product
+import io.bidswipe.app.network.response.toLiveShowProduct
 import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.ui.sellerHub.SellerHubActivity
 import io.bidswipe.app.utils.Alerts
@@ -31,6 +31,7 @@ import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request
 import io.bidswipe.app.utils.setHapticClickListener
 import io.bidswipe.app.utils.toListProduct
+import io.bidswipe.app.utils.toSellerShow
 import okhttp3.MultipartBody
 import java.io.File
 
@@ -51,15 +52,19 @@ class AddProductFragment : BaseFragment<ScheduleShowViewModel, FragmentAddProduc
 		registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
 			if (result.resultCode == Activity.RESULT_OK) {
 				val data = result.data
-				val selectedProducts =
-					data?.getSerializableExtra("selectedProducts") as? ArrayList<GetProductsResponse.Data>
+				val selectedProducts = data?.getSerializableExtra("selectedProducts") as? ArrayList<Product>
 
 				Log.d(TAG, "$selectedProducts ")
 				selectedProducts?.forEach { data ->
 
 					val product =
 						LiveShowModel.Product(
-							data.category?.name,
+							LiveShowModel.Category(
+								data.category?.id,
+								data.category?.image ?: "",
+								data.category?.name ?: "",
+								data.category?.thumbnail
+							),
 							data.id.toString(),
 							data.images?.get(0),
 							data.status,
@@ -227,7 +232,7 @@ class AddProductFragment : BaseFragment<ScheduleShowViewModel, FragmentAddProduc
 				is Resource.Success -> {
 					bind.loader.isVisible = false
 
-					it.value.data
+					it.value.products
 
 					/*if (page == 1) productList.clear()
 
@@ -278,31 +283,19 @@ class AddProductFragment : BaseFragment<ScheduleShowViewModel, FragmentAddProduc
 					bind.loader.isVisible = false
 
 					val data = it.value.data
+					log("SHOW DATA Before Start Show: $data")
 
-					log("SHOW DATA Before Start Shoe: $data")
-
-					val products = data?.products?.map { it?.toLiveShowProduct() }
-
+					val products = data?.products?.map { product -> product?.toLiveShowProduct() }
 					products?.first()?.isCurrent = true
 
-					val showData = LiveShowModel(
+					val show = LiveShowModel(
 						seller = LiveShowModel.Seller(
 							id = userId,
 							image = userImage,
 							name = userName,
 							rating = ""
 						),
-						products = products?.map { p ->
-							LiveShowModel.Product(
-								data.category?.name,
-								p?.id,
-								p?.image,
-								p?.status,
-								p?.name,
-								p?.price,
-								"1",
-							)
-						}?.toList() ?: mutableListOf(),
+						products = products ?: mutableListOf(),
 						roomId = "live_room_${userId}_${data?.id.toString()}",
 						showDetail = "Test Details",
 						thumbnail = data?.thumbnail?.getOrNull(0) ?: "",
@@ -322,12 +315,7 @@ class AddProductFragment : BaseFragment<ScheduleShowViewModel, FragmentAddProduc
 						showTimer = "",
 					)
 
-					val intent = Intent(mCtx, AgoraPublisherActivity::class.java).putExtra(
-						"showData",
-						showData
-					).putExtra("time", data?.time)
-
-					startActivity(intent)
+					startActivity(mCtx.toSellerShow(data?.time, show))
 					finish()
 				}
 

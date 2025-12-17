@@ -22,6 +22,7 @@ import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.model.LiveShowModel
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.network.response.GetMyShowResponse
+import io.bidswipe.app.network.response.toLiveShowProduct
 import io.bidswipe.app.ui.agoraStream.AgoraPublisherActivity
 import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.ui.more.MoreActivity
@@ -34,6 +35,7 @@ import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request
 import io.bidswipe.app.utils.setHapticClickListener
 import io.bidswipe.app.utils.toScheduleShow
+import io.bidswipe.app.utils.toSellerShow
 
 @SuppressLint("NotifyDataSetChanged")
 class ShowsFragment : BaseFragment<SellerHubViewModel, FragmentShowsBinding>() {
@@ -67,7 +69,7 @@ class ShowsFragment : BaseFragment<SellerHubViewModel, FragmentShowsBinding>() {
 
             val user = data?.user
 
-            val products = data?.products?.map { it?.toLiveShowProduct() }
+            val products = data?.products?.map { product -> product?.toLiveShowProduct() }
 
             if (products?.isEmpty() == true) {
                 Alerts.error(mCtx, "No products found for this Show")
@@ -125,13 +127,7 @@ class ShowsFragment : BaseFragment<SellerHubViewModel, FragmentShowsBinding>() {
 
                 findNavController().animatedNav(R.id.toShowDetails, bundleOf("showId" to showList[pos]?.id.toString()))
             } else {
-
-                startActivity(
-                    Intent(mCtx, AgoraPublisherActivity::class.java).putExtra(
-                        "showData",
-                        showData
-                    ).putExtra("time", showList[pos]?.time)
-                )
+                startActivity(mCtx.toSellerShow(showList[pos]?.time, showData))
             }
         }
 

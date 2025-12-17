@@ -5,6 +5,7 @@ import android.util.Log
 import io.bidswipe.app.model.LiveShowModel
 import io.socket.client.IO
 import io.socket.client.Socket
+import org.json.JSONArray
 import org.json.JSONObject
 import java.net.URISyntaxException
 
@@ -562,6 +563,82 @@ class SocketManager private constructor(
 
 		Log.d(TAG, "EMIT: send_tip  - showId: $showId, showId : $showId, userId : $userId, sellerId : $sellerId, amount : $amount, cardNumber: $cardNumber")
 		socket?.emit("send_tip", payload)
+	}
+
+	fun startAuction(roomId : String, productIds : List<String>, startingBidAmount : String , requireTime: Int, counterBidTime: Int,  suddenDeath : Boolean) {
+		val payload = JSONObject().apply {
+			put("room_id", roomId)
+			put("products", JSONArray(productIds))
+			put("starting_bid_amount", startingBidAmount)
+			put("require_time", requireTime)
+			put("counter_bid_time", counterBidTime)
+			put("sudden_death", suddenDeath)
+		}
+
+		Log.d(TAG, "startAuction: ${payload}")
+		Log.d(TAG, "EMIT:start_auction  - roomId: $roomId, productIds: $productIds, startingBidAmount: $startingBidAmount, requireTime: $requireTime, counterBidTime: $counterBidTime: $suddenDeath")
+		socket?.emit("start_auction", payload)
+	}
+
+	fun onAuctionStarted(listener: (resultJson : JSONObject) -> Unit) {
+		socket?.off("auction_started")
+		socket?.on("auction_started") { args ->
+			val obj = args.firstOrNull()
+			if (obj is JSONObject) {
+				Log.d(TAG, "RECEIVED: auction_started - $obj")
+				listener(obj)
+			}
+		}
+	}
+
+	fun pinProduct(roomId : String, productId : String) {
+		val payload = JSONObject().apply {
+			put("room_id", roomId)
+			put("product_id", productId)
+		}
+		Log.d(TAG, "EMIT:pin_product  - roomId: $roomId, productId: $productId")
+		socket?.emit("pin_product", payload)
+	}
+
+	fun onProductPinned(listener: (resultJson : JSONObject) -> Unit) {
+		socket?.off("product_pinned")
+		socket?.on("product_pinned") { args ->
+			val obj = args.firstOrNull()
+			if (obj is JSONObject) {
+				Log.d(TAG, "RECEIVED: product_pinned - $obj")
+				listener(obj)
+			}
+		}
+	}
+
+	fun runNextProduct(roomId : String) {
+		val payload = JSONObject().apply {
+			put("room_id", roomId)
+		}
+		Log.d(TAG, "EMIT:run_next_product  - roomId: $roomId")
+		socket?.emit("run_next_product", payload)
+	}
+
+	fun onAuctionNExtProduct(listener: (resultJson : JSONObject) -> Unit) {
+		socket?.off("auction_next_product")
+		socket?.on("auction_next_product") { args ->
+			val obj = args.firstOrNull()
+			if (obj is JSONObject) {
+				Log.d(TAG, "RECEIVED: auction_next_product - $obj")
+				listener(obj)
+			}
+		}
+	}
+
+	fun onOnNextProductError(listener: (resultJson : JSONObject) -> Unit) {
+		socket?.off("run_next_product_error")
+		socket?.on("run_next_product_error") { args ->
+			val obj = args.firstOrNull()
+			if (obj is JSONObject) {
+				Log.d(TAG, "RECEIVED: run_next_product_error - $obj")
+				listener(obj)
+			}
+		}
 	}
 
 }

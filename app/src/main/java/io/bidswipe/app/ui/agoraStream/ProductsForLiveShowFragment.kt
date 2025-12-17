@@ -5,13 +5,14 @@ import android.content.Context
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import androidx.core.view.get
 import androidx.core.view.isVisible
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -23,10 +24,11 @@ import io.bidswipe.app.databinding.FragmentProductsForLiveShowBinding
 import io.bidswipe.app.interfaces.AlertClicks
 import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.network.Resource
-import io.bidswipe.app.network.response.GetProductsResponse
+import io.bidswipe.app.network.response.Product
 import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.ui.dashboard.DashViewModel
 import io.bidswipe.app.utils.Alerts
+import io.bidswipe.app.utils.SocketManager
 import io.bidswipe.app.utils.Utils
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request
@@ -38,19 +40,22 @@ import io.bidswipe.app.utils.value
 class ProductsForLiveShowFragment : BottomSheetDialogFragment() {
 
     private lateinit var productAdapter: FirebaseProductAdapter
-    private var productList = mutableListOf<GetProductsResponse.Data?>()
+    private var productList = mutableListOf<Product?>()
 
     private lateinit var mCtx: Context
 
     private var _binding: FragmentProductsForLiveShowBinding? = null
     private val bind get() = _binding!!
 
-    private val viewModel by viewModels<DashViewModel>()
+    val viewModel: DashViewModel by activityViewModels()
 
     private var page = 1
     private var isLoading = false
     private var selectedPos = -1
     private var saleType = ""
+    private var type = ""
+    private var status = ""
+    private var socketManager: SocketManager? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -67,6 +72,11 @@ class ProductsForLiveShowFragment : BottomSheetDialogFragment() {
         super.onViewCreated(view, savedInstanceState)
 
         saleType = "auction"
+
+        socketManager = SocketManager.getInstance(requireContext())
+
+        Log.d("TAG", "onViewCreated: ${viewModel.currentRoomId}")
+        Log.d("TAG", "onViewCreated: ${viewModel.categoryId}")
 
         bind.chipGroup.apply {
             addView(
@@ -108,11 +118,27 @@ class ProductsForLiveShowFragment : BottomSheetDialogFragment() {
                     val index = chipGroup.indexOfChild(chipGroup.findViewById(chipId))
 //                    bind.loader.isVisible = true
 
-                    saleType = when (index) {
-                        0 -> "auction"
-                        1 -> "buy_now"
-                        2 -> "sold"
-                        3 -> "accept_offers"
+                     when (index) {
+                        0 -> {
+                            saleType = "auction"
+                            type = ""
+                            status = ""
+                        }
+                        1 ->{
+                           type = "buy_now"
+                            status = ""
+                            saleType = ""
+                        }
+                        2 -> {
+                          status =  "inactive"
+                            type = ""
+                            saleType = ""
+                        }
+                        3 -> {
+                            saleType =  "accept_offers"
+                            type = ""
+                            status = ""
+                        }
                         else -> ""
                     }
 
@@ -134,7 +160,7 @@ class ProductsForLiveShowFragment : BottomSheetDialogFragment() {
             when (it) {
                 is Resource.Success -> {
                     bind.bottomLoader.isVisible = false
-                    val mData = it.value.data
+                    val mData = it.value.products
 
                     if (page == 1) {
                         productList.clear()
@@ -168,9 +194,7 @@ class ProductsForLiveShowFragment : BottomSheetDialogFragment() {
                             dialog.dismiss()
                         }
                     })
-
                 }
-
                 else -> {}
             }
         }
@@ -204,6 +228,7 @@ class ProductsForLiveShowFragment : BottomSheetDialogFragment() {
             }
         })
 
+
         productAdapter =
             FirebaseProductAdapter(
                 from = "live_show",
@@ -211,10 +236,14 @@ class ProductsForLiveShowFragment : BottomSheetDialogFragment() {
                 object : RecyclerClicks {
                     @SuppressLint("NotifyDataSetChanged")
                     override fun itemClick(pos: Int, status: String?) {
+
                         if (productList[pos]?.status == "sold") {
                             Alerts.error(mCtx, "This product is already sold")
                         }  else if (status == "start_auction") {
-                            auctionSettingsSheet()
+
+                            val selectedProduct = productList[pos]
+
+                            auctionSettingsSheet(selectedProduct?.id.toString(),selectedProduct?.pricing ?: "")
                         } else {
 //                            productList.forEachIndexed { index, item ->
 //                                item?.selected = index == pos
@@ -260,6 +289,8 @@ class ProductsForLiveShowFragment : BottomSheetDialogFragment() {
         viewModel.getUserProducts(
             page = page.toString().request(),
             saleType = saleType.ifEmpty { null }?.request(),
+            type = type.ifEmpty { null }?.request(),
+            status = status.ifEmpty { null }?.request(),
             search = bind.search.value().ifEmpty { null }?.request(),
             categoryIds = viewModel.categoryId.request()
         )
@@ -270,8 +301,8 @@ class ProductsForLiveShowFragment : BottomSheetDialogFragment() {
         _binding = null
     }
 
-    private fun auctionSettingsSheet() {
-        var selectedCounterTimer = 0
+    private fun auctionSettingsSheet(productId : String, price : String) {
+        var selectedCounterTimer = 5
         var selectedRequiredTime = 0
 
         val auctionSettingsSheetBind =
@@ -310,6 +341,8 @@ class ProductsForLiveShowFragment : BottomSheetDialogFragment() {
 
         auctionSettingsSheetBind.requiredTime.setAdapter(requiredTimeAdapter)
 
+        auctionSettingsSheetBind.requiredTime.setText("30",false)
+
         auctionSettingsSheetBind.requiredTime.setOnItemClickListener { _, _, position, _ ->
             selectedRequiredTime = requiredTimeList[position]
             auctionSettingsSheetBind.requiredTime.setText("${requiredTimeList[position]}s", false)
@@ -319,8 +352,42 @@ class ProductsForLiveShowFragment : BottomSheetDialogFragment() {
             auctionSettingsSheetBind.requiredTime.showDropDown()
         }
 
+        auctionSettingsSheetBind.startingBid.setText(price)
+
         auctionSettingsSheetBind.close.setHapticClickListener { sheet.dismiss() }
         auctionSettingsSheetBind.start.setHapticClickListener {
+
+            when{
+                selectedRequiredTime == 0 -> {
+                    Alerts.error(mCtx,"Please select required time")
+                    return@setHapticClickListener
+                }
+                selectedCounterTimer == 0 -> {
+                    Alerts.error(mCtx,"Please select counter timer")
+                    return@setHapticClickListener
+                }
+                auctionSettingsSheetBind.startingBid.value().isEmpty() -> {
+                    Alerts.error(mCtx,"Please enter starting bid")
+                    return@setHapticClickListener
+                }
+                else -> {
+                    val productIds = mutableListOf<String>()
+                    productIds.add(productId)
+
+                     socketManager?.startAuction(
+						 viewModel.currentRoomId,
+                                productIds,
+                         auctionSettingsSheetBind.startingBid.value(),
+						 selectedRequiredTime,
+						 selectedCounterTimer,
+						 auctionSettingsSheetBind.suddenDeath.isChecked
+					 )
+
+                    sheet.dismiss()
+                }
+
+            }
+
             /* auctionSettingsSheetBind.startingBid.value()
              selectedRequiredTime
              selectedCounterTimer

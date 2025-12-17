@@ -35,6 +35,7 @@ import io.bidswipe.app.network.response.GetMailClassesResponse
 import io.bidswipe.app.network.response.GetProductDetailsResponse
 import io.bidswipe.app.network.response.GetProductsResponse
 import io.bidswipe.app.network.response.GetShippingProfilesResponse
+import io.bidswipe.app.network.response.Product
 import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.ui.dashboard.DashViewModel
 import io.bidswipe.app.utils.Alerts
@@ -68,7 +69,7 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
     lateinit var imageAdapter: ImageAdapter
     var uploadItemIndex = -1
     var isSubCategory = false
-    private var product: GetProductsResponse.Data? = null
+    private var product: Product? = null
     private var categoryList = mutableListOf<GetCategoryResponse.Data?>()
     private var subCategoryList = mutableListOf<GetCategoryResponse.Data?>()
     private var mailClassesList = mutableListOf<GetMailClassesResponse.Data.MailClasses?>()
@@ -314,7 +315,7 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
 
         // Get product from intent only if not already restored
         if (product == null) {
-            product = activity?.intent?.getSerializableExtra("product") as? GetProductsResponse.Data
+            product = activity?.intent?.getSerializableExtra("product") as? Product
         }
 
         bind.root.setOnClickListener {

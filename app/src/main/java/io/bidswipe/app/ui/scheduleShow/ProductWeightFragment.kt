@@ -156,7 +156,7 @@ class ProductWeightFragment : BaseFragment<ScheduleShowViewModel, FragmentProduc
 
 					val data = it.value.data
 
-					val product =
+					/*val product =
 						LiveShowModel.Product(
 							data?.category?.name,
 							data?.id.toString(),
@@ -165,9 +165,9 @@ class ProductWeightFragment : BaseFragment<ScheduleShowViewModel, FragmentProduc
 							data?.title,
 							data?.pricing,
 							data?.quantity
-						)
+						)*/
 
-					viewModel.currentProducts.add(product)
+//					viewModel.currentProducts.add(product)
 
 					findNavController().navigate(ids.addProductFragment)
 				}

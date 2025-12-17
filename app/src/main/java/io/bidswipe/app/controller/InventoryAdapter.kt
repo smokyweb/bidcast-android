@@ -14,6 +14,7 @@ import io.bidswipe.app.base.BaseAdapter
 import io.bidswipe.app.databinding.InventoryItemBinding
 import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.network.response.GetProductsResponse
+import io.bidswipe.app.network.response.Product
 import io.bidswipe.app.utils.Const
 import io.bidswipe.app.utils.asCapital
 import io.bidswipe.app.utils.asMoney
@@ -22,10 +23,10 @@ import io.bidswipe.app.utils.loadUrl
 import io.bidswipe.app.utils.setHapticClickListener
 
 class InventoryAdapter(
-    mList: MutableList<GetProductsResponse.Data?>,
+    mList: MutableList<Product?>,
     private val isSelectionMode: Boolean,
     val mClicks: RecyclerClicks,
-) : BaseAdapter<GetProductsResponse.Data?, InventoryItemBinding>(mList) {
+) : BaseAdapter<Product?, InventoryItemBinding>(mList) {
 
     val posList = mutableListOf<Int>()
 
@@ -35,7 +36,7 @@ class InventoryAdapter(
     override fun onBind(
         holder: BaseViewHolder<InventoryItemBinding>,
         position: Int,
-        item: GetProductsResponse.Data?,
+        item: Product?,
     ) {
         with(holder) {
 

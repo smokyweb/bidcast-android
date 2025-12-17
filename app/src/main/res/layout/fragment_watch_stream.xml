@@ -600,6 +600,7 @@
                             android:backgroundTint="@color/transparent"
                             android:elevation="0dp"
                             app:cardElevation="0dp"
+                            android:visibility="gone"
                             app:layout_constraintBottom_toTopOf="@id/bidLayout"
                             app:layout_constraintStart_toStartOf="parent">
 
@@ -793,6 +794,7 @@
                             android:layout_marginHorizontal="@dimen/margin"
                             android:layout_marginBottom="@dimen/half_margin"
                             android:gravity="center_vertical"
+                            android:visibility="gone"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintStart_toStartOf="parent">
 

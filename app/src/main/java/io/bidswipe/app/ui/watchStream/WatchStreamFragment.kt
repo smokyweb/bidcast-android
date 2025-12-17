@@ -191,13 +191,10 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
         }
 
         bind.iconCard.setHapticClickListener {
-
             if (sellerId?.isNotEmpty() == true) {
                 bind.loader.isVisible = true
                 viewModel.getSellerInfo(sellerId!!)
             }
-
-
         }
 
         bind.userName.setHapticClickListener {
@@ -245,12 +242,28 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
                             bind.liveCount.text = args.optString("count")
                         }
                     }
-
                 }
             }
 
             socketManager?.getHighestBid { json ->
                 handleBidUpdate(json)
+            }
+
+            socketManager?.onAuctionStarted { json ->
+                runSafe {
+                    if (json.optString("room_id") == roomID) {
+                        requireActivity().runOnUiThread  {
+                            val product = LiveShowModel.Product.fromJson(json.optJSONObject("product"))
+                            val startingBidAmount = json.optString("starting_bid_amount")
+                            log("LIVE PRODUCT : $product")
+                            bind.productLayout.isVisible = true
+                            bind.bidLayout.isVisible = true
+                            bind.soldLayout.isVisible = false
+                            updateProductUI(product, startingBidAmount)
+
+                        }
+                    }
+                }
             }
 
             socketManager?.getUpdatedProduct { json ->
@@ -260,7 +273,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
                         if (json.optString("room_id") == roomID) {
                             val products = LiveShowModel.fromJson(json)
                             val currentProduct = products.products.find { it?.isCurrent == true }
-                            updateProductUI(currentProduct)
+                            updateProductUI(currentProduct , currentProduct?.price)
                             setBidText(currentProduct?.price)
                         }
 
@@ -888,9 +901,12 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
         }
     }
 
-    private fun updateProductUI(liveProduct: LiveShowModel.Product?) {
+    private fun updateProductUI(liveProduct: LiveShowModel.Product?, bidStartingAmount : String? ) {
 
         activity?.runOnUiThread {
+
+            log("LIVE PRODUCT : $liveProduct")
+
             if (liveProduct != null) {
                 bind.soldLayout.isVisible = false
                 bind.winningLayout.isVisible = false
@@ -899,7 +915,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
                 bind.productLayout.isVisible = true
                 bind.productName.text = liveProduct.name?.asCapital()
                 log("CATEGORY ${liveProduct.category}")
-                bind.productCategory.text = liveProduct.category?.asCapital()
+                bind.productCategory.text = liveProduct.category?.name?.asCapital()
                 bind.quantity.text = buildString {
                     append("Quantity: ")
                     append(liveProduct.quantity ?: 0)
@@ -907,9 +923,9 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
                 bind.productImage.loadUrl(mCtx, liveProduct.image ?: "")
                 bind.productImageShop.loadUrl(mCtx, liveProduct.image ?: "")
                 val price = liveProduct.price
-                bind.price.text = price?.asMoney() ?: ("0.0" + "Shipping + Taxes")
+                bind.price.text = bidStartingAmount?.asMoney() ?: ("0.0" + "Shipping + Taxes")
 
-                highestBidAmount = price
+                highestBidAmount = bidStartingAmount
                 bidProductId = liveProduct.id
                 setBidText(highestBidAmount)
 
@@ -923,11 +939,9 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
                 }
 
             } else {
-
                 bind.status.isVisible = true
-
-                /*bind.bidLayout.isVisible = false
-                bind.productLayout.isVisible = false*/
+                bind.bidLayout.isVisible = false
+                bind.productLayout.isVisible = false
             }
         }
 
@@ -957,15 +971,15 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
             val liveProduct = showData.products.find { it?.isCurrent == true }
 
             if (showData.highestBid.bidAmount?.isNotEmpty() == true) {
-                highestBidAmount = showData.highestBid.bidAmount
+//                highestBidAmount = showData.highestBid.bidAmount
                 log("HIGHEST BID: $highestBidAmount")
-                setBidText(highestBidAmount)
+//                setBidText(highestBidAmount)
             } else {
-                highestBidAmount = ""
+//                highestBidAmount = ""
                 setBidText((liveProduct?.price?.toDoubleOrNull()?.toInt() ?: 0).toString())
             }
 
-            updateProductUI(liveProduct)
+//            updateProductUI(liveProduct , liveProduct?.price)
 
             isAllowBidForAll = json.optBoolean("allowBidForAll", true)
 

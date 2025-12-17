@@ -20,7 +20,7 @@ import io.bidswipe.app.interfaces.AlertClicks
 import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.model.LiveMoreOption
 import io.bidswipe.app.network.Resource
-import io.bidswipe.app.network.response.GetProductsResponse
+import io.bidswipe.app.network.response.Product
 import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.ui.product.ProductDetailsActivity
 import io.bidswipe.app.utils.Alerts
@@ -37,12 +37,13 @@ class ShopFragment : BaseFragment<SellerViewModel, FragmentShopBinding>() {
     override fun getBind(inflater: LayoutInflater, view: ViewGroup?) =
         FragmentShopBinding.inflate(inflater, view, false)
 
-    private var productList = mutableListOf<GetProductsResponse.Data?>()
+    private var productList = mutableListOf<Product?>()
     private lateinit var shopAdapter: ShopAdapter
     private val optionList = mutableListOf<LiveMoreOption?>()
     private var sellerId = ""
     private var sortBy = ""
     private var saleType = ""
+    private var type = ""
     private var status = ""
     private var page = 1
     private var isLoading = false
@@ -126,7 +127,7 @@ class ShopFragment : BaseFragment<SellerViewModel, FragmentShopBinding>() {
                     bind.bottomLoader.isVisible = false
                     bind.noData.isVisible = false
 
-                    val mData = it.value.data
+                    val mData = it.value.products
                     if (page == 1) {
                         productList.clear()
                     }
@@ -198,6 +199,7 @@ class ShopFragment : BaseFragment<SellerViewModel, FragmentShopBinding>() {
         viewModel.getUserProducts(
             userId = sellerId.request(),
             saleType = saleType.ifEmpty { null }?.request(),
+            type = type.ifEmpty { null }?.request(),
             sortBy = sortBy.ifEmpty { null }?.request(),
             page = page.toString().request(),
             search = bind.search.value().ifEmpty { null }?.request()
@@ -256,7 +258,7 @@ class ShopFragment : BaseFragment<SellerViewModel, FragmentShopBinding>() {
                     }
 
                     2 -> {
-                        saleType = "buy_now"
+                        type  = "buy_now"
                     }
 
                     3 -> {

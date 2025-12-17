@@ -9,14 +9,15 @@ import io.bidswipe.app.databinding.ShopSheetItemBinding
 import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.network.response.GetMyInventoryResponse
 import io.bidswipe.app.network.response.GetProductsResponse
+import io.bidswipe.app.network.response.Product
 import io.bidswipe.app.utils.asCapital
 import io.bidswipe.app.utils.loadUrl
 import io.bidswipe.app.utils.setHapticClickListener
 
 class ShopSheetAdapter(
-	mList : MutableList<GetProductsResponse.Data?>, type : String
+	mList : MutableList<Product?>, type : String
 	, val mClicks : RecyclerClicks
-) : BaseAdapter<GetProductsResponse.Data? , ShopSheetItemBinding>(mList) {
+) : BaseAdapter<Product? , ShopSheetItemBinding>(mList) {
 
 	override fun bindView(inflater : LayoutInflater , parent : ViewGroup) =
 		ShopSheetItemBinding.inflate(inflater , parent , false)
@@ -24,7 +25,7 @@ class ShopSheetAdapter(
 	override fun onBind(
 		holder : BaseViewHolder<ShopSheetItemBinding> ,
 		position : Int ,
-		item : GetProductsResponse.Data? ,
+		item : Product? ,
 	) {
 		with(holder) {
 

@@ -39,7 +39,6 @@ import com.squareup.picasso.Picasso
 import com.squareup.picasso.Target
 import io.bidswipe.app.R
 import io.bidswipe.app.interfaces.AlertClicks
-import io.bidswipe.app.model.LiveShowModelOld
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.ui.custom.AlertType
 import io.bidswipe.app.ui.custom.AppBottomSheet
@@ -356,7 +355,7 @@ fun decimalLimiter(string : String , maxDecimal : Int) : String {
  * Returns the first product where isCurrent == true, or null if none.
  */
 
-fun List<LiveShowModelOld.Product?>?.getCurrentProduct() = this?.firstOrNull { it?.isCurrent == true }
+//fun List<LiveShowModelOld.Product?>?.getCurrentProduct() = this?.firstOrNull { it?.isCurrent == true }
 
 fun View.setHapticClickListener(onClick : (View) -> Unit) {
 	setOnClickListener {

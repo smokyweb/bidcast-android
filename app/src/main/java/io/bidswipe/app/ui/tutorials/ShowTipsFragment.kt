@@ -1,6 +1,5 @@
 package io.bidswipe.app.ui.tutorials
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -13,7 +12,7 @@ import io.bidswipe.app.base.BaseFragment
 import io.bidswipe.app.controller.ProductTipsPagerAdapter
 import io.bidswipe.app.databinding.FragmentShowTipsBinding
 import io.bidswipe.app.model.LiveShowModel
-import io.bidswipe.app.ui.agoraStream.AgoraPublisherActivity
+import io.bidswipe.app.network.response.toLiveShowProduct
 import io.bidswipe.app.ui.dashboard.DashViewModel
 import io.bidswipe.app.utils.Utils
 import io.bidswipe.app.utils.finish
@@ -21,25 +20,26 @@ import io.bidswipe.app.utils.ids
 import io.bidswipe.app.utils.setHapticClickListener
 import io.bidswipe.app.utils.string
 import io.bidswipe.app.utils.toScheduleShow
+import io.bidswipe.app.utils.toSellerShow
 
-class ShowTipsFragment : BaseFragment<DashViewModel , FragmentShowTipsBinding>() {
+class ShowTipsFragment : BaseFragment<DashViewModel, FragmentShowTipsBinding>() {
 
-	override fun getModel() : Class<DashViewModel> = DashViewModel::class.java
+	override fun getModel(): Class<DashViewModel> = DashViewModel::class.java
 
-	override fun getBind(inflater : LayoutInflater , view : ViewGroup?) =
-		FragmentShowTipsBinding.inflate(inflater , view , false)
+	override fun getBind(inflater: LayoutInflater, view: ViewGroup?) =
+		FragmentShowTipsBinding.inflate(inflater, view, false)
 
-	private var productTipList = mutableListOf("" , "" , "")
-	private lateinit var pagerAdapter : ProductTipsPagerAdapter
+	private var productTipList = mutableListOf("", "", "")
+	private lateinit var pagerAdapter: ProductTipsPagerAdapter
 
 	private var type = ""
 	private var showId = ""
 
-	override fun onViewCreated(view : View , savedInstanceState : Bundle?) {
-		super.onViewCreated(view , savedInstanceState)
+	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+		super.onViewCreated(view, savedInstanceState)
 
-		type = arguments?.getString("type" , "").toString()
-		showId = arguments?.getString("showId" , "").toString()
+		type = arguments?.getString("type", "").toString()
+		showId = arguments?.getString("showId", "").toString()
 		log("ShowId : $showId")
 
 		when (type) {
@@ -49,12 +49,12 @@ class ShowTipsFragment : BaseFragment<DashViewModel , FragmentShowTipsBinding>()
 
 			"bringInBuyers" -> {
 				bind.header.setHeaderText("Bring In Buyers")
-				bind.continueBtn.setBackgroundColor(ContextCompat.getColor(mCtx , R.color.secondary))
+				bind.continueBtn.setBackgroundColor(ContextCompat.getColor(mCtx, R.color.secondary))
 			}
 
 			"goLive" -> {
 				bind.header.setHeaderText("Live Stream Tips")
-				bind.continueBtn.setBackgroundColor(ContextCompat.getColor(mCtx , R.color.secondary))
+				bind.continueBtn.setBackgroundColor(ContextCompat.getColor(mCtx, R.color.secondary))
 			}
 		}
 
@@ -64,13 +64,13 @@ class ShowTipsFragment : BaseFragment<DashViewModel , FragmentShowTipsBinding>()
 
 		bind.stepProgress.max = productTipList.size
 
-		pagerAdapter = ProductTipsPagerAdapter(productTipList , type)
+		pagerAdapter = ProductTipsPagerAdapter(productTipList, type)
 		bind.pager.adapter = pagerAdapter
 
 		bind.pager.isUserInputEnabled = false
 
 		bind.pager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
-			override fun onPageSelected(position : Int) {
+			override fun onPageSelected(position: Int) {
 				super.onPageSelected(position)
 
 				bind.stepProgress.progress = position + 1
@@ -90,7 +90,7 @@ class ShowTipsFragment : BaseFragment<DashViewModel , FragmentShowTipsBinding>()
 			}
 		})
 
-        bind.continueBtn.setHapticClickListener {
+		bind.continueBtn.setHapticClickListener {
 			if (bind.pager.currentItem == productTipList.size - 1) {
 				when (type) {
 					"showTips" -> {
@@ -106,33 +106,20 @@ class ShowTipsFragment : BaseFragment<DashViewModel , FragmentShowTipsBinding>()
 					}
 
 					"goLive" -> {
-
 						val data = viewModel.currentShowData
-
 						log("SHOW DATA Before Start Shoe: $data")
 
-						val products = data?.products?.map { it?.toLiveShowProduct() }
-
+						val products = viewModel.currentShowData?.products?.map { product -> product?.toLiveShowProduct() }
 						products?.first()?.isCurrent = true
 
-						val showData = LiveShowModel(
+						val show = LiveShowModel(
 							seller = LiveShowModel.Seller(
 								id = userId,
 								image = userImage,
 								name = userName,
 								rating = ""
 							),
-							products = products?.map { p ->
-								LiveShowModel.Product(
-									data.category?.name,
-									p?.id,
-									p?.image,
-									p?.status,
-									p?.name,
-									p?.price,
-									"1",
-								)
-							}?.toList() ?: mutableListOf(),
+							products = products ?: mutableListOf(),
 							roomId = "live_room_${userId}_${data?.id.toString()}",
 							showDetail = "Test Details",
 							thumbnail = data?.thumbnail?.getOrNull(0) ?: "",
@@ -149,16 +136,10 @@ class ShowTipsFragment : BaseFragment<DashViewModel , FragmentShowTipsBinding>()
 							showId = data?.id.toString(),
 							allowBidForAll = true,
 							bidCountDown = "",
-							showTimer = ""
+							showTimer = "",
 						)
 
-						val intent = Intent(mCtx, AgoraPublisherActivity::class.java).putExtra(
-							"showData",
-							showData
-						).putExtra("time", data?.time)
-
-						startActivity(intent)
-
+						startActivity(mCtx.toSellerShow(data?.time, show))
 						finish()
 					}
 

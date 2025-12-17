@@ -34,12 +34,12 @@ class SellerShowFragment : BaseFragment<SellerViewModel , FragmentSellerShowBind
 	private val mClicks = object : RecyclerClicks {
 		override fun itemClick(pos : Int , status : String?) {
 
-			startActivity(
+			/*startActivity(
 				Intent(mCtx , AgoraPublisherActivity::class.java).putExtra(
 					"showId" ,
 					showList[pos]?.id.toString()
 				)
-			)
+			)*/
 
 		}
 

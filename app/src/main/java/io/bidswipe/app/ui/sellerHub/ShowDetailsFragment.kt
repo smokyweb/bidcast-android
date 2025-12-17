@@ -1,6 +1,5 @@
 package io.bidswipe.app.ui.sellerHub
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -15,11 +14,11 @@ import io.bidswipe.app.base.BaseFragment
 import io.bidswipe.app.databinding.FragmentShowDetailsBinding
 import io.bidswipe.app.interfaces.AlertClicks
 import io.bidswipe.app.network.Resource
-import io.bidswipe.app.ui.agoraStream.AgoraPublisherActivity
 import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.utils.asMoney
 import io.bidswipe.app.utils.ids
 import io.bidswipe.app.utils.parse
+import io.bidswipe.app.utils.toSellerShow
 
 class ShowDetailsFragment : BaseFragment<SellerHubViewModel, FragmentShowDetailsBinding>() {
 	override fun getModel(): Class<SellerHubViewModel> = SellerHubViewModel::class.java
@@ -41,7 +40,7 @@ class ShowDetailsFragment : BaseFragment<SellerHubViewModel, FragmentShowDetails
 			findNavController().popBackStack()
 		}
 
-		bind.header.setHeaderText(viewModel.selectedShow?.showDetail ?:"Show Details")
+		bind.header.setHeaderText(viewModel.selectedShow?.showDetail ?: "Show Details")
 
 		val menu = PopupMenu(mCtx, bind.header.findViewById<AppCompatImageView>(R.id.primaryIcon))
 		menu.menuInflater.inflate(R.menu.show_menu, menu.menu)
@@ -49,17 +48,8 @@ class ShowDetailsFragment : BaseFragment<SellerHubViewModel, FragmentShowDetails
 		menu.setOnMenuItemClickListener {
 			when (it.itemId) {
 				ids.restart_show -> {
-
-					startActivity(
-						Intent(mCtx, AgoraPublisherActivity::class.java).putExtra(
-							"showData",
-							viewModel.selectedShow
-						).putExtra("time", viewModel.showTime)
-					)
-
-
+					startActivity(mCtx.toSellerShow(viewModel.showTime, viewModel.selectedShow))
 				}
-
 			}
 			return@setOnMenuItemClickListener true
 		}
@@ -70,9 +60,9 @@ class ShowDetailsFragment : BaseFragment<SellerHubViewModel, FragmentShowDetails
 
 		bind.watchVideo.setOnClickListener {
 
-			if (videoUrl.isNotEmpty()){
+			if (videoUrl.isNotEmpty()) {
 				findNavController().navigate(R.id.showDetailsVideoReceiptPlayerFragment2, bundleOf("videoUrl" to videoUrl))
-			}else{
+			} else {
 				successToast("Video is not available")
 			}
 
@@ -90,7 +80,7 @@ class ShowDetailsFragment : BaseFragment<SellerHubViewModel, FragmentShowDetails
 
 					log("data: $mData")
 
-					videoUrl = mData?.fileUrl ?:""
+					videoUrl = mData?.fileUrl ?: ""
 
 					bind.duration.text = buildString {
 						append("Show Duration: ")

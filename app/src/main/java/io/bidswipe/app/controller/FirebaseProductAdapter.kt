@@ -15,6 +15,7 @@ import io.bidswipe.app.databinding.ProductSelectionItemBinding
 import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.model.LiveShowModel
 import io.bidswipe.app.network.response.GetProductsResponse
+import io.bidswipe.app.network.response.Product
 import io.bidswipe.app.utils.asCapital
 import io.bidswipe.app.utils.asMoney
 import io.bidswipe.app.utils.dpToPx
@@ -23,8 +24,8 @@ import io.bidswipe.app.utils.setHapticClickListener
 
 class FirebaseProductAdapter(
     val from: String = "",
-    val mList: MutableList<GetProductsResponse.Data?>, val mClicks: RecyclerClicks,
-) : BaseAdapter<GetProductsResponse.Data?, ProductSelectionItemBinding>(mList) {
+    val mList: MutableList<Product?>, val mClicks: RecyclerClicks,
+) : BaseAdapter<Product?, ProductSelectionItemBinding>(mList) {
 
     override fun bindView(inflater: LayoutInflater, parent: ViewGroup) =
         ProductSelectionItemBinding.inflate(inflater, parent, false)
@@ -33,7 +34,7 @@ class FirebaseProductAdapter(
     override fun onBind(
         holder: BaseViewHolder<ProductSelectionItemBinding>,
         position: Int,
-        item: GetProductsResponse.Data?,
+        item: Product?,
     ) {
         with(holder) {
 

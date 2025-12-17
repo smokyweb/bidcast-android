@@ -80,7 +80,7 @@ data class GetMyShowResponse(
 			val thumbnail : String? ,
         ) : Serializable
 
-        @Keep
+       /* @Keep
         data class Product(
             @SerializedName("accept_offers")
             val acceptOffers: Boolean?,
@@ -132,20 +132,7 @@ data class GetMyShowResponse(
             val weight: Double?,
             @SerializedName("width")
             val width: Double?
-        ) : Serializable {
-
-            fun toLiveShowProduct(): LiveShowModel.Product {
-                return LiveShowModel.Product(
-                    category = this.categoryId?.toString(),
-                    id = this.id?.toString(),
-                    image = this.images?.firstOrNull() ?: "",
-                    status = this.status ?: "live",
-                    name = this.title,
-                    isCurrent = false,
-                    price = this.pricing
-                )
-            }
-        }
+        ) : Serializable*/
 
 		@Keep
 		data class User(

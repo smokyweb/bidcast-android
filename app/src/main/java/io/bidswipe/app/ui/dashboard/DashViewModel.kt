@@ -31,6 +31,7 @@ import io.bidswipe.app.network.response.GetPromotePlansResponse
 import io.bidswipe.app.network.response.GetShippingProfilesResponse
 import io.bidswipe.app.network.response.GetSubCategoriesResponse
 import io.bidswipe.app.network.response.PageUrlResponse
+import io.bidswipe.app.network.response.Product
 import io.bidswipe.app.network.response.StoreProductMetaResponse
 import io.bidswipe.app.network.response.UpdateOfferResponse
 import io.bidswipe.app.network.response.UserDeviceResponse
@@ -56,6 +57,7 @@ class DashViewModel @Inject constructor(
 	var showList = mutableListOf<GetPrepareStepResponse.Data?>()
 	var currentStep = 0
 	var categoryId = ""
+	var currentRoomId = ""
 
 	var lastIndex = MutableLiveData(0)
 
@@ -78,7 +80,7 @@ class DashViewModel @Inject constructor(
 	var productFormPackageLength = 0.0
 	var productFormPackageWeight = 0.0
 	var productFormSelectedMailClass: GetMailClassesResponse.Data.MailClasses? = null
-	var productFormProduct: GetProductsResponse.Data? = null
+	var productFormProduct: Product? = null
 	var productFormIsSubCategory = false
 	var productFormProductTitle = ""
 	var productFormDescription = ""
