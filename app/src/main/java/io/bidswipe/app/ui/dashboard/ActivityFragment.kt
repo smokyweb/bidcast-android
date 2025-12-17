@@ -58,10 +58,6 @@ class ActivityFragment : BaseFragment<DashViewModel, FragmentActivityBinding>() 
 			startActivity(Intent(mCtx, NotificationActivity::class.java).putExtra("slug", "notification"))
 		}
 
-		bind.header.onMoreSecondaryClick {
-			// Search functionality
-		}
-
 		// Hide logo in header
 		bind.header.hideLogo()
 

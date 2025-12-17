@@ -11,195 +11,185 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:scrollbars="none"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/payoutCard">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <com.google.android.material.card.MaterialCardView
-                style="@style/cardStyle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="@dimen/margin"
-                android:layout_marginVertical="@dimen/half_margin"
-                android:layout_weight="1">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:background="@drawable/card_8"
-                    android:orientation="vertical"
-                    android:padding="@dimen/half_margin">
-
-                    <TextView
-                        style="@style/TitleSmall"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:text="@string/available_balance"
-                        android:textColor="@color/onSurfaceVariant" />
-
-                    <TextView
-                        android:id="@+id/wallet_amount"
-                        style="@style/TitleLarge"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:text="$0.00"
-                        android:textColor="@color/tertiary"
-                        android:textSize="28dp" />
-
-                </LinearLayout>
-
-            </com.google.android.material.card.MaterialCardView>
-
-            <LinearLayout
-                android:id="@+id/orders"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="@dimen/half_margin"
-                android:orientation="horizontal"
-                app:layout_constraintTop_toBottomOf="@+id/header">
-
-                <com.google.android.material.card.MaterialCardView
-                    style="@style/cardStyle"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_margin="@dimen/half_margin"
-                    android:layout_weight="1">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:background="@drawable/card_8"
-                        android:orientation="vertical"
-                        android:padding="@dimen/half_margin">
-
-                        <androidx.appcompat.widget.AppCompatImageView
-                            android:layout_width="44dp"
-                            android:layout_height="32dp"
-                            android:src="@drawable/ic_payout" />
-
-                        <TextView
-                            style="@style/BodyMedium"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="@string/available_for_payout"
-                            android:layout_marginTop="4dp"
-                            android:textColor="@color/onSurfaceVariant" />
-
-                        <TextView
-                            android:id="@+id/available"
-                            style="@style/TitleLarge"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="$0.00"
-                            android:textColor="@color/tertiary" />
-
-                    </LinearLayout>
-
-                </com.google.android.material.card.MaterialCardView>
-
-                <com.google.android.material.card.MaterialCardView
-                    style="@style/cardStyle"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_margin="@dimen/half_margin"
-                    android:layout_weight="1">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:background="@drawable/card_8"
-                        android:orientation="vertical"
-                        android:padding="@dimen/half_margin">
-
-                        <androidx.appcompat.widget.AppCompatImageView
-                            android:layout_width="44dp"
-                            android:layout_height="32dp"
-                            android:src="@drawable/ic_processing" />
-
-                        <TextView
-                            style="@style/BodyMedium"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="@string/processing"
-                            android:layout_marginTop="4dp"
-                            android:textColor="@color/onSurfaceVariant" />
-
-                        <TextView
-                            android:id="@+id/processing"
-                            style="@style/TitleLarge"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="$0.00"
-                            android:textColor="@color/tertiary" />
-
-                    </LinearLayout>
-
-                </com.google.android.material.card.MaterialCardView>
-
-
-            </LinearLayout>
-
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/payoutCard"
-                style="@style/cardStyle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="@dimen/margin"
-                android:layout_marginVertical="@dimen/half_margin"
-                android:layout_weight="1">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/card_8">
+                    android:orientation="vertical"
+                    android:padding="@dimen/margin">
 
-                    <LinearLayout
-                        android:layout_width="0dp"
+                    <TextView
+                        style="@style/TitleSemiBold"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:orientation="vertical"
-                        android:padding="@dimen/half_margin">
+                        android:text="Account Balance"
+                        android:textColor="@color/onSurface" />
 
-                        <TextView
-                            style="@style/TitleMedium"
+                    <TextView
+                        android:id="@+id/wallet_amount"
+                        style="@style/TitleLarge"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="$0.00"
+                        android:textColor="@color/onSurface" />
+
+                    <com.google.android.material.card.MaterialCardView
+                        style="@style/cardStyle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/half_margin"
+                        app:cardCornerRadius="12dp">
+
+                        <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="@string/early_payout" />
+                            android:orientation="vertical"
+                            android:padding="@dimen/margin">
 
-                        <TextView
-                            style="@style/BodyMedium"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="@string/you_re_eligible_for_early_payout"
-                            android:textColor="@color/tertiary" />
+                            <!-- Available for payout -->
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="vertical">
 
-                    </LinearLayout>
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:orientation="horizontal">
 
-                    <androidx.appcompat.widget.AppCompatImageView
-                        android:layout_width="28dp"
-                        android:layout_height="28dp"
-                        android:layout_gravity="center_vertical"
-                        android:src="@drawable/ic_arrow_right"
-                        app:tint="@color/onSurface" />
+                                    <TextView
+                                        android:id="@+id/available"
+                                        style="@style/TitleMedium"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="$0.00"
+                                        android:textColor="@color/onSurface" />
+
+                                    <TextView
+                                        style="@style/BodyMedium"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginStart="4dp"
+                                        android:text="available for payout"
+                                        android:textColor="@color/onSurface" />
+                                </LinearLayout>
+
+                                <TextView
+                                    style="@style/BodySmall"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="2dp"
+                                    android:text="These funds are available to initiate payout to your bank account."
+                                    android:textColor="@color/onSurfaceVariant" />
+                            </LinearLayout>
+
+                            <!-- Processing -->
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="@dimen/half_margin"
+                                android:orientation="vertical">
+
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:orientation="horizontal">
+
+                                    <TextView
+                                        android:id="@+id/processing"
+                                        style="@style/TitleMedium"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="$0.00"
+                                        android:textColor="@color/onSurface" />
+
+                                    <TextView
+                                        style="@style/BodyMedium"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginStart="4dp"
+                                        android:text="processing"
+                                        android:textColor="@color/onSurface" />
+                                </LinearLayout>
+
+                                <TextView
+                                    style="@style/BodySmall"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="2dp"
+                                    android:text="These funds will be available for payout up to 4 hours after delivery of the order has been confirmed."
+                                    android:textColor="@color/onSurfaceVariant" />
+                            </LinearLayout>
+
+                            <!-- Early payout info -->
+                            <TextView
+                                style="@style/BodySmall"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="@dimen/half_margin"
+                                android:text="Not eligible for early payout"
+                                android:textColor="@color/onSurfaceVariant" />
+
+                        </LinearLayout>
+                    </com.google.android.material.card.MaterialCardView>
 
                 </LinearLayout>
+<!--
 
-            </com.google.android.material.card.MaterialCardView>
-
+            &lt;!&ndash; Help center text &ndash;&gt;
             <TextView
-                style="@style/TitleLarge"
+                style="@style/BodySmall"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/margin"
-                android:layout_marginVertical="@dimen/half_margin"
-                android:text="@string/payout_history" />
+                android:layout_marginTop="@dimen/half_margin"
+                android:text="Need more information about receiving payouts?" />
 
+            <TextView
+                style="@style/BodySmall"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/margin"
+                android:text="Visit the Help Center"
+                android:textColor="@color/tertiary" />
+-->
+
+            <!-- Payout history header row -->
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/margin"
+                android:layout_marginVertical="@dimen/half_margin">
+
+                <TextView
+                    style="@style/TitleLarge"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/payout_history"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/seeAll"
+                    style="@style/BodyMedium"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="See All"
+                    android:textColor="@color/tertiary"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <!-- Payout history list -->
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recycler"
                 android:layout_width="match_parent"
@@ -218,9 +208,23 @@
                 android:layout_height="wrap_content"
                 android:visibility="visible"
                 app:title_text="No History Found" />
+
         </LinearLayout>
 
     </ScrollView>
+
+    <!-- Start payout button fixed at bottom -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/payoutCard"
+        style="@style/Widget.MaterialComponents.Button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/margin"
+        android:layout_marginBottom="@dimen/margin"
+        android:text="Start Payout"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <io.bidswipe.app.ui.custom.LoaderView
         android:id="@+id/loader"

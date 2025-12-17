@@ -24,7 +24,6 @@
         style="@style/HeadlineSmall"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
         android:text="N/A"
         android:textColor="@color/onSurface"
         android:textSize="24sp"
@@ -35,7 +34,6 @@
         style="@style/BodySmall"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
         android:text="Description text"
         android:textColor="@color/outlineVariant" />
 

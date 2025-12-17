@@ -55,8 +55,7 @@ class MessagesFragment : BaseFragment<DashViewModel, FragmentMessagesBinding>() 
 		bind.loader.isVisible = true
 		bind.noInternet.isVisible = false
 		
-		FireRef.CHAT_LIST.child(userId).orderByChild("timestamp")
-			.addValueEventListener(mValueEventListener)
+		FireRef.CHAT_LIST.child(userId).orderByChild("timestamp").addValueEventListener(mValueEventListener)
 	}
 	
 	private var mValueEventListener = object : ValueEventListener {

@@ -16,8 +16,8 @@
 
         <com.google.android.material.card.MaterialCardView
             style="@style/cardStyle"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
+            android:layout_width="84dp"
+            android:layout_height="84dp"
             app:cardCornerRadius="10dp"
             app:cardElevation="0dp">
 
@@ -33,9 +33,10 @@
 
         <LinearLayout
             android:layout_width="0dp"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_marginHorizontal="@dimen/half_margin"
             android:layout_weight="1"
+            android:layout_gravity="start"
             android:gravity="center_vertical"
             android:orientation="vertical">
 

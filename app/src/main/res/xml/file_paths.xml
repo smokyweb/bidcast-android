@@ -11,4 +11,11 @@
     
     <!-- External cache directory -->
     <external-cache-path name="external_cache" path="." />
+    <cache-path
+        name="shared_images"
+        path="." />
+
+    <cache-path
+        name="cached_images"
+        path="." />
 </paths>

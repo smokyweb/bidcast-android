@@ -18,6 +18,7 @@ import io.bidswipe.app.network.response.GetOrdersResponse
 import io.bidswipe.app.network.response.GetPaymentCardsResponse
 import io.bidswipe.app.network.response.GetPremierShopResponse
 import io.bidswipe.app.network.response.GetProductsResponse
+import io.bidswipe.app.network.response.GetPromoteToolsDetailsResponse
 import io.bidswipe.app.network.response.GetPromoteToolsResponse
 import io.bidswipe.app.network.response.GetShippingProfilesResponse
 import io.bidswipe.app.network.response.GetShowDetailResponse
@@ -592,21 +593,17 @@ class SellerHubViewModel @Inject constructor(
 		_getShowDetailResponse.value = repo.getShowDetail(showId)
 	}
 
-	private var _exportAnalyticsDataResponse = MutableLiveData<Resource<CommonResponse>>()
-	val exportAnalyticsDataRepo: MutableLiveData<Resource<CommonResponse>>
-		get() = _exportAnalyticsDataResponse
+	private var _getPromoteToolsDetailsResponse = MutableLiveData<Resource<GetPromoteToolsDetailsResponse>>()
+	val getPromoteToolsDetailsRepo: MutableLiveData<Resource<GetPromoteToolsDetailsResponse>>
+		get() = _getPromoteToolsDetailsResponse
 
-	fun exportAnalyticsData(
-		type: String?,
-		filter: String?,
-		startDate: String?,
-		endDate: String?
+	fun getPromoteToolsDetails(
 	) = viewModelScope.launch {
 		if (!networkMonitor.hasInternet()) {
-			_exportAnalyticsDataResponse.value = NO_INTERNET_ERROR
+			_getPromoteToolsDetailsResponse.value = NO_INTERNET_ERROR
 			return@launch
 		}
-		_exportAnalyticsDataResponse.value = repo.exportAnalyticsData( type, filter, startDate, endDate)
+		_getPromoteToolsDetailsResponse.value = repo.getPromoteToolsDetails()
 	}
 
 }

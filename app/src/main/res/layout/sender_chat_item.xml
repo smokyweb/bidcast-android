@@ -81,6 +81,8 @@
                     android:paddingTop="10dp"
                     android:paddingEnd="8dp"
                     android:paddingBottom="6dp"
+                    android:autoLink="all"
+                    android:textColorLink="@color/onPrimary"
                     android:text="@string/toast_message"
                     android:textColor="@color/onPrimary" />
 

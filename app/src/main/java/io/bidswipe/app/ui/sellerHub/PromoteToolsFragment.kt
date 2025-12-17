@@ -19,6 +19,7 @@ import io.bidswipe.app.interfaces.AlertClicks
 import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.model.PromoteMetricModel
 import io.bidswipe.app.network.Resource
+import io.bidswipe.app.network.response.GetPromoteToolsDetailsResponse
 import io.bidswipe.app.network.response.GetPromoteToolsResponse
 import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.utils.Utils
@@ -64,11 +65,9 @@ class PromoteToolsFragment : BaseFragment<SellerHubViewModel, FragmentPromoteToo
         setupTabs()
         setupFilterChips()
         setupRecyclerViews()
-        setupMetrics()
+        setupMetrics(null)
 
-        bind.loader.isVisible = true
-        viewModel.getPromoteTools()
-
+       /* viewModel.getPromoteTools()
         viewModel.getPromoteToolsRepo.observe(viewLifecycleOwner) {
             when (it) {
                 is Resource.Success -> {
@@ -76,6 +75,31 @@ class PromoteToolsFragment : BaseFragment<SellerHubViewModel, FragmentPromoteToo
                     val mData = it.value.data
                     gridList.clear()
                     gridList.addAll(mData?.features ?: emptyList())
+                }
+
+                is Resource.Error -> {
+                    bind.loader.isVisible = false
+                    it.parse(mCtx, TAG, object : AlertClicks {
+                        override fun primaryClick(dialog: AppBottomSheet) {
+                            dialog.dismiss()
+                        }
+
+                        override fun secondaryClick(dialog: AppBottomSheet) {
+                            dialog.dismiss()
+                        }
+                    })
+                }
+            }
+        }*/
+
+        bind.loader.isVisible = true
+        viewModel.getPromoteToolsDetails()
+        viewModel.getPromoteToolsDetailsRepo.observe(viewLifecycleOwner) {
+            when (it) {
+                is Resource.Success -> {
+                    bind.loader.isVisible = false
+                    val mData = it.value.data
+                  setupMetrics(mData)
                 }
 
                 is Resource.Error -> {
@@ -136,48 +160,48 @@ class PromoteToolsFragment : BaseFragment<SellerHubViewModel, FragmentPromoteToo
         }
     }
 
-    private fun setupMetrics() {
+    private fun setupMetrics(mData: GetPromoteToolsDetailsResponse.Data?) {
         // Add initial metrics for Audience Reached
         metricsList.clear()
         metricsList.add(
             PromoteMetricModel(
                 "Number of Show Boosts",
-                "N/A",
+                (mData?.numberOfBoost)?.toString()?:"N/A",
                 "Run a few more promotions to start seeing results for this metric!"
             )
         )
         metricsList.add(
             PromoteMetricModel(
                 "Number of Show Promotions",
-                "N/A",
+                (mData?.numberOfShowPromote)?.toString()?:"N/A",
                 "Run a few more promotions to start seeing results for this metric!"
             )
         )
         metricsList.add(
             PromoteMetricModel(
                 "Community Boosts",
-                "1",
+                (mData?.communityBoot)?.toString()?:"N/A",
                 "The total number of Community Boosts buyers unlocked during your shows."
             )
         )
         metricsList.add(
             PromoteMetricModel(
                 "Impressions",
-                "572",
+                (mData?.impressions)?.toString()?:"N/A",
                 "The total number of times a Whatnot user saw your livestreams in their feeds due to a promotion."
             )
         )
         metricsList.add(
             PromoteMetricModel(
                 "Number of promoted hours",
-                "N/A",
+                (mData?.promoteHours)?.toString()?:"N/A",
                 "Run a few more promotions to start seeing results for this metric!"
             )
         )
         metricsList.add(
             PromoteMetricModel(
                 "Promoted impressions per hour",
-                "N/A",
+                (mData?.impessionPerHours)?.toString()?:"N/A",
                 "Run a few more promotions to start seeing results for this metric!"
             )
         )
@@ -191,35 +215,35 @@ class PromoteToolsFragment : BaseFragment<SellerHubViewModel, FragmentPromoteToo
         discoveryMetricsList.add(
             PromoteMetricModel(
                 "Total Taps and Clicks",
-                "214",
+                (mData?.totalTapsaAndClicks)?.toString()?:"N/A",
                 "Number of users that tapped into your livestream to view your show as a result of your promotions."
             )
         )
         discoveryMetricsList.add(
             PromoteMetricModel(
                 "CTR (Click Through Rate)",
-                "12.9%",
+                (mData?.ctr)?.toString()?:"N/A",
                 "Percentage of time your promotions in feeds resulted in a buyer entering your show (taps and clicks)."
             )
         )
         discoveryMetricsList.add(
             PromoteMetricModel(
                 "Sustained Watches",
-                "34",
+                (mData?.sustainedWatches)?.toString()?:"N/A",
                 "Number of users that clicked into your stream and stayed to watch your show for longer than 30 seconds"
             )
         )
         discoveryMetricsList.add(
             PromoteMetricModel(
                 "Sustained Watch Rate",
-                "11.49%",
+                (mData?.sustainedWatchesRate)?.toString()?:"N/A",
                 "The percentage of visitors from promotions that converted into sustained viewers"
             )
         )
         discoveryMetricsList.add(
             PromoteMetricModel(
                 "Follows from Promotion",
-                "4",
+                (mData?.followsFromPromotion)?.toString()?:"N/A",
                 "Number of buyers that followed your account by finding you via promotions"
             )
         )
@@ -233,42 +257,42 @@ class PromoteToolsFragment : BaseFragment<SellerHubViewModel, FragmentPromoteToo
         buyersConvertedList.add(
             PromoteMetricModel(
                 "First Time Buyers from Promotion",
-                "N/A",
+                (mData?.firstTimeBuyersFromPromotion)?.toString()?:"N/A",
                 "Run a few more promotions to start seeing results for this metric!"
             )
         )
         buyersConvertedList.add(
             PromoteMetricModel(
                 "Direct Sales from Promotion",
-                "N/A",
+                (mData?.directSalesFormPromotion)?.toString()?:"N/A",
                 "Run a few more promotions to start seeing results for this metric!"
             )
         )
         buyersConvertedList.add(
             PromoteMetricModel(
                 "Spend",
-                "N/A",
+                (mData?.spend)?.toString()?:"N/A",
                 "Run a few more promotions to start seeing results for this metric!"
             )
         )
         buyersConvertedList.add(
             PromoteMetricModel(
                 "Immediate Return on Spend",
-                "N/A",
+                (mData?.immediateReturnOnSpend)?.toString()?:"N/A",
                 "Run a few more promotions to start seeing results for this metric!"
             )
         )
         buyersConvertedList.add(
             PromoteMetricModel(
                 "7-Day Return on Spend",
-                "N/A",
+                (mData?.dayReturnOnSpend)?.toString()?:"N/A",
                 "Run a few more promotions to start seeing results for this metric!"
             )
         )
         buyersConvertedList.add(
             PromoteMetricModel(
                 "Bids from Promotion",
-                "3",
+                (mData?.bidsFromPromotion)?.toString()?:"N/A",
                 "The number of bids from buyers who found your show via promotion"
             )
         )

@@ -1235,9 +1235,6 @@ class AgoraPublisherActivity : BaseActivity() {
                 }
 
             }
-
-            tipSettingsSheetBind.tipMessage.value()
-            tipSettingsSheetBind.showLiveChat.isChecked
         }
         sheet.show()
     }

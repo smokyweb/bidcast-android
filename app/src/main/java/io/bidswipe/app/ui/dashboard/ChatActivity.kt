@@ -154,6 +154,9 @@ class ChatActivity : BaseActivity() {
 		receiverName = intent.getStringExtra("name").toString()
 		receiverId = intent.getStringExtra("id").toString()
 
+		if(intent.hasExtra("shareText")){
+			bind.message.setText(intent.getStringExtra("shareText").toString())
+		}
 		bind.root.viewTreeObserver.addOnGlobalLayoutListener {
 			val r = Rect()
 			bind.root.getWindowVisibleDisplayFrame(r)

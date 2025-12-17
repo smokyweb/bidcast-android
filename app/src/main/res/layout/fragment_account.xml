@@ -12,10 +12,13 @@
         android:id="@+id/header"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:headerMode="APP_TEXT_ACTION"
+        app:headerMode="BACK_BUTTON_TITLE_ACTION"
         app:layout_constraintStart_toStartOf="parent"
+        app:headerTitle="Account"
         app:layout_constraintTop_toTopOf="parent"
-        app:showBackButton="false" />
+        app:showBackButton="false"
+        app:primaryIconDrawable="@drawable/notification"
+        app:showPrimaryIcon="true"/>
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"

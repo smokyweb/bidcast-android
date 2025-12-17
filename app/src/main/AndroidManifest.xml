@@ -14,6 +14,7 @@
 	<uses-permission android:name = "android.permission.BLUETOOTH" />
 	<uses-permission android:name = "android.permission.BLUETOOTH_CONNECT" />
 	<uses-permission android:name = "android.permission.BLUETOOTH_SCAN" />
+	<uses-permission android:name="android.permission.QUERY_ALL_PACKAGES"/>
 
 	<uses-feature
 		android:name = "android.hardware.camera"
@@ -177,7 +178,8 @@
 			android:name = "androidx.core.content.FileProvider"
 			android:authorities = "${applicationId}.provider"
 			android:exported = "false"
-			android:grantUriPermissions = "true" >
+			android:grantUriPermissions = "true"
+			android:permission="android.permission.MANAGE_EXTERNAL_STORAGE" >
 			<meta-data
 				android:name = "android.support.FILE_PROVIDER_PATHS"
 				android:resource = "@xml/file_paths" />

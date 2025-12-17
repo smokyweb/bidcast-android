@@ -11,7 +11,6 @@
         android:id="@+id/header"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="@dimen/margin"
         app:headerMode="BACK_BUTTON_TITLE_ACTION"
         app:headerTitle="@string/promote_tools"
         app:layout_constraintTop_toTopOf="parent"
@@ -34,6 +33,7 @@
             android:id="@+id/tabLayout"
             style="@style/tabStyle"
             android:layout_width="match_parent"
+            android:layout_margin="4dp"
             android:layout_height="wrap_content">
 
             <com.google.android.material.tabs.TabItem
@@ -67,7 +67,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/margin"
-                android:layout_marginTop="@dimen/margin"
                 android:orientation="vertical">
 
                 <TextView
@@ -78,10 +77,9 @@
                     android:textStyle="bold" />
 
                 <TextView
-                    style="@style/BodyLarge"
+                    style="@style/BodyMedium"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
                     android:text="Promote your livestreams to reach a wider audience on Whatnot." />
 
             </LinearLayout>

@@ -190,6 +190,10 @@ class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		super.onViewCreated(view, savedInstanceState)
 
+		bind.header.onMorePrimaryClick {
+			startActivity(Intent(mCtx, NotificationActivity::class.java).putExtra("slug", "notification"))
+		}
+
 		App.getProfile()
 
 		App.profileResponse.observe(viewLifecycleOwner) {

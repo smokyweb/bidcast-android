@@ -32,6 +32,7 @@ class TransactionHistoryAdapter(
 				"card" -> if (item.type == "debited" && item.orderId != null) "Product Purchased" else "Debited"
 				else -> "Debited"
 			}
+
 			val icon = when (item?.status?.lowercase()) {
 				"process" -> R.drawable.ic_transaction_processing
 				"paid" -> R.drawable.ic_transaction_success

@@ -242,33 +242,6 @@ class OverAllFragment : BaseFragment<SellerHubViewModel, FragmentOverAllBinding>
             }
         }
 
-        viewModel.exportAnalyticsDataRepo.observe(viewLifecycleOwner) {
-            viewModel.exportAnalyticsDataRepo.value=null
-            when (it) {
-                is Resource.Success -> {
-                    bind.loader.isVisible = false
-
-                }
-
-                is Resource.Error -> {
-                    bind.loader.isVisible = false
-                    it.parse(mCtx, TAG, object : AlertClicks {
-                        override fun primaryClick(dialog: AppBottomSheet) {
-                            dialog.dismiss()
-                        }
-
-                        override fun secondaryClick(dialog: AppBottomSheet) {
-                            dialog.dismiss()
-                        }
-                    })
-                }
-
-                else -> {}
-            }
-
-        }
-
-
     }
 
     private fun setupRecyclerViews() {
@@ -364,7 +337,6 @@ class OverAllFragment : BaseFragment<SellerHubViewModel, FragmentOverAllBinding>
         bind.loader.isVisible = true
         isSalesPerformanceLoaded = false
         viewModel.getSalesPerformance()
-        // TODO: Call API with date range parameters
     }
 
     private fun updateTopBuyers(topBuyersBySalesListData: List<SellerAnalyticsResponse.Data.TopBuyersBySale?>?, topBuyersByOrdersListData: List<SellerAnalyticsResponse.Data.TopBuyersByOrder?>?,) {

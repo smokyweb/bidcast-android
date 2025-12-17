@@ -43,6 +43,7 @@ import io.bidswipe.app.network.response.GetProductDetailsResponse
 import io.bidswipe.app.network.response.GetProductsByStatusResponse
 import io.bidswipe.app.network.response.GetProductsResponse
 import io.bidswipe.app.network.response.GetPromotePlansResponse
+import io.bidswipe.app.network.response.GetPromoteToolsDetailsResponse
 import io.bidswipe.app.network.response.GetPromoteToolsResponse
 import io.bidswipe.app.network.response.GetPurchaseDetail
 import io.bidswipe.app.network.response.GetRatingResponse
@@ -786,6 +787,10 @@ interface ApiInterface {
 		@Query("start_date") startDate : String?,
 		@Query("end_date") endDate : String?
 	) : CommonResponse
+
+	@GET("api/promote-tool-details")
+	suspend fun getPromoteToolsDetails(
+	) : GetPromoteToolsDetailsResponse
 
 	@GET("api/export-deatils")
 	 fun exportAnalyticsDataD(
