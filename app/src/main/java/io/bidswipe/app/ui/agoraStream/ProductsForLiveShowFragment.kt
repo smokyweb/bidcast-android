@@ -237,14 +237,17 @@ class ProductsForLiveShowFragment : BottomSheetDialogFragment() {
                     @SuppressLint("NotifyDataSetChanged")
                     override fun itemClick(pos: Int, status: String?) {
 
+                        val selectedProduct = productList[pos]
+
                         if (productList[pos]?.status == "sold") {
                             Alerts.error(mCtx, "This product is already sold")
                         }  else if (status == "start_auction") {
 
-                            val selectedProduct = productList[pos]
-
                             auctionSettingsSheet(selectedProduct?.id.toString(),selectedProduct?.pricing ?: "")
-                        } else {
+                        } else if (status == "set_next"){
+
+                            socketManager?.pinProduct(roomId = viewModel.currentRoomId, productId = selectedProduct?.id.toString())
+
 //                            productList.forEachIndexed { index, item ->
 //                                item?.selected = index == pos
 //                                bind.recycler.adapter?.notifyDataSetChanged()
@@ -303,10 +306,9 @@ class ProductsForLiveShowFragment : BottomSheetDialogFragment() {
 
     private fun auctionSettingsSheet(productId : String, price : String) {
         var selectedCounterTimer = 5
-        var selectedRequiredTime = 0
+        var selectedRequiredTime = 30
 
-        val auctionSettingsSheetBind =
-            AuctionSettingsSheetBinding.bind(
+        val auctionSettingsSheetBind = AuctionSettingsSheetBinding.bind(
                 layoutInflater.inflate(
                     R.layout.auction_settings_sheet,
                     null,
@@ -341,7 +343,7 @@ class ProductsForLiveShowFragment : BottomSheetDialogFragment() {
 
         auctionSettingsSheetBind.requiredTime.setAdapter(requiredTimeAdapter)
 
-        auctionSettingsSheetBind.requiredTime.setText("30",false)
+        auctionSettingsSheetBind.requiredTime.setText("30s",false)
 
         auctionSettingsSheetBind.requiredTime.setOnItemClickListener { _, _, position, _ ->
             selectedRequiredTime = requiredTimeList[position]
@@ -382,8 +384,9 @@ class ProductsForLiveShowFragment : BottomSheetDialogFragment() {
 						 selectedCounterTimer,
 						 auctionSettingsSheetBind.suddenDeath.isChecked
 					 )
-
                     sheet.dismiss()
+                    dismiss()
+
                 }
 
             }

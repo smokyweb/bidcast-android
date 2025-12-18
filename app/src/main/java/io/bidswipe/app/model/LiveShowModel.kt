@@ -62,8 +62,8 @@ data class LiveShowModel(
 			put("id", id)
 			put("image", image)
 			put("status", status)
-			put("name", name)
-			put("price", price)
+			put("title", name)
+			put("pricing", price)
 			put("quantity", quantity)
 			put("is_current", isCurrent)
 		}

@@ -29,6 +29,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.recyclerview.widget.GridLayoutManager
 import com.bumptech.glide.Glide
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.gson.Gson
 import com.gyf.immersionbar.ktx.navigationBarHeight
 import com.gyf.immersionbar.ktx.statusBarHeight
 import com.ncorti.slidetoact.SlideToActView
@@ -132,6 +133,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
     private val followSheetHandler = Handler(Looper.getMainLooper())
     private lateinit var pipParams: PictureInPictureParams
     private var isSocketDataLoaded = false
+    private var isHandlerRunning = false
     private var showThumbnail: String? = null
 
     private var showNotes: String? = ""
@@ -249,13 +251,18 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
                 runSafe {
                     if (json.optString("room_id") == roomID) {
                         requireActivity().runOnUiThread  {
-                            val product = LiveShowModel.Product.fromJson(json.optJSONObject("product"))
-                            val startingBidAmount = json.optString("starting_bid_amount")
-                            log("LIVE PRODUCT : $product")
-                            bind.productLayout.isVisible = true
-                            bind.bidLayout.isVisible = true
-                            bind.soldLayout.isVisible = false
-                            updateProductUI(product, startingBidAmount)
+                            if (json.has("product") && json.optJSONObject("product") != null) {
+
+                                val product =  LiveShowModel.Product.fromJson(json.optJSONObject("product"))
+                                val startingBidAmount = json.optString("starting_bid_amount") ?:"0"
+                                log("LIVE PRODUCT : $product")
+                                bind.productLayout.isVisible = true
+                                bind.bidLayout.isVisible = true
+                                bind.soldLayout.isVisible = false
+                                updateProductUI(product, startingBidAmount)
+                            }else{
+                                updateProductUI(null, "0")
+                            }
 
                         }
                     }
@@ -269,8 +276,8 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
                         if (json.optString("room_id") == roomID) {
                             val products = LiveShowModel.fromJson(json)
                             val currentProduct = products.products.find { it?.isCurrent == true }
-                            updateProductUI(currentProduct , currentProduct?.price)
-                            setBidText(currentProduct?.price)
+//                            updateProductUI(currentProduct , currentProduct?.price)
+//                            setBidText(currentProduct?.price)
                         }
 
                     }
@@ -372,8 +379,9 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
                     followSheetRunnable = Runnable { followSheet() }
 
-                    if (!isFollowing) {
+                    if (!isFollowing  && !isHandlerRunning) {
                         followSheetRunnable?.let { followSheetHandler.postDelayed(it, 30000) }
+                        isHandlerRunning = true
                     }
                 }
             }
@@ -912,9 +920,14 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
                 bind.productImage.loadUrl(mCtx, liveProduct.image ?: "")
                 bind.productImageShop.loadUrl(mCtx, liveProduct.image ?: "")
                 val price = liveProduct.price
-                bind.price.text = bidStartingAmount?.asMoney() ?: ("0.0" + "Shipping + Taxes")
+                bind.price.text = price?.asMoney() ?: ("0.0" + "Shipping + Taxes")
 
-                highestBidAmount = bidStartingAmount
+                highestBidAmount = if (bidStartingAmount == "0"){
+                    price
+                }else{
+                    bidStartingAmount
+                }
+
                 bidProductId = liveProduct.id
                 setBidText(highestBidAmount)
 
@@ -965,7 +978,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 //                setBidText(highestBidAmount)
             } else {
 //                highestBidAmount = ""
-                setBidText((liveProduct?.price?.toDoubleOrNull()?.toInt() ?: 0).toString())
+//                setBidText((liveProduct?.price?.toDoubleOrNull()?.toInt() ?: 0).toString())
             }
 
 //            updateProductUI(liveProduct , liveProduct?.price)
@@ -1690,7 +1703,10 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
             followSheet.dismiss()
         }
 
-        followSheet.show()
+        if (!followSheet.isShowing){
+            followSheet.show()
+        }
+
     }
 
     private fun updatePollSheet() {

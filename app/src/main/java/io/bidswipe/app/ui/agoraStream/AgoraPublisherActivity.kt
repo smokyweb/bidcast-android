@@ -388,6 +388,12 @@ class AgoraPublisherActivity : BaseActivity() {
 			}
 		}
 
+		bind.runNext.setHapticClickListener {
+			if (isShowLive) {
+				socketManager?.runNextProduct(roomID)
+			}
+		}
+
 		onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
 			override fun handleOnBackPressed() {
 				if (isShowLive) {
@@ -585,11 +591,42 @@ class AgoraPublisherActivity : BaseActivity() {
 			runSafe {
 				if (json.optString("room_id") == roomID) {
 					runOnUiThread {
-						val product = LiveShowModel.Product.fromJson(json.optJSONObject("product"))
-						val startingBidAmount = json.optString("starting_bid_amount")
-						log("LIVE PRODUCT : $product")
-						updateProductUI(product, startingBidAmount)
+						if (json.has("product") && json.optJSONObject("product") != null) {
+							bind.runNextLayout.isVisible = false
+							val product = LiveShowModel.Product.fromJson(json.optJSONObject("product"))
+							val startingBidAmount = json.optString("starting_bid_amount")
+							log("LIVE PRODUCT : $product")
+							updateProductUI(product, startingBidAmount)
+						}else{
+							updateProductUI(null, startingBidAmount = "0")
+						}
 
+					}
+				}
+			}
+		}
+
+		socketManager?.onAuctionNExtProduct { json ->
+			runSafe {
+				if (json.optString("room_id") == roomID) {
+					runOnUiThread {
+						if (json.has("product") && json.optJSONObject("product") != null) {
+							val product = LiveShowModel.Product.fromJson(json.optJSONObject("product"))
+							auctionSettingsSheet(product.id.toString() , product.price.toString())
+						}else{
+							showProductSheet()
+						}
+					}
+				}
+			}
+		}
+
+		socketManager?.onNextProductError { json ->
+			runSafe {
+				if (json.optString("room_id") == roomID) {
+					runOnUiThread {
+						showProductSheet()
+						log("NEXT PRODUCT ERROR : ${json.optString("message")}")
 					}
 				}
 			}
@@ -689,7 +726,7 @@ class AgoraPublisherActivity : BaseActivity() {
 
 					val liveProduct = showData.products.find { it?.isCurrent == true }
 
-					updateProductUI(liveProduct, liveProduct?.price)
+//					updateProductUI(liveProduct, liveProduct?.price)
 
 					log("ROOM CREATED : $showData")
 				}
@@ -700,7 +737,6 @@ class AgoraPublisherActivity : BaseActivity() {
 
 		socketManager?.onDurationUpdate { obj ->
 			runOnUiThread {
-
 				if (roomID == obj.optString("room_id")) {
 					val elapsedSeconds = obj.optString("elapsed").toLongOrNull() ?: 0L
 					val formattedTime = "%02d:%02d:%02d".format(
@@ -804,10 +840,11 @@ class AgoraPublisherActivity : BaseActivity() {
 						product?.isCurrent = false
 
 						bind.status.isVisible = true
+						bind.runNextLayout.isVisible = true
 
 //						log("UPDATED PRODUCT LIST : ${productList} ")
 
-						showProductSheet()
+//						showProductSheet()
 
 					}
 
@@ -832,9 +869,9 @@ class AgoraPublisherActivity : BaseActivity() {
 
 						val currentProduct = products.products.find { it?.isCurrent == true }
 
-						updateProductUI(currentProduct, currentProduct?.price )
+//						updateProductUI(currentProduct, currentProduct?.price )
 
-						productAdapter.notifyDataSetChanged()
+//						productAdapter.notifyDataSetChanged()
 
 					}
 
@@ -1259,7 +1296,7 @@ class AgoraPublisherActivity : BaseActivity() {
 		sheet.show()
 	}
 
-	private fun auctionSettingsSheet() {
+	private fun auctionSettingsSheet(productId : String, price : String) {
 		var selectedCounterTimer = 0
 		var selectedRequiredTime = 0
 

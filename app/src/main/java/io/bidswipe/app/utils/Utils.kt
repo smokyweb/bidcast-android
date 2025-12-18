@@ -23,7 +23,6 @@ import androidx.core.content.FileProvider
 import com.canhub.cropper.CropImageOptions
 import com.canhub.cropper.CropImageView
 import com.google.android.material.chip.Chip
-import com.stripe.android.customersheet.injection.CustomerSheetViewModelModule_Companion_ResourcesFactory.resources
 import io.bidswipe.app.R
 import io.bidswipe.app.utils.cropper.CropOptions
 import kotlinx.coroutines.CoroutineScope
