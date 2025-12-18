@@ -5,6 +5,7 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.ColorFilter
@@ -18,18 +19,25 @@ import android.provider.OpenableColumns
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
+import androidx.core.content.FileProvider
 import com.canhub.cropper.CropImageOptions
 import com.canhub.cropper.CropImageView
 import com.google.android.material.chip.Chip
 import com.stripe.android.customersheet.injection.CustomerSheetViewModelModule_Companion_ResourcesFactory.resources
 import io.bidswipe.app.R
 import io.bidswipe.app.utils.cropper.CropOptions
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import java.io.File
 import java.io.FileOutputStream
 import java.io.InputStream
+import java.net.HttpURLConnection
+import java.net.URL
 import java.text.SimpleDateFormat
 import java.time.Instant
 import java.util.Date
@@ -301,6 +309,45 @@ object Utils {
 		canvas.drawText(text, width / 2f, height / 2f - (paint.descent() + paint.ascent()) / 2, paint)
 
 		return BitmapDrawable(mCtx.resources, bitmap)
+	}
+
+	fun saveImageFromUrlToCache(mCtx: Context, url: String?, callback: (uri: Uri?) -> Unit) {
+		if (url.isNullOrEmpty()) return callback(null)
+		CoroutineScope(Dispatchers.IO).launch {
+			try {
+				val url = URL(url)
+				val connection: HttpURLConnection = url.openConnection() as HttpURLConnection
+				connection.connect()
+
+				val inputStream: InputStream = connection.inputStream
+				val bitmap: Bitmap = BitmapFactory.decodeStream(inputStream)
+
+				val cacheDir: File = mCtx.cacheDir
+
+				val imageFile = File(cacheDir, "cached_image_${System.currentTimeMillis()}.jpg")
+
+				val outputStream = FileOutputStream(imageFile)
+				bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
+				outputStream.flush()
+				outputStream.close()
+
+				val uri = FileProvider.getUriForFile(
+					mCtx,
+					"${mCtx.packageName}.provider",
+					imageFile
+				)
+
+				withContext(Dispatchers.Main) {
+					callback(uri)
+				}
+
+			} catch (e: Exception) {
+				withContext(Dispatchers.Main) {
+					callback(null)
+				}
+				e.printStackTrace()
+			}
+		}
 	}
 
 }

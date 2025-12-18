@@ -39,7 +39,7 @@
             android:layout_marginEnd="@dimen/margin"
             android:padding="12dp"
             android:scaleType="centerCrop"
-            android:src="@drawable/close_ic" />
+            android:src="@drawable/ic_close" />
 
     </LinearLayout>
 

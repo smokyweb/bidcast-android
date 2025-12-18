@@ -1,189 +1,220 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android = "http://schemas.android.com/apk/res/android"
-	xmlns:tools = "http://schemas.android.com/tools" >
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
 
-	<uses-permission android:name = "android.permission.ACCESS_WIFI_STATE" />
-	<uses-permission android:name = "android.permission.RECORD_AUDIO" />
-	<uses-permission android:name = "android.permission.INTERNET" />
-	<uses-permission android:name = "android.permission.ACCESS_NETWORK_STATE" />
-	<uses-permission android:name = "android.permission.CAMERA" />
-	<uses-permission android:name = "android.permission.MODIFY_AUDIO_SETTINGS" />
-	<uses-permission android:name = "android.permission.READ_PHONE_STATE" />
-	<uses-permission android:name = "android.permission.VIBRATE" />
-	<uses-permission android:name = "android.permission.READ_EXTERNAL_STORAGE" />
-	<uses-permission android:name = "android.permission.BLUETOOTH" />
-	<uses-permission android:name = "android.permission.BLUETOOTH_CONNECT" />
-	<uses-permission android:name = "android.permission.BLUETOOTH_SCAN" />
-	<uses-permission android:name="android.permission.QUERY_ALL_PACKAGES"/>
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
+    <uses-permission android:name="android.permission.BLUETOOTH_SCAN" />
+    <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES" />
 
-	<uses-feature
-		android:name = "android.hardware.camera"
-		android:required = "false" />
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="false" />
 
-	<uses-feature
-		android:glEsVersion = "0x00020000"
-		android:required = "true" />
+    <uses-feature
+        android:glEsVersion="0x00020000"
+        android:required="true" />
 
-	<uses-feature
-		android:name = "android.hardware.camera.autofocus"
-		android:required = "false"
-		tools:ignore = "SelectedPhotoAccess" />
+    <uses-feature
+        android:name="android.hardware.camera.autofocus"
+        android:required="false"
+        tools:ignore="SelectedPhotoAccess" />
 
-	<application
-		android:name = ".App"
-		android:allowBackup = "true"
-		android:allowClearUserData = "true"
-		android:dataExtractionRules = "@xml/data_extraction_rules"
-		android:enableOnBackInvokedCallback = "true"
-		android:fullBackupContent = "@xml/backup_rules"
-		android:icon = "@mipmap/ic_launcher"
-		android:label = "@string/app_name"
-		android:roundIcon = "@mipmap/ic_launcher_round"
-		android:supportsRtl = "true"
-		android:theme = "@style/Theme.Bidswipe"
-		tools:targetApi = "31"
-		android:usesCleartextTraffic="true">
+    <application
+        android:name=".App"
+        android:allowBackup="true"
+        android:allowClearUserData="true"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:enableOnBackInvokedCallback="true"
+        android:fullBackupContent="@xml/backup_rules"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.Bidswipe"
+        android:usesCleartextTraffic="true"
+        tools:targetApi="31">
 
-		<activity
-			android:name = ".ui.scheduleShow.TipSettingActivity"
-			android:exported = "false" />
-		<activity
-			android:name = ".ui.agoraStream.AgoraPublisherActivity"
-			android:configChanges = "screenSize|smallestScreenSize|screenLayout|orientation"
-			android:exported = "false"
-			android:launchMode = "singleTop"
-			android:resizeableActivity = "true"
-			android:supportsPictureInPicture = "true"
-			android:windowSoftInputMode = "adjustResize"/>
+        <activity
+            android:name=".ui.scheduleShow.TipSettingActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.agoraStream.AgoraPublisherActivity"
+            android:configChanges="screenSize|smallestScreenSize|screenLayout|orientation"
+            android:exported="false"
+            android:launchMode="singleTop"
+            android:resizeableActivity="true"
+            android:supportsPictureInPicture="true"
+            android:windowSoftInputMode="adjustResize" />
 
-		<activity
-			android:name = ".ui.interest.ChooseInterestActivity"
-			android:exported = "false"
-			android:theme = "@style/Theme.Bidswipe" />
-		<activity
-			android:name = ".ui.dashboard.ChatActivity"
-			android:exported = "false" />
-		<activity
-			android:name = ".ui.dashboard.RateSellerActivity"
-			android:exported = "false" />
-		<activity
-			android:name = ".ui.dashboard.UpdateAccountActivity"
-			android:exported = "false" />
-		<activity
-			android:name = ".ui.more.NotificationActivity"
-			android:exported = "false" />
-		<activity
-			android:name = ".ui.watchStream.ViewLiveShowActivity"
-			android:configChanges = "screenSize|smallestScreenSize|screenLayout|orientation"
-			android:exported = "false"
-			android:resizeableActivity = "true"
-			android:supportsPictureInPicture = "true"
-			android:windowSoftInputMode = "adjustResize" />
+        <activity
+            android:name=".ui.interest.ChooseInterestActivity"
+            android:exported="false"
+            android:theme="@style/Theme.Bidswipe" />
+        <activity
+            android:name=".ui.dashboard.ChatActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.dashboard.RateSellerActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.dashboard.UpdateAccountActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.more.NotificationActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.watchStream.ViewLiveShowActivity"
+            android:configChanges="screenSize|smallestScreenSize|screenLayout|orientation"
+            android:exported="false"
+            android:resizeableActivity="true"
+            android:supportsPictureInPicture="true"
+            android:windowSoftInputMode="adjustResize">
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
 
-		<activity
-			android:name = ".ui.dashboard.AddPaymentCardActivity"
-			android:exported = "false" />
-		<activity
-			android:name = ".ui.sellerProfile.SellerProfileActivity"
-			android:exported = "false"
-			android:windowSoftInputMode = "adjustResize" />
-		<activity
-			android:name = ".ui.product.ProductDetailsActivity"
-			android:exported = "false" />
-		<activity
-			android:name = ".ui.sellerHub.SellerHubActivity"
-			android:exported = "false" />
-		<activity
-			android:name = ".ui.more.MoreActivity"
-			android:exported = "false" />
-		<activity
-			android:name = ".ui.dashboard.LanguageActivity"
-			android:exported = "false" />
-		<activity
-			android:name = ".ui.scheduleShow.ScheduleShowActivity"
-			android:exported = "false" />
-		<activity
-			android:name = ".ui.tutorials.TutorialsActivity"
-			android:exported = "false" />
-		<activity
-			android:name = ".ui.sell.ListAProductActivity"
-			android:exported = "false"
-			android:windowSoftInputMode="adjustResize"
-			/>
-		<activity
-			android:name = ".ui.dashboard.DashActivity"
-			android:exported = "true"
-			android:windowSoftInputMode = "adjustNothing" >
-			<intent-filter android:autoVerify = "true" >
-				<action android:name = "android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
 
-				<category android:name = "android.intent.category.DEFAULT" />
-				<category android:name = "android.intent.category.BROWSABLE" />
+                <data android:scheme="https" />
+                <data android:host="backend.bidcast.betaplanets.com" />
+                <data android:pathPrefix="/live-show" />
+            </intent-filter>
+        </activity>
 
-				<data android:scheme = "https" />
-				<data android:host = "backend.bidcast.betaplanets.com" />
-				<data android:pathPrefix = "/live-show" />
-			</intent-filter >
-		</activity >
+        <activity
+            android:name=".ui.dashboard.AddPaymentCardActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.sellerProfile.SellerProfileActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" >
+            <intent-filter android:autoVerify = "true" >
+                <action android:name = "android.intent.action.VIEW" />
 
-		<activity
-			android:name = ".ui.SplashActivity"
-			android:exported = "true"
-			android:theme = "@style/RemoveSplash" >
-			<intent-filter >
-				<action android:name = "android.intent.action.MAIN" />
+                <category android:name = "android.intent.category.DEFAULT" />
+                <category android:name = "android.intent.category.BROWSABLE" />
 
-				<category android:name = "android.intent.category.LAUNCHER" />
-			</intent-filter >
-		</activity >
+                <data android:scheme = "https" />
+                <data android:host = "backend.bidcast.betaplanets.com" />
+                <data android:pathPrefix = "/seller" />
+            </intent-filter >
+        </activity>
+        <activity
+            android:name=".ui.product.ProductDetailsActivity"
+            android:exported="false" >
+            <intent-filter android:autoVerify = "true" >
+                <action android:name = "android.intent.action.VIEW" />
 
-		<activity
-			android:name = ".ui.auth.AuthActivity"
-			android:exported = "true"
-			android:windowSoftInputMode="adjustResize">
-			<intent-filter android:autoVerify = "true" >
-				<action android:name = "android.intent.action.VIEW" />
+                <category android:name = "android.intent.category.DEFAULT" />
+                <category android:name = "android.intent.category.BROWSABLE" />
 
-				<category android:name = "android.intent.category.DEFAULT" />
-				<category android:name = "android.intent.category.BROWSABLE" />
+                <data android:scheme = "https" />
+                <data android:host = "backend.bidcast.betaplanets.com" />
+                <data android:pathPrefix = "/products" />
+            </intent-filter >
+        </activity>
+        <activity
+            android:name=".ui.sellerHub.SellerHubActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.more.MoreActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.dashboard.LanguageActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.scheduleShow.ScheduleShowActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.tutorials.TutorialsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.sell.ListAProductActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name=".ui.dashboard.DashActivity"
+            android:exported="true"
+            android:windowSoftInputMode="adjustNothing">
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
 
-				<data android:scheme = "https" />
-				<data android:host = "backend.bidcast.betaplanets.com" />
-				<data android:pathPattern = "/referral-code" />
-			</intent-filter >
-		</activity >
-		<activity
-			android:name = ".ui.more.TrustedBuyerActivity"
-			android:exported = "false" />
-		<activity
-			android:name = ".ui.sellerHub.SellerVerificationActivity"
-			android:exported = "false" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
 
-		<activity
-			android:name = ".utils.cropper.CustomCropImageActivity"
-			android:theme = "@style/Theme.Bidswipe"
-			android:windowSoftInputMode = "adjustResize"
-			android:exported = "false" />
+                <data android:scheme="https" />
+                <data android:host="backend.bidcast.betaplanets.com" />
+            </intent-filter>
+        </activity>
 
-		<service
-			android:name = ".messaging.MyFirebaseMessagingService"
-			android:directBootAware = "true"
-			android:exported = "false" >
-			<intent-filter >
-				<action android:name = "com.google.firebase.MESSAGING_EVENT" />
-			</intent-filter >
-		</service >
+        <activity
+            android:name=".ui.SplashActivity"
+            android:exported="true"
+            android:theme="@style/RemoveSplash">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
 
-		<provider
-			android:name = "androidx.core.content.FileProvider"
-			android:authorities = "${applicationId}.provider"
-			android:exported = "false"
-			android:grantUriPermissions = "true"
-			android:permission="android.permission.MANAGE_EXTERNAL_STORAGE" >
-			<meta-data
-				android:name = "android.support.FILE_PROVIDER_PATHS"
-				android:resource = "@xml/file_paths" />
-		</provider >
-	</application >
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
 
-</manifest >
+        <activity
+            android:name=".ui.auth.AuthActivity"
+            android:exported="true"
+            android:windowSoftInputMode="adjustResize">
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="https" />
+                <data android:host="backend.bidcast.betaplanets.com" />
+                <data android:pathPattern="/referral-code" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".ui.more.TrustedBuyerActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.sellerHub.SellerVerificationActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".utils.cropper.CustomCropImageActivity"
+            android:exported="false"
+            android:theme="@style/Theme.Bidswipe"
+            android:windowSoftInputMode="adjustResize" />
+
+        <service
+            android:name=".messaging.MyFirebaseMessagingService"
+            android:directBootAware="true"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.provider"
+            android:exported="false"
+            android:grantUriPermissions="true"
+            android:permission="android.permission.MANAGE_EXTERNAL_STORAGE">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
+    </application>
+
+</manifest>

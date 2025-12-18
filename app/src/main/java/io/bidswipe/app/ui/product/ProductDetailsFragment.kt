@@ -1,17 +1,11 @@
 package io.bidswipe.app.ui.product
 
 import android.annotation.SuppressLint
-import android.app.PendingIntent
 import android.content.Intent
-import android.content.pm.PackageManager
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.graphics.Paint
-import android.graphics.drawable.Icon
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.service.chooser.ChooserAction
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -19,15 +13,10 @@ import android.widget.PopupMenu
 import androidx.annotation.RequiresApi
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.content.ContextCompat
-import androidx.core.content.FileProvider
-import androidx.core.text.bold
 import androidx.core.text.buildSpannedString
 import androidx.core.text.color
 import androidx.core.view.isVisible
 import androidx.navigation.fragment.findNavController
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.ValueEventListener
 import com.skydoves.powermenu.PowerMenuItem
 import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseFragment
@@ -37,7 +26,7 @@ import io.bidswipe.app.databinding.FragmentProductDetailsBinding
 import io.bidswipe.app.databinding.MakeOfferSheetBinding
 import io.bidswipe.app.interfaces.AlertClicks
 import io.bidswipe.app.interfaces.RecyclerClicks
-import io.bidswipe.app.model.ChatModel
+import io.bidswipe.app.model.LiveShowModel
 import io.bidswipe.app.model.OfferModel
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.network.response.GetProductDetailsResponse
@@ -45,8 +34,6 @@ import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.ui.dashboard.ChatActivity
 import io.bidswipe.app.utils.Alerts
 import io.bidswipe.app.utils.Const
-import io.bidswipe.app.utils.FireRef
-import io.bidswipe.app.utils.Prefs
 import io.bidswipe.app.utils.Utils
 import io.bidswipe.app.utils.asCapital
 import io.bidswipe.app.utils.asMoney
@@ -57,16 +44,9 @@ import io.bidswipe.app.utils.loadUrl
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request
 import io.bidswipe.app.utils.setHapticClickListener
+import io.bidswipe.app.utils.share.Seller
+import io.bidswipe.app.utils.share.ShareHelper
 import io.bidswipe.app.utils.value
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import java.io.File
-import java.io.FileOutputStream
-import java.io.InputStream
-import java.net.HttpURLConnection
-import java.net.URL
 
 @SuppressLint("NotifyDataSetChanged", "InflateParams")
 class ProductDetailsFragment : BaseFragment<ProductViewModel, FragmentProductDetailsBinding>() {
@@ -249,11 +229,9 @@ class ProductDetailsFragment : BaseFragment<ProductViewModel, FragmentProductDet
                     )
 
                     bind.share.setHapticClickListener {
-                        if (mData?.images?.isNotEmpty() == true) {
-                            saveImageFromUrlToCache(mData)
-                        } else {
-                            shareProduct(mData)
-                        }
+                        bind.loader.isVisible = true
+                        shareProduct(mData)
+
                     }
 
                     bind.chat.setHapticClickListener {
@@ -379,70 +357,9 @@ class ProductDetailsFragment : BaseFragment<ProductViewModel, FragmentProductDet
                 else -> {}
             }
         }
-        FireRef.CHAT_LIST.child(userId).orderByChild("timestamp")
-            .addValueEventListener(mValueEventListener)
-    }
-
-    private val chatList = mutableListOf<ChatModel>()
-    private var mValueEventListener = object : ValueEventListener {
-        @SuppressLint("NotifyDataSetChanged")
-        override fun onDataChange(snap: DataSnapshot) {
-
-            chatList.clear()
-
-            snap.children.forEach {
-                val chat = ChatModel().fromMap(it)
-                chatList.add(chat)
-            }
-            chatList.reverse()
-        }
-
-        override fun onCancelled(error: DatabaseError) {
-            error.toException().printStackTrace()
-        }
-    }
-
-    fun saveImageFromUrlToCache(mData: GetProductDetailsResponse.Data?) {
-        bind.loader.isVisible = true
-        CoroutineScope(Dispatchers.IO).launch {
-            try {
-                val url = URL(mData?.images?.first() ?: "")
-                val connection: HttpURLConnection = url.openConnection() as HttpURLConnection
-                connection.connect()
-
-                val inputStream: InputStream = connection.inputStream
-                val bitmap: Bitmap = BitmapFactory.decodeStream(inputStream)
-
-                val cacheDir: File = mCtx.cacheDir
-
-                val imageFile = File(cacheDir, "cached_image_${System.currentTimeMillis()}.jpg")
-
-                val outputStream = FileOutputStream(imageFile)
-                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
-                outputStream.flush()
-                outputStream.close()
-
-                val uri = FileProvider.getUriForFile(
-                    mCtx,
-                    "${mCtx.packageName}.provider",
-                    imageFile
-                )
-
-                withContext(Dispatchers.Main) {
-                    bind.loader.isVisible = false
-
-                    shareProduct(mData, uri)
-                }
-
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-        }
-
     }
 
     fun shareProduct(mData: GetProductDetailsResponse.Data?, uri: Uri? = null) {
-        // Use a plain String so all apps (WhatsApp, Instagram, etc.) can consume it safely
         val shareText = buildString {
             append("Check out ")
             append(mData?.title?.asCapital() ?: "")
@@ -450,119 +367,29 @@ class ProductDetailsFragment : BaseFragment<ProductViewModel, FragmentProductDet
             append("@${bind.userName.text}\n${Const.BASE_URL}/products/$productId")
         }
 
-        // Base share intent
-        val sendIntent = Intent(Intent.ACTION_SEND).apply {
-            if (uri != null) {
-                putExtra(Intent.EXTRA_STREAM, uri)
-                type = "image/*"
-                data=uri
-                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-            } else {
-                type = "text/plain"
-            }
-            putExtra(Intent.EXTRA_TEXT, shareText)
-        }
-
-        // List of custom actions (like 'Search' and chat contacts)
-        val customActions = mutableListOf(
-            ChooserAction.Builder(
-                Icon.createWithResource(context, R.drawable.search),
-                "Search",
-                PendingIntent.getBroadcast(
-                    context,
-                    1,
-                    Intent(Intent.ACTION_VIEW),
-                    PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_CANCEL_CURRENT
-                )
-            ).build()
+        val seller = Seller(
+            mData?.userId.toString(),
+            mData?.user?.profileImage,
+            mData?.user?.name
         )
-
-        // Add chat contact actions
-        chatList.forEach { item ->
-            val recId = if (item.users?.senderId == Prefs(mCtx).getUserData()?.id.toString()) {
-                item.users?.receiverId ?: ""
-            } else {
-                item.users?.senderId ?: ""
-            }
-
-            val (receiverName, receiverImage) = if (item.users?.senderId == Prefs(mCtx).getUserData()?.id.toString()) {
-                item.users?.receiverName?.asCapital() to (item.users?.receiverImage ?: "")
-            } else {
-                item.users?.senderName?.asCapital() to (item.users?.senderImage ?: "")
-            }
-
-            customActions.add(
-                ChooserAction.Builder(
-                    Icon.createWithResource(mCtx, R.drawable.user_image),
-                    receiverName ?: "",
-                    PendingIntent.getActivity(
-                        context,
-                        1,
-                        Intent(mCtx, ChatActivity::class.java).apply {
-                            putExtra("id", recId)
-                            putExtra("name", receiverName)
-                            putExtra("image", receiverImage)
-                            putExtra("productImage", uri)
-                            putExtra("shareText", shareText)
-                        },
-                        PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_CANCEL_CURRENT
-                    )
-                ).build()
+            ShareHelper.openShareSheet(
+                parentFragmentManager,
+                imageUrl = mData?.images?.first().orEmpty(),
+                text =  mData?.title?.asCapital().orEmpty(),
+                sellerInfo = seller,
+                shareText = shareText,
+                type = "product"
             )
-        }
 
-        // Query apps that can handle exactly this share intent
-        val resolvedActivities =
-            mCtx.packageManager.queryIntentActivities(sendIntent, PackageManager.MATCH_ALL)
-
-        val priorityList = listOf(
-            "com.android.mms",
-            "com.instagram.android",
-            "com.facebook.katana",
-            "com.facebook.orca",
-            "com.whatsapp"
-        )
-
-        val sortedResolveInfoList = resolvedActivities.sortedBy { resolveInfo ->
-            when (resolveInfo.activityInfo.packageName) {
-                in priorityList -> 0
-                else -> 1
-            }
-        }
-
-        val initialIntents = sortedResolveInfoList.map { resolveInfo ->
-            Intent(Intent.ACTION_SEND).apply {
-                if (uri != null) {
-                    putExtra(Intent.EXTRA_STREAM, uri)
-                    type = "image/*"
-                    data=uri
-                    addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-                } else {
-                    type = "text/plain"
-                }
-                putExtra(Intent.EXTRA_TEXT, shareText)
-                setPackage(resolveInfo.activityInfo.packageName)
-            }
-        }.toTypedArray()
-
-        if (uri != null) {
-            sortedResolveInfoList.forEach { resolveInfo ->
-                try {
-                    mCtx.grantUriPermission(
-                        resolveInfo.activityInfo.packageName,
-                        uri,
-                        Intent.FLAG_GRANT_READ_URI_PERMISSION
-                    )
-                } catch (_: Exception) {
-                }
-            }
-        }
-
-        val chooserIntent = Intent.createChooser(sendIntent, "Share Product")
-        chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, initialIntents)
-        chooserIntent.putExtra(Intent.EXTRA_CHOOSER_CUSTOM_ACTIONS, customActions.toTypedArray())
-
-        mCtx.startActivity(chooserIntent)
+//        if (mData?.images?.isNotEmpty() == true) {
+//            Utils.saveImageFromUrlToCache(mCtx, mData.images.first().orEmpty()) { imageUri ->
+//                bind.loader.isVisible = false
+//                shareProductDetails(imageUri)
+//            }
+//        } else {
+//            bind.loader.isVisible = false
+//            shareProductDetails(null)
+//        }
     }
 
     fun getDiscountAmount(originalAmount: Double, percentOff: Int): String {

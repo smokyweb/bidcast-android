@@ -3,130 +3,315 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     android:background="@drawable/bottom_sheet_back">
 
-    <LinearLayout
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/nestedScrollView2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="@dimen/margin"
-        app:layout_constraintTop_toTopOf="parent">
+        android:fillViewport="true"
+        android:scrollbars="none">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:orientation="horizontal">
+            android:orientation="vertical"
+            android:padding="@dimen/margin"
+            app:layout_constraintTop_toTopOf="parent">
 
-            <TextView
-                style="@style/TitleLarge"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/share_show" />
-
-            <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/close"
-                android:layout_width="44dp"
-                android:layout_height="44dp"
-                android:alpha="0.7"
-                android:padding="12dp"
-                android:src="@drawable/close_ic"
-                app:tint="@color/tertiary" />
-
-        </LinearLayout>
-
-        <com.google.android.material.divider.MaterialDivider
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            app:dividerColor="@color/outline" />
-
-        <!-- Preview Card -->
-        <com.google.android.material.card.MaterialCardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/margin"
-            app:cardCornerRadius="12dp"
-            app:cardElevation="0dp">
-
-            <androidx.constraintlayout.widget.ConstraintLayout
+            <LinearLayout
+                android:id="@+id/linearLayout3"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/showImg"
-                    android:layout_width="match_parent"
-                    android:layout_height="200dp"
-                    android:scaleType="centerCrop"
-                    android:src="@drawable/placeholder_square"
-                    app:layout_constraintTop_toTopOf="parent" />
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
 
                 <TextView
-                    android:id="@+id/liveBadge"
-                    android:layout_width="wrap_content"
+                    android:id="@+id/shareTitle"
+                    style="@style/TitleLarge"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_margin="12dp"
-                    android:background="@drawable/card_8"
-                    android:backgroundTint="@color/error"
-                    android:paddingHorizontal="12dp"
-                    android:paddingVertical="6dp"
-                    android:text="Live"
-                    android:textColor="@android:color/white"
-                    android:textStyle="bold"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    android:layout_weight="1"
+                    android:text="@string/share_show" />
 
-                <LinearLayout
-                    android:id="@+id/previewInfo"
-                    android:layout_width="match_parent"
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/close"
+                    android:layout_width="44dp"
+                    android:layout_height="44dp"
+                    android:alpha="0.7"
+                    android:padding="12dp"
+                    android:src="@drawable/ic_close"
+                    app:tint="@color/tertiary" />
+
+            </LinearLayout>
+            <!-- Preview Card -->
+            <LinearLayout
+                android:id="@+id/preview_card"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:orientation="horizontal"
+                android:weightSum="2">
+
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/screenshotView"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:background="#80000000"
-                    android:orientation="vertical"
-                    android:padding="16dp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/showImg">
+                    android:layout_marginTop="@dimen/margin"
+                    android:layout_weight="1.2"
+                    app:cardCornerRadius="12dp"
+                    app:cardElevation="0dp">
 
-                    <TextView
-                        android:id="@+id/showTitle"
-                        style="@style/TitleLarge"
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/seller_card_view"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:textColor="@android:color/white"
-                        android:text="Show Title" />
+                        android:background="@color/background"
+                        android:layout_height="wrap_content">
 
-                    <TextView
-                        android:id="@+id/showSubtitle"
-                        style="@style/BodySmall"
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="100dp"
+                            app:layout_constraintTop_toTopOf="parent"
+                            android:background="@color/primary"/>
+
+                        <com.google.android.material.card.MaterialCardView
+                            android:id="@+id/imageCard"
+                            style="@style/cardStyle"
+                            android:layout_width="120dp"
+                            android:layout_height="120dp"
+                            android:layout_marginTop="40dp"
+                            android:layout_gravity="center"
+                            android:backgroundTint="@color/transparent"
+                            app:cardCornerRadius="100dp"
+                            app:cardElevation="0dp"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent">
+
+                            <androidx.appcompat.widget.AppCompatImageView
+                                android:id="@+id/seller_image"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:gravity="center"
+                                android:scaleType="centerCrop"
+                                android:src="@drawable/user_image" />
+
+                        </com.google.android.material.card.MaterialCardView>
+
+                        <TextView
+                            android:id="@+id/seller_name"
+                            style="@style/TitleLarge"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Show Title"
+                            android:layout_marginTop="@dimen/half_margin"
+                            android:gravity="center"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            android:paddingHorizontal="@dimen/margin"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/imageCard" />
+
+                        <TextView
+                            android:id="@+id/checkout_text"
+                            style="@style/BodySmall"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:paddingHorizontal="@dimen/margin"
+                            android:text="Checkout this profile on Bidswipe"
+                            android:layout_marginBottom="@dimen/half_margin"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/seller_name"/>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            app:layout_constraintTop_toBottomOf="@id/checkout_text"
+                            android:padding="@dimen/half_margin"
+                            app:layout_constraintBottom_toBottomOf="parent">
+
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginHorizontal="@dimen/half_margin"
+                                android:layout_weight="1"
+                                android:gravity="center_horizontal"
+                                android:orientation="vertical">
+
+                                <TextView
+                                    android:id="@+id/followers"
+                                    style="@style/TitleSmall"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:gravity="center_vertical"
+                                    android:text="1.8K" />
+
+                                <TextView
+                                    style="@style/BodySmall"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Followers" />
+
+                            </LinearLayout>
+
+                            <com.google.android.material.divider.MaterialDivider
+                                android:layout_width="2dp"
+                                android:layout_height="match_parent" />
+
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginHorizontal="@dimen/half_margin"
+                                android:layout_weight="1"
+                                android:gravity="center_horizontal"
+                                android:orientation="vertical">
+
+                                <TextView
+                                    android:id="@+id/rating"
+                                    style="@style/TitleSmall"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:gravity="center_vertical"
+                                    android:text="5.5k" />
+
+                                <TextView
+                                    style="@style/BodySmall"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Ratings" />
+
+                            </LinearLayout>
+
+
+                        </LinearLayout>
+
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                     <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/normal_share_view"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="4dp"
-                        android:text="Shop Live Now!"
-                        android:textColor="@android:color/white" />
+                        android:visibility="gone"
+                        android:layout_height="wrap_content">
 
-                </LinearLayout>
+                        <androidx.appcompat.widget.AppCompatImageView
+                            android:id="@+id/showImg"
+                            android:layout_width="match_parent"
+                            android:layout_height="0dp"
+                            android:scaleType="centerCrop"
+                            android:src="@drawable/placeholder_square"
+                            app:layout_constraintDimensionRatio="1"
+                            app:layout_constraintTop_toTopOf="parent" />
 
-            </androidx.constraintlayout.widget.ConstraintLayout>
+                        <TextView
+                            android:id="@+id/liveBadge"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="12dp"
+                            android:background="@drawable/card_8"
+                            android:backgroundTint="@color/error"
+                            android:paddingHorizontal="12dp"
+                            android:paddingVertical="6dp"
+                            android:text="Live"
+                            android:textColor="@android:color/white"
+                            android:textStyle="bold"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
 
-        </com.google.android.material.card.MaterialCardView>
+                        <LinearLayout
+                            android:id="@+id/previewInfo"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@color/outlineVariant"
+                            android:orientation="vertical"
+                            android:padding="16dp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintTop_toBottomOf="@id/showImg">
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/margin"
-            android:text="Quick Share"
-            style="@style/TitleMedium" />
+                            <LinearLayout
+                                android:id="@+id/sellerInfo"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:gravity="center_vertical"
+                                android:orientation="horizontal"
+                                android:paddingBottom="4dp"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent">
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/shareTargetsRecycler"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/half_margin"
-            app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-            app:spanCount="4"
-            tools:itemCount="8"
-            tools:listitem="@layout/share_target_item" />
+                                <com.makeramen.roundedimageview.RoundedImageView
+                                    android:id="@+id/userImage"
+                                    android:layout_width="32dp"
+                                    android:layout_height="32dp"
+                                    android:scaleType="centerCrop"
+                                    android:src="@drawable/user_image"
+                                    app:riv_corner_radius="100dp" />
 
-    </LinearLayout>
+                                <TextView
+                                    android:id="@+id/userName"
+                                    style="@style/BodySmall"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center_vertical"
+                                    android:layout_marginStart="6dp"
+                                    android:layout_weight="1"
+                                    android:maxLines="1"
+                                    android:textColor="@color/onPrimary"
+                                    android:text="@string/username" />
+
+                            </LinearLayout>
+
+                            <TextView
+                                android:id="@+id/showTitle"
+                                style="@style/LabelLarge"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="Show Title"
+                                android:textColor="@android:color/white" />
+
+                            <TextView
+                                android:id="@+id/showSubtitle"
+                                style="@style/LabelMedium"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="4dp"
+                                android:text="Shop Live Now!"
+                                android:textColor="@color/onPrimary" />
+
+                        </LinearLayout>
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                </com.google.android.material.card.MaterialCardView>
+
+            </LinearLayout>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/chats"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/half_margin"
+                android:orientation="horizontal"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                tools:itemCount="8"
+                tools:listitem="@layout/share_target_item" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/shareTargetsRecycler"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/half_margin"
+                android:nestedScrollingEnabled="false"
+                android:orientation="horizontal"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                tools:itemCount="8"
+                tools:listitem="@layout/share_target_item" />
+
+
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

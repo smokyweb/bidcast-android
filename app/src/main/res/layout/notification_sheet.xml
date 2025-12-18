@@ -41,7 +41,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="@dimen/margin"
-            android:src="@drawable/close_ic"
+            android:src="@drawable/ic_close"
             app:tint="@color/background" />
 
     </com.google.android.material.card.MaterialCardView>

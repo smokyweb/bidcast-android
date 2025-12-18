@@ -188,7 +188,7 @@
                                     android:contentDescription="@string/app_name"
                                     android:elevation="2dp"
                                     android:padding="6dp"
-                                    android:src="@drawable/close_ic"
+                                    android:src="@drawable/ic_close"
                                     app:layout_constraintEnd_toEndOf="parent"
                                     app:layout_constraintTop_toTopOf="parent" />
 

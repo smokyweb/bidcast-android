@@ -13,7 +13,7 @@
         app:headerMode="BACK_BUTTON_TITLE_ACTION"
         app:headerTitle="Let's Prepare Your Show"
         app:layout_constraintTop_toTopOf="parent"
-        app:primaryIconDrawable="@drawable/close_ic"
+        app:primaryIconDrawable="@drawable/ic_close"
         app:secondaryIconDrawable="@drawable/search"
         app:showBackButton="true"
         app:showPrimaryIcon="false"

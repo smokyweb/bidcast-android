@@ -27,6 +27,10 @@ class OrdersAdapter(
 	) {
 		with(holder) {
 			bind.root.setHapticClickListener { mClicks.itemClick(position) }
+			bind.buyerLayout.setHapticClickListener {
+				mClicks.itemClick(position, "profile")
+			}
+
 			bind.orderId.text = item?.orderId
 			bind.status.text = item?.status?.replace("_", " ")?.asCapital()
 			bind.orderAmount.text = item?.product?.pricing.toString().asMoney()
@@ -40,7 +44,6 @@ class OrdersAdapter(
 			bind.productImage.loadUrl(mCtx, item?.product?.images?.get(0) ?:"")
 			
 			bind.productName.text = item?.product?.title?.asCapital()
-			bind.category.text = item?.product?.category?.name
 
 			bind.buyerName.text = item?.user?.name?.asCapital()
 

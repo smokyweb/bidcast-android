@@ -125,8 +125,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
                             Intent(mCtx, AgoraPublisherActivity::class.java).putExtra(
                                 "showId",
                                 ""
-                            ),
-                            flag)
+                            ), flag)
                     }
 
                     else -> {
@@ -146,6 +145,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
                         NotificationCompat.BigTextStyle().setBigContentTitle(title).bigText(message)
                     )
                 }.build()
+
             } catch (e: Exception) {
                 e.printStackTrace()
                 Utils.getNotifBuilder(mCtx, title.asCapital(), message).apply {

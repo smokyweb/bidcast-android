@@ -110,7 +110,7 @@ data class LiveShowModel(
 	data class Seller(
 		val id: String? = null,
 		val image: String? = null,
-		val name: String? = "test",
+		val name: String? = null,
 		val rating: String? = null
 	) : Serializable {
 		fun toJson() = JSONObject().apply {
