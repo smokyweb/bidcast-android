@@ -266,7 +266,7 @@
 
                             <TextView
                                 android:id="@+id/showTitle"
-                                style="@style/LabelLarge"
+                                style="@style/TitleMedium"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:text="Show Title"

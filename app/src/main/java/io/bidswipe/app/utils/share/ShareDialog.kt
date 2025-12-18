@@ -126,7 +126,7 @@ class ShareDialog : BottomSheetDialogFragment() {
         Log.d("TAG", "onViewCreated: $payload")
 
         bind.showImg.loadUrl(mCtx, payload.imageUrl ?: "")
-        bind.showTitle.text = payload.text
+        bind.showTitle.text = payload.text?.capitalize()
         if (payload.sellerInfo != null) {
             bind.sellerInfo.isVisible = true
             bind.userName.text = payload.sellerInfo?.name
@@ -141,6 +141,7 @@ class ShareDialog : BottomSheetDialogFragment() {
 
         when (payload.type) {
             "product" -> {
+                bind.liveBadge.isVisible = false
                 bind.shareTitle.text = "Share Product"
                 bind.showSubtitle.isVisible = false
                 bind.sellerCardView.isVisible = false
