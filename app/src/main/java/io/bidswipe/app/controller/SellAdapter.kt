@@ -12,7 +12,7 @@ import io.bidswipe.app.model.SellModel
 import io.bidswipe.app.utils.setHapticClickListener
 
 class SellAdapter(
-	mList : MutableList<SellModel> , val type : String , val mClicks : RecyclerClicks ,
+	mList : MutableList<SellModel> , val type : String, val mClicks: RecyclerClicks,
 ) : BaseAdapter<SellModel , SellSheetItemBinding>(mList) {
 
 	override fun bindView(inflater : LayoutInflater , parent : ViewGroup) =

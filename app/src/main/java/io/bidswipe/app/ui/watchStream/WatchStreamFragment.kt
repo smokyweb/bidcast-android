@@ -1669,17 +1669,19 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
         if (App.PIPMode) return
 
+        val ctx = context ?: return
+        val inflater = LayoutInflater.from(ctx)
         val followSheetBinding = FollowInfoSheetBinding.bind(
-            layoutInflater.inflate(
+            inflater.inflate(
                 R.layout.follow_info_sheet,
                 null,
                 false
             )
         )
 
-        val followSheet = Alerts.appBottomSheet(mCtx, true, followSheetBinding)
+        val followSheet = Alerts.appBottomSheet(ctx, true, followSheetBinding)
 
-        followSheetBinding.image.loadUrl(mCtx, sellerImage ?: "")
+        followSheetBinding.image.loadUrl(ctx, sellerImage ?: "")
 
         followSheetBinding.title.text = buildString {
             append("Follow This Seller!")
@@ -1687,7 +1689,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
         followSheetBinding.message.text = buildSpannedString {
             append("Like what you see? Follow ")
-            color(ContextCompat.getColor(mCtx, R.color.primary)) {
+            color(ContextCompat.getColor(ctx, R.color.primary)) {
                 append(sellerName)
             }
             append(" to get notifications when they go live!")
@@ -1703,7 +1705,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
             followSheet.dismiss()
         }
 
-        if (!followSheet.isShowing){
+        if (!followSheet.isShowing) {
             followSheet.show()
         }
 

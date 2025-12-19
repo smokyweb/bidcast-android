@@ -16,6 +16,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.FileProvider
+import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.FragmentManager
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -28,6 +29,8 @@ import io.bidswipe.app.controller.ShareTargetAdapter
 import io.bidswipe.app.databinding.ShareSheetBinding
 import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.model.ChatModel
+import io.bidswipe.app.model.LiveShowModel
+import io.bidswipe.app.ui.agoraStream.ProductsForLiveShowFragment
 import io.bidswipe.app.ui.dashboard.ChatActivity
 import io.bidswipe.app.utils.FireRef
 import io.bidswipe.app.utils.Prefs
@@ -38,7 +41,6 @@ import java.io.IOException
 import java.io.Serializable
 
 object ShareHelper {
-
     fun openShareSheet(
         fragmentManager: FragmentManager,
         imageUrl: String?,
@@ -120,6 +122,9 @@ class ShareDialog : BottomSheetDialogFragment() {
 
         Log.d("TAG", "onViewCreated: $payload")
 
+        chatList.clear()
+        chatList.add(0, ChatModel())
+
         bind.showImg.loadUrl(mCtx, payload.imageUrl ?: "")
         bind.showTitle.text = payload.text?.capitalize()
         if (payload.sellerInfo != null) {
@@ -195,6 +200,9 @@ class ShareDialog : BottomSheetDialogFragment() {
             override fun itemClick(pos: Int, status: String?) {
                 if (pos == 0) {
                     //search  sheet for user search
+                    val bottomSheetFragment = SearchUsers()
+                    bottomSheetFragment.arguments= bundleOf("share_text" to payload.shareText)
+                    bottomSheetFragment.show(parentFragmentManager, "SEARCH_SHEET")
                 } else {
                     var name = ""
                     var img = ""
@@ -218,8 +226,8 @@ class ShareDialog : BottomSheetDialogFragment() {
                     }
                     startActivity(intent)
 
+                    dismiss()
                 }
-                dismiss()
             }
         })
 

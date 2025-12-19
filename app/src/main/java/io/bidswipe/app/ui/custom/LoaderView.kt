@@ -36,6 +36,8 @@ class LoaderView @JvmOverloads constructor(
 
 		//	loader.setColor(attr.getColor(styleable.LoaderView_loaderColor , ContextCompat.getColor(context , clr.primary)))
 
+
+
 		click.isVisible = attr.getBoolean(styleable.LoaderView_showBack , true)
 
 		click.setOnClickListener { }

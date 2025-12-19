@@ -9,7 +9,6 @@ import io.bidswipe.app.network.response.GetShippingAddressResponse
 import io.bidswipe.app.utils.setHapticClickListener
 
 class SelectAddressAdapter(
-
 	mList: MutableList<GetShippingAddressResponse.Data?>, val mClicks: RecyclerClicks,
 ) : BaseAdapter<GetShippingAddressResponse.Data?, SelectableAddressItemBinding>(mList) {
 

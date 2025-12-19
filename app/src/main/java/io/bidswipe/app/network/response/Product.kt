@@ -24,13 +24,13 @@ data class Product(
 	@SerializedName("hazardousMaterial")
 	val hazardousMaterial: Boolean?,
 	@SerializedName("height")
-	val height: String?,
+	val height: Double?,
 	@SerializedName("id")
 	val id: Int?,
 	@SerializedName("images")
 	val images: List<String?>?,
 	@SerializedName("length")
-	val length: Int?,
+	val length: Double?,
 	@SerializedName("mailClass")
 	val mailClass: String?,
 	@SerializedName("pricing")
@@ -70,9 +70,9 @@ data class Product(
 	@SerializedName("videos")
 	val videos: List<String?>?,
 	@SerializedName("weight")
-	val weight: String?,
+	val weight: Double?,
 	@SerializedName("width")
-	val width: Int?,
+	val width: Double?,
 	var selected: Boolean = false,
 	var isCurrent: Boolean? = false,
 ) : Serializable {

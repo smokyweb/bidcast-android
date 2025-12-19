@@ -372,6 +372,7 @@ class ProductDetailsFragment : BaseFragment<ProductViewModel, FragmentProductDet
             mData?.user?.profileImage,
             mData?.user?.name
         )
+
             ShareHelper.openShareSheet(
                 parentFragmentManager,
                 imageUrl = mData?.images?.first().orEmpty(),

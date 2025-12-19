@@ -501,7 +501,6 @@ interface ApiInterface {
 	suspend fun searchUsers(
 		@Part("search") search : RequestBody? ,
 	) : UserSearchingResponse
-
 	@Multipart
 	@POST("api/product/save")
 	suspend fun saveSellerProduct(
