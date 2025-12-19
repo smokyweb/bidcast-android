@@ -6,6 +6,7 @@ import io.bidswipe.app.base.BaseAdapter
 import io.bidswipe.app.databinding.MenuItemBinding
 import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.model.MoreModel
+import io.bidswipe.app.utils.draw
 import io.bidswipe.app.utils.setHapticClickListener
 
 class MoreAdapter(
@@ -30,6 +31,7 @@ class MoreAdapter(
 				mClicks.itemClick(position)
 
 			}
+			bind.icon.setImageResource(item?.icon?: draw.ic_document)
 
 		}
 	}

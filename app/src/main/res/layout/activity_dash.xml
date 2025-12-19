@@ -17,7 +17,9 @@
         android:layout_width = "match_parent"
         android:layout_height = "match_parent"
         style="@style/navStyle"
-        android:layout_gravity = "bottom|end" >
+        android:layout_marginEnd="-65dp"
+        android:layout_marginRight="-65dp"
+        android:layout_gravity = "end" >
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -31,15 +33,14 @@
                 app:headerTitle="Seller Tools"/>
 
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/gridRecycler"
+                android:id="@+id/menu_recycler"
                 android:layout_width="match_parent"
+                android:background="@color/surface"
                 android:layout_height="wrap_content"
-                android:paddingHorizontal="@dimen/half_margin"
                 android:layout_marginBottom="@dimen/half_margin"
-                app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-                app:spanCount="2"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 tools:itemCount="8"
-                tools:listitem="@layout/grid_item" />
+                tools:listitem="@layout/seller_tools_item" />
 
         </LinearLayout>
 

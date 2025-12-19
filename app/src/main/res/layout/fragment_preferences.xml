@@ -131,7 +131,6 @@
                 android:layout_marginHorizontal="@dimen/margin"
                 android:text="@string/enable_private_entry" />
 
-
             <TextView
                 style="@style/TitleSmall"
                 android:layout_width="match_parent"

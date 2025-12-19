@@ -2,6 +2,8 @@ package io.bidswipe.app.controller
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.text.bold
+import androidx.core.text.buildSpannedString
 import io.bidswipe.app.base.BaseAdapter
 import io.bidswipe.app.databinding.TipsItemBinding
 import io.bidswipe.app.interfaces.RecyclerClicks
@@ -34,27 +36,21 @@ class TipsAdapter(
                 mClicks.itemClick(position, "chat")
             }
 
-            bind.userName.text =
-                item?.user?.name?.asCapital() + " tipped " + item?.total.toString().asMoney()
-//			bind.date.text = item?.createdAt
-
-            bind.date.text = buildString {
-                append(
-                    Utils.getFormattedDateTime(
-                        Const.SERVER_TIME_FORMAT,
-                        "MM/dd/yyyy",
-                        item?.createdAt.toString()
-                    )
-                )
-                append(" " + Const.BULLET + " ")
-                append(
-                    Utils.getFormattedDateTime(
-                        Const.SERVER_TIME_FORMAT,
-                        "hh:mm a",
-                        item?.createdAt.toString()
-                    )
-                )
+            bind.userName.text = buildSpannedString {
+               bold { append( item?.user?.name?.asCapital()) }
+                append(" tipped ")
+               bold {   append(item?.total.toString().asMoney())}
+                if(item?.show!=null){
+                    append(" during ")
+                    append(item.show.title.toString())
+                }
             }
+
+            bind.date.text = Utils.getFormattedDateTime(
+                Const.SERVER_TIME_FORMAT,
+                "MMM dd, yyyy",
+                item?.createdAt.toString()
+            )
 
             bind.icon.loadUrl(mCtx, item?.user?.profileImage ?: "", userName = item?.user?.name)
 

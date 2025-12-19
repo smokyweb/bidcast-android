@@ -2,6 +2,7 @@ package io.bidswipe.app.network.response
 
 import com.google.gson.annotations.SerializedName
 import androidx.annotation.Keep
+import io.bidswipe.app.network.response.GetTipAmountResponse.Data.Tip.Show
 
 @Keep
 data class GetTransactionsHistoryResponse(
@@ -71,7 +72,11 @@ data class GetTransactionsHistoryResponse(
 		@SerializedName("type")
 		val type: String?,
 		@SerializedName("user_id")
-		val userId: Int?
+		val userId: Int?,
+		@SerializedName("show")
+		val show: Show?,
+		@SerializedName("show_id")
+		val showId: Int?,
 	) {
 		@Keep
 		data class Buyer(
@@ -97,6 +102,59 @@ data class GetTransactionsHistoryResponse(
 			val id: Int?,
 			@SerializedName("name")
 			val name: String?
+		)
+		@Keep
+		data class Show(
+			@SerializedName("auction_type_id")
+			val auctionTypeId: Int?,
+			@SerializedName("category_id")
+			val categoryId: Int?,
+			@SerializedName("date")
+			val date: String?,
+			@SerializedName("id")
+			val id: Int?,
+			@SerializedName("img_thumbnail")
+			val imgThumbnail: List<String?>?,
+			@SerializedName("is_explicit")
+			val isExplicit: Boolean?,
+			@SerializedName("is_live")
+			val isLive: Boolean?,
+			@SerializedName("is_repeat")
+			val isRepeat: Boolean?,
+			@SerializedName("language")
+			val language: String?,
+			@SerializedName("latest_viewer_count")
+			val latestViewerCount: Int?,
+			@SerializedName("product_ids")
+			val productIds: List<String?>?,
+			@SerializedName("promote_show_id")
+			val promoteShowId: Any?,
+			@SerializedName("promoted_at")
+			val promotedAt: Any?,
+			@SerializedName("recording_resource_id")
+			val recordingResourceId: String?,
+			@SerializedName("recording_sid")
+			val recordingSid: String?,
+			@SerializedName("repeat_value")
+			val repeatValue: String?,
+			@SerializedName("rtc_token")
+			val rtcToken: String?,
+			@SerializedName("share_count")
+			val shareCount: Int?,
+			@SerializedName("show_discoverability")
+			val showDiscoverability: String?,
+			@SerializedName("started_at")
+			val startedAt: String?,
+			@SerializedName("thumbnail")
+			val thumbnail: List<String?>?,
+			@SerializedName("time")
+			val time: String?,
+			@SerializedName("title")
+			val title: String?,
+			@SerializedName("user_id")
+			val userId: Int?,
+			@SerializedName("viewer_count")
+			val viewerCount: Int?
 		)
 	}
 }

@@ -5,3 +5,8 @@ data class MoreModel(
 	val title : String? ,
 	val slug : String ,
 )
+
+data class SellerToolModel(
+	val title : String? ,
+	val list : MutableList<MoreModel> ,
+)

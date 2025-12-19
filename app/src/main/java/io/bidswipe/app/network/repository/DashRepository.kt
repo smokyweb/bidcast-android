@@ -564,5 +564,6 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
 	) = call { api.exportAnalyticsData(type, filter, startDate, endDate) }
 
 	suspend fun getPromoteToolsDetails() = call { api.getPromoteToolsDetails() }
+	suspend fun getSellerHubInfo() = call { api.getSellerHubInfo() }
 
 }

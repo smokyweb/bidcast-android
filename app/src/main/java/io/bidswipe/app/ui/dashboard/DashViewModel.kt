@@ -32,6 +32,7 @@ import io.bidswipe.app.network.response.GetShippingProfilesResponse
 import io.bidswipe.app.network.response.GetSubCategoriesResponse
 import io.bidswipe.app.network.response.PageUrlResponse
 import io.bidswipe.app.network.response.Product
+import io.bidswipe.app.network.response.SellerHubResponse
 import io.bidswipe.app.network.response.StoreProductMetaResponse
 import io.bidswipe.app.network.response.UpdateOfferResponse
 import io.bidswipe.app.network.response.UserDeviceResponse
@@ -627,6 +628,19 @@ class DashViewModel @Inject constructor(
 			return@launch
 		}
 		_getProductDetailsResponse.value = repo.getProductDetails(productId)
+	}
+
+	private var _getSellerHubInfoResponse = MutableLiveData<Resource<SellerHubResponse>>()
+	val getSellerHubInfoRepo: MutableLiveData<Resource<SellerHubResponse>>
+		get() = _getSellerHubInfoResponse
+
+	fun getSellerHubInfo(
+	) = viewModelScope.launch {
+		if (!networkMonitor.hasInternet()) {
+			_getSellerHubInfoResponse.value = NO_INTERNET_ERROR
+			return@launch
+		}
+		_getSellerHubInfoResponse.value = repo.getSellerHubInfo()
 	}
 
 }

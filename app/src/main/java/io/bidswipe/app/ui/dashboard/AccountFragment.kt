@@ -36,6 +36,8 @@ import io.bidswipe.app.utils.loadUrl
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.setHapticClickListener
 import io.bidswipe.app.utils.toAuth
+import io.bidswipe.app.utils.toListProduct
+import io.bidswipe.app.utils.toScheduleShow
 
 class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
 
@@ -213,14 +215,14 @@ class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
 		bind.tabs.addOnTabSelectedListener(onTabSelectedListener)
 
 		moreList.clear()
-		moreList.add(MoreModel(R.drawable.ic_vacation, "About Us", "aboutUs"))
-		moreList.add(MoreModel(R.drawable.ic_vacation, "Contact Us", "contactUs"))
-		moreList.add(MoreModel(R.drawable.ic_vacation, "Sales Tax Exemption", "salesTax"))
-		moreList.add(MoreModel(R.drawable.ic_vacation, "Terms & Conditions", "terms-condition"))
-		moreList.add(MoreModel(R.drawable.ic_vacation, "Privacy Policy", "privacy-policy"))
-		moreList.add(MoreModel(R.drawable.ic_vacation, "F.A.Q", "faq"))
-		moreList.add(MoreModel(R.drawable.ic_vacation, "Blocked Users", "blockedUsers"))
-		moreList.add(MoreModel(R.drawable.ic_vacation, "Logout", "logout"))
+		moreList.add(MoreModel(R.drawable.ic_about_us, "About Us", "aboutUs"))
+		moreList.add(MoreModel(R.drawable.ic_outlined_message, "Contact Us", "contactUs"))
+		moreList.add(MoreModel(R.drawable.ic_document, "Sales Tax Exemption", "salesTax"))
+		moreList.add(MoreModel(R.drawable.ic_document, "Terms & Conditions", "terms-condition"))
+		moreList.add(MoreModel(R.drawable.ic_privacy, "Privacy Policy", "privacy-policy"))
+		moreList.add(MoreModel(R.drawable.ic_faq, "F.A.Q", "faq"))
+		moreList.add(MoreModel(R.drawable.peopleic_people_outline, "Blocked Users", "blockedUsers"))
+		moreList.add(MoreModel(R.drawable.ic_logout_outline, "Logout", "logout"))
 
 		moreAdapter = MoreAdapter(moreList, mClicks)
 		bind.accountView.moreRecycler.adapter = moreAdapter
@@ -246,12 +248,12 @@ class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
 		bind.sellerHub.gridRecycler.adapter = gridAdapter
 
 		accountGridList.clear()
-		accountGridList.add(MoreModel(R.drawable.ic_box, "Payment & Shipping", "paymentShipping"))
-		accountGridList.add(MoreModel(R.drawable.ic_mic, "Addresses", "address"))
-		accountGridList.add(MoreModel(R.drawable.ic_order, "Trusted Buyer", "buyer"))
+		accountGridList.add(MoreModel(R.drawable.ic_inventory_outline, "Payment & Shipping", "paymentShipping"))
+		accountGridList.add(MoreModel(R.drawable.ic_location_outline, "Addresses", "address"))
+		accountGridList.add(MoreModel(R.drawable.ic_identity_verification, "Trusted Buyer", "buyer"))
 		accountGridList.add(MoreModel(R.drawable.notification, "Notifications", "notification"))
-		accountGridList.add(MoreModel(R.drawable.ic_tag, "Preferences", "preferences"))
-		accountGridList.add(MoreModel(R.drawable.explore, "Interests", "interests"))
+		accountGridList.add(MoreModel(R.drawable.ic_tag_outline, "Preferences", "preferences"))
+		accountGridList.add(MoreModel(R.drawable.ic_heart, "Interests", "interests"))
 
 		accountGridAdapter = GridAdapter(accountGridList, accountGridClick)
 		bind.accountView.gridRecycler.adapter = accountGridAdapter
@@ -273,6 +275,44 @@ class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
 				is Resource.Error -> {
 					bind.loader.isVisible = false
 					viewModel.logoutRepo.value = null
+
+					it.parse(mCtx, TAG, object : AlertClicks {
+						override fun primaryClick(dialog: AppBottomSheet) {
+							dialog.dismiss()
+						}
+
+						override fun secondaryClick(dialog: AppBottomSheet) {
+							dialog.dismiss()
+						}
+					})
+
+				}
+
+				else -> {}
+
+			}
+		}
+
+		bind.sellerHub.createProduct.setHapticClickListener {
+			startActivity(mCtx.toListProduct())
+		}
+bind.sellerHub.createShow.setHapticClickListener {
+	startActivity(mCtx.toScheduleShow(from = "dash"))
+
+}
+
+		bind.loader.isVisible = true
+		viewModel.getSellerHubInfo()
+		viewModel.getSellerHubInfoRepo.observe(viewLifecycleOwner) {
+			when (it) {
+				is Resource.Success -> {
+					bind.loader.isVisible = false
+
+				}
+
+				is Resource.Error -> {
+					bind.loader.isVisible = false
+					viewModel.getSellerHubInfoRepo.value = null
 
 					it.parse(mCtx, TAG, object : AlertClicks {
 						override fun primaryClick(dialog: AppBottomSheet) {

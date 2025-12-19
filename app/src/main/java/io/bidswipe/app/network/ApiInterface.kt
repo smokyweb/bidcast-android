@@ -72,6 +72,7 @@ import io.bidswipe.app.network.response.PayoutHistoryResponse
 import io.bidswipe.app.network.response.RaiseTicketResponse
 import io.bidswipe.app.network.response.SalesAnalyticsResponse
 import io.bidswipe.app.network.response.SellerAnalyticsResponse
+import io.bidswipe.app.network.response.SellerHubResponse
 import io.bidswipe.app.network.response.SellerInfoResponse
 import io.bidswipe.app.network.response.SellerStatusResponse
 import io.bidswipe.app.network.response.SentTipAmountResponse
@@ -790,6 +791,10 @@ interface ApiInterface {
 	@GET("api/promote-tool-details")
 	suspend fun getPromoteToolsDetails(
 	) : GetPromoteToolsDetailsResponse
+
+	@GET("api/seller-hub-info")
+	suspend fun getSellerHubInfo(
+	) : SellerHubResponse
 
 	@GET("api/export-deatils")
 	 fun exportAnalyticsDataD(
