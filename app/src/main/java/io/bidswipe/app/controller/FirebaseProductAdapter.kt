@@ -1,6 +1,7 @@
 package io.bidswipe.app.controller
 
 import android.annotation.SuppressLint
+import android.content.res.ColorStateList
 import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -57,7 +58,7 @@ class FirebaseProductAdapter(
                 if (item?.status == "sold") {
                     bold {
                         color(Color.RED) {
-                            append(item.status?.asCapital())
+                            append(item.status.asCapital())
                         }
                     }
                 } else {
@@ -66,18 +67,11 @@ class FirebaseProductAdapter(
             }
 
             if (item?.selected == true) {
-                bind.root.strokeWidth = mCtx.resources.dpToPx(2)
-                bind.root.strokeColor = ContextCompat.getColor(mCtx, R.color.primary)
-                bind.root.setCardBackgroundColor(
-                    ContextCompat.getColor(
-                        mCtx,
-                        R.color.background
-                    )
-                )
+                bind.pinCard.setCardBackgroundColor(ContextCompat.getColor(mCtx, R.color.primary))
+                bind.setForNext.imageTintList = (ColorStateList.valueOf(ContextCompat.getColor(mCtx, R.color.surface)))
             } else {
-                bind.root.strokeWidth = 0
-                bind.root.strokeColor = ContextCompat.getColor(mCtx, R.color.background)
-                bind.root.setCardBackgroundColor(ContextCompat.getColor(mCtx, R.color.background))
+                bind.pinCard.setCardBackgroundColor(ContextCompat.getColor(mCtx, R.color.outline))
+                bind.setForNext.imageTintList = (ColorStateList.valueOf(ContextCompat.getColor(mCtx, R.color.onSurface)))
             }
 
             bind.productStatus.isVisible = item?.isCurrent == true

@@ -612,6 +612,17 @@ class SocketManager private constructor(
 		}
 	}
 
+	fun onProductUnPinned(listener: (resultJson : JSONObject) -> Unit) {
+		socket?.off("product_unpinned")
+		socket?.on("product_unpinned") { args ->
+			val obj = args.firstOrNull()
+			if (obj is JSONObject) {
+				Log.d(TAG, "RECEIVED: product_unpinned - $obj")
+				listener(obj)
+			}
+		}
+	}
+
 	fun runNextProduct(roomId : String) {
 		val payload = JSONObject().apply {
 			put("room_id", roomId)

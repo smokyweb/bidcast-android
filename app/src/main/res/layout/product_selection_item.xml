@@ -98,17 +98,27 @@
                     android:textColor="@color/onSurface"
                     app:backgroundTint="@color/outline"/>
 
-                <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/set_for_next"
-                    android:layout_width="28dp"
-                    android:layout_height="28dp"
-                    android:layout_gravity="center"
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/pinCard"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/half_margin"
-                    android:background="@drawable/card_16"
-                    android:backgroundTint="@color/outline"
-                    android:padding="6dp"
-                    android:src="@drawable/ic_pin"
-                    android:tint="@color/onSurface" />
+                    style="@style/cardStyle"
+                    app:cardCornerRadius="28dp">
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/set_for_next"
+                        android:layout_width="28dp"
+                        android:layout_height="28dp"
+                        android:layout_gravity="center"
+                        android:padding="6dp"
+                        android:src="@drawable/ic_pin"
+                        android:tint="@color/onSurface" />
+
+
+                </com.google.android.material.card.MaterialCardView>
+
+
 
             </LinearLayout>
 

@@ -124,7 +124,6 @@ class AgoraPublisherActivity : BaseActivity() {
 	private var pollOptionList = mutableListOf<PollOptionModel?>()
 	private var commentList = mutableListOf<LiveChatModel?>()
 
-	private lateinit var productAdapter: FirebaseProductAdapter
 	private lateinit var livePollAdapter: LivePollOptionAdapter
 	private lateinit var pollOptionAdapter: PollOptionAdapter
 	private lateinit var sellerAdapter: LiveSellerAdapter
@@ -592,7 +591,11 @@ class AgoraPublisherActivity : BaseActivity() {
 				if (json.optString("room_id") == roomID) {
 					runOnUiThread {
 						if (json.has("product") && json.optJSONObject("product") != null) {
-							bind.runNextLayout.isVisible = false
+
+							val status  = json.optString("status")
+
+							bind.runNextLayout.isVisible = status == "sold"
+
 							val product = LiveShowModel.Product.fromJson(json.optJSONObject("product"))
 							val startingBidAmount = json.optString("starting_bid_amount")
 							log("LIVE PRODUCT : $product")
@@ -641,6 +644,8 @@ class AgoraPublisherActivity : BaseActivity() {
 
 		// Socket cleanup
 		runSafe {
+
+			viewModel.pinnedProducts.clear()
 
 			if (currentPoll != null) {
 				socketManager?.endPoll(roomID, currentPoll?.pollId.toString())
