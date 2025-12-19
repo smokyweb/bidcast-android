@@ -113,9 +113,9 @@
     </style>
 
     <style name="appTonalBtn" parent="appBtn">
-        <item name="backgroundTint">@color/onPrimaryContainer</item>
-        <item name="rippleColor">@color/onPrimary</item>
-        <item name="android:textColor">@color/onPrimary</item>
+        <item name="backgroundTint">@color/primaryContainer</item>
+        <item name="rippleColor">@color/primary</item>
+        <item name="android:textColor">@color/onPrimaryContainer</item>
     </style>
 
     <style name="appBtnOutline" parent="appBtn">

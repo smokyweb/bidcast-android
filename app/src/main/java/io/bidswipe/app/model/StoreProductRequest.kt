@@ -54,5 +54,4 @@ data class StoreProductRequest(
 	val sku : String? = null,
 	@SerializedName("cost_per_item")
 	val costPerItem : String? = null ,
-
 	)

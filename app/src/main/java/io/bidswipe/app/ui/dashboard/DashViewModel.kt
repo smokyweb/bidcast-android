@@ -50,6 +50,7 @@ class DashViewModel @Inject constructor(
 	private val networkMonitor : NetworkMonitor ,
 ) : ViewModel() {
 
+	var isDrawerOpened = MutableLiveData<Boolean>(false)
 	var showDate = ""
 	var showTime = ""
 	var showId = ""

@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.core.view.GravityCompat
 import androidx.core.view.isVisible
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayout.OnTabSelectedListener
@@ -44,6 +45,7 @@ class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
 		FragmentAccountBinding.inflate(inflater, view, false)
 
 	private var moreList = mutableListOf<MoreModel>()
+
 	private var gridList = mutableListOf<MoreModel>()
 
 	private var accountGridList = mutableListOf<MoreModel>()
@@ -191,7 +193,9 @@ class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
 		super.onViewCreated(view, savedInstanceState)
 
 		bind.header.onMorePrimaryClick {
-			startActivity(Intent(mCtx, NotificationActivity::class.java).putExtra("slug", "notification"))
+
+			viewModel.isDrawerOpened.value = viewModel.isDrawerOpened.value == false
+
 		}
 
 		App.getProfile()

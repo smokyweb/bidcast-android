@@ -1,50 +1,55 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.drawerlayout.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:layout_marginTop="24dp"
-    tools:context=".ui.dashboard.DashActivity">
+    android:id = "@+id/drawer"
+    android:layout_width = "match_parent"
+    android:layout_height = "match_parent"
+    tools:context = ".ui.dashboard.DashActivity"
+    tools:openDrawer = "end" >
 
-    <androidx.fragment.app.FragmentContainerView
-        android:id="@+id/nav_host_fragment"
-        android:name="androidx.navigation.fragment.NavHostFragment"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        app:defaultNavHost="true"
-        app:layout_constraintBottom_toTopOf="@id/bottomBar"
-        app:layout_constraintTop_toTopOf="parent"
-        app:navGraph="@navigation/dash_nav_graph" />
+    <include
+        android:id = "@+id/content_dash"
+        layout = "@layout/dash_content" />
 
-    <androidx.coordinatorlayout.widget.CoordinatorLayout
-        android:id="@+id/co_ordinate"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:elevation="4dp"
-        app:layout_constraintBottom_toTopOf="@id/bottomBar"
-        app:layout_constraintTop_toTopOf="parent">
+    <com.google.android.material.navigation.NavigationView
+        android:id = "@+id/side_menu"
+        android:layout_width = "match_parent"
+        android:layout_height = "match_parent"
+        style="@style/navStyle"
+        android:layout_gravity = "bottom|end" >
 
-        <include
-            android:id="@+id/sell_sheet"
-            layout="@layout/sell_bottom_sheet" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <io.bidswipe.app.ui.custom.Header
+                android:id="@+id/header"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:headerTitle="Seller Tools"/>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/gridRecycler"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingHorizontal="@dimen/half_margin"
+                android:layout_marginBottom="@dimen/half_margin"
+                app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+                app:spanCount="2"
+                tools:itemCount="8"
+                tools:listitem="@layout/grid_item" />
+
+        </LinearLayout>
+
+        <io.bidswipe.app.ui.custom.LoaderView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/loader"
+            android:visibility="gone"/>
 
 
-    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+    </com.google.android.material.navigation.NavigationView>
 
-    <io.bidswipe.app.ui.custom.LoaderView
-        android:id="@+id/loader"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:visibility="gone" />
-
-    <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:id="@+id/bottomBar"
-        style="@style/bottomNavigationStyle"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:menu="@menu/home_menu" />
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.drawerlayout.widget.DrawerLayout>

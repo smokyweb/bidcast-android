@@ -8,10 +8,12 @@ import android.view.View
 import androidx.activity.viewModels
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
+import androidx.core.view.GravityCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsCompat.CONSUMED
 import androidx.core.view.isVisible
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
 import androidx.navigation.fragment.NavHostFragment
@@ -22,16 +24,19 @@ import com.google.firebase.messaging.FirebaseMessaging
 import io.bidswipe.app.App
 import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseActivity
+import io.bidswipe.app.controller.GridAdapter
 import io.bidswipe.app.controller.SellAdapter
 import io.bidswipe.app.databinding.ActivityDashBinding
 import io.bidswipe.app.databinding.PaymentAndAddressSheetBinding
 import io.bidswipe.app.interfaces.AlertClicks
 import io.bidswipe.app.interfaces.RecyclerClicks
+import io.bidswipe.app.model.MoreModel
 import io.bidswipe.app.model.SellModel
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.ui.custom.AlertType
 import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.ui.more.MoreActivity
+import io.bidswipe.app.ui.sellerHub.SellerHubActivity
 import io.bidswipe.app.ui.sellerHub.SellerVerificationActivity
 import io.bidswipe.app.utils.Alerts
 import io.bidswipe.app.utils.Const
@@ -56,27 +61,105 @@ class DashActivity : BaseActivity(), NavController.OnDestinationChangedListener 
 
 	private lateinit var navController: NavController
 	private lateinit var navHostFragment: NavHostFragment
+	private lateinit var gridAdapter: GridAdapter
+	private var gridList = mutableListOf<MoreModel>()
+
+	private val gridClick = object : RecyclerClicks {
+		override fun itemClick(pos: Int, status: String?) {
+
+			when (gridList[pos].slug) {
+
+				"sellerVerification" -> {
+					startActivity(
+						Intent(this@DashActivity, SellerVerificationActivity::class.java).putExtra(
+							"slug",
+							gridList[pos].slug
+						)
+					)
+				}
+
+				else -> {
+					startActivity(
+						Intent(this@DashActivity, SellerHubActivity::class.java).putExtra(
+							"slug",
+							gridList[pos].slug
+						).putExtra("url", "")
+					)
+
+				}
+
+			}
+
+		}
+
+	}
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
 		setContentView(bind.root)
 
-		ViewCompat.setOnApplyWindowInsetsListener(window.decorView) { v, insets ->
+		/*ViewCompat.setOnApplyWindowInsetsListener(window.decorView) { v, insets ->
 			val system = insets.getInsets(WindowInsetsCompat.Type.systemBars())
 			bind.root.setPadding(0, system.top, 0, system.bottom)
 			CONSUMED
-		}
+		}*/
 
 		navHostFragment = supportFragmentManager.findFragmentById(ids.nav_host_fragment) as NavHostFragment
 		navController = navHostFragment.navController
 
 		navController.addOnDestinationChangedListener(this)
-		bind.bottomBar.setupWithNavController(navController)
+
+		bind.drawer.addDrawerListener(object : DrawerLayout.DrawerListener {
+			override fun onDrawerSlide(drawerView: View, slideOffset: Float) {
+			}
+
+			override fun onDrawerOpened(drawerView: View) {
+
+			}
+
+			override fun onDrawerClosed(drawerView: View) {
+				viewModel.isDrawerOpened.value = false
+
+			}
+
+			override fun onDrawerStateChanged(newState: Int) {
+			}
+		})
+
+		bind.header.onBackClick { bind.drawer.closeDrawer(GravityCompat.END) }
+
+		gridList.clear()
+		gridList.add(MoreModel(R.drawable.ic_box, "Inventory", "inventory"))
+		gridList.add(MoreModel(R.drawable.ic_mic, "Shows", "shows"))
+		gridList.add(MoreModel(R.drawable.ic_order, "Orders", "order"))
+		gridList.add(MoreModel(R.drawable.ic_wallet, "Wallet", "wallet"))
+		gridList.add(MoreModel(R.drawable.ic_tag, "Offers", "offers"))
+		gridList.add(MoreModel(R.drawable.ic_tag, "Tips", "tips"))
+		gridList.add(MoreModel(R.drawable.ic_shipping, "Shipping", "shipping"))
+		gridList.add(MoreModel(R.drawable.ic_people, "Affiliate Program", "program"))
+		gridList.add(MoreModel(R.drawable.ic_training, "Seller Training", "training"))
+		gridList.add(MoreModel(R.drawable.ic_shop, "Premier Shop", "shop"))
+		gridList.add(MoreModel(R.drawable.ic_graph, "Seller Status", "sellerStatus"))
+		gridList.add(MoreModel(R.drawable.ic_graph, "Seller Analytics", "sellerAnalytics"))
+		gridList.add(MoreModel(R.drawable.ic_speaker, "Promote Tools", "promote"))
+		gridList.add(MoreModel(R.drawable.ic_checked_tag, "Seller Verification", "sellerVerification"))
+		gridList.add(MoreModel(R.drawable.ic_payment_verification, "Identity Verification", "identityVerification"))
+
+		gridAdapter = GridAdapter(gridList, gridClick)
+		bind.gridRecycler.adapter = gridAdapter
+
+		viewModel.isDrawerOpened.observe(this){
+
+			if(it) bind.drawer.openDrawer(GravityCompat.END)
+
+		}
+
+		bind.contentDash.bottomBar.setupWithNavController(navController)
 		setupImageSheet()
 
 		log("USER NAME : ${userName.replace(" ", ".")}  $userId   $userImage")
 
-		bind.bottomBar.setOnItemSelectedListener { menuItem ->
+		bind.contentDash.bottomBar.setOnItemSelectedListener { menuItem ->
 			if (menuItem.itemId != ids.sellFragment) viewModel.lastIndex.value = menuItem.itemId
 			when (menuItem.itemId) {
 
@@ -144,11 +227,11 @@ class DashActivity : BaseActivity(), NavController.OnDestinationChangedListener 
 	}
 
 	fun hideBottomNav() {
-		bind.bottomBar.isVisible = false
+		bind.contentDash.bottomBar.isVisible = false
 	}
 
 	fun showBottomNav() {
-		bind.bottomBar.isVisible = true
+		bind.contentDash.bottomBar.isVisible = true
 	}
 
 	override fun onDestinationChanged(
@@ -163,9 +246,9 @@ class DashActivity : BaseActivity(), NavController.OnDestinationChangedListener 
 	}
 
 	private fun setupImageSheet() {
-		BottomSheetBehavior.from(bind.sellSheet.root)
+		BottomSheetBehavior.from(bind.contentDash.sellSheet.root)
 
-		imageSheet = BottomSheetBehavior.from(bind.sellSheet.root).also {
+		imageSheet = BottomSheetBehavior.from(bind.contentDash.sellSheet.root).also {
 			it.peekHeight = 0
 			it.isHideable = true
 			it.isDraggable = false
@@ -206,7 +289,7 @@ class DashActivity : BaseActivity(), NavController.OnDestinationChangedListener 
 
 				when (pos) {
 					2 -> {
-						bind.bottomBar.selectedItemId = ids.accountFragment
+						bind.contentDash.bottomBar.selectedItemId = ids.accountFragment
 						return
 					}
 				}
@@ -246,13 +329,13 @@ class DashActivity : BaseActivity(), NavController.OnDestinationChangedListener 
 
 		})
 
-		bind.sellSheet.recycler.adapter = exploreAdapter
+		bind.contentDash.sellSheet.recycler.adapter = exploreAdapter
 
-		bind.sellSheet.root.setHapticClickListener {
+		bind.contentDash.sellSheet.root.setHapticClickListener {
 			imageSheet.state = BottomSheetBehavior.STATE_COLLAPSED
 		}
 
-		bind.sellSheet.close.setHapticClickListener {
+		bind.contentDash.sellSheet.close.setHapticClickListener {
 			imageSheet.state = BottomSheetBehavior.STATE_COLLAPSED
 		}
 
@@ -286,7 +369,7 @@ class DashActivity : BaseActivity(), NavController.OnDestinationChangedListener 
 				}
 
 				BottomSheetBehavior.STATE_COLLAPSED -> {
-					bind.bottomBar.selectedItemId = viewModel.lastIndex.value ?: 0
+					bind.contentDash.bottomBar.selectedItemId = viewModel.lastIndex.value ?: 0
 				}
 			}
 		}

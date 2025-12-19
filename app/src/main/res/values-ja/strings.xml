@@ -338,4 +338,5 @@
     <string name="try_something_like_tip_for_a_shoutout">Try something like \"Tip for a shoutout\"</string>
     <string name="save">Save</string>
     <string name="start_auction">Start Auction</string>
+    <string name="account_health">Account Health</string>
 </resources>

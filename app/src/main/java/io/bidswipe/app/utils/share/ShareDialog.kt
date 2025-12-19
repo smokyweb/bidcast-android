@@ -28,17 +28,14 @@ import io.bidswipe.app.controller.ShareTargetAdapter
 import io.bidswipe.app.databinding.ShareSheetBinding
 import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.model.ChatModel
-import io.bidswipe.app.model.LiveShowModel
 import io.bidswipe.app.ui.dashboard.ChatActivity
 import io.bidswipe.app.utils.FireRef
 import io.bidswipe.app.utils.Prefs
-import io.bidswipe.app.utils.asCapital
 import io.bidswipe.app.utils.loadUrl
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
 import java.io.Serializable
-
 
 object ShareHelper {
 
@@ -59,9 +56,7 @@ object ShareHelper {
             type = type,
             isLive = isLive
         )
-        ShareDialog
-            .newInstance(payload)
-            .show(fragmentManager, "CustomShareSheet")
+        ShareDialog.newInstance(payload).show(fragmentManager, "CustomShareSheet")
     }
 }
 
@@ -114,7 +109,7 @@ class ShareDialog : BottomSheetDialogFragment() {
         payload = SharePayload(
             imageUrl = requireArguments().getString(ARG_IMAGE),
             text = requireArguments().getString(ARG_TEXT),
-            sellerInfo = requireArguments().getSerializable(ARG_SELLER) as Seller,
+            sellerInfo = requireArguments().getSerializable(ARG_SELLER) as Seller?,
             shareText = requireArguments().getString(ARG_LINK),
             type = requireArguments().getString(ARG_TYPE),
             isLive = requireArguments().getBoolean(ARG_IS_LIVE)
