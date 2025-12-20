@@ -8,6 +8,7 @@ import io.bidswipe.app.model.LiveShowModel
 import io.bidswipe.app.model.StoreProductRequest
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.network.repository.DashRepository
+import io.bidswipe.app.network.response.CheckScheduleShowResponse
 import io.bidswipe.app.network.response.CommonResponse
 import io.bidswipe.app.network.response.CreateProductResponse
 import io.bidswipe.app.network.response.CreateShowResponse
@@ -242,6 +243,21 @@ class ScheduleShowViewModel @Inject constructor(
             return@launch
         }
         _getMailClassesResponse.value = repo.getMailClasses()
+    }
+
+
+    private var _checkScheduleShowResponse = MutableLiveData<Resource<CheckScheduleShowResponse>>()
+    val checkScheduleShowRepo: MutableLiveData<Resource<CheckScheduleShowResponse>>
+        get() = _checkScheduleShowResponse
+
+    fun checkScheduleShow(
+        date: RequestBody?,
+        time:RequestBody?) = viewModelScope.launch {
+        if (!networkMonitor.hasInternet()) {
+            _checkScheduleShowResponse.value = NO_INTERNET_ERROR
+            return@launch
+        }
+        _checkScheduleShowResponse.value = repo.checkScheduleShow(date,time)
     }
 
 }

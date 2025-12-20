@@ -566,4 +566,8 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
 	suspend fun getPromoteToolsDetails() = call { api.getPromoteToolsDetails() }
 	suspend fun getSellerHubInfo() = call { api.getSellerHubInfo() }
 
+	suspend fun checkScheduleShow(
+		date: RequestBody?,
+		time:RequestBody?
+	) = call { api.checkScheduleShow(date,time) }
 }

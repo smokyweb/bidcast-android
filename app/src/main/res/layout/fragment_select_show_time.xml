@@ -135,4 +135,12 @@
         android:text="@string/continue_to_next_step"
         app:layout_constraintBottom_toBottomOf="parent" />
 
+    <io.bidswipe.app.ui.custom.LoaderView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:id="@+id/loader"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/header"/>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

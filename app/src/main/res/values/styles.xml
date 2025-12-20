@@ -159,7 +159,8 @@
     <style name="shadowStyle">
         <item name="android:elevation">2dp</item>
         <item name="cardBackgroundColor">@color/background</item>
-        <item name="android:outlineSpotShadowColor" tools:targetApi="p">@color/onSurfaceVariant</item>
+        <item name="android:outlineSpotShadowColor" tools:targetApi="p">@color/onSurfaceVariant
+        </item>
         <item name="android:outlineAmbientShadowColor" tools:targetApi="p">@color/onSurfaceVariant
         </item>
     </style>
@@ -246,6 +247,14 @@
         <item name="itemShapeInsetStart">0dp</item>
         <item name="itemShapeInsetTop">0dp</item>
         <item name="itemVerticalPadding">@dimen/margin</item>
+    </style>
+
+    <style name="circularProgressStyle" parent="Widget.Material3.CircularProgressIndicator">
+        <item name="trackThickness">3dp</item>
+        <item name="indicatorColor">@color/success</item>
+        <item name="trackColor">@color/outline</item>
+        <item name="trackCornerRadius">8dp</item>
+        <item name="indicatorTrackGapSize">0dp</item>
     </style>
 
     <style name="popupMenuStyle" parent="Widget.Material3.PopupMenu">

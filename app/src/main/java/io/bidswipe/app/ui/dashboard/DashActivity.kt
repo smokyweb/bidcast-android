@@ -162,7 +162,7 @@ class DashActivity : BaseActivity(), NavController.OnDestinationChangedListener 
             SellerToolModel(
                 "Performance",
                 mutableListOf(
-                    MoreModel(R.drawable.ic_shop_outline, "Premier Shop", "shop"),
+                    MoreModel(R.drawable.ic_shop, "Premier Shop", "shop"),
                     MoreModel(R.drawable.ic_graph, "Seller Analytics", "sellerAnalytics"),
                 )
             )

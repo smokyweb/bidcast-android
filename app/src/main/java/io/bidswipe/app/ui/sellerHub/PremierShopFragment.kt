@@ -7,6 +7,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
+import androidx.core.text.bold
+import androidx.core.text.buildSpannedString
+import androidx.core.text.color
+import androidx.core.text.scale
 import androidx.core.view.isVisible
 import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseFragment
@@ -19,6 +23,7 @@ import io.bidswipe.app.network.Resource
 import io.bidswipe.app.network.response.GetPremierShopResponse
 import io.bidswipe.app.ui.custom.AlertType
 import io.bidswipe.app.ui.custom.AppBottomSheet
+import io.bidswipe.app.utils.clr
 import io.bidswipe.app.utils.finish
 import io.bidswipe.app.utils.loadUrl
 import io.bidswipe.app.utils.parse
@@ -55,6 +60,17 @@ class PremierShopFragment : BaseFragment<SellerHubViewModel, FragmentPremierShop
 		 gridList.add(SellModel(R.drawable.ic_finger_print,0,"Unique Profile ID", "Custom URL for your shop"))
 		 gridList.add(SellModel(R.drawable.ic_speaker,0,"Marketing Boost", "Priority in search result"))
 		 gridList.add(SellModel(R.drawable.ic_support,0,"Priority Support", "24/7 dedicated assistance"))*/
+
+		bind.welcomeText.text= buildSpannedString {
+			bold{
+				scale(1.2f){
+					append("Welcome!\n")
+				}
+			}
+			color(ContextCompat.getColor(mCtx,clr.onSurfaceVariant)) {
+				append("This is where you can monitor your key performance metrics, or any other issues on your account")
+			}
+		}
 
 		gridAdapter = BenefitsAdapter(gridList, mClick)
 		bind.gridRecycler.adapter = gridAdapter

@@ -313,8 +313,11 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
         restoreStateFromViewModel()
 
         // Get product from intent only if not already restored
-        if (product == null) {
+        if (product == null ) {
             product = activity?.intent?.getSerializableExtra("product") as? Product
+            if(product != null) {
+                viewModel.getProductDetails(product?.id.toString().request())
+            }
         }
 
         bind.root.setOnClickListener {
@@ -538,8 +541,6 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
                 viewModel.productFormQuantity = if (input < 1) 1 else input
             }
         })
-
-        viewModel.getProductDetails(product?.id.toString().request())
 
         viewModel.getCategory()
 

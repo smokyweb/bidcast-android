@@ -1,6 +1,7 @@
 package io.bidswipe.app.network.response
 
 
+import androidx.annotation.Keep
 import com.google.gson.annotations.SerializedName
 
 data class SellerHubResponse(
@@ -19,11 +20,11 @@ data class SellerHubResponse(
         @SerializedName("items")
         val items: Int?,
         @SerializedName("payouts")
-        val payouts: Int?,
+        val payouts: Double?,
         @SerializedName("rating")
-        val rating: Int?,
+        val rating: Double?,
         @SerializedName("revenue")
-        val revenue: Int?,
+        val revenue: Double?,
         @SerializedName("total_orders")
         val totalOrders: Int?,
         @SerializedName("upcoming_show")
@@ -90,7 +91,23 @@ data class SellerHubResponse(
             @SerializedName("user_id")
             val userId: Int?,
             @SerializedName("viewer_count")
-            val viewerCount: Int?
-        )
+            val viewerCount: Int?,
+            @SerializedName("category")
+            val category: Category?,
+        ) {
+            @Keep
+            data class Category(
+                @SerializedName("color")
+                val color: String?,
+                @SerializedName("id")
+                val id: Int?,
+                @SerializedName("image")
+                val image: String?,
+                @SerializedName("name")
+                val name: String?,
+                @SerializedName("thumbnail")
+                val thumbnail: String?,
+            )
+        }
     }
 }

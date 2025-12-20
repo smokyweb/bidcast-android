@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import androidx.navigation.fragment.findNavController
 import com.applandeo.materialcalendarview.CalendarDay
 import com.applandeo.materialcalendarview.listeners.OnCalendarDayClickListener
@@ -15,10 +16,15 @@ import com.google.android.material.timepicker.TimeFormat
 import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseFragment
 import io.bidswipe.app.databinding.FragmentSelectShowTimeBinding
+import io.bidswipe.app.interfaces.AlertClicks
+import io.bidswipe.app.network.Resource
+import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.utils.Alerts
 import io.bidswipe.app.utils.Utils
 import io.bidswipe.app.utils.draw
 import io.bidswipe.app.utils.finish
+import io.bidswipe.app.utils.parse
+import io.bidswipe.app.utils.request
 import io.bidswipe.app.utils.setHapticClickListener
 import java.util.Calendar
 import java.util.Locale
@@ -79,7 +85,7 @@ class SelectShowTimeFragment :
                     val savedTimeDate = Utils.getSimpleDate("HH:mm").parse(viewModel.time)
 
                     if (savedTimeDate != null && selectedDate != null) {
-                         val savedTimeCalendar = Calendar.getInstance().apply {
+                        val savedTimeCalendar = Calendar.getInstance().apply {
                             time = savedTimeDate
                         }
 
@@ -151,16 +157,48 @@ class SelectShowTimeFragment :
                 }
 
                 else -> {
-                    if (from == "dash") {
-                        findNavController().navigate(R.id.ShowTimeFragment_to_selectCategoryFragment)
-                    } else {
-                        val data = Intent()
-                        data.putExtra("date", viewModel.date)
-                        data.putExtra("time", viewModel.time)
-                        activity?.setResult(Activity.RESULT_OK, data)
-                        finish()
-                    }
+                    bind.loader.isVisible = true
+                    viewModel.checkScheduleShow(viewModel.date.request(), viewModel.time.request())
                 }
+            }
+        }
+
+        viewModel.checkScheduleShowRepo.observe(viewLifecycleOwner) {
+            when (it) {
+                is Resource.Success -> {
+                    bind.loader.isVisible = false
+                    viewModel.checkScheduleShowRepo.value = null
+                    if (it.value.data?.isExists == true) {
+                        errorToast("Show already scheduled for this time")
+                    } else {
+                        if (from == "dash") {
+                            findNavController().navigate(R.id.ShowTimeFragment_to_selectCategoryFragment)
+                        } else {
+                            val data = Intent()
+                            data.putExtra("date", viewModel.date)
+                            data.putExtra("time", viewModel.time)
+                            activity?.setResult(Activity.RESULT_OK, data)
+                            finish()
+                        }
+                    }
+
+                }
+
+                is Resource.Error -> {
+                    bind.loader.isVisible = false
+                    viewModel.checkScheduleShowRepo.value = null
+                    it.parse(mCtx, TAG, object : AlertClicks {
+                        override fun primaryClick(dialog: AppBottomSheet) {
+                            dialog.dismiss()
+                        }
+
+                        override fun secondaryClick(dialog: AppBottomSheet) {
+                            dialog.dismiss()
+                        }
+                    })
+                }
+
+                else -> {}
             }
         }
     }
@@ -169,15 +207,15 @@ class SelectShowTimeFragment :
         // Parse the selected date
         val selectedDate = Utils.getSimpleDate("yyyy-MM-dd").parse(viewModel.date)
             ?: Calendar.getInstance().time
-        
+
         val selectedDateCalendar = Calendar.getInstance().apply {
             time = selectedDate
         }
-        
+
         val now = Calendar.getInstance()
         val isToday = selectedDateCalendar.get(Calendar.YEAR) == now.get(Calendar.YEAR) &&
                 selectedDateCalendar.get(Calendar.DAY_OF_YEAR) == now.get(Calendar.DAY_OF_YEAR)
-        
+
         // Calculate minimum time (current time + 1 minute if today, or start of day if future)
         val minTime = if (isToday) {
             Calendar.getInstance().apply {
@@ -192,11 +230,11 @@ class SelectShowTimeFragment :
                 set(Calendar.MILLISECOND, 0)
             }
         }
-        
+
         // Initialize time picker with saved time or minimum time
         var initialHour = minTime.get(Calendar.HOUR_OF_DAY)
         var initialMinute = minTime.get(Calendar.MINUTE)
-        
+
         if (viewModel.time.isNotEmpty()) {
             try {
                 val savedTime = Utils.getSimpleDate("HH:mm").parse(viewModel.time)
@@ -211,7 +249,7 @@ class SelectShowTimeFragment :
                         set(Calendar.SECOND, 0)
                         set(Calendar.MILLISECOND, 0)
                     }
-                    
+
                     // Use saved time if it's in the future, otherwise use minimum time
                     if (savedDateTime.after(minTime) || savedDateTime == minTime) {
                         initialHour = savedCalendar.get(Calendar.HOUR_OF_DAY)
@@ -250,7 +288,7 @@ class SelectShowTimeFragment :
                 // Save time in HH:mm format to ViewModel
                 val timeString = String.format(Locale.getDefault(), "%02d:%02d", newHour, newMinute)
                 viewModel.time = timeString
-                
+
                 // Display time in hh:mm a format
                 val displayTime = Utils.getSimpleDate("hh:mm a").format(selectedDateTime.time)
                 bind.time.setText(displayTime)

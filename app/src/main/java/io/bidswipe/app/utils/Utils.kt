@@ -67,6 +67,7 @@ object Utils {
 		}
 
 	fun getFormattedDateTime(inFormat : String , outFormat : String , timestamp : String) : String? {
+		if(timestamp.isNullOrEmpty()) return "N/A"
 		return try {
 			getSimpleDate(inFormat).parse(timestamp)?.let { getSimpleDate(outFormat).format(it) }
 		} catch (e : Exception) {

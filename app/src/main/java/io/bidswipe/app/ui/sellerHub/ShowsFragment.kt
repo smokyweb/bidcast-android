@@ -191,7 +191,6 @@ class ShowsFragment : BaseFragment<SellerHubViewModel, FragmentShowsBinding>() {
 
         bind.addNewProduct.setHapticClickListener {
             startActivity(mCtx.toScheduleShow(from = "dash"))
-
         }
 
         bind.loader.isVisible = true

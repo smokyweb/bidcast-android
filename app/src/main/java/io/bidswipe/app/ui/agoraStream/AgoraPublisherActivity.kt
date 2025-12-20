@@ -1615,13 +1615,17 @@ class AgoraPublisherActivity : BaseActivity() {
 		pollSheetBind.pollDuration.setText("${selectedDuration} minutes", false)
 
 		pollSheetBind.addOption.setOnClickListener {
-			pollOptionList.add(
-				PollOptionModel(
-					title = "Option ${pollOptionList.size + 1}",
-					hint = "Enter your option"
+			if(pollOptionList.size<5) {
+				pollOptionList.add(
+					PollOptionModel(
+						title = "Option ${pollOptionList.size + 1}",
+						hint = "Enter your option"
+					)
 				)
-			)
-			pollSheetBind.pollOptions.adapter?.notifyItemInserted(pollOptionList.size - 1)
+				pollSheetBind.pollOptions.adapter?.notifyItemInserted(pollOptionList.size - 1)
+			}else{
+				errorToast("Maximum 5 options allowed")
+			}
 		}
 
 		val durationAdapter = ArrayAdapter(
@@ -1656,12 +1660,12 @@ class AgoraPublisherActivity : BaseActivity() {
 			}
 
 			if (options.isEmpty()) {
-				Alerts.error(this, "Please add at least 2 options")
+				Alerts.error(this, "Please add at least 3 options")
 				return@setHapticClickListener
 			}
 
-			if (options.size < 2) {
-				Alerts.error(this, "Please add at least 2 options")
+			if (options.size < 3) {
+				Alerts.error(this, "Please add at least 3 options")
 				return@setHapticClickListener
 			}
 

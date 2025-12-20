@@ -18,18 +18,20 @@
             android:layout_height="wrap_content"
             android:baselineAligned="false"
             android:layout_marginBottom="@dimen/margin"
-            android:paddingHorizontal="@dimen/half_margin"
+            android:paddingHorizontal="12dp"
             android:weightSum="3">
 
             <LinearLayout
                 style="@style/shadowStyle"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_margin="@dimen/half_margin"
+                android:layout_marginVertical="@dimen/half_margin"
+                android:layout_marginHorizontal="4dp"
                 android:layout_weight="1"
                 android:background="@drawable/card_8"
                 android:orientation="vertical"
-                android:padding="@dimen/margin">
+                android:paddingHorizontal="@dimen/half_margin"
+                android:paddingVertical="@dimen/margin">
 
                 <TextView
                     android:id="@+id/item_count"
@@ -49,7 +51,7 @@
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:text="@string/items"
-                    android:textColor="@color/tertiary"
+                    android:textColor="@color/onSurfaceVariant"
                     app:layout_constraintEnd_toEndOf="@+id/view"
                     app:layout_constraintStart_toStartOf="@+id/view"
                     app:layout_constraintTop_toBottomOf="@+id/view" />
@@ -60,11 +62,13 @@
                 style="@style/shadowStyle"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_margin="@dimen/half_margin"
+                android:layout_marginVertical="@dimen/half_margin"
+                android:layout_marginHorizontal="4dp"
                 android:layout_weight="1"
                 android:background="@drawable/card_8"
                 android:orientation="vertical"
-                android:padding="@dimen/margin">
+                android:paddingHorizontal="@dimen/half_margin"
+                android:paddingVertical="@dimen/margin">
 
                 <TextView
                     android:id="@+id/revenue"
@@ -84,7 +88,7 @@
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:text="@string/revenue"
-                    android:textColor="@color/tertiary"
+                    android:textColor="@color/onSurfaceVariant"
                     app:layout_constraintEnd_toEndOf="@+id/view"
                     app:layout_constraintStart_toStartOf="@+id/view"
                     app:layout_constraintTop_toBottomOf="@+id/view" />
@@ -95,11 +99,13 @@
                 style="@style/shadowStyle"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_margin="@dimen/half_margin"
+                android:layout_marginVertical="@dimen/half_margin"
+                android:layout_marginHorizontal="4dp"
                 android:layout_weight="1"
                 android:background="@drawable/card_8"
                 android:orientation="vertical"
-                android:padding="@dimen/margin">
+                android:paddingHorizontal="@dimen/half_margin"
+                android:paddingVertical="@dimen/margin">
 
                 <TextView
                     android:id="@+id/rating"
@@ -119,7 +125,7 @@
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:text="@string/rating"
-                    android:textColor="@color/tertiary"
+                    android:textColor="@color/onSurfaceVariant"
                     app:layout_constraintEnd_toEndOf="@+id/view"
                     app:layout_constraintStart_toStartOf="@+id/view"
                     app:layout_constraintTop_toBottomOf="@+id/view" />
@@ -131,7 +137,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="@dimen/half_margin"
+            android:layout_marginHorizontal="@dimen/margin"
             android:layout_marginBottom="@dimen/margin"
             android:baselineAligned="false"
             android:weightSum="2">
@@ -185,6 +191,7 @@
                 android:visibility="visible" />
 
             <LinearLayout
+                android:id="@+id/upcoming_show"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="8dp"
@@ -203,7 +210,7 @@
                         android:id="@+id/image"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:scaleType="fitXY"
+                        android:scaleType="centerCrop"
                         android:src="@drawable/placeholder_square" />
 
                 </com.google.android.material.card.MaterialCardView>
@@ -236,6 +243,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="sales and order"
+                        android:visibility="gone"
                         app:drawableTint="@color/onSurface" />
 
                     <TextView
@@ -264,7 +272,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="@dimen/margin"
-            android:layout_marginBottom="@dimen/margin"
+            android:layout_marginBottom="@dimen/half_margin"
             app:cardBackgroundColor="@color/background">
 
             <LinearLayout
@@ -282,6 +290,7 @@
                     android:orientation="vertical">
 
                     <TextView
+                        android:id="@+id/on_time_percent"
                         style="@style/TitleMedium"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -312,6 +321,7 @@
                     android:orientation="vertical">
 
                     <TextView
+                        android:id="@+id/defect_free_order_rate"
                         style="@style/TitleMedium"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -342,6 +352,7 @@
                     android:orientation="vertical">
 
                     <TextView
+                        android:id="@+id/policy_standing"
                         style="@style/TitleMedium"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -366,14 +377,15 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:baselineAligned="false"
-            android:paddingHorizontal="@dimen/half_margin"
+            android:paddingHorizontal="12dp"
             android:weightSum="2">
 
             <com.google.android.material.card.MaterialCardView
                 style="@style/cardStyle"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_margin="@dimen/half_margin"
+                android:layout_marginVertical="@dimen/half_margin"
+                android:layout_marginHorizontal="4dp"
                 android:layout_weight="1"
                 app:cardBackgroundColor="@color/background">
 
@@ -393,7 +405,7 @@
                         android:textStyle="bold" />
 
                     <TextView
-                        android:id="@+id/title"
+                        android:id="@+id/payout_amount"
                         style="@style/BodyLarge"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -410,7 +422,8 @@
                 style="@style/cardStyle"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_margin="@dimen/half_margin"
+                android:layout_marginVertical="@dimen/half_margin"
+                android:layout_marginHorizontal="4dp"
                 android:layout_weight="1"
                 app:cardBackgroundColor="@color/background">
 
@@ -431,6 +444,7 @@
 
                     <TextView
                         style="@style/BodyLarge"
+                        android:id="@+id/total_orders"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="22 Items"
@@ -467,18 +481,14 @@
             android:paddingHorizontal="@dimen/margin"
             android:paddingVertical="8dp">
 
-            <ImageView
-                android:layout_width="28dp"
-                android:layout_height="28dp"
-                android:layout_marginEnd="12dp"
-                android:contentDescription="@string/vacation_mode"
-                android:src="@drawable/ic_vacation" />
-
             <com.google.android.material.materialswitch.MaterialSwitch
                 style="@style/appSwitch"
+                android:id="@+id/vacation_mode"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/vacation_mode"
+                android:drawableStart="@drawable/ic_vacation"
+                android:drawablePadding="@dimen/half_margin"
                 android:textAppearance="@style/TitleMedium"
                 android:textStyle="bold" />
 

@@ -32,23 +32,25 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/margin"
+                android:layout_marginTop="@dimen/margin"
+                android:layout_marginBottom="@dimen/half_margin"
                 android:elevation="2dp">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/layout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="100dp"
-                    app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent">
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
-                        android:background="@color/primary"
+                        android:background="@drawable/card_8"
+                        android:backgroundTint="@color/primary"
                         android:orientation="vertical"
-                        app:layout_constraintDimensionRatio="7:4"
+                        app:layout_constraintDimensionRatio="7:4.5"
                         app:layout_constraintTop_toTopOf="parent">
 
                         <ImageView
@@ -87,16 +89,17 @@
                     style="@style/cardStyle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_margin="@dimen/margin"
+                    android:layout_marginHorizontal="@dimen/margin"
+                    android:layout_marginTop="130dp"
+                    android:layout_marginBottom="@dimen/half_margin"
                     app:cardBackgroundColor="@color/onPrimary"
-                    app:layout_constraintBottom_toBottomOf="@id/layout"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/layout"
+                    app:layout_constraintTop_toTopOf="parent"
                     app:strokeColor="@color/background"
                     app:strokeWidth="4dp">
 
                     <LinearLayout
+                        style="@style/shadowStyle"
+                        android:layout_marginBottom="8dp"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="vertical">
@@ -107,7 +110,7 @@
                             android:gravity="center_vertical"
                             android:orientation="horizontal"
                             android:paddingHorizontal="16dp"
-                            android:paddingVertical="20dp">
+                            android:paddingTop="20dp">
 
                             <com.google.android.material.card.MaterialCardView
                                 android:id="@+id/icon_card"
@@ -157,111 +160,157 @@
                             android:id="@+id/orders"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginHorizontal="@dimen/half_margin"
                             android:orientation="horizontal"
+                            android:padding="@dimen/half_margin"
                             app:layout_constraintTop_toBottomOf="@+id/header">
 
-                            <com.google.android.material.card.MaterialCardView
-                                style="@style/cardStyle"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_margin="@dimen/half_margin"
-                                android:layout_weight="1">
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                                android:orientation="vertical"
+                                android:padding="@dimen/half_margin">
 
-                                <LinearLayout
+                                <androidx.constraintlayout.widget.ConstraintLayout
                                     android:layout_width="match_parent"
-                                    android:layout_height="match_parent"
-                                    android:background="@drawable/card_8"
-                                    android:orientation="vertical"
-                                    android:padding="@dimen/half_margin">
+                                    android:layout_height="wrap_content">
+
+                                    <com.google.android.material.progressindicator.CircularProgressIndicator
+                                        android:id="@+id/ratingProgress"
+                                        style="@style/circularProgressStyle"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="0dp"
+                                        android:max="50"
+                                        android:progress="48"
+                                        app:layout_constraintDimensionRatio="1:1"
+                                        app:layout_constraintStart_toStartOf="parent"
+                                        app:layout_constraintTop_toTopOf="parent" />
 
                                     <TextView
                                         android:id="@+id/rating"
-                                        style="@style/TitleLarge"
+                                        style="@style/TitleMedium"
                                         android:layout_width="match_parent"
                                         android:layout_height="wrap_content"
                                         android:gravity="center"
                                         android:text="N/A"
-                                        android:textColor="@color/tertiary" />
+                                        android:textColor="@color/tertiary"
+                                        app:layout_constraintBottom_toBottomOf="parent"
+                                        app:layout_constraintEnd_toEndOf="parent"
+                                        app:layout_constraintStart_toStartOf="parent"
+                                        app:layout_constraintTop_toTopOf="parent" />
 
-                                    <TextView
-                                        style="@style/BodySmall"
-                                        android:layout_width="match_parent"
-                                        android:layout_height="wrap_content"
-                                        android:gravity="center"
-                                        android:text="Rating" />
+                                </androidx.constraintlayout.widget.ConstraintLayout>
 
-                                </LinearLayout>
-
-                            </com.google.android.material.card.MaterialCardView>
-
-                            <com.google.android.material.card.MaterialCardView
-                                style="@style/cardStyle"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_margin="@dimen/half_margin"
-                                android:layout_weight="1">
-
-                                <LinearLayout
+                                <TextView
+                                    style="@style/BodySmall"
                                     android:layout_width="match_parent"
-                                    android:layout_height="match_parent"
-                                    android:background="@drawable/card_8"
-                                    android:orientation="vertical"
-                                    android:padding="@dimen/half_margin">
+                                    android:layout_height="wrap_content"
+                                    android:gravity="center"
+                                    android:text="Rating" />
+
+                            </LinearLayout>
+
+                            <com.google.android.material.divider.MaterialDivider
+                                android:layout_width="1dp"
+                                android:layout_height="match_parent" />
+
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                                android:background="@drawable/card_8"
+                                android:orientation="vertical"
+                                android:padding="@dimen/half_margin">
+
+                                <androidx.constraintlayout.widget.ConstraintLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content">
+
+                                    <com.google.android.material.progressindicator.CircularProgressIndicator
+                                        android:id="@+id/responseProgress"
+                                        style="@style/circularProgressStyle"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="0dp"
+                                        android:progress="70"
+                                        android:max="100"
+                                        app:layout_constraintDimensionRatio="1:1"
+                                        app:layout_constraintStart_toStartOf="parent"
+                                        app:layout_constraintTop_toTopOf="parent" />
 
                                     <TextView
                                         android:id="@+id/response"
-                                        style="@style/TitleLarge"
+                                        style="@style/TitleMedium"
                                         android:layout_width="match_parent"
                                         android:layout_height="wrap_content"
                                         android:gravity="center"
                                         android:text="N/A"
-                                        android:textColor="@color/tertiary" />
+                                        android:textColor="@color/tertiary"
+                                        app:layout_constraintBottom_toBottomOf="parent"
+                                        app:layout_constraintEnd_toEndOf="parent"
+                                        app:layout_constraintStart_toStartOf="parent"
+                                        app:layout_constraintTop_toTopOf="parent" />
 
-                                    <TextView
-                                        style="@style/BodySmall"
-                                        android:layout_width="match_parent"
-                                        android:layout_height="wrap_content"
-                                        android:gravity="center"
-                                        android:text="Response" />
+                                </androidx.constraintlayout.widget.ConstraintLayout>
 
-                                </LinearLayout>
-
-                            </com.google.android.material.card.MaterialCardView>
-
-                            <com.google.android.material.card.MaterialCardView
-                                style="@style/cardStyle"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_margin="@dimen/half_margin"
-                                android:layout_weight="1">
-
-                                <LinearLayout
+                                <TextView
+                                    style="@style/BodySmall"
                                     android:layout_width="match_parent"
-                                    android:layout_height="match_parent"
-                                    android:background="@drawable/card_8"
-                                    android:orientation="vertical"
-                                    android:padding="@dimen/half_margin">
+                                    android:layout_height="wrap_content"
+                                    android:gravity="center"
+                                    android:text="Response" />
+
+                            </LinearLayout>
+
+                            <com.google.android.material.divider.MaterialDivider
+                                android:layout_width="1dp"
+                                android:layout_height="match_parent" />
+
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                                android:background="@drawable/card_8"
+                                android:orientation="vertical"
+                                android:padding="@dimen/half_margin">
+
+                                <androidx.constraintlayout.widget.ConstraintLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content">
+
+                                    <com.google.android.material.progressindicator.CircularProgressIndicator
+                                        android:id="@+id/deliveryProgress"
+                                        style="@style/circularProgressStyle"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="0dp"
+                                        android:progress="70"
+                                        app:layout_constraintDimensionRatio="1:1"
+                                        app:layout_constraintStart_toStartOf="parent"
+                                        app:layout_constraintTop_toTopOf="parent" />
 
                                     <TextView
                                         android:id="@+id/delivery"
-                                        style="@style/TitleLarge"
+                                        style="@style/TitleMedium"
                                         android:layout_width="match_parent"
                                         android:layout_height="wrap_content"
                                         android:gravity="center"
                                         android:text="N/A"
-                                        android:textColor="@color/tertiary" />
+                                        android:max="100"
+                                        android:textColor="@color/tertiary"
+                                        app:layout_constraintBottom_toBottomOf="parent"
+                                        app:layout_constraintEnd_toEndOf="parent"
+                                        app:layout_constraintStart_toStartOf="parent"
+                                        app:layout_constraintTop_toTopOf="parent" />
+                                </androidx.constraintlayout.widget.ConstraintLayout>
 
-                                    <TextView
-                                        style="@style/BodySmall"
-                                        android:layout_width="match_parent"
-                                        android:layout_height="wrap_content"
-                                        android:gravity="center"
-                                        android:text="Delivery" />
+                                <TextView
+                                    style="@style/BodySmall"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:gravity="center"
+                                    android:text="Delivery" />
 
-                                </LinearLayout>
+                            </LinearLayout>
 
-                            </com.google.android.material.card.MaterialCardView>
 
                         </LinearLayout>
 
@@ -270,6 +319,37 @@
                 </com.google.android.material.card.MaterialCardView>
 
             </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <LinearLayout
+                style="@style/shadowStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/margin"
+                android:layout_marginTop="@dimen/half_margin"
+                android:layout_marginBottom="@dimen/half_margin"
+                android:background="@drawable/card_8"
+                android:gravity="center_vertical"
+                android:backgroundTint="@color/surfaceVariant"
+                android:orientation="horizontal"
+                android:padding="12dp">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_info"
+                    android:tint="@color/onSurfaceVariant" />
+
+                <TextView
+                    android:id="@+id/welcome_text"
+                    style="@style/BodySmall"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/margin"
+                    android:layout_weight="1"
+                    android:text="Pro Tip text here"
+                    android:textColor="@color/onSurface" />
+
+            </LinearLayout>
 
             <TextView
                 style="@style/HeadlineSmall"
