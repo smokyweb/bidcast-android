@@ -13,6 +13,7 @@ import io.bidswipe.app.databinding.AppAlertViewBinding
 import io.bidswipe.app.interfaces.AlertClicks
 import io.bidswipe.app.utils.asCapital
 import io.bidswipe.app.utils.clr
+import io.bidswipe.app.utils.dpToPx
 import io.bidswipe.app.utils.layout
 import io.bidswipe.app.utils.runSafe
 import io.bidswipe.app.utils.setHapticClickListener
@@ -85,6 +86,8 @@ class AppBottomSheet(
                         clr.warningClr
                     )
                 )
+                bind.imageCard.setPadding(mCtx.resources.dpToPx(iconPadding))
+                bind.image.imageTintList =    ContextCompat.getColorStateList(mCtx, clr.onPrimary)
             }
 
             AlertType.INFO -> {
@@ -99,11 +102,13 @@ class AppBottomSheet(
             }
 
         }
+
         if (image != null) {
             bind.image.setImageResource(image?: R.drawable.ic_info)
         } else {
             bind.image.isVisible = false
         }
+
         bind.image.setPadding(iconPadding)
 
         if (message?.isEmpty()==true) {
@@ -111,6 +116,7 @@ class AppBottomSheet(
         } else {
             bind.message.text = message?.asCapital()
         }
+
         bind.title.text = title.asCapital()
 
         bind.secondaryBtn.isVisible = showSecondary

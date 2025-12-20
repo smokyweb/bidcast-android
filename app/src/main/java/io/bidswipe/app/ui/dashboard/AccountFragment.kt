@@ -400,14 +400,14 @@ class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
     private fun logoutDialog() {
         AppBottomSheet(
             mCtx,
-            R.drawable.ic_logout,
+            R.drawable.ic_logout_outline,
             "Logout",
             "Are you sure you want to logout?",
             primaryBtnText = "Logout",
             secondaryBtnText = "Cancel",
             canCancel = true,
             showSecondary = true,
-            iconPadding = 16,
+            iconPadding = 36,
             alertType = AlertType.WARNING,
             clicks = object : AlertClicks {
                 override fun primaryClick(dialog: AppBottomSheet) {

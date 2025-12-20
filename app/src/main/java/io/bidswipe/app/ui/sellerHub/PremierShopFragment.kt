@@ -61,15 +61,25 @@ class PremierShopFragment : BaseFragment<SellerHubViewModel, FragmentPremierShop
 		 gridList.add(SellModel(R.drawable.ic_speaker,0,"Marketing Boost", "Priority in search result"))
 		 gridList.add(SellModel(R.drawable.ic_support,0,"Priority Support", "24/7 dedicated assistance"))*/
 
-		bind.welcomeText.text= buildSpannedString {
-			bold{
-				scale(1.2f){
+		bind.welcomeText.text = buildSpannedString {
+			bold {
+				scale(1.2f) {
 					append("Welcome!\n")
 				}
 			}
-			color(ContextCompat.getColor(mCtx,clr.onSurfaceVariant)) {
+			color(ContextCompat.getColor(mCtx, clr.onSurfaceVariant)) {
 				append("This is where you can monitor your key performance metrics, or any other issues on your account")
 			}
+		}
+
+		bind.policyStandards.text = buildString {
+			append("If you have Community Guidelines violations, they’ll display here. Violations typically remain on your account for 180 days. If you think a violation was issued in error, you can appeal by responding to the email from Trust & Safety with details about the violation.")
+		}
+
+		bind.becomeText.text = buildString {
+			append("These are your key seller performance rates based on the past three months. These rates reflect the % of orders where buyers had positive experiences, with no seller-fault issues based on ship time or refunds and seller-driven cancellations.")
+			append("\n\n")
+			append("Premier Shop status helps buyers identify top-performing sellers. Keep in mind performance rates are rarely 100% because buyer issues covered under our Buyer Protection Policy are excluded.")
 		}
 
 		gridAdapter = BenefitsAdapter(gridList, mClick)
@@ -103,11 +113,18 @@ class PremierShopFragment : BaseFragment<SellerHubViewModel, FragmentPremierShop
 					gridAdapter.notifyDataSetChanged()
 					reqAdapter.notifyDataSetChanged()
 
-					bind.rating.text = mData?.shopOptions?.rating.toString()
 
-					bind.response.text = mData?.shopOptions?.response ?: "N/A"
+					val ratingProg = (mData?.shopOptions?.rating ?: 0.0)
+					val responseProg = (mData?.shopOptions?.response?.replace("%", "") ?: "0").toInt()
+					val deliveryProg = (mData?.shopOptions?.delivery?.replace("%", "") ?: "0").toInt()
 
-					bind.delivery.text = mData?.shopOptions?.delivery ?: "N/A"
+					bind.response.text = "$responseProg%"
+					bind.delivery.text = "$deliveryProg%"
+					bind.rating.text = ratingProg.toString()
+
+					bind.ratingProgress.progress = (ratingProg * 10.0).toInt()
+					bind.responseProgress.progress = responseProg
+					bind.deliveryProgress.progress = responseProg
 
 					bind.reviewLogo.loadUrl(mCtx, mData?.reviewLogo ?: "")
 

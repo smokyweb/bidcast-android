@@ -29,6 +29,36 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
+            <LinearLayout
+                style="@style/shadowStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/margin"
+                android:layout_marginTop="@dimen/margin"
+                android:background="@drawable/card_8"
+                android:backgroundTint="@color/surfaceVariant"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:padding="12dp">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_info"
+                    android:tint="@color/onSurfaceVariant" />
+
+                <TextView
+                    android:id="@+id/welcome_text"
+                    style="@style/BodySmall"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/margin"
+                    android:layout_weight="1"
+                    android:text="Pro Tip text here"
+                    android:textColor="@color/onSurface" />
+
+            </LinearLayout>
+
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -91,15 +121,13 @@
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="@dimen/margin"
                     android:layout_marginTop="130dp"
-                    android:layout_marginBottom="@dimen/half_margin"
+                    android:layout_marginBottom="@dimen/margin"
                     app:cardBackgroundColor="@color/onPrimary"
                     app:layout_constraintTop_toTopOf="parent"
                     app:strokeColor="@color/background"
                     app:strokeWidth="4dp">
 
                     <LinearLayout
-                        style="@style/shadowStyle"
-                        android:layout_marginBottom="8dp"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="vertical">
@@ -231,8 +259,8 @@
                                         style="@style/circularProgressStyle"
                                         android:layout_width="match_parent"
                                         android:layout_height="0dp"
-                                        android:progress="70"
                                         android:max="100"
+                                        android:progress="70"
                                         app:layout_constraintDimensionRatio="1:1"
                                         app:layout_constraintStart_toStartOf="parent"
                                         app:layout_constraintTop_toTopOf="parent" />
@@ -293,8 +321,8 @@
                                         android:layout_width="match_parent"
                                         android:layout_height="wrap_content"
                                         android:gravity="center"
-                                        android:text="N/A"
                                         android:max="100"
+                                        android:text="N/A"
                                         android:textColor="@color/tertiary"
                                         app:layout_constraintBottom_toBottomOf="parent"
                                         app:layout_constraintEnd_toEndOf="parent"
@@ -320,49 +348,158 @@
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
+            <TextView
+                style="@style/TitleLarge"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/margin"
+                android:layout_marginTop="@dimen/margin"
+                android:layout_marginBottom="@dimen/half_margin"
+                android:text="Policy Standards" />
+
             <LinearLayout
                 style="@style/shadowStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/margin"
-                android:layout_marginTop="@dimen/half_margin"
-                android:layout_marginBottom="@dimen/half_margin"
-                android:background="@drawable/card_8"
-                android:gravity="center_vertical"
-                android:backgroundTint="@color/surfaceVariant"
-                android:orientation="horizontal"
-                android:padding="12dp">
-
-                <androidx.appcompat.widget.AppCompatImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:src="@drawable/ic_info"
-                    android:tint="@color/onSurfaceVariant" />
+                android:layout_marginBottom="@dimen/margin"
+                android:background="@drawable/card_16"
+                android:orientation="vertical"
+                android:padding="@dimen/padding">
 
                 <TextView
-                    android:id="@+id/welcome_text"
+                    android:id="@+id/policy_standards"
                     style="@style/BodySmall"
-                    android:layout_width="0dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/margin"
-                    android:layout_weight="1"
-                    android:text="Pro Tip text here"
-                    android:textColor="@color/onSurface" />
+                    android:text=""
+                    android:textColor="@color/onSurfaceVariant" />
 
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:paddingVertical="20dp">
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/reviewLogo"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:backgroundTint="@color/onSecondary"
+                        android:src="@drawable/ic_checked_tag"
+                        android:tint="@color/primary" />
+
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="@dimen/half_margin"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/reviewTitle"
+                            style="@style/TitleLarge"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Monthly Evaluation" />
+
+                        <TextView
+                            android:id="@+id/reviewDetails"
+                            style="@style/BodyMedium"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Performance reviewed every 30 days" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        style="@style/BodyLarge"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:alpha="0.7"
+                        android:text="Current Progress" />
+
+                    <TextView
+                        android:id="@+id/progress"
+                        style="@style/TitleMedium"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="0%" />
+
+                </LinearLayout>
+
+                <com.google.android.material.progressindicator.LinearProgressIndicator
+                    android:id="@+id/stepProgress"
+                    style="@style/circularProgressStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingVertical="@dimen/margin"
+                    android:progress="9"
+                    android:progressTint="@color/primary"
+                    app:layout_constraintTop_toBottomOf="@id/header"
+                    app:trackCornerRadius="6dp"
+                    app:trackThickness="8dp" />
+
+                <TextView
+                    android:id="@+id/nextReview"
+                    style="@style/BodyMedium"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:alpha="0.7"
+                    android:text="Next Review in 7 days" />
             </LinearLayout>
 
             <TextView
-                style="@style/HeadlineSmall"
+                style="@style/TitleLarge"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/margin"
-                android:text="Premier Benifits" />
+                android:text="Become a Premier Shop" />
+
+            <LinearLayout
+                style="@style/shadowStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/margin"
+                android:layout_marginBottom="@dimen/margin"
+                android:background="@drawable/card_16"
+                android:padding="@dimen/padding">
+
+                <TextView
+                    android:id="@+id/become_text"
+                    style="@style/BodyMedium"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text=""
+                    android:textColor="@color/onSurfaceVariant" />
+            </LinearLayout>
+
+
+            <TextView
+                style="@style/TitleLarge"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/margin"
+                android:layout_marginTop="@dimen/margin"
+                android:text="Premier Benifits"
+                android:visibility="gone" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/gridRecycler"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="8dp"
+                android:visibility="gone"
                 app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
                 app:spanCount="2"
                 tools:itemCount="4"
@@ -377,104 +514,18 @@
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/requirementRecycler"
+                style="@style/shadowStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="8dp"
+                android:layout_marginHorizontal="@dimen/padding"
+                android:layout_marginBottom="@dimen/half_margin"
+                android:background="@drawable/card_16"
+                android:paddingHorizontal="@dimen/margin"
+                android:paddingTop="@dimen/margin"
+                android:paddingBottom="@dimen/half_margin"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 tools:itemCount="4"
                 tools:listitem="@layout/requirement_item" />
-
-            <TextView
-                style="@style/HeadlineSmall"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="@dimen/margin"
-                android:text="@string/review_process" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:paddingHorizontal="16dp"
-                android:paddingVertical="20dp">
-
-                <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/reviewLogo"
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
-                    android:backgroundTint="@color/onSecondary"
-                    android:src="@drawable/ic_checked_tag"
-                    android:tint="@color/primary" />
-
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="@dimen/half_margin"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:id="@+id/reviewTitle"
-                        style="@style/TitleLarge"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Monthly Evaluation" />
-
-                    <TextView
-                        android:id="@+id/reviewDetails"
-                        style="@style/BodyMedium"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Performance reviewed every 30 days" />
-
-                </LinearLayout>
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginHorizontal="@dimen/margin"
-                android:orientation="horizontal">
-
-                <TextView
-                    style="@style/BodyLarge"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:alpha="0.7"
-                    android:text="Current Progress" />
-
-                <TextView
-                    android:id="@+id/progress"
-                    style="@style/TitleMedium"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="0%" />
-
-            </LinearLayout>
-
-            <com.google.android.material.progressindicator.LinearProgressIndicator
-                android:id="@+id/stepProgress"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="@dimen/margin"
-                android:progress="9"
-                android:progressTint="@color/primary"
-                app:layout_constraintTop_toBottomOf="@id/header"
-                app:trackCornerRadius="6dp"
-                app:trackThickness="8dp" />
-
-            <TextView
-                android:id="@+id/nextReview"
-                style="@style/BodyLarge"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="@dimen/margin"
-                android:alpha="0.7"
-                android:text="Next Review in 7 days" />
 
         </LinearLayout>
 

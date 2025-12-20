@@ -9,16 +9,16 @@
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/icon_card"
         style="@style/cardStyle"
-        android:layout_width="32dp"
-        android:layout_height="32dp"
+        android:layout_width="18dp"
+        android:layout_height="18dp"
         app:cardBackgroundColor="@color/success"
         app:cardCornerRadius="100dp"
         app:cardElevation="0dp">
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/icon"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
+            android:layout_width="14dp"
+            android:layout_height="14dp"
             android:layout_gravity="center"
             android:src="@drawable/ic_check_white_24dp" />
 
@@ -34,7 +34,7 @@
 
         <TextView
             android:id="@+id/title"
-            style="@style/TitleLarge"
+            style="@style/TitleSmall"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/schedule_your_first_show" />
@@ -44,6 +44,7 @@
             style="@style/BodySmall"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:textColor="@color/onSurfaceVariant"
             android:text="@string/pick_a_date_and_time_for_your_live_show" />
 
 

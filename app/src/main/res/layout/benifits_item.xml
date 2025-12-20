@@ -21,7 +21,7 @@
 
     <TextView
         android:id="@+id/title"
-        style="@style/TitleLarge"
+        style="@style/TitleSemiBold"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/sell"
@@ -32,11 +32,11 @@
 
     <TextView
         android:id="@+id/description"
-        style="@style/BodyLarge"
+        style="@style/BodySmall"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/sell"
-        android:textStyle="bold"
+        android:textColor="@color/onSurfaceVariant"
         app:layout_constraintEnd_toEndOf="@+id/view"
         app:layout_constraintStart_toStartOf="@+id/view"
         app:layout_constraintTop_toBottomOf="@+id/view" />
