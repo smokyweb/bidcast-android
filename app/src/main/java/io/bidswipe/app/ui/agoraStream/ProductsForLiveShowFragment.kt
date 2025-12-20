@@ -28,6 +28,7 @@ import io.bidswipe.app.network.response.Product
 import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.ui.dashboard.DashViewModel
 import io.bidswipe.app.utils.Alerts
+import io.bidswipe.app.utils.Alerts.log
 import io.bidswipe.app.utils.SocketManager
 import io.bidswipe.app.utils.Utils
 import io.bidswipe.app.utils.parse
@@ -171,6 +172,12 @@ class ProductsForLiveShowFragment : BottomSheetDialogFragment() {
                         productAdapter.notifyDataSetChanged()
                     }
 
+                    productList.forEach {
+                        if (viewModel.pinnedProducts.contains(it?.id.toString())) {
+                            it?.selected = true
+                        }
+                    }
+
                     if (productList.isEmpty()) {
                         bind.noDataView.isVisible = true
                         bind.recycler.isVisible = false
@@ -228,6 +235,44 @@ class ProductsForLiveShowFragment : BottomSheetDialogFragment() {
             }
         })
 
+        socketManager?.onProductPinned {json ->
+            runSafe {
+                requireActivity() .runOnUiThread {
+
+                    val productId = json.optString("product_id")
+
+                    viewModel.pinnedProducts.add(productId)
+
+                    Log.d("TAG", "pinnedProducts: ${viewModel.pinnedProducts}")
+
+                    productList[selectedPos]?.selected = true
+                    productAdapter.notifyItemChanged(selectedPos)
+
+                }
+            }
+
+        }
+
+        socketManager?.onProductUnPinned { json ->
+            runSafe {
+                requireActivity() .runOnUiThread {
+
+                    if (viewModel.currentRoomId == json.optString("room_id")) {
+
+                        val productId = json.optString("product_id")
+
+                        Log.d("TAG", "pinnedProducts: ${viewModel.pinnedProducts}")
+
+
+                        productList[selectedPos]?.selected = false
+                        productAdapter.notifyItemChanged(selectedPos)
+
+                        viewModel.pinnedProducts.remove(productId)
+
+                    }
+                }
+            }
+        }
 
         productAdapter =
             FirebaseProductAdapter(
@@ -245,8 +290,11 @@ class ProductsForLiveShowFragment : BottomSheetDialogFragment() {
 
                             auctionSettingsSheet(selectedProduct?.id.toString(),selectedProduct?.pricing ?: "")
                         } else if (status == "set_next"){
+                            selectedPos = pos
 
                             socketManager?.pinProduct(roomId = viewModel.currentRoomId, productId = selectedProduct?.id.toString())
+
+
 
 //                            productList.forEachIndexed { index, item ->
 //                                item?.selected = index == pos
@@ -267,10 +315,10 @@ class ProductsForLiveShowFragment : BottomSheetDialogFragment() {
 
         bind.addBtn.setHapticClickListener {
 
-            if (selectedPos == -1) {
+            /*if (selectedPos == -1) {
                 Alerts.error(mCtx, "Please select a product")
                 return@setHapticClickListener
-            }
+            }*/
 
 //            val isAnyProductLive = productList.any { it?.isCurrent == true }
 //

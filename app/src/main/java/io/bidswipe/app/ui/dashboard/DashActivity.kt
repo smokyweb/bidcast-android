@@ -60,9 +60,10 @@ class DashActivity : BaseActivity(), NavController.OnDestinationChangedListener 
     private lateinit var imageSheet: BottomSheetBehavior<ConstraintLayout>
     private var sellList = mutableListOf<SellModel>()
 
-    private lateinit var navController: NavController
-    private lateinit var navHostFragment: NavHostFragment
-    private lateinit var sellerToolsAdapter: SellerToolsAdapter
+	private lateinit var navController: NavController
+
+	private lateinit var navHostFragment: NavHostFragment
+	private lateinit var sellerToolsAdapter: SellerToolsAdapter
     private var gridList = mutableListOf<SellerToolModel>()
 
     private val gridClick = object : RecyclerClicks {
@@ -100,9 +101,9 @@ class DashActivity : BaseActivity(), NavController.OnDestinationChangedListener 
         ViewCompat.setOnApplyWindowInsetsListener(window.decorView) { v, insets ->
             val system = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             bind.contentDash.root.setPadding(0, system.top, 0, system.bottom)
-            bind.sideMenu.setPadding(0, system.top, 0, system.bottom)
-            CONSUMED
-        }
+			bind.sideMenu.setPadding(0, system.top, 0, system.bottom)
+			CONSUMED
+		}
 
         navHostFragment = supportFragmentManager.findFragmentById(ids.nav_host_fragment) as NavHostFragment
         navController = navHostFragment.navController

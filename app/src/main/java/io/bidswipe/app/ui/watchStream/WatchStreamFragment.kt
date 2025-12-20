@@ -121,7 +121,6 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
     private var isAllowBidForAll = true
     private var isFollowing = false
     private var socketManager: SocketManager? = null
-    private lateinit var productAdapter: FirebaseProductAdapter
     private var productList = mutableListOf<LiveShowModel.Product?>()
     private var currentRemoteUid: Int? = null
     private var currentPoll: PollModel? = null
@@ -252,13 +251,24 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
                     if (json.optString("room_id") == roomID) {
                         requireActivity().runOnUiThread  {
                             if (json.has("product") && json.optJSONObject("product") != null) {
-
                                 val product =  LiveShowModel.Product.fromJson(json.optJSONObject("product"))
                                 val startingBidAmount = json.optString("starting_bid_amount") ?:"0"
                                 log("LIVE PRODUCT : $product")
                                 bind.productLayout.isVisible = true
-                                bind.bidLayout.isVisible = true
-                                bind.soldLayout.isVisible = false
+                                val status  = json.optString("status")
+
+                                log("STATUS : $status")
+                                if (status == "sold"){
+                                    bind.bidLayout.isVisible = false
+                                    bind.soldLayout.isVisible = true
+                                    bind.productLayout.isVisible = false
+                                }else{
+                                    bind.bidLayout.isVisible = true
+                                    bind.soldLayout.isVisible = false
+                                    bind.productLayout.isVisible = true
+
+                                }
+
                                 updateProductUI(product, startingBidAmount)
                             }else{
                                 updateProductUI(null, "0")
@@ -905,11 +915,8 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
             log("LIVE PRODUCT : $liveProduct")
 
             if (liveProduct != null) {
-                bind.soldLayout.isVisible = false
                 bind.winningLayout.isVisible = false
                 bind.status.isVisible = false
-                bind.bidLayout.isVisible = true
-                bind.productLayout.isVisible = true
                 bind.productName.text = liveProduct.name?.asCapital()
                 log("CATEGORY ${liveProduct.category}")
                 bind.productCategory.text = liveProduct.category?.name?.asCapital()

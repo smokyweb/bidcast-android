@@ -33,7 +33,6 @@ import io.bidswipe.app.utils.request
 
 @AndroidEntryPoint
 class SearchUsers : BottomSheetDialogFragment() {
-    private lateinit var productAdapter: FirebaseProductAdapter
     private var productList = mutableListOf<Product?>()
     private lateinit var mCtx: Context
     private var userList = mutableListOf<UserSearchingResponse.Data?>()
