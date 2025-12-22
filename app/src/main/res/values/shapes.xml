@@ -6,19 +6,4 @@
         <item name="cornerFamily">rounded</item>
     </style>
 
-    <style name="medShape" parent="ShapeAppearance.Material3.MediumComponent">
-        <item name="cornerSize">16dp</item>
-        <item name="cornerFamily">rounded</item>
-    </style>
-
-    <style name="smallShape" parent="ShapeAppearance.Material3.SmallComponent">
-        <item name="cornerSize">8dp</item>
-        <item name="cornerFamily">rounded</item>
-    </style>
-
-    <style name="noShape" parent="ShapeAppearance.Material3.SmallComponent">
-        <item name="cornerSize">0dp</item>
-        <item name="cornerFamily">cut</item>
-    </style>
-
 </resources>

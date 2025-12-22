@@ -1,7 +1,6 @@
 <resources>
     <string name="_0_00">$ 0.00</string>
     <string name="_10_00_oz">10.00 盎司</string>
-    <string name="_117_00">$117.00</string>
     <string name="_continue">继续</string>
     <string name="_switch">切换</string>
     <string name="about_us">关于我们</string>
@@ -11,7 +10,6 @@
     <string name="add_another_product">添加另一个产品</string>
     <string name="add_more_products">添加更多产品</string>
     <string name="add_product">添加产品</string>
-    <string name="add_starting_price_range_if_applicable">如适用，添加起始价格范围</string>
     <string name="add_up_to_8_photos">最多添加 8 张照片</string>
     <string name="add_variants">添加变体</string>
     <string name="added_product">已添加产品</string>
@@ -20,13 +18,11 @@
     <string name="auction">拍卖</string>
     <string name="auction_type">拍卖类型</string>
     <string name="back">返回</string>
-    <string name="be_specific_about_what_you_re_auctioning_e_g_quot_vintage_jewelry_collection_quot">具体说明您拍卖的内容（例如：“复古珠宝收藏”）</string>
     <string name="become_a_bidswipe_seller">成为 Bidswipe 卖家</string>
     <string name="better_promotion_opportunities">更好的推广机会</string>
     <string name="bids">出价</string>
     <string name="bidswipe_calculates_shipping_fees_based_on_the_product_weight_you_can_adjust_this_later_if_needed">Bidswipe 会根据产品重量计算运费。如有需要，您可以稍后进行调整。</string>
     <string name="bio">简介</string>
-    <string name="buy_it_now_price">一口价</string>
     <string name="cancel">取消</string>
     <string name="caption">标题</string>
     <string name="category">类别</string>
@@ -56,7 +52,6 @@
     <string name="explore">探索</string>
     <string name="finish">完成</string>
     <string name="first_name">名字</string>
-    <string name="flash_sell">限时抢购</string>
     <string name="forgot_password">忘记密码</string>
     <string name="full_name">全名</string>
     <string name="goods_examples">商品示例</string>
@@ -64,7 +59,6 @@
     <string name="home">首页</string>
     <string name="how_it_works">使用指南</string>
     <string name="i_agree_to_follow_these_guidelines_and_understand_that_violations_may_result_in_account_suspension">我同意遵守这些指南，并了解违规行为可能导致账户暂停</string>
-    <string name="include_key_details_like_brand_names_or_unique_features">包含关键细节，如品牌名称或独特特征</string>
     <string name="invite_friends_and_earn_rewards_when_they_join">邀请好友并在他们加入时获得奖励</string>
     <string name="item_weight">商品重量</string>
     <string name="items">商品</string>
@@ -74,7 +68,6 @@
     <string name="live_now">正在直播</string>
     <string name="login">登录</string>
     <string name="managing_orders_amp_shipping"><![CDATA[管理订单与发货]]></string>
-    <string name="mention_if_it_s_a_special_event_e_g_quot_holiday_special_quot">如是特别活动请注明（例如：“假日特卖”）</string>
     <string name="messages">消息</string>
     <string name="mic_test">麦克风测试</string>
     <string name="minimum_starting_bid_is_1_00">起拍价最低为 $1.00</string>
@@ -91,8 +84,6 @@
     <string name="password">密码</string>
     <string name="pick_a_date_and_time_for_your_live_show">为您的直播选择日期和时间</string>
     <string name="please_enter_the_email_address_associated_with_your_account">请输入与您账户关联的电子邮件地址。</string>
-    <string name="privacy_policy">隐私政策</string>
-    <string name="products">产品</string>
     <string name="publish">发布</string>
     <string name="purchases">购买记录</string>
     <string name="quantity_available">可用数量</string>
@@ -106,7 +97,6 @@
     <string name="save_draft">保存草稿</string>
     <string name="saved_items">已保存的商品</string>
     <string name="schedule_your_first_show">安排您的首次直播</string>
-    <string name="select_a_category">选择一个类别</string>
     <string name="select_auction_type">选择拍卖类型</string>
     <string name="select_category">选择类别</string>
     <string name="select_format">选择格式</string>
@@ -120,7 +110,6 @@
     <string name="set_schedule">设定时间表</string>
     <string name="setting_up_your_store">正在设置您的商店</string>
     <string name="share_amp_earn_reward"><![CDATA[分享并获得奖励]]></string>
-    <string name="shipping_profile">配送信息</string>
     <string name="shop">商店</string>
     <string name="show_category">直播类别</string>
     <string name="show_details">直播详情</string>
@@ -136,7 +125,6 @@
     <string name="success_please_enter_your_new_password_below">成功！请输入您的新密码。</string>
     <string name="tap_to_upload_thumbnail">点击上传缩略图</string>
     <string name="tell_us_about_yourself">请介绍一下自己</string>
-    <string name="terms_of_service">| 服务条款</string>
     <string name="this_is_my_message">这是我的消息</string>
     <string name="time_to_prepare_your_items_properly">是时候好好准备您的商品了</string>
     <string name="tips_for_a_great_thumbnail">打造优质缩略图的小贴士</string>
@@ -147,7 +135,6 @@
     <string name="verify_code">验证验证码</string>
     <string name="weight_0_00">0.00</string>
     <string name="what_are_you_looking_for">您在寻找什么？</string>
-    <string name="what_you_ll_learn">您将学习：</string>
     <string name="why_scedule_in_advance">为什么要提前安排？</string>
     <string name="yes">是</string>
     <string name="your_referral_link">您的推荐链接</string>
@@ -166,7 +153,6 @@
     <string name="make_an_offer">提出报价</string>
     <string name="send_offer">发送报价</string>
     <string name="you_won_t_be_charged_unless_the_seller_accepts_your_offer">除非卖家接受您的报价，否则您不会被收费</string>
-    <string name="verified_seller">已验证卖家</string>
     <string name="buy_now">立即购买</string>
     <string name="make_offer">提出报价</string>
     <string name="condition">状况</string>
@@ -190,7 +176,6 @@
     <string name="delivery_address">送货地址</string>
     <string name="swiftbid_buyer_protection">SwiftBid 买家保护</string>
     <string name="new_product">+ 新产品</string>
-    <string name="past_shows">过去的节目</string>
     <string name="new_show">新节目</string>
     <string name="new_orders">新订单</string>
     <string name="completed">已完成</string>
@@ -198,13 +183,8 @@
     <string name="pending">待定</string>
     <string name="accepted">已接受</string>
     <string name="declined">已拒绝</string>
-    <string name="my_orders">我的订单</string>
     <string name="wallet">钱包</string>
     <string name="transactions">交易</string>
-    <string name="available_balance">可用余额</string>
-    <string name="available_for_payout">可用于提款</string>
-    <string name="early_payout">提前提款</string>
-    <string name="you_re_eligible_for_early_payout">您有资格提前提款</string>
     <string name="payout_history">提款历史</string>
     <string name="delivered">已送达</string>
     <string name="returns">退货</string>
@@ -243,17 +223,12 @@
     <string name="save_past_shows">保存过去的节目</string>
     <string name="other_settings">其他设置</string>
     <string name="activity_status">活动状态</string>
-    <string name="sync_phone_contact">同步电话联系人</string>
-    <string name="suggest_my_account">推荐我的账户</string>
     <string name="haptic_feedback">触觉反馈</string>
     <string name="my_addresses">我的地址</string>
     <string name="become_a_trusted_buyer">成为信誉买家</string>
     <string name="expiration_date">到期日</string>
     <string name="issue_date">发证日期</string>
-    <string name="recommended">已推荐</string>
     <string name="popular">热门</string>
-    <string name="all">全部</string>
-    <string name="choose_sales_format">选择销售格式</string>
     <string name="affiliate_program">联盟计划</string>
     <string name="share_your_link">分享您的链接</string>
     <string name="share_invite_link">分享邀请链接</string>
@@ -262,15 +237,8 @@
     <string name="seller_status">卖家身份</string>
     <string name="contact_support">联系支持</string>
     <string name="premier_shop">高级商店</string>
-    <string name="review_process">审核流程</string>
     <string name="promote_tools">推广工具</string>
-    <string name="promote_your_shows">推广您的直播</string>
-    <string name="learn_how_to_promote">了解如何推广</string>
-    <string name="get_tips_and_strategies_to_grow_your_live_shows">获取发展直播的技巧和策略</string>
-    <string name="start_learning">开始学习</string>
     <string name="analytics">分析</string>
-    <string name="sales_performance">销售业绩</string>
-    <string name="visitor_analytics">访客分析</string>
     <string name="use_product_library">使用产品库</string>
     <string name="follow">关注</string>
     <string name="comming_soon">即将推出</string>
@@ -294,9 +262,7 @@
     <string name="id_card">ID Card</string>
     <string name="no_payment_method_added">No payment method added</string>
     <string name="manual_verification">Manual Verification</string>
-    <string name="complete_verification">Complete Verification</string>
     <string name="mic">Mic</string>
-    <string name="rotate_camera">Rotate Camera</string>
     <string name="zoom_in">Zoom In</string>
     <string name="promote_show">Promote Show</string>
     <string name="prices_shown_in_usd_actual_boost_duration_may_vary">Prices shown in USD. Actual boost duration may vary.</string>

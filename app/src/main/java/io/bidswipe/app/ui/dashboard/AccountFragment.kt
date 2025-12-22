@@ -36,6 +36,7 @@ import io.bidswipe.app.utils.asMoney
 import io.bidswipe.app.utils.finish
 import io.bidswipe.app.utils.loadUrl
 import io.bidswipe.app.utils.parse
+import io.bidswipe.app.utils.request
 import io.bidswipe.app.utils.setHapticClickListener
 import io.bidswipe.app.utils.toAuth
 import io.bidswipe.app.utils.toListProduct
@@ -298,9 +299,13 @@ class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
         bind.sellerHub.createProduct.setHapticClickListener {
             startActivity(mCtx.toListProduct())
         }
+
         bind.sellerHub.createShow.setHapticClickListener {
             startActivity(mCtx.toScheduleShow(from = "dash"))
+        }
 
+        bind.sellerHub.vacationMode.setOnCheckedChangeListener { _,status->
+            viewModel.updateVacationModeStatus(status.toString().request())
         }
 
         bind.loader.isVisible = true

@@ -2,7 +2,6 @@
 <resources>
     <string name="_0_00">$ 0.00</string>
     <string name="_10_00_oz">10,00 oz</string>
-    <string name="_117_00">$117.00</string>
     <string name="_continue">Tiếp tục</string>
     <string name="_switch">Chuyển đổi</string>
     <string name="about_us">Về chúng tôi</string>
@@ -12,7 +11,6 @@
     <string name="add_another_product">Thêm sản phẩm khác</string>
     <string name="add_more_products">Thêm nhiều sản phẩm hơn</string>
     <string name="add_product">Thêm sản phẩm</string>
-    <string name="add_starting_price_range_if_applicable">Thêm khoảng giá khởi điểm nếu có</string>
     <string name="add_up_to_8_photos">Thêm tối đa 8 ảnh</string>
     <string name="add_variants">Thêm biến thể</string>
     <string name="added_product">Đã thêm sản phẩm</string>
@@ -21,13 +19,11 @@
     <string name="auction">Đấu giá</string>
     <string name="auction_type">Loại đấu giá</string>
     <string name="back">Quay lại</string>
-    <string name="be_specific_about_what_you_re_auctioning_e_g_quot_vintage_jewelry_collection_quot">Hãy cụ thể về mặt hàng bạn đang đấu giá (ví dụ: “Bộ sưu tập trang sức cổ điển”)</string>
     <string name="become_a_bidswipe_seller">Trở thành người bán Bidswipe</string>
     <string name="better_promotion_opportunities">Cơ hội quảng bá tốt hơn</string>
     <string name="bids">Đặt giá</string>
     <string name="bidswipe_calculates_shipping_fees_based_on_the_product_weight_you_can_adjust_this_later_if_needed">Bidswipe tính phí vận chuyển dựa trên trọng lượng sản phẩm. Bạn có thể điều chỉnh sau nếu cần.</string>
     <string name="bio">Tiểu sử</string>
-    <string name="buy_it_now_price">Giá mua ngay</string>
     <string name="cancel">Hủy</string>
     <string name="caption">Chú thích</string>
     <string name="category">Danh mục</string>
@@ -57,7 +53,6 @@
     <string name="explore">Khám phá</string>
     <string name="finish">Hoàn thành</string>
     <string name="first_name">Tên</string>
-    <string name="flash_sell">Bán nhanh</string>
     <string name="forgot_password">Quên mật khẩu?</string>
     <string name="full_name">Họ và tên</string>
     <string name="goods_examples">Ví dụ sản phẩm</string>
@@ -65,7 +60,6 @@
     <string name="home">Trang chủ</string>
     <string name="how_it_works">Cách hoạt động</string>
     <string name="i_agree_to_follow_these_guidelines_and_understand_that_violations_may_result_in_account_suspension">Tôi đồng ý tuân theo hướng dẫn và hiểu rằng vi phạm có thể dẫn đến tạm ngưng tài khoản</string>
-    <string name="include_key_details_like_brand_names_or_unique_features">Bao gồm chi tiết chính như tên thương hiệu hoặc tính năng độc đáo</string>
     <string name="invite_friends_and_earn_rewards_when_they_join">Mời bạn bè và nhận thưởng khi họ tham gia</string>
     <string name="item_weight">Khối lượng sản phẩm</string>
     <string name="items">Mặt hàng</string>
@@ -75,7 +69,6 @@
     <string name="live_now">Đang phát trực tiếp</string>
     <string name="login">Đăng nhập</string>
     <string name="managing_orders_amp_shipping"><![CDATA[Quản lý đơn hàng và vận chuyển]]></string>
-    <string name="mention_if_it_s_a_special_event_e_g_quot_holiday_special_quot">Nhắc nếu đây là sự kiện đặc biệt (ví dụ, “Khuyến mãi dịp lễ”)</string>
     <string name="messages">Tin nhắn</string>
     <string name="mic_test">Kiểm tra mic</string>
     <string name="minimum_starting_bid_is_1_00">Giá khởi điểm tối thiểu là $1.00</string>
@@ -92,8 +85,6 @@
     <string name="password">Mật khẩu</string>
     <string name="pick_a_date_and_time_for_your_live_show">Chọn ngày giờ cho buổi phát</string>
     <string name="please_enter_the_email_address_associated_with_your_account">Vui lòng nhập email liên kết với tài khoản của bạn.</string>
-    <string name="privacy_policy">Chính sách bảo mật</string>
-    <string name="products">Sản phẩm</string>
     <string name="publish">Đăng</string>
     <string name="purchases">Đơn mua</string>
     <string name="quantity_available">Số lượng có sẵn</string>
@@ -107,7 +98,6 @@
     <string name="save_draft">Lưu nháp</string>
     <string name="saved_items">Mặt hàng đã lưu</string>
     <string name="schedule_your_first_show">Lên lịch buổi phát đầu tiên</string>
-    <string name="select_a_category">Chọn danh mục</string>
     <string name="select_auction_type">Chọn loại đấu giá</string>
     <string name="select_category">Chọn danh mục</string>
     <string name="select_format">Chọn định dạng</string>
@@ -121,7 +111,6 @@
     <string name="set_schedule">Đặt lịch</string>
     <string name="setting_up_your_store">Thiết lập cửa hàng của bạn</string>
     <string name="share_amp_earn_reward"><![CDATA[Chia sẻ và nhận thưởng]]></string>
-    <string name="shipping_profile">Hồ sơ vận chuyển</string>
     <string name="shop">Cửa hàng</string>
     <string name="show_category">Danh mục buổi phát</string>
     <string name="show_details">Chi tiết buổi phát</string>
@@ -137,7 +126,6 @@
     <string name="success_please_enter_your_new_password_below">Thành công! Vui lòng nhập mật khẩu mới của bạn bên dưới.</string>
     <string name="tap_to_upload_thumbnail">Chạm để tải lên ảnh thu nhỏ</string>
     <string name="tell_us_about_yourself">Cho chúng tôi biết về bạn</string>
-    <string name="terms_of_service">| Điều khoản dịch vụ</string>
     <string name="this_is_my_message">Đây là tin nhắn của tôi</string>
     <string name="time_to_prepare_your_items_properly">Đã đến lúc chuẩn bị sản phẩm của bạn một cách đúng đắn</string>
     <string name="tips_for_a_great_thumbnail">Mẹo cho ảnh thu nhỏ ấn tượng</string>
@@ -148,7 +136,6 @@
     <string name="verify_code">Xác thực mã</string>
     <string name="weight_0_00">0.00</string>
     <string name="what_are_you_looking_for">Bạn đang tìm gì?</string>
-    <string name="what_you_ll_learn">Bạn sẽ học:</string>
     <string name="why_scedule_in_advance">Tại sao lên lịch trước?</string>
     <string name="yes">Có</string>
     <string name="your_referral_link">Liên kết giới thiệu của bạn</string>
@@ -167,7 +154,6 @@
     <string name="make_an_offer">Đưa ra đề nghị</string>
     <string name="send_offer">Gửi đề nghị</string>
     <string name="you_won_t_be_charged_unless_the_seller_accepts_your_offer">Bạn sẽ không bị tính phí trừ khi người bán chấp nhận đề nghị của bạn</string>
-    <string name="verified_seller">Người bán đã xác minh</string>
     <string name="buy_now">Mua ngay</string>
     <string name="make_offer">Đưa ra đề nghị</string>
     <string name="condition">Điều kiện</string>
@@ -191,7 +177,6 @@
     <string name="delivery_address">Địa chỉ giao hàng</string>
     <string name="swiftbid_buyer_protection">Bảo vệ người mua SwiftBid</string>
     <string name="new_product">+ Sản phẩm mới</string>
-    <string name="past_shows">Chương trình đã qua</string>
     <string name="new_show">Chương trình mới</string>
     <string name="new_orders">Đơn hàng mới</string>
     <string name="completed">Đã hoàn thành</string>
@@ -199,13 +184,8 @@
     <string name="pending">Chờ xử lý</string>
     <string name="accepted">Chấp nhận</string>
     <string name="declined">Từ chối</string>
-    <string name="my_orders">Đơn hàng của tôi</string>
     <string name="transactions">Giao dịch</string>
     <string name="wallet">Ví</string>
-    <string name="available_balance">Số dư khả dụng</string>
-    <string name="available_for_payout">Có sẵn để thanh toán</string>
-    <string name="early_payout">Thanh toán sớm</string>
-    <string name="you_re_eligible_for_early_payout">Bạn đủ điều kiện để thanh toán sớm</string>
     <string name="payout_history">Lịch sử thanh toán</string>
     <string name="delivered">Đã giao hàng</string>
     <string name="returns">Trả hàng</string>
@@ -244,17 +224,12 @@
     <string name="save_past_shows">Lưu các chương trình đã qua</string>
     <string name="other_settings">Cài đặt khác</string>
     <string name="activity_status">Trạng thái hoạt động</string>
-    <string name="sync_phone_contact">Đồng bộ danh bạ điện thoại</string>
-    <string name="suggest_my_account">Đề xuất tài khoản của tôi</string>
     <string name="haptic_feedback">Phản hồi xúc giác</string>
     <string name="my_addresses">Địa chỉ của tôi</string>
     <string name="become_a_trusted_buyer">Trở thành người mua đáng tin cậy</string>
     <string name="expiration_date">Ngày hết hạn</string>
     <string name="issue_date">Ngày phát hành</string>
-    <string name="recommended">Đề xuất</string>
     <string name="popular">Phổ biến</string>
-    <string name="all">Tất cả</string>
-    <string name="choose_sales_format">Chọn định dạng bán hàng</string>
     <string name="affiliate_program">Chương trình tiếp thị liên kết</string>
     <string name="share_your_link">Chia sẻ liên kết của bạn</string>
     <string name="share_invite_link">Chia sẻ liên kết mời</string>
@@ -263,15 +238,8 @@
     <string name="seller_status">Trạng thái người bán</string>
     <string name="contact_support">Liên hệ hỗ trợ</string>
     <string name="premier_shop">Cửa hàng cao cấp</string>
-    <string name="review_process">Quy trình đánh giá</string>
     <string name="promote_tools">Công cụ quảng bá</string>
-    <string name="promote_your_shows">Quảng bá chương trình của bạn</string>
-    <string name="learn_how_to_promote">Tìm hiểu cách quảng bá</string>
-    <string name="get_tips_and_strategies_to_grow_your_live_shows">Nhận các mẹo và chiến lược để phát triển các chương trình trực tiếp của bạn</string>
-    <string name="start_learning">Bắt đầu học</string>
     <string name="analytics">Phân tích</string>
-    <string name="sales_performance">Hiệu suất bán hàng</string>
-    <string name="visitor_analytics">Phân tích khách truy cập</string>
     <string name="use_product_library">Sử dụng thư viện sản phẩm</string>
     <string name="follow">Theo dõi</string>
     <string name="comming_soon">Sắp có</string>
@@ -295,9 +263,7 @@
     <string name="id_card">ID Card</string>
     <string name="no_payment_method_added">No payment method added</string>
     <string name="manual_verification">Manual Verification</string>
-    <string name="complete_verification">Complete Verification</string>
     <string name="mic">Mic</string>
-    <string name="rotate_camera">Rotate Camera</string>
     <string name="zoom_in">Zoom In</string>
     <string name="promote_show">Promote Show</string>
     <string name="prices_shown_in_usd_actual_boost_duration_may_vary">Prices shown in USD. Actual boost duration may vary.</string>

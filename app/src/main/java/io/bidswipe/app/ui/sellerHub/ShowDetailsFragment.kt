@@ -69,7 +69,7 @@ class ShowDetailsFragment : BaseFragment<SellerHubViewModel, FragmentShowDetails
 		}
 
 		bind.loader.isVisible = true
-		viewModel.getShowDetail(showId)
+		viewModel.getShowOverview(showId)
 
 		viewModel.getShowDetailRepo.observe(viewLifecycleOwner) {
 			when (it) {

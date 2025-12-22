@@ -2,7 +2,6 @@
 <resources>
     <string name="_0_00">$ 0.00</string>
     <string name="_10_00_oz">10.00オンス</string>
-    <string name="_117_00">$117.00</string>
     <string name="_continue">続行</string>
     <string name="_switch">切り替え</string>
     <string name="about_us">私たちについて</string>
@@ -12,7 +11,6 @@
     <string name="add_another_product">別の製品を追加</string>
     <string name="add_more_products">さらに製品を追加</string>
     <string name="add_product">製品を追加</string>
-    <string name="add_starting_price_range_if_applicable">該当する場合、開始価格帯を追加</string>
     <string name="add_up_to_8_photos">最大8枚の写真を追加</string>
     <string name="add_variants">バリアントを追加</string>
     <string name="added_product">製品を追加しました</string>
@@ -21,13 +19,11 @@
     <string name="auction">オークション</string>
     <string name="auction_type">オークションタイプ</string>
     <string name="back">戻る</string>
-    <string name="be_specific_about_what_you_re_auctioning_e_g_quot_vintage_jewelry_collection_quot">出品するアイテムを具体的に記載してください（例：“ビンテージジュエリーコレクション”）</string>
     <string name="become_a_bidswipe_seller">Bidswipeセラーになる</string>
     <string name="better_promotion_opportunities">より良いプロモーション機会</string>
     <string name="bids">入札</string>
     <string name="bidswipe_calculates_shipping_fees_based_on_the_product_weight_you_can_adjust_this_later_if_needed">Bidswipeは商品の重量に基づいて送料を計算します。必要に応じて後で調整できます。</string>
     <string name="bio">自己紹介</string>
-    <string name="buy_it_now_price">即購入価格</string>
     <string name="cancel">キャンセル</string>
     <string name="caption">キャプション</string>
     <string name="category">カテゴリ</string>
@@ -57,7 +53,6 @@
     <string name="explore">探す</string>
     <string name="finish">完了</string>
     <string name="first_name">名</string>
-    <string name="flash_sell">フラッシュセール</string>
     <string name="forgot_password">パスワードを忘れた？</string>
     <string name="full_name">フルネーム</string>
     <string name="goods_examples">商品例</string>
@@ -65,7 +60,6 @@
     <string name="home">ホーム</string>
     <string name="how_it_works">使い方</string>
     <string name="i_agree_to_follow_these_guidelines_and_understand_that_violations_may_result_in_account_suspension">これらのガイドラインに従い、違反するとアカウント停止になる可能性があることを理解します</string>
-    <string name="include_key_details_like_brand_names_or_unique_features">ブランド名や独自機能などの重要な詳細を含めてください</string>
     <string name="invite_friends_and_earn_rewards_when_they_join">友達を招待して参加時に報酬をゲット</string>
     <string name="item_weight">商品の重量</string>
     <string name="items">アイテム</string>
@@ -75,7 +69,6 @@
     <string name="live_now">ライブ中</string>
     <string name="login">ログイン</string>
     <string name="managing_orders_amp_shipping"><![CDATA[注文と配送を管理]]></string>
-    <string name="mention_if_it_s_a_special_event_e_g_quot_holiday_special_quot">特別イベントの場合は記載してください（例：「ホリデースペシャル」）</string>
     <string name="messages">メッセージ</string>
     <string name="mic_test">マイクテスト</string>
     <string name="minimum_starting_bid_is_1_00">最低開始入札額は $1.00</string>
@@ -92,8 +85,6 @@
     <string name="password">パスワード</string>
     <string name="pick_a_date_and_time_for_your_live_show">配信の日時を選択</string>
     <string name="please_enter_the_email_address_associated_with_your_account">アカウントに関連付けられたメールアドレスを入力してください。</string>
-    <string name="privacy_policy">プライバシーポリシー</string>
-    <string name="products">製品</string>
     <string name="publish">公開</string>
     <string name="purchases">購入履歴</string>
     <string name="quantity_available">利用可能数</string>
@@ -107,7 +98,6 @@
     <string name="save_draft">下書きを保存</string>
     <string name="saved_items">保存済みアイテム</string>
     <string name="schedule_your_first_show">初回配信を予約</string>
-    <string name="select_a_category">カテゴリを選択</string>
     <string name="select_auction_type">オークションタイプを選択</string>
     <string name="select_category">カテゴリを選択</string>
     <string name="select_format">フォーマットを選択</string>
@@ -121,7 +111,6 @@
     <string name="set_schedule">スケジュールを設定</string>
     <string name="setting_up_your_store">ストアを設定中</string>
     <string name="share_amp_earn_reward"><![CDATA[シェアして報酬を獲得]]></string>
-    <string name="shipping_profile">配送プロファイル</string>
     <string name="shop">ショップ</string>
     <string name="show_category">配信カテゴリ</string>
     <string name="show_details">配信詳細</string>
@@ -137,7 +126,6 @@
     <string name="success_please_enter_your_new_password_below">完了！新しいパスワードを入力してください。</string>
     <string name="tap_to_upload_thumbnail">タップしてサムネイルをアップロード</string>
     <string name="tell_us_about_yourself">自己紹介をお願いします</string>
-    <string name="terms_of_service">| 利用規約</string>
     <string name="this_is_my_message">これは私のメッセージです</string>
     <string name="time_to_prepare_your_items_properly">アイテムを適切に準備する時間です</string>
     <string name="tips_for_a_great_thumbnail">素晴らしいサムネイルのコツ</string>
@@ -148,7 +136,6 @@
     <string name="verify_code">コード確認</string>
     <string name="weight_0_00">0.00</string>
     <string name="what_are_you_looking_for">何をお探しですか？</string>
-    <string name="what_you_ll_learn">学べること：</string>
     <string name="why_scedule_in_advance">なぜ事前にスケジュールするのか？</string>
     <string name="yes">はい</string>
     <string name="your_referral_link">紹介リンク</string>
@@ -167,7 +154,6 @@
     <string name="make_an_offer">オファーを作成</string>
     <string name="send_offer">オファーを送信</string>
     <string name="you_won_t_be_charged_unless_the_seller_accepts_your_offer">売り手がオファーを受け入れない限り、料金は発生しません</string>
-    <string name="verified_seller">認証済み販売者</string>
     <string name="buy_now">今すぐ購入</string>
     <string name="make_offer">オファーを作成</string>
     <string name="condition">状態</string>
@@ -191,7 +177,6 @@
     <string name="delivery_address">配送先住所</string>
     <string name="swiftbid_buyer_protection">SwiftBid購入者保護</string>
     <string name="new_product">+ 新製品</string>
-    <string name="past_shows">過去のショー</string>
     <string name="new_show">新しいショー</string>
     <string name="new_orders">新しい注文</string>
     <string name="completed">完了</string>
@@ -199,13 +184,8 @@
     <string name="pending">保留中</string>
     <string name="accepted">承認済み</string>
     <string name="declined">拒否されました</string>
-    <string name="my_orders">私の注文</string>
     <string name="wallet">ウォレット</string>
     <string name="transactions">取引</string>
-    <string name="available_balance">利用可能残高</string>
-    <string name="available_for_payout">支払い可能</string>
-    <string name="early_payout">早期支払い</string>
-    <string name="you_re_eligible_for_early_payout">早期支払いの対象です</string>
     <string name="payout_history">支払い履歴</string>
     <string name="delivered">配達済み</string>
     <string name="returns">返品</string>
@@ -244,17 +224,12 @@
     <string name="save_past_shows">過去のショーを保存</string>
     <string name="other_settings">その他の設定</string>
     <string name="activity_status">アクティビティステータス</string>
-    <string name="sync_phone_contact">電話の連絡先を同期</string>
-    <string name="suggest_my_account">私のアカウントを提案</string>
     <string name="haptic_feedback">触覚フィードバック</string>
     <string name="my_addresses">私の住所</string>
     <string name="become_a_trusted_buyer">信頼できる購入者になる</string>
     <string name="expiration_date">有効期限</string>
     <string name="issue_date">発行日</string>
-    <string name="recommended">おすすめ</string>
     <string name="popular">人気</string>
-    <string name="all">すべて</string>
-    <string name="choose_sales_format">販売形式を選択</string>
     <string name="affiliate_program">アフィリエイトプログラム</string>
     <string name="share_your_link">リンクを共有</string>
     <string name="share_invite_link">招待リンクを共有</string>
@@ -263,15 +238,8 @@
     <string name="seller_status">販売者ステータス</string>
     <string name="contact_support">サポートに連絡</string>
     <string name="premier_shop">プレミアショップ</string>
-    <string name="review_process">レビュー手順</string>
     <string name="promote_tools">プロモーションツール</string>
-    <string name="promote_your_shows">ショーを宣伝</string>
-    <string name="learn_how_to_promote">宣伝方法を学ぶ</string>
-    <string name="get_tips_and_strategies_to_grow_your_live_shows">ライブショーを成長させるためのヒントと戦略を取得</string>
-    <string name="start_learning">学習を開始</string>
     <string name="analytics">分析</string>
-    <string name="sales_performance">販売実績</string>
-    <string name="visitor_analytics">訪問者分析</string>
     <string name="use_product_library">製品ライブラリを使用</string>
     <string name="follow">フォロー</string>
     <string name="comming_soon">近日公開</string>
@@ -295,9 +263,7 @@
     <string name="id_card">ID Card</string>
     <string name="no_payment_method_added">No payment method added</string>
     <string name="manual_verification">Manual Verification</string>
-    <string name="complete_verification">Complete Verification</string>
     <string name="mic">Mic</string>
-    <string name="rotate_camera">Rotate Camera</string>
     <string name="zoom_in">Zoom In</string>
     <string name="promote_show">Promote Show</string>
     <string name="prices_shown_in_usd_actual_boost_duration_may_vary">Prices shown in USD. Actual boost duration may vary.</string>

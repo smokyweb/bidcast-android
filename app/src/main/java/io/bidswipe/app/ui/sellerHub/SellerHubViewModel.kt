@@ -21,7 +21,7 @@ import io.bidswipe.app.network.response.GetProductsResponse
 import io.bidswipe.app.network.response.GetPromoteToolsDetailsResponse
 import io.bidswipe.app.network.response.GetPromoteToolsResponse
 import io.bidswipe.app.network.response.GetShippingProfilesResponse
-import io.bidswipe.app.network.response.GetShowDetailResponse
+import io.bidswipe.app.network.response.GetShowOverviewResponse
 import io.bidswipe.app.network.response.GetTipAmountResponse
 import io.bidswipe.app.network.response.GetTransactionsHistoryResponse
 import io.bidswipe.app.network.response.PayoutHistoryResponse
@@ -579,18 +579,18 @@ class SellerHubViewModel @Inject constructor(
 		_settingsListResponse.value = repo.settingsList()
 	}
 
-	private var _getShowDetailResponse = MutableLiveData<Resource<GetShowDetailResponse>>()
-	val getShowDetailRepo: MutableLiveData<Resource<GetShowDetailResponse>>
-		get() = _getShowDetailResponse
+	private var _getShowOverviewResponse = MutableLiveData<Resource<GetShowOverviewResponse>>()
+	val getShowDetailRepo: MutableLiveData<Resource<GetShowOverviewResponse>>
+		get() = _getShowOverviewResponse
 
-	fun getShowDetail(
+	fun getShowOverview(
 		showId : String
 	) = viewModelScope.launch {
 		if (!networkMonitor.hasInternet()) {
-			_getShowDetailResponse.value = NO_INTERNET_ERROR
+			_getShowOverviewResponse.value = NO_INTERNET_ERROR
 			return@launch
 		}
-		_getShowDetailResponse.value = repo.getShowDetail(showId)
+		_getShowOverviewResponse.value = repo.getShowOverview(showId)
 	}
 
 	private var _getPromoteToolsDetailsResponse = MutableLiveData<Resource<GetPromoteToolsDetailsResponse>>()

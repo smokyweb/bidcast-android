@@ -216,7 +216,8 @@ class AddProductFragment : BaseFragment<ScheduleShowViewModel, FragmentAddProduc
 					isRepeat = viewModel.repeatMode.request(),
 					repeatValue = viewModel.repeatType.request(),
 					language = viewModel.primaryLanguage.request(),
-					isExplicit = viewModel.explicitContent.request()
+					isExplicit = viewModel.explicitContent.request(),
+					showId=viewModel.showId?.request()
 				)
 			}
 

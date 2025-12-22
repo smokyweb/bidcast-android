@@ -2,7 +2,6 @@
 <resources>
     <string name="_0_00">$ 0.00</string>
     <string name="_10_00_oz">10,00 унц.</string>
-    <string name="_117_00">$117.00</string>
     <string name="_continue">Продолжить</string>
     <string name="_switch">Переключить</string>
     <string name="about_us">О нас</string>
@@ -12,7 +11,6 @@
     <string name="add_another_product">Добавить еще товар</string>
     <string name="add_more_products">Добавить больше товаров</string>
     <string name="add_product">Добавить товар</string>
-    <string name="add_starting_price_range_if_applicable">Добавить диапазон начальных цен, если применимо</string>
     <string name="add_up_to_8_photos">Добавить до 8 фото</string>
     <string name="add_variants">Добавить варианты</string>
     <string name="added_product">Товар добавлен</string>
@@ -21,13 +19,11 @@
     <string name="auction">Аукцион</string>
     <string name="auction_type">Тип аукциона</string>
     <string name="back">Назад</string>
-    <string name="be_specific_about_what_you_re_auctioning_e_g_quot_vintage_jewelry_collection_quot">Укажите конкретно, что вы выставляете на аукцион (например: «Винтажная коллекция ювелирных изделий»)</string>
     <string name="become_a_bidswipe_seller">Стать продавцом Bidswipe</string>
     <string name="better_promotion_opportunities">Лучшие возможности продвижения</string>
     <string name="bids">Ставки</string>
     <string name="bidswipe_calculates_shipping_fees_based_on_the_product_weight_you_can_adjust_this_later_if_needed">Bidswipe рассчитывает стоимость доставки на основе веса товара. Вы можете изменить её позже при необходимости.</string>
     <string name="bio">О себе</string>
-    <string name="buy_it_now_price">Цена «Купить сейчас»</string>
     <string name="cancel">Отмена</string>
     <string name="caption">Подпись</string>
     <string name="category">Категория</string>
@@ -57,7 +53,6 @@
     <string name="explore">Исследовать</string>
     <string name="finish">Завершить</string>
     <string name="first_name">Имя</string>
-    <string name="flash_sell">Молниеносная распродажа</string>
     <string name="forgot_password">Забыли пароль?</string>
     <string name="full_name">Полное имя</string>
     <string name="goods_examples">Примеры товаров</string>
@@ -65,7 +60,6 @@
     <string name="home">Главная</string>
     <string name="how_it_works">Как это работает</string>
     <string name="i_agree_to_follow_these_guidelines_and_understand_that_violations_may_result_in_account_suspension">Я согласен с этими правилами и понимаю, что нарушение может привести к блокировке аккаунта</string>
-    <string name="include_key_details_like_brand_names_or_unique_features">Укажите ключевые детали, такие как бренды или уникальные особенности</string>
     <string name="invite_friends_and_earn_rewards_when_they_join">Пригласите друзей и получите награды, когда они присоединятся</string>
     <string name="item_weight">Вес товара</string>
     <string name="items">Товары</string>
@@ -75,7 +69,6 @@
     <string name="live_now">Сейчас в эфире</string>
     <string name="login">Войти</string>
     <string name="managing_orders_amp_shipping"><![CDATA[Управление заказами и доставкой]]></string>
-    <string name="mention_if_it_s_a_special_event_e_g_quot_holiday_special_quot">Укажите, если это особое событие (например: «Праздничное спец. предложение»)</string>
     <string name="messages">Сообщения</string>
     <string name="mic_test">Тест микрофона</string>
     <string name="minimum_starting_bid_is_1_00">Минимальная ставка $1.00</string>
@@ -92,8 +85,6 @@
     <string name="password">Пароль</string>
     <string name="pick_a_date_and_time_for_your_live_show">Выберите дату и время вашего шоу</string>
     <string name="please_enter_the_email_address_associated_with_your_account">Пожалуйста, введите Email, связанный с вашим аккаунтом.</string>
-    <string name="privacy_policy">Политика конфиденциальности</string>
-    <string name="products">Продукты</string>
     <string name="publish">Опубликовать</string>
     <string name="purchases">Покупки</string>
     <string name="quantity_available">Доступное количество</string>
@@ -107,7 +98,6 @@
     <string name="save_draft">Сохранить черновик</string>
     <string name="saved_items">Сохраненные товары</string>
     <string name="schedule_your_first_show">Запланируйте ваше первое шоу</string>
-    <string name="select_a_category">Выберите категорию</string>
     <string name="select_auction_type">Выберите тип аукциона</string>
     <string name="select_category">Выберите категорию</string>
     <string name="select_format">Выберите формат</string>
@@ -121,7 +111,6 @@
     <string name="set_schedule">Установить расписание</string>
     <string name="setting_up_your_store">Настройка вашего магазина</string>
     <string name="share_amp_earn_reward"><![CDATA[Поделитесь и заработайте награды]]></string>
-    <string name="shipping_profile">Профиль доставки</string>
     <string name="shop">Магазин</string>
     <string name="show_category">Категория шоу</string>
     <string name="show_details">Детали шоу</string>
@@ -137,7 +126,6 @@
     <string name="success_please_enter_your_new_password_below">Успешно! Введите ваш новый пароль ниже.</string>
     <string name="tap_to_upload_thumbnail">Нажмите, чтобы загрузить миниатюру</string>
     <string name="tell_us_about_yourself">Расскажите о себе</string>
-    <string name="terms_of_service">| Условия обслуживания</string>
     <string name="this_is_my_message">Это мое сообщение</string>
     <string name="time_to_prepare_your_items_properly">Время правильно подготовить ваши товары</string>
     <string name="tips_for_a_great_thumbnail">Советы для отличной миниатюры</string>
@@ -148,7 +136,6 @@
     <string name="verify_code">Проверить код</string>
     <string name="weight_0_00">0.00</string>
     <string name="what_are_you_looking_for">Что вы ищете?</string>
-    <string name="what_you_ll_learn">Вы узнаете:</string>
     <string name="why_scedule_in_advance">Зачем планировать заранее?</string>
     <string name="yes">Да</string>
     <string name="your_referral_link">Ваша реферальная ссылка</string>
@@ -167,7 +154,6 @@
     <string name="make_an_offer">Сделать предложение</string>
     <string name="send_offer">Отправить предложение</string>
     <string name="you_won_t_be_charged_unless_the_seller_accepts_your_offer">С вас не будет списана сумма, пока продавец не примет ваше предложение</string>
-    <string name="verified_seller">Проверенный продавец</string>
     <string name="buy_now">Купить сейчас</string>
     <string name="make_offer">Сделать предложение</string>
     <string name="condition">Состояние</string>
@@ -191,7 +177,6 @@
     <string name="delivery_address">Адрес доставки</string>
     <string name="swiftbid_buyer_protection">Защита покупателя SwiftBid</string>
     <string name="new_product">+ Новый продукт</string>
-    <string name="past_shows">Прошлые шоу</string>
     <string name="new_show">Новое шоу</string>
     <string name="new_orders">Новые заказы</string>
     <string name="completed">Завершено</string>
@@ -199,13 +184,8 @@
     <string name="pending">В ожидании</string>
     <string name="accepted">Принято</string>
     <string name="declined">Отклонено</string>
-    <string name="my_orders">Мои заказы</string>
     <string name="wallet">Кошелек</string>
     <string name="transactions">Транзакции</string>
-    <string name="available_balance">Доступный баланс</string>
-    <string name="available_for_payout">Доступно к выплате</string>
-    <string name="early_payout">Ранняя выплата</string>
-    <string name="you_re_eligible_for_early_payout">Вы имеете право на раннюю выплату</string>
     <string name="payout_history">История выплат</string>
     <string name="delivered">Доставлено</string>
     <string name="returns">Возвраты</string>
@@ -244,17 +224,12 @@
     <string name="save_past_shows">Сохранять прошлые шоу</string>
     <string name="other_settings">Другие настройки</string>
     <string name="activity_status">Статус активности</string>
-    <string name="sync_phone_contact">Синхронизировать контакты телефона</string>
-    <string name="suggest_my_account">Рекомендовать мой аккаунт</string>
     <string name="haptic_feedback">Тактильная обратная связь</string>
     <string name="my_addresses">Мои адреса</string>
     <string name="become_a_trusted_buyer">Стать надежным покупателем</string>
     <string name="expiration_date">Срок действия</string>
     <string name="issue_date">Дата выдачи</string>
-    <string name="recommended">Рекомендуется</string>
     <string name="popular">Популярное</string>
-    <string name="all">Все</string>
-    <string name="choose_sales_format">Выберите формат продаж</string>
     <string name="affiliate_program">Партнёрская программа</string>
     <string name="share_your_link">Поделитесь вашей ссылкой</string>
     <string name="share_invite_link">Поделиться ссылкой-приглашением</string>
@@ -263,15 +238,8 @@
     <string name="seller_status">Статус продавца</string>
     <string name="contact_support">Связаться с поддержкой</string>
     <string name="premier_shop">Премиум магазин</string>
-    <string name="review_process">Процесс проверки</string>
     <string name="promote_tools">Инструменты продвижения</string>
-    <string name="promote_your_shows">Продвигайте ваши шоу</string>
-    <string name="learn_how_to_promote">Узнайте, как продвигать</string>
-    <string name="get_tips_and_strategies_to_grow_your_live_shows">Получите советы и стратегии для роста ваших живых шоу</string>
-    <string name="start_learning">Начать обучение</string>
     <string name="analytics">Аналитика</string>
-    <string name="sales_performance">Продажи и результаты</string>
-    <string name="visitor_analytics">Аналитика посетителей</string>
     <string name="use_product_library">Использовать библиотеку продуктов</string>
     <string name="follow">Подписаться</string>
     <string name="comming_soon">Скоро будет</string>
@@ -295,9 +263,7 @@
     <string name="id_card">ID Card</string>
     <string name="no_payment_method_added">No payment method added</string>
     <string name="manual_verification">Manual Verification</string>
-    <string name="complete_verification">Complete Verification</string>
     <string name="mic">Mic</string>
-    <string name="rotate_camera">Rotate Camera</string>
     <string name="zoom_in">Zoom In</string>
     <string name="promote_show">Promote Show</string>
     <string name="prices_shown_in_usd_actual_boost_duration_may_vary">Prices shown in USD. Actual boost duration may vary.</string>

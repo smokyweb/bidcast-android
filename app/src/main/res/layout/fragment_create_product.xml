@@ -23,6 +23,7 @@
         android:id="@+id/scroll"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:scrollbars="none"
         app:layout_constraintBottom_toTopOf="@id/buttonLayout"
         app:layout_constraintTop_toBottomOf="@id/header">
 
@@ -173,6 +174,12 @@
                 style="@style/inputBoxStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                app:boxCornerRadiusBottomEnd="@dimen/margin"
+                app:boxCornerRadiusBottomStart="@dimen/margin"
+                app:boxCornerRadiusTopEnd="@dimen/margin"
+                app:boxCornerRadiusTopStart="@dimen/margin"
+                app:counterEnabled="true"
+                app:counterMaxLength="1000"
                 android:layout_marginBottom="@dimen/margin">
 
                 <com.google.android.material.textfield.TextInputEditText
@@ -182,7 +189,9 @@
                     android:layout_height="wrap_content"
                     android:gravity="top"
                     android:hint="@string/describe_your_product"
-                    android:minLines="4" />
+                    android:inputType="textMultiLine"
+                    android:maxLines="10"
+                    android:minLines="4"/>
 
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -359,70 +368,76 @@
 
             </com.google.android.material.textfield.TextInputLayout>
 
-            <TextView
-                style="@style/TitleSmall"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/quantity_available" />
-
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:layout_marginBottom="@dimen/margin"
+                android:gravity="center_vertical">
 
-                <com.google.android.material.card.MaterialCardView
-                    android:id="@+id/decreaseQuantity"
+                <TextView
+                    style="@style/TitleMedium"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/quantity_available" />
+
+                <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    app:strokeColor="@color/outlineVariant"
-                    app:strokeWidth="2dp">
+                    android:background="@drawable/card_8_outline"
+                    android:padding="2dp">
 
-
-                    <androidx.appcompat.widget.AppCompatImageView
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/decreaseQuantity"
+                        style="@style/appBtnTrans"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginStart="4dp"
+                        android:minWidth="0dp"
+                        android:minHeight="0dp"
                         android:paddingHorizontal="@dimen/margin"
-                        android:paddingVertical="28dp"
-                        android:src="@drawable/ic_minus" />
+                        android:paddingVertical="4dp"
+                        android:text="-" />
 
-
-                </com.google.android.material.card.MaterialCardView>
-
-                <com.google.android.material.textfield.TextInputLayout
-                    style="@style/inputBoxStyle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="@dimen/margin"
-                    app:boxStrokeWidth="2dp">
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/quantity"
-                        style="@style/inputTextStyle"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:inputType="number"
-                        android:maxLength="2"
-                        android:text="1"
-                        android:textAlignment="center"
-                        android:textSize="18sp" />
-
-                </com.google.android.material.textfield.TextInputLayout>
-
-                <com.google.android.material.card.MaterialCardView
-                    android:id="@+id/increaseQuantity"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    app:strokeColor="@color/outlineVariant"
-                    app:strokeWidth="2dp">
-
-                    <androidx.appcompat.widget.AppCompatImageView
+                    <com.google.android.material.textfield.TextInputLayout
+                        style="@style/inputBoxStyle"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:padding="@dimen/margin"
-                        android:src="@drawable/ic_add"
-                        android:tint="@color/outlineVariant" />
+                        android:layout_marginHorizontal="@dimen/half_margin"
+                        android:minWidth="0dp"
+                        android:minHeight="0dp"
+                        android:paddingHorizontal="0dp"
+                        app:boxStrokeWidthFocused="0dp"
+                        android:paddingVertical="0dp"
+                        app:boxStrokeWidth="0dp">
 
-                </com.google.android.material.card.MaterialCardView>
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/quantity"
+                            style="@style/inputTextStyle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:inputType="number"
+                            android:maxLength="5"
+                            android:minHeight="0dp"
+                            android:padding="0dp"
+                            android:text="1"
+                            android:textAlignment="center"
+                            android:textSize="18sp" />
+
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/increaseQuantity"
+                        style="@style/appBtnTrans"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="4dp"
+                        android:minWidth="0dp"
+                        android:minHeight="0dp"
+                        android:paddingHorizontal="@dimen/margin"
+                        android:paddingVertical="4dp"
+                        android:text="+" />
+                </LinearLayout>
 
             </LinearLayout>
 
@@ -475,26 +490,27 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:visibility="visible"
-        android:weightSum="2"
+        android:weightSum="3"
+        android:padding="@dimen/margin"
         app:layout_constraintBottom_toBottomOf="parent">
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/useProduct"
             style="@style/appBtn"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/margin"
-            android:layout_weight="1"
+            android:layout_marginEnd="@dimen/half_margin"
+            android:layout_weight="2"
             android:paddingHorizontal="@dimen/margin"
             android:text="@string/use_product_library" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/continueBtn"
             style="@style/appBtn"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_margin="@dimen/margin"
             android:layout_weight="1"
+            android:layout_marginStart="@dimen/half_margin"
             android:paddingHorizontal="@dimen/margin"
             android:text="@string/_continue" />
 

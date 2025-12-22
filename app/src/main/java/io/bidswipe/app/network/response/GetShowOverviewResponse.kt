@@ -4,7 +4,7 @@ import com.google.gson.annotations.SerializedName
 import androidx.annotation.Keep
 
 @Keep
-data class GetShowDetailResponse(
+data class GetShowOverviewResponse(
     @SerializedName("data")
     val `data`: Data?,
     @SerializedName("error_type")

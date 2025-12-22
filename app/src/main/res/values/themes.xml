@@ -46,22 +46,6 @@
         <item name="entryChipStyleNew">@style/entryChipStyleNew</item>
     </style>
 
-    <style name="Theme.Bidswipe.NoActionBar" parent="Theme.Bidswipe">
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
-    </style>
-
-    <style name="Theme.Bidswipe.ActionBar" parent="Theme.Bidswipe">
-        <item name="windowActionBar">true</item>
-        <item name="windowNoTitle">false</item>
-        <item name="android:fitsSystemWindows">true</item>
-        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
-        <item name="android:windowIsTranslucent">false</item>
-        <item name="android:windowLayoutInDisplayCutoutMode" tools:targetApi="p">shortEdges</item>
-    </style>
-
-    <style name="Theme.Bidswipe.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
-
     <style name="Theme.Bidswipe.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
     <style name="RemoveSplash" parent="Theme.Bidswipe">

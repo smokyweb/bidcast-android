@@ -58,44 +58,6 @@
         <item name="android:gravity">center_vertical</item>
     </style>
 
-    <style name="textBoxFillDropDown" parent="Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
-        <!--TEXT STYLE-->
-        <item name="android:textAppearance">@style/BodyMedium</item>
-        <item name="android:textColor">@color/onBackground</item>
-
-        <!--TEXT BOX STYLE-->
-        <item name="boxStrokeColor">@color/input_box_stroke_color_state</item>
-        <item name="boxBackgroundColor">@color/surface</item>
-        <item name="errorEnabled">false</item>
-        <item name="hintEnabled">false</item>
-        <item name="boxStrokeWidth">1dp</item>
-        <item name="boxStrokeWidthFocused">1dp</item>
-        <item name="boxCornerRadiusBottomStart">24dp</item>
-        <item name="boxCornerRadiusBottomEnd">24dp</item>
-        <item name="boxCornerRadiusTopStart">24dp</item>
-        <item name="boxCornerRadiusTopEnd">24dp</item>
-
-        <!--MISC. COLOR-->
-        <item name="endIconTint">@color/primary</item>
-        <item name="errorTextAppearance">@style/BodyMedium</item>
-        <item name="android:textColorHint">@color/onBackground</item>
-        <item name="boxStrokeErrorColor">@color/error</item>
-        <item name="hintTextColor">@color/onBackground</item>
-        <item name="startIconTint">@color/primary</item>
-        <item name="passwordToggleTint">@color/onBackground</item>
-        <item name="hintTextAppearance">@style/BodyMedium</item>
-        <item name="counterTextAppearance">@style/LabelMedium</item>
-        <item name="counterOverflowTextAppearance">@style/LabelMedium</item>
-
-        <!--TEXT CONTROLLER COLOR-->
-        <item name="colorControlActivated">@color/primary</item>
-        <item name="colorControlNormal">@color/primary</item>
-        <item name="colorControlHighlight">@color/primary</item>
-        <item name="android:colorControlActivated">@color/primary</item>
-        <item name="android:colorControlNormal">@color/primary</item>
-        <item name="android:colorControlHighlight">@color/primary</item>
-    </style>
-
     <!--BUTTON STYLES-->
     <style name="appBtn" parent="Widget.Material3.Button.UnelevatedButton">
         <item name="cornerRadius">50dp</item>
@@ -272,21 +234,6 @@
         <item name="shapeAppearance">@style/ShapeAppearance.Material3.Tooltip</item>
     </style>
 
-    <style name="sliderStyle" parent="Widget.Material3.Slider">
-        <item name="thumbColor">@color/primary</item>
-        <item name="trackHeight">10dp</item>
-        <item name="thumbRadius">12dp</item>
-        <item name="thumbStrokeColor">@color/surface</item>
-        <item name="thumbStrokeWidth">2dp</item>
-        <item name="trackColorActive">@color/primary</item>
-        <item name="trackColorInactive">@color/primaryContainer</item>
-        <!--        <item name="labelStyle">@style/MyTooltip</item>-->
-    </style>
-
-    <style name="MyTooltip" parent="Widget.MaterialComponents.Tooltip">
-        <item name="backgroundTint">@color/primary</item>
-    </style>
-
     <style name="progressStyle" parent="Widget.Material3.LinearProgressIndicator">
         <item name="android:progressTint">@color/secondary</item>
         <item name="indicatorColor">@color/secondary</item>
@@ -295,13 +242,6 @@
         <item name="trackThickness">12dp</item>
         <item name="android:progress">0</item>
         <item name="android:max">100</item>
-    </style>
-
-    <style name="calenderRangeStyle" parent="ThemeOverlay.MaterialComponents.MaterialCalendar">
-        <item name="materialCalendarStyle">@style/calendarStyle</item>
-        <item name="materialCalendarYearNavigationButton">@style/calendarYearButton</item>
-        <item name="materialCalendarMonthNavigationButton">@style/calendarYearButton</item>
-        <item name="materialCalendarHeaderToggleButton">@style/calendarToggleButton</item>
     </style>
 
     <style name="calendarStyle">
@@ -330,16 +270,6 @@
         <item name="elevation">0dp</item>
         &lt;!&ndash;		<item name="rangeFillColor">@color/primaryContainer</item>&ndash;&gt;
     </style>-->
-
-    <style name="calendarYearButton" parent="Widget.MaterialComponents.Button.TextButton.Dialog.Flush">
-        <item name="android:textColor">@color/onBackground</item>
-        <item name="android:textAppearance">@style/BodyLarge</item>
-        <item name="iconTint">@color/onBackground</item>
-    </style>
-
-    <style name="calendarToggleButton" parent="Base.Widget.MaterialComponents.MaterialCalendar.HeaderToggleButton">
-        <item name="android:visibility">gone</item>
-    </style>
 
     <style name="bottomNavigationStyle" parent="Widget.Material3.BottomNavigationView">
         <item name="itemRippleColor">@color/primary</item>

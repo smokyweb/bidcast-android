@@ -1,5 +1,6 @@
 package io.bidswipe.app.controller
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import io.bidswipe.app.base.BaseAdapter
@@ -27,8 +28,12 @@ class ShowListingAdapter(
 	) {
 		with(holder) {
 
-			bind.root.setHapticClickListener {
+			bind.click.setHapticClickListener {
 				mClick.itemClick(position, "click")
+			}
+
+			bind.edit.setHapticClickListener {
+				mClick.itemClick(position, "edit")
 			}
 
 			bind.name.text = item?.title?.asCapital()

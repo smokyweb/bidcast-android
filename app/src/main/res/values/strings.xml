@@ -1,7 +1,6 @@
 <resources>
     <string name="_0_00">0.00</string>
     <string name="_10_00_oz">10.00 Oz</string>
-    <string name="_117_00">$117.00</string>
     <string name="_continue">Continue</string>
     <string name="_switch">Switch</string>
     <string name="about_us">About Us</string>
@@ -11,7 +10,6 @@
     <string name="add_another_product">Add another Product</string>
     <string name="add_more_products">Add More Products</string>
     <string name="add_product">Add Product</string>
-    <string name="add_starting_price_range_if_applicable">Add starting price range if applicable</string>
     <string name="add_up_to_8_photos">Add up to 8 photos</string>
     <string name="add_variants">Add Variants</string>
     <string name="added_product">Added Product</string>
@@ -20,21 +18,16 @@
     <string name="auction">Auction</string>
     <string name="auction_type">Auction Type</string>
     <string name="back">Back</string>
-    <string name="be_specific_about_what_you_re_auctioning_e_g_quot_vintage_jewelry_collection_quot">Be specific about what you\'re auctioning (e.g., &quot;Vintage Jewelry Collection&quot;)</string>
     <string name="become_a_bidswipe_seller">Become a Bidswipe Seller</string>
     <string name="better_promotion_opportunities">Better promotion opportunities</string>
     <string name="bids">Bids</string>
 
     <string name="bidswipe_calculates_shipping_fees_based_on_the_product_weight_you_can_adjust_this_later_if_needed">Bidswipe calculates shipping fees based on the product weight. You can adjust this later if needed.</string>
     <string name="bio">Bio</string>
-    <string name="buy_it_now_price">Buy It Now Price</string>
     <string name="cancel">Cancel</string>
     <string name="caption">Caption</string>
     <string name="play_pause">Play/Pause</string>
-    <string name="mute">Mute</string>
     <string name="unmute">Unmute</string>
-    <string name="subtitles_on">Subtitles On</string>
-    <string name="subtitles_off">Subtitles Off</string>
     <string name="category">Category</string>
     <string name="confirm_password">Confirm Password</string>
     <string name="continue_to_next_step">Continue to Next Step</string>
@@ -63,7 +56,6 @@
     <string name="explore">Explore</string>
     <string name="finish">Finish</string>
     <string name="first_name">First Name</string>
-    <string name="flash_sell">Flash Sell</string>
     <string name="forgot_password">Forgot Password</string>
     <string name="full_name">Full Name</string>
     <string name="goods_examples">Good Examples</string>
@@ -71,7 +63,6 @@
     <string name="home">Home</string>
     <string name="how_it_works">How It Works</string>
     <string name="i_agree_to_follow_these_guidelines_and_understand_that_violations_may_result_in_account_suspension">I agree to follow these guidelines and understand that violations may result in account suspension</string>
-    <string name="include_key_details_like_brand_names_or_unique_features">Include key details like brand names or unique features</string>
     <string name="invite_friends_and_earn_rewards_when_they_join">Invite friends and earn rewards when they join</string>
     <string name="item_weight">Item Weight</string>
     <string name="items">Items</string>
@@ -81,7 +72,6 @@
     <string name="live_now">Live Now</string>
     <string name="login">Login</string>
     <string name="managing_orders_amp_shipping"><![CDATA[Managing orders & shipping]]></string>
-    <string name="mention_if_it_s_a_special_event_e_g_quot_holiday_special_quot">Mention if it\'s a special event (e.g., &quot;Holiday Special&quot;)</string>
     <string name="messages">Messages</string>
     <string name="mic_test">Mic Test</string>
     <string name="minimum_starting_bid_is_1_00">Minimum starting bid is $1.00</string>
@@ -100,8 +90,6 @@
     <string name="for_you_tile">For You</string>
     <string name="see_all_categories_tile">See All&#10;Categories</string>
     <string name="please_enter_the_email_address_associated_with_your_account">Please enter the email address associated with your account.</string>
-    <string name="privacy_policy">Privacy Policy </string>
-    <string name="products">Products</string>
     <string name="publish">Publish</string>
     <string name="purchases">Purchases</string>
     <string name="quantity_available">Quantity Available</string>
@@ -115,7 +103,6 @@
     <string name="save_draft">Save Draft</string>
     <string name="saved_items">Saved Items</string>
     <string name="schedule_your_first_show">Schedule your first show</string>
-    <string name="select_a_category">Select a Category</string>
     <string name="select_auction_type">Select auction type</string>
     <string name="select_category">Select Category</string>
     <string name="select_format">Select Format</string>
@@ -129,7 +116,6 @@
     <string name="set_schedule">Set Schedule</string>
     <string name="setting_up_your_store">Setting up your store</string>
     <string name="share_amp_earn_reward"><![CDATA[Share & Earn Reward]]></string>
-    <string name="shipping_profile">Shipping Profile</string>
     <string name="shop">Shop</string>
     <string name="show_category">Show Category</string>
     <string name="show_details">Show Details</string>
@@ -145,7 +131,6 @@
     <string name="success_please_enter_your_new_password_below">Success! Please enter your new password below.</string>
     <string name="tap_to_upload_thumbnail">Tap to upload thumbnail</string>
     <string name="tell_us_about_yourself">Tell us about yourself</string>
-    <string name="terms_of_service"> | Terms of Service</string>
     <string name="this_is_my_message">This is my message</string>
     <string name="time_to_prepare_your_items_properly">Time to prepare your items properly</string>
     <string name="tips_for_a_great_thumbnail">Tips for a Great Thumbnail</string>
@@ -156,7 +141,6 @@
     <string name="verify_code">Verify Code</string>
     <string name="weight_0_00">0.00</string>
     <string name="what_are_you_looking_for">What are you looking for?</string>
-    <string name="what_you_ll_learn">What you\'ll learn:</string>
     <string name="why_scedule_in_advance">Why Schedule in Advance?</string>
     <string name="yes">Yes</string>
     <string name="your_referral_link">Your Referral Link</string>
@@ -175,7 +159,6 @@
     <string name="make_an_offer">Make an Offer</string>
     <string name="send_offer">Send Offer</string>
     <string name="you_won_t_be_charged_unless_the_seller_accepts_your_offer">You won\'t be charged unless the seller accepts your offer</string>
-    <string name="verified_seller">Verified Seller</string>
     <string name="buy_now">Buy Now</string>
     <string name="make_offer">Make Offer</string>
     <string name="condition">Condition</string>
@@ -188,13 +171,8 @@
     <string name="pending">Pending</string>
     <string name="accepted">Accepted</string>
     <string name="declined">Declined</string>
-    <string name="my_orders">My Orders</string>
     <string name="wallet">Wallet</string>
     <string name="transactions">Transactions</string>
-    <string name="available_balance">Available Balance</string>
-    <string name="available_for_payout">Available for Payout</string>
-    <string name="early_payout">Early Payout</string>
-    <string name="you_re_eligible_for_early_payout">You\'re eligible for early payout</string>
     <string name="payout_history">Payout History</string>
     <string name="send_as_a_gift">Send as a gift?</string>
     <string name="payment_method">Payment Method</string>
@@ -213,7 +191,6 @@
     <string name="delivery_address">Delivery Address</string>
     <string name="swiftbid_buyer_protection">SwiftBid Buyer Protection</string>
     <string name="new_product">+ New Product</string>
-    <string name="past_shows">Past Shows</string>
     <string name="new_show">New Show</string>
     <string name="delivered">Delivered</string>
     <string name="returns">Returns</string>
@@ -252,17 +229,12 @@
     <string name="save_past_shows">Save Past Shows</string>
     <string name="other_settings">Other Settings</string>
     <string name="activity_status">Activity Status</string>
-    <string name="sync_phone_contact">Sync Phone Contact</string>
-    <string name="suggest_my_account">Suggest My Account</string>
     <string name="haptic_feedback">Haptic Feedback</string>
     <string name="my_addresses">My Addresses</string>
     <string name="become_a_trusted_buyer">Become a Trusted Buyer</string>
     <string name="expiration_date">Expiration Date</string>
     <string name="issue_date">Issue Date</string>
-    <string name="recommended">Recommended</string>
     <string name="popular">Popular</string>
-    <string name="all">All</string>
-    <string name="choose_sales_format">Choose Sales Format</string>
     <string name="affiliate_program">Affiliate Program</string>
     <string name="share_your_link">Share Your Link</string>
     <string name="share_invite_link">Share Invite Link</string>
@@ -271,15 +243,8 @@
     <string name="seller_status">Seller Status</string>
     <string name="contact_support">Contact Support</string>
     <string name="premier_shop">Premier Shop</string>
-    <string name="review_process">Review Process</string>
     <string name="promote_tools">Promote Tools</string>
-    <string name="promote_your_shows">Promote Your Shows</string>
-    <string name="learn_how_to_promote">Learn How to Promote</string>
-    <string name="get_tips_and_strategies_to_grow_your_live_shows">Get tips and strategies to grow your live shows</string>
-    <string name="start_learning">Start Learning</string>
     <string name="analytics">Analytics</string>
-    <string name="sales_performance">Sales Performance</string>
-    <string name="visitor_analytics">Visitor Analytics</string>
     <string name="use_product_library">Use Product Library</string>
     <string name="follow">Follow</string>
     <string name="comming_soon">Coming Soon</string>
@@ -296,97 +261,6 @@
     <string name="expiry_date">Expiry Date</string>
     <string name="cvv">CVV</string>
     <string name="no_offers_found">No offers found</string>
-    <string name="title_activity_scrolling">ScrollingActivity</string>
-    <string name="large_text">
-        "Material is the metaphor.\n\n"
-
-        "A material metaphor is the unifying theory of a rationalized space and a system of motion."
-        "The material is grounded in tactile reality, inspired by the study of paper and ink, yet "
-        "technologically advanced and open to imagination and magic.\n"
-        "Surfaces and edges of the material provide visual cues that are grounded in reality. The "
-        "use of familiar tactile attributes helps users quickly understand affordances. Yet the "
-        "flexibility of the material creates new affordances that supercede those in the physical "
-        "world, without breaking the rules of physics.\n"
-        "The fundamentals of light, surface, and movement are key to conveying how objects move, "
-        "interact, and exist in space and in relation to each other. Realistic lighting shows "
-        "seams, divides space, and indicates moving parts.\n\n"
-
-        "Bold, graphic, intentional.\n\n"
-
-        "The foundational elements of print based design typography, grids, space, scale, color, "
-        "and use of imagery guide visual treatments. These elements do far more than please the "
-        "eye. They create hierarchy, meaning, and focus. Deliberate color choices, edge to edge "
-        "imagery, large scale typography, and intentional white space create a bold and graphic "
-        "interface that immerse the user in the experience.\n"
-        "An emphasis on user actions makes core functionality immediately apparent and provides "
-        "waypoints for the user.\n\n"
-
-        "Motion provides meaning.\n\n"
-
-        "Motion respects and reinforces the user as the prime mover. Primary user actions are "
-        "inflection points that initiate motion, transforming the whole design.\n"
-        "All action takes place in a single environment. Objects are presented to the user without "
-        "breaking the continuity of experience even as they transform and reorganize.\n"
-        "Motion is meaningful and appropriate, serving to focus attention and maintain continuity. "
-        "Feedback is subtle yet clear. Transitions are efﬁcient yet coherent.\n\n"
-
-        "3D world.\n\n"
-
-        "The material environment is a 3D space, which means all objects have x, y, and z "
-        "dimensions. The z-axis is perpendicularly aligned to the plane of the display, with the "
-        "positive z-axis extending towards the viewer. Every sheet of material occupies a single "
-        "position along the z-axis and has a standard 1dp thickness.\n"
-        "On the web, the z-axis is used for layering and not for perspective. The 3D world is "
-        "emulated by manipulating the y-axis.\n\n"
-
-        "Light and shadow.\n\n"
-
-        "Within the material environment, virtual lights illuminate the scene. Key lights create "
-        "directional shadows, while ambient light creates soft shadows from all angles.\n"
-        "Shadows in the material environment are cast by these two light sources. In Android "
-        "development, shadows occur when light sources are blocked by sheets of material at "
-        "various positions along the z-axis. On the web, shadows are depicted by manipulating the "
-        "y-axis only. The following example shows the card with a height of 6dp.\n\n"
-
-        "Resting elevation.\n\n"
-
-        "All material objects, regardless of size, have a resting elevation, or default elevation "
-        "that does not change. If an object changes elevation, it should return to its resting "
-        "elevation as soon as possible.\n\n"
-
-        "Component elevations.\n\n"
-
-        "The resting elevation for a component type is consistent across apps (e.g., FAB elevation "
-        "does not vary from 6dp in one app to 16dp in another app).\n"
-        "Components may have different resting elevations across platforms, depending on the depth "
-        "of the environment (e.g., TV has a greater depth than mobile or desktop).\n\n"
-
-        "Responsive elevation and dynamic elevation offsets.\n\n"
-
-        "Some component types have responsive elevation, meaning they change elevation in response "
-        "to user input (e.g., normal, focused, and pressed) or system events. These elevation "
-        "changes are consistently implemented using dynamic elevation offsets.\n"
-        "Dynamic elevation offsets are the goal elevation that a component moves towards, relative "
-        "to the component’s resting state. They ensure that elevation changes are consistent "
-        "across actions and component types. For example, all components that lift on press have "
-        "the same elevation change relative to their resting elevation.\n"
-        "Once the input event is completed or cancelled, the component will return to its resting "
-        "elevation.\n\n"
-
-        "Avoiding elevation interference.\n\n"
-
-        "Components with responsive elevations may encounter other components as they move between "
-        "their resting elevations and dynamic elevation offsets. Because material cannot pass "
-        "through other material, components avoid interfering with one another any number of ways, "
-        "whether on a per component basis or using the entire app layout.\n"
-        "On a component level, components can move or be removed before they cause interference. "
-        "For example, a floating action button (FAB) can disappear or move off screen before a "
-        "user picks up a card, or it can move if a snackbar appears.\n"
-        "On the layout level, design your app layout to minimize opportunities for interference. "
-        "For example, position the FAB to one side of stream of a cards so the FAB won’t interfere "
-        "when a user tries to pick up one of cards.\n\n"
-    </string>
-    <string name="action_settings">Settings</string>
     <string name="verification_progress">Verification Progress</string>
     <string name="id_verification">Id Verification</string>
     <string name="upload_your_id_card_amp_take_a_selfie"><![CDATA[Upload your ID card & take a selfie]]></string>
@@ -394,10 +268,6 @@
     <string name="id_card">ID Card</string>
     <string name="no_payment_method_added">No payment method added</string>
     <string name="manual_verification">Manual Verification</string>
-    <string name="complete_verification">Complete Verification</string>
-    <string name="more">More</string>
-    <string name="promote">Promote</string>
-    <string name="clip">Clip</string>
     <string name="share">Share</string>
     <string name="start_now">Start Now</string>
     <string name="say_something">Say Something...</string>
@@ -407,7 +277,6 @@
     <string name="end_show">End Show</string>
     <string name="broadcasting_options">Broadcasting Options</string>
     <string name="mic">Mic</string>
-    <string name="rotate_camera">Rotate Camera</string>
     <string name="zoom_in">Zoom In</string>
     <string name="promote_show">Promote Show</string>
     <string name="prices_shown_in_usd_actual_boost_duration_may_vary">Prices shown in USD. Actual boost duration may vary.</string>
@@ -421,19 +290,10 @@
     <string name="poll_question">Poll Question</string>
     <string name="enter_poll_question">Enter your poll question here</string>
     <string name="poll_options">Poll Options</string>
-    <string name="option_1">Option 1</string>
-    <string name="option_2">Option 2</string>
-    <string name="option_3_optional">Option 3 (Optional)</string>
-    <string name="option_4_optional">Option 4 (Optional)</string>
-    <string name="enter_option_1">Enter option 1</string>
-    <string name="enter_option_2">Enter option 2</string>
-    <string name="enter_option_3">Enter option 3</string>
-    <string name="enter_option_4">Enter option 4</string>
     <string name="poll_duration">Poll Duration</string>
     <string name="select_duration">Select duration (minutes)</string>
     <string name="create_a_raid">Create a raid</string>
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="enter_phone_number">Enter Phone Number</string>
     <string name="select_shipping_address">Select Shipping Address</string>
     <string name="select">Select</string>
@@ -470,44 +330,7 @@
     <!-- Strings used for fragments for navigation -->
     <string name="first_fragment_label">First Fragment</string>
     <string name="second_fragment_label">Second Fragment</string>
-    <string name="previous">Previous</string>
 
-    <string name="lorem_ipsum">
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam in scelerisque sem. Mauris
-        volutpat, dolor id interdum ullamcorper, risus dolor egestas lectus, sit amet mattis purus
-        dui nec risus. Maecenas non sodales nisi, vel dictum dolor. Class aptent taciti sociosqu ad
-        litora torquent per conubia nostra, per inceptos himenaeos. Suspendisse blandit eleifend
-        diam, vel rutrum tellus vulputate quis. Aliquam eget libero aliquet, imperdiet nisl a,
-        ornare ex. Sed rhoncus est ut libero porta lobortis. Fusce in dictum tellus.\n\n
-        Suspendisse interdum ornare ante. Aliquam nec cursus lorem. Morbi id magna felis. Vivamus
-        egestas, est a condimentum egestas, turpis nisl iaculis ipsum, in dictum tellus dolor sed
-        neque. Morbi tellus erat, dapibus ut sem a, iaculis tincidunt dui. Interdum et malesuada
-        fames ac ante ipsum primis in faucibus. Curabitur et eros porttitor, ultricies urna vitae,
-        molestie nibh. Phasellus at commodo eros, non aliquet metus. Sed maximus nisl nec dolor
-        bibendum, vel congue leo egestas.\n\n
-        Sed interdum tortor nibh, in sagittis risus mollis quis. Curabitur mi odio, condimentum sit
-        amet auctor at, mollis non turpis. Nullam pretium libero vestibulum, finibus orci vel,
-        molestie quam. Fusce blandit tincidunt nulla, quis sollicitudin libero facilisis et. Integer
-        interdum nunc ligula, et fermentum metus hendrerit id. Vestibulum lectus felis, dictum at
-        lacinia sit amet, tristique id quam. Cras eu consequat dui. Suspendisse sodales nunc ligula,
-        in lobortis sem porta sed. Integer id ultrices magna, in luctus elit. Sed a pellentesque
-        est.\n\n
-        Aenean nunc velit, lacinia sed dolor sed, ultrices viverra nulla. Etiam a venenatis nibh.
-        Morbi laoreet, tortor sed facilisis varius, nibh orci rhoncus nulla, id elementum leo dui
-        non lorem. Nam mollis ipsum quis auctor varius. Quisque elementum eu libero sed commodo. In
-        eros nisl, imperdiet vel imperdiet et, scelerisque a mauris. Pellentesque varius ex nunc,
-        quis imperdiet eros placerat ac. Duis finibus orci et est auctor tincidunt. Sed non viverra
-        ipsum. Nunc quis augue egestas, cursus lorem at, molestie sem. Morbi a consectetur ipsum, a
-        placerat diam. Etiam vulputate dignissim convallis. Integer faucibus mauris sit amet finibus
-        convallis.\n\n
-        Phasellus in aliquet mi. Pellentesque habitant morbi tristique senectus et netus et
-        malesuada fames ac turpis egestas. In volutpat arcu ut felis sagittis, in finibus massa
-        gravida. Pellentesque id tellus orci. Integer dictum, lorem sed efficitur ullamcorper,
-        libero justo consectetur ipsum, in mollis nisl ex sed nisl. Donec maximus ullamcorper
-        sodales. Praesent bibendum rhoncus tellus nec feugiat. In a ornare nulla. Donec rhoncus
-        libero vel nunc consequat, quis tincidunt nisl eleifend. Cras bibendum enim a justo luctus
-        vestibulum. Fusce dictum libero quis erat maximus, vitae volutpat diam dignissim.
-    </string>
     <string name="confirm">Confirm</string>
     <string name="select_sub_categories_based_on_the_categories_you_chose_on_the_previous_page">Select Sub Categories based on the Categories you chose on the previous page</string>
     <string name="choose_the_categories_you_re_interested_in_to_watch_related_shows">Choose the categories you’re interested in to watch related shows.</string>
@@ -515,11 +338,9 @@
     <string name="more_potential_buyers_can_plan_to_attend">More potential buyers can plan to attend</string>
     <string name="enter_referral_code">Enter Referral Code</string>
     <string name="play_video">Play video</string>
-    <string name="video_thumbnail">Video thumbnail</string>
     <string name="send_tip">Send Tip</string>
     <string name="product_deleted">Product Deleted</string>
     <string name="product_no_longer_available">This product is no longer available</string>
-    <string name="deleted_product_message">The seller has removed this product</string>
     <string name="overview">Overview</string>
     <string name="watch_vod">Watch VOD</string>
     <string name="enable_free_pickup">Enable Free Pickup</string>

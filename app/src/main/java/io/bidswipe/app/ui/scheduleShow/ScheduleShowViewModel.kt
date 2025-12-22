@@ -17,6 +17,8 @@ import io.bidswipe.app.network.response.GetAuctionTypeResponse
 import io.bidswipe.app.network.response.GetCategoryResponse
 import io.bidswipe.app.network.response.GetMailClassesResponse
 import io.bidswipe.app.network.response.GetProductsResponse
+import io.bidswipe.app.network.response.GetShowDetailsResponse
+import io.bidswipe.app.network.response.GetShowOverviewResponse
 import io.bidswipe.app.network.response.StoreProductMetaResponse
 import io.bidswipe.app.utils.Const.NO_INTERNET_ERROR
 import io.bidswipe.app.utils.NetworkMonitor
@@ -33,6 +35,7 @@ class ScheduleShowViewModel @Inject constructor(
 
     var currentProducts = mutableListOf<LiveShowModel.Product>()
 
+    var showId :String?= null
     var showTitle = ""
     var date = ""
     var time = ""
@@ -83,6 +86,7 @@ class ScheduleShowViewModel @Inject constructor(
         repeatValue: RequestBody?,
         language: RequestBody?,
         isExplicit: RequestBody?,
+        showId: RequestBody? = null
     ) = viewModelScope.launch {
         if (!networkMonitor.hasInternet()) {
             _storeScheduleShowResponse.value = NO_INTERNET_ERROR
@@ -100,7 +104,8 @@ class ScheduleShowViewModel @Inject constructor(
             isRepeat,
             repeatValue,
             language,
-            isExplicit
+            isExplicit,
+            showId
         )
     }
 
@@ -252,12 +257,28 @@ class ScheduleShowViewModel @Inject constructor(
 
     fun checkScheduleShow(
         date: RequestBody?,
-        time:RequestBody?) = viewModelScope.launch {
+        time:RequestBody?,
+        showId: RequestBody?=null
+        ) = viewModelScope.launch {
         if (!networkMonitor.hasInternet()) {
             _checkScheduleShowResponse.value = NO_INTERNET_ERROR
             return@launch
         }
-        _checkScheduleShowResponse.value = repo.checkScheduleShow(date,time)
+        _checkScheduleShowResponse.value = repo.checkScheduleShow(date,time,showId)
+    }
+
+ private var _getShowDetailsResponse = MutableLiveData<Resource<GetShowDetailsResponse>>()
+    val getShowDetailsRepo: MutableLiveData<Resource<GetShowDetailsResponse>>
+        get() = _getShowDetailsResponse
+
+    fun getShowDetails(
+        showId: String
+    ) = viewModelScope.launch {
+        if (!networkMonitor.hasInternet()) {
+            _getShowDetailsResponse.value = NO_INTERNET_ERROR
+            return@launch
+        }
+        _getShowDetailsResponse.value = repo.getShowDetails(showId)
     }
 
 }

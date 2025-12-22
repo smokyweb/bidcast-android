@@ -26,7 +26,10 @@ fun Context.toSellerShow(time: String?, showData: LiveShowModel?) = Intent(this,
 	.putExtra("time", time)
 	.putExtra("showData", showData)
 
-fun Context.toScheduleShow(from: String? = "") = Intent(this, ScheduleShowActivity::class.java).putExtra("from", from)
+fun Context.toScheduleShow(from: String? = "",showId:String?="") = Intent(this, ScheduleShowActivity::class.java).apply {
+	putExtra("from", from)
+	putExtra("showId", showId)
+}
 
 fun Context.goToAddCard(from: String? = "") = Intent(this, AddPaymentCardActivity::class.java).putExtra("from", from)
 

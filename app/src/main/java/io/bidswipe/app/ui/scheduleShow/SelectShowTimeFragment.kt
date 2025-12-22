@@ -25,6 +25,7 @@ import io.bidswipe.app.utils.draw
 import io.bidswipe.app.utils.finish
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request
+import io.bidswipe.app.utils.runSafe
 import io.bidswipe.app.utils.setHapticClickListener
 import java.util.Calendar
 import java.util.Locale
@@ -68,6 +69,17 @@ class SelectShowTimeFragment :
                 Utils.getDateFromTimestamp(calendar.timeInMillis)
             )
             viewModel.date = date.toString()
+        } else {
+            runSafe {
+                val date = viewModel.date.split("-")
+                val calendar = Calendar.getInstance()
+                calendar.set(date[0].toInt(), date[1].toInt() - 1, date[2].toInt())
+
+                val isFuture = calendar.after(Calendar.getInstance())
+                if (isFuture) {
+                    bind.calenderView.setDate(calendar)
+                }
+            }
         }
 
         bind.calenderView.setOnCalendarDayClickListener(object : OnCalendarDayClickListener {
@@ -158,7 +170,7 @@ class SelectShowTimeFragment :
 
                 else -> {
                     bind.loader.isVisible = true
-                    viewModel.checkScheduleShow(viewModel.date.request(), viewModel.time.request())
+                    viewModel.checkScheduleShow(viewModel.date.request(), viewModel.time.request(),viewModel.showId?.request())
                 }
             }
         }

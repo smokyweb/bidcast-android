@@ -355,7 +355,7 @@
                 android:layout_marginHorizontal="@dimen/margin"
                 android:layout_marginTop="@dimen/margin"
                 android:layout_marginBottom="@dimen/half_margin"
-                android:text="Policy Standards" />
+                android:text="Policy Standing" />
 
             <LinearLayout
                 style="@style/shadowStyle"

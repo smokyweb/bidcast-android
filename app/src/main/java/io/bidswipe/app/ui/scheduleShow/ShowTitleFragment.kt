@@ -16,6 +16,7 @@ import io.bidswipe.app.network.Resource
 import io.bidswipe.app.network.response.GetAllTipsResponse
 import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.utils.Alerts
+import io.bidswipe.app.utils.Utils
 import io.bidswipe.app.utils.finish
 import io.bidswipe.app.utils.hideKeyboard
 import io.bidswipe.app.utils.ids
@@ -27,109 +28,165 @@ import io.bidswipe.app.utils.value
 
 class ShowTitleFragment : BaseFragment<ScheduleShowViewModel, FragmentShowTitleBinding>() {
 
-	override fun getModel(): Class<ScheduleShowViewModel> = ScheduleShowViewModel::class.java
+    override fun getModel(): Class<ScheduleShowViewModel> = ScheduleShowViewModel::class.java
 
-	override fun getBind(inflater: LayoutInflater, view: ViewGroup?) = FragmentShowTitleBinding.inflate(inflater, view, false)
+    override fun getBind(inflater: LayoutInflater, view: ViewGroup?) = FragmentShowTitleBinding.inflate(inflater, view, false)
 
-	private lateinit var titleAdapter: TitleAdapter
-	private lateinit var exampleAdapter: ExampleAdapter
+    private lateinit var titleAdapter: TitleAdapter
+    private lateinit var exampleAdapter: ExampleAdapter
 
-	private var titleList = mutableListOf<GetAllTipsResponse.Data.Tip?>()
-	private var exampleList = mutableListOf<String?>()
+    private var titleList = mutableListOf<GetAllTipsResponse.Data.Tip?>()
+    private var exampleList = mutableListOf<String?>()
 
-	@SuppressLint("NotifyDataSetChanged")
-	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-		super.onViewCreated(view, savedInstanceState)
+    @SuppressLint("NotifyDataSetChanged")
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
-		val from = activity?.intent?.getStringExtra("from")
+        val from = activity?.intent?.getStringExtra("from")
 
-		bind.header.onBackClick {
-			finish()
-		}
+        if (from == "dash") {
+            viewModel.showId = activity?.intent?.getStringExtra("showId")
+            if (!viewModel.showId.isNullOrEmpty()) {
+                viewModel.getShowDetails(viewModel.showId.toString())
+            }
+        }
 
-		bind.layout.setHapticClickListener {
-			hideKeyboard(it)
-		}
+        bind.header.onBackClick {
+            finish()
+        }
 
-		titleAdapter = TitleAdapter(titleList)
-		bind.recycler.adapter = titleAdapter
+        bind.layout.setHapticClickListener {
+            hideKeyboard(it)
+        }
 
-		exampleAdapter = ExampleAdapter(exampleList)
-		bind.exampleRecycler.adapter = exampleAdapter
+        titleAdapter = TitleAdapter(titleList)
+        bind.recycler.adapter = titleAdapter
 
-		bind.continueBtn.setHapticClickListener {
+        exampleAdapter = ExampleAdapter(exampleList)
+        bind.exampleRecycler.adapter = exampleAdapter
 
-			when {
+        bind.continueBtn.setHapticClickListener {
 
-				bind.showTitle.value().isEmpty() -> {
-					Alerts.error(mCtx, "Please enter the show title")
-					bind.showTitle.requestFocus()
-					showKeyboard(bind.showTitle)
-				}
+            when {
 
-				else -> {
-					viewModel.showTitle = bind.showTitle.value()
-					hideKeyboard(it)
+                bind.showTitle.value().isEmpty() -> {
+                    Alerts.error(mCtx, "Please enter the show title")
+                    bind.showTitle.requestFocus()
+                    showKeyboard(bind.showTitle)
+                }
 
-					if (from == "tips" || from == "showTutorial") {
-						findNavController().navigate(ids.goToSelectCategoryFragment)
-					} else {
-						findNavController().navigate(ids.goToSelectShowTimeFragment)
-					}
-				}
-			}
+                else -> {
+                    viewModel.showTitle = bind.showTitle.value()
+                    hideKeyboard(it)
 
-		}
+                    if (from == "tips" || from == "showTutorial") {
+                        findNavController().navigate(ids.goToSelectCategoryFragment)
+                    } else {
+                        findNavController().navigate(ids.goToSelectShowTimeFragment)
+                    }
+                }
+            }
 
-		bind.loader.isVisible = true
+        }
 
-		viewModel.getAllTips("title".request())
+        bind.loader.isVisible = true
 
-		viewModel.getAllTipsRepo.observe(viewLifecycleOwner) {
-			when (it) {
-				is Resource.Success -> {
-					bind.loader.isVisible = false
+        viewModel.getAllTips("title".request())
+        viewModel.getAllTipsRepo.observe(viewLifecycleOwner) {
+            when (it) {
+                is Resource.Success -> {
+                    bind.loader.isVisible = false
 
-					val mData = it.value.data
-					titleList.clear()
-					exampleList.clear()
+                    val mData = it.value.data
+                    titleList.clear()
+                    exampleList.clear()
 
-					mData?.tips?.forEach { tip ->
-						titleList.add(tip)
-					}
+                    mData?.tips?.forEach { tip ->
+                        titleList.add(tip)
+                    }
 
-					mData?.example?.forEach { example ->
-						exampleList.add(example)
-					}
+                    mData?.example?.forEach { example ->
+                        exampleList.add(example)
+                    }
 
-					titleAdapter.notifyDataSetChanged()
+                    titleAdapter.notifyDataSetChanged()
 
-					exampleAdapter.notifyDataSetChanged()
+                    exampleAdapter.notifyDataSetChanged()
 
-				}
+                }
 
-				is Resource.Error -> {
-					bind.loader.isVisible = false
+                is Resource.Error -> {
+                    bind.loader.isVisible = false
 
-					it.parse(mCtx, TAG, object : AlertClicks {
-						override fun primaryClick(dialog: AppBottomSheet) {
-							dialog.dismiss()
+                    it.parse(mCtx, TAG, object : AlertClicks {
+                        override fun primaryClick(dialog: AppBottomSheet) {
+                            dialog.dismiss()
 
-						}
+                        }
 
-						override fun secondaryClick(dialog: AppBottomSheet) {
-							dialog.dismiss()
+                        override fun secondaryClick(dialog: AppBottomSheet) {
+                            dialog.dismiss()
 
-						}
-					})
+                        }
+                    })
 
-				}
+                }
 
-				else -> {}
+                else -> {}
 
-			}
-		}
+            }
+        }
 
-	}
+        viewModel.getShowDetailsRepo.observe(viewLifecycleOwner) {
+            when (it) {
+                is Resource.Success -> {
+                    bind.loader.isVisible = false
+
+                    val mData = it.value.data
+
+                    viewModel.showTitle = mData?.title ?: ""
+                    bind.showTitle.setText(viewModel.showTitle)
+
+                    viewModel.time = Utils.getFormattedDateTime("HH:mm:ss", "HH:mm", mData?.time ?: "") ?: ""
+                    viewModel.date = mData?.date ?: ""
+
+                    viewModel.categoryId = mData?.categoryId.toString()
+                    viewModel.auctionId = mData?.auctionTypeId.toString()
+
+                    viewModel.repeatMode = if (mData?.isRepeat ?: false) "0" else "1"
+                    viewModel.repeatType = mData?.repeatValue ?: ""
+
+                    viewModel.explicitContent = if (mData?.isExplicit ?: false) "1" else "0"
+                    viewModel.primaryLanguage = mData?.language ?: ""
+
+                    viewModel.discoverability = mData?.showDiscoverability ?: ""
+
+                    viewModel.thumbnail=mData?.thumbnail?.first()?:""
+
+
+                }
+
+                is Resource.Error -> {
+                    bind.loader.isVisible = false
+                    it.parse(mCtx, TAG, object : AlertClicks {
+                        override fun primaryClick(dialog: AppBottomSheet) {
+                            dialog.dismiss()
+
+                        }
+
+                        override fun secondaryClick(dialog: AppBottomSheet) {
+                            dialog.dismiss()
+
+                        }
+                    })
+                }
+
+                else -> {}
+
+            }
+        }
+
+
+    }
 
 }

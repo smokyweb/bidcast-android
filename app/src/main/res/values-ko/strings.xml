@@ -2,7 +2,6 @@
 <resources>
     <string name="_0_00">$ 0.00</string>
     <string name="_10_00_oz">10.00온스</string>
-    <string name="_117_00">$117.00</string>
     <string name="_continue">계속</string>
     <string name="_switch">전환</string>
     <string name="about_us">회사 소개</string>
@@ -12,7 +11,6 @@
     <string name="add_another_product">제품 추가</string>
     <string name="add_more_products">제품 더 추가</string>
     <string name="add_product">제품 추가</string>
-    <string name="add_starting_price_range_if_applicable">적용 가능한 경우 시작 가격 범위 추가</string>
     <string name="add_up_to_8_photos">최대 8장 사진 추가</string>
     <string name="add_variants">옵션 추가</string>
     <string name="added_product">제품이 추가되었습니다</string>
@@ -21,13 +19,11 @@
     <string name="auction">경매</string>
     <string name="auction_type">경매 유형</string>
     <string name="back">뒤로</string>
-    <string name="be_specific_about_what_you_re_auctioning_e_g_quot_vintage_jewelry_collection_quot">경매할 항목을 구체적으로 입력하세요(예: “빈티지 보석 컬렉션”)</string>
     <string name="become_a_bidswipe_seller">Bidswipe 판매자 되기</string>
     <string name="better_promotion_opportunities">더 나은 홍보 기회</string>
     <string name="bids">입찰</string>
     <string name="bidswipe_calculates_shipping_fees_based_on_the_product_weight_you_can_adjust_this_later_if_needed">Bidswipe가 상품 무게에 따라 배송비를 계산합니다. 필요 시 나중에 조정할 수 있습니다.</string>
     <string name="bio">소개</string>
-    <string name="buy_it_now_price">즉시 구매가</string>
     <string name="cancel">취소</string>
     <string name="caption">캡션</string>
     <string name="category">카테고리</string>
@@ -57,7 +53,6 @@
     <string name="explore">탐색</string>
     <string name="finish">마침</string>
     <string name="first_name">이름</string>
-    <string name="flash_sell">번개 판매</string>
     <string name="forgot_password">비밀번호를 잊으셨나요?</string>
     <string name="full_name">전체 이름</string>
     <string name="goods_examples">상품 예시</string>
@@ -65,7 +60,6 @@
     <string name="home">홈</string>
     <string name="how_it_works">이용 방법</string>
     <string name="i_agree_to_follow_these_guidelines_and_understand_that_violations_may_result_in_account_suspension">이 지침을 준수하며 위반 시 계정이 정지될 수 있음을 이해합니다</string>
-    <string name="include_key_details_like_brand_names_or_unique_features">브랜드 명 또는 고유 특징과 같은 핵심 정보를 포함하세요</string>
     <string name="invite_friends_and_earn_rewards_when_they_join">친구 초대 및 가입 시 보상 받기</string>
     <string name="item_weight">상품 무게</string>
     <string name="items">상품</string>
@@ -75,7 +69,6 @@
     <string name="live_now">지금 라이브</string>
     <string name="login">로그인</string>
     <string name="managing_orders_amp_shipping"><![CDATA[주문 및 배송 관리]]></string>
-    <string name="mention_if_it_s_a_special_event_e_g_quot_holiday_special_quot">특별 이벤트인 경우 언급해 주세요 (예: “휴일 스페셜”)</string>
     <string name="messages">메시지</string>
     <string name="mic_test">마이크 테스트</string>
     <string name="minimum_starting_bid_is_1_00">최소 시작 입찰가 $1.00</string>
@@ -92,8 +85,6 @@
     <string name="password">비밀번호</string>
     <string name="pick_a_date_and_time_for_your_live_show">라이브 방송 날짜 및 시간 선택</string>
     <string name="please_enter_the_email_address_associated_with_your_account">계정에 연결된 이메일 주소를 입력해 주세요.</string>
-    <string name="privacy_policy">개인정보 처리방침</string>
-    <string name="products">제품</string>
     <string name="publish">게시</string>
     <string name="purchases">구매</string>
     <string name="quantity_available">사용 가능 수량</string>
@@ -107,7 +98,6 @@
     <string name="save_draft">임시 저장</string>
     <string name="saved_items">저장된 상품</string>
     <string name="schedule_your_first_show">첫 방송 예약</string>
-    <string name="select_a_category">카테고리 선택</string>
     <string name="select_auction_type">경매 유형 선택</string>
     <string name="select_category">카테고리 선택</string>
     <string name="select_format">형식 선택</string>
@@ -121,7 +111,6 @@
     <string name="set_schedule">일정 설정</string>
     <string name="setting_up_your_store">매장 설정</string>
     <string name="share_amp_earn_reward"><![CDATA[공유하고 보상 받기]]></string>
-    <string name="shipping_profile">배송 정보</string>
     <string name="shop">상점</string>
     <string name="show_category">방송 카테고리</string>
     <string name="show_details">방송 상세</string>
@@ -137,7 +126,6 @@
     <string name="success_please_enter_your_new_password_below">성공! 새 비밀번호를 입력해 주세요.</string>
     <string name="tap_to_upload_thumbnail">썸네일 업로드하려면 탭하세요</string>
     <string name="tell_us_about_yourself">자기소개</string>
-    <string name="terms_of_service">| 서비스 약관</string>
     <string name="this_is_my_message">이것이 제 메시지입니다</string>
     <string name="time_to_prepare_your_items_properly">상품을 적절히 준비할 시간입니다</string>
     <string name="tips_for_a_great_thumbnail">훌륭한 썸네일 팁</string>
@@ -148,7 +136,6 @@
     <string name="verify_code">코드 확인</string>
     <string name="weight_0_00">0.00</string>
     <string name="what_are_you_looking_for">무엇을 찾고 계신가요?</string>
-    <string name="what_you_ll_learn">배우게 될 내용:</string>
     <string name="why_scedule_in_advance">왜 미리 예약하나요?</string>
     <string name="yes">예</string>
     <string name="your_referral_link">추천 링크</string>
@@ -167,7 +154,6 @@
     <string name="make_an_offer">제안하기</string>
     <string name="send_offer">제안 보내기</string>
     <string name="you_won_t_be_charged_unless_the_seller_accepts_your_offer">판매자가 제안을 수락하지 않으면 요금이 부과되지 않습니다</string>
-    <string name="verified_seller">인증된 판매자</string>
     <string name="buy_now">지금 구매</string>
     <string name="make_offer">제안하기</string>
     <string name="condition">상태</string>
@@ -191,7 +177,6 @@
     <string name="delivery_address">배송지 주소</string>
     <string name="swiftbid_buyer_protection">SwiftBid 구매자 보호</string>
     <string name="new_product">+ 새 제품</string>
-    <string name="past_shows">지난 쇼</string>
     <string name="new_show">새 쇼</string>
     <string name="new_orders">새 주문</string>
     <string name="completed">완료됨</string>
@@ -199,13 +184,8 @@
     <string name="pending">보류 중</string>
     <string name="accepted">수락됨</string>
     <string name="declined">거절됨</string>
-    <string name="my_orders">내 주문</string>
     <string name="wallet">지갑</string>
     <string name="transactions">거래내역</string>
-    <string name="available_balance">사용 가능한 잔액</string>
-    <string name="available_for_payout">출금 가능</string>
-    <string name="early_payout">조기 출금</string>
-    <string name="you_re_eligible_for_early_payout">조기 출금 자격이 있습니다</string>
     <string name="payout_history">출금 내역</string>
     <string name="delivered">배송 완료</string>
     <string name="returns">반품</string>
@@ -244,17 +224,12 @@
     <string name="save_past_shows">이전 쇼 저장</string>
     <string name="other_settings">기타 설정</string>
     <string name="activity_status">활동 상태</string>
-    <string name="sync_phone_contact">전화 연락처 동기화</string>
-    <string name="suggest_my_account">내 계정 추천</string>
     <string name="haptic_feedback">진동 피드백</string>
     <string name="my_addresses">내 주소</string>
     <string name="become_a_trusted_buyer">신뢰받는 구매자가 되기</string>
     <string name="expiration_date">만료일</string>
     <string name="issue_date">발급일</string>
-    <string name="recommended">추천</string>
     <string name="popular">인기</string>
-    <string name="all">전체</string>
-    <string name="choose_sales_format">판매 형식 선택</string>
     <string name="affiliate_program">제휴 프로그램</string>
     <string name="share_your_link">링크 공유</string>
     <string name="share_invite_link">초대 링크 공유</string>
@@ -263,15 +238,8 @@
     <string name="seller_status">판매자 상태</string>
     <string name="contact_support">지원 문의</string>
     <string name="premier_shop">프리미어 샵</string>
-    <string name="review_process">검토 과정</string>
     <string name="promote_tools">홍보 도구</string>
-    <string name="promote_your_shows">당신의 쇼 홍보하기</string>
-    <string name="learn_how_to_promote">홍보 방법 배우기</string>
-    <string name="get_tips_and_strategies_to_grow_your_live_shows">라이브 쇼 성장을 위한 팁과 전략을 얻으세요</string>
-    <string name="start_learning">학습 시작</string>
     <string name="analytics">분석</string>
-    <string name="sales_performance">판매 실적</string>
-    <string name="visitor_analytics">방문자 분석</string>
     <string name="use_product_library">제품 라이브러리 사용</string>
     <string name="follow">팔로우</string>
     <string name="comming_soon">곧 출시 예정</string>
@@ -295,9 +263,7 @@
     <string name="id_card">ID Card</string>
     <string name="no_payment_method_added">No payment method added</string>
     <string name="manual_verification">Manual Verification</string>
-    <string name="complete_verification">Complete Verification</string>
     <string name="mic">Mic</string>
-    <string name="rotate_camera">Rotate Camera</string>
     <string name="zoom_in">Zoom In</string>
     <string name="promote_show">Promote Show</string>
     <string name="prices_shown_in_usd_actual_boost_duration_may_vary">Prices shown in USD. Actual boost duration may vary.</string>

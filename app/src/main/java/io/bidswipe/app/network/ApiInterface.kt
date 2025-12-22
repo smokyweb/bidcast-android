@@ -50,7 +50,8 @@ import io.bidswipe.app.network.response.GetRatingResponse
 import io.bidswipe.app.network.response.GetReportCategoriesResponse
 import io.bidswipe.app.network.response.GetShippingAddressResponse
 import io.bidswipe.app.network.response.GetShippingProfilesResponse
-import io.bidswipe.app.network.response.GetShowDetailResponse
+import io.bidswipe.app.network.response.GetShowDetailsResponse
+import io.bidswipe.app.network.response.GetShowOverviewResponse
 import io.bidswipe.app.network.response.GetStatesResponse
 import io.bidswipe.app.network.response.GetSubCategoriesResponse
 import io.bidswipe.app.network.response.GetTipAmountResponse
@@ -214,7 +215,25 @@ interface ApiInterface {
         @Part("is_repeat") isRepeat: RequestBody?,
         @Part("repeat_value") repeatValue: RequestBody?,
         @Part("language") language: RequestBody?,
-        @Part("is_explicit") isExplicit: RequestBody?
+        @Part("is_explicit") isExplicit: RequestBody?,
+    ): CreateShowResponse
+
+    @Multipart
+    @POST("api/update-schedule-show")
+    suspend fun updateScheduleShow(
+        @Part("title") title: RequestBody?,
+        @Part("date") date: RequestBody?,
+        @Part("time") time: RequestBody?,
+        @Part("category_id") categoryId: RequestBody?,
+        @Part("show_discoverability") showDiscoverability: RequestBody?,
+        @Part("auction_type_id") auctionTypeId: RequestBody?,
+        @Part("product_ids[]") productIds: List<Int>,
+        @Part thumbnails: List<MultipartBody.Part?>?,
+        @Part("is_repeat") isRepeat: RequestBody?,
+        @Part("repeat_value") repeatValue: RequestBody?,
+        @Part("language") language: RequestBody?,
+        @Part("is_explicit") isExplicit: RequestBody?,
+        @Part("showId") showId: RequestBody?,
     ): CreateShowResponse
 
     @GET("api/get-auction-type")
@@ -767,11 +786,15 @@ interface ApiInterface {
     suspend fun getShippingProfile(
     ): GetShippingProfilesResponse
 
-
     @GET("api/get-show-overview")
-    suspend fun getShowDetail(
+    suspend fun getShowOverview(
         @Query("show_id") showId: String?
-    ): GetShowDetailResponse
+    ): GetShowOverviewResponse
+
+    @GET("api/get-show-details-by-id")
+    suspend fun getShowDetails(
+        @Query("show_id") showId: String?
+    ): GetShowDetailsResponse
 
     @Multipart
     @POST("api/raise-ticket")
@@ -798,10 +821,17 @@ interface ApiInterface {
     ): SellerHubResponse
 
     @Multipart
+    @POST("api/update-vacation-mode-status")
+    suspend fun updateVacationModeStatus(
+        @Part("vacation_mode") vacationMode: RequestBody?,
+    ): CommonResponse
+
+    @Multipart
     @POST("api/check-schedule-show")
     suspend fun checkScheduleShow(
         @Part("date") date: RequestBody?,
         @Part("time") time: RequestBody?,
+        @Part("show_id") showId: RequestBody?,
     ): CheckScheduleShowResponse
 
     @GET("api/export-deatils")

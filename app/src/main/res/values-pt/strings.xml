@@ -2,7 +2,6 @@
 <resources>
     <string name="_0_00">$ 0.00</string>
     <string name="_10_00_oz">10,00 oz</string>
-    <string name="_117_00">$117.00</string>
     <string name="_continue">Continuar</string>
     <string name="_switch">Alternar</string>
     <string name="about_us">Sobre nós</string>
@@ -12,7 +11,6 @@
     <string name="add_another_product">Adicionar outro produto</string>
     <string name="add_more_products">Adicionar mais produtos</string>
     <string name="add_product">Adicionar produto</string>
-    <string name="add_starting_price_range_if_applicable">Adicionar faixa de preço inicial, se aplicável</string>
     <string name="add_up_to_8_photos">Adicionar até 8 fotos</string>
     <string name="add_variants">Adicionar variantes</string>
     <string name="added_product">Produto adicionado</string>
@@ -21,13 +19,11 @@
     <string name="auction">Leilão</string>
     <string name="auction_type">Tipo de leilão</string>
     <string name="back">Voltar</string>
-    <string name="be_specific_about_what_you_re_auctioning_e_g_quot_vintage_jewelry_collection_quot">Seja específico sobre o que você está leiloando (por exemplo, “Coleção de joias vintage”)</string>
     <string name="become_a_bidswipe_seller">Torne-se um vendedor Bidswipe</string>
     <string name="better_promotion_opportunities">Melhores oportunidades de promoção</string>
     <string name="bids">Lances</string>
     <string name="bidswipe_calculates_shipping_fees_based_on_the_product_weight_you_can_adjust_this_later_if_needed">O Bidswipe calcula as taxas de envio com base no peso do produto. Você pode ajustá-las depois, se necessário.</string>
     <string name="bio">Biografia</string>
-    <string name="buy_it_now_price">Preço de compra imediata</string>
     <string name="cancel">Cancelar</string>
     <string name="caption">Legenda</string>
     <string name="category">Categoria</string>
@@ -57,7 +53,6 @@
     <string name="explore">Explorar</string>
     <string name="finish">Concluir</string>
     <string name="first_name">Nome</string>
-    <string name="flash_sell">Venda relâmpago</string>
     <string name="forgot_password">Esqueceu a senha?</string>
     <string name="full_name">Nome completo</string>
     <string name="goods_examples">Exemplos de produtos</string>
@@ -65,7 +60,6 @@
     <string name="home">Início</string>
     <string name="how_it_works">Como funciona</string>
     <string name="i_agree_to_follow_these_guidelines_and_understand_that_violations_may_result_in_account_suspension">Concordo em seguir estas diretrizes e entendo que violações podem resultar em suspensão da conta</string>
-    <string name="include_key_details_like_brand_names_or_unique_features">Inclua detalhes-chave, como nomes de marca ou recursos exclusivos</string>
     <string name="invite_friends_and_earn_rewards_when_they_join">Convide amigos e ganhe recompensas quando eles se juntarem</string>
     <string name="item_weight">Peso do item</string>
     <string name="items">Itens</string>
@@ -75,7 +69,6 @@
     <string name="live_now">Ao vivo agora</string>
     <string name="login">Entrar</string>
     <string name="managing_orders_amp_shipping"><![CDATA[Gerenciando pedidos e envio]]></string>
-    <string name="mention_if_it_s_a_special_event_e_g_quot_holiday_special_quot">Mencione se é um evento especial (por exemplo, “Especial de fim de ano”)</string>
     <string name="messages">Mensagens</string>
     <string name="mic_test">Teste de microfone</string>
     <string name="minimum_starting_bid_is_1_00">Lance inicial mínimo de $1.00</string>
@@ -92,8 +85,6 @@
     <string name="password">Senha</string>
     <string name="pick_a_date_and_time_for_your_live_show">Escolha uma data e hora para seu evento ao vivo</string>
     <string name="please_enter_the_email_address_associated_with_your_account">Por favor, digite o endereço de email associado à sua conta.</string>
-    <string name="privacy_policy">Política de privacidade</string>
-    <string name="products">Produtos</string>
     <string name="publish">Publicar</string>
     <string name="purchases">Compras</string>
     <string name="quantity_available">Quantidade disponível</string>
@@ -107,7 +98,6 @@
     <string name="save_draft">Salvar rascunho</string>
     <string name="saved_items">Itens salvos</string>
     <string name="schedule_your_first_show">Agende seu primeiro evento</string>
-    <string name="select_a_category">Selecionar categoria</string>
     <string name="select_auction_type">Selecionar tipo de leilão</string>
     <string name="select_category">Selecionar categoria</string>
     <string name="select_format">Selecionar formato</string>
@@ -121,7 +111,6 @@
     <string name="set_schedule">Definir agenda</string>
     <string name="setting_up_your_store">Configurando sua loja</string>
     <string name="share_amp_earn_reward"><![CDATA[Compartilhe e ganhe recompensas]]></string>
-    <string name="shipping_profile">Perfil de envio</string>
     <string name="shop">Loja</string>
     <string name="show_category">Categoria do evento</string>
     <string name="show_details">Detalhes do evento</string>
@@ -137,7 +126,6 @@
     <string name="success_please_enter_your_new_password_below">Sucesso! Por favor, digite sua nova senha abaixo.</string>
     <string name="tap_to_upload_thumbnail">Toque para enviar miniatura</string>
     <string name="tell_us_about_yourself">Conte-nos sobre você</string>
-    <string name="terms_of_service">| Termos de serviço</string>
     <string name="this_is_my_message">Esta é minha mensagem</string>
     <string name="time_to_prepare_your_items_properly">Hora de preparar seus itens adequadamente</string>
     <string name="tips_for_a_great_thumbnail">Dicas para uma ótima miniatura</string>
@@ -148,7 +136,6 @@
     <string name="verify_code">Verificar código</string>
     <string name="weight_0_00">0.00</string>
     <string name="what_are_you_looking_for">O que você está procurando?</string>
-    <string name="what_you_ll_learn">O que você aprenderá:</string>
     <string name="why_scedule_in_advance">Por que agendar com antecedência?</string>
     <string name="yes">Sim</string>
     <string name="your_referral_link">Seu link de referência</string>
@@ -167,7 +154,6 @@
     <string name="make_an_offer">Fazer uma oferta</string>
     <string name="send_offer">Enviar oferta</string>
     <string name="you_won_t_be_charged_unless_the_seller_accepts_your_offer">Você não será cobrado a menos que o vendedor aceite sua oferta</string>
-    <string name="verified_seller">Vendedor verificado</string>
     <string name="buy_now">Comprar agora</string>
     <string name="make_offer">Fazer oferta</string>
     <string name="condition">Condição</string>
@@ -191,7 +177,6 @@
     <string name="delivery_address">Endereço de entrega</string>
     <string name="swiftbid_buyer_protection">Proteção ao comprador SwiftBid</string>
     <string name="new_product">+ Novo produto</string>
-    <string name="past_shows">Shows anteriores</string>
     <string name="new_show">Novo show</string>
     <string name="new_orders">Novos pedidos</string>
     <string name="completed">Concluído</string>
@@ -199,13 +184,8 @@
     <string name="pending">Pendente</string>
     <string name="accepted">Aceito</string>
     <string name="declined">Recusado</string>
-    <string name="my_orders">Meus pedidos</string>
     <string name="wallet">Carteira</string>
     <string name="transactions">Transações</string>
-    <string name="available_balance">Saldo disponível</string>
-    <string name="available_for_payout">Disponível para saque</string>
-    <string name="early_payout">Saque antecipado</string>
-    <string name="you_re_eligible_for_early_payout">Você está qualificado para saque antecipado</string>
     <string name="payout_history">Histórico de saques</string>
     <string name="delivered">Entregue</string>
     <string name="returns">Devoluções</string>
@@ -244,17 +224,12 @@
     <string name="save_past_shows">Salvar shows anteriores</string>
     <string name="other_settings">Outras configurações</string>
     <string name="activity_status">Status de atividade</string>
-    <string name="sync_phone_contact">Sincronizar contatos do telefone</string>
-    <string name="suggest_my_account">Sugerir minha conta</string>
     <string name="haptic_feedback">Feedback tátil</string>
     <string name="my_addresses">Meus endereços</string>
     <string name="become_a_trusted_buyer">Torne-se um comprador confiável</string>
     <string name="expiration_date">Data de validade</string>
     <string name="issue_date">Data de emissão</string>
-    <string name="recommended">Recomendado</string>
     <string name="popular">Popular</string>
-    <string name="all">Todos</string>
-    <string name="choose_sales_format">Escolha o formato de venda</string>
     <string name="affiliate_program">Programa de afiliados</string>
     <string name="share_your_link">Compartilhar seu link</string>
     <string name="share_invite_link">Compartilhar link de convite</string>
@@ -263,15 +238,8 @@
     <string name="seller_status">Status do vendedor</string>
     <string name="contact_support">Contatar suporte</string>
     <string name="premier_shop">Loja Premier</string>
-    <string name="review_process">Processo de revisão</string>
     <string name="promote_tools">Ferramentas de promoção</string>
-    <string name="promote_your_shows">Promova seus shows</string>
-    <string name="learn_how_to_promote">Aprenda como promover</string>
-    <string name="get_tips_and_strategies_to_grow_your_live_shows">Receba dicas e estratégias para crescer seus shows ao vivo</string>
-    <string name="start_learning">Começar a aprender</string>
     <string name="analytics">Análises</string>
-    <string name="sales_performance">Desempenho de vendas</string>
-    <string name="visitor_analytics">Análise de visitantes</string>
     <string name="use_product_library">Usar biblioteca de produtos</string>
     <string name="follow">Seguir</string>
     <string name="comming_soon">Em breve</string>
@@ -295,9 +263,7 @@
     <string name="id_card">ID Card</string>
     <string name="no_payment_method_added">No payment method added</string>
     <string name="manual_verification">Manual Verification</string>
-    <string name="complete_verification">Complete Verification</string>
     <string name="mic">Mic</string>
-    <string name="rotate_camera">Rotate Camera</string>
     <string name="zoom_in">Zoom In</string>
     <string name="promote_show">Promote Show</string>
     <string name="prices_shown_in_usd_actual_boost_duration_may_vary">Prices shown in USD. Actual boost duration may vary.</string>

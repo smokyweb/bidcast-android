@@ -23,6 +23,7 @@ import io.bidswipe.app.utils.Utils
 import io.bidswipe.app.utils.cropper.CustomCropImageContract
 
 import io.bidswipe.app.utils.ids
+import io.bidswipe.app.utils.loadUrl
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request
 import io.bidswipe.app.utils.setHapticClickListener
@@ -61,6 +62,16 @@ class SelectThumbnailFragment :
 
 		bind.header.onBackClick {
 			findNavController().popBackStack()
+		}
+
+		if(viewModel.thumbnail.isNotEmpty()){
+			bind.imgCard.isVisible = true
+			bind.pickImageLayout.isVisible = false
+			if(viewModel.thumbnail.contains(Const.BASE_URL)){
+				bind.img.loadUrl(mCtx,viewModel.thumbnail)
+			}else{
+				bind.img.setImageURI(viewModel.thumbnail.toUri())
+			}
 		}
 
 		bind.pickThumbnail.setHapticClickListener {

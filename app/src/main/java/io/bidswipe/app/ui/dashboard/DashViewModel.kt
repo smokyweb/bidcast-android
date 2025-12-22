@@ -644,4 +644,18 @@ class DashViewModel @Inject constructor(
 		_getSellerHubInfoResponse.value = repo.getSellerHubInfo()
 	}
 
+	private var _updateVacationModeStatusResponse = MutableLiveData<Resource<CommonResponse>>()
+	val updateVacationModeStatusRepo: MutableLiveData<Resource<CommonResponse>>
+		get() = _updateVacationModeStatusResponse
+
+	fun updateVacationModeStatus(
+		vacationMode : RequestBody?
+	) = viewModelScope.launch {
+		if (!networkMonitor.hasInternet()) {
+			_updateVacationModeStatusResponse.value = NO_INTERNET_ERROR
+			return@launch
+		}
+		_updateVacationModeStatusResponse.value = repo.updateVacationModeStatus(vacationMode)
+	}
+
 }
