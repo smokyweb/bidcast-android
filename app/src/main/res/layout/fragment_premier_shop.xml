@@ -348,14 +348,7 @@
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <TextView
-                style="@style/TitleLarge"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="@dimen/margin"
-                android:layout_marginTop="@dimen/margin"
-                android:layout_marginBottom="@dimen/half_margin"
-                android:text="Policy Standing" />
+
 
             <LinearLayout
                 style="@style/shadowStyle"
@@ -365,7 +358,13 @@
                 android:layout_marginBottom="@dimen/margin"
                 android:background="@drawable/card_16"
                 android:orientation="vertical"
+                android:layout_marginTop="@dimen/margin"
                 android:padding="@dimen/padding">
+                <TextView
+                    style="@style/TitleLarge"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Policy Standing" />
 
                 <TextView
                     android:id="@+id/policy_standards"
@@ -373,14 +372,15 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text=""
+                    android:layout_marginTop="@dimen/half_margin"
                     android:textColor="@color/onSurfaceVariant" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center_vertical"
-                    android:orientation="horizontal"
-                    android:paddingVertical="20dp">
+                    android:layout_marginVertical="@dimen/half_margin"
+                    android:orientation="horizontal">
 
                     <androidx.appcompat.widget.AppCompatImageView
                         android:id="@+id/reviewLogo"
@@ -422,7 +422,7 @@
                     android:orientation="horizontal">
 
                     <TextView
-                        style="@style/BodyLarge"
+                        style="@style/BodyMedium"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
@@ -459,12 +459,6 @@
                     android:text="Next Review in 7 days" />
             </LinearLayout>
 
-            <TextView
-                style="@style/TitleLarge"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="@dimen/margin"
-                android:text="Become a Premier Shop" />
 
             <LinearLayout
                 style="@style/shadowStyle"
@@ -473,7 +467,14 @@
                 android:layout_marginHorizontal="@dimen/margin"
                 android:layout_marginBottom="@dimen/margin"
                 android:background="@drawable/card_16"
+                android:orientation="vertical"
                 android:padding="@dimen/padding">
+
+                <TextView
+                    style="@style/TitleLarge"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Become a Premier Shop" />
 
                 <TextView
                     android:id="@+id/become_text"
@@ -481,9 +482,24 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text=""
+                    android:layout_marginVertical="@dimen/half_margin"
                     android:textColor="@color/onSurfaceVariant" />
-            </LinearLayout>
 
+                <TextView
+                    style="@style/TitleSemiBold"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/requirements" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/requirementRecycler"
+                    style="@style/shadowStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    tools:itemCount="4"
+                    tools:listitem="@layout/requirement_item" />
+            </LinearLayout>
 
             <TextView
                 style="@style/TitleLarge"
@@ -505,27 +521,6 @@
                 tools:itemCount="4"
                 tools:listitem="@layout/benifits_item" />
 
-            <TextView
-                style="@style/HeadlineSmall"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="@dimen/margin"
-                android:text="@string/requirements" />
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/requirementRecycler"
-                style="@style/shadowStyle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="@dimen/padding"
-                android:layout_marginBottom="@dimen/half_margin"
-                android:background="@drawable/card_16"
-                android:paddingHorizontal="@dimen/margin"
-                android:paddingTop="@dimen/margin"
-                android:paddingBottom="@dimen/half_margin"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                tools:itemCount="4"
-                tools:listitem="@layout/requirement_item" />
 
         </LinearLayout>
 

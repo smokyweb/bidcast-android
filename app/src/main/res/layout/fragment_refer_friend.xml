@@ -42,7 +42,7 @@
                 android:layout_height="80dp"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="@dimen/margin"
-                android:backgroundTint="@color/secondaryContainer"
+                android:backgroundTint="@color/primaryContainer"
                 app:cardCornerRadius="100dp">
 
                 <ImageView
@@ -112,8 +112,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="@dimen/half_margin"
-                    android:backgroundTint="@color/secondary"
-                    android:drawableTop="@drawable/ic_copy"
+                    android:drawableStart="@drawable/ic_copy"
+                    app:iconGravity="textStart"
                     android:text="@string/copy"
                     app:cornerRadius="8dp" />
 

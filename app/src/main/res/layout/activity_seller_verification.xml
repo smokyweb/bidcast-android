@@ -60,11 +60,11 @@
 
             <com.google.android.material.progressindicator.LinearProgressIndicator
                 android:id="@+id/stepProgress"
+                style="@style/circularProgressStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:max="3"
                 android:padding="@dimen/margin"
-                android:progressTint="@color/secondary"
                 app:trackCornerRadius="6dp"
                 app:trackThickness="8dp" />
 

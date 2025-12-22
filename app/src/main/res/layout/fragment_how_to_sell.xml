@@ -30,6 +30,7 @@
             android:id="@+id/track"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            style="@style/circularProgressStyle"
             android:progress="0"
             android:progressTint="@color/primary" />
 
@@ -170,6 +171,7 @@
         android:orientation="horizontal"
         android:visibility="visible"
         android:weightSum="2"
+        android:padding="@dimen/margin"
         app:layout_constraintBottom_toBottomOf="parent">
 
         <com.google.android.material.button.MaterialButton
@@ -177,8 +179,8 @@
             style="@style/appBtnOutline"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/margin"
             android:layout_weight="1"
+            android:layout_marginEnd="@dimen/half_margin"
             android:paddingHorizontal="@dimen/margin"
             android:text="@string/back" />
 
@@ -187,9 +189,8 @@
             style="@style/appBtn"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/margin"
             android:layout_weight="1"
-            android:backgroundTint="@color/secondary"
+            android:layout_marginStart="@dimen/half_margin"
             android:paddingHorizontal="@dimen/margin"
             android:text="@string/next" />
 

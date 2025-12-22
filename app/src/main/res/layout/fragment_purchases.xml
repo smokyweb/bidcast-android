@@ -5,53 +5,49 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ui.dashboard.PurchasesFragment">
-
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/swipeRefreshLayout"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        android:layout_height="match_parent">
 
-        <LinearLayout
+        <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:fillViewport="true">
 
-            <HorizontalScrollView
-                android:id="@+id/chip_scroll"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="@dimen/margin"
-                android:layout_marginTop="@dimen/half_margin"
-                android:scrollbars="none">
+                android:orientation="vertical">
 
-                <com.google.android.material.chip.ChipGroup
-                    android:id="@+id/filter_chip_group"
-                    android:layout_width="wrap_content"
+                <!-- Chips -->
+                <HorizontalScrollView
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:chipSpacing="@dimen/half_margin"
-                    app:singleLine="true"
-                    app:singleSelection="true" />
+                    android:scrollbars="none">
 
-            </HorizontalScrollView>
+                    <com.google.android.material.chip.ChipGroup
+                        android:id="@+id/filter_chip_group"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:singleSelection="true" />
+                </HorizontalScrollView>
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recycler"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_marginHorizontal="@dimen/half_margin"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                tools:itemCount="2"
-                android:layout_weight="1"
-                tools:listitem="@layout/purchases_item" />
+                <!-- RecyclerView -->
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recycler"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:nestedScrollingEnabled="false"
+                    android:clickable="true"
+                    android:focusable="true"
+                    tools:listitem="@layout/purchases_item"/>
 
                 <com.github.ybq.android.spinkit.SpinKitView
                     android:id="@+id/bottomLoader"
-                    style="@style/appLoader"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:visibility="gone" />
+                    android:visibility="gone"/>
 
                 <io.bidswipe.app.ui.custom.NoDataView
                     android:id="@+id/noData"
@@ -60,7 +56,9 @@
                     android:visibility="gone"
                     app:title_text="No Purchases Found" />
 
-        </LinearLayout>
+            </LinearLayout>
+
+        </androidx.core.widget.NestedScrollView>
 
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 

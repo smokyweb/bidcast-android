@@ -1,5 +1,6 @@
 package io.bidswipe.app.controller
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
@@ -36,9 +37,9 @@ class PurchasesAdapter(
 			}
 
 			bind.view.setHapticClickListener {
+				Log.d(TAG, "onBind: djfdhfudfudyf")
 				mClicks.itemClick(position, "product")
 			}
-
 
 			// Price formatting - bold, below title
 			bind.price.text =

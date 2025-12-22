@@ -13,7 +13,6 @@
         android:layout_height="wrap_content"
         android:background="@color/background"
         android:orientation="horizontal"
-
         android:padding="@dimen/half_margin">
 
         <com.google.android.material.card.MaterialCardView
@@ -89,6 +88,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
+                android:background="?selectableItemBackground"
                 android:orientation="horizontal">
 
                 <TextView

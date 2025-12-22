@@ -25,7 +25,6 @@
         android:layout_height="wrap_content"
         android:padding="@dimen/margin"
         android:progress="15"
-        android:progressTint="@color/secondary"
         app:layout_constraintTop_toBottomOf="@id/header"
         app:trackCornerRadius="6dp"
         app:trackThickness="8dp" />

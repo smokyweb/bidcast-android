@@ -286,6 +286,7 @@
                 android:layout_height="wrap_content"
                 android:paddingTop="38dp"
                 app:layout_collapseMode="pin"
+                android:background="@color/background"
                 app:navigationIcon="@drawable/ic_back"
                 app:popupTheme="@style/Theme.Bidswipe.PopupOverlay">
 

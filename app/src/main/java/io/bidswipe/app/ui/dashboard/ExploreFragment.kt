@@ -347,7 +347,7 @@ class ExploreFragment : BaseFragment<DashViewModel, FragmentExploreBinding>() {
         bind.search.setText("")
         bind.chipGroup.removeAllViews()
 
-        listOf("Recommended", "Popular", "All").forEach {
+        listOf("All","Recommended", "Popular").forEach {
             bind.chipGroup.addView(
                 Utils.makeAChip(
                     mCtx = mCtx,

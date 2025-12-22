@@ -27,7 +27,7 @@
 
         <com.google.android.material.progressindicator.LinearProgressIndicator
             android:id="@+id/stepProgress"
-            style="@style/progressStyle"
+            style="@style/circularProgressStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="@dimen/margin"

@@ -330,10 +330,10 @@ class BuyNowFragment : BaseFragment<ProductViewModel, FragmentBuyNowBinding>() {
 		}
 
 		viewModel.createOrderRepo.observe(viewLifecycleOwner) {
-
+			viewModel.createOrderRepo.value=null
+			bind.loader.isVisible = false
 			when (it) {
 				is Resource.Success -> {
-					bind.loader.isVisible = false
 
 					val mData = it.value.data
 
@@ -346,7 +346,6 @@ class BuyNowFragment : BaseFragment<ProductViewModel, FragmentBuyNowBinding>() {
 				}
 
 				is Resource.Error -> {
-					bind.loader.isVisible = false
 
 					it.parse(mCtx, TAG, object : AlertClicks {
 						override fun primaryClick(dialog: AppBottomSheet) {
