@@ -105,7 +105,11 @@ class SelectThumbnailFragment :
 
 				else -> {
 					if (from == "dash") {
-						findNavController().navigate(ids.selectThumbnail_to_createProductFragment)
+						if(!viewModel.showId.isNullOrEmpty()){
+							findNavController().navigate(ids.action_selectThumbnailFragment_to_addProductFragment)
+						}else {
+							findNavController().navigate(ids.selectThumbnail_to_createProductFragment)
+						}
 					} else {
 						findNavController().navigate(ids.goToProductTipsFragment)
 					}

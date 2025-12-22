@@ -24,6 +24,7 @@ import io.bidswipe.app.network.response.toLiveShowProduct
 import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.ui.sellerHub.SellerHubActivity
 import io.bidswipe.app.utils.Alerts
+import io.bidswipe.app.utils.Const
 import io.bidswipe.app.utils.Utils
 import io.bidswipe.app.utils.finish
 import io.bidswipe.app.utils.ids
@@ -171,13 +172,15 @@ class AddProductFragment : BaseFragment<ScheduleShowViewModel, FragmentAddProduc
 				return@setHapticClickListener
 			}
 
-			imagePartList.add(
-				Utils.imagePart(
-					"thumbnail[]",
-					viewModel.thumbnail,
-					File(viewModel.thumbnail)
+			if(!viewModel.thumbnail.contains(Const.BASE_URL)) {
+				imagePartList.add(
+					Utils.imagePart(
+						"thumbnail[]",
+						viewModel.thumbnail,
+						File(viewModel.thumbnail)
+					)
 				)
-			)
+			}
 
 			bind.loader.isVisible = true
 

@@ -12,6 +12,7 @@ import io.bidswipe.app.controller.ExampleAdapter
 import io.bidswipe.app.controller.TitleAdapter
 import io.bidswipe.app.databinding.FragmentShowTitleBinding
 import io.bidswipe.app.interfaces.AlertClicks
+import io.bidswipe.app.model.LiveShowModel
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.network.response.GetAllTipsResponse
 import io.bidswipe.app.ui.custom.AppBottomSheet
@@ -163,6 +164,30 @@ class ShowTitleFragment : BaseFragment<ScheduleShowViewModel, FragmentShowTitleB
 
                     viewModel.thumbnail=mData?.thumbnail?.first()?:""
 
+                    mData?.products?.forEach { data ->
+                        if(data!=null) {
+                            val product =
+                                LiveShowModel.Product(
+                                    LiveShowModel.Category(
+                                        data.category?.id,
+                                        data.category?.image ?: "",
+                                        data.category?.name ?: "",
+                                        data.category?.thumbnail
+                                    ),
+                                    data.id.toString(),
+                                    data.images?.get(0),
+                                    data.status,
+                                    data.title,
+                                    data.pricing.toString(),
+                                    data.quantity.toString(),
+                                    selected = true
+                                )
+
+                            if (!viewModel.currentProducts.any { existing -> existing.id == product.id }) {
+                                viewModel.currentProducts.add(product)
+                            }
+                        }
+                    }
 
                 }
 

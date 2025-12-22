@@ -11,6 +11,7 @@ import io.bidswipe.app.base.BaseAdapter
 import io.bidswipe.app.databinding.SellSheetItemBinding
 import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.network.response.GetAllTipsResponse
+import io.bidswipe.app.utils.clr
 import io.bidswipe.app.utils.loadUrl
 import io.bidswipe.app.utils.setHapticClickListener
 
@@ -41,7 +42,14 @@ class ThumbnailTipsAdapter(
 			}
 
 			bind.icon.loadUrl(mCtx , item?.icon.toString())
-			bind.iconCard.setCardBackgroundColor(Color.parseColor(item?.color))
+
+			if(type=="getStarted"){
+				bind.iconCard.setCardBackgroundColor(ContextCompat.getColor(mCtx,clr.black25))
+				bind.root.background.setTint(ContextCompat.getColor(mCtx , R.color.background))
+			}else{
+				bind.iconCard.setCardBackgroundColor(Color.parseColor(item?.color))
+			}
+
 			bind.subTitle.text = item?.description
 			bind.title.text = item?.title
 
