@@ -233,7 +233,7 @@ interface ApiInterface {
         @Part("repeat_value") repeatValue: RequestBody?,
         @Part("language") language: RequestBody?,
         @Part("is_explicit") isExplicit: RequestBody?,
-        @Part("showId") showId: RequestBody?,
+        @Part("show_id") showId: RequestBody?,
     ): CreateShowResponse
 
     @GET("api/get-auction-type")

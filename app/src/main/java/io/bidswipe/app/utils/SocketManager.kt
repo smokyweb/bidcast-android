@@ -653,6 +653,16 @@ class SocketManager private constructor(
 		}
 	}
 
+	fun setPromotionData(userId : String, showId : String, promoteShowId : String) {
+		val payload = JSONObject().apply {
+			put("user_id", userId)
+			put("show_id", showId)
+			put("promote_show_id", promoteShowId)
+		}
+		Log.d(TAG, "EMIT:set_promotion_data  - userId: $userId, showId: $showId, promoteShowId: $promoteShowId")
+		socket?.emit("set_promotion_data", payload)
+	}
+
 }
 
 

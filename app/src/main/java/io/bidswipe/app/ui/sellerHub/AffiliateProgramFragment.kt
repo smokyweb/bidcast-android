@@ -114,6 +114,8 @@ class AffiliateProgramFragment : BaseFragment<SellerHubViewModel, FragmentAffili
 					val mData = it.value.data
 
 					bind.referralCode.text = mData?.referralCode
+					bind.referralBuyer.text = mData?.referralCode
+					bind.referralSeller.text = mData?.referralCode
 					bind.referralCount.text = mData?.totalReferred.toString()
 					bind.totalEarning.text = mData?.totalEarnings.toString().asMoney()
 

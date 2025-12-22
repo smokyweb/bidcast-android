@@ -15,6 +15,8 @@ import io.bidswipe.app.interfaces.AlertClicks
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.ui.sellerHub.SellerHubViewModel
+import io.bidswipe.app.utils.finish
+import io.bidswipe.app.utils.intent
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request
 import io.bidswipe.app.utils.setHapticClickListener
@@ -44,8 +46,15 @@ class CreateShippingProfileFragment : BaseFragment<SellerHubViewModel, FragmentC
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		super.onViewCreated(view, savedInstanceState)
 
+		val type = activity?.intent?.getStringExtra("slug").toString()
+
+
 		bind.header.onBackClick {
-			findNavController().popBackStack()
+			if (type == "createShippingProfile"){
+				finish()
+			}else{
+				findNavController().popBackStack()
+			}
 		}
 
 		val proCategoryAdapter = ArrayAdapter(

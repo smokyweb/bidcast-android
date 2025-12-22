@@ -141,7 +141,7 @@ class DashActivity : BaseActivity(), NavController.OnDestinationChangedListener 
                     MoreModel(R.drawable.ic_identity_verification, "Identity Verification", "identityVerification"),
                     MoreModel(R.drawable.ic_inventory_outline, "Inventory", "inventory"),
                     MoreModel(R.drawable.ic_clip_new, "Shows", "shows"),
-                    MoreModel(R.drawable.ic_order_outline, "Orders", "order"),
+                    MoreModel(R.drawable.ic_order_outline, "My Orders", "order"),
                     MoreModel(R.drawable.ic_wallet_outlined, "Wallet", "wallet"),
                     MoreModel(R.drawable.ic_tag_outline, "Offers", "offers"),
                     MoreModel(R.drawable.ic_gift_outlined, "Tips", "tips"),

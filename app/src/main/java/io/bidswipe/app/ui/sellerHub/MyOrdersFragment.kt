@@ -38,6 +38,7 @@ class MyOrdersFragment : BaseFragment<SellerHubViewModel, FragmentMyOrdersBindin
     private var orderList = mutableListOf<GetOrdersResponse.Data?>()
     private lateinit var adapter: OrdersAdapter
     private var page = 1
+    private var status = ""
     private var isLoading = false
 
     private val mClick = object : RecyclerClicks {
@@ -120,7 +121,7 @@ class MyOrdersFragment : BaseFragment<SellerHubViewModel, FragmentMyOrdersBindin
                         s.toString().request()
                     )
                 } else {
-                    viewModel.getOrderListing(page.toString().request(), "".request())
+                    viewModel.getOrderListing(page.toString().request(), status.request())
                 }
             }
         })
@@ -242,8 +243,8 @@ class MyOrdersFragment : BaseFragment<SellerHubViewModel, FragmentMyOrdersBindin
         bind.search.setText("")
         bind.chipGroup.removeAllViews()
 
-       val status = listOf("All", "Processing", "Completed", "Cancelled", "Refunded")
-           status .forEach {
+       val statusList = listOf("All", "Processing", "Completed", "Cancelled", "Refunded")
+        statusList .forEach {
             bind.chipGroup.addView(
                 Utils.makeAChip(
                     mCtx = mCtx,
@@ -262,13 +263,10 @@ class MyOrdersFragment : BaseFragment<SellerHubViewModel, FragmentMyOrdersBindin
 
                 val chipId = chipGroup.checkedChipId
                 val index = chipGroup.indexOfChild(chipGroup.findViewById(chipId))
-
                 if (index == -1) return@runSafe
-
                 bind.loader.isVisible = true
+                status = statusList[index].lowercase()
                 bind.search.setText("")
-                page = 1
-                viewModel.getOrderListing(page = page.toString().request(), status[index].lowercase().request())
             }
         }
 

@@ -18,8 +18,10 @@ import io.bidswipe.app.controller.MoreAdapter
 import io.bidswipe.app.databinding.FragmentAccountBinding
 import io.bidswipe.app.interfaces.AlertClicks
 import io.bidswipe.app.interfaces.RecyclerClicks
+import io.bidswipe.app.model.LiveShowModel
 import io.bidswipe.app.model.MoreModel
 import io.bidswipe.app.network.Resource
+import io.bidswipe.app.network.response.SellerHubResponse
 import io.bidswipe.app.ui.custom.AlertType
 import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.ui.interest.ChooseInterestActivity
@@ -41,6 +43,7 @@ import io.bidswipe.app.utils.setHapticClickListener
 import io.bidswipe.app.utils.toAuth
 import io.bidswipe.app.utils.toListProduct
 import io.bidswipe.app.utils.toScheduleShow
+import io.bidswipe.app.utils.toSellerShow
 
 class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
 
@@ -59,6 +62,8 @@ class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
     private lateinit var gridAdapter: GridAdapter
     private lateinit var accountGridAdapter: GridAdapter
     private var kycUrl = ""
+    private var upcomingShow : SellerHubResponse.Data.UpcomingShow? = null
+
 
     private val onTabSelectedListener = object : OnTabSelectedListener {
         override fun onTabSelected(tab: TabLayout.Tab?) {
@@ -265,6 +270,7 @@ class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
             startActivity(Intent(mCtx, UpdateAccountActivity::class.java))
         }
 
+
         viewModel.logoutRepo.observe(viewLifecycleOwner) {
             when (it) {
                 is Resource.Success -> {
@@ -308,6 +314,53 @@ class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
             viewModel.updateVacationModeStatus(status.toString().request())
         }
 
+        bind.sellerHub.upcomingShow.setHapticClickListener {
+
+            val data = upcomingShow
+
+            val showData = LiveShowModel(
+                seller = LiveShowModel.Seller(
+                    id = userId,
+                    image = userImage,
+                    name = userName,
+                    rating =  ""
+                ),
+                products = emptyList<LiveShowModel.Product>(),
+                /* products = products?.map { p ->
+				LiveShowModel.Product(
+					data.category?.name,
+					p?.id,
+					p?.image,
+					p?.status,
+					p?.name,
+					p?.price,
+					"1",
+				)
+			}?.toList() ?: mutableListOf(),*/
+                roomId = "live_room_${userId}_${data?.id.toString()}",
+                showDetail = data?.title ?: "",
+                thumbnail = data?.thumbnail?.getOrNull(0) ?: "",
+                viewerCount = "1",
+                highestBid = LiveShowModel.HighestBid(
+                    bidAmount = "",
+                    userName = "",
+                    userImage = "",
+                    userId = "",
+                    productId = ""
+                ),
+                isLive = true,
+                time = Utils.timestamp().toString(),
+                showId = data?.id.toString(),
+                allowBidForAll = true,
+                bidCountDown = "",
+                showTimer = "",
+                categoryId = data?.category?.id.toString()
+            )
+
+            startActivity(mCtx.toSellerShow(data?.time, showData))
+
+        }
+
         bind.loader.isVisible = true
         viewModel.getSellerHubInfo()
         viewModel.getSellerHubInfoRepo.observe(viewLifecycleOwner) {
@@ -318,6 +371,8 @@ class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
 
                     //UPCOMING SHOW
                     if (mData?.upcomingShow != null) {
+
+                        upcomingShow = mData.upcomingShow
 
                         bind.sellerHub.noShows.isVisible=false
                         bind.sellerHub.upcomingShow.isVisible=true

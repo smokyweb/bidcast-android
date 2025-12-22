@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.navigation.fragment.findNavController
+import io.bidswipe.app.App
 import io.bidswipe.app.base.BaseFragment
 import io.bidswipe.app.controller.SubCategoryRecyclerAdapter
 import io.bidswipe.app.databinding.FragmentSubcategoryBinding
@@ -56,49 +57,47 @@ class SubCategoryFragment : BaseFragment<DashViewModel, FragmentSubcategoryBindi
 		bind.confirmButton.setHapticClickListener {
 			val selectedSubCategories = subCategoryList.filter { it?.subcategories?.filter { it1 -> it1?.isSelected == true }?.isNotEmpty() == true }.toList()
 
-			if (selectedSubCategories.isNotEmpty()) {
-				val selectedCategoryIds = viewModel.selectedCategories.mapNotNull { it.id }
-				val selectedSubCategoryIds = mutableListOf<Int>()
-				selectedSubCategories.forEach {
-					it?.subcategories?.filter { it1 -> it1?.isSelected == true }
-						?.map { it?.id?.let { element -> selectedSubCategoryIds.add(element) } }
-				}
+			val selectedCategoryIds = viewModel.selectedCategories.mapNotNull { it.id }
+			val selectedSubCategoryIds = mutableListOf<Int>()
+			selectedSubCategories.forEach {
+				it?.subcategories?.filter { it1 -> it1?.isSelected == true }
+					?.map { it?.id?.let { element -> selectedSubCategoryIds.add(element) } }
+			}
 
-				viewModel.userFavorite(
-					categoryIds = selectedCategoryIds,
-					subcategoriesIds = selectedSubCategoryIds
-				)
+			viewModel.userFavorite(
+				categoryIds = selectedCategoryIds,
+				subcategoriesIds = selectedSubCategoryIds
+			)
 
-				val fromAccount = arguments?.getBoolean("fromAccount", false)
-				viewModel.userFavoriteRepo.observe(viewLifecycleOwner) {
-					when (it) {
-						is Resource.Success -> {
-							successToast("Saved successfully")
-							if (fromAccount == true) {
-								requireActivity().finish()
-							} else {
-								startActivity(mCtx.toDash())
-								requireActivity().finish()
-							}
+			val fromAccount = arguments?.getBoolean("fromAccount", false)
+			viewModel.userFavoriteRepo.observe(viewLifecycleOwner) {
+				when (it) {
+					is Resource.Success -> {
+						successToast("Saved successfully")
+
+						App.getCategories()
+						if (fromAccount == true) {
+							requireActivity().finish()
+						} else {
+							startActivity(mCtx.toDash())
+							requireActivity().finish()
 						}
-
-						is Resource.Error -> {
-							it.parse(mCtx, TAG, object : AlertClicks {
-								override fun primaryClick(dialog: AppBottomSheet) {
-									dialog.dismiss()
-								}
-
-								override fun secondaryClick(dialog: AppBottomSheet) {
-									dialog.dismiss()
-								}
-							})
-						}
-
-						else -> {}
 					}
+
+					is Resource.Error -> {
+						it.parse(mCtx, TAG, object : AlertClicks {
+							override fun primaryClick(dialog: AppBottomSheet) {
+								dialog.dismiss()
+							}
+
+							override fun secondaryClick(dialog: AppBottomSheet) {
+								dialog.dismiss()
+							}
+						})
+					}
+
+					else -> {}
 				}
-			} else {
-				errorToast("Please select at least one category")
 			}
 		}
 

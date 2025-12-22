@@ -97,6 +97,10 @@ class SellerHubActivity : BaseActivity() {
 				navGraph.setStartDestination(R.id.KYCFragment)
 			}
 
+			"createShippingProfile" -> {
+				navGraph.setStartDestination(R.id.createShippingProfileFragment)
+			}
+
 			else -> {
 				navGraph.setStartDestination(R.id.inventoryFragment)
 			}

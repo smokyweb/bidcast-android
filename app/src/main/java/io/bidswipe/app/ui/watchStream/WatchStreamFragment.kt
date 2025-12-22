@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.app.PictureInPictureParams
 import android.content.Intent
 import android.graphics.Rect
-import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
@@ -18,7 +17,6 @@ import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.ArrayAdapter
 import androidx.core.content.ContextCompat
-import androidx.core.content.FileProvider
 import androidx.core.text.bold
 import androidx.core.text.buildSpannedString
 import androidx.core.text.color
@@ -26,10 +24,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
 import androidx.lifecycle.viewModelScope
-import androidx.recyclerview.widget.GridLayoutManager
-import com.bumptech.glide.Glide
 import com.google.android.material.bottomsheet.BottomSheetDialog
-import com.google.gson.Gson
 import com.gyf.immersionbar.ktx.navigationBarHeight
 import com.gyf.immersionbar.ktx.statusBarHeight
 import com.ncorti.slidetoact.SlideToActView
@@ -41,7 +36,6 @@ import io.bidswipe.app.App
 import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseFragment
 import io.bidswipe.app.controller.CommentAdapter
-import io.bidswipe.app.controller.FirebaseProductAdapter
 import io.bidswipe.app.controller.LivePollOptionAdapter
 import io.bidswipe.app.controller.SellerMenuInfoAdapter
 import io.bidswipe.app.databinding.AppReportViewBinding
@@ -72,7 +66,6 @@ import io.bidswipe.app.ui.sellerProfile.SellerProfileActivity
 import io.bidswipe.app.utils.Alerts
 import io.bidswipe.app.utils.Const
 import io.bidswipe.app.utils.SocketManager
-import io.bidswipe.app.utils.Utils
 import io.bidswipe.app.utils.asCapital
 import io.bidswipe.app.utils.asMoney
 import io.bidswipe.app.utils.dpToPx
@@ -89,8 +82,6 @@ import io.bidswipe.app.utils.share.ShareHelper
 import io.bidswipe.app.utils.value
 import kotlinx.coroutines.launch
 import org.json.JSONObject
-import java.io.File
-import java.io.FileOutputStream
 import kotlin.math.abs
 
 @SuppressLint("NotifyDataSetChanged", "InflateParams", "ClickableViewAccessibility")
@@ -266,7 +257,6 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
                                     bind.bidLayout.isVisible = true
                                     bind.soldLayout.isVisible = false
                                     bind.productLayout.isVisible = true
-
                                 }
 
                                 updateProductUI(product, startingBidAmount)
@@ -1777,11 +1767,15 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
             App.PIPMode = true
             bind.profileLayout.isVisible = false
             bind.bottomUI.isVisible = false
+            bind.showNotes.isVisible = false
+            bind.giveawayLayout.isVisible = false
             log("PIP MODE ON")
         } else {
             App.PIPMode = false
             bind.profileLayout.isVisible = true
             bind.bottomUI.isVisible = true
+            bind.showNotes.isVisible = true
+            bind.giveawayLayout.isVisible = true
 
             ProductDetailsActivity.instance?.finish()
 

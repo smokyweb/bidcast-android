@@ -1,6 +1,7 @@
 package io.bidswipe.app.ui.sell
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.provider.OpenableColumns
@@ -35,8 +36,10 @@ import io.bidswipe.app.network.response.GetMailClassesResponse
 import io.bidswipe.app.network.response.GetProductDetailsResponse
 import io.bidswipe.app.network.response.GetShippingProfilesResponse
 import io.bidswipe.app.network.response.Product
+import io.bidswipe.app.ui.custom.AlertType
 import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.ui.dashboard.DashViewModel
+import io.bidswipe.app.ui.sellerHub.SellerHubActivity
 import io.bidswipe.app.utils.Alerts
 import io.bidswipe.app.utils.Const
 import io.bidswipe.app.utils.Utils
@@ -1017,7 +1020,12 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
                 }
 
                 bind.shippingProfile.value().isEmpty() -> {
-                    Alerts.error(mCtx, "Please select shipping")
+                    if (profiles.isEmpty()){
+                        addShippingProfile()
+                    }else{
+                        Alerts.error(mCtx, "Please select shipping profile")
+                    }
+
                 }
 
 
@@ -1308,4 +1316,38 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
         // Save state when fragment is paused (including orientation changes)
         saveStateToViewModel()
     }
+
+    private fun addShippingProfile() {
+        AppBottomSheet(
+            mCtx,
+            R.drawable.ic_info,
+            "No Shipping Profile Found!",
+            "You have not added any shipping profile. Are you sure you want to add shipping profile?",
+            primaryBtnText = "Yes",
+            secondaryBtnText = "No",
+            canCancel = true,
+            showSecondary = true,
+            alertType = AlertType.INFO,
+            clicks = object : AlertClicks {
+                override fun primaryClick(dialog: AppBottomSheet) {
+                    dialog.dismiss()
+
+                   startActivity(Intent(mCtx , SellerHubActivity::class.java).putExtra(
+                       "slug",
+                       "createShippingProfile"
+                   ))
+
+
+                }
+
+                override fun secondaryClick(dialog: AppBottomSheet) {
+                    dialog.dismiss()
+                }
+            }
+
+        ).show()
+
+    }
+
+
 }

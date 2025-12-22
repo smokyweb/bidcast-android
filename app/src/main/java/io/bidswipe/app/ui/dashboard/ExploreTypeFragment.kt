@@ -55,7 +55,7 @@ class ExploreTypeFragment : BaseFragment<DashViewModel , FragmentExploreTypeBind
 				"user" -> {
 					startActivity(
 						Intent(mCtx , SellerProfileActivity::class.java).putExtra(
-							"userId" ,
+							"sellerId" ,
 							showList[pos]?.userId.toString()
 						)
 					)

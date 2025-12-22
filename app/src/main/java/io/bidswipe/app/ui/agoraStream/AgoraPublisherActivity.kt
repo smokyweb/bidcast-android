@@ -2,8 +2,6 @@ package io.bidswipe.app.ui.agoraStream
 
 import android.annotation.SuppressLint
 import android.app.PictureInPictureParams
-import android.content.ClipData
-import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
@@ -35,11 +33,9 @@ import androidx.core.text.color
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
-import androidx.recyclerview.widget.GridLayoutManager
 import com.bumptech.glide.Glide
 import com.caneryilmaz.apps.luckywheel.constant.ArrowPosition
 import com.caneryilmaz.apps.luckywheel.data.WheelData
-import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.gyf.immersionbar.ktx.immersionBar
 import com.gyf.immersionbar.ktx.navigationBarHeight
 import com.gyf.immersionbar.ktx.statusBarHeight
@@ -48,14 +44,11 @@ import io.bidswipe.app.App
 import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseActivity
 import io.bidswipe.app.controller.CommentAdapter
-import io.bidswipe.app.controller.FirebaseProductAdapter
 import io.bidswipe.app.controller.LiveMoreAdapter
 import io.bidswipe.app.controller.LivePollOptionAdapter
 import io.bidswipe.app.controller.LiveSellerAdapter
 import io.bidswipe.app.controller.PollOptionAdapter
 import io.bidswipe.app.controller.PromoteSheetAdapter
-import io.bidswipe.app.controller.ShareTarget
-import io.bidswipe.app.controller.ShareTargetAdapter
 import io.bidswipe.app.databinding.ActivityAgoraPublisherBinding
 import io.bidswipe.app.databinding.AuctionSettingsSheetBinding
 import io.bidswipe.app.databinding.CreateClipSheetBinding
@@ -67,7 +60,6 @@ import io.bidswipe.app.databinding.PollDetailsSheetBinding
 import io.bidswipe.app.databinding.PromoteShowSheetBinding
 import io.bidswipe.app.databinding.RandomizerSheetBinding
 import io.bidswipe.app.databinding.SellerTipSettingsSheetBinding
-import io.bidswipe.app.databinding.ShareSheetBinding
 import io.bidswipe.app.databinding.ShowConfirmationAlertBinding
 import io.bidswipe.app.databinding.ShowNotesSheetBinding
 import io.bidswipe.app.interfaces.AlertClicks
@@ -100,7 +92,6 @@ import io.bidswipe.app.utils.request
 import io.bidswipe.app.utils.runSafe
 import io.bidswipe.app.utils.setHapticClickListener
 import io.bidswipe.app.utils.setMargins
-import io.bidswipe.app.utils.share.Seller
 import io.bidswipe.app.utils.share.ShareHelper
 import io.bidswipe.app.utils.value
 import org.json.JSONObject
@@ -841,15 +832,14 @@ class AgoraPublisherActivity : BaseActivity() {
 							}
 						}
 
+						socketManager?.sendMessage(roomID, "We have a winner! ${userName}", userId, userName, userImage)
+
 						product?.status = "sold"
 						product?.isCurrent = false
 
 						bind.status.isVisible = true
 						bind.runNextLayout.isVisible = true
 
-//						log("UPDATED PRODUCT LIST : ${productList} ")
-
-//						showProductSheet()
 
 					}
 
@@ -1302,17 +1292,16 @@ class AgoraPublisherActivity : BaseActivity() {
 	}
 
 	private fun auctionSettingsSheet(productId : String, price : String) {
-		var selectedCounterTimer = 0
-		var selectedRequiredTime = 0
+		var selectedCounterTimer = 5
+		var selectedRequiredTime = 30
 
-		val auctionSettingsSheetBind =
-			AuctionSettingsSheetBinding.bind(
-				layoutInflater.inflate(
-					R.layout.auction_settings_sheet,
-					null,
-					false
-				)
+		val auctionSettingsSheetBind = AuctionSettingsSheetBinding.bind(
+			layoutInflater.inflate(
+				R.layout.auction_settings_sheet,
+				null,
+				false
 			)
+		)
 
 		val sheet = Alerts.appBottomSheet(this, true, auctionSettingsSheetBind)
 
@@ -1341,6 +1330,8 @@ class AgoraPublisherActivity : BaseActivity() {
 
 		auctionSettingsSheetBind.requiredTime.setAdapter(requiredTimeAdapter)
 
+		auctionSettingsSheetBind.requiredTime.setText("30s",false)
+
 		auctionSettingsSheetBind.requiredTime.setOnItemClickListener { _, _, position, _ ->
 			selectedRequiredTime = requiredTimeList[position]
 			auctionSettingsSheetBind.requiredTime.setText("${requiredTimeList[position]}s", false)
@@ -1350,36 +1341,38 @@ class AgoraPublisherActivity : BaseActivity() {
 			auctionSettingsSheetBind.requiredTime.showDropDown()
 		}
 
+		auctionSettingsSheetBind.startingBid.setText(price)
+
 		auctionSettingsSheetBind.close.setHapticClickListener { sheet.dismiss() }
 		auctionSettingsSheetBind.start.setHapticClickListener {
 
-			when {
+			when{
 				selectedRequiredTime == 0 -> {
-					errorToast("Please select required time")
+					Alerts.error(this,"Please select required time")
 					return@setHapticClickListener
 				}
-
 				selectedCounterTimer == 0 -> {
-					errorToast("Please select counter timer")
+					Alerts.error(this,"Please select counter timer")
 					return@setHapticClickListener
 				}
-
 				auctionSettingsSheetBind.startingBid.value().isEmpty() -> {
-					errorToast("Please enter starting bid")
+					Alerts.error(this,"Please enter starting bid")
 					return@setHapticClickListener
 				}
-
 				else -> {
+					val productIds = mutableListOf<String>()
+					productIds.add(productId)
 
-					/* socketManager?.startAuction(
-						 roomID,
-
-						 selectedRequiredTime,
-						 selectedCounterTimer,
-						 auctionSettingsSheetBind.startingBid.value()
-					 )
- */
+					socketManager?.startAuction(
+						viewModel.currentRoomId,
+						productIds,
+						auctionSettingsSheetBind.startingBid.value(),
+						selectedRequiredTime,
+						selectedCounterTimer,
+						auctionSettingsSheetBind.suddenDeath.isChecked
+					)
 					sheet.dismiss()
+
 				}
 
 			}
@@ -1563,6 +1556,7 @@ class AgoraPublisherActivity : BaseActivity() {
 						showId.request(),
 						promotePlans[pos]?.id.toString().request()
 					)
+					socketManager?.setPromotionData( userId, showId,promotePlans[pos]?.id.toString())
 				}
 			})
 

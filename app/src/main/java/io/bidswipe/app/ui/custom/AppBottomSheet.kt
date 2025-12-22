@@ -96,7 +96,7 @@ class AppBottomSheet(
                 bind.imageCard.setCardBackgroundColor(
                     ContextCompat.getColorStateList(
                         mCtx,
-                        clr.primary
+                        clr.onPrimary
                     )
                 )
             }
