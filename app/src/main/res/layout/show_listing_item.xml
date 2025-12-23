@@ -4,99 +4,79 @@
     style="@style/cardStyle"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginVertical="4dp"
     android:layout_marginHorizontal="@dimen/half_margin"
-    app:cardCornerRadius="12dp"
-    app:cardBackgroundColor="@color/background">
+    android:layout_marginVertical="4dp"
+    app:cardBackgroundColor="@color/background"
+    app:cardCornerRadius="12dp">
 
-    <com.zerobranch.layout.SwipeLayout
-        android:id="@+id/swipeLayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:draggedItem="@id/click"
-        app:rightItem="@id/edit_click"
-        app:swipeDirection="left">
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/edit_click"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_gravity="end"
-        android:clickable="true"
-        android:focusable="true">
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/edit"
-            style="@style/appBtn"
-            android:layout_width="wrap_content"
-            android:layout_height="0dp"
-            android:layout_gravity="end"
-            android:padding="32dp"
-            android:text=""
-            app:backgroundTint="@color/background"
-            app:cornerRadius="0dp"
-            app:iconTint="@color/onSurface"
-            app:icon="@drawable/ic_edit"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"/>
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <LinearLayout
-        android:id="@+id/click"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="8dp"
-        android:background="@drawable/card_8"
-        android:gravity="center_vertical"
-        android:orientation="horizontal">
-
-        <com.google.android.material.card.MaterialCardView
-            style="@style/cardStyle"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            app:cardCornerRadius="10dp"
-            app:cardElevation="0dp">
-
-            <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/image"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:scaleType="fitXY"
-                android:src="@drawable/placeholder_square" />
-
-        </com.google.android.material.card.MaterialCardView>
 
         <LinearLayout
-            android:layout_marginStart="@dimen/half_margin"
-            android:layout_width="0dp"
+            android:id="@+id/click"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:background="@drawable/card_8"
             android:gravity="center_vertical"
-            android:orientation="vertical">
+            android:orientation="horizontal"
+            android:padding="8dp">
 
-            <TextView
-                android:id="@+id/name"
-                style="@style/TitleMedium"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Show Name" />
+            <com.google.android.material.card.MaterialCardView
+                style="@style/cardStyle"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                app:cardCornerRadius="10dp"
+                app:cardElevation="0dp">
 
-            <TextView
-                android:id="@+id/category"
-                style="@style/BodyMedium"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Gaming" />
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/image"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="fitXY"
+                    android:src="@drawable/placeholder_square" />
 
-            <TextView
-                android:id="@+id/sales"
-                style="@style/BodyMedium"
-                android:layout_width="match_parent"
+            </com.google.android.material.card.MaterialCardView>
+
+            <LinearLayout
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="sales and order"
-                app:drawableTint="@color/onSurface" />
+                android:layout_marginStart="@dimen/half_margin"
+                android:layout_weight="1"
+                android:gravity="center_vertical"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:id="@+id/name"
+                        style="@style/TitleMedium"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Show Name" />
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/moreMenu"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_vertical_menu"
+                        app:tint="@color/onSurface" />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/category"
+                    style="@style/BodyMedium"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Gaming" />
+
+                <TextView
+                    android:id="@+id/sales"
+                    style="@style/BodyMedium"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="sales and order"
+                    app:drawableTint="@color/onSurface" />
 
                 <TextView
                     android:id="@+id/time"
@@ -105,8 +85,7 @@
                     android:layout_height="wrap_content"
                     android:text="8:00 PM EST" />
 
-        </LinearLayout>
+            </LinearLayout>
 
-    </LinearLayout>
-    </com.zerobranch.layout.SwipeLayout>
+        </LinearLayout>
 </com.google.android.material.card.MaterialCardView>

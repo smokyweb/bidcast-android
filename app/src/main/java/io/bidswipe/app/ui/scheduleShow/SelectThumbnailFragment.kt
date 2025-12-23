@@ -98,7 +98,6 @@ class SelectThumbnailFragment :
 		bind.continueBtn.setHapticClickListener {
 
 			when {
-
 				viewModel.thumbnail.isEmpty() -> {
 					Alerts.error(mCtx, "Please select ThumbNail")
 				}

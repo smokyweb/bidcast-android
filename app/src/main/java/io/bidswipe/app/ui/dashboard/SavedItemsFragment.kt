@@ -1,6 +1,7 @@
 package io.bidswipe.app.ui.dashboard
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -16,6 +17,7 @@ import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.network.response.GetProductsByStatusResponse
 import io.bidswipe.app.ui.custom.AppBottomSheet
+import io.bidswipe.app.ui.product.ProductDetailsActivity
 import io.bidswipe.app.utils.Utils
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request
@@ -34,6 +36,12 @@ class SavedItemsFragment : BaseFragment<DashViewModel , FragmentSavedItemsBindin
 
 	private var mClick = object : RecyclerClicks {
 		override fun itemClick(pos : Int , status : String?) {
+			startActivity(
+				Intent(mCtx, ProductDetailsActivity::class.java).putExtra(
+					"productId",
+					mList[pos]?.productId.toString()
+				)
+			)
 		}
 	}
 

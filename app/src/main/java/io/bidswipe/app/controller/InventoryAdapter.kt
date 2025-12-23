@@ -73,24 +73,6 @@ class InventoryAdapter(
                 append(item?.quantity ?: 0)
             }
 
-            bind.swipeLayout.close()
-
-            bind.swipeLayout.setOnActionsListener(object : SwipeLayout.SwipeActionsListener {
-                override fun onOpen(direction: Int, isContinuous: Boolean) {
-                    if (posList.isNotEmpty()) {
-                        val posi = posList.first()
-                        posList.clear()
-                        notifyItemChanged(posi)
-                    }
-                    posList.add(position)
-                }
-
-                override fun onClose() {
-                    posList.remove(position)
-                }
-
-            })
-
             if (isSelectionMode) {
                 if (item?.selected == true) {
 //					bind.root.setBackgroundColor(ContextCompat.getColor(mCtx, R.color.secondaryContainer))
@@ -109,10 +91,6 @@ class InventoryAdapter(
                 bind.root.strokeWidth = 0
                 bind.click.setHapticClickListener {
                     mClicks.itemClick(position)
-                }
-
-                bind.deleteNotification.setHapticClickListener {
-                    mClicks.itemClick(position, "delete")
                 }
             }
 
@@ -157,7 +135,6 @@ class InventoryAdapter(
             bind.moreMenu.setHapticClickListener {
                 menu.show()
             }
-
 
         }
     }

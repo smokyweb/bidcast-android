@@ -14,9 +14,9 @@
         android:gravity="center"
         android:background="@drawable/rounded_background"
         android:padding="@dimen/half_margin"
-        android:backgroundTint="@color/surfaceVariant"
+        android:backgroundTint="@color/primaryContainer"
         android:src="@drawable/search"
-        app:tint="@color/onSurfaceVariant" />
+        app:tint="@color/primary" />
 
     <TextView
         android:id="@+id/title"

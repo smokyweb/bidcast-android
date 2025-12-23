@@ -143,7 +143,7 @@
 
     <style name="appLoader">
         <item name="SpinKit_Color">@color/primary</item>
-        <item name="SpinKit_Style">ThreeBounce</item>
+        <item name="SpinKit_Style">Circle</item>
     </style>
 
     <style name="tabStyle" parent="Widget.Material3.TabLayout">
@@ -248,7 +248,7 @@
         <item name="headerColor">@color/onPrimary</item>
         <item name="headerLabelColor">@color/scrim</item>
         <item name="todayLabelColor">@color/scrim</item>
-        <item name="selectionColor">@color/secondary</item>
+        <item name="selectionColor">@color/primary</item>
         <item name="selectionLabelColor">@color/surface</item>
         <item name="highlightedDaysLabelsColor">@color/primary</item>
         <item name="abbreviationsBarColor">@android:color/transparent</item>

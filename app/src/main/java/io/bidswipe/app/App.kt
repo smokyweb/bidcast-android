@@ -5,10 +5,13 @@ import android.app.Application
 import android.content.Context
 import android.os.Process
 import android.util.Log
+import android.view.Gravity
+import androidx.core.content.res.ResourcesCompat
 import androidx.lifecycle.MutableLiveData
 import com.google.firebase.FirebaseApp
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import dagger.hilt.android.HiltAndroidApp
+import es.dmoral.toasty.Toasty
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.network.RetrofitService
 import io.bidswipe.app.network.repository.DashRepository
@@ -106,6 +109,14 @@ class App : Application() {
 			getProfile()
 			getCategories()
 		}
+
+		Toasty.Config.getInstance()
+			.setToastTypeface(ResourcesCompat.getFont(applicationContext, R.font.poppins_semi_bold)!!)
+			.setGravity(Gravity.TOP, 0, 160)
+			.supportDarkTheme(true)
+			.allowQueue(false)
+			.setTextSize(12)
+			.apply()
 
 	}
 

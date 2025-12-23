@@ -1,8 +1,13 @@
 package io.bidswipe.app.controller
 
 import android.util.Log
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.appcompat.widget.AppCompatImageView
+import androidx.appcompat.widget.PopupMenu
+import androidx.core.view.isVisible
+import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseAdapter
 import io.bidswipe.app.databinding.ShowListingItemBinding
 import io.bidswipe.app.interfaces.RecyclerClicks
@@ -11,6 +16,7 @@ import io.bidswipe.app.utils.Const
 import io.bidswipe.app.utils.Utils
 import io.bidswipe.app.utils.asCapital
 import io.bidswipe.app.utils.asMoney
+import io.bidswipe.app.utils.ids
 import io.bidswipe.app.utils.loadUrl
 import io.bidswipe.app.utils.setHapticClickListener
 
@@ -32,13 +38,12 @@ class ShowListingAdapter(
 				mClick.itemClick(position, "click")
 			}
 
-			bind.edit.setHapticClickListener {
-				mClick.itemClick(position, "edit")
-			}
-
 			bind.name.text = item?.title?.asCapital()
 
-			bind.category.text = item?.category?.name?.asCapital()
+			if(item?.category!=null){
+			bind.category.text = item?.category?.name?.asCapital()}else{
+				bind.category.isVisible=false
+			}
 
 			bind.time.text = buildString {
 				append(
@@ -69,6 +74,33 @@ class ShowListingAdapter(
 			}
 
 			bind.image.loadUrl(mCtx, item?.imgThumbnail?.first() ?: "")
+
+			val menu = PopupMenu(
+				mCtx,
+				bind.root.findViewById<AppCompatImageView>(R.id.moreMenu),
+				Gravity.START
+			)
+
+			menu.menu.add("Edit")
+//			menu.menu.add("Delete")
+
+			menu.setOnMenuItemClickListener {
+				when (it.title) {
+					"Delete" -> {
+						mClick.itemClick(position, "delete")
+					}
+					else -> {
+						mClick.itemClick(position, "edit")
+
+					}
+
+				}
+				return@setOnMenuItemClickListener true
+			}
+
+			bind.moreMenu.setHapticClickListener {
+				menu.show()
+			}
 
 		}
 	}

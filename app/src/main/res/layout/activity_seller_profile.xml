@@ -152,7 +152,6 @@
                         android:layout_width="26dp"
                         android:layout_height="32dp"
                         android:background="?selectableItemBackgroundBorderless"
-                        android:padding="4dp"
                         android:src="@drawable/notification"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
@@ -237,7 +236,7 @@
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/follow"
-                        style="@style/appBtn"
+                        style="@style/appTonalBtn"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
@@ -262,7 +261,7 @@
                         style="@style/cardStyle"
                         android:layout_width="48dp"
                         android:layout_height="48dp"
-                        android:backgroundTint="@color/outline"
+                        android:backgroundTint="@color/primaryContainer"
                         app:cardCornerRadius="100dp"
                         app:cardElevation="0dp"
                         app:strokeWidth="0dp">
@@ -273,6 +272,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:gravity="center"
+                            android:textColor="@color/primary"
                             android:text="$" />
 
                     </com.google.android.material.card.MaterialCardView>
@@ -375,14 +375,16 @@
             android:id="@+id/tab_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/surface"
-            app:tabGravity="fill"
-            app:tabIndicatorColor="@color/secondary"
-            app:tabIndicatorHeight="3dp"
-            app:tabMode="fixed"
-            app:tabRippleColor="@null"
-            app:tabSelectedTextAppearance="@style/TitleMedium"
-            app:tabSelectedTextColor="@color/secondary"
+            android:background="@color/background"
+            app:layout_constraintTop_toBottomOf="@id/header"
+            app:tabIndicatorColor="@color/scrim"
+            app:tabIndicatorHeight="0dp"
+            app:tabMode="scrollable"
+            app:tabPaddingStart="4dp"
+            app:tabPaddingEnd="4dp"
+            app:tabSelectedTextAppearance="@style/TitleLarge"
+            app:tabSelectedTextColor="@color/scrim"
+            app:tabTextColor="@color/outlineVariant"
             app:tabTextAppearance="@style/TitleSmall">
 
             <com.google.android.material.tabs.TabItem

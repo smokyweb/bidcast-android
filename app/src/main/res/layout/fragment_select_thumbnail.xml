@@ -19,17 +19,6 @@
         app:showPrimaryIcon="false"
         app:showSecondaryIcon="false" />
 
-    <TextView
-        style="@style/TitleSmall"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/margin"
-        android:layout_marginEnd="@dimen/margin"
-        android:text="@string/done"
-        android:textColor="@color/secondary"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -172,7 +161,7 @@
             android:layout_margin="@dimen/margin"
             android:layout_weight="1"
             android:paddingHorizontal="@dimen/margin"
-            android:text="@string/finish" />
+            android:text="@string/_continue" />
 
     </LinearLayout>
 

@@ -31,7 +31,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Account Balance"
-                        android:textColor="@color/onSurface" />
+                        android:textColor="@color/onSurfaceVariant" />
 
                     <TextView
                         android:id="@+id/wallet_amount"
@@ -39,13 +39,16 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="$0.00"
+                        android:textSize="24sp"
                         android:textColor="@color/onSurface" />
 
                     <com.google.android.material.card.MaterialCardView
                         style="@style/cardStyle"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/half_margin"
+                        app:cardBackgroundColor="@color/background"
+                        android:layout_marginVertical="@dimen/half_margin"
+                        android:layout_marginHorizontal="1dp"
                         app:cardCornerRadius="12dp">
 
                         <LinearLayout
@@ -67,7 +70,7 @@
 
                                     <TextView
                                         android:id="@+id/available"
-                                        style="@style/TitleMedium"
+                                        style="@style/TitleSemiBold"
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
                                         android:text="$0.00"
@@ -91,11 +94,15 @@
                                     android:textColor="@color/onSurfaceVariant" />
                             </LinearLayout>
 
+                            <com.google.android.material.divider.MaterialDivider
+                                android:layout_width="match_parent"
+                                android:layout_marginVertical="@dimen/half_margin"
+                                android:layout_height="1dp"/>
+
                             <!-- Processing -->
                             <LinearLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:layout_marginTop="@dimen/half_margin"
                                 android:orientation="vertical">
 
                                 <LinearLayout
@@ -105,7 +112,7 @@
 
                                     <TextView
                                         android:id="@+id/processing"
-                                        style="@style/TitleMedium"
+                                        style="@style/TitleSemiBold"
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
                                         android:text="$0.00"
@@ -128,15 +135,14 @@
                                     android:text="These funds will be available for payout up to 4 hours after delivery of the order has been confirmed."
                                     android:textColor="@color/onSurfaceVariant" />
                             </LinearLayout>
-
-                            <!-- Early payout info -->
+      <!-- Early payout info -->
                             <TextView
-                                style="@style/BodySmall"
+                                android:id="@+id/eligible_for_payout"
+                                style="@style/BodyMedium"
                                 android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
                                 android:layout_marginTop="@dimen/half_margin"
-                                android:text="Not eligible for early payout"
-                                android:textColor="@color/onSurfaceVariant" />
+                                android:layout_height="wrap_content"
+                                android:text="Not eligible for early payout" />
 
                         </LinearLayout>
                     </com.google.android.material.card.MaterialCardView>
@@ -216,7 +222,7 @@
     <!-- Start payout button fixed at bottom -->
     <com.google.android.material.button.MaterialButton
         android:id="@+id/payoutCard"
-        style="@style/Widget.MaterialComponents.Button"
+        style="@style/appBtn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/margin"

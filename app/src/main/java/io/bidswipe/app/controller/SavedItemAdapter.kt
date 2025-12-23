@@ -2,7 +2,11 @@ package io.bidswipe.app.controller
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import io.bidswipe.app.base.BaseAdapter
+import io.bidswipe.app.databinding.ProductImageItemBinding
+import io.bidswipe.app.databinding.ProductListItemBinding
+import io.bidswipe.app.databinding.ProductSelectionItemBinding
 import io.bidswipe.app.databinding.PurchasesItemBinding
 import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.network.response.GetProductsByStatusResponse
@@ -15,15 +19,15 @@ import io.bidswipe.app.utils.setHapticClickListener
 
 class SavedItemAdapter(
 	mList : MutableList<GetProductsByStatusResponse.Data?> , val mClicks : RecyclerClicks ,
-) : BaseAdapter<GetProductsByStatusResponse.Data , PurchasesItemBinding>(mList) {
+) : BaseAdapter<GetProductsByStatusResponse.Data , ProductSelectionItemBinding>(mList) {
 
 	override fun bindView(inflater : LayoutInflater , parent : ViewGroup) =
-		PurchasesItemBinding.inflate(inflater , parent , false)
+		ProductSelectionItemBinding.inflate(inflater , parent , false)
 
 	override fun onBind(
-		holder : BaseViewHolder<PurchasesItemBinding> ,
-		position : Int ,
-		item : GetProductsByStatusResponse.Data? ,
+		holder : BaseViewHolder<ProductSelectionItemBinding>,
+		position : Int,
+		item : GetProductsByStatusResponse.Data?,
 	) {
 		with(holder) {
 
@@ -33,7 +37,7 @@ class SavedItemAdapter(
 
 			bind.price.text = item?.product?.pricing.toString().asMoney()
 
-			bind.productId.text = buildString {
+		/*	bind.productId.text = buildString {
 				append(item?.product?.title?.asCapital())
 				append(" #")
 				append(item?.product?.id.toString())
@@ -52,9 +56,13 @@ class SavedItemAdapter(
 						item?.product?.createdAt.toString()
 					)
 				)
-			}
+			}*/
 
-			bind.productImage.loadUrl(mCtx , item?.product?.images?.get(0).toString())
+			bind.productName.text=item?.product?.title?:""
+
+			bind.img.loadUrl(mCtx , item?.product?.images?.get(0).toString())
+
+			bind.buttonLayout.isVisible=false
 
 		}
 	}

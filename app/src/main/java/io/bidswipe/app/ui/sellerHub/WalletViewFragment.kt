@@ -105,6 +105,7 @@ class WalletViewFragment : BaseFragment<SellerHubViewModel , FragmentWalletViewB
 					bind.processing.text = mData?.processing.toString().asMoney()
 
 					bind.payoutCard.isVisible = (mData?.avaiableForPayout ?: 0) > 10
+
 				}
 
 				is Resource.Error -> {
