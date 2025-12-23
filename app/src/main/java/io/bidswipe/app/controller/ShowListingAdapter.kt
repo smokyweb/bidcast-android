@@ -4,6 +4,7 @@ import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.appcompat.view.ContextThemeWrapper
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.view.isVisible
@@ -75,10 +76,10 @@ class ShowListingAdapter(
 
 			bind.image.loadUrl(mCtx, item?.imgThumbnail?.first() ?: "")
 
+			val wrapper = ContextThemeWrapper(mCtx, R.style.popupMenuStyle)
 			val menu = PopupMenu(
-				mCtx,
-				bind.root.findViewById<AppCompatImageView>(R.id.moreMenu),
-				Gravity.START
+				wrapper,
+				bind.moreMenu
 			)
 
 			menu.menu.add("Edit")

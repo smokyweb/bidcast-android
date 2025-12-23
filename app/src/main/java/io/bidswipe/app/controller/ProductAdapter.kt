@@ -3,6 +3,7 @@ package io.bidswipe.app.controller
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseAdapter
 import io.bidswipe.app.databinding.ProductListItemBinding
@@ -13,7 +14,7 @@ import io.bidswipe.app.utils.loadUrl
 import io.bidswipe.app.utils.setHapticClickListener
 
 class ProductAdapter(
-	val mList: MutableList<LiveShowModel.Product>, val mClicks: RecyclerClicks,
+	val mList: MutableList<LiveShowModel.Product>, val mClicks: RecyclerClicks,val from:String?=null
 ) : BaseAdapter<LiveShowModel.Product?, ProductListItemBinding>(mList) {
 
 	override fun bindView(inflater: LayoutInflater, parent: ViewGroup) =
@@ -25,13 +26,17 @@ class ProductAdapter(
 		item: LiveShowModel.Product?,
 	) {
 		with(holder) {
+if(from=="show_details"){
+	bind.topLayout.isVisible = false
 
+}else{
+	bind.topLayout.isVisible=true
 			if (item?.selected == true) {
 				bind.root.strokeWidth = 2
 				bind.root.strokeColor = ContextCompat.getColor(mCtx, R.color.primary)
 			} else {
 				bind.root.strokeWidth = 0
-			}
+			}}
 
 			bind.productName.text = item?.name?.asCapital()
 			bind.prodSubTitle.text = item?.category?.name

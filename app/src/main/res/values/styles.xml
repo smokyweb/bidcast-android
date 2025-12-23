@@ -147,6 +147,7 @@
         <item name="strokeColor">@color/success</item>
         <item name="strokeWidth">1dp</item>
         <item name="rippleColor">@color/success</item>
+        <item name="cardElevation">0dp</item>
     </style>
 
     <style name="warningCardStyle" parent="cardStyle">
@@ -244,6 +245,10 @@
     <style name="popupMenuStyle" parent="Widget.Material3.PopupMenu">
         <item name="actionMenuTextColor">@color/primary</item>
         <item name="colorControlNormal">@color/surface</item>
+        <item name="android:popupBackground">@drawable/card_8</item>
+        <item name="android:textColor">@color/onSurface</item>
+        <item name="android:backgroundTint">@color/background</item>
+        <item name="android:textAppearance">@style/BodyMedium</item>
     </style>
 
     <style name="toolTipStyle" parent="Widget.Material3.Tooltip">

@@ -26,6 +26,7 @@ import io.bidswipe.app.network.response.toLiveShowProduct
 import io.bidswipe.app.ui.agoraStream.AgoraPublisherActivity
 import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.ui.more.MoreActivity
+import io.bidswipe.app.ui.scheduleShow.ShowDetailsActivity
 import io.bidswipe.app.utils.Alerts
 import io.bidswipe.app.utils.Utils
 import io.bidswipe.app.utils.animatedNav
@@ -52,9 +53,11 @@ class ShowsFragment : BaseFragment<SellerHubViewModel, FragmentShowsBinding>() {
 
     private val mClicks = object : RecyclerClicks {
         override fun itemClick(pos: Int, status: String?) {
+//            startActivity(Intent(mCtx, ShowDetailsActivity::class.java).putExtra("showId",showList[pos]?.id.toString()))
+
             if (status == "edit") {
                 startActivity(mCtx.toScheduleShow(from = "dash", showId = showList[pos]?.id.toString()))
-            } else {
+             } else {
 
                 val profile = App.profileResponse.value
 

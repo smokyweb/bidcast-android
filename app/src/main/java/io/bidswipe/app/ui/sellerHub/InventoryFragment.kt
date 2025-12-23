@@ -530,7 +530,7 @@ class InventoryFragment : BaseFragment<SellerHubViewModel, FragmentInventoryBind
         filterSheet = BottomSheetBehavior.from(bind.filtersheet.root).also {
             it.peekHeight = 0
             it.isHideable = true
-            it.isDraggable = false
+            it.isDraggable = true
             it.isFitToContents = false
         }
 

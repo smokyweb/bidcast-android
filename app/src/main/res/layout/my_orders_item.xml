@@ -39,11 +39,9 @@
 
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/statusCard"
-                style="@style/cardStyle"
+                style="@style/successCardStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:cardElevation="0dp"
-                app:cardBackgroundColor="@color/successContainer"
                 app:cardCornerRadius="100dp">
 
                 <TextView

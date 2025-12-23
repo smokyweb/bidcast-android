@@ -197,6 +197,10 @@
                 style="@style/inputBoxStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                app:boxCornerRadiusBottomEnd="@dimen/margin"
+                app:boxCornerRadiusBottomStart="@dimen/margin"
+                app:boxCornerRadiusTopEnd="@dimen/margin"
+                app:boxCornerRadiusTopStart="@dimen/margin"
                 android:layout_marginHorizontal="@dimen/half_margin"
                 android:layout_marginBottom="@dimen/half_margin">
 

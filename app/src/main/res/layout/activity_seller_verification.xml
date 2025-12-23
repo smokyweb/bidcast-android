@@ -167,6 +167,7 @@
 	                                    android:layout_width = "48dp"
 	                                    android:layout_height = "48dp"
 	                                    android:layout_gravity = "center"
+										app:tint = "@color/outlineVariant"
 	                                    android:src = "@drawable/ic_id_card" />
 
                                     <TextView
@@ -311,7 +312,7 @@
 	                    android:background = "@drawable/card_32_outline"
 	                    android:backgroundTint = "@color/primaryContainer"
 	                    android:padding = "16dp"
-	                    android:src = "@drawable/ic_speaker_outline"
+	                    android:src = "@drawable/ic_phone"
 	                    app:tint = "@color/primary" />
 
                         <LinearLayout

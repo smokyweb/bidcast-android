@@ -138,6 +138,7 @@ class ShowTitleFragment : BaseFragment<ScheduleShowViewModel, FragmentShowTitleB
             }
         }
 
+
         viewModel.getShowDetailsRepo.observe(viewLifecycleOwner) {
             when (it) {
                 is Resource.Success -> {
@@ -210,7 +211,6 @@ class ShowTitleFragment : BaseFragment<ScheduleShowViewModel, FragmentShowTitleB
 
             }
         }
-
 
     }
 

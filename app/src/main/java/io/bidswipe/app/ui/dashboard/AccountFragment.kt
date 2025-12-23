@@ -379,9 +379,7 @@ class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
 
                         val item=mData.upcomingShow
                         bind.sellerHub.name.text = item.title?.asCapital()?:"N/A"
-
                         bind.sellerHub.category.text = item.category?.name?.asCapital()?:"N/A"
-
                         bind.sellerHub.time.text = buildString {
                             append(
                                 Utils.getFormattedDateTime(

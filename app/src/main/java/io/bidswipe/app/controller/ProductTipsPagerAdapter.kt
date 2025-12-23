@@ -65,7 +65,7 @@ class ProductTipsPagerAdapter(mList : MutableList<String> , val type : String?) 
 								"Create a clear, descriptive title that captures attention. Keep it concise and relevant to your content."
 							) ,
 							SellModel(
-								R.drawable.ic_calender ,
+								R.drawable.ic_calendar ,
 								R.color.tertiaryContainer ,
 								"Schedule in Advance" ,
 								"Only sell authentic and legitimate productsPlan your shows ahead of time to maintain consistency and give your audience time to prepare."
