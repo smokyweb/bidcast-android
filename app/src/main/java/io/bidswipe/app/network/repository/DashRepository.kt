@@ -147,7 +147,8 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
 
     suspend fun followUser(
         userId: RequestBody?,
-    ) = call { api.followUser(userId) }
+        showId: RequestBody?,
+    ) = call { api.followUser(userId,showId) }
 
     suspend fun makeOffer(
         amount: RequestBody?,

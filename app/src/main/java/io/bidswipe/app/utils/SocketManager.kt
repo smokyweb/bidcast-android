@@ -417,11 +417,13 @@ class SocketManager private constructor(
 
 	fun followSeller(
 		followerId: String,
-		followingId: String
+		followingId: String,
+		showId: String
 	) {
 		val payload = JSONObject().apply {
 			put("follower_id", followerId)
 			put("following_id", followingId)
+			put("show_id", showId)
 		}
 		Log.d(TAG, "EMIT: Follow Seller - $payload")
 		socket?.emit("follow_unfollow", payload)
@@ -664,7 +666,7 @@ class SocketManager private constructor(
 	}
 
 
-	fun joinShow(userId : String, showId : String) {
+	fun joinShow(userId : String?, showId : String?) {
 		val payload = JSONObject().apply {
 			put("show_id", showId)
 			put("user_id", userId)
@@ -673,7 +675,7 @@ class SocketManager private constructor(
 		socket?.emit("join_show", payload)
 	}
 
-	fun sustainWatches(userId : String, showId : String) {
+	fun sustainWatches(userId : String?, showId : String?) {
 
 		val payload = JSONObject().apply {
 			put("show_id", showId)

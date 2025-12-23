@@ -273,6 +273,7 @@ interface ApiInterface {
     @POST("api/follow-unfollow")
     suspend fun followUser(
         @Part("following_id") userId: RequestBody?,
+        @Part("show_id") showId: RequestBody?,
     ): FollowUnfollowResponse
 
     @Multipart

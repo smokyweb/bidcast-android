@@ -98,7 +98,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
     private lateinit var streamID: String
     private lateinit var thumbnail: String
 
-    private var showId: String? = null
+    private var showId: String? = ""
     private var showTitle: String? = null
     private var highestBidAmount: String? = ""
     private var bidProductId: String? = ""
@@ -120,7 +120,6 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
     private var livePollOptionList = mutableListOf<PollModel.PollOption>()
     private lateinit var livePollAdapter: LivePollOptionAdapter
     private var followSheetRunnable: Runnable? = null
-    private var sustainWatches: Runnable? = null
     private val followSheetHandler = Handler(Looper.getMainLooper())
     private lateinit var pipParams: PictureInPictureParams
     private var isSocketDataLoaded = false
@@ -162,7 +161,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
 //		showThumbnail()
 
-        ViewCompat.setOnApplyWindowInsetsListener(requireActivity().window.decorView) { v, insets ->
+        ViewCompat.setOnApplyWindowInsetsListener(requireActivity().window.decorView) { _, insets ->
             val system = insets.getInsets(WindowInsetsCompat.Type.systemBars())
 
             bind.profileLayout.setMargins(
@@ -191,7 +190,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
             viewModel.getSellerInfo(sellerId!!)
         }
 
-        bind.recycler.setOnTouchListener { view, event ->
+        bind.recycler.setOnTouchListener { view, _ ->
             hideKeyboard(view)
             return@setOnTouchListener false
         }
@@ -378,13 +377,20 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
                     bind.follow.isVisible = !obj.optBoolean("is_followed")
 
-                    followSheetRunnable = Runnable { followSheet() }
-//                    sustainWatches = Runnable { socketManager.sustainWatches(userId, showId) }
+	                 followSheetRunnable = Runnable {
+		                if (isFollowing) {
+			                socketManager?.sustainWatches(userId, showId)
+		                } else {
+			                followSheet()
+			                socketManager?.sustainWatches(userId, showId)
+		                }
+	                }
 
-                    if (!isFollowing  && !isHandlerRunning) {
-                        followSheetRunnable?.let { followSheetHandler.postDelayed(it, 30000) }
-                        isHandlerRunning = true
-                    }
+	                if (!isHandlerRunning) {
+		                followSheetHandler.postDelayed(followSheetRunnable!!, 30000)
+		                isHandlerRunning = true
+	                }
+
                 }
             }
         }
@@ -696,6 +702,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
         socketManager?.joinRoom(roomID, userId) {
             socketManager?.sendMessage(roomID, "Joined \uD83D\uDC4B", userId, userName, userImage)
+	        socketManager?.joinShow(userId, showId)
         }
 
         if (streamID.isBlank()) {
@@ -998,7 +1005,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
             bind.follow.setHapticClickListener {
                 bind.loader.isVisible = true
-                viewModel.followUser(sellerId?.request())
+                viewModel.followUser(sellerId?.request(), showId.toString().request())
             }
 
             showId = showData.showId
@@ -1657,7 +1664,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
         sellerInfoSheetBinding.follow.setHapticClickListener {
             bind.loader.isVisible = true
-            viewModel.followUser(sellerId?.request())
+            viewModel.followUser(sellerId?.request(), showId.toString().request())
             sellerInfoSheet.dismiss()
         }
 
@@ -1696,7 +1703,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
         followSheetBinding.primaryBtn.setHapticClickListener {
             bind.loader.isVisible = true
-            viewModel.followUser(sellerId?.request())
+            viewModel.followUser(sellerId?.request(), showId.toString().request())
             followSheet.dismiss()
         }
 

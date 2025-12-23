@@ -73,12 +73,13 @@ class SellerViewModel @Inject constructor(
 
 	fun followUser(
 		userId: RequestBody?,
+		showId: RequestBody? = null,
 	) = viewModelScope.launch {
 		if (!networkMonitor.hasInternet()) {
 			_followUserResponse.value = NO_INTERNET_ERROR
 			return@launch
 		}
-		_followUserResponse.value = repo.followUser(userId)
+		_followUserResponse.value = repo.followUser(userId, showId)
 	}
 
 	private var _notifyLiveUserResponse = MutableLiveData<Resource<CommonResponse>>()

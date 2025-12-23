@@ -59,7 +59,7 @@
                     android:layout_marginTop="@dimen/half_margin"
                     android:layout_weight="0.5"
                     android:padding="@dimen/half_margin"
-                    android:background="@drawable/dashed_card_8_white"
+                    android:background="@drawable/card_8_outline"
                     android:layout_marginHorizontal="@dimen/half_margin"
                     android:gravity="center"
                     android:orientation="vertical">
@@ -87,7 +87,7 @@
                     android:layout_margin="@dimen/half_margin"
                     android:layout_weight="0.5"
                     android:padding="@dimen/half_margin"
-                    android:background="@drawable/dashed_card_8_white"
+                    android:background="@drawable/card_8_outline"
                     android:gravity="center"
                     android:orientation="vertical">
 
@@ -123,10 +123,10 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="@string/add_more_products" />
+                    android:text="Added Products" />
 
                 <TextView
-                    android:id="@+id/exSpace"
+                    android:id="@+id/productCount"
                     style="@style/BodyMedium"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -140,7 +140,8 @@
                 android:layout_height="wrap_content"
                 android:nestedScrollingEnabled="false"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                tools:itemCount="12"
+                android:layout_weight="1"
+                tools:itemCount="2"
                 tools:listitem="@layout/product_list_item" />
 
             <io.bidswipe.app.ui.custom.NoDataView
@@ -148,6 +149,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:title_text="No Products Found"
+                android:layout_weight="1"
                 android:visibility="gone"/>
 
         </LinearLayout>

@@ -9,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.text.buildSpannedString
 import androidx.core.view.isVisible
 import androidx.navigation.fragment.findNavController
 import io.bidswipe.app.base.BaseFragment
@@ -58,34 +59,41 @@ class AddProductFragment : BaseFragment<ScheduleShowViewModel, FragmentAddProduc
                 Log.d(TAG, "$selectedProducts ")
                 selectedProducts?.forEach { data ->
 
-                    val product =
-                        LiveShowModel.Product(
-                            LiveShowModel.Category(
-                                data.category?.id,
-                                data.category?.image ?: "",
-                                data.category?.name ?: "",
-                                data.category?.thumbnail
-                            ),
-                            data.id.toString(),
-                            data.images?.get(0),
-                            data.status,
-                            data.title,
-                            data.pricing.toString(),
-                            data.quantity.toString(),
-                            selected = true
-                        )
+					val product = LiveShowModel.Product(
+							LiveShowModel.Category(
+								data.category?.id,
+								data.category?.image ?: "",
+								data.category?.name ?: "",
+								data.category?.thumbnail
+							),
+							data.id.toString(),
+							data.images?.get(0),
+							data.status,
+							data.title,
+							data.pricing.toString(),
+							data.quantity.toString(),
+							selected = true
+						)
 
                     if (!viewModel.currentProducts.any { existing -> existing.id == product.id }) {
                         viewModel.currentProducts.add(product)
                     }
                 }
 
-                productAdapter.notifyDataSetChanged()
+                bind.productCount.text = buildSpannedString {
+					append(viewModel.currentProducts.size.toString())
+					append("/100")
+				}
 
-                if (viewModel.currentProducts.isNotEmpty()) {
-//					bind.noData.isVisible = false
+				productAdapter.notifyDataSetChanged()
+
+                if (viewModel.currentProducts.isNotEmpty()){
+					bind.noData.isVisible = false
                     bind.recycler.isVisible = true
-                }
+                }else{
+					bind.noData.isVisible = true
+					bind.recycler.isVisible = false
+				}
             }
         }
 
@@ -107,14 +115,28 @@ class AddProductFragment : BaseFragment<ScheduleShowViewModel, FragmentAddProduc
 
                     log("position : $pos , ${viewModel.currentProducts.size}")
 
-                    viewModel.currentProducts.removeAt(pos)
-                    productAdapter.notifyItemRemoved(pos)
-                    productAdapter.notifyItemRangeChanged(pos, viewModel.currentProducts.size)
+					viewModel.currentProducts.removeAt(pos)
 
-                }
-            }
-        }
-    }
+					bind.productCount.text = buildSpannedString {
+						append(viewModel.currentProducts.size.toString())
+						append("/100")
+					}
+
+					productAdapter.notifyItemRemoved(pos)
+					productAdapter.notifyItemRangeChanged(pos, viewModel.currentProducts.size)
+
+					if (viewModel.currentProducts.isNotEmpty()){
+						bind.noData.isVisible = false
+						bind.recycler.isVisible = true
+					}else{
+						bind.noData.isVisible = true
+						bind.recycler.isVisible = false
+					}
+
+				}
+			}
+		}
+	}
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -148,10 +170,24 @@ class AddProductFragment : BaseFragment<ScheduleShowViewModel, FragmentAddProduc
             findNavController().navigate(ids.addProductFragment_to_createProductFragment)
         }
 
-        bind.selectInventoryLayout.setHapticClickListener {
-            inventoryLauncher.launch(
-                Intent(mCtx, SellerHubActivity::class.java)
-                    .putExtra("slug", "inventory")
+        bind.productCount.text = buildSpannedString {
+			append(viewModel.currentProducts.size.toString())
+			append("/100")
+		}
+
+		if (viewModel.currentProducts.isNotEmpty()){
+			bind.noData.isVisible = false
+			bind.recycler.isVisible = true
+		}else{
+			bind.noData.isVisible = true
+			bind.recycler.isVisible = false
+		}
+
+		bind.selectInventoryLayout.setHapticClickListener {
+			inventoryLauncher.launch(
+				Intent(mCtx, SellerHubActivity::class.java)
+					.putExtra("slug", "inventory")
+					.putExtra("categoryId", viewModel.categoryId)
                     .putExtra("from", "addProduct")
             )
         }
@@ -225,7 +261,6 @@ class AddProductFragment : BaseFragment<ScheduleShowViewModel, FragmentAddProduc
             }
 
         }
-
 
 //		bind.loader.isVisible = true
 //
@@ -317,8 +352,6 @@ class AddProductFragment : BaseFragment<ScheduleShowViewModel, FragmentAddProduc
                         bidCountDown = "",
                         showTimer = "",
                     )
-
-
                         startActivity(mCtx.toSellerShow(data?.time, show))
                         finish()
                     } else {

@@ -13,7 +13,7 @@
         android:layout_margin="@dimen/half_margin"
         android:orientation="vertical">
 
-        <LinearLayout
+       <!-- <LinearLayout
             android:id="@+id/topLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -42,8 +42,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:background="?selectableItemBackgroundBorderless"
-                    android:padding="4dp"
-                    android:src="@drawable/trash"
+                    android:src="@drawable/ic_add_outline"
+                    android:padding="@dimen/dp4"
+                    android:rotation="45"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
@@ -72,7 +73,7 @@
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
-        </LinearLayout>
+        </LinearLayout>-->
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -84,12 +85,14 @@
                 android:layout_width="80dp"
                 android:layout_height="80dp"
                 app:cardCornerRadius="10dp"
+                app:cardBackgroundColor="@color/transparent"
                 app:cardElevation="0dp">
 
                 <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/img"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:scaleType="centerCrop"
                     android:src="@drawable/placeholder_square" />
 
             </com.google.android.material.card.MaterialCardView>
@@ -102,13 +105,31 @@
                 android:gravity="center_vertical"
                 android:orientation="vertical">
 
-                <TextView
-                    android:id="@+id/productName"
-                    style="@style/TitleLarge"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:maxLines="1"
-                    android:text="White Sneakers" />
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/productName"
+                        style="@style/TitleLarge"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:maxLines="1"
+                        android:text="White Sneakers" />
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/moreMenu"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_vertical_menu"
+                        app:tint="@color/onSurface" />
+
+
+                </LinearLayout>
+
+
 
                 <TextView
                     android:id="@+id/prod_sub_title"

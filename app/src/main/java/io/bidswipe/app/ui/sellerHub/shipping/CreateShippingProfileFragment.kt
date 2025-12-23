@@ -16,6 +16,7 @@ import io.bidswipe.app.network.Resource
 import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.ui.sellerHub.SellerHubViewModel
 import io.bidswipe.app.utils.finish
+import io.bidswipe.app.utils.hideKeyboard
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request
 import io.bidswipe.app.utils.setHapticClickListener
@@ -56,6 +57,10 @@ class CreateShippingProfileFragment : BaseFragment<SellerHubViewModel, FragmentC
 			}
 		}
 
+		bind.layout.setHapticClickListener {
+			hideKeyboard(it)
+		}
+
 		val proCategoryAdapter = ArrayAdapter(
 			mCtx,
 			android.R.layout.simple_list_item_1,
@@ -72,6 +77,7 @@ class CreateShippingProfileFragment : BaseFragment<SellerHubViewModel, FragmentC
 		}
 
 		bind.weightUnits.setHapticClickListener {
+			hideKeyboard(it)
 			bind.weightUnits.showDropDown()
 		}
 
