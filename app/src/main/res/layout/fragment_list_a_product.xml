@@ -833,7 +833,7 @@
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/save_draft"
-                style="@style/appBtnOutline"
+                style="@style/appTonalBtn"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="4dp"

@@ -107,8 +107,9 @@
         <item name="android:windowIsFloating">false</item>
         <item name="android:windowLightStatusBar">false</item>
         <item name="android:windowLightNavigationBar" tools:targetApi="o_mr1">true</item>
-        <item name="android:statusBarColor">@color/surface</item>
-        <item name="android:navigationBarColor">@color/surface</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">#80000000</item>
+        <item name="enableEdgeToEdge">true</item>
     </style>
 
     <style name="BottomSheetAppearance" parent="Widget.Material3.BottomSheet">
@@ -139,6 +140,27 @@
         </item>
         <item name="android:outlineAmbientShadowColor" tools:targetApi="p">@color/onSurfaceVariant
         </item>
+    </style>
+
+    <style name="successCardStyle" parent="cardStyle">
+        <item name="cardBackgroundColor">@color/successContainer</item>
+        <item name="strokeColor">@color/success</item>
+        <item name="strokeWidth">1dp</item>
+        <item name="rippleColor">@color/success</item>
+    </style>
+
+    <style name="warningCardStyle" parent="cardStyle">
+        <item name="cardBackgroundColor">@color/warningContainer</item>
+        <item name="strokeColor">@color/warning</item>
+        <item name="strokeWidth">1dp</item>
+        <item name="rippleColor">@color/warning</item>
+    </style>
+
+    <style name="errorCardStyle" parent="cardStyle">
+        <item name="cardBackgroundColor">@color/errorContainer</item>
+        <item name="strokeColor">@color/error</item>
+        <item name="strokeWidth">1dp</item>
+        <item name="rippleColor">@color/error</item>
     </style>
 
     <style name="appLoader">
@@ -287,7 +309,7 @@
         <item name="strokeWidth">0dp</item>
         <item name="chipEndPadding">6dp</item>
         <item name="chipStartPadding">6dp</item>
-        <item name="chipCornerRadius">@dimen/padding</item>
+        <item name="chipCornerRadius">32dp</item>
         <item name="android:textColor">@color/chip_text_color_state</item>
         <item name="android:textAppearance">@style/BodyMedium</item>
     </style>

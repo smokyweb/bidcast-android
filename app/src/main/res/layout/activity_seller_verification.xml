@@ -1,36 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".ui.sellerHub.SellerVerificationActivity">
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android = "http://schemas.android.com/apk/res/android"
+	xmlns:app = "http://schemas.android.com/apk/res-auto"
+	xmlns:tools = "http://schemas.android.com/tools"
+	android:layout_width = "match_parent"
+	android:layout_height = "match_parent"
+	android:background = "@color/surface"
+	tools:context = ".ui.sellerHub.SellerVerificationActivity" >
 
     <io.bidswipe.app.ui.custom.Header
-        android:id="@+id/header"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:headerMode="BACK_BUTTON_TITLE_ACTION"
-        app:headerTitle="Seller Verification"
-        app:layout_constraintTop_toTopOf="parent"
-        app:primaryIconDrawable="@drawable/ic_close"
-        app:secondaryIconDrawable="@drawable/search"
-        app:showBackButton="true"
-        app:showPrimaryIcon="false"
-        app:showSecondaryIcon="false" />
+	    android:id = "@+id/header"
+	    android:layout_width = "match_parent"
+	    android:layout_height = "wrap_content"
+	    app:headerTitle = "Seller Verification"
+	    app:layout_constraintTop_toTopOf = "parent"
+	    app:showBackButton = "true" />
 
     <androidx.core.widget.NestedScrollView
-        android:id="@+id/scrollView"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_marginBottom="@dimen/margin"
-        app:layout_constraintBottom_toTopOf="@id/completeVerification"
-        app:layout_constraintTop_toBottomOf="@id/header">
+	    android:id = "@+id/scrollView"
+	    android:layout_width = "match_parent"
+	    android:layout_height = "0dp"
+	    android:layout_marginBottom = "@dimen/margin"
+	    app:layout_constraintBottom_toTopOf = "@id/completeVerification"
+	    app:layout_constraintTop_toBottomOf = "@id/header" >
 
         <LinearLayout
             android:id="@+id/main"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+	        android:padding="@dimen/half_margin"
             android:orientation="vertical">
 
             <LinearLayout
@@ -41,642 +38,594 @@
                 android:orientation="horizontal">
 
                 <TextView
-                    android:id="@+id/image_limit"
-                    style="@style/TitleMedium"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:layout_weight="1"
-                    android:text="@string/verification_progress" />
+	                android:id = "@+id/image_limit"
+	                style = "@style/TitleMedium"
+	                android:layout_width = "0dp"
+	                android:layout_height = "wrap_content"
+	                android:layout_gravity = "center_vertical"
+	                android:layout_weight = "1"
+	                android:text = "@string/verification_progress" />
 
                 <TextView
-                    android:id="@+id/stepCount"
-                    style="@style/TitleLarge"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    app:title="2 of 4" />
+	                android:id = "@+id/stepCount"
+	                style = "@style/TitleLarge"
+	                android:layout_width = "wrap_content"
+	                android:layout_height = "wrap_content"
+	                app:title = "2 of 4" />
 
-            </LinearLayout>
+            </LinearLayout >
 
             <com.google.android.material.progressindicator.LinearProgressIndicator
-                android:id="@+id/stepProgress"
-                style="@style/circularProgressStyle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:max="3"
-                android:padding="@dimen/margin"
-                app:trackCornerRadius="6dp"
-                app:trackThickness="8dp" />
+	            android:id = "@+id/stepProgress"
+	            style = "@style/circularProgressStyle"
+	            android:layout_width = "match_parent"
+	            android:layout_height = "wrap_content"
+	            android:layout_marginHorizontal="@dimen/half_margin"
+	            android:layout_marginBottom="@dimen/padding"
+	            android:max = "3"
+	            app:trackCornerRadius = "6dp"
+	            app:trackThickness = "8dp" />
 
             <com.google.android.material.card.MaterialCardView
-                style="@style/cardStyle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/margin"
-                app:strokeColor="@color/outline"
-                app:strokeWidth="1dp">
+	            style = "@style/cardStyle"
+	            android:layout_marginHorizontal="@dimen/half_margin"
+	            android:layout_marginBottom="@dimen/margin"
+	            android:layout_width = "match_parent"
+	            android:layout_height = "wrap_content" >
 
                 <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@color/surface"
-                    android:orientation="vertical"
-                    android:padding="@dimen/padding">
+	                android:layout_width = "match_parent"
+	                android:layout_height = "wrap_content"
+	                android:background = "@color/background"
+	                android:orientation = "vertical"
+	                android:padding = "@dimen/padding" >
 
                     <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal">
+	                    android:layout_width = "match_parent"
+	                    android:layout_height = "wrap_content"
+	                    android:gravity="center_vertical"
+	                    android:layout_marginBottom="@dimen/margin"
+	                    android:orientation = "horizontal" >
 
-                        <com.google.android.material.card.MaterialCardView
-                            android:id="@+id/icon_card"
-                            style="@style/cardStyle"
-                            android:layout_width="60dp"
-                            android:layout_height="60dp"
-                            android:layout_gravity="center_vertical"
-                            app:cardBackgroundColor="@color/secondaryContainer"
-                            app:cardCornerRadius="100dp"
-                            app:cardElevation="0dp">
-
-                            <androidx.appcompat.widget.AppCompatImageView
-                                android:id="@+id/icon"
-                                android:layout_width="32dp"
-                                android:layout_height="32dp"
-                                android:layout_gravity="center"
-                                android:src="@drawable/ic_id_card"
-                                app:tint="@color/secondary" />
-
-                        </com.google.android.material.card.MaterialCardView>
+                    <androidx.appcompat.widget.AppCompatImageView
+	                    android:layout_width = "56dp"
+	                    android:layout_height = "56dp"
+	                    android:background = "@drawable/card_32_outline"
+	                    android:backgroundTint = "@color/primaryContainer"
+	                    android:padding = "16dp"
+	                    android:src = "@drawable/ic_id_card"
+	                    app:tint = "@color/primary" />
 
                         <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_marginHorizontal="@dimen/half_margin"
-                            android:layout_weight="1"
-                            android:orientation="vertical">
+	                        android:layout_width = "0dp"
+	                        android:layout_marginStart="@dimen/margin"
+	                        android:layout_height = "wrap_content"
+	                        android:layout_weight = "1"
+	                        android:orientation = "vertical" >
 
                             <TextView
-                                android:id="@+id/title"
-                                style="@style/TitleLarge"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:text="@string/id_verification" />
+	                            style = "@style/TitleMedium"
+	                            android:textStyle="bold"
+	                            android:layout_width = "match_parent"
+	                            android:layout_height = "wrap_content"
+	                            android:text = "@string/id_verification" />
 
                             <TextView
-                                android:id="@+id/sub_title"
-                                style="@style/BodySmall"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_marginVertical="@dimen/half_margin"
-                                android:text="@string/upload_your_id_card_amp_take_a_selfie" />
+	                            android:id = "@+id/sub_title"
+	                            style = "@style/BodySmall"
+	                            android:layout_width = "match_parent"
+	                            android:layout_height = "wrap_content"
+	                            android:text = "@string/upload_your_id_card_amp_take_a_selfie" />
 
-                        </LinearLayout>
+                        </LinearLayout >
 
                         <androidx.appcompat.widget.AppCompatImageView
-                            android:id="@+id/verificationIcon"
-                            android:layout_width="32dp"
-                            android:layout_height="32dp"
-                            android:layout_gravity="center"
-                            android:src="@drawable/ic_check_white_24dp"
-                            android:visibility="gone"
-                            app:tint="@color/success" />
+	                        android:id = "@+id/verificationIcon"
+	                        android:layout_width = "32dp"
+	                        android:layout_height = "32dp"
+	                        android:layout_gravity = "center"
+	                        android:src = "@drawable/ic_check_white_24dp"
+	                        android:visibility = "gone"
+	                        app:tint = "@color/success" />
 
-                        <com.google.android.material.button.MaterialButton
-                            android:id="@+id/verifyId"
-                            style="@style/appBtn"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center_vertical"
-                            android:paddingHorizontal="@dimen/padding"
-                            android:paddingVertical="4dp"
-                            android:text="Verify"
-                            android:textAppearance="@style/TitleMedium"
-                            android:visibility="gone" />
-
-                    </LinearLayout>
+                    </LinearLayout >
 
                     <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:weightSum="2">
+	                    android:layout_width = "match_parent"
+	                    android:layout_height = "wrap_content"
+	                    android:orientation = "horizontal"
+	                    android:weightSum = "2" >
 
                         <com.google.android.material.card.MaterialCardView
-                            android:id="@+id/uploadId"
-                            style="@style/cardStyle"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_margin="4dp"
-                            android:layout_weight="1"
-                            app:strokeColor="@color/outline"
-                            app:strokeWidth="1dp">
+	                        android:id = "@+id/uploadId"
+	                        style = "@style/cardStyle"
+	                        android:layout_width = "0dp"
+	                        android:layout_height = "wrap_content"
+	                        android:layout_margin = "4dp"
+	                        android:layout_weight = "1"
+	                        app:strokeColor = "@color/outline"
+	                        app:strokeWidth = "1dp" >
 
                             <androidx.constraintlayout.widget.ConstraintLayout
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1">
+	                            android:layout_width = "match_parent"
+	                            android:layout_height = "wrap_content"
+	                            android:layout_weight = "1" >
 
                                 <LinearLayout
-                                    android:id="@+id/idCardLayout"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="0dp"
-                                    android:background="@color/surface"
-                                    android:orientation="vertical"
-                                    android:padding="@dimen/margin"
-                                    android:gravity="center"
-                                    app:layout_constraintBottom_toBottomOf="parent"
-                                    app:layout_constraintDimensionRatio="1:1"
-                                    app:layout_constraintTop_toTopOf="parent">
+	                                android:id = "@+id/idCardLayout"
+	                                android:layout_width = "match_parent"
+	                                android:layout_height = "0dp"
+	                                android:background = "@color/surface"
+	                                android:gravity = "center"
+	                                android:orientation = "vertical"
+	                                android:padding = "@dimen/margin"
+	                                app:layout_constraintBottom_toBottomOf = "parent"
+	                                app:layout_constraintDimensionRatio = "1:1"
+	                                app:layout_constraintTop_toTopOf = "parent" >
 
                                     <androidx.appcompat.widget.AppCompatImageView
-                                        android:layout_width="48dp"
-                                        android:layout_height="48dp"
-                                        android:layout_gravity="center"
-                                        android:src="@drawable/ic_id_card" />
+	                                    android:layout_width = "48dp"
+	                                    android:layout_height = "48dp"
+	                                    android:layout_gravity = "center"
+	                                    android:src = "@drawable/ic_id_card" />
 
                                     <TextView
-                                        style="@style/BodyMedium"
-                                        android:layout_width="match_parent"
-                                        android:layout_height="wrap_content"
-                                        android:gravity="center"
-                                        android:text="@string/id_card"
-                                        android:textColor="@color/tertiary" />
+	                                    style = "@style/BodyMedium"
+	                                    android:layout_width = "match_parent"
+	                                    android:layout_height = "wrap_content"
+	                                    android:gravity = "center"
+	                                    android:text = "@string/id_card"
+	                                    android:textColor = "@color/tertiary" />
 
-                                </LinearLayout>
+                                </LinearLayout >
 
 
                                 <androidx.appcompat.widget.AppCompatImageView
-                                    android:id="@+id/cardImage"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="0dp"
-                                    android:layout_gravity="center"
-                                    android:scaleType="centerCrop"
-                                    android:src="@drawable/ic_id_card"
-                                    android:visibility="gone"
-                                    app:layout_constraintBottom_toBottomOf="parent"
-                                    app:layout_constraintDimensionRatio="1:1"
-                                    app:layout_constraintTop_toTopOf="parent" />
+	                                android:id = "@+id/cardImage"
+	                                android:layout_width = "match_parent"
+	                                android:layout_height = "0dp"
+	                                android:layout_gravity = "center"
+	                                android:scaleType = "centerCrop"
+	                                android:src = "@drawable/ic_id_card"
+	                                android:visibility = "gone"
+	                                app:layout_constraintBottom_toBottomOf = "parent"
+	                                app:layout_constraintDimensionRatio = "1:1"
+	                                app:layout_constraintTop_toTopOf = "parent" />
 
-                            </androidx.constraintlayout.widget.ConstraintLayout>
+                            </androidx.constraintlayout.widget.ConstraintLayout >
 
-                        </com.google.android.material.card.MaterialCardView>
+                        </com.google.android.material.card.MaterialCardView >
 
                         <com.google.android.material.card.MaterialCardView
-                            android:id="@+id/uploadSelfie"
-                            style="@style/cardStyle"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_margin="4dp"
-                            android:layout_weight="1"
-                            app:strokeColor="@color/outline"
-                            app:strokeWidth="1dp">
+	                        android:id = "@+id/uploadSelfie"
+	                        style = "@style/cardStyle"
+	                        android:layout_width = "0dp"
+	                        android:layout_height = "wrap_content"
+	                        android:layout_margin = "4dp"
+	                        android:layout_weight = "1"
+	                        app:strokeColor = "@color/outline"
+	                        app:strokeWidth = "1dp" >
 
                             <androidx.constraintlayout.widget.ConstraintLayout
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1">
+	                            android:layout_width = "match_parent"
+	                            android:layout_height = "wrap_content"
+	                            android:layout_weight = "1" >
 
                                 <LinearLayout
-                                    android:id="@+id/selfieLayout"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="0dp"
-                                    android:background="@color/surface"
-                                    android:orientation="vertical"
-                                    android:gravity="center"
-                                    app:layout_constraintBottom_toBottomOf="parent"
-                                    app:layout_constraintDimensionRatio="1:1"
-                                    app:layout_constraintTop_toTopOf="parent"
-                                    android:padding="@dimen/margin">
+	                                android:id = "@+id/selfieLayout"
+	                                android:layout_width = "match_parent"
+	                                android:layout_height = "0dp"
+	                                android:background = "@color/surface"
+	                                android:gravity = "center"
+	                                android:orientation = "vertical"
+	                                android:padding = "@dimen/margin"
+	                                app:layout_constraintBottom_toBottomOf = "parent"
+	                                app:layout_constraintDimensionRatio = "1:1"
+	                                app:layout_constraintTop_toTopOf = "parent" >
 
                                     <androidx.appcompat.widget.AppCompatImageView
-                                        android:layout_width="48dp"
-                                        android:layout_height="48dp"
-                                        android:layout_gravity="center"
-                                        android:src="@drawable/ic_person_outlined"
-                                        app:tint="@color/outlineVariant" />
+	                                    android:layout_width = "48dp"
+	                                    android:layout_height = "48dp"
+	                                    android:layout_gravity = "center"
+	                                    android:src = "@drawable/ic_person_outlined"
+	                                    app:tint = "@color/outlineVariant" />
 
                                     <TextView
-                                        android:id="@+id/discount"
-                                        style="@style/BodyMedium"
-                                        android:layout_width="match_parent"
-                                        android:layout_height="wrap_content"
-                                        android:gravity="center"
-                                        android:text="@string/selfie"
-                                        android:textColor="@color/tertiary" />
+	                                    android:id = "@+id/discount"
+	                                    style = "@style/BodyMedium"
+	                                    android:layout_width = "match_parent"
+	                                    android:layout_height = "wrap_content"
+	                                    android:gravity = "center"
+	                                    android:text = "@string/selfie"
+	                                    android:textColor = "@color/tertiary" />
 
-                                </LinearLayout>
+                                </LinearLayout >
 
 
                                 <androidx.appcompat.widget.AppCompatImageView
-                                    android:id="@+id/selfie"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="0dp"
-                                    android:layout_gravity="center"
-                                    android:scaleType="centerCrop"
-                                    android:src="@drawable/ic_id_card"
-                                    android:visibility="gone"
-                                    app:layout_constraintBottom_toBottomOf="parent"
-                                    app:layout_constraintDimensionRatio="1:1"
-                                    app:layout_constraintTop_toTopOf="parent" />
+	                                android:id = "@+id/selfie"
+	                                android:layout_width = "match_parent"
+	                                android:layout_height = "0dp"
+	                                android:layout_gravity = "center"
+	                                android:scaleType = "centerCrop"
+	                                android:src = "@drawable/ic_id_card"
+	                                android:visibility = "gone"
+	                                app:layout_constraintBottom_toBottomOf = "parent"
+	                                app:layout_constraintDimensionRatio = "1:1"
+	                                app:layout_constraintTop_toTopOf = "parent" />
 
-                            </androidx.constraintlayout.widget.ConstraintLayout>
+                            </androidx.constraintlayout.widget.ConstraintLayout >
 
-                            <!--    <androidx.appcompat.widget.AppCompatImageView
-                                    android:id="@+id/selfie"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="match_parent"
-                                    android:layout_gravity="center"
-                                    android:maxHeight="120dp"
-                                    android:visibility="gone"
-                                    android:src="@drawable/ic_id_card" />-->
+	                        <!--    <androidx.appcompat.widget.AppCompatImageView
+									android:id="@+id/selfie"
+									android:layout_width="match_parent"
+									android:layout_height="match_parent"
+									android:layout_gravity="center"
+									android:maxHeight="120dp"
+									android:visibility="gone"
+									android:src="@drawable/ic_id_card" />-->
 
-                        </com.google.android.material.card.MaterialCardView>
+                        </com.google.android.material.card.MaterialCardView >
 
 
-                    </LinearLayout>
+                    </LinearLayout >
 
-                </LinearLayout>
+	                <com.google.android.material.button.MaterialButton
+		                android:id = "@+id/verifyId"
+		                style = "@style/appBtn"
+		                android:layout_width = "match_parent"
+		                android:layout_height = "wrap_content"
+		                android:layout_gravity = "center_vertical"
+		                android:layout_marginTop="@dimen/margin"
+		                android:text = "Verify"
+		                android:visibility = "gone"/>
 
+                </LinearLayout >
 
             </com.google.android.material.card.MaterialCardView>
 
             <com.google.android.material.card.MaterialCardView
-                style="@style/cardStyle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/margin"
-                app:strokeColor="@color/outline"
-                app:strokeWidth="1dp">
+	            style = "@style/cardStyle"
+	            android:layout_width = "match_parent"
+	            android:layout_height = "wrap_content"
+	            android:layout_marginHorizontal="@dimen/half_margin"
+	            android:layout_marginBottom="@dimen/margin" >
 
                 <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@color/surface"
-                    android:orientation="vertical"
-                    android:padding="@dimen/padding">
+	                android:layout_width = "match_parent"
+	                android:layout_height = "wrap_content"
+	                android:background = "@color/background"
+	                android:orientation = "vertical"
+	                android:padding = "@dimen/padding" >
 
                     <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal">
+	                    android:gravity="center_vertical"
+	                    android:layout_width = "match_parent"
+	                    android:layout_height = "wrap_content"
+	                    android:layout_marginBottom="@dimen/margin"
+	                    android:orientation = "horizontal" >
 
-                        <com.google.android.material.card.MaterialCardView
-                            style="@style/cardStyle"
-                            android:layout_width="60dp"
-                            android:layout_height="60dp"
-                            android:layout_gravity="center_vertical"
-                            app:cardBackgroundColor="@color/primaryContainer"
-                            app:cardCornerRadius="100dp"
-                            app:cardElevation="0dp">
-
-                            <androidx.appcompat.widget.AppCompatImageView
-                                android:layout_width="32dp"
-                                android:layout_height="32dp"
-                                android:layout_gravity="center"
-                                android:src="@drawable/ic_phone"
-                                app:tint="@color/primary" />
-
-                        </com.google.android.material.card.MaterialCardView>
+                    <androidx.appcompat.widget.AppCompatImageView
+	                    android:layout_width = "56dp"
+	                    android:layout_height = "56dp"
+	                    android:background = "@drawable/card_32_outline"
+	                    android:backgroundTint = "@color/primaryContainer"
+	                    android:padding = "16dp"
+	                    android:src = "@drawable/ic_speaker_outline"
+	                    app:tint = "@color/primary" />
 
                         <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_marginHorizontal="@dimen/half_margin"
-                            android:layout_weight="1"
-                            android:orientation="vertical">
+	                        android:layout_width = "0dp"
+	                        android:layout_height = "wrap_content"
+	                        android:layout_marginStart="@dimen/margin"
+	                        android:layout_weight = "1"
+	                        android:orientation = "vertical" >
 
                             <TextView
-                                style="@style/TitleLarge"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:text="Phone Verification" />
+	                            style = "@style/TitleMedium"
+	                            android:textStyle="bold"
+	                            android:layout_width = "match_parent"
+	                            android:layout_height = "wrap_content"
+	                            android:text = "Phone Verification" />
 
                             <TextView
-                                style="@style/BodyMedium"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_marginVertical="@dimen/half_margin"
-                                android:text="Verify your phone number" />
+	                            style = "@style/BodyMedium"
+	                            android:layout_width = "match_parent"
+	                            android:layout_height = "wrap_content"
+	                            android:text = "Verify your phone number" />
 
 
-                        </LinearLayout>
+                        </LinearLayout >
 
                         <androidx.appcompat.widget.AppCompatImageView
-                            android:id="@+id/verificationPhoneIcon"
-                            android:layout_width="32dp"
-                            android:layout_height="32dp"
-                            android:layout_gravity="center"
-                            android:src="@drawable/ic_check_white_24dp"
-                            android:visibility="gone"
-                            app:tint="@color/success" />
+	                        android:id = "@+id/verificationPhoneIcon"
+	                        android:layout_width = "32dp"
+	                        android:layout_height = "32dp"
+	                        android:layout_gravity = "center"
+	                        android:src = "@drawable/ic_check_white_24dp"
+	                        android:visibility = "gone"
+	                        app:tint = "@color/success" />
 
                         <com.google.android.material.button.MaterialButton
-                            android:id="@+id/verifyPhone"
-                            style="@style/appBtn"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center_vertical"
-                            android:paddingHorizontal="@dimen/padding"
-                            android:paddingVertical="4dp"
-                            android:text="Verify"
-                            android:textAppearance="@style/TitleMedium" />
+	                        android:id = "@+id/verifyOtp"
+	                        style = "@style/appBtn"
+	                        android:layout_width = "wrap_content"
+	                        android:layout_height = "wrap_content"
+	                        android:layout_gravity = "center_vertical"
+	                        android:paddingHorizontal = "@dimen/padding"
+	                        android:paddingVertical = "4dp"
+	                        android:text = "Verify OTP"
+	                        android:textAppearance = "@style/TitleMedium"
+	                        android:visibility = "gone" />
 
-                        <com.google.android.material.button.MaterialButton
-                            android:id="@+id/verifyOtp"
-                            style="@style/appBtn"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center_vertical"
-                            android:paddingHorizontal="@dimen/padding"
-                            android:paddingVertical="4dp"
-                            android:text="Verify OTP"
-                            android:textAppearance="@style/TitleMedium"
-                            android:visibility="gone" />
-
-                    </LinearLayout>
+                    </LinearLayout >
 
                     <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal">
+	                    android:layout_width = "match_parent"
+	                    android:layout_height = "wrap_content"
+	                    android:layout_marginBottom="@dimen/half_margin"
+	                    android:orientation = "horizontal" >
 
                         <TextView
-                            android:id="@+id/verifyPhoneTitle"
-                            style="@style/TitleSmall"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_marginVertical="@dimen/half_margin"
-                            android:layout_weight="1"
-                            android:text="Enter Phone Number"
-                            android:visibility="visible" />
+	                        android:id = "@+id/verifyPhoneTitle"
+	                        style = "@style/TitleSmall"
+	                        android:layout_width = "0dp"
+	                        android:layout_height = "wrap_content"
+	                        android:layout_weight = "1"
+	                        android:text = "Enter Phone Number"
+	                        android:visibility = "visible" />
 
                         <androidx.appcompat.widget.AppCompatImageView
-                            android:id="@+id/editPhone"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:layout_marginEnd="@dimen/half_margin"
-                            android:src="@drawable/ic_pencil"
-                            android:visibility="gone" />
+	                        android:id = "@+id/editPhone"
+	                        android:layout_width = "wrap_content"
+	                        android:layout_height = "wrap_content"
+	                        android:layout_gravity = "center"
+	                        android:padding="4dp"
+	                        android:visibility="gone"
+	                        android:src = "@drawable/ic_pencil" />
 
-                    </LinearLayout>
-
-
-                    <com.google.android.material.textfield.TextInputLayout
-                        android:id="@+id/phoneNumberLayout"
-                        style="@style/inputBoxStyle"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="@dimen/half_margin">
-
-                        <com.google.android.material.textfield.MaterialAutoCompleteTextView
-                            android:id="@+id/phoneNumber"
-                            style="@style/inputTextStyle"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:hint="@string/enter_phone_number"
-                            android:inputType="number"
-                            android:maxLength="10" />
-
-                    </com.google.android.material.textfield.TextInputLayout>
+                    </LinearLayout >
 
                     <com.google.android.material.textfield.TextInputLayout
-                        android:id="@+id/otpLayout"
-                        style="@style/inputBoxStyle"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="@dimen/half_margin"
-                        android:visibility="gone">
+	                    android:id = "@+id/phoneNumberLayout"
+	                    style = "@style/inputBoxStyle"
+	                    android:layout_width = "match_parent"
+	                    android:layout_height = "wrap_content" >
 
                         <com.google.android.material.textfield.MaterialAutoCompleteTextView
-                            android:id="@+id/otp"
-                            style="@style/inputTextStyle"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:hint="@string/enter_code"
-                            android:inputType="number" />
+	                        android:id = "@+id/phoneNumber"
+	                        style = "@style/inputTextStyle"
+	                        android:layout_width = "match_parent"
+	                        android:layout_height = "wrap_content"
+	                        android:hint = "@string/enter_phone_number"
+	                        android:inputType = "number"
+	                        android:maxLength = "10" />
 
-                    </com.google.android.material.textfield.TextInputLayout>
+                    </com.google.android.material.textfield.TextInputLayout >
+
+                    <com.google.android.material.textfield.TextInputLayout
+	                    android:id = "@+id/otpLayout"
+	                    style = "@style/inputBoxStyle"
+	                    android:layout_width = "match_parent"
+	                    android:layout_height = "wrap_content"
+	                    android:layout_marginBottom = "@dimen/half_margin"
+	                    android:visibility = "gone" >
+
+                        <com.google.android.material.textfield.MaterialAutoCompleteTextView
+	                        android:id = "@+id/otp"
+	                        style = "@style/inputTextStyle"
+	                        android:layout_width = "match_parent"
+	                        android:layout_height = "wrap_content"
+	                        android:hint = "@string/enter_code"
+	                        android:inputType = "number" />
+
+                    </com.google.android.material.textfield.TextInputLayout >
+
+	                <com.google.android.material.button.MaterialButton
+		                android:id = "@+id/verifyPhone"
+		                style = "@style/appBtn"
+		                android:layout_width = "match_parent"
+		                android:layout_height = "wrap_content"
+		                android:layout_gravity = "center_vertical"
+		                android:layout_marginTop="@dimen/margin"
+		                android:text = "Verify"
+		                android:visibility = "visible"/>
 
                     <TextView
-                        android:id="@+id/resend"
-                        style="@style/BodyMedium"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="end"
-                        android:text="Resend?"
-                        android:textColor="@color/primary"
-                        android:visibility="gone" />
+	                    android:id = "@+id/resend"
+	                    style = "@style/BodyMedium"
+	                    android:layout_width = "wrap_content"
+	                    android:layout_height = "wrap_content"
+	                    android:layout_gravity = "end"
+	                    android:text = "Resend?"
+	                    android:textColor = "@color/primary"
+	                    android:visibility = "gone" />
 
-                </LinearLayout>
+                </LinearLayout >
 
-            </com.google.android.material.card.MaterialCardView>
+            </com.google.android.material.card.MaterialCardView >
 
             <com.google.android.material.card.MaterialCardView
-                style="@style/cardStyle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/margin"
-                app:strokeColor="@color/outline"
-                app:strokeWidth="1dp">
+	            style = "@style/cardStyle"
+	            android:layout_width = "match_parent"
+	            android:layout_height = "wrap_content"
+	            android:layout_marginHorizontal="@dimen/half_margin"
+	            android:layout_marginBottom="@dimen/margin" >
 
                 <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@color/surface"
-                    android:orientation="vertical"
-                    android:padding="@dimen/padding">
+	                android:layout_width = "match_parent"
+	                android:layout_height = "wrap_content"
+	                android:background = "@color/background"
+	                android:orientation = "vertical"
+	                android:padding = "@dimen/padding" >
 
                     <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal">
+	                    android:layout_width = "match_parent"
+	                    android:layout_height = "wrap_content"
+	                    android:layout_marginBottom="@dimen/margin"
+	                    android:gravity="center_vertical"
+	                    android:orientation = "horizontal" >
 
-                        <com.google.android.material.card.MaterialCardView
-                            style="@style/cardStyle"
-                            android:layout_width="60dp"
-                            android:layout_height="60dp"
-                            android:layout_gravity="center_vertical"
-                            app:cardBackgroundColor="@color/primaryContainer"
-                            app:cardCornerRadius="100dp"
-                            app:cardElevation="0dp">
-
-                            <androidx.appcompat.widget.AppCompatImageView
-                                android:layout_width="32dp"
-                                android:layout_height="32dp"
-                                android:layout_gravity="center"
-                                android:src="@drawable/ic_payment_card" />
-
-                        </com.google.android.material.card.MaterialCardView>
+					<androidx.appcompat.widget.AppCompatImageView
+						android:layout_width = "56dp"
+						android:layout_height = "56dp"
+						android:background = "@drawable/card_32_outline"
+						android:backgroundTint = "@color/primaryContainer"
+						android:padding = "16dp"
+						android:src = "@drawable/ic_payment_card"
+						app:tint = "@color/primary" />
 
                         <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_marginHorizontal="@dimen/half_margin"
-                            android:layout_weight="1"
-                            android:orientation="vertical">
+	                        android:layout_width = "0dp"
+	                        android:layout_height = "wrap_content"
+	                        android:layout_marginHorizontal = "@dimen/half_margin"
+	                        android:layout_weight = "1"
+	                        android:orientation = "vertical" >
 
                             <TextView
-                                style="@style/TitleLarge"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:text="Payment Method" />
+	                            style = "@style/TitleMedium"
+	                            android:textStyle="bold"
+	                            android:layout_width = "match_parent"
+	                            android:layout_height = "wrap_content"
+	                            android:text = "Payment Method" />
 
                             <TextView
 
-                                style="@style/BodyMedium"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_marginVertical="@dimen/half_margin"
-                                android:text="Add your payment details" />
+	                            style = "@style/BodyMedium"
+	                            android:layout_width = "match_parent"
+	                            android:layout_height = "wrap_content"
+	                            android:text = "Add your payment details" />
 
-
-                        </LinearLayout>
+                        </LinearLayout >
 
                         <com.google.android.material.button.MaterialButton
-                            android:id="@+id/addCardBtn"
-                            style="@style/appBtnTrans"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center_vertical"
-                            android:background="@color/surface"
-                            android:paddingHorizontal="@dimen/padding"
-                            android:paddingVertical="4dp"
-                            android:text="Add"
-                            android:textAppearance="@style/TitleMedium"
-                            android:textColor="@color/primary" />
+	                        android:id = "@+id/addCardBtn"
+	                        style = "@style/appTonalBtn"
+	                        android:layout_width = "wrap_content"
+	                        android:layout_height = "wrap_content"
+	                        android:layout_gravity = "center_vertical"
+	                        android:text = "Add" />
 
-                    </LinearLayout>
+                    </LinearLayout >
 
                     <LinearLayout
-                        android:id="@+id/noCardView"
-                        android:layout_width="match_parent"
-                        android:layout_height="120dp"
-                        android:layout_margin="@dimen/half_margin"
-                        android:background="@drawable/dashed_card_8_white"
-                        android:gravity="center"
-                        android:orientation="vertical"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/headingView">
+	                    android:id = "@+id/noCardView"
+	                    android:layout_width = "match_parent"
+	                    android:layout_height = "120dp"
+	                    android:background = "@drawable/dashed_card_8_white"
+	                    android:gravity = "center"
+	                    android:orientation = "vertical"
+	                    android:visibility = "gone"
+	                    app:layout_constraintStart_toStartOf = "parent"
+	                    app:layout_constraintTop_toBottomOf = "@id/headingView" >
 
                         <androidx.appcompat.widget.AppCompatImageView
-                            android:layout_width="42dp"
-                            android:layout_height="42dp"
-                            android:src="@drawable/ic_payment_card"
-                            android:tint="@color/outlineVariant" />
+	                        android:layout_width = "42dp"
+	                        android:layout_height = "42dp"
+	                        android:src = "@drawable/ic_payment_card"
+	                        android:tint = "@color/outlineVariant" />
 
                         <TextView
-                            style="@style/TitleMedium"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/no_payment_method_added"
-                            android:textColor="@color/outlineVariant" />
+	                        style = "@style/TitleMedium"
+	                        android:layout_width = "wrap_content"
+	                        android:layout_height = "wrap_content"
+	                        android:text = "@string/no_payment_method_added"
+	                        android:textColor = "@color/outlineVariant" />
 
-                    </LinearLayout>
+                    </LinearLayout >
 
                     <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/recycler"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:nestedScrollingEnabled="false"
-                        android:orientation="vertical"
-                        android:visibility="gone"
-                        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                        tools:itemCount="3"
-                        tools:listitem="@layout/payment_card_item" />
+	                    android:id = "@+id/recycler"
+	                    android:layout_width = "match_parent"
+	                    android:layout_height = "wrap_content"
+	                    android:nestedScrollingEnabled = "false"
+	                    android:orientation = "vertical"
+	                    app:layoutManager = "androidx.recyclerview.widget.LinearLayoutManager"
+	                    tools:itemCount = "2"
+	                    tools:listitem = "@layout/payment_card_item" />
+
+                </LinearLayout >
 
 
-                </LinearLayout>
-
-
-            </com.google.android.material.card.MaterialCardView>
+            </com.google.android.material.card.MaterialCardView >
 
             <com.google.android.material.card.MaterialCardView
-                style="@style/cardStyle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/margin"
-                app:strokeColor="@color/outline"
-                app:strokeWidth="1dp">
-
+	            style = "@style/cardStyle"
+	            android:layout_width = "match_parent"
+	            android:layout_height = "wrap_content"
+	            android:layout_marginHorizontal="@dimen/half_margin"
+	            android:layout_marginBottom="@dimen/margin" >
 
                 <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@color/surface"
-                    android:orientation="horizontal"
-                    android:padding="@dimen/padding">
+	                android:layout_width = "match_parent"
+	                android:layout_height = "wrap_content"
+	                android:background = "@color/background"
+	                android:orientation = "horizontal"
+	                android:gravity="center_vertical"
+	                android:padding = "@dimen/padding" >
 
-                    <com.google.android.material.card.MaterialCardView
-                        style="@style/cardStyle"
-                        android:layout_width="60dp"
-                        android:layout_height="60dp"
-                        android:layout_gravity="center_vertical"
-                        app:cardBackgroundColor="@color/primaryContainer"
-                        app:cardCornerRadius="100dp"
-                        app:cardElevation="0dp">
-
-                        <androidx.appcompat.widget.AppCompatImageView
-                            android:layout_width="32dp"
-                            android:layout_height="32dp"
-                            android:layout_gravity="center"
-                            android:src="@drawable/person" />
-
-                    </com.google.android.material.card.MaterialCardView>
+					<androidx.appcompat.widget.AppCompatImageView
+						android:layout_width = "56dp"
+						android:layout_height = "56dp"
+						android:background = "@drawable/card_32_outline"
+						android:backgroundTint = "@color/primaryContainer"
+						android:padding = "16dp"
+						android:src = "@drawable/ic_user_outline"
+						app:tint = "@color/primary" />
 
                     <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginHorizontal="@dimen/half_margin"
-                        android:layout_weight="1"
-                        android:orientation="vertical">
+	                    android:layout_width = "0dp"
+	                    android:layout_height = "wrap_content"
+	                    android:layout_marginHorizontal = "@dimen/half_margin"
+	                    android:layout_weight = "1"
+	                    android:orientation = "vertical" >
 
                         <TextView
-                            style="@style/TitleLarge"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="@string/manual_verification" />
+	                        style = "@style/TitleMedium"
+	                        android:textStyle="bold"
+	                        android:layout_width = "match_parent"
+	                        android:layout_height = "wrap_content"
+	                        android:text = "@string/manual_verification" />
 
                         <TextView
-                            android:id="@+id/statusDescription"
-                            style="@style/BodyMedium"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginVertical="@dimen/half_margin"
-                            android:text="Final review by our team" />
+	                        android:id = "@+id/statusDescription"
+	                        style = "@style/BodyMedium"
+	                        android:layout_width = "match_parent"
+	                        android:layout_height = "wrap_content"
+	                        android:text = "Final review by our team" />
 
-                    </LinearLayout>
+                    </LinearLayout >
 
                     <TextView
-                        android:id="@+id/status"
-                        style="@style/TitleMedium"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
-                        android:text="@string/pending" />
+	                    android:id = "@+id/status"
+	                    style = "@style/TitleMedium"
+	                    android:layout_width = "wrap_content"
+	                    android:layout_height = "wrap_content"
+	                    android:layout_gravity = "center_vertical"
+	                    android:text = "@string/pending" />
 
-                </LinearLayout>
+                </LinearLayout >
 
 
-            </com.google.android.material.card.MaterialCardView>
+            </com.google.android.material.card.MaterialCardView >
 
-        </LinearLayout>
+        </LinearLayout >
 
-    </androidx.core.widget.NestedScrollView>
+    </androidx.core.widget.NestedScrollView >
 
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/completeVerification"
-        style="@style/appBtn"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/margin"
-        android:text="@string/submit"
-        app:layout_constraintBottom_toBottomOf="parent" />
+	    android:id = "@+id/completeVerification"
+	    style = "@style/appBtn"
+	    android:layout_width = "match_parent"
+	    android:layout_height = "wrap_content"
+	    android:layout_margin = "@dimen/margin"
+	    android:text = "@string/submit"
+	    app:layout_constraintBottom_toBottomOf = "parent" />
 
     <io.bidswipe.app.ui.custom.LoaderView
-        android:id="@+id/loader"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:visibility="gone" />
+	    android:id = "@+id/loader"
+	    android:layout_width = "match_parent"
+	    android:layout_height = "match_parent"
+	    android:visibility = "gone" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout >

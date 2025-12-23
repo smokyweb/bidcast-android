@@ -82,7 +82,7 @@
 
 
         <com.google.android.material.button.MaterialButton
-            style="@style/appBtnOutline"
+            style="@style/appTonalBtn"
             android:id="@+id/close"
             android:layout_width="0dp"
             android:layout_weight="1"

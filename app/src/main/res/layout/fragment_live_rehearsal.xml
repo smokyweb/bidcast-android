@@ -75,7 +75,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/margin"
         android:layout_marginTop="32dp"
-        android:backgroundTint="@color/onSecWarning"
+        android:backgroundTint="@color/warningContainer"
         app:cardElevation="0dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/profileLayout">

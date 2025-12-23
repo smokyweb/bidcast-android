@@ -155,8 +155,8 @@ class ExploreAdapter(
 			val isSelected = selectedPosition == categoryIndex
 
 			if (isSelected) {
-				bind.root.setCardBackgroundColor(mCtx.getColor(R.color.yellowWarningClr))
-				bind.root.strokeColor = mCtx.getColor(R.color.yellowWarningClr)
+				bind.root.setCardBackgroundColor(mCtx.getColor(R.color.warningAlt))
+				bind.root.strokeColor = mCtx.getColor(R.color.warningAlt)
 				bind.root.strokeWidth = mCtx.resources.dpToPx(4)
 			} else {
 				bind.root.setCardBackgroundColor(mCtx.getColor(R.color.background))

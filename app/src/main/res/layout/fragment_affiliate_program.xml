@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/surface"
     tools:context=".ui.sellerHub.AffiliateProgramFragment">
 
     <io.bidswipe.app.ui.custom.Header
@@ -31,6 +32,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/half_margin"
             android:orientation="vertical">
+
             <TextView
                 style="@style/TitleLarge"
                 android:layout_width="match_parent"
@@ -122,28 +124,30 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/half_margin"
+                android:layout_marginTop="@dimen/margin"
                 android:text="Earn Rewards &amp; Unlock Perks" />
 
             <LinearLayout
                 style="@style/shadowStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/card_8"
                 android:layout_margin="@dimen/half_margin"
+                android:background="@drawable/card_8"
                 android:orientation="vertical"
                 android:padding="16dp">
 
                 <TextView
-                    style="@style/TitleLarge"
-                    android:layout_width="wrap_content"
+                    style="@style/TitleMedium"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Give new buyers $15 credit to shop your shows!" />
 
-               <TextView
+                <TextView
                     style="@style/TitleSmall"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                   android:alpha="0.7"
+                    android:layout_marginTop="@dimen/half_margin"
+                    android:alpha="0.7"
                     android:text="View Buyer Referral History >" />
 
                 <androidx.recyclerview.widget.RecyclerView
@@ -151,15 +155,15 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:nestedScrollingEnabled="false"
+                    android:paddingBottom="12dp"
                     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                     tools:itemCount="3"
-                    tools:listitem="@layout/referral_benefits_item"
-                    android:paddingBottom="12dp" />
+                    tools:listitem="@layout/referral_benefits_item" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/card_8_outline"
+                    android:background="@drawable/card_32_outline"
                     android:gravity="center_vertical"
                     android:orientation="horizontal"
                     android:padding="8dp">
@@ -169,6 +173,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
+                        android:layout_marginStart="@dimen/half_margin"
                         android:text="referral_code"
                         android:textColor="@android:color/black" />
 
@@ -177,28 +182,29 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:backgroundTint="@color/transparent"
+                        android:contentDescription="@string/app_name"
                         android:src="@drawable/ic_copy"
-                        app:cornerRadius="8dp"
                         android:tooltipText="Copy"
+                        app:cornerRadius="8dp"
                         app:tint="@color/primary" />
                 </LinearLayout>
 
                 <Button
                     android:id="@+id/buyerInvite"
+                    style="@style/appBtn"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="12dp"
-                    style="@style/appBtn"
                     android:text="Invite Buyer" />
 
             </LinearLayout>
 
-     <LinearLayout
+            <LinearLayout
                 style="@style/shadowStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/card_8"
                 android:layout_margin="@dimen/half_margin"
+                android:background="@drawable/card_8"
                 android:orientation="vertical"
                 android:padding="16dp">
 
@@ -208,11 +214,11 @@
                     android:layout_height="wrap_content"
                     android:text="Invite a seller, earn $100" />
 
-               <TextView
+                <TextView
                     style="@style/TitleSmall"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                   android:alpha="0.7"
+                    android:alpha="0.7"
                     android:text="View Seller Referral History >" />
 
                 <androidx.recyclerview.widget.RecyclerView
@@ -220,15 +226,15 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:nestedScrollingEnabled="false"
+                    android:paddingBottom="12dp"
                     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                     tools:itemCount="3"
-                    tools:listitem="@layout/referral_benefits_item"
-                    android:paddingBottom="12dp" />
+                    tools:listitem="@layout/referral_benefits_item" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/card_8_outline"
+                    android:background="@drawable/card_32_outline"
                     android:gravity="center_vertical"
                     android:orientation="horizontal"
                     android:padding="8dp">
@@ -238,6 +244,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
+                        android:layout_marginStart="@dimen/half_margin"
                         android:text="referral_code"
                         android:textColor="@android:color/black" />
 
@@ -246,115 +253,121 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:backgroundTint="@color/transparent"
+                        android:contentDescription="@string/app_name"
                         android:src="@drawable/ic_copy"
-                        app:cornerRadius="8dp"
                         android:tooltipText="Copy"
+                        app:cornerRadius="8dp"
                         app:tint="@color/primary" />
                 </LinearLayout>
 
                 <Button
                     android:id="@+id/sellerInvite"
+                    style="@style/appBtn"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="12dp"
-                    style="@style/appBtn"
-                    android:text="Invite Seller"/>
+                    android:text="Invite Seller" />
 
             </LinearLayout>
 
-        <LinearLayout
-            style="@style/shadowStyle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/card_8"
-            android:layout_margin="@dimen/half_margin"
-            android:orientation="vertical"
-            android:padding="16dp">
             <LinearLayout
+                style="@style/shadowStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
-
-                <com.google.android.material.card.MaterialCardView
-                    android:id="@+id/icon_card"
-                    style="@style/cardStyle"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    app:cardBackgroundColor="@color/inversePrimary"
-                    app:cardCornerRadius="100dp"
-                    app:cardElevation="0dp">
-
-                    <androidx.appcompat.widget.AppCompatImageView
-                        android:id="@+id/icon"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:padding="12dp"
-                        android:src="@drawable/ic_link" />
-
-                </com.google.android.material.card.MaterialCardView>
+                android:layout_margin="@dimen/half_margin"
+                android:background="@drawable/card_8"
+                android:orientation="vertical"
+                android:padding="16dp">
 
                 <LinearLayout
-                    android:layout_width="0dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="@dimen/half_margin"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
 
-                    <TextView
-                        android:id="@+id/title"
-                        style="@style/TitleLarge"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="@string/share_your_link" />
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/icon_card"
+                        style="@style/cardStyle"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        app:cardBackgroundColor="@color/primaryContainer"
+                        app:cardCornerRadius="100dp"
+                        app:cardElevation="0dp">
 
-                    <TextView
-                        android:id="@+id/sub_title"
-                        style="@style/BodyLarge"
-                        android:layout_width="match_parent"
+                        <androidx.appcompat.widget.AppCompatImageView
+                            android:id="@+id/icon"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:padding="12dp"
+                            android:src="@drawable/ic_link"
+                            app:tint="@color/primary" />
+
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:text="Invite sellers using your unique code" />
+                        android:layout_marginHorizontal="@dimen/half_margin"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/title"
+                            style="@style/TitleLarge"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@string/share_your_link" />
+
+                        <TextView
+                            android:id="@+id/sub_title"
+                            style="@style/BodyLarge"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Invite sellers using your unique code" />
+
+                    </LinearLayout>
 
                 </LinearLayout>
 
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginVertical="@dimen/margin"
+                    android:background="@drawable/card_32_outline"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:padding="8dp">
+
+                    <TextView
+                        android:id="@+id/referral_code"
+                        style="@style/TitleMedium"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/half_margin"
+                        android:layout_weight="1"
+                        android:text="ABCDEFGH123456" />
+
+                    <ImageButton
+                        android:id="@+id/copy_btn"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="@dimen/half_margin"
+                        android:backgroundTint="@color/transparent"
+                        android:contentDescription="@string/app_name"
+                        android:src="@drawable/ic_copy"
+                        app:cornerRadius="8dp"
+                        app:tint="@color/primary" />
+
+                </LinearLayout>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/share"
+                    style="@style/appBtn"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/share_invite_link" />
 
             </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:id="@+id/referral_code"
-                    style="@style/TitleMedium"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/half_margin"
-                    android:layout_weight="1"
-                    android:text="ABCDEFGH123456" />
-
-                <ImageButton
-                    android:id="@+id/copy_btn"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="@dimen/half_margin"
-                    android:backgroundTint="@color/transparent"
-                    android:src="@drawable/ic_copy"
-                    app:cornerRadius="8dp"
-                    app:tint="@color/primary" />
-
-            </LinearLayout>
-
-            <com.google.android.material.button.MaterialButton
-            android:id="@+id/share"
-            style="@style/appBtn"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/share_invite_link" />
-
-        </LinearLayout>
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recycler"

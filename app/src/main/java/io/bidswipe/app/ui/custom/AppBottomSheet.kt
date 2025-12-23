@@ -83,7 +83,7 @@ class AppBottomSheet(
                 bind.imageCard.setCardBackgroundColor(
                     ContextCompat.getColorStateList(
                         mCtx,
-                        clr.warningClr
+                        clr.warning
                     )
                 )
                 bind.imageCard.setPadding(mCtx.resources.dpToPx(iconPadding))
@@ -142,11 +142,11 @@ class AppBottomSheet(
 
     private fun MaterialButton.setWarningStyle(isOutline: Boolean = false) {
         if (isOutline) {
-            strokeColor = ContextCompat.getColorStateList(mCtx, clr.warningClr)
-            rippleColor = ContextCompat.getColorStateList(mCtx, clr.warningClr)
-            setTextColor(ContextCompat.getColor(mCtx, clr.warningClr))
+            strokeColor = ContextCompat.getColorStateList(mCtx, clr.warning)
+            rippleColor = ContextCompat.getColorStateList(mCtx, clr.warning)
+            setTextColor(ContextCompat.getColor(mCtx, clr.warning))
         } else {
-            setBackgroundColor(ContextCompat.getColor(mCtx, clr.warningClr))
+            setBackgroundColor(ContextCompat.getColor(mCtx, clr.warning))
             setTextColor(ContextCompat.getColor(mCtx, clr.onError))
             rippleColor = ContextCompat.getColorStateList(mCtx, clr.onErrorContainer)
         }

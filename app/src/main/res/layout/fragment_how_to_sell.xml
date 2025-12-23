@@ -176,7 +176,7 @@
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/backBtn"
-            style="@style/appBtnOutline"
+            style="@style/appTonalBtn"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"

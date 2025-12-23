@@ -46,12 +46,12 @@ class AffiliateProgramFragment : BaseFragment<SellerHubViewModel, FragmentAffili
 
 		val buyerBenefits = mutableListOf(
 			BenefitItem(
-				R.drawable.ic_people,
+				R.drawable.peopleic_people_outline,
 				"Make Referrals",
 				"Each referred buyer gets $15 to shop your shows, you get $5"
 			),
-			BenefitItem(R.drawable.ic_people, "Build your audience", "Referred buyers auto follow you and bookmark your next show"),
-			BenefitItem(R.drawable.ic_people, "Prioritize your show", "When they join, your shows will be highlighted in their feed")
+			BenefitItem(R.drawable.peopleic_people_outline, "Build your audience", "Referred buyers auto follow you and bookmark your next show"),
+			BenefitItem(R.drawable.peopleic_people_outline, "Prioritize your show", "When they join, your shows will be highlighted in their feed")
 		)
 
 		val buyerAdapter = ReferralBenefitsAdapter( buyerBenefits )
@@ -60,12 +60,12 @@ class AffiliateProgramFragment : BaseFragment<SellerHubViewModel, FragmentAffili
 
 		val sellerBenefits = mutableListOf(
 			BenefitItem(
-				R.drawable.ic_people,
+				R.drawable.peopleic_people_outline,
 				"Share your invite link",
 				"Send your referral link to friends and followers and invite them to sell"
 			),
-			BenefitItem(R.drawable.ic_people, "You earn \$100", "Receive \$100 after your referrals make their"),
-			BenefitItem(R.drawable.ic_people, "They earn too", "Your referrals will earn a bonus of up to \$150 in matched earnings during their first week")
+			BenefitItem(R.drawable.peopleic_people_outline, "You earn \$100", "Receive \$100 after your referrals make their"),
+			BenefitItem(R.drawable.peopleic_people_outline, "They earn too", "Your referrals will earn a bonus of up to \$150 in matched earnings during their first week")
 		)
 
 		val sellerAdapter = ReferralBenefitsAdapter( sellerBenefits )

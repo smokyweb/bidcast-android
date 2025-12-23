@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
+import androidx.core.view.WindowCompat
 import androidx.viewbinding.ViewBinding
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -39,8 +40,8 @@ object Alerts {
 		}
 	}
 
-	fun appAlert(mCtx : Context , isCancelable : Boolean = false , view : ViewBinding) =
-		AlertDialog.Builder(mCtx).apply {
+	fun appAlert(mCtx : Context , isCancelable : Boolean = false , view : ViewBinding) : AlertDialog {
+		return AlertDialog.Builder(mCtx).apply {
 
 			setView(view.root)
 			setCancelable(isCancelable)
@@ -55,17 +56,33 @@ object Alerts {
 			)
 			it.window?.setDimAmount(0.6f)
 		}
+	}
 
-    fun appBottomSheet(mCtx : Context , isCancelable : Boolean , view : ViewBinding) =
-        BottomSheetDialog(mCtx , style.BottomSheetDialogStyle).apply {
-            setContentView(view.root)
-            dismissWithAnimation = true
-            setCancelable(isCancelable)
+    fun appBottomSheet(mCtx : Context , isCancelable : Boolean , view : ViewBinding) : BottomSheetDialog {
+	    return BottomSheetDialog(mCtx , style.BottomSheetDialogStyle).apply {
+		    setContentView(view.root)
+		    dismissWithAnimation = true
+		    setCancelable(isCancelable)
 
-            behavior.state = BottomSheetBehavior.STATE_EXPANDED
-            behavior.skipCollapsed = true
-            behavior.isFitToContents = true
-        }
+		    behavior.state = BottomSheetBehavior.STATE_EXPANDED
+		    behavior.isFitToContents = true
+		    behavior.skipCollapsed = true
+	    }.also {
+		    it.window?.setBackgroundDrawable(
+			    ColorDrawable(
+				    ContextCompat.getColor(
+					    mCtx ,
+					    clr.transparent
+				    )
+			    )
+		    )
+		    it.window?.setDimAmount(0.6f)
+
+		    it.window?.navigationBarColor = ContextCompat.getColor(mCtx , clr.surface)
+
+		    it.window?.let { window -> WindowCompat.setDecorFitsSystemWindows(window , false) }
+	    }
+    }
 
 	fun showBottomSheet(
         mCtx : Context ,

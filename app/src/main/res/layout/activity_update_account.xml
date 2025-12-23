@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/surface"
     tools:context=".ui.dashboard.UpdateAccountActivity">
 
     <io.bidswipe.app.ui.custom.Header
@@ -65,7 +66,7 @@
                     style="@style/cardStyle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:backgroundTint="@color/secondary"
+                    android:backgroundTint="@color/primaryContainer"
                     app:cardCornerRadius="100dp"
                     app:cardElevation="4dp"
                     app:layout_constraintBottom_toBottomOf="@id/materialCardView"
@@ -79,23 +80,11 @@
                         android:layout_height="32dp"
                         android:padding="8dp"
                         android:src="@drawable/camera"
-                        app:tint="@color/onPrimary" />
+                        app:tint="@color/primary" />
 
                 </com.google.android.material.card.MaterialCardView>
 
-
             </androidx.constraintlayout.widget.ConstraintLayout>
-
-
-            <TextView
-                style="@style/BodyLarge"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_margin="@dimen/margin"
-                android:text="Upload Photo"
-                android:textAlignment="center"
-                android:textColor="@color/secondary" />
 
             <TextView
                 style="@style/TitleSmall"
@@ -109,6 +98,7 @@
                 style="@style/inputBoxStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                app:startIconDrawable="@drawable/ic_user_outline"
                 android:layout_marginHorizontal="@dimen/half_margin"
                 android:layout_marginBottom="@dimen/half_margin">
 
@@ -135,6 +125,7 @@
                 style="@style/inputBoxStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                app:startIconDrawable="@drawable/ic_user_outline"
                 android:layout_marginBottom="@dimen/half_margin">
 
                 <com.google.android.material.textfield.MaterialAutoCompleteTextView
@@ -162,6 +153,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/half_margin"
+                app:startIconDrawable="@drawable/ic_user_outline"
                 android:layout_marginBottom="@dimen/half_margin">
 
                 <com.google.android.material.textfield.MaterialAutoCompleteTextView
@@ -185,6 +177,7 @@
                 style="@style/inputBoxStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                app:startIconDrawable="@drawable/ic_email"
                 android:layout_marginHorizontal="@dimen/half_margin"
                 android:layout_marginBottom="@dimen/half_margin">
 
@@ -220,6 +213,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="top"
+                    android:paddingTop="16dp"
+                    android:paddingStart="16dp"
                     android:hint="@string/tell_us_about_yourself"
                     android:minLines="4" />
 

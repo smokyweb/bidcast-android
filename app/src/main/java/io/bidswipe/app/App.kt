@@ -93,7 +93,7 @@ class App : Application() {
 
 	}
 
-	override fun onCreate() {
+	override fun onCreate() {jack@
 		super.onCreate()
 
 		mCtx = applicationContext

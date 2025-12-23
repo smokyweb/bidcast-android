@@ -7,7 +7,7 @@
     android:layout_height="wrap_content"
     android:layout_margin="@dimen/half_margin"
     android:background="@drawable/card_8"
-    android:backgroundTint="@color/inverseOnSurface"
+    android:backgroundTint="@color/background"
     android:gravity="center_vertical"
     android:padding="@dimen/margin">
 
@@ -23,8 +23,9 @@
             android:id="@+id/icon"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:backgroundTint="@color/onSecondary"
+            android:backgroundTint="@color/primaryContainer"
             android:padding="12dp"
+            app:tint="@color/primary"
             android:src="@drawable/notification" />
 
     </com.google.android.material.card.MaterialCardView>

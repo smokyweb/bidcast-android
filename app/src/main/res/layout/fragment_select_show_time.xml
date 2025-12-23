@@ -84,7 +84,7 @@
                 android:drawablePadding="@dimen/half_margin"
                 android:text="@string/why_scedule_in_advance"
                 app:drawableStartCompat="@drawable/ic_bulb"
-                app:drawableTint="@color/warningClr" />
+                app:drawableTint="@color/warning" />
 
             <TextView
                 style="@style/BodyMedium"

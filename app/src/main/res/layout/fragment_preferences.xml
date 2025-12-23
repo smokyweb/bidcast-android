@@ -35,7 +35,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:alpha="0.7"
-                android:background="@color/backgroundClr"
+                android:background="@color/inverseOnSurface"
                 android:paddingHorizontal="@dimen/margin"
                 android:paddingVertical="12dp"
                 android:text="@string/account" />
@@ -89,7 +89,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginVertical="@dimen/half_margin"
                 android:alpha="0.7"
-                android:background="@color/backgroundClr"
+                android:background="@color/inverseOnSurface"
                 android:paddingHorizontal="@dimen/margin"
                 android:drawableEnd="@drawable/ic_question"
                 android:paddingVertical="12dp"
@@ -138,7 +138,7 @@
                 android:layout_marginVertical="@dimen/half_margin"
                 android:layout_marginTop="@dimen/margin"
                 android:alpha="0.7"
-                android:background="@color/backgroundClr"
+                android:background="@color/inverseOnSurface"
                 android:paddingHorizontal="@dimen/margin"
                 android:paddingVertical="12dp"
                 android:text="@string/display" />
@@ -174,7 +174,7 @@
                 android:layout_marginVertical="@dimen/half_margin"
                 android:layout_marginTop="@dimen/margin"
                 android:alpha="0.7"
-                android:background="@color/backgroundClr"
+                android:background="@color/inverseOnSurface"
                 android:paddingHorizontal="@dimen/margin"
                 android:paddingVertical="12dp"
                 android:text="@string/content" />
@@ -209,7 +209,7 @@
                 android:layout_marginVertical="@dimen/half_margin"
                 android:layout_marginTop="@dimen/margin"
                 android:alpha="0.7"
-                android:background="@color/backgroundClr"
+                android:background="@color/inverseOnSurface"
                 android:paddingHorizontal="@dimen/margin"
                 android:paddingVertical="12dp"
                 android:text="@string/other_settings" />

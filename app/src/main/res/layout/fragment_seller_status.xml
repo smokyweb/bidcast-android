@@ -18,10 +18,16 @@
 
     <include
         android:id="@+id/vendor"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/margin"
         layout="@layout/status_item" />
 
     <include
         android:id="@+id/sender"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/margin"
         layout="@layout/status_item" />
 
     <View
@@ -37,6 +43,5 @@
         android:layout_margin="@dimen/margin"
         android:text="@string/contact_support"
         app:layout_constraintBottom_toBottomOf="parent" />
-
 
 </LinearLayout>

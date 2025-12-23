@@ -9,24 +9,17 @@ import io.bidswipe.app.base.BaseAdapter
 import io.bidswipe.app.databinding.SellSheetItemBinding
 import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.model.SellModel
+import io.bidswipe.app.utils.draw
 import io.bidswipe.app.utils.setHapticClickListener
 
-class SellAdapter(
-	mList : MutableList<SellModel> , val type : String, val mClicks: RecyclerClicks,
-) : BaseAdapter<SellModel , SellSheetItemBinding>(mList) {
+class SellAdapter(mList : MutableList<SellModel> , val type : String , val mClicks : RecyclerClicks , ) : BaseAdapter<SellModel , SellSheetItemBinding>(mList) {
 
-	override fun bindView(inflater : LayoutInflater , parent : ViewGroup) =
-		SellSheetItemBinding.inflate(inflater , parent , false)
+	override fun bindView(inflater : LayoutInflater , parent : ViewGroup) = SellSheetItemBinding.inflate(inflater , parent , false)
 
-	override fun onBind(
-		holder : BaseViewHolder<SellSheetItemBinding> ,
-
-		position : Int ,
-		item : SellModel? ,
-	) {
+	override fun onBind(holder : BaseViewHolder<SellSheetItemBinding> , position : Int , item : SellModel? , ) {
 		with(holder) {
 
-            bind.root.setHapticClickListener {
+			bind.root.setHapticClickListener {
 				mClicks.itemClick(position)
 			}
 
@@ -38,22 +31,9 @@ class SellAdapter(
 				bind.root.background.setTint(ContextCompat.getColor(mCtx , R.color.background))
 			}
 
-			bind.icon.setImageDrawable(
-				ContextCompat.getDrawable(
-					mCtx ,
-					item?.icon ?: R.drawable.notification
-				)
-			)
-
-			bind.iconCard.setCardBackgroundColor(
-				ContextCompat.getColor(
-					mCtx ,
-					item?.color ?: R.color.primaryContainer
-				)
-			)
+			bind.icon.setImageDrawable(ContextCompat.getDrawable(mCtx , item?.icon ?: draw.ic_add_outline))
 			bind.subTitle.text = item?.subtitle
 			bind.title.text = item?.title
-
 		}
 	}
 }

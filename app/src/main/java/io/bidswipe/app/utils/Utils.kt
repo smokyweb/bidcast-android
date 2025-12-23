@@ -11,18 +11,22 @@ import android.graphics.Color
 import android.graphics.ColorFilter
 import android.graphics.LightingColorFilter
 import android.graphics.Paint
-import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Build
 import android.provider.OpenableColumns
-import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
+import androidx.core.graphics.createBitmap
+import androidx.core.graphics.drawable.toDrawable
+import androidx.core.graphics.get
+import androidx.core.graphics.set
+import androidx.core.graphics.toColorInt
 import com.canhub.cropper.CropImageOptions
 import com.canhub.cropper.CropImageView
 import com.google.android.material.chip.Chip
+import com.google.android.material.shape.ShapeAppearanceModel
 import io.bidswipe.app.R
 import io.bidswipe.app.utils.cropper.CropOptions
 import kotlinx.coroutines.CoroutineScope
@@ -67,7 +71,7 @@ object Utils {
 		}
 
 	fun getFormattedDateTime(inFormat : String , outFormat : String , timestamp : String) : String? {
-		if(timestamp.isNullOrEmpty()) return "N/A"
+		if (timestamp.isEmpty()) return "N/A"
 		return try {
 			getSimpleDate(inFormat).parse(timestamp)?.let { getSimpleDate(outFormat).format(it) }
 		} catch (e : Exception) {
@@ -75,25 +79,25 @@ object Utils {
 			timestamp
 		}
 	}
-	
+
 	fun initCrop(mCtx : Context , isCamera : Boolean = false , isGallery : Boolean = false) =
 		CropOptions(
-			null, CropImageOptions(
-				activityBackgroundColor = ContextCompat.getColor(mCtx, clr.background),
-				toolbarBackButtonColor = ContextCompat.getColor(mCtx, clr.onSurface),
-				toolbarColor = ContextCompat.getColor(mCtx, clr.surface),
-				activityMenuTextColor = ContextCompat.getColor(mCtx, clr.onSurface),
-				activityMenuIconColor = ContextCompat.getColor(mCtx, clr.onSurface),
-				toolbarTitleColor = ContextCompat.getColor(mCtx, clr.onSurface),
-				borderCornerColor = ContextCompat.getColor(mCtx, clr.primary),
-				borderLineColor = ContextCompat.getColor(mCtx, clr.primary),
-				guidelinesColor = ContextCompat.getColor(mCtx, clr.primary),
-				outputCompressFormat = Bitmap.CompressFormat.JPEG,
-				guidelines = CropImageView.Guidelines.ON,
-				imageSourceIncludeGallery = isGallery,
-				imageSourceIncludeCamera = isCamera,
-				cropMenuCropButtonTitle = "Done",
-				outputCompressQuality = 70,
+			null , CropImageOptions(
+				activityBackgroundColor = ContextCompat.getColor(mCtx , clr.background) ,
+				toolbarBackButtonColor = ContextCompat.getColor(mCtx , clr.onSurface) ,
+				toolbarColor = ContextCompat.getColor(mCtx , clr.surface) ,
+				activityMenuTextColor = ContextCompat.getColor(mCtx , clr.onSurface) ,
+				activityMenuIconColor = ContextCompat.getColor(mCtx , clr.onSurface) ,
+				toolbarTitleColor = ContextCompat.getColor(mCtx , clr.onSurface) ,
+				borderCornerColor = ContextCompat.getColor(mCtx , clr.primary) ,
+				borderLineColor = ContextCompat.getColor(mCtx , clr.primary) ,
+				guidelinesColor = ContextCompat.getColor(mCtx , clr.primary) ,
+				outputCompressFormat = Bitmap.CompressFormat.JPEG ,
+				guidelines = CropImageView.Guidelines.ON ,
+				imageSourceIncludeGallery = isGallery ,
+				imageSourceIncludeCamera = isCamera ,
+				cropMenuCropButtonTitle = "Done" ,
+				outputCompressQuality = 70 ,
 			)
 		)
 
@@ -106,7 +110,7 @@ object Utils {
 
 	fun getDateFromTimestamp(millis : Long) = getSimpleDate("dd-MM-yyyy")
 		.format(millis).toString()
-	
+
 	fun getNotifBuilder(ctx : Context , title : String , msg : String) =
 		NotificationCompat.Builder(ctx , Const.CHANNEL_ID).apply {
 			color = ContextCompat.getColor(ctx , clr.primary)
@@ -127,7 +131,7 @@ object Utils {
 	fun getSimpleDate(format : String) = SimpleDateFormat(format , Locale.getDefault())
 
 	fun imagePart(param : String , name : String , file : File) =
-		MultipartBody.Part.Companion.createFormData(
+		MultipartBody.Part.createFormData(
 			param ,
 			name ,
 			file.asRequestBody("*/*".toMediaTypeOrNull())
@@ -198,11 +202,11 @@ object Utils {
 		for (x in 0 until modifiedBitmap.width) {
 			for (y in 0 until modifiedBitmap.height) {
 				// Get the color of the pixel at (x, y)
-				val pixelColor = modifiedBitmap.getPixel(x , y)
+				modifiedBitmap[x , y]
 
 				// Modify the pixel color (change it to red in this case)
 //				if (pixelColor == Color.WHITE) {  // Check if the pixel is white
-				modifiedBitmap.setPixel(x , y , Color.RED) // Set pixel to red
+				modifiedBitmap[x , y] = Color.RED // Set pixel to red
 //				}
 			}
 		}
@@ -211,9 +215,9 @@ object Utils {
 
 	fun hexToColor(color : String?) : Int {
 		return try {
-			Color.parseColor(color ?: "#E31E25")
+			(color ?: "#E31E25").toColorInt()
 		} catch (e : Exception) {
-			Color.parseColor("#E31E25")
+			"#E31E25".toColorInt()
 		}
 	}
 
@@ -240,15 +244,28 @@ object Utils {
 		return fileName
 	}
 
-	fun makeAChip(mCtx : Context , text : String , selected : Boolean,closeIconVisible : Boolean,minHeight:Int=36,chipPadding:Int=12,strokeWidth:Int=0,chipId:Int?=null, iconRes: Int? = null) =
+	fun makeAChip(
+		mCtx : Context ,
+		text : String ,
+		selected : Boolean ,
+		closeIconVisible : Boolean ,
+		minHeight : Int = 36 ,
+		chipPadding : Int = 12 ,
+		strokeWidth : Int = 0 ,
+		chipId : Int? = null ,
+		iconRes : Int? = null
+	) =
 		Chip(mCtx , null , R.attr.entryChipStyleNew).apply {
 			setText(text)
-			id = chipId?:text.hashCode()
+			id = chipId ?: text.hashCode()
 			isClickable = true
 			isCheckable = true
 			isCloseIconVisible = closeIconVisible
 			closeIconTint = ContextCompat.getColorStateList(mCtx , clr.error)
-			chipCornerRadius = mCtx.resources.dpToPx(8).toFloat()
+//			chipCornerRadius = mCtx.resources.dpToPx(8).toFloat()
+			shapeAppearanceModel = ShapeAppearanceModel.builder().also {
+				it.setAllCornerSizes(ShapeAppearanceModel.PILL)
+			}.build()
 			chipStrokeWidth = mCtx.resources.dpToPx(strokeWidth).toFloat()
 			chipStartPadding = mCtx.resources.dpToPx(chipPadding).toFloat()
 			chipEndPadding = mCtx.resources.dpToPx(chipPadding).toFloat()
@@ -257,7 +274,7 @@ object Utils {
 			isCheckedIconVisible = false
 
 			iconRes?.let {
-				chipIcon = ContextCompat.getDrawable(mCtx, it)
+				chipIcon = ContextCompat.getDrawable(mCtx , it)
 				isChipIconVisible = true
 			}
 		}
@@ -275,7 +292,6 @@ object Utils {
 		return cm.activeNetworkInfo?.isConnectedOrConnecting == true
 	}
 
-	@RequiresApi(Build.VERSION_CODES.O)
 	fun notificationChannel() = NotificationChannel(
 		Const.CHANNEL_ID ,
 		Const.CHANNEL_NAME ,
@@ -286,7 +302,7 @@ object Utils {
 		it.enableLights(false)
 	}
 
-	fun generateTextDrawable(mCtx: Context,text: String): Drawable {
+	fun generateTextDrawable(mCtx : Context , text : String) : Drawable {
 		val textSize = 40f
 		val bgColor = Color.LTGRAY
 		val textColor = Color.WHITE
@@ -299,41 +315,41 @@ object Utils {
 		// Create a bitmap to draw text on
 		val width = 100
 		val height = 100
-		val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+		val bitmap = createBitmap(width , height)
 		val canvas = Canvas(bitmap)
 
 		// Fill the canvas with the background color
 		canvas.drawColor(bgColor)
 
 		// Draw the first letter of the user's name
-		canvas.drawText(text, width / 2f, height / 2f - (paint.descent() + paint.ascent()) / 2, paint)
+		canvas.drawText(text , width / 2f , height / 2f - (paint.descent() + paint.ascent()) / 2 , paint)
 
-		return BitmapDrawable(mCtx.resources, bitmap)
+		return bitmap.toDrawable(mCtx.resources)
 	}
 
-	fun saveImageFromUrlToCache(mCtx: Context, url: String?, callback: (uri: Uri?) -> Unit) {
+	fun saveImageFromUrlToCache(mCtx : Context , url : String? , callback : (uri : Uri?) -> Unit) {
 		if (url.isNullOrEmpty()) return callback(null)
 		CoroutineScope(Dispatchers.IO).launch {
 			try {
 				val url = URL(url)
-				val connection: HttpURLConnection = url.openConnection() as HttpURLConnection
+				val connection : HttpURLConnection = url.openConnection() as HttpURLConnection
 				connection.connect()
 
-				val inputStream: InputStream = connection.inputStream
-				val bitmap: Bitmap = BitmapFactory.decodeStream(inputStream)
+				val inputStream : InputStream = connection.inputStream
+				val bitmap : Bitmap = BitmapFactory.decodeStream(inputStream)
 
-				val cacheDir: File = mCtx.cacheDir
+				val cacheDir : File = mCtx.cacheDir
 
-				val imageFile = File(cacheDir, "cached_image_${System.currentTimeMillis()}.jpg")
+				val imageFile = File(cacheDir , "cached_image_${System.currentTimeMillis()}.jpg")
 
 				val outputStream = FileOutputStream(imageFile)
-				bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
+				bitmap.compress(Bitmap.CompressFormat.JPEG , 100 , outputStream)
 				outputStream.flush()
 				outputStream.close()
 
 				val uri = FileProvider.getUriForFile(
-					mCtx,
-					"${mCtx.packageName}.provider",
+					mCtx ,
+					"${mCtx.packageName}.provider" ,
 					imageFile
 				)
 
@@ -341,7 +357,7 @@ object Utils {
 					callback(uri)
 				}
 
-			} catch (e: Exception) {
+			} catch (e : Exception) {
 				withContext(Dispatchers.Main) {
 					callback(null)
 				}

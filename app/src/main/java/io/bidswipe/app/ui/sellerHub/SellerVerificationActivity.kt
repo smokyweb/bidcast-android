@@ -361,7 +361,7 @@ class SellerVerificationActivity : BaseActivity() {
 							bind.verifyPhone.isVisible = false
 							bind.verificationPhoneIcon.isVisible = true
 							bind.completeVerification.isVisible = false
-							bind.status.setTextColor(ContextCompat.getColor(this, R.color.warningClr))
+							bind.status.setTextColor(ContextCompat.getColor(this, R.color.warning))
 							bind.uploadId.isClickable = false
 							bind.uploadSelfie.isClickable = false
 						}

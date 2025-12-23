@@ -101,7 +101,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/margin"
-                android:backgroundTint="@color/onSecWarning"
+                android:backgroundTint="@color/warningContainer"
                 app:contentPadding="@dimen/margin">
 
                 <LinearLayout

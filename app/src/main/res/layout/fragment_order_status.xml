@@ -331,7 +331,7 @@
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/receipt"
-                    style="@style/appBtnOutline"
+                    style="@style/appTonalBtn"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_margin="@dimen/half_margin"
@@ -341,7 +341,7 @@
                     app:cornerRadius="32dp" />
 
                 <com.google.android.material.button.MaterialButton
-                    style="@style/appBtnOutline"
+                    style="@style/appTonalBtn"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_margin="@dimen/half_margin"

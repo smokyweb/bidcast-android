@@ -101,7 +101,7 @@
                         style="@style/cardStyle"
                         android:layout_width="48dp"
                         android:layout_height="48dp"
-                        app:cardBackgroundColor="@color/backgroundClr"
+                        app:cardBackgroundColor="@color/inverseOnSurface"
                         app:cardCornerRadius="100dp"
                         app:cardElevation="0dp">
 
@@ -162,7 +162,7 @@
                         style="@style/cardStyle"
                         android:layout_width="48dp"
                         android:layout_height="48dp"
-                        app:cardBackgroundColor="@color/backgroundClr"
+                        app:cardBackgroundColor="@color/inverseOnSurface"
                         app:cardCornerRadius="100dp"
                         app:cardElevation="0dp">
 
@@ -209,7 +209,7 @@
                         style="@style/cardStyle"
                         android:layout_width="48dp"
                         android:layout_height="48dp"
-                        app:cardBackgroundColor="@color/backgroundClr"
+                        app:cardBackgroundColor="@color/inverseOnSurface"
                         app:cardCornerRadius="100dp"
                         app:cardElevation="0dp">
 
@@ -269,7 +269,7 @@
                         style="@style/cardStyle"
                         android:layout_width="48dp"
                         android:layout_height="48dp"
-                        app:cardBackgroundColor="@color/backgroundClr"
+                        app:cardBackgroundColor="@color/inverseOnSurface"
                         app:cardCornerRadius="100dp"
                         app:cardElevation="0dp">
 
@@ -606,7 +606,7 @@
                         style="@style/cardStyle"
                         android:layout_width="48dp"
                         android:layout_height="48dp"
-                        app:cardBackgroundColor="@color/backgroundClr"
+                        app:cardBackgroundColor="@color/inverseOnSurface"
                         app:cardCornerRadius="100dp"
                         app:cardElevation="0dp">
 
@@ -655,7 +655,7 @@
                         style="@style/cardStyle"
                         android:layout_width="48dp"
                         android:layout_height="48dp"
-                        app:cardBackgroundColor="@color/backgroundClr"
+                        app:cardBackgroundColor="@color/inverseOnSurface"
                         app:cardCornerRadius="100dp"
                         app:cardElevation="0dp">
 
@@ -729,7 +729,7 @@
                         style="@style/cardStyle"
                         android:layout_width="48dp"
                         android:layout_height="48dp"
-                        app:cardBackgroundColor="@color/backgroundClr"
+                        app:cardBackgroundColor="@color/inverseOnSurface"
                         app:cardCornerRadius="100dp"
                         app:cardElevation="0dp">
 
