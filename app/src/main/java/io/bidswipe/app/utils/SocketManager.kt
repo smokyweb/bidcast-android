@@ -663,6 +663,29 @@ class SocketManager private constructor(
 		socket?.emit("set_promotion_data", payload)
 	}
 
+
+	fun joinShow(userId : String, showId : String) {
+		val payload = JSONObject().apply {
+			put("show_id", showId)
+			put("user_id", userId)
+		}
+		Log.d(TAG, "EMIT:join_show  - userId: $userId, showId: $showId ")
+		socket?.emit("join_show", payload)
+	}
+
+	fun sustainWatches(userId : String, showId : String) {
+
+		val payload = JSONObject().apply {
+			put("show_id", showId)
+			put("user_id", userId)
+		}
+
+		Log.d(TAG, "EMIT:sustained_watches  - userId: $userId, showId: $showId ")
+
+		socket?.emit("sustained_watches", payload)
+	}
+
+
 }
 
 

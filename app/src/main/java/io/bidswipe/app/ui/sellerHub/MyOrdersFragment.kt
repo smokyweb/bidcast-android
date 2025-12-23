@@ -260,7 +260,6 @@ class MyOrdersFragment : BaseFragment<SellerHubViewModel, FragmentMyOrdersBindin
 
         bind.chipGroup.setOnCheckedStateChangeListener { chipGroup, _ ->
             runSafe {
-
                 val chipId = chipGroup.checkedChipId
                 val index = chipGroup.indexOfChild(chipGroup.findViewById(chipId))
                 if (index == -1) return@runSafe

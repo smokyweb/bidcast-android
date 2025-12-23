@@ -23,7 +23,7 @@
     <color name="background">#FFFFFF</color>
     <color name="onBackground">#191919</color>
 
-    <color name="surface">#F6F8FB</color>
+    <color name="surface">#E6F0FF</color>
     <color name="onSurface">#151515</color>
     <color name="surfaceVariant">#E5E7EB</color>
     <color name="onSurfaceVariant">#687280</color>
