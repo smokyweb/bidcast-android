@@ -26,7 +26,6 @@
         android:layout_marginHorizontal="@dimen/margin"
         android:layout_marginTop="@dimen/half_margin"
         android:layout_marginBottom="@dimen/margin"
-        app:boxBackgroundColor="@color/surface"
         app:boxStrokeWidth="2dp"
         app:endIconMode="clear_text"
         app:endIconTint="@color/scrim"

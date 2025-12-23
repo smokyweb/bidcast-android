@@ -11,11 +11,10 @@ import androidx.core.view.isVisible
 import androidx.navigation.fragment.findNavController
 import com.applandeo.materialcalendarview.CalendarDay
 import com.applandeo.materialcalendarview.listeners.OnCalendarDayClickListener
-import com.google.android.material.timepicker.MaterialTimePicker
-import com.google.android.material.timepicker.TimeFormat
 import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseFragment
 import io.bidswipe.app.databinding.FragmentSelectShowTimeBinding
+import io.bidswipe.app.databinding.SelectTimeSheetBinding
 import io.bidswipe.app.interfaces.AlertClicks
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.ui.custom.AppBottomSheet
@@ -29,6 +28,7 @@ import io.bidswipe.app.utils.runSafe
 import io.bidswipe.app.utils.setHapticClickListener
 import java.util.Calendar
 import java.util.Locale
+
 
 class SelectShowTimeFragment :
     BaseFragment<ScheduleShowViewModel, FragmentSelectShowTimeBinding>() {
@@ -154,6 +154,7 @@ class SelectShowTimeFragment :
         bind.time.setOnClickListener {
             showTimePicker()
         }
+
         bind.timeBox.setOnClickListener {
             showTimePicker()
         }
@@ -170,7 +171,7 @@ class SelectShowTimeFragment :
 
                 else -> {
                     bind.loader.isVisible = true
-                    viewModel.checkScheduleShow(viewModel.date.request(), viewModel.time.request(),viewModel.showId?.request())
+                    viewModel.checkScheduleShow(viewModel.date.request(), viewModel.time.request(), viewModel.showId?.request())
                 }
             }
         }
@@ -266,6 +267,8 @@ class SelectShowTimeFragment :
                     if (savedDateTime.after(minTime) || savedDateTime == minTime) {
                         initialHour = savedCalendar.get(Calendar.HOUR_OF_DAY)
                         initialMinute = savedCalendar.get(Calendar.MINUTE)
+                        selectedDateCalendar.set(Calendar.HOUR_OF_DAY, initialHour)
+                        selectedDateCalendar.set(Calendar.MINUTE, initialMinute)
                     }
                 }
             } catch (e: Exception) {
@@ -273,16 +276,22 @@ class SelectShowTimeFragment :
             }
         }
 
-        val materialTimePicker = MaterialTimePicker.Builder()
-            .setTimeFormat(TimeFormat.CLOCK_24H)
-            .setInputMode(MaterialTimePicker.INPUT_MODE_CLOCK)
-            .setHour(initialHour)
-            .setMinute(initialMinute)
-            .build()
+        val sheetBind = SelectTimeSheetBinding.bind(
+            LayoutInflater.from(mCtx).inflate(
+                R.layout.select_time_sheet,
+                null,
+                false
+            )
+        )
 
-        materialTimePicker.addOnPositiveButtonClickListener {
-            val newHour: Int = materialTimePicker.hour
-            val newMinute: Int = materialTimePicker.minute
+        val sheet = Alerts.appBottomSheet(mCtx, true, sheetBind)
+
+        sheetBind.timePicker.setDefaultDate(selectedDateCalendar.time)
+
+        sheetBind.save.setHapticClickListener {
+            val selectedTime = Utils.getSimpleDate("HH:mm").format(sheetBind.timePicker.date.time)
+            val newHour = selectedTime.split(":").first().toInt()
+            val newMinute = selectedTime.split(":").last().toInt()
 
             // Create selected date-time with the chosen time
             val selectedDateTime = Calendar.getInstance().apply {
@@ -305,8 +314,10 @@ class SelectShowTimeFragment :
                 val displayTime = Utils.getSimpleDate("hh:mm a").format(selectedDateTime.time)
                 bind.time.setText(displayTime)
             }
+
+            sheet.dismiss()
         }
 
-        materialTimePicker.show(childFragmentManager, "tag")
+        sheet.show()
     }
 }

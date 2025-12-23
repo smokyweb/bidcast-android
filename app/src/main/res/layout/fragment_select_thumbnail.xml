@@ -91,10 +91,11 @@
             </LinearLayout>
 
             <TextView
-                style="@style/TitleMedium"
+                style="@style/TitleSemiBold"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="@dimen/half_margin"
+                android:layout_marginTop="@dimen/margin"
+                android:layout_marginHorizontal="@dimen/half_margin"
                 android:text="@string/tips_for_a_great_thumbnail" />
 
             <androidx.recyclerview.widget.RecyclerView
@@ -110,10 +111,11 @@
                 tools:listitem="@layout/sell_sheet_item" />
 
             <TextView
-                style="@style/TitleMedium"
+                style="@style/TitleSemiBold"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="@dimen/half_margin"
+                android:layout_marginTop="@dimen/margin"
+                android:layout_marginHorizontal="@dimen/half_margin"
                 android:text="@string/goods_examples" />
 
             <androidx.recyclerview.widget.RecyclerView

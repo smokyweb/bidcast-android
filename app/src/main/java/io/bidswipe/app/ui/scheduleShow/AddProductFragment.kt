@@ -38,345 +38,312 @@ import java.io.File
 
 @SuppressLint("NotifyDataSetChanged")
 class AddProductFragment : BaseFragment<ScheduleShowViewModel, FragmentAddProductBinding>() {
-	override fun getModel(): Class<ScheduleShowViewModel> = ScheduleShowViewModel::class.java
+    override fun getModel(): Class<ScheduleShowViewModel> = ScheduleShowViewModel::class.java
 
-	override fun getBind(inflater: LayoutInflater, view: ViewGroup?) =
-		FragmentAddProductBinding.inflate(inflater, view, false)
+    override fun getBind(inflater: LayoutInflater, view: ViewGroup?) =
+        FragmentAddProductBinding.inflate(inflater, view, false)
 
-	private lateinit var productAdapter: ProductAdapter
+    private lateinit var productAdapter: ProductAdapter
 
-	//	private var productList = mutableListOf<GetMyInventoryResponse.Data?>()
-	private var page = 1
-	private var isLoading = false
+    //	private var productList = mutableListOf<GetMyInventoryResponse.Data?>()
+    private var page = 1
+    private var isLoading = false
 
-	private val inventoryLauncher =
-		registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-			if (result.resultCode == Activity.RESULT_OK) {
-				val data = result.data
-				val selectedProducts = data?.getSerializableExtra("selectedProducts") as? ArrayList<Product>
+    private val inventoryLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                val data = result.data
+                val selectedProducts = data?.getSerializableExtra("selectedProducts") as? ArrayList<Product>
 
-				Log.d(TAG, "$selectedProducts ")
-				selectedProducts?.forEach { data ->
+                Log.d(TAG, "$selectedProducts ")
+                selectedProducts?.forEach { data ->
 
-					val product =
-						LiveShowModel.Product(
-							LiveShowModel.Category(
-								data.category?.id,
-								data.category?.image ?: "",
-								data.category?.name ?: "",
-								data.category?.thumbnail
-							),
-							data.id.toString(),
-							data.images?.get(0),
-							data.status,
-							data.title,
-							data.pricing.toString(),
-							data.quantity.toString(),
-							selected = true
-						)
+                    val product =
+                        LiveShowModel.Product(
+                            LiveShowModel.Category(
+                                data.category?.id,
+                                data.category?.image ?: "",
+                                data.category?.name ?: "",
+                                data.category?.thumbnail
+                            ),
+                            data.id.toString(),
+                            data.images?.get(0),
+                            data.status,
+                            data.title,
+                            data.pricing.toString(),
+                            data.quantity.toString(),
+                            selected = true
+                        )
 
-					if (!viewModel.currentProducts.any { existing -> existing.id == product.id }) {
-						viewModel.currentProducts.add(product)
-					}
-				}
+                    if (!viewModel.currentProducts.any { existing -> existing.id == product.id }) {
+                        viewModel.currentProducts.add(product)
+                    }
+                }
 
-				productAdapter.notifyDataSetChanged()
+                productAdapter.notifyDataSetChanged()
 
-				if (viewModel.currentProducts.isNotEmpty()) {
+                if (viewModel.currentProducts.isNotEmpty()) {
 //					bind.noData.isVisible = false
-					bind.recycler.isVisible = true
-				}
-			}
-		}
+                    bind.recycler.isVisible = true
+                }
+            }
+        }
 
-	private var from = ""
+    private var from = ""
 
-	private var mClick = object : RecyclerClicks {
-		override fun itemClick(pos: Int, status: String?) {
-			when (status) {
-				"select" -> {
-					viewModel.currentProducts[pos].selected = true
-					productAdapter.notifyItemChanged(pos)
-				}
+    private var mClick = object : RecyclerClicks {
+        override fun itemClick(pos: Int, status: String?) {
+            when (status) {
+                "select" -> {
+                    viewModel.currentProducts[pos].selected = true
+                    productAdapter.notifyItemChanged(pos)
+                }
 
-				"edit" -> {
-					startActivity(mCtx.toListProduct().putExtra("product", viewModel.currentProducts[pos]))
-				}
+                "edit" -> {
+                    startActivity(mCtx.toListProduct().putExtra("product", viewModel.currentProducts[pos]))
+                }
 
-				"delete" -> {
+                "delete" -> {
 
-					log("position : $pos , ${viewModel.currentProducts.size}")
+                    log("position : $pos , ${viewModel.currentProducts.size}")
 
-					viewModel.currentProducts.removeAt(pos)
-					productAdapter.notifyItemRemoved(pos)
-					productAdapter.notifyItemRangeChanged(pos, viewModel.currentProducts.size)
+                    viewModel.currentProducts.removeAt(pos)
+                    productAdapter.notifyItemRemoved(pos)
+                    productAdapter.notifyItemRangeChanged(pos, viewModel.currentProducts.size)
 
-				}
-			}
-		}
-	}
+                }
+            }
+        }
+    }
 
-	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-		super.onViewCreated(view, savedInstanceState)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
-		from = activity?.intent?.getStringExtra("from") ?: ""
+        from = activity?.intent?.getStringExtra("from") ?: ""
 
-		bind.header.onBackClick {
-			findNavController().popBackStack()
-		}
+        bind.header.onBackClick {
+            findNavController().popBackStack()
+        }
 
-		/*bind.contentScrollView.setOnScrollChangeListener { v: NestedScrollView?, _: Int, scrollY: Int, _: Int, oldScrollY: Int ->
-			val nestedScrollView = checkNotNull(v) {
-				return@setOnScrollChangeListener
-			}
-			val lastChild = nestedScrollView.getChildAt(nestedScrollView.childCount - 1)
-			if (lastChild != null) {
-				if ((scrollY >= (lastChild.measuredHeight - nestedScrollView.measuredHeight)) && scrollY > oldScrollY) {
-					if (!isLoading){
-						isLoading = true
-						page++
-						viewModel.getUserProducts(userId.request(), categoryId = viewModel.categoryId.request(), page.toString().request())
-					}
-				}
-			}
-		}*/
+        /*bind.contentScrollView.setOnScrollChangeListener { v: NestedScrollView?, _: Int, scrollY: Int, _: Int, oldScrollY: Int ->
+            val nestedScrollView = checkNotNull(v) {
+                return@setOnScrollChangeListener
+            }
+            val lastChild = nestedScrollView.getChildAt(nestedScrollView.childCount - 1)
+            if (lastChild != null) {
+                if ((scrollY >= (lastChild.measuredHeight - nestedScrollView.measuredHeight)) && scrollY > oldScrollY) {
+                    if (!isLoading){
+                        isLoading = true
+                        page++
+                        viewModel.getUserProducts(userId.request(), categoryId = viewModel.categoryId.request(), page.toString().request())
+                    }
+                }
+            }
+        }*/
 
-		productAdapter = ProductAdapter(viewModel.currentProducts, mClick)
-		bind.recycler.adapter = productAdapter
+        productAdapter = ProductAdapter(viewModel.currentProducts, mClick)
+        bind.recycler.adapter = productAdapter
 
-		bind.addProductLayout.setHapticClickListener {
-			findNavController().navigate(ids.addProductFragment_to_createProductFragment)
-		}
+        bind.addProductLayout.setHapticClickListener {
+            findNavController().navigate(ids.addProductFragment_to_createProductFragment)
+        }
 
-		bind.selectInventoryLayout.setHapticClickListener {
-			inventoryLauncher.launch(
-				Intent(mCtx, SellerHubActivity::class.java)
-					.putExtra("slug", "inventory")
-					.putExtra("from", "addProduct")
-			)
-		}
+        bind.selectInventoryLayout.setHapticClickListener {
+            inventoryLauncher.launch(
+                Intent(mCtx, SellerHubActivity::class.java)
+                    .putExtra("slug", "inventory")
+                    .putExtra("from", "addProduct")
+            )
+        }
 
-		bind.finishBtn.setHapticClickListener {
+        bind.finishBtn.setHapticClickListener {
 
-			val imagePartList = mutableListOf<MultipartBody.Part?>()
-			val productIdList = mutableListOf<Int>()
+            val imagePartList = mutableListOf<MultipartBody.Part?>()
+            val productIdList = mutableListOf<Int>()
 
-			viewModel.currentProducts.forEach {
-				if (it.selected == true) {
-					productIdList.add(it.id?.toInt() ?: 0)
-				}
-			}
+            viewModel.currentProducts.forEach {
+                if (it.selected == true) {
+                    productIdList.add(it.id?.toInt() ?: 0)
+                }
+            }
 
-			if (productIdList.isEmpty()) {
-				Alerts.error(mCtx, "Please select product")
-				return@setHapticClickListener
-			}
+            if (productIdList.isEmpty()) {
+                Alerts.error(mCtx, "Please select product")
+                return@setHapticClickListener
+            }
 
-			if(!viewModel.thumbnail.contains(Const.BASE_URL)) {
-				imagePartList.add(
-					Utils.imagePart(
-						"thumbnail[]",
-						viewModel.thumbnail,
-						File(viewModel.thumbnail)
-					)
-				)
-			}
+            if (!viewModel.thumbnail.contains(Const.BASE_URL)) {
+                imagePartList.add(
+                    Utils.imagePart(
+                        "thumbnail[]",
+                        viewModel.thumbnail,
+                        File(viewModel.thumbnail)
+                    )
+                )
+            }
 
-			bind.loader.isVisible = true
+            bind.loader.isVisible = true
 
-			if (from == "showTutorial") {
+            if (from == "showTutorial") {
 
-				val data = Intent()
-				data.putExtra(
-					"title",
-					TutorialShowModel(
-						viewModel.showTitle,
-						viewModel.categoryId,
-						viewModel.auctionId,
-						viewModel.thumbnail,
-						productIdList.joinToString(","),
-						viewModel.repeatMode,
-						viewModel.repeatType,
-						viewModel.explicitContent,
-						viewModel.primaryLanguage,
-						viewModel.discoverability
-					)
-				)
+                val data = Intent()
+                data.putExtra(
+                    "title",
+                    TutorialShowModel(
+                        viewModel.showTitle,
+                        viewModel.categoryId,
+                        viewModel.auctionId,
+                        viewModel.thumbnail,
+                        productIdList.joinToString(","),
+                        viewModel.repeatMode,
+                        viewModel.repeatType,
+                        viewModel.explicitContent,
+                        viewModel.primaryLanguage,
+                        viewModel.discoverability
+                    )
+                )
 
-				activity?.setResult(Activity.RESULT_OK, data)
-				finish()
+                activity?.setResult(Activity.RESULT_OK, data)
+                finish()
 
-			} else {
-				viewModel.storeScheduleShow(
-					title = viewModel.showTitle.request(),
-					date = viewModel.date.request(),
-					time = viewModel.time.request(),
-					categoryId = viewModel.categoryId.request(),
-					showDiscoverability = viewModel.discoverability.request(),
-					auctionTypeId = viewModel.auctionId.request(),
-					thumbnails = imagePartList,
-					productIds = productIdList,
-					isRepeat = viewModel.repeatMode.request(),
-					repeatValue = viewModel.repeatType.request(),
-					language = viewModel.primaryLanguage.request(),
-					isExplicit = viewModel.explicitContent.request(),
-					showId=viewModel.showId?.request()
-				)
-			}
+            } else {
+                viewModel.storeScheduleShow(
+                    title = viewModel.showTitle.request(),
+                    date = viewModel.date.request(),
+                    time = viewModel.time.request(),
+                    categoryId = viewModel.categoryId.request(),
+                    showDiscoverability = viewModel.discoverability.request(),
+                    auctionTypeId = viewModel.auctionId.request(),
+                    thumbnails = imagePartList,
+                    productIds = productIdList,
+                    isRepeat = viewModel.repeatMode.request(),
+                    repeatValue = viewModel.repeatType.request(),
+                    language = viewModel.primaryLanguage.request(),
+                    isExplicit = viewModel.explicitContent.request(),
+                    showId = viewModel.showId?.ifEmpty { null }?.request()
+                )
+            }
 
-		}
+        }
 
 
 //		bind.loader.isVisible = true
 //
 //		viewModel.getUserProducts(userId.request(), categoryId = viewModel.categoryId.request(), page.toString().request())
 
-		viewModel.getUserProductsRepo.observe(viewLifecycleOwner) {
-			when (it) {
-				is Resource.Success -> {
-					bind.loader.isVisible = false
+        viewModel.getUserProductsRepo.observe(viewLifecycleOwner) {
+            when (it) {
+                is Resource.Success -> {
+                    bind.loader.isVisible = false
 
-					it.value.products
+                    it.value.products
 
-					/*if (page == 1) productList.clear()
+                    /*if (page == 1) productList.clear()
 
-					mData?.forEach {
-						productList.add(it)
-					}
+                    mData?.forEach {
+                        productList.add(it)
+                    }
 
-					log("DATA ${productList.size}")
+                    log("DATA ${productList.size}")
 
-					productAdapter.notifyDataSetChanged()
+                    productAdapter.notifyDataSetChanged()
 
-					isLoading = page >= (it.value.totalPage ?: 0)
+                    isLoading = page >= (it.value.totalPage ?: 0)
 
-					if (productList.isEmpty()) {
-						bind.noData.isVisible = true
-						bind.recycler.isVisible = false
-					} else {
-						bind.noData.isVisible = false
-						bind.recycler.isVisible = true
-					}*/
+                    if (productList.isEmpty()) {
+                        bind.noData.isVisible = true
+                        bind.recycler.isVisible = false
+                    } else {
+                        bind.noData.isVisible = false
+                        bind.recycler.isVisible = true
+                    }*/
 
-				}
+                }
 
-				is Resource.Error -> {
-					bind.loader.isVisible = false
+                is Resource.Error -> {
+                    bind.loader.isVisible = false
 
-					it.parse(mCtx, TAG, object : AlertClicks {
-						override fun primaryClick(dialog: AppBottomSheet) {
-							dialog.dismiss()
-						}
+                    it.parse(mCtx, TAG, object : AlertClicks {
+                        override fun primaryClick(dialog: AppBottomSheet) {
+                            dialog.dismiss()
+                        }
 
-						override fun secondaryClick(dialog: AppBottomSheet) {
-							dialog.dismiss()
+                        override fun secondaryClick(dialog: AppBottomSheet) {
+                            dialog.dismiss()
 
-						}
-					})
+                        }
+                    })
 
-				}
+                }
 
-				else -> {}
+                else -> {}
 
-			}
-		}
+            }
+        }
 
-		viewModel.storeScheduleShowRepo.observe(viewLifecycleOwner) {
-			when (it) {
-				is Resource.Success -> {
-					bind.loader.isVisible = false
+        viewModel.storeScheduleShowRepo.observe(viewLifecycleOwner) {
+            when (it) {
+                is Resource.Success -> {
+                    bind.loader.isVisible = false
+                    val data = it.value.data
+                    log("SHOW DATA Before Start Show: $data")
+                    if (viewModel.showId.isNullOrEmpty()) {
+                    val products = data?.products?.map { product -> product?.toLiveShowProduct() }
+                    products?.first()?.isCurrent = true
 
-					val data = it.value.data
-					log("SHOW DATA Before Start Show: $data")
+                    val show = LiveShowModel(
+                        seller = LiveShowModel.Seller(
+                            id = userId,
+                            image = userImage,
+                            name = userName,
+                            rating = ""
+                        ),
+                        products = products ?: mutableListOf(),
+                        roomId = "live_room_${userId}_${data?.id.toString()}",
+                        showDetail = "Test Details",
+                        thumbnail = data?.thumbnail?.getOrNull(0) ?: "",
+                        viewerCount = "1",
+                        highestBid = LiveShowModel.HighestBid(
+                            bidAmount = "",
+                            userName = "",
+                            userImage = "",
+                            userId = "",
+                            productId = ""
+                        ),
+                        isLive = true,
+                        time = Utils.timestamp().toString(),
+                        showId = data?.id.toString(),
+                        allowBidForAll = true,
+                        bidCountDown = "",
+                        showTimer = "",
+                    )
 
-					val products = data?.products?.map { product -> product?.toLiveShowProduct() }
-					products?.first()?.isCurrent = true
 
-					val show = LiveShowModel(
-						seller = LiveShowModel.Seller(
-							id = userId,
-							image = userImage,
-							name = userName,
-							rating = ""
-						),
-						products = products ?: mutableListOf(),
-						roomId = "live_room_${userId}_${data?.id.toString()}",
-						showDetail = "Test Details",
-						thumbnail = data?.thumbnail?.getOrNull(0) ?: "",
-						viewerCount = "1",
-						highestBid = LiveShowModel.HighestBid(
-							bidAmount = "",
-							userName = "",
-							userImage = "",
-							userId = "",
-							productId = ""
-						),
-						isLive = true,
-						time = Utils.timestamp().toString(),
-						showId = data?.id.toString(),
-						allowBidForAll = true,
-						bidCountDown = "",
-						showTimer = "",
-					)
+                        startActivity(mCtx.toSellerShow(data?.time, show))
+                        finish()
+                    } else {
+                        finish()
+                    }
+                }
 
-					startActivity(mCtx.toSellerShow(data?.time, show))
-					finish()
-				}
+                is Resource.Error -> {
+                    viewModel.storeScheduleShowRepo.value = null
+                    bind.loader.isVisible = false
 
-				is Resource.Error -> {
-					bind.loader.isVisible = false
+                    it.parse(mCtx, TAG, object : AlertClicks {
+                        override fun primaryClick(dialog: AppBottomSheet) {
+                            dialog.dismiss()
+                        }
 
-					it.parse(mCtx, TAG, object : AlertClicks {
-						override fun primaryClick(dialog: AppBottomSheet) {
-							dialog.dismiss()
-						}
+                        override fun secondaryClick(dialog: AppBottomSheet) {
+                            dialog.dismiss()
+                        }
+                    })
 
-						override fun secondaryClick(dialog: AppBottomSheet) {
-							dialog.dismiss()
-						}
-					})
+                }
+                else -> {}
+            }
+        }
 
-				}
-
-				else -> {}
-
-			}
-		}
-
-		viewModel.deleteProductRepo.observe(viewLifecycleOwner) {
-			when (it) {
-				is Resource.Success -> {
-
-					it.value.data
-
-					/*viewModel.getUserProducts(
-						userId.request(),
-						categoryId = viewModel.categoryId.request()
-					)*/
-
-				}
-
-				is Resource.Error -> {
-					bind.loader.isVisible = false
-
-					it.parse(mCtx, TAG, object : AlertClicks {
-						override fun primaryClick(dialog: AppBottomSheet) {
-							dialog.dismiss()
-
-						}
-
-						override fun secondaryClick(dialog: AppBottomSheet) {
-							dialog.dismiss()
-
-						}
-					})
-
-				}
-
-				else -> {}
-
-			}
-		}
-
-	}
+    }
 }

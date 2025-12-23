@@ -35,7 +35,7 @@ class ScheduleShowViewModel @Inject constructor(
 
     var currentProducts = mutableListOf<LiveShowModel.Product>()
 
-    var showId :String?= null
+    var showId :String? = null
     var showTitle = ""
     var date = ""
     var time = ""

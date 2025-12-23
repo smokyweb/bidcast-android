@@ -156,7 +156,7 @@ class DashActivity : BaseActivity() , NavController.OnDestinationChangedListener
 			SellerToolModel(
 				"Promotion" ,
 				mutableListOf(
-					MoreModel(R.drawable.peopleic_people_outline , "Affiliate Program" , "program") ,
+					MoreModel(R.drawable.ic_people , "Affiliate Program" , "program") ,
 					MoreModel(R.drawable.ic_speaker_outline , "Promote Tools" , "promote")
 				)
 			)

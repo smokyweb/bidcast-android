@@ -32,8 +32,7 @@
             style="@style/TitleSmall"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/half_margin"
-            android:layout_marginBottom="@dimen/half_margin"
+            android:layout_marginStart="@dimen/margin"
             android:text="@string/show_title" />
 
         <com.google.android.material.textfield.TextInputLayout
@@ -59,10 +58,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/half_margin"
-            android:backgroundTint="@color/secondaryContainer">
+            app:cardBackgroundColor="@color/background">
 
             <LinearLayout
                 android:layout_width="match_parent"
+                android:padding="@dimen/margin"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
@@ -71,15 +71,49 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:layout_marginStart="@dimen/margin"
-                    android:layout_marginTop="@dimen/margin"
                     android:text="@string/tips_for_a_great_title" />
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/recycler"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_margin="@dimen/half_margin"
+                    android:layout_marginTop="@dimen/half_margin"
+                    android:orientation="vertical"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/heading"
+                    tools:itemCount="6"
+                    tools:listitem="@layout/title_item" />
+            </LinearLayout>
+
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.card.MaterialCardView
+            style="@style/cardStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/half_margin"
+            app:cardBackgroundColor="@color/background">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/margin"
+                android:orientation="vertical">
+
+                <TextView
+                    style="@style/TitleLarge"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="@string/goods_examples" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/exampleRecycler"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/half_margin"
                     android:orientation="vertical"
                     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                     app:layout_constraintBottom_toBottomOf="parent"
@@ -87,107 +121,8 @@
                     tools:itemCount="6"
                     tools:listitem="@layout/title_item" />
 
-                <!--<TextView
-                    style="@style/BodyLarge"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginStart="@dimen/margin"
-                    android:layout_marginBottom="@dimen/half_margin"
-                    android:drawablePadding="@dimen/half_margin"
-                    android:text="@string/be_specific_about_what_you_re_auctioning_e_g_quot_vintage_jewelry_collection_quot"
-                    app:drawableStartCompat="@drawable/ic_bulb"/>
-
-                <TextView
-                    style="@style/BodyLarge"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginStart="@dimen/margin"
-                    android:layout_marginBottom="@dimen/half_margin"
-                    android:drawablePadding="@dimen/half_margin"
-                    android:text="@string/include_key_details_like_brand_names_or_unique_features"
-                    app:drawableStartCompat="@drawable/ic_star"/>
-
-                <TextView
-                    style="@style/BodyLarge"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginStart="@dimen/margin"
-                    android:layout_marginBottom="@dimen/half_margin"
-                    android:drawablePadding="@dimen/half_margin"
-                    android:text="@string/mention_if_it_s_a_special_event_e_g_quot_holiday_special_quot"
-                    app:drawableStartCompat="@drawable/ic_timer" />
-
-                <TextView
-                    style="@style/BodyLarge"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginStart="@dimen/margin"
-                    android:layout_marginBottom="@dimen/margin"
-                    android:drawablePadding="@dimen/half_margin"
-                    android:text="@string/add_starting_price_range_if_applicable"
-                    app:drawableStartCompat="@drawable/ic_tag"
-                    app:drawableTint="@color/secondary" />
--->
-
             </LinearLayout>
-
-
         </com.google.android.material.card.MaterialCardView>
-
-
-        <TextView
-            style="@style/TitleLarge"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginStart="@dimen/half_margin"
-            android:layout_marginTop="@dimen/margin"
-            android:text="@string/goods_examples" />
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/exampleRecycler"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/half_margin"
-            android:orientation="vertical"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/heading"
-            tools:itemCount="6"
-            tools:listitem="@layout/title_item" />
-
-        <!--<TextView
-            style="@style/BodyLarge"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginStart="@dimen/margin"
-            android:layout_marginBottom="@dimen/half_margin"
-            android:drawablePadding="@dimen/half_margin"
-            android:text='\"Luxury Watch Collection - Starting at $500\"' />
-
-        <TextView
-            style="@style/BodyLarge"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginStart="@dimen/margin"
-            android:layout_marginBottom="@dimen/half_margin"
-            android:drawablePadding="@dimen/half_margin"
-            android:text='\"Rare Comic Books Auction - Marvel Collection\"' />
-
-        <TextView
-            style="@style/BodyLarge"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginStart="@dimen/margin"
-            android:drawablePadding="@dimen/half_margin"
-            android:text='\"Antique Furniture Special - Victorian Era\"' />-->
 
     </LinearLayout>
 

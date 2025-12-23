@@ -48,7 +48,6 @@
             style="@style/inputBoxStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:boxBackgroundColor="@color/surface"
             app:boxStrokeWidth="2dp"
             app:endIconMode="custom"
             app:endIconTint="@color/scrim"

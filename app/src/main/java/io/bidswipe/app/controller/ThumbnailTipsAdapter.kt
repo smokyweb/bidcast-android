@@ -1,5 +1,6 @@
 package io.bidswipe.app.controller
 
+import android.content.res.ColorStateList
 import android.graphics.Color
 import android.util.Log
 import android.view.LayoutInflater
@@ -44,7 +45,7 @@ class ThumbnailTipsAdapter(
 			bind.icon.loadUrl(mCtx , item?.icon.toString())
 
 			if(type=="getStarted"){
-				bind.iconCard.setCardBackgroundColor(ContextCompat.getColor(mCtx,clr.black25))
+				bind.icon.backgroundTintList= ColorStateList.valueOf(ContextCompat.getColor(mCtx,clr.onSecondary))
 				bind.root.background.setTint(ContextCompat.getColor(mCtx , R.color.background))
 			}else{
 				bind.iconCard.setCardBackgroundColor(Color.parseColor(item?.color))

@@ -229,7 +229,7 @@ class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
         moreList.add(MoreModel(R.drawable.ic_document, "Terms & Conditions", "terms-condition"))
         moreList.add(MoreModel(R.drawable.ic_privacy, "Privacy Policy", "privacy-policy"))
         moreList.add(MoreModel(R.drawable.ic_faq, "F.A.Q", "faq"))
-        moreList.add(MoreModel(R.drawable.peopleic_people_outline, "Blocked Users", "blockedUsers"))
+        moreList.add(MoreModel(R.drawable.ic_people, "Blocked Users", "blockedUsers"))
         moreList.add(MoreModel(R.drawable.ic_logout_outline, "Logout", "logout"))
 
         moreAdapter = MoreAdapter(moreList, mClicks)

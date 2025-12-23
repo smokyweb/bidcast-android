@@ -37,7 +37,6 @@
                 android:layout_height="wrap_content"
                 android:paddingTop="@dimen/half_margin"
                 android:paddingBottom="@dimen/half_margin"
-                app:boxBackgroundColor="@color/surface"
                 app:boxStrokeWidth="2dp"
                 app:endIconMode="clear_text"
                 app:endIconTint="@color/scrim"

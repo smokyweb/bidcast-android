@@ -2,9 +2,11 @@ package io.bidswipe.app.controller
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import io.bidswipe.app.base.BaseAdapter
 import io.bidswipe.app.databinding.TitleItemBinding
 import io.bidswipe.app.network.response.GetAllTipsResponse
+import io.bidswipe.app.utils.Const
 import io.bidswipe.app.utils.loadUrl
 
 class TitleAdapter(
@@ -21,8 +23,9 @@ class TitleAdapter(
 	) {
 		with(holder) {
 
-			bind.icon.loadUrl(mCtx , item?.icon.toString())
-			bind.title.setHtmlFromString(item?.description ?: "" , false)
+//			bind.icon.loadUrl(mCtx , item?.icon.toString())
+			bind.icon.isVisible=false
+			bind.title.setHtmlFromString("${Const.BULLET} ${item?.description ?: ""}" , false)
 
 		}
 	}

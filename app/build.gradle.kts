@@ -260,5 +260,6 @@ dependencies {
 
     implementation(libs.arindicatorview)
     implementation("com.github.caneryilmaz52:LuckyWheelView:1.1.6")
+    implementation ("com.github.florent37:singledateandtimepicker:2.2.7")
 
 }

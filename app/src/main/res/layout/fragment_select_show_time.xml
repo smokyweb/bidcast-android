@@ -31,10 +31,10 @@
             android:orientation="vertical">
 
             <com.google.android.material.card.MaterialCardView
-                android:layout_width="match_parent"
-                android:layout_margin="@dimen/margin"
                 style="@style/cardStyle"
-                android:layout_height="wrap_content">
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/margin">
 
                 <com.applandeo.materialcalendarview.CalendarView
                     android:id="@+id/calenderView"
@@ -55,72 +55,75 @@
 
 
             <com.google.android.material.textfield.TextInputLayout
-                style="@style/inputBoxStyle"
                 android:id="@+id/time_box"
+                style="@style/inputBoxStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="@dimen/margin"
-                android:layout_marginBottom="@dimen/half_margin">
+                android:layout_marginHorizontal="@dimen/margin">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/time"
                     style="@style/inputTextStyle"
-                    android:focusable="false"
-                    android:editable="false"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:editable="false"
+                    android:focusable="false"
                     android:hint="@string/select_time" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
-
-            <TextView
-                style="@style/TitleLarge"
+            <com.google.android.material.card.MaterialCardView
+                style="@style/cardStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginStart="@dimen/margin"
-                android:layout_marginTop="@dimen/margin"
-                android:drawablePadding="@dimen/half_margin"
-                android:text="@string/why_scedule_in_advance"
-                app:drawableStartCompat="@drawable/ic_bulb"
-                app:drawableTint="@color/warning" />
+                app:cardBackgroundColor="@color/background"
+                android:layout_margin="@dimen/margin">
 
-            <TextView
-                style="@style/BodyMedium"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginStart="32dp"
-                android:layout_marginEnd="@dimen/margin"
-                android:drawablePadding="@dimen/half_margin"
-                android:text="@string/more_potential_buyers_can_plan_to_attend"
-                app:drawableStartCompat="@drawable/ic_tick"
-                app:drawableTint="@color/success" />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:padding="@dimen/margin"
+                    android:orientation="vertical"
+                    android:layout_height="wrap_content">
 
-            <TextView
-                style="@style/BodyMedium"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginEnd="@dimen/margin"
-                android:layout_marginStart="32dp"
-                android:drawablePadding="@dimen/half_margin"
-                android:text="@string/better_promotion_opportunities"
-                app:drawableStartCompat="@drawable/ic_tick"
-                app:drawableTint="@color/success" />
+                    <TextView
+                        style="@style/TitleLarge"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="@string/why_scedule_in_advance" />
 
-            <TextView
-                style="@style/BodyMedium"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginStart="32dp"
-                android:layout_marginEnd="@dimen/margin"
-                android:drawablePadding="@dimen/half_margin"
-                android:text="@string/time_to_prepare_your_items_properly"
-                app:drawableStartCompat="@drawable/ic_tick"
-                app:drawableTint="@color/success" />
+                    <TextView
+                        style="@style/BodyMedium"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginTop="@dimen/dp4"
+                        android:drawablePadding="@dimen/half_margin"
+                        android:text="@string/more_potential_buyers_can_plan_to_attend"
+                        app:drawableStartCompat="@drawable/ic_tick"
+                        app:drawableTint="@color/success" />
+
+                    <TextView
+                        style="@style/BodyMedium"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:drawablePadding="@dimen/half_margin"
+                        android:text="@string/better_promotion_opportunities"
+                        app:drawableStartCompat="@drawable/ic_tick"
+                        app:drawableTint="@color/success" />
+
+                    <TextView
+                        style="@style/BodyMedium"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:drawablePadding="@dimen/half_margin"
+                        android:text="@string/time_to_prepare_your_items_properly"
+                        app:drawableStartCompat="@drawable/ic_tick"
+                        app:drawableTint="@color/success" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
 
         </LinearLayout>
     </ScrollView>
@@ -132,15 +135,15 @@
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/margin"
         android:paddingHorizontal="@dimen/margin"
-        android:text="@string/continue_to_next_step"
+        android:text="@string/_continue"
         app:layout_constraintBottom_toBottomOf="parent" />
 
     <io.bidswipe.app.ui.custom.LoaderView
+        android:id="@+id/loader"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:id="@+id/loader"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/header"/>
+        app:layout_constraintTop_toBottomOf="@id/header" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
