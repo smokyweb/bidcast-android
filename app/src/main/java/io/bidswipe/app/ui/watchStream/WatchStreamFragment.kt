@@ -120,6 +120,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
     private var livePollOptionList = mutableListOf<PollModel.PollOption>()
     private lateinit var livePollAdapter: LivePollOptionAdapter
     private var followSheetRunnable: Runnable? = null
+    private var sustainWatches: Runnable? = null
     private val followSheetHandler = Handler(Looper.getMainLooper())
     private lateinit var pipParams: PictureInPictureParams
     private var isSocketDataLoaded = false
@@ -378,6 +379,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
                     bind.follow.isVisible = !obj.optBoolean("is_followed")
 
                     followSheetRunnable = Runnable { followSheet() }
+//                    sustainWatches = Runnable { socketManager.sustainWatches(userId, showId) }
 
                     if (!isFollowing  && !isHandlerRunning) {
                         followSheetRunnable?.let { followSheetHandler.postDelayed(it, 30000) }

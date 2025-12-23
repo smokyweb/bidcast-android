@@ -16,7 +16,6 @@ import io.bidswipe.app.network.Resource
 import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.ui.sellerHub.SellerHubViewModel
 import io.bidswipe.app.utils.finish
-import io.bidswipe.app.utils.intent
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request
 import io.bidswipe.app.utils.setHapticClickListener
@@ -50,9 +49,9 @@ class CreateShippingProfileFragment : BaseFragment<SellerHubViewModel, FragmentC
 
 
 		bind.header.onBackClick {
-			if (type == "createShippingProfile"){
+			if (type == "createShippingProfile") {
 				finish()
-			}else{
+			} else {
 				findNavController().popBackStack()
 			}
 		}
@@ -77,7 +76,7 @@ class CreateShippingProfileFragment : BaseFragment<SellerHubViewModel, FragmentC
 		}
 
 
-    bind.save.setHapticClickListener {
+		bind.save.setHapticClickListener {
 
 			when {
 
@@ -116,7 +115,13 @@ class CreateShippingProfileFragment : BaseFragment<SellerHubViewModel, FragmentC
 				is Resource.Success -> {
 					viewModel.storeShippingProfileRepo.value = null
 					bind.loader.isVisible = false
-					findNavController().popBackStack()
+
+					if (type == "createShippingProfile") {
+						finish()
+					} else {
+						findNavController().popBackStack()
+					}
+
 				}
 
 				is Resource.Error -> {
