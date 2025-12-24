@@ -151,13 +151,12 @@ class AgoraPublisherActivity : BaseActivity() {
             keyboardEnable(true)
         }
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) { // Android 15+
-            window.decorView.setOnApplyWindowInsetsListener { view, insets ->
-
-                insets
-            }
-        } else {
-            // For Android 14 and below
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) { // Android 15+
+			window.decorView.setOnApplyWindowInsetsListener { view, insets ->
+				insets
+			}
+		} else {
+			// For Android 14 and below
 //			window.statusBarColor = color
         }
 
@@ -198,7 +197,12 @@ class AgoraPublisherActivity : BaseActivity() {
         showId = liveShowData?.showId ?: ""
         showTime = intent.getStringExtra("time") ?: ""
 
-        roomID = "live_room_${userId}_${showId}"
+        showThumbnail = liveShowData?.thumbnail
+		showTitle = liveShowData?.showDetail
+
+//		val userId = intent.getStringExtra("userId") ?: ""
+
+		roomID = "live_room_${userId}_${showId}"
 
         viewModel.currentRoomId = roomID
         viewModel.categoryId = liveShowData?.categoryId ?: ""
@@ -248,7 +252,7 @@ class AgoraPublisherActivity : BaseActivity() {
             }
         }
 
-        bind.controls.setHapticClickListener {
+        bind.view2.setHapticClickListener {
             hideKeyboard()
         }
 
@@ -330,16 +334,19 @@ class AgoraPublisherActivity : BaseActivity() {
                 append("/live-show?roomId=$roomID")
             }
 
-            ShareHelper.openShareSheet(
-                this.supportFragmentManager,
-                imageUrl = showThumbnail,
-                text = showTitle,
-                sellerInfo = null,
-                shareText = shareText,
-                type = "show",
-                isLive = isShowLive
-            )
-        }
+
+			log("THUMBNAIL : $showThumbnail  TITLE : $showTitle")
+
+			ShareHelper.openShareSheet(
+				this.supportFragmentManager,
+				imageUrl = showThumbnail,
+				text =  showTitle,
+				sellerInfo = null,
+				shareText = shareText,
+				type = "show",
+				isLive = isShowLive
+			)
+		}
 
         bind.showNotes.setHapticClickListener {
             if (isShowLive) {

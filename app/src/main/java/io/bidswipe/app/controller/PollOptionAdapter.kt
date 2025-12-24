@@ -10,6 +10,7 @@ import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.model.PollOptionModel
 import io.bidswipe.app.utils.asCapital
 import io.bidswipe.app.utils.setHapticClickListener
+import io.bidswipe.app.utils.value
 
 class PollOptionAdapter (
 	val mList : MutableList<PollOptionModel?>,
@@ -48,9 +49,9 @@ class PollOptionAdapter (
 
 			viewHolder.let { holder ->
 				variant?.let {
-					val value = holder.bind.quantity.text ?: ""
+					val value = holder.bind.quantity.value()
 					if (value.isNotEmpty()){
-						result.add(value.toString())
+						result.add(value)
 					}
 				}
 			}

@@ -15,6 +15,7 @@ import io.bidswipe.app.model.StoreProductRequest
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.utils.Utils
+import io.bidswipe.app.utils.hideKeyboard
 import io.bidswipe.app.utils.ids
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.setHapticClickListener
@@ -35,6 +36,10 @@ class ProductWeightFragment : BaseFragment<ScheduleShowViewModel, FragmentProduc
 
 		bind.header.onBackClick {
 			findNavController().popBackStack()
+		}
+
+		bind.layout.setHapticClickListener {
+			hideKeyboard(it)
 		}
 
 		adapter = WeightAdapter(mList)
@@ -156,18 +161,23 @@ class ProductWeightFragment : BaseFragment<ScheduleShowViewModel, FragmentProduc
 
 					val data = it.value.data
 
-					/*val product =
+					val product =
 						LiveShowModel.Product(
-							data?.category?.name,
+							LiveShowModel.Category(
+								data?.category?.id,
+								data?.category?.image ?: "",
+								data?.category?.name ?: "",
+								data?.category?.thumbnail
+							),
 							data?.id.toString(),
 							data?.images?.get(0),
 							data?.status,
 							data?.title,
 							data?.pricing,
 							data?.quantity
-						)*/
+						)
 
-//					viewModel.currentProducts.add(product)
+					viewModel.currentProducts.add(product)
 
 					findNavController().navigate(ids.addProductFragment)
 				}

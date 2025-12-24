@@ -328,7 +328,7 @@ class ProductsForLiveShowFragment : BottomSheetDialogFragment() {
 //                return@setHapticClickListener
 //            }
 
-            val selectedProduct = productList[selectedPos]
+//            val selectedProduct = productList[selectedPos]
 
 //            socketManager?.setNextProduct(roomID, selectedProduct?.id)
 //            productSheet.dismiss()

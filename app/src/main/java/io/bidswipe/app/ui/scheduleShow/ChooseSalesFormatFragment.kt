@@ -13,6 +13,7 @@ import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.model.FormatModel
 import io.bidswipe.app.utils.Alerts
 import io.bidswipe.app.utils.draw
+import io.bidswipe.app.utils.hideKeyboard
 import io.bidswipe.app.utils.ids
 import io.bidswipe.app.utils.setHapticClickListener
 import io.bidswipe.app.utils.value
@@ -64,6 +65,10 @@ class ChooseSalesFormatFragment : BaseFragment<ScheduleShowViewModel, FragmentCh
 
 		bind.header.onBackClick {
 			findNavController().popBackStack()
+		}
+
+		bind.layout.setHapticClickListener {
+			hideKeyboard(it)
 		}
 
 		formatList.clear()

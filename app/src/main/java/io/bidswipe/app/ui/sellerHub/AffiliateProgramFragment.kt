@@ -81,11 +81,21 @@ class AffiliateProgramFragment : BaseFragment<SellerHubViewModel, FragmentAffili
 		bind.recycler.adapter = adapter
 
 		bind.copyBtn.setHapticClickListener {
-
 			val clipboard = context?.getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
 			val clip = ClipData.newPlainText("label", bind.referralCode.text)
 			clipboard.setPrimaryClip(clip)
+		}
 
+		bind.copyBuyer.setHapticClickListener {
+			val clipboard = context?.getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
+			val clip = ClipData.newPlainText("label", bind.referralBuyer.text)
+			clipboard.setPrimaryClip(clip)
+		}
+
+		bind.copySeller.setHapticClickListener {
+			val clipboard = context?.getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
+			val clip = ClipData.newPlainText("label", bind.referralSeller.text)
+			clipboard.setPrimaryClip(clip)
 		}
 
 		bind.share.setHapticClickListener {

@@ -76,32 +76,32 @@ class ShowListingAdapter(
 
 			bind.image.loadUrl(mCtx, item?.imgThumbnail?.first() ?: "")
 
-			val wrapper = ContextThemeWrapper(mCtx, R.style.popupMenuStyle)
-			val menu = PopupMenu(
-				wrapper,
-				bind.moreMenu
-			)
-
-			menu.menu.add("Edit")
+//			val wrapper = ContextThemeWrapper(mCtx, R.style.popupMenuStyle)
+//			val menu = PopupMenu(
+//				wrapper,
+//				bind.moreMenu
+//			)
+//
+//			menu.menu.add("Edit")
 //			menu.menu.add("Delete")
 
-			menu.setOnMenuItemClickListener {
-				when (it.title) {
-					"Delete" -> {
-						mClick.itemClick(position, "delete")
-					}
-					else -> {
-						mClick.itemClick(position, "edit")
-
-					}
-
-				}
-				return@setOnMenuItemClickListener true
-			}
-
-			bind.moreMenu.setHapticClickListener {
-				menu.show()
-			}
+//			menu.setOnMenuItemClickListener {
+//				when (it.title) {
+//					"Delete" -> {
+//						mClick.itemClick(position, "delete")
+//					}
+//					else -> {
+//						mClick.itemClick(position, "edit")
+//
+//					}
+//
+//				}
+//				return@setOnMenuItemClickListener true
+//			}
+//
+//			bind.moreMenu.setHapticClickListener {
+//				menu.show()
+//			}
 
 		}
 	}

@@ -180,7 +180,7 @@
                 app:boxCornerRadiusTopStart="@dimen/margin"
                 app:counterEnabled="true"
                 app:counterMaxLength="1000"
-                android:layout_marginBottom="@dimen/margin">
+                android:layout_marginBottom="@dimen/half_margin">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/description"
@@ -225,7 +225,6 @@
                 style="@style/TitleSmall"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/margin"
                 android:layout_marginBottom="@dimen/half_margin"
                 android:text="Width" />
 
@@ -241,7 +240,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="Enter Width (cm)"
-                    android:inputType="number" />
+                    android:inputType="numberDecimal" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -264,7 +263,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="Enter Height (cm)"
-                    android:inputType="number" />
+                    android:inputType="numberDecimal" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -287,7 +286,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="Enter Length (cm)"
-                    android:inputType="number" />
+                    android:inputType="numberDecimal" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -310,7 +309,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="Enter Weight (lbs)"
-                    android:inputType="number" />
+                    android:inputType="numberDecimal" />
 
             </com.google.android.material.textfield.TextInputLayout>
 

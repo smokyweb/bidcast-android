@@ -575,6 +575,7 @@ class InventoryFragment : BaseFragment<SellerHubViewModel, FragmentInventoryBind
         bind.filtersheet.recycler.adapter =
             InventoryFilterAdapter(filterList, object : RecyclerClicks {
                 override fun itemClick(pos: Int, status: String?) {
+					hideKeyboard(bind.root)
                     val item = filterList[pos]
                     when (status) {
                         "open" -> {
@@ -654,6 +655,10 @@ class InventoryFragment : BaseFragment<SellerHubViewModel, FragmentInventoryBind
             getInventory()
             filterSheet.state = BottomSheetBehavior.STATE_COLLAPSED
         }
+
+	    bind.filtersheet.recycler.setHapticClickListener {
+			hideKeyboard(it)
+	    }
 
         bind.filtersheet.clearFilter.setHapticClickListener {
             filterSheet.state = BottomSheetBehavior.STATE_COLLAPSED
