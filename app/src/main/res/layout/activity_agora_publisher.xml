@@ -176,6 +176,7 @@
                     app:layout_constraintTop_toBottomOf="@+id/view2">
 
                     <LinearLayout
+                        android:id="@+id/bottom_layout_options"
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
                         android:layout_weight="1"
@@ -209,7 +210,6 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_marginStart="@dimen/margin"
-                                android:layout_marginBottom="@dimen/margin"
                                 app:boxBackgroundColor="@color/transparent"
                                 app:endIconDrawable="@drawable/ic_forward"
                                 app:endIconMode="custom"
@@ -732,6 +732,7 @@
 
                     </com.google.android.material.card.MaterialCardView>
 
+
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/startBtn"
                         style="@style/appBtn"
@@ -742,38 +743,17 @@
                         android:text="@string/start_now"
                         app:layout_constraintBottom_toBottomOf="parent" />
 
-                    <LinearLayout
-                        android:id="@+id/runNextLayout"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:weightSum="2"
-                        android:visibility="gone"
-                        android:layout_marginHorizontal="@dimen/margin"
-                        android:orientation="horizontal">
-
-                        <com.google.android.material.button.MaterialButton
-                            style="@style/appTonalBtn"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_marginBottom="@dimen/margin"
-                            android:layout_marginEnd="@dimen/half_margin"
-                            android:enabled="false"
-                            android:layout_weight="1"
-                            android:text="5 Bids"
-                            app:layout_constraintBottom_toBottomOf="parent" />
-
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/runNext"
                             style="@style/appBtn"
-                            android:layout_width="0dp"
+                            android:visibility="gone"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginBottom="@dimen/margin"
                             android:layout_marginStart="@dimen/half_margin"
-                            android:layout_weight="1"
                             android:text="Run Next"
                             app:layout_constraintBottom_toBottomOf="parent" />
 
-                    </LinearLayout>
 
                 </LinearLayout>
 
