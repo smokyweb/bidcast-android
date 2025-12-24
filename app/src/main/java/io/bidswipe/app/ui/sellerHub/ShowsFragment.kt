@@ -23,7 +23,6 @@ import io.bidswipe.app.model.LiveShowModel
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.network.response.GetMyShowResponse
 import io.bidswipe.app.network.response.toLiveShowProduct
-import io.bidswipe.app.ui.agoraStream.AgoraPublisherActivity
 import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.ui.more.MoreActivity
 import io.bidswipe.app.ui.scheduleShow.ShowDetailsActivity
@@ -36,7 +35,6 @@ import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request
 import io.bidswipe.app.utils.setHapticClickListener
 import io.bidswipe.app.utils.toScheduleShow
-import io.bidswipe.app.utils.toSellerShow
 
 @SuppressLint("NotifyDataSetChanged")
 class ShowsFragment : BaseFragment<SellerHubViewModel, FragmentShowsBinding>() {
@@ -53,11 +51,9 @@ class ShowsFragment : BaseFragment<SellerHubViewModel, FragmentShowsBinding>() {
 
     private val mClicks = object : RecyclerClicks {
         override fun itemClick(pos: Int, status: String?) {
-//            startActivity(Intent(mCtx, ShowDetailsActivity::class.java).putExtra("showId",showList[pos]?.id.toString()))
-
-            if (status == "edit") {
-                startActivity(mCtx.toScheduleShow(from = "dash", showId = showList[pos]?.id.toString()))
-             } else {
+            if (bind.tabs.selectedTabPosition == 0) {
+                startActivity(Intent(mCtx, ShowDetailsActivity::class.java).putExtra("showId", showList[pos]?.id.toString()))
+            } else {
 
                 val profile = App.profileResponse.value
 
@@ -72,9 +68,7 @@ class ShowsFragment : BaseFragment<SellerHubViewModel, FragmentShowsBinding>() {
                 }
 
                 val data = showList[pos]
-
                 val user = data?.user
-
                 val products = data?.products?.map { product -> product?.toLiveShowProduct() }
 
                 if (products?.isEmpty() == true) {
@@ -92,17 +86,6 @@ class ShowsFragment : BaseFragment<SellerHubViewModel, FragmentShowsBinding>() {
                         rating = user?.rating ?: ""
                     ),
                     products = emptyList<LiveShowModel.Product>(),
-                    /* products = products?.map { p ->
-                    LiveShowModel.Product(
-                        data.category?.name,
-                        p?.id,
-                        p?.image,
-                        p?.status,
-                        p?.name,
-                        p?.price,
-                        "1",
-                    )
-                }?.toList() ?: mutableListOf(),*/
                     roomId = "live_room_${userId}_${data?.id.toString()}",
                     showDetail = data?.title ?: "",
                     thumbnail = data?.thumbnail?.getOrNull(0) ?: "",
@@ -123,17 +106,12 @@ class ShowsFragment : BaseFragment<SellerHubViewModel, FragmentShowsBinding>() {
                     categoryId = data?.category?.id.toString()
                 )
 
-                if (App.PIPMode) {
-                    Alerts.error(mCtx, "You are already in Live show")
-                } else if (bind.tabs.selectedTabPosition == 1) {
 
-                    viewModel.selectedShow = showData
-                    viewModel.showTime = showList[pos]?.time
+                viewModel.selectedShow = showData
+                viewModel.showTime = showList[pos]?.time
 
-                    findNavController().animatedNav(R.id.toShowDetails, bundleOf("showId" to showList[pos]?.id.toString()))
-                } else {
-                    startActivity(mCtx.toSellerShow(showList[pos]?.time, showData))
-                }
+                findNavController().animatedNav(R.id.toShowDetails, bundleOf("showId" to showList[pos]?.id.toString()))
+
             }
         }
 

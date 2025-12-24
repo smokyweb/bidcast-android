@@ -42,7 +42,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/half_margin"
-                android:backgroundTint="@color/surface"
+                app:cardBackgroundColor="@color/primaryContainer"
                 app:contentPadding="@dimen/margin">
 
                 <LinearLayout
@@ -60,8 +60,7 @@
                         style="@style/BodyMedium"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Provide a detailed description of the problem you're facing. The more information you provide, the faster we can resolve it."
-                        android:textColor="@color/secondary" />
+                        android:text="Provide a detailed description of the problem you're facing. The more information you provide, the faster we can resolve it." />
 
                 </LinearLayout>
 

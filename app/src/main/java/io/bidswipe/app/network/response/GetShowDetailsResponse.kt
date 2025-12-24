@@ -1,6 +1,7 @@
 package io.bidswipe.app.network.response
 
 
+import androidx.annotation.Keep
 import com.google.gson.annotations.SerializedName
 
 data class GetShowDetailsResponse(
@@ -16,6 +17,8 @@ data class GetShowDetailsResponse(
     data class Data(
         @SerializedName("auction_type_id")
         val auctionTypeId: Int?,
+        @SerializedName("auction")
+        val auction: Auction?,
         @SerializedName("category")
         val category: Category?,
         @SerializedName("category_id")
@@ -71,8 +74,19 @@ data class GetShowDetailsResponse(
         @SerializedName("user_id")
         val userId: Int?,
         @SerializedName("viewer_count")
-        val viewerCount: Int?
+        val viewerCount: Int?,
+        @SerializedName("total_orders")
+        val totalOrders: Int?,
+        @SerializedName("total_sales_amount")
+        val totalSalesAmount: Double?,
     ) {
+        @Keep
+        data class Auction(
+            @SerializedName("id")
+            val id : Int? ,
+            @SerializedName("name")
+            val name : String? ,
+        )
         data class Category(
             @SerializedName("color")
             val color: String?,
@@ -118,7 +132,7 @@ data class GetShowDetailsResponse(
             @SerializedName("name")
             val name: String?,
             @SerializedName("profile_image")
-            val profileImage: Any?,
+            val profileImage: String?,
             @SerializedName("profile_visits")
             val profileVisits: Int?,
             @SerializedName("referral_code")
@@ -126,11 +140,13 @@ data class GetShowDetailsResponse(
             @SerializedName("role_id")
             val roleId: Int?,
             @SerializedName("thumbnail")
-            val thumbnail: Any?,
+            val thumbnail: String?,
             @SerializedName("username")
-            val username: Any?,
+            val username: String?,
             @SerializedName("vacation_mode")
-            val vacationMode: String?
+            val vacationMode: String?,
+            @SerializedName("rating")
+            val rating: String?,
         )
     }
 }

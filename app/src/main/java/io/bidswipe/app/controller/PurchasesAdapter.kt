@@ -15,6 +15,7 @@ import io.bidswipe.app.network.response.GetProductsByStatusResponse
 import io.bidswipe.app.utils.Utils
 import io.bidswipe.app.utils.asCapital
 import io.bidswipe.app.utils.asMoney
+import io.bidswipe.app.utils.clr
 import io.bidswipe.app.utils.loadUrl
 import io.bidswipe.app.utils.setHapticClickListener
 
@@ -37,7 +38,10 @@ class PurchasesAdapter(
 			}
 
 			bind.view.setHapticClickListener {
-				Log.d(TAG, "onBind: djfdhfudfudyf")
+				mClicks.itemClick(position, "product")
+			}
+
+			bind.productImage.setHapticClickListener {
 				mClicks.itemClick(position, "product")
 			}
 
@@ -81,6 +85,27 @@ class PurchasesAdapter(
 			val status = item?.status?.asCapital() ?: "Completed"
 			bind.status.text = status
 			bind.status.isVisible = status.isNotEmpty()
+
+			when (item?.status?.lowercase()) {
+				"cancelled", "rejected" -> {
+					bind.statusCard.setCardBackgroundColor(ContextCompat.getColor(mCtx, clr.errorContainer))
+					bind.statusCard.strokeColor = ContextCompat.getColor(mCtx, clr.error)
+					bind.status.setTextColor(ContextCompat.getColor(mCtx, clr.error))
+				}
+
+				"delivered" -> {
+					bind.statusCard.setCardBackgroundColor(ContextCompat.getColor(mCtx, clr.successContainer))
+					bind.statusCard.strokeColor = ContextCompat.getColor(mCtx, clr.success)
+					bind.status.setTextColor(ContextCompat.getColor(mCtx, clr.success))
+				}
+
+				else -> {
+					bind.statusCard.setCardBackgroundColor(ContextCompat.getColor(mCtx, clr.warningContainer))
+					bind.statusCard.strokeColor = ContextCompat.getColor(mCtx, clr.warning)
+					bind.status.setTextColor(ContextCompat.getColor(mCtx, clr.warning))
+				}
+			}
+
 
 			// Load product image
 			bind.productImage.loadUrl(mCtx, item?.product?.images?.get(0).toString())

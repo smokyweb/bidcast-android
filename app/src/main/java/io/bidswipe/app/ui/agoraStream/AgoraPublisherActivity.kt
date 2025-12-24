@@ -77,6 +77,7 @@ import io.bidswipe.app.ui.dashboard.DashViewModel
 import io.bidswipe.app.utils.AgoraManager
 import io.bidswipe.app.utils.Alerts
 import io.bidswipe.app.utils.Const
+import io.bidswipe.app.utils.PriceFormatter
 import io.bidswipe.app.utils.SocketManager
 import io.bidswipe.app.utils.Utils
 import io.bidswipe.app.utils.asCapital
@@ -307,9 +308,9 @@ class AgoraPublisherActivity : BaseActivity() {
 		}
 
 		bind.promote.setHapticClickListener {
-//            if (isShowLive && promotePlans.isNotEmpty()) {
+            if (isShowLive && promotePlans.isNotEmpty()) {
 			showPromoteSheet()
-//            }
+            }
 		}
 
 		bind.clip.setHapticClickListener {
@@ -317,8 +318,6 @@ class AgoraPublisherActivity : BaseActivity() {
 		}
 
 		bind.share.setHapticClickListener {
-//            showShareBottomSheet()
-
 
 			val shareText = buildString {
 				append(Const.BASE_URL)
@@ -1320,6 +1319,8 @@ class AgoraPublisherActivity : BaseActivity() {
 			}
 			auctionSettingsSheetBind.timerChips.addView(chip)
 		}
+
+		auctionSettingsSheetBind.startingBid.addTextChangedListener( PriceFormatter(auctionSettingsSheetBind.startingBid))
 
 		val requiredTimeList = listOf(15, 30, 45)
 		val requiredTimeAdapter = ArrayAdapter(

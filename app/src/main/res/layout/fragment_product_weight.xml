@@ -37,7 +37,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/margin"
-                android:backgroundTint="@color/secondaryContainer"
+                android:backgroundTint="@color/primaryContainer"
                 app:contentPadding="@dimen/margin">
 
                 <LinearLayout
@@ -56,8 +56,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="@dimen/half_margin"
-                        android:text="@string/bidswipe_calculates_shipping_fees_based_on_the_product_weight_you_can_adjust_this_later_if_needed"
-                        android:textColor="@color/secondary" />
+                        android:text="@string/bidswipe_calculates_shipping_fees_based_on_the_product_weight_you_can_adjust_this_later_if_needed" />
 
                 </LinearLayout>
 

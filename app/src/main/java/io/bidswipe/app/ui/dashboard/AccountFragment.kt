@@ -28,6 +28,7 @@ import io.bidswipe.app.ui.interest.ChooseInterestActivity
 import io.bidswipe.app.ui.more.MoreActivity
 import io.bidswipe.app.ui.more.NotificationActivity
 import io.bidswipe.app.ui.more.TrustedBuyerActivity
+import io.bidswipe.app.ui.scheduleShow.ShowDetailsActivity
 import io.bidswipe.app.ui.sellerHub.SellerHubActivity
 import io.bidswipe.app.ui.sellerHub.SellerVerificationActivity
 import io.bidswipe.app.utils.Const
@@ -326,50 +327,8 @@ class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
         }
 
         bind.sellerHub.upcomingShow.setHapticClickListener {
-
             val data = upcomingShow
-
-            val showData = LiveShowModel(
-                seller = LiveShowModel.Seller(
-                    id = userId,
-                    image = userImage,
-                    name = userName,
-                    rating =  ""
-                ),
-                products = emptyList<LiveShowModel.Product>(),
-                /* products = products?.map { p ->
-				LiveShowModel.Product(
-					data.category?.name,
-					p?.id,
-					p?.image,
-					p?.status,
-					p?.name,
-					p?.price,
-					"1",
-				)
-			}?.toList() ?: mutableListOf(),*/
-                roomId = "live_room_${userId}_${data?.id.toString()}",
-                showDetail = data?.title ?: "",
-                thumbnail = data?.thumbnail?.getOrNull(0) ?: "",
-                viewerCount = "1",
-                highestBid = LiveShowModel.HighestBid(
-                    bidAmount = "",
-                    userName = "",
-                    userImage = "",
-                    userId = "",
-                    productId = ""
-                ),
-                isLive = true,
-                time = Utils.timestamp().toString(),
-                showId = data?.id.toString(),
-                allowBidForAll = true,
-                bidCountDown = "",
-                showTimer = "",
-                categoryId = data?.category?.id.toString()
-            )
-
-            startActivity(mCtx.toSellerShow(data?.time, showData))
-
+            startActivity(Intent(mCtx, ShowDetailsActivity::class.java).putExtra("showId", upcomingShow?.id.toString()))
         }
 
         bind.loader.isVisible = true
@@ -428,7 +387,11 @@ class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
                     bind.sellerHub.defectFreeOrderRate.text = mData?.accountHealth?.defectFreeOrderRate ?: "N/A"
                     bind.sellerHub.policyStanding.text = mData?.accountHealth?.policyStanding ?: "N/A"
 
-                    bind.sellerHub.totalOrders.text=(mData?.totalOrders?:0).toString()
+                    val total=(mData?.totalOrders?:0)
+                    bind.sellerHub.totalOrders.text= buildString{
+                        append(total.toString())
+                        if(total<1) append(" Item") else append(" Items")
+                    }
                     bind.sellerHub.payoutAmount.text=(mData?.payouts?:0.0).toString().asMoney()
 
                     bind.sellerHub.vacationMode.isChecked=mData?.vacationMode?:false

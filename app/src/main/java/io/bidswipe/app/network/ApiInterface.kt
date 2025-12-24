@@ -792,7 +792,7 @@ interface ApiInterface {
         @Query("show_id") showId: String?
     ): GetShowOverviewResponse
 
-    @GET("api/get-show-details-by-id")
+    @GET("api/v1/get-show-details-by-id")
     suspend fun getShowDetails(
         @Query("show_id") showId: String?
     ): GetShowDetailsResponse

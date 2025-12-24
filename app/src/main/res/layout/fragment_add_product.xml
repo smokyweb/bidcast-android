@@ -19,18 +19,6 @@
         app:showPrimaryIcon="false"
         app:showSecondaryIcon="false" />
 
- <!--   <TextView
-        android:id="@+id/cancel"
-        style="@style/TitleSmall"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="@dimen/margin"
-        android:text="@string/cancel"
-        android:textColor="@color/secondary"
-        app:layout_constraintBottom_toBottomOf="@id/header"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@id/header" />-->
-
     <androidx.core.widget.NestedScrollView
         android:id="@+id/contentScrollView"
         android:layout_width="match_parent"

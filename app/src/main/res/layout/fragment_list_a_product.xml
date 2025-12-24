@@ -458,8 +458,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
                             android:layout_marginStart="@dimen/half_margin"
-                            android:text="@string/add_variants"
-                            android:textColor="@color/secondary" />
+                            android:text="@string/add_variants" />
 
                     </LinearLayout>
 
@@ -516,6 +515,8 @@
                     style="@style/inputBoxStyle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    app:prefixText="$"
+                    app:prefixTextAppearance="@style/BodyMedium"
                     android:layout_marginBottom="@dimen/margin"
                     app:endIconMode="custom">
 
@@ -524,9 +525,6 @@
                         style="@style/inputTextStyle"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:drawableStart="@drawable/ic_dollar"
-                        android:drawablePadding="@dimen/half_margin"
-                        android:drawableTint="@color/primary"
                         android:hint="@string/_0_00"
                         android:inputType="numberDecimal" />
 

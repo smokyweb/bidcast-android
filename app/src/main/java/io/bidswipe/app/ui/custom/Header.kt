@@ -161,4 +161,8 @@ class Header @JvmOverloads constructor(
     fun hideLogo() {
         bind.appText.visibility = GONE
     }
+
+    fun setHeaderPadding(left:Int, top:Int, right: Int, bottom:Int){
+        bind.root.setPadding(left, top, right, bottom)
+    }
 }

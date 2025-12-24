@@ -36,7 +36,7 @@
                 style="@style/cardStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:backgroundTint="@color/secondaryContainer"
+                android:backgroundTint="@color/primaryContainer"
                 app:contentPadding="@dimen/margin">
 
                 <LinearLayout
@@ -56,7 +56,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="@dimen/half_margin"
                         android:text="@string/set_a_competitive_starting_price_that_will_attract_potential_buyers_a_well_priced_item_increases_your_chances_of_a_successful_sale_and_can_lead_to_better_bidding_activity"
-                        android:textColor="@color/secondary" />
+                        />
 
                 </LinearLayout>
 

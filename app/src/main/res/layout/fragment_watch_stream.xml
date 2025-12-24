@@ -139,6 +139,7 @@
                     android:paddingHorizontal="8dp"
                     android:paddingVertical="4dp"
                     android:text="0"
+                    android:textColor="@color/onPrimary"
                     android:textSize="12sp"
                     app:backgroundTint="@color/black25"
                     app:cornerRadius="24dp"
@@ -815,27 +816,6 @@
                                 app:strokeColor="@color/surfaceVariant"
                                 app:strokeWidth="1dp" />
 
-                            <com.ncorti.slidetoact.SlideToActView
-                                android:id="@+id/bid1"
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:visibility="gone"
-                                app:animation_duration="250"
-                                app:area_margin="4dp"
-                                app:border_radius="8dp"
-                                app:bounce_on_start="true"
-                                app:icon_margin="12dp"
-                                app:inner_color="@color/secondaryContainer"
-                                app:outer_color="@color/primary"
-                                app:slider_height="48dp"
-                                app:slider_icon="@drawable/ic_dollar_2"
-                                app:slider_icon_color="@color/onSurface"
-                                app:slider_locked="false"
-                                app:text="Swipe to Bid"
-                                app:text_appearance="@style/SlideButtonTitle" />
-
-
                             <com.google.android.material.card.MaterialCardView
                                 style="@style/cardStyle"
                                 android:layout_width="0dp"
@@ -895,6 +875,45 @@
             android:gravity="center" />
 
     </ViewFlipper>
+
+    <LinearLayout
+        android:id="@+id/not_live_layout"
+        android:layout_width="match_parent"
+        android:orientation="vertical"
+        android:visibility="gone"
+        android:background="@color/black25"
+        android:layout_height="match_parent">
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            style="@style/cardStyle"
+            android:layout_margin="@dimen/margin"
+            android:layout_marginTop="100dp"
+            android:layout_height="wrap_content">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:orientation="vertical"
+                android:padding="@dimen/padding"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/show_time"
+                    style="@style/TitleMedium"/>
+
+                <com.google.android.material.button.MaterialButton
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/share_show"
+                    android:text="Share Show"
+                    app:iconGravity="textStart"
+                    app:icon="@drawable/share"/>
+
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+    </LinearLayout>
 
     <io.bidswipe.app.ui.custom.LoaderView
         android:id="@+id/loader"

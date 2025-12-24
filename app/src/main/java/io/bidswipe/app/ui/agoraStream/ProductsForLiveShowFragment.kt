@@ -29,6 +29,7 @@ import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.ui.dashboard.DashViewModel
 import io.bidswipe.app.utils.Alerts
 import io.bidswipe.app.utils.Alerts.log
+import io.bidswipe.app.utils.PriceFormatter
 import io.bidswipe.app.utils.SocketManager
 import io.bidswipe.app.utils.Utils
 import io.bidswipe.app.utils.parse
@@ -402,6 +403,7 @@ class ProductsForLiveShowFragment : BottomSheetDialogFragment() {
             auctionSettingsSheetBind.requiredTime.showDropDown()
         }
 
+        auctionSettingsSheetBind.startingBid.addTextChangedListener( PriceFormatter(auctionSettingsSheetBind.startingBid))
         auctionSettingsSheetBind.startingBid.setText(price)
 
         auctionSettingsSheetBind.close.setHapticClickListener { sheet.dismiss() }

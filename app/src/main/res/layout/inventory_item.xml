@@ -6,128 +6,137 @@
     android:layout_height="wrap_content"
     android:layout_margin="@dimen/half_margin">
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/background"
+        android:orientation="vertical">
+
+    <LinearLayout
+        android:id="@+id/click"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:padding="@dimen/half_margin">
+
+        <com.google.android.material.card.MaterialCardView
+            style="@style/cardStyle"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            app:cardCornerRadius="10dp"
+            app:cardElevation="0dp">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/productImage"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                android:src="@drawable/placeholder_square" />
+
+        </com.google.android.material.card.MaterialCardView>
+
         <LinearLayout
-            android:id="@+id/click"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:background="@drawable/card_8"
-            android:padding="@dimen/half_margin"
+            android:layout_marginStart="@dimen/half_margin"
+            android:layout_weight="1"
             android:gravity="center_vertical"
-            android:orientation="horizontal">
-
-            <com.google.android.material.card.MaterialCardView
-                style="@style/cardStyle"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
-                app:cardCornerRadius="10dp"
-                app:cardElevation="0dp">
-
-                <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/productImage"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:scaleType="centerCrop"
-                    android:src="@drawable/placeholder_square" />
-
-            </com.google.android.material.card.MaterialCardView>
+            android:orientation="vertical">
 
             <LinearLayout
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/half_margin"
-                android:layout_weight="1"
-                android:gravity="center_vertical"
-                android:orientation="vertical">
+                android:orientation="horizontal">
 
                 <LinearLayout
-                    android:layout_width="match_parent"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal">
+                    android:layout_weight="1"
+                    android:orientation="vertical">
 
-                    <LinearLayout
-                        android:layout_width="0dp"
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/statusCard"
+                        style="@style/cardStyle"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:orientation="vertical">
-
-                        <com.google.android.material.card.MaterialCardView
-                            android:id="@+id/statusCard"
-                            style="@style/cardStyle"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            app:cardBackgroundColor="@color/errorContainer"
-                            app:cardElevation="0dp"
-                            app:cardCornerRadius="100dp">
-
-                            <TextView
-                                android:id="@+id/status"
-                                style="@style/TitleSmall"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginHorizontal="@dimen/margin"
-                                android:text="Out of Stock"
-                                android:textColor="@color/error" />
-
-                        </com.google.android.material.card.MaterialCardView>
+                        app:cardBackgroundColor="@color/errorContainer"
+                        app:cardCornerRadius="100dp"
+                        app:cardElevation="0dp">
 
                         <TextView
-                            android:id="@+id/productName"
-                            style="@style/TitleMedium"
-                            android:layout_width="match_parent"
+                            android:id="@+id/status"
+                            style="@style/TitleSmall"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:maxLines="2"
-                            android:text="Product Name" />
+                            android:layout_marginHorizontal="@dimen/margin"
+                            android:text="Out of Stock"
+                            android:textColor="@color/error" />
 
-                    </LinearLayout>
-
-                    <androidx.appcompat.widget.AppCompatImageView
-                        android:id="@+id/moreMenu"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/ic_vertical_menu"
-                        app:tint="@color/onSurface" />
-                </LinearLayout>
-
-                <TextView
-                    android:id="@+id/prod_sub_title"
-                    style="@style/BodyMedium"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Condition - Category" />
-
-                <TextView
-                    android:id="@+id/price"
-                    style="@style/TitleMedium"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:textSize="14dp"
-                    android:text="$355 - Auction" />
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    </com.google.android.material.card.MaterialCardView>
 
                     <TextView
-                        android:id="@+id/bidsCount"
-                        style="@style/BodySmall"
+                        android:id="@+id/productName"
+                        style="@style/TitleMedium"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="0 bids" />
-
-                    <TextView
-                        android:id="@+id/stockCount"
-                        style="@style/BodySmall"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Stock: 24" />
+                        android:maxLines="2"
+                        android:text="Product Name" />
 
                 </LinearLayout>
 
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/moreMenu"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_vertical_menu"
+                    app:tint="@color/onSurface" />
+            </LinearLayout>
 
+            <TextView
+                android:id="@+id/prod_sub_title"
+                style="@style/BodyMedium"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Condition - Category" />
+
+            <TextView
+                android:id="@+id/price"
+                style="@style/TitleMedium"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="$355 - Auction"
+                android:textSize="14dp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/bidsCount"
+                    style="@style/BodySmall"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="0 bids" />
+
+                <TextView
+                    android:id="@+id/stockCount"
+                    style="@style/BodySmall"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Stock: 24" />
 
             </LinearLayout>
 
         </LinearLayout>
 
+    </LinearLayout>
+        <com.google.android.material.divider.MaterialDivider
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/divider"
+            android:visibility="gone"
+            android:layout_margin="@dimen/half_margin"/>
+    </LinearLayout>
 </com.google.android.material.card.MaterialCardView>

@@ -37,7 +37,7 @@
                 style="@style/cardStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:backgroundTint="@color/secondaryContainer"
+                android:backgroundTint="@color/primaryContainer"
                 app:contentPadding="@dimen/margin">
 
                 <LinearLayout
@@ -69,7 +69,7 @@
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="@dimen/half_margin"
                 android:text="@string/more_info"
-                android:textColor="@color/secondary" />
+                android:textColor="@color/primary" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -92,7 +92,7 @@
                     android:backgroundTint="@color/background"
                     android:src="@drawable/ic_copy"
                     app:cornerRadius="8dp"
-                    app:tint="@color/secondary" />
+                    app:tint="@color/primary" />
 
             </LinearLayout>
 
@@ -144,7 +144,7 @@
                     style="@style/cardStyle"
                     android:layout_width="48dp"
                     android:layout_height="48dp"
-                    android:backgroundTint="@color/secondaryContainer"
+                    android:backgroundTint="@color/primaryContainer"
                     app:cardCornerRadius="100dp"
                     app:cardElevation="0dp">
 
@@ -155,7 +155,7 @@
                         android:layout_height="match_parent"
                         android:gravity="center"
                         android:text="1"
-                        android:textColor="@color/secondary" />
+                        android:textColor="@color/primary" />
 
                 </com.google.android.material.card.MaterialCardView>
 
@@ -180,7 +180,7 @@
                     style="@style/cardStyle"
                     android:layout_width="48dp"
                     android:layout_height="48dp"
-                    android:backgroundTint="@color/secondaryContainer"
+                    android:backgroundTint="@color/primaryContainer"
                     app:cardCornerRadius="100dp"
                     app:cardElevation="0dp">
 
@@ -190,7 +190,7 @@
                         android:layout_height="match_parent"
                         android:gravity="center"
                         android:text="2"
-                        android:textColor="@color/secondary" />
+                        android:textColor="@color/primary" />
 
                 </com.google.android.material.card.MaterialCardView>
 
@@ -215,7 +215,7 @@
                     style="@style/cardStyle"
                     android:layout_width="48dp"
                     android:layout_height="48dp"
-                    android:backgroundTint="@color/secondaryContainer"
+                    android:backgroundTint="@color/primaryContainer"
                     app:cardCornerRadius="100dp"
                     app:cardElevation="0dp">
 
@@ -225,7 +225,7 @@
                         android:layout_height="match_parent"
                         android:gravity="center"
                         android:text="3"
-                        android:textColor="@color/secondary" />
+                        android:textColor="@color/primary" />
 
                 </com.google.android.material.card.MaterialCardView>
 
@@ -249,7 +249,7 @@
                     style="@style/cardStyle"
                     android:layout_width="48dp"
                     android:layout_height="48dp"
-                    android:backgroundTint="@color/secondaryContainer"
+                    android:backgroundTint="@color/primaryContainer"
                     app:cardCornerRadius="100dp"
                     app:cardElevation="0dp">
 
@@ -259,7 +259,7 @@
                         android:layout_height="match_parent"
                         android:gravity="center"
                         android:text="4"
-                        android:textColor="@color/secondary" />
+                        android:textColor="@color/primary" />
 
                 </com.google.android.material.card.MaterialCardView>
 
@@ -290,19 +290,16 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/margin"
                 android:layout_marginBottom="@dimen/margin"
-                android:backgroundTint="@color/secondary"
                 android:text="Download OBS Studio"
                 app:icon="@drawable/download" />
 
             <com.google.android.material.button.MaterialButton
-                style="@style/appBtn"
+                style="@style/appTonalBtn"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/margin"
-                android:backgroundTint="@color/secondary"
                 android:paddingHorizontal="@dimen/margin"
                 android:text="Start Streaming" />
-
 
         </LinearLayout>
 

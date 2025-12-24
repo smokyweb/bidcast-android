@@ -1,5 +1,6 @@
 package io.bidswipe.app.controller
 
+import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -20,11 +21,13 @@ import io.bidswipe.app.utils.asMoney
 import io.bidswipe.app.utils.ids
 import io.bidswipe.app.utils.loadUrl
 import io.bidswipe.app.utils.setHapticClickListener
+import io.bidswipe.app.utils.setMargins
 
 class InventoryAdapter(
-	mList: MutableList<Product?>,
+	val mList: MutableList<Product?>,
 	private val isSelectionMode: Boolean,
 	val mClicks: RecyclerClicks,
+	val from:String =""
 ) : BaseAdapter<Product?, InventoryItemBinding>(mList) {
 
 	val posList = mutableListOf<Int>()
@@ -38,11 +41,21 @@ class InventoryAdapter(
 		item: Product?,
 	) {
 		with(holder) {
+			if (from == "show_details") {
+				bind.moreMenu.isVisible = false
+				bind.root.cardElevation = 0F
+				bind.root.setMargins(0,0,0,0)
+				bind.divider.isVisible = position != mList.lastIndex
+			}else{
+				bind.divider.isVisible = false
+				bind.moreMenu.isVisible = true
+			}
 
 			bind.statusCard.isVisible = item?.status == "inactive"
 			bind.stockCount.isVisible = item?.status != "inactive"
 
 			bind.productName.text = item?.title?.asCapital()
+			Log.d(TAG, "onBind: ${item?.productCondition}")
 			bind.prodSubTitle.text = buildSpannedString {
 				if (item?.productCondition != null) {
 					append((item.productCondition.replace("_", " ")))

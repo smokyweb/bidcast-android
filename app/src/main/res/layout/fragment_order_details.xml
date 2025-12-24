@@ -108,9 +108,10 @@
                         <androidx.appcompat.widget.AppCompatImageView
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:backgroundTint="@color/onSecondary"
+                            android:backgroundTint="@color/primaryContainer"
                             android:padding="12dp"
-                            android:src="@drawable/ic_location_marker" />
+                            app:tint="@color/primary"
+                            android:src="@drawable/ic_location_outline" />
 
                     </com.google.android.material.card.MaterialCardView>
 
@@ -169,8 +170,9 @@
                         <androidx.appcompat.widget.AppCompatImageView
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:backgroundTint="@color/onSecondary"
+                            android:backgroundTint="@color/primaryContainer"
                             android:padding="12dp"
+                            app:tint="@color/primary"
                             android:src="@drawable/ic_outlined_message" />
 
                     </com.google.android.material.card.MaterialCardView>
@@ -216,8 +218,9 @@
                         <androidx.appcompat.widget.AppCompatImageView
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:backgroundTint="@color/onSecondary"
+                            android:backgroundTint="@color/primaryContainer"
                             android:padding="12dp"
+                            app:tint="@color/primary"
                             android:src="@drawable/ic_question" />
 
                     </com.google.android.material.card.MaterialCardView>
@@ -276,8 +279,9 @@
                         <androidx.appcompat.widget.AppCompatImageView
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:backgroundTint="@color/onSecondary"
+                            android:backgroundTint="@color/primaryContainer"
                             android:padding="12dp"
+                            app:tint="@color/primary"
                             android:src="@drawable/ic_gift_outlined" />
 
                     </com.google.android.material.card.MaterialCardView>
@@ -614,7 +618,8 @@
                             android:id="@+id/icon"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:backgroundTint="@color/onSecondary"
+                            android:backgroundTint="@color/primaryContainer"
+                            app:tint="@color/primary"
                             android:padding="12dp"
                             android:src="@drawable/notification" />
 
@@ -662,7 +667,8 @@
                         <androidx.appcompat.widget.AppCompatImageView
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:backgroundTint="@color/onSecondary"
+                            android:backgroundTint="@color/primaryContainer"
+                            app:tint="@color/primary"
                             android:padding="12dp"
                             android:src="@drawable/notification" />
 
@@ -736,7 +742,8 @@
                         <androidx.appcompat.widget.AppCompatImageView
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:backgroundTint="@color/onSecondary"
+                            android:backgroundTint="@color/primaryContainer"
+                            app:tint="@color/primary"
                             android:padding="12dp"
                             android:src="@drawable/ic_gift_outlined" />
 
@@ -780,6 +787,7 @@
                     android:id="@+id/userInfo"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/margin"
                     android:backgroundTint="@color/outlineVariant"
                     android:gravity="center_vertical"
                     android:orientation="vertical">

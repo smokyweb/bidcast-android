@@ -4,8 +4,7 @@
     style="@style/cardStyle"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="@dimen/half_margin"
-    app:strokeColor="@color/secondary">
+    android:layout_margin="@dimen/half_margin">
 
     <LinearLayout
         android:layout_width="match_parent"

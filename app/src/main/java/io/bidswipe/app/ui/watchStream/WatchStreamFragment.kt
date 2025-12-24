@@ -27,8 +27,6 @@ import androidx.lifecycle.viewModelScope
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.gyf.immersionbar.ktx.navigationBarHeight
 import com.gyf.immersionbar.ktx.statusBarHeight
-import com.ncorti.slidetoact.SlideToActView
-import com.ncorti.slidetoact.SlideToActView.OnSlideCompleteListener
 import com.zerobranch.layout.SwipeLayout
 import com.zerobranch.layout.SwipeLayout.SwipeActionsListener
 import io.agora.rtc2.video.VideoCanvas
@@ -127,6 +125,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
     private var showThumbnail: String? = null
 
     private var showNotes: String? = ""
+
     companion object {
         fun newInstance(roomID: String, streamID: String, thumbnail: String? = null) =
             WatchStreamFragment().apply {
@@ -240,27 +239,27 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
             socketManager?.onAuctionStarted { json ->
                 runSafe {
                     if (json.optString("room_id") == roomID) {
-                        requireActivity().runOnUiThread  {
+                        requireActivity().runOnUiThread {
                             if (json.has("product") && json.optJSONObject("product") != null) {
-                                val product =  LiveShowModel.Product.fromJson(json.optJSONObject("product"))
-                                val startingBidAmount = json.optString("starting_bid_amount") ?:"0"
+                                val product = LiveShowModel.Product.fromJson(json.optJSONObject("product"))
+                                val startingBidAmount = json.optString("starting_bid_amount") ?: "0"
                                 log("LIVE PRODUCT : $product")
                                 bind.productLayout.isVisible = true
-                                val status  = json.optString("status")
+                                val status = json.optString("status")
 
                                 log("STATUS : $status")
-                                if (status == "sold"){
+                                if (status == "sold") {
                                     bind.bidLayout.isVisible = false
                                     bind.soldLayout.isVisible = true
                                     bind.productLayout.isVisible = false
-                                }else{
+                                } else {
                                     bind.bidLayout.isVisible = true
                                     bind.soldLayout.isVisible = false
                                     bind.productLayout.isVisible = true
                                 }
 
                                 updateProductUI(product, startingBidAmount)
-                            }else{
+                            } else {
                                 updateProductUI(null, "0")
                             }
 
@@ -275,7 +274,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
                         if (json.optString("room_id") == roomID) {
                             val products = LiveShowModel.fromJson(json)
-                            val currentProduct = products.products.find { it?.isCurrent == true }
+                            products.products.find { it?.isCurrent == true }
 //                            updateProductUI(currentProduct , currentProduct?.price)
 //                            setBidText(currentProduct?.price)
                         }
@@ -377,19 +376,19 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
                     bind.follow.isVisible = !obj.optBoolean("is_followed")
 
-	                 followSheetRunnable = Runnable {
-		                if (isFollowing) {
-			                socketManager?.sustainWatches(userId, showId)
-		                } else {
-			                followSheet()
-			                socketManager?.sustainWatches(userId, showId)
-		                }
-	                }
+                    followSheetRunnable = Runnable {
+                        if (isFollowing) {
+                            socketManager?.sustainWatches(userId, showId)
+                        } else {
+                            followSheet()
+                            socketManager?.sustainWatches(userId, showId)
+                        }
+                    }
 
-	                if (!isHandlerRunning) {
-		                followSheetHandler.postDelayed(followSheetRunnable!!, 30000)
-		                isHandlerRunning = true
-	                }
+                    if (!isHandlerRunning) {
+                        followSheetHandler.postDelayed(followSheetRunnable!!, 30000)
+                        isHandlerRunning = true
+                    }
 
                 }
             }
@@ -417,8 +416,8 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
             runSafe {
                 if (args.optString("room_id") == roomID) {
                     requireActivity().runOnUiThread {
-                        bind.showNotes.isVisible=true
-                     showNotes=   args.optString("show_note")?:""
+                        bind.showNotes.isVisible = true
+                        showNotes = args.optString("show_note") ?: ""
                     }
                 }
             }
@@ -426,7 +425,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
         socketManager?.onSaveTipSettingResult { obj ->
             requireActivity().runOnUiThread {
-               log("Message : ${obj.optString("tip_message")} ")
+                log("Message : ${obj.optString("tip_message")} ")
             }
         }
 
@@ -510,7 +509,24 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
             ShareHelper.openShareSheet(
                 parentFragmentManager,
                 imageUrl = showThumbnail,
-                text =  showTitle,
+                text = showTitle,
+                sellerInfo = null,
+                shareText = shareText,
+                type = "show",
+                isLive = true
+            )
+        }
+
+        bind.shareShow.setHapticClickListener {
+            val shareText = buildString {
+                append(Const.BASE_URL)
+                append("/live-show?roomId=$roomID")
+            }
+
+            ShareHelper.openShareSheet(
+                parentFragmentManager,
+                imageUrl = showThumbnail,
+                text = showTitle,
                 sellerInfo = null,
                 shareText = shareText,
                 type = "show",
@@ -702,7 +718,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
         socketManager?.joinRoom(roomID, userId) {
             socketManager?.sendMessage(roomID, "Joined \uD83D\uDC4B", userId, userName, userImage)
-	        socketManager?.joinShow(userId, showId)
+            socketManager?.joinShow(userId, showId)
         }
 
         if (streamID.isBlank()) {
@@ -907,7 +923,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
         }
     }
 
-    private fun updateProductUI(liveProduct: LiveShowModel.Product?, bidStartingAmount : String? ) {
+    private fun updateProductUI(liveProduct: LiveShowModel.Product?, bidStartingAmount: String?) {
 
         activity?.runOnUiThread {
 
@@ -928,9 +944,9 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
                 val price = liveProduct.price
                 bind.price.text = price?.asMoney() ?: ("0.0" + "Shipping + Taxes")
 
-                highestBidAmount = if (bidStartingAmount == "0"){
+                highestBidAmount = if (bidStartingAmount == "0") {
                     price
-                }else{
+                } else {
                     bidStartingAmount
                 }
 
@@ -976,7 +992,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
             bind.countBadge.isVisible = true
             bind.countBadge.text = productList.size.toString()
 
-            val liveProduct = showData.products.find { it?.isCurrent == true }
+            showData.products.find { it?.isCurrent == true }
 
             if (showData.highestBid.bidAmount?.isNotEmpty() == true) {
 //                highestBidAmount = showData.highestBid.bidAmount
@@ -1038,28 +1054,6 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
                     // the main view has returned to the default state
                 }
             })
-
-            bind.bid1.onSlideCompleteListener = object : OnSlideCompleteListener {
-                override fun onSlideComplete(view: SlideToActView) {
-
-                    if (App.profileResponse.value?.hasShippingAddress == true && App.profileResponse.value?.hasCardAdded == true) {
-
-                        if (isAllowBidForAll) {
-                            attemptBid()
-                        } else {
-                            if (App.profileResponse.value?.buyerIdentityStatus == "verified") {
-                                attemptBid()
-                            } else {
-                                verificationDialog()
-                            }
-                        }
-
-                    } else {
-                        showPaymentAndAddressSheet()
-                    }
-
-                }
-            }
 
             bind.max.setHapticClickListener {
                 showInputSheet()
@@ -1175,7 +1169,6 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
                     userName,
                     userImage
                 )*/
-            bind.bid1.setCompleted(completed = false, withAnimation = true)
             bind.bidSwipeLayout.close()
 
         }
@@ -1261,7 +1254,6 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
             makeOfferSheet.dismiss()
         }
 
-        bind.bid1.setCompleted(completed = false, withAnimation = true)
         bind.bidSwipeLayout.close()
 
         makeOfferSheet.show()
@@ -1947,7 +1939,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
         val sheet = Alerts.appBottomSheet(mCtx, false, showNotesSheetBind)
 
-        showNotesSheetBind.notes.setHtmlFromString(showNotes?.ifEmpty { "No notes added yet." },false)
+        showNotesSheetBind.notes.setHtmlFromString(showNotes?.ifEmpty { "No notes added yet." }, false)
 
         showNotesSheetBind.close.setHapticClickListener {
             sheet.dismiss()

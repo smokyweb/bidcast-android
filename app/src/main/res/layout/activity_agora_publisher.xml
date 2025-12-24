@@ -106,6 +106,7 @@
                     app:cornerRadius="24dp"
                     app:icon="@drawable/ic_broadcast"
                     app:iconPadding="6dp"
+                    android:textColor="@color/onPrimary"
                     app:iconSize="20sp"
                     app:iconTint="@null" />
 

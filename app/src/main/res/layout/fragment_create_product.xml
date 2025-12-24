@@ -475,7 +475,7 @@
                         android:layout_height="match_parent"
                         android:layout_marginStart="@dimen/half_margin"
                         android:text="@string/add_variants"
-                        android:textColor="@color/secondary" />
+                        android:textColor="@color/primary" />
 
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>

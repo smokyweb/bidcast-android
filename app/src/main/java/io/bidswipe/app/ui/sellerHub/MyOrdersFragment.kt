@@ -264,7 +264,7 @@ class MyOrdersFragment : BaseFragment<SellerHubViewModel, FragmentMyOrdersBindin
                 val index = chipGroup.indexOfChild(chipGroup.findViewById(chipId))
                 if (index == -1) return@runSafe
                 bind.loader.isVisible = true
-                status = statusList[index].lowercase()
+                status = if(statusList[index].lowercase()=="all") "" else statusList[index].lowercase()
                 bind.search.setText("")
             }
         }

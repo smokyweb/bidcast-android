@@ -242,6 +242,8 @@ class ProductDetailsFragment : BaseFragment<ProductViewModel, FragmentProductDet
                         }
                         startActivity(intent)
                     }
+
+                    bind.buyLayout.isVisible=mData?.userId.toString()!=userId
                 }
 
                 is Resource.Error -> {

@@ -11,6 +11,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
+import android.widget.EditText
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.core.text.buildSpannedString
@@ -42,6 +43,7 @@ import io.bidswipe.app.ui.dashboard.DashViewModel
 import io.bidswipe.app.ui.sellerHub.SellerHubActivity
 import io.bidswipe.app.utils.Alerts
 import io.bidswipe.app.utils.Const
+import io.bidswipe.app.utils.PriceFormatter
 import io.bidswipe.app.utils.Utils
 import io.bidswipe.app.utils.cropper.CustomCropImageContract
 import io.bidswipe.app.utils.finish
@@ -53,7 +55,11 @@ import io.bidswipe.app.utils.value
 import okhttp3.MultipartBody
 import java.io.File
 import java.io.FileOutputStream
-import kotlin.text.replace
+import java.lang.ref.WeakReference
+import java.math.BigDecimal
+import java.text.NumberFormat
+import java.util.Locale
+
 
 data class MediaItem(
 	val path: String,
@@ -328,8 +334,6 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
 			}
 		}
 
-
-
 		bind.root.setOnClickListener {
 			hideKeyboard(it)
 		}
@@ -356,6 +360,8 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
 			}
 			bind.header.setHeaderText("Update Product")
 		}
+
+		bind.price.addTextChangedListener( PriceFormatter(bind.price))
 
 		bind.hazardousDesc.text = buildSpannedString {
 			append("Carriers restrict shipping ")
@@ -590,7 +596,7 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
 						bind.shippingProfile.showDropDown()
 
 
-						if (viewModel.shippingProfile.isNotEmpty()){
+						if (viewModel.shippingProfile.isNotEmpty()) {
 
 							profileId = viewModel.shippingProfile
 
@@ -600,11 +606,10 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
 							}
 
 							bind.shippingProfile.setText(selectedShippingProfile?.name, false)
-							}
-
-
 						}
 
+
+					}
 
 
 				}
@@ -1090,7 +1095,7 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
 		bind.reserveForLive.isChecked = product?.reserveForLive == true
 		viewModel.shippingProfile = product?.shippingProfileId.toString()
 
-		if (profiles.isNotEmpty()){
+		if (profiles.isNotEmpty()) {
 			val selectedShippingProfile = profiles.findLast { profile ->
 				viewModel.shippingProfile == profile?.id.toString()
 			}
@@ -1387,5 +1392,5 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
 		viewModel.getShippingProfile()
 	}
 
-
 }
+

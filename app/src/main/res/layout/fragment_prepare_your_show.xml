@@ -21,6 +21,7 @@
 
     <com.google.android.material.progressindicator.LinearProgressIndicator
         android:id="@+id/stepProgress"
+        style="@style/circularProgressStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="@dimen/margin"
@@ -57,7 +58,7 @@
             android:drawablePadding="@dimen/half_margin"
             android:text="@string/need_help_contact_our_support_team"
             app:drawableStartCompat="@drawable/ic_question"
-            app:drawableTint="@color/secondary" />
+            app:drawableTint="@color/primary" />
 
     </LinearLayout>
 
