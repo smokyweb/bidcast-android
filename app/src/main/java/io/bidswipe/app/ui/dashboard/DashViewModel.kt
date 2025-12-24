@@ -77,6 +77,7 @@ class DashViewModel @Inject constructor(
 	var productFormImageList = mutableListOf<String?>()
 	var productFormCategoryId = ""
 	var productFormSubCategoryId = ""
+	var productCondition = ""
 	var productFormVariantList = mutableListOf<GetCategoryResponse.Data.ExtraField?>()
 	var productFormPackageWidth = 0.0
 	var productFormPackageHeight = 0.0
@@ -99,6 +100,7 @@ class DashViewModel @Inject constructor(
 	var productFormAcceptOffers = false
 	var productFormReserveForLive = false
 	var productFormCategoryText = ""
+	var shippingProfile = ""
 	private var _logoutResponse = MutableLiveData<Resource<CommonResponse>>()
 	val logoutRepo : MutableLiveData<Resource<CommonResponse>>
 		get() = _logoutResponse

@@ -302,6 +302,17 @@ class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
             }
         }
 
+	    bind.sellerHub.viewAll.setHapticClickListener {
+
+		    startActivity(
+			    Intent(mCtx , SellerHubActivity::class.java).putExtra(
+				    "slug" ,
+				    "shows"
+			    )
+		    )
+
+        }
+
         bind.sellerHub.createProduct.setHapticClickListener {
             startActivity(mCtx.toListProduct())
         }
@@ -412,7 +423,7 @@ class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
 
                     }
 
-                    //ACCCOUNT HEALTH
+                    //ACCOUNT HEALTH
                     bind.sellerHub.onTimePercent.text = mData?.accountHealth?.onTimeScanRate ?: "N/A"
                     bind.sellerHub.defectFreeOrderRate.text = mData?.accountHealth?.defectFreeOrderRate ?: "N/A"
                     bind.sellerHub.policyStanding.text = mData?.accountHealth?.policyStanding ?: "N/A"

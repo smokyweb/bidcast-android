@@ -262,6 +262,8 @@ class DashActivity : BaseActivity() , NavController.OnDestinationChangedListener
 
 		App.getProfile()
 
+		App.getCategories()
+
 	}
 
 	fun hideBottomNav() {

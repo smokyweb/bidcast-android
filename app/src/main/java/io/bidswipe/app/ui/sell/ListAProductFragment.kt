@@ -53,6 +53,7 @@ import io.bidswipe.app.utils.value
 import okhttp3.MultipartBody
 import java.io.File
 import java.io.FileOutputStream
+import kotlin.text.replace
 
 data class MediaItem(
 	val path: String,
@@ -259,6 +260,7 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
 			bind.flashSell.isChecked = viewModel.productFormFlashSale
 			bind.acceptOffers.isChecked = viewModel.productFormAcceptOffers
 			bind.reserveForLive.isChecked = viewModel.productFormReserveForLive
+			bind.condition.setText(viewModel.productCondition, false)
 
 			if (viewModel.productFormCategoryText.isNotEmpty()) {
 				if (subCategoryId.isNotEmpty()) {
@@ -307,6 +309,7 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
 		viewModel.productFormAcceptOffers = bind.acceptOffers.isChecked
 		viewModel.productFormReserveForLive = bind.reserveForLive.isChecked
 		viewModel.productFormCategoryText = bind.category.text?.toString() ?: ""
+		viewModel.productCondition = bind.condition.text?.toString() ?: ""
 	}
 
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -585,7 +588,24 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
 
 					bind.shippingProfile.setHapticClickListener {
 						bind.shippingProfile.showDropDown()
-					}
+
+
+						if (viewModel.shippingProfile.isNotEmpty()){
+
+							profileId = viewModel.shippingProfile
+
+
+							val selectedShippingProfile = profiles.findLast { profile ->
+								viewModel.shippingProfile == profile?.id.toString()
+							}
+
+							bind.shippingProfile.setText(selectedShippingProfile?.name, false)
+							}
+
+
+						}
+
+
 
 				}
 
@@ -1062,10 +1082,24 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
 		bind.weight.setText((product?.weight ?: "").toString())
 		bind.mailClass.setText(product?.mailClass ?: "", false)
 		bind.proCategory.setText(product?.processingCategory ?: "", false)
+		selectedCondition = product?.productCondition.toString()
+		bind.condition.setText(product?.productCondition?.replace("_", " ") ?: "", false)
 		bind.price.setText((product?.pricing ?: ""))
 		bind.flashSell.isChecked = product?.flashSale == true
 		bind.acceptOffers.isChecked = product?.acceptOffers == true
 		bind.reserveForLive.isChecked = product?.reserveForLive == true
+		viewModel.shippingProfile = product?.shippingProfileId.toString()
+
+		if (profiles.isNotEmpty()){
+			val selectedShippingProfile = profiles.findLast { profile ->
+				viewModel.shippingProfile == profile?.id.toString()
+			}
+
+			profileId = viewModel.shippingProfile
+
+			bind.shippingProfile.setText(selectedShippingProfile?.name, false)
+		}
+
 		imageList.clear()
 		product?.images?.forEachIndexed { index, imageUrl ->
 			imageUrl?.let {

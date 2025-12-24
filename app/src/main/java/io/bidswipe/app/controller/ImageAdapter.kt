@@ -1,5 +1,6 @@
 package io.bidswipe.app.controller
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.net.toUri
@@ -35,6 +36,8 @@ class ImageAdapter(
                 val isVideo = isVideoFile(item)
 
                 if (item.contains(Const.BASE_URL)) {
+	                bind.image.isVisible = true
+	                bind.videoView.isVisible = false
                     bind.image.loadUrl(mCtx, item)
                 } else {
                     if (isVideo) {
