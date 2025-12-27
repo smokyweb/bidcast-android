@@ -31,6 +31,13 @@ class SellAdapter(mList : MutableList<SellModel> , val type : String , val mClic
 				bind.root.background.setTint(ContextCompat.getColor(mCtx , R.color.background))
 			}
 
+			if (type == "shipping" && position == 0){
+				bind.status.isVisible = true
+				bind.status.text = item?.status
+			}else{
+				bind.status.isVisible = false
+			}
+
 			bind.icon.setImageDrawable(ContextCompat.getDrawable(mCtx , item?.icon ?: draw.ic_add_outline))
 			bind.subTitle.text = item?.subtitle
 			bind.title.text = item?.title

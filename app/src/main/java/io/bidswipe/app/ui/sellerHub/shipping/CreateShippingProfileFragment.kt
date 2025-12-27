@@ -108,7 +108,9 @@ class CreateShippingProfileFragment : BaseFragment<SellerHubViewModel, FragmentC
 					viewModel.storeShippingProfile(
 						name = bind.name.value().request(),
 						size = bind.weightUnits.value().request(),
-						weight = bind.weight.value().request()
+						weight = bind.weight.value().request(),
+						additionalWeight = if(bind.additionalWeight.isChecked) "1".request() else "0".request(),
+						maxItems = if(bind.maxPackage.isChecked) "1".request() else "0".request()
 					)
 				}
 

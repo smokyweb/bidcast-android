@@ -26,6 +26,10 @@ data class GetShippingProfilesResponse(
         @SerializedName("user_id")
         val userId: Int?,
         @SerializedName("weight")
-        val weight: String?
+        val weight: String?,
+        @SerializedName("maxItems")
+        val maxItems: Boolean?,
+        @SerializedName("additionalWeight")
+        val additionalWeight: Boolean?
     )
 }

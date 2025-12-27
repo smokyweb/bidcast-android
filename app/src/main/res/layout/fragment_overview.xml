@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".ui.sellerHub.OverviewFragment">
+
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/scrollView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tab_container">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingBottom="@dimen/margin">
+
+            <!-- Promote Tools Section -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/margin"
+                android:orientation="vertical">
+
+                <TextView
+                    style="@style/TitleLarge"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Promote Tools"
+                    android:textStyle="bold" />
+
+                <TextView
+                    style="@style/BodyMedium"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Promote your livestreams to reach a wider audience on Whatnot." />
+
+            </LinearLayout>
+
+            <HorizontalScrollView
+                android:id="@+id/chip_scroll"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/margin"
+                android:layout_marginTop="@dimen/half_margin"
+                android:scrollbars="none"
+                app:layout_constraintTop_toBottomOf="@id/searchLayout">
+
+                <com.google.android.material.chip.ChipGroup
+                    android:id="@+id/filter_chip_group"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:chipSpacing="@dimen/half_margin"
+                    app:singleLine="true"
+                    app:singleSelection="true" />
+
+            </HorizontalScrollView>
+
+            <!-- One Promotion, Two Benefits Card -->
+            <LinearLayout
+                style="@style/shadowStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/margin"
+                android:layout_marginTop="@dimen/margin"
+                android:background="@drawable/card_8"
+                android:backgroundTint="@color/primaryContainer"
+                android:orientation="vertical"
+                android:padding="@dimen/padding">
+
+                <TextView
+                    style="@style/TitleLarge"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="One Promotion, Two Benefits"
+                    android:textStyle="bold" />
+
+                <TextView
+                    style="@style/BodyMedium"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="• Instant audience boost: Promotions bring more viewers to your live show." />
+
+                <TextView
+                    style="@style/BodyMedium"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="• Long-term discoverability: More engagement today powers our algorithms to surface your future shows higher in buyers' feed." />
+
+            </LinearLayout>
+
+            <!-- Audience Reached Section -->
+            <TextView
+                style="@style/TitleLarge"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/margin"
+                android:layout_marginTop="@dimen/margin"
+                android:text="Audience Reached"
+                android:textStyle="bold" />
+
+            <!-- Metric Cards Container -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/metricsRecycler"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/half_margin"
+                android:nestedScrollingEnabled="false"
+                tools:listitem="@layout/item_promote_metric" />
+
+
+            <include
+                android:id="@+id/pro_tip_audience"
+                layout="@layout/item_pro_tip" />
+
+            <!-- Discovery Impact Section -->
+            <TextView
+                android:id="@+id/discoveryImpactHeader"
+                style="@style/TitleLarge"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/margin"
+                android:layout_marginTop="@dimen/margin"
+                android:text="Discovery Impact"
+                android:textStyle="bold"
+                android:visibility="gone" />
+
+            <!-- Discovery Impact Metrics Container -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/discoveryMetricsRecycler"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/half_margin"
+                android:nestedScrollingEnabled="false"
+                android:visibility="gone"
+                tools:listitem="@layout/item_promote_metric" />
+
+
+            <include
+                android:id="@+id/pro_tip_discovery_1"
+                layout="@layout/item_pro_tip" />
+
+            <include
+                android:id="@+id/pro_tip_discovery_2"
+                layout="@layout/item_pro_tip" />
+
+            <include
+                android:id="@+id/pro_tip_discovery_3"
+                layout="@layout/item_pro_tip" />
+            <!-- Buyers Converted Section -->
+            <TextView
+                android:id="@+id/buyersConvertedHeader"
+                style="@style/TitleLarge"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/margin"
+                android:layout_marginTop="@dimen/margin"
+                android:text="Buyers Converted"
+                android:textStyle="bold"
+                android:visibility="gone" />
+
+            <!-- Buyers Converted Metrics Container -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/buyersConvertedRecycler"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/half_margin"
+                android:nestedScrollingEnabled="false"
+                android:visibility="gone"
+                tools:listitem="@layout/item_promote_metric" />
+
+            <include
+                android:id="@+id/pro_tip_buyer_1"
+                layout="@layout/item_pro_tip" />
+
+            <include
+                android:id="@+id/pro_tip_buyer_2"
+                layout="@layout/item_pro_tip" />
+
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+    <io.bidswipe.app.ui.custom.LoaderView
+        android:id="@+id/loader"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone" />
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

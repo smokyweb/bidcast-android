@@ -368,21 +368,21 @@ class ExploreFragment : BaseFragment<DashViewModel, FragmentExploreBinding>() {
                 bind.loader.isVisible = true
 
                 when (index) {
+
                     0 -> {
-                        selectedTabText = "recommended"
-                        viewModel.getCategory(type = "recommended", getCount = "true")
-                    }
-
-                    1 -> {
-                        selectedTabText = "popular"
-                        viewModel.getCategory(type = "popular", getCount = "true")
-                    }
-
-                    2 -> {
                         selectedTabText = "all"
                         viewModel.getCategory(type = "all", getCount = "true")
                     }
 
+	                1 -> {
+		                selectedTabText = "recommended"
+		                viewModel.getCategory(type = "recommended", getCount = "true")
+	                }
+
+	                2 -> {
+		                selectedTabText = "popular"
+		                viewModel.getCategory(type = "popular", getCount = "true")
+	                }
                 }
             }
         }

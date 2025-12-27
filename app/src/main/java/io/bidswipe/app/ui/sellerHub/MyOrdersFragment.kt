@@ -70,6 +70,7 @@ class MyOrdersFragment : BaseFragment<SellerHubViewModel, FragmentMyOrdersBindin
         bind.header.onMoreSecondaryClick {
             showDeleteConfirmationDialog()
         }
+
         setUpChips()
 
         adapter = OrdersAdapter(orderList, mClick)
@@ -81,7 +82,7 @@ class MyOrdersFragment : BaseFragment<SellerHubViewModel, FragmentMyOrdersBindin
         bind.swipeRefreshLayout.setOnRefreshListener {
             bind.search.setText("")
             page = 1
-            viewModel.getOrderListing(page = page.toString().request(), "".request())
+            viewModel.getOrderListing(page = page.toString().request(), status.request())
         }
 
         bind.recycler.addOnScrollListener(object : RecyclerView.OnScrollListener() {
@@ -94,7 +95,7 @@ class MyOrdersFragment : BaseFragment<SellerHubViewModel, FragmentMyOrdersBindin
                         isLoading = true
                         page++
                         bind.bottomLoader.isVisible = true
-                        viewModel.getOrderListing(page = page.toString().request(), "".request())
+                        viewModel.getOrderListing(page = page.toString().request(), status.request())
                     }
                 }
             }
@@ -117,7 +118,7 @@ class MyOrdersFragment : BaseFragment<SellerHubViewModel, FragmentMyOrdersBindin
                 if (!s.isNullOrEmpty()) {
                     viewModel.getOrderListing(
                         page.toString().request(),
-                        "".request(),
+	                    status.request(),
                         s.toString().request()
                     )
                 } else {
@@ -130,16 +131,16 @@ class MyOrdersFragment : BaseFragment<SellerHubViewModel, FragmentMyOrdersBindin
             bind.search.setText("")
             bind.searchLayout.isEndIconVisible = false
             page = 1
-            viewModel.getOrderListing(page = page.toString().request(), "".request())
+            viewModel.getOrderListing(page = page.toString().request(), status.request())
         }
 
         bind.noInternet.onClick {
             bind.loader.isVisible = true
             bind.noInternet.isVisible = false
-            viewModel.getOrderListing(page = page.toString().request(), "".request())
+            viewModel.getOrderListing(page = page.toString().request(), status.request())
         }
 
-        viewModel.getOrderListing(page = page.toString().request(), "".request())
+        viewModel.getOrderListing(page = page.toString().request(), status.request())
         viewModel.getOrderListingRepo.observe(viewLifecycleOwner) {
             when (it) {
                 is Resource.Success -> {
@@ -162,10 +163,6 @@ class MyOrdersFragment : BaseFragment<SellerHubViewModel, FragmentMyOrdersBindin
                     bind.processingOrderCount.text = it.value.processingOrderCount.toString()
                     bind.completedOrderCount.text = it.value.completeOrderCount.toString()
 
-                    if (mData?.isNotEmpty() == true) {
-                        orderList.addAll(mData)
-                    }
-
                     if (mData?.isEmpty() == true) {
 
                         bind.noData.isVisible = true
@@ -186,7 +183,6 @@ class MyOrdersFragment : BaseFragment<SellerHubViewModel, FragmentMyOrdersBindin
                     bind.swipeRefreshLayout.isRefreshing = false
                     bind.loader.isVisible = false
                     bind.bottomLoader.isVisible = false
-
 
                     if (it.isNetworkError) {
                         bind.noInternet.isVisible = true

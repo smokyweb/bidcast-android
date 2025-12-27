@@ -6,7 +6,7 @@
     android:orientation="vertical"
     android:layout_margin="@dimen/half_margin"
     style="@style/shadowStyle"
-    android:padding="8dp">
+    android:padding="@dimen/margin">
 
     <TextView
         android:id="@+id/itemName"
@@ -37,6 +37,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:visibility="gone"
             android:text="Scale: kg"
             android:textSize="14sp"
             android:gravity="end"/>
@@ -58,7 +59,7 @@
             android:gravity="start"/>
 
         <TextView
-            android:id="@+id/bundlingOptionYesNo"
+            android:id="@+id/maxItems"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="No"
@@ -83,7 +84,7 @@
             android:gravity="start"/>
 
         <TextView
-            android:id="@+id/additionalWeightYesNo"
+            android:id="@+id/additionalWeight"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="No"

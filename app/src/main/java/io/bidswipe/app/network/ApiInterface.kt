@@ -780,7 +780,9 @@ interface ApiInterface {
     suspend fun storeShippingProfile(
         @Part("name") name: RequestBody?,
         @Part("size") size: RequestBody?,
-        @Part("weight") weight: RequestBody?
+        @Part("weight") weight: RequestBody?,
+        @Part("additionalWeight") additionalWeight: RequestBody?,
+        @Part("maxItems") maxItems: RequestBody?
     ): CommonResponse
 
     @GET("api/get-shipping-profile")

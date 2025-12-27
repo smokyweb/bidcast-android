@@ -166,7 +166,7 @@
                 </LinearLayout>
 
                 <com.google.android.material.materialswitch.MaterialSwitch
-                    android:id="@+id/one_package"
+                    android:id="@+id/maxPackage"
                     style="@style/appSwitch"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

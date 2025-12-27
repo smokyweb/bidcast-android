@@ -72,7 +72,7 @@ data class LiveShowModel(
 			fun fromJson(json: JSONObject) = Product(
 				category = Category.fromJson(json.optJSONObject("category")),
 				id = json.optString("id", null),
-				image = json.optString("images", ""),
+				image = json.optJSONArray("images").optString(0),
 				status = json.optString("status", "live"),
 				name = json.optString("title", null),
 				price = json.optString("pricing", null),

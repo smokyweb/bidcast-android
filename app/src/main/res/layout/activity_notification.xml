@@ -67,7 +67,7 @@
                     android:visibility="gone"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintTop_toBottomOf="parent"
-                    app:title_text="Notifications not found" />
+                    app:title_text="No Notifications Found" />
 
                 <io.bidswipe.app.ui.custom.NoDataView
                     android:id="@+id/noInternet"

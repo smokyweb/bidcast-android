@@ -574,8 +574,10 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
     suspend fun storeShippingProfile(
         name: RequestBody?,
         size: RequestBody?,
-        weight: RequestBody?
-    ) = call { api.storeShippingProfile(name, size, weight) }
+        weight: RequestBody?,
+        additionalWeight: RequestBody?,
+        maxItems: RequestBody?
+    ) = call { api.storeShippingProfile(name, size, weight, additionalWeight, maxItems) }
 
     suspend fun getShippingProfile(
     ) = call { api.getShippingProfile() }

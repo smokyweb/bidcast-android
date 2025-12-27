@@ -24,36 +24,23 @@ class FreePickupFragment : BaseFragment<SellerHubViewModel, FragmentFreePickupBi
         view: ViewGroup?,
     ) = FragmentFreePickupBinding.inflate(inflater, view, false)
 
+	var status : Boolean? = false
+
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+	    status = arguments?.getBoolean("status")
 
         bind.header.onBackClick {
             findNavController().popBackStack()
         }
 
-        bind.loader.isVisible = true
-        viewModel.settingsList()
-        viewModel.settingsListRepo.observe(viewLifecycleOwner) {
-            when (it) {
-                is Resource.Success -> {
-                    bind.loader.isVisible = false
-                    viewModel.settingsListRepo.value = null
+	    bind.freePickup.isChecked = status == true
 
-                    val mData = it.value.data
-
-                    bind.freePickup.isChecked = mData?.freeShipping == true
-                }
-
-                is Resource.Error -> {
-                    bind.loader.isVisible = false
-                    viewModel.settingsListRepo.value = null
-                    it.parse(mCtx, TAG)
-                }
-
-                else -> {}
-
-            }
-        }
+	    bind.save.setHapticClickListener {
+		    callAPI()
+	    }
 
         viewModel.settingsStoreRepo.observe(viewLifecycleOwner) {
             when (it) {
@@ -69,14 +56,11 @@ class FreePickupFragment : BaseFragment<SellerHubViewModel, FragmentFreePickupBi
                     it.parse(mCtx, TAG)
                 }
 
-                else -> {}
+	            else -> {}
 
             }
         }
 
-        bind.save.setHapticClickListener {
-            callAPI()
-        }
 
     }
 

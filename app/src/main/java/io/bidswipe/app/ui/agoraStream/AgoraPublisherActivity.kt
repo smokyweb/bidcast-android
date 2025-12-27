@@ -33,6 +33,7 @@ import androidx.core.text.color
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
+import androidx.core.view.setPadding
 import com.bumptech.glide.Glide
 import com.caneryilmaz.apps.luckywheel.constant.ArrowPosition
 import com.caneryilmaz.apps.luckywheel.data.WheelData
@@ -152,7 +153,7 @@ class AgoraPublisherActivity : BaseActivity() {
         }
 
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) { // Android 15+
-			window.decorView.setOnApplyWindowInsetsListener { view, insets ->
+			window.decorView.setOnApplyWindowInsetsListener { _, insets ->
 				insets
 			}
 		} else {
@@ -160,27 +161,22 @@ class AgoraPublisherActivity : BaseActivity() {
 //			window.statusBarColor = color
         }
 
-        ViewCompat.setOnApplyWindowInsetsListener(window.decorView) { v, insets ->
+        ViewCompat.setOnApplyWindowInsetsListener(window.decorView) { _, insets ->
 
             val system = insets.getInsets(WindowInsetsCompat.Type.systemBars())
 
-            bind.profileLayout.setMargins(
-                top = system.top,
+          /*  bind.profileLayout.setMargins(
                 left = resources.dpToPx(16),
                 right = resources.dpToPx(16)
             )
-            bind.startBtn.setMargins(
-                resources.dpToPx(16),
-                resources.dpToPx(16),
-                resources.dpToPx(16),
-                system.bottom + 16
+*/
+            bind.controlsView.setPadding(
+                resources.dpToPx(0),
+	            system.top,
+                resources.dpToPx(0),
+                system.bottom
             )
-            bind.runNext.setMargins(
-                resources.dpToPx(16),
-                resources.dpToPx(16),
-                resources.dpToPx(16),
-                system.bottom + 16
-            )
+
             insets
         }
 
@@ -239,7 +235,6 @@ class AgoraPublisherActivity : BaseActivity() {
             }
         })
 
-
         socketUrl = Const.SOCKET_URL
         initializeSocket()
 
@@ -276,7 +271,7 @@ class AgoraPublisherActivity : BaseActivity() {
             true
         }
 
-        bind.messageText.setOnEditorActionListener { v, actionId, event ->
+        bind.messageText.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_SEND) {
                 if (!isShowLive) {
                     Alerts.error(this, "Please start live show to send message")
@@ -688,13 +683,6 @@ class AgoraPublisherActivity : BaseActivity() {
 
             bind.startBtn.isVisible = false
 
-            bind.product.setMargins(
-                resources.dpToPx(16),
-                resources.dpToPx(16),
-                resources.dpToPx(16),
-                navigationBarHeight + 16
-            )
-
             addShowData(liveShowData!!)
 
             bind.shop.strokeWidth = 4
@@ -978,30 +966,24 @@ class AgoraPublisherActivity : BaseActivity() {
                 bind.quantity.text = buildString {
                     append("Quantity: ")
                     append(liveProduct.quantity ?: 0)
-                }
-                bind.productImage.loadUrl(this, liveProduct.image ?: "")
-                bind.productImageShop.loadUrl(this, liveProduct.image ?: "")
+				}
+
+	            if (liveProduct.image?.contains(Const.BASE_URL) == true){
+		            bind.productImage.loadUrl(this, liveProduct.image)
+		            bind.productImageShop.loadUrl(this, liveProduct.image)
+	            }else{
+					bind.productImage.loadUrl(this, "${Const.BASE_URL + "/"}${liveProduct.image ?:""}")
+		            bind.productImageShop.loadUrl(this, "${Const.BASE_URL + "/"}${liveProduct.image ?:""}")
+	            }
+
+
                 val price = startingBidAmount
                 bind.bidPrice.text = price?.asMoney()
                 bind.status.isVisible = false
 
-                if (!bind.startBtn.isVisible || !bind.runNext.isVisible) bind.bottomLayoutOptions.setMargins(
-                    0,
-                    resources.dpToPx(16),
-                    0,
-                    0
-                )
-
             } else {
                 bind.product.isVisible = false
                 bind.productLayout.isVisible = false
-
-                if  (!bind.startBtn.isVisible || !bind.runNext.isVisible) bind.bottomLayoutOptions.setMargins(
-                    0,
-                    resources.dpToPx(16),
-                    0,
-                    navigationBarHeight + 16
-                )
 
             }
         }

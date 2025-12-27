@@ -21,89 +21,89 @@ import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.setHapticClickListener
 
 class ShippingProfilesFragment : BaseFragment<SellerHubViewModel, FragmentShippingProfilesBinding>() {
-    override fun getModel(): Class<SellerHubViewModel> = SellerHubViewModel::class.java
+	override fun getModel(): Class<SellerHubViewModel> = SellerHubViewModel::class.java
 
-    override fun getBind(
-        inflater: LayoutInflater,
-        view: ViewGroup?,
-    ) = FragmentShippingProfilesBinding.inflate(inflater, view, false)
+	override fun getBind(
+		inflater: LayoutInflater,
+		view: ViewGroup?,
+	) = FragmentShippingProfilesBinding.inflate(inflater, view, false)
 
-    private lateinit var profileAdapter : ShippingProfileAdapter
-    private var profiles = mutableListOf<GetShippingProfilesResponse.Data?>()
+	private lateinit var profileAdapter: ShippingProfileAdapter
+	private var profiles = mutableListOf<GetShippingProfilesResponse.Data?>()
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+		super.onViewCreated(view, savedInstanceState)
 
-        bind.header.onBackClick {
-            findNavController().popBackStack()
-        }
+		bind.header.onBackClick {
+			findNavController().popBackStack()
+		}
 
-        bind.create.setHapticClickListener {
-            findNavController().animatedNav(R.id.toCreateShippingProfile)
-        }
+		bind.create.setHapticClickListener {
+			findNavController().animatedNav(R.id.toCreateShippingProfile)
+		}
 
 
-        profileAdapter = ShippingProfileAdapter(profiles, object : RecyclerClicks {
-            override fun itemClick(pos: Int, status: String?) {
+		profileAdapter = ShippingProfileAdapter(profiles, object : RecyclerClicks {
+			override fun itemClick(pos: Int, status: String?) {
 
-            }
-        })
+			}
+		})
 
-        bind.shippingProfiles.adapter = profileAdapter
+		bind.shippingProfiles.adapter = profileAdapter
 
-        bind.loader.isVisible = true
+		bind.loader.isVisible = true
 
-        viewModel.getShippingProfile()
+		viewModel.getShippingProfile()
 
-        viewModel.getShippingProfileRepo.observe(viewLifecycleOwner) {
-            when (it) {
-                is Resource.Success -> {
-                    bind.loader.isVisible = false
+		viewModel.getShippingProfileRepo.observe(viewLifecycleOwner) {
+			when (it) {
+				is Resource.Success -> {
+					bind.loader.isVisible = false
 
-                    val mData = it.value.data
+					val mData = it.value.data
 
-                    if(mData != null){
-                        profiles.clear()
-                        profiles.addAll(mData)
-                    }
+					if (mData != null) {
+						profiles.clear()
+						profiles.addAll(mData)
+					}
 
-                    if (profiles.isNotEmpty()){
-                        bind.noData.isVisible = false
-                        bind.shippingProfiles.isVisible = true
+					if (profiles.isNotEmpty()) {
+						bind.noData.isVisible = false
+						bind.shippingProfiles.isVisible = true
 
-                    }else{
-                        bind.noData.isVisible = true
-                        bind.shippingProfiles.isVisible = false
-                    }
+					} else {
+						bind.noData.isVisible = true
+						bind.shippingProfiles.isVisible = false
+					}
 
-                    profileAdapter.notifyDataSetChanged()
+					profileAdapter.notifyDataSetChanged()
 
-                    log( mData.toString())
+					log(mData.toString())
 
-                }
+				}
 
-                is Resource.Error -> {
-                    bind.loader.isVisible = false
+				is Resource.Error -> {
+					bind.loader.isVisible = false
 
-                    it.parse(mCtx, TAG, object : AlertClicks {
-                        override fun primaryClick(dialog: AppBottomSheet) {
-                            dialog.dismiss()
+					it.parse(mCtx, TAG, object : AlertClicks {
+						override fun primaryClick(dialog: AppBottomSheet) {
+							dialog.dismiss()
 
-                        }
+						}
 
-                        override fun secondaryClick(dialog: AppBottomSheet) {
-                            dialog.dismiss()
+						override fun secondaryClick(dialog: AppBottomSheet) {
+							dialog.dismiss()
 
-                        }
-                    })
+						}
+					})
 
-                }
+				}
 
-                else -> {}
+				else -> {}
 
-            }
+			}
 
-        }
+		}
 
-    }
+	}
 }

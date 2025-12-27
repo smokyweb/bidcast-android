@@ -17,7 +17,7 @@ data class GetShowOverviewResponse(
     @Keep
     data class Data(
         @SerializedName("contributions_count")
-        val contributionsCount: Int?,
+        val contributionsCount: Double?,
         @SerializedName("new_followers")
         val newFollowers: Int?,
         @SerializedName("file_url")

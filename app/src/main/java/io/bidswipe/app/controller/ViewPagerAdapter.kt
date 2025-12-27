@@ -11,6 +11,8 @@ import io.bidswipe.app.ui.dashboard.SavedItemsFragment
 import io.bidswipe.app.ui.sellerHub.OverAllFragment
 import io.bidswipe.app.ui.sellerHub.TransactionsFragment
 import io.bidswipe.app.ui.sellerHub.WalletViewFragment
+import io.bidswipe.app.ui.sellerHub.OverviewFragment
+import io.bidswipe.app.ui.sellerHub.PromotedShowsFragment
 import io.bidswipe.app.ui.sellerProfile.ClipsFragment
 import io.bidswipe.app.ui.sellerProfile.ReviewListFragment
 import io.bidswipe.app.ui.sellerProfile.SellerShowFragment
@@ -41,6 +43,13 @@ class ViewPagerAdapter(fragmentActivity : FragmentActivity , type : String) :
 			listOf(
 				WalletViewFragment() ,
 				TransactionsFragment()
+			)
+		}
+
+        "promoteTools" -> {
+			listOf(
+				OverviewFragment() ,
+				PromotedShowsFragment()
 			)
 		}
 

@@ -939,8 +939,15 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
                     append("Quantity: ")
                     append(liveProduct.quantity ?: 0)
                 }
-                bind.productImage.loadUrl(mCtx, liveProduct.image ?: "")
-                bind.productImageShop.loadUrl(mCtx, liveProduct.image ?: "")
+
+	            if (liveProduct.image?.contains(Const.BASE_URL) == true){
+		            bind.productImage.loadUrl(mCtx, liveProduct.image)
+		            bind.productImageShop.loadUrl(mCtx, liveProduct.image)
+	            }else{
+		            bind.productImage.loadUrl(mCtx, "${Const.BASE_URL + "/"}${liveProduct.image ?:""}")
+		            bind.productImageShop.loadUrl(mCtx, "${Const.BASE_URL + "/"}${liveProduct.image ?:""}")
+	            }
+
                 val price = liveProduct.price
                 bind.price.text = price?.asMoney() ?: ("0.0" + "Shipping + Taxes")
 

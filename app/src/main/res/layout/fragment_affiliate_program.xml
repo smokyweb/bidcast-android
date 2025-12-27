@@ -340,7 +340,6 @@
 
                     <TextView
                         android:id="@+id/referral_code"
-                        style="@style/TitleMedium"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="@dimen/half_margin"

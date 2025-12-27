@@ -504,13 +504,15 @@ class SellerHubViewModel @Inject constructor(
 	fun storeShippingProfile(
 		name: RequestBody?,
 		size : RequestBody?,
-		weight : RequestBody?
+		weight : RequestBody?,
+		additionalWeight: RequestBody?,
+		maxItems: RequestBody?
 	) = viewModelScope.launch {
 		if (!networkMonitor.hasInternet()) {
 			_storeShippingProfileResponse.value = NO_INTERNET_ERROR
 			return@launch
 		}
-		_storeShippingProfileResponse.value = repo.storeShippingProfile(name,size,weight)
+		_storeShippingProfileResponse.value = repo.storeShippingProfile(name,size,weight, additionalWeight,maxItems)
 	}
 
 	private var _getShippingProfileResponse = MutableLiveData<Resource<GetShippingProfilesResponse>>()

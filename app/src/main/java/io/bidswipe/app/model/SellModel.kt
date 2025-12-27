@@ -5,4 +5,5 @@ data class SellModel(
 	val color : Int? ,
 	val title : String? ,
 	val subtitle : String? ,
+	var status : String?  = "",
 )

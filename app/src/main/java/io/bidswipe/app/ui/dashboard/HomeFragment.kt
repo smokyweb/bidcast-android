@@ -2,10 +2,7 @@ package io.bidswipe.app.ui.dashboard
 
 import android.annotation.SuppressLint
 import android.content.Intent
-import android.graphics.Color
 import android.graphics.Typeface
-import android.graphics.drawable.BitmapDrawable
-import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -36,7 +33,6 @@ import io.bidswipe.app.ui.product.ProductDetailsActivity
 import io.bidswipe.app.ui.sellerProfile.SellerProfileActivity
 import io.bidswipe.app.ui.watchStream.ViewLiveShowActivity
 import io.bidswipe.app.utils.Alerts
-import io.bidswipe.app.utils.clr
 import io.bidswipe.app.utils.hideKeyboard
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request
@@ -267,7 +263,9 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
 
             bind.loader.isVisible = false
             val mData = App.categoryList
+
             categoryTiles.clear()
+
             categoryTiles.add(
                 HomeCategoryAdapter.CategoryTile(
                     id = "for_you",
@@ -279,7 +277,7 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
             )
 
             categoryTiles.addAll(
-                mData.filter { data -> data?.isSelected == true }.mapNotNull { category ->
+                mData.filter { data -> data?.isSelected == true }.distinct().mapNotNull { category ->
                     val name = category?.name ?: return@mapNotNull null
                     HomeCategoryAdapter.CategoryTile(
                         id = name,
@@ -323,7 +321,9 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
                         viewModel.getCategoryRepo.value = null
 
                         val mData = it.value.data
+
                         categoryTiles.clear()
+
                         categoryTiles.add(
                             HomeCategoryAdapter.CategoryTile(
                                 id = "for_you",
@@ -336,7 +336,7 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
 
                         categoryTiles.addAll(
                             mData?.filter { data -> data?.isSelected == true }
-                                ?.mapNotNull { category ->
+                                ?.distinct()?.mapNotNull { category ->
                                     val name = category?.name ?: return@mapNotNull null
                                     HomeCategoryAdapter.CategoryTile(
                                         id = name,
@@ -356,7 +356,7 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
                             )
                         )
 
-                        categoryAdapter.notifyDataSetChanged()
+	                    categoryAdapter.notifyDataSetChanged()
 
                         val tileToSelect =
                             categoryTiles.firstOrNull { it.id == selectedCategoryTileId && it.tileType != HomeCategoryAdapter.TileType.SEE_ALL }

@@ -54,9 +54,8 @@ class AffiliateProgramFragment : BaseFragment<SellerHubViewModel, FragmentAffili
 			BenefitItem(R.drawable.ic_people, "Prioritize your show", "When they join, your shows will be highlighted in their feed")
 		)
 
-		val buyerAdapter = ReferralBenefitsAdapter( buyerBenefits )
+		val buyerAdapter = ReferralBenefitsAdapter(buyerBenefits)
 		bind.buyerBenefits.adapter = buyerAdapter
-
 
 		val sellerBenefits = mutableListOf(
 			BenefitItem(
@@ -68,7 +67,7 @@ class AffiliateProgramFragment : BaseFragment<SellerHubViewModel, FragmentAffili
 			BenefitItem(R.drawable.ic_people, "They earn too", "Your referrals will earn a bonus of up to \$150 in matched earnings during their first week")
 		)
 
-		val sellerAdapter = ReferralBenefitsAdapter( sellerBenefits )
+		val sellerAdapter = ReferralBenefitsAdapter(sellerBenefits)
 		bind.sellerBenefits.adapter = sellerAdapter
 
 
@@ -107,7 +106,7 @@ class AffiliateProgramFragment : BaseFragment<SellerHubViewModel, FragmentAffili
 
 			val shareIntent = Intent(Intent.ACTION_SEND).apply {
 				type = "Text/*"
-				putExtra(Intent.EXTRA_TEXT, shareText )
+				putExtra(Intent.EXTRA_TEXT, shareText)
 			}
 
 			context?.startActivity(Intent.createChooser(shareIntent, "Share invite link"))

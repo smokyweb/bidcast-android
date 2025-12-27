@@ -92,7 +92,11 @@
         android:id="@+id/promoteToolsFragment"
         android:name="io.bidswipe.app.ui.sellerHub.PromoteToolsFragment"
         android:label="fragment_promote_tools"
-        tools:layout="@layout/fragment_promote_tools" />
+        tools:layout="@layout/fragment_promote_tools" >
+        <action
+            android:id="@+id/action_promoteToolsFragment_to_showDetailsFragment"
+            app:destination="@id/showDetailsFragment" />
+    </fragment>
     <fragment
         android:id="@+id/analyticsFragment"
         android:name="io.bidswipe.app.ui.sellerHub.AnalyticsFragment"
@@ -160,5 +164,12 @@
         android:name="io.bidswipe.app.ui.product.VideoReceiptPlayerFragment"
         android:label="fragment_video_receipt_player"
         tools:layout="@layout/fragment_video_receipt_player" />
+    <fragment
+        android:id="@+id/promotedShowsFragment"
+        android:name="io.bidswipe.app.ui.sellerHub.PromotedShowsFragment"
+        android:label="fragment_promoted_shows"
+        tools:layout="@layout/fragment_promoted_shows" >
+
+    </fragment>
 
 </navigation>
