@@ -57,12 +57,13 @@ class SellerHubViewModel @Inject constructor(
 
 	fun getMyScheduledShow(
         type : RequestBody? = null ,
+        page : RequestBody? = null ,
     ) = viewModelScope.launch {
 		if (!networkMonitor.hasInternet()) {
 			_getMyScheduledShowResponse.value = NO_INTERNET_ERROR
 			return@launch
 		}
-		_getMyScheduledShowResponse.value = repo.getMyScheduledShow(type)
+		_getMyScheduledShowResponse.value = repo.getMyScheduledShow(type, page)
 	}
 
 	private var _fetchSellerVerificationResponse = MutableLiveData<Resource<FetchSellerVerificationResponse>>()
@@ -125,13 +126,14 @@ class SellerHubViewModel @Inject constructor(
 		get() = _offerListResponse
 
 	fun offerList(
-        page : Int? = null ,
+        page : RequestBody? ,
+        offerType : RequestBody?  ,
     ) = viewModelScope.launch {
 		if (!networkMonitor.hasInternet()) {
 			_offerListResponse.value = NO_INTERNET_ERROR
 			return@launch
 		}
-		_offerListResponse.value = repo.offerList(page)
+		_offerListResponse.value = repo.offerList(page, offerType)
 	}
 
 	private var _offerUpdateStatusResponse = MutableLiveData<Resource<UpdateOfferResponse>>()

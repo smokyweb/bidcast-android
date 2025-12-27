@@ -7,7 +7,7 @@ import androidx.annotation.Keep
 @Keep
 data class CreateProductResponse(
     @SerializedName("data")
-    val `data`: Data?,
+    val `data`: Product?,
     @SerializedName("error_type")
     val errorType: String?,
     @SerializedName("message")
@@ -15,7 +15,7 @@ data class CreateProductResponse(
     @SerializedName("status")
     val status: String?
 ) {
-    @Keep
+  /*  @Keep
     data class Data(
         @SerializedName("accept_offers")
         val acceptOffers: Boolean?,
@@ -101,5 +101,5 @@ data class CreateProductResponse(
             @SerializedName("value")
             val value: String?
         )
-    }
+    }*/
 }

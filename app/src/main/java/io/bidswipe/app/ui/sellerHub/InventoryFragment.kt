@@ -73,6 +73,7 @@ class InventoryFragment : BaseFragment<SellerHubViewModel, FragmentInventoryBind
 		val from = requireActivity().intent.getStringExtra("from")
 		val isSelectionMode = from == "addProduct"
 
+
 		if (from == "addProduct") {
 			val categoryId = requireActivity().intent.getStringExtra("categoryId")
 			categoryIds.add(categoryId?.toInt())

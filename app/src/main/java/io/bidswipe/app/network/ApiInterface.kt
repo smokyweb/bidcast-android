@@ -261,6 +261,7 @@ interface ApiInterface {
     @POST("api/get-my-schedule-show")
     suspend fun getMyScheduledShow(
         @Part("type") type: RequestBody?,
+        @Part("page") page: RequestBody?,
     ): GetMyShowResponse
 
     @Multipart
@@ -286,7 +287,8 @@ interface ApiInterface {
     @Multipart
     @POST("api/offer/lists")
     suspend fun offerList(
-        @Part("page") page: Int?,
+        @Part("page") page: RequestBody?,
+        @Part("offer_type") offerType: RequestBody?,
     ): GetOffersResponse
 
     @Multipart

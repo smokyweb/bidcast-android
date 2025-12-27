@@ -30,6 +30,7 @@ import io.bidswipe.app.utils.request
 import io.bidswipe.app.utils.runSafe
 import io.bidswipe.app.utils.setHapticClickListener
 import io.bidswipe.app.utils.value
+import kotlin.text.ifEmpty
 
 class ShopFragment : BaseFragment<SellerViewModel, FragmentShopBinding>() {
     override fun getModel(): Class<SellerViewModel> = SellerViewModel::class.java
@@ -44,7 +45,7 @@ class ShopFragment : BaseFragment<SellerViewModel, FragmentShopBinding>() {
     private var sortBy = ""
     private var saleType = ""
     private var type = ""
-    private var status = ""
+    private var productStatus = ""
     private var page = 1
     private var isLoading = false
 
@@ -200,6 +201,7 @@ class ShopFragment : BaseFragment<SellerViewModel, FragmentShopBinding>() {
             userId = sellerId.request(),
             saleType = saleType.ifEmpty { null }?.request(),
             type = type.ifEmpty { null }?.request(),
+	        status = productStatus.ifEmpty { null }?.request(),
             sortBy = sortBy.ifEmpty { null }?.request(),
             page = page.toString().request(),
             search = bind.search.value().ifEmpty { null }?.request()
@@ -255,15 +257,20 @@ class ShopFragment : BaseFragment<SellerViewModel, FragmentShopBinding>() {
 
                     1 -> {
                         saleType = "auction"
+	                    type = ""
+	                    productStatus = ""
                     }
 
                     2 -> {
                         type  = "buy_now"
+	                    saleType = ""
+	                    productStatus = ""
                     }
 
                     3 -> {
-                        status = "inactive"
-
+                        productStatus = "inactive"
+	                    saleType = ""
+	                    type = ""
                     }
 
                 }
@@ -301,6 +308,8 @@ class ShopFragment : BaseFragment<SellerViewModel, FragmentShopBinding>() {
                     bind.search.setText("")
                     saleType = ""
                     sortBy = ""
+	                productStatus = ""
+
                     page = 1
 
                     when (pos) {

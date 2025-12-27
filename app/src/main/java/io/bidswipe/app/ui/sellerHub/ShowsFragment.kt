@@ -10,6 +10,8 @@ import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.tabs.TabLayout
 import io.bidswipe.app.App
 import io.bidswipe.app.R
@@ -48,6 +50,9 @@ class ShowsFragment : BaseFragment<SellerHubViewModel, FragmentShowsBinding>() {
     private lateinit var showAdapter: ShowListingAdapter
 
     private var showList = mutableListOf<GetMyShowResponse.Data?>()
+
+	private var page = 1
+	private var isLoading = false
 
     private val mClicks = object : RecyclerClicks {
         override fun itemClick(pos: Int, status: String?) {
@@ -106,7 +111,6 @@ class ShowsFragment : BaseFragment<SellerHubViewModel, FragmentShowsBinding>() {
                     categoryId = data?.category?.id.toString()
                 )
 
-
                 viewModel.selectedShow = showData
                 viewModel.showTime = showList[pos]?.time
 
@@ -130,26 +134,31 @@ class ShowsFragment : BaseFragment<SellerHubViewModel, FragmentShowsBinding>() {
 
         bind.swipeRefreshLayout.setOnRefreshListener {
             bind.loader.isVisible = true
+
+	        page = 1
+
             val currentTab = bind.tabs.selectedTabPosition
             val requestType = when (currentTab) {
                 0 -> "upcoming"
                 1 -> "past"
                 else -> "upcoming"
             }
-            viewModel.getMyScheduledShow(requestType.request())
+            viewModel.getMyScheduledShow(requestType.request(), page.toString().request())
         }
 
         bind.noInternet.onClick {
             bind.loader.isVisible = true
             bind.noInternet.isVisible = false
 
+	        page = 1
+
             val currentTab = bind.tabs.selectedTabPosition
             val requestType = when (currentTab) {
                 0 -> "upcoming"
                 1 -> "past"
                 else -> "upcoming"
             }
-            viewModel.getMyScheduledShow(requestType.request())
+            viewModel.getMyScheduledShow(requestType.request(), page.toString().request())
         }
 
         bind.tabs.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
@@ -158,9 +167,11 @@ class ShowsFragment : BaseFragment<SellerHubViewModel, FragmentShowsBinding>() {
                 showAdapter.notifyDataSetChanged()
                 bind.loader.isVisible = true
 
+	            page = 1
+
                 when (tab?.position) {
-                    0 -> viewModel.getMyScheduledShow("upcoming".request())
-                    1 -> viewModel.getMyScheduledShow("past".request())
+                    0 -> viewModel.getMyScheduledShow("upcoming".request(), page.toString().request())
+                    1 -> viewModel.getMyScheduledShow("past".request(), page.toString().request())
                 }
 
             }
@@ -173,22 +184,42 @@ class ShowsFragment : BaseFragment<SellerHubViewModel, FragmentShowsBinding>() {
 
         })
 
+	    bind.recycler.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+		    override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+			    super.onScrolled(recyclerView, dx, dy)
+			    val layoutManager = bind.recycler.layoutManager as LinearLayoutManager
+			    val lastItemPosition = layoutManager.findLastVisibleItemPosition()
+			    if (lastItemPosition == (showList.size - 1)) {
+				    if (!isLoading) {
+					    isLoading = true
+					    page++
+					    bind.bottomLoader.isVisible = true
+					    viewModel.getMyScheduledShow(if (bind.tabs.selectedTabPosition == 0) "upcoming".request() else "past".request() , page.toString().request())
+				    }
+			    }
+		    }
+	    })
+
         bind.addNewProduct.setHapticClickListener {
             startActivity(mCtx.toScheduleShow(from = "dash"))
         }
 
         bind.loader.isVisible = true
 
-        viewModel.getMyScheduledShow("upcoming".request())
+        viewModel.getMyScheduledShow("upcoming".request(), page.toString().request())
         viewModel.getMyScheduledShowRepo.observe(viewLifecycleOwner) {
             when (it) {
                 is Resource.Success -> {
                     bind.noInternet.isVisible = false
                     bind.swipeRefreshLayout.isRefreshing = false
+	                bind.bottomLoader.isVisible = false
                     bind.loader.isVisible = false
                     bind.addNewProduct.isVisible = true
 
-                    showList.clear()
+	                if (page == 1){
+		                showList.clear()
+	                }
+
                     it.value.data?.let { data ->
                         showList.addAll(data.distinctBy { show -> show?.id })
                     }
@@ -202,14 +233,17 @@ class ShowsFragment : BaseFragment<SellerHubViewModel, FragmentShowsBinding>() {
                         bind.recycler.isVisible = true
                     }
 
+	                isLoading = page >= (it.value.totalPage ?: 0)
+
                 }
 
                 is Resource.Error -> {
                     bind.swipeRefreshLayout.isRefreshing = false
                     bind.noInternet.isVisible = false
                     bind.loader.isVisible = false
+	                bind.bottomLoader.isVisible = false
 
-                    if (it.isNetworkError) {
+	                if (it.isNetworkError) {
                         bind.noInternet.isVisible = true
                         bind.recycler.isVisible = false
                         bind.addNewProduct.isVisible = false

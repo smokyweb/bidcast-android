@@ -139,7 +139,8 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
 
     suspend fun getMyScheduledShow(
         type: RequestBody?,
-    ) = call { api.getMyScheduledShow(type) }
+        page: RequestBody?,
+    ) = call { api.getMyScheduledShow(type, page) }
 
     suspend fun getProfileById(
         userId: RequestBody?,
@@ -156,8 +157,9 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
     ) = call { api.makeOffer(amount, productId) }
 
     suspend fun offerList(
-        page: Int?,
-    ) = call { api.offerList(page) }
+        page: RequestBody?,
+        offerType: RequestBody?,
+    ) = call { api.offerList(page, offerType) }
 
     suspend fun offerUpdateStatus(
         offerId: RequestBody?,

@@ -58,25 +58,8 @@ class AddProductFragment : BaseFragment<ScheduleShowViewModel, FragmentAddProduc
 
                 Log.d(TAG, "$selectedProducts ")
                 selectedProducts?.forEach { data ->
-
-					val product = LiveShowModel.Product(
-							LiveShowModel.Category(
-								data.category?.id,
-								data.category?.image ?: "",
-								data.category?.name ?: "",
-								data.category?.thumbnail
-							),
-							data.id.toString(),
-							data.images?.get(0),
-							data.status,
-							data.title,
-							data.pricing.toString(),
-							data.quantity.toString(),
-							selected = true
-						)
-
-                    if (!viewModel.currentProducts.any { existing -> existing.id == product.id }) {
-                        viewModel.currentProducts.add(product)
+                    if (!viewModel.currentProducts.any { existing -> existing.id == data.id }) {
+                        viewModel.currentProducts.add(data)
                     }
                 }
 

@@ -19,6 +19,7 @@ import io.bidswipe.app.network.response.GetMailClassesResponse
 import io.bidswipe.app.network.response.GetProductsResponse
 import io.bidswipe.app.network.response.GetShowDetailsResponse
 import io.bidswipe.app.network.response.GetShowOverviewResponse
+import io.bidswipe.app.network.response.Product
 import io.bidswipe.app.network.response.StoreProductMetaResponse
 import io.bidswipe.app.utils.Const.NO_INTERNET_ERROR
 import io.bidswipe.app.utils.NetworkMonitor
@@ -33,7 +34,7 @@ class ScheduleShowViewModel @Inject constructor(
     private val networkMonitor: NetworkMonitor
 ) : ViewModel() {
 
-    var currentProducts = mutableListOf<LiveShowModel.Product>()
+    var currentProducts = mutableListOf<Product>()
 
     var showId :String? = null
     var showTitle = ""

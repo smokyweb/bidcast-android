@@ -159,25 +159,11 @@ class ProductWeightFragment : BaseFragment<ScheduleShowViewModel, FragmentProduc
 					viewModel.storeProductRepo.value=null
 					bind.loader.isVisible = false
 
-					val data = it.value.data
+					val mData = it.value.data
 
-					val product =
-						LiveShowModel.Product(
-							LiveShowModel.Category(
-								data?.category?.id,
-								data?.category?.image ?: "",
-								data?.category?.name ?: "",
-								data?.category?.thumbnail
-							),
-							data?.id.toString(),
-							data?.images?.get(0),
-							data?.status,
-							data?.title,
-							data?.pricing,
-							data?.quantity
-						)
-
-					viewModel.currentProducts.add(product)
+					if (mData != null){
+						viewModel.currentProducts.add(mData)
+					}
 
 					findNavController().navigate(ids.addProductFragment)
 				}

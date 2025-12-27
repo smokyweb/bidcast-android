@@ -142,14 +142,30 @@
             android:padding="@dimen/half_margin"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             tools:itemCount="6"
+            android:visibility="gone"
             tools:listitem="@layout/seller_offers_item" />
+
+        <com.github.ybq.android.spinkit.SpinKitView
+            android:id="@+id/bottomLoader"
+            style="@style/appLoader"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent" />
 
         <io.bidswipe.app.ui.custom.NoDataView
             android:id="@+id/noData"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:visibility="gone"
             app:title_text="No Data Found" />
+
+        <io.bidswipe.app.ui.custom.NoDataView
+            android:id="@+id/noInternet"
+            style="@style/noInternetStyle"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone" />
 
     </LinearLayout>
 

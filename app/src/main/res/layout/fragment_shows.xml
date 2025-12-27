@@ -11,10 +11,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:headerMode="BACK_BUTTON_TITLE_ACTION"
+        app:headerTitle="My Shows"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:headerTitle="My Shows"
         app:primaryIconDrawable="@drawable/permissionx_ic_setting"
         app:secondaryIconDrawable="@drawable/notification"
         app:showBackButton="true" />
@@ -31,8 +31,8 @@
             style="@style/cardStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:cardBackgroundColor="@color/surfaceVariant"
             android:layout_margin="@dimen/half_margin"
+            app:cardBackgroundColor="@color/surfaceVariant"
             app:cardCornerRadius="8dp"
             app:cardElevation="0dp">
 
@@ -59,6 +59,7 @@
                     android:text="Past" />
 
             </com.google.android.material.tabs.TabLayout>
+
         </com.google.android.material.card.MaterialCardView>
 
         <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -67,20 +68,27 @@
             android:layout_height="0dp"
             android:layout_weight="1">
 
-            <androidx.constraintlayout.widget.ConstraintLayout
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+                android:orientation="vertical">
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/recycler"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_height="0dp"
                     android:orientation="vertical"
+                    android:layout_weight="1"
                     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                    tools:itemCount="6"
-                    tools:layout_editor_absoluteX="0dp"
-                    tools:layout_editor_absoluteY="0dp"
+                    tools:itemCount="3"
                     tools:listitem="@layout/show_listing_item" />
+
+                <com.github.ybq.android.spinkit.SpinKitView
+                    android:id="@+id/bottomLoader"
+                    style="@style/appLoader"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone" />
 
                 <io.bidswipe.app.ui.custom.NoDataView
                     android:id="@+id/noData"
@@ -98,7 +106,7 @@
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
-            </androidx.constraintlayout.widget.ConstraintLayout>
+            </LinearLayout>
 
         </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 

@@ -37,9 +37,9 @@ class MyOrdersFragment : BaseFragment<SellerHubViewModel, FragmentMyOrdersBindin
 
     private var orderList = mutableListOf<GetOrdersResponse.Data?>()
     private lateinit var adapter: OrdersAdapter
-    private var page = 1
     private var status = ""
-    private var isLoading = false
+	private var page = 1
+	private var isLoading = false
 
     private val mClick = object : RecyclerClicks {
         override fun itemClick(pos: Int, status: String?) {

@@ -257,13 +257,14 @@ class DashViewModel @Inject constructor(
 		get() = _offerListResponse
 
 	fun offerList(
-		page : Int ,
+		page : RequestBody? ,
+		offerType : RequestBody? ,
 	) = viewModelScope.launch {
 		if (! networkMonitor.hasInternet()) {
 			_offerListResponse.value = NO_INTERNET_ERROR
 			return@launch
 		}
-		_offerListResponse.value = repo.offerList(page)
+		_offerListResponse.value = repo.offerList(page, offerType)
 	}
 
 	private var _offerUpdateStatusResponse = MutableLiveData<Resource<UpdateOfferResponse>>()

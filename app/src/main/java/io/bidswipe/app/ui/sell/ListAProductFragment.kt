@@ -11,7 +11,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
-import android.widget.EditText
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.core.text.buildSpannedString
@@ -55,11 +54,6 @@ import io.bidswipe.app.utils.value
 import okhttp3.MultipartBody
 import java.io.File
 import java.io.FileOutputStream
-import java.lang.ref.WeakReference
-import java.math.BigDecimal
-import java.text.NumberFormat
-import java.util.Locale
-
 
 data class MediaItem(
 	val path: String,
@@ -985,7 +979,6 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
 					Alerts.error(mCtx, "Please enter description")
 				}
 
-
 				packageWidth <= 0 || packageHeight <= 0 || packageLength <= 0 || packageWeight <= 0 -> {
 					Alerts.error(mCtx, "Please enter all package dimensions")
 				}
@@ -1047,9 +1040,7 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
 					} else {
 						Alerts.error(mCtx, "Please select shipping profile")
 					}
-
 				}
-
 
 				else -> {
 					saveProduct("active")

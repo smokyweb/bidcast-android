@@ -16,7 +16,6 @@ import io.bidswipe.app.utils.Utils
 import io.bidswipe.app.utils.asCapital
 import io.bidswipe.app.utils.asMoney
 import io.bidswipe.app.utils.loadUrl
-import io.bidswipe.app.utils.setHapticClickListener
 
 class OffersAdapter(
 	mList: MutableList<GetOffersResponse.Data?>, val mClicks: RecyclerClicks,
@@ -30,19 +29,9 @@ class OffersAdapter(
 		item: GetOffersResponse.Data?,
 	) {
 		with(holder) {
-			
-			bind.buttonLayout.isVisible = true
-			bind.accept.setHapticClickListener {
-				mClicks.itemClick(position, "accept")
-			}
-			
-			bind.decline.setHapticClickListener {
-				mClicks.itemClick(position, "reject")
-			}
-			
+
 			when (item?.status) {
 				"accepted" -> {
-					bind.buttonLayout.isVisible = false
 					bind.status.isVisible = true
 					bind.status.setTextColor(ContextCompat.getColor(mCtx, R.color.success))
 					bind.status.backgroundTintList = ColorStateList.valueOf(
@@ -55,7 +44,6 @@ class OffersAdapter(
 				}
 				
 				"rejected" -> {
-					bind.buttonLayout.isVisible = false
 					bind.status.isVisible = true
 					bind.status.setTextColor(ContextCompat.getColor(mCtx, R.color.error))
 					bind.status.backgroundTintList = ColorStateList.valueOf(
@@ -68,8 +56,15 @@ class OffersAdapter(
 				}
 				
 				"pending" -> {
-					bind.status.isVisible = false
-					bind.buttonLayout.isVisible = true
+					bind.status.isVisible = true
+					bind.status.setTextColor(ContextCompat.getColor(mCtx, R.color.primary))
+					bind.status.backgroundTintList = ColorStateList.valueOf(
+						ContextCompat.getColor(
+							mCtx,
+							R.color.primaryContainer
+						)
+					)
+					bind.status.text = ContextCompat.getString(mCtx, R.string.pending)
 				}
 				
 			}

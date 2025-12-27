@@ -18,7 +18,7 @@ data class UpdateOfferResponse(
 	@Keep
 	data class Data(
 		@SerializedName("amount")
-		val amount : Int? ,
+		val amount : Double? ,
 		@SerializedName("created_at")
 		val createdAt : String? ,
 		@SerializedName("id")

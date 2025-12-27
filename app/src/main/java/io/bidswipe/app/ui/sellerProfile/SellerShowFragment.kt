@@ -51,7 +51,7 @@ class SellerShowFragment : BaseFragment<SellerViewModel , FragmentSellerShowBind
 			bind.noInternet.isVisible = false
 			bind.loader.isVisible = true
 			page = 1
-			viewModel.getMyScheduledShow("upcoming".request())
+			viewModel.getMyScheduledShow("upcoming".request(), page.toString().request())
 		} else {
 			bind.recycler.isVisible = false
 			bind.noData.isVisible = false
@@ -71,11 +71,11 @@ class SellerShowFragment : BaseFragment<SellerViewModel , FragmentSellerShowBind
 			bind.loader.isVisible = true
 			bind.noInternet.isVisible = false
 			page = 1
-			viewModel.getMyScheduledShow("upcoming".request())
+			viewModel.getMyScheduledShow("upcoming".request(), page.toString().request())
 		}
 
 		bind.loader.isVisible = true
-		viewModel.getMyScheduledShow("upcoming".request())
+		viewModel.getMyScheduledShow("upcoming".request() , page.toString().request())
 
 		viewModel.getMyScheduledShowRepo.observe(viewLifecycleOwner) {
 			when (it) {

@@ -122,38 +122,6 @@
 
         </LinearLayout>
 
-        <LinearLayout
-            android:id="@+id/buttonLayout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:visibility="gone"
-            android:weightSum="2">
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/decline"
-                style="@style/appBtn"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/margin"
-                android:layout_weight="1"
-                android:backgroundTint="@color/error"
-                android:paddingHorizontal="@dimen/margin"
-                android:text="Decline" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/accept"
-                style="@style/appBtn"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/margin"
-                android:layout_weight="1"
-                android:backgroundTint="@color/success"
-                android:paddingHorizontal="@dimen/margin"
-                android:text="Accept" />
-
-        </LinearLayout>
-
         <com.google.android.material.button.MaterialButton
             android:id="@+id/status"
             style="@style/appBtn"
