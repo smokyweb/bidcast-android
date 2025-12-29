@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/surface"
     tools:context=".ui.sellerHub.shipping.DomesticShipmentsFragment">
 
     <io.bidswipe.app.ui.custom.Header
@@ -19,9 +20,9 @@
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/header">
+        android:layout_height = "0dp"
+        app:layout_constraintBottom_toTopOf = "@id/bottomLayout"
+        app:layout_constraintTop_toBottomOf = "@+id/header" >
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -45,10 +46,13 @@
                 android:textSize="16dp" />
 
             <LinearLayout
+                style="@style/shadowStyle"
+                android:background="@drawable/card_8"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/margin"
                 android:layout_marginVertical="@dimen/half_margin"
+                android:padding="@dimen/margin"
                 android:gravity="center_vertical"
                 android:orientation="horizontal">
 
@@ -59,7 +63,8 @@
                     android:orientation="vertical">
 
                     <TextView
-                        style="@style/TitleLarge"
+                        style="@style/TitleMedium"
+                        android:textStyle="bold"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="USPS First-Class Mail Letter" />
@@ -75,21 +80,18 @@
                 <com.google.android.material.materialswitch.MaterialSwitch
                     android:id="@+id/free_pickup"
                     style="@style/appSwitch"
+                    android:layout_marginStart="@dimen/half_margin"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textAppearance="@style/TitleLarge" />
 
             </LinearLayout>
 
-            <com.google.android.material.divider.MaterialDivider
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginVertical="@dimen/margin" />
-
             <TextView
                 style="@style/TitleLarge"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margin"
                 android:layout_marginHorizontal="@dimen/margin"
                 android:text="Domestic Shipments from 1 to 5 lbs"
                 android:textSize="16dp" />
@@ -99,56 +101,59 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/domestic_1_5_recycler"
                 android:nestedScrollingEnabled="false"
-                android:layout_marginHorizontal="@dimen/margin"
-                tools:itemCount="2"
+                android:layout_marginHorizontal="@dimen/half_margin"
+                tools:itemCount="1"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 tools:listitem="@layout/domestic_shipment_item" />
 
-
-            <com.google.android.material.divider.MaterialDivider
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginVertical="@dimen/margin" />
             <TextView
                 style="@style/TitleLarge"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margin"
                 android:layout_marginHorizontal="@dimen/margin"
                 android:text="Domestic Shipments over 5 lbs"
-                android:textSize="16dp" />
+                android:textSize="16sp" />
+
             <androidx.recyclerview.widget.RecyclerView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/domestic_5_recycler"
                 android:nestedScrollingEnabled="false"
-                android:layout_marginHorizontal="@dimen/margin"
-                tools:itemCount="3"
+                android:layout_marginHorizontal="@dimen/half_margin"
+                tools:itemCount="1"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 tools:listitem="@layout/domestic_shipment_item" />
 
-            <com.google.android.material.divider.MaterialDivider
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginVertical="@dimen/margin" />
-
-            <com.google.android.material.checkbox.MaterialCheckBox
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="@dimen/margin"
-                android:minHeight="0dp"
-                android:text="Also apply to scheduled shows"
-                android:textAppearance="@style/TitleLarge"
-                android:textSize="14dp" />
-
-            <com.google.android.material.button.MaterialButton
-                style="@style/appBtn"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="16dp"
-                android:text="Save" />
-
         </LinearLayout>
 
-
     </ScrollView>
+
+    <LinearLayout
+        android:id = "@+id/bottomLayout"
+        android:layout_width = "match_parent"
+        android:layout_height = "wrap_content"
+        android:orientation = "vertical"
+        app:layout_constraintBottom_toBottomOf = "parent" >
+
+            <com.google.android.material.checkbox.MaterialCheckBox
+                style = "@style/appCheckbox"
+                android:layout_width = "match_parent"
+                android:layout_height = "wrap_content"
+                android:layout_marginHorizontal = "@dimen/margin"
+                android:layout_marginTop = "@dimen/margin"
+                android:minHeight = "0dp"
+                android:text = "Also apply to scheduled shows"
+                android:textAppearance = "@style/TitleMedium" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id = "@+id/save"
+            style = "@style/appBtn"
+            android:layout_width = "match_parent"
+            android:layout_height = "wrap_content"
+            android:layout_margin = "16dp"
+            android:text = "Save" />
+
+    </LinearLayout >
+
 </androidx.constraintlayout.widget.ConstraintLayout>

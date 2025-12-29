@@ -93,7 +93,7 @@ class App : Application() {
 
 	}
 
-	override fun onCreate() {jack@
+	override fun onCreate() {
 		super.onCreate()
 
 		mCtx = applicationContext
@@ -102,7 +102,7 @@ class App : Application() {
 		FirebaseApp.initializeApp(applicationContext)
 
 		if (BuildConfig.DEBUG) {
-			FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(false)
+			FirebaseCrashlytics.getInstance().isCrashlyticsCollectionEnabled = false
 		}
 
 		if (Prefs(mCtx).token().isNotEmpty()) {

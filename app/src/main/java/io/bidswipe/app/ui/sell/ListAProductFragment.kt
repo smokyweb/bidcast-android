@@ -29,6 +29,7 @@ import io.bidswipe.app.databinding.CategoryBottomSheetBinding
 import io.bidswipe.app.databinding.FragmentListAProductBinding
 import io.bidswipe.app.interfaces.AlertClicks
 import io.bidswipe.app.interfaces.RecyclerClicks
+import io.bidswipe.app.model.MediaItem
 import io.bidswipe.app.model.StoreProductRequest
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.network.response.GetCategoryResponse
@@ -54,11 +55,6 @@ import io.bidswipe.app.utils.value
 import okhttp3.MultipartBody
 import java.io.File
 import java.io.FileOutputStream
-
-data class MediaItem(
-	val path: String,
-	val isVideo: Boolean = false
-)
 
 @SuppressLint("NotifyDataSetChanged")
 class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBinding>() {
@@ -748,14 +744,14 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
 						// Restore selected mail class if available
 						if (selectedMailClass != null) {
 							val sel = mailClassesList.findLast { mailClass ->
-								selectedMailClass?.label?.lowercase() == mailClass?.label?.lowercase()
+								selectedMailClass?.label.equals(mailClass?.label , ignoreCase = true)
 							}
 							if (sel != null) {
 								selectedMailClass = sel
 								bind.mailClass.setText(sel.label, false)
 							}
 						} else {
-							val sel = mailClassesList.find { it?.label == product?.mailClass }
+							val sel = mailClassesList.find { mailClasses -> mailClasses?.label == product?.mailClass }
 
 							if (sel != null) {
 								selectedMailClass = sel

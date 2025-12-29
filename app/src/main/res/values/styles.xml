@@ -208,6 +208,18 @@
         <item name="android:textColor">@color/onSurface</item>
     </style>
 
+    <style name="appCheckbox" parent="Widget.Material3.CompoundButton.CheckBox">
+        <item name="android:textAppearance">@style/TitleMedium</item>
+        <item name="android:textColor">@color/onSurface</item>
+        <item name="buttonTint">@color/switch_track_deco_color</item>
+    </style>
+
+    <style name="appRadio" parent="Widget.Material3.CompoundButton.RadioButton">
+        <item name="android:textAppearance">@style/TitleMedium</item>
+        <item name="android:textColor">@color/onSurface</item>
+        <item name="buttonTint">@color/switch_track_deco_color</item>
+    </style>
+
     <style name="noInternetStyle">
         <item name="icon">@drawable/no_result</item>
         <item name="title_text">Oops!</item>
