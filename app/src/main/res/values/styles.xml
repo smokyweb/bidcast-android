@@ -209,7 +209,7 @@
     </style>
 
     <style name="appCheckbox" parent="Widget.Material3.CompoundButton.CheckBox">
-        <item name="android:textAppearance">@style/TitleMedium</item>
+        <item name="android:textAppearance">@style/TitleSmall</item>
         <item name="android:textColor">@color/onSurface</item>
         <item name="buttonTint">@color/switch_track_deco_color</item>
     </style>

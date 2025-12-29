@@ -74,7 +74,7 @@
         <activity
             android:name=".ui.watchStream.ViewLiveShowActivity"
             android:configChanges="screenSize|smallestScreenSize|screenLayout|orientation"
-            android:exported="false"
+            android:exported="true"
             android:resizeableActivity="true"
             android:supportsPictureInPicture="true"
             android:windowSoftInputMode="adjustResize" >
@@ -94,11 +94,10 @@
             android:exported="false" />
         <activity
             android:name=".ui.sellerProfile.SellerProfileActivity"
-            android:exported="false"
+            android:exported="true"
             android:windowSoftInputMode="adjustResize" >
             <intent-filter android:autoVerify="true" >
                 <action android:name="android.intent.action.VIEW" />
-
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
 
@@ -109,7 +108,7 @@
         </activity>
         <activity
             android:name=".ui.product.ProductDetailsActivity"
-            android:exported="false" >
+            android:exported="true" >
             <intent-filter android:autoVerify="true" >
                 <action android:name="android.intent.action.VIEW" />
 

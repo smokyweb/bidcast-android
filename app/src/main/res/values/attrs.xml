@@ -18,6 +18,7 @@
     </declare-styleable>
 
     <declare-styleable name="Header">
+        <attr name="backgroundColor" format="color" />
         <attr name="secondaryIconDrawable" format="reference" />
         <attr name="primaryIconDrawable" format="reference" />
         <attr name="backIconDrawable" format="reference" />

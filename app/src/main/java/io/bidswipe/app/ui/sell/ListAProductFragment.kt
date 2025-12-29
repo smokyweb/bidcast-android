@@ -186,8 +186,7 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
 					if (it.moveToFirst()) {
 						val nameIndex = it.getColumnIndex(OpenableColumns.DISPLAY_NAME)
 						if (nameIndex != -1) {
-							val name =
-								it.getString(nameIndex) ?: "video_${System.currentTimeMillis()}.mp4"
+							val name = it.getString(nameIndex) ?: "video_${System.currentTimeMillis()}.mp4"
 							val cacheFile = File(mCtx.cacheDir, name)
 							mCtx.contentResolver.openInputStream(uri)?.use { input ->
 								FileOutputStream(cacheFile).use { output ->
@@ -318,7 +317,7 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
 		if (product == null) {
 			product = activity?.intent?.getSerializableExtra("product") as? Product
 
-			log("PRODUCT : ${product}")
+			log("PRODUCT : $product")
 			if (product != null) {
 				viewModel.getProductDetails(product?.id.toString().request())
 			}
@@ -390,7 +389,7 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
 			processingCategories
 		)
 
-		bind.reserveForLive.setOnCheckedChangeListener { view, isChecked ->
+		bind.reserveForLive.setOnCheckedChangeListener { _, isChecked ->
 			if (isChecked) {
 				bind.acceptOffers.isChecked = false
 				bind.flashSell.isChecked = false
@@ -957,7 +956,7 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
 
 			when {
 
-				imageList.filter { !it.isVideo }.isEmpty() -> {
+				imageList.none { ! it.isVideo } -> {
 					Alerts.error(mCtx, "Please select at least one photo")
 				}
 
@@ -1260,7 +1259,7 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
 		val videoPartList = mutableListOf<MultipartBody.Part>()
 
 		// Separate photos and videos
-		imageList.filter { it.path.contains(Const.BASE_URL) == false }.forEach { mediaItem ->
+		imageList.filter { ! it.path.contains(Const.BASE_URL) }.forEach { mediaItem ->
 			if (mediaItem.path.isNotEmpty()) {
 				if (mediaItem.isVideo) {
 					// Handle video upload

@@ -1,208 +1,196 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".ui.auth.LoginFragment">
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android = "http://schemas.android.com/apk/res/android"
+	xmlns:app = "http://schemas.android.com/apk/res-auto"
+	xmlns:tools = "http://schemas.android.com/tools"
+	android:layout_width = "match_parent"
+	android:layout_height = "match_parent"
+	android:background = "@color/surface"
+	tools:context = ".ui.auth.LoginFragment" >
 
     <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@id/privacyLayout"
-        app:layout_constraintTop_toTopOf="parent">
+	    android:layout_width = "match_parent"
+	    android:layout_height = "0dp"
+	    app:layout_constraintBottom_toTopOf = "@id/privacyLayout"
+	    app:layout_constraintTop_toTopOf = "parent" >
 
         <LinearLayout
-            android:id="@+id/layout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
+	        android:id = "@+id/layout"
+	        android:layout_width = "match_parent"
+	        android:layout_height = "wrap_content"
+	        android:orientation = "vertical"
+	        android:padding = "@dimen/padding" >
 
             <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/signInBg"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginHorizontal="38dp"
-                android:layout_marginVertical="64dp"
-                android:paddingTop="24dp"
-                android:src="@drawable/app_icon"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+	            android:id = "@+id/signInBg"
+	            android:layout_width = "match_parent"
+	            android:layout_height = "wrap_content"
+	            android:layout_gravity = "center"
+	            android:layout_marginHorizontal = "24dp"
+	            android:layout_marginVertical = "56dp"
+	            android:paddingTop = "24dp"
+	            android:src = "@drawable/app_icon"
+	            app:layout_constraintEnd_toEndOf = "parent"
+	            app:layout_constraintStart_toStartOf = "parent"
+	            app:layout_constraintTop_toTopOf = "parent" />
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:orientation="vertical">
+	        <TextView
+		        style = "@style/TitleSmall"
+		        android:layout_width = "match_parent"
+		        android:layout_height = "wrap_content"
+		        android:layout_marginVertical = "@dimen/half_margin"
+		        android:text = "@string/email" />
 
-                <TextView
-                    style="@style/TitleSmall"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="@dimen/margin"
-                    android:layout_marginVertical="@dimen/half_margin"
-                    android:text="@string/email" />
+	        <com.google.android.material.textfield.TextInputLayout
+		        style = "@style/inputBoxStyle"
+		        android:layout_width = "match_parent"
+		        android:layout_height = "wrap_content"
+		        android:layout_marginBottom = "@dimen/margin"
+		        app:startIconDrawable = "@drawable/ic_user_outline" >
 
-                <com.google.android.material.textfield.TextInputLayout
-                    style="@style/inputBoxStyle"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="@dimen/margin"
-                    android:layout_marginBottom="@dimen/margin">
+		        <com.google.android.material.textfield.MaterialAutoCompleteTextView
+			        android:id = "@+id/email"
+			        style = "@style/inputTextStyle"
+			        android:layout_width = "match_parent"
+			        android:layout_height = "wrap_content"
+			        android:hint = "@string/enter_your_email"
+			        android:inputType = "textEmailAddress" />
 
-                    <com.google.android.material.textfield.MaterialAutoCompleteTextView
-                        android:id="@+id/email"
-                        style="@style/inputTextStyle"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:hint="@string/enter_your_email"
-                        android:inputType="textEmailAddress" />
+	        </com.google.android.material.textfield.TextInputLayout >
 
-                </com.google.android.material.textfield.TextInputLayout>
+	        <TextView
+		        style = "@style/TitleSmall"
+		        android:layout_width = "match_parent"
+		        android:layout_height = "wrap_content"
+		        android:layout_marginVertical = "@dimen/half_margin"
+		        android:text = "@string/password" />
 
-
-                <TextView
-                    style="@style/TitleSmall"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="@dimen/margin"
-                    android:layout_marginVertical="@dimen/half_margin"
-                    android:text="@string/password" />
-
-                <com.google.android.material.textfield.TextInputLayout
-                    style="@style/inputBoxStyle"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="@dimen/margin"
-                    android:layout_marginBottom="@dimen/margin"
-                    app:endIconMode="password_toggle">
+	        <com.google.android.material.textfield.TextInputLayout
+		        style = "@style/inputBoxStyle"
+		        android:layout_width = "match_parent"
+		        android:layout_height = "wrap_content"
+		        android:layout_marginBottom = "@dimen/margin"
+		        app:endIconMode = "password_toggle"
+		        app:startIconDrawable = "@drawable/ic_lock" >
 
                     <com.google.android.material.textfield.MaterialAutoCompleteTextView
-                        android:id="@+id/password"
-                        style="@style/inputTextStyle"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:hint="***********"
-                        android:inputType="textPassword" />
+	                    android:id = "@+id/password"
+	                    style = "@style/inputTextStyle"
+	                    android:layout_width = "match_parent"
+	                    android:layout_height = "wrap_content"
+	                    android:hint = "***********"
+	                    android:inputType = "textPassword" />
 
-                </com.google.android.material.textfield.TextInputLayout>
+                </com.google.android.material.textfield.TextInputLayout >
 
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/margin"
-                    android:layout_marginHorizontal="@dimen/margin"
-                    android:gravity="center"
-                    android:orientation="horizontal"
-                    android:weightSum="1">
+	        <LinearLayout
+		        android:layout_width = "match_parent"
+		        android:layout_height = "wrap_content"
+		        android:layout_marginBottom = "@dimen/margin"
+		        android:gravity = "center"
+		        android:orientation = "horizontal"
+		        android:weightSum = "1" >
 
                     <androidx.appcompat.widget.AppCompatCheckBox
-                        android:id="@+id/rememberMe"
-                        style="@style/BodyMedium"
-                        android:layout_width="wrap_content"
-                        android:layout_height="20dp"
-                        android:text="@string/remember_me"
-                        app:buttonTint="@color/tertiary" />
+	                    android:id = "@+id/rememberMe"
+	                    style = "@style/appCheckbox"
+	                    android:layout_width = "wrap_content"
+	                    android:layout_height = "20dp"
+	                    android:text = "@string/remember_me" />
 
                     <View
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1" />
+	                    android:layout_width = "0dp"
+	                    android:layout_height = "match_parent"
+	                    android:layout_weight = "1" />
 
                     <TextView
-                        android:id="@+id/forgot"
-                        style="@style/BodyMedium"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:background="?selectableItemBackground"
-                        android:gravity="end"
-                        android:padding="8dp"
-                        android:text="@string/forgot_password"
-                        android:textColor="@color/primary"
-                        android:textStyle="bold" />
+	                    android:id = "@+id/forgot"
+	                    style = "@style/BodyMedium"
+	                    android:layout_width = "wrap_content"
+	                    android:layout_height = "wrap_content"
+	                    android:background = "?selectableItemBackground"
+	                    android:gravity = "end"
+	                    android:padding = "8dp"
+	                    android:text = "@string/forgot_password"
+	                    android:textColor = "@color/primary"
+	                    android:textStyle = "bold" />
 
-                </LinearLayout>
+                </LinearLayout >
 
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/loginBtn"
-                    style="@style/appBtn"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="@dimen/margin"
-                    android:layout_marginVertical="@dimen/padding"
-                    android:text="@string/login" />
+	        <com.google.android.material.button.MaterialButton
+		        android:id = "@+id/loginBtn"
+		        style = "@style/appBtn"
+		        android:layout_width = "match_parent"
+		        android:layout_height = "wrap_content"
+		        android:layout_marginVertical = "@dimen/padding"
+		        android:text = "@string/login" />
 
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/margin"
-                    android:gravity="center"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        style="@style/BodyMedium"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:text="@string/new_user" />
-
-                    <TextView
-                        android:id="@+id/createAccount"
-                        style="@style/TitleMedium"
-                        android:background="?selectableItemBackground"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:text=" Create Account" />
-
-                </LinearLayout>
-
-            </LinearLayout>
-
-        </LinearLayout>
-
-    </ScrollView>
-
-    <LinearLayout
-        android:id="@+id/privacyLayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        android:layout_margin="@dimen/margin"
-        android:gravity="center"
-        android:orientation="horizontal"
-        app:layout_constraintBottom_toBottomOf="parent">
+            <LinearLayout
+	            android:layout_width = "match_parent"
+	            android:layout_height = "wrap_content"
+	            android:layout_gravity = "bottom"
+	            android:gravity = "center"
+	            android:orientation = "horizontal"
+	            app:layout_constraintBottom_toBottomOf = "parent" >
 
         <TextView
-            android:id="@+id/privacyPolicy"
-            style="@style/BodyMedium"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="?selectableItemBackground"
-            android:layout_gravity="center"
-            android:text="Privacy Policy" />
+	        android:id = "@+id/privacyPolicy"
+	        style = "@style/BodyMedium"
+	        android:layout_width = "wrap_content"
+	        android:layout_height = "wrap_content"
+	        android:layout_gravity = "center"
+	        android:background = "?selectableItemBackground"
+	        android:text = "@string/privacy_policy" />
 
         <TextView
-            android:id="@+id/termsOfService"
-            style="@style/BodyMedium"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="?selectableItemBackground"
-            android:layout_gravity="center"
-            android:text=" | Terms of Service" />
+	        android:id = "@+id/termsOfService"
+	        style = "@style/BodyMedium"
+	        android:layout_width = "wrap_content"
+	        android:layout_height = "wrap_content"
+	        android:layout_gravity = "center"
+	        android:layout_marginStart = "4dp"
+	        android:background = "?selectableItemBackground"
+	        android:text = "@string/terms_of_service" />
 
-    </LinearLayout>
+    </LinearLayout >
 
+        </LinearLayout >
+
+    </ScrollView >
+
+	<LinearLayout
+		android:id = "@+id/privacyLayout"
+		android:layout_width = "match_parent"
+		android:layout_height = "wrap_content"
+		android:layout_gravity = "bottom"
+		android:layout_margin = "@dimen/margin"
+		android:gravity = "center"
+		android:orientation = "horizontal"
+		app:layout_constraintBottom_toBottomOf = "parent" >
+
+		<TextView
+			style = "@style/BodyLarge"
+			android:layout_width = "wrap_content"
+			android:layout_height = "wrap_content"
+			android:layout_gravity = "center"
+			android:text = "@string/new_user"
+			android:textColor = "@color/onSurfaceVariant" />
+
+		<TextView
+			android:id = "@+id/createAccount"
+			style = "@style/BodyLarge"
+			android:layout_width = "wrap_content"
+			android:layout_height = "wrap_content"
+			android:layout_gravity = "center"
+			android:background = "?selectableItemBackground"
+			android:text = " Create Account" />
+
+	</LinearLayout >
 
     <io.bidswipe.app.ui.custom.LoaderView
-        android:id="@+id/loader"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:visibility="gone" />
+	    android:id = "@+id/loader"
+	    android:layout_width = "match_parent"
+	    android:layout_height = "match_parent"
+	    android:visibility = "gone" />
 
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout >

@@ -3,12 +3,14 @@ package io.bidswipe.app.ui.custom
 import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater
+import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.use
 import androidx.core.view.isVisible
 import io.bidswipe.app.databinding.HeaderViewBinding
+import io.bidswipe.app.utils.clr
 import io.bidswipe.app.utils.draw
 import io.bidswipe.app.utils.styleable
 
@@ -22,6 +24,8 @@ class Header @JvmOverloads constructor(
 
     init {
         context.theme.obtainStyledAttributes(attrs, styleable.Header, 0, 0).use {
+
+            setBackground(it.getColor(styleable.Header_backgroundColor, ContextCompat.getColor(context, clr.onPrimary)))
 
             setHeaderText(it.getString(styleable.Header_headerTitle) ?: "")
 
@@ -86,6 +90,10 @@ class Header @JvmOverloads constructor(
                 bind.primary.isVisible = true   // Include primary button
             }
         }
+    }
+
+    fun setBackground(@ColorRes color: Int) {
+        bind.header.setBackgroundColor(color)
     }
 
     fun setHeaderText(title: String) {
