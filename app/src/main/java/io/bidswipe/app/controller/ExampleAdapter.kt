@@ -20,10 +20,10 @@ class ExampleAdapter(
 		item : String? ,
 	) {
 		with(holder) {
-
 			bind.icon.isVisible = true
-			bind.title.setHtmlFromString("$item" , false)
-
+			bind.title.text = item.toString()
+			bind.title.isVisible = false
+			bind.subTitle.setHtmlFromString("$item" , false)
 		}
 	}
 }

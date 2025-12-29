@@ -86,29 +86,47 @@
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="@dimen/half_margin"
                         android:text="recommended_size_1280_x_720px" />
+
                 </LinearLayout>
 
             </LinearLayout>
 
-            <TextView
-                style="@style/TitleSemiBold"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/margin"
-                android:layout_marginHorizontal="@dimen/half_margin"
-                android:text="@string/tips_for_a_great_thumbnail" />
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recycler"
+            <com.google.android.material.card.MaterialCardView
+                style="@style/cardStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="@dimen/half_margin"
-                android:nestedScrollingEnabled="false"
-                android:orientation="vertical"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                app:layout_constraintTop_toBottomOf="@id/stepProgress"
-                tools:itemCount="5"
-                tools:listitem="@layout/sell_sheet_item" />
+                android:layout_margin="@dimen/half_margin"
+                app:cardBackgroundColor="@color/background">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:padding="@dimen/margin"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        style="@style/TitleLarge"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/tips_for_a_great_thumbnail" />
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/recycler"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:nestedScrollingEnabled="false"
+                        android:orientation="vertical"
+                        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                        app:layout_constraintTop_toBottomOf="@id/stepProgress"
+                        tools:itemCount="5"
+                        tools:listitem="@layout/title_item" />
+
+                </LinearLayout>
+
+
+            </com.google.android.material.card.MaterialCardView>
+
+
 
             <TextView
                 style="@style/TitleSemiBold"
