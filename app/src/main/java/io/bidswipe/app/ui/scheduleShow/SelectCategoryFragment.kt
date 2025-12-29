@@ -34,8 +34,7 @@ class SelectCategoryFragment : BaseFragment<ScheduleShowViewModel, FragmentSelec
 
     private var categoryList = mutableListOf<GetCategoryResponse.Data?>()
     private var auctionTypeList = mutableListOf<GetAuctionTypeResponse.Data?>()
-    private var repeatModes = mutableListOf("Daily", "Weekly")
-
+    private var repeatModes = mutableListOf( "No Repeat", "Daily", "Weekly")
     private var categoryId = ""
     private var auctionId = ""
 
@@ -120,6 +119,8 @@ class SelectCategoryFragment : BaseFragment<ScheduleShowViewModel, FragmentSelec
         bind.repeat.setOnItemClickListener { _, _, position, _ ->
             viewModel.repeatMode = repeatModes[position]
         }
+
+
 
         bind.repeat.setHapticClickListener {
             bind.repeat.showDropDown()

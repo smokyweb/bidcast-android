@@ -6,12 +6,10 @@ import android.view.ViewGroup
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.content.ContextCompat
-import androidx.core.view.isVisible
 import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseAdapter
 import io.bidswipe.app.databinding.ProductListItemBinding
 import io.bidswipe.app.interfaces.RecyclerClicks
-import io.bidswipe.app.model.LiveShowModel
 import io.bidswipe.app.network.response.Product
 import io.bidswipe.app.utils.asCapital
 import io.bidswipe.app.utils.ids
@@ -40,6 +38,7 @@ class ProductAdapter(
                 }
 
             bind.productName.text = item?.title?.asCapital()
+
             bind.prodSubTitle.text = item?.category?.name
             bind.quantity.text = buildString {
                 append("Quantity: ")

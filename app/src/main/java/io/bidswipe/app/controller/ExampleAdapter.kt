@@ -21,8 +21,8 @@ class ExampleAdapter(
 	) {
 		with(holder) {
 
-			bind.icon.isVisible = false
-			bind.title.setHtmlFromString("${Const.BULLET} $item" , false)
+			bind.icon.isVisible = true
+			bind.title.setHtmlFromString("$item" , false)
 
 		}
 	}

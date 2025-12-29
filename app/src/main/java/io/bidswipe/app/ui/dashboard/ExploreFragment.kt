@@ -14,6 +14,7 @@ import androidx.core.view.isVisible
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.chip.ChipGroup
 import io.bidswipe.app.base.BaseFragment
 import io.bidswipe.app.controller.ExploreAdapter
 import io.bidswipe.app.databinding.FragmentExploreBinding
@@ -30,6 +31,7 @@ import io.bidswipe.app.utils.ids
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.runSafe
 import io.bidswipe.app.utils.setHapticClickListener
+import io.bidswipe.app.utils.value
 
 @SuppressLint("NotifyDataSetChanged")
 class ExploreFragment : BaseFragment<DashViewModel, FragmentExploreBinding>() {
@@ -40,10 +42,10 @@ class ExploreFragment : BaseFragment<DashViewModel, FragmentExploreBinding>() {
 
     private lateinit var exploreAdapter: ExploreAdapter
     private var exploreList = mutableListOf<GetCategoryResponse.Data?>()
-    private var selectedTabText = "recommended"
+    private var selectedTabText = "all"
     private var loadingSubcategoriesForPosition: Int? = null
-
     private var selectedCategory : GetCategoryResponse.Data?  = null
+	private var oldText = ""
 
     private val mClick = object : RecyclerClicks {
 
@@ -102,13 +104,37 @@ class ExploreFragment : BaseFragment<DashViewModel, FragmentExploreBinding>() {
         }
     }
 
+	private val textWatcher = object : TextWatcher {
+		override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+		override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+		override fun afterTextChanged(s: Editable?) {
+
+			val query = s?.toString()?.trim() ?: ""
+
+			if (query == oldText) return
+			oldText = query
+
+			bind.searchLayout.isEndIconVisible = query.isNotEmpty()
+			bind.loader.isVisible = true
+			bind.recycler.isVisible = false
+			bind.noData.isVisible = false
+
+			log("Query : $selectedTabText ")
+
+			viewModel.getCategory(type = selectedTabText, search = query.ifEmpty { null }, getCount = "true")
+
+		}
+	}
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+	    log("OnViewCreated")
+
         bind.root.setHapticClickListener {
             hideKeyboard(it)
         }
+
         bind.main.setHapticClickListener {
             hideKeyboard(it)
         }
@@ -159,44 +185,29 @@ class ExploreFragment : BaseFragment<DashViewModel, FragmentExploreBinding>() {
 
         bind.searchLayout.isEndIconVisible = false
 
-        bind.search.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
-            override fun afterTextChanged(s: Editable?) {
-                val query = s?.toString()?.trim() ?: ""
-                bind.searchLayout.isEndIconVisible = query.isNotEmpty()
-
-                bind.loader.isVisible = true
-                bind.recycler.isVisible = false
-                bind.noData.isVisible = false
-
-                if (query.isNotEmpty()) {
-                    viewModel.getCategory(type = selectedTabText, search = query, getCount = "true")
-                } else {
-                    viewModel.getCategory(type = selectedTabText, getCount = "true")
-                }
-            }
-        })
-
         bind.searchLayout.setEndIconOnClickListener {
-            bind.search.setText("")
+	        bind.search.setText( "")
             bind.searchLayout.isEndIconVisible = false
-            viewModel.getCategory(type = selectedTabText, getCount = "true")
             hideKeyboard(it)
         }
 
         bind.swipeRefreshLayout.setOnRefreshListener {
-            bind.search.setText("")
-            viewModel.getCategory(type = selectedTabText, getCount = "true")
+	        bind.loader.isVisible = true
+	        viewModel.getCategory(type = selectedTabText, search = bind.search.value().ifEmpty { null }, getCount = "true")
         }
 
         bind.noInternet.onClick {
             bind.loader.isVisible = true
             bind.noInternet.isVisible = false
-            viewModel.getCategory(type = selectedTabText, getCount = "true")
+	        viewModel.getCategory(type = selectedTabText, search = bind.search.value().ifEmpty { null }, getCount = "true")
         }
 
         setUpChips()
+
+	    if (viewModel.getCategoryRepo.value == null){
+		    bind.loader.isVisible = true
+		    viewModel.getCategory(type = selectedTabText, getCount = "true")
+	    }
 
         // Observe subcategories response
         viewModel.getSubCategoriesRepo.observe(viewLifecycleOwner) {
@@ -336,15 +347,17 @@ class ExploreFragment : BaseFragment<DashViewModel, FragmentExploreBinding>() {
 
         }
 
+	    bind.search.addTextChangedListener(textWatcher)
+
     }
 
-    override fun onPause() {
-        super.onPause()
-        bind.search.setText("")
-    }
+	override fun onPause() {
+		super.onPause()
+		bind.search.removeTextChangedListener(textWatcher)
+		bind.search.setText("")
+	}
 
     private fun setUpChips() {
-        bind.search.setText("")
         bind.chipGroup.removeAllViews()
 
         listOf("All","Recommended", "Popular").forEach {
@@ -384,6 +397,7 @@ class ExploreFragment : BaseFragment<DashViewModel, FragmentExploreBinding>() {
 		                viewModel.getCategory(type = "popular", getCount = "true")
 	                }
                 }
+
             }
         }
 

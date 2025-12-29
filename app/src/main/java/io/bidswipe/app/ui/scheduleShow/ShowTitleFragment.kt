@@ -18,6 +18,7 @@ import io.bidswipe.app.network.response.GetAllTipsResponse
 import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.utils.Alerts
 import io.bidswipe.app.utils.Utils
+import io.bidswipe.app.utils.asCapital
 import io.bidswipe.app.utils.finish
 import io.bidswipe.app.utils.hideKeyboard
 import io.bidswipe.app.utils.ids
@@ -156,7 +157,7 @@ class ShowTitleFragment : BaseFragment<ScheduleShowViewModel, FragmentShowTitleB
                     viewModel.auctionId = mData?.auctionTypeId.toString()
 
                     viewModel.repeatMode = if (mData?.isRepeat ?: false) "0" else "1"
-                    viewModel.repeatType = mData?.repeatValue ?: ""
+                    viewModel.repeatType = mData?.repeatValue?.asCapital() ?: ""
 
                     viewModel.explicitContent = if (mData?.isExplicit ?: false) "1" else "0"
                     viewModel.primaryLanguage = mData?.language ?: ""

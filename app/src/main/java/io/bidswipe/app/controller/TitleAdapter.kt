@@ -6,11 +6,9 @@ import androidx.core.view.isVisible
 import io.bidswipe.app.base.BaseAdapter
 import io.bidswipe.app.databinding.TitleItemBinding
 import io.bidswipe.app.network.response.GetAllTipsResponse
-import io.bidswipe.app.utils.Const
 import io.bidswipe.app.utils.loadUrl
 
-class TitleAdapter(
-	mList : MutableList<GetAllTipsResponse.Data.Tip?> ,
+class TitleAdapter(mList : MutableList<GetAllTipsResponse.Data.Tip?> ,
 ) : BaseAdapter<GetAllTipsResponse.Data.Tip? , TitleItemBinding>(mList) {
 
 	override fun bindView(inflater : LayoutInflater , parent : ViewGroup) =
@@ -23,9 +21,9 @@ class TitleAdapter(
 	) {
 		with(holder) {
 
-//			bind.icon.loadUrl(mCtx , item?.icon.toString())
-			bind.icon.isVisible=false
-			bind.title.setHtmlFromString("${Const.BULLET} ${item?.description ?: ""}" , false)
+			bind.icon.loadUrl(mCtx , item?.icon ?:"")
+			bind.icon.isVisible = true
+			bind.title.setHtmlFromString("${item?.description ?: ""}" , false)
 
 		}
 	}

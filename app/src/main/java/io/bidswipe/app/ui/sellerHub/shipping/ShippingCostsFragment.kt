@@ -13,8 +13,8 @@ import io.bidswipe.app.databinding.FragmentShippingCostsBinding
 import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.ui.sellerHub.SellerHubViewModel
 
-class ShippingCostsFragment :
-    BaseFragment<SellerHubViewModel, FragmentShippingCostsBinding>() {
+class ShippingCostsFragment : BaseFragment<SellerHubViewModel, FragmentShippingCostsBinding>() {
+
     override fun getModel(): Class<SellerHubViewModel> = SellerHubViewModel::class.java
 
     override fun getBind(

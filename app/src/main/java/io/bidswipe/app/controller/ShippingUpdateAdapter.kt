@@ -23,6 +23,7 @@ class ShippingUpdateAdapter(
 		with(holder) {
 
 			bind.title.text = item?.title?.asCapital()
+
 			bind.subTitle.text = Utils.getFormattedDateTime(
 				"yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'" ,
 				"MMM dd, yyyy - HH:mm" ,

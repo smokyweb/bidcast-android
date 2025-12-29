@@ -57,9 +57,7 @@ class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
 	private lateinit var moreAdapter: MoreAdapter
 	private lateinit var gridAdapter: GridAdapter
 	private lateinit var accountGridAdapter: GridAdapter
-	private var kycUrl = ""
 	private var upcomingShow: SellerHubResponse.Data.UpcomingShow? = null
-
 
 	private val onTabSelectedListener = object : OnTabSelectedListener {
 		override fun onTabSelected(tab: TabLayout.Tab?) {
@@ -212,10 +210,27 @@ class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
 		accountGridAdapter = GridAdapter(accountGridList, accountGridClick)
 		bind.accountView.gridRecycler.adapter = accountGridAdapter
 
+		bind.sellerHub.payoutCard.setHapticClickListener {
+			startActivity(
+				Intent(mCtx, SellerHubActivity::class.java).putExtra(
+					"slug",
+					"wallet"
+				)
+			)
+		}
+
+		bind.sellerHub.totalOrderCard.setHapticClickListener {
+			startActivity(
+				Intent(mCtx, SellerHubActivity::class.java).putExtra(
+					"slug",
+					"order"
+				)
+			)
+		}
+
 		bind.editIcon.setHapticClickListener {
 			startActivity(Intent(mCtx, UpdateAccountActivity::class.java))
 		}
-
 
 		viewModel.logoutRepo.observe(viewLifecycleOwner) {
 			when (it) {
@@ -267,14 +282,15 @@ class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
 			startActivity(mCtx.toScheduleShow(from = "dash"))
 		}
 
-		bind.sellerHub.vacationMode.setOnCheckedChangeListener { _, status ->
-			viewModel.updateVacationModeStatus(status.toString().request())
-		}
-
 		bind.sellerHub.upcomingShow.setHapticClickListener {
 			upcomingShow
 			startActivity(Intent(mCtx, ShowDetailsActivity::class.java).putExtra("showId", upcomingShow?.id.toString()))
 		}
+
+		bind.sellerHub.vacationMode.setOnCheckedChangeListener { _, status ->
+			viewModel.updateVacationModeStatus(status.toString().request())
+		}
+
 
 		bind.loader.isVisible = true
 		viewModel.getSellerHubInfo()
