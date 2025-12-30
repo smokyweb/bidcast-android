@@ -335,12 +335,13 @@ interface ApiInterface {
     suspend fun getShippingAddress(
     ): GetShippingAddressResponse
 
-    @POST("api/add-card-net")
+	@Multipart
+    @POST("api/add-card")
     suspend fun addPaymentCard(
-        @Body data: PaymentCardModel,
+		@Part("card_token") cardToken: RequestBody?,
     ): CommonResponse
 
-    @GET("api/get-card-net")
+    @GET("api/get-card")
     suspend fun getPaymentCard(
     ): GetPaymentCardsResponse
 
@@ -564,7 +565,6 @@ interface ApiInterface {
         @Part("customerPaymentProfileId") cardId: RequestBody,
     ): CommonResponse
 
-
     @POST("api/stripe/check-Kyc")
     suspend fun checkKyc(
     ): CheckKycResponse
@@ -645,9 +645,9 @@ interface ApiInterface {
     ): CommonResponse
 
     @Multipart
-    @POST("api/delete-card-net")
+    @POST("api/delete-card")
     suspend fun deleteCard(
-        @Part("payment_profile_id") cardId: RequestBody?,
+        @Part("card_id") cardId: RequestBody?,
     ): CommonResponse
 
     @Multipart

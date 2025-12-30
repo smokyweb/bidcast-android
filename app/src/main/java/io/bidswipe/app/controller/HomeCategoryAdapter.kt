@@ -87,7 +87,7 @@ class HomeCategoryAdapter(
     enum class TileType {
         FOR_YOU,
         CATEGORY,
-        SEE_ALL,
+        SEE_ALL
     }
 
 }

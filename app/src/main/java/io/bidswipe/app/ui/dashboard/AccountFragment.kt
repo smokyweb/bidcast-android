@@ -11,6 +11,7 @@ import androidx.core.view.isVisible
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayout.OnTabSelectedListener
 import io.bidswipe.app.App
+import io.bidswipe.app.BuildConfig
 import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseFragment
 import io.bidswipe.app.controller.GridAdapter

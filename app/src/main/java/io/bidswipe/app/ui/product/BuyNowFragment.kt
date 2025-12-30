@@ -50,7 +50,7 @@ class BuyNowFragment : BaseFragment<ProductViewModel, FragmentBuyNowBinding>() {
 
 	private var checkOutData: GetPurchaseDetail.Data? = null
 
-	private var cardList = mutableListOf<GetPaymentCardsResponse.Data.PaymentProfile?>()
+	private var cardList = mutableListOf<GetPaymentCardsResponse.Data?>()
 	private var addressList = mutableListOf<GetShippingAddressResponse.Data?>()
 	private var shippingId = 0
 	private var cardId = ""
@@ -143,7 +143,7 @@ class BuyNowFragment : BaseFragment<ProductViewModel, FragmentBuyNowBinding>() {
 							bundleOf(
 								"shippingId" to shippingId.toString(),
 								"productId" to viewModel.product?.id.toString(),
-								"cardId" to cardList[0]?.customerPaymentProfileId,
+								"cardId" to cardList[0]?.cardId.toString(),
 								"promoCode" to bind.promoCode.value()
 							)
 						)
@@ -235,7 +235,7 @@ class BuyNowFragment : BaseFragment<ProductViewModel, FragmentBuyNowBinding>() {
 				is Resource.Success -> {
 					bind.loader.isVisible = false
 
-					val mData = it.value.data?.paymentProfiles
+					val mData = it.value.data
 
 					cardList.clear()
 
@@ -255,7 +255,8 @@ class BuyNowFragment : BaseFragment<ProductViewModel, FragmentBuyNowBinding>() {
 
 					} else {
 						bind.cardNumber.text = buildString {
-							append(cardList[0]?.payment?.creditCard?.cardNumber)
+							append("**** **** **** ")
+							append(cardList[0]?.last4)
 						}
 						bind.cardNumber.setCompoundDrawablesWithIntrinsicBounds(
 							ContextCompat.getDrawable(
@@ -266,7 +267,7 @@ class BuyNowFragment : BaseFragment<ProductViewModel, FragmentBuyNowBinding>() {
 
 						cardList[0]?.selected = true
 
-						cardId = cardList[0]?.customerPaymentProfileId.toString()
+						cardId = cardList[0]?.cardId.toString()
 					}
 //					cardAdapter.notifyDataSetChanged()
 				}
@@ -380,12 +381,13 @@ class BuyNowFragment : BaseFragment<ProductViewModel, FragmentBuyNowBinding>() {
 
 						item?.selected = index == pos
 
-						cardId = item?.customerPaymentProfileId.toString()
+						cardId = item?.cardId.toString()
 
 						paymentSheetBind.recycler.adapter?.notifyDataSetChanged()
 
 						bind.cardNumber.text = buildString {
-							append(cardList[pos]?.payment?.creditCard?.cardNumber)
+							append("**** **** **** ")
+							append(item?.last4)
 						}
 						bind.cardNumber.setCompoundDrawablesWithIntrinsicBounds(
 							ContextCompat.getDrawable(

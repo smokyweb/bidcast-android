@@ -11,9 +11,8 @@ import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.network.response.GetPaymentCardsResponse
 import io.bidswipe.app.utils.setHapticClickListener
 
-class PaymentCardAdapter(
-	mList: MutableList<GetPaymentCardsResponse.Data.PaymentProfile?>, val mClicks: RecyclerClicks,
-) : BaseAdapter<GetPaymentCardsResponse.Data.PaymentProfile?, PaymentCardItemBinding>(mList) {
+class PaymentCardAdapter(mList: MutableList<GetPaymentCardsResponse.Data?>, val mClicks: RecyclerClicks,
+) : BaseAdapter<GetPaymentCardsResponse.Data?, PaymentCardItemBinding>(mList) {
 
 	override fun bindView(inflater: LayoutInflater, parent: ViewGroup) =
 		PaymentCardItemBinding.inflate(inflater, parent, false)
@@ -21,7 +20,7 @@ class PaymentCardAdapter(
 	override fun onBind(
 		holder: BaseViewHolder<PaymentCardItemBinding>,
 		position: Int,
-		item: GetPaymentCardsResponse.Data.PaymentProfile?,
+		item: GetPaymentCardsResponse.Data?,
 	) {
 		with(holder) {
 
@@ -29,10 +28,15 @@ class PaymentCardAdapter(
 				mClicks.itemClick(position)
 			}
 
-			bind.cardNumber.text = item?.payment?.creditCard?.cardNumber
+			bind.cardNumber.text = buildString {
+				append("**** **** **** ")
+				append(item?.last4)
+			}
 
 			bind.expiryDate.text = buildString {
-				append(item?.payment?.creditCard?.expirationDate)
+				append(item?.expMonth)
+				append("/")
+				append(item?.expYear)
 			}
 
 			bind.defaultAddress.isVisible = item?.isDefault == true

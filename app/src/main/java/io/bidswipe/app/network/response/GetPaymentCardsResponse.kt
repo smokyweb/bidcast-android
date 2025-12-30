@@ -5,57 +5,37 @@ import androidx.annotation.Keep
 
 @Keep
 data class GetPaymentCardsResponse(
-    @SerializedName("data")
-    val `data` : Data? ,
-    @SerializedName("error_type")
-    val errorType : String? ,
-    @SerializedName("message")
-    val message : String? ,
-    @SerializedName("status")
-    val status : String? ,
+	@SerializedName("current_page")
+	val currentPage: Int?,
+	@SerializedName("data")
+	val `data`: List<Data?>?,
+	@SerializedName("message")
+	val message: String?,
+	@SerializedName("per_page")
+	val perPage: Int?,
+	@SerializedName("status")
+	val status: String?,
+	@SerializedName("total_pages")
+	val totalPages: Int?,
+	@SerializedName("total_records")
+	val totalRecords: Int?
 ) {
 	@Keep
 	data class Data(
-        @SerializedName("customerProfileId")
-        val customerProfileId : String? ,
-        @SerializedName("description")
-        val description : String? ,
-        @SerializedName("email")
-        val email : String? ,
-        @SerializedName("merchantCustomerId")
-        val merchantCustomerId : String? ,
-        @SerializedName("paymentProfiles")
-        val paymentProfiles : List<PaymentProfile?>? ,
-        @SerializedName("profileType")
-        val profileType : String? ,
-    ) {
-		@Keep
-		data class PaymentProfile(
-			@SerializedName("customerPaymentProfileId")
-			val customerPaymentProfileId : String? ,
-			@SerializedName("customerType")
-			val customerType : String? ,
-			@SerializedName("payment")
-			val payment : Payment? ,
-			@SerializedName("is_default")
-			val isDefault : Boolean? ,
-			var selected : Boolean? = false ,
-		) {
-			@Keep
-			data class Payment(
-                @SerializedName("creditCard")
-                val creditCard : CreditCard? ,
-            ) {
-				@Keep
-				data class CreditCard(
-                    @SerializedName("cardNumber")
-                    val cardNumber : String? ,
-                    @SerializedName("cardType")
-                    val cardType : String? ,
-                    @SerializedName("expirationDate")
-                    val expirationDate : String? ,
-                )
-			}
-		}
-	}
+		@SerializedName("card_holder_name")
+		val cardHolderName: String?,
+		@SerializedName("card_id")
+		val cardId: String?,
+		@SerializedName("exp_month")
+		val expMonth: Int?,
+		@SerializedName("exp_year")
+		val expYear: Int?,
+		@SerializedName("fingerprint")
+		val fingerprint: String?,
+		@SerializedName("is_default")
+		val isDefault: Boolean?,
+		@SerializedName("last4")
+		val last4: String?,
+		var selected : Boolean = false
+	)
 }

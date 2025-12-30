@@ -9,8 +9,8 @@ import io.bidswipe.app.network.response.GetPaymentCardsResponse
 import io.bidswipe.app.utils.setHapticClickListener
 
 class SelectPaymentCardAdapter(
-	mList : MutableList<GetPaymentCardsResponse.Data.PaymentProfile?> , val mClicks : RecyclerClicks ,
-) : BaseAdapter<GetPaymentCardsResponse.Data.PaymentProfile? , SelcetableCardItemBinding>(mList) {
+	mList : MutableList<GetPaymentCardsResponse.Data?> , val mClicks : RecyclerClicks ,
+) : BaseAdapter<GetPaymentCardsResponse.Data? , SelcetableCardItemBinding>(mList) {
 
 	override fun bindView(inflater : LayoutInflater , parent : ViewGroup) =
 		SelcetableCardItemBinding.inflate(inflater , parent , false)
@@ -18,7 +18,7 @@ class SelectPaymentCardAdapter(
 	override fun onBind(
 		holder : BaseViewHolder<SelcetableCardItemBinding> ,
 		position : Int ,
-		item : GetPaymentCardsResponse.Data.PaymentProfile? ,
+		item : GetPaymentCardsResponse.Data? ,
 	) {
 		with(holder) {
 
@@ -27,7 +27,8 @@ class SelectPaymentCardAdapter(
 			}
 
 			bind.cardNumber.text = buildString {
-				append(item?.payment?.creditCard?.cardNumber)
+				append("**** **** **** ")
+				append(item?.last4)
 			}
 
 			bind.selectBtn.isChecked = item?.selected == true

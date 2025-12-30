@@ -25,8 +25,10 @@ android {
 		versionCode = 1
 		versionName = "1.0"
 
-		testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-	}
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+	    buildConfigField("String", "STRIPE_PK", "\"pk_test_51SjiEtQzmy9jx34KXrnMJIwqLx5IfCN69oZsNCptlyBfChq7NrJVc8OjS5q16nvnuobjjp3Run8icoXQHn0D9eVG00nJyhk9zM\"")
+    }
 
 	buildTypes {
 		release {

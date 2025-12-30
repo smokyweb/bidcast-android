@@ -71,7 +71,6 @@
             android:alpha="0.7"
             android:text="465 Bussiness Ave , Suit 200 New York" />
 
-
     </LinearLayout>
 
     <androidx.appcompat.widget.AppCompatImageView
@@ -80,5 +79,7 @@
         android:layout_height="18dp"
         android:alpha="0.7"
         android:rotation="90"
+        android:layout_gravity="top"
         android:src="@drawable/ic_detail" />
+
 </LinearLayout>

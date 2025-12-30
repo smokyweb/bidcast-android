@@ -1,6 +1,7 @@
 package io.bidswipe.app.ui.dashboard
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import androidx.activity.viewModels
 import androidx.core.view.ViewCompat
@@ -8,8 +9,13 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsCompat.CONSUMED
 import androidx.core.view.isVisible
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.stripe.android.ApiResultCallback
+import com.stripe.android.Stripe
+import com.stripe.android.model.CardParams
+import com.stripe.android.model.Token
 import com.wajahatkarim3.easyvalidation.core.view_ktx.validator
 import io.bidswipe.app.App
+import io.bidswipe.app.BuildConfig
 import io.bidswipe.app.base.BaseActivity
 import io.bidswipe.app.databinding.ActivityAddPaymentCardBinding
 import io.bidswipe.app.databinding.DatePickerLayoutBinding
@@ -23,6 +29,7 @@ import io.bidswipe.app.utils.bind
 import io.bidswipe.app.utils.hideKeyboard
 import io.bidswipe.app.utils.layout
 import io.bidswipe.app.utils.parse
+import io.bidswipe.app.utils.request
 import io.bidswipe.app.utils.runSafe
 import io.bidswipe.app.utils.setHapticClickListener
 import io.bidswipe.app.utils.showKeyboard
@@ -55,6 +62,9 @@ class AddPaymentCardActivity : BaseActivity() {
 			}
 		}
 
+		bind.rootView.setHapticClickListener {
+			hideKeyboard()
+		}
 
 		bind.addCard.setHapticClickListener {
 
@@ -100,17 +110,28 @@ class AddPaymentCardActivity : BaseActivity() {
 
 					hideKeyboard()
 
+					hideKeyboard()
+
+					val mCard = CardParams(
+						number = bind.cardNumber.value(),
+						expMonth = (bind.expiryDate.text ?: "").split("-")[1].toInt(),
+						expYear = (bind.expiryDate.text ?: "").split("-")[0].toInt(),
+						cvc = bind.csv.value(),
+						name = bind.name.text.toString()
+					)
+
 					bind.loader.isVisible = true
+					val strip = Stripe(this, BuildConfig.STRIPE_PK)
+					strip.createCardToken(mCard, null, null, object : ApiResultCallback<Token> {
+						override fun onSuccess(result: Token) {
+							Log.d(TAG, "onSuccess: $result.")
+							viewModel.addPaymentCard(result.id.request())
+						}
 
-					val cardData = PaymentCardModel(
-						bind.cardNumber.value().replace(" ", ""),
-						bind.csv.value(),
-						bind.expiryDate.value()
-					)
+						override fun onError(e: Exception) {
 
-					viewModel.addPaymentCard(
-						cardData
-					)
+						}
+					})
 
 				}
 

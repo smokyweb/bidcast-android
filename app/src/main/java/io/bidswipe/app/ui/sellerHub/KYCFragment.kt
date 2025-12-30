@@ -12,6 +12,7 @@ import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.activity.OnBackPressedCallback
 import androidx.core.view.isVisible
+import io.bidswipe.app.BuildConfig
 import io.bidswipe.app.base.BaseFragment
 import io.bidswipe.app.databinding.FragmentKYCBinding
 import io.bidswipe.app.interfaces.AlertClicks

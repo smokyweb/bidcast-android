@@ -77,7 +77,7 @@ data class GetProductDetailsResponse(
 		@SerializedName("user_id")
 		val userId: Int?,
 		@SerializedName("variant")
-		val variant: String?,
+		val variant: Any?,
 		@SerializedName("videos")
 		val videos: List<String?>?,
 		@SerializedName("weight")

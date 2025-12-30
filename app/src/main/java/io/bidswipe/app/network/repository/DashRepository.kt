@@ -204,8 +204,8 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
     suspend fun getShippingAddress() = call { api.getShippingAddress() }
 
     suspend fun addPaymentCard(
-        data: PaymentCardModel,
-    ) = call { api.addPaymentCard(data) }
+        cardToken: RequestBody?
+    ) = call { api.addPaymentCard(cardToken) }
 
     suspend fun getPaymentCard(
     ) = call { api.getPaymentCard() }

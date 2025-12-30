@@ -34,7 +34,7 @@ class PaymentShippingFragment : BaseFragment<MoreViewModel, FragmentPaymentShipp
 		view: ViewGroup?,
 	) = FragmentPaymentShippingBinding.inflate(inflater, view, false)
 
-	private var cardList = mutableListOf<GetPaymentCardsResponse.Data.PaymentProfile?>()
+	private var cardList = mutableListOf<GetPaymentCardsResponse.Data?>()
 	private var addressList = mutableListOf<GetShippingAddressResponse.Data?>()
 
 	private lateinit var cardAdapter: PaymentCardAdapter
@@ -66,12 +66,12 @@ class PaymentShippingFragment : BaseFragment<MoreViewModel, FragmentPaymentShipp
 			when (status) {
 				"default" -> {
 					bind.loader.isVisible = true
-					viewModel.setDefaultCard(cardList[pos]?.customerPaymentProfileId.toString().request())
+					viewModel.setDefaultCard(cardList[pos]?.cardId.toString().request())
 				}
 
 				"delete" -> {
 					bind.loader.isVisible = true
-					viewModel.deleteCard(cardList[pos]?.customerPaymentProfileId.toString().request())
+					viewModel.deleteCard(cardList[pos]?.cardId.toString().request())
 				}
 
 			}
@@ -156,7 +156,7 @@ class PaymentShippingFragment : BaseFragment<MoreViewModel, FragmentPaymentShipp
 				is Resource.Success -> {
 					bind.loader.isVisible = false
 
-					val mData = it.value.data?.paymentProfiles
+					val mData = it.value.data
 
 					cardList.clear()
 

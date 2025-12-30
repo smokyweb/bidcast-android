@@ -287,13 +287,13 @@ class DashViewModel @Inject constructor(
 		get() = _addPaymentCardResponse
 
 	fun addPaymentCard(
-		data : PaymentCardModel ,
+		cardToken : RequestBody? ,
 	) = viewModelScope.launch {
 		if (! networkMonitor.hasInternet()) {
 			_addPaymentCardResponse.value = NO_INTERNET_ERROR
 			return@launch
 		}
-		_addPaymentCardResponse.value = repo.addPaymentCard(data)
+		_addPaymentCardResponse.value = repo.addPaymentCard(cardToken)
 	}
 
 	private var _storeDeviceDetailsResponse = MutableLiveData<Resource<UserDeviceResponse>>()

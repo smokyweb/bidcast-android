@@ -43,7 +43,7 @@ class SellerVerificationActivity : BaseActivity() {
 
 	private val viewModel by viewModels<SellerHubViewModel>()
 
-	private var cardList = mutableListOf<GetPaymentCardsResponse.Data.PaymentProfile?>()
+	private var cardList = mutableListOf<GetPaymentCardsResponse.Data?>()
 
 	var cardImage = ""
 	var selfie = ""
@@ -108,7 +108,7 @@ class SellerVerificationActivity : BaseActivity() {
 
 				item?.selected = index == pos
 
-				paymentCardId = item?.customerPaymentProfileId.toString()
+				paymentCardId = item?.cardId.toString()
 
 				cardAdapter.notifyDataSetChanged()
 
@@ -520,13 +520,13 @@ class SellerVerificationActivity : BaseActivity() {
 
 					cardList.clear()
 
-					if (mData?.paymentProfiles?.isNotEmpty() == true) {
+					if (mData?.isNotEmpty() == true) {
 
-						paymentCardId = mData.paymentProfiles[0]?.customerPaymentProfileId.toString()
+						paymentCardId = mData[0]?.cardId.toString()
 
-						mData.paymentProfiles[0]?.selected = true
+						mData[0]?.selected = true
 
-						cardList.add(mData.paymentProfiles[0])
+						cardList.add(mData[0])
 
 					}
 

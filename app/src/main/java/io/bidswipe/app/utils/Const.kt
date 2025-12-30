@@ -14,8 +14,9 @@ object Const {
     const val BASE_URL = "https://backend.bidcast.betaplanets.com"
     val SOCKET_URL = "https://node.bidcast.betaplanets.com/"
 
-    const val STRIPE_KEY =
-        "pk_test_51RQLxjQEbmPLLc7GaDeFTplB9lwTK5t9ZvpHVd1CtK4XtWsmktQvN3hoZW0ZZ0kSu0PFJ6R63D9X3PSMAq8tg5Sh00Vzh05MeU"
+    const val STRIPE_KEY_TEST = "sk_test_51SjiEtQzmy9jx34KJkQK0ng6qgLis0Hs6WlFOreR7PFGZDgAmywdukVujQEZP9ypqkpxANtz06vAvB6cGRyx8rCf00Bj2cGaVU"
+
+    const val STRIPE_KEY = "pk_test_51SjiEtQzmy9jx34KXrnMJIwqLx5IfCN69oZsNCptlyBfChq7NrJVc8OjS5q16nvnuobjjp3Run8icoXQHn0D9eVG00nJyhk9zM"
 
     //NOTIFICATION CONST
     const val CHANNEL_NAME = "Base Project"

@@ -67,10 +67,10 @@ class ShowsFragment : BaseFragment<SellerHubViewModel, FragmentShowsBinding>() {
                     return
                 }
 
-                if (profile.hasCardAdded != true || profile.hasShippingAddress != true) {
-                    showPaymentAndAddressSheet()
-                    return
-                }
+//                if (profile.hasCardAdded != true || profile.hasShippingAddress != true) {
+//                    showPaymentAndAddressSheet()
+//                    return
+//                }
 
                 val data = showList[pos]
                 val user = data?.user
