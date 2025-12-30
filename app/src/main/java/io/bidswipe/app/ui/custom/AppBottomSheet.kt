@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.view.LayoutInflater
 import androidx.core.content.ContextCompat
+import androidx.core.graphics.ColorUtils
 import androidx.core.view.isVisible
 import androidx.core.view.setPadding
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -133,6 +134,7 @@ class AppBottomSheet(
             strokeColor = ContextCompat.getColorStateList(mCtx, clr.error)
             rippleColor = ContextCompat.getColorStateList(mCtx, clr.error)
             setTextColor(ContextCompat.getColor(mCtx, clr.error))
+            setBackgroundColor(ContextCompat.getColor(mCtx, clr.errorContainer))
         } else {
             setBackgroundColor(ContextCompat.getColor(mCtx, clr.error))
             setTextColor(ContextCompat.getColor(mCtx, clr.onError))
@@ -145,6 +147,7 @@ class AppBottomSheet(
             strokeColor = ContextCompat.getColorStateList(mCtx, clr.warning)
             rippleColor = ContextCompat.getColorStateList(mCtx, clr.warning)
             setTextColor(ContextCompat.getColor(mCtx, clr.warning))
+            setBackgroundColor(ColorUtils.setAlphaComponent((ContextCompat.getColor(mCtx, clr.warning)),50))
         } else {
             setBackgroundColor(ContextCompat.getColor(mCtx, clr.warning))
             setTextColor(ContextCompat.getColor(mCtx, clr.onError))
@@ -169,6 +172,7 @@ class AppBottomSheet(
             strokeColor = ContextCompat.getColorStateList(mCtx, clr.success)
             rippleColor = ContextCompat.getColorStateList(mCtx, clr.success)
             setTextColor(ContextCompat.getColor(mCtx, clr.success))
+            setBackgroundColor(ContextCompat.getColor(mCtx, clr.successContainer))
         } else {
             setBackgroundColor(ContextCompat.getColor(mCtx, clr.success))
             setTextColor(ContextCompat.getColor(mCtx, clr.onSuccess))

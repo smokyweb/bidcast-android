@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.bidswipe.app.model.LiveShowModel
+import io.bidswipe.app.model.MediaItem
 import io.bidswipe.app.model.StoreProductRequest
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.network.repository.DashRepository
@@ -61,7 +62,7 @@ class ScheduleShowViewModel @Inject constructor(
     var productHeight = ""
     var productLength = ""
     var productWeight = ""
-    val productImages = mutableListOf<String?>()
+    val productImages = mutableListOf<MediaItem>()
     var productProcessingCategory: String? = null
     var productMailClass: GetMailClassesResponse.Data.MailClasses? = null
     var productSalesFormat: String = ""

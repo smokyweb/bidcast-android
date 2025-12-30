@@ -10,11 +10,8 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
         android:orientation="horizontal"
-        android:paddingHorizontal="@dimen/margin"
-        android:paddingTop="@dimen/margin"
-        android:paddingBottom="8dp">
+        android:padding="12dp">
 
         <com.google.android.material.card.MaterialCardView
             style="@style/cardStyle"
@@ -23,13 +20,14 @@
             android:layout_marginBottom="8dp"
             app:cardCornerRadius="10dp"
             app:cardElevation="0dp"
+            app:cardBackgroundColor="@color/background"
             app:strokeWidth="2dp">
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/img"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:scaleType="fitXY"
+                android:scaleType="fitCenter"
                 android:src="@drawable/placeholder_square" />
 
         </com.google.android.material.card.MaterialCardView>

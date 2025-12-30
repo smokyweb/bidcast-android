@@ -32,64 +32,84 @@
             android:orientation="vertical">
 
             <LinearLayout
-                android:id="@+id/pickThumbnail"
                 android:layout_width="match_parent"
-                android:layout_height="240dp"
-                android:layout_margin="@dimen/half_margin"
-                android:background="@drawable/dashed_card_8_white"
+                android:baselineAligned="false"
+                android:weightSum="2"
                 android:gravity="center"
-                android:orientation="vertical"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/headingView">
+                android:layout_height="wrap_content">
 
-                <com.google.android.material.card.MaterialCardView
-                    android:id="@+id/imgCard"
-                    style="@style/cardStyle"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_margin="3dp"
-                    android:elevation="0dp"
-                    android:visibility="gone"
-                    app:cardBackgroundColor="@color/onPrimary">
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="0dp"
+                    android:layout_weight="1.3"
+                    android:layout_height="wrap_content">
 
-                    <androidx.appcompat.widget.AppCompatImageView
-                        android:id="@+id/img"
+                    <LinearLayout
+                        android:id="@+id/pickThumbnail"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:scaleType="centerCrop"
-                        android:src="@drawable/ic_image" />
+                        android:layout_height="0dp"
+                        android:layout_margin="@dimen/half_margin"
+                        android:background="@drawable/dashed_card_8_white"
+                        android:gravity="center"
+                        android:orientation="vertical"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintDimensionRatio="2:3"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent">
 
-                </com.google.android.material.card.MaterialCardView>
+                        <com.google.android.material.card.MaterialCardView
+                            android:id="@+id/imgCard"
+                            style="@style/cardStyle"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_margin="3dp"
+                            android:elevation="0dp"
+                            android:visibility="gone"
+                            app:cardBackgroundColor="@color/onPrimary">
 
-                <LinearLayout
-                    android:id="@+id/pickImageLayout"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center"
-                    android:orientation="vertical">
+                            <androidx.appcompat.widget.AppCompatImageView
+                                android:id="@+id/img"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:scaleType="centerCrop"
+                                android:src="@drawable/ic_image" />
 
-                    <androidx.appcompat.widget.AppCompatImageView
-                        android:layout_width="42dp"
-                        android:layout_height="42dp"
-                        android:src="@drawable/ic_image"
-                        android:tint="@color/onSurfaceVariant" />
+                        </com.google.android.material.card.MaterialCardView>
 
-                    <TextView
-                        style="@style/BodyLarge"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/tap_to_upload_thumbnail" />
+                        <LinearLayout
+                            android:id="@+id/pickImageLayout"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
+                            android:padding="@dimen/half_margin"
+                            android:orientation="vertical">
 
-                    <TextView
-                        style="@style/BodySmall"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="@dimen/half_margin"
-                        android:text="recommended_size_1280_x_720px" />
+                            <androidx.appcompat.widget.AppCompatImageView
+                                android:layout_width="42dp"
+                                android:layout_height="42dp"
+                                android:src="@drawable/ic_image"
+                                android:tint="@color/onSurfaceVariant" />
 
-                </LinearLayout>
+                            <TextView
+                                style="@style/BodyLarge"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:gravity="center"
+                                android:text="@string/tap_to_upload_thumbnail" />
 
+                            <TextView
+                                style="@style/BodySmall"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:gravity="center"
+                                android:text="Recommended size: 480 x 720 px with a 2:3 aspect ratio." />
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+                </androidx.constraintlayout.widget.ConstraintLayout>
             </LinearLayout>
+
 
             <com.google.android.material.card.MaterialCardView
                 style="@style/cardStyle"
@@ -140,7 +160,6 @@
                 android:id="@+id/goodsRecycler"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="@dimen/half_margin"
                 android:nestedScrollingEnabled="false"
                 android:orientation="vertical"
                 app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"

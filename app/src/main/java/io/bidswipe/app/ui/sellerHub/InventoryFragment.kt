@@ -34,6 +34,7 @@ import io.bidswipe.app.network.response.GetMyInventoryResponse
 import io.bidswipe.app.network.response.Product
 import io.bidswipe.app.ui.custom.AlertType
 import io.bidswipe.app.ui.custom.AppBottomSheet
+import io.bidswipe.app.ui.product.ProductDetailsActivity
 import io.bidswipe.app.utils.Alerts
 import io.bidswipe.app.utils.Utils
 import io.bidswipe.app.utils.finish
@@ -141,7 +142,11 @@ class InventoryFragment : BaseFragment<SellerHubViewModel, FragmentInventoryBind
 								item.selected = !(item.selected ?: false)
 								adapter.notifyItemChanged(pos)
 							} else {
-								//							startActivity(mCtx.toListProduct().putExtra("product" , item))
+								startActivity(
+									Intent(mCtx, ProductDetailsActivity::class.java).putExtra(
+										"productId", item.id.toString()
+									)
+								)
 							}
 						}
 					}

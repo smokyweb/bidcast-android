@@ -63,63 +63,78 @@
 
 
             </com.google.android.material.card.MaterialCardView>
-
             <io.bidswipe.app.ui.custom.Heading
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/half_margin"
-                app:title="Photos" />
+                app:title="Media" />
 
-            <HorizontalScrollView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/images"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:nestedScrollingEnabled="false"
-                        android:orientation="horizontal"
-                        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                        tools:itemCount="1"
-                        tools:listitem="@layout/upload_image_item" />
-
-                    <LinearLayout
-                        android:id="@+id/add_new_image"
-                        android:layout_width="120dp"
-                        android:layout_height="120dp"
-                        android:background="@drawable/dashed_card_8_white"
-                        android:gravity="center">
-
-                        <ImageView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:contentDescription="@string/app_name"
-                            android:src="@drawable/ic_add"
-                            app:tint="@color/outlineVariant" />
-
-                    </LinearLayout>
-                </LinearLayout>
-            </HorizontalScrollView>
-
-            <TextView
-                style="@style/BodyMedium"
+            <LinearLayout
+                android:id="@+id/add_new_image"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/add_up_to_8_photos" />
+                android:background="@drawable/card_8_outline"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:padding="@dimen/padding">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:layout_width="48dp"
+                    android:layout_height="38dp"
+                    android:layout_gravity="center"
+                    android:contentDescription="@string/app_name"
+                    android:src="@drawable/ic_image"
+                    app:tint="@color/outlineVariant" />
+
+                <TextView
+                    style="@style/TitleMedium"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="Photos/Videos"
+                    android:textSize="14sp" />
+
+                <TextView
+                    style="@style/BodySmall"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="Minimum 1 photo required" />
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/image_limit"
+                style="@style/TitleMedium"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="Photos: 0/8  Video: 0/1"
+                android:textSize="14sp" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/images"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/half_margin"
+                android:layout_marginTop="8dp"
+                android:orientation="horizontal"
+                android:visibility="gone"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                tools:itemCount="3"
+                tools:listitem="@layout/upload_image_item" />
+
+
+            <io.bidswipe.app.ui.custom.Heading
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margin"
+                app:title="Product Details" />
 
             <TextView
                 style="@style/TitleSmall"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/margin"
-                android:layout_marginBottom="@dimen/half_margin"
                 android:text="@string/category" />
 
             <com.google.android.material.textfield.TextInputLayout
@@ -127,7 +142,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/margin"
-                app:endIconDrawable="@drawable/ic_forward"
+                app:endIconDrawable="@drawable/ic_arrow_down_2"
                 app:endIconMode="custom">
 
                 <com.google.android.material.textfield.MaterialAutoCompleteTextView
@@ -145,7 +160,6 @@
                 style="@style/TitleSmall"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/half_margin"
                 android:text="@string/title" />
 
             <com.google.android.material.textfield.TextInputLayout
@@ -167,7 +181,6 @@
                 style="@style/TitleSmall"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/half_margin"
                 android:text="@string/description" />
 
             <com.google.android.material.textfield.TextInputLayout
@@ -199,7 +212,6 @@
                 style="@style/TitleSmall"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/half_margin"
                 android:text="Condition" />
 
             <com.google.android.material.textfield.TextInputLayout
@@ -207,7 +219,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/margin"
-                app:endIconDrawable="@drawable/ic_forward"
+                app:endIconDrawable="@drawable/ic_arrow_down_2"
                 app:endIconMode="custom">
 
                 <com.google.android.material.textfield.MaterialAutoCompleteTextView
@@ -225,8 +237,34 @@
                 style="@style/TitleSmall"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/half_margin"
-                android:text="Width" />
+                android:text="Mail Class" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/inputBoxStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/margin"
+                app:endIconDrawable="@drawable/ic_arrow_down_2"
+                app:endIconMode="custom">
+
+                <com.google.android.material.textfield.MaterialAutoCompleteTextView
+                    android:id="@+id/mailClass"
+                    style="@style/inputTextStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:focusable="false"
+                    android:focusableInTouchMode="false"
+                    android:hint="Select Mail Class" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+                <TextView
+                    android:id="@+id/width_title"
+                    style="@style/TitleSmall"
+                    android:layout_width="match_parent"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:text="Width" />
 
             <com.google.android.material.textfield.TextInputLayout
                 style="@style/inputBoxStyle"
@@ -245,10 +283,10 @@
             </com.google.android.material.textfield.TextInputLayout>
 
             <TextView
+                android:id="@+id/height_title"
                 style="@style/TitleSmall"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/half_margin"
                 android:text="Height" />
 
             <com.google.android.material.textfield.TextInputLayout
@@ -268,10 +306,10 @@
             </com.google.android.material.textfield.TextInputLayout>
 
             <TextView
+                android:id="@+id/length_title"
                 style="@style/TitleSmall"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/half_margin"
                 android:text="Length" />
 
             <com.google.android.material.textfield.TextInputLayout
@@ -291,10 +329,10 @@
             </com.google.android.material.textfield.TextInputLayout>
 
             <TextView
+                android:id="@+id/weight_title"
                 style="@style/TitleSmall"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/half_margin"
                 android:text="Weight" />
 
             <com.google.android.material.textfield.TextInputLayout
@@ -317,35 +355,6 @@
                 style="@style/TitleSmall"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/margin"
-                android:layout_marginBottom="@dimen/half_margin"
-                android:text="Mail Class" />
-
-            <com.google.android.material.textfield.TextInputLayout
-                style="@style/inputBoxStyle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/margin"
-                app:endIconDrawable="@drawable/ic_forward"
-                app:endIconMode="custom">
-
-                <com.google.android.material.textfield.MaterialAutoCompleteTextView
-                    android:id="@+id/mailClass"
-                    style="@style/inputTextStyle"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:focusable="false"
-                    android:focusableInTouchMode="false"
-                    android:hint="Select Mail Class" />
-
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <TextView
-                style="@style/TitleSmall"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/margin"
-                android:layout_marginBottom="@dimen/half_margin"
                 android:text="Processing Category" />
 
             <com.google.android.material.textfield.TextInputLayout
@@ -353,7 +362,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/margin"
-                app:endIconDrawable="@drawable/ic_forward"
+                app:endIconDrawable="@drawable/ic_arrow_down_2"
                 app:endIconMode="custom">
 
                 <com.google.android.material.textfield.MaterialAutoCompleteTextView
@@ -383,8 +392,9 @@
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:paddingHorizontal="@dimen/half_margin"
                     android:background="@drawable/card_8_outline"
-                    android:padding="2dp">
+                    >
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/decreaseQuantity"
@@ -394,8 +404,7 @@
                         android:layout_marginStart="4dp"
                         android:minWidth="0dp"
                         android:minHeight="0dp"
-                        android:paddingHorizontal="@dimen/margin"
-                        android:paddingVertical="4dp"
+                        android:padding="4dp"
                         android:text="-" />
 
                     <com.google.android.material.textfield.TextInputLayout
@@ -418,8 +427,9 @@
                             android:inputType="number"
                             android:maxLength="5"
                             android:minHeight="0dp"
+                            android:minWidth="48dp"
                             android:padding="0dp"
-                            android:text="1"
+                            android:text="12"
                             android:textAlignment="center"
                             android:textSize="18sp" />
 
@@ -433,8 +443,7 @@
                         android:layout_marginStart="4dp"
                         android:minWidth="0dp"
                         android:minHeight="0dp"
-                        android:paddingHorizontal="@dimen/margin"
-                        android:paddingVertical="4dp"
+                    android:padding="4dp"
                         android:text="+" />
                 </LinearLayout>
 
@@ -451,7 +460,7 @@
                 tools:itemCount="3"
                 tools:listitem="@layout/variant_item" />
 
-            <com.google.android.material.card.MaterialCardView
+      <!--      <com.google.android.material.card.MaterialCardView
                 android:id="@+id/addVariant"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -478,7 +487,7 @@
 
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
-
+-->
         </LinearLayout>
 
     </ScrollView>
@@ -495,7 +504,7 @@
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/useProduct"
-            style="@style/appBtn"
+            style="@style/appTonalBtn"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginEnd="@dimen/half_margin"

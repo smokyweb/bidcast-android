@@ -91,7 +91,7 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
 
                 "viewShow" -> {
 
-                    if (showList[pos]?.isLive == true) {
+//                    if (showList[pos]?.isLive == true) {
                         val roomId = showList[pos]?.roomId.toString()
 
                         if (App.PIPMode) {
@@ -108,7 +108,7 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
                                     )
                             )
                         }
-                    }
+//                    }
                 }
             }
         }

@@ -1,5 +1,8 @@
 package io.bidswipe.app.ui.watchStream
 
+import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
+import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
 import android.app.PictureInPictureParams
 import android.content.Intent
@@ -154,6 +157,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
         setUpSwipe()
 
         initPip()
+//        showWonView(userName ,userImage,"dhty ddy")
 
         // Initialize thumbnail view - show it initially
         bind.thumbnailView.loadUrl(mCtx, thumbnail, R.drawable.placeholder_rect)
@@ -312,6 +316,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
                                     bold { append(" you won!") }
                                 }
                             }
+                            showWonView("You",bidderImage,"won the auction!")
                         } else {
                             bind.winning.text = buildSpannedString {
                                 append(bidderName)
@@ -319,6 +324,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
                                     bold { append(" has won!") }
                                 }
                             }
+                            showWonView(bidderName,bidderImage,"won the auction!")
                         }
 
                     }
@@ -1955,5 +1961,35 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
         sheet.show()
     }
+
+    fun showWonView(username:String, userImage:String,desc:String){
+        bind.wonView.root.isVisible=true
+        bind.wonView.userName.text=username
+        bind.wonView.desc.text=desc
+
+        Handler(Looper.getMainLooper()).postDelayed({
+            val flip = ObjectAnimator.ofFloat(bind.wonView.imageCard, "rotationY", 0f, 180f)
+            flip.duration = 1000
+
+            flip.addListener(object : AnimatorListenerAdapter() {
+                override fun onAnimationEnd(animation: Animator) {
+                    super.onAnimationEnd(animation)
+
+                    bind.wonView.userImage.loadUrl(mCtx,userImage, draw.app_icon_dollar)
+
+                    val flipBack = ObjectAnimator.ofFloat(bind.wonView.imageCard, "rotationY", 0f, 180f)
+                    flipBack.duration = 1000
+                    flipBack.start()
+                }
+            })
+            flip.start()
+        }, 1000)
+
+        Handler(Looper.getMainLooper()).postDelayed({
+            bind.wonView.root.isVisible = false
+        }, 5000)
+
+    }
+
 
 }

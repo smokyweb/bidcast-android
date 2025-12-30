@@ -118,7 +118,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="@dimen/margin"
-                    app:endIconDrawable="@drawable/ic_forward"
+                    app:endIconDrawable="@drawable/ic_arrow_down_2"
                     app:endIconMode="custom">
 
                     <com.google.android.material.textfield.MaterialAutoCompleteTextView
@@ -271,7 +271,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="@dimen/margin"
-                    app:endIconDrawable="@drawable/ic_forward"
+                    app:endIconDrawable="@drawable/ic_arrow_down_2"
                     app:endIconMode="custom">
 
                     <com.google.android.material.textfield.MaterialAutoCompleteTextView
@@ -384,7 +384,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="@dimen/margin"
-                    app:endIconDrawable="@drawable/ic_forward"
+                    app:endIconDrawable="@drawable/ic_arrow_down_2"
                     app:endIconMode="custom">
 
                     <com.google.android.material.textfield.MaterialAutoCompleteTextView
@@ -410,7 +410,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="@dimen/margin"
-                    app:endIconDrawable="@drawable/ic_forward"
+                    app:endIconDrawable="@drawable/ic_arrow_down_2"
                     app:endIconMode="custom">
 
                     <com.google.android.material.textfield.MaterialAutoCompleteTextView
@@ -661,7 +661,7 @@
                     style="@style/inputBoxStyle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:endIconDrawable="@drawable/ic_forward"
+                    app:endIconDrawable="@drawable/ic_arrow_down_2"
                     app:endIconMode="custom">
 
                     <com.google.android.material.textfield.MaterialAutoCompleteTextView

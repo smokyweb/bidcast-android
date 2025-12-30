@@ -47,7 +47,7 @@ class ProductWeightFragment : BaseFragment<ScheduleShowViewModel, FragmentProduc
 
 		bind.continueBtn.setHapticClickListener {
 			bind.loader.isVisible = true
-			val imageFiles = viewModel.productImages.filterNotNull().map { File(it) }
+			val imageFiles = viewModel.productImages.filterNotNull().map { File(it.path) }
 
 			if (imageFiles.isEmpty()) {
 				createProduct(null, null)

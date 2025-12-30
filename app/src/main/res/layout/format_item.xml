@@ -3,19 +3,20 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     style="@style/cardStyle"
     android:layout_width="match_parent"
-    android:layout_height="160dp"
+    android:layout_height="wrap_content"
     android:layout_margin="@dimen/half_margin"
     android:gravity="center"
-    app:cardBackgroundColor="@color/background"
-    app:strokeWidth="2dp">
+    app:cardBackgroundColor="@color/background">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:gravity="center"
+        android:paddingVertical="32dp"
+        android:paddingHorizontal="12dp"
         android:orientation="vertical">
 
-        <ImageView
+        <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/icon"
             android:layout_width="32dp"
             android:layout_height="32dp"

@@ -83,7 +83,7 @@
                 android:id="@+id/rehearsalLayout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="bottom"
+                android:layout_gravity="top"
                 android:layout_marginStart="@dimen/half_margin"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
@@ -578,8 +578,8 @@
 
                                 <com.google.android.material.card.MaterialCardView
                                     style="@style/cardStyle"
-                                    android:layout_width="24dp"
-                                    android:layout_height="24dp"
+                                    android:layout_width="18dp"
+                                    android:layout_height="18dp"
                                     android:background="@color/transparent"
                                     app:cardCornerRadius="100dp"
                                     app:cardElevation="0dp">
@@ -613,8 +613,8 @@
 
                                 <com.google.android.material.card.MaterialCardView
                                     style="@style/cardStyle"
-                                    android:layout_width="80dp"
-                                    android:layout_height="80dp"
+                                    android:layout_width="72dp"
+                                    android:layout_height="72dp"
                                     app:cardCornerRadius="10dp"
                                     app:cardElevation="0dp">
 
@@ -629,7 +629,7 @@
 
                                 <LinearLayout
                                     android:layout_width="0dp"
-                                    android:layout_height="match_parent"
+                                    android:layout_height="wrap_content"
                                     android:layout_marginHorizontal="@dimen/half_margin"
                                     android:layout_weight="1"
                                     android:gravity="center_vertical"

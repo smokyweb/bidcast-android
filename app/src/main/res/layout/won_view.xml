@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:paddingTop="120dp"
+    android:layout_height="wrap_content">
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/image_card"
+        style="@style/cardStyle"
+        android:layout_width="72dp"
+        android:layout_height="72dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="@dimen/margin"
+        android:backgroundTint="@color/background"
+        app:cardCornerRadius="100dp">
+
+        <ImageView
+            android:id="@+id/user_image"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:src="@drawable/app_icon_dollar"/>
+
+    </com.google.android.material.card.MaterialCardView>
+
+    <TextView
+        android:id="@+id/user_name"
+        style="@style/TitleLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginHorizontal="@dimen/half_margin"
+        android:layout_marginTop="@dimen/margin"
+        android:textColor="@color/primary"
+        android:text="@string/app_name" />
+
+
+    <TextView
+        android:id="@+id/desc"
+        style="@style/TitleSemiBold"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginHorizontal="@dimen/margin"
+        android:text="Live Auction platform"
+        android:textColor="@color/background"
+        android:textAlignment="center" />
+
+
+</LinearLayout>

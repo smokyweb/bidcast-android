@@ -7,16 +7,16 @@
 
     <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintDimensionRatio="16:9"
+        app:layout_constraintDimensionRatio="2:3"
         app:layout_constraintTop_toTopOf="parent">
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/img"
             android:layout_width="match_parent"
-            android:layout_height="180dp"
-            android:scaleType="fitXY"
+            android:layout_height="wrap_content"
+            android:scaleType="centerCrop"
             android:src="@drawable/tutorial" />
 
     </com.google.android.material.card.MaterialCardView>

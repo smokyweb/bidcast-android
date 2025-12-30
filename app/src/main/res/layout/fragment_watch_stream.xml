@@ -132,7 +132,7 @@
                     style="@style/appTonalBtn"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="bottom"
+                    android:layout_gravity="top"
                     android:layout_marginEnd="@dimen/half_margin"
                     android:minWidth="0dp"
                     android:minHeight="0dp"
@@ -153,7 +153,7 @@
                     style="@style/cardStyle"
                     android:layout_width="28dp"
                     android:layout_height="28dp"
-                    android:layout_gravity="bottom"
+                    android:layout_gravity="top"
                     app:cardBackgroundColor="@color/black25"
                     app:cardCornerRadius="100dp"
                     app:cardElevation="0dp">
@@ -200,7 +200,7 @@
                     style="@style/TitleMedium"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Giveaway"
+                    android:text="Freebie"
                     android:textColor="@color/background" />
 
                 <TextView
@@ -215,6 +215,11 @@
                     android:textColor="@color/background" />
 
             </LinearLayout>
+
+            <include
+                layout="@layout/won_view"
+                android:id="@+id/won_view"
+                android:visibility="gone"/>
 
             <ScrollView
                 android:layout_width="match_parent"
@@ -621,8 +626,8 @@
 
                                     <com.google.android.material.card.MaterialCardView
                                         style="@style/cardStyle"
-                                        android:layout_width="24dp"
-                                        android:layout_height="24dp"
+                                        android:layout_width="18dp"
+                                        android:layout_height="18dp"
                                         android:background="@color/transparent"
                                         app:cardCornerRadius="100dp"
                                         app:cardElevation="0dp">
@@ -671,7 +676,7 @@
 
                                     <LinearLayout
                                         android:layout_width="0dp"
-                                        android:layout_height="match_parent"
+                                        android:layout_height="wrap_content"
                                         android:layout_marginStart="@dimen/half_margin"
                                         android:layout_weight="1"
                                         android:gravity="center_vertical"

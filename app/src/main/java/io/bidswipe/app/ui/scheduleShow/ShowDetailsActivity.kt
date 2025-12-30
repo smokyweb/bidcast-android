@@ -99,7 +99,7 @@ class ShowDetailsActivity : BaseActivity() {
                     id = user?.id.toString(),
                     image = user?.profileImage ?: "",
                     name = user?.name,
-//                    rating = user?.rating ?: ""
+                    rating = user?.rating ?: ""
                 ),
                 products = emptyList<LiveShowModel.Product>(),
                 roomId = "live_room_${userId}_${showData?.id.toString()}",
