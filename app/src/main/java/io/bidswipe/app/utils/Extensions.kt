@@ -35,8 +35,6 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import androidx.viewbinding.ViewBinding
 import com.bumptech.glide.Glide
 import com.rubensousa.decorator.LinearDividerDecoration
-import com.squareup.picasso.Picasso
-import com.squareup.picasso.Target
 import io.bidswipe.app.R
 import io.bidswipe.app.interfaces.AlertClicks
 import io.bidswipe.app.network.Resource
@@ -263,26 +261,6 @@ fun Context.getRecyclerDivider(left : Int = 0 , top : Int = 0 , right : Int = 0 
 		orientation = RecyclerView.VERTICAL ,
 		addBeforeFirstPosition = false ,
 	)
-
-fun Context.getBitmapFromUrl(url : String , callBack : (Bitmap?) -> Unit) {
-	Handler(Looper.getMainLooper()).post {
-		Picasso.get().load(url).placeholder(draw.app_icon).error(draw.app_icon).into(object : Target {
-			override fun onBitmapLoaded(bitmap : Bitmap? , from : Picasso.LoadedFrom?) {
-				callBack(
-					bitmap ?: ContextCompat.getDrawable(this@getBitmapFromUrl , draw.app_icon)?.toBitmap()
-				)
-			}
-
-			override fun onBitmapFailed(e : java.lang.Exception? , errorDrawable : Drawable?) {
-				callBack(errorDrawable?.toBitmap())
-			}
-
-			override fun onPrepareLoad(placeHolderDrawable : Drawable?) {
-//					callBack(placeHolderDrawable?.toBitmap())
-			}
-		})
-	}
-}
 
 fun SwipeRefreshLayout.setDefaults() {
 	this.setColorSchemeResources(clr.primary , clr.onPrimaryContainer)

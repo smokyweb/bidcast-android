@@ -14,8 +14,7 @@ import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.ui.sellerHub.SellerHubViewModel
 import io.bidswipe.app.utils.Const
 
-class DomesticShipmentsFragment :
-    BaseFragment<SellerHubViewModel, FragmentDomesticShipmentsBinding>() {
+class DomesticShipmentsFragment : BaseFragment<SellerHubViewModel, FragmentDomesticShipmentsBinding>() {
     override fun getModel(): Class<SellerHubViewModel> = SellerHubViewModel::class.java
 
     override fun getBind(

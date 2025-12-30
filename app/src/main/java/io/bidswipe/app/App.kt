@@ -123,9 +123,9 @@ class App : Application() {
 	private fun isMainProcess(): Boolean {
 		val pid = Process.myPid()
 		val manager = getSystemService(ACTIVITY_SERVICE) as ActivityManager
-		for (processInfo in manager.getRunningAppProcesses()) {
+		for (processInfo in manager.runningAppProcesses) {
 			if (processInfo.pid == pid) {
-				return getPackageName() == processInfo.processName
+				return packageName == processInfo.processName
 			}
 		}
 		return false
