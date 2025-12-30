@@ -780,6 +780,7 @@ interface ApiInterface {
     @Multipart
     @POST("api/store-shipping-profile")
     suspend fun storeShippingProfile(
+        @Part("shipping_profile_id") shippingProfileId: RequestBody?,
         @Part("name") name: RequestBody?,
         @Part("size") size: RequestBody?,
         @Part("weight") weight: RequestBody?,
@@ -846,6 +847,11 @@ interface ApiInterface {
         @Query("start_date") startDate: String?,
         @Query("end_date") endDate: String?
     ): Call<ResponseBody>
+
+	@POST("api/delete-shipping-profile/{profileId}")
+	suspend fun deleteShippingProfile(
+		@Path("profileId") profileId: String
+	): CommonResponse
 
 }
 

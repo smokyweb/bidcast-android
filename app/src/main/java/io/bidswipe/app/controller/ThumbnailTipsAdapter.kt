@@ -3,6 +3,7 @@ package io.bidswipe.app.controller
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseAdapter
 import io.bidswipe.app.databinding.TitleItemBinding
@@ -45,6 +46,8 @@ class ThumbnailTipsAdapter(
 			}else{
 				bind.iconCard.setCardBackgroundColor(Color.parseColor(item?.color))
 			}*/
+
+			bind.title.isVisible = false
 
 			bind.subTitle.text = item?.description
 			bind.title.text = item?.title

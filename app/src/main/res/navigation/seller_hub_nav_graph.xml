@@ -19,6 +19,9 @@
         <action
             android:id="@+id/toOrderStatus"
             app:destination="@id/orderStatusFragment" />
+        <action
+            android:id="@+id/myOrdersFragmentToSellerOrderDetailFragment"
+            app:destination="@id/sellerOrderDetailFragment" />
     </fragment>
     <fragment
         android:id="@+id/sellerOffersFragment"
@@ -171,5 +174,10 @@
         tools:layout="@layout/fragment_promoted_shows" >
 
     </fragment>
+    <fragment
+        android:id="@+id/sellerOrderDetailFragment"
+        android:name="io.bidswipe.app.ui.sellerHub.SellerOrderDetailFragment"
+        android:label="fragment_seller_order_detail"
+        tools:layout="@layout/fragment_seller_order_detail" />
 
 </navigation>

@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.get
 import androidx.core.view.isVisible
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import io.bidswipe.app.R
@@ -25,245 +26,250 @@ import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.ui.sellerProfile.SellerProfileActivity
 import io.bidswipe.app.utils.Utils
 import io.bidswipe.app.utils.finish
+import io.bidswipe.app.utils.ids
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request
 import io.bidswipe.app.utils.runSafe
 
 class MyOrdersFragment : BaseFragment<SellerHubViewModel, FragmentMyOrdersBinding>() {
-    override fun getModel(): Class<SellerHubViewModel> = SellerHubViewModel::class.java
+	override fun getModel(): Class<SellerHubViewModel> = SellerHubViewModel::class.java
 
-    override fun getBind(inflater: LayoutInflater, view: ViewGroup?) =
-        FragmentMyOrdersBinding.inflate(inflater, view, false)
+	override fun getBind(inflater: LayoutInflater, view: ViewGroup?) =
+		FragmentMyOrdersBinding.inflate(inflater, view, false)
 
-    private var orderList = mutableListOf<GetOrdersResponse.Data?>()
-    private lateinit var adapter: OrdersAdapter
-    private var status = ""
+	private var orderList = mutableListOf<GetOrdersResponse.Data?>()
+	private lateinit var adapter: OrdersAdapter
+	private var status = ""
 	private var page = 1
 	private var isLoading = false
 
-    private val mClick = object : RecyclerClicks {
-        override fun itemClick(pos: Int, status: String?) {
+	private val mClick = object : RecyclerClicks {
+		override fun itemClick(pos: Int, status: String?) {
 
-            when (status) {
-                    "profile" -> {
-                        if (orderList[pos]?.user != null) {
-                            startActivity(
-                                Intent(mCtx, SellerProfileActivity::class.java).putExtra(
-                                    "sellerId",
-                                    orderList[pos]?.user?.id.toString()
-                                )
-                            )
-                        }
-                    }
-                }
-        }
-    }
+			when (status) {
+				"profile" -> {
+					if (orderList[pos]?.user != null) {
+						startActivity(
+							Intent(mCtx, SellerProfileActivity::class.java).putExtra(
+								"sellerId",
+								orderList[pos]?.user?.id.toString()
+							)
+						)
+					}
+				}
 
-    @SuppressLint("NotifyDataSetChanged")
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+				else -> {
+					findNavController().navigate(ids.myOrdersFragmentToSellerOrderDetailFragment)
+				}
+			}
+		}
+	}
 
-        bind.header.onBackClick {
-            finish()
-        }
+	@SuppressLint("NotifyDataSetChanged")
+	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+		super.onViewCreated(view, savedInstanceState)
 
-        bind.header.onMoreSecondaryClick {
-            showDeleteConfirmationDialog()
-        }
+		bind.header.onBackClick {
+			finish()
+		}
 
-        setUpChips()
+		bind.header.onMoreSecondaryClick {
+			showDeleteConfirmationDialog()
+		}
 
-        adapter = OrdersAdapter(orderList, mClick)
+		setUpChips()
 
-        bind.recycler.adapter = adapter
+		adapter = OrdersAdapter(orderList, mClick)
 
-        bind.loader.isVisible = true
+		bind.recycler.adapter = adapter
 
-        bind.swipeRefreshLayout.setOnRefreshListener {
-            bind.search.setText("")
-            page = 1
-            viewModel.getOrderListing(page = page.toString().request(), status.request())
-        }
+		bind.loader.isVisible = true
 
-        bind.recycler.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                super.onScrolled(recyclerView, dx, dy)
-                val layoutManager = bind.recycler.layoutManager as LinearLayoutManager
-                val lastItemPosition = layoutManager.findLastVisibleItemPosition()
-                if (lastItemPosition == (orderList.size - 1)) {
-                    if (!isLoading) {
-                        isLoading = true
-                        page++
-                        bind.bottomLoader.isVisible = true
-                        viewModel.getOrderListing(page = page.toString().request(), status.request())
-                    }
-                }
-            }
-        })
+		bind.swipeRefreshLayout.setOnRefreshListener {
+			bind.search.setText("")
+			page = 1
+			viewModel.getOrderListing(page = page.toString().request(), status.request())
+		}
 
-        bind.search.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
-            override fun afterTextChanged(s: Editable?) {
-                val query = s?.toString()?.trim() ?: ""
-                bind.searchLayout.isEndIconVisible = query.isNotEmpty()
+		bind.recycler.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+			override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+				super.onScrolled(recyclerView, dx, dy)
+				val layoutManager = bind.recycler.layoutManager as LinearLayoutManager
+				val lastItemPosition = layoutManager.findLastVisibleItemPosition()
+				if (lastItemPosition == (orderList.size - 1)) {
+					if (!isLoading) {
+						isLoading = true
+						page++
+						bind.bottomLoader.isVisible = true
+						viewModel.getOrderListing(page = page.toString().request(), status.request())
+					}
+				}
+			}
+		})
 
-                page = 1
-                isLoading = false
+		bind.search.addTextChangedListener(object : TextWatcher {
+			override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+			override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+			override fun afterTextChanged(s: Editable?) {
+				val query = s?.toString()?.trim() ?: ""
+				bind.searchLayout.isEndIconVisible = query.isNotEmpty()
 
-                bind.loader.isVisible = true
-                bind.recycler.isVisible = false
-                bind.noData.isVisible = false
+				page = 1
+				isLoading = false
 
-                if (!s.isNullOrEmpty()) {
-                    viewModel.getOrderListing(
-                        page.toString().request(),
-	                    status.request(),
-                        s.toString().request()
-                    )
-                } else {
-                    viewModel.getOrderListing(page.toString().request(), status.request())
-                }
-            }
-        })
+				bind.loader.isVisible = true
+				bind.recycler.isVisible = false
+				bind.noData.isVisible = false
 
-        bind.searchLayout.setEndIconOnClickListener {
-            bind.search.setText("")
-            bind.searchLayout.isEndIconVisible = false
-            page = 1
-            viewModel.getOrderListing(page = page.toString().request(), status.request())
-        }
+				if (!s.isNullOrEmpty()) {
+					viewModel.getOrderListing(
+						page.toString().request(),
+						status.request(),
+						s.toString().request()
+					)
+				} else {
+					viewModel.getOrderListing(page.toString().request(), status.request())
+				}
+			}
+		})
 
-        bind.noInternet.onClick {
-            bind.loader.isVisible = true
-            bind.noInternet.isVisible = false
-            viewModel.getOrderListing(page = page.toString().request(), status.request())
-        }
+		bind.searchLayout.setEndIconOnClickListener {
+			bind.search.setText("")
+			bind.searchLayout.isEndIconVisible = false
+			page = 1
+			viewModel.getOrderListing(page = page.toString().request(), status.request())
+		}
 
-        viewModel.getOrderListing(page = page.toString().request(), status.request())
-        viewModel.getOrderListingRepo.observe(viewLifecycleOwner) {
-            when (it) {
-                is Resource.Success -> {
-                    bind.swipeRefreshLayout.isRefreshing = false
-                    bind.noInternet.isVisible = false
-                    bind.bottomLoader.isVisible = false
-                    bind.loader.isVisible = false
+		bind.noInternet.onClick {
+			bind.loader.isVisible = true
+			bind.noInternet.isVisible = false
+			viewModel.getOrderListing(page = page.toString().request(), status.request())
+		}
 
-                    val mData = it.value.data
+		viewModel.getOrderListing(page = page.toString().request(), status.request())
+		viewModel.getOrderListingRepo.observe(viewLifecycleOwner) {
+			when (it) {
+				is Resource.Success -> {
+					bind.swipeRefreshLayout.isRefreshing = false
+					bind.noInternet.isVisible = false
+					bind.bottomLoader.isVisible = false
+					bind.loader.isVisible = false
 
-                    if (page == 1) {
-                        orderList.clear()
-                    }
+					val mData = it.value.data
 
-                    if (mData != null) {
-                        orderList.addAll(mData)
-                    }
+					if (page == 1) {
+						orderList.clear()
+					}
 
-                    bind.newOrderCount.text = it.value.newOrderCount.toString()
-                    bind.processingOrderCount.text = it.value.processingOrderCount.toString()
-                    bind.completedOrderCount.text = it.value.completeOrderCount.toString()
+					if (mData != null) {
+						orderList.addAll(mData)
+					}
 
-                    if (mData?.isEmpty() == true) {
+					bind.newOrderCount.text = it.value.newOrderCount.toString()
+					bind.processingOrderCount.text = it.value.processingOrderCount.toString()
+					bind.completedOrderCount.text = it.value.completeOrderCount.toString()
 
-                        bind.noData.isVisible = true
-                        bind.recycler.isVisible = false
+					if (mData?.isEmpty() == true) {
 
-                    } else {
-                        bind.noData.isVisible = false
-                        bind.recycler.isVisible = true
-                    }
+						bind.noData.isVisible = true
+						bind.recycler.isVisible = false
 
-                    isLoading = page >= (it.value.totalPage ?: 0)
+					} else {
+						bind.noData.isVisible = false
+						bind.recycler.isVisible = true
+					}
 
-                    adapter.notifyDataSetChanged()
+					isLoading = page >= (it.value.totalPage ?: 0)
 
-                }
+					adapter.notifyDataSetChanged()
 
-                is Resource.Error -> {
-                    bind.swipeRefreshLayout.isRefreshing = false
-                    bind.loader.isVisible = false
-                    bind.bottomLoader.isVisible = false
+				}
 
-                    if (it.isNetworkError) {
-                        bind.noInternet.isVisible = true
-                        bind.recycler.isVisible = false
+				is Resource.Error -> {
+					bind.swipeRefreshLayout.isRefreshing = false
+					bind.loader.isVisible = false
+					bind.bottomLoader.isVisible = false
 
-                    } else {
-                        it.parse(mCtx, TAG, object : AlertClicks {
-                            override fun primaryClick(dialog: AppBottomSheet) {
-                                dialog.dismiss()
-                            }
+					if (it.isNetworkError) {
+						bind.noInternet.isVisible = true
+						bind.recycler.isVisible = false
 
-                            override fun secondaryClick(dialog: AppBottomSheet) {
-                                dialog.dismiss()
+					} else {
+						it.parse(mCtx, TAG, object : AlertClicks {
+							override fun primaryClick(dialog: AppBottomSheet) {
+								dialog.dismiss()
+							}
 
-                            }
-                        })
-                    }
-                }
+							override fun secondaryClick(dialog: AppBottomSheet) {
+								dialog.dismiss()
 
-                else -> {}
+							}
+						})
+					}
+				}
 
-            }
-        }
+				else -> {}
 
-    }
+			}
+		}
 
-    private fun showDeleteConfirmationDialog() {
-        AppBottomSheet(
-            mCtx,
-            R.drawable.ic_delete,
-            "Delete Order",
-            "Are you sure you want to delete all orders?",
-            primaryBtnText = "Delete",
-            secondaryBtnText = "Cancel",
-            canCancel = true,
-            showSecondary = true,
-            alertType = AlertType.ERROR,
-            clicks = object : AlertClicks {
-                override fun primaryClick(dialog: AppBottomSheet) {
-                    dialog.dismiss()
-                    bind.loader.isVisible = false
-                }
+	}
 
-                override fun secondaryClick(dialog: AppBottomSheet) {
-                    dialog.dismiss()
-                }
+	private fun showDeleteConfirmationDialog() {
+		AppBottomSheet(
+			mCtx,
+			R.drawable.ic_delete,
+			"Delete Order",
+			"Are you sure you want to delete all orders?",
+			primaryBtnText = "Delete",
+			secondaryBtnText = "Cancel",
+			canCancel = true,
+			showSecondary = true,
+			alertType = AlertType.ERROR,
+			clicks = object : AlertClicks {
+				override fun primaryClick(dialog: AppBottomSheet) {
+					dialog.dismiss()
+					bind.loader.isVisible = false
+				}
 
-            },
+				override fun secondaryClick(dialog: AppBottomSheet) {
+					dialog.dismiss()
+				}
 
-            ).show()
-    }
+			},
 
-    private fun setUpChips() {
-        bind.search.setText("")
-        bind.chipGroup.removeAllViews()
+			).show()
+	}
 
-       val statusList = listOf("All", "Processing", "Completed", "Cancelled", "Refunded")
-        statusList .forEach {
-            bind.chipGroup.addView(
-                Utils.makeAChip(
-                    mCtx = mCtx,
-                    text = it,
-                    selected = false,
-                    closeIconVisible = false,
-                    chipPadding = 12,
-                )
-            )
-        }
+	private fun setUpChips() {
+		bind.search.setText("")
+		bind.chipGroup.removeAllViews()
 
-        bind.chipGroup.check(bind.chipGroup[0].id)
+		val statusList = listOf("All", "Processing", "Completed", "Cancelled", "Refunded")
+		statusList.forEach {
+			bind.chipGroup.addView(
+				Utils.makeAChip(
+					mCtx = mCtx,
+					text = it,
+					selected = false,
+					closeIconVisible = false,
+					chipPadding = 12,
+				)
+			)
+		}
 
-        bind.chipGroup.setOnCheckedStateChangeListener { chipGroup, _ ->
-            runSafe {
-                val chipId = chipGroup.checkedChipId
-                val index = chipGroup.indexOfChild(chipGroup.findViewById(chipId))
-                if (index == -1) return@runSafe
-                bind.loader.isVisible = true
-                status = if(statusList[index].lowercase()=="all") "" else statusList[index].lowercase()
-                bind.search.setText("")
-            }
-        }
+		bind.chipGroup.check(bind.chipGroup[0].id)
 
-    }
+		bind.chipGroup.setOnCheckedStateChangeListener { chipGroup, _ ->
+			runSafe {
+				val chipId = chipGroup.checkedChipId
+				val index = chipGroup.indexOfChild(chipGroup.findViewById(chipId))
+				if (index == -1) return@runSafe
+				bind.loader.isVisible = true
+				status = if (statusList[index].lowercase() == "all") "" else statusList[index].lowercase()
+				bind.search.setText("")
+			}
+		}
+
+	}
 }

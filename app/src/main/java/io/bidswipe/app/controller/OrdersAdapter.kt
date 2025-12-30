@@ -31,7 +31,9 @@ class OrdersAdapter(
         item: GetOrdersResponse.Data?,
     ) {
         with(holder) {
+
             bind.root.setHapticClickListener { mClicks.itemClick(position) }
+
             bind.buyerLayout.setHapticClickListener {
                 mClicks.itemClick(position, "profile")
             }

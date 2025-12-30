@@ -20,6 +20,7 @@ class ExampleAdapter(
 		item : String? ,
 	) {
 		with(holder) {
+			bind.title.isVisible = false
 			bind.icon.isVisible = true
 			bind.title.text = item.toString()
 			bind.title.isVisible = false

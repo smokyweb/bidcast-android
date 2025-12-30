@@ -24,6 +24,8 @@ class TitleAdapter(mList : MutableList<GetAllTipsResponse.Data.Tip?> ,
 			bind.icon.loadUrl(mCtx , item?.icon ?:"")
 			bind.icon.isVisible = true
 			bind.subTitle.setHtmlFromString("${item?.description ?: ""}" , false)
+			bind.title.isVisible = false
+
 			bind.title.text = item?.title ?: ""
 
 		}

@@ -49,6 +49,8 @@ class SellerHubViewModel @Inject constructor(
 
 	var selectedShow : LiveShowModel ?= null
 
+	var selectedShippingProfile : GetShippingProfilesResponse.Data ?= null
+
 	var showTime : String ?= null
 
 	private var _getMyScheduledShowResponse = MutableLiveData<Resource<GetMyShowResponse>>()
@@ -504,6 +506,7 @@ class SellerHubViewModel @Inject constructor(
 		get() = _storeShippingProfileResponse
 
 	fun storeShippingProfile(
+		shippingProfileId: RequestBody? = null,
 		name: RequestBody?,
 		size : RequestBody?,
 		weight : RequestBody?,
@@ -514,7 +517,7 @@ class SellerHubViewModel @Inject constructor(
 			_storeShippingProfileResponse.value = NO_INTERNET_ERROR
 			return@launch
 		}
-		_storeShippingProfileResponse.value = repo.storeShippingProfile(name,size,weight, additionalWeight,maxItems)
+		_storeShippingProfileResponse.value = repo.storeShippingProfile(shippingProfileId, name,size,weight, additionalWeight,maxItems)
 	}
 
 	private var _getShippingProfileResponse = MutableLiveData<Resource<GetShippingProfilesResponse>>()
@@ -608,6 +611,20 @@ class SellerHubViewModel @Inject constructor(
 			return@launch
 		}
 		_getPromoteToolsDetailsResponse.value = repo.getPromoteToolsDetails()
+	}
+
+	private var _deleteShippingProfileResponse = MutableLiveData<Resource<CommonResponse>>()
+	val deleteShippingProfileRepo: MutableLiveData<Resource<CommonResponse>>
+		get() = _deleteShippingProfileResponse
+
+	fun deleteShippingProfile(
+		shippingProfileId : String
+	) = viewModelScope.launch {
+		if (!networkMonitor.hasInternet()) {
+			_deleteShippingProfileResponse.value = NO_INTERNET_ERROR
+			return@launch
+		}
+		_deleteShippingProfileResponse.value = repo.deleteShippingProfile(shippingProfileId)
 	}
 
 }

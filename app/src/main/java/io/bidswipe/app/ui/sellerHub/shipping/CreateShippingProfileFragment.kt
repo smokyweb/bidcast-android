@@ -23,6 +23,7 @@ import io.bidswipe.app.utils.setHapticClickListener
 import io.bidswipe.app.utils.value
 
 class CreateShippingProfileFragment : BaseFragment<SellerHubViewModel, FragmentCreateShippingProfileBinding>() {
+
 	override fun getModel(): Class<SellerHubViewModel> = SellerHubViewModel::class.java
 
 	override fun getBind(
@@ -47,6 +48,27 @@ class CreateShippingProfileFragment : BaseFragment<SellerHubViewModel, FragmentC
 		super.onViewCreated(view, savedInstanceState)
 
 		val type = activity?.intent?.getStringExtra("slug").toString()
+
+		val from = arguments?.getString("from")
+
+
+		if (from == "edit"){
+			bind.header.setHeaderText("Edit Shipping Profile")
+			bind.save.text = "Update"
+
+			bind.name.setText(viewModel.selectedShippingProfile?.name.toString())
+			bind.weight.setText(viewModel.selectedShippingProfile?.weight.toString())
+			bind.weightUnits.setText(viewModel.selectedShippingProfile?.size.toString())
+
+			if(viewModel.selectedShippingProfile?.additionalWeight == true){
+				bind.additionalWeight.isChecked = true
+			}
+
+			if(viewModel.selectedShippingProfile?.maxItems == true){
+				bind.maxPackage.isChecked = true
+			}
+
+		}
 
 
 		bind.header.onBackClick {
@@ -81,7 +103,6 @@ class CreateShippingProfileFragment : BaseFragment<SellerHubViewModel, FragmentC
 			bind.weightUnits.showDropDown()
 		}
 
-
 		bind.save.setHapticClickListener {
 
 			when {
@@ -105,13 +126,25 @@ class CreateShippingProfileFragment : BaseFragment<SellerHubViewModel, FragmentC
 				else -> {
 					bind.loader.isVisible = true
 
-					viewModel.storeShippingProfile(
-						name = bind.name.value().request(),
-						size = bind.weightUnits.value().request(),
-						weight = bind.weight.value().request(),
-						additionalWeight = if(bind.additionalWeight.isChecked) "1".request() else "0".request(),
-						maxItems = if(bind.maxPackage.isChecked) "1".request() else "0".request()
-					)
+					if (from == "edit"){
+						viewModel.storeShippingProfile(
+							shippingProfileId = viewModel.selectedShippingProfile?.id.toString().request(),
+							name = bind.name.value().request(),
+							size = bind.weightUnits.value().request(),
+							weight = bind.weight.value().request(),
+							additionalWeight = if(bind.additionalWeight.isChecked) "1".request() else "0".request(),
+							maxItems = if(bind.maxPackage.isChecked) "1".request() else "0".request()
+						)
+					}else{
+						viewModel.storeShippingProfile(
+							name = bind.name.value().request(),
+							size = bind.weightUnits.value().request(),
+							weight = bind.weight.value().request(),
+							additionalWeight = if(bind.additionalWeight.isChecked) "1".request() else "0".request(),
+							maxItems = if(bind.maxPackage.isChecked) "1".request() else "0".request()
+						)
+					}
+
 				}
 
 			}

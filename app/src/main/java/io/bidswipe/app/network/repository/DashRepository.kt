@@ -574,12 +574,13 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
     ) = call { api.updateProductStatus(productId, status) }
 
     suspend fun storeShippingProfile(
+        shippingId: RequestBody?,
         name: RequestBody?,
         size: RequestBody?,
         weight: RequestBody?,
         additionalWeight: RequestBody?,
         maxItems: RequestBody?
-    ) = call { api.storeShippingProfile(name, size, weight, additionalWeight, maxItems) }
+    ) = call { api.storeShippingProfile(shippingId,name, size, weight, additionalWeight, maxItems) }
 
     suspend fun getShippingProfile(
     ) = call { api.getShippingProfile() }
@@ -606,6 +607,7 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
     ) = call { api.exportAnalyticsData(type, filter, startDate, endDate) }
 
     suspend fun getPromoteToolsDetails() = call { api.getPromoteToolsDetails() }
+
     suspend fun getSellerHubInfo() = call { api.getSellerHubInfo() }
 
     suspend fun checkScheduleShow(
@@ -617,5 +619,9 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
     suspend fun updateVacationModeStatus(
         vacationMode: RequestBody?
     ) = call { api.updateVacationModeStatus(vacationMode) }
+
+	suspend fun deleteShippingProfile(
+		profileId: String
+	) = call { api.deleteShippingProfile(profileId) }
 
 }

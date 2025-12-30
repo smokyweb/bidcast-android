@@ -49,12 +49,11 @@ class ReviewListFragment : BaseFragment<SellerViewModel , FragmentReviewListBind
 		}
 	}
 
-
 	@SuppressLint("NotifyDataSetChanged")
 	override fun onViewCreated(view : View , savedInstanceState : Bundle?) {
 		super.onViewCreated(view , savedInstanceState)
 
-		sellerId = activity?.intent?.getStringExtra("userId") ?: ""
+		sellerId = activity?.intent?.getStringExtra("sellerId") ?: ""
 		adapter = ReviewAdapter(list , mClick)
 		bind.recycler.adapter = adapter
 

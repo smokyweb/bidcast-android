@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.navigation.fragment.findNavController
 import io.bidswipe.app.R
@@ -42,9 +43,30 @@ class ShippingProfilesFragment : BaseFragment<SellerHubViewModel, FragmentShippi
 			findNavController().animatedNav(R.id.toCreateShippingProfile)
 		}
 
-
 		profileAdapter = ShippingProfileAdapter(profiles, object : RecyclerClicks {
 			override fun itemClick(pos: Int, status: String?) {
+
+				val shippingProfileId = profiles[pos]?.id
+
+				when (status) {
+
+					"edit" -> {
+						viewModel.selectedShippingProfile = profiles[pos]
+						findNavController().animatedNav(R.id.toCreateShippingProfile, bundleOf("from" to "edit"))
+					}
+
+					"delete" -> {
+
+						bind.loader.isVisible = true
+						viewModel.deleteShippingProfile(profiles[pos]?.id.toString())
+
+					}
+
+					else -> {
+
+					}
+
+				}
 
 			}
 		})
@@ -94,6 +116,39 @@ class ShippingProfilesFragment : BaseFragment<SellerHubViewModel, FragmentShippi
 						override fun secondaryClick(dialog: AppBottomSheet) {
 							dialog.dismiss()
 
+						}
+					})
+
+				}
+
+				else -> {}
+
+			}
+
+		}
+
+		viewModel.deleteShippingProfileRepo.observe(viewLifecycleOwner) {
+			when (it) {
+				is Resource.Success -> {
+					bind.loader.isVisible = false
+
+					val mData = it.value.data
+
+					viewModel.getShippingProfile()
+
+					profileAdapter.notifyDataSetChanged()
+				}
+
+				is Resource.Error -> {
+					bind.loader.isVisible = false
+
+					it.parse(mCtx, TAG, object : AlertClicks {
+						override fun primaryClick(dialog: AppBottomSheet) {
+							dialog.dismiss()
+						}
+
+						override fun secondaryClick(dialog: AppBottomSheet) {
+							dialog.dismiss()
 						}
 					})
 
