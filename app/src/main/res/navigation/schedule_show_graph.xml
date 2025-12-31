@@ -87,6 +87,7 @@
         android:name="io.bidswipe.app.ui.scheduleShow.ProductTipsFragment"
         android:label="fragment_product_tips"
         tools:layout="@layout/fragment_product_tips">
+
         <action
             android:id="@+id/goToCreateProductFragment"
             app:destination="@id/createProductFragment"
@@ -94,6 +95,7 @@
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@anim/slide_in_left"
             app:popExitAnim="@anim/slide_out_right" />
+
     </fragment>
 
     <fragment

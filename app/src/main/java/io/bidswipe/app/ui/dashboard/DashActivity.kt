@@ -368,7 +368,6 @@ class DashActivity : BaseActivity() , NavController.OnDestinationChangedListener
 					}
 				}
 			}
-
 		})
 
 		bind.contentDash.sellSheet.recycler.adapter = exploreAdapter
