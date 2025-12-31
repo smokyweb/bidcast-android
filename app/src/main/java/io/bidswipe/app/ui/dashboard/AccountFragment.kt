@@ -11,7 +11,6 @@ import androidx.core.view.isVisible
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayout.OnTabSelectedListener
 import io.bidswipe.app.App
-import io.bidswipe.app.BuildConfig
 import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseFragment
 import io.bidswipe.app.controller.GridAdapter
@@ -175,6 +174,11 @@ class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
 
 		App.getProfile()
 
+		bind.swipeRefreshLayout.setOnRefreshListener {
+			App.getProfile()
+			viewModel.getSellerHubInfo()
+		}
+
 		App.profileResponse.observe(viewLifecycleOwner) {
 
 			bind.userName.text = it?.name?.asCapital() ?: ""
@@ -292,13 +296,13 @@ class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
 			viewModel.updateVacationModeStatus(status.toString().request())
 		}
 
-
 		bind.loader.isVisible = true
 		viewModel.getSellerHubInfo()
 		viewModel.getSellerHubInfoRepo.observe(viewLifecycleOwner) {
 			when (it) {
 				is Resource.Success -> {
 					bind.loader.isVisible = false
+					bind.swipeRefreshLayout.isRefreshing = false
 					val mData = it.value.data
 
 					//UPCOMING SHOW
@@ -367,6 +371,7 @@ class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
 				is Resource.Error -> {
 					bind.loader.isVisible = false
 					viewModel.getSellerHubInfoRepo.value = null
+					bind.swipeRefreshLayout.isRefreshing = false
 
 					it.parse(mCtx, TAG, object : AlertClicks {
 						override fun primaryClick(dialog: AppBottomSheet) {
@@ -377,6 +382,7 @@ class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
 							dialog.dismiss()
 						}
 					})
+
 				}
 
 				else -> {}

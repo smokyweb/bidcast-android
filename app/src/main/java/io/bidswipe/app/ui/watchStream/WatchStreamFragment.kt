@@ -129,16 +129,16 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
     private var showNotes: String? = ""
 
-    companion object {
-        fun newInstance(roomID: String, streamID: String, thumbnail: String? = null) =
-            WatchStreamFragment().apply {
-                arguments = Bundle().apply {
-                    putString("roomID", roomID)
-                    putString("streamID", streamID)
-                    putString("thumbnail", thumbnail)
-                }
-            }
-    }
+	companion object {
+		fun newInstance(roomID: String, streamID: String, thumbnail: String? = null) =
+			WatchStreamFragment().apply {
+				arguments = Bundle().apply {
+					putString("roomID", roomID)
+					putString("streamID", streamID)
+					putString("thumbnail", thumbnail)
+				}
+			}
+	}
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -303,32 +303,38 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 //							bind.productLayout.isVisible = false
                         }
 
-                        val bidderName = winner.optString("user_name")
+                        val bidderName = winner.optString("user_name") ?:""
                         val bidderImage = winner.optString("user_image")
 
-                        bind.winningLayout.isVisible = true
+	                    if (bidderName.isNotEmpty()){
+		                    bind.winningLayout.isVisible = true
 
-                        bind.userImage.loadUrl(mCtx, bidderImage)
+		                    bind.userImage.loadUrl(mCtx, bidderImage)
 
-                        if (userId == winner.optString("user_id")) {
-                            bind.winning.text = buildSpannedString {
-                                color(ContextCompat.getColor(mCtx, R.color.primary)) {
-                                    bold { append(" you won!") }
-                                }
-                            }
-                            showWonView("You",bidderImage,"won the auction!")
-                        } else {
-                            bind.winning.text = buildSpannedString {
-                                append(bidderName)
-                                color(ContextCompat.getColor(mCtx, R.color.primary)) {
-                                    bold { append(" has won!") }
-                                }
-                            }
-                            showWonView(bidderName,bidderImage,"won the auction!")
-                        }
+		                    if (userId == winner.optString("user_id")) {
+			                    bind.winning.text = buildSpannedString {
+				                    color(ContextCompat.getColor(mCtx, R.color.primary)) {
+					                    bold { append(" you won!") }
+				                    }
+			                    }
+			                    showWonView("You",bidderImage,"won the auction!")
+		                    } else {
+			                    bind.winning.text = buildSpannedString {
+				                    append(bidderName)
+				                    color(ContextCompat.getColor(mCtx, R.color.primary)) {
+					                    bold { append(" has won!") }
+				                    }
+			                    }
+			                    showWonView(bidderName,bidderImage,"won the auction!")
+		                    }
 
+	                    }else{
+							bind.winningLayout.isVisible = false
+		                    bind.productLayout.isVisible = false
+		                    bind.soldLayout.isVisible = true
+
+	                    }
                     }
-
                 }
             }
 

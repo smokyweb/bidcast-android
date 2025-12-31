@@ -1,19 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:baselineAligned="false"
     android:padding="@dimen/half_margin">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="vertical">
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/icon"
-            android:background="@drawable/card_16"
-            android:backgroundTint="@color/primary"
             android:layout_width="18dp"
             android:layout_height="18dp"
-            android:padding="2dp"
             android:layout_marginTop="4dp"
+            android:background="@drawable/card_16"
+            android:backgroundTint="@color/primary"
+            android:padding="2dp"
             android:src="@drawable/ic_check_white_24dp" />
+
+        <View
+            android:layout_width="2dp"
+            android:layout_height="match_parent"
+            android:background="@color/primary" />
+
+    </LinearLayout>
 
     <LinearLayout
         android:layout_width="0dp"
@@ -25,6 +38,8 @@
         <TextView
             android:id="@+id/title"
             style="@style/TitleMedium"
+            android:textStyle="bold"
+            android:alpha="0.8"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Order Confirmed" />

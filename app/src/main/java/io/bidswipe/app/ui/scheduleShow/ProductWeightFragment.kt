@@ -10,7 +10,6 @@ import io.bidswipe.app.base.BaseFragment
 import io.bidswipe.app.controller.WeightAdapter
 import io.bidswipe.app.databinding.FragmentProductWeightBinding
 import io.bidswipe.app.interfaces.AlertClicks
-import io.bidswipe.app.model.LiveShowModel
 import io.bidswipe.app.model.StoreProductRequest
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.ui.custom.AppBottomSheet
@@ -107,7 +106,7 @@ class ProductWeightFragment : BaseFragment<ScheduleShowViewModel, FragmentProduc
 			flashSale = viewModel.productFormAcceptOffers,
 			acceptOffers = viewModel.productFormAcceptOffers,
 			reserveForLive = viewModel.productFormReserveForLive ,
-			shippingProfileId = "4",
+			shippingProfileId = viewModel.shippingProfile.ifEmpty { null },
 			status = "active",
 			images = imageUrls,
 			videos = videoUrls,
@@ -119,7 +118,8 @@ class ProductWeightFragment : BaseFragment<ScheduleShowViewModel, FragmentProduc
 			width = viewModel.productWidth,
 			mailClass = viewModel.productMailClass?.label ?: "",
 			processingCategory = viewModel.productProcessingCategory ?: "",
-			productCondition = viewModel.condition), productId = null
+			productCondition = viewModel.condition),
+			productId = null
 		)
 
 	}

@@ -267,7 +267,6 @@ class AgoraPublisherActivity : BaseActivity() {
 				)
 				bind.messageText.setText("")
 			}
-			true
 		}
 
 		bind.messageText.setOnEditorActionListener { _, actionId, _ ->
@@ -813,31 +812,39 @@ class AgoraPublisherActivity : BaseActivity() {
 						val winner = json.getJSONObject("winner")
 						val product = productList.find { it?.id == winner.optString("product_id") }
 
-						val bidderName = winner.optString("user_name")
+						val bidderName = winner.optString("user_name") ?:""
 						val bidderImage = winner.optString("user_image")
 
-						bind.winningLayout.isVisible = true
+						if (bidderName.isNotEmpty()){
 
-						bind.userImage.loadUrl(this, bidderImage)
-						bind.winning.text = buildSpannedString {
-							append(bidderName)
-							color(
-								ContextCompat.getColor(
-									this@AgoraPublisherActivity,
-									R.color.primary
-								)
-							) {
-								bold { append(" has won!") }
+							bind.winningLayout.isVisible = true
+
+							bind.userImage.loadUrl(this, bidderImage)
+							bind.winning.text = buildSpannedString {
+								append(bidderName)
+								color(
+									ContextCompat.getColor(
+										this@AgoraPublisherActivity,
+										R.color.primary
+									)
+								) {
+									bold { append(" has won!") }
+								}
 							}
+
+							socketManager?.sendMessage(roomID, "We have a winner! ${bidderName}", userId, userName, userImage)
+
+							product?.status = "sold"
+							product?.isCurrent = false
+
+							bind.status.isVisible = true
+							bind.runNext.isVisible = true
+
+						}else{
+							bind.winningLayout.isVisible = false
+							bind.status.isVisible = false
+							bind.runNext.isVisible = true
 						}
-
-						socketManager?.sendMessage(roomID, "We have a winner! ${userName}", userId, userName, userImage)
-
-						product?.status = "sold"
-						product?.isCurrent = false
-
-						bind.status.isVisible = true
-						bind.runNext.isVisible = true
 
 					}
 

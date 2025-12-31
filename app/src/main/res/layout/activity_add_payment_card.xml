@@ -73,15 +73,14 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/margin">
 
-                <com.stripe.android.view.StripeEditText
+                <com.stripe.android.view.CardNumberEditText
                     android:id="@+id/card_number"
                     style="@style/inputTextStyle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:digits="1234567890"
                     android:hint="@string/enter_card_number"
-                    android:inputType="number|numberSigned"
-                    android:maxLength="16" />
+                    android:inputType="number|numberSigned" />
 
             </com.google.android.material.textfield.TextInputLayout>
 

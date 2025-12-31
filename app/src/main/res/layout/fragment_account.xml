@@ -20,142 +20,149 @@
         app:showBackButton="false"
         app:showPrimaryIcon="true" />
 
-    <androidx.core.widget.NestedScrollView
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipeRefreshLayout"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@id/header">
 
-        <LinearLayout
+        <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
-
-        <LinearLayout
-            style="@style/shadowStyle"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@color/background"
-            android:paddingHorizontal="@dimen/margin"
-            android:paddingBottom="@dimen/margin"
-            android:orientation="vertical">
+            android:layout_height="match_parent">
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@color/background"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:layout_marginTop="@dimen/half_margin"
-                android:layout_marginBottom="@dimen/margin">
-
-                <com.google.android.material.card.MaterialCardView
-                    android:id="@+id/materialCardView"
-                    style="@style/cardStyle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    app:cardCornerRadius="100dp">
-
-                    <ImageView
-                        android:id="@+id/userProfile"
-                        android:layout_width="64dp"
-                        android:layout_height="64dp"
-                        android:contentDescription="@string/app_name"
-                        android:scaleType="centerCrop"
-                        android:src="@drawable/placeholder_user" />
-
-                </com.google.android.material.card.MaterialCardView>
+                android:layout_height="match_parent"
+                android:orientation="vertical">
 
                 <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/half_margin"
-                    android:layout_weight="1"
+                    style="@style/shadowStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@color/background"
+                    android:paddingHorizontal="@dimen/margin"
+                    android:paddingBottom="@dimen/margin"
                     android:orientation="vertical">
 
-                    <TextView
-                        android:id="@+id/userName"
-                        style="@style/TitleMedium"
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="@string/app_name"
-                        android:textStyle="bold" />
+                        android:background="@color/background"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:layout_marginTop="@dimen/half_margin"
+                        android:layout_marginBottom="@dimen/margin">
 
-                    <TextView
-                        android:id="@+id/sellerSince"
-                        style="@style/TitleSmall"
+                        <com.google.android.material.card.MaterialCardView
+                            android:id="@+id/materialCardView"
+                            style="@style/cardStyle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            app:cardCornerRadius="100dp">
+
+                            <ImageView
+                                android:id="@+id/userProfile"
+                                android:layout_width="64dp"
+                                android:layout_height="64dp"
+                                android:contentDescription="@string/app_name"
+                                android:scaleType="centerCrop"
+                                android:src="@drawable/placeholder_user" />
+
+                        </com.google.android.material.card.MaterialCardView>
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/half_margin"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:id="@+id/userName"
+                                style="@style/TitleMedium"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="@string/app_name"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:id="@+id/sellerSince"
+                                style="@style/TitleSmall"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="dfbgh"
+                                android:textColor="@color/tertiary" />
+
+                        </LinearLayout>
+
+                        <androidx.appcompat.widget.AppCompatImageView
+                            android:id="@+id/edit_icon"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:contentDescription="@string/app_name"
+                            android:scaleType="centerCrop"
+                            android:src="@drawable/ic_edit" />
+
+                    </LinearLayout>
+
+                    <com.google.android.material.card.MaterialCardView
+                        style="@style/cardStyle"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="dfbgh"
-                        android:textColor="@color/tertiary" />
+                        app:cardBackgroundColor="@color/surfaceVariant"
+                        app:cardCornerRadius="8dp"
+                        app:cardElevation="0dp">
+
+                        <com.google.android.material.tabs.TabLayout
+                            android:id="@+id/tabs"
+                            style="@style/tabStyle"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="4dp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:tabPadding="0dp">
+
+                            <com.google.android.material.tabs.TabItem
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/seller_hub" />
+
+                            <com.google.android.material.tabs.TabItem
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/my_account" />
+
+                        </com.google.android.material.tabs.TabLayout>
+
+                    </com.google.android.material.card.MaterialCardView>
 
                 </LinearLayout>
 
-                <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/edit_icon"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:contentDescription="@string/app_name"
-                    android:scaleType="centerCrop"
-                    android:src="@drawable/ic_edit" />
-
-            </LinearLayout>
-
-            <com.google.android.material.card.MaterialCardView
-                style="@style/cardStyle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:cardBackgroundColor="@color/surfaceVariant"
-                app:cardCornerRadius="8dp"
-                app:cardElevation="0dp">
-
-                <com.google.android.material.tabs.TabLayout
-                    android:id="@+id/tabs"
-                    style="@style/tabStyle"
+                <ViewSwitcher
+                    android:id="@+id/switcher"
+                    android:measureAllChildren="false"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="4dp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:tabPadding="0dp">
+                    android:layout_height="wrap_content">
 
-                    <com.google.android.material.tabs.TabItem
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/seller_hub" />
+                    <include
+                        android:id="@+id/seller_hub"
+                        layout="@layout/seller_hub_view" />
 
-                    <com.google.android.material.tabs.TabItem
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/my_account" />
+                    <include
+                        android:id="@+id/account_view"
+                        layout="@layout/account_view" />
 
-                </com.google.android.material.tabs.TabLayout>
-
-            </com.google.android.material.card.MaterialCardView>
+                </ViewSwitcher>
 
             </LinearLayout>
 
-            <ViewSwitcher
-                android:id="@+id/switcher"
-                android:measureAllChildren="false"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+        </androidx.core.widget.NestedScrollView>
 
-                <include
-                    android:id="@+id/seller_hub"
-                    layout="@layout/seller_hub_view" />
-
-                <include
-                    android:id="@+id/account_view"
-                    layout="@layout/account_view" />
-
-            </ViewSwitcher>
-
-        </LinearLayout>
-
-    </androidx.core.widget.NestedScrollView>
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
     <io.bidswipe.app.ui.custom.LoaderView
         android:id="@+id/loader"

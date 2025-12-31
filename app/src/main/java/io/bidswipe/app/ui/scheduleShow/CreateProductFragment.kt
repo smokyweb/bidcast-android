@@ -31,6 +31,7 @@ import io.bidswipe.app.network.Resource
 import io.bidswipe.app.network.response.GetCategoryResponse
 import io.bidswipe.app.network.response.GetMailClassesResponse
 import io.bidswipe.app.network.response.GetMyInventoryResponse
+import io.bidswipe.app.network.response.GetShippingProfilesResponse
 import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.utils.Alerts
 import io.bidswipe.app.utils.Const
@@ -55,7 +56,9 @@ class CreateProductFragment : BaseFragment<ScheduleShowViewModel, FragmentCreate
     private var subCategoryList = mutableListOf<GetCategoryResponse.Data?>()
     private var mailClassesList = mutableListOf<GetMailClassesResponse.Data.MailClasses?>()
     private var uploadItemIndex = -1
-    private var selectedCondition = ""
+	private var profiles = mutableListOf<GetShippingProfilesResponse.Data?>()
+	private var profileId = ""
+	private var selectedCondition = ""
     var isSubCategory = false
     var variantList = mutableListOf<GetCategoryResponse.Data.ExtraField?>()
     private val imageList get() = viewModel.productImages
@@ -342,7 +345,9 @@ class CreateProductFragment : BaseFragment<ScheduleShowViewModel, FragmentCreate
         setupMailClassDropdown()
 
         viewModel.getMailClasses()
-        viewModel.getMailClassesRepo.observe(viewLifecycleOwner) {
+	    viewModel.getShippingProfile()
+
+	    viewModel.getMailClassesRepo.observe(viewLifecycleOwner) {
             when (it) {
                 is Resource.Success -> {
                     bind.loader.isVisible = false
@@ -443,6 +448,74 @@ class CreateProductFragment : BaseFragment<ScheduleShowViewModel, FragmentCreate
 
             }
         }
+
+	    viewModel.getShippingProfileRepo.observe(viewLifecycleOwner) {
+		    when (it) {
+			    is Resource.Success -> {
+				    viewModel.getShippingProfileRepo.value = null
+				    bind.loader.isVisible = false
+
+				    val mData = it.value.data
+
+				    if (mData?.isNotEmpty() == true) {
+					    profiles.clear()
+					    profiles.addAll(mData)
+				    }
+
+				    val profileAdapter = ArrayAdapter(
+					    mCtx,
+					    android.R.layout.simple_list_item_1,
+					    profiles.map { it?.name })
+				    bind.shippingProfile.setAdapter(profileAdapter)
+				    bind.shippingProfile.setDropDownBackgroundDrawable(draw)
+
+				    bind.shippingProfile.setOnItemClickListener { _, _, position, _ ->
+
+					    profileId = profiles[position]?.id.toString()
+
+					    viewModel.shippingProfile = profileId
+
+					    bind.shippingProfile.setText(profiles[position]?.name, false)
+
+				    }
+
+				    if (viewModel.shippingProfile.isNotEmpty()) {
+
+					    profileId = viewModel.shippingProfile
+
+					    val selectedShippingProfile = profiles.findLast { profile ->
+						    viewModel.shippingProfile == profile?.id.toString()
+					    }
+
+					    bind.shippingProfile.setText(selectedShippingProfile?.name, false)
+				    }
+
+				    bind.shippingProfile.setHapticClickListener {
+					    bind.shippingProfile.showDropDown()
+
+				    }
+
+
+			    }
+
+			    is Resource.Error -> {
+				    it.parse(mCtx, TAG, object : AlertClicks {
+					    override fun primaryClick(dialog: AppBottomSheet) {
+						    dialog.dismiss()
+
+					    }
+
+					    override fun secondaryClick(dialog: AppBottomSheet) {
+						    dialog.dismiss()
+					    }
+				    })
+
+			    }
+
+			    else -> {}
+		    }
+	    }
+
 
     }
 

@@ -10,6 +10,7 @@ import androidx.core.view.WindowInsetsCompat.CONSUMED
 import androidx.core.view.isVisible
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.stripe.android.ApiResultCallback
+import com.stripe.android.PaymentConfiguration
 import com.stripe.android.Stripe
 import com.stripe.android.model.CardParams
 import com.stripe.android.model.Token
@@ -20,7 +21,6 @@ import io.bidswipe.app.base.BaseActivity
 import io.bidswipe.app.databinding.ActivityAddPaymentCardBinding
 import io.bidswipe.app.databinding.DatePickerLayoutBinding
 import io.bidswipe.app.interfaces.AlertClicks
-import io.bidswipe.app.model.PaymentCardModel
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.utils.Alerts
@@ -42,11 +42,15 @@ class AddPaymentCardActivity : BaseActivity() {
 	private val viewModel by viewModels<DashViewModel>()
 
 	private var mSheet: BottomSheetDialog? = null
+
 	private var isShowing = false
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
 		setContentView(bind.root)
+
+		PaymentConfiguration.init(this, BuildConfig.STRIPE_PK)
+
 		ViewCompat.setOnApplyWindowInsetsListener(window.decorView) { v, insets ->
 			val system = insets.getInsets(WindowInsetsCompat.Type.systemBars())
 			bind.root.setPadding(0, system.top, 0, system.bottom)
@@ -107,8 +111,6 @@ class AddPaymentCardActivity : BaseActivity() {
 				}
 
 				else -> {
-
-					hideKeyboard()
 
 					hideKeyboard()
 
@@ -181,7 +183,6 @@ class AddPaymentCardActivity : BaseActivity() {
 		}
 
 	}
-
 
 	private fun showDatePicker(call: (String) -> Unit) {
 		val alBind = DatePickerLayoutBinding.bind(LayoutInflater.from(this).inflate(layout.date_picker_layout, null))

@@ -17,61 +17,22 @@
         app:showBackButton="true"
         app:showSecondaryIcon="false" />
 
-    <androidx.core.widget.NestedScrollView
+    <ScrollView
         android:id="@+id/scroll"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@id/buttonLayout"
-        app:layout_constraintTop_toBottomOf="@id/header">
+        android:fillViewport="true"
+        app:layout_constraintTop_toBottomOf="@id/header"
+        app:layout_constraintBottom_toBottomOf="parent">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_marginHorizontal="@dimen/half_margin"
+            android:paddingHorizontal="@dimen/half_margin"
             android:orientation="vertical"
             app:layout_constraintBottom_toTopOf="@id/buttonLayout"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/header">
-
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/materialCardView"
-                style="@style/cardStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="@dimen/margin"
-                android:backgroundTint="@color/background"
-                app:cardCornerRadius="100dp">
-
-                <ImageView
-                    android:layout_width="36dp"
-                    android:layout_height="36dp"
-                    android:layout_gravity="center"
-                    android:contentDescription="@string/app_name"
-                    android:scaleType="centerCrop"
-                    android:src="@drawable/ic_box"
-                    android:layout_margin="24dp"
-                    app:tint="@color/primary" />
-
-            </com.google.android.material.card.MaterialCardView>
-
-            <TextView
-                style="@style/HeadlineMedium"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginHorizontal="@dimen/half_margin"
-                android:layout_marginTop="@dimen/margin"
-                android:text="Preparing Your Order" />
-
-            <TextView
-                style="@style/BodyMedium"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginHorizontal="@dimen/margin"
-                android:text="@string/send_this_purchase_as_a_gift_to_someone_special"
-                android:textAlignment="center" />
 
             <LinearLayout
                 style="@style/shadowStyle"
@@ -109,7 +70,7 @@
                     </com.google.android.material.card.MaterialCardView>
 
                     <LinearLayout
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginHorizontal="@dimen/half_margin"
                         android:layout_weight="1"
@@ -138,12 +99,11 @@
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
                     android:alpha="0.5"
-                    android:layout_margin="@dimen/half_margin" />
+                    android:layout_marginVertical="@dimen/margin" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/half_margin"
                     android:orientation="horizontal">
 
                     <TextView
@@ -168,7 +128,6 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/half_margin"
                     android:orientation="horizontal">
 
                     <TextView
@@ -187,31 +146,6 @@
                         android:layout_height="wrap_content"
                         android:background="?selectableItemBackground"
                         android:text="Jan 15, 2025" />
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginVertical="@dimen/half_margin"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        style="@style/TitleMedium"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="@dimen/margin"
-                        android:layout_weight="1"
-                        android:alpha="0.7"
-                        android:text="@string/sold_by" />
-
-                    <TextView
-                        android:id="@+id/sold_by"
-                        style="@style/BodyLarge"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:background="?selectableItemBackground"
-                        android:text="TechGear Pro" />
 
                 </LinearLayout>
 
@@ -242,7 +176,6 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/half_margin"
                     android:orientation="horizontal">
 
                     <TextView
@@ -282,7 +215,7 @@
                     android:layout_height="wrap_content"
                     android:drawablePadding="@dimen/half_margin"
                     android:text="Shipping Updates"
-                    app:drawableStartCompat="@drawable/ic_vehicle"
+                    app:drawableStartCompat="@drawable/ic_truck_outline"
                     app:drawableTint="@color/primary" />
 
                 <androidx.recyclerview.widget.RecyclerView
@@ -321,67 +254,48 @@
                     android:layout_marginHorizontal="@dimen/half_margin"
                     android:alpha="0.8"
                     android:text="12 Main Road Engineering Chauraha" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:weightSum="2">
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/receipt"
-                    style="@style/appTonalBtn"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="@dimen/half_margin"
-                    android:layout_weight="1"
-                    android:paddingHorizontal="@dimen/margin"
-                    android:text="Receipt"
-                    app:cornerRadius="32dp" />
-
-                <com.google.android.material.button.MaterialButton
-                    style="@style/appTonalBtn"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="@dimen/half_margin"
-                    android:layout_weight="1"
-                    android:paddingHorizontal="@dimen/margin"
-                    android:text="Shipping Details"
-                    app:cornerRadius="32dp" />
 
             </LinearLayout>
 
             <LinearLayout
-                style="@style/shadowStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/half_margin"
-                android:background="@drawable/card_16"
-                android:gravity="center_vertical"
-                android:orientation="vertical"
-                android:padding="@dimen/margin">
+                android:orientation="horizontal">
 
-                <TextView
-                    style="@style/TitleLarge"
-                    android:layout_width="match_parent"
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/inputBoxStyle"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:drawablePadding="@dimen/half_margin"
-                    android:text="@string/swiftbid_buyer_protection"
-                    app:drawableStartCompat="@drawable/ic_shield" />
+                    app:endIconDrawable="@drawable/ic_arrow_down_2"
+                    android:layout_weight="1"
+                    app:endIconMode="dropdown_menu">
 
-                <TextView
-                    style="@style/BodyLarge"
-                    android:layout_width="match_parent"
+                    <com.google.android.material.textfield.MaterialAutoCompleteTextView
+                        android:id="@+id/status"
+                        style="@style/inputTextStyle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:focusable="false"
+                        android:layout_marginEnd="@dimen/half_margin"
+                        android:focusableInTouchMode="false"
+                        android:hint="Select Status" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/publish"
+                    style="@style/appBtn"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:alpha="0.8"
-                    android:text="Get full refund if the item is not as described or if is not delivered" />
+                    android:layout_marginStart="@dimen/half_margin"
+                    android:text="Update Status" />
 
             </LinearLayout>
+
         </LinearLayout>
 
-    </androidx.core.widget.NestedScrollView>
-
+    </ScrollView>
 
     <io.bidswipe.app.ui.custom.LoaderView
         android:id="@+id/loader"

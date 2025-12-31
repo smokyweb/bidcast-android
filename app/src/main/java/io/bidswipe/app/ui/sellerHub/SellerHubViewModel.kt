@@ -14,6 +14,7 @@ import io.bidswipe.app.network.response.FetchSellerVerificationResponse
 import io.bidswipe.app.network.response.GetKYCDetailsRespnse
 import io.bidswipe.app.network.response.GetMyShowResponse
 import io.bidswipe.app.network.response.GetOffersResponse
+import io.bidswipe.app.network.response.GetOrderDetailsResponse
 import io.bidswipe.app.network.response.GetOrdersResponse
 import io.bidswipe.app.network.response.GetPaymentCardsResponse
 import io.bidswipe.app.network.response.GetPremierShopResponse
@@ -625,6 +626,21 @@ class SellerHubViewModel @Inject constructor(
 			return@launch
 		}
 		_deleteShippingProfileResponse.value = repo.deleteShippingProfile(shippingProfileId)
+	}
+
+
+	private var _getOrderDetailsResponse = MutableLiveData<Resource<GetOrderDetailsResponse>>()
+	val getOrderDetailsRepo: MutableLiveData<Resource<GetOrderDetailsResponse>>
+		get() = _getOrderDetailsResponse
+
+	fun getOrderDetails(
+		orderId: RequestBody?,
+	) = viewModelScope.launch {
+		if (!networkMonitor.hasInternet()) {
+			_getOrderDetailsResponse.value = NO_INTERNET_ERROR
+			return@launch
+		}
+		_getOrderDetailsResponse.value = repo.getOrderDetails(orderId)
 	}
 
 }

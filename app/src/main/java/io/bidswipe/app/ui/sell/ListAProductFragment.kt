@@ -571,6 +571,7 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
 						android.R.layout.simple_list_item_1,
 						profiles.map { it?.name })
 					bind.shippingProfile.setAdapter(profileAdapter)
+
 					bind.shippingProfile.setDropDownBackgroundDrawable(draw)
 
 					bind.shippingProfile.setOnItemClickListener { _, _, position, _ ->
@@ -581,22 +582,19 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
 
 					}
 
-					bind.shippingProfile.setHapticClickListener {
-						bind.shippingProfile.showDropDown()
+					if (viewModel.shippingProfile.isNotEmpty()) {
 
+						profileId = viewModel.shippingProfile
 
-						if (viewModel.shippingProfile.isNotEmpty()) {
-
-							profileId = viewModel.shippingProfile
-
-
-							val selectedShippingProfile = profiles.findLast { profile ->
-								viewModel.shippingProfile == profile?.id.toString()
-							}
-
-							bind.shippingProfile.setText(selectedShippingProfile?.name, false)
+						val selectedShippingProfile = profiles.findLast { profile ->
+							viewModel.shippingProfile == profile?.id.toString()
 						}
 
+						bind.shippingProfile.setText(selectedShippingProfile?.name, false)
+					}
+
+					bind.shippingProfile.setHapticClickListener {
+						bind.shippingProfile.showDropDown()
 
 					}
 

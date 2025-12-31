@@ -40,6 +40,15 @@ class PaymentShippingFragment : BaseFragment<MoreViewModel, FragmentPaymentShipp
 	private lateinit var cardAdapter: PaymentCardAdapter
 	private lateinit var shippingAddressAdapter: ShippingAddressAdapter
 
+	private var addCardLauncher =
+		registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+			if (result.resultCode == Activity.RESULT_OK) {
+				bind.loader.isVisible = true
+				viewModel.getPaymentCard()
+			}
+
+		}
+
 	private val mClick = object : RecyclerClicks {
 		override fun itemClick(pos: Int, status: String?) {
 
@@ -96,7 +105,7 @@ class PaymentShippingFragment : BaseFragment<MoreViewModel, FragmentPaymentShipp
 		bind.addressRecycler.adapter = shippingAddressAdapter
 
 		bind.addPaymentCard.setHapticClickListener {
-			startActivity(Intent(mCtx, AddPaymentCardActivity::class.java))
+			addCardLauncher.launch(Intent(mCtx, AddPaymentCardActivity::class.java))
 		}
 
 		bind.addNewAddress.setHapticClickListener {

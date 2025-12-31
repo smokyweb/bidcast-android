@@ -8,6 +8,7 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.core.view.get
 import androidx.core.view.isVisible
 import androidx.navigation.fragment.findNavController
@@ -59,7 +60,7 @@ class MyOrdersFragment : BaseFragment<SellerHubViewModel, FragmentMyOrdersBindin
 				}
 
 				else -> {
-					findNavController().navigate(ids.myOrdersFragmentToSellerOrderDetailFragment)
+					findNavController().navigate(ids.myOrdersFragmentToSellerOrderDetailFragment, bundleOf("orderId" to orderList[pos]?.id.toString(), "from" to "myOrders"))
 				}
 			}
 		}
