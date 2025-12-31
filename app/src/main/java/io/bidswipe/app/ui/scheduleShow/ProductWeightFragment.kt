@@ -14,6 +14,7 @@ import io.bidswipe.app.model.LiveShowModel
 import io.bidswipe.app.model.StoreProductRequest
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.ui.custom.AppBottomSheet
+import io.bidswipe.app.utils.Const
 import io.bidswipe.app.utils.Utils
 import io.bidswipe.app.utils.hideKeyboard
 import io.bidswipe.app.utils.ids
@@ -64,18 +65,35 @@ class ProductWeightFragment : BaseFragment<ScheduleShowViewModel, FragmentProduc
 		val imagePartList = mutableListOf<MultipartBody.Part>()
 		val thumbnailPartList = mutableListOf<MultipartBody.Part>()
 
-		imageFiles.forEach { file ->
-			val name = System.currentTimeMillis().toString() + "_product_gallery.jpeg"
-			val imagePart = Utils.imagePart("images[]", name, file)
-			imagePartList.add(imagePart)
+		val videoPartList = mutableListOf<MultipartBody.Part>()
 
-			val thumbnailFile = File(file.absolutePath)
-			val thumbnailName = System.currentTimeMillis().toString() + "_product_thumbnail.jpeg"
-			val thumbnailPart = Utils.imagePart("thumbnail[]", thumbnailName, thumbnailFile)
-			thumbnailPartList.add(thumbnailPart)
+		// Separate photos and videos
+		viewModel.productImages.filter { ! it.path.contains(Const.BASE_URL) }.forEach { mediaItem ->
+			if (mediaItem.path.isNotEmpty()) {
+				if (mediaItem.isVideo) {
+					// Handle video upload
+					val name = System.currentTimeMillis().toString() + "_product_video.mp4"
+					val videoPart = Utils.imagePart("videos[]", name, File(mediaItem.path))
+					videoPart.let { element -> videoPartList.add(element) }
+				} else {
+					// Handle photo upload
+					val name = System.currentTimeMillis().toString() + "_product_gallery.jpeg"
+					val thumbnailName =
+						System.currentTimeMillis().toString() + "_product_thumbnail.jpeg"
+
+					val imagePart = Utils.imagePart("images[]", name, File(mediaItem.path))
+					imagePart.let { element -> imagePartList.add(element) }
+
+					val thumbnailFile = File(mediaItem.path)
+					val thumbnailPart =
+						Utils.imagePart("thumbnails[]", thumbnailName, thumbnailFile)
+					thumbnailPart.let { element -> thumbnailPartList.add(element) }
+				}
+			}
 		}
 
-		viewModel.storeProductMeta(imagePartList, thumbnailPartList)
+
+		viewModel.storeProductMeta(imagePartList,videoPartList, thumbnailPartList)
 	}
 
 	private fun createProduct(imageUrls: List<Map<String, String>>?, videoUrls: List<Map<String, String>>?) {

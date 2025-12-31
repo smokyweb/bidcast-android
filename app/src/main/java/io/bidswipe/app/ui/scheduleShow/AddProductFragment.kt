@@ -305,7 +305,9 @@ class AddProductFragment : BaseFragment<ScheduleShowViewModel, FragmentAddProduc
 					bind.loader.isVisible = false
 					val data = it.value.data
 					log("SHOW DATA Before Start Show: $data")
-					if (viewModel.showId.isNullOrEmpty()) {
+					finish()
+
+					/*if (viewModel.showId.isNullOrEmpty()) {
 						val products = data?.products?.map { product -> product?.toLiveShowProduct() }
 						products?.first()?.isCurrent = true
 
@@ -339,7 +341,7 @@ class AddProductFragment : BaseFragment<ScheduleShowViewModel, FragmentAddProduc
 						finish()
 					} else {
 						finish()
-					}
+					}*/
 				}
 
 				is Resource.Error -> {

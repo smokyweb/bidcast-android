@@ -83,7 +83,7 @@ class AddPaymentCardActivity : BaseActivity() {
 				}
 
 				bind.cardNumber.value().validator().minLength(16).check().not() -> {
-					Alerts.error(this, "Card Digit should be 12")
+					Alerts.error(this, "Card Digit should be 16")
 					bind.cardNumber.requestFocus()
 					showKeyboard(bind.cardNumber)
 				}

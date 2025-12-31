@@ -217,13 +217,14 @@ class ScheduleShowViewModel @Inject constructor(
 
     fun storeProductMeta(
         productImages: List<MultipartBody.Part>?,
+        videos : List<MultipartBody.Part>?,
         thumbnail: List<MultipartBody.Part>?
     ) = viewModelScope.launch {
         if (!networkMonitor.hasInternet()) {
             _storeProductMetaResponse.value = NO_INTERNET_ERROR
             return@launch
         }
-        _storeProductMetaResponse.value = repo.storeProductMeta(productImages, thumbnail)
+        _storeProductMetaResponse.value = repo.storeProductMeta(productImages,videos, thumbnail)
     }
 
     private var _deleteProductResponse = MutableLiveData<Resource<CommonResponse>>()

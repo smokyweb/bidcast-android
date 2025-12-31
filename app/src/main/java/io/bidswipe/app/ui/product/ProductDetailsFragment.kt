@@ -197,6 +197,7 @@ class ProductDetailsFragment : BaseFragment<ProductViewModel, FragmentProductDet
 					bind.recyclerView.onFlingListener = null
 
 					images.clear()
+					images.addAll(mData?.videos ?: emptyList())
 					images.addAll(mData?.images ?: emptyList())
 					mediaAdapter.notifyDataSetChanged()
 

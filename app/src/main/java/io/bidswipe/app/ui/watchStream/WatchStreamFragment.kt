@@ -1966,17 +1966,15 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
         bind.wonView.root.isVisible=true
         bind.wonView.userName.text=username
         bind.wonView.desc.text=desc
+	    bind.wonView.userImage.loadUrl(mCtx, userImage, draw.app_icon_dollar)
 
-        Handler(Looper.getMainLooper()).postDelayed({
-            val flip = ObjectAnimator.ofFloat(bind.wonView.imageCard, "rotationY", 0f, 180f)
-            flip.duration = 1000
+	    Handler(Looper.getMainLooper()).postDelayed({
+		    val flip = ObjectAnimator.ofFloat(bind.wonView.imageCard, "rotationY", 0f, 180f)
+		    flip.duration = 1000
 
-            flip.addListener(object : AnimatorListenerAdapter() {
-                override fun onAnimationEnd(animation: Animator) {
-                    super.onAnimationEnd(animation)
-
-                    bind.wonView.userImage.loadUrl(mCtx,userImage, draw.app_icon_dollar)
-
+		    flip.addListener(object : AnimatorListenerAdapter() {
+			    override fun onAnimationEnd(animation: Animator) {
+				    super.onAnimationEnd(animation)
                     val flipBack = ObjectAnimator.ofFloat(bind.wonView.imageCard, "rotationY", 0f, 180f)
                     flipBack.duration = 1000
                     flipBack.start()

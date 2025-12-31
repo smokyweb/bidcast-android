@@ -79,10 +79,12 @@ class ShowDetailsActivity : BaseActivity() {
 
             if (profile?.sellerIdentityStatus != "verified") {
                 startActivity(Intent(this, SellerVerificationActivity::class.java))
+	            return@setHapticClickListener
             }
 
-            if (profile?.hasCardAdded != true || profile.hasShippingAddress != true) {
+            if (profile.hasCardAdded != true || profile.hasShippingAddress != true) {
                 showPaymentAndAddressSheet()
+	            return@setHapticClickListener
             }
 
             val user = showData?.user
@@ -90,6 +92,7 @@ class ShowDetailsActivity : BaseActivity() {
 
             if (products?.isEmpty() == true) {
                 errorToast("No products found for this Show")
+	            return@setHapticClickListener
             } else {
                 products?.first()?.isCurrent = true
             }
