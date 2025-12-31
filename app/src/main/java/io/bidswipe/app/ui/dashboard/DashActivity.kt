@@ -113,6 +113,7 @@ class DashActivity : BaseActivity() , NavController.OnDestinationChangedListener
 
 		navController.addOnDestinationChangedListener(this)
 
+		bind.drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
 		bind.drawer.addDrawerListener(object : DrawerLayout.DrawerListener {
 			override fun onDrawerSlide(drawerView : View , slideOffset : Float) {
 			}
@@ -129,6 +130,7 @@ class DashActivity : BaseActivity() , NavController.OnDestinationChangedListener
 			override fun onDrawerStateChanged(newState : Int) {
 			}
 		})
+
 
 		bind.header.onBackClick { bind.drawer.closeDrawer(GravityCompat.END) }
 

@@ -79,8 +79,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+                tools:listitem="@layout/format_item"
+                tools:itemCount="2"
                 app:spanCount="2" />
-
 
             <TextView
                 style="@style/TitleSmall"
@@ -94,6 +95,8 @@
                 style="@style/inputBoxStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                app:prefixText="$"
+                app:prefixTextAppearance="@style/BodyMedium"
                 android:layout_marginBottom="@dimen/half_margin">
 
                 <androidx.appcompat.widget.AppCompatAutoCompleteTextView
@@ -102,9 +105,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="numberDecimal"
-                    android:drawablePadding="@dimen/half_margin"
-                    android:drawableTint="@color/primary"
-                    android:drawableStart="@drawable/ic_dollar"
                     android:hint="@string/_0_00" />
 
             </com.google.android.material.textfield.TextInputLayout>

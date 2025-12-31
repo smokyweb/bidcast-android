@@ -88,13 +88,9 @@ class ProductDetailsFragment : BaseFragment<ProductViewModel, FragmentProductDet
 		menu.setOnMenuItemClickListener {
 			when (it.itemId) {
 				ids.save_product -> {
-
 					bind.loader.isVisible = true
-
 					viewModel.saveSellerProduct(productId.request())
-
 				}
-
 			}
 			return@setOnMenuItemClickListener true
 		}
@@ -131,7 +127,6 @@ class ProductDetailsFragment : BaseFragment<ProductViewModel, FragmentProductDet
 					bind.userName.text = mData?.user?.name?.asCapital()
 
 					viewModel.getSellerInfo(sellerId = mData?.userId.toString())
-
 
 //                    if (mData?.user?.sellerVerification == true) {
 //                        bind.sellerStatus.text = "Verified Seller"

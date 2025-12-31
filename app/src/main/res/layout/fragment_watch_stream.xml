@@ -31,197 +31,8 @@
             android:layout_height="match_parent"
             android:background="@drawable/center_gradient">
 
-            <LinearLayout
-                android:id="@+id/profileLayout"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
-
-                <com.google.android.material.card.MaterialCardView
-                    android:id="@+id/icon_card"
-                    style="@style/cardStyle"
-                    android:layout_width="42dp"
-                    android:layout_height="42dp"
-                    app:cardCornerRadius="100dp"
-                    app:cardElevation="0dp">
-
-                    <androidx.appcompat.widget.AppCompatImageView
-                        android:id="@+id/userImage"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:scaleType="centerCrop"
-                        android:src="@drawable/user_image" />
-
-                </com.google.android.material.card.MaterialCardView>
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="@dimen/half_margin"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:id="@+id/userName"
-                        style="@style/TitleMedium"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="@string/username"
-                        android:textColor="@color/surface"
-                        android:textSize="16sp" />
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="@dimen/half_margin">
-
-                        <TextView
-                            android:id="@+id/rating"
-                            style="@style/TitleSmall"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:drawablePadding="2dp"
-                            android:gravity="center_vertical"
-                            android:text="5.0"
-                            android:textColor="@color/onPrimary"
-                            app:drawableStartCompat="@drawable/ic_star"
-                            app:drawableTint="@color/onPrimary" />
-
-                        <TextView
-                            style="@style/TitleSmall"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginHorizontal="2dp"
-                            android:gravity="center_vertical"
-                            android:text="•"
-                            android:textColor="@color/onPrimary" />
-
-                        <TextView
-                            android:id="@+id/shipping"
-                            style="@style/TitleSmall"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginEnd="@dimen/half_margin"
-                            android:drawablePadding="2dp"
-                            android:drawableTint="@color/onPrimary"
-                            android:gravity="center_vertical"
-                            android:text="1d"
-                            android:textColor="@color/onPrimary"
-                            app:drawableStartCompat="@drawable/ic_shipping" />
-
-                        <com.google.android.material.button.MaterialButton
-                            android:id="@+id/follow"
-                            style="@style/appBtn"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:minWidth="0dp"
-                            android:minHeight="0dp"
-                            android:paddingHorizontal="12dp"
-                            android:paddingVertical="2dp"
-                            android:text="Follow"
-                            android:textSize="14sp"
-                            app:cornerRadius="24dp" />
-                    </LinearLayout>
-
-                </LinearLayout>
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/liveCount"
-                    style="@style/appTonalBtn"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="top"
-                    android:layout_marginEnd="@dimen/half_margin"
-                    android:minWidth="0dp"
-                    android:minHeight="0dp"
-                    android:paddingHorizontal="8dp"
-                    android:paddingVertical="4dp"
-                    android:text="0"
-                    android:textColor="@color/onPrimary"
-                    android:textSize="12sp"
-                    app:backgroundTint="@color/black25"
-                    app:cornerRadius="24dp"
-                    app:icon="@drawable/ic_broadcast"
-                    app:iconPadding="6dp"
-                    app:iconSize="20sp"
-                    app:iconTint="@null" />
-
-                <com.google.android.material.card.MaterialCardView
-                    android:id="@+id/rehearsal"
-                    style="@style/cardStyle"
-                    android:layout_width="28dp"
-                    android:layout_height="28dp"
-                    android:layout_gravity="top"
-                    app:cardBackgroundColor="@color/black25"
-                    app:cardCornerRadius="100dp"
-                    app:cardElevation="0dp">
-
-                    <androidx.appcompat.widget.AppCompatImageView
-                        android:id="@+id/cutButton"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:padding="6dp"
-                        android:src="@drawable/ic_down"
-                        android:tint="@color/surface" />
-
-                </com.google.android.material.card.MaterialCardView>
-
-            </LinearLayout>
-
-            <TextView
-                android:id="@+id/show_notes"
-                style="@style/LabelLarge"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/half_margin"
-                android:background="@drawable/card_8"
-                android:backgroundTint="@color/surfaceVariant"
-                android:elevation="4dp"
-                android:padding="@dimen/half_margin"
-                android:text="@string/show_nnotes"
-                android:visibility="visible"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/profileLayout" />
-
-            <LinearLayout
-                android:id="@+id/giveaway_layout"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginVertical="@dimen/half_margin"
-                android:background="@drawable/giveaway_back"
-                android:orientation="vertical"
-                android:padding="8dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/profileLayout">
-
-                <TextView
-                    style="@style/TitleMedium"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Freebie"
-                    android:textColor="@color/background" />
-
-                <TextView
-                    style="@style/BodyMedium"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:drawableStart="@drawable/ic_gift_outlined"
-                    android:drawablePadding="4dp"
-                    android:drawableTint="@color/background"
-                    android:gravity="center_vertical"
-                    android:text="0 Entries"
-                    android:textColor="@color/background" />
-
-            </LinearLayout>
-
-            <include
-                layout="@layout/won_view"
-                android:id="@+id/won_view"
-                android:visibility="gone"/>
-
             <ScrollView
+                android:id="@+id/scrollview"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:fillViewport="true"
@@ -605,8 +416,8 @@
                             android:layout_marginBottom="@dimen/margin"
                             android:backgroundTint="@color/transparent"
                             android:elevation="0dp"
-                            app:cardElevation="0dp"
                             android:visibility="gone"
+                            app:cardElevation="0dp"
                             app:layout_constraintBottom_toTopOf="@id/bidLayout"
                             app:layout_constraintStart_toStartOf="parent">
 
@@ -872,6 +683,307 @@
 
             </ScrollView>
 
+            <LinearLayout
+                android:id="@+id/profileLayout"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/icon_card"
+                    style="@style/cardStyle"
+                    android:layout_width="42dp"
+                    android:layout_height="42dp"
+                    app:cardCornerRadius="100dp"
+                    app:cardElevation="0dp">
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/userImage"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/user_image" />
+
+                </com.google.android.material.card.MaterialCardView>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/half_margin"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/userName"
+                        style="@style/TitleMedium"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/username"
+                        android:textColor="@color/surface"
+                        android:textSize="16sp" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="@dimen/half_margin">
+
+                        <TextView
+                            android:id="@+id/rating"
+                            style="@style/TitleSmall"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:drawablePadding="2dp"
+                            android:gravity="center_vertical"
+                            android:text="5.0"
+                            android:textColor="@color/onPrimary"
+                            app:drawableStartCompat="@drawable/ic_star"
+                            app:drawableTint="@color/onPrimary" />
+
+                        <TextView
+                            style="@style/TitleSmall"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginHorizontal="2dp"
+                            android:gravity="center_vertical"
+                            android:text="•"
+                            android:textColor="@color/onPrimary" />
+
+                        <TextView
+                            android:id="@+id/shipping"
+                            style="@style/TitleSmall"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="@dimen/half_margin"
+                            android:drawablePadding="2dp"
+                            android:drawableTint="@color/onPrimary"
+                            android:gravity="center_vertical"
+                            android:text="1d"
+                            android:textColor="@color/onPrimary"
+                            app:drawableStartCompat="@drawable/ic_shipping" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/follow"
+                            style="@style/appBtn"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:minWidth="0dp"
+                            android:minHeight="0dp"
+                            android:paddingHorizontal="12dp"
+                            android:paddingVertical="2dp"
+                            android:text="Follow"
+                            android:textSize="14sp"
+                            app:cornerRadius="24dp" />
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/liveCount"
+                    style="@style/appTonalBtn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="top"
+                    android:layout_marginEnd="@dimen/half_margin"
+                    android:minWidth="0dp"
+                    android:minHeight="0dp"
+                    android:paddingHorizontal="8dp"
+                    android:paddingVertical="4dp"
+                    android:text="0"
+                    android:textColor="@color/onPrimary"
+                    android:textSize="12sp"
+                    app:backgroundTint="@color/black25"
+                    app:cornerRadius="24dp"
+                    app:icon="@drawable/ic_broadcast"
+                    app:iconPadding="6dp"
+                    app:iconSize="20sp"
+                    app:iconTint="@null" />
+
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/rehearsal"
+                    style="@style/cardStyle"
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
+                    android:layout_gravity="top"
+                    app:cardBackgroundColor="@color/black25"
+                    app:cardCornerRadius="100dp"
+                    app:cardElevation="0dp">
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/cutButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:padding="6dp"
+                        android:src="@drawable/ic_down"
+                        android:tint="@color/surface" />
+
+                </com.google.android.material.card.MaterialCardView>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/notes_freebie_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/profileLayout">
+
+                <TextView
+                    android:id="@+id/show_notes"
+                    style="@style/LabelLarge"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/half_margin"
+                    android:background="@drawable/card_8"
+                    android:backgroundTint="@color/surfaceVariant"
+                    android:elevation="4dp"
+                    android:padding="@dimen/half_margin"
+                    android:text="@string/show_nnotes"
+                    android:visibility="visible" />
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1" />
+
+                <LinearLayout
+                    android:id="@+id/freebie_layout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginVertical="@dimen/half_margin"
+                    android:background="@drawable/giveaway_back"
+                    android:orientation="vertical"
+                    android:padding="8dp">
+
+                    <TextView
+                        style="@style/TitleMedium"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Freebie"
+                        android:textColor="@color/background" />
+
+                    <TextView
+                        style="@style/BodyMedium"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:drawableStart="@drawable/ic_gift_outlined"
+                        android:drawablePadding="4dp"
+                        android:drawableTint="@color/background"
+                        android:gravity="center_vertical"
+                        android:text="0 Entries"
+                        android:textColor="@color/background" />
+
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/freebie_entry_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/half_margin"
+                android:background="@drawable/card_16"
+                android:backgroundTint="@color/almost_black"
+                android:elevation="6dp"
+                android:orientation="vertical"
+                android:visibility="gone"
+                android:padding="12dp"
+                app:layout_constraintTop_toBottomOf="@id/profileLayout">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:id="@+id/freebie_title"
+                        style="@style/TitleMedium"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Freebie Product Name"
+                        android:textColor="@color/background" />
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/close_freebie"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:rotation="45"
+                        app:tint="@color/background"
+                        android:src="@drawable/ic_add_outline" />
+                </LinearLayout>
+
+
+                <TextView
+                    android:id="@+id/freebie_entry_count"
+                    style="@style/BodyMedium"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:drawableStart="@drawable/ic_gift_outlined"
+                    android:drawablePadding="4dp"
+                    android:drawableTint="@color/background"
+                    android:gravity="center_vertical"
+                    android:text="0 Entries"
+                    android:textColor="@color/background" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/enter_freebie"
+                    style="@style/appTonalBtn"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:minHeight="0dp"
+                    android:paddingVertical="6dp"
+                    android:text="Follow Host &amp; Enter Freebie"
+                    app:iconGravity="textStart" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/winner_spot_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/half_margin"
+                android:background="@drawable/card_16"
+                android:backgroundTint="@color/almost_black"
+                android:elevation="6dp"
+                android:orientation="vertical"
+                android:visibility="gone"
+                android:padding="12dp"
+                app:layout_constraintTop_toBottomOf="@id/profileLayout">
+
+                    <TextView
+                        android:id="@+id/winner_title"
+                        style="@style/TitleMedium"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:text="Selecting Freebie Winner"
+                        android:textColor="@color/background" />
+                <android.widget.TextSwitcher
+                    android:id="@+id/textSwitcher"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inAnimation="@anim/stripe_slide_up"
+                    android:padding="@dimen/half_margin"
+                    android:background="@drawable/card_16"
+                    android:outAnimation="@anim/stripe_slide_down">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        style="@style/TitleSemiBold"
+                        android:gravity="center"
+                        android:lines="1"/>
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        style="@style/TitleSemiBold"
+                        android:gravity="center"
+                        android:lines="1"/>
+                </android.widget.TextSwitcher>
+
+            </LinearLayout>
+
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <View
@@ -884,41 +996,50 @@
     <LinearLayout
         android:id="@+id/not_live_layout"
         android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/card_16"
+        android:backgroundTint="@color/almost_black"
         android:orientation="vertical"
-        android:visibility="gone"
-        android:background="@color/black25"
-        android:layout_height="match_parent">
+        android:gravity="bottom"
+        android:visibility="gone">
 
         <com.google.android.material.card.MaterialCardView
-            android:layout_width="match_parent"
             style="@style/cardStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:layout_margin="@dimen/margin"
-            android:layout_marginTop="100dp"
-            android:layout_height="wrap_content">
+            android:layout_marginTop="100dp">
+
             <LinearLayout
                 android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="@dimen/padding"
-                android:layout_height="wrap_content">
+                android:padding="@dimen/padding">
 
                 <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
                     android:id="@+id/show_time"
-                    style="@style/TitleMedium"/>
+                    style="@style/TitleMedium"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
 
                 <com.google.android.material.button.MaterialButton
+                    android:id="@+id/share_show"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:id="@+id/share_show"
                     android:text="Share Show"
-                    app:iconGravity="textStart"
-                    app:icon="@drawable/share"/>
+                    app:icon="@drawable/share"
+                    app:iconGravity="textStart" />
 
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
     </LinearLayout>
+
+    <include
+        android:id="@+id/won_view"
+        layout="@layout/won_view"
+        android:elevation="12dp"
+        android:visibility="gone" />
 
     <io.bidswipe.app.ui.custom.LoaderView
         android:id="@+id/loader"

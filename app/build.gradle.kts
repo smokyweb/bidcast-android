@@ -270,6 +270,8 @@ dependencies {
 	implementation(libs.arindicatorview)
 	implementation(libs.luckywheelview)
 	implementation(libs.aztec)
+		implementation("nl.dionsegijn:konfetti-xml:2.0.5")
+
 
 	// ───────────────── SDKs ─────────────────
 	implementation(libs.agora.full.sdk)

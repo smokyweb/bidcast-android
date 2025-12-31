@@ -167,9 +167,8 @@ class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
 		super.onViewCreated(view, savedInstanceState)
 
 		bind.header.onMorePrimaryClick {
-
+			log("TOUVHCHCCH ")
 			viewModel.isDrawerOpened.value = viewModel.isDrawerOpened.value == false
-
 		}
 
 		App.getProfile()

@@ -69,6 +69,7 @@ import io.bidswipe.app.utils.Const
 import io.bidswipe.app.utils.SocketManager
 import io.bidswipe.app.utils.asCapital
 import io.bidswipe.app.utils.asMoney
+import io.bidswipe.app.utils.clr
 import io.bidswipe.app.utils.dpToPx
 import io.bidswipe.app.utils.draw
 import io.bidswipe.app.utils.finish
@@ -82,7 +83,11 @@ import io.bidswipe.app.utils.setMargins
 import io.bidswipe.app.utils.share.ShareHelper
 import io.bidswipe.app.utils.value
 import kotlinx.coroutines.launch
+import nl.dionsegijn.konfetti.core.Party
+import nl.dionsegijn.konfetti.core.Position
+import nl.dionsegijn.konfetti.core.emitter.Emitter
 import org.json.JSONObject
+import java.util.concurrent.TimeUnit
 import kotlin.math.abs
 
 @SuppressLint("NotifyDataSetChanged", "InflateParams", "ClickableViewAccessibility")
@@ -203,8 +208,29 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
             bind.showNotes.isVisible = false
         }
 
-        bind.giveawayLayout.setOnClickListener {
-            successToast("Coming Soon..")
+        bind.freebieLayout.setHapticClickListener {
+            bind.notesFreebieLayout.isVisible = false
+            bind.freebieEntryLayout.isVisible = true
+            bind.enterFreebie.text = if (isFollowing) "Enter Freebie" else "Follow Host & Enter Freebie"
+        }
+
+        bind.enterFreebie.setHapticClickListener {
+            if (isFollowing) {
+                // Freebie Entry event
+                bind.freebieEntryLayout.isVisible = false
+                bind.winnerSpotLayout.isVisible = true
+
+
+                rotateText()
+            } else {
+                bind.loader.isVisible = true
+                viewModel.followUser(sellerId?.request(), showId.toString().request())
+            }
+        }
+
+        bind.closeFreebie.setHapticClickListener {
+            bind.notesFreebieLayout.isVisible = true
+            bind.freebieEntryLayout.isVisible = false
         }
 
         commentAdapter = CommentAdapter(commentList, roomID.split("_")[2])
@@ -301,7 +327,6 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 //							bind.soldLayout.isVisible = true
                             bind.bidLayout.isVisible = false
 //							bind.productLayout.isVisible = false
-                        }
 
                         val bidderName = winner.optString("user_name") ?:""
                         val bidderImage = winner.optString("user_image")
@@ -317,7 +342,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 					                    bold { append(" you won!") }
 				                    }
 			                    }
-			                    showWonView("You",bidderImage,"won the auction!")
+			                    showWonView("You", bidderImage, "won the auction!")
 		                    } else {
 			                    bind.winning.text = buildSpannedString {
 				                    append(bidderName)
@@ -325,7 +350,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 					                    bold { append(" has won!") }
 				                    }
 			                    }
-			                    showWonView(bidderName,bidderImage,"won the auction!")
+			                    showWonView(bidderName, bidderImage, "won the auction!")
 		                    }
 
 	                    }else{
@@ -335,6 +360,8 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
 	                    }
                     }
+                }
+
                 }
             }
 
@@ -419,7 +446,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
         socketManager?.onVoteErrorResult { obj ->
             requireActivity().runOnUiThread {
                 if (obj.optString("roomId") == roomID) {
-                    Alerts.error(mCtx, "Vote failed")
+//                    Alerts.error(mCtx, "Vote failed")
                 }
             }
         }
@@ -633,11 +660,12 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
             when (it) {
                 is Resource.Success -> {
                     bind.loader.isVisible = false
-                    it.value.data
 
                     isFollowing = true
 
                     bind.follow.isVisible = false
+
+                    bind.enterFreebie.text = "Enter Freebie"
 
                 }
 
@@ -952,13 +980,13 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
                     append(liveProduct.quantity ?: 0)
                 }
 
-	            if (liveProduct.image?.contains(Const.BASE_URL) == true){
-		            bind.productImage.loadUrl(mCtx, liveProduct.image)
-		            bind.productImageShop.loadUrl(mCtx, liveProduct.image)
-	            }else{
-		            bind.productImage.loadUrl(mCtx, "${Const.BASE_URL + "/"}${liveProduct.image ?:""}")
-		            bind.productImageShop.loadUrl(mCtx, "${Const.BASE_URL + "/"}${liveProduct.image ?:""}")
-	            }
+                if (liveProduct.image?.contains(Const.BASE_URL) == true) {
+                    bind.productImage.loadUrl(mCtx, liveProduct.image)
+                    bind.productImageShop.loadUrl(mCtx, liveProduct.image)
+                } else {
+                    bind.productImage.loadUrl(mCtx, "${Const.BASE_URL + "/"}${liveProduct.image ?: ""}")
+                    bind.productImageShop.loadUrl(mCtx, "${Const.BASE_URL + "/"}${liveProduct.image ?: ""}")
+                }
 
                 val price = liveProduct.price
                 bind.price.text = price?.asMoney() ?: ("0.0" + "Shipping + Taxes")
@@ -995,6 +1023,17 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
             val showData = LiveShowModel.fromJson(json)
 
             log("SESSION UPDATE: $showData")
+
+//            if(!showData.isLive){
+//                bind.notLiveLayout.isVisible=true
+//                bind.scrollview.isVisible=false
+//
+//                bind.showTime.text = showData.time
+//
+//            }else{
+//                bind.notLiveLayout.isVisible=false
+//                bind.scrollview.isVisible=true
+//            }
 
             // Mark socket data as loaded and show thumbnail if available
             isSocketDataLoaded = true
@@ -1503,10 +1542,12 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
         socketManager?.onPollUpdate { json ->
             runSafe {
                 requireActivity().runOnUiThread {
+                    if (json.optString("roomId") == roomID) {
                     currentPoll = PollModel.fromJson(json)
                     showPollCard()
                     updatePollUI() // Update poll card preview
                     updatePollSheet() // Update poll details sheet if open
+                        }
                 }
 
             }
@@ -1787,15 +1828,13 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
             App.PIPMode = true
             bind.profileLayout.isVisible = false
             bind.bottomUI.isVisible = false
-            bind.showNotes.isVisible = false
-            bind.giveawayLayout.isVisible = false
+            bind.notesFreebieLayout.isVisible = false
             log("PIP MODE ON")
         } else {
             App.PIPMode = false
             bind.profileLayout.isVisible = true
             bind.bottomUI.isVisible = true
-            bind.showNotes.isVisible = true
-            bind.giveawayLayout.isVisible = true
+            bind.notesFreebieLayout.isVisible = true
 
             ProductDetailsActivity.instance?.finish()
 
@@ -1968,19 +2007,31 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
         sheet.show()
     }
 
-    fun showWonView(username:String, userImage:String,desc:String){
-        bind.wonView.root.isVisible=true
-        bind.wonView.userName.text=username
-        bind.wonView.desc.text=desc
-	    bind.wonView.userImage.loadUrl(mCtx, userImage, draw.app_icon_dollar)
+    val party = Party(
+        speed = 0f,
+        maxSpeed = 30f,
+        damping = 0.9f,
+        spread = 360,
+        colors = listOf(0xfce18a, 0xff726d, 0xf4306d, 0xb48def),
+        emitter = Emitter(duration = 100, TimeUnit.MILLISECONDS).max(100),
+        position = Position.Relative(0.5, 0.3)
+    )
+    fun showWonView(username: String, userImage: String, desc: String) {
+        bind.wonView.root.isVisible = true
+        bind.wonView.userName.text = username
+        bind.wonView.desc.text = desc
+        bind.wonView.userImage.loadUrl(mCtx, userImage, draw.app_icon_dollar)
 
-	    Handler(Looper.getMainLooper()).postDelayed({
-		    val flip = ObjectAnimator.ofFloat(bind.wonView.imageCard, "rotationY", 0f, 180f)
-		    flip.duration = 1000
 
-		    flip.addListener(object : AnimatorListenerAdapter() {
-			    override fun onAnimationEnd(animation: Animator) {
-				    super.onAnimationEnd(animation)
+        bind.wonView.konfettiView.start(party)
+
+        Handler(Looper.getMainLooper()).postDelayed({
+            val flip = ObjectAnimator.ofFloat(bind.wonView.imageCard, "rotationY", 0f, 180f)
+            flip.duration = 1000
+
+            flip.addListener(object : AnimatorListenerAdapter() {
+                override fun onAnimationEnd(animation: Animator) {
+                    super.onAnimationEnd(animation)
                     val flipBack = ObjectAnimator.ofFloat(bind.wonView.imageCard, "rotationY", 0f, 180f)
                     flipBack.duration = 1000
                     flipBack.start()
@@ -1991,9 +2042,38 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
         Handler(Looper.getMainLooper()).postDelayed({
             bind.wonView.root.isVisible = false
+            bind.wonView.konfettiView.stop(party)
         }, 5000)
 
     }
 
+    private var textList = mutableListOf("One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten")
+    private var currentIndex = 0
 
+    private fun rotateText() {
+        val handler = Handler()
+        val textSwitcherRunnable = object : Runnable {
+            override fun run() {
+                currentIndex++
+                 if (currentIndex == textList.lastIndex) {
+                    bind.textSwitcher.setText(buildSpannedString {
+                       color(ContextCompat.getColor(mCtx, clr.success)) { append("${textList[currentIndex]} won") }
+                    })
+                    handler.postDelayed({
+                        bind.winnerSpotLayout.isVisible = false
+                        bind.notesFreebieLayout.isVisible = true
+                        currentIndex=0
+                    }, 2000)
+                    return
+                } else {
+                    bind.textSwitcher.setText(textList[currentIndex])
+                }
+
+                handler.postDelayed(this, 200)
+            }
+        }
+        // Start after 2 seconds
+        bind.textSwitcher.setText(textList[currentIndex])
+        handler.postDelayed(textSwitcherRunnable, 200)
+    }
 }
