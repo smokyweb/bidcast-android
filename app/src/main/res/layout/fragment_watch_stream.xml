@@ -853,6 +853,7 @@
                     android:layout_marginVertical="@dimen/half_margin"
                     android:background="@drawable/giveaway_back"
                     android:orientation="vertical"
+                    android:visibility="gone"
                     android:padding="8dp">
 
                     <TextView

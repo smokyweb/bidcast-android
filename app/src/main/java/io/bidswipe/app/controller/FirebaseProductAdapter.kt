@@ -48,21 +48,21 @@ class FirebaseProductAdapter(
                 mClicks.itemClick(position, "set_next")
             }
 
-            bind.root.alpha = if (item?.status == "sold") 0.5f else 1f
+//            bind.root.alpha = if (item?.status == "sold") 0.5f else 1f
 
-	        bind.quantity.isVisible = item?.status == "sold"
-	        bind.buttonLayout.isVisible = item?.status != "sold"
+	        bind.quantity.isVisible = item?.status == "inactive"
+	        bind.buttonLayout.isVisible = item?.status != "inactive"
 
             bind.quantity.text = buildSpannedString {
                 append("Status: ")
-                if (item?.status == "sold") {
+                if (item?.status == "inactive") {
                     bold {
                         color(Color.RED) {
-                            append(item.status.asCapital())
+                            append("Sold")
                         }
                     }
                 } else {
-                    bold { append(item?.status?.asCapital()) }
+                    bold { append("Sold") }
                 }
             }
 
