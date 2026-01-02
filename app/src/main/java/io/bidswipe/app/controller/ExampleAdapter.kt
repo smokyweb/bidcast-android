@@ -21,10 +21,10 @@ class ExampleAdapter(
 	) {
 		with(holder) {
 			bind.title.isVisible = false
-			bind.icon.isVisible = true
+			bind.icon.isVisible = false
 			bind.title.text = item.toString()
 			bind.title.isVisible = false
-			bind.subTitle.setHtmlFromString("$item" , false)
+			bind.subTitle.setHtmlFromString(Const.BULLET +"$item" , false)
 		}
 	}
 }

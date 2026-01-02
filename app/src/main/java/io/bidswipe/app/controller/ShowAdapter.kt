@@ -1,6 +1,7 @@
 package io.bidswipe.app.controller
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
@@ -16,14 +17,9 @@ class ShowAdapter(
 	mList: MutableList<GetPrepareStepResponse.Data?>, val mClicks: RecyclerClicks,
 ) : BaseAdapter<GetPrepareStepResponse.Data?, ShowItemBinding>(mList) {
 
-	override fun bindView(inflater: LayoutInflater, parent: ViewGroup) =
-		ShowItemBinding.inflate(inflater, parent, false)
+	override fun bindView(inflater: LayoutInflater, parent: ViewGroup) = ShowItemBinding.inflate(inflater, parent, false)
 
-	override fun onBind(
-		holder: BaseViewHolder<ShowItemBinding>,
-		position: Int,
-		item: GetPrepareStepResponse.Data?,
-	) {
+	override fun onBind(holder: BaseViewHolder<ShowItemBinding>, position: Int, item: GetPrepareStepResponse.Data?) {
 		with(holder) {
 
 			bind.setSchedule.setHapticClickListener {
@@ -34,65 +30,32 @@ class ShowAdapter(
 				append(position + 1)
 			}
 
-			/*     if (item?.selected == true) {
-					 bind.root.strokeWidth=mCtx.resources.dpToPx(2)
-					 bind.iconCard.setCardBackgroundColor(
-						 ContextCompat.getColor(
-							 mCtx,
-							 R.color.secondary
-						 )
-					 )
-
-				 } else {
-					 bind.root.strokeWidth=mCtx.resources.dpToPx(0)
-				 }*/
-
 			when (item?.status) {
 				"unlocked" -> {
 					bind.icon.isVisible = true
 					bind.step.isVisible = false
-					bind.setSchedule.isVisible = false
-					bind.icon.setImageDrawable(
-						ContextCompat.getDrawable(
-							mCtx,
-							R.drawable.ic_lock
-						)
-					)
-
-					bind.iconCard.setCardBackgroundColor(
-						ContextCompat.getColor(
-							mCtx,
-							R.color.outlineVariant
-						)
-					)
+					bind.setSchedule.visibility = View.VISIBLE
+					bind.icon.setImageDrawable(ContextCompat.getDrawable(mCtx, R.drawable.ic_lock))
+					bind.iconCard.setCardBackgroundColor(ContextCompat.getColor(mCtx, R.color.outlineVariant))
 				}
+
 				"completed" -> {
 					bind.icon.isVisible = true
 					bind.step.isVisible = false
-					bind.setSchedule.isVisible = false
-					bind.icon.setImageDrawable(
-						ContextCompat.getDrawable(
-							mCtx,
-							R.drawable.ic_tick
-						)
-					)
-					bind.iconCard.setCardBackgroundColor(
-						ContextCompat.getColor(
-							mCtx,
-							R.color.success
-						)
-					)
+					bind.setSchedule.visibility = View.GONE
+					bind.icon.setImageDrawable(ContextCompat.getDrawable(mCtx, R.drawable.ic_tick))
+					bind.iconCard.setCardBackgroundColor(ContextCompat.getColor(mCtx, R.color.success))
 				}
+
 				else -> {
 					bind.icon.isVisible = false
 					bind.step.isVisible = true
-					bind.setSchedule.isVisible = true
+					bind.setSchedule.visibility = View.VISIBLE
 				}
 			}
 
 			bind.subTitle.text = (item?.description ?: "").asHtml()
 			bind.title.text = item?.title
-
 		}
 	}
 }

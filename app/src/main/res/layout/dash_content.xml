@@ -30,7 +30,6 @@
             android:id="@+id/sell_sheet"
             layout="@layout/sell_bottom_sheet" />
 
-
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
     <io.bidswipe.app.ui.custom.LoaderView

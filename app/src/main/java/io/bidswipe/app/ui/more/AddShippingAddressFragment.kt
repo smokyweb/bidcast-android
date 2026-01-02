@@ -185,9 +185,11 @@ class AddShippingAddressFragment :
 						bind.loader.isVisible = false
 						stateList.clear()
 						stateList.addAll(it.value.data)
+						stateList.sortBy { selector -> selector?.name }
 
-						val adapter = ArrayAdapter(mCtx, android.R.layout.simple_list_item_1, stateList.map { it?.iso2 })
+						val adapter = ArrayAdapter(mCtx, android.R.layout.simple_list_item_1, stateList.map { data -> data?.name + " ( " + data?.iso2 + " )" })
 						bind.state.setAdapter(adapter)
+
 						val draw = ContextCompat.getDrawable(mCtx, R.drawable.card_8)
 						bind.state.setDropDownBackgroundDrawable(draw)
 					}

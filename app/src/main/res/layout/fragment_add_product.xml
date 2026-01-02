@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/surface"
     tools:context=".ui.scheduleShow.AddProductFragment">
 
     <io.bidswipe.app.ui.custom.Header
@@ -25,32 +26,33 @@
         android:layout_height="0dp"
         android:clipToPadding="false"
         android:fillViewport="true"
-        android:paddingHorizontal="@dimen/half_margin"
-        android:paddingBottom="@dimen/half_margin"
         app:layout_constraintBottom_toTopOf="@id/buttonLayout"
         app:layout_constraintTop_toBottomOf="@id/header">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:padding="@dimen/half_margin">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/half_margin"
+                android:layout_marginTop="@dimen/half_margin"
+                android:baselineAligned="false"
                 android:orientation="horizontal">
 
                 <LinearLayout
                     android:id="@+id/addProductLayout"
                     android:layout_width="0dp"
                     android:layout_height="120dp"
-                    android:layout_marginTop="@dimen/half_margin"
+                    android:layout_marginEnd="@dimen/half_margin"
                     android:layout_weight="0.5"
-                    android:padding="@dimen/half_margin"
-                    android:background="@drawable/card_8_outline"
-                    android:layout_marginHorizontal="@dimen/half_margin"
+                    android:background="@drawable/dashed_card_8_white"
                     android:gravity="center"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:padding="@dimen/half_margin">
 
                     <androidx.appcompat.widget.AppCompatImageView
                         android:layout_width="42dp"
@@ -72,12 +74,12 @@
                     android:id="@+id/selectInventoryLayout"
                     android:layout_width="0dp"
                     android:layout_height="120dp"
-                    android:layout_margin="@dimen/half_margin"
+                    android:layout_marginStart="@dimen/half_margin"
                     android:layout_weight="0.5"
-                    android:padding="@dimen/half_margin"
-                    android:background="@drawable/card_8_outline"
+                    android:background="@drawable/dashed_card_8_white"
                     android:gravity="center"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:padding="@dimen/half_margin">
 
                     <androidx.appcompat.widget.AppCompatImageView
                         android:layout_width="42dp"
@@ -101,8 +103,8 @@
                 android:id="@+id/addNewProductLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/half_margin"
                 android:layout_marginHorizontal="@dimen/half_margin"
+                android:layout_marginTop="@dimen/margin"
                 android:orientation="horizontal">
 
                 <TextView
@@ -126,9 +128,9 @@
                 android:id="@+id/recycler"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_weight="1"
                 android:nestedScrollingEnabled="false"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                android:layout_weight="1"
                 tools:itemCount="2"
                 tools:listitem="@layout/product_list_item" />
 
@@ -136,9 +138,9 @@
                 android:id="@+id/noData"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:title_text="No Products Found"
                 android:layout_weight="1"
-                android:visibility="gone"/>
+                android:visibility="gone"
+                app:title_text="No Products Found" />
 
         </LinearLayout>
 

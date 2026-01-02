@@ -10,6 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
+        android:gravity="center"
         android:padding="@dimen/margin">
 
         <com.google.android.material.card.MaterialCardView
@@ -65,6 +66,7 @@
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/set_schedule"
                 style="@style/appBtn"
+                android:layout_gravity="end"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:minHeight="0dp"

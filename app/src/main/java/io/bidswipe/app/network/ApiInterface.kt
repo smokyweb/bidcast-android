@@ -562,7 +562,7 @@ interface ApiInterface {
         @Part idCard: MultipartBody.Part?,
         @Part image: MultipartBody.Part?,
         @Part("phone_verification") phoneVerification: RequestBody,
-        @Part("customerPaymentProfileId") cardId: RequestBody,
+        @Part("card_id") cardId: RequestBody,
     ): CommonResponse
 
     @POST("api/stripe/check-Kyc")

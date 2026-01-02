@@ -124,6 +124,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/half_margin"
+                app:startIconDrawable="@drawable/ic_user_outline"
                 android:layout_marginBottom="@dimen/margin">
 
                 <com.google.android.material.textfield.MaterialAutoCompleteTextView
@@ -148,6 +149,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/half_margin"
+                app:startIconDrawable="@drawable/ic_email"
                 android:layout_marginBottom="@dimen/margin">
 
                 <com.google.android.material.textfield.MaterialAutoCompleteTextView
@@ -173,6 +175,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/half_margin"
+                app:startIconDrawable="@drawable/ic_edit"
                 android:layout_marginBottom="@dimen/margin">
 
                 <com.google.android.material.textfield.MaterialAutoCompleteTextView

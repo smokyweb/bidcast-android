@@ -687,6 +687,37 @@ class SocketManager private constructor(
 		socket?.emit("sustained_watches", payload)
 	}
 
+	fun createFreebie( showId : String,productId : String, time : String) {
+		val payload = JSONObject().apply {
+			put("show_id", showId)
+			put("product_id", productId)
+			put("time", time)
+		}
+		Log.d(TAG, "EMIT:create-freebie  - showId: $showId, productId: $productId, time: $time")
+		socket?.emit("create-freebie", payload)
+	}
+
+	fun enterInFreebie( showId : String,userId : String) {
+		val payload = JSONObject().apply {
+			put("show_id", showId)
+			put("user_id", userId)
+		}
+		Log.d(TAG, "EMIT:enter-in-freebie  - showId: $showId, userId: $userId")
+		socket?.emit("enter-in-freebie", payload)
+	}
+
+	fun getFreebie(listener: (resultJson : JSONObject) -> Unit) {
+		socket?.off("get-freebie")
+		socket?.on("get-freebie") { args ->
+			val obj = args.firstOrNull()
+			if (obj is JSONObject) {
+				Log.d(TAG, "RECEIVED: get-freebie - $obj")
+				listener(obj)
+			}
+		}
+	}
+
+
 
 }
 

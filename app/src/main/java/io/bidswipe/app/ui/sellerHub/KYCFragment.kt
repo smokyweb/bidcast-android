@@ -12,6 +12,7 @@ import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.activity.OnBackPressedCallback
 import androidx.core.view.isVisible
+import androidx.lifecycle.viewModelScope
 import io.bidswipe.app.BuildConfig
 import io.bidswipe.app.base.BaseFragment
 import io.bidswipe.app.databinding.FragmentKYCBinding
@@ -21,6 +22,10 @@ import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.utils.finish
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.runSafe
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import okhttp3.Dispatcher
 
 class KYCFragment : BaseFragment<SellerHubViewModel, FragmentKYCBinding>() {
 
@@ -61,7 +66,6 @@ class KYCFragment : BaseFragment<SellerHubViewModel, FragmentKYCBinding>() {
 //                    customTab.launchUrl(mCtx , mData?.url.toString().toUri())
 
 					bind.webView.webViewClient = WebClient()
-					bind.webView.loadUrl(mData?.url.toString(), headerMap)
 					bind.webView.settings.apply {
 						layoutAlgorithm = WebSettings.LayoutAlgorithm.NORMAL
 						cacheMode = WebSettings.LOAD_CACHE_ELSE_NETWORK
@@ -70,6 +74,7 @@ class KYCFragment : BaseFragment<SellerHubViewModel, FragmentKYCBinding>() {
 						javaScriptEnabled = true
 						domStorageEnabled = true
 					}
+					bind.webView.loadUrl(mData?.url.toString(), headerMap)
 				}
 
 				is Resource.Error -> {
@@ -111,15 +116,12 @@ class KYCFragment : BaseFragment<SellerHubViewModel, FragmentKYCBinding>() {
 	internal inner class WebClient : WebViewClient() {
 		@Deprecated("Deprecated in Java")
 		override fun shouldOverrideUrlLoading(view: WebView, url: String): Boolean {
-			handleUrl(url)
-			view.loadUrl(url)
+			handleUrl(url, view)
 			return true
 		}
 
 		override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?): Boolean {
-			val url = request?.url.toString()
-			handleUrl(url)
-			view?.loadUrl(url)
+			handleUrl(request?.url.toString(), view)
 			return true
 		}
 
@@ -135,18 +137,13 @@ class KYCFragment : BaseFragment<SellerHubViewModel, FragmentKYCBinding>() {
 			bind.loader.visibility = View.GONE
 		}
 
-		private fun handleUrl(url: String) {
+		private fun handleUrl(url: String, web : WebView?) {
 			log("REDIRECT URL : $url")
-			runSafe {
-				if (url.contains("?")) {
-					val arr = url.split("/?/".toRegex()).toTypedArray()
-					if (arr[arr.size - 1].contains("account")) {
-						val param = arr[arr.size - 1].split("=".toRegex()).toTypedArray()
-						val id = param[param.size - 1]
-						log("STRIPE ID : $id")
-						finish()
-					}
-				}
+
+			if (url.contains("api/stripe-kyc-callback")){
+				finish()
+			}else{
+				web?.loadUrl(url)
 			}
 		}
 	}

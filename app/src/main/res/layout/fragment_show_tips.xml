@@ -15,7 +15,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:primaryIconDrawable="@drawable/ic_question"
         app:showBackButton="true"
-        app:showPrimaryIcon="true"
+        app:showPrimaryIcon="false"
         app:showSecondaryIcon="false" />
 
     <LinearLayout

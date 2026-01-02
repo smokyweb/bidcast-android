@@ -7,7 +7,6 @@ import android.util.Log
 import android.view.View
 import android.widget.LinearLayout
 import androidx.activity.viewModels
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.core.view.ViewCompat
@@ -40,6 +39,7 @@ import io.bidswipe.app.network.Resource
 import io.bidswipe.app.ui.custom.AlertType
 import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.ui.more.MoreActivity
+import io.bidswipe.app.ui.more.NotificationActivity
 import io.bidswipe.app.ui.sellerHub.SellerHubActivity
 import io.bidswipe.app.ui.sellerHub.SellerVerificationActivity
 import io.bidswipe.app.utils.Alerts
@@ -55,28 +55,41 @@ import io.bidswipe.app.utils.toListProduct
 import io.bidswipe.app.utils.toScheduleShow
 import io.bidswipe.app.utils.toTutorials
 
-class DashActivity : BaseActivity() , NavController.OnDestinationChangedListener {
+class DashActivity : BaseActivity(), NavController.OnDestinationChangedListener {
 
 	private val bind by bind(ActivityDashBinding::inflate)
 	private val viewModel by viewModels<DashViewModel>()
 
-	private lateinit var imageSheet : BottomSheetBehavior<LinearLayout>
-	private lateinit var sellerToolsAdapter : SellerToolsAdapter
-	private lateinit var navHostFragment : NavHostFragment
-	private lateinit var mSellSheet : BottomSheetDialog
-	private lateinit var navController : NavController
+	private lateinit var imageSheet: BottomSheetBehavior<LinearLayout>
+	private lateinit var sellerToolsAdapter: SellerToolsAdapter
+	private lateinit var navHostFragment: NavHostFragment
+	private lateinit var mSellSheet: BottomSheetDialog
+	private lateinit var navController: NavController
 
 	private var gridList = mutableListOf<SellerToolModel>()
 	private var sellList = mutableListOf<SellModel>()
 
 	private val gridClick = object : RecyclerClicks {
-		override fun itemClick(pos : Int , status : String?) {
+		override fun itemClick(pos: Int, status: String?) {
 			if (status?.isEmpty() == false) {
 				when (val slug = gridList[pos].list[status.toInt()].slug) {
 					"sellerVerification" -> {
 						startActivity(
-							Intent(this@DashActivity , SellerVerificationActivity::class.java).putExtra(
-								"slug" ,
+							Intent(this@DashActivity, SellerVerificationActivity::class.java).putExtra(
+								"slug",
+								slug
+							)
+						)
+					}
+
+					"training" -> {
+						startActivity(this@DashActivity.toTutorials())
+					}
+
+					"notifications" -> {
+						startActivity(
+							Intent(this@DashActivity, NotificationActivity::class.java).putExtra(
+								"slug",
 								slug
 							)
 						)
@@ -84,10 +97,10 @@ class DashActivity : BaseActivity() , NavController.OnDestinationChangedListener
 
 					else -> {
 						startActivity(
-							Intent(this@DashActivity , SellerHubActivity::class.java).putExtra(
-								"slug" ,
+							Intent(this@DashActivity, SellerHubActivity::class.java).putExtra(
+								"slug",
 								slug
-							).putExtra("url" , "")
+							).putExtra("url", "")
 						)
 					}
 				}
@@ -97,14 +110,14 @@ class DashActivity : BaseActivity() , NavController.OnDestinationChangedListener
 
 	}
 
-	override fun onCreate(savedInstanceState : Bundle?) {
+	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
 		setContentView(bind.root)
 
-		ViewCompat.setOnApplyWindowInsetsListener(window.decorView) { _ , insets ->
+		ViewCompat.setOnApplyWindowInsetsListener(window.decorView) { _, insets ->
 			val system = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-			bind.contentDash.root.setPadding(0 , system.top , 0 , system.bottom)
-			bind.sideMenu.setPadding(0 , system.top , 0 , system.bottom)
+			bind.contentDash.root.setPadding(0, system.top, 0, system.bottom)
+			bind.sideMenu.setPadding(0, system.top, 0, system.bottom)
 			CONSUMED
 		}
 
@@ -115,19 +128,19 @@ class DashActivity : BaseActivity() , NavController.OnDestinationChangedListener
 
 		bind.drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
 		bind.drawer.addDrawerListener(object : DrawerLayout.DrawerListener {
-			override fun onDrawerSlide(drawerView : View , slideOffset : Float) {
+			override fun onDrawerSlide(drawerView: View, slideOffset: Float) {
 			}
 
-			override fun onDrawerOpened(drawerView : View) {
+			override fun onDrawerOpened(drawerView: View) {
 
 			}
 
-			override fun onDrawerClosed(drawerView : View) {
+			override fun onDrawerClosed(drawerView: View) {
 				viewModel.isDrawerOpened.value = false
 
 			}
 
-			override fun onDrawerStateChanged(newState : Int) {
+			override fun onDrawerStateChanged(newState: Int) {
 			}
 		})
 
@@ -136,55 +149,55 @@ class DashActivity : BaseActivity() , NavController.OnDestinationChangedListener
 
 		gridList.clear()
 
-
 		gridList.add(
 			SellerToolModel(
-				"Seller" ,
+				"Seller",
 				mutableListOf(
-					MoreModel(R.drawable.ic_training_outline , "Seller Training" , "training") ,
-					MoreModel(R.drawable.ic_seller_verification , "Seller Verification" , "sellerVerification") ,
-					MoreModel(R.drawable.ic_identity_verification , "Identity Verification" , "identityVerification") ,
-					MoreModel(R.drawable.ic_inventory_outline , "Inventory" , "inventory") ,
-					MoreModel(R.drawable.ic_clip_new , "Shows" , "shows") ,
-					MoreModel(R.drawable.ic_order_outline , "My Orders" , "order") ,
-					MoreModel(R.drawable.ic_wallet_outlined , "Wallet" , "wallet") ,
-					MoreModel(R.drawable.ic_tag_outline , "Offers" , "offers") ,
-					MoreModel(R.drawable.ic_gift_outlined , "Tips" , "tips") ,
+					MoreModel(R.drawable.ic_training_outline, "Seller Training", "training"),
+					MoreModel(R.drawable.ic_seller_verification, "Seller Verification", "sellerVerification"),
+					MoreModel(R.drawable.ic_identity_verification, "Identity Verification", "identityVerification"),
+					MoreModel(R.drawable.ic_inventory_outline, "Inventory", "inventory"),
+					MoreModel(R.drawable.ic_clip_new, "Shows", "shows"),
+					MoreModel(R.drawable.ic_order_outline, "My Orders", "order"),
+					MoreModel(R.drawable.ic_wallet_outlined, "Wallet", "wallet"),
+					MoreModel(R.drawable.ic_tag_outline, "Offers", "offers"),
+					MoreModel(R.drawable.ic_gift_outlined, "Tips", "tips"),
+					MoreModel(R.drawable.notification, "Notifications", "notifications"),
 				)
 			)
 		)
 
 		gridList.add(
 			SellerToolModel(
-				"Promotion" ,
+				"Promotion",
 				mutableListOf(
-					MoreModel(R.drawable.ic_people , "Affiliate Program" , "program") ,
-					MoreModel(R.drawable.ic_speaker_outline , "Promote Tools" , "promote")
+					MoreModel(R.drawable.ic_people, "Affiliate Program", "program"),
+					MoreModel(R.drawable.ic_speaker_outline, "Promote Tools", "promote")
 				)
 			)
 		)
 
 		gridList.add(
 			SellerToolModel(
-				"Performance" ,
+				"Performance",
 				mutableListOf(
-					MoreModel(R.drawable.ic_shop , "Premier Shop" , "shop") ,
-					MoreModel(R.drawable.ic_graph , "Seller Analytics" , "sellerAnalytics") ,
+					MoreModel(R.drawable.ic_shop, "Premier Shop", "shop"),
+					MoreModel(R.drawable.ic_graph, "Seller Analytics", "sellerAnalytics"),
 				)
 			)
 		)
 		gridList.add(
 			SellerToolModel(
-				"Settings" ,
+				"Settings",
 				mutableListOf(
-					MoreModel(R.drawable.ic_shipping , "Shipping" , "shipping") ,
-					MoreModel(R.drawable.ic_graph , "Seller Status" , "sellerStatus")
+					MoreModel(R.drawable.ic_shipping, "Shipping", "shipping"),
+					MoreModel(R.drawable.ic_graph, "Seller Status", "sellerStatus")
 				)
 			)
 		)
 
 		sellerToolsAdapter = SellerToolsAdapter(
-			gridList , gridClick
+			gridList, gridClick
 		)
 		bind.menuRecycler.adapter = sellerToolsAdapter
 
@@ -198,7 +211,7 @@ class DashActivity : BaseActivity() , NavController.OnDestinationChangedListener
 		setupImageSheet()
 		sellSheet()
 
-		log("USER NAME : ${userName.replace(" " , ".")}  $userId   $userImage")
+		log("USER NAME : ${userName.replace(" ", ".")}  $userId   $userImage")
 
 		bind.contentDash.bottomBar.setOnItemSelectedListener { menuItem ->
 			if (menuItem.itemId != ids.sellFragment) viewModel.lastIndex.value = menuItem.itemId
@@ -214,11 +227,11 @@ class DashActivity : BaseActivity() , NavController.OnDestinationChangedListener
 					mSellSheet.dismiss()
 					try {
 						navController.let { ctrl ->
-							NavigationUI.onNavDestinationSelected(menuItem , ctrl)
-							ctrl.popBackStack(menuItem.itemId , false)
+							NavigationUI.onNavDestinationSelected(menuItem, ctrl)
+							ctrl.popBackStack(menuItem.itemId, false)
 						}
 						return@setOnItemSelectedListener true
-					} catch (e : Exception) {
+					} catch (e: Exception) {
 						e.printStackTrace()
 						return@setOnItemSelectedListener false
 					}
@@ -227,11 +240,11 @@ class DashActivity : BaseActivity() , NavController.OnDestinationChangedListener
 		}
 
 		getDeviceToken(this) {
-			Log.d(TAG , "onCreate: $it")
+			Log.d(TAG, "onCreate: $it")
 			viewModel.storeDeviceDetails(it.request())
 		}
 
-		requestPerms(Const.PERMISSIONS){}
+		requestPerms(Const.PERMISSIONS) {}
 
 		viewModel.storeDeviceDetailsRepo.observe(this) {
 			when (it) {
@@ -245,12 +258,12 @@ class DashActivity : BaseActivity() , NavController.OnDestinationChangedListener
 
 				is Resource.Error -> {
 
-					it.parse(this , TAG , object : AlertClicks {
-						override fun primaryClick(dialog : AppBottomSheet) {
+					it.parse(this, TAG, object : AlertClicks {
+						override fun primaryClick(dialog: AppBottomSheet) {
 							dialog.dismiss()
 						}
 
-						override fun secondaryClick(dialog : AppBottomSheet) {
+						override fun secondaryClick(dialog: AppBottomSheet) {
 							dialog.dismiss()
 						}
 					})
@@ -277,9 +290,9 @@ class DashActivity : BaseActivity() , NavController.OnDestinationChangedListener
 	}
 
 	override fun onDestinationChanged(
-		controller : NavController ,
-		destination : NavDestination ,
-		arguments : Bundle? ,
+		controller: NavController,
+		destination: NavDestination,
+		arguments: Bundle?,
 	) {
 		when (destination.id) {
 			R.id.exploreTypeFragment -> hideBottomNav()
@@ -305,29 +318,29 @@ class DashActivity : BaseActivity() , NavController.OnDestinationChangedListener
 		sellList.addAll(
 			listOf(
 				SellModel(
-					R.drawable.ic_tag ,
-					R.color.primaryContainer ,
-					"List a Product" ,
+					R.drawable.ic_tag,
+					R.color.primaryContainer,
+					"List a Product",
 					"Create listing for your item"
-				) ,
+				),
 				SellModel(
-					R.drawable.ic_video ,
-					R.color.primaryContainer ,
-					"Schedule a Show" ,
+					R.drawable.ic_video,
+					R.color.primaryContainer,
+					"Schedule a Show",
 					"Go live and sell to your audience"
-				) ,
+				),
 				SellModel(
-					R.drawable.ic_shop ,
-					R.color.primaryContainer ,
-					"Seller Hub" ,
+					R.drawable.ic_shop,
+					R.color.primaryContainer,
+					"Seller Hub",
 					"Manage your store and listings"
 				)
 			)
 		)
 
-		val exploreAdapter = SellAdapter(sellList , "explore" , object : RecyclerClicks {
+		val exploreAdapter = SellAdapter(sellList, "explore", object : RecyclerClicks {
 
-			override fun itemClick(pos : Int , status : String?) {
+			override fun itemClick(pos: Int, status: String?) {
 
 				when (pos) {
 					2 -> {
@@ -383,9 +396,9 @@ class DashActivity : BaseActivity() , NavController.OnDestinationChangedListener
 	}
 
 	private fun sellSheet() {
-		val sheetView = SellBottomSheetBinding.bind(layoutInflater.inflate(R.layout.sell_bottom_sheet , null , false))
+		val sheetView = SellBottomSheetBinding.bind(layoutInflater.inflate(R.layout.sell_bottom_sheet, null, false))
 
-		mSellSheet = Alerts.appBottomSheet(this , true , sheetView)
+		mSellSheet = Alerts.appBottomSheet(this, true, sheetView)
 
 		mSellSheet.setOnDismissListener {
 			bind.contentDash.bottomBar.selectedItemId = viewModel.lastIndex.value ?: 0
@@ -395,29 +408,29 @@ class DashActivity : BaseActivity() , NavController.OnDestinationChangedListener
 		sellList.addAll(
 			listOf(
 				SellModel(
-					R.drawable.ic_tag ,
-					R.color.primaryContainer ,
-					"List a Product" ,
+					R.drawable.ic_tag,
+					R.color.primaryContainer,
+					"List a Product",
 					"Create listing for your item"
-				) ,
+				),
 				SellModel(
-					R.drawable.ic_video ,
-					R.color.primaryContainer ,
-					"Schedule a Show" ,
+					R.drawable.ic_video,
+					R.color.primaryContainer,
+					"Schedule a Show",
 					"Go live and sell to your audience"
-				) ,
+				),
 				SellModel(
-					R.drawable.ic_shop ,
-					R.color.primaryContainer ,
-					"Seller Hub" ,
+					R.drawable.ic_shop,
+					R.color.primaryContainer,
+					"Seller Hub",
 					"Manage your store and listings"
 				)
 			)
 		)
 
-		val exploreAdapter = SellAdapter(sellList , "explore" , object : RecyclerClicks {
+		val exploreAdapter = SellAdapter(sellList, "explore", object : RecyclerClicks {
 
-			override fun itemClick(pos : Int , status : String?) {
+			override fun itemClick(pos: Int, status: String?) {
 
 				when (pos) {
 					2 -> {
@@ -472,7 +485,7 @@ class DashActivity : BaseActivity() , NavController.OnDestinationChangedListener
 	}
 
 	private val mSheetCallback = object : BottomSheetBehavior.BottomSheetCallback() {
-		override fun onStateChanged(bottomSheet : View , newState : Int) {
+		override fun onStateChanged(bottomSheet: View, newState: Int) {
 			when (newState) {
 				BottomSheetBehavior.STATE_EXPANDED -> {
 					/*val params = CoordinatorLayout.LayoutParams(
@@ -504,11 +517,11 @@ class DashActivity : BaseActivity() , NavController.OnDestinationChangedListener
 			}
 		}
 
-		override fun onSlide(bottomSheet : View , slideOffset : Float) {
+		override fun onSlide(bottomSheet: View, slideOffset: Float) {
 			if (slideOffset > 0) {
 				try {
 //						bind.commentSheet.sheetRoot.itemClick.alpha = slideOffset
-				} catch (e : Exception) {
+				} catch (e: Exception) {
 					e.printStackTrace()
 				}
 			}
@@ -516,21 +529,21 @@ class DashActivity : BaseActivity() , NavController.OnDestinationChangedListener
 
 	}
 
-	fun getDeviceToken(context : Context , token : (token : String) -> Unit) {
+	fun getDeviceToken(context: Context, token: (token: String) -> Unit) {
 		FirebaseMessaging.getInstance().token.addOnCompleteListener {
-			if (! it.isSuccessful) {
+			if (!it.isSuccessful) {
 				Alerts.log(
-					javaClass.simpleName ,
+					javaClass.simpleName,
 					"Fetching FCM registration token failed ${it.exception}"
 				)
 				return@addOnCompleteListener
 			}
 			val deviceToken = it.result.toString()
 			if (Prefs(context).fcmToken() != deviceToken) {
-				Prefs(context).putString(Prefs.PUSH_TOKEN , deviceToken)
-				Alerts.log(javaClass.simpleName , "device token $deviceToken")
+				Prefs(context).putString(Prefs.PUSH_TOKEN, deviceToken)
+				Alerts.log(javaClass.simpleName, "device token $deviceToken")
 			} else {
-				Alerts.log(javaClass.simpleName , "device token not refresh  $token")
+				Alerts.log(javaClass.simpleName, "device token not refresh  $token")
 			}
 			token(deviceToken)
 		}
@@ -540,17 +553,17 @@ class DashActivity : BaseActivity() , NavController.OnDestinationChangedListener
 
 		val paymentAddressBind = PaymentAndAddressSheetBinding.bind(
 			layoutInflater.inflate(
-				R.layout.payment_and_address_sheet ,
-				null ,
+				R.layout.payment_and_address_sheet,
+				null,
 				false
 			)
 		)
 
-		val makeOfferSheet = Alerts.appBottomSheet(this , true , paymentAddressBind)
+		val makeOfferSheet = Alerts.appBottomSheet(this, true, paymentAddressBind)
 
 		with(paymentAddressBind.addressItem) {
 			val hasAddress = App.profileResponse.value?.hasShippingAddress == true
-			moreIcon.setImageDrawable(ContextCompat.getDrawable(this@DashActivity , draw.ic_pencil))
+			moreIcon.setImageDrawable(ContextCompat.getDrawable(this@DashActivity, draw.ic_pencil))
 			moreIcon.rotation = 0f
 
 			name.isVisible = hasAddress
@@ -571,8 +584,8 @@ class DashActivity : BaseActivity() , NavController.OnDestinationChangedListener
 
 			moreIcon.setHapticClickListener {
 				startActivity(
-					Intent(this@DashActivity , MoreActivity::class.java).putExtra(
-						"slug" ,
+					Intent(this@DashActivity, MoreActivity::class.java).putExtra(
+						"slug",
 						"paymentShipping"
 					)
 				)
@@ -583,7 +596,7 @@ class DashActivity : BaseActivity() , NavController.OnDestinationChangedListener
 			val hasCard = App.profileResponse.value?.hasCardAdded == true
 			iconCard.isVisible = hasCard
 			expiryDate.isVisible = hasCard
-			moreIcon.setImageDrawable(ContextCompat.getDrawable(this@DashActivity , draw.ic_pencil))
+			moreIcon.setImageDrawable(ContextCompat.getDrawable(this@DashActivity, draw.ic_pencil))
 			moreIcon.rotation = 0f
 
 			if (hasCard) {
@@ -604,8 +617,8 @@ class DashActivity : BaseActivity() , NavController.OnDestinationChangedListener
 
 			moreIcon.setHapticClickListener {
 				startActivity(
-					Intent(this@DashActivity , MoreActivity::class.java).putExtra(
-						"slug" ,
+					Intent(this@DashActivity, MoreActivity::class.java).putExtra(
+						"slug",
 						"paymentShipping"
 					)
 				)
@@ -624,8 +637,8 @@ class DashActivity : BaseActivity() , NavController.OnDestinationChangedListener
 
 	private fun verificationDialog() {
 		AppBottomSheet(
-			this ,
-			R.drawable.ic_info ,
+			this,
+			R.drawable.ic_info,
 			title = when (App.profileResponse.value?.sellerIdentityStatus) {
 				"null" -> {
 					"Become a Verified Seller!"
@@ -642,7 +655,7 @@ class DashActivity : BaseActivity() , NavController.OnDestinationChangedListener
 				else -> {
 					"Become a Verified Seller!"
 				}
-			} ,
+			},
 			message = when (App.profileResponse.value?.sellerIdentityStatus) {
 				"null" -> {
 					"Your seller verification request has been rejected, You need to reapply for the verification."
@@ -659,25 +672,25 @@ class DashActivity : BaseActivity() , NavController.OnDestinationChangedListener
 				else -> {
 					"Before you interact with lives shows, You need to become a Verified Seller."
 				}
-			} ,
-			primaryBtnText = "Okay" ,
-			secondaryBtnText = "Cancel" ,
-			canCancel = true ,
-			showSecondary = false ,
-			iconPadding = 16 ,
-			alertType = AlertType.INFO ,
+			},
+			primaryBtnText = "Okay",
+			secondaryBtnText = "Cancel",
+			canCancel = true,
+			showSecondary = false,
+			iconPadding = 16,
+			alertType = AlertType.INFO,
 			clicks = object : AlertClicks {
-				override fun primaryClick(dialog : AppBottomSheet) {
+				override fun primaryClick(dialog: AppBottomSheet) {
 					dialog.dismiss()
 
 					if (App.profileResponse.value?.sellerIdentityStatus == "pending") {
 						return
 					}
 
-					startActivity(Intent(this@DashActivity , SellerVerificationActivity::class.java))
+					startActivity(Intent(this@DashActivity, SellerVerificationActivity::class.java))
 				}
 
-				override fun secondaryClick(dialog : AppBottomSheet) {
+				override fun secondaryClick(dialog: AppBottomSheet) {
 					dialog.dismiss()
 				}
 			}

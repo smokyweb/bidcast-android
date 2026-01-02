@@ -4,10 +4,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat
 import androidx.navigation.fragment.findNavController
 import androidx.viewpager2.widget.ViewPager2
-import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseFragment
 import io.bidswipe.app.controller.ProductTipsPagerAdapter
 import io.bidswipe.app.databinding.FragmentShowTipsBinding
@@ -43,19 +41,9 @@ class ShowTipsFragment : BaseFragment<DashViewModel, FragmentShowTipsBinding>() 
 		log("ShowId : $showId")
 
 		when (type) {
-			"liveTips" -> {
-				bind.header.setHeaderText("Going Live Tips")
-			}
-
-			"bringInBuyers" -> {
-				bind.header.setHeaderText("Bring In Buyers")
-				bind.continueBtn.setBackgroundColor(ContextCompat.getColor(mCtx, R.color.secondary))
-			}
-
-			"goLive" -> {
-				bind.header.setHeaderText("Live Stream Tips")
-				bind.continueBtn.setBackgroundColor(ContextCompat.getColor(mCtx, R.color.secondary))
-			}
+			"liveTips" -> bind.header.setHeaderText("Going Live Tips")
+			"bringInBuyers" -> bind.header.setHeaderText("Bring In Buyers")
+			"goLive" -> bind.header.setHeaderText("Live Stream Tips")
 		}
 
 		bind.header.onBackClick {

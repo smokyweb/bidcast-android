@@ -43,49 +43,41 @@ class AddProductFragment : BaseFragment<ScheduleShowViewModel, FragmentAddProduc
 
 	private lateinit var productAdapter: ProductAdapter
 
-	//	private var productList = mutableListOf<GetMyInventoryResponse.Data?>()
-	private var page = 1
-	private var isLoading = false
+	private var from = ""
 
-	private val inventoryLauncher =
-		registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-			if (result.resultCode == Activity.RESULT_OK) {
-				val data = result.data
-				val selectedProducts = data?.getSerializableExtra("selectedProducts") as? ArrayList<Product>
+	private val inventoryLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+		if (result.resultCode == Activity.RESULT_OK) {
+			val data = result.data
+			val selectedProducts = data?.getSerializableExtra("selectedProducts") as? ArrayList<Product>
 
-				Log.d(TAG, "$selectedProducts ")
-				selectedProducts?.forEach { data ->
-					if (!viewModel.currentProducts.any { existing -> existing.id == data.id }) {
-						viewModel.currentProducts.add(data)
-					}
-				}
-
-				bind.productCount.text = buildSpannedString {
-					append(viewModel.currentProducts.size.toString())
-					append("/100")
-				}
-
-				productAdapter.notifyDataSetChanged()
-
-				if (viewModel.currentProducts.isNotEmpty()) {
-					bind.noData.isVisible = false
-					bind.recycler.isVisible = true
-				} else {
-					bind.noData.isVisible = true
-					bind.recycler.isVisible = false
+			Log.d(TAG, "$selectedProducts ")
+			selectedProducts?.forEach { data ->
+				if (!viewModel.currentProducts.any { existing -> existing.id == data.id }) {
+					viewModel.currentProducts.add(data)
 				}
 			}
-		}
 
-	private var from = ""
+			bind.productCount.text = buildSpannedString {
+				append(viewModel.currentProducts.size.toString())
+				append("/100")
+			}
+
+			productAdapter.notifyDataSetChanged()
+
+			if (viewModel.currentProducts.isNotEmpty()) {
+				bind.noData.isVisible = false
+				bind.recycler.isVisible = true
+			} else {
+				bind.noData.isVisible = true
+				bind.recycler.isVisible = false
+			}
+		}
+	}
+
 
 	private var mClick = object : RecyclerClicks {
 		override fun itemClick(pos: Int, status: String?) {
 			when (status) {
-				"select" -> {
-					viewModel.currentProducts[pos].selected = true
-					productAdapter.notifyItemChanged(pos)
-				}
 
 				"edit" -> {
 					startActivity(mCtx.toListProduct().putExtra("product", viewModel.currentProducts[pos]))
@@ -178,9 +170,7 @@ class AddProductFragment : BaseFragment<ScheduleShowViewModel, FragmentAddProduc
 			val productIdList = mutableListOf<Int>()
 
 			viewModel.currentProducts.forEach {
-				if (it.selected == true) {
-					productIdList.add(it.id?.toInt() ?: 0)
-				}
+				productIdList.add(it.id ?: 0)
 			}
 
 			if (productIdList.isEmpty()) {
@@ -242,60 +232,6 @@ class AddProductFragment : BaseFragment<ScheduleShowViewModel, FragmentAddProduc
 
 		}
 
-//		bind.loader.isVisible = true
-//
-//		viewModel.getUserProducts(userId.request(), categoryId = viewModel.categoryId.request(), page.toString().request())
-
-		viewModel.getUserProductsRepo.observe(viewLifecycleOwner) {
-			when (it) {
-				is Resource.Success -> {
-					bind.loader.isVisible = false
-
-					it.value.products
-
-					/*if (page == 1) productList.clear()
-
-					mData?.forEach {
-						productList.add(it)
-					}
-
-					log("DATA ${productList.size}")
-
-					productAdapter.notifyDataSetChanged()
-
-					isLoading = page >= (it.value.totalPage ?: 0)
-
-					if (productList.isEmpty()) {
-						bind.noData.isVisible = true
-						bind.recycler.isVisible = false
-					} else {
-						bind.noData.isVisible = false
-						bind.recycler.isVisible = true
-					}*/
-
-				}
-
-				is Resource.Error -> {
-					bind.loader.isVisible = false
-
-					it.parse(mCtx, TAG, object : AlertClicks {
-						override fun primaryClick(dialog: AppBottomSheet) {
-							dialog.dismiss()
-						}
-
-						override fun secondaryClick(dialog: AppBottomSheet) {
-							dialog.dismiss()
-
-						}
-					})
-
-				}
-
-				else -> {}
-
-			}
-		}
-
 		viewModel.storeScheduleShowRepo.observe(viewLifecycleOwner) {
 			when (it) {
 				is Resource.Success -> {
@@ -303,42 +239,6 @@ class AddProductFragment : BaseFragment<ScheduleShowViewModel, FragmentAddProduc
 					val data = it.value.data
 					log("SHOW DATA Before Start Show: $data")
 					finish()
-
-					/*if (viewModel.showId.isNullOrEmpty()) {
-						val products = data?.products?.map { product -> product?.toLiveShowProduct() }
-						products?.first()?.isCurrent = true
-
-						val show = LiveShowModel(
-							seller = LiveShowModel.Seller(
-								id = userId,
-								image = userImage,
-								name = userName,
-								rating = ""
-							),
-							products = products ?: mutableListOf(),
-							roomId = "live_room_${userId}_${data?.id.toString()}",
-							showDetail = "Test Details",
-							thumbnail = data?.thumbnail?.getOrNull(0) ?: "",
-							viewerCount = "1",
-							highestBid = LiveShowModel.HighestBid(
-								bidAmount = "",
-								userName = "",
-								userImage = "",
-								userId = "",
-								productId = ""
-							),
-							isLive = true,
-							time = Utils.timestamp().toString(),
-							showId = data?.id.toString(),
-							allowBidForAll = true,
-							bidCountDown = "",
-							showTimer = "",
-						)
-						startActivity(mCtx.toSellerShow(data?.time, show))
-						finish()
-					} else {
-						finish()
-					}*/
 				}
 
 				is Resource.Error -> {

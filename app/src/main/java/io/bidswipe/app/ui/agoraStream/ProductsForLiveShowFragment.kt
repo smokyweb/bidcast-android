@@ -76,9 +76,6 @@ class ProductsForLiveShowFragment : BottomSheetDialogFragment() {
 
 		socketManager = SocketManager.getInstance(requireContext())
 
-		Log.d("TAG", "onViewCreated: ${viewModel.currentRoomId}")
-		Log.d("TAG", "onViewCreated: ${viewModel.categoryId}")
-
 		bind.chipGroup.apply {
 			addView(
 				Utils.makeAChip(
@@ -154,12 +151,7 @@ class ProductsForLiveShowFragment : BottomSheetDialogFragment() {
 			}
 		}
 
-
 		bind.chipGroup.check(bind.chipGroup[0].id)
-
-
-//        bind.bottomLoader.isVisible = true
-//        loadData()
 
 		viewModel.getUserProductsRepo.observe(viewLifecycleOwner) {
 			when (it) {

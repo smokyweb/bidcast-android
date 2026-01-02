@@ -14,12 +14,9 @@ import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseAdapter
 import io.bidswipe.app.databinding.ProductSelectionItemBinding
 import io.bidswipe.app.interfaces.RecyclerClicks
-import io.bidswipe.app.model.LiveShowModel
-import io.bidswipe.app.network.response.GetProductsResponse
 import io.bidswipe.app.network.response.Product
 import io.bidswipe.app.utils.asCapital
 import io.bidswipe.app.utils.asMoney
-import io.bidswipe.app.utils.dpToPx
 import io.bidswipe.app.utils.loadUrl
 import io.bidswipe.app.utils.setHapticClickListener
 
@@ -52,6 +49,9 @@ class FirebaseProductAdapter(
             }
 
             bind.root.alpha = if (item?.status == "sold") 0.5f else 1f
+
+	        bind.quantity.isVisible = item?.status == "sold"
+	        bind.buttonLayout.isVisible = item?.status != "sold"
 
             bind.quantity.text = buildSpannedString {
                 append("Status: ")
