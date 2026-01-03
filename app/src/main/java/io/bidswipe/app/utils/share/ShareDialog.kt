@@ -29,11 +29,10 @@ import io.bidswipe.app.controller.ShareTargetAdapter
 import io.bidswipe.app.databinding.ShareSheetBinding
 import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.model.ChatModel
-import io.bidswipe.app.model.LiveShowModel
-import io.bidswipe.app.ui.agoraStream.ProductsForLiveShowFragment
 import io.bidswipe.app.ui.dashboard.ChatActivity
 import io.bidswipe.app.utils.FireRef
 import io.bidswipe.app.utils.Prefs
+import io.bidswipe.app.utils.asCapital
 import io.bidswipe.app.utils.loadUrl
 import java.io.File
 import java.io.FileOutputStream
@@ -126,7 +125,7 @@ class ShareDialog : BottomSheetDialogFragment() {
         chatList.add(0, ChatModel())
 
         bind.showImg.loadUrl(mCtx, payload.imageUrl ?: "")
-        bind.showTitle.text = payload.text?.capitalize()
+        bind.showTitle.text = payload.text?.asCapital()
         if (payload.sellerInfo != null) {
             bind.sellerInfo.isVisible = true
             bind.userName.text = payload.sellerInfo?.name
@@ -201,7 +200,7 @@ class ShareDialog : BottomSheetDialogFragment() {
                 if (pos == 0) {
                     //search  sheet for user search
                     val bottomSheetFragment = SearchUsers()
-                    bottomSheetFragment.arguments= bundleOf("share_text" to payload.shareText)
+                    bottomSheetFragment.arguments = bundleOf("share_text" to payload.shareText)
                     bottomSheetFragment.show(parentFragmentManager, "SEARCH_SHEET")
                 } else {
                     var name = ""
@@ -217,12 +216,27 @@ class ShareDialog : BottomSheetDialogFragment() {
                         id = chatList[pos].users?.senderId.toString()
                     }
 
+                    val text = when (payload.type) {
+
+                        "show" -> {
+                            buildString {
+                                append("Check out this amazing show")
+                                payload.sellerInfo?.name?.let {
+                                    append(" by $it")
+                                }
+                                append("! 🎬✨\nDon’t miss it — watch now:\n")
+                                append(payload.shareText)
+                            }
+                        }
+
+                        else -> payload.shareText
+                    }
+
                     val intent = Intent(mCtx, ChatActivity::class.java).apply {
                         putExtra("id", id)
                         putExtra("name", name)
                         putExtra("image", img)
-                        putExtra("productImage", payload.imageUrl)
-                        putExtra("shareText", payload.shareText)
+                        putExtra("share_payload", payload.copy(shareText = text))
                     }
                     startActivity(intent)
 
@@ -359,7 +373,7 @@ data class SharePayload(
     val shareText: String? = "",
     var type: String? = "",
     var isLive: Boolean = false
-)
+) : Serializable
 
 data class Seller(
     val id: String? = null,

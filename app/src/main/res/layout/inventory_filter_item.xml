@@ -23,7 +23,7 @@
             android:background="@drawable/card_8"
             app:tint="@color/primary"
             android:backgroundTint="@color/primaryContainer"
-            android:src="@drawable/ic_dollar_2"
+            android:src="@drawable/ic_dollar"
             android:padding="8dp"
             android:layout_marginEnd="@dimen/half_margin"/>
         <TextView

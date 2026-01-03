@@ -83,7 +83,6 @@
                 android:paddingHorizontal="8dp"
                 android:textColor="@color/onError"/>
 
-
     </com.google.android.material.card.MaterialCardView>
 
     <TextView
@@ -111,7 +110,7 @@
         android:textSize="11sp"
         android:lineSpacingExtra="0dp"
         android:lineHeight="0dp"
-        android:textColor="@color/outlineVariant"
+        android:textColor="@color/onSurfaceVariant"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/title" />

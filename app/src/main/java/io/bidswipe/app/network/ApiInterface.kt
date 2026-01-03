@@ -391,7 +391,6 @@ interface ApiInterface {
         @Part("discount") discount: RequestBody?,
     ): CreateOrderResponse
 
-
     @Multipart
     @POST("api/buyer-identity/store")
     suspend fun storeBuyerIdentity(

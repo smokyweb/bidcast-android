@@ -84,6 +84,7 @@ agoraFullSdk = "4.6.1"
 # --- Google / Firebase Plugins ---
 googleGmsGoogleServices = "4.4.4"
 crashlytics = "3.0.6"
+ui = "1.10.0"
 
 
 [libraries]
@@ -172,6 +173,7 @@ permissionx = { module = "com.guolindev.permissionx:permissionx", version.ref = 
 
 # --- SDKs ---
 agora-full-sdk = { module = "io.agora.rtc:full-sdk", version.ref = "agoraFullSdk" }
+androidx-ui = { group = "androidx.compose.ui", name = "ui", version.ref = "ui" }
 
 
 [plugins]

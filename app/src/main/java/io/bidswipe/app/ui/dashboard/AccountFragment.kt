@@ -204,8 +204,8 @@ class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
 		bind.accountView.moreRecycler.adapter = moreAdapter
 
 		accountGridList.clear()
-		accountGridList.add(MoreModel(R.drawable.ic_inventory_outline, "Payment & Shipping", "paymentShipping"))
-		accountGridList.add(MoreModel(R.drawable.ic_location_outline, "Addresses", "address"))
+		accountGridList.add(MoreModel(R.drawable.ic_box, "Payment & Shipping", "paymentShipping"))
+		accountGridList.add(MoreModel(R.drawable.ic_location, "Addresses", "address"))
 		accountGridList.add(MoreModel(R.drawable.ic_identity_verification, "Trusted Buyer", "buyer"))
 		accountGridList.add(MoreModel(R.drawable.notification, "Notifications", "notification"))
 		accountGridList.add(MoreModel(R.drawable.ic_tag_outline, "Preferences", "preferences"))

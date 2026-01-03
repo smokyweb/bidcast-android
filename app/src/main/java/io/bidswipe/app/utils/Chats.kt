@@ -37,6 +37,7 @@ class Chats(
 		const val TEXT = "text"
 		const val DATE = "date"
 		const val PDF = "pdf"
+		const val SHARE = "share"
 	}
 
 	/*

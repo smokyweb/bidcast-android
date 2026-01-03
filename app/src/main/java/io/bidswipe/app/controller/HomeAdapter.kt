@@ -49,8 +49,6 @@ class HomeAdapter(
 				append(item?.category?.name ?: "")
 			}
 
-			Log.d(TAG, "onBind: ${item?.user?.name}")
-
 			bind.userName.text = buildSpannedString {
 				bold {
 					append((item?.user?.username?.asCapital() ?: "").ifEmpty { item?.user?.name?.asCapital() ?: "user@${item?.user?.id}" })

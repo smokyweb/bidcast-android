@@ -57,6 +57,7 @@ import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request
 import io.bidswipe.app.utils.runSafe
 import io.bidswipe.app.utils.setHapticClickListener
+import io.bidswipe.app.utils.share.SharePayload
 import io.bidswipe.app.utils.value
 import jp.wasabeef.recyclerview.animators.SlideInUpAnimator
 import kotlinx.coroutines.delay
@@ -87,6 +88,7 @@ class ChatActivity : BaseActivity() {
 	private var chatLimit = 20
 	private var isBlockedByMe = false
 	private var isBlockedByOther = false
+	private var sharePayload : SharePayload?=null
 
 	private val mClick = object : RecyclerClicks {
 
@@ -154,9 +156,12 @@ class ChatActivity : BaseActivity() {
 		receiverName = intent.getStringExtra("name").toString()
 		receiverId = intent.getStringExtra("id").toString()
 
-		if(intent.hasExtra("shareText")){
-			bind.message.setText(intent.getStringExtra("shareText").toString())
+		if(intent.hasExtra("share_payload")){
+			sharePayload = intent.getSerializableExtra("share_payload") as SharePayload
+			log("PAYLOAD $sharePayload")
+			bind.message.setText(sharePayload?.shareText)
 		}
+
 		bind.root.viewTreeObserver.addOnGlobalLayoutListener {
 			val r = Rect()
 			bind.root.getWindowVisibleDisplayFrame(r)
@@ -269,14 +274,26 @@ class ChatActivity : BaseActivity() {
 				)
 				else ChatModel(isReply = false, message = bind.message.value())
 
-				chats.sendChat(model) {
-					viewModel.sendChatNotification(
-						receiverId.request(),
-						bind.message.value().request()
-					)
-					bind.message.text = null
-					bind.message.isFocusableInTouchMode = true
-					showReply(false)
+				if(sharePayload!=null){
+					chats.sendChat(model.copy(type = Chats.ChatType.SHARE, attachment = ChatModel.Attachment(image = sharePayload?.imageUrl?:""))){
+						viewModel.sendChatNotification(
+							receiverId.request(),
+							bind.message.value().request()
+						)
+						bind.message.text = null
+						bind.message.isFocusableInTouchMode = true
+						sharePayload=null
+					}
+				}else{
+					chats.sendChat(model) {
+						viewModel.sendChatNotification(
+							receiverId.request(),
+							bind.message.value().request()
+						)
+						bind.message.text = null
+						bind.message.isFocusableInTouchMode = true
+						showReply(false)
+					}
 				}
 
 

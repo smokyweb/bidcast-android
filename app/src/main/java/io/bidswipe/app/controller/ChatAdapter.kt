@@ -60,6 +60,13 @@ class ChatAdapter(
 							bind.imageView.isVisible = true
 							bind.image.loadUrl(mCtx, chat.attachment?.image.toString())
 						}
+
+						Chats.ChatType.SHARE -> {
+							bind.imgRead.isVisible = false
+							bind.chatView.isVisible = true
+							bind.imageView.isVisible = true
+							bind.image.loadUrl(mCtx, chat.attachment?.image.toString())
+						}
 					}
 
 					bind.imageView.setHapticClickListener {
@@ -71,8 +78,8 @@ class ChatAdapter(
 							mCtx, clr.primaryContainer
 						)
 					)
-					bind.replyView.replyDivider.backgroundTintList =
-						ColorStateList.valueOf(ContextCompat.getColor(mCtx, clr.onPrimaryContainer))
+
+					bind.replyView.replyDivider.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(mCtx, clr.onPrimaryContainer))
 
 					bind.root.setOnLongClickListener {
 						mClicks.itemClick(position, "select")
@@ -84,7 +91,7 @@ class ChatAdapter(
 					}
 
 					bind.replyView.root.isVisible = chat.isReply ?: false
-					if (chat.replyMessage?.type == "image") {
+					if (chat.replyMessage?.type == Chats.ChatType.IMAGE) {
 						bind.replyView.replyImage.loadUrl(
 							mCtx, chat.replyMessage?.message.toString()
 						)
@@ -124,6 +131,12 @@ class ChatAdapter(
 
 						Chats.ChatType.IMAGE -> {
 							bind.chatView.isVisible = false
+							bind.imageView.isVisible = true
+							bind.image.loadUrl(mCtx, chat.attachment?.image.toString())
+						}
+
+						Chats.ChatType.SHARE -> {
+							bind.chatView.isVisible = true
 							bind.imageView.isVisible = true
 							bind.image.loadUrl(mCtx, chat.attachment?.image.toString())
 						}

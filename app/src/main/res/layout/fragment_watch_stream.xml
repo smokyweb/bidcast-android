@@ -140,7 +140,7 @@
                                     <androidx.appcompat.widget.AppCompatImageView
                                         android:layout_width="32dp"
                                         android:layout_height="32dp"
-                                        android:src="@drawable/ic_gift_outlined"
+                                        android:src="@drawable/ic_gift"
                                         android:tint="@color/surface" />
 
                                     <TextView
@@ -209,7 +209,7 @@
                                     <androidx.appcompat.widget.AppCompatImageView
                                         android:layout_width="32dp"
                                         android:layout_height="32dp"
-                                        android:src="@drawable/ic_wallet_outlined"
+                                        android:src="@drawable/ic_wallet"
                                         android:tint="@color/surface" />
 
                                     <TextView
@@ -864,10 +864,11 @@
                         android:textColor="@color/background" />
 
                     <TextView
+                        id="@+id/freebie_count"
                         style="@style/BodyMedium"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:drawableStart="@drawable/ic_gift_outlined"
+                        android:drawableStart="@drawable/ic_gift"
                         android:drawablePadding="4dp"
                         android:drawableTint="@color/background"
                         android:gravity="center_vertical"
@@ -918,7 +919,7 @@
                     style="@style/BodyMedium"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:drawableStart="@drawable/ic_gift_outlined"
+                    android:drawableStart="@drawable/ic_gift"
                     android:drawablePadding="4dp"
                     android:drawableTint="@color/background"
                     android:gravity="center_vertical"

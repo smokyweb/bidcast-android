@@ -331,12 +331,10 @@ class BuyNowFragment : BaseFragment<ProductViewModel, FragmentBuyNowBinding>() {
 		}
 
 		viewModel.createOrderRepo.observe(viewLifecycleOwner) {
-
+				bind.loader.isVisible = false
 			when (it) {
 				is Resource.Success -> {
 					viewModel.createOrderRepo.value=null
-					bind.loader.isVisible = false
-
 					val mData = it.value.data
 
 					findNavController().navigate(
@@ -348,6 +346,7 @@ class BuyNowFragment : BaseFragment<ProductViewModel, FragmentBuyNowBinding>() {
 				}
 
 				is Resource.Error -> {
+					viewModel.createOrderRepo.value=null
 
 					viewModel.createOrderRepo.value=null
 					bind.loader.isVisible = false

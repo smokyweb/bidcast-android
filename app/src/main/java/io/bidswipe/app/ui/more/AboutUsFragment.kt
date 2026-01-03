@@ -122,7 +122,7 @@ class AboutUsFragment : BaseFragment<MoreViewModel, FragmentAboutUsBinding>() {
 					}
 
 					bind.email.title.text = mData?.contactEmail
-					bind.email.icon.setImageDrawable(ContextCompat.getDrawable(mCtx, draw.ic_mail))
+					bind.email.icon.setImageDrawable(ContextCompat.getDrawable(mCtx, draw.ic_email))
 					bind.phoneNumber.title.text = mData?.contactPhone
 					bind.phoneNumber.icon.setImageDrawable(
 						ContextCompat.getDrawable(

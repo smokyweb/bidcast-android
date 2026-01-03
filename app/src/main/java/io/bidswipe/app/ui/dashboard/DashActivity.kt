@@ -156,12 +156,12 @@ class DashActivity : BaseActivity(), NavController.OnDestinationChangedListener 
 					MoreModel(R.drawable.ic_training_outline, "Seller Training", "training"),
 					MoreModel(R.drawable.ic_seller_verification, "Seller Verification", "sellerVerification"),
 					MoreModel(R.drawable.ic_identity_verification, "Identity Verification", "identityVerification"),
-					MoreModel(R.drawable.ic_inventory_outline, "Inventory", "inventory"),
+					MoreModel(R.drawable.ic_box, "Inventory", "inventory"),
 					MoreModel(R.drawable.ic_clip_new, "Shows", "shows"),
-					MoreModel(R.drawable.ic_order_outline, "My Orders", "order"),
-					MoreModel(R.drawable.ic_wallet_outlined, "Wallet", "wallet"),
+					MoreModel(R.drawable.ic_order, "My Orders", "order"),
+					MoreModel(R.drawable.ic_wallet, "Wallet", "wallet"),
 					MoreModel(R.drawable.ic_tag_outline, "Offers", "offers"),
-					MoreModel(R.drawable.ic_gift_outlined, "Tips", "tips"),
+					MoreModel(R.drawable.ic_gift, "Tips", "tips"),
 					MoreModel(R.drawable.notification, "Notifications", "notifications"),
 				)
 			)
@@ -172,7 +172,7 @@ class DashActivity : BaseActivity(), NavController.OnDestinationChangedListener 
 				"Promotion",
 				mutableListOf(
 					MoreModel(R.drawable.ic_people, "Affiliate Program", "program"),
-					MoreModel(R.drawable.ic_speaker_outline, "Promote Tools", "promote")
+					MoreModel(R.drawable.ic_sound, "Promote Tools", "promote")
 				)
 			)
 		)
@@ -208,7 +208,6 @@ class DashActivity : BaseActivity(), NavController.OnDestinationChangedListener 
 		}
 
 		bind.contentDash.bottomBar.setupWithNavController(navController)
-		setupImageSheet()
 		sellSheet()
 
 		log("USER NAME : ${userName.replace(" ", ".")}  $userId   $userImage")
@@ -300,101 +299,6 @@ class DashActivity : BaseActivity(), NavController.OnDestinationChangedListener 
 		}
 	}
 
-	private fun setupImageSheet() {
-		BottomSheetBehavior.from(bind.contentDash.sellSheet.root)
-
-		imageSheet = BottomSheetBehavior.from(bind.contentDash.sellSheet.root).also {
-			it.peekHeight = 0
-			it.isHideable = true
-			it.isDraggable = false
-			it.isFitToContents = false
-		}
-
-		imageSheet.addBottomSheetCallback(mSheetCallback)
-
-		imageSheet.state = BottomSheetBehavior.STATE_COLLAPSED
-
-		sellList.clear()
-		sellList.addAll(
-			listOf(
-				SellModel(
-					R.drawable.ic_tag,
-					R.color.primaryContainer,
-					"List a Product",
-					"Create listing for your item"
-				),
-				SellModel(
-					R.drawable.ic_video,
-					R.color.primaryContainer,
-					"Schedule a Show",
-					"Go live and sell to your audience"
-				),
-				SellModel(
-					R.drawable.ic_shop,
-					R.color.primaryContainer,
-					"Seller Hub",
-					"Manage your store and listings"
-				)
-			)
-		)
-
-		val exploreAdapter = SellAdapter(sellList, "explore", object : RecyclerClicks {
-
-			override fun itemClick(pos: Int, status: String?) {
-
-				when (pos) {
-					2 -> {
-						bind.contentDash.bottomBar.selectedItemId = ids.accountFragment
-						return
-					}
-				}
-
-				val profile = App.profileResponse.value
-
-				if (profile?.sellerIdentityStatus != "verified") {
-					verificationDialog()
-					return
-				}
-
-				if (profile.hasCardAdded != true || profile.hasShippingAddress != true) {
-					showPaymentAndAddressSheet()
-					return
-				}
-
-				when (pos) {
-					0 -> {
-						startActivity(this@DashActivity.toListProduct())
-						imageSheet.state = BottomSheetBehavior.STATE_COLLAPSED
-					}
-
-					1 -> {
-						val isFirstShow = profile.isFirstShowCreated == true
-
-						val intent = if (isFirstShow) {
-							this@DashActivity.toScheduleShow(from = "dash")
-						} else {
-							this@DashActivity.toTutorials()
-						}
-
-						startActivity(intent)
-						imageSheet.state = BottomSheetBehavior.STATE_COLLAPSED
-					}
-				}
-			}
-		})
-
-		bind.contentDash.sellSheet.recycler.adapter = exploreAdapter
-
-		bind.contentDash.sellSheet.root.setHapticClickListener {
-			imageSheet.state = BottomSheetBehavior.STATE_COLLAPSED
-		}
-
-		bind.contentDash.sellSheet.close.setHapticClickListener {
-			imageSheet.state = BottomSheetBehavior.STATE_COLLAPSED
-		}
-
-	}
-
 	private fun sellSheet() {
 		val sheetView = SellBottomSheetBinding.bind(layoutInflater.inflate(R.layout.sell_bottom_sheet, null, false))
 
@@ -408,7 +312,7 @@ class DashActivity : BaseActivity(), NavController.OnDestinationChangedListener 
 		sellList.addAll(
 			listOf(
 				SellModel(
-					R.drawable.ic_tag,
+					R.drawable.ic_tag_outline,
 					R.color.primaryContainer,
 					"List a Product",
 					"Create listing for your item"

@@ -91,7 +91,7 @@
                     android:background="@drawable/card_8"
                     android:backgroundTint="@color/primaryContainer"
                     android:padding="8dp"
-                    android:src="@drawable/ic_dollar_2"
+                    android:src="@drawable/ic_dollar"
                     app:tint="@color/primary" />
 
                 <TextView

@@ -219,7 +219,8 @@ dependencies {
 
 	// ───────────────── Dependency Injection ─────────────────
 	implementation(libs.hilt.android)
-	ksp(libs.hilt.compiler)
+    implementation(libs.androidx.ui)
+    ksp(libs.hilt.compiler)
 
 	// ───────────────── Kotlin / Coroutines ─────────────────
 	implementation(libs.kotlinx.coroutines.core)

@@ -3,37 +3,45 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
     android:background="@drawable/bottom_sheet_back"
+    android:orientation="vertical"
     android:padding="@dimen/padding">
+
+    <View
+        android:layout_width="64dp"
+        android:layout_height="4dp"
+        android:layout_gravity="center_horizontal"
+        android:background="@drawable/card_16"
+        android:backgroundTint="@color/outlineVariant" />
 
     <LinearLayout
         android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_marginVertical="@dimen/margin"
-        android:gravity="center_vertical"
-        android:layout_height="wrap_content">
+        android:gravity="center_vertical">
 
         <TextView
             style="@style/TitleLarge"
-            android:layout_weight="1"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:text="Randomizer" />
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/close"
             android:layout_width="32dp"
             android:layout_height="32dp"
+            android:background="?selectableItemBackground"
             android:padding="@dimen/half_margin"
             android:scaleType="centerCrop"
             android:src="@drawable/ic_close"
-            app:tint="@color/onSurface"/>
+            app:tint="@color/onSurface" />
 
     </LinearLayout>
 
     <com.google.android.material.button.MaterialButton
-        style="@style/appBtn"
         android:id="@+id/show_spin"
+        style="@style/appBtn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Show SpinWheel" />
@@ -41,10 +49,10 @@
     <LinearLayout
         android:id="@+id/spin_controllers_view"
         android:layout_width="match_parent"
-        android:visibility="invisible"
-        android:layout_marginTop="@dimen/margin"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:layout_marginTop="@dimen/margin"
+        android:orientation="vertical"
+        android:visibility="invisible">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -52,18 +60,19 @@
             android:orientation="horizontal">
 
             <com.google.android.material.button.MaterialButton
+                android:id="@+id/hide_wheel"
                 style="@style/appBtn"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_marginEnd="8dp"
                 android:layout_weight="1"
                 android:paddingVertical="12dp"
-                android:id="@+id/hide_wheel"
                 android:text="Hide SpinWheel"
                 android:textAppearance="@style/BodySmall"
                 app:cornerRadius="@dimen/half_margin" />
 
             <com.google.android.material.button.MaterialButton
+                android:id="@+id/shuffle_entries"
                 style="@style/appBtn"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
@@ -71,17 +80,16 @@
                 android:layout_weight="1"
                 android:paddingVertical="12dp"
                 android:text="Shuffle Entries"
-                android:id="@+id/shuffle_entries"
                 android:textAppearance="@style/BodySmall"
                 app:cornerRadius="@dimen/half_margin" />
 
             <com.google.android.material.button.MaterialButton
+                android:id="@+id/spin_wheel"
                 style="@style/appBtn"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:paddingVertical="12dp"
-                android:id="@+id/spin_wheel"
                 android:text="Spin Wheel"
                 android:textAppearance="@style/BodySmall"
                 app:cornerRadius="@dimen/half_margin" />
@@ -93,8 +101,16 @@
             style="@style/TitleSmall"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginVertical="@dimen/half_margin"
-            android:text="Options" />
+            android:layout_marginTop="@dimen/half_margin"
+            android:text="Users Entered in Freebie" />
+
+        <TextView
+            android:id="@+id/users_text"
+            style="@style/BodySmall"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/half_margin"
+            android:text="Users Entered in Freebie" />
 
         <TextView
             style="@style/TitleSmall"
@@ -105,8 +121,8 @@
 
 
         <com.google.android.material.textfield.TextInputLayout
-            style="@style/inputBoxStyle"
             android:id="@+id/manual_entry_box"
+            style="@style/inputBoxStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/margin"
@@ -121,18 +137,19 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="top"
-                android:inputType="textMultiLine"
                 android:hint="Enter manual entries here separated by next line..."
+                android:inputType="textMultiLine"
                 android:minLines="4" />
 
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.button.MaterialButton
+            android:id="@+id/remove_all"
             style="@style/appBtn"
             android:layout_width="match_parent"
-            android:id="@+id/remove_all"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/margin"
             android:text="Remove All" />
     </LinearLayout>
+
 </LinearLayout>

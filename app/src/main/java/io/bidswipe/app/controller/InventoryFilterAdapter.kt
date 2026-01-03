@@ -25,7 +25,7 @@ class InventoryFilterAdapter(
             bind.icon.setImageDrawable(
                 ContextCompat.getDrawable(
                     mCtx,
-                    item?.icon ?: R.drawable.ic_dollar_2
+                    item?.icon ?: R.drawable.ic_dollar
                 )
             )
             bind.category.text = item?.title

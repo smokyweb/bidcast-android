@@ -111,7 +111,7 @@
                             android:backgroundTint="@color/primaryContainer"
                             android:padding="12dp"
                             app:tint="@color/primary"
-                            android:src="@drawable/ic_location_outline" />
+                            android:src="@drawable/ic_location" />
 
                     </com.google.android.material.card.MaterialCardView>
 
@@ -282,7 +282,7 @@
                             android:backgroundTint="@color/primaryContainer"
                             android:padding="12dp"
                             app:tint="@color/primary"
-                            android:src="@drawable/ic_gift_outlined" />
+                            android:src="@drawable/ic_gift" />
 
                     </com.google.android.material.card.MaterialCardView>
 
@@ -745,7 +745,7 @@
                             android:backgroundTint="@color/primaryContainer"
                             app:tint="@color/primary"
                             android:padding="12dp"
-                            android:src="@drawable/ic_gift_outlined" />
+                            android:src="@drawable/ic_gift" />
 
                     </com.google.android.material.card.MaterialCardView>
 

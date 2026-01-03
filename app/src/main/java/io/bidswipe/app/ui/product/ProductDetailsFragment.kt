@@ -358,10 +358,11 @@ class ProductDetailsFragment : BaseFragment<ProductViewModel, FragmentProductDet
 
 	fun shareProduct(mData: GetProductDetailsResponse.Data?, uri: Uri? = null) {
 		val shareText = buildString {
-			append("Check out ")
+			append("Check out this product ")
 			append(mData?.title?.asCapital() ?: "")
-			append(" from Bidswipe by ")
-			append("@${bind.userName.text}\n${Const.BASE_URL}/products/$productId")
+			append(" by @${bind.userName.text}")
+			append(" 🛍️✨\nGrab it here:\n")
+			append("${Const.BASE_URL}/products/$productId")
 		}
 
 		val seller = Seller(

@@ -4,8 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:backgroundTint="@color/surface"
-    android:background="@drawable/bottom_sheet_back">
+    android:background="@drawable/bottom_sheet_back"
+    android:backgroundTint="@color/surface">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -13,62 +13,74 @@
         android:orientation="vertical"
         android:padding="@dimen/margin">
 
+        <View
+            android:layout_width="64dp"
+            android:layout_height="4dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="@dimen/half_margin"
+            android:background="@drawable/card_16"
+            android:backgroundTint="@color/outlineVariant" />
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:orientation="horizontal">
+            android:gravity="center_vertical">
 
             <TextView
                 style="@style/TitleLarge"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/padding"
                 android:layout_weight="1"
-                android:text="@string/more_option" />
+                android:text="More Options" />
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/close"
-                android:layout_width="44dp"
-                android:layout_height="44dp"
-                android:padding="12dp"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:padding="@dimen/half_margin"
+                android:scaleType="centerCrop"
                 android:src="@drawable/ic_close"
-                app:tint="@color/tertiary" />
+                app:tint="@color/onSurface" />
 
         </LinearLayout>
 
         <LinearLayout
+            style="@style/shadowStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginHorizontal="2dp"
             android:layout_marginVertical="@dimen/margin"
-            android:orientation="horizontal">
+            android:background="@drawable/card_16"
+            android:backgroundTint="@color/background"
+            android:orientation="horizontal"
+            android:padding="12dp">
 
             <androidx.appcompat.widget.AppCompatImageView
-                android:layout_width="28dp"
-                android:layout_height="28dp"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
                 android:layout_gravity="center"
-                android:layout_marginEnd="@dimen/margin"
                 android:src="@drawable/ic_question"
                 app:tint="@color/onPrimaryContainer" />
 
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/half_margin"
                 android:layout_weight="1"
                 android:orientation="vertical">
 
                 <TextView
-                    style="@style/TitleLarge"
+                    style="@style/TitleSemiBold"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/verified_buyers" />
 
                 <TextView
-                    style="@style/BodyLarge"
+                    style="@style/BodyMedium"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/half_margin"
-                    android:text="@string/when_on_allows_bids_from_verified_buyers_only" />
+                    android:text="@string/when_on_allows_bids_from_verified_buyers_only"
+                    android:textColor="@color/onSurfaceVariant" />
 
             </LinearLayout>
 
@@ -102,7 +114,7 @@
             app:dividerColor="@color/outline" />
 
         <TextView
-            style="@style/BodyLarge"
+            style="@style/TitleSemiBold"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/margin"
@@ -124,7 +136,8 @@
                 android:background="@drawable/card_8"
                 android:gravity="center"
                 android:orientation="vertical"
-                android:padding="@dimen/margin">
+                android:paddingHorizontal="@dimen/half_margin"
+                android:paddingVertical="@dimen/margin">
 
                 <ImageView
                     android:id="@+id/image"
@@ -156,7 +169,8 @@
                 android:background="@drawable/card_8"
                 android:gravity="center"
                 android:orientation="vertical"
-                android:padding="@dimen/margin">
+                android:paddingHorizontal="@dimen/half_margin"
+                android:paddingVertical="@dimen/margin">
 
                 <ImageView
                     android:layout_width="28dp"
@@ -186,7 +200,8 @@
                 android:background="@drawable/card_8"
                 android:gravity="center"
                 android:orientation="vertical"
-                android:padding="@dimen/margin">
+                android:paddingHorizontal="@dimen/half_margin"
+                android:paddingVertical="@dimen/margin">
 
                 <ImageView
                     android:id="@+id/mute_icon"

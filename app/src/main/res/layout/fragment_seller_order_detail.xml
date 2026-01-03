@@ -244,7 +244,7 @@
                     android:layout_height="wrap_content"
                     android:drawablePadding="@dimen/half_margin"
                     android:text="@string/delivery_address"
-                    app:drawableStartCompat="@drawable/ic_location_marker" />
+                    app:drawableStartCompat="@drawable/ic_location" />
 
                 <TextView
                     android:id="@+id/address"

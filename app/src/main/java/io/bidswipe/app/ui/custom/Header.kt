@@ -43,7 +43,7 @@ class Header @JvmOverloads constructor(
             setSecondaryIcon(
                 it.getResourceId(
                     styleable.Header_secondaryIconDrawable,
-                    draw.ic_delete
+                    draw.trash
                 )
             )
 

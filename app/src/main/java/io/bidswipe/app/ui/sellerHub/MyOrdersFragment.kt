@@ -219,7 +219,7 @@ class MyOrdersFragment : BaseFragment<SellerHubViewModel, FragmentMyOrdersBindin
 	private fun showDeleteConfirmationDialog() {
 		AppBottomSheet(
 			mCtx,
-			R.drawable.ic_delete,
+			R.drawable.trash,
 			"Delete Order",
 			"Are you sure you want to delete all orders?",
 			primaryBtnText = "Delete",

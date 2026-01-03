@@ -31,7 +31,7 @@
                 app:backgroundTint="@color/error"
                 app:cornerRadius="0dp"
                 app:iconSize="32dp"
-                app:icon="@drawable/ic_delete"
+                app:icon="@drawable/trash"
                 app:iconTint="@color/background"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"

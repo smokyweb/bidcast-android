@@ -83,7 +83,7 @@
                     android:layout_height="38dp"
                     android:layout_gravity="center"
                     android:contentDescription="@string/app_name"
-                    android:src="@drawable/ic_image"
+                    android:src="@drawable/ic_gallery"
                     app:tint="@color/outlineVariant" />
 
                 <TextView

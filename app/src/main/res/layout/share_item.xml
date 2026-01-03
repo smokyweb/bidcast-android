@@ -25,7 +25,7 @@
             android:layout_height="match_parent"
             android:backgroundTint="@color/onSecondary"
             android:padding="12dp"
-            android:src="@drawable/ic_mail" />
+            android:src="@drawable/ic_email" />
 
     </com.google.android.material.card.MaterialCardView>
 

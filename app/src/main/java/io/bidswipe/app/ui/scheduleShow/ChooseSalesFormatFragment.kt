@@ -73,7 +73,7 @@ class ChooseSalesFormatFragment : BaseFragment<ScheduleShowViewModel, FragmentCh
 
 		formatList.clear()
 		formatList.add(FormatModel(draw.ic_hammer, "Auction"))
-		formatList.add(FormatModel(draw.ic_tag, "Buy It Now"))
+		formatList.add(FormatModel(draw.ic_tag_outline, "Buy It Now"))
 
 		adapter = FormatAdapter(formatList, mClick)
 

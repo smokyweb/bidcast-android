@@ -17,6 +17,7 @@ import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.network.response.Product
 import io.bidswipe.app.utils.asCapital
 import io.bidswipe.app.utils.asMoney
+import io.bidswipe.app.utils.dpToPx
 import io.bidswipe.app.utils.loadUrl
 import io.bidswipe.app.utils.setHapticClickListener
 
@@ -37,7 +38,11 @@ class FirebaseProductAdapter(
         with(holder) {
 
             bind.root.setHapticClickListener {
-                mClicks.itemClick(position, "select")
+                if (from == "freebie") {
+                    mClicks.itemClick(position, "freebie")
+                } else {
+                    mClicks.itemClick(position, "select")
+                }
             }
 
             bind.startAuction.setHapticClickListener {
@@ -50,8 +55,8 @@ class FirebaseProductAdapter(
 
 //            bind.root.alpha = if (item?.status == "sold") 0.5f else 1f
 
-	        bind.quantity.isVisible = item?.status == "inactive"
-	        bind.buttonLayout.isVisible = item?.status != "inactive"
+            bind.quantity.isVisible = item?.status == "inactive"
+            bind.buttonLayout.isVisible = item?.status != "inactive" && from != "freebie"
 
             bind.quantity.text = buildSpannedString {
                 append("Status: ")
@@ -66,6 +71,10 @@ class FirebaseProductAdapter(
                 }
             }
 
+            if (from == "freebie") {
+                bind.root.strokeColor = ContextCompat.getColor(mCtx, R.color.primary)
+                bind.root.strokeWidth = if (item?.selected == true) mCtx.resources.dpToPx(2) else 0
+            } else {
             if (item?.selected == true) {
                 bind.pinCard.setCardBackgroundColor(ContextCompat.getColor(mCtx, R.color.primary))
                 bind.setForNext.imageTintList = (ColorStateList.valueOf(ContextCompat.getColor(mCtx, R.color.surface)))
@@ -73,6 +82,7 @@ class FirebaseProductAdapter(
                 bind.pinCard.setCardBackgroundColor(ContextCompat.getColor(mCtx, R.color.outline))
                 bind.setForNext.imageTintList = (ColorStateList.valueOf(ContextCompat.getColor(mCtx, R.color.onSurface)))
             }
+        }
 
             bind.productStatus.isVisible = item?.isCurrent == true
 

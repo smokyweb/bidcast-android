@@ -22,8 +22,8 @@
             android:id="@+id/profileLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:baselineAligned="false"
             android:layout_margin="@dimen/half_margin"
+            android:baselineAligned="false"
             android:gravity="center_vertical"
             app:layout_constraintTop_toTopOf="parent">
 
@@ -102,12 +102,12 @@
                     android:paddingHorizontal="8dp"
                     android:paddingVertical="4dp"
                     android:text="0"
+                    android:textColor="@color/onPrimary"
                     android:textSize="12sp"
                     app:backgroundTint="@color/black25"
                     app:cornerRadius="24dp"
                     app:icon="@drawable/ic_broadcast"
                     app:iconPadding="6dp"
-                    android:textColor="@color/onPrimary"
                     app:iconSize="20sp"
                     app:iconTint="@null" />
 
@@ -136,17 +136,50 @@
 
         <TextView
             android:id="@+id/show_notes"
+            style="@style/LabelLarge"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/half_margin"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/profileLayout"
             android:background="@drawable/card_8"
-            android:padding="@dimen/half_margin"
             android:backgroundTint="@color/surfaceVariant"
-            style="@style/LabelLarge"
             android:elevation="4dp"
-            android:text="@string/show_nnotes"/>
+            android:padding="@dimen/half_margin"
+            android:text="@string/show_nnotes"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/profileLayout" />
+
+        <LinearLayout
+            android:id="@+id/freebie_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="@dimen/half_margin"
+            android:background="@drawable/giveaway_back"
+            android:elevation="4dp"
+            android:orientation="vertical"
+            android:padding="8dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/profileLayout">
+
+            <TextView
+                style="@style/TitleMedium"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Freebie"
+                android:textColor="@color/background" />
+
+            <TextView
+                android:id="@+id/freebieEntryCount"
+                style="@style/BodyMedium"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawableStart="@drawable/ic_gift"
+                android:drawablePadding="4dp"
+                android:drawableTint="@color/background"
+                android:gravity="center_vertical"
+                android:text="0 Entries"
+                android:textColor="@color/background" />
+
+        </LinearLayout>
 
         <ScrollView
             android:layout_width="match_parent"
@@ -180,9 +213,9 @@
                         android:id="@+id/bottom_layout_options"
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
+                        android:layout_marginBottom="@dimen/half_margin"
                         android:layout_weight="1"
                         android:gravity="bottom"
-                        android:layout_marginBottom="@dimen/half_margin"
                         android:orientation="horizontal">
 
                         <LinearLayout
@@ -213,9 +246,10 @@
                                 android:layout_height="wrap_content"
                                 android:layout_marginStart="@dimen/margin"
                                 app:boxBackgroundColor="@color/transparent"
-                                app:endIconDrawable="@drawable/ic_forward"
-                                app:endIconMode="custom"
                                 app:boxStrokeColor="@color/input_box_stroke_color_surface"
+                                app:endIconDrawable="@drawable/send"
+                                app:endIconTint="@color/background"
+                                app:endIconMode="custom"
                                 app:layout_constraintBottom_toTopOf="@+id/product">
 
                                 <com.google.android.material.textfield.TextInputEditText
@@ -571,8 +605,8 @@
                                 android:id="@+id/winningLayout"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:orientation="horizontal"
                                 android:layout_marginStart="@dimen/half_margin"
+                                android:orientation="horizontal"
                                 android:paddingVertical="4dp"
                                 android:visibility="gone">
 
@@ -686,8 +720,8 @@
                                         android:drawableStart="@drawable/skull"
                                         android:drawablePadding="4dp"
                                         android:text="00:00:00"
-                                        android:visibility="gone"
-                                        android:textColor="@color/error" />
+                                        android:textColor="@color/error"
+                                        android:visibility="gone" />
 
                                     <TextView
                                         android:id="@+id/status"
@@ -696,8 +730,8 @@
                                         android:layout_height="wrap_content"
                                         android:layout_gravity="center"
                                         android:text="Sold"
-                                        android:visibility="visible"
-                                        android:textColor="@color/error" />
+                                        android:textColor="@color/error"
+                                        android:visibility="visible" />
 
                                 </LinearLayout>
 
@@ -745,16 +779,16 @@
                         android:text="@string/start_now"
                         app:layout_constraintBottom_toBottomOf="parent" />
 
-                        <com.google.android.material.button.MaterialButton
-                            android:id="@+id/runNext"
-                            style="@style/appBtn"
-                            android:visibility="gone"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginBottom="@dimen/margin"
-                            android:layout_marginStart="@dimen/half_margin"
-                            android:text="Run Next"
-                            app:layout_constraintBottom_toBottomOf="parent" />
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/runNext"
+                        style="@style/appBtn"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/half_margin"
+                        android:layout_marginBottom="@dimen/margin"
+                        android:text="Run Next"
+                        android:visibility="gone"
+                        app:layout_constraintBottom_toBottomOf="parent" />
 
 
                 </LinearLayout>
@@ -765,28 +799,57 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <com.google.android.material.card.MaterialCardView
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/lucky_wheel_layout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        style="@style/cardStyle"
-        android:padding="2dp"
-        android:visibility="gone"
-        app:cardCornerRadius="1000dp"
-        android:elevation="4dp"
-        android:layout_marginTop="64dp"
+        android:layout_height="0dp"
         android:layout_marginHorizontal="32dp"
-        app:cardBackgroundColor="@color/background"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintDimensionRatio="1">
+        android:visibility="gone"
+        app:layout_constraintDimensionRatio="1"
+        android:layout_marginTop="100dp">
 
-        <com.caneryilmaz.apps.luckywheel.ui.LuckyWheelView
-            android:id="@+id/lucky_wheel"
+        <com.google.android.material.card.MaterialCardView
+            style="@style/cardStyle"
             android:layout_width="match_parent"
-            app:arrowPosition="CENTER"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            android:elevation="4dp"
+            android:padding="2dp"
+            app:cardBackgroundColor="@color/background"
+            app:cardCornerRadius="1000dp">
 
-    </com.google.android.material.card.MaterialCardView>
+            <com.caneryilmaz.apps.luckywheel.ui.LuckyWheelView
+                android:id="@+id/lucky_wheel"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:arrowPosition="CENTER" />
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <View
+            android:layout_width="32dp"
+            android:id="@+id/center_of_wheel"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:elevation="6dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_height="32dp"/>
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/close_wheel"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:background="@drawable/card_16"
+            android:padding="@dimen/half_margin"
+            android:scaleType="centerCrop"
+            android:src="@drawable/ic_close"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="@color/onSurface" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
 
     <io.bidswipe.app.ui.custom.LoaderView
         android:id="@+id/loader"

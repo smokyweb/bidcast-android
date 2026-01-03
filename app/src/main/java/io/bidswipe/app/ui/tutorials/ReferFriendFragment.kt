@@ -50,13 +50,13 @@ class ReferFriendFragment : BaseFragment<DashViewModel, FragmentReferFriendBindi
 					"Adding products before the stream helps you organize better and gives viewers time to preview items."
 				),
 				SellModel(
-					R.drawable.ic_image,
+					R.drawable.ic_gallery,
 					R.color.tertiaryContainer,
 					"Quality Photos Matter",
 					"Upload clear, high-quality photos showing different angles of your products to build trust."
 				),
 				SellModel(
-					R.drawable.ic_tag,
+					R.drawable.ic_tag_outline,
 					R.color.successContainer,
 					"Set Clear Pricing",
 					"Define your starting prices and reserve prices to help buyers make informed decisions."

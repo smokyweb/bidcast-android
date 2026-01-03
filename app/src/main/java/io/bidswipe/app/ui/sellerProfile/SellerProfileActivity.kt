@@ -452,8 +452,9 @@ class SellerProfileActivity : BaseActivity() {
 
     private fun shareSellerProfile() {
         val shareText = buildString {
-            append("Check out ${sellerName}'s profile!\n")
-            append("@${bind.userName.text}\n${Const.BASE_URL}/seller/$sellerId")
+            append("Check out this seller: @${bind.userName.text}")
+            append(" ⭐\nExplore their collection here:\n")
+            append("${Const.BASE_URL}/seller/$sellerId")
         }
 
         val seller = Seller(
