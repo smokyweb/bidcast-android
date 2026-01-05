@@ -3,65 +3,66 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
     android:background="@drawable/bottom_sheet_back"
+    android:orientation="vertical"
     android:padding="@dimen/padding">
 
     <View
         android:layout_width="64dp"
         android:layout_height="4dp"
+        android:layout_gravity="center"
+        android:layout_marginBottom="16dp"
         android:background="@drawable/card_16"
-        android:backgroundTint="@color/outlineVariant"
-        android:layout_gravity="center_horizontal"/>
+        android:backgroundTint="@color/outlineVariant" />
 
-    <TextView
-        style="@style/TitleLarge"
-        android:layout_weight="1"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_marginVertical="@dimen/margin"
         android:layout_height="wrap_content"
-        android:text="Select Time" />
+        android:layout_marginBottom="@dimen/half_margin"
+        android:gravity="center_vertical">
+
+        <TextView
+            style="@style/TitleLarge"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/select_time" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/close"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:padding="@dimen/half_margin"
+            android:scaleType="centerCrop"
+            android:src="@drawable/ic_close"
+            app:tint="@color/onSurface" />
+
+    </LinearLayout>
+
 
     <com.github.florent37.singledateandtimepicker.SingleDateAndTimePicker
         android:id="@+id/time_picker"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:picker_itemSpacing="6dp"
-        app:picker_curvedMaxAngle="45"
         app:picker_curved="true"
+        app:picker_curvedMaxAngle="45"
+        app:picker_cyclic="true"
+        app:picker_displayDays="false"
+        app:picker_itemSpacing="6dp"
+        app:picker_mustBeOnFuture="true"
         app:picker_selectorColor="@android:color/transparent"
         app:picker_stepSizeHours="1"
         app:picker_stepSizeMinutes="5"
-        app:picker_cyclic="true"
-        app:picker_displayDays="false"
-        app:picker_mustBeOnFuture="true"
-        app:picker_visibleItemCount="7"
-        />
+        app:picker_visibleItemCount="5" />
 
-    <LinearLayout
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/save"
+        style="@style/appBtn"
         android:layout_width="match_parent"
-        android:gravity="center_vertical"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/half_margin"
         android:layout_marginTop="@dimen/margin"
-        android:layout_height="wrap_content">
+        android:text="@string/select" />
 
-
-        <com.google.android.material.button.MaterialButton
-            style="@style/appBtnOutline"
-            android:id="@+id/close"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="@dimen/half_margin"
-            android:text="@string/cancel" />
-
-        <com.google.android.material.button.MaterialButton
-            style="@style/appBtn"
-            android:id="@+id/save"
-            android:layout_width="0dp"
-            android:layout_marginStart="@dimen/half_margin"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:text="@string/select" />
-
-    </LinearLayout>
 </LinearLayout>

@@ -545,6 +545,7 @@ class InventoryFragment : BaseFragment<SellerHubViewModel, FragmentInventoryBind
 			it.isHideable = true
 			it.isDraggable = true
 			it.isFitToContents = false
+			it.skipCollapsed=true
 		}
 
 		filterSheet.state = BottomSheetBehavior.STATE_COLLAPSED

@@ -68,10 +68,6 @@ class ProductDetailsFragment : BaseFragment<ProductViewModel, FragmentProductDet
 
 		productId = activity?.intent?.getStringExtra("productId") ?: ""
 
-		bind.header.onBackClick {
-			finish()
-		}
-
 		bind.backImage.setHapticClickListener {
 			finish()
 		}
@@ -81,23 +77,6 @@ class ProductDetailsFragment : BaseFragment<ProductViewModel, FragmentProductDet
 
 		mediaAdapter = ProductImageAdapter(images)
 		bind.recyclerView.adapter = mediaAdapter
-
-		val menu = PopupMenu(mCtx, bind.header.findViewById<AppCompatImageView>(R.id.primaryIcon))
-		menu.menuInflater.inflate(R.menu.action_menu, menu.menu)
-
-		menu.setOnMenuItemClickListener {
-			when (it.itemId) {
-				ids.save_product -> {
-					bind.loader.isVisible = true
-					viewModel.saveSellerProduct(productId.request())
-				}
-			}
-			return@setOnMenuItemClickListener true
-		}
-
-		bind.header.onMorePrimaryClick {
-			menu.show()
-		}
 
 		bind.buyNow.setHapticClickListener {
 			findNavController().navigate(ids.goToBuyNowFragment)

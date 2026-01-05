@@ -19,15 +19,14 @@
 
     <TextView
         android:id="@+id/title"
-        style="@style/BodyMedium"
+        style="@style/BodyLarge"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:gravity="center"
         android:layout_marginVertical="@dimen/half_margin"
         android:layout_marginHorizontal="@dimen/margin"
         android:text="@string/choose_the_categories_you_re_interested_in_to_watch_related_shows"
-        android:textSize="18sp"
         app:layout_constraintTop_toBottomOf="@id/header" />
-
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
@@ -39,7 +38,7 @@
         app:layout_constraintBottom_toTopOf="@+id/nextButton"
         app:layout_constraintTop_toBottomOf="@+id/title"
         app:layout_constraintVertical_bias="0.0"
-        app:spanCount="2"
+        app:spanCount="3"
         tools:itemCount="6"
         tools:layout_editor_absoluteX="8dp"
         tools:listitem="@layout/category_item" />

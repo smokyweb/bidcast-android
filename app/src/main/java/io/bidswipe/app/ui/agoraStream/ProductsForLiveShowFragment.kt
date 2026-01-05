@@ -79,6 +79,7 @@ class ProductsForLiveShowFragment : BottomSheetDialogFragment() {
                 it.layoutParams = layoutParams
                 val behavior = BottomSheetBehavior.from(it)
                 behavior.state = BottomSheetBehavior.STATE_EXPANDED
+                behavior.skipCollapsed=true
             }
         }
         return dialog

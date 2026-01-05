@@ -6,18 +6,6 @@
     android:layout_height="match_parent"
     tools:context=".ui.product.ProductDetailsFragment">
 
-    <io.bidswipe.app.ui.custom.Header
-        android:id="@+id/header"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:elevation="2dp"
-        app:headerMode="BACK_BUTTON_TITLE_ACTION"
-        app:layout_constraintTop_toTopOf="parent"
-        app:primaryIconDrawable="@drawable/ic_detail"
-        app:showBackButton="true"
-        android:visibility="gone"
-        app:showPrimaryIcon="true" />
-
     <androidx.appcompat.widget.AppCompatImageView
         android:layout_width="36dp"
         android:layout_height="36dp"

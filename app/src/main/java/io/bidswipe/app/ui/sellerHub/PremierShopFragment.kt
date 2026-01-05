@@ -129,6 +129,7 @@ class PremierShopFragment : BaseFragment<SellerHubViewModel, FragmentPremierShop
 					bind.reviewLogo.loadUrl(mCtx, mData?.reviewLogo ?: "")
 
 					bind.reviewTitle.text = mData?.reviewTitle
+//					bind.policyStanding.text = mData?.
 
 					bind.reviewDetails.text = mData?.reviewDetails
 

@@ -16,34 +16,42 @@
         android:layout_marginTop="@dimen/margin"
         app:layout_constraintTop_toTopOf="parent">
 
-        <TextView
-            android:id="@+id/sheetTitle"
-            style="@style/TitleLarge"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
+        <View
+            android:id="@+id/view3"
+            android:layout_width="64dp"
+            android:layout_height="4dp"
+            android:layout_gravity="center"
+            android:background="@drawable/card_16"
+            android:backgroundTint="@color/outlineVariant"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            android:layout_gravity="center"
-            android:gravity="center"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/half_margin"
             android:layout_marginHorizontal="@dimen/margin"
-            android:layout_weight="1"
-            android:text="@string/show_notes" />
+            android:gravity="center_vertical"
+            app:layout_constraintTop_toBottomOf="@+id/view3">
 
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/close"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:padding="@dimen/half_margin"
-            android:layout_marginEnd="@dimen/half_margin"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            android:scaleType="centerCrop"
-            android:src="@drawable/ic_close"
-            app:tint="@color/onSurface"/>
+            <TextView
+                style="@style/TitleLarge"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/show_notes" />
 
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/close"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:padding="@dimen/half_margin"
+                android:scaleType="centerCrop"
+                android:src="@drawable/ic_close"
+                app:tint="@color/onSurface" />
+
+        </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

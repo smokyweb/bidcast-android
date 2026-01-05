@@ -18,30 +18,28 @@
         android:backgroundTint="@color/outlineVariant" />
 
     <LinearLayout
-        android:id="@+id/headingCon"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
-        android:orientation="horizontal">
+        android:layout_marginHorizontal="@dimen/margin"
+        android:layout_marginBottom="@dimen/half_margin"
+        android:gravity="center_vertical"
+        android:layout_height="wrap_content">
 
         <TextView
             android:id="@+id/sheetTitle"
             style="@style/TitleLarge"
+            android:layout_weight="1"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginHorizontal="@dimen/margin"
-            android:layout_weight="1"
-            android:text="Select Product Category" />
+            android:text="@string/select_product_category" />
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/close"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_marginEnd="@dimen/margin"
-            android:padding="12dp"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:padding="@dimen/half_margin"
             android:scaleType="centerCrop"
-            android:src="@drawable/ic_close" />
+            android:src="@drawable/ic_close"
+            app:tint="@color/onSurface"/>
 
     </LinearLayout>
 

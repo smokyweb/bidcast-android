@@ -151,7 +151,7 @@
                                     android:id="@+id/icon"
                                     android:layout_width="match_parent"
                                     android:layout_height="match_parent"
-                                    android:backgroundTint="@color/onSecondary"
+                                    android:backgroundTint="@color/primaryContainer"
                                     android:padding="12dp"
                                     android:src="@drawable/ic_shop"
                                     android:tint="@color/primary" />
@@ -359,12 +359,28 @@
                 android:orientation="vertical"
                 android:layout_marginTop="@dimen/margin"
                 android:padding="@dimen/padding">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
                 <TextView
                     style="@style/TitleLarge"
-                    android:layout_width="match_parent"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
                     android:layout_height="wrap_content"
                     android:text="Policy Standing" />
 
+                <TextView
+                    android:id="@+id/policy_standing"
+                    style="@style/TitleMedium"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Excellent"
+                    android:textStyle="bold" />
+
+                </LinearLayout>
                 <TextView
                     android:id="@+id/policy_standards"
                     style="@style/BodySmall"
@@ -385,10 +401,8 @@
                         android:id="@+id/reviewLogo"
                         android:layout_width="32dp"
                         android:layout_height="32dp"
-                        android:backgroundTint="@color/onSecondary"
                         android:src="@drawable/ic_checked_tag"
                         android:tint="@color/primary" />
-
 
                     <LinearLayout
                         android:layout_width="0dp"

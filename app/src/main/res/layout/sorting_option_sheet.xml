@@ -16,46 +16,36 @@
             android:layout_width="64dp"
             android:layout_height="4dp"
             android:layout_gravity="center"
-            android:layout_marginVertical="16dp"
+            android:layout_marginVertical="@dimen/margin"
             android:background="@drawable/card_16"
-            android:backgroundTint="@color/outlineVariant" />
+            android:backgroundTint="@color/outlineVariant"/>
 
         <LinearLayout
-            android:id="@+id/profileLayout"
+            android:id="@+id/header"
             android:layout_width="match_parent"
+            android:layout_marginHorizontal="@dimen/margin"
             android:layout_height="wrap_content"
-            android:paddingHorizontal="@dimen/half_margin"
-            android:orientation="horizontal">
+            android:gravity="center_vertical">
 
             <TextView
                 android:id="@+id/title"
-                style="@style/HeadlineSmall"
-                android:layout_width="wrap_content"
+                style="@style/TitleLarge"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="Sort By"
                 android:layout_weight="1"
-                android:layout_marginStart="@dimen/half_margin"
-                android:layout_gravity="center_vertical" />
+                android:text="@string/sort_by" />
 
-            <com.google.android.material.card.MaterialCardView
+            <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/close"
-                style="@style/cardStyle"
-                android:layout_width="44dp"
-                android:layout_height="44dp"
-                app:cardCornerRadius="22dp"
-                app:cardBackgroundColor="@color/background"
-                app:cardElevation="0dp">
-
-                <androidx.appcompat.widget.AppCompatImageView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:padding="12dp"
-                    android:src="@drawable/ic_close"
-                    app:tint="@color/tertiary" />
-
-            </com.google.android.material.card.MaterialCardView>
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:padding="@dimen/half_margin"
+                android:scaleType="centerCrop"
+                android:src="@drawable/ic_close"
+                app:tint="@color/onSurface" />
 
         </LinearLayout>
+
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/optionRecycler"

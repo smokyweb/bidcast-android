@@ -3,6 +3,7 @@ package io.bidswipe.app.ui.dashboard
 import android.annotation.SuppressLint
 import android.graphics.Color
 import android.graphics.Rect
+import android.os.Build
 import android.os.Bundle
 import android.text.SpannableStringBuilder
 import android.text.TextPaint
@@ -28,6 +29,8 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ValueEventListener
+import com.gyf.immersionbar.ktx.immersionBar
+import com.gyf.immersionbar.ktx.statusBarHeight
 import io.bidswipe.app.App
 import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseActivity
@@ -57,6 +60,7 @@ import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request
 import io.bidswipe.app.utils.runSafe
 import io.bidswipe.app.utils.setHapticClickListener
+import io.bidswipe.app.utils.setMargins
 import io.bidswipe.app.utils.share.SharePayload
 import io.bidswipe.app.utils.value
 import jp.wasabeef.recyclerview.animators.SlideInUpAnimator
@@ -95,6 +99,7 @@ class ChatActivity : BaseActivity() {
 		override fun itemClick(pos: Int, status: String?) {
 			when (status) {
 				"image" -> {
+					hideKeyboard()
 					/*val imgList = mutableListOf(chatList[pos].attachment?.image.toString())
 					StfalconImageViewer.Builder(this@ChatActivity , imgList , ::loadImage).withBackgroundColorResource(clr.surface)
 						.withHiddenStatusBar(false)
@@ -106,6 +111,7 @@ class ChatActivity : BaseActivity() {
 						chatList.indexOf(chatList.find { it.id == chatList[pos].replyMessage?.messageId })
 					bind.chats.scrollToPosition(notifyIndex)
 				}
+				else -> hideKeyboard()
 			}
 		}
 	}
@@ -133,13 +139,13 @@ class ChatActivity : BaseActivity() {
 		super.onCreate(savedInstanceState)
 
 		setContentView(bind.root)
-		
-		ViewCompat.setOnApplyWindowInsetsListener(window.decorView) { v, insets ->
-			val system = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-			bind.root.setPadding(0,system.top,0, system.bottom)
-			CONSUMED
+
+		immersionBar {
+			keyboardEnable(true)
+			fitsSystemWindows(true)
+			statusBarDarkFont(true)
 		}
-		
+
 		bind.chats.setOnTouchListener { _, _ ->
 			hideKeyboard()
 			return@setOnTouchListener false
@@ -148,6 +154,8 @@ class ChatActivity : BaseActivity() {
 		bind.header.setHapticClickListener {
 			hideKeyboard()
 		}
+
+		bind.back.setHapticClickListener { finishAfterTransition() }
 
 		App.isUserOnChatScreen = true
 		window.navigationBarColor = ContextCompat.getColor(this, clr.background)
@@ -203,9 +211,6 @@ class ChatActivity : BaseActivity() {
 			)
 		)
 
-		hideKeyboard()
-
-		bind.toolbar.setNavigationOnClickListener { finishAfterTransition() }
 
 		chatAdapter = ChatAdapter(this, userId, chatList, mClick)
 

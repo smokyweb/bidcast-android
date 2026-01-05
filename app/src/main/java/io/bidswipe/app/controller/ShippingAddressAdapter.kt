@@ -3,6 +3,8 @@ package io.bidswipe.app.controller
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.PopupMenu
+import androidx.appcompat.view.ContextThemeWrapper
+import androidx.compose.ui.window.Popup
 import androidx.core.view.isVisible
 import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseAdapter
@@ -37,7 +39,9 @@ class ShippingAddressAdapter(
 			bind.defaultAddress.isVisible = item?.isDefault == true
 
             bind.moreIcon.setHapticClickListener { view ->
-				val popup = PopupMenu(view.context , view)
+				val wrapper = ContextThemeWrapper(mCtx, R.style.popupMenuStyle)
+				val popup = PopupMenu(wrapper, view)
+
 				popup.inflate(R.menu.card_action_menu)  // Your menu XML
 				popup.setOnMenuItemClickListener { menuItem ->
 					when (menuItem.itemId) {

@@ -8,43 +8,46 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/half_margin"
+        android:padding="@dimen/half_margin"
         android:orientation="vertical">
+
+        <View
+            android:layout_width="64dp"
+            android:layout_height="4dp"
+            android:layout_gravity="center"
+            android:layout_marginVertical="@dimen/half_margin"
+            android:background="@drawable/card_16"
+            android:backgroundTint="@color/outlineVariant" />
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginVertical="@dimen/margin"
+            android:layout_marginBottom="@dimen/half_margin"
+            android:layout_marginHorizontal="@dimen/half_margin"
             android:gravity="center_vertical"
-            android:orientation="horizontal">
+            android:layout_height="wrap_content">
 
             <TextView
                 style="@style/TitleLarge"
+                android:layout_weight="1"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/padding"
-                android:layout_weight="1"
-                android:text="Add Payment Method and Address" />
+                android:text="@string/add_payment_method_and_address" />
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/close"
-                android:layout_width="44dp"
-                android:layout_height="44dp"
-                android:padding="12dp"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:padding="@dimen/half_margin"
+                android:scaleType="centerCrop"
                 android:src="@drawable/ic_close"
-                app:tint="@color/tertiary" />
+                app:tint="@color/onSurface"/>
 
         </LinearLayout>
 
-        <com.google.android.material.divider.MaterialDivider
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            app:dividerColor="@color/outline" />
 
         <include
             android:id="@+id/paymentCard"
             layout="@layout/payment_card_item" />
-
 
         <include
             android:id="@+id/addressItem"

@@ -181,7 +181,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
-                android:minLines="2"
+                android:minLines="1"
+                android:padding="@dimen/half_margin"
+                android:paddingEnd="0dp"
                 android:text="View All"
                 android:textColor="@color/primary" />
 
@@ -311,7 +313,7 @@
                         style="@style/TitleMedium"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="100%"
+                        android:text="0%"
                         android:textStyle="bold" />
 
                     <TextView
@@ -342,7 +344,7 @@
                         style="@style/TitleMedium"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="100%"
+                        android:text="0%"
                         android:textStyle="bold" />
 
                     <TextView
@@ -427,7 +429,7 @@
                         style="@style/BodyLarge"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="$199.00 "
+                        android:text="$0.00 "
                         android:textColor="@color/onSurfaceVariant"
                         app:drawableEndCompat="@drawable/ic_arrow_right"
                         app:drawableTint="@color/primary" />
@@ -466,7 +468,7 @@
                         style="@style/BodyLarge"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="22 Items"
+                        android:text="0 Items"
                         android:textColor="@color/onSurfaceVariant"
                         app:drawableEndCompat="@drawable/ic_arrow_right"
                         app:drawableTint="@color/primary" />

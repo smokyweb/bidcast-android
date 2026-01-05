@@ -305,4 +305,16 @@
     <string name="save">Save</string>
     <string name="start_auction">Start Auction</string>
     <string name="account_health">Account Health</string>
+    <string name="select_media_type">Select Media Type</string>
+    <string name="auction_settings">Auction Settings</string>
+    <string name="select_product_category">Select Product Category</string>
+    <string name="select_country">Select Country</string>
+    <string name="max_bid_amount">Max Bid Amount</string>
+    <string name="select_live_seller_for_raid">Select Live Seller for Raid</string>
+    <string name="select_payment_method">Select Payment Method</string>
+    <string name="live_poll">Live Poll</string>
+    <string name="search_users">Search Users</string>
+    <string name="tip_settings">Tip Settings</string>
+    <string name="sort_by">Sort By</string>
+    <string name="follow_seller">Follow Seller</string>
 </resources>

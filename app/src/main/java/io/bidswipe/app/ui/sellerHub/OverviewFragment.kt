@@ -308,7 +308,7 @@ class OverviewFragment : BaseFragment<SellerHubViewModel, FragmentOverviewBindin
 			return // Already set up
 		}
 
-		val filters = listOf("Last 30 days", "Last 3 months", "Last 6 months")
+		val filters = listOf("Last 30 days", "Last 3 months", "Last 6 months", "Last 1 year")
 		filters.forEachIndexed { index, filter ->
 			val chip = Utils.makeAChip(
 				mCtx = mCtx,

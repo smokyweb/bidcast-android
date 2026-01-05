@@ -29,7 +29,7 @@ class PromoteSheetAdapter(
 	) {
 		with(holder) {
 			
-			bind.root.setHapticClickListener {
+			bind.amount.setHapticClickListener {
 				mClicks.itemClick(position)
 			}
 			

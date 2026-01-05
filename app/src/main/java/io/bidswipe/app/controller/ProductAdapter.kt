@@ -3,6 +3,7 @@ package io.bidswipe.app.controller
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.appcompat.view.ContextThemeWrapper
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.PopupMenu
 import io.bidswipe.app.R
@@ -38,10 +39,10 @@ class ProductAdapter(
 			}
 			bind.img.loadUrl(mCtx, item?.images?.get(0) ?: "")
 
+			val wrapper = ContextThemeWrapper(mCtx, R.style.popupMenuStyle)
 			val menu = PopupMenu(
-				mCtx,
-				bind.root.findViewById<AppCompatImageView>(R.id.moreMenu),
-				Gravity.START
+				wrapper,
+				bind.moreMenu
 			)
 
 			menu.menuInflater.inflate(R.menu.inventory_menu, menu.menu)

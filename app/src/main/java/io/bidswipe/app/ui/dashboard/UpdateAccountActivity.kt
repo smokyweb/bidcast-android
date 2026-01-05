@@ -132,6 +132,7 @@ class UpdateAccountActivity : BaseActivity() {
 				}
 				
 				is Resource.Error -> {
+					bind.loader.isVisible = false
 					viewModel.getUserProfileRepo.value = null
 					it.parse(this, TAG, object : AlertClicks {
 						override fun primaryClick(dialog: AppBottomSheet) {

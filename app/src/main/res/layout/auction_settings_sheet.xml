@@ -11,15 +11,33 @@
         android:layout_width="64dp"
         android:layout_height="4dp"
         android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="@dimen/margin"
         android:background="@drawable/card_16"
         android:backgroundTint="@color/outlineVariant" />
 
-    <TextView
-        style="@style/TitleLarge"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginVertical="@dimen/margin"
-        android:text="Auction Settings" />
+        android:layout_marginBottom="@dimen/half_margin"
+        android:gravity="center_vertical">
+
+        <TextView
+            style="@style/TitleLarge"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/auction_settings" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/close"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:padding="@dimen/half_margin"
+            android:scaleType="centerCrop"
+            android:src="@drawable/ic_close"
+            app:tint="@color/onSurface" />
+
+    </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -95,7 +113,7 @@
                     android:dropDownAnchor="@id/required_time_box"
                     android:focusable="false"
                     android:focusableInTouchMode="false"
-                    android:inputType="number"/>
+                    android:inputType="number" />
 
             </com.google.android.material.textfield.TextInputLayout>
         </LinearLayout>
@@ -151,28 +169,13 @@
         android:textAppearance="@style/BodySmall"
         android:textColor="@color/onSurfaceVariant" />
 
-    <LinearLayout
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/start"
+        style="@style/appBtn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/margin"
-        android:gravity="center_vertical">
+        android:text="@string/start_auction" />
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/close"
-            style="@style/appTonalBtn"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="@dimen/half_margin"
-            android:layout_weight="1"
-            android:text="@string/cancel" />
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/start"
-            style="@style/appBtn"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="2"
-            android:text="@string/start_auction" />
-
-    </LinearLayout>
 </LinearLayout>

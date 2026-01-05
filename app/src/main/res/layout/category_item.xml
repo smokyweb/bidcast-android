@@ -26,12 +26,12 @@
 
         <TextView
             android:id="@+id/title"
-            style="@style/TitleMedium"
+            style="@style/TitleSmall"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ellipsize="end"
             android:gravity="center|bottom"
-            android:maxLines="1"
+            android:maxLines="2"
             android:padding="@dimen/half_margin"
             tools:text="Category Name" />
 

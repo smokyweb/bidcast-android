@@ -13,39 +13,38 @@
         android:orientation="vertical"
         android:padding="@dimen/margin">
 
+        <View
+            android:layout_width="64dp"
+            android:layout_height="4dp"
+            android:layout_gravity="center"
+            android:layout_marginBottom="16dp"
+            android:background="@drawable/card_16"
+            android:backgroundTint="@color/outlineVariant" />
+
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/margin"
+            android:layout_marginBottom="@dimen/half_margin"
             android:gravity="center_vertical"
-            android:orientation="horizontal">
+            android:layout_height="wrap_content">
 
             <TextView
-                style="@style/HeadlineMedium"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                style="@style/TitleLarge"
                 android:layout_weight="1"
-                android:text="Live Poll" />
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@string/live_poll" />
 
-
-            <com.google.android.material.card.MaterialCardView
+            <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/close"
-                style="@style/cardStyle"
-                android:layout_width="44dp"
-                android:layout_height="44dp"
-                app:cardCornerRadius="22dp"
-                app:cardElevation="0dp">
-
-                <androidx.appcompat.widget.AppCompatImageView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:padding="12dp"
-                    android:src="@drawable/ic_close"
-                    app:tint="@color/tertiary" />
-
-            </com.google.android.material.card.MaterialCardView>
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:padding="@dimen/half_margin"
+                android:scaleType="centerCrop"
+                android:src="@drawable/ic_close"
+                app:tint="@color/onSurface"/>
 
         </LinearLayout>
+
 
         <!-- Poll Question -->
         <com.google.android.material.card.MaterialCardView

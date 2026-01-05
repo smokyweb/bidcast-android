@@ -76,8 +76,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:layout_marginStart="@dimen/half_margin"
-            android:layout_marginBottom="@dimen/margin"
-            android:text="Follow Seller" />
+            android:text="@string/follow_seller" />
 
     </LinearLayout>
 

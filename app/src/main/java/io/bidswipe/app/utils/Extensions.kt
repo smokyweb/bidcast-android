@@ -24,6 +24,7 @@ import android.widget.ImageView
 import androidx.annotation.IdRes
 import androidx.annotation.NavigationRes
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.ui.text.toUpperCase
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.toBitmap
 import androidx.core.text.HtmlCompat
@@ -43,6 +44,7 @@ import io.bidswipe.app.ui.custom.AppBottomSheet
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody.Companion.toRequestBody
 import java.util.Locale
+import java.util.Locale.getDefault
 import kotlin.math.ceil
 
 fun runSafe(callback : () -> Unit) {
@@ -84,7 +86,7 @@ fun ImageView.loadUrl(mCtx : Context , url : String , placeHolder : Int? = null,
 	runSafe {
 		if (url.isEmpty() && !userName.isNullOrEmpty()) {
 			val firstLetter = userName.firstOrNull()?.toString() ?: ""
-			val drawable =Utils.generateTextDrawable(mCtx,firstLetter)
+			val drawable =Utils.generateTextDrawable(mCtx, firstLetter.uppercase(getDefault()))
 			this.setImageDrawable(drawable)
 		}else {
 			Glide.with(mCtx)

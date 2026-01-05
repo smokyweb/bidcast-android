@@ -12,12 +12,34 @@
     <View
         android:layout_width="64dp"
         android:layout_height="4dp"
-        android:layout_gravity="center_horizontal"
-        android:background="@drawable/card_8"
-        android:backgroundTint="@color/outlineVariant"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_gravity="center"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/card_16"
+        android:backgroundTint="@color/outlineVariant" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:gravity="center_vertical"
+        android:layout_height="wrap_content">
+
+        <TextView
+            style="@style/TitleLarge"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/search_users" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/close"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:padding="@dimen/half_margin"
+            android:scaleType="centerCrop"
+            android:src="@drawable/ic_close"
+            app:tint="@color/onSurface"/>
+
+    </LinearLayout>
+
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/searchLayout"

@@ -35,7 +35,7 @@ class CategoryAdapter(
 				main.strokeColor = mCtx.getColor(R.color.primary)
 				main.strokeWidth = mCtx.resources.dpToPx(2)
 			} else {
-				main.setCardBackgroundColor(mCtx.getColor(R.color.outline))
+				main.setCardBackgroundColor(mCtx.getColor(R.color.background))
 				main.strokeColor = mCtx.getColor(R.color.transparent)
 				main.strokeWidth = 0
 			}

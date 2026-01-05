@@ -61,7 +61,8 @@
             android:theme="@style/Theme.Bidswipe" />
         <activity
             android:name=".ui.dashboard.ChatActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".ui.dashboard.RateSellerActivity"
             android:exported="false" />

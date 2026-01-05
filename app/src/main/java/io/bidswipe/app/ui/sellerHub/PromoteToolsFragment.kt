@@ -37,8 +37,6 @@ class PromoteToolsFragment : BaseFragment<SellerHubViewModel, FragmentPromoteToo
         view: ViewGroup?,
     ) = FragmentPromoteToolsBinding.inflate(inflater, view, false)
 
-
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
