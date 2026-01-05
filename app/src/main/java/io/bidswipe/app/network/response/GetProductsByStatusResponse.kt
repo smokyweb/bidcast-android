@@ -54,59 +54,6 @@ data class GetProductsByStatusResponse(
 		@SerializedName("user_id")
 		val userId : Int? ,
 	) {
-		@Keep
-		data class Product(
-			@SerializedName("accept_offers")
-			val acceptOffers : Boolean? ,
-			@SerializedName("category_id")
-			val categoryId : Int? ,
-			@SerializedName("created_at")
-			val createdAt : String? ,
-			@SerializedName("description")
-			val description : String? ,
-			@SerializedName("flash_sale")
-			val flashSale : Boolean? ,
-			@SerializedName("id")
-			val id : Int? ,
-			@SerializedName("images")
-			val images : List<String?>? ,
-			@SerializedName("pricing")
-			val pricing : String? ,
-			@SerializedName("product_show")
-			val productShow : String? ,
-			@SerializedName("purchased_quantity")
-			val purchasedQuantity : Int? ,
-			@SerializedName("quantity")
-			val quantity : Int? ,
-			@SerializedName("reserve_for_live")
-			val reserveForLive : Boolean? ,
-			@SerializedName("seller")
-			val seller : Seller? ,
-			@SerializedName("shipping_profile_id")
-			val shippingProfileId : Int? ,
-			@SerializedName("status")
-			val status : String? ,
-			@SerializedName("thumbnail")
-			val thumbnail : List<Any?>? ,
-			@SerializedName("title")
-			val title : String? ,
-			@SerializedName("user_id")
-			val userId : Int? ,
-		) {
-			@Keep
-			data class Seller(
-				@SerializedName("email")
-				val email : String? ,
-				@SerializedName("id")
-				val id : Int? ,
-				@SerializedName("name")
-				val name : String? ,
-				@SerializedName("profile_image")
-				val profileImage : String? ,
-				@SerializedName("username")
-				val username : String? ,
-			)
-		}
 
 		@Keep
 		data class User(

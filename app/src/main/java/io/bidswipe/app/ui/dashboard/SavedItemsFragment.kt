@@ -110,7 +110,8 @@ class SavedItemsFragment : BaseFragment<DashViewModel , FragmentSavedItemsBindin
 					}
 
 					savedAdapter.notifyDataSetChanged()
-					isLoading = false
+
+					isLoading = page >= (it.value.totalPage ?: 0)
 
 				}
 

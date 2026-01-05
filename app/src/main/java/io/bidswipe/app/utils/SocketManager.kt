@@ -310,7 +310,6 @@ class SocketManager private constructor(
 		socket?.emit("createRaid", payload)
 	}
 
-
 	fun addShowNotes(roomId: String, note: String) {
 		val payload = JSONObject().apply {
 			put("room_id", roomId)
@@ -321,7 +320,6 @@ class SocketManager private constructor(
 		socket?.emit("add_show_note", payload)
 	}
 
-
 	fun receiveShowNotes(listener: (count: JSONObject) -> Unit) {
 		socket?.on("get_show_note") { args ->
 			Log.d(TAG, "receiveShowNotes: $args")
@@ -331,7 +329,6 @@ class SocketManager private constructor(
 			}
 		}
 	}
-
 
 	fun receiveRaid(listener: (json: JSONObject) -> Unit) {
 		socket?.on("receiveRaid") { args ->
@@ -665,7 +662,6 @@ class SocketManager private constructor(
 		socket?.emit("set_promotion_data", payload)
 	}
 
-
 	fun joinShow(userId : String?, showId : String?) {
 		val payload = JSONObject().apply {
 			put("show_id", showId)
@@ -716,8 +712,6 @@ class SocketManager private constructor(
 			}
 		}
 	}
-
-
 
 }
 

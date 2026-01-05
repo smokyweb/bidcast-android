@@ -11,13 +11,16 @@ import androidx.core.view.isVisible
 import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseAdapter
 import io.bidswipe.app.databinding.LiveCommentItemBinding
+import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.model.LiveChatModel
 import io.bidswipe.app.utils.asCapital
 import io.bidswipe.app.utils.loadUrl
+import io.bidswipe.app.utils.setHapticClickListener
 
 class CommentAdapter(
 	mList: MutableList<LiveChatModel?>,
-	private var sellerId: String?
+	private var sellerId: String?,
+	val mClicks: RecyclerClicks
 ) : BaseAdapter<LiveChatModel, LiveCommentItemBinding>(mList) {
 
 	override fun bindView(inflater: LayoutInflater, parent: ViewGroup) =
@@ -29,6 +32,11 @@ class CommentAdapter(
 		item: LiveChatModel?,
 	) {
 		with(holder) {
+
+			bind.root.setHapticClickListener {
+				mClicks.itemClick(position)
+			}
+
 			bind.userName.text = item?.userName?.asCapital()
 			bind.userImage.loadUrl(mCtx, item?.userImage.toString())
 			Log.d(TAG, "onBind: $sellerId")

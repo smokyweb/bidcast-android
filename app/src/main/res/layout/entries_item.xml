@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:padding="@dimen/half_margin"
+    android:layout_margin="@dimen/half_margin"
+    android:orientation="horizontal">
+
+    <TextView
+        android:id="@+id/name"
+        style="@style/TitleMedium"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_marginHorizontal="@dimen/half_margin"
+        android:layout_weight="1"
+        android:text="Jhon" />
+
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/cutButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="6dp"
+            android:rotation="45"
+            android:src="@drawable/add_selector"
+            android:tint="@color/outlineVariant" />
+
+
+</LinearLayout>

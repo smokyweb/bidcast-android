@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
     android:background="@drawable/bottom_sheet_back"
     android:orientation="vertical"
     android:padding="@dimen/padding">
@@ -39,25 +40,29 @@
 
     </LinearLayout>
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/show_spin"
-        style="@style/appBtn"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Show SpinWheel" />
-
     <LinearLayout
         android:id="@+id/spin_controllers_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/margin"
-        android:orientation="vertical"
-        android:visibility="invisible">
+        android:orientation="vertical">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/show_spin"
+                style="@style/appBtn"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginEnd="@dimen/half_margin"
+                android:layout_weight="1"
+                android:text="Show SpinWheel"
+                android:paddingVertical="12dp"
+                android:textAppearance="@style/BodySmall"
+                app:cornerRadius="@dimen/half_margin"/>
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/hide_wheel"
@@ -96,7 +101,6 @@
 
         </LinearLayout>
 
-
         <TextView
             style="@style/TitleSmall"
             android:layout_width="match_parent"
@@ -119,6 +123,13 @@
             android:layout_marginTop="@dimen/half_margin"
             android:text="Manual Entries" />
 
+        <androidx.recyclerview.widget.RecyclerView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/half_margin"
+            android:id="@+id/recycler"
+            android:orientation="vertical"
+            tools:listitem="@layout/entries_item"/>
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/manual_entry_box"
@@ -139,7 +150,7 @@
                 android:gravity="top"
                 android:hint="Enter manual entries here separated by next line..."
                 android:inputType="textMultiLine"
-                android:minLines="4" />
+                android:minLines="1" />
 
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -150,6 +161,7 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/margin"
             android:text="Remove All" />
+
     </LinearLayout>
 
 </LinearLayout>

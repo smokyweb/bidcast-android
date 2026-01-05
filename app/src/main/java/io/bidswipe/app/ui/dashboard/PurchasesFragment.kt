@@ -58,11 +58,11 @@ class PurchasesFragment : BaseFragment<DashViewModel, FragmentPurchasesBinding>(
                 }
 
                 "profile" -> {
-                    if (mList[pos]?.product?.seller != null) {
+                    if (mList[pos]?.product?.user?.name != null) {
                         startActivity(
                             Intent(mCtx, SellerProfileActivity::class.java).putExtra(
                                 "sellerId",
-                                mList[pos]?.product?.seller?.id.toString()
+                                mList[pos]?.product?.user?.id.toString()
                             )
                         )
                     }

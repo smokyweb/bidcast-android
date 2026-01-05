@@ -76,7 +76,7 @@ class PurchasesAdapter(
 			}
 
 			// Seller username with "From:" label
-			bind.sellerUsername.text = (item?.product?.seller?.name ?: "").asCapital()
+			bind.sellerUsername.text = (item?.product?.user?.name ?: "").asCapital()
 			bind.sellerUsername.setHapticClickListener {
 				mClicks.itemClick(position, "seller")
 			}
