@@ -100,10 +100,10 @@ class PurchasesFragment : BaseFragment<DashViewModel, FragmentPurchasesBinding>(
         })
 
 
-        bind.swipeRefreshLayout.setOnRefreshListener {
-            page = 1
-            loadData()
-        }
+//        bind.swipeRefreshLayout.setOnRefreshListener {
+//            page = 1
+//            loadData()
+//        }
 
         bind.noInternet.onClick {
             bind.loader.isVisible = true
@@ -115,12 +115,13 @@ class PurchasesFragment : BaseFragment<DashViewModel, FragmentPurchasesBinding>(
         bind.loader.isVisible = true
         loadData()
         viewModel.getPurchasedProductsByStatusRepo.observe(viewLifecycleOwner) {
+            viewModel.isViewPagerDataLoaded.value=true
             when (it) {
                 is Resource.Success -> {
                     bind.loader.isVisible = false
                     bind.bottomLoader.isVisible = false
                     bind.noInternet.isVisible = false
-                    bind.swipeRefreshLayout.isRefreshing = false
+//                    bind.swipeRefreshLayout.isRefreshing = false
 
                     val mData = it.value.data
                     if (page == 1) {
@@ -149,13 +150,12 @@ class PurchasesFragment : BaseFragment<DashViewModel, FragmentPurchasesBinding>(
                     bind.noData.isVisible = false
                     bind.loader.isVisible = false
                     bind.bottomLoader.isVisible = false
-                    bind.swipeRefreshLayout.isRefreshing = false
+//                    bind.swipeRefreshLayout.isRefreshing = false
 
                     if (it.isNetworkError) {
                         bind.noInternet.isVisible = true
                         bind.recycler.isVisible = false
                         bind.noData.isVisible = false
-
                     } else {
                         it.parse(mCtx, TAG, object : AlertClicks {
                             override fun primaryClick(dialog: AppBottomSheet) {
@@ -164,20 +164,18 @@ class PurchasesFragment : BaseFragment<DashViewModel, FragmentPurchasesBinding>(
 
                             override fun secondaryClick(dialog: AppBottomSheet) {
                                 dialog.dismiss()
-
                             }
                         })
                     }
                 }
 
                 else -> {}
-
             }
         }
 
     }
 
-    fun reloadData() {
+    fun reloadData()  {
         if (Utils.isOnline(mCtx)) {
             bind.loader.isVisible = true
             bind.noInternet.isVisible = false
@@ -188,6 +186,7 @@ class PurchasesFragment : BaseFragment<DashViewModel, FragmentPurchasesBinding>(
             bind.noInternet.isVisible = true
             bind.recycler.isVisible = false
             bind.noData.isVisible = false
+            viewModel.isViewPagerDataLoaded.value=true
         }
     }
 

@@ -1,6 +1,7 @@
 package io.bidswipe.app.ui.dashboard
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -17,6 +18,7 @@ import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.network.response.GetOffersResponse
 import io.bidswipe.app.ui.custom.AppBottomSheet
+import io.bidswipe.app.ui.product.ProductDetailsActivity
 import io.bidswipe.app.utils.Utils
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request
@@ -36,17 +38,12 @@ class OfferFragment : BaseFragment<DashViewModel, FragmentOfferBinding>() {
 
 	private var mClick = object : RecyclerClicks {
 		override fun itemClick(pos: Int, status: String?) {
-
-			Toast.makeText(mCtx, "LICKED", Toast.LENGTH_SHORT).show()
-
-			bind.loader.isVisible = true
-			if (status == "accept") {
-				bind.loader.isVisible = true
-				viewModel.offerUpdateStatus(mList[pos]?.id.toString().request(), "accepted".request())
-			} else if (status == "reject") {
-				bind.loader.isVisible = true
-				viewModel.offerUpdateStatus(mList[pos]?.id.toString().request(), "rejected".request())
-			}
+			startActivity(
+				Intent(mCtx, ProductDetailsActivity::class.java).putExtra(
+					"productId",
+					mList[pos]?.productId.toString()
+				)
+			)
 		}
 	}
 
@@ -60,11 +57,6 @@ class OfferFragment : BaseFragment<DashViewModel, FragmentOfferBinding>() {
 		bind.noInternet.onClick {
 			bind.loader.isVisible = true
 			bind.noInternet.isVisible = false
-			page = 1
-			viewModel.offerList(page.toString().request(), "user".request())
-		}
-
-		bind.swipeRefreshLayout.setOnRefreshListener {
 			page = 1
 			viewModel.offerList(page.toString().request(), "user".request())
 		}
@@ -89,12 +81,10 @@ class OfferFragment : BaseFragment<DashViewModel, FragmentOfferBinding>() {
 
 		viewModel.offerList(page.toString().request(), "user".request())
 		viewModel.offerListRepo.observe(viewLifecycleOwner) { it ->
+			viewModel.isViewPagerDataLoaded.value=true
 			when (it) {
 				is Resource.Success -> {
-
 					val mData = it.value.data
-
-					bind.swipeRefreshLayout.isRefreshing = false
 					bind.noInternet.isVisible = false
 					bind.bottomLoader.isVisible = false
 					bind.loader.isVisible = false
@@ -124,7 +114,6 @@ class OfferFragment : BaseFragment<DashViewModel, FragmentOfferBinding>() {
 				}
 
 				is Resource.Error -> {
-					bind.swipeRefreshLayout.isRefreshing = false
 					bind.noInternet.isVisible = false
 					bind.loader.isVisible = false
 					bind.bottomLoader.isVisible = false
@@ -151,48 +140,6 @@ class OfferFragment : BaseFragment<DashViewModel, FragmentOfferBinding>() {
 
 			}
 		}
-
-		viewModel.offerUpdateStatusRepo.observe(viewLifecycleOwner) {
-
-			when (it) {
-				is Resource.Success -> {
-					bind.loader.isVisible = false
-					val index = mList.indexOfFirst { offer -> offer?.id == it.value.data?.id }
-					if (index != -1) {
-						val updatedItem = mList[index]?.copy(status = it.value.data?.status)
-						mList[index] = updatedItem
-						offersAdapter.notifyItemChanged(index, updatedItem)
-					}
-				}
-
-				is Resource.Error -> {
-					bind.loader.isVisible = false
-					bind.swipeRefreshLayout.isRefreshing = false
-
-					if (it.isNetworkError) {
-						bind.noInternet.isVisible = true
-						bind.recycler.isVisible = false
-
-					} else {
-						it.parse(mCtx, TAG, object : AlertClicks {
-							override fun primaryClick(dialog: AppBottomSheet) {
-								dialog.dismiss()
-
-							}
-
-							override fun secondaryClick(dialog: AppBottomSheet) {
-								dialog.dismiss()
-
-							}
-						})
-					}
-				}
-
-				else -> {}
-
-			}
-		}
-
 	}
 
 	fun reloadData() {
@@ -206,6 +153,7 @@ class OfferFragment : BaseFragment<DashViewModel, FragmentOfferBinding>() {
 			bind.noInternet.isVisible = true
 			bind.recycler.isVisible = false
 			bind.noData.isVisible = false
+			viewModel.isViewPagerDataLoaded.value=true
 		}
 	}
 

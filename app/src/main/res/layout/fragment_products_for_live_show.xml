@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginTop="32dp"
     android:background="@drawable/bottom_sheet_back"
     android:backgroundTint="@color/surface"
     tools:context=".ui.agoraStream.ProductsForLiveShowFragment">
@@ -118,7 +117,6 @@
             style="@style/appBtn"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="@dimen/half_margin"
             android:layout_marginVertical="@dimen/margin"
             android:text="Add Product"
             app:layout_constraintBottom_toBottomOf="parent" />

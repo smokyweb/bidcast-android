@@ -50,8 +50,8 @@ class DashViewModel @Inject constructor(
 	val repo : DashRepository ,
 	private val networkMonitor : NetworkMonitor ,
 ) : ViewModel() {
-
 	var isDrawerOpened = MutableLiveData(false)
+	var isViewPagerDataLoaded = MutableLiveData(false)
 	var pinnedProducts = ArrayList<String?>()
 	var showDate = ""
 	var showTime = ""

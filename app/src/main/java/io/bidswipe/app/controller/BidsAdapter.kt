@@ -29,7 +29,11 @@ class BidsAdapter(
 		item: FetchBidResponse.Data?,
 	) {
 		with(holder) {
-			
+
+			bind.productContainer.setHapticClickListener {
+				mClicks.itemClick(position)
+			}
+
 			bind.userName.text = buildString {
 				append(item?.user?.name?.asCapital())
 			}
@@ -85,11 +89,7 @@ class BidsAdapter(
 				bind.productImage.setImageResource(R.drawable.placeholder_square)
 				
 			}
-			
-			bind.root.setHapticClickListener {
-				mClicks.itemClick(position)
-			}
-			
+
 		}
 	}
 }

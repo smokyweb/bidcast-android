@@ -36,6 +36,7 @@ import io.bidswipe.app.utils.Const
 import io.bidswipe.app.utils.Utils
 import io.bidswipe.app.utils.asCapital
 import io.bidswipe.app.utils.asMoney
+import io.bidswipe.app.utils.draw
 import io.bidswipe.app.utils.finish
 import io.bidswipe.app.utils.hideKeyboard
 import io.bidswipe.app.utils.ids
@@ -59,6 +60,8 @@ class ProductDetailsFragment : BaseFragment<ProductViewModel, FragmentProductDet
 	private var offerList = mutableListOf<OfferModel>()
 	private var actionList = mutableListOf<PowerMenuItem>()
 	private var images = mutableListOf<String?>()
+
+	private var productSaved =false
 
 	lateinit var mediaAdapter: ProductImageAdapter
 
@@ -218,6 +221,12 @@ class ProductDetailsFragment : BaseFragment<ProductViewModel, FragmentProductDet
 					}
 
 					bind.buyLayout.isVisible = mData?.userId.toString() != userId
+
+					productSaved = mData?.productSaveStatus?:false
+
+					bind.save.icon = ContextCompat.getDrawable(mCtx, if(productSaved) draw.ic_saved else draw.ic_save )
+					bind.save.text = if(productSaved) "Saved" else "Save"
+
 				}
 
 				is Resource.Error -> {
@@ -274,9 +283,12 @@ class ProductDetailsFragment : BaseFragment<ProductViewModel, FragmentProductDet
 				is Resource.Success -> {
 					bind.loader.isVisible = false
 
-					it.value.data
+					productSaved =!productSaved
 
-					Alerts.success(mCtx, it.value.message.toString())
+					bind.save.icon = ContextCompat.getDrawable(mCtx, if(productSaved==true) draw.ic_saved else draw.ic_save )
+					bind.save.text = if(productSaved==true) "Saved" else "Save"
+
+//					Alerts.success(mCtx, it.value.message.toString())
 
 				}
 

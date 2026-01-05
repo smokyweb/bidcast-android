@@ -74,6 +74,8 @@ data class GetProductDetailsResponse(
 		val type: String?,
 		@SerializedName("user")
 		val user: User?,
+		@SerializedName("product_save_status")
+		val productSaveStatus: Boolean?,
 		@SerializedName("user_id")
 		val userId: Int?,
 		@SerializedName("variant")

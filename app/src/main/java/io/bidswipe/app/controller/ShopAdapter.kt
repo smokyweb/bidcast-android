@@ -40,7 +40,7 @@ class ShopAdapter(
 					bind.category.text = buildSpannedString {
 						append(item.category?.name + " ")
 						append(Const.BULLET)
-						append(" " + item.productCondition)
+						append(" " + item.productCondition.replace("_"," "))
 					}
 				}
 				item?.category != null -> {

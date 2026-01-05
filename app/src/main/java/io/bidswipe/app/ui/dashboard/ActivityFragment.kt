@@ -13,57 +13,84 @@ import io.bidswipe.app.databinding.FragmentActivityBinding
 import io.bidswipe.app.ui.more.NotificationActivity
 
 class ActivityFragment : BaseFragment<DashViewModel, FragmentActivityBinding>() {
-	override fun getModel(): Class<DashViewModel> = DashViewModel::class.java
+    override fun getModel(): Class<DashViewModel> = DashViewModel::class.java
 
-	override fun getBind(inflater: LayoutInflater, view: ViewGroup?) = FragmentActivityBinding.inflate(inflater, view, false)
+    override fun getBind(inflater: LayoutInflater, view: ViewGroup?) = FragmentActivityBinding.inflate(inflater, view, false)
 
-	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-		super.onViewCreated(view, savedInstanceState)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
-		val adapter = ViewPagerAdapter(requireActivity(), "Activity")
-		bind.pager.adapter = adapter
-		bind.pager.isUserInputEnabled = false
+        val adapter = ViewPagerAdapter(requireActivity(), "Activity")
+        bind.pager.adapter = adapter
+        bind.pager.isUserInputEnabled = false
 
-		TabLayoutMediator(bind.tabLayout, bind.pager) { tab, position ->
-			tab.text = when (position) {
-				0 -> "Messages"
-				1 -> "Bids"
-				2 -> "Offers"
-				3 -> "Purchases"
-				4 -> "Saved Items"
-				else -> ""
-			}
-		}.attach()
+        TabLayoutMediator(bind.tabLayout, bind.pager) { tab, position ->
+            tab.text = when (position) {
+                0 -> "Messages"
+                1 -> "Bids"
+                2 -> "Offers"
+                3 -> "Purchases"
+                4 -> "Saved Items"
+                else -> ""
+            }
+        }.attach()
 
-		bind.pager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
-			override fun onPageSelected(position: Int) {
-				super.onPageSelected(position)
-				val fragment = adapter.getFragment(position)
-				if (fragment.isAdded) {
-					when (fragment) {
-						is MessagesFragment -> fragment.reloadData()
-						is BidsFragment -> fragment.reloadData()
-						is OfferFragment -> fragment.reloadData()
-						is PurchasesFragment -> {
-							fragment.reloadData()
-						}
+        bind.pager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+            override fun onPageSelected(position: Int) {
+                super.onPageSelected(position)
 
-						is SavedItemsFragment -> fragment.reloadData()
-					}
-				}
-			}
-		})
+                bind.swipeRefreshLayout.setOnChildScrollUpCallback { _, _ ->
+                    position == 0
+                }
 
-		bind.header.onMorePrimaryClick {
-			startActivity(Intent(mCtx, NotificationActivity::class.java).putExtra("slug", "notification"))
-		}
+                val fragment = adapter.getFragment(position)
+                if (fragment.isAdded) {
+                    when (fragment) {
+                        is MessagesFragment -> fragment.reloadData()
+                        is BidsFragment -> fragment.reloadData()
+                        is OfferFragment -> fragment.reloadData()
+                        is PurchasesFragment -> {
+                            fragment.reloadData()
+                        }
 
-		// Hide logo in header
-		bind.header.hideLogo()
+                        is SavedItemsFragment -> fragment.reloadData()
+                    }
+                }
+            }
+        })
 
-		// Initially hide filter chips
+        bind.header.onMorePrimaryClick {
+            startActivity(Intent(mCtx, NotificationActivity::class.java).putExtra("slug", "notification"))
+        }
+
+        // Hide logo in header
+        bind.header.hideLogo()
+
+        // Initially hide filter chips
 //		bind.chipScroll.visibility = View.GONE
 
-	}
+        bind.swipeRefreshLayout.setOnRefreshListener {
+            val fragment = adapter.getFragment(bind.pager.currentItem)
+            if (fragment.isAdded) {
+                viewModel.isViewPagerDataLoaded.value = false
+                when (fragment) {
+                    is BidsFragment -> fragment.reloadData()
+                    is OfferFragment -> fragment.reloadData()
+                    is PurchasesFragment -> {
+                        fragment.reloadData()
+                    }
+
+                    is SavedItemsFragment -> fragment.reloadData()
+                    else -> bind.swipeRefreshLayout.isRefreshing = false
+                }
+            }
+        }
+
+        viewModel.isViewPagerDataLoaded.observe(viewLifecycleOwner) {
+            if (it) {
+                bind.swipeRefreshLayout.isRefreshing = false
+            }
+        }
+    }
 
 }

@@ -1,6 +1,7 @@
 package io.bidswipe.app.ui.dashboard
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -16,6 +17,7 @@ import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.network.response.FetchBidResponse
 import io.bidswipe.app.ui.custom.AppBottomSheet
+import io.bidswipe.app.ui.product.ProductDetailsActivity
 import io.bidswipe.app.utils.Utils
 import io.bidswipe.app.utils.parse
 
@@ -33,6 +35,12 @@ class BidsFragment : BaseFragment<DashViewModel , FragmentBidsBinding>() {
 
 	private var mClick = object : RecyclerClicks {
 		override fun itemClick(pos : Int , status : String?) {
+			startActivity(
+				Intent(mCtx, ProductDetailsActivity::class.java).putExtra(
+					"productId",
+					mList[pos]?.productId.toString()
+				)
+			)
 		}
 	}
 
@@ -42,11 +50,6 @@ class BidsFragment : BaseFragment<DashViewModel , FragmentBidsBinding>() {
 
 		bidsAdapter = BidsAdapter(mList , mClick)
 		bind.recycler.adapter = bidsAdapter
-
-		bind.swipeRefreshLayout.setOnRefreshListener {
-			page = 1
-			viewModel.fetchBids(page.toString())
-		}
 
 		bind.noInternet.onClick {
 			bind.loader.isVisible = true
@@ -76,10 +79,10 @@ class BidsFragment : BaseFragment<DashViewModel , FragmentBidsBinding>() {
 
 		viewModel.fetchBids(page.toString())
 		viewModel.fetchBidsRepo.observe(viewLifecycleOwner) {
+			viewModel.isViewPagerDataLoaded.value=true
 			when (it) {
 				is Resource.Success -> {
 					bind.loader.isVisible = false
-					bind.swipeRefreshLayout.isRefreshing = false
 					bind.bottomLoader.isVisible = false
 					bind.noInternet.isVisible = false
 
@@ -111,7 +114,6 @@ class BidsFragment : BaseFragment<DashViewModel , FragmentBidsBinding>() {
 
 				is Resource.Error -> {
 					bind.loader.isVisible = false
-					bind.swipeRefreshLayout.isRefreshing = false
 					bind.bottomLoader.isVisible = false
 
 					if (it.isNetworkError) {
@@ -152,6 +154,7 @@ class BidsFragment : BaseFragment<DashViewModel , FragmentBidsBinding>() {
 			bind.noInternet.isVisible = true
 			bind.recycler.isVisible = false
 			bind.noData.isVisible = false
+			viewModel.isViewPagerDataLoaded.value=true
 		}
 	}
 }

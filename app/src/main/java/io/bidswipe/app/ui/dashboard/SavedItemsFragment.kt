@@ -67,11 +67,6 @@ class SavedItemsFragment : BaseFragment<DashViewModel , FragmentSavedItemsBindin
 				}
 			}
 		})
-		
-		bind.swipeRefreshLayout.setOnRefreshListener {
-			page = 1
-			viewModel.getSavedProductsByStatus("saved".request() , page.toString().request())
-		}
 
 		bind.noInternet.onClick {
 			bind.loader.isVisible = true
@@ -84,9 +79,9 @@ class SavedItemsFragment : BaseFragment<DashViewModel , FragmentSavedItemsBindin
 
 		viewModel.getSavedProductsByStatus("saved".request() , "1".request())
 		viewModel.getSavedProductsByStatusRepo.observe(viewLifecycleOwner) {
+			viewModel.isViewPagerDataLoaded.value=true
 			when (it) {
 				is Resource.Success -> {
-					bind.swipeRefreshLayout.isRefreshing = false
 					bind.noInternet.isVisible = false
 					bind.loader.isVisible = false
 
@@ -116,7 +111,6 @@ class SavedItemsFragment : BaseFragment<DashViewModel , FragmentSavedItemsBindin
 				}
 
 				is Resource.Error -> {
-					bind.swipeRefreshLayout.isRefreshing = false
 					bind.loader.isVisible = false
 					isLoading = false
 
@@ -156,6 +150,7 @@ class SavedItemsFragment : BaseFragment<DashViewModel , FragmentSavedItemsBindin
 			bind.noInternet.isVisible = true
 			bind.recycler.isVisible = false
 			bind.noData.isVisible = false
+			viewModel.isViewPagerDataLoaded.value=true
 		}
 	}
 

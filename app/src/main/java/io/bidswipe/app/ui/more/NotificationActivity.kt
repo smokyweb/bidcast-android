@@ -7,6 +7,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsCompat.CONSUMED
 import androidx.core.view.isVisible
+import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseActivity
 import io.bidswipe.app.controller.NotificationAdapter
 import io.bidswipe.app.databinding.ActivityNotificationBinding
@@ -14,6 +15,7 @@ import io.bidswipe.app.interfaces.AlertClicks
 import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.network.response.GetNotificationResponse
+import io.bidswipe.app.ui.custom.AlertType
 import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.utils.bind
 import io.bidswipe.app.utils.parse
@@ -33,10 +35,33 @@ class NotificationActivity : BaseActivity() {
 		override fun itemClick(pos: Int, status: String?) {
 			when (status) {
 				"delete" -> {
-					bind.loader.isVisible = true
-					delPos = pos
-					val id = notificationList[pos]?.id
-					viewModel.deleteNotification(id.toString().request())
+					AppBottomSheet(
+						this@NotificationActivity,
+						R.drawable.trash,
+						"Delete!",
+						"Are you sure you want to delete?",
+						primaryBtnText = "Yes",
+						secondaryBtnText = "No",
+						canCancel = true,
+						showSecondary = true,
+						iconPadding = 16,
+						alertType = AlertType.ERROR,
+						clicks = object : AlertClicks {
+							override fun primaryClick(dialog: AppBottomSheet) {
+								dialog.dismiss()
+								bind.loader.isVisible = true
+								delPos = pos
+								val id = notificationList[pos]?.id
+								viewModel.deleteNotification(id.toString().request())
+							}
+
+							override fun secondaryClick(dialog: AppBottomSheet) {
+								dialog.dismiss()
+							}
+						}
+
+					).show()
+
 				}
 			}
 		}
@@ -147,6 +172,12 @@ class NotificationActivity : BaseActivity() {
 							notificationList.removeAt(delPos)
 							notificationAdapter.notifyItemRemoved(delPos)
 							notificationAdapter.notifyItemRangeChanged(0, notificationList.size)
+
+							val isEmpty = notificationList.isNullOrEmpty()
+							bind.noData.isVisible = isEmpty
+							bind.notificationRec.isVisible = !isEmpty
+							bind.deleteAll.isVisible = !isEmpty
+
 						} else {
 							viewModel.getNotification()
 						}
