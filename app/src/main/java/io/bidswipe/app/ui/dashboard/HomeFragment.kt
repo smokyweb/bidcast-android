@@ -240,7 +240,7 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
             viewModel.getCategory()
         }
 
-        bind.noInternet.onClick {
+                 bind.noInternet.onClick {
             bind.loader.isVisible = false
             bind.noInternet.isVisible = false
             viewModel.getLiveShow(

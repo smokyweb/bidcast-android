@@ -68,8 +68,13 @@ class ChatAdapter(
                             bind.image.loadUrl(mCtx, chat.attachment?.image.toString())
                         }
                     }
+
                     bind.root.setHapticClickListener {
                         mClicks.itemClick(position)
+                    }
+
+                    bind.card.setHapticClickListener {
+                        mClicks.itemClick(position,"root")
                     }
 
                     bind.imageView.setHapticClickListener {

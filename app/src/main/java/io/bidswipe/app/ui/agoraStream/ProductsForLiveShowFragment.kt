@@ -3,6 +3,7 @@ package io.bidswipe.app.ui.agoraStream
 import android.annotation.SuppressLint
 import android.app.Dialog
 import android.content.Context
+import android.os.Build
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -13,6 +14,7 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.ArrayAdapter
 import android.widget.FrameLayout
+import androidx.core.content.ContextCompat
 import androidx.core.view.get
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
@@ -73,6 +75,12 @@ class ProductsForLiveShowFragment : BottomSheetDialogFragment() {
                 com.google.android.material.R.id.design_bottom_sheet
             ) as FrameLayout?
 
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                bottomSheetDialog.window?.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION)
+                bottomSheetDialog.window?.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+                bottomSheetDialog.window?.navigationBarColor = ContextCompat.getColor(requireContext(), R.color.background)
+            }
+
             bottomSheet?.let {
                 val layoutParams = it.layoutParams
                 layoutParams.height = WindowManager.LayoutParams.MATCH_PARENT
@@ -81,6 +89,7 @@ class ProductsForLiveShowFragment : BottomSheetDialogFragment() {
                 behavior.state = BottomSheetBehavior.STATE_EXPANDED
                 behavior.skipCollapsed=true
             }
+
         }
         return dialog
     }
