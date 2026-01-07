@@ -852,5 +852,12 @@ interface ApiInterface {
 		@Path("profileId") profileId: String
 	): CommonResponse
 
+	@Multipart
+	@POST("api/change-order-status")
+	suspend fun changeOrderStatus(
+        @Part("order_id") orderId: RequestBody?,
+        @Part("status") status: RequestBody?
+	): CommonResponse
+
 }
 

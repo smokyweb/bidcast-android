@@ -3,6 +3,7 @@ package io.bidswipe.app.ui.sellerHub
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.android.gms.common.api.Status
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.bidswipe.app.model.LiveShowModel
 import io.bidswipe.app.network.Resource
@@ -641,6 +642,21 @@ class SellerHubViewModel @Inject constructor(
 			return@launch
 		}
 		_getOrderDetailsResponse.value = repo.getOrderDetails(orderId)
+	}
+
+	private var _changeOrderStatusResponse = MutableLiveData<Resource<CommonResponse>>()
+	val changeOrderStatusRepo: MutableLiveData<Resource<CommonResponse>>
+		get() = _changeOrderStatusResponse
+
+	fun changeOrderStatus(
+		orderId: RequestBody?,
+		status: RequestBody?,
+	) = viewModelScope.launch {
+		if (!networkMonitor.hasInternet()) {
+			_changeOrderStatusResponse.value = NO_INTERNET_ERROR
+			return@launch
+		}
+		_changeOrderStatusResponse.value = repo.changeOrderStatus(orderId, status)
 	}
 
 }

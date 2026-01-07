@@ -24,7 +24,6 @@ import io.bidswipe.app.databinding.AppReportViewBinding
 import io.bidswipe.app.databinding.NotificationSheetBinding
 import io.bidswipe.app.databinding.SendTipSheetBinding
 import io.bidswipe.app.interfaces.AlertClicks
-import io.bidswipe.app.model.LiveShowModel
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.network.response.GetReportCategoriesResponse
 import io.bidswipe.app.ui.custom.AlertType

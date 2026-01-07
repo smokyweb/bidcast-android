@@ -1,5 +1,6 @@
 package io.bidswipe.app.ui.sellerHub
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -16,6 +17,7 @@ import io.bidswipe.app.interfaces.AlertClicks
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.network.response.GetOrderDetailsResponse
 import io.bidswipe.app.ui.custom.AppBottomSheet
+import io.bidswipe.app.ui.dashboard.ChatActivity
 import io.bidswipe.app.utils.Utils
 import io.bidswipe.app.utils.asCapital
 import io.bidswipe.app.utils.finish
@@ -31,7 +33,7 @@ class SellerOrderDetailFragment : BaseFragment<SellerHubViewModel, FragmentSelle
 	override fun getBind(inflater: LayoutInflater, view: ViewGroup?): FragmentSellerOrderDetailBinding =
 		FragmentSellerOrderDetailBinding.inflate(inflater, view, false)
 
-	private var statusList = mutableListOf<String?>("Processing", "Out for Delivery", "Delivered")
+	private var statusList = mutableListOf<String?>("Pending","Processing", "Out for delivery", "Delivered")
 
 	private val statusItems = mutableListOf<GetOrderDetailsResponse.Data.ShippingTracking?>()
 
@@ -40,6 +42,9 @@ class SellerOrderDetailFragment : BaseFragment<SellerHubViewModel, FragmentSelle
 	private var selectedStatus = ""
 
 	private var orderId = ""
+	private var buyerId = ""
+	private var buyerName = ""
+	private var buyerImage = ""
 
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		super.onViewCreated(view, savedInstanceState)
@@ -63,9 +68,8 @@ class SellerOrderDetailFragment : BaseFragment<SellerHubViewModel, FragmentSelle
 		bind.status.setDropDownBackgroundDrawable(drawable)
 
 		bind.status.setOnItemClickListener { _, _, position, _ ->
-			selectedStatus = statusList[position] ?: ""
-			log("Selected mail class: ${selectedStatus}")
-			bind.status.setText(selectedStatus, false)
+			selectedStatus = statusList[position]?.replace(" ", "_")?.lowercase() ?:""
+			bind.status.setText(statusList[position] , false)
 		}
 
 		bind.status.setHapticClickListener {
@@ -78,6 +82,25 @@ class SellerOrderDetailFragment : BaseFragment<SellerHubViewModel, FragmentSelle
 			} else {
 				finish()
 			}
+		}
+
+		bind.updateStatus.setHapticClickListener {
+
+			if (selectedStatus.isEmpty()) {
+				errorToast("Please select status")
+				return@setHapticClickListener
+			}
+			bind.loader.isVisible = true
+			viewModel.changeOrderStatus(orderId.request(), selectedStatus.request())
+		}
+
+		bind.message.setHapticClickListener {
+			val intent = Intent(mCtx, ChatActivity::class.java).apply {
+				putExtra("id", buyerId)
+				putExtra("name", buyerName)
+				putExtra("image", buyerImage)
+			}
+			startActivity(intent)
 		}
 
 		adapter = ShippingUpdateAdapter(statusItems)
@@ -118,11 +141,23 @@ class SellerOrderDetailFragment : BaseFragment<SellerHubViewModel, FragmentSelle
 
 					selectedStatus = mData?.status ?: ""
 
-					bind.status.setText(selectedStatus, false)
+					bind.status.setText(selectedStatus.replace("_", " ").asCapital(), false)
+
+					statusItems.clear()
 
 					if (mData?.shippingTracking?.isNotEmpty() == true) {
 						statusItems.addAll(mData.shippingTracking)
 					}
+
+					buyerId = (mData?.user?.id ?:0).toString()
+					buyerName = mData?.user?.name ?:""
+					buyerImage = mData?.user?.profileImage ?:""
+
+					bind.userProfile.loadUrl(mCtx,mData?.user?.profileImage ?:"")
+
+					bind.userName.text = mData?.user?.name
+
+					bind.email.text = mData?.user?.email
 
 					adapter.notifyDataSetChanged()
 
@@ -148,5 +183,35 @@ class SellerOrderDetailFragment : BaseFragment<SellerHubViewModel, FragmentSelle
 
 			}
 		}
+
+		viewModel.changeOrderStatusRepo.observe(viewLifecycleOwner) {
+			when (it) {
+				is Resource.Success -> {
+					viewModel.getOrderDetailsRepo.value = null
+					val mData = it.value.data
+					viewModel.getOrderDetails(orderId.request())
+				}
+
+				is Resource.Error -> {
+					viewModel.getOrderDetailsRepo.value = null
+					bind.loader.isVisible = false
+					it.parse(mCtx, TAG, object : AlertClicks {
+						override fun primaryClick(dialog: AppBottomSheet) {
+							dialog.dismiss()
+
+						}
+
+						override fun secondaryClick(dialog: AppBottomSheet) {
+							dialog.dismiss()
+
+						}
+					})
+				}
+
+				else -> {}
+
+			}
+		}
+
 	}
 }

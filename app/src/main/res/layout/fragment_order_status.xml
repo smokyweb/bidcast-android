@@ -282,7 +282,7 @@
                     android:layout_height="wrap_content"
                     android:drawablePadding="@dimen/half_margin"
                     android:text="Shipping Updates"
-                    app:drawableStartCompat="@drawable/ic_vehicle"
+                    app:drawableStartCompat="@drawable/ic_shipping"
                     app:drawableTint="@color/primary" />
 
                 <androidx.recyclerview.widget.RecyclerView

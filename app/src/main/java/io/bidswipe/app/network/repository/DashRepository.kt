@@ -2,7 +2,6 @@ package io.bidswipe.app.network.repository
 
 import io.bidswipe.app.base.BaseRepository
 import io.bidswipe.app.model.GetSubCategoriesRequest
-import io.bidswipe.app.model.PaymentCardModel
 import io.bidswipe.app.model.StoreProductRequest
 import io.bidswipe.app.network.ApiInterface
 import okhttp3.MultipartBody
@@ -467,7 +466,6 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
         )
     }
 
-
     suspend fun getSellerStatus(
     ) = call { api.getSellerStatus() }
 
@@ -623,5 +621,10 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
 	suspend fun deleteShippingProfile(
 		profileId: String
 	) = call { api.deleteShippingProfile(profileId) }
+
+	suspend fun changeOrderStatus(
+		orderId: RequestBody?,
+		status: RequestBody?
+	) = call { api.changeOrderStatus(orderId,status) }
 
 }

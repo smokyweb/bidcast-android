@@ -1,6 +1,7 @@
 package io.bidswipe.app.controller
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import io.bidswipe.app.base.BaseAdapter
 import io.bidswipe.app.databinding.ShippingUpdateItemBinding
@@ -29,6 +30,12 @@ class ShippingUpdateAdapter(
 				"MMM dd, yyyy - HH:mm" ,
 				item?.createdAt.toString()
 			)
+
+			if (position == mList.size - 1) {
+				bind.view.visibility = View.INVISIBLE
+			} else {
+				bind.view.visibility = View.VISIBLE
+			}
 
 		}
 	}

@@ -37,7 +37,7 @@ class GetStartedFragment : BaseFragment<DashViewModel, FragmentGetStartedBinding
 				SellModel(R.drawable.ic_hand_shake, R.color.secondaryContainer, "Honor Purchases & Freebies", "Fulfill all orders promptly and honor your commitments"),
 				SellModel(R.drawable.ic_block, R.color.tertiaryContainer, "Do Not Sell Counterfeits", "Only sell authentic and legitimate products"),
 				SellModel(R.drawable.ic_checked_tag, R.color.successContainer, "Do Not Lie About Items", "Provide accurate descriptions and images"),
-				SellModel(R.drawable.ic_truck_outline, R.color.successContainer, "Ship Quickly & Safely", "Use appropriate packaging and ship within 3 days")
+				SellModel(R.drawable.ic_shipping, R.color.successContainer, "Ship Quickly & Safely", "Use appropriate packaging and ship within 3 days")
 			)
 		)
 

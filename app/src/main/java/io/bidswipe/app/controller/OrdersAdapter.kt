@@ -32,12 +32,6 @@ class OrdersAdapter(
     ) {
         with(holder) {
 
-            bind.root.setHapticClickListener { mClicks.itemClick(position) }
-
-            bind.buyerLayout.setHapticClickListener {
-                mClicks.itemClick(position, "profile")
-            }
-
             bind.orderId.text = item?.orderId
             bind.status.text = item?.status?.replace("_", " ")?.asCapital()
 
@@ -80,9 +74,11 @@ class OrdersAdapter(
 
             bind.buyerName.text = item?.user?.name?.asCapital()
 
-            bind.buyerLayout.setOnClickListener {
-                mClicks.itemClick(position, "buyerInfo")
-            }
+	        bind.root.setHapticClickListener { mClicks.itemClick(position) }
+
+	        bind.buyerLayout.setHapticClickListener {
+		        mClicks.itemClick(position, "profile")
+	        }
         }
     }
 }

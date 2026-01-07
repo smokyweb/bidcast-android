@@ -1165,7 +1165,23 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 			})
 
 			bind.max.setHapticClickListener {
-				showInputSheet()
+
+				if (App.profileResponse.value?.hasShippingAddress == true && App.profileResponse.value?.hasCardAdded == true) {
+
+					if (isAllowBidForAll) {
+						showInputSheet()
+					} else {
+						if (App.profileResponse.value?.buyerIdentityStatus == "verified") {
+							showInputSheet()
+						} else {
+							verificationDialog()
+						}
+					}
+				} else {
+					showPaymentAndAddressSheet()
+				}
+
+
 			}
 
 			socketManager?.getBidTimerUpdate { json ->
@@ -1180,31 +1196,6 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 			}
 
 		}
-	}
-
-	private fun showProductSheet() {
-		/*val productSheetBind = ProductSheetBinding.bind(layoutInflater.inflate(R.layout.product_sheet, null, false))
-		val productSheet = Alerts.appBottomSheet(mCtx, true, productSheetBind)
-
-		productAdapter = FirebaseProductAdapter(productList, object : RecyclerClicks {
-			override fun itemClick(pos: Int, status: String?) {
-
-			}
-
-		})
-
-		productSheetBind.title.text = buildString {
-			append("Seller Products")
-		}
-
-		productSheetBind.recycler.adapter = productAdapter
-
-		productSheet.show()
-
-		productSheetBind.close.setHapticClickListener {
-			productSheet.dismiss()
-		}
-		productSheetBind.addBtn.isVisible = false*/
 	}
 
 	private fun verificationDialog() {

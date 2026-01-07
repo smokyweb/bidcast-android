@@ -78,14 +78,14 @@
 
                         <TextView
                             android:id="@+id/productName"
-                            style="@style/TitleLarge"
+                            style="@style/TitleSmall"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="Premium Wireless Headphones" />
 
                         <TextView
                             android:id="@+id/productColor"
-                            style="@style/BodyLarge"
+                            style="@style/BodyMedium"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:alpha="0.8"
@@ -107,7 +107,7 @@
                     android:orientation="horizontal">
 
                     <TextView
-                        style="@style/BodyLarge"
+                        style="@style/BodyMedium"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="@dimen/margin"
@@ -117,7 +117,7 @@
 
                     <TextView
                         android:id="@+id/orderId"
-                        style="@style/TitleMedium"
+                        style="@style/TitleSmall"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:background="?selectableItemBackground"
@@ -131,7 +131,7 @@
                     android:orientation="horizontal">
 
                     <TextView
-                        style="@style/BodyLarge"
+                        style="@style/BodyMedium"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="@dimen/margin"
@@ -141,7 +141,7 @@
 
                     <TextView
                         android:id="@+id/orderDate"
-                        style="@style/TitleMedium"
+                        style="@style/TitleSmall"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:background="?selectableItemBackground"
@@ -155,7 +155,7 @@
                     android:orientation="horizontal">
 
                     <TextView
-                        style="@style/BodyLarge"
+                        style="@style/BodyMedium"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="@dimen/margin"
@@ -165,7 +165,7 @@
 
                     <TextView
                         android:id="@+id/quantity"
-                        style="@style/TitleMedium"
+                        style="@style/BodyMedium"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:background="?selectableItemBackground"
@@ -179,7 +179,7 @@
                     android:orientation="horizontal">
 
                     <TextView
-                        style="@style/BodyLarge"
+                        style="@style/BodyMedium"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="@dimen/margin"
@@ -189,7 +189,7 @@
 
                     <TextView
                         android:id="@+id/category"
-                        style="@style/TitleMedium"
+                        style="@style/TitleSmall"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:background="?selectableItemBackground"
@@ -214,19 +214,90 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:drawablePadding="@dimen/half_margin"
-                    android:text="Shipping Updates"
-                    app:drawableStartCompat="@drawable/ic_truck_outline"
-                    app:drawableTint="@color/primary" />
+                    android:text="Buyer Details"/>
 
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/shippingRecycler"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                    tools:itemCount="2"
-                    tools:listitem="@layout/shipping_update_item" />
+                    android:background="@color/background"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="@dimen/half_margin">
+
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/materialCardView"
+                        style="@style/cardStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:cardCornerRadius="100dp">
+
+                        <ImageView
+                            android:id="@+id/userProfile"
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:contentDescription="@string/app_name"
+                            android:scaleType="centerCrop"
+                            android:src="@drawable/placeholder_user" />
+
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/half_margin"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/userName"
+                            style="@style/TitleSmall"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@string/app_name" />
+
+                        <TextView
+                            android:id="@+id/email"
+                            style="@style/BodyMedium"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="dfbgh"
+                            android:textColor="@color/tertiary" />
+
+                    </LinearLayout>
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/message"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:contentDescription="@string/app_name"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/ic_outlined_message" />
+
+                </LinearLayout>
+
+                <com.google.android.material.divider.MaterialDivider
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:alpha="0.5"
+                    android:layout_marginVertical="@dimen/margin" />
+
+                <TextView
+                    style="@style/TitleMedium"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/delivery_address"
+                    android:textStyle="bold"/>
+
+                <TextView
+                    android:id="@+id/address"
+                    style="@style/BodyMedium"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:alpha="0.8"
+                    android:text="12 Main Road Engineering Chauraha" />
 
             </LinearLayout>
+
 
             <LinearLayout
                 style="@style/shadowStyle"
@@ -243,17 +314,18 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:drawablePadding="@dimen/half_margin"
-                    android:text="@string/delivery_address"
-                    app:drawableStartCompat="@drawable/ic_location" />
+                    android:text="Shipping Updates"
+                    app:drawableStartCompat="@drawable/ic_shipping"
+                    app:drawableTint="@color/primary" />
 
-                <TextView
-                    android:id="@+id/address"
-                    style="@style/BodyLarge"
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/shippingRecycler"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="@dimen/half_margin"
-                    android:alpha="0.8"
-                    android:text="12 Main Road Engineering Chauraha" />
+                    android:layout_marginTop="@dimen/half_margin"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    tools:itemCount="2"
+                    tools:listitem="@layout/shipping_update_item" />
 
             </LinearLayout>
 
@@ -284,7 +356,7 @@
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.button.MaterialButton
-                    android:id="@+id/publish"
+                    android:id="@+id/updateStatus"
                     style="@style/appBtn"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

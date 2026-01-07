@@ -1,135 +1,134 @@
 package io.bidswipe.app.network.response
 
-
-import com.google.gson.annotations.SerializedName
 import androidx.annotation.Keep
+import com.google.gson.annotations.SerializedName
 import java.io.Serializable
 
 @Keep
 data class GetOrderDetailsResponse(
 	@SerializedName("data")
-	val `data` : Data? ,
+	val `data`: Data?,
 	@SerializedName("error_type")
-	val errorType : String? ,
+	val errorType: String?,
 	@SerializedName("message")
-	val message : String? ,
+	val message: String?,
 	@SerializedName("status")
-	val status : String? ,
+	val status: String?,
 ) {
 	@Keep
 	data class Data(
 		@SerializedName("card_id")
-		val cardId : String? ,
+		val cardId: String?,
 		@SerializedName("created_at")
-		val createdAt : String? ,
+		val createdAt: String?,
 		@SerializedName("gift_msg")
-		val giftMsg : String? ,
+		val giftMsg: String?,
 		@SerializedName("gift_user")
-		val giftUser : GiftUser? ,
+		val giftUser: GiftUser?,
 		@SerializedName("gift_user_id")
-		val giftUserId : Int? ,
+		val giftUserId: Int?,
 		@SerializedName("id")
-		val id : Int? ,
+		val id: Int?,
 		@SerializedName("order_id")
-		val orderId : String? ,
+		val orderId: String?,
 		@SerializedName("product")
-		val product : Product? ,
+		val product: Product?,
 		@SerializedName("product_id")
-		val productId : Int? ,
+		val productId: Int?,
 		@SerializedName("promo_code")
-		val promoCode : String? ,
+		val promoCode: String?,
 		@SerializedName("send_as_gift")
-		val sendAsGift : Boolean? ,
+		val sendAsGift: Boolean?,
 		@SerializedName("shipping_address")
-		val shippingAddress : String? ,
+		val shippingAddress: String?,
 		@SerializedName("shipping_tracking")
-		val shippingTracking : List<ShippingTracking?>? ,
+		val shippingTracking: List<ShippingTracking?>?,
 		@SerializedName("status")
-		val status : String? ,
+		val status: String?,
 		@SerializedName("user")
-		val user : User? ,
+		val user: User?,
 		@SerializedName("user_id")
-		val userId : Int? ,
+		val userId: Int?,
 	) {
 		@Keep
 		data class GiftUser(
 			@SerializedName("bio")
-			val bio : Any? ,
+			val bio: Any?,
 			@SerializedName("email")
-			val email : String? ,
+			val email: String?,
 			@SerializedName("first_name")
-			val firstName : String? ,
+			val firstName: String?,
 			@SerializedName("id")
-			val id : Int? ,
+			val id: Int?,
 			@SerializedName("is_active")
-			val isActive : Boolean? ,
+			val isActive: Boolean?,
 			@SerializedName("last_name")
-			val lastName : String? ,
+			val lastName: String?,
 			@SerializedName("name")
-			val name : String? ,
+			val name: String?,
 			@SerializedName("profile_image")
-			val profileImage : String? ,
+			val profileImage: String?,
 			@SerializedName("referral_code")
-			val referralCode : String? ,
+			val referralCode: String?,
 			@SerializedName("role_id")
-			val roleId : Int? ,
+			val roleId: Int?,
 			@SerializedName("thumbnail")
-			val thumbnail : Any? ,
+			val thumbnail: Any?,
 			@SerializedName("username")
-			val username : Any? ,
+			val username: Any?,
 		)
 
 		@Keep
 		data class Product(
 			@SerializedName("accept_offers")
-			val acceptOffers : Boolean?,
+			val acceptOffers: Boolean?,
 			@SerializedName("category")
 			val category: Category?,
 			@SerializedName("category_id")
-			val categoryId : Int?,
+			val categoryId: Int?,
 			@SerializedName("created_at")
-			val createdAt : String?,
+			val createdAt: String?,
 			@SerializedName("description")
-			val description : String?,
+			val description: String?,
 			@SerializedName("flash_sale")
-			val flashSale : Boolean?,
+			val flashSale: Boolean?,
 			@SerializedName("id")
-			val id : Int?,
+			val id: Int?,
 			@SerializedName("images")
-			val images : List<String?>?,
+			val images: List<String?>?,
 			@SerializedName("pricing")
-			val pricing : Double?,
+			val pricing: Double?,
 			@SerializedName("product_show")
-			val productShow : String?,
+			val productShow: String?,
 			@SerializedName("purchased_quantity")
-			val purchasedQuantity : Int?,
+			val purchasedQuantity: Int?,
 			@SerializedName("quantity")
-			val quantity : Int?,
+			val quantity: Int?,
 			@SerializedName("reserve_for_live")
-			val reserveForLive : Boolean?,
+			val reserveForLive: Boolean?,
 			@SerializedName("shipping_profile_id")
-			val shippingProfileId : Int?,
+			val shippingProfileId: Int?,
 			@SerializedName("status")
-			val status : String?,
+			val status: String?,
 			@SerializedName("thumbnail")
-			val thumbnail : List<Any?>?,
+			val thumbnail: List<Any?>?,
 			@SerializedName("title")
-			val title : String?,
+			val title: String?,
 			@SerializedName("user_id")
-			val userId : Int?,
-		){
+			val userId: Int?,
+		) {
 			@Keep
 			data class Category(
 				@SerializedName("color")
-				val color : String? ,
+				val color: String?,
 				@SerializedName("id")
-				val id : Int? ,
+				val id: Int?,
 				@SerializedName("image")
-				val image : String? ,
+				val image: String?,
 				@SerializedName("name")
-				val name : String? ,
+				val name: String?,
 				@SerializedName("thumbnail")
-				val thumbnail : String? ,
+				val thumbnail: String?,
 			) : Serializable
 
 		}
@@ -137,41 +136,42 @@ data class GetOrderDetailsResponse(
 		@Keep
 		data class ShippingTracking(
 			@SerializedName("created_at")
-			val createdAt : String? ,
+			val createdAt: String?,
 			@SerializedName("id")
-			val id : Int? ,
+			val id: Int?,
 			@SerializedName("order_id")
-			val orderId : Int? ,
+			val orderId: Int?,
 			@SerializedName("title")
-			val title : String? ,
+			val title: String?,
 		)
 
 		@Keep
 		data class User(
 			@SerializedName("bio")
-			val bio : String? ,
+			val bio: String?,
 			@SerializedName("email")
-			val email : String? ,
+			val email: String?,
 			@SerializedName("first_name")
-			val firstName : String? ,
+			val firstName: String?,
 			@SerializedName("id")
-			val id : Int? ,
+			val id: Int?,
 			@SerializedName("is_active")
-			val isActive : Boolean? ,
+			val isActive: Boolean?,
 			@SerializedName("last_name")
-			val lastName : String? ,
+			val lastName: String?,
 			@SerializedName("name")
-			val name : String? ,
+			val name: String?,
 			@SerializedName("profile_image")
-			val profileImage : String? ,
+			val profileImage: String?,
 			@SerializedName("referral_code")
-			val referralCode : String? ,
+			val referralCode: String?,
 			@SerializedName("role_id")
-			val roleId : Int? ,
+			val roleId: Int?,
 			@SerializedName("thumbnail")
-			val thumbnail : Any? ,
+			val thumbnail: Any?,
 			@SerializedName("username")
-			val username : String? ,
+			val username: String?,
 		)
+
 	}
 }

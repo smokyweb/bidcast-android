@@ -115,6 +115,7 @@ class SocketManager private constructor(
 	fun onRoomCreated(listener: (bidJson: JSONObject) -> Unit) {
 
 		socket?.off("room_create_get")
+
 		socket?.on("room_create_get") { args ->
 			val obj = args.firstOrNull()
 			if (obj is JSONObject) {
