@@ -23,9 +23,9 @@ class RandomizerEntriesAdapter(
 	) {
 		with(holder) {
 
-			bind.name.text = item?.name
+			bind.name.text = item?.userName
 
-			bind.root.setHapticClickListener {
+			bind.endIcon.setHapticClickListener {
 
 				mClicks.itemClick(position)
 

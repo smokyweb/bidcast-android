@@ -224,7 +224,13 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 				// Freebie Entry event
 				bind.freebieEntryLayout.isVisible = false
 				bind.notesFreebieLayout.isVisible = true
-				socketManager?.enterInFreebie(roomID.toString(), userId)
+
+				if (freebieUsers.find { it?.id.toString() == userId } != null) {
+					Alerts.error(mCtx, "You have already entered the freebie")
+
+				}else{
+					socketManager?.enterInFreebie(roomID, userId)
+				}
 
 				/*bind.winnerSpotLayout.isVisible = true
 				rotateText()*/
@@ -457,6 +463,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 			requireActivity().runOnUiThread {
 				if (obj.optString("roomId") == roomID) {
 //                    Alerts.error(mCtx, "Vote failed")
+
 				}
 			}
 		}
@@ -481,15 +488,34 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 		socketManager?.getFreebie { obj ->
 			requireActivity().runOnUiThread {
 				val res = Gson().fromJson(obj.toString(), GetFreebieObject::class.java)
-				log("Freebie22 : ${res.freebie?.showId}==$roomID")
+				if (res.freebie?.roomId == roomID) {
 
-				if (res.freebie?.showId == roomID) {
 					bind.freebieLayout.isVisible = true
 					bind.freebieEntryCount.text = "${res.usersList?.size ?: 0} Entries"
-					log("Freebie : ${bind.freebieEntryCount.text}")
+					bind.freebieCount.text = "${res.usersList?.size ?: 0} Entries"
 					freebieUsers.clear()
 					freebieUsers.addAll(res.usersList ?: mutableListOf())
 				}
+
+			}
+		}
+
+		socketManager?.getFreebieWinner { obj ->
+
+			requireActivity().runOnUiThread {
+
+				if (obj.optString("room_id") == roomID) {
+
+					val user = GetFreebieObject.Users.fromJson(obj.optJSONObject("user"))
+
+					bind.winnerSpotLayout.isVisible = true
+
+					rotateText(user.id)
+
+					log("Freebie Winner : ${obj} ")
+
+				}
+
 			}
 		}
 
@@ -783,7 +809,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
 		socketManager?.joinRoom(roomID, userId) {
 			socketManager?.sendMessage(roomID, "Joined \uD83D\uDC4B", userId, userName, userImage)
-			socketManager?.joinShow(userId, showId)
+			socketManager?.joinShow(userId, roomID)
 		}
 
 		if (streamID.isBlank()) {
@@ -2075,12 +2101,15 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
 	private var currentIndex = 0
 
-	private fun rotateText() {
+	private fun rotateText(userId : Int ?) {
 		val handler = Handler()
+
+		val finalIndex = freebieUsers.indexOf(freebieUsers.find { it?.id == userId })
+
 		val textSwitcherRunnable = object : Runnable {
 			override fun run() {
-				currentIndex++
-				if (currentIndex == freebieUsers.lastIndex) {
+
+				if (currentIndex == finalIndex) {
 					bind.textSwitcher.setText(buildSpannedString {
 						color(ContextCompat.getColor(mCtx, clr.success)) { append("${freebieUsers[currentIndex]?.name} won") }
 					})
@@ -2094,6 +2123,8 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 					bind.textSwitcher.setText(freebieUsers[currentIndex]?.name)
 				}
 
+				if (currentIndex < finalIndex ) currentIndex++
+
 				handler.postDelayed(this, 200)
 			}
 		}
@@ -2101,4 +2132,5 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 		bind.textSwitcher.setText(freebieUsers[currentIndex]?.name)
 		handler.postDelayed(textSwitcherRunnable, 200)
 	}
+
 }

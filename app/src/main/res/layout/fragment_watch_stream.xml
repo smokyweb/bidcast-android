@@ -864,7 +864,7 @@
                         android:textColor="@color/background" />
 
                     <TextView
-                        id="@+id/freebie_count"
+                        android:id="@+id/freebie_count"
                         style="@style/BodyMedium"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -923,7 +923,7 @@
                     android:drawablePadding="4dp"
                     android:drawableTint="@color/background"
                     android:gravity="center_vertical"
-                    android:text="0 Entries"
+                    android:text=""
                     android:textColor="@color/background" />
 
                 <com.google.android.material.button.MaterialButton

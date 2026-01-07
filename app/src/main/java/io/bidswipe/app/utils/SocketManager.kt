@@ -108,9 +108,7 @@ class SocketManager private constructor(
 	}
 
 	fun createRoom(liveShowData: LiveShowModel) {
-		val payload = JSONObject().apply {}
 		Log.d(TAG, "EMIT: room_created - RoomId: $liveShowData")
-//		liveShowData.products.first()?.isCurrent = true
 		socket?.emit("room_create", liveShowData.toJson())
 	}
 
@@ -662,12 +660,12 @@ class SocketManager private constructor(
 		socket?.emit("set_promotion_data", payload)
 	}
 
-	fun joinShow(userId : String?, showId : String?) {
+	fun joinShow(userId : String?, roomId : String?) {
 		val payload = JSONObject().apply {
-			put("show_id", showId)
+			put("room_id", roomId)
 			put("user_id", userId)
 		}
-		Log.d(TAG, "EMIT:join_show  - userId: $userId, showId: $showId ")
+		Log.d(TAG, "EMIT:join_show  - userId: $userId, showId: $roomId ")
 		socket?.emit("join_show", payload)
 	}
 
@@ -683,22 +681,22 @@ class SocketManager private constructor(
 		socket?.emit("sustained_watches", payload)
 	}
 
-	fun createFreebie( showId : String,productId : String, time : String) {
+	fun createFreebie( roomId : String, productId : String, time : String) {
 		val payload = JSONObject().apply {
-			put("show_id", showId)
+			put("room_id", roomId)
 			put("product_id", productId)
 			put("time", time)
 		}
-		Log.d(TAG, "EMIT:create-freebie  - showId: $showId, productId: $productId, time: $time")
+		Log.d(TAG, "EMIT:create-freebie  - showId: $roomId, productId: $productId, time: $time")
 		socket?.emit("create-freebie", payload)
 	}
 
-	fun enterInFreebie( showId : String,userId : String) {
+	fun enterInFreebie( roomId : String,userId : String) {
 		val payload = JSONObject().apply {
-			put("show_id", showId)
+			put("room_id", roomId)
 			put("user_id", userId)
 		}
-		Log.d(TAG, "EMIT:enter-in-freebie  - showId: $showId, userId: $userId")
+		Log.d(TAG, "EMIT:enter-in-freebie  - showId: $roomId, userId: $userId")
 		socket?.emit("enter-in-freebie", payload)
 	}
 
@@ -711,6 +709,45 @@ class SocketManager private constructor(
 				listener(obj)
 			}
 		}
+	}
+
+	fun getLiveUsers(listener: (resultJson : JSONObject) -> Unit) {
+		socket?.off("active_show_users")
+		socket?.on("active_show_users") { args ->
+			val obj = args.firstOrNull()
+			if (obj is JSONObject) {
+				Log.d(TAG, "RECEIVED: active_show_users - $obj")
+				listener(obj)
+			}
+		}
+	}
+
+	fun finalizeFreebie( roomId : String) {
+		val payload = JSONObject().apply {
+			put("room_id", roomId)
+		}
+		Log.d(TAG, "EMIT:finalize-freebie  - showId: $roomId ")
+		socket?.emit("finalize-freebie", payload)
+	}
+
+	fun getFreebieWinner(listener: (resultJson : JSONObject) -> Unit) {
+		socket?.off("get-freebie-winner")
+		socket?.on("get-freebie-winner") { args ->
+			val obj = args.firstOrNull()
+			if (obj is JSONObject) {
+				Log.d(TAG, "RECEIVED: get-freebie-winner - $obj")
+				listener(obj)
+			}
+		}
+	}
+
+	fun removeFreebieUser( roomId : String, userId: String) {
+		val payload = JSONObject().apply {
+			put("room_id", roomId)
+			put("user_id", userId)
+		}
+		Log.d(TAG, "EMIT:remove-freebie-user  - showId: $roomId , userId: $userId")
+		socket?.emit("remove-freebie-user", payload)
 	}
 
 }

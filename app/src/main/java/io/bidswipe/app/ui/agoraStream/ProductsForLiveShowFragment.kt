@@ -358,8 +358,10 @@ class ProductsForLiveShowFragment : BottomSheetDialogFragment() {
 
                 val selectedProduct = productList[selectedPos]
 
-                socketManager?.createFreebie(viewModel.currentRoomId, selectedProduct?.id.toString(), "1")
+                socketManager?.createFreebie(roomId = viewModel.currentRoomId, productId = selectedProduct?.id.toString(), time = "1")
                 dismiss()
+
+
             }
         }
 
