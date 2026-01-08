@@ -29,6 +29,7 @@ import androidx.core.os.bundleOf
 import androidx.core.text.bold
 import androidx.core.text.buildSpannedString
 import androidx.core.text.color
+import androidx.core.text.toSpannable
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
@@ -71,7 +72,7 @@ import io.bidswipe.app.model.LiveShowModel
 import io.bidswipe.app.model.PollModel
 import io.bidswipe.app.model.PollOptionModel
 import io.bidswipe.app.network.Resource
-import io.bidswipe.app.network.response.GetFreebieObject
+import io.bidswipe.app.network.response.socket.GetFreebieObject
 import io.bidswipe.app.network.response.GetLiveSellerResponse
 import io.bidswipe.app.network.response.GetPromotePlansResponse
 import io.bidswipe.app.ui.custom.AlertType
@@ -149,6 +150,7 @@ class AgoraPublisherActivity : BaseActivity() {
 	private var freebieUsers = mutableListOf<GetFreebieObject.Users?>()
 	private var liveUsersList = mutableListOf<GetFreebieObject.Users?>()
 	private var randomizerSheetBind : RandomizerSheetBinding ? =null
+	private var showNotes: String? = ""
 
 
 	override fun onCreate(savedInstanceState: Bundle?) {
@@ -806,12 +808,9 @@ class AgoraPublisherActivity : BaseActivity() {
 		isShowLive = true
 		socketManager?.createRoom(data)
 
-		socketManager?.onRoomCreated { obj ->
+		socketManager?.onRoomCreated { showData ->
 			runSafe {
-
-				if (obj.optString("room_id") == roomID) {
-					val showData = LiveShowModel.fromJson(obj)
-
+				if (showData.roomId == roomID) {
 					productList.clear()
 
 					productList.addAll(showData.products)
@@ -851,6 +850,14 @@ class AgoraPublisherActivity : BaseActivity() {
 			if (roomID == obj.optString("room_id")) {
 				val allowBidForAll = obj.optBoolean("allow_bid_for_all")
 				liveShowData?.allowBidForAll = allowBidForAll
+			}
+		}
+
+		socketManager?.receiveShowNotes { args ->
+			runSafe {
+				if (args.optString("room_id") == roomID) {
+						showNotes = args.optString("show_note") ?: ""
+				}
 			}
 		}
 
@@ -1483,6 +1490,9 @@ class AgoraPublisherActivity : BaseActivity() {
 			showNotesSheetBind.formattingToolbar,
 			editorListener
 		)
+
+		showNotesSheetBind.showNotes.fromHtml(showNotes?:"")
+
 		showNotesSheetBind.close.setHapticClickListener {
 			sheet.dismiss()
 			bind.showNotes.isVisible = true
@@ -1493,6 +1503,7 @@ class AgoraPublisherActivity : BaseActivity() {
 			if (notes.isEmpty()) {
 				errorToast("Please enter some notes")
 			} else {
+				showNotes=notes
 				socketManager?.addShowNotes(
 					roomID,
 					notes

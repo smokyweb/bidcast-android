@@ -28,12 +28,12 @@ class StreamViewModel @Inject constructor(
 ) : ViewModel() {
 
 	// LiveData to hold the list or individual streams
-    private val _streams = MutableLiveData<List<StreamModel>>()
+	val streamsList = MutableLiveData<MutableList<StreamModel>>()
 
-    val streams: LiveData<List<StreamModel>> = _streams
+    val streams: LiveData<MutableList<StreamModel>> = streamsList
 
-    fun setStreams(newStreams: List<StreamModel>) {
-		_streams.value = newStreams
+    fun setStreams(newStreams: MutableList<StreamModel>) {
+		streamsList.value = newStreams
 	}
 
 	// Optionally, you can have a LiveData for the currently selected stream

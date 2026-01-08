@@ -2,7 +2,9 @@ package io.bidswipe.app.utils
 
 import android.content.Context
 import android.util.Log
+import com.google.gson.Gson
 import io.bidswipe.app.model.LiveShowModel
+import io.bidswipe.app.network.response.socket.GetFreebieObject
 import io.socket.client.IO
 import io.socket.client.Socket
 import org.json.JSONArray
@@ -112,7 +114,7 @@ class SocketManager private constructor(
 		socket?.emit("room_create", liveShowData.toJson())
 	}
 
-	fun onRoomCreated(listener: (bidJson: JSONObject) -> Unit) {
+	fun onRoomCreated(listener: (bidJson: LiveShowModel) -> Unit) {
 
 		socket?.off("room_create_get")
 
@@ -120,10 +122,10 @@ class SocketManager private constructor(
 			val obj = args.firstOrNull()
 			if (obj is JSONObject) {
 				Log.d(TAG, "RECEIVED: create_room_get - $obj")
-				listener(obj)
+				val res = LiveShowModel.fromJson(obj)
+				listener(res)
 			}
 		}
-
 	}
 
 	fun joinRoom(roomId: String, userId: String, listener: (liveShowJson: JSONObject) -> Unit) {

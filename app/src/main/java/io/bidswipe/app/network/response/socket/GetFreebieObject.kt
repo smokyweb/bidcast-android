@@ -1,4 +1,4 @@
-package io.bidswipe.app.network.response
+package io.bidswipe.app.network.response.socket
 
 
 import com.google.gson.annotations.SerializedName
@@ -35,18 +35,19 @@ data class GetFreebieObject(
         val userName: String?,
         @SerializedName("profile_image")
         val profileImage: Any?
-    ){
+    ) {
 
-		companion object{
-			fun fromJson(json: JSONObject) = Users(
-				email = json.optString("email", null),
-				id = json.optInt("id", 0),
-				name = json.optString("name", null),
-				userName = json.optString("username", null),
-				profileImage = json.optString("profile_image", null))
-		}
+        companion object {
+            fun fromJson(json: JSONObject) = Users(
+                email = json.optString("email", null),
+                id = json.optInt("id", 0),
+                name = json.optString("name", null),
+                userName = json.optString("username", null),
+                profileImage = json.optString("profile_image", null)
+            )
+        }
 
-	}
+    }
 
 
 }

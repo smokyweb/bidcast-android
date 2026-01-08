@@ -18,7 +18,13 @@ data class LiveShowModel(
 	var allowBidForAll: Boolean? = true,
 	val bidCountDown: String?,
 	val showTimer: String?,
-	val categoryId: String? = null
+	val categoryId: String? = null,
+	val maxViewerCount: String?=null,
+	val rtcToken: String?=null,
+	val startingBidAmount: Double?=null,
+	val requireTime: Long?=null,
+	val counterBidTime: Long?=null,
+	val suddenDeath: Boolean?=null
 ) : Serializable {
 
 	companion object {
@@ -42,7 +48,13 @@ data class LiveShowModel(
 			allowBidForAll = if (json.has("allow_bid_for_all")) json.optBoolean("allow_bid_for_all") else true,
 			bidCountDown = json.optString("bid_count_down", null),
 			showTimer = json.optString("show_timer", null),
-			categoryId = json.optString("category_id", null)
+			categoryId = json.optString("category_id", null),
+			maxViewerCount = json.optString("max_viewer_count", null), 
+			rtcToken = json.optString("rtc_token", null), 
+			startingBidAmount = json.optDouble("starting_bid_amount", 0.0), 
+			requireTime = json.optLong("require_time", 0), 
+			counterBidTime = json.optLong("counter_bid_time", 0), 
+			suddenDeath = json.optBoolean("sudden_death", false) 
 		)
 	}
 
@@ -104,7 +116,6 @@ data class LiveShowModel(
 				thumbnail = json.optString("thumbnail", null)
 			)
 		}
-
 	}
 
 	data class Seller(
@@ -155,7 +166,6 @@ data class LiveShowModel(
 				productId = json.optString("product_id", "")
 			)
 		}
-
 	}
 
 	fun toJson() = JSONObject().apply {
@@ -173,6 +183,12 @@ data class LiveShowModel(
 		put("bid_count_down", bidCountDown)
 		put("show_timer", showTimer)
 		put("category_id", categoryId)
+		put("max_viewer_count", maxViewerCount) 
+		put("rtc_token", rtcToken) 
+		put("starting_bid_amount", startingBidAmount) 
+		put("require_time", requireTime) 
+		put("counter_bid_time", counterBidTime) 
+		put("sudden_death", suddenDeath) 
 	}
-
 }
+

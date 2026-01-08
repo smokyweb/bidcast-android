@@ -5,7 +5,7 @@ import android.view.ViewGroup
 import io.bidswipe.app.base.BaseAdapter
 import io.bidswipe.app.databinding.EntriesItemBinding
 import io.bidswipe.app.interfaces.RecyclerClicks
-import io.bidswipe.app.network.response.GetFreebieObject
+import io.bidswipe.app.network.response.socket.GetFreebieObject
 import io.bidswipe.app.utils.setHapticClickListener
 
 class RandomizerEntriesAdapter(

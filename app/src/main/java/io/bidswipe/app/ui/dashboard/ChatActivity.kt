@@ -153,7 +153,7 @@ class ChatActivity : BaseActivity() {
                                                         StreamModel(
                                                             roomIdValue,
                                                             "",
-                                                            thumbnail = ""
+                                                            thumbnail = item.attachment?.image?:""
                                                         )
                                                     ))
                                                 )
