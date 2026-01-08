@@ -62,7 +62,7 @@ class CreateProductFragment : BaseFragment<ScheduleShowViewModel, FragmentCreate
 	var variantList = mutableListOf<GetCategoryResponse.Data.ExtraField?>()
 	private val imageList get() = viewModel.productImages
 	private lateinit var variantAdapter: ProductVariantAdapter
-	private val processingCategories = listOf("LETTERS", "FLATS", "MACHINABLE", "NONSTANDARD", "NON_MACHINABLE")
+	private val processingCategories = listOf("LETTERS", "FLATS", "MACHINABLE", "NONSTANDARD", "NON MACHINABLE")
 
 	lateinit var imageAdapter: ImageAdapter
 	private fun getPhotoCount(): Int = imageList.count { !it.isVideo }
@@ -235,12 +235,11 @@ class CreateProductFragment : BaseFragment<ScheduleShowViewModel, FragmentCreate
 		bind.height.setText(viewModel.productHeight)
 		bind.length.setText(viewModel.productLength)
 		bind.weight.setText(viewModel.productWeight)
-		updateCategoryField()
 		viewModel.productMailClass?.let {
 			bind.mailClass.setText(it.label, false)
 		}
 		viewModel.productProcessingCategory?.let {
-			bind.procategory.setText(it, false)
+			bind.procategory.setText(it.replace("_"," "), false)
 		}
 
 		bind.productTitle.doAfterTextChanged {
@@ -389,6 +388,8 @@ class CreateProductFragment : BaseFragment<ScheduleShowViewModel, FragmentCreate
 						categoryList.clear()
 						categoryList.addAll(mData)
 					}
+
+					updateCategoryField()
 				}
 
 				is Resource.Error -> {
@@ -527,13 +528,13 @@ class CreateProductFragment : BaseFragment<ScheduleShowViewModel, FragmentCreate
 		bind.procategory.setOnItemClickListener { _, _, position, _ ->
 			viewModel.productProcessingCategory = processingCategories[position]
 			log("Selected processing category: ${viewModel.productProcessingCategory}")
-			bind.procategory.setText(viewModel.productProcessingCategory, false)
+			bind.procategory.setText(viewModel.productProcessingCategory?.replace("_"," "), false)
 		}
 		bind.procategory.setHapticClickListener {
 			bind.procategory.showDropDown()
 		}
 		viewModel.productProcessingCategory?.let {
-			bind.procategory.setText(it, false)
+			bind.procategory.setText(it.replace("_"," "), false)
 		}
 	}
 
@@ -566,6 +567,7 @@ class CreateProductFragment : BaseFragment<ScheduleShowViewModel, FragmentCreate
 					}
 				}
 			}
+
 			if (viewModel.productMailClass?.maxHeightIn != null) {
 				bind.heightTitle.text = buildSpannedString {
 					append("Height ")
@@ -837,10 +839,12 @@ class CreateProductFragment : BaseFragment<ScheduleShowViewModel, FragmentCreate
 	}
 
 	private fun updateCategoryField() {
-		val categoryName = viewModel.productCategoryName
+		val categoryName = categoryList.find { it?.id.toString() == viewModel.categoryId }?.name
 		val subCategoryName = viewModel.productSubCategoryName
 
-		if (categoryName.isEmpty()) {
+		viewModel.productCategoryId = viewModel.categoryId
+
+		if (categoryName?.isEmpty() == true) {
 			bind.category.setText("")
 			return
 		}

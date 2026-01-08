@@ -226,11 +226,14 @@ class AgoraPublisherActivity : BaseActivity() {
 
         viewModel.getAgoraToken(roomID.request())
 
-        commentAdapter = CommentAdapter(commentList, userId, object : RecyclerClicks {
-            override fun itemClick(pos: Int, status: String?) {
-                startActivity(Intent(this@AgoraPublisherActivity, SellerProfileActivity::class.java).putExtra("sellerId", commentList[pos]?.userId))
-            }
-        })
+		commentAdapter = CommentAdapter(commentList, userId, object : RecyclerClicks {
+			override fun itemClick(pos: Int, status: String?) {
+
+				if (commentList[pos]?.userId == userId) return
+
+				startActivity(Intent(this@AgoraPublisherActivity, SellerProfileActivity::class.java).putExtra("sellerId", commentList[pos]?.userId))
+			}
+		})
 
         bind.recycler.adapter = commentAdapter
 
@@ -270,10 +273,12 @@ class AgoraPublisherActivity : BaseActivity() {
 
         bind.clip.isVisible = App.profileResponse.value?.preferences?.enableClips == true
 
-        bind.message.setEndIconOnClickListener {
-            if (!isShowLive) {
-                Alerts.error(this, "Please start live show to send message")
-            }
+		bind.message.setEndIconOnClickListener {
+			if (!isShowLive) {
+				Alerts.error(this, "Please start live show to send message")
+				bind.messageText.setText("")
+				return@setEndIconOnClickListener
+			}
 
             if (bind.messageText.value().isNotEmpty()) {
                 socketManager?.sendMessage(
@@ -717,7 +722,10 @@ class AgoraPublisherActivity : BaseActivity() {
                     bind.showNotes.isVisible = false
                     bind.freebieLayout.isVisible = false
 
-                    val user = GetFreebieObject.Users.fromJson(obj.optJSONObject("user"))
+                    freebieUsers.clear()
+					randomizerSheetBind?.recycler?.adapter?.notifyDataSetChanged()
+
+					val user = GetFreebieObject.Users.fromJson(obj.optJSONObject("user"))
 
                     val index = freebieUsers.indexOf(freebieUsers.find { it?.id == user.id })
 
@@ -726,11 +734,11 @@ class AgoraPublisherActivity : BaseActivity() {
                         bind.luckyWheel.rotateWheel()
                     }
 
+				}
 
-                }
+			}
 
-            }
-        }
+		}
 
         socketManager?.receiveShowNotes { args ->
             runSafe {
@@ -1937,9 +1945,9 @@ class AgoraPublisherActivity : BaseActivity() {
             setTextOrientation(TextOrientation.VERTICAL_TO_CENTER)
         }
 
-        bind.centerOfWheel.setOnClickListener {
+        /*bind.centerOfWheel.setOnClickListener {
             bind.luckyWheel.rotateWheel()
-        }
+        }*/
     }
 
     fun showRandomizerSheet() {

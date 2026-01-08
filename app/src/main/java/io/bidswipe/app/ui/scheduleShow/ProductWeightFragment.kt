@@ -21,6 +21,7 @@ import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.setHapticClickListener
 import okhttp3.MultipartBody
 import java.io.File
+import kotlin.text.ifEmpty
 
 class ProductWeightFragment : BaseFragment<ScheduleShowViewModel, FragmentProductWeightBinding>() {
 	override fun getModel(): Class<ScheduleShowViewModel> = ScheduleShowViewModel::class.java
@@ -98,7 +99,7 @@ class ProductWeightFragment : BaseFragment<ScheduleShowViewModel, FragmentProduc
 	private fun createProduct(imageUrls: List<Map<String, String>>?, videoUrls: List<Map<String, String>>?) {
 
 		viewModel.storeProduct(StoreProductRequest(
-			categoryId = viewModel.productCategoryId,
+			categoryId = viewModel.categoryId,
 			title = viewModel.productTitle,
 			description = viewModel.productDescription,
 			quantity = viewModel.productQuantity.toString(),
@@ -112,16 +113,19 @@ class ProductWeightFragment : BaseFragment<ScheduleShowViewModel, FragmentProduc
 			videos = videoUrls,
 			subCategoryId = viewModel.productSubCategoryId.ifEmpty { null }?.toInt(),
 			variant = viewModel.variantData,
-			weight = viewModel.productWeight,
+			width = viewModel.productWidth,
 			height = viewModel.productHeight,
 			length = viewModel.productLength,
-			width = viewModel.productWidth,
+			weight = viewModel.productWeight,
 			mailClass = viewModel.productMailClass?.label ?: "",
-			processingCategory = viewModel.productProcessingCategory ?: "",
-			productCondition = viewModel.condition),
-			productId = null
+			processingCategory = viewModel.productProcessingCategory?.replace(" ","_"),
+			productCondition = viewModel.condition,
+			hazardousMaterial = bind.isHazardous.isChecked,
+			sku = null,
+			costPerItem = null
+		),
+			null
 		)
-
 	}
 
 	private fun setupObservers() {

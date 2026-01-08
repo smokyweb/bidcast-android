@@ -117,7 +117,7 @@ class ShowDetailsActivity : BaseActivity() {
                     productId = ""
                 ),
                 isLive = true,
-                time = Utils.timestamp().toString(),
+                time = showData?.time.toString(),
                 showId = showData?.id.toString(),
                 allowBidForAll = true,
                 bidCountDown = "",
@@ -141,7 +141,7 @@ class ShowDetailsActivity : BaseActivity() {
 
                     bind.showTitle.text = showData?.title ?: "Show Details"
 
-                    bind.repeat.text = if (showData?.isRepeat ?: false) "None" else showData?.repeatValue ?: "N/A"
+                    bind.repeat.text = showData?.repeatValue?.asCapital() ?: "N/A"
                     bind.auctionType.text = showData?.auction?.name?:"N/A"
                     bind.discoverability.text = (showData?.showDiscoverability ?: "").asCapital()
 

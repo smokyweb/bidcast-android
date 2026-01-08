@@ -144,7 +144,7 @@
                 android:padding="@dimen/margin">
 
                 <com.google.android.material.materialswitch.MaterialSwitch
-                    android:id="@+id/flashSell"
+                    android:id="@+id/is_hazardous"
                     style="@style/appSwitch"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

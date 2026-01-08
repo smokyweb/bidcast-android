@@ -245,11 +245,14 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
             bind.freebieEntryLayout.isVisible = false
         }
 
-        commentAdapter = CommentAdapter(commentList, roomID.split("_")[2], object : RecyclerClicks {
-            override fun itemClick(pos: Int, status: String?) {
-                startActivity(Intent(mCtx, SellerProfileActivity::class.java).putExtra("sellerId", commentList[pos]?.userId))
-            }
-        })
+		commentAdapter = CommentAdapter(commentList, roomID.split("_")[2], object : RecyclerClicks {
+			override fun itemClick(pos: Int, status: String?) {
+
+				if (commentList[pos]?.userId == userId) return
+
+				startActivity(Intent(mCtx, SellerProfileActivity::class.java).putExtra("sellerId", commentList[pos]?.userId))
+			}
+		})
 
         livePollAdapter = LivePollOptionAdapter(livePollOptionList, object : RecyclerClicks {
             override fun itemClick(pos: Int, status: String?) {
@@ -451,10 +454,10 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
                     followSheetRunnable = Runnable {
                         if (isFollowing) {
-                            socketManager?.sustainWatches(userId, showId)
+                            socketManager?.sustainWatches(userId, roomID)
                         } else {
                             followSheet()
-                            socketManager?.sustainWatches(userId, showId)
+                            socketManager?.sustainWatches(userId, roomID)
                         }
                     }
 
@@ -2155,12 +2158,13 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
                     handler.postDelayed({
                         bind.winnerSpotLayout.isVisible = false
                         bind.notesFreebieLayout.isVisible = true
-                        currentIndex = 0
-                    }, 2000)
-                    return
-                } else {
-                    bind.textSwitcher.setText(freebieUsers[currentIndex]?.name)
-                }
+                        bind.freebieLayout.isVisible = false
+						currentIndex = 0
+					}, 2000)
+					return
+				} else {
+					bind.textSwitcher.setText(freebieUsers[currentIndex]?.name)
+				}
 
                 if (currentIndex < finalIndex) currentIndex++
 

@@ -4,7 +4,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import io.bidswipe.app.model.PaymentCardModel
 import io.bidswipe.app.model.StoreProductRequest
 import io.bidswipe.app.model.TutorialShowModel
 import io.bidswipe.app.network.Resource
@@ -98,6 +97,7 @@ class DashViewModel @Inject constructor(
 	var productFormPrice = ""
 	var productFormFlashSale = false
 	var productFormAcceptOffers = false
+	var isHazardous = false
 	var productFormReserveForLive = false
 	var productFormCategoryText = ""
 	var shippingProfile = ""

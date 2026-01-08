@@ -54,7 +54,7 @@ class SelectCategoryFragment : BaseFragment<ScheduleShowViewModel, FragmentSelec
         if (!viewModel.showId.isNullOrEmpty()) {
             auctionId = viewModel.auctionId
             categoryId = viewModel.categoryId
-            bind.repeat.setText(viewModel.repeatType)
+            bind.repeat.setText(viewModel.repeatType,false)
             bind.explicitSwitch.isChecked = viewModel.explicitContent == "1"
             bind.language.setText(viewModel.primaryLanguage)
 
@@ -120,8 +120,6 @@ class SelectCategoryFragment : BaseFragment<ScheduleShowViewModel, FragmentSelec
             viewModel.repeatMode = repeatModes[position]
         }
 
-
-
         bind.repeat.setHapticClickListener {
             bind.repeat.showDropDown()
         }
@@ -130,7 +128,6 @@ class SelectCategoryFragment : BaseFragment<ScheduleShowViewModel, FragmentSelec
         bind.language.setAdapter(languageAdapter)
         bind.language.setDropDownBackgroundDrawable(draw)
         bind.language.setOnItemClickListener { _, _, position, _ ->
-
         }
 
         bind.language.setHapticClickListener {

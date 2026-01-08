@@ -114,7 +114,6 @@ class SellerProfileActivity : BaseActivity() {
 
                 ids.block -> {
                     showBlockConfirmation()
-
                 }
 
                 ids.reportUser -> {

@@ -250,11 +250,12 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
 			bind.length.setText(viewModel.productFormLength)
 			bind.weight.setText(viewModel.productFormWeight)
 			bind.mailClass.setText(viewModel.productFormMailClassText, false)
-			bind.proCategory.setText(viewModel.productFormProcessingCategory, false)
+			bind.proCategory.setText(viewModel.productFormProcessingCategory.replace("_"," "), false)
 			bind.price.setText(viewModel.productFormPrice)
 			bind.flashSell.isChecked = viewModel.productFormFlashSale
 			bind.acceptOffers.isChecked = viewModel.productFormAcceptOffers
 			bind.reserveForLive.isChecked = viewModel.productFormReserveForLive
+			bind.isHazardous.isChecked = viewModel.isHazardous
 			bind.condition.setText(viewModel.productCondition, false)
 
 			if (viewModel.productFormCategoryText.isNotEmpty()) {
@@ -303,6 +304,7 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
 		viewModel.productFormFlashSale = bind.flashSell.isChecked
 		viewModel.productFormAcceptOffers = bind.acceptOffers.isChecked
 		viewModel.productFormReserveForLive = bind.reserveForLive.isChecked
+		viewModel.isHazardous = bind.isHazardous.isChecked
 		viewModel.productFormCategoryText = bind.category.text?.toString() ?: ""
 		viewModel.productCondition = bind.condition.text?.toString() ?: ""
 	}
@@ -382,7 +384,7 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
 		}
 
 		val processingCategories =
-			listOf("LETTERS", "FLATS", "MACHINABLE", "NONSTANDARD", "NON_MACHINABLE")
+			listOf("LETTERS", "FLATS", "MACHINABLE", "NONSTANDARD", "NON MACHINABLE")
 		val proCategoryAdapter = ArrayAdapter(
 			mCtx,
 			android.R.layout.simple_list_item_1,
@@ -1070,13 +1072,14 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
 		bind.length.setText((product?.length ?: "").toString())
 		bind.weight.setText((product?.weight ?: "").toString())
 		bind.mailClass.setText(product?.mailClass ?: "", false)
-		bind.proCategory.setText(product?.processingCategory ?: "", false)
+		bind.proCategory.setText(product?.processingCategory?.replace("_"," ") ?: "", false)
 		selectedCondition = product?.productCondition.toString()
 		bind.condition.setText(product?.productCondition?.replace("_", " ") ?: "", false)
 		bind.price.setText((product?.pricing ?: ""))
 		bind.flashSell.isChecked = product?.flashSale == true
 		bind.acceptOffers.isChecked = product?.acceptOffers == true
 		bind.reserveForLive.isChecked = product?.reserveForLive == true
+		bind.isHazardous.isChecked = product?.hazardousMaterial == true
 		viewModel.shippingProfile = product?.shippingProfileId.toString()
 
 		if (profiles.isNotEmpty()) {
@@ -1218,13 +1221,13 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
 				length = bind.length.value(),
 				weight = bind.weight.value(),
 				mailClass = selectedMailClass?.label,
-				processingCategory = bind.proCategory.value(),
+				processingCategory = bind.proCategory.value().replace(" ", "_"),
 				productCondition = selectedCondition,
 				hazardousMaterial = bind.isHazardous.isChecked,
 				sku = bind.sku.value(),
 				costPerItem = bind.costPerItem.value(),
 			),
-			productId = productId?.ifEmpty { null },
+			productId = productId?.ifEmpty { null }
 		)
 
 	}

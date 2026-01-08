@@ -178,7 +178,7 @@
                                 android:layout_gravity="center_vertical"
                                 android:layout_marginStart="@dimen/half_margin"
                                 android:layout_weight="1"
-                                android:text="@string/username" />
+                                android:text="@string/username"/>
 
                             <androidx.appcompat.widget.AppCompatImageView
                                 android:id="@+id/chat"
@@ -187,6 +187,7 @@
                                 android:background="@drawable/card_16"
                                 android:backgroundTint="@color/primary"
                                 android:padding="6dp"
+                                android:visibility="gone"
                                 android:src="@drawable/ic_outlined_message"
                                 app:tint="@color/surface" />
 
