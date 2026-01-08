@@ -74,10 +74,6 @@ class MyOrdersFragment : BaseFragment<SellerHubViewModel, FragmentMyOrdersBindin
 			finish()
 		}
 
-		bind.header.onMoreSecondaryClick {
-			showDeleteConfirmationDialog()
-		}
-
 		setUpChips()
 
 		adapter = OrdersAdapter(orderList, mClick)
@@ -214,32 +210,6 @@ class MyOrdersFragment : BaseFragment<SellerHubViewModel, FragmentMyOrdersBindin
 			}
 		}
 
-	}
-
-	private fun showDeleteConfirmationDialog() {
-		AppBottomSheet(
-			mCtx,
-			R.drawable.trash,
-			"Delete Order",
-			"Are you sure you want to delete all orders?",
-			primaryBtnText = "Delete",
-			secondaryBtnText = "Cancel",
-			canCancel = true,
-			showSecondary = true,
-			alertType = AlertType.ERROR,
-			clicks = object : AlertClicks {
-				override fun primaryClick(dialog: AppBottomSheet) {
-					dialog.dismiss()
-					bind.loader.isVisible = false
-				}
-
-				override fun secondaryClick(dialog: AppBottomSheet) {
-					dialog.dismiss()
-				}
-
-			},
-
-			).show()
 	}
 
 	private fun setUpChips() {

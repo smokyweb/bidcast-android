@@ -63,12 +63,15 @@ object Utils {
         System.currentTimeMillis() / 1000L
     }
 
-    fun getTimeFromTimestamp(millis: Long, format: String = "hh:mm a") =
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            getSimpleDate(format).format(Instant.ofEpochSecond(millis).toEpochMilli()).toString()
+    fun getTimeFromTimestamp(millis: Long, format: String = "hh:mm a"): String {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val formatter = getSimpleDate(format)
+            formatter.format(Instant.ofEpochMilli(millis).toEpochMilli()).toString()
         } else {
-            getSimpleDate(format).format(millis / 1000).toString()
+            val formatter = getSimpleDate(format)
+            formatter.format(millis).toString()
         }
+    }
 
     fun getFormattedDateTime(inFormat: String, outFormat: String, timestamp: String): String? {
         if (timestamp.isEmpty()) return "N/A"
@@ -104,9 +107,14 @@ object Utils {
     fun getTimeStampFromServerTime(time: String, format: String = Const.SERVER_TIME_FORMAT): Long {
         val inputFormat = SimpleDateFormat(format)
         inputFormat.timeZone = TimeZone.getTimeZone("UTC")
-        val date = inputFormat.parse(time)
-        return date?.time ?: timestamp()
+        try {
+            return inputFormat.parse(time)?.time ?: System.currentTimeMillis()
+        } catch (e: Exception) {
+            e.printStackTrace()
+            return System.currentTimeMillis()
+        }
     }
+
 
     fun getDateFromTimestamp(millis: Long) = getSimpleDate("dd-MM-yyyy")
         .format(millis).toString()

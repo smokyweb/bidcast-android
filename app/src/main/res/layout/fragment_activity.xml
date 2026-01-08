@@ -11,16 +11,13 @@
         android:id="@+id/header"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:headerMode="APP_TEXT_ACTION"
         app:headerTitle="Activity"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:primaryIconDrawable="@drawable/notification"
-        app:secondaryIconDrawable="@drawable/search"
         app:showBackButton="false"
-        app:showPrimaryIcon="true"
-        app:showSecondaryIcon="false" />
+        app:showPrimaryIcon="true" />
 
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/tab_layout"

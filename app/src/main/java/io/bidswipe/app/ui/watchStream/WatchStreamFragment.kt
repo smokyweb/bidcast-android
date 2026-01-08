@@ -917,6 +917,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
         var downX = 0f
 
         bind.viewFlipper.setOnTouchListener { _, event ->
+            log("TOUCH FLIPPP")
             when (event.action) {
                 MotionEvent.ACTION_DOWN -> {
                     downX = event.x
@@ -945,6 +946,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
         }
 
         bind.controls.setOnTouchListener { _, event ->
+            log("TOUCH CONTROLLS")
             when (event.action) {
                 MotionEvent.ACTION_DOWN -> {
                     downX = event.x
@@ -961,6 +963,35 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
                             bind.viewFlipper.showPrevious()
                         } else {
 
+                            bind.viewFlipper.setInAnimation(mCtx, R.anim.slide_in_right)
+                            bind.viewFlipper.setOutAnimation(mCtx, R.anim.slide_out_left)
+                            bind.viewFlipper.showNext()
+                        }
+                    }
+                    true
+                }
+
+                else -> false
+            }
+        }
+
+        bind.scrollviewLinear.setOnTouchListener { _, event ->
+            log("TOUCH LINEAR")
+            when (event.action) {
+                MotionEvent.ACTION_DOWN -> {
+                    downX = event.x
+                    true
+                }
+
+                MotionEvent.ACTION_UP -> {
+                    val deltaX = event.x - downX
+
+                    if (abs(deltaX) > 100) {
+                        if (deltaX > 0) {
+                            bind.viewFlipper.setInAnimation(mCtx, R.anim.slide_in_left)
+                            bind.viewFlipper.setOutAnimation(mCtx, R.anim.slide_out_right)
+                            bind.viewFlipper.showPrevious()
+                        } else {
                             bind.viewFlipper.setInAnimation(mCtx, R.anim.slide_in_right)
                             bind.viewFlipper.setOutAnimation(mCtx, R.anim.slide_out_left)
                             bind.viewFlipper.showNext()

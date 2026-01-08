@@ -63,12 +63,6 @@ class ActivityFragment : BaseFragment<DashViewModel, FragmentActivityBinding>() 
             startActivity(Intent(mCtx, NotificationActivity::class.java).putExtra("slug", "notification"))
         }
 
-        // Hide logo in header
-        bind.header.hideLogo()
-
-        // Initially hide filter chips
-//		bind.chipScroll.visibility = View.GONE
-
         bind.swipeRefreshLayout.setOnRefreshListener {
             val fragment = adapter.getFragment(bind.pager.currentItem)
             if (fragment.isAdded) {

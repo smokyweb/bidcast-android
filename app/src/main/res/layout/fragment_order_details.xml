@@ -10,13 +10,11 @@
         android:id="@+id/header"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:headerMode="BACK_BUTTON_TITLE_ACTION"
         app:headerTitle="Product Name"
         app:layout_constraintTop_toTopOf="parent"
         app:primaryIconDrawable="@drawable/ic_vertical_menu"
         app:showBackButton="true"
-        app:showPrimaryIcon="true"
-        app:showSecondaryIcon="false" />
+        app:showPrimaryIcon="true" />
 
     <androidx.core.widget.NestedScrollView
         android:id="@+id/nestedScrollView"

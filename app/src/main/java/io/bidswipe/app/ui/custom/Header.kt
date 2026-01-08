@@ -29,9 +29,6 @@ class Header @JvmOverloads constructor(
 
             setHeaderText(it.getString(styleable.Header_headerTitle) ?: "")
 
-            // Configure the header mode (back button, app text, icons, etc.)
-            configureHeaderMode(it.getInt(styleable.Header_headerMode, 0))
-
             // Set icons
             setBackIcon(it.getResourceId(styleable.Header_backIconDrawable, draw.ic_back))
             setPrimaryIcon(
@@ -40,55 +37,15 @@ class Header @JvmOverloads constructor(
                     draw.notification
                 )
             )
-            setSecondaryIcon(
-                it.getResourceId(
-                    styleable.Header_secondaryIconDrawable,
-                    draw.trash
-                )
-            )
 
             // Set visibility of icons
             showPrimaryIcon(it.getBoolean(styleable.Header_showPrimaryIcon, false))
-            showSecondaryIcon(it.getBoolean(styleable.Header_showSecondaryIcon, false))
-            showBackButton(
+         showBackButton(
                 it.getBoolean(
                     styleable.Header_showBackButton,
                     true
                 )
             )  // Adjust visibility of back button
-        }
-    }
-
-    private fun configureHeaderMode(headerMode: Int) {
-        when (headerMode) {
-            0 -> { // BACK_BUTTON_WITH_TITLE_AND_ACTION_BUTTONS
-                bind.back.isVisible = true
-                bind.title.isVisible = true
-                bind.appText.isVisible = false
-                bind.secondaryIcon.isVisible = true
-                bind.secondary.isVisible = true
-                bind.primaryIcon.isVisible = true // Include primary icon
-                bind.primary.isVisible = true   // Include primary button
-            }
-
-            1 -> { // APP_TEXT_WITH_ACTION_BUTTONS
-                bind.back.isVisible = false
-                bind.title.isVisible = true
-                bind.appText.isVisible = true
-                bind.secondaryIcon.isVisible = true
-                bind.secondary.isVisible = true
-                bind.primaryIcon.isVisible = true // Include primary icon
-                bind.primary.isVisible = true   // Include primary button
-            }
-
-            2 -> { // APP_TEXT_WITH_BACK_AND_ACTION_BUTTONS
-                bind.back.isVisible = true
-                bind.appText.isVisible = true
-                bind.secondaryIcon.isVisible = true
-                bind.secondary.isVisible = true
-                bind.primaryIcon.isVisible = true // Include primary icon
-                bind.primary.isVisible = true   // Include primary button
-            }
         }
     }
 
@@ -108,10 +65,6 @@ class Header @JvmOverloads constructor(
         bind.primaryIcon.setImageResource(id)
     }
 
-    fun setSecondaryIcon(@DrawableRes id: Int) {
-        bind.secondaryIcon.setImageResource(id)
-    }
-
     fun onBackClick(click: OnClickListener) {
         bind.backIcon.setOnClickListener(click)
         bind.back.setOnClickListener(click)
@@ -120,23 +73,6 @@ class Header @JvmOverloads constructor(
     fun onMorePrimaryClick(click: OnClickListener) {
         bind.primaryIcon.setOnClickListener(click)
         bind.primary.setOnClickListener(click)
-    }
-
-    fun onMoreSecondaryClick(click: OnClickListener) {
-        bind.secondaryIcon.setOnClickListener(click)
-        bind.secondary.setOnClickListener(click)
-    }
-
-    fun showSecondaryIcon(state: Boolean) {
-        if (state) {
-            bind.secondaryIcon.isEnabled = true
-            bind.secondary.visibility = VISIBLE
-            bind.secondaryIcon.visibility = VISIBLE
-        } else {
-            bind.secondaryIcon.isEnabled = false
-            bind.secondary.visibility = GONE
-            bind.secondaryIcon.visibility = GONE
-        }
     }
 
     fun showPrimaryIcon(state: Boolean) {
@@ -160,16 +96,11 @@ class Header @JvmOverloads constructor(
             bind.backIcon.isEnabled = false
             bind.back.visibility = GONE
             bind.backIcon.visibility = INVISIBLE
-            bind.appText.setPadding(20, 0, 0, 0)
         }
     }
 
     fun background(color: Int) {
         bind.header.setBackgroundColor(ContextCompat.getColor(context, color))
-    }
-
-    fun hideLogo() {
-        bind.appText.visibility = GONE
     }
 
     fun setHeaderPadding(left:Int, top:Int, right: Int, bottom:Int){

@@ -11,11 +11,9 @@
         android:id="@+id/header"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:headerMode="BACK_BUTTON_TITLE_ACTION"
         app:headerTitle="Payout"
         app:layout_constraintTop_toTopOf="parent"
-        app:showBackButton="true"
-        app:showSecondaryIcon="false" />
+        app:showBackButton="true" />
 
     <LinearLayout
         android:layout_width="match_parent"

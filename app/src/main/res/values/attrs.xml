@@ -19,19 +19,12 @@
 
     <declare-styleable name="Header">
         <attr name="backgroundColor" format="color" />
-        <attr name="secondaryIconDrawable" format="reference" />
         <attr name="primaryIconDrawable" format="reference" />
         <attr name="backIconDrawable" format="reference" />
-        <attr name="showSecondaryIcon" format="boolean" />
         <attr name="showPrimaryIcon" format="boolean" />
         <attr name="showBackButton" format="boolean" />
         <attr name="showAppTitle" format="boolean" />
         <attr name="headerTitle" format="string" />
-        <attr name="headerMode" format="enum">
-            <enum name="BACK_BUTTON_TITLE_ACTION" value="0" />
-            <enum name="APP_TEXT_ACTION" value="1" />
-            <enum name="APP_TEXT_BACK_ACTION" value="2" />
-        </attr>
     </declare-styleable>
 
     <declare-styleable name="Heading">

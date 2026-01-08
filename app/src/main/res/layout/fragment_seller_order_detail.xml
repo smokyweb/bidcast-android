@@ -10,12 +10,10 @@
         android:id="@+id/header"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:headerMode="BACK_BUTTON_TITLE_ACTION"
         app:headerTitle="Order Detail"
         app:layout_constraintTop_toTopOf="parent"
         app:primaryIconDrawable="@drawable/ic_close"
-        app:showBackButton="true"
-        app:showSecondaryIcon="false" />
+        app:showBackButton="true" />
 
     <ScrollView
         android:id="@+id/scroll"

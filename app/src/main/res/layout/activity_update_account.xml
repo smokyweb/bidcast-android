@@ -10,13 +10,11 @@
         android:id="@+id/header"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:headerMode="BACK_BUTTON_TITLE_ACTION"
         app:headerTitle="Update Your Profile"
         app:layout_constraintTop_toTopOf="parent"
         app:primaryIconDrawable="@drawable/ic_question"
         app:showBackButton="true"
-        app:showPrimaryIcon="false"
-        app:showSecondaryIcon="false" />
+        app:showPrimaryIcon="false" />
 
     <androidx.core.widget.NestedScrollView
         android:id="@+id/scroll"

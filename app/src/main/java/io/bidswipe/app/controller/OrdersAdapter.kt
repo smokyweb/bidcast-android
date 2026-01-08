@@ -62,10 +62,10 @@ class OrdersAdapter(
                 append(item?.product?.pricing.toString().asMoney())
             }
 
-            bind.orderDate.text = Utils.getFormattedDateTime(
-                Const.SERVER_TIME_FORMAT,
-                "MMM dd, yyyy, HH:mm",
-                item?.createdAt.toString()
+            val time = Utils.getTimeStampFromServerTime(item?.createdAt.toString())
+            bind.orderDate.text =   Utils.getTimeFromTimestamp(
+                time,
+                "MMM dd, yyyy - HH:mm",
             )
 
             bind.productImage.loadUrl(mCtx, item?.product?.images?.get(0) ?: "")

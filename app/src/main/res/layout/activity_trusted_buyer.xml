@@ -10,13 +10,10 @@
         android:id="@+id/header"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:headerMode="BACK_BUTTON_TITLE_ACTION"
         app:headerTitle="@string/become_a_trusted_buyer"
         app:layout_constraintTop_toTopOf="parent"
         app:primaryIconDrawable="@drawable/ic_add"
-        app:secondaryIconDrawable="@drawable/search"
-        app:showBackButton="true"
-        app:showSecondaryIcon="false" />
+        app:showBackButton="true" />
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"

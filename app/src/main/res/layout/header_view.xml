@@ -12,14 +12,6 @@
     tools:context="ui.custom.Header"
     tools:ignore="Overdraw">
 
-    <!-- Guideline at 50% to ensure perfect centering -->
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/centerGuideline"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.50" />
-
     <!-- Back button -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/back"
@@ -43,61 +35,23 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <!-- App icon/text -->
-    <androidx.appcompat.widget.AppCompatImageView
-        android:id="@+id/appText"
-        android:layout_width="wrap_content"
-        android:layout_height="38dp"
-        android:visibility="gone"
-        android:layout_marginStart="@dimen/half_margin"
-        android:adjustViewBounds="true"
-        android:src="@drawable/app_icon"
-        app:layout_constraintStart_toEndOf="@id/back"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent" />
-
     <!-- Title - Always centered using guideline at 50% -->
     <TextView
         android:id="@+id/title"
         style="@style/TitleLarge"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:gravity="center"
         android:padding="4dp"
         android:text="@string/app_name"
         android:textAllCaps="false"
         android:textColor="@color/scrim"
-        android:maxWidth="200dp"
         android:ellipsize="end"
         android:maxLines="1"
-        app:layout_constraintStart_toStartOf="@id/centerGuideline"
-        app:layout_constraintEnd_toEndOf="@id/centerGuideline"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent" />
-
-    <!-- Secondary icon -->
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/secondary"
-        android:layout_width="32dp"
-        android:layout_height="32dp"
-        android:layout_marginEnd="@dimen/half_margin"
+        app:layout_constraintStart_toEndOf="@id/back"
         app:layout_constraintEnd_toStartOf="@id/primary"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent">
-
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/secondaryIcon"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="?selectableItemBackgroundBorderless"
-            android:padding="4dp"
-            android:src="@drawable/search"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:tint="@color/onBackground" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
+        app:layout_constraintBottom_toBottomOf="parent" />
 
     <!-- Primary icon -->
     <androidx.constraintlayout.widget.ConstraintLayout

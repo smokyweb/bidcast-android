@@ -538,7 +538,7 @@ class SocketManager private constructor(
 			put("show_in_live_chat", showInLiveChat)
 		}
 
-		Log.d(TAG, "EMIT:tip_setting_save  - showId: $showId, message: $tipMessage")
+		Log.d(TAG, "EMIT:tip_setting_save  - showId: $payload")
 		socket?.emit("tip_setting_save", payload)
 	}
 
