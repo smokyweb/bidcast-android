@@ -51,7 +51,7 @@
         app:endIconTint="@color/scrim"
         app:layout_constraintTop_toTopOf="parent"
         app:startIconDrawable="@drawable/search"
-        app:startIconTint="@color/scrim"
+        app:startIconTint="@color/outlineVariant"
         tools:layout_editor_absoluteX="16dp">
 
         <com.google.android.material.textfield.MaterialAutoCompleteTextView

@@ -128,13 +128,6 @@ class SocketManager private constructor(
                     val user = shoDataNotLive.seller
                     
                     val timee= Utils.getTimeStampFromServerTime( shoDataNotLive.date?.replace("00:00:00",shoDataNotLive.time?:"00:00:00")?:"", timeZone = TimeZone.getDefault().id).toString()
-                    Log.d(TAG, "onRoomCreated: TIME $timee--${shoDataNotLive.date?.replace("00:00:00",shoDataNotLive.time?:"00:00:00")?:""}")
-
-                    val dateFormat = Utils.getSimpleDate("yyyy-MM-dd'T'HH:mm:ss")
-                    val combinedDateTime = "${shoDataNotLive.date?.split("'")?.first()}${shoDataNotLive.time}"
-                    val date = dateFormat.parse(combinedDateTime)
-                    val time =  date?.time ?: 0L
-                    Log.d(TAG, "onRoomCreated: NEW $time")
 
                     val showData = LiveShowModel(
                         seller = LiveShowModel.Seller(

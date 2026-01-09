@@ -6,40 +6,6 @@
     android:layout_height="wrap_content"
     android:layout_margin="@dimen/half_margin">
 
-    <com.zerobranch.layout.SwipeLayout
-        android:id="@+id/swipeLayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:draggedItem="@id/click"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:rightItem="@id/deleteNotification"
-        app:swipeDirection="left">
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/delete"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_gravity="end">
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/deleteNotification"
-                style="@style/appBtn"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_gravity="end"
-                app:backgroundTint="@color/error"
-                app:cornerRadius="0dp"
-                app:iconSize="32dp"
-                app:icon="@drawable/trash"
-                app:iconTint="@color/background"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:rippleColor="@color/onErrorContainer" />
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
         <LinearLayout
             android:id="@+id/click"
             android:layout_width="match_parent"
@@ -47,7 +13,7 @@
             android:background="@drawable/card_8"
             android:gravity="center_vertical"
             android:orientation="vertical"
-            android:padding="@dimen/padding">
+            android:padding="@dimen/margin">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -60,16 +26,14 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="This is notification title"
-                    android:textAllCaps="true" />
+                    android:text="This is notification title" />
 
-                <TextView
-                    android:id="@+id/time"
-                    style="@style/BodyMedium"
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/deleteIcon"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="7 hrs ago"
-                    android:textAllCaps="false"/>
+                    android:src="@drawable/trash"
+                    app:tint="@color/onSurface" />
 
             </LinearLayout>
 
@@ -79,11 +43,17 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="7 hrs ago"
-                android:textAllCaps="false" />
+                android:maxLines="2" />
+
+            <TextView
+                android:id="@+id/time"
+                style="@style/BodySmall"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="7 hrs ago"
+                android:alpha="0.7"
+                android:textAllCaps="false"/>
 
         </LinearLayout>
-
-    </com.zerobranch.layout.SwipeLayout>
-
 
 </com.google.android.material.card.MaterialCardView>

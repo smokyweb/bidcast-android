@@ -7,6 +7,8 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsCompat.CONSUMED
 import androidx.core.view.isVisible
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseActivity
 import io.bidswipe.app.controller.NotificationAdapter
@@ -30,6 +32,9 @@ class NotificationActivity : BaseActivity() {
 	private lateinit var notificationAdapter: NotificationAdapter
 	private var notificationList = mutableListOf<GetNotificationResponse.Data?>()
 	private var delPos = -1
+
+	private var page = 1
+	private var isLoading = false
 
 	private val mClick = object : RecyclerClicks {
 		override fun itemClick(pos: Int, status: String?) {
@@ -82,6 +87,24 @@ class NotificationActivity : BaseActivity() {
 			finish()
 		}
 
+		bind.notificationRec.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+			override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+				super.onScrolled(recyclerView, dx, dy)
+				val layoutManager = bind.notificationRec.layoutManager as LinearLayoutManager
+				val lastItemPosition = layoutManager.findLastVisibleItemPosition()
+				if (lastItemPosition == (notificationList.size - 1)) {
+					if (!isLoading) {
+						isLoading = true
+						page++
+						bind.bottomLoader.isVisible = true
+						viewModel.getNotification(
+							page.toString()
+						)
+					}
+				}
+			}
+		})
+
 		notificationAdapter = NotificationAdapter(notificationList, mClick)
 		bind.notificationRec.adapter = notificationAdapter
 
@@ -92,22 +115,26 @@ class NotificationActivity : BaseActivity() {
 
 		bind.swipeRefreshLayout.setOnRefreshListener {
 			bind.swipeRefreshLayout.isRefreshing = false
-			viewModel.getNotification()
+			page = 1
+			viewModel.getNotification(page.toString())
 		}
 
 		bind.noInternet.onClick {
 			bind.noInternet.isVisible = false
 			bind.loader.isVisible = true
-			viewModel.getNotification()
+			page  = 1
+			viewModel.getNotification(page.toString())
 		}
 
 		bind.noData.onClick {
 			bind.noData.isVisible = false
-			viewModel.getNotification()
+			bind.loader.isVisible = true
+			page  = 1
+			viewModel.getNotification(page.toString())
 		}
 
 		bind.loader.isVisible = true
-		viewModel.getNotification()
+		viewModel.getNotification(page.toString())
 		viewModel.getNotificationRepo.observe(this) {
 			when (it) {
 				is Resource.Success -> {
@@ -117,15 +144,26 @@ class NotificationActivity : BaseActivity() {
 						bind.swipeRefreshLayout.isRefreshing = false
 						bind.loader.isVisible = false
 
-						notificationList.clear()
 						val mData = it.value.data
+
+						if (page== 1){
+							notificationList.clear()
+						}
+
 						if (mData != null) {
 							notificationList.addAll(mData)
 						}
+
 						notificationAdapter.notifyDataSetChanged()
-						val isEmpty = mData.isNullOrEmpty()
-						bind.noData.isVisible = mData?.isEmpty() == true
-						bind.deleteAll.isVisible = !isEmpty
+
+						log("NotificationList : ${notificationList.size}")
+
+						isLoading = page >= (it.value.totalPage ?: 0)
+
+						bind.noData.isVisible = notificationList.isEmpty() == true
+						bind.deleteAll.isVisible = notificationList.isNotEmpty() == true
+
+
 					}
 				}
 
@@ -140,7 +178,6 @@ class NotificationActivity : BaseActivity() {
 						bind.deleteAll.isVisible = false
 						notificationList.clear()
 						notificationAdapter.notifyDataSetChanged()
-
 					} else {
 						bind.noInternet.isVisible = false
 						bind.deleteAll.isVisible = false
@@ -179,7 +216,8 @@ class NotificationActivity : BaseActivity() {
 							bind.deleteAll.isVisible = !isEmpty
 
 						} else {
-							viewModel.getNotification()
+							page = 1
+							viewModel.getNotification(page.toString())
 						}
 
 						delPos = -1

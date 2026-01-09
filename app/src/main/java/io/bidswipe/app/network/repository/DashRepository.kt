@@ -359,7 +359,8 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
     ) = call { api.fetchBuyerIdentity() }
 
     suspend fun getNotification(
-    ) = call { api.getNotification() }
+		page: String?
+    ) = call { api.getNotification(page) }
 
     suspend fun fetchBids(
         page: String?,

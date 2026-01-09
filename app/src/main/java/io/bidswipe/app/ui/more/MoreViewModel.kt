@@ -231,12 +231,13 @@ class MoreViewModel @Inject constructor(
 		get() = _getNotificationResponse
 
 	fun getNotification(
+		page: String?
 	) = viewModelScope.launch {
 		if (!networkMonitor.hasInternet()) {
 			_getNotificationResponse.value = NO_INTERNET_ERROR
 			return@launch
 		}
-		_getNotificationResponse.value = repo.getNotification()
+		_getNotificationResponse.value = repo.getNotification(page)
 	}
 
 	private var _deleteNotificationResponse = MutableLiveData<Resource<CommonResponse>>()

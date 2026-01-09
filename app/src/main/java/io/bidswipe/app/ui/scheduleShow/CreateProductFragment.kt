@@ -57,7 +57,6 @@ class CreateProductFragment : BaseFragment<ScheduleShowViewModel, FragmentCreate
 	private var uploadItemIndex = -1
 	private var profiles = mutableListOf<GetShippingProfilesResponse.Data?>()
 	private var profileId = ""
-	private var selectedCondition = ""
 	var isSubCategory = false
 	var variantList = mutableListOf<GetCategoryResponse.Data.ExtraField?>()
 	private val imageList get() = viewModel.productImages

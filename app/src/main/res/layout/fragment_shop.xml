@@ -27,7 +27,7 @@
             app:endIconTint="@color/scrim"
             android:layout_weight="1"
             app:startIconDrawable="@drawable/search"
-            app:startIconTint="@color/scrim">
+            app:startIconTint="@color/outlineVariant">
 
             <com.google.android.material.textfield.MaterialAutoCompleteTextView
                 android:id="@+id/search"

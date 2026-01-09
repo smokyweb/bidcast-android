@@ -1,6 +1,7 @@
 package io.bidswipe.app.ui.scheduleShow
 
 import android.content.Intent
+import android.icu.util.TimeZone
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.core.content.ContextCompat
@@ -97,6 +98,8 @@ class ShowDetailsActivity : BaseActivity() {
                 products?.first()?.isCurrent = true
             }
 
+	        val timee= Utils.getTimeStampFromServerTime( showData?.date?.replace("00:00:00",showData?.time?:"00:00:00")?:"", timeZone = TimeZone.getDefault().id).toString()
+
             val showData = LiveShowModel(
                 seller = LiveShowModel.Seller(
                     id = user?.id.toString(),
@@ -117,7 +120,7 @@ class ShowDetailsActivity : BaseActivity() {
                     productId = ""
                 ),
                 isLive = true,
-                time = showData?.time.toString(),
+                time =timee,
                 showId = showData?.id.toString(),
                 allowBidForAll = true,
                 bidCountDown = "",
