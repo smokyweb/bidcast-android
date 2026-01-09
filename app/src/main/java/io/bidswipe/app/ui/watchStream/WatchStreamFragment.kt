@@ -91,6 +91,7 @@ import nl.dionsegijn.konfetti.core.Party
 import nl.dionsegijn.konfetti.core.Position
 import nl.dionsegijn.konfetti.core.emitter.Emitter
 import org.json.JSONObject
+import java.time.Instant
 import java.util.Calendar
 import java.util.concurrent.TimeUnit
 import kotlin.math.abs
@@ -1253,10 +1254,12 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
     }
 
     fun checkShowTime(time: Long) {
-        log("ShowTimeTimestamp: $time")
-        val currentTime = Calendar.getInstance()
+        log("ShowTimeTimestamp: $time ${Utils.timestamp()}")
+        val currentTime = Calendar.getInstance().apply {
+            timeInMillis=Utils.timestamp()*1000
+        }
         val showTime = Calendar.getInstance().apply {
-            timeInMillis = time
+            timeInMillis = time*1000
         }
 
         val isToday = currentTime.get(Calendar.DAY_OF_YEAR) == showTime.get(Calendar.DAY_OF_YEAR)
@@ -1268,7 +1271,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
             if (timeDiffInMillis <= 900000) {
                 startCountdown(timeDiffInMillis, time)
             } else {
-                bind.showTime.text = "Today, " + Utils.getTimeFromTimestamp(time, Const.MMM_dd_yyyy_HH_mm)
+                bind.showTime.text = "Today, " + Utils.getTimeFromTimestamp(time, "HH:mm")
             }
         } else {
             setTimeAndTitle(time)
