@@ -12,6 +12,7 @@ import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseAdapter
 import io.bidswipe.app.databinding.ShippingUpdateItemBinding
 import io.bidswipe.app.network.response.GetOrderDetailsResponse
+import io.bidswipe.app.utils.Const
 import io.bidswipe.app.utils.Utils
 import io.bidswipe.app.utils.asCapital
 
@@ -32,9 +33,9 @@ class ShippingUpdateAdapter(
             bind.title.text = item?.title?.asCapital()
 
             val time = Utils.getTimeStampFromServerTime(item?.createdAt.toString())
-            bind.subTitle.text =  Utils.getTimeFromTimestamp(
+            bind.subTitle.text =  Utils.getTimeFromServerTimestamp(
                     time,
-            "MMM dd, yyyy - HH:mm",
+            Const.MMM_dd_yyyy_HH_mm,
             )
 
             if (position == 0) {

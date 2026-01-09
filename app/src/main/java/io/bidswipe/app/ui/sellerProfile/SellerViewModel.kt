@@ -101,6 +101,7 @@ class SellerViewModel @Inject constructor(
 		get() = _getMyScheduledShowResponse
 
 	fun getMyScheduledShow(
+		sellerId: RequestBody?,
 		type: RequestBody? = null,
 		page: RequestBody? = null,
 	) = viewModelScope.launch {
@@ -108,7 +109,7 @@ class SellerViewModel @Inject constructor(
 			_getMyScheduledShowResponse.value = NO_INTERNET_ERROR
 			return@launch
 		}
-		_getMyScheduledShowResponse.value = repo.getMyScheduledShow(type, page)
+		_getMyScheduledShowResponse.value = repo.getMyScheduledShow(type, page,sellerId)
 	}
 
 	private var _getSellerRatingResponse = MutableLiveData<Resource<GetRatingResponse>>()

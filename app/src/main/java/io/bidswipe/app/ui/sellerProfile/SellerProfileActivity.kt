@@ -8,10 +8,12 @@ import android.widget.ArrayAdapter
 import android.widget.PopupMenu
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
+import androidx.appcompat.view.ContextThemeWrapper
 import androidx.core.content.ContextCompat
 import androidx.core.text.bold
 import androidx.core.text.buildSpannedString
 import androidx.core.view.isVisible
+import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayoutMediator
 import com.gyf.immersionbar.ktx.immersionBar
 import com.skydoves.powermenu.PowerMenuItem
@@ -28,7 +30,13 @@ import io.bidswipe.app.network.Resource
 import io.bidswipe.app.network.response.GetReportCategoriesResponse
 import io.bidswipe.app.ui.custom.AlertType
 import io.bidswipe.app.ui.custom.AppBottomSheet
+import io.bidswipe.app.ui.dashboard.BidsFragment
 import io.bidswipe.app.ui.dashboard.ChatActivity
+import io.bidswipe.app.ui.dashboard.MessagesFragment
+import io.bidswipe.app.ui.dashboard.OfferFragment
+import io.bidswipe.app.ui.dashboard.PurchasesFragment
+import io.bidswipe.app.ui.dashboard.SavedItemsFragment
+import io.bidswipe.app.ui.sellerHub.ShowsFragment
 import io.bidswipe.app.utils.Alerts
 import io.bidswipe.app.utils.Const
 import io.bidswipe.app.utils.asCapital
@@ -51,7 +59,7 @@ class SellerProfileActivity : BaseActivity() {
     private val bind by bind(ActivitySellerProfileBinding::inflate)
     private val viewModel by viewModels<SellerViewModel>()
 
-    private var sellerId = ""
+     var sellerId = ""
     private var sellerName = ""
     private var sellerImage = ""
 
@@ -75,7 +83,12 @@ class SellerProfileActivity : BaseActivity() {
         actionList.clear()
         actionList.add(PowerMenuItem(title = "Save Product"))
 
-        val menu = PopupMenu(this, bind.moreIcon)
+          val wrapper = ContextThemeWrapper(this, R.style.popupMenuStyle)
+        val menu = PopupMenu(
+            wrapper,
+            bind.moreIcon
+        )
+
         menu.menuInflater.inflate(R.menu.profile_action_menu, menu.menu)
         menu.setOnMenuItemClickListener {
             when (it.itemId) {
@@ -104,7 +117,11 @@ class SellerProfileActivity : BaseActivity() {
             menu.show()
         }
 
-        val menu1 = PopupMenu(this, bind.moreIcon1)
+        val menu1 = PopupMenu(
+            wrapper,
+            bind.moreIcon1
+        )
+
         menu1.menuInflater.inflate(R.menu.profile_action_menu, menu1.menu)
         menu1.setOnMenuItemClickListener {
             when (it.itemId) {

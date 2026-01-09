@@ -3,6 +3,7 @@ package io.bidswipe.app.utils
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.content.res.Configuration
 import android.content.res.Resources
 import android.content.res.TypedArray
 import android.graphics.Bitmap
@@ -81,6 +82,10 @@ fun Resources.dp(value : Float) : Int {
 	} else ceil((density * value).toDouble()).toInt()
 }
 
+fun Resources.isTablet(): Boolean {
+	return (this.configuration.screenLayout and Configuration.SCREENLAYOUT_SIZE_MASK == Configuration.SCREENLAYOUT_SIZE_LARGE) ||
+			(this.configuration.screenLayout and Configuration.SCREENLAYOUT_SIZE_MASK == Configuration.SCREENLAYOUT_SIZE_XLARGE)
+}
 
 fun ImageView.loadUrl(mCtx : Context , url : String , placeHolder : Int? = null,userName:String?=null) {
 	runSafe {

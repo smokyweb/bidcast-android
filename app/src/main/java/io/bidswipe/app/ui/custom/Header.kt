@@ -82,8 +82,8 @@ class Header @JvmOverloads constructor(
             bind.primaryIcon.visibility = VISIBLE
         } else {
             bind.primaryIcon.isEnabled = false
-            bind.primary.visibility = GONE
-            bind.primaryIcon.visibility = GONE
+            bind.primary.visibility = INVISIBLE
+            bind.primaryIcon.visibility = INVISIBLE
         }
     }
 

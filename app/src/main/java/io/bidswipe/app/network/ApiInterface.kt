@@ -260,6 +260,7 @@ interface ApiInterface {
     @Multipart
     @POST("api/get-my-schedule-show")
     suspend fun getMyScheduledShow(
+        @Part("seller_id") sellerId: RequestBody?,
         @Part("type") type: RequestBody?,
         @Part("page") page: RequestBody?,
     ): GetMyShowResponse

@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.GridLayoutManager
 import io.bidswipe.app.base.BaseFragment
 import io.bidswipe.app.controller.HomeAdapter
 import io.bidswipe.app.databinding.FragmentSearchShowBinding
@@ -22,6 +23,7 @@ import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.ui.sellerProfile.SellerProfileActivity
 import io.bidswipe.app.ui.watchStream.ViewLiveShowActivity
 import io.bidswipe.app.utils.hideKeyboard
+import io.bidswipe.app.utils.isTablet
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request
 import io.bidswipe.app.utils.setHapticClickListener
@@ -82,7 +84,7 @@ class SearchShowFragment : BaseFragment<DashViewModel, FragmentSearchShowBinding
 		}
 
 		homeAdapter = HomeAdapter(showList, mClick)
-
+		(bind.recycler.layoutManager as GridLayoutManager).setSpanCount( if(resources.isTablet()) 3 else 2)
 		bind.recycler.adapter = homeAdapter
 
 		bind.search.requestFocus()

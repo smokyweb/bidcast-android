@@ -15,6 +15,7 @@ import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Build
 import android.provider.OpenableColumns
+import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
@@ -43,6 +44,7 @@ import java.net.HttpURLConnection
 import java.net.URL
 import java.text.SimpleDateFormat
 import java.time.Instant
+import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 import java.util.TimeZone
@@ -63,7 +65,7 @@ object Utils {
         System.currentTimeMillis() / 1000L
     }
 
-    fun getTimeFromTimestamp(millis: Long, format: String = "hh:mm a"): String {
+    fun getTimeFromServerTimestamp(millis: Long, format: String = "hh:mm a"): String {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val formatter = getSimpleDate(format)
             formatter.format(Instant.ofEpochMilli(millis).toEpochMilli()).toString()
@@ -72,6 +74,13 @@ object Utils {
             formatter.format(millis).toString()
         }
     }
+
+    fun getTimeFromTimestamp(millis: Long, format: String = "hh:mm a") =
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            getSimpleDate(format).format(Instant.ofEpochSecond(millis).toEpochMilli()).toString()
+        } else {
+            getSimpleDate(format).format(millis / 1000).toString()
+        }
 
     fun getFormattedDateTime(inFormat: String, outFormat: String, timestamp: String): String? {
         if (timestamp.isEmpty()) return "N/A"
@@ -104,17 +113,32 @@ object Utils {
             )
         )
 
-    fun getTimeStampFromServerTime(time: String, format: String = Const.SERVER_TIME_FORMAT): Long {
-        val inputFormat = SimpleDateFormat(format)
-        inputFormat.timeZone = TimeZone.getTimeZone("UTC")
+
+    fun getTimeStampFromServerTime(
+        time: String,
+        format: String = Const.SERVER_TIME_FORMAT,
+        timeZone: String? = "UTC",
+        outTimeZone: String = "UTC"
+    ): Long {
+        Log.d("TAG", "getTimeStampFromServerTime: $time")
+
+        val inputFormat = getSimpleDate(format)
+        inputFormat.timeZone = TimeZone.getTimeZone(timeZone)
+
         try {
-            return inputFormat.parse(time)?.time ?: System.currentTimeMillis()
+            val parsedDate = inputFormat.parse(time) ?: return System.currentTimeMillis()
+
+            val outputFormat = getSimpleDate(format)
+            outputFormat.timeZone = TimeZone.getTimeZone(outTimeZone)
+
+            return outputFormat.format(parsedDate).let {
+                outputFormat.parse(it)?.time ?: System.currentTimeMillis()
+            }
         } catch (e: Exception) {
             e.printStackTrace()
             return System.currentTimeMillis()
         }
     }
-
 
     fun getDateFromTimestamp(millis: Long) = getSimpleDate("dd-MM-yyyy")
         .format(millis).toString()

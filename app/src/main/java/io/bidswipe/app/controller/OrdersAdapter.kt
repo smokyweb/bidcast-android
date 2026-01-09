@@ -63,9 +63,9 @@ class OrdersAdapter(
             }
 
             val time = Utils.getTimeStampFromServerTime(item?.createdAt.toString())
-            bind.orderDate.text =   Utils.getTimeFromTimestamp(
+            bind.orderDate.text =   Utils.getTimeFromServerTimestamp(
                 time,
-                "MMM dd, yyyy - HH:mm",
+                Const.MMM_dd_yyyy_HH_mm,
             )
 
             bind.productImage.loadUrl(mCtx, item?.product?.images?.get(0) ?: "")

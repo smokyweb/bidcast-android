@@ -28,8 +28,11 @@
         app:tabIndicatorColor="@color/scrim"
         app:tabIndicatorHeight="0dp"
         app:tabMode="scrollable"
-        app:tabPaddingEnd="6dp"
-        app:tabPaddingStart="6dp"
+        app:tabMinWidth="0dp"
+        app:tabMaxWidth="0dp"
+        app:tabGravity="start"
+        app:tabPaddingEnd="10dp"
+        app:tabPaddingStart="10dp"
         app:tabSelectedTextAppearance="@style/TitleLarge"
         app:tabSelectedTextColor="@color/scrim"
         app:tabTextAppearance="@style/TitleSmall"
@@ -38,7 +41,6 @@
         <com.google.android.material.tabs.TabItem
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:minWidth="0dp"
             android:text="@string/messages" />
 
         <com.google.android.material.tabs.TabItem

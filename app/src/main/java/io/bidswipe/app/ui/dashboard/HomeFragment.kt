@@ -15,7 +15,6 @@ import androidx.core.view.isVisible
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.caneryilmaz.apps.luckywheel.data.WheelData
 import io.bidswipe.app.App
 import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseFragment
@@ -34,6 +33,7 @@ import io.bidswipe.app.ui.sellerProfile.SellerProfileActivity
 import io.bidswipe.app.ui.watchStream.ViewLiveShowActivity
 import io.bidswipe.app.utils.Alerts
 import io.bidswipe.app.utils.hideKeyboard
+import io.bidswipe.app.utils.isTablet
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request
 import io.bidswipe.app.utils.setHapticClickListener
@@ -92,22 +92,22 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
                 "viewShow" -> {
 
 //                    if (showList[pos]?.isLive == true) {
-                        val roomId = showList[pos]?.roomId.toString()
+                    val roomId = showList[pos]?.roomId.toString()
 
-                        if (App.PIPMode) {
-                            Alerts.error(mCtx, "You are already in Live show")
-                        } else {
-                            startActivity(
-                                Intent(mCtx, ViewLiveShowActivity::class.java)
-                                    .putExtra("roomId", roomId)
-                                    .putExtra("userId", showList[pos]?.userId.toString())
-                                    .putExtra("roomIdsList", romIdsList.joinToString(","))
-                                    .putParcelableArrayListExtra(
-                                        "streamList",
-                                        ArrayList(streamList)
-                                    )
-                            )
-                        }
+                    if (App.PIPMode) {
+                        Alerts.error(mCtx, "You are already in Live show")
+                    } else {
+                        startActivity(
+                            Intent(mCtx, ViewLiveShowActivity::class.java)
+                                .putExtra("roomId", roomId)
+                                .putExtra("userId", showList[pos]?.userId.toString())
+                                .putExtra("roomIdsList", romIdsList.joinToString(","))
+                                .putParcelableArrayListExtra(
+                                    "streamList",
+                                    ArrayList(streamList)
+                                )
+                        )
+                    }
 //                    }
                 }
             }
@@ -150,6 +150,7 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
 
         homeAdapter = HomeAdapter(showList, mClick)
 
+        (bind.recycler.layoutManager as GridLayoutManager).setSpanCount( if(resources.isTablet()) 3 else 2)
         bind.recycler.adapter = homeAdapter
 
         categoryAdapter = HomeCategoryAdapter(categoryTiles, object : RecyclerClicks {
@@ -240,7 +241,7 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
             viewModel.getCategory()
         }
 
-                 bind.noInternet.onClick {
+        bind.noInternet.onClick {
             bind.loader.isVisible = false
             bind.noInternet.isVisible = false
             viewModel.getLiveShow(
@@ -356,7 +357,7 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
                             )
                         )
 
-	                    categoryAdapter.notifyDataSetChanged()
+                        categoryAdapter.notifyDataSetChanged()
 
                         val tileToSelect =
                             categoryTiles.firstOrNull { it.id == selectedCategoryTileId && it.tileType != HomeCategoryAdapter.TileType.SEE_ALL }
@@ -405,8 +406,12 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
 
                     val mData = it.value.data
 
-//					romIdsList.clear()
-                    streamList.clear()
+
+                    if (page == 1) {
+                        romIdsList.clear()
+                        showList.clear()
+                        streamList.clear()
+                    }
 
                     mData?.forEach {
                         streamList.add(
@@ -417,10 +422,6 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
                             )
                         )
                         romIdsList.add(it?.roomId.toString())
-                    }
-
-                    if (page == 1) {
-                        showList.clear()
                     }
 
                     mData?.forEach {

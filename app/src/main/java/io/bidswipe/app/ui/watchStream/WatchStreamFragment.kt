@@ -70,6 +70,7 @@ import io.bidswipe.app.ui.sellerProfile.SellerProfileActivity
 import io.bidswipe.app.utils.Alerts
 import io.bidswipe.app.utils.Const
 import io.bidswipe.app.utils.SocketManager
+import io.bidswipe.app.utils.Utils
 import io.bidswipe.app.utils.asCapital
 import io.bidswipe.app.utils.asMoney
 import io.bidswipe.app.utils.clr
@@ -90,6 +91,7 @@ import nl.dionsegijn.konfetti.core.Party
 import nl.dionsegijn.konfetti.core.Position
 import nl.dionsegijn.konfetti.core.emitter.Emitter
 import org.json.JSONObject
+import java.util.Calendar
 import java.util.concurrent.TimeUnit
 import kotlin.math.abs
 
@@ -169,7 +171,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 //        showWonView(userName ,userImage,"dhty ddy")
 
         // Initialize thumbnail view - show it initially
-        bind.thumbnailView.loadUrl(mCtx, showThumbnail?:"", R.drawable.placeholder_rect)
+        bind.thumbnailView.loadUrl(mCtx, showThumbnail ?: "", R.drawable.placeholder_rect)
 
 //		showThumbnail()
 
@@ -245,14 +247,14 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
             bind.freebieEntryLayout.isVisible = false
         }
 
-		commentAdapter = CommentAdapter(commentList, roomID.split("_")[2], object : RecyclerClicks {
-			override fun itemClick(pos: Int, status: String?) {
+        commentAdapter = CommentAdapter(commentList, roomID.split("_")[2], object : RecyclerClicks {
+            override fun itemClick(pos: Int, status: String?) {
 
-				if (commentList[pos]?.userId == userId) return
+                if (commentList[pos]?.userId == userId) return
 
-				startActivity(Intent(mCtx, SellerProfileActivity::class.java).putExtra("sellerId", commentList[pos]?.userId))
-			}
-		})
+                startActivity(Intent(mCtx, SellerProfileActivity::class.java).putExtra("sellerId", commentList[pos]?.userId))
+            }
+        })
 
         livePollAdapter = LivePollOptionAdapter(livePollOptionList, object : RecyclerClicks {
             override fun itemClick(pos: Int, status: String?) {
@@ -421,7 +423,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
                 if (showData.roomId == roomID) {
                     if (streamID.isEmpty()) {
                         streamID = showData.rtcToken ?: ""
-                        if(streamID.isNotEmpty()){
+                        if (streamID.isNotEmpty()) {
                             App.manager.joinSubscriberChannel(streamID, roomID)
                             currentRemoteUid?.let { uid ->
                                 setupRemoteVideo(uid)
@@ -1125,16 +1127,17 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
         runSafe {
             log("SESSION UPDATE: $showData")
 
-//            if(!showData.isLive){
-//                bind.notLiveLayout.isVisible=true
-//                bind.scrollview.isVisible=false
-//
-//                bind.showTime.text = showData.time
-//
-//            }else{
-//                bind.notLiveLayout.isVisible=false
-//                bind.scrollview.isVisible=true
-//            }
+            if (!showData.isLive) {
+                bind.notLiveLayout.isVisible = true
+                bind.bottomUI.isVisible = false
+                bind.notesFreebieLayout.isVisible = false
+//                bind.showTime.text = Utils.getTimeFromTimestamp(showData.time?.toLong()?:Utils.timestamp(),Const.MMM_dd_yyyy_HH_mm)
+                checkShowTime(showData.time?.toLong() ?: Utils.timestamp())
+            } else {
+                bind.notLiveLayout.isVisible = false
+                bind.notesFreebieLayout.isVisible = true
+                bind.bottomUI.isVisible = true
+            }
 
             // Mark socket data as loaded and show thumbnail if available
             isSocketDataLoaded = true
@@ -1185,10 +1188,10 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
             showId = showData.showId
             showTitle = showData.showDetail
-            showThumbnail = showData.thumbnail
-            bind.thumbnailView.loadUrl(mCtx, showThumbnail?:"", R.drawable.placeholder_rect)
-
-            log("ALLOW BID FOR ALL: $isAllowBidForAll")
+            if (showThumbnail?.isEmpty()==true) {
+                showThumbnail = showData.thumbnail
+                bind.thumbnailView.loadUrl(mCtx, showThumbnail ?: "", R.drawable.placeholder_rect)
+            }
 
             bind.bidSwipeLayout.setOnActionsListener(object : SwipeActionsListener {
                 override fun onOpen(direction: Int, isContinuous: Boolean) {
@@ -1247,6 +1250,58 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
             }
 
         }
+    }
+
+    fun checkShowTime(time: Long) {
+        log("ShowTimeTimestamp: $time")
+        val currentTime = Calendar.getInstance()
+        val showTime = Calendar.getInstance().apply {
+            timeInMillis = time
+        }
+
+        val isToday = currentTime.get(Calendar.DAY_OF_YEAR) == showTime.get(Calendar.DAY_OF_YEAR)
+        val isInTheFuture = showTime.after(currentTime)
+
+        if (isToday && isInTheFuture) {
+            val timeDiffInMillis = showTime.timeInMillis - currentTime.timeInMillis
+
+            if (timeDiffInMillis <= 900000) {
+                startCountdown(timeDiffInMillis, time)
+            } else {
+                bind.showTime.text = "Today, " + Utils.getTimeFromTimestamp(time, Const.MMM_dd_yyyy_HH_mm)
+            }
+        } else {
+            setTimeAndTitle(time)
+        }
+    }
+
+    fun setTimeAndTitle(time: Long) {
+        bind.showTimeTitle.text = buildString {
+            append("Show Starts at -")
+            append(Utils.getTimeFromTimestamp(time, Const.MMM_dd_yyyy_HH_mm))
+        }
+        bind.showTime.text = "Waiting for Host..."
+    }
+
+    fun startCountdown(timeRemainingInMillis: Long, time: Long) {
+        val handler = Handler()
+        val countdownRunnable = object : Runnable {
+            var timeRemaining = timeRemainingInMillis
+
+            override fun run() {
+                if (timeRemaining > 0) {
+                    val minutes = (timeRemaining / 1000) / 60
+                    val seconds = (timeRemaining / 1000) % 60
+                    bind.showTime.text = String.format("%02d:%02d", minutes, seconds)
+                    timeRemaining -= 1000
+                    handler.postDelayed(this, 1000)
+                } else {
+                    setTimeAndTitle(time)
+                }
+            }
+        }
+
+        handler.post(countdownRunnable)
     }
 
     private fun verificationDialog() {
@@ -2159,12 +2214,12 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
                         bind.winnerSpotLayout.isVisible = false
                         bind.notesFreebieLayout.isVisible = true
                         bind.freebieLayout.isVisible = false
-						currentIndex = 0
-					}, 2000)
-					return
-				} else {
-					bind.textSwitcher.setText(freebieUsers[currentIndex]?.name)
-				}
+                        currentIndex = 0
+                    }, 2000)
+                    return
+                } else {
+                    bind.textSwitcher.setText(freebieUsers[currentIndex]?.name)
+                }
 
                 if (currentIndex < finalIndex) currentIndex++
 

@@ -12,6 +12,7 @@ import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.GridLayoutManager
 import io.bidswipe.app.App
 import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseFragment
@@ -29,6 +30,7 @@ import io.bidswipe.app.ui.watchStream.ViewLiveShowActivity
 import io.bidswipe.app.utils.Alerts
 import io.bidswipe.app.utils.asCapital
 import io.bidswipe.app.utils.hideKeyboard
+import io.bidswipe.app.utils.isTablet
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request
 import io.bidswipe.app.utils.setHapticClickListener
@@ -62,9 +64,8 @@ class ExploreTypeFragment : BaseFragment<DashViewModel , FragmentExploreTypeBind
 				}
 
 				"viewShow" -> {
-					if (showList[pos]?.isLive == true) {
+//					if (showList[pos]?.isLive == true) {
 						val roomId = showList[pos]?.roomId.toString()
-						print("ROOM $romIdsList")
 						if (App.PIPMode) {
 							Alerts.error(mCtx , "You are already in Live show")
 						} else {
@@ -81,7 +82,7 @@ class ExploreTypeFragment : BaseFragment<DashViewModel , FragmentExploreTypeBind
 									)
 							)
 						}
-					}
+//					}
 				}
 			}
 
@@ -151,7 +152,7 @@ class ExploreTypeFragment : BaseFragment<DashViewModel , FragmentExploreTypeBind
 		}
 
 		homeAdapter = HomeAdapter(showList , mClick)
-
+		(bind.recycler.layoutManager as GridLayoutManager).setSpanCount( if(resources.isTablet()) 3 else 2)
 		bind.recycler.adapter = homeAdapter
 
 		selectTab(bind.live)
