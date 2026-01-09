@@ -27,7 +27,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/header"
         app:startIconDrawable="@drawable/search"
-        app:startIconTint="@color/scrim">
+        app:startIconTint="@color/outlineVariant">
 
         <com.google.android.material.textfield.MaterialAutoCompleteTextView
             android:id="@+id/search"

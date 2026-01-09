@@ -120,7 +120,6 @@ object Utils {
         timeZone: String? = "UTC",
         outTimeZone: String = "UTC"
     ): Long {
-        Log.d("TAG", "getTimeStampFromServerTime: $time")
 
         val inputFormat = getSimpleDate(format)
         inputFormat.timeZone = TimeZone.getTimeZone(timeZone)

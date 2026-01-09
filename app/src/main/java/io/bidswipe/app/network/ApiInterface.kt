@@ -495,6 +495,7 @@ interface ApiInterface {
 
     @POST("api/notification/listing")
     suspend fun getNotification(
+		@Query("page") page: String?
     ): GetNotificationResponse
 
     @GET("api/bid/fetch")

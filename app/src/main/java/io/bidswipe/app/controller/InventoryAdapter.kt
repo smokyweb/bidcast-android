@@ -1,11 +1,9 @@
 package io.bidswipe.app.controller
 
 import android.util.Log
-import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.appcompat.view.ContextThemeWrapper
-import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.content.ContextCompat
 import androidx.core.text.buildSpannedString
@@ -27,10 +25,8 @@ class InventoryAdapter(
 	val mList: MutableList<Product?>,
 	private val isSelectionMode: Boolean,
 	val mClicks: RecyclerClicks,
-	val from:String =""
+	val from: String = ""
 ) : BaseAdapter<Product?, InventoryItemBinding>(mList) {
-
-	val posList = mutableListOf<Int>()
 
 	override fun bindView(inflater: LayoutInflater, parent: ViewGroup) =
 		InventoryItemBinding.inflate(inflater, parent, false)
@@ -44,9 +40,9 @@ class InventoryAdapter(
 			if (from == "show_details") {
 				bind.moreMenu.isVisible = false
 				bind.root.cardElevation = 0F
-				bind.root.setMargins(0,0,0,0)
+				bind.root.setMargins(0, 0, 0, 0)
 				bind.divider.isVisible = position != mList.lastIndex
-			}else{
+			} else {
 				bind.divider.isVisible = false
 				bind.moreMenu.isVisible = true
 			}
@@ -76,8 +72,6 @@ class InventoryAdapter(
 
 			bind.price.text = buildSpannedString {
 				append((item?.pricing ?: 0.0).toString().asMoney())
-//				append(Const.BULLET)
-//				append(if (item?.auction == true) "Auction" else "MarketPlace")
 			}
 
 			bind.stockCount.text = buildString {
@@ -86,12 +80,10 @@ class InventoryAdapter(
 			}
 
 			if (isSelectionMode) {
-                if (item?.selected == true) {
-//					bind.root.setBackgroundColor(ContextCompat.getColor(mCtx, R.color.secondaryContainer))
+				if (item?.selected == true) {
 					bind.root.strokeWidth = 2
 					bind.root.strokeColor = ContextCompat.getColor(mCtx, R.color.primary)
 				} else {
-//					bind.root.setBackgroundColor(ContextCompat.getColor(mCtx, R.color.surface))
 					bind.root.strokeWidth = 0
 				}
 
@@ -99,12 +91,11 @@ class InventoryAdapter(
 					mClicks.itemClick(position, "toggle")
 				}
 			} else {
-//				bind.root.setBackgroundColor(ContextCompat.getColor(mCtx, R.color.surface))
-                bind.root.strokeWidth = 0
-                bind.click.setHapticClickListener {
-                    mClicks.itemClick(position)
-                }
-            }
+				bind.root.strokeWidth = 0
+				bind.click.setHapticClickListener {
+					mClicks.itemClick(position)
+				}
+			}
 
 			val wrapper = ContextThemeWrapper(mCtx, R.style.popupMenuStyle)
 			val menu = PopupMenu(
@@ -147,7 +138,7 @@ class InventoryAdapter(
 				menu.show()
 			}
 
-        }
-    }
+		}
+	}
 
 }

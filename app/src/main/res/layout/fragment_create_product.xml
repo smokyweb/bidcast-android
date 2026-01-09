@@ -58,8 +58,8 @@
 
                 </LinearLayout>
 
-
             </com.google.android.material.card.MaterialCardView>
+
             <io.bidswipe.app.ui.custom.Heading
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -121,7 +121,6 @@
                 tools:itemCount="3"
                 tools:listitem="@layout/upload_image_item" />
 
-
             <io.bidswipe.app.ui.custom.Heading
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -147,6 +146,7 @@
                     style="@style/inputTextStyle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:enabled="false"
                     android:focusable="false"
                     android:focusableInTouchMode="false"
                     android:hint="@string/select_category" />
@@ -184,13 +184,13 @@
                 style="@style/inputBoxStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/half_margin"
                 app:boxCornerRadiusBottomEnd="@dimen/margin"
                 app:boxCornerRadiusBottomStart="@dimen/margin"
                 app:boxCornerRadiusTopEnd="@dimen/margin"
                 app:boxCornerRadiusTopStart="@dimen/margin"
                 app:counterEnabled="true"
-                app:counterMaxLength="1000"
-                android:layout_marginBottom="@dimen/half_margin">
+                app:counterMaxLength="1000">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/description"
@@ -201,7 +201,7 @@
                     android:hint="@string/describe_your_product"
                     android:inputType="textMultiLine"
                     android:maxLines="10"
-                    android:minLines="4"/>
+                    android:minLines="4" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -224,9 +224,9 @@
                     style="@style/inputTextStyle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Select Product Condition"
                     android:focusable="false"
-                    android:focusableInTouchMode="false"/>
+                    android:focusableInTouchMode="false"
+                    android:hint="Select Product Condition" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -255,13 +255,13 @@
 
             </com.google.android.material.textfield.TextInputLayout>
 
-                <TextView
-                    android:id="@+id/width_title"
-                    style="@style/TitleSmall"
-                    android:layout_width="match_parent"
-                    android:layout_weight="1"
-                    android:layout_height="wrap_content"
-                    android:text="Width" />
+            <TextView
+                android:id="@+id/width_title"
+                style="@style/TitleSmall"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Width" />
 
             <com.google.android.material.textfield.TextInputLayout
                 style="@style/inputBoxStyle"
@@ -369,7 +369,6 @@
                     android:layout_height="wrap_content"
                     android:focusable="false"
                     android:focusableInTouchMode="false"
-                    android:enabled="false"
                     android:hint="@string/select_category" />
 
             </com.google.android.material.textfield.TextInputLayout>
@@ -384,8 +383,8 @@
                 style="@style/inputBoxStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:endIconDrawable="@drawable/ic_arrow_down_2"
                 android:layout_marginBottom="@dimen/margin"
+                app:endIconDrawable="@drawable/ic_arrow_down_2"
                 app:endIconMode="custom">
 
                 <com.google.android.material.textfield.MaterialAutoCompleteTextView
@@ -415,9 +414,8 @@
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:paddingHorizontal="@dimen/half_margin"
                     android:background="@drawable/card_8_outline"
-                    >
+                    android:paddingHorizontal="@dimen/half_margin">
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/decreaseQuantity"
@@ -438,9 +436,9 @@
                         android:minWidth="0dp"
                         android:minHeight="0dp"
                         android:paddingHorizontal="0dp"
-                        app:boxStrokeWidthFocused="0dp"
                         android:paddingVertical="0dp"
-                        app:boxStrokeWidth="0dp">
+                        app:boxStrokeWidth="0dp"
+                        app:boxStrokeWidthFocused="0dp">
 
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/quantity"
@@ -449,8 +447,8 @@
                             android:layout_height="wrap_content"
                             android:inputType="number"
                             android:maxLength="5"
-                            android:minHeight="0dp"
                             android:minWidth="48dp"
+                            android:minHeight="0dp"
                             android:padding="0dp"
                             android:text="12"
                             android:textAlignment="center"
@@ -466,7 +464,7 @@
                         android:layout_marginStart="4dp"
                         android:minWidth="0dp"
                         android:minHeight="0dp"
-                    android:padding="4dp"
+                        android:padding="4dp"
                         android:text="+" />
                 </LinearLayout>
 
@@ -483,34 +481,34 @@
                 tools:itemCount="3"
                 tools:listitem="@layout/variant_item" />
 
-      <!--      <com.google.android.material.card.MaterialCardView
-                android:id="@+id/addVariant"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:strokeWidth="2dp">
+            <!--      <com.google.android.material.card.MaterialCardView
+                      android:id="@+id/addVariant"
+                      android:layout_width="match_parent"
+                      android:layout_height="wrap_content"
+                      app:strokeWidth="2dp">
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center"
-                    android:padding="@dimen/margin">
+                      <LinearLayout
+                          android:layout_width="match_parent"
+                          android:layout_height="match_parent"
+                          android:gravity="center"
+                          android:padding="@dimen/margin">
 
-                    <androidx.appcompat.widget.AppCompatImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/ic_add" />
+                          <androidx.appcompat.widget.AppCompatImageView
+                              android:layout_width="wrap_content"
+                              android:layout_height="wrap_content"
+                              android:src="@drawable/ic_add" />
 
-                    <TextView
-                        style="@style/BodyLarge"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:layout_marginStart="@dimen/half_margin"
-                        android:text="@string/add_variants"
-                        android:textColor="@color/primary" />
+                          <TextView
+                              style="@style/BodyLarge"
+                              android:layout_width="wrap_content"
+                              android:layout_height="match_parent"
+                              android:layout_marginStart="@dimen/half_margin"
+                              android:text="@string/add_variants"
+                              android:textColor="@color/primary" />
 
-                </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
--->
+                      </LinearLayout>
+                  </com.google.android.material.card.MaterialCardView>
+      -->
         </LinearLayout>
 
     </ScrollView>
@@ -520,9 +518,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
+        android:padding="@dimen/margin"
         android:visibility="visible"
         android:weightSum="3"
-        android:padding="@dimen/margin"
         app:layout_constraintBottom_toBottomOf="parent">
 
         <com.google.android.material.button.MaterialButton
@@ -540,8 +538,8 @@
             style="@style/appBtn"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="1"
             android:layout_marginStart="@dimen/half_margin"
+            android:layout_weight="1"
             android:paddingHorizontal="@dimen/margin"
             android:text="@string/_continue" />
 
