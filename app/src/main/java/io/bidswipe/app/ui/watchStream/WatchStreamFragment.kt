@@ -1259,13 +1259,17 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 		val currentTime = Calendar.getInstance().apply {
 			timeInMillis = System.currentTimeMillis()
 		}
+
 		val showTime = Calendar.getInstance().apply {
-			timeInMillis = time
+			timeInMillis = Instant.ofEpochSecond(time).toEpochMilli()
 		}
 
-		val isToday = currentTime.get(Calendar.DAY_OF_YEAR) == showTime.get(Calendar.DAY_OF_YEAR)
+		val isToday = showTime.get(Calendar.DAY_OF_YEAR) == Calendar.getInstance().get(Calendar.DAY_OF_YEAR)
+
+//		val isToday = currentTime.get(Calendar.DAY_OF_YEAR) == showTime.get(Calendar.DAY_OF_YEAR)
+
 		val isInTheFuture = showTime.after(currentTime)
-		log("IS TODAY $isToday--$isInTheFuture--${currentTime.get(Calendar.DAY_OF_YEAR)}==${showTime.get(Calendar.DAY_OF_YEAR)}\n ${currentTime.timeInMillis}--${showTime.timeInMillis}")
+		log("IS TODAY $isToday--$isInTheFuture--${showTime.get(Calendar.DAY_OF_YEAR)}==${Calendar.getInstance().get(Calendar.DAY_OF_YEAR)}\n ${currentTime.timeInMillis}--${showTime.timeInMillis}")
 		if (isToday && isInTheFuture) {
 			val timeDiffInMillis = showTime.timeInMillis - currentTime.timeInMillis
 			log("TIME DIFF $timeDiffInMillis")
