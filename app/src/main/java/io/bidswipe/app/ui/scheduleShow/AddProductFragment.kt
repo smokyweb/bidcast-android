@@ -196,16 +196,17 @@ class AddProductFragment : BaseFragment<ScheduleShowViewModel, FragmentAddProduc
 				data.putExtra(
 					"title",
 					TutorialShowModel(
-						viewModel.showTitle,
-						viewModel.categoryId,
-						viewModel.auctionId,
-						viewModel.thumbnail,
-						productIdList.joinToString(","),
-						viewModel.repeatMode,
-						viewModel.repeatType,
-						viewModel.explicitContent,
-						viewModel.primaryLanguage,
-						viewModel.discoverability
+                        showTitle = viewModel.showTitle,
+                        categoryId = viewModel.categoryId,
+                        subCategoryId = viewModel.subCategoryId,
+                        actionId = viewModel.auctionId,
+                        thumbnail = viewModel.thumbnail,
+                        productIds = productIdList.joinToString(","),
+                        repeatMode = viewModel.repeatMode,
+                        repeatType = viewModel.repeatType,
+                        explicitContent = viewModel.explicitContent,
+                        primaryLanguage = viewModel.primaryLanguage,
+                        discoverability = viewModel.discoverability
 					)
 				)
 
@@ -218,6 +219,7 @@ class AddProductFragment : BaseFragment<ScheduleShowViewModel, FragmentAddProduc
 					date = viewModel.date.request(),
 					time = viewModel.time.request(),
 					categoryId = viewModel.categoryId.request(),
+					subCategoryId = viewModel.subCategoryId.request(),
 					showDiscoverability = viewModel.discoverability.request(),
 					auctionTypeId = viewModel.auctionId.request(),
 					thumbnails = imagePartList,

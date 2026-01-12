@@ -1175,7 +1175,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 			sellerName = showData.seller?.name.toString()
 			sellerImage = showData.seller?.image.toString()
 
-			bind.userName.text = showData.seller?.name?.asCapital()
+			bind.userName.text = showData.seller?.name
 			bind.rating.text = showData.seller?.rating?.ifEmpty { "0.0" }
 
 			bind.userImage.loadUrl(mCtx, showData.seller?.image ?: "")
@@ -1276,10 +1276,6 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 			if (timeDiffInMillis <= 900000) {
 				startCountdown(timeDiffInMillis, time)
 			} else {
-				bind.showTimeTitle.text = buildString {
-					append("Show Starts at -")
-					append(Utils.getTimeFromTimestamp(time, Const.MMM_dd_yyyy_HH_mm))
-				}
 				bind.showTime.text = "Today, " + Utils.getTimeFromTimestamp(time, "HH:mm")
 			}
 		} else {
@@ -1304,6 +1300,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 				if (timeRemaining > 0) {
 					val minutes = (timeRemaining / 1000) / 60
 					val seconds = (timeRemaining / 1000) % 60
+					bind.showTimeTitle.text="Show starting in"
 					bind.showTime.text = String.format("%02d:%02d", minutes, seconds)
 					timeRemaining -= 1000
 					handler.postDelayed(this, 1000)
@@ -1867,7 +1864,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
 		sellerInfoSheetBinding.follow.isVisible = !isFollowing
 
-		sellerInfoSheetBinding.userName.text = data.sellerDetails?.name
+		sellerInfoSheetBinding.userName.text = data.sellerDetails?.username?:""
 		sellerInfoSheetBinding.rating.text = (data.ratingAvg ?: 0).toString()
 		sellerInfoSheetBinding.review.text = (data.review ?: 0).toString()
 		sellerInfoSheetBinding.sold.text = (data.soldCount ?: 0).toString()

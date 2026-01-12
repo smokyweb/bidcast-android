@@ -1,7 +1,12 @@
 package io.bidswipe.app.network.response.socket
 
 
+import com.google.gson.JsonDeserializationContext
+import com.google.gson.JsonDeserializer
+import com.google.gson.JsonElement
+import com.google.gson.annotations.JsonAdapter
 import com.google.gson.annotations.SerializedName
+import java.lang.reflect.Type
 
 data class NotLiveShowResponse(
     @SerializedName("auction_type_id")
@@ -33,6 +38,7 @@ data class NotLiveShowResponse(
     @SerializedName("latest_viewer_count")
     val latestViewerCount: Int?,
     @SerializedName("product_ids")
+    @JsonAdapter(ProductIdsDeserializer::class)
     val productIds: List<String?>?,
     @SerializedName("promote_show_id")
     val promoteShowId: Any?,
@@ -87,4 +93,28 @@ data class NotLiveShowResponse(
         @SerializedName("rating")
         val rating: String?
     )
+}
+
+class ProductIdsDeserializer : JsonDeserializer<List<String>> {
+
+    override fun deserialize(
+        json: JsonElement?,
+        typeOfT: Type?,
+        context: JsonDeserializationContext?
+    ): List<String> {
+
+        if (json == null || json.isJsonNull) return emptyList()
+
+        return when {
+            json.isJsonArray -> {
+                json.asJsonArray.map { it.asString }
+            }
+
+            json.isJsonObject -> {
+                json.asJsonObject.entrySet().map { it.value.asString }
+            }
+
+            else -> emptyList()
+        }
+    }
 }

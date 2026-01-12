@@ -41,6 +41,7 @@ class ScheduleShowViewModel @Inject constructor(
 	var date = ""
 	var time = ""
 	var categoryId = ""
+	var subCategoryId = ""
 	var auctionId = ""
 	var repeatMode = ""
 	var repeatType = ""
@@ -80,6 +81,7 @@ class ScheduleShowViewModel @Inject constructor(
 		date: RequestBody?,
 		time: RequestBody?,
 		categoryId: RequestBody?,
+		subCategoryId: RequestBody?,
 		showDiscoverability: RequestBody?,
 		auctionTypeId: RequestBody?,
 		thumbnails: List<MultipartBody.Part?>?,
@@ -98,7 +100,7 @@ class ScheduleShowViewModel @Inject constructor(
 			title,
 			date,
 			time,
-			categoryId,
+			categoryId,subCategoryId,
 			showDiscoverability,
 			auctionTypeId,
 			thumbnails,

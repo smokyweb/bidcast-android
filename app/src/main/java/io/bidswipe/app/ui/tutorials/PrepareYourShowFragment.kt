@@ -117,6 +117,7 @@ class PrepareYourShowFragment : BaseFragment<DashViewModel, FragmentPrepareYourS
 								viewModel.showDate.request(),
 								viewModel.showTime.request(),
 								mData?.categoryId?.request(),
+								mData?.subCategoryId?.request(),
 								viewModel.discoverability.request(),
 								mData?.actionId?.request(),
 								imagePartList,

@@ -70,10 +70,7 @@ class ActivityFragment : BaseFragment<DashViewModel, FragmentActivityBinding>() 
                 when (fragment) {
                     is BidsFragment -> fragment.reloadData()
                     is OfferFragment -> fragment.reloadData()
-                    is PurchasesFragment -> {
-                        fragment.reloadData()
-                    }
-
+                    is PurchasesFragment -> fragment.reloadData()
                     is SavedItemsFragment -> fragment.reloadData()
                     else -> bind.swipeRefreshLayout.isRefreshing = false
                 }

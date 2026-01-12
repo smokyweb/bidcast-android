@@ -7,6 +7,7 @@ import kotlinx.parcelize.Parcelize
 data class TutorialShowModel(
 	var showTitle : String? = null ,
 	var categoryId : String? = null ,
+	var subCategoryId : String? = null ,
 	var actionId : String? = null ,
 	var thumbnail : String? = null ,
 	var productIds : String? = null ,

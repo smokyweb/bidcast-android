@@ -33,8 +33,9 @@ class SelectCategoryFragment : BaseFragment<ScheduleShowViewModel, FragmentSelec
     ) = FragmentSelectCategoryBinding.inflate(inflater, view, false)
 
     private var categoryList = mutableListOf<GetCategoryResponse.Data?>()
+    private var subCategoryList = mutableListOf<GetCategoryResponse.Data?>()
     private var auctionTypeList = mutableListOf<GetAuctionTypeResponse.Data?>()
-    private var repeatModes = mutableListOf( "No Repeat", "Daily", "Weekly")
+    private var repeatModes = mutableListOf("No Repeat", "Daily", "Weekly")
     private var categoryId = ""
     private var auctionId = ""
 
@@ -54,12 +55,12 @@ class SelectCategoryFragment : BaseFragment<ScheduleShowViewModel, FragmentSelec
         if (!viewModel.showId.isNullOrEmpty()) {
             auctionId = viewModel.auctionId
             categoryId = viewModel.categoryId
-            bind.repeat.setText(viewModel.repeatType,false)
+            bind.repeat.setText(viewModel.repeatType, false)
             bind.explicitSwitch.isChecked = viewModel.explicitContent == "1"
             bind.language.setText(viewModel.primaryLanguage)
 
-           bind.publicButton.isChecked= viewModel.discoverability =="public"
-           bind.privateButton.isChecked= viewModel.discoverability =="private"
+            bind.publicButton.isChecked = viewModel.discoverability == "public"
+            bind.privateButton.isChecked = viewModel.discoverability == "private"
         }
 
         bind.publicButton.isChecked = true
@@ -75,7 +76,6 @@ class SelectCategoryFragment : BaseFragment<ScheduleShowViewModel, FragmentSelec
                 }
 
                 else -> {
-
                     viewModel.auctionId = auctionId
                     viewModel.categoryId = categoryId
                     viewModel.repeatMode = if (bind.repeat.value().isEmpty()) "0" else "1"
@@ -98,6 +98,12 @@ class SelectCategoryFragment : BaseFragment<ScheduleShowViewModel, FragmentSelec
 
         bind.category.setOnItemClickListener { _, _, position, _ ->
             categoryId = categoryList[position]?.id.toString()
+            viewModel.productCategoryName = categoryList[position]?.name.toString()
+            viewModel.subCategoryId=""
+            viewModel.productSubCategoryName=""
+
+            bind.loader.isVisible = true
+            viewModel.getProductSubCategory(categoryId, "subCategory")
         }
 
         bind.category.setHapticClickListener {
@@ -170,8 +176,75 @@ class SelectCategoryFragment : BaseFragment<ScheduleShowViewModel, FragmentSelec
                         val draw = ContextCompat.getDrawable(mCtx, R.drawable.card_8)
                         bind.category.setDropDownBackgroundDrawable(draw)
 
-                        if(categoryId.isNotEmpty()){
+                        if (categoryId.isNotEmpty()) {
                             bind.category.setText(categoryList.find { it?.id.toString() == categoryId }?.name, false)
+                        }
+
+                    }
+                }
+
+                is Resource.Error -> {
+                    bind.loader.isVisible = false
+
+                    it.parse(mCtx, TAG, object : AlertClicks {
+                        override fun primaryClick(dialog: AppBottomSheet) {
+                            dialog.dismiss()
+
+                        }
+
+                        override fun secondaryClick(dialog: AppBottomSheet) {
+                            dialog.dismiss()
+
+                        }
+                    })
+
+                }
+
+                else -> {}
+
+            }
+        }
+
+        viewModel.getProductSubCategoryRepo.observe(viewLifecycleOwner) {
+            when (it) {
+                is Resource.Success -> {
+                    if (it.value.data?.isNotEmpty() == true) {
+                        bind.loader.isVisible = false
+                        viewModel.getCategoryRepo.value = null
+
+                        val mData = it.value.data
+
+                        if (mData?.isNotEmpty() == true) {
+                            subCategoryList.clear()
+                            subCategoryList.addAll(mData)
+
+                            bind.subCategoryLayout.isVisible = true
+
+                            val subCategoryAdapter = ArrayAdapter(
+                                mCtx,
+                                android.R.layout.simple_list_item_1,
+                                subCategoryList.map { it?.name })
+
+                            bind.subCategory.setAdapter(subCategoryAdapter)
+
+                            val draw = ContextCompat.getDrawable(mCtx, R.drawable.card_8)
+                            bind.subCategory.setDropDownBackgroundDrawable(draw)
+
+                            bind.subCategory.setOnItemClickListener { _, _, position, _ ->
+
+                                viewModel.subCategoryId = subCategoryList[position]?.id.toString()
+                                viewModel.productSubCategoryName = subCategoryList[position]?.name.toString()
+
+                                bind.subCategory.setText(subCategoryList[position]?.name, false)
+
+                            }
+
+                            bind.subCategory.setHapticClickListener {
+                                bind.subCategory.showDropDown()
+                            }
+
+                        } else {
+                            bind.subCategoryLayout.isVisible = false
                         }
 
                     }
@@ -214,7 +287,7 @@ class SelectCategoryFragment : BaseFragment<ScheduleShowViewModel, FragmentSelec
                         val draw = ContextCompat.getDrawable(mCtx, R.drawable.card_8)
                         bind.auctionType.setDropDownBackgroundDrawable(draw)
 
-                        if(auctionId.isNotEmpty()){
+                        if (auctionId.isNotEmpty()) {
                             bind.auctionType.setText(auctionTypeList.find { it?.id.toString() == auctionId }?.name, false)
                         }
 

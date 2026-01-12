@@ -67,9 +67,9 @@ data class SellerInfoResponse(
             @SerializedName("role_id")
             val roleId: Int?,
             @SerializedName("thumbnail")
-            val thumbnail: Any?,
+            val thumbnail: String?,
             @SerializedName("username")
-            val username: Any?
+            val username: String?
         )
     }
 }

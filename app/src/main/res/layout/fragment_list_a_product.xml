@@ -129,6 +129,39 @@
 
                 </com.google.android.material.textfield.TextInputLayout>
 
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:id="@+id/sub_category_layout"
+                    android:layout_width="match_parent"
+                    android:visibility="gone"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        style="@style/TitleSmall"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/sub_category" />
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        style="@style/inputBoxStyle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/margin"
+                        app:endIconDrawable="@drawable/ic_arrow_down_2"
+                        app:endIconMode="custom">
+
+                        <com.google.android.material.textfield.MaterialAutoCompleteTextView
+                            android:id="@+id/sub_category"
+                            style="@style/inputTextStyle"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:focusable="false"
+                            android:focusableInTouchMode="false"
+                            android:hint="@string/select_category" />
+
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                </LinearLayout>
                 <TextView
                     style="@style/TitleSmall"
                     android:layout_width="match_parent"

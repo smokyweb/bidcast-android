@@ -4,8 +4,11 @@ import android.content.Context
 import android.icu.util.TimeZone
 import android.util.Log
 import com.google.gson.Gson
+import com.google.gson.GsonBuilder
+import com.google.gson.reflect.TypeToken
 import io.bidswipe.app.model.LiveShowModel
 import io.bidswipe.app.network.response.socket.NotLiveShowResponse
+import io.bidswipe.app.network.response.socket.ProductIdsDeserializer
 import io.socket.client.IO
 import io.socket.client.Socket
 import org.json.JSONArray
@@ -123,7 +126,18 @@ class SocketManager private constructor(
             if (obj is JSONObject) {
                 Log.d(TAG, "RECEIVED: create_room_get - $obj")
                 if (!obj.optBoolean("is_room_created")) {
-                    val shoDataNotLive = Gson().fromJson(obj.toString(), NotLiveShowResponse::class.java)
+
+                    val gson = GsonBuilder()
+                        .registerTypeAdapter(
+                            object : TypeToken<List<String>>() {}.type,
+                            ProductIdsDeserializer()
+                        )
+                        .create()
+
+                    val shoDataNotLive = gson.fromJson(
+                        obj.toString(),
+                        NotLiveShowResponse::class.java
+                    )
 
                     val user = shoDataNotLive.seller
                     
@@ -132,7 +146,7 @@ class SocketManager private constructor(
                     val showData = LiveShowModel(
                         seller = LiveShowModel.Seller(
                             id = user?.id.toString(),
-                            image = Const.BASE_URL+(user?.profileImage ?: ""),
+                            image = Const.BASE_URL+"/"+(user?.profileImage ?: ""),
                             name = user?.username,
                             rating = user?.rating ?: ""
                         ),

@@ -140,7 +140,10 @@ class SavedItemsFragment : BaseFragment<DashViewModel , FragmentSavedItemsBindin
 	}
 
 	fun reloadData() {
+		log("RELOAD CALL")
 		if (Utils.isOnline(mCtx)) {
+
+			log("RELOAD CALL 1")
 			bind.loader.isVisible = true
 			bind.noInternet.isVisible = false
 			page = 1
