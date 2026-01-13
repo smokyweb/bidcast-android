@@ -306,6 +306,7 @@ interface ApiInterface {
     suspend fun getLiveShow(
         @Part("type") type: RequestBody?,
         @Part("category") category: RequestBody?,
+        @Part("sub_category") subCategory: RequestBody?,
         @Part("search") search: RequestBody?,
         @Part("page") page: RequestBody?
     ): GetMyShowResponse

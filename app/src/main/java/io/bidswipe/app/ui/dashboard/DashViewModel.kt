@@ -242,6 +242,7 @@ class DashViewModel @Inject constructor(
 	fun getLiveShow(
 		type : RequestBody? = null ,
 		category : RequestBody? = null ,
+		subCategory : RequestBody? = null ,
 		search : RequestBody? = null ,
 		page : RequestBody? = null ,
 	) = viewModelScope.launch {
@@ -249,7 +250,7 @@ class DashViewModel @Inject constructor(
 			_getLiveShowResponse.value = NO_INTERNET_ERROR
 			return@launch
 		}
-		_getLiveShowResponse.value = repo.getLiveShow(type , category , search , page)
+		_getLiveShowResponse.value = repo.getLiveShow(type , category , subCategory,search , page)
 	}
 
 	private var _offerListResponse = MutableLiveData<Resource<GetOffersResponse>>()

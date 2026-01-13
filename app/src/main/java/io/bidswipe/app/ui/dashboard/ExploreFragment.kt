@@ -57,15 +57,21 @@ class ExploreFragment : BaseFragment<DashViewModel, FragmentExploreBinding>() {
 
             // ---------------- SUBCATEGORY CLICK ----------------
             if (!status.isNullOrEmpty()) {
-
                 val subcategoryPos = status.toIntOrNull() ?: return
                 val subcategory = exploreAdapter.getSubcategoryAt(subcategoryPos) ?: return
+
+                val sendSub = if (subcategory.name == "All ${selectedCategory?.name}") {
+                    null
+                } else {
+                    subcategory.name
+                }
 
                 findNavController().navigate(
                     ids.goTopExploreType,
                     bundleOf(
                         "category" to selectedCategory?.name,
-                        "subcategory" to subcategory.name
+                        "subcategory" to sendSub,
+//                        "sub_list" to exploreAdapter.getAllSubCategories()
                     )
                 )
                 return

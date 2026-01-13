@@ -59,13 +59,11 @@ class ShowDetailsFragment : BaseFragment<SellerHubViewModel, FragmentShowDetails
 		}
 
 		bind.watchVideo.setOnClickListener {
-
 			if (videoUrl.isNotEmpty()) {
 				findNavController().navigate(R.id.showDetailsVideoReceiptPlayerFragment2, bundleOf("videoUrl" to videoUrl))
 			} else {
 				successToast("Video is not available")
 			}
-
 		}
 
 		bind.loader.isVisible = true

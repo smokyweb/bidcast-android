@@ -2,6 +2,7 @@ package io.bidswipe.app.ui.dashboard
 
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -22,7 +23,9 @@ import io.bidswipe.app.interfaces.AlertClicks
 import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.model.StreamModel
 import io.bidswipe.app.network.Resource
+import io.bidswipe.app.network.response.GetCategoryResponse
 import io.bidswipe.app.network.response.GetMyShowResponse
+import io.bidswipe.app.network.response.GetSubCategoriesResponse
 import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.ui.more.NotificationActivity
 import io.bidswipe.app.ui.sellerProfile.SellerProfileActivity
@@ -34,242 +37,284 @@ import io.bidswipe.app.utils.isTablet
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request
 import io.bidswipe.app.utils.setHapticClickListener
+import io.bidswipe.app.utils.value
 
-class ExploreTypeFragment : BaseFragment<DashViewModel , FragmentExploreTypeBinding>() {
-	override fun getModel() : Class<DashViewModel> = DashViewModel::class.java
+class ExploreTypeFragment : BaseFragment<DashViewModel, FragmentExploreTypeBinding>() {
+    override fun getModel(): Class<DashViewModel> = DashViewModel::class.java
 
-	override fun getBind(inflater : LayoutInflater , view : ViewGroup?) =
-		FragmentExploreTypeBinding.inflate(inflater , view , false)
+    override fun getBind(inflater: LayoutInflater, view: ViewGroup?) =
+        FragmentExploreTypeBinding.inflate(inflater, view, false)
 
-	private lateinit var homeAdapter : HomeAdapter
-	private var categoriesList = mutableListOf<String>()
-	private var showList = mutableListOf<GetMyShowResponse.Data?>()
-	private var romIdsList = mutableListOf<String>()
-	private var streamList = mutableListOf<StreamModel>()
-	private var category = ""
+    private lateinit var homeAdapter: HomeAdapter
+    private var categoriesList = mutableListOf<String>()
+    private var showList = mutableListOf<GetMyShowResponse.Data?>()
+    private var romIdsList = mutableListOf<String>()
+    private var streamList = mutableListOf<StreamModel>()
+    private var category = ""
+    private var subCategory: String? = null
+    private var page = 1
+    private var isLoading = false
 
-	private var selectedTabText = "live"
+    private var selectedTabText = "live"
 
-	private val mClick = object : RecyclerClicks {
-		override fun itemClick(pos : Int , status : String?) {
+    private val mClick = object : RecyclerClicks {
+        override fun itemClick(pos: Int, status: String?) {
 
-			when (status) {
-				"user" -> {
-					startActivity(
-						Intent(mCtx , SellerProfileActivity::class.java).putExtra(
-							"sellerId" ,
-							showList[pos]?.userId.toString()
-						)
-					)
-				}
+            when (status) {
+                "user" -> {
+                    startActivity(
+                        Intent(mCtx, SellerProfileActivity::class.java).putExtra(
+                            "sellerId",
+                            showList[pos]?.userId.toString()
+                        )
+                    )
+                }
 
-				"viewShow" -> {
+                "viewShow" -> {
 //					if (showList[pos]?.isLive == true) {
-						val roomId = showList[pos]?.roomId.toString()
-						if (App.PIPMode) {
-							Alerts.error(mCtx , "You are already in Live show")
-						} else {
-							startActivity(
-								Intent(
-									mCtx ,
-									ViewLiveShowActivity::class.java
-								) .putExtra("roomId", roomId)
-									.putExtra("userId", showList[pos]?.userId.toString())
-									.putExtra("roomIdsList", romIdsList.joinToString(","))
-									.putParcelableArrayListExtra(
-										"streamList",
-										ArrayList(streamList)
-									)
-							)
-						}
+                    val roomId = showList[pos]?.roomId.toString()
+                    if (App.PIPMode) {
+                        Alerts.error(mCtx, "You are already in Live show")
+                    } else {
+                        startActivity(
+                            Intent(
+                                mCtx,
+                                ViewLiveShowActivity::class.java
+                            ).putExtra("roomId", roomId)
+                                .putExtra("userId", showList[pos]?.userId.toString())
+                                .putExtra("roomIdsList", romIdsList.joinToString(","))
+                                .putParcelableArrayListExtra(
+                                    "streamList",
+                                    ArrayList(streamList)
+                                )
+                        )
+                    }
 //					}
-				}
-			}
+                }
+            }
 
-		}
-	}
+        }
+    }
 
-	@SuppressLint("NotifyDataSetChanged")
-	override fun onViewCreated(view : View , savedInstanceState : Bundle?) {
-		super.onViewCreated(view , savedInstanceState)
+    @SuppressLint("NotifyDataSetChanged")
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
-		category = arguments?.getString("category") ?: ""
-		bind.header.setHeaderText(category.asCapital())
+        category = arguments?.getString("category") ?: ""
+        subCategory = arguments?.getString("subcategory")
 
-		bind.root.setHapticClickListener {
-			hideKeyboard(it)
-		}
-		bind.main.setHapticClickListener {
-			hideKeyboard(it)
-		}
-		bind.header.onBackClick {
-			findNavController().popBackStack()
-		}
+//        val subCategories = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+//                arguments?.getParcelableArrayList(
+//                    "sub_list",
+//                    GetSubCategoriesResponse.Data.Subcategory::class.java
+//                )
+//            } else {
+//                @Suppress("DEPRECATION")
+//                arguments?.getParcelableArrayList("sub_list") as ArrayList<GetSubCategoriesResponse.Data.Subcategory>
+//            }
 
-		bind.swipeRefreshLayout.setOnRefreshListener {
-			bind.search.setText("")
-			bind.searchLayout.isEndIconVisible = false
-			viewModel.getLiveShow(selectedTabText.request() , category.request())
-		}
-		bind.searchLayout.isEndIconVisible = false
-		bind.search.addTextChangedListener(object : TextWatcher {
-			override fun beforeTextChanged(s : CharSequence? , start : Int , count : Int , after : Int) {}
-			override fun onTextChanged(s : CharSequence? , start : Int , before : Int , count : Int) {}
-			override fun afterTextChanged(s : Editable?) {
-				bind.searchLayout.isEndIconVisible = ! s.isNullOrEmpty()
+        val headerText = if (subCategory != null) subCategory?.asCapital()?:"" else category.asCapital()
+        bind.header.setHeaderText(headerText)
 
-				bind.loader.isVisible = true
-				bind.recycler.isVisible = false
-				bind.noData.isVisible = false
+        bind.root.setHapticClickListener {
+            hideKeyboard(it)
+        }
 
-				if (! s.isNullOrEmpty()) {
-					viewModel.getLiveShow(selectedTabText.request() , category.request() , s.toString().request())
-				}
-				else {
-					viewModel.getLiveShow(selectedTabText.request() , category.request())
-				}
-			}
-		})
-		bind.searchLayout.setEndIconOnClickListener {
-			bind.search.setText("")
-			viewModel.getLiveShow(selectedTabText.request() , category.request())
-			hideKeyboard(it)
-		}
+        bind.main.setHapticClickListener {
+            hideKeyboard(it)
+        }
 
-		bind.noInternet.setHapticClickListener {
-			bind.loader.isVisible = true
-			bind.noInternet.isVisible = false
-			viewModel.getLiveShow(selectedTabText.request() , category.request())
-		}
+        bind.header.onBackClick {
+            findNavController().popBackStack()
+        }
 
-		bind.header.onMorePrimaryClick {
-			startActivity(
-				Intent(mCtx , NotificationActivity::class.java).putExtra(
-					"slug" ,
-					"notification"
-				)
-			)
-		}
+        bind.swipeRefreshLayout.setOnRefreshListener {
+            bind.search.setText("")
+            bind.searchLayout.isEndIconVisible = false
+            viewModel.getLiveShow(selectedTabText.request(), category.request(), subCategory?.request())
+        }
 
-		homeAdapter = HomeAdapter(showList , mClick)
-		(bind.recycler.layoutManager as GridLayoutManager).setSpanCount( if(resources.isTablet()) 3 else 2)
-		bind.recycler.adapter = homeAdapter
+        bind.searchLayout.isEndIconVisible = false
+        bind.search.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+            override fun afterTextChanged(s: Editable?) {
+                bind.searchLayout.isEndIconVisible = !s.isNullOrEmpty()
 
-		selectTab(bind.live)
+                bind.loader.isVisible = true
+                bind.recycler.isVisible = false
+                bind.noData.isVisible = false
 
-		bind.live.setHapticClickListener { selectTab(it as TextView) }
-		bind.popular.setHapticClickListener { selectTab(it as TextView) }
-		bind.comingSoon.setHapticClickListener { selectTab(it as TextView) }
+                if (!s.isNullOrEmpty()) {
+                    viewModel.getLiveShow(selectedTabText.request(), category.request(), subCategory?.request(), s.toString().request())
+                } else {
+                    viewModel.getLiveShow(selectedTabText.request(), category.request(), subCategory?.request())
+                }
+            }
+        })
 
-		categoriesList = mutableListOf(category)
-		viewModel.getLiveShow(selectedTabText.request() , category = category.request())
-		viewModel.getLiveShowRepo.observe(viewLifecycleOwner) { it ->
-			when (it) {
-				is Resource.Success -> {
-					bind.loader.isVisible = false
-					bind.swipeRefreshLayout.isRefreshing = false
-					bind.noInternet.isVisible = false
+        bind.searchLayout.setEndIconOnClickListener {
+            bind.search.setText("")
+            viewModel.getLiveShow(selectedTabText.request(), category.request(), subCategory?.request())
+            hideKeyboard(it)
+        }
 
-					val mData = it.value.data
+        bind.noInternet.setHapticClickListener {
+            bind.loader.isVisible = true
+            bind.noInternet.isVisible = false
+            viewModel.getLiveShow(selectedTabText.request(), category.request(), subCategory?.request())
+        }
 
-					/*mData?.forEach {
-						romIdsList.add(StreamModel(it?.roomId.toString() , ""))
-					}*/
+        bind.header.onMorePrimaryClick {
+            startActivity(
+                Intent(mCtx, NotificationActivity::class.java).putExtra(
+                    "slug",
+                    "notification"
+                )
+            )
+        }
 
-					showList.clear()
-					mData?.forEach {
-						showList.add(it)
-					}
+        homeAdapter = HomeAdapter(showList, mClick)
+        (bind.recycler.layoutManager as GridLayoutManager).setSpanCount(if (resources.isTablet()) 3 else 2)
+        bind.recycler.adapter = homeAdapter
 
-					streamList.clear()
+        bind.recycler.setOnScrollChangeListener { _, _, _, _, _ ->
+            val layoutManager = bind.recycler.layoutManager as GridLayoutManager
+            val lastItemPosition = layoutManager.findLastVisibleItemPosition()
 
-					mData?.forEach {
-						streamList.add(
-							StreamModel(
-								it?.roomId.toString(),
-								it?.rtcToken ?: "",
-								thumbnail = it?.thumbnail?.get(0)
-							)
-						)
-						romIdsList.add(it?.roomId.toString())
-					}
+            val listSize = showList.size
 
-					if (showList.isEmpty()) {
-						bind.noData.isVisible = true
-						bind.recycler.isVisible = false
-					} else {
-						bind.noData.isVisible = false
-						bind.recycler.isVisible = true
-					}
-					homeAdapter.notifyDataSetChanged()
-				}
+            if (lastItemPosition == listSize - 1 && !isLoading) {
+                isLoading = true
+                page++
+                viewModel.getLiveShow(
+                    selectedTabText.request(),
+                    category.request(),
+                    subCategory?.request(),
+                    bind.search.value().ifEmpty { null }?.request(),
+                    page.toString().request()
+                )
+            }
+        }
 
-				is Resource.Error -> {
-					bind.swipeRefreshLayout.isRefreshing = false
-					bind.loader.isVisible = false
 
-					if (it.isNetworkError) {
-						bind.noInternet.isVisible = true
-						bind.noData.isVisible = false
-						bind.recycler.isVisible = false
-					} else {
-						bind.noInternet.isVisible = false
-						it.parse(mCtx , TAG , object : AlertClicks {
-							override fun primaryClick(dialog : AppBottomSheet) {
-								dialog.dismiss()
-							}
+        selectTab(bind.live)
 
-							override fun secondaryClick(dialog : AppBottomSheet) {
-								dialog.dismiss()
-							}
-						})
-					}
-				}
+        bind.live.setHapticClickListener { selectTab(it as TextView) }
+        bind.popular.setHapticClickListener { selectTab(it as TextView) }
+        bind.comingSoon.setHapticClickListener { selectTab(it as TextView) }
 
-				else -> {}
+        categoriesList = mutableListOf(category)
+        viewModel.getLiveShow(selectedTabText.request(), category = category.request(), subCategory?.request())
+        viewModel.getLiveShowRepo.observe(viewLifecycleOwner) { it ->
+            when (it) {
+                is Resource.Success -> {
+                    bind.loader.isVisible = false
+                    bind.swipeRefreshLayout.isRefreshing = false
+                    bind.noInternet.isVisible = false
 
-			}
-		}
+                    val mData = it.value.data
 
-	}
+                    /*mData?.forEach {
+                        romIdsList.add(StreamModel(it?.roomId.toString() , ""))
+                    }*/
 
-	override fun onPause() {
-		super.onPause()
-		bind.search.setText("")
-	}
+                    if (page == 1) {
+                        romIdsList.clear()
+                        showList.clear()
+                        streamList.clear()
+                    }
 
-	fun selectTab(selectedTab : TextView) {
+                    mData?.forEach {
+                        showList.add(it)
+                        streamList.add(
+                            StreamModel(
+                                it?.roomId.toString(),
+                                it?.rtcToken ?: "",
+                                thumbnail = it?.thumbnail?.get(0)
+                            )
+                        )
+                        romIdsList.add(it?.roomId.toString())
+                    }
 
-		bind.search.setText("")
+                    if (showList.isEmpty()) {
+                        bind.noData.isVisible = true
+                        bind.recycler.isVisible = false
+                    } else {
+                        bind.noData.isVisible = false
+                        bind.recycler.isVisible = true
+                    }
 
-		listOf(bind.live , bind.popular , bind.comingSoon).forEach { tab ->
-			tab.setTextAppearance(R.style.TitleMedium)
-			tab.setTextColor(ContextCompat.getColor(mCtx , R.color.outlineVariant))
-			tab.isSelected = (tab == selectedTab)
-		}
+                    homeAdapter.notifyDataSetChanged()
+                    isLoading = page >= (it.value.totalPage ?: 0)
+                }
 
-		selectedTab.setTextColor(ContextCompat.getColor(mCtx , R.color.scrim))
-		selectedTab.setTextAppearance(R.style.TitleLarge)
+                is Resource.Error -> {
+                    bind.swipeRefreshLayout.isRefreshing = false
+                    bind.loader.isVisible = false
 
-		bind.loader.isVisible = true
+                    if (it.isNetworkError) {
+                        bind.noInternet.isVisible = true
+                        bind.noData.isVisible = false
+                        bind.recycler.isVisible = false
+                    } else {
+                        bind.noInternet.isVisible = false
+                        it.parse(mCtx, TAG, object : AlertClicks {
+                            override fun primaryClick(dialog: AppBottomSheet) {
+                                dialog.dismiss()
+                            }
 
-		when (selectedTab) {
-			bind.live -> {
-				selectedTabText = "live"
-				viewModel.getLiveShow("live".request() , category.request())
-			}
+                            override fun secondaryClick(dialog: AppBottomSheet) {
+                                dialog.dismiss()
+                            }
+                        })
+                    }
+                }
 
-			bind.popular -> {
-				selectedTabText = "popular"
-				viewModel.getLiveShow("popular".request() , category.request())
-			}
+                else -> {}
 
-			bind.comingSoon -> {
-				selectedTabText = "upcoming"
-				viewModel.getLiveShow("upcoming".request() , category.request())
-			}
+            }
+        }
 
-		}
-	}
+    }
+
+    override fun onPause() {
+        super.onPause()
+        bind.search.setText("")
+    }
+
+    fun selectTab(selectedTab: TextView) {
+
+        bind.search.setText("")
+
+        listOf(bind.live, bind.popular, bind.comingSoon).forEach { tab ->
+            tab.setTextAppearance(R.style.TitleMedium)
+            tab.setTextColor(ContextCompat.getColor(mCtx, R.color.outlineVariant))
+            tab.isSelected = (tab == selectedTab)
+        }
+
+        selectedTab.setTextColor(ContextCompat.getColor(mCtx, R.color.scrim))
+        selectedTab.setTextAppearance(R.style.TitleLarge)
+
+        bind.loader.isVisible = true
+
+        when (selectedTab) {
+            bind.live -> {
+                selectedTabText = "live"
+                viewModel.getLiveShow("live".request(), category.request(), subCategory?.request())
+            }
+
+            bind.popular -> {
+                selectedTabText = "popular"
+                viewModel.getLiveShow("popular".request(), category.request(), subCategory?.request())
+            }
+
+            bind.comingSoon -> {
+                selectedTabText = "upcoming"
+                viewModel.getLiveShow("upcoming".request(), category.request(), subCategory?.request())
+            }
+
+        }
+    }
 
 }

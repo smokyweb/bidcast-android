@@ -61,9 +61,20 @@ class SelectCategoryFragment : BaseFragment<ScheduleShowViewModel, FragmentSelec
 
             bind.publicButton.isChecked = viewModel.discoverability == "public"
             bind.privateButton.isChecked = viewModel.discoverability == "private"
-        }
 
-        bind.publicButton.isChecked = true
+            if (!viewModel.subCategoryId.isEmpty()) {
+                bind.subCategoryLayout.isVisible = true
+                bind.subCategory.setText(viewModel.productSubCategoryName, false)
+                viewModel.getProductSubCategory(categoryId, "subCategory")
+            }
+
+            if (!viewModel.productCategoryName.isEmpty()) {
+                bind.category.setText(viewModel.productCategoryName, false)
+            }
+
+        } else {
+            bind.publicButton.isChecked = true
+        }
 
         bind.continueBtn.setHapticClickListener {
             when {
@@ -99,8 +110,8 @@ class SelectCategoryFragment : BaseFragment<ScheduleShowViewModel, FragmentSelec
         bind.category.setOnItemClickListener { _, _, position, _ ->
             categoryId = categoryList[position]?.id.toString()
             viewModel.productCategoryName = categoryList[position]?.name.toString()
-            viewModel.subCategoryId=""
-            viewModel.productSubCategoryName=""
+            viewModel.subCategoryId = ""
+            viewModel.productSubCategoryName = ""
 
             bind.loader.isVisible = true
             viewModel.getProductSubCategory(categoryId, "subCategory")
@@ -120,8 +131,7 @@ class SelectCategoryFragment : BaseFragment<ScheduleShowViewModel, FragmentSelec
 
         val repeatModeAdapter = ArrayAdapter(mCtx, android.R.layout.simple_list_item_1, repeatModes.map { it })
         bind.repeat.setAdapter(repeatModeAdapter)
-        val draw = ContextCompat.getDrawable(mCtx, R.drawable.card_8)
-        bind.repeat.setDropDownBackgroundDrawable(draw)
+        bind.repeat.setDropDownBackgroundDrawable(dropdownBg)
         bind.repeat.setOnItemClickListener { _, _, position, _ ->
             viewModel.repeatMode = repeatModes[position]
         }
@@ -132,7 +142,7 @@ class SelectCategoryFragment : BaseFragment<ScheduleShowViewModel, FragmentSelec
 
         val languageAdapter = ArrayAdapter(mCtx, android.R.layout.simple_list_item_1, Const.languages.map { it.title })
         bind.language.setAdapter(languageAdapter)
-        bind.language.setDropDownBackgroundDrawable(draw)
+        bind.language.setDropDownBackgroundDrawable(dropdownBg)
         bind.language.setOnItemClickListener { _, _, position, _ ->
         }
 

@@ -1,6 +1,7 @@
 package io.bidswipe.app.network.response
 
 
+import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
 import androidx.annotation.Keep
 
@@ -50,7 +51,7 @@ data class GetSubCategoriesResponse(
             val color : String? ,
             @SerializedName("is_selected")
             var isSelected : Boolean? = false
-        ) {
+        ): Parcelable {
 			@Keep
 			data class ExtraField(
                 @SerializedName("label")
@@ -59,7 +60,7 @@ data class GetSubCategoriesResponse(
                 val type : String? ,
                 @SerializedName("options")
                 val options : List<String?>? ,
-            )
+            ): Parcelable
 		}
 	}
 }

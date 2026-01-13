@@ -153,6 +153,13 @@ class ShowTitleFragment : BaseFragment<ScheduleShowViewModel, FragmentShowTitleB
                     viewModel.date = mData?.date ?: ""
 
                     viewModel.categoryId = mData?.categoryId.toString()
+                    viewModel.productCategoryName=mData?.category?.name?:""
+
+                    if(mData?.subCategoryId!=null) {
+                        viewModel.subCategoryId = mData.subCategoryId.toString()
+                        viewModel.productSubCategoryName = mData.subCategory?.name ?: ""
+                    }
+
                     viewModel.auctionId = mData?.auctionTypeId.toString()
 
                     viewModel.repeatMode = if (mData?.isRepeat ?: false) "0" else "1"
@@ -172,7 +179,6 @@ class ShowTitleFragment : BaseFragment<ScheduleShowViewModel, FragmentShowTitleB
                             }
                         }
                     }
-
                 }
 
                 is Resource.Error -> {

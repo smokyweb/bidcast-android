@@ -3,6 +3,7 @@
 package io.bidswipe.app.base
 
 import android.content.Context
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.view.HapticFeedbackConstants
 import android.view.LayoutInflater
@@ -17,6 +18,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.viewbinding.ViewBinding
 import com.permissionx.guolindev.PermissionX
 import io.bidswipe.app.App
+import io.bidswipe.app.R
 import io.bidswipe.app.utils.Alerts
 import io.bidswipe.app.utils.Prefs
 import io.bidswipe.app.utils.clr
@@ -30,6 +32,7 @@ abstract class BaseFragment<VM : ViewModel, BIND : ViewBinding> : Fragment() {
     protected lateinit var userName: String
     protected lateinit var userImage: String
     protected lateinit var TAG: String
+    protected lateinit var dropdownBg: Drawable
 
     override fun onCreateView(
 		inflater: LayoutInflater,
@@ -58,6 +61,8 @@ abstract class BaseFragment<VM : ViewModel, BIND : ViewBinding> : Fragment() {
         userImage = Prefs(mCtx).getUserData()?.profileImage.toString()
 //		authUserData = Prefs(mCtx).getUserData()
         viewModel = ViewModelProvider(requireActivity())[getModel()]
+
+        dropdownBg = ContextCompat.getDrawable(mCtx, R.drawable.card_8)!!
 
         return bind.root
     }

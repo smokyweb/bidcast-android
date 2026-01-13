@@ -125,7 +125,8 @@ class ShowDetailsActivity : BaseActivity() {
                 allowBidForAll = true,
                 bidCountDown = "",
                 showTimer = "",
-                categoryId = showData?.category?.id.toString()
+                categoryId = showData?.category?.id.toString(),
+                subCategoryId = showData?.subCategoryId.toString(),
             )
 
             if (App.PIPMode) {

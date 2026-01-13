@@ -23,6 +23,10 @@ data class GetShowDetailsResponse(
         val category: Category?,
         @SerializedName("category_id")
         val categoryId: Int?,
+        @SerializedName("sub_category_id")
+        val subCategoryId: Int?,
+        @SerializedName("sub_category")
+        val subCategory: SubCategory?,
         @SerializedName("date")
         val date: String?,
         @SerializedName("id")
@@ -103,6 +107,26 @@ data class GetShowDetailsResponse(
             @SerializedName("thumbnail")
             val thumbnail: String?
         )
+
+        data class SubCategory(
+            @SerializedName("category_id")
+            val categoryId: Int?,
+            @SerializedName("color")
+            val color: String?,
+            @SerializedName("deleted_at")
+            val deletedAt: Any?,
+            @SerializedName("extra_fields")
+            val extraFields: List<Any?>?,
+            @SerializedName("id")
+            val id: Int?,
+            @SerializedName("image")
+            val image: String?,
+            @SerializedName("name")
+            val name: String?,
+            @SerializedName("thumbnail")
+            val thumbnail: String?
+        )
+
 
         data class User(
             @SerializedName("authorize_net_cid")

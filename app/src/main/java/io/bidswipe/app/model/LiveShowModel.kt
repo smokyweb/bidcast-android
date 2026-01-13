@@ -24,9 +24,9 @@ data class LiveShowModel(
 	val startingBidAmount: Double?=null,
 	val requireTime: Long?=null,
 	val counterBidTime: Long?=null,
-	val suddenDeath: Boolean?=null
+	val suddenDeath: Boolean?=null,
+	val subCategoryId: String? = null,
 ) : Serializable {
-
 	companion object {
 		fun fromJson(json: JSONObject) = LiveShowModel(
 			products = json.optJSONArray("products")
@@ -54,7 +54,8 @@ data class LiveShowModel(
 			startingBidAmount = json.optDouble("starting_bid_amount", 0.0), 
 			requireTime = json.optLong("require_time", 0), 
 			counterBidTime = json.optLong("counter_bid_time", 0), 
-			suddenDeath = json.optBoolean("sudden_death", false) 
+			suddenDeath = json.optBoolean("sudden_death", false) ,
+			subCategoryId = json.optString("sub_category_id", null) ,
 		)
 	}
 
@@ -189,6 +190,7 @@ data class LiveShowModel(
 		put("require_time", requireTime) 
 		put("counter_bid_time", counterBidTime) 
 		put("sudden_death", suddenDeath) 
+		put("sub_category_id", subCategoryId)
 	}
 }
 

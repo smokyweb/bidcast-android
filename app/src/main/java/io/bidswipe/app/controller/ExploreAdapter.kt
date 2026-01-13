@@ -223,6 +223,7 @@ class ExploreAdapter(
     fun getSubcategoryAt(position: Int): GetSubCategoriesResponse.Data.Subcategory? =
         subcategories.getOrNull(position)
 
+    fun getAllSubCategories()=subcategories
 
     fun clearSelection() {
         selectedPosition = -1
