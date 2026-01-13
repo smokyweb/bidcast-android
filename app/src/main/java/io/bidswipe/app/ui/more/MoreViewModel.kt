@@ -10,6 +10,7 @@ import io.bidswipe.app.network.response.AboutUsResponse
 import io.bidswipe.app.network.response.CommonResponse
 import io.bidswipe.app.network.response.FAQResponse
 import io.bidswipe.app.network.response.GetBuyerIdentityResponse
+import io.bidswipe.app.network.response.GetCouponsResponse
 import io.bidswipe.app.network.response.GetNotificationResponse
 import io.bidswipe.app.network.response.GetPaymentCardsResponse
 import io.bidswipe.app.network.response.GetShippingAddressResponse
@@ -321,6 +322,18 @@ class MoreViewModel @Inject constructor(
 			return@launch
 		}
 		_getStatesResponse.value = repo.getStates()
+	}
+
+	private var _getCouponResponse = MutableLiveData<Resource<GetCouponsResponse>>()
+	val getCouponRepo: MutableLiveData<Resource<GetCouponsResponse>>
+		get() = _getCouponResponse
+
+	fun getCoupon() = viewModelScope.launch {
+		if (!networkMonitor.hasInternet()) {
+			_getCouponResponse.value = NO_INTERNET_ERROR
+			return@launch
+		}
+		_getCouponResponse.value = repo.getCoupon()
 	}
 
 

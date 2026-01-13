@@ -189,6 +189,8 @@ class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
 
             bind.sellerSince.text = it?.username ?: "N/A"
             bind.userProfile.loadUrl(mCtx, it?.profileImage.toString())
+
+            bind.accountView.couponCount.text=(it?.couponCount?:0).toString()
         }
 
         bind.tabs.addOnTabSelectedListener(onTabSelectedListener)
@@ -308,6 +310,7 @@ class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
         bind.sellerHub.vacationMode.setOnCheckedChangeListener { _, status ->
             viewModel.updateVacationModeStatus(status.toString().request())
         }
+
         bind.accountView.coupons.setOnClickListener { p0 ->
             startActivity(
                 Intent(mCtx, MoreActivity::class.java).putExtra(

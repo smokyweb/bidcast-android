@@ -19,7 +19,7 @@
         app:cardCornerRadius="8dp">
 
         <TextView
-            android:id="@+id/status"
+            android:id="@+id/percentage"
             style="@style/TitleSemiBold"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -43,7 +43,7 @@
             android:text="Code: 2#STRSS" />
 
         <TextView
-            android:id="@+id/name"
+            android:id="@+id/desc"
             style="@style/BodySmall"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -53,7 +53,7 @@
             android:text="This coupon applies only to orders up to a maximum of $500" />
 
         <TextView
-            android:id="@+id/address"
+            android:id="@+id/valid_upto"
             style="@style/BodySmall"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

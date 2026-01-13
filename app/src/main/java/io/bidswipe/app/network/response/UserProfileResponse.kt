@@ -60,6 +60,8 @@ data class UserProfileResponse(
         val preferences: SettingListResponse.Data?,
         @SerializedName("wallet_amount")
         val walletAmount: Any?,
+        @SerializedName("coupon_count")
+        val couponCount: Int?,
         ) {
 
 		@Keep

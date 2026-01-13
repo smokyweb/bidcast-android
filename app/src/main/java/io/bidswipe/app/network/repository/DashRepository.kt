@@ -493,6 +493,8 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
 
     suspend fun getStates() = call { api.getStates() }
 
+    suspend fun getCoupon() = call { api.getCoupon() }
+
     suspend fun deleteProduct(productId: String?) = call { api.deleteProduct(productId) }
 
     suspend fun blockUnblockUser(

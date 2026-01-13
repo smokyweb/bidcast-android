@@ -68,7 +68,7 @@
                 android:padding="@dimen/margin">
 
                 <TextView
-                    android:id="@+id/revenue"
+                    android:id="@+id/coupon_count"
                     style="@style/TitleLarge"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

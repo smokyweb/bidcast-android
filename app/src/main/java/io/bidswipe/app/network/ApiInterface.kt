@@ -26,6 +26,7 @@ import io.bidswipe.app.network.response.GetAuctionTypeResponse
 import io.bidswipe.app.network.response.GetBlockedUsersResponse
 import io.bidswipe.app.network.response.GetBuyerIdentityResponse
 import io.bidswipe.app.network.response.GetCategoryResponse
+import io.bidswipe.app.network.response.GetCouponsResponse
 import io.bidswipe.app.network.response.GetHowToSellResponse
 import io.bidswipe.app.network.response.GetKYCDetailsRespnse
 import io.bidswipe.app.network.response.GetLessonsResponse
@@ -439,7 +440,6 @@ interface ApiInterface {
     @GET("api/seller-identity/fetch")
     suspend fun fetchSellerVerification(
     ): FetchSellerVerificationResponse
-
 
     @Multipart
     @POST("api/v1/get-product")
@@ -863,6 +863,10 @@ interface ApiInterface {
         @Part("order_id") orderId: RequestBody?,
         @Part("status") status: RequestBody?
 	): CommonResponse
+
+    @GET("api/get-coupon")
+    suspend fun getCoupon(
+    ): GetCouponsResponse
 
 }
 
