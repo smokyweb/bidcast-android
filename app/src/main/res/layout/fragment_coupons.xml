@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	tools:context=".ui.more.CouponFragment">
+
+	<io.bidswipe.app.ui.custom.Header
+		android:id="@+id/header"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		app:headerTitle="My Coupons"
+		app:layout_constraintTop_toTopOf="parent"
+		app:primaryIconDrawable="@drawable/ic_add"
+		app:showBackButton="true" />
+
+	<androidx.recyclerview.widget.RecyclerView
+		android:id="@+id/couponRecycler"
+		android:layout_width="match_parent"
+		android:layout_height="0dp"
+		android:layout_marginHorizontal="@dimen/half_margin"
+		android:nestedScrollingEnabled="false"
+		android:orientation="vertical"
+		app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+		app:layout_constraintBottom_toBottomOf="parent"
+		app:layout_constraintTop_toBottomOf="@id/header"
+		tools:itemCount="3"
+		tools:layout_editor_absoluteX="8dp"
+		tools:listitem="@layout/coupons_list_item" />
+
+
+
+	<io.bidswipe.app.ui.custom.NoDataView
+		android:id="@+id/noData"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:visibility="gone"
+		app:layout_constraintBottom_toBottomOf="parent"
+		app:layout_constraintTop_toBottomOf="@id/header"
+		app:title_text="No Addresses Found" />
+
+	<io.bidswipe.app.ui.custom.LoaderView
+		android:id="@+id/loader"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:visibility="gone" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -37,6 +37,11 @@ class MoreActivity : BaseActivity() {
 		when (slug) {
 			
 			"language" -> {
+
+			}
+
+			"coupons" -> {
+				navGraph.setStartDestination(R.id.couponsFragment)
 			}
 			
 			"contactUs" -> {

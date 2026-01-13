@@ -640,7 +640,7 @@ class CreateProductFragment : BaseFragment<ScheduleShowViewModel, FragmentCreate
                 }
             }
             if (viewModel.productMailClass?.maxLengthIn != null) {
-                bind.widthTitle.text = buildSpannedString {
+                bind.lengthTitle.text = buildSpannedString {
                     append("Length ")
                     color(ContextCompat.getColor(mCtx, clr.onSurfaceVariant)) {
                         append("(Max: " + viewModel.productMailClass?.maxLengthIn.toString() + " inches)")
@@ -649,7 +649,7 @@ class CreateProductFragment : BaseFragment<ScheduleShowViewModel, FragmentCreate
             }
 
             if (viewModel.productMailClass?.maxWeightLbs != null) {
-                bind.widthTitle.text = buildSpannedString {
+                bind.weightTitle.text = buildSpannedString {
                     append("Weight ")
                     color(ContextCompat.getColor(mCtx, clr.onSurfaceVariant)) {
                         append("(Max: " + viewModel.productMailClass?.maxWeightLbs.toString() + " lbs)")

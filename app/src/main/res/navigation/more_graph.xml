@@ -90,6 +90,10 @@
         android:name="io.bidswipe.app.ui.dashboard.BlockedUsersFragment"
         android:label="fragment_blocked_users"
         tools:layout="@layout/fragment_blocked_users" />
+    <fragment
+        android:id="@+id/couponsFragment"
+        android:name="io.bidswipe.app.ui.more.CouponsFragment"
+        android:label="CouponsFragment" />
 
 
 </navigation>

@@ -21,11 +21,9 @@ import com.google.android.material.tabs.TabLayout
 import io.bidswipe.app.App
 import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseFragment
-import io.bidswipe.app.controller.CategoryListAdapter
 import io.bidswipe.app.controller.ImageAdapter
 import io.bidswipe.app.controller.ProductVariantAdapter
 import io.bidswipe.app.databinding.AttachmentChooserSheetBinding
-import io.bidswipe.app.databinding.CategoryBottomSheetBinding
 import io.bidswipe.app.databinding.FragmentListAProductBinding
 import io.bidswipe.app.interfaces.AlertClicks
 import io.bidswipe.app.interfaces.RecyclerClicks
@@ -45,6 +43,7 @@ import io.bidswipe.app.utils.Alerts
 import io.bidswipe.app.utils.Const
 import io.bidswipe.app.utils.PriceFormatter
 import io.bidswipe.app.utils.Utils
+import io.bidswipe.app.utils.clr
 import io.bidswipe.app.utils.cropper.CustomCropImageContract
 import io.bidswipe.app.utils.finish
 import io.bidswipe.app.utils.hideKeyboard
@@ -186,7 +185,8 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
                     if (it.moveToFirst()) {
                         val nameIndex = it.getColumnIndex(OpenableColumns.DISPLAY_NAME)
                         if (nameIndex != -1) {
-                            val name = it.getString(nameIndex) ?: "video_${System.currentTimeMillis()}.mp4"
+                            val name =
+                                it.getString(nameIndex) ?: "video_${System.currentTimeMillis()}.mp4"
                             val cacheFile = File(mCtx.cacheDir, name)
                             mCtx.contentResolver.openInputStream(uri)?.use { input ->
                                 FileOutputStream(cacheFile).use { output ->
@@ -250,7 +250,10 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
             bind.length.setText(viewModel.productFormLength)
             bind.weight.setText(viewModel.productFormWeight)
             bind.mailClass.setText(viewModel.productFormMailClassText, false)
-            bind.proCategory.setText(viewModel.productFormProcessingCategory.replace("_", " "), false)
+            bind.proCategory.setText(
+                viewModel.productFormProcessingCategory.replace("_", " "),
+                false
+            )
             bind.price.setText(viewModel.productFormPrice)
             bind.flashSell.isChecked = viewModel.productFormFlashSale
             bind.acceptOffers.isChecked = viewModel.productFormAcceptOffers
@@ -385,7 +388,8 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
             finish()
         }
 
-        val processingCategories = listOf("LETTERS", "FLATS", "MACHINABLE", "NONSTANDARD", "NON MACHINABLE")
+        val processingCategories =
+            listOf("LETTERS", "FLATS", "MACHINABLE", "NONSTANDARD", "NON MACHINABLE")
         val proCategoryAdapter = ArrayAdapter(
             mCtx,
             android.R.layout.simple_list_item_1,
@@ -645,7 +649,9 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
 
                             bind.category.setText(categoryList[position]?.name, false)
                             if (categoryList[position]?.extraFields?.isNotEmpty() == true) {
-                                variantList.addAll(categoryList[position]?.extraFields ?: mutableListOf())
+                                variantList.addAll(
+                                    categoryList[position]?.extraFields ?: mutableListOf()
+                                )
                                 variantAdapter.notifyDataSetChanged()
                             }
                             bind.loader.isVisible = true
@@ -710,7 +716,9 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
                             bind.subCategory.setText(subCategoryList[position]?.name, false)
 
                             if (subCategoryList[position]?.extraFields?.isNotEmpty() == true) {
-                                variantList.addAll(subCategoryList[position]?.extraFields ?: mutableListOf())
+                                variantList.addAll(
+                                    subCategoryList[position]?.extraFields ?: mutableListOf()
+                                )
                                 variantAdapter.notifyDataSetChanged()
                             }
 
@@ -806,7 +814,8 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
                                 bind.mailClass.setText(sel.label, false)
                             }
                         } else {
-                            val sel = mailClassesList.find { mailClasses -> mailClasses?.label == product?.mailClass }
+                            val sel =
+                                mailClassesList.find { mailClasses -> mailClasses?.label == product?.mailClass }
 
                             if (sel != null) {
                                 selectedMailClass = sel
@@ -885,6 +894,45 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
             log("Selected mail class: ${selectedMailClass?.label}")
             // Save state to ViewModel
             saveStateToViewModel()
+
+
+            selectedMailClass?.label?.let { label ->
+                bind.mailClass.setText(label, false)
+            }
+
+            if (selectedMailClass?.maxWidthIn != null) {
+                bind.widthTitle.text = buildSpannedString {
+                    append("Width ")
+                    color(ContextCompat.getColor(mCtx, clr.onSurfaceVariant)) {
+                        append("(Max: " + selectedMailClass?.maxWidthIn.toString() + " inches)")
+                    }
+                }
+            }
+            if (selectedMailClass?.maxHeightIn != null) {
+                bind.heightTitle.text = buildSpannedString {
+                    append("Height ")
+                    color(ContextCompat.getColor(mCtx, clr.onSurfaceVariant)) {
+                        append("(Max: " + selectedMailClass?.maxHeightIn.toString() + " inches)")
+                    }
+                }
+            }
+            if (selectedMailClass?.maxLengthIn != null) {
+                bind.lengthTitle.text = buildSpannedString {
+                    append("Length ")
+                    color(ContextCompat.getColor(mCtx, clr.onSurfaceVariant)) {
+                        append("(Max: " + selectedMailClass?.maxLengthIn.toString() + " inches)")
+                    }
+                }
+            }
+
+            if (selectedMailClass?.maxWeightLbs != null) {
+                bind.weightTitle.text = buildSpannedString {
+                    append("Weight ")
+                    color(ContextCompat.getColor(mCtx, clr.onSurfaceVariant)) {
+                        append("(Max: " + selectedMailClass?.maxWeightLbs.toString() + " lbs)")
+                    }
+                }
+            }
         }
 
         bind.mailClass.setHapticClickListener {
@@ -1038,7 +1086,7 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
                     ?: 0.0)) -> {
                     Alerts.error(
                         mCtx,
-                        "Width exceeds maximum of ${selectedMailClass?.maxWidthIn} cm"
+                        "Width exceeds maximum of ${selectedMailClass?.maxWidthIn} inches"
                     )
                 }
 
@@ -1046,7 +1094,7 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
                     ?: 0.0)) -> {
                     Alerts.error(
                         mCtx,
-                        "Height exceeds maximum of ${selectedMailClass?.maxHeightIn} cm"
+                        "Height exceeds maximum of ${selectedMailClass?.maxHeightIn} inches"
                     )
                 }
 
@@ -1054,7 +1102,7 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
                     ?: 0.0)) -> {
                     Alerts.error(
                         mCtx,
-                        "Length exceeds maximum of ${selectedMailClass?.maxLengthIn} cm"
+                        "Length exceeds maximum of ${selectedMailClass?.maxLengthIn} inches"
                     )
                 }
 
@@ -1108,7 +1156,9 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
 
         subCategoryId = if (product?.subCategoryId != null) product.subCategoryId.toString() else ""
 
-        val categoryName = if (categoryId.isNotEmpty()) App.categoryList.find { it?.id == categoryId.toInt() }?.name ?: "" else ""
+        val categoryName =
+            if (categoryId.isNotEmpty()) App.categoryList.find { it?.id == categoryId.toInt() }?.name
+                ?: "" else ""
 
         if (subCategoryId.isNotEmpty()) {
 //            val subCategoryName = App.categoryList.find { it?. == categoryId.toInt() }?.name
