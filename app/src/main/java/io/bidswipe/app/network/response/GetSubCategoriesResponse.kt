@@ -4,6 +4,7 @@ package io.bidswipe.app.network.response
 import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
 import androidx.annotation.Keep
+import kotlinx.parcelize.Parcelize
 
 @Keep
 data class GetSubCategoriesResponse(
@@ -34,6 +35,7 @@ data class GetSubCategoriesResponse(
         val subcategories : List<Subcategory?>? ,
     ) {
 		@Keep
+        @Parcelize
 		data class Subcategory(
             @SerializedName("id")
             val id : Int? ,
@@ -53,6 +55,7 @@ data class GetSubCategoriesResponse(
             var isSelected : Boolean? = false
         ): Parcelable {
 			@Keep
+            @Parcelize
 			data class ExtraField(
                 @SerializedName("label")
                 val label : String? ,

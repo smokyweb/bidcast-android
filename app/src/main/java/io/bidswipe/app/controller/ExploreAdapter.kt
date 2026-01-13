@@ -3,6 +3,7 @@ package io.bidswipe.app.controller
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import io.bidswipe.app.App
@@ -163,9 +164,12 @@ class ExploreAdapter(
             val isSelected = selectedPosition == categoryIndex
 
             if (isSelected) {
-                bind.root.setCardBackgroundColor(mCtx.getColor(R.color.warningAlt))
-                bind.root.strokeColor = mCtx.getColor(R.color.warningAlt)
-                bind.root.strokeWidth = mCtx.resources.dpToPx(4)
+                bind.root.setBackgroundDrawable(
+                    ContextCompat.getDrawable(
+                        mCtx,
+                        R.drawable.category_selected_background
+                    )
+                )
             } else {
                 bind.root.setCardBackgroundColor(mCtx.getColor(R.color.background))
                 bind.root.strokeColor = mCtx.getColor(R.color.transparent)

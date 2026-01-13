@@ -39,8 +39,3 @@ class SubCategoryListAdapter(
 		}
 	}
 }
-
-
-
-
-

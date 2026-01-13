@@ -18,12 +18,12 @@ import io.bidswipe.app.App
 import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseFragment
 import io.bidswipe.app.controller.HomeAdapter
+import io.bidswipe.app.controller.SubCategoryAdapter
 import io.bidswipe.app.databinding.FragmentExploreTypeBinding
 import io.bidswipe.app.interfaces.AlertClicks
 import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.model.StreamModel
 import io.bidswipe.app.network.Resource
-import io.bidswipe.app.network.response.GetCategoryResponse
 import io.bidswipe.app.network.response.GetMyShowResponse
 import io.bidswipe.app.network.response.GetSubCategoriesResponse
 import io.bidswipe.app.ui.custom.AppBottomSheet
@@ -39,6 +39,7 @@ import io.bidswipe.app.utils.request
 import io.bidswipe.app.utils.setHapticClickListener
 import io.bidswipe.app.utils.value
 
+@Suppress("DEPRECATION")
 class ExploreTypeFragment : BaseFragment<DashViewModel, FragmentExploreTypeBinding>() {
     override fun getModel(): Class<DashViewModel> = DashViewModel::class.java
 
@@ -57,6 +58,7 @@ class ExploreTypeFragment : BaseFragment<DashViewModel, FragmentExploreTypeBindi
 
     private var selectedTabText = "live"
 
+    var subCategoryAdapter: SubCategoryAdapter? = null
     private val mClick = object : RecyclerClicks {
         override fun itemClick(pos: Int, status: String?) {
 
@@ -103,18 +105,40 @@ class ExploreTypeFragment : BaseFragment<DashViewModel, FragmentExploreTypeBindi
         category = arguments?.getString("category") ?: ""
         subCategory = arguments?.getString("subcategory")
 
-//        val subCategories = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-//                arguments?.getParcelableArrayList(
-//                    "sub_list",
-//                    GetSubCategoriesResponse.Data.Subcategory::class.java
-//                )
-//            } else {
-//                @Suppress("DEPRECATION")
-//                arguments?.getParcelableArrayList("sub_list") as ArrayList<GetSubCategoriesResponse.Data.Subcategory>
-//            }
-
-        val headerText = if (subCategory != null) subCategory?.asCapital()?:"" else category.asCapital()
+        val headerText = if (subCategory != null) subCategory?.asCapital() ?: "" else category.asCapital()
         bind.header.setHeaderText(headerText)
+
+        val subCategories = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            arguments?.getParcelableArrayList(
+                "sub_list",
+                GetSubCategoriesResponse.Data.Subcategory::class.java
+            )
+        } else {
+            @Suppress("DEPRECATION")
+            arguments?.getParcelableArrayList("sub_list")
+        }
+
+        if (subCategories?.isNotEmpty() == true) {
+            subCategoryAdapter = SubCategoryAdapter(subCategories, object : RecyclerClicks {
+                override fun itemClick(pos: Int, status: String?) {
+                    subCategories.forEachIndexed { index, sub ->
+                        sub.isSelected = pos == index
+                        subCategoryAdapter?.notifyDataSetChanged()
+                    }
+
+                    subCategory = subCategories[pos].name
+                    page = 1
+                    bind.loader.isVisible = true
+                    viewModel.getLiveShow(selectedTabText.request(), category.request(), subCategory?.request())
+                }
+            }, "explore")
+
+            bind.categoryRecycler.adapter = subCategoryAdapter
+            bind.categoryRecycler.isVisible = true
+
+        } else {
+            bind.categoryRecycler.isVisible = false
+        }
 
         bind.root.setHapticClickListener {
             hideKeyboard(it)

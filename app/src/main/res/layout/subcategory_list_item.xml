@@ -14,15 +14,16 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:gravity="center_vertical"
-        android:padding="12dp">
+        android:padding="@dimen/half_margin">
 
         <!-- Subcategory Icon -->
         <com.google.android.material.card.MaterialCardView
             style="@style/cardStyle"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
+            android:layout_width="38dp"
+            android:layout_height="38dp"
             android:layout_marginEnd="12dp"
             app:cardElevation="0dp"
+            app:cardBackgroundColor="@color/transparent"
             app:cardCornerRadius="8dp">
 
             <androidx.appcompat.widget.AppCompatImageView
@@ -37,12 +38,11 @@
         <!-- Title -->
         <TextView
             android:id="@+id/subcategoryTitle"
-            style="@style/TitleMedium"
+            style="@style/TitleSmall"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:textColor="@color/onSurface"
-            android:textSize="16sp"
             android:maxLines="1"
             android:ellipsize="end"
             tools:text="All Books &amp; Movies" />

@@ -99,7 +99,8 @@
                                     android:layout_marginBottom="@dimen/margin"
                                     app:boxBackgroundColor="@color/transparent"
                                     app:boxStrokeColor="@color/input_box_stroke_color_surface"
-                                    app:endIconDrawable="@drawable/ic_forward"
+                                    app:endIconDrawable="@drawable/send"
+                                    app:endIconTint="@color/background"
                                     app:endIconMode="custom"
                                     app:layout_constraintBottom_toTopOf="@+id/product">
 

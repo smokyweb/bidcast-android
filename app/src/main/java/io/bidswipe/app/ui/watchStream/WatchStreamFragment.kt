@@ -135,6 +135,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 	private lateinit var pipParams: PictureInPictureParams
 	private var isSocketDataLoaded = false
 	private var isHandlerRunning = false
+	private var isAuctionStarted = false
 	private var showThumbnail: String? = null
 
 	private var showNotes: String? = ""
@@ -297,6 +298,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 								val startingBidAmount = json.optString("starting_bid_amount") ?: "0"
 								log("LIVE PRODUCT : $product")
 								bind.productLayout.isVisible = true
+								isAuctionStarted=true
 								val status = json.optString("status")
 
 								log("STATUS : $status")
@@ -312,6 +314,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
 								updateProductUI(product, startingBidAmount)
 							} else {
+								isAuctionStarted=false
 								updateProductUI(null, "0")
 							}
 
@@ -595,12 +598,12 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 			val imeVisible = insets.isVisible(WindowInsetsCompat.Type.ime())
 
 			if (imeVisible) {
-				bind.product.isVisible = false
+				bind.productLayout.isVisible = false
 				bind.bidLayout.isVisible = false
 				bind.sideOptions.isVisible = false
 			} else {
-				bind.product.isVisible = true
-				bind.bidLayout.isVisible = true
+				bind.productLayout.isVisible = isAuctionStarted
+				bind.bidLayout.isVisible = isAuctionStarted
 				bind.sideOptions.isVisible = true
 			}
 			insets

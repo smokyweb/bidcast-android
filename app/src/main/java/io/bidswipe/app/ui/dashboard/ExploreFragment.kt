@@ -66,12 +66,18 @@ class ExploreFragment : BaseFragment<DashViewModel, FragmentExploreBinding>() {
                     subcategory.name
                 }
 
+                val subCategoryList = if (subcategory.name == "All ${selectedCategory?.name}") {
+                    ArrayList(exploreAdapter.getAllSubCategories().filter { it?.name != "All ${selectedCategory?.name}" })
+                } else {
+                    arrayListOf()
+                }
+
                 findNavController().navigate(
                     ids.goTopExploreType,
                     bundleOf(
                         "category" to selectedCategory?.name,
                         "subcategory" to sendSub,
-//                        "sub_list" to exploreAdapter.getAllSubCategories()
+                        "sub_list" to subCategoryList
                     )
                 )
                 return
