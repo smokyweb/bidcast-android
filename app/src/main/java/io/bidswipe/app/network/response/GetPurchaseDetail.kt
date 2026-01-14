@@ -18,19 +18,21 @@ data class GetPurchaseDetail(
 	@Keep
 	data class Data(
 		@SerializedName("product")
-		val product : Product? ,
+		val product : Product?,
 		@SerializedName("shippingAddress")
-		val shippingAddress : ShippingAddress? ,
+		val shippingAddress : ShippingAddress?,
 		@SerializedName("shipping_charges")
-		val shippingCharges : String? ,
+		val shippingCharges : String?,
 		@SerializedName("sub_total")
-		val subTotal : String? ,
+		val subTotal : String?,
 		@SerializedName("tax_amount")
-		val taxAmount : String? ,
+		val taxAmount : String?,
 		@SerializedName("tax_percent")
-		val taxPercent : String? ,
+		val taxPercent : String?,
 		@SerializedName("total")
-		val total : String? ,
+		val total : String?,
+		@SerializedName("discount_amount")
+		val discountAmount : String?,
 	) {
 		@Keep
 		data class Product(

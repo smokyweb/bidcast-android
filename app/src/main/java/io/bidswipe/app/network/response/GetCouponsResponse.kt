@@ -25,7 +25,8 @@ data class GetCouponsResponse(
         @SerializedName("status")
         val status: Int?,
         @SerializedName("user_id")
-        val userId: Int?
+        val userId: Int?,
+        var isSelected: Boolean = false
     ) {
         data class Coupon(
             @SerializedName("description")

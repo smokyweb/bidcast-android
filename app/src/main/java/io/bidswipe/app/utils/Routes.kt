@@ -9,6 +9,7 @@ import io.bidswipe.app.ui.dashboard.AddPaymentCardActivity
 import io.bidswipe.app.ui.dashboard.DashActivity
 import io.bidswipe.app.ui.dashboard.RateSellerActivity
 import io.bidswipe.app.ui.interest.ChooseInterestActivity
+import io.bidswipe.app.ui.product.OrderStatusActivity
 import io.bidswipe.app.ui.scheduleShow.ScheduleShowActivity
 import io.bidswipe.app.ui.sell.ListAProductActivity
 import io.bidswipe.app.ui.tutorials.TutorialsActivity
@@ -25,6 +26,10 @@ fun Context.toTutorials() = Intent(this, TutorialsActivity::class.java)
 fun Context.toSellerShow(time: String?, showData: LiveShowModel?) = Intent(this, AgoraPublisherActivity::class.java)
 	.putExtra("time", time)
 	.putExtra("showData", showData)
+
+fun Context.toOrderStatus(orderId: String?,from:String?=null) = Intent(this, OrderStatusActivity::class.java)
+	.putExtra("orderId", orderId)
+	.putExtra("from", from)
 
 fun Context.toScheduleShow(from: String? = "",showId:String?="") = Intent(this, ScheduleShowActivity::class.java).apply {
 	putExtra("from", from)

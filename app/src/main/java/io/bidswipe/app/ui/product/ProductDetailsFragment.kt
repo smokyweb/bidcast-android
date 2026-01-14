@@ -9,10 +9,9 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.PopupMenu
 import androidx.annotation.RequiresApi
-import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.content.ContextCompat
+import androidx.core.text.bold
 import androidx.core.text.buildSpannedString
 import androidx.core.text.color
 import androidx.core.view.isVisible
@@ -51,64 +50,64 @@ import io.bidswipe.app.utils.value
 @SuppressLint("NotifyDataSetChanged", "InflateParams")
 class ProductDetailsFragment : BaseFragment<ProductViewModel, FragmentProductDetailsBinding>() {
 
-	override fun getModel(): Class<ProductViewModel> = ProductViewModel::class.java
+    override fun getModel(): Class<ProductViewModel> = ProductViewModel::class.java
 
-	override fun getBind(inflater: LayoutInflater, view: ViewGroup?) =
-		FragmentProductDetailsBinding.inflate(inflater, view, false)
+    override fun getBind(inflater: LayoutInflater, view: ViewGroup?) =
+        FragmentProductDetailsBinding.inflate(inflater, view, false)
 
-	private var productId = ""
-	private var offerList = mutableListOf<OfferModel>()
-	private var actionList = mutableListOf<PowerMenuItem>()
-	private var images = mutableListOf<String?>()
+    private var productId = ""
+    private var offerList = mutableListOf<OfferModel>()
+    private var actionList = mutableListOf<PowerMenuItem>()
+    private var images = mutableListOf<String?>()
 
-	private var productSaved =false
+    private var productSaved = false
 
-	lateinit var mediaAdapter: ProductImageAdapter
+    lateinit var mediaAdapter: ProductImageAdapter
 
-	@RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
-	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-		super.onViewCreated(view, savedInstanceState)
+    @RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
-		productId = activity?.intent?.getStringExtra("productId") ?: ""
+        productId = activity?.intent?.getStringExtra("productId") ?: ""
 
-		bind.backImage.setHapticClickListener {
-			finish()
-		}
+        bind.backImage.setHapticClickListener {
+            finish()
+        }
 
-		actionList.clear()
-		actionList.add(PowerMenuItem(title = "Save Product"))
+        actionList.clear()
+        actionList.add(PowerMenuItem(title = "Save Product"))
 
-		mediaAdapter = ProductImageAdapter(images)
-		bind.recyclerView.adapter = mediaAdapter
+        mediaAdapter = ProductImageAdapter(images)
+        bind.recyclerView.adapter = mediaAdapter
 
-		bind.buyNow.setHapticClickListener {
-			findNavController().navigate(ids.goToBuyNowFragment)
-		}
+        bind.buyNow.setHapticClickListener {
+            findNavController().navigate(ids.goToBuyNowFragment)
+        }
 
-		bind.makeOffer.setHapticClickListener {
-			showOfferSheet()
-		}
+        bind.makeOffer.setHapticClickListener {
+            showOfferSheet()
+        }
 
-		bind.save.setHapticClickListener {
-			bind.loader.isVisible = true
-			viewModel.saveSellerProduct(productId.request())
-		}
+        bind.save.setHapticClickListener {
+            bind.loader.isVisible = true
+            viewModel.saveSellerProduct(productId.request())
+        }
 
-		bind.loader.isVisible = true
-		viewModel.getProductDetails(productId.request())
+        bind.loader.isVisible = true
+        viewModel.getProductDetails(productId.request())
 
-		viewModel.getProductDetailsRepo.observe(viewLifecycleOwner) {
-			when (it) {
-				is Resource.Success -> {
+        viewModel.getProductDetailsRepo.observe(viewLifecycleOwner) {
+            when (it) {
+                is Resource.Success -> {
 //                    bind.loader.isVisible = false
 
-					val mData = it.value.data
+                    val mData = it.value.data
 
-					viewModel.product = mData
+                    viewModel.product = mData
 
-					bind.userName.text = mData?.user?.name?.asCapital()
+                    bind.userName.text = mData?.user?.name?.asCapital()
 
-					viewModel.getSellerInfo(sellerId = mData?.userId.toString())
+                    viewModel.getSellerInfo(sellerId = mData?.userId.toString())
 
 //                    if (mData?.user?.sellerVerification == true) {
 //                        bind.sellerStatus.text = "Verified Seller"
@@ -116,260 +115,274 @@ class ProductDetailsFragment : BaseFragment<ProductViewModel, FragmentProductDet
 //                        bind.sellerStatus.text = "Unverified Seller"
 //                    }
 
-					bind.productName.text = mData?.title?.asCapital()
-					bind.quantity.text = buildSpannedString {
-						append(mData?.quantity.toString())
-						append(" Available")
-					}
+                    bind.productName.text = mData?.title?.asCapital()
 
-					bind.price.text = buildSpannedString {
-						append("Starting at ")
-						color(ContextCompat.getColor(mCtx, R.color.onSurface)) {
-							append(mData?.pricing.toString().asMoney())
-						}
-						append(" + Shipping + Taxes")
-					}
+                    bind.description.text = mData?.description?.asCapital()
+                    bind.category.text = mData?.category?.name?.asCapital() ?: "Other"
 
-					val offer = mData?.offer
-					if (offer != null) {
+                    bind.subCategoryLayout.isVisible = mData?.subCategory != null
+                    if (mData?.subCategory != null) {
+                        bind.subCategory.text = mData.subCategory.name ?: "Other"
+                    }
 
-						bind.offerLayout.isVisible = true
+                    bind.conditionLayout.isVisible = mData?.productCondition.isNullOrEmpty() == false
+                    if (!mData?.productCondition.isNullOrEmpty()) {
+                        bind.condition.text = (mData.productCondition?:"").replace("_", " ")
+                    }
 
-						bind.offerHeading.text = buildSpannedString {
-							append("Offer ")
-							append(offer.status)
-						}
+                    bind.quantity.text = buildSpannedString {
+                        append(mData?.quantity.toString())
+                        append(" Available")
+                    }
 
-						bind.offerPrice.text = offer.amount.toString().asMoney()
+                    bind.price.text = buildSpannedString {
+                        append("Starting at ")
+                        color(ContextCompat.getColor(mCtx, R.color.onSurface)) {
+                            append(mData?.pricing.toString().asMoney())
+                        }
+                        append(" + Shipping + Taxes")
+                    }
 
-						when (offer.status) {
-							"accepted" -> {
-								bind.price.paintFlags =
-									bind.price.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
-								bind.price.setTextColor(
-									ContextCompat.getColor(
-										mCtx,
-										R.color.outlineVariant
-									)
-								)
-								bind.makeOffer.isVisible = false
-							}
+                    val offer = mData?.offer
+                    if (offer != null) {
+//                        bind.offerLayout.isVisible = true
 
-							"rejected" -> {
-								bind.makeOffer.isVisible = mData.acceptOffers == true
-							}
+                        bind.offerHeading.text = buildSpannedString {
+                            append("Offer ")
+                            append(offer.status)
+                        }
 
-							else -> {
-								bind.makeOffer.isVisible = false
-							}
-						}
+                        bind.offerPrice.text = offer.amount.toString().asMoney()
 
-					} else {
-						bind.offerLayout.isVisible = false
-						bind.makeOffer.isVisible = mData?.acceptOffers == true
-					}
+                        when (offer.status) {
+                            "accepted" -> {
+                                bind.price.paintFlags =
+                                    bind.price.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
+                                bind.price.setTextColor(
+                                    ContextCompat.getColor(
+                                        mCtx,
+                                        R.color.outlineVariant
+                                    )
+                                )
+                                bind.makeOffer.isVisible = false
+                            }
 
-					bind.userImage.loadUrl(mCtx, mData?.user?.profileImage.toString())
+                            "rejected" -> {
+                                bind.makeOffer.isVisible = mData.acceptOffers == true
+                            }
 
-					bind.recyclerView.onFlingListener = null
+                            else -> {
+                                bind.makeOffer.isVisible = false
+                            }
+                        }
 
-					images.clear()
-					images.addAll(mData?.videos ?: emptyList())
-					images.addAll(mData?.images ?: emptyList())
-					mediaAdapter.notifyDataSetChanged()
+                    } else {
+                        bind.offerLayout.isVisible = false
+                        bind.makeOffer.isVisible = mData?.acceptOffers == true
+                    }
 
-					bind.indicatorv.attachTo(bind.recyclerView, true)
+                    bind.userImage.loadUrl(mCtx, mData?.user?.profileImage.toString())
 
-					bind.posted.text =
-						Utils.getTimeAgo(mData?.createdAt ?: "", Const.DD_MM_YYYY_HH_MM_SS)
+                    bind.recyclerView.onFlingListener = null
 
-					bind.address.text = mData?.shippingAdress?.streetAddress ?: "--"
+                    images.clear()
+                    images.addAll(mData?.videos ?: emptyList())
+                    images.addAll(mData?.images ?: emptyList())
+                    mediaAdapter.notifyDataSetChanged()
 
-					offerList.clear()
+                    bind.indicatorv.attachTo(bind.recyclerView, true)
 
-					offerList.addAll(
-						listOf(
-							OfferModel(
-								getDiscountAmount(mData?.pricing?.toDouble() ?: 0.0, 20),
-								"20% off"
-							), OfferModel(
-								getDiscountAmount(mData?.pricing?.toDouble() ?: 0.0, 15),
-								"15% off"
-							), OfferModel(
-								getDiscountAmount(mData?.pricing?.toDouble() ?: 0.0, 10),
-								"10% off"
-							), OfferModel(
-								getDiscountAmount(mData?.pricing?.toDouble() ?: 0.0, 5),
-								"5% off"
-							)
-						)
-					)
+                    bind.posted.text = buildSpannedString {
+                        bold {
+                            append("Posted ")
+                        }
+                        append(Utils.getTimeAgo(mData?.createdAt ?: "", Const.DD_MM_YYYY_HH_MM_SS))
+                    }
 
-					bind.share.setHapticClickListener {
-						bind.loader.isVisible = true
-						shareProduct(mData)
+                    offerList.clear()
 
-					}
+                    offerList.addAll(
+                        listOf(
+                            OfferModel(
+                                getDiscountAmount(mData?.pricing?.toDouble() ?: 0.0, 20),
+                                "20% off"
+                            ), OfferModel(
+                                getDiscountAmount(mData?.pricing?.toDouble() ?: 0.0, 15),
+                                "15% off"
+                            ), OfferModel(
+                                getDiscountAmount(mData?.pricing?.toDouble() ?: 0.0, 10),
+                                "10% off"
+                            ), OfferModel(
+                                getDiscountAmount(mData?.pricing?.toDouble() ?: 0.0, 5),
+                                "5% off"
+                            )
+                        )
+                    )
 
-					bind.chat.setHapticClickListener {
-						val intent = Intent(mCtx, ChatActivity::class.java).apply {
-							putExtra("id", mData?.userId.toString())
-							putExtra("name", mData?.user?.name ?: "")
-							putExtra("image", mData?.user?.profileImage ?: "")
-						}
-						startActivity(intent)
-					}
+                    bind.share.setHapticClickListener {
+                        bind.loader.isVisible = true
+                        shareProduct(mData)
 
-					bind.buyLayout.isVisible = mData?.userId.toString() != userId
+                    }
 
-					productSaved = mData?.productSaveStatus?:false
+                    bind.chat.setHapticClickListener {
+                        val intent = Intent(mCtx, ChatActivity::class.java).apply {
+                            putExtra("id", mData?.userId.toString())
+                            putExtra("name", mData?.user?.name ?: "")
+                            putExtra("image", mData?.user?.profileImage ?: "")
+                        }
+                        startActivity(intent)
+                    }
 
-					bind.save.icon = ContextCompat.getDrawable(mCtx, if(productSaved) draw.ic_saved else draw.ic_save )
-					bind.save.text = if(productSaved) "Saved" else "Save"
+                    bind.buyLayout.isVisible = mData?.userId.toString() != userId
 
-				}
+                    productSaved = mData?.productSaveStatus ?: false
 
-				is Resource.Error -> {
-					bind.loader.isVisible = false
+                    bind.save.icon = ContextCompat.getDrawable(mCtx, if (productSaved) draw.ic_saved else draw.ic_save)
+                    bind.save.text = if (productSaved) "Saved" else "Save"
 
-					it.parse(mCtx, TAG, object : AlertClicks {
-						override fun primaryClick(dialog: AppBottomSheet) {
-							dialog.dismiss()
+                }
 
-						}
+                is Resource.Error -> {
+                    bind.loader.isVisible = false
 
-						override fun secondaryClick(dialog: AppBottomSheet) {
-							dialog.dismiss()
+                    it.parse(mCtx, TAG, object : AlertClicks {
+                        override fun primaryClick(dialog: AppBottomSheet) {
+                            dialog.dismiss()
+                        }
 
-						}
-					})
-				}
+                        override fun secondaryClick(dialog: AppBottomSheet) {
+                            dialog.dismiss()
 
-				else -> {}
+                        }
+                    })
+                }
 
-			}
-		}
+                else -> {}
 
-		viewModel.makeOfferRepo.observe(viewLifecycleOwner) {
-			when (it) {
-				is Resource.Success -> {
-					bind.loader.isVisible = false
-					Alerts.success(mCtx, "Offer Sent")
-				}
+            }
+        }
 
-				is Resource.Error -> {
-					bind.loader.isVisible = false
+        viewModel.makeOfferRepo.observe(viewLifecycleOwner) {
+            when (it) {
+                is Resource.Success -> {
+                    bind.loader.isVisible = false
+                    Alerts.success(mCtx, "Offer Sent")
+                }
 
-					it.parse(mCtx, TAG, object : AlertClicks {
-						override fun primaryClick(dialog: AppBottomSheet) {
-							dialog.dismiss()
+                is Resource.Error -> {
+                    bind.loader.isVisible = false
 
-						}
+                    it.parse(mCtx, TAG, object : AlertClicks {
+                        override fun primaryClick(dialog: AppBottomSheet) {
+                            dialog.dismiss()
 
-						override fun secondaryClick(dialog: AppBottomSheet) {
-							dialog.dismiss()
+                        }
 
-						}
-					})
-				}
+                        override fun secondaryClick(dialog: AppBottomSheet) {
+                            dialog.dismiss()
 
-				else -> {}
+                        }
+                    })
+                }
 
-			}
-		}
+                else -> {}
 
-		viewModel.saveSellerProductRepo.observe(viewLifecycleOwner) {
-			when (it) {
-				is Resource.Success -> {
-					bind.loader.isVisible = false
+            }
+        }
 
-					productSaved =!productSaved
+        viewModel.saveSellerProductRepo.observe(viewLifecycleOwner) {
+            when (it) {
+                is Resource.Success -> {
+                    bind.loader.isVisible = false
 
-					bind.save.icon = ContextCompat.getDrawable(mCtx, if(productSaved==true) draw.ic_saved else draw.ic_save )
-					bind.save.text = if(productSaved==true) "Saved" else "Save"
+                    productSaved = !productSaved
+
+                    bind.save.icon = ContextCompat.getDrawable(mCtx, if (productSaved == true) draw.ic_saved else draw.ic_save)
+                    bind.save.text = if (productSaved == true) "Saved" else "Save"
 
 //					Alerts.success(mCtx, it.value.message.toString())
 
-				}
+                }
 
-				is Resource.Error -> {
-					bind.loader.isVisible = false
+                is Resource.Error -> {
+                    bind.loader.isVisible = false
 
-					it.parse(mCtx, TAG, object : AlertClicks {
-						override fun primaryClick(dialog: AppBottomSheet) {
-							dialog.dismiss()
+                    it.parse(mCtx, TAG, object : AlertClicks {
+                        override fun primaryClick(dialog: AppBottomSheet) {
+                            dialog.dismiss()
 
-						}
+                        }
 
-						override fun secondaryClick(dialog: AppBottomSheet) {
-							dialog.dismiss()
+                        override fun secondaryClick(dialog: AppBottomSheet) {
+                            dialog.dismiss()
 
-						}
-					})
-				}
+                        }
+                    })
+                }
 
-				else -> {}
+                else -> {}
 
-			}
-		}
+            }
+        }
 
-		viewModel.getSellerInfoRepo.observe(viewLifecycleOwner) {
-			when (it) {
-				is Resource.Success -> {
-					bind.loader.isVisible = false
-					val mData = it.value.data
+        viewModel.getSellerInfoRepo.observe(viewLifecycleOwner) {
+            when (it) {
+                is Resource.Success -> {
+                    bind.loader.isVisible = false
+                    val mData = it.value.data
 
-					bind.rating.text = (mData?.ratingAvg ?: 0).toString()
-					bind.review.text = (mData?.review ?: 0).toString()
-					bind.sold.text = (mData?.soldCount ?: 0).toString()
-					bind.shipping.text = (mData?.avgShip ?: 0).toString()
-					bind.userImage.loadUrl(mCtx, mData?.sellerDetails?.profileImage ?: "")
+                    bind.rating.text = (mData?.ratingAvg ?: 0).toString()
+                    bind.review.text = (mData?.review ?: 0).toString()
+                    bind.sold.text = (mData?.soldCount ?: 0).toString()
+                    bind.shipping.text = (mData?.avgShip ?: 0).toString()
+                    bind.userImage.loadUrl(mCtx, mData?.sellerDetails?.profileImage ?: "")
 
-				}
+                }
 
-				is Resource.Error -> {
-					bind.loader.isVisible = false
+                is Resource.Error -> {
+                    bind.loader.isVisible = false
 
-					it.parse(mCtx, TAG, object : AlertClicks {
-						override fun primaryClick(dialog: AppBottomSheet) {
-							dialog.dismiss()
+                    it.parse(mCtx, TAG, object : AlertClicks {
+                        override fun primaryClick(dialog: AppBottomSheet) {
+                            dialog.dismiss()
 
-						}
+                        }
 
-						override fun secondaryClick(dialog: AppBottomSheet) {
-							dialog.dismiss()
-						}
-					})
-				}
+                        override fun secondaryClick(dialog: AppBottomSheet) {
+                            dialog.dismiss()
+                        }
+                    })
+                }
 
-				else -> {}
-			}
-		}
-	}
+                else -> {}
+            }
+        }
+    }
 
-	fun shareProduct(mData: GetProductDetailsResponse.Data?, uri: Uri? = null) {
-		val shareText = buildString {
-			append("Check out this product ")
-			append(mData?.title?.asCapital() ?: "")
-			append(" by @${bind.userName.text}")
-			append(" 🛍️✨\nGrab it here:\n")
-			append("${Const.BASE_URL}/products/$productId")
-		}
+    fun shareProduct(mData: GetProductDetailsResponse.Data?, uri: Uri? = null) {
+        val shareText = buildString {
+            append("Check out this product ")
+            append(mData?.title?.asCapital() ?: "")
+            append(" by @${bind.userName.text}")
+            append(" 🛍️✨\nGrab it here:\n")
+            append("${Const.BASE_URL}/products/$productId")
+        }
 
-		val seller = Seller(
-			mData?.userId.toString(),
-			mData?.user?.profileImage,
-			mData?.user?.name
-		)
+        val seller = Seller(
+            mData?.userId.toString(),
+            mData?.user?.profileImage,
+            mData?.user?.name
+        )
 
-		ShareHelper.openShareSheet(
-			parentFragmentManager,
-			imageUrl = mData?.images?.first().orEmpty(),
-			text = mData?.title?.asCapital().orEmpty(),
-			sellerInfo = seller,
-			shareText = shareText,
-			type = "product"
-		)
+        ShareHelper.openShareSheet(
+            parentFragmentManager,
+            imageUrl = mData?.images?.first().orEmpty(),
+            text = mData?.title?.asCapital().orEmpty(),
+            sellerInfo = seller,
+            shareText = shareText,
+            type = "product"
+        )
 
 //        if (mData?.images?.isNotEmpty() == true) {
 //            Utils.saveImageFromUrlToCache(mCtx, mData.images.first().orEmpty()) { imageUri ->
@@ -380,88 +393,88 @@ class ProductDetailsFragment : BaseFragment<ProductViewModel, FragmentProductDet
 //            bind.loader.isVisible = false
 //            shareProductDetails(null)
 //        }
-	}
+    }
 
-	fun getDiscountAmount(originalAmount: Double, percentOff: Int): String {
-		val discountedAmount = originalAmount - (originalAmount * percentOff) / 100
-		return discountedAmount.toString()
-	}
+    fun getDiscountAmount(originalAmount: Double, percentOff: Int): String {
+        val discountedAmount = originalAmount - (originalAmount * percentOff) / 100
+        return discountedAmount.toString()
+    }
 
-	fun showOfferSheet() {
-		val makeOfferSheetBind = MakeOfferSheetBinding.bind(
-			layoutInflater.inflate(
-				R.layout.make_offer_sheet,
-				null,
-				false
-			)
-		)
-		val makeOfferSheet = Alerts.appBottomSheet(mCtx, true, makeOfferSheetBind)
+    fun showOfferSheet() {
+        val makeOfferSheetBind = MakeOfferSheetBinding.bind(
+            layoutInflater.inflate(
+                R.layout.make_offer_sheet,
+                null,
+                false
+            )
+        )
+        val makeOfferSheet = Alerts.appBottomSheet(mCtx, true, makeOfferSheetBind)
 
-		makeOfferSheetBind.listedPrice.text = viewModel.product?.pricing.toString().asMoney()
+        makeOfferSheetBind.listedPrice.text = viewModel.product?.pricing.toString().asMoney()
 
-		makeOfferSheetBind.offerRecycler.adapter =
-			MakeOfferAdapter(offerList, object : RecyclerClicks {
+        makeOfferSheetBind.offerRecycler.adapter =
+            MakeOfferAdapter(offerList, object : RecyclerClicks {
 
-				override fun itemClick(pos: Int, status: String?) {
+                override fun itemClick(pos: Int, status: String?) {
 
-					makeOfferSheetBind.customOffer.setText(offerList[pos].amount)
+                    makeOfferSheetBind.customOffer.setText(offerList[pos].amount)
 
-					offerList.forEachIndexed { index, item ->
-						item.selected = index == pos
-					}
+                    offerList.forEachIndexed { index, item ->
+                        item.selected = index == pos
+                    }
 
-					makeOfferSheetBind.offerRecycler.adapter?.notifyDataSetChanged()
-				}
-			})
+                    makeOfferSheetBind.offerRecycler.adapter?.notifyDataSetChanged()
+                }
+            })
 
-		makeOfferSheetBind.close.setHapticClickListener {
-			makeOfferSheet.dismiss()
-		}
+        makeOfferSheetBind.close.setHapticClickListener {
+            makeOfferSheet.dismiss()
+        }
 
-		makeOfferSheetBind.select.setHapticClickListener {
+        makeOfferSheetBind.select.setHapticClickListener {
 
-			if (makeOfferSheetBind.customOffer.value().isEmpty()) {
-				Alerts.error(mCtx, "Please Enter Offer Amount")
-			} else {
-				hideKeyboard(it)
-				makeOfferSheet.dismiss()
-				bind.loader.isVisible = true
-				viewModel.makeOffer(
-					makeOfferSheetBind.customOffer.value().request(),
-					productId.request()
-				)
-			}
+            if (makeOfferSheetBind.customOffer.value().isEmpty()) {
+                Alerts.error(mCtx, "Please Enter Offer Amount")
+            } else {
+                hideKeyboard(it)
+                makeOfferSheet.dismiss()
+                bind.loader.isVisible = true
+                viewModel.makeOffer(
+                    makeOfferSheetBind.customOffer.value().request(),
+                    productId.request()
+                )
+            }
 
-		}
-		makeOfferSheet.show()
-	}
+        }
+        makeOfferSheet.show()
+    }
 
-	private fun shareSellerProfile(productName: String, productImage: String) {
-		val shareText = buildString {
-			append("Check out $productName")
-			append("Username: @${bind.userName.text}\n")
-			append(productImage.takeIf { it.isNotEmpty() }?.let { "Profile image: $it" } ?: "")
-		}
+    private fun shareSellerProfile(productName: String, productImage: String) {
+        val shareText = buildString {
+            append("Check out $productName")
+            append("Username: @${bind.userName.text}\n")
+            append(productImage.takeIf { it.isNotEmpty() }?.let { "Profile image: $it" } ?: "")
+        }
 
-		val shareIntent = Intent().apply {
-			action = Intent.ACTION_SEND
-			putExtra(Intent.EXTRA_TEXT, shareText)
-			type = "text/plain"
-		}
+        val shareIntent = Intent().apply {
+            action = Intent.ACTION_SEND
+            putExtra(Intent.EXTRA_TEXT, shareText)
+            type = "text/plain"
+        }
 
-		val chooserIntent = Intent.createChooser(shareIntent, "Share via")
+        val chooserIntent = Intent.createChooser(shareIntent, "Share via")
 
-		if (shareIntent.resolveActivity(mCtx.packageManager) != null) {
-			startActivity(chooserIntent)
-		} else {
-			errorToast("No sharing apps available")
-		}
-	}
+        if (shareIntent.resolveActivity(mCtx.packageManager) != null) {
+            startActivity(chooserIntent)
+        } else {
+            errorToast("No sharing apps available")
+        }
+    }
 
-	override fun onDestroy() {
-		super.onDestroy()
-		mediaAdapter.onDestroy()
-	}
+    override fun onDestroy() {
+        super.onDestroy()
+        mediaAdapter.onDestroy()
+    }
 }
 
 

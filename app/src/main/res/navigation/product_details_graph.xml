@@ -23,32 +23,12 @@
         android:id="@+id/sendGiftFragment"
         android:name="io.bidswipe.app.ui.product.SendGiftFragment"
         android:label="fragment_send_gift"
-        tools:layout="@layout/fragment_send_gift">
-        <action
-            android:id="@+id/goToOrderStatusFragment"
-            app:destination="@id/orderStatusFragment"
-            app:enterAnim="@anim/slide_in_right"
-            app:exitAnim="@anim/slide_out_left"
-            app:popEnterAnim="@anim/slide_in_left"
-            app:popExitAnim="@anim/slide_out_right" />
-    </fragment>
-    <fragment
-        android:id="@+id/orderStatusFragment"
-        android:name="io.bidswipe.app.ui.product.OrderStatusFragment"
-        android:label="fragment_order_status"
-        tools:layout="@layout/fragment_order_status" />
+        tools:layout="@layout/fragment_send_gift"/>
     <fragment
         android:id="@+id/buyNowFragment"
         android:name="io.bidswipe.app.ui.product.BuyNowFragment"
         android:label="fragment_buy_now"
         tools:layout="@layout/fragment_buy_now">
-        <action
-            android:id="@+id/buyNowToOrderStatusFragment"
-            app:destination="@id/orderStatusFragment"
-            app:enterAnim="@anim/slide_in_right"
-            app:exitAnim="@anim/slide_out_left"
-            app:popEnterAnim="@anim/slide_in_left"
-            app:popExitAnim="@anim/slide_out_right" />
         <action
             android:id="@+id/buyNowToSendGiftFragment"
             app:destination="@id/sendGiftFragment"
@@ -67,13 +47,6 @@
         android:name="io.bidswipe.app.ui.product.OrderDetailsFragment"
         android:label="fragment_order_details"
         tools:layout="@layout/fragment_order_details">
-        <action
-            android:id="@+id/orderDetailToOrderStatusFragment"
-            app:destination="@id/orderStatusFragment"
-            app:enterAnim="@anim/slide_in_right"
-            app:exitAnim="@anim/slide_out_left"
-            app:popEnterAnim="@anim/slide_in_left"
-            app:popExitAnim="@anim/slide_out_right" />
         <action
             android:id="@+id/orderDetailToVideoReceiptPlayerFragment"
             app:destination="@id/videoReceiptPlayerFragment"

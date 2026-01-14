@@ -377,6 +377,7 @@ interface ApiInterface {
     suspend fun getPurchaseProduct(
         @Part("shipping_id") shippingId: RequestBody?,
         @Part("product_id") productId: RequestBody?,
+        @Part("coupon_name") couponName: RequestBody?,
     ): GetPurchaseDetail
 
     @Multipart

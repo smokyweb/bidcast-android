@@ -35,6 +35,7 @@ import io.bidswipe.app.utils.ids
 import io.bidswipe.app.utils.loadUrl
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.setHapticClickListener
+import io.bidswipe.app.utils.toOrderStatus
 
 class OrderDetailsFragment : BaseFragment<ProductViewModel, FragmentOrderDetailsBinding>() {
     override fun getModel(): Class<ProductViewModel> = ProductViewModel::class.java
@@ -98,10 +99,11 @@ class OrderDetailsFragment : BaseFragment<ProductViewModel, FragmentOrderDetails
         }
 
         bind.shippingDetail.setHapticClickListener {
-            findNavController().navigate(
-                ids.orderDetailToOrderStatusFragment,
-                bundleOf("orderId" to order)
-            )
+//            findNavController().navigate(
+//                ids.orderDetailToOrderStatusFragment,
+//                bundleOf("orderId" to order)
+//            )
+            startActivity(mCtx.toOrderStatus( order,"order_details"))
         }
 
         bind.viewProduct.setHapticClickListener {

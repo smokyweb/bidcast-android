@@ -14,14 +14,12 @@
         android:id="@+id/myOrdersFragment"
         android:name="io.bidswipe.app.ui.sellerHub.MyOrdersFragment"
         android:label="fragment_my_orders"
-        tools:layout="@layout/fragment_my_orders" >
+        tools:layout="@layout/fragment_my_orders">
 
-        <action
-            android:id="@+id/toOrderStatus"
-            app:destination="@id/orderStatusFragment" />
         <action
             android:id="@+id/myOrdersFragmentToSellerOrderDetailFragment"
             app:destination="@id/sellerOrderDetailFragment" />
+
     </fragment>
     <fragment
         android:id="@+id/sellerOffersFragment"
@@ -43,7 +41,7 @@
         android:id="@+id/showsFragment"
         android:name="io.bidswipe.app.ui.sellerHub.ShowsFragment"
         android:label="fragment_shows"
-        tools:layout="@layout/fragment_shows" >
+        tools:layout="@layout/fragment_shows">
         <action
             android:id="@+id/toShowDetails"
             app:destination="@id/showDetailsFragment" />
@@ -52,7 +50,7 @@
         android:id="@+id/shippingFragment"
         android:name="io.bidswipe.app.ui.sellerHub.shipping.ShippingFragment"
         android:label="fragment_shipping"
-        tools:layout="@layout/fragment_shipping" >
+        tools:layout="@layout/fragment_shipping">
         <action
             android:id="@+id/toFreePickup"
             app:destination="@id/freePIckupFragment" />
@@ -95,7 +93,7 @@
         android:id="@+id/promoteToolsFragment"
         android:name="io.bidswipe.app.ui.sellerHub.PromoteToolsFragment"
         android:label="fragment_promote_tools"
-        tools:layout="@layout/fragment_promote_tools" >
+        tools:layout="@layout/fragment_promote_tools">
         <action
             android:id="@+id/action_promoteToolsFragment_to_showDetailsFragment"
             app:destination="@id/showDetailsFragment" />
@@ -120,16 +118,12 @@
         android:name="io.bidswipe.app.ui.sellerHub.PayoutFragment"
         android:label="fragment_payout"
         tools:layout="@layout/fragment_payout" />
-    <fragment
-        android:id="@+id/orderStatusFragment"
-        android:name="io.bidswipe.app.ui.product.OrderStatusFragment"
-        android:label="fragment_order_status"
-        tools:layout="@layout/fragment_order_status" />
+
     <fragment
         android:id="@+id/showDetailsFragment"
         android:name="io.bidswipe.app.ui.sellerHub.ShowDetailsFragment"
         android:label="fragment_show_details"
-        tools:layout="@layout/fragment_show_details" >
+        tools:layout="@layout/fragment_show_details">
         <action
             android:id="@+id/showDetailsVideoReceiptPlayerFragment2"
             app:destination="@id/videoReceiptPlayerFragment2" />
@@ -152,7 +146,7 @@
         android:id="@+id/shippingProfilesFragment"
         android:name="io.bidswipe.app.ui.sellerHub.shipping.ShippingProfilesFragment"
         android:label="fragment_shipping_profiles"
-        tools:layout="@layout/fragment_shipping_profiles" >
+        tools:layout="@layout/fragment_shipping_profiles">
         <action
             android:id="@+id/toCreateShippingProfile"
             app:destination="@id/createShippingProfileFragment" />
@@ -171,7 +165,7 @@
         android:id="@+id/promotedShowsFragment"
         android:name="io.bidswipe.app.ui.sellerHub.PromotedShowsFragment"
         android:label="fragment_promoted_shows"
-        tools:layout="@layout/fragment_promoted_shows" >
+        tools:layout="@layout/fragment_promoted_shows">
 
     </fragment>
     <fragment

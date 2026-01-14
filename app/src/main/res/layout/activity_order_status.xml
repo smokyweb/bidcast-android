@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.product.OrderStatusFragment">
+    tools:context=".ui.product.OrderStatusActivity">
 
     <io.bidswipe.app.ui.custom.Header
         android:id="@+id/header"
@@ -285,6 +285,7 @@
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/shippingRecycler"
+                    android:layout_marginTop="@dimen/half_margin"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"

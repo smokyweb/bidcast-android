@@ -2,6 +2,8 @@ package io.bidswipe.app.network.response
 
 import com.google.gson.annotations.SerializedName
 import androidx.annotation.Keep
+import io.bidswipe.app.network.response.GetShowDetailsResponse.Data.Category
+import io.bidswipe.app.network.response.GetShowDetailsResponse.Data.SubCategory
 
 @Keep
 data class GetProductDetailsResponse(
@@ -22,6 +24,8 @@ data class GetProductDetailsResponse(
 		val auction: Boolean?,
 		@SerializedName("category_id")
 		val categoryId: Int?,
+		@SerializedName("category")
+		val category: Category?,
 		@SerializedName("created_at")
 		val createdAt: String?,
 		@SerializedName("description")
@@ -66,6 +70,8 @@ data class GetProductDetailsResponse(
 		val status: String?,
 		@SerializedName("sub_category_id")
 		val subCategoryId: Int?,
+		@SerializedName("sub_category")
+		val subCategory: SubCategory?,
 		@SerializedName("thumbnail")
 		val thumbnail: List<String?>?,
 		@SerializedName("title")
@@ -141,6 +147,42 @@ data class GetProductDetailsResponse(
 			val sellerVerification: Boolean?,
 			@SerializedName("username")
 			val username: String?
+		)
+
+		data class Category(
+			@SerializedName("color")
+			val color: String?,
+			@SerializedName("deleted_at")
+			val deletedAt: Any?,
+			@SerializedName("extra_fields")
+			val extraFields: List<Any?>?,
+			@SerializedName("id")
+			val id: Int?,
+			@SerializedName("image")
+			val image: String?,
+			@SerializedName("name")
+			val name: String?,
+			@SerializedName("thumbnail")
+			val thumbnail: String?
+		)
+
+		data class SubCategory(
+			@SerializedName("category_id")
+			val categoryId: Int?,
+			@SerializedName("color")
+			val color: String?,
+			@SerializedName("deleted_at")
+			val deletedAt: Any?,
+			@SerializedName("extra_fields")
+			val extraFields: List<Any?>?,
+			@SerializedName("id")
+			val id: Int?,
+			@SerializedName("image")
+			val image: String?,
+			@SerializedName("name")
+			val name: String?,
+			@SerializedName("thumbnail")
+			val thumbnail: String?
 		)
 	}
 }

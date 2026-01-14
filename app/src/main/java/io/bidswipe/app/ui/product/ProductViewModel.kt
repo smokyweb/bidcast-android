@@ -9,6 +9,7 @@ import io.bidswipe.app.network.repository.DashRepository
 import io.bidswipe.app.network.response.CommonResponse
 import io.bidswipe.app.network.response.CreateOrderResponse
 import io.bidswipe.app.network.response.FetchOrderDetailResponse
+import io.bidswipe.app.network.response.GetCouponsResponse
 import io.bidswipe.app.network.response.GetOrderDetailsResponse
 import io.bidswipe.app.network.response.GetPaymentCardsResponse
 import io.bidswipe.app.network.response.GetProductDetailsResponse
@@ -67,12 +68,13 @@ class ProductViewModel @Inject constructor(
 	fun getPurchaseProduct(
 		shippingId: RequestBody?,
 		productId: RequestBody?,
+		couponName: RequestBody?=null,
 	) = viewModelScope.launch {
 		if (!networkMonitor.hasInternet()) {
 			_getPurchaseProductResponse.value = NO_INTERNET_ERROR
 			return@launch
 		}
-		_getPurchaseProductResponse.value = repo.getPurchaseProduct(shippingId, productId)
+		_getPurchaseProductResponse.value = repo.getPurchaseProduct(shippingId, productId,couponName)
 	}
 
 	private var _createOrderResponse = MutableLiveData<Resource<CreateOrderResponse>>()
@@ -267,6 +269,18 @@ class ProductViewModel @Inject constructor(
 			return@launch
 		}
 		_raiseTicketResponse.value = repo.raiseTicket( orderId, subject, message)
+	}
+
+	private var _getCouponResponse = MutableLiveData<Resource<GetCouponsResponse>>()
+	val getCouponRepo: MutableLiveData<Resource<GetCouponsResponse>>
+		get() = _getCouponResponse
+
+	fun getCoupon() = viewModelScope.launch {
+		if (!networkMonitor.hasInternet()) {
+			_getCouponResponse.value = NO_INTERNET_ERROR
+			return@launch
+		}
+		_getCouponResponse.value = repo.getCoupon()
 	}
 
 }

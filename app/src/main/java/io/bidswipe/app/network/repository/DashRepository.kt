@@ -251,7 +251,8 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
     suspend fun getPurchaseProduct(
         shippingId: RequestBody?,
         productId: RequestBody?,
-    ) = call { api.getPurchaseProduct(shippingId, productId) }
+        couponName: RequestBody?,
+    ) = call { api.getPurchaseProduct(shippingId, productId, couponName) }
 
     suspend fun createOrder(
         shippingId: RequestBody?,

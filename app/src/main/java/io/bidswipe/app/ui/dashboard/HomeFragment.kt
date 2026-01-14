@@ -150,7 +150,7 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
 
         homeAdapter = HomeAdapter(showList, mClick)
 
-        (bind.recycler.layoutManager as GridLayoutManager).setSpanCount( if(resources.isTablet()) 3 else 2)
+        (bind.recycler.layoutManager as GridLayoutManager).setSpanCount(if (resources.isTablet()) 3 else 2)
         bind.recycler.adapter = homeAdapter
 
         categoryAdapter = HomeCategoryAdapter(categoryTiles, object : RecyclerClicks {
@@ -188,17 +188,15 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
         bind.recycler.setOnScrollChangeListener { _, _, _, _, _ ->
             val layoutManager = bind.recycler.layoutManager as GridLayoutManager
             val lastItemPosition = layoutManager.findLastVisibleItemPosition()
-
-            val listSize = showList.size
-
-            if (lastItemPosition == listSize - 1 && !isLoading) {
+            log("lastItemPosition: $lastItemPosition  $isLoading")
+            if (lastItemPosition == showList.lastIndex - 2 && !isLoading) {
                 isLoading = true
                 page++
                 viewModel.getLiveShow(
                     selectedTabText.request(),
                     selectedCategory.request(),
-                    bind.search.value().ifEmpty { null }?.request(),
-                    page.toString().request()
+                    search = bind.search.value().ifEmpty { null }?.request(),
+                    page=page.toString().request()
                 )
             }
         }
@@ -218,8 +216,8 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
                     viewModel.getLiveShow(
                         selectedTabText.request(),
                         selectedCategory.request(),
-                        s.toString().request(),
-                        page.toString().request()
+                        search=s.toString().request(),
+                       page= page.toString().request()
                     )
                 }
             }

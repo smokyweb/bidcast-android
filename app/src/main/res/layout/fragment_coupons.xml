@@ -26,10 +26,7 @@
 		app:layout_constraintBottom_toBottomOf="parent"
 		app:layout_constraintTop_toBottomOf="@id/header"
 		tools:itemCount="3"
-		tools:layout_editor_absoluteX="8dp"
 		tools:listitem="@layout/coupons_list_item" />
-
-
 
 	<io.bidswipe.app.ui.custom.NoDataView
 		android:id="@+id/noData"

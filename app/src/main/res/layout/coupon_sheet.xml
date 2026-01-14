@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:padding="@dimen/margin"
+    android:orientation="vertical"
+    android:background="@drawable/bottom_sheet_back"
+    android:layout_height="match_parent">
+
+    <View
+        android:layout_width="64dp"
+        android:layout_height="4dp"
+        android:layout_gravity="center"
+        android:background="@drawable/card_16"
+        android:backgroundTint="@color/outlineVariant"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <LinearLayout
+        android:id="@+id/header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        tools:layout_editor_absoluteX="18dp"
+        tools:layout_editor_absoluteY="18dp">
+
+        <TextView
+            style="@style/TitleLarge"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Coupons" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/close"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:padding="@dimen/half_margin"
+            android:scaleType="centerCrop"
+            android:src="@drawable/ic_close"
+            app:tint="@color/onSurface" />
+
+    </LinearLayout>
+
+    <ScrollView
+        android:id="@+id/scroll_view"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_marginTop="@dimen/margin"
+        app:layout_constraintTop_toBottomOf="@+id/header">
+
+     <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+         <androidx.recyclerview.widget.RecyclerView
+             android:id="@+id/couponRecycler"
+             android:layout_width="match_parent"
+             android:layout_height="wrap_content"
+             android:orientation="vertical"
+             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+             tools:itemCount="3"
+             tools:listitem="@layout/coupons_list_item" />
+
+         <io.bidswipe.app.ui.custom.NoDataView
+             android:id="@+id/noData"
+             android:layout_width="match_parent"
+             android:layout_height="wrap_content"
+             android:visibility="gone"
+             app:layout_constraintBottom_toBottomOf="parent"
+             app:layout_constraintTop_toBottomOf="@id/header"
+             app:title_text="No Addresses Found" />
+    </LinearLayout>
+    </ScrollView>
+
+</LinearLayout>

@@ -18,7 +18,6 @@ import androidx.core.text.color
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.tabs.TabLayout
-import io.bidswipe.app.App
 import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseFragment
 import io.bidswipe.app.controller.ImageAdapter
@@ -812,14 +811,15 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
                             if (sel != null) {
                                 selectedMailClass = sel
                                 bind.mailClass.setText(sel.label, false)
+                                setMailClassTexts()
                             }
                         } else {
-                            val sel =
-                                mailClassesList.find { mailClasses -> mailClasses?.label == product?.mailClass }
+                            val sel = mailClassesList.find { mailClasses -> mailClasses?.label == product?.mailClass }
 
                             if (sel != null) {
                                 selectedMailClass = sel
                                 bind.mailClass.setText(sel.label, false)
+                                setMailClassTexts()
                             }
                         }
 
@@ -895,44 +895,8 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
             // Save state to ViewModel
             saveStateToViewModel()
 
-
-            selectedMailClass?.label?.let { label ->
-                bind.mailClass.setText(label, false)
-            }
-
-            if (selectedMailClass?.maxWidthIn != null) {
-                bind.widthTitle.text = buildSpannedString {
-                    append("Width ")
-                    color(ContextCompat.getColor(mCtx, clr.onSurfaceVariant)) {
-                        append("(Max: " + selectedMailClass?.maxWidthIn.toString() + " inches)")
-                    }
-                }
-            }
-            if (selectedMailClass?.maxHeightIn != null) {
-                bind.heightTitle.text = buildSpannedString {
-                    append("Height ")
-                    color(ContextCompat.getColor(mCtx, clr.onSurfaceVariant)) {
-                        append("(Max: " + selectedMailClass?.maxHeightIn.toString() + " inches)")
-                    }
-                }
-            }
-            if (selectedMailClass?.maxLengthIn != null) {
-                bind.lengthTitle.text = buildSpannedString {
-                    append("Length ")
-                    color(ContextCompat.getColor(mCtx, clr.onSurfaceVariant)) {
-                        append("(Max: " + selectedMailClass?.maxLengthIn.toString() + " inches)")
-                    }
-                }
-            }
-
-            if (selectedMailClass?.maxWeightLbs != null) {
-                bind.weightTitle.text = buildSpannedString {
-                    append("Weight ")
-                    color(ContextCompat.getColor(mCtx, clr.onSurfaceVariant)) {
-                        append("(Max: " + selectedMailClass?.maxWeightLbs.toString() + " lbs)")
-                    }
-                }
-            }
+            bind.mailClass.setText(selectedMailClass?.label ?: "", false)
+            setMailClassTexts()
         }
 
         bind.mailClass.setHapticClickListener {
@@ -940,6 +904,44 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
                 bind.mailClass.showDropDown()
             } else {
                 viewModel.getMailClasses()
+            }
+        }
+    }
+
+    fun setMailClassTexts(){
+        if (selectedMailClass?.maxWidthIn != null) {
+            bind.widthTitle.text = buildSpannedString {
+                append("Width ")
+                color(ContextCompat.getColor(mCtx, clr.onSurfaceVariant)) {
+                    append("(Max: " + selectedMailClass?.maxWidthIn.toString() + " inches)")
+                }
+            }
+        }
+
+        if (selectedMailClass?.maxHeightIn != null) {
+            bind.heightTitle.text = buildSpannedString {
+                append("Height ")
+                color(ContextCompat.getColor(mCtx, clr.onSurfaceVariant)) {
+                    append("(Max: " + selectedMailClass?.maxHeightIn.toString() + " inches)")
+                }
+            }
+        }
+
+        if (selectedMailClass?.maxLengthIn != null) {
+            bind.lengthTitle.text = buildSpannedString {
+                append("Length ")
+                color(ContextCompat.getColor(mCtx, clr.onSurfaceVariant)) {
+                    append("(Max: " + selectedMailClass?.maxLengthIn.toString() + " inches)")
+                }
+            }
+        }
+
+        if (selectedMailClass?.maxWeightLbs != null) {
+            bind.weightTitle.text = buildSpannedString {
+                append("Weight ")
+                color(ContextCompat.getColor(mCtx, clr.onSurfaceVariant)) {
+                    append("(Max: " + selectedMailClass?.maxWeightLbs.toString() + " lbs)")
+                }
             }
         }
     }
@@ -1156,20 +1158,14 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
 
         subCategoryId = if (product?.subCategoryId != null) product.subCategoryId.toString() else ""
 
-        val categoryName =
-            if (categoryId.isNotEmpty()) App.categoryList.find { it?.id == categoryId.toInt() }?.name
-                ?: "" else ""
+        bind.category.setText(product?.category?.name ?: "Other", false)
 
-        if (subCategoryId.isNotEmpty()) {
-//            val subCategoryName = App.categoryList.find { it?. == categoryId.toInt() }?.name
-
-            bind.category.setText(buildSpannedString {
-                append(categoryName)
-//                append("(${product.subCategory.name})")
-            }, false)
-        } else {
-            bind.category.setText(categoryName, false)
+        if (!subCategoryId.isEmpty()) {
+            bind.subCategoryLayout.isVisible = true
+            bind.subCategory.setText(product?.subCategory?.name ?: "Other", false)
+            viewModel.getProductSubCategory(categoryId, "subCategory")
         }
+
         bind.productTitle.setText(product?.title ?: "")
         bind.description.setText(product?.description ?: "")
         bind.quantity.setText((product?.quantity ?: ""))
