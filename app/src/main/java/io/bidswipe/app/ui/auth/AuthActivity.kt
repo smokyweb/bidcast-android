@@ -8,6 +8,7 @@ import androidx.core.view.WindowInsetsCompat.CONSUMED
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
+import com.gyf.immersionbar.ktx.immersionBar
 import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseActivity
 import io.bidswipe.app.databinding.ActivityAuthBinding
@@ -38,7 +39,9 @@ class AuthActivity : BaseActivity() {
 				// Use the param or the path to navigate or update UI
 				log(" referralCode : $referralCode")
 			}
-
+		immersionBar {
+			keyboardEnable(true)
+		}
 
 		navHostFragment =
 			supportFragmentManager.findFragmentById(R.id.fragmentContainer) as NavHostFragment

@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.navigation.fragment.findNavController
+import com.gyf.immersionbar.ktx.immersionBar
 import com.wajahatkarim3.easyvalidation.core.view_ktx.validator
 import io.bidswipe.app.base.BaseFragment
 import io.bidswipe.app.databinding.FragmentCreateAccountBinding
@@ -49,6 +50,7 @@ class CreateAccountFragment : BaseFragment<AuthViewModel , FragmentCreateAccount
 		bind.layout.setHapticClickListener {
 			hideKeyboard(it)
 		}
+
 
 		bind.createAccountBtn.setHapticClickListener {
 			when {

@@ -639,4 +639,8 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
 		roomId: RequestBody?,
 	) = call { api.getClip(roomId) }
 
+	suspend fun getUserClips(
+		sellerId: String?,
+	) = call { api.getUserClips(sellerId) }
+
 }

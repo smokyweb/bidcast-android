@@ -9,6 +9,7 @@ import io.bidswipe.app.network.repository.DashRepository
 import io.bidswipe.app.network.response.BlockedUnblockedResponse
 import io.bidswipe.app.network.response.CommonResponse
 import io.bidswipe.app.network.response.FollowUnfollowResponse
+import io.bidswipe.app.network.response.GetClipsResponse
 import io.bidswipe.app.network.response.GetMyShowResponse
 import io.bidswipe.app.network.response.GetProductsResponse
 import io.bidswipe.app.network.response.GetRatingResponse
@@ -65,6 +66,20 @@ class SellerViewModel @Inject constructor(
 			return@launch
 		}
 		_getUserProductsResponse.value = repo.getProducts(userId, status,  format, page, search, categoryIds, conditions, minPrice, maxPrice,marketPlace, type, saleType, sortBy)
+	}
+
+	private var _getUserClipsResponse = MutableLiveData<Resource<GetClipsResponse>>()
+	val getUserClipsRepo: MutableLiveData<Resource<GetClipsResponse>>
+		get() = _getUserClipsResponse
+
+	fun getUserClips(
+		userId : String? = null,
+	) = viewModelScope.launch {
+		if (!networkMonitor.hasInternet()) {
+			_getUserClipsResponse.value = NO_INTERNET_ERROR
+			return@launch
+		}
+			_getUserClipsResponse.value = repo.getUserClips(userId)
 	}
 
 	private var _followUserResponse = MutableLiveData<Resource<FollowUnfollowResponse>>()

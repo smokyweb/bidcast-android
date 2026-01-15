@@ -519,9 +519,9 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
         bind.seeOtherOptions.setHapticClickListener {
             bind.otherOptions.isExpanded = !bind.otherOptions.isExpanded
             if (bind.otherOptions.isExpanded) {
-                bind.scroll.post {
+                bind.scroll.postDelayed({
                     bind.scroll.fullScroll(View.FOCUS_DOWN)
-                }
+                },300)
             }
         }
 

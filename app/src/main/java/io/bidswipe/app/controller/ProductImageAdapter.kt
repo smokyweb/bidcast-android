@@ -29,6 +29,7 @@ class ProductImageAdapter(
     ) {
         with(holder) {
             val isVideo = isVideoFile(item ?: "")
+            val newPlayer = ExoPlayer.Builder(mCtx).build()
             if (isVideo) {
                 bind.imageView.isVisible = false
                 bind.videoView.isVisible = true
@@ -40,7 +41,7 @@ class ProductImageAdapter(
                 }
                 Log.d(TAG, "onBind: $item")
 
-                val newPlayer = ExoPlayer.Builder(mCtx).build()
+
                 playerInstances[position] = newPlayer
                 bind.videoView.player = newPlayer
                 val newMediaItem = MediaItem.fromUri(item.toString())
@@ -82,6 +83,7 @@ class ProductImageAdapter(
                 })
 
             } else {
+                newPlayer.pause()
                 bind.imageView.isVisible = true
                 bind.videoView.isVisible = false
                 bind.imageView.loadUrl(mCtx, item ?: "")

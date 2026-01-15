@@ -25,6 +25,7 @@ import io.bidswipe.app.network.response.GetAuctionTypeResponse
 import io.bidswipe.app.network.response.GetBlockedUsersResponse
 import io.bidswipe.app.network.response.GetBuyerIdentityResponse
 import io.bidswipe.app.network.response.GetCategoryResponse
+import io.bidswipe.app.network.response.GetClipsResponse
 import io.bidswipe.app.network.response.GetCouponsResponse
 import io.bidswipe.app.network.response.GetHowToSellResponse
 import io.bidswipe.app.network.response.GetKYCDetailsRespnse
@@ -874,6 +875,11 @@ interface ApiInterface {
     suspend fun getClip(
         @Part("room_id") roomId: RequestBody?,
     ): MakeClipResponse
+
+    @GET("api/get-clips")
+    suspend fun getUserClips(
+        @Query("seller_id") sellerId: String?
+    ): GetClipsResponse
 
 }
 

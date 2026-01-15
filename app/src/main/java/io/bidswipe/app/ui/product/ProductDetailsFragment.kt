@@ -408,12 +408,12 @@ class ProductDetailsFragment : BaseFragment<ProductViewModel, FragmentProductDet
                 false
             )
         )
-        val makeOfferSheet = Alerts.appBottomSheet(mCtx, true, makeOfferSheetBind)
+        offerList.find { it.selected==true }?.selected=false
+		val makeOfferSheet = Alerts.appBottomSheet(mCtx, true, makeOfferSheetBind)
 
         makeOfferSheetBind.listedPrice.text = viewModel.product?.pricing.toString().asMoney()
 
-        makeOfferSheetBind.offerRecycler.adapter =
-            MakeOfferAdapter(offerList, object : RecyclerClicks {
+		makeOfferSheetBind.offerRecycler.adapter = MakeOfferAdapter(offerList, object : RecyclerClicks {
 
                 override fun itemClick(pos: Int, status: String?) {
 
