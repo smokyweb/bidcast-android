@@ -14,13 +14,19 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <LinearLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/categoryImage"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/create_clip"
             android:gravity="center"
             android:orientation="vertical">
+            <ImageView
+                android:id="@+id/thumbnail"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:scaleType="centerCrop"
+                android:src="@drawable/create_clip"
+                app:layout_constraintDimensionRatio="3:4"/>
 
             <ImageView
                 android:id="@+id/playButton"
@@ -28,9 +34,13 @@
                 android:layout_height="56dp"
                 android:contentDescription="@string/play_video"
                 android:elevation="8dp"
-                android:src="@drawable/ic_play" />
+                android:src="@drawable/ic_play"
+                app:layout_constraintBottom_toBottomOf="@+id/thumbnail"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-        </LinearLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
     </LinearLayout>
 

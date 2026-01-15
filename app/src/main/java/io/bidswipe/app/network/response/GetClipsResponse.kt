@@ -19,6 +19,8 @@ data class GetClipsResponse(
     data class Data(
         @SerializedName("clip_url")
         val clipUrl: String?,
+        @SerializedName("thumbnail_url")
+        val thumbnail_url: String?,
         @SerializedName("id")
         val id: Int?,
         @SerializedName("is_public")

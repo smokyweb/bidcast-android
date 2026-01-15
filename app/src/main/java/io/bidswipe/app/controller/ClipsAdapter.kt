@@ -5,6 +5,7 @@ import android.view.ViewGroup
 import io.bidswipe.app.base.BaseAdapter
 import io.bidswipe.app.databinding.ClipsItemBinding
 import io.bidswipe.app.network.response.GetClipsResponse
+import io.bidswipe.app.utils.loadUrl
 import io.bidswipe.app.utils.setHapticClickListener
 
 class ClipsAdapter(
@@ -21,7 +22,9 @@ class ClipsAdapter(
 		position : Int ,
 		item : GetClipsResponse.Data?? ,
 	) {
+
 		with(holder) {
+			bind.thumbnail.loadUrl(mCtx,item?.thumbnail_url?:"")
             bind.root.setHapticClickListener {
 				onItemClick(item , position)
 			}
