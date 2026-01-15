@@ -188,8 +188,12 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
         bind.recycler.setOnScrollChangeListener { _, _, _, _, _ ->
             val layoutManager = bind.recycler.layoutManager as GridLayoutManager
             val lastItemPosition = layoutManager.findLastVisibleItemPosition()
-            log("lastItemPosition: $lastItemPosition  $isLoading")
-            if (lastItemPosition == showList.lastIndex - 2 && !isLoading) {
+
+            val lastCheck = if(resources.isTablet()) showList.lastIndex - 3 else showList.lastIndex - 2
+
+            log("lastItemPosition: $lastItemPosition--$isLoading--${showList.lastIndex}")
+
+            if (lastItemPosition == showList.lastIndex && !isLoading) {
                 isLoading = true
                 page++
                 viewModel.getLiveShow(

@@ -199,7 +199,7 @@ class SearchUsers : BottomSheetDialogFragment() {
 
         if (message.isNotEmpty()) {
 
-            val model = ChatModel(isReply = false, message = message)
+            val model = ChatModel(isReply = false, message = message, type = Chats.ChatType.SHARE)
 
             chats.sendChat(model) {
                 dismiss()

@@ -30,6 +30,7 @@ abstract class BaseFragment<VM : ViewModel, BIND : ViewBinding> : Fragment() {
     protected lateinit var bind: BIND
     protected lateinit var userId: String
     protected lateinit var userName: String
+    protected lateinit var userUserName: String
     protected lateinit var userImage: String
     protected lateinit var TAG: String
     protected lateinit var dropdownBg: Drawable
@@ -58,6 +59,7 @@ abstract class BaseFragment<VM : ViewModel, BIND : ViewBinding> : Fragment() {
 
         userId = Prefs(mCtx).getUserData()?.id.toString()
         userName = Prefs(mCtx).getUserData()?.name.toString()
+        userUserName = Prefs(mCtx).getUserData()?.username.toString()
         userImage = Prefs(mCtx).getUserData()?.profileImage.toString()
 //		authUserData = Prefs(mCtx).getUserData()
         viewModel = ViewModelProvider(requireActivity())[getModel()]

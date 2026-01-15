@@ -25,6 +25,8 @@ import io.bidswipe.app.utils.asMoney
 import io.bidswipe.app.utils.finish
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.setHapticClickListener
+import io.bidswipe.app.utils.share.Seller
+import io.bidswipe.app.utils.share.ShareHelper
 
 class AffiliateProgramFragment : BaseFragment<SellerHubViewModel, FragmentAffiliateProgramBinding>() {
 
@@ -63,7 +65,7 @@ class AffiliateProgramFragment : BaseFragment<SellerHubViewModel, FragmentAffili
 				"Share your invite link",
 				"Send your referral link to friends and followers and invite them to sell"
 			),
-			BenefitItem(R.drawable.ic_people, "You earn \$100", "Receive \$100 after your referrals make their"),
+			BenefitItem(R.drawable.ic_people, "You earn \$100", "Receive \$100 after your referrals make their first sale and verify their account"),
 			BenefitItem(R.drawable.ic_people, "They earn too", "Your referrals will earn a bonus of up to \$150 in matched earnings during their first week")
 		)
 
@@ -112,6 +114,46 @@ class AffiliateProgramFragment : BaseFragment<SellerHubViewModel, FragmentAffili
 			context?.startActivity(Intent.createChooser(shareIntent, "Share invite link"))
 		}
 
+		bind.buyerInvite.setHapticClickListener {
+			val shareText = buildString {
+				append("$userName invited you to join")
+				append(bind.referralBuyer.text)
+			}
+
+			ShareHelper.openShareSheet(
+				parentFragmentManager,
+				imageUrl = "",
+				text = "",
+				sellerInfo = Seller(
+					id = userId,
+					image = userImage,
+					name = userUserName
+				),
+				shareText = shareText,
+				type = "invite"
+			)
+		}
+
+		bind.sellerInvite.setHapticClickListener {
+			val shareText = buildString {
+				append("$userName invited you to join ")
+				append(bind.referralBuyer.text)
+			}
+
+			ShareHelper.openShareSheet(
+				parentFragmentManager,
+				imageUrl = "",
+				text = "",
+				sellerInfo = Seller(
+					id = userId,
+					image = userImage,
+					name = userUserName
+				),
+				shareText = shareText,
+				type = "invite"
+			)
+		}
+
 		bind.loader.isVisible = true
 
 		viewModel.fetchReferral()
@@ -122,9 +164,9 @@ class AffiliateProgramFragment : BaseFragment<SellerHubViewModel, FragmentAffili
 					bind.loader.isVisible = false
 					val mData = it.value.data
 
-					bind.referralCode.text = mData?.referralCode
-					bind.referralBuyer.text = mData?.referralCode
-					bind.referralSeller.text = mData?.referralCode
+					bind.referralCode.text = "${Const.BASE_URL}/invite?referralCode="+mData?.referralCode
+					bind.referralBuyer.text = "${Const.BASE_URL}/invite?referralCode="+mData?.referralCode
+					bind.referralSeller.text ="${Const.BASE_URL}/invite/seller?referralCode="+ mData?.referralCode
 					bind.referralCount.text = mData?.totalReferred.toString()
 					bind.totalEarning.text = mData?.totalEarnings.toString().asMoney()
 

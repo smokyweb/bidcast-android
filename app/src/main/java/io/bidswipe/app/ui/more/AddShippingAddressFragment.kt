@@ -39,6 +39,7 @@ class AddShippingAddressFragment :
 
 	private var slug = ""
 	private var stateList = mutableListOf<GetStatesResponse.Data?>()
+	private var selectedState: GetStatesResponse.Data? = null
 
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		super.onViewCreated(view, savedInstanceState)
@@ -60,7 +61,7 @@ class AddShippingAddressFragment :
 		}
 
 		bind.state.setOnItemClickListener { _, _, position, _ ->
-
+selectedState=stateList[position]
 		}
 
 		bind.state.setHapticClickListener {
@@ -101,7 +102,7 @@ class AddShippingAddressFragment :
 					showKeyboard(bind.city)
 				}
 
-				bind.state.value().isEmpty() -> {
+				bind.state.value().isEmpty() || selectedState==null -> {
 					Alerts.error(mCtx, "Please select state")
 				}
 
@@ -125,12 +126,10 @@ class AddShippingAddressFragment :
 						streetAddress = bind.streetAddress.value().request(),
 						pinCode = bind.zipCode.value().request(),
 						city = bind.city.value().request(),
-						state = bind.state.value().request()
+						state = selectedState?.iso2?.request()
 					)
 				}
-
 			}
-
 
 		}
 

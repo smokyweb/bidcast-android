@@ -29,6 +29,8 @@ data class LoginResponse(
 		val name : String? ,
 		@SerializedName("email")
 		val email : String? ,
+		@SerializedName("username")
+		val username : String? ,
 		@SerializedName("profile_image")
 		val profileImage : String? ,
 		@SerializedName("is_FirsttimeLogin")

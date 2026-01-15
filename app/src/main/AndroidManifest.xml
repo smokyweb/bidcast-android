@@ -78,49 +78,17 @@
             android:exported="true"
             android:resizeableActivity="true"
             android:supportsPictureInPicture="true"
-            android:windowSoftInputMode="adjustResize" >
-            <intent-filter android:autoVerify="true" >
-                <action android:name="android.intent.action.VIEW" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-
-                <data android:scheme="https" />
-                <data android:host="backend.bidcast.betaplanets.com" />
-                <data android:pathPrefix="/live-show" />
-            </intent-filter>
-        </activity>
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".ui.dashboard.AddPaymentCardActivity"
             android:exported="false" />
         <activity
             android:name=".ui.sellerProfile.SellerProfileActivity"
             android:exported="true"
-            android:windowSoftInputMode="adjustResize" >
-            <intent-filter android:autoVerify="true" >
-                <action android:name="android.intent.action.VIEW" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-
-                <data android:scheme="https" />
-                <data android:host="backend.bidcast.betaplanets.com" />
-                <data android:pathPrefix="/seller" />
-            </intent-filter>
-        </activity>
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".ui.product.ProductDetailsActivity"
-            android:exported="true" >
-            <intent-filter android:autoVerify="true" >
-                <action android:name="android.intent.action.VIEW" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-
-                <data android:scheme="https" />
-                <data android:host="backend.bidcast.betaplanets.com" />
-                <data android:pathPrefix="/products" />
-            </intent-filter>
-        </activity>
+            android:exported="true" />
         <activity
             android:name=".ui.sellerHub.SellerHubActivity"
             android:exported="false" />
@@ -144,44 +112,52 @@
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".ui.dashboard.DashActivity"
-            android:exported="true"
-            android:windowSoftInputMode="adjustNothing" >
-            <intent-filter android:autoVerify="true" >
-                <action android:name="android.intent.action.VIEW" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-
-                <data android:scheme="https" />
-                <data android:host="backend.bidcast.betaplanets.com" />
-            </intent-filter>
-        </activity>
-        <activity
             android:name=".ui.SplashActivity"
             android:exported="true"
             android:theme="@style/RemoveSplash" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
+            android:name=".ui.dashboard.DashActivity"
+            android:exported="true"
+            android:windowSoftInputMode="adjustNothing">
+
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW"/>
+
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+
+                <data
+                    android:scheme="https"
+                    android:host="backend.bidcast.betaplanets.com"/>
+
+            </intent-filter>
+
+        </activity>
+
+        <activity
             android:name=".ui.auth.AuthActivity"
             android:exported="true"
-            android:windowSoftInputMode="adjustResize" >
-            <intent-filter android:autoVerify="true" >
-                <action android:name="android.intent.action.VIEW" />
+            android:windowSoftInputMode="adjustResize">
 
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW"/>
 
-                <data android:scheme="https" />
-                <data android:host="backend.bidcast.betaplanets.com" />
-                <data android:pathPattern="/referral-code" />
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+
+                <data
+                    android:scheme="https"
+                    android:host="backend.bidcast.betaplanets.com"
+                    android:pathPrefix="/invite"/>
             </intent-filter>
+
         </activity>
+
         <activity
             android:name=".ui.more.TrustedBuyerActivity"
             android:exported="false" />

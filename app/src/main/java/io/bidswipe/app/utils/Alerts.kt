@@ -3,12 +3,13 @@ package io.bidswipe.app.utils
 import android.content.Context
 import android.graphics.drawable.ColorDrawable
 import android.util.Log
+import android.view.View
+import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.toDrawable
 import androidx.core.view.WindowCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.viewbinding.ViewBinding
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -53,8 +54,8 @@ object Alerts {
         }
     }
 
-    fun appBottomSheet(mCtx: Context, isCancelable: Boolean, view: ViewBinding): BottomSheetDialog {
-        return BottomSheetDialog(mCtx, style.BottomSheetDialogStyle).apply {
+    fun appBottomSheet(mCtx: Context, isCancelable: Boolean, view: ViewBinding,isFullScreen:Boolean=false): BottomSheetDialog {
+        var dialog= BottomSheetDialog(mCtx, style.BottomSheetDialogStyle).apply {
             setContentView(view.root)
             dismissWithAnimation = true
             setCancelable(isCancelable)
@@ -63,22 +64,30 @@ object Alerts {
             behavior.isFitToContents = true
             behavior.skipCollapsed = true
         }.also {
-            it.window?.setBackgroundDrawable(
-                ColorDrawable(
-                    ContextCompat.getColor(
-                        mCtx,
-                        clr.transparent
-                    )
-                )
-            )
             it.window?.apply {
+                setBackgroundDrawable(ContextCompat.getColor(mCtx, clr.transparent).toDrawable())
                 setDimAmount(0.6f)
                 navigationBarColor = ContextCompat.getColor(mCtx, clr.surface)
-                let { window ->
-                    WindowCompat.setDecorFitsSystemWindows(window, false)
-                }
+                WindowCompat.setDecorFitsSystemWindows(this, false)
             }
         }
+
+        if(isFullScreen){
+            dialog.setOnShowListener {
+                val bottomSheet = dialog.findViewById<View>(com.google.android.material.R.id.design_bottom_sheet)
+
+                bottomSheet?.layoutParams?.height = ViewGroup.LayoutParams.MATCH_PARENT
+                bottomSheet?.requestLayout()
+
+                val behavior = BottomSheetBehavior.from(bottomSheet!!)
+                behavior.state = BottomSheetBehavior.STATE_EXPANDED
+                behavior.isFitToContents = false
+                behavior.skipCollapsed = true
+                behavior.peekHeight = mCtx.resources.displayMetrics.heightPixels
+            }
+        }
+
+        return dialog
     }
 
     fun showBottomSheet(

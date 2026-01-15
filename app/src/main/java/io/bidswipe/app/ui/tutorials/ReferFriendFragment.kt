@@ -85,7 +85,6 @@ class ReferFriendFragment : BaseFragment<DashViewModel, FragmentReferFriendBindi
 		}
 
 		bind.continueBtn.setHapticClickListener {
-
 			findNavController().navigate(ids.goToCompleteYourProfileFragment)
 
 		}

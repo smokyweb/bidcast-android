@@ -3,10 +3,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:padding="@dimen/margin"
-    android:orientation="vertical"
+    android:layout_height="match_parent"
     android:background="@drawable/bottom_sheet_back"
-    android:layout_height="match_parent">
+    android:orientation="vertical"
+    android:padding="@dimen/margin">
 
     <View
         android:layout_width="64dp"
@@ -44,37 +44,33 @@
 
     </LinearLayout>
 
-    <ScrollView
-        android:id="@+id/scroll_view"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
         android:layout_marginTop="@dimen/margin"
+        android:layout_weight="1"
+        android:orientation="vertical"
         app:layout_constraintTop_toBottomOf="@+id/header">
 
-     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/couponRecycler"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:visibility="gone"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            tools:itemCount="3"
+            tools:listitem="@layout/coupons_list_item" />
 
-         <androidx.recyclerview.widget.RecyclerView
-             android:id="@+id/couponRecycler"
-             android:layout_width="match_parent"
-             android:layout_height="wrap_content"
-             android:orientation="vertical"
-             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-             tools:itemCount="3"
-             tools:listitem="@layout/coupons_list_item" />
+        <io.bidswipe.app.ui.custom.NoDataView
+            android:id="@+id/noData"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/header"
+            app:title_text="No Coupons Found" />
 
-         <io.bidswipe.app.ui.custom.NoDataView
-             android:id="@+id/noData"
-             android:layout_width="match_parent"
-             android:layout_height="wrap_content"
-             android:visibility="gone"
-             app:layout_constraintBottom_toBottomOf="parent"
-             app:layout_constraintTop_toBottomOf="@id/header"
-             app:title_text="No Addresses Found" />
     </LinearLayout>
-    </ScrollView>
 
 </LinearLayout>

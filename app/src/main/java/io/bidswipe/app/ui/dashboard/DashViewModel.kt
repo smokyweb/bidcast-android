@@ -29,6 +29,7 @@ import io.bidswipe.app.network.response.GetProductsResponse
 import io.bidswipe.app.network.response.GetPromotePlansResponse
 import io.bidswipe.app.network.response.GetShippingProfilesResponse
 import io.bidswipe.app.network.response.GetSubCategoriesResponse
+import io.bidswipe.app.network.response.MakeClipResponse
 import io.bidswipe.app.network.response.PageUrlResponse
 import io.bidswipe.app.network.response.Product
 import io.bidswipe.app.network.response.SellerHubResponse
@@ -662,6 +663,20 @@ class DashViewModel @Inject constructor(
 			return@launch
 		}
 		_updateVacationModeStatusResponse.value = repo.updateVacationModeStatus(vacationMode)
+	}
+
+	private var _getClipResponse = MutableLiveData<Resource<MakeClipResponse>>()
+	val getClipRepo: MutableLiveData<Resource<MakeClipResponse>>
+		get() = _getClipResponse
+
+	fun getClip(
+		roomId : RequestBody?
+	) = viewModelScope.launch {
+		if (!networkMonitor.hasInternet()) {
+			_getClipResponse.value = NO_INTERNET_ERROR
+			return@launch
+		}
+		_getClipResponse.value = repo.getClip(roomId)
 	}
 
 }

@@ -28,6 +28,7 @@ import io.bidswipe.app.network.Resource
 import io.bidswipe.app.network.response.GetCouponsResponse
 import io.bidswipe.app.network.response.GetPaymentCardsResponse
 import io.bidswipe.app.network.response.GetShippingAddressResponse
+import io.bidswipe.app.ui.custom.AlertType
 import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.ui.more.MoreActivity
 import io.bidswipe.app.utils.Alerts
@@ -107,7 +108,7 @@ class BuyNowFragment : BaseFragment<ProductViewModel, FragmentBuyNowBinding>() {
         }
 
         bind.promoCodeLayout.suffixTextView.setOnClickListener {
-            if(bind.promoCodeLayout.suffixText!="Applied!") {
+            if (bind.promoCodeLayout.suffixText != "Applied!") {
                 if (bind.promoCode.value().isEmpty()) {
                     Alerts.error(mCtx, "Please enter promo code")
                 } else {
@@ -213,6 +214,7 @@ class BuyNowFragment : BaseFragment<ProductViewModel, FragmentBuyNowBinding>() {
         viewModel.getShippingAddressRepo.observe(viewLifecycleOwner) { response ->
             when (response) {
                 is Resource.Success -> {
+                    viewModel.getShippingAddressRepo.value=null
                     bind.loader.isVisible = false
 
                     val mData = response.value.data
@@ -237,6 +239,35 @@ class BuyNowFragment : BaseFragment<ProductViewModel, FragmentBuyNowBinding>() {
                             shippingId.toString().request(),
                             viewModel.product?.id.toString().request()
                         )
+                    } else {
+                        AppBottomSheet(
+                            mCtx,
+                            R.drawable.ic_info,
+                            "No Shipping Address Found!",
+                            "Please add shipping address to continue",
+                            primaryBtnText = "Okay",
+                            secondaryBtnText = "Cancel",
+                            canCancel = false,
+                            showSecondary = true,
+                            alertType = AlertType.INFO,
+                            clicks = object : AlertClicks {
+                                override fun primaryClick(dialog: AppBottomSheet) {
+                                    dialog.dismiss()
+                                    addAddressLauncher.launch(
+                                        Intent(mCtx, MoreActivity::class.java).putExtra(
+                                            "slug",
+                                            "addAddress"
+                                        )
+                                    )
+                                }
+
+                                override fun secondaryClick(dialog: AppBottomSheet) {
+                                    dialog.dismiss()
+                                    findNavController().popBackStack()
+                                }
+                            }
+
+                        ).show()
                     }
 
                     if (addressList.isEmpty()) {
@@ -253,6 +284,7 @@ class BuyNowFragment : BaseFragment<ProductViewModel, FragmentBuyNowBinding>() {
                 }
 
                 is Resource.Error -> {
+                    viewModel.getShippingAddressRepo.value=null
                     bind.loader.isVisible = false
                     response.parse(mCtx, TAG, object : AlertClicks {
                         override fun primaryClick(dialog: AppBottomSheet) {
@@ -547,7 +579,7 @@ class BuyNowFragment : BaseFragment<ProductViewModel, FragmentBuyNowBinding>() {
     private fun showCouponSheet(callback: (String?) -> Unit) {
         val couponSheetBinding =
             CouponSheetBinding.bind(layoutInflater.inflate(R.layout.coupon_sheet, null, false))
-        val couponSheet = Alerts.appBottomSheet(mCtx, true, couponSheetBinding)
+        val couponSheet = Alerts.appBottomSheet(mCtx, true, couponSheetBinding, true)
         log("COUPONS $couponList")
 
         if (couponList.isNotEmpty()) {

@@ -175,7 +175,7 @@
 	                android:layout_width = "match_parent"
 	                android:layout_height = "wrap_content"
 	                android:layout_marginBottom = "@dimen/half_margin"
-	                app:startIconDrawable = "@drawable/ic_id_card" >
+	                app:startIconDrawable = "@drawable/ic_gift" >
 
                     <com.google.android.material.textfield.MaterialAutoCompleteTextView
 	                    android:id = "@+id/referral_code"

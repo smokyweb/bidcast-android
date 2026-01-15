@@ -31,7 +31,6 @@ class SplashActivity : AppCompatActivity() {
 		}
 
 		Handler(Looper.getMainLooper()).postDelayed({
-
 			if (Prefs(this@SplashActivity).token().isNotEmpty()) {
 				startActivity(this.toDash())
 			} else {

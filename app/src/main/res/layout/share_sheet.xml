@@ -294,6 +294,75 @@
 
                     </androidx.constraintlayout.widget.ConstraintLayout>
 
+                    <LinearLayout
+                        android:id="@+id/invite_card_view"
+                        android:layout_width="match_parent"
+                        android:visibility="gone"
+                        android:background="@color/background"
+                        android:orientation="vertical"
+                        android:layout_height="wrap_content">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:background="@color/primary"
+                            android:padding="@dimen/margin"
+                            android:orientation="vertical"
+                            android:layout_height="wrap_content">
+
+                            <TextView
+                                style="@style/LabelMedium"
+                                android:gravity="center"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="username invited you to join"
+                                android:textColor="@color/onPrimary"
+                                android:layout_marginBottom="@dimen/dp4"
+                                android:id="@+id/invite_user_text"/>
+
+                            <androidx.appcompat.widget.AppCompatImageView
+                                android:layout_width="match_parent"
+                                android:layout_height="32dp"
+                                android:src="@drawable/app_icon"/>
+
+                        </LinearLayout>
+
+
+                        <com.google.android.material.card.MaterialCardView
+                            style="@style/cardStyle"
+                            android:layout_width="84dp"
+                            android:layout_height="84dp"
+                            android:layout_gravity="center"
+                            app:cardCornerRadius="100dp"
+                            app:cardElevation="0dp"
+                            app:cardBackgroundColor="@color/primaryContainer"
+                            android:layout_margin="@dimen/margin"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent">
+
+                            <androidx.appcompat.widget.AppCompatImageView
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:gravity="center"
+                                android:scaleType="centerCrop"
+                                android:tint="@color/primary"
+                                android:padding="@dimen/padding"
+                                android:src="@drawable/ic_gift" />
+
+                        </com.google.android.material.card.MaterialCardView>
+
+                        <TextView
+                            style="@style/BodySmall"
+                            android:gravity="center"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Enjooy $10-$200 credit to spend on your first purchase"
+                            android:layout_marginBottom="@dimen/margin"
+                            android:layout_marginHorizontal="@dimen/margin"
+                            android:id="@+id/invite_text"/>
+
+                    </LinearLayout>
+
                 </com.google.android.material.card.MaterialCardView>
 
             </LinearLayout>

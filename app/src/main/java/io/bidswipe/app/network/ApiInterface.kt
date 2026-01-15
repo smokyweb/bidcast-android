@@ -2,7 +2,6 @@ package io.bidswipe.app.network
 
 import io.bidswipe.app.BuildConfig
 import io.bidswipe.app.model.GetSubCategoriesRequest
-import io.bidswipe.app.model.PaymentCardModel
 import io.bidswipe.app.model.StoreProductRequest
 import io.bidswipe.app.network.response.AboutUsResponse
 import io.bidswipe.app.network.response.BlockedUnblockedResponse
@@ -59,6 +58,7 @@ import io.bidswipe.app.network.response.GetTipAmountResponse
 import io.bidswipe.app.network.response.GetTransactionsHistoryResponse
 import io.bidswipe.app.network.response.GetUserProfileResponse
 import io.bidswipe.app.network.response.LoginResponse
+import io.bidswipe.app.network.response.MakeClipResponse
 import io.bidswipe.app.network.response.PageUrlResponse
 import io.bidswipe.app.network.response.PayoutHistoryResponse
 import io.bidswipe.app.network.response.RaiseTicketResponse
@@ -340,10 +340,10 @@ interface ApiInterface {
     suspend fun getShippingAddress(
     ): GetShippingAddressResponse
 
-	@Multipart
+    @Multipart
     @POST("api/add-card")
     suspend fun addPaymentCard(
-		@Part("card_token") cardToken: RequestBody?,
+        @Part("card_token") cardToken: RequestBody?,
     ): CommonResponse
 
     @GET("api/get-card")
@@ -499,7 +499,7 @@ interface ApiInterface {
 
     @POST("api/notification/listing")
     suspend fun getNotification(
-		@Query("page") page: String?
+        @Query("page") page: String?
     ): GetNotificationResponse
 
     @GET("api/bid/fetch")
@@ -853,21 +853,27 @@ interface ApiInterface {
         @Query("end_date") endDate: String?
     ): Call<ResponseBody>
 
-	@POST("api/delete-shipping-profile/{profileId}")
-	suspend fun deleteShippingProfile(
-		@Path("profileId") profileId: String
-	): CommonResponse
+    @POST("api/delete-shipping-profile/{profileId}")
+    suspend fun deleteShippingProfile(
+        @Path("profileId") profileId: String
+    ): CommonResponse
 
-	@Multipart
-	@POST("api/change-order-status")
-	suspend fun changeOrderStatus(
+    @Multipart
+    @POST("api/change-order-status")
+    suspend fun changeOrderStatus(
         @Part("order_id") orderId: RequestBody?,
         @Part("status") status: RequestBody?
-	): CommonResponse
+    ): CommonResponse
 
     @GET("api/get-coupon")
     suspend fun getCoupon(
     ): GetCouponsResponse
+
+    @Multipart
+    @POST("api/make-clip")
+    suspend fun getClip(
+        @Part("room_id") roomId: RequestBody?,
+    ): MakeClipResponse
 
 }
 

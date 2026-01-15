@@ -156,14 +156,14 @@ class ProductDetailsFragment : BaseFragment<ProductViewModel, FragmentProductDet
 
                         when (offer.status) {
                             "accepted" -> {
-                                bind.price.paintFlags =
-                                    bind.price.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
-                                bind.price.setTextColor(
-                                    ContextCompat.getColor(
-                                        mCtx,
-                                        R.color.outlineVariant
-                                    )
-                                )
+//                                bind.price.paintFlags =
+//                                    bind.price.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
+//                                bind.price.setTextColor(
+//                                    ContextCompat.getColor(
+//                                        mCtx,
+//                                        R.color.outlineVariant
+//                                    )
+//                                )
                                 bind.makeOffer.isVisible = false
                             }
 

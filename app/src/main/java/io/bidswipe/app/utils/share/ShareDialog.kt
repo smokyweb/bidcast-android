@@ -11,15 +11,12 @@ import android.content.pm.ResolveInfo
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.WindowManager
 import android.widget.FrameLayout
-import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
@@ -30,7 +27,6 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
-import io.bidswipe.app.R
 import io.bidswipe.app.controller.ShareChatAdapter
 import io.bidswipe.app.controller.ShareTarget
 import io.bidswipe.app.controller.ShareTargetAdapter
@@ -76,14 +72,14 @@ class ShareDialog : BottomSheetDialogFragment() {
         val dialog = super.onCreateDialog(savedInstanceState) as BottomSheetDialog
         dialog.setOnShowListener { dialogInterface ->
             val bottomSheetDialog = dialogInterface as BottomSheetDialog
-            val bottomSheet =  bottomSheetDialog.findViewById<View>(
+            val bottomSheet = bottomSheetDialog.findViewById<View>(
                 com.google.android.material.R.id.design_bottom_sheet
             ) as FrameLayout?
 
             bottomSheet?.let {
-                 val behavior = BottomSheetBehavior.from(it)
+                val behavior = BottomSheetBehavior.from(it)
                 behavior.state = BottomSheetBehavior.STATE_EXPANDED
-                behavior.skipCollapsed=true
+                behavior.skipCollapsed = true
             }
         }
         return dialog
@@ -147,8 +143,15 @@ class ShareDialog : BottomSheetDialogFragment() {
 
         Log.d("TAG", "onViewCreated: $payload")
 
-        chatList.clear()
-        chatList.add(0, ChatModel())
+        if (payload.type == "invite") {
+            bind.chats.isVisible = false
+        } else {
+            bind.chats.isVisible = true
+            chatList.clear()
+            chatList.add(0, ChatModel())
+            FireRef.CHAT_LIST.child(Prefs(mCtx).getUserData()?.id.toString()).orderByChild("timestamp")
+                .addValueEventListener(mValueEventListener)
+        }
 
         bind.showImg.loadUrl(mCtx, payload.imageUrl ?: "")
         bind.showTitle.text = payload.text?.asCapital()
@@ -171,6 +174,7 @@ class ShareDialog : BottomSheetDialogFragment() {
                 bind.showSubtitle.isVisible = false
                 bind.sellerCardView.isVisible = false
                 bind.normalShareView.isVisible = true
+                bind.inviteCardView.isVisible = false
             }
 
             "show" -> {
@@ -179,12 +183,14 @@ class ShareDialog : BottomSheetDialogFragment() {
                 bind.showSubtitle.isVisible = true
                 bind.sellerCardView.isVisible = false
                 bind.normalShareView.isVisible = true
+                bind.inviteCardView.isVisible = false
             }
 
             "seller" -> {
                 bind.shareTitle.text = "Share Seller Profile"
                 bind.showSubtitle.isVisible = false
                 bind.sellerCardView.isVisible = true
+                bind.inviteCardView.isVisible = false
 
                 bind.sellerImage.loadUrl(mCtx, payload.sellerInfo?.image ?: "", userName = payload.sellerInfo?.name)
                 bind.followers.text = payload.sellerInfo?.followers ?: "0"
@@ -192,10 +198,21 @@ class ShareDialog : BottomSheetDialogFragment() {
                 bind.sellerName.text = payload.sellerInfo?.name?.capitalize()
             }
 
+            "invite"->{
+                bind.shareTitle.isVisible=false
+                bind.showSubtitle.isVisible = false
+                bind.sellerCardView.isVisible = false
+                bind.inviteCardView.isVisible = true
+
+                bind.inviteText.text= "Enjoy $10-$200 credit to spend on your first purchase!"
+                bind.inviteUserText.text= payload.sellerInfo?.name +" invited you to join"
+            }
+
             else -> {
                 bind.showSubtitle.isVisible = false
                 bind.liveBadge.isVisible = false
                 bind.sellerCardView.isVisible = false
+                bind.inviteCardView.isVisible = false
                 bind.normalShareView.isVisible = true
             }
         }
@@ -270,9 +287,6 @@ class ShareDialog : BottomSheetDialogFragment() {
                 }
             }
         })
-
-        FireRef.CHAT_LIST.child(Prefs(mCtx).getUserData()?.id.toString()).orderByChild("timestamp")
-            .addValueEventListener(mValueEventListener)
 
     }
 

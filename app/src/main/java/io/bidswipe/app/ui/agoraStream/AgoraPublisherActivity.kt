@@ -32,10 +32,13 @@ import androidx.core.text.color
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
+import androidx.media3.common.MediaItem
+import androidx.media3.exoplayer.ExoPlayer
 import com.bumptech.glide.Glide
 import com.caneryilmaz.apps.luckywheel.constant.ArrowPosition
 import com.caneryilmaz.apps.luckywheel.constant.TextOrientation
 import com.caneryilmaz.apps.luckywheel.data.WheelData
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.gson.Gson
 import com.gyf.immersionbar.ktx.immersionBar
 import com.gyf.immersionbar.ktx.navigationBarHeight
@@ -152,7 +155,9 @@ class AgoraPublisherActivity : BaseActivity() {
     private var showNotes: String? = ""
     private var tipMessage: String? = ""
     private var tipChatEnabled: Boolean? = false
-
+    private lateinit var exoPlayer: ExoPlayer
+    private lateinit var clipSheetBind: CreateClipSheetBinding
+    private lateinit var clipSheet: BottomSheetDialog
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -200,6 +205,17 @@ class AgoraPublisherActivity : BaseActivity() {
             }
         }
 
+        exoPlayer = ExoPlayer.Builder(this).build()
+
+        clipSheetBind = CreateClipSheetBinding.bind(
+            layoutInflater.inflate(
+                R.layout.create_clip_sheet,
+                null,
+                false
+            )
+        )
+         clipSheet = Alerts.appBottomSheet(this, true, clipSheetBind)
+
         showId = liveShowData?.showId ?: ""
 
         viewModel.showId = showId
@@ -226,14 +242,14 @@ class AgoraPublisherActivity : BaseActivity() {
 
         viewModel.getAgoraToken(roomID.request())
 
-		commentAdapter = CommentAdapter(commentList, userId, object : RecyclerClicks {
-			override fun itemClick(pos: Int, status: String?) {
+        commentAdapter = CommentAdapter(commentList, userId, object : RecyclerClicks {
+            override fun itemClick(pos: Int, status: String?) {
 
-				if (commentList[pos]?.userId == userId) return
+                if (commentList[pos]?.userId == userId) return
 
-				startActivity(Intent(this@AgoraPublisherActivity, SellerProfileActivity::class.java).putExtra("sellerId", commentList[pos]?.userId))
-			}
-		})
+                startActivity(Intent(this@AgoraPublisherActivity, SellerProfileActivity::class.java).putExtra("sellerId", commentList[pos]?.userId))
+            }
+        })
 
         bind.recycler.adapter = commentAdapter
 
@@ -273,12 +289,12 @@ class AgoraPublisherActivity : BaseActivity() {
 
         bind.clip.isVisible = App.profileResponse.value?.preferences?.enableClips == true
 
-		bind.message.setEndIconOnClickListener {
-			if (!isShowLive) {
-				Alerts.error(this, "Please start live show to send message")
-				bind.messageText.setText("")
-				return@setEndIconOnClickListener
-			}
+        bind.message.setEndIconOnClickListener {
+            if (!isShowLive) {
+                Alerts.error(this, "Please start live show to send message")
+                bind.messageText.setText("")
+                return@setEndIconOnClickListener
+            }
 
             if (bind.messageText.value().isNotEmpty()) {
                 socketManager?.sendMessage(
@@ -340,6 +356,9 @@ class AgoraPublisherActivity : BaseActivity() {
         }
 
         bind.clip.setHapticClickListener {
+            clipSheetBind.loaderView.isVisible = true
+            clipSheetBind.videoView.isVisible = false
+            viewModel.getClip(roomID.request())
             createClipSheet()
         }
 
@@ -723,9 +742,9 @@ class AgoraPublisherActivity : BaseActivity() {
                     bind.freebieLayout.isVisible = false
 
                     freebieUsers.clear()
-					randomizerSheetBind?.recycler?.adapter?.notifyDataSetChanged()
+                    randomizerSheetBind?.recycler?.adapter?.notifyDataSetChanged()
 
-					val user = GetFreebieObject.Users.fromJson(obj.optJSONObject("user"))
+                    val user = GetFreebieObject.Users.fromJson(obj.optJSONObject("user"))
 
                     val index = freebieUsers.indexOf(freebieUsers.find { it?.id == user.id })
 
@@ -734,11 +753,11 @@ class AgoraPublisherActivity : BaseActivity() {
                         bind.luckyWheel.rotateWheel()
                     }
 
-				}
+                }
 
-			}
+            }
 
-		}
+        }
 
         socketManager?.receiveShowNotes { args ->
             runSafe {
@@ -755,6 +774,44 @@ class AgoraPublisherActivity : BaseActivity() {
                     tipMessage = obj.optString("tip_message")
                     tipChatEnabled = obj.optBoolean("show_in_live_chat")
                 }
+            }
+        }
+
+        viewModel.getClipRepo.observe(this) {
+            when (it) {
+                is Resource.Success -> {
+                    clipSheetBind.loaderView.isVisible = false
+                    viewModel.getClipRepo.value = null
+                    val mData = it.value.data
+                    log("GOT ${it.value.data}")
+
+                    if (mData != null) {
+                        runOnUiThread {
+                            clipSheetBind.videoView.player = exoPlayer
+                            val mediaItem = MediaItem.fromUri(mData.clipUrl ?: "")
+
+                            exoPlayer.setMediaItem(mediaItem)
+                            clipSheetBind.videoView.isVisible = true
+                            clipSheetBind.bottomLayout.isVisible = true
+                            exoPlayer.prepare()
+                            exoPlayer.playWhenReady = true
+                        }
+
+                    } else {
+                        errorToast("Something went wrong")
+                        clipSheet.dismiss()
+                    }
+                }
+
+                is Resource.Error -> {
+                    clipSheetBind.loaderView.isVisible = false
+                    viewModel.getClipRepo.value = null
+                    clipSheet.dismiss()
+                    errorToast(it.errorResponse?.message ?: "Something went wrong")
+                }
+
+                else -> {}
+
             }
         }
     }
@@ -1346,8 +1403,8 @@ class AgoraPublisherActivity : BaseActivity() {
             )
         val sheet = Alerts.appBottomSheet(this, true, tipSettingsSheetBind)
         tipSettingsSheetBind.close.setHapticClickListener { sheet.dismiss() }
-        tipSettingsSheetBind.showLiveChat.isChecked = tipChatEnabled==true
-		    tipSettingsSheetBind.tipMessage.setText(tipMessage)
+        tipSettingsSheetBind.showLiveChat.isChecked = tipChatEnabled == true
+        tipSettingsSheetBind.tipMessage.setText(tipMessage)
 
         tipSettingsSheetBind.save.setHapticClickListener {
 
@@ -1658,26 +1715,17 @@ class AgoraPublisherActivity : BaseActivity() {
     }
 
     fun createClipSheet() {
-        val clipSheetBind = CreateClipSheetBinding.bind(
-            layoutInflater.inflate(
-                R.layout.create_clip_sheet,
-                null,
-                false
-            )
-        )
-
-        val clipSheet = Alerts.appBottomSheet(this, true, clipSheetBind)
-        val mList = mutableListOf<String?>()
-
-        repeat(3) {
-            mList.add("")
-        }
 
         clipSheetBind.close.setHapticClickListener {
             clipSheet.dismiss()
         }
 
         clipSheet.show()
+
+        clipSheet.setOnDismissListener {
+            exoPlayer.release()
+        }
+
     }
 
     private fun createPollSheet() {

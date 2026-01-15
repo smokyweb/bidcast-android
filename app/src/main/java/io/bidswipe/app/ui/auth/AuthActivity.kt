@@ -31,6 +31,7 @@ class AuthActivity : BaseActivity() {
 			bind.root.setPadding(0,system.top,0, system.bottom)
 			CONSUMED
 		}
+
 			val data: Uri? = intent.data
 			data?.let { uri ->
 				referralCode = uri.getQueryParameter("referralCode").toString()
@@ -51,7 +52,6 @@ class AuthActivity : BaseActivity() {
 			bundle.putString("referralCode", referralCode)
 			navController.navigate(R.id.createAccountFragment, bundle)
 		}
-
 
 	}
 
