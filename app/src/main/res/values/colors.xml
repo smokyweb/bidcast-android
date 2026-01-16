@@ -35,6 +35,7 @@
     <color name="scrim">#000000</color>
     <color name="transparent">#00FFFFFF</color>
     <color name="black25">#40000000</color>
+    <color name="black10">#19000000</color>
 
     <color name="success">#1DBC64</color>
     <color name="onSuccess">#FFFFFF</color>

@@ -15,4 +15,6 @@
     <string name="sub_category">Sub-Category</string>
     <string name="view_all">View All</string>
     <string name="address_type">Address Type</string>
+    <string name="last_60_seconds">Last 60 seconds</string>
+    <string name="awaiting_next_item">Awaiting Next Item</string>
 </resources>

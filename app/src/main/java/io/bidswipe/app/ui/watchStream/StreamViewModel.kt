@@ -13,6 +13,7 @@ import io.bidswipe.app.network.response.CommonResponse
 import io.bidswipe.app.network.response.CreateBidResponse
 import io.bidswipe.app.network.response.FollowUnfollowResponse
 import io.bidswipe.app.network.response.GetReportCategoriesResponse
+import io.bidswipe.app.network.response.MakeClipResponse
 import io.bidswipe.app.network.response.SellerInfoResponse
 import io.bidswipe.app.network.response.SentTipAmountResponse
 import io.bidswipe.app.utils.Const.NO_INTERNET_ERROR
@@ -150,4 +151,17 @@ class StreamViewModel @Inject constructor(
 		_reportSellerResponse.value = repo.reportSeller(sellerId, categoryId, notes)
 	}
 
+	private var _getClipResponse = MutableLiveData<Resource<MakeClipResponse>>()
+	val getClipRepo: MutableLiveData<Resource<MakeClipResponse>>
+		get() = _getClipResponse
+
+	fun getClip(
+		roomId : RequestBody?
+	) = viewModelScope.launch {
+		if (!networkMonitor.hasInternet()) {
+			_getClipResponse.value = NO_INTERNET_ERROR
+			return@launch
+		}
+		_getClipResponse.value = repo.getClip(roomId)
+	}
 }

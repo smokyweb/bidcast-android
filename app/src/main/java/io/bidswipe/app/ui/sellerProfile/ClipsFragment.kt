@@ -1,10 +1,15 @@
 package io.bidswipe.app.ui.sellerProfile
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
+import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import io.bidswipe.app.base.BaseFragment
 import io.bidswipe.app.controller.ClipsAdapter
 import io.bidswipe.app.databinding.FragmentClipsBinding
@@ -15,7 +20,9 @@ import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.utils.Alerts
 import io.bidswipe.app.utils.Utils
 import io.bidswipe.app.utils.finish
+import io.bidswipe.app.utils.isTablet
 import io.bidswipe.app.utils.parse
+import io.bidswipe.app.utils.request
 
 class ClipsFragment : BaseFragment<SellerViewModel , FragmentClipsBinding>() {
 	override fun getModel() = SellerViewModel::class.java
@@ -30,6 +37,7 @@ class ClipsFragment : BaseFragment<SellerViewModel , FragmentClipsBinding>() {
 	private  var clipList =mutableListOf<GetClipsResponse.Data?>()
 	private var page=1
 	private var isLoading=false
+	private var sellerId:String?=null
 
 
 	override fun onResume() {
@@ -50,15 +58,47 @@ class ClipsFragment : BaseFragment<SellerViewModel , FragmentClipsBinding>() {
 	override fun onViewCreated(view : View , savedInstanceState : Bundle?) {
 		super.onViewCreated(view , savedInstanceState)
 
-		val sellerId = (requireActivity() as SellerProfileActivity).sellerId
+		if(arguments!=null){
+			bind.header.isVisible=requireArguments().getBoolean("fromAccount",false)
+			bind.header.onBackClick { findNavController().popBackStack() }
+		}
 
-		clipsAdapter = ClipsAdapter(mList = clipList)
+		 sellerId =if(requireActivity() is SellerProfileActivity) (requireActivity() as SellerProfileActivity).sellerId else null
+
+		bind.recycler.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+			override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+				super.onScrolled(recyclerView, dx, dy)
+				val layoutManager = bind.recycler.layoutManager as LinearLayoutManager
+				val lastItemPosition = layoutManager.findLastVisibleItemPosition()
+				if (lastItemPosition == (clipList.size - 1)) {
+					if (!isLoading) {
+						isLoading = true
+						page++
+						bind.bottomLoader.isVisible = true
+						viewModel.getUserClips(sellerId,page.toString())
+
+					}
+				}
+			}
+		})
+
+		clipsAdapter = ClipsAdapter(mList = clipList){ data,pos->
+			startActivity(
+				Intent(mCtx, ClipEditActivity::class.java).putExtra(
+					"videoUrl",
+					clipList[pos]?.clipUrl?:""
+				)
+			)
+		}
+
+		(bind.recycler.layoutManager as GridLayoutManager).setSpanCount(if (resources.isTablet()) 3 else 2)
 		bind.recycler.adapter = clipsAdapter
 
 		bind.loader.isVisible=true
-		viewModel.getUserClips(sellerId)
+		viewModel.getUserClips(sellerId,page.toString())
 		viewModel.getUserClipsRepo.observe(viewLifecycleOwner){
 			bind.loader.isVisible = false
+			bind.bottomLoader.isVisible = false
 			when (it) {
 				is Resource.Success -> {
 					bind.noInternet.isVisible = false
@@ -79,9 +119,10 @@ class ClipsFragment : BaseFragment<SellerViewModel , FragmentClipsBinding>() {
 						bind.recycler.isVisible = true
 					}
 
-//					isLoading = page >= (it.value.totalPage ?: 0)
+					isLoading = page >= (it.value.totalPage ?: 0)
 
 					clipsAdapter.notifyDataSetChanged()
+
 				}
 
 				is Resource.Error -> {
@@ -111,7 +152,6 @@ class ClipsFragment : BaseFragment<SellerViewModel , FragmentClipsBinding>() {
 			}
 
 		}
-
-
 	}
+
 }

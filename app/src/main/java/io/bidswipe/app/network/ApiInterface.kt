@@ -878,7 +878,8 @@ interface ApiInterface {
 
     @GET("api/get-clips")
     suspend fun getUserClips(
-        @Query("seller_id") sellerId: String?
+        @Query("seller_id") sellerId: String?,
+        @Query("page") page: String?
     ): GetClipsResponse
 
 }

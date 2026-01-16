@@ -27,7 +27,7 @@ class ViewPagerAdapter(fragmentActivity : FragmentActivity , type : String) :
 				BidsFragment() ,
 				OfferFragment() ,
 				PurchasesFragment() ,
-				SavedItemsFragment()
+				SavedItemsFragment(),
 			)
 		}
 

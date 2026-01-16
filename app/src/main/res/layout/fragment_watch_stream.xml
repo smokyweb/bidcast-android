@@ -156,7 +156,7 @@
                                 </LinearLayout>
 
                                 <LinearLayout
-                                    android:id="@+id/promote"
+                                    android:id="@+id/clip"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_marginBottom="8dp"
@@ -411,7 +411,7 @@
                         </com.google.android.material.card.MaterialCardView>
 
                         <com.google.android.material.card.MaterialCardView
-                            android:id="@+id/product"
+                            android:id="@+id/product_auction_bid_layout"
                             style="@style/cardStyle"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -573,38 +573,21 @@
 
                                 </LinearLayout>
 
-
-                            </LinearLayout>
-
-                            <LinearLayout
-                                android:id="@+id/sold_layout"
-                                android:layout_width="match_parent"
-                                android:layout_height="match_parent"
-                                android:layout_margin="@dimen/half_margin"
-                                android:layout_marginHorizontal="@dimen/half_margin"
-                                android:layout_weight="1"
-                                android:gravity="center_horizontal"
-                                android:orientation="vertical"
-                                android:visibility="gone">
-
-                                <TextView
-                                    android:id="@+id/soldOutText"
-                                    style="@style/TitleLarge"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="Sold Out!"
-                                    android:textColor="@color/surface" />
-
-                                <TextView
-                                    style="@style/BodySmall"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="Please wait for next product"
-                                    android:textColor="@color/surface" />
-
                             </LinearLayout>
 
                         </com.google.android.material.card.MaterialCardView>
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/sold_layout"
+                            style="@style/appBtn"
+                            android:layout_marginHorizontal="@dimen/margin"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:enabled="false"
+                            android:text="@string/awaiting_next_item"
+                            android:backgroundTint="@color/black10"
+                            android:textColor="@color/background"
+                            android:visibility="visible"/>
 
                         <LinearLayout
                             android:id="@+id/bidLayout"
@@ -675,7 +658,6 @@
                                 </com.zerobranch.layout.SwipeLayout>
 
                             </com.google.android.material.card.MaterialCardView>
-
 
                         </LinearLayout>
 

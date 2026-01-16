@@ -48,10 +48,12 @@
     <com.google.android.material.card.MaterialCardView
         android:layout_width="240sp"
         android:layout_height="0dp"
+        app:cardBackgroundColor="@color/primaryContainer"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintDimensionRatio="2:3"
         app:layout_constraintEnd_toEndOf="parent"
-        app:cardBackgroundColor="@color/primaryContainer"
-        app:layout_constraintStart_toStartOf="parent">
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
         <androidx.media3.ui.PlayerView
             android:id="@+id/videoView"
@@ -70,8 +72,6 @@
     </com.google.android.material.card.MaterialCardView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
-
-
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -105,7 +105,7 @@
                     style="@style/BodyMedium"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/when_on_allows_bids_from_verified_buyers_only" />
+                    android:text="@string/last_60_seconds" />
 
             </LinearLayout>
 

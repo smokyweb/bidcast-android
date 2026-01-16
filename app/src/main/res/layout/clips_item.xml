@@ -6,7 +6,7 @@
     style="@style/cardStyle"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="8dp"
+    android:layout_margin="4dp"
     app:cardCornerRadius="@dimen/half_margin">
 
     <LinearLayout
@@ -20,20 +20,24 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:orientation="vertical">
-            <ImageView
+
+            <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/thumbnail"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:scaleType="centerCrop"
                 android:src="@drawable/create_clip"
-                app:layout_constraintDimensionRatio="3:4"/>
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintDimensionRatio="2:3"
+                app:layout_constraintTop_toTopOf="parent" />
 
-            <ImageView
+            <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/playButton"
-                android:layout_width="56dp"
-                android:layout_height="56dp"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
                 android:contentDescription="@string/play_video"
                 android:elevation="8dp"
+                app:tint="@color/primary"
                 android:src="@drawable/ic_play"
                 app:layout_constraintBottom_toBottomOf="@+id/thumbnail"
                 app:layout_constraintEnd_toEndOf="parent"

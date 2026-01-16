@@ -12,10 +12,14 @@ import androidx.appcompat.view.ContextThemeWrapper
 import androidx.core.content.ContextCompat
 import androidx.core.text.bold
 import androidx.core.text.buildSpannedString
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsCompat.CONSUMED
 import androidx.core.view.isVisible
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayoutMediator
 import com.gyf.immersionbar.ktx.immersionBar
+import com.gyf.immersionbar.ktx.navigationBarHeight
 import com.skydoves.powermenu.PowerMenuItem
 import io.bidswipe.app.App
 import io.bidswipe.app.R
@@ -79,6 +83,8 @@ class SellerProfileActivity : BaseActivity() {
             fitsSystemWindows(false)
             keyboardEnable(true)
         }
+
+        bind.pager.setPadding(0, 0, 0, navigationBarHeight)
 
         actionList.clear()
         actionList.add(PowerMenuItem(title = "Save Product"))

@@ -11,7 +11,6 @@ import io.bidswipe.app.utils.setHapticClickListener
 class ClipsAdapter(
 	mList : List<GetClipsResponse.Data?>,
 	private val onItemClick : (GetClipsResponse.Data? , Int) -> Unit = { _ , _ -> },
-	private val onPlayClick : (GetClipsResponse.Data? , Int) -> Unit = { _ , _ -> },
 ) : BaseAdapter<GetClipsResponse.Data? , ClipsItemBinding>(mList) {
 
 	override fun bindView(inflater : LayoutInflater , parent : ViewGroup) =
@@ -24,12 +23,9 @@ class ClipsAdapter(
 	) {
 
 		with(holder) {
-			bind.thumbnail.loadUrl(mCtx,item?.thumbnail_url?:"")
+			bind.thumbnail.loadUrl(mCtx,item?.thumbnailUrl?:"")
             bind.root.setHapticClickListener {
 				onItemClick(item , position)
-			}
-            bind.playButton.setHapticClickListener {
-				onPlayClick(item , position)
 			}
 		}
 	}

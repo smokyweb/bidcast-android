@@ -38,6 +38,7 @@ class ActivityFragment : BaseFragment<DashViewModel, FragmentActivityBinding>() 
         bind.pager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
                 super.onPageSelected(position)
+                bind.swipeRefreshLayout.isRefreshing = false
                 viewModel.isViewPagerDataLoaded.value = false
                 bind.swipeRefreshLayout.setOnChildScrollUpCallback { _, _ ->
                     position == 0

@@ -146,6 +146,7 @@ class AgoraPublisherActivity : BaseActivity() {
     private var roomID = ""
 
     private var isShowLive = false
+    private var isAuctionStarted = false
     private var isFreebieLive = false
     private var zoomLevel = 1.0f
 
@@ -214,7 +215,7 @@ class AgoraPublisherActivity : BaseActivity() {
                 false
             )
         )
-         clipSheet = Alerts.appBottomSheet(this, true, clipSheetBind)
+        clipSheet = Alerts.appBottomSheet(this, true, clipSheetBind)
 
         showId = liveShowData?.showId ?: ""
 
@@ -233,8 +234,6 @@ class AgoraPublisherActivity : BaseActivity() {
 
         bind.hostName.text = userName.asCapital()
         bind.hostImage.loadUrl(this, userImage)
-
-        initPip()
 
         App.manager = AgoraManager(this, Const.APP_ID_AGORA)
 
@@ -332,16 +331,16 @@ class AgoraPublisherActivity : BaseActivity() {
 
         ViewCompat.setOnApplyWindowInsetsListener(bind.root) { _, insets ->
             val imeVisible = insets.isVisible(WindowInsetsCompat.Type.ime())
-            if (isShowLive) {
-                if (imeVisible) {
+                 if (imeVisible) {
                     bind.product.isVisible = false
                     bind.startBtn.isVisible = false
                     bind.menuLayout.isVisible = false
                 } else {
-                    bind.product.isVisible = true
+                    bind.startBtn.isVisible = !isShowLive
+
+                    bind.product.isVisible = isAuctionStarted
                     bind.menuLayout.isVisible = true
                 }
-            }
             insets
         }
 
@@ -637,7 +636,7 @@ class AgoraPublisherActivity : BaseActivity() {
                 if (json.optString("room_id") == roomID) {
                     runOnUiThread {
                         if (json.has("product") && json.optJSONObject("product") != null) {
-
+                            isAuctionStarted = true
                             val status = json.optString("status")
 
                             bind.runNext.isVisible = status == "sold"
@@ -647,6 +646,7 @@ class AgoraPublisherActivity : BaseActivity() {
                             log("LIVE PRODUCT : $product")
                             updateProductUI(product, startingBidAmount)
                         } else {
+                            isAuctionStarted = false
                             updateProductUI(null, startingBidAmount = "0")
                         }
 
@@ -859,7 +859,7 @@ class AgoraPublisherActivity : BaseActivity() {
 
         showConfirmationSheetBind.startBtn.setHapticClickListener {
             showConfirmationSheet.dismiss()
-
+            initPip()
             App.manager.joinChannel(agoraToken, channelName)
 
             bind.startBtn.isVisible = false
@@ -1018,6 +1018,7 @@ class AgoraPublisherActivity : BaseActivity() {
                             product?.isCurrent = false
 
                             bind.status.isVisible = true
+                            bind.bidPrice.isVisible = false
                             bind.runNext.isVisible = true
 
                         } else {

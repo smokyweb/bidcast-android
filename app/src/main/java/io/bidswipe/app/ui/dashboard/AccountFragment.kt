@@ -7,7 +7,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
+import androidx.navigation.fragment.findNavController
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayout.OnTabSelectedListener
 import io.bidswipe.app.App
@@ -29,12 +31,15 @@ import io.bidswipe.app.ui.more.NotificationActivity
 import io.bidswipe.app.ui.more.TrustedBuyerActivity
 import io.bidswipe.app.ui.scheduleShow.ShowDetailsActivity
 import io.bidswipe.app.ui.sellerHub.SellerHubActivity
+import io.bidswipe.app.ui.sellerProfile.ClipEditActivity
 import io.bidswipe.app.utils.Const
 import io.bidswipe.app.utils.Prefs
 import io.bidswipe.app.utils.Utils
+import io.bidswipe.app.utils.animatedNav
 import io.bidswipe.app.utils.asCapital
 import io.bidswipe.app.utils.asMoney
 import io.bidswipe.app.utils.finish
+import io.bidswipe.app.utils.ids
 import io.bidswipe.app.utils.loadUrl
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request
@@ -152,6 +157,10 @@ class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
                     )
                 }
 
+                "clips" -> {
+                    findNavController().animatedNav(ids.toClipsFragment, bundleOf("fromAccount" to true))
+                }
+
                 else -> {
                     startActivity(
                         Intent(mCtx, MoreActivity::class.java).putExtra(
@@ -221,6 +230,7 @@ class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
         accountGridList.add(MoreModel(R.drawable.notification, "Notifications", "notification"))
         accountGridList.add(MoreModel(R.drawable.ic_tag_outline, "Preferences", "preferences"))
         accountGridList.add(MoreModel(R.drawable.ic_heart, "Interests", "interests"))
+        accountGridList.add(MoreModel(R.drawable.ic_clip_new, "Clips", "clips"))
 
         accountGridAdapter = GridAdapter(accountGridList, accountGridClick)
         bind.accountView.gridRecycler.adapter = accountGridAdapter

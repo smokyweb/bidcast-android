@@ -50,7 +50,11 @@
         android:id="@+id/accountFragment"
         android:name="io.bidswipe.app.ui.dashboard.AccountFragment"
         android:label="fragment_account"
-        tools:layout="@layout/fragment_account" />
+        tools:layout="@layout/fragment_account" >
+        <action
+            android:id="@+id/toClipsFragment"
+            app:destination="@id/clipsFragment" />
+    </fragment>
     <fragment
         android:id="@+id/exploreTypeFragment"
         android:name="io.bidswipe.app.ui.dashboard.ExploreTypeFragment"
@@ -62,5 +66,10 @@
         android:name="io.bidswipe.app.ui.dashboard.SearchShowFragment"
         android:label="fragment_search_show"
         tools:layout="@layout/fragment_search_show" />
+    <fragment
+        android:id="@+id/clipsFragment"
+        android:name="io.bidswipe.app.ui.sellerProfile.ClipsFragment"
+        android:label="fragment_clips"
+        tools:layout="@layout/fragment_clips" />
 
 </navigation>

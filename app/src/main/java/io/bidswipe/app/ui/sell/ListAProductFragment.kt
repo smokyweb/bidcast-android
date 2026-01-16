@@ -686,10 +686,10 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
         }
 
         viewModel.getProductSubCategoryRepo.observe(viewLifecycleOwner) {
+            bind.loader.isVisible = false
             when (it) {
                 is Resource.Success -> {
                     viewModel.getProductSubCategoryRepo.value = null
-                    bind.loader.isVisible = false
 
                     val mData = it.value.data
 

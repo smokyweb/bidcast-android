@@ -216,10 +216,10 @@ class SelectCategoryFragment : BaseFragment<ScheduleShowViewModel, FragmentSelec
         }
 
         viewModel.getProductSubCategoryRepo.observe(viewLifecycleOwner) {
+            bind.loader.isVisible = false
             when (it) {
                 is Resource.Success -> {
                     if (it.value.data?.isNotEmpty() == true) {
-                        bind.loader.isVisible = false
                         viewModel.getCategoryRepo.value = null
 
                         val mData = it.value.data
