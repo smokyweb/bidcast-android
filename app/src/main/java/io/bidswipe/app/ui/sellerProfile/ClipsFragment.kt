@@ -84,10 +84,7 @@ class ClipsFragment : BaseFragment<SellerViewModel , FragmentClipsBinding>() {
 
 		clipsAdapter = ClipsAdapter(mList = clipList){ data,pos->
 			startActivity(
-				Intent(mCtx, ClipEditActivity::class.java).putExtra(
-					"videoUrl",
-					clipList[pos]?.clipUrl?:""
-				)
+				Intent(mCtx, ClipEditActivity::class.java).putExtra("videoUrl", clipList[pos]?.clipUrl?:"").putExtra("isEdit", sellerId==null)
 			)
 		}
 
@@ -137,7 +134,6 @@ class ClipsFragment : BaseFragment<SellerViewModel , FragmentClipsBinding>() {
 						it.parse(mCtx, TAG, object : AlertClicks {
 							override fun primaryClick(dialog: AppBottomSheet) {
 								dialog.dismiss()
-
 							}
 
 							override fun secondaryClick(dialog: AppBottomSheet) {

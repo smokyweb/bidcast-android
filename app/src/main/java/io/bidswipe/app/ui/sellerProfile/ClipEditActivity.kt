@@ -23,10 +23,15 @@ class ClipEditActivity : BaseActivity() {
     private var videoUrl: String? = null
     private var isEdit: Boolean? = false
 
-    override fun onCreate(savedInstanceState: Bundle?, persistentState: PersistableBundle?) {
-        super.onCreate(savedInstanceState, persistentState)
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
 
         setContentView(bind.root)
+
+        bind.header.onBackClick {
+            finishAfterTransition()
+        }
+
 
         videoUrl = intent?.getStringExtra("videoUrl") ?: ""
         log("URL $videoUrl")

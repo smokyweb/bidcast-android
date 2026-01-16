@@ -172,7 +172,7 @@ aztec = { module = "org.wordpress:aztec", version.ref = "aztec" }
 permissionx = { module = "com.guolindev.permissionx:permissionx", version.ref = "permissionx" }
 
 # --- SDKs ---
-agora-full-sdk = { module = "io.agora.rtc:full-sdk", version.ref = "agoraFullSdk" }
+agora-full-sdk = { module = "io.agora.rtc:lite-sdk", version.ref = "agoraFullSdk" }
 androidx-ui = { group = "androidx.compose.ui", name = "ui", version.ref = "ui" }
 
 

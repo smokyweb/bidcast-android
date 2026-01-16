@@ -331,16 +331,16 @@ class AgoraPublisherActivity : BaseActivity() {
 
         ViewCompat.setOnApplyWindowInsetsListener(bind.root) { _, insets ->
             val imeVisible = insets.isVisible(WindowInsetsCompat.Type.ime())
-                 if (imeVisible) {
-                    bind.product.isVisible = false
-                    bind.startBtn.isVisible = false
-                    bind.menuLayout.isVisible = false
-                } else {
-                    bind.startBtn.isVisible = !isShowLive
+            if (imeVisible) {
+                bind.product.isVisible = false
+                bind.startBtn.isVisible = false
+                bind.menuLayout.isVisible = false
+            } else {
+                bind.startBtn.isVisible = !isShowLive
 
-                    bind.product.isVisible = isAuctionStarted
-                    bind.menuLayout.isVisible = true
-                }
+                bind.product.isVisible = isAuctionStarted
+                bind.menuLayout.isVisible = true
+            }
             insets
         }
 
@@ -1370,27 +1370,55 @@ class AgoraPublisherActivity : BaseActivity() {
     }
 
     private fun endShowSheet() {
+        if (isFreebieLive) {
 
-        val endShowSheetBind = EndShowSheetBinding.bind(layoutInflater.inflate(R.layout.end_show_sheet, null, false))
+            AppBottomSheet(
+                this,
+                R.drawable.ic_info,
+                "Freebie Live",
+                "A freebie is currently running. Ending the show will stop the freebie. Are you sure you want to continue?",
+                primaryBtnText = "Okay",
+                secondaryBtnText = "Cancel",
+                canCancel = true,
+                showSecondary = true,
+                iconPadding = 16,
+                alertType = AlertType.INFO,
+                clicks = object : AlertClicks {
+                    override fun primaryClick(dialog: AppBottomSheet) {
+                        dialog.dismiss()
+                        socketManager?.sendMessage(roomID, "end_show", userId, userName, userImage)
+                        App.manager.destroyEngine()
+                        dialog.dismiss()
+                        finishAfterTransition()
+                    }
 
-        val sheet = Alerts.appBottomSheet(this, true, endShowSheetBind)
+                    override fun secondaryClick(dialog: AppBottomSheet) {
+                        dialog.dismiss()
+                    }
+                }
+            ).show()
+        } else {
 
-        endShowSheetBind.close.setHapticClickListener { sheet.dismiss() }
+            val endShowSheetBind = EndShowSheetBinding.bind(layoutInflater.inflate(R.layout.end_show_sheet, null, false))
 
-        endShowSheetBind.endBtn.setHapticClickListener {
-            if (isFreebieLive) {
-                errorToast("Show cannot be ended until freebie is over")
-            } else {
-                socketManager?.sendMessage(roomID, "end_show", userId, userName, userImage)
-                App.manager.destroyEngine()
+            val sheet = Alerts.appBottomSheet(this, true, endShowSheetBind)
 
-                sheet.dismiss()
+            endShowSheetBind.close.setHapticClickListener { sheet.dismiss() }
 
-                finishAfterTransition()
+            endShowSheetBind.endBtn.setHapticClickListener {
+                if (isFreebieLive) {
+                    errorToast("Show cannot be ended until freebie is over")
+                } else {
+                    socketManager?.sendMessage(roomID, "end_show", userId, userName, userImage)
+                    App.manager.destroyEngine()
+
+                    sheet.dismiss()
+
+                    finishAfterTransition()
+                }
             }
+            sheet.show()
         }
-
-        sheet.show()
     }
 
     private fun tipSettingsSheet() {
