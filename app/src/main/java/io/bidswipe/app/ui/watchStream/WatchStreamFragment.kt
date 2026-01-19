@@ -88,6 +88,7 @@ import io.bidswipe.app.utils.runSafe
 import io.bidswipe.app.utils.setHapticClickListener
 import io.bidswipe.app.utils.setMargins
 import io.bidswipe.app.utils.share.ShareHelper
+import io.bidswipe.app.utils.toEpochMillis
 import io.bidswipe.app.utils.value
 import kotlinx.coroutines.launch
 import nl.dionsegijn.konfetti.core.Party
@@ -928,7 +929,6 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
             currentRemoteUid?.let { uid ->
                 setupRemoteVideo(uid)
             }
-
         }
 
         log("TOKEN: $streamID")
@@ -970,6 +970,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
             }
         }
     }
+
 
     private fun setupRemoteVideo(uid: Int) {
         bind.hostView.removeAllViews()
@@ -1219,8 +1220,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
                 bind.notLiveLayout.isVisible = true
                 bind.bottomUI.isVisible = false
                 bind.notesFreebieLayout.isVisible = false
-//                bind.showTime.text = Utils.getTimeFromTimestamp(showData.time?.toLong()?:Utils.timestamp(),Const.MMM_dd_yyyy_HH_mm)
-                checkShowTime(showData.time?.toLong() ?: Utils.timestamp())
+                checkShowTime((showData.time?.toLong())?.toEpochMillis() ?: Utils.timestamp())
             } else {
                 bind.notLiveLayout.isVisible = false
                 bind.notesFreebieLayout.isVisible = true
@@ -1340,26 +1340,24 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
         }
     }
 
+    @SuppressLint("SetTextI18n")
     fun checkShowTime(time: Long) {
-        log("ShowTimeTimestamp: $time")
-
+        log("ShowTimeTimestamp: $time--${System.currentTimeMillis()}--${Instant.ofEpochSecond(time).toEpochMilli()}")
         val currentTime = Calendar.getInstance().apply {
             timeInMillis = System.currentTimeMillis()
         }
 
         val showTime = Calendar.getInstance().apply {
-            timeInMillis = Instant.ofEpochSecond(time).toEpochMilli()
+            timeInMillis = time
         }
 
         val isToday = showTime.get(Calendar.DAY_OF_YEAR) == Calendar.getInstance().get(Calendar.DAY_OF_YEAR)
-
-//		val isToday = currentTime.get(Calendar.DAY_OF_YEAR) == showTime.get(Calendar.DAY_OF_YEAR)
-
         val isInTheFuture = showTime.after(currentTime)
+
         log(
             "IS TODAY $isToday--$isInTheFuture--${showTime.get(Calendar.DAY_OF_YEAR)}==${
                 Calendar.getInstance().get(Calendar.DAY_OF_YEAR)
-            }\n ${currentTime.timeInMillis}--${showTime.timeInMillis}"
+            }\n ${currentTime.timeInMillis - showTime.timeInMillis}"
         )
         if (isToday && isInTheFuture) {
             val timeDiffInMillis = showTime.timeInMillis - currentTime.timeInMillis
@@ -1377,7 +1375,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
     fun setTimeAndTitle(time: Long) {
         bind.showTimeTitle.text = buildString {
             append("Show Starts at -")
-            append(Utils.getTimeFromTimestamp(time, Const.MMM_dd_yyyy_HH_mm))
+            append(Utils.getSimpleDate(Const.MMM_dd_yyyy_HH_mm).format(time))
         }
         bind.showTime.text = "Waiting for Host..."
     }
@@ -1913,9 +1911,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
         sellerInfoSheetBinding.menuRecycler.adapter =
             SellerMenuInfoAdapter(sellerMenuList, object : RecyclerClicks {
                 override fun itemClick(pos: Int, status: String?) {
-
                     sellerInfoSheet.dismiss()
-
                     when (status) {
                         "tip" -> {
                             sendTipSheet()

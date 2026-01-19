@@ -348,3 +348,13 @@ fun View.setHapticClickListener(onClick : (View) -> Unit) {
 		onClick(it)
 	}
 }
+
+fun Long.toEpochMillis(): Long {
+	return when (this.toString().length) {
+		10 -> this * 1000L              // seconds → millis
+		13 -> this                      // already millis
+		else -> this.toString()
+			.take(13)
+			.toLong()                   // trim extra digits
+	}
+}

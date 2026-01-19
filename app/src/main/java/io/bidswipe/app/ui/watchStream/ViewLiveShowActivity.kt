@@ -101,7 +101,6 @@ class ViewLiveShowActivity : BaseActivity() {
         App.manager.destroyEngine()
     }
 
-
     fun setPipModeEnteredCallback(callback: (() -> Unit)?) {
         pipModeEnteredCallback = callback
     }

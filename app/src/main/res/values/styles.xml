@@ -361,4 +361,10 @@
         <item name="picker_itemSpacing">52dp</item>
     </style>
 
+    <style name="FlatRangeSlider" parent="Widget.Material3.Slider">
+        <item name="trackInsideCornerSize">0dp</item>
+        <item name="trackCornerRadius">0dp</item>
+    </style>
+
+
 </resources>

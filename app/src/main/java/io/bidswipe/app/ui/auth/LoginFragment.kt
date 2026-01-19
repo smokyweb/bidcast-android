@@ -9,6 +9,7 @@ import android.widget.ArrayAdapter
 import androidx.core.view.isVisible
 import androidx.navigation.fragment.findNavController
 import com.google.gson.Gson
+import io.bidswipe.app.App
 import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseFragment
 import io.bidswipe.app.databinding.FragmentLoginBinding
@@ -119,6 +120,8 @@ class LoginFragment : BaseFragment<AuthViewModel, FragmentLoginBinding>() {
 					)
 
 					Prefs(mCtx).putString(Prefs.USER, Gson().toJson(it.value.data).toString())
+					App.getProfile()
+					App.checkKYC()
 
 					if (it.value.data?.isFirsttimeLogin == true) {
 						val intent = Intent(mCtx, ChooseInterestActivity::class.java)

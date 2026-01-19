@@ -18,17 +18,17 @@ data class CheckKycResponse(
 	@Keep
 	data class Data(
 		@SerializedName("created")
-		val created : Int? ,
+		val created : Int?,
 		@SerializedName("expires_at")
-		val expiresAt : Int? ,
+		val expiresAt : Int?,
 		@SerializedName("kyc_details")
-		val kycDetails : KycDetails? ,
+		val kycDetails : KycDetails?,
 		@SerializedName("kyc_status")
-		val kycStatus : String? ,
+		val kycStatus : String?,
 		@SerializedName("msg")
-		val msg : String? ,
+		val msg : String?,
 		@SerializedName("object")
-		val objectX : String? ,
+		val objectX : String?,
 		@SerializedName("res")
 		val res : Boolean? ,
 		@SerializedName("link")

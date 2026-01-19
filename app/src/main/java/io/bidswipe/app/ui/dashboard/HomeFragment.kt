@@ -191,8 +191,6 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
 
             val lastCheck = if(resources.isTablet()) showList.lastIndex - 3 else showList.lastIndex - 2
 
-            log("lastItemPosition: $lastItemPosition--$isLoading--${showList.lastIndex}")
-
             if (lastItemPosition == showList.lastIndex && !isLoading) {
                 isLoading = true
                 page++

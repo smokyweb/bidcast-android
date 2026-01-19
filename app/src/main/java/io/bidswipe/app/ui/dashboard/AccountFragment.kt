@@ -31,7 +31,7 @@ import io.bidswipe.app.ui.more.NotificationActivity
 import io.bidswipe.app.ui.more.TrustedBuyerActivity
 import io.bidswipe.app.ui.scheduleShow.ShowDetailsActivity
 import io.bidswipe.app.ui.sellerHub.SellerHubActivity
-import io.bidswipe.app.ui.sellerProfile.ClipEditActivity
+import io.bidswipe.app.utils.Alerts
 import io.bidswipe.app.utils.Const
 import io.bidswipe.app.utils.Prefs
 import io.bidswipe.app.utils.Utils
@@ -52,8 +52,7 @@ class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
 
     override fun getModel(): Class<DashViewModel> = DashViewModel::class.java
 
-    override fun getBind(inflater: LayoutInflater, view: ViewGroup?) =
-        FragmentAccountBinding.inflate(inflater, view, false)
+    override fun getBind(inflater: LayoutInflater, view: ViewGroup?) = FragmentAccountBinding.inflate(inflater, view, false)
 
     private var moreList = mutableListOf<MoreModel>()
 
@@ -99,9 +98,7 @@ class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
                 "termsCondition" -> handlePageUrl(DashViewModel.SLUG_TERMS)
                 else -> {
                     startActivity(
-                        Intent(mCtx, MoreActivity::class.java)
-                            .putExtra("slug", moreList[pos].slug)
-                            .putExtra("title", moreList[pos].title)
+                        Intent(mCtx, MoreActivity::class.java).putExtra("slug", moreList[pos].slug).putExtra("title", moreList[pos].title)
                     )
                 }
 
@@ -133,8 +130,7 @@ class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
                 "notification" -> {
                     startActivity(
                         Intent(mCtx, NotificationActivity::class.java).putExtra(
-                            "slug",
-                            accountGridList[pos].slug
+                            "slug", accountGridList[pos].slug
                         )
                     )
                 }
@@ -142,8 +138,7 @@ class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
                 "buyer" -> {
                     startActivity(
                         Intent(mCtx, TrustedBuyerActivity::class.java).putExtra(
-                            "slug",
-                            accountGridList[pos].slug
+                            "slug", accountGridList[pos].slug
                         )
                     )
                 }
@@ -151,8 +146,7 @@ class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
                 "interests" -> {
                     startActivity(
                         Intent(mCtx, ChooseInterestActivity::class.java).putExtra(
-                            "fromAccount",
-                            true
+                            "fromAccount", true
                         )
                     )
                 }
@@ -164,8 +158,7 @@ class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
                 else -> {
                     startActivity(
                         Intent(mCtx, MoreActivity::class.java).putExtra(
-                            "slug",
-                            accountGridList[pos].slug
+                            "slug", accountGridList[pos].slug
                         )
                     )
                 }
@@ -199,7 +192,7 @@ class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
             bind.sellerSince.text = it?.username ?: "N/A"
             bind.userProfile.loadUrl(mCtx, it?.profileImage.toString())
 
-            bind.accountView.couponCount.text=(it?.couponCount?:0).toString()
+            bind.accountView.couponCount.text = (it?.couponCount ?: 0).toString()
         }
 
         bind.tabs.addOnTabSelectedListener(onTabSelectedListener)
@@ -222,9 +215,7 @@ class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
         accountGridList.add(MoreModel(R.drawable.ic_location, "Addresses", "address"))
         accountGridList.add(
             MoreModel(
-                R.drawable.ic_identity_verification,
-                "Trusted Buyer",
-                "buyer"
+                R.drawable.ic_identity_verification, "Trusted Buyer", "buyer"
             )
         )
         accountGridList.add(MoreModel(R.drawable.notification, "Notifications", "notification"))
@@ -238,8 +229,7 @@ class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
         bind.sellerHub.payoutCard.setHapticClickListener {
             startActivity(
                 Intent(mCtx, SellerHubActivity::class.java).putExtra(
-                    "slug",
-                    "wallet"
+                    "slug", "wallet"
                 )
             )
         }
@@ -247,8 +237,7 @@ class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
         bind.sellerHub.totalOrderCard.setHapticClickListener {
             startActivity(
                 Intent(mCtx, SellerHubActivity::class.java).putExtra(
-                    "slug",
-                    "order"
+                    "slug", "order"
                 )
             )
         }
@@ -292,27 +281,33 @@ class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
 
             startActivity(
                 Intent(mCtx, SellerHubActivity::class.java).putExtra(
-                    "slug",
-                    "shows"
+                    "slug", "shows"
                 )
             )
 
         }
 
         bind.sellerHub.createProduct.setHapticClickListener {
-            startActivity(mCtx.toListProduct())
+            if (App.checkKycResponse.value?.kycStatus != "active") {
+                Alerts.kycDialog(mCtx)
+            } else {
+                startActivity(mCtx.toListProduct())
+            }
         }
 
         bind.sellerHub.createShow.setHapticClickListener {
-            startActivity(mCtx.toScheduleShow(from = "dash"))
+            if (App.checkKycResponse.value?.kycStatus != "active") {
+                Alerts.kycDialog(mCtx)
+            } else {
+                startActivity(mCtx.toScheduleShow(from = "dash"))
+            }
         }
 
         bind.sellerHub.upcomingShow.setHapticClickListener {
             upcomingShow
             startActivity(
                 Intent(mCtx, ShowDetailsActivity::class.java).putExtra(
-                    "showId",
-                    upcomingShow?.id.toString()
+                    "showId", upcomingShow?.id.toString()
                 )
             )
         }
@@ -324,8 +319,7 @@ class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
         bind.accountView.coupons.setOnClickListener { p0 ->
             startActivity(
                 Intent(mCtx, MoreActivity::class.java).putExtra(
-                    "slug",
-                    "coupons"
+                    "slug", "coupons"
                 )
             )
         }
@@ -354,9 +348,7 @@ class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
                         bind.sellerHub.time.text = buildString {
                             append(
                                 Utils.getFormattedDateTime(
-                                    "yyyy-mm-dd",
-                                    "mm-dd-yyyy",
-                                    item.date ?: ""
+                                    "yyyy-mm-dd", "mm-dd-yyyy", item.date ?: ""
                                 )
                             )
                             append(" ")
@@ -364,32 +356,19 @@ class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
                             append(" ")
                             append(
                                 Utils.getFormattedDateTime(
-                                    "HH:mm:ss",
-                                    "hh:mm a",
-                                    item.time ?: ""
+                                    "HH:mm:ss", "hh:mm a", item.time ?: ""
                                 )
                             )
                         }
-
-//                        bind.sellerHub.sales.text = buildString {
-//                            append((item?.totalSalesAmount ?: 0).toString().asMoney())
-//                            append(" sales ")
-//                            append(Const.BULLET + " ")
-//                            append(item?.totalOrders ?: 0)
-//                            append(" orders")
-//                        }
 
                         bind.sellerHub.image.loadUrl(mCtx, item.imgThumbnail?.first() ?: "")
 
                     }
 
                     //ACCOUNT HEALTH
-                    bind.sellerHub.onTimePercent.text =
-                        mData?.accountHealth?.onTimeScanRate ?: "N/A"
-                    bind.sellerHub.defectFreeOrderRate.text =
-                        mData?.accountHealth?.defectFreeOrderRate ?: "N/A"
-                    bind.sellerHub.policyStanding.text =
-                        mData?.accountHealth?.policyStanding ?: "N/A"
+                    bind.sellerHub.onTimePercent.text = mData?.accountHealth?.onTimeScanRate ?: "N/A"
+                    bind.sellerHub.defectFreeOrderRate.text = mData?.accountHealth?.defectFreeOrderRate ?: "N/A"
+                    bind.sellerHub.policyStanding.text = mData?.accountHealth?.policyStanding ?: "N/A"
 
                     val total = (mData?.totalOrders ?: 0)
                     bind.sellerHub.totalOrders.text = buildString {

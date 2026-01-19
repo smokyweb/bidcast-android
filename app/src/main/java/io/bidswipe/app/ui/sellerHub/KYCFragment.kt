@@ -12,8 +12,7 @@ import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.activity.OnBackPressedCallback
 import androidx.core.view.isVisible
-import androidx.lifecycle.viewModelScope
-import io.bidswipe.app.BuildConfig
+import io.bidswipe.app.App
 import io.bidswipe.app.base.BaseFragment
 import io.bidswipe.app.databinding.FragmentKYCBinding
 import io.bidswipe.app.interfaces.AlertClicks
@@ -22,10 +21,6 @@ import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.utils.finish
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.runSafe
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import okhttp3.Dispatcher
 
 class KYCFragment : BaseFragment<SellerHubViewModel, FragmentKYCBinding>() {
 
@@ -141,6 +136,7 @@ class KYCFragment : BaseFragment<SellerHubViewModel, FragmentKYCBinding>() {
 			log("REDIRECT URL : $url")
 
 			if (url.contains("api/stripe-kyc-callback")){
+				App.checkKYC()
 				finish()
 			}else{
 				web?.loadUrl(url)

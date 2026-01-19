@@ -223,13 +223,15 @@ class DashActivity : BaseActivity(), NavController.OnDestinationChangedListener 
             if (menuItem.itemId != ids.sellFragment) viewModel.lastIndex.value = menuItem.itemId
             when (menuItem.itemId) {
                 ids.sellFragment -> {
-//					imageSheet.state = BottomSheetBehavior.STATE_EXPANDED
-                    mSellSheet.show()
+                    if (App.checkKycResponse.value?.kycStatus != "active") {
+                        Alerts.kycDialog(this)
+                    } else {
+                        mSellSheet.show()
+                    }
                     return@setOnItemSelectedListener true
                 }
 
                 else -> {
-//					imageSheet.state = BottomSheetBehavior.STATE_COLLAPSED
                     mSellSheet.dismiss()
                     try {
                         navController.let { ctrl ->
@@ -393,51 +395,6 @@ class DashActivity : BaseActivity(), NavController.OnDestinationChangedListener 
         sheetView.close.setHapticClickListener {
             mSellSheet.dismiss()
         }
-    }
-
-    private val mSheetCallback = object : BottomSheetBehavior.BottomSheetCallback() {
-        override fun onStateChanged(bottomSheet: View, newState: Int) {
-            when (newState) {
-                BottomSheetBehavior.STATE_EXPANDED -> {
-                    /*val params = CoordinatorLayout.LayoutParams(
-                        CoordinatorLayout.LayoutParams.MATCH_PARENT,
-                        CoordinatorLayout.LayoutParams.WRAP_CONTENT
-                    )
-                    params.setMargins(0, 0, 0, 0)
-                    bind.coOrdinate.setLayoutParams(params)*/
-
-                }
-
-                BottomSheetBehavior.STATE_HIDDEN -> {
-                }
-
-                BottomSheetBehavior.STATE_DRAGGING -> {
-                }
-
-                BottomSheetBehavior.STATE_HALF_EXPANDED -> {
-
-                }
-
-                BottomSheetBehavior.STATE_SETTLING -> {
-
-                }
-
-                BottomSheetBehavior.STATE_COLLAPSED -> {
-                    bind.contentDash.bottomBar.selectedItemId = viewModel.lastIndex.value ?: 0
-                }
-            }
-        }
-
-        override fun onSlide(bottomSheet: View, slideOffset: Float) {
-            if (slideOffset > 0) {
-                try {
-//						bind.commentSheet.sheetRoot.itemClick.alpha = slideOffset
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                }
-            }
-        }
-
     }
 
     fun getDeviceToken(context: Context, token: (token: String) -> Unit) {
@@ -662,13 +619,15 @@ class DashActivity : BaseActivity(), NavController.OnDestinationChangedListener 
                                     .putExtra("roomIdsList", roomIdValue)
                                     .putParcelableArrayListExtra(
                                         "streamList",
-                                        ArrayList(listOf(
-                                            StreamModel(
-                                                roomIdValue.toString(),
-                                                "",
-                                                thumbnail = ""
+                                        ArrayList(
+                                            listOf(
+                                                StreamModel(
+                                                    roomIdValue.toString(),
+                                                    "",
+                                                    thumbnail = ""
+                                                )
                                             )
-                                        ))
+                                        )
                                     )
                             )
                         }

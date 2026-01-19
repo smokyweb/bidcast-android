@@ -143,7 +143,6 @@ class SellerProfileActivity : BaseActivity() {
                     bind.loader.isVisible = true
                     viewModel.getReportCategories()
                 }
-
             }
             return@setOnMenuItemClickListener true
         }

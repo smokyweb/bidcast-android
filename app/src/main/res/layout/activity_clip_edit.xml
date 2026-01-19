@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ui.sellerProfile.ClipEditActivity">
 
+    <!-- Header -->
     <io.bidswipe.app.ui.custom.Header
         android:id="@+id/header"
         android:layout_width="match_parent"
@@ -14,24 +16,75 @@
         app:layout_constraintTop_toTopOf="parent"
         app:showBackButton="true" />
 
+    <!-- Video Player -->
     <androidx.media3.ui.PlayerView
         android:id="@+id/playerView"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="0dp"
         app:animation_enabled="false"
-        app:auto_show="true"
+        app:auto_show="false"
         app:hide_on_touch="true"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:controller_layout_id="@null"
+        app:layout_constraintBottom_toTopOf="@+id/trim_layout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/header"
-        app:use_controller="true" />
+        app:use_controller="false" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/trim_layout"
+        android:layout_width="match_parent"
+        android:layout_height="64dp"
+        android:layout_margin="@dimen/margin"
+        android:background="@drawable/card_16"
+        android:backgroundTint="@color/outlineVariant"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/playerView"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/frameRecycler"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:overScrollMode="never"
+            android:orientation="horizontal"
+            android:layout_marginHorizontal="@dimen/half_margin"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            tools:listitem="@layout/frame_image_item" />
+
+        <com.google.android.material.slider.RangeSlider
+            android:id="@+id/trimSlider"
+            style="@style/FlatRangeSlider"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            app:trackHeight="48dp"
+            android:minWidth="0dp"
+            app:trackColorInactive="@color/black25"
+            app:trackColorActive="@color/transparent"
+            app:haloColor="@android:color/transparent"
+            app:labelBehavior="gone"
+            android:layout_marginHorizontal="-8dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
 
     <io.bidswipe.app.ui.custom.LoaderView
         android:id="@+id/loader"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:visibility="gone"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

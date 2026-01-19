@@ -15,6 +15,7 @@ import es.dmoral.toasty.Toasty
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.network.RetrofitService
 import io.bidswipe.app.network.repository.DashRepository
+import io.bidswipe.app.network.response.CheckKycResponse
 import io.bidswipe.app.network.response.GetCategoryResponse
 import io.bidswipe.app.network.response.UserProfileResponse
 import io.bidswipe.app.utils.AgoraManager
@@ -39,6 +40,7 @@ class App : Application() {
 		var currentSellerId : String? = ""
 
 		val profileResponse = MutableLiveData<UserProfileResponse.Data?>()
+		val checkKycResponse = MutableLiveData<CheckKycResponse.Data?>()
 		var categoryList = mutableListOf<GetCategoryResponse.Data?>()
 
 		lateinit var manager: AgoraManager
@@ -59,6 +61,26 @@ class App : Application() {
 								" getProfile: HAPTIC FEEDBACK : ${mData?.preferences?.hapticFeedback} "
 							)
 							HapticManager.setEnabled(mData?.preferences?.hapticFeedback ?: false)
+						}
+
+						is Resource.Error -> {
+							profileResponse.value = null
+						}
+					}
+				}
+			}
+		}
+
+		fun checkKYC() {
+			CoroutineScope(Dispatchers.IO).launch {
+				val repo = DashRepository(RetrofitService(mCtx).build())
+				val it = repo.checkKyc()
+
+				withContext(Dispatchers.Main) {
+					when (it) {
+						is Resource.Success -> {
+							val mData = it.value.data
+							checkKycResponse.value = mData
 						}
 
 						is Resource.Error -> {
@@ -108,6 +130,7 @@ class App : Application() {
 		if (Prefs(mCtx).token().isNotEmpty()) {
 			getProfile()
 			getCategories()
+			checkKYC()
 		}
 
 		Toasty.Config.getInstance()

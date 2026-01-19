@@ -1,7 +1,7 @@
 package io.bidswipe.app.utils
 
 import android.content.Context
-import android.graphics.drawable.ColorDrawable
+import android.content.Intent
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup
@@ -15,8 +15,11 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import es.dmoral.toasty.Toasty
 import io.bidswipe.app.BuildConfig
+import io.bidswipe.app.R.drawable
 import io.bidswipe.app.interfaces.AlertClicks
+import io.bidswipe.app.ui.custom.AlertType
 import io.bidswipe.app.ui.custom.AppBottomSheet
+import io.bidswipe.app.ui.sellerHub.SellerHubActivity
 
 object Alerts {
 
@@ -54,8 +57,8 @@ object Alerts {
         }
     }
 
-    fun appBottomSheet(mCtx: Context, isCancelable: Boolean, view: ViewBinding,isFullScreen:Boolean=false): BottomSheetDialog {
-        var dialog= BottomSheetDialog(mCtx, style.BottomSheetDialogStyle).apply {
+    fun appBottomSheet(mCtx: Context, isCancelable: Boolean, view: ViewBinding, isFullScreen: Boolean = false): BottomSheetDialog {
+        var dialog = BottomSheetDialog(mCtx, style.BottomSheetDialogStyle).apply {
             setContentView(view.root)
             dismissWithAnimation = true
             setCancelable(isCancelable)
@@ -72,7 +75,7 @@ object Alerts {
             }
         }
 
-        if(isFullScreen){
+        if (isFullScreen) {
             dialog.setOnShowListener {
                 val bottomSheet = dialog.findViewById<View>(com.google.android.material.R.id.design_bottom_sheet)
 
@@ -123,5 +126,32 @@ object Alerts {
 
     fun success(ctx: Context, message: String) =
         Toasty.success(ctx, message, Toast.LENGTH_SHORT, false).show()
+
+    fun kycDialog(mCtx: Context) {
+        AppBottomSheet(
+            mCtx,
+            drawable.ic_info,
+            "Action Required",
+            "Your identity verification (KYC) with Stripe is required to enable selling. Transactions cannot be processed until verification is completed.",
+            primaryBtnText = "Complete Verification",
+            secondaryBtnText = "Cancel",
+            canCancel = true,
+            showSecondary = true,
+            iconPadding = 16,
+            alertType = AlertType.INFO,
+            clicks = object : AlertClicks {
+                override fun primaryClick(dialog: AppBottomSheet) {
+                    dialog.dismiss()
+                    mCtx.startActivity(
+                        Intent(mCtx, SellerHubActivity::class.java).putExtra("slug", "identityVerification")
+                    )
+                }
+
+                override fun secondaryClick(dialog: AppBottomSheet) {
+                    dialog.dismiss()
+                }
+            }
+        ).show()
+    }
 
 }

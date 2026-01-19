@@ -1426,7 +1426,6 @@ class AgoraPublisherActivity : BaseActivity() {
                 alertType = AlertType.INFO,
                 clicks = object : AlertClicks {
                     override fun primaryClick(dialog: AppBottomSheet) {
-                        dialog.dismiss()
                         socketManager?.sendMessage(roomID, "end_show", userId, userName, userImage)
                         App.manager.destroyEngine()
                         dialog.dismiss()
@@ -1476,6 +1475,7 @@ class AgoraPublisherActivity : BaseActivity() {
                     false
                 )
             )
+
         val sheet = Alerts.appBottomSheet(this, true, tipSettingsSheetBind)
         tipSettingsSheetBind.close.setHapticClickListener { sheet.dismiss() }
         tipSettingsSheetBind.showLiveChat.isChecked = tipChatEnabled == true
@@ -1502,6 +1502,7 @@ class AgoraPublisherActivity : BaseActivity() {
 
 
         }
+
         sheet.show()
     }
 
