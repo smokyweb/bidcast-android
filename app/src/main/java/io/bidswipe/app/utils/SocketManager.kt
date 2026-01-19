@@ -210,7 +210,7 @@ class SocketManager private constructor(
         socket?.on("show_timer_update") { args ->
             val obj = args.firstOrNull()
             if (obj is JSONObject) {
-                Log.d(TAG, "RECEIVED: show_timer_update - $obj")
+//                Log.d(TAG, "RECEIVED: show_timer_update - $obj")
                 listener(obj)
             }
         }

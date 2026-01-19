@@ -806,6 +806,7 @@
         android:layout_marginHorizontal="32dp"
         app:layout_constraintTop_toTopOf="parent"
         android:visibility="gone"
+        android:elevation="6dp"
         app:layout_constraintDimensionRatio="1"
         android:layout_marginTop="100dp">
 
@@ -843,6 +844,7 @@
             android:background="@drawable/card_16"
             android:padding="@dimen/half_margin"
             android:scaleType="centerCrop"
+            android:elevation="6dp"
             android:src="@drawable/ic_close"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"

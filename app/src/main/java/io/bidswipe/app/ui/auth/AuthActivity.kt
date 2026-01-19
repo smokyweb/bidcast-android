@@ -43,8 +43,7 @@ class AuthActivity : BaseActivity() {
 			keyboardEnable(true)
 		}
 
-		navHostFragment =
-			supportFragmentManager.findFragmentById(R.id.fragmentContainer) as NavHostFragment
+		navHostFragment = supportFragmentManager.findFragmentById(R.id.fragmentContainer) as NavHostFragment
 		navController = navHostFragment.findNavController()
 		val navGraph = navController.navInflater.inflate(R.navigation.auth_nav_graph)
 

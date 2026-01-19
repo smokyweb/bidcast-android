@@ -31,7 +31,7 @@ data class CheckKycResponse(
 		val objectX : String? ,
 		@SerializedName("res")
 		val res : Boolean? ,
-		@SerializedName("url")
+		@SerializedName("link")
 		val url : String? ,
 	) {
 		@Keep
