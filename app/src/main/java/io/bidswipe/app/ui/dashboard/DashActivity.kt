@@ -8,6 +8,7 @@ import android.util.Log
 import android.view.View
 import android.widget.LinearLayout
 import androidx.activity.viewModels
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.core.view.ViewCompat
@@ -50,6 +51,7 @@ import io.bidswipe.app.ui.watchStream.ViewLiveShowActivity
 import io.bidswipe.app.utils.Alerts
 import io.bidswipe.app.utils.Const
 import io.bidswipe.app.utils.Prefs
+import io.bidswipe.app.utils.SocketManager
 import io.bidswipe.app.utils.bind
 import io.bidswipe.app.utils.draw
 import io.bidswipe.app.utils.ids
@@ -59,6 +61,8 @@ import io.bidswipe.app.utils.setHapticClickListener
 import io.bidswipe.app.utils.toListProduct
 import io.bidswipe.app.utils.toScheduleShow
 import io.bidswipe.app.utils.toTutorials
+import io.bidswipe.app.utils.value
+import kotlin.text.ifEmpty
 
 class DashActivity : BaseActivity(), NavController.OnDestinationChangedListener {
 
@@ -73,6 +77,8 @@ class DashActivity : BaseActivity(), NavController.OnDestinationChangedListener 
 
     private var gridList = mutableListOf<SellerToolModel>()
     private var sellList = mutableListOf<SellModel>()
+
+
 
     private val gridClick = object : RecyclerClicks {
         override fun itemClick(pos: Int, status: String?) {
@@ -287,6 +293,7 @@ class DashActivity : BaseActivity(), NavController.OnDestinationChangedListener 
 
         App.getCategories()
 
+
     }
 
     fun hideBottomNav() {
@@ -307,6 +314,8 @@ class DashActivity : BaseActivity(), NavController.OnDestinationChangedListener 
             else -> showBottomNav()
         }
     }
+
+
 
     private fun sellSheet() {
         val sheetView = SellBottomSheetBinding.bind(layoutInflater.inflate(R.layout.sell_bottom_sheet, null, false))

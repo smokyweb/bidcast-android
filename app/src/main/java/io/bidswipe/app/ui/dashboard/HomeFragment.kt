@@ -1,6 +1,7 @@
 package io.bidswipe.app.ui.dashboard
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Intent
 import android.graphics.Typeface
 import android.os.Bundle
@@ -10,6 +11,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.navigation.fragment.findNavController
@@ -26,16 +28,21 @@ import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.model.StreamModel
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.network.response.GetMyShowResponse
+import io.bidswipe.app.ui.custom.AlertType
 import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.ui.more.NotificationActivity
 import io.bidswipe.app.ui.product.ProductDetailsActivity
 import io.bidswipe.app.ui.sellerProfile.SellerProfileActivity
 import io.bidswipe.app.ui.watchStream.ViewLiveShowActivity
 import io.bidswipe.app.utils.Alerts
+import io.bidswipe.app.utils.Const
+import io.bidswipe.app.utils.SocketManager
+import io.bidswipe.app.utils.finish
 import io.bidswipe.app.utils.hideKeyboard
 import io.bidswipe.app.utils.isTablet
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request
+import io.bidswipe.app.utils.runSafe
 import io.bidswipe.app.utils.setHapticClickListener
 import io.bidswipe.app.utils.value
 
@@ -56,6 +63,20 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
     private var selectedCategory = "for_you"
     private var selectedCategoryTileId = "for_you"
     private var hasInitializedCategories = false
+
+    private val viewLiveShowLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            page=1
+            viewModel.getLiveShow(
+                selectedTabText.request(),
+                selectedCategory.request(),
+                search = bind.search.value().ifEmpty { null }?.request(),
+                page=page.toString().request()
+            )
+        }
+    }
 
     /*	private val streamingResultLauncher = registerForActivityResult(
             ActivityResultContracts.StartActivityForResult()
@@ -97,7 +118,7 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
                     if (App.PIPMode) {
                         Alerts.error(mCtx, "You are already in Live show")
                     } else {
-                        startActivity(
+                        viewLiveShowLauncher.launch(
                             Intent(mCtx, ViewLiveShowActivity::class.java)
                                 .putExtra("roomId", roomId)
                                 .putExtra("userId", showList[pos]?.userId.toString())
@@ -311,6 +332,60 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
                 hasInitializedCategories = true
             }
 
+
+
+
+            App.socketManager?.onRoomCreated { showData ->
+
+                activity?.runOnUiThread {
+                    if (App.categoryList.filter { it?.isSelected == true }.findLast { it?.id.toString() == showData.categoryId } != null) {
+                        viewModel.getLiveShow(
+                            selectedTabText.request(),
+                            selectedCategory.request(),
+                            search = bind.search.value().ifEmpty { null }?.request(),
+                            page=1.toString().request()
+                        )
+                    }
+                }
+            }
+
+
+            App.socketManager?.onRoomEnded { json ->
+                runSafe {
+                    requireActivity().runOnUiThread {
+                        val roomID=json.optString("room_end")
+                        if(roomID.isNotEmpty()){
+                            streamList.removeIf { it.roomId == roomID}
+                            romIdsList.remove(roomID)
+                            if(showList.isNotEmpty()){
+                                val position= showList.indexOfFirst { it?.roomId == roomID}
+                                if(position>=0)
+                                {
+                                    showList.removeAt(position)
+                                }
+                                if (showList.isEmpty()) {
+                                    bind.noData.isVisible = true
+                                    bind.recycler.isVisible = false
+                                    bind.noInternet.isVisible = false
+
+                                } else {
+                                    if(position>=0) {
+                                        homeAdapter.notifyItemRemoved(position)
+                                        homeAdapter.notifyItemRangeChanged(position, showList.size)
+                                    }
+
+                                }
+                            }
+
+
+
+
+                        }
+
+                    }
+                }
+            }
+
         } else {
             bind.loader.isVisible = false
             viewModel.getCategory()
@@ -413,20 +488,29 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
                         streamList.clear()
                     }
 
-                    mData?.forEach {
-                        streamList.add(
-                            StreamModel(
-                                it?.roomId.toString(),
-                                it?.rtcToken ?: "",
-                                thumbnail = it?.thumbnail?.get(0)
+                    mData?.forEach { it1 ->
+                        if(streamList.find { it.roomId == it1?.roomId.toString() } == null)
+                        {
+                            streamList.add(
+                                StreamModel(
+                                    it1?.roomId.toString(),
+                                    it1?.rtcToken ?: "",
+                                    thumbnail = it1?.thumbnail?.get(0)
+                                )
                             )
-                        )
-                        romIdsList.add(it?.roomId.toString())
+                        }
+                       if(!romIdsList.contains(it1?.roomId.toString()))
+                       {
+                           romIdsList.add(it1?.roomId.toString())
+                       }
+
                     }
 
-                    mData?.forEach {
-                        if (it?.user != null) {
-                            showList.add(it)
+                    mData?.forEach { it1 ->
+                        if (it1?.user != null) {
+                            if(showList.find { it?.roomId == it1.roomId.toString() } == null) {
+                                showList.add(it1)
+                            }
                         }
                     }
 

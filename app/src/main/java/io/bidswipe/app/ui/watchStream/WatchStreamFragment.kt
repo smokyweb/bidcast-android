@@ -4,6 +4,7 @@ import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.app.PictureInPictureParams
 import android.content.Intent
 import android.graphics.Rect
@@ -290,12 +291,13 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
         bind.recycler.adapter = commentAdapter
 
         if (socketUrl.isNotEmpty()) {
-            socketManager = SocketManager.getInstance(requireContext())
-            socketManager?.initialize(socketUrl, mapOf("uid" to userId))
-            socketManager?.connect(onConnected = {
+//            socketManager = SocketManager.getInstance(requireContext())
+//            socketManager?.initialize(socketUrl, mapOf("uid" to userId))
+//            socketManager?.connect(onConnected = {
+            socketManager=App.socketManager
                 socketManager?.joinRoom(roomID, userId) {
                 }
-            }) { err -> log("Socket connect error: $err") }
+//            }) { err -> log("Socket connect error: $err") }
 
             socketManager?.onViewerCount { args ->
 
@@ -447,6 +449,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
                                     override fun primaryClick(dialog: AppBottomSheet) {
                                         dialog.dismiss()
                                         App.manager.destroyEngine()
+                                        activity?.setResult(Activity.RESULT_OK)
                                         finish()
                                     }
 
@@ -949,7 +952,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
     override fun onDestroy() {
         super.onDestroy()
         socketManager?.leaveRoom(roomID, userId)
-        socketManager?.disconnect()
+//        socketManager?.disconnect()
         App.manager.leaveChannel()
     }
 

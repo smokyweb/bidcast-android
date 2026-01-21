@@ -19,8 +19,11 @@ import io.bidswipe.app.network.response.CheckKycResponse
 import io.bidswipe.app.network.response.GetCategoryResponse
 import io.bidswipe.app.network.response.UserProfileResponse
 import io.bidswipe.app.utils.AgoraManager
+import io.bidswipe.app.utils.Alerts.log
+import io.bidswipe.app.utils.Const
 import io.bidswipe.app.utils.HapticManager
 import io.bidswipe.app.utils.Prefs
+import io.bidswipe.app.utils.SocketManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -29,130 +32,141 @@ import kotlinx.coroutines.withContext
 @HiltAndroidApp
 class App : Application() {
 
-	companion object {
+    companion object {
+        var socketManager: SocketManager? = null
+        lateinit var mCtx: Context
+        private lateinit var TAG: String
+        var PIPMode: Boolean = false
+        var isUserOnChatScreen: Boolean = false
 
-		lateinit var mCtx: Context
-		private lateinit var TAG: String
-		var PIPMode: Boolean = false
-		var isUserOnChatScreen: Boolean = false
+        var isWatchStreamInPIP = MutableLiveData<Boolean>(false)
+        var currentSellerId: String? = ""
 
-		var isWatchStreamInPIP = MutableLiveData<Boolean>(false)
-		var currentSellerId : String? = ""
+        val profileResponse = MutableLiveData<UserProfileResponse.Data?>()
+        val checkKycResponse = MutableLiveData<CheckKycResponse.Data?>()
+        var categoryList = mutableListOf<GetCategoryResponse.Data?>()
 
-		val profileResponse = MutableLiveData<UserProfileResponse.Data?>()
-		val checkKycResponse = MutableLiveData<CheckKycResponse.Data?>()
-		var categoryList = mutableListOf<GetCategoryResponse.Data?>()
+        lateinit var manager: AgoraManager
 
-		lateinit var manager: AgoraManager
+        fun getProfile() {
+            CoroutineScope(Dispatchers.IO).launch {
+                val repo = DashRepository(RetrofitService(mCtx).build())
+                val it = repo.getUserProfile()
 
-		fun getProfile() {
-			CoroutineScope(Dispatchers.IO).launch {
-				val repo = DashRepository(RetrofitService(mCtx).build())
-				val it = repo.getUserProfile()
+                withContext(Dispatchers.Main) {
+                    when (it) {
+                        is Resource.Success -> {
+                            val mData = it.value.data
+                            profileResponse.value = mData
 
-				withContext(Dispatchers.Main) {
-					when (it) {
-						is Resource.Success -> {
-							val mData = it.value.data
-							profileResponse.value = mData
+                            Log.d(
+                                TAG,
+                                " getProfile: HAPTIC FEEDBACK : ${mData?.preferences?.hapticFeedback} "
+                            )
+                            HapticManager.setEnabled(mData?.preferences?.hapticFeedback ?: false)
+                        }
 
-							Log.d(
-								TAG,
-								" getProfile: HAPTIC FEEDBACK : ${mData?.preferences?.hapticFeedback} "
-							)
-							HapticManager.setEnabled(mData?.preferences?.hapticFeedback ?: false)
-						}
+                        is Resource.Error -> {
+                            profileResponse.value = null
+                        }
+                    }
+                }
+            }
+        }
 
-						is Resource.Error -> {
-							profileResponse.value = null
-						}
-					}
-				}
-			}
-		}
+        fun checkKYC() {
+            CoroutineScope(Dispatchers.IO).launch {
+                val repo = DashRepository(RetrofitService(mCtx).build())
+                val it = repo.checkKyc()
 
-		fun checkKYC() {
-			CoroutineScope(Dispatchers.IO).launch {
-				val repo = DashRepository(RetrofitService(mCtx).build())
-				val it = repo.checkKyc()
+                withContext(Dispatchers.Main) {
+                    when (it) {
+                        is Resource.Success -> {
+                            val mData = it.value.data
+                            checkKycResponse.value = mData
+                        }
 
-				withContext(Dispatchers.Main) {
-					when (it) {
-						is Resource.Success -> {
-							val mData = it.value.data
-							checkKycResponse.value = mData
-						}
+                        is Resource.Error -> {
+                            profileResponse.value = null
+                        }
+                    }
+                }
+            }
+        }
 
-						is Resource.Error -> {
-							profileResponse.value = null
-						}
-					}
-				}
-			}
-		}
+        fun getCategories() {
+            CoroutineScope(Dispatchers.IO).launch {
+                val repo = DashRepository(RetrofitService(mCtx).build())
+                val it = repo.getCategory()
 
-	fun getCategories() {
-			CoroutineScope(Dispatchers.IO).launch {
-				val repo = DashRepository(RetrofitService(mCtx).build())
-				val it = repo.getCategory()
+                withContext(Dispatchers.Main) {
+                    when (it) {
+                        is Resource.Success -> {
+                            val mData = it.value.data
+                            mData?.forEach {
+                                categoryList.add(it)
+                            }
+                        }
 
-				withContext(Dispatchers.Main) {
-					when (it) {
-						is Resource.Success -> {
-							val mData = it.value.data
-							mData?.forEach {
-								categoryList.add(it)
-							}
-						}
+                        is Resource.Error -> {
+                            profileResponse.value = null
+                        }
+                    }
+                }
+            }
+        }
 
-						is Resource.Error -> {
-							profileResponse.value = null
-						}
-					}
-				}
-			}
-		}
+    }
 
-	}
+    override fun onCreate() {
+        super.onCreate()
 
-	override fun onCreate() {
-		super.onCreate()
+        mCtx = applicationContext
+        TAG = mCtx.packageName
 
-		mCtx = applicationContext
-		TAG = mCtx.packageName
+        FirebaseApp.initializeApp(applicationContext)
 
-		FirebaseApp.initializeApp(applicationContext)
+        if (BuildConfig.DEBUG) {
+            FirebaseCrashlytics.getInstance().isCrashlyticsCollectionEnabled = false
+        }
 
-		if (BuildConfig.DEBUG) {
-			FirebaseCrashlytics.getInstance().isCrashlyticsCollectionEnabled = false
-		}
+        if (Prefs(mCtx).token().isNotEmpty()) {
+            getProfile()
+            getCategories()
+            checkKYC()
 
-		if (Prefs(mCtx).token().isNotEmpty()) {
-			getProfile()
-			getCategories()
-			checkKYC()
-		}
+            socketManager = SocketManager.getInstance(this)
+            socketManager?.initialize(Const.SOCKET_URL, mapOf("uid" to Prefs(mCtx).getUserData()?.id.toString()))
+            socketManager?.connect(onConnected = {
+                log(javaClass.simpleName,"Socket connect")
+            }) { err -> log(javaClass.simpleName,"Socket connect error: $err") }
+        }
 
-		Toasty.Config.getInstance()
-			.setToastTypeface(ResourcesCompat.getFont(applicationContext, R.font.poppins_semi_bold)!!)
-			.setGravity(Gravity.TOP, 0, 160)
-			.supportDarkTheme(true)
-			.allowQueue(false)
-			.setTextSize(12)
-			.apply()
+        Toasty.Config.getInstance()
+            .setToastTypeface(
+                ResourcesCompat.getFont(
+                    applicationContext,
+                    R.font.poppins_semi_bold
+                )!!
+            )
+            .setGravity(Gravity.TOP, 0, 160)
+            .supportDarkTheme(true)
+            .allowQueue(false)
+            .setTextSize(12)
+            .apply()
 
-	}
+    }
 
-	private fun isMainProcess(): Boolean {
-		val pid = Process.myPid()
-		val manager = getSystemService(ACTIVITY_SERVICE) as ActivityManager
-		for (processInfo in manager.runningAppProcesses) {
-			if (processInfo.pid == pid) {
-				return packageName == processInfo.processName
-			}
-		}
-		return false
-	}
+    private fun isMainProcess(): Boolean {
+        val pid = Process.myPid()
+        val manager = getSystemService(ACTIVITY_SERVICE) as ActivityManager
+        for (processInfo in manager.runningAppProcesses) {
+            if (processInfo.pid == pid) {
+                return packageName == processInfo.processName
+            }
+        }
+        return false
+    }
 
 
 }

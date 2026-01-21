@@ -5,6 +5,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.bidswipe.app.model.StoreProductRequest
+import io.bidswipe.app.model.StreamModel
+
 import io.bidswipe.app.model.TutorialShowModel
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.network.repository.DashRepository
@@ -50,6 +52,9 @@ class DashViewModel @Inject constructor(
 	val repo : DashRepository ,
 	private val networkMonitor : NetworkMonitor ,
 ) : ViewModel() {
+
+	var streamsList= MutableLiveData<MutableList<StreamModel>>()
+
 	var isDrawerOpened = MutableLiveData(false)
 	var isViewPagerDataLoaded = MutableLiveData(false)
 	var pinnedProducts = ArrayList<String?>()

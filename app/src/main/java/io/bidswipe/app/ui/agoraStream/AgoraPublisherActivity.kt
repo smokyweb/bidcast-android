@@ -858,7 +858,7 @@ class AgoraPublisherActivity : BaseActivity() {
 
             socketManager?.emitEndRoom(roomID)
             socketManager?.leaveRoom(roomID, userId)
-            socketManager?.disconnect()
+//            socketManager?.disconnect()
         }
 
         updateStatusRunnable?.let { updateStatusHandler.removeCallbacks(it) }

@@ -52,7 +52,7 @@ class SocketManager private constructor(
         }
     }
 
-    fun initialize(serverUrl: String, queryParams: Map<String, String> = emptyMap()) {
+    fun  initialize(serverUrl: String, queryParams: Map<String, String> = emptyMap()) {
         if (isInitialized) {
             Log.d(TAG, "Socket already initialized")
             return
