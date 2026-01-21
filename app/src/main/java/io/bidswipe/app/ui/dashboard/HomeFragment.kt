@@ -28,16 +28,12 @@ import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.model.StreamModel
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.network.response.GetMyShowResponse
-import io.bidswipe.app.ui.custom.AlertType
 import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.ui.more.NotificationActivity
 import io.bidswipe.app.ui.product.ProductDetailsActivity
 import io.bidswipe.app.ui.sellerProfile.SellerProfileActivity
 import io.bidswipe.app.ui.watchStream.ViewLiveShowActivity
 import io.bidswipe.app.utils.Alerts
-import io.bidswipe.app.utils.Const
-import io.bidswipe.app.utils.SocketManager
-import io.bidswipe.app.utils.finish
 import io.bidswipe.app.utils.hideKeyboard
 import io.bidswipe.app.utils.isTablet
 import io.bidswipe.app.utils.parse
@@ -68,12 +64,12 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
         ActivityResultContracts.StartActivityForResult()
     ) { result ->
         if (result.resultCode == Activity.RESULT_OK) {
-            page=1
+            page = 1
             viewModel.getLiveShow(
                 selectedTabText.request(),
                 selectedCategory.request(),
                 search = bind.search.value().ifEmpty { null }?.request(),
-                page=page.toString().request()
+                page = page.toString().request()
             )
         }
     }
@@ -210,7 +206,7 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
             val layoutManager = bind.recycler.layoutManager as GridLayoutManager
             val lastItemPosition = layoutManager.findLastVisibleItemPosition()
 
-            val lastCheck = if(resources.isTablet()) showList.lastIndex - 3 else showList.lastIndex - 2
+            if (resources.isTablet()) showList.lastIndex - 3 else showList.lastIndex - 2
 
             if (lastItemPosition == showList.lastIndex && !isLoading) {
                 isLoading = true
@@ -219,7 +215,7 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
                     selectedTabText.request(),
                     selectedCategory.request(),
                     search = bind.search.value().ifEmpty { null }?.request(),
-                    page=page.toString().request()
+                    page = page.toString().request()
                 )
             }
         }
@@ -239,8 +235,8 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
                     viewModel.getLiveShow(
                         selectedTabText.request(),
                         selectedCategory.request(),
-                        search=s.toString().request(),
-                       page= page.toString().request()
+                        search = s.toString().request(),
+                        page = page.toString().request()
                     )
                 }
             }
@@ -336,14 +332,13 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
 
 
             App.socketManager?.onRoomCreated { showData ->
-
                 activity?.runOnUiThread {
                     if (App.categoryList.filter { it?.isSelected == true }.findLast { it?.id.toString() == showData.categoryId } != null) {
                         viewModel.getLiveShow(
                             selectedTabText.request(),
                             selectedCategory.request(),
                             search = bind.search.value().ifEmpty { null }?.request(),
-                            page=1.toString().request()
+                            page = 1.toString().request()
                         )
                     }
                 }
@@ -353,14 +348,13 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
             App.socketManager?.onRoomEnded { json ->
                 runSafe {
                     requireActivity().runOnUiThread {
-                        val roomID=json.optString("room_end")
-                        if(roomID.isNotEmpty()){
-                            streamList.removeIf { it.roomId == roomID}
+                        val roomID = json.optString("room_end")
+                        if (roomID.isNotEmpty()) {
+                            streamList.removeIf { it.roomId == roomID }
                             romIdsList.remove(roomID)
-                            if(showList.isNotEmpty()){
-                                val position= showList.indexOfFirst { it?.roomId == roomID}
-                                if(position>=0)
-                                {
+                            if (showList.isNotEmpty()) {
+                                val position = showList.indexOfFirst { it?.roomId == roomID }
+                                if (position >= 0) {
                                     showList.removeAt(position)
                                 }
                                 if (showList.isEmpty()) {
@@ -369,16 +363,13 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
                                     bind.noInternet.isVisible = false
 
                                 } else {
-                                    if(position>=0) {
+                                    if (position >= 0) {
                                         homeAdapter.notifyItemRemoved(position)
                                         homeAdapter.notifyItemRangeChanged(position, showList.size)
                                     }
 
                                 }
                             }
-
-
-
 
                         }
 
@@ -489,8 +480,7 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
                     }
 
                     mData?.forEach { it1 ->
-                        if(streamList.find { it.roomId == it1?.roomId.toString() } == null)
-                        {
+                        if (streamList.find { it.roomId == it1?.roomId.toString() } == null) {
                             streamList.add(
                                 StreamModel(
                                     it1?.roomId.toString(),
@@ -499,16 +489,15 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
                                 )
                             )
                         }
-                       if(!romIdsList.contains(it1?.roomId.toString()))
-                       {
-                           romIdsList.add(it1?.roomId.toString())
-                       }
+                        if (!romIdsList.contains(it1?.roomId.toString())) {
+                            romIdsList.add(it1?.roomId.toString())
+                        }
 
                     }
 
                     mData?.forEach { it1 ->
                         if (it1?.user != null) {
-                            if(showList.find { it?.roomId == it1.roomId.toString() } == null) {
+                            if (showList.find { it?.roomId == it1.roomId.toString() } == null) {
                                 showList.add(it1)
                             }
                         }

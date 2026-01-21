@@ -155,8 +155,8 @@ class SellerHubViewModel @Inject constructor(
 		_offerUpdateStatusResponse.value = repo.offerUpdateStatus(offerId , status)
 	}
 
-	private var _storeSellerIdResponse = MutableLiveData<Resource<StoreSellerIdResponse>>()
-	val storeSellerIdRepo : MutableLiveData<Resource<StoreSellerIdResponse>>
+	private var _storeSellerIdResponse = MutableLiveData<Resource<FetchSellerVerificationResponse>>()
+	val storeSellerIdRepo : MutableLiveData<Resource<FetchSellerVerificationResponse>>
 		get() = _storeSellerIdResponse
 
 	fun storeSellerId(

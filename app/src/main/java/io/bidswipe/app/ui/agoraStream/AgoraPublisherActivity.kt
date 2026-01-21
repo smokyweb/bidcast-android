@@ -695,24 +695,26 @@ class AgoraPublisherActivity : BaseActivity() {
 
         socketManager?.onAuctionStarted { json ->
             runSafe {
-                if (json.optString("room_id") == roomID) {
+                if (json.roomId== roomID) {
                     runOnUiThread {
-                        if (json.has("product") && json.optJSONObject("product") != null) {
+                        if (json.product != null) {
                             isAuctionStarted = true
-                            val status = json.optString("status")
-
-                            bind.runNext.isVisible = status == "sold"
-
-                            val product =
-                                LiveShowModel.Product.fromJson(json.optJSONObject("product"))
-                            val startingBidAmount = json.optString("starting_bid_amount")
-                            log("LIVE PRODUCT : $product")
-                            updateProductUI(product, startingBidAmount)
+                            bind.runNext.isVisible = json.status == "sold"
+                            if (json.suddenDeath==true) {
+                                bind.bidTime.setCompoundDrawablesWithIntrinsicBounds(
+                                    R.drawable.skull,
+                                    0,
+                                    0,
+                                    0
+                                )
+                            } else {
+                                bind.bidTime.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0)
+                            }
+                            updateProductUI(json.product, json.startingBidAmount)
                         } else {
                             isAuctionStarted = false
                             updateProductUI(null, startingBidAmount = "0")
                         }
-
                     }
                 }
             }

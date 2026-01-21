@@ -7,9 +7,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.navigation.fragment.findNavController
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayout.OnTabSelectedListener
 import io.bidswipe.app.App
@@ -18,6 +20,7 @@ import io.bidswipe.app.base.BaseFragment
 import io.bidswipe.app.controller.GridAdapter
 import io.bidswipe.app.controller.MoreAdapter
 import io.bidswipe.app.databinding.FragmentAccountBinding
+import io.bidswipe.app.databinding.PaymentAndAddressSheetBinding
 import io.bidswipe.app.interfaces.AlertClicks
 import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.model.MoreModel
@@ -31,6 +34,7 @@ import io.bidswipe.app.ui.more.NotificationActivity
 import io.bidswipe.app.ui.more.TrustedBuyerActivity
 import io.bidswipe.app.ui.scheduleShow.ShowDetailsActivity
 import io.bidswipe.app.ui.sellerHub.SellerHubActivity
+import io.bidswipe.app.ui.sellerHub.SellerVerificationActivity
 import io.bidswipe.app.utils.Alerts
 import io.bidswipe.app.utils.Const
 import io.bidswipe.app.utils.Prefs
@@ -38,6 +42,7 @@ import io.bidswipe.app.utils.Utils
 import io.bidswipe.app.utils.animatedNav
 import io.bidswipe.app.utils.asCapital
 import io.bidswipe.app.utils.asMoney
+import io.bidswipe.app.utils.draw
 import io.bidswipe.app.utils.finish
 import io.bidswipe.app.utils.ids
 import io.bidswipe.app.utils.loadUrl
@@ -172,7 +177,6 @@ class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
         super.onViewCreated(view, savedInstanceState)
 
         bind.header.onMorePrimaryClick {
-            log("TOUVHCHCCH ")
             viewModel.isDrawerOpened.value = viewModel.isDrawerOpened.value == false
         }
 
@@ -288,19 +292,43 @@ class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
         }
 
         bind.sellerHub.createProduct.setHapticClickListener {
-            if (App.checkKycResponse.value?.kycStatus != "active") {
-                Alerts.kycDialog(mCtx)
-            } else {
-                startActivity(mCtx.toListProduct())
+
+            val profile = App.profileResponse.value
+            if (profile?.sellerIdentityStatus != "verified") {
+                verificationDialog()
+                return@setHapticClickListener
             }
+            if (App.checkKycResponse.value?.kycStatus != "active") {
+                verificationDialog()
+                return@setHapticClickListener
+            }
+            if (profile.hasCardAdded != true || profile.hasShippingAddress != true) {
+                showPaymentAndAddressSheet()
+                return@setHapticClickListener
+            }
+
+            startActivity(mCtx.toListProduct())
+
         }
 
         bind.sellerHub.createShow.setHapticClickListener {
-            if (App.checkKycResponse.value?.kycStatus != "active") {
-                Alerts.kycDialog(mCtx)
-            } else {
-                startActivity(mCtx.toScheduleShow(from = "dash"))
+
+            val profile = App.profileResponse.value
+            if (profile?.sellerIdentityStatus != "verified") {
+                verificationDialog()
+                return@setHapticClickListener
             }
+            if (App.checkKycResponse.value?.kycStatus != "active") {
+                verificationDialog()
+                return@setHapticClickListener
+            }
+            if (profile.hasCardAdded != true || profile.hasShippingAddress != true) {
+                showPaymentAndAddressSheet()
+                return@setHapticClickListener
+            }
+
+            startActivity(mCtx.toScheduleShow(from = "dash"))
+
         }
 
         bind.sellerHub.upcomingShow.setHapticClickListener {
@@ -442,4 +470,150 @@ class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
 
     }
 
+    fun showPaymentAndAddressSheet() {
+
+        val paymentAddressBind = PaymentAndAddressSheetBinding.bind(
+            layoutInflater.inflate(
+                R.layout.payment_and_address_sheet,
+                null,
+                false
+            )
+        )
+
+        val makeOfferSheet = Alerts.appBottomSheet(mCtx, true, paymentAddressBind)
+
+        with(paymentAddressBind.addressItem) {
+            val hasAddress = App.profileResponse.value?.hasShippingAddress == true
+            moreIcon.setImageDrawable(ContextCompat.getDrawable(mCtx, draw.ic_pencil))
+            moreIcon.rotation = 0f
+
+            name.isVisible = hasAddress
+            address.isVisible = hasAddress
+
+            if (hasAddress) {
+                val addressData = App.profileResponse.value?.defaultShippingAddress
+                address.text = addressData?.streetAddress
+                name.text = addressData?.name
+                type.text = addressData?.type
+                defaultAddress.isVisible = addressData?.isDefault == true
+            } else {
+                type.text = buildString {
+                    append("Address Not Added")
+                }
+                defaultAddress.isVisible = false
+            }
+
+            moreIcon.setHapticClickListener {
+                startActivity(
+                    Intent(mCtx, MoreActivity::class.java).putExtra(
+                        "slug",
+                        "paymentShipping"
+                    )
+                )
+            }
+        }
+
+        with(paymentAddressBind.paymentCard) {
+            val hasCard = App.profileResponse.value?.hasCardAdded == true
+            iconCard.isVisible = hasCard
+            expiryDate.isVisible = hasCard
+            moreIcon.setImageDrawable(ContextCompat.getDrawable(mCtx, draw.ic_pencil))
+            moreIcon.rotation = 0f
+
+            if (hasCard) {
+                cardNumber.text = buildString {
+                    append("•••• •••• •••• ")
+                    append(App.profileResponse.value?.defaultCard?.last4)
+                }
+
+                expiryDate.text = buildString {
+                    append(App.profileResponse.value?.defaultCard?.expDate)
+                }
+
+            } else {
+                cardNumber.text = buildString {
+                    append("Payment Cards Not Added")
+                }
+            }
+
+            moreIcon.setHapticClickListener {
+                startActivity(
+                    Intent(mCtx, MoreActivity::class.java).putExtra(
+                        "slug",
+                        "paymentShipping"
+                    )
+                )
+            }
+
+        }
+
+        paymentAddressBind.close.setHapticClickListener {
+            makeOfferSheet.dismiss()
+        }
+        makeOfferSheet.show()
+
+    }
+
+    private fun verificationDialog() {
+        AppBottomSheet(
+            mCtx,
+            R.drawable.ic_info,
+            title = when (App.profileResponse.value?.sellerIdentityStatus) {
+                "null" -> {
+                    "Become a Verified Seller!"
+                }
+
+                "pending" -> {
+                    "Verification Pending!"
+                }
+
+                "rejected" -> {
+                    "Verification Rejected!"
+                }
+
+                else -> {
+                    "Become a Verified Seller!"
+                }
+            },
+            message = when (App.profileResponse.value?.sellerIdentityStatus) {
+                "null" -> {
+                    "Your seller verification request has been rejected, You need to reapply for the verification."
+                }
+
+                "pending" -> {
+                    "Your seller verification request is currently pending. You will be able to access this functionality once it is approved by the admin."
+                }
+
+                "rejected" -> {
+                    "Your seller verification request was not approved. Please reapply to complete the verification process."
+                }
+
+                else -> {
+                    "Before you interact with lives shows, You need to become a Verified Seller."
+                }
+            },
+            primaryBtnText = "Okay",
+            secondaryBtnText = "Cancel",
+            canCancel = true,
+            showSecondary = false,
+            iconPadding = 16,
+            alertType = AlertType.INFO,
+            clicks = object : AlertClicks {
+                override fun primaryClick(dialog: AppBottomSheet) {
+                    dialog.dismiss()
+
+                    if (App.profileResponse.value?.sellerIdentityStatus == "pending") {
+                        return
+                    }
+
+                    startActivity(Intent(mCtx, SellerVerificationActivity::class.java))
+                }
+
+                override fun secondaryClick(dialog: AppBottomSheet) {
+                    dialog.dismiss()
+                }
+            }
+        ).show()
+
+    }
 }

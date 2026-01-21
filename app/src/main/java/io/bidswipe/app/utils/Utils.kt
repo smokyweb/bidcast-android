@@ -113,7 +113,6 @@ object Utils {
             )
         )
 
-
     fun getTimeStampFromServerTime(
         time: String,
         format: String = Const.SERVER_TIME_FORMAT,

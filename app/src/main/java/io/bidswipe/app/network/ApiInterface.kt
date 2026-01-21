@@ -474,7 +474,7 @@ interface ApiInterface {
     suspend fun storeSellerId(
         @Part idCard: MultipartBody.Part,
         @Part image: MultipartBody.Part,
-    ): StoreSellerIdResponse
+    ): FetchSellerVerificationResponse
 
     @Multipart
     @POST("api/seller-identity/store-phone-number")

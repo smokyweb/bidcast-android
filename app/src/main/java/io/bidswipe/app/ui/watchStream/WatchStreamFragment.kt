@@ -316,14 +316,15 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
             socketManager?.onAuctionStarted { json ->
                 runSafe {
-                    if (json.optString("room_id") == roomID) {
+                    if (json.roomId == roomID) {
                         requireActivity().runOnUiThread {
-                            if (json.has("product") && json.optJSONObject("product") != null) {
-                                val product = LiveShowModel.Product.fromJson(json.optJSONObject("product"))
-                                val startingBidAmount = json.optString("starting_bid_amount") ?: "0"
+                            if (json.product != null) {
+
+                                val product = json.product
+                                val startingBidAmount = json.startingBidAmount ?: "0"
                                 log("LIVE PRODUCT : $product")
                                 isAuctionStarted = true
-                                val status = json.optString("status")
+                                val status = json.status
 
                                 if (status == "sold") {
                                     bind.bidLayout.isVisible = false
@@ -333,6 +334,17 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
                                     bind.bidLayout.isVisible = true
                                     bind.soldLayout.isVisible = false
                                     bind.productLayout.isVisible = true
+                                }
+
+                                if (json.suddenDeath==true) {
+                                    bind.bidTime.setCompoundDrawablesWithIntrinsicBounds(
+                                        R.drawable.skull,
+                                        0,
+                                        0,
+                                        0
+                                    )
+                                } else {
+                                    bind.bidTime.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0)
                                 }
 
                                 updateProductUI(product, startingBidAmount)

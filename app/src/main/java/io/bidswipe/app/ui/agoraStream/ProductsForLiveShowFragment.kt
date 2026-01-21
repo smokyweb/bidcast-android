@@ -1,6 +1,7 @@
 package io.bidswipe.app.ui.agoraStream
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.app.Dialog
 import android.content.Context
 import android.os.Build
@@ -14,6 +15,7 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.ArrayAdapter
 import android.widget.FrameLayout
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.core.view.get
 import androidx.core.view.isVisible
@@ -42,6 +44,7 @@ import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request
 import io.bidswipe.app.utils.runSafe
 import io.bidswipe.app.utils.setHapticClickListener
+import io.bidswipe.app.utils.toListProduct
 import io.bidswipe.app.utils.value
 
 @AndroidEntryPoint
@@ -66,6 +69,15 @@ class ProductsForLiveShowFragment : BottomSheetDialogFragment() {
     private var socketManager: SocketManager? = null
 
     var from = "live_show"
+
+    private var addProductLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            Log.d("TAG", "CALLL RESULT")
+            if (result.resultCode == Activity.RESULT_OK) {
+               page =1
+                loadData()
+            }
+        }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val dialog = super.onCreateDialog(savedInstanceState) as BottomSheetDialog
@@ -117,9 +129,6 @@ class ProductsForLiveShowFragment : BottomSheetDialogFragment() {
         if (from == "freebie") {
             bind.title.text = "Select Product for Freebie"
             bind.addBtn.text = "Start Freebie"
-            bind.addBtn.isVisible = true
-        } else {
-            bind.addBtn.isVisible = false
         }
 
         socketManager = SocketManager.getInstance(requireContext())
@@ -371,6 +380,8 @@ class ProductsForLiveShowFragment : BottomSheetDialogFragment() {
                 dismiss()
 
 
+            } else {
+                addProductLauncher.launch( mCtx.toListProduct().putExtra("category" , viewModel.categoryId))
             }
         }
 
@@ -446,6 +457,12 @@ class ProductsForLiveShowFragment : BottomSheetDialogFragment() {
         auctionSettingsSheetBind.startingBid.setText(price)
 
         auctionSettingsSheetBind.close.setHapticClickListener { sheet.dismiss() }
+
+        auctionSettingsSheetBind.suddenDeath.setOnCheckedChangeListener { _,v->
+            auctionSettingsSheetBind.counterTimerLayout.isVisible=!v
+            if(v) selectedCounterTimer=0
+        }
+
         auctionSettingsSheetBind.start.setHapticClickListener {
 
             when {
@@ -454,7 +471,7 @@ class ProductsForLiveShowFragment : BottomSheetDialogFragment() {
                     return@setHapticClickListener
                 }
 
-                selectedCounterTimer == 0 -> {
+                selectedCounterTimer == 0 && !auctionSettingsSheetBind.suddenDeath.isChecked -> {
                     Alerts.error(mCtx, "Please select counter timer")
                     return@setHapticClickListener
                 }
@@ -487,6 +504,7 @@ class ProductsForLiveShowFragment : BottomSheetDialogFragment() {
              selectedRequiredTime
              selectedCounterTimer
              auctionSettingsSheetBind.suddenDeath.isChecked*/
+
         }
 
         sheet.show()

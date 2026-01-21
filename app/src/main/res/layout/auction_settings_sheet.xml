@@ -119,38 +119,6 @@
         </LinearLayout>
     </LinearLayout>
 
-    <TextView
-        style="@style/TitleSemiBold"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/half_margin"
-        android:text="Counter-Bid Time" />
-
-
-    <TextView
-        style="@style/BodySmall"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/half_margin"
-        android:text="When the auction has less than 10 seconds remaining, any new bids will reset the timer to the selected amount."
-        android:textColor="@color/onSurfaceVariant" />
-
-    <HorizontalScrollView
-        android:id="@+id/chip_scroll"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:scrollbars="none"
-        app:layout_constraintTop_toBottomOf="@id/searchLayout">
-
-        <com.google.android.material.chip.ChipGroup
-            android:id="@+id/timer_chips"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:chipSpacing="@dimen/half_margin"
-            app:singleLine="true"
-            app:singleSelection="true" />
-
-    </HorizontalScrollView>
 
     <TextView
         style="@style/TitleSemiBold"
@@ -169,6 +137,45 @@
         android:textAppearance="@style/BodySmall"
         android:textColor="@color/onSurfaceVariant" />
 
+    <LinearLayout
+        android:id="@+id/counter_timer_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            style="@style/TitleSemiBold"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/half_margin"
+            android:text="Counter-Bid Time" />
+
+        <TextView
+            style="@style/BodySmall"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/half_margin"
+            android:text="When the auction has less than 10 seconds remaining, any new bids will reset the timer to the selected amount."
+            android:textColor="@color/onSurfaceVariant" />
+
+        <HorizontalScrollView
+            android:id="@+id/chip_scroll"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:scrollbars="none"
+            app:layout_constraintTop_toBottomOf="@id/searchLayout">
+
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/timer_chips"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:chipSpacing="@dimen/half_margin"
+                app:singleLine="true"
+                app:singleSelection="true" />
+
+        </HorizontalScrollView>
+
+    </LinearLayout>
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/start"

@@ -1,6 +1,7 @@
 package io.bidswipe.app.ui.sell
 
 import android.annotation.SuppressLint
+import android.app.Activity.RESULT_OK
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -320,11 +321,17 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
         // Get product from intent only if not already restored
         if (product == null) {
             product = activity?.intent?.getSerializableExtra("product") as? Product
-
-            log("PRODUCT : $product")
             if (product != null) {
                 viewModel.getProductDetails(product?.id.toString().request())
             }
+        }
+
+        if (activity?.intent?.hasExtra("category") == true) {
+            categoryId = activity?.intent?.getStringExtra("category").toString()
+            viewModel.categoryId = categoryId
+            bind.category.isEnabled = false
+        } else {
+            bind.category.isEnabled = true
         }
 
         val adapterBg = ContextCompat.getDrawable(mCtx, R.drawable.card_8)
@@ -521,7 +528,7 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
             if (bind.otherOptions.isExpanded) {
                 bind.scroll.postDelayed({
                     bind.scroll.fullScroll(View.FOCUS_DOWN)
-                },300)
+                }, 300)
             }
         }
 
@@ -632,6 +639,19 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
                     if (mData?.isNotEmpty() == true) {
                         categoryList.clear()
                         categoryList.addAll(mData)
+                        if (categoryId.isNotEmpty()) {
+                            variantList.clear()
+                            val cat = categoryList.find { it?.id.toString() == categoryId }
+                            bind.category.setText(cat?.name, false)
+                            if (cat?.extraFields?.isNotEmpty() == true) {
+                                variantList.addAll(
+                                    cat.extraFields ?: mutableListOf()
+                                )
+                                variantAdapter.notifyDataSetChanged()
+                            }
+                            subCategoryId = ""
+                            viewModel.getProductSubCategory(categoryId, "subCategory")
+                        }
 
                         val categoryAdapter = ArrayAdapter(
                             mCtx,
@@ -639,7 +659,6 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
                             categoryList.map { it?.name })
 
                         bind.category.setAdapter(categoryAdapter)
-
                         bind.category.setDropDownBackgroundDrawable(adapterBg)
 
                         bind.category.setOnItemClickListener { _, _, position, _ ->
@@ -766,6 +785,7 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
                         false,
                         object : AlertClicks {
                             override fun primaryClick(dialog: AppBottomSheet) {
+                                activity?.setResult(RESULT_OK)
                                 finish()
                                 dialog.dismiss()
                             }
@@ -908,7 +928,7 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
         }
     }
 
-    fun setMailClassTexts(){
+    fun setMailClassTexts() {
         if (selectedMailClass?.maxWidthIn != null) {
             bind.widthTitle.text = buildSpannedString {
                 append("Width ")

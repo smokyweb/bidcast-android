@@ -333,6 +333,31 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/half_margin"
+                    android:alpha="0.7"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        style="@style/BodyLarge"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="@dimen/half_margin"
+                        android:layout_weight="1"
+                        android:text="Tax" />
+
+                    <TextView
+                        android:id="@+id/tax"
+                        style="@style/BodyLarge"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="?selectableItemBackground"
+                        android:text="$24.99" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/half_margin"
                     android:orientation="horizontal">
 
                     <TextView
@@ -376,31 +401,6 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="$0.00" />
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/half_margin"
-                    android:alpha="0.7"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        style="@style/BodyLarge"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="@dimen/half_margin"
-                        android:layout_weight="1"
-                        android:text="Tax" />
-
-                    <TextView
-                        android:id="@+id/tax"
-                        style="@style/BodyLarge"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:background="?selectableItemBackground"
-                        android:text="$24.99" />
 
                 </LinearLayout>
 

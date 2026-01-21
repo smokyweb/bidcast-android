@@ -31,6 +31,7 @@ class ListAProductActivity : BaseActivity() {
 		bind.main.setHapticClickListener {
 			hideKeyboard()
 		}
+
 		navHostFragment = supportFragmentManager.findFragmentById(R.id.fragmentContainer) as NavHostFragment
 		navController = navHostFragment.navController
 

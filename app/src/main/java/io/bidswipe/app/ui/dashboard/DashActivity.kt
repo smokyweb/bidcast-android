@@ -229,11 +229,7 @@ class DashActivity : BaseActivity(), NavController.OnDestinationChangedListener 
             if (menuItem.itemId != ids.sellFragment) viewModel.lastIndex.value = menuItem.itemId
             when (menuItem.itemId) {
                 ids.sellFragment -> {
-                    if (App.checkKycResponse.value?.kycStatus != "active") {
-                        Alerts.kycDialog(this)
-                    } else {
-                        mSellSheet.show()
-                    }
+                    mSellSheet.show()
                     return@setOnItemSelectedListener true
                 }
 
@@ -362,12 +358,14 @@ class DashActivity : BaseActivity(), NavController.OnDestinationChangedListener 
                 }
 
                 val profile = App.profileResponse.value
-
                 if (profile?.sellerIdentityStatus != "verified") {
                     verificationDialog()
                     return
                 }
-
+                if (App.checkKycResponse.value?.kycStatus != "active") {
+                    verificationDialog()
+                    return
+                }
                 if (profile.hasCardAdded != true || profile.hasShippingAddress != true) {
                     showPaymentAndAddressSheet()
                     return

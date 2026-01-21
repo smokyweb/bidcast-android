@@ -7,6 +7,7 @@ import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
 import io.bidswipe.app.model.LiveShowModel
+import io.bidswipe.app.network.response.socket.AuctionStartedResponse
 import io.bidswipe.app.network.response.socket.NotLiveShowResponse
 import io.bidswipe.app.network.response.socket.ProductIdsDeserializer
 import io.socket.client.IO
@@ -400,7 +401,7 @@ class SocketManager private constructor(
         socket?.on("viewerCount") { args ->
             val obj = args.firstOrNull()
             if (obj is JSONObject) {
-                Log.d(TAG, "RECEIVED: next_product_set - $obj")
+                Log.d(TAG, "RECEIVED: viewerCount - $obj")
                 listener(obj)
             }
         }
@@ -645,13 +646,17 @@ class SocketManager private constructor(
         socket?.emit("start_auction", payload)
     }
 
-    fun onAuctionStarted(listener: (resultJson: JSONObject) -> Unit) {
+    fun onAuctionStarted(listener: (resultJson: AuctionStartedResponse) -> Unit) {
         socket?.off("auction_started")
         socket?.on("auction_started") { args ->
             val obj = args.firstOrNull()
+            val auctionResponse = Gson().fromJson(
+                obj.toString(),
+                AuctionStartedResponse::class.java
+            )
             if (obj is JSONObject) {
                 Log.d(TAG, "RECEIVED: auction_started - $obj")
-                listener(obj)
+                listener(auctionResponse)
             }
         }
     }
