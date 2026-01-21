@@ -294,9 +294,9 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 //            socketManager = SocketManager.getInstance(requireContext())
 //            socketManager?.initialize(socketUrl, mapOf("uid" to userId))
 //            socketManager?.connect(onConnected = {
-            socketManager=App.socketManager
-                socketManager?.joinRoom(roomID, userId) {
-                }
+            socketManager = App.socketManager
+            socketManager?.joinRoom(roomID, userId) {
+            }
 //            }) { err -> log("Socket connect error: $err") }
 
             socketManager?.onViewerCount { args ->
@@ -320,7 +320,23 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
                         requireActivity().runOnUiThread {
                             if (json.product != null) {
 
-                                val product = json.product
+                                val product = LiveShowModel.Product(
+                                    LiveShowModel.Category(
+                                        id = json.product.category?.id,
+                                        image = json.product.category?.image,
+                                        name = json.product.category?.name,
+                                        thumbnail = json.product.category?.thumbnail,
+                                    ),
+                                    json.product.id.toString(),
+                                    json.product.images?.firstOrNull(),
+                                    json.product.status,
+                                    json.product.title,
+                                    json.product.pricing,
+                                    json.product.quantity,
+                                    true,
+                                    false,
+                                )
+
                                 val startingBidAmount = json.startingBidAmount ?: "0"
                                 log("LIVE PRODUCT : $product")
                                 isAuctionStarted = true
@@ -336,7 +352,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
                                     bind.productLayout.isVisible = true
                                 }
 
-                                if (json.suddenDeath==true) {
+                                if (json.suddenDeath == true) {
                                     bind.bidTime.setCompoundDrawablesWithIntrinsicBounds(
                                         R.drawable.skull,
                                         0,

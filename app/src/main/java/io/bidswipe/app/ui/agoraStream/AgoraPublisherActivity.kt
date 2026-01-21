@@ -38,7 +38,6 @@ import com.bumptech.glide.Glide
 import com.caneryilmaz.apps.luckywheel.constant.ArrowPosition
 import com.caneryilmaz.apps.luckywheel.constant.TextOrientation
 import com.caneryilmaz.apps.luckywheel.data.WheelData
-import com.caneryilmaz.apps.luckywheel.listener.RotationCompleteListener
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.gson.Gson
 import com.gyf.immersionbar.ktx.immersionBar
@@ -651,7 +650,7 @@ class AgoraPublisherActivity : BaseActivity() {
         }
     }
 
-    fun socketListeners(){
+    fun socketListeners() {
         socketManager?.onPollCreated { json ->
             runSafe {
                 runOnUiThread {
@@ -695,12 +694,12 @@ class AgoraPublisherActivity : BaseActivity() {
 
         socketManager?.onAuctionStarted { json ->
             runSafe {
-                if (json.roomId== roomID) {
+                if (json.roomId == roomID) {
                     runOnUiThread {
                         if (json.product != null) {
                             isAuctionStarted = true
                             bind.runNext.isVisible = json.status == "sold"
-                            if (json.suddenDeath==true) {
+                            if (json.suddenDeath == true) {
                                 bind.bidTime.setCompoundDrawablesWithIntrinsicBounds(
                                     R.drawable.skull,
                                     0,
@@ -710,7 +709,24 @@ class AgoraPublisherActivity : BaseActivity() {
                             } else {
                                 bind.bidTime.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0)
                             }
-                            updateProductUI(json.product, json.startingBidAmount)
+
+                            val product = LiveShowModel.Product(
+                                LiveShowModel.Category(
+                                    id = json.product.category?.id,
+                                    image = json.product.category?.image,
+                                    name = json.product.category?.name,
+                                    thumbnail = json.product.category?.thumbnail,
+                                ),
+                                json.product.id.toString(),
+                                json.product.images?.firstOrNull(),
+                                json.product.status,
+                                json.product.title,
+                                json.product.pricing,
+                                json.product.quantity,
+                                true,
+                                false,
+                            )
+                            updateProductUI(product, json.startingBidAmount)
                         } else {
                             isAuctionStarted = false
                             updateProductUI(null, startingBidAmount = "0")
@@ -2090,155 +2106,155 @@ class AgoraPublisherActivity : BaseActivity() {
             }
         }
 
-        bind . centerOfWheel . setOnClickListener {
+        bind.centerOfWheel.setOnClickListener {
 //            bind.luckyWheel.rotateWheel()
-                if (freebieUsers.isEmpty()) {
-                    Alerts.error(this, "Please enter entries to spin wheel")
-                    return@setOnClickListener
-                }
-
-                socketManager?.finalizeFreebie(roomID)
+            if (freebieUsers.isEmpty()) {
+                Alerts.error(this, "Please enter entries to spin wheel")
+                return@setOnClickListener
             }
+
+            socketManager?.finalizeFreebie(roomID)
+        }
+    }
+
+    fun showRandomizerSheet() {
+
+        randomizerSheetBind = RandomizerSheetBinding.bind(
+            layoutInflater.inflate(
+                R.layout.randomizer_sheet,
+                null,
+                false
+            )
+        )
+
+        val randomSheet = Alerts.appBottomSheet(this, true, randomizerSheetBind!!)
+
+        if (bind.luckyWheelLayout.isVisible) {
+            randomizerSheetBind?.hideWheel?.isVisible = true
+            randomizerSheetBind?.showSpin?.isVisible = false
+        } else {
+            randomizerSheetBind?.hideWheel?.visibility = View.GONE
+            randomizerSheetBind?.showSpin?.isVisible = true
         }
 
-        fun showRandomizerSheet() {
+        /*var currentEntries = mutableListOf<String>()
 
-            randomizerSheetBind = RandomizerSheetBinding.bind(
-                layoutInflater.inflate(
-                    R.layout.randomizer_sheet,
-                    null,
-                    false
-                )
-            )
+        currentEntries.addAll(freebieUsers.map { it?.name ?: "" })*/
 
-            val randomSheet = Alerts.appBottomSheet(this, true, randomizerSheetBind!!)
+        randomizerSheetBind?.recycler?.adapter =
+            RandomizerEntriesAdapter(freebieUsers, object : RecyclerClicks {
+                override fun itemClick(pos: Int, status: String?) {
 
-            if (bind.luckyWheelLayout.isVisible) {
-                randomizerSheetBind?.hideWheel?.isVisible = true
-                randomizerSheetBind?.showSpin?.isVisible = false
-            } else {
-                randomizerSheetBind?.hideWheel?.visibility = View.GONE
-                randomizerSheetBind?.showSpin?.isVisible = true
-            }
+                    socketManager?.removeFreebieUser(roomID, freebieUsers[pos]?.id.toString())
 
-            /*var currentEntries = mutableListOf<String>()
+                    /*freebieUsers.removeAt(pos)
+                    randomizerSheetBind?.recycler?.adapter?.notifyItemRemoved(pos)*/
+                }
+            })
 
-            currentEntries.addAll(freebieUsers.map { it?.name ?: "" })*/
+        if (freebieUsers.isEmpty()) {
+            randomizerSheetBind?.recycler?.isVisible = false
+            randomizerSheetBind?.noEntries?.isVisible = true
+        } else {
+            randomizerSheetBind?.recycler?.isVisible = true
+            randomizerSheetBind?.noEntries?.isVisible = false
+        }
 
-            randomizerSheetBind?.recycler?.adapter =
-                RandomizerEntriesAdapter(freebieUsers, object : RecyclerClicks {
-                    override fun itemClick(pos: Int, status: String?) {
+        if (freebieUsers.isNotEmpty()) {
+            setUpWheel(freebieUsers)
+        }
 
-                        socketManager?.removeFreebieUser(roomID, freebieUsers[pos]?.id.toString())
+        randomizerSheetBind?.close?.setHapticClickListener {
+            randomSheet.dismiss()
+        }
 
-                        /*freebieUsers.removeAt(pos)
-                        randomizerSheetBind?.recycler?.adapter?.notifyItemRemoved(pos)*/
-                    }
-                })
+        randomSheet.show()
+
+        randomizerSheetBind?.showSpin?.setHapticClickListener {
 
             if (freebieUsers.isEmpty()) {
-                randomizerSheetBind?.recycler?.isVisible = false
-                randomizerSheetBind?.noEntries?.isVisible = true
-            } else {
-                randomizerSheetBind?.recycler?.isVisible = true
-                randomizerSheetBind?.noEntries?.isVisible = false
+                errorToast("Please enter entries to show spin wheel")
+                return@setHapticClickListener
             }
 
-            if (freebieUsers.isNotEmpty()) {
-                setUpWheel(freebieUsers)
+            // Show wheel and controls
+            bind.luckyWheelLayout.isVisible = true
+            randomizerSheetBind?.hideWheel?.isVisible = true
+            randomizerSheetBind?.showSpin?.isVisible = false
+
+            bind.showNotes.isVisible = false
+            bind.freebieLayout.isVisible = false
+        }
+
+        val arrayAdapter = ArrayAdapter(
+            this,
+            android.R.layout.simple_list_item_1,
+            liveUsersList.map { it?.userName })
+
+        randomizerSheetBind?.manualEntry?.setAdapter(arrayAdapter)
+
+        randomizerSheetBind?.manualEntry?.setOnItemClickListener { parent, _, position, _ ->
+
+            val selectedUser = parent.getItemAtPosition(position)
+
+            val uId = liveUsersList.find { it?.userName == selectedUser }?.id
+
+            log("SELECTED USER: $uId")
+
+            socketManager?.enterInFreebie(roomID, uId.toString())
+
+            randomizerSheetBind?.manualEntry?.setText("", false)
+
+            Toast.makeText(this, "Selected: ${uId}", Toast.LENGTH_SHORT).show()
+
+        }
+
+        // Hide wheel
+        randomizerSheetBind?.hideWheel?.setHapticClickListener {
+            bind.luckyWheelLayout.isVisible = false
+            randomizerSheetBind?.hideWheel?.visibility = View.GONE
+            randomizerSheetBind?.showSpin?.visibility = View.VISIBLE
+            bind.showNotes.isVisible = true
+            bind.freebieLayout.isVisible = true
+        }
+
+        randomizerSheetBind?.shuffleEntries?.setHapticClickListener {
+            if (freebieUsers.isEmpty()) {
+                Alerts.error(this, "Please enter entries to shuffle")
+                return@setHapticClickListener
             }
 
-            randomizerSheetBind?.close?.setHapticClickListener {
-                randomSheet.dismiss()
-            }
-
-            randomSheet.show()
-
-            randomizerSheetBind?.showSpin?.setHapticClickListener {
-
-                if (freebieUsers.isEmpty()) {
-                    errorToast("Please enter entries to show spin wheel")
-                    return@setHapticClickListener
-                }
-
-                // Show wheel and controls
-                bind.luckyWheelLayout.isVisible = true
-                randomizerSheetBind?.hideWheel?.isVisible = true
-                randomizerSheetBind?.showSpin?.isVisible = false
-
-                bind.showNotes.isVisible = false
-                bind.freebieLayout.isVisible = false
-            }
-
-            val arrayAdapter = ArrayAdapter(
-                this,
-                android.R.layout.simple_list_item_1,
-                liveUsersList.map { it?.userName })
-
-            randomizerSheetBind?.manualEntry?.setAdapter(arrayAdapter)
-
-            randomizerSheetBind?.manualEntry?.setOnItemClickListener { parent, _, position, _ ->
-
-                val selectedUser = parent.getItemAtPosition(position)
-
-                val uId = liveUsersList.find { it?.userName == selectedUser }?.id
-
-                log("SELECTED USER: $uId")
-
-                socketManager?.enterInFreebie(roomID, uId.toString())
-
-                randomizerSheetBind?.manualEntry?.setText("", false)
-
-                Toast.makeText(this, "Selected: ${uId}", Toast.LENGTH_SHORT).show()
-
-            }
-
-            // Hide wheel
-            randomizerSheetBind?.hideWheel?.setHapticClickListener {
-                bind.luckyWheelLayout.isVisible = false
-                randomizerSheetBind?.hideWheel?.visibility = View.GONE
-                randomizerSheetBind?.showSpin?.visibility = View.VISIBLE
-                bind.showNotes.isVisible = true
-                bind.freebieLayout.isVisible = true
-            }
-
-            randomizerSheetBind?.shuffleEntries?.setHapticClickListener {
-                if (freebieUsers.isEmpty()) {
-                    Alerts.error(this, "Please enter entries to shuffle")
-                    return@setHapticClickListener
-                }
-
-                freebieUsers.shuffle()
+            freebieUsers.shuffle()
 
 //			currentEntries.shuffle()
 
-                randomizerSheetBind?.recycler?.adapter?.notifyDataSetChanged()
+            randomizerSheetBind?.recycler?.adapter?.notifyDataSetChanged()
 
 //			randomizerSheetBind.manualEntry.setText(currentEntries.joinToString("\n"))
 
-                setUpWheel(freebieUsers)
-            }
-
-            randomizerSheetBind?.removeAll?.setOnClickListener {
-                freebieUsers.clear()
-                randomizerSheetBind?.recycler?.adapter?.notifyDataSetChanged()
-                setUpWheel(freebieUsers)
-            }
-
-            // Spin the wheel
-            randomizerSheetBind?.spinWheel?.setOnClickListener {
-                if (freebieUsers.isEmpty()) {
-                    Alerts.error(this, "Please enter entries to spin wheel")
-                    return@setOnClickListener
-                }
-
-                socketManager?.finalizeFreebie(roomID)
-
-                randomSheet.dismiss()
-//			bind.luckyWheel.rotateWheel()
-            }
-
-
+            setUpWheel(freebieUsers)
         }
 
+        randomizerSheetBind?.removeAll?.setOnClickListener {
+            freebieUsers.clear()
+            randomizerSheetBind?.recycler?.adapter?.notifyDataSetChanged()
+            setUpWheel(freebieUsers)
+        }
+
+        // Spin the wheel
+        randomizerSheetBind?.spinWheel?.setOnClickListener {
+            if (freebieUsers.isEmpty()) {
+                Alerts.error(this, "Please enter entries to spin wheel")
+                return@setOnClickListener
+            }
+
+            socketManager?.finalizeFreebie(roomID)
+
+            randomSheet.dismiss()
+//			bind.luckyWheel.rotateWheel()
+        }
+
+
     }
+
+}
