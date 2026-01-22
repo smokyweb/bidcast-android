@@ -2,7 +2,6 @@ package io.bidswipe.app.network.response.socket
 
 
 import com.google.gson.annotations.SerializedName
-import io.bidswipe.app.model.LiveShowModel
 
 data class AuctionStartedResponse(
     @SerializedName("auction_started_at")
@@ -42,13 +41,13 @@ data class AuctionStartedResponse(
         @SerializedName("hazardousMaterial")
         val hazardousMaterial: Boolean?,
         @SerializedName("height")
-        val height: Int?,
+        val height: Any?,
         @SerializedName("id")
         val id: Int?,
         @SerializedName("images")
         val images: List<String?>?,
         @SerializedName("length")
-        val length: Int?,
+        val length: Any?,
         @SerializedName("mailClass")
         val mailClass: String?,
         @SerializedName("pricing")
@@ -86,9 +85,9 @@ data class AuctionStartedResponse(
         @SerializedName("videos")
         val videos: List<Any?>?,
         @SerializedName("weight")
-        val weight: Int?,
+        val weight: Any?,
         @SerializedName("width")
-        val width: Int?
+        val width: Any?
     ) {
         data class Category(
             @SerializedName("color")
@@ -100,7 +99,7 @@ data class AuctionStartedResponse(
             @SerializedName("isSelected")
             val isSelected: Boolean?,
             @SerializedName("liveCount")
-            val liveCount: Int?,
+            val liveCount: Any?,
             @SerializedName("name")
             val name: String?,
             @SerializedName("thumbnail")

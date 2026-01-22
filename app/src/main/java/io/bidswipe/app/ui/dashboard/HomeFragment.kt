@@ -328,24 +328,25 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
                 hasInitializedCategories = true
             }
 
-
-
-
             App.socketManager?.onRoomCreated { showData ->
+                log("ON CREATED ${showData.categoryId}-- ${selectedCategory}-- ${selectedCategoryTileId}\n-- ${selectedTabText}\n--${App.categoryList.filter { it?.isSelected == true }.find { it?.id.toString() == showData.categoryId }}")
                 activity?.runOnUiThread {
-                    if (App.categoryList.filter { it?.isSelected == true }.findLast { it?.id.toString() == showData.categoryId } != null) {
-                        viewModel.getLiveShow(
-                            selectedTabText.request(),
-                            selectedCategory.request(),
-                            search = bind.search.value().ifEmpty { null }?.request(),
-                            page = 1.toString().request()
-                        )
+                    val cat = App.categoryList.filter { it?.isSelected == true }.findLast { it?.id.toString() == showData.categoryId }
+                    if (cat != null) {
+                        if( selectedCategory == "for_you" || selectedCategory == cat.name) {
+                            viewModel.getLiveShow(
+                                selectedTabText.request(),
+                                selectedCategory.request(),
+                                search = bind.search.value().ifEmpty { null }?.request(),
+                                page = 1.toString().request()
+                            )
+                        }
                     }
                 }
             }
 
-
             App.socketManager?.onRoomEnded { json ->
+                log("END GOT HOME FRAGMENT $json")
                 runSafe {
                     requireActivity().runOnUiThread {
                         val roomID = json.optString("room_end")

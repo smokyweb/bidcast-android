@@ -275,7 +275,6 @@ class ExploreFragment : BaseFragment<DashViewModel, FragmentExploreBinding>() {
                                 ids.goTopExploreType,
                                 bundleOf(
                                     "category" to selectedCategory?.name,
-                                    "subcategory" to selectedCategory?.name
                                 )
                             )
                         }

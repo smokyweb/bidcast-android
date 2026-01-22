@@ -586,6 +586,7 @@
                             android:layout_height="wrap_content"
                             android:enabled="false"
                             android:text="@string/awaiting_next_item"
+                            android:layout_marginBottom="@dimen/margin"
                             android:backgroundTint="@color/black10"
                             android:textColor="@color/background"
                             android:visibility="gone"/>

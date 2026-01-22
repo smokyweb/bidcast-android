@@ -116,6 +116,15 @@ class App : Application() {
             }
         }
 
+        fun setUpSocket() {
+            socketManager = SocketManager.getInstance(mCtx)
+            socketManager?.initialize(Const.SOCKET_URL, mapOf("uid" to Prefs(mCtx).getUserData()?.id.toString()))
+            socketManager?.connect(onConnected = {
+                log(javaClass.simpleName, "Socket connect")
+            }) { err -> log(javaClass.simpleName, "Socket connect error: $err") }
+
+        }
+
     }
 
     override fun onCreate() {
@@ -134,12 +143,7 @@ class App : Application() {
             getProfile()
             getCategories()
             checkKYC()
-
-            socketManager = SocketManager.getInstance(this)
-            socketManager?.initialize(Const.SOCKET_URL, mapOf("uid" to Prefs(mCtx).getUserData()?.id.toString()))
-            socketManager?.connect(onConnected = {
-                log(javaClass.simpleName,"Socket connect")
-            }) { err -> log(javaClass.simpleName,"Socket connect error: $err") }
+            setUpSocket()
         }
 
         Toasty.Config.getInstance()

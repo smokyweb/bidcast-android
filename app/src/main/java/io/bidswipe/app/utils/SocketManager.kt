@@ -121,7 +121,7 @@ class SocketManager private constructor(
 
     fun onRoomCreated(listener: (bidJson: LiveShowModel) -> Unit) {
 
-        socket?.off("room_create_get")
+//        socket?.off("room_create_get")
         socket?.on("room_create_get") { args ->
             val obj = args.firstOrNull()
             if (obj is JSONObject) {
@@ -226,7 +226,7 @@ class SocketManager private constructor(
     }
 
     fun onRoomEnded(listener: (JSONObject) -> Unit) {
-        socket?.off("roomEnded")
+//        socket?.off("roomEnded")
         socket?.on("roomEnded") { args ->
             val obj = args.firstOrNull()
             if (obj is JSONObject) {

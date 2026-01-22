@@ -177,6 +177,14 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
         page: RequestBody?
     ) = call { api.getLiveShow(type, category, subCategory,search, page) }
 
+  suspend fun getExploreLiveShow(
+        type: RequestBody?,
+        category: RequestBody?,
+        subCategory: RequestBody?,
+        search: RequestBody?,
+        page: RequestBody?
+    ) = call { api.getLiveShow(type, category, subCategory,search, page) }
+
     suspend fun notifyLiveUser(
         liveUserId: RequestBody?,
     ) = call { api.notifyLiveUser(liveUserId) }

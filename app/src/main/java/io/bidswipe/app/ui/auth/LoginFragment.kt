@@ -122,6 +122,8 @@ class LoginFragment : BaseFragment<AuthViewModel, FragmentLoginBinding>() {
 					Prefs(mCtx).putString(Prefs.USER, Gson().toJson(it.value.data).toString())
 					App.getProfile()
 					App.checkKYC()
+					App.setUpSocket()
+					App.getCategories()
 
 					if (it.value.data?.isFirsttimeLogin == true) {
 						val intent = Intent(mCtx, ChooseInterestActivity::class.java)
@@ -132,7 +134,6 @@ class LoginFragment : BaseFragment<AuthViewModel, FragmentLoginBinding>() {
 						startActivity(mCtx.toDash())
 						finish()
 					}
-
 				}
 
 				is Resource.Error -> {

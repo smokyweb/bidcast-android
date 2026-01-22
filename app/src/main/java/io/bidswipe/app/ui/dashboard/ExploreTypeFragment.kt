@@ -1,6 +1,7 @@
 package io.bidswipe.app.ui.dashboard
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
@@ -10,6 +11,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.navigation.fragment.findNavController
@@ -36,6 +38,7 @@ import io.bidswipe.app.utils.hideKeyboard
 import io.bidswipe.app.utils.isTablet
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request
+import io.bidswipe.app.utils.runSafe
 import io.bidswipe.app.utils.setHapticClickListener
 import io.bidswipe.app.utils.value
 
@@ -58,6 +61,21 @@ class ExploreTypeFragment : BaseFragment<DashViewModel, FragmentExploreTypeBindi
 
     private var selectedTabText = "live"
 
+    private val viewLiveShowLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            page = 1
+            viewModel.getExploreLiveShow(
+                selectedTabText.request(),
+                category.request(),
+                subCategory?.request(),
+                search = bind.search.value().ifEmpty { null }?.request(),
+                page = page.toString().request()
+            )
+        }
+    }
+
     var subCategoryAdapter: SubCategoryAdapter? = null
     private val mClick = object : RecyclerClicks {
         override fun itemClick(pos: Int, status: String?) {
@@ -78,7 +96,7 @@ class ExploreTypeFragment : BaseFragment<DashViewModel, FragmentExploreTypeBindi
                     if (App.PIPMode) {
                         Alerts.error(mCtx, "You are already in Live show")
                     } else {
-                        startActivity(
+                        viewLiveShowLauncher.launch(
                             Intent(
                                 mCtx,
                                 ViewLiveShowActivity::class.java
@@ -129,7 +147,7 @@ class ExploreTypeFragment : BaseFragment<DashViewModel, FragmentExploreTypeBindi
                     subCategory = subCategories[pos].name
                     page = 1
                     bind.loader.isVisible = true
-                    viewModel.getLiveShow(selectedTabText.request(), category.request(), subCategory?.request())
+                    viewModel.getExploreLiveShow(selectedTabText.request(), category.request(), subCategory?.request())
                 }
             }, "explore")
 
@@ -152,10 +170,60 @@ class ExploreTypeFragment : BaseFragment<DashViewModel, FragmentExploreTypeBindi
             findNavController().popBackStack()
         }
 
+        App.socketManager?.onRoomCreated { showData ->
+            log("START GOT EXPLORE  FRAGMENT ${showData.categoryId}--${showData.subCategoryId}")
+            activity?.runOnUiThread {
+                val cat = App.categoryList.findLast { it?.id.toString() == showData.categoryId }
+                log("START GOT EXPLORE  FRAGMENT ${cat}--${category}--$subCategory")
+
+                if (cat != null) {
+                    if (category == cat.name) {
+                        viewModel.getExploreLiveShow(
+                            selectedTabText.request(),
+                            category.request(),
+                            subCategory?.request(),
+                            search = bind.search.value().ifEmpty { null }?.request(),
+                            page = "1".request()
+                        )
+                    }
+                }
+            }
+        }
+
+        App.socketManager?.onRoomEnded { json ->
+            log("END GOT EXPLORE  FRAGMENT $json")
+            runSafe {
+                requireActivity().runOnUiThread {
+                    val roomID = json.optString("room_end")
+                    if (roomID.isNotEmpty()) {
+                        streamList.removeIf { it.roomId == roomID }
+                        romIdsList.remove(roomID)
+                        if (showList.isNotEmpty()) {
+                            val position = showList.indexOfFirst { it?.roomId == roomID }
+                            if (position >= 0) {
+                                showList.removeAt(position)
+                            }
+                            if (showList.isEmpty()) {
+                                bind.noData.isVisible = true
+                                bind.recycler.isVisible = false
+                                bind.noInternet.isVisible = false
+
+                            } else {
+                                if (position >= 0) {
+                                    homeAdapter.notifyItemRemoved(position)
+                                    homeAdapter.notifyItemRangeChanged(position, showList.size)
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
         bind.swipeRefreshLayout.setOnRefreshListener {
             bind.search.setText("")
             bind.searchLayout.isEndIconVisible = false
-            viewModel.getLiveShow(selectedTabText.request(), category.request(), subCategory?.request())
+            viewModel.getExploreLiveShow(selectedTabText.request(), category.request(), subCategory?.request())
         }
 
         bind.searchLayout.isEndIconVisible = false
@@ -170,23 +238,23 @@ class ExploreTypeFragment : BaseFragment<DashViewModel, FragmentExploreTypeBindi
                 bind.noData.isVisible = false
 
                 if (!s.isNullOrEmpty()) {
-                    viewModel.getLiveShow(selectedTabText.request(), category.request(), subCategory?.request(), s.toString().request())
+                    viewModel.getExploreLiveShow(selectedTabText.request(), category.request(), subCategory?.request(), s.toString().request())
                 } else {
-                    viewModel.getLiveShow(selectedTabText.request(), category.request(), subCategory?.request())
+                    viewModel.getExploreLiveShow(selectedTabText.request(), category.request(), subCategory?.request())
                 }
             }
         })
 
         bind.searchLayout.setEndIconOnClickListener {
             bind.search.setText("")
-            viewModel.getLiveShow(selectedTabText.request(), category.request(), subCategory?.request())
+            viewModel.getExploreLiveShow(selectedTabText.request(), category.request(), subCategory?.request())
             hideKeyboard(it)
         }
 
         bind.noInternet.setHapticClickListener {
             bind.loader.isVisible = true
             bind.noInternet.isVisible = false
-            viewModel.getLiveShow(selectedTabText.request(), category.request(), subCategory?.request())
+            viewModel.getExploreLiveShow(selectedTabText.request(), category.request(), subCategory?.request())
         }
 
         bind.header.onMorePrimaryClick {
@@ -211,7 +279,7 @@ class ExploreTypeFragment : BaseFragment<DashViewModel, FragmentExploreTypeBindi
             if (lastItemPosition == listSize - 1 && !isLoading) {
                 isLoading = true
                 page++
-                viewModel.getLiveShow(
+                viewModel.getExploreLiveShow(
                     selectedTabText.request(),
                     category.request(),
                     subCategory?.request(),
@@ -229,8 +297,8 @@ class ExploreTypeFragment : BaseFragment<DashViewModel, FragmentExploreTypeBindi
         bind.comingSoon.setHapticClickListener { selectTab(it as TextView) }
 
         categoriesList = mutableListOf(category)
-        viewModel.getLiveShow(selectedTabText.request(), category = category.request(), subCategory?.request())
-        viewModel.getLiveShowRepo.observe(viewLifecycleOwner) { it ->
+        viewModel.getExploreLiveShow(selectedTabText.request(), category = category.request(), subCategory?.request())
+        viewModel.getExploreLiveShowRepo.observe(viewLifecycleOwner) { it ->
             when (it) {
                 is Resource.Success -> {
                     bind.loader.isVisible = false
@@ -325,17 +393,17 @@ class ExploreTypeFragment : BaseFragment<DashViewModel, FragmentExploreTypeBindi
         when (selectedTab) {
             bind.live -> {
                 selectedTabText = "live"
-                viewModel.getLiveShow("live".request(), category.request(), subCategory?.request())
+                viewModel.getExploreLiveShow("live".request(), category.request(), subCategory?.request())
             }
 
             bind.popular -> {
                 selectedTabText = "popular"
-                viewModel.getLiveShow("popular".request(), category.request(), subCategory?.request())
+                viewModel.getExploreLiveShow("popular".request(), category.request(), subCategory?.request())
             }
 
             bind.comingSoon -> {
                 selectedTabText = "upcoming"
-                viewModel.getLiveShow("upcoming".request(), category.request(), subCategory?.request())
+                viewModel.getExploreLiveShow("upcoming".request(), category.request(), subCategory?.request())
             }
 
         }

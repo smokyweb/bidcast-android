@@ -76,6 +76,7 @@ import io.bidswipe.app.model.PollOptionModel
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.network.response.GetLiveSellerResponse
 import io.bidswipe.app.network.response.GetPromotePlansResponse
+import io.bidswipe.app.network.response.socket.AuctionStartedResponse
 import io.bidswipe.app.network.response.socket.GetFreebieObject
 import io.bidswipe.app.ui.custom.AlertType
 import io.bidswipe.app.ui.custom.AppBottomSheet
@@ -209,6 +210,7 @@ class AgoraPublisherActivity : BaseActivity() {
                 intent.getSerializableExtra("showData") as LiveShowModel
             }
         }
+        log("SHOW DATA ON PUBLISH : $liveShowData")
 
         exoPlayer = ExoPlayer.Builder(this).build()
 
@@ -710,23 +712,7 @@ class AgoraPublisherActivity : BaseActivity() {
                                 bind.bidTime.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0)
                             }
 
-                            val product = LiveShowModel.Product(
-                                LiveShowModel.Category(
-                                    id = json.product.category?.id,
-                                    image = json.product.category?.image,
-                                    name = json.product.category?.name,
-                                    thumbnail = json.product.category?.thumbnail,
-                                ),
-                                json.product.id.toString(),
-                                json.product.images?.firstOrNull(),
-                                json.product.status,
-                                json.product.title,
-                                json.product.pricing,
-                                json.product.quantity,
-                                true,
-                                false,
-                            )
-                            updateProductUI(product, json.startingBidAmount)
+                            updateProductUI(json.product, json.startingBidAmount)
                         } else {
                             isAuctionStarted = false
                             updateProductUI(null, startingBidAmount = "0")
@@ -1121,7 +1107,7 @@ class AgoraPublisherActivity : BaseActivity() {
         bottomSheetFragment.show(supportFragmentManager, "BOTTOM_SHEET_TAG")
     }
 
-    fun updateProductUI(liveProduct: LiveShowModel.Product?, startingBidAmount: String?) {
+    fun updateProductUI(liveProduct: AuctionStartedResponse.Product?, startingBidAmount: String?) {
 
         runOnUiThread {
 
@@ -1129,27 +1115,23 @@ class AgoraPublisherActivity : BaseActivity() {
                 log("updateProductUI : $liveProduct")
                 bind.product.isVisible = true
                 bind.productLayout.isVisible = true
-                bind.productName.text = liveProduct.name?.asCapital()
+                bind.productName.text = liveProduct.title?.asCapital()
                 bind.productCategory.text = liveProduct.category?.name?.asCapital()
                 bind.quantity.text = buildString {
                     append("Quantity: ")
                     append(liveProduct.quantity ?: 0)
                 }
 
-                if (liveProduct.image?.contains(Const.BASE_URL) == true) {
-                    bind.productImage.loadUrl(this, liveProduct.image)
-                    bind.productImageShop.loadUrl(this, liveProduct.image)
-                } else {
-                    bind.productImage.loadUrl(
-                        this,
-                        "${Const.BASE_URL + "/"}${liveProduct.image ?: ""}"
-                    )
-                    bind.productImageShop.loadUrl(
-                        this,
-                        "${Const.BASE_URL + "/"}${liveProduct.image ?: ""}"
-                    )
+                val image = liveProduct.images?.firstOrNull() ?: ""
+                if (image.isNotEmpty()) {
+                    if (image.contains(Const.BASE_URL)) {
+                        bind.productImage.loadUrl(this, image)
+                        bind.productImageShop.loadUrl(this, image)
+                    } else {
+                        bind.productImage.loadUrl(this, "${Const.BASE_URL + "/"}${image}")
+                        bind.productImageShop.loadUrl(this, "${Const.BASE_URL + "/"}${image}")
+                    }
                 }
-
 
                 val price = startingBidAmount
                 bind.bidPrice.text = price?.asMoney()
@@ -1265,6 +1247,7 @@ class AgoraPublisherActivity : BaseActivity() {
             bind.product.isVisible = false
             bind.showNotes.isVisible = false
             bind.freebieLayout.isVisible = false
+            bind.controls.isVisible = false
             App.PIPMode = true
         } else {
             bind.profileLayout.isVisible = true
@@ -1275,6 +1258,7 @@ class AgoraPublisherActivity : BaseActivity() {
             bind.product.isVisible = false
             bind.showNotes.isVisible = true
             bind.freebieLayout.isVisible = true
+            bind.controls.isVisible = true
             App.PIPMode = false
         }
     }

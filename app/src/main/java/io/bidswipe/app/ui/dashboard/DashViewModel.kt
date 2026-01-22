@@ -1,5 +1,6 @@
 package io.bidswipe.app.ui.dashboard
 
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -257,6 +258,25 @@ class DashViewModel @Inject constructor(
 			return@launch
 		}
 		_getLiveShowResponse.value = repo.getLiveShow(type , category , subCategory,search , page)
+	}
+
+	private var _getExploreLiveShowResponse = MutableLiveData<Resource<GetMyShowResponse>>()
+	val getExploreLiveShowRepo : MutableLiveData<Resource<GetMyShowResponse>>
+		get() = _getExploreLiveShowResponse
+
+	fun getExploreLiveShow(
+		type : RequestBody? = null ,
+		category : RequestBody? = null ,
+		subCategory : RequestBody? = null ,
+		search : RequestBody? = null ,
+		page : RequestBody ?=null,
+	) = viewModelScope.launch {
+		Log.d("TAG", "getExploreLiveShow: CALLED $category")
+		if (! networkMonitor.hasInternet()) {
+			_getExploreLiveShowResponse.value = NO_INTERNET_ERROR
+			return@launch
+		}
+		_getExploreLiveShowResponse.value = repo.getExploreLiveShow(type , category , subCategory,search , page)
 	}
 
 	private var _offerListResponse = MutableLiveData<Resource<GetOffersResponse>>()

@@ -98,8 +98,6 @@ class ShowDetailsActivity : BaseActivity() {
                 products?.first()?.isCurrent = true
             }
 
-	        val timee= Utils.getTimeStampFromServerTime( showData?.date?.replace("00:00:00",showData?.time?:"00:00:00")?:"", timeZone = TimeZone.getDefault().id).toString()
-
             val showData = LiveShowModel(
                 seller = LiveShowModel.Seller(
                     id = user?.id.toString(),
@@ -107,7 +105,7 @@ class ShowDetailsActivity : BaseActivity() {
                     name = user?.name,
                     rating = user?.rating ?: ""
                 ),
-                products = emptyList<LiveShowModel.Product>(),
+                products =showData?.products?.map { product -> product?.toLiveShowProduct() }?:emptyList(),
                 roomId = "live_room_${userId}_${showData?.id.toString()}",
                 showDetail = showData?.title ?: "",
                 thumbnail = showData?.thumbnail?.getOrNull(0) ?: "",
@@ -120,7 +118,7 @@ class ShowDetailsActivity : BaseActivity() {
                     productId = ""
                 ),
                 isLive = true,
-                time =timee,
+                time =showData?.time,
                 showId = showData?.id.toString(),
                 allowBidForAll = true,
                 bidCountDown = "",
