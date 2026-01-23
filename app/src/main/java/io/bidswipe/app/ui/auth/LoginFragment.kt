@@ -119,7 +119,6 @@ class LoginFragment : BaseFragment<AuthViewModel, FragmentLoginBinding>() {
 						"Bearer " + it.value.data?.token.toString().trim()
 					)
 
-					Prefs(mCtx).putString(Prefs.USER, Gson().toJson(it.value.data).toString())
 					App.getProfile()
 					App.checkKYC()
 					App.setUpSocket()
@@ -243,5 +242,4 @@ class LoginFragment : BaseFragment<AuthViewModel, FragmentLoginBinding>() {
 		}
 
 	}
-
 }

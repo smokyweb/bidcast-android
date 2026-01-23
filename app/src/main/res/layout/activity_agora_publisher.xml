@@ -248,8 +248,8 @@
                                 app:boxBackgroundColor="@color/transparent"
                                 app:boxStrokeColor="@color/input_box_stroke_color_surface"
                                 app:endIconDrawable="@drawable/send"
-                                app:endIconTint="@color/background"
                                 app:endIconMode="custom"
+                                app:endIconTint="@color/background"
                                 app:layout_constraintBottom_toTopOf="@+id/product">
 
                                 <com.google.android.material.textfield.TextInputEditText
@@ -693,6 +693,13 @@
                                         android:text="Quantity: 1"
                                         android:textColor="@color/surface" />
 
+                                    <TextView
+                                        android:id="@+id/price"
+                                        style="@style/LabelLarge"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:text="$1"
+                                        android:textColor="@color/surface" />
                                 </LinearLayout>
 
                                 <LinearLayout
@@ -725,7 +732,7 @@
 
                                     <TextView
                                         android:id="@+id/status"
-                                        style="@style/BodySmall"
+                                        style="@style/TitleSmall"
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
                                         android:layout_gravity="center"
@@ -784,12 +791,11 @@
                         style="@style/appBtn"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="@dimen/half_margin"
+                        android:layout_marginHorizontal="@dimen/margin"
                         android:layout_marginBottom="@dimen/margin"
                         android:text="Run Next"
                         android:visibility="gone"
                         app:layout_constraintBottom_toBottomOf="parent" />
-
 
                 </LinearLayout>
 
@@ -804,11 +810,11 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginHorizontal="32dp"
-        app:layout_constraintTop_toTopOf="parent"
-        android:visibility="gone"
+        android:layout_marginTop="100dp"
         android:elevation="6dp"
+        android:visibility="gone"
         app:layout_constraintDimensionRatio="1"
-        android:layout_marginTop="100dp">
+        app:layout_constraintTop_toTopOf="parent">
 
         <com.google.android.material.card.MaterialCardView
             style="@style/cardStyle"
@@ -828,23 +834,23 @@
         </com.google.android.material.card.MaterialCardView>
 
         <View
-            android:layout_width="32dp"
             android:id="@+id/center_of_wheel"
-            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
             android:elevation="6dp"
             app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            android:layout_height="32dp"/>
+            app:layout_constraintTop_toTopOf="parent" />
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/close_wheel"
             android:layout_width="32dp"
             android:layout_height="32dp"
             android:background="@drawable/card_16"
+            android:elevation="6dp"
             android:padding="@dimen/half_margin"
             android:scaleType="centerCrop"
-            android:elevation="6dp"
             android:src="@drawable/ic_close"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"

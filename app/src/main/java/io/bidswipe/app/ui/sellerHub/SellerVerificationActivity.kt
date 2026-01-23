@@ -1,6 +1,7 @@
 package io.bidswipe.app.ui.sellerHub
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts
@@ -285,6 +286,12 @@ class SellerVerificationActivity : BaseActivity() {
 
         }
 
+        bind.addKycBtn.setHapticClickListener {
+            startActivity(
+                Intent(this, SellerHubActivity::class.java).putExtra("slug", "identityVerification")
+            )
+        }
+
         viewModel.storeSellerVerificationRepo.observe(this) {
             when (it) {
                 is Resource.Success -> {
@@ -338,16 +345,6 @@ class SellerVerificationActivity : BaseActivity() {
                     }
 
                     isPhoneVerified = sellerData?.numberOtpVerified == 1
-
-                    if (sellerData?.idCard?.isNotEmpty() == true && sellerData?.image?.isNotEmpty() == true) {
-                        bind.cardImage.isVisible = true
-                        bind.selfie.isVisible = true
-                        bind.cardImage.loadUrl(this, sellerData?.idCard ?: "")
-                        bind.selfie.loadUrl(this, sellerData?.image ?: "")
-                    } else {
-                        bind.cardImage.isVisible = false
-                        bind.selfie.isVisible = false
-                    }
 
                     when (sellerData?.status) {
 
@@ -428,7 +425,7 @@ class SellerVerificationActivity : BaseActivity() {
         viewModel.storeSellerIdRepo.observe(this) {
             when (it) {
                 is Resource.Success -> {
-
+                    bind.loader.isVisible = false
                     sellerData = it.value.data
                     updateStepper()
                 }
@@ -498,11 +495,10 @@ class SellerVerificationActivity : BaseActivity() {
                 is Resource.Success -> {
                     bind.loader.isVisible = false
 
-                    it.value.data
                     isPhoneVerified = true
                     bind.stepProgress.progress = 2
                     bind.stepCount.text = buildString {
-                        append("2 of 3")
+                        append("2 of 4")
                     }
 
                     bind.phoneNumberLayout.isVisible = false
@@ -653,10 +649,30 @@ class SellerVerificationActivity : BaseActivity() {
     private fun updateStepper() {
 
         val kycActive = App.checkKycResponse.value?.kycStatus == "active"
-
-        val idDone = cardImage.isNotEmpty() && selfie.isNotEmpty()
+        var idDone = false
         val phoneDone = isPhoneVerified
         val paymentDone = paymentCardId.isNotEmpty()
+
+        if (sellerData?.idCard?.isNotEmpty() == true && sellerData?.image?.isNotEmpty() == true) {
+            idDone=true
+            bind.cardImage.isVisible = true
+            bind.selfie.isVisible = true
+            bind.cardImage.loadUrl(this, sellerData?.idCard ?: "")
+            bind.selfie.loadUrl(this, sellerData?.image ?: "")
+            bind.verificationIcon.isVisible = true
+            bind.verifyId.isVisible =false
+            bind.uploadId.isClickable = false
+            bind.uploadSelfie.isClickable = false
+        } else {
+            idDone=false
+            bind.cardImage.isVisible = false
+            bind.selfie.isVisible = false
+            bind.verificationIcon.isVisible = false
+            bind.verifyId.isVisible = true
+
+            bind.uploadId.isClickable = true
+            bind.uploadSelfie.isClickable = true
+        }
 
         val completedSteps = listOf(
             idDone,
@@ -668,12 +684,9 @@ class SellerVerificationActivity : BaseActivity() {
         bind.stepProgress.progress = completedSteps
         bind.stepCount.text = "$completedSteps of 4"
 
-        bind.uploadId.isClickable = !idDone
-        bind.uploadSelfie.isClickable = !idDone
-        bind.verifyId.isVisible = !idDone
-        bind.verificationIcon.isVisible = idDone
-
         bind.verifyPhone.isVisible = !phoneDone
+
+        log("ACTIVE $kycActive")
 
         bind.addKycBtn.isVisible = !kycActive
         bind.kycCheck.isVisible = kycActive

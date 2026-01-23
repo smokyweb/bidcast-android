@@ -4,12 +4,12 @@ import android.app.ActivityManager
 import android.app.Application
 import android.content.Context
 import android.os.Process
-import android.util.Log
 import android.view.Gravity
 import androidx.core.content.res.ResourcesCompat
 import androidx.lifecycle.MutableLiveData
 import com.google.firebase.FirebaseApp
 import com.google.firebase.crashlytics.FirebaseCrashlytics
+import com.google.gson.Gson
 import dagger.hilt.android.HiltAndroidApp
 import es.dmoral.toasty.Toasty
 import io.bidswipe.app.network.Resource
@@ -59,10 +59,7 @@ class App : Application() {
                             val mData = it.value.data
                             profileResponse.value = mData
 
-                            Log.d(
-                                TAG,
-                                " getProfile: HAPTIC FEEDBACK : ${mData?.preferences?.hapticFeedback} "
-                            )
+                            Prefs(mCtx).putString(Prefs.USER, Gson().toJson(mData).toString())
                             HapticManager.setEnabled(mData?.preferences?.hapticFeedback ?: false)
                         }
 

@@ -1133,6 +1133,8 @@ class AgoraPublisherActivity : BaseActivity() {
                     }
                 }
 
+                bind.price.text = (liveProduct.pricing ?: "0.0").asMoney() + " + Shipping + Taxes"
+
                 val price = startingBidAmount
                 bind.bidPrice.text = price?.asMoney()
                 bind.status.isVisible = false
@@ -1140,7 +1142,6 @@ class AgoraPublisherActivity : BaseActivity() {
             } else {
                 bind.product.isVisible = false
                 bind.productLayout.isVisible = false
-
             }
         }
     }
@@ -1150,7 +1151,7 @@ class AgoraPublisherActivity : BaseActivity() {
         runSafe {
             this.runOnUiThread {
                 if (json.optString("room_id") == roomID) {
-                    bind.bidTime.isVisible = true
+                    bind.bidTime.isVisible = value.toInt()!=0
                     log("BID TIMER UPDATE : $value")
                     val color = if (value.toInt() <= 10) {
                         ContextCompat.getColor(this@AgoraPublisherActivity, R.color.error)
@@ -1268,7 +1269,7 @@ class AgoraPublisherActivity : BaseActivity() {
 
         log("USER LEAVE HINT")
 
-        if (!isInPictureInPictureMode) {
+        if (!isInPictureInPictureMode && this::pipParams.isInitialized) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 setPictureInPictureParams(pipParams)
                 enterPictureInPictureMode(pipParams)

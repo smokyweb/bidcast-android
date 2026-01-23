@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.navigation.fragment.findNavController
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -14,6 +15,7 @@ import io.bidswipe.app.interfaces.AlertClicks
 import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.network.response.PayoutHistoryResponse
+import io.bidswipe.app.network.response.WalletInfoResponse
 import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.utils.asMoney
 import io.bidswipe.app.utils.ids
@@ -36,6 +38,8 @@ class WalletViewFragment : BaseFragment<SellerHubViewModel , FragmentWalletViewB
 		}
 	}
 
+	private var walletData: WalletInfoResponse.Data? =null
+
 	override fun onViewCreated(view : View , savedInstanceState : Bundle?) {
 		super.onViewCreated(view , savedInstanceState)
 
@@ -45,7 +49,7 @@ class WalletViewFragment : BaseFragment<SellerHubViewModel , FragmentWalletViewB
 //			if (!kycStatus) {
 //				Alerts.error(mCtx, "Please Complete Your KYC")
 //			} else {
-			findNavController().navigate(ids.goToPayoutFragment)
+			findNavController().navigate(ids.goToPayoutFragment, bundleOf("amount" to walletData?.avaiableForPayout.toString()))
 //			}
 		}
 		val parentSwipe = requireActivity().findViewById<SwipeRefreshLayout>(
@@ -99,12 +103,12 @@ class WalletViewFragment : BaseFragment<SellerHubViewModel , FragmentWalletViewB
 			when (it) {
 				is Resource.Success -> {
 					bind.loader.isVisible = false
-					val mData = it.value.data
-					bind.walletAmount.text = mData?.avaiableBalance.toString().asMoney()
-					bind.available.text = mData?.avaiableForPayout.toString().asMoney()
-					bind.processing.text = mData?.processing.toString().asMoney()
+					walletData = it.value.data
+					bind.walletAmount.text = walletData?.avaiableBalance.toString().asMoney()
+					bind.available.text = walletData?.avaiableForPayout.toString().asMoney()
+					bind.processing.text = walletData?.processing.toString().asMoney()
 
-					bind.payoutCard.isVisible = (mData?.avaiableForPayout ?: 0) > 10
+					bind.payoutCard.isVisible = (walletData?.avaiableForPayout ?: 0.0) > 10
 
 				}
 

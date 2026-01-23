@@ -6,6 +6,7 @@ import com.google.gson.reflect.TypeToken
 import io.bidswipe.app.model.RememberModel
 import io.bidswipe.app.network.response.LoginResponse
 import androidx.core.content.edit
+import io.bidswipe.app.network.response.UserProfileResponse
 
 class Prefs(ctx : Context) {
 
@@ -44,7 +45,7 @@ class Prefs(ctx : Context) {
 	fun userEmail() = mPrefs.getString(USER_EMAIL , "").toString()
 
 	fun getUserData() = try {
-		Gson().fromJson(mPrefs.getString(USER , "").toString() , LoginResponse.Data::class.java)
+		Gson().fromJson(mPrefs.getString(USER , "").toString() , UserProfileResponse.Data::class.java)
 	} catch (e : Exception) {
 		null
 	}

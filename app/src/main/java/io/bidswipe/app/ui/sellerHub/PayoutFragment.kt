@@ -28,16 +28,21 @@ class PayoutFragment : BaseFragment<SellerHubViewModel, FragmentPayoutBinding>()
 		inflater: LayoutInflater,
 		view: ViewGroup?,
 	) = FragmentPayoutBinding.inflate(inflater, view, false)
-	
+
+	var walletAmount =0.0
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		super.onViewCreated(view, savedInstanceState)
-		
-		val walletAmount = App.profileResponse.value?.walletAmount.toString().toDouble()
+
+		if(arguments?.getString("amount")!=null) {
+			walletAmount=(arguments?.getString("amount")?:"0.0").toDouble()
+		}
+
 		bind.walletAmount.text= buildSpannedString {
 			append("Available for payout : ")
 			append("$")
 			append(walletAmount.toString())
 		}
+
 		bind.header.onBackClick {
 			findNavController().popBackStack()
 		}
@@ -104,7 +109,6 @@ class PayoutFragment : BaseFragment<SellerHubViewModel, FragmentPayoutBinding>()
 			}
 		}
 		
-		
 		viewModel.payoutRepo.observe(viewLifecycleOwner) {
 			when (it) {
 				is Resource.Success -> {
@@ -157,8 +161,7 @@ class PayoutFragment : BaseFragment<SellerHubViewModel, FragmentPayoutBinding>()
 				
 			}
 		}
-		
-		
+
 	}
 	
 	

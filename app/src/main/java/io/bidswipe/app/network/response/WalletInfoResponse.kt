@@ -18,10 +18,10 @@ data class WalletInfoResponse(
     @Keep
     data class Data(
         @SerializedName("avaiable_balance")
-        val avaiableBalance: Double,
+        val avaiableBalance: Double?,
         @SerializedName("avaiable_for_payout")
-        val avaiableForPayout: Int?,
+        val avaiableForPayout: Double?,
         @SerializedName("processing")
-        val processing: Double
+        val processing: Double?
     )
 }
