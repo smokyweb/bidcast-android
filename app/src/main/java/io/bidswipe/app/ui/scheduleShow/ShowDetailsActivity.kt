@@ -1,8 +1,9 @@
 package io.bidswipe.app.ui.scheduleShow
 
+import android.app.Activity
 import android.content.Intent
-import android.icu.util.TimeZone
 import android.os.Bundle
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
@@ -46,6 +47,14 @@ class ShowDetailsActivity : BaseActivity() {
 
     private var showData: GetShowDetailsResponse.Data?? = null
 
+    private var editShowLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                bind.loader.isVisible=true
+                viewModel.getShowDetails(viewModel.showId.toString())
+            }
+        }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -72,7 +81,7 @@ class ShowDetailsActivity : BaseActivity() {
         }
 
         bind.editShow.setHapticClickListener {
-            startActivity(toScheduleShow(from = "dash", showId = viewModel.showId))
+            editShowLauncher.launch(toScheduleShow(from = "dash", showId = viewModel.showId))
         }
 
         bind.startShow.setHapticClickListener {
@@ -125,6 +134,7 @@ class ShowDetailsActivity : BaseActivity() {
                 showTimer = "",
                 categoryId = showData?.category?.id.toString(),
                 subCategoryId = showData?.subCategoryId.toString(),
+                auctionTypeId = showData?.auctionTypeId,
             )
 
             if (App.PIPMode) {

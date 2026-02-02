@@ -6,6 +6,8 @@ import com.google.gson.annotations.SerializedName
 data class AuctionStartedResponse(
     @SerializedName("auction_started_at")
     val auctionStartedAt: String?,
+    @SerializedName("auction_type_id")
+    val auctionTypeId: Int?,
     @SerializedName("counter_bid_time")
     val counterBidTime: Int?,
     @SerializedName("product")

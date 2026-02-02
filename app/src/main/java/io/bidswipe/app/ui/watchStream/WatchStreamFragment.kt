@@ -61,6 +61,7 @@ import io.bidswipe.app.model.MoreModel
 import io.bidswipe.app.model.PollModel
 import io.bidswipe.app.model.StreamModel
 import io.bidswipe.app.network.Resource
+import io.bidswipe.app.network.response.AuctionType
 import io.bidswipe.app.network.response.GetReportCategoriesResponse
 import io.bidswipe.app.network.response.SellerInfoResponse
 import io.bidswipe.app.network.response.socket.AuctionStartedResponse
@@ -97,7 +98,6 @@ import nl.dionsegijn.konfetti.core.Party
 import nl.dionsegijn.konfetti.core.Position
 import nl.dionsegijn.konfetti.core.emitter.Emitter
 import org.json.JSONObject
-import java.time.Instant
 import java.util.Calendar
 import java.util.concurrent.TimeUnit
 import kotlin.math.abs
@@ -151,6 +151,8 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
     private lateinit var exoPlayer: ExoPlayer
     private lateinit var clipSheetBind: CreateClipSheetBinding
     private lateinit var clipSheet: BottomSheetDialog
+
+    private var liveShowData: LiveShowModel? = null
 
     companion object {
         fun newInstance(roomID: String, streamID: String, thumbnail: String? = null) =
@@ -315,42 +317,12 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
                 handleBidUpdate(json)
             }
 
-            socketManager?.onAuctionStarted { json ->
+            socketManager?.onAuctionStarted { auctionData ->
                 runSafe {
-                    if (json.roomId == roomID) {
+                    if (auctionData.roomId == roomID) {
                         requireActivity().runOnUiThread {
-                            if (json.product != null) {
-                                val startingBidAmount = json.startingBidAmount ?: "0"
-                                isAuctionStarted = true
-                                val status = json.status
-
-                                if (status == "sold") {
-                                    bind.bidLayout.isVisible = false
-                                    bind.soldLayout.isVisible = true
-                                    bind.productLayout.isVisible = false
-                                } else {
-                                    bind.bidLayout.isVisible = true
-                                    bind.soldLayout.isVisible = false
-                                    bind.productLayout.isVisible = true
-                                }
-
-                                if (json.suddenDeath == true) {
-                                    bind.bidTime.setCompoundDrawablesWithIntrinsicBounds(
-                                        R.drawable.skull,
-                                        0,
-                                        0,
-                                        0
-                                    )
-                                } else {
-                                    bind.bidTime.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0)
-                                }
-
-                                updateProductUI(json.product, startingBidAmount)
-                            } else {
-                                isAuctionStarted = false
-                                updateProductUI(null, "0")
-                            }
-
+                            isAuctionStarted = auctionData.product != null
+                            updateProductUI(auctionData)
                         }
                     }
                 }
@@ -383,6 +355,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
                         if (roomID == json.optString("room_id")) {
                             bind.bidTime.isVisible = false
                             bind.soldLayout.isVisible = true
+                            bind.buyNowBtn.isVisible = false
                             bind.bidLayout.isVisible = false
 
                             val bidderName = winner.optString("user_name") ?: ""
@@ -477,9 +450,10 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
             socketManager?.onRoomCreated { showData ->
                 activity?.runOnUiThread {
-                    if (showData.roomId == roomID) {
-                        if (streamID.isEmpty()) {
-                            streamID = showData.rtcToken ?: ""
+                    liveShowData = showData
+                    if (liveShowData?.roomId == roomID) {
+                        if (streamID.isEmpty() || liveShowData?.rtcToken != streamID) {
+                            streamID = liveShowData?.rtcToken ?: ""
                             if (streamID.isNotEmpty()) {
                                 App.manager.joinSubscriberChannel(streamID, roomID)
                                 currentRemoteUid?.let { uid ->
@@ -487,14 +461,13 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
                                 }
                             }
                         }
-
-                        updateSessionUI(showData)
+                        updateSessionUI()
                     } else if (App.categoryList.filter { it?.isSelected == true }.findLast { it?.id.toString() == showData.categoryId } != null) {
                         viewModel.streamsList.value?.add(
                             StreamModel(
-                                showData.roomId.toString(),
-                                showData.rtcToken ?: "",
-                                thumbnail = showData.thumbnail
+                                liveShowData?.roomId.toString(),
+                                liveShowData?.rtcToken ?: "",
+                                thumbnail = liveShowData?.thumbnail
                             )
                         )
                     }
@@ -530,13 +503,20 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
             }
 
             socketManager?.receiveRaid { obj ->
-                requireActivity().runOnUiThread {
-                    if (obj.optString("source_room_id") == roomID) {
-                        val targetRoomId = obj.optString("target_room_id")
-                        val rtcToken = obj.optString("rtcToken")
-                        onRaid(targetRoomId, rtcToken)
+                try {
+                    requireActivity().runOnUiThread {
+                        if (obj.optString("source_room_id") == roomID) {
+                            val message = obj.optString("message")
+                            Alerts.success(mCtx, message)
+                            val targetRoomId = obj.optString("target_room_id")
+                            val rtcToken = obj.optString("rtcToken")
+                            onRaid(targetRoomId, rtcToken)
+                        }
                     }
+                } catch (e: Exception) {
+                    e.printStackTrace()
                 }
+
             }
 
             socketManager?.onVoteErrorResult { obj ->
@@ -954,6 +934,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
     private fun attachAgoraCallbacks() {
         App.manager.onUserJoin = { uId, _ ->
             currentRemoteUid = uId
+            log("ON USER JOIN $uId")
             activity?.runOnUiThread {
                 setupRemoteVideo(uId)
             }
@@ -1121,11 +1102,18 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
     }
 
     private fun setBidText(bidAmount: String?) {
-        bind.bidPrice.text = bidAmount?.asMoney()
-        bind.bidButton.text = buildString {
-            append("Bid : ")
-            append(newBidAmount(bidAmount?.toDoubleOrNull()?.toInt() ?: 0).toString().asMoney())
-            append(" >>")
+        if (liveShowData?.auctionTypeId == AuctionType.BUY_NOW.id) {
+            bind.bidTime.isVisible = false
+            bind.bidPrice.isVisible = false
+        } else {
+            bind.bidTime.isVisible = true
+            bind.bidPrice.isVisible = true
+            bind.bidPrice.text = bidAmount?.asMoney()
+            bind.bidButton.text = buildString {
+                append("Bid : ")
+                append(newBidAmount(bidAmount?.toDoubleOrNull()?.toInt() ?: 0).toString().asMoney())
+                append(" >>")
+            }
         }
     }
 
@@ -1145,28 +1133,14 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
         }
     }
 
-    private fun updateProductUI(liveProduct: AuctionStartedResponse.Product?, bidStartingAmount: String?) {
+    private fun updateProductUI(auctionData: AuctionStartedResponse) {
 
         activity?.runOnUiThread {
-
+            val liveProduct = auctionData.product
+            log("LIVE AUCTZION TYPE ${liveShowData?.auctionTypeId}")
             if (liveProduct != null) {
                 bind.winningLayout.isVisible = false
-
-                if (liveProduct.status == "sold") {
-                    bind.bidLayout.isVisible = false
-                    bind.soldLayout.isVisible = true
-                    bind.productLayout.isVisible = false
-                    bind.status.isVisible = true
-                } else {
-                    bind.status.isVisible = false
-                    bind.bidLayout.isVisible = true
-                    bind.soldLayout.isVisible = false
-                    bind.productLayout.isVisible = true
-                    bind.productAuctionBidLayout.isVisible = true
-                }
-
                 bind.productName.text = liveProduct.title?.asCapital()
-                log("CATEGORY ${liveProduct.category}")
 
                 bind.productCategory.text = liveProduct.category?.name?.asCapital()
                 bind.quantity.text = buildString {
@@ -1187,15 +1161,43 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
                 val price = liveProduct.pricing ?: "0.0"
                 bind.price.text = price.asMoney() + " + Shipping + Taxes"
 
-                highestBidAmount = if (bidStartingAmount == "0") {
+                if (auctionData.auctionTypeId == AuctionType.LIVE.id) {
+                    if (auctionData.suddenDeath == true) {
+                        bind.bidTime.setCompoundDrawablesWithIntrinsicBounds(
+                            R.drawable.skull,
+                            0,
+                            0,
+                            0
+                        )
+                    } else {
+                        bind.bidTime.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0)
+                    }
+                }
+
+                highestBidAmount = if (auctionData.startingBidAmount == "0" || auctionData.auctionTypeId == AuctionType.BUY_NOW.id) {
                     price
                 } else {
-                    bidStartingAmount
+                    auctionData.startingBidAmount
                 }
 
                 bidProductId = liveProduct.id.toString()
 
                 setBidText(highestBidAmount)
+
+                if (auctionData.status == "sold") {
+                    bind.bidLayout.isVisible = false
+                    bind.buyNowBtn.isVisible = false
+                    bind.soldLayout.isVisible = true
+                    bind.productLayout.isVisible = false
+                    bind.status.isVisible = true
+                } else {
+                    bind.status.isVisible = false
+                    bind.bidLayout.isVisible = auctionData.auctionTypeId == AuctionType.LIVE.id
+                    bind.buyNowBtn.isVisible = auctionData.auctionTypeId == AuctionType.BUY_NOW.id
+                    bind.soldLayout.isVisible = false
+                    bind.productLayout.isVisible = true
+                    bind.productAuctionBidLayout.isVisible = true
+                }
 
                 bind.productLayout.setHapticClickListener {
                     startActivity(
@@ -1215,15 +1217,13 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
     }
 
-    private fun updateSessionUI(showData: LiveShowModel) {
+    private fun updateSessionUI() {
         runSafe {
-            log("SESSION UPDATE: $showData")
-
-            if (!showData.isLive) {
+            if (liveShowData?.isLive == false) {
                 bind.notLiveLayout.isVisible = true
                 bind.bottomUI.isVisible = false
                 bind.notesFreebieLayout.isVisible = false
-                checkShowTime((showData.time?.toLong())?.toEpochMillis() ?: Utils.timestamp())
+                checkShowTime((liveShowData?.time?.toLong())?.toEpochMillis() ?: Utils.timestamp())
             } else {
                 bind.notLiveLayout.isVisible = false
                 bind.notesFreebieLayout.isVisible = true
@@ -1232,55 +1232,36 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
             // Mark socket data as loaded and show thumbnail if available
             isSocketDataLoaded = true
-            /*	showThumbnail = showData.thumbnail
-
-                // Display thumbnail if available
-                if (!showThumbnail.isNullOrEmpty()) {
-                    bind.thumbnailView.loadUrl(mCtx, showThumbnail!!)
-                    bind.thumbnailView.isVisible = true
-                }*/
 
             productList.clear()
-            productList.addAll(showData.products)
+            productList.addAll(liveShowData?.products ?: emptyList())
             bind.countBadge.isVisible = true
             bind.countBadge.text = productList.size.toString()
 
-            showData.products.find { it?.isCurrent == true }
+            liveShowData?.products?.find { it?.isCurrent == true }
 
-            if (showData.highestBid.bidAmount?.isNotEmpty() == true) {
-//                highestBidAmount = showData.highestBid.bidAmount
-                log("HIGHEST BID: $highestBidAmount")
-//                setBidText(highestBidAmount)
-            } else {
-//                highestBidAmount = ""
-//                setBidText((liveProduct?.price?.toDoubleOrNull()?.toInt() ?: 0).toString())
-            }
+            isAllowBidForAll = liveShowData?.allowBidForAll ?: true
 
-//            updateProductUI(liveProduct , liveProduct?.price)
+            sellerId = liveShowData?.seller?.id.toString()
 
-            isAllowBidForAll = showData.allowBidForAll ?: true
+            sellerName = liveShowData?.seller?.name.toString()
+            sellerImage = liveShowData?.seller?.image.toString()
 
-            sellerId = showData.seller?.id.toString()
+            bind.userName.text = liveShowData?.seller?.name
+            bind.rating.text = liveShowData?.seller?.rating?.ifEmpty { "0.0" }
 
-            sellerName = showData.seller?.name.toString()
-            sellerImage = showData.seller?.image.toString()
-
-            bind.userName.text = showData.seller?.name
-            bind.rating.text = showData.seller?.rating?.ifEmpty { "0.0" }
-
-            bind.userImage.loadUrl(mCtx, showData.seller?.image ?: "")
-            log("IMAGE ${showData.seller?.image}")
-            bind.liveCount.text = showData.viewerCount
+            if (liveShowData?.seller?.image?.isNotEmpty() == true) bind.userImage.loadUrl(mCtx, liveShowData?.seller?.image ?: "")
+            bind.liveCount.text = liveShowData?.viewerCount
 
             bind.follow.setHapticClickListener {
                 bind.loader.isVisible = true
                 viewModel.followUser(sellerId?.request(), showId.toString().request())
             }
 
-            showId = showData.showId
-            showTitle = showData.showDetail
+            showId = liveShowData?.showId
+            showTitle = liveShowData?.showDetail
             if (showThumbnail?.isEmpty() == true) {
-                showThumbnail = showData.thumbnail
+                showThumbnail = liveShowData?.thumbnail
                 bind.thumbnailView.loadUrl(mCtx, showThumbnail ?: "", R.drawable.placeholder_rect)
             }
 
@@ -1308,6 +1289,22 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
                     // the main view has returned to the default state
                 }
             })
+
+            bind.buyNowBtn.setHapticClickListener {
+                if (App.profileResponse.value?.hasShippingAddress == true && App.profileResponse.value?.hasCardAdded == true) {
+                    if (isAllowBidForAll) {
+                        attemptBid()
+                    } else {
+                        if (App.profileResponse.value?.buyerIdentityStatus == "verified") {
+                            attemptBid()
+                        } else {
+                            verificationDialog()
+                        }
+                    }
+                } else {
+                    showPaymentAndAddressSheet()
+                }
+            }
 
             bind.max.setHapticClickListener {
 
@@ -1339,13 +1336,11 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
                     isAllowBidForAll = allowBidForAll
                 }
             }
-
         }
     }
 
     @SuppressLint("SetTextI18n")
     fun checkShowTime(time: Long) {
-        log("ShowTimeTimestamp: $time--${System.currentTimeMillis()}--${Instant.ofEpochSecond(time).toEpochMilli()}")
         val currentTime = Calendar.getInstance().apply {
             timeInMillis = System.currentTimeMillis()
         }
@@ -1357,14 +1352,8 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
         val isToday = showTime.get(Calendar.DAY_OF_YEAR) == Calendar.getInstance().get(Calendar.DAY_OF_YEAR)
         val isInTheFuture = showTime.after(currentTime)
 
-        log(
-            "IS TODAY $isToday--$isInTheFuture--${showTime.get(Calendar.DAY_OF_YEAR)}==${
-                Calendar.getInstance().get(Calendar.DAY_OF_YEAR)
-            }\n ${currentTime.timeInMillis - showTime.timeInMillis}"
-        )
         if (isToday && isInTheFuture) {
             val timeDiffInMillis = showTime.timeInMillis - currentTime.timeInMillis
-            log("TIME DIFF $timeDiffInMillis")
             if (timeDiffInMillis <= 900000) {
                 startCountdown(timeDiffInMillis, time)
             } else {
@@ -1427,7 +1416,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
                     "Become a Verified Buyer!"
                 }
             },
-            "Before you interact with lives shows, You need to become a Verified Buyer.",
+            "Before you interact with live shows, You need to become a Verified Buyer.",
             primaryBtnText = "Okay",
             secondaryBtnText = "Cancel",
             canCancel = true,
@@ -1454,8 +1443,6 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
     fun attemptBid() {
         runSafe {
-            log("SWIPED")
-
             val bidAmount = newBidAmount(highestBidAmount?.toDouble()?.toInt() ?: 0).toString()
 
             socketManager?.emitBid(
@@ -1464,18 +1451,11 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
                 userName = userName,
                 userImage = userImage,
                 productId = bidProductId,
-                bidAmount = bidAmount
+                bidAmount = bidAmount,
+                auctionTypeId = liveShowData?.auctionTypeId
             )
 
-//            sendZimMessage("New high bid: $$bidAmount")
             Alerts.success(mCtx, "Bid placed successfully")
-            /*	socketManager?.sendMessage(
-                    roomID,
-                    "New high bid: $$bidAmount",
-                    userId,
-                    userName,
-                    userImage
-                )*/
             bind.bidSwipeLayout.close()
 
         }
@@ -1592,7 +1572,8 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
                     userName = userName,
                     userImage = userImage,
                     productId = bidProductId,
-                    bidAmount = priceText
+                    bidAmount = priceText,
+                    auctionTypeId = liveShowData?.auctionTypeId
                 )
                 Alerts.success(mCtx, "Bid placed successfully")
 
@@ -1607,7 +1588,6 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
     private fun updateCountdown(json: JSONObject) {
         val value = json.optString("remaining")
         runSafe {
-            log("BID COUNTDOWN: $value")
             requireActivity().runOnUiThread {
                 if (json.optString("room_id") == roomID) {
                     bind.bidTime.isVisible = true
@@ -1753,8 +1733,11 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
                 clearRemoteVideo()
                 roomID = targetRoomId
                 streamID = rtcToken
-
+                App.manager.leaveChannel()
                 App.manager.joinSubscriberChannel(streamID, roomID)
+                currentRemoteUid?.let { uid ->
+                    setupRemoteVideo(uid)
+                }
 
                 socketManager?.joinRoom(roomID, userId) {
                     socketManager?.sendMessage(
@@ -1863,9 +1846,6 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
     }
 
     private fun showPollDetailsSheet() {
-
-        log("SHOW POLL DETAILS")
-
         pollSheetBinding = PollDetailsSheetBinding.bind(
             layoutInflater.inflate(
                 R.layout.poll_details_sheet,
@@ -2076,7 +2056,6 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
             bind.profileLayout.isVisible = false
             bind.bottomUI.isVisible = false
             bind.notesFreebieLayout.isVisible = false
-            log("PIP MODE ON")
         } else {
             App.PIPMode = false
             bind.profileLayout.isVisible = true
@@ -2085,7 +2064,6 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
             ProductDetailsActivity.instance?.finish()
 
-            log("PIP MODE OFF")
         }
     }
 
@@ -2178,10 +2156,9 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
         mBind.reason.setAdapter(reportCategoryAdapter)
         val reportDrawable = ContextCompat.getDrawable(mCtx, R.drawable.card_8)
         mBind.reason.setDropDownBackgroundDrawable(reportDrawable)
-
+        var reasonId = ""
         mBind.reason.setOnItemClickListener { _, _, position, _ ->
-            val selectedProcessingCategory = data[position]
-            log("Selected processing category: $selectedProcessingCategory")
+            reasonId = data[position]?.id.toString()
         }
 
         mBind.reason.setHapticClickListener {
@@ -2199,9 +2176,6 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
                 Alerts.error(mCtx, "Please tell us more")
                 return@setHapticClickListener
             }
-
-            val reasonId =
-                data.find { it?.name?.asCapital() == mBind.reason.text.toString() }?.id.toString()
 
             bind.loader.isVisible = true
             viewModel.reportSeller(

@@ -33,6 +33,7 @@ import io.bidswipe.app.databinding.FragmentProductsForLiveShowBinding
 import io.bidswipe.app.interfaces.AlertClicks
 import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.network.Resource
+import io.bidswipe.app.network.response.AuctionType
 import io.bidswipe.app.network.response.Product
 import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.ui.dashboard.DashViewModel
@@ -69,13 +70,14 @@ class ProductsForLiveShowFragment : BottomSheetDialogFragment() {
     private var socketManager: SocketManager? = null
 
     var from = "live_show"
+    var auctionTypeId = AuctionType.LIVE.id
 
     private var addProductLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             Log.d("TAG", "CALLL RESULT")
             if (result.resultCode == Activity.RESULT_OK) {
-               page =1
-                loadData()
+                page = 1
+                loadData(1)
             }
         }
 
@@ -83,7 +85,7 @@ class ProductsForLiveShowFragment : BottomSheetDialogFragment() {
         val dialog = super.onCreateDialog(savedInstanceState) as BottomSheetDialog
         dialog.setOnShowListener { dialogInterface ->
             val bottomSheetDialog = dialogInterface as BottomSheetDialog
-            val bottomSheet =  bottomSheetDialog.findViewById<View>(
+            val bottomSheet = bottomSheetDialog.findViewById<View>(
                 com.google.android.material.R.id.design_bottom_sheet
             ) as FrameLayout?
 
@@ -99,7 +101,7 @@ class ProductsForLiveShowFragment : BottomSheetDialogFragment() {
                 it.layoutParams = layoutParams
                 val behavior = BottomSheetBehavior.from(it)
                 behavior.state = BottomSheetBehavior.STATE_EXPANDED
-                behavior.skipCollapsed=true
+                behavior.skipCollapsed = true
             }
 
         }
@@ -120,10 +122,17 @@ class ProductsForLiveShowFragment : BottomSheetDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        saleType = "auction"
-
         if (arguments != null) {
             from = arguments?.getString("from") ?: "live_show"
+            auctionTypeId = arguments?.getInt("auction_type_id") ?: AuctionType.LIVE.id
+        }
+
+        if (auctionTypeId == AuctionType.BUY_NOW.id) {
+            type = "buy_now"
+            saleType = ""
+        } else {
+            saleType = "auction"
+            type = ""
         }
 
         if (from == "freebie") {
@@ -138,7 +147,7 @@ class ProductsForLiveShowFragment : BottomSheetDialogFragment() {
                 Utils.makeAChip(
                     mCtx,
                     text = "Auction",
-                    selected = false,
+                    selected = auctionTypeId == AuctionType.LIVE.id,
                     closeIconVisible = false
                 )
             )
@@ -146,7 +155,7 @@ class ProductsForLiveShowFragment : BottomSheetDialogFragment() {
                 Utils.makeAChip(
                     mCtx,
                     text = "Buy Now",
-                    selected = false,
+                    selected = auctionTypeId == AuctionType.BUY_NOW.id,
                     closeIconVisible = false
                 )
             )
@@ -172,8 +181,8 @@ class ProductsForLiveShowFragment : BottomSheetDialogFragment() {
                 runSafe {
                     val chipId = chipGroup.checkedChipId
                     val index = chipGroup.indexOfChild(chipGroup.findViewById(chipId))
-//                    bind.loader.isVisible = true
 
+                    Log.d("TAG", "onViewCreated: AUCTION $auctionTypeId--$saleType--$index")
                     when (index) {
                         0 -> {
                             saleType = "auction"
@@ -203,7 +212,7 @@ class ProductsForLiveShowFragment : BottomSheetDialogFragment() {
                     }
 
                     page = 1
-                    loadData()
+                    loadData(2)
                 }
             }
         }
@@ -270,7 +279,7 @@ class ProductsForLiveShowFragment : BottomSheetDialogFragment() {
                         isLoading = true
                         page++
                         bind.bottomLoader.isVisible = true
-                        loadData()
+                        loadData(3)
                     }
                 }
             }
@@ -285,7 +294,7 @@ class ProductsForLiveShowFragment : BottomSheetDialogFragment() {
 
                 bind.bottomLoader.isVisible = true
                 page = 1
-                loadData()
+                loadData(4)
             }
         })
 
@@ -340,15 +349,23 @@ class ProductsForLiveShowFragment : BottomSheetDialogFragment() {
                     if (productList[pos]?.status == "sold") {
                         Alerts.error(mCtx, "This product is already sold")
                     } else if (status == "start_auction") {
-                        auctionSettingsSheet(selectedProduct?.id.toString(), selectedProduct?.pricing ?: "")
+                        if (auctionTypeId == AuctionType.LIVE.id) {
+                            auctionSettingsSheet(selectedProduct?.id.toString(), selectedProduct?.pricing ?: "")
+
+                        } else {
+                            socketManager?.startAuction(
+                                viewModel.currentRoomId,
+                                listOf(selectedProduct?.id.toString()),
+                                selectedProduct?.pricing ?: "0.0",
+                                null, null, null,
+                                auctionTypeId
+                            )
+                            dismiss()
+                        }
+
                     } else if (status == "set_next") {
                         selectedPos = pos
                         socketManager?.pinProduct(roomId = viewModel.currentRoomId, productId = selectedProduct?.id.toString())
-//                            productList.forEachIndexed { index, item ->
-//                                item?.selected = index == pos
-//                                bind.recycler.adapter?.notifyDataSetChanged()
-//                            }
-//                            selectedPos = pos
                     } else if (status == "freebie") {
                         productList.forEachIndexed { index, item ->
                             item?.selected = index == pos
@@ -379,15 +396,16 @@ class ProductsForLiveShowFragment : BottomSheetDialogFragment() {
                 socketManager?.createFreebie(roomId = viewModel.currentRoomId, productId = selectedProduct?.id.toString(), time = "1")
                 dismiss()
 
-
             } else {
-                addProductLauncher.launch( mCtx.toListProduct().putExtra("category" , viewModel.categoryId))
+                addProductLauncher.launch(mCtx.toListProduct().putExtra("category", viewModel.categoryId))
             }
         }
 
     }
 
-    private fun loadData() {
+    private fun loadData(call: Int) {
+        Log.d("TAG", "$call loadData: $saleType")
+        bind.bottomLoader.isVisible = true
         viewModel.getUserProducts(
             page = page.toString().request(),
             saleType = saleType.ifEmpty { null }?.request(),
@@ -458,9 +476,9 @@ class ProductsForLiveShowFragment : BottomSheetDialogFragment() {
 
         auctionSettingsSheetBind.close.setHapticClickListener { sheet.dismiss() }
 
-        auctionSettingsSheetBind.suddenDeath.setOnCheckedChangeListener { _,v->
-            auctionSettingsSheetBind.counterTimerLayout.isVisible=!v
-            if(v) selectedCounterTimer=0
+        auctionSettingsSheetBind.suddenDeath.setOnCheckedChangeListener { _, v ->
+            auctionSettingsSheetBind.counterTimerLayout.isVisible = !v
+            if (v) selectedCounterTimer = 0
         }
 
         auctionSettingsSheetBind.start.setHapticClickListener {
@@ -491,7 +509,8 @@ class ProductsForLiveShowFragment : BottomSheetDialogFragment() {
                         auctionSettingsSheetBind.startingBid.value(),
                         selectedRequiredTime,
                         selectedCounterTimer,
-                        auctionSettingsSheetBind.suddenDeath.isChecked
+                        auctionSettingsSheetBind.suddenDeath.isChecked,
+                        auctionTypeId
                     )
                     sheet.dismiss()
                     dismiss()

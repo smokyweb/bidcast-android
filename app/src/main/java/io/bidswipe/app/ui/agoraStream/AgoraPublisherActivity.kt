@@ -74,6 +74,7 @@ import io.bidswipe.app.model.LiveShowModel
 import io.bidswipe.app.model.PollModel
 import io.bidswipe.app.model.PollOptionModel
 import io.bidswipe.app.network.Resource
+import io.bidswipe.app.network.response.AuctionType
 import io.bidswipe.app.network.response.GetLiveSellerResponse
 import io.bidswipe.app.network.response.GetPromotePlansResponse
 import io.bidswipe.app.network.response.socket.AuctionStartedResponse
@@ -701,21 +702,10 @@ class AgoraPublisherActivity : BaseActivity() {
                         if (json.product != null) {
                             isAuctionStarted = true
                             bind.runNext.isVisible = json.status == "sold"
-                            if (json.suddenDeath == true) {
-                                bind.bidTime.setCompoundDrawablesWithIntrinsicBounds(
-                                    R.drawable.skull,
-                                    0,
-                                    0,
-                                    0
-                                )
-                            } else {
-                                bind.bidTime.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0)
-                            }
-
-                            updateProductUI(json.product, json.startingBidAmount)
+                            updateProductUI(json)
                         } else {
                             isAuctionStarted = false
-                            updateProductUI(null, startingBidAmount = "0")
+                            updateProductUI(null)
                         }
                     }
                 }
@@ -727,9 +717,20 @@ class AgoraPublisherActivity : BaseActivity() {
                 if (json.optString("room_id") == roomID) {
                     runOnUiThread {
                         if (json.has("product") && json.optJSONObject("product") != null) {
-                            val product =
-                                LiveShowModel.Product.fromJson(json.optJSONObject("product"))
-                            auctionSettingsSheet(product.id.toString(), product.price.toString())
+                            val product = LiveShowModel.Product.fromJson(json.optJSONObject("product"))
+                            if (liveShowData?.auctionTypeId == AuctionType.BUY_NOW.id) {
+                                socketManager?.startAuction(
+                                    viewModel.currentRoomId,
+                                    listOf(product.id.toString()),
+                                    product.price.toString(),
+                                    null,
+                                    null,
+                                    null,
+                                    liveShowData?.auctionTypeId
+                                )
+                            } else {
+                                auctionSettingsSheet(product.id.toString(), product.price.toString())
+                            }
                         } else {
                             showProductSheet()
                         }
@@ -1096,21 +1097,23 @@ class AgoraPublisherActivity : BaseActivity() {
     }
 
     private fun showProductSheet() {
-        val bottomSheetFragment = ProductsForLiveShowFragment()
+        val bottomSheetFragment = ProductsForLiveShowFragment().apply {
+            arguments = bundleOf("from" to "live_show", "auction_type_id" to liveShowData?.auctionTypeId)
+        }
         bottomSheetFragment.show(supportFragmentManager, "BOTTOM_SHEET_TAG")
     }
 
     private fun showFreebieStartSheet() {
         val bottomSheetFragment = ProductsForLiveShowFragment().apply {
-            arguments = bundleOf("from" to "freebie")
+            arguments = bundleOf("from" to "freebie", "auction_type_id" to liveShowData?.auctionTypeId)
         }
         bottomSheetFragment.show(supportFragmentManager, "BOTTOM_SHEET_TAG")
     }
 
-    fun updateProductUI(liveProduct: AuctionStartedResponse.Product?, startingBidAmount: String?) {
+    fun updateProductUI(auctionData: AuctionStartedResponse?) {
 
         runOnUiThread {
-
+            val liveProduct = auctionData?.product
             if (liveProduct != null) {
                 log("updateProductUI : $liveProduct")
                 bind.product.isVisible = true
@@ -1133,11 +1136,25 @@ class AgoraPublisherActivity : BaseActivity() {
                     }
                 }
 
+                if (auctionData.auctionTypeId == AuctionType.LIVE.id) {
+                    if (auctionData.suddenDeath == true) {
+                        bind.bidTime.setCompoundDrawablesWithIntrinsicBounds(
+                            R.drawable.skull,
+                            0,
+                            0,
+                            0
+                        )
+                    } else {
+                        bind.bidTime.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0)
+                    }
+                }
+
                 bind.price.text = (liveProduct.pricing ?: "0.0").asMoney() + " + Shipping + Taxes"
 
-                val price = startingBidAmount
+                val price = auctionData.startingBidAmount
+                bind.bidPrice.isVisible = auctionData.auctionTypeId == AuctionType.LIVE.id
                 bind.bidPrice.text = price?.asMoney()
-                bind.status.isVisible = false
+                bind.status.isVisible = auctionData.status=="sold"
 
             } else {
                 bind.product.isVisible = false
@@ -1151,7 +1168,7 @@ class AgoraPublisherActivity : BaseActivity() {
         runSafe {
             this.runOnUiThread {
                 if (json.optString("room_id") == roomID) {
-                    bind.bidTime.isVisible = value.toInt()!=0
+                    bind.bidTime.isVisible = value.toInt() != 0
                     log("BID TIMER UPDATE : $value")
                     val color = if (value.toInt() <= 10) {
                         ContextCompat.getColor(this@AgoraPublisherActivity, R.color.error)
@@ -1596,7 +1613,8 @@ class AgoraPublisherActivity : BaseActivity() {
                         auctionSettingsSheetBind.startingBid.value(),
                         selectedRequiredTime,
                         selectedCounterTimer,
-                        auctionSettingsSheetBind.suddenDeath.isChecked
+                        auctionSettingsSheetBind.suddenDeath.isChecked,
+                        liveShowData?.auctionTypeId
                     )
                     sheet.dismiss()
 

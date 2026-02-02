@@ -10,7 +10,7 @@ import java.lang.reflect.Type
 
 data class NotLiveShowResponse(
     @SerializedName("auction_type_id")
-    val auctionTypeId: Int?,
+    val auctionTypeId: Int?=0,
     @SerializedName("category_id")
     val categoryId: Int?,
     @SerializedName("created_at")

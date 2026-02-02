@@ -240,6 +240,7 @@ class AddProductFragment : BaseFragment<ScheduleShowViewModel, FragmentAddProduc
 					bind.loader.isVisible = false
 					val data = it.value.data
 					log("SHOW DATA Before Start Show: $data")
+					activity?.setResult(Activity.RESULT_OK)
 					finish()
 				}
 

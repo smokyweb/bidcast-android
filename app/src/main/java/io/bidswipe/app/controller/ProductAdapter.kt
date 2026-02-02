@@ -29,16 +29,6 @@ class ProductAdapter(
 		item: Product?,
 	) {
 		with(holder) {
-
-			bind.productName.text = item?.title?.asCapital()
-
-			bind.prodSubTitle.text = item?.category?.name
-			bind.quantity.text = buildString {
-				append("Quantity: ")
-				append(item?.quantity)
-			}
-			bind.img.loadUrl(mCtx, item?.images?.get(0) ?: "")
-
 			val wrapper = ContextThemeWrapper(mCtx, R.style.popupMenuStyle)
 			val menu = PopupMenu(
 				wrapper,
@@ -67,6 +57,16 @@ class ProductAdapter(
 			bind.moreMenu.setHapticClickListener {
 				menu.show()
 			}
+
+			bind.productName.text = item?.title?.asCapital()
+
+			bind.prodSubTitle.text = item?.category?.name
+			bind.quantity.text = buildString {
+				append("Quantity: ")
+				append(item?.quantity)
+			}
+			
+			bind.img.loadUrl(mCtx, item?.images?.first() ?: "")
 
 		}
 	}

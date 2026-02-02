@@ -26,6 +26,7 @@ data class LiveShowModel(
 	val counterBidTime: Long?=null,
 	val suddenDeath: Boolean?=null,
 	val subCategoryId: String? = null,
+	val auctionTypeId: Int? = 0,
 ) : Serializable {
 	companion object {
 		fun fromJson(json: JSONObject) = LiveShowModel(
@@ -49,13 +50,14 @@ data class LiveShowModel(
 			bidCountDown = json.optString("bid_count_down", null),
 			showTimer = json.optString("show_timer", null),
 			categoryId = json.optString("category_id", null),
-			maxViewerCount = json.optString("max_viewer_count", null), 
-			rtcToken = json.optString("rtc_token", null), 
-			startingBidAmount = json.optDouble("starting_bid_amount", 0.0), 
-			requireTime = json.optLong("require_time", 0), 
-			counterBidTime = json.optLong("counter_bid_time", 0), 
+			maxViewerCount = json.optString("max_viewer_count", null),
+			rtcToken = json.optString("rtc_token", null),
+			startingBidAmount = json.optDouble("starting_bid_amount", 0.0),
+			requireTime = json.optLong("require_time", 0),
+			counterBidTime = json.optLong("counter_bid_time", 0),
 			suddenDeath = json.optBoolean("sudden_death", false) ,
 			subCategoryId = json.optString("sub_category_id", null) ,
+			auctionTypeId = json.optInt("auction_type_id", 0) ,
 		)
 	}
 
@@ -184,13 +186,14 @@ data class LiveShowModel(
 		put("bid_count_down", bidCountDown)
 		put("show_timer", showTimer)
 		put("category_id", categoryId)
-		put("max_viewer_count", maxViewerCount) 
-		put("rtc_token", rtcToken) 
-		put("starting_bid_amount", startingBidAmount) 
-		put("require_time", requireTime) 
-		put("counter_bid_time", counterBidTime) 
-		put("sudden_death", suddenDeath) 
+		put("max_viewer_count", maxViewerCount)
+		put("rtc_token", rtcToken)
+		put("starting_bid_amount", startingBidAmount)
+		put("require_time", requireTime)
+		put("counter_bid_time", counterBidTime)
+		put("sudden_death", suddenDeath)
 		put("sub_category_id", subCategoryId)
+		put("auction_type_id", auctionTypeId)
 	}
 }
 

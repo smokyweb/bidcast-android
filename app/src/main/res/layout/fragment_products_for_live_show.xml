@@ -6,79 +6,82 @@
     android:layout_height="match_parent"
     android:background="@drawable/bottom_sheet_back"
     android:backgroundTint="@color/surface"
+    android:padding="@dimen/margin"
     tools:context=".ui.agoraStream.ProductsForLiveShowFragment">
 
     <LinearLayout
+        android:id="@+id/linearLayout4"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:padding="@dimen/margin"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
         app:layout_constraintTop_toTopOf="parent">
 
-        <LinearLayout
+        <TextView
+            android:id="@+id/title"
+            style="@style/TitleLarge"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/select_next_product_for_auction" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/close"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:alpha="0.7"
+            android:padding="12dp"
+            android:src="@drawable/ic_close"
+            app:tint="@color/tertiary" />
+
+    </LinearLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/searchLayout"
+        style="@style/inputBoxStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:boxStrokeWidth="2dp"
+        app:endIconMode="custom"
+        app:endIconTint="@color/scrim"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout4"
+        app:startIconDrawable="@drawable/search">
+
+        <com.google.android.material.textfield.MaterialAutoCompleteTextView
+            android:id="@+id/search"
+            style="@style/inputTextStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:orientation="horizontal">
+            android:hint="@string/search_products"
+            android:inputType="textEmailAddress" />
 
-            <TextView
-                android:id="@+id/title"
-                style="@style/TitleLarge"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/select_next_product_for_auction" />
+    </com.google.android.material.textfield.TextInputLayout>
 
-            <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/close"
-                android:layout_width="44dp"
-                android:layout_height="44dp"
-                android:alpha="0.7"
-                android:padding="12dp"
-                android:src="@drawable/ic_close"
-                app:tint="@color/tertiary" />
+    <HorizontalScrollView
+        android:id="@+id/chipGroupScroll"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/searchLayout"
+        android:layout_margin="@dimen/margin"
+        android:scrollbars="none">
 
-        </LinearLayout>
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/searchLayout"
-            style="@style/inputBoxStyle"
-            android:layout_width="match_parent"
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/chipGroup"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:boxStrokeWidth="2dp"
-            app:endIconMode="custom"
-            app:endIconTint="@color/scrim"
-            app:layout_constraintTop_toBottomOf="@id/divider"
-            app:startIconDrawable="@drawable/search">
+            app:singleLine="true"
+            app:selectionRequired="true"
+            app:singleSelection="true" />
 
-            <com.google.android.material.textfield.MaterialAutoCompleteTextView
-                android:id="@+id/search"
-                style="@style/inputTextStyle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="@string/search_products"
-                android:inputType="textEmailAddress" />
+    </HorizontalScrollView>
 
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <HorizontalScrollView
-            android:id="@+id/chipGroupScroll"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/margin"
-            android:scrollbars="none">
-
-            <com.google.android.material.chip.ChipGroup
-                android:id="@+id/chipGroup"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:singleLine="true"
-                app:selectionRequired="true"
-                app:singleSelection="true" />
-
-        </HorizontalScrollView>
-
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toTopOf="@id/addBtn"
+        android:paddingVertical="@dimen/margin"
+        app:layout_constraintTop_toBottomOf="@+id/chipGroupScroll">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycler"
@@ -97,8 +100,8 @@
             android:id="@+id/noDataView"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:visibility="gone"
             android:layout_weight="1"
+            android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toBottomOf="@id/chipGroupScroll"
             app:title_text="No Products Found!" />
@@ -112,15 +115,21 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toBottomOf="@id/recycler" />
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/addBtn"
-            style="@style/appBtn"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginVertical="@dimen/margin"
-            android:text="Add Product"
-            app:layout_constraintBottom_toBottomOf="parent" />
-
     </LinearLayout>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/addBtn"
+        style="@style/appBtn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin"
+        android:text="Add Product"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+    <io.bidswipe.app.ui.custom.LoaderView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        id="@+id/loader"
+        android:visibility="gone"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

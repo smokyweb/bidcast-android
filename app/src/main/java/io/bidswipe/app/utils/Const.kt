@@ -35,6 +35,7 @@ object Const {
 
     const val SERVER_TIME_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
     const val DD_MM_YYYY_HH_MM_SS = "dd-MM-yyyy HH:mm:ss"
+    const val YYYY_MM_DD_HH_MM_SS = "yyyy-MM-dd HH:mm:ss"
     const val DD_MMMM_YYYY = "dd MMMM yyyy"
     const val MMM_dd_yyyy_HH_mm = "MMM dd, yyyy • HH:mm"
 

@@ -170,6 +170,7 @@ class SocketManager private constructor(
                         bidCountDown = "",
                         showTimer = "",
                         categoryId = shoDataNotLive?.categoryId.toString(),
+                        auctionTypeId = shoDataNotLive.auctionTypeId
                     )
                     listener(showData)       
                 } else {
@@ -242,7 +243,8 @@ class SocketManager private constructor(
         userName: String,
         userImage: String,
         productId: String?,
-        bidAmount: String
+        bidAmount: String?,
+        auctionTypeId:Int?
     ) {
         val payload = JSONObject().apply {
             put("room_id", roomId)
@@ -251,6 +253,7 @@ class SocketManager private constructor(
             put("user_image", userImage)
             put("user_id", userId)
             put("product_id", productId)
+            put("auction_type_id", auctionTypeId)
         }
 
         Log.d(
@@ -625,9 +628,10 @@ class SocketManager private constructor(
         roomId: String,
         productIds: List<String>,
         startingBidAmount: String,
-        requireTime: Int,
-        counterBidTime: Int,
-        suddenDeath: Boolean
+        requireTime: Int?,
+        counterBidTime: Int?,
+        suddenDeath: Boolean?,
+        auctionTypeId:Int?
     ) {
         val payload = JSONObject().apply {
             put("room_id", roomId)
@@ -636,6 +640,7 @@ class SocketManager private constructor(
             put("require_time", requireTime)
             put("counter_bid_time", counterBidTime)
             put("sudden_death", suddenDeath)
+            put("auction_type_id", auctionTypeId)
         }
 
         Log.d(TAG, "startAuction: ${payload}")

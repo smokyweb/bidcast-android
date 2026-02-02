@@ -161,4 +161,5 @@ class UpdateAccountActivity : BaseActivity() {
         bind.bio.setText(mData.bio)
         bind.userProfile.loadUrl(this, mData.profileImage ?: "")
     }
+
 }

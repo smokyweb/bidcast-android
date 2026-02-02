@@ -591,6 +591,17 @@
                             android:textColor="@color/background"
                             android:visibility="gone"/>
 
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/buy_now_btn"
+                            style="@style/appBtn"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="@dimen/margin"
+                            android:layout_marginHorizontal="@dimen/margin"
+                            android:text="Buy Now"
+                            android:visibility="gone"
+                            app:cornerRadius="28dp" />
+
                         <LinearLayout
                             android:id="@+id/bidLayout"
                             android:layout_width="match_parent"

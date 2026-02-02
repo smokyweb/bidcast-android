@@ -11,6 +11,7 @@ import io.bidswipe.app.base.BaseAdapter
 import io.bidswipe.app.databinding.PurchasesItemBinding
 import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.network.response.GetProductsByStatusResponse
+import io.bidswipe.app.utils.Const
 import io.bidswipe.app.utils.Utils
 import io.bidswipe.app.utils.asCapital
 import io.bidswipe.app.utils.asMoney
@@ -67,7 +68,7 @@ class PurchasesAdapter(
 				append("Purchased: ")
 				append(
 					Utils.getFormattedDateTime(
-						"yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'",
+						Const.YYYY_MM_DD_HH_MM_SS,
 						"MM/dd/yy",
 						item?.createdAt.toString()
 					)

@@ -23,3 +23,14 @@ data class GetAuctionTypeResponse(
 		val name : String? ,
 	)
 }
+
+enum class AuctionType(val id: Int, val displayName: String) {
+
+	BUY_NOW(5, "Buy Now Auction"),
+	LIVE(8, "Live Auction"),
+	SPORTS_CARD_BREAK(9, "Sports Card Break Auction");
+
+	companion object {
+		fun fromId(id: Int): AuctionType? = entries.find { it.id == id }
+	}
+}
