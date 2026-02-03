@@ -329,33 +329,15 @@ class ProductsForLiveShowFragment : BottomSheetDialogFragment() {
             }
         }
 
-        bind.recycler.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                super.onScrolled(recyclerView, dx, dy)
-                val layoutManager = bind.recycler.layoutManager as LinearLayoutManager
-                val lastItemPosition = layoutManager.findLastVisibleItemPosition()
-                if (lastItemPosition == (productList.size - 1)) {
-                    if (!isLoading) {
-                        isLoading = true
-                        page++
-                        bind.bottomLoader.isVisible = true
-                        loadData(3)
-                    }
-                }
-            }
-        })
-
-        bind.surpriseRecycler.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                super.onScrolled(recyclerView, dx, dy)
-                val layoutManager = bind.surpriseRecycler.layoutManager as LinearLayoutManager
-                val lastItemPosition = layoutManager.findLastVisibleItemPosition()
-                if (lastItemPosition == (surpriseProductList.size - 1)) {
-                    if (!surpriseIsLoading) {
-                        surpriseIsLoading = true
-                        surprisePage++
-                        bind.surpriseBottomLoader.isVisible = true
-                        loadSurpriseSets()
+        viewModel.getSurpriseProductRepo.observe(viewLifecycleOwner) {
+            when (it) {
+                is Resource.Success -> {
+                    bind.loader.isVisible = false
+                    bind.surpriseBottomLoader.isVisible = false
+                    bind.switcher.showPrevious()
+                    val mData = it.value.data
+                    if (surprisePage == 1) {
+                        surpriseProductList.clear()
                     }
                 }
             }
@@ -456,19 +438,6 @@ class ProductsForLiveShowFragment : BottomSheetDialogFragment() {
 
         bind.recycler.adapter = productAdapter
 
-        surpriseProductAdapter = SurpriseProductAdapter(
-            from = from,
-            mList = surpriseProductList,
-            object : RecyclerClicks {
-                @SuppressLint("NotifyDataSetChanged")
-                override fun itemClick(pos: Int, status: String?) {
-
-                }
-
-            })
-
-        bind.surpriseRecycler.adapter = surpriseProductAdapter
-
         bind.close.setHapticClickListener {
             dismiss()
         }
@@ -486,12 +455,7 @@ class ProductsForLiveShowFragment : BottomSheetDialogFragment() {
                 dismiss()
 
             } else {
-                if (chipIndex == 4) {
-                    addProductLauncher.launch(mCtx.toListProduct().putExtra("from", "surprise"))
-                } else {
-                    addProductLauncher.launch(mCtx.toListProduct().putExtra("category", viewModel.categoryId))
-                }
-
+                addProductLauncher.launch(mCtx.toListProduct().putExtra("category", viewModel.categoryId))
             }
         }
 
@@ -508,11 +472,6 @@ class ProductsForLiveShowFragment : BottomSheetDialogFragment() {
             search = bind.search.value().ifEmpty { null }?.request(),
             categoryIds = viewModel.categoryId.request()
         )
-    }
-
-    private fun loadSurpriseSets() {
-        bind.loader.isVisible = true
-        viewModel.getSurpriseProduct()
     }
 
     override fun onDestroyView() {
