@@ -27,9 +27,9 @@ class MoreActivity : BaseActivity() {
 			bind.root.setPadding(0, system.top, 0, system.bottom)
 			CONSUMED
 		}
-		navHostFragment =
-			supportFragmentManager.findFragmentById(R.id.fragmentContainer) as NavHostFragment
+		navHostFragment = supportFragmentManager.findFragmentById(R.id.fragmentContainer) as NavHostFragment
 		navController = navHostFragment.findNavController()
+
 		val navGraph = navController.navInflater.inflate(R.navigation.more_graph)
 		
 		val slug = intent.getStringExtra("slug").toString()

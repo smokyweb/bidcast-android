@@ -429,6 +429,7 @@ class AgoraPublisherActivity : BaseActivity() {
         }
 
         bind.shop.setHapticClickListener {
+            showProductSheet()
             if (isShowLive) {
                 showProductSheet()
             } else {

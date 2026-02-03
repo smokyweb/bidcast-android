@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.bidswipe.app.model.MediaItem
-import io.bidswipe.app.model.StoreProductRequest
+import io.bidswipe.app.network.request.StoreProductRequest
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.network.repository.DashRepository
 import io.bidswipe.app.network.response.CheckScheduleShowResponse

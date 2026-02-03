@@ -1,7 +1,6 @@
-package io.bidswipe.app.model
+package io.bidswipe.app.network.request
 
 import androidx.annotation.Keep
-import androidx.navigation.NavType
 import com.google.gson.annotations.SerializedName
 
 @Keep

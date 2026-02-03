@@ -91,7 +91,6 @@ class PremierShopFragment : BaseFragment<SellerHubViewModel, FragmentPremierShop
 		bind.loader.isVisible = true
 		viewModel.getPremierShop()
 		viewModel.getPremierShopRepo.observe(viewLifecycleOwner) {
-
 			when (it) {
 				is Resource.Success -> {
 
@@ -112,7 +111,6 @@ class PremierShopFragment : BaseFragment<SellerHubViewModel, FragmentPremierShop
 					}
 					gridAdapter.notifyDataSetChanged()
 					reqAdapter.notifyDataSetChanged()
-
 
 					val ratingProg = (mData?.shopOptions?.rating ?: 0.0)
 					val responseProg = (mData?.shopOptions?.response?.replace("%", "") ?: "0").toInt()

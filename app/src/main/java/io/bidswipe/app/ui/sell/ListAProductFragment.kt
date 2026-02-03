@@ -28,7 +28,7 @@ import io.bidswipe.app.databinding.FragmentListAProductBinding
 import io.bidswipe.app.interfaces.AlertClicks
 import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.model.MediaItem
-import io.bidswipe.app.model.StoreProductRequest
+import io.bidswipe.app.network.request.StoreProductRequest
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.network.response.GetCategoryResponse
 import io.bidswipe.app.network.response.GetMailClassesResponse

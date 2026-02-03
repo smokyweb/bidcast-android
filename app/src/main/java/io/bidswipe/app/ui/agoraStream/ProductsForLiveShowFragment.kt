@@ -28,12 +28,14 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
 import io.bidswipe.app.R
 import io.bidswipe.app.controller.FirebaseProductAdapter
+import io.bidswipe.app.controller.SurpriseProductAdapter
 import io.bidswipe.app.databinding.AuctionSettingsSheetBinding
 import io.bidswipe.app.databinding.FragmentProductsForLiveShowBinding
 import io.bidswipe.app.interfaces.AlertClicks
 import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.network.response.AuctionType
+import io.bidswipe.app.network.response.GetSurpriseProductsResponse
 import io.bidswipe.app.network.response.Product
 import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.ui.dashboard.DashViewModel
@@ -53,7 +55,10 @@ class ProductsForLiveShowFragment : BottomSheetDialogFragment() {
 
     private lateinit var productAdapter: FirebaseProductAdapter
     private var productList = mutableListOf<Product?>()
-
+    private var surpriseProductList = mutableListOf<GetSurpriseProductsResponse.Data?>()
+    private lateinit var surpriseProductAdapter: SurpriseProductAdapter
+    private var surprisePage = 1
+    private var surpriseIsLoading = false
     private lateinit var mCtx: Context
 
     private var _binding: FragmentProductsForLiveShowBinding? = null
@@ -76,10 +81,18 @@ class ProductsForLiveShowFragment : BottomSheetDialogFragment() {
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             Log.d("TAG", "CALLL RESULT")
             if (result.resultCode == Activity.RESULT_OK) {
-                page = 1
-                loadData(1)
+                if (chipIndex == 4) {
+                    surprisePage = 1
+                    loadSurpriseSets()
+                } else {
+                    page = 1
+                    loadData(1)
+                }
             }
         }
+
+    private var productTypesList = mutableListOf("Auction", "Buy Now", "Sold", "Offers", "Surprise Sets")
+    var chipIndex = 0
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val dialog = super.onCreateDialog(savedInstanceState) as BottomSheetDialog
@@ -142,77 +155,68 @@ class ProductsForLiveShowFragment : BottomSheetDialogFragment() {
 
         socketManager = SocketManager.getInstance(requireContext())
 
-        bind.chipGroup.apply {
-            addView(
-                Utils.makeAChip(
-                    mCtx,
-                    text = "Auction",
-                    selected = auctionTypeId == AuctionType.LIVE.id,
-                    closeIconVisible = false
-                )
-            )
-            addView(
-                Utils.makeAChip(
-                    mCtx,
-                    text = "Buy Now",
-                    selected = auctionTypeId == AuctionType.BUY_NOW.id,
-                    closeIconVisible = false
-                )
-            )
-            addView(
-                Utils.makeAChip(
-                    mCtx,
-                    text = "Sold",
-                    selected = false,
-                    closeIconVisible = false
-                )
-            )
+        bind.switcher.showNext()
 
-            addView(
-                Utils.makeAChip(
-                    mCtx,
-                    text = "Offers",
-                    selected = false,
-                    closeIconVisible = false
+        bind.chipGroup.apply {
+            productTypesList.forEach {
+                addView(
+                    Utils.makeAChip(
+                        mCtx,
+                        text = it,
+                        selected = auctionTypeId == AuctionType.LIVE.id,
+                        closeIconVisible = false
+                    )
                 )
-            )
+            }
 
             setOnCheckedStateChangeListener { chipGroup, _ ->
                 runSafe {
                     val chipId = chipGroup.checkedChipId
-                    val index = chipGroup.indexOfChild(chipGroup.findViewById(chipId))
+                    chipIndex = chipGroup.indexOfChild(chipGroup.findViewById(chipId))
 
-                    Log.d("TAG", "onViewCreated: AUCTION $auctionTypeId--$saleType--$index")
-                    when (index) {
+                    Log.d("TAG", "onViewCreated: AUCTION $auctionTypeId--$saleType--$chipIndex")
+                    when (chipIndex) {
                         0 -> {
                             saleType = "auction"
                             type = ""
                             status = ""
+                            page = 1
+                            loadData(2)
                         }
 
                         1 -> {
                             type = "buy_now"
                             status = ""
                             saleType = ""
+                            page = 1
+                            loadData(2)
                         }
 
                         2 -> {
                             status = "inactive"
                             type = ""
                             saleType = ""
+
+                            page = 1
+                            loadData(2)
                         }
 
                         3 -> {
                             saleType = "accept_offers"
                             type = ""
                             status = ""
+
+                            page = 1
+                            loadData(2)
+                        }
+
+                        4 -> {
+                            loadSurpriseSets()
                         }
 
                         else -> ""
                     }
 
-                    page = 1
-                    loadData(2)
                 }
             }
         }
@@ -223,6 +227,8 @@ class ProductsForLiveShowFragment : BottomSheetDialogFragment() {
             when (it) {
                 is Resource.Success -> {
                     bind.bottomLoader.isVisible = false
+                    bind.loader.isVisible = false
+                    bind.switcher.showNext()
                     val mData = it.value.products
 
                     if (page == 1) {
@@ -253,6 +259,60 @@ class ProductsForLiveShowFragment : BottomSheetDialogFragment() {
 
                 is Resource.Error -> {
                     bind.bottomLoader.isVisible = false
+                    bind.loader.isVisible = false
+
+                    it.parse(mCtx, javaClass.simpleName, object : AlertClicks {
+                        override fun primaryClick(dialog: AppBottomSheet) {
+                            dialog.dismiss()
+                        }
+
+                        override fun secondaryClick(dialog: AppBottomSheet) {
+                            dialog.dismiss()
+                        }
+                    })
+                }
+
+                else -> {}
+            }
+        }
+
+        viewModel.getSurpriseProductRepo.observe(viewLifecycleOwner) {
+            when (it) {
+                is Resource.Success -> {
+                    bind.loader.isVisible = false
+                    bind.surpriseBottomLoader.isVisible = false
+                    bind.switcher.showPrevious()
+                    val mData = it.value.data
+                    if (surprisePage == 1) {
+                        surpriseProductList.clear()
+                    }
+
+                    if (mData != null) {
+                        surpriseProductList.addAll(mData)
+                        surpriseProductAdapter.notifyDataSetChanged()
+                    }
+
+                    surpriseProductList.forEach {
+//                        if (viewModel.pinnedProducts.contains(it?.id.toString())) {
+//                            it?.selected = true
+//                        }
+                    }
+
+                    if (surpriseProductList.isEmpty()) {
+                        bind.surpriseNoDataView.isVisible = true
+                        bind.surpriseRecycler.isVisible = false
+                    } else {
+                        bind.surpriseNoDataView.isVisible = false
+                        bind.surpriseRecycler.isVisible = true
+                    }
+
+                    surpriseIsLoading = surprisePage >= (it.value.totalPage ?: 0)
+
+                }
+
+                is Resource.Error -> {
+                    bind.loader.isVisible = false
+                    bind.surpriseBottomLoader.isVisible = false
 
                     it.parse(mCtx, javaClass.simpleName, object : AlertClicks {
                         override fun primaryClick(dialog: AppBottomSheet) {
@@ -280,6 +340,22 @@ class ProductsForLiveShowFragment : BottomSheetDialogFragment() {
                         page++
                         bind.bottomLoader.isVisible = true
                         loadData(3)
+                    }
+                }
+            }
+        })
+
+        bind.surpriseRecycler.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+                val layoutManager = bind.surpriseRecycler.layoutManager as LinearLayoutManager
+                val lastItemPosition = layoutManager.findLastVisibleItemPosition()
+                if (lastItemPosition == (surpriseProductList.size - 1)) {
+                    if (!surpriseIsLoading) {
+                        surpriseIsLoading = true
+                        surprisePage++
+                        bind.surpriseBottomLoader.isVisible = true
+                        loadSurpriseSets()
                     }
                 }
             }
@@ -380,6 +456,19 @@ class ProductsForLiveShowFragment : BottomSheetDialogFragment() {
 
         bind.recycler.adapter = productAdapter
 
+        surpriseProductAdapter = SurpriseProductAdapter(
+            from = from,
+            mList = surpriseProductList,
+            object : RecyclerClicks {
+                @SuppressLint("NotifyDataSetChanged")
+                override fun itemClick(pos: Int, status: String?) {
+
+                }
+
+            })
+
+        bind.surpriseRecycler.adapter = surpriseProductAdapter
+
         bind.close.setHapticClickListener {
             dismiss()
         }
@@ -397,7 +486,12 @@ class ProductsForLiveShowFragment : BottomSheetDialogFragment() {
                 dismiss()
 
             } else {
-                addProductLauncher.launch(mCtx.toListProduct().putExtra("category", viewModel.categoryId))
+                if (chipIndex == 4) {
+                    addProductLauncher.launch(mCtx.toListProduct().putExtra("from", "surprise"))
+                } else {
+                    addProductLauncher.launch(mCtx.toListProduct().putExtra("category", viewModel.categoryId))
+                }
+
             }
         }
 
@@ -414,6 +508,11 @@ class ProductsForLiveShowFragment : BottomSheetDialogFragment() {
             search = bind.search.value().ifEmpty { null }?.request(),
             categoryIds = viewModel.categoryId.request()
         )
+    }
+
+    private fun loadSurpriseSets() {
+        bind.loader.isVisible = true
+        viewModel.getSurpriseProduct()
     }
 
     override fun onDestroyView() {

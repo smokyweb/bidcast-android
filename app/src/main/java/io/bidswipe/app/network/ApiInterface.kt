@@ -2,7 +2,8 @@ package io.bidswipe.app.network
 
 import io.bidswipe.app.BuildConfig
 import io.bidswipe.app.model.GetSubCategoriesRequest
-import io.bidswipe.app.model.StoreProductRequest
+import io.bidswipe.app.network.request.StoreProductRequest
+import io.bidswipe.app.network.request.StoreSurpriseSet
 import io.bidswipe.app.network.response.AboutUsResponse
 import io.bidswipe.app.network.response.BlockedUnblockedResponse
 import io.bidswipe.app.network.response.CheckKycResponse
@@ -55,6 +56,7 @@ import io.bidswipe.app.network.response.GetShowDetailsResponse
 import io.bidswipe.app.network.response.GetShowOverviewResponse
 import io.bidswipe.app.network.response.GetStatesResponse
 import io.bidswipe.app.network.response.GetSubCategoriesResponse
+import io.bidswipe.app.network.response.GetSurpriseProductsResponse
 import io.bidswipe.app.network.response.GetTipAmountResponse
 import io.bidswipe.app.network.response.GetTransactionsHistoryResponse
 import io.bidswipe.app.network.response.GetUserProfileResponse
@@ -881,6 +883,16 @@ interface ApiInterface {
         @Query("seller_id") sellerId: String?,
         @Query("page") page: String?
     ): GetClipsResponse
+
+    @POST("api/store-surprise-product")
+    suspend fun storeSurpriseProduct(
+       @Body request: StoreSurpriseSet?
+    ): CommonResponse
+
+      @GET("api/get-surprise-product")
+    suspend fun getSurpriseProduct(
+    ): GetSurpriseProductsResponse
+
 
 }
 
