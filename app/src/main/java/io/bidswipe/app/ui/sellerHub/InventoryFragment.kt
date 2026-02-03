@@ -105,7 +105,7 @@ class InventoryFragment : BaseFragment<SellerHubViewModel, FragmentInventoryBind
 		} else {
 			bind.addNewProduct.text = getString(R.string.new_product)
 			bind.addNewProduct.setHapticClickListener {
-				startActivity(mCtx.toListProduct())
+				startActivity(mCtx.toListProduct().putExtra("from","surprise"))
 			}
 
 		}

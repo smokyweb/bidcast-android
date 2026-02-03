@@ -2,8 +2,9 @@ package io.bidswipe.app.network.repository
 
 import io.bidswipe.app.base.BaseRepository
 import io.bidswipe.app.model.GetSubCategoriesRequest
-import io.bidswipe.app.model.StoreProductRequest
 import io.bidswipe.app.network.ApiInterface
+import io.bidswipe.app.network.request.StoreProductRequest
+import io.bidswipe.app.network.request.StoreSurpriseSet
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import javax.inject.Inject
@@ -142,8 +143,8 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
     suspend fun getMyScheduledShow(
         type: RequestBody?,
         page: RequestBody?,
-        sellerId: RequestBody?=null,
-    ) = call { api.getMyScheduledShow(sellerId,type, page) }
+        sellerId: RequestBody? = null,
+    ) = call { api.getMyScheduledShow(sellerId, type, page) }
 
     suspend fun getProfileById(
         userId: RequestBody?,
@@ -152,7 +153,7 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
     suspend fun followUser(
         userId: RequestBody?,
         showId: RequestBody?,
-    ) = call { api.followUser(userId,showId) }
+    ) = call { api.followUser(userId, showId) }
 
     suspend fun makeOffer(
         amount: RequestBody?,
@@ -175,15 +176,15 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
         subCategory: RequestBody?,
         search: RequestBody?,
         page: RequestBody?
-    ) = call { api.getLiveShow(type, category, subCategory,search, page) }
+    ) = call { api.getLiveShow(type, category, subCategory, search, page) }
 
-  suspend fun getExploreLiveShow(
+    suspend fun getExploreLiveShow(
         type: RequestBody?,
         category: RequestBody?,
         subCategory: RequestBody?,
         search: RequestBody?,
         page: RequestBody?
-    ) = call { api.getLiveShow(type, category, subCategory,search, page) }
+    ) = call { api.getLiveShow(type, category, subCategory, search, page) }
 
     suspend fun notifyLiveUser(
         liveUserId: RequestBody?,
@@ -372,7 +373,7 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
     ) = call { api.fetchBuyerIdentity() }
 
     suspend fun getNotification(
-		page: String?
+        page: String?
     ) = call { api.getNotification(page) }
 
     suspend fun fetchBids(
@@ -594,7 +595,7 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
         weight: RequestBody?,
         additionalWeight: RequestBody?,
         maxItems: RequestBody?
-    ) = call { api.storeShippingProfile(shippingId,name, size, weight, additionalWeight, maxItems) }
+    ) = call { api.storeShippingProfile(shippingId, name, size, weight, additionalWeight, maxItems) }
 
     suspend fun getShippingProfile(
     ) = call { api.getShippingProfile() }
@@ -628,28 +629,35 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
         date: RequestBody?,
         time: RequestBody?,
         showId: RequestBody?
-    ) = call { api.checkScheduleShow(date, time,showId) }
+    ) = call { api.checkScheduleShow(date, time, showId) }
 
     suspend fun updateVacationModeStatus(
         vacationMode: RequestBody?
     ) = call { api.updateVacationModeStatus(vacationMode) }
 
-	suspend fun deleteShippingProfile(
-		profileId: String
-	) = call { api.deleteShippingProfile(profileId) }
+    suspend fun deleteShippingProfile(
+        profileId: String
+    ) = call { api.deleteShippingProfile(profileId) }
 
-	suspend fun changeOrderStatus(
-		orderId: RequestBody?,
-		status: RequestBody?
-	) = call { api.changeOrderStatus(orderId,status) }
+    suspend fun changeOrderStatus(
+        orderId: RequestBody?,
+        status: RequestBody?
+    ) = call { api.changeOrderStatus(orderId, status) }
 
-	suspend fun getClip(
-		roomId: RequestBody?,
-	) = call { api.getClip(roomId) }
+    suspend fun getClip(
+        roomId: RequestBody?,
+    ) = call { api.getClip(roomId) }
 
-	suspend fun getUserClips(
-		sellerId: String?,
-		page: String?,
-	) = call { api.getUserClips(sellerId,page) }
+    suspend fun getUserClips(
+        sellerId: String?,
+        page: String?,
+    ) = call { api.getUserClips(sellerId, page) }
+
+    suspend fun storeSurpriseProduct(
+        request: StoreSurpriseSet?
+    ) = call { api.storeSurpriseProduct(request) }
+
+    suspend fun getSurpriseProduct(
+    ) = call { api.getSurpriseProduct() }
 
 }

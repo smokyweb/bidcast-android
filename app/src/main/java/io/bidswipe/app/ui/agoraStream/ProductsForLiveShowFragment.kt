@@ -28,12 +28,14 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
 import io.bidswipe.app.R
 import io.bidswipe.app.controller.FirebaseProductAdapter
+import io.bidswipe.app.controller.SurpriseProductAdapter
 import io.bidswipe.app.databinding.AuctionSettingsSheetBinding
 import io.bidswipe.app.databinding.FragmentProductsForLiveShowBinding
 import io.bidswipe.app.interfaces.AlertClicks
 import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.network.response.AuctionType
+import io.bidswipe.app.network.response.GetSurpriseProductsResponse
 import io.bidswipe.app.network.response.Product
 import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.ui.dashboard.DashViewModel
@@ -53,7 +55,10 @@ class ProductsForLiveShowFragment : BottomSheetDialogFragment() {
 
     private lateinit var productAdapter: FirebaseProductAdapter
     private var productList = mutableListOf<Product?>()
-
+    private var surpriseProductList = mutableListOf<GetSurpriseProductsResponse.Data?>()
+    private lateinit var surpriseProductAdapter: SurpriseProductAdapter
+    private var surprisePage = 1
+    private var surpriseIsLoading = false
     private lateinit var mCtx: Context
 
     private var _binding: FragmentProductsForLiveShowBinding? = null
@@ -76,10 +81,18 @@ class ProductsForLiveShowFragment : BottomSheetDialogFragment() {
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             Log.d("TAG", "CALLL RESULT")
             if (result.resultCode == Activity.RESULT_OK) {
-                page = 1
-                loadData(1)
+                if (chipIndex == 4) {
+                    surprisePage = 1
+                    loadSurpriseSets()
+                } else {
+                    page = 1
+                    loadData(1)
+                }
             }
         }
+
+    private var productTypesList = mutableListOf("Auction", "Buy Now", "Sold", "Offers", "Surprise Sets")
+    var chipIndex = 0
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val dialog = super.onCreateDialog(savedInstanceState) as BottomSheetDialog
@@ -142,77 +155,68 @@ class ProductsForLiveShowFragment : BottomSheetDialogFragment() {
 
         socketManager = SocketManager.getInstance(requireContext())
 
-        bind.chipGroup.apply {
-            addView(
-                Utils.makeAChip(
-                    mCtx,
-                    text = "Auction",
-                    selected = auctionTypeId == AuctionType.LIVE.id,
-                    closeIconVisible = false
-                )
-            )
-            addView(
-                Utils.makeAChip(
-                    mCtx,
-                    text = "Buy Now",
-                    selected = auctionTypeId == AuctionType.BUY_NOW.id,
-                    closeIconVisible = false
-                )
-            )
-            addView(
-                Utils.makeAChip(
-                    mCtx,
-                    text = "Sold",
-                    selected = false,
-                    closeIconVisible = false
-                )
-            )
+        bind.switcher.showNext()
 
-            addView(
-                Utils.makeAChip(
-                    mCtx,
-                    text = "Offers",
-                    selected = false,
-                    closeIconVisible = false
+        bind.chipGroup.apply {
+            productTypesList.forEach {
+                addView(
+                    Utils.makeAChip(
+                        mCtx,
+                        text = it,
+                        selected = auctionTypeId == AuctionType.LIVE.id,
+                        closeIconVisible = false
+                    )
                 )
-            )
+            }
 
             setOnCheckedStateChangeListener { chipGroup, _ ->
                 runSafe {
                     val chipId = chipGroup.checkedChipId
-                    val index = chipGroup.indexOfChild(chipGroup.findViewById(chipId))
+                    chipIndex = chipGroup.indexOfChild(chipGroup.findViewById(chipId))
 
-                    Log.d("TAG", "onViewCreated: AUCTION $auctionTypeId--$saleType--$index")
-                    when (index) {
+                    Log.d("TAG", "onViewCreated: AUCTION $auctionTypeId--$saleType--$chipIndex")
+                    when (chipIndex) {
                         0 -> {
                             saleType = "auction"
                             type = ""
                             status = ""
+                            page = 1
+                            loadData(2)
                         }
 
                         1 -> {
                             type = "buy_now"
                             status = ""
                             saleType = ""
+                            page = 1
+                            loadData(2)
                         }
 
                         2 -> {
                             status = "inactive"
                             type = ""
                             saleType = ""
+
+                            page = 1
+                            loadData(2)
                         }
 
                         3 -> {
                             saleType = "accept_offers"
                             type = ""
                             status = ""
+
+                            page = 1
+                            loadData(2)
+                        }
+
+                        4 -> {
+                            loadSurpriseSets()
                         }
 
                         else -> ""
                     }
 
-                    page = 1
-                    loadData(2)
                 }
             }
         }
@@ -223,6 +227,8 @@ class ProductsForLiveShowFragment : BottomSheetDialogFragment() {
             when (it) {
                 is Resource.Success -> {
                     bind.bottomLoader.isVisible = false
+                    bind.loader.isVisible = false
+                    bind.switcher.showNext()
                     val mData = it.value.products
 
                     if (page == 1) {
@@ -253,6 +259,7 @@ class ProductsForLiveShowFragment : BottomSheetDialogFragment() {
 
                 is Resource.Error -> {
                     bind.bottomLoader.isVisible = false
+                    bind.loader.isVisible = false
 
                     it.parse(mCtx, javaClass.simpleName, object : AlertClicks {
                         override fun primaryClick(dialog: AppBottomSheet) {
@@ -269,265 +276,14 @@ class ProductsForLiveShowFragment : BottomSheetDialogFragment() {
             }
         }
 
-        bind.recycler.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                super.onScrolled(recyclerView, dx, dy)
-                val layoutManager = bind.recycler.layoutManager as LinearLayoutManager
-                val lastItemPosition = layoutManager.findLastVisibleItemPosition()
-                if (lastItemPosition == (productList.size - 1)) {
-                    if (!isLoading) {
-                        isLoading = true
-                        page++
-                        bind.bottomLoader.isVisible = true
-                        loadData(3)
+        viewModel.getSurpriseProductRepo.observe(viewLifecycleOwner) {
+            when (it) {
+                is Resource.Success -> {
+                    bind.loader.isVisible = false
+                    bind.surpriseBottomLoader.isVisible = false
+                    bind.switcher.showPrevious()
+                    val mData = it.value.data
+                    if (surprisePage == 1) {
+                        surpriseProductList.clear()
                     }
-                }
-            }
-        })
-
-        bind.search.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
-            override fun afterTextChanged(s: Editable?) {
-                val query = s?.toString()?.trim() ?: ""
-                bind.searchLayout.isEndIconVisible = query.isNotEmpty()
-
-                bind.bottomLoader.isVisible = true
-                page = 1
-                loadData(4)
-            }
-        })
-
-        socketManager?.onProductPinned { json ->
-            runSafe {
-                requireActivity().runOnUiThread {
-
-                    val productId = json.optString("product_id")
-
-                    viewModel.pinnedProducts.add(productId)
-
-                    Log.d("TAG", "pinnedProducts: ${viewModel.pinnedProducts}")
-
-                    productList[selectedPos]?.selected = true
-                    productAdapter.notifyItemChanged(selectedPos)
-
-                }
-            }
-
-        }
-
-        socketManager?.onProductUnPinned { json ->
-            runSafe {
-                requireActivity().runOnUiThread {
-
-                    if (viewModel.currentRoomId == json.optString("room_id")) {
-
-                        val productId = json.optString("product_id")
-
-                        Log.d("TAG", "pinnedProducts: ${viewModel.pinnedProducts}")
-
-
-                        productList[selectedPos]?.selected = false
-                        productAdapter.notifyItemChanged(selectedPos)
-
-                        viewModel.pinnedProducts.remove(productId)
-
-                    }
-                }
-            }
-        }
-
-        productAdapter = FirebaseProductAdapter(
-            from = from,
-            mList = productList,
-            object : RecyclerClicks {
-                @SuppressLint("NotifyDataSetChanged")
-                override fun itemClick(pos: Int, status: String?) {
-
-                    val selectedProduct = productList[pos]
-
-                    if (productList[pos]?.status == "sold") {
-                        Alerts.error(mCtx, "This product is already sold")
-                    } else if (status == "start_auction") {
-                        if (auctionTypeId == AuctionType.LIVE.id) {
-                            auctionSettingsSheet(selectedProduct?.id.toString(), selectedProduct?.pricing ?: "")
-
-                        } else {
-                            socketManager?.startAuction(
-                                viewModel.currentRoomId,
-                                listOf(selectedProduct?.id.toString()),
-                                selectedProduct?.pricing ?: "0.0",
-                                null, null, null,
-                                auctionTypeId
-                            )
-                            dismiss()
-                        }
-
-                    } else if (status == "set_next") {
-                        selectedPos = pos
-                        socketManager?.pinProduct(roomId = viewModel.currentRoomId, productId = selectedProduct?.id.toString())
-                    } else if (status == "freebie") {
-                        productList.forEachIndexed { index, item ->
-                            item?.selected = index == pos
-                            bind.recycler.adapter?.notifyDataSetChanged()
-                        }
-                        selectedPos = pos
-                    }
-
-                }
-
-            })
-
-        bind.recycler.adapter = productAdapter
-
-        bind.close.setHapticClickListener {
-            dismiss()
-        }
-
-        bind.addBtn.setHapticClickListener {
-            if (from == "freebie") {
-                if (selectedPos == -1) {
-                    Alerts.error(mCtx, "Please select a product")
-                    return@setHapticClickListener
-                }
-
-                val selectedProduct = productList[selectedPos]
-
-                socketManager?.createFreebie(roomId = viewModel.currentRoomId, productId = selectedProduct?.id.toString(), time = "1")
-                dismiss()
-
-            } else {
-                addProductLauncher.launch(mCtx.toListProduct().putExtra("category", viewModel.categoryId))
-            }
-        }
-
-    }
-
-    private fun loadData(call: Int) {
-        Log.d("TAG", "$call loadData: $saleType")
-        bind.bottomLoader.isVisible = true
-        viewModel.getUserProducts(
-            page = page.toString().request(),
-            saleType = saleType.ifEmpty { null }?.request(),
-            type = type.ifEmpty { null }?.request(),
-            status = status.ifEmpty { null }?.request(),
-            search = bind.search.value().ifEmpty { null }?.request(),
-            categoryIds = viewModel.categoryId.request()
-        )
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
-    }
-
-    private fun auctionSettingsSheet(productId: String, price: String) {
-        var selectedCounterTimer = 5
-        var selectedRequiredTime = 30
-
-        val auctionSettingsSheetBind = AuctionSettingsSheetBinding.bind(
-            layoutInflater.inflate(
-                R.layout.auction_settings_sheet,
-                null,
-                false
-            )
-        )
-
-        val sheet = Alerts.appBottomSheet(mCtx, true, auctionSettingsSheetBind)
-
-        val extraTimer = listOf(5, 7, 10)
-        extraTimer.forEachIndexed { index, time ->
-            val chip = Utils.makeAChip(
-                mCtx = mCtx,
-                text = "${time}s",
-                selected = index == 0,
-                closeIconVisible = false,
-                chipPadding = 12,
-            )
-            chip.setOnClickListener {
-                auctionSettingsSheetBind.timerChips.check(chip.id)
-                selectedCounterTimer = time
-            }
-            auctionSettingsSheetBind.timerChips.addView(chip)
-        }
-
-        val requiredTimeList = listOf(15, 30, 45)
-        val requiredTimeAdapter = ArrayAdapter(
-            mCtx,
-            android.R.layout.simple_list_item_1,
-            requiredTimeList
-        )
-
-        auctionSettingsSheetBind.requiredTime.setAdapter(requiredTimeAdapter)
-
-        auctionSettingsSheetBind.requiredTime.setText("30s", false)
-
-        auctionSettingsSheetBind.requiredTime.setOnItemClickListener { _, _, position, _ ->
-            selectedRequiredTime = requiredTimeList[position]
-            auctionSettingsSheetBind.requiredTime.setText("${requiredTimeList[position]}s", false)
-        }
-
-        auctionSettingsSheetBind.requiredTime.setHapticClickListener {
-            auctionSettingsSheetBind.requiredTime.showDropDown()
-        }
-
-        auctionSettingsSheetBind.startingBid.addTextChangedListener(PriceFormatter(auctionSettingsSheetBind.startingBid))
-        auctionSettingsSheetBind.startingBid.setText(price)
-
-        auctionSettingsSheetBind.close.setHapticClickListener { sheet.dismiss() }
-
-        auctionSettingsSheetBind.suddenDeath.setOnCheckedChangeListener { _, v ->
-            auctionSettingsSheetBind.counterTimerLayout.isVisible = !v
-            if (v) selectedCounterTimer = 0
-        }
-
-        auctionSettingsSheetBind.start.setHapticClickListener {
-
-            when {
-                selectedRequiredTime == 0 -> {
-                    Alerts.error(mCtx, "Please select required time")
-                    return@setHapticClickListener
-                }
-
-                selectedCounterTimer == 0 && !auctionSettingsSheetBind.suddenDeath.isChecked -> {
-                    Alerts.error(mCtx, "Please select counter timer")
-                    return@setHapticClickListener
-                }
-
-                auctionSettingsSheetBind.startingBid.value().isEmpty() -> {
-                    Alerts.error(mCtx, "Please enter starting bid")
-                    return@setHapticClickListener
-                }
-
-                else -> {
-                    val productIds = mutableListOf<String>()
-                    productIds.add(productId)
-
-                    socketManager?.startAuction(
-                        viewModel.currentRoomId,
-                        productIds,
-                        auctionSettingsSheetBind.startingBid.value(),
-                        selectedRequiredTime,
-                        selectedCounterTimer,
-                        auctionSettingsSheetBind.suddenDeath.isChecked,
-                        auctionTypeId
-                    )
-                    sheet.dismiss()
-                    dismiss()
-
-                }
-
-            }
-
-            /* auctionSettingsSheetBind.startingBid.value()
-             selectedRequiredTime
-             selectedCounterTimer
-             auctionSettingsSheetBind.suddenDeath.isChecked*/
-
-        }
-
-        sheet.show()
-
-    }
-
 }

@@ -61,61 +61,103 @@
         android:id="@+id/chipGroupScroll"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/searchLayout"
-        android:layout_margin="@dimen/margin"
-        android:scrollbars="none">
+        android:layout_margin="@dimen/half_margin"
+        android:scrollbars="none"
+        app:layout_constraintTop_toBottomOf="@id/searchLayout">
 
         <com.google.android.material.chip.ChipGroup
             android:id="@+id/chipGroup"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:singleLine="true"
             app:selectionRequired="true"
+            app:singleLine="true"
             app:singleSelection="true" />
 
     </HorizontalScrollView>
 
-    <LinearLayout
+    <ViewSwitcher
+        android:id="@+id/switcher"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:orientation="vertical"
         app:layout_constraintBottom_toTopOf="@id/addBtn"
-        android:paddingVertical="@dimen/margin"
-        app:layout_constraintTop_toBottomOf="@+id/chipGroupScroll">
+        app:layout_constraintTop_toBottomOf="@+id/chipGroupScroll"
+        android:layout_height="0dp">
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recycler"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:nestedScrollingEnabled="false"
+            android:layout_height="match_parent"
             android:orientation="vertical"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/chipGroupScroll"
-            tools:itemCount="510"
-            tools:listitem="@layout/product_selection_item" />
+            android:paddingVertical="@dimen/margin">
 
-        <io.bidswipe.app.ui.custom.NoDataView
-            android:id="@+id/noDataView"
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/surprise_recycler"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:nestedScrollingEnabled="false"
+                android:orientation="vertical"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                tools:itemCount="510"
+                tools:listitem="@layout/product_selection_item" />
+
+            <io.bidswipe.app.ui.custom.NoDataView
+                android:id="@+id/surpriseNoDataView"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/chipGroupScroll"
+                app:title_text="No Products Found!" />
+
+            <com.github.ybq.android.spinkit.SpinKitView
+                android:id="@+id/surpriseBottomLoader"
+                style="@style/appLoader"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/recycler" />
+
+        </LinearLayout>
+
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/chipGroupScroll"
-            app:title_text="No Products Found!" />
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:paddingVertical="@dimen/margin">
 
-        <com.github.ybq.android.spinkit.SpinKitView
-            android:id="@+id/bottomLoader"
-            style="@style/appLoader"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/recycler" />
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycler"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:nestedScrollingEnabled="false"
+                android:orientation="vertical"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                tools:itemCount="510"
+                tools:listitem="@layout/product_selection_item" />
 
-    </LinearLayout>
+            <io.bidswipe.app.ui.custom.NoDataView
+                android:id="@+id/noDataView"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/chipGroupScroll"
+                app:title_text="No Products Found!" />
+
+            <com.github.ybq.android.spinkit.SpinKitView
+                android:id="@+id/bottomLoader"
+                style="@style/appLoader"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/recycler" />
+
+        </LinearLayout>
+    </ViewSwitcher>
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/addBtn"
@@ -127,9 +169,10 @@
         app:layout_constraintBottom_toBottomOf="parent" />
 
     <io.bidswipe.app.ui.custom.LoaderView
+        android:id="@+id/loader"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        id="@+id/loader"
-        android:visibility="gone"/>
+        app:showBack="false"
+        android:visibility="gone" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

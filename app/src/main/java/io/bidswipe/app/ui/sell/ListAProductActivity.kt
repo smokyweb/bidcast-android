@@ -14,26 +14,36 @@ import io.bidswipe.app.utils.hideKeyboard
 import io.bidswipe.app.utils.setHapticClickListener
 
 class ListAProductActivity : BaseActivity() {
-	private val bind by bind(ActivityListAproductBinding::inflate)
-	private lateinit var navHostFragment: NavHostFragment
-	private lateinit var navController: NavController
+    private val bind by bind(ActivityListAproductBinding::inflate)
+    private lateinit var navHostFragment: NavHostFragment
+    private lateinit var navController: NavController
 
-	override fun onCreate(savedInstanceState: Bundle?) {
-		super.onCreate(savedInstanceState)
-		setContentView(bind.root)
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(bind.root)
 
-		ViewCompat.setOnApplyWindowInsetsListener(window.decorView) { v, insets ->
-			val system = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-			bind.root.setPadding(0, system.top, 0, system.bottom)
-			CONSUMED
-		}
+        ViewCompat.setOnApplyWindowInsetsListener(window.decorView) { v, insets ->
+            val system = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            bind.root.setPadding(0, system.top, 0, system.bottom)
+            CONSUMED
+        }
 
-		bind.main.setHapticClickListener {
-			hideKeyboard()
-		}
+        bind.main.setHapticClickListener {
+            hideKeyboard()
+        }
 
-		navHostFragment = supportFragmentManager.findFragmentById(R.id.fragmentContainer) as NavHostFragment
-		navController = navHostFragment.navController
+        navHostFragment = supportFragmentManager.findFragmentById(R.id.fragmentContainer) as NavHostFragment
+        navController = navHostFragment.navController
 
-	}
+        val navGraph = navController.navInflater.inflate(R.navigation.list_a_product_nav_graph)
+
+        if(intent.hasExtra("from")){
+            navGraph.setStartDestination(R.id.createSurpriseSetFragment)
+        }else {
+            navGraph.setStartDestination(R.id.listAProductFragment)
+        }
+
+        navController.graph = navGraph
+
+    }
 }

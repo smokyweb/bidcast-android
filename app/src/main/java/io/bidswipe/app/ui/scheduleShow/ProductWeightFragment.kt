@@ -10,7 +10,7 @@ import io.bidswipe.app.base.BaseFragment
 import io.bidswipe.app.controller.WeightAdapter
 import io.bidswipe.app.databinding.FragmentProductWeightBinding
 import io.bidswipe.app.interfaces.AlertClicks
-import io.bidswipe.app.model.StoreProductRequest
+import io.bidswipe.app.network.request.StoreProductRequest
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.utils.Const

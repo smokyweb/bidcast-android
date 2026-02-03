@@ -321,4 +321,15 @@
     <string name="address_type">Address Type</string>
     <string name="last_60_seconds">Last 60 seconds</string>
     <string name="awaiting_next_item">Awaiting Next Item</string>
+    <string name="surprise_set_description">Surprise Set Description</string>
+    <string name="surprise_set_name">Surprise Set Name</string>
+    <string name="create_a_surprise_set">Create a Surprise Set</string>
+    <string name="create_surprise_set">Create Surprise Set</string>
+    <string name="manage_products">Manage Products</string>
+    <string name="buy_in_price">Buy-in-Price</string>
+    <string name="number_of_products">Number of Products</string>
+    <string name="product_name">Product Name</string>
+    <string name="add">Add</string>
+    <string name="turn_off_if_you_want_a_slower_spin_animation_this_does_not_affect_randomization">Turn off if you want a slower spin animation. This does not affect randomization.</string>
+    <string name="after_each_product_sells_the_buyer_will_be_randomly_assigned_turn_off_if_you_want_to_randomize_manually">After each product sells, the buyer will be randomly assigned. Turn off if you want to randomize manually.</string>
 </resources>

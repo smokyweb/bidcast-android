@@ -11,4 +11,20 @@
         android:label="fragment_list_a_product"
         tools:layout="@layout/fragment_list_a_product" />
 
+    <fragment
+        android:id="@+id/createSurpriseSetFragment"
+        android:name="io.bidswipe.app.ui.sell.CreateSurpriseSetFragment"
+        android:label="fragment_create_surprise_set"
+        tools:layout="@layout/fragment_create_surprise_set" >
+        <action
+            android:id="@+id/toManageSurpriseProductsFragment"
+            app:destination="@id/manageSurpriseProductsFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/manageSurpriseProductsFragment"
+        android:name="io.bidswipe.app.ui.sell.ManageSurpriseProductsFragment"
+        android:label="fragment_manage_surprise_products"
+        tools:layout="@layout/fragment_manage_surprise_products" />
+
 </navigation>
