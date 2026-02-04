@@ -48,6 +48,7 @@ import io.bidswipe.app.utils.request
 import kotlinx.coroutines.launch
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
+import retrofit2.http.Query
 import javax.inject.Inject
 
 @HiltViewModel
@@ -115,6 +116,7 @@ class DashViewModel @Inject constructor(
     //SURPRISE SETS
     var surpriseSetList = mutableListOf<SurpriseProductModel?>()
     var surpriseBuyPrice = ""
+    var surprise_set_type = ""
 
     private var _logoutResponse = MutableLiveData<Resource<CommonResponse>>()
     val logoutRepo: MutableLiveData<Resource<CommonResponse>>
@@ -733,12 +735,13 @@ class DashViewModel @Inject constructor(
         get() = _getSurpriseProductResponse
 
     fun getSurpriseProduct(
+       page: String?
     ) = viewModelScope.launch {
         if (!networkMonitor.hasInternet()) {
             _getSurpriseProductResponse.value = NO_INTERNET_ERROR
             return@launch
         }
-        _getSurpriseProductResponse.value = repo.getSurpriseProduct()
+        _getSurpriseProductResponse.value = repo.getSurpriseProduct(page)
     }
 
 }

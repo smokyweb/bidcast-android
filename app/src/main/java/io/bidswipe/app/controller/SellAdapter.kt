@@ -41,6 +41,8 @@ class SellAdapter(mList : MutableList<SellModel> , val type : String , val mClic
 			bind.icon.setImageDrawable(ContextCompat.getDrawable(mCtx , item?.icon ?: draw.ic_add_outline))
 			bind.subTitle.text = item?.subtitle
 			bind.title.text = item?.title
+
+			bind.subTitle.isVisible=item?.subtitle?.isNotEmpty()==true
 		}
 	}
 }

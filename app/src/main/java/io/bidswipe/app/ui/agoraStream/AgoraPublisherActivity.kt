@@ -430,11 +430,6 @@ class AgoraPublisherActivity : BaseActivity() {
 
         bind.shop.setHapticClickListener {
             showProductSheet()
-            if (isShowLive) {
-                showProductSheet()
-            } else {
-                Alerts.error(this, "Please start live show to access this feature")
-            }
         }
 
         bind.freebieLayout.setHapticClickListener {

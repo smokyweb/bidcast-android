@@ -891,6 +891,7 @@ interface ApiInterface {
 
       @GET("api/get-surprise-product")
     suspend fun getSurpriseProduct(
+          @Query("page") page: String?
     ): GetSurpriseProductsResponse
 
 

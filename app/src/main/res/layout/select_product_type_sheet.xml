@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_weight="1"
+    android:background="@drawable/top_curve"
+    android:backgroundTint="@color/surface"
+    android:elevation="4dp"
+    android:orientation="vertical"
+    app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
+    app:layout_constraintBottom_toBottomOf="parent">
+
+    <View
+        android:layout_width="64dp"
+        android:layout_height="4dp"
+        android:layout_gravity="center"
+        android:layout_marginVertical="16dp"
+        android:background="@drawable/card_16"
+        android:backgroundTint="@color/outlineVariant" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_marginHorizontal="@dimen/margin"
+        android:layout_marginBottom="@dimen/half_margin"
+        android:gravity="center_vertical"
+        android:layout_height="wrap_content">
+
+        <TextView
+            style="@style/TitleLarge"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="What would you like to add?" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/close"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:padding="@dimen/half_margin"
+            android:scaleType="centerCrop"
+            android:src="@drawable/ic_close"
+            app:tint="@color/onSurface"/>
+
+    </LinearLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginHorizontal="@dimen/half_margin"
+        android:layout_weight="1"
+        android:layout_marginBottom="@dimen/half_margin"
+        android:nestedScrollingEnabled="false"
+        android:orientation="vertical"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        tools:itemCount="3"
+        tools:listitem="@layout/sell_sheet_item" />
+
+</LinearLayout>

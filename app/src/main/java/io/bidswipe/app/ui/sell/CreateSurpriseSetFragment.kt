@@ -9,6 +9,7 @@ import android.widget.ArrayAdapter
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.navigation.fragment.findNavController
+import com.google.android.material.tabs.TabLayout
 import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseFragment
 import io.bidswipe.app.databinding.FragmentCreateSurpriseSetBinding
@@ -46,6 +47,24 @@ class CreateSurpriseSetFragment : BaseFragment<DashViewModel, FragmentCreateSurp
             findNavController().animatedNav(ids.toManageSurpriseProductsFragment)
         }
 
+        bind.surpriseType.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+            override fun onTabSelected(tab: TabLayout.Tab?) {
+                viewModel.surprise_set_type = if(tab?.position==0) "buy_it_now" else "auction"
+                showHideLayouts()
+            }
+
+            override fun onTabUnselected(tab: TabLayout.Tab?) {
+
+            }
+
+            override fun onTabReselected(tab: TabLayout.Tab?) {
+                viewModel.surprise_set_type = if(tab?.position==0) "buy_it_now" else "auction"
+                showHideLayouts()
+            }
+        })
+
+        bind.surpriseType.selectTab(bind.surpriseType.getTabAt(1))
+
         bind.create.setOnClickListener {
             when {
                 bind.name.value().isEmpty() -> {
@@ -70,7 +89,7 @@ class CreateSurpriseSetFragment : BaseFragment<DashViewModel, FragmentCreateSurp
                     bind.loader.isVisible = true
                     viewModel.storeSurpriseProduct(
                         StoreSurpriseSet(
-                            bind.surpriseType.getTabAt(bind.surpriseType.selectedTabPosition)?.text?.trim().toString().replace(" ", "_").lowercase(),
+                            viewModel.surprise_set_type,
                             bind.name.value(),
                             bind.description.value(),
                             viewModel.surpriseBuyPrice.toDoubleOrNull(),
@@ -191,8 +210,11 @@ class CreateSurpriseSetFragment : BaseFragment<DashViewModel, FragmentCreateSurp
             }
         }
 
-
     }
 
+    fun showHideLayouts(){
+        bind.quickSpinLayout.isVisible=viewModel.surprise_set_type!="buy_it_now"
+        bind.autoRandomizeLayout.isVisible=viewModel.surprise_set_type!="buy_it_now"
+    }
 
 }

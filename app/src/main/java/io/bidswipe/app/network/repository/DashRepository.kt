@@ -658,6 +658,7 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
     ) = call { api.storeSurpriseProduct(request) }
 
     suspend fun getSurpriseProduct(
-    ) = call { api.getSurpriseProduct() }
+        page: String?
+    ) = call { api.getSurpriseProduct(page) }
 
 }

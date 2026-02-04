@@ -36,8 +36,8 @@ class ManageProductItemAdapter(
 				bind.root.setBackgroundColor(ContextCompat.getColor(mCtx, R.color.transparent))
 			}
 
-			bind.name.text = item?.name ?: ""
-			bind.desc.text = item?.description ?: ""
+			bind.name.text = item?.name ?: " "
+			bind.desc.text = item?.description ?: " "
 			bind.index.text = (position+1).toString()
 			bind.quantity.text = item?.quantity.toString()
 

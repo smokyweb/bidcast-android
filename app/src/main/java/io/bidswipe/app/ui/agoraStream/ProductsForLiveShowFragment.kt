@@ -28,11 +28,14 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
 import io.bidswipe.app.R
 import io.bidswipe.app.controller.FirebaseProductAdapter
+import io.bidswipe.app.controller.SellAdapter
 import io.bidswipe.app.controller.SurpriseProductAdapter
 import io.bidswipe.app.databinding.AuctionSettingsSheetBinding
 import io.bidswipe.app.databinding.FragmentProductsForLiveShowBinding
+import io.bidswipe.app.databinding.SelectProductTypeSheetBinding
 import io.bidswipe.app.interfaces.AlertClicks
 import io.bidswipe.app.interfaces.RecyclerClicks
+import io.bidswipe.app.model.SellModel
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.network.response.AuctionType
 import io.bidswipe.app.network.response.GetSurpriseProductsResponse
@@ -79,14 +82,13 @@ class ProductsForLiveShowFragment : BottomSheetDialogFragment() {
 
     private var addProductLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            Log.d("TAG", "CALLL RESULT")
             if (result.resultCode == Activity.RESULT_OK) {
                 if (chipIndex == 4) {
                     surprisePage = 1
                     loadSurpriseSets()
                 } else {
                     page = 1
-                    loadData(1)
+                    loadData()
                 }
             }
         }
@@ -155,8 +157,6 @@ class ProductsForLiveShowFragment : BottomSheetDialogFragment() {
 
         socketManager = SocketManager.getInstance(requireContext())
 
-        bind.switcher.showNext()
-
         bind.chipGroup.apply {
             productTypesList.forEach {
                 addView(
@@ -181,7 +181,7 @@ class ProductsForLiveShowFragment : BottomSheetDialogFragment() {
                             type = ""
                             status = ""
                             page = 1
-                            loadData(2)
+                            loadData()
                         }
 
                         1 -> {
@@ -189,7 +189,7 @@ class ProductsForLiveShowFragment : BottomSheetDialogFragment() {
                             status = ""
                             saleType = ""
                             page = 1
-                            loadData(2)
+                            loadData()
                         }
 
                         2 -> {
@@ -198,7 +198,7 @@ class ProductsForLiveShowFragment : BottomSheetDialogFragment() {
                             saleType = ""
 
                             page = 1
-                            loadData(2)
+                            loadData()
                         }
 
                         3 -> {
@@ -207,10 +207,11 @@ class ProductsForLiveShowFragment : BottomSheetDialogFragment() {
                             status = ""
 
                             page = 1
-                            loadData(2)
+                            loadData()
                         }
 
                         4 -> {
+                            surprisePage=1
                             loadSurpriseSets()
                         }
 
@@ -223,12 +224,171 @@ class ProductsForLiveShowFragment : BottomSheetDialogFragment() {
 
         bind.chipGroup.check(bind.chipGroup[0].id)
 
+        bind.recycler.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+                val layoutManager = bind.recycler.layoutManager as LinearLayoutManager
+                val lastItemPosition = layoutManager.findLastVisibleItemPosition()
+                if (lastItemPosition == (productList.size - 1)) {
+                    if (!isLoading) {
+                        isLoading = true
+                        page++
+                        bind.bottomLoader.isVisible = true
+                        loadData(true)
+                    }
+                }
+            }
+        })
+
+        bind.surpriseRecycler.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+                val layoutManager = bind.surpriseRecycler.layoutManager as LinearLayoutManager
+                val lastItemPosition = layoutManager.findLastVisibleItemPosition()
+                if (lastItemPosition == (surpriseProductList.size - 1)) {
+                    if (!surpriseIsLoading) {
+                        surpriseIsLoading = true
+                        surprisePage++
+                        bind.surpriseBottomLoader.isVisible = true
+                        loadSurpriseSets(true)
+                    }
+                }
+            }
+        })
+
+        bind.search.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+            override fun afterTextChanged(s: Editable?) {
+                val query = s?.toString()?.trim() ?: ""
+                bind.searchLayout.isEndIconVisible = query.isNotEmpty()
+                page = 1
+                loadData()
+            }
+        })
+
+        productAdapter = FirebaseProductAdapter(
+            from = from,
+            mList = productList,
+            object : RecyclerClicks {
+                @SuppressLint("NotifyDataSetChanged")
+                override fun itemClick(pos: Int, status: String?) {
+
+                    val selectedProduct = productList[pos]
+
+                    if (productList[pos]?.status == "sold") {
+                        Alerts.error(mCtx, "This product is already sold")
+                    } else if (status == "start_auction") {
+                        if (auctionTypeId == AuctionType.LIVE.id) {
+                            auctionSettingsSheet(selectedProduct?.id.toString(), selectedProduct?.pricing ?: "")
+
+                        } else {
+                            socketManager?.startAuction(
+                                viewModel.currentRoomId,
+                                listOf(selectedProduct?.id.toString()),
+                                selectedProduct?.pricing ?: "0.0",
+                                null, null, null,
+                                auctionTypeId
+                            )
+                            dismiss()
+                        }
+
+                    } else if (status == "set_next") {
+                        selectedPos = pos
+                        socketManager?.pinProduct(roomId = viewModel.currentRoomId, productId = selectedProduct?.id.toString())
+                    } else if (status == "freebie") {
+                        productList.forEachIndexed { index, item ->
+                            item?.selected = index == pos
+                            bind.recycler.adapter?.notifyDataSetChanged()
+                        }
+                        selectedPos = pos
+                    }
+
+                }
+
+            })
+
+        bind.recycler.adapter = productAdapter
+
+        surpriseProductAdapter = SurpriseProductAdapter(
+            from = from,
+            mList = surpriseProductList,
+            object : RecyclerClicks {
+                @SuppressLint("NotifyDataSetChanged")
+                override fun itemClick(pos: Int, status: String?) {
+                    productList[pos]
+
+                }
+            })
+
+        bind.recycler.adapter = productAdapter
+
+        bind.close.setHapticClickListener {
+            dismiss()
+        }
+
+        bind.addBtn.setHapticClickListener {
+            if (from == "freebie") {
+                if (selectedPos == -1) {
+                    Alerts.error(mCtx, "Please select a product")
+                    return@setHapticClickListener
+                }
+
+                val selectedProduct = productList[selectedPos]
+
+                socketManager?.createFreebie(roomId = viewModel.currentRoomId, productId = selectedProduct?.id.toString(), time = "1")
+                dismiss()
+
+            } else {
+                addProductSheet()
+            }
+        }
+
+        socketManager?.onProductPinned { json ->
+            runSafe {
+                requireActivity().runOnUiThread {
+
+                    val productId = json.optString("product_id")
+
+                    viewModel.pinnedProducts.add(productId)
+
+                    Log.d("TAG", "pinnedProducts: ${viewModel.pinnedProducts}")
+
+                    productList[selectedPos]?.selected = true
+                    productAdapter.notifyItemChanged(selectedPos)
+
+                }
+            }
+
+        }
+
+        socketManager?.onProductUnPinned { json ->
+            runSafe {
+                requireActivity().runOnUiThread {
+
+                    if (viewModel.currentRoomId == json.optString("room_id")) {
+
+                        val productId = json.optString("product_id")
+
+                        Log.d("TAG", "pinnedProducts: ${viewModel.pinnedProducts}")
+
+
+                        productList[selectedPos]?.selected = false
+                        productAdapter.notifyItemChanged(selectedPos)
+
+                        viewModel.pinnedProducts.remove(productId)
+
+                    }
+                }
+            }
+        }
+
         viewModel.getUserProductsRepo.observe(viewLifecycleOwner) {
             when (it) {
                 is Resource.Success -> {
                     bind.bottomLoader.isVisible = false
                     bind.loader.isVisible = false
-                    bind.switcher.showNext()
+                    bind.switcher.displayedChild=0
                     val mData = it.value.products
 
                     if (page == 1) {
@@ -281,7 +441,7 @@ class ProductsForLiveShowFragment : BottomSheetDialogFragment() {
                 is Resource.Success -> {
                     bind.loader.isVisible = false
                     bind.surpriseBottomLoader.isVisible = false
-                    bind.switcher.showPrevious()
+                    bind.switcher.displayedChild=1
                     val mData = it.value.data
                     if (surprisePage == 1) {
                         surpriseProductList.clear()
@@ -329,141 +489,11 @@ class ProductsForLiveShowFragment : BottomSheetDialogFragment() {
             }
         }
 
-        viewModel.getSurpriseProductRepo.observe(viewLifecycleOwner) {
-            when (it) {
-                is Resource.Success -> {
-                    bind.loader.isVisible = false
-                    bind.surpriseBottomLoader.isVisible = false
-                    bind.switcher.showPrevious()
-                    val mData = it.value.data
-                    if (surprisePage == 1) {
-                        surpriseProductList.clear()
-                    }
-                }
-            }
-        })
-
-        bind.search.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
-            override fun afterTextChanged(s: Editable?) {
-                val query = s?.toString()?.trim() ?: ""
-                bind.searchLayout.isEndIconVisible = query.isNotEmpty()
-
-                bind.bottomLoader.isVisible = true
-                page = 1
-                loadData(4)
-            }
-        })
-
-        socketManager?.onProductPinned { json ->
-            runSafe {
-                requireActivity().runOnUiThread {
-
-                    val productId = json.optString("product_id")
-
-                    viewModel.pinnedProducts.add(productId)
-
-                    Log.d("TAG", "pinnedProducts: ${viewModel.pinnedProducts}")
-
-                    productList[selectedPos]?.selected = true
-                    productAdapter.notifyItemChanged(selectedPos)
-
-                }
-            }
-
-        }
-
-        socketManager?.onProductUnPinned { json ->
-            runSafe {
-                requireActivity().runOnUiThread {
-
-                    if (viewModel.currentRoomId == json.optString("room_id")) {
-
-                        val productId = json.optString("product_id")
-
-                        Log.d("TAG", "pinnedProducts: ${viewModel.pinnedProducts}")
-
-
-                        productList[selectedPos]?.selected = false
-                        productAdapter.notifyItemChanged(selectedPos)
-
-                        viewModel.pinnedProducts.remove(productId)
-
-                    }
-                }
-            }
-        }
-
-        productAdapter = FirebaseProductAdapter(
-            from = from,
-            mList = productList,
-            object : RecyclerClicks {
-                @SuppressLint("NotifyDataSetChanged")
-                override fun itemClick(pos: Int, status: String?) {
-
-                    val selectedProduct = productList[pos]
-
-                    if (productList[pos]?.status == "sold") {
-                        Alerts.error(mCtx, "This product is already sold")
-                    } else if (status == "start_auction") {
-                        if (auctionTypeId == AuctionType.LIVE.id) {
-                            auctionSettingsSheet(selectedProduct?.id.toString(), selectedProduct?.pricing ?: "")
-
-                        } else {
-                            socketManager?.startAuction(
-                                viewModel.currentRoomId,
-                                listOf(selectedProduct?.id.toString()),
-                                selectedProduct?.pricing ?: "0.0",
-                                null, null, null,
-                                auctionTypeId
-                            )
-                            dismiss()
-                        }
-
-                    } else if (status == "set_next") {
-                        selectedPos = pos
-                        socketManager?.pinProduct(roomId = viewModel.currentRoomId, productId = selectedProduct?.id.toString())
-                    } else if (status == "freebie") {
-                        productList.forEachIndexed { index, item ->
-                            item?.selected = index == pos
-                            bind.recycler.adapter?.notifyDataSetChanged()
-                        }
-                        selectedPos = pos
-                    }
-
-                }
-
-            })
-
-        bind.recycler.adapter = productAdapter
-
-        bind.close.setHapticClickListener {
-            dismiss()
-        }
-
-        bind.addBtn.setHapticClickListener {
-            if (from == "freebie") {
-                if (selectedPos == -1) {
-                    Alerts.error(mCtx, "Please select a product")
-                    return@setHapticClickListener
-                }
-
-                val selectedProduct = productList[selectedPos]
-
-                socketManager?.createFreebie(roomId = viewModel.currentRoomId, productId = selectedProduct?.id.toString(), time = "1")
-                dismiss()
-
-            } else {
-                addProductLauncher.launch(mCtx.toListProduct().putExtra("category", viewModel.categoryId))
-            }
-        }
-
     }
 
-    private fun loadData(call: Int) {
-        Log.d("TAG", "$call loadData: $saleType")
-        bind.bottomLoader.isVisible = true
+    private fun loadData(loadMore: Boolean = false) {
+        bind.bottomLoader.isVisible = loadMore
+        bind.loader.isVisible = !loadMore
         viewModel.getUserProducts(
             page = page.toString().request(),
             saleType = saleType.ifEmpty { null }?.request(),
@@ -472,6 +502,12 @@ class ProductsForLiveShowFragment : BottomSheetDialogFragment() {
             search = bind.search.value().ifEmpty { null }?.request(),
             categoryIds = viewModel.categoryId.request()
         )
+    }
+
+    private fun loadSurpriseSets(loadMore: Boolean = false) {
+        bind.bottomLoader.isVisible = loadMore
+        bind.loader.isVisible = !loadMore
+        viewModel.getSurpriseProduct(surprisePage.toString())
     }
 
     override fun onDestroyView() {
@@ -572,15 +608,8 @@ class ProductsForLiveShowFragment : BottomSheetDialogFragment() {
                     )
                     sheet.dismiss()
                     dismiss()
-
                 }
-
             }
-
-            /* auctionSettingsSheetBind.startingBid.value()
-             selectedRequiredTime
-             selectedCounterTimer
-             auctionSettingsSheetBind.suddenDeath.isChecked*/
 
         }
 
@@ -588,4 +617,54 @@ class ProductsForLiveShowFragment : BottomSheetDialogFragment() {
 
     }
 
+    private fun addProductSheet() {
+        val sheetView = SelectProductTypeSheetBinding.bind(layoutInflater.inflate(R.layout.select_product_type_sheet, null, false))
+
+        val mSellSheet = Alerts.appBottomSheet(mCtx, true, sheetView)
+
+        val sellList = mutableListOf(
+//                SellModel(
+//                    R.drawable.ic_quick,
+//                    R.color.primaryContainer,
+//                    "Create Temporary Listing",
+//                    ""
+//                ),
+            SellModel(
+                R.drawable.ic_tag_outline,
+                R.color.primaryContainer,
+                "Create Quality Listing",
+                ""
+            ),
+            SellModel(
+                R.drawable.ic_tile_grid,
+                R.color.primaryContainer,
+                "Create a Surprise Set",
+                ""
+            )
+        )
+
+
+        val exploreAdapter = SellAdapter(sellList, "", object : RecyclerClicks {
+
+            override fun itemClick(pos: Int, status: String?) {
+                when (pos) {
+                    1 -> {
+                        addProductLauncher.launch(mCtx.toListProduct().putExtra("from", "surprise"))
+                    }
+
+                    else -> {
+                        addProductLauncher.launch(mCtx.toListProduct().putExtra("category", viewModel.categoryId))
+                    }
+                }
+                mSellSheet.dismiss()
+            }
+        })
+
+        sheetView.recycler.adapter = exploreAdapter
+
+        sheetView.close.setHapticClickListener {
+            mSellSheet.dismiss()
+        }
+        mSellSheet.show()
+    }
 }

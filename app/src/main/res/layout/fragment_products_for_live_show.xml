@@ -77,11 +77,49 @@
 
     <ViewSwitcher
         android:id="@+id/switcher"
+        android:measureAllChildren="false"
         android:layout_width="match_parent"
         app:layout_constraintBottom_toTopOf="@id/addBtn"
         app:layout_constraintTop_toBottomOf="@+id/chipGroupScroll"
         android:layout_height="0dp">
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:paddingVertical="@dimen/half_margin">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycler"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:nestedScrollingEnabled="false"
+                android:orientation="vertical"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                tools:itemCount="510"
+                tools:listitem="@layout/product_selection_item" />
+
+            <io.bidswipe.app.ui.custom.NoDataView
+                android:id="@+id/noDataView"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/chipGroupScroll"
+                app:title_text="No Products Found!" />
+
+            <com.github.ybq.android.spinkit.SpinKitView
+                android:id="@+id/bottomLoader"
+                style="@style/appLoader"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/recycler" />
+
+        </LinearLayout>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -120,43 +158,6 @@
 
         </LinearLayout>
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:paddingVertical="@dimen/margin">
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recycler"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:nestedScrollingEnabled="false"
-                android:orientation="vertical"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                tools:itemCount="510"
-                tools:listitem="@layout/product_selection_item" />
-
-            <io.bidswipe.app.ui.custom.NoDataView
-                android:id="@+id/noDataView"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:visibility="gone"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/chipGroupScroll"
-                app:title_text="No Products Found!" />
-
-            <com.github.ybq.android.spinkit.SpinKitView
-                android:id="@+id/bottomLoader"
-                style="@style/appLoader"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:visibility="gone"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/recycler" />
-
-        </LinearLayout>
     </ViewSwitcher>
 
     <com.google.android.material.button.MaterialButton

@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.navigation.fragment.findNavController
 import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseFragment
@@ -37,6 +38,8 @@ class ManageSurpriseProductsFragment : BaseFragment<DashViewModel, FragmentManag
             hideKeyboard(it)
         }
 
+        bind.priceLayout.isVisible = viewModel.surprise_set_type == "buy_it_now"
+
         productsAdapter = ManageProductItemAdapter(viewModel.surpriseSetList, object : RecyclerClicks {
             override fun itemClick(pos: Int, status: String?) {
                 viewModel.surpriseSetList.removeAt(pos)
@@ -61,7 +64,7 @@ class ManageSurpriseProductsFragment : BaseFragment<DashViewModel, FragmentManag
                     Alerts.error(mCtx, "Please add at least one product")
                 }
 
-                bind.price.value().isEmpty() -> {
+                viewModel.surprise_set_type == "buy_it_now" && bind.price.value().isEmpty() -> {
                     bind.price.requestFocus()
                     Alerts.error(mCtx, "Please enter surprise buy price")
                 }
@@ -97,6 +100,7 @@ class ManageSurpriseProductsFragment : BaseFragment<DashViewModel, FragmentManag
         }
 
         surpriseAddProductSheetBind.confirm.setHapticClickListener {
+            val addedQuantity = viewModel.surpriseSetList.sumOf { it?.quantity ?: 0 }
             when {
                 surpriseAddProductSheetBind.name.value().isEmpty() -> {
                     surpriseAddProductSheetBind.name.requestFocus()
@@ -111,7 +115,11 @@ class ManageSurpriseProductsFragment : BaseFragment<DashViewModel, FragmentManag
                 surpriseAddProductSheetBind.quantity.value().toInt() < 1 -> {
                     surpriseAddProductSheetBind.quantity.requestFocus()
                     Alerts.error(mCtx, "Please enter valid product quantity")
+                }
 
+                addedQuantity + surpriseAddProductSheetBind.quantity.value().toInt() > 500 -> {
+                    surpriseAddProductSheetBind.quantity.requestFocus()
+                    Alerts.error(mCtx, "You can not add product quantity more than 500")
                 }
 
                 else -> {
@@ -124,7 +132,9 @@ class ManageSurpriseProductsFragment : BaseFragment<DashViewModel, FragmentManag
                     )
                     productsAdapter.notifyItemInserted(viewModel.surpriseSetList.size)
                     bind.numberOfProducts.text = "Number Of Products (Max 500): ${viewModel.surpriseSetList.sumOf { it?.quantity ?: 0 }}"
-
+                    if (viewModel.surpriseSetList.sumOf { it?.quantity ?: 0 } == 500) {
+                        bind.addNew.isVisible = false
+                    }
                     surpriseAddProductSheet.dismiss()
                 }
             }

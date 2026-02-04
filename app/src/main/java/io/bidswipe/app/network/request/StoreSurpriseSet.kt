@@ -17,16 +17,16 @@ data class StoreSurpriseSet(
     @SerializedName("items")
     val items: List<SurpriseProductModel?>?,
     @SerializedName("auto_randomizer")
-val autoRandomizer: Int?,
+    val autoRandomizer: Int?,
     @SerializedName("quick_spin")
     val quickSpin: Int?,
 )
 
 data class SurpriseProductModel(
-    @SerializedName("description")
-    val description: String?,
     @SerializedName("name")
     val name: String?,
+    @SerializedName("description")
+    val description: String?,
     @SerializedName("quantity")
     val quantity: Int?
 )
