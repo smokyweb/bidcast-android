@@ -100,7 +100,6 @@
             android:orientation="horizontal">
 
             <com.google.android.material.card.MaterialCardView
-                android:id="@+id/pinCard"
                 style="@style/cardStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

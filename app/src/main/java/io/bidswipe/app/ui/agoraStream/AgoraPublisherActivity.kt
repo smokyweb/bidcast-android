@@ -1094,7 +1094,7 @@ class AgoraPublisherActivity : BaseActivity() {
 
     private fun showProductSheet() {
         val bottomSheetFragment = ProductsForLiveShowFragment().apply {
-            arguments = bundleOf("from" to "live_show", "auction_type_id" to liveShowData?.auctionTypeId)
+            arguments = bundleOf("from" to "live_show", "auction_type_id" to liveShowData?.auctionTypeId,"live_status" to isShowLive)
         }
         bottomSheetFragment.show(supportFragmentManager, "BOTTOM_SHEET_TAG")
     }

@@ -78,6 +78,7 @@ class ProductsForLiveShowFragment : BottomSheetDialogFragment() {
     private var socketManager: SocketManager? = null
 
     var from = "live_show"
+    var isLive = false
     var auctionTypeId = AuctionType.LIVE.id
 
     private var addProductLauncher =
@@ -93,7 +94,8 @@ class ProductsForLiveShowFragment : BottomSheetDialogFragment() {
             }
         }
 
-    private var productTypesList = mutableListOf("Auction", "Buy Now", "Sold", "Offers", "Surprise Sets")
+    private var productTypesList =
+        mutableListOf("Auction", "Buy Now", "Sold", "Offers", "Surprise Sets")
     var chipIndex = 0
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
@@ -107,7 +109,8 @@ class ProductsForLiveShowFragment : BottomSheetDialogFragment() {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 bottomSheetDialog.window?.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION)
                 bottomSheetDialog.window?.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
-                bottomSheetDialog.window?.navigationBarColor = ContextCompat.getColor(requireContext(), R.color.background)
+                bottomSheetDialog.window?.navigationBarColor =
+                    ContextCompat.getColor(requireContext(), R.color.background)
             }
 
             bottomSheet?.let {
@@ -140,6 +143,7 @@ class ProductsForLiveShowFragment : BottomSheetDialogFragment() {
         if (arguments != null) {
             from = arguments?.getString("from") ?: "live_show"
             auctionTypeId = arguments?.getInt("auction_type_id") ?: AuctionType.LIVE.id
+            isLive = arguments?.getBoolean("live_status") ?: false
         }
 
         if (auctionTypeId == AuctionType.BUY_NOW.id) {
@@ -279,23 +283,34 @@ class ProductsForLiveShowFragment : BottomSheetDialogFragment() {
                     if (productList[pos]?.status == "sold") {
                         Alerts.error(mCtx, "This product is already sold")
                     } else if (status == "start_auction") {
-                        if (auctionTypeId == AuctionType.LIVE.id) {
-                            auctionSettingsSheet(selectedProduct?.id.toString(), selectedProduct?.pricing ?: "")
+                        if (isLive) {
+                            if (auctionTypeId == AuctionType.LIVE.id) {
+                                auctionSettingsSheet(
+                                    selectedProduct?.id.toString(),
+                                    selectedProduct?.pricing ?: ""
+                                )
+                            } else {
+                                socketManager?.startAuction(
+                                    viewModel.currentRoomId,
+                                    listOf(selectedProduct?.id.toString()),
+                                    selectedProduct?.pricing ?: "0.0",
+                                    null, null, null,
+                                    auctionTypeId
+                                )
+                                dismiss()
 
+                            }
                         } else {
-                            socketManager?.startAuction(
-                                viewModel.currentRoomId,
-                                listOf(selectedProduct?.id.toString()),
-                                selectedProduct?.pricing ?: "0.0",
-                                null, null, null,
-                                auctionTypeId
-                            )
-                            dismiss()
+                            Alerts.error(mCtx, "Please start live show to start auction")
+                            return@itemClick
                         }
 
                     } else if (status == "set_next") {
                         selectedPos = pos
-                        socketManager?.pinProduct(roomId = viewModel.currentRoomId, productId = selectedProduct?.id.toString())
+                        socketManager?.pinProduct(
+                            roomId = viewModel.currentRoomId,
+                            productId = selectedProduct?.id.toString()
+                        )
                     } else if (status == "freebie") {
                         productList.forEachIndexed { index, item ->
                             item?.selected = index == pos
@@ -367,7 +382,11 @@ class ProductsForLiveShowFragment : BottomSheetDialogFragment() {
 
                 val selectedProduct = productList[selectedPos]
 
-                socketManager?.createFreebie(roomId = viewModel.currentRoomId, productId = selectedProduct?.id.toString(), time = "1")
+                socketManager?.createFreebie(
+                    roomId = viewModel.currentRoomId,
+                    productId = selectedProduct?.id.toString(),
+                    time = "1"
+                )
                 dismiss()
 
             } else {
@@ -413,6 +432,8 @@ class ProductsForLiveShowFragment : BottomSheetDialogFragment() {
                 }
             }
         }
+
+        viewModel.getUserProductsRepo.value = null
 
         viewModel.getUserProductsRepo.observe(viewLifecycleOwner) {
             when (it) {
@@ -596,7 +617,11 @@ class ProductsForLiveShowFragment : BottomSheetDialogFragment() {
             auctionSettingsSheetBind.requiredTime.showDropDown()
         }
 
-        auctionSettingsSheetBind.startingBid.addTextChangedListener(PriceFormatter(auctionSettingsSheetBind.startingBid))
+        auctionSettingsSheetBind.startingBid.addTextChangedListener(
+            PriceFormatter(
+                auctionSettingsSheetBind.startingBid
+            )
+        )
         auctionSettingsSheetBind.startingBid.setText(price)
 
         auctionSettingsSheetBind.close.setHapticClickListener { sheet.dismiss() }
@@ -649,7 +674,13 @@ class ProductsForLiveShowFragment : BottomSheetDialogFragment() {
     }
 
     private fun addProductSheet() {
-        val sheetView = SelectProductTypeSheetBinding.bind(layoutInflater.inflate(R.layout.select_product_type_sheet, null, false))
+        val sheetView = SelectProductTypeSheetBinding.bind(
+            layoutInflater.inflate(
+                R.layout.select_product_type_sheet,
+                null,
+                false
+            )
+        )
 
         val mSellSheet = Alerts.appBottomSheet(mCtx, true, sheetView)
 
@@ -684,7 +715,9 @@ class ProductsForLiveShowFragment : BottomSheetDialogFragment() {
                     }
 
                     else -> {
-                        addProductLauncher.launch(mCtx.toListProduct().putExtra("category", viewModel.categoryId))
+                        addProductLauncher.launch(
+                            mCtx.toListProduct().putExtra("category", viewModel.categoryId)
+                        )
                     }
                 }
                 mSellSheet.dismiss()
