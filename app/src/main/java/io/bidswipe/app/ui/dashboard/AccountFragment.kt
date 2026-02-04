@@ -605,7 +605,6 @@ class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
                     if (App.profileResponse.value?.sellerIdentityStatus == "pending") {
                         return
                     }
-
                     startActivity(Intent(mCtx, SellerVerificationActivity::class.java))
                 }
 

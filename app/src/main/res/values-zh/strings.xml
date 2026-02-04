@@ -332,4 +332,6 @@
     <string name="add">Add</string>
     <string name="turn_off_if_you_want_a_slower_spin_animation_this_does_not_affect_randomization">Turn off if you want a slower spin animation. This does not affect randomization.</string>
     <string name="after_each_product_sells_the_buyer_will_be_randomly_assigned_turn_off_if_you_want_to_randomize_manually">After each product sells, the buyer will be randomly assigned. Turn off if you want to randomize manually.</string>
+    <string name="description_optional">Description (Optional)</string>
+    <string name="surprise_set">Surprise Set</string>
 </resources>

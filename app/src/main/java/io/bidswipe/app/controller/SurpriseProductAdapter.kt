@@ -1,26 +1,15 @@
 package io.bidswipe.app.controller
 
 import android.annotation.SuppressLint
-import android.content.res.ColorStateList
-import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat
-import androidx.core.text.bold
-import androidx.core.text.buildSpannedString
-import androidx.core.text.color
 import androidx.core.view.isVisible
-import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseAdapter
-import io.bidswipe.app.databinding.ProductSelectionItemBinding
 import io.bidswipe.app.databinding.SurpriseSetItemBinding
 import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.network.response.GetSurpriseProductsResponse
-import io.bidswipe.app.network.response.Product
 import io.bidswipe.app.utils.asCapital
 import io.bidswipe.app.utils.asMoney
-import io.bidswipe.app.utils.dpToPx
-import io.bidswipe.app.utils.loadUrl
 import io.bidswipe.app.utils.setHapticClickListener
 
 class SurpriseProductAdapter(
@@ -47,26 +36,35 @@ class SurpriseProductAdapter(
                 }
             }
 
-            bind.startAuction.setHapticClickListener {
-                mClicks.itemClick(position, "start_auction")
+            bind.manage.setHapticClickListener {
+                mClicks.itemClick(position, "manage")
             }
 
             bind.setForNext.setHapticClickListener {
                 mClicks.itemClick(position, "set_next")
             }
 
-            bind.buttonLayout.isVisible =  from != "freebie"
+            bind.buttonLayout.isVisible = from != "freebie"
 
-            bind.prodSubTitle.text = buildString {
+            bind.desc.text = buildString {
                 append(item?.description)
             }
 
             bind.productName.text = item?.name?.asCapital()
 
-            bind.category.isVisible =false
-
+            bind.price.isVisible = item?.type == "buy_it_now"
             bind.price.text = buildString {
                 append(item?.price?.toString()?.asMoney())
+            }
+
+            item?.totalQuantity=item.items?.sumOf { it?.quantity?:0 }
+            bind.stepProgress.max = item?.totalQuantity ?: 0
+            bind.stepProgress.progress = (item?.soldQuantity ?: 0)
+            bind.itemsLeftText.text = buildString {
+                append((item?.totalQuantity ?: 0) - (item?.soldQuantity ?: 0))
+                append("/")
+                append(item?.totalQuantity?:0)
+                append(" left")
             }
         }
     }

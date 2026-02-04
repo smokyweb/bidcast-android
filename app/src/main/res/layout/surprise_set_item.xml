@@ -10,126 +10,99 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:padding="12dp">
+        android:layout_weight="1"
+        android:gravity="center_vertical"
+        android:orientation="vertical"
+        android:padding="12dp"
+        android:weightSum="1">
 
         <LinearLayout
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="@dimen/half_margin"
-            android:layout_weight="1"
-            android:gravity="center_vertical"
-            android:orientation="vertical"
-            android:weightSum="1">
+            android:orientation="horizontal">
 
             <TextView
                 android:id="@+id/productName"
-                style="@style/TitleLarge"
-                android:layout_width="match_parent"
+                style="@style/TitleSmall"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_weight="1"
                 android:text="@string/enter_product_title" />
-
-            <TextView
-                android:id="@+id/category"
-                style="@style/BodySmall"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Category • Condition" />
 
             <TextView
                 android:id="@+id/price"
                 style="@style/TitleMedium"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="\$1" />
-
-            <com.google.android.material.progressindicator.LinearProgressIndicator
-                android:id="@+id/stepProgress"
-                style="@style/circularProgressStyle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/half_margin"
-                android:progress="15"
-                app:layout_constraintTop_toBottomOf="@id/header"
-                app:trackCornerRadius="6dp"
-                app:trackThickness="8dp" />
-
-            <LinearLayout
-                android:id="@+id/buttonLayout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/start_auction"
-                    style="@style/appBtn"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:minHeight="0dp"
-                    android:paddingHorizontal="@dimen/margin"
-                    android:paddingVertical="4dp"
-                    android:text="Start Auction"
-                    android:textAppearance="@style/BodySmall"
-                    android:textColor="@color/onSurface"
-                    app:backgroundTint="@color/outline" />
-
-                <com.google.android.material.card.MaterialCardView
-                    android:id="@+id/pinCard"
-                    style="@style/cardStyle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/half_margin"
-                    app:cardCornerRadius="28dp">
-
-                    <androidx.appcompat.widget.AppCompatImageView
-                        android:id="@+id/set_for_next"
-                        android:layout_width="28dp"
-                        android:layout_height="28dp"
-                        android:layout_gravity="center"
-                        android:padding="6dp"
-                        android:src="@drawable/ic_pin"
-                        android:tint="@color/onSurface" />
-
-
-                </com.google.android.material.card.MaterialCardView>
-
-
-            </LinearLayout>
-
         </LinearLayout>
 
+        <TextView
+            android:id="@+id/desc"
+            style="@style/BodySmall"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Category • Condition" />
+
+        <com.google.android.material.progressindicator.LinearProgressIndicator
+            android:id="@+id/stepProgress"
+            style="@style/circularProgressStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="4dp"
+            android:progress="15"
+            app:layout_constraintTop_toBottomOf="@id/header"
+            app:trackCornerRadius="6dp"
+            app:trackThickness="8dp" />
+
+        <TextView
+            android:id="@+id/items_left_text"
+            style="@style/BodySmall"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/half_margin"
+            android:text="Category • Condition" />
+
         <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:gravity="center_vertical|end"
-            android:orientation="vertical"
-            android:visibility="gone">
+            android:id="@+id/buttonLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
 
-            <TextView
-                android:id="@+id/productStatus"
-                style="@style/TitleMedium"
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/manage"
+                style="@style/appBtn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="live"
-                android:textAllCaps="true"
-                android:textColor="@color/primary"
-                android:visibility="gone" />
+                android:minHeight="0dp"
+                android:paddingHorizontal="@dimen/margin"
+                android:paddingVertical="4dp"
+                android:text="Manage Products"
+                android:textAppearance="@style/BodySmall"
+                android:textColor="@color/onSurface"
+                app:backgroundTint="@color/outline" />
 
-            <View
-                android:layout_width="1dp"
-                android:layout_height="0dp"
-                android:layout_weight="1" />
-
-            <TextView
-                android:id="@+id/prod_sub_title"
-                style="@style/HeadlineSmall"
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/pinCard"
+                style="@style/cardStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:fontFamily="@font/poppins_bold"
-                android:text="$45.00"
-                android:textColor="@color/success" />
+                android:layout_marginStart="@dimen/half_margin"
+                app:cardCornerRadius="28dp">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/set_for_next"
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
+                    android:layout_gravity="center"
+                    android:padding="6dp"
+                    android:src="@drawable/ic_pin"
+                    android:tint="@color/onSurface" />
+
+
+            </com.google.android.material.card.MaterialCardView>
+
 
         </LinearLayout>
 

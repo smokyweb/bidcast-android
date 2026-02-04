@@ -211,7 +211,7 @@ class ProductsForLiveShowFragment : BottomSheetDialogFragment() {
                         }
 
                         4 -> {
-                            surprisePage=1
+                            surprisePage = 1
                             loadSurpriseSets()
                         }
 
@@ -316,12 +316,43 @@ class ProductsForLiveShowFragment : BottomSheetDialogFragment() {
             object : RecyclerClicks {
                 @SuppressLint("NotifyDataSetChanged")
                 override fun itemClick(pos: Int, status: String?) {
-                    productList[pos]
-
+                    val selectedProduct = surpriseProductList[pos]
+                    selectedProduct?.totalQuantity = selectedProduct.items?.sumOf { it?.quantity ?: 0 }
+                    if (selectedProduct?.totalQuantity == selectedProduct?.soldQuantity) {
+                        Alerts.error(mCtx, "This product is already sold")
+                    } else if (status == "manage") {
+                        val bottomSheetFragment = ManageSurpriseSetSheet()
+                        bottomSheetFragment.show(parentFragmentManager, "MANAGE_SURPRISE")
+                    } else if (status == "start_auction") {
+                        if (auctionTypeId == AuctionType.LIVE.id) {
+                            auctionSettingsSheet(selectedProduct?.id.toString(), (selectedProduct?.price ?: 0.0).toString())
+                        } else {
+                            socketManager?.startAuction(
+                                viewModel.currentRoomId,
+                                listOf(selectedProduct?.id.toString()),
+                                (selectedProduct?.price ?: 0.0).toString(),
+                                null, null, null,
+                                auctionTypeId
+                            )
+                            dismiss()
+                        }
+                    } else if (status == "set_next") {
+                        selectedPos = pos
+                        socketManager?.pinProduct(roomId = viewModel.currentRoomId, productId = selectedProduct?.id.toString())
+                    } else if (status == "manage") {
+                        selectedPos = pos
+                        socketManager?.pinProduct(roomId = viewModel.currentRoomId, productId = selectedProduct?.id.toString())
+                    } else if (status == "freebie") {
+                        surpriseProductList.forEachIndexed { index, item ->
+                            item?.selected = index == pos
+                            bind.recycler.adapter?.notifyDataSetChanged()
+                        }
+                        selectedPos = pos
+                    }
                 }
             })
 
-        bind.recycler.adapter = productAdapter
+        bind.surpriseRecycler.adapter = surpriseProductAdapter
 
         bind.close.setHapticClickListener {
             dismiss()
@@ -388,7 +419,7 @@ class ProductsForLiveShowFragment : BottomSheetDialogFragment() {
                 is Resource.Success -> {
                     bind.bottomLoader.isVisible = false
                     bind.loader.isVisible = false
-                    bind.switcher.displayedChild=0
+                    bind.switcher.displayedChild = 0
                     val mData = it.value.products
 
                     if (page == 1) {
@@ -441,7 +472,7 @@ class ProductsForLiveShowFragment : BottomSheetDialogFragment() {
                 is Resource.Success -> {
                     bind.loader.isVisible = false
                     bind.surpriseBottomLoader.isVisible = false
-                    bind.switcher.displayedChild=1
+                    bind.switcher.displayedChild = 1
                     val mData = it.value.data
                     if (surprisePage == 1) {
                         surpriseProductList.clear()

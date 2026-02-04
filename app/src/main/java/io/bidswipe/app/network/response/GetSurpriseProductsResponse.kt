@@ -39,7 +39,12 @@ data class GetSurpriseProductsResponse(
         @SerializedName("type")
         val type: String?,
         @SerializedName("user_id")
-        val userId: Int?
+        val userId: Int?,
+        @SerializedName("total_quantity")
+        var totalQuantity: Int?,
+        @SerializedName("sold_quantity")
+        var soldQuantity: Int? = 0,
+        var selected: Boolean? = false
     ) {
         data class Item(
             @SerializedName("description")
