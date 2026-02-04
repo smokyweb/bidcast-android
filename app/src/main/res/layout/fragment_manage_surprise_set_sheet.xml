@@ -56,14 +56,14 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="@string/enter_product_title" />
+                android:text="SPORTS CARD" />
 
             <TextView
                 android:id="@+id/price"
                 style="@style/TitleMedium"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="\$1" />
+                android:text="\$100" />
         </LinearLayout>
 
         <TextView
@@ -71,7 +71,7 @@
             style="@style/BodySmall"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Category • Condition" />
+            android:text="Description of set" />
 
         <com.google.android.material.progressindicator.LinearProgressIndicator
             android:id="@+id/stepProgress"
@@ -90,12 +90,13 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/half_margin"
-            android:text="Category • Condition" />
+            android:text="30/30 left" />
 
         <LinearLayout
             android:id="@+id/buttonLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/half_margin"
             android:gravity="center_vertical"
             android:orientation="horizontal">
 
@@ -119,7 +120,7 @@
             </com.google.android.material.card.MaterialCardView>
 
             <com.google.android.material.card.MaterialCardView
-                android:id="@+id/pinCard"
+                android:id="@+id/delete_card"
                 style="@style/cardStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -159,7 +160,6 @@
                 android:id="@+id/auto_randomize_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginVertical="@dimen/half_margin"
                 android:background="@drawable/card_8_outline"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
@@ -237,15 +237,45 @@
 
             </LinearLayout>
 
+            <LinearLayout
+                android:id="@+id/unsold_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <io.bidswipe.app.ui.custom.Heading
+                    android:id="@+id/unsold_heading"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:title="Unsold (40)" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/unsold_items"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:nestedScrollingEnabled="false"
+                    android:orientation="vertical"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    tools:itemCount="2"
+                    tools:listitem="@layout/unsold_item" />
+            </LinearLayout>
+
+            <io.bidswipe.app.ui.custom.Heading
+                android:id="@+id/available_heading"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margin"
+                app:title="Available Items (40)" />
+
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recycler"
+                android:id="@+id/available_items"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:nestedScrollingEnabled="false"
                 android:orientation="vertical"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                tools:itemCount="0"
-                tools:listitem="@layout/product_selection_item" />
+                tools:itemCount="2"
+                tools:listitem="@layout/available_item" />
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>

@@ -16,9 +16,14 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import io.bidswipe.app.R
+import io.bidswipe.app.controller.AvailableItemAdapter
+import io.bidswipe.app.controller.UnsoldAdapterAdapter
 import io.bidswipe.app.databinding.FragmentManageSurpriseSetSheetBinding
+import io.bidswipe.app.interfaces.RecyclerClicks
+import io.bidswipe.app.network.request.SurpriseProductModel
 import io.bidswipe.app.network.response.AuctionType
 import io.bidswipe.app.ui.dashboard.DashViewModel
+import io.bidswipe.app.utils.setHapticClickListener
 
 class ManageSurpriseSetSheet : BottomSheetDialogFragment() {
 
@@ -78,6 +83,33 @@ class ManageSurpriseSetSheet : BottomSheetDialogFragment() {
             auctionTypeId = arguments?.getInt("auction_type_id") ?: AuctionType.LIVE.id
         }
 
+        bind.close.setHapticClickListener {
+            dismiss()
+        }
+
+        val unSoldlist = mutableListOf(SurpriseProductModel("", "", 1), SurpriseProductModel("", "", 2))
+        val unSoldAdapter = UnsoldAdapterAdapter(
+            mList = unSoldlist,
+            object : RecyclerClicks {
+                @SuppressLint("NotifyDataSetChanged")
+                override fun itemClick(pos: Int, status: String?) {
+                }
+            })
+
+        bind.unsoldItems.adapter = unSoldAdapter
+        bind.unsoldHeading.title.text = "Unsold (${unSoldlist.sumOf { it.quantity ?: 0 }})"
+
+        val availableList = mutableListOf(SurpriseProductModel("P1", "", 10), SurpriseProductModel("P2", "", 12))
+        val availabledapter = AvailableItemAdapter(
+            mList = availableList,
+            object : RecyclerClicks {
+                @SuppressLint("NotifyDataSetChanged")
+                override fun itemClick(pos: Int, status: String?) {
+                }
+            })
+
+        bind.availableItems.adapter = availabledapter
+        bind.availableHeading.title.text = "Available (${availableList.sumOf { it.quantity ?: 0 }})"
 
     }
 

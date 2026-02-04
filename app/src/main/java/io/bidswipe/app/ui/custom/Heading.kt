@@ -19,19 +19,18 @@ class Heading @JvmOverloads constructor(
 	defStyleAttr : Int = 0 ,
 ) : LinearLayout(context , attrs , defStyleAttr) {
 
+	lateinit var title: TextView
 	init {
 		context.theme.obtainStyledAttributes(attrs , styleable.Heading , 0 , 0).use {
 			orientation = VERTICAL
-			val title = TextView(context).apply {
+			 title = TextView(context).apply {
 				text = it.getString(styleable.Heading_title)
 				setTextAppearance(style.TitleLarge)
 				isAllCaps = false
 				setTextColor(ContextCompat.getColor(context , clr.scrim))
 				setPadding(0 , 0 , 0 , context.resources.dpToPx(4))
-				layoutParams =
-					ViewGroup.LayoutParams(LayoutParams.WRAP_CONTENT , LayoutParams.WRAP_CONTENT)
+				layoutParams = ViewGroup.LayoutParams(LayoutParams.WRAP_CONTENT , LayoutParams.WRAP_CONTENT)
 			}
-
 
 			addView(title , 0)
 			//addView(line, 1)
