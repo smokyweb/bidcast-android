@@ -30,6 +30,7 @@
     <declare-styleable name="Heading">
         <attr name="title" format="string" />
         <attr name="style" format="reference" />
+        <attr name="show_close" format="boolean" />
     </declare-styleable>
 
     <attr name="entryChipStyleNew" format="reference" />

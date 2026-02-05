@@ -63,7 +63,7 @@ class CreateSurpriseSetFragment : BaseFragment<DashViewModel, FragmentCreateSurp
             }
         })
 
-        bind.surpriseType.selectTab(bind.surpriseType.getTabAt(1))
+        bind.surpriseType.selectTab(bind.surpriseType.getTabAt(if(  viewModel.surprise_set_type=="buy_it_now") 0 else 1))
 
         bind.create.setOnClickListener {
             when {

@@ -17,6 +17,7 @@ import android.widget.ArrayAdapter
 import android.widget.FrameLayout
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
+import androidx.core.os.bundleOf
 import androidx.core.view.get
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
@@ -332,22 +333,29 @@ class ProductsForLiveShowFragment : BottomSheetDialogFragment() {
                 @SuppressLint("NotifyDataSetChanged")
                 override fun itemClick(pos: Int, status: String?) {
                     val selectedProduct = surpriseProductList[pos]
-                    selectedProduct?.totalQuantity = selectedProduct.items?.sumOf { it?.quantity ?: 0 }
-                    if (selectedProduct?.totalQuantity == selectedProduct?.soldQuantity) {
+                    val totalQuantity = selectedProduct?.items?.sumOf { it?.quantity ?: 0 }
+                    val soldQuantity = selectedProduct?.items?.sumOf { it?.soldQuantity ?: 0 }
+
+                    if (totalQuantity == soldQuantity) {
                         Alerts.error(mCtx, "This product is already sold")
                     } else if (status == "manage") {
-                        val bottomSheetFragment = ManageSurpriseSetSheet()
+                        val bottomSheetFragment = ManageSurpriseSetSheet(){
+                            dismiss()
+                        }.apply{
+                            arguments = bundleOf("setData" to selectedProduct)
+                        }
                         bottomSheetFragment.show(parentFragmentManager, "MANAGE_SURPRISE")
                     } else if (status == "start_auction") {
                         if (auctionTypeId == AuctionType.LIVE.id) {
                             auctionSettingsSheet(selectedProduct?.id.toString(), (selectedProduct?.price ?: 0.0).toString())
                         } else {
-                            socketManager?.startAuction(
+                            socketManager?.startAuctionBreakSpot(
                                 viewModel.currentRoomId,
-                                listOf(selectedProduct?.id.toString()),
+                                selectedProduct?.id.toString(),
+                                selectedProduct?.items?.first { it?.status=="available" }?.id.toString(),
+                                selectedProduct?.items?.first { it?.status=="available" }?.units?.first{it?.status=="available"}?.id.toString(),
                                 (selectedProduct?.price ?: 0.0).toString(),
                                 null, null, null,
-                                auctionTypeId
                             )
                             dismiss()
                         }

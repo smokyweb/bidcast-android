@@ -7,6 +7,7 @@ import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
 import io.bidswipe.app.model.LiveShowModel
+import io.bidswipe.app.network.response.socket.AuctionStartedBreakSpotResponse
 import io.bidswipe.app.network.response.socket.AuctionStartedResponse
 import io.bidswipe.app.network.response.socket.NotLiveShowResponse
 import io.bidswipe.app.network.response.socket.ProductIdsDeserializer
@@ -825,6 +826,48 @@ class SocketManager private constructor(
         }
         Log.d(TAG, "EMIT:remove-freebie-user  - showId: $roomId , userId: $userId")
         socket?.emit("remove-freebie-user", payload)
+    }
+
+    //SPOT BREAK
+    fun startAuctionBreakSpot(
+        roomId: String,
+        productSetId: String,
+        productSetItemId: String,
+        productSetItemUnitId: String,
+        startingBidAmount: String,
+        requireTime: Int?,
+        counterBidTime: Int?,
+        suddenDeath: Boolean?,
+    ) {
+        val payload = JSONObject().apply {
+            put("room_id", roomId)
+            put("productSetId", productSetId)
+            put("productSetItemId", productSetItemId)
+            put("productSetItemUnitId", productSetItemUnitId)
+            put("starting_bid_amount", startingBidAmount)
+            put("require_time", requireTime)
+            put("counter_bid_time", counterBidTime)
+            put("sudden_death", suddenDeath)
+        }
+
+        Log.d(TAG, "startAuctionBreakSpot: ${payload}")
+
+        socket?.emit("start_auction_break_spot", payload)
+    }
+
+    fun onAuctionStartedBreakSpot(listener: (resultJson: AuctionStartedBreakSpotResponse) -> Unit) {
+        socket?.off("auction_started_break_spot")
+        socket?.on("auction_started_break_spot") { args ->
+            val obj = args.firstOrNull()
+            val auctionResponse = Gson().fromJson(
+                obj.toString(),
+                AuctionStartedBreakSpotResponse::class.java
+            )
+            if (obj is JSONObject) {
+                Log.d(TAG, "RECEIVED: auction_started_break_spot - $obj")
+                listener(auctionResponse)
+            }
+        }
     }
 
 }

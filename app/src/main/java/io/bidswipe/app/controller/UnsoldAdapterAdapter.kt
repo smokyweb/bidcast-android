@@ -8,12 +8,14 @@ import io.bidswipe.app.databinding.UnsoldItemBinding
 import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.network.request.SurpriseProductModel
 import io.bidswipe.app.network.response.GetPremierShopResponse
+import io.bidswipe.app.network.response.GetSurpriseProductsResponse
+import io.bidswipe.app.utils.asMoney
 import io.bidswipe.app.utils.loadUrl
 import io.bidswipe.app.utils.setHapticClickListener
 
 class UnsoldAdapterAdapter(
-	mList : MutableList<SurpriseProductModel>, val mClicks : RecyclerClicks,
-) : BaseAdapter<SurpriseProductModel , UnsoldItemBinding>(mList) {
+	mList : MutableList<GetSurpriseProductsResponse.Data.Item.Unit?>, val mClicks : RecyclerClicks,
+) : BaseAdapter<GetSurpriseProductsResponse.Data.Item.Unit? , UnsoldItemBinding>(mList) {
 
 	override fun bindView(inflater : LayoutInflater , parent : ViewGroup) =
 		UnsoldItemBinding.inflate(inflater , parent , false)
@@ -21,7 +23,7 @@ class UnsoldAdapterAdapter(
 	override fun onBind(
 		holder : BaseViewHolder<UnsoldItemBinding> ,
 		position : Int ,
-		item :SurpriseProductModel? ,
+		item :GetSurpriseProductsResponse.Data.Item.Unit? ,
 	) {
 		with(holder) {
 
@@ -29,8 +31,8 @@ class UnsoldAdapterAdapter(
 				mClicks.itemClick(position)
 			}
 
-			bind.index.text="#${position+1}"
-
+			bind.index.text="#${item?.id}"
+			bind.price.text=(item?.price?:0).toString().asMoney()
 		}
 	}
 

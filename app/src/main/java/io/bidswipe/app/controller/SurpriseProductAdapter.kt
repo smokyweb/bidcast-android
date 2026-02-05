@@ -46,24 +46,21 @@ class SurpriseProductAdapter(
 
             bind.buttonLayout.isVisible = from != "freebie"
 
-            bind.desc.text = buildString {
-                append(item?.description)
-            }
-
+            bind.desc.text =item?.description
             bind.productName.text = item?.name?.asCapital()
-
             bind.price.isVisible = item?.type == "buy_it_now"
             bind.price.text = buildString {
                 append(item?.price?.toString()?.asMoney())
             }
 
-            item?.totalQuantity=item.items?.sumOf { it?.quantity?:0 }
-            bind.stepProgress.max = item?.totalQuantity ?: 0
-            bind.stepProgress.progress = (item?.soldQuantity ?: 0)
+            val  totalQuantity =item?.items?.sumOf { it?.quantity?:0 }
+            val  soldQuantity =item?.items?.sumOf { it?.soldQuantity?:0 }
+            bind.stepProgress.max = totalQuantity ?: 0
+            bind.stepProgress.progress = (soldQuantity ?: 0)
             bind.itemsLeftText.text = buildString {
-                append((item?.totalQuantity ?: 0) - (item?.soldQuantity ?: 0))
+                append((totalQuantity ?: 0) - (soldQuantity ?: 0))
                 append("/")
-                append(item?.totalQuantity?:0)
+                append(totalQuantity?:0)
                 append(" left")
             }
         }

@@ -77,6 +77,7 @@ import io.bidswipe.app.network.Resource
 import io.bidswipe.app.network.response.AuctionType
 import io.bidswipe.app.network.response.GetLiveSellerResponse
 import io.bidswipe.app.network.response.GetPromotePlansResponse
+import io.bidswipe.app.network.response.socket.AuctionStartedBreakSpotResponse
 import io.bidswipe.app.network.response.socket.AuctionStartedResponse
 import io.bidswipe.app.network.response.socket.GetFreebieObject
 import io.bidswipe.app.ui.custom.AlertType
@@ -708,6 +709,23 @@ class AgoraPublisherActivity : BaseActivity() {
             }
         }
 
+        socketManager?.onAuctionStartedBreakSpot { json ->
+            runSafe {
+                if (json.roomId == roomID) {
+                    runOnUiThread {
+                        if (json.surpriseSetDetails != null) {
+                            isAuctionStarted = true
+                            bind.runNext.isVisible = json.status == "sold"
+                            updateBreakSpotProductUI(json)
+                        } else {
+                            isAuctionStarted = false
+                            updateBreakSpotProductUI(null)
+                        }
+                    }
+                }
+            }
+        }
+
         socketManager?.onAuctionNExtProduct { json ->
             runSafe {
                 if (json.optString("room_id") == roomID) {
@@ -1094,7 +1112,7 @@ class AgoraPublisherActivity : BaseActivity() {
 
     private fun showProductSheet() {
         val bottomSheetFragment = ProductsForLiveShowFragment().apply {
-            arguments = bundleOf("from" to "live_show", "auction_type_id" to liveShowData?.auctionTypeId,"live_status" to isShowLive)
+            arguments = bundleOf("from" to "live_show", "auction_type_id" to liveShowData?.auctionTypeId, "live_status" to isShowLive)
         }
         bottomSheetFragment.show(supportFragmentManager, "BOTTOM_SHEET_TAG")
     }
@@ -1132,6 +1150,8 @@ class AgoraPublisherActivity : BaseActivity() {
                     }
                 }
 
+                bind.productImageCard.isVisible = true
+
                 if (auctionData.auctionTypeId == AuctionType.LIVE.id) {
                     if (auctionData.suddenDeath == true) {
                         bind.bidTime.setCompoundDrawablesWithIntrinsicBounds(
@@ -1145,13 +1165,63 @@ class AgoraPublisherActivity : BaseActivity() {
                     }
                 }
 
+
                 bind.price.text = (liveProduct.pricing ?: "0.0").asMoney() + " + Shipping + Taxes"
 
                 val price = auctionData.startingBidAmount
                 bind.bidPrice.isVisible = auctionData.auctionTypeId == AuctionType.LIVE.id
                 bind.bidPrice.text = price?.asMoney()
-                bind.status.isVisible = auctionData.status=="sold"
+                bind.status.isVisible = auctionData.status == "sold"
 
+            } else {
+                bind.product.isVisible = false
+                bind.productLayout.isVisible = false
+            }
+        }
+    }
+
+    fun updateBreakSpotProductUI(auctionData: AuctionStartedBreakSpotResponse?) {
+
+        runOnUiThread {
+            val liveProduct = auctionData?.surpriseSetDetails
+            if (liveProduct != null) {
+                log("updateProductUI : $liveProduct")
+                bind.product.isVisible = true
+                bind.productLayout.isVisible = true
+                bind.productName.text = liveProduct?.productSet?.name?.asCapital() +" #${auctionData.productSetItemUnitId}"
+                bind.productCategory.text = liveProduct.productSet?.description?.asCapital()
+
+                bind.itemsLeftProgress.max = liveProduct.totalQuantity ?: 0
+                bind.itemsLeftProgress.progress = (liveProduct.soldQuantity ?: 0)
+
+                bind.quantity.text = buildString {
+                    append((liveProduct.totalQuantity ?: 0) - (liveProduct?.soldQuantity ?: 0))
+                    append("/")
+                    append(liveProduct.totalQuantity ?: 0)
+                    append(" left")
+                }
+
+                bind.productImageCard.isVisible = false
+
+                if (liveProduct.productSet?.type == "auction") {
+                    if (auctionData.suddenDeath == true) {
+                        bind.bidTime.setCompoundDrawablesWithIntrinsicBounds(
+                            R.drawable.skull,
+                            0,
+                            0,
+                            0
+                        )
+                    } else {
+                        bind.bidTime.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0)
+                    }
+                }
+
+                bind.price.text = "+ Shipping + Taxes"
+
+                val price = auctionData.startingBidAmount
+                bind.bidPrice.isVisible = liveProduct.productSet?.type == "auction"
+                bind.bidPrice.text = price?.asMoney()
+                bind.status.isVisible = auctionData.status == "sold"
             } else {
                 bind.product.isVisible = false
                 bind.productLayout.isVisible = false

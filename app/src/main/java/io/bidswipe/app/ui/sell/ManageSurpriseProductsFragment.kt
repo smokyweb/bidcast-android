@@ -1,5 +1,6 @@
 package io.bidswipe.app.ui.sell
 
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -13,8 +14,12 @@ import io.bidswipe.app.databinding.FragmentManageSurpriseProductsBinding
 import io.bidswipe.app.databinding.SurpriseAddProductSheetBinding
 import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.network.request.SurpriseProductModel
+import io.bidswipe.app.network.response.GetSubCategoriesResponse
+import io.bidswipe.app.network.response.GetSurpriseProductsResponse
 import io.bidswipe.app.ui.dashboard.DashViewModel
 import io.bidswipe.app.utils.Alerts
+import io.bidswipe.app.utils.asCapital
+import io.bidswipe.app.utils.asMoney
 import io.bidswipe.app.utils.hideKeyboard
 import io.bidswipe.app.utils.setHapticClickListener
 import io.bidswipe.app.utils.value
