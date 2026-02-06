@@ -33,7 +33,7 @@ data class AuctionStartedBreakSpotResponse(
         @SerializedName("product_set_item")
         val productSetItem: ProductSetItem?,
         @SerializedName("sold_quantity")
-        val soldQuantity: Int?,
+        var soldQuantity: Int?,
         @SerializedName("total_quantity")
         val totalQuantity: Int?
     ) {

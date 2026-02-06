@@ -154,6 +154,7 @@ class AgoraPublisherActivity : BaseActivity() {
 
     private var isShowLive = false
     private var isAuctionStarted = false
+    private var breakSpotAuctionData: AuctionStartedBreakSpotResponse? = null
     private var isFreebieLive = false
     private var zoomLevel = 1.0f
 
@@ -350,7 +351,6 @@ class AgoraPublisherActivity : BaseActivity() {
                 bind.menuLayout.isVisible = false
             } else {
                 bind.startBtn.isVisible = !isShowLive
-
                 bind.product.isVisible = isAuctionStarted
                 bind.menuLayout.isVisible = true
             }
@@ -715,6 +715,7 @@ class AgoraPublisherActivity : BaseActivity() {
                     runOnUiThread {
                         if (json.surpriseSetDetails != null) {
                             isAuctionStarted = true
+                            breakSpotAuctionData=json
                             bind.runNext.isVisible = json.status == "sold"
                             updateBreakSpotProductUI(json)
                         } else {
@@ -1029,59 +1030,31 @@ class AgoraPublisherActivity : BaseActivity() {
         }
 
         socketManager?.getBidFinalize { json ->
-            runSafe {
+            updateBidFinalisseUI(json)
+        }
 
-                runOnUiThread {
+         socketManager?.getBidFinalizeBreakSpot { json ->
+            updateBidFinalisseUI(json)
+             runSafe {
+                 runOnUiThread {
 
-                    if (roomID == json.optString("room_id")) {
-                        val winner = json.getJSONObject("winner")
-                        val product = productList.find { it?.id == winner.optString("product_id") }
+                     breakSpotAuctionData?.surpriseSetDetails?.soldQuantity = (breakSpotAuctionData?.surpriseSetDetails?.soldQuantity ?: 0) + 1
 
-                        val bidderName = winner.optString("user_name") ?: ""
-                        val bidderImage = winner.optString("user_image")
+                     bind.itemsLeftProgress.isVisible = true
+                     bind.itemsLeftProgress.max = breakSpotAuctionData?.surpriseSetDetails?.totalQuantity ?: 0
+                     bind.itemsLeftProgress.progress = (breakSpotAuctionData?.surpriseSetDetails?.soldQuantity ?: 0)
 
-                        if (bidderName.isNotEmpty()) {
-
-                            bind.winningLayout.isVisible = true
-
-                            bind.userImage.loadUrl(this, bidderImage)
-                            bind.winning.text = buildSpannedString {
-                                append(bidderName)
-                                color(
-                                    ContextCompat.getColor(
-                                        this@AgoraPublisherActivity,
-                                        R.color.primary
-                                    )
-                                ) {
-                                    bold { append(" has won!") }
-                                }
-                            }
-
-                            socketManager?.sendMessage(
-                                roomID,
-                                "We have a winner! ${bidderName}",
-                                userId,
-                                userName,
-                                userImage
-                            )
-
-                            product?.status = "sold"
-                            product?.isCurrent = false
-
-                            bind.status.isVisible = true
-                            bind.bidPrice.isVisible = false
-                            bind.runNext.isVisible = true
-
-                        } else {
-                            bind.winningLayout.isVisible = false
-                            bind.status.isVisible = false
-                            bind.runNext.isVisible = true
-                        }
-
-                    }
-
-                }
-            }
+                     bind.quantity.text = buildString {
+                         append(
+                             (breakSpotAuctionData?.surpriseSetDetails?.totalQuantity ?: 0) - (breakSpotAuctionData?.surpriseSetDetails?.soldQuantity
+                                 ?: 0)
+                         )
+                         append("/")
+                         append(breakSpotAuctionData?.surpriseSetDetails?.totalQuantity ?: 0)
+                         append(" left")
+                     }
+                 }
+             }
         }
 
         socketManager?.getUpdatedProduct { json ->
@@ -1104,7 +1077,14 @@ class AgoraPublisherActivity : BaseActivity() {
             updateCountdown(json)
         }
 
+        socketManager?.getBidTimerUpdateBreakSpot { json ->
+            updateCountdown(json)
+        }
+
         socketManager?.getHighestBid { json ->
+            handleBidUpdate(json)
+        }
+        socketManager?.getHighestBidBreakSpot { json ->
             handleBidUpdate(json)
         }
 
@@ -1132,6 +1112,7 @@ class AgoraPublisherActivity : BaseActivity() {
                 log("updateProductUI : $liveProduct")
                 bind.product.isVisible = true
                 bind.productLayout.isVisible = true
+                bind.itemsLeftProgress.isVisible = false
                 bind.productName.text = liveProduct.title?.asCapital()
                 bind.productCategory.text = liveProduct.category?.name?.asCapital()
                 bind.quantity.text = buildString {
@@ -1188,9 +1169,10 @@ class AgoraPublisherActivity : BaseActivity() {
                 log("updateProductUI : $liveProduct")
                 bind.product.isVisible = true
                 bind.productLayout.isVisible = true
-                bind.productName.text = liveProduct?.productSet?.name?.asCapital() +" #${auctionData.productSetItemUnitId}"
+                bind.productName.text = liveProduct?.productSet?.name?.asCapital() + " #${auctionData.productSetItemUnitId}"
                 bind.productCategory.text = liveProduct.productSet?.description?.asCapital()
 
+                bind.itemsLeftProgress.isVisible = true
                 bind.itemsLeftProgress.max = liveProduct.totalQuantity ?: 0
                 bind.itemsLeftProgress.progress = (liveProduct.soldQuantity ?: 0)
 
@@ -2324,6 +2306,62 @@ class AgoraPublisherActivity : BaseActivity() {
         }
 
 
+    }
+
+    fun updateBidFinalisseUI(json: JSONObject){
+        runSafe {
+
+            runOnUiThread {
+
+                if (roomID == json.optString("room_id")) {
+                    val winner = json.getJSONObject("winner")
+                    val product = productList.find { it?.id == winner.optString("product_id") }
+
+                    val bidderName = winner.optString("user_name") ?: ""
+                    val bidderImage = winner.optString("user_image")
+
+                    if (bidderName.isNotEmpty()) {
+
+                        bind.winningLayout.isVisible = true
+
+                        bind.userImage.loadUrl(this, bidderImage)
+                        bind.winning.text = buildSpannedString {
+                            append(bidderName)
+                            color(
+                                ContextCompat.getColor(
+                                    this@AgoraPublisherActivity,
+                                    R.color.primary
+                                )
+                            ) {
+                                bold { append(" has won!") }
+                            }
+                        }
+
+                        socketManager?.sendMessage(
+                            roomID,
+                            "We have a winner! ${bidderName}",
+                            userId,
+                            userName,
+                            userImage
+                        )
+
+                        product?.status = "sold"
+                        product?.isCurrent = false
+
+                        bind.status.isVisible = true
+                        bind.bidPrice.isVisible = false
+                        bind.runNext.isVisible = true
+
+                    } else {
+                        bind.winningLayout.isVisible = false
+                        bind.status.isVisible = false
+                        bind.runNext.isVisible = true
+                    }
+
+                }
+
+            }
+        }
     }
 
 }

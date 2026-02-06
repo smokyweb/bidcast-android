@@ -142,6 +142,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
     private lateinit var pipParams: PictureInPictureParams
     private var isSocketDataLoaded = false
     private var isHandlerRunning = false
+    private var surpriseSetAuctionRunning = false
     private var isAuctionStarted = false
     private var showThumbnail: String? = null
 
@@ -154,6 +155,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
     private lateinit var clipSheet: BottomSheetDialog
 
     private var liveShowData: LiveShowModel? = null
+    private var breakSpotAuctionData: AuctionStartedBreakSpotResponse? = null
 
     companion object {
         fun newInstance(roomID: String, streamID: String, thumbnail: String? = null) =
@@ -318,11 +320,16 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
                 handleBidUpdate(json)
             }
 
+            socketManager?.getHighestBidBreakSpot { json ->
+                handleBidUpdate(json)
+            }
+
             socketManager?.onAuctionStarted { auctionData ->
                 runSafe {
                     if (auctionData.roomId == roomID) {
                         requireActivity().runOnUiThread {
                             isAuctionStarted = auctionData.product != null
+                            surpriseSetAuctionRunning = false
                             updateProductUI(auctionData)
                         }
                     }
@@ -334,6 +341,8 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
                     if (auctionData.roomId == roomID) {
                         requireActivity().runOnUiThread {
                             isAuctionStarted = auctionData.surpriseSetDetails != null
+                            breakSpotAuctionData = auctionData
+                            surpriseSetAuctionRunning = true
                             updateBreakSpotProductUI(auctionData)
                         }
                     }
@@ -353,51 +362,30 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
                     }
                 }
-
             }
 
             socketManager?.getBidFinalize { json ->
+                finalizeBidUpdateUI(json)
+            }
+
+            socketManager?.getBidFinalizeBreakSpot { json ->
+                finalizeBidUpdateUI(json)
                 runSafe {
                     requireActivity().runOnUiThread {
+                        breakSpotAuctionData?.surpriseSetDetails?.soldQuantity = (breakSpotAuctionData?.surpriseSetDetails?.soldQuantity ?: 0) + 1
 
-                        val winner = json.getJSONObject("winner")
-                        log("WINNER: $winner")
+                        bind.itemsLeftProgress.isVisible = true
+                        bind.itemsLeftProgress.max = breakSpotAuctionData?.surpriseSetDetails?.totalQuantity ?: 0
+                        bind.itemsLeftProgress.progress = (breakSpotAuctionData?.surpriseSetDetails?.soldQuantity ?: 0)
 
-                        if (roomID == json.optString("room_id")) {
-                            bind.bidTime.isVisible = false
-                            bind.soldLayout.isVisible = true
-                            bind.buyNowBtn.isVisible = false
-                            bind.bidLayout.isVisible = false
-
-                            val bidderName = winner.optString("user_name") ?: ""
-                            val bidderImage = winner.optString("user_image")
-
-                            if (bidderName.isNotEmpty()) {
-                                bind.winningLayout.isVisible = true
-
-                                bind.userImage.loadUrl(mCtx, bidderImage)
-
-                                if (userId == winner.optString("user_id")) {
-                                    bind.winning.text = buildSpannedString {
-                                        color(ContextCompat.getColor(mCtx, R.color.primary)) {
-                                            bold { append(" you won!") }
-                                        }
-                                    }
-                                    showWonView("You", bidderImage, "won the auction!")
-                                } else {
-                                    bind.winning.text = buildSpannedString {
-                                        append(bidderName)
-                                        color(ContextCompat.getColor(mCtx, R.color.primary)) {
-                                            bold { append(" has won!") }
-                                        }
-                                    }
-                                    showWonView(bidderName, bidderImage, "won the auction!")
-                                }
-
-                            } else {
-                                bind.winningLayout.isVisible = false
-                                bind.soldLayout.isVisible = true
-                            }
+                        bind.quantity.text = buildString {
+                            append(
+                                (breakSpotAuctionData?.surpriseSetDetails?.totalQuantity
+                                    ?: 0) - (breakSpotAuctionData?.surpriseSetDetails?.soldQuantity ?: 0)
+                            )
+                            append("/")
+                            append(breakSpotAuctionData?.surpriseSetDetails?.totalQuantity ?: 0)
+                            append(" left")
                         }
                     }
                 }
@@ -1168,8 +1156,8 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
                         bind.productImageShop.loadUrl(mCtx, "${Const.BASE_URL + "/"}${image}")
                     }
                 }
-                bind.productImageCard.isVisible=true
-                bind.itemsLeftProgress.isVisible=false
+                bind.productImageCard.isVisible = true
+                bind.itemsLeftProgress.isVisible = false
 
                 val price = liveProduct.pricing ?: "0.0"
                 bind.price.text = price.asMoney() + " + Shipping + Taxes"
@@ -1237,26 +1225,26 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
             log("LIVE AUCTZION TYPE ${liveShowData?.auctionTypeId}")
             if (liveProduct != null) {
                 bind.winningLayout.isVisible = false
-                bind.productName.text = liveProduct.productSet?.name?.asCapital()+" #${auctionData.productSetItemUnitId}"
+                bind.productName.text = liveProduct.productSet?.name?.asCapital() + " #${auctionData.productSetItemUnitId}"
 
                 bind.productCategory.text = liveProduct.productSet?.description
 
                 bind.itemsLeftProgress.max = liveProduct?.totalQuantity ?: 0
                 bind.itemsLeftProgress.progress = (liveProduct?.soldQuantity ?: 0)
 
-                bind.quantity.isVisible=true
+                bind.quantity.isVisible = true
                 bind.quantity.text = buildString {
                     append((liveProduct.totalQuantity ?: 0) - (liveProduct?.soldQuantity ?: 0))
                     append("/")
-                    append(liveProduct.totalQuantity?:0)
+                    append(liveProduct.totalQuantity ?: 0)
                     append(" left")
                 }
 
-              bind.productImageCard.isVisible=false
-              bind.itemsLeftProgress.isVisible=true
+                bind.productImageCard.isVisible = false
+                bind.itemsLeftProgress.isVisible = true
 
-                val price =( liveProduct.productSet?.price ?: 0.0).toString()
-                bind.price.text =  "+ Shipping + Taxes"
+                val price = (liveProduct.productSet?.price ?: 0.0).toString()
+                bind.price.text = "+ Shipping + Taxes"
 
                 if (liveProduct.productSet?.type == "auction") {
                     if (auctionData.suddenDeath == true) {
@@ -1290,7 +1278,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
                 } else {
                     bind.status.isVisible = false
                     bind.bidLayout.isVisible = liveProduct.productSet?.type == "auction"
-                    bind.buyNowBtn.isVisible =liveProduct.productSet?.type == "buy_it_now"
+                    bind.buyNowBtn.isVisible = liveProduct.productSet?.type == "buy_it_now"
                     bind.soldLayout.isVisible = false
                     bind.productLayout.isVisible = true
                     bind.productAuctionBidLayout.isVisible = true
@@ -1343,1083 +1331,1147 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
             sellerName = liveShowData?.seller?.name.toString()
 
-            sellerImage = if(liveShowData?.seller?.image?.isNotEmpty() == true) {
+            sellerImage = if (liveShowData?.seller?.image?.isNotEmpty() == true) {
                 if (liveShowData?.seller?.image?.contains(Const.BASE_URL) == true) {
                     liveShowData?.seller?.image ?: ""
                 } else {
                     "${Const.BASE_URL + "/"}${liveShowData?.seller?.image ?: ""}"
                 }
-            }else{""}
+            } else {
+                ""
+            }
 
-            if (sellerImage?.isNotEmpty() == true) bind.userImage.loadUrl(mCtx, sellerImage?:"")
+            if (sellerImage?.isNotEmpty() == true) bind.userImage.loadUrl(mCtx, sellerImage ?: "")
 
-        bind.userName.text = liveShowData?.seller?.name
-        bind.rating.text = liveShowData?.seller?.rating?.ifEmpty { "0.0" }
+            bind.userName.text = liveShowData?.seller?.name
+            bind.rating.text = liveShowData?.seller?.rating?.ifEmpty { "0.0" }
 
-        bind.liveCount.text = liveShowData?.viewerCount
+            bind.liveCount.text = liveShowData?.viewerCount
 
-        bind.follow.setHapticClickListener {
-            bind.loader.isVisible = true
-            viewModel.followUser(sellerId?.request(), showId.toString().request())
-        }
+            bind.follow.setHapticClickListener {
+                bind.loader.isVisible = true
+                viewModel.followUser(sellerId?.request(), showId.toString().request())
+            }
 
-        showId = liveShowData?.showId
-        showTitle = liveShowData?.showDetail
-        if (showThumbnail?.isEmpty() == true) {
-            showThumbnail = liveShowData?.thumbnail
-            bind.thumbnailView.loadUrl(mCtx, showThumbnail ?: "", R.drawable.placeholder_rect)
-        }
+            showId = liveShowData?.showId
+            showTitle = liveShowData?.showDetail
+            if (showThumbnail?.isEmpty() == true) {
+                showThumbnail = liveShowData?.thumbnail
+                bind.thumbnailView.loadUrl(mCtx, showThumbnail ?: "", R.drawable.placeholder_rect)
+            }
 
-        bind.bidSwipeLayout.setOnActionsListener(object : SwipeActionsListener {
-            override fun onOpen(direction: Int, isContinuous: Boolean) {
-                if (direction == SwipeLayout.RIGHT) {
-                    if (App.profileResponse.value?.hasShippingAddress == true && App.profileResponse.value?.hasCardAdded == true) {
+            bind.bidSwipeLayout.setOnActionsListener(object : SwipeActionsListener {
+                override fun onOpen(direction: Int, isContinuous: Boolean) {
+                    if (direction == SwipeLayout.RIGHT) {
+                        if (App.profileResponse.value?.hasShippingAddress == true && App.profileResponse.value?.hasCardAdded == true) {
 
-                        if (isAllowBidForAll) {
-                            attemptBid()
-                        } else {
-                            if (App.profileResponse.value?.buyerIdentityStatus == "verified") {
+                            if (isAllowBidForAll) {
                                 attemptBid()
                             } else {
-                                verificationDialog()
+                                if (App.profileResponse.value?.buyerIdentityStatus == "verified") {
+                                    attemptBid()
+                                } else {
+                                    verificationDialog()
+                                }
                             }
+                        } else {
+                            showPaymentAndAddressSheet()
                         }
-                    } else {
-                        showPaymentAndAddressSheet()
                     }
                 }
-            }
 
-            override fun onClose() {
-                // the main view has returned to the default state
-            }
-        })
+                override fun onClose() {
+                    // the main view has returned to the default state
+                }
+            })
 
-        bind.buyNowBtn.setHapticClickListener {
-            if (App.profileResponse.value?.hasShippingAddress == true && App.profileResponse.value?.hasCardAdded == true) {
-                if (isAllowBidForAll) {
-                    attemptBid()
-                } else {
-                    if (App.profileResponse.value?.buyerIdentityStatus == "verified") {
+            bind.buyNowBtn.setHapticClickListener {
+                if (App.profileResponse.value?.hasShippingAddress == true && App.profileResponse.value?.hasCardAdded == true) {
+                    if (isAllowBidForAll) {
                         attemptBid()
                     } else {
-                        verificationDialog()
+                        if (App.profileResponse.value?.buyerIdentityStatus == "verified") {
+                            attemptBid()
+                        } else {
+                            verificationDialog()
+                        }
                     }
-                }
-            } else {
-                showPaymentAndAddressSheet()
-            }
-        }
-
-        bind.max.setHapticClickListener {
-
-            if (App.profileResponse.value?.hasShippingAddress == true && App.profileResponse.value?.hasCardAdded == true) {
-
-                if (isAllowBidForAll) {
-                    showInputSheet()
                 } else {
-                    if (App.profileResponse.value?.buyerIdentityStatus == "verified") {
+                    showPaymentAndAddressSheet()
+                }
+            }
+
+            bind.max.setHapticClickListener {
+
+                if (App.profileResponse.value?.hasShippingAddress == true && App.profileResponse.value?.hasCardAdded == true) {
+
+                    if (isAllowBidForAll) {
                         showInputSheet()
                     } else {
-                        verificationDialog()
+                        if (App.profileResponse.value?.buyerIdentityStatus == "verified") {
+                            showInputSheet()
+                        } else {
+                            verificationDialog()
+                        }
                     }
+                } else {
+                    showPaymentAndAddressSheet()
                 }
+
+
+            }
+
+            socketManager?.getBidTimerUpdate { json ->
+                updateCountdown(json)
+            }
+
+            socketManager?.getBidTimerUpdateBreakSpot { json ->
+                updateCountdown(json)
+            }
+
+            socketManager?.onAllowBidForAllUpdate { obj ->
+                if (roomID == obj.optString("room_id")) {
+                    val allowBidForAll = obj.optBoolean("allow_bid_for_all")
+                    isAllowBidForAll = allowBidForAll
+                }
+            }
+        }
+    }
+
+    @SuppressLint("SetTextI18n")
+    fun checkShowTime(time: Long) {
+        val currentTime = Calendar.getInstance().apply {
+            timeInMillis = System.currentTimeMillis()
+        }
+
+        val showTime = Calendar.getInstance().apply {
+            timeInMillis = time
+        }
+
+        val isToday = showTime.get(Calendar.DAY_OF_YEAR) == Calendar.getInstance().get(Calendar.DAY_OF_YEAR)
+        val isInTheFuture = showTime.after(currentTime)
+
+        if (isToday && isInTheFuture) {
+            val timeDiffInMillis = showTime.timeInMillis - currentTime.timeInMillis
+            if (timeDiffInMillis <= 900000) {
+                startCountdown(timeDiffInMillis, time)
             } else {
-                showPaymentAndAddressSheet()
+                bind.showTime.text = "Today, " + Utils.getTimeFromTimestamp(time, "HH:mm")
             }
-
-
-        }
-
-        socketManager?.getBidTimerUpdate { json ->
-            updateCountdown(json)
-        }
-
-        socketManager?.onAllowBidForAllUpdate { obj ->
-            if (roomID == obj.optString("room_id")) {
-                val allowBidForAll = obj.optBoolean("allow_bid_for_all")
-                isAllowBidForAll = allowBidForAll
-            }
-        }
-    }
-}
-
-@SuppressLint("SetTextI18n")
-fun checkShowTime(time: Long) {
-    val currentTime = Calendar.getInstance().apply {
-        timeInMillis = System.currentTimeMillis()
-    }
-
-    val showTime = Calendar.getInstance().apply {
-        timeInMillis = time
-    }
-
-    val isToday = showTime.get(Calendar.DAY_OF_YEAR) == Calendar.getInstance().get(Calendar.DAY_OF_YEAR)
-    val isInTheFuture = showTime.after(currentTime)
-
-    if (isToday && isInTheFuture) {
-        val timeDiffInMillis = showTime.timeInMillis - currentTime.timeInMillis
-        if (timeDiffInMillis <= 900000) {
-            startCountdown(timeDiffInMillis, time)
         } else {
-            bind.showTime.text = "Today, " + Utils.getTimeFromTimestamp(time, "HH:mm")
+            setTimeAndTitle(time)
         }
-    } else {
-        setTimeAndTitle(time)
     }
-}
 
-fun setTimeAndTitle(time: Long) {
-    bind.showTimeTitle.text = buildString {
-        append("Show Starts at -")
-        append(Utils.getSimpleDate(Const.MMM_dd_yyyy_HH_mm).format(time))
+    fun setTimeAndTitle(time: Long) {
+        bind.showTimeTitle.text = buildString {
+            append("Show Starts at -")
+            append(Utils.getSimpleDate(Const.MMM_dd_yyyy_HH_mm).format(time))
+        }
+        bind.showTime.text = "Waiting for Host..."
     }
-    bind.showTime.text = "Waiting for Host..."
-}
 
-fun startCountdown(timeRemainingInMillis: Long, time: Long) {
-    val handler = Handler()
-    val countdownRunnable = object : Runnable {
-        var timeRemaining = timeRemainingInMillis
+    fun startCountdown(timeRemainingInMillis: Long, time: Long) {
+        val handler = Handler()
+        val countdownRunnable = object : Runnable {
+            var timeRemaining = timeRemainingInMillis
 
-        override fun run() {
-            if (timeRemaining > 0) {
-                val minutes = (timeRemaining / 1000) / 60
-                val seconds = (timeRemaining / 1000) % 60
-                bind.showTimeTitle.text = "Show starting in"
-                bind.showTime.text = String.format("%02d:%02d", minutes, seconds)
-                timeRemaining -= 1000
-                handler.postDelayed(this, 1000)
+            override fun run() {
+                if (timeRemaining > 0) {
+                    val minutes = (timeRemaining / 1000) / 60
+                    val seconds = (timeRemaining / 1000) % 60
+                    bind.showTimeTitle.text = "Show starting in"
+                    bind.showTime.text = String.format("%02d:%02d", minutes, seconds)
+                    timeRemaining -= 1000
+                    handler.postDelayed(this, 1000)
+                } else {
+                    setTimeAndTitle(time)
+                }
+            }
+        }
+
+        handler.post(countdownRunnable)
+    }
+
+    private fun verificationDialog() {
+        AppBottomSheet(
+            mCtx,
+            R.drawable.ic_info,
+            title = when (App.profileResponse.value?.buyerIdentityStatus) {
+
+                "null" -> {
+                    "Become a Verified Buyer!"
+                }
+
+                "pending" -> {
+                    "Verification Pending!"
+                }
+
+                "rejected" -> {
+                    "Verification Rejected!"
+                }
+
+                else -> {
+                    "Become a Verified Buyer!"
+                }
+            },
+            "Before you interact with live shows, You need to become a Verified Buyer.",
+            primaryBtnText = "Okay",
+            secondaryBtnText = "Cancel",
+            canCancel = true,
+            showSecondary = false,
+            iconPadding = 16,
+            alertType = AlertType.INFO,
+            clicks = object : AlertClicks {
+                override fun primaryClick(dialog: AppBottomSheet) {
+                    dialog.dismiss()
+                    startActivity(
+                        Intent(mCtx, TrustedBuyerActivity::class.java).putExtra(
+                            "slug",
+                            "buyer"
+                        )
+                    )
+                }
+
+                override fun secondaryClick(dialog: AppBottomSheet) {
+                    dialog.dismiss()
+                }
+            }
+        ).show()
+    }
+
+    fun attemptBid() {
+        runSafe {
+            val bidAmount = newBidAmount(highestBidAmount?.toDouble()?.toInt() ?: 0).toString()
+            if (surpriseSetAuctionRunning) {
+                socketManager?.emitBidBreakSpot(
+                    roomId = roomID,
+                    userId = userId,
+                    userName = userName,
+                    userImage = userImage,
+                    bidAmount = bidAmount,
+                    breakSpotAuctionData
+                )
             } else {
-                setTimeAndTitle(time)
+                socketManager?.emitBid(
+                    roomId = roomID,
+                    userId = userId,
+                    userName = userName,
+                    userImage = userImage,
+                    productId = bidProductId,
+                    bidAmount = bidAmount,
+                    auctionTypeId = liveShowData?.auctionTypeId
+                )
             }
+
+            Alerts.success(mCtx, "Bid placed successfully")
+            bind.bidSwipeLayout.close()
+
         }
     }
 
-    handler.post(countdownRunnable)
-}
+    fun showPaymentAndAddressSheet() {
 
-private fun verificationDialog() {
-    AppBottomSheet(
-        mCtx,
-        R.drawable.ic_info,
-        title = when (App.profileResponse.value?.buyerIdentityStatus) {
+        val paymentAddressBind = PaymentAndAddressSheetBinding.bind(
+            layoutInflater.inflate(
+                R.layout.payment_and_address_sheet,
+                null,
+                false
+            )
+        )
 
-            "null" -> {
-                "Become a Verified Buyer!"
+        val makeOfferSheet = Alerts.appBottomSheet(mCtx, true, paymentAddressBind)
+
+        with(paymentAddressBind.addressItem) {
+            val hasAddress = App.profileResponse.value?.hasShippingAddress == true
+            moreIcon.setImageDrawable(ContextCompat.getDrawable(mCtx, draw.ic_pencil))
+            moreIcon.rotation = 0f
+
+            name.isVisible = hasAddress
+            address.isVisible = hasAddress
+
+            if (hasAddress) {
+                val addressData = App.profileResponse.value?.defaultShippingAddress
+                address.text = addressData?.streetAddress
+                name.text = addressData?.name
+                type.text = addressData?.type
+                defaultAddress.isVisible = addressData?.isDefault == true
+            } else {
+                type.text = buildString {
+                    append("Address Not Added")
+                }
+                defaultAddress.isVisible = false
             }
 
-            "pending" -> {
-                "Verification Pending!"
-            }
-
-            "rejected" -> {
-                "Verification Rejected!"
-            }
-
-            else -> {
-                "Become a Verified Buyer!"
-            }
-        },
-        "Before you interact with live shows, You need to become a Verified Buyer.",
-        primaryBtnText = "Okay",
-        secondaryBtnText = "Cancel",
-        canCancel = true,
-        showSecondary = false,
-        iconPadding = 16,
-        alertType = AlertType.INFO,
-        clicks = object : AlertClicks {
-            override fun primaryClick(dialog: AppBottomSheet) {
-                dialog.dismiss()
+            moreIcon.setHapticClickListener {
                 startActivity(
-                    Intent(mCtx, TrustedBuyerActivity::class.java).putExtra(
+                    Intent(mCtx, MoreActivity::class.java).putExtra(
                         "slug",
-                        "buyer"
+                        "paymentShipping"
                     )
                 )
             }
 
-            override fun secondaryClick(dialog: AppBottomSheet) {
-                dialog.dismiss()
+        }
+
+        with(paymentAddressBind.paymentCard) {
+            val hasCard = App.profileResponse.value?.hasCardAdded == true
+            iconCard.isVisible = hasCard
+            expiryDate.isVisible = hasCard
+            moreIcon.setImageDrawable(ContextCompat.getDrawable(mCtx, draw.ic_pencil))
+            moreIcon.rotation = 0f
+
+            if (hasCard) {
+                cardNumber.text = buildString {
+                    append("•••• •••• •••• ")
+                    append(App.profileResponse.value?.defaultCard?.last4 ?: "")
+                }
+
+                expiryDate.text = buildString {
+                    append(App.profileResponse.value?.defaultCard?.expDate ?: "")
+                }
+            } else {
+                cardNumber.text = buildString {
+                    append("Payment Cards Not Added")
+                }
+            }
+
+            moreIcon.setHapticClickListener {
+                startActivity(
+                    Intent(mCtx, MoreActivity::class.java).putExtra(
+                        "slug",
+                        "paymentShipping"
+                    )
+                )
             }
         }
-    ).show()
-}
 
-fun attemptBid() {
-    runSafe {
-        val bidAmount = newBidAmount(highestBidAmount?.toDouble()?.toInt() ?: 0).toString()
+        paymentAddressBind.close.setHapticClickListener {
+            makeOfferSheet.dismiss()
+        }
 
-        socketManager?.emitBid(
-            roomId = roomID,
-            userId = userId,
-            userName = userName,
-            userImage = userImage,
-            productId = bidProductId,
-            bidAmount = bidAmount,
-            auctionTypeId = liveShowData?.auctionTypeId
-        )
-
-        Alerts.success(mCtx, "Bid placed successfully")
         bind.bidSwipeLayout.close()
 
+        makeOfferSheet.show()
+
     }
-}
 
-fun showPaymentAndAddressSheet() {
+    private fun showInputSheet() {
 
-    val paymentAddressBind = PaymentAndAddressSheetBinding.bind(
-        layoutInflater.inflate(
-            R.layout.payment_and_address_sheet,
-            null,
-            false
-        )
-    )
-
-    val makeOfferSheet = Alerts.appBottomSheet(mCtx, true, paymentAddressBind)
-
-    with(paymentAddressBind.addressItem) {
-        val hasAddress = App.profileResponse.value?.hasShippingAddress == true
-        moreIcon.setImageDrawable(ContextCompat.getDrawable(mCtx, draw.ic_pencil))
-        moreIcon.rotation = 0f
-
-        name.isVisible = hasAddress
-        address.isVisible = hasAddress
-
-        if (hasAddress) {
-            val addressData = App.profileResponse.value?.defaultShippingAddress
-            address.text = addressData?.streetAddress
-            name.text = addressData?.name
-            type.text = addressData?.type
-            defaultAddress.isVisible = addressData?.isDefault == true
-        } else {
-            type.text = buildString {
-                append("Address Not Added")
-            }
-            defaultAddress.isVisible = false
-        }
-
-        moreIcon.setHapticClickListener {
-            startActivity(
-                Intent(mCtx, MoreActivity::class.java).putExtra(
-                    "slug",
-                    "paymentShipping"
-                )
+        val inputSheetBind = InputBottomSheetBinding.bind(
+            layoutInflater.inflate(
+                R.layout.input_bottom_sheet,
+                null,
+                false
             )
-        }
-
-    }
-
-    with(paymentAddressBind.paymentCard) {
-        val hasCard = App.profileResponse.value?.hasCardAdded == true
-        iconCard.isVisible = hasCard
-        expiryDate.isVisible = hasCard
-        moreIcon.setImageDrawable(ContextCompat.getDrawable(mCtx, draw.ic_pencil))
-        moreIcon.rotation = 0f
-
-        if (hasCard) {
-            cardNumber.text = buildString {
-                append("•••• •••• •••• ")
-                append(App.profileResponse.value?.defaultCard?.last4 ?: "")
-            }
-
-            expiryDate.text = buildString {
-                append(App.profileResponse.value?.defaultCard?.expDate ?: "")
-            }
-        } else {
-            cardNumber.text = buildString {
-                append("Payment Cards Not Added")
-            }
-        }
-
-        moreIcon.setHapticClickListener {
-            startActivity(
-                Intent(mCtx, MoreActivity::class.java).putExtra(
-                    "slug",
-                    "paymentShipping"
-                )
-            )
-        }
-    }
-
-    paymentAddressBind.close.setHapticClickListener {
-        makeOfferSheet.dismiss()
-    }
-
-    bind.bidSwipeLayout.close()
-
-    makeOfferSheet.show()
-
-}
-
-private fun showInputSheet() {
-
-    val inputSheetBind = InputBottomSheetBinding.bind(
-        layoutInflater.inflate(
-            R.layout.input_bottom_sheet,
-            null,
-            false
-        )
-    )
-
-    inputSheet = Alerts.appBottomSheet(mCtx, true, inputSheetBind)
-
-    inputSheetBind.submitBtn.setHapticClickListener {
-        val priceText = inputSheetBind.price.value()
-        val priceVal = priceText.toDoubleOrNull() ?: 0.0
-        val current = highestBidAmount?.toDoubleOrNull() ?: 0.0
-        if (priceVal <= current) {
-            Alerts.error(mCtx, "Bid amount must be greater than the current highest bid.")
-        } else {
-            socketManager?.emitBid(
-                roomId = roomID,
-                userId = userId,
-                userName = userName,
-                userImage = userImage,
-                productId = bidProductId,
-                bidAmount = priceText,
-                auctionTypeId = liveShowData?.auctionTypeId
-            )
-            Alerts.success(mCtx, "Bid placed successfully")
-
-            inputSheet?.dismiss()
-        }
-    }
-
-    inputSheetBind.close.setHapticClickListener { inputSheet?.dismiss() }
-    inputSheet?.show()
-}
-
-private fun updateCountdown(json: JSONObject) {
-    val value = json.optString("remaining")
-    runSafe {
-        requireActivity().runOnUiThread {
-            if (json.optString("room_id") == roomID) {
-                bind.bidTime.isVisible = true
-                val color = if (value.toInt() <= 10) {
-                    ContextCompat.getColor(mCtx, R.color.error)
-                } else {
-                    ContextCompat.getColor(mCtx, R.color.background)
-                }
-
-                bind.bidTime.text = buildSpannedString {
-                    color(color) {
-                        append("Ends in ")
-                        append(value)
-                    }
-                }
-            }
-        }
-    }
-}
-
-fun sendTipSheet() {
-    val sendTipSheetBind = SendTipSheetBinding.bind(
-        layoutInflater.inflate(
-            R.layout.send_tip_sheet,
-            null,
-            false
-        )
-    )
-
-    val sendTipSheet = Alerts.appBottomSheet(mCtx, true, sendTipSheetBind)
-
-    sendTipSheetBind.root.setOnClickListener {
-        hideKeyboard(it)
-    }
-
-    sendTipSheetBind.btnTip5.setHapticClickListener {
-        sendTipSheetBind.customOffer.setText("5")
-    }
-
-    sendTipSheetBind.close.setHapticClickListener {
-        sendTipSheet.dismiss()
-    }
-
-    sendTipSheetBind.btnTip10.setHapticClickListener {
-        sendTipSheetBind.customOffer.setText(buildString {
-            append("10")
-        })
-    }
-
-    sendTipSheetBind.btnTip25.setHapticClickListener {
-        sendTipSheetBind.customOffer.setText(buildString {
-            append("25")
-        })
-    }
-
-    sendTipSheetBind.btnTip50.setHapticClickListener {
-        sendTipSheetBind.customOffer.setText(buildString {
-            append("50")
-        })
-    }
-
-    sendTipSheetBind.paymentWallet.text = buildString {
-        append("Wallet - ")
-        append(App.profileResponse.value?.walletAmount ?: 0)
-    }
-
-    sendTipSheetBind.walletRadio.setOnCheckedChangeListener { _, isChecked ->
-        if (isChecked) {
-            sendTipSheetBind.cardRadio.isChecked = false
-        }
-    }
-
-    sendTipSheetBind.cardRadio.setOnCheckedChangeListener { _, isChecked ->
-        if (isChecked) {
-            sendTipSheetBind.walletRadio.isChecked = false
-        }
-    }
-
-    if (App.profileResponse.value?.defaultCard != null) {
-        sendTipSheetBind.paymentCard.text = buildString {
-            append("XXXX XXXX XXXX ")
-            append(App.profileResponse.value?.defaultCard?.last4 ?: 0)
-        }
-    } else {
-        sendTipSheetBind.cardRadio.isVisible = false
-        sendTipSheetBind.paymentCard.text = buildString {
-            append("Payment Method Not Added")
-        }
-    }
-
-    sendTipSheetBind.btnSendTip.setHapticClickListener {
-
-        with(sendTipSheetBind) {
-
-            if (!walletRadio.isChecked && !cardRadio.isChecked) {
-                Alerts.error(mCtx, "Please select a payment method")
-                return@setHapticClickListener
-            }
-
-            if (customOffer.text.toString().isEmpty()) {
-                Alerts.error(mCtx, "Please enter an amount")
-                return@setHapticClickListener
-            }
-
-            if (walletRadio.isChecked && customOffer.text.toString()
-                    .toDouble() > ((App.profileResponse.value?.walletAmount ?: "0.0").toString()
-                    .toDouble())
-            ) {
-                Alerts.error(mCtx, "Insufficient balance")
-                return@setHapticClickListener
-            }
-        }
-
-        sendTipSheet.dismiss()
-
-        socketManager?.sendTip(
-            roomId = roomID,
-            showId = showId.toString(),
-            userId = userId,
-            sellerId = sellerId.toString(),
-            amount = sendTipSheetBind.customOffer.text.toString()
         )
 
-        /*bind.loader.isVisible = true
-        viewModel.sendTipAmount(
-            sellerId!!.request(),
-            sendTipSheetBind.customOffer.text.toString().request(),
-            null
-        )*/
-
-    }
-
-    sendTipSheet.show()
-}
-
-private fun onRaid(targetRoomId: String, rtcToken: String) {
-    viewModel.viewModelScope.launch {
-        try {
-            socketManager?.leaveRoom(roomID, userId)
-            commentList.clear()
-            commentAdapter.notifyDataSetChanged()
-            currentRemoteUid = null
-            clearRemoteVideo()
-            roomID = targetRoomId
-            streamID = rtcToken
-            App.manager.leaveChannel()
-            App.manager.joinSubscriberChannel(streamID, roomID)
-            currentRemoteUid?.let { uid ->
-                setupRemoteVideo(uid)
-            }
-
-            socketManager?.joinRoom(roomID, userId) {
-                socketManager?.sendMessage(
-                    roomID,
-                    "Joined \uD83D\uDC4B",
-                    userId,
-                    userName,
-                    userImage
-                )
-            }
-        } catch (e: Exception) {
-            log("Raid failed: ${e.message}")
-            e.printStackTrace()
-        }
-    }
-
-}
-
-private fun setupPollListeners() {
-    // Listen for poll creation
-    socketManager?.onPollCreated { json ->
-        runSafe {
-            if (json.optString("roomId") == roomID) {
-                requireActivity().runOnUiThread {
-                    currentPoll = PollModel.fromJson(json)
-                    showPollCard()
-                    updatePollUI()
-                }
-            }
-        }
-    }
-
-    // Listen for poll updates (vote counts, timer)
-    socketManager?.onPollUpdate { json ->
-        runSafe {
-            requireActivity().runOnUiThread {
-                if (json.optString("roomId") == roomID) {
-                    currentPoll = PollModel.fromJson(json)
-                    showPollCard()
-                    updatePollUI() // Update poll card preview
-                    updatePollSheet() // Update poll details sheet if open
-                }
-            }
-
-        }
-    }
-
-    // Listen for poll ended
-    socketManager?.onPollEnded { json ->
-        runSafe {
-            requireActivity().runOnUiThread {
-                if (json.optString("roomId") == roomID) {
-                    currentPoll = null
-                    hidePollCard()
-                    pollSheet?.dismiss()
-                    pollSheetBinding = null
-                }
-            }
-        }
-    }
-
-    // Listen for vote result
-    socketManager?.onPollVoteResult { json ->
-        runSafe {
-            if (json.optString("room_id") == roomID) {
-                requireActivity().runOnUiThread {
-                    val success = json.optBoolean("success", false)
-                    if (success) {
-                        Alerts.success(mCtx, "Vote submitted successfully!")
-                        // Poll will be updated via poll_update event
-                    } else {
-                        val message = json.optString("message", "Failed to submit vote")
-                        Alerts.error(mCtx, message)
-                    }
-                }
-            }
-        }
-    }
-}
-
-private fun showPollCard() {
-    requireActivity().runOnUiThread {
-        bind.poll.isVisible = true
-        updatePollUI()
-    }
-}
-
-private fun hidePollCard() {
-    requireActivity().runOnUiThread {
-        bind.poll.isVisible = false
-    }
-}
-
-private fun updatePollUI() {
-    currentPoll?.let { poll ->
-        if (poll.roomId == roomID) {
-            bind.pollQuestionPreview.text = poll.question ?: "Poll Question"
-            bind.pollTimerPreview.text = poll.remainingTime ?: "00:00 remaining"
-            bind.pollTotalVotesPreview.text = buildString {
-                append(poll.totalVotes)
-                append(" ")
-                append(if (poll.totalVotes == 1) "vote" else "votes")
-            }
-        }
-    }
-}
-
-private fun showPollDetailsSheet() {
-    pollSheetBinding = PollDetailsSheetBinding.bind(
-        layoutInflater.inflate(
-            R.layout.poll_details_sheet,
-            null,
-            false
-        )
-    )
-
-    val pollSheet = Alerts.appBottomSheet(mCtx, true, pollSheetBinding!!)
-
-    livePollOptionList.clear()
-    livePollOptionList.addAll(currentPoll?.options ?: mutableListOf())
-
-    pollSheetBinding?.optionRecycler?.adapter = livePollAdapter
-
-    pollSheetBinding?.endPollBtn?.isVisible = false
-
-    pollSheetBinding?.close?.setHapticClickListener {
-        pollSheet.dismiss()
-    }
-
-    pollSheet.show()
-}
-
-private fun sellerInfoSheet(data: SellerInfoResponse.Data) {
-
-    val sellerInfoSheetBinding = SellerInfoSheetBinding.bind(
-        layoutInflater.inflate(
-            R.layout.seller_info_sheet,
-            null,
-            false
-        )
-    )
-
-    val sellerInfoSheet = Alerts.appBottomSheet(mCtx, true, sellerInfoSheetBinding)
-
-    val sellerMenuList = mutableListOf<MoreModel>()
-
-    sellerMenuList.add(MoreModel(R.drawable.ic_flying_money, "Tip or Boost", "tip"))
-    sellerMenuList.add(MoreModel(R.drawable.ic_rounded_profile, "View Profile", "profile"))
-    sellerMenuList.add(MoreModel(R.drawable.ic_outlined_message, "Message", "message"))
-//		sellerMenuList.add(MoreModel(R.drawable.ic_mention, "Mention in Chat", "mention"))
-    sellerMenuList.add(MoreModel(R.drawable.ic_block, "Block", "block"))
-    sellerMenuList.add(MoreModel(R.drawable.ic_warning, "Report", "report"))
-
-    sellerInfoSheetBinding.menuRecycler.adapter =
-        SellerMenuInfoAdapter(sellerMenuList, object : RecyclerClicks {
-            override fun itemClick(pos: Int, status: String?) {
-                sellerInfoSheet.dismiss()
-                when (status) {
-                    "tip" -> {
-                        sendTipSheet()
-                    }
-
-                    "profile" -> {
-                        startActivity(
-                            Intent(
-                                mCtx,
-                                SellerProfileActivity::class.java
-                            ).putExtra("sellerId", sellerId)
-                        )
-                    }
-
-                    "message" -> {
-                        startActivity(
-                            Intent(mCtx, ChatActivity::class.java).putExtra("id", sellerId)
-                                .putExtra("name", sellerName)
-                                .putExtra("image", sellerImage)
-                        )
-                    }
-
-                    "mention" -> {
-                    }
-
-                    "block" -> {
-                        showBlockConfirmation()
-                    }
-
-                    "report" -> {
-                        bind.loader.isVisible = true
-                        viewModel.getReportCategories()
-                    }
-                }
-            }
-        })
-
-    sellerInfoSheetBinding.follow.isVisible = !isFollowing
-
-    sellerInfoSheetBinding.userName.text = data.sellerDetails?.username ?: ""
-    sellerInfoSheetBinding.rating.text = (data.ratingAvg ?: 0).toString()
-    sellerInfoSheetBinding.review.text = (data.review ?: 0).toString()
-    sellerInfoSheetBinding.sold.text = (data.soldCount ?: 0).toString()
-    sellerInfoSheetBinding.shipping.text = (data.avgShip ?: 0).toString()
-    sellerInfoSheetBinding.userImage.loadUrl(mCtx, data.sellerDetails?.profileImage ?: "")
-
-    sellerInfoSheetBinding.follow.setHapticClickListener {
-        bind.loader.isVisible = true
-        viewModel.followUser(sellerId?.request(), showId.toString().request())
-        sellerInfoSheet.dismiss()
-    }
-
-    sellerInfoSheet.show()
-}
-
-private fun followSheet() {
-
-    if (App.PIPMode) return
-
-    val ctx = context ?: return
-    val inflater = LayoutInflater.from(ctx)
-    val followSheetBinding = FollowInfoSheetBinding.bind(
-        inflater.inflate(
-            R.layout.follow_info_sheet,
-            null,
-            false
-        )
-    )
-
-    val followSheet = Alerts.appBottomSheet(ctx, true, followSheetBinding)
-
-    followSheetBinding.image.loadUrl(ctx, sellerImage ?: "")
-
-    followSheetBinding.title.text = buildString {
-        append("Follow This Seller!")
-    }
-
-    followSheetBinding.message.text = buildSpannedString {
-        append("Like what you see? Follow ")
-        color(ContextCompat.getColor(ctx, R.color.primary)) {
-            append(sellerName)
-        }
-        append(" to get notifications when they go live!")
-    }
-
-    followSheetBinding.primaryBtn.setHapticClickListener {
-        bind.loader.isVisible = true
-        viewModel.followUser(sellerId?.request(), showId.toString().request())
-        followSheet.dismiss()
-    }
-
-    followSheetBinding.secondaryBtn.setHapticClickListener {
-        followSheet.dismiss()
-    }
-
-    if (!followSheet.isShowing) {
-        followSheet.show()
-    }
-
-}
-
-private fun updatePollSheet() {
-    val poll = currentPoll ?: return
-    pollSheetBinding?.let { binding ->
-        // Update poll header data
-
-        binding.pollQuestionDetail.text = poll.question ?: "No question"
-        binding.pollTimerDetail.text = poll.remainingTime ?: "00:00 remaining"
-        binding.pollTotalVotesDetail.text = buildString {
-            append(poll.totalVotes)
-            append(" total votes")
-        }
-
-        if (::livePollAdapter.isInitialized) {
-            livePollOptionList.clear()
-            livePollOptionList.addAll(poll.options)
-            livePollAdapter.notifyDataSetChanged()
-        }
-
-    }
-}
-
-private fun voteOnPoll(optionIndex: Int) {
-    val poll = currentPoll ?: return
-
-    // Emit vote
-    socketManager?.votePoll(
-        roomId = roomID,
-        pollId = poll.pollId ?: 0,
-        optionIndex = optionIndex,
-        userId = userId
-    )
-}
-
-private fun initPip() {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-        val visibleRect = Rect()
-
-        (requireActivity() as ViewLiveShowActivity).bind.root.getGlobalVisibleRect(visibleRect)
-        pipParams = PictureInPictureParams.Builder().apply {
-            setAspectRatio(Rational(100, 200))
-//                setAspectRatio(Rational(2, 5))
-            setSourceRectHint(visibleRect)
-
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                setAutoEnterEnabled(false)
-            }
-        }.build()
-
-        activity?.setPictureInPictureParams(pipParams)
-    }
-}
-
-override fun onPictureInPictureModeChanged(isInPictureInPictureMode: Boolean) {
-    super.onPictureInPictureModeChanged(isInPictureInPictureMode)
-
-    if (isInPictureInPictureMode) {
-        App.PIPMode = true
-        bind.profileLayout.isVisible = false
-        bind.bottomUI.isVisible = false
-        bind.notesFreebieLayout.isVisible = false
-    } else {
-        App.PIPMode = false
-        bind.profileLayout.isVisible = true
-        bind.bottomUI.isVisible = true
-        bind.notesFreebieLayout.isVisible = true
-
-        ProductDetailsActivity.instance?.finish()
-
-    }
-}
-
-private fun showBlockConfirmation() {
-    AppBottomSheet(
-        mCtx,
-        R.drawable.ic_block,
-        "Block Seller",
-        "Are you sure you want to block this seller?",
-        primaryBtnText = "Block",
-        secondaryBtnText = "Cancel",
-        canCancel = true,
-        showSecondary = true,
-        iconPadding = 16,
-        alertType = AlertType.WARNING,
-        clicks = object : AlertClicks {
-            override fun primaryClick(dialog: AppBottomSheet) {
-                dialog.dismiss()
-                blockUser()
-            }
-
-            override fun secondaryClick(dialog: AppBottomSheet) {
-                dialog.dismiss()
-            }
-        }).show()
-}
-
-private fun showThumbnail() {
-    if (!showThumbnail.isNullOrEmpty()) {
-        bind.thumbnailView.isVisible = true
-        bind.hostView.isVisible = false
-    }
-}
-
-private fun hideThumbnail() {
-    bind.thumbnailView.isVisible = false
-    bind.hostView.isVisible = true
-}
-
-private fun blockUser() {
-    bind.loader.isVisible = true
-    viewModel.blockUnblockUser(sellerId?.request()!!)
-
-    viewModel.blockUnblockUserRepo.observe(viewLifecycleOwner) {
-        when (it) {
-            is Resource.Success -> {
-                bind.loader.isVisible = false
-                it.value.data
-                if (it.value.status == "success") {
-                    Alerts.success(mCtx, it.value.message ?: "User blocked successfully")
-                    finish()
-                } else {
-                    Alerts.error(mCtx, it.value.message ?: "Failed to block user")
-                }
-            }
-
-            is Resource.Error -> {
-                bind.loader.isVisible = false
-                it.parse(mCtx, TAG, object : AlertClicks {
-                    override fun primaryClick(dialog: AppBottomSheet) {
-                        dialog.dismiss()
-                    }
-
-                    override fun secondaryClick(dialog: AppBottomSheet) {
-                        dialog.dismiss()
-                    }
-                })
-            }
-
-            else -> {}
-        }
-    }
-}
-
-fun reportUserDialog(data: List<GetReportCategoriesResponse.Data?>) {
-
-    val mBind = AppReportViewBinding.bind(
-        layoutInflater.inflate(
-            R.layout.app_report_view, null, false
-        )
-    )
-    val sheet = Alerts.appBottomSheet(mCtx, true, mBind)
-
-    val reportCategoryAdapter = ArrayAdapter(
-        mCtx,
-        android.R.layout.simple_list_item_1,
-        data.map { it?.name?.asCapital() }
-    )
-
-    mBind.reason.setAdapter(reportCategoryAdapter)
-    val reportDrawable = ContextCompat.getDrawable(mCtx, R.drawable.card_8)
-    mBind.reason.setDropDownBackgroundDrawable(reportDrawable)
-    var reasonId = ""
-    mBind.reason.setOnItemClickListener { _, _, position, _ ->
-        reasonId = data[position]?.id.toString()
-    }
-
-    mBind.reason.setHapticClickListener {
-        mBind.reason.showDropDown()
-    }
-
-    mBind.submitReport.setHapticClickListener {
-
-        if (mBind.reason.text.toString().isEmpty()) {
-            Alerts.error(mCtx, "Please select a reason")
-            return@setHapticClickListener
-        }
-
-        if (mBind.tellMore.text.toString().isEmpty()) {
-            Alerts.error(mCtx, "Please tell us more")
-            return@setHapticClickListener
-        }
-
-        bind.loader.isVisible = true
-        viewModel.reportSeller(
-            sellerId?.request()!!,
-            reasonId.request(),
-            mBind.tellMore.text.toString().request()
-        )
-
-        sheet.dismiss()
-    }
-
-    sheet.show()
-}
-
-private fun showNotesSheet() {
-    val showNotesSheetBind = ViewerShowNotesSheetBinding.bind(
-        layoutInflater.inflate(
-            R.layout.viewer_show_notes_sheet,
-            null,
-            false
-        )
-    )
-
-    val newHeight = requireActivity().window?.decorView?.measuredHeight
-    val viewGroupLayoutParams = showNotesSheetBind.root.layoutParams ?: ViewGroup.LayoutParams(
-        ViewGroup.LayoutParams.MATCH_PARENT,
-        ViewGroup.LayoutParams.MATCH_PARENT
-    )
-
-    viewGroupLayoutParams.height = (newHeight ?: 0) - (statusBarHeight)
-
-    showNotesSheetBind.root.layoutParams = viewGroupLayoutParams
-
-    showNotesSheetBind.notes.setMargins(
-        resources.dpToPx(16),
-        resources.dpToPx(16),
-        resources.dpToPx(16),
-        navigationBarHeight
-    )
-
-    val sheet = Alerts.appBottomSheet(mCtx, false, showNotesSheetBind)
-
-    showNotesSheetBind.notes.setHtmlFromString(showNotes?.ifEmpty { "No notes added yet." }, false)
-
-    showNotesSheetBind.close.setHapticClickListener {
-        sheet.dismiss()
-        bind.showNotes.isVisible = true
-    }
-
-    sheet.show()
-}
-
-val party = Party(
-    speed = 0f,
-    maxSpeed = 30f,
-    damping = 0.9f,
-    spread = 360,
-    colors = listOf(0xfce18a, 0xff726d, 0xf4306d, 0xb48def),
-    emitter = Emitter(duration = 100, TimeUnit.MILLISECONDS).max(100),
-    position = Position.Relative(0.5, 0.3)
-)
-
-fun showWonView(username: String, userImage: String, desc: String) {
-    bind.wonView.root.isVisible = true
-    bind.wonView.userName.text = username
-    bind.wonView.desc.text = desc
-    bind.wonView.userImage.loadUrl(mCtx, userImage, draw.app_icon_dollar)
-
-
-    bind.wonView.konfettiView.start(party)
-
-    Handler(Looper.getMainLooper()).postDelayed({
-        val flip = ObjectAnimator.ofFloat(bind.wonView.imageCard, "rotationY", 0f, 180f)
-        flip.duration = 1000
-
-        flip.addListener(object : AnimatorListenerAdapter() {
-            override fun onAnimationEnd(animation: Animator) {
-                super.onAnimationEnd(animation)
-                val flipBack = ObjectAnimator.ofFloat(bind.wonView.imageCard, "rotationY", 0f, 180f)
-                flipBack.duration = 1000
-                flipBack.start()
-            }
-        })
-        flip.start()
-    }, 1000)
-
-    Handler(Looper.getMainLooper()).postDelayed({
-        bind.wonView.root.isVisible = false
-        bind.wonView.konfettiView.stop(party)
-    }, 5000)
-
-}
-
-private var currentIndex = 0
-
-private fun rotateText(userId: Int?) {
-    val handler = Handler()
-
-    val finalIndex = freebieUsers.indexOf(freebieUsers.find { it?.id == userId })
-
-    val textSwitcherRunnable = object : Runnable {
-        override fun run() {
-
-            if (currentIndex == finalIndex) {
-                bind.textSwitcher.setText(buildSpannedString {
-                    color(ContextCompat.getColor(mCtx, clr.success)) { append("${freebieUsers[currentIndex]?.name} won") }
-                })
-                handler.postDelayed({
-                    bind.winnerSpotLayout.isVisible = false
-                    bind.notesFreebieLayout.isVisible = true
-                    bind.freebieLayout.isVisible = false
-                    currentIndex = 0
-                }, 2000)
-                return
+        inputSheet = Alerts.appBottomSheet(mCtx, true, inputSheetBind)
+
+        inputSheetBind.submitBtn.setHapticClickListener {
+            val priceText = inputSheetBind.price.value()
+            val priceVal = priceText.toDoubleOrNull() ?: 0.0
+            val current = highestBidAmount?.toDoubleOrNull() ?: 0.0
+            if (priceVal <= current) {
+                Alerts.error(mCtx, "Bid amount must be greater than the current highest bid.")
             } else {
-                bind.textSwitcher.setText(freebieUsers[currentIndex]?.name)
+                socketManager?.emitBid(
+                    roomId = roomID,
+                    userId = userId,
+                    userName = userName,
+                    userImage = userImage,
+                    productId = bidProductId,
+                    bidAmount = priceText,
+                    auctionTypeId = liveShowData?.auctionTypeId
+                )
+                Alerts.success(mCtx, "Bid placed successfully")
+
+                inputSheet?.dismiss()
             }
+        }
 
-            if (currentIndex < finalIndex) currentIndex++
+        inputSheetBind.close.setHapticClickListener { inputSheet?.dismiss() }
+        inputSheet?.show()
+    }
 
-            handler.postDelayed(this, 200)
+    private fun updateCountdown(json: JSONObject) {
+        val value = json.optString("remaining")
+        runSafe {
+            requireActivity().runOnUiThread {
+                if (json.optString("room_id") == roomID) {
+                    bind.bidTime.isVisible = true
+                    val color = if (value.toInt() <= 10) {
+                        ContextCompat.getColor(mCtx, R.color.error)
+                    } else {
+                        ContextCompat.getColor(mCtx, R.color.background)
+                    }
+
+                    bind.bidTime.text = buildSpannedString {
+                        color(color) {
+                            append("Ends in ")
+                            append(value)
+                        }
+                    }
+                }
+            }
         }
     }
-    // Start after 2 seconds
-    bind.textSwitcher.setText(freebieUsers[currentIndex]?.name)
-    handler.postDelayed(textSwitcherRunnable, 200)
-}
 
-fun createClipSheet() {
+    fun sendTipSheet() {
+        val sendTipSheetBind = SendTipSheetBinding.bind(
+            layoutInflater.inflate(
+                R.layout.send_tip_sheet,
+                null,
+                false
+            )
+        )
 
-    clipSheetBind.close.setHapticClickListener {
-        clipSheet.dismiss()
+        val sendTipSheet = Alerts.appBottomSheet(mCtx, true, sendTipSheetBind)
+
+        sendTipSheetBind.root.setOnClickListener {
+            hideKeyboard(it)
+        }
+
+        sendTipSheetBind.btnTip5.setHapticClickListener {
+            sendTipSheetBind.customOffer.setText("5")
+        }
+
+        sendTipSheetBind.close.setHapticClickListener {
+            sendTipSheet.dismiss()
+        }
+
+        sendTipSheetBind.btnTip10.setHapticClickListener {
+            sendTipSheetBind.customOffer.setText(buildString {
+                append("10")
+            })
+        }
+
+        sendTipSheetBind.btnTip25.setHapticClickListener {
+            sendTipSheetBind.customOffer.setText(buildString {
+                append("25")
+            })
+        }
+
+        sendTipSheetBind.btnTip50.setHapticClickListener {
+            sendTipSheetBind.customOffer.setText(buildString {
+                append("50")
+            })
+        }
+
+        sendTipSheetBind.paymentWallet.text = buildString {
+            append("Wallet - ")
+            append(App.profileResponse.value?.walletAmount ?: 0)
+        }
+
+        sendTipSheetBind.walletRadio.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
+                sendTipSheetBind.cardRadio.isChecked = false
+            }
+        }
+
+        sendTipSheetBind.cardRadio.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
+                sendTipSheetBind.walletRadio.isChecked = false
+            }
+        }
+
+        if (App.profileResponse.value?.defaultCard != null) {
+            sendTipSheetBind.paymentCard.text = buildString {
+                append("XXXX XXXX XXXX ")
+                append(App.profileResponse.value?.defaultCard?.last4 ?: 0)
+            }
+        } else {
+            sendTipSheetBind.cardRadio.isVisible = false
+            sendTipSheetBind.paymentCard.text = buildString {
+                append("Payment Method Not Added")
+            }
+        }
+
+        sendTipSheetBind.btnSendTip.setHapticClickListener {
+
+            with(sendTipSheetBind) {
+
+                if (!walletRadio.isChecked && !cardRadio.isChecked) {
+                    Alerts.error(mCtx, "Please select a payment method")
+                    return@setHapticClickListener
+                }
+
+                if (customOffer.text.toString().isEmpty()) {
+                    Alerts.error(mCtx, "Please enter an amount")
+                    return@setHapticClickListener
+                }
+
+                if (walletRadio.isChecked && customOffer.text.toString()
+                        .toDouble() > ((App.profileResponse.value?.walletAmount ?: "0.0").toString()
+                        .toDouble())
+                ) {
+                    Alerts.error(mCtx, "Insufficient balance")
+                    return@setHapticClickListener
+                }
+            }
+
+            sendTipSheet.dismiss()
+
+            socketManager?.sendTip(
+                roomId = roomID,
+                showId = showId.toString(),
+                userId = userId,
+                sellerId = sellerId.toString(),
+                amount = sendTipSheetBind.customOffer.text.toString()
+            )
+
+            /*bind.loader.isVisible = true
+            viewModel.sendTipAmount(
+                sellerId!!.request(),
+                sendTipSheetBind.customOffer.text.toString().request(),
+                null
+            )*/
+
+        }
+
+        sendTipSheet.show()
     }
 
-    clipSheet.show()
+    private fun onRaid(targetRoomId: String, rtcToken: String) {
+        viewModel.viewModelScope.launch {
+            try {
+                socketManager?.leaveRoom(roomID, userId)
+                commentList.clear()
+                commentAdapter.notifyDataSetChanged()
+                currentRemoteUid = null
+                clearRemoteVideo()
+                roomID = targetRoomId
+                streamID = rtcToken
+                App.manager.leaveChannel()
+                App.manager.joinSubscriberChannel(streamID, roomID)
+                currentRemoteUid?.let { uid ->
+                    setupRemoteVideo(uid)
+                }
 
-    clipSheet.setOnDismissListener {
-        exoPlayer.release()
+                socketManager?.joinRoom(roomID, userId) {
+                    socketManager?.sendMessage(
+                        roomID,
+                        "Joined \uD83D\uDC4B",
+                        userId,
+                        userName,
+                        userImage
+                    )
+                }
+            } catch (e: Exception) {
+                log("Raid failed: ${e.message}")
+                e.printStackTrace()
+            }
+        }
+
     }
 
-}
+    private fun setupPollListeners() {
+        // Listen for poll creation
+        socketManager?.onPollCreated { json ->
+            runSafe {
+                if (json.optString("roomId") == roomID) {
+                    requireActivity().runOnUiThread {
+                        currentPoll = PollModel.fromJson(json)
+                        showPollCard()
+                        updatePollUI()
+                    }
+                }
+            }
+        }
+
+        // Listen for poll updates (vote counts, timer)
+        socketManager?.onPollUpdate { json ->
+            runSafe {
+                requireActivity().runOnUiThread {
+                    if (json.optString("roomId") == roomID) {
+                        currentPoll = PollModel.fromJson(json)
+                        showPollCard()
+                        updatePollUI() // Update poll card preview
+                        updatePollSheet() // Update poll details sheet if open
+                    }
+                }
+
+            }
+        }
+
+        // Listen for poll ended
+        socketManager?.onPollEnded { json ->
+            runSafe {
+                requireActivity().runOnUiThread {
+                    if (json.optString("roomId") == roomID) {
+                        currentPoll = null
+                        hidePollCard()
+                        pollSheet?.dismiss()
+                        pollSheetBinding = null
+                    }
+                }
+            }
+        }
+
+        // Listen for vote result
+        socketManager?.onPollVoteResult { json ->
+            runSafe {
+                if (json.optString("room_id") == roomID) {
+                    requireActivity().runOnUiThread {
+                        val success = json.optBoolean("success", false)
+                        if (success) {
+                            Alerts.success(mCtx, "Vote submitted successfully!")
+                            // Poll will be updated via poll_update event
+                        } else {
+                            val message = json.optString("message", "Failed to submit vote")
+                            Alerts.error(mCtx, message)
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private fun showPollCard() {
+        requireActivity().runOnUiThread {
+            bind.poll.isVisible = true
+            updatePollUI()
+        }
+    }
+
+    private fun hidePollCard() {
+        requireActivity().runOnUiThread {
+            bind.poll.isVisible = false
+        }
+    }
+
+    private fun updatePollUI() {
+        currentPoll?.let { poll ->
+            if (poll.roomId == roomID) {
+                bind.pollQuestionPreview.text = poll.question ?: "Poll Question"
+                bind.pollTimerPreview.text = poll.remainingTime ?: "00:00 remaining"
+                bind.pollTotalVotesPreview.text = buildString {
+                    append(poll.totalVotes)
+                    append(" ")
+                    append(if (poll.totalVotes == 1) "vote" else "votes")
+                }
+            }
+        }
+    }
+
+    private fun showPollDetailsSheet() {
+        pollSheetBinding = PollDetailsSheetBinding.bind(
+            layoutInflater.inflate(
+                R.layout.poll_details_sheet,
+                null,
+                false
+            )
+        )
+
+        val pollSheet = Alerts.appBottomSheet(mCtx, true, pollSheetBinding!!)
+
+        livePollOptionList.clear()
+        livePollOptionList.addAll(currentPoll?.options ?: mutableListOf())
+
+        pollSheetBinding?.optionRecycler?.adapter = livePollAdapter
+
+        pollSheetBinding?.endPollBtn?.isVisible = false
+
+        pollSheetBinding?.close?.setHapticClickListener {
+            pollSheet.dismiss()
+        }
+
+        pollSheet.show()
+    }
+
+    private fun sellerInfoSheet(data: SellerInfoResponse.Data) {
+
+        val sellerInfoSheetBinding = SellerInfoSheetBinding.bind(
+            layoutInflater.inflate(
+                R.layout.seller_info_sheet,
+                null,
+                false
+            )
+        )
+
+        val sellerInfoSheet = Alerts.appBottomSheet(mCtx, true, sellerInfoSheetBinding)
+
+        val sellerMenuList = mutableListOf<MoreModel>()
+
+        sellerMenuList.add(MoreModel(R.drawable.ic_flying_money, "Tip or Boost", "tip"))
+        sellerMenuList.add(MoreModel(R.drawable.ic_rounded_profile, "View Profile", "profile"))
+        sellerMenuList.add(MoreModel(R.drawable.ic_outlined_message, "Message", "message"))
+//		sellerMenuList.add(MoreModel(R.drawable.ic_mention, "Mention in Chat", "mention"))
+        sellerMenuList.add(MoreModel(R.drawable.ic_block, "Block", "block"))
+        sellerMenuList.add(MoreModel(R.drawable.ic_warning, "Report", "report"))
+
+        sellerInfoSheetBinding.menuRecycler.adapter =
+            SellerMenuInfoAdapter(sellerMenuList, object : RecyclerClicks {
+                override fun itemClick(pos: Int, status: String?) {
+                    sellerInfoSheet.dismiss()
+                    when (status) {
+                        "tip" -> {
+                            sendTipSheet()
+                        }
+
+                        "profile" -> {
+                            startActivity(
+                                Intent(
+                                    mCtx,
+                                    SellerProfileActivity::class.java
+                                ).putExtra("sellerId", sellerId)
+                            )
+                        }
+
+                        "message" -> {
+                            startActivity(
+                                Intent(mCtx, ChatActivity::class.java).putExtra("id", sellerId)
+                                    .putExtra("name", sellerName)
+                                    .putExtra("image", sellerImage)
+                            )
+                        }
+
+                        "mention" -> {
+                        }
+
+                        "block" -> {
+                            showBlockConfirmation()
+                        }
+
+                        "report" -> {
+                            bind.loader.isVisible = true
+                            viewModel.getReportCategories()
+                        }
+                    }
+                }
+            })
+
+        sellerInfoSheetBinding.follow.isVisible = !isFollowing
+
+        sellerInfoSheetBinding.userName.text = data.sellerDetails?.username ?: ""
+        sellerInfoSheetBinding.rating.text = (data.ratingAvg ?: 0).toString()
+        sellerInfoSheetBinding.review.text = (data.review ?: 0).toString()
+        sellerInfoSheetBinding.sold.text = (data.soldCount ?: 0).toString()
+        sellerInfoSheetBinding.shipping.text = (data.avgShip ?: 0).toString()
+        sellerInfoSheetBinding.userImage.loadUrl(mCtx, data.sellerDetails?.profileImage ?: "")
+
+        sellerInfoSheetBinding.follow.setHapticClickListener {
+            bind.loader.isVisible = true
+            viewModel.followUser(sellerId?.request(), showId.toString().request())
+            sellerInfoSheet.dismiss()
+        }
+
+        sellerInfoSheet.show()
+    }
+
+    private fun followSheet() {
+
+        if (App.PIPMode) return
+
+        val ctx = context ?: return
+        val inflater = LayoutInflater.from(ctx)
+        val followSheetBinding = FollowInfoSheetBinding.bind(
+            inflater.inflate(
+                R.layout.follow_info_sheet,
+                null,
+                false
+            )
+        )
+
+        val followSheet = Alerts.appBottomSheet(ctx, true, followSheetBinding)
+
+        followSheetBinding.image.loadUrl(ctx, sellerImage ?: "")
+
+        followSheetBinding.title.text = buildString {
+            append("Follow This Seller!")
+        }
+
+        followSheetBinding.message.text = buildSpannedString {
+            append("Like what you see? Follow ")
+            color(ContextCompat.getColor(ctx, R.color.primary)) {
+                append(sellerName)
+            }
+            append(" to get notifications when they go live!")
+        }
+
+        followSheetBinding.primaryBtn.setHapticClickListener {
+            bind.loader.isVisible = true
+            viewModel.followUser(sellerId?.request(), showId.toString().request())
+            followSheet.dismiss()
+        }
+
+        followSheetBinding.secondaryBtn.setHapticClickListener {
+            followSheet.dismiss()
+        }
+
+        if (!followSheet.isShowing) {
+            followSheet.show()
+        }
+
+    }
+
+    private fun updatePollSheet() {
+        val poll = currentPoll ?: return
+        pollSheetBinding?.let { binding ->
+            // Update poll header data
+
+            binding.pollQuestionDetail.text = poll.question ?: "No question"
+            binding.pollTimerDetail.text = poll.remainingTime ?: "00:00 remaining"
+            binding.pollTotalVotesDetail.text = buildString {
+                append(poll.totalVotes)
+                append(" total votes")
+            }
+
+            if (::livePollAdapter.isInitialized) {
+                livePollOptionList.clear()
+                livePollOptionList.addAll(poll.options)
+                livePollAdapter.notifyDataSetChanged()
+            }
+
+        }
+    }
+
+    private fun voteOnPoll(optionIndex: Int) {
+        val poll = currentPoll ?: return
+
+        // Emit vote
+        socketManager?.votePoll(
+            roomId = roomID,
+            pollId = poll.pollId ?: 0,
+            optionIndex = optionIndex,
+            userId = userId
+        )
+    }
+
+    private fun initPip() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val visibleRect = Rect()
+
+            (requireActivity() as ViewLiveShowActivity).bind.root.getGlobalVisibleRect(visibleRect)
+            pipParams = PictureInPictureParams.Builder().apply {
+                setAspectRatio(Rational(100, 200))
+//                setAspectRatio(Rational(2, 5))
+                setSourceRectHint(visibleRect)
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                    setAutoEnterEnabled(false)
+                }
+            }.build()
+
+            activity?.setPictureInPictureParams(pipParams)
+        }
+    }
+
+    override fun onPictureInPictureModeChanged(isInPictureInPictureMode: Boolean) {
+        super.onPictureInPictureModeChanged(isInPictureInPictureMode)
+
+        if (isInPictureInPictureMode) {
+            App.PIPMode = true
+            bind.profileLayout.isVisible = false
+            bind.bottomUI.isVisible = false
+            bind.notesFreebieLayout.isVisible = false
+        } else {
+            App.PIPMode = false
+            bind.profileLayout.isVisible = true
+            bind.bottomUI.isVisible = true
+            bind.notesFreebieLayout.isVisible = true
+
+            ProductDetailsActivity.instance?.finish()
+
+        }
+    }
+
+    private fun showBlockConfirmation() {
+        AppBottomSheet(
+            mCtx,
+            R.drawable.ic_block,
+            "Block Seller",
+            "Are you sure you want to block this seller?",
+            primaryBtnText = "Block",
+            secondaryBtnText = "Cancel",
+            canCancel = true,
+            showSecondary = true,
+            iconPadding = 16,
+            alertType = AlertType.WARNING,
+            clicks = object : AlertClicks {
+                override fun primaryClick(dialog: AppBottomSheet) {
+                    dialog.dismiss()
+                    blockUser()
+                }
+
+                override fun secondaryClick(dialog: AppBottomSheet) {
+                    dialog.dismiss()
+                }
+            }).show()
+    }
+
+    private fun showThumbnail() {
+        if (!showThumbnail.isNullOrEmpty()) {
+            bind.thumbnailView.isVisible = true
+            bind.hostView.isVisible = false
+        }
+    }
+
+    private fun hideThumbnail() {
+        bind.thumbnailView.isVisible = false
+        bind.hostView.isVisible = true
+    }
+
+    private fun blockUser() {
+        bind.loader.isVisible = true
+        viewModel.blockUnblockUser(sellerId?.request()!!)
+
+        viewModel.blockUnblockUserRepo.observe(viewLifecycleOwner) {
+            when (it) {
+                is Resource.Success -> {
+                    bind.loader.isVisible = false
+                    it.value.data
+                    if (it.value.status == "success") {
+                        Alerts.success(mCtx, it.value.message ?: "User blocked successfully")
+                        finish()
+                    } else {
+                        Alerts.error(mCtx, it.value.message ?: "Failed to block user")
+                    }
+                }
+
+                is Resource.Error -> {
+                    bind.loader.isVisible = false
+                    it.parse(mCtx, TAG, object : AlertClicks {
+                        override fun primaryClick(dialog: AppBottomSheet) {
+                            dialog.dismiss()
+                        }
+
+                        override fun secondaryClick(dialog: AppBottomSheet) {
+                            dialog.dismiss()
+                        }
+                    })
+                }
+
+                else -> {}
+            }
+        }
+    }
+
+    fun reportUserDialog(data: List<GetReportCategoriesResponse.Data?>) {
+
+        val mBind = AppReportViewBinding.bind(
+            layoutInflater.inflate(
+                R.layout.app_report_view, null, false
+            )
+        )
+        val sheet = Alerts.appBottomSheet(mCtx, true, mBind)
+
+        val reportCategoryAdapter = ArrayAdapter(
+            mCtx,
+            android.R.layout.simple_list_item_1,
+            data.map { it?.name?.asCapital() }
+        )
+
+        mBind.reason.setAdapter(reportCategoryAdapter)
+        val reportDrawable = ContextCompat.getDrawable(mCtx, R.drawable.card_8)
+        mBind.reason.setDropDownBackgroundDrawable(reportDrawable)
+        var reasonId = ""
+        mBind.reason.setOnItemClickListener { _, _, position, _ ->
+            reasonId = data[position]?.id.toString()
+        }
+
+        mBind.reason.setHapticClickListener {
+            mBind.reason.showDropDown()
+        }
+
+        mBind.submitReport.setHapticClickListener {
+
+            if (mBind.reason.text.toString().isEmpty()) {
+                Alerts.error(mCtx, "Please select a reason")
+                return@setHapticClickListener
+            }
+
+            if (mBind.tellMore.text.toString().isEmpty()) {
+                Alerts.error(mCtx, "Please tell us more")
+                return@setHapticClickListener
+            }
+
+            bind.loader.isVisible = true
+            viewModel.reportSeller(
+                sellerId?.request()!!,
+                reasonId.request(),
+                mBind.tellMore.text.toString().request()
+            )
+
+            sheet.dismiss()
+        }
+
+        sheet.show()
+    }
+
+    private fun showNotesSheet() {
+        val showNotesSheetBind = ViewerShowNotesSheetBinding.bind(
+            layoutInflater.inflate(
+                R.layout.viewer_show_notes_sheet,
+                null,
+                false
+            )
+        )
+
+        val newHeight = requireActivity().window?.decorView?.measuredHeight
+        val viewGroupLayoutParams = showNotesSheetBind.root.layoutParams ?: ViewGroup.LayoutParams(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.MATCH_PARENT
+        )
+
+        viewGroupLayoutParams.height = (newHeight ?: 0) - (statusBarHeight)
+
+        showNotesSheetBind.root.layoutParams = viewGroupLayoutParams
+
+        showNotesSheetBind.notes.setMargins(
+            resources.dpToPx(16),
+            resources.dpToPx(16),
+            resources.dpToPx(16),
+            navigationBarHeight
+        )
+
+        val sheet = Alerts.appBottomSheet(mCtx, false, showNotesSheetBind)
+
+        showNotesSheetBind.notes.setHtmlFromString(showNotes?.ifEmpty { "No notes added yet." }, false)
+
+        showNotesSheetBind.close.setHapticClickListener {
+            sheet.dismiss()
+            bind.showNotes.isVisible = true
+        }
+
+        sheet.show()
+    }
+
+    val party = Party(
+        speed = 0f,
+        maxSpeed = 30f,
+        damping = 0.9f,
+        spread = 360,
+        colors = listOf(0xfce18a, 0xff726d, 0xf4306d, 0xb48def),
+        emitter = Emitter(duration = 100, TimeUnit.MILLISECONDS).max(100),
+        position = Position.Relative(0.5, 0.3)
+    )
+
+    fun showWonView(username: String, userImage: String, desc: String) {
+        bind.wonView.root.isVisible = true
+        bind.wonView.userName.text = username
+        bind.wonView.desc.text = desc
+        bind.wonView.userImage.loadUrl(mCtx, userImage, draw.app_icon_dollar)
+
+
+        bind.wonView.konfettiView.start(party)
+
+        Handler(Looper.getMainLooper()).postDelayed({
+            val flip = ObjectAnimator.ofFloat(bind.wonView.imageCard, "rotationY", 0f, 180f)
+            flip.duration = 1000
+
+            flip.addListener(object : AnimatorListenerAdapter() {
+                override fun onAnimationEnd(animation: Animator) {
+                    super.onAnimationEnd(animation)
+                    val flipBack = ObjectAnimator.ofFloat(bind.wonView.imageCard, "rotationY", 0f, 180f)
+                    flipBack.duration = 1000
+                    flipBack.start()
+                }
+            })
+            flip.start()
+        }, 1000)
+
+        Handler(Looper.getMainLooper()).postDelayed({
+            bind.wonView.root.isVisible = false
+            bind.wonView.konfettiView.stop(party)
+        }, 5000)
+
+    }
+
+    private var currentIndex = 0
+
+    private fun rotateText(userId: Int?) {
+        val handler = Handler()
+
+        val finalIndex = freebieUsers.indexOf(freebieUsers.find { it?.id == userId })
+
+        val textSwitcherRunnable = object : Runnable {
+            override fun run() {
+
+                if (currentIndex == finalIndex) {
+                    bind.textSwitcher.setText(buildSpannedString {
+                        color(ContextCompat.getColor(mCtx, clr.success)) { append("${freebieUsers[currentIndex]?.name} won") }
+                    })
+                    handler.postDelayed({
+                        bind.winnerSpotLayout.isVisible = false
+                        bind.notesFreebieLayout.isVisible = true
+                        bind.freebieLayout.isVisible = false
+                        currentIndex = 0
+                    }, 2000)
+                    return
+                } else {
+                    bind.textSwitcher.setText(freebieUsers[currentIndex]?.name)
+                }
+
+                if (currentIndex < finalIndex) currentIndex++
+
+                handler.postDelayed(this, 200)
+            }
+        }
+        // Start after 2 seconds
+        bind.textSwitcher.setText(freebieUsers[currentIndex]?.name)
+        handler.postDelayed(textSwitcherRunnable, 200)
+    }
+
+    fun createClipSheet() {
+
+        clipSheetBind.close.setHapticClickListener {
+            clipSheet.dismiss()
+        }
+
+        clipSheet.show()
+
+        clipSheet.setOnDismissListener {
+            exoPlayer.release()
+        }
+
+    }
+
+    fun finalizeBidUpdateUI(json: JSONObject) {
+        runSafe {
+            requireActivity().runOnUiThread {
+
+                val winner = json.getJSONObject("winner")
+                log("WINNER: $winner")
+
+                if (roomID == json.optString("room_id")) {
+                    bind.bidTime.isVisible = false
+                    bind.soldLayout.isVisible = true
+                    bind.buyNowBtn.isVisible = false
+                    bind.bidLayout.isVisible = false
+
+                    val bidderName = winner.optString("user_name") ?: ""
+                    val bidderImage = winner.optString("user_image")
+
+                    if (bidderName.isNotEmpty()) {
+                        bind.winningLayout.isVisible = true
+
+                        bind.userImage.loadUrl(mCtx, bidderImage)
+
+                        if (userId == winner.optString("user_id")) {
+                            bind.winning.text = buildSpannedString {
+                                color(ContextCompat.getColor(mCtx, R.color.primary)) {
+                                    bold { append(" you won!") }
+                                }
+                            }
+                            showWonView("You", bidderImage, "won the auction!")
+                        } else {
+                            bind.winning.text = buildSpannedString {
+                                append(bidderName)
+                                color(ContextCompat.getColor(mCtx, R.color.primary)) {
+                                    bold { append(" has won!") }
+                                }
+                            }
+                            showWonView(bidderName, bidderImage, "won the auction!")
+                        }
+
+                    } else {
+                        bind.winningLayout.isVisible = false
+                        bind.soldLayout.isVisible = true
+                    }
+                }
+            }
+        }
+
+    }
 }

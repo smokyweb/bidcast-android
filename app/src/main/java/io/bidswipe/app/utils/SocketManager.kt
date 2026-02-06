@@ -870,6 +870,60 @@ class SocketManager private constructor(
         }
     }
 
+    fun emitBidBreakSpot(
+        roomId: String,
+        userId: String,
+        userName: String,
+        userImage: String,
+        bidAmount: String?,
+        breakSpotData: AuctionStartedBreakSpotResponse?
+    ) {
+        val payload = JSONObject().apply {
+            put("room_id", roomId)
+            put("bid_amount", bidAmount)
+            put("user_name", userName)
+            put("user_image", userImage)
+            put("user_id", userId)
+            put("product_set_id", breakSpotData?.productSetId)
+            put("product_set_item_id", breakSpotData?.productSetItemId)
+            put("product_set_item_unit_id", breakSpotData?.productSetItemUnitId)
+            put("product_set_type", breakSpotData?.surpriseSetDetails?.productSet?.type)
+        }
+
+        Log.d(TAG, "EMIT: place_bid_break_spot - $payload")
+        socket?.emit("place_bid_break_spot", payload)
+    }
+
+    fun getBidTimerUpdateBreakSpot(listener: (json: JSONObject) -> Unit) {
+        socket?.on("bid_timer_update_break_spot") { args ->
+            val obj = args.firstOrNull()
+            if (obj is JSONObject) {
+                Log.d(TAG, "RECEIVED: bid_timer_update_break_spot - $obj")
+                listener(obj)
+            }
+        }
+    }
+
+    fun getHighestBidBreakSpot(listener: (json: JSONObject) -> Unit) {
+        socket?.on("get_highest_bid_break_spot") { args ->
+            val obj = args.firstOrNull()
+            if (obj is JSONObject) {
+                Log.d(TAG, "RECEIVED: get_highest_bid_break_spot - $obj")
+                listener(obj)
+            }
+        }
+    }
+
+    fun getBidFinalizeBreakSpot(listener: (bidJson: JSONObject) -> Unit) {
+        socket?.on("bid_finalized_break_spot") { args ->
+            val obj = args.firstOrNull()
+            if (obj is JSONObject) {
+                Log.d(TAG, "RECEIVED: bid_finalized_break_spot - $obj")
+                listener(obj)
+            }
+        }
+    }
+
 }
 
 
