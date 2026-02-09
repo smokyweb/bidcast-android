@@ -173,7 +173,7 @@ fun Fragment.intent() : Intent {
 
 fun Resource.Error.parse(
 	mCtx : Context ,
-	tag : String ,
+	tag : String ?= null ,
 	mClicks : AlertClicks? = null ,
 	showSecondary : Boolean = false ,
 	title : String = "Error" ,
@@ -191,7 +191,7 @@ fun Resource.Error.parse(
 		e.localizedMessage?.asCapital() ?: "No Data Found"
 	}
 
-	if (this.isNetworkError) Alerts.log(tag , "ERROR : \n${this.errorCode}")
+	if (this.isNetworkError) Alerts.log(tag?: mCtx.javaClass.simpleName.toString() , "ERROR : \n${this.errorCode}")
 
 	val clicks = if (this.errorResponse?.errorType == "UNAUTHORIZED" || this.errorResponse?.errorType == "invalid_token"||this.errorResponse?.message=="Token not found") {
 		object : AlertClicks {

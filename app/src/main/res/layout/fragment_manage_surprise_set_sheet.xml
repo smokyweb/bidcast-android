@@ -102,6 +102,7 @@
 
             <com.google.android.material.card.MaterialCardView
                 style="@style/cardStyle"
+                android:id="@+id/delete_card"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/half_margin"
@@ -120,7 +121,7 @@
             </com.google.android.material.card.MaterialCardView>
 
             <com.google.android.material.card.MaterialCardView
-                android:id="@+id/delete_card"
+                android:id="@+id/pin_card"
                 style="@style/cardStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

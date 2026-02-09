@@ -339,9 +339,16 @@ class ProductsForLiveShowFragment : BottomSheetDialogFragment() {
                     if (totalQuantity == soldQuantity) {
                         Alerts.error(mCtx, "This product is already sold")
                     } else if (status == "manage") {
-                        val bottomSheetFragment = ManageSurpriseSetSheet(){
-                            dismiss()
-                        }.apply{
+                        val bottomSheetFragment = ManageSurpriseSetSheet { status ->
+                            when (status) {
+                                "dismiss" -> dismiss()
+                                else->{
+                                    surprisePage = 1
+                                    loadSurpriseSets()
+                                }
+                            }
+
+                        }.apply {
                             arguments = bundleOf("setData" to selectedProduct)
                         }
                         bottomSheetFragment.show(parentFragmentManager, "MANAGE_SURPRISE")
@@ -352,25 +359,22 @@ class ProductsForLiveShowFragment : BottomSheetDialogFragment() {
                             socketManager?.startAuctionBreakSpot(
                                 viewModel.currentRoomId,
                                 selectedProduct?.id.toString(),
-                                selectedProduct?.items?.first { it?.status=="available" }?.id.toString(),
-                                selectedProduct?.items?.first { it?.status=="available" }?.units?.first{it?.status=="available"}?.id.toString(),
+                                selectedProduct?.items?.first { it?.status == "available" }?.id.toString(),
+                                selectedProduct?.items?.first { it?.status == "available" }?.units?.first { it?.status == "available" }?.id.toString(),
                                 (selectedProduct?.price ?: 0.0).toString(),
                                 null, null, null,
                             )
                             dismiss()
                         }
                     } else if (status == "set_next") {
-                        selectedPos = pos
-                        socketManager?.pinProduct(roomId = viewModel.currentRoomId, productId = selectedProduct?.id.toString())
-                    } else if (status == "manage") {
-                        selectedPos = pos
-                        socketManager?.pinProduct(roomId = viewModel.currentRoomId, productId = selectedProduct?.id.toString())
+//                        selectedPos = pos
+//                        socketManager?.pinProduct(roomId = viewModel.currentRoomId, productId = selectedProduct?.id.toString())
                     } else if (status == "freebie") {
-                        surpriseProductList.forEachIndexed { index, item ->
-                            item?.selected = index == pos
-                            bind.recycler.adapter?.notifyDataSetChanged()
-                        }
-                        selectedPos = pos
+//                        surpriseProductList.forEachIndexed { index, item ->
+//                            item?.selected = index == pos
+//                            bind.recycler.adapter?.notifyDataSetChanged()
+//                        }
+//                        selectedPos = pos
                     }
                 }
             })

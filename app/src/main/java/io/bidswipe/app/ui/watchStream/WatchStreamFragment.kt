@@ -212,6 +212,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
                 false
             )
         )
+
         clipSheet = Alerts.appBottomSheet(mCtx, true, clipSheetBind)
 
         bind.cutButton.setHapticClickListener {
@@ -1024,7 +1025,6 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
                             bind.viewFlipper.setOutAnimation(mCtx, R.anim.slide_out_right)
                             bind.viewFlipper.showPrevious()
                         } else {
-
                             bind.viewFlipper.setInAnimation(mCtx, R.anim.slide_in_right)
                             bind.viewFlipper.setOutAnimation(mCtx, R.anim.slide_out_left)
                             bind.viewFlipper.showNext()

@@ -730,6 +730,36 @@ class DashViewModel @Inject constructor(
         _storeSurpriseProductResponse.value = repo.storeSurpriseProduct(request)
     }
 
+   private var _editSurpriseProductResponse = MutableLiveData<Resource<CommonResponse>>()
+    val editSurpriseProductRepo: MutableLiveData<Resource<CommonResponse>>
+        get() = _editSurpriseProductResponse
+
+    fun editSurpriseProduct(
+        unitId: RequestBody?,
+        price: RequestBody?,
+        description: RequestBody?,
+    ) = viewModelScope.launch {
+        if (!networkMonitor.hasInternet()) {
+            _editSurpriseProductResponse.value = NO_INTERNET_ERROR
+            return@launch
+        }
+        _editSurpriseProductResponse.value = repo.editSurpriseProduct(unitId,price,description)
+    }
+
+   private var _deleteSurpriseSetResponse = MutableLiveData<Resource<CommonResponse>>()
+    val deleteSurpriseSetRepo: MutableLiveData<Resource<CommonResponse>>
+        get() = _deleteSurpriseSetResponse
+
+    fun deleteSurpriseSet(
+        productSetId: RequestBody?
+    ) = viewModelScope.launch {
+        if (!networkMonitor.hasInternet()) {
+            _deleteSurpriseSetResponse.value = NO_INTERNET_ERROR
+            return@launch
+        }
+        _deleteSurpriseSetResponse.value = repo.deleteSurpriseSet(productSetId)
+    }
+
     private var _getSurpriseProductResponse = MutableLiveData<Resource<GetSurpriseProductsResponse>>()
     val getSurpriseProductRepo: MutableLiveData<Resource<GetSurpriseProductsResponse>>
         get() = _getSurpriseProductResponse

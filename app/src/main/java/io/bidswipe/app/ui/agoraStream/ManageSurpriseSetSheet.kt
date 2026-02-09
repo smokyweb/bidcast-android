@@ -5,7 +5,6 @@ import android.app.Dialog
 import android.content.Context
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -24,19 +23,26 @@ import io.bidswipe.app.controller.AvailableItemAdapter
 import io.bidswipe.app.controller.UnsoldAdapterAdapter
 import io.bidswipe.app.databinding.AuctionSettingsSheetBinding
 import io.bidswipe.app.databinding.FragmentManageSurpriseSetSheetBinding
+import io.bidswipe.app.interfaces.AlertClicks
 import io.bidswipe.app.interfaces.RecyclerClicks
+import io.bidswipe.app.network.Resource
 import io.bidswipe.app.network.response.AuctionType
 import io.bidswipe.app.network.response.GetSurpriseProductsResponse
+import io.bidswipe.app.ui.custom.AlertType
+import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.ui.dashboard.DashViewModel
 import io.bidswipe.app.utils.Alerts
 import io.bidswipe.app.utils.PriceFormatter
 import io.bidswipe.app.utils.Utils
 import io.bidswipe.app.utils.asCapital
 import io.bidswipe.app.utils.asMoney
+import io.bidswipe.app.utils.parse
+import io.bidswipe.app.utils.request
+import io.bidswipe.app.utils.runSafe
 import io.bidswipe.app.utils.setHapticClickListener
 import io.bidswipe.app.utils.value
 
-class ManageSurpriseSetSheet(var callBack: () -> Unit) : BottomSheetDialogFragment() {
+class ManageSurpriseSetSheet(var callBack: (status: String) -> Unit) : BottomSheetDialogFragment() {
 
     private lateinit var mCtx: Context
 
@@ -48,26 +54,27 @@ class ManageSurpriseSetSheet(var callBack: () -> Unit) : BottomSheetDialogFragme
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val dialog = super.onCreateDialog(savedInstanceState) as BottomSheetDialog
         dialog.setOnShowListener { dialogInterface ->
-            val bottomSheetDialog = dialogInterface as BottomSheetDialog
-            val bottomSheet = bottomSheetDialog.findViewById<View>(
-                com.google.android.material.R.id.design_bottom_sheet
-            ) as FrameLayout?
+            runSafe {
+                val bottomSheetDialog = dialogInterface as BottomSheetDialog
+                val bottomSheet = bottomSheetDialog.findViewById<View>(
+                    com.google.android.material.R.id.design_bottom_sheet
+                ) as FrameLayout?
 
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                bottomSheetDialog.window?.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION)
-                bottomSheetDialog.window?.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
-                bottomSheetDialog.window?.navigationBarColor = ContextCompat.getColor(requireContext(), R.color.background)
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    bottomSheetDialog.window?.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION)
+                    bottomSheetDialog.window?.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+                    bottomSheetDialog.window?.navigationBarColor = ContextCompat.getColor(requireContext(), R.color.background)
+                }
+
+                bottomSheet?.let {
+                    val layoutParams = it.layoutParams
+                    layoutParams.height = WindowManager.LayoutParams.MATCH_PARENT
+                    it.layoutParams = layoutParams
+                    val behavior = BottomSheetBehavior.from(it)
+                    behavior.state = BottomSheetBehavior.STATE_EXPANDED
+                    behavior.skipCollapsed = true
+                }
             }
-
-            bottomSheet?.let {
-                val layoutParams = it.layoutParams
-                layoutParams.height = WindowManager.LayoutParams.MATCH_PARENT
-                it.layoutParams = layoutParams
-                val behavior = BottomSheetBehavior.from(it)
-                behavior.state = BottomSheetBehavior.STATE_EXPANDED
-                behavior.skipCollapsed = true
-            }
-
         }
         return dialog
     }
@@ -158,13 +165,34 @@ class ManageSurpriseSetSheet(var callBack: () -> Unit) : BottomSheetDialogFragme
             object : RecyclerClicks {
                 @SuppressLint("NotifyDataSetChanged")
                 override fun itemClick(pos: Int, status: String?) {
+                    when (status) {
+                        "start_auction" -> {
+                            App.socketManager?.startAuctionBreakSpot(
+                                viewModel.currentRoomId,
+                                surpriseSet?.id.toString(),
+                                unSoldList[pos]?.productSetItemId.toString(),
+                                unSoldList[pos]?.id.toString(),
+                                (surpriseSet?.price ?: 0.0).toString(),
+                                null, null, null,
+                            )
+                            dismiss()
+                            callBack("dismiss")
+                        }
+
+                        "set_next" -> {
+
+                        }
+                    }
                 }
-            })
+            }) { position, price, desc ->
+            bind.loader.isVisible = true
+            viewModel.editSurpriseProduct(unSoldList[position]?.id.toString().request(), price.request(), desc.request())
+        }
 
         bind.unsoldItems.adapter = unSoldAdapter
         bind.unsoldHeading.title.text = "Unsold (${unSoldList.count { it?.status == "available" }})"
 
-        val availabledapter = AvailableItemAdapter(
+        val availableAdapter = AvailableItemAdapter(
             mList = availableList,
             object : RecyclerClicks {
                 @SuppressLint("NotifyDataSetChanged")
@@ -172,7 +200,7 @@ class ManageSurpriseSetSheet(var callBack: () -> Unit) : BottomSheetDialogFragme
                 }
             })
 
-        bind.availableItems.adapter = availabledapter
+        bind.availableItems.adapter = availableAdapter
         bind.availableHeading.title.text = "Available (${availableList.sumOf { it?.quantity ?: 0 }})"
 
         bind.unsoldHeading.onCloseCLick {
@@ -185,17 +213,68 @@ class ManageSurpriseSetSheet(var callBack: () -> Unit) : BottomSheetDialogFragme
 
         bind.startAuction.setHapticClickListener {
             auctionSettingsSheet()
-
-//                App.socketManager?.startAuctionBreakSpot(
-//                    viewModel.currentRoomId,
-//                    surpriseSet?.id.toString(),
-//                    surpriseSet?.items?.first { it?.status=="available" }?.id.toString(),
-//                    surpriseSet?.items?.first { it?.status=="available" }?.units?.first{it?.status=="available"}?.id.toString(),
-//                    (surpriseSet?.price ?: 0.0).toString(),
-//                    null, null, null,
-//                )
-//                dismiss()
         }
+
+        bind.deleteCard.setHapticClickListener {
+            AppBottomSheet(
+                mCtx,
+                R.drawable.trash,
+                "Delete!",
+                "Are you sure you want to delete?",
+                primaryBtnText = "Yes",
+                secondaryBtnText = "No",
+                canCancel = true,
+                showSecondary = true,
+                iconPadding = 16,
+                alertType = AlertType.ERROR,
+                clicks = object : AlertClicks {
+                    override fun primaryClick(dialog: AppBottomSheet) {
+                        dialog.dismiss()
+                        bind.loader.isVisible = true
+                        viewModel.deleteSurpriseSet(surpriseSet?.id.toString().request())
+                    }
+
+                    override fun secondaryClick(dialog: AppBottomSheet) {
+                        dialog.dismiss()
+                    }
+                }
+
+            ).show()
+
+        }
+
+        viewModel.deleteSurpriseSetRepo.observe(viewLifecycleOwner) {
+            when (it) {
+                is Resource.Success -> {
+                    dismiss()
+                    callBack("delete")
+                }
+
+                is Resource.Error -> {
+                    it.parse(mCtx)
+                }
+
+                else -> {}
+
+            }
+        }
+
+        viewModel.editSurpriseProductRepo.observe(viewLifecycleOwner) {
+            when (it) {
+                is Resource.Success -> {
+                    dismiss()
+                    callBack("edit")
+                }
+
+                is Resource.Error -> {
+                    it.parse(mCtx)
+                }
+
+                else -> {}
+
+            }
+        }
+
     }
 
     private fun auctionSettingsSheet() {
@@ -264,7 +343,6 @@ class ManageSurpriseSetSheet(var callBack: () -> Unit) : BottomSheetDialogFragme
         }
 
         auctionSettingsSheetBind.start.setHapticClickListener {
-
             when {
                 selectedRequiredTime == 0 -> {
                     Alerts.error(mCtx, "Please select required time")
@@ -294,10 +372,9 @@ class ManageSurpriseSetSheet(var callBack: () -> Unit) : BottomSheetDialogFragme
                     )
                     sheet.dismiss()
                     dismiss()
-                    callBack()
+                    callBack("dismiss")
                 }
             }
-
         }
 
         sheet.show()

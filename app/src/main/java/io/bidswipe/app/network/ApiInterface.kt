@@ -76,7 +76,6 @@ import io.bidswipe.app.network.response.SettingListResponse
 import io.bidswipe.app.network.response.SignUpResponse
 import io.bidswipe.app.network.response.StorePhoneNumberResponse
 import io.bidswipe.app.network.response.StoreProductMetaResponse
-import io.bidswipe.app.network.response.StoreSellerIdResponse
 import io.bidswipe.app.network.response.TermsConditionResponse
 import io.bidswipe.app.network.response.UpdateLiveStatusResponse
 import io.bidswipe.app.network.response.UpdateOfferResponse
@@ -886,12 +885,27 @@ interface ApiInterface {
 
     @POST("api/store-surprise-product")
     suspend fun storeSurpriseProduct(
-       @Body request: StoreSurpriseSet?
+        @Body request: StoreSurpriseSet?
     ): CommonResponse
 
-      @GET("api/get-surprise-product")
+    @Multipart
+    @POST("api/edit-product-set-item-unit")
+    suspend fun editSurpriseSetUnit(
+        @Part("unit_id") unitId: RequestBody?,
+        @Part("price") price: RequestBody?,
+        @Part("description") description: RequestBody?,
+    ): CommonResponse
+
+    @Multipart
+    @POST("api/delete-product-set")
+    suspend fun deleteSurpriseSet(
+        @Part("product_set_id") productSetId: RequestBody?,
+    ): CommonResponse
+
+
+    @GET("api/get-surprise-product")
     suspend fun getSurpriseProduct(
-          @Query("page") page: String?
+        @Query("page") page: String?
     ): GetSurpriseProductsResponse
 
 

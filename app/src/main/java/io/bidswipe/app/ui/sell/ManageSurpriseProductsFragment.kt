@@ -56,6 +56,7 @@ class ManageSurpriseProductsFragment : BaseFragment<DashViewModel, FragmentManag
         bind.products.adapter = productsAdapter
 
         bind.addNew.setHapticClickListener {
+            hideKeyboard(it)
             if (viewModel.surpriseSetList.sumOf { it?.quantity ?: 0 } < 500) {
                 addProductSheet()
             } else {

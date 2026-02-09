@@ -657,6 +657,16 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
         request: StoreSurpriseSet?
     ) = call { api.storeSurpriseProduct(request) }
 
+    suspend fun editSurpriseProduct(
+        unitId: RequestBody?,
+        price: RequestBody?,
+        description: RequestBody?,
+    ) = call { api.editSurpriseSetUnit(unitId, price, description) }
+
+    suspend fun deleteSurpriseSet(
+        productSetId: RequestBody?,
+    ) = call { api.deleteSurpriseSet(productSetId) }
+
     suspend fun getSurpriseProduct(
         page: String?
     ) = call { api.getSurpriseProduct(page) }

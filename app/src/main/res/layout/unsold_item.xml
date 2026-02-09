@@ -35,10 +35,23 @@
         android:gravity="center_vertical"
         android:orientation="horizontal">
 
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/start_auction"
+            style="@style/appBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:minHeight="0dp"
+            android:paddingHorizontal="@dimen/margin"
+            android:paddingVertical="6dp"
+            android:text="@string/start_auction"
+            android:textAppearance="@style/BodySmall" />
+
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/pin_card"
             style="@style/cardStyle"
             android:layout_width="wrap_content"
+            android:elevation="0dp"
+            app:cardElevation="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/half_margin"
             app:cardCornerRadius="28dp">
@@ -60,6 +73,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/half_margin"
+            android:elevation="0dp"
+            app:cardElevation="0dp"
             app:cardCornerRadius="28dp">
 
             <androidx.appcompat.widget.AppCompatImageView
@@ -71,10 +86,61 @@
                 android:src="@drawable/ic_edit"
                 android:tint="@color/onSurface" />
 
-
         </com.google.android.material.card.MaterialCardView>
 
 
     </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:orientation="vertical"
+        android:id="@+id/edit_layout"
+        android:visibility="gone"
+        android:paddingVertical="@dimen/half_margin"
+        android:layout_height="wrap_content">
+
+        <TextView
+            style="@style/TitleSmall"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Price" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/inputBoxStyle"
+            android:layout_width="match_parent"
+            android:layout_marginBottom="@dimen/margin"
+            android:layout_height="wrap_content">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/unit_price"
+                style="@style/inputTextStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/enter_price" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <TextView
+            style="@style/TitleSmall"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/description_optional" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/inputBoxStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/desc"
+                style="@style/inputTextStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/describe_your_product" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+    </LinearLayout>
+
+
 
 </LinearLayout>
