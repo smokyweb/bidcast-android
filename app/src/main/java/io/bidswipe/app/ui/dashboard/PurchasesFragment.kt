@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
-import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isNotEmpty
@@ -41,36 +40,31 @@ class PurchasesFragment : BaseFragment<DashViewModel, FragmentPurchasesBinding>(
 
     private var mClick = object : RecyclerClicks {
         override fun itemClick(pos: Int, status: String?) {
-
-            when(status){
-
+            when (status) {
                 "product" -> {
-                    if (mList[pos]?.orderId?.isNotEmpty() == true){
+                    val productId = mList[pos]?.productId ?: mList[pos]?.productSet?.id
+
+                    if (mList[pos]?.orderId?.isNotEmpty() == true) {
                         startActivity(
-                            Intent(mCtx, ProductDetailsActivity::class.java).putExtra(
-                                "productId",
-                                mList[pos]?.product?.id.toString()).putExtra(
-                                "type",
-                                "orderDetail"
-                            ).putExtra("orderId", mList[pos]?.orderId.toString())
+                            Intent(mCtx, ProductDetailsActivity::class.java)
+                                .putExtra("productId", productId.toString())
+                                .putExtra("type", "orderDetail")
+                                .putExtra("productType", if (mList[pos]?.productId != null) "product" else "product_set")
+                                .putExtra("orderId", mList[pos]?.orderId.toString())
                         )
                     }
                 }
 
                 "profile" -> {
-                    if (mList[pos]?.product?.user?.name != null) {
-                        startActivity(
-                            Intent(mCtx, SellerProfileActivity::class.java).putExtra(
-                                "sellerId",
-                                mList[pos]?.product?.user?.id.toString()
-                            )
+                    val sellerId = if (mList[pos]?.productId != null) (mList[pos]?.product?.user?.id) else (mList[pos]?.productSet?.seller?.id)
+                    startActivity(
+                        Intent(mCtx, SellerProfileActivity::class.java).putExtra(
+                            "sellerId",
+                            sellerId.toString()
                         )
-                    }
+                    )
                 }
-
             }
-
-
         }
     }
 
@@ -115,7 +109,7 @@ class PurchasesFragment : BaseFragment<DashViewModel, FragmentPurchasesBinding>(
         bind.loader.isVisible = true
         loadData()
         viewModel.getPurchasedProductsByStatusRepo.observe(viewLifecycleOwner) {
-            viewModel.isViewPagerDataLoaded.value=true
+            viewModel.isViewPagerDataLoaded.value = true
             when (it) {
                 is Resource.Success -> {
                     bind.loader.isVisible = false
@@ -175,7 +169,7 @@ class PurchasesFragment : BaseFragment<DashViewModel, FragmentPurchasesBinding>(
 
     }
 
-    fun reloadData()  {
+    fun reloadData() {
         if (Utils.isOnline(mCtx)) {
             bind.loader.isVisible = true
             bind.noInternet.isVisible = false
@@ -186,7 +180,7 @@ class PurchasesFragment : BaseFragment<DashViewModel, FragmentPurchasesBinding>(
             bind.noInternet.isVisible = true
             bind.recycler.isVisible = false
             bind.noData.isVisible = false
-            viewModel.isViewPagerDataLoaded.value=true
+            viewModel.isViewPagerDataLoaded.value = true
         }
     }
 
@@ -201,7 +195,7 @@ class PurchasesFragment : BaseFragment<DashViewModel, FragmentPurchasesBinding>(
     }
 
     private fun loadData() {
-        viewModel.getPurchasedProductsByStatus(type.request(), page.toString().request(),currentFilter.ifEmpty { null }?.request())
+        viewModel.getPurchasedProductsByStatus(type.request(), page.toString().request(), currentFilter.ifEmpty { null }?.request())
     }
 
     private fun setupFilterChips() {
@@ -209,7 +203,7 @@ class PurchasesFragment : BaseFragment<DashViewModel, FragmentPurchasesBinding>(
             return // Already set up
         }
 
-        val filters = listOf( "All", "In Progress", "Completed")
+        val filters = listOf("All", "In Progress", "Completed")
         filters.forEachIndexed { index, filter ->
             val chip = Utils.makeAChip(
                 mCtx = mCtx,

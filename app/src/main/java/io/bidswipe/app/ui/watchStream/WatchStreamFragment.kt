@@ -149,6 +149,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
     private var showNotes: String? = ""
 
     private var freebieUsers = mutableListOf<GetFreebieObject.Users?>()
+    private var breakSpotUsers = mutableListOf<Pair<Int, String>?>()
 
     private lateinit var exoPlayer: ExoPlayer
     private lateinit var clipSheetBind: CreateClipSheetBinding
@@ -323,6 +324,18 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
             socketManager?.getHighestBidBreakSpot { json ->
                 handleBidUpdate(json)
+                runSafe {
+                    requireActivity().runOnUiThread {
+                        val highestBid = json.getJSONObject("get_highest_bid")
+                        val bidderName = highestBid.optString("user_name")
+                        if (breakSpotUsers.find { it?.first == highestBid.optInt("user_id") } == null) breakSpotUsers.add(
+                            Pair(
+                                highestBid.optInt("user_id"),
+                                bidderName
+                            )
+                        )
+                    }
+                }
             }
 
             socketManager?.onAuctionStarted { auctionData ->
@@ -370,7 +383,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
             }
 
             socketManager?.getBidFinalizeBreakSpot { json ->
-                finalizeBidUpdateUI(json)
+                finalizeBidUpdateUI(json,false)
                 runSafe {
                     requireActivity().runOnUiThread {
                         breakSpotAuctionData?.surpriseSetDetails?.soldQuantity = (breakSpotAuctionData?.surpriseSetDetails?.soldQuantity ?: 0) + 1
@@ -388,6 +401,8 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
                             append(breakSpotAuctionData?.surpriseSetDetails?.totalQuantity ?: 0)
                             append(" left")
                         }
+                        val winner = json.getJSONObject("winner")
+                        rotateBreakSpotText(winner.optString("user_id").toInt())
                     }
                 }
             }
@@ -2378,39 +2393,84 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
     }
 
-    private var currentIndex = 0
-
     private fun rotateText(userId: Int?) {
+        var currentIndex = 0
+        bind.winnerTitle.text = "Selecting Freebie Winner"
         val handler = Handler()
+        if (freebieUsers.size > 1) {
+            val finalIndex = freebieUsers.indexOf(freebieUsers.find { it?.id == userId })
 
-        val finalIndex = freebieUsers.indexOf(freebieUsers.find { it?.id == userId })
+            val textSwitcherRunnable = object : Runnable {
+                override fun run() {
 
-        val textSwitcherRunnable = object : Runnable {
-            override fun run() {
+                    if (currentIndex == finalIndex) {
+                        bind.textSwitcher.setText(buildSpannedString {
+                            color(ContextCompat.getColor(mCtx, clr.success)) { append("${freebieUsers[currentIndex]?.name} won") }
+                        })
 
-                if (currentIndex == finalIndex) {
-                    bind.textSwitcher.setText(buildSpannedString {
-                        color(ContextCompat.getColor(mCtx, clr.success)) { append("${freebieUsers[currentIndex]?.name} won") }
-                    })
-                    handler.postDelayed({
-                        bind.winnerSpotLayout.isVisible = false
-                        bind.notesFreebieLayout.isVisible = true
-                        bind.freebieLayout.isVisible = false
-                        currentIndex = 0
-                    }, 2000)
-                    return
-                } else {
-                    bind.textSwitcher.setText(freebieUsers[currentIndex]?.name)
+                        handler.postDelayed({
+                            bind.winnerSpotLayout.isVisible = false
+                            bind.notesFreebieLayout.isVisible = true
+                            bind.freebieLayout.isVisible = false
+                            currentIndex = 0
+                        }, 2000)
+                        return
+                    } else {
+                        bind.textSwitcher.setText(freebieUsers[currentIndex]?.name)
+                    }
+
+                    if (currentIndex < finalIndex) currentIndex++
+
+                    handler.postDelayed(this, 200)
                 }
-
-                if (currentIndex < finalIndex) currentIndex++
-
-                handler.postDelayed(this, 200)
             }
+
+            // Start after 2 seconds
+            bind.textSwitcher.setText(freebieUsers[currentIndex]?.name)
+            handler.postDelayed(textSwitcherRunnable, 200)
+        } else {
+            bind.textSwitcher.setText(freebieUsers[currentIndex]?.name)
         }
-        // Start after 2 seconds
-        bind.textSwitcher.setText(freebieUsers[currentIndex]?.name)
-        handler.postDelayed(textSwitcherRunnable, 200)
+    }
+
+    private fun rotateBreakSpotText(userId: Int?) {
+        var currentIndex = 0
+        bind.winnerSpotLayout.isVisible = true
+        bind.winnerTitle.text = "Selecting Random Spot"
+        val handler = Handler()
+        if (breakSpotUsers.size > 1) {
+            val finalIndex = breakSpotUsers.indexOf(breakSpotUsers.find { it?.first == userId })
+
+           val textSwitcherRunnable= object : Runnable {
+                override fun run() {
+
+                    if (currentIndex == finalIndex) {
+                        bind.textSwitcher.setText(buildSpannedString {
+                            color(ContextCompat.getColor(mCtx, clr.success)) { append("${breakSpotUsers[currentIndex]?.second} won") }
+                        })
+
+                        handler.postDelayed({
+                            bind.winnerSpotLayout.isVisible = false
+                            bind.notesFreebieLayout.isVisible = true
+                            bind.freebieLayout.isVisible = false
+                            currentIndex = 0
+                        }, 2000)
+                        return
+                    } else {
+                        bind.textSwitcher.setText(breakSpotUsers[currentIndex]?.second)
+                    }
+
+                    if (currentIndex < finalIndex) currentIndex++
+
+                    handler.postDelayed(this, 200)
+                }
+            }
+            // Start after 2 seconds
+            bind.textSwitcher.setText(breakSpotUsers[currentIndex]?.second)
+            handler.postDelayed(textSwitcherRunnable, 200)
+        } else {
+            bind.textSwitcher.setText(breakSpotUsers[0]?.second)
+        }
     }
 
     fun createClipSheet() {
@@ -2427,7 +2487,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
     }
 
-    fun finalizeBidUpdateUI(json: JSONObject) {
+    fun finalizeBidUpdateUI(json: JSONObject,showWon:Boolean=true) {
         runSafe {
             requireActivity().runOnUiThread {
 
@@ -2454,7 +2514,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
                                     bold { append(" you won!") }
                                 }
                             }
-                            showWonView("You", bidderImage, "won the auction!")
+                       if(showWon)     showWonView("You", bidderImage, "won the auction!")
                         } else {
                             bind.winning.text = buildSpannedString {
                                 append(bidderName)
@@ -2462,7 +2522,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
                                     bold { append(" has won!") }
                                 }
                             }
-                            showWonView(bidderName, bidderImage, "won the auction!")
+                            if(showWon)     showWonView(bidderName, bidderImage, "won the auction!")
                         }
 
                     } else {

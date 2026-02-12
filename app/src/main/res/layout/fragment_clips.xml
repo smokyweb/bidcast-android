@@ -46,7 +46,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:visibility="gone"
-            app:title_text="No Shows Found" />
+            app:title_text="No Clips Found" />
 
         <io.bidswipe.app.ui.custom.NoDataView
             android:id="@+id/noInternet"

@@ -187,13 +187,13 @@ class SellerOrderDetailFragment : BaseFragment<SellerHubViewModel, FragmentSelle
 		viewModel.changeOrderStatusRepo.observe(viewLifecycleOwner) {
 			when (it) {
 				is Resource.Success -> {
-					viewModel.getOrderDetailsRepo.value = null
+					viewModel.changeOrderStatusRepo.value = null
 					val mData = it.value.data
 					viewModel.getOrderDetails(orderId.request())
 				}
 
 				is Resource.Error -> {
-					viewModel.getOrderDetailsRepo.value = null
+					viewModel.changeOrderStatusRepo.value = null
 					bind.loader.isVisible = false
 					it.parse(mCtx, TAG, object : AlertClicks {
 						override fun primaryClick(dialog: AppBottomSheet) {

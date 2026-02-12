@@ -55,12 +55,14 @@ class OrderDetailsFragment : BaseFragment<ProductViewModel, FragmentOrderDetails
     private var videoUrl: String? = null
     private var videoPlayerBottomSheet: BottomSheetDialog? = null
     private var exoPlayer: ExoPlayer? = null
+    private var type="product"
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         orderId = requireActivity().intent.getStringExtra("orderId")
         productId = requireActivity().intent.getStringExtra("productId")
+        type = requireActivity().intent.getStringExtra("productType")?:"product"
 
         bind.header.onBackClick {
             finish()
@@ -111,9 +113,7 @@ class OrderDetailsFragment : BaseFragment<ProductViewModel, FragmentOrderDetails
         }
 
         bind.videoReceipt.setHapticClickListener {
-
             findNavController().navigate(ids.orderDetailToVideoReceiptPlayerFragment, bundleOf("videoUrl" to videoUrl))
-
         }
 
         val menu = PopupMenu(mCtx, bind.header.findViewById<AppCompatImageView>(R.id.primaryIcon))
@@ -141,8 +141,7 @@ class OrderDetailsFragment : BaseFragment<ProductViewModel, FragmentOrderDetails
         }
 
         bind.loader.isVisible = true
-
-        viewModel.fetchOrderDetail(productId, orderId)
+        viewModel.fetchOrderDetail(productId, orderId,type)
 
         viewModel.fetchOrderDetailRepo.observe(viewLifecycleOwner) {
             when (it) {

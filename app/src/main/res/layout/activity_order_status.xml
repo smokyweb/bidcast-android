@@ -367,6 +367,7 @@
                     android:layout_height="wrap_content"
                     android:drawablePadding="@dimen/half_margin"
                     android:text="@string/swiftbid_buyer_protection"
+                    android:drawableTint="@color/primary"
                     app:drawableStartCompat="@drawable/ic_shield" />
 
                 <TextView

@@ -47,6 +47,8 @@ class ClipsFragment : BaseFragment<SellerViewModel , FragmentClipsBinding>() {
 			bind.loader.isVisible = false
 			bind.recycler.isVisible = true
 			bind.noData.isVisible = false
+			bind.loader.isVisible=true
+			viewModel.getUserClips(sellerId,page.toString())
 		} else {
 			bind.recycler.isVisible = false
 			bind.noData.isVisible = false

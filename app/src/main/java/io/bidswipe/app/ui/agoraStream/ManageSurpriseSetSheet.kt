@@ -5,6 +5,7 @@ import android.app.Dialog
 import android.content.Context
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,7 +21,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import io.bidswipe.app.App
 import io.bidswipe.app.R
 import io.bidswipe.app.controller.AvailableItemAdapter
-import io.bidswipe.app.controller.UnsoldAdapterAdapter
+import io.bidswipe.app.controller.UnsoldItemsAdapter
 import io.bidswipe.app.databinding.AuctionSettingsSheetBinding
 import io.bidswipe.app.databinding.FragmentManageSurpriseSetSheetBinding
 import io.bidswipe.app.interfaces.AlertClicks
@@ -139,7 +140,7 @@ class ManageSurpriseSetSheet(var callBack: (status: String) -> Unit) : BottomShe
             }
 
             surpriseSet?.items?.forEach {
-                unSoldList.addAll(it?.units ?: emptyList())
+                unSoldList.addAll(it?.units?.filter {it1-> it1?.status=="available" } ?: emptyList())
                 availableList.add(it)
             }
 
@@ -160,7 +161,7 @@ class ManageSurpriseSetSheet(var callBack: (status: String) -> Unit) : BottomShe
             }
         }
 
-        val unSoldAdapter = UnsoldAdapterAdapter(
+        val unSoldAdapter = UnsoldItemsAdapter(
             mList = unSoldList,
             object : RecyclerClicks {
                 @SuppressLint("NotifyDataSetChanged")
@@ -172,7 +173,7 @@ class ManageSurpriseSetSheet(var callBack: (status: String) -> Unit) : BottomShe
                                 surpriseSet?.id.toString(),
                                 unSoldList[pos]?.productSetItemId.toString(),
                                 unSoldList[pos]?.id.toString(),
-                                (surpriseSet?.price ?: 0.0).toString(),
+                                (unSoldList[pos]?.price ?: 0.0).toString(),
                                 null, null, null,
                             )
                             dismiss()
@@ -246,12 +247,14 @@ class ManageSurpriseSetSheet(var callBack: (status: String) -> Unit) : BottomShe
         viewModel.deleteSurpriseSetRepo.observe(viewLifecycleOwner) {
             when (it) {
                 is Resource.Success -> {
+                    viewModel.deleteSurpriseSetRepo.value=null
                     dismiss()
                     callBack("delete")
                 }
 
                 is Resource.Error -> {
-                    it.parse(mCtx)
+                    viewModel.deleteSurpriseSetRepo.value=null
+                      it.parse(mCtx)
                 }
 
                 else -> {}
@@ -262,19 +265,19 @@ class ManageSurpriseSetSheet(var callBack: (status: String) -> Unit) : BottomShe
         viewModel.editSurpriseProductRepo.observe(viewLifecycleOwner) {
             when (it) {
                 is Resource.Success -> {
+                    viewModel.editSurpriseProductRepo.value=null
                     dismiss()
                     callBack("edit")
                 }
 
                 is Resource.Error -> {
+                    viewModel.editSurpriseProductRepo.value=null
                     it.parse(mCtx)
                 }
 
                 else -> {}
-
             }
         }
-
     }
 
     private fun auctionSettingsSheet() {
@@ -360,25 +363,34 @@ class ManageSurpriseSetSheet(var callBack: (status: String) -> Unit) : BottomShe
                 }
 
                 else -> {
-                    App.socketManager?.startAuctionBreakSpot(
-                        viewModel.currentRoomId,
-                        surpriseSet?.id.toString(),
-                        surpriseSet?.items?.first { it?.status == "available" }?.id.toString(),
-                        surpriseSet?.items?.first { it?.status == "available" }?.units?.first { it?.status == "available" }?.id.toString(),
-                        auctionSettingsSheetBind.startingBid.value(),
-                        selectedRequiredTime,
-                        selectedCounterTimer,
-                        auctionSettingsSheetBind.suddenDeath.isChecked,
-                    )
+                     val available = surpriseSet?.items?.find { it?.status == "available" }
+
+                    if (available != null) {
+                        val availableUnits = available.units?.find { it?.status == "available" }
+                        if (availableUnits != null) {
+                            App.socketManager?.startAuctionBreakSpot(
+                                viewModel.currentRoomId,
+                                surpriseSet?.id.toString(),
+                                available.id.toString(),
+                                availableUnits.id.toString(),
+                                auctionSettingsSheetBind.startingBid.value(),
+                                selectedRequiredTime,
+                                selectedCounterTimer,
+                                auctionSettingsSheetBind.suddenDeath.isChecked,
+                            )
+                        } else {
+                            Alerts.error(mCtx, "Something went wrong")
+                        }
+                    } else {
+                        Alerts.error(mCtx, "Something went wrong")
+                    }
                     sheet.dismiss()
                     dismiss()
                     callBack("dismiss")
                 }
             }
         }
-
         sheet.show()
-
     }
 
 }

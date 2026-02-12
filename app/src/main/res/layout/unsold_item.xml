@@ -116,6 +116,7 @@
                 style="@style/inputTextStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:inputType="numberDecimal"
                 android:hint="@string/enter_price" />
 
         </com.google.android.material.textfield.TextInputLayout>
@@ -136,11 +137,10 @@
                 style="@style/inputTextStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:inputType="textMultiLine"
                 android:hint="@string/describe_your_product" />
 
         </com.google.android.material.textfield.TextInputLayout>
     </LinearLayout>
-
-
 
 </LinearLayout>

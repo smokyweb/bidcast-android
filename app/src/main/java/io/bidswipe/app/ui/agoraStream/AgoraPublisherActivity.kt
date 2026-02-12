@@ -1341,8 +1341,7 @@ class AgoraPublisherActivity : BaseActivity() {
             }
             log("STARTED IN PIP MODE")
         } else {
-            log("ALREADY IN PIP MODE")
-        }
+            log("ALREADY IN PIP MODE") }
     }
 
     fun showMoreSheet() {

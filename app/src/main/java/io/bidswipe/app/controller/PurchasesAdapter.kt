@@ -45,22 +45,37 @@ class PurchasesAdapter(
 				mClicks.itemClick(position, "product")
 			}
 
-			// Price formatting - bold, below title
+			val price = if (item?.productId != null) {
+				(item.product?.pricing ?: "0")
+			} else {
+				(item?.productSetItemUnit?.price ?: 0.0).toString()
+			}
+
 			bind.price.text =
 				buildSpannedString {
 					append("Price: ")
 					color(ContextCompat.getColor(mCtx, io.bidswipe.app.R.color.scrim)) {
-						bold { append(item?.product?.pricing?.asMoney()) }
+						bold { append(price.asMoney()) }
 					}
 				}
 
+			val productId = if (item?.productId != null) {
+				(item.productId)
+			} else {
+				item?.productSetItemUnit?.id
+			}
+
+			val title = if (item?.productId != null) {
+				item.product?.title
+			} else {
+				item?.productSet?.name
+			}
+
 			// Product title - bold
 			bind.productId.text = buildString {
-				append(item?.product?.title?.asCapital())
-				if (item?.product?.id != null) {
+				append(title?.asCapital())
 					append(" #")
-					append(item.product.id.toString())
-				}
+					append(productId.toString())
 			}
 
 			// Date formatting
@@ -75,8 +90,7 @@ class PurchasesAdapter(
 				)
 			}
 
-			// Seller username with "From:" label
-			bind.sellerUsername.text = (item?.product?.user?.name ?: "").asCapital()
+			bind.sellerUsername.text =if(item?.productId!=null) (item.product?.user?.name ?: "").asCapital() else (item?.productSet?.seller?.name?:"").asCapital()
 			bind.sellerUsername.setHapticClickListener {
 				mClicks.itemClick(position, "seller")
 			}
@@ -106,9 +120,12 @@ class PurchasesAdapter(
 				}
 			}
 
-
-			// Load product image
-			bind.productImage.loadUrl(mCtx, item?.product?.images?.get(0).toString())
+			if (item?.productId != null) {
+				bind.imageCard.isVisible = true
+				bind.productImage.loadUrl(mCtx, item.product?.images?.get(0) ?: "")
+			} else {
+				bind.imageCard.isVisible = false
+			}
 
 		}
 	}

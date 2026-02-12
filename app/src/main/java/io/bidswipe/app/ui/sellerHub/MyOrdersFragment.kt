@@ -164,7 +164,7 @@ class MyOrdersFragment : BaseFragment<SellerHubViewModel, FragmentMyOrdersBindin
 
 					bind.newOrderCount.text = it.value.newOrderCount.toString()
 					bind.processingOrderCount.text = it.value.processingOrderCount.toString()
-					bind.completedOrderCount.text = it.value.completeOrderCount.toString()
+					bind.completedOrderCount.text = it.value.completedOrderCount.toString()
 
 					if (mData?.isEmpty() == true) {
 

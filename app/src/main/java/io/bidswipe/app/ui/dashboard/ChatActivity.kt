@@ -102,7 +102,7 @@ class ChatActivity : BaseActivity() {
                     bind.chats.scrollToPosition(notifyIndex)
                 }
 
-                "root","image" -> {
+                "root", "image" -> {
                     hideKeyboard()
                     if (item.type == Chats.ChatType.SHARE) {
                         val message = item.message ?: ""
@@ -149,13 +149,15 @@ class ChatActivity : BaseActivity() {
                                                 .putExtra("roomIdsList", roomIdValue)
                                                 .putParcelableArrayListExtra(
                                                     "streamList",
-                                                    ArrayList(listOf(
-                                                        StreamModel(
-                                                            roomIdValue,
-                                                            "",
-                                                            thumbnail = item.attachment?.image?:""
+                                                    ArrayList(
+                                                        listOf(
+                                                            StreamModel(
+                                                                roomIdValue,
+                                                                "",
+                                                                thumbnail = item.attachment?.image ?: ""
+                                                            )
                                                         )
-                                                    ))
+                                                    )
                                                 )
                                         )
                                     }
@@ -165,7 +167,8 @@ class ChatActivity : BaseActivity() {
                     }
 
                 }
-                else-> hideKeyboard()
+
+                else -> hideKeyboard()
 
             }
         }
@@ -239,17 +242,11 @@ class ChatActivity : BaseActivity() {
             }
         }
 
-        chatKey = if (userId > receiverId) {
-            receiverId + "_chats_" + userId
-        } else {
-            userId + "_chats_" + receiverId
-        }
+        val users = listOf(userId, receiverId)
+        users.sorted()
+        chatKey = users[1] + "_chats_" + users[0]
 
         chatRef = FireRef.CHAT.child(chatKey)
-
-        /*// Reset unread count when opening chat
-        FireRef.CHAT_LIST.child(userId).child(receiverId)
-            .updateChildren(mapOf("unreadCount" to 0))*/
 
         bind.title.text = receiverName.asCapital()
         bind.userImage.loadUrl(this, receiverImage, userName = receiverName)

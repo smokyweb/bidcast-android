@@ -7,18 +7,18 @@ import io.bidswipe.app.base.BaseAdapter
 import io.bidswipe.app.databinding.UnsoldItemBinding
 import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.network.response.GetSurpriseProductsResponse
+import io.bidswipe.app.utils.PriceFormatter
 import io.bidswipe.app.utils.asMoney
 import io.bidswipe.app.utils.draw
 import io.bidswipe.app.utils.setHapticClickListener
 import io.bidswipe.app.utils.value
 
-class UnsoldAdapterAdapter(
+class UnsoldItemsAdapter(
     mList: MutableList<GetSurpriseProductsResponse.Data.Item.Unit?>, val mClicks: RecyclerClicks,
-   val callback: (Int,String, String) -> Unit
+    val callback: (Int, String, String) -> Unit
 ) : BaseAdapter<GetSurpriseProductsResponse.Data.Item.Unit?, UnsoldItemBinding>(mList) {
 
-    override fun bindView(inflater: LayoutInflater, parent: ViewGroup) =
-        UnsoldItemBinding.inflate(inflater, parent, false)
+    override fun bindView(inflater: LayoutInflater, parent: ViewGroup) = UnsoldItemBinding.inflate(inflater, parent, false)
 
     var isEditMode = false
 
@@ -35,14 +35,16 @@ class UnsoldAdapterAdapter(
 
             bind.editCard.setHapticClickListener {
                 if (isEditMode) {
-                    isEditMode=false
+                    isEditMode = false
                     bind.edit.setImageResource(draw.ic_edit)
                     bind.editLayout.isVisible = false
-                   callback(position,bind.unitPrice.value(),bind.desc.value())
+                    callback(position, bind.unitPrice.value(), bind.desc.value())
                 } else {
                     isEditMode = true
                     bind.edit.setImageResource(draw.ic_check)
                     bind.editLayout.isVisible = true
+                    bind.unitPrice.setText(item?.price.toString())
+                    bind.desc.setText(item?.description)
                 }
             }
 
@@ -56,6 +58,8 @@ class UnsoldAdapterAdapter(
 
             bind.index.text = "#${item?.id}"
             bind.price.text = (item?.price ?: 0).toString().asMoney()
+
+            bind.unitPrice.addTextChangedListener(PriceFormatter(bind.unitPrice))
         }
     }
 

@@ -14,7 +14,7 @@
         android:padding="@dimen/margin">
 
         <com.google.android.material.card.MaterialCardView
-            android:id="@+id/icon_card"
+            android:id="@+id/product_card"
             style="@style/cardStyle"
             android:layout_width="84dp"
             android:layout_height="84dp"

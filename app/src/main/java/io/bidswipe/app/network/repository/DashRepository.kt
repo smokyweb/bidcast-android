@@ -580,8 +580,8 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
 
     suspend fun fetchOrderDetail(
         productId: String?,
-        orderId: String?
-    ) = call { api.fetchOrderDetail(productId, orderId) }
+        orderId: String?, productType: String?
+    ) = call { api.fetchOrderDetail(productId, orderId,productType) }
 
     suspend fun updateProductStatus(
         productId: RequestBody?,

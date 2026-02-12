@@ -774,7 +774,8 @@ interface ApiInterface {
     @POST("api/v1/get-order-details")
     suspend fun fetchOrderDetail(
         @Query("product_id") productId: String?,
-        @Query("order_id") orderId: String?
+        @Query("order_id") orderId: String?,
+        @Query("type") productType: String?
     ): FetchOrderDetailResponse
 
     @Multipart

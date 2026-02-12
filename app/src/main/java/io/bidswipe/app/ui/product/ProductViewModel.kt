@@ -246,13 +246,13 @@ class ProductViewModel @Inject constructor(
 
 	fun fetchOrderDetail(
 		productId: String?,
-		orderId: String?
+		orderId: String?, productType: String?
 	) = viewModelScope.launch {
 		if (! networkMonitor.hasInternet()) {
 			_fetchOrderDetailResponse.value = NO_INTERNET_ERROR
 			return@launch
 		}
-		_fetchOrderDetailResponse.value = repo.fetchOrderDetail(productId, orderId)
+		_fetchOrderDetailResponse.value = repo.fetchOrderDetail(productId, orderId,productType)
 	}
 
 	private var _raiseTicketResponse = MutableLiveData<Resource<RaiseTicketResponse>>()

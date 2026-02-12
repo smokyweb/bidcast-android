@@ -3,9 +3,9 @@ package io.bidswipe.app.controller
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
-import androidx.core.text.bold
 import androidx.core.text.buildSpannedString
 import androidx.core.text.color
+import androidx.core.view.isVisible
 import io.bidswipe.app.base.BaseAdapter
 import io.bidswipe.app.databinding.MyOrdersItemBinding
 import io.bidswipe.app.interfaces.RecyclerClicks
@@ -31,6 +31,11 @@ class OrdersAdapter(
         item: GetOrdersResponse.Data?,
     ) {
         with(holder) {
+            bind.root.setHapticClickListener { mClicks.itemClick(position) }
+
+            bind.buyerLayout.setHapticClickListener {
+                mClicks.itemClick(position, "profile")
+            }
 
             bind.orderId.text = item?.orderId
             bind.status.text = item?.status?.replace("_", " ")?.asCapital()
@@ -55,30 +60,36 @@ class OrdersAdapter(
                 }
             }
 
+            val price = if (item?.productId != null) {
+                (item.product?.pricing ?: "0")
+            } else {
+                (item?.productSetItemUnit?.price ?: 0.0).toString()
+            }
+
             bind.orderAmount.text = buildSpannedString {
-                    color(ContextCompat.getColor(mCtx, clr.onSurfaceVariant)){
-                        append("Sold For: ")
-                    }
-                append(item?.product?.pricing.toString().asMoney())
+                color(ContextCompat.getColor(mCtx, clr.onSurfaceVariant)) {
+                    append("Sold For: ")
+                }
+                append(price.asMoney())
             }
 
             val time = Utils.getTimeStampFromServerTime(item?.createdAt.toString())
-            bind.orderDate.text =   Utils.getTimeFromServerTimestamp(
+            bind.orderDate.text = Utils.getTimeFromServerTimestamp(
                 time,
                 Const.MMM_dd_yyyy_HH_mm,
             )
 
-            bind.productImage.loadUrl(mCtx, item?.product?.images?.get(0) ?: "")
+            if (item?.productId != null) {
+                bind.productCard.isVisible = true
+                bind.productImage.loadUrl(mCtx, item?.product?.images?.get(0) ?: "")
+            } else {
+                bind.productCard.isVisible = false
+            }
 
-            bind.productName.text = item?.product?.title?.asCapital()
+            bind.productName.text = if (item?.productId != null) item.product?.title?.asCapital() else item?.productSet?.name + " #${item?.productSetItemUnitId}"
 
             bind.buyerName.text = item?.user?.name?.asCapital()
 
-	        bind.root.setHapticClickListener { mClicks.itemClick(position) }
-
-	        bind.buyerLayout.setHapticClickListener {
-		        mClicks.itemClick(position, "profile")
-	        }
         }
     }
 }
