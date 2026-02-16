@@ -263,7 +263,7 @@ data class GetOrdersResponse(
             @SerializedName("payout_id")
             val payoutId: Any?,
             @SerializedName("product_price")
-            val productPrice: Int?,
+            val productPrice: Double?,
             @SerializedName("promote_show_id")
             val promoteShowId: Any?,
             @SerializedName("seller_id")

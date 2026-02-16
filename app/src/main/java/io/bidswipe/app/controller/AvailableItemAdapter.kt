@@ -29,7 +29,7 @@ class AvailableItemAdapter(
             }
 
             bind.productName.text = item?.name
-            bind.quantity.text = "Qty: "+(item?.quantity ?: 0).toString()
+            bind.quantity.text = "Qty: "+((item?.quantity ?: 0)-(item?.soldQuantity?:0)).toString()
             bind.status.text = item?.status?.asCapital()
 
         }

@@ -998,6 +998,11 @@
 
             </LinearLayout>
 
+            <nl.dionsegijn.konfetti.xml.KonfettiView
+                android:id="@+id/popper_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <View

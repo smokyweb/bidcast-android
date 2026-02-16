@@ -28,190 +28,190 @@ import io.bidswipe.app.utils.setHapticClickListener
 
 class SellerOrderDetailFragment : BaseFragment<SellerHubViewModel, FragmentSellerOrderDetailBinding>() {
 
-	override fun getModel(): Class<SellerHubViewModel> = SellerHubViewModel::class.java
+    override fun getModel(): Class<SellerHubViewModel> = SellerHubViewModel::class.java
 
-	override fun getBind(inflater: LayoutInflater, view: ViewGroup?): FragmentSellerOrderDetailBinding =
-		FragmentSellerOrderDetailBinding.inflate(inflater, view, false)
+    override fun getBind(inflater: LayoutInflater, view: ViewGroup?): FragmentSellerOrderDetailBinding =
+        FragmentSellerOrderDetailBinding.inflate(inflater, view, false)
 
-	private var statusList = mutableListOf<String?>("Pending","Processing", "Out for delivery", "Delivered")
+    private var statusList = mutableListOf<String?>("Pending", "Processing", "Out for delivery", "Delivered")
 
-	private val statusItems = mutableListOf<GetOrderDetailsResponse.Data.ShippingTracking?>()
+    private val statusItems = mutableListOf<GetOrderDetailsResponse.Data.ShippingTracking?>()
 
-	private lateinit var adapter: ShippingUpdateAdapter
+    private lateinit var adapter: ShippingUpdateAdapter
 
-	private var selectedStatus = ""
+    private var selectedStatus = ""
 
-	private var orderId = ""
-	private var buyerId = ""
-	private var buyerName = ""
-	private var buyerImage = ""
+    private var orderId = ""
+    private var buyerId = ""
+    private var buyerName = ""
+    private var buyerImage = ""
 
-	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-		super.onViewCreated(view, savedInstanceState)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
-		orderId = arguments?.getString("orderId") ?: ""
-		arguments?.getString("from") ?: ""
+        orderId = arguments?.getString("orderId") ?: ""
+        arguments?.getString("from") ?: ""
 
-		bind.header.onBackClick {
-			findNavController().popBackStack()
-		}
+        bind.header.onBackClick {
+            findNavController().popBackStack()
+        }
 
-		val arrayAdapter = ArrayAdapter(
-			mCtx,
-			android.R.layout.simple_list_item_1,
-			statusList
-		)
+        val arrayAdapter = ArrayAdapter(
+            mCtx,
+            android.R.layout.simple_list_item_1,
+            statusList
+        )
 
-		bind.status.setAdapter(arrayAdapter)
+        bind.status.setAdapter(arrayAdapter)
 
-		val drawable = ContextCompat.getDrawable(mCtx, R.drawable.card_8)
-		bind.status.setDropDownBackgroundDrawable(drawable)
+        val drawable = ContextCompat.getDrawable(mCtx, R.drawable.card_8)
+        bind.status.setDropDownBackgroundDrawable(drawable)
 
-		bind.status.setOnItemClickListener { _, _, position, _ ->
-			selectedStatus = statusList[position]?.replace(" ", "_")?.lowercase() ?:""
-			bind.status.setText(statusList[position] , false)
-		}
+        bind.status.setOnItemClickListener { _, _, position, _ ->
+            selectedStatus = statusList[position]?.replace(" ", "_")?.lowercase() ?: ""
+            bind.status.setText(statusList[position], false)
+        }
 
-		bind.status.setHapticClickListener {
-			bind.status.showDropDown()
-		}
+        bind.status.setHapticClickListener {
+            bind.status.showDropDown()
+        }
 
-		bind.header.onBackClick {
-			if (findNavController().graph.id == R.navigation.seller_hub_nav_graph) {
-				findNavController().popBackStack()
-			} else {
-				finish()
-			}
-		}
+        bind.header.onBackClick {
+            if (findNavController().graph.id == R.navigation.seller_hub_nav_graph) {
+                findNavController().popBackStack()
+            } else {
+                finish()
+            }
+        }
 
-		bind.updateStatus.setHapticClickListener {
+        bind.updateStatus.setHapticClickListener {
 
-			if (selectedStatus.isEmpty()) {
-				errorToast("Please select status")
-				return@setHapticClickListener
-			}
-			bind.loader.isVisible = true
-			viewModel.changeOrderStatus(orderId.request(), selectedStatus.request())
-		}
+            if (selectedStatus.isEmpty()) {
+                errorToast("Please select status")
+                return@setHapticClickListener
+            }
+            bind.loader.isVisible = true
+            viewModel.changeOrderStatus(orderId.request(), selectedStatus.request())
+        }
 
-		bind.message.setHapticClickListener {
-			val intent = Intent(mCtx, ChatActivity::class.java).apply {
-				putExtra("id", buyerId)
-				putExtra("name", buyerName)
-				putExtra("image", buyerImage)
-			}
-			startActivity(intent)
-		}
+        bind.message.setHapticClickListener {
+            val intent = Intent(mCtx, ChatActivity::class.java).apply {
+                putExtra("id", buyerId)
+                putExtra("name", buyerName)
+                putExtra("image", buyerImage)
+            }
+            startActivity(intent)
+        }
 
-		adapter = ShippingUpdateAdapter(statusItems)
+        adapter = ShippingUpdateAdapter(statusItems)
 
-		bind.shippingRecycler.adapter = adapter
+        bind.shippingRecycler.adapter = adapter
 
-		bind.loader.isVisible = true
+        bind.loader.isVisible = true
+        viewModel.getOrderDetails(orderId.request())
+        viewModel.getOrderDetailsRepo.observe(viewLifecycleOwner) {
+            when (it) {
+                is Resource.Success -> {
+                    viewModel.getOrderDetailsRepo.value = null
+                    bind.loader.isVisible = false
 
-		viewModel.getOrderDetails(orderId.request())
+                    val mData = it.value.data
 
-		viewModel.getOrderDetailsRepo.observe(viewLifecycleOwner) {
-			when (it) {
-				is Resource.Success -> {
-					viewModel.getOrderDetailsRepo.value = null
-					bind.loader.isVisible = false
+                    if (mData?.product != null) {
+                        bind.productName.text = mData.product.title?.asCapital()
+                        bind.productImage.loadUrl(mCtx, mData.product.images?.get(0).toString())
+                        bind.category.text = mData.product.category?.name ?: ""
+                    } else {
+                        bind.productCard.isVisible = false
+                        if (mData?.productSet != null) {
+                            bind.productName.text = mData.productSet.name?.asCapital()
+                            bind.category.text = (mData.productSet.items?.find { it?.id == mData.productSetItemId }?.name ?: "N/A") +"#${mData.productSetItemUnitId}"
+                        }
+                    }
 
-					val mData = it.value.data
+                    if (mData?.shippingAddress?.isEmpty() == true) {
+                        bind.address.text = "N/A"
+                    } else {
+                        bind.address.text = mData?.shippingAddress
+                    }
 
-					bind.productName.text = mData?.product?.title?.asCapital()
+                    bind.orderId.text = mData?.orderId.toString()
+                    bind.orderDate.text = Utils.getFormattedDateTime(
+                        "yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'",
+                        "MMM dd, yyyy, HH:mm",
+                        mData?.createdAt.toString()
+                    )
 
-					if (mData?.shippingAddress?.isEmpty()==true){
-						bind.address.text = "N/A"
-					}else{
-						bind.address.text = mData?.shippingAddress
-					}
+                    selectedStatus = mData?.status ?: ""
 
+                    bind.status.setText(selectedStatus.replace("_", " ").asCapital(), false)
 
-//					bind.address.text = mData?.shippingAddress ?: "N/A"
-					bind.productImage.loadUrl(mCtx, mData?.product?.images?.get(0).toString())
-					bind.productColor.text = mData?.product?.category?.name
-					bind.category.text = mData?.product?.category?.name
-					bind.orderId.text = mData?.orderId.toString()
-					bind.orderDate.text = Utils.getFormattedDateTime(
-						"yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'",
-						"MMM dd, yyyy, HH:mm",
-						mData?.createdAt.toString()
-					)
+                    statusItems.clear()
 
-					selectedStatus = mData?.status ?: ""
+                    if (mData?.shippingTracking?.isNotEmpty() == true) {
+                        statusItems.addAll(mData.shippingTracking)
+                    }
 
-					bind.status.setText(selectedStatus.replace("_", " ").asCapital(), false)
+                    buyerId = (mData?.user?.id ?: 0).toString()
+                    buyerName = mData?.user?.name ?: ""
+                    buyerImage = mData?.user?.profileImage ?: ""
 
-					statusItems.clear()
+                    bind.userProfile.loadUrl(mCtx, mData?.user?.profileImage ?: "")
 
-					if (mData?.shippingTracking?.isNotEmpty() == true) {
-						statusItems.addAll(mData.shippingTracking)
-					}
+                    bind.userName.text = mData?.user?.name
 
-					buyerId = (mData?.user?.id ?:0).toString()
-					buyerName = mData?.user?.name ?:""
-					buyerImage = mData?.user?.profileImage ?:""
+                    bind.email.text = mData?.user?.email
 
-					bind.userProfile.loadUrl(mCtx,mData?.user?.profileImage ?:"")
+                    adapter.notifyDataSetChanged()
 
-					bind.userName.text = mData?.user?.name
+                }
 
-					bind.email.text = mData?.user?.email
+                is Resource.Error -> {
+                    viewModel.getOrderDetailsRepo.value = null
+                    bind.loader.isVisible = false
+                    it.parse(mCtx, TAG, object : AlertClicks {
+                        override fun primaryClick(dialog: AppBottomSheet) {
+                            dialog.dismiss()
+                        }
 
-					adapter.notifyDataSetChanged()
+                        override fun secondaryClick(dialog: AppBottomSheet) {
+                            dialog.dismiss()
+                        }
+                    })
+                }
 
-				}
+                else -> {}
+            }
+        }
 
-				is Resource.Error -> {
-					viewModel.getOrderDetailsRepo.value = null
-					bind.loader.isVisible = false
-					it.parse(mCtx, TAG, object : AlertClicks {
-						override fun primaryClick(dialog: AppBottomSheet) {
-							dialog.dismiss()
+        viewModel.changeOrderStatusRepo.observe(viewLifecycleOwner) {
+            when (it) {
+                is Resource.Success -> {
+                    viewModel.changeOrderStatusRepo.value = null
+                    it.value.data
+                    viewModel.getOrderDetails(orderId.request())
+                }
 
-						}
+                is Resource.Error -> {
+                    viewModel.changeOrderStatusRepo.value = null
+                    bind.loader.isVisible = false
+                    it.parse(mCtx, TAG, object : AlertClicks {
+                        override fun primaryClick(dialog: AppBottomSheet) {
+                            dialog.dismiss()
 
-						override fun secondaryClick(dialog: AppBottomSheet) {
-							dialog.dismiss()
+                        }
 
-						}
-					})
-				}
+                        override fun secondaryClick(dialog: AppBottomSheet) {
+                            dialog.dismiss()
 
-				else -> {}
+                        }
+                    })
+                }
 
-			}
-		}
+                else -> {}
 
-		viewModel.changeOrderStatusRepo.observe(viewLifecycleOwner) {
-			when (it) {
-				is Resource.Success -> {
-					viewModel.changeOrderStatusRepo.value = null
-					val mData = it.value.data
-					viewModel.getOrderDetails(orderId.request())
-				}
+            }
+        }
 
-				is Resource.Error -> {
-					viewModel.changeOrderStatusRepo.value = null
-					bind.loader.isVisible = false
-					it.parse(mCtx, TAG, object : AlertClicks {
-						override fun primaryClick(dialog: AppBottomSheet) {
-							dialog.dismiss()
-
-						}
-
-						override fun secondaryClick(dialog: AppBottomSheet) {
-							dialog.dismiss()
-
-						}
-					})
-				}
-
-				else -> {}
-
-			}
-		}
-
-	}
+    }
 }

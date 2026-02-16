@@ -14,7 +14,7 @@ import io.bidswipe.app.utils.setHapticClickListener
 import io.bidswipe.app.utils.value
 
 class UnsoldItemsAdapter(
-    mList: MutableList<GetSurpriseProductsResponse.Data.Item.Unit?>, val mClicks: RecyclerClicks,
+    mList: MutableList<GetSurpriseProductsResponse.Data.Item.Unit?>, val mClicks: RecyclerClicks,val showEdit:Boolean=true,
     val callback: (Int, String, String) -> Unit
 ) : BaseAdapter<GetSurpriseProductsResponse.Data.Item.Unit?, UnsoldItemBinding>(mList) {
 
@@ -28,6 +28,8 @@ class UnsoldItemsAdapter(
         item: GetSurpriseProductsResponse.Data.Item.Unit?,
     ) {
         with(holder) {
+
+           bind.buttonLayout.isVisible=showEdit
 
             bind.root.setHapticClickListener {
                 mClicks.itemClick(position)

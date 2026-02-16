@@ -16,6 +16,7 @@ import io.bidswipe.app.network.response.GetProductDetailsResponse
 import io.bidswipe.app.network.response.GetProductsResponse
 import io.bidswipe.app.network.response.GetPurchaseDetail
 import io.bidswipe.app.network.response.GetShippingAddressResponse
+import io.bidswipe.app.network.response.ProductSetDetailsResponse
 import io.bidswipe.app.network.response.RaiseTicketResponse
 import io.bidswipe.app.network.response.SellerInfoResponse
 import io.bidswipe.app.network.response.UserSearchingResponse
@@ -282,5 +283,21 @@ class ProductViewModel @Inject constructor(
 		}
 		_getCouponResponse.value = repo.getCoupon()
 	}
+
+	private var _getSurpriseProductDetailResponse = MutableLiveData<Resource<ProductSetDetailsResponse>>()
+	val getSurpriseProductDetailRepo: MutableLiveData<Resource<ProductSetDetailsResponse>>
+		get() = _getSurpriseProductDetailResponse
+
+	fun getSurpriseProductDetail(
+		page: String?
+	) = viewModelScope.launch {
+		if (!networkMonitor.hasInternet()) {
+			_getSurpriseProductDetailResponse.value = NO_INTERNET_ERROR
+			return@launch
+		}
+		_getSurpriseProductDetailResponse.value = repo.getSurpriseProductDetail(page)
+	}
+
+
 
 }

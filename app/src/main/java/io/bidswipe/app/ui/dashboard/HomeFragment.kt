@@ -31,6 +31,7 @@ import io.bidswipe.app.network.response.GetMyShowResponse
 import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.ui.more.NotificationActivity
 import io.bidswipe.app.ui.product.ProductDetailsActivity
+import io.bidswipe.app.ui.product.ProductSetDetailsActivity
 import io.bidswipe.app.ui.sellerProfile.SellerProfileActivity
 import io.bidswipe.app.ui.watchStream.ViewLiveShowActivity
 import io.bidswipe.app.utils.Alerts
@@ -195,11 +196,14 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
 
         bind.notification.setHapticClickListener {
             startActivity(
-                Intent(mCtx, NotificationActivity::class.java).putExtra(
-                    "slug",
-                    "notification"
-                )
+                Intent(mCtx, ProductSetDetailsActivity::class.java).putExtra("productSetId", "19")
             )
+//            startActivity(
+//                Intent(mCtx, NotificationActivity::class.java).putExtra(
+//                    "slug",
+//                    "notification"
+//                )
+//            )
         }
 
         bind.recycler.setOnScrollChangeListener { _, _, _, _, _ ->

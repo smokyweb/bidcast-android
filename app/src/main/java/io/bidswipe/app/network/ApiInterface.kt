@@ -64,6 +64,7 @@ import io.bidswipe.app.network.response.LoginResponse
 import io.bidswipe.app.network.response.MakeClipResponse
 import io.bidswipe.app.network.response.PageUrlResponse
 import io.bidswipe.app.network.response.PayoutHistoryResponse
+import io.bidswipe.app.network.response.ProductSetDetailsResponse
 import io.bidswipe.app.network.response.RaiseTicketResponse
 import io.bidswipe.app.network.response.SalesAnalyticsResponse
 import io.bidswipe.app.network.response.SellerAnalyticsResponse
@@ -903,12 +904,15 @@ interface ApiInterface {
         @Part("product_set_id") productSetId: RequestBody?,
     ): CommonResponse
 
-
     @GET("api/get-surprise-product")
     suspend fun getSurpriseProduct(
         @Query("page") page: String?
     ): GetSurpriseProductsResponse
 
+    @GET("api/get-set-details")
+    suspend fun getSetDetails(
+        @Query("set_id") setId: String?
+    ): ProductSetDetailsResponse
 
 }
 

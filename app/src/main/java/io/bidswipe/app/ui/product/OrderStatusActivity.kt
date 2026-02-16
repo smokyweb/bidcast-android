@@ -22,15 +22,6 @@ import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request
 import io.bidswipe.app.utils.setHapticClickListener
 
-//class OrderStatusFragment : BaseFragment<ProductViewModel, FragmentOrderStatusBinding>() {
-//
-//	override fun getModel(): Class<ProductViewModel> = ProductViewModel::class.java
-//
-//	override fun getBind(
-//		inflater: LayoutInflater,
-//		view: ViewGroup?,
-//	) = FragmentOrderStatusBinding.inflate(inflater, view, false)
-
 class OrderStatusActivity : BaseActivity() {
 
     private val bind by bind(ActivityOrderStatusBinding::inflate)
@@ -62,17 +53,12 @@ class OrderStatusActivity : BaseActivity() {
         }
 
         bind.receipt.setHapticClickListener {
-
             bind.loader.isVisible = true
-
             viewModel.getOrderReceipt(orderId = orderId.request())
-
         }
 
         bind.loader.isVisible = true
-
         viewModel.getOrderDetails(orderId.request())
-
         viewModel.getOrderDetailsRepo.observe(this) {
             when (it) {
                 is Resource.Success -> {

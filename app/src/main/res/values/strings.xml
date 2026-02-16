@@ -354,8 +354,6 @@
     <string name="save">Save</string>
     <string name="start_auction">Start Auction</string>
     <string name="account_health">Account Health</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="privacy_policy"><u>Privacy Policy</u></string>
     <string name="terms_of_service">  | <u>Terms of Service</u></string>
     <string name="select_media_type">Select Media Type</string>
@@ -394,4 +392,28 @@
     <string name="after_each_product_sells_the_buyer_will_be_randomly_assigned_turn_off_if_you_want_to_randomize_manually">After each product sells, the buyer will be randomly assigned. Turn off if you want to randomize manually.</string>
     <string name="description_optional">Description (Optional)</string>
     <string name="surprise_set">Surprise Set</string>
+    <string name="how_it_works_info">
+        &lt;p&gt;
+        Surprise items is a format where a set of items are each sold at random —
+        the buyer finds out which of the items they will receive live.
+        You can see all available items in this format in the Items tab.
+        &lt;/p&gt;
+
+        &lt;h3&gt;What To Expect?&lt;/h3&gt;
+
+        &lt;p&gt;Surprise Sets go through two main stages:&lt;/p&gt;
+
+        &lt;h4&gt;⏳ Filling + Running&lt;/h4&gt;
+        &lt;p&gt;
+        The excitement begins! This is the time when you can purchase a surprise item.
+        You can always see how many spots are left and what items have been sold.
+        &lt;/p&gt;
+
+        &lt;h4&gt;✅ Completed&lt;/h4&gt;
+        &lt;p&gt;
+        The sale is over. All of the available items have been sold and revealed,
+        and the seller will ship to you as soon as they can.
+        &lt;/p&gt;
+    </string>
+
 </resources>

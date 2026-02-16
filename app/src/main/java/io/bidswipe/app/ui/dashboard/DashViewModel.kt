@@ -37,6 +37,7 @@ import io.bidswipe.app.network.response.GetSurpriseProductsResponse
 import io.bidswipe.app.network.response.MakeClipResponse
 import io.bidswipe.app.network.response.PageUrlResponse
 import io.bidswipe.app.network.response.Product
+import io.bidswipe.app.network.response.ProductSetDetailsResponse
 import io.bidswipe.app.network.response.SellerHubResponse
 import io.bidswipe.app.network.response.StoreProductMetaResponse
 import io.bidswipe.app.network.response.UpdateOfferResponse

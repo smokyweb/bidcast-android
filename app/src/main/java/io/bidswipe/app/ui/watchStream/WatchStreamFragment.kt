@@ -73,6 +73,7 @@ import io.bidswipe.app.ui.dashboard.ChatActivity
 import io.bidswipe.app.ui.more.MoreActivity
 import io.bidswipe.app.ui.more.TrustedBuyerActivity
 import io.bidswipe.app.ui.product.ProductDetailsActivity
+import io.bidswipe.app.ui.product.ProductSetDetailsActivity
 import io.bidswipe.app.ui.sellerProfile.SellerProfileActivity
 import io.bidswipe.app.utils.Alerts
 import io.bidswipe.app.utils.Const
@@ -268,8 +269,6 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
                     socketManager?.enterInFreebie(roomID, userId)
                 }
 
-                /*bind.winnerSpotLayout.isVisible = true
-                rotateText()*/
             } else {
                 bind.loader.isVisible = true
                 viewModel.followUser(sellerId?.request(), showId.toString().request())
@@ -1223,7 +1222,6 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
                         ).putExtra("productId", liveProduct.id.toString())
                     )
                 }
-
             } else {
                 bind.status.isVisible = true
                 bind.bidLayout.isVisible = false
@@ -1299,22 +1297,23 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
                     bind.productAuctionBidLayout.isVisible = true
                 }
 
-//                bind.productLayout.setHapticClickListener {
-//                    startActivity(
-//                        Intent(
-//                            mCtx,
-//                            ProductDetailsActivity::class.java
-//                        ).putExtra("productId", liveProduct.productSet.id.toString())
-//                    )
-//                }
-
+                bind.productLayout.setHapticClickListener {
+                    log("CLICKED $surpriseSetAuctionRunning")
+                    if(surpriseSetAuctionRunning){
+                        startActivity(
+                            Intent(
+                                mCtx,
+                                ProductSetDetailsActivity::class.java
+                            ).putExtra("productSetId", breakSpotAuctionData?.productSetId.toString())
+                        )
+                    }
+                }
             } else {
                 bind.status.isVisible = true
                 bind.bidLayout.isVisible = false
                 bind.productLayout.isVisible = false
             }
         }
-
     }
 
     private fun updateSessionUI() {
@@ -2429,6 +2428,12 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
             bind.textSwitcher.setText(freebieUsers[currentIndex]?.name)
             handler.postDelayed(textSwitcherRunnable, 200)
         } else {
+            handler.postDelayed({
+                bind.winnerSpotLayout.isVisible = false
+                bind.notesFreebieLayout.isVisible = true
+                bind.freebieLayout.isVisible = false
+                currentIndex = 0
+            }, 2000)
             bind.textSwitcher.setText(freebieUsers[currentIndex]?.name)
         }
     }
@@ -2436,21 +2441,24 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
     private fun rotateBreakSpotText(userId: Int?) {
         var currentIndex = 0
         bind.winnerSpotLayout.isVisible = true
-        bind.winnerTitle.text = "Selecting Random Spot"
+        bind.winnerTitle.text = "Selecting Spot"
         val handler = Handler()
         if (breakSpotUsers.size > 1) {
             val finalIndex = breakSpotUsers.indexOf(breakSpotUsers.find { it?.first == userId })
-
            val textSwitcherRunnable= object : Runnable {
                 override fun run() {
 
                     if (currentIndex == finalIndex) {
+                        bind.winnerTitle.text = "Break Spot \uD83C\uDF89"
+                        bind.popperView.isVisible=true
+
                         bind.textSwitcher.setText(buildSpannedString {
                             color(ContextCompat.getColor(mCtx, clr.success)) { append("${breakSpotUsers[currentIndex]?.second} won") }
                         })
 
                         handler.postDelayed({
                             bind.winnerSpotLayout.isVisible = false
+                            bind.popperView.isVisible=false
                             bind.notesFreebieLayout.isVisible = true
                             bind.freebieLayout.isVisible = false
                             currentIndex = 0
@@ -2469,7 +2477,17 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
             bind.textSwitcher.setText(breakSpotUsers[currentIndex]?.second)
             handler.postDelayed(textSwitcherRunnable, 200)
         } else {
+            bind.winnerTitle.text = "Break Spot \uD83C\uDF89"
+            bind.popperView.isVisible=true
             bind.textSwitcher.setText(breakSpotUsers[0]?.second)
+            
+            handler.postDelayed({
+                bind.winnerSpotLayout.isVisible = false
+                bind.popperView.isVisible=false
+                bind.notesFreebieLayout.isVisible = true
+                bind.freebieLayout.isVisible = false
+                currentIndex = 0
+            }, 2000)
         }
     }
 

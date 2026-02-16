@@ -1,0 +1,454 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/surface"
+    tools:context=".ui.product.ProductSetDetailsActivity">
+
+    <io.bidswipe.app.ui.custom.Header
+        android:id="@+id/header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:headerTitle=""
+        app:layout_constraintTop_toTopOf="parent"
+        app:showBackButton="true"
+        app:showPrimaryIcon="false" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:scrollbars="none"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/header">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="@dimen/margin">
+
+                <TextView
+                    android:id="@+id/productName"
+                    style="@style/HeadlineSmall"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:text="Product Name" />
+
+                <TextView
+                    android:id="@+id/desc"
+                    style="@style/BodySmall"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginBottom="@dimen/half_margin"
+                    android:text="Available" />
+
+                <com.google.android.material.progressindicator.LinearProgressIndicator
+                    android:id="@+id/stepProgress"
+                    style="@style/circularProgressStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginVertical="4dp"
+                    android:progress="15"
+                    app:layout_constraintTop_toBottomOf="@id/header"
+                    app:trackCornerRadius="6dp"
+                    app:trackThickness="8dp" />
+
+                <TextView
+                    android:id="@+id/items_left_text"
+                    style="@style/BodySmall"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/half_margin"
+                    android:text="30/30 left" />
+
+
+                <TextView
+                    android:id="@+id/price"
+                    style="@style/BodySmall"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:text="--"
+                    android:textColor="@color/onSurfaceVariant" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/half_margin"
+                    android:visibility="gone"
+                    android:orientation="horizontal">
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/save"
+                        style="@style/appTonalBtn"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="4dp"
+                        android:layout_weight="1"
+                        android:minHeight="0dp"
+                        android:paddingHorizontal="0dp"
+                        android:paddingVertical="6dp"
+                        android:text="Save"
+                        app:cornerRadius="50dp"
+                        app:icon="@drawable/ic_save"
+                        app:iconGravity="textStart"
+                        app:iconPadding="@dimen/half_margin"
+                        app:iconTint="@color/primary" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/share"
+                        style="@style/appTonalBtn"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="4dp"
+                        android:layout_weight="1"
+                        android:minHeight="0dp"
+                        android:paddingVertical="6dp"
+                        android:text="@string/share"
+                        app:cornerRadius="50dp"
+                        app:icon="@drawable/share"
+                        app:iconGravity="textStart"
+                        app:iconPadding="@dimen/half_margin"
+                        app:iconTint="@color/primary" />
+
+                </LinearLayout>
+
+                <com.google.android.material.card.MaterialCardView
+                    style="@style/cardStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginVertical="12dp"
+                    app:cardCornerRadius="12dp"
+                    app:cardElevation="0dp">
+
+                    <LinearLayout
+                        android:id="@+id/userInfo"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:backgroundTint="@color/outlineVariant"
+                        android:gravity="center_vertical"
+                        android:orientation="vertical">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@color/outline"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal"
+                            android:padding="12dp">
+
+                            <com.makeramen.roundedimageview.RoundedImageView
+                                android:id="@+id/userImage"
+                                android:layout_width="36dp"
+                                android:layout_height="36dp"
+                                android:scaleType="centerCrop"
+                                android:src="@drawable/placeholder_user"
+                                app:riv_corner_radius="100dp" />
+
+                            <TextView
+                                android:id="@+id/userName"
+                                style="@style/TitleMedium"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center_vertical"
+                                android:layout_marginStart="@dimen/half_margin"
+                                android:layout_weight="1"
+                                android:text="@string/username" />
+
+                            <androidx.appcompat.widget.AppCompatImageView
+                                android:id="@+id/chat"
+                                android:layout_width="32dp"
+                                android:layout_height="32dp"
+                                android:background="@drawable/card_16"
+                                android:backgroundTint="@color/primary"
+                                android:padding="6dp"
+                                android:src="@drawable/ic_outlined_message"
+                                android:visibility="gone"
+                                app:tint="@color/surface" />
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@color/background"
+                            android:orientation="horizontal"
+                            android:padding="@dimen/half_margin">
+
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginHorizontal="@dimen/half_margin"
+                                android:layout_weight="1"
+                                android:gravity="center_horizontal"
+                                android:orientation="vertical">
+
+                                <TextView
+                                    android:id="@+id/rating"
+                                    style="@style/TitleSmall"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:drawableStart="@drawable/ic_star"
+                                    android:drawablePadding="2dp"
+                                    android:gravity="center_vertical"
+                                    android:text="5.0" />
+
+                                <TextView
+                                    style="@style/BodySmall"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="@string/rating" />
+
+                            </LinearLayout>
+
+                            <com.google.android.material.divider.MaterialDivider
+                                android:layout_width="2dp"
+                                android:layout_height="match_parent" />
+
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginHorizontal="@dimen/half_margin"
+                                android:layout_weight="1"
+                                android:gravity="center_horizontal"
+                                android:orientation="vertical">
+
+                                <TextView
+                                    android:id="@+id/review"
+                                    style="@style/TitleSmall"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:gravity="center_vertical"
+                                    android:text="1.8K" />
+
+                                <TextView
+                                    style="@style/BodySmall"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="@string/reviews" />
+
+                            </LinearLayout>
+
+                            <com.google.android.material.divider.MaterialDivider
+                                android:layout_width="2dp"
+                                android:layout_height="match_parent" />
+
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginHorizontal="@dimen/half_margin"
+                                android:layout_weight="1"
+                                android:gravity="center_horizontal"
+                                android:orientation="vertical">
+
+                                <TextView
+                                    android:id="@+id/sold"
+                                    style="@style/TitleSmall"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:gravity="center_vertical"
+                                    android:text="5.5k" />
+
+                                <TextView
+                                    style="@style/BodySmall"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Sold" />
+
+                            </LinearLayout>
+
+                            <com.google.android.material.divider.MaterialDivider
+                                android:layout_width="2dp"
+                                android:layout_height="match_parent" />
+
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginHorizontal="@dimen/half_margin"
+                                android:layout_weight="1"
+                                android:gravity="center_horizontal"
+                                android:orientation="vertical">
+
+                                <TextView
+                                    android:id="@+id/shipping"
+                                    style="@style/TitleSmall"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:drawableStart="@drawable/ic_shipping"
+                                    android:drawablePadding="2dp"
+                                    android:drawableTint="@color/onSurface"
+                                    android:gravity="center_vertical"
+                                    android:text="5.0" />
+
+                                <TextView
+                                    style="@style/BodySmall"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Avg ship" />
+
+                            </LinearLayout>
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                </com.google.android.material.card.MaterialCardView>
+                <com.google.android.material.tabs.TabLayout
+                    android:id="@+id/tab_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toBottomOf="@id/header"
+                    app:tabIndicatorColor="@color/scrim"
+                    app:tabIndicatorHeight="3dp"
+                    app:tabMode="scrollable"
+                    app:tabMinWidth="0dp"
+                    app:tabMaxWidth="0dp"
+                    app:tabGravity="start"
+                    android:background="@color/transparent"
+                    app:tabPaddingEnd="10dp"
+                    app:tabPaddingStart="10dp"
+                    app:tabSelectedTextAppearance="@style/TitleLarge"
+                    app:tabSelectedTextColor="@color/scrim"
+                    app:tabTextAppearance="@style/TitleSmall"
+                    app:tabTextColor="@color/outlineVariant">
+
+                    <com.google.android.material.tabs.TabItem
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Products" />
+
+                    <com.google.android.material.tabs.TabItem
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="How it Works" />
+
+                </com.google.android.material.tabs.TabLayout>
+
+                <ViewSwitcher
+                    android:id="@+id/viewSwitcher"
+                    android:measureAllChildren="false"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/products_layout"
+                        android:orientation="vertical">
+
+                        <LinearLayout
+                            android:id="@+id/unsold_layout"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            app:show_close="true">
+
+                            <io.bidswipe.app.ui.custom.Heading
+                                android:id="@+id/unsold_heading"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                app:show_close="true"
+                                app:title="Items (40)" />
+
+                            <net.cachapa.expandablelayout.ExpandableLayout
+                                android:id="@+id/unsold_expand_view"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                app:el_duration="500"
+                                app:el_expanded="false"
+                                app:el_parallax="1">
+
+                                <androidx.recyclerview.widget.RecyclerView
+                                    android:id="@+id/unsold_items"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:nestedScrollingEnabled="false"
+                                    android:orientation="vertical"
+                                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                                    tools:itemCount="2"
+                                    tools:listitem="@layout/unsold_item" />
+
+                            </net.cachapa.expandablelayout.ExpandableLayout>
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/sold_layout"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            app:show_close="true">
+
+                            <io.bidswipe.app.ui.custom.Heading
+                                android:id="@+id/sold_heading"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                app:show_close="true"
+                                app:title="Sold" />
+
+                            <net.cachapa.expandablelayout.ExpandableLayout
+                                android:id="@+id/sold_expand_view"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                app:el_duration="500"
+                                app:el_expanded="false"
+                                app:el_parallax="1">
+
+                                <androidx.recyclerview.widget.RecyclerView
+                                    android:id="@+id/sold_items"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:nestedScrollingEnabled="false"
+                                    android:orientation="vertical"
+                                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                                    tools:itemCount="2"
+                                    tools:listitem="@layout/unsold_item" />
+
+                            </net.cachapa.expandablelayout.ExpandableLayout>
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                    <org.sufficientlysecure.htmltextview.HtmlTextView
+                        style="@style/BodyMedium"
+                        android:layout_width="match_parent"
+                        android:layout_marginTop="@dimen/half_margin"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/how_it_works"
+                        android:text="@string/how_it_works_info" />
+                </ViewSwitcher>
+
+                <TextView
+                    android:id="@+id/posted"
+                    style="@style/BodyMedium"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginTop="@dimen/margin"
+                    android:text="--" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </ScrollView>
+
+    <io.bidswipe.app.ui.custom.LoaderView
+        android:id="@+id/loader"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

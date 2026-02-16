@@ -35,6 +35,14 @@ data class GetOrderDetailsResponse(
 		val product: Product?,
 		@SerializedName("product_id")
 		val productId: Int?,
+		@SerializedName("product_set")
+		val productSet: ProductSet?,
+		@SerializedName("product_set_id")
+		val productSetId: Int?,
+		@SerializedName("product_set_item_id")
+		val productSetItemId: Int?,
+		@SerializedName("product_set_item_unit_id")
+		val productSetItemUnitId: Int?,
 		@SerializedName("promo_code")
 		val promoCode: String?,
 		@SerializedName("send_as_gift")
@@ -172,6 +180,56 @@ data class GetOrderDetailsResponse(
 			@SerializedName("username")
 			val username: String?,
 		)
+
+		data class ProductSet(
+			@SerializedName("auto_randomizer")
+			val autoRandomizer: Int?,
+			@SerializedName("created_at")
+			val createdAt: String?,
+			@SerializedName("description")
+			val description: String?,
+			@SerializedName("id")
+			val id: Int?,
+			@SerializedName("is_live_bid")
+			val isLiveBid: Int?,
+			@SerializedName("items")
+			val items: List<Item?>?,
+			@SerializedName("name")
+			val name: String?,
+			@SerializedName("price")
+			val price: Int?,
+			@SerializedName("quick_spin")
+			val quickSpin: Int?,
+			@SerializedName("shipping_profile_id")
+			val shippingProfileId: Int?,
+			@SerializedName("status")
+			val status: String?,
+			@SerializedName("type")
+			val type: String?,
+			@SerializedName("updated_at")
+			val updatedAt: String?,
+			@SerializedName("user_id")
+			val userId: Int?
+		) {
+			data class Item(
+				@SerializedName("description")
+				val description: Any?,
+				@SerializedName("id")
+				val id: Int?,
+				@SerializedName("name")
+				val name: String?,
+				@SerializedName("price")
+				val price: Int?,
+				@SerializedName("product_set_id")
+				val productSetId: Int?,
+				@SerializedName("quantity")
+				val quantity: Int?,
+				@SerializedName("sold_quantity")
+				val soldQuantity: Int?,
+				@SerializedName("status")
+				val status: String?
+			)
+		}
 
 	}
 }
