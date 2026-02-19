@@ -6,6 +6,7 @@ import androidx.appcompat.view.ContextThemeWrapper
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.text.bold
 import androidx.core.text.buildSpannedString
+import androidx.core.view.isVisible
 import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseAdapter
 import io.bidswipe.app.databinding.ShippingProfileItemBinding
@@ -44,6 +45,16 @@ class ShippingProfileAdapter(
 
 			bind.maxItems.text = if (item?.maxItems == true) "Yes" else "No"
 			bind.additionalWeight.text = if (item?.additionalWeight == true) "Yes" else "No"
+
+			if(item?.additionalWeight==true){
+				bind.additionalWeightLayout.isVisible=false
+				bind.additionalWeightText.text = buildSpannedString {
+					append(item?.incrementWeight + " ")
+					append(item?.incrementWeightScale)
+				}
+			}else{
+				bind.additionalWeightLayout.isVisible=false
+			}
 
 			val wrapper = ContextThemeWrapper(mCtx, R.style.popupMenuStyle)
 			val menu = PopupMenu(

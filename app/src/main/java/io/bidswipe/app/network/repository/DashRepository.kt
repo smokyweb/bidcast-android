@@ -598,8 +598,31 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
         size: RequestBody?,
         weight: RequestBody?,
         additionalWeight: RequestBody?,
-        maxItems: RequestBody?
-    ) = call { api.storeShippingProfile(shippingId, name, size, weight, additionalWeight, maxItems) }
+        maxItems: RequestBody?,
+        maxItemUnit: RequestBody?,
+        height: RequestBody?,
+        width: RequestBody?,
+        length: RequestBody?,
+        scale: RequestBody?,
+        incrementWeight: RequestBody?,
+        incrementWeightUnit: RequestBody?,
+    ) = call {
+        api.storeShippingProfile(
+            shippingId,
+            name,
+            size,
+            weight,
+            additionalWeight,
+            maxItems,
+            maxItemUnit,
+            height,
+            width,
+            length,
+            scale,
+            incrementWeight,
+            incrementWeightUnit
+        )
+    }
 
     suspend fun getShippingProfile(
     ) = call { api.getShippingProfile() }
@@ -678,5 +701,22 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
     suspend fun getSurpriseProductDetail(
         setId: String?
     ) = call { api.getSetDetails(setId) }
+
+    suspend fun getUSPSBoxDimensions(
+    ) = call { api.getUSPSBoxDimensions() }
+
+    suspend fun saveDomesticShipmentSetting(
+        domesticShipmentForm1To5Lbs: RequestBody?,
+        domesticShipmentOver5Lbs: RequestBody?,
+        alsoApplyScheduleShow: RequestBody?,
+        uspsFirstClassMailLetter: RequestBody?
+    ) = call {
+        api.saveDomesticShipmentSetting(
+            domesticShipmentForm1To5Lbs,
+            domesticShipmentOver5Lbs,
+            alsoApplyScheduleShow,
+            uspsFirstClassMailLetter
+        )
+    }
 
 }

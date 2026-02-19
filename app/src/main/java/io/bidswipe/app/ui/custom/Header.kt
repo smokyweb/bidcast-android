@@ -8,7 +8,6 @@ import androidx.annotation.DrawableRes
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.use
-import androidx.core.view.isVisible
 import io.bidswipe.app.databinding.HeaderViewBinding
 import io.bidswipe.app.utils.clr
 import io.bidswipe.app.utils.draw

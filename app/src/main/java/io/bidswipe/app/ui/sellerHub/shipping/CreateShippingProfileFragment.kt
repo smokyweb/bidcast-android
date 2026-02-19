@@ -13,6 +13,7 @@ import io.bidswipe.app.base.BaseFragment
 import io.bidswipe.app.databinding.FragmentCreateShippingProfileBinding
 import io.bidswipe.app.interfaces.AlertClicks
 import io.bidswipe.app.network.Resource
+import io.bidswipe.app.network.response.GetUSPSboxDimensionsResponse
 import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.ui.sellerHub.SellerHubViewModel
 import io.bidswipe.app.utils.Const
@@ -32,13 +33,14 @@ class CreateShippingProfileFragment : BaseFragment<SellerHubViewModel, FragmentC
         view: ViewGroup?,
     ) = FragmentCreateShippingProfileBinding.inflate(inflater, view, false)
 
+    private var dimensionsList = mutableListOf<GetUSPSboxDimensionsResponse.Data?>()
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         val type = activity?.intent?.getStringExtra("slug").toString()
 
         val from = arguments?.getString("from")
-
 
         if (from == "edit") {
             bind.header.setHeaderText("Edit Shipping Profile")
@@ -57,7 +59,6 @@ class CreateShippingProfileFragment : BaseFragment<SellerHubViewModel, FragmentC
             }
 
         }
-
 
         bind.header.onBackClick {
             if (type == "createShippingProfile") {
@@ -108,9 +109,6 @@ class CreateShippingProfileFragment : BaseFragment<SellerHubViewModel, FragmentC
             bind.dimensionUnits.showDropDown()
         }
 
-        bind.boxDimensions.setAdapter(dimensionScaleAdapter)
-        bind.boxDimensions.setDropDownBackgroundDrawable(proDrawable)
-
         bind.boxDimensions.setHapticClickListener {
             hideKeyboard(it)
             bind.boxDimensions.showDropDown()
@@ -121,16 +119,26 @@ class CreateShippingProfileFragment : BaseFragment<SellerHubViewModel, FragmentC
             bind.width.isEnabled = false
             bind.length.isEnabled = false
             bind.dimensionUnits.isEnabled = false
+
+            bind.height.setText(dimensionsList[position]?.height.toString())
+            bind.width.setText(dimensionsList[position]?.width.toString())
+            bind.length.setText(dimensionsList[position]?.length.toString())
+            bind.dimensionUnits.setText(dimensionsList[position]?.unit.toString())
         }
 
         bind.maxPackage.setOnCheckedChangeListener { _, checked ->
             bind.maxItemsExpand.isExpanded = checked
 
-            bind.boxDimensions.setText("Custom",false)
+            bind.boxDimensions.setText("Custom", false)
             bind.height.setText("12.00")
             bind.length.setText("12.00")
             bind.width.setText("12.00")
-            bind.dimensionUnits.setText("Inch",false)
+            bind.dimensionUnits.setText("Inch", false)
+
+            if (dimensionsList.isEmpty()) {
+                bind.loader.isVisible = true
+                viewModel.getUSPSBoxDimensions()
+            }
         }
 
         bind.additionalWeight.setOnCheckedChangeListener { _, checked ->
@@ -138,50 +146,88 @@ class CreateShippingProfileFragment : BaseFragment<SellerHubViewModel, FragmentC
         }
 
         bind.save.setHapticClickListener {
-            when {
-                bind.name.value().isEmpty() -> {
-                    bind.name.error = "Please enter name"
-                    return@setHapticClickListener
-                }
 
-                bind.weight.value().isEmpty() -> {
-                    bind.weight.error = "Please enter weight"
-                    return@setHapticClickListener
-
-                }
-
-                bind.weightUnits.value().isEmpty() -> {
-                    bind.weightUnits.error = "Please enter weight units"
-                    return@setHapticClickListener
-                }
-
-                else -> {
-                    bind.loader.isVisible = true
-
-                    if (from == "edit") {
-                        viewModel.storeShippingProfile(
-                            shippingProfileId = viewModel.selectedShippingProfile?.id.toString().request(),
-                            name = bind.name.value().request(),
-                            size = bind.weightUnits.value().request(),
-                            weight = bind.weight.value().request(),
-                            additionalWeight = if (bind.additionalWeight.isChecked) "1".request() else "0".request(),
-                            maxItems = if (bind.maxPackage.isChecked) "1".request() else "0".request()
-                        )
-                    } else {
-                        viewModel.storeShippingProfile(
-                            name = bind.name.value().request(),
-                            size = bind.weightUnits.value().request(),
-                            weight = bind.weight.value().request(),
-                            additionalWeight = if (bind.additionalWeight.isChecked) "1".request() else "0".request(),
-                            maxItems = if (bind.maxPackage.isChecked) "1".request() else "0".request()
-                        )
-                    }
-
-                }
-
+            if (bind.name.value().isEmpty()) {
+                errorToast("Please enter name")
+                bind.name.requestFocus()
+                return@setHapticClickListener
             }
 
+            if (bind.weight.value().isEmpty()) {
+                errorToast("Please enter weight")
+                bind.weight.requestFocus()
+                return@setHapticClickListener
+            }
+
+            if (bind.weightUnits.value().isEmpty()) {
+                errorToast("Please enter weight units")
+                return@setHapticClickListener
+            }
+
+            if (bind.maxPackage.isChecked) {
+
+                if (bind.maxItems.value().isEmpty()) {
+                    errorToast("Please enter max items")
+                    bind.maxItems.requestFocus()
+                    return@setHapticClickListener
+                }
+
+                if (bind.height.value().isEmpty()) {
+                    errorToast("Please enter height")
+                    bind.height.requestFocus()
+                    return@setHapticClickListener
+                }
+
+                if (bind.width.value().isEmpty()) {
+                    errorToast("Please enter width")
+                    bind.width.requestFocus()
+                    return@setHapticClickListener
+                }
+
+                if (bind.length.value().isEmpty()) {
+                    errorToast("Please enter length")
+                    bind.length.requestFocus()
+                    return@setHapticClickListener
+                }
+
+                if (bind.dimensionUnits.value().isEmpty()) {
+                    errorToast("Please enter dimension unit")
+                    return@setHapticClickListener
+                }
+            }
+
+            if (bind.additionalWeight.isChecked) {
+
+                if (bind.incrementalWeight.value().isEmpty()) {
+                    errorToast("Please enter incremental weight")
+                    bind.incrementalWeight.requestFocus()
+                    return@setHapticClickListener
+                }
+
+                if (bind.incrementalWeightUnits.value().isEmpty()) {
+                    errorToast("Please enter incremental weight unit")
+                    return@setHapticClickListener
+                }
+            }
+
+            bind.loader.isVisible = true
+            viewModel.storeShippingProfile(
+                shippingProfileId = if (from == "edit") viewModel.selectedShippingProfile?.id.toString().request() else null,
+                name = bind.name.value().request(),
+                size = bind.weightUnits.value().request(),
+                weight = bind.weight.value().request(),
+                additionalWeight = if (bind.additionalWeight.isChecked) "1".request() else "0".request(),
+                maxItems = if (bind.maxPackage.isChecked) "1".request() else "0".request(),
+                maxItemUnit = if (bind.maxPackage.isChecked) bind.maxItems.value().request() else null,
+                height = if (bind.maxPackage.isChecked) bind.height.value().request() else null,
+                width = if (bind.maxPackage.isChecked) bind.width.value().request() else null,
+                length = if (bind.maxPackage.isChecked) bind.length.value().request() else null,
+                scale = if (bind.maxPackage.isChecked) bind.dimensionUnits.value().request() else null,
+                incrementWeight = if (bind.additionalWeight.isChecked) bind.incrementalWeight.value().request() else null,
+                incrementWeightUnit = if (bind.additionalWeight.isChecked) bind.incrementalWeightUnits.value().request() else null
+            )
         }
+
 
         viewModel.storeShippingProfileRepo.observe(viewLifecycleOwner) {
             when (it) {
@@ -218,5 +264,38 @@ class CreateShippingProfileFragment : BaseFragment<SellerHubViewModel, FragmentC
             }
         }
 
+        viewModel.getUSPSBoxDimensionsRepo.observe(viewLifecycleOwner) {
+            when (it) {
+                is Resource.Success -> {
+                    bind.loader.isVisible = false
+                    viewModel.getUSPSBoxDimensionsRepo.value = null
+
+                    val mData = it.value.data
+                    if (mData?.isNotEmpty() == true) {
+                        dimensionsList.clear()
+                        dimensionsList.addAll(mData)
+
+                        val boxDimensionsAdapter = ArrayAdapter(
+                            mCtx,
+                            android.R.layout.simple_list_item_1,
+                            dimensionsList.map { it?.name }
+                        )
+
+                        bind.boxDimensions.setAdapter(boxDimensionsAdapter)
+                        bind.boxDimensions.setDropDownBackgroundDrawable(proDrawable)
+
+                    }
+                }
+
+                is Resource.Error -> {
+                    bind.loader.isVisible = false
+                    viewModel.getUSPSBoxDimensionsRepo.value = null
+                    it.parse(mCtx, TAG)
+                }
+
+                else -> {}
+
+            }
+        }
     }
 }

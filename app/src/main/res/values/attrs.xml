@@ -33,6 +33,14 @@
         <attr name="show_close" format="boolean" />
     </declare-styleable>
 
+    <declare-styleable name="InfoCard">
+        <attr name="infoIcon" format="reference" />
+        <attr name="infoText" format="string" />
+        <attr name="infoBackgroundColor" format="color" />
+        <attr name="infoTextColor" format="color" />
+        <attr name="infoIconTint" format="color" />
+    </declare-styleable>
+
     <attr name="entryChipStyleNew" format="reference" />
 
 </resources>

@@ -59,6 +59,7 @@ import io.bidswipe.app.network.response.GetSubCategoriesResponse
 import io.bidswipe.app.network.response.GetSurpriseProductsResponse
 import io.bidswipe.app.network.response.GetTipAmountResponse
 import io.bidswipe.app.network.response.GetTransactionsHistoryResponse
+import io.bidswipe.app.network.response.GetUSPSboxDimensionsResponse
 import io.bidswipe.app.network.response.GetUserProfileResponse
 import io.bidswipe.app.network.response.LoginResponse
 import io.bidswipe.app.network.response.MakeClipResponse
@@ -796,7 +797,14 @@ interface ApiInterface {
         @Part("size") size: RequestBody?,
         @Part("weight") weight: RequestBody?,
         @Part("additionalWeight") additionalWeight: RequestBody?,
-        @Part("maxItems") maxItems: RequestBody?
+        @Part("maxItems") maxItems: RequestBody?,
+        @Part("max_item_unit") maxItemUnit: RequestBody?,
+        @Part("height") height: RequestBody?,
+        @Part("width") width: RequestBody?,
+        @Part("length") length: RequestBody?,
+        @Part("scale") scale: RequestBody?,
+        @Part("increment_weight") incrementWeight: RequestBody?,
+        @Part("increment_weight_scale") incrementWeightUnit: RequestBody?,
     ): CommonResponse
 
     @GET("api/get-shipping-profile")
@@ -916,5 +924,16 @@ interface ApiInterface {
         @Query("set_id") setId: String?
     ): ProductSetDetailsResponse
 
+   @GET("api/get-usps-shipping-price")
+    suspend fun getUSPSBoxDimensions(
+    ): GetUSPSboxDimensionsResponse
+
+    @Multipart
+    @POST("api/save-domestic-shipment-setting")
+    suspend fun saveDomesticShipmentSetting(
+        @Part("domestic_shipment_form_1_to_5_lbs") domesticShipmentForm1To5Lbs: RequestBody?,
+        @Part("domestic_shipment_over_5_lbs") domesticShipmentOver5Lbs: RequestBody?,
+        @Part("also_apply_schedule_show") alsoApplyScheduleShow: RequestBody?,
+        @Part("usps_first_class_mail_letter") uspsFirstClassMailLetter: RequestBody?): CommonResponse
 }
 

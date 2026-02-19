@@ -17,24 +17,23 @@
         app:layout_constraintTop_toTopOf="parent"
         app:showBackButton="true" />
 
-    <ScrollView
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height = "0dp"
-        app:layout_constraintBottom_toTopOf = "@id/bottomLayout"
-        app:layout_constraintTop_toBottomOf = "@+id/header" >
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@id/bottomLayout"
+        app:layout_constraintTop_toBottomOf="@+id/header">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/labelInstructions"
-                style="@style/BodyMedium"
+            <io.bidswipe.app.ui.custom.InfoCard
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="@dimen/margin"
-                android:text="All orders falling outside of your shipping preferences will default to USPS Ground Advantage. Eligible sellers will default to Media Mail shipping." />
+                android:layout_marginHorizontal="@dimen/margin"
+                app:infoText="All orders falling outside of your shipping preferences will default to USPS Ground Advantage. Eligible sellers will default to Media Mail shipping."
+               />
 
             <TextView
                 style="@style/TitleLarge"
@@ -46,14 +45,14 @@
 
             <LinearLayout
                 style="@style/shadowStyle"
-                android:background="@drawable/card_8"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/margin"
                 android:layout_marginVertical="@dimen/half_margin"
-                android:padding="@dimen/margin"
+                android:background="@drawable/card_8"
                 android:gravity="center_vertical"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:padding="@dimen/margin">
 
                 <LinearLayout
                     android:layout_width="0dp"
@@ -63,10 +62,10 @@
 
                     <TextView
                         style="@style/TitleMedium"
-                        android:textStyle="bold"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="USPS First-Class Mail Letter" />
+                        android:text="USPS First-Class Mail Letter"
+                        android:textStyle="bold" />
 
                     <TextView
                         style="@style/BodySmall"
@@ -77,11 +76,11 @@
                 </LinearLayout>
 
                 <com.google.android.material.materialswitch.MaterialSwitch
-                    android:id="@+id/free_pickup"
+                    android:id="@+id/first_class_mail_letter_switch"
                     style="@style/appSwitch"
-                    android:layout_marginStart="@dimen/half_margin"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/half_margin"
                     android:textAppearance="@style/TitleLarge" />
 
             </LinearLayout>
@@ -90,69 +89,75 @@
                 style="@style/TitleLarge"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/margin"
                 android:layout_marginHorizontal="@dimen/margin"
+                android:layout_marginTop="@dimen/margin"
                 android:text="Domestic Shipments from 1 to 5 lbs"
                 android:textSize="16dp" />
 
             <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/domestic_1_5_recycler"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/domestic_1_5_recycler"
-                android:nestedScrollingEnabled="false"
                 android:layout_marginHorizontal="@dimen/half_margin"
-                tools:itemCount="1"
+                android:nestedScrollingEnabled="false"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                tools:itemCount="1"
                 tools:listitem="@layout/domestic_shipment_item" />
 
             <TextView
                 style="@style/TitleLarge"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/margin"
                 android:layout_marginHorizontal="@dimen/margin"
+                android:layout_marginTop="@dimen/margin"
                 android:text="Domestic Shipments over 5 lbs"
                 android:textSize="16sp" />
 
             <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/domestic_5_recycler"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/domestic_5_recycler"
-                android:nestedScrollingEnabled="false"
                 android:layout_marginHorizontal="@dimen/half_margin"
-                tools:itemCount="1"
+                android:nestedScrollingEnabled="false"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 tools:listitem="@layout/domestic_shipment_item" />
 
         </LinearLayout>
 
-    </ScrollView>
+    </androidx.core.widget.NestedScrollView>
 
     <LinearLayout
-        android:id = "@+id/bottomLayout"
-        android:layout_width = "match_parent"
-        android:layout_height = "wrap_content"
-        android:orientation = "vertical"
-        app:layout_constraintBottom_toBottomOf = "parent" >
+        android:id="@+id/bottomLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent">
 
-            <com.google.android.material.checkbox.MaterialCheckBox
-                style = "@style/appCheckbox"
-                android:layout_width = "match_parent"
-                android:layout_height = "wrap_content"
-                android:layout_marginHorizontal = "@dimen/margin"
-                android:layout_marginTop = "@dimen/margin"
-                android:minHeight = "0dp"
-                android:text = "Also apply to scheduled shows"
-                android:textAppearance = "@style/TitleMedium" />
+        <com.google.android.material.checkbox.MaterialCheckBox
+            android:id="@+id/apply_to_scheduled_shows"
+            style="@style/appCheckbox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/margin"
+            android:layout_marginTop="@dimen/margin"
+            android:minHeight="0dp"
+            android:text="Also apply to scheduled shows"
+            android:textAppearance="@style/TitleMedium" />
 
         <com.google.android.material.button.MaterialButton
-            android:id = "@+id/save"
-            style = "@style/appBtn"
-            android:layout_width = "match_parent"
-            android:layout_height = "wrap_content"
-            android:layout_margin = "16dp"
-            android:text = "Save" />
+            android:id="@+id/save"
+            style="@style/appBtn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:text="Save" />
 
-    </LinearLayout >
+    </LinearLayout>
+
+    <io.bidswipe.app.ui.custom.LoaderView
+        android:id="@+id/loader"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
