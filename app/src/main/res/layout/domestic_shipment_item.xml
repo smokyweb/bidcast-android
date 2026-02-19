@@ -15,8 +15,9 @@
 	    android:layout_height = "48dp"
 	    android:layout_marginEnd = "@dimen/half_margin"
 	    android:layout_gravity="top"
-	    android:scaleType = "centerCrop"
-	    android:src = "@drawable/placeholder_square" />
+        android:background="@drawable/card_8"
+        android:backgroundTint="@color/primaryContainer"
+	    android:src = "@drawable/usps_logo" />
 
         <LinearLayout
 	        android:layout_width = "0dp"

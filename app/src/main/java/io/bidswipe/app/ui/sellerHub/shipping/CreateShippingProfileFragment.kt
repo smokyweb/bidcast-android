@@ -125,6 +125,12 @@ class CreateShippingProfileFragment : BaseFragment<SellerHubViewModel, FragmentC
 
         bind.maxPackage.setOnCheckedChangeListener { _, checked ->
             bind.maxItemsExpand.isExpanded = checked
+
+            bind.boxDimensions.setText("Custom",false)
+            bind.height.setText("12.00")
+            bind.length.setText("12.00")
+            bind.width.setText("12.00")
+            bind.dimensionUnits.setText("Inch",false)
         }
 
         bind.additionalWeight.setOnCheckedChangeListener { _, checked ->
