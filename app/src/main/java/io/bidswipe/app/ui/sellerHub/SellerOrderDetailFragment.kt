@@ -20,7 +20,6 @@ import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.ui.dashboard.ChatActivity
 import io.bidswipe.app.utils.Utils
 import io.bidswipe.app.utils.asCapital
-import io.bidswipe.app.utils.finish
 import io.bidswipe.app.utils.loadUrl
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request
@@ -77,11 +76,7 @@ class SellerOrderDetailFragment : BaseFragment<SellerHubViewModel, FragmentSelle
         }
 
         bind.header.onBackClick {
-            if (findNavController().graph.id == R.navigation.seller_hub_nav_graph) {
-                findNavController().popBackStack()
-            } else {
-                finish()
-            }
+            findNavController().popBackStack()
         }
 
         bind.updateStatus.setHapticClickListener {
@@ -125,7 +120,8 @@ class SellerOrderDetailFragment : BaseFragment<SellerHubViewModel, FragmentSelle
                         bind.productCard.isVisible = false
                         if (mData?.productSet != null) {
                             bind.productName.text = mData.productSet.name?.asCapital()
-                            bind.category.text = (mData.productSet.items?.find { it?.id == mData.productSetItemId }?.name ?: "N/A") +"#${mData.productSetItemUnitId}"
+                            bind.category.text =
+                                (mData.productSet.items?.find { it?.id == mData.productSetItemId }?.name ?: "N/A") + "#${mData.productSetItemUnitId}"
                         }
                     }
 

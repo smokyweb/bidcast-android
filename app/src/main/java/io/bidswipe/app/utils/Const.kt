@@ -113,4 +113,7 @@ object Const {
         LiveMoreOption("Randomizer", false, draw.ic_spin_wheel),
     )
 
+    val dimensionScales = listOf("Inch", "Feet", "Centimeter", "Meter")
+    val weightScales= listOf("Pound" , "Ounce" , "Gram", "Kilogram" )
+
 }

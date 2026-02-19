@@ -238,7 +238,9 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
         syncPhoneContacts: RequestBody?,
         suggestMyAccount: RequestBody?,
         hapticFeedback: RequestBody?,
-        freeShipping: RequestBody?
+        freeShipping: RequestBody?,
+        shippingAddressId: RequestBody? = null,
+        instruction: RequestBody? = null,
     ) = call {
         api.settingsStore(
             countryOfResidence,
@@ -253,7 +255,9 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
             syncPhoneContacts,
             suggestMyAccount,
             hapticFeedback,
-            freeShipping
+            freeShipping,
+            shippingAddressId,
+            instruction
         )
     }
 

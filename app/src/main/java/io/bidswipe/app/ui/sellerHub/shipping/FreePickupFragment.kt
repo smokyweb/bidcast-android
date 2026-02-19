@@ -15,6 +15,7 @@ import io.bidswipe.app.utils.finish
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request
 import io.bidswipe.app.utils.setHapticClickListener
+import io.bidswipe.app.utils.value
 
 class FreePickupFragment : BaseFragment<SellerHubViewModel, FragmentFreePickupBinding>() {
     override fun getModel(): Class<SellerHubViewModel> = SellerHubViewModel::class.java
@@ -24,23 +25,47 @@ class FreePickupFragment : BaseFragment<SellerHubViewModel, FragmentFreePickupBi
         view: ViewGroup?,
     ) = FragmentFreePickupBinding.inflate(inflater, view, false)
 
-	var status : Boolean? = false
-
+    var status: Boolean? = false
+    var selectedShippingAddressId = ""
+    var shippingAddress = ""
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-	    status = arguments?.getBoolean("status")
+        status = arguments?.getBoolean("status")
+        shippingAddress = arguments?.getString("address") ?: ""
+        val instruction = arguments?.getString("instruction") ?: ""
 
         bind.header.onBackClick {
             findNavController().popBackStack()
         }
 
-	    bind.freePickup.isChecked = status == true
+        bind.freePickup.isChecked = status == true
+        bind.expandView.isExpanded = status == true
 
-	    bind.save.setHapticClickListener {
-		    callAPI()
-	    }
+        if (shippingAddress.isNotEmpty()) {
+            bind.pickupaddress.setText(shippingAddress)
+        }
+
+        if (instruction.isNotEmpty()) {
+            bind.instruction.setText(instruction)
+        }
+
+        bind.freePickup.setOnCheckedChangeListener { _, checked ->
+            bind.expandView.isExpanded = checked
+        }
+
+        bind.pickupaddress.setOnClickListener {
+            openAddressSheet()
+        }
+
+        bind.pickupaddressBox.setOnClickListener {
+            openAddressSheet()
+        }
+
+        bind.save.setHapticClickListener {
+            callAPI()
+        }
 
         viewModel.settingsStoreRepo.observe(viewLifecycleOwner) {
             when (it) {
@@ -56,11 +81,9 @@ class FreePickupFragment : BaseFragment<SellerHubViewModel, FragmentFreePickupBi
                     it.parse(mCtx, TAG)
                 }
 
-	            else -> {}
-
+                else -> {}
             }
         }
-
 
     }
 
@@ -68,8 +91,23 @@ class FreePickupFragment : BaseFragment<SellerHubViewModel, FragmentFreePickupBi
         bind.loader.isVisible = true
         App.getProfile()
         viewModel.settingsStore(
-            freeShipping = if (bind.freePickup.isChecked) "1".request() else "0".request()
+            freeShipping = if (bind.freePickup.isChecked) "1".request() else "0".request(),
+            shippingAddressId = if (bind.freePickup.isChecked) selectedShippingAddressId.request() else null,
+            instruction = if (bind.freePickup.isChecked) bind.instruction.value().request() else null,
         )
+    }
+
+    fun openAddressSheet() {
+        val bottomSheetFragment = SelectAddressFragment { address ->
+            selectedShippingAddressId = address?.id.toString()
+            val addressShow = """
+                            ${address?.name}
+                            ${address?.streetAddress}, ${address?.city}, ${address?.state} ${address?.pincode}
+                            """.trimIndent()
+
+            bind.pickupaddress.setText(addressShow)
+        }
+        bottomSheetFragment.show(parentFragmentManager, "SELECT_ADDRESS")
     }
 
 }

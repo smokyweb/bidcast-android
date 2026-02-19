@@ -14,6 +14,7 @@ import io.bidswipe.app.databinding.FragmentShippingBinding
 import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.model.SellModel
 import io.bidswipe.app.network.Resource
+import io.bidswipe.app.network.response.SettingListResponse
 import io.bidswipe.app.ui.sellerHub.SellerHubViewModel
 import io.bidswipe.app.utils.animatedNav
 import io.bidswipe.app.utils.finish
@@ -30,6 +31,8 @@ class ShippingFragment : BaseFragment<SellerHubViewModel, FragmentShippingBindin
 	private lateinit var adapter: SellAdapter
 
 	var shippingStatus : Boolean? = false
+	var shippingAddress : String? = ""
+	var instruction : String? = ""
 
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		super.onViewCreated(view, savedInstanceState)
@@ -37,6 +40,7 @@ class ShippingFragment : BaseFragment<SellerHubViewModel, FragmentShippingBindin
 		bind.header.onBackClick {
 			finish()
 		}
+
 		itemList.clear()
 		itemList.addAll(
 			listOf(
@@ -71,7 +75,7 @@ class ShippingFragment : BaseFragment<SellerHubViewModel, FragmentShippingBindin
 			override fun itemClick(pos: Int, status: String?) {
 				log("CLICK $pos")
 				when (pos) {
-					0 -> findNavController().animatedNav(R.id.toFreePickup, bundleOf("status" to shippingStatus))
+					0 -> findNavController().animatedNav(R.id.toFreePickup, bundleOf("status" to shippingStatus,"address" to shippingAddress,"instruction" to instruction))
 					1 -> findNavController().animatedNav(R.id.toDomesticShipments)
 					2 -> findNavController().animatedNav(R.id.toShippingCost)
 					3 -> findNavController().animatedNav(R.id.toShippingProfiles)
@@ -93,7 +97,13 @@ class ShippingFragment : BaseFragment<SellerHubViewModel, FragmentShippingBindin
 					val mData = it.value.data
 
 					shippingStatus = mData?.freeShipping
-
+					instruction=mData?.instruction
+					if(mData?.shippingAddress!=null) {
+						shippingAddress = """
+                            ${mData?.shippingAddress?.name}
+                            ${mData?.shippingAddress?.streetAddress}, ${mData?.shippingAddress?.city}, ${mData?.shippingAddress?.state} ${mData?.shippingAddress?.pincode}
+                            """.trimIndent()
+					}
 					itemList[0].status = if (mData?.freeShipping == true) "ON" else "OFF"
 
 					adapter.notifyItemChanged(0)

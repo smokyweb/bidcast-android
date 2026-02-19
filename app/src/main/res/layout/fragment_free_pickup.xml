@@ -16,55 +16,180 @@
         app:layout_constraintTop_toTopOf="parent"
         app:showBackButton="true" />
 
-    <LinearLayout
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:orientation="vertical"
+        android:scrollbars="none"
         app:layout_constraintBottom_toTopOf="@+id/save"
         app:layout_constraintTop_toBottomOf="@+id/header">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/margin"
-            android:orientation="horizontal">
+            android:orientation="vertical">
 
             <LinearLayout
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical">
+                android:layout_margin="@dimen/margin"
+                android:orientation="horizontal">
 
-                <TextView
-                    style="@style/TitleLarge"
-                    android:textSize="16dp"
-                    android:layout_width="match_parent"
+                <LinearLayout
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:text="@string/enable_free_pickup" />
+                    android:layout_weight="1"
+                    android:orientation="vertical">
 
-                <TextView
-                    style="@style/BodyMedium"
-                    android:layout_width="match_parent"
+                    <TextView
+                        style="@style/TitleLarge"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/enable_free_pickup"
+                        android:textSize="16dp" />
+
+                    <TextView
+                        style="@style/BodyMedium"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Allow buyers to pick up any order from an address of your choice" />
+
+                </LinearLayout>
+
+                <com.google.android.material.materialswitch.MaterialSwitch
+                    android:id="@+id/free_pickup"
+                    style="@style/appSwitch"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Allow buyers to pick up any order from an address of your choice" />
+                    android:textAppearance="@style/TitleLarge" />
 
             </LinearLayout>
 
-            <com.google.android.material.materialswitch.MaterialSwitch
-                android:id="@+id/free_pickup"
-                style="@style/appSwitch"
-                android:layout_width="wrap_content"
+            <net.cachapa.expandablelayout.ExpandableLayout
+                android:id="@+id/expandView"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textAppearance="@style/TitleLarge" />
+                app:el_duration="500"
+                app:el_expanded="false"
+                app:el_parallax="1"
+                app:layout_constraintTop_toTopOf="parent">
 
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="@dimen/padding"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Location"
+                        style="@style/TitleMedium"/>
+
+                    <TextView
+                        style="@style/BodySmall"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/half_margin"
+                        android:textColor="@color/onSurfaceVariant"
+                        android:text="Ensure that your pickup location is safe and easily accessible for both you and your buyers." />
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/pickupaddress_box"
+                        style="@style/inputBoxStyle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:focusable="false"
+                        android:editable="false"
+                        android:focusableInTouchMode="false"
+                        app:endIconDrawable="@drawable/ic_arrow_down_2"
+                        app:endIconMode="custom">
+
+                        <com.google.android.material.textfield.MaterialAutoCompleteTextView
+                            android:id="@+id/pickupaddress"
+                            style="@style/inputTextStyle"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:focusable="false"
+                            android:editable="false"
+                            android:focusableInTouchMode="false"
+                            android:hint="Pickup Address" />
+
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:background="@drawable/card_8"
+                        android:backgroundTint="@color/primaryContainer"
+                        style="@style/BodySmall"
+                        android:padding="@dimen/half_margin"
+                        android:textColor="@color/primary"
+                        android:text="Note: this address will be visible to viewers within shows when Free Pickup is enabled." />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="20dp"
+                        android:text="Instructions"
+                        style="@style/TitleMedium"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="8dp"
+                        style="@style/BodySmall"
+                        android:text="Let buyers know when to show up and how to reach you. Consider offering specific pickup time windows."
+                        android:textColor="@color/onSurfaceVariant"
+                       />
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        style="@style/inputBoxStyle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/margin"
+                        app:boxCornerRadiusBottomEnd="@dimen/margin"
+                        app:boxCornerRadiusBottomStart="@dimen/margin"
+                        app:boxCornerRadiusTopEnd="@dimen/margin"
+                        app:boxCornerRadiusTopStart="@dimen/margin"
+                        app:counterEnabled="true"
+                        app:counterMaxLength="250">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/instruction"
+                            style="@style/inputTextStyle"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="top"
+                            android:hint="@string/type_here"
+                            android:inputType="textMultiLine"
+                            android:minLines="4"
+                            android:maxLines="10"/>
+
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="20dp"
+                        android:background="@drawable/card_8"
+                        android:backgroundTint="@color/primaryContainer"
+                        style="@style/TitleSmall"
+                        android:padding="@dimen/half_margin"
+                        android:textColor="@color/primary"
+                        android:text="These pickup settings will apply to future and already scheduled shows." />
+
+                </LinearLayout>
+            </net.cachapa.expandablelayout.ExpandableLayout>
         </LinearLayout>
-    </LinearLayout>
+
+    </ScrollView>
+
 
     <io.bidswipe.app.ui.custom.LoaderView
         android:id="@+id/loader"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone"/>
+        android:visibility="gone" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/save"

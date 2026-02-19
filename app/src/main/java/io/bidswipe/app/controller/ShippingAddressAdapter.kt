@@ -4,7 +4,6 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.PopupMenu
 import androidx.appcompat.view.ContextThemeWrapper
-import androidx.compose.ui.window.Popup
 import androidx.core.view.isVisible
 import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseAdapter
@@ -15,52 +14,60 @@ import io.bidswipe.app.utils.asCapital
 import io.bidswipe.app.utils.setHapticClickListener
 
 class ShippingAddressAdapter(
-	mList : MutableList<GetShippingAddressResponse.Data?> , val mClicks : RecyclerClicks ,
-) : BaseAdapter<GetShippingAddressResponse.Data? , ShippingAddressItemBinding>(mList) {
+    mList: MutableList<GetShippingAddressResponse.Data?>, val mClicks: RecyclerClicks,
+) : BaseAdapter<GetShippingAddressResponse.Data?, ShippingAddressItemBinding>(mList) {
 
-	override fun bindView(inflater : LayoutInflater , parent : ViewGroup) =
-		ShippingAddressItemBinding.inflate(inflater , parent , false)
+    override fun bindView(inflater: LayoutInflater, parent: ViewGroup) =
+        ShippingAddressItemBinding.inflate(inflater, parent, false)
 
-	override fun onBind(
-		holder : BaseViewHolder<ShippingAddressItemBinding> ,
-		position : Int ,
-		item : GetShippingAddressResponse.Data? ,
-	) {
-		with(holder) {
+    override fun onBind(
+        holder: BaseViewHolder<ShippingAddressItemBinding>,
+        position: Int,
+        item: GetShippingAddressResponse.Data?,
+    ) {
+        with(holder) {
 
             bind.root.setHapticClickListener {
-				mClicks.itemClick(position)
-			}
+                mClicks.itemClick(position)
+            }
 
-			bind.address.text = item?.streetAddress
-			bind.name.text = item?.name?.asCapital()
-			bind.type.text = item?.type
+            bind.address.text = buildString {
+                append(item?.streetAddress)
+                append(item?.city)
+                append(", ")
+                append(item?.state)
+                append(" ")
+                append(item?.pincode)
+            }.trimIndent()
 
-			bind.defaultAddress.isVisible = item?.isDefault == true
+            bind.name.text = item?.name?.asCapital()
+            bind.type.text = item?.type
+
+            bind.defaultAddress.isVisible = item?.isDefault == true
 
             bind.moreIcon.setHapticClickListener { view ->
-				val wrapper = ContextThemeWrapper(mCtx, R.style.popupMenuStyle)
-				val popup = PopupMenu(wrapper, view)
+                val wrapper = ContextThemeWrapper(mCtx, R.style.popupMenuStyle)
+                val popup = PopupMenu(wrapper, view)
 
-				popup.inflate(R.menu.card_action_menu)  // Your menu XML
-				popup.setOnMenuItemClickListener { menuItem ->
-					when (menuItem.itemId) {
-						R.id.setDefault -> {
-							mClicks.itemClick(position , "default")
-							true
-						}
+                popup.inflate(R.menu.card_action_menu)  // Your menu XML
+                popup.setOnMenuItemClickListener { menuItem ->
+                    when (menuItem.itemId) {
+                        R.id.setDefault -> {
+                            mClicks.itemClick(position, "default")
+                            true
+                        }
 
-						R.id.delete -> {
-							mClicks.itemClick(position , "delete")
-							true
-						}
+                        R.id.delete -> {
+                            mClicks.itemClick(position, "delete")
+                            true
+                        }
 
-						else -> false
-					}
-				}
-				popup.show()
-			}
+                        else -> false
+                    }
+                }
+                popup.show()
+            }
 
-		}
-	}
+        }
+    }
 }

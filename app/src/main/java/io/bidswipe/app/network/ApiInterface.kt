@@ -372,7 +372,9 @@ interface ApiInterface {
         @Part("sync_phone_contacts") syncPhoneContacts: RequestBody?,
         @Part("suggest_my_account") suggestMyAccount: RequestBody?,
         @Part("haptic_feedback") hapticFeedback: RequestBody?,
-        @Part("free_shipping") freeShipping: RequestBody?
+        @Part("free_shipping") freeShipping: RequestBody?,
+        @Part("shipping_address_id") shippingAddressId: RequestBody?,
+        @Part("instruction") instruction: RequestBody?,
     ): CommonResponse
 
     @Multipart

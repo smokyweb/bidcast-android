@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".ui.sellerHub.shipping.CreateShippingProfileFragment">
 
     <io.bidswipe.app.ui.custom.Header
@@ -18,25 +18,25 @@
 
     <ScrollView
         android:layout_width="match_parent"
-        app:layout_constraintBottom_toTopOf="@+id/save"
-        app:layout_constraintTop_toBottomOf="@id/header"
+        android:layout_height="0dp"
         android:fillViewport="true"
-        android:layout_height="0dp">
+        app:layout_constraintBottom_toTopOf="@+id/save"
+        app:layout_constraintTop_toBottomOf="@id/header">
 
         <LinearLayout
             android:id="@+id/layout"
             android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="@dimen/padding"
-            android:layout_height="wrap_content">
+            android:padding="@dimen/padding">
 
             <TextView
                 android:id="@+id/title"
                 style="@style/TitleLarge"
                 android:layout_width="match_parent"
-                android:layout_marginBottom="@dimen/half_margin"
                 android:layout_height="wrap_content"
-                android:text="Details"/>
+                android:layout_marginBottom="@dimen/half_margin"
+                android:text="Details" />
 
             <com.google.android.material.textfield.TextInputLayout
                 style="@style/inputBoxStyle"
@@ -56,15 +56,15 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_marginTop="@dimen/half_margin"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/half_margin">
 
                 <com.google.android.material.textfield.TextInputLayout
                     style="@style/inputBoxStyle"
                     android:layout_width="0dp"
-                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
                     android:layout_marginEnd="4dp"
-                    android:layout_height="wrap_content">
+                    android:layout_weight="1">
 
                     <com.google.android.material.textfield.MaterialAutoCompleteTextView
                         android:id="@+id/weight"
@@ -79,9 +79,9 @@
                 <com.google.android.material.textfield.TextInputLayout
                     style="@style/inputBoxStyle"
                     android:layout_width="0dp"
-                    android:layout_weight="1"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="4dp"
+                    android:layout_weight="1"
                     app:endIconDrawable="@drawable/ic_forward"
                     app:endIconMode="custom">
 
@@ -99,21 +99,21 @@
             </LinearLayout>
 
             <TextView
-                android:drawableStart="@drawable/ic_info"
                 style="@style/BodySmall"
-                android:drawablePadding="4dp"
                 android:layout_width="match_parent"
-                android:gravity="center_vertical"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
                 android:layout_marginBottom="@dimen/half_margin"
-                android:layout_height="wrap_content"
+                android:drawableStart="@drawable/ic_info"
+                android:drawablePadding="4dp"
+                android:gravity="center_vertical"
                 android:text="Please enter the weight of this item and packaging" />
 
             <com.google.android.material.divider.MaterialDivider
                 android:layout_width="match_parent"
-                android:layout_marginBottom="@dimen/margin"
+                android:layout_height="1dp"
                 android:layout_marginTop="@dimen/half_margin"
-                android:layout_height="1dp"/>
+                android:layout_marginBottom="@dimen/margin" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -122,16 +122,17 @@
                 <TextView
                     style="@style/TitleLarge"
                     android:layout_width="0dp"
-                    android:layout_weight="1"
                     android:layout_height="wrap_content"
+                    android:layout_weight="1"
                     android:text="Bundling Options" />
-                 <TextView
+
+                <TextView
                     android:id="@+id/learn_more"
                     style="@style/TitleSmall"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                     android:textColor="@color/primary"
-                    android:text="Learn More" />
+                    android:text="Learn More"
+                    android:textColor="@color/primary" />
 
 
             </LinearLayout>
@@ -151,10 +152,10 @@
                     <TextView
                         android:id="@+id/one_package_title"
                         style="@style/TitleLarge"
-                        android:textSize="15sp"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Set the maximum number of items to put into one package" />
+                        android:text="Set the maximum number of items to put into one package"
+                        android:textSize="15sp" />
 
                     <TextView
                         style="@style/BodySmall"
@@ -173,6 +174,168 @@
 
             </LinearLayout>
 
+            <net.cachapa.expandablelayout.ExpandableLayout
+                android:id="@+id/max_items_expand"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:el_duration="500"
+                app:el_expanded="false"
+                app:el_parallax="1"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        style="@style/inputBoxStyle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/half_margin">
+
+                        <com.google.android.material.textfield.MaterialAutoCompleteTextView
+                            android:id="@+id/max_items"
+                            style="@style/inputTextStyle"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="Max # of items in one box"
+                            android:inputType="number" />
+
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <TextView
+                        style="@style/BodySmall"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/half_margin"
+                        android:drawablePadding="4dp"
+                        android:gravity="center_vertical"
+                        android:text="For cost-effective bundling, we recommend setting the quantity based on box sizes smaller than 1 cubic foot." />
+
+                    <TextView
+                        style="@style/TitleSmall"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/margin"
+                        android:text="Box Dimensions" />
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        style="@style/inputBoxStyle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:endIconDrawable="@drawable/ic_forward"
+                        app:endIconMode="custom">
+
+                        <com.google.android.material.textfield.MaterialAutoCompleteTextView
+                            android:id="@+id/box_dimensions"
+                            style="@style/inputTextStyle"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:focusable="false"
+                            android:focusableInTouchMode="false"
+                            android:hint="Select a Box Size(Optional)" />
+
+                    </com.google.android.material.textfield.TextInputLayout>
+                    <TextView
+                        style="@style/BodySmall"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/half_margin"
+                        android:drawablePadding="4dp"
+                        android:gravity="center_vertical"
+                        android:text="Navigate to your Shipping Settings to opt-in to shipping via Flat-Rate." />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:orientation="horizontal">
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            style="@style/inputBoxStyle"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="4dp"
+                            android:layout_weight="1">
+
+                            <com.google.android.material.textfield.MaterialAutoCompleteTextView
+                                android:id="@+id/length"
+                                style="@style/inputTextStyle"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:hint="Length"
+                                android:inputType="numberDecimal" />
+
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            style="@style/inputBoxStyle"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="4dp"
+                            android:layout_weight="1">
+
+                            <com.google.android.material.textfield.MaterialAutoCompleteTextView
+                                android:id="@+id/width"
+                                style="@style/inputTextStyle"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:hint="Width"
+                                android:inputType="numberDecimal" />
+
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:orientation="horizontal">
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            style="@style/inputBoxStyle"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/height_box"
+                            android:layout_marginEnd="4dp"
+                            android:layout_weight="1">
+
+                            <com.google.android.material.textfield.MaterialAutoCompleteTextView
+                                android:id="@+id/height"
+                                style="@style/inputTextStyle"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:hint="Height"
+                                android:inputType="numberDecimal" />
+
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            style="@style/inputBoxStyle"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="4dp"
+                            android:layout_weight="1"
+                            app:endIconDrawable="@drawable/ic_forward"
+                            app:endIconMode="custom">
+
+                            <com.google.android.material.textfield.MaterialAutoCompleteTextView
+                                android:id="@+id/dimension_units"
+                                style="@style/inputTextStyle"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:focusable="false"
+                                android:focusableInTouchMode="false"
+                                android:hint="Scale" />
+
+                        </com.google.android.material.textfield.TextInputLayout>
+                    </LinearLayout>
+
+                </LinearLayout>
+            </net.cachapa.expandablelayout.ExpandableLayout>
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -187,10 +350,10 @@
 
                     <TextView
                         style="@style/TitleLarge"
-                        android:textSize="15dp"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Set a fixed weight for additional items in the same package" />
+                        android:text="Set a fixed weight for additional items in the same package"
+                        android:textSize="15dp" />
 
                     <TextView
                         style="@style/BodySmall"
@@ -209,23 +372,77 @@
 
             </LinearLayout>
 
+            <net.cachapa.expandablelayout.ExpandableLayout
+                android:id="@+id/fixed_weight_expand"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:el_duration="500"
+                app:el_expanded="false"
+                app:el_parallax="1"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:orientation="horizontal">
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        style="@style/inputBoxStyle"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="4dp"
+                        android:layout_weight="1">
+
+                        <com.google.android.material.textfield.MaterialAutoCompleteTextView
+                            android:id="@+id/incremental_weight"
+                            style="@style/inputTextStyle"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="Incremental Weight"
+                            android:inputType="numberDecimal" />
+
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        style="@style/inputBoxStyle"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="4dp"
+                        android:layout_weight="1"
+                        app:endIconDrawable="@drawable/ic_forward"
+                        app:endIconMode="custom">
+
+                        <com.google.android.material.textfield.MaterialAutoCompleteTextView
+                            android:id="@+id/incremental_weight_units"
+                            style="@style/inputTextStyle"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:focusable="false"
+                            android:focusableInTouchMode="false"
+                            android:hint="Scale" />
+
+                    </com.google.android.material.textfield.TextInputLayout>
+                </LinearLayout>
+
+            </net.cachapa.expandablelayout.ExpandableLayout>
         </LinearLayout>
 
     </ScrollView>
 
-<com.google.android.material.button.MaterialButton
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    style="@style/appBtn"
-    android:layout_margin="@dimen/margin"
-    android:text="Save Profile"
-    android:id="@+id/save"
-    app:layout_constraintBottom_toBottomOf="parent"/>
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/save"
+        style="@style/appBtn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/margin"
+        android:text="Save Profile"
+        app:layout_constraintBottom_toBottomOf="parent" />
 
     <io.bidswipe.app.ui.custom.LoaderView
         android:id="@+id/loader"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone"/>
+        android:visibility="gone" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

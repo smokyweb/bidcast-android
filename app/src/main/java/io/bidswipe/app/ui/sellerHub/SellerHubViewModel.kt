@@ -22,6 +22,7 @@ import io.bidswipe.app.network.response.GetPremierShopResponse
 import io.bidswipe.app.network.response.GetProductsResponse
 import io.bidswipe.app.network.response.GetPromoteToolsDetailsResponse
 import io.bidswipe.app.network.response.GetPromoteToolsResponse
+import io.bidswipe.app.network.response.GetShippingAddressResponse
 import io.bidswipe.app.network.response.GetShippingProfilesResponse
 import io.bidswipe.app.network.response.GetShowOverviewResponse
 import io.bidswipe.app.network.response.GetTipAmountResponse
@@ -552,7 +553,9 @@ class SellerHubViewModel @Inject constructor(
 		syncPhoneContacts: RequestBody? = null,
 		suggestMyAccount: RequestBody? = null,
 		hapticFeedback: RequestBody? = null,
-		freeShipping: RequestBody? = null
+		freeShipping: RequestBody? = null,
+		shippingAddressId: RequestBody?=null,
+		instruction: RequestBody?=null,
 	) = viewModelScope.launch {
 		if (!networkMonitor.hasInternet()) {
 			_settingsStoreResponse.value = NO_INTERNET_ERROR
@@ -571,7 +574,9 @@ class SellerHubViewModel @Inject constructor(
 			syncPhoneContacts,
 			suggestMyAccount,
 			hapticFeedback,
-			freeShipping
+			freeShipping,
+			shippingAddressId,
+			instruction
 		)
 	}
 
@@ -659,5 +664,17 @@ class SellerHubViewModel @Inject constructor(
 		_changeOrderStatusResponse.value = repo.changeOrderStatus(orderId, status)
 	}
 
+	private var _getShippingAddressResponse =
+		MutableLiveData<Resource<GetShippingAddressResponse>>()
+	val getShippingAddressRepo: MutableLiveData<Resource<GetShippingAddressResponse>>
+		get() = _getShippingAddressResponse
+
+	fun getShippingAddress() = viewModelScope.launch {
+		if (!networkMonitor.hasInternet()) {
+			_getShippingAddressResponse.value = NO_INTERNET_ERROR
+			return@launch
+		}
+		_getShippingAddressResponse.value = repo.getShippingAddress()
+	}
 
 }

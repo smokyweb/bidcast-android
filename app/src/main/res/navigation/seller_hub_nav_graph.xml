@@ -131,7 +131,15 @@
     <fragment
         android:id="@+id/freePIckupFragment"
         android:name="io.bidswipe.app.ui.sellerHub.shipping.FreePickupFragment"
-        android:label="FreePIckupFragment" />
+        android:label="FreePIckupFragment" >
+        <action
+            android:id="@+id/goToAddShippingAddressFragment"
+            app:destination="@id/addShippingAddressFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+    </fragment>
     <fragment
         android:id="@+id/domesticShipmentsFragment"
         android:name="io.bidswipe.app.ui.sellerHub.shipping.DomesticShipmentsFragment"
@@ -173,5 +181,10 @@
         android:name="io.bidswipe.app.ui.sellerHub.SellerOrderDetailFragment"
         android:label="fragment_seller_order_detail"
         tools:layout="@layout/fragment_seller_order_detail" />
+    <fragment
+        android:id="@+id/addShippingAddressFragment"
+        android:name="io.bidswipe.app.ui.more.AddShippingAddressFragment"
+        android:label="fragment_add_shipping_address"
+        tools:layout="@layout/fragment_add_shipping_address" />
 
 </navigation>

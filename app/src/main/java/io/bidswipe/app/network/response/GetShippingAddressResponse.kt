@@ -29,6 +29,10 @@ data class GetShippingAddressResponse(
 		val pincode : String? ,
 		@SerializedName("street_address")
 		val streetAddress : String? ,
+		@SerializedName("city")
+		val city : String? ,
+		@SerializedName("state")
+		val state : String? ,
 		@SerializedName("type")
 		val type : String? ,
 		@SerializedName("user_id")
