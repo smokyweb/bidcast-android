@@ -43,6 +43,8 @@ class SellAdapter(mList : MutableList<SellModel> , val type : String , val mClic
 			bind.title.text = item?.title
 
 			bind.subTitle.isVisible=item?.subtitle?.isNotEmpty()==true
+			bind.selectedValue.isVisible=item?.selectedValue?.isNotEmpty()==true
+			bind.selectedValue.text=item?.selectedValue
 		}
 	}
 }

@@ -142,7 +142,7 @@
             android:layout_marginTop="@dimen/margin"
             android:minHeight="0dp"
             android:text="Also apply to scheduled shows"
-            android:textAppearance="@style/TitleMedium" />
+            android:textAppearance="@style/BodyMedium" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/save"

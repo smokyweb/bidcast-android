@@ -10,7 +10,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
-import android.widget.ArrayAdapter
 import android.widget.FrameLayout
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
@@ -22,7 +21,6 @@ import io.bidswipe.app.App
 import io.bidswipe.app.R
 import io.bidswipe.app.controller.AvailableItemAdapter
 import io.bidswipe.app.controller.UnsoldItemsAdapter
-import io.bidswipe.app.databinding.AuctionSettingsSheetBinding
 import io.bidswipe.app.databinding.FragmentManageSurpriseSetSheetBinding
 import io.bidswipe.app.interfaces.AlertClicks
 import io.bidswipe.app.interfaces.RecyclerClicks
@@ -33,7 +31,6 @@ import io.bidswipe.app.ui.custom.AlertType
 import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.ui.dashboard.DashViewModel
 import io.bidswipe.app.utils.Alerts
-import io.bidswipe.app.utils.PriceFormatter
 import io.bidswipe.app.utils.Utils
 import io.bidswipe.app.utils.asCapital
 import io.bidswipe.app.utils.asMoney
@@ -281,116 +278,36 @@ class ManageSurpriseSetSheet(var callBack: (status: String) -> Unit) : BottomShe
     }
 
     private fun auctionSettingsSheet() {
-        var selectedCounterTimer = 5
-        var selectedRequiredTime = 30
+        val initialPrice = (surpriseSet?.price ?: 1.0).toString()
 
-        val auctionSettingsSheetBind = AuctionSettingsSheetBinding.bind(
-            layoutInflater.inflate(
-                R.layout.auction_settings_sheet,
-                null,
-                false
-            )
-        )
+        AuctionSettingsSheetHelper.show(
+            context = mCtx,
+            initialPrice = initialPrice
+        ) { result ->
+            val available = surpriseSet?.items?.find { it?.status == "available" }
 
-        val sheet = Alerts.appBottomSheet(mCtx, true, auctionSettingsSheetBind)
-
-        val extraTimer = listOf(5, 7, 10)
-        extraTimer.forEachIndexed { index, time ->
-            val chip = Utils.makeAChip(
-                mCtx = mCtx,
-                text = "${time}s",
-                selected = index == 0,
-                closeIconVisible = false,
-                chipPadding = 12,
-            )
-            chip.setOnClickListener {
-                auctionSettingsSheetBind.timerChips.check(chip.id)
-                selectedCounterTimer = time
+            if (available != null) {
+                val availableUnits = available.units?.find { it?.status == "available" }
+                if (availableUnits != null) {
+                    App.socketManager?.startAuctionBreakSpot(
+                        viewModel.currentRoomId,
+                        surpriseSet?.id.toString(),
+                        available.id.toString(),
+                        availableUnits.id.toString(),
+                        result.startingBid,
+                        result.requiredTimeSeconds,
+                        result.counterTimerSeconds,
+                        result.suddenDeath,
+                    )
+                } else {
+                    Alerts.error(mCtx, "Something went wrong")
+                }
+            } else {
+                Alerts.error(mCtx, "Something went wrong")
             }
-            auctionSettingsSheetBind.timerChips.addView(chip)
+            dismiss()
+            callBack("dismiss")
         }
-
-        val requiredTimeList = listOf(15, 30, 45)
-        val requiredTimeAdapter = ArrayAdapter(
-            mCtx,
-            android.R.layout.simple_list_item_1,
-            requiredTimeList
-        )
-
-        auctionSettingsSheetBind.requiredTime.setAdapter(requiredTimeAdapter)
-
-        auctionSettingsSheetBind.requiredTime.setText("30s", false)
-
-        auctionSettingsSheetBind.requiredTime.setOnItemClickListener { _, _, position, _ ->
-            selectedRequiredTime = requiredTimeList[position]
-            auctionSettingsSheetBind.requiredTime.setText("${requiredTimeList[position]}s", false)
-        }
-
-        auctionSettingsSheetBind.requiredTime.setHapticClickListener {
-            auctionSettingsSheetBind.requiredTime.showDropDown()
-        }
-
-        auctionSettingsSheetBind.startingBid.addTextChangedListener(
-            PriceFormatter(
-                auctionSettingsSheetBind.startingBid
-            )
-        )
-
-        auctionSettingsSheetBind.startingBid.setText("1")
-
-        auctionSettingsSheetBind.close.setHapticClickListener { sheet.dismiss() }
-
-        auctionSettingsSheetBind.suddenDeath.setOnCheckedChangeListener { _, v ->
-            auctionSettingsSheetBind.counterTimerLayout.isVisible = !v
-            if (v) selectedCounterTimer = 0
-        }
-
-        auctionSettingsSheetBind.start.setHapticClickListener {
-            when {
-                selectedRequiredTime == 0 -> {
-                    Alerts.error(mCtx, "Please select required time")
-                    return@setHapticClickListener
-                }
-
-                selectedCounterTimer == 0 && !auctionSettingsSheetBind.suddenDeath.isChecked -> {
-                    Alerts.error(mCtx, "Please select counter timer")
-                    return@setHapticClickListener
-                }
-
-                auctionSettingsSheetBind.startingBid.value().isEmpty() -> {
-                    Alerts.error(mCtx, "Please enter starting bid")
-                    return@setHapticClickListener
-                }
-
-                else -> {
-                     val available = surpriseSet?.items?.find { it?.status == "available" }
-
-                    if (available != null) {
-                        val availableUnits = available.units?.find { it?.status == "available" }
-                        if (availableUnits != null) {
-                            App.socketManager?.startAuctionBreakSpot(
-                                viewModel.currentRoomId,
-                                surpriseSet?.id.toString(),
-                                available.id.toString(),
-                                availableUnits.id.toString(),
-                                auctionSettingsSheetBind.startingBid.value(),
-                                selectedRequiredTime,
-                                selectedCounterTimer,
-                                auctionSettingsSheetBind.suddenDeath.isChecked,
-                            )
-                        } else {
-                            Alerts.error(mCtx, "Something went wrong")
-                        }
-                    } else {
-                        Alerts.error(mCtx, "Something went wrong")
-                    }
-                    sheet.dismiss()
-                    dismiss()
-                    callBack("dismiss")
-                }
-            }
-        }
-        sheet.show()
     }
 
 }

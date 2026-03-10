@@ -4,6 +4,7 @@ data class SellModel(
 	val icon : Int? ,
 	val color : Int? ,
 	val title : String? ,
-	val subtitle : String? ,
+	var subtitle : String? ,
+	var selectedValue : String?="" ,
 	var status : String?  = "",
 )

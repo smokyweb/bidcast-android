@@ -32,9 +32,19 @@ class FreePickupFragment : BaseFragment<SellerHubViewModel, FragmentFreePickupBi
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        status = arguments?.getBoolean("status")
-        shippingAddress = arguments?.getString("address") ?: ""
-        val instruction = arguments?.getString("instruction") ?: ""
+        if(viewModel.shippingDetails!=null){
+            status = viewModel.shippingDetails?.freePickup==true
+            bind.freePickup.isChecked=viewModel.shippingDetails?.freePickup==true
+            if (viewModel.shippingDetails?.shippingAddress != null) {
+                shippingAddress = """
+                            ${viewModel.shippingDetails?.shippingAddress?.name}
+                            ${viewModel.shippingDetails?.shippingAddress?.streetAddress}, ${viewModel.shippingDetails?.shippingAddress?.city}, ${viewModel.shippingDetails?.shippingAddress?.state} ${viewModel.shippingDetails?.shippingAddress?.pincode}
+                            """.trimIndent()
+            }
+            bind.instruction.setText(viewModel.shippingDetails?.instruction )
+        }else{
+            bind.freePickup.isChecked=status==false
+        }
 
         bind.header.onBackClick {
             findNavController().popBackStack()
@@ -45,10 +55,6 @@ class FreePickupFragment : BaseFragment<SellerHubViewModel, FragmentFreePickupBi
 
         if (shippingAddress.isNotEmpty()) {
             bind.pickupaddress.setText(shippingAddress)
-        }
-
-        if (instruction.isNotEmpty()) {
-            bind.instruction.setText(instruction)
         }
 
         bind.freePickup.setOnCheckedChangeListener { _, checked ->

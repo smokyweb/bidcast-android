@@ -14,113 +14,116 @@ import io.bidswipe.app.databinding.FragmentShippingBinding
 import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.model.SellModel
 import io.bidswipe.app.network.Resource
-import io.bidswipe.app.network.response.SettingListResponse
 import io.bidswipe.app.ui.sellerHub.SellerHubViewModel
 import io.bidswipe.app.utils.animatedNav
 import io.bidswipe.app.utils.finish
 import io.bidswipe.app.utils.parse
 
 class ShippingFragment : BaseFragment<SellerHubViewModel, FragmentShippingBinding>() {
-	override fun getModel(): Class<SellerHubViewModel> = SellerHubViewModel::class.java
+    override fun getModel(): Class<SellerHubViewModel> = SellerHubViewModel::class.java
 
-	override fun getBind(inflater: LayoutInflater, view: ViewGroup?) =
-		FragmentShippingBinding.inflate(inflater, view, false)
+    override fun getBind(inflater: LayoutInflater, view: ViewGroup?) =
+        FragmentShippingBinding.inflate(inflater, view, false)
 
-	private var itemList = mutableListOf<SellModel>()
+    private var itemList = mutableListOf<SellModel>()
 
-	private lateinit var adapter: SellAdapter
+    private lateinit var adapter: SellAdapter
 
-	var shippingStatus : Boolean? = false
-	var shippingAddress : String? = ""
-	var instruction : String? = ""
+    var shippingStatus: Boolean? = false
+    var shippingAddress: String? = ""
+    var instruction: String? = ""
 
-	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-		super.onViewCreated(view, savedInstanceState)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
-		bind.header.onBackClick {
-			finish()
-		}
+        bind.header.onBackClick {
+            finish()
+        }
 
-		itemList.clear()
-		itemList.addAll(
-			listOf(
-				SellModel(
-					R.drawable.ic_shop,
-					R.color.outline,
-					"Free Pickup",
-					"Local pickup settings"
-				),
-				SellModel(
-					R.drawable.ic_shipping,
-					R.color.outline,
-					"Domestic Shipments",
-					"National delivery options"
-				),
-				SellModel(
-					R.drawable.ic_dollar,
-					R.color.outline,
-					"Shipping Costs",
-					"Manage shipping rates"
-				),
-				SellModel(
-					R.drawable.ic_setting,
-					R.color.outline,
-					"Shipping Profiles",
-					"Custom shipping profiles"
-				)
-			)
-		)
+        itemList.clear()
+        itemList.addAll(
+            listOf(
+                SellModel(
+                    R.drawable.ic_shop,
+                    R.color.outline,
+                    "Free Pickup",
+                    "Allow buyers to pickup any order from an address of your choice."
+                ),
+                SellModel(
+                    R.drawable.ic_shipping,
+                    R.color.outline,
+                    "Domestic Shipments",
+                    "Customise your default shipping options."
+                ),
+                SellModel(
+                    R.drawable.ic_dollar,
+                    R.color.outline,
+                    "Shipping Costs",
+                    "Offer reduced or free shipping to buyers. Selection apply to all future shipments."
+                ),
+                SellModel(
+                    R.drawable.ic_setting,
+                    R.color.outline,
+                    "Shipping Profiles",
+                    "Custom shipping profiles"
+                )
+            )
+        )
 
-		adapter = SellAdapter(itemList, "shipping", object : RecyclerClicks {
-			override fun itemClick(pos: Int, status: String?) {
-				log("CLICK $pos")
-				when (pos) {
-					0 -> findNavController().animatedNav(R.id.toFreePickup, bundleOf("status" to shippingStatus,"address" to shippingAddress,"instruction" to instruction))
-					1 -> findNavController().animatedNav(R.id.toDomesticShipments)
-					2 -> findNavController().animatedNav(R.id.toShippingCost)
-					3 -> findNavController().animatedNav(R.id.toShippingProfiles)
-					else -> findNavController().animatedNav(R.id.toFreePickup)
-				}
-			}
-		})
+        adapter = SellAdapter(itemList, "shipping", object : RecyclerClicks {
+            override fun itemClick(pos: Int, status: String?) {
+                log("CLICK $pos")
+                when (pos) {
+                    0 -> findNavController().animatedNav(R.id.toFreePickup)
+                    1 -> findNavController().animatedNav(R.id.toDomesticShipments)
+                    2 -> findNavController().animatedNav(R.id.toShippingCost)
+                    3 -> findNavController().animatedNav(R.id.toShippingProfiles)
+                    else -> findNavController().animatedNav(R.id.toFreePickup)
+                }
+            }
+        })
 
-		bind.recycler.adapter = adapter
+        bind.recycler.adapter = adapter
 
-		bind.loader.isVisible = true
-		viewModel.settingsList()
-		viewModel.settingsListRepo.observe(viewLifecycleOwner) {
-			when (it) {
-				is Resource.Success -> {
-					bind.loader.isVisible = false
-					viewModel.settingsListRepo.value = null
+        bind.loader.isVisible = true
+        viewModel.getShippingDetails()
+        viewModel.getShippingDetailsRepo.observe(viewLifecycleOwner) {
+            when (it) {
+                is Resource.Success -> {
+                    bind.loader.isVisible = false
+                    viewModel.getShippingDetailsRepo.value = null
 
-					val mData = it.value.data
+                    val mData = it.value.data
+                    viewModel.shippingDetails = mData
 
-					shippingStatus = mData?.freeShipping
-					instruction=mData?.instruction
-					if(mData?.shippingAddress!=null) {
-						shippingAddress = """
-                            ${mData?.shippingAddress?.name}
-                            ${mData?.shippingAddress?.streetAddress}, ${mData?.shippingAddress?.city}, ${mData?.shippingAddress?.state} ${mData?.shippingAddress?.pincode}
-                            """.trimIndent()
-					}
-					itemList[0].status = if (mData?.freeShipping == true) "ON" else "OFF"
+                    itemList.first().status = if (mData?.freePickup == true) "ON" else "OFF"
 
-					adapter.notifyItemChanged(0)
+                    itemList.last().subtitle=if((mData?.shippingProfilesCount?:0)>0){
+                        "You have saved ${mData?.shippingProfilesCount} shipping profiles"
+                    }else{
+                        "No shipping profiles saved yet"
+                    }
 
-				}
+                    itemList[2].selectedValue=mData?.domesticShipmentSetting?.shippingCosts
 
-				is Resource.Error -> {
-					bind.loader.isVisible = false
-					viewModel.settingsListRepo.value = null
-					it.parse(mCtx, TAG)
-				}
+                    itemList[1].selectedValue=buildString {
+                       if(mData?.domesticShipmentSetting?.uspsFirstClassMailLetter==true) append("USPS First Class Mail Letter, ")
+                        append("${mData?.domesticShipmentSetting?.domesticShipmentForm1To5Lbs}, ${mData?.domesticShipmentSetting?.domesticShipmentOver5Lbs}")
+                    }
 
-				else -> {}
+                    adapter.notifyDataSetChanged()
 
-			}
-		}
+                }
 
+                is Resource.Error -> {
+                    bind.loader.isVisible = false
+                    viewModel.getShippingDetailsRepo.value = null
+                    it.parse(mCtx, TAG)
+                }
 
-	}
+                else -> {}
+
+            }
+        }
+    }
 }

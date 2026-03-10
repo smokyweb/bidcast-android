@@ -70,6 +70,17 @@ class DomesticShipmentsFragment : BaseFragment<SellerHubViewModel, FragmentDomes
             )
         )
 
+        if (viewModel.shippingDetails != null) {
+            shipment5List.forEach {
+                it.isSelected = it.title == viewModel.shippingDetails?.domesticShipmentSetting?.domesticShipmentOver5Lbs
+            }
+            shipmentList.forEach {
+                it.isSelected = it.title == viewModel.shippingDetails?.domesticShipmentSetting?.domesticShipmentForm1To5Lbs
+            }
+            bind.firstClassMailLetterSwitch.isChecked = viewModel.shippingDetails?.domesticShipmentSetting?.uspsFirstClassMailLetter == true
+            bind.applyToScheduledShows.isChecked = viewModel.shippingDetails?.domesticShipmentSetting?.alsoApplyScheduleShow == true
+        }
+
         val domestic15Adapter = DomesticShipmentAdapter(shipmentList, object : RecyclerClicks {
             override fun itemClick(pos: Int, status: String?) {
                 if (status == null) {

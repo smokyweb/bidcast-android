@@ -22,6 +22,7 @@ import io.bidswipe.app.network.response.GetProductsResponse
 import io.bidswipe.app.network.response.GetPromoteToolsDetailsResponse
 import io.bidswipe.app.network.response.GetPromoteToolsResponse
 import io.bidswipe.app.network.response.GetShippingAddressResponse
+import io.bidswipe.app.network.response.GetShippingDetailsResponse
 import io.bidswipe.app.network.response.GetShippingProfilesResponse
 import io.bidswipe.app.network.response.GetShowOverviewResponse
 import io.bidswipe.app.network.response.GetTipAmountResponse
@@ -54,6 +55,7 @@ class SellerHubViewModel @Inject constructor(
     var selectedShippingProfile: GetShippingProfilesResponse.Data? = null
 
     var showTime: String? = null
+    var shippingDetails: GetShippingDetailsResponse.Data? = null
 
     private var _getMyScheduledShowResponse = MutableLiveData<Resource<GetMyShowResponse>>()
     val getMyScheduledShowRepo: MutableLiveData<Resource<GetMyShowResponse>>
@@ -728,5 +730,34 @@ class SellerHubViewModel @Inject constructor(
             repo.saveDomesticShipmentSetting(domesticShipmentForm1To5Lbs, domesticShipmentOver5Lbs, alsoApplyScheduleShow, uspsFirstClassMailLetter)
     }
 
+    private var _getShippingDetailsResponse = MutableLiveData<Resource<GetShippingDetailsResponse>>()
+    val getShippingDetailsRepo: MutableLiveData<Resource<GetShippingDetailsResponse>>
+        get() = _getShippingDetailsResponse
+
+    fun getShippingDetails(
+    ) = viewModelScope.launch {
+        if (!networkMonitor.hasInternet()) {
+            _getShippingDetailsResponse.value = NO_INTERNET_ERROR
+            return@launch
+        }
+        _getShippingDetailsResponse.value =
+            repo.getShippingDetails()
+    }
+
+    private var _saveShippingCostsResponse = MutableLiveData<Resource<CommonResponse>>()
+    val saveShippingCostsRepo: MutableLiveData<Resource<CommonResponse>>
+        get() = _saveShippingCostsResponse
+
+    fun saveShippingCosts(
+        shippingCosts: RequestBody?,
+        alsoApplyScheduleShow: RequestBody?,
+    ) = viewModelScope.launch {
+        if (!networkMonitor.hasInternet()) {
+            _saveShippingCostsResponse.value = NO_INTERNET_ERROR
+            return@launch
+        }
+        _saveShippingCostsResponse.value =
+            repo.saveShippingCosts(shippingCosts,alsoApplyScheduleShow)
+    }
 
 }

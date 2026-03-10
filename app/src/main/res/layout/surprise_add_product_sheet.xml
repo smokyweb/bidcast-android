@@ -106,6 +106,14 @@
 
     </com.google.android.material.textfield.TextInputLayout>
 
+    <TextView
+        android:id="@+id/productCount"
+        style="@style/BodyMedium"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/half_margin"
+        android:text="Number Of Products (Max 500): 0" />
+
     <com.google.android.material.button.MaterialButton
         android:id="@+id/confirm"
         style="@style/appBtn"

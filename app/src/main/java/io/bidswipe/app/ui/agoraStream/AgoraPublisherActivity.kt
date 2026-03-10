@@ -182,9 +182,6 @@ class AgoraPublisherActivity : BaseActivity() {
             window.decorView.setOnApplyWindowInsetsListener { _, insets ->
                 insets
             }
-        } else {
-            // For Android 14 and below
-//			window.statusBarColor = color
         }
 
         ViewCompat.setOnApplyWindowInsetsListener(window.decorView) { _, insets ->
@@ -411,13 +408,6 @@ class AgoraPublisherActivity : BaseActivity() {
                 Alerts.error(this, "Please start live show to access this feature")
             }
         }
-
-        /*val animator = ObjectAnimator.ofFloat(bind.poll, "alpha", 1f, 0f).apply {
-            duration = 500
-            repeatMode = ObjectAnimator.REVERSE
-            repeatCount = ObjectAnimator.INFINITE
-        }
-        animator.start()*/
 
         bind.cutButton.setHapticClickListener {
 
@@ -651,6 +641,14 @@ class AgoraPublisherActivity : BaseActivity() {
     }
 
     fun socketListeners() {
+        setupPollSocketListeners()
+        setupAuctionSocketListeners()
+        setupFreebieSocketListeners()
+        setupNotesSocketListeners()
+        setupTipSettingsSocketListeners()
+    }
+
+    private fun setupPollSocketListeners() {
         socketManager?.onPollCreated { json ->
             runSafe {
                 runOnUiThread {
@@ -661,7 +659,6 @@ class AgoraPublisherActivity : BaseActivity() {
                         updatePollSheet()
                     }
                 }
-
             }
         }
 
@@ -671,15 +668,13 @@ class AgoraPublisherActivity : BaseActivity() {
                     if (json.optString("roomId") == roomID) {
                         currentPoll = PollModel.fromJson(json)
                         showPollCard()
-                        updatePollUI() // Update poll card preview
-                        updatePollSheet() // Update poll details sheet if open
+                        updatePollUI()
+                        updatePollSheet()
                     }
                 }
-
             }
         }
 
-        // Listen for poll ended
         socketManager?.onPollEnded { json ->
             runSafe {
                 if (json.optString("roomId") == roomID) {
@@ -691,7 +686,9 @@ class AgoraPublisherActivity : BaseActivity() {
                 }
             }
         }
+    }
 
+    private fun setupAuctionSocketListeners() {
         socketManager?.onAuctionStarted { json ->
             runSafe {
                 if (json.roomId == roomID) {
@@ -715,7 +712,7 @@ class AgoraPublisherActivity : BaseActivity() {
                     runOnUiThread {
                         if (json.surpriseSetDetails != null) {
                             isAuctionStarted = true
-                            breakSpotAuctionData=json
+                            breakSpotAuctionData = json
                             bind.runNext.isVisible = json.status == "sold"
                             updateBreakSpotProductUI(json)
                         } else {
@@ -732,7 +729,8 @@ class AgoraPublisherActivity : BaseActivity() {
                 if (json.optString("room_id") == roomID) {
                     runOnUiThread {
                         if (json.has("product") && json.optJSONObject("product") != null) {
-                            val product = LiveShowModel.Product.fromJson(json.optJSONObject("product"))
+                            val product =
+                                LiveShowModel.Product.fromJson(json.optJSONObject("product"))
                             if (liveShowData?.auctionTypeId == AuctionType.BUY_NOW.id) {
                                 socketManager?.startAuction(
                                     viewModel.currentRoomId,
@@ -744,7 +742,10 @@ class AgoraPublisherActivity : BaseActivity() {
                                     liveShowData?.auctionTypeId
                                 )
                             } else {
-                                auctionSettingsSheet(product.id.toString(), product.price.toString())
+                                auctionSettingsSheet(
+                                    product.id.toString(),
+                                    product.price.toString()
+                                )
                             }
                         } else {
                             showProductSheet()
@@ -764,7 +765,9 @@ class AgoraPublisherActivity : BaseActivity() {
                 }
             }
         }
+    }
 
+    private fun setupFreebieSocketListeners() {
         socketManager?.getFreebie { obj ->
             runOnUiThread {
                 val res = Gson().fromJson(obj.toString(), GetFreebieObject::class.java)
@@ -794,23 +797,21 @@ class AgoraPublisherActivity : BaseActivity() {
 
                     val userList = obj.getJSONArray("users").let { array ->
                         (0 until array.length()).map { i ->
-                            array.optJSONObject(i)?.let { GetFreebieObject.Users.fromJson(it) }
+                            array.optJSONObject(i)?.let {
+                                GetFreebieObject.Users.fromJson(it)
+                            }
                         }
                     } ?: emptyList()
 
                     liveUsersList.clear()
-
                     liveUsersList.addAll(userList)
 
                     log("LIVE USERS : ${liveUsersList}")
-
                 }
             }
-
         }
 
         socketManager?.getFreebieWinner { obj ->
-
             runOnUiThread {
                 log("winner $obj")
 
@@ -818,14 +819,12 @@ class AgoraPublisherActivity : BaseActivity() {
                     log("winner2 $obj")
                     isFreebieLive = false
 
-                    // Show wheel and controls
                     bind.luckyWheelLayout.isVisible = true
                     randomizerSheetBind?.hideWheel?.isVisible = true
                     randomizerSheetBind?.showSpin?.isVisible = false
 
                     bind.showNotes.isVisible = false
                     bind.freebieLayout.isVisible = false
-
 
                     val user = GetFreebieObject.Users.fromJson(obj.optJSONObject("user"))
 
@@ -838,11 +837,11 @@ class AgoraPublisherActivity : BaseActivity() {
                         bind.luckyWheel.rotateWheel()
                     }
                 }
-
             }
-
         }
+    }
 
+    private fun setupNotesSocketListeners() {
         socketManager?.receiveShowNotes { args ->
             runSafe {
                 if (args.optString("room_id") == roomID) {
@@ -850,7 +849,9 @@ class AgoraPublisherActivity : BaseActivity() {
                 }
             }
         }
+    }
 
+    private fun setupTipSettingsSocketListeners() {
         socketManager?.onSaveTipSettingResult { obj ->
             runOnUiThread {
                 log("Message : ${obj} ")
@@ -941,18 +942,11 @@ class AgoraPublisherActivity : BaseActivity() {
             runSafe {
                 if (showData.roomId == roomID) {
                     productList.clear()
-
                     productList.addAll(showData.products)
-
                     showData.products.find { it?.isCurrent == true }
-
-//					updateProductUI(liveProduct, liveProduct?.price)
-
                     log("ROOM CREATED : $showData")
                 }
-
             }
-//			startLiveDurationTimer()
         }
 
         socketManager?.onDurationUpdate { obj ->
@@ -992,9 +986,7 @@ class AgoraPublisherActivity : BaseActivity() {
         socketManager?.initialize(socketUrl, mapOf("uid" to userId))
         socketManager?.connect(onConnected = {
             socketManager?.joinRoom(roomID, userId) {
-
             }
-//			socketManager?.emitViewerJoin(roomID)
         }) { err ->
             log("Socket connect error: $err")
         }
@@ -1066,8 +1058,6 @@ class AgoraPublisherActivity : BaseActivity() {
                         productList.addAll(product.products)
                         val products = LiveShowModel.fromJson(json)
                         products.products.find { it?.isCurrent == true }
-//						updateProductUI(currentProduct, currentProduct?.price )
-//						productAdapter.notifyDataSetChanged()
                     }
                 }
             }
@@ -1574,109 +1564,22 @@ class AgoraPublisherActivity : BaseActivity() {
     }
 
     private fun auctionSettingsSheet(productId: String, price: String) {
-        var selectedCounterTimer = 5
-        var selectedRequiredTime = 30
+        AuctionSettingsSheetHelper.show(
+            context = this,
+            initialPrice = price
+        ) { result ->
+            val productIds = mutableListOf(productId)
 
-        val auctionSettingsSheetBind = AuctionSettingsSheetBinding.bind(
-            layoutInflater.inflate(
-                R.layout.auction_settings_sheet,
-                null,
-                false
+            socketManager?.startAuction(
+                viewModel.currentRoomId,
+                productIds,
+                result.startingBid,
+                result.requiredTimeSeconds,
+                result.counterTimerSeconds,
+                result.suddenDeath,
+                liveShowData?.auctionTypeId
             )
-        )
-
-        val sheet = Alerts.appBottomSheet(this, true, auctionSettingsSheetBind)
-
-        val extraTimer = listOf(5, 7, 10)
-        extraTimer.forEachIndexed { index, time ->
-            val chip = Utils.makeAChip(
-                mCtx = this,
-                text = "${time}s",
-                selected = index == 0,
-                closeIconVisible = false,
-                chipPadding = 12,
-            )
-            chip.setOnClickListener {
-                auctionSettingsSheetBind.timerChips.check(chip.id)
-                selectedCounterTimer = time
-            }
-            auctionSettingsSheetBind.timerChips.addView(chip)
         }
-
-        auctionSettingsSheetBind.startingBid.addTextChangedListener(
-            PriceFormatter(
-                auctionSettingsSheetBind.startingBid
-            )
-        )
-
-        val requiredTimeList = listOf(15, 30, 45)
-        val requiredTimeAdapter = ArrayAdapter(
-            this,
-            android.R.layout.simple_list_item_1,
-            requiredTimeList
-        )
-
-        auctionSettingsSheetBind.requiredTime.setAdapter(requiredTimeAdapter)
-
-        auctionSettingsSheetBind.requiredTime.setText("30s", false)
-
-        auctionSettingsSheetBind.requiredTime.setOnItemClickListener { _, _, position, _ ->
-            selectedRequiredTime = requiredTimeList[position]
-            auctionSettingsSheetBind.requiredTime.setText("${requiredTimeList[position]}s", false)
-        }
-
-        auctionSettingsSheetBind.requiredTime.setHapticClickListener {
-            auctionSettingsSheetBind.requiredTime.showDropDown()
-        }
-
-        auctionSettingsSheetBind.startingBid.setText(price)
-
-        auctionSettingsSheetBind.close.setHapticClickListener { sheet.dismiss() }
-        auctionSettingsSheetBind.start.setHapticClickListener {
-
-            when {
-                selectedRequiredTime == 0 -> {
-                    Alerts.error(this, "Please select required time")
-                    return@setHapticClickListener
-                }
-
-                selectedCounterTimer == 0 -> {
-                    Alerts.error(this, "Please select counter timer")
-                    return@setHapticClickListener
-                }
-
-                auctionSettingsSheetBind.startingBid.value().isEmpty() -> {
-                    Alerts.error(this, "Please enter starting bid")
-                    return@setHapticClickListener
-                }
-
-                else -> {
-                    val productIds = mutableListOf<String>()
-                    productIds.add(productId)
-
-                    socketManager?.startAuction(
-                        viewModel.currentRoomId,
-                        productIds,
-                        auctionSettingsSheetBind.startingBid.value(),
-                        selectedRequiredTime,
-                        selectedCounterTimer,
-                        auctionSettingsSheetBind.suddenDeath.isChecked,
-                        liveShowData?.auctionTypeId
-                    )
-                    sheet.dismiss()
-
-                }
-
-            }
-
-//             auctionSettingsSheetBind.startingBid.value()
-//             selectedRequiredTime
-//             selectedCounterTimer
-//             auctionSettingsSheetBind.suddenDeath.isChecked
-        }
-
-        sheet.show()
-
     }
 
     private fun showNotesSheet() {
@@ -2157,7 +2060,6 @@ class AgoraPublisherActivity : BaseActivity() {
         }
 
         bind.centerOfWheel.setOnClickListener {
-//            bind.luckyWheel.rotateWheel()
             if (freebieUsers.isEmpty()) {
                 Alerts.error(this, "Please enter entries to spin wheel")
                 return@setOnClickListener
@@ -2194,11 +2096,7 @@ class AgoraPublisherActivity : BaseActivity() {
         randomizerSheetBind?.recycler?.adapter =
             RandomizerEntriesAdapter(freebieUsers, object : RecyclerClicks {
                 override fun itemClick(pos: Int, status: String?) {
-
                     socketManager?.removeFreebieUser(roomID, freebieUsers[pos]?.id.toString())
-
-                    /*freebieUsers.removeAt(pos)
-                    randomizerSheetBind?.recycler?.adapter?.notifyItemRemoved(pos)*/
                 }
             })
 
@@ -2275,13 +2173,7 @@ class AgoraPublisherActivity : BaseActivity() {
             }
 
             freebieUsers.shuffle()
-
-//			currentEntries.shuffle()
-
             randomizerSheetBind?.recycler?.adapter?.notifyDataSetChanged()
-
-//			randomizerSheetBind.manualEntry.setText(currentEntries.joinToString("\n"))
-
             setUpWheel(freebieUsers)
         }
 
@@ -2291,7 +2183,6 @@ class AgoraPublisherActivity : BaseActivity() {
             setUpWheel(freebieUsers)
         }
 
-        // Spin the wheel
         randomizerSheetBind?.spinWheel?.setOnClickListener {
             if (freebieUsers.isEmpty()) {
                 Alerts.error(this, "Please enter entries to spin wheel")
@@ -2301,7 +2192,6 @@ class AgoraPublisherActivity : BaseActivity() {
             socketManager?.finalizeFreebie(roomID)
 
             randomSheet.dismiss()
-//			bind.luckyWheel.rotateWheel()
         }
 
 

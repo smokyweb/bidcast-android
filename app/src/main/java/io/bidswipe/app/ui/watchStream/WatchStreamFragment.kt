@@ -298,16 +298,11 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
         bind.recycler.adapter = commentAdapter
 
         if (socketUrl.isNotEmpty()) {
-//            socketManager = SocketManager.getInstance(requireContext())
-//            socketManager?.initialize(socketUrl, mapOf("uid" to userId))
-//            socketManager?.connect(onConnected = {
             socketManager = App.socketManager
             socketManager?.joinRoom(roomID, userId) {
             }
-//            }) { err -> log("Socket connect error: $err") }
 
             socketManager?.onViewerCount { args ->
-
                 runSafe {
                     if (args.optString("room_id") == roomID) {
                         requireActivity().runOnUiThread {
@@ -369,8 +364,6 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
                         if (json.optString("room_id") == roomID) {
                             val products = LiveShowModel.fromJson(json)
                             products.products.find { it?.isCurrent == true }
-//                            updateProductUI(currentProduct , currentProduct?.price)
-//                            setBidText(currentProduct?.price)
                         }
 
                     }
@@ -536,8 +529,6 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
             socketManager?.onVoteErrorResult { obj ->
                 requireActivity().runOnUiThread {
                     if (obj.optString("room_id") == roomID) {
-//                    Alerts.error(mCtx, "Vote failed")
-
                     }
                 }
             }
@@ -706,16 +697,8 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
                 (requireActivity() as ViewLiveShowActivity).enterPictureInPictureMode(pipParams)
             }
 
-//			requireActivity().setResult(Activity.RESULT_OK, Intent().putExtra("sellerId", sellerId).putExtra("type", "shop"))
-
             App.isWatchStreamInPIP.value = true
             App.currentSellerId = sellerId
-
-//			requireActivity().finish()
-
-
-//			startActivity(Intent(mCtx, ProductDetailsActivity::class.java).putExtra("type", "shop").putExtra("sellerId", sellerId).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
-
         }
 
         if (App.profileResponse.value?.buyerIdentityStatus != "verified") {
@@ -920,7 +903,6 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
         attachAgoraCallbacks()
 
         socketManager?.joinRoom(roomID, userId) {
-//            socketManager?.sendMessage(roomID, "Joined \uD83D\uDC4B", userId, userName, userImage)
             socketManager?.joinShow(userId, roomID)
         }
 
@@ -941,7 +923,6 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
         super.onDestroy()
         log("DESTRO CALLED")
         socketManager?.leaveRoom(roomID, userId)
-//        socketManager?.disconnect()
         App.manager.leaveChannel()
     }
 
@@ -982,11 +963,6 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
         bind.hostView.removeAllViews()
         bind.productLayout.isVisible = false
         bind.soldLayout.isVisible = true
-
-        // Show thumbnail again when video is cleared
-        /*if (!isSocketDataLoaded) {
-            showThumbnail()
-        }*/
     }
 
     fun setUpSwipe() {
@@ -1115,6 +1091,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
     }
 
     private fun setBidText(bidAmount: String?) {
+        log("BID AMOUNT 1: $bidAmount")
         if (liveShowData?.auctionTypeId == AuctionType.BUY_NOW.id) {
             bind.bidTime.isVisible = false
             bind.bidPrice.isVisible = false
@@ -1256,8 +1233,15 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
                 bind.productImageCard.isVisible = false
                 bind.itemsLeftProgress.isVisible = true
 
-                val price = (liveProduct.productSet?.price ?: 0.0).toString()
-                bind.price.text = "+ Shipping + Taxes"
+                val price =  if( liveProduct.productSet?.type == "buy_it_now"){
+                   (liveProduct.productSet?.price ?: 0.0).toString()
+                }else{
+                    auctionData.startingBidAmount
+                }
+
+                 bind.price.text = "$price + Shipping + Taxes"
+
+                log("BID AMOUNT 3 : $price  -- ${liveProduct.productSet?.price}")
 
                 if (liveProduct.productSet?.type == "auction") {
                     if (auctionData.suddenDeath == true) {
@@ -1277,6 +1261,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
                 } else {
                     auctionData.startingBidAmount
                 }
+                log("BID AMOUNT 2 : $highestBidAmount")
 
                 bidProductId = liveProduct.productSet?.id.toString()
 
@@ -1834,13 +1819,6 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
                 amount = sendTipSheetBind.customOffer.text.toString()
             )
 
-            /*bind.loader.isVisible = true
-            viewModel.sendTipAmount(
-                sellerId!!.request(),
-                sendTipSheetBind.customOffer.text.toString().request(),
-                null
-            )*/
-
         }
 
         sendTipSheet.show()
@@ -2010,7 +1988,6 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
         sellerMenuList.add(MoreModel(R.drawable.ic_flying_money, "Tip or Boost", "tip"))
         sellerMenuList.add(MoreModel(R.drawable.ic_rounded_profile, "View Profile", "profile"))
         sellerMenuList.add(MoreModel(R.drawable.ic_outlined_message, "Message", "message"))
-//		sellerMenuList.add(MoreModel(R.drawable.ic_mention, "Mention in Chat", "mention"))
         sellerMenuList.add(MoreModel(R.drawable.ic_block, "Block", "block"))
         sellerMenuList.add(MoreModel(R.drawable.ic_warning, "Report", "report"))
 
@@ -2159,7 +2136,6 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
             (requireActivity() as ViewLiveShowActivity).bind.root.getGlobalVisibleRect(visibleRect)
             pipParams = PictureInPictureParams.Builder().apply {
                 setAspectRatio(Rational(100, 200))
-//                setAspectRatio(Rational(2, 5))
                 setSourceRectHint(visibleRect)
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {

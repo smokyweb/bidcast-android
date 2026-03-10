@@ -28,26 +28,68 @@
 	        android:layout_height = "wrap_content"
 	        android:orientation = "vertical" >
 
-            <TextView
+            <io.bidswipe.app.ui.custom.InfoCard
 	            android:id = "@+id/labelInstructions"
 	            style = "@style/BodyMedium"
 	            android:layout_width = "match_parent"
+				android:layout_marginTop="@dimen/margin"
 	            android:layout_height = "wrap_content"
-	            android:layout_margin = "@dimen/margin"
-	            android:text = "Costs calculated based on buyer's location and shipment weight, Only applies to shipments within the contiguous US." />
+				android:layout_marginHorizontal="@dimen/margin"
+	            app:infoText = "Costs calculated based on buyer's location and shipment weight, Only applies to shipments within the contiguous US." />
 
             <androidx.recyclerview.widget.RecyclerView
 	            android:id = "@+id/cost_recycler"
 	            android:layout_width = "match_parent"
 	            android:layout_height = "wrap_content"
-	            android:layout_marginHorizontal = "@dimen/margin"
+	            android:layout_marginHorizontal = "@dimen/half_margin"
 	            android:nestedScrollingEnabled = "false"
 	            app:layoutManager = "androidx.recyclerview.widget.LinearLayoutManager"
 	            tools:itemCount = "2"
 	            tools:listitem = "@layout/domestic_shipment_item" />
 
+			<net.cachapa.expandablelayout.ExpandableLayout
+				android:id="@+id/expand_view"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				app:el_duration="500"
+				app:el_expanded="false"
+				app:el_parallax="1"
+				android:layout_marginHorizontal="@dimen/margin"
+				app:layout_constraintTop_toTopOf="parent">
 
-        </LinearLayout >
+				<LinearLayout
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:orientation="vertical">
+					<TextView
+						style="@style/TitleSmall"
+						android:layout_width="match_parent"
+						android:layout_height="wrap_content"
+						android:layout_marginTop="@dimen/margin"
+						android:text="Price" />
+
+					<com.google.android.material.textfield.TextInputLayout
+						style="@style/inputBoxStyle"
+						android:layout_width="match_parent"
+						android:layout_marginBottom="@dimen/margin"
+						app:prefixText="$"
+						app:prefixTextAppearance="@style/BodyMedium"
+						android:layout_height="wrap_content">
+
+						<com.google.android.material.textfield.TextInputEditText
+							android:id="@+id/price"
+							style="@style/inputTextStyle"
+							android:layout_width="match_parent"
+							android:layout_height="wrap_content"
+							android:inputType="numberDecimal"
+							android:hint="@string/enter_price" />
+
+					</com.google.android.material.textfield.TextInputLayout>
+
+				</LinearLayout>
+			</net.cachapa.expandablelayout.ExpandableLayout>
+
+		</LinearLayout >
 
     </ScrollView >
 
@@ -59,6 +101,7 @@
 	    app:layout_constraintBottom_toBottomOf = "parent" >
 
             <com.google.android.material.checkbox.MaterialCheckBox
+				android:id="@+id/alsoApplyScheduleShow"
 	            style = "@style/appCheckbox"
 	            android:layout_width = "match_parent"
 	            android:layout_height = "wrap_content"
@@ -66,7 +109,7 @@
 	            android:layout_marginTop = "@dimen/margin"
 	            android:minHeight = "0dp"
 	            android:text = "Also apply to scheduled shows"
-	            android:textAppearance = "@style/TitleMedium" />
+	            android:textAppearance = "@style/BodyMedium" />
 
         <com.google.android.material.button.MaterialButton
 	        android:id = "@+id/save"
@@ -77,5 +120,11 @@
 	        android:text = "Save" />
 
     </LinearLayout >
+
+	<io.bidswipe.app.ui.custom.LoaderView
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:id="@+id/loader"
+		android:visibility="gone"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout >

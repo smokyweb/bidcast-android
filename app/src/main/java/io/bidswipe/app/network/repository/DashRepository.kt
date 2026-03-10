@@ -719,4 +719,7 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
         )
     }
 
+    suspend fun saveShippingCosts(shippingCosts: RequestBody?, alsoApplyScheduleShow: RequestBody?,) = call { api.saveShippingCosts(shippingCosts ,alsoApplyScheduleShow) }
+    suspend fun getShippingDetails() = call { api.getShippingDetails() }
+
 }

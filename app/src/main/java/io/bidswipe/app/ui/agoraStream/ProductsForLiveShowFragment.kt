@@ -13,7 +13,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
-import android.widget.ArrayAdapter
 import android.widget.FrameLayout
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
@@ -31,7 +30,6 @@ import io.bidswipe.app.R
 import io.bidswipe.app.controller.FirebaseProductAdapter
 import io.bidswipe.app.controller.SellAdapter
 import io.bidswipe.app.controller.SurpriseProductAdapter
-import io.bidswipe.app.databinding.AuctionSettingsSheetBinding
 import io.bidswipe.app.databinding.FragmentProductsForLiveShowBinding
 import io.bidswipe.app.databinding.SelectProductTypeSheetBinding
 import io.bidswipe.app.interfaces.AlertClicks
@@ -44,7 +42,6 @@ import io.bidswipe.app.network.response.Product
 import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.ui.dashboard.DashViewModel
 import io.bidswipe.app.utils.Alerts
-import io.bidswipe.app.utils.PriceFormatter
 import io.bidswipe.app.utils.SocketManager
 import io.bidswipe.app.utils.Utils
 import io.bidswipe.app.utils.parse
@@ -367,14 +364,7 @@ class ProductsForLiveShowFragment : BottomSheetDialogFragment() {
                             dismiss()
                         }
                     } else if (status == "set_next") {
-//                        selectedPos = pos
-//                        socketManager?.pinProduct(roomId = viewModel.currentRoomId, productId = selectedProduct?.id.toString())
                     } else if (status == "freebie") {
-//                        surpriseProductList.forEachIndexed { index, item ->
-//                            item?.selected = index == pos
-//                            bind.recycler.adapter?.notifyDataSetChanged()
-//                        }
-//                        selectedPos = pos
                     }
                 }
             })
@@ -517,9 +507,6 @@ class ProductsForLiveShowFragment : BottomSheetDialogFragment() {
                     }
 
                     surpriseProductList.forEach {
-//                        if (viewModel.pinnedProducts.contains(it?.id.toString())) {
-//                            it?.selected = true
-//                        }
                     }
 
                     if (surpriseProductList.isEmpty()) {
@@ -580,109 +567,23 @@ class ProductsForLiveShowFragment : BottomSheetDialogFragment() {
     }
 
     private fun auctionSettingsSheet(productId: String, price: String) {
-        var selectedCounterTimer = 5
-        var selectedRequiredTime = 30
+        AuctionSettingsSheetHelper.show(
+            context = mCtx,
+            initialPrice = price
+        ) { result ->
+            val productIds = mutableListOf(productId)
 
-        val auctionSettingsSheetBind = AuctionSettingsSheetBinding.bind(
-            layoutInflater.inflate(
-                R.layout.auction_settings_sheet,
-                null,
-                false
+            socketManager?.startAuction(
+                viewModel.currentRoomId,
+                productIds,
+                result.startingBid,
+                result.requiredTimeSeconds,
+                result.counterTimerSeconds,
+                result.suddenDeath,
+                auctionTypeId
             )
-        )
-
-        val sheet = Alerts.appBottomSheet(mCtx, true, auctionSettingsSheetBind)
-
-        val extraTimer = listOf(5, 7, 10)
-        extraTimer.forEachIndexed { index, time ->
-            val chip = Utils.makeAChip(
-                mCtx = mCtx,
-                text = "${time}s",
-                selected = index == 0,
-                closeIconVisible = false,
-                chipPadding = 12,
-            )
-            chip.setOnClickListener {
-                auctionSettingsSheetBind.timerChips.check(chip.id)
-                selectedCounterTimer = time
-            }
-            auctionSettingsSheetBind.timerChips.addView(chip)
+            dismiss()
         }
-
-        val requiredTimeList = listOf(15, 30, 45)
-        val requiredTimeAdapter = ArrayAdapter(
-            mCtx,
-            android.R.layout.simple_list_item_1,
-            requiredTimeList
-        )
-
-        auctionSettingsSheetBind.requiredTime.setAdapter(requiredTimeAdapter)
-
-        auctionSettingsSheetBind.requiredTime.setText("30s", false)
-
-        auctionSettingsSheetBind.requiredTime.setOnItemClickListener { _, _, position, _ ->
-            selectedRequiredTime = requiredTimeList[position]
-            auctionSettingsSheetBind.requiredTime.setText("${requiredTimeList[position]}s", false)
-        }
-
-        auctionSettingsSheetBind.requiredTime.setHapticClickListener {
-            auctionSettingsSheetBind.requiredTime.showDropDown()
-        }
-
-        auctionSettingsSheetBind.startingBid.addTextChangedListener(
-            PriceFormatter(
-                auctionSettingsSheetBind.startingBid
-            )
-        )
-        auctionSettingsSheetBind.startingBid.setText(price)
-
-        auctionSettingsSheetBind.close.setHapticClickListener { sheet.dismiss() }
-
-        auctionSettingsSheetBind.suddenDeath.setOnCheckedChangeListener { _, v ->
-            auctionSettingsSheetBind.counterTimerLayout.isVisible = !v
-            if (v) selectedCounterTimer = 0
-        }
-
-        auctionSettingsSheetBind.start.setHapticClickListener {
-
-            when {
-                selectedRequiredTime == 0 -> {
-                    Alerts.error(mCtx, "Please select required time")
-                    return@setHapticClickListener
-                }
-
-                selectedCounterTimer == 0 && !auctionSettingsSheetBind.suddenDeath.isChecked -> {
-                    Alerts.error(mCtx, "Please select counter timer")
-                    return@setHapticClickListener
-                }
-
-                auctionSettingsSheetBind.startingBid.value().isEmpty() -> {
-                    Alerts.error(mCtx, "Please enter starting bid")
-                    return@setHapticClickListener
-                }
-
-                else -> {
-                    val productIds = mutableListOf<String>()
-                    productIds.add(productId)
-
-                    socketManager?.startAuction(
-                        viewModel.currentRoomId,
-                        productIds,
-                        auctionSettingsSheetBind.startingBid.value(),
-                        selectedRequiredTime,
-                        selectedCounterTimer,
-                        auctionSettingsSheetBind.suddenDeath.isChecked,
-                        auctionTypeId
-                    )
-                    sheet.dismiss()
-                    dismiss()
-                }
-            }
-
-        }
-
-        sheet.show()
-
     }
 
     private fun addProductSheet() {
@@ -697,12 +598,6 @@ class ProductsForLiveShowFragment : BottomSheetDialogFragment() {
         val mSellSheet = Alerts.appBottomSheet(mCtx, true, sheetView)
 
         val sellList = mutableListOf(
-//                SellModel(
-//                    R.drawable.ic_quick,
-//                    R.color.primaryContainer,
-//                    "Create Temporary Listing",
-//                    ""
-//                ),
             SellModel(
                 R.drawable.ic_tag_outline,
                 R.color.primaryContainer,

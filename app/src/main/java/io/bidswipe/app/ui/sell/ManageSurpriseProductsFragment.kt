@@ -105,6 +105,11 @@ class ManageSurpriseProductsFragment : BaseFragment<DashViewModel, FragmentManag
             surpriseAddProductSheet.dismiss()
         }
 
+        // Show current total quantity on the sheet so user can see how much is already added
+        val addedQuantity = viewModel.surpriseSetList.sumOf { it?.quantity ?: 0 }
+        surpriseAddProductSheetBind.productCount.text =
+            "Number Of Products (Max 500): $addedQuantity"
+
         surpriseAddProductSheetBind.confirm.setHapticClickListener {
             val addedQuantity = viewModel.surpriseSetList.sumOf { it?.quantity ?: 0 }
             when {

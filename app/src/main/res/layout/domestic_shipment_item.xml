@@ -3,11 +3,12 @@
 	style = "@style/shadowStyle"
 	android:layout_width = "match_parent"
 	android:layout_height = "wrap_content"
-	android:layout_margin = "@dimen/half_margin"
+	android:layout_marginHorizontal="4dp"
+	android:layout_marginVertical="@dimen/half_margin"
 	android:background = "@drawable/card_8"
 	android:gravity = "center_vertical"
 	android:orientation = "horizontal"
-	android:padding = "@dimen/margin" >
+	android:padding = "12dp" >
 
     <androidx.appcompat.widget.AppCompatImageView
 	    android:id = "@+id/image"
@@ -27,12 +28,10 @@
 
             <TextView
 	            android:id = "@+id/title"
-	            style = "@style/TitleMedium"
+	            style = "@style/TitleSmall"
 	            android:layout_width = "match_parent"
 	            android:layout_height = "wrap_content"
-	            android:text = "USPS First-Class Mail Letter"
-	            android:textSize = "16dp"
-	            android:textStyle = "bold" />
+	            android:text = "USPS First-Class Mail Letter" />
 
             <TextView
 	            android:id = "@+id/subTitle"
@@ -48,6 +47,8 @@
 	        style="@style/appRadio"
 	        android:id = "@+id/check"
 	        android:layout_width = "wrap_content"
+			android:minWidth="0dp"
+			android:minHeight="0dp"
             android:includeFontPadding="false"
             android:layoutDirection="rtl"
 	        android:layout_height = "wrap_content" />

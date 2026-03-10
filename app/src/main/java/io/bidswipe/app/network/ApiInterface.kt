@@ -51,6 +51,7 @@ import io.bidswipe.app.network.response.GetPurchaseDetail
 import io.bidswipe.app.network.response.GetRatingResponse
 import io.bidswipe.app.network.response.GetReportCategoriesResponse
 import io.bidswipe.app.network.response.GetShippingAddressResponse
+import io.bidswipe.app.network.response.GetShippingDetailsResponse
 import io.bidswipe.app.network.response.GetShippingProfilesResponse
 import io.bidswipe.app.network.response.GetShowDetailsResponse
 import io.bidswipe.app.network.response.GetShowOverviewResponse
@@ -924,7 +925,7 @@ interface ApiInterface {
         @Query("set_id") setId: String?
     ): ProductSetDetailsResponse
 
-   @GET("api/get-usps-shipping-price")
+    @GET("api/get-usps-shipping-price")
     suspend fun getUSPSBoxDimensions(
     ): GetUSPSboxDimensionsResponse
 
@@ -934,6 +935,18 @@ interface ApiInterface {
         @Part("domestic_shipment_form_1_to_5_lbs") domesticShipmentForm1To5Lbs: RequestBody?,
         @Part("domestic_shipment_over_5_lbs") domesticShipmentOver5Lbs: RequestBody?,
         @Part("also_apply_schedule_show") alsoApplyScheduleShow: RequestBody?,
-        @Part("usps_first_class_mail_letter") uspsFirstClassMailLetter: RequestBody?): CommonResponse
+        @Part("usps_first_class_mail_letter") uspsFirstClassMailLetter: RequestBody?
+    ): CommonResponse
+
+    @GET("api/get-shipping-details")
+    suspend fun getShippingDetails(
+    ): GetShippingDetailsResponse
+
+    @Multipart
+    @POST("api/save-shipping-costs")
+    suspend fun saveShippingCosts(
+        @Part("shipping_costs") shippingCosts:RequestBody?,
+        @Part("shipping_cost_also_apply_schedule_show") alsoApplyScheduleShow: RequestBody?,
+    ): CommonResponse
 }
 
