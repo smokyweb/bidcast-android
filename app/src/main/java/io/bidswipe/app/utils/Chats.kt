@@ -34,9 +34,9 @@ class Chats(
 		const val IMAGE = "image"
 		const val VIDEO = "video"
 		const val AUDIO = "audio"
+        const val PDF = "pdf"
 		const val TEXT = "text"
 		const val DATE = "date"
-		const val PDF = "pdf"
 		const val SHARE = "share"
 	}
 

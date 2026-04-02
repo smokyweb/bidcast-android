@@ -103,7 +103,7 @@
         android:id="@+id/createProductFragment"
         android:name="io.bidswipe.app.ui.scheduleShow.CreateProductFragment"
         android:label="fragment_create_product"
-        tools:layout="@layout/fragment_create_product">
+        tools:layout="@layout/fragment_list_a_product">
         <action
             android:id="@+id/goToChooseSalesFormatFragment"
             app:destination="@id/chooseSalesFormatFragment"

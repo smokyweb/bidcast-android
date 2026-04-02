@@ -16,38 +16,45 @@ import androidx.core.view.isVisible
 import androidx.core.widget.doAfterTextChanged
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.tabs.TabLayout
 import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseFragment
 import io.bidswipe.app.controller.ImageAdapter
 import io.bidswipe.app.controller.ProductVariantAdapter
 import io.bidswipe.app.databinding.AttachmentChooserSheetBinding
-import io.bidswipe.app.databinding.FragmentCreateProductBinding
+import io.bidswipe.app.databinding.FragmentListAProductBinding
 import io.bidswipe.app.interfaces.AlertClicks
 import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.model.MediaItem
 import io.bidswipe.app.network.Resource
+import io.bidswipe.app.network.request.StoreProductRequest
 import io.bidswipe.app.network.response.GetCategoryResponse
 import io.bidswipe.app.network.response.GetMailClassesResponse
 import io.bidswipe.app.network.response.GetShippingProfilesResponse
+import io.bidswipe.app.ui.custom.AlertType
 import io.bidswipe.app.ui.custom.AppBottomSheet
+import io.bidswipe.app.ui.sellerHub.SellerHubActivity
 import io.bidswipe.app.utils.Alerts
 import io.bidswipe.app.utils.Const
+import io.bidswipe.app.utils.PriceFormatter
 import io.bidswipe.app.utils.Utils
 import io.bidswipe.app.utils.clr
 import io.bidswipe.app.utils.cropper.CustomCropImageContract
 import io.bidswipe.app.utils.hideKeyboard
-import io.bidswipe.app.utils.ids
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.setHapticClickListener
+import io.bidswipe.app.utils.value
+import okhttp3.MultipartBody
 import java.io.File
 import java.io.FileOutputStream
+import android.content.Intent
 
 @SuppressLint("NotifyDataSetChanged")
-class CreateProductFragment : BaseFragment<ScheduleShowViewModel, FragmentCreateProductBinding>() {
+class CreateProductFragment : BaseFragment<ScheduleShowViewModel, FragmentListAProductBinding>() {
     override fun getModel(): Class<ScheduleShowViewModel> = ScheduleShowViewModel::class.java
 
     override fun getBind(inflater: LayoutInflater, view: ViewGroup?) =
-        FragmentCreateProductBinding.inflate(inflater, view, false)
+        FragmentListAProductBinding.inflate(inflater, view, false)
 
     private var categoryList = mutableListOf<GetCategoryResponse.Data?>()
     private var subCategoryList = mutableListOf<GetCategoryResponse.Data?>()
@@ -55,7 +62,6 @@ class CreateProductFragment : BaseFragment<ScheduleShowViewModel, FragmentCreate
     private var uploadItemIndex = -1
     private var profiles = mutableListOf<GetShippingProfilesResponse.Data?>()
     private var profileId = ""
-    var isSubCategory = false
     var variantList = mutableListOf<GetCategoryResponse.Data.ExtraField?>()
     private val imageList get() = viewModel.productImages
     private lateinit var variantAdapter: ProductVariantAdapter
@@ -64,6 +70,9 @@ class CreateProductFragment : BaseFragment<ScheduleShowViewModel, FragmentCreate
     lateinit var imageAdapter: ImageAdapter
     private fun getPhotoCount(): Int = imageList.count { !it.isVideo }
     private fun getVideoCount(): Int = imageList.count { it.isVideo }
+
+    private var selectedCondition = ""
+    private var submitType: String = "active"
 
     private fun updateMediaCounts() {
         bind.imageLimit.text = buildSpannedString {
@@ -195,6 +204,12 @@ class CreateProductFragment : BaseFragment<ScheduleShowViewModel, FragmentCreate
 
         clearProductData()
 
+        bind.price.addTextChangedListener(PriceFormatter(bind.price))
+
+        // Product is created for same category as the show.
+        bind.category.isEnabled = false
+        bind.subCategory.isEnabled = false
+
         variantAdapter = ProductVariantAdapter(variantList, object : RecyclerClicks {
             override fun itemClick(pos: Int, status: String?) {
             }
@@ -217,7 +232,8 @@ class CreateProductFragment : BaseFragment<ScheduleShowViewModel, FragmentCreate
         bind.condition.setDropDownBackgroundDrawable(draw)
 
         bind.condition.setOnItemClickListener { _, _, position, _ ->
-            viewModel.condition = conditionList[position].replace(" ", "_")
+            selectedCondition = conditionList[position].replace(" ", "_")
+            viewModel.condition = selectedCondition
         }
 
         bind.condition.setHapticClickListener {
@@ -237,7 +253,7 @@ class CreateProductFragment : BaseFragment<ScheduleShowViewModel, FragmentCreate
             bind.mailClass.setText(it.label, false)
         }
         viewModel.productProcessingCategory?.let {
-            bind.procategory.setText(it.replace("_", " "), false)
+            bind.proCategory.setText(it.replace("_", " "), false)
         }
 
         bind.productTitle.doAfterTextChanged {
@@ -265,15 +281,77 @@ class CreateProductFragment : BaseFragment<ScheduleShowViewModel, FragmentCreate
         bind.root.setHapticClickListener {
             hideKeyboard(it)
         }
-        bind.main.setHapticClickListener {
-            hideKeyboard(it)
+        bind.mainLayout.setHapticClickListener { hideKeyboard(it) }
+
+        bind.tabs.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+            override fun onTabSelected(tab: TabLayout.Tab?) {
+                bind.flashSell.isChecked = false
+                bind.acceptOffers.isChecked = false
+                bind.reserveForLive.isChecked = false
+
+                when (tab?.position) {
+                    0 -> {
+                        bind.acceptOffersLayout.isVisible = true
+                        bind.flashLayout.isVisible = true
+                        bind.reserveLayout.isVisible = false
+                        viewModel.productSalesFormat = "Buy It Now"
+                    }
+
+                    1 -> {
+                        bind.acceptOffersLayout.isVisible = false
+                        bind.flashLayout.isVisible = false
+                        bind.reserveLayout.isVisible = true
+                        viewModel.productSalesFormat = "Auction"
+                    }
+                }
+            }
+
+            override fun onTabUnselected(tab: TabLayout.Tab?) {}
+
+            override fun onTabReselected(tab: TabLayout.Tab?) {
+                onTabSelected(tab)
+            }
+        })
+
+        bind.reserveForLive.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
+                bind.acceptOffers.isChecked = false
+                bind.flashSell.isChecked = false
+            }
         }
+
+        bind.acceptOffers.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
+                bind.reserveForLive.isChecked = false
+            }
+        }
+
+        bind.flashSell.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
+                bind.reserveForLive.isChecked = false
+            }
+        }
+
+        bind.seeOtherOptions.setHapticClickListener {
+            bind.otherOptions.isExpanded = !bind.otherOptions.isExpanded
+            if (bind.otherOptions.isExpanded) {
+                bind.scroll.postDelayed({
+                    bind.scroll.fullScroll(View.FOCUS_DOWN)
+                }, 300)
+            }
+        }
+
         setupProcessingCategoryDropdown()
 
         imageAdapter = ImageAdapter(imageList.map { it.path }.toMutableList(), object : RecyclerClicks {
             override fun itemClick(pos: Int, status: String?) {
                 uploadItemIndex = pos
-                uploadImage()
+                val item = imageList[pos]
+                if (item.isVideo) {
+                    uploadVideo(true)
+                } else {
+                    uploadImage()
+                }
             }
         })
 
@@ -317,23 +395,20 @@ class CreateProductFragment : BaseFragment<ScheduleShowViewModel, FragmentCreate
             findNavController().popBackStack()
         }
 
-        bind.continueBtn.setHapticClickListener {
-            viewModel.productQuantity = bind.quantity.text.toString().toIntOrNull()?.coerceAtLeast(1) ?: 1
-            bind.quantity.setText(viewModel.productQuantity.toString())
-            if (validateAndNavigate()) {
-                viewModel.variantData = variantAdapter.getAllVariantData().toMutableList()
-                findNavController().navigate(ids.goToChooseSalesFormatFragment)
-            }
+        bind.publish.setHapticClickListener {
+            validateProductData("active")
         }
 
-        bind.useProduct.setHapticClickListener {
-            findNavController().navigate(ids.createProductAddProductFragment)
+        bind.saveDraft.setHapticClickListener {
+            validateProductData("draft")
         }
 
         setupMailClassDropdown()
 
         viewModel.getMailClasses()
         viewModel.getShippingProfile()
+
+        setupObservers()
 
         viewModel.getMailClassesRepo.observe(viewLifecycleOwner) {
             when (it) {
@@ -550,7 +625,11 @@ class CreateProductFragment : BaseFragment<ScheduleShowViewModel, FragmentCreate
                     }
 
                     bind.shippingProfile.setHapticClickListener {
-                        bind.shippingProfile.showDropDown()
+                        if (profiles.isEmpty()) {
+                            addShippingProfile()
+                        } else {
+                            bind.shippingProfile.showDropDown()
+                        }
 
                     }
 
@@ -584,20 +663,20 @@ class CreateProductFragment : BaseFragment<ScheduleShowViewModel, FragmentCreate
             android.R.layout.simple_list_item_1,
             processingCategories
         )
-        bind.procategory.setAdapter(proCategoryAdapter)
+        bind.proCategory.setAdapter(proCategoryAdapter)
         val proDrawable = ContextCompat.getDrawable(mCtx, R.drawable.card_8)
-        bind.procategory.setDropDownBackgroundDrawable(proDrawable)
+        bind.proCategory.setDropDownBackgroundDrawable(proDrawable)
 
-        bind.procategory.setOnItemClickListener { _, _, position, _ ->
+        bind.proCategory.setOnItemClickListener { _, _, position, _ ->
             viewModel.productProcessingCategory = processingCategories[position]
             log("Selected processing category: ${viewModel.productProcessingCategory}")
-            bind.procategory.setText(viewModel.productProcessingCategory?.replace("_", " "), false)
+            bind.proCategory.setText(viewModel.productProcessingCategory?.replace("_", " "), false)
         }
-        bind.procategory.setHapticClickListener {
-            bind.procategory.showDropDown()
+        bind.proCategory.setHapticClickListener {
+            bind.proCategory.showDropDown()
         }
         viewModel.productProcessingCategory?.let {
-            bind.procategory.setText(it.replace("_", " "), false)
+            bind.proCategory.setText(it.replace("_", " "), false)
         }
     }
 
@@ -753,93 +832,242 @@ class CreateProductFragment : BaseFragment<ScheduleShowViewModel, FragmentCreate
         }
     }
 
-    private fun validateAndNavigate(): Boolean {
-        val title = viewModel.productTitle
-        val description = viewModel.productDescription
-        val width = viewModel.productWidth
-        val height = viewModel.productHeight
-        val length = viewModel.productLength
-        val weight = viewModel.productWeight
+    private fun validateProductData(type: String = "active") {
+        hideKeyboard(bind.root)
+        submitType = type
 
-        if (title.isEmpty()) {
-            errorToast("Please enter product title")
-            return false
-        }
+        viewModel.productQuantity = bind.quantity.value().toIntOrNull()?.coerceAtLeast(1) ?: 1
+        bind.quantity.setText(viewModel.productQuantity.toString())
 
-        if (description.isEmpty()) {
-            errorToast("Please enter product description")
-            return false
-        }
+        val packageWidth = bind.width.value().toDoubleOrNull() ?: 0.0
+        val packageHeight = bind.height.value().toDoubleOrNull() ?: 0.0
+        val packageLength = bind.length.value().toDoubleOrNull() ?: 0.0
+        val packageWeight = bind.weight.value().toDoubleOrNull() ?: 0.0
 
-        if (viewModel.productCategoryId.isEmpty()) {
-            errorToast("Please select a category")
-            return false
-        }
+        viewModel.productWidth = bind.width.value()
+        viewModel.productHeight = bind.height.value()
+        viewModel.productLength = bind.length.value()
+        viewModel.productWeight = bind.weight.value()
+        viewModel.productDescription = bind.description.value()
+        viewModel.productTitle = bind.productTitle.value()
+        viewModel.productPrice = bind.price.value()
+        viewModel.variantData = variantAdapter.getAllVariantData().toMutableList()
+        viewModel.shippingProfile = profileId
+        viewModel.productFormFlashSale = bind.flashSell.isChecked
+        viewModel.productFormAcceptOffers = bind.acceptOffers.isChecked
+        viewModel.productFormReserveForLive = bind.reserveForLive.isChecked
 
-        if (imageList.isEmpty()) {
-            errorToast("Please add at least one image")
-            return false
-        }
-
-        if (viewModel.productMailClass == null) {
-            errorToast("Please select a mail class")
-            return false
-        }
-
-        if (viewModel.productProcessingCategory == null) {
-            errorToast("Please select a processing category")
-            return false
-        }
-
-        if (width.isEmpty() || height.isEmpty() || length.isEmpty() || weight.isEmpty()) {
-            errorToast("Please enter all package dimensions")
-            return false
-        }
-
-        try {
-            val packageWidth = width.toDouble()
-            val packageHeight = height.toDouble()
-            val packageLength = length.toDouble()
-            val packageWeight = weight.toDouble()
-
-            viewModel.productMailClass?.let { mailClass ->
-                log("MAIL CLAS $mailClass")
-
-                if (mailClass.maxWidthIn != null && packageWidth > mailClass.maxWidthIn) {
-                    errorToast("Width exceeds maximum of ${mailClass.maxWidthIn} inches")
-                    return false
-                }
-                if (mailClass.maxHeightIn != null && packageHeight > mailClass.maxHeightIn) {
-                    errorToast("Height exceeds maximum of ${mailClass.maxHeightIn} inches")
-                    return false
-                }
-                if (mailClass.maxLengthIn != null && packageLength > mailClass.maxLengthIn) {
-                    errorToast("Length exceeds maximum of ${mailClass.maxLengthIn} inches")
-                    return false
-                }
-
-                if (mailClass.maxWeightLbs != null && packageWeight > mailClass.maxWeightLbs) {
-                    errorToast("Weight exceeds maximum of ${mailClass.maxWeightLbs} lbs")
-                    return false
-                }
-
-                if (mailClass.maxLengthPlusGirthIn != null) {
-                    val lengthPlusGirth = packageLength + (2 * packageWidth) + (2 * packageHeight)
-                    if (lengthPlusGirth > mailClass.maxLengthPlusGirthIn) {
-                        errorToast("Length + girth exceeds maximum of ${mailClass.maxLengthPlusGirthIn} inches")
-                        return false
-                    } else {
-                        return true
-                    }
-                }
-
+        if (type == "draft") {
+            when {
+                viewModel.productCategoryId.isEmpty() -> Alerts.error(mCtx, "Please select category")
+                bind.productTitle.value().isEmpty() -> Alerts.error(mCtx, "Please enter product title")
+                else -> saveProduct("draft")
             }
-        } catch (e: NumberFormatException) {
-            errorToast("Please enter valid numeric values for dimensions")
-            return false
+            return
         }
 
-        return true
+        when {
+            imageList.none { !it.isVideo } -> Alerts.error(mCtx, "Please select at least one photo")
+            viewModel.productCategoryId.isEmpty() -> Alerts.error(mCtx, "Please select category")
+            bind.productTitle.value().isEmpty() -> Alerts.error(mCtx, "Please enter product title")
+            bind.description.value().isEmpty() -> Alerts.error(mCtx, "Please enter description")
+            packageWidth <= 0 || packageHeight <= 0 || packageLength <= 0 || packageWeight <= 0 -> Alerts.error(
+                mCtx,
+                "Please enter all package dimensions"
+            )
+
+            viewModel.productMailClass == null -> Alerts.error(mCtx, "Please select a mail class")
+            viewModel.productMailClass?.maxWidthIn != null && packageWidth > (viewModel.productMailClass?.maxWidthIn ?: 0.0) ->
+                Alerts.error(mCtx, "Width exceeds maximum of ${viewModel.productMailClass?.maxWidthIn} inches")
+
+            viewModel.productMailClass?.maxHeightIn != null && packageHeight > (viewModel.productMailClass?.maxHeightIn ?: 0.0) ->
+                Alerts.error(mCtx, "Height exceeds maximum of ${viewModel.productMailClass?.maxHeightIn} inches")
+
+            viewModel.productMailClass?.maxLengthIn != null && packageLength > (viewModel.productMailClass?.maxLengthIn ?: 0.0) ->
+                Alerts.error(mCtx, "Length exceeds maximum of ${viewModel.productMailClass?.maxLengthIn} inches")
+
+            viewModel.productMailClass?.maxWeightLbs != null && packageWeight > (viewModel.productMailClass?.maxWeightLbs ?: 0.0) ->
+                Alerts.error(mCtx, "Weight exceeds maximum of ${viewModel.productMailClass?.maxWeightLbs} lbs")
+
+            bind.proCategory.value().isEmpty() -> Alerts.error(mCtx, "Please enter processing category")
+            bind.price.value().isEmpty() -> Alerts.error(mCtx, "Please enter price")
+            bind.shippingProfile.value().isEmpty() -> {
+                if (profiles.isEmpty()) {
+                    addShippingProfile()
+                } else {
+                    Alerts.error(mCtx, "Please select shipping profile")
+                }
+            }
+            else -> saveProduct("active")
+        }
+    }
+
+    private fun addShippingProfile() {
+        AppBottomSheet(
+            mCtx,
+            R.drawable.ic_info,
+            "No Shipping Profile Found!",
+            "You have not added any shipping profile. Are you sure you want to add shipping profile?",
+            primaryBtnText = "Yes",
+            secondaryBtnText = "No",
+            canCancel = true,
+            showSecondary = true,
+            alertType = AlertType.INFO,
+            clicks = object : AlertClicks {
+                override fun primaryClick(dialog: AppBottomSheet) {
+                    dialog.dismiss()
+                    startActivity(
+                        Intent(mCtx, SellerHubActivity::class.java).putExtra(
+                            "slug",
+                            "createShippingProfile"
+                        )
+                    )
+                }
+
+                override fun secondaryClick(dialog: AppBottomSheet) {
+                    dialog.dismiss()
+                }
+            }
+        ).show()
+    }
+
+    private fun saveProduct(type: String = "active") {
+        bind.loader.isVisible = true
+
+        val imagePartList = mutableListOf<MultipartBody.Part>()
+        val thumbnailPartList = mutableListOf<MultipartBody.Part>()
+        val videoPartList = mutableListOf<MultipartBody.Part>()
+
+        imageList.filter { !it.path.contains(Const.BASE_URL) }.forEach { mediaItem ->
+            if (mediaItem.path.isNotEmpty()) {
+                if (mediaItem.isVideo) {
+                    val name = System.currentTimeMillis().toString() + "_product_video.mp4"
+                    val videoPart = Utils.imagePart("videos[]", name, File(mediaItem.path))
+                    videoPartList.add(videoPart)
+                } else {
+                    val name = System.currentTimeMillis().toString() + "_product_gallery.jpeg"
+                    val thumbnailName = System.currentTimeMillis().toString() + "_product_thumbnail.jpeg"
+
+                    val imagePart = Utils.imagePart("images[]", name, File(mediaItem.path))
+                    imagePartList.add(imagePart)
+
+                    val thumbnailFile = File(mediaItem.path)
+                    val thumbnailPart = Utils.imagePart("thumbnails[]", thumbnailName, thumbnailFile)
+                    thumbnailPartList.add(thumbnailPart)
+                }
+            }
+        }
+
+        if (imagePartList.isNotEmpty() || videoPartList.isNotEmpty()) {
+            viewModel.storeProductMeta(imagePartList, videoPartList, thumbnailPartList)
+        } else {
+            createProduct(type, emptyList(), emptyList())
+        }
+    }
+
+    private fun createProduct(
+        type: String,
+        images: List<Map<String, String?>>?,
+        videos: List<Map<String, String?>>?
+    ) {
+        viewModel.storeProduct(
+            StoreProductRequest(
+                categoryId = viewModel.categoryId,
+                subCategoryId = viewModel.productSubCategoryId.ifEmpty { null }?.toInt(),
+                title = viewModel.productTitle,
+                description = viewModel.productDescription,
+                quantity = viewModel.productQuantity.toString(),
+                pricing = viewModel.productPrice.ifEmpty { "1" },
+                flashSale = viewModel.productFormFlashSale,
+                acceptOffers = viewModel.productFormAcceptOffers,
+                reserveForLive = viewModel.productFormReserveForLive,
+                shippingProfileId = viewModel.shippingProfile.ifEmpty { null },
+                status = type,
+                images = images,
+                videos = videos,
+                variant = viewModel.variantData,
+                width = viewModel.productWidth,
+                height = viewModel.productHeight,
+                length = viewModel.productLength,
+                weight = viewModel.productWeight,
+                mailClass = viewModel.productMailClass?.label,
+                processingCategory = bind.proCategory.value().replace(" ", "_"),
+                productCondition = selectedCondition.ifEmpty { viewModel.condition },
+                hazardousMaterial = bind.isHazardous.isChecked,
+                sku = bind.sku.value().ifEmpty { null },
+                costPerItem = bind.costPerItem.value().ifEmpty { null },
+            ),
+            null
+        )
+    }
+
+    private fun setupObservers() {
+        viewModel.storeProductMetaRepo.observe(viewLifecycleOwner) { res ->
+            when (res) {
+                is Resource.Success -> {
+                    viewModel.storeProductMetaRepo.value = null
+
+                    val imageData = res.value.data?.images?.mapNotNull { data ->
+                        if (data?.images != null && data.thumbnail != null) {
+                            mapOf("image" to data.images, "thumbnail" to data.thumbnail)
+                        } else null
+                    }
+
+                    val videoData = res.value.data?.videos?.mapNotNull { data ->
+                        if (data?.videos != null) mapOf("videos" to data.videos) else null
+                    }
+
+                    createProduct(submitType, imageData, videoData)
+                }
+
+                is Resource.Error -> {
+                    viewModel.storeProductMetaRepo.value = null
+                    bind.loader.isVisible = false
+                    res.parse(mCtx, TAG, object : AlertClicks {
+                        override fun primaryClick(dialog: AppBottomSheet) {
+                            dialog.dismiss()
+                        }
+
+                        override fun secondaryClick(dialog: AppBottomSheet) {
+                            dialog.dismiss()
+                        }
+                    })
+                }
+
+                else -> {}
+            }
+        }
+
+        viewModel.storeProductRepo.observe(viewLifecycleOwner) { res ->
+            when (res) {
+                is Resource.Success -> {
+                    viewModel.storeProductRepo.value = null
+                    bind.loader.isVisible = false
+
+                    val mData = res.value.data
+                    if (mData != null) {
+                        viewModel.currentProducts.add(mData)
+                    }
+                    findNavController().navigate(io.bidswipe.app.utils.ids.addProductFragment)
+                }
+
+                is Resource.Error -> {
+                    viewModel.storeProductRepo.value = null
+                    bind.loader.isVisible = false
+                    res.parse(mCtx, TAG, object : AlertClicks {
+                        override fun primaryClick(dialog: AppBottomSheet) {
+                            dialog.dismiss()
+                        }
+
+                        override fun secondaryClick(dialog: AppBottomSheet) {
+                            dialog.dismiss()
+                        }
+                    })
+                }
+
+                else -> {}
+            }
+        }
     }
 
     private fun updateCategoryField() {
@@ -883,6 +1111,9 @@ class CreateProductFragment : BaseFragment<ScheduleShowViewModel, FragmentCreate
         viewModel.shippingProfile = ""
         viewModel.productSalesFormat = ""
         viewModel.productPrice = ""
+        viewModel.productFormFlashSale = false
+        viewModel.productFormAcceptOffers = false
+        viewModel.productFormReserveForLive = false
 
         updateCategoryField()
     }

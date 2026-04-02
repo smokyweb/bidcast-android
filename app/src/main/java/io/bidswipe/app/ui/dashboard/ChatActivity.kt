@@ -242,9 +242,8 @@ class ChatActivity : BaseActivity() {
             }
         }
 
-        val users = listOf(userId, receiverId)
-        users.sorted()
-        chatKey = users[1] + "_chats_" + users[0]
+        val users = listOf(userId.toInt(), receiverId.toInt()).sorted()
+        chatKey =  "${users[1]}_chats_${users[0]}"
 
         chatRef = FireRef.CHAT.child(chatKey)
 

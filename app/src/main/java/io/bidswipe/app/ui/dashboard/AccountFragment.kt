@@ -1,5 +1,6 @@
 package io.bidswipe.app.ui.dashboard
 
+import android.app.Activity
 import android.content.Intent
 import android.graphics.Typeface
 import android.os.Bundle
@@ -8,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.content.ContextCompat
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.navigation.fragment.findNavController
@@ -67,6 +69,14 @@ class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
     private lateinit var gridAdapter: GridAdapter
     private lateinit var accountGridAdapter: GridAdapter
     private var upcomingShow: SellerHubResponse.Data.UpcomingShow? = null
+
+    private val scheduleShowLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                App.getProfile()
+                viewModel.getSellerHubInfo()
+            }
+        }
 
     private val onTabSelectedListener = object : OnTabSelectedListener {
         override fun onTabSelected(tab: TabLayout.Tab?) {
@@ -327,7 +337,7 @@ class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
                 return@setHapticClickListener
             }
 
-            startActivity(mCtx.toScheduleShow(from = "dash"))
+            scheduleShowLauncher.launch(mCtx.toScheduleShow(from = "dash"))
 
         }
 

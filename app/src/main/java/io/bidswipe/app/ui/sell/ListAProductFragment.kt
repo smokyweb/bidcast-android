@@ -603,7 +603,11 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
                     }
 
                     bind.shippingProfile.setHapticClickListener {
-                        bind.shippingProfile.showDropDown()
+                        if (profiles.isEmpty()) {
+                            addShippingProfile()
+                        } else {
+                            bind.shippingProfile.showDropDown()
+                        }
 
                     }
 

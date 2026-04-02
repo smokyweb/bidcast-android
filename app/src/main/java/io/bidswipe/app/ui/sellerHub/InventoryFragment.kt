@@ -30,6 +30,7 @@ import io.bidswipe.app.interfaces.AlertClicks
 import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.model.LiveMoreOption
 import io.bidswipe.app.network.Resource
+import io.bidswipe.app.network.response.AuctionType
 import io.bidswipe.app.network.response.GetMyInventoryResponse
 import io.bidswipe.app.network.response.Product
 import io.bidswipe.app.ui.custom.AlertType
@@ -67,6 +68,9 @@ class InventoryFragment : BaseFragment<SellerHubViewModel, FragmentInventoryBind
 	private var minPrice: String? = null
 	private var maxPrice: String? = null
 	private var sort: String? = null
+	/** Set when opening inventory from schedule show (addProduct); passed to get-products API. */
+	private var inventoryTypeFilter: String? = null
+	private var inventorySaleTypeFilter: String? = null
 
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		super.onViewCreated(view, savedInstanceState)
@@ -74,10 +78,22 @@ class InventoryFragment : BaseFragment<SellerHubViewModel, FragmentInventoryBind
 		val from = requireActivity().intent.getStringExtra("from")
 		val isSelectionMode = from == "addProduct"
 
-
 		if (from == "addProduct") {
 			val categoryId = requireActivity().intent.getStringExtra("categoryId")
-			categoryIds.add(categoryId?.toInt())
+			if (categoryId != null) {
+				categoryIds.add(categoryId.toInt())
+			}
+			val auctionTypeId =
+				requireActivity().intent.getStringExtra("auction_type")?.toIntOrNull()
+			if (auctionTypeId != null) {
+				if (auctionTypeId == AuctionType.BUY_NOW.id) {
+					inventoryTypeFilter = "buy_now"
+					inventorySaleTypeFilter = ""
+				} else {
+					inventorySaleTypeFilter = "auction"
+					inventoryTypeFilter = ""
+				}
+			}
 		}
 
 		if (isSelectionMode) {
@@ -272,6 +288,7 @@ class InventoryFragment : BaseFragment<SellerHubViewModel, FragmentInventoryBind
 						itemList.clear()
 						filteredList.clear()
 					}
+
 					itemList.addAll(mData)
 
 					filteredList.addAll(mData)
@@ -279,10 +296,13 @@ class InventoryFragment : BaseFragment<SellerHubViewModel, FragmentInventoryBind
 					if (filteredList.isNotEmpty()) {
 						bind.recycler.isVisible = true
 						bind.noData.isVisible = false
+						bind.addNewProduct.isVisible = true
 					} else {
 						bind.recycler.isVisible = false
 						bind.noData.isVisible = true
-						bind.addNewProduct.isVisible = false
+						// Keep button visible when not picking from inventory (anchors noData above it);
+						// in selection mode with no items, hide the primary action.
+						bind.addNewProduct.isVisible = !isSelectionMode
 					}
 
 					isLoading = page >= (it.value.totalPage ?: 0)
@@ -558,6 +578,7 @@ class InventoryFragment : BaseFragment<SellerHubViewModel, FragmentInventoryBind
 			InventoryFilterModel.InnerModel(null, "Other"),
 			InventoryFilterModel.InnerModel(null, "Trending"),
 		)
+
 		val sortList = mutableListOf(
 			InventoryFilterModel.InnerModel(null, "Newest First"),
 			InventoryFilterModel.InnerModel(null, "Oldest First"),
@@ -689,7 +710,6 @@ class InventoryFragment : BaseFragment<SellerHubViewModel, FragmentInventoryBind
 			page = 1
 			getInventory()
 		}
-
 	}
 
 	fun getInventory(search: String? = null) {
@@ -701,7 +721,9 @@ class InventoryFragment : BaseFragment<SellerHubViewModel, FragmentInventoryBind
 			conditions = if (conditions.isEmpty()) null else conditions.joinToString(",").request(),
 			minPrice = minPrice?.request(),
 			maxPrice = maxPrice?.request(),
-			format = sort?.request()
+			format = sort?.request(),
+//			type = inventoryTypeFilter?.ifEmpty { null }?.request(),
+//			saleType = inventorySaleTypeFilter?.ifEmpty { null }?.request()
 		)
 	}
 }

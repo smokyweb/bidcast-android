@@ -160,6 +160,7 @@ class AddProductFragment : BaseFragment<ScheduleShowViewModel, FragmentAddProduc
 				Intent(mCtx, SellerHubActivity::class.java)
 					.putExtra("slug", "inventory")
 					.putExtra("categoryId", viewModel.categoryId)
+					.putExtra("auction_type", viewModel.auctionId)
 					.putExtra("from", "addProduct")
 			)
 		}
