@@ -857,6 +857,15 @@ class CreateProductFragment : BaseFragment<ScheduleShowViewModel, FragmentListAP
         viewModel.productFormAcceptOffers = bind.acceptOffers.isChecked
         viewModel.productFormReserveForLive = bind.reserveForLive.isChecked
 
+        // QA fix: the category field is disabled on this screen because the product inherits
+        // the show's category. clearProductData() resets productCategoryId, then calls
+        // updateCategoryField() to re-sync it from viewModel.categoryId. If for any reason
+        // that sync left productCategoryId empty (e.g. show category not yet set), ensure it
+        // is re-synced here before validation so the seller is never stuck on a disabled field.
+        if (viewModel.productCategoryId.isEmpty() && viewModel.categoryId.isNotEmpty()) {
+            viewModel.productCategoryId = viewModel.categoryId
+        }
+
         if (type == "draft") {
             when {
                 viewModel.productCategoryId.isEmpty() -> Alerts.error(mCtx, "Please select category")
