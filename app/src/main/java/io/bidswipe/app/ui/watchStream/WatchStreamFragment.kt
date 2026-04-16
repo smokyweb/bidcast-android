@@ -236,8 +236,10 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
         }
 
         bind.userName.setHapticClickListener {
-            bind.loader.isVisible = true
-            viewModel.getSellerInfo(sellerId!!)
+            if (sellerId?.isNotEmpty() == true) {
+                bind.loader.isVisible = true
+                viewModel.getSellerInfo(sellerId!!)
+            }
         }
 
         bind.recycler.setOnTouchListener { view, _ ->
@@ -360,12 +362,9 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
             socketManager?.getUpdatedProduct { json ->
                 runSafe {
                     requireActivity().runOnUiThread {
-
                         if (json.optString("room_id") == roomID) {
-                            val products = LiveShowModel.fromJson(json)
-                            products.products.find { it?.isCurrent == true }
+                            updateCurrentProductFromRoomState(LiveShowModel.fromJson(json))
                         }
-
                     }
                 }
             }
@@ -776,6 +775,12 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
                     bind.follow.isVisible = false
 
                     bind.enterFreebie.text = "Enter Freebie"
+
+                    if (bind.freebieEntryLayout.isVisible && freebieUsers.none { it?.id.toString() == userId }) {
+                        bind.freebieEntryLayout.isVisible = false
+                        bind.notesFreebieLayout.isVisible = true
+                        socketManager?.enterInFreebie(roomID, userId)
+                    }
 
                 }
 
@@ -1206,6 +1211,70 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
             }
         }
 
+    }
+
+    private fun updateCurrentProductFromRoomState(roomState: LiveShowModel) {
+        val currentProduct = roomState.products.find { it?.isCurrent == true }
+        productList.clear()
+        productList.addAll(roomState.products)
+
+        if (currentProduct != null) {
+            bind.winningLayout.isVisible = false
+            bind.soldLayout.isVisible = false
+            bind.status.isVisible = false
+            bind.productLayout.isVisible = true
+            bind.productAuctionBidLayout.isVisible = true
+            bind.productName.text = currentProduct.name?.asCapital()
+            bind.productCategory.text = currentProduct.category?.name?.asCapital()
+            bind.quantity.text = buildString {
+                append("Quantity: ")
+                append(currentProduct.quantity ?: 0)
+            }
+
+            val image = currentProduct.image.orEmpty()
+            if (image.isNotEmpty()) {
+                if (image.contains(Const.BASE_URL)) {
+                    bind.productImage.loadUrl(mCtx, image)
+                    bind.productImageShop.loadUrl(mCtx, image)
+                } else {
+                    bind.productImage.loadUrl(mCtx, "${Const.BASE_URL + "/"}$image")
+                    bind.productImageShop.loadUrl(mCtx, "${Const.BASE_URL + "/"}$image")
+                }
+            }
+
+            bind.productImageCard.isVisible = true
+            bind.itemsLeftProgress.isVisible = false
+
+            val price = currentProduct.price ?: "0.0"
+            bind.price.text = price.asMoney() + " + Shipping + Taxes"
+
+            val auctionTypeId = roomState.auctionTypeId ?: liveShowData?.auctionTypeId
+            val activeBid = roomState.highestBid.bidAmount?.takeIf { it.isNotEmpty() }
+                ?: roomState.startingBidAmount?.toString()?.takeIf { it != "0.0" }
+                ?: price
+
+            highestBidAmount = activeBid
+            bidProductId = currentProduct.id
+            setBidText(highestBidAmount)
+
+            bind.bidLayout.isVisible = auctionTypeId == AuctionType.LIVE.id
+            bind.buyNowBtn.isVisible = auctionTypeId == AuctionType.BUY_NOW.id
+
+            bind.productLayout.setHapticClickListener {
+                startActivity(
+                    Intent(
+                        mCtx,
+                        ProductDetailsActivity::class.java
+                    ).putExtra("productId", currentProduct.id.toString())
+                )
+            }
+        } else {
+            bind.bidTime.isVisible = false
+            bind.bidLayout.isVisible = false
+            bind.buyNowBtn.isVisible = false
+            bind.productLayout.isVisible = false
+            bind.status.isVisible = true
+        }
     }
 
     private fun updateBreakSpotProductUI(auctionData: AuctionStartedBreakSpotResponse) {

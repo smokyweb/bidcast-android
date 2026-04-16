@@ -333,18 +333,15 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
             }
 
             App.socketManager?.onRoomCreated { showData ->
-                log("ON CREATED ${showData.categoryId}-- ${selectedCategory}-- ${selectedCategoryTileId}\n-- ${selectedTabText}\n--${App.categoryList.filter { it?.isSelected == true }.find { it?.id.toString() == showData.categoryId }}")
+                log("ON CREATED ${showData.categoryId}-- ${selectedCategory}-- ${selectedCategoryTileId}\n-- ${selectedTabText}")
                 activity?.runOnUiThread {
-                    val cat = App.categoryList.filter { it?.isSelected == true }.findLast { it?.id.toString() == showData.categoryId }
-                    if (cat != null) {
-                        if( selectedCategory == "for_you" || selectedCategory == cat.name) {
-                            viewModel.getLiveShow(
-                                selectedTabText.request(),
-                                selectedCategory.request(),
-                                search = bind.search.value().ifEmpty { null }?.request(),
-                                page = 1.toString().request()
-                            )
-                        }
+                    if (selectedTabText == "live") {
+                        viewModel.getLiveShow(
+                            selectedTabText.request(),
+                            selectedCategory.request(),
+                            search = bind.search.value().ifEmpty { null }?.request(),
+                            page = 1.toString().request()
+                        )
                     }
                 }
             }

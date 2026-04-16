@@ -721,9 +721,9 @@ class InventoryFragment : BaseFragment<SellerHubViewModel, FragmentInventoryBind
 			conditions = if (conditions.isEmpty()) null else conditions.joinToString(",").request(),
 			minPrice = minPrice?.request(),
 			maxPrice = maxPrice?.request(),
-			format = sort?.request(),
-//			type = inventoryTypeFilter?.ifEmpty { null }?.request(),
-//			saleType = inventorySaleTypeFilter?.ifEmpty { null }?.request()
+			sortBy = sort?.request(),
+			type = inventoryTypeFilter?.ifEmpty { null }?.request(),
+			saleType = inventorySaleTypeFilter?.ifEmpty { null }?.request()
 		)
 	}
 }

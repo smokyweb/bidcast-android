@@ -56,13 +56,13 @@ class CreateAccountFragment : BaseFragment<AuthViewModel , FragmentCreateAccount
 			when {
 
 				bind.firstName.value().isEmpty() -> {
-					Alerts.error(mCtx , "Name can not be empty")
+					Alerts.error(mCtx , "First name can not be empty")
 					bind.firstName.requestFocus()
 					showKeyboard(bind.firstName)
 				}
 
 				bind.lastName.value().isEmpty() -> {
-					Alerts.error(mCtx , "Name can not be empty")
+					Alerts.error(mCtx , "Last name can not be empty")
 					bind.lastName.requestFocus()
 					showKeyboard(bind.lastName)
 				}

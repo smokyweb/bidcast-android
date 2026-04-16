@@ -45,19 +45,6 @@ class CreateShippingProfileFragment : BaseFragment<SellerHubViewModel, FragmentC
         if (from == "edit") {
             bind.header.setHeaderText("Edit Shipping Profile")
             bind.save.text = "Update"
-
-            bind.name.setText(viewModel.selectedShippingProfile?.name.toString())
-            bind.weight.setText(viewModel.selectedShippingProfile?.weight.toString())
-            bind.weightUnits.setText(viewModel.selectedShippingProfile?.size.toString())
-
-            if (viewModel.selectedShippingProfile?.additionalWeight == true) {
-                bind.additionalWeight.isChecked = true
-            }
-
-            if (viewModel.selectedShippingProfile?.maxItems == true) {
-                bind.maxPackage.isChecked = true
-            }
-
         }
 
         bind.header.onBackClick {
@@ -129,21 +116,25 @@ class CreateShippingProfileFragment : BaseFragment<SellerHubViewModel, FragmentC
         bind.maxPackage.setOnCheckedChangeListener { _, checked ->
             bind.maxItemsExpand.isExpanded = checked
 
-            bind.boxDimensions.setText("Custom", false)
-            bind.height.setText("12.00")
-            bind.length.setText("12.00")
-            bind.width.setText("12.00")
-            bind.dimensionUnits.setText("Inch", false)
+            if (checked) {
+                if (bind.height.value().isEmpty()) bind.height.setText("12.00")
+                if (bind.length.value().isEmpty()) bind.length.setText("12.00")
+                if (bind.width.value().isEmpty()) bind.width.setText("12.00")
+                if (bind.dimensionUnits.value().isEmpty()) bind.dimensionUnits.setText("Inch", false)
+                if (bind.boxDimensions.value().isEmpty()) bind.boxDimensions.setText("Custom", false)
 
-            if (dimensionsList.isEmpty()) {
-                bind.loader.isVisible = true
-                viewModel.getUSPSBoxDimensions()
+                if (dimensionsList.isEmpty()) {
+                    bind.loader.isVisible = true
+                    viewModel.getUSPSBoxDimensions()
+                }
             }
         }
 
         bind.additionalWeight.setOnCheckedChangeListener { _, checked ->
             bind.fixedWeightExpand.isExpanded = checked
         }
+
+        populateEditData(from)
 
         bind.save.setHapticClickListener {
 
@@ -297,5 +288,27 @@ class CreateShippingProfileFragment : BaseFragment<SellerHubViewModel, FragmentC
 
             }
         }
+    }
+
+    private fun populateEditData(from: String?) {
+        if (from != "edit") return
+
+        val profile = viewModel.selectedShippingProfile ?: return
+
+        bind.name.setText(profile.name.orEmpty())
+        bind.weight.setText(profile.weight.orEmpty())
+        bind.weightUnits.setText(profile.size.orEmpty(), false)
+
+        bind.additionalWeight.isChecked = profile.additionalWeight == true
+        bind.incrementalWeight.setText(profile.incrementWeight.orEmpty())
+        bind.incrementalWeightUnits.setText(profile.incrementWeightScale.orEmpty(), false)
+
+        bind.maxPackage.isChecked = profile.maxItems == true
+        bind.maxItems.setText(profile.maxItemUnit.orEmpty())
+        bind.height.setText(profile.height.orEmpty())
+        bind.width.setText(profile.width.orEmpty())
+        bind.length.setText(profile.length.orEmpty())
+        bind.dimensionUnits.setText(profile.scale.orEmpty(), false)
+        bind.boxDimensions.setText("Custom", false)
     }
 }
