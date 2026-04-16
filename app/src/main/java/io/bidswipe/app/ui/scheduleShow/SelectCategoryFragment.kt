@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
+import android.widget.AutoCompleteTextView
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.navigation.fragment.findNavController
@@ -118,7 +119,7 @@ class SelectCategoryFragment : BaseFragment<ScheduleShowViewModel, FragmentSelec
         }
 
         bind.category.setHapticClickListener {
-            bind.category.showDropDown()
+            openDropdown(bind.category)
         }
 
         bind.auctionType.setOnItemClickListener { _, _, position, _ ->
@@ -126,7 +127,7 @@ class SelectCategoryFragment : BaseFragment<ScheduleShowViewModel, FragmentSelec
         }
 
         bind.auctionType.setHapticClickListener {
-            bind.auctionType.showDropDown()
+            openDropdown(bind.auctionType)
         }
 
         val repeatModeAdapter = ArrayAdapter(mCtx, android.R.layout.simple_list_item_1, repeatModes.map { it })
@@ -137,7 +138,7 @@ class SelectCategoryFragment : BaseFragment<ScheduleShowViewModel, FragmentSelec
         }
 
         bind.repeat.setHapticClickListener {
-            bind.repeat.showDropDown()
+            openDropdown(bind.repeat)
         }
 
         val languageAdapter = ArrayAdapter(mCtx, android.R.layout.simple_list_item_1, Const.languages.map { it.title })
@@ -147,7 +148,7 @@ class SelectCategoryFragment : BaseFragment<ScheduleShowViewModel, FragmentSelec
         }
 
         bind.language.setHapticClickListener {
-            bind.language.showDropDown()
+            openDropdown(bind.language)
         }
 
         bind.publicButton.setOnCheckedChangeListener { _, isChecked ->
@@ -182,6 +183,8 @@ class SelectCategoryFragment : BaseFragment<ScheduleShowViewModel, FragmentSelec
                         categoryList.addAll(it.value.data)
 
                         val adapter = ArrayAdapter(mCtx, android.R.layout.simple_list_item_1, categoryList.map { it?.name })
+                        // QA fix: this field behaves like a picker, so show the full list immediately on tap.
+                        bind.category.threshold = 0
                         bind.category.setAdapter(adapter)
                         val draw = ContextCompat.getDrawable(mCtx, R.drawable.card_8)
                         bind.category.setDropDownBackgroundDrawable(draw)
@@ -235,6 +238,8 @@ class SelectCategoryFragment : BaseFragment<ScheduleShowViewModel, FragmentSelec
                                 android.R.layout.simple_list_item_1,
                                 subCategoryList.map { it?.name })
 
+                            // QA fix: this field behaves like a picker, so show the full list immediately on tap.
+                            bind.subCategory.threshold = 0
                             bind.subCategory.setAdapter(subCategoryAdapter)
 
                             val draw = ContextCompat.getDrawable(mCtx, R.drawable.card_8)
@@ -250,7 +255,7 @@ class SelectCategoryFragment : BaseFragment<ScheduleShowViewModel, FragmentSelec
                             }
 
                             bind.subCategory.setHapticClickListener {
-                                bind.subCategory.showDropDown()
+                                openDropdown(bind.subCategory)
                             }
 
                         } else {
@@ -293,6 +298,8 @@ class SelectCategoryFragment : BaseFragment<ScheduleShowViewModel, FragmentSelec
                         auctionTypeList.addAll(it.value.data)
 
                         val adapter = ArrayAdapter(mCtx, android.R.layout.simple_list_item_1, auctionTypeList.map { it?.name })
+                        // QA fix: this field behaves like a picker, so show the full list immediately on tap.
+                        bind.auctionType.threshold = 0
                         bind.auctionType.setAdapter(adapter)
                         val draw = ContextCompat.getDrawable(mCtx, R.drawable.card_8)
                         bind.auctionType.setDropDownBackgroundDrawable(draw)
@@ -325,6 +332,15 @@ class SelectCategoryFragment : BaseFragment<ScheduleShowViewModel, FragmentSelec
             }
         }
 
+    }
+
+    private fun openDropdown(view: AutoCompleteTextView) {
+        // QA fix: request focus and post showDropDown so the picker opens reliably
+        // during seller setup, even when the field is configured like a non-editable selector.
+        view.requestFocus()
+        view.post {
+            view.showDropDown()
+        }
     }
 
 }

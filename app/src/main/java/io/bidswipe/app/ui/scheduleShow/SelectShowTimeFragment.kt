@@ -68,6 +68,10 @@ class SelectShowTimeFragment : BaseFragment<ScheduleShowViewModel, FragmentSelec
 				Utils.getDateFromTimestamp(calendar.timeInMillis)
 			)
 			viewModel.date = date.toString()
+
+			// QA fix: we were defaulting the schedule date in state, but not visually selecting it
+			// in the calendar. That made Continue feel broken until the seller manually tapped a day.
+			bind.calenderView.setDate(calendar)
 		} else {
 			runSafe {
 				val date = viewModel.date.split("-")
