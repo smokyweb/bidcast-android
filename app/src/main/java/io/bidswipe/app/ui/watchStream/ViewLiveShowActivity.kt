@@ -62,14 +62,12 @@ class ViewLiveShowActivity : BaseActivity() {
             finishAfterTransition()
         }
 
-        if (roomId.isNotEmpty()) {
-            val data: Uri? = intent.data
-            data?.let { uri ->
-                uri.getQueryParameter("showId")?.takeIf { it.isNotEmpty() }?.let { deepLinkRoomId ->
-                    roomId = deepLinkRoomId
-                }
-                log(" SHOW ID : $roomId")
+        val data: Uri? = intent.data
+        data?.let { uri ->
+            uri.getQueryParameter("showId")?.takeIf { it.isNotEmpty() }?.let { deepLinkRoomId ->
+                roomId = deepLinkRoomId
             }
+            log(" SHOW ID : $roomId")
         }
 
         if (streamList.isNotEmpty()) {

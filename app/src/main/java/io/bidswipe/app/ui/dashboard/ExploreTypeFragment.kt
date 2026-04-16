@@ -173,19 +173,14 @@ class ExploreTypeFragment : BaseFragment<DashViewModel, FragmentExploreTypeBindi
         App.socketManager?.onRoomCreated { showData ->
             log("START GOT EXPLORE  FRAGMENT ${showData.categoryId}--${showData.subCategoryId}")
             activity?.runOnUiThread {
-                val cat = App.categoryList.findLast { it?.id.toString() == showData.categoryId }
-                log("START GOT EXPLORE  FRAGMENT ${cat}--${category}--$subCategory")
-
-                if (cat != null) {
-                    if (category == cat.name) {
-                        viewModel.getExploreLiveShow(
-                            selectedTabText.request(),
-                            category.request(),
-                            subCategory?.request(),
-                            search = bind.search.value().ifEmpty { null }?.request(),
-                            page = "1".request()
-                        )
-                    }
+                if (selectedTabText == "live") {
+                    viewModel.getExploreLiveShow(
+                        selectedTabText.request(),
+                        category.request(),
+                        subCategory?.request(),
+                        search = bind.search.value().ifEmpty { null }?.request(),
+                        page = "1".request()
+                    )
                 }
             }
         }

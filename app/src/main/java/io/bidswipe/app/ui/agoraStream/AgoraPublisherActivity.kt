@@ -2242,11 +2242,20 @@ class AgoraPublisherActivity : BaseActivity() {
                         bind.runNext.isVisible = true
 
                     } else {
+                        product?.isCurrent = false
                         bind.winningLayout.isVisible = false
                         bind.status.isVisible = false
                         bind.runNext.isVisible = true
                     }
 
+                    val hasRemainingProducts = productList.any { it?.status != "sold" && it?.id != product?.id }
+                    if (hasRemainingProducts) {
+                        bind.runNext.postDelayed({
+                            if (!isFinishing && roomID == json.optString("room_id")) {
+                                socketManager?.runNextProduct(roomID)
+                            }
+                        }, 1500)
+                    }
                 }
 
             }

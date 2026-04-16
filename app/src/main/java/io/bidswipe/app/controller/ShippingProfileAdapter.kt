@@ -47,7 +47,7 @@ class ShippingProfileAdapter(
 			bind.additionalWeight.text = if (item?.additionalWeight == true) "Yes" else "No"
 
 			if(item?.additionalWeight==true){
-				bind.additionalWeightLayout.isVisible=false
+				bind.additionalWeightLayout.isVisible=true
 				bind.additionalWeightText.text = buildSpannedString {
 					append(item?.incrementWeight + " ")
 					append(item?.incrementWeightScale)
