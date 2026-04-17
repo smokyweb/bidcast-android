@@ -185,7 +185,13 @@ class Chats(
 					val currentDate = format.format(Date().toInstant().toEpochMilli())
 					val messageDate =
 						format.format(Instant.ofEpochSecond(previousTime).toEpochMilli())
-					val diff = format.parse(currentDate) !!.time - format.parse(messageDate) !!.time
+					val currentParsed = format.parse(currentDate)
+					val messageParsed = format.parse(messageDate)
+					if (currentParsed == null || messageParsed == null) {
+						check(Pair(0L , currentDate))
+						return
+					}
+					val diff = currentParsed.time - messageParsed.time
 
 					val days = TimeUnit.DAYS.convert(diff , TimeUnit.MILLISECONDS)
 

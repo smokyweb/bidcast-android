@@ -2272,8 +2272,14 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
     }
 
     private fun blockUser() {
+        val sellerRequest = sellerId?.takeIf { it.isNotBlank() }?.request()
+        if (sellerRequest == null) {
+            Alerts.error(mCtx, "Seller information is unavailable")
+            return
+        }
+
         bind.loader.isVisible = true
-        viewModel.blockUnblockUser(sellerId?.request()!!)
+        viewModel.blockUnblockUser(sellerRequest)
 
         viewModel.blockUnblockUserRepo.observe(viewLifecycleOwner) {
             when (it) {

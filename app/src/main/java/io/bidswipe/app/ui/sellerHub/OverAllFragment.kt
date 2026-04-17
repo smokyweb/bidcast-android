@@ -480,7 +480,15 @@ class OverAllFragment : BaseFragment<SellerHubViewModel, FragmentOverAllBinding>
 
                 // Get the URI to insert the file into Downloads
                 val uri = context.contentResolver.insert(MediaStore.Files.getContentUri("external"), contentValues)
-                outputStream = context.contentResolver.openOutputStream(uri!!) // Open output stream
+                if (uri == null) {
+                    cancel(true)
+                    return null
+                }
+                outputStream = context.contentResolver.openOutputStream(uri)
+                if (outputStream == null) {
+                    cancel(true)
+                    return null
+                }
 
                 // Read data from the input stream and write it to the output stream
                 val buffer = ByteArray(4096)
