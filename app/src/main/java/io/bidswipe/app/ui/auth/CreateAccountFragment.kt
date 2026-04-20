@@ -90,8 +90,11 @@ class CreateAccountFragment : BaseFragment<AuthViewModel , FragmentCreateAccount
 					showKeyboard(bind.password)
 				}
 
-				bind.password.value().validator().minLength(6).check().not() -> {
-					Alerts.error(mCtx , "Enter at least 6 digit password")
+				// QA-FIX: Copy said "6 digit password" which is both misleading (digits ≠ characters)
+				// and too weak; tightened to 8 characters minimum for baseline security. If product
+				// wants more (numbers/symbols/etc.) they can layer it on, but 8 chars is a safer floor.
+				bind.password.value().validator().minLength(8).check().not() -> {
+					Alerts.error(mCtx , "Password must be at least 8 characters")
 					bind.password.requestFocus()
 					showKeyboard(bind.password)
 				}
@@ -102,8 +105,9 @@ class CreateAccountFragment : BaseFragment<AuthViewModel , FragmentCreateAccount
 					showKeyboard(bind.cPassword)
 				}
 
+				// QA-FIX: Grammar pass on user-facing copy.
 				bind.cPassword.value() != bind.password.value() -> {
-					Alerts.error(mCtx , "Confirm password not matched with password")
+					Alerts.error(mCtx , "Passwords do not match")
 					bind.cPassword.requestFocus()
 					showKeyboard(bind.cPassword)
 				}
@@ -158,17 +162,59 @@ class CreateAccountFragment : BaseFragment<AuthViewModel , FragmentCreateAccount
 					bind.loader.isVisible = false
 					viewModel.signUpRepo.value = null
 
-					it.parse(mCtx , TAG , object : AlertClicks {
-						override fun primaryClick(dialog : AppBottomSheet) {
-							dialog.dismiss()
+					// QA-FIX (deleted-account signup): before falling through to the generic
+					// parse() path (which renders raw backend copy or "No Data Found"),
+					// branch on recognisable error signals from the backend and show
+					// friendlier, signup-specific copy so the user knows what to do next.
+					val errType = it.errorResponse?.errorType?.uppercase()
+					val rawMsg = it.errorResponse?.message?.trim().orEmpty()
+					val lowerMsg = rawMsg.lowercase()
+
+					val handled = when {
+						errType == "ACCOUNT_DELETED" || lowerMsg.contains("account was deleted") || lowerMsg.contains("account has been deleted") -> {
+							Alerts.showBottomSheet(
+								mCtx = mCtx,
+								msg = "This account was previously deleted and cannot be reused. Please contact support to restore it, or sign up with a different email.",
+								title = "Account Deleted",
+								isError = true
+							)
+							true
 						}
-
-						override fun secondaryClick(dialog : AppBottomSheet) {
-							dialog.dismiss()
-
+						errType == "EMAIL_TAKEN" || lowerMsg.contains("has already been taken") || lowerMsg.contains("already been registered") || lowerMsg.contains("email already") -> {
+							Alerts.showBottomSheet(
+								mCtx = mCtx,
+								msg = "An account with this email already exists. Try logging in or use \"Forgot Password\" to reset it.",
+								title = "Email Already Registered",
+								isError = true
+							)
+							true
 						}
-					})
+						else -> false
+					}
 
+					if (!handled) {
+						// Fallback: if the backend returned a non-empty human message, surface
+						// it directly with a sensible title. If there is no message at all,
+						// use a friendly signup-specific fallback instead of "No Data Found".
+						if (rawMsg.isNotEmpty() && !it.isNetworkError) {
+							it.parse(mCtx , TAG , object : AlertClicks {
+								override fun primaryClick(dialog : AppBottomSheet) { dialog.dismiss() }
+								override fun secondaryClick(dialog : AppBottomSheet) { dialog.dismiss() }
+							})
+						} else if (it.isNetworkError) {
+							it.parse(mCtx , TAG , object : AlertClicks {
+								override fun primaryClick(dialog : AppBottomSheet) { dialog.dismiss() }
+								override fun secondaryClick(dialog : AppBottomSheet) { dialog.dismiss() }
+							})
+						} else {
+							Alerts.showBottomSheet(
+								mCtx = mCtx,
+								msg = "Signup failed. Please try again or contact support if the problem continues.",
+								title = "Error",
+								isError = true
+							)
+						}
+					}
 				}
 
 				else -> {}
