@@ -155,6 +155,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
     private lateinit var exoPlayer: ExoPlayer
     private lateinit var clipSheetBind: CreateClipSheetBinding
     private lateinit var clipSheet: BottomSheetDialog
+    private var liveEndedSheet: AppBottomSheet? = null
 
     private var liveShowData: LiveShowModel? = null
     private var breakSpotAuctionData: AuctionStartedBreakSpotResponse? = null
@@ -338,7 +339,13 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
                 runSafe {
                     if (auctionData.roomId == roomID) {
                         requireActivity().runOnUiThread {
-                            isAuctionStarted = auctionData.product != null
+                            if (liveEndedSheet?.isShowing == true) {
+                                liveEndedSheet?.dismiss()
+                                liveEndedSheet = null
+                            }
+                            // Auction-start event means the bidding area should be available.
+                            // Product payload can be delayed/null in some socket emissions.
+                            isAuctionStarted = true
                             surpriseSetAuctionRunning = false
                             updateProductUI(auctionData)
                         }
@@ -425,7 +432,8 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
                 runSafe {
                     requireActivity().runOnUiThread {
                         if (json.optString("room_end") == roomID) {
-                            AppBottomSheet(
+                            liveEndedSheet?.dismiss()
+                            liveEndedSheet = AppBottomSheet(
                                 mCtx,
                                 R.drawable.ic_info,
                                 "Live show ended!",
@@ -448,7 +456,8 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
                                     }
                                 }
 
-                            ).show()
+                            )
+                            liveEndedSheet?.show()
                         }
                     }
                 }
@@ -458,6 +467,10 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
                 activity?.runOnUiThread {
                     liveShowData = showData
                     if (liveShowData?.roomId == roomID) {
+                        if (liveEndedSheet?.isShowing == true) {
+                            liveEndedSheet?.dismiss()
+                            liveEndedSheet = null
+                        }
                         if (streamID.isEmpty() || liveShowData?.rtcToken != streamID) {
                             streamID = liveShowData?.rtcToken ?: ""
                             if (streamID.isNotEmpty()) {
@@ -927,6 +940,8 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
     override fun onDestroy() {
         super.onDestroy()
         log("DESTRO CALLED")
+        liveEndedSheet?.dismiss()
+        liveEndedSheet = null
         socketManager?.leaveRoom(roomID, userId)
         App.manager.leaveChannel()
     }
@@ -1134,6 +1149,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
             val liveProduct = auctionData.product
             log("LIVE AUCTZION TYPE ${liveShowData?.auctionTypeId}")
             if (liveProduct != null) {
+                isAuctionStarted = true
                 bind.winningLayout.isVisible = false
                 bind.productName.text = liveProduct.title?.asCapital()
 
@@ -1205,6 +1221,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
                     )
                 }
             } else {
+                isAuctionStarted = false
                 bind.status.isVisible = true
                 bind.bidLayout.isVisible = false
                 bind.productLayout.isVisible = false
@@ -1219,6 +1236,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
         productList.addAll(roomState.products)
 
         if (currentProduct != null) {
+            isAuctionStarted = true
             bind.winningLayout.isVisible = false
             bind.soldLayout.isVisible = false
             bind.status.isVisible = false
@@ -1269,6 +1287,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
                 )
             }
         } else {
+            isAuctionStarted = false
             bind.bidTime.isVisible = false
             bind.bidLayout.isVisible = false
             bind.buyNowBtn.isVisible = false
@@ -1696,7 +1715,9 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
                 }
 
                 expiryDate.text = buildString {
-                    append(App.profileResponse.value?.defaultCard?.expDate ?: "")
+                    append(App.profileResponse.value?.defaultCard?.expMonth)
+                    append("/")
+                    append(App.profileResponse.value?.defaultCard?.expYear)
                 }
             } else {
                 cardNumber.text = buildString {
@@ -1767,8 +1788,21 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
         runSafe {
             requireActivity().runOnUiThread {
                 if (json.optString("room_id") == roomID) {
+                    val remaining = value.toIntOrNull() ?: 0
+                    if (remaining <= 0) {
+                        // Fallback UI state when timer ends but finalize event is delayed/missed.
+                        isAuctionStarted = false
+                        bind.bidTime.isVisible = false
+                        bind.bidLayout.isVisible = false
+                        bind.buyNowBtn.isVisible = false
+                        bind.soldLayout.isVisible = true
+                        bind.productLayout.isVisible = false
+                        bind.status.isVisible = true
+                        return@runOnUiThread
+                    }
+
                     bind.bidTime.isVisible = true
-                    val color = if (value.toInt() <= 10) {
+                    val color = if (remaining <= 10) {
                         ContextCompat.getColor(mCtx, R.color.error)
                     } else {
                         ContextCompat.getColor(mCtx, R.color.background)

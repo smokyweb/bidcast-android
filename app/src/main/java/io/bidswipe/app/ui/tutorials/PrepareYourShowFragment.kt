@@ -78,6 +78,10 @@ class PrepareYourShowFragment : BaseFragment<DashViewModel, FragmentPrepareYourS
 					bind.recycler.adapter?.notifyDataSetChanged()
 
 				} else {
+					if (!isStepEnabled(pos)) {
+						Alerts.error(mCtx, "Please complete previous step first")
+						return
+					}
 					when (pos) {
 						0 -> {
 							scheduleShowLauncher.launch(mCtx.toScheduleShow(from = "tutorial"))
@@ -99,7 +103,7 @@ class PrepareYourShowFragment : BaseFragment<DashViewModel, FragmentPrepareYourS
 								Utils.imagePart(
 									"thumbnail[]",
 									mData?.thumbnail.toString(),
-									File(mData?.thumbnail)
+									File(mData?.thumbnail?:"")
 								)
 							)
 
@@ -272,6 +276,13 @@ class PrepareYourShowFragment : BaseFragment<DashViewModel, FragmentPrepareYourS
 		}
 
 
+	}
+
+	private fun isStepEnabled(position: Int): Boolean {
+		if (position == 0) return true
+		return (0 until position).all { index ->
+			viewModel.showList.getOrNull(index)?.status == "completed"
+		}
 	}
 
 }

@@ -36,8 +36,17 @@ class SubCategoryFragment : BaseFragment<DashViewModel, FragmentSubcategoryBindi
 	private val categoryClicks = object : RecyclerClicks {
 		override fun itemClick(pos: Int, status: String?) {
 			if (status != null) {
-				subCategoryList[pos]?.subcategories?.get(status.toInt())?.isSelected =
-					!(subCategoryList[pos]?.subcategories?.get(status.toInt())?.isSelected ?: false)
+				val subCategoryIndex = status.toIntOrNull() ?: return
+				val subCategory = subCategoryList[pos]?.subcategories?.getOrNull(subCategoryIndex) ?: return
+				val updatedSelection = !(subCategory.isSelected ?: false)
+				subCategory.isSelected = updatedSelection
+				subCategory.id?.let { id ->
+					if (updatedSelection) {
+						viewModel.selectedSubCategoryIds.add(id)
+					} else {
+						viewModel.selectedSubCategoryIds.remove(id)
+					}
+				}
 				subCategoryRecyclerAdapter.notifyItemChanged(pos)
 			}
 		}
@@ -116,6 +125,26 @@ class SubCategoryFragment : BaseFragment<DashViewModel, FragmentSubcategoryBindi
 							.sortedByDescending { category ->
 								!category?.subcategories.isNullOrEmpty()
 							}
+
+						if (viewModel.selectedSubCategoryIds.isEmpty()) {
+							sortedList.forEach { category ->
+								category?.subcategories?.forEach { subCategory ->
+									if (subCategory?.isSelected == true) {
+										subCategory.id?.let { selectedId ->
+											viewModel.selectedSubCategoryIds.add(selectedId)
+										}
+									}
+								}
+							}
+						}
+
+						sortedList.forEach { category ->
+							category?.subcategories?.forEach { subCategory ->
+								subCategory?.id?.let { id ->
+									subCategory.isSelected = viewModel.selectedSubCategoryIds.contains(id)
+								}
+							}
+						}
 
 						subCategoryList.addAll(sortedList)
 						subCategoryRecyclerAdapter.notifyDataSetChanged()

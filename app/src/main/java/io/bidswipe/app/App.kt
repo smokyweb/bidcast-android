@@ -60,7 +60,7 @@ class App : Application() {
                             profileResponse.value = mData
 
                             Prefs(mCtx).putString(Prefs.USER, Gson().toJson(mData).toString())
-                            HapticManager.setEnabled(mData?.preferences?.hapticFeedback ?: false)
+                            HapticManager.setEnabled(mData?.preference?.hapticFeedback ?: false)
                         }
 
                         is Resource.Error -> {

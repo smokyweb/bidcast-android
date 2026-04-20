@@ -14,13 +14,10 @@ import androidx.core.view.isVisible
 import io.bidswipe.app.App
 import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseActivity
-import io.bidswipe.app.controller.SelectPaymentCardAdapter
 import io.bidswipe.app.databinding.ActivitySellerVerificationBinding
 import io.bidswipe.app.interfaces.AlertClicks
-import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.network.response.FetchSellerVerificationResponse
-import io.bidswipe.app.network.response.GetPaymentCardsResponse
 import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.utils.Alerts
 import io.bidswipe.app.utils.Const
@@ -46,15 +43,12 @@ class SellerVerificationActivity : BaseActivity() {
 
     private val viewModel by viewModels<SellerHubViewModel>()
 
-    private var cardList = mutableListOf<GetPaymentCardsResponse.Data?>()
-
     var cardImage = ""
     var selfie = ""
     var phoneNumber = ""
     var isPhoneVerified = false
     var paymentCardId = ""
 
-    private lateinit var cardAdapter: SelectPaymentCardAdapter
     private var sellerData: FetchSellerVerificationResponse.Data? = null
 
     private val idResult = registerForActivityResult(CustomCropImageContract()) { result ->
@@ -102,25 +96,6 @@ class SellerVerificationActivity : BaseActivity() {
             viewModel.getPaymentCard()
         }
     }
-
-
-    private val mClick = object : RecyclerClicks {
-        override fun itemClick(pos: Int, status: String?) {
-
-            cardList.forEachIndexed { index, item ->
-
-                item?.selected = index == pos
-
-                paymentCardId = item?.cardId.toString()
-
-                cardAdapter.notifyDataSetChanged()
-
-            }
-
-        }
-
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(bind.root)
@@ -141,10 +116,6 @@ class SellerVerificationActivity : BaseActivity() {
             hideKeyboard()
             return@setOnTouchListener true
         }
-
-        cardAdapter = SelectPaymentCardAdapter(cardList, mClick)
-
-        bind.recycler.adapter = cardAdapter
 
         bind.uploadId.setHapticClickListener {
             uploadUserId()
@@ -345,6 +316,7 @@ class SellerVerificationActivity : BaseActivity() {
                     }
 
                     isPhoneVerified = sellerData?.numberOtpVerified == 1
+                    phoneNumber = sellerData?.phoneNumber ?: ""
 
                     when (sellerData?.status) {
 
@@ -496,6 +468,9 @@ class SellerVerificationActivity : BaseActivity() {
                     bind.loader.isVisible = false
 
                     isPhoneVerified = true
+                    if (phoneNumber.isNotEmpty()) {
+                        bind.verifyNumberText.text = phoneNumber
+                    }
                     bind.stepProgress.progress = 2
                     bind.stepCount.text = buildString {
                         append("2 of 4")
@@ -542,27 +517,32 @@ class SellerVerificationActivity : BaseActivity() {
 
                     val mData = it.value.data
 
-                    cardList.clear()
-
                     if (mData?.isNotEmpty() == true) {
+                        val selectedCard = mData.firstOrNull()
+                        paymentCardId = selectedCard?.cardId.orEmpty()
+                        bind.paymentCardIcon.isVisible = true
 
-                        paymentCardId = mData[0]?.cardId.toString()
-
-                        mData[0]?.selected = true
-
-                        cardList.add(mData[0])
-
-                    }
-
-                    if (cardList.isNotEmpty()) {
-                        bind.recycler.isVisible = true
-                        bind.noCardView.isVisible = false
+                        bind.addCardBtn.isVisible=false
+                        bind.paymentCardNumber.isVisible = true
+                        bind.paymentCardNumber.text = buildString {
+                            append("**** **** **** ")
+                            append(selectedCard?.last4.orEmpty())
+                        }
+                        bind.paymentCardExpiry.text = buildString {
+                            append("Expires ")
+                            append(selectedCard?.expMonth ?: "--")
+                            append("/")
+                            append(selectedCard?.expYear ?: "--")
+                        }
                     } else {
-                        bind.recycler.isVisible = true
-                        bind.noCardView.isVisible = false
+                        paymentCardId = ""
+                        bind.paymentCardIcon.isVisible = false
+                        bind.paymentCardNumber.isVisible = false
+
+                        bind.addCardBtn.isVisible=true
+                        bind.paymentCardExpiry.text = getString(R.string.no_payment_method_added)
                     }
 
-                    cardAdapter.notifyDataSetChanged()
                     updateStepper()
 
                 }
@@ -685,33 +665,71 @@ class SellerVerificationActivity : BaseActivity() {
         bind.stepCount.text = "$completedSteps of 4"
 
         bind.verifyPhone.isVisible = !phoneDone
+        bind.verificationPhoneIcon.isVisible = phoneDone
+        bind.verifyOtp.isVisible = !phoneDone && bind.otpLayout.isVisible
+        bind.verifyPhoneTitle.isVisible = !phoneDone
+        bind.phoneNumberLayout.isVisible = !phoneDone && !bind.otpLayout.isVisible
+        bind.otpLayout.isVisible = !phoneDone && bind.otpLayout.isVisible
+        bind.editPhone.isVisible = !phoneDone && bind.editPhone.isVisible
+        bind.resend.isVisible = !phoneDone && bind.resend.isVisible
+        bind.verifyNumberText.text = if (phoneDone) {
+            phoneNumber.ifEmpty { sellerData?.phoneNumber ?: "" }.ifEmpty { "Phone number verified" }
+        } else {
+            "Verify your phone number"
+        }
 
         log("ACTIVE $kycActive")
 
         bind.addKycBtn.isVisible = !kycActive
         bind.kycCheck.isVisible = kycActive
+        bind.kycDescription.text = if (kycActive) {
+            "KYC verified successfully"
+        } else {
+            "Stripe identity verification(KYC) to start selling."
+        }
+        bind.kycDescription.setTextColor(
+            ContextCompat.getColor(
+                this,
+                if (kycActive) R.color.success else R.color.onSurfaceVariant
+            )
+        )
 
-        bind.addCardBtn.isVisible = !paymentDone && kycActive
+        bind.addCardBtn.isVisible = !paymentDone
 
         when (sellerData?.status) {
             "pending" -> {
                 bind.completeVerification.isVisible = false
                 bind.status.setTextColor(ContextCompat.getColor(this, R.color.warning))
+                bind.status.isVisible = true
+                bind.manualVerificationIcon.isVisible = false
+                bind.statusDescription.text = "Final review by our team"
+                bind.statusDescription.setTextColor(ContextCompat.getColor(this, R.color.onSurfaceVariant))
             }
 
             "verified" -> {
                 bind.status.setTextColor(ContextCompat.getColor(this, R.color.success))
+                bind.statusDescription.text = "Verified"
+                bind.statusDescription.setTextColor(ContextCompat.getColor(this, R.color.success))
                 bind.completeVerification.isVisible = false
+                bind.status.isVisible = false
+                bind.manualVerificationIcon.isVisible = true
             }
 
             "rejected" -> {
                 bind.status.setTextColor(ContextCompat.getColor(this, R.color.error))
                 bind.statusDescription.text = sellerData?.reason.toString()
                 bind.completeVerification.isVisible = false
+                bind.status.isVisible = true
+                bind.manualVerificationIcon.isVisible = false
+                bind.statusDescription.setTextColor(ContextCompat.getColor(this, R.color.error))
             }
 
             else -> {
                 bind.completeVerification.isVisible = false
+                bind.status.isVisible = true
+                bind.manualVerificationIcon.isVisible = false
+                bind.statusDescription.text = "Final review by our team"
+                bind.statusDescription.setTextColor(ContextCompat.getColor(this, R.color.onSurfaceVariant))
             }
         }
 

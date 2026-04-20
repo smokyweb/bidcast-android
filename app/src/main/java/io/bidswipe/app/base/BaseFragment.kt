@@ -46,7 +46,7 @@ abstract class BaseFragment<VM : ViewModel, BIND : ViewBinding> : Fragment() {
         // Set fragment background to surface color
         bind.root.setBackgroundColor(ContextCompat.getColor(mCtx, clr.surface))
 
-        if (App.profileResponse.value?.preferences?.hapticFeedback == true) {
+        if (App.profileResponse.value?.preference?.hapticFeedback == true) {
             applyHapticToAllClickableViews(bind.root)
         }
 

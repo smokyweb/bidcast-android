@@ -127,6 +127,8 @@ class AgoraPublisherActivity : BaseActivity() {
     private var livePollOptionList = mutableListOf<PollModel.PollOption>()
     private var liveSellerList = mutableListOf<GetLiveSellerResponse.Data?>()
     private var productList = mutableListOf<LiveShowModel.Product?>()
+    private var builtInProducts = mutableListOf<LiveShowModel.Product>()
+    private var remainingQuantityMap = mutableMapOf<String, Int>()
     private var pollOptionList = mutableListOf<PollOptionModel?>()
     private var commentList = mutableListOf<LiveChatModel?>()
 
@@ -154,6 +156,7 @@ class AgoraPublisherActivity : BaseActivity() {
 
     private var isShowLive = false
     private var isAuctionStarted = false
+    private var hasAutoAdvancedOnTimerEnd = false
     private var breakSpotAuctionData: AuctionStartedBreakSpotResponse? = null
     private var isFreebieLive = false
     private var zoomLevel = 1.0f
@@ -211,6 +214,7 @@ class AgoraPublisherActivity : BaseActivity() {
             }
         }
         log("SHOW DATA ON PUBLISH : $liveShowData")
+        initializeBuiltInProductQueue(liveShowData?.products)
 
         exoPlayer = ExoPlayer.Builder(this).build()
 
@@ -297,7 +301,7 @@ class AgoraPublisherActivity : BaseActivity() {
             hideKeyboard()
         }
 
-        bind.clip.isVisible = App.profileResponse.value?.preferences?.enableClips == true
+        bind.clip.isVisible = App.profileResponse.value?.preference?.enableClips == true
 
         bind.message.setEndIconOnClickListener {
             if (!isShowLive) {
@@ -695,10 +699,12 @@ class AgoraPublisherActivity : BaseActivity() {
                     runOnUiThread {
                         if (json.product != null) {
                             isAuctionStarted = true
+                            hasAutoAdvancedOnTimerEnd = false
                             bind.runNext.isVisible = json.status == "sold"
                             updateProductUI(json)
                         } else {
                             isAuctionStarted = false
+                            hasAutoAdvancedOnTimerEnd = false
                             updateProductUI(null)
                         }
                     }
@@ -712,11 +718,13 @@ class AgoraPublisherActivity : BaseActivity() {
                     runOnUiThread {
                         if (json.surpriseSetDetails != null) {
                             isAuctionStarted = true
+                            hasAutoAdvancedOnTimerEnd = false
                             breakSpotAuctionData = json
                             bind.runNext.isVisible = json.status == "sold"
                             updateBreakSpotProductUI(json)
                         } else {
                             isAuctionStarted = false
+                            hasAutoAdvancedOnTimerEnd = false
                             updateBreakSpotProductUI(null)
                         }
                     }
@@ -731,24 +739,9 @@ class AgoraPublisherActivity : BaseActivity() {
                         if (json.has("product") && json.optJSONObject("product") != null) {
                             val product =
                                 LiveShowModel.Product.fromJson(json.optJSONObject("product"))
-                            if (liveShowData?.auctionTypeId == AuctionType.BUY_NOW.id) {
-                                socketManager?.startAuction(
-                                    viewModel.currentRoomId,
-                                    listOf(product.id.toString()),
-                                    product.price.toString(),
-                                    null,
-                                    null,
-                                    null,
-                                    liveShowData?.auctionTypeId
-                                )
-                            } else {
-                                auctionSettingsSheet(
-                                    product.id.toString(),
-                                    product.price.toString()
-                                )
-                            }
+                            startAuctionForProduct(product.id)
                         } else {
-                            showProductSheet()
+                            tryStartBuiltInProductOrOpenSheet()
                         }
                     }
                 }
@@ -759,7 +752,7 @@ class AgoraPublisherActivity : BaseActivity() {
             runSafe {
                 if (json.optString("room_id") == roomID) {
                     runOnUiThread {
-                        showProductSheet()
+                        tryStartBuiltInProductOrOpenSheet()
                         log("NEXT PRODUCT ERROR : ${json.optString("message")}")
                     }
                 }
@@ -943,6 +936,7 @@ class AgoraPublisherActivity : BaseActivity() {
                 if (showData.roomId == roomID) {
                     productList.clear()
                     productList.addAll(showData.products)
+                    initializeBuiltInProductQueue(showData.products)
                     showData.products.find { it?.isCurrent == true }
                     log("ROOM CREATED : $showData")
                 }
@@ -1087,6 +1081,77 @@ class AgoraPublisherActivity : BaseActivity() {
         bottomSheetFragment.show(supportFragmentManager, "BOTTOM_SHEET_TAG")
     }
 
+    private fun initializeBuiltInProductQueue(products: List<LiveShowModel.Product?>?) {
+        builtInProducts.clear()
+        remainingQuantityMap.clear()
+
+        products.orEmpty().filterNotNull().forEach { product ->
+            val productId = product.id ?: return@forEach
+            builtInProducts.add(product)
+            remainingQuantityMap[productId] = product.quantity?.toIntOrNull()?.coerceAtLeast(1) ?: 1
+        }
+    }
+
+    private fun hasBuiltInProductsRemaining(): Boolean {
+        return builtInProducts.any { product ->
+            val productId = product.id ?: return@any false
+            (remainingQuantityMap[productId] ?: 0) > 0
+        }
+    }
+
+    private fun nextBuiltInProductId(preferredProductId: String? = null): String? {
+        if (!preferredProductId.isNullOrEmpty() && (remainingQuantityMap[preferredProductId] ?: 0) > 0) {
+            return preferredProductId
+        }
+
+        return builtInProducts.firstOrNull { product ->
+            val productId = product.id ?: return@firstOrNull false
+            (remainingQuantityMap[productId] ?: 0) > 0
+        }?.id
+    }
+
+    private fun startAuctionForProduct(productId: String?) {
+        val validProductId = productId ?: return
+        val product = builtInProducts.firstOrNull { it.id == validProductId } ?: return
+
+        if (liveShowData?.auctionTypeId == AuctionType.BUY_NOW.id) {
+            socketManager?.startAuction(
+                viewModel.currentRoomId,
+                listOf(validProductId),
+                product.price.toString(),
+                null,
+                null,
+                null,
+                liveShowData?.auctionTypeId
+            )
+        } else {
+            auctionSettingsSheet(validProductId, product.price.toString())
+        }
+    }
+
+    private fun tryStartBuiltInProductOrOpenSheet() {
+        val nextProductId = nextBuiltInProductId()
+        if (nextProductId != null) {
+            startAuctionForProduct(nextProductId)
+        } else {
+            showProductSheet()
+        }
+    }
+
+    private fun tryStartNextBuiltInProductAfterCurrentOrOpenSheet() {
+        val currentProductId = productList.firstOrNull { it?.isCurrent == true }?.id
+        val nextProductId = builtInProducts.firstOrNull { product ->
+            val productId = product.id ?: return@firstOrNull false
+            productId != currentProductId && (remainingQuantityMap[productId] ?: 0) > 0
+        }?.id
+
+        if (nextProductId != null) {
+            startAuctionForProduct(nextProductId)
+        } else {
+            tryStartBuiltInProductOrOpenSheet()
+        }
+    }
+
     private fun showFreebieStartSheet() {
         val bottomSheetFragment = ProductsForLiveShowFragment().apply {
             arguments = bundleOf("from" to "freebie", "auction_type_id" to liveShowData?.auctionTypeId)
@@ -1208,6 +1273,7 @@ class AgoraPublisherActivity : BaseActivity() {
                 if (json.optString("room_id") == roomID) {
                     bind.bidTime.isVisible = value.toInt() != 0
                     log("BID TIMER UPDATE : $value")
+                    val remaining = value.toIntOrNull() ?: 0
                     val color = if (value.toInt() <= 10) {
                         ContextCompat.getColor(this@AgoraPublisherActivity, R.color.error)
                     } else {
@@ -1218,6 +1284,17 @@ class AgoraPublisherActivity : BaseActivity() {
                             append("Ends in ")
                             append(value)
                         }
+                    }
+
+                    if (remaining == 0 && isAuctionStarted && isShowLive && !hasAutoAdvancedOnTimerEnd) {
+                        hasAutoAdvancedOnTimerEnd = true
+                        bind.runNext.postDelayed({
+                            if (!isFinishing && roomID == json.optString("room_id")) {
+                                tryStartNextBuiltInProductAfterCurrentOrOpenSheet()
+                            }
+                        }, 1200)
+                    } else if (remaining > 0) {
+                        hasAutoAdvancedOnTimerEnd = false
                     }
                 }
             }
@@ -2204,7 +2281,8 @@ class AgoraPublisherActivity : BaseActivity() {
 
                 if (roomID == json.optString("room_id")) {
                     val winner = json.getJSONObject("winner")
-                    val product = productList.find { it?.id == winner.optString("product_id") }
+                    val winnerProductId = winner.optString("product_id")
+                    val product = productList.find { it?.id == winnerProductId }
 
                     val bidderName = winner.optString("user_name") ?: ""
                     val bidderImage = winner.optString("user_image")
@@ -2234,7 +2312,13 @@ class AgoraPublisherActivity : BaseActivity() {
                             userImage
                         )
 
-                        product?.status = "sold"
+                        val remainingAfterSale =
+                            (remainingQuantityMap[winnerProductId] ?: 0).coerceAtLeast(1) - 1
+                        remainingQuantityMap[winnerProductId] = remainingAfterSale
+
+                        if (remainingAfterSale <= 0) {
+                            product?.status = "sold"
+                        }
                         product?.isCurrent = false
 
                         bind.status.isVisible = true
@@ -2248,18 +2332,27 @@ class AgoraPublisherActivity : BaseActivity() {
                         bind.runNext.isVisible = true
                     }
 
-                    val hasRemainingProducts = productList.any { it?.status != "sold" && it?.id != product?.id }
-                    if (hasRemainingProducts) {
+                    val nextProductId = if (bidderName.isNotEmpty()) {
+                        nextBuiltInProductId(winnerProductId)
+                    } else {
+                        nextBuiltInProductId()
+                    }
+
+                    if (nextProductId != null) {
                         bind.runNext.postDelayed({
                             if (!isFinishing && roomID == json.optString("room_id")) {
-                                socketManager?.runNextProduct(roomID)
+                                startAuctionForProduct(nextProductId)
+                            }
+                        }, 1500)
+                    } else if (!hasBuiltInProductsRemaining()) {
+                        bind.runNext.postDelayed({
+                            if (!isFinishing && roomID == json.optString("room_id")) {
+                                showProductSheet()
                             }
                         }, 1500)
                     }
                 }
-
             }
         }
     }
-
 }

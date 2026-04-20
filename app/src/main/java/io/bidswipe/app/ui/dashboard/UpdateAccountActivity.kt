@@ -4,7 +4,6 @@ import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.WindowInsetsCompat.CONSUMED
 import androidx.core.view.isVisible
 import io.bidswipe.app.App
 import io.bidswipe.app.base.BaseActivity
@@ -53,8 +52,16 @@ class UpdateAccountActivity : BaseActivity() {
 
         ViewCompat.setOnApplyWindowInsetsListener(window.decorView) { v, insets ->
             val system = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            bind.root.setPadding(0, system.top, 0, system.bottom)
-            CONSUMED
+            val ime = insets.getInsets(WindowInsetsCompat.Type.ime())
+
+            bind.root.setPadding(0, system.top, 0, 0)
+            bind.scroll.setPadding(
+                bind.scroll.paddingLeft,
+                bind.scroll.paddingTop,
+                bind.scroll.paddingRight,
+                maxOf(system.bottom, ime.bottom)
+            )
+            insets
         }
 
         bind.header.onBackClick {
@@ -67,6 +74,14 @@ class UpdateAccountActivity : BaseActivity() {
 
         bind.layout.setHapticClickListener {
             hideKeyboard()
+        }
+
+        bind.bio.setOnFocusChangeListener { _, hasFocus ->
+            if (hasFocus) {
+                bind.scroll.post {
+                    bind.scroll.smoothScrollTo(0, bind.bio.bottom + bind.update.height)
+                }
+            }
         }
 
         bind.selectImg.setHapticClickListener {

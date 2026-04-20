@@ -109,7 +109,8 @@
             android:exported="false" />
         <activity
             android:name=".ui.scheduleShow.ScheduleShowActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".ui.tutorials.TutorialsActivity"
             android:exported="false" />

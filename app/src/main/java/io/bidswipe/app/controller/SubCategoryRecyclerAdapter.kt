@@ -8,6 +8,7 @@ import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.network.response.GetSubCategoriesResponse
 import io.bidswipe.app.utils.loadUrl
 import io.bidswipe.app.utils.setHapticClickListener
+import androidx.recyclerview.widget.RecyclerView
 
 class SubCategoryRecyclerAdapter(
 	items: List<GetSubCategoriesResponse.Data?>,
@@ -27,7 +28,10 @@ class SubCategoryRecyclerAdapter(
 	) {
 		with(holder.bind) {
 			root.setHapticClickListener {
-				mClicks.itemClick(position)
+				val parentPos = holder.bindingAdapterPosition
+				if (parentPos != RecyclerView.NO_POSITION) {
+					mClicks.itemClick(parentPos)
+				}
 			}
 
 			heading.text = item?.name
@@ -35,7 +39,10 @@ class SubCategoryRecyclerAdapter(
 
 			subCategoryAdapter = SubCategoryAdapter(item?.subcategories ?: mutableListOf(), object : RecyclerClicks {
 				override fun itemClick(pos: Int, status: String?) {
-					mClicks.itemClick(position, pos.toString())
+					val parentPos = holder.bindingAdapterPosition
+					if (parentPos != RecyclerView.NO_POSITION) {
+						mClicks.itemClick(parentPos, pos.toString())
+					}
 				}
 			})
 			recyclerView.adapter = subCategoryAdapter

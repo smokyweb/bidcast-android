@@ -2,8 +2,10 @@ package io.bidswipe.app.ui.more
 
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
 import androidx.core.view.isVisible
 import com.wajahatkarim3.easyvalidation.core.view_ktx.validator
 import io.bidswipe.app.App
@@ -39,6 +41,7 @@ class ContactUsFragment : BaseFragment<MoreViewModel, FragmentContactUsBinding>(
 		bind.root.setHapticClickListener {
 			hideKeyboard(it)
 		}
+		setupKeyboardDismiss(bind.root)
 
 		bind.email.setText(App.profileResponse.value?.email.toString())
 
@@ -123,6 +126,24 @@ class ContactUsFragment : BaseFragment<MoreViewModel, FragmentContactUsBinding>(
 
 		}
 
+	}
+
+	private fun setupKeyboardDismiss(view: View) {
+		if (view !is EditText) {
+			view.setOnTouchListener { v, event ->
+				if (event.action == MotionEvent.ACTION_DOWN) {
+					v.clearFocus()
+					hideKeyboard(v)
+				}
+				false
+			}
+		}
+
+		if (view is ViewGroup) {
+			for (index in 0 until view.childCount) {
+				setupKeyboardDismiss(view.getChildAt(index))
+			}
+		}
 	}
 
 }

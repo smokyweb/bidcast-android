@@ -8,6 +8,8 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.RadioButton
 import androidx.core.content.ContextCompat
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
 import androidx.navigation.fragment.findNavController
 import io.bidswipe.app.App
@@ -58,6 +60,26 @@ class AddShippingAddressFragment :
 		}
 		bind.rootView.setHapticClickListener {
 			hideKeyboard(it)
+		}
+
+		ViewCompat.setOnApplyWindowInsetsListener(bind.root) { _, insets ->
+			val system = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+			val ime = insets.getInsets(WindowInsetsCompat.Type.ime())
+			bind.scrollView2.setPadding(
+				bind.scrollView2.paddingLeft,
+				bind.scrollView2.paddingTop,
+				bind.scrollView2.paddingRight,
+				maxOf(system.bottom, ime.bottom)
+			)
+			insets
+		}
+
+		bind.zipCode.setOnFocusChangeListener { _, hasFocus ->
+			if (hasFocus) {
+				bind.scrollView2.post {
+					bind.scrollView2.smoothScrollTo(0, bind.zipCode.bottom + bind.addAddress.height)
+				}
+			}
 		}
 
 		bind.state.setOnItemClickListener { _, _, position, _ ->
@@ -156,6 +178,7 @@ selectedState=stateList[position]
 
 				is Resource.Error -> {
 					bind.loader.isVisible = false
+                    viewModel.addShippingAddressRepo.value = null
 
 					it.parse(mCtx, TAG, object : AlertClicks {
 						override fun primaryClick(dialog: AppBottomSheet) {

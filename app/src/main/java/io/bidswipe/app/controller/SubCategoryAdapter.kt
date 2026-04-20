@@ -9,6 +9,7 @@ import io.bidswipe.app.databinding.CategoryItemBinding
 import io.bidswipe.app.databinding.HomeCategoryTileBinding
 import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.network.response.GetSubCategoriesResponse
+import io.bidswipe.app.utils.dpToPx
 import io.bidswipe.app.utils.loadUrl
 import io.bidswipe.app.utils.setHapticClickListener
 
@@ -71,8 +72,21 @@ class SubCategoryAdapter(
                 title.text = item?.name
                 categoryImage.loadUrl(root.context, item?.image ?: "")
 
+                if (item?.isSelected == true) {
+                    main.setCardBackgroundColor(root.context.getColor(R.color.primaryContainer))
+                    main.strokeColor = root.context.getColor(R.color.primary)
+                    main.strokeWidth = root.context.resources.dpToPx(2)
+                } else {
+                    main.setCardBackgroundColor(root.context.getColor(R.color.background))
+                    main.strokeColor = root.context.getColor(R.color.transparent)
+                    main.strokeWidth = 0
+                }
+
                 root.setHapticClickListener {
-                    mClicks.itemClick(adapterPosition)
+                    val pos = bindingAdapterPosition
+                    if (pos != RecyclerView.NO_POSITION) {
+                        mClicks.itemClick(pos)
+                    }
                 }
             }
         }
@@ -106,7 +120,10 @@ class SubCategoryAdapter(
 
                 }
                 root.setHapticClickListener {
-                    mClicks.itemClick(adapterPosition)
+                    val pos = bindingAdapterPosition
+                    if (pos != RecyclerView.NO_POSITION) {
+                        mClicks.itemClick(pos)
+                    }
                 }
             }
         }

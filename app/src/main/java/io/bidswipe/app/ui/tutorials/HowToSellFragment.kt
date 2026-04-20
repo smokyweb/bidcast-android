@@ -9,6 +9,7 @@ import androidx.core.view.isVisible
 import androidx.navigation.fragment.findNavController
 import androidx.viewpager2.widget.ViewPager2
 import io.bidswipe.app.base.BaseFragment
+import io.bidswipe.app.R
 import io.bidswipe.app.controller.HowToSellPagerAdapter
 import io.bidswipe.app.databinding.FragmentHowToSellBinding
 import io.bidswipe.app.interfaces.AlertClicks
@@ -38,14 +39,18 @@ class HowToSellFragment : BaseFragment<DashViewModel, FragmentHowToSellBinding>(
 
 		type = activity?.intent?.getStringExtra("slug") ?: ""
 
-		bind.header.onBackClick {
-			if (type.isEmpty()) {
-				findNavController().popBackStack()
-			} else {
-				finish()
-			}
-
-		}
+        bind.header.onBackClick {
+            if (type.isEmpty()) {
+                val navController = findNavController()
+                if (navController.previousBackStackEntry != null) {
+                    navController.popBackStack()
+                } else {
+                    requireActivity().finish()
+                }
+            } else {
+                finish()
+            }
+        }
 
 //        bind.next.setHapticClickListener {
 //            findNavController().navigate(ids.prepareYourShowFragment)
@@ -72,6 +77,9 @@ class HowToSellFragment : BaseFragment<DashViewModel, FragmentHowToSellBinding>(
 					append(position + 1)
 					append(" of ${tipList.size}")
 				}
+
+				updateBackButtonState(position)
+				updateNextButtonText(position)
 			}
 		})
 
@@ -137,7 +145,9 @@ class HowToSellFragment : BaseFragment<DashViewModel, FragmentHowToSellBinding>(
 						append(" ")
 					}
 
-					bind.pager.currentItem = 1
+					bind.pager.currentItem = 0
+					updateBackButtonState(bind.pager.currentItem)
+					updateNextButtonText(bind.pager.currentItem)
 
 					pagerAdapter.notifyDataSetChanged()
 
@@ -165,6 +175,20 @@ class HowToSellFragment : BaseFragment<DashViewModel, FragmentHowToSellBinding>(
 		}
 
 
+	}
+
+	private fun updateNextButtonText(currentPosition: Int) {
+		val isLastStep = tipList.isNotEmpty() && currentPosition == tipList.lastIndex
+		bind.nextBtn.text = if (isLastStep) {
+			getString(R.string.finish)
+		} else {
+			getString(R.string.next)
+		}
+	}
+
+	private fun updateBackButtonState(currentPosition: Int) {
+		bind.backBtn.text = "Previous"
+		bind.backBtn.isVisible = currentPosition > 0
 	}
 
 }

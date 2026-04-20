@@ -3,7 +3,6 @@ package io.bidswipe.app.ui.more
 import android.os.Bundle
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.WindowInsetsCompat.CONSUMED
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
@@ -25,7 +24,7 @@ class MoreActivity : BaseActivity() {
 		ViewCompat.setOnApplyWindowInsetsListener(window.decorView) { v, insets ->
 			val system = insets.getInsets(WindowInsetsCompat.Type.systemBars())
 			bind.root.setPadding(0, system.top, 0, system.bottom)
-			CONSUMED
+			insets
 		}
 		navHostFragment = supportFragmentManager.findFragmentById(R.id.fragmentContainer) as NavHostFragment
 		navController = navHostFragment.findNavController()

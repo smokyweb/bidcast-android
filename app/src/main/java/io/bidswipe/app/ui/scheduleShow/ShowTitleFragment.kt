@@ -5,6 +5,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
 import androidx.navigation.fragment.findNavController
 import io.bidswipe.app.base.BaseFragment
@@ -59,6 +61,26 @@ class ShowTitleFragment : BaseFragment<ScheduleShowViewModel, FragmentShowTitleB
 
         bind.layout.setHapticClickListener {
             hideKeyboard(it)
+        }
+
+        ViewCompat.setOnApplyWindowInsetsListener(bind.root) { _, insets ->
+            val system = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            val ime = insets.getInsets(WindowInsetsCompat.Type.ime())
+            bind.scrollView.setPadding(
+                bind.scrollView.paddingLeft,
+                bind.scrollView.paddingTop,
+                bind.scrollView.paddingRight,
+                maxOf(system.bottom, ime.bottom) + bind.buttonLayout.height
+            )
+            insets
+        }
+
+        bind.showTitle.setOnFocusChangeListener { _, hasFocus ->
+            if (hasFocus) {
+                bind.scrollView.post {
+                    bind.scrollView.smoothScrollTo(0, bind.showTitle.bottom + bind.buttonLayout.height)
+                }
+            }
         }
 
         titleAdapter = TitleAdapter(titleList)

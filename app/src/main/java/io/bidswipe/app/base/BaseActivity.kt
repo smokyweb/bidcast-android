@@ -32,7 +32,7 @@ abstract class BaseActivity : LocaleAwareCompatActivity() {
         userName = Prefs(this).getUserData()?.name.toString()
         userImage = Prefs(this).getUserData()?.profileImage ?: ""
 
-        if (App.profileResponse.value?.preferences?.hapticFeedback == true) {
+        if (App.profileResponse.value?.preference?.hapticFeedback == true) {
             applyHapticToAllClickableViews(window.decorView)
         }
 

@@ -215,6 +215,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="top"
+                    android:imeOptions="flagNoExtractUi"
+                    android:inputType="textMultiLine|textCapSentences"
                     android:paddingTop="16dp"
                     android:paddingStart="16dp"
                     android:hint="@string/tell_us_about_yourself"

@@ -68,7 +68,7 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
             page = 1
             viewModel.getLiveShow(
                 selectedTabText.request(),
-                selectedCategory.request(),
+                selectedCategoryRequest(),
                 search = bind.search.value().ifEmpty { null }?.request(),
                 page = page.toString().request()
             )
@@ -133,6 +133,7 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
     }
 
     private var selectedTabText = "live"
+    private fun selectedCategoryRequest() = if (selectedTabText == "live") null else selectedCategory.request()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -217,7 +218,7 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
                 page++
                 viewModel.getLiveShow(
                     selectedTabText.request(),
-                    selectedCategory.request(),
+                    selectedCategoryRequest(),
                     search = bind.search.value().ifEmpty { null }?.request(),
                     page = page.toString().request()
                 )
@@ -238,7 +239,7 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
                     page = 1
                     viewModel.getLiveShow(
                         selectedTabText.request(),
-                        selectedCategory.request(),
+                        selectedCategoryRequest(),
                         search = s.toString().request(),
                         page = page.toString().request()
                     )
@@ -256,7 +257,7 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
             page = 1
             viewModel.getLiveShow(
                 selectedTabText.request(),
-                selectedCategory.request(),
+                selectedCategoryRequest(),
                 page = page.toString().request()
             )
             viewModel.getCategory()
@@ -267,13 +268,18 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
             bind.noInternet.isVisible = false
             viewModel.getLiveShow(
                 selectedTabText.request(),
-                selectedCategory.request(),
+                selectedCategoryRequest(),
                 page = page.toString().request()
             )
             viewModel.getCategory()
         }
 
-        selectTab(bind.live, true)
+        val selectedTabView = when (selectedTabText) {
+            "popular" -> bind.popular
+            "upcoming" -> bind.comingSoon
+            else -> bind.live
+        }
+        selectTab(selectedTabView, true)
 
         bind.live.setHapticClickListener { selectTab(it as TextView, false) }
 
@@ -338,7 +344,7 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
                     if (selectedTabText == "live") {
                         viewModel.getLiveShow(
                             selectedTabText.request(),
-                            selectedCategory.request(),
+                            selectedCategoryRequest(),
                             search = bind.search.value().ifEmpty { null }?.request(),
                             page = 1.toString().request()
                         )
@@ -579,7 +585,7 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
             bind.loader.isVisible = true
             viewModel.getLiveShow(
                 selectedTabText.request(),
-                selectedCategory.request(),
+                selectedCategoryRequest(),
                 page = page.toString().request()
             )
         }
@@ -613,7 +619,7 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
                 if (!isFirst) {
                     viewModel.getLiveShow(
                         "live".request(),
-                        selectedCategory.request(),
+                        selectedCategoryRequest(),
                         page = page.toString().request()
                     )
                 }
@@ -623,7 +629,7 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
                 selectedTabText = "popular"
                 viewModel.getLiveShow(
                     "popular".request(),
-                    selectedCategory.request(),
+                    selectedCategoryRequest(),
                     page = page.toString().request()
                 )
             }
@@ -632,7 +638,7 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
                 selectedTabText = "upcoming"
                 viewModel.getLiveShow(
                     "upcoming".request(),
-                    selectedCategory.request(),
+                    selectedCategoryRequest(),
                     page = page.toString().request()
                 )
             }

@@ -537,7 +537,9 @@ class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
                 }
 
                 expiryDate.text = buildString {
-                    append(App.profileResponse.value?.defaultCard?.expDate)
+                    append(App.profileResponse.value?.defaultCard?.expMonth)
+                    append("/")
+                    append(App.profileResponse.value?.defaultCard?.expYear)
                 }
 
             } else {

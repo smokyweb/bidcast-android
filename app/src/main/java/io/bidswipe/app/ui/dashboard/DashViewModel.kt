@@ -77,6 +77,7 @@ class DashViewModel @Inject constructor(
     var showData = MutableLiveData<TutorialShowModel>()
 
     val selectedCategories = mutableListOf<GetCategoryResponse.Data>()
+    val selectedSubCategoryIds = mutableSetOf<Int>()
 
     var repeatMode = ""
     var repeatType = ""

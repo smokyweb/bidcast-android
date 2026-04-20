@@ -21,7 +21,6 @@ import androidx.navigation.NavDestination
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.setupWithNavController
-import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.firebase.messaging.FirebaseMessaging
 import io.bidswipe.app.App
@@ -69,7 +68,6 @@ class DashActivity : BaseActivity(), NavController.OnDestinationChangedListener 
     private val bind by bind(ActivityDashBinding::inflate)
     private val viewModel by viewModels<DashViewModel>()
 
-    private lateinit var imageSheet: BottomSheetBehavior<LinearLayout>
     private lateinit var sellerToolsAdapter: SellerToolsAdapter
     private lateinit var navHostFragment: NavHostFragment
     private lateinit var mSellSheet: BottomSheetDialog
@@ -94,7 +92,9 @@ class DashActivity : BaseActivity(), NavController.OnDestinationChangedListener 
                     }
 
                     "training" -> {
-                        startActivity(this@DashActivity.toTutorials())
+                        startActivity(
+                            this@DashActivity.toTutorials().putExtra("type", "promoteTools")
+                        )
                     }
 
                     "notifications" -> {
@@ -481,7 +481,9 @@ class DashActivity : BaseActivity(), NavController.OnDestinationChangedListener 
                 }
 
                 expiryDate.text = buildString {
-                    append(App.profileResponse.value?.defaultCard?.expDate)
+                    append(App.profileResponse.value?.defaultCard?.expMonth)
+                    append("/")
+                    append(App.profileResponse.value?.defaultCard?.expYear)
                 }
 
             } else {
@@ -505,7 +507,9 @@ class DashActivity : BaseActivity(), NavController.OnDestinationChangedListener 
             makeOfferSheet.dismiss()
         }
 
-        imageSheet.state = BottomSheetBehavior.STATE_COLLAPSED
+        if (this::mSellSheet.isInitialized && mSellSheet.isShowing) {
+            mSellSheet.dismiss()
+        }
         makeOfferSheet.show()
 
     }

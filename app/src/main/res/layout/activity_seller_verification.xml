@@ -7,12 +7,6 @@
     android:background="@color/surface"
     tools:context=".ui.sellerHub.SellerVerificationActivity">
 
-    <TextView
-        android:id="@+id/textView2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Stripe identity verification (KYC) to start selling." />
-
     <io.bidswipe.app.ui.custom.Header
         android:id="@+id/header"
         android:layout_width="match_parent"
@@ -25,7 +19,7 @@
         android:id="@+id/scrollView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginBottom="@dimen/margin"
+        android:layout_marginBottom="@dimen/half_margin"
         app:layout_constraintBottom_toTopOf="@id/completeVerification"
         app:layout_constraintTop_toBottomOf="@id/header">
 
@@ -71,21 +65,21 @@
                 android:max="4"
                 android:progress="0"
                 app:trackCornerRadius="6dp"
-                app:trackThickness="8dp" />
+                app:trackThickness="4dp" />
 
             <com.google.android.material.card.MaterialCardView
                 style="@style/cardStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/half_margin"
-                android:layout_marginBottom="@dimen/margin">
+                android:layout_marginBottom="@dimen/half_margin">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@color/background"
                     android:orientation="vertical"
-                    android:padding="@dimen/padding">
+                    android:padding="@dimen/half_margin">
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -95,11 +89,11 @@
                         android:orientation="horizontal">
 
                         <androidx.appcompat.widget.AppCompatImageView
-                            android:layout_width="56dp"
-                            android:layout_height="56dp"
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
                             android:background="@drawable/card_32_outline"
                             android:backgroundTint="@color/primaryContainer"
-                            android:padding="16dp"
+                            android:padding="12dp"
                             android:src="@drawable/ic_id_card"
                             app:tint="@color/primary" />
 
@@ -297,14 +291,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/half_margin"
-                android:layout_marginBottom="@dimen/margin">
+                android:layout_marginBottom="@dimen/half_margin">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@color/background"
                     android:orientation="vertical"
-                    android:padding="@dimen/padding">
+                    android:padding="@dimen/half_margin">
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -313,11 +307,11 @@
                         android:orientation="horizontal">
 
                         <androidx.appcompat.widget.AppCompatImageView
-                            android:layout_width="56dp"
-                            android:layout_height="56dp"
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
                             android:background="@drawable/card_32_outline"
                             android:backgroundTint="@color/primaryContainer"
-                            android:padding="16dp"
+                            android:padding="12dp"
                             android:src="@drawable/ic_phone"
                             app:tint="@color/primary" />
 
@@ -457,7 +451,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/half_margin"
-                android:layout_marginBottom="@dimen/margin">
+                android:layout_marginBottom="@dimen/half_margin">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -465,14 +459,14 @@
                     android:background="@color/background"
                     android:gravity="center_vertical"
                     android:orientation="horizontal"
-                    android:padding="@dimen/padding">
+                    android:padding="@dimen/half_margin">
 
                     <androidx.appcompat.widget.AppCompatImageView
-                        android:layout_width="56dp"
-                        android:layout_height="56dp"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
                         android:background="@drawable/card_32_outline"
                         android:backgroundTint="@color/primaryContainer"
-                        android:padding="16dp"
+                        android:padding="12dp"
                         android:src="@drawable/ic_identity_verification"
                         app:tint="@color/primary" />
 
@@ -491,6 +485,7 @@
                             android:textStyle="bold" />
 
                         <TextView
+                            android:id="@+id/kycDescription"
                             style="@style/BodyMedium"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -524,35 +519,35 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/half_margin"
-                android:layout_marginBottom="@dimen/margin">
+                android:layout_marginBottom="@dimen/half_margin">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@color/background"
                     android:orientation="vertical"
-                    android:padding="@dimen/padding">
+                    android:padding="@dimen/half_margin">
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="@dimen/margin"
+                        android:layout_marginBottom="@dimen/half_margin"
                         android:gravity="center_vertical"
                         android:orientation="horizontal">
 
                         <androidx.appcompat.widget.AppCompatImageView
-                            android:layout_width="56dp"
-                            android:layout_height="56dp"
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
                             android:background="@drawable/card_32_outline"
                             android:backgroundTint="@color/primaryContainer"
-                            android:padding="16dp"
+                            android:padding="12dp"
                             android:src="@drawable/ic_payment_card"
                             app:tint="@color/primary" />
 
                         <LinearLayout
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_marginHorizontal="@dimen/half_margin"
+                            android:layout_marginHorizontal="8dp"
                             android:layout_weight="1"
                             android:orientation="vertical">
 
@@ -583,40 +578,55 @@
                     </LinearLayout>
 
                     <LinearLayout
-                        android:id="@+id/noCardView"
-                        android:layout_width="match_parent"
-                        android:layout_height="120dp"
-                        android:background="@drawable/dashed_card_8_white"
-                        android:gravity="center"
-                        android:orientation="vertical"
-                        android:visibility="gone"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/headingView">
-
-                        <androidx.appcompat.widget.AppCompatImageView
-                            android:layout_width="42dp"
-                            android:layout_height="42dp"
-                            android:src="@drawable/ic_payment_card"
-                            android:tint="@color/outlineVariant" />
-
-                        <TextView
-                            style="@style/TitleMedium"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/no_payment_method_added"
-                            android:textColor="@color/outlineVariant" />
-
-                    </LinearLayout>
-
-                    <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/recycler"
+                        android:id="@+id/paymentCardItem"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:nestedScrollingEnabled="false"
-                        android:orientation="vertical"
-                        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                        tools:itemCount="2"
-                        tools:listitem="@layout/payment_card_item" />
+                        android:layout_marginHorizontal="@dimen/half_margin"
+                        android:background="@drawable/card_8"
+                        android:backgroundTint="@color/outline"
+                        android:gravity="center_vertical"
+                        android:padding="@dimen/half_margin">
+
+                        <com.google.android.material.card.MaterialCardView
+                            android:id="@+id/paymentCardIcon"
+                            style="@style/cardStyle"
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            app:cardElevation="0dp">
+
+                            <androidx.appcompat.widget.AppCompatImageView
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:padding="8dp"
+                                android:src="@drawable/ic_payment_card"
+                                app:tint="@color/primary" />
+
+                        </com.google.android.material.card.MaterialCardView>
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginHorizontal="@dimen/half_margin"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:id="@+id/paymentCardNumber"
+                                style="@style/TitleMedium"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="**** **** ****" />
+
+                            <TextView
+                                android:id="@+id/paymentCardExpiry"
+                                style="@style/BodyMedium"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:alpha="0.7"
+                                android:text="No payment method added" />
+
+                        </LinearLayout>
+                    </LinearLayout>
 
                 </LinearLayout>
 
@@ -628,7 +638,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/half_margin"
-                android:layout_marginBottom="@dimen/margin">
+                android:layout_marginBottom="@dimen/half_margin">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -636,14 +646,14 @@
                     android:background="@color/background"
                     android:gravity="center_vertical"
                     android:orientation="horizontal"
-                    android:padding="@dimen/padding">
+                    android:padding="@dimen/half_margin">
 
                     <androidx.appcompat.widget.AppCompatImageView
-                        android:layout_width="56dp"
-                        android:layout_height="56dp"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
                         android:background="@drawable/card_32_outline"
                         android:backgroundTint="@color/primaryContainer"
-                        android:padding="16dp"
+                        android:padding="12dp"
                         android:src="@drawable/ic_user_outline"
                         app:tint="@color/primary" />
 
@@ -677,6 +687,15 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
                         android:text="@string/pending" />
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/manualVerificationIcon"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:layout_gravity="center"
+                        android:src="@drawable/ic_check_white_24dp"
+                        android:visibility="gone"
+                        app:tint="@color/success" />
 
                 </LinearLayout>
 
