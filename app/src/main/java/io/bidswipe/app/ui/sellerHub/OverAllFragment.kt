@@ -312,16 +312,29 @@ class OverAllFragment : BaseFragment<SellerHubViewModel, FragmentOverAllBinding>
             loadDataForDateRange()
         }
 
+        // QA-FIX: These three buttons were no-op stubs (empty click handlers). Users saw the
+        // buttons, tapped them, and nothing happened — classic broken-button bug. Until the
+        // real implementations land (metrics info dialog + CSV export endpoints), give the
+        // user clear feedback that the feature is on the way instead of silent failure.
         bind.linkMetricsInfo.setHapticClickListener {
-            // TODO: Show metrics info dialog
+            Alerts.info(
+                mCtx,
+                "Metrics info coming soon. We\u2019ll add a breakdown of each metric here in an upcoming release."
+            )
         }
 
         bind.btnExportSales.setHapticClickListener {
-            // TODO: Export sales data
+            Alerts.info(
+                mCtx,
+                "Sales export is coming soon. You\u2019ll be able to download your sales data as CSV from here."
+            )
         }
 
         bind.btnExportOrders.setHapticClickListener {
-            // TODO: Export orders data
+            Alerts.info(
+                mCtx,
+                "Orders export is coming soon. You\u2019ll be able to download your orders as CSV from here."
+            )
         }
     }
 
@@ -480,7 +493,19 @@ class OverAllFragment : BaseFragment<SellerHubViewModel, FragmentOverAllBinding>
 
                 // Get the URI to insert the file into Downloads
                 val uri = context.contentResolver.insert(MediaStore.Files.getContentUri("external"), contentValues)
-                outputStream = context.contentResolver.openOutputStream(uri!!) // Open output stream
+                if (uri == null) {
+                    // QA-FIX (compile): doInBackground is declared to return
+                    // non-null Boolean, so return false instead of null.
+                    cancel(true)
+                    return false
+                }
+                outputStream = context.contentResolver.openOutputStream(uri)
+                if (outputStream == null) {
+                    // QA-FIX (compile): doInBackground is declared to return
+                    // non-null Boolean, so return false instead of null.
+                    cancel(true)
+                    return false
+                }
 
                 // Read data from the input stream and write it to the output stream
                 val buffer = ByteArray(4096)
