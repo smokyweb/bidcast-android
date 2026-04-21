@@ -505,6 +505,18 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
                         }
                     }
 
+                    // QA-FIX (MC task cmo7iafya00cofi15op1wnifq): if the for-you or any category
+                    // tab returns no shows, fall back to fetching ALL live shows without category
+                    // filter rather than showing an empty screen.
+                    if (showList.isEmpty() && page == 1 && selectedCategory != "all") {
+                        viewModel.getLiveShow(
+                            selectedTabText.request(),
+                            "all".request(),
+                            page = "1".request()
+                        )
+                        return@observe
+                    }
+
                     if (showList.isEmpty()) {
                         bind.noData.isVisible = true
                         bind.recycler.isVisible = false

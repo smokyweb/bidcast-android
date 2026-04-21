@@ -43,6 +43,9 @@ class LoginFragment : BaseFragment<AuthViewModel, FragmentLoginBinding>() {
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		super.onViewCreated(view, savedInstanceState)
 
+		// QA-FIX (MC task cmo7iaecx00c6fi15wmnjyw0f): Remember Me should be checked by default
+		bind.rememberMe.isChecked = true
+
 		bind.createAccount.setHapticClickListener {
 			findNavController().navigate(ids.goToCreateAccount)
 		}

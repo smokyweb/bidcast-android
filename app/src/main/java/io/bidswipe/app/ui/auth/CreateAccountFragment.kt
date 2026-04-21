@@ -1,5 +1,6 @@
 package io.bidswipe.app.ui.auth
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -8,17 +9,22 @@ import androidx.core.view.isVisible
 import androidx.navigation.fragment.findNavController
 import com.gyf.immersionbar.ktx.immersionBar
 import com.wajahatkarim3.easyvalidation.core.view_ktx.validator
+import io.bidswipe.app.App
 import io.bidswipe.app.base.BaseFragment
 import io.bidswipe.app.databinding.FragmentCreateAccountBinding
 import io.bidswipe.app.interfaces.AlertClicks
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.ui.custom.AppBottomSheet
+import io.bidswipe.app.ui.interest.ChooseInterestActivity
 import io.bidswipe.app.utils.Alerts
+import io.bidswipe.app.utils.Prefs
+import io.bidswipe.app.utils.finish
 import io.bidswipe.app.utils.hideKeyboard
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request
 import io.bidswipe.app.utils.setHapticClickListener
 import io.bidswipe.app.utils.showKeyboard
+import io.bidswipe.app.utils.toDash
 import io.bidswipe.app.utils.value
 
 class CreateAccountFragment : BaseFragment<AuthViewModel , FragmentCreateAccountBinding>() {
@@ -128,9 +134,28 @@ class CreateAccountFragment : BaseFragment<AuthViewModel , FragmentCreateAccount
 				is Resource.Success -> {
 					viewModel.signUpRepo.value = null
 					bind.loader.isVisible = false
-					successToast(it.value.message.toString())
-//                  Prefs(mCtx).putString(Prefs.USER, Gson().toJson(it.value.data).toString())
-					findNavController().popBackStack()
+
+					// QA-FIX (MC task cmo7iacwd00bqfi15a11rkszi): auto-login after signup.
+					// Save the auth token returned by the signup API and go straight to the
+					// interest-selection screen so the user is never asked to log in again.
+					val token = it.value.data?.token
+					if (!token.isNullOrBlank()) {
+						Prefs(mCtx).putString(Prefs.TOKEN, "Bearer ${token.trim()}")
+						App.getProfile()
+						App.checkKYC()
+						App.setUpSocket()
+						App.getCategories()
+						// New accounts always go through interest selection on first login
+						startActivity(
+							Intent(mCtx, ChooseInterestActivity::class.java)
+								.putExtra("isFirstTimeLogin", true)
+						)
+						finish()
+					} else {
+						// No token in response — fall back to navigating back to the login screen
+						successToast(it.value.message.toString())
+						findNavController().popBackStack()
+					}
 				}
 
 				is Resource.Error -> {

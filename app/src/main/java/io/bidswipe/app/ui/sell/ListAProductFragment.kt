@@ -589,6 +589,14 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
 
                         bind.shippingProfile.setText(profiles[position]?.name, false)
 
+                        // QA-FIX (MC task cmo7iaf1n00cefi1502b100zw): hide dimension + weight
+                        // fields when a shipping profile is selected (profile already carries
+                        // that info so the user shouldn't need to re-enter it).
+                        val hasDimensions = profiles[position]?.let {
+                            !it.height.isNullOrBlank() || !it.width.isNullOrBlank() || !it.length.isNullOrBlank()
+                        } ?: false
+                        toggleDimensionFields(!hasDimensions)
+
                     }
 
                     if (viewModel.shippingProfile.isNotEmpty()) {
@@ -1159,13 +1167,9 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
                     Alerts.error(mCtx, "Please enter price")
                 }
 
-                bind.shippingProfile.value().isEmpty() -> {
-                    if (profiles.isEmpty()) {
-                        addShippingProfile()
-                    } else {
-                        Alerts.error(mCtx, "Please select shipping profile")
-                    }
-                }
+                // QA-FIX (MC task cmo7iaf1n00cefi1502b100zw): shipping profile is now
+                // OPTIONAL — removed the mandatory validation so sellers can create a
+                // product without selecting a profile.
 
                 else -> {
                     saveProduct("active")
@@ -1397,6 +1401,61 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
         super.onPause()
         // Save state when fragment is paused (including orientation changes)
         saveStateToViewModel()
+    }
+
+    // QA-FIX (MC task cmo7iaf1n00cefi1502b100zw): show/hide dimension + weight fields
+    // based on whether a shipping profile (which already has those details) is selected.
+    private fun toggleDimensionFields(show: Boolean) {
+        val visibility = if (show) android.view.View.VISIBLE else android.view.View.GONE
+        bind.widthTitle.visibility = visibility
+        (bind.widthTitle.parent as? android.view.ViewGroup)?.let {
+            // hide the TextInputLayout that wraps the width field
+            for (i in 0 until it.childCount) {
+                val child = it.getChildAt(i)
+                if (child is com.google.android.material.textfield.TextInputLayout &&
+                    child.editText?.id == bind.width.id
+                ) {
+                    child.visibility = visibility
+                    break
+                }
+            }
+        }
+        bind.heightTitle.visibility = visibility
+        (bind.heightTitle.parent as? android.view.ViewGroup)?.let {
+            for (i in 0 until it.childCount) {
+                val child = it.getChildAt(i)
+                if (child is com.google.android.material.textfield.TextInputLayout &&
+                    child.editText?.id == bind.height.id
+                ) {
+                    child.visibility = visibility
+                    break
+                }
+            }
+        }
+        bind.lengthTitle.visibility = visibility
+        (bind.lengthTitle.parent as? android.view.ViewGroup)?.let {
+            for (i in 0 until it.childCount) {
+                val child = it.getChildAt(i)
+                if (child is com.google.android.material.textfield.TextInputLayout &&
+                    child.editText?.id == bind.length.id
+                ) {
+                    child.visibility = visibility
+                    break
+                }
+            }
+        }
+        bind.weightTitle.visibility = visibility
+        (bind.weightTitle.parent as? android.view.ViewGroup)?.let {
+            for (i in 0 until it.childCount) {
+                val child = it.getChildAt(i)
+                if (child is com.google.android.material.textfield.TextInputLayout &&
+                    child.editText?.id == bind.weight.id
+                ) {
+                    child.visibility = visibility
+                    break
+                }
+            }
+        }
     }
 
     private fun addShippingProfile() {

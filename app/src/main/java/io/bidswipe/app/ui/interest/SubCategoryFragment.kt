@@ -112,7 +112,43 @@ class SubCategoryFragment : BaseFragment<DashViewModel, FragmentSubcategoryBindi
 						bind.loader.isVisible = false
 						subCategoryList.clear()
 
-						val sortedList = (it.value.data ?: emptyList())
+						// QA-FIX (MC task cmo7iad4500bsfi158cbti9q1): filter out categories that
+						// have NO subcategories — they should not appear as options here.
+						val allData = it.value.data ?: emptyList()
+						val categoriesWithSubcategories = allData.filter { category ->
+							!category?.subcategories.isNullOrEmpty()
+						}
+
+						// QA-FIX (MC task cmo7iad9e00bufi15cq2d1qz1): if NONE of the selected
+						// categories have subcategories, skip this screen entirely and go directly
+						// to the dashboard (or back to account settings).
+						if (categoriesWithSubcategories.isEmpty()) {
+							// Submit with just the selected categories and no subcategories
+							val selectedCategoryIdsFinal = viewModel.selectedCategories.mapNotNull { it.id }
+							viewModel.userFavorite(
+								categoryIds = selectedCategoryIdsFinal,
+								subcategoriesIds = emptyList()
+							)
+							val fromAccountSkip = arguments?.getBoolean("fromAccount", false)
+							viewModel.userFavoriteRepo.observe(viewLifecycleOwner) { res ->
+								when (res) {
+									is Resource.Success -> {
+										successToast("Saved successfully")
+										App.getCategories()
+										if (fromAccountSkip == true) {
+											requireActivity().finish()
+										} else {
+											startActivity(mCtx.toDash())
+											requireActivity().finish()
+										}
+									}
+									else -> {}
+								}
+							}
+							return@observe
+						}
+
+						val sortedList = categoriesWithSubcategories
 							.sortedByDescending { category ->
 								!category?.subcategories.isNullOrEmpty()
 							}
