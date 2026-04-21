@@ -121,6 +121,32 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
     private var showTitle: String? = null
     private var highestBidAmount: String? = ""
     private var bidProductId: String? = ""
+
+    // QA-FIX-cmo93i77500oe3u1h32urq42p: track whether the current item has
+    // received at least one live bid since it started. If the bid timer
+    // expires with zero bids we must locally end the item and stop letting
+    // users swipe to bid (server does not emit bid_finalized for a no-bid
+    // item, so without this flag the Android bid button stays live forever).
+    private var hasActiveBid: Boolean = false
+
+    // QA-FIX-cmo93i77500oe3u1h32urq42p: once the timer has expired locally
+    // (no-bid case) OR server-finalized, block further bid emits until a
+    // new auction starts.
+    private var isBiddingClosed: Boolean = false
+
+    // QA-FIX-cmo93i6xk00oc3u1hmlx3xtof: user id of the current leader on the
+    // live auction. Used to detect "I am the current winner" so that the
+    // max-bid input sheet acts as a proxy ceiling instead of immediately
+    // bumping the public bid.
+    private var currentLeaderUserId: String = ""
+
+    // QA-FIX-cmo93i6xk00oc3u1hmlx3xtof: the logged-in user's pending proxy
+    // ceiling (max bid) for the current auction. When another user places
+    // a bid that is below this ceiling, the server-side proxy-bid logic
+    // should auto-bump the leader's public bid by one increment. Until
+    // that server-side feature is in place, we at minimum stop emitting
+    // the leader's own max as a public place_bid.
+    private var myProxyMaxBid: Double = 0.0
     private lateinit var socketUrl: String
     private var commentList = mutableListOf<LiveChatModel?>()
     private lateinit var commentAdapter: CommentAdapter
@@ -1073,6 +1099,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
                     val bidderName = highestBid.optString("user_name")
                     val bidderImage = highestBid.optString("user_image")
+                    val bidderUserId = highestBid.optString("user_id")
 
                     log("BID UPDATE: $bidAmount")
 
@@ -1089,6 +1116,23 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
                     setBidText(bidAmount)
                     highestBidAmount = bidAmount
                     bidProductId = highestBid.optString("product_id")
+
+                    // QA-FIX-cmo93i77500oe3u1h32urq42p: a real bid arrived, so
+                    // the item is no longer "no-bid". The timer-expiry safety
+                    // net should not fire for this item.
+                    hasActiveBid = true
+                    isBiddingClosed = false
+
+                    // QA-FIX-cmo93i6xk00oc3u1hmlx3xtof: remember who the
+                    // current leader is so the max-bid input sheet can switch
+                    // between "proxy ceiling" (leader) and "normal public
+                    // bid" (challenger).
+                    currentLeaderUserId = bidderUserId
+                    // If someone else took the lead, clear our stale proxy
+                    // ceiling so we don't silently skip real bids later.
+                    if (bidderUserId != userId) {
+                        myProxyMaxBid = 0.0
+                    }
                 }
             }
 
@@ -1134,6 +1178,14 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
             val liveProduct = auctionData.product
             log("LIVE AUCTZION TYPE ${liveShowData?.auctionTypeId}")
             if (liveProduct != null) {
+                // QA-FIX-cmo93i77500oe3u1h32urq42p: reset the no-bid / closed
+                // flags for the NEW item so a previously ended item does not
+                // leave the bid layout hidden on the next auction.
+                hasActiveBid = false
+                isBiddingClosed = false
+                // QA-FIX-cmo93i6xk00oc3u1hmlx3xtof: clear per-item proxy state.
+                currentLeaderUserId = ""
+                myProxyMaxBid = 0.0
                 bind.winningLayout.isVisible = false
                 bind.productName.text = liveProduct.title?.asCapital()
 
@@ -1219,6 +1271,13 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
         productList.addAll(roomState.products)
 
         if (currentProduct != null) {
+            // QA-FIX-cmo93i77500oe3u1h32urq42p / cmo93i6xk00oc3u1hmlx3xtof:
+            // reset per-item state when re-syncing the current product from
+            // a full room-state snapshot (e.g. on reconnect / late-join).
+            hasActiveBid = false
+            isBiddingClosed = false
+            currentLeaderUserId = ""
+            myProxyMaxBid = 0.0
             bind.winningLayout.isVisible = false
             bind.soldLayout.isVisible = false
             bind.status.isVisible = false
@@ -1253,6 +1312,14 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
                 ?: roomState.startingBidAmount?.toString()?.takeIf { it != "0.0" }
                 ?: price
 
+            // QA-FIX-cmo93i77500oe3u1h32urq42p: if the room snapshot already
+            // shows a highestBid, the item is mid-auction with at least one
+            // bid on it, so our "no-bid-timer-expiry" safety net should not
+            // end this item.
+            if (!roomState.highestBid.bidAmount.isNullOrEmpty()) {
+                hasActiveBid = true
+            }
+
             highestBidAmount = activeBid
             bidProductId = currentProduct.id
             setBidText(highestBidAmount)
@@ -1283,6 +1350,12 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
             val liveProduct = auctionData.surpriseSetDetails
             log("LIVE AUCTZION TYPE ${liveShowData?.auctionTypeId}")
             if (liveProduct != null) {
+                // QA-FIX-cmo93i77500oe3u1h32urq42p / cmo93i6xk00oc3u1hmlx3xtof:
+                // reset per-item state for break-spot (surprise-set) items.
+                hasActiveBid = false
+                isBiddingClosed = false
+                currentLeaderUserId = ""
+                myProxyMaxBid = 0.0
                 bind.winningLayout.isVisible = false
                 bind.productName.text = liveProduct.productSet?.name?.asCapital() + " #${auctionData.productSetItemUnitId}"
 
@@ -1610,6 +1683,13 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
     fun attemptBid() {
         runSafe {
+            // QA-FIX-cmo93i77500oe3u1h32urq42p: do not allow bids once the
+            // item has ended locally (no-bid timer expiry) or server-side.
+            if (isBiddingClosed) {
+                Alerts.error(mCtx, "This item has ended.")
+                bind.bidSwipeLayout.close()
+                return@runSafe
+            }
             val bidAmount = newBidAmount(highestBidAmount?.toDouble()?.toInt() ?: 0).toString()
             if (surpriseSetAuctionRunning) {
                 socketManager?.emitBidBreakSpot(
@@ -1740,19 +1820,62 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
             val priceText = inputSheetBind.price.value()
             val priceVal = priceText.toDoubleOrNull() ?: 0.0
             val current = highestBidAmount?.toDoubleOrNull() ?: 0.0
+
+            // QA-FIX-cmo93i77500oe3u1h32urq42p: block max-bid submits on an
+            // already-ended item.
+            if (isBiddingClosed) {
+                Alerts.error(mCtx, "This item has ended.")
+                inputSheet?.dismiss()
+                return@setHapticClickListener
+            }
+
             if (priceVal <= current) {
                 Alerts.error(mCtx, "Bid amount must be greater than the current highest bid.")
             } else {
-                socketManager?.emitBid(
-                    roomId = roomID,
-                    userId = userId,
-                    userName = userName,
-                    userImage = userImage,
-                    productId = bidProductId,
-                    bidAmount = priceText,
-                    auctionTypeId = liveShowData?.auctionTypeId
-                )
-                Alerts.success(mCtx, "Bid placed successfully")
+                // QA-FIX-cmo93i6xk00oc3u1hmlx3xtof: proxy-bid behavior.
+                // If the current user is the winning bidder, the typed
+                // amount is a *max bid ceiling*, not a new public bid.
+                // We must NOT emit place_bid — that would publicly bump
+                // the displayed bid right away and defeat the ceiling.
+                // Instead we store it locally and tell the server about
+                // the new ceiling via set_max_bid. The public bid should
+                // only auto-increase when someone else bids under this
+                // ceiling (handled by the backend proxy logic).
+                //
+                // Cross-platform note: PWA + iOS need the same split:
+                // - When leader swipes/opens max-bid sheet → emit
+                //   set_max_bid (room_id, user_id, product_id, max_bid).
+                // - When a non-leader bids under an existing leader’s
+                //   max_bid, the backend should auto-bump the leader's
+                //   current_bid by one newBidAmount() increment.
+                // - When a non-leader bids at/above leader’s max_bid,
+                //   the non-leader takes the lead at their bid amount.
+                val amImLeader = currentLeaderUserId.isNotEmpty() &&
+                        currentLeaderUserId == userId
+                if (amImLeader) {
+                    myProxyMaxBid = priceVal
+                    socketManager?.emitSetMaxBid(
+                        roomId = roomID,
+                        userId = userId,
+                        productId = bidProductId,
+                        maxBid = priceText
+                    )
+                    Alerts.success(
+                        mCtx,
+                        "Max bid set. Your bid will auto-increase only if someone else bids."
+                    )
+                } else {
+                    socketManager?.emitBid(
+                        roomId = roomID,
+                        userId = userId,
+                        userName = userName,
+                        userImage = userImage,
+                        productId = bidProductId,
+                        bidAmount = priceText,
+                        auctionTypeId = liveShowData?.auctionTypeId
+                    )
+                    Alerts.success(mCtx, "Bid placed successfully")
+                }
 
                 inputSheet?.dismiss()
             }
@@ -1767,8 +1890,15 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
         runSafe {
             requireActivity().runOnUiThread {
                 if (json.optString("room_id") == roomID) {
+                    // QA-FIX-cmo93i77500oe3u1h32urq42p: parse defensively.
+                    // The server sends remaining as a numeric string; if it
+                    // ever arrives empty or non-numeric, treat as "still
+                    // running" (Int.MAX_VALUE) so we don't prematurely close
+                    // the item on a bad payload.
+                    val remaining = value.toIntOrNull() ?: Int.MAX_VALUE
+
                     bind.bidTime.isVisible = true
-                    val color = if (value.toInt() <= 10) {
+                    val color = if (remaining in 0..10) {
                         ContextCompat.getColor(mCtx, R.color.error)
                     } else {
                         ContextCompat.getColor(mCtx, R.color.background)
@@ -1779,6 +1909,23 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
                             append("Ends in ")
                             append(value)
                         }
+                    }
+
+                    // QA-FIX-cmo93i77500oe3u1h32urq42p: timer hit zero AND
+                    // nobody ever bid on this item → the server is not going
+                    // to emit bid_finalized, so we must end the item locally:
+                    // hide the bid controls, show the sold/ended layout,
+                    // and flip isBiddingClosed so any further swipe/max
+                    // attempt is refused.
+                    if (remaining <= 0 && !hasActiveBid && !isBiddingClosed) {
+                        isBiddingClosed = true
+                        bind.bidTime.isVisible = false
+                        bind.bidLayout.isVisible = false
+                        bind.buyNowBtn.isVisible = false
+                        bind.winningLayout.isVisible = false
+                        bind.soldLayout.isVisible = true
+                        bind.bidSwipeLayout.close()
+                        inputSheet?.dismiss()
                     }
                 }
             }

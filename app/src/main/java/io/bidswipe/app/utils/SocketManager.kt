@@ -264,6 +264,37 @@ class SocketManager private constructor(
         socket?.emit("place_bid", payload)
     }
 
+    // QA-FIX-cmo93i6xk00oc3u1hmlx3xtof: proxy-bid support. The app
+    // differentiates a "public bid" (place_bid) from a "ceiling bid"
+    // (set_max_bid) so that when the current winner swipes/types to raise
+    // their maximum, the displayed bid does NOT jump up. The server is
+    // expected to:
+    //  - store max_bid per (room_id, product_id, user_id)
+    //  - when a challenger bids below that ceiling, auto-bump the
+    //    leader's public bid by one increment (proxy behavior)
+    //  - when a challenger bids at/above the ceiling, award the lead
+    //    to the challenger at their bid amount
+    // Until the backend emits a dedicated set_max_bid_ack / updated
+    // max_bid event, the client treats this as fire-and-forget.
+    fun emitSetMaxBid(
+        roomId: String,
+        userId: String,
+        productId: String?,
+        maxBid: String?
+    ) {
+        val payload = JSONObject().apply {
+            put("room_id", roomId)
+            put("user_id", userId)
+            put("product_id", productId)
+            put("max_bid", maxBid)
+        }
+        Log.d(
+            TAG,
+            "EMIT: set_max_bid - RoomId: $roomId, UserId: $userId, MaxBid: $maxBid, ProductId: $productId"
+        )
+        socket?.emit("set_max_bid", payload)
+    }
+
     fun getBidTimerUpdate(listener: (json: JSONObject) -> Unit) {
         socket?.on("bid_timer_update") { args ->
             val obj = args.firstOrNull()
