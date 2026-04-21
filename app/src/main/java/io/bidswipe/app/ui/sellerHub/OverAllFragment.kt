@@ -105,6 +105,7 @@ class OverAllFragment : BaseFragment<SellerHubViewModel, FragmentOverAllBinding>
         setupRecyclerViews()
         setupDateRange()
         setupClickListeners()
+        updateExportButtonsState()
 
         bind.btnExportSales.setHapticClickListener {
             bind.loader.isVisible = true
@@ -180,6 +181,11 @@ class OverAllFragment : BaseFragment<SellerHubViewModel, FragmentOverAllBinding>
                 is Resource.Error -> {
                     isSellerAnalyticsLoaded = true
                     updateAnalyticsLoader()
+                    topBuyersBySalesList.clear()
+                    topBuyersBySalesAdapter.notifyDataSetChanged()
+                    topBuyersByOrdersList.clear()
+                    topBuyersByOrdersAdapter.notifyDataSetChanged()
+                    updateExportButtonsState()
                     it.parse(mCtx, TAG, object : AlertClicks {
                         override fun primaryClick(dialog: AppBottomSheet) {
                             dialog.dismiss()
@@ -312,30 +318,22 @@ class OverAllFragment : BaseFragment<SellerHubViewModel, FragmentOverAllBinding>
             loadDataForDateRange()
         }
 
-        // QA-FIX: These three buttons were no-op stubs (empty click handlers). Users saw the
-        // buttons, tapped them, and nothing happened — classic broken-button bug. Until the
-        // real implementations land (metrics info dialog + CSV export endpoints), give the
-        // user clear feedback that the feature is on the way instead of silent failure.
         bind.linkMetricsInfo.setHapticClickListener {
             Alerts.info(
                 mCtx,
                 "Metrics info coming soon. We\u2019ll add a breakdown of each metric here in an upcoming release."
             )
         }
+    }
 
-        bind.btnExportSales.setHapticClickListener {
-            Alerts.info(
-                mCtx,
-                "Sales export is coming soon. You\u2019ll be able to download your sales data as CSV from here."
-            )
-        }
+    private fun updateExportButtonsState() {
+        val hasSalesData = topBuyersBySalesList.isNotEmpty()
+        bind.btnExportSales.isEnabled = hasSalesData
+        bind.btnExportSales.alpha = if (hasSalesData) 1f else 0.5f
 
-        bind.btnExportOrders.setHapticClickListener {
-            Alerts.info(
-                mCtx,
-                "Orders export is coming soon. You\u2019ll be able to download your orders as CSV from here."
-            )
-        }
+        val hasOrdersData = topBuyersByOrdersList.isNotEmpty()
+        bind.btnExportOrders.isEnabled = hasOrdersData
+        bind.btnExportOrders.alpha = if (hasOrdersData) 1f else 0.5f
     }
 
     private fun updateDateRangeDisplay() {
@@ -371,6 +369,7 @@ class OverAllFragment : BaseFragment<SellerHubViewModel, FragmentOverAllBinding>
             topBuyersByOrdersList.add(TopBuyerModel(rank ,  it?.user?.name.toString() , it?.user?.profileImage , it?.totalOrders.toString()))
         }
         topBuyersByOrdersAdapter.notifyDataSetChanged()
+        updateExportButtonsState()
     }
 
     fun setUpBarChart(
