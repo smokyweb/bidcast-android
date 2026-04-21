@@ -78,6 +78,11 @@
         android:name="io.bidswipe.app.ui.more.AddShippingAddressFragment"
         android:label="fragment_add_shipping_address"
         tools:layout="@layout/fragment_add_shipping_address" />
+    <fragment
+        android:id="@+id/deleteAccountFragment"
+        android:name="io.bidswipe.app.ui.more.DeleteAccountFragment"
+        android:label="fragment_delete_account"
+        tools:layout="@layout/fragment_delete_account" />
 
     <fragment
         android:id="@+id/contentFragment"

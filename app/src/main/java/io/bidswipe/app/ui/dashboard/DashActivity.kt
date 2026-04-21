@@ -515,42 +515,22 @@ class DashActivity : BaseActivity(), NavController.OnDestinationChangedListener 
     }
 
     private fun verificationDialog() {
+        val sellerStatus = App.profileResponse.value?.sellerIdentityStatus
+        val kycActive = App.checkKycResponse.value?.kycStatus == "active"
         AppBottomSheet(
             this,
             R.drawable.ic_info,
-            title = when (App.profileResponse.value?.sellerIdentityStatus) {
-                "null" -> {
-                    "Become a Verified Seller!"
-                }
-
-                "pending" -> {
-                    "Verification Pending!"
-                }
-
-                "rejected" -> {
-                    "Verification Rejected!"
-                }
-
-                else -> {
-                    "Become a Verified Seller!"
-                }
+            title = when {
+                sellerStatus == "verified" && !kycActive -> "Complete KYC Verification"
+                sellerStatus == "pending" -> "Verification Pending!"
+                sellerStatus == "rejected" -> "Verification Rejected!"
+                else -> "Become a Verified Seller!"
             },
-            message = when (App.profileResponse.value?.sellerIdentityStatus) {
-                "null" -> {
-                    "Your seller verification request has been rejected, You need to reapply for the verification."
-                }
-
-                "pending" -> {
-                    "Your seller verification request is currently pending. You will be able to access this functionality once it is approved by the admin."
-                }
-
-                "rejected" -> {
-                    "Your seller verification request was not approved. Please reapply to complete the verification process."
-                }
-
-                else -> {
-                    "Before you interact with lives shows, You need to become a Verified Seller."
-                }
+            message = when {
+                sellerStatus == "verified" && !kycActive -> "Your seller profile is verified, but KYC verification is still required before you can create products or shows."
+                sellerStatus == "pending" -> "Your seller verification request is currently pending. You will be able to access this functionality once it is approved by the admin."
+                sellerStatus == "rejected" -> "Your seller verification request was not approved. Please reapply to complete the verification process."
+                else -> "Before you interact with live shows, you need to complete seller verification."
             },
             primaryBtnText = "Okay",
             secondaryBtnText = "Cancel",
@@ -562,7 +542,7 @@ class DashActivity : BaseActivity(), NavController.OnDestinationChangedListener 
                 override fun primaryClick(dialog: AppBottomSheet) {
                     dialog.dismiss()
 
-                    if (App.profileResponse.value?.sellerIdentityStatus == "pending") {
+                    if (sellerStatus == "pending") {
                         return
                     }
 

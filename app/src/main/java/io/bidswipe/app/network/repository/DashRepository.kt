@@ -15,6 +15,10 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
         api.logout()
     }
 
+    suspend fun deleteProfile(reason: RequestBody?) = call {
+        api.deleteProfile(reason)
+    }
+
     suspend fun aboutUs() = call { api.aboutUs() }
 
     suspend fun getTermsConditions() = call { api.getTermsConditions() }

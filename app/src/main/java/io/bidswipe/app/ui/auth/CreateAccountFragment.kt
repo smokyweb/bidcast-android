@@ -1,5 +1,6 @@
 package io.bidswipe.app.ui.auth
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -8,12 +9,16 @@ import androidx.core.view.isVisible
 import androidx.navigation.fragment.findNavController
 import com.gyf.immersionbar.ktx.immersionBar
 import com.wajahatkarim3.easyvalidation.core.view_ktx.validator
+import io.bidswipe.app.App
 import io.bidswipe.app.base.BaseFragment
 import io.bidswipe.app.databinding.FragmentCreateAccountBinding
 import io.bidswipe.app.interfaces.AlertClicks
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.ui.custom.AppBottomSheet
+import io.bidswipe.app.ui.interest.ChooseInterestActivity
 import io.bidswipe.app.utils.Alerts
+import io.bidswipe.app.utils.Prefs
+import io.bidswipe.app.utils.finish
 import io.bidswipe.app.utils.hideKeyboard
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request
@@ -125,8 +130,28 @@ class CreateAccountFragment : BaseFragment<AuthViewModel , FragmentCreateAccount
 					viewModel.signUpRepo.value = null
 					bind.loader.isVisible = false
 					successToast(it.value.message.toString())
-//                  Prefs(mCtx).putString(Prefs.USER, Gson().toJson(it.value.data).toString())
-					findNavController().popBackStack()
+
+					val token = it.value.data?.token?.trim().orEmpty()
+					if (token.isEmpty()) {
+						Alerts.error(mCtx, "Account created but no session token was returned. Please log in.")
+						findNavController().popBackStack()
+						return@observe
+					}
+
+					Prefs(mCtx).putString(Prefs.TOKEN, "Bearer $token")
+					App.getProfile()
+					App.checkKYC()
+					App.setUpSocket()
+					App.getCategories()
+
+					// New sign-ups are treated like first-time login (interests not set yet).
+					startActivity(
+						Intent(mCtx, ChooseInterestActivity::class.java).putExtra(
+							"isFirstTimeLogin",
+							true
+						)
+					)
+					finish()
 				}
 
 				is Resource.Error -> {

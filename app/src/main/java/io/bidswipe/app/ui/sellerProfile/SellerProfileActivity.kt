@@ -198,6 +198,8 @@ class SellerProfileActivity : BaseActivity() {
                 else -> ""
             }
         }.attach()
+        val selectedTab = intent?.getIntExtra("selectedTab", 0) ?: 0
+        bind.pager.setCurrentItem(selectedTab.coerceIn(0, 3), false)
 
         bind.loader.isVisible = true
         viewModel.getProfileById(sellerId.request())

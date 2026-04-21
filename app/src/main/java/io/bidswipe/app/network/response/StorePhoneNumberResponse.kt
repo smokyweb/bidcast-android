@@ -19,7 +19,7 @@ data class StorePhoneNumberResponse(
 	data class Data(
 		@SerializedName("otp")
 		val otp : Int? ,
-		@SerializedName("phone_numer")
+		@SerializedName("phone_number")
 		val phoneNumer : String? ,
 	)
 }

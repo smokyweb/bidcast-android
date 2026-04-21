@@ -32,6 +32,12 @@ android {
             "STRIPE_PK",
             "\"pk_test_51SjiEtQzmy9jx34KXrnMJIwqLx5IfCN69oZsNCptlyBfChq7NrJVc8OjS5q16nvnuobjjp3Run8icoXQHn0D9eVG00nJyhk9zM\""
         )
+        // Google Places (address autocomplete). Restrict this key in Cloud Console (Android app + Places API).
+        buildConfigField(
+            "String",
+            "PLACES_API_KEY",
+            "\"ADD_PLACES_API_KEY_HERE\""
+        )
 
     }
 
@@ -222,6 +228,7 @@ dependencies {
     // ───────────────── Google / UI ─────────────────
     implementation(libs.material) // DO NOT CHANGE
     implementation(libs.flexbox)
+    implementation("com.google.android.libraries.places:places:3.5.0")
 
     // ───────────────── Dependency Injection ─────────────────
     implementation(libs.hilt.android)

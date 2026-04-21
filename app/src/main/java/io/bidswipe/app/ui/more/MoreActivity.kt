@@ -73,6 +73,10 @@ class MoreActivity : BaseActivity() {
 			"addAddress" -> {
 				navGraph.setStartDestination(R.id.addShippingAddressFragment)
 			}
+
+			"deleteAccount" -> {
+				navGraph.setStartDestination(R.id.deleteAccountFragment)
+			}
 			
 			else -> {
 				navGraph.setStartDestination(R.id.contentFragment)

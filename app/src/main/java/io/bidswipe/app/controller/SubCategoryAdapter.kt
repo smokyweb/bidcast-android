@@ -78,8 +78,8 @@ class SubCategoryAdapter(
                     main.strokeWidth = root.context.resources.dpToPx(2)
                 } else {
                     main.setCardBackgroundColor(root.context.getColor(R.color.background))
-                    main.strokeColor = root.context.getColor(R.color.transparent)
-                    main.strokeWidth = 0
+                    main.strokeColor = root.context.getColor(R.color.outline)
+                    main.strokeWidth = 1
                 }
 
                 root.setHapticClickListener {
