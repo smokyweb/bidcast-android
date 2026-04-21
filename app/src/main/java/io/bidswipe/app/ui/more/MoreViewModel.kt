@@ -31,6 +31,18 @@ class MoreViewModel @Inject constructor(
 	private val networkMonitor: NetworkMonitor
 ) : ViewModel() {
 
+	private var _deleteProfileResponse = MutableLiveData<Resource<CommonResponse>>()
+	val deleteProfileRepo: MutableLiveData<Resource<CommonResponse>>
+		get() = _deleteProfileResponse
+
+	fun deleteProfile(reason: RequestBody?) = viewModelScope.launch {
+		if (!networkMonitor.hasInternet()) {
+			_deleteProfileResponse.value = NO_INTERNET_ERROR
+			return@launch
+		}
+		_deleteProfileResponse.value = repo.deleteProfile(reason)
+	}
+
 	private var _aboutUsResponse = MutableLiveData<Resource<AboutUsResponse>>()
 	val aboutUsRepo: MutableLiveData<Resource<AboutUsResponse>>
 		get() = _aboutUsResponse

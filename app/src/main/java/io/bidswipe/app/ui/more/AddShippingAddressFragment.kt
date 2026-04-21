@@ -2,6 +2,8 @@ package io.bidswipe.app.ui.more
 
 import android.app.Activity
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,7 +14,14 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
 import androidx.navigation.fragment.findNavController
+import com.google.android.libraries.places.api.Places
+import com.google.android.libraries.places.api.model.AutocompletePrediction
+import com.google.android.libraries.places.api.model.AutocompleteSessionToken
+import com.google.android.libraries.places.api.model.Place
+import com.google.android.libraries.places.api.net.FetchPlaceRequest
+import com.google.android.libraries.places.api.net.PlacesClient
 import io.bidswipe.app.App
+import io.bidswipe.app.BuildConfig
 import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseFragment
 import io.bidswipe.app.databinding.FragmentAddShippingAddressBinding
@@ -42,6 +51,13 @@ class AddShippingAddressFragment :
 	private var slug = ""
 	private var stateList = mutableListOf<GetStatesResponse.Data?>()
 	private var selectedState: GetStatesResponse.Data? = null
+
+	private var placesClient: PlacesClient? = null
+	private var streetPlacesAdapter: PlacesStreetAutocompleteAdapter? = null
+	private var suppressStreetAutocomplete = false
+
+	/** If Google returns a state before our state list is loaded, apply when [stateList] is ready. */
+	private var pendingGoogleStateIso: String? = null
 
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		super.onViewCreated(view, savedInstanceState)
@@ -89,6 +105,8 @@ selectedState=stateList[position]
 		bind.state.setHapticClickListener {
 			bind.state.showDropDown()
 		}
+
+		setupStreetAddressAutocomplete()
 
 		bind.addAddress.setHapticClickListener {
 
@@ -214,6 +232,8 @@ selectedState=stateList[position]
 
 						val draw = ContextCompat.getDrawable(mCtx, R.drawable.card_8)
 						bind.state.setDropDownBackgroundDrawable(draw)
+
+						pendingGoogleStateIso?.let { iso -> selectStateByIso(iso) }
 					}
 				}
 
@@ -239,6 +259,106 @@ selectedState=stateList[position]
 		}
 
 
+	}
+
+	private fun setupStreetAddressAutocomplete() {
+		if (!Places.isInitialized()) {
+			if (BuildConfig.PLACES_API_KEY.isBlank()) return
+			Places.initialize(requireContext().applicationContext, BuildConfig.PLACES_API_KEY)
+		}
+		val client = Places.createClient(requireContext())
+		placesClient = client
+		val sessionToken = AutocompleteSessionToken.newInstance()
+		val adapter = PlacesStreetAutocompleteAdapter(requireContext(), client, sessionToken)
+		streetPlacesAdapter = adapter
+		bind.streetAddress.setAdapter(adapter)
+		bind.streetAddress.threshold = 2
+		ContextCompat.getDrawable(mCtx, R.drawable.card_8)?.let { bind.streetAddress.setDropDownBackgroundDrawable(it) }
+		bind.streetAddress.addTextChangedListener(object : TextWatcher {
+			override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) = Unit
+			override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+				if (suppressStreetAutocomplete) return
+				val query = s?.toString()?.trim().orEmpty()
+				if (query.length >= 2) {
+					streetPlacesAdapter?.filter?.filter(query)
+					bind.streetAddress.post { bind.streetAddress.showDropDown() }
+				}
+			}
+			override fun afterTextChanged(s: Editable?) = Unit
+		})
+		bind.streetAddress.setOnItemClickListener { _, _, position, _ ->
+			val prediction = adapter.getItem(position) ?: return@setOnItemClickListener
+			suppressStreetAutocomplete = true
+			bind.streetAddress.dismissDropDown()
+			hideKeyboard(bind.streetAddress)
+			fetchPlaceAndFill(prediction)
+		}
+	}
+
+	private fun selectStateByIso(iso: String?) {
+		if (iso.isNullOrBlank()) return
+		val trimmed = iso.trim()
+		val match = stateList.find { it?.iso2.equals(trimmed, ignoreCase = true) }
+		if (match != null) {
+			selectedState = match
+			bind.state.setText("${match.name} ( ${match.iso2} )", false)
+			pendingGoogleStateIso = null
+		} else {
+			pendingGoogleStateIso = trimmed
+		}
+	}
+
+	private fun applyAddressFromPlace(place: Place) {
+		var streetNumber = ""
+		var route = ""
+		var city = ""
+		var stateIso = ""
+		var zip = ""
+		place.addressComponents?.asList()?.forEach { comp ->
+			val types = comp.types
+			when {
+				types.contains("street_number") -> streetNumber = comp.name ?: ""
+				types.contains("route") -> route = comp.name ?: ""
+				types.contains("locality") -> city = comp.name ?: ""
+				types.contains("sublocality_level_1") && city.isBlank() -> city = comp.name ?: ""
+				types.contains("administrative_area_level_1") -> stateIso = comp.shortName ?: comp.name ?: ""
+				types.contains("postal_code") -> zip = comp.name ?: ""
+			}
+		}
+		val streetJoined = listOf(streetNumber, route).joinToString(" ").trim()
+		val streetLine = streetJoined.ifBlank {
+			place.address?.lineSequence()?.firstOrNull().orEmpty()
+		}
+		bind.streetAddress.setText(streetLine, false)
+		bind.streetAddress.dismissDropDown()
+		bind.city.setText(city)
+		bind.zipCode.setText(zip)
+		selectStateByIso(stateIso)
+		suppressStreetAutocomplete = false
+	}
+
+	private fun fetchPlaceAndFill(prediction: AutocompletePrediction) {
+		val client = placesClient ?: return
+		bind.loader.isVisible = true
+		val fields = listOf(
+			Place.Field.ID,
+			Place.Field.ADDRESS_COMPONENTS,
+			Place.Field.ADDRESS
+		)
+		val request = FetchPlaceRequest.newInstance(prediction.placeId, fields)
+		client.fetchPlace(request)
+			.addOnSuccessListener { response ->
+				if (!isAdded) return@addOnSuccessListener
+				bind.loader.isVisible = false
+				applyAddressFromPlace(response.place)
+				streetPlacesAdapter?.newSession()
+			}
+			.addOnFailureListener {
+				if (!isAdded) return@addOnFailureListener
+				bind.loader.isVisible = false
+				suppressStreetAutocomplete = false
+				Alerts.error(mCtx, "Could not load address details. Try again or enter manually.")
+			}
 	}
 
 }

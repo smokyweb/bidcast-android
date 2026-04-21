@@ -7,6 +7,7 @@ import android.os.Process
 import android.view.Gravity
 import androidx.core.content.res.ResourcesCompat
 import androidx.lifecycle.MutableLiveData
+import com.google.android.libraries.places.api.Places
 import com.google.firebase.FirebaseApp
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.gson.Gson
@@ -131,6 +132,10 @@ class App : Application() {
         TAG = mCtx.packageName
 
         FirebaseApp.initializeApp(applicationContext)
+
+        if (BuildConfig.PLACES_API_KEY.isNotBlank() && !Places.isInitialized()) {
+            Places.initialize(applicationContext, BuildConfig.PLACES_API_KEY)
+        }
 
         if (BuildConfig.DEBUG) {
             FirebaseCrashlytics.getInstance().isCrashlyticsCollectionEnabled = false

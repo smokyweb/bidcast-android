@@ -36,6 +36,7 @@ import io.bidswipe.app.ui.more.NotificationActivity
 import io.bidswipe.app.ui.more.TrustedBuyerActivity
 import io.bidswipe.app.ui.scheduleShow.ShowDetailsActivity
 import io.bidswipe.app.ui.sellerHub.SellerHubActivity
+import io.bidswipe.app.ui.sellerProfile.SellerProfileActivity
 import io.bidswipe.app.ui.sellerHub.SellerVerificationActivity
 import io.bidswipe.app.utils.Alerts
 import io.bidswipe.app.utils.Const
@@ -158,7 +159,7 @@ class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
                     )
                 }
 
-                "interests" -> {
+                "favourite" -> {
                     startActivity(
                         Intent(mCtx, ChooseInterestActivity::class.java).putExtra(
                             "fromAccount", true
@@ -219,6 +220,7 @@ class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
         moreList.add(MoreModel(R.drawable.ic_privacy, "Privacy Policy", "privacy-policy"))
         moreList.add(MoreModel(R.drawable.ic_faq, "F.A.Q", "faq"))
         moreList.add(MoreModel(R.drawable.ic_people, "Blocked Users", "blockedUsers"))
+        moreList.add(MoreModel(R.drawable.trash, "Delete Account", "deleteAccount"))
         moreList.add(MoreModel(R.drawable.ic_logout_outline, "Logout", "logout"))
 
         moreAdapter = MoreAdapter(moreList, mClicks)
@@ -234,7 +236,7 @@ class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
         )
         accountGridList.add(MoreModel(R.drawable.notification, "Notifications", "notification"))
         accountGridList.add(MoreModel(R.drawable.ic_tag_outline, "Preferences", "preferences"))
-        accountGridList.add(MoreModel(R.drawable.ic_heart, "Interests", "interests"))
+        accountGridList.add(MoreModel(R.drawable.ic_heart, "Favourite", "favourite"))
         accountGridList.add(MoreModel(R.drawable.ic_clip_new, "Clips", "clips"))
 
         accountGridAdapter = GridAdapter(accountGridList, accountGridClick)
@@ -256,6 +258,31 @@ class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
             )
         }
 
+        bind.sellerHub.itemCount.setHapticClickListener {
+            startActivity(
+                Intent(mCtx, SellerHubActivity::class.java).putExtra(
+                    "slug", "inventory"
+                )
+            )
+        }
+
+        bind.sellerHub.revenue.setHapticClickListener {
+            startActivity(
+                Intent(mCtx, SellerHubActivity::class.java).putExtra(
+                    "slug", "wallet"
+                )
+            )
+        }
+
+        bind.sellerHub.rating.setHapticClickListener {
+            val profile = App.profileResponse.value
+            startActivity(
+                Intent(mCtx, SellerProfileActivity::class.java)
+                    .putExtra("sellerId", profile?.id?.toString().orEmpty())
+                    .putExtra("selectedTab", 2)
+            )
+        }
+
         bind.editIcon.setHapticClickListener {
             startActivity(Intent(mCtx, UpdateAccountActivity::class.java))
         }
@@ -265,6 +292,12 @@ class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
                 is Resource.Success -> {
                     bind.loader.isVisible = false
                     successToast(it.value.message.toString())
+                    // Clear in-memory session caches so next login starts clean.
+                    App.profileResponse.value = null
+                    App.checkKycResponse.value = null
+                    App.categoryList.clear()
+                    App.socketManager?.disconnect()
+                    App.socketManager = null
                     Prefs(mCtx).clear()
                     startActivity(mCtx.toAuth())
                     finish()

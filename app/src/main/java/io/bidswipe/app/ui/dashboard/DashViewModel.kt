@@ -76,6 +76,9 @@ class DashViewModel @Inject constructor(
 
     var showData = MutableLiveData<TutorialShowModel>()
 
+    // Cached interest categories for ChooseInterest flow (avoid refetching on back/navigation).
+    val interestCategoriesCache = mutableListOf<GetCategoryResponse.Data?>()
+    var isInterestCategoriesLoaded = false
     val selectedCategories = mutableListOf<GetCategoryResponse.Data>()
     val selectedSubCategoryIds = mutableSetOf<Int>()
 

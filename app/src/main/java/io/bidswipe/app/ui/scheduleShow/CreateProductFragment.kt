@@ -282,6 +282,11 @@ class CreateProductFragment : BaseFragment<ScheduleShowViewModel, FragmentListAP
             hideKeyboard(it)
         }
         bind.mainLayout.setHapticClickListener { hideKeyboard(it) }
+        bind.clearShippingSelection.setHapticClickListener {
+            clearShippingProfileSelection()
+        }
+        profileId = viewModel.shippingProfile
+        updateShippingDependentFields()
 
         bind.tabs.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab?) {
@@ -610,6 +615,7 @@ class CreateProductFragment : BaseFragment<ScheduleShowViewModel, FragmentListAP
                         viewModel.shippingProfile = profileId
 
                         bind.shippingProfile.setText(profiles[position]?.name, false)
+                        updateShippingDependentFields()
 
                     }
 
@@ -623,6 +629,7 @@ class CreateProductFragment : BaseFragment<ScheduleShowViewModel, FragmentListAP
 
                         bind.shippingProfile.setText(selectedShippingProfile?.name, false)
                     }
+                    updateShippingDependentFields()
 
                     bind.shippingProfile.setHapticClickListener {
                         if (profiles.isEmpty()) {
@@ -880,33 +887,26 @@ class CreateProductFragment : BaseFragment<ScheduleShowViewModel, FragmentListAP
             viewModel.productCategoryId.isEmpty() -> Alerts.error(mCtx, "Please select category")
             bind.productTitle.value().isEmpty() -> Alerts.error(mCtx, "Please enter product title")
             bind.description.value().isEmpty() -> Alerts.error(mCtx, "Please enter description")
-            packageWidth <= 0 || packageHeight <= 0 || packageLength <= 0 || packageWeight <= 0 -> Alerts.error(
+            profileId.isEmpty() && (packageWidth <= 0 || packageHeight <= 0 || packageLength <= 0 || packageWeight <= 0) -> Alerts.error(
                 mCtx,
                 "Please enter all package dimensions"
             )
 
-            viewModel.productMailClass == null -> Alerts.error(mCtx, "Please select a mail class")
-            viewModel.productMailClass?.maxWidthIn != null && packageWidth > (viewModel.productMailClass?.maxWidthIn ?: 0.0) ->
+            profileId.isEmpty() && viewModel.productMailClass == null -> Alerts.error(mCtx, "Please select a mail class")
+            profileId.isEmpty() && viewModel.productMailClass?.maxWidthIn != null && packageWidth > (viewModel.productMailClass?.maxWidthIn ?: 0.0) ->
                 Alerts.error(mCtx, "Width exceeds maximum of ${viewModel.productMailClass?.maxWidthIn} inches")
 
-            viewModel.productMailClass?.maxHeightIn != null && packageHeight > (viewModel.productMailClass?.maxHeightIn ?: 0.0) ->
+            profileId.isEmpty() && viewModel.productMailClass?.maxHeightIn != null && packageHeight > (viewModel.productMailClass?.maxHeightIn ?: 0.0) ->
                 Alerts.error(mCtx, "Height exceeds maximum of ${viewModel.productMailClass?.maxHeightIn} inches")
 
-            viewModel.productMailClass?.maxLengthIn != null && packageLength > (viewModel.productMailClass?.maxLengthIn ?: 0.0) ->
+            profileId.isEmpty() && viewModel.productMailClass?.maxLengthIn != null && packageLength > (viewModel.productMailClass?.maxLengthIn ?: 0.0) ->
                 Alerts.error(mCtx, "Length exceeds maximum of ${viewModel.productMailClass?.maxLengthIn} inches")
 
-            viewModel.productMailClass?.maxWeightLbs != null && packageWeight > (viewModel.productMailClass?.maxWeightLbs ?: 0.0) ->
+            profileId.isEmpty() && viewModel.productMailClass?.maxWeightLbs != null && packageWeight > (viewModel.productMailClass?.maxWeightLbs ?: 0.0) ->
                 Alerts.error(mCtx, "Weight exceeds maximum of ${viewModel.productMailClass?.maxWeightLbs} lbs")
 
             bind.proCategory.value().isEmpty() -> Alerts.error(mCtx, "Please enter processing category")
             bind.price.value().isEmpty() -> Alerts.error(mCtx, "Please enter price")
-            bind.shippingProfile.value().isEmpty() -> {
-                if (profiles.isEmpty()) {
-                    addShippingProfile()
-                } else {
-                    Alerts.error(mCtx, "Please select shipping profile")
-                }
-            }
             else -> saveProduct("active")
         }
     }
@@ -1125,6 +1125,19 @@ class CreateProductFragment : BaseFragment<ScheduleShowViewModel, FragmentListAP
         viewModel.productFormReserveForLive = false
 
         updateCategoryField()
+    }
+
+    private fun clearShippingProfileSelection() {
+        profileId = ""
+        viewModel.shippingProfile = ""
+        bind.shippingProfile.setText("", false)
+        updateShippingDependentFields()
+    }
+
+    private fun updateShippingDependentFields() {
+        val hasSelectedShippingProfile = profileId.isNotEmpty()
+        bind.shippingDependentFields.isVisible = !hasSelectedShippingProfile
+        bind.clearShippingSelection.isVisible = hasSelectedShippingProfile
     }
 
 }

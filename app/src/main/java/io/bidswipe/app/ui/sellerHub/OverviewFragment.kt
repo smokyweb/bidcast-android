@@ -61,9 +61,28 @@ class OverviewFragment : BaseFragment<SellerHubViewModel, FragmentOverviewBindin
 		setupFilterChips()
 		setupRecyclerViews()
 		setupMetrics(null)
+		bindPromoteToolsData(null)
 
 		bind.loader.isVisible = true
+		viewModel.getPromoteTools()
 		viewModel.getPromoteToolsDetails()
+
+		viewModel.getPromoteToolsRepo.observe(viewLifecycleOwner) {
+			when (it) {
+				is Resource.Success -> {
+					viewModel.getPromoteToolsRepo.value = null
+					bindPromoteToolsData(it.value.data)
+				}
+
+				is Resource.Error -> {
+					viewModel.getPromoteToolsRepo.value = null
+					// Keep fallback copy from layout when this API fails.
+				}
+
+				else -> {}
+			}
+		}
+
 		viewModel.getPromoteToolsDetailsRepo.observe(viewLifecycleOwner) {
 			when (it) {
 				is Resource.Success -> {
@@ -88,6 +107,28 @@ class OverviewFragment : BaseFragment<SellerHubViewModel, FragmentOverviewBindin
 		}
 
 
+	}
+
+	private fun bindPromoteToolsData(data: GetPromoteToolsResponse.Data?) {
+		bind.promoteToolsTitle.text =
+			data?.promoteTitle?.takeIf { it.isNotBlank() } ?: "Promote Tools"
+		bind.promoteToolsDescription.text =
+			data?.promoteDetails?.takeIf { it.isNotBlank() }
+				?: "Promote your livestreams to reach a wider audience on Whatnot."
+		bind.benefitsTitle.text =
+			data?.showTitle?.takeIf { it.isNotBlank() } ?: "One Promotion, Two Benefits"
+
+		val points = data?.showDetails
+			?.split("\n")
+			?.map { it.trim() }
+			?.filter { it.isNotEmpty() }
+			.orEmpty()
+
+		val defaultPointOne = "• Instant audience boost: Promotions bring more viewers to your live show."
+		val defaultPointTwo = "• Long-term discoverability: More engagement today powers our algorithms to surface your future shows higher in buyers' feed."
+
+		bind.benefitsPointOne.text = points.getOrNull(0) ?: defaultPointOne
+		bind.benefitsPointTwo.text = points.getOrNull(1) ?: defaultPointTwo
 	}
 
 

@@ -89,11 +89,11 @@
                         android:orientation="horizontal">
 
                         <androidx.appcompat.widget.AppCompatImageView
-                            android:layout_width="48dp"
-                            android:layout_height="48dp"
+                            android:layout_width="42dp"
+                            android:layout_height="42dp"
                             android:background="@drawable/card_32_outline"
                             android:backgroundTint="@color/primaryContainer"
-                            android:padding="12dp"
+                            android:padding="10dp"
                             android:src="@drawable/ic_id_card"
                             app:tint="@color/primary" />
 
@@ -307,11 +307,11 @@
                         android:orientation="horizontal">
 
                         <androidx.appcompat.widget.AppCompatImageView
-                            android:layout_width="48dp"
-                            android:layout_height="48dp"
+                            android:layout_width="42dp"
+                            android:layout_height="42dp"
                             android:background="@drawable/card_32_outline"
                             android:backgroundTint="@color/primaryContainer"
-                            android:padding="12dp"
+                            android:padding="10dp"
                             android:src="@drawable/ic_phone"
                             app:tint="@color/primary" />
 
@@ -364,13 +364,13 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginVertical="@dimen/half_margin"
                         android:orientation="horizontal">
 
                         <TextView
                             android:id="@+id/verifyPhoneTitle"
                             style="@style/TitleSmall"
                             android:layout_width="0dp"
+                            android:layout_marginTop="@dimen/half_margin"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:text="Enter Phone Number"
@@ -412,7 +412,7 @@
                         android:layout_marginBottom="@dimen/half_margin"
                         android:visibility="gone">
 
-                        <com.google.android.material.textfield.MaterialAutoCompleteTextView
+                        <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/otp"
                             style="@style/inputTextStyle"
                             android:layout_width="match_parent"
@@ -428,7 +428,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
-                        android:layout_marginTop="@dimen/margin"
+                        android:layout_marginTop="@dimen/half_margin"
                         android:text="Verify"
                         android:visibility="visible" />
 
@@ -462,11 +462,11 @@
                     android:padding="@dimen/half_margin">
 
                     <androidx.appcompat.widget.AppCompatImageView
-                        android:layout_width="48dp"
-                        android:layout_height="48dp"
+                        android:layout_width="42dp"
+                        android:layout_height="42dp"
                         android:background="@drawable/card_32_outline"
                         android:backgroundTint="@color/primaryContainer"
-                        android:padding="12dp"
+                        android:padding="10dp"
                         android:src="@drawable/ic_identity_verification"
                         app:tint="@color/primary" />
 
@@ -489,7 +489,7 @@
                             style="@style/BodyMedium"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="Stripe identity verification(KYC) to start selling." />
+                            android:text="KYC verification to start selling." />
 
                     </LinearLayout>
 
@@ -508,6 +508,12 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
+                        android:minHeight="0dp"
+                        android:minWidth="0dp"
+                        android:paddingStart="@dimen/padding"
+                        android:paddingTop="4dp"
+                        android:paddingEnd="@dimen/padding"
+                        android:paddingBottom="4dp"
                         android:text="Add" />
 
                 </LinearLayout>
@@ -531,16 +537,15 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="@dimen/half_margin"
                         android:gravity="center_vertical"
                         android:orientation="horizontal">
 
                         <androidx.appcompat.widget.AppCompatImageView
-                            android:layout_width="48dp"
-                            android:layout_height="48dp"
+                            android:layout_width="42dp"
+                            android:layout_height="42dp"
                             android:background="@drawable/card_32_outline"
                             android:backgroundTint="@color/primaryContainer"
-                            android:padding="12dp"
+                            android:padding="10dp"
                             android:src="@drawable/ic_payment_card"
                             app:tint="@color/primary" />
 
@@ -573,7 +578,22 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_vertical"
+                            android:minHeight="0dp"
+                            android:minWidth="0dp"
+                            android:paddingStart="@dimen/padding"
+                            android:paddingTop="4dp"
+                            android:paddingEnd="@dimen/padding"
+                            android:paddingBottom="4dp"
                             android:text="Add" />
+
+                        <androidx.appcompat.widget.AppCompatImageView
+                            android:id="@+id/paymentMethodCheck"
+                            android:layout_width="32dp"
+                            android:layout_height="32dp"
+                            android:layout_gravity="center_vertical"
+                            android:src="@drawable/ic_check_white_24dp"
+                            android:visibility="gone"
+                            app:tint="@color/success" />
 
                     </LinearLayout>
 
@@ -581,9 +601,9 @@
                         android:id="@+id/paymentCardItem"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginHorizontal="@dimen/half_margin"
                         android:background="@drawable/card_8"
-                        android:backgroundTint="@color/outline"
+                        android:backgroundTint="@color/inverseOnSurface"
+                        android:layout_marginTop="@dimen/half_margin"
                         android:gravity="center_vertical"
                         android:padding="@dimen/half_margin">
 
@@ -649,11 +669,11 @@
                     android:padding="@dimen/half_margin">
 
                     <androidx.appcompat.widget.AppCompatImageView
-                        android:layout_width="48dp"
-                        android:layout_height="48dp"
+                        android:layout_width="42dp"
+                        android:layout_height="42dp"
                         android:background="@drawable/card_32_outline"
                         android:backgroundTint="@color/primaryContainer"
-                        android:padding="12dp"
+                        android:padding="10dp"
                         android:src="@drawable/ic_user_outline"
                         app:tint="@color/primary" />
 

@@ -210,10 +210,10 @@ class CreateShippingProfileFragment : BaseFragment<SellerHubViewModel, FragmentC
                 additionalWeight = if (bind.additionalWeight.isChecked) "1".request() else "0".request(),
                 maxItems = if (bind.maxPackage.isChecked) "1".request() else "0".request(),
                 maxItemUnit = if (bind.maxPackage.isChecked) bind.maxItems.value().request() else null,
-                height = if (bind.maxPackage.isChecked) bind.height.value().request() else null,
-                width = if (bind.maxPackage.isChecked) bind.width.value().request() else null,
-                length = if (bind.maxPackage.isChecked) bind.length.value().request() else null,
-                scale = if (bind.maxPackage.isChecked) bind.dimensionUnits.value().request() else null,
+                height = if (bind.maxPackage.isChecked) bind.height.value().request() else "12.00".request(),
+                width = if (bind.maxPackage.isChecked) bind.width.value().request() else "12.00".request(),
+                length = if (bind.maxPackage.isChecked) bind.length.value().request() else "12.00".request(),
+                scale = if (bind.maxPackage.isChecked) bind.dimensionUnits.value().request() else "inch".request(),
                 incrementWeight = if (bind.additionalWeight.isChecked) bind.incrementalWeight.value().request() else null,
                 incrementWeightUnit = if (bind.additionalWeight.isChecked) bind.incrementalWeightUnits.value().request() else null
             )

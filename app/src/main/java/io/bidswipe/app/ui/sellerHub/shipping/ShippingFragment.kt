@@ -106,10 +106,17 @@ class ShippingFragment : BaseFragment<SellerHubViewModel, FragmentShippingBindin
 
                     itemList[2].selectedValue=mData?.domesticShipmentSetting?.shippingCosts
 
-                    itemList[1].selectedValue=buildString {
-                       if(mData?.domesticShipmentSetting?.uspsFirstClassMailLetter==true) append("USPS First Class Mail Letter, ")
-                        append("${mData?.domesticShipmentSetting?.domesticShipmentForm1To5Lbs}, ${mData?.domesticShipmentSetting?.domesticShipmentOver5Lbs}")
-                    }
+                    itemList[1].selectedValue =
+                        listOfNotNull(
+                            if (mData?.domesticShipmentSetting?.uspsFirstClassMailLetter == true)
+                                "USPS First Class Mail Letter" else null,
+
+                            (mData?.domesticShipmentSetting?.domesticShipmentForm1To5Lbs as? String)
+                                ?.takeIf { it.isNotBlank() },
+
+                            (mData?.domesticShipmentSetting?.domesticShipmentOver5Lbs as? String)
+                                ?.takeIf { it.isNotBlank() }
+                        ).joinToString(", ")
 
                     adapter.notifyDataSetChanged()
 

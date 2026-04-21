@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:headerTitle="Select Your Favourite Category"
+        app:headerTitle="Select Favourite Category"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -19,7 +19,7 @@
 
     <TextView
         android:id="@+id/title"
-        style="@style/BodyLarge"
+        style="@style/BodyMedium"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"

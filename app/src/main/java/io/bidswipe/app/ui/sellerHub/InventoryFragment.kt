@@ -36,6 +36,7 @@ import io.bidswipe.app.network.response.Product
 import io.bidswipe.app.ui.custom.AlertType
 import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.ui.product.ProductDetailsActivity
+import io.bidswipe.app.ui.sellerHub.SellerVerificationActivity
 import io.bidswipe.app.utils.Alerts
 import io.bidswipe.app.utils.Utils
 import io.bidswipe.app.utils.finish
@@ -121,9 +122,9 @@ class InventoryFragment : BaseFragment<SellerHubViewModel, FragmentInventoryBind
 		} else {
 			bind.addNewProduct.text = getString(R.string.new_product)
 			bind.addNewProduct.setHapticClickListener {
-				startActivity(mCtx.toListProduct().putExtra("from","surprise"))
+				if (!canAddSellerContent()) return@setHapticClickListener
+				startActivity(mCtx.toListProduct())
 			}
-
 		}
 
 		adapter = InventoryAdapter(filteredList, isSelectionMode, object : RecyclerClicks {
@@ -726,5 +727,56 @@ class InventoryFragment : BaseFragment<SellerHubViewModel, FragmentInventoryBind
 			type = inventoryTypeFilter?.ifEmpty { null }?.request(),
 			saleType = inventorySaleTypeFilter?.ifEmpty { null }?.request()
 		)
+	}
+
+	private fun canAddSellerContent(): Boolean {
+		val profile = App.profileResponse.value
+		if (profile?.sellerIdentityStatus != "verified") {
+			showVerificationDialog()
+			return false
+		}
+		if (App.checkKycResponse.value?.kycStatus != "active") {
+			showVerificationDialog()
+			return false
+		}
+		return true
+	}
+
+	private fun showVerificationDialog() {
+		val sellerStatus = App.profileResponse.value?.sellerIdentityStatus
+		val kycActive = App.checkKycResponse.value?.kycStatus == "active"
+		AppBottomSheet(
+			mCtx,
+			R.drawable.ic_info,
+			title = when {
+				sellerStatus == "verified" && !kycActive -> "Complete KYC Verification"
+				sellerStatus == "pending" -> "Verification Pending!"
+				sellerStatus == "rejected" -> "Verification Rejected!"
+				else -> "Become a Verified Seller!"
+			},
+			message = when {
+				sellerStatus == "verified" && !kycActive -> "Your seller profile is verified, but KYC verification is still required before you can create products or shows."
+				sellerStatus == "pending" -> "Your seller verification request is currently pending. You will be able to access this functionality once it is approved by the admin."
+				sellerStatus == "rejected" -> "Your seller verification request was not approved. Please reapply to complete the verification process."
+				else -> "Before you interact with live shows, you need to complete seller verification."
+			},
+			primaryBtnText = "Okay",
+			secondaryBtnText = "Cancel",
+			canCancel = true,
+			showSecondary = false,
+			iconPadding = 16,
+			alertType = AlertType.INFO,
+			clicks = object : AlertClicks {
+				override fun primaryClick(dialog: AppBottomSheet) {
+					dialog.dismiss()
+					if (sellerStatus == "pending") return
+					startActivity(Intent(mCtx, SellerVerificationActivity::class.java))
+				}
+
+				override fun secondaryClick(dialog: AppBottomSheet) {
+					dialog.dismiss()
+				}
+			}
+		).show()
 	}
 }

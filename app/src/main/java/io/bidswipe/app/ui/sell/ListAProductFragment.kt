@@ -240,6 +240,7 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
             selectedMailClass = viewModel.productFormSelectedMailClass
             product = viewModel.productFormProduct
             isSubCategory = viewModel.productFormIsSubCategory
+            profileId = viewModel.shippingProfile
 
             // Restore form fields
             bind.productTitle.setText(viewModel.productFormProductTitle)
@@ -343,6 +344,10 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
         bind.mainLayout.setOnClickListener {
             hideKeyboard(it)
         }
+        bind.clearShippingSelection.setHapticClickListener {
+            clearShippingProfileSelection()
+        }
+        updateShippingDependentFields()
 
         // Only load product data if not restored from ViewModel
         if (product != null && viewModel.productFormProduct == null) {
@@ -586,8 +591,10 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
                     bind.shippingProfile.setOnItemClickListener { _, _, position, _ ->
 
                         profileId = profiles[position]?.id.toString()
+                        viewModel.shippingProfile = profileId
 
                         bind.shippingProfile.setText(profiles[position]?.name, false)
+                        updateShippingDependentFields()
 
                     }
 
@@ -601,6 +608,7 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
 
                         bind.shippingProfile.setText(selectedShippingProfile?.name, false)
                     }
+                    updateShippingDependentFields()
 
                     bind.shippingProfile.setHapticClickListener {
                         if (profiles.isEmpty()) {
@@ -1061,6 +1069,7 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
             Alerts.error(mCtx, "Please enter valid numeric values for dimensions")
             return
         }
+        val hasSelectedShippingProfile = profileId.isNotEmpty()
 
         if (type == "draft") {
 
@@ -1104,11 +1113,11 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
                     Alerts.error(mCtx, "Please enter description")
                 }
 
-                packageWidth <= 0 || packageHeight <= 0 || packageLength <= 0 || packageWeight <= 0 -> {
+                !hasSelectedShippingProfile && (packageWidth <= 0 || packageHeight <= 0 || packageLength <= 0 || packageWeight <= 0) -> {
                     Alerts.error(mCtx, "Please enter all package dimensions")
                 }
 
-                selectedMailClass?.maxWidthIn != null && (packageWidth > (selectedMailClass?.maxWidthIn
+                !hasSelectedShippingProfile && selectedMailClass?.maxWidthIn != null && (packageWidth > (selectedMailClass?.maxWidthIn
                     ?: 0.0)) -> {
                     Alerts.error(
                         mCtx,
@@ -1116,7 +1125,7 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
                     )
                 }
 
-                selectedMailClass?.maxHeightIn != null && (packageHeight > (selectedMailClass?.maxHeightIn
+                !hasSelectedShippingProfile && selectedMailClass?.maxHeightIn != null && (packageHeight > (selectedMailClass?.maxHeightIn
                     ?: 0.0)) -> {
                     Alerts.error(
                         mCtx,
@@ -1124,7 +1133,7 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
                     )
                 }
 
-                selectedMailClass?.maxLengthIn != null && (packageLength > (selectedMailClass?.maxLengthIn
+                !hasSelectedShippingProfile && selectedMailClass?.maxLengthIn != null && (packageLength > (selectedMailClass?.maxLengthIn
                     ?: 0.0)) -> {
                     Alerts.error(
                         mCtx,
@@ -1132,7 +1141,7 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
                     )
                 }
 
-                selectedMailClass?.maxWeightLbs != null && (packageWeight > (selectedMailClass?.maxWeightLbs
+                !hasSelectedShippingProfile && selectedMailClass?.maxWeightLbs != null && (packageWeight > (selectedMailClass?.maxWeightLbs
                     ?: 0.0)) -> {
                     Alerts.error(
                         mCtx,
@@ -1140,7 +1149,7 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
                     )
                 }
 
-                selectedMailClass == null -> {
+                !hasSelectedShippingProfile && selectedMailClass == null -> {
                     Alerts.error(mCtx, "Please select a mail class")
                 }
 
@@ -1159,21 +1168,11 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
                     Alerts.error(mCtx, "Please enter price")
                 }
 
-                bind.shippingProfile.value().isEmpty() -> {
-                    if (profiles.isEmpty()) {
-                        addShippingProfile()
-                    } else {
-                        Alerts.error(mCtx, "Please select shipping profile")
-                    }
-                }
-
                 else -> {
                     saveProduct("active")
                 }
             }
-
         }
-
     }
 
     private fun addProductData(product: GetProductDetailsResponse.Data?) {
@@ -1217,6 +1216,7 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
 
             bind.shippingProfile.setText(selectedShippingProfile?.name, false)
         }
+        updateShippingDependentFields()
 
         imageList.clear()
         product?.images?.forEachIndexed { index, imageUrl ->
@@ -1245,6 +1245,19 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
             imageAdapter.mList.addAll(imageList.map { it.path })
             imageAdapter.notifyDataSetChanged()
         }
+    }
+
+    private fun clearShippingProfileSelection() {
+        profileId = ""
+        viewModel.shippingProfile = ""
+        bind.shippingProfile.setText("", false)
+        updateShippingDependentFields()
+    }
+
+    private fun updateShippingDependentFields() {
+        val hasSelectedShippingProfile = profileId.isNotEmpty()
+        bind.shippingDependentFields.isVisible = !hasSelectedShippingProfile
+        bind.clearShippingSelection.isVisible = hasSelectedShippingProfile
     }
 
     fun getVariantData(): List<Map<String?, Any?>> {

@@ -125,6 +125,12 @@ interface ApiInterface {
     suspend fun logout(): CommonResponse
 
     @Multipart
+    @POST("api/delete-profile")
+    suspend fun deleteProfile(
+        @Part("reason") reason: RequestBody?,
+    ): CommonResponse
+
+    @Multipart
     @POST("api/forgot-password")
     suspend fun forgotPassword(
         @Part("email") email: RequestBody,

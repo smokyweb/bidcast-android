@@ -47,18 +47,22 @@
                 android:weightSum="3">
 
                 <RadioButton
+                    android:id="@+id/addressTypeHome"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:checked="true"
                     android:text="Home" />
 
                 <RadioButton
+                    android:id="@+id/addressTypeOffice"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="Office" />
 
                 <RadioButton
+                    android:id="@+id/addressTypeOther"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -144,12 +148,14 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/margin">
 
-                <com.google.android.material.textfield.TextInputEditText
+                <com.google.android.material.textfield.MaterialAutoCompleteTextView
                     android:id="@+id/streetAddress"
                     style="@style/inputTextStyle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/enter_street_address" />
+                    android:completionThreshold="2"
+                    android:hint="@string/enter_street_address"
+                    android:inputType="textPostalAddress|textCapWords" />
 
             </com.google.android.material.textfield.TextInputLayout>
 

@@ -105,6 +105,7 @@ class SellerVerificationActivity : BaseActivity() {
             CONSUMED
         }
         bind.header.onBackClick {
+            hideKeyboard()
             finish()
         }
 
@@ -114,18 +115,21 @@ class SellerVerificationActivity : BaseActivity() {
 
         bind.main.setOnTouchListener { _, _ ->
             hideKeyboard()
-            return@setOnTouchListener true
+            return@setOnTouchListener false
         }
 
         bind.uploadId.setHapticClickListener {
+            hideKeyboard()
             uploadUserId()
         }
 
         bind.uploadSelfie.setHapticClickListener {
+            hideKeyboard()
             uploadUserSelfie()
         }
 
         bind.verifyId.setHapticClickListener {
+            hideKeyboard()
 
             when {
 
@@ -160,6 +164,7 @@ class SellerVerificationActivity : BaseActivity() {
         }
 
         bind.verifyPhone.setHapticClickListener {
+            hideKeyboard()
 
             when {
 
@@ -179,6 +184,7 @@ class SellerVerificationActivity : BaseActivity() {
         }
 
         bind.verifyOtp.setHapticClickListener {
+            hideKeyboard()
 
             when {
 
@@ -198,10 +204,12 @@ class SellerVerificationActivity : BaseActivity() {
         }
 
         bind.addCardBtn.setHapticClickListener {
+            hideKeyboard()
             addCardLauncher.launch(this.goToAddCard("verification"))
         }
 
         bind.completeVerification.setHapticClickListener {
+            hideKeyboard()
             when {
 
                 cardImage.isEmpty() -> {
@@ -236,6 +244,7 @@ class SellerVerificationActivity : BaseActivity() {
         }
 
         bind.editPhone.setHapticClickListener {
+            hideKeyboard()
             bind.phoneNumberLayout.isVisible = true
             bind.verifyPhoneTitle.isVisible = true
             bind.verifyPhoneTitle.text = buildString {
@@ -251,6 +260,7 @@ class SellerVerificationActivity : BaseActivity() {
         }
 
         bind.resend.setHapticClickListener {
+            hideKeyboard()
 
             bind.loader.isVisible = true
             viewModel.storePhoneNumber(phoneNumber.request())
@@ -258,6 +268,7 @@ class SellerVerificationActivity : BaseActivity() {
         }
 
         bind.addKycBtn.setHapticClickListener {
+            hideKeyboard()
             startActivity(
                 Intent(this, SellerHubActivity::class.java).putExtra("slug", "identityVerification")
             )
@@ -435,6 +446,7 @@ class SellerVerificationActivity : BaseActivity() {
                         append("OTP has been sent on ******")
                         append(mData?.phoneNumer?.drop(6))
                     }
+
                     bind.editPhone.isVisible = true
                     bind.resend.isVisible = true
                     bind.phoneNumberLayout.isVisible = false
@@ -534,13 +546,13 @@ class SellerVerificationActivity : BaseActivity() {
                             append("/")
                             append(selectedCard?.expYear ?: "--")
                         }
+                        bind.paymentCardItem.isVisible = true
                     } else {
                         paymentCardId = ""
                         bind.paymentCardIcon.isVisible = false
                         bind.paymentCardNumber.isVisible = false
-
-                        bind.addCardBtn.isVisible=true
-                        bind.paymentCardExpiry.text = getString(R.string.no_payment_method_added)
+                        bind.paymentCardItem.isVisible = false
+                        bind.addCardBtn.isVisible = true
                     }
 
                     updateStepper()
@@ -664,24 +676,37 @@ class SellerVerificationActivity : BaseActivity() {
         bind.stepProgress.progress = completedSteps
         bind.stepCount.text = "$completedSteps of 4"
 
-        bind.verifyPhone.isVisible = !phoneDone
+        val step2Enabled = idDone
+        val step3Enabled = step2Enabled && phoneDone
+        val step4Enabled = step3Enabled && kycActive
+
+        // Step 2 (Phone): only available after step 1 is done.
+        bind.verifyPhoneTitle.isVisible = step2Enabled && !phoneDone
+        bind.phoneNumberLayout.isVisible = step2Enabled && !phoneDone && !bind.otpLayout.isVisible
+        bind.otpLayout.isVisible = step2Enabled && !phoneDone && bind.otpLayout.isVisible
+        bind.verifyPhone.isVisible = step2Enabled && !phoneDone
+        bind.verifyOtp.isVisible = step2Enabled && !phoneDone && bind.otpLayout.isVisible
+        bind.editPhone.isVisible = step2Enabled && !phoneDone && bind.editPhone.isVisible
+        bind.resend.isVisible = step2Enabled && !phoneDone && bind.resend.isVisible
         bind.verificationPhoneIcon.isVisible = phoneDone
-        bind.verifyOtp.isVisible = !phoneDone && bind.otpLayout.isVisible
-        bind.verifyPhoneTitle.isVisible = !phoneDone
-        bind.phoneNumberLayout.isVisible = !phoneDone && !bind.otpLayout.isVisible
-        bind.otpLayout.isVisible = !phoneDone && bind.otpLayout.isVisible
-        bind.editPhone.isVisible = !phoneDone && bind.editPhone.isVisible
-        bind.resend.isVisible = !phoneDone && bind.resend.isVisible
         bind.verifyNumberText.text = if (phoneDone) {
             phoneNumber.ifEmpty { sellerData?.phoneNumber ?: "" }.ifEmpty { "Phone number verified" }
         } else {
             "Verify your phone number"
         }
+        bind.verifyPhone.isEnabled = step2Enabled
+        bind.verifyOtp.isEnabled = step2Enabled
+        bind.phoneNumber.isEnabled = step2Enabled
+        bind.otp.isEnabled = step2Enabled
+        bind.editPhone.isEnabled = step2Enabled
+        bind.resend.isEnabled = step2Enabled
+
+        // Step 3 (KYC): only available after step 2 is done.
+        bind.addKycBtn.isVisible = step3Enabled && !kycActive
+        bind.kycCheck.isVisible = step3Enabled && kycActive
+//        bind.kycDescription.isVisible = step3Enabled
 
         log("ACTIVE $kycActive")
-
-        bind.addKycBtn.isVisible = !kycActive
-        bind.kycCheck.isVisible = kycActive
         bind.kycDescription.text = if (kycActive) {
             "KYC verified successfully"
         } else {
@@ -694,7 +719,11 @@ class SellerVerificationActivity : BaseActivity() {
             )
         )
 
-        bind.addCardBtn.isVisible = !paymentDone
+        // Step 4 (Payment): only available after step 3 is done.
+        bind.addCardBtn.isVisible = step4Enabled && !paymentDone
+        bind.addCardBtn.isEnabled = step4Enabled
+        bind.paymentMethodCheck.isVisible = step4Enabled && paymentDone
+        bind.paymentCardItem.isVisible = step4Enabled && paymentDone
 
         when (sellerData?.status) {
             "pending" -> {
