@@ -240,6 +240,33 @@ class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
         accountGridAdapter = GridAdapter(accountGridList, accountGridClick)
         bind.accountView.gridRecycler.adapter = accountGridAdapter
 
+        // QA-FIX (MC tasks cmo7iaf7h00cgfi155p712op6 / cmo7iaffj00cifi153dmctomr / cmo7iaflb00ckfi15jxfhw8j2):
+        // Items, Revenue, and Rating stat cards on the seller account screen should
+        // navigate to the relevant screen when tapped.
+        bind.sellerHub.itemsCard.setHapticClickListener {
+            startActivity(
+                Intent(mCtx, SellerHubActivity::class.java).putExtra(
+                    "slug", "inventory"
+                )
+            )
+        }
+
+        bind.sellerHub.revenueCard.setHapticClickListener {
+            startActivity(
+                Intent(mCtx, SellerHubActivity::class.java).putExtra(
+                    "slug", "wallet"
+                )
+            )
+        }
+
+        bind.sellerHub.ratingCard.setHapticClickListener {
+            startActivity(
+                Intent(mCtx, SellerHubActivity::class.java).putExtra(
+                    "slug", "sellerStatus"
+                )
+            )
+        }
+
         bind.sellerHub.payoutCard.setHapticClickListener {
             startActivity(
                 Intent(mCtx, SellerHubActivity::class.java).putExtra(

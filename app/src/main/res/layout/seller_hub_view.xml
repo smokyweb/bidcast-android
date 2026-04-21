@@ -20,8 +20,10 @@
             android:paddingHorizontal="12dp"
             android:weightSum="3">
 
+            <!-- QA-FIX (MC task cmo7iaf7h00cgfi155p712op6): added id so AccountFragment can attach click listener -->
             <LinearLayout
                 style="@style/shadowStyle"
+                android:id="@+id/itemsCard"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="4dp"
@@ -57,8 +59,10 @@
 
             </LinearLayout>
 
+            <!-- QA-FIX (MC task cmo7iaffj00cifi153dmctomr): added id for revenue card click -->
             <LinearLayout
                 style="@style/shadowStyle"
+                android:id="@+id/revenueCard"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="4dp"
@@ -94,8 +98,10 @@
 
             </LinearLayout>
 
+            <!-- QA-FIX (MC task cmo7iaflb00ckfi15jxfhw8j2): added id for rating card click -->
             <LinearLayout
                 style="@style/shadowStyle"
+                android:id="@+id/ratingCard"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="4dp"

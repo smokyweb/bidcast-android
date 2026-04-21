@@ -190,6 +190,13 @@ class SellerVerificationActivity : BaseActivity() {
 
         bind.verifyPhone.setHapticClickListener {
 
+            // QA-FIX (seller OTP): normalize to US E.164 (`+1XXXXXXXXXX`)
+            // client-side before hitting the backend. The seller OTP backend
+            // only supports 10-12 digit numbers today and there is no country
+            // code picker in the UI; defaulting to US (+1) is the safe short
+            // term fix while the product decision on international is pending.
+            val digitsOnly = bind.phoneNumber.value().filter { it.isDigit() }
+
             when {
 
                 bind.phoneNumber.value().isEmpty() -> {
@@ -197,10 +204,17 @@ class SellerVerificationActivity : BaseActivity() {
                     showKeyboard(bind.phoneNumber)
                 }
 
+                digitsOnly.length != 10 -> {
+                    Alerts.error(this, "Please enter a valid 10-digit US phone number")
+                    showKeyboard(bind.phoneNumber)
+                }
+
                 else -> {
                     bind.loader.isVisible = true
 
-                    viewModel.storePhoneNumber(bind.phoneNumber.value().request())
+                    val e164 = "+1$digitsOnly"
+                    phoneNumber = e164
+                    viewModel.storePhoneNumber(e164.request())
                 }
 
             }
@@ -281,6 +295,8 @@ class SellerVerificationActivity : BaseActivity() {
 
         bind.resend.setHapticClickListener {
 
+            // QA-FIX (seller OTP): phoneNumber is already normalized to E.164
+            // when the user first submitted, so just resend that.
             bind.loader.isVisible = true
             viewModel.storePhoneNumber(phoneNumber.request())
 
@@ -458,10 +474,17 @@ class SellerVerificationActivity : BaseActivity() {
                     val mData = it.value.data
                     bind.verifyPhone.isVisible = false
                     bind.verifyOtp.isVisible = true
-                    phoneNumber = mData?.phoneNumer.toString()
+                    // QA-FIX (seller OTP): prefer the E.164 number we just
+                    // submitted; fall back to whatever backend echoed. Mask
+                    // everything except the last 4 digits so the banner works
+                    // for both raw 10-digit and `+1XXXXXXXXXX` shapes.
+                    val serverPhone = mData?.phoneNumer.orEmpty()
+                    val resolvedPhone = if (serverPhone.isNotBlank()) serverPhone else phoneNumber
+                    phoneNumber = resolvedPhone
+                    val lastFour = resolvedPhone.filter { it.isDigit() }.takeLast(4)
                     bind.verifyPhoneTitle.text = buildString {
-                        append("OTP has been sent on ******")
-                        append(mData?.phoneNumer?.drop(6))
+                        append("OTP has been sent to ******")
+                        append(lastFour)
                     }
                     bind.editPhone.isVisible = true
                     bind.resend.isVisible = true

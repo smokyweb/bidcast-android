@@ -1,5 +1,6 @@
 package io.bidswipe.app.ui.auth
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -8,17 +9,22 @@ import androidx.core.view.isVisible
 import androidx.navigation.fragment.findNavController
 import com.gyf.immersionbar.ktx.immersionBar
 import com.wajahatkarim3.easyvalidation.core.view_ktx.validator
+import io.bidswipe.app.App
 import io.bidswipe.app.base.BaseFragment
 import io.bidswipe.app.databinding.FragmentCreateAccountBinding
 import io.bidswipe.app.interfaces.AlertClicks
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.ui.custom.AppBottomSheet
+import io.bidswipe.app.ui.interest.ChooseInterestActivity
 import io.bidswipe.app.utils.Alerts
+import io.bidswipe.app.utils.Prefs
+import io.bidswipe.app.utils.finish
 import io.bidswipe.app.utils.hideKeyboard
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request
 import io.bidswipe.app.utils.setHapticClickListener
 import io.bidswipe.app.utils.showKeyboard
+import io.bidswipe.app.utils.toDash
 import io.bidswipe.app.utils.value
 
 class CreateAccountFragment : BaseFragment<AuthViewModel , FragmentCreateAccountBinding>() {
@@ -85,8 +91,11 @@ class CreateAccountFragment : BaseFragment<AuthViewModel , FragmentCreateAccount
 					showKeyboard(bind.password)
 				}
 
-				bind.password.value().validator().minLength(6).check().not() -> {
-					Alerts.error(mCtx , "Enter at least 6 digit password")
+				// QA-FIX: Copy said "6 digit password" which is both misleading (digits ≠ characters)
+				// and too weak; tightened to 8 characters minimum for baseline security. If product
+				// wants more (numbers/symbols/etc.) they can layer it on, but 8 chars is a safer floor.
+				bind.password.value().validator().minLength(8).check().not() -> {
+					Alerts.error(mCtx , "Password must be at least 8 characters")
 					bind.password.requestFocus()
 					showKeyboard(bind.password)
 				}
@@ -97,8 +106,9 @@ class CreateAccountFragment : BaseFragment<AuthViewModel , FragmentCreateAccount
 					showKeyboard(bind.cPassword)
 				}
 
+				// QA-FIX: Grammar pass on user-facing copy.
 				bind.cPassword.value() != bind.password.value() -> {
-					Alerts.error(mCtx , "Confirm password not matched with password")
+					Alerts.error(mCtx , "Passwords do not match")
 					bind.cPassword.requestFocus()
 					showKeyboard(bind.cPassword)
 				}
@@ -124,26 +134,87 @@ class CreateAccountFragment : BaseFragment<AuthViewModel , FragmentCreateAccount
 				is Resource.Success -> {
 					viewModel.signUpRepo.value = null
 					bind.loader.isVisible = false
-					successToast(it.value.message.toString())
-//                  Prefs(mCtx).putString(Prefs.USER, Gson().toJson(it.value.data).toString())
-					findNavController().popBackStack()
+
+					// QA-FIX (MC task cmo7iacwd00bqfi15a11rkszi): auto-login after signup.
+					// Save the auth token returned by the signup API and go straight to the
+					// interest-selection screen so the user is never asked to log in again.
+					val token = it.value.data?.token
+					if (!token.isNullOrBlank()) {
+						Prefs(mCtx).putString(Prefs.TOKEN, "Bearer ${token.trim()}")
+						App.getProfile()
+						App.checkKYC()
+						App.setUpSocket()
+						App.getCategories()
+						// New accounts always go through interest selection on first login
+						startActivity(
+							Intent(mCtx, ChooseInterestActivity::class.java)
+								.putExtra("isFirstTimeLogin", true)
+						)
+						finish()
+					} else {
+						// No token in response — fall back to navigating back to the login screen
+						successToast(it.value.message.toString())
+						findNavController().popBackStack()
+					}
 				}
 
 				is Resource.Error -> {
 					bind.loader.isVisible = false
 					viewModel.signUpRepo.value = null
 
-					it.parse(mCtx , TAG , object : AlertClicks {
-						override fun primaryClick(dialog : AppBottomSheet) {
-							dialog.dismiss()
+					// QA-FIX (deleted-account signup): before falling through to the generic
+					// parse() path (which renders raw backend copy or "No Data Found"),
+					// branch on recognisable error signals from the backend and show
+					// friendlier, signup-specific copy so the user knows what to do next.
+					val errType = it.errorResponse?.errorType?.uppercase()
+					val rawMsg = it.errorResponse?.message?.trim().orEmpty()
+					val lowerMsg = rawMsg.lowercase()
+
+					val handled = when {
+						errType == "ACCOUNT_DELETED" || lowerMsg.contains("account was deleted") || lowerMsg.contains("account has been deleted") -> {
+							Alerts.showBottomSheet(
+								mCtx = mCtx,
+								msg = "This account was previously deleted and cannot be reused. Please contact support to restore it, or sign up with a different email.",
+								title = "Account Deleted",
+								isError = true
+							)
+							true
 						}
-
-						override fun secondaryClick(dialog : AppBottomSheet) {
-							dialog.dismiss()
-
+						errType == "EMAIL_TAKEN" || lowerMsg.contains("has already been taken") || lowerMsg.contains("already been registered") || lowerMsg.contains("email already") -> {
+							Alerts.showBottomSheet(
+								mCtx = mCtx,
+								msg = "An account with this email already exists. Try logging in or use \"Forgot Password\" to reset it.",
+								title = "Email Already Registered",
+								isError = true
+							)
+							true
 						}
-					})
+						else -> false
+					}
 
+					if (!handled) {
+						// Fallback: if the backend returned a non-empty human message, surface
+						// it directly with a sensible title. If there is no message at all,
+						// use a friendly signup-specific fallback instead of "No Data Found".
+						if (rawMsg.isNotEmpty() && !it.isNetworkError) {
+							it.parse(mCtx , TAG , object : AlertClicks {
+								override fun primaryClick(dialog : AppBottomSheet) { dialog.dismiss() }
+								override fun secondaryClick(dialog : AppBottomSheet) { dialog.dismiss() }
+							})
+						} else if (it.isNetworkError) {
+							it.parse(mCtx , TAG , object : AlertClicks {
+								override fun primaryClick(dialog : AppBottomSheet) { dialog.dismiss() }
+								override fun secondaryClick(dialog : AppBottomSheet) { dialog.dismiss() }
+							})
+						} else {
+							Alerts.showBottomSheet(
+								mCtx = mCtx,
+								msg = "Signup failed. Please try again or contact support if the problem continues.",
+								title = "Error",
+								isError = true
+							)
+						}
+					}
 				}
 
 				else -> {}

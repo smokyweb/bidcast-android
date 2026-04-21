@@ -41,6 +41,20 @@ class AddShippingAddressFragment :
 	private var stateList = mutableListOf<GetStatesResponse.Data?>()
 	private var selectedState: GetStatesResponse.Data? = null
 
+	// QA-FIX (MC task cmo7iaepv00cafi15wyu5k00e): Street address field should use Google
+	// Places Autocomplete so the user gets address suggestions while typing instead of
+	// having to enter the full address manually.
+	//
+	// TODO: Integrate Google Places SDK autocomplete on bind.streetAddress:
+	//   1. Add dependency to build.gradle.kts:
+	//      implementation("com.google.android.libraries.places:places:<latest_version>")
+	//   2. Initialize the Places client in Application (App.kt):
+	//      Places.initialize(applicationContext, BuildConfig.GOOGLE_MAPS_API_KEY)
+	//   3. In onViewCreated, replace the plain TextInputEditText with a Places Autocomplete
+	//      widget (AutocompleteSupportFragment or Autocomplete.IntentBuilder) and populate
+	//      bind.streetAddress, bind.city, bind.state, and bind.zipCode from the result.
+	//   BLOCKED: requires GOOGLE_MAPS_API_KEY (Places API key) from the project config.
+
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		super.onViewCreated(view, savedInstanceState)
 

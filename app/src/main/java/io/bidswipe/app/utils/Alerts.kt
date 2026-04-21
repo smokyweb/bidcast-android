@@ -127,6 +127,10 @@ object Alerts {
     fun success(ctx: Context, message: String) =
         Toasty.success(ctx, message, Toast.LENGTH_SHORT, false).show()
 
+    // QA-FIX: added info toast for coming-soon button stubs
+    fun info(ctx: Context, message: String) =
+        Toasty.info(ctx, message, Toast.LENGTH_SHORT, false).show()
+
     fun kycDialog(mCtx: Context) {
         AppBottomSheet(
             mCtx,

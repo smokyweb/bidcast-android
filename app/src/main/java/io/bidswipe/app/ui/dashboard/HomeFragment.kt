@@ -505,6 +505,26 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
                         }
                     }
 
+                    // QA-FIX (MC task cmo8utxn700fd3u1hjk2a1yny):
+                    // Previously (MC task cmo7iafya00cofi15op1wnifq) this fallback fell back
+                    // to fetching ALL live shows whenever ANY category returned an empty list.
+                    // That caused tapping a specific category (e.g. "Gaming") with zero live
+                    // shows in it to silently show every other category's live shows, which
+                    // reads to users as "explore still shows my favorites instead of the
+                    // category I picked".
+                    //
+                    // Narrow the fallback to ONLY the special For-You tab, where it is the
+                    // expected UX. For any other specific category, respect the empty result
+                    // and show the real "no shows" state instead.
+                    if (showList.isEmpty() && page == 1 && selectedCategory == "for_you") {
+                        viewModel.getLiveShow(
+                            selectedTabText.request(),
+                            "all".request(),
+                            page = "1".request()
+                        )
+                        return@observe
+                    }
+
                     if (showList.isEmpty()) {
                         bind.noData.isVisible = true
                         bind.recycler.isVisible = false
