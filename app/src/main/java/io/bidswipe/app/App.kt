@@ -84,7 +84,10 @@ class App : Application() {
                         }
 
                         is Resource.Error -> {
-                            profileResponse.value = null
+                            // QA-FIX: was mutating profileResponse by mistake on a KYC
+                            // failure, which wiped the logged-in profile and caused null
+                            // derefs on downstream screens right after login.
+                            checkKycResponse.value = null
                         }
                     }
                 }
@@ -100,13 +103,21 @@ class App : Application() {
                     when (it) {
                         is Resource.Success -> {
                             val mData = it.value.data
-                            mData?.forEach {
-                                categoryList.add(it)
-                            }
+                            // QA-FIX (MC task cmo8tx4iw00ei3u1hejjq99ai):
+                            // categoryList is shared across the whole process. On every
+                            // call we were APPENDING without clearing, so repeated logins
+                            // duplicated categories and downstream screens iterating the
+                            // list could race / ConcurrentModification when another fetch
+                            // re-entered. Rebuild the list atomically instead.
+                            val rebuilt = mData?.toMutableList() ?: mutableListOf()
+                            categoryList.clear()
+                            categoryList.addAll(rebuilt)
                         }
 
                         is Resource.Error -> {
-                            profileResponse.value = null
+                            // QA-FIX: was mutating profileResponse by mistake on a
+                            // category failure. Don't knock the profile out just because
+                            // category fetch failed; leave the list as-is.
                         }
                     }
                 }
@@ -114,12 +125,28 @@ class App : Application() {
         }
 
         fun setUpSocket() {
-            socketManager = SocketManager.getInstance(mCtx)
-            socketManager?.initialize(Const.SOCKET_URL, mapOf("uid" to Prefs(mCtx).getUserData()?.id.toString()))
-            socketManager?.connect(onConnected = {
-                log(javaClass.simpleName, "Socket connect")
-            }) { err -> log(javaClass.simpleName, "Socket connect error: $err") }
-
+            try {
+                // QA-FIX (MC task cmo8tx4iw00ei3u1hejjq99ai):
+                // The previous code did `Prefs(mCtx).getUserData()?.id.toString()` which,
+                // when getUserData() is null, evaluates as `(null).toString()` => literal
+                // string "null" going into the socket uid. That both confuses server-side
+                // routing and, combined with socket lifecycle reuse across logins, can
+                // lead to callbacks firing against a reused SocketManager. Guard the uid
+                // and wrap the entire setup in try/catch so a bad socket init can never
+                // crash the process.
+                val uid = Prefs(mCtx).getUserData()?.id?.toString().orEmpty()
+                if (uid.isEmpty()) {
+                    log(javaClass.simpleName, "setUpSocket: no user id yet, skipping")
+                    return
+                }
+                socketManager = SocketManager.getInstance(mCtx)
+                socketManager?.initialize(Const.SOCKET_URL, mapOf("uid" to uid))
+                socketManager?.connect(onConnected = {
+                    log(javaClass.simpleName, "Socket connect")
+                }) { err -> log(javaClass.simpleName, "Socket connect error: $err") }
+            } catch (e: Throwable) {
+                log(javaClass.simpleName, "setUpSocket failed: ${e.message}")
+            }
         }
 
     }
@@ -143,18 +170,23 @@ class App : Application() {
             setUpSocket()
         }
 
-        Toasty.Config.getInstance()
-            .setToastTypeface(
-                ResourcesCompat.getFont(
-                    applicationContext,
-                    R.font.poppins_semi_bold
-                )!!
-            )
+        // QA-FIX (MC task cmo8tx4iw00ei3u1hejjq99ai):
+        // The previous code force-unwrapped ResourcesCompat.getFont(...) with !! inside
+        // Application.onCreate. If the font fails to resolve (OEM vendor strip, resource
+        // shrinker, rare device), the whole app crashes on startup / right after login
+        // when the process is restarted. Make it safe and fall back to the default font.
+        val cfg = Toasty.Config.getInstance()
             .setGravity(Gravity.TOP, 0, 160)
             .supportDarkTheme(true)
             .allowQueue(false)
             .setTextSize(12)
-            .apply()
+        try {
+            val tf = ResourcesCompat.getFont(applicationContext, R.font.poppins_semi_bold)
+            if (tf != null) cfg.setToastTypeface(tf)
+        } catch (e: Throwable) {
+            log(javaClass.simpleName, "Toasty font init failed: ${e.message}")
+        }
+        cfg.apply()
 
     }
 
