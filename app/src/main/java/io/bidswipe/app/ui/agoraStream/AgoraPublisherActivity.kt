@@ -945,6 +945,36 @@ class AgoraPublisherActivity : BaseActivity() {
                     productList.addAll(showData.products)
                     showData.products.find { it?.isCurrent == true }
                     log("ROOM CREATED : $showData")
+
+                    // QA-FIX (MC task cmo93i4ss00ns3u1h2rgj6zzg — auto-pin):
+                    // Products that the host added during show scheduling should be pinned
+                    // from the moment the room is created, so run_next_product has a queue to
+                    // rotate through and viewers see them immediately. Mobile clients previously
+                    // required the host to tap 'Set Next' on each product before a pin_product
+                    // emit would fire. Auto-emit pin_product for every scheduled product here.
+                    try {
+                        val sm = socketManager
+                        val roomIdLocal = viewModel.currentRoomId
+                        if (sm != null && roomIdLocal.isNotBlank()) {
+                            showData.products.forEachIndexed { index, product ->
+                                val pid = product?.id
+                                if (pid.isNullOrBlank()) return@forEachIndexed
+                                if (viewModel.pinnedProducts.contains(pid)) return@forEachIndexed
+                                // Stagger by 120ms so Node processes in order without a burst.
+                                bind.root.postDelayed({
+                                    runSafe {
+                                        sm.pinProduct(roomIdLocal, pid)
+                                        if (!viewModel.pinnedProducts.contains(pid)) {
+                                            viewModel.pinnedProducts.add(pid)
+                                        }
+                                        log("auto-pin emitted pin_product for $pid (room=$roomIdLocal)")
+                                    }
+                                }, (index * 120L))
+                            }
+                        }
+                    } catch (t: Throwable) {
+                        log("auto-pin failed: ${t.message}")
+                    }
                 }
             }
         }
