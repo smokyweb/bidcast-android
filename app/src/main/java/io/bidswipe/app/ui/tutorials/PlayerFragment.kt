@@ -4,7 +4,9 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
 import androidx.annotation.OptIn
+import androidx.core.text.HtmlCompat
 import androidx.core.view.isVisible
 import androidx.media3.common.MediaItem
 import androidx.media3.common.util.UnstableApi
@@ -14,6 +16,7 @@ import io.bidswipe.app.base.BaseFragment
 import io.bidswipe.app.databinding.FragmentPlayerBinding
 import io.bidswipe.app.interfaces.AlertClicks
 import io.bidswipe.app.network.Resource
+import io.bidswipe.app.network.response.GetLessonsResponse
 import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.ui.dashboard.DashViewModel
 import io.bidswipe.app.utils.ids
@@ -21,114 +24,136 @@ import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.setHapticClickListener
 
 class PlayerFragment : BaseFragment<DashViewModel, FragmentPlayerBinding>() {
-	override fun getModel(): Class<DashViewModel> = DashViewModel::class.java
 
-	override fun getBind(inflater: LayoutInflater, view: ViewGroup?) =
-		FragmentPlayerBinding.inflate(inflater, view, false)
+    override fun getModel(): Class<DashViewModel> = DashViewModel::class.java
 
-	private var lessonList = mutableListOf<String>()
+    override fun getBind(inflater: LayoutInflater, view: ViewGroup?) =
+        FragmentPlayerBinding.inflate(inflater, view, false)
 
-	private var playPos = 0
+    private var lessonList = mutableListOf<GetLessonsResponse.Data?>()
+    private var playPos = 0
+    private var player: ExoPlayer? = null
 
-	private var player: ExoPlayer? = null
+    @OptIn(UnstableApi::class)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
-	@OptIn(UnstableApi::class)
-	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-		super.onViewCreated(view, savedInstanceState)
+        bind.header.onBackClick {
+            findNavController().popBackStack()
+        }
 
-		bind.header.onBackClick {
-			findNavController().popBackStack()
-		}
+        setupPlayer()
+        setupClicks()
 
-		player = ExoPlayer.Builder(mCtx).build()
-		bind.player.player = player
+        bind.loader.isVisible = true
+        viewModel.getLesson()
 
-		bind.player.useController = true
-		bind.player.setShowSubtitleButton(true)
-		bind.player.showController()
-		bind.nextButton.setHapticClickListener {
-			playPos = playPos + 1
+        observeLessons()
+    }
 
-			if (playPos < lessonList.size) {
+    private fun setupPlayer() {
+        player = ExoPlayer.Builder(mCtx).build()
+        bind.player.player = player
+        bind.playerControls.player = player
 
-				bind.header.setHeaderText("Lesson ${playPos + 1}/${lessonList.size}")
+        bind.player.useController = false
+        bind.playerControls.show()
+    }
 
-				player?.setMediaItem(
-					MediaItem.Builder()
-						.setUri(lessonList[playPos]).build()
-				)
+    private fun setupClicks() {
 
-				player?.prepare()
+        bind.previousButton.setHapticClickListener {
+            if (playPos > 0) {
+                playPos--
+                playLesson(playPos)
+            }
+        }
 
-				player?.play()
-			} else {
-				findNavController().navigate(ids.goToSellFragment)
-			}
-		}
+        bind.nextButton.setHapticClickListener {
 
-		bind.loader.isVisible = true
+            if (playPos < lessonList.size - 1) {
+                playPos++
+                playLesson(playPos)
+            } else {
+                findNavController().navigate(ids.goToSellFragment)
+            }
+        }
+    }
 
-		viewModel.getLesson()
+    private fun observeLessons() {
+        viewModel.getLessonRepo.observe(viewLifecycleOwner) {
+            when (it) {
 
-		viewModel.getLessonRepo.observe(viewLifecycleOwner) {
-			when (it) {
-				is Resource.Success -> {
-					viewModel.getLessonRepo.value = null
-					bind.loader.isVisible = false
+                is Resource.Success -> {
+                    viewModel.getLessonRepo.value = null
+                    bind.loader.isVisible = false
 
-					val mData = it.value.data
+                    val mData = it.value.data
 
-					playPos = 0
+                    playPos = 0
+                    lessonList.clear()
+                    lessonList.addAll(mData ?: emptyList())
 
-					lessonList.clear()
+                    if (lessonList.isNotEmpty()) {
+                        playLesson(playPos)
+                    }
+                }
 
-					mData?.forEach { data ->
+                is Resource.Error -> {
+                    viewModel.getLessonRepo.value = null
+                    bind.loader.isVisible = false
 
-						lessonList.add(data?.video.toString())
+                    it.parse(mCtx, TAG, object : AlertClicks {
+                        override fun primaryClick(dialog: AppBottomSheet) {
+                            dialog.dismiss()
+                        }
 
-					}
+                        override fun secondaryClick(dialog: AppBottomSheet) {
+                            dialog.dismiss()
+                        }
+                    })
+                }
 
-					bind.header.setHeaderText("Lesson 1/${lessonList.size}")
+                else -> {}
+            }
+        }
+    }
 
-					player?.setMediaItem(
-						MediaItem.Builder()
-							.setUri(lessonList[playPos]).build()
-					)
+    private fun playLesson(position: Int) {
+        val lesson = lessonList.getOrNull(position) ?: return
+        val lessonVideo = lesson.video.orEmpty()
+        if (lessonVideo.isEmpty()) return
 
-					player?.prepare()
+        // UI Content
+        bind.header.setHeaderText("Lesson")
+        bind.lessonCount.text = "Lesson ${position + 1}/${lessonList.size}"
+        bind.lessonTitle.text = lesson.title.orEmpty()
+        bind.lessonDescription.text = HtmlCompat.fromHtml(
+            lesson.description.orEmpty(),
+            HtmlCompat.FROM_HTML_MODE_LEGACY
+        ).trim()
 
-					player?.play()
+        bind.previousButton.visibility =
+            if (position > 0) View.VISIBLE else View.INVISIBLE
 
-				}
+        // Player setup
+        player?.apply {
+            stop()
+            clearMediaItems()
 
-				is Resource.Error -> {
-					viewModel.getLessonRepo.value = null
-					bind.loader.isVisible = false
+            setMediaItem(
+                MediaItem.Builder()
+                    .setUri(lessonVideo)
+                    .build()
+            )
+            prepare()
+            playWhenReady = true
+        }
+    }
 
-					it.parse(mCtx, TAG, object : AlertClicks {
-						override fun primaryClick(dialog: AppBottomSheet) {
-							dialog.dismiss()
-
-						}
-
-						override fun secondaryClick(dialog: AppBottomSheet) {
-							dialog.dismiss()
-
-						}
-					})
-
-				}
-
-				else -> {}
-
-			}
-		}
-	}
-
-	override fun onDestroy() {
-		super.onDestroy()
-		player?.release()
-		player = null
-	}
-
+    override fun onDestroyView() {
+        super.onDestroyView()
+        player?.release()
+        player = null
+    }
 }

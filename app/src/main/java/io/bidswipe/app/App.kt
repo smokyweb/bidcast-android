@@ -137,9 +137,9 @@ class App : Application() {
             Places.initialize(applicationContext, BuildConfig.PLACES_API_KEY)
         }
 
-        if (BuildConfig.DEBUG) {
-            FirebaseCrashlytics.getInstance().isCrashlyticsCollectionEnabled = false
-        }
+//        if (BuildConfig.DEBUG) {
+            FirebaseCrashlytics.getInstance().isCrashlyticsCollectionEnabled = true
+//        }
 
         if (Prefs(mCtx).token().isNotEmpty()) {
             getProfile()

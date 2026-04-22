@@ -19,6 +19,7 @@
     <LinearLayout
         android:id="@+id/progressLayout"
         android:layout_width="match_parent"
+        android:visibility="gone"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layout_constraintTop_toBottomOf="@+id/header">
@@ -67,7 +68,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/margin"
             android:paddingHorizontal="@dimen/margin"
-            android:text="@string/continue_to_next_step" />
+            android:text="@string/_continue" />
 
     </LinearLayout>
 

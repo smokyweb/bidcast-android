@@ -23,6 +23,7 @@ import io.bidswipe.app.utils.Utils
 import io.bidswipe.app.utils.ids
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request
+import io.bidswipe.app.utils.toLiveRehearsal
 import io.bidswipe.app.utils.toScheduleShow
 import okhttp3.MultipartBody
 import java.io.File
@@ -56,6 +57,15 @@ class PrepareYourShowFragment : BaseFragment<DashViewModel, FragmentPrepareYourS
 
 			}
 
+		}
+
+	private var rehearsalLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+			if (result.resultCode == Activity.RESULT_OK) {
+				viewModel.currentStep = 3
+				viewModel.showList.getOrNull(2)?.status = "completed"
+				viewModel.showList.getOrNull(3)?.status = "locked"
+				bind.recycler.adapter?.notifyDataSetChanged()
+			}
 		}
 
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -92,7 +102,7 @@ class PrepareYourShowFragment : BaseFragment<DashViewModel, FragmentPrepareYourS
 						}
 
 						2 -> {
-							findNavController().navigate(ids.goToShowTipsFragment, bundleOf("type" to "liveTips"))
+							rehearsalLauncher.launch(mCtx.toLiveRehearsal())
 						}
 
 						3 -> {

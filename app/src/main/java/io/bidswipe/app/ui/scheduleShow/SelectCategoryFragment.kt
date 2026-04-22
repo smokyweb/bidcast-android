@@ -75,6 +75,10 @@ class SelectCategoryFragment : BaseFragment<ScheduleShowViewModel, FragmentSelec
 
         } else {
             bind.publicButton.isChecked = true
+            if (viewModel.primaryLanguage.isEmpty()) {
+                viewModel.primaryLanguage = "English"
+            }
+            bind.language.setText(viewModel.primaryLanguage, false)
         }
 
         bind.continueBtn.setHapticClickListener {

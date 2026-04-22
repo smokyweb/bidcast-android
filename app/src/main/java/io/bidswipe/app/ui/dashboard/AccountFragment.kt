@@ -55,6 +55,7 @@ import io.bidswipe.app.utils.setHapticClickListener
 import io.bidswipe.app.utils.toAuth
 import io.bidswipe.app.utils.toListProduct
 import io.bidswipe.app.utils.toScheduleShow
+import io.bidswipe.app.utils.toTutorials
 
 class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
 
@@ -220,7 +221,7 @@ class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
         moreList.add(MoreModel(R.drawable.ic_privacy, "Privacy Policy", "privacy-policy"))
         moreList.add(MoreModel(R.drawable.ic_faq, "F.A.Q", "faq"))
         moreList.add(MoreModel(R.drawable.ic_people, "Blocked Users", "blockedUsers"))
-        moreList.add(MoreModel(R.drawable.trash, "Delete Account", "deleteAccount"))
+        moreList.add(MoreModel(R.drawable.ic_trash, "Delete Account", "deleteAccount"))
         moreList.add(MoreModel(R.drawable.ic_logout_outline, "Logout", "logout"))
 
         moreAdapter = MoreAdapter(moreList, mClicks)
@@ -258,7 +259,7 @@ class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
             )
         }
 
-        bind.sellerHub.itemCount.setHapticClickListener {
+        bind.sellerHub.itemsLayout.setHapticClickListener {
             startActivity(
                 Intent(mCtx, SellerHubActivity::class.java).putExtra(
                     "slug", "inventory"
@@ -266,7 +267,7 @@ class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
             )
         }
 
-        bind.sellerHub.revenue.setHapticClickListener {
+        bind.sellerHub.revenueCard.setHapticClickListener {
             startActivity(
                 Intent(mCtx, SellerHubActivity::class.java).putExtra(
                     "slug", "wallet"
@@ -274,7 +275,7 @@ class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
             )
         }
 
-        bind.sellerHub.rating.setHapticClickListener {
+        bind.sellerHub.ratingCard.setHapticClickListener {
             val profile = App.profileResponse.value
             startActivity(
                 Intent(mCtx, SellerProfileActivity::class.java)
@@ -325,7 +326,6 @@ class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
         }
 
         bind.sellerHub.viewAll.setHapticClickListener {
-
             startActivity(
                 Intent(mCtx, SellerHubActivity::class.java).putExtra(
                     "slug", "shows"
@@ -370,7 +370,12 @@ class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
                 return@setHapticClickListener
             }
 
-            scheduleShowLauncher.launch(mCtx.toScheduleShow(from = "dash"))
+            val intent = if (profile.isFirstShowCreated == true) {
+                mCtx.toScheduleShow(from = "dash")
+            } else {
+                mCtx.toTutorials()
+            }
+            scheduleShowLauncher.launch(intent)
 
         }
 

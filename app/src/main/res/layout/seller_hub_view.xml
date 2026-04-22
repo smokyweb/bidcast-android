@@ -21,6 +21,7 @@
             android:weightSum="3">
 
             <LinearLayout
+                android:id="@+id/items_layout"
                 style="@style/shadowStyle"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -58,6 +59,7 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/revenue_card"
                 style="@style/shadowStyle"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -95,6 +97,7 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/rating_card"
                 style="@style/shadowStyle"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"

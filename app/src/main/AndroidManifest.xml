@@ -115,6 +115,10 @@
             android:name=".ui.tutorials.TutorialsActivity"
             android:exported="false" />
         <activity
+            android:name=".ui.tutorials.LiveRehearsalActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
             android:name=".ui.sell.ListAProductActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />

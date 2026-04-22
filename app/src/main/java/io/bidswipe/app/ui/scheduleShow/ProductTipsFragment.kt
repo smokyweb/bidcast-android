@@ -13,65 +13,66 @@ import io.bidswipe.app.utils.ids
 import io.bidswipe.app.utils.setHapticClickListener
 import io.bidswipe.app.utils.string
 
-class ProductTipsFragment : BaseFragment<ScheduleShowViewModel , FragmentProductTipsBinding>() {
-	override fun getModel() : Class<ScheduleShowViewModel> = ScheduleShowViewModel::class.java
+class ProductTipsFragment : BaseFragment<ScheduleShowViewModel, FragmentProductTipsBinding>() {
+    override fun getModel(): Class<ScheduleShowViewModel> = ScheduleShowViewModel::class.java
 
-	override fun getBind(inflater : LayoutInflater , view : ViewGroup?) = FragmentProductTipsBinding.inflate(inflater , view , false)
+    override fun getBind(inflater: LayoutInflater, view: ViewGroup?) =
+        FragmentProductTipsBinding.inflate(inflater, view, false)
 
-	private var productTipList = mutableListOf("" , "" , "")
-	private lateinit var pagerAdapter : ProductTipsPagerAdapter
+    private var productTipList = mutableListOf("")
+    private lateinit var pagerAdapter: ProductTipsPagerAdapter
 
-	override fun onViewCreated(view : View , savedInstanceState : Bundle?) {
-		super.onViewCreated(view , savedInstanceState)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
-		bind.header.onBackClick {
-			if (bind.pager.currentItem == 0) {
-				findNavController().popBackStack()
-			} else {
-				bind.pager.currentItem -= 1
-			}
+        bind.header.onBackClick {
+            if (bind.pager.currentItem == 0) {
+                findNavController().popBackStack()
+            } else {
+                bind.pager.currentItem -= 1
+            }
 
-		}
+        }
 
-		bind.stepProgress.max = productTipList.size
+        bind.stepProgress.max = productTipList.size
 
-		pagerAdapter = ProductTipsPagerAdapter(productTipList , "productTips")
-		bind.pager.adapter = pagerAdapter
+        pagerAdapter = ProductTipsPagerAdapter(productTipList, "productTips")
+        bind.pager.adapter = pagerAdapter
 
-		bind.pager.isUserInputEnabled = false
+        bind.pager.isUserInputEnabled = false
 
         bind.continueBtn.setHapticClickListener {
-			if (bind.pager.currentItem == productTipList.size - 1) {
+            if (bind.pager.currentItem == productTipList.size - 1) {
 
-				findNavController().navigate(ids.goToCreateProductFragment)
+                findNavController().navigate(ids.goToCreateProductFragment)
 
-			} else {
-				bind.pager.currentItem += 1
-			}
+            } else {
+                bind.pager.currentItem += 1
+            }
 
-		}
+        }
 
-		bind.pager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
-			override fun onPageSelected(position : Int) {
-				super.onPageSelected(position)
+        bind.pager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+            override fun onPageSelected(position: Int) {
+                super.onPageSelected(position)
 
-				bind.stepProgress.progress = position + 1
+                bind.stepProgress.progress = position + 1
 
-				bind.step.text = buildString {
-					append("Step ")
-					append(position + 1)
-					append(" of ${productTipList.size}")
-				}
+                bind.step.text = buildString {
+                    append("Step ")
+                    append(position + 1)
+                    append(" of ${productTipList.size}")
+                }
 
-				if (position == 2) {
-					bind.continueBtn.text = resources.getString(string._continue)
-				} else {
-					bind.continueBtn.text = resources.getString(string.continue_to_next_step)
-				}
+                if (position == productTipList.lastIndex) {
+                    bind.continueBtn.text = resources.getString(string._continue)
+                } else {
+                    bind.continueBtn.text = resources.getString(string.continue_to_next_step)
+                }
 
-			}
-		})
+            }
+        })
 
-	}
+    }
 
 }

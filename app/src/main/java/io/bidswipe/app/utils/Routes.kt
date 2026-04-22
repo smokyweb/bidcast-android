@@ -12,6 +12,7 @@ import io.bidswipe.app.ui.interest.ChooseInterestActivity
 import io.bidswipe.app.ui.product.OrderStatusActivity
 import io.bidswipe.app.ui.scheduleShow.ScheduleShowActivity
 import io.bidswipe.app.ui.sell.ListAProductActivity
+import io.bidswipe.app.ui.tutorials.LiveRehearsalActivity
 import io.bidswipe.app.ui.tutorials.TutorialsActivity
 
 fun Context.toAuth() = Intent(this, AuthActivity::class.java)
@@ -22,6 +23,7 @@ fun Context.toChoose() = Intent(this, ChooseInterestActivity::class.java)
 fun Context.toListProduct() = Intent(this, ListAProductActivity::class.java)
 
 fun Context.toTutorials() = Intent(this, TutorialsActivity::class.java)
+fun Context.toLiveRehearsal() = Intent(this, LiveRehearsalActivity::class.java)
 
 fun Context.toSellerShow(time: String?, showData: LiveShowModel?) = Intent(this, AgoraPublisherActivity::class.java)
 	.putExtra("time", time)

@@ -6,6 +6,7 @@
     android:layout_height="wrap_content"
     android:layout_marginHorizontal="@dimen/half_margin"
     android:layout_marginTop="4dp"
+    app:strokeColor="@color/primary"
     android:layout_marginBottom="4dp">
 
     <LinearLayout
@@ -83,7 +84,7 @@
             android:id="@+id/set_schedule"
             style="@style/appBtn"
             android:layout_gravity="end"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:minHeight="0dp"
             android:paddingHorizontal="@dimen/padding"

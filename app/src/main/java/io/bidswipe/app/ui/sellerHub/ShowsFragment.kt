@@ -37,7 +37,9 @@ import io.bidswipe.app.utils.finish
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request
 import io.bidswipe.app.utils.setHapticClickListener
+import io.bidswipe.app.utils.toLiveRehearsal
 import io.bidswipe.app.utils.toScheduleShow
+import io.bidswipe.app.utils.toTutorials
 
 @SuppressLint("NotifyDataSetChanged")
 class ShowsFragment : BaseFragment<SellerHubViewModel, FragmentShowsBinding>() {
@@ -206,7 +208,13 @@ class ShowsFragment : BaseFragment<SellerHubViewModel, FragmentShowsBinding>() {
 
 		bind.addNewProduct.setHapticClickListener {
 			if (!canAddSellerContent()) return@setHapticClickListener
-			startActivity(mCtx.toScheduleShow(from = "dash"))
+			val profile = App.profileResponse.value
+			val intent = if (profile?.isFirstShowCreated == true) {
+				mCtx.toScheduleShow(from = "dash")
+			} else {
+				mCtx.toTutorials()
+			}
+			startActivity(intent)
 		}
 
 		bind.loader.isVisible = true

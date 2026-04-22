@@ -9,7 +9,7 @@
     android:background="@drawable/card_8"
     android:backgroundTint="@color/background"
     android:gravity="center_vertical"
-    android:padding="@dimen/margin">
+    android:padding="12dp">
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/icon_card"

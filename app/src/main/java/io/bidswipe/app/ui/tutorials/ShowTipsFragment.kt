@@ -27,7 +27,7 @@ class ShowTipsFragment : BaseFragment<DashViewModel, FragmentShowTipsBinding>() 
 	override fun getBind(inflater: LayoutInflater, view: ViewGroup?) =
 		FragmentShowTipsBinding.inflate(inflater, view, false)
 
-	private var productTipList = mutableListOf("", "", "")
+	private var productTipList = mutableListOf("")
 	private lateinit var pagerAdapter: ProductTipsPagerAdapter
 
 	private var type = ""
@@ -69,7 +69,7 @@ class ShowTipsFragment : BaseFragment<DashViewModel, FragmentShowTipsBinding>() 
 					append(" of ${productTipList.size}")
 				}
 
-				if (position == 2) {
+				if (position == productTipList.lastIndex) {
 					bind.continueBtn.text = resources.getString(string._continue)
 				} else {
 					bind.continueBtn.text = resources.getString(string.continue_to_next_step)

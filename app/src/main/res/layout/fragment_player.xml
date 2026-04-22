@@ -1,49 +1,142 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ui.tutorials.PlayerFragment">
 
+    <!-- Header -->
     <io.bidswipe.app.ui.custom.Header
         android:id="@+id/header"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:headerTitle="Lesson 1/12"
+        app:headerTitle="Lesson"
         app:layout_constraintTop_toTopOf="parent"
         app:primaryIconDrawable="@drawable/notification"
         app:showBackButton="true"
         app:showPrimaryIcon="false" />
 
-    <androidx.media3.ui.PlayerView
-        android:id="@+id/player"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        app:animation_enabled="false"
-        app:auto_show="true"
-        app:controller_layout_id="@layout/plyer_controller"
-        app:hide_on_touch="false"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/header"
-        app:use_controller="true" />
-
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/nextButton"
-        style="@style/appBtn"
+    <!-- Lesson Count -->
+    <TextView
+        android:id="@+id/lessonCount"
+        style="@style/TitleSmall"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/half_margin"
         android:layout_marginEnd="@dimen/margin"
-        android:layout_marginBottom="120dp"
-        android:text="@string/next"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:text="Lesson 1/4"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/header" />
+
+    <!-- Lesson Title -->
+    <TextView
+        android:id="@+id/lessonTitle"
+        style="@style/TitleMedium"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margin"
+        android:layout_marginTop="@dimen/half_margin"
+        android:layout_marginEnd="@dimen/margin"
+        android:gravity="center"
+        tools:text="What Happens After You Win"
+        app:layout_constraintTop_toBottomOf="@id/lessonCount"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
+    <!-- Video Player (CENTERED ZONE) -->
+    <androidx.media3.ui.PlayerView
+        android:id="@+id/player"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="@dimen/margin"
+        android:layout_marginBottom="@dimen/margin"
+        app:layout_constraintTop_toBottomOf="@id/lessonTitle"
+        app:layout_constraintBottom_toTopOf="@id/lessonDescription"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHeight_percent="0.35"
+        app:use_controller="false"
+        app:animation_enabled="false"
+        app:auto_show="false"
+        app:hide_on_touch="false" />
+
+    <!-- Description -->
+    <TextView
+        android:id="@+id/lessonDescription"
+        style="@style/TitleSmall"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margin"
+        android:layout_marginEnd="@dimen/margin"
+        android:layout_marginBottom="@dimen/margin"
+        android:maxLines="3"
+        android:ellipsize="end"
+        tools:text="Find out how to complete your payment, track your item, and receive updates once you've won an auction."
+        app:layout_constraintBottom_toTopOf="@id/playerControls"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <androidx.media3.ui.PlayerControlView
+        android:id="@+id/playerControls"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margin"
+        android:layout_marginEnd="@dimen/margin"
+        android:layout_marginBottom="@dimen/margin"
+        app:controller_layout_id="@layout/plyer_controller"
+        app:layout_constraintBottom_toTopOf="@id/button_layout"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:show_fastforward_button="false"
+        app:show_next_button="false"
+        app:show_previous_button="false"
+        app:show_rewind_button="false"
+        app:show_timeout="0"
+        app:time_bar_min_update_interval="200" />
+
+    <!-- Bottom Buttons -->
+    <LinearLayout
+        android:id="@+id/button_layout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="2"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/previousButton"
+            style="@style/appTonalBtn"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginStart="@dimen/margin"
+            android:layout_marginEnd="@dimen/half_margin"
+            android:layout_marginBottom="@dimen/margin"
+            android:text="Previous"
+            android:visibility="invisible" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/nextButton"
+            style="@style/appBtn"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginStart="@dimen/half_margin"
+            android:layout_marginEnd="@dimen/margin"
+            android:layout_marginBottom="@dimen/margin"
+            android:text="@string/next" />
+
+    </LinearLayout>
+
+    <!-- Loader -->
     <io.bidswipe.app.ui.custom.LoaderView
         android:id="@+id/loader"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="gone" />
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

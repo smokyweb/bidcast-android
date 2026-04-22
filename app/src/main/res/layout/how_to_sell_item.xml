@@ -18,7 +18,7 @@
 
             <TextView
                 android:id="@+id/title"
-                style="@style/HeadlineMedium"
+                style="@style/TitleLarge"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -35,7 +35,7 @@
 
             <org.sufficientlysecure.htmltextview.HtmlTextView
                 android:id="@+id/description"
-                style="@style/BodyLarge"
+                style="@style/BodyMedium"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"

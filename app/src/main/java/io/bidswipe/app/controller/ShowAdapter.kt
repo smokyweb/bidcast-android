@@ -11,6 +11,7 @@ import io.bidswipe.app.databinding.ShowItemBinding
 import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.network.response.GetPrepareStepResponse
 import io.bidswipe.app.utils.asHtml
+import io.bidswipe.app.utils.dpToPx
 import io.bidswipe.app.utils.setHapticClickListener
 
 class ShowAdapter(
@@ -44,6 +45,8 @@ class ShowAdapter(
 					bind.setSchedule.isEnabled = true
 					bind.icon.setImageDrawable(ContextCompat.getDrawable(mCtx, R.drawable.ic_lock))
 					bind.iconCard.setCardBackgroundColor(ContextCompat.getColor(mCtx, R.color.outlineVariant))
+
+                    bind.root.strokeWidth =mCtx.resources.dpToPx(0)
 				}
 
 				"completed" -> {
@@ -52,6 +55,7 @@ class ShowAdapter(
 					bind.setSchedule.visibility = View.GONE
 					bind.icon.setImageDrawable(ContextCompat.getDrawable(mCtx, R.drawable.ic_tick))
 					bind.iconCard.setCardBackgroundColor(ContextCompat.getColor(mCtx, R.color.success))
+                    bind.root.strokeWidth =mCtx.resources.dpToPx(0)
 				}
 
 				else -> {
@@ -60,6 +64,7 @@ class ShowAdapter(
 					bind.setSchedule.visibility = View.VISIBLE
 					bind.setSchedule.text = mCtx.getString(R.string._continue)
 					bind.setSchedule.isEnabled = true
+                    bind.root.strokeWidth =mCtx.resources.dpToPx(2)
 				}
 			}
 
