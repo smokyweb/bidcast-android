@@ -3,7 +3,6 @@ package io.bidswipe.app.ui.sell
 import android.os.Bundle
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.WindowInsetsCompat.CONSUMED
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import io.bidswipe.app.R
@@ -24,8 +23,9 @@ class ListAProductActivity : BaseActivity() {
 
         ViewCompat.setOnApplyWindowInsetsListener(window.decorView) { v, insets ->
             val system = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            bind.root.setPadding(0, system.top, 0, system.bottom)
-            CONSUMED
+            val ime = insets.getInsets(WindowInsetsCompat.Type.ime())
+            bind.root.setPadding(0, system.top, 0, maxOf(system.bottom, ime.bottom))
+            insets
         }
 
         bind.main.setHapticClickListener {

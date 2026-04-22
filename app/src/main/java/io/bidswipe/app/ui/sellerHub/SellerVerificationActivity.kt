@@ -188,7 +188,7 @@ class SellerVerificationActivity : BaseActivity() {
                 else -> {
                     bind.loader.isVisible = true
 
-                    val e164 = "+1$digitsOnly"
+                    val e164 = digitsOnly
                     phoneNumber = e164
                     viewModel.storePhoneNumber(e164.request())
                 }

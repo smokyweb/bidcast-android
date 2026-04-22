@@ -23,7 +23,8 @@ class ScheduleShowActivity : BaseActivity() {
 		setContentView(bind.root)
 		ViewCompat.setOnApplyWindowInsetsListener(window.decorView) { v, insets ->
 			val system = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-			bind.root.setPadding(0,system.top,0, system.bottom)
+			val ime = insets.getInsets(WindowInsetsCompat.Type.ime())
+			bind.root.setPadding(0,system.top,0, maxOf(system.bottom, ime.bottom))
 			insets
 		}
 		val from = intent?.getStringExtra("from").toString()
