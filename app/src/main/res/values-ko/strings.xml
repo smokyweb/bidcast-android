@@ -9,9 +9,7 @@
     <string name="account">계정</string>
     <string name="activity">활동</string>
     <string name="add_another_product">제품 추가</string>
-    <string name="add_more_products">제품 더 추가</string>
     <string name="add_product">제품 추가</string>
-    <string name="add_up_to_8_photos">최대 8장 사진 추가</string>
     <string name="add_variants">옵션 추가</string>
     <string name="added_product">제품이 추가되었습니다</string>
     <string name="allow_offers">제안 허용</string>
@@ -35,7 +33,6 @@
     <string name="credits">크레딧</string>
     <string name="describe_your_product">상품 설명</string>
     <string name="description">설명</string>
-    <string name="done">완료</string>
     <string name="email">이메일</string>
     <string name="enable_allow_offers_to_let_buyers_offer_a_different_price_for_your_product_you_may_counter_accept_or_simply_decline_the_offer">“제안 허용”을 활성화하면 구매자가 다른 가격을 제안할 수 있습니다. 제안에 대해 답장하거나 수락·거절할 수 있습니다.</string>
     <string name="enter_code">코드 입력</string>
@@ -108,7 +105,6 @@
     <string name="sell">판매</string>
     <string name="sell_on_bidswipe">Bidswipe에서 판매</string>
     <string name="set_a_competitive_starting_price_that_will_attract_potential_buyers_a_well_priced_item_increases_your_chances_of_a_successful_sale_and_can_lead_to_better_bidding_activity">경쟁력 있는 시작 가격을 설정하여 잠재 구매자를 유도하세요. 적절한 가격은 판매 성공률을 높이고 활발한 입찰을 촉진합니다.</string>
-    <string name="set_schedule">일정 설정</string>
     <string name="setting_up_your_store">매장 설정</string>
     <string name="share_amp_earn_reward"><![CDATA[공유하고 보상 받기]]></string>
     <string name="shop">상점</string>
@@ -156,9 +152,6 @@
     <string name="you_won_t_be_charged_unless_the_seller_accepts_your_offer">판매자가 제안을 수락하지 않으면 요금이 부과되지 않습니다</string>
     <string name="buy_now">지금 구매</string>
     <string name="make_offer">제안하기</string>
-    <string name="condition">상태</string>
-    <string name="location">위치</string>
-    <string name="posted">게시됨</string>
     <string name="confirm_purchase">구매 확인</string>
     <string name="send_as_a_gift">선물로 보내시겠습니까?</string>
     <string name="payment_method">결제 방법</string>
@@ -240,7 +233,6 @@
     <string name="premier_shop">프리미어 샵</string>
     <string name="promote_tools">홍보 도구</string>
     <string name="analytics">분석</string>
-    <string name="use_product_library">제품 라이브러리 사용</string>
     <string name="follow">팔로우</string>
     <string name="comming_soon">곧 출시 예정</string>
     <string name="street_address">도로명 주소</string>
@@ -261,7 +253,6 @@
     <string name="upload_your_id_card_amp_take_a_selfie"><![CDATA[신분증을 업로드하고 셀피를 찍어주세요]]></string>
     <string name="selfie">셀피</string>
     <string name="id_card">신분증</string>
-    <string name="no_payment_method_added">결제 수단이 추가되지 않았습니다</string>
     <string name="manual_verification">수동 확인</string>
     <string name="mic">마이크</string>
     <string name="zoom_in">확대</string>
@@ -279,7 +270,6 @@
     <string name="yes_notify_me">네, 알려주세요</string>
     <string name="no_thanks">아니요, 괜찮아요</string>
     <string name="no_user_matches_the_name_entered">입력한 이름과 일치하는 사용자가 없습니다.</string>
-    <string name="save_product">상품 저장</string>
     <string name="update">업데이트</string>
     <string name="search_products">상품 검색..</string>
     <string name="users">사용자</string>
@@ -289,7 +279,6 @@
     <string name="block_seller">판매자 차단</string>
     <string name="set_as_default">기본값으로 설정</string>
     <string name="delete">삭제</string>
-    <string name="product_detail_description">상세한 상품 정보는 구매자의 결정을 돕고 판매 가능성을 높여줍니다.</string>
     <string name="select_from_product_inventory">상품 재고에서 선택</string>
     <string name="enter_referral_code">추천 코드 입력</string>
     <string name="overview">개요</string>
@@ -307,7 +296,6 @@
     <string name="account_health">계정 상태</string>
     <string name="select_media_type">미디어 유형 선택</string>
     <string name="auction_settings">경매 설정</string>
-    <string name="select_product_category">상품 카테고리 선택</string>
     <string name="select_country">국가 선택</string>
     <string name="max_bid_amount">최대 입찰 금액</string>
     <string name="select_live_seller_for_raid">레이드를 위한 라이브 판매자 선택</string>
@@ -335,4 +323,147 @@
     <string name="after_each_product_sells_the_buyer_will_be_randomly_assigned_turn_off_if_you_want_to_randomize_manually">각 상품이 판매된 후 구매자가 무작위로 할당됩니다. 수동으로 무작위 배정하려면 끄세요.</string>
     <string name="description_optional">설명(선택 사항)</string>
     <string name="surprise_set">서프라이즈 세트</string>
+
+
+    <!-- Added missing translations (fallback to default text) -->
+    <string name="play_pause">Play/Pause</string>
+    <string name="unmute">Unmute</string>
+    <string name="blocked_message">You cannot send messages to this chat.</string>
+    <string name="for_you_tile">For You</string>
+    <string name="see_all_categories_tile">See All&#10;Categories</string>
+    <string name="share">Share</string>
+    <string name="start_now">Start Now</string>
+    <string name="say_something">Say Something...</string>
+    <string name="verified_buyers">Verified Buyers</string>
+    <string name="when_on_allows_bids_from_verified_buyers_only">When on, allows bids from verified buyers only</string>
+    <string name="end_show">End Show</string>
+    <string name="broadcasting_options">Broadcasting Options</string>
+    <string name="create_poll">Create Poll</string>
+    <string name="create_poll_description">Engage your audience by creating a poll. Ask a question and let viewers vote!</string>
+    <string name="poll_question">Poll Question</string>
+    <string name="enter_poll_question">Enter your poll question here</string>
+    <string name="poll_options">Poll Options</string>
+    <string name="poll_duration">Poll Duration</string>
+    <string name="select_duration">Select duration (minutes)</string>
+    <string name="john_smith">John Smith</string>
+    <string name="clear_all">CLEAR ALL</string>
+    <string name="type_here">Type here...</string>
+        <string name="language">언어</string>
+    <string name="report_seller">Report Seller</string>
+    <string name="submit_report">Submit Report</string>
+    <string name="tell_us_more">Tell us more</string>
+    <string name="write_something">Write Something</string>
+    <string name="would_you_like_to_notified_when_usrname_goes_live">Would you like to notified when @usrname goes live</string>
+    <string name="over_all">Over All</string>
+    <string name="livestream">Livestream</string>
+    <string name="trust">Trust</string>
+    <string name="get_in_touch">Get in Touch</string>
+    <string name="support_company_com">support@company.com</string>
+    <string name="send_message">Send Message</string>
+    <string name="first_fragment_label">First Fragment</string>
+    <string name="second_fragment_label">Second Fragment</string>
+    <string name="confirm">Confirm</string>
+    <string name="select_sub_categories_based_on_the_categories_you_chose_on_the_previous_page">Select Sub Categories based on the Categories you chose on the previous page</string>
+    <string name="choose_the_categories_you_re_interested_in_to_watch_related_shows">Choose the categories you’re interested in to watch related shows.</string>
+    <string name="select_next_product_for_auction">Select Next Product For Auction</string>
+    <string name="more_potential_buyers_can_plan_to_attend">More potential buyers can plan to attend</string>
+    <string name="play_video">Play video</string>
+    <string name="send_tip">Send Tip</string>
+    <string name="product_deleted">Product Deleted</string>
+    <string name="product_no_longer_available">This product is no longer available</string>
+    <string name="privacy_policy"><u>Privacy Policy</u></string>
+    <string name="terms_of_service">  | <u>Terms of Service</u></string>
+    <string name="get_notification">Get Notification</string>
+    <string name="add_payment_method_and_address">Add Payment Method and Address</string>
+    <string name="shipping_profile">Shipping Profile</string>
+    <string name="surprise_set_details">Surprise Set Details</string>
+    <string name="enter_price">Enter Price</string>
+    <string name="how_it_works_info">
+        &lt;p&gt;
+        Surprise items is a format where a set of items are each sold at random —
+        the buyer finds out which of the items they will receive live.
+        You can see all available items in this format in the Items tab.
+        &lt;/p&gt;
+
+        &lt;h3&gt;What To Expect?&lt;/h3&gt;
+
+        &lt;p&gt;Surprise Sets go through two main stages:&lt;/p&gt;
+
+        &lt;h4&gt;⏳ Filling + Running&lt;/h4&gt;
+        &lt;p&gt;
+        The excitement begins! This is the time when you can purchase a surprise item.
+        You can always see how many spots are left and what items have been sold.
+        &lt;/p&gt;
+
+        &lt;h4&gt;✅ Completed&lt;/h4&gt;
+        &lt;p&gt;
+        The sale is over. All of the available items have been sold and revealed,
+        and the seller will ship to you as soon as they can.
+        &lt;/p&gt;
+    </string>
+    <string name="deleting_your_account_is_irreversible_and_will_permanently_erase_all_your_data_this_action_cannot_be_undone_please_consider_carefully_before_proceeding">Deleting your account is irreversible and will permanently erase all your data. This action cannot be undone. Please consider carefully before proceeding.</string>
+
+    <string name="select_language">언어 선택</string>
+
+    <string name="upcoming_shows">예정된 쇼</string>
+
+    <string name="on_time_scan_rate">정시 스캔 비율</string>
+
+    <string name="defect_free_order_rate">무결함 주문 비율</string>
+
+    <string name="policy_standing">정책 준수 상태</string>
+
+    <string name="payouts">지급금</string>
+
+    <string name="total_orders">총 주문</string>
+
+    <string name="create_show">쇼 만들기</string>
+
+    <string name="create_product">상품 만들기</string>
+
+    <string name="contact_us">문의하기</string>
+
+    <string name="sales_tax_exemption">판매세 면제</string>
+
+    <string name="terms_and_conditions">이용 약관</string>
+
+    <string name="privacy_policy_plain">개인정보 처리방침</string>
+
+    <string name="faq_label">자주 묻는 질문</string>
+
+    <string name="blocked_users">차단된 사용자</string>
+
+    <string name="delete_account">계정 삭제</string>
+
+    <string name="logout">로그아웃</string>
+
+    <string name="addresses">주소</string>
+
+    <string name="trusted_buyer">신뢰할 수 있는 구매자</string>
+
+    <string name="notifications">알림</string>
+
+    <string name="preferences">환경설정</string>
+
+    <string name="favourite">즐겨찾기</string>
+
+    <string name="seller_section">판매자</string>
+
+    <string name="promotion_section">프로모션</string>
+
+    <string name="performance_section">성과</string>
+
+    <string name="settings_section">설정</string>
+
+    <string name="seller_training">판매자 교육</string>
+
+    <string name="seller_verification">판매자 인증</string>
+
+    <string name="identity_verification">신원 인증</string>
+
+    <string name="inventory">재고</string>
+
+    <string name="my_orders">내 주문</string>
+
+    <string name="seller_analytics">판매자 분석</string>
 </resources>

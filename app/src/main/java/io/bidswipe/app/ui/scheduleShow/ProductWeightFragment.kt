@@ -129,8 +129,8 @@ class ProductWeightFragment : BaseFragment<ScheduleShowViewModel, FragmentProduc
 	}
 
 	private fun setupObservers() {
-		viewModel.storeProductMetaRepo.observe(viewLifecycleOwner) { it ->
-			when (it) {
+		viewModel.storeProductMetaRepo.observe(viewLifecycleOwner) {
+            when (it) {
 				is Resource.Success -> {
 
 					viewModel.storeProductMetaRepo.value=null
@@ -175,8 +175,8 @@ class ProductWeightFragment : BaseFragment<ScheduleShowViewModel, FragmentProduc
 			}
 		}
 
-		viewModel.storeProductRepo.observe(viewLifecycleOwner) { it ->
-			when (it) {
+		viewModel.storeProductRepo.observe(viewLifecycleOwner) {
+            when (it) {
 				is Resource.Success -> {
 					viewModel.storeProductRepo.value=null
 					bind.loader.isVisible = false

@@ -106,9 +106,9 @@ class PaymentShippingFragment : BaseFragment<MoreViewModel, FragmentPaymentShipp
 
         bind.addressRecycler.adapter = shippingAddressAdapter
 
-		bind.addPaymentCard.setHapticClickListener {
-			addCardLauncher.launch(Intent(mCtx, AddPaymentCardActivity::class.java))
-		}
+        bind.addPaymentCard.setHapticClickListener {
+            addCardLauncher.launch(Intent(mCtx, AddPaymentCardActivity::class.java))
+        }
 
         bind.addNewAddress.setHapticClickListener {
             findNavController().navigate(ids.goToAddShippingAddressFragment)

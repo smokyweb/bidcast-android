@@ -125,9 +125,10 @@ class ProductDetailsFragment : BaseFragment<ProductViewModel, FragmentProductDet
                         bind.subCategory.text = mData.subCategory.name ?: "Other"
                     }
 
-                    bind.conditionLayout.isVisible = mData?.productCondition.isNullOrEmpty() == false
+                    bind.conditionLayout.isVisible =
+                        mData?.productCondition.isNullOrEmpty() == false
                     if (!mData?.productCondition.isNullOrEmpty()) {
-                        bind.condition.text = (mData.productCondition?:"").replace("_", " ")
+                        bind.condition.text = (mData.productCondition ?: "").replace("_", " ")
                     }
 
                     bind.quantity.text = buildSpannedString {
@@ -238,7 +239,10 @@ class ProductDetailsFragment : BaseFragment<ProductViewModel, FragmentProductDet
 
                     productSaved = mData?.productSaveStatus ?: false
 
-                    bind.save.icon = ContextCompat.getDrawable(mCtx, if (productSaved) draw.ic_saved else draw.ic_save)
+                    bind.save.icon = ContextCompat.getDrawable(
+                        mCtx,
+                        if (productSaved) draw.ic_saved else draw.ic_save
+                    )
                     bind.save.text = if (productSaved) "Saved" else "Save"
 
                 }
@@ -298,7 +302,10 @@ class ProductDetailsFragment : BaseFragment<ProductViewModel, FragmentProductDet
 
                     productSaved = !productSaved
 
-                    bind.save.icon = ContextCompat.getDrawable(mCtx, if (productSaved == true) draw.ic_saved else draw.ic_save)
+                    bind.save.icon = ContextCompat.getDrawable(
+                        mCtx,
+                        if (productSaved == true) draw.ic_saved else draw.ic_save
+                    )
                     bind.save.text = if (productSaved == true) "Saved" else "Save"
 
 //					Alerts.success(mCtx, it.value.message.toString())
@@ -408,12 +415,13 @@ class ProductDetailsFragment : BaseFragment<ProductViewModel, FragmentProductDet
                 false
             )
         )
-        offerList.find { it.selected==true }?.selected=false
-		val makeOfferSheet = Alerts.appBottomSheet(mCtx, true, makeOfferSheetBind)
+        offerList.find { it.selected == true }?.selected = false
+        val makeOfferSheet = Alerts.appBottomSheet(mCtx, true, makeOfferSheetBind)
 
         makeOfferSheetBind.listedPrice.text = viewModel.product?.pricing.toString().asMoney()
 
-		makeOfferSheetBind.offerRecycler.adapter = MakeOfferAdapter(offerList, object : RecyclerClicks {
+        makeOfferSheetBind.offerRecycler.adapter =
+            MakeOfferAdapter(offerList, object : RecyclerClicks {
 
                 override fun itemClick(pos: Int, status: String?) {
 

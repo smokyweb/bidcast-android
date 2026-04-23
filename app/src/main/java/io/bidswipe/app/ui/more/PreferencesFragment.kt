@@ -21,8 +21,10 @@ import io.bidswipe.app.network.Resource
 import io.bidswipe.app.ui.custom.AlertType
 import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.utils.Alerts
+import io.bidswipe.app.utils.Const
 import io.bidswipe.app.utils.finish
 import io.bidswipe.app.utils.parse
+import io.bidswipe.app.utils.Prefs
 import io.bidswipe.app.utils.request
 import io.bidswipe.app.utils.setHapticClickListener
 import java.util.Locale
@@ -40,9 +42,12 @@ class PreferencesFragment : BaseFragment<MoreViewModel, FragmentPreferencesBindi
 	private var countries = Locale.getISOCountries()
 
 	private var countryList = mutableListOf<CountryModel?>()
+	private var languageList = mutableListOf<CountryModel?>()
 
 	private lateinit var countryAdapter: CountrySelectorAdapter
+	private lateinit var languageAdapter: CountrySelectorAdapter
 	private var countryPickerDialog: BottomSheetDialog? = null
+	private var languagePickerDialog: BottomSheetDialog? = null
 
 	private var mClick = object : RecyclerClicks {
 		override fun itemClick(pos: Int, status: String?) {
@@ -50,11 +55,27 @@ class PreferencesFragment : BaseFragment<MoreViewModel, FragmentPreferencesBindi
 				countryModel?.selected = index == pos
 			}
 
-			bind.country.setText(countryList[pos]?.countryName, false)
+			bind.country.text=(countryList[pos]?.countryName)
 
 			countryPickerDialog?.dismiss()
 
 			countryAdapter.notifyDataSetChanged()
+		}
+	}
+
+	private var languageClick = object : RecyclerClicks {
+		override fun itemClick(pos: Int, status: String?) {
+			languageList.forEachIndexed { index, lang ->
+				lang?.selected = index == pos
+			}
+
+			val selectedTitle = languageList[pos]?.countryName ?: return
+			bind.languageValue.text = selectedTitle
+
+			languagePickerDialog?.dismiss()
+			languageAdapter.notifyDataSetChanged()
+
+			applySelectedLanguage(selectedTitle)
 		}
 	}
 
@@ -74,10 +95,16 @@ class PreferencesFragment : BaseFragment<MoreViewModel, FragmentPreferencesBindi
 		}
 
 		countryAdapter = CountrySelectorAdapter(countryList, mClick)
+		languageList = Const.languages.map { CountryModel(countryName = it.title) }.toMutableList()
+		languageAdapter = CountrySelectorAdapter(languageList, languageClick)
+		setupLanguageSelection()
 
 		bind.country.setHapticClickListener {
 			countryPickerSheet()
 //			bind.country.showDropDown()
+		}
+		bind.languageValue.setHapticClickListener {
+			languagePickerSheet()
 		}
 
 		bind.privacy.setHapticClickListener {
@@ -98,7 +125,7 @@ class PreferencesFragment : BaseFragment<MoreViewModel, FragmentPreferencesBindi
 
 					countryList.find { it?.countryName == mData?.countryOfResidence }?.selected = true
 
-					bind.country.setText(mData?.countryOfResidence ?: "", false)
+					bind.country.text=(mData?.countryOfResidence ?: "")
 					bind.directMessages.isChecked = mData?.directMessage == true
 					bind.receiveGifts.isChecked = mData?.receiveGifts == true
 					bind.privateEntry.isChecked = mData?.enablePrivateEntry == true
@@ -181,6 +208,7 @@ class PreferencesFragment : BaseFragment<MoreViewModel, FragmentPreferencesBindi
 
 		countryPickerDialog = Alerts.appBottomSheet(mCtx, true, countryBind)
 
+		countryBind.title.text = getString(R.string.select_country)
 		countryBind.recycler.adapter = countryAdapter
 
 		countryBind.close.setHapticClickListener {
@@ -188,6 +216,50 @@ class PreferencesFragment : BaseFragment<MoreViewModel, FragmentPreferencesBindi
 		}
 
 		countryPickerDialog?.show()
+	}
+
+	private fun languagePickerSheet() {
+		val languageBind = CountryPickerSheetBinding.bind(
+			layoutInflater.inflate(
+				R.layout.country_picker_sheet,
+				null,
+				false
+			)
+		)
+
+		languagePickerDialog = Alerts.appBottomSheet(mCtx, true, languageBind)
+		languageBind.title.text = getString(R.string.select_language)
+		languageBind.recycler.adapter = languageAdapter
+
+		languageBind.close.setHapticClickListener {
+			languagePickerDialog?.dismiss()
+		}
+
+		languagePickerDialog?.show()
+	}
+
+	private fun setupLanguageSelection() {
+		val savedLanguageCode = Prefs(mCtx).localeLanguage().ifBlank { "en" }
+		val selectedLang = Const.languages.find { it.locale.language == savedLanguageCode }
+			?: Const.languages.find { it.locale.language == "en" }
+			?: Const.languages.first()
+
+		languageList.forEach { lang ->
+			lang?.selected = lang?.countryName == selectedLang.title
+		}
+		bind.languageValue.text = selectedLang.title
+	}
+
+	private fun applySelectedLanguage(selectedTitle: String) {
+		val selectedLang = Const.languages.find { it.title == selectedTitle }
+			?: Const.languages.find { it.locale.language == "en" }
+			?: return
+
+		Prefs(mCtx).putString(Prefs.LANGUAGE, selectedLang.title)
+		Prefs(mCtx).putString(Prefs.LOCALE_LANGUAGE, selectedLang.locale.language)
+
+		(activity as? io.bidswipe.app.base.BaseActivity)?.updateLocale(selectedLang.locale)
+		activity?.recreate()
 	}
 
 	private fun showPrivacyInfo() {

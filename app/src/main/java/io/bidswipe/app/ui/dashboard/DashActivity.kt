@@ -164,47 +164,47 @@ class DashActivity : BaseActivity(), NavController.OnDestinationChangedListener 
 
         gridList.add(
             SellerToolModel(
-                "Seller",
+                getString(R.string.seller_section),
                 mutableListOf(
-                    MoreModel(R.drawable.ic_training_outline, "Seller Training", "training"),
-                    MoreModel(R.drawable.ic_seller_verification, "Seller Verification", "sellerVerification"),
-                    MoreModel(R.drawable.ic_identity_verification, "Identity Verification", "identityVerification"),
-                    MoreModel(R.drawable.ic_box, "Inventory", "inventory"),
-                    MoreModel(R.drawable.ic_clip_new, "Shows", "shows"),
-                    MoreModel(R.drawable.ic_order, "My Orders", "order"),
-                    MoreModel(R.drawable.ic_wallet, "Wallet", "wallet"),
-                    MoreModel(R.drawable.ic_tag_outline, "Offers", "offers"),
-                    MoreModel(R.drawable.ic_gift, "Tips", "tips"),
-                    MoreModel(R.drawable.notification, "Notifications", "notifications"),
+                    MoreModel(R.drawable.ic_training_outline, getString(R.string.seller_training), "training"),
+                    MoreModel(R.drawable.ic_seller_verification, getString(R.string.seller_verification), "sellerVerification"),
+                    MoreModel(R.drawable.ic_identity_verification, getString(R.string.identity_verification), "identityVerification"),
+                    MoreModel(R.drawable.ic_box, getString(R.string.inventory), "inventory"),
+                    MoreModel(R.drawable.ic_clip_new, getString(R.string.shows), "shows"),
+                    MoreModel(R.drawable.ic_order, getString(R.string.my_orders), "order"),
+                    MoreModel(R.drawable.ic_wallet, getString(R.string.wallet), "wallet"),
+                    MoreModel(R.drawable.ic_tag_outline, getString(R.string.offers), "offers"),
+                    MoreModel(R.drawable.ic_gift, getString(R.string.tips), "tips"),
+                    MoreModel(R.drawable.notification, getString(R.string.notifications), "notifications"),
                 )
             )
         )
 
         gridList.add(
             SellerToolModel(
-                "Promotion",
+                getString(R.string.promotion_section),
                 mutableListOf(
-                    MoreModel(R.drawable.ic_people, "Affiliate Program", "program"),
-                    MoreModel(R.drawable.ic_sound, "Promote Tools", "promote")
+                    MoreModel(R.drawable.ic_people, getString(R.string.affiliate_program), "program"),
+                    MoreModel(R.drawable.ic_sound, getString(R.string.promote_tools), "promote")
                 )
             )
         )
 
         gridList.add(
             SellerToolModel(
-                "Performance",
+                getString(R.string.performance_section),
                 mutableListOf(
-                    MoreModel(R.drawable.ic_shop, "Premier Shop", "shop"),
-                    MoreModel(R.drawable.ic_graph, "Seller Analytics", "sellerAnalytics"),
+                    MoreModel(R.drawable.ic_shop, getString(R.string.premier_shop), "shop"),
+                    MoreModel(R.drawable.ic_graph, getString(R.string.seller_analytics), "sellerAnalytics"),
                 )
             )
         )
         gridList.add(
             SellerToolModel(
-                "Settings",
+                getString(R.string.settings_section),
                 mutableListOf(
-                    MoreModel(R.drawable.ic_shipping, "Shipping", "shipping"),
-                    MoreModel(R.drawable.ic_graph, "Seller Status", "sellerStatus")
+                    MoreModel(R.drawable.ic_shipping, getString(R.string.shipping), "shipping"),
+                    MoreModel(R.drawable.ic_graph, getString(R.string.seller_status), "sellerStatus")
                 )
             )
         )

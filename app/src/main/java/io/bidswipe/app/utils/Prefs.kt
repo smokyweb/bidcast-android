@@ -64,7 +64,7 @@ class Prefs(ctx : Context) {
 		rememberPrefs.edit { putString(REM_NODE , Gson().toJson(list)) }
 	}
 
-	fun localeLanguage() = mPrefs.getString(LOCALE_LANGUAGE , "").toString()
+	fun localeLanguage() = mPrefs.getString(LOCALE_LANGUAGE , "en").toString()
 
 	fun isFirstLogin() = rememberPrefs.getBoolean(FIRST_LOGIN , true)
 

@@ -218,7 +218,7 @@ object Utils {
             Bitmap.createBitmap(sourceBitmap, 0, 0, sourceBitmap.width - 1, sourceBitmap.height - 1)
         val p = Paint()
         val filter: ColorFilter = LightingColorFilter(color, 1)
-        p.setColorFilter(filter)
+        p.colorFilter = filter
         val canvas = Canvas(resultBitmap)
         canvas.drawBitmap(resultBitmap, 0f, 0f, p)
         return resultBitmap

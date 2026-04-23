@@ -31,7 +31,7 @@ class ProductVariantAdapter(
 			if (item?.type == "text") {
 				bind.quantityBox.isVisible = true
 				bind.radioGroup.isVisible = false
-				bind.quantity.setHint("Enter ${item.label}")
+                bind.quantity.hint = "Enter ${item.label}"
 			} else if (item?.type == "radio") {
 				bind.radioGroup.isVisible = true
 				bind.quantityBox.isVisible = false

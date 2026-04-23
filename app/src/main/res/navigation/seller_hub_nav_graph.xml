@@ -104,11 +104,6 @@
         android:label="fragment_analytics"
         tools:layout="@layout/fragment_analytics" />
     <fragment
-        android:id="@+id/sellerVerificationFragment"
-        android:name="io.bidswipe.app.ui.sellerHub.SellerVerificationFragment"
-        android:label="fragment_seller_verification"
-        tools:layout="@layout/activity_seller_verification" />
-    <fragment
         android:id="@+id/KYCFragment"
         android:name="io.bidswipe.app.ui.sellerHub.KYCFragment"
         android:label="fragment_k_y_c"

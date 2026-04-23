@@ -121,7 +121,7 @@ fun String.request() = this.trim().toRequestBody("text/plain".toMediaTypeOrNull(
 fun String.asHtml() = HtmlCompat.fromHtml(this , HtmlCompat.FROM_HTML_MODE_COMPACT).toString()
 
 fun String.asCapital() =
-	this.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
+	this.replaceFirstChar { if (it.isLowerCase()) it.titlecase(getDefault()) else it.toString() }
 
 fun Int.toHex() = "#" + Integer.toHexString(this).substring(2)
 

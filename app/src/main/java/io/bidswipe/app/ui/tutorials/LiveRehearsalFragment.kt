@@ -24,17 +24,7 @@ class LiveRehearsalFragment : BaseFragment<DashViewModel , FragmentLiveRehearsal
 
 	private val cameraListener = object : CameraListener() {
 
-		override fun onVideoRecordingStart() {
-			super.onVideoRecordingStart()
-
-		}
-
-		override fun onVideoRecordingEnd() {
-			super.onVideoRecordingEnd()
-
-		}
-
-		override fun onVideoTaken(result : VideoResult) {
+        override fun onVideoTaken(result : VideoResult) {
 			super.onVideoTaken(result)
 			log("VIDEO RECORDING FINISHED : " + result.file.absolutePath)
 		}

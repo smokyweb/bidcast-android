@@ -46,8 +46,6 @@ class ShippingProfilesFragment : BaseFragment<SellerHubViewModel, FragmentShippi
 		profileAdapter = ShippingProfileAdapter(profiles, object : RecyclerClicks {
 			override fun itemClick(pos: Int, status: String?) {
 
-				val shippingProfileId = profiles[pos]?.id
-
 				when (status) {
 
 					"edit" -> {
@@ -131,8 +129,6 @@ class ShippingProfilesFragment : BaseFragment<SellerHubViewModel, FragmentShippi
 			when (it) {
 				is Resource.Success -> {
 					bind.loader.isVisible = false
-
-					val mData = it.value.data
 
 					viewModel.getShippingProfile()
 

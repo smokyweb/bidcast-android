@@ -51,6 +51,7 @@ class PlayerFragment : BaseFragment<DashViewModel, FragmentPlayerBinding>() {
         observeLessons()
     }
 
+    @OptIn(UnstableApi::class)
     private fun setupPlayer() {
         player = ExoPlayer.Builder(mCtx).build()
         bind.player.player = player

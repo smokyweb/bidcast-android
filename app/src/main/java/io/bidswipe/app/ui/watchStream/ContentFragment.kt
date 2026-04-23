@@ -87,8 +87,8 @@ class ContentFragment : BaseFragment<DashViewModel , FragmentContentBinding>() {
 		bind.loader.isVisible = true
 
 		viewModel.getPageUrl(slug ?: "")
-		viewModel.pageUrlRepo.observe(viewLifecycleOwner) { it ->
-			when (it) {
+		viewModel.pageUrlRepo.observe(viewLifecycleOwner) {
+            when (it) {
 				is Resource.Success -> {
 					bind.loader.isVisible = false
 					it.value.data?.url?.let { url ->

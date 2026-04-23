@@ -151,7 +151,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="8dp"
                 android:layout_weight="1"
-                android:text="Create Show" />
+                android:text="@string/create_show" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/create_product"
@@ -160,7 +160,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_weight="1"
-                android:text="Create Product" />
+                android:text="@string/create_product" />
 
         </LinearLayout>
 
@@ -175,7 +175,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Upcoming Shows" />
+                android:text="@string/upcoming_shows" />
 
             <TextView
                 android:id="@+id/view_all"
@@ -187,7 +187,7 @@
                 android:minLines="1"
                 android:padding="@dimen/half_margin"
                 android:paddingEnd="0dp"
-                android:text="View All"
+                android:text="@string/view_all"
                 android:textColor="@color/primary" />
 
         </LinearLayout>
@@ -325,7 +325,7 @@
                         android:layout_height="wrap_content"
                         android:gravity="center_vertical"
                         android:minLines="2"
-                        android:text="On-Time Scan Rate"
+                        android:text="@string/on_time_scan_rate"
                         android:textColor="@color/onSurfaceVariant" />
 
                 </LinearLayout>
@@ -355,7 +355,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:minLines="2"
-                        android:text="Defect-Free Order Rate"
+                        android:text="@string/defect_free_order_rate"
                         android:textColor="@color/onSurfaceVariant" />
 
                 </LinearLayout>
@@ -386,7 +386,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:minLines="2"
-                        android:text="Policy Standing"
+                        android:text="@string/policy_standing"
                         android:textColor="@color/onSurfaceVariant" />
 
                 </LinearLayout>
@@ -424,7 +424,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="@dimen/half_margin"
-                        android:text="Payouts"
+                        android:text="@string/payouts"
                         android:textStyle="bold" />
 
                     <TextView
@@ -463,7 +463,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="@dimen/half_margin"
-                        android:text="Total Orders"
+                        android:text="@string/total_orders"
                         android:textStyle="bold" />
 
                     <TextView

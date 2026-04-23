@@ -12,32 +12,32 @@ import io.bidswipe.app.utils.asMoney
 import io.bidswipe.app.utils.setHapticClickListener
 
 class MakeOfferAdapter(
-	mList : MutableList<OfferModel> , val mClicks : RecyclerClicks ,
-) : BaseAdapter<OfferModel , OfferPriceItemBinding>(mList) {
+    mList: MutableList<OfferModel>, val mClicks: RecyclerClicks,
+) : BaseAdapter<OfferModel, OfferPriceItemBinding>(mList) {
 
-	override fun bindView(inflater : LayoutInflater , parent : ViewGroup) =
-		OfferPriceItemBinding.inflate(inflater , parent , false)
+    override fun bindView(inflater: LayoutInflater, parent: ViewGroup) =
+        OfferPriceItemBinding.inflate(inflater, parent, false)
 
-	override fun onBind(
-		holder : BaseViewHolder<OfferPriceItemBinding> ,
-		position : Int ,
-		item : OfferModel? ,
-	) {
-		with(holder) {
+    override fun onBind(
+        holder: BaseViewHolder<OfferPriceItemBinding>,
+        position: Int,
+        item: OfferModel?,
+    ) {
+        with(holder) {
 
             bind.root.setHapticClickListener {
-				mClicks.itemClick(position)
-			}
+                mClicks.itemClick(position)
+            }
 
-			if (item?.selected == true) {
-				bind.root.strokeWidth = 2
-				bind.root.strokeColor = ContextCompat.getColor(mCtx , R.color.primary)
-			} else {
-				bind.root.strokeWidth = 0
-			}
+            if (item?.selected == true) {
+                bind.root.strokeWidth = 2
+                bind.root.strokeColor = ContextCompat.getColor(mCtx, R.color.primary)
+            } else {
+                bind.root.strokeWidth = 0
+            }
 
-			bind.amount.text = item?.amount?.asMoney()
-			bind.discount.text = item?.percent
-		}
-	}
+            bind.amount.text = item?.amount?.asMoney()
+            bind.discount.text = item?.percent
+        }
+    }
 }

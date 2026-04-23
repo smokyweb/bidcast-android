@@ -61,8 +61,8 @@ class BlockedUsersFragment : BaseFragment<DashViewModel , FragmentBlockedUsersBi
 		bind.recycler.adapter = adapter
 		bind.loader.isVisible = true
 
-		viewModel.blockUnblockUserRepo.observe(viewLifecycleOwner) { it ->
-			when (it) {
+		viewModel.blockUnblockUserRepo.observe(viewLifecycleOwner) {
+            when (it) {
 				is Resource.Success -> {
 					bind.loader.isVisible = false
 					if (unblockPos != - 1 && unblockPos < mList.size) {
@@ -105,8 +105,8 @@ class BlockedUsersFragment : BaseFragment<DashViewModel , FragmentBlockedUsersBi
 		}
 
 		viewModel.getBlockedUsers()
-		viewModel.getBlockedUsersRepo.observe(viewLifecycleOwner) { it ->
-			when (it) {
+		viewModel.getBlockedUsersRepo.observe(viewLifecycleOwner) {
+            when (it) {
 				is Resource.Success -> {
 					bind.loader.isVisible = false
 					bind.swipeRefreshLayout.isRefreshing = false

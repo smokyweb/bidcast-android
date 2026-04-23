@@ -33,7 +33,7 @@ class PollOptionAdapter (
 			bind.quantityBox.isVisible = true
 			bind.quantity.inputType = InputType.TYPE_CLASS_TEXT
 			bind.radioGroup.isVisible = false
-			bind.quantity.setHint(item?.hint)
+            bind.quantity.hint = item?.hint
 			bind.root.setHapticClickListener {
 				mClicks.itemClick(position)
 			}

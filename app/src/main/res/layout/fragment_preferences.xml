@@ -25,8 +25,8 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingBottom="@dimen/padding"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:paddingBottom="@dimen/padding">
 
             <TextView
                 style="@style/TitleSemiBold"
@@ -43,6 +43,8 @@
                 android:layout_gravity="center_vertical"
                 android:layout_marginHorizontal="@dimen/margin"
                 android:layout_marginVertical="@dimen/half_margin"
+                android:gravity="center_vertical"
+                android:paddingVertical="12dp"
                 android:background="@drawable/card_16"
                 android:orientation="horizontal"
                 android:paddingHorizontal="@dimen/margin">
@@ -54,30 +56,48 @@
                     android:layout_weight="1"
                     android:text="@string/country_of_residence" />
 
-
-                <com.google.android.material.textfield.TextInputLayout
+                <TextView
+                    android:id="@+id/country"
+                    style="@style/TitleMedium"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginVertical="@dimen/half_margin"
-                    android:layout_marginStart="@dimen/half_margin"
-                    android:gravity="end"
-                    app:boxStrokeWidth="0dp">
+                    android:drawablePadding="@dimen/half_margin"
+                    android:drawableEnd="@drawable/ic_forward"
+                    android:text="@string/select_country" />
 
-                    <com.google.android.material.textfield.MaterialAutoCompleteTextView
-                        android:id="@+id/country"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:alpha="0.7"
-                        android:drawableEnd="@drawable/ic_forward"
-                        android:drawablePadding="8dp"
-                        android:focusable="false"
-                        android:gravity="end"
-                        android:inputType="none"
-                        android:padding="@dimen/half_margin"
-                        android:text=""
-                        android:textStyle="bold" />
 
-                </com.google.android.material.textfield.TextInputLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                style="@style/shadowStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginHorizontal="@dimen/margin"
+                android:layout_marginBottom="@dimen/half_margin"
+                android:gravity="center_vertical"
+                android:paddingVertical="12dp"
+                android:visibility="gone"
+                android:background="@drawable/card_16"
+                android:orientation="horizontal"
+                android:paddingHorizontal="@dimen/margin">
+
+                <TextView
+                    style="@style/TitleMedium"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/language" />
+
+                <TextView
+                    android:id="@+id/language_value"
+                    style="@style/TitleMedium"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:drawablePadding="@dimen/half_margin"
+                    android:drawableEnd="@drawable/ic_forward"
+                    android:text="@string/language" />
+
 
             </LinearLayout>
 
@@ -99,12 +119,14 @@
                 android:layout_marginVertical="@dimen/half_margin"
                 android:background="@drawable/card_16"
                 android:orientation="vertical"
-                android:padding="@dimen/margin">
+                 android:padding="12dp">
 
                 <com.google.android.material.materialswitch.MaterialSwitch
                     android:id="@+id/direct_messages"
                     style="@style/appSwitch"
                     android:layout_width="match_parent"
+                    android:minHeight="0dp"
+                    android:layout_marginBottom="8dp"
                     android:layout_height="wrap_content"
                     android:text="@string/direct_messages" />
 
@@ -112,6 +134,8 @@
                     android:id="@+id/receive_gifts"
                     style="@style/appSwitch"
                     android:layout_width="match_parent"
+                    android:minHeight="0dp"
+                    android:layout_marginBottom="8dp"
                     android:layout_height="wrap_content"
                     android:text="@string/receive_gifts" />
 
@@ -119,6 +143,7 @@
                     android:id="@+id/private_entry"
                     style="@style/appSwitch"
                     android:layout_width="match_parent"
+                    android:minHeight="0dp"
                     android:layout_height="wrap_content"
                     android:text="@string/enable_private_entry" />
 
@@ -140,12 +165,14 @@
                 android:layout_marginVertical="@dimen/half_margin"
                 android:background="@drawable/card_16"
                 android:orientation="vertical"
-                android:padding="@dimen/margin">
+                 android:padding="12dp">
 
                 <com.google.android.material.materialswitch.MaterialSwitch
                     android:id="@+id/reward_status"
                     style="@style/appSwitch"
                     android:layout_width="match_parent"
+                    android:minHeight="0dp"
+                    android:layout_marginBottom="8dp"
                     android:layout_height="wrap_content"
                     android:text="@string/show_reward_status" />
 
@@ -153,6 +180,7 @@
                     android:id="@+id/seller_tools"
                     style="@style/appSwitch"
                     android:layout_width="match_parent"
+                    android:minHeight="0dp"
                     android:layout_height="wrap_content"
                     android:text="@string/show_seller_tools" />
 
@@ -174,18 +202,21 @@
                 android:layout_marginVertical="@dimen/half_margin"
                 android:background="@drawable/card_16"
                 android:orientation="vertical"
-                android:padding="@dimen/margin">
+                 android:padding="12dp">
 
                 <com.google.android.material.materialswitch.MaterialSwitch
                     android:id="@+id/enable_clips"
                     style="@style/appSwitch"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:minHeight="0dp"
+                    android:layout_marginBottom="8dp"
                     android:text="@string/enable_clips" />
 
                 <com.google.android.material.materialswitch.MaterialSwitch
                     android:id="@+id/save_past_shows"
                     style="@style/appSwitch"
+                    android:minHeight="0dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/save_past_shows" />
@@ -208,21 +239,23 @@
                 android:layout_marginVertical="@dimen/half_margin"
                 android:background="@drawable/card_16"
                 android:orientation="vertical"
-                android:padding="@dimen/margin">
+                 android:padding="12dp">
 
                 <com.google.android.material.materialswitch.MaterialSwitch
                     android:id="@+id/activity_status"
                     style="@style/appSwitch"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:minHeight="0dp"
+                    android:layout_marginBottom="8dp"
                     android:text="@string/activity_status" />
-
 
                 <com.google.android.material.materialswitch.MaterialSwitch
                     android:id="@+id/haptic_feedback"
                     style="@style/appSwitch"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:minHeight="0dp"
                     android:text="@string/haptic_feedback" />
 
             </LinearLayout>

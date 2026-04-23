@@ -2,7 +2,6 @@
 <resources>
     <string name="select_media_type">Select Media Type</string>
     <string name="auction_settings">Auction Settings</string>
-    <string name="select_product_category">Select Product Category</string>
     <string name="select_country">Select Country</string>
     <string name="max_bid_amount">Max Bid Amount</string>
     <string name="select_live_seller_for_raid">Select Live Seller for Raid</string>

@@ -12,10 +12,4 @@ class OBSSetupFragment : BaseFragment<ScheduleShowViewModel , FragmentOBSSetupBi
 
 	override fun getBind(inflater : LayoutInflater , view : ViewGroup?) = FragmentOBSSetupBinding.inflate(inflater , view , false)
 
-	override fun onViewCreated(view : View , savedInstanceState : Bundle?) {
-		super.onViewCreated(view , savedInstanceState)
-
-
-	}
-
 }

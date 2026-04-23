@@ -24,20 +24,21 @@ import io.bidswipe.app.utils.setHapticClickListener
 
 class HowToSellFragment : BaseFragment<DashViewModel, FragmentHowToSellBinding>() {
 
-	override fun getModel(): Class<DashViewModel> = DashViewModel::class.java
+    override fun getModel(): Class<DashViewModel> = DashViewModel::class.java
 
-	override fun getBind(inflater: LayoutInflater, view: ViewGroup?) = FragmentHowToSellBinding.inflate(inflater, view, false)
+    override fun getBind(inflater: LayoutInflater, view: ViewGroup?) =
+        FragmentHowToSellBinding.inflate(inflater, view, false)
 
-	private var tipList = mutableListOf<GetHowToSellResponse.Data?>()
-	private lateinit var pagerAdapter: HowToSellPagerAdapter
+    private var tipList = mutableListOf<GetHowToSellResponse.Data?>()
+    private lateinit var pagerAdapter: HowToSellPagerAdapter
 
-	private var type = ""
+    private var type = ""
 
-	@SuppressLint("NotifyDataSetChanged")
-	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-		super.onViewCreated(view, savedInstanceState)
+    @SuppressLint("NotifyDataSetChanged")
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
-		type = activity?.intent?.getStringExtra("slug") ?: ""
+        type = activity?.intent?.getStringExtra("slug") ?: ""
 
         bind.header.onBackClick {
             if (type.isEmpty()) {
@@ -61,134 +62,134 @@ class HowToSellFragment : BaseFragment<DashViewModel, FragmentHowToSellBinding>(
 //        }
 
 
-		pagerAdapter = HowToSellPagerAdapter(tipList)
-		bind.pager.adapter = pagerAdapter
+        pagerAdapter = HowToSellPagerAdapter(tipList)
+        bind.pager.adapter = pagerAdapter
 
-		bind.pager.isUserInputEnabled = false
+        bind.pager.isUserInputEnabled = false
 
-		bind.pager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
-			override fun onPageSelected(position: Int) {
-				super.onPageSelected(position)
+        bind.pager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+            override fun onPageSelected(position: Int) {
+                super.onPageSelected(position)
 
-				bind.track.progress = position + 1
+                bind.track.progress = position + 1
 
-				bind.step.text = buildString {
-					append("Step ")
-					append(position + 1)
-					append(" of ${tipList.size}")
-				}
+                bind.step.text = buildString {
+                    append("Step ")
+                    append(position + 1)
+                    append(" of ${tipList.size}")
+                }
 
-				updateBackButtonState(position)
-				updateNextButtonText(position)
-			}
-		})
+                updateBackButtonState(position)
+                updateNextButtonText(position)
+            }
+        })
 
-		bind.nextBtn.setHapticClickListener {
+        bind.nextBtn.setHapticClickListener {
 
-			log("ITEM : ${bind.pager.currentItem}")
+            log("ITEM : ${bind.pager.currentItem}")
 
-			if (bind.pager.currentItem == tipList.size - 1) {
-				if (requireActivity().intent.getStringExtra("type") == "promoteTools") {
-					finish()
-				} else {
-					if (type.isEmpty()) {
-						findNavController().navigate(ids.prepareYourShowFragment)
-					} else {
-						finish()
-					}
-				}
+            if (bind.pager.currentItem == tipList.size - 1) {
+                if (requireActivity().intent.getStringExtra("type") == "promoteTools") {
+                    finish()
+                } else {
+                    if (type.isEmpty()) {
+                        findNavController().navigate(ids.prepareYourShowFragment)
+                    } else {
+                        finish()
+                    }
+                }
 
-			} else {
-				bind.pager.currentItem += 1
-			}
+            } else {
+                bind.pager.currentItem += 1
+            }
 
-		}
+        }
 
-		bind.backBtn.setHapticClickListener {
-			if (bind.pager.currentItem == 0) {
-				if (requireActivity().intent.getStringExtra("type") == "promoteTools") {
-					finish()
-				} else {
-					findNavController().popBackStack()
-				}
-			} else {
-				bind.pager.currentItem -= 1
-			}
+        bind.backBtn.setHapticClickListener {
+            if (bind.pager.currentItem == 0) {
+                if (requireActivity().intent.getStringExtra("type") == "promoteTools") {
+                    finish()
+                } else {
+                    findNavController().popBackStack()
+                }
+            } else {
+                bind.pager.currentItem -= 1
+            }
 
-		}
-
-
-		bind.loader.isVisible = true
-
-		viewModel.getHowToSellStep()
-		viewModel.getHowToSellStepRepo.observe(viewLifecycleOwner) {
-			when (it) {
-				is Resource.Success -> {
-					bind.loader.isVisible = false
-
-					val mData = it.value.data
-					tipList.clear()
-
-					mData?.forEach { data ->
-
-						tipList.add(data)
-
-					}
-
-					bind.track.max = tipList.size
-
-					bind.track.progress = 1
-
-					bind.step.text = buildString {
-						append("Step 1 of ")
-						append(tipList.size)
-						append(" ")
-					}
-
-					bind.pager.currentItem = 0
-					updateBackButtonState(bind.pager.currentItem)
-					updateNextButtonText(bind.pager.currentItem)
-
-					pagerAdapter.notifyDataSetChanged()
-
-				}
-
-				is Resource.Error -> {
-					bind.loader.isVisible = false
-
-					it.parse(mCtx, TAG, object : AlertClicks {
-						override fun primaryClick(dialog: AppBottomSheet) {
-							dialog.dismiss()
-
-						}
-
-						override fun secondaryClick(dialog: AppBottomSheet) {
-							dialog.dismiss()
-
-						}
-					})
-				}
-
-				else -> {}
-
-			}
-		}
+        }
 
 
-	}
+        bind.loader.isVisible = true
 
-	private fun updateNextButtonText(currentPosition: Int) {
-		val isLastStep = tipList.isNotEmpty() && currentPosition == tipList.lastIndex
-		bind.nextBtn.text = if (isLastStep) {
-			getString(R.string.finish)
-		} else {
-			getString(R.string.next)
-		}
-	}
+        viewModel.getHowToSellStep()
+        viewModel.getHowToSellStepRepo.observe(viewLifecycleOwner) {
+            when (it) {
+                is Resource.Success -> {
+                    bind.loader.isVisible = false
 
-	private fun updateBackButtonState(currentPosition: Int) {
-		bind.backBtn.text = "Previous"
-		bind.backBtn.isVisible = currentPosition > 0
-	}
+                    val mData = it.value.data
+                    tipList.clear()
+
+                    mData?.forEach { data ->
+
+                        tipList.add(data)
+
+                    }
+
+                    bind.track.max = tipList.size
+
+                    bind.track.progress = 1
+
+                    bind.step.text = buildString {
+                        append("Step 1 of ")
+                        append(tipList.size)
+                        append(" ")
+                    }
+
+                    bind.pager.currentItem = 0
+                    updateBackButtonState(bind.pager.currentItem)
+                    updateNextButtonText(bind.pager.currentItem)
+
+                    pagerAdapter.notifyDataSetChanged()
+
+                }
+
+                is Resource.Error -> {
+                    bind.loader.isVisible = false
+
+                    it.parse(mCtx, TAG, object : AlertClicks {
+                        override fun primaryClick(dialog: AppBottomSheet) {
+                            dialog.dismiss()
+
+                        }
+
+                        override fun secondaryClick(dialog: AppBottomSheet) {
+                            dialog.dismiss()
+
+                        }
+                    })
+                }
+
+                else -> {}
+
+            }
+        }
+
+
+    }
+
+    private fun updateNextButtonText(currentPosition: Int) {
+        val isLastStep = tipList.isNotEmpty() && currentPosition == tipList.lastIndex
+        bind.nextBtn.text = if (isLastStep) {
+            getString(R.string.finish)
+        } else {
+            getString(R.string.next)
+        }
+    }
+
+    private fun updateBackButtonState(currentPosition: Int) {
+        bind.backBtn.text = "Previous"
+        bind.backBtn.isVisible = currentPosition > 0
+    }
 
 }

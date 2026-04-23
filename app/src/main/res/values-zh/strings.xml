@@ -8,9 +8,7 @@
     <string name="account">账户</string>
     <string name="activity">活动</string>
     <string name="add_another_product">添加另一个产品</string>
-    <string name="add_more_products">添加更多产品</string>
     <string name="add_product">添加产品</string>
-    <string name="add_up_to_8_photos">最多添加 8 张照片</string>
     <string name="add_variants">添加变体</string>
     <string name="added_product">已添加产品</string>
     <string name="allow_offers">允许报价</string>
@@ -34,7 +32,6 @@
     <string name="credits">积分</string>
     <string name="describe_your_product">描述您的产品</string>
     <string name="description">描述</string>
-    <string name="done">完成</string>
     <string name="email">电子邮件</string>
     <string name="enable_allow_offers_to_let_buyers_offer_a_different_price_for_your_product_you_may_counter_accept_or_simply_decline_the_offer">启用“允许报价”以便买家可以出价购买您的产品。您可以还价、接受或拒绝该报价。</string>
     <string name="enter_code">输入验证码</string>
@@ -107,7 +104,6 @@
     <string name="sell">出售</string>
     <string name="sell_on_bidswipe">在 Bidswipe 上销售</string>
     <string name="set_a_competitive_starting_price_that_will_attract_potential_buyers_a_well_priced_item_increases_your_chances_of_a_successful_sale_and_can_lead_to_better_bidding_activity">设定一个有竞争力的起始价格以吸引潜在买家。定价合理的商品更容易售出，并有助于提升竞价活跃度。</string>
-    <string name="set_schedule">设定时间表</string>
     <string name="setting_up_your_store">正在设置您的商店</string>
     <string name="share_amp_earn_reward"><![CDATA[分享并获得奖励]]></string>
     <string name="shop">商店</string>
@@ -155,9 +151,6 @@
     <string name="you_won_t_be_charged_unless_the_seller_accepts_your_offer">除非卖家接受您的报价，否则您不会被收费</string>
     <string name="buy_now">立即购买</string>
     <string name="make_offer">提出报价</string>
-    <string name="condition">状况</string>
-    <string name="location">地点</string>
-    <string name="posted">已发布</string>
     <string name="confirm_purchase">确认购买</string>
     <string name="send_as_a_gift">作为礼物发送？</string>
     <string name="payment_method">付款方式</string>
@@ -239,7 +232,6 @@
     <string name="premier_shop">高级商店</string>
     <string name="promote_tools">推广工具</string>
     <string name="analytics">分析</string>
-    <string name="use_product_library">使用产品库</string>
     <string name="follow">关注</string>
     <string name="comming_soon">即将推出</string>
     <string name="street_address">街道地址</string>
@@ -260,7 +252,6 @@
     <string name="upload_your_id_card_amp_take_a_selfie"><![CDATA[上传您的证件并拍摄一张自拍]]></string>
     <string name="selfie">自拍</string>
     <string name="id_card">证件</string>
-    <string name="no_payment_method_added">未添加支付方式</string>
     <string name="manual_verification">人工验证</string>
     <string name="mic">麦克风</string>
     <string name="zoom_in">放大</string>
@@ -278,7 +269,6 @@
     <string name="yes_notify_me">是的，通知我</string>
     <string name="no_thanks">不用了，谢谢</string>
     <string name="no_user_matches_the_name_entered">没有用户与输入的名称匹配。</string>
-    <string name="save_product">保存商品</string>
     <string name="update">更新</string>
     <string name="search_products">搜索商品..</string>
     <string name="users">用户</string>
@@ -288,7 +278,6 @@
     <string name="block_seller">屏蔽卖家</string>
     <string name="set_as_default">设为默认</string>
     <string name="delete">删除</string>
-    <string name="product_detail_description">详细的商品信息可帮助买家做出明智决定，并提高您的成交概率。</string>
     <string name="select_from_product_inventory">从商品库存中选择</string>
     <string name="enter_referral_code">输入推荐码</string>
     <string name="overview">概览</string>
@@ -306,7 +295,6 @@
     <string name="account_health">账户健康</string>
     <string name="select_media_type">选择媒体类型</string>
     <string name="auction_settings">拍卖设置</string>
-    <string name="select_product_category">选择商品类别</string>
     <string name="select_country">选择国家/地区</string>
     <string name="max_bid_amount">最高出价金额</string>
     <string name="select_live_seller_for_raid">选择要 Raid 的直播卖家</string>
@@ -334,4 +322,147 @@
     <string name="after_each_product_sells_the_buyer_will_be_randomly_assigned_turn_off_if_you_want_to_randomize_manually">每件商品售出后，将随机分配买家。如需手动随机，请关闭。</string>
     <string name="description_optional">描述（可选）</string>
     <string name="surprise_set">惊喜套装</string>
+
+
+    <!-- Added missing translations (fallback to default text) -->
+    <string name="play_pause">Play/Pause</string>
+    <string name="unmute">Unmute</string>
+    <string name="blocked_message">You cannot send messages to this chat.</string>
+    <string name="for_you_tile">For You</string>
+    <string name="see_all_categories_tile">See All&#10;Categories</string>
+    <string name="share">Share</string>
+    <string name="start_now">Start Now</string>
+    <string name="say_something">Say Something...</string>
+    <string name="verified_buyers">Verified Buyers</string>
+    <string name="when_on_allows_bids_from_verified_buyers_only">When on, allows bids from verified buyers only</string>
+    <string name="end_show">End Show</string>
+    <string name="broadcasting_options">Broadcasting Options</string>
+    <string name="create_poll">Create Poll</string>
+    <string name="create_poll_description">Engage your audience by creating a poll. Ask a question and let viewers vote!</string>
+    <string name="poll_question">Poll Question</string>
+    <string name="enter_poll_question">Enter your poll question here</string>
+    <string name="poll_options">Poll Options</string>
+    <string name="poll_duration">Poll Duration</string>
+    <string name="select_duration">Select duration (minutes)</string>
+    <string name="john_smith">John Smith</string>
+    <string name="clear_all">CLEAR ALL</string>
+    <string name="type_here">Type here...</string>
+        <string name="language">语言</string>
+    <string name="report_seller">Report Seller</string>
+    <string name="submit_report">Submit Report</string>
+    <string name="tell_us_more">Tell us more</string>
+    <string name="write_something">Write Something</string>
+    <string name="would_you_like_to_notified_when_usrname_goes_live">Would you like to notified when @usrname goes live</string>
+    <string name="over_all">Over All</string>
+    <string name="livestream">Livestream</string>
+    <string name="trust">Trust</string>
+    <string name="get_in_touch">Get in Touch</string>
+    <string name="support_company_com">support@company.com</string>
+    <string name="send_message">Send Message</string>
+    <string name="first_fragment_label">First Fragment</string>
+    <string name="second_fragment_label">Second Fragment</string>
+    <string name="confirm">Confirm</string>
+    <string name="select_sub_categories_based_on_the_categories_you_chose_on_the_previous_page">Select Sub Categories based on the Categories you chose on the previous page</string>
+    <string name="choose_the_categories_you_re_interested_in_to_watch_related_shows">Choose the categories you’re interested in to watch related shows.</string>
+    <string name="select_next_product_for_auction">Select Next Product For Auction</string>
+    <string name="more_potential_buyers_can_plan_to_attend">More potential buyers can plan to attend</string>
+    <string name="play_video">Play video</string>
+    <string name="send_tip">Send Tip</string>
+    <string name="product_deleted">Product Deleted</string>
+    <string name="product_no_longer_available">This product is no longer available</string>
+    <string name="privacy_policy"><u>Privacy Policy</u></string>
+    <string name="terms_of_service">  | <u>Terms of Service</u></string>
+    <string name="get_notification">Get Notification</string>
+    <string name="add_payment_method_and_address">Add Payment Method and Address</string>
+    <string name="shipping_profile">Shipping Profile</string>
+    <string name="surprise_set_details">Surprise Set Details</string>
+    <string name="enter_price">Enter Price</string>
+    <string name="how_it_works_info">
+        &lt;p&gt;
+        Surprise items is a format where a set of items are each sold at random —
+        the buyer finds out which of the items they will receive live.
+        You can see all available items in this format in the Items tab.
+        &lt;/p&gt;
+
+        &lt;h3&gt;What To Expect?&lt;/h3&gt;
+
+        &lt;p&gt;Surprise Sets go through two main stages:&lt;/p&gt;
+
+        &lt;h4&gt;⏳ Filling + Running&lt;/h4&gt;
+        &lt;p&gt;
+        The excitement begins! This is the time when you can purchase a surprise item.
+        You can always see how many spots are left and what items have been sold.
+        &lt;/p&gt;
+
+        &lt;h4&gt;✅ Completed&lt;/h4&gt;
+        &lt;p&gt;
+        The sale is over. All of the available items have been sold and revealed,
+        and the seller will ship to you as soon as they can.
+        &lt;/p&gt;
+    </string>
+    <string name="deleting_your_account_is_irreversible_and_will_permanently_erase_all_your_data_this_action_cannot_be_undone_please_consider_carefully_before_proceeding">Deleting your account is irreversible and will permanently erase all your data. This action cannot be undone. Please consider carefully before proceeding.</string>
+
+    <string name="select_language">选择语言</string>
+
+    <string name="upcoming_shows">即将开始的直播</string>
+
+    <string name="on_time_scan_rate">按时扫描率</string>
+
+    <string name="defect_free_order_rate">无缺陷订单率</string>
+
+    <string name="policy_standing">政策合规状态</string>
+
+    <string name="payouts">打款</string>
+
+    <string name="total_orders">订单总数</string>
+
+    <string name="create_show">创建直播</string>
+
+    <string name="create_product">创建商品</string>
+
+    <string name="contact_us">联系我们</string>
+
+    <string name="sales_tax_exemption">销售税豁免</string>
+
+    <string name="terms_and_conditions">条款和条件</string>
+
+    <string name="privacy_policy_plain">隐私政策</string>
+
+    <string name="faq_label">常见问题</string>
+
+    <string name="blocked_users">已屏蔽用户</string>
+
+    <string name="delete_account">删除账号</string>
+
+    <string name="logout">退出登录</string>
+
+    <string name="addresses">地址</string>
+
+    <string name="trusted_buyer">可信买家</string>
+
+    <string name="notifications">通知</string>
+
+    <string name="preferences">偏好设置</string>
+
+    <string name="favourite">收藏</string>
+
+    <string name="seller_section">卖家</string>
+
+    <string name="promotion_section">推广</string>
+
+    <string name="performance_section">表现</string>
+
+    <string name="settings_section">设置</string>
+
+    <string name="seller_training">卖家培训</string>
+
+    <string name="seller_verification">卖家认证</string>
+
+    <string name="identity_verification">身份验证</string>
+
+    <string name="inventory">库存</string>
+
+    <string name="my_orders">我的订单</string>
+
+    <string name="seller_analytics">卖家分析</string>
 </resources>

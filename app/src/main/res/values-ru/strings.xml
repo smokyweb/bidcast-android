@@ -9,9 +9,7 @@
     <string name="account">Аккаунт</string>
     <string name="activity">Действия</string>
     <string name="add_another_product">Добавить еще товар</string>
-    <string name="add_more_products">Добавить больше товаров</string>
     <string name="add_product">Добавить товар</string>
-    <string name="add_up_to_8_photos">Добавить до 8 фото</string>
     <string name="add_variants">Добавить варианты</string>
     <string name="added_product">Товар добавлен</string>
     <string name="allow_offers">Разрешить предложения</string>
@@ -35,7 +33,6 @@
     <string name="credits">Кредиты</string>
     <string name="describe_your_product">Опишите ваш товар</string>
     <string name="description">Описание</string>
-    <string name="done">Готово</string>
     <string name="email">Эл. почта</string>
     <string name="enable_allow_offers_to_let_buyers_offer_a_different_price_for_your_product_you_may_counter_accept_or_simply_decline_the_offer">Включите «Разрешить предложения», чтобы покупатели могли предложить другую цену. Вы можете сделать встречное предложение, принять или отклонить его.</string>
     <string name="enter_code">Введите код</string>
@@ -108,7 +105,6 @@
     <string name="sell">Продать</string>
     <string name="sell_on_bidswipe">Продать на Bidswipe</string>
     <string name="set_a_competitive_starting_price_that_will_attract_potential_buyers_a_well_priced_item_increases_your_chances_of_a_successful_sale_and_can_lead_to_better_bidding_activity">Установите конкурентную стартовую цену, которая привлечет потенциальных покупателей. Правильная цена повышает шансы успешной продажи и стимулирует активность торгов.</string>
-    <string name="set_schedule">Установить расписание</string>
     <string name="setting_up_your_store">Настройка вашего магазина</string>
     <string name="share_amp_earn_reward"><![CDATA[Поделитесь и заработайте награды]]></string>
     <string name="shop">Магазин</string>
@@ -156,9 +152,6 @@
     <string name="you_won_t_be_charged_unless_the_seller_accepts_your_offer">С вас не будет списана сумма, пока продавец не примет ваше предложение</string>
     <string name="buy_now">Купить сейчас</string>
     <string name="make_offer">Сделать предложение</string>
-    <string name="condition">Состояние</string>
-    <string name="location">Местоположение</string>
-    <string name="posted">Опубликовано</string>
     <string name="confirm_purchase">Подтвердить покупку</string>
     <string name="send_as_a_gift">Отправить как подарок?</string>
     <string name="payment_method">Способ оплаты</string>
@@ -240,7 +233,6 @@
     <string name="premier_shop">Премиум магазин</string>
     <string name="promote_tools">Инструменты продвижения</string>
     <string name="analytics">Аналитика</string>
-    <string name="use_product_library">Использовать библиотеку продуктов</string>
     <string name="follow">Подписаться</string>
     <string name="comming_soon">Скоро будет</string>
     <string name="street_address">Улица</string>
@@ -261,7 +253,6 @@
     <string name="upload_your_id_card_amp_take_a_selfie"><![CDATA[Загрузите документ и сделайте селфи]]></string>
     <string name="selfie">Селфи</string>
     <string name="id_card">Документ</string>
-    <string name="no_payment_method_added">Способ оплаты не добавлен</string>
     <string name="manual_verification">Ручная проверка</string>
     <string name="mic">Микрофон</string>
     <string name="zoom_in">Приблизить</string>
@@ -279,7 +270,6 @@
     <string name="yes_notify_me">Да, уведомить меня</string>
     <string name="no_thanks">Нет, спасибо</string>
     <string name="no_user_matches_the_name_entered">Пользователь с таким именем не найден.</string>
-    <string name="save_product">Сохранить товар</string>
     <string name="update">Обновить</string>
     <string name="search_products">Поиск товаров..</string>
     <string name="users">Пользователи</string>
@@ -289,7 +279,6 @@
     <string name="block_seller">Заблокировать продавца</string>
     <string name="set_as_default">Сделать по умолчанию</string>
     <string name="delete">Удалить</string>
-    <string name="product_detail_description">Подробные описания товаров помогают покупателям принимать взвешенные решения и повышают ваши шансы на продажу.</string>
     <string name="select_from_product_inventory">Выбрать из инвентаря товаров</string>
     <string name="enter_referral_code">Введите реферальный код</string>
     <string name="overview">Обзор</string>
@@ -307,7 +296,6 @@
     <string name="account_health">Здоровье аккаунта</string>
     <string name="select_media_type">Выберите тип медиа</string>
     <string name="auction_settings">Настройки аукциона</string>
-    <string name="select_product_category">Выберите категорию товара</string>
     <string name="select_country">Выберите страну</string>
     <string name="max_bid_amount">Максимальная сумма ставки</string>
     <string name="select_live_seller_for_raid">Выберите продавца в эфире для рейда</string>
@@ -335,4 +323,147 @@
     <string name="after_each_product_sells_the_buyer_will_be_randomly_assigned_turn_off_if_you_want_to_randomize_manually">После продажи каждого товара покупатель будет назначаться случайным образом. Отключите, если хотите выбирать вручную.</string>
     <string name="description_optional">Описание (необязательно)</string>
     <string name="surprise_set">Набор-сюрприз</string>
+
+
+    <!-- Added missing translations (fallback to default text) -->
+    <string name="play_pause">Play/Pause</string>
+    <string name="unmute">Unmute</string>
+    <string name="blocked_message">You cannot send messages to this chat.</string>
+    <string name="for_you_tile">For You</string>
+    <string name="see_all_categories_tile">See All&#10;Categories</string>
+    <string name="share">Share</string>
+    <string name="start_now">Start Now</string>
+    <string name="say_something">Say Something...</string>
+    <string name="verified_buyers">Verified Buyers</string>
+    <string name="when_on_allows_bids_from_verified_buyers_only">When on, allows bids from verified buyers only</string>
+    <string name="end_show">End Show</string>
+    <string name="broadcasting_options">Broadcasting Options</string>
+    <string name="create_poll">Create Poll</string>
+    <string name="create_poll_description">Engage your audience by creating a poll. Ask a question and let viewers vote!</string>
+    <string name="poll_question">Poll Question</string>
+    <string name="enter_poll_question">Enter your poll question here</string>
+    <string name="poll_options">Poll Options</string>
+    <string name="poll_duration">Poll Duration</string>
+    <string name="select_duration">Select duration (minutes)</string>
+    <string name="john_smith">John Smith</string>
+    <string name="clear_all">CLEAR ALL</string>
+    <string name="type_here">Type here...</string>
+        <string name="language">Язык</string>
+    <string name="report_seller">Report Seller</string>
+    <string name="submit_report">Submit Report</string>
+    <string name="tell_us_more">Tell us more</string>
+    <string name="write_something">Write Something</string>
+    <string name="would_you_like_to_notified_when_usrname_goes_live">Would you like to notified when @usrname goes live</string>
+    <string name="over_all">Over All</string>
+    <string name="livestream">Livestream</string>
+    <string name="trust">Trust</string>
+    <string name="get_in_touch">Get in Touch</string>
+    <string name="support_company_com">support@company.com</string>
+    <string name="send_message">Send Message</string>
+    <string name="first_fragment_label">First Fragment</string>
+    <string name="second_fragment_label">Second Fragment</string>
+    <string name="confirm">Confirm</string>
+    <string name="select_sub_categories_based_on_the_categories_you_chose_on_the_previous_page">Select Sub Categories based on the Categories you chose on the previous page</string>
+    <string name="choose_the_categories_you_re_interested_in_to_watch_related_shows">Choose the categories you’re interested in to watch related shows.</string>
+    <string name="select_next_product_for_auction">Select Next Product For Auction</string>
+    <string name="more_potential_buyers_can_plan_to_attend">More potential buyers can plan to attend</string>
+    <string name="play_video">Play video</string>
+    <string name="send_tip">Send Tip</string>
+    <string name="product_deleted">Product Deleted</string>
+    <string name="product_no_longer_available">This product is no longer available</string>
+    <string name="privacy_policy"><u>Privacy Policy</u></string>
+    <string name="terms_of_service">  | <u>Terms of Service</u></string>
+    <string name="get_notification">Get Notification</string>
+    <string name="add_payment_method_and_address">Add Payment Method and Address</string>
+    <string name="shipping_profile">Shipping Profile</string>
+    <string name="surprise_set_details">Surprise Set Details</string>
+    <string name="enter_price">Enter Price</string>
+    <string name="how_it_works_info">
+        &lt;p&gt;
+        Surprise items is a format where a set of items are each sold at random —
+        the buyer finds out which of the items they will receive live.
+        You can see all available items in this format in the Items tab.
+        &lt;/p&gt;
+
+        &lt;h3&gt;What To Expect?&lt;/h3&gt;
+
+        &lt;p&gt;Surprise Sets go through two main stages:&lt;/p&gt;
+
+        &lt;h4&gt;⏳ Filling + Running&lt;/h4&gt;
+        &lt;p&gt;
+        The excitement begins! This is the time when you can purchase a surprise item.
+        You can always see how many spots are left and what items have been sold.
+        &lt;/p&gt;
+
+        &lt;h4&gt;✅ Completed&lt;/h4&gt;
+        &lt;p&gt;
+        The sale is over. All of the available items have been sold and revealed,
+        and the seller will ship to you as soon as they can.
+        &lt;/p&gt;
+    </string>
+    <string name="deleting_your_account_is_irreversible_and_will_permanently_erase_all_your_data_this_action_cannot_be_undone_please_consider_carefully_before_proceeding">Deleting your account is irreversible and will permanently erase all your data. This action cannot be undone. Please consider carefully before proceeding.</string>
+
+    <string name="select_language">Выберите язык</string>
+
+    <string name="upcoming_shows">Предстоящие шоу</string>
+
+    <string name="on_time_scan_rate">Доля своевременного сканирования</string>
+
+    <string name="defect_free_order_rate">Доля заказов без дефектов</string>
+
+    <string name="policy_standing">Статус соответствия политикам</string>
+
+    <string name="payouts">Выплаты</string>
+
+    <string name="total_orders">Всего заказов</string>
+
+    <string name="create_show">Создать шоу</string>
+
+    <string name="create_product">Создать товар</string>
+
+    <string name="contact_us">Свяжитесь с нами</string>
+
+    <string name="sales_tax_exemption">Освобождение от налога с продаж</string>
+
+    <string name="terms_and_conditions">Условия и положения</string>
+
+    <string name="privacy_policy_plain">Политика конфиденциальности</string>
+
+    <string name="faq_label">Часто задаваемые вопросы</string>
+
+    <string name="blocked_users">Заблокированные пользователи</string>
+
+    <string name="delete_account">Удалить аккаунт</string>
+
+    <string name="logout">Выйти</string>
+
+    <string name="addresses">Адреса</string>
+
+    <string name="trusted_buyer">Надежный покупатель</string>
+
+    <string name="notifications">Уведомления</string>
+
+    <string name="preferences">Настройки</string>
+
+    <string name="favourite">Избранное</string>
+
+    <string name="seller_section">Продавец</string>
+
+    <string name="promotion_section">Продвижение</string>
+
+    <string name="performance_section">Эффективность</string>
+
+    <string name="settings_section">Настройки</string>
+
+    <string name="seller_training">Обучение продавца</string>
+
+    <string name="seller_verification">Проверка продавца</string>
+
+    <string name="identity_verification">Проверка личности</string>
+
+    <string name="inventory">Инвентарь</string>
+
+    <string name="my_orders">Мои заказы</string>
+
+    <string name="seller_analytics">Аналитика продавца</string>
 </resources>

@@ -1,6 +1,7 @@
 package io.bidswipe.app.ui.custom
 
 import android.content.Context
+import android.os.Build
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.widget.LinearLayout
@@ -18,37 +19,39 @@ class InfoCard @JvmOverloads constructor(
     private val binding = InfoCardViewBinding.inflate(LayoutInflater.from(context), this, true)
 
     init {
-        context.theme.obtainStyledAttributes(attrs, R.styleable.InfoCard, 0, 0).use {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            context.theme.obtainStyledAttributes(attrs, R.styleable.InfoCard, 0, 0).use {
 
-            // Icon
-            val iconRes = it.getResourceId(R.styleable.InfoCard_infoIcon, R.drawable.ic_info)
-            binding.icon.setImageResource(iconRes)
+                // Icon
+                val iconRes = it.getResourceId(R.styleable.InfoCard_infoIcon, R.drawable.ic_info)
+                binding.icon.setImageResource(iconRes)
 
-            // Text
-            binding.tipText.text = it.getString(R.styleable.InfoCard_infoText) ?: ""
+                // Text
+                binding.tipText.text = it.getString(R.styleable.InfoCard_infoText) ?: ""
 
-            // Background color
-            val bgColor = it.getColor(
-                    R.styleable.InfoCard_infoBackgroundColor,
-                    ContextCompat.getColor(context, R.color.primaryContainer)
-                )
-            binding.rootLayout.setCardBackgroundColor( bgColor)
+                // Background color
+                val bgColor = it.getColor(
+                        R.styleable.InfoCard_infoBackgroundColor,
+                        ContextCompat.getColor(context, R.color.primaryContainer)
+                    )
+                binding.rootLayout.setCardBackgroundColor( bgColor)
 
-            // Text color
-            val textColor =
-                it.getColor(
-                    R.styleable.InfoCard_infoTextColor,
-                    ContextCompat.getColor(context, R.color.onSurface)
-                )
-            binding.tipText.setTextColor(textColor)
+                // Text color
+                val textColor =
+                    it.getColor(
+                        R.styleable.InfoCard_infoTextColor,
+                        ContextCompat.getColor(context, R.color.onSurface)
+                    )
+                binding.tipText.setTextColor(textColor)
 
-            // Icon tint
-            val iconTint =
-                it.getColor(
-                    R.styleable.InfoCard_infoIconTint,
-                    ContextCompat.getColor(context, R.color.primary)
-                )
-            binding.icon.setColorFilter(iconTint)
+                // Icon tint
+                val iconTint =
+                    it.getColor(
+                        R.styleable.InfoCard_infoIconTint,
+                        ContextCompat.getColor(context, R.color.primary)
+                    )
+                binding.icon.setColorFilter(iconTint)
+            }
         }
     }
 

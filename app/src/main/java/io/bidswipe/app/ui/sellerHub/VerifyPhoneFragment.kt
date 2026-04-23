@@ -15,9 +15,4 @@ class VerifyPhoneFragment : BaseFragment<SellerHubViewModel , FragmentVerifyPhon
         view : ViewGroup? ,
     ) = FragmentVerifyPhoneBinding.inflate(inflater , view , false)
 
-	override fun onViewCreated(view : View , savedInstanceState : Bundle?) {
-		super.onViewCreated(view , savedInstanceState)
-
-	}
-
 }

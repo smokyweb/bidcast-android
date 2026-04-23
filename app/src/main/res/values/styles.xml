@@ -204,7 +204,7 @@
         <item name="thumbTint">@color/surface</item>
         <item name="trackDecorationTint">@color/switch_track_deco_color</item>
         <item name="trackTint">@color/switch_track_deco_color</item>
-        <item name="android:textAppearance">@style/TitleMedium</item>
+        <item name="android:textAppearance">@style/TitleSmall</item>
         <item name="android:textColor">@color/onSurface</item>
     </style>
 
@@ -263,26 +263,6 @@
         <item name="android:textAppearance">@style/BodyMedium</item>
     </style>
 
-    <style name="toolTipStyle" parent="Widget.Material3.Tooltip">
-        <item name="android:textAppearance">@style/LabelMedium</item>
-        <item name="android:textColor">@color/onPrimary</item>
-        <item name="backgroundTint">@color/primary</item>
-        <item name="android:padding">8dp</item>
-        <item name="android:minWidth">28dp</item>
-        <item name="android:minHeight">28dp</item>
-        <item name="shapeAppearance">@style/ShapeAppearance.Material3.Tooltip</item>
-    </style>
-
-    <style name="progressStyle" parent="Widget.Material3.LinearProgressIndicator">
-        <item name="android:progressTint">@color/secondary</item>
-        <item name="indicatorColor">@color/secondary</item>
-        <item name="trackColor">@color/onSecondary</item>
-        <item name="trackCornerRadius">20dp</item>
-        <item name="trackThickness">12dp</item>
-        <item name="android:progress">0</item>
-        <item name="android:max">100</item>
-    </style>
-
     <style name="calendarStyle">
         <item name="headerColor">@color/onPrimary</item>
         <item name="headerLabelColor">@color/scrim</item>
@@ -328,17 +308,6 @@
         <item name="chipCornerRadius">32dp</item>
         <item name="android:textColor">@color/chip_text_color_state</item>
         <item name="android:textAppearance">@style/BodyMedium</item>
-    </style>
-
-    <style name="toolbarStyle" parent="Widget.Material3.Toolbar">
-        <item name="navigationIcon">@drawable/ic_back</item>
-        <item name="navigationIconTint">@color/onSurface</item>
-        <item name="titleCentered">true</item>
-        <item name="titleTextAppearance">@style/TitleLarge</item>
-        <item name="titleTextColor">@color/onPrimary</item>
-        <item name="android:background">@color/onPrimary</item>
-        <item name="android:theme">@style/popupMenuStyle</item>
-        <item name="tooltipStyle">@style/toolTipStyle</item>
     </style>
 
 

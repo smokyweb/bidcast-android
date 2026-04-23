@@ -44,18 +44,18 @@ class PromoteToolsFragment : BaseFragment<SellerHubViewModel, FragmentPromoteToo
             finish()
         }
 
-	    val adapter = ViewPagerAdapter(requireActivity(), "promoteTools")
-	    bind.pager.adapter = adapter
+        val adapter = ViewPagerAdapter(requireActivity(), "promoteTools")
+        bind.pager.adapter = adapter
 
-	    bind.pager.isUserInputEnabled = false
+        bind.pager.isUserInputEnabled = false
 
-	    TabLayoutMediator(bind.tabLayout, bind.pager) { tab, position ->
-		    tab.text = when (position) {
-			    0 -> "Overview"
-			    1 -> "Promoted Shows"
-			    else -> ""
-		    }
-	    }.attach()
+        TabLayoutMediator(bind.tabLayout, bind.pager) { tab, position ->
+            tab.text = when (position) {
+                0 -> "Overview"
+                1 -> "Promoted Shows"
+                else -> ""
+            }
+        }.attach()
 
     }
 

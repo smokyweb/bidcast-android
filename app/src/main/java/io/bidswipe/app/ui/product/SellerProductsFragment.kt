@@ -110,9 +110,9 @@ class SellerProductsFragment : BaseFragment<ProductViewModel, FragmentSellerProd
 
 		viewModel.getUserProducts(userId = sellerId.request(), page = page.toString().request())
 
-		viewModel.getUserProductsRepo.observe(viewLifecycleOwner) { it ->
+		viewModel.getUserProductsRepo.observe(viewLifecycleOwner) {
 
-			when (it) {
+            when (it) {
 				is Resource.Success -> {
 					bind.loader.isVisible = false
 					bind.bottomLoader.isVisible = false

@@ -30,7 +30,7 @@
                 android:id="@+id/header"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:headerTitle="Seller Tools"/>
+                app:headerTitle="@string/seller_tools"/>
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/menu_recycler"

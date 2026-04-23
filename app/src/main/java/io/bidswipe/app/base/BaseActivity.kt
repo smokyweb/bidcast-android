@@ -13,6 +13,7 @@ import com.zeugmasolutions.localehelper.LocaleAwareCompatActivity
 import dagger.hilt.android.AndroidEntryPoint
 import io.bidswipe.app.App
 import io.bidswipe.app.utils.Alerts
+import io.bidswipe.app.utils.Const
 import io.bidswipe.app.utils.Prefs
 
 @Suppress("PropertyName")
@@ -27,6 +28,14 @@ abstract class BaseActivity : LocaleAwareCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        val savedLangCode = Prefs(this).localeLanguage().ifBlank { "en" }
+        val selectedLocale = Const.languages.find { it.locale.language == savedLangCode }?.locale
+            ?: java.util.Locale.ENGLISH
+        val currentLanguage = resources.configuration.locales[0]?.language ?: "en"
+        if (currentLanguage != selectedLocale.language) {
+            updateLocale(selectedLocale)
+        }
 
         userId = Prefs(this).getUserData()?.id.toString()
         userName = Prefs(this).getUserData()?.name.toString()

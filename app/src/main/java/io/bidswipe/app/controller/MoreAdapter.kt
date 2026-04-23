@@ -10,29 +10,29 @@ import io.bidswipe.app.utils.draw
 import io.bidswipe.app.utils.setHapticClickListener
 
 class MoreAdapter(
-	val mList : MutableList<MoreModel> ,
-	val mClicks : RecyclerClicks ,
-) : BaseAdapter<MoreModel , MenuItemBinding>(mList) {
+    val mList: MutableList<MoreModel>,
+    val mClicks: RecyclerClicks,
+) : BaseAdapter<MoreModel, MenuItemBinding>(mList) {
 
-	override fun bindView(inflater : LayoutInflater , parent : ViewGroup) =
-		MenuItemBinding.inflate(inflater , parent , false)
+    override fun bindView(inflater: LayoutInflater, parent: ViewGroup) =
+        MenuItemBinding.inflate(inflater, parent, false)
 
-	override fun onBind(
-		holder : BaseViewHolder<MenuItemBinding> ,
-		position : Int ,
-		item : MoreModel? ,
-	) {
-		with(holder) {
+    override fun onBind(
+        holder: BaseViewHolder<MenuItemBinding>,
+        position: Int,
+        item: MoreModel?,
+    ) {
+        with(holder) {
 
-			bind.title.text = item?.title
+            bind.title.text = item?.title
 
             bind.root.setHapticClickListener {
 
-				mClicks.itemClick(position)
+                mClicks.itemClick(position)
 
-			}
-			bind.icon.setImageResource(item?.icon?: draw.ic_document)
+            }
+            bind.icon.setImageResource(item?.icon ?: draw.ic_document)
 
-		}
-	}
+        }
+    }
 }

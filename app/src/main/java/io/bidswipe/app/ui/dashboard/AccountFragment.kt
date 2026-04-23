@@ -214,31 +214,31 @@ class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
         bind.tabs.addOnTabSelectedListener(onTabSelectedListener)
 
         moreList.clear()
-        moreList.add(MoreModel(R.drawable.ic_about_us, "About Us", "aboutUs"))
-        moreList.add(MoreModel(R.drawable.ic_outlined_message, "Contact Us", "contactUs"))
-        moreList.add(MoreModel(R.drawable.ic_document, "Sales Tax Exemption", "salesTax"))
-        moreList.add(MoreModel(R.drawable.ic_document, "Terms & Conditions", "terms-condition"))
-        moreList.add(MoreModel(R.drawable.ic_privacy, "Privacy Policy", "privacy-policy"))
-        moreList.add(MoreModel(R.drawable.ic_faq, "F.A.Q", "faq"))
-        moreList.add(MoreModel(R.drawable.ic_people, "Blocked Users", "blockedUsers"))
-        moreList.add(MoreModel(R.drawable.ic_trash, "Delete Account", "deleteAccount"))
-        moreList.add(MoreModel(R.drawable.ic_logout_outline, "Logout", "logout"))
+        moreList.add(MoreModel(R.drawable.ic_about_us, getString(R.string.about_us), "aboutUs"))
+        moreList.add(MoreModel(R.drawable.ic_outlined_message, getString(R.string.contact_us), "contactUs"))
+        moreList.add(MoreModel(R.drawable.ic_document, getString(R.string.sales_tax_exemption), "salesTax"))
+        moreList.add(MoreModel(R.drawable.ic_document, getString(R.string.terms_and_conditions), "terms-condition"))
+        moreList.add(MoreModel(R.drawable.ic_privacy, getString(R.string.privacy_policy_plain), "privacy-policy"))
+        moreList.add(MoreModel(R.drawable.ic_faq, getString(R.string.faq_label), "faq"))
+        moreList.add(MoreModel(R.drawable.ic_people, getString(R.string.blocked_users), "blockedUsers"))
+        moreList.add(MoreModel(R.drawable.ic_trash, getString(R.string.delete_account), "deleteAccount"))
+        moreList.add(MoreModel(R.drawable.ic_logout_outline, getString(R.string.logout), "logout"))
 
         moreAdapter = MoreAdapter(moreList, mClicks)
         bind.accountView.moreRecycler.adapter = moreAdapter
 
         accountGridList.clear()
-        accountGridList.add(MoreModel(R.drawable.ic_box, "Payment & Shipping", "paymentShipping"))
-        accountGridList.add(MoreModel(R.drawable.ic_location, "Addresses", "address"))
+        accountGridList.add(MoreModel(R.drawable.ic_box, getString(R.string.payment_shipping), "paymentShipping"))
+        accountGridList.add(MoreModel(R.drawable.ic_location, getString(R.string.addresses), "address"))
         accountGridList.add(
             MoreModel(
-                R.drawable.ic_identity_verification, "Trusted Buyer", "buyer"
+                R.drawable.ic_identity_verification, getString(R.string.trusted_buyer), "buyer"
             )
         )
-        accountGridList.add(MoreModel(R.drawable.notification, "Notifications", "notification"))
-        accountGridList.add(MoreModel(R.drawable.ic_tag_outline, "Preferences", "preferences"))
-        accountGridList.add(MoreModel(R.drawable.ic_heart, "Favourite", "favourite"))
-        accountGridList.add(MoreModel(R.drawable.ic_clip_new, "Clips", "clips"))
+        accountGridList.add(MoreModel(R.drawable.notification, getString(R.string.notifications), "notification"))
+        accountGridList.add(MoreModel(R.drawable.ic_tag_outline, getString(R.string.preferences), "preferences"))
+        accountGridList.add(MoreModel(R.drawable.ic_heart, getString(R.string.favourite), "favourite"))
+        accountGridList.add(MoreModel(R.drawable.ic_clip_new, getString(R.string.clips), "clips"))
 
         accountGridAdapter = GridAdapter(accountGridList, accountGridClick)
         bind.accountView.gridRecycler.adapter = accountGridAdapter

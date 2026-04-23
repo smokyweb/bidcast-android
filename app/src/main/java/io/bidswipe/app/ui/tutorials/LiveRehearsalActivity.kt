@@ -201,7 +201,7 @@ class LiveRehearsalActivity : BaseActivity() {
         }
 
         bind.cutButton.setHapticClickListener {
-            setResult(Activity.RESULT_OK)
+            setResult(RESULT_OK)
             finish()
         }
     }

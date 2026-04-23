@@ -13,45 +13,45 @@ import io.bidswipe.app.utils.loadUrl
 import io.bidswipe.app.utils.setHapticClickListener
 
 class ThumbnailTipsAdapter(
-	mList : MutableList<GetAllTipsResponse.Data.Tip?> , val type : String , val mClicks : RecyclerClicks ,
-) : BaseAdapter<GetAllTipsResponse.Data.Tip? , TitleItemBinding>(mList) {
+    mList: MutableList<GetAllTipsResponse.Data.Tip?>, val type: String, val mClicks: RecyclerClicks,
+) : BaseAdapter<GetAllTipsResponse.Data.Tip?, TitleItemBinding>(mList) {
 
-	override fun bindView(inflater : LayoutInflater , parent : ViewGroup) =
-		TitleItemBinding.inflate(inflater , parent , false)
+    override fun bindView(inflater: LayoutInflater, parent: ViewGroup) =
+        TitleItemBinding.inflate(inflater, parent, false)
 
-	override fun onBind(
-		holder : BaseViewHolder<TitleItemBinding> ,
-		position : Int ,
-		item : GetAllTipsResponse.Data.Tip? ,
-	) {
-		with(holder) {
+    override fun onBind(
+        holder: BaseViewHolder<TitleItemBinding>,
+        position: Int,
+        item: GetAllTipsResponse.Data.Tip?,
+    ) {
+        with(holder) {
 
             bind.root.setHapticClickListener {
-				mClicks.itemClick(position)
-			}
+                mClicks.itemClick(position)
+            }
 
-			/*if (type == "getStarted" || type == "tips") {
-				bind.next.isVisible = false
-			}*/
+            /*if (type == "getStarted" || type == "tips") {
+                bind.next.isVisible = false
+            }*/
 
-			if (type == "shipping") {
-				bind.root.background.setTint(ContextCompat.getColor(mCtx , R.color.background))
-			}
+            if (type == "shipping") {
+                bind.root.background.setTint(ContextCompat.getColor(mCtx, R.color.background))
+            }
 
-			bind.icon.loadUrl(mCtx , item?.icon.toString())
+            bind.icon.loadUrl(mCtx, item?.icon.toString())
 
-			/*if(type=="getStarted"){
-				bind.icon.backgroundTintList= ColorStateList.valueOf(ContextCompat.getColor(mCtx,clr.onSecondary))
-				bind.root.background.setTint(ContextCompat.getColor(mCtx , R.color.background))
-			}else{
-				bind.iconCard.setCardBackgroundColor(Color.parseColor(item?.color))
-			}*/
+            /*if(type=="getStarted"){
+                bind.icon.backgroundTintList= ColorStateList.valueOf(ContextCompat.getColor(mCtx,clr.onSecondary))
+                bind.root.background.setTint(ContextCompat.getColor(mCtx , R.color.background))
+            }else{
+                bind.iconCard.setCardBackgroundColor(Color.parseColor(item?.color))
+            }*/
 
-			bind.title.isVisible = false
+            bind.title.isVisible = false
 
-			bind.subTitle.text = item?.description
-			bind.title.text = item?.title
+            bind.subTitle.text = item?.description
+            bind.title.text = item?.title
 
-		}
-	}
+        }
+    }
 }

@@ -8,9 +8,7 @@
     <string name="account">Account</string>
     <string name="activity">Activity</string>
     <string name="add_another_product">Add another Product</string>
-    <string name="add_more_products">Add More Products</string>
     <string name="add_product">Add Product</string>
-    <string name="add_up_to_8_photos">Add up to 8 photos</string>
     <string name="add_variants">Add Variants</string>
     <string name="added_product">Added Product</string>
     <string name="allow_offers">Allow Offers</string>
@@ -38,7 +36,6 @@
     <string name="blocked_message">You cannot send messages to this chat.</string>
     <string name="describe_your_product">Describe your product</string>
     <string name="description">Description</string>
-    <string name="done">Done</string>
     <string name="email">Email</string>
     <string name="enable_allow_offers_to_let_buyers_offer_a_different_price_for_your_product_you_may_counter_accept_or_simply_decline_the_offer">Enable Allow Offers to let buyers offer a different price for your product. You may counter, accept, or simply decline the offer.</string>
     <string name="enter_code">Enter Code</string>
@@ -113,7 +110,6 @@
     <string name="sell">Sell</string>
     <string name="sell_on_bidswipe">Sell On Bidswipe</string>
     <string name="set_a_competitive_starting_price_that_will_attract_potential_buyers_a_well_priced_item_increases_your_chances_of_a_successful_sale_and_can_lead_to_better_bidding_activity">Set a competitive starting price that will attract potential buyers. A well-priced item increases your chances of a successful sale and can lead to better bidding activity.</string>
-    <string name="set_schedule">Set Schedule</string>
     <string name="setting_up_your_store">Setting up your store</string>
     <string name="share_amp_earn_reward"><![CDATA[Share & Earn Reward]]></string>
     <string name="shop">Shop</string>
@@ -161,9 +157,6 @@
     <string name="you_won_t_be_charged_unless_the_seller_accepts_your_offer">You won\'t be charged unless the seller accepts your offer</string>
     <string name="buy_now">Buy Now</string>
     <string name="make_offer">Make Offer</string>
-    <string name="condition">Condition</string>
-    <string name="location">Location</string>
-    <string name="posted">Posted</string>
     <string name="confirm_purchase">Confirm Purchase</string>
     <string name="new_orders">New Orders</string>
     <string name="completed">Completed</string>
@@ -245,7 +238,6 @@
     <string name="premier_shop">Premier Shop</string>
     <string name="promote_tools">Promote Tools</string>
     <string name="analytics">Analytics</string>
-    <string name="use_product_library">Use Product Library</string>
     <string name="follow">Follow</string>
     <string name="comming_soon">Coming Soon</string>
     <string name="street_address">Street Address</string>
@@ -266,12 +258,10 @@
     <string name="upload_your_id_card_amp_take_a_selfie"><![CDATA[Upload your ID card & take a selfie]]></string>
     <string name="selfie">Selfie</string>
     <string name="id_card">ID Card</string>
-    <string name="no_payment_method_added">No payment method added</string>
     <string name="manual_verification">Manual Verification</string>
     <string name="share">Share</string>
     <string name="start_now">Start Now</string>
     <string name="say_something">Say Something...</string>
-    <string name="more_option">More Option</string>
     <string name="verified_buyers">Verified Buyers</string>
     <string name="when_on_allows_bids_from_verified_buyers_only">When on, allows bids from verified buyers only</string>
     <string name="end_show">End Show</string>
@@ -300,7 +290,6 @@
     <string name="yes_notify_me">Yes, notify me</string>
     <string name="no_thanks">No, thanks</string>
     <string name="no_user_matches_the_name_entered">No user matches the name entered.</string>
-    <string name="save_product">Save Product</string>
     <string name="update">Update</string>
     <string name="search_products">Search Products..</string>
     <string name="users">Users</string>
@@ -325,7 +314,6 @@
     <string name="get_in_touch">Get in Touch</string>
     <string name="support_company_com">support@company.com</string>
     <string name="send_message">Send Message</string>
-    <string name="product_detail_description">Detailed product listings help buyers make informed decisions and increase your chances of making a sale.</string>
     <string name="select_from_product_inventory">Select from product Inventory</string>
     <!-- Strings used for fragments for navigation -->
     <string name="first_fragment_label">First Fragment</string>
@@ -358,7 +346,6 @@
     <string name="terms_of_service">  | <u>Terms of Service</u></string>
     <string name="select_media_type">Select Media Type</string>
     <string name="auction_settings">Auction Settings</string>
-    <string name="select_product_category">Select Product Category</string>
     <string name="select_country">Select Country</string>
     <string name="max_bid_amount">Max Bid Amount</string>
     <string name="select_live_seller_for_raid">Select Live Seller for Raid</string>
@@ -380,7 +367,6 @@
     <string name="create_a_surprise_set">Create a Surprise Set</string>
     <string name="create_surprise_set">Create Surprise Set</string>
     <string name="manage_products">Manage Products</string>
-    <string name="product_type">Product Type</string>
     <string name="shipping_profile">Shipping Profile</string>
     <string name="surprise_set_details">Surprise Set Details</string>
     <string name="buy_in_price">Buy-in-Price</string>
@@ -416,7 +402,55 @@
         &lt;/p&gt;
     </string>
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="deleting_your_account_is_irreversible_and_will_permanently_erase_all_your_data_this_action_cannot_be_undone_please_consider_carefully_before_proceeding">Deleting your account is irreversible and will permanently erase all your data. This action cannot be undone. Please consider carefully before proceeding.</string>
 
+
+    <string name="select_language">Select Language</string>
+        <string name="upcoming_shows">Upcoming Shows</string>
+        <string name="on_time_scan_rate">On-Time Scan Rate</string>
+        <string name="defect_free_order_rate">Defect-Free Order Rate</string>
+        <string name="policy_standing">Policy Standing</string>
+        <string name="payouts">Payouts</string>
+        <string name="total_orders">Total Orders</string>
+        <string name="create_show">Create Show</string>
+        <string name="create_product">Create Product</string>
+
+    <string name="contact_us">Contact Us</string>
+
+    <string name="sales_tax_exemption">Sales Tax Exemption</string>
+
+    <string name="terms_and_conditions">Terms &amp; Conditions</string>
+
+    <string name="privacy_policy_plain">Privacy Policy</string>
+
+    <string name="faq_label">F.A.Q</string>
+
+    <string name="blocked_users">Blocked Users</string>
+
+    <string name="delete_account">Delete Account</string>
+
+    <string name="logout">Logout</string>
+
+    <string name="addresses">Addresses</string>
+
+    <string name="trusted_buyer">Trusted Buyer</string>
+
+    <string name="notifications">Notifications</string>
+
+    <string name="preferences">Preferences</string>
+
+    <string name="favourite">Favourite</string>
+
+    <string name="seller_section">Seller</string>
+    <string name="promotion_section">Promotion</string>
+    <string name="performance_section">Performance</string>
+    <string name="settings_section">Settings</string>
+    <string name="seller_training">Seller Training</string>
+    <string name="seller_verification">Seller Verification</string>
+    <string name="identity_verification">Identity Verification</string>
+    <string name="inventory">Inventory</string>
+    <string name="my_orders">My Orders</string>
+    <string name="seller_analytics">Seller Analytics</string>
+    <string name="seller_tools">Seller Tools</string>
+    <string name="no_shows_found">No Shows Found</string>
 </resources>

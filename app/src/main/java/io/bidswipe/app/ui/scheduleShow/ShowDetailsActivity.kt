@@ -49,8 +49,8 @@ class ShowDetailsActivity : BaseActivity() {
 
     private var editShowLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            if (result.resultCode == Activity.RESULT_OK) {
-                bind.loader.isVisible=true
+            if (result.resultCode == RESULT_OK) {
+                bind.loader.isVisible = true
                 viewModel.getShowDetails(viewModel.showId.toString())
             }
         }
@@ -62,16 +62,21 @@ class ShowDetailsActivity : BaseActivity() {
 
         ViewCompat.setOnApplyWindowInsetsListener(window.decorView) { v, insets ->
             val system = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            bind.header.setHeaderPadding(resources.dpToPx(8), system.top, resources.dpToPx(8), resources.dpToPx(8))
+            bind.header.setHeaderPadding(
+                resources.dpToPx(8),
+                system.top,
+                resources.dpToPx(8),
+                resources.dpToPx(8)
+            )
             bind.root.setPadding(0, 0, 0, system.bottom)
             CONSUMED
         }
 
         viewModel.showId = intent?.getStringExtra("showId")
         if (!viewModel.showId.isNullOrEmpty()) {
-            bind.loader.isVisible=true
+            bind.loader.isVisible = true
             viewModel.getShowDetails(viewModel.showId.toString())
-        }else{
+        } else {
             errorToast("Something went wrong")
             finishAfterTransition()
         }
@@ -89,12 +94,12 @@ class ShowDetailsActivity : BaseActivity() {
 
             if (profile?.sellerIdentityStatus != "verified") {
                 startActivity(Intent(this, SellerVerificationActivity::class.java))
-	            return@setHapticClickListener
+                return@setHapticClickListener
             }
 
             if (profile.hasCardAdded != true || profile.hasShippingAddress != true) {
                 showPaymentAndAddressSheet()
-	            return@setHapticClickListener
+                return@setHapticClickListener
             }
 
             val user = showData?.user
@@ -102,7 +107,7 @@ class ShowDetailsActivity : BaseActivity() {
 
             if (products?.isEmpty() == true) {
                 errorToast("No products found for this Show")
-	            return@setHapticClickListener
+                return@setHapticClickListener
             } else {
                 products?.first()?.isCurrent = true
             }
@@ -114,7 +119,8 @@ class ShowDetailsActivity : BaseActivity() {
                     name = user?.name,
                     rating = user?.rating ?: ""
                 ),
-                products =showData?.products?.map { product -> product?.toLiveShowProduct() }?:emptyList(),
+                products = showData?.products?.map { product -> product?.toLiveShowProduct() }
+                    ?: emptyList(),
                 roomId = "live_room_${userId}_${showData?.id.toString()}",
                 showDetail = showData?.title ?: "",
                 thumbnail = showData?.thumbnail?.getOrNull(0) ?: "",
@@ -127,7 +133,7 @@ class ShowDetailsActivity : BaseActivity() {
                     productId = ""
                 ),
                 isLive = true,
-                time =showData?.time,
+                time = showData?.time,
                 showId = showData?.id.toString(),
                 allowBidForAll = true,
                 bidCountDown = "",
@@ -154,7 +160,7 @@ class ShowDetailsActivity : BaseActivity() {
                     bind.showTitle.text = showData?.title ?: "Show Details"
 
                     bind.repeat.text = showData?.repeatValue?.asCapital() ?: "N/A"
-                    bind.auctionType.text = showData?.auction?.name?:"N/A"
+                    bind.auctionType.text = showData?.auction?.name ?: "N/A"
                     bind.discoverability.text = (showData?.showDiscoverability ?: "").asCapital()
 
                     bind.explicitContent.text = if (showData?.isExplicit ?: false) "Yes" else "No"
@@ -201,16 +207,20 @@ class ShowDetailsActivity : BaseActivity() {
 
                         val products = showData?.products?.toMutableList() ?: mutableListOf()
 
-                        val productAdapter = InventoryAdapter(products, false, object : RecyclerClicks {
-                            override fun itemClick(pos: Int, status: String?) {
-                                startActivity(
-                                    Intent(this@ShowDetailsActivity, ProductDetailsActivity::class.java).putExtra(
-                                        "productId", products[pos]?.id.toString()
+                        val productAdapter =
+                            InventoryAdapter(products, false, object : RecyclerClicks {
+                                override fun itemClick(pos: Int, status: String?) {
+                                    startActivity(
+                                        Intent(
+                                            this@ShowDetailsActivity,
+                                            ProductDetailsActivity::class.java
+                                        ).putExtra(
+                                            "productId", products[pos]?.id.toString()
+                                        )
                                     )
-                                )
-                            }
+                                }
 
-                        }, "show_details")
+                            }, "show_details")
 
                         bind.recycler.adapter = productAdapter
                         bind.exSpace.text = buildString {
@@ -261,7 +271,12 @@ class ShowDetailsActivity : BaseActivity() {
 
         with(paymentAddressBind.addressItem) {
             val hasAddress = App.profileResponse.value?.hasShippingAddress == true
-            moreIcon.setImageDrawable(ContextCompat.getDrawable(this@ShowDetailsActivity, draw.ic_pencil))
+            moreIcon.setImageDrawable(
+                ContextCompat.getDrawable(
+                    this@ShowDetailsActivity,
+                    draw.ic_pencil
+                )
+            )
             moreIcon.rotation = 0f
 
             name.isVisible = hasAddress
@@ -291,7 +306,12 @@ class ShowDetailsActivity : BaseActivity() {
             val hasCard = App.profileResponse.value?.hasCardAdded == true
             iconCard.isVisible = hasCard
             expiryDate.isVisible = hasCard
-            moreIcon.setImageDrawable(ContextCompat.getDrawable(this@ShowDetailsActivity, draw.ic_pencil))
+            moreIcon.setImageDrawable(
+                ContextCompat.getDrawable(
+                    this@ShowDetailsActivity,
+                    draw.ic_pencil
+                )
+            )
             moreIcon.rotation = 0f
 
             if (hasCard) {

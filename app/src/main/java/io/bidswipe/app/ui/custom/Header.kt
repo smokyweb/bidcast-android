@@ -8,6 +8,7 @@ import androidx.annotation.DrawableRes
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.use
+import io.bidswipe.app.R
 import io.bidswipe.app.databinding.HeaderViewBinding
 import io.bidswipe.app.utils.clr
 import io.bidswipe.app.utils.draw
@@ -24,7 +25,12 @@ class Header @JvmOverloads constructor(
     init {
         context.theme.obtainStyledAttributes(attrs, styleable.Header, 0, 0).use {
 
-            setBackground(it.getColor(styleable.Header_backgroundColor, ContextCompat.getColor(context, clr.onPrimary)))
+            setBackgroundColor(
+                it.getColor(
+                    styleable.Header_backgroundColor,
+                    ContextCompat.getColor(context, R.color.onPrimary)
+                )
+            )
 
             setHeaderText(it.getString(styleable.Header_headerTitle) ?: "")
 
@@ -39,7 +45,7 @@ class Header @JvmOverloads constructor(
 
             // Set visibility of icons
             showPrimaryIcon(it.getBoolean(styleable.Header_showPrimaryIcon, false))
-         showBackButton(
+            showBackButton(
                 it.getBoolean(
                     styleable.Header_showBackButton,
                     true
@@ -49,7 +55,7 @@ class Header @JvmOverloads constructor(
     }
 
     fun setBackground(@ColorRes color: Int) {
-        bind.header.setBackgroundColor(color)
+        bind.header.setBackgroundColor(resources.getColor(color))
     }
 
     fun setHeaderText(title: String) {
@@ -102,7 +108,7 @@ class Header @JvmOverloads constructor(
         bind.header.setBackgroundColor(ContextCompat.getColor(context, color))
     }
 
-    fun setHeaderPadding(left:Int, top:Int, right: Int, bottom:Int){
+    fun setHeaderPadding(left: Int, top: Int, right: Int, bottom: Int) {
         bind.root.setPadding(left, top, right, bottom)
     }
 }

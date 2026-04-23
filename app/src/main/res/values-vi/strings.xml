@@ -9,9 +9,7 @@
     <string name="account">Tài khoản</string>
     <string name="activity">Hoạt động</string>
     <string name="add_another_product">Thêm sản phẩm khác</string>
-    <string name="add_more_products">Thêm nhiều sản phẩm hơn</string>
     <string name="add_product">Thêm sản phẩm</string>
-    <string name="add_up_to_8_photos">Thêm tối đa 8 ảnh</string>
     <string name="add_variants">Thêm biến thể</string>
     <string name="added_product">Đã thêm sản phẩm</string>
     <string name="allow_offers">Cho phép đề nghị</string>
@@ -35,7 +33,6 @@
     <string name="credits">Tín dụng</string>
     <string name="describe_your_product">Mô tả sản phẩm của bạn</string>
     <string name="description">Mô tả</string>
-    <string name="done">Hoàn tất</string>
     <string name="email">Thư điện tử</string>
     <string name="enable_allow_offers_to_let_buyers_offer_a_different_price_for_your_product_you_may_counter_accept_or_simply_decline_the_offer">Bật “Cho phép đề nghị” để người mua có thể đề xuất mức giá khác. Bạn có thể trả giá, chấp nhận hoặc từ chối.</string>
     <string name="enter_code">Nhập mã</string>
@@ -108,7 +105,6 @@
     <string name="sell">Bán</string>
     <string name="sell_on_bidswipe">Bán trên Bidswipe</string>
     <string name="set_a_competitive_starting_price_that_will_attract_potential_buyers_a_well_priced_item_increases_your_chances_of_a_successful_sale_and_can_lead_to_better_bidding_activity">Đặt giá khởi điểm cạnh tranh để thu hút người mua tiềm năng. Giá hợp lý tăng cơ hội bán thành công và thúc đẩy hoạt động đặt giá.</string>
-    <string name="set_schedule">Đặt lịch</string>
     <string name="setting_up_your_store">Thiết lập cửa hàng của bạn</string>
     <string name="share_amp_earn_reward"><![CDATA[Chia sẻ và nhận thưởng]]></string>
     <string name="shop">Cửa hàng</string>
@@ -156,9 +152,6 @@
     <string name="you_won_t_be_charged_unless_the_seller_accepts_your_offer">Bạn sẽ không bị tính phí trừ khi người bán chấp nhận đề nghị của bạn</string>
     <string name="buy_now">Mua ngay</string>
     <string name="make_offer">Đưa ra đề nghị</string>
-    <string name="condition">Điều kiện</string>
-    <string name="location">Vị trí</string>
-    <string name="posted">Đã đăng</string>
     <string name="confirm_purchase">Xác nhận mua hàng</string>
     <string name="send_as_a_gift">Gửi làm quà?</string>
     <string name="payment_method">Phương thức thanh toán</string>
@@ -240,7 +233,6 @@
     <string name="premier_shop">Cửa hàng cao cấp</string>
     <string name="promote_tools">Công cụ quảng bá</string>
     <string name="analytics">Phân tích</string>
-    <string name="use_product_library">Sử dụng thư viện sản phẩm</string>
     <string name="follow">Theo dõi</string>
     <string name="comming_soon">Sắp có</string>
     <string name="street_address">Địa chỉ đường</string>
@@ -261,7 +253,6 @@
     <string name="upload_your_id_card_amp_take_a_selfie"><![CDATA[Tải lên giấy tờ tùy thân và chụp ảnh selfie]]></string>
     <string name="selfie">Ảnh selfie</string>
     <string name="id_card">Giấy tờ tùy thân</string>
-    <string name="no_payment_method_added">Chưa thêm phương thức thanh toán</string>
     <string name="manual_verification">Xác minh thủ công</string>
     <string name="mic">Mic</string>
     <string name="zoom_in">Phóng to</string>
@@ -279,7 +270,6 @@
     <string name="yes_notify_me">Có, hãy thông báo cho tôi</string>
     <string name="no_thanks">Không, cảm ơn</string>
     <string name="no_user_matches_the_name_entered">Không có người dùng nào khớp với tên đã nhập.</string>
-    <string name="save_product">Lưu sản phẩm</string>
     <string name="update">Cập nhật</string>
     <string name="search_products">Tìm kiếm sản phẩm..</string>
     <string name="users">Người dùng</string>
@@ -289,7 +279,6 @@
     <string name="block_seller">Chặn người bán</string>
     <string name="set_as_default">Đặt làm mặc định</string>
     <string name="delete">Xóa</string>
-    <string name="product_detail_description">Danh sách sản phẩm chi tiết giúp người mua đưa ra quyết định và tăng cơ hội bán hàng của bạn.</string>
     <string name="select_from_product_inventory">Chọn từ kho sản phẩm</string>
     <string name="enter_referral_code">Nhập mã giới thiệu</string>
     <string name="overview">Tổng quan</string>
@@ -307,7 +296,6 @@
     <string name="account_health">Tình trạng tài khoản</string>
     <string name="select_media_type">Chọn loại phương tiện</string>
     <string name="auction_settings">Cài đặt đấu giá</string>
-    <string name="select_product_category">Chọn danh mục sản phẩm</string>
     <string name="select_country">Chọn quốc gia</string>
     <string name="max_bid_amount">Số tiền đặt giá tối đa</string>
     <string name="select_live_seller_for_raid">Chọn người bán đang phát trực tiếp để raid</string>
@@ -335,4 +323,147 @@
     <string name="after_each_product_sells_the_buyer_will_be_randomly_assigned_turn_off_if_you_want_to_randomize_manually">Sau mỗi sản phẩm được bán, người mua sẽ được gán ngẫu nhiên. Tắt nếu bạn muốn ngẫu nhiên thủ công.</string>
     <string name="description_optional">Mô tả (tùy chọn)</string>
     <string name="surprise_set">Bộ bất ngờ</string>
+
+
+    <!-- Added missing translations (fallback to default text) -->
+    <string name="play_pause">Play/Pause</string>
+    <string name="unmute">Unmute</string>
+    <string name="blocked_message">You cannot send messages to this chat.</string>
+    <string name="for_you_tile">For You</string>
+    <string name="see_all_categories_tile">See All&#10;Categories</string>
+    <string name="share">Share</string>
+    <string name="start_now">Start Now</string>
+    <string name="say_something">Say Something...</string>
+    <string name="verified_buyers">Verified Buyers</string>
+    <string name="when_on_allows_bids_from_verified_buyers_only">When on, allows bids from verified buyers only</string>
+    <string name="end_show">End Show</string>
+    <string name="broadcasting_options">Broadcasting Options</string>
+    <string name="create_poll">Create Poll</string>
+    <string name="create_poll_description">Engage your audience by creating a poll. Ask a question and let viewers vote!</string>
+    <string name="poll_question">Poll Question</string>
+    <string name="enter_poll_question">Enter your poll question here</string>
+    <string name="poll_options">Poll Options</string>
+    <string name="poll_duration">Poll Duration</string>
+    <string name="select_duration">Select duration (minutes)</string>
+    <string name="john_smith">John Smith</string>
+    <string name="clear_all">CLEAR ALL</string>
+    <string name="type_here">Type here...</string>
+        <string name="language">Ngôn ngữ</string>
+    <string name="report_seller">Report Seller</string>
+    <string name="submit_report">Submit Report</string>
+    <string name="tell_us_more">Tell us more</string>
+    <string name="write_something">Write Something</string>
+    <string name="would_you_like_to_notified_when_usrname_goes_live">Would you like to notified when @usrname goes live</string>
+    <string name="over_all">Over All</string>
+    <string name="livestream">Livestream</string>
+    <string name="trust">Trust</string>
+    <string name="get_in_touch">Get in Touch</string>
+    <string name="support_company_com">support@company.com</string>
+    <string name="send_message">Send Message</string>
+    <string name="first_fragment_label">First Fragment</string>
+    <string name="second_fragment_label">Second Fragment</string>
+    <string name="confirm">Confirm</string>
+    <string name="select_sub_categories_based_on_the_categories_you_chose_on_the_previous_page">Select Sub Categories based on the Categories you chose on the previous page</string>
+    <string name="choose_the_categories_you_re_interested_in_to_watch_related_shows">Choose the categories you’re interested in to watch related shows.</string>
+    <string name="select_next_product_for_auction">Select Next Product For Auction</string>
+    <string name="more_potential_buyers_can_plan_to_attend">More potential buyers can plan to attend</string>
+    <string name="play_video">Play video</string>
+    <string name="send_tip">Send Tip</string>
+    <string name="product_deleted">Product Deleted</string>
+    <string name="product_no_longer_available">This product is no longer available</string>
+    <string name="privacy_policy"><u>Privacy Policy</u></string>
+    <string name="terms_of_service">  | <u>Terms of Service</u></string>
+    <string name="get_notification">Get Notification</string>
+    <string name="add_payment_method_and_address">Add Payment Method and Address</string>
+    <string name="shipping_profile">Shipping Profile</string>
+    <string name="surprise_set_details">Surprise Set Details</string>
+    <string name="enter_price">Enter Price</string>
+    <string name="how_it_works_info">
+        &lt;p&gt;
+        Surprise items is a format where a set of items are each sold at random —
+        the buyer finds out which of the items they will receive live.
+        You can see all available items in this format in the Items tab.
+        &lt;/p&gt;
+
+        &lt;h3&gt;What To Expect?&lt;/h3&gt;
+
+        &lt;p&gt;Surprise Sets go through two main stages:&lt;/p&gt;
+
+        &lt;h4&gt;⏳ Filling + Running&lt;/h4&gt;
+        &lt;p&gt;
+        The excitement begins! This is the time when you can purchase a surprise item.
+        You can always see how many spots are left and what items have been sold.
+        &lt;/p&gt;
+
+        &lt;h4&gt;✅ Completed&lt;/h4&gt;
+        &lt;p&gt;
+        The sale is over. All of the available items have been sold and revealed,
+        and the seller will ship to you as soon as they can.
+        &lt;/p&gt;
+    </string>
+    <string name="deleting_your_account_is_irreversible_and_will_permanently_erase_all_your_data_this_action_cannot_be_undone_please_consider_carefully_before_proceeding">Deleting your account is irreversible and will permanently erase all your data. This action cannot be undone. Please consider carefully before proceeding.</string>
+
+    <string name="select_language">Chọn ngôn ngữ</string>
+
+    <string name="upcoming_shows">Chương trình sắp tới</string>
+
+    <string name="on_time_scan_rate">Tỷ lệ quét đúng hạn</string>
+
+    <string name="defect_free_order_rate">Tỷ lệ đơn hàng không lỗi</string>
+
+    <string name="policy_standing">Trạng thái tuân thủ chính sách</string>
+
+    <string name="payouts">Khoản thanh toán</string>
+
+    <string name="total_orders">Tổng đơn hàng</string>
+
+    <string name="create_show">Tạo chương trình</string>
+
+    <string name="create_product">Tạo sản phẩm</string>
+
+    <string name="contact_us">Liên hệ với chúng tôi</string>
+
+    <string name="sales_tax_exemption">Miễn thuế bán hàng</string>
+
+    <string name="terms_and_conditions">Điều khoản và điều kiện</string>
+
+    <string name="privacy_policy_plain">Chính sách quyền riêng tư</string>
+
+    <string name="faq_label">Câu hỏi thường gặp</string>
+
+    <string name="blocked_users">Người dùng bị chặn</string>
+
+    <string name="delete_account">Xóa tài khoản</string>
+
+    <string name="logout">Đăng xuất</string>
+
+    <string name="addresses">Địa chỉ</string>
+
+    <string name="trusted_buyer">Người mua đáng tin cậy</string>
+
+    <string name="notifications">Thông báo</string>
+
+    <string name="preferences">Tùy chọn</string>
+
+    <string name="favourite">Yêu thích</string>
+
+    <string name="seller_section">Người bán</string>
+
+    <string name="promotion_section">Khuyến mãi</string>
+
+    <string name="performance_section">Hiệu suất</string>
+
+    <string name="settings_section">Cài đặt</string>
+
+    <string name="seller_training">Đào tạo người bán</string>
+
+    <string name="seller_verification">Xác minh người bán</string>
+
+    <string name="identity_verification">Xác minh danh tính</string>
+
+    <string name="inventory">Kho hàng</string>
+
+    <string name="my_orders">Đơn hàng của tôi</string>
+
+    <string name="seller_analytics">Phân tích người bán</string>
 </resources>
