@@ -369,6 +369,46 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
                 }
             }
 
+            // MC task cmobr8v240061fjhgeiatidu7 — Android port of iOS fix
+            // cmo93i7ga: when the per-item timer runs out and the server emits
+            // auction_next_product, viewers were stuck on the expired item.
+            // The host-side (AgoraPublisherActivity) already handled this; the
+            // viewer-side (this fragment) did not subscribe, so nothing
+            // advanced. Now we pick up the emitted product and push it through
+            // the same update path the host's initial auction_started event uses.
+            socketManager?.onAuctionNExtProduct { json ->
+                runSafe {
+                    if (json.optString("room_id") != roomID) return@onAuctionNExtProduct
+                    requireActivity().runOnUiThread {
+                        // Server emits { room_id, product, source }. The existing
+                        // updateCurrentProductFromRoomState path expects a room
+                        // payload with a `products` array, so normalize the shape:
+                        // wrap the single product into a products array before
+                        // constructing the LiveShowModel.
+                        val productObj = json.optJSONObject("product")
+                        val wrapped = org.json.JSONObject().apply {
+                            put("room_id", json.optString("room_id"))
+                            if (productObj != null) {
+                                put("products", org.json.JSONArray().apply { put(productObj) })
+                            }
+                        }
+                        updateCurrentProductFromRoomState(LiveShowModel.fromJson(wrapped))
+                    }
+                }
+            }
+
+            socketManager?.onNextProductError { json ->
+                runSafe {
+                    if (json.optString("room_id") != roomID) return@onNextProductError
+                    requireActivity().runOnUiThread {
+                        val msg = json.optString("message").ifBlank {
+                            "Couldn't load the next item. Please wait for the host."
+                        }
+                        try { com.google.android.material.snackbar.Snackbar.make(requireView(), msg, com.google.android.material.snackbar.Snackbar.LENGTH_SHORT).show() } catch (_: Throwable) {}
+                    }
+                }
+            }
+
             socketManager?.getBidFinalize { json ->
                 finalizeBidUpdateUI(json)
             }
