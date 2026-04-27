@@ -7,6 +7,10 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.LinearLayout
+import android.Manifest
+import android.content.pm.PackageManager
+import android.os.Build
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.content.ContextCompat
@@ -121,9 +125,30 @@ class DashActivity : BaseActivity(), NavController.OnDestinationChangedListener 
 
     }
 
+    // Android 13+ requires explicit user grant for system notifications;
+    // FCM push notifications silently no-op until the user accepts.
+    private val notificationPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { granted ->
+        Log.d(TAG, "POST_NOTIFICATIONS granted=$granted")
+    }
+
+    private fun ensureNotificationPermission() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) return
+        val granted = ContextCompat.checkSelfPermission(
+            this,
+            Manifest.permission.POST_NOTIFICATIONS
+        ) == PackageManager.PERMISSION_GRANTED
+        if (!granted) {
+            notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(bind.root)
+
+        ensureNotificationPermission()
 
         ViewCompat.setOnApplyWindowInsetsListener(window.decorView) { _, insets ->
             val system = insets.getInsets(WindowInsetsCompat.Type.systemBars())
