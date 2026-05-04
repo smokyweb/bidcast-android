@@ -722,4 +722,13 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
     suspend fun saveShippingCosts(shippingCosts: RequestBody?, alsoApplyScheduleShow: RequestBody?,) = call { api.saveShippingCosts(shippingCosts ,alsoApplyScheduleShow) }
     suspend fun getShippingDetails() = call { api.getShippingDetails() }
 
+    // 2026-05-04 (MC cmordzx1s00cuf3hgkwnkkplg) Account Security parity with iOS
+    suspend fun changePassword(
+        currentPassword: RequestBody,
+        newPassword: RequestBody,
+        newPasswordConfirmation: RequestBody,
+    ) = call { api.changePassword(currentPassword, newPassword, newPasswordConfirmation) }
+
+    suspend fun deleteAccountRequest(reason: RequestBody?) = call { api.deleteAccountRequest(reason) }
+
 }

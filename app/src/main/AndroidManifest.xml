@@ -168,6 +168,10 @@
             android:name=".ui.more.TrustedBuyerActivity"
             android:exported="false" />
         <activity
+            android:name=".ui.more.AccountSecurityActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
             android:name=".ui.sellerHub.SellerVerificationActivity"
             android:exported="false" />
         <activity

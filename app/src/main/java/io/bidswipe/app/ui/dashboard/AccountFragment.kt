@@ -108,6 +108,7 @@ class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
             when (moreList[pos].slug) {
                 "logout" -> logoutDialog()
                 "aboutUs" -> handlePageUrl(DashViewModel.SLUG_ABOUT_US)
+                "accountSecurity" -> startActivity(Intent(mCtx, io.bidswipe.app.ui.more.AccountSecurityActivity::class.java))
                 "privacyPolicy" -> handlePageUrl(DashViewModel.SLUG_PRIVACY_POLICY)
                 "faq" -> handlePageUrl(DashViewModel.SLUG_FAQ)
                 "termsCondition" -> handlePageUrl(DashViewModel.SLUG_TERMS)
@@ -219,6 +220,8 @@ class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
         moreList.add(MoreModel(R.drawable.ic_privacy, "Privacy Policy", "privacy-policy"))
         moreList.add(MoreModel(R.drawable.ic_faq, "F.A.Q", "faq"))
         moreList.add(MoreModel(R.drawable.ic_people, "Blocked Users", "blockedUsers"))
+        // 2026-05-04 (MC cmordzx1s00cuf3hgkwnkkplg) Account Security parity with iOS
+        moreList.add(MoreModel(R.drawable.ic_privacy, "Account Security", "accountSecurity"))
         moreList.add(MoreModel(R.drawable.ic_logout_outline, "Logout", "logout"))
 
         moreAdapter = MoreAdapter(moreList, mClicks)
