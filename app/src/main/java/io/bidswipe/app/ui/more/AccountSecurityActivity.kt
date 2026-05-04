@@ -68,7 +68,7 @@ class AccountSecurityActivity : BaseActivity() {
                 }
                 else -> {
                     bind.loader.isVisible = true
-                    hideKeyboard(it)
+                    hideKeyboard()
                     viewModel.changePassword(
                         bind.currentPassword.value().request(),
                         bind.newPassword.value().request(),
