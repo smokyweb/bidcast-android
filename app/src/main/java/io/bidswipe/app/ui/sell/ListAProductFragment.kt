@@ -797,7 +797,10 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
                         false,
                         object : AlertClicks {
                             override fun primaryClick(dialog: AppBottomSheet) {
-                                activity?.setResult(RESULT_OK)
+                                val resultIntent = Intent().apply {
+                                    putExtra("updatedProduct", it.value.data)
+                                }
+                                activity?.setResult(RESULT_OK, resultIntent)
                                 finish()
                                 dialog.dismiss()
                             }

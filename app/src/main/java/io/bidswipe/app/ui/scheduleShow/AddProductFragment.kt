@@ -74,13 +74,28 @@ class AddProductFragment : BaseFragment<ScheduleShowViewModel, FragmentAddProduc
 		}
 	}
 
+	private val editProductLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+		if (result.resultCode == Activity.RESULT_OK) {
+			val updatedProduct = result.data?.getSerializableExtra("updatedProduct") as? Product
+			if (updatedProduct != null) {
+				val index = viewModel.currentProducts.indexOfFirst { it.id == updatedProduct.id }
+				if (index != -1) {
+					viewModel.currentProducts[index] = updatedProduct
+					productAdapter.notifyItemChanged(index)
+				}
+			}
+		}
+	}
+
 
 	private var mClick = object : RecyclerClicks {
 		override fun itemClick(pos: Int, status: String?) {
 			when (status) {
 
 				"edit" -> {
-					startActivity(mCtx.toListProduct().putExtra("product", viewModel.currentProducts[pos]))
+					editProductLauncher.launch(
+						mCtx.toListProduct().putExtra("product", viewModel.currentProducts[pos])
+					)
 				}
 
 				"delete" -> {
