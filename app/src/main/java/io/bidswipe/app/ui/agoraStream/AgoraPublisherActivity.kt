@@ -119,6 +119,11 @@ import java.io.FileOutputStream
 @SuppressLint("NotifyDataSetChanged")
 class AgoraPublisherActivity : BaseActivity() {
 
+    private companion object {
+        const val PRODUCT_SHEET_TAG = "PRODUCTS_FOR_LIVE_SHOW_SHEET"
+        const val FREEBIE_SHEET_TAG = "FREEBIE_PRODUCTS_FOR_LIVE_SHOW_SHEET"
+    }
+
     private val bind by bind(ActivityAgoraPublisherBinding::inflate)
 
     private val viewModel by viewModels<DashViewModel>()
@@ -1075,10 +1080,24 @@ class AgoraPublisherActivity : BaseActivity() {
     }
 
     private fun showProductSheet() {
-        val bottomSheetFragment = ProductsForLiveShowFragment().apply {
-            arguments = bundleOf("from" to "live_show", "auction_type_id" to liveShowData?.auctionTypeId, "live_status" to isShowLive)
+        if (isFinishing || isDestroyed) return
+
+        // Multiple socket/timer paths (bid finalize, countdown end, run-next ack/error)
+        // can request the product sheet within a short window. Guard against showing
+        // it more than once at a time.
+        val existing = supportFragmentManager.findFragmentByTag(PRODUCT_SHEET_TAG)
+        if (existing is ProductsForLiveShowFragment && (existing.isAdded || existing.isVisible)) {
+            return
         }
-        bottomSheetFragment.show(supportFragmentManager, "BOTTOM_SHEET_TAG")
+
+        val bottomSheetFragment = ProductsForLiveShowFragment().apply {
+            arguments = bundleOf(
+                "from" to "live_show",
+                "auction_type_id" to liveShowData?.auctionTypeId,
+                "live_status" to isShowLive
+            )
+        }
+        bottomSheetFragment.show(supportFragmentManager, PRODUCT_SHEET_TAG)
     }
 
     private fun initializeBuiltInProductQueue(products: List<LiveShowModel.Product?>?) {
@@ -1153,10 +1172,17 @@ class AgoraPublisherActivity : BaseActivity() {
     }
 
     private fun showFreebieStartSheet() {
+        if (isFinishing || isDestroyed) return
+
+        val existing = supportFragmentManager.findFragmentByTag(FREEBIE_SHEET_TAG)
+        if (existing is ProductsForLiveShowFragment && (existing.isAdded || existing.isVisible)) {
+            return
+        }
+
         val bottomSheetFragment = ProductsForLiveShowFragment().apply {
             arguments = bundleOf("from" to "freebie", "auction_type_id" to liveShowData?.auctionTypeId)
         }
-        bottomSheetFragment.show(supportFragmentManager, "BOTTOM_SHEET_TAG")
+        bottomSheetFragment.show(supportFragmentManager, FREEBIE_SHEET_TAG)
     }
 
     fun updateProductUI(auctionData: AuctionStartedResponse?) {
