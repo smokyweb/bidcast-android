@@ -146,7 +146,6 @@ class SearchUsers : BottomSheetDialogFragment() {
                     } else {
                         bind.noData.isVisible = false
                     }
-                    Log.d("TAG", "onViewCreated: $userList")
                     userAdapter.notifyDataSetChanged()
                     isLoading = false
 

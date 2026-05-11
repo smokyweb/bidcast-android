@@ -21,7 +21,6 @@ class TransactionHistoryAdapter(
 
 	override fun onBind(holder : BaseViewHolder<TransactionItemBinding> , position : Int , item : GetTransactionsHistoryResponse.Data?) {
 		with(holder) {
-			Log.d(TAG , "onBind: $item")
 			val titleText = when (item?.sourceType) {
 				"tip_amount" -> "Sent tip to ${item.receiver?.name}"
 				"account" -> if (item.type == "withdraw") "Payout" else if (item.type == "debited") "Debited" else ""

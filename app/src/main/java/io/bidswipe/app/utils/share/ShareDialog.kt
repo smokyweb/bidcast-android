@@ -141,7 +141,6 @@ class ShareDialog : BottomSheetDialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
-        Log.d("TAG", "onViewCreated: $payload")
 
         if (payload.type == "invite") {
             bind.chats.isVisible = false

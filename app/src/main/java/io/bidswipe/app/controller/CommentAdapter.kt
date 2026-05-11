@@ -39,7 +39,6 @@ class CommentAdapter(
 
 			bind.userName.text = item?.userName?.asCapital()
 			bind.userImage.loadUrl(mCtx, item?.userImage.toString())
-			Log.d(TAG, "onBind: $sellerId")
 			bind.message.text = if (item?.message?.contains("?") == true) {
 				buildSpannedString {
 					color(ContextCompat.getColor(mCtx, R.color.primary)) {

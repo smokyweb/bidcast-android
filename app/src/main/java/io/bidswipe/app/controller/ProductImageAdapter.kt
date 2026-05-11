@@ -39,7 +39,6 @@ class ProductImageAdapter(
                     existingPlayer.stop()
                     existingPlayer.release()
                 }
-                Log.d(TAG, "onBind: $item")
 
 
                 playerInstances[position] = newPlayer

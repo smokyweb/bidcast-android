@@ -275,7 +275,6 @@ class DashActivity : BaseActivity(), NavController.OnDestinationChangedListener 
         }
 
         getDeviceToken(this) {
-            Log.d(TAG, "onCreate: $it")
             viewModel.storeDeviceDetails(it.request())
         }
 

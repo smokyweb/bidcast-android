@@ -22,7 +22,6 @@ class SplashActivity : AppCompatActivity() {
 
 		val referrer = intent.data?.getQueryParameter("referrer")
 
-		Log.d("TAG", "onCreate: $referrer ")
 
 		if (referrer != null) {
 			referrerCode = referrer

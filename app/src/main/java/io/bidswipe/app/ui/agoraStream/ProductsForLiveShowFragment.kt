@@ -176,7 +176,6 @@ class ProductsForLiveShowFragment : BottomSheetDialogFragment() {
                     val chipId = chipGroup.checkedChipId
                     chipIndex = chipGroup.indexOfChild(chipGroup.findViewById(chipId))
 
-                    Log.d("TAG", "onViewCreated: AUCTION $auctionTypeId--$saleType--$chipIndex")
                     when (chipIndex) {
                         0 -> {
                             saleType = "auction"
@@ -404,7 +403,6 @@ class ProductsForLiveShowFragment : BottomSheetDialogFragment() {
 
                     viewModel.pinnedProducts.add(productId)
 
-                    Log.d("TAG", "pinnedProducts: ${viewModel.pinnedProducts}")
 
                     productList[selectedPos]?.selected = true
                     productAdapter.notifyItemChanged(selectedPos)
@@ -422,7 +420,6 @@ class ProductsForLiveShowFragment : BottomSheetDialogFragment() {
 
                         val productId = json.optString("product_id")
 
-                        Log.d("TAG", "pinnedProducts: ${viewModel.pinnedProducts}")
 
 
                         productList[selectedPos]?.selected = false

@@ -51,7 +51,6 @@ class InventoryAdapter(
 			bind.stockCount.isVisible = item?.status != "inactive"
 
 			bind.productName.text = item?.title?.asCapital()
-			Log.d(TAG, "onBind: ${item?.productCondition}")
 			bind.prodSubTitle.text = buildSpannedString {
 				if (item?.productCondition != null) {
 					append((item.productCondition.replace("_", " ")))

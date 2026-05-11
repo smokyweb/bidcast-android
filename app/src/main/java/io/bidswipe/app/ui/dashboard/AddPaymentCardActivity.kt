@@ -126,7 +126,6 @@ class AddPaymentCardActivity : BaseActivity() {
 					val strip = Stripe(this, BuildConfig.STRIPE_PK)
 					strip.createCardToken(mCard, null, null, object : ApiResultCallback<Token> {
 						override fun onSuccess(result: Token) {
-							Log.d(TAG, "onSuccess: $result.")
 							viewModel.addPaymentCard(result.id.request())
 						}
 

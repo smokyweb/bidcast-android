@@ -34,7 +34,6 @@ class InventoryFilterAdapter(
                 mClicks.itemClick(position, "open")
             }
 
-            Log.d(TAG, "onBind: CLCICKER ${item?.isOpened}")
 
             bind.innerLayout.isExpanded = item?.isOpened ?: false
 

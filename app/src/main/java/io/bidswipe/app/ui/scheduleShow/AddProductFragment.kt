@@ -50,7 +50,6 @@ class AddProductFragment : BaseFragment<ScheduleShowViewModel, FragmentAddProduc
 			val data = result.data
 			val selectedProducts = data?.getSerializableExtra("selectedProducts") as? ArrayList<Product>
 
-			Log.d(TAG, "$selectedProducts ")
 			selectedProducts?.forEach { data ->
 				if (!viewModel.currentProducts.any { existing -> existing.id == data.id }) {
 					viewModel.currentProducts.add(data)

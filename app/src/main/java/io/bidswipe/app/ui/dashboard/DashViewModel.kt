@@ -283,7 +283,6 @@ class DashViewModel @Inject constructor(
         search: RequestBody? = null,
         page: RequestBody? = null,
     ) = viewModelScope.launch {
-        Log.d("TAG", "getExploreLiveShow: CALLED $category")
         if (!networkMonitor.hasInternet()) {
             _getExploreLiveShowResponse.value = NO_INTERNET_ERROR
             return@launch

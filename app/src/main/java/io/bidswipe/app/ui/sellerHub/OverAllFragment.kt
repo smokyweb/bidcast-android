@@ -527,7 +527,6 @@ class OverAllFragment : BaseFragment<SellerHubViewModel, FragmentOverAllBinding>
         override fun onPostExecute(result: Boolean) {
             if (result) {
                 callback(true)
-                Log.d("FileDownload", "File downloaded successfully!")
                 Alerts.success(context, "File downloaded successfully!")
             } else {
                 callback(false)
