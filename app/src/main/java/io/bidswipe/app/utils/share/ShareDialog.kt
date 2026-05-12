@@ -53,6 +53,12 @@ object ShareHelper {
         type: String? = null,
         isLive: Boolean = false
     ) {
+        // Guard against duplicate share-sheet presentations when the host screen
+        // is restoring state or the user taps share again immediately after return.
+        if (fragmentManager.isStateSaved || fragmentManager.findFragmentByTag("CustomShareSheet") != null) {
+            return
+        }
+
         val payload = SharePayload(
             imageUrl = imageUrl,
             text = text,

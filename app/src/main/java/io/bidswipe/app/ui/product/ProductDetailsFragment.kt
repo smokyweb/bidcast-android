@@ -220,9 +220,11 @@ class ProductDetailsFragment : BaseFragment<ProductViewModel, FragmentProductDet
                     )
 
                     bind.share.setHapticClickListener {
-                        bind.loader.isVisible = true
+                        // Sharing here is a local UI flow, not an async network action.
+                        // Leaving the screen loader on makes the product detail screen look
+                        // like it re-entered an endless loop after the share sheet closes.
+                        bind.loader.isVisible = false
                         shareProduct(mData)
-
                     }
 
                     bind.chat.setHapticClickListener {
