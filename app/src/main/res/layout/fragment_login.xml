@@ -162,9 +162,12 @@
 		android:layout_width = "match_parent"
 		android:layout_height = "wrap_content"
 		android:layout_gravity = "bottom"
-		android:layout_margin = "@dimen/margin"
+		android:layout_marginHorizontal = "@dimen/margin"
+		android:layout_marginTop = "@dimen/margin"
+		android:layout_marginBottom = "32dp"
 		android:gravity = "center"
 		android:orientation = "horizontal"
+		android:paddingBottom = "8dp"
 		app:layout_constraintBottom_toBottomOf = "parent" >
 
 		<TextView
