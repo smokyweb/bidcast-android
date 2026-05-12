@@ -49,8 +49,8 @@ class ShowListingAdapter(
 			bind.time.text = buildString {
 				append(
 					Utils.getFormattedDateTime(
-						"yyyy-mm-dd",
-						"mm-dd-yyyy",
+						"yyyy-MM-dd",
+						"MM-dd-yyyy",
 						item?.date.toString()
 					)
 				)
