@@ -15,7 +15,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:showBackButton="true"
-        app:showPrimaryIcon="true"
+        app:showPrimaryIcon="false"
         app:primaryIconDrawable="@drawable/ic_vertical_menu"/>
 
     <ScrollView

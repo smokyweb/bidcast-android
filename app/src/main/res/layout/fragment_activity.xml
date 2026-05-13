@@ -17,7 +17,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:primaryIconDrawable="@drawable/notification"
         app:showBackButton="false"
-        app:showPrimaryIcon="true" />
+        app:showPrimaryIcon="false" />
 
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/tab_layout"

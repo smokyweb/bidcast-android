@@ -17,7 +17,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:primaryIconDrawable="@drawable/ic_menu"
         app:showBackButton="false"
-        app:showPrimaryIcon="true" />
+        app:showPrimaryIcon="false" />
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/swipeRefreshLayout"

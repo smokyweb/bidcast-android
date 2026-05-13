@@ -14,7 +14,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:primaryIconDrawable="@drawable/ic_vertical_menu"
         app:showBackButton="true"
-        app:showPrimaryIcon="true" />
+        app:showPrimaryIcon="false" />
 
     <androidx.core.widget.NestedScrollView
         android:id="@+id/nestedScrollView"
