@@ -97,11 +97,9 @@ class TrustedBuyerActivity : BaseActivity() {
 		viewModel.fetchBuyerIdentityRepo.observe(this) {
 			when (it) {
 				is Resource.Success -> {
-					runSafe {
-						bind.loader.isVisible = false
+					val mData = it.value.data
 
-						val mData = it.value.data
-
+					try {
 						if (mData?.image?.isNotEmpty() == true) {
 
 							bind.uploadLayout.isVisible = false
@@ -223,8 +221,19 @@ class TrustedBuyerActivity : BaseActivity() {
 
 								}
 							}
+						} else {
+							// No submission yet — show upload form
+							bind.uploadLayout.isVisible = true
+							bind.imgCard.isVisible = false
+							bind.submit.isVisible = true
 						}
+					} catch (e: Exception) {
+						// If image loading or UI update fails, log error and show user-friendly message
+						Alerts.log(TAG, "Failed to load buyer identity data: ${e.localizedMessage}")
+						Alerts.error(this, "Failed to load verification data. Please try again.")
 					}
+					// Always hide loader after processing, regardless of success or exception
+					bind.loader.isVisible = false
 				}
 
 				is Resource.Error -> {
@@ -247,11 +256,8 @@ class TrustedBuyerActivity : BaseActivity() {
 		viewModel.storeBuyerIdentityRepo.observe(this) {
 			when (it) {
 				is Resource.Success -> {
-					runSafe {
-						// ID upload successful — show pending verification status
-						bind.loader.isVisible = false
-
-						// Update UI to show pending verification state
+					try {
+						// ID upload successful — update UI to show pending verification status
 						bind.uploadLayout.isVisible = false
 						bind.imgCard.isVisible = true
 
@@ -280,8 +286,15 @@ class TrustedBuyerActivity : BaseActivity() {
 
 						bind.submit.isVisible = false
 
+						// Keep loader visible and reload to ensure pending status is reflected
+						bind.loader.isVisible = true
 						viewModel.fetchBuyerIdentity()
 
+					} catch (e: Exception) {
+						// If something fails during submission processing, hide loader and show error
+						Alerts.log(TAG, "Failed during ID submission confirmation: ${e.localizedMessage}")
+						bind.loader.isVisible = false
+						Alerts.error(this, "Failed to process submission. Please try again.")
 					}
 				}
 
