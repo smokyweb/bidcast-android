@@ -194,6 +194,8 @@ data class FetchOrderDetailResponse(
 
         @Keep
         data class ShippingAddress(
+            @SerializedName("address_line_2")
+            val addressLine2: String?,
             @SerializedName("city")
             val city: String?,
             @SerializedName("id")

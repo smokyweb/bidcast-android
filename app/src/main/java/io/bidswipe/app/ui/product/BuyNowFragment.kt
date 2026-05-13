@@ -10,7 +10,6 @@ import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
-import androidx.core.text.buildSpannedString
 import androidx.core.view.isVisible
 import androidx.navigation.fragment.findNavController
 import io.bidswipe.app.R
@@ -225,8 +224,12 @@ class BuyNowFragment : BaseFragment<ProductViewModel, FragmentBuyNowBinding>() {
                         addressList.addAll(mData)
 
                         bind.address.text =
-                            addressList.find { it?.isDefault == true }?.streetAddress
-                                ?: addressList[0]?.streetAddress
+                            (addressList.find { it?.isDefault == true } ?: addressList[0])?.let { addr ->
+                                io.bidswipe.app.utils.Utils.formatAddress(
+                                    streetAddress = addr.streetAddress,
+                                    addressLine2 = addr.addressLine2,
+                                )
+                            }
 
 
                         shippingId = addressList.find { it?.isDefault == true }?.id
@@ -544,8 +547,12 @@ class BuyNowFragment : BaseFragment<ProductViewModel, FragmentBuyNowBinding>() {
                         addressSheetBind.recycler.adapter?.notifyDataSetChanged()
 
                         bind.address.text =
-                            addressList.find { it?.isDefault == true }?.streetAddress
-                                ?: addressList[pos]?.streetAddress
+                            (addressList.find { it?.isDefault == true } ?: addressList[pos])?.let { addr ->
+                                io.bidswipe.app.utils.Utils.formatAddress(
+                                    streetAddress = addr.streetAddress,
+                                    addressLine2 = addr.addressLine2,
+                                )
+                            }
 
 
                         shippingId = addressList.find { it?.isDefault == true }?.id

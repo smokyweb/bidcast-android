@@ -36,10 +36,14 @@ class FreePickupFragment : BaseFragment<SellerHubViewModel, FragmentFreePickupBi
             status = viewModel.shippingDetails?.freePickup==true
             bind.freePickup.isChecked=viewModel.shippingDetails?.freePickup==true
             if (viewModel.shippingDetails?.shippingAddress != null) {
-                shippingAddress = """
-                            ${viewModel.shippingDetails?.shippingAddress?.name}
-                            ${viewModel.shippingDetails?.shippingAddress?.streetAddress}, ${viewModel.shippingDetails?.shippingAddress?.city}, ${viewModel.shippingDetails?.shippingAddress?.state} ${viewModel.shippingDetails?.shippingAddress?.pincode}
-                            """.trimIndent()
+                shippingAddress = Utils.formatAddress(
+                    name = viewModel.shippingDetails?.shippingAddress?.name,
+                    streetAddress = viewModel.shippingDetails?.shippingAddress?.streetAddress,
+                    addressLine2 = viewModel.shippingDetails?.shippingAddress?.addressLine2,
+                    city = viewModel.shippingDetails?.shippingAddress?.city,
+                    state = viewModel.shippingDetails?.shippingAddress?.state,
+                    pincode = viewModel.shippingDetails?.shippingAddress?.pincode,
+                )
             }
             bind.instruction.setText(viewModel.shippingDetails?.instruction )
         }else{
@@ -106,10 +110,14 @@ class FreePickupFragment : BaseFragment<SellerHubViewModel, FragmentFreePickupBi
     fun openAddressSheet() {
         val bottomSheetFragment = SelectAddressFragment { address ->
             selectedShippingAddressId = address?.id.toString()
-            val addressShow = """
-                            ${address?.name}
-                            ${address?.streetAddress}, ${address?.city}, ${address?.state} ${address?.pincode}
-                            """.trimIndent()
+            val addressShow = Utils.formatAddress(
+                name = address?.name,
+                streetAddress = address?.streetAddress,
+                addressLine2 = address?.addressLine2,
+                city = address?.city,
+                state = address?.state,
+                pincode = address?.pincode,
+            )
 
             bind.pickupaddress.setText(addressShow)
         }

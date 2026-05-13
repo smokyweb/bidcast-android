@@ -66,6 +66,8 @@ data class UserProfileResponse(
 
 		@Keep
 		data class DefaultShippingAddress(
+            @SerializedName("address_line_2")
+            val addressLine2 : String? ,
             @SerializedName("id")
             val id : Int? ,
             @SerializedName("is_default")

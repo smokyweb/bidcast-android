@@ -167,6 +167,31 @@ object Utils {
             file.asRequestBody("*/*".toMediaTypeOrNull())
         )
 
+    fun formatAddress(
+        name: String? = null,
+        streetAddress: String? = null,
+        addressLine2: String? = null,
+        city: String? = null,
+        state: String? = null,
+        pincode: String? = null,
+    ): String {
+        val lines = mutableListOf<String>()
+        name?.trim()?.takeIf { it.isNotEmpty() }?.let(lines::add)
+        streetAddress?.trim()?.takeIf { it.isNotEmpty() }?.let(lines::add)
+        addressLine2?.trim()?.takeIf { it.isNotEmpty() }?.let(lines::add)
+
+        val cityStateZip = listOfNotNull(
+            city?.trim()?.takeIf { it.isNotEmpty() },
+            state?.trim()?.takeIf { it.isNotEmpty() }
+        ).joinToString(", ") +
+            (pincode?.trim()?.takeIf { it.isNotEmpty() }?.let { zip ->
+                if (listOfNotNull(city?.trim()?.takeIf { it.isNotEmpty() }, state?.trim()?.takeIf { it.isNotEmpty() }).isEmpty()) zip else " $zip"
+            } ?: "")
+
+        cityStateZip.takeIf { it.isNotBlank() }?.let(lines::add)
+        return lines.joinToString("\n")
+    }
+
     fun getTimeAgo(time: String, format: String = Const.SERVER_TIME_FORMAT): String {
 
         val serverTime = time.ifEmpty { getSimpleDate(format).format(timestamp()).toString() }
