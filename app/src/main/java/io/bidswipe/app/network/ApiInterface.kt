@@ -336,6 +336,8 @@ interface ApiInterface {
         @Part("name") name: RequestBody?,
         @Part("phone_number") phoneNumber: RequestBody?,
         @Part("street_address") streetAddress: RequestBody?,
+        // MC sub-task cmp4932vk00l13mx1du6mmebo: optional 2nd address line.
+        @Part("address_line_2") addressLine2: RequestBody?,
         @Part("pincode") pinCode: RequestBody?,
         @Part("city") city: RequestBody?,
         @Part("state") state: RequestBody?,

@@ -152,6 +152,31 @@
 
             </com.google.android.material.textfield.TextInputLayout>
 
+            <!-- MC sub-task cmp4932vk00l13mx1du6mmebo: optional 2nd line
+                 (apartment / unit / suite). Hardcoded hint string here
+                 instead of adding a strings.xml entry to keep this patch
+                 confined to this layout file. -->
+            <TextView
+                style="@style/TitleSmall"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Apt / Suite / Unit (optional)" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/inputBoxStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/margin">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/addressLine2"
+                    style="@style/inputTextStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="e.g. Apt 4B" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
             <TextView
                 style="@style/TitleSmall"
                 android:layout_width="match_parent"

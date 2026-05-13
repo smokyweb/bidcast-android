@@ -109,6 +109,8 @@ class MoreViewModel @Inject constructor(
 		name: RequestBody?,
 		phoneNumber: RequestBody?,
 		streetAddress: RequestBody?,
+		// MC sub-task cmp4932vk00l13mx1du6mmebo: optional 2nd address line.
+		addressLine2: RequestBody?,
 		pinCode: RequestBody?,
 		city: RequestBody?,
 		state: RequestBody?,
@@ -118,7 +120,7 @@ class MoreViewModel @Inject constructor(
 			return@launch
 		}
 		_addShippingAddressResponse.value =
-			repo.addShippingAddress(type, name, phoneNumber, streetAddress, pinCode, city, state)
+			repo.addShippingAddress(type, name, phoneNumber, streetAddress, addressLine2, pinCode, city, state)
 	}
 
 	private var _getShippingAddressResponse =

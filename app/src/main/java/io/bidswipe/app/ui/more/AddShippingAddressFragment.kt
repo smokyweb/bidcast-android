@@ -133,11 +133,15 @@ selectedState=stateList[position]
 
 					val selectedText = selectedRadioButton.text
 
+					// MC sub-task cmp4932vk00l13mx1du6mmebo: optional 2nd address
+					// line. Empty -> send empty RequestBody so backend stores NULL.
+					val line2Text = bind.addressLine2.value()
 					viewModel.addShippingAddress(
 						type = selectedText.toString().request(),
 						name = bind.name.value().request(),
 						phoneNumber = bind.phoneNumber.value().request(),
 						streetAddress = bind.streetAddress.value().request(),
+						addressLine2 = line2Text.request(),
 						pinCode = bind.zipCode.value().request(),
 						city = bind.city.value().request(),
 						state = selectedState?.iso2?.request()

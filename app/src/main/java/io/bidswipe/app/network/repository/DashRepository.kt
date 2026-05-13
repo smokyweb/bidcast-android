@@ -199,6 +199,8 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
         name: RequestBody?,
         phoneNumber: RequestBody?,
         streetAddress: RequestBody?,
+        // MC sub-task cmp4932vk00l13mx1du6mmebo: optional 2nd address line.
+        addressLine2: RequestBody?,
         pinCode: RequestBody?,
         city: RequestBody?,
         state: RequestBody?,
@@ -208,6 +210,7 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
             name,
             phoneNumber,
             streetAddress,
+            addressLine2,
             pinCode,
             city,
             state
