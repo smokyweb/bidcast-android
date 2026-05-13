@@ -10,16 +10,6 @@
 	android:orientation = "horizontal"
 	android:padding = "12dp" >
 
-    <androidx.appcompat.widget.AppCompatImageView
-	    android:id = "@+id/image"
-	    android:layout_width = "48dp"
-	    android:layout_height = "48dp"
-	    android:layout_marginEnd = "@dimen/half_margin"
-	    android:layout_gravity="top"
-        android:background="@drawable/card_8"
-        android:backgroundTint="@color/primaryContainer"
-	    android:src = "@drawable/usps_logo" />
-
         <LinearLayout
 	        android:layout_width = "0dp"
 	        android:layout_height = "wrap_content"

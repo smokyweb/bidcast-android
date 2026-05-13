@@ -36,13 +36,13 @@ class DomesticShipmentsFragment : BaseFragment<SellerHubViewModel, FragmentDomes
 
         val shipmentList = mutableListOf(
             DomesticShipmentModel(
-                R.drawable.usps_logo,
+                null,
                 "USPS Priority Mail",
                 "Arrives in 1-3 business days. Best for time-sensitive shipments.",
                 isSelected = true
             ),
             DomesticShipmentModel(
-                R.drawable.usps_logo,
+                null,
                 "USPS Flat-Rate Boxes",
                 "Ships at a fixed rate within the United States, regardless of weight or distance.",
                 Const.BASE_URL
@@ -51,19 +51,19 @@ class DomesticShipmentsFragment : BaseFragment<SellerHubViewModel, FragmentDomes
 
         val shipment5List = mutableListOf(
             DomesticShipmentModel(
-                R.drawable.usps_logo,
+                null,
                 "USPS Priority Mail",
                 "Arrives in 1-3 business days. Best for time-sensitive shipments.",
                 isSelected = true
             ),
             DomesticShipmentModel(
-                R.drawable.usps_logo,
+                null,
                 "USPS Flat-Rate Boxes",
                 "Ships at a fixed rate within the United States, regardless of weight or distance.",
                 Const.BASE_URL
             ),
             DomesticShipmentModel(
-                R.drawable.usps_logo,
+                null,
                 "USPS Ground Advantage",
                 "Best for shipping heavier items that aren't time-sensitive.",
                 Const.BASE_URL

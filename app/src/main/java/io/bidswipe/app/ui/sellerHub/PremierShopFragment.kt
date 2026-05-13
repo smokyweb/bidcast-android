@@ -125,8 +125,6 @@ class PremierShopFragment : BaseFragment<SellerHubViewModel, FragmentPremierShop
 					// QA-FIX: delivery progress was using responseProg by mistake
 					bind.deliveryProgress.progress = deliveryProg
 
-					bind.reviewLogo.loadUrl(mCtx, mData?.reviewLogo ?: "")
-
 					bind.reviewTitle.text = mData?.reviewTitle
 //					bind.policyStanding.text = mData?.
 
