@@ -754,7 +754,7 @@ class SellerVerificationActivity : BaseActivity() {
                 bind.status.setTextColor(ContextCompat.getColor(this, R.color.warning))
                 bind.status.isVisible = true
                 bind.manualVerificationIcon.isVisible = false
-                bind.statusDescription.text = "Final review by our team"
+                bind.statusDescription.text = getString(R.string.verification_pending_backend_review)
                 bind.statusDescription.setTextColor(ContextCompat.getColor(this, R.color.onSurfaceVariant))
             }
 

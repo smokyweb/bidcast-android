@@ -1,5 +1,6 @@
 package io.bidswipe.app.ui.sellerHub
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -18,6 +19,7 @@ import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.utils.asMoney
 import io.bidswipe.app.utils.ids
 import io.bidswipe.app.utils.parse
+import io.bidswipe.app.utils.setHapticClickListener
 import io.bidswipe.app.utils.toSellerShow
 
 class ShowDetailsFragment : BaseFragment<SellerHubViewModel, FragmentShowDetailsBinding>() {
@@ -64,6 +66,12 @@ class ShowDetailsFragment : BaseFragment<SellerHubViewModel, FragmentShowDetails
 			} else {
 				successToast("Video is not available")
 			}
+		}
+
+		bind.analyticsView.setHapticClickListener {
+			startActivity(
+				Intent(mCtx, SellerHubActivity::class.java).putExtra("slug", "sellerAnalytics")
+			)
 		}
 
 		bind.loader.isVisible = true

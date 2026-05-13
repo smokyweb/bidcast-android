@@ -349,7 +349,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/half_margin"
-                tools:text="@string/buyer_verification_under_review" />
+                tools:text="@string/verification_pending_backend_review" />
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
 

@@ -256,11 +256,18 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
                 false
             )
             bind.price.setText(viewModel.productFormPrice)
-            bind.flashSell.isChecked = viewModel.productFormFlashSale
-            bind.acceptOffers.isChecked = viewModel.productFormAcceptOffers
-            bind.reserveForLive.isChecked = viewModel.productFormReserveForLive
             bind.isHazardous.isChecked = viewModel.isHazardous
             bind.condition.setText(viewModel.productCondition, false)
+
+            bind.tabs.post {
+                if (viewModel.productFormReserveForLive) {
+                    bind.tabs.getTabAt(1)?.select()
+                } else {
+                    bind.tabs.getTabAt(0)?.select()
+                    bind.flashSell.isChecked = viewModel.productFormFlashSale
+                    bind.acceptOffers.isChecked = viewModel.productFormAcceptOffers
+                }
+            }
 
             if (viewModel.productFormCategoryText.isNotEmpty()) {
                 if (subCategoryId.isNotEmpty()) {
@@ -307,7 +314,7 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
         viewModel.productFormPrice = bind.price.value()
         viewModel.productFormFlashSale = bind.flashSell.isChecked
         viewModel.productFormAcceptOffers = bind.acceptOffers.isChecked
-        viewModel.productFormReserveForLive = bind.reserveForLive.isChecked
+        viewModel.productFormReserveForLive = bind.tabs.selectedTabPosition == 1
         viewModel.isHazardous = bind.isHazardous.isChecked
         viewModel.productFormCategoryText = bind.category.text?.toString() ?: ""
         viewModel.productCondition = bind.condition.text?.toString() ?: ""
@@ -501,21 +508,26 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
 
         bind.tabs.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab?) {
-
                 bind.flashSell.isChecked = false
                 bind.acceptOffers.isChecked = false
-                bind.reserveForLive.isChecked = false
+
                 when (tab?.position) {
                     0 -> {
                         bind.acceptOffersLayout.isVisible = true
                         bind.flashLayout.isVisible = true
                         bind.reserveLayout.isVisible = false
+                        bind.reserveForLive.isEnabled = true
+                        bind.reserveForLive.isChecked = false
+                        viewModel.productFormReserveForLive = false
                     }
 
                     1 -> {
                         bind.acceptOffersLayout.isVisible = false
                         bind.flashLayout.isVisible = false
                         bind.reserveLayout.isVisible = true
+                        bind.reserveForLive.isEnabled = false
+                        bind.reserveForLive.isChecked = true
+                        viewModel.productFormReserveForLive = true
                     }
                 }
             }
@@ -1201,9 +1213,16 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
         selectedCondition = product?.productCondition.toString()
         bind.condition.setText(product?.productCondition?.replace("_", " ") ?: "", false)
         bind.price.setText((product?.pricing ?: ""))
-        bind.flashSell.isChecked = product?.flashSale == true
-        bind.acceptOffers.isChecked = product?.acceptOffers == true
-        bind.reserveForLive.isChecked = product?.reserveForLive == true
+        bind.tabs.post {
+            when {
+                product?.auction == true -> bind.tabs.getTabAt(1)?.select()
+                else -> {
+                    bind.tabs.getTabAt(0)?.select()
+                    bind.flashSell.isChecked = product?.flashSale == true
+                    bind.acceptOffers.isChecked = product?.acceptOffers == true
+                }
+            }
+        }
         bind.isHazardous.isChecked = product?.hazardousMaterial == true
         viewModel.shippingProfile = product?.shippingProfileId.toString()
 
@@ -1282,7 +1301,7 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
                 pricing = bind.price.value(),
                 flashSale = bind.flashSell.isChecked,
                 acceptOffers = bind.acceptOffers.isChecked,
-                reserveForLive = bind.reserveForLive.isChecked,
+                reserveForLive = bind.tabs.selectedTabPosition == 1,
                 shippingProfileId = profileId.ifEmpty { null },
                 status = type,
                 images = images,

@@ -292,13 +292,15 @@ class CreateProductFragment : BaseFragment<ScheduleShowViewModel, FragmentListAP
             override fun onTabSelected(tab: TabLayout.Tab?) {
                 bind.flashSell.isChecked = false
                 bind.acceptOffers.isChecked = false
-                bind.reserveForLive.isChecked = false
 
                 when (tab?.position) {
                     0 -> {
                         bind.acceptOffersLayout.isVisible = true
                         bind.flashLayout.isVisible = true
                         bind.reserveLayout.isVisible = false
+                        bind.reserveForLive.isEnabled = true
+                        bind.reserveForLive.isChecked = false
+                        viewModel.productFormReserveForLive = false
                         viewModel.productSalesFormat = "Buy It Now"
                     }
 
@@ -307,14 +309,10 @@ class CreateProductFragment : BaseFragment<ScheduleShowViewModel, FragmentListAP
                         bind.flashLayout.isVisible = false
                         bind.reserveLayout.isVisible = true
                         viewModel.productSalesFormat = "Auction"
-                        // Bug fix: selecting Auction tab must automatically set
-                        // reserveForLive = true so the product is correctly sent
-                        // to the backend as a live-auction item, not Buy Now.
-                        // Previously the checkbox was reset to false at the top
-                        // of onTabSelected and never re-checked, so every product
-                        // created from the Auction tab was submitted with
-                        // reserveForLive=false and appeared in the Buy Now section.
+                        // Auction listings are live-only; keep switch on and non-editable.
+                        bind.reserveForLive.isEnabled = false
                         bind.reserveForLive.isChecked = true
+                        viewModel.productFormReserveForLive = true
                     }
                 }
             }
@@ -870,7 +868,8 @@ class CreateProductFragment : BaseFragment<ScheduleShowViewModel, FragmentListAP
         viewModel.shippingProfile = profileId
         viewModel.productFormFlashSale = bind.flashSell.isChecked
         viewModel.productFormAcceptOffers = bind.acceptOffers.isChecked
-        viewModel.productFormReserveForLive = bind.reserveForLive.isChecked
+        // Tab 1 = Auction: always reserve for live (matches pricing tab, not switch timing).
+        viewModel.productFormReserveForLive = bind.tabs.selectedTabPosition == 1
 
         // QA fix: the category field is disabled on this screen because the product inherits
         // the show's category. clearProductData() resets productCategoryId, then calls

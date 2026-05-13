@@ -202,6 +202,7 @@
     <string name="verification_status">Estado de verificación</string>
     <string name="buyer_verification_not_submitted">No enviado</string>
     <string name="buyer_verification_under_review">En revisión</string>
+    <string name="verification_pending_backend_review">Nuestro equipo está revisando tu perfil. Será verificado en breve.</string>
     <string name="buyer_verification_rejected">Rechazado</string>
     <string name="please_upload_a_clear_photo_of_your_valid_government_issued_id_driver_s_license_or_passport">Por favor, sube una foto clara de tu identificación válida emitida por el gobierno (licencia de conducir o pasaporte).</string>
     <string name="tap_to_upload_your_id_photo">Toca para subir la foto de tu identificación</string>

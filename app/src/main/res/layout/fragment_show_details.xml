@@ -428,9 +428,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/margin"
-                android:gravity="center_vertical"
                 android:background="@drawable/card_8"
                 android:backgroundTint="@color/primaryContainer"
+                android:clickable="true"
+                android:contentDescription="@string/seller_analytics"
+                android:focusable="true"
+                android:gravity="center_vertical"
                 android:padding="12dp">
 
                 <androidx.appcompat.widget.AppCompatImageView

@@ -724,7 +724,7 @@
                             style="@style/BodySmall"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="Turn this on to make this product only purchasable within a show."
+                            android:text="Auction items are reserved for live shows only. This stays on while you are on the Auction tab."
                             android:textStyle="bold" />
 
                     </LinearLayout>
