@@ -21,6 +21,7 @@ import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.ui.product.ProductDetailsActivity
 import io.bidswipe.app.ui.sellerProfile.SellerProfileActivity
 import io.bidswipe.app.utils.Utils
+import io.bidswipe.app.utils.finish
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request
 
@@ -71,6 +72,10 @@ class PurchasesFragment : BaseFragment<DashViewModel, FragmentPurchasesBinding>(
     @SuppressLint("ClickableViewAccessibility")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        bind.header.onBackClick {
+            finish()
+        }
 
         setupFilterChips()
         purchasesAdapter = PurchasesAdapter(mList, mClick)
