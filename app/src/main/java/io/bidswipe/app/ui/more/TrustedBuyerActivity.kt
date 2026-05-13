@@ -197,7 +197,7 @@ class TrustedBuyerActivity : BaseActivity() {
 								}
 
 								else -> {
-
+									// Pending admin review — show clear pending status to user
 									bind.firstDivider.dividerColor =
 										ContextCompat.getColor(this, color.primary)
 									bind.secondCard.setCardBackgroundColor(
@@ -213,12 +213,23 @@ class TrustedBuyerActivity : BaseActivity() {
 										)
 									)
 
+									// Show "Pending" in step-3 circle and status label
+									bind.thirdText.text = getString(io.bidswipe.app.R.string.pending)
+									bind.finalStatus.text = getString(io.bidswipe.app.R.string.pending)
+									bind.finalStatus.setTextColor(
+										ContextCompat.getColor(this, color.primary)
+									)
+
 									bind.submit.isVisible = false
 
 								}
 							}
+						} else {
+							// No submission yet — show upload form
+							bind.uploadLayout.isVisible = true
+							bind.imgCard.isVisible = false
+							bind.submit.isVisible = true
 						}
-					}
 				}
 
 				is Resource.Error -> {
@@ -242,12 +253,13 @@ class TrustedBuyerActivity : BaseActivity() {
 			when (it) {
 				is Resource.Success -> {
 					runSafe {
-						bind.loader.isVisible = false
-
-						it.value.data
-
+						// Show confirmation so user knows submission was received;
+						// keep loader visible during the re-fetch that follows
+						Alerts.success(
+							this,
+							"Your ID has been submitted. Please wait while an admin verifies your account. You'll be notified once approved."
+						)
 						viewModel.fetchBuyerIdentity()
-
 					}
 				}
 
