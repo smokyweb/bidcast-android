@@ -361,6 +361,9 @@ class SellerVerificationActivity : BaseActivity() {
                     }
 
                     isPhoneVerified = sellerData?.numberOtpVerified == 1
+                    if (sellerData?.phoneNumber?.isNotBlank() == true) {
+                        phoneNumber = sellerData?.phoneNumber.orEmpty()
+                    }
 
                     when (sellerData?.status) {
 
@@ -486,6 +489,7 @@ class SellerVerificationActivity : BaseActivity() {
                         append("OTP has been sent to ******")
                         append(lastFour)
                     }
+                    bind.verifyNumberText.text = resolvedPhone
                     bind.editPhone.isVisible = true
                     bind.resend.isVisible = true
                     bind.phoneNumberLayout.isVisible = false
@@ -535,6 +539,9 @@ class SellerVerificationActivity : BaseActivity() {
                     bind.verifyOtp.isVisible = false
                     bind.verifyPhone.isVisible = false
                     bind.verificationPhoneIcon.isVisible = true
+                    if (phoneNumber.isNotBlank()) {
+                        bind.verifyNumberText.text = phoneNumber
+                    }
 
                 }
 
