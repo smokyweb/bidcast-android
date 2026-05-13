@@ -11,6 +11,7 @@ import android.view.ViewGroup
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.os.bundleOf
+import androidx.core.text.buildSpannedString
 import androidx.core.view.isVisible
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.navigation.fragment.findNavController

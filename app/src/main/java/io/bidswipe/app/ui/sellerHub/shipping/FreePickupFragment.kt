@@ -11,6 +11,7 @@ import io.bidswipe.app.base.BaseFragment
 import io.bidswipe.app.databinding.FragmentFreePickupBinding
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.ui.sellerHub.SellerHubViewModel
+import io.bidswipe.app.utils.Utils
 import io.bidswipe.app.utils.finish
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request
