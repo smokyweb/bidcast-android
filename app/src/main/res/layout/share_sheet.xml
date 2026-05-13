@@ -319,10 +319,9 @@
                                 android:layout_marginBottom="@dimen/dp4"
                                 android:id="@+id/invite_user_text"/>
 
-                            <androidx.appcompat.widget.AppCompatImageView
+                            <View
                                 android:layout_width="match_parent"
-                                android:layout_height="32dp"
-                                android:src="@drawable/app_icon"/>
+                                android:layout_height="32dp" />
 
                         </LinearLayout>
 
