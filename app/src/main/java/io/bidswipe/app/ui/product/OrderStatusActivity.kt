@@ -16,6 +16,7 @@ import io.bidswipe.app.network.response.GetOrderDetailsResponse
 import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.utils.Utils
 import io.bidswipe.app.utils.asCapital
+import io.bidswipe.app.utils.asMoney
 import io.bidswipe.app.utils.bind
 import io.bidswipe.app.utils.loadUrl
 import io.bidswipe.app.utils.parse
@@ -78,6 +79,17 @@ class OrderStatusActivity : BaseActivity() {
                         "MMM dd, yyyy, HH:mm",
                         mData?.createdAt.toString()
                     )
+
+                    val summary = mData?.summary
+                    val productPrice = summary?.productPrice ?: mData?.product?.pricing ?: 0.0
+                    val shippingCost = summary?.shippingCharge ?: 0.0
+                    val taxAmount = summary?.taxAmount ?: 0.0
+                    val total = summary?.total ?: (productPrice + shippingCost + taxAmount)
+
+                    bind.itemPrice.text = productPrice.toString().asMoney()
+                    bind.shippingCost.text = shippingCost.toString().asMoney()
+                    bind.taxAmount.text = taxAmount.toString().asMoney()
+                    bind.receiptTotal.text = total.toString().asMoney()
 
                     if (mData?.shippingTracking?.isNotEmpty() == true) {
                         statusItems.addAll(mData.shippingTracking)

@@ -278,6 +278,124 @@
                     style="@style/TitleLarge"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:text="Receipt Summary" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/half_margin"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        style="@style/BodyLarge"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="@dimen/margin"
+                        android:layout_weight="1"
+                        android:alpha="0.7"
+                        android:text="Item price" />
+
+                    <TextView
+                        android:id="@+id/itemPrice"
+                        style="@style/TitleMedium"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="$0.00" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/half_margin"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        style="@style/BodyLarge"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="@dimen/margin"
+                        android:layout_weight="1"
+                        android:alpha="0.7"
+                        android:text="Shipping" />
+
+                    <TextView
+                        android:id="@+id/shippingCost"
+                        style="@style/TitleMedium"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="$0.00" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/half_margin"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        style="@style/BodyLarge"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="@dimen/margin"
+                        android:layout_weight="1"
+                        android:alpha="0.7"
+                        android:text="Tax" />
+
+                    <TextView
+                        android:id="@+id/taxAmount"
+                        style="@style/TitleMedium"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="$0.00" />
+
+                </LinearLayout>
+
+                <com.google.android.material.divider.MaterialDivider
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginVertical="@dimen/half_margin"
+                    android:alpha="0.5" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        style="@style/TitleMedium"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="@dimen/margin"
+                        android:layout_weight="1"
+                        android:text="Total" />
+
+                    <TextView
+                        android:id="@+id/receiptTotal"
+                        style="@style/TitleLarge"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="$0.00" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                style="@style/shadowStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/half_margin"
+                android:background="@drawable/card_16"
+                android:gravity="center_vertical"
+                android:orientation="vertical"
+                android:padding="@dimen/margin">
+
+                <TextView
+                    style="@style/TitleLarge"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
                     android:drawablePadding="@dimen/half_margin"
                     android:text="Shipping Updates"
                     app:drawableStartCompat="@drawable/ic_shipping"

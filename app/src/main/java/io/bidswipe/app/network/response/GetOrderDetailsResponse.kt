@@ -53,11 +53,29 @@ data class GetOrderDetailsResponse(
 		val shippingTracking: List<ShippingTracking?>?,
 		@SerializedName("status")
 		val status: String?,
+		@SerializedName("summary")
+		val summary: Summary?,
 		@SerializedName("user")
 		val user: User?,
 		@SerializedName("user_id")
 		val userId: Int?,
 	) {
+		@Keep
+		data class Summary(
+			@SerializedName("product_price")
+			val productPrice: Double?,
+			@SerializedName("shipping_charge")
+			val shippingCharge: Double?,
+			@SerializedName("tax_percent")
+			val taxPercent: Double?,
+			@SerializedName("tax_amount")
+			val taxAmount: Double?,
+			@SerializedName("sub_total")
+			val subTotal: Double?,
+			@SerializedName("total")
+			val total: Double?,
+		)
+
 		@Keep
 		data class GiftUser(
 			@SerializedName("bio")
