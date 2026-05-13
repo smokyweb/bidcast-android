@@ -50,6 +50,8 @@ import io.bidswipe.app.utils.value
 @SuppressLint("NotifyDataSetChanged", "InflateParams")
 class ProductDetailsFragment : BaseFragment<ProductViewModel, FragmentProductDetailsBinding>() {
 
+    private var launchedExternalShare = false
+
     override fun getModel(): Class<ProductViewModel> = ProductViewModel::class.java
 
     override fun getBind(inflater: LayoutInflater, view: ViewGroup?) =
@@ -223,6 +225,7 @@ class ProductDetailsFragment : BaseFragment<ProductViewModel, FragmentProductDet
                         // Sharing here is a local UI flow, not an async network action.
                         // Leaving the screen loader on makes the product detail screen look
                         // like it re-entered an endless loop after the share sheet closes.
+                        launchedExternalShare = true
                         bind.loader.isVisible = false
                         shareProduct(mData)
                     }
@@ -359,6 +362,15 @@ class ProductDetailsFragment : BaseFragment<ProductViewModel, FragmentProductDet
 
                 else -> {}
             }
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        if (launchedExternalShare) {
+            bind.loader.isVisible = false
+            launchedExternalShare = false
         }
     }
 

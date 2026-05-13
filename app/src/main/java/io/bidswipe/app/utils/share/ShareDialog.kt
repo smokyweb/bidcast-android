@@ -234,13 +234,16 @@ class ShareDialog : BottomSheetDialogFragment() {
                         val clipboard = context?.getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
                         val clip = ClipData.newPlainText("share_text", payload.shareText)
                         clipboard.setPrimaryClip(clip)
+                        dismiss()
                     } else {
                         val info = targets[pos].resolveInfo
                         if (info != null) {
+                            dismissAllowingStateLoss()
                             shareTo(info)
+                        } else {
+                            dismiss()
                         }
                     }
-                    dismiss()
                 }
             })
 
