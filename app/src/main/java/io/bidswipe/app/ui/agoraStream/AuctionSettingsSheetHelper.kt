@@ -14,6 +14,8 @@ import io.bidswipe.app.utils.value
 
 object AuctionSettingsSheetHelper {
 
+    private const val MIN_STARTING_BID = 1.0
+
     data class Result(
         val startingBid: String,
         val requiredTimeSeconds: Int,
@@ -90,12 +92,19 @@ object AuctionSettingsSheetHelper {
 
         binding.close.setHapticClickListener { sheet.dismiss() }
 
+
+
+
+
         binding.suddenDeath.setOnCheckedChangeListener { _, isChecked ->
             binding.counterTimerLayout.isVisible = !isChecked
             if (isChecked) selectedCounterTimer = 0
         }
 
         binding.start.setHapticClickListener {
+            val startingBidText = binding.startingBid.value()
+            val startingBidValue = startingBidText.toDoubleOrNull()
+
             when {
                 selectedRequiredTime == 0 -> {
                     Alerts.error(context, "Please select required time")
@@ -107,15 +116,25 @@ object AuctionSettingsSheetHelper {
                     return@setHapticClickListener
                 }
 
-                binding.startingBid.value().isEmpty() -> {
+                startingBidText.isEmpty() -> {
                     Alerts.error(context, "Please enter starting bid")
+                    return@setHapticClickListener
+                }
+
+                startingBidValue == null -> {
+                    Alerts.error(context, "Please enter a valid starting bid")
+                    return@setHapticClickListener
+                }
+
+                startingBidValue < MIN_STARTING_BID -> {
+                    Alerts.error(context, "Starting bid must be at least \$${MIN_STARTING_BID.toInt()}")
                     return@setHapticClickListener
                 }
 
                 else -> {
                     onConfirm(
                         Result(
-                            startingBid = binding.startingBid.value(),
+                            startingBid = startingBidText,
                             requiredTimeSeconds = selectedRequiredTime,
                             counterTimerSeconds = selectedCounterTimer,
                             suddenDeath = binding.suddenDeath.isChecked

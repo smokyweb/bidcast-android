@@ -501,7 +501,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
                         isFollowing = obj.optBoolean("is_followed")
 
-                        bind.follow.isVisible = !obj.optBoolean("is_followed")
+                        updateFollowUi()
 
                         followSheetRunnable = Runnable {
                             if (isFollowing) {
@@ -783,13 +783,21 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
                 is Resource.Success -> {
                     bind.loader.isVisible = false
 
-                    isFollowing = true
+                    // The follow-unfollow API toggles the relationship.
+                    // Prefer the new state from the response; fall back to toggling locally.
+                    isFollowing = it.value.data?.status ?: !isFollowing
 
-                    bind.follow.isVisible = false
+                    updateFollowUi()
 
-                    bind.enterFreebie.text = "Enter Freebie"
+                    Alerts.success(
+                        mCtx,
+                        if (isFollowing) "Followed successfully" else "Unfollowed successfully"
+                    )
 
-                    if (bind.freebieEntryLayout.isVisible && freebieUsers.none { it?.id.toString() == userId }) {
+                    if (isFollowing &&
+                        bind.freebieEntryLayout.isVisible &&
+                        freebieUsers.none { user -> user?.id.toString() == userId }
+                    ) {
                         bind.freebieEntryLayout.isVisible = false
                         bind.notesFreebieLayout.isVisible = true
                         socketManager?.enterInFreebie(roomID, userId)
@@ -2135,7 +2143,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
                 }
             })
 
-        sellerInfoSheetBinding.follow.isVisible = !isFollowing
+        sellerInfoSheetBinding.follow.text = if (isFollowing) "Following" else "Follow"
 
         sellerInfoSheetBinding.userName.text = data.sellerDetails?.username ?: ""
         sellerInfoSheetBinding.rating.text = (data.ratingAvg ?: 0).toString()
@@ -2151,6 +2159,14 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
         }
 
         sellerInfoSheet.show()
+    }
+
+    private fun updateFollowUi() {
+        runSafe {
+            bind.follow.text = if (isFollowing) "Following" else "Follow"
+            bind.enterFreebie.text =
+                if (isFollowing) "Enter Freebie" else "Follow Host & Enter Freebie"
+        }
     }
 
     private fun followSheet() {
