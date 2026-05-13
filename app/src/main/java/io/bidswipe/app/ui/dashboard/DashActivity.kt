@@ -388,7 +388,7 @@ class DashActivity : BaseActivity(), NavController.OnDestinationChangedListener 
                     return
                 }
                 if (App.checkKycResponse.value?.kycStatus != "active") {
-                    verificationDialog()
+                    Alerts.kycDialog(this@DashActivity)
                     return
                 }
                 if (profile.hasCardAdded != true || profile.hasShippingAddress != true) {
