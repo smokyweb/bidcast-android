@@ -194,7 +194,7 @@ class TrustedBuyerActivity : BaseActivity() {
 								}
 
 								else -> {
-
+									// "pending" or other status — show pending verification message
 									bind.firstDivider.dividerColor =
 										ContextCompat.getColor(this, color.primary)
 									bind.secondCard.setCardBackgroundColor(
@@ -207,6 +207,15 @@ class TrustedBuyerActivity : BaseActivity() {
 										ContextCompat.getColor(
 											this,
 											color.background
+										)
+									)
+
+									// Show clear pending status message to user
+									bind.finalStatus.text = "Pending Admin Verification"
+									bind.finalStatus.setTextColor(
+										ContextCompat.getColor(
+											this,
+											color.primary
 										)
 									)
 
@@ -239,9 +248,37 @@ class TrustedBuyerActivity : BaseActivity() {
 			when (it) {
 				is Resource.Success -> {
 					runSafe {
+						// ID upload successful — show pending verification status
 						bind.loader.isVisible = false
 
-						it.value.data
+						// Update UI to show pending verification state
+						bind.uploadLayout.isVisible = false
+						bind.imgCard.isVisible = true
+
+						// Show clear pending status message to user
+						bind.firstDivider.dividerColor =
+							ContextCompat.getColor(this, color.primary)
+						bind.secondCard.setCardBackgroundColor(
+							ColorStateList.valueOf(
+								ContextCompat.getColor(this, color.primary)
+							)
+						)
+						bind.secondText.setTextColor(
+							ContextCompat.getColor(
+								this,
+								color.background
+							)
+						)
+
+						bind.finalStatus.text = "Your ID has been submitted.\nPlease wait while an admin verifies your account.\nYou'll be notified once approved."
+						bind.finalStatus.setTextColor(
+							ContextCompat.getColor(
+								this,
+								color.primary
+							)
+						)
+
+						bind.submit.isVisible = false
 
 						viewModel.fetchBuyerIdentity()
 
