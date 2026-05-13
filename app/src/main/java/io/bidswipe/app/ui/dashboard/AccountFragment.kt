@@ -416,7 +416,7 @@ class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
                         bind.sellerHub.time.text = buildString {
                             append(
                                 Utils.getFormattedDateTime(
-                                    "yyyy-mm-dd", "mm-dd-yyyy", item.date ?: ""
+                                    "yyyy-MM-dd", "MM-dd-yyyy", item.date ?: ""
                                 )
                             )
                             append(" ")
