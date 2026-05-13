@@ -302,6 +302,14 @@ class CreateProductFragment : BaseFragment<ScheduleShowViewModel, FragmentListAP
                         bind.flashLayout.isVisible = false
                         bind.reserveLayout.isVisible = true
                         viewModel.productSalesFormat = "Auction"
+                        // Bug fix: selecting Auction tab must automatically set
+                        // reserveForLive = true so the product is correctly sent
+                        // to the backend as a live-auction item, not Buy Now.
+                        // Previously the checkbox was reset to false at the top
+                        // of onTabSelected and never re-checked, so every product
+                        // created from the Auction tab was submitted with
+                        // reserveForLive=false and appeared in the Buy Now section.
+                        bind.reserveForLive.isChecked = true
                     }
                 }
             }
