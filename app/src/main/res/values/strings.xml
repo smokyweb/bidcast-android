@@ -204,6 +204,10 @@
     <string name="review">Review</string>
     <string name="to_become_a_trusted_buyer_we_need_to_verify_your_identity_this_helps_create_a_safe">To become a Trusted Buyer, we need to verify your identity. This helps create a safe</string>
     <string name="verified">Verified</string>
+    <string name="verification_status">Verification status</string>
+    <string name="buyer_verification_not_submitted">Not submitted</string>
+    <string name="buyer_verification_under_review">Under review</string>
+    <string name="buyer_verification_rejected">Rejected</string>
     <string name="please_upload_a_clear_photo_of_your_valid_government_issued_id_driver_s_license_or_passport">Please upload a clear photo of your valid government-issued ID (driver\'s license or passport).</string>
     <string name="tap_to_upload_your_id_photo">Tap to Upload your Id photo</string>
     <string name="choose_file">Choose File</string>

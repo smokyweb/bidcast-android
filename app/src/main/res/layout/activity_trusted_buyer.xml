@@ -16,10 +16,11 @@
         app:showBackButton="true" />
 
     <androidx.core.widget.NestedScrollView
+        android:id="@+id/nestedScroll"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginBottom="@dimen/margin"
-        app:layout_constraintBottom_toTopOf="@id/submit"
+        android:layout_marginBottom="@dimen/half_margin"
+        app:layout_constraintBottom_toTopOf="@id/verificationStatusCard"
         app:layout_constraintTop_toBottomOf="@id/header">
 
         <LinearLayout
@@ -319,6 +320,38 @@
         </LinearLayout>
 
     </androidx.core.widget.NestedScrollView>
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/verificationStatusCard"
+        style="@style/cardStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/margin"
+        android:layout_marginBottom="@dimen/half_margin"
+        app:layout_constraintBottom_toTopOf="@id/submit"
+        app:layout_constraintTop_toBottomOf="@id/nestedScroll">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="@dimen/margin">
+
+            <TextView
+                style="@style/TitleMedium"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/verification_status" />
+
+            <TextView
+                android:id="@+id/verificationStatusValue"
+                style="@style/BodyLarge"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/half_margin"
+                tools:text="@string/buyer_verification_under_review" />
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/submit"

@@ -9,9 +9,11 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsCompat.CONSUMED
 import androidx.core.view.isVisible
+import io.bidswipe.app.R
 import io.bidswipe.app.R.color
 import io.bidswipe.app.base.BaseActivity
 import io.bidswipe.app.databinding.ActivityTrustedBuyerBinding
+import io.bidswipe.app.network.response.GetBuyerIdentityResponse
 import io.bidswipe.app.interfaces.AlertClicks
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.ui.custom.AppBottomSheet
@@ -101,6 +103,7 @@ class TrustedBuyerActivity : BaseActivity() {
 						bind.loader.isVisible = false
 
 						val mData = it.value.data
+						updateVerificationStatusBar(mData)
 
 						if (mData?.image?.isNotEmpty() == true) {
 
@@ -265,6 +268,51 @@ class TrustedBuyerActivity : BaseActivity() {
 			}
 		}
 
+	}
+
+	private fun updateVerificationStatusBar(mData: GetBuyerIdentityResponse.Data?) {
+		val raw = mData?.status?.trim()?.lowercase()
+		val statusKey = when {
+			raw.isNullOrBlank() || raw == "null" -> null
+			else -> raw
+		}
+		when (statusKey) {
+			"verified" -> {
+				bind.verificationStatusValue.setText(R.string.verified)
+				bind.verificationStatusValue.setTextColor(
+					ContextCompat.getColor(this, color.primary)
+				)
+			}
+			"rejected" -> {
+				bind.verificationStatusValue.setText(R.string.buyer_verification_rejected)
+				bind.verificationStatusValue.setTextColor(
+					ContextCompat.getColor(this, color.error)
+				)
+			}
+			"pending" -> {
+				bind.verificationStatusValue.setText(R.string.buyer_verification_under_review)
+				bind.verificationStatusValue.setTextColor(
+					ContextCompat.getColor(this, color.onSurfaceVariant)
+				)
+			}
+			null -> {
+				if (mData == null) {
+					bind.verificationStatusValue.setText(R.string.buyer_verification_not_submitted)
+				} else {
+					bind.verificationStatusValue.setText(R.string.buyer_verification_under_review)
+				}
+				bind.verificationStatusValue.setTextColor(
+					ContextCompat.getColor(this, color.onSurfaceVariant)
+				)
+			}
+			else -> {
+				bind.verificationStatusValue.text =
+					statusKey.replaceFirstChar { c -> c.uppercase() }
+				bind.verificationStatusValue.setTextColor(
+					ContextCompat.getColor(this, color.onSurfaceVariant)
+				)
+			}
+		}
 	}
 
 }
