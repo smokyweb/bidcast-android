@@ -1,11 +1,13 @@
 package io.bidswipe.app.ui.sellerHub
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
@@ -54,10 +56,34 @@ class ShowsFragment : BaseFragment<SellerHubViewModel, FragmentShowsBinding>() {
 	private var page = 1
 	private var isLoading = false
 
+	// FIX (MC cmp5wk6ap01bqm61h4hizl8hh): Refresh upcoming shows when user returns
+	// from ScheduleShowActivity (new show) or ShowDetailsActivity (edit existing).
+	private val scheduleShowLauncher =
+		registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+			if (result.resultCode == Activity.RESULT_OK) {
+				page = 1
+				bind.loader.isVisible = true
+				viewModel.getMyScheduledShow("upcoming".request(), page.toString().request())
+				if (bind.tabs.selectedTabPosition != 0) {
+					bind.tabs.getTabAt(0)?.select()
+				}
+			}
+		}
+
+	private val showDetailsLauncher =
+		registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+			if (result.resultCode == Activity.RESULT_OK) {
+				page = 1
+				bind.loader.isVisible = true
+				val requestType = if (bind.tabs.selectedTabPosition == 0) "upcoming" else "past"
+				viewModel.getMyScheduledShow(requestType.request(), page.toString().request())
+			}
+		}
+
 	private val mClicks = object : RecyclerClicks {
 		override fun itemClick(pos: Int, status: String?) {
 			if (bind.tabs.selectedTabPosition == 0) {
-				startActivity(Intent(mCtx, ShowDetailsActivity::class.java).putExtra("showId", showList[pos]?.id.toString()))
+				showDetailsLauncher.launch(Intent(mCtx, ShowDetailsActivity::class.java).putExtra("showId", showList[pos]?.id.toString()))
 			} else {
 
 				val profile = App.profileResponse.value
@@ -204,7 +230,7 @@ class ShowsFragment : BaseFragment<SellerHubViewModel, FragmentShowsBinding>() {
 		})
 
 		bind.addNewProduct.setHapticClickListener {
-			startActivity(mCtx.toScheduleShow(from = "dash"))
+			scheduleShowLauncher.launch(mCtx.toScheduleShow(from = "dash"))
 		}
 
 		bind.loader.isVisible = true

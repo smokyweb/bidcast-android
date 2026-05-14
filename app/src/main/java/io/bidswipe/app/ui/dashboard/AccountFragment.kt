@@ -477,6 +477,17 @@ class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
 
     }
 
+    // FIX (MC cmp5wk6ap01bqm61h4hizl8hh): Refresh seller hub data (including the
+    // upcoming shows preview) every time the seller returns to this screen.
+    // Previously the API call only fired in onViewCreated(), so a newly-scheduled
+    // show would not appear in the preview card until the user force-reloaded
+    // (e.g. by tapping 'View All' and coming back). Moving the refresh to
+    // onResume() ensures the preview is always current.
+    override fun onResume() {
+        super.onResume()
+        viewModel.getSellerHubInfo()
+    }
+
     override fun onDestroyView() {
         bind.tabs.removeOnTabSelectedListener(onTabSelectedListener)
         super.onDestroyView()
