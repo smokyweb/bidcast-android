@@ -35,6 +35,8 @@ class VideoReceiptPlayerFragment : BaseFragment<ProductViewModel, FragmentVideoR
 	private var areSubtitlesEnabled = false
 	private var soundButton: MaterialButton? = null
 	private var captionButton: MaterialButton? = null
+	private var skipBackButton: android.widget.ImageButton? = null
+	private var skipForwardButton: android.widget.ImageButton? = null
 
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		super.onViewCreated(view, savedInstanceState)
@@ -95,6 +97,8 @@ class VideoReceiptPlayerFragment : BaseFragment<ProductViewModel, FragmentVideoR
 			controllerView?.let { layout ->
 				soundButton = layout.findViewById(R.id.btnSound)
 				captionButton = layout.findViewById(R.id.btnCaption)
+				skipBackButton = layout.findViewById(R.id.btnSkipBack)
+				skipForwardButton = layout.findViewById(R.id.btnSkipForward)
 
 				soundButton?.setHapticClickListener {
 					toggleMute()
@@ -102,6 +106,20 @@ class VideoReceiptPlayerFragment : BaseFragment<ProductViewModel, FragmentVideoR
 
 				captionButton?.setHapticClickListener {
 					toggleSubtitles()
+				}
+
+				skipBackButton?.setOnClickListener {
+					exoPlayer?.let { player ->
+						val newPos = (player.currentPosition - 10_000L).coerceAtLeast(0L)
+						player.seekTo(newPos)
+					}
+				}
+
+				skipForwardButton?.setOnClickListener {
+					exoPlayer?.let { player ->
+						val newPos = (player.currentPosition + 10_000L).coerceAtMost(player.duration.coerceAtLeast(0L))
+						player.seekTo(newPos)
+					}
 				}
 
 				updateSoundButtonState()
@@ -186,6 +204,8 @@ class VideoReceiptPlayerFragment : BaseFragment<ProductViewModel, FragmentVideoR
 		exoPlayer = null
 		soundButton = null
 		captionButton = null
+		skipBackButton = null
+		skipForwardButton = null
 	}
 
 	override fun onPause() {
