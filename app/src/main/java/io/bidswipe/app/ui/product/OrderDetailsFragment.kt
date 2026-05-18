@@ -89,6 +89,7 @@ class OrderDetailsFragment : BaseFragment<ProductViewModel, FragmentOrderDetails
             val clipboard = context?.getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
             val clip = ClipData.newPlainText("label", bind.orderId.text)
             clipboard.setPrimaryClip(clip)
+            android.widget.Toast.makeText(mCtx, "Copied!", android.widget.Toast.LENGTH_SHORT).show()
         }
 
         bind.userProfile.setHapticClickListener {
