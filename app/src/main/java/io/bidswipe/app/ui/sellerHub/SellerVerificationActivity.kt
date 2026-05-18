@@ -664,7 +664,11 @@ class SellerVerificationActivity : BaseActivity() {
 
     private fun updateStepper() {
 
-        val kycActive = App.checkKycResponse.value?.kycStatus == "active"
+        // #43: treat both "active" and "pending" as done for UI purposes.
+        // When status is "pending" the user has completed KYC; backend review is in progress.
+        // Showing the "Verify" button again after submission is confusing.
+        val kycStatus = App.checkKycResponse.value?.kycStatus
+        val kycActive = kycStatus == "active" || kycStatus == "pending"
         var idDone = false
         val phoneDone = isPhoneVerified
         val paymentDone = paymentCardId.isNotEmpty()
@@ -731,11 +735,11 @@ class SellerVerificationActivity : BaseActivity() {
         bind.kycCheck.isVisible = step3Enabled && kycActive
 //        bind.kycDescription.isVisible = step3Enabled
 
-        log("ACTIVE $kycActive")
-        bind.kycDescription.text = if (kycActive) {
-            "KYC verified successfully"
-        } else {
-            "Stripe identity verification(KYC) to start selling."
+        log("ACTIVE $kycActive (status=$kycStatus)")
+        bind.kycDescription.text = when {
+            kycStatus == "active" -> "KYC verified successfully"
+            kycStatus == "pending" -> "KYC verification is pending — we'll notify you once reviewed."
+            else -> "Stripe identity verification(KYC) to start selling."
         }
         bind.kycDescription.setTextColor(
             ContextCompat.getColor(
