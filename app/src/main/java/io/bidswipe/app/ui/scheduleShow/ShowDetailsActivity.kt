@@ -89,6 +89,14 @@ class ShowDetailsActivity : BaseActivity() {
             editShowLauncher.launch(toScheduleShow(from = "dash", showId = viewModel.showId))
         }
 
+        // #49 — wire Promote button → PromoteToolsFragment
+        bind.promoteShow.setHapticClickListener {
+            startActivity(
+                Intent(this, io.bidswipe.app.ui.sellerHub.SellerHubActivity::class.java)
+                    .putExtra("slug", "promote")
+            )
+        }
+
         bind.startShow.setHapticClickListener {
             val profile = App.profileResponse.value
 
