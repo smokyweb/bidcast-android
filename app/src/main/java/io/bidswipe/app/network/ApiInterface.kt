@@ -204,6 +204,15 @@ interface ApiInterface {
     @GET("api/get-FAQ")
     suspend fun getFAQ(): FAQResponse
 
+    // #41: Tax Exemption — mirror of iOS Wave 4 /api/tax-exemption/apply
+    @Multipart
+    @POST("api/tax-exemption/apply")
+    suspend fun applyTaxExemption(
+        @Part("state") state: RequestBody?,
+        @Part("exemption_type") exemptionType: RequestBody?,
+        @Part certificate: MultipartBody.Part?,
+    ): CommonResponse
+
     @Multipart
     @POST("api/contact-us")
     suspend fun contactUs(

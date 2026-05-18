@@ -348,5 +348,21 @@ class MoreViewModel @Inject constructor(
 		_getCouponResponse.value = repo.getCoupon()
 	}
 
+	// #41: Tax Exemption
+	private var _applyTaxExemptionResponse = MutableLiveData<Resource<CommonResponse>>()
+	val applyTaxExemptionRepo: MutableLiveData<Resource<CommonResponse>>
+		get() = _applyTaxExemptionResponse
+
+	fun applyTaxExemption(
+		state: okhttp3.RequestBody?,
+		exemptionType: okhttp3.RequestBody?,
+		certificate: okhttp3.MultipartBody.Part?,
+	) = viewModelScope.launch {
+		if (!networkMonitor.hasInternet()) {
+			_applyTaxExemptionResponse.value = NO_INTERNET_ERROR
+			return@launch
+		}
+		_applyTaxExemptionResponse.value = repo.applyTaxExemption(state, exemptionType, certificate)
+	}
 
 }

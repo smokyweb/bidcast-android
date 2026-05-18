@@ -397,8 +397,40 @@ class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
             )
         }
 
-        bind.sellerHub.vacationMode.setOnCheckedChangeListener { _, status ->
-            viewModel.updateVacationModeStatus(status.toString().request())
+        // #35: Wrap vacation mode toggle in a confirmation dialog
+        bind.sellerHub.vacationMode.setOnCheckedChangeListener { compoundButton, isChecked ->
+            // Temporarily block the change — we'll revert if user cancels
+            compoundButton.setOnCheckedChangeListener(null)
+            compoundButton.isChecked = !isChecked
+            val titleRes = if (isChecked) "Enable Vacation Mode" else "Disable Vacation Mode"
+            val msgRes = if (isChecked)
+                "Enable vacation mode? Buyers will not be able to purchase your items while vacation mode is on."
+            else
+                "Disable vacation mode? Your listings will become available for purchase again."
+            AppBottomSheet(
+                requireActivity(),
+                io.bidswipe.app.R.drawable.ic_information,
+                titleRes,
+                msgRes,
+                primaryBtnText = "Confirm",
+                secondaryBtnText = "Cancel",
+                canCancel = true,
+                showSecondary = true,
+                alertType = AlertType.WARNING,
+                clicks = object : AlertClicks {
+                    override fun primaryClick(dialog: AppBottomSheet) {
+                        dialog.dismiss()
+                        compoundButton.isChecked = isChecked
+                        viewModel.updateVacationModeStatus(isChecked.toString().request())
+                        // Restore listener after state change
+                        restoreVacationModeListener(compoundButton)
+                    }
+                    override fun secondaryClick(dialog: AppBottomSheet) {
+                        dialog.dismiss()
+                        // Revert: leave toggle at !isChecked (already set above)
+                        restoreVacationModeListener(compoundButton)
+                    }
+                }).show()
         }
 
         bind.accountView.coupons.setOnClickListener { p0 ->
@@ -585,16 +617,12 @@ class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
             moreIcon.rotation = 0f
 
             if (hasCard) {
-                cardNumber.text = buildString {
-                    append("•••• •••• •••• ")
-                    append(App.profileResponse.value?.defaultCard?.last4)
-                }
-
-                expiryDate.text = buildString {
-                    append(App.profileResponse.value?.defaultCard?.expMonth)
-                    append("/")
-                    append(App.profileResponse.value?.defaultCard?.expYear)
-                }
+                // #44: use orEmpty() / let to avoid printing "null" when fields are missing
+                val last4 = App.profileResponse.value?.defaultCard?.last4.orEmpty()
+                val expM = App.profileResponse.value?.defaultCard?.expMonth?.toString().orEmpty()
+                val expY = App.profileResponse.value?.defaultCard?.expYear?.toString().orEmpty()
+                cardNumber.text = if (last4.isNotEmpty()) "•••• •••• •••• $last4" else "•••• •••• •••• ••••"
+                expiryDate.text = if (expM.isNotEmpty()) "$expM/$expY" else ""
 
             } else {
                 cardNumber.text = buildString {
@@ -680,5 +708,40 @@ class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
             }
         ).show()
 
+    }
+
+    /** Restore the vacation mode listener after dialog dismissal (#35) */
+    private fun restoreVacationModeListener(compoundButton: android.widget.CompoundButton) {
+        compoundButton.setOnCheckedChangeListener { btn, isChecked ->
+            compoundButton.setOnCheckedChangeListener(null)
+            compoundButton.isChecked = !isChecked
+            val titleRes = if (isChecked) "Enable Vacation Mode" else "Disable Vacation Mode"
+            val msgRes = if (isChecked)
+                "Enable vacation mode? Buyers will not be able to purchase your items while vacation mode is on."
+            else
+                "Disable vacation mode? Your listings will become available for purchase again."
+            AppBottomSheet(
+                requireActivity(),
+                io.bidswipe.app.R.drawable.ic_information,
+                titleRes,
+                msgRes,
+                primaryBtnText = "Confirm",
+                secondaryBtnText = "Cancel",
+                canCancel = true,
+                showSecondary = true,
+                alertType = AlertType.WARNING,
+                clicks = object : AlertClicks {
+                    override fun primaryClick(dialog: AppBottomSheet) {
+                        dialog.dismiss()
+                        btn.isChecked = isChecked
+                        viewModel.updateVacationModeStatus(isChecked.toString().request())
+                        restoreVacationModeListener(btn)
+                    }
+                    override fun secondaryClick(dialog: AppBottomSheet) {
+                        dialog.dismiss()
+                        restoreVacationModeListener(btn)
+                    }
+                }).show()
+        }
     }
 }
