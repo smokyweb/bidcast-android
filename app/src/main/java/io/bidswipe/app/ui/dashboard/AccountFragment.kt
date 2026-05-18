@@ -601,16 +601,12 @@ class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
             moreIcon.rotation = 0f
 
             if (hasCard) {
-                cardNumber.text = buildString {
-                    append("•••• •••• •••• ")
-                    append(App.profileResponse.value?.defaultCard?.last4)
-                }
-
-                expiryDate.text = buildString {
-                    append(App.profileResponse.value?.defaultCard?.expMonth)
-                    append("/")
-                    append(App.profileResponse.value?.defaultCard?.expYear)
-                }
+                // #44: use orEmpty() / let to avoid printing "null" when fields are missing
+                val last4 = App.profileResponse.value?.defaultCard?.last4.orEmpty()
+                val expM = App.profileResponse.value?.defaultCard?.expMonth?.toString().orEmpty()
+                val expY = App.profileResponse.value?.defaultCard?.expYear?.toString().orEmpty()
+                cardNumber.text = if (last4.isNotEmpty()) "•••• •••• •••• $last4" else "•••• •••• •••• ••••"
+                expiryDate.text = if (expM.isNotEmpty()) "$expM/$expY" else ""
 
             } else {
                 cardNumber.text = buildString {
