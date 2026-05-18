@@ -18,4 +18,9 @@
     <cache-path
         name="cached_images"
         path="." />
+
+    <!-- Receipts downloaded for in-app PDF viewing -->
+    <cache-path
+        name="receipts"
+        path="receipts/" />
 </paths>
