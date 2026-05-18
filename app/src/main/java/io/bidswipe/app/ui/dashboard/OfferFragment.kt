@@ -31,17 +31,24 @@ class OfferFragment : BaseFragment<DashViewModel, FragmentOfferBinding>() {
 	override fun getBind(inflater: LayoutInflater, view: ViewGroup?) = FragmentOfferBinding.inflate(inflater, view, false)
 
 	private lateinit var offersAdapter: OffersAdapter
+
+	// #38: Combined list containing both buyer-placed bids and seller-received bids.
+	// A null item acts as a section separator rendered by OffersAdapter as a header row.
 	private var mList = mutableListOf<GetOffersResponse.Data?>()
 
 	private var page = 1
 	private var isLoading = false
+	private var sellerPage = 1
+	private var isSellerLoading = false
 
 	private var mClick = object : RecyclerClicks {
 		override fun itemClick(pos: Int, status: String?) {
+			if (pos < 0 || pos >= mList.size) return
+			val item = mList[pos] ?: return // null = section header, not clickable
 			startActivity(
 				Intent(mCtx, ProductDetailsActivity::class.java).putExtra(
 					"productId",
-					mList[pos]?.productId.toString()
+					item.productId.toString()
 				)
 			)
 		}
@@ -58,7 +65,9 @@ class OfferFragment : BaseFragment<DashViewModel, FragmentOfferBinding>() {
 			bind.loader.isVisible = true
 			bind.noInternet.isVisible = false
 			page = 1
+			sellerPage = 1
 			viewModel.offerList(page.toString().request(), "user".request())
+			viewModel.sellerOfferList(sellerPage.toString().request())
 		}
 
 		bind.recycler.addOnScrollListener(object : RecyclerView.OnScrollListener() {
@@ -80,8 +89,12 @@ class OfferFragment : BaseFragment<DashViewModel, FragmentOfferBinding>() {
 		bind.loader.isVisible = true
 
 		viewModel.offerList(page.toString().request(), "user".request())
+		// #38: Also load seller-received bids so the Offers tab shows bids placed ON the
+		// user's items, not just bids the user has placed themselves.
+		viewModel.sellerOfferList(sellerPage.toString().request())
+
 		viewModel.offerListRepo.observe(viewLifecycleOwner) { it ->
-			viewModel.isViewPagerDataLoaded.value=true
+			viewModel.isViewPagerDataLoaded.value = true
 			when (it) {
 				is Resource.Success -> {
 					val mData = it.value.data
@@ -89,13 +102,19 @@ class OfferFragment : BaseFragment<DashViewModel, FragmentOfferBinding>() {
 					bind.bottomLoader.isVisible = false
 					bind.loader.isVisible = false
 
-					if (page == 1) mList.clear()
+					if (page == 1) {
+						// Clear only buyer-side items (everything before the null separator)
+						val sepIdx = mList.indexOfFirst { item -> item == null }
+						if (sepIdx == -1) mList.clear() else mList.subList(0, sepIdx).clear()
+					}
 
 					if (mData?.isNotEmpty() == true) {
-						it.value.data.forEach {
-							if (it != null) {
-								mList.add(it)
-							}
+						val insertAt = run {
+							val sep = mList.indexOfFirst { item -> item == null }
+							if (sep == -1) mList.size else sep
+						}
+						mData.filterNotNull().forEachIndexed { i, offer ->
+							mList.add(insertAt + i, offer)
 						}
 					}
 
@@ -110,7 +129,6 @@ class OfferFragment : BaseFragment<DashViewModel, FragmentOfferBinding>() {
 					offersAdapter.notifyDataSetChanged()
 
 					isLoading = page >= (it.value.totalPage ?: 0)
-
 				}
 
 				is Resource.Error -> {
@@ -125,19 +143,40 @@ class OfferFragment : BaseFragment<DashViewModel, FragmentOfferBinding>() {
 						it.parse(mCtx, TAG, object : AlertClicks {
 							override fun primaryClick(dialog: AppBottomSheet) {
 								dialog.dismiss()
-
 							}
 
 							override fun secondaryClick(dialog: AppBottomSheet) {
 								dialog.dismiss()
-
 							}
 						})
 					}
 				}
 
 				else -> {}
+			}
+		}
 
+		// #38: Observe seller-received bids and append them after buyer bids.
+		viewModel.sellerOfferListRepo.observe(viewLifecycleOwner) { it ->
+			when (it) {
+				is Resource.Success -> {
+					val mData = it.value.data
+					if (!mData.isNullOrEmpty()) {
+						// Remove any existing seller section (null separator + items after it)
+						val sepIdx = mList.indexOfFirst { item -> item == null }
+						if (sepIdx != -1) mList.subList(sepIdx, mList.size).clear()
+
+						// null signals the adapter to render a "Bids on My Items" section header
+						mList.add(null)
+						mData.filterNotNull().forEach { offer -> mList.add(offer) }
+
+						bind.recycler.isVisible = true
+						bind.noData.isVisible = false
+						offersAdapter.notifyDataSetChanged()
+					}
+					isSellerLoading = sellerPage >= (it.value.totalPage ?: 0)
+				}
+				else -> { /* non-critical — buyer bids are still shown */ }
 			}
 		}
 	}
@@ -147,13 +186,15 @@ class OfferFragment : BaseFragment<DashViewModel, FragmentOfferBinding>() {
 			bind.loader.isVisible = true
 			bind.noInternet.isVisible = false
 			page = 1
+			sellerPage = 1
 			viewModel.offerList(page.toString().request(), "user".request())
+			viewModel.sellerOfferList(sellerPage.toString().request())
 		} else {
 			bind.loader.isVisible = false
 			bind.noInternet.isVisible = true
 			bind.recycler.isVisible = false
 			bind.noData.isVisible = false
-			viewModel.isViewPagerDataLoaded.value=true
+			viewModel.isViewPagerDataLoaded.value = true
 		}
 	}
 

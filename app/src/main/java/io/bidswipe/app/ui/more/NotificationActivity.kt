@@ -39,6 +39,12 @@ class NotificationActivity : BaseActivity() {
 	private val mClick = object : RecyclerClicks {
 		override fun itemClick(pos: Int, status: String?) {
 			when (status) {
+				// #36: "open" means the user tapped the notification row — the adapter
+				// already updated the visual state; nothing extra to do here yet.
+				// TODO: call viewModel.markNotificationSeen(id) once the backend endpoint
+				// api/notification/seen is available so the seen state persists server-side.
+				"open" -> { /* visual read state handled in adapter */ }
+
 				"delete" -> {
 					AppBottomSheet(
 						this@NotificationActivity,
