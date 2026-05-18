@@ -409,7 +409,7 @@ class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
                 "Disable vacation mode? Your listings will become available for purchase again."
             AppBottomSheet(
                 requireActivity(),
-                io.bidswipe.app.R.drawable.ic_information,
+                io.bidswipe.app.R.drawable.ic_info,
                 titleRes,
                 msgRes,
                 primaryBtnText = "Confirm",
@@ -722,7 +722,7 @@ class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
                 "Disable vacation mode? Your listings will become available for purchase again."
             AppBottomSheet(
                 requireActivity(),
-                io.bidswipe.app.R.drawable.ic_information,
+                io.bidswipe.app.R.drawable.ic_info,
                 titleRes,
                 msgRes,
                 primaryBtnText = "Confirm",

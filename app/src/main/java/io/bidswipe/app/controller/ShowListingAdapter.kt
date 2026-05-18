@@ -11,7 +11,6 @@ import androidx.core.view.isVisible
 import io.bidswipe.app.databinding.ShowListingItemBinding
 import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseAdapter
-import io.bidswipe.app.databinding.ShowListingItemBinding
 import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.network.response.GetMyShowResponse
 import io.bidswipe.app.utils.Const
