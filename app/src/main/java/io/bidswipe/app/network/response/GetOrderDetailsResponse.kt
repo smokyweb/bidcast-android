@@ -18,7 +18,7 @@ data class GetOrderDetailsResponse(
 	@Keep
 	data class Data(
 		@SerializedName("card_id")
-		val cardId: String?,
+		val cardId: Any?,  // Any? handles Int (old orders) or String (new orders) without Gson crash
 		@SerializedName("created_at")
 		val createdAt: String?,
 		@SerializedName("gift_msg")

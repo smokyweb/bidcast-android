@@ -176,7 +176,9 @@ class OrderDetailsFragment : BaseFragment<ProductViewModel, FragmentOrderDetails
                     bind.productName.text = mData?.order?.product?.title
                     bind.productDescription.text = mData?.order?.product?.description
 
-                    bind.orderProgress.setProgress(mData?.order?.orderStatusPercentage ?: 0, true)
+                    // orderStatusPercentage may come back as Int or Double from old API records
+                    val statusPct = (mData?.order?.orderStatusPercentage as? Number)?.toInt() ?: 0
+                    bind.orderProgress.setProgress(statusPct, true)
 
                     bind.orderId.text = mData?.order?.orderId.toString()
 
