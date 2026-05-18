@@ -395,6 +395,11 @@ class InventoryFragment : BaseFragment<SellerHubViewModel, FragmentInventoryBind
 			}
 		}
 
+		// #12: Deactivate gives an error — Android client already handles this correctly.
+		// BaseRepository reads errorBody() → parses as BaseResponse ("message" key) → shown via parse().
+		// The remaining error (deactivation blocked for incomplete products) is a backend-only issue:
+		// MR !5 (qa/trey-wave3-backend-data-20260518 → backend) must be merged+deployed to loosen
+		// the updateProductStatus() validation so "inactive" skips the required-fields check.
 		viewModel.updateProductStatusRepo.observe(viewLifecycleOwner) {
 			when (it) {
 				is Resource.Success -> {
