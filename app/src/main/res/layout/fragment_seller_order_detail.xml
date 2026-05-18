@@ -364,6 +364,160 @@
 
             </LinearLayout>
 
+            <!-- ═══ Wave 4: Order Workflow Actions (#31/#32/#33/#34) ═══ -->
+
+            <!-- #31/#32: Processing → Shipped progression -->
+            <LinearLayout
+                android:id="@+id/markShippedSection"
+                style="@style/shadowStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/half_margin"
+                android:background="@drawable/card_16"
+                android:orientation="vertical"
+                android:padding="@dimen/margin"
+                android:visibility="gone">
+
+                <TextView
+                    style="@style/TitleMedium"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Mark as Shipped"
+                    android:textStyle="bold" />
+
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/inputBoxStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/half_margin"
+                    android:hint="USPS Tracking Number">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/trackingNumberInput"
+                        style="@style/inputTextStyle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="text"
+                        android:maxLines="1" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnMarkShipped"
+                    style="@style/appBtn"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/half_margin"
+                    android:text="Mark as Shipped" />
+
+            </LinearLayout>
+
+            <!-- #33: Get Shipping Label (shown when processing or shipped) -->
+            <LinearLayout
+                android:id="@+id/shippingLabelSection"
+                style="@style/shadowStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/half_margin"
+                android:background="@drawable/card_16"
+                android:orientation="vertical"
+                android:padding="@dimen/margin"
+                android:visibility="gone">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnGetShippingLabel"
+                    style="@style/appBtn"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Get Shipping Label" />
+
+            </LinearLayout>
+
+            <!-- #32: Tracking info display (shown when tracking_number is present) -->
+            <LinearLayout
+                android:id="@+id/trackingInfoSection"
+                style="@style/shadowStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/half_margin"
+                android:background="@drawable/card_16"
+                android:orientation="vertical"
+                android:padding="@dimen/margin"
+                android:visibility="gone">
+
+                <TextView
+                    style="@style/TitleMedium"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Tracking Information"
+                    android:textStyle="bold" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/half_margin"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        style="@style/BodyMedium"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:alpha="0.7"
+                        android:text="Tracking #" />
+
+                    <TextView
+                        android:id="@+id/trackingNumberDisplay"
+                        style="@style/TitleSmall"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="" />
+
+                </LinearLayout>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnTrackPackage"
+                    style="@style/appBtn"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/half_margin"
+                    android:text="Track Package on USPS" />
+
+            </LinearLayout>
+
+            <!-- #34: Order Completed badge -->
+            <LinearLayout
+                android:id="@+id/completedBadgeSection"
+                style="@style/shadowStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/half_margin"
+                android:background="@drawable/card_16"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:padding="@dimen/margin"
+                android:visibility="gone">
+
+                <TextView
+                    style="@style/TitleLarge"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="✅ Order Completed"
+                    android:textColor="@color/primary"
+                    android:textStyle="bold" />
+
+                <TextView
+                    style="@style/BodyMedium"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:alpha="0.7"
+                    android:layout_marginTop="@dimen/half_margin"
+                    android:text="This order has been delivered and completed." />
+
+            </LinearLayout>
+
         </LinearLayout>
 
     </ScrollView>

@@ -675,6 +675,18 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
         status: RequestBody?
     ) = call { api.changeOrderStatus(orderId, status) }
 
+    // #32 Wave 4: change status + save tracking number
+    suspend fun changeOrderStatusWithTracking(
+        orderId: RequestBody?,
+        status: RequestBody?,
+        trackingNumber: RequestBody?
+    ) = call { api.changeOrderStatusWithTracking(orderId, status, trackingNumber) }
+
+    // #33 Wave 4: create USPS shipping label
+    suspend fun createShippingLabel(
+        orderId: RequestBody?
+    ) = call { api.createShippingLabel(orderId) }
+
     suspend fun getClip(
         roomId: RequestBody?,
     ) = call { api.getClip(roomId) }

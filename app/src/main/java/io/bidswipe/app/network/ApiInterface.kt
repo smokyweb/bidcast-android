@@ -886,6 +886,22 @@ interface ApiInterface {
         @Part("status") status: RequestBody?
     ): CommonResponse
 
+    // #32 Wave 4: Mark as Shipped with optional USPS tracking number
+    @Multipart
+    @POST("api/change-order-status")
+    suspend fun changeOrderStatusWithTracking(
+        @Part("order_id") orderId: RequestBody?,
+        @Part("status") status: RequestBody?,
+        @Part("tracking_number") trackingNumber: RequestBody?
+    ): CommonResponse
+
+    // #33 Wave 4: Create USPS shipping label
+    @Multipart
+    @POST("api/usps/create-label")
+    suspend fun createShippingLabel(
+        @Part("order_id") orderId: RequestBody?
+    ): CommonResponse
+
     @GET("api/get-coupon")
     suspend fun getCoupon(
     ): GetCouponsResponse
