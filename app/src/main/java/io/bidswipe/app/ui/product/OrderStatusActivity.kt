@@ -167,8 +167,10 @@ class OrderStatusActivity : BaseActivity() {
 
     }
 
-    /** Download PDF to cache and open it in-app using FileProvider + ACTION_VIEW.
-     *  Shows a progress toast while downloading; on completion opens the PDF viewer.
+    /** Download PDF to cache and open it in-app using FileProvider + Intent.ACTION_VIEW.
+     *  #8: Receipt now opens inside the device PDF viewer rather than being pushed to
+     *  the Downloads folder via DownloadManager.  Zero new library dependencies.
+     *  Uses cache/receipts/ (declared in file_paths.xml) so FileProvider can serve it.
      */
     private fun openPdfInApp(context: Context, url: String) {
         Toast.makeText(context, "Opening receipt…", Toast.LENGTH_SHORT).show()
@@ -179,7 +181,8 @@ class OrderStatusActivity : BaseActivity() {
                 val response = client.newCall(request).execute()
                 if (!response.isSuccessful) throw IOException("HTTP ${response.code}")
                 val bytes = response.body?.bytes() ?: throw IOException("Empty response")
-                val file = File(context.cacheDir, "receipt_${System.currentTimeMillis()}.pdf")
+                val receiptsDir = File(context.cacheDir, "receipts").also { it.mkdirs() }
+                val file = File(receiptsDir, "receipt_${System.currentTimeMillis()}.pdf")
                 file.writeBytes(bytes)
                 val uri = FileProvider.getUriForFile(
                     context,
@@ -195,8 +198,14 @@ class OrderStatusActivity : BaseActivity() {
                     try {
                         startActivity(intent)
                     } catch (e: Exception) {
-                        Log.e(TAG, "No PDF viewer", e)
-                        Toast.makeText(context, "No PDF viewer installed", Toast.LENGTH_LONG).show()
+                        Log.e(TAG, "No PDF viewer found, falling back to browser", e)
+                        // Fallback: open original URL in browser
+                        try {
+                            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url))
+                                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
+                        } catch (ex: Exception) {
+                            Toast.makeText(context, "Cannot open receipt", Toast.LENGTH_LONG).show()
+                        }
                     }
                 }
             } catch (e: Exception) {
