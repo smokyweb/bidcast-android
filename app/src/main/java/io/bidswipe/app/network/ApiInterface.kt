@@ -540,6 +540,10 @@ interface ApiInterface {
         @Part("search") search: RequestBody?,
     ): UserSearchingResponse
 
+    @POST("api/v1/search")
+    suspend fun search(@Body request: SearchRequest): ExploreSearchResponse
+
+
     @Multipart
     @POST("api/product/save")
     suspend fun saveSellerProduct(

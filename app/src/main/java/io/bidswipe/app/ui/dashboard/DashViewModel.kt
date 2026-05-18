@@ -775,4 +775,18 @@ class DashViewModel @Inject constructor(
         _getSurpriseProductResponse.value = repo.getSurpriseProduct(page)
     }
 
+    private var _searchResponse = MutableLiveData<Resource<ExploreSearchResponse>>()
+    val searchRepo: MutableLiveData<Resource<ExploreSearchResponse>>
+        get() = _searchResponse
+
+    fun search(
+        request: SearchRequest
+    ) = viewModelScope.launch {
+        if (!networkMonitor.hasInternet()) {
+            _searchResponse.value = NO_INTERNET_ERROR
+            return@launch
+        }
+        _searchResponse.value = repo.search(request)
+    }
+
 }

@@ -403,6 +403,10 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
         search: RequestBody?,
     ) = call { api.searchUsers(search) }
 
+    suspend fun search(
+        request: SearchRequest,
+    ) = call { api.search(request) }
+
     suspend fun saveSellerProduct(
         productId: RequestBody?,
     ) = call { api.saveSellerProduct(productId) }
