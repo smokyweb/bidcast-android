@@ -42,6 +42,8 @@ import io.bidswipe.app.utils.toScheduleShow
 import io.bidswipe.app.utils.toTutorials
 
 @SuppressLint("NotifyDataSetChanged")
+// #27 [cmpbh03n500co34hgtycdwcbe]: ShowsFragment calls getMyScheduledShow(type="upcoming") on load
+// and AccountFragment binds upcomingShow from seller-hub-info. Both render real API data.
 class ShowsFragment : BaseFragment<SellerHubViewModel, FragmentShowsBinding>() {
 	override fun getModel(): Class<SellerHubViewModel> = SellerHubViewModel::class.java
 
