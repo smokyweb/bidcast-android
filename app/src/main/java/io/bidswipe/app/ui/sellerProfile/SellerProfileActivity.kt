@@ -213,6 +213,18 @@ class SellerProfileActivity : BaseActivity() {
                     sellerName = mData?.name?.asCapital() ?: ""
                     sellerImage = mData?.profileImage ?: ""
 
+                    // #15/#18/#19/#20/#21 — hide interactive buttons on own profile
+                    val isOwnProfile = sellerId.isNotEmpty() &&
+                        sellerId == App.profileResponse.value?.id?.toString()
+                    bind.sendTip.isVisible = !isOwnProfile
+                    bind.messageSeller.isVisible = !isOwnProfile
+                    bind.follow.isVisible = !isOwnProfile
+                    bind.notificationIcon.isVisible = !isOwnProfile
+                    bind.notificationIcon1.isVisible = !isOwnProfile
+                    bind.moreIcon.isVisible = !isOwnProfile
+                    bind.moreIcon1.isVisible = !isOwnProfile
+                    // #21 — Share stays visible on own profile (no change needed)
+
                     bind.name.text = mData?.name?.asCapital()
                     bind.name1.text = mData?.name?.asCapital()
                     bind.userName.text = mData?.username ?: ""
