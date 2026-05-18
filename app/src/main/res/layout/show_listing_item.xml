@@ -86,6 +86,16 @@
                     android:layout_height="wrap_content"
                     android:text="8:00 PM EST" />
 
+                <TextView
+                    android:id="@+id/duration"
+                    style="@style/BodySmall"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone"
+                    android:drawableStart="@drawable/ic_play"
+                    android:drawablePadding="4dp"
+                    android:text="" />
+
             </LinearLayout>
 
         </LinearLayout>

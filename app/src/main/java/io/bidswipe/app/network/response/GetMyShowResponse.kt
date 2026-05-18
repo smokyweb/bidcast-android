@@ -65,6 +65,10 @@ data class GetMyShowResponse(
         val totalOrders: Int?,
 		@SerializedName("total_sales_amount")
         val totalSalesAmount: Double?,
+		@SerializedName("video_duration")
+        val videoDuration: String?,
+		@SerializedName("status")
+        val status: String?,
     ) : Serializable {
 		@Keep
 		data class Category(
