@@ -30,6 +30,7 @@ import io.bidswipe.app.utils.hideKeyboard
 import io.bidswipe.app.utils.loadUrl
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request
+import io.bidswipe.app.utils.toAbsoluteUrl
 import io.bidswipe.app.utils.setHapticClickListener
 import io.bidswipe.app.utils.showKeyboard
 import io.bidswipe.app.utils.value
@@ -672,8 +673,9 @@ class SellerVerificationActivity : BaseActivity() {
             idDone=true
             bind.cardImage.isVisible = true
             bind.selfie.isVisible = true
-            bind.cardImage.loadUrl(this, sellerData?.idCard ?: "")
-            bind.selfie.loadUrl(this, sellerData?.image ?: "")
+            // #42: prepend backend base URL for relative paths (e.g. /storage/...)
+            bind.cardImage.loadUrl(this, sellerData?.idCard.toAbsoluteUrl())
+            bind.selfie.loadUrl(this, sellerData?.image.toAbsoluteUrl())
             bind.verificationIcon.isVisible = true
             bind.verifyId.isVisible =false
             bind.uploadId.isClickable = false
