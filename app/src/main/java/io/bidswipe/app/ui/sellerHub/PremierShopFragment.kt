@@ -112,6 +112,7 @@ class PremierShopFragment : BaseFragment<SellerHubViewModel, FragmentPremierShop
 					gridAdapter.notifyDataSetChanged()
 					reqAdapter.notifyDataSetChanged()
 
+					// #14 [cmpbh03n500co34hgtycdwcbe]: rating sourced from shopOptions.rating (API) — NOT hardcoded. Confirmed.
 					val ratingProg = (mData?.shopOptions?.rating ?: 0.0)
 					val responseProg = (mData?.shopOptions?.response?.replace("%", "") ?: "0").toInt()
 					val deliveryProg = (mData?.shopOptions?.delivery?.replace("%", "") ?: "0").toInt()
