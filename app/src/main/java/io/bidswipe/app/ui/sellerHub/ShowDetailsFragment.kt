@@ -16,6 +16,7 @@ import io.bidswipe.app.databinding.FragmentShowDetailsBinding
 import io.bidswipe.app.interfaces.AlertClicks
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.ui.custom.AppBottomSheet
+import androidx.core.content.ContextCompat
 import io.bidswipe.app.utils.asMoney
 import io.bidswipe.app.utils.ids
 import io.bidswipe.app.utils.parse
@@ -64,7 +65,7 @@ class ShowDetailsFragment : BaseFragment<SellerHubViewModel, FragmentShowDetails
 			if (videoUrl.isNotEmpty()) {
 				findNavController().navigate(R.id.showDetailsVideoReceiptPlayerFragment2, bundleOf("videoUrl" to videoUrl))
 			} else {
-				successToast("Video is not available")
+				successToast("VOD not yet processed — check back soon")
 			}
 		}
 
@@ -88,9 +89,16 @@ class ShowDetailsFragment : BaseFragment<SellerHubViewModel, FragmentShowDetails
 
 					videoUrl = mData?.fileUrl ?: ""
 
-					bind.duration.text = buildString {
-						append("Show Duration: ")
-						append(mData?.videoDuration)
+					// Update watchVideo card appearance based on VOD availability
+					if (videoUrl.isEmpty()) {
+						bind.watchVideo.alpha = 0.5f
+						bind.duration.text = "VOD not yet processed"
+					} else {
+						bind.watchVideo.alpha = 1.0f
+						bind.duration.text = buildString {
+							append("Show Duration: ")
+							append(mData?.videoDuration)
+						}
 					}
 
 					bind.sales.text = mData?.totalSales?.asMoney()

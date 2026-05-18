@@ -33,32 +33,57 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/margin"
             android:layout_marginEnd="@dimen/margin"
-            android:weightSum="3"
             android:gravity="center_vertical"
             android:orientation="horizontal">
 
+            <!-- Skip back 10 s -->
             <ImageButton
-                android:id="@id/exo_play_pause"
+                android:id="@+id/btnSkipBack"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
+                android:layout_weight="0"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="Skip back 10 seconds"
+                android:padding="@dimen/half_margin"
+                android:scaleType="fitCenter"
+                android:src="@drawable/exo_icon_rewind"
+                app:tint="@color/onSurface" />
+
+            <!-- Play / Pause -->
+            <ImageButton
+                android:id="@id/exo_play_pause"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_weight="1"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:contentDescription="@string/play_pause"
                 android:padding="@dimen/half_margin"
-                android:layout_weight="1"
                 android:scaleType="fitCenter"
                 android:src="@drawable/exo_icon_play"
                 app:tint="@color/onSurface" />
 
+            <!-- Skip forward 10 s -->
+            <ImageButton
+                android:id="@+id/btnSkipForward"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_weight="0"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="Skip forward 10 seconds"
+                android:padding="@dimen/half_margin"
+                android:scaleType="fitCenter"
+                android:src="@drawable/exo_icon_fastforward"
+                app:tint="@color/onSurface" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnSound"
                 style="@style/Widget.Material3.Button.TextButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_weight="0"
                 android:text="@string/sound"
                 android:textColor="@color/onSurface"
                 app:icon="@drawable/ic_sound"
-                android:layout_weight="1"
                 app:iconGravity="textStart"
                 app:iconPadding="8dp"
                 app:iconTint="@color/onSurface" />
@@ -68,8 +93,8 @@
                 style="@style/Widget.Material3.Button.TextButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_weight="0"
                 android:text="@string/caption"
-                android:layout_weight="1"
                 android:textColor="@color/onSurface"
                 app:icon="@drawable/ic_cc"
                 app:iconGravity="textStart"
