@@ -1,12 +1,15 @@
 package io.bidswipe.app.ui.product
 
-import android.app.DownloadManager
 import android.content.Context
+import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.os.Environment
+import android.util.Log
+import android.widget.Toast
 import androidx.activity.viewModels
+import androidx.core.content.FileProvider
 import androidx.core.view.isVisible
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import io.bidswipe.app.base.BaseActivity
 import io.bidswipe.app.controller.ShippingUpdateAdapter
 import io.bidswipe.app.databinding.ActivityOrderStatusBinding
@@ -21,6 +24,11 @@ import io.bidswipe.app.utils.loadUrl
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request
 import io.bidswipe.app.utils.setHapticClickListener
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import java.io.File
+import java.io.IOException
+import kotlin.concurrent.thread
 
 class OrderStatusActivity : BaseActivity() {
 
@@ -30,6 +38,7 @@ class OrderStatusActivity : BaseActivity() {
 
     private lateinit var adapter: ShippingUpdateAdapter
     private var orderId = ""
+    private var shippingAddress: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -57,6 +66,15 @@ class OrderStatusActivity : BaseActivity() {
             viewModel.getOrderReceipt(orderId = orderId.request())
         }
 
+        bind.shippingDetailsBtn.setHapticClickListener {
+            val msg = shippingAddress?.takeIf { it.isNotBlank() } ?: "No shipping address on file."
+            MaterialAlertDialogBuilder(this)
+                .setTitle("Shipping Details")
+                .setMessage(msg)
+                .setPositiveButton("OK") { d, _ -> d.dismiss() }
+                .show()
+        }
+
         bind.loader.isVisible = true
         viewModel.getOrderDetails(orderId.request())
         viewModel.getOrderDetailsRepo.observe(this) {
@@ -67,8 +85,9 @@ class OrderStatusActivity : BaseActivity() {
 
                     val mData = it.value.data
 
+                    shippingAddress = mData?.shippingAddress
                     bind.productName.text = mData?.product?.title?.asCapital()
-                    bind.address.text = mData?.shippingAddress ?: "N/A"
+                    bind.address.text = shippingAddress ?: "N/A"
                     bind.productImage.loadUrl(this, mData?.product?.images?.get(0).toString())
                     bind.productColor.text = mData?.product?.category?.name
                     bind.category.text = mData?.product?.category?.name
@@ -114,9 +133,12 @@ class OrderStatusActivity : BaseActivity() {
                     viewModel.getOrderReceiptRepo.value = null
                     bind.loader.isVisible = false
 
-                    val mData = it.value.data
-
-                    downloadPdf(this, mData.toString(), System.currentTimeMillis().toString())
+                    val url = it.value.data?.toString()
+                    if (url.isNullOrBlank() || url == "null") {
+                        Toast.makeText(this, "Receipt not available", Toast.LENGTH_SHORT).show()
+                        return@observe
+                    }
+                    openPdfInApp(this, url)
 
                 }
 
@@ -145,21 +167,45 @@ class OrderStatusActivity : BaseActivity() {
 
     }
 
-    fun downloadPdf(context: Context, url: String, fileName: String) {
-        val request = DownloadManager.Request(Uri.parse(url)).apply {
-            setTitle(fileName)
-            setDescription("Downloading PDF...")
-            setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
-
-            // For Android 10 and above, this is app-specific external directory
-            setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, "$fileName.pdf")
-
-            setAllowedOverMetered(true)
-            setAllowedOverRoaming(true)
+    /** Download PDF to cache and open it in-app using FileProvider + ACTION_VIEW.
+     *  Shows a progress toast while downloading; on completion opens the PDF viewer.
+     */
+    private fun openPdfInApp(context: Context, url: String) {
+        Toast.makeText(context, "Opening receipt…", Toast.LENGTH_SHORT).show()
+        thread {
+            try {
+                val client = OkHttpClient()
+                val request = Request.Builder().url(url).build()
+                val response = client.newCall(request).execute()
+                if (!response.isSuccessful) throw IOException("HTTP ${response.code}")
+                val bytes = response.body?.bytes() ?: throw IOException("Empty response")
+                val file = File(context.cacheDir, "receipt_${System.currentTimeMillis()}.pdf")
+                file.writeBytes(bytes)
+                val uri = FileProvider.getUriForFile(
+                    context,
+                    "${context.packageName}.provider",
+                    file
+                )
+                val intent = Intent(Intent.ACTION_VIEW).apply {
+                    setDataAndType(uri, "application/pdf")
+                    addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                }
+                runOnUiThread {
+                    try {
+                        startActivity(intent)
+                    } catch (e: Exception) {
+                        Log.e(TAG, "No PDF viewer", e)
+                        Toast.makeText(context, "No PDF viewer installed", Toast.LENGTH_LONG).show()
+                    }
+                }
+            } catch (e: Exception) {
+                Log.e(TAG, "Receipt download failed", e)
+                runOnUiThread {
+                    Toast.makeText(context, "Could not load receipt: ${e.message}", Toast.LENGTH_LONG).show()
+                }
+            }
         }
-
-        val downloadManager = context.getSystemService(DOWNLOAD_SERVICE) as DownloadManager
-        downloadManager.enqueue(request)
     }
 
 }
