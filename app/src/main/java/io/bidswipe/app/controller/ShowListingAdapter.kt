@@ -8,9 +8,9 @@ import androidx.appcompat.view.ContextThemeWrapper
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.view.isVisible
+import io.bidswipe.app.databinding.ShowListingItemBinding
 import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseAdapter
-import io.bidswipe.app.databinding.ShowListingItemBinding
 import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.network.response.GetMyShowResponse
 import io.bidswipe.app.utils.Const
@@ -72,6 +72,15 @@ class ShowListingAdapter(
 				append(Const.BULLET + " ")
 				append(item?.totalOrders ?: 0)
 				append(" orders")
+			}
+
+			// Show duration label for past shows (video_duration present)
+			val duration = item?.videoDuration
+			if (!duration.isNullOrEmpty()) {
+				bind.duration.isVisible = true
+				bind.duration.text = duration
+			} else {
+				bind.duration.isVisible = false
 			}
 
 			bind.image.loadUrl(mCtx, item?.imgThumbnail?.first() ?: "")

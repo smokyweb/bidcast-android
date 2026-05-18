@@ -22,6 +22,7 @@ import io.bidswipe.app.ui.more.MoreActivity
 import io.bidswipe.app.utils.Alerts
 import io.bidswipe.app.utils.Prefs
 import io.bidswipe.app.utils.Utils
+import android.view.inputmethod.EditorInfo
 import io.bidswipe.app.utils.finish
 import io.bidswipe.app.utils.hideKeyboard
 import io.bidswipe.app.utils.ids
@@ -65,6 +66,21 @@ class LoginFragment : BaseFragment<AuthViewModel, FragmentLoginBinding>() {
 			startActivity(Intent(mCtx, MoreActivity::class.java)
 				.putExtra("slug", "terms-condition")
 				.putExtra("title", "Terms of Service"))
+		}
+
+		// #1: IME Next advances to password; Done submits the form
+		bind.email.setOnEditorActionListener { _, actionId, _ ->
+			if (actionId == EditorInfo.IME_ACTION_NEXT) {
+				bind.password.requestFocus()
+				true
+			} else false
+		}
+
+		bind.password.setOnEditorActionListener { _, actionId, _ ->
+			if (actionId == EditorInfo.IME_ACTION_DONE) {
+				bind.loginBtn.performClick()
+				true
+			} else false
 		}
 
 		bind.loginBtn.setHapticClickListener {

@@ -687,6 +687,39 @@ class SellerHubViewModel @Inject constructor(
         _changeOrderStatusResponse.value = repo.changeOrderStatus(orderId, status)
     }
 
+    // #32 Wave 4: Mark as Shipped with tracking number
+    private var _changeOrderStatusWithTrackingResponse = MutableLiveData<Resource<CommonResponse>>()
+    val changeOrderStatusWithTrackingRepo: MutableLiveData<Resource<CommonResponse>>
+        get() = _changeOrderStatusWithTrackingResponse
+
+    fun changeOrderStatusWithTracking(
+        orderId: RequestBody?,
+        status: RequestBody?,
+        trackingNumber: RequestBody?,
+    ) = viewModelScope.launch {
+        if (!networkMonitor.hasInternet()) {
+            _changeOrderStatusWithTrackingResponse.value = NO_INTERNET_ERROR
+            return@launch
+        }
+        _changeOrderStatusWithTrackingResponse.value =
+            repo.changeOrderStatusWithTracking(orderId, status, trackingNumber)
+    }
+
+    // #33 Wave 4: Create USPS shipping label
+    private var _createShippingLabelResponse = MutableLiveData<Resource<CommonResponse>>()
+    val createShippingLabelRepo: MutableLiveData<Resource<CommonResponse>>
+        get() = _createShippingLabelResponse
+
+    fun createShippingLabel(
+        orderId: RequestBody?,
+    ) = viewModelScope.launch {
+        if (!networkMonitor.hasInternet()) {
+            _createShippingLabelResponse.value = NO_INTERNET_ERROR
+            return@launch
+        }
+        _createShippingLabelResponse.value = repo.createShippingLabel(orderId)
+    }
+
     private var _getShippingAddressResponse =
         MutableLiveData<Resource<GetShippingAddressResponse>>()
     val getShippingAddressRepo: MutableLiveData<Resource<GetShippingAddressResponse>>

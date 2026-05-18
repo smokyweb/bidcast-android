@@ -82,6 +82,7 @@ class ReferFriendFragment : BaseFragment<DashViewModel, FragmentReferFriendBindi
 			val clipboard = context?.getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
 			val clip = ClipData.newPlainText("label", bind.referralCode.text)
 			clipboard.setPrimaryClip(clip)
+			android.widget.Toast.makeText(mCtx, "Copied!", android.widget.Toast.LENGTH_SHORT).show()
 		}
 
 		bind.continueBtn.setHapticClickListener {

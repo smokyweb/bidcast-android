@@ -46,6 +46,24 @@ class ContactUsFragment : BaseFragment<MoreViewModel, FragmentContactUsBinding>(
 		bind.email.setText(App.profileResponse.value?.email.toString())
 
 
+		// #40: observer must be OUTSIDE the click handler to avoid multiple subscriptions
+		viewModel.contactUsRepo.observe(viewLifecycleOwner) {
+			when (it) {
+				is Resource.Success -> {
+					bind.loader.isVisible = false
+					Alerts.success(mCtx, it.value.message.toString())
+				}
+				is Resource.Error -> {
+					bind.loader.isVisible = false
+					it.parse(mCtx, TAG, object : AlertClicks {
+						override fun primaryClick(dialog: AppBottomSheet) { dialog.dismiss() }
+						override fun secondaryClick(dialog: AppBottomSheet) { dialog.dismiss() }
+					})
+				}
+				else -> {}
+			}
+		}
+
 		bind.sendMessage.setHapticClickListener { it ->
 			when {
 
@@ -75,15 +93,13 @@ class ContactUsFragment : BaseFragment<MoreViewModel, FragmentContactUsBinding>(
 
 				bind.description.value().isEmpty() -> {
 					Alerts.error(mCtx, "Enter Message")
-					bind.subject.requestFocus()
+					bind.description.requestFocus()
 					showKeyboard(bind.description)
 				}
 
 				else -> {
-
 					hideKeyboard(it)
 					bind.loader.isVisible = true
-
 					viewModel.contactUs(
 						bind.firstName.value().request(),
 						bind.email.value().request(),
@@ -92,38 +108,6 @@ class ContactUsFragment : BaseFragment<MoreViewModel, FragmentContactUsBinding>(
 					)
 				}
 			}
-
-			viewModel.contactUsRepo.observe(viewLifecycleOwner) {
-				when (it) {
-					is Resource.Success -> {
-						bind.loader.isVisible = false
-
-						it.value.data
-						Alerts.success(mCtx, it.value.message.toString())
-
-					}
-
-					is Resource.Error -> {
-						bind.loader.isVisible = false
-						it.parse(mCtx, TAG, object : AlertClicks {
-							override fun primaryClick(dialog: AppBottomSheet) {
-								dialog.dismiss()
-
-							}
-
-							override fun secondaryClick(dialog: AppBottomSheet) {
-								dialog.dismiss()
-
-							}
-						})
-					}
-
-					else -> {}
-
-				}
-
-			}
-
 		}
 
 	}

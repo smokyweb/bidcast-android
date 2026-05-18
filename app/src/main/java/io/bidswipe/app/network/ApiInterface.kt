@@ -204,6 +204,15 @@ interface ApiInterface {
     @GET("api/get-FAQ")
     suspend fun getFAQ(): FAQResponse
 
+    // #41: Tax Exemption — mirror of iOS Wave 4 /api/tax-exemption/apply
+    @Multipart
+    @POST("api/tax-exemption/apply")
+    suspend fun applyTaxExemption(
+        @Part("state") state: RequestBody?,
+        @Part("exemption_type") exemptionType: RequestBody?,
+        @Part certificate: MultipartBody.Part?,
+    ): CommonResponse
+
     @Multipart
     @POST("api/contact-us")
     suspend fun contactUs(
@@ -884,6 +893,22 @@ interface ApiInterface {
     suspend fun changeOrderStatus(
         @Part("order_id") orderId: RequestBody?,
         @Part("status") status: RequestBody?
+    ): CommonResponse
+
+    // #32 Wave 4: Mark as Shipped with optional USPS tracking number
+    @Multipart
+    @POST("api/change-order-status")
+    suspend fun changeOrderStatusWithTracking(
+        @Part("order_id") orderId: RequestBody?,
+        @Part("status") status: RequestBody?,
+        @Part("tracking_number") trackingNumber: RequestBody?
+    ): CommonResponse
+
+    // #33 Wave 4: Create USPS shipping label
+    @Multipart
+    @POST("api/usps/create-label")
+    suspend fun createShippingLabel(
+        @Part("order_id") orderId: RequestBody?
     ): CommonResponse
 
     @GET("api/get-coupon")

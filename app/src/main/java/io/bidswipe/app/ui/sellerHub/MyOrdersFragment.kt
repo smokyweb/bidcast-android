@@ -74,7 +74,9 @@ class MyOrdersFragment : BaseFragment<SellerHubViewModel, FragmentMyOrdersBindin
 			finish()
 		}
 
-		setUpChips()
+		// #45: If launched from Sold tab, pre-select the Completed filter
+		val initialStatus = arguments?.getString("initialStatus")
+		setUpChips(initialStatus)
 
 		adapter = OrdersAdapter(orderList, mClick)
 
@@ -212,7 +214,7 @@ class MyOrdersFragment : BaseFragment<SellerHubViewModel, FragmentMyOrdersBindin
 
 	}
 
-	private fun setUpChips() {
+	private fun setUpChips(initialStatus: String? = null) {
 		bind.search.setText("")
 		bind.chipGroup.removeAllViews()
 
@@ -229,7 +231,18 @@ class MyOrdersFragment : BaseFragment<SellerHubViewModel, FragmentMyOrdersBindin
 			)
 		}
 
-		bind.chipGroup.check(bind.chipGroup[0].id)
+		// #45: Support pre-selecting a status (e.g. "completed" when launched from Sold tab)
+		val initialIndex = if (!initialStatus.isNullOrEmpty()) {
+			statusList.indexOfFirst { it.lowercase() == initialStatus.lowercase() }.takeIf { it >= 0 } ?: 0
+		} else {
+			0
+		}
+
+		bind.chipGroup.check(bind.chipGroup[initialIndex].id)
+
+		if (initialIndex > 0) {
+			status = statusList[initialIndex].lowercase()
+		}
 
 		bind.chipGroup.setOnCheckedStateChangeListener { chipGroup, _ ->
 			runSafe {

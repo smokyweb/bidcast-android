@@ -59,31 +59,7 @@
 
                     </androidx.constraintlayout.widget.ConstraintLayout>
 
-                    <com.google.android.material.card.MaterialCardView
-                        android:id="@+id/backBtnCard"
-                        style="@style/cardStyle"
-                        android:layout_width="48dp"
-                        android:layout_height="48dp"
-                        android:layout_marginStart="@dimen/margin"
-                        android:layout_marginTop="38dp"
-                        android:alpha="0.7"
-                        android:backgroundTint="@color/background"
-                        app:cardCornerRadius="100dp"
-                        app:cardElevation="0dp"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:strokeWidth="1dp">
-
-                        <androidx.appcompat.widget.AppCompatImageView
-                            android:id="@+id/backBtn"
-                            style="@style/TitleLarge"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:gravity="center"
-                            android:padding="@dimen/half_margin"
-                            android:src="@drawable/ic_back" />
-
-                    </com.google.android.material.card.MaterialCardView>
+                    <!-- backBtnCard moved to CollapsingToolbarLayout as pinned direct child (#22) -->
 
                     <com.google.android.material.card.MaterialCardView
                         android:id="@+id/materialCardView"
@@ -280,6 +256,33 @@
 
                 </LinearLayout>
             </LinearLayout>
+
+            <!-- #22: backBtnCard pinned so it stays above status bar during scroll -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/backBtnCard"
+                style="@style/cardStyle"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_gravity="top|start"
+                android:layout_marginStart="@dimen/margin"
+                android:layout_marginTop="38dp"
+                android:alpha="0.7"
+                android:backgroundTint="@color/background"
+                app:cardCornerRadius="100dp"
+                app:cardElevation="0dp"
+                app:layout_collapseMode="pin"
+                app:strokeWidth="1dp">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/backBtn"
+                    style="@style/TitleLarge"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:padding="@dimen/half_margin"
+                    android:src="@drawable/ic_back" />
+
+            </com.google.android.material.card.MaterialCardView>
 
             <com.google.android.material.appbar.MaterialToolbar
                 android:id="@+id/toolbar"

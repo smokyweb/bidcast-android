@@ -17,6 +17,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.tabs.TabLayout
+import androidx.core.os.bundleOf
+import androidx.navigation.fragment.findNavController
 import io.bidswipe.app.App
 import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseFragment
@@ -41,6 +43,7 @@ import io.bidswipe.app.utils.Alerts
 import io.bidswipe.app.utils.Utils
 import io.bidswipe.app.utils.finish
 import io.bidswipe.app.utils.hideKeyboard
+import io.bidswipe.app.utils.ids
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request
 import io.bidswipe.app.utils.setHapticClickListener
@@ -237,17 +240,35 @@ class InventoryFragment : BaseFragment<SellerHubViewModel, FragmentInventoryBind
 
 		bind.tabs.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
 			override fun onTabSelected(tab: TabLayout.Tab?) {
-				selectedTab = tab?.text.toString().lowercase()
-				page = 1
-				bind.search.text?.clear()
-				bind.searchBox.isEndIconVisible = false
-				bind.loader.isVisible = true
-				getInventory()
+				val tabText = tab?.text.toString().lowercase()
+				when (tabText) {
+					"orders" -> {
+						// #10: Navigate to MyOrdersFragment (seller orders)
+						findNavController().navigate(ids.inventoryFragmentToMyOrdersFragment)
+					}
+					"sold" -> {
+						// #45: Navigate to MyOrdersFragment pre-filtered to Completed (sold items)
+						findNavController().navigate(
+							ids.inventoryFragmentToMyOrdersFragment,
+							bundleOf("initialStatus" to "completed")
+						)
+					}
+					else -> {
+						selectedTab = tabText
+						page = 1
+						bind.search.text?.clear()
+						bind.searchBox.isEndIconVisible = false
+						bind.loader.isVisible = true
+						getInventory()
+					}
+				}
 			}
 
 			override fun onTabUnselected(tab: TabLayout.Tab?) {}
 			override fun onTabReselected(tab: TabLayout.Tab?) {}
 		})
+
+
 
 		bind.swipeRefreshLayout.setOnRefreshListener {
 			bind.search.setText("")
@@ -374,6 +395,11 @@ class InventoryFragment : BaseFragment<SellerHubViewModel, FragmentInventoryBind
 			}
 		}
 
+		// #12: Deactivate gives an error — Android client already handles this correctly.
+		// BaseRepository reads errorBody() → parses as BaseResponse ("message" key) → shown via parse().
+		// The remaining error (deactivation blocked for incomplete products) is a backend-only issue:
+		// MR !5 (qa/trey-wave3-backend-data-20260518 → backend) must be merged+deployed to loosen
+		// the updateProductStatus() validation so "inactive" skips the required-fields check.
 		viewModel.updateProductStatusRepo.observe(viewLifecycleOwner) {
 			when (it) {
 				is Resource.Success -> {
@@ -406,6 +432,15 @@ class InventoryFragment : BaseFragment<SellerHubViewModel, FragmentInventoryBind
 			}
 		}
 
+	}
+
+	override fun onResume() {
+		super.onResume()
+		// If we returned from MyOrdersFragment (Orders/Sold tab navigation),
+		// snap the tab selection back to the active inventory tab.
+		if (selectedTab == "active" && bind.tabs.selectedTabPosition > 2) {
+			bind.tabs.getTabAt(0)?.select()
+		}
 	}
 
 	private fun deleteProductDialog(productId: String, position: Int) {

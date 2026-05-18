@@ -3,6 +3,7 @@ package io.bidswipe.app.ui.sellerHub
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context.CLIPBOARD_SERVICE
+import android.widget.Toast
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -85,18 +86,21 @@ class AffiliateProgramFragment : BaseFragment<SellerHubViewModel, FragmentAffili
 			val clipboard = context?.getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
 			val clip = ClipData.newPlainText("label", bind.referralCode.text)
 			clipboard.setPrimaryClip(clip)
+			Toast.makeText(mCtx, "Copied!", Toast.LENGTH_SHORT).show()
 		}
 
 		bind.copyBuyer.setHapticClickListener {
 			val clipboard = context?.getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
 			val clip = ClipData.newPlainText("label", bind.referralBuyer.text)
 			clipboard.setPrimaryClip(clip)
+			Toast.makeText(mCtx, "Copied!", Toast.LENGTH_SHORT).show()
 		}
 
 		bind.copySeller.setHapticClickListener {
 			val clipboard = context?.getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
 			val clip = ClipData.newPlainText("label", bind.referralSeller.text)
 			clipboard.setPrimaryClip(clip)
+			Toast.makeText(mCtx, "Copied!", Toast.LENGTH_SHORT).show()
 		}
 
 		bind.share.setHapticClickListener {

@@ -340,6 +340,7 @@
                     app:cornerRadius="32dp" />
 
                 <com.google.android.material.button.MaterialButton
+                    android:id="@+id/shippingDetailsBtn"
                     style="@style/appTonalBtn"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"

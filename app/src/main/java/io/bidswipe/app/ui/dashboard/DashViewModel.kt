@@ -310,6 +310,22 @@ class DashViewModel @Inject constructor(
         _offerListResponse.value = repo.offerList(page, offerType)
     }
 
+    // #38: Separate LiveData for seller-received bids so OfferFragment can
+    // display both buyer-placed bids and bids received on the user's own items.
+    private var _sellerOfferListResponse = MutableLiveData<Resource<GetOffersResponse>>()
+    val sellerOfferListRepo: MutableLiveData<Resource<GetOffersResponse>>
+        get() = _sellerOfferListResponse
+
+    fun sellerOfferList(
+        page: RequestBody?,
+    ) = viewModelScope.launch {
+        if (!networkMonitor.hasInternet()) {
+            _sellerOfferListResponse.value = NO_INTERNET_ERROR
+            return@launch
+        }
+        _sellerOfferListResponse.value = repo.offerList(page, "seller".request())
+    }
+
     private var _offerUpdateStatusResponse = MutableLiveData<Resource<UpdateOfferResponse>>()
     val offerUpdateStatusRepo: MutableLiveData<Resource<UpdateOfferResponse>>
         get() = _offerUpdateStatusResponse

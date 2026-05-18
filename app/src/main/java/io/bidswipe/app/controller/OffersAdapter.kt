@@ -18,6 +18,8 @@ import io.bidswipe.app.utils.asMoney
 import io.bidswipe.app.utils.loadUrl
 import io.bidswipe.app.utils.setHapticClickListener
 
+// #38: null item in mList is treated as a section-separator header between
+//      buyer-placed bids and seller-received bids.
 class        OffersAdapter(
 	mList: MutableList<GetOffersResponse.Data?>, val mClicks: RecyclerClicks,
 ) : BaseAdapter<GetOffersResponse.Data?, BidsItemBinding>(mList) {
@@ -30,6 +32,23 @@ class        OffersAdapter(
 		item: GetOffersResponse.Data?,
 	) {
 		with(holder) {
+
+			// #38: null item = section separator between buyer-placed bids and
+			// seller-received bids.  Reuse the card layout to show a label row.
+			if (item == null) {
+				bind.iconCard.isVisible = false
+				bind.userName.text = "— Bids on My Items —"
+				bind.subTitle.text = "Offers placed on your listings"
+				bind.offerPrice.isVisible = false
+				bind.productContainer.isVisible = false
+				bind.status.isVisible = false
+				return@with
+			}
+
+			// Ensure all views are visible for normal items (reset from header state)
+			bind.iconCard.isVisible = true
+			bind.offerPrice.isVisible = true
+			bind.productContainer.isVisible = true
 
 			bind.productContainer.setHapticClickListener {
 				mClicks.itemClick(position)

@@ -15,6 +15,7 @@ import io.bidswipe.app.App
 import io.bidswipe.app.ui.agoraStream.AgoraPublisherActivity
 import io.bidswipe.app.ui.dashboard.ChatActivity
 import io.bidswipe.app.ui.dashboard.DashActivity
+import io.bidswipe.app.ui.more.NotificationActivity
 import io.bidswipe.app.utils.Alerts
 import io.bidswipe.app.utils.Prefs
 import io.bidswipe.app.utils.Utils
@@ -128,11 +129,30 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
                             ), flag)
                     }
 
+                    // #39: Route purchase / sold-item / bid / offer notifications to the
+                    // in-app Notification Activity so the user can see the event row that
+                    // was stored server-side.  Backend must dispatch push events for these
+                    // types; the Android side is ready to receive and route them.
+                    "purchase", "sold", "bid", "offer", "order", "payment" -> {
+                        PendingIntent.getActivity(
+                            mCtx,
+                            2,
+                            Intent(applicationContext, NotificationActivity::class.java).apply {
+                                flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
+                            },
+                            flag
+                        )
+                    }
+
                     else -> {
+                        // Default: open NotificationActivity so users see the notification row
+                        // rather than just landing on the dashboard home screen.
                         PendingIntent.getActivity(
                             mCtx,
                             0,
-                            Intent(applicationContext, DashActivity::class.java),
+                            Intent(applicationContext, NotificationActivity::class.java).apply {
+                                flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
+                            },
                             flag
                         )
                     }

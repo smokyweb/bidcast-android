@@ -12,7 +12,6 @@ import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.os.bundleOf
 import androidx.core.text.buildSpannedString
-import androidx.core.view.isVisible
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -36,6 +35,7 @@ import io.bidswipe.app.utils.loadUrl
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.setHapticClickListener
 import io.bidswipe.app.utils.toOrderStatus
+import androidx.core.view.isVisible
 
 class OrderDetailsFragment : BaseFragment<ProductViewModel, FragmentOrderDetailsBinding>() {
     override fun getModel(): Class<ProductViewModel> = ProductViewModel::class.java
@@ -89,6 +89,7 @@ class OrderDetailsFragment : BaseFragment<ProductViewModel, FragmentOrderDetails
             val clipboard = context?.getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
             val clip = ClipData.newPlainText("label", bind.orderId.text)
             clipboard.setPrimaryClip(clip)
+            android.widget.Toast.makeText(mCtx, "Copied!", android.widget.Toast.LENGTH_SHORT).show()
         }
 
         bind.userProfile.setHapticClickListener {
@@ -176,7 +177,9 @@ class OrderDetailsFragment : BaseFragment<ProductViewModel, FragmentOrderDetails
                     bind.productName.text = mData?.order?.product?.title
                     bind.productDescription.text = mData?.order?.product?.description
 
-                    bind.orderProgress.setProgress(mData?.order?.orderStatusPercentage ?: 0, true)
+                    // orderStatusPercentage may come back as Int or Double from old API records
+                    val statusPct = (mData?.order?.orderStatusPercentage as? Number)?.toInt() ?: 0
+                    bind.orderProgress.setProgress(statusPct, true)
 
                     bind.orderId.text = mData?.order?.orderId.toString()
 
@@ -229,6 +232,19 @@ class OrderDetailsFragment : BaseFragment<ProductViewModel, FragmentOrderDetails
 
                     primaryOrderId = mData?.order?.id.toString()
 
+                    // Cost breakdown: sub_total, shipping_charges, tax_amount, total
+                    val subTotal = (mData?.order?.subTotal as? Number)?.toDouble()
+                    val shipping = (mData?.order?.shippingCharges as? Number)?.toDouble()
+                    val tax = (mData?.order?.taxAmount as? Number)?.toDouble()
+                    val total = (mData?.order?.total as? Number)?.toDouble()
+                    val hasBreakdown = subTotal != null || shipping != null || tax != null || total != null
+                    bind.costBreakdownSection.isVisible = hasBreakdown
+                    if (hasBreakdown) {
+                        bind.itemSubtotal.text = "$${String.format("%.2f", subTotal ?: 0.0)}"
+                        bind.itemShipping.text = "$${String.format("%.2f", shipping ?: 0.0)}"
+                        bind.itemTax.text = "$${String.format("%.2f", tax ?: 0.0)}"
+                        bind.itemTotal.text = "$${String.format("%.2f", total ?: 0.0)}"
+                    }
 
                 }
 

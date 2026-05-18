@@ -349,6 +349,12 @@ fun View.setHapticClickListener(onClick : (View) -> Unit) {
 	}
 }
 
+/** #42: Ensure image URL is absolute. Prepend backend base if path starts with '/' or is blank. */
+fun String?.toAbsoluteUrl(): String {
+    if (this.isNullOrBlank()) return ""
+    return if (this.startsWith("http")) this else "${Const.BASE_URL}$this"
+}
+
 fun Long.toEpochMillis(): Long {
 	return when (this.toString().length) {
 		10 -> this * 1000L              // seconds → millis

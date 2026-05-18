@@ -43,19 +43,24 @@ class MessagesAdapter(
 				mClicks.itemClick(position, "")
 			}
 
-			if (item?.users?.senderId == Prefs(mCtx).getUserData()?.id.toString()) {
-				bind.name.text = item.users?.receiverName?.asCapital()
-				if (item.users?.receiverImage?.isEmpty() == false) bind.icon.loadUrl(mCtx, item.users?.receiverImage ?: "", draw.placeholder_user,bind.name.text.toString())
+			val currentUserId = Prefs(mCtx).getUserData()?.id.toString()
+			val currentUserIsSender = item?.users?.senderId == currentUserId
+
+			if (currentUserIsSender) {
+				// Current user sent the last message — show other party's info
+				bind.name.text = item?.users?.receiverName?.asCapital()
+				if (item?.users?.receiverImage?.isEmpty() == false) bind.icon.loadUrl(mCtx, item.users?.receiverImage ?: "", draw.placeholder_user, bind.name.text.toString())
 			} else {
+				// Other party sent the last message
 				bind.name.text = item?.users?.senderName?.asCapital()
-				if (item?.users?.receiverImage?.isEmpty() == false) bind.icon.loadUrl(mCtx, item.users?.senderImage ?: "", draw.placeholder_user,bind.name.text.toString())
+				if (item?.users?.senderImage?.isEmpty() == false) bind.icon.loadUrl(mCtx, item?.users?.senderImage ?: "", draw.placeholder_user, bind.name.text.toString())
 			}
 
 			bind.message.text = item?.message
-			
-			// Show/hide unread count badge
+
+			// #37: Show/hide unread count badge
 			val unreadCount = item?.unreadCount ?: 0
-			
+
 			if (unreadCount > 0) {
 				bind.notificationBadge.isVisible = true
 				bind.notificationBadge.text = when {
@@ -65,6 +70,14 @@ class MessagesAdapter(
 			} else {
 				bind.notificationBadge.isVisible = false
 			}
+
+			// #37: Dim the message preview row when the user has responded
+			// (i.e. they are the sender of the last message in this thread).
+			// A "seen" thread where current user responded should appear grayed-out
+			// to indicate it is waiting for the other party to reply.
+			val userHasResponded = currentUserIsSender && (item?.seen == true || unreadCount == 0)
+			bind.message.alpha = if (userHasResponded) 0.45f else 1.0f
+			bind.root.alpha = if (userHasResponded) 0.7f else 1.0f
 
 			try {
 				val calendar = Calendar.getInstance()
