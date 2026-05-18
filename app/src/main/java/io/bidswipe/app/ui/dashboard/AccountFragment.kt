@@ -259,6 +259,15 @@ class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
             )
         }
 
+        // #30: new orders card click — same destination as total orders
+        bind.sellerHub.newOrderCard.setHapticClickListener {
+            startActivity(
+                Intent(mCtx, SellerHubActivity::class.java).putExtra(
+                    "slug", "order"
+                )
+            )
+        }
+
         bind.sellerHub.itemsLayout.setHapticClickListener {
             startActivity(
                 Intent(mCtx, SellerHubActivity::class.java).putExtra(
@@ -446,10 +455,17 @@ class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
                     bind.sellerHub.defectFreeOrderRate.text = mData?.accountHealth?.defectFreeOrderRate ?: "N/A"
                     bind.sellerHub.policyStanding.text = mData?.accountHealth?.policyStanding ?: "N/A"
 
+                    // #29 fix: use == 1 for singular (was `< 1` which wrongly showed 0→"Item" and 1→"Items")
                     val total = (mData?.totalOrders ?: 0)
                     bind.sellerHub.totalOrders.text = buildString {
                         append(total.toString())
-                        if (total < 1) append(" Item") else append(" Items")
+                        if (total == 1) append(" Item") else append(" Items")
+                    }
+                    // #30 fix: bind new_orders from seller-hub-info (field was missing from model)
+                    val newOrders = mData?.newOrders ?: 0
+                    bind.sellerHub.newOrders.text = buildString {
+                        append(newOrders.toString())
+                        if (newOrders == 1) append(" Item") else append(" Items")
                     }
                     bind.sellerHub.payoutAmount.text = (mData?.payouts ?: 0.0).toString().asMoney()
 

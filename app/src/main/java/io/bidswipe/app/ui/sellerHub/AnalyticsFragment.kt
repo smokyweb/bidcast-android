@@ -13,6 +13,8 @@ import io.bidswipe.app.utils.asCapital
 import io.bidswipe.app.utils.finish
 import io.bidswipe.app.utils.loadUrl
 
+// #24 [cmpbh03n500co34hgtycdwcbe]: AnalyticsFragment hosts ViewPager with OverAllFragment (real APIs:
+// getSellerAnalytics, getSalesPerformance, getVisitorsAnalytics). No static placeholder data.
 class AnalyticsFragment : BaseFragment<SellerHubViewModel , FragmentAnalyticsBinding>() {
 	override fun getModel() : Class<SellerHubViewModel> = SellerHubViewModel::class.java
 

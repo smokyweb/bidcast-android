@@ -23,6 +23,8 @@ import io.bidswipe.app.utils.request
 import io.bidswipe.app.utils.runSafe
 
 @SuppressLint("NotifyDataSetChanged")
+// #13 [cmpbh03n500co34hgtycdwcbe]: Verified — TransactionsFragment calls getTransactionsHistory API with
+// real pagination + status filter chips. No static placeholder data. Binding confirmed real on Android.
 class TransactionsFragment : BaseFragment<SellerHubViewModel, FragmentTransactionsBinding>() {
 	override fun getModel(): Class<SellerHubViewModel> = SellerHubViewModel::class.java
 
