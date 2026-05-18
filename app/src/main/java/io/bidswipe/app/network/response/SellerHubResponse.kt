@@ -25,6 +25,8 @@ data class SellerHubResponse(
         val rating: Double?,
         @SerializedName("revenue")
         val revenue: Double?,
+        @SerializedName("new_orders")
+        val newOrders: Int?,
         @SerializedName("total_orders")
         val totalOrders: Int?,
         @SerializedName("upcoming_show")
