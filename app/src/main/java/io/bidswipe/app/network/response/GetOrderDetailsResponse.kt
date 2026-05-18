@@ -53,6 +53,12 @@ data class GetOrderDetailsResponse(
 		val shippingTracking: List<ShippingTracking?>?,
 		@SerializedName("status")
 		val status: String?,
+		@SerializedName("tracking_number")
+		val trackingNumber: String?,
+		@SerializedName("shipping_status")
+		val shippingStatus: String?,
+		@SerializedName("label_url")
+		val labelUrl: String?,
 		@SerializedName("user")
 		val user: User?,
 		@SerializedName("user_id")
