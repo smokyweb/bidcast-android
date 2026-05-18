@@ -149,6 +149,8 @@
     <string name="active">Active</string>
     <string name="draft">Draft</string>
     <string name="inactive">Inactive</string>
+    <string name="orders">Orders</string>
+    <string name="sold">Sold</string>
     <string name="listed_price">Listed Price</string>
     <string name="custom_offer">Custom Offer</string>
     <string name="enter_your_own_amount">Enter your own amount</string>

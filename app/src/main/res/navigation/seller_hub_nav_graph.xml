@@ -9,7 +9,13 @@
         android:id="@+id/inventoryFragment"
         android:name="io.bidswipe.app.ui.sellerHub.InventoryFragment"
         android:label="fragment_inventory"
-        tools:layout="@layout/fragment_inventory" />
+        tools:layout="@layout/fragment_inventory">
+
+        <action
+            android:id="@+id/inventoryFragmentToMyOrdersFragment"
+            app:destination="@id/myOrdersFragment" />
+
+    </fragment>
     <fragment
         android:id="@+id/myOrdersFragment"
         android:name="io.bidswipe.app.ui.sellerHub.MyOrdersFragment"
