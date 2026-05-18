@@ -31,6 +31,7 @@ import io.bidswipe.app.network.response.GetReportCategoriesResponse
 import io.bidswipe.app.ui.custom.AlertType
 import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.ui.dashboard.ChatActivity
+import io.bidswipe.app.ui.dashboard.UpdateAccountActivity
 import io.bidswipe.app.utils.Alerts
 import io.bidswipe.app.utils.Const
 import io.bidswipe.app.utils.asCapital
@@ -56,6 +57,10 @@ class SellerProfileActivity : BaseActivity() {
     var sellerId = ""
     private var sellerName = ""
     private var sellerImage = ""
+
+    /** True when the profile being viewed belongs to the currently logged-in user. */
+    private val isOwnProfile: Boolean
+        get() = sellerId.isNotEmpty() && sellerId == App.profileResponse.value?.id?.toString()
 
     private var actionList = mutableListOf<PowerMenuItem>()
 
@@ -172,18 +177,47 @@ class SellerProfileActivity : BaseActivity() {
             finish()
         }
 
-        bind.messageSeller.setHapticClickListener {
-            val intent = Intent(this, ChatActivity::class.java).apply {
-                putExtra("id", sellerId)
-                putExtra("name", sellerName)
-                putExtra("image", sellerImage)
+        // ── Own-profile UI affordances ──────────────────────────────────────
+        // Issues #15, #17, #18, #19, #20, #46
+        // When a user views their own profile, hide action buttons that only
+        // make sense when looking at another seller, and wire the gear/more
+        // icon to the Account Settings screen instead.
+        if (isOwnProfile) {
+            // #15: hide "Send a Tip"
+            bind.sendTip.isVisible = false
+            // #18: hide "Message Seller"
+            bind.messageSeller.isVisible = false
+            // #19: hide "Follow/Unfollow"
+            bind.follow.isVisible = false
+            // #20: hide rate/block/report popup icons on both toolbars
+            bind.moreIcon.isVisible = false
+            bind.moreIcon1.isVisible = false
+            // hide live-notification icons (not applicable to own profile)
+            bind.notificationIcon.isVisible = false
+            bind.notificationIcon1.isVisible = false
+            // #17 / #46: wire gear/more icon to Account Settings
+            bind.moreIcon.setHapticClickListener {
+                startActivity(Intent(this, UpdateAccountActivity::class.java))
             }
-            startActivity(intent)
-        }
+            bind.moreIcon1.setHapticClickListener {
+                startActivity(Intent(this, UpdateAccountActivity::class.java))
+            }
+        } else {
+            // Not own profile — wire message and tip buttons normally
+            bind.messageSeller.setHapticClickListener {
+                val intent = Intent(this, ChatActivity::class.java).apply {
+                    putExtra("id", sellerId)
+                    putExtra("name", sellerName)
+                    putExtra("image", sellerImage)
+                }
+                startActivity(intent)
+            }
 
-        bind.sendTip.setHapticClickListener {
-            sendTipSheet()
+            bind.sendTip.setHapticClickListener {
+                sendTipSheet()
+            }
         }
+        // ───────────────────────────────────────────────────────────────────
 
         val adapter = ViewPagerAdapter(this, "Shop")
         bind.pager.adapter = adapter
