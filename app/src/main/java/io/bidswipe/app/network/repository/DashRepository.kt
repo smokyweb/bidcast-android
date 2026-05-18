@@ -73,6 +73,13 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
         message: RequestBody?,
     ) = call { api.contactUs(name, email, subject, message) }
 
+    // #41: Tax exemption
+    suspend fun applyTaxExemption(
+        state: RequestBody?,
+        exemptionType: RequestBody?,
+        certificate: MultipartBody.Part?,
+    ) = call { api.applyTaxExemption(state, exemptionType, certificate) }
+
     suspend fun storeScheduleShow(
         title: RequestBody?,
         date: RequestBody?,
