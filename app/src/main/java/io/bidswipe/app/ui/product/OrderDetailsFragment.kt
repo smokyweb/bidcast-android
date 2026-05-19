@@ -206,6 +206,21 @@ class OrderDetailsFragment : BaseFragment<ProductViewModel, FragmentOrderDetails
 
                     bind.productCategory.text = mData?.order?.product?.category?.name
                     bind.price.text = mData?.order?.product?.pricing.toString().asMoney()
+                    
+                    // QA cmpcqb2cm008fg3hg0zn8o1nh — cost breakdown below Category on the order detail.
+                    // Same fallback math as the PWA orders.blade.php Wave 1 #4 fix:
+                    //   shipping = 9, tax = 7% of item, total = item + tax + shipping.
+                    // The backend GetOrderDetailsResponse doesn't expose a transaction subtree on Android
+                    // yet, so we use the same computed values the PWA uses when transaction is empty.
+                    val itemCost = mData?.order?.product?.pricing?.toDoubleOrNull() ?: 0.0
+                    val shippingCost = 9.0
+                    val taxAmount = (itemCost * 0.07 * 100).toInt() / 100.0
+                    val totalCost = itemCost + shippingCost + taxAmount
+                    bind.itemSubtotal.text = "$" + "%.2f".format(itemCost)
+                    bind.itemShipping.text = "$" + "%.2f".format(shippingCost)
+                    bind.itemTax.text = "$" + "%.2f".format(taxAmount)
+                    bind.itemTotal.text = "$" + "%.2f".format(totalCost)
+                    bind.costBreakdownSection.visibility = View.VISIBLE
 
                     order = mData?.order?.id.toString()
 
