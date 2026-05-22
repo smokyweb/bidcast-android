@@ -306,7 +306,15 @@ class AgoraPublisherActivity : BaseActivity() {
             hideKeyboard()
         }
 
-        bind.clip.isVisible = App.profileResponse.value?.preference?.enableClips == true
+        // MC cmph7xsgz00g5ms8pf6y3tosu (2026-05-22): always show the clip
+        // button on the host screen so the streamer can clip their own
+        // show. Previously gated on the host's `preference.enableClips`,
+        // which is a privacy toggle for OTHERS clipping the host's
+        // streams, not whether the host can clip their own. The host
+        // not being able to clip their own show was a real user-facing
+        // bug Trey reported. The viewer-side WatchStreamFragment has no
+        // such guard, matching this behavior.
+        bind.clip.isVisible = true
 
         bind.message.setEndIconOnClickListener {
             if (!isShowLive) {
