@@ -348,6 +348,46 @@ class MoreViewModel @Inject constructor(
 		_getCouponResponse.value = repo.getCoupon()
 	}
 
+	// MC cmph7xsgw00g2ms8pmtc6xgz5 (Trey 2026-05-22): seller-coupon flows.
+	private var _listSellerCouponsResponse = MutableLiveData<Resource<GetCouponsResponse>>()
+	val listSellerCouponsRepo: MutableLiveData<Resource<GetCouponsResponse>>
+		get() = _listSellerCouponsResponse
+
+	fun listSellerCoupons() = viewModelScope.launch {
+		if (!networkMonitor.hasInternet()) {
+			_listSellerCouponsResponse.value = NO_INTERNET_ERROR
+			return@launch
+		}
+		_listSellerCouponsResponse.value = repo.listSellerCoupons()
+	}
+
+	private var _createSellerCouponResponse =
+		MutableLiveData<Resource<io.bidswipe.app.network.response.CreateSellerCouponResponse>>()
+	val createSellerCouponRepo: MutableLiveData<Resource<io.bidswipe.app.network.response.CreateSellerCouponResponse>>
+		get() = _createSellerCouponResponse
+
+	fun createSellerCoupon(body: io.bidswipe.app.network.request.CreateSellerCouponRequest) =
+		viewModelScope.launch {
+			if (!networkMonitor.hasInternet()) {
+				_createSellerCouponResponse.value = NO_INTERNET_ERROR
+				return@launch
+			}
+			_createSellerCouponResponse.value = repo.createSellerCoupon(body)
+		}
+
+	private var _deleteSellerCouponResponse =
+		MutableLiveData<Resource<io.bidswipe.app.network.response.CreateSellerCouponResponse>>()
+	val deleteSellerCouponRepo: MutableLiveData<Resource<io.bidswipe.app.network.response.CreateSellerCouponResponse>>
+		get() = _deleteSellerCouponResponse
+
+	fun deleteSellerCoupon(id: Int) = viewModelScope.launch {
+		if (!networkMonitor.hasInternet()) {
+			_deleteSellerCouponResponse.value = NO_INTERNET_ERROR
+			return@launch
+		}
+		_deleteSellerCouponResponse.value = repo.deleteSellerCoupon(id)
+	}
+
 	// #41: Tax Exemption
 	private var _applyTaxExemptionResponse = MutableLiveData<Resource<CommonResponse>>()
 	val applyTaxExemptionRepo: MutableLiveData<Resource<CommonResponse>>

@@ -519,6 +519,13 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
     suspend fun getStates() = call { api.getStates() }
 
     suspend fun getCoupon() = call { api.getCoupon() }
+
+    // MC cmph7xsgw00g2ms8pmtc6xgz5 (Trey 2026-05-22): seller coupon CRUD.
+    suspend fun listSellerCoupons() = call { api.listSellerCoupons() }
+    suspend fun createSellerCoupon(
+        body: io.bidswipe.app.network.request.CreateSellerCouponRequest
+    ) = call { api.createSellerCoupon(body) }
+    suspend fun deleteSellerCoupon(id: Int) = call { api.deleteSellerCoupon(id) }
     suspend fun deleteProduct(productId: String?) = call { api.deleteProduct(productId) }
 
     suspend fun blockUnblockUser(
