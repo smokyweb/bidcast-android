@@ -11,17 +11,23 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsCompat.CONSUMED
 import androidx.core.view.isVisible
 import io.bidswipe.app.App
+import com.gyf.immersionbar.ktx.navigationBarHeight
+import com.gyf.immersionbar.ktx.statusBarHeight
 import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseActivity
 import io.bidswipe.app.controller.InventoryAdapter
+import io.bidswipe.app.controller.PromoteSheetAdapter
 import io.bidswipe.app.databinding.ActivityShowDetailsBinding
 import io.bidswipe.app.databinding.PaymentAndAddressSheetBinding
+import io.bidswipe.app.databinding.PromoteShowSheetBinding
 import io.bidswipe.app.interfaces.AlertClicks
 import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.model.LiveShowModel
 import io.bidswipe.app.network.Resource
+import io.bidswipe.app.network.response.GetPromotePlansResponse
 import io.bidswipe.app.network.response.GetShowDetailsResponse
 import io.bidswipe.app.network.response.toLiveShowProduct
+import io.bidswipe.app.ui.custom.AlertType
 import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.ui.more.MoreActivity
 import io.bidswipe.app.ui.product.ProductDetailsActivity
@@ -36,7 +42,9 @@ import io.bidswipe.app.utils.dpToPx
 import io.bidswipe.app.utils.draw
 import io.bidswipe.app.utils.loadUrl
 import io.bidswipe.app.utils.parse
+import io.bidswipe.app.utils.request
 import io.bidswipe.app.utils.setHapticClickListener
+import io.bidswipe.app.utils.setMargins
 import io.bidswipe.app.utils.toScheduleShow
 import io.bidswipe.app.utils.toSellerShow
 
@@ -46,6 +54,7 @@ class ShowDetailsActivity : BaseActivity() {
     private val viewModel by viewModels<ScheduleShowViewModel>()
 
     private var showData: GetShowDetailsResponse.Data?? = null
+    private var promotePlans = mutableListOf<GetPromotePlansResponse.Data?>()
 
     private var editShowLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -89,12 +98,63 @@ class ShowDetailsActivity : BaseActivity() {
             editShowLauncher.launch(toScheduleShow(from = "dash", showId = viewModel.showId))
         }
 
-        // #49 — wire Promote button → PromoteToolsFragment
+        // #49 — Promote button: fetch plans then show the promote bottom sheet
+        viewModel.getPromoteShowList()
+        viewModel.getPromoteShowListRepo.observe(this) {
+            when (it) {
+                is Resource.Success -> {
+                    viewModel.getPromoteShowListRepo.value = null
+                    promotePlans.clear()
+                    promotePlans.addAll(it.value.data ?: mutableListOf())
+                }
+                is Resource.Error -> {
+                    viewModel.getPromoteShowListRepo.value = null
+                }
+                else -> {}
+            }
+        }
+
+        viewModel.promoteShowRepo.observe(this) {
+            when (it) {
+                is Resource.Success -> {
+                    bind.loader.isVisible = false
+                    viewModel.promoteShowRepo.value = null
+                    AppBottomSheet(
+                        this,
+                        R.drawable.ic_success,
+                        "Show Promoted",
+                        it.value.message ?: "",
+                        primaryBtnText = "Okay",
+                        secondaryBtnText = "Cancel",
+                        canCancel = true,
+                        showSecondary = false,
+                        iconPadding = 16,
+                        alertType = AlertType.SUCCESS,
+                        clicks = object : AlertClicks {
+                            override fun primaryClick(dialog: AppBottomSheet) {
+                                dialog.dismiss()
+                            }
+                            override fun secondaryClick(dialog: AppBottomSheet) {
+                                dialog.dismiss()
+                            }
+                        }
+                    ).show()
+                }
+                is Resource.Error -> {
+                    bind.loader.isVisible = false
+                    viewModel.promoteShowRepo.value = null
+                }
+                else -> {}
+            }
+        }
+
         bind.promoteShow.setHapticClickListener {
-            startActivity(
-                Intent(this, io.bidswipe.app.ui.sellerHub.SellerHubActivity::class.java)
-                    .putExtra("slug", "promote")
-            )
+            if (promotePlans.isNotEmpty()) {
+                showPromoteSheet()
+            } else {
+                errorToast("Promote plans not available. Please try again.")
+                viewModel.getPromoteShowList()
+            }
         }
 
         bind.startShow.setHapticClickListener {
@@ -263,6 +323,52 @@ class ShowDetailsActivity : BaseActivity() {
             }
         }
 
+    }
+
+    fun showPromoteSheet() {
+        val promoteSheetBind = PromoteShowSheetBinding.bind(
+            layoutInflater.inflate(
+                R.layout.promote_show_sheet,
+                null,
+                false
+            )
+        )
+
+        val newHeight = window?.decorView?.measuredHeight
+        val viewGroupLayoutParams = promoteSheetBind.root.layoutParams
+            ?: android.view.ViewGroup.LayoutParams(
+                android.view.ViewGroup.LayoutParams.MATCH_PARENT,
+                android.view.ViewGroup.LayoutParams.MATCH_PARENT
+            )
+        viewGroupLayoutParams.height = (newHeight ?: 0) - statusBarHeight
+        promoteSheetBind.root.layoutParams = viewGroupLayoutParams
+
+        promoteSheetBind.bottomText.setMargins(
+            0,
+            0,
+            0,
+            navigationBarHeight + resources.dpToPx(32)
+        )
+
+        val promoteSheet = Alerts.appBottomSheet(this, true, promoteSheetBind)
+
+        promoteSheetBind.optionList.adapter =
+            PromoteSheetAdapter(promotePlans, object : RecyclerClicks {
+                override fun itemClick(pos: Int, status: String?) {
+                    promoteSheet.dismiss()
+                    bind.loader.isVisible = true
+                    viewModel.promoteShow(
+                        viewModel.showId.toString().request(),
+                        promotePlans[pos]?.id.toString().request()
+                    )
+                }
+            })
+
+        promoteSheetBind.close.setHapticClickListener {
+            promoteSheet.dismiss()
+        }
+
+        promoteSheet.show()
     }
 
     fun showPaymentAndAddressSheet() {
