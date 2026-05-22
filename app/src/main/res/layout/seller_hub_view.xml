@@ -305,10 +305,14 @@
                 android:paddingVertical="@dimen/margin">
 
                 <LinearLayout
+                    android:id="@+id/on_time_tile"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="@dimen/half_margin"
                     android:layout_weight="1"
+                    android:background="?selectableItemBackground"
+                    android:clickable="true"
+                    android:focusable="true"
                     android:orientation="vertical">
 
                     <TextView
@@ -337,10 +341,14 @@
                     android:background="@color/surfaceVariant" />
 
                 <LinearLayout
+                    android:id="@+id/defect_free_tile"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="@dimen/margin"
                     android:layout_weight="1"
+                    android:background="?selectableItemBackground"
+                    android:clickable="true"
+                    android:focusable="true"
                     android:orientation="vertical">
 
                     <TextView
@@ -368,11 +376,15 @@
                     android:background="@color/surfaceVariant" />
 
                 <LinearLayout
+                    android:id="@+id/policy_standing_tile"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:layout_marginHorizontal="@dimen/margin"
                     android:layout_weight="1"
+                    android:background="?selectableItemBackground"
+                    android:clickable="true"
+                    android:focusable="true"
                     android:orientation="vertical">
 
                     <TextView
