@@ -6,6 +6,7 @@ import androidx.activity.viewModels
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsCompat.CONSUMED
+import androidx.core.view.get
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -19,6 +20,8 @@ import io.bidswipe.app.network.Resource
 import io.bidswipe.app.network.response.GetNotificationResponse
 import io.bidswipe.app.ui.custom.AlertType
 import io.bidswipe.app.ui.custom.AppBottomSheet
+import io.bidswipe.app.utils.NotificationCategory
+import io.bidswipe.app.utils.Utils
 import io.bidswipe.app.utils.bind
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request
@@ -30,8 +33,16 @@ class NotificationActivity : BaseActivity() {
 	private val bind by bind(ActivityNotificationBinding::inflate)
 	private val viewModel by viewModels<MoreViewModel>()
 	private lateinit var notificationAdapter: NotificationAdapter
+
+	// Source-of-truth list (every notification we've fetched from the server)
+	private var allNotifications = mutableListOf<GetNotificationResponse.Data?>()
+
+	// Currently-displayed list (filtered by the selected category chip)
 	private var notificationList = mutableListOf<GetNotificationResponse.Data?>()
 	private var delPos = -1
+
+	// Task cmph7xsgt: filter chip state. null = ALL, otherwise show only matches.
+	private var selectedCategory: NotificationCategory? = null
 
 	private var page = 1
 	private var isLoading = false
@@ -114,6 +125,9 @@ class NotificationActivity : BaseActivity() {
 		notificationAdapter = NotificationAdapter(notificationList, mClick)
 		bind.notificationRec.adapter = notificationAdapter
 
+		// Task cmph7xsgt: build the category filter chips.
+		setUpCategoryChips()
+
 		bind.deleteAll.setHapticClickListener {
 			bind.loader.isVisible = true
 			viewModel.deleteNotification("".request())
@@ -153,16 +167,17 @@ class NotificationActivity : BaseActivity() {
 						val mData = it.value.data
 
 						if (page== 1){
-							notificationList.clear()
+							allNotifications.clear()
 						}
 
 						if (mData != null) {
-							notificationList.addAll(mData)
+							allNotifications.addAll(mData)
 						}
 
-						notificationAdapter.notifyDataSetChanged()
+						// Re-apply current category filter to the merged dataset.
+						applyCategoryFilter()
 
-						log("NotificationList : ${notificationList.size}")
+						log("NotificationList : ${notificationList.size} (all=${allNotifications.size})")
 
 						isLoading = page >= (it.value.totalPage ?: 0)
 
@@ -182,6 +197,7 @@ class NotificationActivity : BaseActivity() {
 						bind.noInternet.isVisible = true
 						bind.noData.isVisible = false
 						bind.deleteAll.isVisible = false
+						allNotifications.clear()
 						notificationList.clear()
 						notificationAdapter.notifyDataSetChanged()
 					} else {
@@ -212,7 +228,12 @@ class NotificationActivity : BaseActivity() {
 						bind.loader.isVisible = false
 
 						if (delPos != -1) {
+							// Remove from both the source-of-truth list and the visible list.
+							val removedItem = notificationList[delPos]
 							notificationList.removeAt(delPos)
+							if (removedItem != null) {
+								allNotifications.remove(removedItem)
+							}
 							notificationAdapter.notifyItemRemoved(delPos)
 							notificationAdapter.notifyItemRangeChanged(0, notificationList.size)
 
@@ -246,5 +267,73 @@ class NotificationActivity : BaseActivity() {
 				else -> {}
 			}
 		}
+	}
+
+	/**
+	 * Task cmph7xsgt: build the horizontal filter chip row.
+	 * Order: All / Messages / Verification / Orders / Bids / Purchases / Other.
+	 * Single-select; "All" is selected by default.
+	 */
+	private fun setUpCategoryChips() {
+		bind.chipGroup.removeAllViews()
+
+		data class ChipDef(val label: String, val category: NotificationCategory?)
+
+		val chips = listOf(
+			ChipDef(getString(R.string.notif_cat_all), null),
+			ChipDef(getString(R.string.notif_cat_messages), NotificationCategory.MESSAGES),
+			ChipDef(getString(R.string.notif_cat_verification), NotificationCategory.VERIFICATION),
+			ChipDef(getString(R.string.notif_cat_orders), NotificationCategory.ORDERS),
+			ChipDef(getString(R.string.notif_cat_bids), NotificationCategory.BIDS),
+			ChipDef(getString(R.string.notif_cat_purchases), NotificationCategory.PURCHASES),
+			ChipDef(getString(R.string.notif_cat_other), NotificationCategory.OTHER),
+		)
+
+		chips.forEach { def ->
+			bind.chipGroup.addView(
+				Utils.makeAChip(
+					mCtx = this,
+					text = def.label,
+					selected = false,
+					closeIconVisible = false,
+					chipPadding = 12,
+				)
+			)
+		}
+
+		// Default: select "All".
+		bind.chipGroup.check(bind.chipGroup[0].id)
+
+		bind.chipGroup.setOnCheckedStateChangeListener { chipGroup, _ ->
+			runSafe {
+				val chipId = chipGroup.checkedChipId
+				val index = chipGroup.indexOfChild(chipGroup.findViewById(chipId))
+				if (index < 0 || index >= chips.size) return@runSafe
+				selectedCategory = chips[index].category
+				applyCategoryFilter()
+			}
+		}
+	}
+
+	/**
+	 * Recompute the visible notification list from [allNotifications] using
+	 * the currently-selected category filter.
+	 */
+	@SuppressLint("NotifyDataSetChanged")
+	private fun applyCategoryFilter() {
+		notificationList.clear()
+		val cat = selectedCategory
+		if (cat == null) {
+			notificationList.addAll(allNotifications)
+		} else {
+			notificationList.addAll(
+				allNotifications.filter { NotificationCategory.fromRawType(it?.type) == cat }
+			)
+		}
+		notificationAdapter.notifyDataSetChanged()
+
+		val isEmpty = notificationList.isEmpty()
+		bind.noData.isVisible = isEmpty
+		bind.deleteAll.isVisible = !isEmpty
 	}
 }
