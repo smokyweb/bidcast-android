@@ -65,7 +65,19 @@ class App : Application() {
                         }
 
                         is Resource.Error -> {
-                            profileResponse.value = null
+                            // MC cmph7xsgo00fxms8phuhd5bq4 (2026-05-22):
+                            // do NOT null out the cached profile on a
+                            // transient profile-fetch failure. Previous
+                            // behavior wiped the in-memory profile on any
+                            // network blip, which made every
+                            // `App.profileResponse.value?.sellerIdentityStatus`
+                            // evaluate to null and the UI rendered Trey
+                            // (and any verified user) as un-verified until
+                            // the next successful fetch — matching his
+                            // 'all of that status has been removed'
+                            // report. Keep the last-known-good value;
+                            // the next successful getProfile() will
+                            // overwrite it cleanly.
                         }
                     }
                 }
@@ -85,7 +97,15 @@ class App : Application() {
                         }
 
                         is Resource.Error -> {
-                            profileResponse.value = null
+                            // MC cmph7xsgo00fxms8phuhd5bq4 (2026-05-22):
+                            // previous code set profileResponse.value = null
+                            // here on a checkKyc() failure, which is the
+                            // wrong cache to invalidate — the KYC check
+                            // has its own checkKycResponse cache, and a
+                            // transient KYC API failure should not wipe
+                            // the user's profile + seller verification
+                            // state. Leave caches alone; the relevant
+                            // refresh paths handle their own state.
                         }
                     }
                 }
@@ -107,7 +127,10 @@ class App : Application() {
                         }
 
                         is Resource.Error -> {
-                            profileResponse.value = null
+                            // MC cmph7xsgo00fxms8phuhd5bq4 (2026-05-22):
+                            // same anti-pattern — a category fetch
+                            // failure has nothing to do with the user's
+                            // profile cache. Do not wipe it.
                         }
                     }
                 }
