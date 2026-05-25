@@ -119,6 +119,37 @@ class SellerVerificationActivity : BaseActivity() {
             return@setOnTouchListener false
         }
 
+        // Basecamp #9916227688 (Trey 2026-05-21): "could not click on any of these
+        // buttons. could not become a verified seller". The screen has 4 verification
+        // step cards (ID, Phone, KYC, Payment) with small action buttons inside
+        // (`verifyId`, `verifyPhone`, `add_kyc_btn`, `addCardBtn`). The cards
+        // themselves weren't tappable, so users tapping the card body got no
+        // response. Make the whole card tap-through to the inner action button
+        // when that button is visible.
+        bind.cardIdVerify.setHapticClickListener {
+            if (bind.verifyId.isVisible) bind.verifyId.performClick()
+        }
+        bind.cardPhone.setHapticClickListener {
+            // Tapping the Phone card forwards to whichever sub-button is currently visible.
+            when {
+                bind.verifyOtp.isVisible -> bind.verifyOtp.performClick()
+                bind.verifyPhone.isVisible && bind.verifyPhone.isEnabled -> bind.verifyPhone.performClick()
+                bind.editPhone.isVisible -> bind.editPhone.performClick()
+            }
+        }
+        bind.cardKyc.setHapticClickListener {
+            if (bind.addKycBtn.isVisible && bind.addKycBtn.isEnabled) bind.addKycBtn.performClick()
+        }
+        bind.cardPayment.setHapticClickListener {
+            if (bind.addCardBtn.isVisible && bind.addCardBtn.isEnabled) bind.addCardBtn.performClick()
+        }
+
+        // Basecamp #9916227688 (continued): the KYC card stays empty/unclickable
+        // until App.checkKycResponse is populated, but onCreate doesn't trigger
+        // the fetch — only App.checkKYC() in App.kt sets it. Kick that off here
+        // so the KYC card has its data by the time the user reaches it.
+        App.checkKYC()
+
         bind.uploadId.setHapticClickListener {
             hideKeyboard()
             uploadUserId()

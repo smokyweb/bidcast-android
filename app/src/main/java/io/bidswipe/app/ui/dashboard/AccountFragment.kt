@@ -207,7 +207,11 @@ class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
             bind.sellerSince.isVisible = it?.username.isNullOrEmpty() == false
 
             bind.sellerSince.text = it?.username ?: "N/A"
-            bind.userProfile.loadUrl(mCtx, it?.profileImage.toString())
+            // Basecamp #9916951961 (Trey 2026-05-21) — use the colored bidswipe
+            // dollar-circle logo as the avatar fallback instead of the generic
+            // gray person silhouette (placeholder_user) when the user has no
+            // profile image set. Matches the iOS account screen styling.
+            bind.userProfile.loadUrl(mCtx, it?.profileImage.toString(), R.drawable.app_icon_dollar)
 
             bind.accountView.couponCount.text = (it?.couponCount ?: 0).toString()
         }

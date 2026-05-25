@@ -5,6 +5,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
 import androidx.navigation.fragment.findNavController
 import com.gyf.immersionbar.ktx.immersionBar
@@ -36,6 +38,18 @@ class CreateAccountFragment : BaseFragment<AuthViewModel , FragmentCreateAccount
 
 	override fun onViewCreated(view : View , savedInstanceState : Bundle?) {
 		super.onViewCreated(view , savedInstanceState)
+
+		// Basecamp #9916894584 (Trey 2026-05-21): "screen is jumping on android
+		// when you click on these different options". With windowSoftInputMode=adjustResize
+		// + privacyLayout pinned to constraintBottom_toBottomOf=parent, every focus
+		// change between EditTexts triggered a layout pass that fought the scroll
+		// position. Hiding the pinned-bottom privacyLayout while the keyboard is
+		// up removes the conflict — the scroll view now owns all vertical real estate.
+		ViewCompat.setOnApplyWindowInsetsListener(view) { _, insets ->
+			val imeVisible = insets.isVisible(WindowInsetsCompat.Type.ime())
+			bind.privacyLayout.isVisible = !imeVisible
+			insets
+		}
 
 		referralCode = arguments?.getString("referralCode") ?: ""
 

@@ -69,6 +69,7 @@
 
             <com.google.android.material.card.MaterialCardView
                 style="@style/cardStyle"
+                android:id="@+id/cardIdVerify"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/half_margin"
@@ -288,6 +289,7 @@
 
             <com.google.android.material.card.MaterialCardView
                 style="@style/cardStyle"
+                android:id="@+id/cardPhone"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/half_margin"
@@ -448,6 +450,7 @@
 
             <com.google.android.material.card.MaterialCardView
                 style="@style/cardStyle"
+                android:id="@+id/cardKyc"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/half_margin"
@@ -522,6 +525,7 @@
 
             <com.google.android.material.card.MaterialCardView
                 style="@style/cardStyle"
+                android:id="@+id/cardPayment"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/half_margin"

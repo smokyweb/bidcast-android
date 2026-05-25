@@ -60,13 +60,16 @@
                             android:layout_height="wrap_content"
                             app:cardCornerRadius="100dp">
 
+                            <!-- Basecamp #9916951961 (Trey 2026-05-21): default to
+                                 colored bidswipe dollar-circle logo instead of the
+                                 generic gray person silhouette when no profile pic. -->
                             <ImageView
                                 android:id="@+id/userProfile"
                                 android:layout_width="64dp"
                                 android:layout_height="64dp"
                                 android:contentDescription="@string/app_name"
                                 android:scaleType="centerCrop"
-                                android:src="@drawable/placeholder_user" />
+                                android:src="@drawable/app_icon_dollar" />
 
                         </com.google.android.material.card.MaterialCardView>
 
