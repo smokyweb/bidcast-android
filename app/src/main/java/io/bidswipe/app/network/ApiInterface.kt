@@ -2,8 +2,10 @@ package io.bidswipe.app.network
 
 import io.bidswipe.app.BuildConfig
 import io.bidswipe.app.model.GetSubCategoriesRequest
+import io.bidswipe.app.network.request.SearchRequest
 import io.bidswipe.app.network.request.StoreProductRequest
 import io.bidswipe.app.network.request.StoreSurpriseSet
+import io.bidswipe.app.network.response.ExploreSearchResponse
 import io.bidswipe.app.network.response.AboutUsResponse
 import io.bidswipe.app.network.response.BlockedUnblockedResponse
 import io.bidswipe.app.network.response.CheckKycResponse
@@ -554,6 +556,12 @@ interface ApiInterface {
     suspend fun searchUsers(
         @Part("search") search: RequestBody?,
     ): UserSearchingResponse
+
+    // Basecamp #9922137198 (Trey 2026-05-20): unified search across shows,
+    // products, and users — backed by ApiController::unifiedSearch which
+    // also filters by description/show_notes/sku (PWA fixes c428186a + f92e8f99).
+    @POST("api/v1/search")
+    suspend fun unifiedSearch(@Body request: SearchRequest): ExploreSearchResponse
 
     @Multipart
     @POST("api/product/save")

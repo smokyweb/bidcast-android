@@ -276,6 +276,20 @@ class DashViewModel @Inject constructor(
         _getLiveShowResponse.value = repo.getLiveShow(type, category, subCategory, search, page)
     }
 
+    // Basecamp #9922137198 (Trey 2026-05-20): unified search across shows + products + users
+    private var _unifiedSearchResponse =
+        MutableLiveData<Resource<io.bidswipe.app.network.response.ExploreSearchResponse>>()
+    val unifiedSearchRepo: MutableLiveData<Resource<io.bidswipe.app.network.response.ExploreSearchResponse>>
+        get() = _unifiedSearchResponse
+
+    fun unifiedSearch(searchTerm: String, page: Int? = null) = viewModelScope.launch {
+        if (!networkMonitor.hasInternet()) {
+            _unifiedSearchResponse.value = NO_INTERNET_ERROR
+            return@launch
+        }
+        _unifiedSearchResponse.value = repo.unifiedSearch(searchTerm, page)
+    }
+
     private var _getExploreLiveShowResponse = MutableLiveData<Resource<GetMyShowResponse>>()
     val getExploreLiveShowRepo: MutableLiveData<Resource<GetMyShowResponse>>
         get() = _getExploreLiveShowResponse

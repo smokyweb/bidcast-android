@@ -414,6 +414,10 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
         search: RequestBody?,
     ) = call { api.searchUsers(search) }
 
+    // Basecamp #9922137198 (Trey 2026-05-20): unified search across shows + products + users.
+    suspend fun unifiedSearch(search: String, page: Int? = null) =
+        call { api.unifiedSearch(io.bidswipe.app.network.request.SearchRequest(search, page)) }
+
     suspend fun saveSellerProduct(
         productId: RequestBody?,
     ) = call { api.saveSellerProduct(productId) }

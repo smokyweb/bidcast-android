@@ -273,13 +273,10 @@ class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
             )
         }
 
-        bind.sellerHub.ratingCard.setHapticClickListener {
-            startActivity(
-                Intent(mCtx, SellerHubActivity::class.java).putExtra(
-                    "slug", "sellerStatus"
-                )
-            )
-        }
+        // MC cmpaj2fex0000w5hgq64jp9k4 merge cleanup (2026-05-24):
+        // Earlier ratingCard listener removed — replaced by the cleaner one
+        // below that opens SellerProfileActivity with the Reviews tab,
+        // matching Basecamp #9922137161 (Trey 2026-05-20).
 
         bind.sellerHub.payoutCard.setHapticClickListener {
             startActivity(
@@ -306,23 +303,34 @@ class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
             )
         }
 
-        // MC cmpaj2fex0000w5hgq64jp9k4 merge (2026-05-24): removed duplicate
-        // `itemsLayout` listener — same wiring as `itemsCard` above. Both IDs
-        // existed because GitHub side and GitLab side independently added an
-        // id to the same LinearLayout; the XML now keeps only `itemsCard`.
-        bind.sellerHub.revenueCard.setHapticClickListener {
-            startActivity(
-                Intent(mCtx, SellerHubActivity::class.java).putExtra(
-                    "slug", "wallet"
-                )
-            )
-        }
-
+        // MC cmpaj2fex0000w5hgq64jp9k4 merge cleanup (2026-05-24):
+        //   - Removed redundant second `revenueCard` listener (identical wiring
+        //     to the one above).
+        //   - Repointed `ratingCard` from SellerHubActivity(slug="sellerStatus")
+        //     to SellerProfileActivity with selectedTab=2 (Reviews tab) so
+        //     tapping Rating goes to ratings/reviews instead of seller status.
+        //     This matches Basecamp #9922137161 (Trey 2026-05-20): tapping
+        //     Reviews should show ratings/reviews (or empty state), not log
+        //     the user out via the wrong destination.
         bind.sellerHub.ratingCard.setHapticClickListener {
+            // Basecamp #9922137161 (Trey 2026-05-20): "tapping Reviews logs user
+            // out and shows wrong background page". Root cause: the profile
+            // wasn't loaded yet at click time, sellerId came through as empty,
+            // backend returned UNAUTHORIZED/invalid_token, and the global
+            // Resource.Error.parse() handler in Extensions.kt treats that as
+            // an auth failure and clears Prefs + redirects to auth screen —
+            // hence the logout. Guard here: don't navigate until profile is
+            // loaded.
             val profile = App.profileResponse.value
+            val sellerId = profile?.id?.toString().orEmpty()
+            if (sellerId.isEmpty()) {
+                Alerts.info(mCtx, "Loading your account\u2026 please try again in a moment.")
+                App.getProfile()
+                return@setHapticClickListener
+            }
             startActivity(
                 Intent(mCtx, SellerProfileActivity::class.java)
-                    .putExtra("sellerId", profile?.id?.toString().orEmpty())
+                    .putExtra("sellerId", sellerId)
                     .putExtra("selectedTab", 2)
             )
         }

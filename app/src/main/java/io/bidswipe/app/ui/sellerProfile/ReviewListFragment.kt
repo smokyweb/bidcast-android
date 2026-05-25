@@ -37,6 +37,16 @@ class ReviewListFragment : BaseFragment<SellerViewModel , FragmentReviewListBind
 
 	override fun onResume() {
 		super.onResume()
+		// Basecamp #9922137161 (Trey 2026-05-20): guard against empty sellerId
+		// to avoid an UNAUTHORIZED response from the backend that the global
+		// error handler would mistake for an auth failure and log the user out.
+		if (sellerId.isEmpty()) {
+			bind.loader.isVisible = false
+			bind.recycler.isVisible = false
+			bind.noInternet.isVisible = false
+			bind.noData.isVisible = true
+			return
+		}
 		if (Utils.isOnline(mCtx)) {
 			bind.noInternet.isVisible = false
 			bind.loader.isVisible = true
@@ -61,10 +71,16 @@ class ReviewListFragment : BaseFragment<SellerViewModel , FragmentReviewListBind
 		bind.noInternet.onClick {
 			bind.loader.isVisible = true
 			bind.noInternet.isVisible = false
-			viewModel.getSellerRating(sellerId)
+			if (sellerId.isNotEmpty()) viewModel.getSellerRating(sellerId)
 		}
 
-		viewModel.getSellerRating(sellerId)
+		// Basecamp #9922137161: only fire API if sellerId is populated
+		if (sellerId.isNotEmpty()) {
+			viewModel.getSellerRating(sellerId)
+		} else {
+			bind.loader.isVisible = false
+			bind.noData.isVisible = true
+		}
 		viewModel.getSellerRatingRepo.observe(viewLifecycleOwner) {
 			when (it) {
 				is Resource.Success -> {

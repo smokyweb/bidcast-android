@@ -22,6 +22,7 @@ import io.bidswipe.app.network.response.GetMyShowResponse
 import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.ui.sellerProfile.SellerProfileActivity
 import io.bidswipe.app.ui.watchStream.ViewLiveShowActivity
+import io.bidswipe.app.network.response.SearchData
 import io.bidswipe.app.utils.hideKeyboard
 import io.bidswipe.app.utils.isTablet
 import io.bidswipe.app.utils.parse
@@ -95,27 +96,22 @@ class SearchShowFragment : BaseFragment<DashViewModel, FragmentSearchShowBinding
 		viewModel.getLiveShow(search = "".request())
 
 		bind.search.addTextChangedListener(object : TextWatcher {
-			override fun beforeTextChanged(
-				p0: CharSequence?,
-				p1: Int,
-				p2: Int,
-				p3: Int,
-			) {
-			}
+			private var debounce: android.os.Handler? = null
 
-			override fun onTextChanged(
-				p0: CharSequence?,
-				p1: Int,
-				p2: Int,
-				p3: Int,
-			) {
-			}
+			override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
+			override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
 
 			override fun afterTextChanged(p0: Editable?) {
-
-				bind.loader.isVisible = true
-				viewModel.getLiveShow(search = p0.toString().request())
-
+				// Basecamp #9922137198: fire both show search + unified search.
+				// Debounce 350 ms to avoid hammering the API on every keystroke.
+				debounce?.removeCallbacksAndMessages(null)
+				debounce = android.os.Handler(android.os.Looper.getMainLooper())
+				debounce?.postDelayed({
+					val q = p0.toString()
+					bind.loader.isVisible = true
+					viewModel.getLiveShow(search = q.request())
+					if (q.isNotBlank()) viewModel.unifiedSearch(q)
+				}, 350)
 			}
 		})
 
@@ -170,7 +166,29 @@ class SearchShowFragment : BaseFragment<DashViewModel, FragmentSearchShowBinding
 			}
 		}
 
-
+		// Basecamp #9922137198 (Trey 2026-05-20): unified search observer.
+		// Phase 1 — shows a count summary at the bottom so Trey can confirm
+		// products + users are being returned. A future ticket will add a full
+		// sectioned result view (Live Shows / Products / Users) with tappable rows.
+		viewModel.unifiedSearchRepo.observe(viewLifecycleOwner) { resource ->
+			when (resource) {
+				is Resource.Success -> {
+					val data: SearchData? = resource.value.data
+					val productCount = data?.products?.size ?: 0
+					val userCount = data?.users?.size ?: 0
+					if (productCount > 0 || userCount > 0) {
+						val parts = mutableListOf<String>()
+						if (productCount > 0) parts.add("$productCount product${if (productCount == 1) "" else "s"}")
+						if (userCount > 0) parts.add("$userCount user${if (userCount == 1) "" else "s"}")
+						bind.unifiedSearchSummary.text = "Also found: ${parts.joinToString(" • ")}"
+						bind.unifiedSearchSummary.isVisible = true
+					} else {
+						bind.unifiedSearchSummary.isVisible = false
+					}
+				}
+				else -> bind.unifiedSearchSummary.isVisible = false
+			}
+		}
 	}
 
 }
