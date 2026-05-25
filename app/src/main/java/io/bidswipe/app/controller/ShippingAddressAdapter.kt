@@ -31,8 +31,16 @@ class ShippingAddressAdapter(
                 mClicks.itemClick(position)
             }
 
+            // MC sub-task cmp4932vk00l13mx1du6mmebo: render optional
+            // address_line_2 between street and city when present.
+            val line2 = item?.addressLine2?.trim().orEmpty()
             bind.address.text = buildString {
                 append(item?.streetAddress)
+                if (line2.isNotEmpty()) {
+                    append(", ")
+                    append(line2)
+                }
+                append(", ")
                 append(item?.city)
                 append(", ")
                 append(item?.state)

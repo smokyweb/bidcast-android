@@ -351,6 +351,8 @@ interface ApiInterface {
         @Part("name") name: RequestBody?,
         @Part("phone_number") phoneNumber: RequestBody?,
         @Part("street_address") streetAddress: RequestBody?,
+        // MC sub-task cmp4932vk00l13mx1du6mmebo: optional 2nd address line.
+        @Part("address_line_2") addressLine2: RequestBody?,
         @Part("pincode") pinCode: RequestBody?,
         @Part("city") city: RequestBody?,
         @Part("state") state: RequestBody?,
@@ -978,6 +980,23 @@ interface ApiInterface {
     suspend fun saveShippingCosts(
         @Part("shipping_costs") shippingCosts:RequestBody?,
         @Part("shipping_cost_also_apply_schedule_show") alsoApplyScheduleShow: RequestBody?,
+    ): CommonResponse
+
+    // 2026-05-04 (MC cmordzx1s00cuf3hgkwnkkplg) Account Security parity with iOS:
+    // change-password and delete-account-request endpoints used by
+    // AccountSecurityActivity. iOS already calls the same paths.
+    @Multipart
+    @POST("api/change-password")
+    suspend fun changePassword(
+        @Part("current_password") currentPassword: RequestBody,
+        @Part("new_password") newPassword: RequestBody,
+        @Part("new_password_confirmation") newPasswordConfirmation: RequestBody,
+    ): CommonResponse
+
+    @Multipart
+    @POST("api/delete-profile")
+    suspend fun deleteAccountRequest(
+        @Part("reason") reason: RequestBody?,
     ): CommonResponse
 }
 

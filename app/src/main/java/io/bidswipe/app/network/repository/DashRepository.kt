@@ -210,6 +210,8 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
         name: RequestBody?,
         phoneNumber: RequestBody?,
         streetAddress: RequestBody?,
+        // MC sub-task cmp4932vk00l13mx1du6mmebo: optional 2nd address line.
+        addressLine2: RequestBody?,
         pinCode: RequestBody?,
         city: RequestBody?,
         state: RequestBody?,
@@ -219,6 +221,7 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
             name,
             phoneNumber,
             streetAddress,
+            addressLine2,
             pinCode,
             city,
             state
@@ -744,5 +747,14 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
 
     suspend fun saveShippingCosts(shippingCosts: RequestBody?, alsoApplyScheduleShow: RequestBody?,) = call { api.saveShippingCosts(shippingCosts ,alsoApplyScheduleShow) }
     suspend fun getShippingDetails() = call { api.getShippingDetails() }
+
+    // 2026-05-04 (MC cmordzx1s00cuf3hgkwnkkplg) Account Security parity with iOS
+    suspend fun changePassword(
+        currentPassword: RequestBody,
+        newPassword: RequestBody,
+        newPasswordConfirmation: RequestBody,
+    ) = call { api.changePassword(currentPassword, newPassword, newPasswordConfirmation) }
+
+    suspend fun deleteAccountRequest(reason: RequestBody?) = call { api.deleteAccountRequest(reason) }
 
 }

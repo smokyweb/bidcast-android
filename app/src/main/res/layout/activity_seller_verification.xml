@@ -373,7 +373,7 @@
                             android:layout_marginTop="@dimen/half_margin"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:text="Enter Phone Number"
+                            android:text="@string/seller_verification_phone_hint"
                             android:visibility="visible" />
 
                         <androidx.appcompat.widget.AppCompatImageView
@@ -398,8 +398,8 @@
                             style="@style/inputTextStyle"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:hint="@string/enter_phone_number"
-                            android:inputType="number"
+                            android:hint="Enter 10-digit US phone number"
+                            android:inputType="phone"
                             android:maxLength="10" />
 
                     </com.google.android.material.textfield.TextInputLayout>

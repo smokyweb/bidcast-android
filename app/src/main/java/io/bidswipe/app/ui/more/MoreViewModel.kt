@@ -121,6 +121,8 @@ class MoreViewModel @Inject constructor(
 		name: RequestBody?,
 		phoneNumber: RequestBody?,
 		streetAddress: RequestBody?,
+		// MC sub-task cmp4932vk00l13mx1du6mmebo: optional 2nd address line.
+		addressLine2: RequestBody?,
 		pinCode: RequestBody?,
 		city: RequestBody?,
 		state: RequestBody?,
@@ -130,7 +132,7 @@ class MoreViewModel @Inject constructor(
 			return@launch
 		}
 		_addShippingAddressResponse.value =
-			repo.addShippingAddress(type, name, phoneNumber, streetAddress, pinCode, city, state)
+			repo.addShippingAddress(type, name, phoneNumber, streetAddress, addressLine2, pinCode, city, state)
 	}
 
 	private var _getShippingAddressResponse =
@@ -348,7 +350,10 @@ class MoreViewModel @Inject constructor(
 		_getCouponResponse.value = repo.getCoupon()
 	}
 
-	// #41: Tax Exemption
+	// MC cmpaj2fex0000w5hgq64jp9k4 merge (2026-05-24): both sides added
+	// independent ViewModel methods. Kept both.
+
+	// GitLab side — #41 Tax Exemption multipart upload
 	private var _applyTaxExemptionResponse = MutableLiveData<Resource<CommonResponse>>()
 	val applyTaxExemptionRepo: MutableLiveData<Resource<CommonResponse>>
 		get() = _applyTaxExemptionResponse
@@ -363,6 +368,38 @@ class MoreViewModel @Inject constructor(
 			return@launch
 		}
 		_applyTaxExemptionResponse.value = repo.applyTaxExemption(state, exemptionType, certificate)
+	}
+
+	// GitHub side — 2026-05-04 (MC cmordzx1s00cuf3hgkwnkkplg) Account Security
+	// parity with iOS: change password + request account deletion.
+	private var _changePasswordResponse = MutableLiveData<Resource<CommonResponse>?>()
+	val changePasswordRepo: MutableLiveData<Resource<CommonResponse>?>
+		get() = _changePasswordResponse
+
+	fun changePassword(
+		currentPassword: RequestBody,
+		newPassword: RequestBody,
+		newPasswordConfirmation: RequestBody,
+	) = viewModelScope.launch {
+		if (!networkMonitor.hasInternet()) {
+			_changePasswordResponse.value = NO_INTERNET_ERROR
+			return@launch
+		}
+		_changePasswordResponse.value = repo.changePassword(
+			currentPassword, newPassword, newPasswordConfirmation
+		)
+	}
+
+	private var _deleteAccountRequestResponse = MutableLiveData<Resource<CommonResponse>?>()
+	val deleteAccountRequestRepo: MutableLiveData<Resource<CommonResponse>?>
+		get() = _deleteAccountRequestResponse
+
+	fun deleteAccountRequest(reason: RequestBody?) = viewModelScope.launch {
+		if (!networkMonitor.hasInternet()) {
+			_deleteAccountRequestResponse.value = NO_INTERNET_ERROR
+			return@launch
+		}
+		_deleteAccountRequestResponse.value = repo.deleteAccountRequest(reason)
 	}
 
 }

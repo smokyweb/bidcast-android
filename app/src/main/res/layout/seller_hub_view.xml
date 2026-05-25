@@ -20,9 +20,14 @@
             android:paddingHorizontal="12dp"
             android:weightSum="3">
 
+            <!-- MC cmpaj2fex0000w5hgq64jp9k4 merge (2026-05-24): both sides added
+                 an id to this LinearLayout (GitHub: items_layout, GitLab: itemsCard).
+                 Kept GitLab's `itemsCard` since it matches the naming of the other
+                 cards in this layout (revenueCard, ratingCard). The redundant
+                 `itemsLayout` click listener in AccountFragment was removed. -->
             <LinearLayout
-                android:id="@+id/items_layout"
                 style="@style/shadowStyle"
+                android:id="@+id/itemsCard"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="4dp"
@@ -58,9 +63,11 @@
 
             </LinearLayout>
 
+            <!-- MC cmpaj2fex0000w5hgq64jp9k4 merge (2026-05-24): same pattern as itemsCard —
+                 dropped the GitHub-side `revenue_card` snake_case id, kept GitLab's `revenueCard`. -->
             <LinearLayout
-                android:id="@+id/revenue_card"
                 style="@style/shadowStyle"
+                android:id="@+id/revenueCard"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="4dp"
@@ -96,9 +103,11 @@
 
             </LinearLayout>
 
+            <!-- MC cmpaj2fex0000w5hgq64jp9k4 merge (2026-05-24): same pattern as itemsCard —
+                 dropped the GitHub-side `rating_card` snake_case id, kept GitLab's `ratingCard`. -->
             <LinearLayout
-                android:id="@+id/rating_card"
                 style="@style/shadowStyle"
+                android:id="@+id/ratingCard"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="4dp"

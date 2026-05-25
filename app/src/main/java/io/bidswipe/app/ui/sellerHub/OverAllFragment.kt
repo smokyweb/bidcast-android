@@ -318,14 +318,37 @@ class OverAllFragment : BaseFragment<SellerHubViewModel, FragmentOverAllBinding>
             loadDataForDateRange()
         }
 
+        // QA-FIX: These three buttons were no-op stubs (empty click handlers). Users saw the
+        // buttons, tapped them, and nothing happened — classic broken-button bug. Until the
+        // real implementations land (metrics info dialog + CSV export endpoints), give the
+        // user clear feedback that the feature is on the way instead of silent failure.
         bind.linkMetricsInfo.setHapticClickListener {
             Alerts.info(
                 mCtx,
                 "Metrics info coming soon. We\u2019ll add a breakdown of each metric here in an upcoming release."
             )
         }
+
+        // MC cmpaj2fex0000w5hgq64jp9k4 merge (2026-05-24): GitHub side adds
+        // "Export coming soon" click handlers on the export buttons inside
+        // setupClickListeners(). Removed the stray closing brace that put them
+        // at top-level after auto-merge.
+        bind.btnExportSales.setHapticClickListener {
+            Alerts.info(
+                mCtx,
+                "Sales export is coming soon. You\u2019ll be able to download your sales data as CSV from here."
+            )
+        }
+
+        bind.btnExportOrders.setHapticClickListener {
+            Alerts.info(
+                mCtx,
+                "Orders export is coming soon. You\u2019ll be able to download your orders as CSV from here."
+            )
+        }
     }
 
+    // GitLab side — enable/disable export buttons based on data availability.
     private fun updateExportButtonsState() {
         val hasSalesData = topBuyersBySalesList.isNotEmpty()
         bind.btnExportSales.isEnabled = hasSalesData

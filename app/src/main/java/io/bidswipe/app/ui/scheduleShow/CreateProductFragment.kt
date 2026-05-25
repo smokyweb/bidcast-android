@@ -309,7 +309,13 @@ class CreateProductFragment : BaseFragment<ScheduleShowViewModel, FragmentListAP
                         bind.flashLayout.isVisible = false
                         bind.reserveLayout.isVisible = true
                         viewModel.productSalesFormat = "Auction"
-                        // Auction listings are live-only; keep switch on and non-editable.
+                        // MC cmpaj2fex0000w5hgq64jp9k4 merge (2026-05-24): kept GitLab's
+                        // version that ALSO disables the checkbox (.isEnabled=false) and
+                        // updates the ViewModel state. GitHub side (4c0f449e) was the
+                        // original bug fix narrative — "Live Auction product showing in
+                        // Buy Now section" — same intent, GitLab's is the more complete
+                        // implementation that makes the switch non-editable so users can't
+                        // un-set it accidentally.
                         bind.reserveForLive.isEnabled = false
                         bind.reserveForLive.isChecked = true
                         viewModel.productFormReserveForLive = true
@@ -870,6 +876,15 @@ class CreateProductFragment : BaseFragment<ScheduleShowViewModel, FragmentListAP
         viewModel.productFormAcceptOffers = bind.acceptOffers.isChecked
         // Tab 1 = Auction: always reserve for live (matches pricing tab, not switch timing).
         viewModel.productFormReserveForLive = bind.tabs.selectedTabPosition == 1
+
+        // QA fix: the category field is disabled on this screen because the product inherits
+        // the show's category. clearProductData() resets productCategoryId, then calls
+        // updateCategoryField() to re-sync it from viewModel.categoryId. If for any reason
+        // that sync left productCategoryId empty (e.g. show category not yet set), ensure it
+        // is re-synced here before validation so the seller is never stuck on a disabled field.
+        if (viewModel.productCategoryId.isEmpty() && viewModel.categoryId.isNotEmpty()) {
+            viewModel.productCategoryId = viewModel.categoryId
+        }
 
         // QA fix: the category field is disabled on this screen because the product inherits
         // the show's category. clearProductData() resets productCategoryId, then calls

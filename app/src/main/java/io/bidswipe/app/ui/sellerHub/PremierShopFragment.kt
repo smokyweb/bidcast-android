@@ -123,7 +123,8 @@ class PremierShopFragment : BaseFragment<SellerHubViewModel, FragmentPremierShop
 
 					bind.ratingProgress.progress = (ratingProg * 10.0).toInt()
 					bind.responseProgress.progress = responseProg
-					bind.deliveryProgress.progress = responseProg
+					// QA-FIX: delivery progress was using responseProg by mistake
+					bind.deliveryProgress.progress = deliveryProg
 
 					bind.reviewLogo.loadUrl(mCtx, mData?.reviewLogo ?: "")
 
@@ -136,12 +137,41 @@ class PremierShopFragment : BaseFragment<SellerHubViewModel, FragmentPremierShop
 
 					bind.stepProgress.progress = progress
 
+					// QA-FIX: previously the click listener was only attached when progress == 100,
+					// which meant tapping the button did literally nothing for any seller below 100%.
+					// Always attach a click handler and branch on eligibility inside it.
 					if (progress < 100) {
 						bind.applyBtn.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(mCtx, R.color.outlineVariant))
-					} else if (progress == 100) {
-						bind.applyBtn.setHapticClickListener {
+					} else {
+						bind.applyBtn.backgroundTintList = null
+					}
+
+					bind.applyBtn.setHapticClickListener {
+						if (progress >= 100) {
 							bind.loader.isVisible = true
 							viewModel.applyPremierShop()
+						} else {
+							AppBottomSheet(
+								mCtx,
+								R.drawable.ic_error,
+								"Not Eligible Yet",
+								"You are at ${progress}% of the Premier Shop requirements. Reach 100% to apply.",
+								primaryBtnText = "Okay",
+								secondaryBtnText = "Cancel",
+								canCancel = true,
+								showSecondary = false,
+								iconPadding = 16,
+								alertType = AlertType.ERROR,
+								clicks = object : AlertClicks {
+									override fun primaryClick(dialog: AppBottomSheet) {
+										dialog.dismiss()
+									}
+
+									override fun secondaryClick(dialog: AppBottomSheet) {
+										dialog.dismiss()
+									}
+								}
+							).show()
 						}
 					}
 

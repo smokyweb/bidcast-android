@@ -27,13 +27,19 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@id/header">
 
+        <!-- QA-FIX (MC task cmo7iadf400bwfi15eqobn3h5): title was cut off on small screens
+             because 18sp is too large. Reduced to 15sp and ensured multi-line wrapping
+             with no artificial line limit so all text is always visible. -->
         <TextView
             style="@style/BodyMedium"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
             android:gravity="center"
-            android:text="@string/select_sub_categories_based_on_the_categories_you_chose_on_the_previous_page" />
+            android:text="@string/select_sub_categories_based_on_the_categories_you_chose_on_the_previous_page"
+            android:textSize="15sp"
+            android:maxLines="5"
+            android:ellipsize="none" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerView"

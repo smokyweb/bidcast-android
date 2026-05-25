@@ -2358,6 +2358,10 @@ class AgoraPublisherActivity : BaseActivity() {
                         bind.runNext.isVisible = true
                     }
 
+                    // MC cmpaj2fex0000w5hgq64jp9k4 merge (2026-05-24): kept GitHub's
+                    // nextBuiltInProductId(...) flow which is more refined than
+                    // GitLab's simple "any remaining product" branch — it picks the
+                    // winner's preferred next product first when a bidder won.
                     val nextProductId = if (bidderName.isNotEmpty()) {
                         nextBuiltInProductId(winnerProductId)
                     } else {

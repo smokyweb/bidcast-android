@@ -68,6 +68,8 @@ data class GetPurchaseDetail(
 
 		@Keep
 		data class ShippingAddress(
+			@SerializedName("address_line_2")
+			val addressLine2 : String? ,
 			@SerializedName("id")
 			val id : Int? ,
 			@SerializedName("is_default")

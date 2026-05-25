@@ -225,8 +225,12 @@ class BuyNowFragment : BaseFragment<ProductViewModel, FragmentBuyNowBinding>() {
                         addressList.addAll(mData)
 
                         bind.address.text =
-                            addressList.find { it?.isDefault == true }?.streetAddress
-                                ?: addressList[0]?.streetAddress
+                            (addressList.find { it?.isDefault == true } ?: addressList[0])?.let { addr ->
+                                io.bidswipe.app.utils.Utils.formatAddress(
+                                    streetAddress = addr.streetAddress,
+                                    addressLine2 = addr.addressLine2,
+                                )
+                            }
 
 
                         shippingId = addressList.find { it?.isDefault == true }?.id
@@ -544,8 +548,12 @@ class BuyNowFragment : BaseFragment<ProductViewModel, FragmentBuyNowBinding>() {
                         addressSheetBind.recycler.adapter?.notifyDataSetChanged()
 
                         bind.address.text =
-                            addressList.find { it?.isDefault == true }?.streetAddress
-                                ?: addressList[pos]?.streetAddress
+                            (addressList.find { it?.isDefault == true } ?: addressList[pos])?.let { addr ->
+                                io.bidswipe.app.utils.Utils.formatAddress(
+                                    streetAddress = addr.streetAddress,
+                                    addressLine2 = addr.addressLine2,
+                                )
+                            }
 
 
                         shippingId = addressList.find { it?.isDefault == true }?.id

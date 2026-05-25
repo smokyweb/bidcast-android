@@ -110,6 +110,7 @@ class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
             when (moreList[pos].slug) {
                 "logout" -> logoutDialog()
                 "aboutUs" -> handlePageUrl(DashViewModel.SLUG_ABOUT_US)
+                "accountSecurity" -> startActivity(Intent(mCtx, io.bidswipe.app.ui.more.AccountSecurityActivity::class.java))
                 "privacyPolicy" -> handlePageUrl(DashViewModel.SLUG_PRIVACY_POLICY)
                 "faq" -> handlePageUrl(DashViewModel.SLUG_FAQ)
                 "termsCondition" -> handlePageUrl(DashViewModel.SLUG_TERMS)
@@ -214,6 +215,11 @@ class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
         bind.tabs.addOnTabSelectedListener(onTabSelectedListener)
 
         moreList.clear()
+        // MC cmpaj2fex0000w5hgq64jp9k4 merge (2026-05-24): kept GitLab's i18n
+        // string resources + Delete Account entry; merged in GitHub's
+        // Account Security entry (cmordzx1s00cuf3hgkwnkkplg — iOS parity).
+        // Account Security uses a hardcoded string because no R.string
+        // resource exists yet; future i18n pass can add it.
         moreList.add(MoreModel(R.drawable.ic_about_us, getString(R.string.about_us), "aboutUs"))
         moreList.add(MoreModel(R.drawable.ic_outlined_message, getString(R.string.contact_us), "contactUs"))
         moreList.add(MoreModel(R.drawable.ic_document, getString(R.string.sales_tax_exemption), "salesTax"))
@@ -221,6 +227,7 @@ class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
         moreList.add(MoreModel(R.drawable.ic_privacy, getString(R.string.privacy_policy_plain), "privacy-policy"))
         moreList.add(MoreModel(R.drawable.ic_faq, getString(R.string.faq_label), "faq"))
         moreList.add(MoreModel(R.drawable.ic_people, getString(R.string.blocked_users), "blockedUsers"))
+        moreList.add(MoreModel(R.drawable.ic_privacy, "Account Security", "accountSecurity"))
         moreList.add(MoreModel(R.drawable.ic_trash, getString(R.string.delete_account), "deleteAccount"))
         moreList.add(MoreModel(R.drawable.ic_logout_outline, getString(R.string.logout), "logout"))
 
@@ -242,6 +249,33 @@ class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
 
         accountGridAdapter = GridAdapter(accountGridList, accountGridClick)
         bind.accountView.gridRecycler.adapter = accountGridAdapter
+
+        // QA-FIX (MC tasks cmo7iaf7h00cgfi155p712op6 / cmo7iaffj00cifi153dmctomr / cmo7iaflb00ckfi15jxfhw8j2):
+        // Items, Revenue, and Rating stat cards on the seller account screen should
+        // navigate to the relevant screen when tapped.
+        bind.sellerHub.itemsCard.setHapticClickListener {
+            startActivity(
+                Intent(mCtx, SellerHubActivity::class.java).putExtra(
+                    "slug", "inventory"
+                )
+            )
+        }
+
+        bind.sellerHub.revenueCard.setHapticClickListener {
+            startActivity(
+                Intent(mCtx, SellerHubActivity::class.java).putExtra(
+                    "slug", "wallet"
+                )
+            )
+        }
+
+        bind.sellerHub.ratingCard.setHapticClickListener {
+            startActivity(
+                Intent(mCtx, SellerHubActivity::class.java).putExtra(
+                    "slug", "sellerStatus"
+                )
+            )
+        }
 
         bind.sellerHub.payoutCard.setHapticClickListener {
             startActivity(
@@ -268,14 +302,10 @@ class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
             )
         }
 
-        bind.sellerHub.itemsLayout.setHapticClickListener {
-            startActivity(
-                Intent(mCtx, SellerHubActivity::class.java).putExtra(
-                    "slug", "inventory"
-                )
-            )
-        }
-
+        // MC cmpaj2fex0000w5hgq64jp9k4 merge (2026-05-24): removed duplicate
+        // `itemsLayout` listener — same wiring as `itemsCard` above. Both IDs
+        // existed because GitHub side and GitLab side independently added an
+        // id to the same LinearLayout; the XML now keeps only `itemsCard`.
         bind.sellerHub.revenueCard.setHapticClickListener {
             startActivity(
                 Intent(mCtx, SellerHubActivity::class.java).putExtra(
@@ -465,7 +495,7 @@ class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
                         bind.sellerHub.time.text = buildString {
                             append(
                                 Utils.getFormattedDateTime(
-                                    "yyyy-mm-dd", "mm-dd-yyyy", item.date ?: ""
+                                    "yyyy-MM-dd", "MM-dd-yyyy", item.date ?: ""
                                 )
                             )
                             append(" ")

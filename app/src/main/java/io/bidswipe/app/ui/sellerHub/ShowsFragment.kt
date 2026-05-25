@@ -307,7 +307,10 @@ class ShowsFragment : BaseFragment<SellerHubViewModel, FragmentShowsBinding>() {
 
 			if (hasAddress) {
 				val addressData = App.profileResponse.value?.defaultShippingAddress
-				address.text = addressData?.streetAddress
+				address.text = Utils.formatAddress(
+					streetAddress = addressData?.streetAddress,
+					addressLine2 = addressData?.addressLine2,
+				)
 				name.text = addressData?.name
 				type.text = addressData?.type
 				defaultAddress.isVisible = addressData?.isDefault == true

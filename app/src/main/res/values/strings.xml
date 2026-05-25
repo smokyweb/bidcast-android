@@ -291,7 +291,8 @@
     <string name="select_duration">Select duration (minutes)</string>
     <string name="create_a_raid">Create a raid</string>
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="enter_phone_number">Enter Phone Number</string>
+    <string name="enter_phone_number">Enter 10-digit US phone number</string>
+    <string name="seller_verification_phone_hint">Enter 10-digit US number (no country code needed)</string>
     <string name="select_shipping_address">Select Shipping Address</string>
     <string name="select">Select</string>
     <string name="yes_notify_me">Yes, notify me</string>

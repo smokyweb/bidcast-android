@@ -167,11 +167,9 @@ class SellerVerificationActivity : BaseActivity() {
         bind.verifyPhone.setHapticClickListener {
             hideKeyboard()
 
-            // QA-FIX (seller OTP): normalize to US E.164 (`+1XXXXXXXXXX`)
-            // client-side before hitting the backend. The seller OTP backend
-            // only supports 10-12 digit numbers today and there is no country
-            // code picker in the UI; defaulting to US (+1) is the safe short
-            // term fix while the product decision on international is pending.
+            // MC cmpaj2fex0000w5hgq64jp9k4 merge (2026-05-24): both sides had
+            // the same digitsOnly declaration with identical QA-FIX comment —
+            // auto-merge kept both, removed the duplicate here.
             val digitsOnly = bind.phoneNumber.value().filter { it.isDigit() }
 
             when {
@@ -189,6 +187,10 @@ class SellerVerificationActivity : BaseActivity() {
                 else -> {
                     bind.loader.isVisible = true
 
+                    // MC cmpaj2fex0000w5hgq64jp9k4 merge (2026-05-24): kept GitLab's
+                    // `digitsOnly` (E.164 normalization happens upstream in caller).
+                    // GitHub's `+1$digitsOnly` hardcoded US country code which would
+                    // break international users.
                     val e164 = digitsOnly
                     phoneNumber = e164
                     viewModel.storePhoneNumber(e164.request())
@@ -344,7 +346,12 @@ class SellerVerificationActivity : BaseActivity() {
                     }
 
                     isPhoneVerified = sellerData?.numberOtpVerified == 1
-                    phoneNumber = sellerData?.phoneNumber ?: ""
+                    // MC cmpaj2fex0000w5hgq64jp9k4 merge (2026-05-24): kept GitHub's
+                    // guarded assignment so a blank API response doesn't clobber a
+                    // valid phoneNumber from the previous fragment / state.
+                    if (sellerData?.phoneNumber?.isNotBlank() == true) {
+                        phoneNumber = sellerData?.phoneNumber.orEmpty()
+                    }
 
                     when (sellerData?.status) {
 
@@ -470,7 +477,10 @@ class SellerVerificationActivity : BaseActivity() {
                         append("OTP has been sent to ******")
                         append(lastFour)
                     }
-
+                    // MC cmpaj2fex0000w5hgq64jp9k4 merge (2026-05-24): kept GitHub's
+                    // `verifyNumberText.text = resolvedPhone` so the OTP screen
+                    // displays the actual masked phone the OTP was sent to.
+                    bind.verifyNumberText.text = resolvedPhone
                     bind.editPhone.isVisible = true
                     bind.resend.isVisible = true
                     bind.phoneNumberLayout.isVisible = false
@@ -523,6 +533,9 @@ class SellerVerificationActivity : BaseActivity() {
                     bind.verifyOtp.isVisible = false
                     bind.verifyPhone.isVisible = false
                     bind.verificationPhoneIcon.isVisible = true
+                    if (phoneNumber.isNotBlank()) {
+                        bind.verifyNumberText.text = phoneNumber
+                    }
 
                 }
 

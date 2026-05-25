@@ -53,17 +53,38 @@ data class GetOrderDetailsResponse(
 		val shippingTracking: List<ShippingTracking?>?,
 		@SerializedName("status")
 		val status: String?,
+		// MC cmpaj2fex0000w5hgq64jp9k4 merge (2026-05-24): keep both sides.
+		// GitLab (Wave 4 #32/#33): USPS tracking + label fields.
 		@SerializedName("tracking_number")
 		val trackingNumber: String?,
 		@SerializedName("shipping_status")
 		val shippingStatus: String?,
 		@SerializedName("label_url")
 		val labelUrl: String?,
+		// GitHub (1552832d): receipt price/shipping/tax breakdown summary.
+		@SerializedName("summary")
+		val summary: Summary?,
 		@SerializedName("user")
 		val user: User?,
 		@SerializedName("user_id")
 		val userId: Int?,
 	) {
+		@Keep
+		data class Summary(
+			@SerializedName("product_price")
+			val productPrice: Double?,
+			@SerializedName("shipping_charge")
+			val shippingCharge: Double?,
+			@SerializedName("tax_percent")
+			val taxPercent: Double?,
+			@SerializedName("tax_amount")
+			val taxAmount: Double?,
+			@SerializedName("sub_total")
+			val subTotal: Double?,
+			@SerializedName("total")
+			val total: Double?,
+		)
+
 		@Keep
 		data class GiftUser(
 			@SerializedName("bio")

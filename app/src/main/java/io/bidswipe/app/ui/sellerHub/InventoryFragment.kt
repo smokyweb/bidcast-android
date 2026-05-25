@@ -757,8 +757,13 @@ class InventoryFragment : BaseFragment<SellerHubViewModel, FragmentInventoryBind
 			conditions = if (conditions.isEmpty()) null else conditions.joinToString(",").request(),
 			minPrice = minPrice?.request(),
 			maxPrice = maxPrice?.request(),
-//			sortBy = sort?.request(),
-			format = sort?.request(),
+			// MC cmpaj2fex0000w5hgq64jp9k4 merge (2026-05-24): the `sort`
+			// local variable is a sort criterion (newest/oldest/etc.), not a
+			// product format. Kept GitHub's mapping `sortBy = sort?.request()`
+			// over GitLab's `format = sort?.request()` which was semantically
+			// wrong (would have sent sort criterion as the format filter,
+			// breaking backend filtering).
+			sortBy = sort?.request(),
 			type = inventoryTypeFilter?.ifEmpty { null }?.request(),
 			saleType = inventorySaleTypeFilter?.ifEmpty { null }?.request()
 		)

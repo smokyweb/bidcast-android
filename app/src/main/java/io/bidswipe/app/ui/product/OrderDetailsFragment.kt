@@ -153,25 +153,16 @@ class OrderDetailsFragment : BaseFragment<ProductViewModel, FragmentOrderDetails
 
                     bind.header.setHeaderText(mData?.order?.product?.title?.asCapital() ?: "Order Detail")
 
-                    bind.shippingAddress.text = if (mData?.shippingAddress != null) {
-                        buildSpannedString {
-                            if (!mData.shippingAddress.name.isNullOrEmpty()) {
-                                append(mData.shippingAddress.name)
-                                append("\n")
-                            }
-                            if (!mData.shippingAddress.streetAddress.isNullOrEmpty()) {
-                                append(mData.shippingAddress.streetAddress)
-                                append("\n")
-                            }
-                            if (!mData.shippingAddress.city.isNullOrEmpty()) {
-                                append(mData.shippingAddress.city)
-                                append(",")
-                            }
-                            append(mData.shippingAddress.state ?: "")
-                        }
-                    } else {
-                        "N/A"
-                    }
+                    bind.shippingAddress.text = mData?.shippingAddress?.let { addr ->
+                        io.bidswipe.app.utils.Utils.formatAddress(
+                            name = addr.name,
+                            streetAddress = addr.streetAddress,
+                            addressLine2 = addr.addressLine2,
+                            city = addr.city,
+                            state = addr.state,
+                            pincode = addr.pincode,
+                        ).ifBlank { "N/A" }
+                    } ?: "N/A"
 
                     bind.productImage.loadUrl(mCtx, mData?.order?.product?.images?.get(0) ?: "")
                     bind.productName.text = mData?.order?.product?.title

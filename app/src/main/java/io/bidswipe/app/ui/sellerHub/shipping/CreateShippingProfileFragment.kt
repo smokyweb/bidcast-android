@@ -42,6 +42,12 @@ class CreateShippingProfileFragment : BaseFragment<SellerHubViewModel, FragmentC
 
         val from = arguments?.getString("from")
 
+        // QA-FIX (MC task cmo7iaew500ccfi15o3mz7xns): pre-load USPS box dimension data on
+        // fragment start so the dropdown is ready when the user enables the max-package
+        // toggle — previously the data was only fetched after the toggle was turned on,
+        // leaving the field blank and unclickable until that point.
+        viewModel.getUSPSBoxDimensions()
+
         if (from == "edit") {
             bind.header.setHeaderText("Edit Shipping Profile")
             bind.save.text = "Update"

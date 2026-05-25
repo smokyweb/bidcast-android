@@ -803,6 +803,12 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
                         socketManager?.enterInFreebie(roomID, userId)
                     }
 
+                    if (bind.freebieEntryLayout.isVisible && freebieUsers.none { it?.id.toString() == userId }) {
+                        bind.freebieEntryLayout.isVisible = false
+                        bind.notesFreebieLayout.isVisible = true
+                        socketManager?.enterInFreebie(roomID, userId)
+                    }
+
                 }
 
                 is Resource.Error -> {
@@ -1244,6 +1250,8 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
         productList.addAll(roomState.products)
 
         if (currentProduct != null) {
+            // MC cmpaj2fex0000w5hgq64jp9k4 merge (2026-05-24): kept GitLab's
+            // isAuctionStarted state tracking (used by other watch-stream logic).
             isAuctionStarted = true
             bind.winningLayout.isVisible = false
             bind.soldLayout.isVisible = false
@@ -2322,8 +2330,14 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
     }
 
     private fun blockUser() {
+        val sellerRequest = sellerId?.takeIf { it.isNotBlank() }?.request()
+        if (sellerRequest == null) {
+            Alerts.error(mCtx, "Seller information is unavailable")
+            return
+        }
+
         bind.loader.isVisible = true
-        viewModel.blockUnblockUser(sellerId?.request()!!)
+        viewModel.blockUnblockUser(sellerRequest)
 
         viewModel.blockUnblockUserRepo.observe(viewLifecycleOwner) {
             when (it) {

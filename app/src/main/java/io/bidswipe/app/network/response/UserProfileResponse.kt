@@ -89,6 +89,9 @@ data class UserProfileResponse(
             val last4: String?
         )
 
+        // MC cmpaj2fex0000w5hgq64jp9k4 merge (2026-05-24): kept GitLab's
+        // Preference class (new in Trey's Wave settings-profile track) +
+        // GitHub's address_line_2 field on DefaultShippingAddress.
         data class Preference(
             @SerializedName("activity_status")
             val activityStatus: Boolean?,
@@ -127,6 +130,8 @@ data class UserProfileResponse(
         )
         @Keep
         data class DefaultShippingAddress(
+            @SerializedName("address_line_2")
+            val addressLine2 : String? ,
             @SerializedName("id")
             val id : Int? ,
             @SerializedName("is_default")

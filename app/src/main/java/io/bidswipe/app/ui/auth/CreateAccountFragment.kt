@@ -24,6 +24,7 @@ import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request
 import io.bidswipe.app.utils.setHapticClickListener
 import io.bidswipe.app.utils.showKeyboard
+import io.bidswipe.app.utils.toDash
 import io.bidswipe.app.utils.value
 
 class CreateAccountFragment : BaseFragment<AuthViewModel , FragmentCreateAccountBinding>() {
@@ -133,6 +134,10 @@ class CreateAccountFragment : BaseFragment<AuthViewModel , FragmentCreateAccount
 				is Resource.Success -> {
 					viewModel.signUpRepo.value = null
 					bind.loader.isVisible = false
+					// MC cmpaj2fex0000w5hgq64jp9k4 merge (2026-05-24): both sides do
+					// the same auto-login-after-signup flow; kept GitLab's cleaner
+					// implementation (explicit Alerts.error for missing token +
+					// early return) over GitHub's slightly older nested-if form.
 					successToast(it.value.message.toString())
 
 					val token = it.value.data?.token?.trim().orEmpty()

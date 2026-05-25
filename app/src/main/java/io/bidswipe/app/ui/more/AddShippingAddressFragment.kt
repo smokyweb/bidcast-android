@@ -52,6 +52,10 @@ class AddShippingAddressFragment :
 	private var stateList = mutableListOf<GetStatesResponse.Data?>()
 	private var selectedState: GetStatesResponse.Data? = null
 
+	// MC cmpaj2fex0000w5hgq64jp9k4 merge (2026-05-24): GitLab side
+	// (Trey's wave) actually IMPLEMENTED Google Places autocomplete that
+	// the GitHub-side TODO comment (cmo7iaepv00cafi15wyu5k00e) was placeholding for.
+	// Kept the live implementation. The TODO comment is now obsolete.
 	private var placesClient: PlacesClient? = null
 	private var streetPlacesAdapter: PlacesStreetAutocompleteAdapter? = null
 	private var suppressStreetAutocomplete = false
@@ -159,11 +163,15 @@ selectedState=stateList[position]
 
 					val selectedText = selectedRadioButton.text
 
+					// MC sub-task cmp4932vk00l13mx1du6mmebo: optional 2nd address
+					// line. Empty -> send empty RequestBody so backend stores NULL.
+					val line2Text = bind.addressLine2.value()
 					viewModel.addShippingAddress(
 						type = selectedText.toString().request(),
 						name = bind.name.value().request(),
 						phoneNumber = bind.phoneNumber.value().request(),
 						streetAddress = bind.streetAddress.value().request(),
+						addressLine2 = line2Text.request(),
 						pinCode = bind.zipCode.value().request(),
 						city = bind.city.value().request(),
 						state = selectedState?.iso2?.request()
