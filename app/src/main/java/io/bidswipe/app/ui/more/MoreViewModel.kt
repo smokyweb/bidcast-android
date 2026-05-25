@@ -350,10 +350,51 @@ class MoreViewModel @Inject constructor(
 		_getCouponResponse.value = repo.getCoupon()
 	}
 
-	// MC cmpaj2fex0000w5hgq64jp9k4 merge (2026-05-24): both sides added
-	// independent ViewModel methods. Kept both.
+	// Basecamp #9921135721 merge (2026-05-24): bundle from qa/trey-android-bug-bundle-2026-05-22
+	// adds seller-coupon flows + the existing tax exemption + account security methods.
+	// All are additive; kept all.
 
-	// GitLab side — #41 Tax Exemption multipart upload
+	// MC cmph7xsgw00g2ms8pmtc6xgz5 (Trey 2026-05-22): seller-coupon flows.
+	private var _listSellerCouponsResponse = MutableLiveData<Resource<GetCouponsResponse>>()
+	val listSellerCouponsRepo: MutableLiveData<Resource<GetCouponsResponse>>
+		get() = _listSellerCouponsResponse
+
+	fun listSellerCoupons() = viewModelScope.launch {
+		if (!networkMonitor.hasInternet()) {
+			_listSellerCouponsResponse.value = NO_INTERNET_ERROR
+			return@launch
+		}
+		_listSellerCouponsResponse.value = repo.listSellerCoupons()
+	}
+
+	private var _createSellerCouponResponse =
+		MutableLiveData<Resource<io.bidswipe.app.network.response.CreateSellerCouponResponse>>()
+	val createSellerCouponRepo: MutableLiveData<Resource<io.bidswipe.app.network.response.CreateSellerCouponResponse>>
+		get() = _createSellerCouponResponse
+
+	fun createSellerCoupon(body: io.bidswipe.app.network.request.CreateSellerCouponRequest) =
+		viewModelScope.launch {
+			if (!networkMonitor.hasInternet()) {
+				_createSellerCouponResponse.value = NO_INTERNET_ERROR
+				return@launch
+			}
+			_createSellerCouponResponse.value = repo.createSellerCoupon(body)
+		}
+
+	private var _deleteSellerCouponResponse =
+		MutableLiveData<Resource<io.bidswipe.app.network.response.CreateSellerCouponResponse>>()
+	val deleteSellerCouponRepo: MutableLiveData<Resource<io.bidswipe.app.network.response.CreateSellerCouponResponse>>
+		get() = _deleteSellerCouponResponse
+
+	fun deleteSellerCoupon(id: Int) = viewModelScope.launch {
+		if (!networkMonitor.hasInternet()) {
+			_deleteSellerCouponResponse.value = NO_INTERNET_ERROR
+			return@launch
+		}
+		_deleteSellerCouponResponse.value = repo.deleteSellerCoupon(id)
+	}
+
+	// #41: Tax Exemption
 	private var _applyTaxExemptionResponse = MutableLiveData<Resource<CommonResponse>>()
 	val applyTaxExemptionRepo: MutableLiveData<Resource<CommonResponse>>
 		get() = _applyTaxExemptionResponse

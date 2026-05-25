@@ -20,6 +20,7 @@
             android:weightSum="2">
 
             <LinearLayout
+                android:id="@+id/credits"
                 style="@style/shadowStyle"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -37,7 +38,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center"
-                    android:text="0"
+                    android:text="N/A"
                     android:textStyle="bold"
                     app:layout_constraintBottom_toTopOf="@+id/view"
                     app:layout_constraintEnd_toEndOf="@+id/view"

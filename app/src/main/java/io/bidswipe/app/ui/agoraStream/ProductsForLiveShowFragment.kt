@@ -153,7 +153,9 @@ class ProductsForLiveShowFragment : BottomSheetDialogFragment() {
         }
 
         if (from == "freebie") {
-            bind.title.text = "Select Product for Freebie"
+            // MC cmph7xsgy00g4ms8pslgxzr1u (2026-05-22): host may select
+            // multiple products for one freebie pool.
+            bind.title.text = "Select Product(s) for Freebie"
             bind.addBtn.text = "Start Freebie"
         }
 
@@ -310,11 +312,15 @@ class ProductsForLiveShowFragment : BottomSheetDialogFragment() {
                             productId = selectedProduct?.id.toString()
                         )
                     } else if (status == "freebie") {
-                        productList.forEachIndexed { index, item ->
-                            item?.selected = index == pos
-                            bind.recycler.adapter?.notifyDataSetChanged()
-                        }
+                        // MC cmph7xsgy00g4ms8pslgxzr1u (2026-05-22): host
+                        // can pick MULTIPLE products to give away in one
+                        // freebie. Toggle the tapped row instead of
+                        // single-selecting (which used to wipe every
+                        // other selection on each tap).
+                        val cur = productList[pos]
+                        cur?.selected = cur?.selected != true
                         selectedPos = pos
+                        bind.recycler.adapter?.notifyItemChanged(pos)
                     }
 
                 }
@@ -377,18 +383,33 @@ class ProductsForLiveShowFragment : BottomSheetDialogFragment() {
 
         bind.addBtn.setHapticClickListener {
             if (from == "freebie") {
-                if (selectedPos == -1) {
-                    Alerts.error(mCtx, "Please select a product")
+                // MC cmph7xsgy00g4ms8pslgxzr1u (2026-05-22): collect ALL
+                // selected products. Falls back to single-product emit
+                // for back-compat when only one is selected, but uses the
+                // new multi-product socket payload when 2+ are picked.
+                // The server-side `create-freebie` handler accepts both
+                // shapes (see socketEvents.js patched).
+                val selectedIds = productList
+                    .filterNotNull()
+                    .filter { it.selected == true }
+                    .mapNotNull { it.id?.toString() }
+                if (selectedIds.isEmpty()) {
+                    Alerts.error(mCtx, "Please select at least one product")
                     return@setHapticClickListener
                 }
-
-                val selectedProduct = productList[selectedPos]
-
-                socketManager?.createFreebie(
-                    roomId = viewModel.currentRoomId,
-                    productId = selectedProduct?.id.toString(),
-                    time = "1"
-                )
+                if (selectedIds.size == 1) {
+                    socketManager?.createFreebie(
+                        roomId = viewModel.currentRoomId,
+                        productId = selectedIds.first(),
+                        time = "1"
+                    )
+                } else {
+                    socketManager?.createFreebieMulti(
+                        roomId = viewModel.currentRoomId,
+                        productIds = selectedIds,
+                        time = "1"
+                    )
+                }
                 dismiss()
 
             } else {

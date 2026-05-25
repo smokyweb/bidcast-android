@@ -769,6 +769,23 @@ class SocketManager private constructor(
         socket?.emit("create-freebie", payload)
     }
 
+    // MC cmph7xsgy00g4ms8pslgxzr1u (2026-05-22): multi-product freebie
+    // emit. The first id stays in `product_id` for backwards compat with
+    // older clients; the full pool ships as a comma-separated `product_ids`
+    // string which the patched socketEvents.js expects. The server emits a
+    // chat-style notification to all room members when this lands.
+    fun createFreebieMulti(roomId: String, productIds: List<String>, time: String) {
+        if (productIds.isEmpty()) return
+        val payload = JSONObject().apply {
+            put("room_id", roomId)
+            put("product_id", productIds.first())
+            put("product_ids", productIds.joinToString(","))
+            put("time", time)
+        }
+        Log.d(TAG, "EMIT:create-freebie (multi) - showId: $roomId, productIds: ${productIds.joinToString(",")}, time: $time")
+        socket?.emit("create-freebie", payload)
+    }
+
     fun enterInFreebie(roomId: String, userId: String) {
         val payload = JSONObject().apply {
             put("room_id", roomId)

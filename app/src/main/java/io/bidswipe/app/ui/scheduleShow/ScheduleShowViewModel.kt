@@ -17,6 +17,7 @@ import io.bidswipe.app.network.response.GetAuctionTypeResponse
 import io.bidswipe.app.network.response.GetCategoryResponse
 import io.bidswipe.app.network.response.GetMailClassesResponse
 import io.bidswipe.app.network.response.GetProductsResponse
+import io.bidswipe.app.network.response.GetPromotePlansResponse
 import io.bidswipe.app.network.response.GetShippingProfilesResponse
 import io.bidswipe.app.network.response.GetShowDetailsResponse
 import io.bidswipe.app.network.response.Product
@@ -298,6 +299,34 @@ class ScheduleShowViewModel @Inject constructor(
 			return@launch
 		}
 		_getShippingProfileResponse.value = repo.getShippingProfile()
+	}
+
+	// Promote show — scheduled show details screen
+	private var _getPromoteShowListResponse = MutableLiveData<Resource<GetPromotePlansResponse>>()
+	val getPromoteShowListRepo: MutableLiveData<Resource<GetPromotePlansResponse>>
+		get() = _getPromoteShowListResponse
+
+	fun getPromoteShowList() = viewModelScope.launch {
+		if (!networkMonitor.hasInternet()) {
+			_getPromoteShowListResponse.value = NO_INTERNET_ERROR
+			return@launch
+		}
+		_getPromoteShowListResponse.value = repo.getPromoteShowList()
+	}
+
+	private var _promoteShowResponse = MutableLiveData<Resource<CommonResponse>>()
+	val promoteShowRepo: MutableLiveData<Resource<CommonResponse>>
+		get() = _promoteShowResponse
+
+	fun promoteShow(
+		scheduleShowId: RequestBody,
+		promoteShowId: RequestBody,
+	) = viewModelScope.launch {
+		if (!networkMonitor.hasInternet()) {
+			_promoteShowResponse.value = NO_INTERNET_ERROR
+			return@launch
+		}
+		_promoteShowResponse.value = repo.promoteShow(scheduleShowId, promoteShowId)
 	}
 
 }

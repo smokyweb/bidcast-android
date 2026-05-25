@@ -6,6 +6,7 @@ import io.bidswipe.app.base.BaseAdapter
 import io.bidswipe.app.databinding.NotificationItemBinding
 import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.network.response.GetNotificationResponse
+import io.bidswipe.app.utils.NotificationCategory
 import io.bidswipe.app.utils.Utils
 import io.bidswipe.app.utils.asCapital
 import io.bidswipe.app.utils.setHapticClickListener
@@ -34,6 +35,11 @@ class NotificationAdapter(
 			bind.message.text = item?.message
 			bind.title.text = item?.title?.asCapital()
 			bind.time.text = Utils.getTimeAgo(item?.createdAt ?: "")
+
+			// Task cmph7xsgt: set category icon based on backend `type` string.
+			// Falls back to the neutral bell icon for unknown types.
+			val category = NotificationCategory.fromRawType(item?.type)
+			bind.categoryIcon.setImageResource(category.iconRes)
 
 			// #36: Dim the row when the notification has already been seen
 			// (either marked by the server or tapped in this session).

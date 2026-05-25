@@ -447,7 +447,7 @@
 
     <string name="preferences">Preferences</string>
 
-    <string name="favourite">Favourite</string>
+    <string name="favourite">Favorite</string>
 
     <string name="seller_section">Seller</string>
     <string name="promotion_section">Promotion</string>
@@ -461,4 +461,12 @@
     <string name="seller_analytics">Seller Analytics</string>
     <string name="seller_tools">Seller Tools</string>
     <string name="no_shows_found">No Shows Found</string>
+    <!-- Notifications category filter chips (task cmph7xsgt) -->
+    <string name="notif_cat_all">All</string>
+    <string name="notif_cat_messages">Messages</string>
+    <string name="notif_cat_verification">Verification</string>
+    <string name="notif_cat_orders">Orders</string>
+    <string name="notif_cat_bids">Bids</string>
+    <string name="notif_cat_purchases">Purchases</string>
+    <string name="notif_cat_other">Other</string>
 </resources>

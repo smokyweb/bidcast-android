@@ -335,6 +335,33 @@ class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
             )
         }
 
+        // #50 Account Health tiles → route to relevant Seller Hub destinations.
+        // On-Time Scan Rate + Defect-Free Order Rate → orders status page (MyOrdersFragment).
+        // Policy Standing → SellerStatusFragment (marketplace + live-sell vendor status).
+        bind.sellerHub.onTimeTile.setHapticClickListener {
+            startActivity(
+                Intent(mCtx, SellerHubActivity::class.java).putExtra(
+                    "slug", "order"
+                )
+            )
+        }
+
+        bind.sellerHub.defectFreeTile.setHapticClickListener {
+            startActivity(
+                Intent(mCtx, SellerHubActivity::class.java).putExtra(
+                    "slug", "order"
+                )
+            )
+        }
+
+        bind.sellerHub.policyStandingTile.setHapticClickListener {
+            startActivity(
+                Intent(mCtx, SellerHubActivity::class.java).putExtra(
+                    "slug", "sellerStatus"
+                )
+            )
+        }
+
         bind.editIcon.setHapticClickListener {
             startActivity(Intent(mCtx, UpdateAccountActivity::class.java))
         }

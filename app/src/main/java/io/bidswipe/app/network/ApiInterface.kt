@@ -925,6 +925,22 @@ interface ApiInterface {
     suspend fun getCoupon(
     ): GetCouponsResponse
 
+    // MC cmph7xsgw00g2ms8pmtc6xgz5 (Trey 2026-05-22): seller-owned coupon CRUD.
+    @GET("api/seller-coupons")
+    suspend fun listSellerCoupons(
+    ): GetCouponsResponse
+
+    @retrofit2.http.Headers("Content-Type: application/json")
+    @POST("api/seller-coupons")
+    suspend fun createSellerCoupon(
+        @Body body: io.bidswipe.app.network.request.CreateSellerCouponRequest
+    ): io.bidswipe.app.network.response.CreateSellerCouponResponse
+
+    @POST("api/seller-coupons/{id}/delete")
+    suspend fun deleteSellerCoupon(
+        @retrofit2.http.Path("id") id: Int
+    ): io.bidswipe.app.network.response.CreateSellerCouponResponse
+
     @Multipart
     @POST("api/make-clip")
     suspend fun getClip(
