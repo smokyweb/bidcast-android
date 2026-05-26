@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Basecamp #9929090875 (Trey 2026-05-26): unified search results now rendered
+     in a real RecyclerView (unifiedResultsRecycler) below the shows grid.
+     The old unifiedSearchSummary count-only TextView is removed. -->
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -101,6 +104,7 @@
 
     </LinearLayout>
 
+    <!-- Shows grid — occupies the top half of the results area -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler"
         android:layout_width="match_parent"
@@ -108,28 +112,45 @@
         android:layout_margin="@dimen/half_margin"
         android:orientation="vertical"
         app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-        app:layout_constraintBottom_toTopOf="@id/unifiedSearchSummary"
+        app:layout_constraintBottom_toTopOf="@id/unifiedSectionLabel"
         app:layout_constraintTop_toBottomOf="@id/heading"
         app:spanCount="2"
-        tools:itemCount="6"
+        tools:itemCount="4"
         tools:listitem="@layout/home_item" />
 
-    <!-- Basecamp #9922137198 (Trey 2026-05-20): unified search summary line.
-         Phase 1 ship just exposes the counts of products + users found by
-         /api/v1/search; a future ticket will replace the show-only grid
-         with a full sectioned results screen. -->
+    <!-- Basecamp #9929090875 (Trey 2026-05-26): section header for user+product results.
+         Hidden when the query is blank or unified search returns nothing. -->
     <TextView
-        android:id="@+id/unifiedSearchSummary"
-        style="@style/BodySmall"
+        android:id="@+id/unifiedSectionLabel"
+        style="@style/TitleSemiBold"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
-        android:padding="@dimen/half_margin"
-        android:textColor="@color/onSurfaceVariant"
+        android:paddingHorizontal="@dimen/margin"
+        android:paddingVertical="6dp"
+        android:text="Users &amp; Products"
+        android:textSize="13sp"
         android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/unifiedResultsRecycler"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
+
+    <!-- Basecamp #9929090875: actual user + product rows from /api/v1/search.
+         FIX (search-redux 2026-05-26): added constraintTop so that layout_height="0dp"
+         resolves correctly — without a top constraint the RecyclerView collapses to
+         0 height and all rows are invisible even when the adapter has items. -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/unifiedResultsRecycler"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        android:visibility="gone"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/unifiedSectionLabel"
+        tools:itemCount="3"
+        tools:listitem="@layout/search_result_item" />
 
     <io.bidswipe.app.ui.custom.NoDataView
         android:id="@+id/noData"
@@ -145,6 +166,5 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="gone" />
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

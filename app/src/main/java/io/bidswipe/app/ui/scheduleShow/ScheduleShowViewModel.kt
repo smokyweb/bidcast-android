@@ -38,6 +38,10 @@ class ScheduleShowViewModel @Inject constructor(
 	var currentProducts = mutableListOf<Product>()
 
 	var showId: String? = null
+	/** Selected randomizer template id (null = none). Set in ShowTitleFragment dropdown. */
+	var selectedRandomizerTemplateId: Int? = null
+	/** Label of the selected template (for display in the dropdown). */
+	var selectedRandomizerTemplateName: String? = null
 	var showTitle = ""
 	var date = ""
 	var time = ""

@@ -11,7 +11,9 @@ import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.text.buildSpannedString
 import androidx.core.view.isVisible
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import kotlinx.coroutines.launch
 import io.bidswipe.app.base.BaseFragment
 import io.bidswipe.app.controller.ProductAdapter
 import io.bidswipe.app.databinding.FragmentAddProductBinding
@@ -241,8 +243,24 @@ class AddProductFragment : BaseFragment<ScheduleShowViewModel, FragmentAddProduc
 					bind.loader.isVisible = false
 					val data = it.value.data
 					log("SHOW DATA Before Start Show: $data")
-					activity?.setResult(Activity.RESULT_OK)
-					finish()
+					// Attach randomizer template if one was selected in the show-create flow
+					val tplId = viewModel.selectedRandomizerTemplateId
+					val newShowId = data?.id?.toString()
+					if (tplId != null && !newShowId.isNullOrEmpty()) {
+						viewLifecycleOwner.lifecycleScope.launch {
+							try {
+								io.bidswipe.app.network.RetrofitService(mCtx).build()
+									.attachRandomizerTemplate(newShowId, io.bidswipe.app.network.request.AttachTemplateRequest(tplId))
+							} catch (e: Exception) {
+								Log.w(TAG, "attach randomizer template failed: " + e.message)
+							}
+							activity?.setResult(Activity.RESULT_OK)
+							finish()
+						}
+					} else {
+						activity?.setResult(Activity.RESULT_OK)
+						finish()
+					}
 				}
 
 				is Resource.Error -> {

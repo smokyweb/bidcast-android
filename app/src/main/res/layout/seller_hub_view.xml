@@ -550,6 +550,16 @@
 
         </LinearLayout>
 
+        <!-- Randomizer Templates shortcut (2026-05-26) -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/randomizerTemplatesBtn"
+            style="@style/Widget.Material3.Button.OutlinedButton"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_margin="@dimen/margin"
+            android:text="🎰 Randomizer Templates"
+            android:textAllCaps="false" />
+
         <LinearLayout
             style="@style/shadowStyle"
             android:layout_width="match_parent"

@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="?attr/colorSurface">
+
+    <!-- Drag handle -->
+    <View
+        android:layout_width="40dp"
+        android:layout_height="4dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        android:background="@drawable/card_8"
+        android:backgroundTint="?attr/colorOnSurface"
+        android:alpha="0.2" />
+
+    <!-- Title -->
+    <TextView
+        android:id="@+id/tvBuilderTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Create Template"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:textColor="?attr/colorOnSurface"
+        android:paddingHorizontal="16dp"
+        android:paddingBottom="8dp" />
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:maxHeight="520dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingHorizontal="16dp"
+            android:paddingBottom="16dp">
+
+            <!-- Template Name -->
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/inputBoxStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                android:hint="Template name"
+                app:counterEnabled="true"
+                app:counterMaxLength="100">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etTemplateName"
+                    style="@style/inputTextStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="text"
+                    android:maxLength="100" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Type dropdown -->
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                android:hint="Type">
+
+                <AutoCompleteTextView
+                    android:id="@+id/actvTemplateType"
+                    style="@style/inputTextStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:focusable="false"
+                    android:focusableInTouchMode="false"
+                    android:inputType="none" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Entry cost -->
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/inputBoxStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                android:hint="Entry cost (0 = free)"
+                app:prefixText="$">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etEntryCost"
+                    style="@style/inputTextStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="numberDecimal" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Slot count stepper -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginBottom="12dp">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Slot count"
+                    android:textSize="14sp"
+                    android:textColor="?attr/colorOnSurface" />
+
+                <ImageView
+                    android:id="@+id/btnSlotMinus"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:src="@drawable/ic_down"
+                    android:padding="6dp"
+                    android:background="@drawable/card_8"
+                    android:contentDescription="Decrease slots"
+                    app:tint="?attr/colorOnSurface" />
+
+                <TextView
+                    android:id="@+id/tvSlotCountValue"
+                    android:layout_width="48dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="6"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:textColor="?attr/colorOnSurface" />
+
+                <ImageView
+                    android:id="@+id/btnSlotPlus"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:src="@drawable/ic_add_bold"
+                    android:padding="6dp"
+                    android:background="@drawable/card_8"
+                    android:contentDescription="Increase slots"
+                    app:tint="?attr/colorOnSurface" />
+
+            </LinearLayout>
+
+            <!-- Slot grid label -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Slots (tap to configure)"
+                android:textSize="13sp"
+                android:textColor="?attr/colorOnSurface"
+                android:alpha="0.6"
+                android:layout_marginBottom="8dp" />
+
+            <!-- Slot grid (2 columns) -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerSlots"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:nestedScrollingEnabled="false"
+                android:layout_marginBottom="16dp" />
+
+            <!-- Save button -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnSaveTemplate"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:text="Save Template"
+                android:textAllCaps="false" />
+
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+</LinearLayout>

@@ -105,6 +105,9 @@
             android:name=".ui.sellerHub.SellerHubActivity"
             android:exported="false" />
         <activity
+            android:name=".ui.randomizer.RandomizerTemplatesActivity"
+            android:exported="false" />
+        <activity
             android:name=".ui.product.OrderStatusActivity"
             android:exported="false" />
         <activity

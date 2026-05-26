@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Basecamp #9929090875 (Trey 2026-05-26): unified search result row.
+     Shared layout for both SearchUser and SearchProduct result types.
+     Image on the left, title + subtitle in the middle, type chip on the right. -->
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    style="@style/cardStyle"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginHorizontal="@dimen/margin"
+    android:layout_marginVertical="4dp"
+    app:cardElevation="1dp"
+    app:cardCornerRadius="12dp">
+
+    <LinearLayout
+        android:id="@+id/root_click"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="@dimen/half_margin"
+        android:gravity="center_vertical">
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/image_card"
+            style="@style/cardStyle"
+            android:layout_width="52dp"
+            android:layout_height="52dp"
+            app:cardCornerRadius="26dp"
+            app:cardElevation="0dp">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/thumbnail"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                android:src="@drawable/placeholder_user" />
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:layout_marginHorizontal="@dimen/half_margin">
+
+            <TextView
+                android:id="@+id/title"
+                style="@style/BodyLarge"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/subtitle"
+                style="@style/BodySmall"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:textColor="@color/onSurfaceVariant" />
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/type_chip"
+            style="@style/BodySmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="8dp"
+            android:paddingVertical="4dp"
+            android:background="@color/surfaceVariant"
+            android:textColor="@color/primary"
+            android:textSize="11sp" />
+
+    </LinearLayout>
+
+</com.google.android.material.card.MaterialCardView>
