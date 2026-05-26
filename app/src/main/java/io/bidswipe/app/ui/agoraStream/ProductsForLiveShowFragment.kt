@@ -54,6 +54,25 @@ import io.bidswipe.app.utils.value
 @AndroidEntryPoint
 class ProductsForLiveShowFragment : BottomSheetDialogFragment() {
 
+    // ── Callback for randomizer slot product selection ──────────────────────
+    interface OnProductSelectedListener {
+        fun onProductSelected(productId: Int, productTitle: String)
+    }
+    private var productSelectedListener: OnProductSelectedListener? = null
+    fun setOnProductSelectedListener(listener: (Int, String) -> Unit) {
+        productSelectedListener = object : OnProductSelectedListener {
+            override fun onProductSelected(productId: Int, productTitle: String) = listener(productId, productTitle)
+        }
+    }
+
+    companion object {
+        fun newInstance(from: String = "live_show"): ProductsForLiveShowFragment {
+            return ProductsForLiveShowFragment().apply {
+                arguments = android.os.Bundle().apply { putString("from", from) }
+            }
+        }
+    }
+
     private lateinit var productAdapter: FirebaseProductAdapter
     private var productList = mutableListOf<Product?>()
     private var surpriseProductList = mutableListOf<GetSurpriseProductsResponse.Data?>()
@@ -157,6 +176,9 @@ class ProductsForLiveShowFragment : BottomSheetDialogFragment() {
             // multiple products for one freebie pool.
             bind.title.text = "Select Product(s) for Freebie"
             bind.addBtn.text = "Start Freebie"
+        } else if (from == "randomizer_slot") {
+            bind.title.text = "Pick Product for Slot"
+            bind.addBtn.text = "Select"
         }
 
         socketManager = SocketManager.getInstance(requireContext())
@@ -410,6 +432,19 @@ class ProductsForLiveShowFragment : BottomSheetDialogFragment() {
                         time = "1"
                     )
                 }
+                dismiss()
+
+            } else if (from == "randomizer_slot") {
+                // Single-product selection for a randomizer slot
+                val selected = productList.filterNotNull().firstOrNull { it.selected == true }
+                if (selected == null) {
+                    Alerts.error(mCtx, "Please select a product")
+                    return@setHapticClickListener
+                }
+                productSelectedListener?.onProductSelected(
+                    selected.id ?: 0,
+                    selected.title ?: selected.name ?: "Product"
+                )
                 dismiss()
 
             } else {

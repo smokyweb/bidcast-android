@@ -572,8 +572,27 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
                         bind.freebieCount.text = "${res.usersList?.size ?: 0} Entries"
                         freebieUsers.clear()
                         freebieUsers.addAll(res.usersList ?: mutableListOf())
+                        // Pre-populate wheel so it's ready when spinning starts
+                        setupBuyerWheel()
                     }
 
+                }
+            }
+
+            // freebie-spinning: server fires this before computing winner — start spin animation
+            socketManager?.onFreebieSpinning { obj ->
+                requireActivity().runOnUiThread {
+                    if (obj.optString("room_id") == roomID) {
+                        bind.winnerSpotLayout.isVisible = true
+                        bind.winnerTitle.text = "Spinning…"
+                        if (freebieUsers.isNotEmpty()) {
+                            bind.buyerLuckyWheel.isVisible = true
+                            bind.textSwitcher.isVisible = false
+                            // Spin to a random slot (winner will snap it correctly on arrival)
+                            bind.buyerLuckyWheel.setTarget(freebieUsers.indices.random())
+                            bind.buyerLuckyWheel.rotateWheel()
+                        }
+                    }
                 }
             }
 
@@ -587,7 +606,33 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
                         bind.winnerSpotLayout.isVisible = true
 
-                        rotateText(user.id)
+                        if (bind.buyerLuckyWheel.isVisible && freebieUsers.isNotEmpty()) {
+                            // Spin wheel to winning slot
+                            val idx = freebieUsers.indexOfFirst { it?.id == user.id }
+                            bind.winnerTitle.text = "The winner is…"
+                            if (idx >= 0) {
+                                bind.buyerLuckyWheel.setTarget(idx)
+                                bind.buyerLuckyWheel.rotateWheel()
+                            }
+                            bind.buyerLuckyWheel.setRotationCompleteListener {
+                                requireActivity().runOnUiThread {
+                                    bind.winnerTitle.text = "🎉 ${user.name} won!"
+                                    android.os.Handler(android.os.Looper.getMainLooper()).postDelayed({
+                                        bind.winnerSpotLayout.isVisible = false
+                                        bind.buyerLuckyWheel.isVisible = false
+                                        bind.textSwitcher.isVisible = true
+                                        bind.notesFreebieLayout.isVisible = true
+                                        bind.freebieLayout.isVisible = false
+                                        freebieUsers.clear()
+                                    }, 3000)
+                                }
+                            }
+                        } else {
+                            // Fallback: text animation
+                            bind.buyerLuckyWheel.isVisible = false
+                            bind.textSwitcher.isVisible = true
+                            rotateText(user.id)
+                        }
 
                         log("Freebie Winner : ${obj} ")
 
@@ -2499,6 +2544,41 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
             bind.wonView.konfettiView.stop(party)
         }, 5000)
 
+    }
+
+    /**
+     * Populates the buyer's LuckyWheelView with the current freebie entrant list.
+     * Handles all 4 randomizer types:
+     *   - product_raffle / blind_product_raffle: slots show usernames (winner takes product)
+     *   - buyer_raffle: same (buyer enters for free or paid)
+     *   - wheel_bin_auction: purely decorative, winner comes from bid mechanics
+     * Colors cycle through the locked 12-swatch palette.
+     */
+    private fun setupBuyerWheel() {
+        if (freebieUsers.isEmpty()) return
+        val colors = listOf(
+            "#FF6B6B", "#FFA94D", "#FFD43B", "#82C91E",
+            "#51CF66", "#20C997", "#22B8CF", "#339AF0",
+            "#5C7CFA", "#845EF7", "#CC5DE8", "#F06595"
+        ).map { android.graphics.Color.parseColor(it) }
+
+        val wheelData = ArrayList(
+            freebieUsers.mapIndexed { idx, u ->
+                com.caneryilmaz.apps.luckywheel.data.WheelData(
+                    text = u?.userName?.trim() ?: u?.name?.trim() ?: "?",
+                    textColor = intArrayOf(android.graphics.Color.WHITE),
+                    backgroundColor = intArrayOf(colors[idx % colors.size])
+                )
+            }
+        )
+
+        bind.buyerLuckyWheel.apply {
+            setCenterPointRadius(40f)
+            setWheelData(wheelData)
+            setCornerPointsRadius(16f)
+            setArrowPosition(com.caneryilmaz.apps.luckywheel.constant.ArrowPosition.CENTER)
+            setTextOrientation(com.caneryilmaz.apps.luckywheel.constant.TextOrientation.VERTICAL_TO_CENTER)
+        }
     }
 
     private fun rotateText(userId: Int?) {

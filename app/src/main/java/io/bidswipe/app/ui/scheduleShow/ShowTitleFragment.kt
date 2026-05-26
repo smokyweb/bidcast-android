@@ -223,6 +223,48 @@ class ShowTitleFragment : BaseFragment<ScheduleShowViewModel, FragmentShowTitleB
             }
         }
 
+        // ── Randomizer template dropdown ─────────────────────────────────────
+        loadRandomizerTemplates()
+
+    }
+
+    private fun loadRandomizerTemplates() {
+        val vm2 = io.bidswipe.app.ui.randomizer.RandomizerViewModel(
+            repo = viewModel.repo,
+            networkMonitor = io.bidswipe.app.utils.NetworkMonitor(mCtx)
+        )
+        vm2.listResponse.observe(viewLifecycleOwner) { res ->
+            if (res is io.bidswipe.app.network.Resource.Success) {
+                val templates = res.value?.data ?: return@observe
+                val labels = mutableListOf("None")
+                labels.addAll(templates.map { "${it.name} (${it.typeLabel()})" })
+                val adapter = android.widget.ArrayAdapter(
+                    mCtx,
+                    android.R.layout.simple_dropdown_item_1line,
+                    labels
+                )
+                bind.actvRandomizerTemplate.setAdapter(adapter)
+                // Restore previously selected
+                val prevId = viewModel.selectedRandomizerTemplateId
+                if (prevId != null) {
+                    val idx = templates.indexOfFirst { it.id == prevId }
+                    if (idx >= 0) bind.actvRandomizerTemplate.setText(labels[idx + 1], false)
+                } else {
+                    bind.actvRandomizerTemplate.setText("None", false)
+                }
+                bind.actvRandomizerTemplate.setOnItemClickListener { _, _, position, _ ->
+                    if (position == 0) {
+                        viewModel.selectedRandomizerTemplateId = null
+                        viewModel.selectedRandomizerTemplateName = null
+                    } else {
+                        val tpl = templates[position - 1]
+                        viewModel.selectedRandomizerTemplateId = tpl.id
+                        viewModel.selectedRandomizerTemplateName = tpl.name
+                    }
+                }
+            }
+        }
+        vm2.loadTemplates()
     }
 
 }

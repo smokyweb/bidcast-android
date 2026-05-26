@@ -54,6 +54,7 @@ import io.bidswipe.app.utils.request
 import io.bidswipe.app.utils.setHapticClickListener
 import io.bidswipe.app.utils.toAuth
 import io.bidswipe.app.utils.toListProduct
+import io.bidswipe.app.utils.toRandomizerTemplates
 import io.bidswipe.app.utils.toScheduleShow
 import io.bidswipe.app.utils.toTutorials
 
@@ -455,6 +456,16 @@ class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
             }
             scheduleShowLauncher.launch(intent)
 
+        }
+
+        // ── Randomizer Templates entry point (2026-05-26) ─────────────────────────────
+        bind.sellerHub.randomizerTemplatesBtn?.setHapticClickListener {
+            val profile = App.profileResponse.value
+            if (profile?.sellerIdentityStatus != "verified") {
+                verificationDialog()
+                return@setHapticClickListener
+            }
+            startActivity(mCtx.toRandomizerTemplates())
         }
 
         bind.sellerHub.upcomingShow.setHapticClickListener {
