@@ -2502,6 +2502,10 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
     }
 
     private fun rotateText(userId: Int?) {
+        if (freebieUsers.isEmpty()) {
+            bind.winnerSpotLayout.isVisible = false
+            return
+        }
         var currentIndex = 0
         bind.winnerTitle.text = "Selecting Freebie Winner"
         val handler = Handler()
