@@ -382,6 +382,12 @@ class AgoraPublisherActivity : BaseActivity() {
         }
 
         bind.clip.setHapticClickListener {
+            // Basecamp #9929851737: guard clip against pre-show taps (mirrors
+            // the isShowLive guard on Promote and other seller actions).
+            if (!isShowLive) {
+                Alerts.error(this, "Please start the live show before creating a clip")
+                return@setHapticClickListener
+            }
             clipSheetBind.loaderView.isVisible = true
             clipSheetBind.videoView.isVisible = false
             viewModel.getClip(roomID.request())
@@ -871,6 +877,13 @@ class AgoraPublisherActivity : BaseActivity() {
 
     override fun onDestroy() {
         App.manager.destroyEngine()
+
+        // Basecamp #9929851737: release the clip ExoPlayer when the activity
+        // is destroyed. It is intentionally NOT released on clip-sheet dismiss
+        // (stop+clear instead) so repeat clips within the same session work.
+        if (::exoPlayer.isInitialized) {
+            exoPlayer.release()
+        }
 
         isShowLive = false
 
@@ -1889,7 +1902,14 @@ class AgoraPublisherActivity : BaseActivity() {
         clipSheet.show()
 
         clipSheet.setOnDismissListener {
-            exoPlayer.release()
+            // Basecamp #9929851737: stop + clear instead of release so the
+            // player can be reused if the seller clips again in the same
+            // session. A full release() here was preventing the second (and
+            // any subsequent) clip from playing — setMediaItem() on a
+            // released player throws IllegalStateException. The player is
+            // properly released in onDestroy().
+            exoPlayer.stop()
+            exoPlayer.clearMediaItems()
         }
 
     }
