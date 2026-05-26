@@ -229,10 +229,7 @@ class ShowTitleFragment : BaseFragment<ScheduleShowViewModel, FragmentShowTitleB
     }
 
     private fun loadRandomizerTemplates() {
-        val vm2 = io.bidswipe.app.ui.randomizer.RandomizerViewModel(
-            repo = viewModel.repo,
-            networkMonitor = io.bidswipe.app.utils.NetworkMonitor(mCtx)
-        )
+        val vm2 = androidx.lifecycle.ViewModelProvider(requireActivity())[io.bidswipe.app.ui.randomizer.RandomizerViewModel::class.java]
         vm2.listResponse.observe(viewLifecycleOwner) { res ->
             if (res is io.bidswipe.app.network.Resource.Success) {
                 val templates = res.value?.data ?: return@observe

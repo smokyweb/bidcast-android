@@ -92,7 +92,7 @@ class RandomizerTemplatesActivity : BaseActivity() {
     @SuppressLint("NotifyDataSetChanged")
     private fun setupObservers() {
         vm.listResponse.observe(this) { res ->
-            bind.loader.isVisible = res is Resource.Loading
+            bind.loader.isVisible = false  // no loading state in this app
             when (res) {
                 is Resource.Success -> {
                     val list = res.value?.data ?: emptyList()
@@ -100,31 +100,31 @@ class RandomizerTemplatesActivity : BaseActivity() {
                     bind.emptyState.isVisible = list.isEmpty()
                     bind.recyclerTemplates.isVisible = list.isNotEmpty()
                 }
-                is Resource.Error -> Alerts.error(this, res.errorBody?.message ?: "Failed to load templates")
+                is Resource.Error -> Alerts.error(this, res.errorResponse?.message ?: "Failed to load templates")
                 else -> Unit
             }
         }
 
         vm.createResponse.observe(this) { res ->
-            builderBind?.btnSaveTemplate?.isEnabled = res !is Resource.Loading
+            builderBind?.btnSaveTemplate?.isEnabled = true
             when (res) {
                 is Resource.Success -> {
                     builderSheet?.dismiss()
                     vm.loadTemplates()
                 }
-                is Resource.Error -> Alerts.error(this, res.errorBody?.message ?: "Failed to save template")
+                is Resource.Error -> Alerts.error(this, res.errorResponse?.message ?: "Failed to save template")
                 else -> Unit
             }
         }
 
         vm.updateResponse.observe(this) { res ->
-            builderBind?.btnSaveTemplate?.isEnabled = res !is Resource.Loading
+            builderBind?.btnSaveTemplate?.isEnabled = true
             when (res) {
                 is Resource.Success -> {
                     builderSheet?.dismiss()
                     vm.loadTemplates()
                 }
-                is Resource.Error -> Alerts.error(this, res.errorBody?.message ?: "Failed to update template")
+                is Resource.Error -> Alerts.error(this, res.errorResponse?.message ?: "Failed to update template")
                 else -> Unit
             }
         }
@@ -132,7 +132,7 @@ class RandomizerTemplatesActivity : BaseActivity() {
         vm.deleteResponse.observe(this) { res ->
             when (res) {
                 is Resource.Success -> vm.loadTemplates()
-                is Resource.Error -> Alerts.error(this, res.errorBody?.message ?: "Failed to delete template")
+                is Resource.Error -> Alerts.error(this, res.errorResponse?.message ?: "Failed to delete template")
                 else -> Unit
             }
         }
@@ -143,7 +143,7 @@ class RandomizerTemplatesActivity : BaseActivity() {
                     Alerts.success(this, "Products released")
                     vm.loadTemplates()
                 }
-                is Resource.Error -> Alerts.error(this, res.errorBody?.message ?: "Failed to release products")
+                is Resource.Error -> Alerts.error(this, res.errorResponse?.message ?: "Failed to release products")
                 else -> Unit
             }
         }
