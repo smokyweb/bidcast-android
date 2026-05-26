@@ -443,7 +443,7 @@ class ProductsForLiveShowFragment : BottomSheetDialogFragment() {
                 }
                 productSelectedListener?.onProductSelected(
                     selected.id ?: 0,
-                    selected.title ?: selected.name ?: "Product"
+                    selected.title ?: "Product"
                 )
                 dismiss()
 
