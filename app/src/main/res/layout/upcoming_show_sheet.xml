@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/top_curve"
+    android:backgroundTint="@android:color/white"
+    android:orientation="vertical"
+    android:paddingBottom="@dimen/padding">
+
+    <!-- Drag handle -->
+    <View
+        android:layout_width="64dp"
+        android:layout_height="4dp"
+        android:layout_gravity="center"
+        android:layout_marginVertical="16dp"
+        android:background="@drawable/card_16"
+        android:backgroundTint="@color/outlineVariant" />
+
+    <!-- Header: avatar + username + close -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/margin"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/avatarCard"
+            style="@style/cardStyle"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:backgroundTint="@color/transparent"
+            app:cardCornerRadius="100dp"
+            app:cardElevation="0dp">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/userImage"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                android:src="@drawable/user_image" />
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <TextView
+            android:id="@+id/userName"
+            style="@style/TitleMedium"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_weight="1"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:text="@username" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/close"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:padding="@dimen/half_margin"
+            android:src="@drawable/ic_close"
+            app:tint="@color/onSurface" />
+
+    </LinearLayout>
+
+    <!-- Date/time message -->
+    <TextView
+        android:id="@+id/dateTimeText"
+        style="@style/TitleMedium"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/margin"
+        android:layout_marginTop="@dimen/margin"
+        android:layout_marginBottom="@dimen/half_margin"
+        android:gravity="center"
+        android:textStyle="bold"
+        android:text="Show starts on Dec 25, 2025 at 8:00 PM" />
+
+    <!-- Okay button -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/okayBtn"
+        style="@style/appBtn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/margin"
+        android:layout_marginTop="@dimen/half_margin"
+        android:text="Okay" />
+
+</LinearLayout>
