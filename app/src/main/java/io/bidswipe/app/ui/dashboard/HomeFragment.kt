@@ -197,14 +197,11 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
 
         bind.notification.setHapticClickListener {
             startActivity(
-                Intent(mCtx, ProductSetDetailsActivity::class.java).putExtra("productSetId", "19")
+                Intent(mCtx, NotificationActivity::class.java).putExtra(
+                    "slug",
+                    "notification"
+                )
             )
-//            startActivity(
-//                Intent(mCtx, NotificationActivity::class.java).putExtra(
-//                    "slug",
-//                    "notification"
-//                )
-//            )
         }
 
         bind.recycler.setOnScrollChangeListener { _, _, _, _, _ ->
