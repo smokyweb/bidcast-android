@@ -28,7 +28,7 @@ enum class AuctionType(val id: Int, val displayName: String) {
 
 	BUY_NOW(5, "Buy Now Auction"),
 	LIVE(8, "Live Auction"),
-	SPORTS_CARD_BREAK(9, "Sports Card Break Auction");
+	SURPRISE_SETS(9, "Surprise Sets");
 
 	companion object {
 		fun fromId(id: Int): AuctionType? = entries.find { it.id == id }
