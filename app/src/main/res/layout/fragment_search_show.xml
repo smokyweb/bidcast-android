@@ -134,7 +134,10 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <!-- Basecamp #9929090875: actual user + product rows from /api/v1/search -->
+    <!-- Basecamp #9929090875: actual user + product rows from /api/v1/search.
+         FIX (search-redux 2026-05-26): added constraintTop so that layout_height="0dp"
+         resolves correctly — without a top constraint the RecyclerView collapses to
+         0 height and all rows are invisible even when the adapter has items. -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/unifiedResultsRecycler"
         android:layout_width="match_parent"
@@ -145,6 +148,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/unifiedSectionLabel"
         tools:itemCount="3"
         tools:listitem="@layout/search_result_item" />
 
