@@ -947,6 +947,9 @@ interface ApiInterface {
     @POST("api/make-clip")
     suspend fun getClip(
         @Part("room_id") roomId: RequestBody?,
+        // Basecamp #9929851737 (2026-05-26): optional clip duration in seconds.
+        // Backend defaults to 60 when null/absent. Bounded 5..300.
+        @Part("duration_sec") durationSec: RequestBody? = null,
     ): MakeClipResponse
 
     @GET("api/get-clips")

@@ -40,6 +40,89 @@
 
         </LinearLayout>
 
+        <!-- Basecamp #9929851737 (2026-05-26): clip duration picker.
+             Shown before the clip is created. Defaults to 60s. After the user
+             taps Create Clip, this group is hidden and the loader/preview is shown. -->
+        <LinearLayout
+            android:id="@+id/durationPickerWrap"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginTop="@dimen/margin"
+            android:layout_marginBottom="@dimen/half_margin">
+
+            <TextView
+                style="@style/TitleMedium"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Clip duration" />
+
+            <TextView
+                style="@style/BodyMedium"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/half_margin"
+                android:text="How many seconds of the stream should we capture?" />
+
+            <com.google.android.material.button.MaterialButtonToggleGroup
+                android:id="@+id/durationToggleGroup"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:singleSelection="true"
+                app:selectionRequired="true">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/duration15"
+                    style="?attr/materialButtonOutlinedStyle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="15s" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/duration30"
+                    style="?attr/materialButtonOutlinedStyle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="30s" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/duration60"
+                    style="?attr/materialButtonOutlinedStyle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="60s" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/duration120"
+                    style="?attr/materialButtonOutlinedStyle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="2m" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/duration180"
+                    style="?attr/materialButtonOutlinedStyle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="3m" />
+
+            </com.google.android.material.button.MaterialButtonToggleGroup>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/createClipBtn"
+                style="@style/appBtn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margin"
+                android:text="@string/create_clip" />
+
+        </LinearLayout>
+
 <androidx.constraintlayout.widget.ConstraintLayout
     android:layout_width="match_parent"
     android:layout_marginVertical="@dimen/margin"

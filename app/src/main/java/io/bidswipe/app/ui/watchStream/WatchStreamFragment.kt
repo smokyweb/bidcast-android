@@ -223,9 +223,13 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
         }
 
         bind.clip.setHapticClickListener {
-            clipSheetBind.loaderView.isVisible = true
+            // Basecamp #9929851737 (2026-05-26): show duration picker FIRST,
+            // defer the API call until the buyer taps "Create Clip".
+            clipSheetBind.durationPickerWrap.isVisible = true
+            clipSheetBind.loaderView.isVisible = false
             clipSheetBind.videoView.isVisible = false
-            viewModel.getClip(roomID.request())
+            clipSheetBind.bottomLayout.isVisible = false
+            clipSheetBind.durationToggleGroup.check(R.id.duration60)
             createClipSheet()
         }
 
@@ -2688,6 +2692,24 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
         clipSheetBind.close.setHapticClickListener {
             clipSheet.dismiss()
+        }
+
+        // Basecamp #9929851737 (2026-05-26): wire the duration picker; fire the
+        // API call only when the buyer taps "Create Clip".
+        clipSheetBind.createClipBtn.setHapticClickListener {
+            val durationSec = when (clipSheetBind.durationToggleGroup.checkedButtonId) {
+                R.id.duration15  -> 15
+                R.id.duration30  -> 30
+                R.id.duration60  -> 60
+                R.id.duration120 -> 120
+                R.id.duration180 -> 180
+                else             -> 60
+            }
+            clipSheetBind.durationPickerWrap.isVisible = false
+            clipSheetBind.loaderView.isVisible = true
+            clipSheetBind.videoView.isVisible = false
+            clipSheetBind.bottomLayout.isVisible = false
+            viewModel.getClip(roomID.request(), durationSec.toString().request())
         }
 
         clipSheet.show()

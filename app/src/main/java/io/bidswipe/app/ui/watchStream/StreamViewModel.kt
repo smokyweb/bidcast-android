@@ -156,12 +156,15 @@ class StreamViewModel @Inject constructor(
 		get() = _getClipResponse
 
 	fun getClip(
-		roomId : RequestBody?
+		roomId : RequestBody?,
+		// Basecamp #9929851737 (2026-05-26): optional clip duration.
+		// Null = backend default (60s). Bounded 5..300 server-side.
+		durationSec: RequestBody? = null
 	) = viewModelScope.launch {
 		if (!networkMonitor.hasInternet()) {
 			_getClipResponse.value = NO_INTERNET_ERROR
 			return@launch
 		}
-		_getClipResponse.value = repo.getClip(roomId)
+		_getClipResponse.value = repo.getClip(roomId, durationSec)
 	}
 }

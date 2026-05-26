@@ -710,7 +710,9 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
 
     suspend fun getClip(
         roomId: RequestBody?,
-    ) = call { api.getClip(roomId) }
+        // Basecamp #9929851737 (2026-05-26): optional clip duration in seconds.
+        durationSec: RequestBody? = null,
+    ) = call { api.getClip(roomId, durationSec) }
 
     suspend fun getUserClips(
         sellerId: String?,
