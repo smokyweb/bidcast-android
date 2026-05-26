@@ -972,6 +972,15 @@
                     android:text="Selecting Freebie Winner"
                     android:textColor="@color/background" />
 
+                <!-- Buyer spinning wheel (shown when freebie is spinning, hidden after winner) -->
+                <com.caneryilmaz.apps.luckywheel.ui.LuckyWheelView
+                    android:id="@+id/buyer_lucky_wheel"
+                    android:layout_width="220dp"
+                    android:layout_height="220dp"
+                    android:layout_gravity="center_horizontal"
+                    android:visibility="gone"
+                    app:arrowPosition="CENTER" />
+
                 <android.widget.TextSwitcher
                     android:id="@+id/textSwitcher"
                     android:layout_width="match_parent"

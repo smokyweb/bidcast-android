@@ -836,6 +836,17 @@ class SocketManager private constructor(
         }
     }
 
+    fun onFreebieSpinning(listener: (resultJson: JSONObject) -> Unit) {
+        socket?.off("freebie-spinning")
+        socket?.on("freebie-spinning") { args ->
+            val obj = args.firstOrNull()
+            if (obj is JSONObject) {
+                Log.d(TAG, "RECEIVED: freebie-spinning - $obj")
+                listener(obj)
+            }
+        }
+    }
+
     fun removeFreebieUser(roomId: String, userId: String) {
         val payload = JSONObject().apply {
             put("room_id", roomId)

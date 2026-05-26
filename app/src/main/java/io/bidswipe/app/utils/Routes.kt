@@ -40,6 +40,8 @@ fun Context.toScheduleShow(from: String? = "",showId:String?="") = Intent(this, 
 
 fun Context.goToAddCard(from: String? = "") = Intent(this, AddPaymentCardActivity::class.java).putExtra("from", from)
 
+fun Context.toRandomizerTemplates() = Intent(this, io.bidswipe.app.ui.randomizer.RandomizerTemplatesActivity::class.java)
+
 fun Context.goToRateSeller(sellerId: String?, sellerName: String?, sellerImage: String?) = Intent(
 	this,
 	RateSellerActivity::class.java

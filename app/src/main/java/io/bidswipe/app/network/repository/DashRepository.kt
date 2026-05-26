@@ -768,4 +768,28 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
 
     suspend fun deleteAccountRequest(reason: RequestBody?) = call { api.deleteAccountRequest(reason) }
 
+    // ── Randomizer templates (2026-05-26) ───────────────────────────────
+
+    suspend fun getRandomizerTemplates() = call { api.getRandomizerTemplates() }
+
+    suspend fun getRandomizerTemplate(id: Int) = call { api.getRandomizerTemplate(id) }
+
+    suspend fun createRandomizerTemplate(body: io.bidswipe.app.network.request.RandomizerTemplateRequest) =
+        call { api.createRandomizerTemplate(body) }
+
+    suspend fun updateRandomizerTemplate(id: Int, body: io.bidswipe.app.network.request.RandomizerTemplateRequest) =
+        call { api.updateRandomizerTemplate(id, body) }
+
+    suspend fun deleteRandomizerTemplate(id: Int) = call { api.deleteRandomizerTemplate(id) }
+
+    suspend fun releaseTemplateProducts(id: Int) = call { api.releaseTemplateProducts(id) }
+
+    suspend fun duplicateTemplate(id: Int) = call { api.duplicateTemplate(id) }
+
+    suspend fun attachRandomizerTemplate(showId: String, templateId: Int) =
+        call { api.attachRandomizerTemplate(showId, io.bidswipe.app.network.request.AttachTemplateRequest(templateId)) }
+
+    suspend fun detachRandomizerTemplate(showId: String) =
+        call { api.detachRandomizerTemplate(showId) }
+
 }

@@ -96,9 +96,11 @@ import okhttp3.RequestBody
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.Multipart
 import retrofit2.http.POST
+import retrofit2.http.PUT
 import retrofit2.http.Part
 import retrofit2.http.Path
 import retrofit2.http.Query
@@ -1021,6 +1023,55 @@ interface ApiInterface {
     @POST("api/delete-profile")
     suspend fun deleteAccountRequest(
         @Part("reason") reason: RequestBody?,
+    ): CommonResponse
+
+    // ── Randomizer template CRUD (2026-05-26) ────────────────────────────────
+
+    @GET("api/v1/randomizer/templates")
+    suspend fun getRandomizerTemplates(): io.bidswipe.app.network.response.RandomizerTemplateListResponse
+
+    @GET("api/v1/randomizer/templates/{id}")
+    suspend fun getRandomizerTemplate(
+        @Path("id") id: Int
+    ): io.bidswipe.app.network.response.RandomizerTemplateSingleResponse
+
+    @POST("api/v1/randomizer/templates")
+    suspend fun createRandomizerTemplate(
+        @Body body: io.bidswipe.app.network.request.RandomizerTemplateRequest
+    ): io.bidswipe.app.network.response.RandomizerTemplateSingleResponse
+
+    @PUT("api/v1/randomizer/templates/{id}")
+    suspend fun updateRandomizerTemplate(
+        @Path("id") id: Int,
+        @Body body: io.bidswipe.app.network.request.RandomizerTemplateRequest
+    ): io.bidswipe.app.network.response.RandomizerTemplateSingleResponse
+
+    @DELETE("api/v1/randomizer/templates/{id}")
+    suspend fun deleteRandomizerTemplate(
+        @Path("id") id: Int
+    ): CommonResponse
+
+    @POST("api/v1/randomizer/templates/{id}/release-products")
+    suspend fun releaseTemplateProducts(
+        @Path("id") id: Int
+    ): CommonResponse
+
+    @POST("api/v1/randomizer/templates/{id}/duplicate")
+    suspend fun duplicateTemplate(
+        @Path("id") id: Int
+    ): io.bidswipe.app.network.response.RandomizerTemplateSingleResponse
+
+    // ── Show / randomizer template attachment ──────────────────────────────
+
+    @PUT("api/v1/shows/{id}/randomizer-template")
+    suspend fun attachRandomizerTemplate(
+        @Path("id") showId: String,
+        @Body body: io.bidswipe.app.network.request.AttachTemplateRequest
+    ): CommonResponse
+
+    @DELETE("api/v1/shows/{id}/randomizer-template")
+    suspend fun detachRandomizerTemplate(
+        @Path("id") showId: String
     ): CommonResponse
 }
 
