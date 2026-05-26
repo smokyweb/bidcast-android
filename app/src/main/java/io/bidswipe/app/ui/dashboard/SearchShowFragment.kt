@@ -219,6 +219,11 @@ class SearchShowFragment : BaseFragment<DashViewModel, FragmentSearchShowBinding
 						unifiedAdapter.submitList(resultItems)
 						bind.unifiedResultsRecycler.isVisible = true
 						bind.unifiedSectionLabel.isVisible = true
+						// FIX (deep-diag 2026-05-26): noData spans heading→parent bottom and
+						// has higher z-order than unifiedResultsRecycler in the XML, so it
+						// overlays and hides unified results when shows=empty.
+						// Hide noData whenever we have user/product results to show.
+						bind.noData.isVisible = false
 					} else {
 						bind.unifiedResultsRecycler.isVisible = false
 						bind.unifiedSectionLabel.isVisible = false
