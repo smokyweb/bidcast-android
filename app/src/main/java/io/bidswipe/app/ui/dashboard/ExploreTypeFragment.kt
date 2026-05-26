@@ -29,6 +29,7 @@ import io.bidswipe.app.network.Resource
 import io.bidswipe.app.network.response.GetMyShowResponse
 import io.bidswipe.app.network.response.GetSubCategoriesResponse
 import io.bidswipe.app.ui.custom.AppBottomSheet
+import io.bidswipe.app.ui.custom.UpcomingShowSheet
 import io.bidswipe.app.ui.more.NotificationActivity
 import io.bidswipe.app.ui.sellerProfile.SellerProfileActivity
 import io.bidswipe.app.ui.watchStream.ViewLiveShowActivity
@@ -91,6 +92,19 @@ class ExploreTypeFragment : BaseFragment<DashViewModel, FragmentExploreTypeBindi
                 }
 
                 "viewShow" -> {
+                    // [Basecamp #9930403446] Upcoming-show tap → popup with date/time
+                    if (selectedTabText == "upcoming") {
+                        val show = showList[pos]
+                        UpcomingShowSheet(
+                            mCtx = mCtx,
+                            profileImageUrl = show?.user?.profileImage,
+                            username = show?.user?.username ?: show?.user?.name,
+                            showDate = show?.date,
+                            showTime = show?.time,
+                        ).show()
+                        return
+                    }
+
 //					if (showList[pos]?.isLive == true) {
                     val roomId = showList[pos]?.roomId.toString()
                     if (App.PIPMode) {
