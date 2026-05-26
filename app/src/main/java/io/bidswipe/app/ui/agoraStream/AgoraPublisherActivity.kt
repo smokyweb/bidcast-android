@@ -382,15 +382,18 @@ class AgoraPublisherActivity : BaseActivity() {
         }
 
         bind.clip.setHapticClickListener {
-            // Basecamp #9929851737: guard clip against pre-show taps (mirrors
-            // the isShowLive guard on Promote and other seller actions).
+            // Basecamp #9929851737: guard clip against pre-show taps.
             if (!isShowLive) {
                 Alerts.error(this, "Please start the live show before creating a clip")
                 return@setHapticClickListener
             }
-            clipSheetBind.loaderView.isVisible = true
+            // Basecamp #9929851737 (2026-05-26): show duration picker FIRST;
+            // defer the API call until the seller taps Create Clip.
+            clipSheetBind.durationPickerWrap.isVisible = true
+            clipSheetBind.loaderView.isVisible = false
             clipSheetBind.videoView.isVisible = false
-            viewModel.getClip(roomID.request())
+            clipSheetBind.bottomLayout.isVisible = false
+            clipSheetBind.durationToggleGroup.check(R.id.duration60)
             createClipSheet()
         }
 
@@ -1899,15 +1902,27 @@ class AgoraPublisherActivity : BaseActivity() {
             clipSheet.dismiss()
         }
 
+        // Basecamp #9929851737 (2026-05-26): wire duration picker.
+        // API call fires only when seller taps Create Clip.
+        clipSheetBind.createClipBtn.setHapticClickListener {
+            val durationSec = when (clipSheetBind.durationToggleGroup.checkedButtonId) {
+                R.id.duration15  -> 15
+                R.id.duration30  -> 30
+                R.id.duration60  -> 60
+                R.id.duration120 -> 120
+                R.id.duration180 -> 180
+                else             -> 60
+            }
+            clipSheetBind.durationPickerWrap.isVisible = false
+            clipSheetBind.loaderView.isVisible = true
+            clipSheetBind.videoView.isVisible = false
+            clipSheetBind.bottomLayout.isVisible = false
+            viewModel.getClip(roomID.request(), durationSec.toString().request())
+        }
+
         clipSheet.show()
 
         clipSheet.setOnDismissListener {
-            // Basecamp #9929851737: stop + clear instead of release so the
-            // player can be reused if the seller clips again in the same
-            // session. A full release() here was preventing the second (and
-            // any subsequent) clip from playing — setMediaItem() on a
-            // released player throws IllegalStateException. The player is
-            // properly released in onDestroy().
             exoPlayer.stop()
             exoPlayer.clearMediaItems()
         }
