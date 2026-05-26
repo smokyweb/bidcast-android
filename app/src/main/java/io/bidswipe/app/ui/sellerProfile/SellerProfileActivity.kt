@@ -306,17 +306,64 @@ class SellerProfileActivity : BaseActivity() {
 
                 is Resource.Error -> {
                     bind.loader.isVisible = false
-                    it.parse(this, TAG, object : AlertClicks {
-                        override fun primaryClick(dialog: AppBottomSheet) {
-                            dialog.dismiss()
+                    // Basecamp #9929104356 (Trey 2026-05-26): 'Reviews from My Account
+                    // gives token is invalid and logs user out.'
+                    //
+                    // Root cause: api/get-profile-by-id is placed OUTSIDE the jwt.verify
+                    // middleware group on the backend, but its controller calls Auth::id()
+                    // internally. Without the middleware, Auth::id() = null → backend
+                    // returns {error_type:"invalid_token"} → the global parse() handler
+                    // clears Prefs + calls toAuth(), logging the user out even though
+                    // the session token is still valid for every other endpoint.
+                    //
+                    // Android fix: for auth-related errors from getProfileById, do NOT
+                    // pass to parse() (which triggers logout). Instead fall back to the
+                    // in-memory App.profileResponse cache for the own-profile case so the
+                    // header still shows name/avatar. Tabs (Reviews, etc.) load via their
+                    // own independent API calls that ARE correctly outside auth checks.
+                    val isAuthError = it.errorResponse?.errorType == "invalid_token" ||
+                        it.errorResponse?.errorType == "UNAUTHORIZED" ||
+                        it.errorResponse?.message == "Token not found"
 
+                    if (isAuthError) {
+                        // Fall back to cached profile when viewing own account
+                        val isOwnProfile = sellerId.isNotEmpty() &&
+                            sellerId == App.profileResponse.value?.id?.toString()
+                        if (isOwnProfile) {
+                            val cached = App.profileResponse.value
+                            if (cached != null) {
+                                sellerName = cached.name?.replaceFirstChar { c -> c.uppercase() } ?: ""
+                                sellerImage = cached.profileImage ?: ""
+                                bind.name.text = sellerName
+                                bind.name1.text = sellerName
+                                bind.userName.text = cached.username ?: ""
+                                bind.userName1.text = cached.username ?: ""
+                                bind.userImage.loadUrl(this, cached.profileImage.orEmpty())
+                                bind.userImage2.loadUrl(this, cached.profileImage.orEmpty())
+                                bind.bio.text = cached.bio ?: ""
+                                bind.bio.isVisible = !cached.bio.isNullOrEmpty()
+                            }
+                            // Viewing own profile — hide other-user interactive buttons
+                            bind.sendTip.isVisible = false
+                            bind.messageSeller.isVisible = false
+                            bind.follow.isVisible = false
+                            bind.notificationIcon.isVisible = false
+                            bind.notificationIcon1.isVisible = false
+                            bind.moreIcon.isVisible = false
+                            bind.moreIcon1.isVisible = false
                         }
-
-                        override fun secondaryClick(dialog: AppBottomSheet) {
-                            dialog.dismiss()
-
-                        }
-                    })
+                        // No logout — user session is still valid
+                    } else {
+                        // Non-auth error: standard global error handler
+                        it.parse(this, TAG, object : AlertClicks {
+                            override fun primaryClick(dialog: AppBottomSheet) {
+                                dialog.dismiss()
+                            }
+                            override fun secondaryClick(dialog: AppBottomSheet) {
+                                dialog.dismiss()
+                            }
+                        })
+                    }
                 }
 
                 else -> {}
