@@ -38,6 +38,13 @@ import io.bidswipe.app.utils.showKeyboard
 // now display in a real RecyclerView below the shows grid instead of a
 // count-only summary. Phase 1 was: "Also found: N products • M users".
 // This commit (Bug 1 fix) replaces that with tappable rows.
+//
+// NOTE (fix 2026-05-27): this fragment is currently UNREACHABLE — it has a
+// destination in dash_nav_graph.xml (goToSearchShowFragment) but no caller
+// anywhere navigates to it. The user-facing search bar lives in HomeFragment;
+// the unified-search wiring that actually runs is in HomeFragment.kt +
+// fragment_home.xml. This file is kept for now because earlier attempted
+// fixes targeted it; do not assume edits here affect production search.
 @SuppressLint("NotifyDataSetChanged")
 class SearchShowFragment : BaseFragment<DashViewModel, FragmentSearchShowBinding>() {
 	override fun getModel(): Class<DashViewModel> = DashViewModel::class.java

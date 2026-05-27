@@ -22,12 +22,16 @@ import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseFragment
 import io.bidswipe.app.controller.HomeAdapter
 import io.bidswipe.app.controller.HomeCategoryAdapter
+import io.bidswipe.app.controller.SearchResultItem
+import io.bidswipe.app.controller.UnifiedSearchResultAdapter
 import io.bidswipe.app.databinding.FragmentHomeBinding
 import io.bidswipe.app.interfaces.AlertClicks
 import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.model.StreamModel
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.network.response.GetMyShowResponse
+import io.bidswipe.app.network.response.SearchProduct
+import io.bidswipe.app.network.response.SearchUser
 import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.ui.custom.UpcomingShowSheet
 import io.bidswipe.app.ui.more.NotificationActivity
@@ -52,6 +56,14 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
 
     private lateinit var homeAdapter: HomeAdapter
     private lateinit var categoryAdapter: HomeCategoryAdapter
+
+    // Basecamp #9929090875 (Trey 2026-05-26 / fix 2026-05-27): unified search
+    // (users + products) results render in a dedicated RecyclerView on the home
+    // screen, below the shows grid. Previous 3 fix attempts wired this up in
+    // SearchShowFragment which is never navigated to from anywhere — the
+    // user-facing search bar lives here in HomeFragment.
+    private lateinit var unifiedAdapter: UnifiedSearchResultAdapter
+    private var searchDebounce: android.os.Handler? = null
     private var showList = mutableListOf<GetMyShowResponse.Data?>()
     private val categoryTiles = mutableListOf<HomeCategoryAdapter.CategoryTile>()
     private var romIdsList = mutableListOf<String>()
@@ -237,6 +249,28 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
 
         bind.searchLayout.isEndIconVisible = false
 
+        // Basecamp #9929090875 (Trey 2026-05-26 / fix 2026-05-27): unified search
+        // adapter wiring. User tap → SellerProfileActivity. Product tap →
+        // ProductDetailsActivity. Adapter is bound here even when empty so that
+        // submitList() updates the live RecyclerView once results arrive.
+        unifiedAdapter = UnifiedSearchResultAdapter(
+            onUserClick = { user: SearchUser ->
+                startActivity(
+                    Intent(mCtx, SellerProfileActivity::class.java)
+                        .putExtra("sellerId", user.id.toString())
+                )
+            },
+            onProductClick = { product: SearchProduct ->
+                if (product.id != null) {
+                    startActivity(
+                        Intent(mCtx, ProductDetailsActivity::class.java)
+                            .putExtra("productId", product.id.toString())
+                    )
+                }
+            }
+        )
+        bind.unifiedResultsRecycler.adapter = unifiedAdapter
+
         bind.search.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
@@ -253,9 +287,52 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
                         search = s.toString().request(),
                         page = page.toString().request()
                     )
+
+                    // Basecamp #9929090875: also fire POST /api/v1/search for
+                    // users + products, debounced 350ms so we don't hammer the
+                    // backend on every keystroke. iOS + PWA already do this;
+                    // Android was the only platform missing the call entirely.
+                    searchDebounce?.removeCallbacksAndMessages(null)
+                    searchDebounce = android.os.Handler(android.os.Looper.getMainLooper())
+                    searchDebounce?.postDelayed({
+                        viewModel.unifiedSearch(query)
+                    }, 350)
+                } else {
+                    // Query cleared → clear unified section.
+                    searchDebounce?.removeCallbacksAndMessages(null)
+                    bind.unifiedResultsRecycler.isVisible = false
+                    bind.unifiedSectionLabel.isVisible = false
+                    unifiedAdapter.submitList(emptyList())
                 }
             }
         })
+
+        // Basecamp #9929090875: observe unified search results and render the
+        // user + product rows. Errors silently hide the section so a failure
+        // here never wipes the shows grid (which has its own observer).
+        viewModel.unifiedSearchRepo.observe(viewLifecycleOwner) { resource ->
+            when (resource) {
+                is Resource.Success -> {
+                    val data = resource.value.data
+                    val resultItems = mutableListOf<SearchResultItem>()
+                    data?.users?.forEach { resultItems.add(SearchResultItem.UserItem(it)) }
+                    data?.products?.forEach { resultItems.add(SearchResultItem.ProductItem(it)) }
+
+                    if (resultItems.isNotEmpty()) {
+                        unifiedAdapter.submitList(resultItems)
+                        bind.unifiedResultsRecycler.isVisible = true
+                        bind.unifiedSectionLabel.isVisible = true
+                    } else {
+                        bind.unifiedResultsRecycler.isVisible = false
+                        bind.unifiedSectionLabel.isVisible = false
+                    }
+                }
+                else -> {
+                    bind.unifiedResultsRecycler.isVisible = false
+                    bind.unifiedSectionLabel.isVisible = false
+                }
+            }
+        }
 
         bind.searchLayout.setEndIconOnClickListener {
             bind.search.setText("")

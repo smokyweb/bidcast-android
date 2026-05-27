@@ -120,11 +120,45 @@
 
     </LinearLayout>
 
+    <!-- Basecamp #9929090875 (Trey 2026-05-26 / fix 2026-05-27):
+         The user-facing search bar lives on HomeFragment (not SearchShowFragment,
+         which is dead code in nav_graph). Search results for users + products
+         from POST /api/v1/search render here, below the shows grid. The previous
+         3 attempts wired this up in SearchShowFragment which is never navigated
+         to — so the unified endpoint was never even called. -->
+    <TextView
+        android:id="@+id/unifiedSectionLabel"
+        style="@style/TitleSemiBold"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="@dimen/margin"
+        android:paddingVertical="6dp"
+        android:text="Users &amp; Products"
+        android:textSize="13sp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@id/unifiedResultsRecycler"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/unifiedResultsRecycler"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:visibility="gone"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHeight_max="260dp"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:itemCount="3"
+        tools:listitem="@layout/search_result_item" />
+
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/swipeRefreshLayout"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/unifiedSectionLabel"
         app:layout_constraintTop_toBottomOf="@id/heading">
 
         <androidx.constraintlayout.widget.ConstraintLayout
