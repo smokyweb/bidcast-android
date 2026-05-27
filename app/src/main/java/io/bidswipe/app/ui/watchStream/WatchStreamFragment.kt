@@ -149,6 +149,12 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
     private var showNotes: String? = ""
 
+    // Basecamp #9933402746 (2026-05-27): track the currently-shown show-notes
+    // sheet so receiveShowNotes can live-refresh its content when the seller
+    // edits notes mid-stream. Previously the sheet read showNotes once on
+    // open and never updated.
+    private var openShowNotesBinding: io.bidswipe.app.databinding.ViewerShowNotesSheetBinding? = null
+
     private var freebieUsers = mutableListOf<GetFreebieObject.Users?>()
     private var breakSpotUsers = mutableListOf<Pair<Int, String>?>()
 
@@ -558,6 +564,13 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
                         requireActivity().runOnUiThread {
                             bind.showNotes.isVisible = true
                             showNotes = args.optString("show_note") ?: ""
+                            // Basecamp #9933402746 (2026-05-27): if the buyer
+                            // has the show-notes sheet open right now, push the
+                            // new HTML into it so they see updates as the seller
+                            // edits without having to close + reopen.
+                            openShowNotesBinding?.notes?.setHtmlFromString(
+                                showNotes?.ifEmpty { "No notes added yet." }, false
+                            )
                         }
                     }
                 }
@@ -2503,6 +2516,11 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
         val sheet = Alerts.appBottomSheet(mCtx, false, showNotesSheetBind)
 
         showNotesSheetBind.notes.setHtmlFromString(showNotes?.ifEmpty { "No notes added yet." }, false)
+
+        // Basecamp #9933402746 (2026-05-27): remember the binding so the socket
+        // listener can live-refresh contents when seller edits.
+        openShowNotesBinding = showNotesSheetBind
+        sheet.setOnDismissListener { openShowNotesBinding = null }
 
         showNotesSheetBind.close.setHapticClickListener {
             sheet.dismiss()
