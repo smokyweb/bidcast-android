@@ -1,0 +1,271 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Basecamp #9933301500 (2026-05-27): Browse Filters bottom sheet.
+  5 filter groups mirror the PWA's browse/category page:
+    1. Show Format  (radio chips)
+    2. Tag          (TextInputEditText)
+    3. Premier Shops only (Switch)
+    4. Shipped from (country Spinner + state TextInputEditText)
+    5. Reduced Shipping (radio chips)
+-->
+<androidx.core.widget.NestedScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bottom_sheet_back"
+    android:backgroundTint="@color/surface">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="@dimen/padding">
+
+        <!-- Handle -->
+        <View
+            android:layout_width="64dp"
+            android:layout_height="4dp"
+            android:layout_gravity="center_horizontal"
+            android:background="@drawable/card_16"
+            android:backgroundTint="@color/outlineVariant" />
+
+        <!-- Header row -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin"
+            android:gravity="center_vertical">
+
+            <TextView
+                style="@style/TitleLarge"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Filters" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/close"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:background="?selectableItemBackground"
+                android:padding="@dimen/half_margin"
+                android:scaleType="centerCrop"
+                android:src="@drawable/ic_close"
+                app:tint="@color/onSurface" />
+        </LinearLayout>
+
+        <!-- ──────────────────────────────────────────────────────
+             Section 1: Show Format
+             Radio-style chips: All / Surprise Sets / Live Auction / Buy It Now
+             Sends show_format = surprise_sets | live_auction | buy_it_now
+        ────────────────────────────────────────────────────────── -->
+        <TextView
+            style="@style/LabelMedium"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin"
+            android:text="Show Format" />
+
+        <com.google.android.material.chip.ChipGroup
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/half_margin"
+            app:selectionRequired="true"
+            app:singleSelection="true">
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chipFormatAll"
+                style="Widget.Material3.Chip.Filter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:text="All" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chipFormatSurprise"
+                style="Widget.Material3.Chip.Filter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Surprise Sets" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chipFormatAuction"
+                style="Widget.Material3.Chip.Filter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Live Auction" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chipFormatBuyNow"
+                style="Widget.Material3.Chip.Filter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Buy It Now" />
+
+        </com.google.android.material.chip.ChipGroup>
+
+        <!-- ──────────────────────────────────────────────────────
+             Section 2: Tag
+             TextInputEditText; sends tag = single string
+        ────────────────────────────────────────────────────────── -->
+        <TextView
+            style="@style/LabelMedium"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin"
+            android:text="Tag" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/half_margin"
+            android:hint="Type a tag">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/tagInput"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="text"
+                android:maxLines="1" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- ──────────────────────────────────────────────────────
+             Section 3: Premier Shops only
+             Switch; sends premier_shop = 1 when on
+        ────────────────────────────────────────────────────────── -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                style="@style/LabelMedium"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Premier Shops only" />
+
+            <com.google.android.material.switchmaterial.SwitchMaterial
+                android:id="@+id/switchPremierShop"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+        </LinearLayout>
+
+        <!-- ──────────────────────────────────────────────────────
+             Section 4: Shipped from
+             Country Spinner + optional state TextInputEditText
+             Sends ship_country (2-letter ISO) + optional ship_state
+        ────────────────────────────────────────────────────────── -->
+        <TextView
+            style="@style/LabelMedium"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin"
+            android:text="Shipped from" />
+
+        <Spinner
+            android:id="@+id/spinnerCountry"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/half_margin"
+            android:background="@drawable/card_16"
+            android:padding="@dimen/half_margin"
+            tools:entries="@array/countries_array" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/half_margin"
+            android:hint="State / region (optional)">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/stateInput"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:enabled="false"
+                android:inputType="text"
+                android:maxLines="1" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- ──────────────────────────────────────────────────────
+             Section 5: Shipping
+             Radio-style chips: All / Free / Reduced
+             Sends shipping = free | reduced
+        ────────────────────────────────────────────────────────── -->
+        <TextView
+            style="@style/LabelMedium"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin"
+            android:text="Shipping" />
+
+        <com.google.android.material.chip.ChipGroup
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/half_margin"
+            app:selectionRequired="true"
+            app:singleSelection="true">
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chipShippingAll"
+                style="Widget.Material3.Chip.Filter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:text="All" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chipShippingFree"
+                style="Widget.Material3.Chip.Filter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Free" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chipShippingReduced"
+                style="Widget.Material3.Chip.Filter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Reduced" />
+
+        </com.google.android.material.chip.ChipGroup>
+
+        <!-- ──────────────────────────────────────────────────────
+             Footer: Clear + Apply buttons
+        ────────────────────────────────────────────────────────── -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnClear"
+                style="?attr/materialButtonOutlinedStyle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/half_margin"
+                android:layout_weight="1"
+                android:text="Clear" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnApply"
+                style="@style/appBtn"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Apply" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</androidx.core.widget.NestedScrollView>

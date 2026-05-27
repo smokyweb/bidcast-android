@@ -330,6 +330,11 @@ interface ApiInterface {
         @Part("status") status: RequestBody?,
     ): UpdateOfferResponse
 
+    // Basecamp #9933301500 (2026-05-27): added 6 optional filter params so Android
+    // browse parity with the PWA filter rail (show_format / tag / premier_shop /
+    // ship_country / ship_state / shipping). All accepted by the existing backend
+    // validator on ApiController::getLiveShow; pass null when the user hasn't set
+    // that filter and Retrofit omits the part.
     @Multipart
     @POST("api/get-live-show")
     suspend fun getLiveShow(
@@ -337,7 +342,13 @@ interface ApiInterface {
         @Part("category") category: RequestBody?,
         @Part("sub_category") subCategory: RequestBody?,
         @Part("search") search: RequestBody?,
-        @Part("page") page: RequestBody?
+        @Part("page") page: RequestBody?,
+        @Part("show_format") showFormat: RequestBody? = null,
+        @Part("tag") tag: RequestBody? = null,
+        @Part("premier_shop") premierShop: RequestBody? = null,
+        @Part("ship_country") shipCountry: RequestBody? = null,
+        @Part("ship_state") shipState: RequestBody? = null,
+        @Part("shipping") shipping: RequestBody? = null,
     ): GetMyShowResponse
 
     @Multipart

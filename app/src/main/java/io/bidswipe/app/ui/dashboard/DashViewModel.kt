@@ -262,18 +262,25 @@ class DashViewModel @Inject constructor(
     val getLiveShowRepo: MutableLiveData<Resource<GetMyShowResponse>>
         get() = _getLiveShowResponse
 
+    // Basecamp #9933301500 (2026-05-27): pass through 6 new filter params
     fun getLiveShow(
         type: RequestBody? = null,
         category: RequestBody? = null,
         subCategory: RequestBody? = null,
         search: RequestBody? = null,
         page: RequestBody? = null,
+        showFormat: RequestBody? = null,
+        tag: RequestBody? = null,
+        premierShop: RequestBody? = null,
+        shipCountry: RequestBody? = null,
+        shipState: RequestBody? = null,
+        shipping: RequestBody? = null,
     ) = viewModelScope.launch {
         if (!networkMonitor.hasInternet()) {
             _getLiveShowResponse.value = NO_INTERNET_ERROR
             return@launch
         }
-        _getLiveShowResponse.value = repo.getLiveShow(type, category, subCategory, search, page)
+        _getLiveShowResponse.value = repo.getLiveShow(type, category, subCategory, search, page, showFormat, tag, premierShop, shipCountry, shipState, shipping)
     }
 
     // Basecamp #9922137198 (Trey 2026-05-20): unified search across shows + products + users
@@ -294,19 +301,26 @@ class DashViewModel @Inject constructor(
     val getExploreLiveShowRepo: MutableLiveData<Resource<GetMyShowResponse>>
         get() = _getExploreLiveShowResponse
 
+    // Basecamp #9933301500 (2026-05-27): pass through 6 new filter params
     fun getExploreLiveShow(
         type: RequestBody? = null,
         category: RequestBody? = null,
         subCategory: RequestBody? = null,
         search: RequestBody? = null,
         page: RequestBody? = null,
+        showFormat: RequestBody? = null,
+        tag: RequestBody? = null,
+        premierShop: RequestBody? = null,
+        shipCountry: RequestBody? = null,
+        shipState: RequestBody? = null,
+        shipping: RequestBody? = null,
     ) = viewModelScope.launch {
         Log.d("TAG", "getExploreLiveShow: CALLED $category")
         if (!networkMonitor.hasInternet()) {
             _getExploreLiveShowResponse.value = NO_INTERNET_ERROR
             return@launch
         }
-        _getExploreLiveShowResponse.value = repo.getExploreLiveShow(type, category, subCategory, search, page)
+        _getExploreLiveShowResponse.value = repo.getExploreLiveShow(type, category, subCategory, search, page, showFormat, tag, premierShop, shipCountry, shipState, shipping)
     }
 
     private var _offerListResponse = MutableLiveData<Resource<GetOffersResponse>>()

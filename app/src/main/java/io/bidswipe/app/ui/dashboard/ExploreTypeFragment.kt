@@ -42,6 +42,7 @@ import io.bidswipe.app.utils.request
 import io.bidswipe.app.utils.runSafe
 import io.bidswipe.app.utils.setHapticClickListener
 import io.bidswipe.app.utils.value
+import androidx.core.view.isVisible
 
 @Suppress("DEPRECATION")
 class ExploreTypeFragment : BaseFragment<DashViewModel, FragmentExploreTypeBinding>() {
@@ -62,18 +63,43 @@ class ExploreTypeFragment : BaseFragment<DashViewModel, FragmentExploreTypeBindi
 
     private var selectedTabText = "live"
 
+    // Basecamp #9933301500 (2026-05-27): browse filters state. Mutated by
+    // BrowseFiltersSheet on Apply; threaded through every getExploreLiveShow
+    // call via the loadShows() helper below.
+    private var browseFilters = BrowseFilters()
+
+    /**
+     * Single entry point for every call to viewModel.getExploreLiveShow().
+     * Threads the current browseFilters through so we don't have to update
+     * 13 different call sites whenever the filter shape changes.
+     */
+    private fun loadShows(
+        type: String = selectedTabText,
+        search: String? = null,
+        pageOverride: String? = null,
+    ) {
+        val f = browseFilters
+        viewModel.getExploreLiveShow(
+            type = type.request(),
+            category = category.request(),
+            subCategory = subCategory?.request(),
+            search = search?.request(),
+            page = pageOverride?.request(),
+            showFormat = f.showFormat?.request(),
+            tag = f.tag?.request(),
+            premierShop = if (f.premierShop) "1".request() else null,
+            shipCountry = f.shipCountry?.request(),
+            shipState = f.shipState?.request(),
+            shipping = f.shipping?.request(),
+        )
+    }
+
     private val viewLiveShowLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
     ) { result ->
         if (result.resultCode == Activity.RESULT_OK) {
             page = 1
-            viewModel.getExploreLiveShow(
-                selectedTabText.request(),
-                category.request(),
-                subCategory?.request(),
-                search = bind.search.value().ifEmpty { null }?.request(),
-                page = page.toString().request()
-            )
+            loadShows(search = bind.search.value().ifEmpty { null }, pageOverride = page.toString())
         }
     }
 
@@ -161,7 +187,7 @@ class ExploreTypeFragment : BaseFragment<DashViewModel, FragmentExploreTypeBindi
                     subCategory = subCategories[pos].name
                     page = 1
                     bind.loader.isVisible = true
-                    viewModel.getExploreLiveShow(selectedTabText.request(), category.request(), subCategory?.request())
+                    loadShows()
                 }
             }, "explore")
 
@@ -188,13 +214,7 @@ class ExploreTypeFragment : BaseFragment<DashViewModel, FragmentExploreTypeBindi
             log("START GOT EXPLORE  FRAGMENT ${showData.categoryId}--${showData.subCategoryId}")
             activity?.runOnUiThread {
                 if (selectedTabText == "live") {
-                    viewModel.getExploreLiveShow(
-                        selectedTabText.request(),
-                        category.request(),
-                        subCategory?.request(),
-                        search = bind.search.value().ifEmpty { null }?.request(),
-                        page = "1".request()
-                    )
+                    loadShows(search = bind.search.value().ifEmpty { null }, pageOverride = "1")
                 }
             }
         }
@@ -232,7 +252,7 @@ class ExploreTypeFragment : BaseFragment<DashViewModel, FragmentExploreTypeBindi
         bind.swipeRefreshLayout.setOnRefreshListener {
             bind.search.setText("")
             bind.searchLayout.isEndIconVisible = false
-            viewModel.getExploreLiveShow(selectedTabText.request(), category.request(), subCategory?.request())
+            loadShows()
         }
 
         bind.searchLayout.isEndIconVisible = false
@@ -247,23 +267,23 @@ class ExploreTypeFragment : BaseFragment<DashViewModel, FragmentExploreTypeBindi
                 bind.noData.isVisible = false
 
                 if (!s.isNullOrEmpty()) {
-                    viewModel.getExploreLiveShow(selectedTabText.request(), category.request(), subCategory?.request(), s.toString().request())
+                    loadShows(search = s.toString())
                 } else {
-                    viewModel.getExploreLiveShow(selectedTabText.request(), category.request(), subCategory?.request())
+                    loadShows()
                 }
             }
         })
 
         bind.searchLayout.setEndIconOnClickListener {
             bind.search.setText("")
-            viewModel.getExploreLiveShow(selectedTabText.request(), category.request(), subCategory?.request())
+            loadShows()
             hideKeyboard(it)
         }
 
         bind.noInternet.setHapticClickListener {
             bind.loader.isVisible = true
             bind.noInternet.isVisible = false
-            viewModel.getExploreLiveShow(selectedTabText.request(), category.request(), subCategory?.request())
+            loadShows()
         }
 
         bind.header.onMorePrimaryClick {
@@ -288,13 +308,7 @@ class ExploreTypeFragment : BaseFragment<DashViewModel, FragmentExploreTypeBindi
             if (lastItemPosition == listSize - 1 && !isLoading) {
                 isLoading = true
                 page++
-                viewModel.getExploreLiveShow(
-                    selectedTabText.request(),
-                    category.request(),
-                    subCategory?.request(),
-                    bind.search.value().ifEmpty { null }?.request(),
-                    page.toString().request()
-                )
+                loadShows(search = bind.search.value().ifEmpty { null }, pageOverride = page.toString())
             }
         }
 
@@ -305,8 +319,19 @@ class ExploreTypeFragment : BaseFragment<DashViewModel, FragmentExploreTypeBindi
         bind.popular.setHapticClickListener { selectTab(it as TextView) }
         bind.comingSoon.setHapticClickListener { selectTab(it as TextView) }
 
+        // Basecamp #9933301500 (2026-05-27): browse filter button
+        bind.btnFilters.setHapticClickListener {
+            BrowseFiltersSheet(initial = browseFilters) { applied ->
+                browseFilters = applied
+                bind.filterActiveDot.isVisible = applied.isActive
+                page = 1
+                bind.loader.isVisible = true
+                loadShows()
+            }.show(childFragmentManager, "browse_filters")
+        }
+
         categoriesList = mutableListOf(category)
-        viewModel.getExploreLiveShow(selectedTabText.request(), category = category.request(), subCategory?.request())
+        loadShows()
         viewModel.getExploreLiveShowRepo.observe(viewLifecycleOwner) { it ->
             when (it) {
                 is Resource.Success -> {
@@ -402,17 +427,17 @@ class ExploreTypeFragment : BaseFragment<DashViewModel, FragmentExploreTypeBindi
         when (selectedTab) {
             bind.live -> {
                 selectedTabText = "live"
-                viewModel.getExploreLiveShow("live".request(), category.request(), subCategory?.request())
+                loadShows(type = "live")
             }
 
             bind.popular -> {
                 selectedTabText = "popular"
-                viewModel.getExploreLiveShow("popular".request(), category.request(), subCategory?.request())
+                loadShows(type = "popular")
             }
 
             bind.comingSoon -> {
                 selectedTabText = "upcoming"
-                viewModel.getExploreLiveShow("upcoming".request(), category.request(), subCategory?.request())
+                loadShows(type = "upcoming")
             }
 
         }

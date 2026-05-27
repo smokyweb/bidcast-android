@@ -185,21 +185,34 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
         status: RequestBody?,
     ) = call { api.offerUpdateStatus(offerId, status) }
 
+    // Basecamp #9933301500 (2026-05-27): 6 new optional filter params
     suspend fun getLiveShow(
         type: RequestBody?,
         category: RequestBody?,
         subCategory: RequestBody?,
         search: RequestBody?,
-        page: RequestBody?
-    ) = call { api.getLiveShow(type, category, subCategory, search, page) }
+        page: RequestBody?,
+        showFormat: RequestBody? = null,
+        tag: RequestBody? = null,
+        premierShop: RequestBody? = null,
+        shipCountry: RequestBody? = null,
+        shipState: RequestBody? = null,
+        shipping: RequestBody? = null,
+    ) = call { api.getLiveShow(type, category, subCategory, search, page, showFormat, tag, premierShop, shipCountry, shipState, shipping) }
 
     suspend fun getExploreLiveShow(
         type: RequestBody?,
         category: RequestBody?,
         subCategory: RequestBody?,
         search: RequestBody?,
-        page: RequestBody?
-    ) = call { api.getLiveShow(type, category, subCategory, search, page) }
+        page: RequestBody?,
+        showFormat: RequestBody? = null,
+        tag: RequestBody? = null,
+        premierShop: RequestBody? = null,
+        shipCountry: RequestBody? = null,
+        shipState: RequestBody? = null,
+        shipping: RequestBody? = null,
+    ) = call { api.getLiveShow(type, category, subCategory, search, page, showFormat, tag, premierShop, shipCountry, shipState, shipping) }
 
     suspend fun notifyLiveUser(
         liveUserId: RequestBody?,

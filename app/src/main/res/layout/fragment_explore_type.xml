@@ -96,6 +96,40 @@
             android:layout_gravity="center_vertical"
             android:text="@string/comming_soon" />
 
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+        <!-- Basecamp #9933301500 (2026-05-27): browse filters button. Tapping
+             opens BrowseFiltersSheet. Small dot to the upper-right turns visible
+             when any filter is active. -->
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical">
+
+            <TextView
+                android:id="@+id/btnFilters"
+                style="@style/TitleLarge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:drawableStart="@android:drawable/ic_menu_sort_by_size"
+                android:drawablePadding="4dp"
+                android:text="Filters" />
+
+            <View
+                android:id="@+id/filterActiveDot"
+                android:layout_width="8dp"
+                android:layout_height="8dp"
+                android:layout_gravity="top|end"
+                android:layout_marginTop="-2dp"
+                android:layout_marginEnd="-4dp"
+                android:background="@drawable/ic_circle_red"
+                android:visibility="gone" />
+        </FrameLayout>
+
     </LinearLayout>
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
