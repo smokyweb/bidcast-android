@@ -40,6 +40,10 @@ import io.bidswipe.app.ui.product.ProductSetDetailsActivity
 import io.bidswipe.app.ui.sellerProfile.SellerProfileActivity
 import io.bidswipe.app.ui.watchStream.ViewLiveShowActivity
 import io.bidswipe.app.utils.Alerts
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import io.bidswipe.app.utils.hideKeyboard
 import io.bidswipe.app.utils.isTablet
 import io.bidswipe.app.utils.parse
@@ -182,6 +186,48 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
         bind.searchLayout.setEndIconOnClickListener {
             bind.search.setText("")
             hideKeyboard(it)
+        }
+
+        // Basecamp #9933801536 (2026-05-27): save-search bell
+        // Basecamp #9933801536 (2026-05-27): save-search bell. Posts current
+        // search text to /api/saved-searches and flips bell to filled state.
+        // Network runs on Dispatchers.IO; UI mutations marshalled back to main.
+        bind.saveBellBtn.setHapticClickListener {
+            val q = bind.search.value().trim()
+            if (q.isEmpty()) {
+                Alerts.error(mCtx, "Type a search term before saving")
+                return@setHapticClickListener
+            }
+            viewLifecycleOwner.lifecycleScope.launch {
+                val code: Int = withContext(Dispatchers.IO) {
+                    try {
+                        val token = io.bidswipe.app.utils.Prefs(mCtx).token()
+                        val body = org.json.JSONObject().apply { put("query", q) }.toString()
+                        val url = java.net.URL("${io.bidswipe.app.utils.Const.BASE_URL}/api/saved-searches")
+                        val conn = url.openConnection() as java.net.HttpURLConnection
+                        conn.requestMethod = "POST"
+                        conn.setRequestProperty("Content-Type", "application/json")
+                        conn.setRequestProperty("Accept", "application/json")
+                        conn.setRequestProperty("Authorization", "Bearer $token")
+                        conn.doOutput = true
+                        conn.outputStream.use { it.write(body.toByteArray()) }
+                        val rc = conn.responseCode
+                        conn.disconnect()
+                        rc
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                        -1
+                    }
+                }
+                if (code == 200 || code == 201) {
+                    bind.saveBellBtn.setImageResource(io.bidswipe.app.R.drawable.ic_bell_filled)
+                    Alerts.success(mCtx, "Search saved — you'll get notified when something matches")
+                } else if (code == -1) {
+                    Alerts.error(mCtx, "Network error saving search")
+                } else {
+                    Alerts.error(mCtx, "Could not save search (code $code)")
+                }
+            }
         }
 
         bind.main.setHapticClickListener {

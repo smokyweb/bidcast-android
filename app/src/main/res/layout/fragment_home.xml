@@ -43,6 +43,17 @@
 
         </com.google.android.material.textfield.TextInputLayout>
 
+        <!-- Basecamp #9933801536 (2026-05-27): save-search bell button -->
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/saveBellBtn"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_marginStart="4dp"
+            android:padding="4dp"
+            android:src="@drawable/ic_bell_outline"
+            android:contentDescription="Save this search"
+            android:background="?attr/selectableItemBackgroundBorderless" />
+
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/primary"
             android:layout_width="32dp"
