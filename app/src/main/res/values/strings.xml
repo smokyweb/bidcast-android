@@ -14,7 +14,7 @@
     <string name="allow_offers">Allow Offers</string>
     <string name="app_name">Bidswipe</string>
     <string name="auction">Auction</string>
-    <string name="auction_type">Auction Type</string>
+    <string name="auction_type">Show Format</string>
     <string name="back">Back</string>
     <string name="become_a_bidswipe_seller">Become a Bidswipe Seller</string>
     <string name="better_promotion_opportunities">Better promotion opportunities</string>
@@ -100,7 +100,11 @@
     <string name="save_draft">Save Draft</string>
     <string name="saved_items">Saved Items</string>
     <string name="schedule_your_first_show">Schedule your first show</string>
-    <string name="select_auction_type">Select auction type</string>
+    <!-- Todo #9933256802 (2026-05-27): renamed user-facing label. The string key
+         stays auction_type / select_auction_type to avoid touching every layout
+         that references it; only the displayed text changes. Backend derives the
+         show_format from auction_type_id automatically. -->
+    <string name="select_auction_type">Select show format</string>
     <string name="select_category">Select Category</string>
     <string name="select_format">Select Format</string>
     <string name="select_profile">Select Profile</string>
