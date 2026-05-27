@@ -40,9 +40,10 @@
 
         </LinearLayout>
 
-        <!-- Basecamp #9929851737 (2026-05-26): clip duration picker.
-             Shown before the clip is created. Defaults to 60s. After the user
-             taps Create Clip, this group is hidden and the loader/preview is shown. -->
+        <!-- Basecamp #9929851737 (2026-05-27): clip duration picker, redux.
+             Per Trey's spec: default 30s, slider 1..60s, user confirms via
+             Create Clip. After the clip is created, the preview + SAVE/CANCEL
+             buttons appear (see bottom_layout). -->
         <LinearLayout
             android:id="@+id/durationPickerWrap"
             android:layout_width="match_parent"
@@ -62,56 +63,35 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/half_margin"
-                android:text="How many seconds of the stream should we capture?" />
+                android:text="Drag to choose how many seconds of the stream to capture (1–60s)." />
 
-            <com.google.android.material.button.MaterialButtonToggleGroup
-                android:id="@+id/durationToggleGroup"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:singleSelection="true"
-                app:selectionRequired="true">
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
 
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/duration15"
-                    style="?attr/materialButtonOutlinedStyle"
+                <com.google.android.material.slider.Slider
+                    android:id="@+id/durationSlider"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="15s" />
+                    android:layout_height="wrap_content"
+                    android:valueFrom="1"
+                    android:valueTo="60"
+                    android:stepSize="1"
+                    android:value="30" />
 
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/duration30"
-                    style="?attr/materialButtonOutlinedStyle"
-                    android:layout_width="0dp"
+                <TextView
+                    android:id="@+id/durationValueText"
+                    style="@style/TitleMedium"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
+                    android:minWidth="56dp"
+                    android:gravity="end"
+                    android:layout_marginStart="@dimen/half_margin"
                     android:text="30s" />
 
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/duration60"
-                    style="?attr/materialButtonOutlinedStyle"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="60s" />
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/duration120"
-                    style="?attr/materialButtonOutlinedStyle"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="2m" />
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/duration180"
-                    style="?attr/materialButtonOutlinedStyle"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="3m" />
-
-            </com.google.android.material.button.MaterialButtonToggleGroup>
+            </LinearLayout>
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/createClipBtn"
@@ -156,6 +136,11 @@
 
 </androidx.constraintlayout.widget.ConstraintLayout>
 
+        <!-- Basecamp #9929851737 (2026-05-27): post-clip review row.
+             Replaced the static "Trim Clip / Edit" placeholder with explicit
+             SAVE / CANCEL buttons per Trey's spec. SAVE dismisses (clip is
+             already persisted server-side by /api/make-clip). CANCEL also
+             dismisses; no delete endpoint exists yet -> see TODO in Kotlin. -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -164,41 +149,23 @@
             android:layout_marginVertical="@dimen/margin"
             android:orientation="horizontal">
 
-            <androidx.appcompat.widget.AppCompatImageView
-                android:layout_width="28dp"
-                android:layout_height="28dp"
-                android:layout_gravity="center"
-                android:layout_marginEnd="@dimen/margin"
-                android:tint="@color/onSurface"
-                android:src="@drawable/ic_scissor" />
-
-            <LinearLayout
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/cancelClipBtn"
+                style="?attr/materialButtonOutlinedStyle"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:orientation="vertical">
-
-                <TextView
-                    style="@style/TitleLarge"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/trim_clip" />
-
-                <TextView
-                    style="@style/BodyMedium"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/last_60_seconds" />
-
-            </LinearLayout>
-
-            <TextView
-                style="@style/TitleMedium"
-                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Edit"
-                android:textColor="@color/primary" />
+                android:layout_marginEnd="@dimen/half_margin"
+                android:text="Cancel" />
 
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/saveClipBtn"
+                style="@style/appBtn"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/half_margin"
+                android:text="Save" />
 
         </LinearLayout>
 

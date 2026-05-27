@@ -387,13 +387,16 @@ class AgoraPublisherActivity : BaseActivity() {
                 Alerts.error(this, "Please start the live show before creating a clip")
                 return@setHapticClickListener
             }
-            // Basecamp #9929851737 (2026-05-26): show duration picker FIRST;
-            // defer the API call until the seller taps Create Clip.
+            // Basecamp #9929851737 (2026-05-27): show duration picker FIRST;
+            // defer the API call until the seller taps Create Clip. Per
+            // Trey's redux spec, default to 30s and let the user drag to
+            // pick anywhere in 1..60s.
             clipSheetBind.durationPickerWrap.isVisible = true
             clipSheetBind.loaderView.isVisible = false
             clipSheetBind.videoView.isVisible = false
             clipSheetBind.bottomLayout.isVisible = false
-            clipSheetBind.durationToggleGroup.check(R.id.duration60)
+            clipSheetBind.durationSlider.value = 30f
+            clipSheetBind.durationValueText.text = "30s"
             createClipSheet()
         }
 
@@ -1905,22 +1908,42 @@ class AgoraPublisherActivity : BaseActivity() {
             clipSheet.dismiss()
         }
 
-        // Basecamp #9929851737 (2026-05-26): wire duration picker.
-        // API call fires only when seller taps Create Clip.
+        // Basecamp #9929851737 (2026-05-27): wire the duration slider's
+        // readout. We only attach one listener at sheet build time; reopens
+        // re-use it.
+        clipSheetBind.durationSlider.clearOnChangeListeners()
+        clipSheetBind.durationSlider.addOnChangeListener { _, value, _ ->
+            clipSheetBind.durationValueText.text = "${value.toInt()}s"
+        }
+
+        // Basecamp #9929851737 (2026-05-27): API call fires only when seller
+        // taps Create Clip. Duration is whatever the slider is at (1..60s),
+        // default 30s.
         clipSheetBind.createClipBtn.setHapticClickListener {
-            val durationSec = when (clipSheetBind.durationToggleGroup.checkedButtonId) {
-                R.id.duration15  -> 15
-                R.id.duration30  -> 30
-                R.id.duration60  -> 60
-                R.id.duration120 -> 120
-                R.id.duration180 -> 180
-                else             -> 60
-            }
+            val durationSec = clipSheetBind.durationSlider.value.toInt().coerceIn(1, 60)
             clipSheetBind.durationPickerWrap.isVisible = false
             clipSheetBind.loaderView.isVisible = true
             clipSheetBind.videoView.isVisible = false
             clipSheetBind.bottomLayout.isVisible = false
             viewModel.getClip(roomID.request(), durationSec.toString().request())
+        }
+
+        // Basecamp #9929851737 (2026-05-27): SAVE = dismiss. The clip is
+        // already persisted server-side by /api/make-clip at the moment the
+        // preview shows, so Save just acknowledges and closes the sheet.
+        clipSheetBind.saveClipBtn.setHapticClickListener {
+            successToast("Clip saved")
+            clipSheet.dismiss()
+        }
+
+        // Basecamp #9929851737 (2026-05-27): CANCEL = dismiss without
+        // surfacing a save toast. TODO: when backend exposes a delete-clip
+        // endpoint, call it here to remove the just-created clip from the
+        // seller's library. Right now the clip remains server-side and the
+        // seller would need to delete it from their clip list.
+        clipSheetBind.cancelClipBtn.setHapticClickListener {
+            // TODO(#9929851737): wire DELETE /api/clips/{id} once backend exposes it.
+            clipSheet.dismiss()
         }
 
         clipSheet.show()
