@@ -94,7 +94,9 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
         repeatValue: RequestBody?,
         language: RequestBody?,
         isExplicit: RequestBody?,
-        showId: RequestBody? = null
+        showId: RequestBody? = null,
+        // Browse-filter bundle (Basecamp #9928367737): pass-through tag list for backend Tag::findOrCreateByName.
+        tags: List<RequestBody>? = null,
     ) = call {
         if (showId != null) {
             api.updateScheduleShow(
@@ -111,7 +113,8 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
                 repeatValue,
                 language,
                 isExplicit,
-                showId
+                showId,
+                tags,
             )
         } else {
             api.storeScheduleShow(
@@ -127,7 +130,8 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
                 isRepeat,
                 repeatValue,
                 language,
-                isExplicit
+                isExplicit,
+                tags,
             )
         }
     }

@@ -53,6 +53,11 @@ class SelectCategoryFragment : BaseFragment<ScheduleShowViewModel, FragmentSelec
             }
         }
 
+        // Browse-filter bundle (Basecamp #9928367737): preserve tag text across navigation back/forward.
+        if (viewModel.tagsRaw.isNotEmpty()) {
+            bind.tagsInput.setText(viewModel.tagsRaw)
+        }
+
         if (!viewModel.showId.isNullOrEmpty()) {
             auctionId = viewModel.auctionId
             categoryId = viewModel.categoryId
@@ -105,6 +110,8 @@ class SelectCategoryFragment : BaseFragment<ScheduleShowViewModel, FragmentSelec
                         viewModel.discoverability = "private"
                     }
 
+                    // Browse-filter bundle (Basecamp #9928367737): persist raw tag text; parsed in AddProductFragment.
+                    viewModel.tagsRaw = bind.tagsInput.value()
 
                     findNavController().navigate(ids.goToSelectThumbnailFragment)
                 }

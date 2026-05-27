@@ -53,6 +53,8 @@ class ScheduleShowViewModel @Inject constructor(
 	var explicitContent = ""
 	var primaryLanguage = ""
 	var discoverability = ""
+	/** Browse-filter bundle (Basecamp #9928367737): raw comma-separated tag string from the show-create form. */
+	var tagsRaw = ""
 	var thumbnail = ""
 	var variantData = mutableListOf<Map<String?, Any?>>()
 	var productTitle = ""
@@ -95,7 +97,9 @@ class ScheduleShowViewModel @Inject constructor(
 		repeatValue: RequestBody?,
 		language: RequestBody?,
 		isExplicit: RequestBody?,
-		showId: RequestBody? = null
+		showId: RequestBody? = null,
+		// Browse-filter bundle (Basecamp #9928367737): tag list piped to backend Tag::findOrCreateByName.
+		tags: List<RequestBody>? = null,
 	) = viewModelScope.launch {
 		if (!networkMonitor.hasInternet()) {
 			_storeScheduleShowResponse.value = NO_INTERNET_ERROR
@@ -114,7 +118,8 @@ class ScheduleShowViewModel @Inject constructor(
 			repeatValue,
 			language,
 			isExplicit,
-			showId
+			showId,
+			tags,
 		)
 	}
 

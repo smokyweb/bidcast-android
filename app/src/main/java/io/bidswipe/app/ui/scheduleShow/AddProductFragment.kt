@@ -217,6 +217,14 @@ class AddProductFragment : BaseFragment<ScheduleShowViewModel, FragmentAddProduc
 				finish()
 
 			} else {
+				// Browse-filter bundle (Basecamp #9928367737): parse comma-separated tag string,
+				// trim, drop empties — mirrors PWA + iOS behavior. Backend reads as `tags[]` array.
+				val parsedTags = viewModel.tagsRaw
+					.split(",")
+					.map { it.trim() }
+					.filter { it.isNotEmpty() }
+				val tagsRequest = if (parsedTags.isEmpty()) null else parsedTags.map { it.request() }
+
 				viewModel.storeScheduleShow(
 					title = viewModel.showTitle.request(),
 					date = viewModel.date.request(),
@@ -231,7 +239,8 @@ class AddProductFragment : BaseFragment<ScheduleShowViewModel, FragmentAddProduc
 					repeatValue = viewModel.repeatType.request(),
 					language = viewModel.primaryLanguage.request(),
 					isExplicit = viewModel.explicitContent.request(),
-					showId = viewModel.showId?.ifEmpty { null }?.request()
+					showId = viewModel.showId?.ifEmpty { null }?.request(),
+					tags = tagsRequest,
 				)
 			}
 

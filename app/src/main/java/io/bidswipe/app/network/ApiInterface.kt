@@ -242,6 +242,8 @@ interface ApiInterface {
         @Part("repeat_value") repeatValue: RequestBody?,
         @Part("language") language: RequestBody?,
         @Part("is_explicit") isExplicit: RequestBody?,
+        // Browse-filter bundle (Basecamp #9928367737): tag names normalized server-side via Tag::findOrCreateByName.
+        @Part("tags[]") tags: List<RequestBody>? = null,
     ): CreateShowResponse
 
     @Multipart
@@ -261,6 +263,8 @@ interface ApiInterface {
         @Part("language") language: RequestBody?,
         @Part("is_explicit") isExplicit: RequestBody?,
         @Part("show_id") showId: RequestBody?,
+        // Browse-filter bundle (Basecamp #9928367737): tag names normalized server-side via Tag::findOrCreateByName.
+        @Part("tags[]") tags: List<RequestBody>? = null,
     ): CreateShowResponse
 
     @GET("api/get-auction-type")
