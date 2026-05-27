@@ -662,7 +662,10 @@ class AgoraPublisherActivity : BaseActivity() {
             randomizerSheetBind?.hideWheel?.isVisible = false
             randomizerSheetBind?.showSpin?.isVisible = true
             bind.showNotes.isVisible = true
-            bind.freebieLayout.isVisible = true
+            // Basecamp #9931107836 (2026-05-26): the freebie button was
+            // replaced by the randomizer template-builder flow. Don't re-show
+            // it on wheel close.
+            // bind.freebieLayout.isVisible = true
         }
     }
 
