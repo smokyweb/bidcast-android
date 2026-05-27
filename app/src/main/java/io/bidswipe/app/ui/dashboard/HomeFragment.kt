@@ -315,8 +315,22 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
                 is Resource.Success -> {
                     val data = resource.value.data
                     val resultItems = mutableListOf<SearchResultItem>()
-                    data?.users?.forEach { resultItems.add(SearchResultItem.UserItem(it)) }
-                    data?.products?.forEach { resultItems.add(SearchResultItem.ProductItem(it)) }
+                    // Basecamp #9929090875 round-2 (2026-05-27): interleave users and
+                    // products instead of all-users-then-all-products so the visible
+                    // top of the unified RecyclerView shows BOTH kinds. With the prior
+                    // ordering and the 260dp height cap, only the first ~4 rows fit on
+                    // screen and all 4 were users — making the section look
+                    // "products missing" even though products were present at
+                    // positions 20-39 (visible only by internal scroll). Combined with
+                    // dropping the height cap in fragment_home.xml (same commit), both
+                    // user and product rows are now visible without scrolling.
+                    val users = data?.users.orEmpty()
+                    val products = data?.products.orEmpty()
+                    val maxLen = maxOf(users.size, products.size)
+                    for (i in 0 until maxLen) {
+                        if (i < users.size) resultItems.add(SearchResultItem.UserItem(users[i]))
+                        if (i < products.size) resultItems.add(SearchResultItem.ProductItem(products[i]))
+                    }
 
                     if (resultItems.isNotEmpty()) {
                         unifiedAdapter.submitList(resultItems)

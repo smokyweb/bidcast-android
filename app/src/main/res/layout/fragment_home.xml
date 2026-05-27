@@ -140,6 +140,11 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
+    <!-- Basecamp #9929090875 round-2 (2026-05-27): drop the 260dp height cap.
+         The earlier cap meant only ~4 rows fit on screen, and combined with the
+         all-users-first ordering it looked like products were missing. Now the
+         recycler is sized to wrap_content (clamped by the parent ConstraintLayout)
+         and the bottom navigation tab bar still pins the bottom of the screen. -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/unifiedResultsRecycler"
         android:layout_width="match_parent"
@@ -149,7 +154,6 @@
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHeight_max="260dp"
         app:layout_constraintStart_toStartOf="parent"
         tools:itemCount="3"
         tools:listitem="@layout/search_result_item" />
