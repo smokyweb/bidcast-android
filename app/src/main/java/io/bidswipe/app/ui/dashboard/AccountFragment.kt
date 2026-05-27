@@ -421,7 +421,7 @@ class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
                 return@setHapticClickListener
             }
             if (App.checkKycResponse.value?.kycStatus != "active") {
-                verificationDialog()
+                Alerts.kycDialog(mCtx)
                 return@setHapticClickListener
             }
             if (profile.hasCardAdded != true || profile.hasShippingAddress != true) {
@@ -441,7 +441,7 @@ class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
                 return@setHapticClickListener
             }
             if (App.checkKycResponse.value?.kycStatus != "active") {
-                verificationDialog()
+                Alerts.kycDialog(mCtx)
                 return@setHapticClickListener
             }
             if (profile.hasCardAdded != true || profile.hasShippingAddress != true) {
