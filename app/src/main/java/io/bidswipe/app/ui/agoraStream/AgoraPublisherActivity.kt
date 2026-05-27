@@ -300,6 +300,10 @@ class AgoraPublisherActivity : BaseActivity() {
         // Basecamp #9934003774 (2026-05-27): tap the live-count button to open
         // the viewer list sheet with kick actions.
         bind.liveCount.setHapticClickListener {
+            // Round 2: defensive fetch in case the broadcast was missed.
+            if (roomID.isNotEmpty()) {
+                socketManager?.requestActiveShowUsers(roomID)
+            }
             showViewerListSheet()
         }
 

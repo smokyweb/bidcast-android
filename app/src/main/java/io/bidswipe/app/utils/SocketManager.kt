@@ -396,6 +396,15 @@ class SocketManager private constructor(
         socket?.emit("request_show_note", payload)
     }
 
+    // Basecamp #9934003774 (2026-05-27 round 2): seller-side fetch — covers
+    // the race where buyers joined before this seller's active_show_users
+    // listener registered.
+    fun requestActiveShowUsers(roomId: String) {
+        val payload = JSONObject().apply { put("room_id", roomId) }
+        Log.d(TAG, "EMIT: request_active_show_users - $payload")
+        socket?.emit("request_active_show_users", payload)
+    }
+
     fun receiveShowNotes(listener: (count: JSONObject) -> Unit) {
         socket?.on("get_show_note") { args ->
             Log.d(TAG, "receiveShowNotes: $args")
