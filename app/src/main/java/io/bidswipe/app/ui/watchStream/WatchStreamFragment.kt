@@ -673,7 +673,10 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
         bind.message.setEndIconOnClickListener {
             if (bind.messageText.value().isNotEmpty()) {
-                if (App.profileResponse.value?.buyerIdentityStatus == "verified") {
+                // Basecamp #9933877362 (2026-05-27): chat is unrestricted unless
+                // the seller has gated this show to verified buyers only.
+                if (liveShowData?.isVerifiedOnly != true ||
+                    App.profileResponse.value?.buyerIdentityStatus == "verified") {
                     socketManager?.sendMessage(
                         roomID,
                         bind.messageText.value(),
@@ -692,7 +695,9 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
         bind.messageText.setOnEditorActionListener { v, actionId, event ->
             if (actionId == EditorInfo.IME_ACTION_SEND) {
                 if (bind.messageText.value().isNotEmpty()) {
-                    if (App.profileResponse.value?.buyerIdentityStatus == "verified") {
+                    // Basecamp #9933877362 (2026-05-27): same relaxation as above.
+                    if (liveShowData?.isVerifiedOnly != true ||
+                        App.profileResponse.value?.buyerIdentityStatus == "verified") {
                         socketManager?.sendMessage(
                             roomID,
                             bind.messageText.value(),
@@ -778,7 +783,13 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
             App.currentSellerId = sellerId
         }
 
-        if (App.profileResponse.value?.buyerIdentityStatus != "verified") {
+        // Basecamp #9933877362 (2026-05-27): only block the viewer on join when
+        // the show is gated to verified-buyers-only. For open shows (the new
+        // default), do not pop the verification modal — the viewer can watch /
+        // bid / tip / buy as long as they have a verified payment method, which
+        // is checked separately at bid/buy time.
+        if (liveShowData?.isVerifiedOnly == true &&
+            App.profileResponse.value?.buyerIdentityStatus != "verified") {
             verificationDialog()
         }
 
@@ -1493,7 +1504,17 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
             liveShowData?.products?.find { it?.isCurrent == true }
 
-            isAllowBidForAll = liveShowData?.allowBidForAll ?: true
+            // Basecamp #9933877362 (2026-05-27): the seller's per-show
+            // verified-buyers-only toggle overrides allowBidForAll. When the
+            // toggle is ON, bidding / tipping / buying require identity
+            // verification; when OFF, the existing allowBidForAll value from the
+            // server applies (defaulting to true — the new "open to all viewers
+            // with a verified payment method" model).
+            isAllowBidForAll = if (liveShowData?.isVerifiedOnly == true) {
+                false
+            } else {
+                liveShowData?.allowBidForAll ?: true
+            }
 
             sellerId = liveShowData?.seller?.id.toString()
 

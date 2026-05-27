@@ -27,6 +27,11 @@ data class LiveShowModel(
 	val suddenDeath: Boolean?=null,
 	val subCategoryId: String? = null,
 	val auctionTypeId: Int? = 0,
+	// Basecamp #9933883175 / #9933877362 (2026-05-27): seller-controlled
+	// verified-buyers-only gate. When true, the client should enforce identity
+	// verification on join / bid / tip / purchase. When false / null, the new
+	// default applies (open to all viewers with a verified payment method).
+	val isVerifiedOnly: Boolean? = false,
 ) : Serializable {
 	companion object {
 		fun fromJson(json: JSONObject) = LiveShowModel(
@@ -58,6 +63,10 @@ data class LiveShowModel(
 			suddenDeath = json.optBoolean("sudden_death", false) ,
 			subCategoryId = json.optString("sub_category_id", null) ,
 			auctionTypeId = json.optInt("auction_type_id", 0) ,
+			// Basecamp #9933883175 (2026-05-27): hydrate verified-only flag from the
+			// socket payload. Server now includes is_verified_only on live_rooms +
+			// schedule_shows row in the join_room broadcast.
+			isVerifiedOnly = json.optBoolean("is_verified_only", false),
 		)
 	}
 
