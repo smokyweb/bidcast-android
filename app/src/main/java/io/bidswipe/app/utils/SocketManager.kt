@@ -817,6 +817,42 @@ class SocketManager private constructor(
         }
     }
 
+    // Basecamp #9934003774 (2026-05-27): seller emits kick_user to remove a buyer.
+    // Server-side verifies caller is the show's host before persisting + executing.
+    fun kickUser(roomId: String, targetUserId: Int) {
+        val payload = JSONObject().apply {
+            put("room_id", roomId)
+            put("target_user_id", targetUserId)
+        }
+        Log.d(TAG, "EMIT: kick_user - $payload")
+        socket?.emit("kick_user", payload)
+    }
+
+    // Listener for the buyer-side notification that they were kicked.
+    fun onKickedFromShow(listener: (msg: String) -> Unit) {
+        socket?.off("kicked_from_show")
+        socket?.on("kicked_from_show") { args ->
+            val obj = args.firstOrNull()
+            if (obj is JSONObject) {
+                Log.d(TAG, "RECEIVED: kicked_from_show - $obj")
+                val msg = obj.optString("message", "You have been removed from this show.")
+                listener(msg)
+            }
+        }
+    }
+
+    // Listener for host-side kick_user confirmation.
+    fun onKickUserSuccess(listener: (targetUserId: Int) -> Unit) {
+        socket?.off("kick_user_success")
+        socket?.on("kick_user_success") { args ->
+            val obj = args.firstOrNull()
+            if (obj is JSONObject) {
+                Log.d(TAG, "RECEIVED: kick_user_success - $obj")
+                listener(obj.optInt("target_user_id", 0))
+            }
+        }
+    }
+
     fun finalizeFreebie(roomId: String) {
         val payload = JSONObject().apply {
             put("room_id", roomId)

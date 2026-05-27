@@ -440,6 +440,18 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
             }
 
+            // Basecamp #9934003774 (2026-05-27): listen for being kicked.
+            socketManager?.onKickedFromShow { msg ->
+                runSafe {
+                    requireActivity().runOnUiThread {
+                        Alerts.error(mCtx, msg)
+                        App.manager.destroyEngine()
+                        activity?.setResult(Activity.RESULT_OK)
+                        finish()
+                    }
+                }
+            }
+
             socketManager?.onRoomEnded { json ->
                 log("END GOT WATCH FRAGMENT $json")
                 runSafe {

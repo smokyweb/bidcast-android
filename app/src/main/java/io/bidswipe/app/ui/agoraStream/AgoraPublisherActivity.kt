@@ -297,6 +297,12 @@ class AgoraPublisherActivity : BaseActivity() {
             showConfirmationAlert()
         }
 
+        // Basecamp #9934003774 (2026-05-27): tap the live-count button to open
+        // the viewer list sheet with kick actions.
+        bind.liveCount.setHapticClickListener {
+            showViewerListSheet()
+        }
+
         bind.cameraSwitch.setHapticClickListener {
             App.manager.switchCamera {
             }
@@ -913,6 +919,42 @@ class AgoraPublisherActivity : BaseActivity() {
         updateStatusRunnable?.let { updateStatusHandler.removeCallbacks(it) }
 
         super.onDestroy()
+    }
+
+    // Basecamp #9934003774 (2026-05-27): host viewer-list sheet. Renders
+    // liveUsersList (populated by getLiveUsers / active_show_users) and lets
+    // the host tap Remove on any row to kick that buyer.
+    private fun showViewerListSheet() {
+        if (liveUsersList.isEmpty()) {
+            Alerts.error(this, "No viewers in this show yet")
+            return
+        }
+        val names = liveUsersList.map { user ->
+            val name = user?.userName ?: user?.name ?: "User"
+            val id = user?.id ?: 0
+            "$name (#$id)"
+        }.toTypedArray()
+        androidx.appcompat.app.AlertDialog.Builder(this)
+            .setTitle("Viewers in this show (${liveUsersList.size})")
+            .setItems(names) { dialog, index ->
+                dialog.dismiss()
+                val target = liveUsersList.getOrNull(index) ?: return@setItems
+                val targetIdInt = (target.id ?: 0)
+                if (targetIdInt == 0) return@setItems
+                val displayName = target.userName ?: target.name ?: "this viewer"
+                androidx.appcompat.app.AlertDialog.Builder(this)
+                    .setTitle("Remove $displayName?")
+                    .setMessage("$displayName will be removed from your show and won't be able to rejoin until you end the show.")
+                    .setPositiveButton("Remove") { d, _ ->
+                        d.dismiss()
+                        socketManager?.kickUser(roomID, targetIdInt)
+                        Toast.makeText(this, "Removing $displayName...", Toast.LENGTH_SHORT).show()
+                    }
+                    .setNegativeButton("Cancel") { d, _ -> d.dismiss() }
+                    .show()
+            }
+            .setNegativeButton("Close") { d, _ -> d.dismiss() }
+            .show()
     }
 
     fun showConfirmationAlert() {
