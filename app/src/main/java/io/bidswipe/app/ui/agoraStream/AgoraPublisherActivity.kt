@@ -1247,6 +1247,9 @@ class AgoraPublisherActivity : BaseActivity() {
         }
     }
 
+    // Basecamp #9931107836 / #9929871140 (2026-05-27 round 2): before opening
+    // the freebie product picker, offer the host a choice between picking from
+    // existing templates or building a new one mid-stream.
     private fun showFreebieStartSheet() {
         if (isFinishing || isDestroyed) return
 
@@ -1255,6 +1258,26 @@ class AgoraPublisherActivity : BaseActivity() {
             return
         }
 
+        androidx.appcompat.app.AlertDialog.Builder(this)
+            .setTitle("🎯 Randomizer")
+            .setMessage("Build a new randomizer template now, or use one you already created?")
+            .setPositiveButton("Build new") { d, _ ->
+                d.dismiss()
+                startActivity(
+                    android.content.Intent(this, io.bidswipe.app.ui.randomizer.RandomizerTemplatesActivity::class.java)
+                        .putExtra("from", "live")
+                )
+            }
+            .setNeutralButton("Use existing") { d, _ ->
+                d.dismiss()
+                showFreebieStartSheetInternal()
+            }
+            .setNegativeButton("Cancel") { d, _ -> d.dismiss() }
+            .show()
+    }
+
+    private fun showFreebieStartSheetInternal() {
+        if (isFinishing || isDestroyed) return
         val bottomSheetFragment = ProductsForLiveShowFragment().apply {
             arguments = bundleOf("from" to "freebie", "auction_type_id" to liveShowData?.auctionTypeId)
         }
