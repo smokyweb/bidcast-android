@@ -38,25 +38,47 @@ class FirebaseProductAdapter(
         with(holder) {
 
             bind.root.setHapticClickListener {
-                if (from == "freebie") {
-                    mClicks.itemClick(position, "freebie")
-                } else {
-                    mClicks.itemClick(position, "select")
+                when (from) {
+                    "freebie" -> mClicks.itemClick(position, "freebie")
+                    // Basecamp #9929871140 (2026-05-27): randomizer-slot picker
+                    // shares the inventory row layout with the live-show flow,
+                    // which includes prominent Start Auction + Pin/Set-next
+                    // buttons. Trey reported users couldn’t figure out how to
+                    // ADD a product to a slot — they saw the action buttons and
+                    // assumed those were the only way to interact. Route any tap
+                    // anywhere on the row to the “select” action when picking
+                    // for a randomizer slot.
+                    "randomizer_slot" -> mClicks.itemClick(position, "select")
+                    else -> mClicks.itemClick(position, "select")
                 }
             }
 
             bind.startAuction.setHapticClickListener {
-                mClicks.itemClick(position, "start_auction")
+                // Basecamp #9929871140 (2026-05-27): when picking for a
+                // randomizer slot, the Start Auction button should NOT start
+                // an auction — it should select the product for the slot. Avoid
+                // confusing UI by routing the click to the select action.
+                if (from == "randomizer_slot") mClicks.itemClick(position, "select")
+                else mClicks.itemClick(position, "start_auction")
             }
 
             bind.setForNext.setHapticClickListener {
-                mClicks.itemClick(position, "set_next")
+                // Same as above — redirect the Pin/Set-next button to select
+                // when in the randomizer-slot picker.
+                if (from == "randomizer_slot") mClicks.itemClick(position, "select")
+                else mClicks.itemClick(position, "set_next")
             }
 
 //            bind.root.alpha = if (item?.status == "sold") 0.5f else 1f
 
             bind.quantity.isVisible = item?.status == "inactive"
-            bind.buttonLayout.isVisible = item?.status != "inactive" && from != "freebie"
+            // Basecamp #9929871140 (2026-05-27): hide the live-show action
+            // buttons (Start Auction / Pin) when the row is rendered inside
+            // the randomizer-slot picker. Users only need to select; the
+            // explicit “Select” footer button on the picker is the canonical
+            // confirm CTA.
+            bind.buttonLayout.isVisible =
+                item?.status != "inactive" && from != "freebie" && from != "randomizer_slot"
 
             bind.quantity.text = buildSpannedString {
                 append("Status: ")
@@ -71,7 +93,11 @@ class FirebaseProductAdapter(
                 }
             }
 
-            if (from == "freebie") {
+            if (from == "freebie" || from == "randomizer_slot") {
+                // Basecamp #9929871140 (2026-05-27): mirror the freebie
+                // selection-stroke pattern for randomizer-slot picking so
+                // the user gets immediate visual feedback that their tap
+                // registered. Pure stroke-on-card; no other styling change.
                 bind.root.strokeColor = ContextCompat.getColor(mCtx, R.color.primary)
                 bind.root.strokeWidth = if (item?.selected == true) mCtx.resources.dpToPx(2) else 0
             } else {

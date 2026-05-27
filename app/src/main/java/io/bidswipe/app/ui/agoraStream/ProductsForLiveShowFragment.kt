@@ -343,6 +343,24 @@ class ProductsForLiveShowFragment : BottomSheetDialogFragment() {
                         cur?.selected = cur?.selected != true
                         selectedPos = pos
                         bind.recycler.adapter?.notifyItemChanged(pos)
+                    } else if (status == "select") {
+                        // Basecamp #9929871140 (2026-05-27): randomizer-slot
+                        // picker. Single-product selection — toggle the
+                        // tapped row, clear any prior selection. Trey
+                        // reported tapping rows did nothing because this
+                        // case was missing; the picker confirm button then
+                        // failed the `firstOrNull { it.selected == true }`
+                        // check and showed "Please select a product".
+                        productList.forEachIndexed { idx, p ->
+                            if (idx != pos && p?.selected == true) {
+                                p.selected = false
+                                bind.recycler.adapter?.notifyItemChanged(idx)
+                            }
+                        }
+                        val cur = productList[pos]
+                        cur?.selected = cur?.selected != true
+                        selectedPos = pos
+                        bind.recycler.adapter?.notifyItemChanged(pos)
                     }
 
                 }
