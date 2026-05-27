@@ -244,6 +244,8 @@ interface ApiInterface {
         @Part("is_explicit") isExplicit: RequestBody?,
         // Browse-filter bundle (Basecamp #9928367737): tag names normalized server-side via Tag::findOrCreateByName.
         @Part("tags[]") tags: List<RequestBody>? = null,
+        // Basecamp #9933883175 (2026-05-27): seller-controlled verified-buyers-only gate.
+        @Part("is_verified_only") isVerifiedOnly: RequestBody? = null,
     ): CreateShowResponse
 
     @Multipart
@@ -265,6 +267,8 @@ interface ApiInterface {
         @Part("show_id") showId: RequestBody?,
         // Browse-filter bundle (Basecamp #9928367737): tag names normalized server-side via Tag::findOrCreateByName.
         @Part("tags[]") tags: List<RequestBody>? = null,
+        // Basecamp #9933883175 (2026-05-27): seller-controlled verified-buyers-only gate.
+        @Part("is_verified_only") isVerifiedOnly: RequestBody? = null,
     ): CreateShowResponse
 
     @GET("api/get-auction-type")

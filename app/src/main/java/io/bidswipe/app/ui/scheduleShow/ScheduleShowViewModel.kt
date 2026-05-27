@@ -51,6 +51,8 @@ class ScheduleShowViewModel @Inject constructor(
 	var repeatMode = ""
 	var repeatType = ""
 	var explicitContent = ""
+	/** Basecamp #9933883175 (2026-05-27): seller-controlled verified-buyers-only gate ("1" or "0"). */
+	var verifiedOnly = ""
 	var primaryLanguage = ""
 	var discoverability = ""
 	/** Browse-filter bundle (Basecamp #9928367737): raw comma-separated tag string from the show-create form. */
@@ -100,6 +102,8 @@ class ScheduleShowViewModel @Inject constructor(
 		showId: RequestBody? = null,
 		// Browse-filter bundle (Basecamp #9928367737): tag list piped to backend Tag::findOrCreateByName.
 		tags: List<RequestBody>? = null,
+		// Basecamp #9933883175 (2026-05-27): seller-controlled verified-buyers-only gate.
+		isVerifiedOnly: RequestBody? = null,
 	) = viewModelScope.launch {
 		if (!networkMonitor.hasInternet()) {
 			_storeScheduleShowResponse.value = NO_INTERNET_ERROR
@@ -120,6 +124,7 @@ class ScheduleShowViewModel @Inject constructor(
 			isExplicit,
 			showId,
 			tags,
+			isVerifiedOnly,
 		)
 	}
 

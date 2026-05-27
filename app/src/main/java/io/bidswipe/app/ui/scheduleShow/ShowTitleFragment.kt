@@ -188,6 +188,8 @@ class ShowTitleFragment : BaseFragment<ScheduleShowViewModel, FragmentShowTitleB
                     viewModel.repeatType = mData?.repeatValue?.asCapital() ?: ""
 
                     viewModel.explicitContent = if (mData?.isExplicit ?: false) "1" else "0"
+                    // Basecamp #9933883175 (2026-05-27): hydrate verified-only state from server.
+                    viewModel.verifiedOnly = if (mData?.isVerifiedOnly ?: false) "1" else "0"
                     viewModel.primaryLanguage = mData?.language ?: ""
 
                     viewModel.discoverability = mData?.showDiscoverability ?: ""

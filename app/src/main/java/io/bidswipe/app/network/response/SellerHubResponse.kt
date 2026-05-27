@@ -56,6 +56,9 @@ data class SellerHubResponse(
             val imgThumbnail: List<String?>?,
             @SerializedName("is_explicit")
             val isExplicit: Boolean?,
+            // Basecamp #9933883175 (2026-05-27): seller-controlled verified-buyers-only gate.
+            @SerializedName("is_verified_only")
+            val isVerifiedOnly: Boolean?,
             @SerializedName("is_live")
             val isLive: Boolean?,
             @SerializedName("is_repeat")

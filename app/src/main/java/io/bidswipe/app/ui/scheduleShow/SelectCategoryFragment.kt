@@ -63,6 +63,8 @@ class SelectCategoryFragment : BaseFragment<ScheduleShowViewModel, FragmentSelec
             categoryId = viewModel.categoryId
             bind.repeat.setText(viewModel.repeatType, false)
             bind.explicitSwitch.isChecked = viewModel.explicitContent == "1"
+            // Basecamp #9933883175 (2026-05-27): restore verified-only state.
+            bind.verifiedOnlySwitch.isChecked = viewModel.verifiedOnly == "1"
             bind.language.setText(viewModel.primaryLanguage)
 
             bind.publicButton.isChecked = viewModel.discoverability == "public"
@@ -102,6 +104,8 @@ class SelectCategoryFragment : BaseFragment<ScheduleShowViewModel, FragmentSelec
                     viewModel.repeatMode = if (bind.repeat.value().isEmpty()) "0" else "1"
                     viewModel.repeatType = bind.repeat.value().ifEmpty { null }.toString()
                     viewModel.explicitContent = if (bind.explicitSwitch.isChecked) "1" else "0"
+                    // Basecamp #9933883175 (2026-05-27): persist verified-only choice.
+                    viewModel.verifiedOnly = if (bind.verifiedOnlySwitch.isChecked) "1" else "0"
                     viewModel.primaryLanguage = bind.language.value().ifEmpty { null }.toString()
 
                     if (bind.publicButton.isChecked) {

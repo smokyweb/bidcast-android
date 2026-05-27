@@ -241,6 +241,10 @@ class AddProductFragment : BaseFragment<ScheduleShowViewModel, FragmentAddProduc
 					isExplicit = viewModel.explicitContent.request(),
 					showId = viewModel.showId?.ifEmpty { null }?.request(),
 					tags = tagsRequest,
+					// Basecamp #9933883175 (2026-05-27): seller-controlled verified-only gate.
+					// Only forward when the seller explicitly toggled it on — otherwise
+					// send null so backend default (false) applies.
+					isVerifiedOnly = if (viewModel.verifiedOnly == "1") "1".request() else null,
 				)
 			}
 
