@@ -588,6 +588,13 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
                 }
             }
 
+            // Basecamp #9933402746 (2026-05-27 round 2): explicit defensive
+            // fetch — emit request_show_note after listener registration.
+            socketManager?.requestShowNote(roomID)
+            android.os.Handler(android.os.Looper.getMainLooper()).postDelayed({
+                socketManager?.requestShowNote(roomID)
+            }, 1500)
+
             socketManager?.onSaveTipSettingResult { obj ->
                 requireActivity().runOnUiThread {
                     log("Message : ${obj.optString("tip_message")} ")

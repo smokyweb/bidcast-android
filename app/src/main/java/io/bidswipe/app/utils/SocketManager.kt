@@ -21,6 +21,9 @@ class SocketManager private constructor(
     context: Context
 ) {
 
+    // Basecamp #9933402746 (2026-05-27): store context for prefs-backed user lookup.
+    private val mContext: Context? = context.applicationContext
+
     private var socket: Socket? = null
 
     @Volatile
@@ -368,13 +371,29 @@ class SocketManager private constructor(
     }
 
     fun addShowNotes(roomId: String, note: String) {
+        // Basecamp #9933402746 (2026-05-27 round 2): include user_id so the
+        // server-side ownership check passes. Previously missing — server
+        // silently dropped the update, buyers never saw the new note.
+        val context = mContext
+        val userId = if (context != null) {
+            try { io.bidswipe.app.utils.Prefs(context).getUserData()?.id ?: 0 } catch (e: Exception) { 0 }
+        } else 0
         val payload = JSONObject().apply {
             put("room_id", roomId)
             put("show_note", note)
+            if (userId > 0) put("user_id", userId)
         }
         Log.d(TAG, "EMIT: SHOW NOTE  - $payload")
 
         socket?.emit("add_show_note", payload)
+    }
+
+    // Basecamp #9933402746 (2026-05-27 round 2): explicit on-demand fetch.
+    // Buyer emits after join_room as a defensive backup to the broadcast.
+    fun requestShowNote(roomId: String) {
+        val payload = JSONObject().apply { put("room_id", roomId) }
+        Log.d(TAG, "EMIT: request_show_note - $payload")
+        socket?.emit("request_show_note", payload)
     }
 
     fun receiveShowNotes(listener: (count: JSONObject) -> Unit) {
