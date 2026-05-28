@@ -88,6 +88,38 @@
                     android:layout_gravity="center_vertical"
                     android:text="Available" />
 
+                <!-- Basecamp #9933973683 (2026-05-27): flash sale badge + countdown -->
+                <LinearLayout
+                    android:id="@+id/flashSaleBadgeRow"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_marginTop="4dp"
+                    android:visibility="gone">
+
+                    <TextView
+                        style="@style/BodySmall"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="⚡ Flash Sale"
+                        android:textStyle="bold"
+                        android:textColor="#DC2626"
+                        android:background="#FEE2E2"
+                        android:paddingHorizontal="8dp"
+                        android:paddingVertical="2dp" />
+
+                    <TextView
+                        android:id="@+id/flashSaleCountdown"
+                        style="@style/BodySmall"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:textColor="#DC2626"
+                        android:textStyle="bold" />
+
+                </LinearLayout>
+
                 <TextView
                     android:id="@+id/price"
                     style="@style/BodySmall"

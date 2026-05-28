@@ -32,6 +32,13 @@ data class GetProductDetailsResponse(
 		val description: String?,
 		@SerializedName("flash_sale")
 		val flashSale: Boolean?,
+		// Basecamp #9933973683 (2026-05-27): flash sale price + window.
+		@SerializedName("flash_sale_price")
+		val flashSalePrice: Double?,
+		@SerializedName("flash_sale_starts_at")
+		val flashSaleStartsAt: String?,
+		@SerializedName("flash_sale_ends_at")
+		val flashSaleEndsAt: String?,
 		@SerializedName("hazardous_material")
 		val hazardousMaterial: Boolean?,
 		@SerializedName("height")

@@ -143,12 +143,41 @@ class ProductDetailsFragment : BaseFragment<ProductViewModel, FragmentProductDet
                         append(" Available")
                     }
 
-                    bind.price.text = buildSpannedString {
-                        append("Starting at ")
-                        color(ContextCompat.getColor(mCtx, R.color.onSurface)) {
-                            append(mData?.pricing.toString().asMoney())
+                    // Basecamp #9933973683 (2026-05-27): flash sale active?
+                    val flashActive = isFlashSaleActive(mData)
+                    if (flashActive && mData?.flashSalePrice != null) {
+                        bind.flashSaleBadgeRow.isVisible = true
+                        startFlashCountdown(mData.flashSaleEndsAt)
+                        bind.price.text = buildSpannedString {
+                            val regular = mData.pricing.toString().asMoney()
+                            color(ContextCompat.getColor(mCtx, R.color.outlineVariant)) {
+                                // Strikethrough on regular price.
+                                val start = length
+                                append(regular)
+                                // Apply strikethrough span manually below.
+                            }
+                            append(" ")
+                            color(android.graphics.Color.parseColor("#DC2626")) {
+                                bold { append(mData.flashSalePrice.toString().asMoney()) }
+                            }
+                            append(" + Shipping + Taxes")
                         }
-                        append(" + Shipping + Taxes")
+                        // Add strikethrough span over the regular price.
+                        val pricedText = bind.price.text
+                        if (pricedText is android.text.Spannable) {
+                            val end = mData.pricing.toString().asMoney().length
+                            pricedText.setSpan(android.text.style.StrikethroughSpan(), 0, end, android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+                        }
+                    } else {
+                        bind.flashSaleBadgeRow.isVisible = false
+                        stopFlashCountdown()
+                        bind.price.text = buildSpannedString {
+                            append("Starting at ")
+                            color(ContextCompat.getColor(mCtx, R.color.onSurface)) {
+                                append(mData?.pricing.toString().asMoney())
+                            }
+                            append(" + Shipping + Taxes")
+                        }
                     }
 
                     val offer = mData?.offer
@@ -489,6 +518,61 @@ class ProductDetailsFragment : BaseFragment<ProductViewModel, FragmentProductDet
     override fun onDestroy() {
         super.onDestroy()
         mediaAdapter.onDestroy()
+        stopFlashCountdown()
+    }
+
+    // Basecamp #9933973683 (2026-05-27): flash sale helpers.
+    private var flashCountdownRunnable: Runnable? = null
+    private val flashHandler by lazy { android.os.Handler(android.os.Looper.getMainLooper()) }
+
+    private fun isFlashSaleActive(d: io.bidswipe.app.network.response.GetProductDetailsResponse.Data?): Boolean {
+        if (d == null) return false
+        if (d.flashSale != true) return false
+        if ((d.flashSalePrice ?: 0.0) <= 0.0) return false
+        val ends = parseSqlOrIso(d.flashSaleEndsAt) ?: return false
+        if (ends.before(java.util.Date())) return false
+        val starts = parseSqlOrIso(d.flashSaleStartsAt)
+        if (starts != null && starts.after(java.util.Date())) return false
+        return true
+    }
+
+    private fun parseSqlOrIso(s: String?): java.util.Date? {
+        if (s.isNullOrBlank()) return null
+        // Try "yyyy-MM-dd HH:mm:ss" first (Laravel format).
+        val sqlFmt = java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss", java.util.Locale.US)
+        sqlFmt.timeZone = java.util.TimeZone.getTimeZone("UTC")
+        try { return sqlFmt.parse(s) } catch (_: Exception) {}
+        val isoFmt = java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", java.util.Locale.US)
+        isoFmt.timeZone = java.util.TimeZone.getTimeZone("UTC")
+        try { return isoFmt.parse(s.replace("Z", "").replace(".000000", "")) } catch (_: Exception) {}
+        return null
+    }
+
+    private fun startFlashCountdown(endsAt: String?) {
+        val ends = parseSqlOrIso(endsAt) ?: return
+        stopFlashCountdown()
+        flashCountdownRunnable = object : Runnable {
+            override fun run() {
+                val diff = ends.time - System.currentTimeMillis()
+                if (diff <= 0) {
+                    bind.flashSaleCountdown.text = "Sale ended"
+                    bind.flashSaleBadgeRow.isVisible = false
+                    return
+                }
+                val total = diff / 1000
+                val h = total / 3600
+                val m = (total % 3600) / 60
+                val sec = total % 60
+                bind.flashSaleCountdown.text = if (h > 0) "${h}h ${m}m ${sec}s left" else "${m}m ${sec}s left"
+                flashHandler.postDelayed(this, 1000)
+            }
+        }
+        flashHandler.post(flashCountdownRunnable!!)
+    }
+
+    private fun stopFlashCountdown() {
+        flashCountdownRunnable?.let { flashHandler.removeCallbacks(it) }
+        flashCountdownRunnable = null
     }
 
     // Basecamp #9933847997 (2026-05-27): pre-bid dialog.
