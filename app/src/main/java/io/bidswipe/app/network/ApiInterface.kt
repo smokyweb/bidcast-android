@@ -359,9 +359,12 @@ interface ApiInterface {
         @Part("ship_country") shipCountry: RequestBody? = null,
         @Part("ship_state") shipState: RequestBody? = null,
         @Part("shipping") shipping: RequestBody? = null,
-        // Basecamp #9938023997: multi-select category + subcategory filter
+        // Basecamp #9938023997 + #9939156565 (2026-05-28): multi-select category + subcategory filter.
+        // BOTH need @JvmSuppressWildcards — Kotlin's `out` variance on List<RequestBody> generates
+        // List<? extends RequestBody> which Retrofit rejects. Same fix as #9928367737 round 4.
+        // Missing annotation on subCategoryIds caused the "parameter #12" home-screen error.
         @Part("category_ids[]") categoryIds: @JvmSuppressWildcards List<RequestBody>? = null,
-        @Part("sub_category_ids[]") subCategoryIds: List<RequestBody>? = null,
+        @Part("sub_category_ids[]") subCategoryIds: @JvmSuppressWildcards List<RequestBody>? = null,
     ): GetMyShowResponse
 
     @Multipart
