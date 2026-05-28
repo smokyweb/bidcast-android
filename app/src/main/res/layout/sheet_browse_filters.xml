@@ -57,6 +57,52 @@
         </LinearLayout>
 
         <!-- ──────────────────────────────────────────────────────
+             Section 0a: Categories (Basecamp #9938023997)
+             Dynamic chips loaded from GET /api/get-category.
+             Multi-select: tap to toggle. Selected = filled, unselected = outlined.
+        ────────────────────────────────────────────────────────── -->
+        <TextView
+            android:id="@+id/labelCategories"
+            style="@style/LabelMedium"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin"
+            android:text="Categories" />
+
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/categoryChipsGroup"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/half_margin" />
+
+        <!-- ──────────────────────────────────────────────────────
+             Section 0b: Subcategories (Basecamp #9938023997)
+             Visible only when ≥1 category is selected.
+             Dynamic chips from POST /api/get-subcategories; cached per-category.
+        ────────────────────────────────────────────────────────── -->
+        <LinearLayout
+            android:id="@+id/subcategorySection"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <TextView
+                style="@style/LabelMedium"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margin"
+                android:text="Subcategories" />
+
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/subcategoryChipsGroup"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/half_margin" />
+
+        </LinearLayout>
+
+        <!-- ──────────────────────────────────────────────────────
              Section 1: Show Format
              Radio-style chips: All / Surprise Sets / Live Auction / Buy It Now
              Sends show_format = surprise_sets | live_auction | buy_it_now

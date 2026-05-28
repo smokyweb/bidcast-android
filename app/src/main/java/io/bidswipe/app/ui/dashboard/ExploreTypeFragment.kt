@@ -44,6 +44,7 @@ import io.bidswipe.app.utils.hideKeyboard
 import io.bidswipe.app.utils.isTablet
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request
+import okhttp3.RequestBody
 import io.bidswipe.app.utils.runSafe
 import io.bidswipe.app.utils.setHapticClickListener
 import io.bidswipe.app.utils.value
@@ -98,6 +99,11 @@ class ExploreTypeFragment : BaseFragment<DashViewModel, FragmentExploreTypeBindi
             shipCountry = f.shipCountry?.request(),
             shipState = f.shipState?.request(),
             shipping = f.shipping?.request(),
+            // Basecamp #9938023997: multi-select category + subcategory filter
+            categoryIds = f.categoryIds.takeIf { it.isNotEmpty() }
+                ?.map { it.toString().request() as RequestBody },
+            subCategoryIds = f.subCategoryIds.takeIf { it.isNotEmpty() }
+                ?.map { it.toString().request() as RequestBody },
         )
     }
 
@@ -336,11 +342,16 @@ class ExploreTypeFragment : BaseFragment<DashViewModel, FragmentExploreTypeBindi
                     bind.swipeRefreshLayout.isVisible = false
                     bind.loader.isVisible = false
 
-                    // Fire unified search (debounced 350ms)
+                    // Fire unified search (debounced 350ms), pass active category/subcat filters
                     searchDebounce?.removeCallbacksAndMessages(null)
                     searchDebounce = android.os.Handler(android.os.Looper.getMainLooper())
                     searchDebounce?.postDelayed({
-                        viewModel.unifiedSearch(s.toString().trim())
+                        val f = browseFilters
+                        viewModel.unifiedSearch(
+                            s.toString().trim(),
+                            categoryIds = f.categoryIds.takeIf { it.isNotEmpty() },
+                            subCategoryIds = f.subCategoryIds.takeIf { it.isNotEmpty() },
+                        )
                     }, 350)
                 } else {
                     // Query cleared → restore normal explore content.

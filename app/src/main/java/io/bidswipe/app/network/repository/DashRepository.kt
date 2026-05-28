@@ -190,6 +190,7 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
     ) = call { api.offerUpdateStatus(offerId, status) }
 
     // Basecamp #9933301500 (2026-05-27): 6 new optional filter params
+    // Basecamp #9938023997: added category_ids + sub_category_ids arrays
     suspend fun getLiveShow(
         type: RequestBody?,
         category: RequestBody?,
@@ -202,7 +203,9 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
         shipCountry: RequestBody? = null,
         shipState: RequestBody? = null,
         shipping: RequestBody? = null,
-    ) = call { api.getLiveShow(type, category, subCategory, search, page, showFormat, tag, premierShop, shipCountry, shipState, shipping) }
+        categoryIds: List<RequestBody>? = null,
+        subCategoryIds: List<RequestBody>? = null,
+    ) = call { api.getLiveShow(type, category, subCategory, search, page, showFormat, tag, premierShop, shipCountry, shipState, shipping, categoryIds, subCategoryIds) }
 
     suspend fun getExploreLiveShow(
         type: RequestBody?,
@@ -216,7 +219,9 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
         shipCountry: RequestBody? = null,
         shipState: RequestBody? = null,
         shipping: RequestBody? = null,
-    ) = call { api.getLiveShow(type, category, subCategory, search, page, showFormat, tag, premierShop, shipCountry, shipState, shipping) }
+        categoryIds: List<RequestBody>? = null,
+        subCategoryIds: List<RequestBody>? = null,
+    ) = call { api.getLiveShow(type, category, subCategory, search, page, showFormat, tag, premierShop, shipCountry, shipState, shipping, categoryIds, subCategoryIds) }
 
     suspend fun notifyLiveUser(
         liveUserId: RequestBody?,
@@ -436,8 +441,13 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
     ) = call { api.searchUsers(search) }
 
     // Basecamp #9922137198 (Trey 2026-05-20): unified search across shows + products + users.
-    suspend fun unifiedSearch(search: String, page: Int? = null) =
-        call { api.unifiedSearch(io.bidswipe.app.network.request.SearchRequest(search, page)) }
+    // Basecamp #9938023997: pass optional category/subcategory filter arrays
+    suspend fun unifiedSearch(
+        search: String,
+        page: Int? = null,
+        categoryIds: List<Int>? = null,
+        subCategoryIds: List<Int>? = null,
+    ) = call { api.unifiedSearch(io.bidswipe.app.network.request.SearchRequest(search, page, categoryIds, subCategoryIds)) }
 
     suspend fun saveSellerProduct(
         productId: RequestBody?,

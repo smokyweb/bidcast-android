@@ -13,6 +13,8 @@ import android.content.Context
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.view.ContextThemeWrapper
+import androidx.core.view.isVisible
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.Dispatchers
@@ -23,7 +25,11 @@ import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.google.android.material.chip.Chip
+import io.bidswipe.app.App
 import io.bidswipe.app.databinding.SheetBrowseFiltersBinding
+import io.bidswipe.app.utils.Const
+import io.bidswipe.app.utils.Prefs
 
 /**
  * Snapshot of the 5 browse filter values. All fields optional — omit by
@@ -36,7 +42,10 @@ data class BrowseFilters(
     val premierShop: Boolean = false,
     val shipCountry: String? = null,   // 2-letter ISO; null = Any country
     val shipState: String? = null,     // optional state/region free text
-    val shipping: String? = null       // free | reduced | null(All)
+    val shipping: String? = null,      // free | reduced | null(All)
+    // Basecamp #9938023997: multi-select category + subcategory filter
+    val categoryIds: List<Int> = emptyList(),
+    val subCategoryIds: List<Int> = emptyList(),
 ) {
     val isActive: Boolean
         get() = showFormat != null
@@ -45,6 +54,8 @@ data class BrowseFilters(
                 || shipCountry != null
                 || !shipState.isNullOrBlank()
                 || shipping != null
+                || categoryIds.isNotEmpty()
+                || subCategoryIds.isNotEmpty()
 }
 
 // Country list matches iOS port. ISO-3166-1 alpha-2 codes (note GB for UK,
@@ -78,6 +89,10 @@ class BrowseFiltersSheet(
     // Working copy mutated as the user changes controls; snapshotted on Apply.
     private var draft = initial.copy()
 
+    // Basecamp #9938023997: subcategory cache keyed by category id to avoid re-fetching.
+    private data class SubcatItem(val id: Int, val categoryId: Int, val name: String)
+    private val subcatCacheByCategory = mutableMapOf<Int, List<SubcatItem>>()
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
@@ -91,6 +106,9 @@ class BrowseFiltersSheet(
 
         // ── Close button ────────────────────────────────────────────────────
         bind.close.setOnClickListener { dismiss() }
+
+        // ── Categories + Subcategories (Basecamp #9938023997) ────────────────
+        setupCategoryChips()
 
         // ── 1. Show Format ──────────────────────────────────────────────────
         // Chip group — single-selection radio style. "All" = no format filter.
@@ -194,6 +212,12 @@ class BrowseFiltersSheet(
             bind.spinnerCountry.setSelection(0)
             restoreShowFormatChip(null)
             restoreShippingChip(null)
+            // Clear category + subcategory chips
+            for (i in 0 until bind.categoryChipsGroup.childCount) {
+                (bind.categoryChipsGroup.getChildAt(i) as? Chip)?.isChecked = false
+            }
+            bind.subcategoryChipsGroup.removeAllViews()
+            bind.subcategorySection.isVisible = false
         }
 
         // ── Apply button ──────────────────────────────────────────────────────
@@ -206,6 +230,199 @@ class BrowseFiltersSheet(
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    // ── Category / Subcategory helpers (Basecamp #9938023997) ───────────────
+
+    /**
+     * Populate the Categories ChipGroup from App.categoryList (or fetch if empty).
+     * Called once from onViewCreated.
+     */
+    private fun setupCategoryChips() {
+        val cached = App.categoryList.filterNotNull()
+        if (cached.isNotEmpty()) {
+            val pairs = cached.mapNotNull { c ->
+                val id = c.id ?: return@mapNotNull null
+                val name = c.name?.takeIf { it.isNotBlank() } ?: return@mapNotNull null
+                id to name
+            }
+            populateCategoryChipsFromPairs(pairs)
+        } else {
+            CoroutineScope(Dispatchers.IO).launch {
+                try {
+                    val token = Prefs(requireContext()).token()
+                    val url = java.net.URL("${Const.BASE_URL}/api/get-category")
+                    val conn = url.openConnection() as java.net.HttpURLConnection
+                    conn.setRequestProperty("Accept", "application/json")
+                    if (token.isNotBlank()) conn.setRequestProperty("Authorization", "Bearer $token")
+                    val body = conn.inputStream.bufferedReader().readText()
+                    conn.disconnect()
+                    val json = org.json.JSONObject(body)
+                    val arr = json.optJSONArray("data") ?: org.json.JSONArray()
+                    val pairs = mutableListOf<Pair<Int, String>>()
+                    for (i in 0 until arr.length()) {
+                        val obj = arr.optJSONObject(i) ?: continue
+                        val id = obj.optInt("id", -1)
+                        val name = obj.optString("name", "").trim()
+                        if (id > 0 && name.isNotBlank()) pairs.add(id to name)
+                    }
+                    withContext(Dispatchers.Main) {
+                        if (isAdded) populateCategoryChipsFromPairs(pairs)
+                    }
+                } catch (e: Exception) {
+                    android.util.Log.w("BrowseFiltersSheet", "category fetch failed: ${e.message}")
+                }
+            }
+        }
+    }
+
+    /**
+     * Build a Chip for every (id, name) pair and add to categoryChipsGroup.
+     * Restores checked state from draft. Pre-loads subcategories if categories
+     * are already selected from a previous open.
+     */
+    private fun populateCategoryChipsFromPairs(pairs: List<Pair<Int, String>>) {
+        val ctx = requireContext()
+        bind.categoryChipsGroup.removeAllViews()
+        pairs.forEach { (id, name) ->
+            val chip = Chip(
+                ContextThemeWrapper(ctx, com.google.android.material.R.style.Widget_Material3_Chip_Filter),
+                null, 0
+            ).apply {
+                text = name
+                isCheckable = true
+                isChecked = id in draft.categoryIds
+                tag = id
+                setOnClickListener { onCategoryChipClicked(id) }
+            }
+            bind.categoryChipsGroup.addView(chip)
+        }
+        // If categories are already selected (initial open with existing filters),
+        // pre-render subcategories.
+        if (draft.categoryIds.isNotEmpty()) {
+            loadSubcategoriesForSelected()
+        }
+    }
+
+    /** Toggle the given category id in/out of draft.categoryIds. */
+    private fun onCategoryChipClicked(id: Int) {
+        val newCatIds = draft.categoryIds.toMutableList()
+        if (id in newCatIds) {
+            newCatIds.remove(id)
+            // Drop any selected subcats that belong to this category.
+            val removedSubcatIds = (subcatCacheByCategory[id] ?: emptyList()).map { it.id }
+            val newSubIds = draft.subCategoryIds.filter { it !in removedSubcatIds }
+            draft = draft.copy(categoryIds = newCatIds, subCategoryIds = newSubIds)
+        } else {
+            newCatIds.add(id)
+            draft = draft.copy(categoryIds = newCatIds)
+        }
+        loadSubcategoriesForSelected()
+    }
+
+    /**
+     * Fetch subcategories for any newly selected categories (cached per-category),
+     * then render. If no categories are selected, hide the section.
+     */
+    private fun loadSubcategoriesForSelected() {
+        val selectedCatIds = draft.categoryIds
+        if (selectedCatIds.isEmpty()) {
+            bind.subcategorySection.isVisible = false
+            bind.subcategoryChipsGroup.removeAllViews()
+            return
+        }
+        val uncached = selectedCatIds.filter { !subcatCacheByCategory.containsKey(it) }
+        if (uncached.isEmpty()) {
+            renderSubcategoryChips()
+            return
+        }
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val token = Prefs(requireContext()).token()
+                val reqBody = org.json.JSONObject()
+                reqBody.put("category_ids", org.json.JSONArray(uncached))
+                val url = java.net.URL("${Const.BASE_URL}/api/get-subcategories")
+                val conn = url.openConnection() as java.net.HttpURLConnection
+                conn.requestMethod = "POST"
+                conn.setRequestProperty("Content-Type", "application/json")
+                conn.setRequestProperty("Accept", "application/json")
+                if (token.isNotBlank()) conn.setRequestProperty("Authorization", "Bearer $token")
+                conn.doOutput = true
+                conn.outputStream.use { it.write(reqBody.toString().toByteArray()) }
+                val respBody = try {
+                    conn.inputStream.bufferedReader().readText()
+                } catch (e: Exception) {
+                    conn.errorStream?.bufferedReader()?.readText() ?: ""
+                }
+                conn.disconnect()
+                val json = org.json.JSONObject(respBody)
+                val arr = json.optJSONArray("data") ?: org.json.JSONArray()
+                for (i in 0 until arr.length()) {
+                    val catObj = arr.optJSONObject(i) ?: continue
+                    val catId = catObj.optInt("id", -1)
+                    if (catId <= 0) continue
+                    val subcats = mutableListOf<SubcatItem>()
+                    val subArr = catObj.optJSONArray("subcategories") ?: org.json.JSONArray()
+                    for (j in 0 until subArr.length()) {
+                        val sub = subArr.optJSONObject(j) ?: continue
+                        val subId = sub.optInt("id", -1)
+                        val subName = sub.optString("name", "").trim()
+                        if (subId > 0 && subName.isNotBlank()) {
+                            subcats.add(SubcatItem(subId, catId, subName))
+                        }
+                    }
+                    subcatCacheByCategory[catId] = subcats
+                }
+                withContext(Dispatchers.Main) {
+                    if (isAdded) renderSubcategoryChips()
+                }
+            } catch (e: Exception) {
+                android.util.Log.w("BrowseFiltersSheet", "subcat fetch failed: ${e.message}")
+            }
+        }
+    }
+
+    /**
+     * Build subcategory chips from the cache for all selected categories.
+     * Union of all subcategories across selected categories.
+     */
+    private fun renderSubcategoryChips() {
+        val selectedCatIds = draft.categoryIds
+        if (selectedCatIds.isEmpty()) {
+            bind.subcategorySection.isVisible = false
+            bind.subcategoryChipsGroup.removeAllViews()
+            return
+        }
+        val allSubcats = selectedCatIds.flatMap { catId ->
+            subcatCacheByCategory[catId] ?: emptyList()
+        }
+        if (allSubcats.isEmpty()) {
+            bind.subcategorySection.isVisible = false
+            bind.subcategoryChipsGroup.removeAllViews()
+            return
+        }
+        bind.subcategorySection.isVisible = true
+        bind.subcategoryChipsGroup.removeAllViews()
+        val ctx = requireContext()
+        allSubcats.forEach { subcat ->
+            val chip = Chip(
+                ContextThemeWrapper(ctx, com.google.android.material.R.style.Widget_Material3_Chip_Filter),
+                null, 0
+            ).apply {
+                text = subcat.name
+                isCheckable = true
+                isChecked = subcat.id in draft.subCategoryIds
+                tag = subcat.id
+                setOnClickListener {
+                    val newSubIds = draft.subCategoryIds.toMutableList()
+                    if (subcat.id in newSubIds) newSubIds.remove(subcat.id)
+                    else newSubIds.add(subcat.id)
+                    draft = draft.copy(subCategoryIds = newSubIds)
+                    isChecked = subcat.id in draft.subCategoryIds
+                }
+            }
+            bind.subcategoryChipsGroup.addView(chip)
+        }
     }
 
     // Helper: mark the correct show-format chip as checked.

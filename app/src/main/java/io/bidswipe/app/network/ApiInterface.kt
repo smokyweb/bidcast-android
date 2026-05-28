@@ -353,6 +353,9 @@ interface ApiInterface {
         @Part("ship_country") shipCountry: RequestBody? = null,
         @Part("ship_state") shipState: RequestBody? = null,
         @Part("shipping") shipping: RequestBody? = null,
+        // Basecamp #9938023997: multi-select category + subcategory filter
+        @Part("category_ids[]") categoryIds: List<RequestBody>? = null,
+        @Part("sub_category_ids[]") subCategoryIds: List<RequestBody>? = null,
     ): GetMyShowResponse
 
     @Multipart
