@@ -18,6 +18,8 @@ import androidx.core.text.buildSpannedString
 import androidx.core.text.color
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.launch
 import com.google.android.material.tabs.TabLayout
 import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseFragment
@@ -65,6 +67,8 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
 
     var imageList = mutableListOf<MediaItem>()
     lateinit var imageAdapter: ImageAdapter
+    // Basecamp #9933973683 (2026-05-27): flash sale ends-at picker state.
+    private var flashSaleEndsAtMillis: Long = 0L
     var uploadItemIndex = -1
     var isSubCategory = false
     private var product: Product? = null
@@ -431,6 +435,21 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
             if (isChecked) {
                 bind.reserveForLive.isChecked = false
             }
+            // Basecamp #9933973683 (2026-05-27): show/hide flash sale details.
+            bind.flashSaleDetails.isVisible = isChecked
+        }
+
+        // Basecamp #9933973683 (2026-05-27): end date/time picker.
+        bind.flashSaleEndsAtBtn.setHapticClickListener {
+            val cal = java.util.Calendar.getInstance()
+            android.app.DatePickerDialog(requireContext(), { _, y, mo, d ->
+                android.app.TimePickerDialog(requireContext(), { _, h, mi ->
+                    cal.set(y, mo, d, h, mi, 0)
+                    flashSaleEndsAtMillis = cal.timeInMillis
+                    val fmt = java.text.SimpleDateFormat("MMM d, yyyy h:mm a", java.util.Locale.US)
+                    bind.flashSaleEndsAtBtn.text = "Ends " + fmt.format(cal.time)
+                }, cal.get(java.util.Calendar.HOUR_OF_DAY), cal.get(java.util.Calendar.MINUTE), false).show()
+            }, cal.get(java.util.Calendar.YEAR), cal.get(java.util.Calendar.MONTH), cal.get(java.util.Calendar.DAY_OF_MONTH)).show()
         }
 
         bind.proCategory.setAdapter(proCategoryAdapter)
@@ -800,6 +819,37 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
 
             when (it) {
                 is Resource.Success -> {
+                    // Basecamp #9933973683 (2026-05-27): if flash sale toggle is on +
+                    // price + ends-at are filled, follow up with /api/product/flash-sale.
+                    val productId = it.value.data?.id
+                    if (bind.flashSell.isChecked && productId != null && productId > 0) {
+                        val price = bind.flashSalePrice.value().toDoubleOrNull() ?: 0.0
+                        if (price > 0 && flashSaleEndsAtMillis > 0) {
+                            viewLifecycleOwner.lifecycleScope.launch {
+                                kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO) {
+                                    try {
+                                        val token = io.bidswipe.app.utils.Prefs(mCtx).token()
+                                        val isoFmt = java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", java.util.Locale.US).apply { timeZone = java.util.TimeZone.getTimeZone("UTC") }
+                                        val body = org.json.JSONObject().apply {
+                                            put("product_id", productId)
+                                            put("flash_sale_price", price)
+                                            put("ends_at", isoFmt.format(java.util.Date(flashSaleEndsAtMillis)))
+                                        }.toString()
+                                        val url = java.net.URL("${io.bidswipe.app.utils.Const.BASE_URL}/api/product/flash-sale")
+                                        val conn = url.openConnection() as java.net.HttpURLConnection
+                                        conn.requestMethod = "POST"
+                                        conn.setRequestProperty("Content-Type", "application/json")
+                                        conn.setRequestProperty("Accept", "application/json")
+                                        conn.setRequestProperty("Authorization", "Bearer $token")
+                                        conn.doOutput = true
+                                        conn.outputStream.use { os -> os.write(body.toByteArray()) }
+                                        conn.responseCode
+                                        conn.disconnect()
+                                    } catch (e: Exception) { e.printStackTrace() }
+                                }
+                            }
+                        }
+                    }
                     // Clear ViewModel state on successful save
                     clearViewModelState()
                     Alerts.showBottomSheet(

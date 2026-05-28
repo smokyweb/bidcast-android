@@ -656,6 +656,60 @@
 
                 </LinearLayout>
 
+                <!-- Basecamp #9933973683 (2026-05-27): flash sale details. Hidden until
+                     flashSell toggle is on. -->
+                <LinearLayout
+                    android:id="@+id/flashSaleDetails"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:visibility="gone"
+                    android:layout_marginVertical="@dimen/half_margin"
+                    android:padding="@dimen/margin"
+                    android:background="#FFFBEB">
+
+                    <TextView
+                        style="@style/BodySmall"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Sale price (must be lower than regular price)"
+                        android:textStyle="bold"
+                        android:textColor="#92400E" />
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:hint="$">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/flashSalePrice"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="numberDecimal" />
+
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <TextView
+                        style="@style/BodySmall"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="Ends at (required)"
+                        android:textStyle="bold"
+                        android:textColor="#92400E" />
+
+                    <Button
+                        android:id="@+id/flashSaleEndsAtBtn"
+                        style="@style/appTonalBtn"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:text="Pick end date/time"
+                        app:cornerRadius="12dp" />
+
+                </LinearLayout>
+
                 <LinearLayout
                     android:id="@+id/accept_offers_layout"
                     android:layout_width="match_parent"
