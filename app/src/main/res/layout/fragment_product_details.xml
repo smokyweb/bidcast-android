@@ -491,6 +491,17 @@
             android:text="@string/buy_now"
             app:cornerRadius="50dp" />
 
+        <!-- Basecamp #9933847997 (2026-05-27): pre-bid button -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/pre_bid"
+            style="@style/appTonalBtn"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_weight="1"
+            android:paddingHorizontal="0dp"
+            android:text="Pre-Bid"
+            app:cornerRadius="50dp" />
 
     </LinearLayout>
 

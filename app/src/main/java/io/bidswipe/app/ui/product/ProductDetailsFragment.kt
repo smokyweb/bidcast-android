@@ -16,6 +16,8 @@ import androidx.core.text.buildSpannedString
 import androidx.core.text.color
 import androidx.core.view.isVisible
 import androidx.navigation.fragment.findNavController
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.launch
 import com.skydoves.powermenu.PowerMenuItem
 import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseFragment
@@ -86,6 +88,11 @@ class ProductDetailsFragment : BaseFragment<ProductViewModel, FragmentProductDet
 
         bind.makeOffer.setHapticClickListener {
             showOfferSheet()
+        }
+
+        // Basecamp #9933847997 (2026-05-27): pre-bid button.
+        bind.preBid.setHapticClickListener {
+            showPreBidDialog()
         }
 
         bind.save.setHapticClickListener {
@@ -482,6 +489,66 @@ class ProductDetailsFragment : BaseFragment<ProductViewModel, FragmentProductDet
     override fun onDestroy() {
         super.onDestroy()
         mediaAdapter.onDestroy()
+    }
+
+    // Basecamp #9933847997 (2026-05-27): pre-bid dialog.
+    private fun showPreBidDialog() {
+        val ctx = requireContext()
+        val input = android.widget.EditText(ctx).apply {
+            inputType = android.text.InputType.TYPE_CLASS_NUMBER or android.text.InputType.TYPE_NUMBER_FLAG_DECIMAL
+            hint = "Amount in USD"
+            setPadding(40, 30, 40, 30)
+        }
+        androidx.appcompat.app.AlertDialog.Builder(ctx)
+            .setTitle("Place Pre-Bid")
+            .setMessage("Lock in your bid before the auction starts. Applied automatically as the opening bid when the seller starts the auction.")
+            .setView(input)
+            .setPositiveButton("Place") { d, _ ->
+                d.dismiss()
+                val raw = input.text?.toString()?.trim() ?: ""
+                val amount = raw.toDoubleOrNull() ?: 0.0
+                if (amount < 1.0) {
+                    io.bidswipe.app.utils.Alerts.error(mCtx, "Please enter $1 or more.")
+                    return@setPositiveButton
+                }
+                postPreBid(amount)
+            }
+            .setNegativeButton("Cancel") { d, _ -> d.dismiss() }
+            .show()
+    }
+
+    private fun postPreBid(amount: Double) {
+        bind.loader.isVisible = true
+        viewLifecycleOwner.lifecycleScope.launch {
+            val code: Int = kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO) {
+                try {
+                    val token = io.bidswipe.app.utils.Prefs(mCtx).token()
+                    val body = org.json.JSONObject().apply {
+                        put("product_id", productId.toIntOrNull() ?: 0)
+                        put("amount", amount)
+                    }.toString()
+                    val url = java.net.URL("${io.bidswipe.app.utils.Const.BASE_URL}/api/product/pre-bid")
+                    val conn = url.openConnection() as java.net.HttpURLConnection
+                    conn.requestMethod = "POST"
+                    conn.setRequestProperty("Content-Type", "application/json")
+                    conn.setRequestProperty("Accept", "application/json")
+                    conn.setRequestProperty("Authorization", "Bearer $token")
+                    conn.doOutput = true
+                    conn.outputStream.use { it.write(body.toByteArray()) }
+                    val rc = conn.responseCode
+                    conn.disconnect()
+                    rc
+                } catch (e: Exception) { e.printStackTrace(); -1 }
+            }
+            bind.loader.isVisible = false
+            when (code) {
+                200, 201 -> io.bidswipe.app.utils.Alerts.success(mCtx, "Pre-bid placed.")
+                403 -> io.bidswipe.app.utils.Alerts.error(mCtx, "Not allowed.")
+                404 -> io.bidswipe.app.utils.Alerts.error(mCtx, "Product not found.")
+                -1 -> io.bidswipe.app.utils.Alerts.error(mCtx, "Network error.")
+                else -> io.bidswipe.app.utils.Alerts.error(mCtx, "Could not place pre-bid (code $code).")
+            }
+        }
     }
 }
 
