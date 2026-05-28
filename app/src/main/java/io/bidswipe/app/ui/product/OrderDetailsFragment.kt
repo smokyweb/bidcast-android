@@ -36,6 +36,11 @@ import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.setHapticClickListener
 import io.bidswipe.app.utils.toOrderStatus
 import androidx.core.view.isVisible
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import io.bidswipe.app.utils.Alerts
 
 class OrderDetailsFragment : BaseFragment<ProductViewModel, FragmentOrderDetailsBinding>() {
     override fun getModel(): Class<ProductViewModel> = ProductViewModel::class.java
@@ -47,6 +52,9 @@ class OrderDetailsFragment : BaseFragment<ProductViewModel, FragmentOrderDetails
 
     private var orderId: String? = null
     private var primaryOrderId: String? = null
+    // Basecamp #9934033253 (2026-05-27): track current order status so the
+    // cancel menu only acts when the order is in a cancellable state.
+    private var currentOrderStatus: String? = null
     private var order: String? = null
     private var sellerId: String? = null
     private var productId: String? = null
@@ -124,7 +132,8 @@ class OrderDetailsFragment : BaseFragment<ProductViewModel, FragmentOrderDetails
         menu.setOnMenuItemClickListener {
             when (it.itemId) {
                 ids.cancel -> {
-
+                    // Basecamp #9934033253 (2026-05-27): buyer cancel-order.
+                    handleCancelOrderTap()
                 }
 
                 ids.raiseTicket -> {
@@ -237,6 +246,7 @@ class OrderDetailsFragment : BaseFragment<ProductViewModel, FragmentOrderDetails
                     bind.videoReceiptDivider.isVisible = !videoUrl.isNullOrEmpty()
 
                     primaryOrderId = mData?.order?.id.toString()
+                    currentOrderStatus = mData?.order?.status
 
                     // Cost breakdown: sub_total, shipping_charges, tax_amount, total
                     val subTotal = (mData?.order?.subTotal as? Number)?.toDouble()
@@ -273,6 +283,69 @@ class OrderDetailsFragment : BaseFragment<ProductViewModel, FragmentOrderDetails
 
         }
 
+    }
+
+    // Basecamp #9934033253 (2026-05-27): buyer cancel-order. Allowed only when
+    // order.status ∈ {pending, processing}. Confirms with the user, POSTs to
+    // /api/product/cancel-order, refreshes the screen on success.
+    private fun handleCancelOrderTap() {
+        val orderId = primaryOrderId?.toIntOrNull()
+        if (orderId == null || orderId <= 0) {
+            Alerts.error(mCtx, "Order not ready yet, please try again.")
+            return
+        }
+        val statusLower = (currentOrderStatus ?: "").lowercase()
+        if (statusLower != "pending" && statusLower != "processing") {
+            Alerts.error(mCtx, "This order can no longer be cancelled (already shipped or delivered).")
+            return
+        }
+        androidx.appcompat.app.AlertDialog.Builder(requireContext())
+            .setTitle("Cancel this order?")
+            .setMessage("You can't undo this. The seller will be notified.")
+            .setNegativeButton("Keep order") { d, _ -> d.dismiss() }
+            .setPositiveButton("Cancel order") { d, _ ->
+                d.dismiss()
+                postCancelOrder(orderId)
+            }
+            .show()
+    }
+
+    private fun postCancelOrder(orderId: Int) {
+        bind.loader.isVisible = true
+        viewLifecycleOwner.lifecycleScope.launch {
+            val code: Int = withContext(Dispatchers.IO) {
+                try {
+                    val token = io.bidswipe.app.utils.Prefs(mCtx).token()
+                    val body = org.json.JSONObject().apply { put("order_id", orderId) }.toString()
+                    val url = java.net.URL("${io.bidswipe.app.utils.Const.BASE_URL}/api/product/cancel-order")
+                    val conn = url.openConnection() as java.net.HttpURLConnection
+                    conn.requestMethod = "POST"
+                    conn.setRequestProperty("Content-Type", "application/json")
+                    conn.setRequestProperty("Accept", "application/json")
+                    conn.setRequestProperty("Authorization", "Bearer $token")
+                    conn.doOutput = true
+                    conn.outputStream.use { it.write(body.toByteArray()) }
+                    val rc = conn.responseCode
+                    conn.disconnect()
+                    rc
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                    -1
+                }
+            }
+            bind.loader.isVisible = false
+            when (code) {
+                200, 201 -> {
+                    Alerts.success(mCtx, "Order cancelled.")
+                    viewModel.fetchOrderDetail(productId, orderId.toString(), type)
+                }
+                403 -> Alerts.error(mCtx, "You are not authorized to cancel this order.")
+                404 -> Alerts.error(mCtx, "Order not found.")
+                409 -> Alerts.error(mCtx, "Order can no longer be cancelled.")
+                -1 -> Alerts.error(mCtx, "Network error.")
+                else -> Alerts.error(mCtx, "Could not cancel order (code $code).")
+            }
+        }
     }
 
     private fun releasePlayer() {
