@@ -341,6 +341,9 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
             override fun afterTextChanged(s: Editable?) {
                 val query = s?.toString()?.trim() ?: ""
                 bind.searchLayout.isEndIconVisible = query.isNotEmpty()
+                // Basecamp #9933801536 (2026-05-28 round 2): save-search bell
+                // should only appear once the user has typed something.
+                bind.saveBellBtn.isVisible = query.isNotEmpty()
 
                 if (!s.isNullOrEmpty()) {
                     bind.loader.isVisible = true

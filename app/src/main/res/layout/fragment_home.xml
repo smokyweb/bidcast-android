@@ -43,7 +43,10 @@
 
         </com.google.android.material.textfield.TextInputLayout>
 
-        <!-- Basecamp #9933801536 (2026-05-27): save-search bell button -->
+        <!-- Basecamp #9933801536 (2026-05-27 → 2026-05-28 round 2): save-search bell.
+             Initially hidden (visibility=gone). HomeFragment toggles to visible only
+             when the search input has a non-blank query, per Trey's spec
+             ("the bell to save searches… should only show on the search results page"). -->
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/saveBellBtn"
             android:layout_width="32dp"
@@ -52,7 +55,8 @@
             android:padding="4dp"
             android:src="@drawable/ic_bell_outline"
             android:contentDescription="Save this search"
-            android:background="?attr/selectableItemBackgroundBorderless" />
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:visibility="gone" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/primary"
