@@ -143,6 +143,18 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
     private lateinit var pipParams: PictureInPictureParams
     private var isSocketDataLoaded = false
     private var isHandlerRunning = false
+
+    // Basecamp #9937970358 (2026-05-28): REST fallback for buyer show view.
+    // When the buyer joins a live show, the UI is hydrated from the socket
+    // event `room_create_get`. If that event never arrives (race condition,
+    // socket disconnect, server hiccup), the buyer is stuck on the layout's
+    // static defaults — literal "Username", ★ 5.0, no bottomUI. This
+    // handler fires a defensive REST `getShowDetails` call ~3.5s after
+    // joinShow if the socket data hasn't arrived. Cancelled on socket
+    // success or fragment teardown.
+    private val restFallbackHandler = Handler(Looper.getMainLooper())
+    private var restFallbackRunnable: Runnable? = null
+    private var restFallbackFired = false
     private var surpriseSetAuctionRunning = false
     private var isAuctionStarted = false
     private var showThumbnail: String? = null
@@ -505,6 +517,10 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
                                 }
                             }
                         }
+                        // Basecamp #9937970358 (2026-05-28): socket data
+                        // arrived in time. Cancel the REST fallback so we
+                        // don't double-hydrate.
+                        cancelRestFallback()
                         updateSessionUI()
                     } else if (App.categoryList.filter { it?.isSelected == true }.findLast { it?.id.toString() == showData.categoryId } != null) {
                         viewModel.streamsList.value?.add(
@@ -843,6 +859,80 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
             }
         }
 
+        // Basecamp #9937970358 (2026-05-28): REST fallback observer. Fires
+        // only when the 3.5s socket-data timeout elapses without
+        // `room_create_get` arriving. Hydrates the buyer UI from the REST
+        // response so the buyer doesn't get stuck on the layout's static
+        // defaults ("Username", ★5.0, missing chat/products/tip/share).
+        viewModel.getShowDetailsRepo.observe(viewLifecycleOwner) {
+            when (it) {
+                is Resource.Success -> {
+                    val d = it.value.data
+                    if (d != null && liveShowData == null) {
+                        log("REST fallback hydrating buyer UI for showId=${d.id}")
+                        val seller = LiveShowModel.Seller(
+                            id = d.user?.id?.toString(),
+                            image = if (d.user?.profileImage?.isNotBlank() == true)
+                                Const.BASE_URL + "/" + d.user.profileImage
+                            else null,
+                            name = d.user?.username,
+                            rating = d.user?.rating ?: "0",
+                        )
+                        val products = (d.products ?: emptyList()).filterNotNull().map { p ->
+                            LiveShowModel.Product(
+                                id = p.id?.toString(),
+                                image = p.images?.firstOrNull() ?: "",
+                                name = p.title,
+                                price = p.pricing,
+                                status = p.status ?: "live",
+                                quantity = p.quantity,
+                                isCurrent = false,
+                            )
+                        }
+                        liveShowData = LiveShowModel(
+                            products = products,
+                            roomId = roomID,
+                            seller = seller,
+                            showDetail = d.title ?: "",
+                            thumbnail = d.thumbnail?.firstOrNull() ?: "",
+                            viewerCount = (d.viewerCount ?: 0).toString(),
+                            highestBid = LiveShowModel.HighestBid(),
+                            isLive = d.isLive ?: false,
+                            time = d.time,
+                            showId = d.id?.toString(),
+                            allowBidForAll = true,
+                            bidCountDown = "",
+                            showTimer = "",
+                            categoryId = d.categoryId?.toString(),
+                            subCategoryId = d.subCategoryId?.toString(),
+                            auctionTypeId = d.auctionTypeId ?: 0,
+                            isVerifiedOnly = d.isVerifiedOnly ?: false,
+                            rtcToken = d.rtcToken,
+                        )
+                        // Mirror the fields the socket path also populates so
+                        // downstream UI calls (follow, tip, products) work.
+                        sellerId = seller.id
+                        sellerName = seller.name
+                        sellerImage = seller.image
+                        showId = d.id?.toString()
+                        showTitle = d.title
+                        if (streamID.isBlank() && !d.rtcToken.isNullOrBlank()) {
+                            streamID = d.rtcToken
+                            App.manager.joinSubscriberChannel(streamID, roomID)
+                            currentRemoteUid?.let { uid -> setupRemoteVideo(uid) }
+                        }
+                        updateSessionUI()
+                    }
+                    viewModel.clearShowDetailsResult()
+                }
+                is Resource.Error -> {
+                    log("REST fallback failed: ${it.errorResponse?.message}")
+                    viewModel.clearShowDetailsResult()
+                }
+                else -> {}
+            }
+        }
+
         viewModel.sendTipAmountRepo.observe(viewLifecycleOwner) {
             when (it) {
                 is Resource.Success -> {
@@ -1033,6 +1123,13 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
             socketManager?.joinShow(userId, roomID)
         }
 
+        // Basecamp #9937970358 (2026-05-28): schedule the REST fallback as a
+        // belt-and-suspenders hydration path. If `room_create_get` arrives
+        // within ~3.5s the socket handler at line 491 sets liveShowData and
+        // we cancel the fallback. If not, the REST call fires and hydrates
+        // the buyer UI from the same data the socket would have provided.
+        scheduleRestFallback()
+
         if (streamID.isBlank()) {
             log("Stream token missing – unable to join channel")
             return
@@ -1045,6 +1142,26 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
     }
 
+    private fun scheduleRestFallback() {
+        restFallbackRunnable?.let { restFallbackHandler.removeCallbacks(it) }
+        if (restFallbackFired) return // one-shot per fragment lifetime
+        val r = Runnable {
+            if (liveShowData != null) return@Runnable
+            val parts = roomID.split("_")
+            val parsedShowId = parts.lastOrNull()?.takeIf { it.isNotBlank() } ?: return@Runnable
+            log("REST fallback firing for showId=$parsedShowId (socket data did not arrive within 3.5s)")
+            restFallbackFired = true
+            viewModel.getShowDetails(parsedShowId)
+        }
+        restFallbackRunnable = r
+        restFallbackHandler.postDelayed(r, 3500)
+    }
+
+    private fun cancelRestFallback() {
+        restFallbackRunnable?.let { restFallbackHandler.removeCallbacks(it) }
+        restFallbackRunnable = null
+    }
+
 
     override fun onDestroy() {
         super.onDestroy()
@@ -1053,6 +1170,8 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
         liveEndedSheet = null
         socketManager?.leaveRoom(roomID, userId)
         App.manager.leaveChannel()
+        // Basecamp #9937970358 (2026-05-28): clean up REST fallback handler.
+        cancelRestFallback()
     }
 
     private fun attachAgoraCallbacks() {

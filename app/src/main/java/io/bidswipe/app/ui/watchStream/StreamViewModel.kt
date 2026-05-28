@@ -13,6 +13,7 @@ import io.bidswipe.app.network.response.CommonResponse
 import io.bidswipe.app.network.response.CreateBidResponse
 import io.bidswipe.app.network.response.FollowUnfollowResponse
 import io.bidswipe.app.network.response.GetReportCategoriesResponse
+import io.bidswipe.app.network.response.GetShowDetailsResponse
 import io.bidswipe.app.network.response.MakeClipResponse
 import io.bidswipe.app.network.response.SellerInfoResponse
 import io.bidswipe.app.network.response.SentTipAmountResponse
@@ -166,5 +167,31 @@ class StreamViewModel @Inject constructor(
 			return@launch
 		}
 		_getClipResponse.value = repo.getClip(roomId, durationSec)
+	}
+
+	// Basecamp #9937970358 (2026-05-28): REST fallback for buyer show view.
+	// When the buyer joins a live show, the entire UI (username, rating,
+	// products, chat, tip, share, your details buttons) is hydrated from the
+	// socket event `room_create_get`. If that event never arrives (race
+	// condition, socket disconnect, server hiccup), the buyer is stuck on the
+	// XML's static defaults: literal "Username", hardcoded ★5.0, no bottom
+	// UI. Adding a REST fallback so WatchStreamFragment can hydrate even when
+	// the socket path silently fails.
+	private var _getShowDetailsResponse = MutableLiveData<Resource<GetShowDetailsResponse>>()
+	val getShowDetailsRepo: MutableLiveData<Resource<GetShowDetailsResponse>>
+		get() = _getShowDetailsResponse
+
+	fun getShowDetails(
+		showId: String
+	) = viewModelScope.launch {
+		if (!networkMonitor.hasInternet()) {
+			_getShowDetailsResponse.value = NO_INTERNET_ERROR
+			return@launch
+		}
+		_getShowDetailsResponse.value = repo.getShowDetails(showId)
+	}
+
+	fun clearShowDetailsResult() {
+		_getShowDetailsResponse.value = null
 	}
 }
