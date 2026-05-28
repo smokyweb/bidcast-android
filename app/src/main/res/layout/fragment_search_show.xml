@@ -18,15 +18,25 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <!--
+      Basecamp #9933301500 round 5 (2026-05-28): added Filter button to the
+      right of the search bar on the SearchShow results page, parity with
+      iOS toolbar filter icon + PWA Filters button. The button uses the
+      existing BrowseFiltersSheet (already in use on Explore + Home) so
+      tag / category / subcategory / shipping filters apply to search
+      results. ChipGroup below this is now flexible-width so Live Now /
+      Popular / Coming Soon don't visually compete with Filter.
+    -->
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/searchLayout"
         style="@style/inputBoxStyle"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="@dimen/margin"
+        android:layout_marginStart="@dimen/margin"
+        android:layout_marginEnd="4dp"
         android:layout_marginBottom="@dimen/margin"
         app:boxStrokeWidth="2dp"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/filterBtn"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/header"
         app:startIconDrawable="@drawable/search"
@@ -41,6 +51,20 @@
             android:inputType="text" />
 
     </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/filterBtn"
+        style="@style/Widget.Material3.Button.IconButton.Filled"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/margin"
+        android:contentDescription="Filter search results"
+        app:backgroundTint="@android:color/black"
+        app:icon="@drawable/ic_product_filter"
+        app:iconTint="@android:color/white"
+        app:layout_constraintBottom_toBottomOf="@id/searchLayout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/searchLayout" />
 
     <com.google.android.material.chip.ChipGroup
         android:id="@+id/chipGroup"

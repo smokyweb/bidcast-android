@@ -47,6 +47,40 @@ import io.bidswipe.app.utils.showKeyboard
 // fixes targeted it; do not assume edits here affect production search.
 @SuppressLint("NotifyDataSetChanged")
 class SearchShowFragment : BaseFragment<DashViewModel, FragmentSearchShowBinding>() {
+
+	// Basecamp #9933301500 round 5 (2026-05-28): hold the active filter state
+	// across keystrokes + filter sheet opens so the search runs with the user's
+	// last-applied filters until they explicitly clear / change them.
+	private var browseFilters: BrowseFilters = BrowseFilters()
+
+	private fun runCurrentSearchWithFilters() {
+		val q = bind.search.text?.toString() ?: ""
+		val catIdParts = browseFilters.categoryIds.map { it.toString().request() }
+		val subCatIdParts = browseFilters.subCategoryIds.map { it.toString().request() }
+		bind.loader.isVisible = true
+		viewModel.getLiveShow(
+			search = q.request(),
+			showFormat = browseFilters.showFormat?.request(),
+			tag = browseFilters.tag?.takeIf { it.isNotBlank() }?.request(),
+			premierShop = if (browseFilters.premierShop) "1".request() else null,
+			shipCountry = browseFilters.shipCountry?.request(),
+			shipState = browseFilters.shipState?.takeIf { it.isNotBlank() }?.request(),
+			shipping = browseFilters.shipping?.request(),
+			categoryIds = catIdParts.ifEmpty { null },
+			subCategoryIds = subCatIdParts.ifEmpty { null },
+		)
+		if (q.isNotBlank()) {
+			viewModel.unifiedSearch(
+				q,
+				categoryIds = browseFilters.categoryIds.ifEmpty { null },
+				subCategoryIds = browseFilters.subCategoryIds.ifEmpty { null },
+			)
+		} else {
+			bind.unifiedResultsRecycler.isVisible = false
+			bind.unifiedSectionLabel.isVisible = false
+			unifiedAdapter.submitList(emptyList())
+		}
+	}
 	override fun getModel(): Class<DashViewModel> = DashViewModel::class.java
 
 	override fun getBind(
@@ -129,8 +163,21 @@ class SearchShowFragment : BaseFragment<DashViewModel, FragmentSearchShowBinding
 
 		showKeyboard(bind.search)
 
+		// Basecamp #9933301500 round 5 (2026-05-28): filter button on the search
+		// results page. Re-uses the BrowseFiltersSheet already used by Explore +
+		// Home for consistency. Apply re-runs both the show-list (getLiveShow)
+		// AND the unified search (users + products) with the selected
+		// category/subcategory filters. Tag/shipping/showFormat are also passed
+		// through to getLiveShow so the show grid respects all filters.
+		bind.filterBtn.setHapticClickListener {
+			BrowseFiltersSheet(initial = browseFilters) { applied ->
+				browseFilters = applied
+				runCurrentSearchWithFilters()
+			}.show(childFragmentManager, "browse_filters")
+		}
+
 		bind.loader.isVisible = true
-		viewModel.getLiveShow(search = "".request())
+		runCurrentSearchWithFilters()
 
 		bind.search.addTextChangedListener(object : TextWatcher {
 			private var debounce: android.os.Handler? = null
@@ -144,17 +191,7 @@ class SearchShowFragment : BaseFragment<DashViewModel, FragmentSearchShowBinding
 				debounce?.removeCallbacksAndMessages(null)
 				debounce = android.os.Handler(android.os.Looper.getMainLooper())
 				debounce?.postDelayed({
-					val q = p0.toString()
-					bind.loader.isVisible = true
-					viewModel.getLiveShow(search = q.request())
-					if (q.isNotBlank()) {
-						viewModel.unifiedSearch(q)
-					} else {
-						// Clear unified results when query is blank
-						bind.unifiedResultsRecycler.isVisible = false
-						bind.unifiedSectionLabel.isVisible = false
-						unifiedAdapter.submitList(emptyList())
-					}
+					runCurrentSearchWithFilters()
 				}, 350)
 			}
 		})

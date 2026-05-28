@@ -58,6 +58,25 @@
             android:background="?attr/selectableItemBackgroundBorderless"
             android:visibility="gone" />
 
+        <!-- Basecamp #9933301500 round 5 (2026-05-28): filter button on Home,
+             shown only when the search query is non-blank (i.e. search results
+             are visible). Same toggle pattern as the save-search bell above.
+             Tapping opens the BrowseFiltersSheet used by Explore + Browse so
+             tag / category / subcategory filters apply to search results.
+             Placed to the right of the search bar (next to the bell) per
+             Trey's spec: "the filter button should be to the right of the
+             search bar, not in line with the 'live now' line". -->
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/searchFilterBtn"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_marginStart="4dp"
+            android:padding="4dp"
+            android:src="@drawable/ic_product_filter"
+            android:contentDescription="Filter search results"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:visibility="gone" />
+
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/primary"
             android:layout_width="32dp"

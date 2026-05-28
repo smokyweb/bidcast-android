@@ -68,6 +68,12 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
     // user-facing search bar lives here in HomeFragment.
     private lateinit var unifiedAdapter: UnifiedSearchResultAdapter
     private var searchDebounce: android.os.Handler? = null
+    // Basecamp #9933301500 round 5 (2026-05-28): in-memory filter state for
+    // the Home search results page. Persisted across keystrokes inside this
+    // session so a user can apply filters, type to refine, and the filters
+    // stick. Cleared when the filter sheet's Clear button runs (BrowseFilters
+    // default has no fields set).
+    private var homeSearchFilters: BrowseFilters = BrowseFilters()
     private var showList = mutableListOf<GetMyShowResponse.Data?>()
     private val categoryTiles = mutableListOf<HomeCategoryAdapter.CategoryTile>()
     private var romIdsList = mutableListOf<String>()
@@ -77,6 +83,37 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
     private var selectedCategory = "for_you"
     private var selectedCategoryTileId = "for_you"
     private var hasInitializedCategories = false
+
+    // Basecamp #9933301500 round 5 (2026-05-28): one runner for getLiveShow +
+    // unifiedSearch with the current filters baked in. Called from the search
+    // TextWatcher AND from BrowseFiltersSheet Apply callback.
+    private fun runSearchWithFilters(query: String) {
+        val catIdParts = homeSearchFilters.categoryIds.map { it.toString().request() }
+        val subCatIdParts = homeSearchFilters.subCategoryIds.map { it.toString().request() }
+        viewModel.getLiveShow(
+            selectedTabText.request(),
+            selectedCategoryRequest(),
+            search = query.request(),
+            page = page.toString().request(),
+            showFormat = homeSearchFilters.showFormat?.request(),
+            tag = homeSearchFilters.tag?.takeIf { it.isNotBlank() }?.request(),
+            premierShop = if (homeSearchFilters.premierShop) "1".request() else null,
+            shipCountry = homeSearchFilters.shipCountry?.request(),
+            shipState = homeSearchFilters.shipState?.takeIf { it.isNotBlank() }?.request(),
+            shipping = homeSearchFilters.shipping?.request(),
+            categoryIds = catIdParts.ifEmpty { null },
+            subCategoryIds = subCatIdParts.ifEmpty { null },
+        )
+        searchDebounce?.removeCallbacksAndMessages(null)
+        searchDebounce = android.os.Handler(android.os.Looper.getMainLooper())
+        searchDebounce?.postDelayed({
+            viewModel.unifiedSearch(
+                query,
+                categoryIds = homeSearchFilters.categoryIds.ifEmpty { null },
+                subCategoryIds = homeSearchFilters.subCategoryIds.ifEmpty { null },
+            )
+        }, 350)
+    }
 
     private val viewLiveShowLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
@@ -192,6 +229,24 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
         // Basecamp #9933801536 (2026-05-27): save-search bell. Posts current
         // search text to /api/saved-searches and flips bell to filled state.
         // Network runs on Dispatchers.IO; UI mutations marshalled back to main.
+        // Basecamp #9933301500 round 5 (2026-05-28): filter button on Home search results.
+        // Opens BrowseFiltersSheet (already used by Explore / Browse / SearchShowFragment).
+        // Apply re-runs both getLiveShow and unifiedSearch with the new filter state.
+        bind.searchFilterBtn.setHapticClickListener {
+            BrowseFiltersSheet(initial = homeSearchFilters) { applied ->
+                homeSearchFilters = applied
+                // Flip icon tint when filters are active so user sees the badge.
+                bind.searchFilterBtn.setColorFilter(
+                    if (applied.isActive) android.graphics.Color.parseColor("#FFA500") else android.graphics.Color.BLACK
+                )
+                val q = bind.search.value()
+                if (q.isNotEmpty()) {
+                    page = 1
+                    runSearchWithFilters(q)
+                }
+            }.show(childFragmentManager, "home_search_browse_filters")
+        }
+
         bind.saveBellBtn.setHapticClickListener {
             val q = bind.search.value().trim()
             if (q.isEmpty()) {
@@ -350,6 +405,9 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
                 // Basecamp #9933801536 (2026-05-28 round 2): save-search bell
                 // should only appear once the user has typed something.
                 bind.saveBellBtn.isVisible = query.isNotEmpty()
+                // Basecamp #9933301500 round 5 (2026-05-28): filter button
+                // same toggle pattern — only show on the results page.
+                bind.searchFilterBtn.isVisible = query.isNotEmpty()
 
                 if (!s.isNullOrEmpty()) {
                     // Basecamp #9929090875 redesign (2026-05-28): hide normal home content
@@ -358,20 +416,7 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
                     bind.swipeRefreshLayout.isVisible = false
 
                     page = 1
-                    viewModel.getLiveShow(
-                        selectedTabText.request(),
-                        selectedCategoryRequest(),
-                        search = s.toString().request(),
-                        page = page.toString().request()
-                    )
-
-                    // Fire POST /api/v1/search for shows + products + users,
-                    // debounced 350ms so we don't hammer the backend on every keystroke.
-                    searchDebounce?.removeCallbacksAndMessages(null)
-                    searchDebounce = android.os.Handler(android.os.Looper.getMainLooper())
-                    searchDebounce?.postDelayed({
-                        viewModel.unifiedSearch(query)
-                    }, 350)
+                    runSearchWithFilters(s.toString())
                 } else {
                     // Query cleared → restore normal home content, hide search results.
                     searchDebounce?.removeCallbacksAndMessages(null)
