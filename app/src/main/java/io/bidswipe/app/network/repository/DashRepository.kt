@@ -442,12 +442,19 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
 
     // Basecamp #9922137198 (Trey 2026-05-20): unified search across shows + products + users.
     // Basecamp #9938023997: pass optional category/subcategory filter arrays
+    // Basecamp #9938023997 round 5: pass full filter set through.
     suspend fun unifiedSearch(
         search: String,
         page: Int? = null,
         categoryIds: List<Int>? = null,
         subCategoryIds: List<Int>? = null,
-    ) = call { api.unifiedSearch(io.bidswipe.app.network.request.SearchRequest(search, page, categoryIds, subCategoryIds)) }
+        showFormat: String? = null,
+        tag: String? = null,
+        premierShop: Boolean? = null,
+        shipping: String? = null,
+    ) = call { api.unifiedSearch(io.bidswipe.app.network.request.SearchRequest(
+        search, page, categoryIds, subCategoryIds, showFormat, tag, premierShop, shipping
+    )) }
 
     suspend fun saveSellerProduct(
         productId: RequestBody?,

@@ -104,6 +104,10 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
             categoryIds = catIdParts.ifEmpty { null },
             subCategoryIds = subCatIdParts.ifEmpty { null },
         )
+        // Basecamp #9938023997 round 5 (2026-05-28): pass ALL active filters
+        // to unifiedSearch, not just category/subcategory. Previously show_format,
+        // tag, premier_shop, shipping were only passed to getLiveShow (the shows
+        // tab) but not to unifiedSearch (the multi-section results recycler).
         searchDebounce?.removeCallbacksAndMessages(null)
         searchDebounce = android.os.Handler(android.os.Looper.getMainLooper())
         searchDebounce?.postDelayed({
@@ -111,6 +115,10 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
                 query,
                 categoryIds = homeSearchFilters.categoryIds.ifEmpty { null },
                 subCategoryIds = homeSearchFilters.subCategoryIds.ifEmpty { null },
+                showFormat = homeSearchFilters.showFormat,
+                tag = homeSearchFilters.tag?.takeIf { it.isNotBlank() },
+                premierShop = if (homeSearchFilters.premierShop) true else null,
+                shipping = homeSearchFilters.shipping,
             )
         }, 350)
     }

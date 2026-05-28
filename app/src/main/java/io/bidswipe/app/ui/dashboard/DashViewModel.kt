@@ -293,17 +293,26 @@ class DashViewModel @Inject constructor(
     val unifiedSearchRepo: MutableLiveData<Resource<io.bidswipe.app.network.response.ExploreSearchResponse>>
         get() = _unifiedSearchResponse
 
+    // Basecamp #9938023997 round 5 (2026-05-28): full filter parity — pass
+    // showFormat / tag / premierShop / shipping through to unifiedSearch.
     fun unifiedSearch(
         searchTerm: String,
         page: Int? = null,
         categoryIds: List<Int>? = null,
         subCategoryIds: List<Int>? = null,
+        showFormat: String? = null,
+        tag: String? = null,
+        premierShop: Boolean? = null,
+        shipping: String? = null,
     ) = viewModelScope.launch {
         if (!networkMonitor.hasInternet()) {
             _unifiedSearchResponse.value = NO_INTERNET_ERROR
             return@launch
         }
-        _unifiedSearchResponse.value = repo.unifiedSearch(searchTerm, page, categoryIds, subCategoryIds)
+        _unifiedSearchResponse.value = repo.unifiedSearch(
+            searchTerm, page, categoryIds, subCategoryIds,
+            showFormat, tag, premierShop, shipping
+        )
     }
 
     private var _getExploreLiveShowResponse = MutableLiveData<Resource<GetMyShowResponse>>()
