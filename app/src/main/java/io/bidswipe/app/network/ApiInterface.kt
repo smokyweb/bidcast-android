@@ -242,8 +242,14 @@ interface ApiInterface {
         @Part("repeat_value") repeatValue: RequestBody?,
         @Part("language") language: RequestBody?,
         @Part("is_explicit") isExplicit: RequestBody?,
-        // Browse-filter bundle (Basecamp #9928367737): tag names normalized server-side via Tag::findOrCreateByName.
-        @Part("tags[]") tags: List<RequestBody>? = null,
+        // Browse-filter bundle (Basecamp #9928367737, 2026-05-28 round 4):
+        // @JvmSuppressWildcards required because Kotlin's `out` variance on a
+        // non-final element type (RequestBody is open) generates
+        // `List<? extends RequestBody>` in the bytecode, which Retrofit's
+        // type-inspector rejects with "Parameter type must not include a type
+        // variable or wildcard: java.util.List (parameter #14)". Same fix
+        // applied to updateScheduleShow + getSubcategoriesByIds (line 357).
+        @Part("tags[]") tags: @JvmSuppressWildcards List<RequestBody>? = null,
         // Basecamp #9933883175 (2026-05-27): seller-controlled verified-buyers-only gate.
         @Part("is_verified_only") isVerifiedOnly: RequestBody? = null,
     ): CreateShowResponse
@@ -266,7 +272,7 @@ interface ApiInterface {
         @Part("is_explicit") isExplicit: RequestBody?,
         @Part("show_id") showId: RequestBody?,
         // Browse-filter bundle (Basecamp #9928367737): tag names normalized server-side via Tag::findOrCreateByName.
-        @Part("tags[]") tags: List<RequestBody>? = null,
+        @Part("tags[]") tags: @JvmSuppressWildcards List<RequestBody>? = null,
         // Basecamp #9933883175 (2026-05-27): seller-controlled verified-buyers-only gate.
         @Part("is_verified_only") isVerifiedOnly: RequestBody? = null,
     ): CreateShowResponse
@@ -354,7 +360,7 @@ interface ApiInterface {
         @Part("ship_state") shipState: RequestBody? = null,
         @Part("shipping") shipping: RequestBody? = null,
         // Basecamp #9938023997: multi-select category + subcategory filter
-        @Part("category_ids[]") categoryIds: List<RequestBody>? = null,
+        @Part("category_ids[]") categoryIds: @JvmSuppressWildcards List<RequestBody>? = null,
         @Part("sub_category_ids[]") subCategoryIds: List<RequestBody>? = null,
     ): GetMyShowResponse
 
