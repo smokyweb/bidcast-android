@@ -154,6 +154,23 @@ class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
                     )
                 }
 
+                "savedSearches" -> {
+                    // Basecamp #9933801536 round 3: open the PWA management page in
+                    // Chrome Custom Tabs. The PWA session cookie auto-auths the user.
+                    // Native parity screen is a follow-up; this gives Trey the nav
+                    // affordance + a working manage screen today.
+                    try {
+                        val url = "${io.bidswipe.app.utils.Const.BASE_URL}/app/saved-searches"
+                        val customTabs = androidx.browser.customtabs.CustomTabsIntent.Builder()
+                            .setShowTitle(true)
+                            .build()
+                        customTabs.launchUrl(mCtx, android.net.Uri.parse(url))
+                    } catch (e: Exception) {
+                        // Fallback: plain ACTION_VIEW if Custom Tabs not available.
+                        startActivity(Intent(Intent.ACTION_VIEW, android.net.Uri.parse("${io.bidswipe.app.utils.Const.BASE_URL}/app/saved-searches")))
+                    }
+                }
+
                 "buyer" -> {
                     startActivity(
                         Intent(mCtx, TrustedBuyerActivity::class.java).putExtra(
@@ -248,6 +265,12 @@ class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
             )
         )
         accountGridList.add(MoreModel(R.drawable.notification, getString(R.string.notifications), "notification"))
+        // Basecamp #9933801536 round 3 (2026-05-28): Saved Searches nav tile for Android,
+        // parity with iOS Account → Saved Searches. Native list/manage screen isn't
+        // built yet, so this opens /app/saved-searches in Chrome Custom Tabs against
+        // the user's existing PWA session (cookie-authenticated). Native screen is a
+        // follow-up.
+        accountGridList.add(MoreModel(R.drawable.notification, "Saved Searches", "savedSearches"))
         accountGridList.add(MoreModel(R.drawable.ic_tag_outline, getString(R.string.preferences), "preferences"))
         accountGridList.add(MoreModel(R.drawable.ic_heart, getString(R.string.favourite), "favourite"))
         accountGridList.add(MoreModel(R.drawable.ic_clip_new, getString(R.string.clips), "clips"))
