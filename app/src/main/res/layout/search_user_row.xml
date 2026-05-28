@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Basecamp #9929090875 (Trey 2026-05-28, redesign round 4):
+     User search-result row. Circular profile picture on the left;
+     BOLD + LARGE username on the right. Full-width single-column row. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:paddingHorizontal="@dimen/margin"
+    android:paddingVertical="10dp">
+
+    <!-- Circular profile image ~48dp -->
+    <com.google.android.material.card.MaterialCardView
+        style="@style/cardStyle"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        app:cardCornerRadius="24dp"
+        app:cardElevation="1dp">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/userAvatar"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"
+            android:src="@drawable/placeholder_user" />
+
+    </com.google.android.material.card.MaterialCardView>
+
+    <!-- Bold, large username -->
+    <TextView
+        android:id="@+id/userName"
+        style="@style/TitleSemiBold"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:layout_weight="1"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:textSize="16sp"
+        android:textStyle="bold" />
+
+</LinearLayout>

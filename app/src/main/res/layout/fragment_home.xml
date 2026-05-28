@@ -135,49 +135,33 @@
 
     </LinearLayout>
 
-    <!-- Basecamp #9929090875 (Trey 2026-05-26 / fix 2026-05-27):
-         The user-facing search bar lives on HomeFragment (not SearchShowFragment,
-         which is dead code in nav_graph). Search results for users + products
-         from POST /api/v1/search render here, below the shows grid. The previous
-         3 attempts wired this up in SearchShowFragment which is never navigated
-         to — so the unified endpoint was never even called. -->
-    <TextView
-        android:id="@+id/unifiedSectionLabel"
-        style="@style/TitleSemiBold"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingHorizontal="@dimen/margin"
-        android:paddingVertical="6dp"
-        android:text="Users &amp; Products"
-        android:textSize="13sp"
-        android:visibility="gone"
-        app:layout_constraintBottom_toTopOf="@id/unifiedResultsRecycler"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <!-- Basecamp #9929090875 round-2 (2026-05-27): drop the 260dp height cap.
-         The earlier cap meant only ~4 rows fit on screen, and combined with the
-         all-users-first ordering it looked like products were missing. Now the
-         recycler is sized to wrap_content (clamped by the parent ConstraintLayout)
-         and the bottom navigation tab bar still pins the bottom of the screen. -->
+    <!-- Basecamp #9929090875 (Trey 2026-05-28, redesign round 4):
+         Unified search results — INLINE, replacing the show carousels when a
+         search query is active. Top-constrained to just below categoryRecycler
+         so it renders in-place (not as an overlay). GridLayoutManager spanCount=2
+         allows Show cards to sit 2-per-row while Products/Users/Headers are full-width
+         via SpanSizeLookup set in HomeFragment. Visibility toggled by HomeFragment:
+         GONE when no query, VISIBLE when results arrive. -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/unifiedResultsRecycler"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:orientation="vertical"
         android:visibility="gone"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+        app:spanCount="2"
+        app:layout_constraintTop_toBottomOf="@id/categoryRecycler"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        tools:itemCount="3"
-        tools:listitem="@layout/search_result_item" />
+        tools:itemCount="6"
+        tools:listitem="@layout/home_item" />
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/swipeRefreshLayout"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@id/unifiedSectionLabel"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@id/heading">
 
         <androidx.constraintlayout.widget.ConstraintLayout

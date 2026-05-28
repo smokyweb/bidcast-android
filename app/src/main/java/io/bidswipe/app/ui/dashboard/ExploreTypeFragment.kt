@@ -20,7 +20,9 @@ import io.bidswipe.app.App
 import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseFragment
 import io.bidswipe.app.controller.HomeAdapter
+import io.bidswipe.app.controller.SearchResultItem
 import io.bidswipe.app.controller.SubCategoryAdapter
+import io.bidswipe.app.controller.UnifiedSearchResultAdapter
 import io.bidswipe.app.databinding.FragmentExploreTypeBinding
 import io.bidswipe.app.interfaces.AlertClicks
 import io.bidswipe.app.interfaces.RecyclerClicks
@@ -28,9 +30,12 @@ import io.bidswipe.app.model.StreamModel
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.network.response.GetMyShowResponse
 import io.bidswipe.app.network.response.GetSubCategoriesResponse
+import io.bidswipe.app.network.response.SearchProduct
+import io.bidswipe.app.network.response.SearchUser
 import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.ui.custom.UpcomingShowSheet
 import io.bidswipe.app.ui.more.NotificationActivity
+import io.bidswipe.app.ui.product.ProductDetailsActivity
 import io.bidswipe.app.ui.sellerProfile.SellerProfileActivity
 import io.bidswipe.app.ui.watchStream.ViewLiveShowActivity
 import io.bidswipe.app.utils.Alerts
@@ -62,6 +67,8 @@ class ExploreTypeFragment : BaseFragment<DashViewModel, FragmentExploreTypeBindi
     private var isLoading = false
 
     private var selectedTabText = "live"
+    private lateinit var unifiedAdapter: UnifiedSearchResultAdapter
+    private var searchDebounce: android.os.Handler? = null
 
     // Basecamp #9933301500 (2026-05-27): browse filters state. Mutated by
     // BrowseFiltersSheet on Apply; threaded through every getExploreLiveShow
@@ -255,6 +262,67 @@ class ExploreTypeFragment : BaseFragment<DashViewModel, FragmentExploreTypeBindi
             loadShows()
         }
 
+        // Basecamp #9929090875 (2026-05-28): unified search for Explore page.
+        // Wire search input to POST /api/v1/search (same endpoint as HomeFragment)
+        // so users + products + shows results appear inline on the Explore page.
+        unifiedAdapter = UnifiedSearchResultAdapter(
+            onUserClick = { user: SearchUser ->
+                startActivity(
+                    Intent(mCtx, SellerProfileActivity::class.java)
+                        .putExtra("sellerId", user.id.toString())
+                )
+            },
+            onProductClick = { product: SearchProduct ->
+                if (product.id != null) {
+                    startActivity(
+                        Intent(mCtx, ProductDetailsActivity::class.java)
+                            .putExtra("productId", product.id.toString())
+                    )
+                }
+            },
+            onShowClick = { show ->
+                if (show.isLive == true) {
+                    if (App.PIPMode) {
+                        Alerts.error(mCtx, "You are already in Live show")
+                    } else {
+                        viewLiveShowLauncher.launch(
+                            Intent(mCtx, ViewLiveShowActivity::class.java)
+                                .putExtra("showId", show.id.toString())
+                                .putExtra("userId", show.userId?.toString() ?: show.user?.id?.toString() ?: "")
+                        )
+                    }
+                } else {
+                    startActivity(
+                        Intent(mCtx, SellerProfileActivity::class.java)
+                            .putExtra("sellerId", (show.user?.id ?: show.userId ?: 0).toString())
+                    )
+                }
+            }
+        )
+        val searchGridLm = androidx.recyclerview.widget.GridLayoutManager(mCtx, 2)
+        bind.unifiedResultsRecycler.layoutManager = searchGridLm
+        bind.unifiedResultsRecycler.adapter = unifiedAdapter
+        searchGridLm.spanSizeLookup = unifiedAdapter.makeSpanSizeLookup()
+
+        // Observe unified search results
+        viewModel.unifiedSearchRepo.observe(viewLifecycleOwner) { resource ->
+            when (resource) {
+                is Resource.Success -> {
+                    val data = resource.value.data
+                    val shows    = data?.shows.orEmpty()
+                    val products = data?.products.orEmpty()
+                    val users    = data?.users.orEmpty()
+                    if (shows.isNotEmpty() || products.isNotEmpty() || users.isNotEmpty()) {
+                        unifiedAdapter.submitResults(shows, products, users)
+                        bind.unifiedResultsRecycler.isVisible = true
+                    } else {
+                        bind.unifiedResultsRecycler.isVisible = false
+                    }
+                }
+                else -> { bind.unifiedResultsRecycler.isVisible = false }
+            }
+        }
+
         bind.searchLayout.isEndIconVisible = false
         bind.search.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
@@ -262,13 +330,28 @@ class ExploreTypeFragment : BaseFragment<DashViewModel, FragmentExploreTypeBindi
             override fun afterTextChanged(s: Editable?) {
                 bind.searchLayout.isEndIconVisible = !s.isNullOrEmpty()
 
-                bind.loader.isVisible = true
-                bind.recycler.isVisible = false
-                bind.noData.isVisible = false
-
                 if (!s.isNullOrEmpty()) {
-                    loadShows(search = s.toString())
+                    // Hide normal explore content; show search results inline.
+                    bind.heading.isVisible = false
+                    bind.swipeRefreshLayout.isVisible = false
+                    bind.loader.isVisible = false
+
+                    // Fire unified search (debounced 350ms)
+                    searchDebounce?.removeCallbacksAndMessages(null)
+                    searchDebounce = android.os.Handler(android.os.Looper.getMainLooper())
+                    searchDebounce?.postDelayed({
+                        viewModel.unifiedSearch(s.toString().trim())
+                    }, 350)
                 } else {
+                    // Query cleared → restore normal explore content.
+                    searchDebounce?.removeCallbacksAndMessages(null)
+                    bind.unifiedResultsRecycler.isVisible = false
+                    unifiedAdapter.submitList(emptyList())
+                    bind.heading.isVisible = true
+                    bind.swipeRefreshLayout.isVisible = true
+                    bind.loader.isVisible = true
+                    bind.recycler.isVisible = false
+                    bind.noData.isVisible = false
                     loadShows()
                 }
             }
@@ -276,7 +359,6 @@ class ExploreTypeFragment : BaseFragment<DashViewModel, FragmentExploreTypeBindi
 
         bind.searchLayout.setEndIconOnClickListener {
             bind.search.setText("")
-            loadShows()
             hideKeyboard(it)
         }
 

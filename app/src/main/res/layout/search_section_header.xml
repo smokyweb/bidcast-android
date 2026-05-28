@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Basecamp #9929090875 (Trey 2026-05-28, redesign round 4):
+     Section header row used inside UnifiedSearchResultAdapter.
+     Bold label "Shows / Products / Users" + count badge "(12)". -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:paddingBottom="6dp"
+    android:paddingHorizontal="@dimen/margin"
+    android:paddingTop="14dp">
+
+    <TextView
+        android:id="@+id/sectionTitle"
+        style="@style/TitleSemiBold"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="15sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/sectionCount"
+        style="@style/BodySmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="6dp"
+        android:textSize="13sp" />
+
+</LinearLayout>

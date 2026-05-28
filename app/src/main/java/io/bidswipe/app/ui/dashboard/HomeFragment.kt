@@ -333,7 +333,13 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
                 }
             }
         )
+        // Basecamp #9929090875 redesign (2026-05-28): configure GridLayoutManager with
+        // spanCount=2 so Show cards render 2-per-row; attach the adapter's SpanSizeLookup
+        // so headers/products/users stay full-width.
+        val searchGridLm = androidx.recyclerview.widget.GridLayoutManager(mCtx, 2)
+        bind.unifiedResultsRecycler.layoutManager = searchGridLm
         bind.unifiedResultsRecycler.adapter = unifiedAdapter
+        searchGridLm.spanSizeLookup = unifiedAdapter.makeSpanSizeLookup()
 
         bind.search.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
@@ -346,7 +352,11 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
                 bind.saveBellBtn.isVisible = query.isNotEmpty()
 
                 if (!s.isNullOrEmpty()) {
-                    bind.loader.isVisible = true
+                    // Basecamp #9929090875 redesign (2026-05-28): hide normal home content
+                    // while a search is active; results appear INLINE in its place.
+                    bind.heading.isVisible = false
+                    bind.swipeRefreshLayout.isVisible = false
+
                     page = 1
                     viewModel.getLiveShow(
                         selectedTabText.request(),
@@ -355,67 +365,45 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
                         page = page.toString().request()
                     )
 
-                    // Basecamp #9929090875: also fire POST /api/v1/search for
-                    // users + products, debounced 350ms so we don't hammer the
-                    // backend on every keystroke. iOS + PWA already do this;
-                    // Android was the only platform missing the call entirely.
+                    // Fire POST /api/v1/search for shows + products + users,
+                    // debounced 350ms so we don't hammer the backend on every keystroke.
                     searchDebounce?.removeCallbacksAndMessages(null)
                     searchDebounce = android.os.Handler(android.os.Looper.getMainLooper())
                     searchDebounce?.postDelayed({
                         viewModel.unifiedSearch(query)
                     }, 350)
                 } else {
-                    // Query cleared → clear unified section.
+                    // Query cleared → restore normal home content, hide search results.
                     searchDebounce?.removeCallbacksAndMessages(null)
                     bind.unifiedResultsRecycler.isVisible = false
-                    bind.unifiedSectionLabel.isVisible = false
+                    bind.heading.isVisible = true
+                    bind.swipeRefreshLayout.isVisible = true
                     unifiedAdapter.submitList(emptyList())
                 }
             }
         })
 
-        // Basecamp #9929090875: observe unified search results and render the
-        // user + product rows. Errors silently hide the section so a failure
-        // here never wipes the shows grid (which has its own observer).
+        // Basecamp #9929090875 redesign (2026-05-28): observe unified search results.
+        // Shows / Products / Users are rendered in separate sections with section headers.
+        // Results replace the normal home content (heading + swipeRefreshLayout are
+        // hidden while a query is active; see search text watcher above).
         viewModel.unifiedSearchRepo.observe(viewLifecycleOwner) { resource ->
             when (resource) {
                 is Resource.Success -> {
                     val data = resource.value.data
-                    val resultItems = mutableListOf<SearchResultItem>()
-                    // Basecamp #9929090875 round-2 (2026-05-27): interleave users and
-                    // products instead of all-users-then-all-products so the visible
-                    // top of the unified RecyclerView shows BOTH kinds. With the prior
-                    // ordering and the 260dp height cap, only the first ~4 rows fit on
-                    // screen and all 4 were users — making the section look
-                    // "products missing" even though products were present at
-                    // positions 20-39 (visible only by internal scroll). Combined with
-                    // dropping the height cap in fragment_home.xml (same commit), both
-                    // user and product rows are now visible without scrolling.
-                    // Basecamp #9929090875 round 3 (2026-05-27): include shows
-                    // in the unified results. Order: shows first (most relevant
-                    // visual target), then interleaved users + products.
-                    val shows = data?.shows.orEmpty()
-                    val users = data?.users.orEmpty()
+                    val shows    = data?.shows.orEmpty()
                     val products = data?.products.orEmpty()
-                    shows.forEach { resultItems.add(SearchResultItem.ShowItem(it)) }
-                    val maxLen = maxOf(users.size, products.size)
-                    for (i in 0 until maxLen) {
-                        if (i < users.size) resultItems.add(SearchResultItem.UserItem(users[i]))
-                        if (i < products.size) resultItems.add(SearchResultItem.ProductItem(products[i]))
-                    }
+                    val users    = data?.users.orEmpty()
 
-                    if (resultItems.isNotEmpty()) {
-                        unifiedAdapter.submitList(resultItems)
+                    if (shows.isNotEmpty() || products.isNotEmpty() || users.isNotEmpty()) {
+                        unifiedAdapter.submitResults(shows, products, users)
                         bind.unifiedResultsRecycler.isVisible = true
-                        bind.unifiedSectionLabel.isVisible = true
                     } else {
                         bind.unifiedResultsRecycler.isVisible = false
-                        bind.unifiedSectionLabel.isVisible = false
                     }
                 }
                 else -> {
                     bind.unifiedResultsRecycler.isVisible = false
-                    bind.unifiedSectionLabel.isVisible = false
                 }
             }
         }

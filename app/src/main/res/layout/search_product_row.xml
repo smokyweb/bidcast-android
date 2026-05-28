@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Basecamp #9929090875 (Trey 2026-05-28, redesign round 4):
+     Compact product search-result row. Small square thumbnail on the left;
+     bold title, price, and seller username stacked on the right.
+     Single column (full-width span in the GridLayoutManager). -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:paddingHorizontal="@dimen/margin"
+    android:paddingVertical="8dp">
+
+    <!-- Square thumbnail ~64dp -->
+    <com.google.android.material.card.MaterialCardView
+        style="@style/cardStyle"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        app:cardCornerRadius="8dp"
+        app:cardElevation="1dp">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/thumbnail"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"
+            android:src="@drawable/placeholder_rect" />
+
+    </com.google.android.material.card.MaterialCardView>
+
+    <!-- Title / price / seller column -->
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/productTitle"
+            style="@style/BodyLarge"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/productPrice"
+            style="@style/BodyMedium"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="1" />
+
+        <TextView
+            android:id="@+id/sellerName"
+            style="@style/BodySmall"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textStyle="bold" />
+
+    </LinearLayout>
+
+</LinearLayout>
