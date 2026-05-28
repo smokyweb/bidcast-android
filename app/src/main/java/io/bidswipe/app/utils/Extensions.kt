@@ -182,7 +182,13 @@ fun Resource.Error.parse(
 	val message = try {
 		if (this.isNetworkError)
 			mCtx.getString(string.no_internet)
-		else if (this.errorCode?.toInt() == 413)
+		// Basecamp #9928367737 (2026-05-27 round 2): errorCode here can be a
+		// non-numeric string like 'UNKNOWN_ERROR' / 'NETWORK_ERROR' / 'JSON_ERROR'.
+		// Previously this used .toInt() which threw NumberFormatException and
+		// surfaced 'For input string: "UNKNOWN_ERROR"' as the error message to
+		// the user, masking the real backend error. Use toIntOrNull instead so
+		// non-numeric codes fall through to the real errorResponse.message.
+		else if (this.errorCode?.toIntOrNull() == 413)
 			"Image is too large"
 		else
 			this.errorResponse?.message?.asHtml()?.asCapital() ?: "No Data Found"

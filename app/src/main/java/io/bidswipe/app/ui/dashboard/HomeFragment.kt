@@ -313,6 +313,24 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
                             .putExtra("productId", product.id.toString())
                     )
                 }
+            },
+            // Basecamp #9929090875 round 3 (2026-05-27): show results now
+            // live in the unified RecyclerView too, with the same card UX as
+            // Live/Upcoming. Tap routes to ViewLiveShowActivity for live ones,
+            // or the seller profile for upcoming.
+            onShowClick = { show: io.bidswipe.app.network.response.SearchShow ->
+                if (show.isLive == true) {
+                    startActivity(
+                        Intent(mCtx, io.bidswipe.app.ui.watchStream.ViewLiveShowActivity::class.java)
+                            .putExtra("showId", show.id.toString())
+                            .putExtra("userId", show.userId?.toString() ?: show.user?.id?.toString() ?: "")
+                    )
+                } else {
+                    startActivity(
+                        Intent(mCtx, SellerProfileActivity::class.java)
+                            .putExtra("sellerId", (show.user?.id ?: show.userId ?: 0).toString())
+                    )
+                }
             }
         )
         bind.unifiedResultsRecycler.adapter = unifiedAdapter
@@ -370,8 +388,13 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
                     // positions 20-39 (visible only by internal scroll). Combined with
                     // dropping the height cap in fragment_home.xml (same commit), both
                     // user and product rows are now visible without scrolling.
+                    // Basecamp #9929090875 round 3 (2026-05-27): include shows
+                    // in the unified results. Order: shows first (most relevant
+                    // visual target), then interleaved users + products.
+                    val shows = data?.shows.orEmpty()
                     val users = data?.users.orEmpty()
                     val products = data?.products.orEmpty()
+                    shows.forEach { resultItems.add(SearchResultItem.ShowItem(it)) }
                     val maxLen = maxOf(users.size, products.size)
                     for (i in 0 until maxLen) {
                         if (i < users.size) resultItems.add(SearchResultItem.UserItem(users[i]))

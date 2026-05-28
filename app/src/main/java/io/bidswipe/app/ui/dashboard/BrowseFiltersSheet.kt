@@ -13,6 +13,10 @@ import android.content.Context
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import kotlinx.coroutines.withContext
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.CoroutineScope
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -97,6 +101,8 @@ class BrowseFiltersSheet(
         bind.chipFormatBuyNow.setOnClickListener     { draft = draft.copy(showFormat = "buy_it_now") }
 
         // ── 2. Tag ──────────────────────────────────────────────────────────
+        // Basecamp #9933301500 (2026-05-27 round 3): replaced free-text input
+        // with an exposed dropdown populated from GET /api/tags/suggest.
         bind.tagInput.setText(draft.tag ?: "")
         bind.tagInput.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, st: Int, c: Int, a: Int) {}
@@ -105,6 +111,33 @@ class BrowseFiltersSheet(
                 draft = draft.copy(tag = s?.toString()?.trim()?.ifEmpty { null })
             }
         })
+        // Fetch all tags to populate the dropdown.
+        kotlinx.coroutines.CoroutineScope(kotlinx.coroutines.Dispatchers.IO).launch {
+            try {
+                val url = java.net.URL("https://backend.bidcast.betaplanets.com/api/tags/suggest")
+                val conn = url.openConnection() as java.net.HttpURLConnection
+                conn.setRequestProperty("Accept", "application/json")
+                val body = conn.inputStream.bufferedReader().readText()
+                conn.disconnect()
+                // Response: { status, message, data: [ {id, name, slug, usage_count} ] }
+                val json = org.json.JSONObject(body)
+                val arr = json.optJSONArray("data") ?: org.json.JSONArray()
+                val tagNames = mutableListOf("Any tag")
+                for (i in 0 until arr.length()) {
+                    arr.optJSONObject(i)?.optString("name")?.takeIf { it.isNotBlank() }?.let { tagNames.add(it) }
+                }
+                withContext(kotlinx.coroutines.Dispatchers.Main) {
+                    val adapter = android.widget.ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, tagNames)
+                    (bind.tagInput as? com.google.android.material.textfield.MaterialAutoCompleteTextView)?.setAdapter(adapter)
+                    (bind.tagInput as? com.google.android.material.textfield.MaterialAutoCompleteTextView)?.setOnItemClickListener { parent, _, pos, _ ->
+                        val selected = parent.getItemAtPosition(pos) as? String ?: ""
+                        draft = draft.copy(tag = if (selected == "Any tag") null else selected)
+                    }
+                }
+            } catch (e: Exception) {
+                android.util.Log.w("BrowseFiltersSheet", "tag fetch failed: " + e.message)
+            }
+        }
 
         // ── 3. Premier Shops toggle ─────────────────────────────────────────
         bind.switchPremierShop.isChecked = draft.premierShop

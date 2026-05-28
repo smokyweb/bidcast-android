@@ -117,13 +117,16 @@
             android:layout_marginTop="@dimen/margin"
             android:text="Tag" />
 
+        <!-- Basecamp #9933301500 (2026-05-27 round 3): replaced free-text
+             input with an exposed dropdown showing all existing tags. -->
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/half_margin"
-            android:hint="Type a tag">
+            android:hint="Any tag"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
 
-            <com.google.android.material.textfield.TextInputEditText
+            <com.google.android.material.textfield.MaterialAutoCompleteTextView
                 android:id="@+id/tagInput"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
