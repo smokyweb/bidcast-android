@@ -145,7 +145,7 @@ class SearchShowFragment : BaseFragment<DashViewModel, FragmentSearchShowBinding
 			onUserClick = { user: SearchUser ->
 				startActivity(
 					Intent(mCtx, SellerProfileActivity::class.java)
-						.putExtra("sellerId", user.id.toString())
+						.putExtra("sellerId", (user.id ?: 0).toString())
 				)
 			},
 			onProductClick = { product: SearchProduct ->

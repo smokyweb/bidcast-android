@@ -358,7 +358,7 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
             onUserClick = { user: SearchUser ->
                 startActivity(
                     Intent(mCtx, SellerProfileActivity::class.java)
-                        .putExtra("sellerId", user.id.toString())
+                        .putExtra("sellerId", (user.id ?: 0).toString())
                 )
             },
             onProductClick = { product: SearchProduct ->
@@ -377,7 +377,7 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
                 if (show.isLive == true) {
                     startActivity(
                         Intent(mCtx, io.bidswipe.app.ui.watchStream.ViewLiveShowActivity::class.java)
-                            .putExtra("showId", show.id.toString())
+                            .putExtra("showId", (show.id ?: 0).toString())
                             .putExtra("userId", show.userId?.toString() ?: show.user?.id?.toString() ?: "")
                     )
                 } else {

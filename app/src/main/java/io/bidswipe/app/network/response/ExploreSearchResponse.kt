@@ -23,7 +23,12 @@ data class SearchData(
 )
 
 data class SearchShow(
-    @SerializedName("id") val id: Int,
+    // Basecamp #9929090875 round 5 (2026-05-28): make id nullable defensively.
+    // GSON throws and discards the entire list when a non-nullable Int field is
+    // missing OR null in the response, which silently empties the search-results
+    // list and looks like "search is broken". Safer to accept null + filter at
+    // render time than to lose the whole list to one bad row.
+    @SerializedName("id") val id: Int? = null,
     @SerializedName("title") val title: String?,
     @SerializedName("date") val date: String?,
     @SerializedName("time") val time: String?,
@@ -43,7 +48,8 @@ data class SearchProduct(
 )
 
 data class SearchUser(
-    @SerializedName("id") val id: Int,
+    // Basecamp #9929090875 round 5 (2026-05-28): defensive null — see SearchShow.id.
+    @SerializedName("id") val id: Int? = null,
     @SerializedName("name") val name: String?,
     @SerializedName("username") val username: String?,
     @SerializedName("profile_image") val profileImage: String?
