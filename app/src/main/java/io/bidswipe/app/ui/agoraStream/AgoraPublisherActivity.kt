@@ -109,6 +109,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import androidx.lifecycle.lifecycleScope
 import org.json.JSONObject
 import org.wordpress.aztec.Aztec
 import org.wordpress.aztec.ITextFormat
@@ -1601,6 +1602,16 @@ class AgoraPublisherActivity : BaseActivity() {
                             showRandomizerSheet()
                         }
 
+                        // Basecamp #9934001770 (2026-05-27): Pair Device.
+                        5 -> {
+                            moreSheet.dismiss()
+                            if (!isShowLive) {
+                                Alerts.error(this@AgoraPublisherActivity, "Please start the live show first.")
+                            } else {
+                                showCoHostPairingDialog()
+                            }
+                        }
+
                         else -> {
 
                         }
@@ -2522,5 +2533,119 @@ class AgoraPublisherActivity : BaseActivity() {
                 }
             }
         }
+    }
+
+    // Basecamp #9934001770 (2026-05-27): co-host pairing dialog for the host.
+    // Generates a 6-char code via POST /api/product/co-host/pair and lets the
+    // host regenerate or revoke. The second device claims it on CoHostJoinActivity.
+    private var coHostPairingId: Int? = null
+
+    private fun showCoHostPairingDialog() {
+        val dialog = android.app.Dialog(this)
+        val view = layoutInflater.inflate(R.layout.dialog_co_host_pairing, null, false)
+        dialog.setContentView(view)
+        dialog.window?.setLayout(
+            (resources.displayMetrics.widthPixels * 0.92).toInt(),
+            android.view.ViewGroup.LayoutParams.WRAP_CONTENT
+        )
+        dialog.setCancelable(true)
+
+        val codeTv = view.findViewById<android.widget.TextView>(R.id.coHostCodeTv)
+        val expiresTv = view.findViewById<android.widget.TextView>(R.id.coHostExpiresTv)
+        val statusTv = view.findViewById<android.widget.TextView>(R.id.coHostStatusTv)
+        val generateBtn = view.findViewById<android.widget.Button>(R.id.coHostGenerateBtn)
+        val revokeBtn = view.findViewById<android.widget.Button>(R.id.coHostRevokeBtn)
+        val closeBtn = view.findViewById<android.view.View>(R.id.coHostCloseBtn)
+
+        closeBtn.setOnClickListener { dialog.dismiss() }
+        coHostPairingId = null
+
+        fun generate() {
+            statusTv.text = "Generating code…"
+            statusTv.setTextColor(android.graphics.Color.parseColor("#666666"))
+            generateBtn.isEnabled = false
+            lifecycleScope.launch {
+                val result = kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO) {
+                    try {
+                        val token = io.bidswipe.app.utils.Prefs(this@AgoraPublisherActivity).token()
+                        val body = org.json.JSONObject().apply {
+                            put("schedule_show_id", showId.toIntOrNull() ?: 0)
+                        }.toString()
+                        val url = java.net.URL("${io.bidswipe.app.utils.Const.BASE_URL}/api/product/co-host/pair")
+                        val conn = url.openConnection() as java.net.HttpURLConnection
+                        conn.requestMethod = "POST"
+                        conn.setRequestProperty("Content-Type", "application/json")
+                        conn.setRequestProperty("Accept", "application/json")
+                        conn.setRequestProperty("Authorization", "Bearer $token")
+                        conn.doOutput = true
+                        conn.outputStream.use { os -> os.write(body.toByteArray()) }
+                        val code = conn.responseCode
+                        val stream = if (code in 200..299) conn.inputStream else conn.errorStream
+                        val text = stream.bufferedReader().use { it.readText() }
+                        conn.disconnect()
+                        Pair(code, text)
+                    } catch (e: Exception) {
+                        Pair(-1, e.message ?: "error")
+                    }
+                }
+                generateBtn.isEnabled = true
+                try {
+                    val json = org.json.JSONObject(result.second)
+                    val status = json.optString("status")
+                    if (status == "success") {
+                        val data = json.optJSONObject("data")
+                        codeTv.text = data?.optString("pairing_code") ?: "——————"
+                        val exp = data?.optString("expires_at") ?: ""
+                        expiresTv.text = if (exp.isNotEmpty()) "Expires " + exp.take(16) else ""
+                        coHostPairingId = data?.optInt("id")
+                        revokeBtn.visibility = android.view.View.VISIBLE
+                        statusTv.text = "Share this code with your second device."
+                        statusTv.setTextColor(android.graphics.Color.parseColor("#16A34A"))
+                    } else {
+                        statusTv.text = json.optString("message", "Could not generate code.")
+                        statusTv.setTextColor(android.graphics.Color.parseColor("#DC2626"))
+                    }
+                } catch (e: Exception) {
+                    statusTv.text = "Could not generate code."
+                    statusTv.setTextColor(android.graphics.Color.parseColor("#DC2626"))
+                }
+            }
+        }
+
+        generateBtn.setOnClickListener { generate() }
+
+        revokeBtn.setOnClickListener {
+            val id = coHostPairingId ?: return@setOnClickListener
+            statusTv.text = "Revoking…"
+            lifecycleScope.launch {
+                val ok = kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO) {
+                    try {
+                        val token = io.bidswipe.app.utils.Prefs(this@AgoraPublisherActivity).token()
+                        val url = java.net.URL("${io.bidswipe.app.utils.Const.BASE_URL}/api/product/co-host/$id")
+                        val conn = url.openConnection() as java.net.HttpURLConnection
+                        conn.requestMethod = "DELETE"
+                        conn.setRequestProperty("Accept", "application/json")
+                        conn.setRequestProperty("Authorization", "Bearer $token")
+                        val rc = conn.responseCode
+                        conn.disconnect()
+                        rc in 200..299
+                    } catch (e: Exception) { false }
+                }
+                if (ok) {
+                    codeTv.text = "——————"
+                    expiresTv.text = ""
+                    revokeBtn.visibility = android.view.View.GONE
+                    coHostPairingId = null
+                    statusTv.text = "Pairing revoked."
+                    statusTv.setTextColor(android.graphics.Color.parseColor("#666666"))
+                } else {
+                    statusTv.text = "Could not revoke pairing."
+                    statusTv.setTextColor(android.graphics.Color.parseColor("#DC2626"))
+                }
+            }
+        }
+
+        dialog.show()
+        generate()
     }
 }

@@ -67,6 +67,18 @@
             android:resizeableActivity="true"
             android:supportsPictureInPicture="true"
             android:windowSoftInputMode="adjustResize" />
+        <!-- Basecamp #9934001770 (2026-05-27): co-host claim screen with deep link. -->
+        <activity
+            android:name=".ui.cohost.CoHostJoinActivity"
+            android:exported="true"
+            android:windowSoftInputMode="adjustResize">
+            <intent-filter android:autoVerify="false">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="bidcast" android:host="co-host-join" />
+            </intent-filter>
+        </activity>
         <activity
             android:name=".ui.interest.ChooseInterestActivity"
             android:exported="false"
