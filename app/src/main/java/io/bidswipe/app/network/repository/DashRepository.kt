@@ -478,6 +478,9 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
         status: RequestBody?
     ) = call { api.getProductsByStatus(type, page, status) }
 
+    // Basecamp #9933973683 (2026-05-29 return): active flash-sales listing.
+    suspend fun getFlashSales() = call { api.getFlashSales() }
+
     suspend fun deleteNotification(
         id: RequestBody?,
     ) = call { api.deleteNotification(id) }

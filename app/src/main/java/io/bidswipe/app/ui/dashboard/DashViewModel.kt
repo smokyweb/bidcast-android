@@ -731,23 +731,11 @@ class DashViewModel @Inject constructor(
             _flashSaleProductsResponse.value = NO_INTERNET_ERROR
             return@launch
         }
-        // Endpoint: POST api/v1/get-product with sale_type=flash_sale.
-        // Returns active flash-sale products across all sellers (no user_id filter).
-        _flashSaleProductsResponse.value = repo.getProducts(
-            userId = null,
-            status = "active".request(),
-            format = null,
-            page = "1".request(),
-            search = null,
-            categoryIds = null,
-            conditions = null,
-            minPrice = null,
-            maxPrice = null,
-            marketPlace = null,
-            type = null,
-            saleType = "flash_sale".request(),
-            sortBy = null
-        )
+        // Endpoint: GET api/product/flash-sales (controller listFlashSales).
+        // Returns active flash-sale products across ALL sellers, time-windowed
+        // server-side. The old get-product?sale_type=flash_sale path is disabled
+        // on the backend (filter commented out) and returns empty — do not use.
+        _flashSaleProductsResponse.value = repo.getFlashSales()
     }
 
     private var _getUserProductsResponse = MutableLiveData<Resource<GetProductsResponse>>()

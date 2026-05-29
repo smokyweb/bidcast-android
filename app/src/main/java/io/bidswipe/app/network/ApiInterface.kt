@@ -522,6 +522,13 @@ interface ApiInterface {
         @Part("sort_by") sortBy: RequestBody?
     ): GetProductsResponse
 
+    // Basecamp #9933973683 (2026-05-29 return): dedicated active-flash-sales
+    // listing across all sellers (time-windowed server-side). Replaces the
+    // get-product?sale_type=flash_sale path whose filter is disabled on the
+    // backend and returns empty. Confirmed endpoint: GET api/product/flash-sales.
+    @GET("api/product/flash-sales")
+    suspend fun getFlashSales(): GetProductsResponse
+
     @Multipart
     @POST("api/v1/get-my-orders")
     suspend fun getOrderListing(
