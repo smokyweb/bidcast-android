@@ -847,4 +847,14 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
     suspend fun detachRandomizerTemplate(showId: String) =
         call { api.detachRandomizerTemplate(showId) }
 
+    // Basecamp #9933847997 (2026-05-29): pre-bid endpoints
+    suspend fun placePrebid(productId: Int, amount: Double, scheduleShowId: Int?) =
+        call { api.placePrebid(productId, amount, scheduleShowId) }
+
+    suspend fun getMyPreBids() = call { api.getMyPreBids() }
+
+    suspend fun withdrawPreBid(id: Int) = call { api.withdrawPreBid(id) }
+
+    suspend fun getHighestPreBid(productId: Int) = call { api.getHighestPreBid(productId) }
+
 }

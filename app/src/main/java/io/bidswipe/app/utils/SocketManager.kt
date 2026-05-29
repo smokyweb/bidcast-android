@@ -1016,6 +1016,31 @@ class SocketManager private constructor(
         }
     }
 
+    // Basecamp #9943368953 (2026-05-29): request recent chat history for a live show
+    // room when the viewer joins. The server must support this socket event:
+    //   Client emits: "get_chat_history" { room_id, limit }
+    //   Server responds: "chat_history" [ { user_image, user_name, user_id, message } ... ]
+    // Robin: add server-side handler for "get_chat_history" event that queries the
+    // live_chat_messages table (or equivalent) and emits "chat_history" back to the
+    // requesting socket with the last N messages.
+    fun requestChatHistory(roomId: String, limit: Int = 50) {
+        val payload = JSONObject().apply {
+            put("room_id", roomId)
+            put("limit", limit)
+        }
+        Log.d(TAG, "EMIT: get_chat_history - RoomId: $roomId")
+        socket?.emit("get_chat_history", payload)
+    }
+
+    fun onChatHistory(listener: (messages: JSONArray) -> Unit) {
+        socket?.off("chat_history")
+        socket?.on("chat_history") { args ->
+            val arr = args.firstOrNull() as? JSONArray ?: return@on
+            Log.d(TAG, "RECEIVED: chat_history - ${arr.length()} messages")
+            listener(arr)
+        }
+    }
+
 }
 
 

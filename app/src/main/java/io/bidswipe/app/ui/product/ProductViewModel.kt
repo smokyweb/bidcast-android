@@ -298,6 +298,53 @@ class ProductViewModel @Inject constructor(
 		_getSurpriseProductDetailResponse.value = repo.getSurpriseProductDetail(page)
 	}
 
+	// Basecamp #9933847997 (2026-05-29): pre-bid via proper Retrofit endpoints
+	private var _placePrebidResponse = MutableLiveData<Resource<io.bidswipe.app.network.response.PreBidResponse>>()
+	val placePrebidRepo: MutableLiveData<Resource<io.bidswipe.app.network.response.PreBidResponse>>
+		get() = _placePrebidResponse
 
+	fun placePrebid(productId: Int, amount: Double, scheduleShowId: Int? = null) = viewModelScope.launch {
+		if (!networkMonitor.hasInternet()) {
+			_placePrebidResponse.value = NO_INTERNET_ERROR
+			return@launch
+		}
+		_placePrebidResponse.value = repo.placePrebid(productId, amount, scheduleShowId)
+	}
+
+	private var _getHighestPreBidResponse = MutableLiveData<Resource<io.bidswipe.app.network.response.PreBidHighestResponse>>()
+	val getHighestPreBidRepo: MutableLiveData<Resource<io.bidswipe.app.network.response.PreBidHighestResponse>>
+		get() = _getHighestPreBidResponse
+
+	fun getHighestPreBid(productId: Int) = viewModelScope.launch {
+		if (!networkMonitor.hasInternet()) {
+			_getHighestPreBidResponse.value = NO_INTERNET_ERROR
+			return@launch
+		}
+		_getHighestPreBidResponse.value = repo.getHighestPreBid(productId)
+	}
+
+	private var _withdrawPreBidResponse = MutableLiveData<Resource<CommonResponse>>()
+	val withdrawPreBidRepo: MutableLiveData<Resource<CommonResponse>>
+		get() = _withdrawPreBidResponse
+
+	fun withdrawPreBid(id: Int) = viewModelScope.launch {
+		if (!networkMonitor.hasInternet()) {
+			_withdrawPreBidResponse.value = NO_INTERNET_ERROR
+			return@launch
+		}
+		_withdrawPreBidResponse.value = repo.withdrawPreBid(id)
+	}
+
+	private var _getMyPreBidsResponse = MutableLiveData<Resource<io.bidswipe.app.network.response.PreBidListResponse>>()
+	val getMyPreBidsRepo: MutableLiveData<Resource<io.bidswipe.app.network.response.PreBidListResponse>>
+		get() = _getMyPreBidsResponse
+
+	fun getMyPreBids() = viewModelScope.launch {
+		if (!networkMonitor.hasInternet()) {
+			_getMyPreBidsResponse.value = NO_INTERNET_ERROR
+			return@launch
+		}
+		_getMyPreBidsResponse.value = repo.getMyPreBids()
+	}
 
 }

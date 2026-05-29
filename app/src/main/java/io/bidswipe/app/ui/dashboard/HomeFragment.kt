@@ -255,6 +255,10 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
         // Basecamp #9933301500 round 5 (2026-05-28): filter button on Home search results.
         // Opens BrowseFiltersSheet (already used by Explore / Browse / SearchShowFragment).
         // Apply re-runs both getLiveShow and unifiedSearch with the new filter state.
+        // Basecamp #9933301500 (2026-05-29): filter button is always visible on Home —
+        // in browse mode (no search query) it filters the live-show grid; in search mode
+        // it narrows both getLiveShow and unifiedSearch as before.
+        bind.searchFilterBtn.isVisible = true
         bind.searchFilterBtn.setHapticClickListener {
             BrowseFiltersSheet(initial = homeSearchFilters) { applied ->
                 homeSearchFilters = applied
@@ -263,9 +267,27 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
                     if (applied.isActive) android.graphics.Color.parseColor("#FFA500") else android.graphics.Color.BLACK
                 )
                 val q = bind.search.value()
+                page = 1
                 if (q.isNotEmpty()) {
-                    page = 1
                     runSearchWithFilters(q)
+                } else {
+                    // Browse mode: apply filters to the live-show grid directly.
+                    val catIdParts = applied.categoryIds.map { it.toString().request() }
+                    val subCatIdParts = applied.subCategoryIds.map { it.toString().request() }
+                    bind.loader.isVisible = true
+                    viewModel.getLiveShow(
+                        selectedTabText.request(),
+                        selectedCategoryRequest(),
+                        page = "1".request(),
+                        showFormat = applied.showFormat?.request(),
+                        tag = applied.tag?.takeIf { it.isNotBlank() }?.request(),
+                        premierShop = if (applied.premierShop) "1".request() else null,
+                        shipCountry = applied.shipCountry?.request(),
+                        shipState = applied.shipState?.takeIf { it.isNotBlank() }?.request(),
+                        shipping = applied.shipping?.request(),
+                        categoryIds = catIdParts.ifEmpty { null },
+                        subCategoryIds = subCatIdParts.ifEmpty { null },
+                    )
                 }
             }.show(childFragmentManager, "home_search_browse_filters")
         }
@@ -451,6 +473,18 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
         bind.unifiedResultsRecycler.adapter = unifiedAdapter
         searchGridLm.spanSizeLookup = unifiedAdapter.makeSpanSizeLookup()
 
+        // Basecamp #9942607925 (2026-05-29 Trey QA): tap the search bar →
+        // navigate to SearchShowFragment (the dedicated search results page).
+        // The inline TextWatcher below is kept as a safety net but the
+        // primary UX is the full-screen search page.
+        bind.search.setOnClickListener {
+            hideKeyboard(it)
+            findNavController().navigate(R.id.goToSearchShowFragment)
+        }
+        bind.searchLayout.setStartIconOnClickListener {
+            findNavController().navigate(R.id.goToSearchShowFragment)
+        }
+
         bind.search.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
@@ -460,9 +494,8 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
                 // Basecamp #9933801536 (2026-05-28 round 2): save-search bell
                 // should only appear once the user has typed something.
                 bind.saveBellBtn.isVisible = query.isNotEmpty()
-                // Basecamp #9933301500 round 5 (2026-05-28): filter button
-                // same toggle pattern — only show on the results page.
-                bind.searchFilterBtn.isVisible = query.isNotEmpty()
+                // Basecamp #9933301500 / #9942607925: filter button is always visible
+                // (set once above); do NOT hide it here. Bell stays search-only.
 
                 if (!s.isNullOrEmpty()) {
                     // Basecamp #9929090875 redesign (2026-05-28): hide normal home content
@@ -502,6 +535,9 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
                     if (shows.isNotEmpty() || products.isNotEmpty() || users.isNotEmpty()) {
                         unifiedAdapter.submitResults(shows, products, users)
                         bind.unifiedResultsRecycler.isVisible = true
+                        // Basecamp #9942607925: hide noData when unified results are present
+                        // (noData overlays unifiedResultsRecycler in ConstraintLayout z-order).
+                        bind.noData.isVisible = false
                     } else {
                         bind.unifiedResultsRecycler.isVisible = false
                     }
@@ -800,7 +836,12 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
                     }
 
                     if (showList.isEmpty()) {
-                        bind.noData.isVisible = true
+                        // Basecamp #9942607925: suppress noData when search is active —
+                        // unified search results (users/products) may populate the overlay
+                        // RecyclerView even if the shows grid returns empty.
+                        if (bind.search.text.isNullOrBlank()) {
+                            bind.noData.isVisible = true
+                        }
                         bind.recycler.isVisible = false
                         bind.noInternet.isVisible = false
 

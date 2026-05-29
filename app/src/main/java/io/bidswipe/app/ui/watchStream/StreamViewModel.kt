@@ -194,4 +194,29 @@ class StreamViewModel @Inject constructor(
 	fun clearShowDetailsResult() {
 		_getShowDetailsResponse.value = null
 	}
+
+	// Basecamp #9933847997 (2026-05-29): in-show pre-bid via Retrofit
+	private var _placePrebidResponse = MutableLiveData<Resource<io.bidswipe.app.network.response.PreBidResponse>>()
+	val placePrebidRepo: MutableLiveData<Resource<io.bidswipe.app.network.response.PreBidResponse>>
+		get() = _placePrebidResponse
+
+	fun placePrebid(productId: Int, amount: Double, scheduleShowId: Int? = null) = viewModelScope.launch {
+		if (!networkMonitor.hasInternet()) {
+			_placePrebidResponse.value = NO_INTERNET_ERROR
+			return@launch
+		}
+		_placePrebidResponse.value = repo.placePrebid(productId, amount, scheduleShowId)
+	}
+
+	private var _getHighestPreBidResponse = MutableLiveData<Resource<io.bidswipe.app.network.response.PreBidHighestResponse>>()
+	val getHighestPreBidRepo: MutableLiveData<Resource<io.bidswipe.app.network.response.PreBidHighestResponse>>
+		get() = _getHighestPreBidResponse
+
+	fun getHighestPreBid(productId: Int) = viewModelScope.launch {
+		if (!networkMonitor.hasInternet()) {
+			_getHighestPreBidResponse.value = NO_INTERNET_ERROR
+			return@launch
+		}
+		_getHighestPreBidResponse.value = repo.getHighestPreBid(productId)
+	}
 }

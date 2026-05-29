@@ -234,7 +234,8 @@ class UpcomingShowDetailsActivity : AppCompatActivity() {
                         put("amount", amount)
                         if (item.scheduleShowId > 0) put("schedule_show_id", item.scheduleShowId)
                     }.toString()
-                    val url = URL("${Const.BASE_URL}/api/product/pre-bid")
+                    // Basecamp #9933847997 (2026-05-29): corrected endpoint per ROBIN_API_SPECS.md
+                    val url = URL("${Const.BASE_URL}/api/pre-bid")
                     val conn = url.openConnection() as HttpURLConnection
                     conn.requestMethod = "POST"
                     conn.setRequestProperty("Content-Type", "application/json")

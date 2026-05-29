@@ -68,6 +68,9 @@ import io.bidswipe.app.network.response.GetUserProfileResponse
 import io.bidswipe.app.network.response.LoginResponse
 import io.bidswipe.app.network.response.MakeClipResponse
 import io.bidswipe.app.network.response.PageUrlResponse
+import io.bidswipe.app.network.response.PreBidHighestResponse
+import io.bidswipe.app.network.response.PreBidListResponse
+import io.bidswipe.app.network.response.PreBidResponse
 import io.bidswipe.app.network.response.PayoutHistoryResponse
 import io.bidswipe.app.network.response.ProductSetDetailsResponse
 import io.bidswipe.app.network.response.RaiseTicketResponse
@@ -1134,5 +1137,31 @@ interface ApiInterface {
     suspend fun detachRandomizerTemplate(
         @Path("id") showId: String
     ): CommonResponse
+
+    // ── Pre-bid (Basecamp #9933847997, 2026-05-29) ────────────────────────────
+    // POST /api/pre-bid  — place or update a pre-bid on a product
+    @FormUrlEncoded
+    @POST("api/pre-bid")
+    suspend fun placePrebid(
+        @Field("product_id")       productId: Int,
+        @Field("amount")           amount: Double,
+        @Field("schedule_show_id") scheduleShowId: Int? = null,
+    ): PreBidResponse
+
+    // GET /api/pre-bid  — list the current user's pre-bids
+    @GET("api/pre-bid")
+    suspend fun getMyPreBids(): PreBidListResponse
+
+    // DELETE /api/pre-bid/{id}  — withdraw a pre-bid
+    @DELETE("api/pre-bid/{id}")
+    suspend fun withdrawPreBid(
+        @Path("id") id: Int
+    ): CommonResponse
+
+    // GET /api/pre-bid/highest/{productId}  — highest pre-bid amount for a product
+    @GET("api/pre-bid/highest/{productId}")
+    suspend fun getHighestPreBid(
+        @Path("productId") productId: Int
+    ): PreBidHighestResponse
 }
 
