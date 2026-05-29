@@ -538,13 +538,25 @@ class ProductDetailsFragment : BaseFragment<ProductViewModel, FragmentProductDet
 
     private fun parseSqlOrIso(s: String?): java.util.Date? {
         if (s.isNullOrBlank()) return null
-        // Try "yyyy-MM-dd HH:mm:ss" first (Laravel format).
-        val sqlFmt = java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss", java.util.Locale.US)
-        sqlFmt.timeZone = java.util.TimeZone.getTimeZone("UTC")
-        try { return sqlFmt.parse(s) } catch (_: Exception) {}
-        val isoFmt = java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", java.util.Locale.US)
-        isoFmt.timeZone = java.util.TimeZone.getTimeZone("UTC")
-        try { return isoFmt.parse(s.replace("Z", "").replace(".000000", "")) } catch (_: Exception) {}
+        val raw = s.trim()
+        // Basecamp #9933973683 (2026-05-29): ROOT-CAUSE FIX for the flash-sale
+        // price not showing. The Bidcast API's Product model overrides
+        // serializeDate() to emit ALL datetimes as "d-m-Y H:i:s"
+        // (e.g. "29-05-2026 10:47:00"). The old parser only tried
+        // "yyyy-MM-dd HH:mm:ss" / ISO, so flashSaleEndsAt never parsed,
+        // isFlashSaleActive was always false, and the price/badge stayed hidden.
+        // Try the REAL backend format first, then the legacy fallbacks.
+        val patterns = listOf(
+            "dd-MM-yyyy HH:mm:ss",   // actual Product serializeDate() output
+            "yyyy-MM-dd HH:mm:ss",   // legacy assumption
+            "yyyy-MM-dd'T'HH:mm:ss"  // ISO without zone
+        )
+        for (p in patterns) {
+            val fmt = java.text.SimpleDateFormat(p, java.util.Locale.US)
+            fmt.timeZone = java.util.TimeZone.getTimeZone("UTC")
+            fmt.isLenient = false
+            try { return fmt.parse(raw.replace("Z", "").replace(".000000", "")) } catch (_: Exception) {}
+        }
         return null
     }
 
