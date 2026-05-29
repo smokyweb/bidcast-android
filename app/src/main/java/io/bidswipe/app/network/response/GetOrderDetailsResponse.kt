@@ -53,6 +53,15 @@ data class GetOrderDetailsResponse(
 		val shippingTracking: List<ShippingTracking?>?,
 		@SerializedName("status")
 		val status: String?,
+		// Cancel-request flow #9934033253 (2026-05-29): seller-visible cancellation
+		// state so the approve/reject UI can render. Field names mirror the buyer
+		// FetchOrderDetailResponse + the live backend columns Robin restored.
+		@SerializedName("cancellation_status")
+		val cancellationStatus: String?,
+		@SerializedName("cancellation_reason")
+		val cancellationReason: String?,
+		@SerializedName("cancellation_reject_reason")
+		val cancellationRejectReason: String?,
 		// MC cmpaj2fex0000w5hgq64jp9k4 merge (2026-05-24): keep both sides.
 		// GitLab (Wave 4 #32/#33): USPS tracking + label fields.
 		@SerializedName("tracking_number")

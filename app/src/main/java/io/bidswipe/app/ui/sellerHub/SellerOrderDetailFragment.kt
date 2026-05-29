@@ -10,7 +10,11 @@ import android.widget.ArrayAdapter
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseFragment
 import io.bidswipe.app.controller.ShippingUpdateAdapter
@@ -49,6 +53,8 @@ class SellerOrderDetailFragment : BaseFragment<SellerHubViewModel, FragmentSelle
     private var buyerImage = ""
     private var currentTrackingNumber: String? = null
     private var currentLabelUrl: String? = null
+    // #9934033253: current cancellation_status so we only show approve/reject when needed.
+    private var currentCancellationStatus: String? = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -131,6 +137,58 @@ class SellerOrderDetailFragment : BaseFragment<SellerHubViewModel, FragmentSelle
             startActivity(intent)
         }
 
+        // #9934033253: seller approves the buyer's cancellation request.
+        bind.btnApproveCancellation.setHapticClickListener {
+            val id = orderDbId.toIntOrNull()
+            if (id == null || id <= 0) {
+                errorToast("Order not ready yet, please try again.")
+                return@setHapticClickListener
+            }
+            androidx.appcompat.app.AlertDialog.Builder(requireContext())
+                .setTitle("Approve cancellation?")
+                .setMessage("The order will be cancelled and the buyer notified. This cannot be undone.")
+                .setNegativeButton("Back") { d, _ -> d.dismiss() }
+                .setPositiveButton("Approve") { d, _ ->
+                    d.dismiss()
+                    postDecideCancellation(id, "approved", null)
+                }
+                .show()
+        }
+
+        // #9934033253: seller rejects the request (optional reject reason).
+        bind.btnRejectCancellation.setHapticClickListener {
+            val id = orderDbId.toIntOrNull()
+            if (id == null || id <= 0) {
+                errorToast("Order not ready yet, please try again.")
+                return@setHapticClickListener
+            }
+            val input = android.widget.EditText(requireContext()).apply {
+                hint = "Reason (optional, shown to buyer)"
+                inputType = android.text.InputType.TYPE_CLASS_TEXT or
+                    android.text.InputType.TYPE_TEXT_FLAG_MULTI_LINE or
+                    android.text.InputType.TYPE_TEXT_FLAG_CAP_SENTENCES
+                setLines(3)
+                gravity = android.view.Gravity.TOP or android.view.Gravity.START
+                filters = arrayOf(android.text.InputFilter.LengthFilter(500))
+            }
+            val pad = (16 * resources.displayMetrics.density).toInt()
+            val container = android.widget.FrameLayout(requireContext()).apply {
+                setPadding(pad, pad / 2, pad, 0)
+                addView(input)
+            }
+            androidx.appcompat.app.AlertDialog.Builder(requireContext())
+                .setTitle("Reject cancellation?")
+                .setMessage("The buyer will be told the order could not be cancelled.")
+                .setView(container)
+                .setNegativeButton("Back") { d, _ -> d.dismiss() }
+                .setPositiveButton("Reject") { d, _ ->
+                    d.dismiss()
+                    val reason = input.text?.toString()?.trim().orEmpty().ifEmpty { null }
+                    postDecideCancellation(id, "rejected", reason)
+                }
+                .show()
+        }
+
         adapter = ShippingUpdateAdapter(statusItems)
 
         bind.shippingRecycler.adapter = adapter
@@ -197,7 +255,9 @@ class SellerOrderDetailFragment : BaseFragment<SellerHubViewModel, FragmentSelle
                     orderDbId = (mData?.id ?: 0).toString()
                     currentTrackingNumber = mData?.trackingNumber
                     currentLabelUrl = mData?.labelUrl
+                    currentCancellationStatus = mData?.cancellationStatus
                     updateWave4Ui(mData)
+                    updateCancellationUi(mData)
 
                 }
 
@@ -285,6 +345,69 @@ class SellerOrderDetailFragment : BaseFragment<SellerHubViewModel, FragmentSelle
     }
 
     private var pendingOpenLabel = false
+
+    // #9934033253: show the approve/reject card only when a request is pending.
+    private fun updateCancellationUi(data: GetOrderDetailsResponse.Data?) {
+        val pending = (data?.cancellationStatus?.lowercase() == "requested")
+        bind.cancellationRequestSection.isVisible = pending
+        if (pending) {
+            val reason = data?.cancellationReason?.takeIf { it.isNotBlank() }
+            bind.cancellationReasonText.text = if (reason != null)
+                "The buyer has requested to cancel this order.\nReason: $reason"
+            else
+                "The buyer has requested to cancel this order."
+        }
+    }
+
+    // #9934033253: POST /api/product/decide-cancellation {order_id, decision, reject_reason?}.
+    // Mirrors the buyer-side raw-HTTP pattern in OrderDetailsFragment to avoid
+    // touching the shared Retrofit/ViewModel plumbing for a one-off action.
+    private fun postDecideCancellation(orderId: Int, decision: String, rejectReason: String?) {
+        bind.loader.isVisible = true
+        viewLifecycleOwner.lifecycleScope.launch {
+            val code: Int = withContext(Dispatchers.IO) {
+                try {
+                    val token = io.bidswipe.app.utils.Prefs(mCtx).token()
+                    val body = org.json.JSONObject().apply {
+                        put("order_id", orderId)
+                        put("decision", decision)
+                        if (!rejectReason.isNullOrBlank()) put("reject_reason", rejectReason)
+                    }.toString()
+                    val url = java.net.URL("${io.bidswipe.app.utils.Const.BASE_URL}/api/product/decide-cancellation")
+                    val conn = url.openConnection() as java.net.HttpURLConnection
+                    conn.requestMethod = "POST"
+                    conn.setRequestProperty("Content-Type", "application/json")
+                    conn.setRequestProperty("Accept", "application/json")
+                    conn.setRequestProperty("Authorization", "Bearer $token")
+                    conn.doOutput = true
+                    conn.outputStream.use { it.write(body.toByteArray()) }
+                    val rc = conn.responseCode
+                    conn.disconnect()
+                    rc
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                    -1
+                }
+            }
+            bind.loader.isVisible = false
+            when (code) {
+                200, 201 -> {
+                    successToast(
+                        if (decision == "approved") "Order cancelled. The buyer has been notified."
+                        else "Request rejected. The buyer has been notified."
+                    )
+                    // Refresh using the fragment's order token (same value the initial
+                    // load used), not the numeric id passed to the decide endpoint.
+                    viewModel.getOrderDetails(this@SellerOrderDetailFragment.orderId.request())
+                }
+                403 -> errorToast("You are not authorized to decide this cancellation.")
+                404 -> errorToast("Order not found.")
+                409 -> errorToast("This cancellation request can no longer be decided.")
+                -1 -> errorToast("Network error. Please try again.")
+                else -> errorToast("Could not update the request (code $code).")
+            }
+        }
+    }
 
     // #31/#32/#33/#34: Update Wave 4 sections based on order status
     private fun updateWave4Ui(data: GetOrderDetailsResponse.Data?) {

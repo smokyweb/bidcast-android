@@ -364,6 +364,63 @@
 
             </LinearLayout>
 
+            <!-- #9934033253: Buyer cancellation request — seller approve/reject.
+                 Shown only when cancellation_status == "requested". -->
+            <LinearLayout
+                android:id="@+id/cancellationRequestSection"
+                style="@style/shadowStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/half_margin"
+                android:background="@drawable/card_16"
+                android:orientation="vertical"
+                android:padding="@dimen/margin"
+                android:visibility="gone">
+
+                <TextView
+                    style="@style/TitleMedium"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Cancellation Requested"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/cancellationReasonText"
+                    style="@style/BodyMedium"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/half_margin"
+                    android:alpha="0.8"
+                    android:text="The buyer has requested to cancel this order." />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/margin"
+                    android:orientation="horizontal">
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnRejectCancellation"
+                        style="@style/Widget.Material3.Button.OutlinedButton"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginEnd="@dimen/half_margin"
+                        android:text="Reject" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnApproveCancellation"
+                        style="@style/appBtn"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginStart="@dimen/half_margin"
+                        android:text="Approve" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
             <!-- ═══ Wave 4: Order Workflow Actions (#31/#32/#33/#34) ═══ -->
 
             <!-- #31/#32: Processing → Shipped progression -->

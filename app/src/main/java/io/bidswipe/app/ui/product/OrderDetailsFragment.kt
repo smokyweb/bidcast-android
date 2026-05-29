@@ -339,24 +339,55 @@ class OrderDetailsFragment : BaseFragment<ProductViewModel, FragmentOrderDetails
             Alerts.error(mCtx, "This order can no longer be cancelled (already shipped or delivered).")
             return
         }
-        androidx.appcompat.app.AlertDialog.Builder(requireContext())
+        // PWA parity (#9934033253): the buyer must enter a reason before the
+        // request is sent. The PWA prompts for a reason (max 500 chars); we make
+        // it required here so the seller always receives context, then confirm.
+        val input = android.widget.EditText(requireContext()).apply {
+            hint = "Reason for cancellation (required)"
+            inputType = android.text.InputType.TYPE_CLASS_TEXT or
+                android.text.InputType.TYPE_TEXT_FLAG_MULTI_LINE or
+                android.text.InputType.TYPE_TEXT_FLAG_CAP_SENTENCES
+            setLines(3)
+            gravity = android.view.Gravity.TOP or android.view.Gravity.START
+            filters = arrayOf(android.text.InputFilter.LengthFilter(500))
+        }
+        val pad = (16 * resources.displayMetrics.density).toInt()
+        val container = android.widget.FrameLayout(requireContext()).apply {
+            setPadding(pad, pad / 2, pad, 0)
+            addView(input)
+        }
+        val dialog = androidx.appcompat.app.AlertDialog.Builder(requireContext())
             .setTitle("Request to cancel this order?")
-            .setMessage("The seller will need to approve it. You cannot undo this request.")
+            .setMessage("Tell the seller why you're cancelling. They'll need to approve it — you cannot undo this request.")
+            .setView(container)
             .setNegativeButton("Keep order") { d, _ -> d.dismiss() }
-            .setPositiveButton("Request cancellation") { d, _ ->
-                d.dismiss()
-                postRequestCancellation(orderId)
-            }
-            .show()
+            .setPositiveButton("Request cancellation", null) // set below so we can validate
+            .create()
+        dialog.setOnShowListener {
+            dialog.getButton(androidx.appcompat.app.AlertDialog.BUTTON_POSITIVE)
+                .setOnClickListener {
+                    val reason = input.text?.toString()?.trim().orEmpty()
+                    if (reason.isEmpty()) {
+                        input.error = "Please enter a reason"
+                        return@setOnClickListener
+                    }
+                    dialog.dismiss()
+                    postRequestCancellation(orderId, reason)
+                }
+        }
+        dialog.show()
     }
 
-    private fun postRequestCancellation(orderId: Int) {
+    private fun postRequestCancellation(orderId: Int, reason: String) {
         bind.loader.isVisible = true
         viewLifecycleOwner.lifecycleScope.launch {
             val code: Int = withContext(Dispatchers.IO) {
                 try {
                     val token = io.bidswipe.app.utils.Prefs(mCtx).token()
-                    val body = org.json.JSONObject().apply { put("order_id", orderId) }.toString()
+                    val body = org.json.JSONObject().apply {
+                        put("order_id", orderId)
+                        put("reason", reason)
+                    }.toString()
                     val url = java.net.URL("${io.bidswipe.app.utils.Const.BASE_URL}/api/product/request-cancellation")
                     val conn = url.openConnection() as java.net.HttpURLConnection
                     conn.requestMethod = "POST"
