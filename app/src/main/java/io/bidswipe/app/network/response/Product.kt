@@ -26,9 +26,9 @@ data class Product(
 	// shape as the product-detail endpoint). Nullable so old/non-flash records
 	// don’t break.
 	@SerializedName("flash_sale_price")
-	val flashSalePrice: Double?,
+	val flashSalePrice: Double? = null,
 	@SerializedName("flash_sale_ends_at")
-	val flashSaleEndsAt: String?,
+	val flashSaleEndsAt: String? = null,
 	@SerializedName("hazardousMaterial")
 	val hazardousMaterial: Boolean?,
 	@SerializedName("height")

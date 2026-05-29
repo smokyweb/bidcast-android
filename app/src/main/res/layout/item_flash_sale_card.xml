@@ -83,7 +83,6 @@
                 style="@style/BodySmall"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paintFlags="16"
                 android:text="$0.00"
                 android:textColor="@color/outlineVariant"
                 android:visibility="gone" />
