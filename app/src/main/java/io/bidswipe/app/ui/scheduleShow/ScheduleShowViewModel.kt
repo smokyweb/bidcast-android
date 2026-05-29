@@ -343,4 +343,34 @@ class ScheduleShowViewModel @Inject constructor(
 		_promoteShowResponse.value = repo.promoteShow(scheduleShowId, promoteShowId)
 	}
 
+	// Basecamp #9940152629 (2026-05-29): per-show tip settings for TipSettingActivity.
+
+	private val _getTipSettingResponse = MutableLiveData<Resource<io.bidswipe.app.network.response.GetTipSettingResponse>>()
+	val getTipSettingRepo: MutableLiveData<Resource<io.bidswipe.app.network.response.GetTipSettingResponse>>
+		get() = _getTipSettingResponse
+
+	fun getTipSetting(scheduleShowId: String?) = viewModelScope.launch {
+		if (!networkMonitor.hasInternet()) {
+			_getTipSettingResponse.value = NO_INTERNET_ERROR
+			return@launch
+		}
+		_getTipSettingResponse.value = repo.getTipSetting(scheduleShowId)
+	}
+
+	private val _saveTipSettingResponse = MutableLiveData<Resource<io.bidswipe.app.network.response.CommonResponse>>()
+	val saveTipSettingRepo: MutableLiveData<Resource<io.bidswipe.app.network.response.CommonResponse>>
+		get() = _saveTipSettingResponse
+
+	fun saveTipSetting(
+		scheduleShowId: String?,
+		tipMessage: String?,
+		showInLiveChat: Boolean,
+	) = viewModelScope.launch {
+		if (!networkMonitor.hasInternet()) {
+			_saveTipSettingResponse.value = NO_INTERNET_ERROR
+			return@launch
+		}
+		_saveTipSettingResponse.value = repo.saveTipSetting(scheduleShowId, tipMessage, showInLiveChat)
+	}
+
 }

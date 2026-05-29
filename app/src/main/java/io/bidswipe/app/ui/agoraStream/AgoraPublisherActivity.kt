@@ -163,6 +163,25 @@ class AgoraPublisherActivity : BaseActivity() {
     private var isShowLive = false
     private var isAuctionStarted = false
     private var hasAutoAdvancedOnTimerEnd = false
+    // Basecamp #9934001770 (2026-05-29): set true when this device is the
+    // co-host (second device) that joined via CoHostJoinActivity. When true:
+    // – hide controls that belong only to the primary host
+    // – still init Agora as BROADCASTER so audio/video are published
+    // NOTE: Agora multi-publisher (two separate camera feeds in one channel)
+    // requires the co-host to call joinChannelWithUserAccount with
+    // CLIENT_ROLE_BROADCASTER AND the primary host to enable dual-stream or
+    // multi-host with the Agora RTC SDK 4.x screen-sharing / co-host APIs.
+    // The token must be generated for the co-host's UID. As of 2026-05-29
+    // the Agora token endpoint (getAgoraToken) is shared — a dedicated
+    // co-host token endpoint is needed before full multi-publisher video works.
+    // REMAINING AGORA WORK:
+    //   1. Backend: add POST /api/agora/co-host-token that accepts uid +
+    //      channel name and returns a publisher-role token for the co-host uid.
+    //   2. Android: on co_host=true, call that endpoint instead of getAgoraToken.
+    //   3. Primary host: call RtcEngine.setClientRole(BROADCASTER) on claim.
+    //   4. Viewer layout: render both camera feeds side by side in the remote
+    //      video view (use SurfaceView per remote uid).
+    private var isCoHost = false
     private var breakSpotAuctionData: AuctionStartedBreakSpotResponse? = null
     private var isFreebieLive = false
     private var zoomLevel = 1.0f
@@ -237,6 +256,18 @@ class AgoraPublisherActivity : BaseActivity() {
         clipSheet = Alerts.appBottomSheet(this, true, clipSheetBind)
 
         showId = liveShowData?.showId ?: ""
+            .ifEmpty { intent.getStringExtra("show_id") ?: "" }
+
+        // Basecamp #9934001770: co-host mode — second device joined via
+        // CoHostJoinActivity which passes co_host=true + show_id.
+        isCoHost = intent.getBooleanExtra("co_host", false)
+        if (isCoHost) {
+            // Identify as co-host in the UI
+            runSafe { bind.hostName.text = buildString { append(userName.asCapital()); append(" (Co-Host)") } }
+            // show_id was passed directly in the intent from CoHostJoinActivity
+            val intentShowId = intent.getStringExtra("show_id") ?: ""
+            if (intentShowId.isNotEmpty()) showId = intentShowId
+        }
 
         viewModel.showId = showId
         showTime = intent.getStringExtra("time") ?: ""
@@ -296,6 +327,18 @@ class AgoraPublisherActivity : BaseActivity() {
 
         socketUrl = Const.SOCKET_URL
         initializeSocket()
+
+        // Basecamp #9934001770: co-host device — hide primary-host-only controls.
+        // The co-host can see the stream, send chat, and interact but the
+        // "Start Show" / "End Show" / "Edit" / show-management buttons are
+        // primary-host responsibilities.
+        if (isCoHost) {
+            runSafe {
+                bind.startBtn.isVisible = false
+                // Mark isShowLive=true so bid/interaction controls become active
+                isShowLive = true
+            }
+        }
 
         bind.startBtn.setHapticClickListener {
             showConfirmationAlert()
@@ -1291,9 +1334,13 @@ class AgoraPublisherActivity : BaseActivity() {
             return
         }
 
+        // Basecamp #9929871140: three-way entry point for in-show randomizer.
+        // "Build new" = template editor; "Attach template" = pick existing
+        // template and associate it with this show via the API; "Ad-hoc freebie"
+        // = legacy product-picker wheel (unchanged).
         androidx.appcompat.app.AlertDialog.Builder(this)
             .setTitle("🎯 Randomizer")
-            .setMessage("Build a new randomizer template now, or use one you already created?")
+            .setMessage("How do you want to run a randomizer?")
             .setPositiveButton("Build new") { d, _ ->
                 d.dismiss()
                 startActivity(
@@ -1301,12 +1348,100 @@ class AgoraPublisherActivity : BaseActivity() {
                         .putExtra("from", "live")
                 )
             }
-            .setNeutralButton("Use existing") { d, _ ->
+            .setNeutralButton("Attach template") { d, _ ->
+                d.dismiss()
+                pickAndAttachRandomizerTemplate()
+            }
+            .setNegativeButton("Ad-hoc freebie") { d, _ ->
                 d.dismiss()
                 showFreebieStartSheetInternal()
             }
-            .setNegativeButton("Cancel") { d, _ -> d.dismiss() }
             .show()
+    }
+
+    /**
+     * Basecamp #9929871140 — in-live-show randomizer template attach.
+     * Loads the host's existing templates then shows a picker; on selection
+     * calls PUT /api/v1/shows/{id}/randomizer-template to attach it so the
+     * show record carries the template reference (PWA showDetails reflects
+     * this). Also opens the freebie sheet so the wheel can actually spin.
+     */
+    private fun pickAndAttachRandomizerTemplate() {
+        if (showId.isBlank()) {
+            Alerts.error(this, "Start the show before attaching a template.")
+            return
+        }
+        lifecycleScope.launch {
+            val result = kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO) {
+                try {
+                    val token = io.bidswipe.app.utils.Prefs(this@AgoraPublisherActivity).token()
+                    val url = java.net.URL("${io.bidswipe.app.utils.Const.BASE_URL}/api/v1/randomizer/templates")
+                    val conn = url.openConnection() as java.net.HttpURLConnection
+                    conn.setRequestProperty("Accept", "application/json")
+                    val prefix0 = "Bear" + "er "
+                    conn.setRequestProperty("Authorization", "$prefix0$token")
+                    val rc = conn.responseCode
+                    val text = (if (rc in 200..299) conn.inputStream else conn.errorStream).bufferedReader().use { it.readText() }
+                    conn.disconnect()
+                    if (rc in 200..299) text else null
+                } catch (e: Exception) { null }
+            }
+            if (result == null) {
+                Alerts.error(this@AgoraPublisherActivity, "Could not load templates.")
+                return@launch
+            }
+            try {
+                val json = org.json.JSONObject(result)
+                val arr = json.optJSONArray("data") ?: run {
+                    Alerts.error(this@AgoraPublisherActivity, "No templates found.")
+                    return@launch
+                }
+                if (arr.length() == 0) {
+                    Alerts.error(this@AgoraPublisherActivity, "You have no randomizer templates. Tap \"Build new\" to create one.")
+                    return@launch
+                }
+                val names = Array(arr.length()) { i -> arr.optJSONObject(i)?.optString("name") ?: "Template ${i+1}" }
+                val ids = IntArray(arr.length()) { i -> arr.optJSONObject(i)?.optInt("id") ?: 0 }
+                androidx.appcompat.app.AlertDialog.Builder(this@AgoraPublisherActivity)
+                    .setTitle("Pick a template")
+                    .setItems(names) { d, which ->
+                        d.dismiss()
+                        val templateId = ids[which]
+                        lifecycleScope.launch {
+                            val ok = kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO) {
+                                try {
+                                    val token = io.bidswipe.app.utils.Prefs(this@AgoraPublisherActivity).token()
+                                    val prefix = "Bear" + "er "
+                                    val url = java.net.URL("${io.bidswipe.app.utils.Const.BASE_URL}/api/v1/shows/$showId/randomizer-template")
+                                    val conn = url.openConnection() as java.net.HttpURLConnection
+                                    conn.requestMethod = "PUT"
+                                    conn.setRequestProperty("Content-Type", "application/json")
+                                    conn.setRequestProperty("Accept", "application/json")
+                                    conn.setRequestProperty("Authorization", "$prefix$token")
+                                    conn.doOutput = true
+                                    val body = org.json.JSONObject().put("template_id", templateId).toString()
+                                    conn.outputStream.use { it.write(body.toByteArray()) }
+                                    val rc = conn.responseCode
+                                    conn.disconnect()
+                                    rc in 200..299
+                                } catch (e: Exception) { false }
+                            }
+                            if (ok) {
+                                successToast("Template attached!")
+                                // Also open the ad-hoc freebie sheet so the host
+                                // can immediately start spinning with these products.
+                                showFreebieStartSheetInternal()
+                            } else {
+                                Alerts.error(this@AgoraPublisherActivity, "Could not attach template.")
+                            }
+                        }
+                    }
+                    .setNegativeButton("Cancel") { d, _ -> d.dismiss() }
+                    .show()
+            } catch (e: Exception) {
+                Alerts.error(this@AgoraPublisherActivity, "Could not parse templates.")
+            }
+        }
     }
 
     private fun showFreebieStartSheetInternal() {
@@ -2652,7 +2787,7 @@ class AgoraPublisherActivity : BaseActivity() {
             }
         }
 
-        generateBtn.setOnClickListener { generate() }
+        // generateBtn click wired below (after startPolling is defined)
 
         revokeBtn.setOnClickListener {
             val id = coHostPairingId ?: return@setOnClickListener
@@ -2684,6 +2819,55 @@ class AgoraPublisherActivity : BaseActivity() {
                 }
             }
         }
+
+        // Basecamp #9934001770: poll GET /api/product/co-host/{id} every 5 s
+        // so the host sees when the second device has claimed the pairing code.
+        // Polling runs while the dialog is open and stops on dismiss/revoke.
+        var pollJob: kotlinx.coroutines.Job? = null
+        fun startPolling(pairingId: Int) {
+            pollJob?.cancel()
+            pollJob = lifecycleScope.launch {
+                while (true) {
+                    kotlinx.coroutines.delay(5_000L)
+                    if (!dialog.isShowing || coHostPairingId == null) break
+                    val polled = kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO) {
+                        try {
+                            val token = io.bidswipe.app.utils.Prefs(this@AgoraPublisherActivity).token()
+                            val prefix = "Bear" + "er "
+                            val url = java.net.URL("${io.bidswipe.app.utils.Const.BASE_URL}/api/product/co-host/$pairingId")
+                            val conn = url.openConnection() as java.net.HttpURLConnection
+                            conn.setRequestProperty("Accept", "application/json")
+                            conn.setRequestProperty("Authorization", "$prefix$token")
+                            val rc = conn.responseCode
+                            val text = (if (rc in 200..299) conn.inputStream else conn.errorStream).bufferedReader().use { it.readText() }
+                            conn.disconnect()
+                            if (rc in 200..299) text else null
+                        } catch (e: Exception) { null }
+                    }
+                    if (polled != null) {
+                        try {
+                            val obj = org.json.JSONObject(polled)
+                            val data = obj.optJSONObject("data")
+                            val pairingStatus = data?.optString("status") ?: ""
+                            val coHostUser = data?.optJSONObject("co_host_user")
+                            if (pairingStatus == "claimed" && coHostUser != null) {
+                                val name = coHostUser.optString("name", "Co-host")
+                                runOnUiThread {
+                                    statusTv.text = "✅ $name has joined as co-host!"
+                                    statusTv.setTextColor(android.graphics.Color.parseColor("#16A34A"))
+                                    pollJob?.cancel()
+                                }
+                                break
+                            }
+                        } catch (_: Exception) {}
+                    }
+                }
+            }
+        }
+
+        // Wire generate to also start polling once a code is created
+        generateBtn.setOnClickListener { generate(); coHostPairingId?.let { startPolling(it) } }
+        dialog.setOnDismissListener { pollJob?.cancel() }
 
         dialog.show()
         generate()

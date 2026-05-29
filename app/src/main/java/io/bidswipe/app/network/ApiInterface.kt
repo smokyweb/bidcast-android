@@ -98,6 +98,8 @@ import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.DELETE
+import retrofit2.http.Field
+import retrofit2.http.FormUrlEncoded
 import retrofit2.http.GET
 import retrofit2.http.Multipart
 import retrofit2.http.POST
@@ -800,6 +802,17 @@ interface ApiInterface {
     suspend fun getTipSetting(
         @Query("schedule_show_id") scheduleShowId: String?,
     ): GetTipSettingResponse
+
+    // Basecamp #9940152629 (2026-05-29): save per-show tip settings (tip_message
+    // + show_in_live_chat) keyed by schedule_show_id. Called from TipSettingActivity
+    // (pre-show) in addition to the live-show socket path.
+    @FormUrlEncoded
+    @POST("api/save-tip-setting")
+    suspend fun saveTipSetting(
+        @Field("schedule_show_id") scheduleShowId: String?,
+        @Field("tip_message") tipMessage: String?,
+        @Field("show_in_live_chat") showInLiveChat: Int,
+    ): CommonResponse
 
     @GET("api/seller-analytic")
     suspend fun getSellerAnalytics(

@@ -59,6 +59,11 @@
         <activity
             android:name=".ui.scheduleShow.TipSettingActivity"
             android:exported="false" />
+        <!-- Basecamp #9933847997 (2026-05-29): upcoming show details + pre-bid screen. -->
+        <activity
+            android:name=".ui.upcomingshow.UpcomingShowDetailsActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".ui.agoraStream.AgoraPublisherActivity"
             android:configChanges="screenSize|smallestScreenSize|screenLayout|orientation"

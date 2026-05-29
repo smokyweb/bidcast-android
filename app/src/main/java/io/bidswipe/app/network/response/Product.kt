@@ -75,6 +75,18 @@ data class Product(
 	val width: Double?,
 	var selected: Boolean = false,
 	var isCurrent: Boolean? = false,
+	// Basecamp #9933847997 (2026-05-29): pre-bid fields returned by getShowDetails
+	// and the product list on upcoming/live shows.
+	@SerializedName("sale_format")
+	val saleFormat: String? = null,
+	@SerializedName("is_auction")
+	val isAuction: Boolean? = null,
+	@SerializedName("pre_bid_allowed")
+	val preBidAllowed: Boolean? = null,
+	@SerializedName("pre_bid_schedule_show_id")
+	val preBidScheduleShowId: Int? = null,
+	@SerializedName("my_pre_bid")
+	val myPreBid: Double? = null,
 ) : Serializable {
 
 	@Keep

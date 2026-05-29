@@ -152,6 +152,13 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
         scheduleShowId: String?,
     ) = call { api.getTipSetting(scheduleShowId) }
 
+    // Basecamp #9940152629 (2026-05-29): save per-show tip settings.
+    suspend fun saveTipSetting(
+        scheduleShowId: String?,
+        tipMessage: String?,
+        showInLiveChat: Boolean,
+    ) = call { api.saveTipSetting(scheduleShowId, tipMessage, if (showInLiveChat) 1 else 0) }
+
     /*	suspend fun getUserProducts(
             userId: RequestBody?,
             categoryId: RequestBody?,

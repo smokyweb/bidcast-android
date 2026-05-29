@@ -170,7 +170,8 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
                 }
 
                 "viewShow" -> {
-                    // [Basecamp #9930403446] Upcoming-show tap → popup with date/time
+                    // [Basecamp #9930403446] Upcoming-show tap → popup with date/time.
+                    // [Basecamp #9933847997] "View Show" button opens upcoming show details.
                     if (selectedTabText == "upcoming") {
                         val show = showList[pos]
                         UpcomingShowSheet(
@@ -179,6 +180,15 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
                             username = show?.user?.username ?: show?.user?.name,
                             showDate = show?.date,
                             showTime = show?.time,
+                            showId = show?.id?.toString(),
+                            onViewShow = { id ->
+                                startActivity(
+                                    android.content.Intent(
+                                        mCtx,
+                                        io.bidswipe.app.ui.upcomingshow.UpcomingShowDetailsActivity::class.java
+                                    ).putExtra("show_id", id)
+                                )
+                            },
                         ).show()
                         return
                     }

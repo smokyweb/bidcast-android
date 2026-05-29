@@ -24,7 +24,7 @@
         android:layout_height="0dp"
         android:fillViewport="true"
         android:isScrollContainer="true"
-        app:layout_constraintBottom_toTopOf="@+id/linearLayout"
+        app:layout_constraintBottom_toTopOf="@+id/tip_settings_btn"
         app:layout_constraintTop_toBottomOf="@id/header">
 
         <LinearLayout
@@ -259,6 +259,19 @@
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
+
+    <!-- Basecamp #9940152629 (2026-05-29): tip settings row above main button bar. -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/tip_settings_btn"
+        style="@style/Widget.Material3.Button.OutlinedButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/margin"
+        android:layout_marginBottom="4dp"
+        android:text="💬 Tip Settings"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <LinearLayout
         android:id="@+id/linearLayout"
