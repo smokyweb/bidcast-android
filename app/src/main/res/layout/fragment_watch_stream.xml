@@ -615,6 +615,19 @@
                             android:visibility="gone"
                             app:cornerRadius="28dp" />
 
+                        <!-- Basecamp #9933847997 (2026-05-29): pre-bid button for in-show
+                             product view. Visible only for auction-type products. -->
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/preBidBtn"
+                            style="@style/appTonalBtn"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="@dimen/margin"
+                            android:layout_marginHorizontal="@dimen/margin"
+                            android:text="Pre-Bid"
+                            android:visibility="gone"
+                            app:cornerRadius="28dp" />
+
                         <LinearLayout
                             android:id="@+id/bidLayout"
                             android:layout_width="match_parent"

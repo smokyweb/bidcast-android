@@ -588,61 +588,91 @@ class ProductDetailsFragment : BaseFragment<ProductViewModel, FragmentProductDet
     }
 
     // Basecamp #9933847997 (2026-05-27): pre-bid dialog.
+    // Basecamp #9933847997 (2026-05-29): updated to POST /api/pre-bid
+    // (was /api/product/pre-bid, incorrect per ROBIN_API_SPECS.md).
+    // Uses Retrofit via ProductViewModel. Also fetches current highest pre-bid
+    // and exposes Withdraw.
     private fun showPreBidDialog() {
+        val pid = productId.toIntOrNull() ?: 0
         val ctx = requireContext()
         val input = android.widget.EditText(ctx).apply {
             inputType = android.text.InputType.TYPE_CLASS_NUMBER or android.text.InputType.TYPE_NUMBER_FLAG_DECIMAL
-            hint = "Amount in USD"
+            hint = "Amount in USD (min \$1.00)"
             setPadding(40, 30, 40, 30)
         }
-        androidx.appcompat.app.AlertDialog.Builder(ctx)
-            .setTitle("Place Pre-Bid")
-            .setMessage("Lock in your bid before the auction starts. Applied automatically as the opening bid when the seller starts the auction.")
+        // Show dialog immediately; highest pre-bid label updates asynchronously.
+        val dialog = androidx.appcompat.app.AlertDialog.Builder(ctx)
+            .setTitle("Pre-Bid")
+            .setMessage("Fetching current pre-bids…")
             .setView(input)
-            .setPositiveButton("Place") { d, _ ->
+            .setPositiveButton("Place Pre-Bid") { d, _ ->
                 d.dismiss()
-                val raw = input.text?.toString()?.trim() ?: ""
-                val amount = raw.toDoubleOrNull() ?: 0.0
+                val amount = input.text?.toString()?.trim()?.toDoubleOrNull() ?: 0.0
                 if (amount < 1.0) {
-                    io.bidswipe.app.utils.Alerts.error(mCtx, "Please enter $1 or more.")
+                    io.bidswipe.app.utils.Alerts.error(mCtx, "Please enter \$1.00 or more.")
                     return@setPositiveButton
                 }
-                postPreBid(amount)
+                bind.loader.isVisible = true
+                viewModel.placePrebid(pid, amount)
+            }
+            .setNeutralButton("Withdraw") { d, _ ->
+                d.dismiss()
+                withdrawCurrentPreBid(pid)
             }
             .setNegativeButton("Cancel") { d, _ -> d.dismiss() }
-            .show()
+            .create()
+        dialog.show()
+        // Fetch highest pre-bid and update dialog message.
+        viewModel.getHighestPreBid(pid)
+        viewModel.getHighestPreBidRepo.observe(viewLifecycleOwner) { res ->
+            viewModel.getHighestPreBidRepo.removeObservers(viewLifecycleOwner)
+            val current = (res as? io.bidswipe.app.network.Resource.Success)?.value?.data?.amount
+            if (dialog.isShowing) {
+                dialog.setMessage(
+                    if (current != null && current > 0.0)
+                        "Current highest pre-bid: \$${"%,.2f".format(current)}. Enter your bid amount."
+                    else
+                        "Lock in your bid before the auction starts."
+                )
+                if (current != null && current > 0.0) {
+                    input.setText(current.toBigDecimal().toPlainString())
+                }
+            }
+        }
+        // Observe place-bid result
+        viewModel.placePrebidRepo.observe(viewLifecycleOwner) { res ->
+            viewModel.placePrebidRepo.removeObservers(viewLifecycleOwner)
+            bind.loader.isVisible = false
+            when (res) {
+                is io.bidswipe.app.network.Resource.Success ->
+                    io.bidswipe.app.utils.Alerts.success(mCtx, "Pre-bid placed!")
+                is io.bidswipe.app.network.Resource.Error ->
+                    io.bidswipe.app.utils.Alerts.error(mCtx, res.errorResponse?.message ?: "Could not place pre-bid.")
+                else -> {}
+            }
+        }
     }
 
-    private fun postPreBid(amount: Double) {
+    private fun withdrawCurrentPreBid(pid: Int) {
         bind.loader.isVisible = true
-        viewLifecycleOwner.lifecycleScope.launch {
-            val code: Int = kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO) {
-                try {
-                    val token = io.bidswipe.app.utils.Prefs(mCtx).token()
-                    val body = org.json.JSONObject().apply {
-                        put("product_id", productId.toIntOrNull() ?: 0)
-                        put("amount", amount)
-                    }.toString()
-                    val url = java.net.URL("${io.bidswipe.app.utils.Const.BASE_URL}/api/product/pre-bid")
-                    val conn = url.openConnection() as java.net.HttpURLConnection
-                    conn.requestMethod = "POST"
-                    conn.setRequestProperty("Content-Type", "application/json")
-                    conn.setRequestProperty("Accept", "application/json")
-                    conn.setRequestProperty("Authorization", "Bearer $token")
-                    conn.doOutput = true
-                    conn.outputStream.use { it.write(body.toByteArray()) }
-                    val rc = conn.responseCode
-                    conn.disconnect()
-                    rc
-                } catch (e: Exception) { e.printStackTrace(); -1 }
-            }
-            bind.loader.isVisible = false
-            when (code) {
-                200, 201 -> io.bidswipe.app.utils.Alerts.success(mCtx, "Pre-bid placed.")
-                403 -> io.bidswipe.app.utils.Alerts.error(mCtx, "Not allowed.")
-                404 -> io.bidswipe.app.utils.Alerts.error(mCtx, "Product not found.")
-                -1 -> io.bidswipe.app.utils.Alerts.error(mCtx, "Network error.")
-                else -> io.bidswipe.app.utils.Alerts.error(mCtx, "Could not place pre-bid (code $code).")
+        viewModel.getMyPreBids()
+        viewModel.getMyPreBidsRepo.observe(viewLifecycleOwner) { res ->
+            viewModel.getMyPreBidsRepo.removeObservers(viewLifecycleOwner)
+            val match = (res as? io.bidswipe.app.network.Resource.Success)?.value?.data
+                ?.firstOrNull { it?.productId == pid }
+            if (match?.id != null) {
+                viewModel.withdrawPreBid(match.id)
+                viewModel.withdrawPreBidRepo.observe(viewLifecycleOwner) { r ->
+                    viewModel.withdrawPreBidRepo.removeObservers(viewLifecycleOwner)
+                    bind.loader.isVisible = false
+                    if (r is io.bidswipe.app.network.Resource.Success)
+                        io.bidswipe.app.utils.Alerts.success(mCtx, "Pre-bid withdrawn.")
+                    else
+                        io.bidswipe.app.utils.Alerts.error(mCtx, "Could not withdraw pre-bid.")
+                }
+            } else {
+                bind.loader.isVisible = false
+                io.bidswipe.app.utils.Alerts.error(mCtx, "No active pre-bid found for this product.")
             }
         }
     }

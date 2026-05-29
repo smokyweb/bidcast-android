@@ -330,6 +330,15 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
             socketManager?.joinRoom(roomID, userId) {
             }
 
+            // Basecamp #9943368953 (2026-05-29): load persisted chat history on join
+            // via the EXISTING REST endpoint GET /api/live_chat/{room_id}
+            // (ApiController::chatHistory). Verified live by Robin — no socket event
+            // exists for history. Results are merged into commentList in the
+            // chatHistoryRepo observer (see setupObservers).
+            if (roomID.isNotEmpty()) {
+                viewModel.getChatHistory(roomID)
+            }
+
             socketManager?.onViewerCount { args ->
                 runSafe {
                     if (args.optString("room_id") == roomID) {
@@ -757,6 +766,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
             if (imeVisible) {
                 bind.productAuctionBidLayout.isVisible = false
                 bind.bidLayout.isVisible = false
+                bind.preBidBtn.isVisible = false
                 bind.sideOptions.isVisible = false
             } else {
                 bind.productAuctionBidLayout.isVisible = isAuctionStarted
@@ -826,6 +836,39 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
         if (liveShowData?.isVerifiedOnly == true &&
             App.profileResponse.value?.buyerIdentityStatus != "verified") {
             verificationDialog()
+        }
+
+        // Basecamp #9943368953 (2026-05-29): persisted live-show chat history
+        // from GET /api/live_chat/{room_id}. Merged into commentList (dedup by
+        // userId+message so socket-delivered messages aren't doubled), then the
+        // adapter is refreshed and scrolled to the latest.
+        viewModel.chatHistoryRepo.observe(viewLifecycleOwner) {
+            when (it) {
+                is Resource.Success -> {
+                    val chats = it.value.chats ?: emptyList()
+                    var added = false
+                    for (c in chats) {
+                        val chatMsg = LiveChatModel(
+                            c.userImage,
+                            c.userName,
+                            c.userId,
+                            c.message
+                        )
+                        if (commentList.none { existing -> existing?.userId == chatMsg.userId && existing?.message == chatMsg.message }) {
+                            commentList.add(chatMsg)
+                            added = true
+                        }
+                    }
+                    if (added) {
+                        commentAdapter.notifyDataSetChanged()
+                        if (commentList.isNotEmpty()) {
+                            bind.recycler.scrollToPosition(commentList.size - 1)
+                        }
+                    }
+                }
+
+                else -> {}
+            }
         }
 
         viewModel.getSellerInfoRepo.observe(viewLifecycleOwner) {
@@ -1435,6 +1478,8 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
                     bind.status.isVisible = false
                     bind.bidLayout.isVisible = auctionData.auctionTypeId == AuctionType.LIVE.id
                     bind.buyNowBtn.isVisible = auctionData.auctionTypeId == AuctionType.BUY_NOW.id
+                    // Basecamp #9933847997: pre-bid available during live auction
+                    bind.preBidBtn.isVisible = auctionData.auctionTypeId == AuctionType.LIVE.id
                     bind.soldLayout.isVisible = false
                     bind.productLayout.isVisible = true
                     bind.productAuctionBidLayout.isVisible = true
@@ -1507,6 +1552,8 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
             bind.bidLayout.isVisible = auctionTypeId == AuctionType.LIVE.id
             bind.buyNowBtn.isVisible = auctionTypeId == AuctionType.BUY_NOW.id
+            // Basecamp #9933847997: show pre-bid button for auction-type products
+            bind.preBidBtn.isVisible = auctionTypeId == AuctionType.LIVE.id
 
             bind.productLayout.setHapticClickListener {
                 startActivity(
@@ -1521,6 +1568,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
             bind.bidTime.isVisible = false
             bind.bidLayout.isVisible = false
             bind.buyNowBtn.isVisible = false
+            bind.preBidBtn.isVisible = false
             bind.productLayout.isVisible = false
             bind.status.isVisible = true
         }
@@ -1726,6 +1774,15 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
                 } else {
                     showPaymentAndAddressSheet()
                 }
+            }
+
+            // Basecamp #9933847997 (2026-05-29): in-show pre-bid button.
+            // Allows buyer to place a pre-bid on the current auction item
+            // directly from the watch stream without opening ProductDetails.
+            bind.preBidBtn.setHapticClickListener {
+                val pid = bidProductId?.toIntOrNull() ?: 0
+                if (pid == 0) { Alerts.error(mCtx, "No product selected."); return@setHapticClickListener }
+                showInShowPreBidDialog(pid)
             }
 
             bind.max.setHapticClickListener {
@@ -2964,5 +3021,40 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
             }
         }
 
+    }
+
+    // Basecamp #9933847997 (2026-05-29): in-show pre-bid dialog.
+    private fun showInShowPreBidDialog(pid: Int) {
+        val ctx = mCtx
+        val input = android.widget.EditText(ctx).apply {
+            inputType = android.text.InputType.TYPE_CLASS_NUMBER or android.text.InputType.TYPE_NUMBER_FLAG_DECIMAL
+            hint = "Amount in USD (min \$1.00)"
+            setPadding(40, 30, 40, 30)
+        }
+        androidx.appcompat.app.AlertDialog.Builder(ctx)
+            .setTitle("Pre-Bid")
+            .setMessage("Place a pre-bid on this item. It will be applied as your opening bid when the auction starts.")
+            .setView(input)
+            .setPositiveButton("Place Pre-Bid") { d, _ ->
+                d.dismiss()
+                val amount = input.text?.toString()?.trim()?.toDoubleOrNull() ?: 0.0
+                if (amount < 1.0) {
+                    Alerts.error(ctx, "Please enter \$1.00 or more.")
+                    return@setPositiveButton
+                }
+                viewModel.placePrebid(pid, amount, showId?.toIntOrNull())
+                viewModel.placePrebidRepo.observe(viewLifecycleOwner) { res ->
+                    viewModel.placePrebidRepo.removeObservers(viewLifecycleOwner)
+                    when (res) {
+                        is io.bidswipe.app.network.Resource.Success ->
+                            Alerts.success(ctx, "Pre-bid of \$${"%,.2f".format(amount)} placed!")
+                        is io.bidswipe.app.network.Resource.Error ->
+                            Alerts.error(ctx, res.errorResponse?.message ?: "Could not place pre-bid.")
+                        else -> {}
+                    }
+                }
+            }
+            .setNegativeButton("Cancel") { d, _ -> d.dismiss() }
+            .show()
     }
 }
