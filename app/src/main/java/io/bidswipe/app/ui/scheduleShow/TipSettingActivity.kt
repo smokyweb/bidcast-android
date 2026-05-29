@@ -20,6 +20,7 @@ import io.bidswipe.app.network.Resource
 import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.utils.Alerts
 import io.bidswipe.app.utils.bind
+import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.setHapticClickListener
 
 class TipSettingActivity : BaseActivity() {

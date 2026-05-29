@@ -86,3 +86,5 @@ lint/tmp/
 # lint/reports/
 
 .kotlin/
+# Signing key properties (contains credentials - do not commit)
+key.properties
