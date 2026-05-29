@@ -98,6 +98,17 @@ class ShowDetailsActivity : BaseActivity() {
             editShowLauncher.launch(toScheduleShow(from = "dash", showId = viewModel.showId))
         }
 
+        // Basecamp #9940152629 (2026-05-29): tip settings for this show.
+        bind.tipSettingsBtn.setHapticClickListener {
+            val sid = viewModel.showId
+            if (!sid.isNullOrBlank()) {
+                startActivity(
+                    android.content.Intent(this, TipSettingActivity::class.java)
+                        .putExtra("schedule_show_id", sid)
+                )
+            }
+        }
+
         // #49 — Promote button: fetch plans then show the promote bottom sheet
         viewModel.getPromoteShowList()
         viewModel.getPromoteShowListRepo.observe(this) {

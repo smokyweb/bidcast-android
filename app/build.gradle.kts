@@ -1,6 +1,7 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import java.text.SimpleDateFormat
 import java.util.Date
+import java.util.Properties
 
 plugins {
     alias(libs.plugins.androidApplication)
@@ -13,17 +14,36 @@ plugins {
 }
 
 fun getAPKName() = "bidswipe_debug_${SimpleDateFormat("dd-MM-yyyy").format(Date())}"
+fun getReleaseAPKName() = "bidswipe_release_${SimpleDateFormat("dd-MM-yyyy").format(Date())}"
+
+// Load signing credentials from key.properties if present
+val keystorePropsFile = rootProject.file("key.properties")
+val keystoreProps = Properties()
+if (keystorePropsFile.exists()) {
+    keystoreProps.load(keystorePropsFile.inputStream())
+}
 
 android {
     namespace = "io.bidswipe.app"
     compileSdk = 36
 
+    signingConfigs {
+        if (keystorePropsFile.exists()) {
+            create("release") {
+                storeFile = file(keystoreProps["storeFile"] as String)
+                storePassword = keystoreProps["storePassword"] as String
+                keyAlias = keystoreProps["keyAlias"] as String
+                keyPassword = keystoreProps["keyPassword"] as String
+            }
+        }
+    }
+
     defaultConfig {
         applicationId = "io.bidswipe.app"
         minSdk = 26
         targetSdk = 36
-        versionCode = 2
-        versionName = "1.1"
+        versionCode = 3
+        versionName = "1.2"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
@@ -48,6 +68,10 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            if (keystorePropsFile.exists()) {
+                signingConfig = signingConfigs.getByName("release")
+            }
+            setProperty("archivesBaseName", getReleaseAPKName())
         }
         debug {
             isMinifyEnabled = false
@@ -61,6 +85,10 @@ android {
             }
             setProperty("archivesBaseName", getAPKName())
         }
+    }
+
+    lint {
+        baseline = file("lint-baseline.xml")
     }
 
     buildFeatures {

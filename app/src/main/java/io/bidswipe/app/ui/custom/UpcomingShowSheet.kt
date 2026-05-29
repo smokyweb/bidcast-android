@@ -33,6 +33,13 @@ class UpcomingShowSheet(
     private val showDate: String?,
     /** Raw time string from API – expected formats: "HH:mm:ss", "HH:mm", "h:mm a" */
     private val showTime: String?,
+    /**
+     * Basecamp #9933847997 (2026-05-29): schedule_shows.id for this upcoming show.
+     * When non-null, the "View Show" button is shown and [onViewShow] is invoked
+     * so the caller can navigate to UpcomingShowDetailsActivity.
+     */
+    private val showId: String? = null,
+    private val onViewShow: ((showId: String) -> Unit)? = null,
 ) : BottomSheetDialog(mCtx) {
 
     private val bind = UpcomingShowSheetBinding.bind(
@@ -63,7 +70,17 @@ class UpcomingShowSheet(
 
         // Close
         bind.close.setHapticClickListener { dismiss() }
-        bind.okayBtn.setHapticClickListener { dismiss() }
+        // Basecamp #9933847997: when showId is available, "Okay" becomes
+        // "View Show" and opens the upcoming show detail screen.
+        if (showId != null && onViewShow != null) {
+            bind.okayBtn.text = "View Show"
+            bind.okayBtn.setHapticClickListener {
+                dismiss()
+                onViewShow.invoke(showId)
+            }
+        } else {
+            bind.okayBtn.setHapticClickListener { dismiss() }
+        }
     }
 
     // ── Helpers ─────────────────────────────────────────────────────────────
