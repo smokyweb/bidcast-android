@@ -61,6 +61,7 @@ import io.bidswipe.app.network.response.GetStatesResponse
 import io.bidswipe.app.network.response.GetSubCategoriesResponse
 import io.bidswipe.app.network.response.GetSurpriseProductsResponse
 import io.bidswipe.app.network.response.GetTipAmountResponse
+import io.bidswipe.app.network.response.GetTipSettingResponse
 import io.bidswipe.app.network.response.GetTransactionsHistoryResponse
 import io.bidswipe.app.network.response.GetUSPSboxDimensionsResponse
 import io.bidswipe.app.network.response.GetUserProfileResponse
@@ -793,6 +794,12 @@ interface ApiInterface {
     @GET("api/get-tip-amount")
     suspend fun getTipAmount(
     ): GetTipAmountResponse
+
+    // M1 (2026-05-28): per-show saved tip message + show-in-live-chat toggle.
+    @GET("api/get-tip-setting")
+    suspend fun getTipSetting(
+        @Query("schedule_show_id") scheduleShowId: String?,
+    ): GetTipSettingResponse
 
     @GET("api/seller-analytic")
     suspend fun getSellerAnalytics(

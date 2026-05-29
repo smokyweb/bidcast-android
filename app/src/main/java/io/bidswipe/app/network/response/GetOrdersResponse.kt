@@ -28,6 +28,18 @@ data class GetOrdersResponse(
     val newOrderCount: Int?,
     @SerializedName("processing_order_count")
     val processingOrderCount: Int?,
+    // M2 (2026-05-28): additive top-level bucket counts from getOrderListing.
+    // Optional/backward-compatible — old responses won't carry these.
+    @SerializedName("total_order_count")
+    val totalOrderCount: Int?,
+    @SerializedName("needs_processing_count")
+    val needsProcessingCount: Int?,
+    @SerializedName("ready_to_ship_count")
+    val readyToShipCount: Int?,
+    @SerializedName("shipped_count")
+    val shippedCount: Int?,
+    @SerializedName("out_for_delivery_count")
+    val outForDeliveryCount: Int?,
 ) {
     data class Data(
         @SerializedName("card_id")
@@ -74,6 +86,14 @@ data class GetOrdersResponse(
         val shippingTracking: List<ShippingTracking?>?,
         @SerializedName("status")
         val status: String?,
+        @SerializedName("shipping_status")
+        val shippingStatus: String?,
+        // M2 (2026-05-28): additive human label + machine bucket per order
+        // from getOrderListing. Optional/backward-compatible.
+        @SerializedName("status_label")
+        val statusLabel: String?,
+        @SerializedName("status_bucket")
+        val statusBucket: String?,
         @SerializedName("transaction")
         val transaction: List<Transaction?>?,
         @SerializedName("user")

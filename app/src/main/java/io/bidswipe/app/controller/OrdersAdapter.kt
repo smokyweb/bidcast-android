@@ -38,16 +38,24 @@ class OrdersAdapter(
             }
 
             bind.orderId.text = item?.orderId
-            bind.status.text = item?.status?.replace("_", " ")?.asCapital()
+            // M2 (2026-05-28): render the API-provided human status_label
+            // ("Needs Processing", "Ready to Ship", "Shipped", "Out for
+            // Delivery", "Completed", ...). Fall back to the legacy
+            // raw-status formatting for old/cached responses missing it.
+            val statusLabel = item?.statusLabel?.takeIf { it.isNotBlank() }
+                ?: item?.status?.replace("_", " ")?.asCapital()
+            bind.status.text = statusLabel
 
-            when (item?.status?.lowercase()) {
+            // Color by the machine status_bucket when present; fall back to the
+            // legacy raw-status mapping otherwise (backward-compatible).
+            when (item?.statusBucket?.lowercase() ?: item?.status?.lowercase()) {
                 "cancelled", "rejected" -> {
                     bind.statusCard.setCardBackgroundColor(ContextCompat.getColor(mCtx, clr.errorContainer))
                     bind.statusCard.strokeColor = ContextCompat.getColor(mCtx, clr.error)
                     bind.status.setTextColor(ContextCompat.getColor(mCtx, clr.error))
                 }
 
-                "delivered" -> {
+                "completed", "delivered" -> {
                     bind.statusCard.setCardBackgroundColor(ContextCompat.getColor(mCtx, clr.successContainer))
                     bind.statusCard.strokeColor = ContextCompat.getColor(mCtx, clr.success)
                     bind.status.setTextColor(ContextCompat.getColor(mCtx, clr.success))

@@ -20,6 +20,7 @@ import io.bidswipe.app.network.response.FetchBidResponse
 import io.bidswipe.app.network.response.GetAgoraTokenResponse
 import io.bidswipe.app.network.response.GetBlockedUsersResponse
 import io.bidswipe.app.network.response.GetCategoryResponse
+import io.bidswipe.app.network.response.GetTipSettingResponse
 import io.bidswipe.app.network.response.GetHowToSellResponse
 import io.bidswipe.app.network.response.GetLessonsResponse
 import io.bidswipe.app.network.response.GetLiveSellerResponse
@@ -134,6 +135,21 @@ class DashViewModel @Inject constructor(
             return@launch
         }
         _logoutResponse.value = repo.logout()
+    }
+
+    // M1 (2026-05-28): tip settings prefill-on-open.
+    private var _getTipSettingResponse = MutableLiveData<Resource<GetTipSettingResponse>>()
+    val getTipSettingRepo: MutableLiveData<Resource<GetTipSettingResponse>>
+        get() = _getTipSettingResponse
+
+    fun getTipSetting(
+        scheduleShowId: String?,
+    ) = viewModelScope.launch {
+        if (!networkMonitor.hasInternet()) {
+            _getTipSettingResponse.value = NO_INTERNET_ERROR
+            return@launch
+        }
+        _getTipSettingResponse.value = repo.getTipSetting(scheduleShowId)
     }
 
     private var _getCategoryResponse = MutableLiveData<Resource<GetCategoryResponse>>()

@@ -173,6 +173,9 @@ class AgoraPublisherActivity : BaseActivity() {
     private var showNotes: String? = ""
     private var tipMessage: String? = ""
     private var tipChatEnabled: Boolean? = false
+    // M1 (2026-05-28): reference to the currently-open Tip Settings sheet so
+    // the get-tip-setting observer can prefill its fields once the fetch lands.
+    private var tipSettingsSheetBind: SellerTipSettingsSheetBinding? = null
     private lateinit var exoPlayer: ExoPlayer
     private lateinit var clipSheetBind: CreateClipSheetBinding
     private lateinit var clipSheet: BottomSheetDialog
@@ -667,6 +670,35 @@ class AgoraPublisherActivity : BaseActivity() {
 
                 else -> {}
 
+            }
+        }
+
+        // M1 (2026-05-28): prefill the Tip Settings sheet from the saved
+        // per-show setting fetched on open. Empty / no-saved-setting lands
+        // here too (blank message + default toggle) without any popup, which
+        // respects the C1 blank-popup guard.
+        viewModel.getTipSettingRepo.observe(this) {
+            when (it) {
+                is Resource.Success -> {
+                    viewModel.getTipSettingRepo.value = null
+                    val tip = it.value.data
+                    tipMessage = tip?.tipMessage ?: ""
+                    tipChatEnabled = tip?.showInLiveChat ?: true
+                    runOnUiThread {
+                        tipSettingsSheetBind?.let { b ->
+                            b.tipMessage.setText(tipMessage)
+                            b.showLiveChat.isChecked = tipChatEnabled == true
+                        }
+                    }
+                }
+
+                is Resource.Error -> {
+                    // Don't surface an error popup for a missing setting — leave
+                    // the fields as they are (blank). C1 blank-popup guard.
+                    viewModel.getTipSettingRepo.value = null
+                }
+
+                else -> {}
             }
         }
 
@@ -1747,9 +1779,17 @@ class AgoraPublisherActivity : BaseActivity() {
             )
 
         val sheet = Alerts.appBottomSheet(this, true, tipSettingsSheetBind)
+        // M1 (2026-05-28): expose the open sheet to the get-tip-setting observer
+        // so the fetched values prefill the fields, then fetch on open.
+        this.tipSettingsSheetBind = tipSettingsSheetBind
+        sheet.setOnDismissListener { this.tipSettingsSheetBind = null }
         tipSettingsSheetBind.close.setHapticClickListener { sheet.dismiss() }
         tipSettingsSheetBind.showLiveChat.isChecked = tipChatEnabled == true
         tipSettingsSheetBind.tipMessage.setText(tipMessage)
+        // GET api/get-tip-setting?schedule_show_id=<id>. viewModel.showId is the
+        // schedule_shows.id for this live show (same id the socket save keys on).
+        viewModel.getTipSetting(viewModel.showId.takeIf { it.isNotBlank() }
+            ?: liveShowData?.showId?.toString())
 
         tipSettingsSheetBind.save.setHapticClickListener {
 

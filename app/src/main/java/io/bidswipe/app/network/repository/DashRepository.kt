@@ -147,6 +147,11 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
         type: RequestBody?,
     ) = call { api.getAllTips(type) }
 
+    // M1 (2026-05-28): fetch saved per-show tip settings for prefill-on-open.
+    suspend fun getTipSetting(
+        scheduleShowId: String?,
+    ) = call { api.getTipSetting(scheduleShowId) }
+
     /*	suspend fun getUserProducts(
             userId: RequestBody?,
             categoryId: RequestBody?,
