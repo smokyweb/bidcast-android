@@ -12,6 +12,22 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
+    <!-- Basecamp #9934001770 (2026-05-29): PiP overlay for the second
+         broadcaster's remote video. Shown/hidden by AgoraPublisherActivity
+         via onUserJoined / onUserOffline callbacks. Positioned bottom-end so
+         it does not overlap the top profile bar. -->
+    <FrameLayout
+        android:id="@+id/remoteVideoView"
+        android:layout_width="120dp"
+        android:layout_height="160dp"
+        android:layout_marginTop="80dp"
+        android:layout_marginEnd="12dp"
+        android:background="#44000000"
+        android:elevation="8dp"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/controls_view"
         android:layout_width="match_parent"
