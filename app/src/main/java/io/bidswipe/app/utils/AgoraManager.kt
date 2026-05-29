@@ -108,6 +108,25 @@ class AgoraManager(
         mRtcEngine?.setupLocalVideo(videoCanvas)
     }
 
+    // Basecamp #9934001770 (2026-05-29): Render a remote broadcaster's video
+    // feed into the given container. Called from AgoraPublisherActivity's
+    // onUserJoin callback so both the host and co-host see each other's feed
+    // in the PiP overlay (remoteVideoView).
+    fun setupRemoteVideo(uid: Int, container: FrameLayout) {
+        val surfaceView = SurfaceView(mCtx)
+        container.removeAllViews()
+        container.addView(surfaceView)
+        val videoCanvas = VideoCanvas(surfaceView, VideoCanvas.RENDER_MODE_HIDDEN, uid)
+        mRtcEngine?.setupRemoteVideo(videoCanvas)
+    }
+
+    // Clear the remote video rendering when a remote user leaves.
+    fun clearRemoteVideo(uid: Int, container: FrameLayout) {
+        val videoCanvas = VideoCanvas(null, VideoCanvas.RENDER_MODE_HIDDEN, uid)
+        mRtcEngine?.setupRemoteVideo(videoCanvas)
+        container.removeAllViews()
+    }
+
     fun joinChannel(token: String, channelName: String) {
         val options = ChannelMediaOptions().also {
             it.channelProfile = Constants.CHANNEL_PROFILE_LIVE_BROADCASTING

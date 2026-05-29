@@ -182,6 +182,11 @@ class AgoraPublisherActivity : BaseActivity() {
     //   4. Viewer layout: render both camera feeds side by side in the remote
     //      video view (use SurfaceView per remote uid).
     private var isCoHost = false
+    // Basecamp #9934001770 (2026-05-29): pairing record ID received from the
+    // claim response; used to revoke the pairing when the co-host leaves.
+    private var coHostPairingIdFromIntent: Int? = null
+    // UID of the remote broadcaster currently rendering in remoteVideoView.
+    private var remotePublisherUid: Int = -1
     private var breakSpotAuctionData: AuctionStartedBreakSpotResponse? = null
     private var isFreebieLive = false
     private var zoomLevel = 1.0f
@@ -259,7 +264,7 @@ class AgoraPublisherActivity : BaseActivity() {
             .ifEmpty { intent.getStringExtra("show_id") ?: "" }
 
         // Basecamp #9934001770: co-host mode — second device joined via
-        // CoHostJoinActivity which passes co_host=true + show_id.
+        // CoHostJoinActivity which passes co_host=true + show_id + host_user_id.
         isCoHost = intent.getBooleanExtra("co_host", false)
         if (isCoHost) {
             // Identify as co-host in the UI
@@ -267,6 +272,9 @@ class AgoraPublisherActivity : BaseActivity() {
             // show_id was passed directly in the intent from CoHostJoinActivity
             val intentShowId = intent.getStringExtra("show_id") ?: ""
             if (intentShowId.isNotEmpty()) showId = intentShowId
+            // Store the pairing record ID so we can revoke it on leave (best-effort).
+            val pId = intent.getIntExtra("pairing_id", 0)
+            if (pId != 0) coHostPairingIdFromIntent = pId
         }
 
         viewModel.showId = showId
@@ -277,7 +285,18 @@ class AgoraPublisherActivity : BaseActivity() {
 
 //		val userId = intent.getStringExtra("userId") ?: ""
 
-        roomID = "live_room_${userId}_${showId}"
+        // Basecamp #9934001770: co-host must join the HOST's channel, not its
+        // own. The channel name is "live_room_{host_user_id}_{show_id}". The
+        // host_user_id is passed from CoHostJoinActivity (extracted from the
+        // claim API response). Falls back to own userId to avoid a crash but
+        // that would be the wrong channel — device QA must verify the channel
+        // name matches the host's.
+        roomID = if (isCoHost) {
+            val hostUid = intent.getStringExtra("host_user_id")?.takeIf { it.isNotEmpty() } ?: userId
+            "live_room_${hostUid}_${showId}"
+        } else {
+            "live_room_${userId}_${showId}"
+        }
 
         viewModel.currentRoomId = roomID
         viewModel.categoryId = liveShowData?.categoryId ?: ""
@@ -286,6 +305,26 @@ class AgoraPublisherActivity : BaseActivity() {
         bind.hostImage.loadUrl(this, userImage)
 
         App.manager = AgoraManager(this, Const.APP_ID_AGORA)
+
+        // Basecamp #9934001770 (2026-05-29): wire remote-video callbacks so
+        // both the host and co-host devices render the other broadcaster's
+        // camera feed in the PiP overlay (remoteVideoView).
+        App.manager.onUserJoin = { uid, _ ->
+            runOnUiThread {
+                remotePublisherUid = uid
+                App.manager.setupRemoteVideo(uid, bind.remoteVideoView)
+                bind.remoteVideoView.isVisible = true
+            }
+        }
+        App.manager.onUserLeave = { uid, _ ->
+            runOnUiThread {
+                if (uid == remotePublisherUid) {
+                    App.manager.clearRemoteVideo(uid, bind.remoteVideoView)
+                    bind.remoteVideoView.isVisible = false
+                    remotePublisherUid = -1
+                }
+            }
+        }
 
         bind.loader.isVisible = true
 
@@ -496,8 +535,11 @@ class AgoraPublisherActivity : BaseActivity() {
         }
 
         bind.cutButton.setHapticClickListener {
-
-            if (isShowLive) {
+            // Basecamp #9934001770 (2026-05-29): co-host has its own leave
+            // flow — leave the Agora channel and best-effort revoke the pairing.
+            if (isCoHost) {
+                leaveAsCoHost()
+            } else if (isShowLive) {
                 endShowSheet()
             } else {
                 App.manager.destroyEngine()
@@ -648,6 +690,13 @@ class AgoraPublisherActivity : BaseActivity() {
                         if (it) {
                             App.manager.initializeAgoraSDK(Constants.CLIENT_ROLE_BROADCASTER)
                             App.manager.setupPublisherView(bind.publisherView)
+                            // Basecamp #9934001770 (2026-05-29): co-host auto-joins
+                            // the channel as a second BROADCASTER immediately after
+                            // permissions are granted and the local camera preview
+                            // starts. The host device waits for the Start button.
+                            if (isCoHost) {
+                                App.manager.joinChannel(agoraToken, channelName)
+                            }
                         } else {
                             errorToast("Permissions not granted!")
                         }
@@ -2708,6 +2757,31 @@ class AgoraPublisherActivity : BaseActivity() {
                 }
             }
         }
+    }
+
+    // Basecamp #9934001770 (2026-05-29): co-host leave — destroys the Agora
+    // engine (which leaves the channel) and best-effort DELETEs the pairing
+    // record so the host's dialog reflects "no active co-host".
+    private fun leaveAsCoHost() {
+        val id = coHostPairingIdFromIntent
+        if (id != null) {
+            Thread {
+                try {
+                    val token = io.bidswipe.app.utils.Prefs(this@AgoraPublisherActivity).token()
+                    val url = java.net.URL("${io.bidswipe.app.utils.Const.BASE_URL}/api/product/co-host/$id")
+                    val conn = url.openConnection() as java.net.HttpURLConnection
+                    conn.requestMethod = "DELETE"
+                    conn.connectTimeout = 5_000
+                    conn.readTimeout = 5_000
+                    conn.setRequestProperty("Accept", "application/json")
+                    conn.setRequestProperty("Authorization", "Bearer $token")
+                    conn.responseCode
+                    conn.disconnect()
+                } catch (_: Exception) {}
+            }.start()
+        }
+        App.manager.destroyEngine()
+        finishAfterTransition()
     }
 
     // Basecamp #9934001770 (2026-05-27): co-host pairing dialog for the host.

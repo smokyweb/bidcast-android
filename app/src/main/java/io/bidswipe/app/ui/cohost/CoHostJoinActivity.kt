@@ -82,11 +82,23 @@ class CoHostJoinActivity : AppCompatActivity() {
                     val status = json.optString("status")
                     if (status == "success") {
                         showStatus("Paired! Opening show…", Color.parseColor("#16A34A"))
-                        val show = json.optJSONObject("data")?.optJSONObject("show")
+                        // Basecamp #9934001770 (2026-05-29): extract show and
+                        // pairing data so the co-host device can build the
+                        // correct Agora channel name (live_room_{host_uid}_{show_id})
+                        // and revoke the pairing on leave.
+                        val data = json.optJSONObject("data")
+                        val show = data?.optJSONObject("show")
                         val showId = show?.optInt("id") ?: 0
+                        // show.user_id = the primary host's user ID — required to
+                        // build the Agora channel name matching the host's channel.
+                        val hostUserId = show?.optString("user_id")
+                            ?: show?.optInt("user_id")?.takeIf { it != 0 }?.toString() ?: ""
+                        val pairingId = data?.optInt("id") ?: 0
                         val intent = Intent(this@CoHostJoinActivity, AgoraPublisherActivity::class.java)
                         intent.putExtra("show_id", showId.toString())
                         intent.putExtra("co_host", true)
+                        intent.putExtra("host_user_id", hostUserId)
+                        intent.putExtra("pairing_id", pairingId)
                         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                         startActivity(intent)
                         finish()
