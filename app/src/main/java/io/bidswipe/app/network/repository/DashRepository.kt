@@ -857,4 +857,7 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
 
     suspend fun getHighestPreBid(productId: Int) = call { api.getHighestPreBid(productId) }
 
+    // Basecamp #9943368953 (2026-05-29): live-show chat history via REST
+    suspend fun getChatHistory(roomId: String) = call { api.getChatHistory(roomId) }
+
 }

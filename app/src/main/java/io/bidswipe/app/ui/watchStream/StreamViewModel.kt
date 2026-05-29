@@ -219,4 +219,17 @@ class StreamViewModel @Inject constructor(
 		}
 		_getHighestPreBidResponse.value = repo.getHighestPreBid(productId)
 	}
+
+	// Basecamp #9943368953 (2026-05-29): live-show chat history via REST
+	private var _chatHistoryResponse = MutableLiveData<Resource<io.bidswipe.app.network.response.ChatHistoryResponse>>()
+	val chatHistoryRepo: MutableLiveData<Resource<io.bidswipe.app.network.response.ChatHistoryResponse>>
+		get() = _chatHistoryResponse
+
+	fun getChatHistory(roomId: String) = viewModelScope.launch {
+		if (!networkMonitor.hasInternet()) {
+			_chatHistoryResponse.value = NO_INTERNET_ERROR
+			return@launch
+		}
+		_chatHistoryResponse.value = repo.getChatHistory(roomId)
+	}
 }

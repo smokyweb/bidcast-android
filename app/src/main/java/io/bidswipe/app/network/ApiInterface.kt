@@ -9,6 +9,7 @@ import io.bidswipe.app.network.response.ExploreSearchResponse
 import io.bidswipe.app.network.response.AboutUsResponse
 import io.bidswipe.app.network.response.BlockedUnblockedResponse
 import io.bidswipe.app.network.response.CheckKycResponse
+import io.bidswipe.app.network.response.ChatHistoryResponse
 import io.bidswipe.app.network.response.CheckScheduleShowResponse
 import io.bidswipe.app.network.response.CommonResponse
 import io.bidswipe.app.network.response.CreateBidResponse
@@ -1163,5 +1164,12 @@ interface ApiInterface {
     suspend fun getHighestPreBid(
         @Path("productId") productId: Int
     ): PreBidHighestResponse
+
+    // GET /api/live_chat/{room_id}  — persisted live-show chat history
+    // (Basecamp #9943368953, 2026-05-29 — verified live REST endpoint)
+    @GET("api/live_chat/{room_id}")
+    suspend fun getChatHistory(
+        @Path("room_id") roomId: String
+    ): ChatHistoryResponse
 }
 

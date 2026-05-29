@@ -330,32 +330,13 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
             socketManager?.joinRoom(roomID, userId) {
             }
 
-            // Basecamp #9943368953 (2026-05-29): load persisted chat history on join.
-            // Emits get_chat_history to the server which responds with chat_history
-            // (array of recent messages). Robin must add the server-side handler for
-            // this socket event (see SocketManager.requestChatHistory for the contract).
-            socketManager?.requestChatHistory(roomID)
-            socketManager?.onChatHistory { messages ->
-                runSafe {
-                    requireActivity().runOnUiThread {
-                        for (i in 0 until messages.length()) {
-                            val msg = messages.optJSONObject(i) ?: continue
-                            val chatMsg = io.bidswipe.app.model.LiveChatModel(
-                                msg.optString("user_image"),
-                                msg.optString("user_name"),
-                                msg.optString("user_id"),
-                                msg.optString("message")
-                            )
-                            if (commentList.none { it?.userId == chatMsg.userId && it?.message == chatMsg.message }) {
-                                commentList.add(chatMsg)
-                            }
-                        }
-                        if (commentList.isNotEmpty()) {
-                            commentAdapter.notifyDataSetChanged()
-                            bind.recycler.scrollToPosition(commentList.size - 1)
-                        }
-                    }
-                }
+            // Basecamp #9943368953 (2026-05-29): load persisted chat history on join
+            // via the EXISTING REST endpoint GET /api/live_chat/{room_id}
+            // (ApiController::chatHistory). Verified live by Robin — no socket event
+            // exists for history. Results are merged into commentList in the
+            // chatHistoryRepo observer (see setupObservers).
+            if (roomID.isNotEmpty()) {
+                viewModel.getChatHistory(roomID)
             }
 
             socketManager?.onViewerCount { args ->
@@ -855,6 +836,39 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
         if (liveShowData?.isVerifiedOnly == true &&
             App.profileResponse.value?.buyerIdentityStatus != "verified") {
             verificationDialog()
+        }
+
+        // Basecamp #9943368953 (2026-05-29): persisted live-show chat history
+        // from GET /api/live_chat/{room_id}. Merged into commentList (dedup by
+        // userId+message so socket-delivered messages aren't doubled), then the
+        // adapter is refreshed and scrolled to the latest.
+        viewModel.chatHistoryRepo.observe(viewLifecycleOwner) {
+            when (it) {
+                is Resource.Success -> {
+                    val chats = it.value.chats ?: emptyList()
+                    var added = false
+                    for (c in chats) {
+                        val chatMsg = LiveChatModel(
+                            c.userImage,
+                            c.userName,
+                            c.userId,
+                            c.message
+                        )
+                        if (commentList.none { existing -> existing?.userId == chatMsg.userId && existing?.message == chatMsg.message }) {
+                            commentList.add(chatMsg)
+                            added = true
+                        }
+                    }
+                    if (added) {
+                        commentAdapter.notifyDataSetChanged()
+                        if (commentList.isNotEmpty()) {
+                            bind.recycler.scrollToPosition(commentList.size - 1)
+                        }
+                    }
+                }
+
+                else -> {}
+            }
         }
 
         viewModel.getSellerInfoRepo.observe(viewLifecycleOwner) {
