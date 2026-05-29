@@ -79,7 +79,14 @@ data class FetchOrderDetailResponse(
             @SerializedName("total")
             val total: Any?,
             @SerializedName("discount")
-            val discount: Any?
+            val discount: Any?,
+            // Cancel-request flow (2026-05-29): new fields from backend.
+            @SerializedName("cancellation_status")
+            val cancellationStatus: String?,
+            @SerializedName("cancellation_reason")
+            val cancellationReason: String?,
+            @SerializedName("cancellation_reject_reason")
+            val cancellationRejectReason: String?
         ) {
             @Keep
             data class Product(

@@ -52,9 +52,13 @@ class OrderDetailsFragment : BaseFragment<ProductViewModel, FragmentOrderDetails
 
     private var orderId: String? = null
     private var primaryOrderId: String? = null
-    // Basecamp #9934033253 (2026-05-27): track current order status so the
-    // cancel menu only acts when the order is in a cancellable state.
+    // Track current order status (cancellable states: pending, processing).
     private var currentOrderStatus: String? = null
+    // Cancel-request flow (2026-05-29): track cancellation state for UI.
+    private var currentCancellationStatus: String? = null
+    private var currentCancellationRejectReason: String? = null
+    // PopupMenu reference so we can hide/show the request-cancellation item.
+    private var orderPopupMenu: androidx.appcompat.widget.PopupMenu? = null
     private var order: String? = null
     private var sellerId: String? = null
     private var productId: String? = null
@@ -125,21 +129,17 @@ class OrderDetailsFragment : BaseFragment<ProductViewModel, FragmentOrderDetails
             findNavController().navigate(ids.orderDetailToVideoReceiptPlayerFragment, bundleOf("videoUrl" to videoUrl))
         }
 
-        val menu = PopupMenu(mCtx, bind.header.findViewById<AppCompatImageView>(R.id.primaryIcon))
+        orderPopupMenu = PopupMenu(mCtx, bind.header.findViewById<AppCompatImageView>(R.id.primaryIcon))
+        orderPopupMenu!!.menuInflater.inflate(R.menu.order_menu, orderPopupMenu!!.menu)
 
-        menu.menuInflater.inflate(R.menu.order_menu, menu.menu)
-
-        menu.setOnMenuItemClickListener {
+        orderPopupMenu!!.setOnMenuItemClickListener {
             when (it.itemId) {
                 ids.cancel -> {
-                    // Basecamp #9934033253 (2026-05-27): buyer cancel-order.
                     handleCancelOrderTap()
                 }
 
                 ids.raiseTicket -> {
-
                     findNavController().navigate(ids.orderDetailToRaiseTicketFragment, bundleOf("orderId" to primaryOrderId))
-
                 }
 
             }
@@ -147,7 +147,7 @@ class OrderDetailsFragment : BaseFragment<ProductViewModel, FragmentOrderDetails
         }
 
         bind.header.onMorePrimaryClick {
-            menu.show()
+            orderPopupMenu?.show()
         }
 
         bind.loader.isVisible = true
@@ -247,6 +247,9 @@ class OrderDetailsFragment : BaseFragment<ProductViewModel, FragmentOrderDetails
 
                     primaryOrderId = mData?.order?.id.toString()
                     currentOrderStatus = mData?.order?.status
+                    currentCancellationStatus = mData?.order?.cancellationStatus
+                    currentCancellationRejectReason = mData?.order?.cancellationRejectReason
+                    updateCancellationBanner()
 
                     // Cost breakdown: sub_total, shipping_charges, tax_amount, total
                     val subTotal = (mData?.order?.subTotal as? Number)?.toDouble()
@@ -285,9 +288,46 @@ class OrderDetailsFragment : BaseFragment<ProductViewModel, FragmentOrderDetails
 
     }
 
-    // Basecamp #9934033253 (2026-05-27): buyer cancel-order. Allowed only when
-    // order.status ∈ {pending, processing}. Confirms with the user, POSTs to
-    // /api/product/cancel-order, refreshes the screen on success.
+    // Cancel-request flow (2026-05-29): update cancellation banner and menu item visibility.
+    private fun updateCancellationBanner() {
+        when (currentCancellationStatus) {
+            "requested" -> {
+                bind.cancellationBannerContainer.isVisible = true
+                bind.cancellationBannerText.text = "Cancellation requested \u2014 awaiting seller approval"
+                bind.cancellationBannerReason.isVisible = false
+                // Hide the "Request Cancellation" menu item — already pending
+                orderPopupMenu?.menu?.findItem(ids.cancel)?.isVisible = false
+            }
+            "rejected" -> {
+                bind.cancellationBannerContainer.isVisible = true
+                bind.cancellationBannerText.text = "Your cancellation request was declined"
+                val reason = currentCancellationRejectReason?.takeIf { it.isNotBlank() }
+                if (reason != null) {
+                    bind.cancellationBannerReason.isVisible = true
+                    bind.cancellationBannerReason.text = "Reason: $reason"
+                } else {
+                    bind.cancellationBannerReason.isVisible = false
+                }
+                // Allow re-request — show the menu item
+                orderPopupMenu?.menu?.findItem(ids.cancel)?.isVisible = true
+            }
+            "approved" -> {
+                bind.cancellationBannerContainer.isVisible = true
+                bind.cancellationBannerText.text = "Order cancelled"
+                bind.cancellationBannerReason.isVisible = false
+                orderPopupMenu?.menu?.findItem(ids.cancel)?.isVisible = false
+            }
+            else -> {
+                bind.cancellationBannerContainer.isVisible = false
+                // Show menu item only when order is cancellable
+                val statusLower = (currentOrderStatus ?: "").lowercase()
+                val cancellable = statusLower == "pending" || statusLower == "processing"
+                orderPopupMenu?.menu?.findItem(ids.cancel)?.isVisible = cancellable
+            }
+        }
+    }
+
+    // Buyer taps "Request Cancellation" from the overflow menu.
     private fun handleCancelOrderTap() {
         val orderId = primaryOrderId?.toIntOrNull()
         if (orderId == null || orderId <= 0) {
@@ -300,24 +340,24 @@ class OrderDetailsFragment : BaseFragment<ProductViewModel, FragmentOrderDetails
             return
         }
         androidx.appcompat.app.AlertDialog.Builder(requireContext())
-            .setTitle("Cancel this order?")
-            .setMessage("You can't undo this. The seller will be notified.")
+            .setTitle("Request to cancel this order?")
+            .setMessage("The seller will need to approve it. You cannot undo this request.")
             .setNegativeButton("Keep order") { d, _ -> d.dismiss() }
-            .setPositiveButton("Cancel order") { d, _ ->
+            .setPositiveButton("Request cancellation") { d, _ ->
                 d.dismiss()
-                postCancelOrder(orderId)
+                postRequestCancellation(orderId)
             }
             .show()
     }
 
-    private fun postCancelOrder(orderId: Int) {
+    private fun postRequestCancellation(orderId: Int) {
         bind.loader.isVisible = true
         viewLifecycleOwner.lifecycleScope.launch {
             val code: Int = withContext(Dispatchers.IO) {
                 try {
                     val token = io.bidswipe.app.utils.Prefs(mCtx).token()
                     val body = org.json.JSONObject().apply { put("order_id", orderId) }.toString()
-                    val url = java.net.URL("${io.bidswipe.app.utils.Const.BASE_URL}/api/product/cancel-order")
+                    val url = java.net.URL("${io.bidswipe.app.utils.Const.BASE_URL}/api/product/request-cancellation")
                     val conn = url.openConnection() as java.net.HttpURLConnection
                     conn.requestMethod = "POST"
                     conn.setRequestProperty("Content-Type", "application/json")
@@ -336,14 +376,18 @@ class OrderDetailsFragment : BaseFragment<ProductViewModel, FragmentOrderDetails
             bind.loader.isVisible = false
             when (code) {
                 200, 201 -> {
-                    Alerts.success(mCtx, "Order cancelled.")
+                    android.widget.Toast.makeText(
+                        mCtx,
+                        "Cancellation requested. The seller has been notified.",
+                        android.widget.Toast.LENGTH_LONG
+                    ).show()
                     viewModel.fetchOrderDetail(productId, orderId.toString(), type)
                 }
-                403 -> Alerts.error(mCtx, "You are not authorized to cancel this order.")
+                403 -> Alerts.error(mCtx, "You are not authorized to request cancellation on this order.")
                 404 -> Alerts.error(mCtx, "Order not found.")
-                409 -> Alerts.error(mCtx, "Order can no longer be cancelled.")
-                -1 -> Alerts.error(mCtx, "Network error.")
-                else -> Alerts.error(mCtx, "Could not cancel order (code $code).")
+                409 -> Alerts.error(mCtx, "This order can no longer be cancelled.")
+                -1 -> Alerts.error(mCtx, "Network error. Please try again.")
+                else -> Alerts.error(mCtx, "Could not request cancellation (code $code).")
             }
         }
     }

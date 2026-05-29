@@ -11,6 +11,7 @@ import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.core.view.get
 import androidx.core.view.isVisible
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -25,12 +26,17 @@ import io.bidswipe.app.network.response.GetOrdersResponse
 import io.bidswipe.app.ui.custom.AlertType
 import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.ui.sellerProfile.SellerProfileActivity
+import io.bidswipe.app.utils.Const
+import io.bidswipe.app.utils.Prefs
 import io.bidswipe.app.utils.Utils
 import io.bidswipe.app.utils.finish
 import io.bidswipe.app.utils.ids
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request
 import io.bidswipe.app.utils.runSafe
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class MyOrdersFragment : BaseFragment<SellerHubViewModel, FragmentMyOrdersBinding>() {
 	override fun getModel(): Class<SellerHubViewModel> = SellerHubViewModel::class.java
@@ -78,7 +84,9 @@ class MyOrdersFragment : BaseFragment<SellerHubViewModel, FragmentMyOrdersBindin
 		val initialStatus = arguments?.getString("initialStatus")
 		setUpChips(initialStatus)
 
-		adapter = OrdersAdapter(orderList, mClick)
+		adapter = OrdersAdapter(orderList, mClick) { orderId, decision ->
+			postCancellationDecision(orderId, decision)
+		}
 
 		bind.recycler.adapter = adapter
 
@@ -212,6 +220,48 @@ class MyOrdersFragment : BaseFragment<SellerHubViewModel, FragmentMyOrdersBindin
 			}
 		}
 
+	}
+
+	// Cancel-request flow (2026-05-29): seller approve/reject a cancellation request.
+	private fun postCancellationDecision(orderId: Int, decision: String) {
+		viewLifecycleOwner.lifecycleScope.launch {
+			val code: Int = withContext(Dispatchers.IO) {
+				try {
+					val token = Prefs(mCtx).token()
+					val body = org.json.JSONObject().apply {
+						put("order_id", orderId)
+						put("decision", decision)
+					}.toString()
+					val url = java.net.URL("${Const.BASE_URL}/api/product/decide-cancellation")
+					val conn = url.openConnection() as java.net.HttpURLConnection
+					conn.requestMethod = "POST"
+					conn.setRequestProperty("Content-Type", "application/json")
+					conn.setRequestProperty("Accept", "application/json")
+					conn.setRequestProperty("Authorization", "Bearer $token")
+					conn.doOutput = true
+					conn.outputStream.use { it.write(body.toByteArray()) }
+					val rc = conn.responseCode
+					conn.disconnect()
+					rc
+				} catch (e: Exception) {
+					e.printStackTrace()
+					-1
+				}
+			}
+			when (code) {
+				200, 201 -> {
+					val msg = if (decision == "approve") "Order cancelled and buyer notified."
+							  else "Cancellation request declined."
+					android.widget.Toast.makeText(mCtx, msg, android.widget.Toast.LENGTH_SHORT).show()
+					// Refresh the list
+					page = 1
+					viewModel.getOrderListing(page.toString().request(), status.request())
+				}
+				else -> {
+					android.widget.Toast.makeText(mCtx, "Action failed (code $code)", android.widget.Toast.LENGTH_SHORT).show()
+				}
+			}
+		}
 	}
 
 	private fun setUpChips(initialStatus: String? = null) {

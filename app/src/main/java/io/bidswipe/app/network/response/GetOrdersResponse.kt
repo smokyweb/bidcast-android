@@ -94,6 +94,13 @@ data class GetOrdersResponse(
         val statusLabel: String?,
         @SerializedName("status_bucket")
         val statusBucket: String?,
+        // Cancel-request flow (2026-05-29).
+        @SerializedName("cancellation_status")
+        val cancellationStatus: String?,
+        @SerializedName("cancellation_reason")
+        val cancellationReason: String?,
+        @SerializedName("cancellation_reject_reason")
+        val cancellationRejectReason: String?,
         @SerializedName("transaction")
         val transaction: List<Transaction?>?,
         @SerializedName("user")

@@ -19,7 +19,11 @@ import io.bidswipe.app.utils.loadUrl
 import io.bidswipe.app.utils.setHapticClickListener
 
 class OrdersAdapter(
-    mList: MutableList<GetOrdersResponse.Data?>, val mClicks: RecyclerClicks,
+    mList: MutableList<GetOrdersResponse.Data?>,
+    val mClicks: RecyclerClicks,
+    // Cancel-request flow (2026-05-29): seller approve/reject callback.
+    // orderId = order.id (Int), decision = "approve" | "reject".
+    val onCancellationDecision: (orderId: Int, decision: String) -> Unit = { _, _ -> },
 ) : BaseAdapter<GetOrdersResponse.Data?, MyOrdersItemBinding>(mList) {
 
     override fun bindView(inflater: LayoutInflater, parent: ViewGroup) =
@@ -97,6 +101,27 @@ class OrdersAdapter(
             bind.productName.text = if (item?.productId != null) item.product?.title?.asCapital() else item?.productSet?.name + " #${item?.productSetItemUnitId}"
 
             bind.buyerName.text = item?.user?.name?.asCapital()
+
+            // Cancel-request flow (2026-05-29): show/bind cancellation action block.
+            val cancellationStatus = item?.cancellationStatus
+            if (cancellationStatus == "requested") {
+                bind.cancellationRequestContainer.isVisible = true
+                val reasonText = item?.cancellationReason?.takeIf { it.isNotBlank() }
+                bind.cancellationRequestText.text = if (reasonText != null)
+                    "Cancellation requested by buyer: $reasonText"
+                else
+                    "Cancellation requested by buyer"
+
+                val orderId = item?.id
+                bind.btnApproveCancellation.setHapticClickListener {
+                    if (orderId != null) onCancellationDecision(orderId, "approve")
+                }
+                bind.btnDeclineCancellation.setHapticClickListener {
+                    if (orderId != null) onCancellationDecision(orderId, "reject")
+                }
+            } else {
+                bind.cancellationRequestContainer.isVisible = false
+            }
 
         }
     }

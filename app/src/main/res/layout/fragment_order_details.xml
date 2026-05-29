@@ -28,6 +28,39 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
+            <!-- Cancellation status banner (2026-05-29) -->
+            <LinearLayout
+                android:id="@+id/cancellationBannerContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/margin"
+                android:layout_marginTop="@dimen/half_margin"
+                android:background="@drawable/card_16"
+                android:backgroundTint="@color/errorContainer"
+                android:orientation="vertical"
+                android:padding="@dimen/margin"
+                android:visibility="gone">
+
+                <TextView
+                    android:id="@+id/cancellationBannerText"
+                    style="@style/TitleMedium"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/error"
+                    android:text="Cancellation requested — awaiting seller approval" />
+
+                <TextView
+                    android:id="@+id/cancellationBannerReason"
+                    style="@style/BodySmall"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:textColor="@color/error"
+                    android:visibility="gone"
+                    android:text="" />
+
+            </LinearLayout>
+
             <LinearLayout
                 style="@style/shadowStyle"
                 android:layout_width="match_parent"
