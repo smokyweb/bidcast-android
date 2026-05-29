@@ -114,6 +114,42 @@
         android:orientation="horizontal"
         tools:listitem="@layout/home_category_tile" />
 
+    <!-- Basecamp #9933973683 return (2026-05-29): Flash Sales section.
+         Shown above the Live/Popular tabs when active flash-sale products exist.
+         Hidden (gone) until getFlashSaleProducts() returns at least one item. -->
+    <LinearLayout
+        android:id="@+id/flashSalesSection"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/categoryRecycler">
+
+        <TextView
+            android:id="@+id/flashSalesHeader"
+            style="@style/TitleMedium"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/margin"
+            android:layout_marginTop="@dimen/half_margin"
+            android:text="&#x26A1; Flash Sales" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/flashSalesRecycler"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clipToPadding="false"
+            android:orientation="horizontal"
+            android:paddingHorizontal="@dimen/margin"
+            android:paddingVertical="4dp"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            tools:itemCount="4"
+            tools:listitem="@layout/item_flash_sale_card" />
+
+    </LinearLayout>
+
     <LinearLayout
         android:id="@+id/heading"
         android:layout_width="match_parent"
@@ -124,7 +160,7 @@
         android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/categoryRecycler">
+        app:layout_constraintTop_toBottomOf="@id/flashSalesSection">
 
         <TextView
             android:id="@+id/live"

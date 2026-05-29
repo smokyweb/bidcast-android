@@ -20,6 +20,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import io.bidswipe.app.App
 import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseFragment
+import io.bidswipe.app.controller.FlashSaleAdapter
 import io.bidswipe.app.controller.HomeAdapter
 import io.bidswipe.app.controller.HomeCategoryAdapter
 import io.bidswipe.app.controller.SearchResultItem
@@ -30,6 +31,7 @@ import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.model.StreamModel
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.network.response.GetMyShowResponse
+import io.bidswipe.app.network.response.Product
 import io.bidswipe.app.network.response.SearchProduct
 import io.bidswipe.app.network.response.SearchUser
 import io.bidswipe.app.ui.custom.AppBottomSheet
@@ -60,6 +62,9 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
 
     private lateinit var homeAdapter: HomeAdapter
     private lateinit var categoryAdapter: HomeCategoryAdapter
+    // Basecamp #9933973683 return (2026-05-29): Flash Sales section adapter.
+    private lateinit var flashSaleAdapter: FlashSaleAdapter
+    private val flashSaleItems = mutableListOf<Product?>()
 
     // Basecamp #9929090875 (Trey 2026-05-26 / fix 2026-05-27): unified search
     // (users + products) results render in a dedicated RecyclerView on the home
@@ -348,6 +353,38 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
             )
         }
 
+        // Basecamp #9933973683 return (2026-05-29): Flash Sales section.
+        // Horizontal RecyclerView above the Live/Popular/Upcoming tabs.
+        flashSaleAdapter = FlashSaleAdapter(flashSaleItems) { product ->
+            startActivity(
+                android.content.Intent(mCtx, io.bidswipe.app.ui.product.ProductDetailsActivity::class.java)
+                    .putExtra("productId", product.id?.toString())
+            )
+        }
+        bind.flashSalesRecycler.layoutManager =
+            androidx.recyclerview.widget.LinearLayoutManager(
+                mCtx, androidx.recyclerview.widget.LinearLayoutManager.HORIZONTAL, false
+            )
+        bind.flashSalesRecycler.adapter = flashSaleAdapter
+
+        viewModel.getFlashSaleProducts()
+
+        viewModel.flashSaleProductsRepo.observe(viewLifecycleOwner) { resource ->
+            when (resource) {
+                is Resource.Success -> {
+                    val products = resource.value.products.orEmpty()
+                    flashSaleItems.clear()
+                    flashSaleItems.addAll(products)
+                    flashSaleAdapter.notifyDataSetChanged()
+                    bind.flashSalesSection.isVisible = flashSaleItems.isNotEmpty()
+                }
+                else -> {
+                    // On error or empty: keep section hidden. Don’t surface an
+                    // error to the user — flash sales are supplementary content.
+                }
+            }
+        }
+
         bind.recycler.setOnScrollChangeListener { _, _, _, _, _ ->
             val layoutManager = bind.recycler.layoutManager as GridLayoutManager
             val lastItemPosition = layoutManager.findLastVisibleItemPosition()
@@ -432,6 +469,8 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
                     // while a search is active; results appear INLINE in its place.
                     bind.heading.isVisible = false
                     bind.swipeRefreshLayout.isVisible = false
+                    // #9933973683 return: also hide flash section during search
+                    bind.flashSalesSection.isVisible = false
 
                     page = 1
                     runSearchWithFilters(s.toString())
@@ -441,6 +480,8 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
                     bind.unifiedResultsRecycler.isVisible = false
                     bind.heading.isVisible = true
                     bind.swipeRefreshLayout.isVisible = true
+                    // Restore flash section if it has items
+                    bind.flashSalesSection.isVisible = flashSaleItems.isNotEmpty()
                     unifiedAdapter.submitList(emptyList())
                 }
             }

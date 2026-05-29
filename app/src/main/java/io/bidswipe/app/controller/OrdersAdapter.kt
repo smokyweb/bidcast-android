@@ -46,14 +46,28 @@ class OrdersAdapter(
             // ("Needs Processing", "Ready to Ship", "Shipped", "Out for
             // Delivery", "Completed", ...). Fall back to the legacy
             // raw-status formatting for old/cached responses missing it.
-            val statusLabel = item?.statusLabel?.takeIf { it.isNotBlank() }
-                ?: item?.status?.replace("_", " ")?.asCapital()
+            //
+            // Return #9934033253 (2026-05-29): when cancellation_status=approved,
+            // the order IS cancelled. Override any stale statusLabel/status so the
+            // row always shows "Cancelled" after seller approval — regardless of
+            // whether the server's order.status has already been updated by the
+            // time the list refresh fires.
+            val effectiveCancelled = item?.cancellationStatus?.lowercase() == "approved"
+            val statusLabel = if (effectiveCancelled) {
+                "Cancelled"
+            } else {
+                item?.statusLabel?.takeIf { it.isNotBlank() }
+                    ?: item?.status?.replace("_", " ")?.asCapital()
+            }
             bind.status.text = statusLabel
 
             // Color by the machine status_bucket when present; fall back to the
             // legacy raw-status mapping otherwise (backward-compatible).
-            when (item?.statusBucket?.lowercase() ?: item?.status?.lowercase()) {
-                "cancelled", "rejected" -> {
+            // Return #9934033253: approved-cancellation maps to the cancelled bucket.
+            val effectiveBucket = if (effectiveCancelled) "cancelled"
+            else item?.statusBucket?.lowercase() ?: item?.status?.lowercase()
+            when (effectiveBucket) {
+                "cancelled", "rejected", "approved" -> {
                     bind.statusCard.setCardBackgroundColor(ContextCompat.getColor(mCtx, clr.errorContainer))
                     bind.statusCard.strokeColor = ContextCompat.getColor(mCtx, clr.error)
                     bind.status.setTextColor(ContextCompat.getColor(mCtx, clr.error))
