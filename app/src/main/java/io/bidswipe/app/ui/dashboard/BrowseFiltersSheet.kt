@@ -93,6 +93,11 @@ class BrowseFiltersSheet(
     private data class SubcatItem(val id: Int, val categoryId: Int, val name: String)
     private val subcatCacheByCategory = mutableMapOf<Int, List<SubcatItem>>()
 
+    // Basecamp #9933301500 (2026-05-29 round 7): category-scoped tag-name cache,
+    // keyed by category id. Tags are per-category (show_tags pivot), so the tag
+    // dropdown only has meaning when exactly one category is selected.
+    private val tagCacheByCategory = mutableMapOf<Int, List<String>>()
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
@@ -119,8 +124,14 @@ class BrowseFiltersSheet(
         bind.chipFormatBuyNow.setOnClickListener     { draft = draft.copy(showFormat = "buy_it_now") }
 
         // ── 2. Tag ──────────────────────────────────────────────────────────
-        // Basecamp #9933301500 (2026-05-27 round 3): replaced free-text input
-        // with an exposed dropdown populated from GET /api/tags/suggest.
+        // Basecamp #9933301500 (2026-05-29 round 7): the tag dropdown must be
+        // SCOPED TO THE CURRENTLY SELECTED CATEGORY, matching the PWA + iOS.
+        // Tags live in the show_tags pivot per-category, so a global tag list
+        // (old /api/tags/suggest behavior) returned tags that don't apply to
+        // the chosen category and matched nothing. The dropdown is enabled only
+        // when exactly ONE category is selected; options come from
+        // GET /api/categories/{id}/tags. draft.tag holds the tag NAME (the
+        // backend matches name OR slug).
         bind.tagInput.setText(draft.tag ?: "")
         bind.tagInput.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, st: Int, c: Int, a: Int) {}
@@ -129,33 +140,8 @@ class BrowseFiltersSheet(
                 draft = draft.copy(tag = s?.toString()?.trim()?.ifEmpty { null })
             }
         })
-        // Fetch all tags to populate the dropdown.
-        kotlinx.coroutines.CoroutineScope(kotlinx.coroutines.Dispatchers.IO).launch {
-            try {
-                val url = java.net.URL("https://backend.bidcast.betaplanets.com/api/tags/suggest")
-                val conn = url.openConnection() as java.net.HttpURLConnection
-                conn.setRequestProperty("Accept", "application/json")
-                val body = conn.inputStream.bufferedReader().readText()
-                conn.disconnect()
-                // Response: { status, message, data: [ {id, name, slug, usage_count} ] }
-                val json = org.json.JSONObject(body)
-                val arr = json.optJSONArray("data") ?: org.json.JSONArray()
-                val tagNames = mutableListOf("Any tag")
-                for (i in 0 until arr.length()) {
-                    arr.optJSONObject(i)?.optString("name")?.takeIf { it.isNotBlank() }?.let { tagNames.add(it) }
-                }
-                withContext(kotlinx.coroutines.Dispatchers.Main) {
-                    val adapter = android.widget.ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, tagNames)
-                    (bind.tagInput as? com.google.android.material.textfield.MaterialAutoCompleteTextView)?.setAdapter(adapter)
-                    (bind.tagInput as? com.google.android.material.textfield.MaterialAutoCompleteTextView)?.setOnItemClickListener { parent, _, pos, _ ->
-                        val selected = parent.getItemAtPosition(pos) as? String ?: ""
-                        draft = draft.copy(tag = if (selected == "Any tag") null else selected)
-                    }
-                }
-            } catch (e: Exception) {
-                android.util.Log.w("BrowseFiltersSheet", "tag fetch failed: " + e.message)
-            }
-        }
+        // Load tags for whatever single category is pre-selected on open (if any).
+        refreshCategoryTags()
 
         // ── 3. Premier Shops toggle ─────────────────────────────────────────
         bind.switchPremierShop.isChecked = draft.premierShop
@@ -218,6 +204,9 @@ class BrowseFiltersSheet(
             }
             bind.subcategoryChipsGroup.removeAllViews()
             bind.subcategorySection.isVisible = false
+            // Basecamp #9933301500 (2026-05-29 round 7): categories were cleared,
+            // so the category-scoped tag dropdown must re-disable + clear too.
+            refreshCategoryTags()
         }
 
         // ── Apply button ──────────────────────────────────────────────────────
@@ -318,6 +307,86 @@ class BrowseFiltersSheet(
             draft = draft.copy(categoryIds = newCatIds)
         }
         loadSubcategoriesForSelected()
+        // Basecamp #9933301500 (2026-05-29 round 7): tags are scoped to the
+        // single selected category — reload (or clear) the tag dropdown whenever
+        // the category selection changes.
+        refreshCategoryTags()
+    }
+
+    /**
+     * Basecamp #9933301500 (2026-05-29 round 7): populate the tag dropdown with
+     * tags scoped to the SINGLE selected category via GET /api/categories/{id}/tags.
+     * Disables (and clears any stale selection) when 0 or >1 categories are
+     * selected, since tags are per-category and otherwise ambiguous.
+     */
+    private fun refreshCategoryTags() {
+        val auto = bind.tagInput as? com.google.android.material.textfield.MaterialAutoCompleteTextView
+        val catIds = draft.categoryIds
+        if (catIds.size != 1) {
+            // No single-category context → disable + clear.
+            auto?.setAdapter(android.widget.ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, listOf<String>()))
+            bind.tagInput.isEnabled = false
+            bind.tagInput.setText("")
+            if (!draft.tag.isNullOrBlank()) draft = draft.copy(tag = null)
+            return
+        }
+        bind.tagInput.isEnabled = true
+        val catId = catIds.first()
+        // Serve from cache when available.
+        tagCacheByCategory[catId]?.let { cached ->
+            applyTagDropdown(cached, catId)
+            return
+        }
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val token = Prefs(requireContext()).token()
+                val url = java.net.URL("${Const.BASE_URL}/api/categories/$catId/tags")
+                val conn = url.openConnection() as java.net.HttpURLConnection
+                conn.setRequestProperty("Accept", "application/json")
+                if (token.isNotBlank()) conn.setRequestProperty("Authorization", "Bearer $token")
+                val body = try {
+                    conn.inputStream.bufferedReader().readText()
+                } catch (e: Exception) {
+                    conn.errorStream?.bufferedReader()?.readText() ?: ""
+                }
+                conn.disconnect()
+                // Response: { status, message, data: { category, tags: [{id,name,slug,category_count}] } }
+                val json = org.json.JSONObject(body)
+                val data = json.optJSONObject("data")
+                val arr = data?.optJSONArray("tags") ?: org.json.JSONArray()
+                val tagNames = mutableListOf<String>()
+                for (i in 0 until arr.length()) {
+                    arr.optJSONObject(i)?.optString("name")?.takeIf { it.isNotBlank() }?.let { tagNames.add(it) }
+                }
+                withContext(Dispatchers.Main) {
+                    if (isAdded) {
+                        tagCacheByCategory[catId] = tagNames
+                        // Guard against the user changing selection mid-flight.
+                        if (draft.categoryIds.size == 1 && draft.categoryIds.first() == catId) {
+                            applyTagDropdown(tagNames, catId)
+                        }
+                    }
+                }
+            } catch (e: Exception) {
+                android.util.Log.w("BrowseFiltersSheet", "category tag fetch failed: ${e.message}")
+            }
+        }
+    }
+
+    /** Wire the tag-name list into the dropdown adapter + selection handler. */
+    private fun applyTagDropdown(tagNames: List<String>, catId: Int) {
+        val auto = bind.tagInput as? com.google.android.material.textfield.MaterialAutoCompleteTextView ?: return
+        val items = mutableListOf("Any tag").apply { addAll(tagNames) }
+        auto.setAdapter(android.widget.ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, items))
+        auto.setOnItemClickListener { parent, _, pos, _ ->
+            val selected = parent.getItemAtPosition(pos) as? String ?: ""
+            draft = draft.copy(tag = if (selected == "Any tag") null else selected)
+        }
+        // Drop a stale tag that no longer exists under this category.
+        if (!draft.tag.isNullOrBlank() && draft.tag !in tagNames) {
+            draft = draft.copy(tag = null)
+            bind.tagInput.setText("")
+        }
     }
 
     /**
