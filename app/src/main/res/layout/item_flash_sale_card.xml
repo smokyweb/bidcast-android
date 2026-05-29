@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Basecamp #9933973683 return (2026-05-29): Flash Sales explore section card.
+     Horizontal scroll row on HomeFragment. Shows product image, ⚡ badge,
+     title, original price struck through (when flash_sale_price is available),
+     and the flash sale price in accent color. -->
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    style="@style/cardStyle"
+    android:layout_width="140dp"
+    android:layout_height="wrap_content"
+    android:layout_margin="@dimen/half_margin"
+    app:cardBackgroundColor="@color/background"
+    app:cardCornerRadius="12dp"
+    app:cardElevation="2dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <!-- Product image with ⚡ badge overlay -->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="130dp">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/productImage"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                android:src="@drawable/placeholder_square"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <!-- Flash badge pill (top-start) -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/flashBadge"
+                style="@style/cardStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="6dp"
+                app:cardBackgroundColor="#FFFD7014"
+                app:cardCornerRadius="100dp"
+                app:cardElevation="0dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/poppins_bold"
+                    android:paddingHorizontal="6dp"
+                    android:paddingVertical="2dp"
+                    android:text="⚡ Flash"
+                    android:textColor="@color/white"
+                    android:textSize="10sp" />
+
+            </com.google.android.material.card.MaterialCardView>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <!-- Title + price block -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="8dp">
+
+            <TextView
+                android:id="@+id/productTitle"
+                style="@style/BodyMedium"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="2"
+                android:text="Product Name" />
+
+            <!-- Original price struck through; hidden when flash_sale_price is null -->
+            <TextView
+                android:id="@+id/originalPrice"
+                style="@style/BodySmall"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paintFlags="16"
+                android:text="$0.00"
+                android:textColor="@color/outlineVariant"
+                android:visibility="gone" />
+
+            <!-- Flash sale / regular price -->
+            <TextView
+                android:id="@+id/flashPrice"
+                style="@style/TitleSmall"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="$0.00"
+                android:textColor="#FFFD7014" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</com.google.android.material.card.MaterialCardView>

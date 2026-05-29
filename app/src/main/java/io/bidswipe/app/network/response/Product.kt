@@ -21,6 +21,14 @@ data class Product(
 	val description: String?,
 	@SerializedName("flashSale")
 	val flashSale: Boolean?,
+	// Basecamp #9933973683 return (2026-05-29): flash-sale price + window for
+	// explore-page cards. The list endpoint may return these in snake_case (same
+	// shape as the product-detail endpoint). Nullable so old/non-flash records
+	// don’t break.
+	@SerializedName("flash_sale_price")
+	val flashSalePrice: Double?,
+	@SerializedName("flash_sale_ends_at")
+	val flashSaleEndsAt: String?,
 	@SerializedName("hazardousMaterial")
 	val hazardousMaterial: Boolean?,
 	@SerializedName("height")

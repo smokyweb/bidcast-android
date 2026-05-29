@@ -719,6 +719,37 @@ class DashViewModel @Inject constructor(
         _getShippingProfileResponse.value = repo.getShippingProfile()
     }
 
+    // Basecamp #9933973683 return (2026-05-29): dedicated LiveData for the Home
+    // "Flash Sales" explore section. Kept separate from getUserProductsRepo so
+    // SellerProductsFragment’s seller-scoped product list is not polluted.
+    private var _flashSaleProductsResponse = MutableLiveData<Resource<GetProductsResponse>>()
+    val flashSaleProductsRepo: MutableLiveData<Resource<GetProductsResponse>>
+        get() = _flashSaleProductsResponse
+
+    fun getFlashSaleProducts() = viewModelScope.launch {
+        if (!networkMonitor.hasInternet()) {
+            _flashSaleProductsResponse.value = NO_INTERNET_ERROR
+            return@launch
+        }
+        // Endpoint: POST api/v1/get-product with sale_type=flash_sale.
+        // Returns active flash-sale products across all sellers (no user_id filter).
+        _flashSaleProductsResponse.value = repo.getProducts(
+            userId = null,
+            status = "active".request(),
+            format = null,
+            page = "1".request(),
+            search = null,
+            categoryIds = null,
+            conditions = null,
+            minPrice = null,
+            maxPrice = null,
+            marketPlace = null,
+            type = null,
+            saleType = "flash_sale".request(),
+            sortBy = null
+        )
+    }
+
     private var _getUserProductsResponse = MutableLiveData<Resource<GetProductsResponse>>()
     val getUserProductsRepo: MutableLiveData<Resource<GetProductsResponse>>
         get() = _getUserProductsResponse
