@@ -150,7 +150,7 @@ class SellerOrderDetailFragment : BaseFragment<SellerHubViewModel, FragmentSelle
                 .setNegativeButton("Back") { d, _ -> d.dismiss() }
                 .setPositiveButton("Approve") { d, _ ->
                     d.dismiss()
-                    postDecideCancellation(id, "approved", null)
+                    postDecideCancellation(id, "approve", null)
                 }
                 .show()
         }
@@ -184,7 +184,7 @@ class SellerOrderDetailFragment : BaseFragment<SellerHubViewModel, FragmentSelle
                 .setPositiveButton("Reject") { d, _ ->
                     d.dismiss()
                     val reason = input.text?.toString()?.trim().orEmpty().ifEmpty { null }
-                    postDecideCancellation(id, "rejected", reason)
+                    postDecideCancellation(id, "reject", reason)
                 }
                 .show()
         }
@@ -393,7 +393,7 @@ class SellerOrderDetailFragment : BaseFragment<SellerHubViewModel, FragmentSelle
             when (code) {
                 200, 201 -> {
                     successToast(
-                        if (decision == "approved") "Order cancelled. The buyer has been notified."
+                        if (decision == "approve") "Order cancelled. The buyer has been notified."
                         else "Request rejected. The buyer has been notified."
                     )
                     // Refresh using the fragment's order token (same value the initial
