@@ -119,7 +119,9 @@ class PayoutFragment : BaseFragment<SellerHubViewModel, FragmentPayoutBinding>()
 						mCtx,
 						R.drawable.ic_success,
 						"Success",
-						it.value.message ?: "",
+						// MC (2026-05-28): blank-popup fix - never show an empty
+						// success dialog; fall back when message is null/blank.
+						it.value.message?.takeIf { m -> m.isNotBlank() } ?: "Request submitted successfully.",
 						primaryBtnText = "Okay",
 						secondaryBtnText = "Cancel",
 						canCancel = true,

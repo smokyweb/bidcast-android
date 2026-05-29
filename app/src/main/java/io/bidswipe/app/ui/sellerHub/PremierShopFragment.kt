@@ -217,7 +217,9 @@ class PremierShopFragment : BaseFragment<SellerHubViewModel, FragmentPremierShop
 						mCtx,
 						R.drawable.ic_success,
 						"Premier Shop Applied",
-						it.value.message ?: "",
+						// MC (2026-05-28): blank-popup fix - never show an empty
+						// success dialog; fall back when message is null/blank.
+						it.value.message?.takeIf { m -> m.isNotBlank() } ?: "Your Premier Shop application has been submitted.",
 						primaryBtnText = "Okay",
 						secondaryBtnText = "Cancel",
 						canCancel = true,

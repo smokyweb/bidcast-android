@@ -179,6 +179,12 @@ fun Resource.Error.parse(
 	title : String = "Error" ,
 	showAlert : Boolean = true ,
 ) {
+	// MC (2026-05-28): Blank Seller Hub popup fix. Track whether the backend
+	// actually gave us a real (non-blank) message. When it didn't (empty string
+	// or whitespace) AND this isn't a network/known error, we suppress the
+	// dialog entirely below - a benign empty state should not pop a blank alert.
+	val rawBackendMessage = this.errorResponse?.message?.asHtml()?.asCapital()
+	val hasRealMessage = !rawBackendMessage.isNullOrBlank()
 	val message = try {
 		if (this.isNetworkError)
 			mCtx.getString(string.no_internet)
@@ -191,10 +197,12 @@ fun Resource.Error.parse(
 		else if (this.errorCode?.toIntOrNull() == 413)
 			"Image is too large"
 		else
-			this.errorResponse?.message?.asHtml()?.asCapital() ?: "No Data Found"
+		// MC (2026-05-28): takeIf { it.isNotBlank() } so an empty-string backend
+		// message yields the fallback rather than rendering a blank dialog.
+			this.errorResponse?.message?.asHtml()?.asCapital()?.takeIf { it.isNotBlank() } ?: "No Data Found"
 	} catch (e : Exception) {
 		e.printStackTrace()
-		e.localizedMessage?.asCapital() ?: "No Data Found"
+		e.localizedMessage?.asCapital()?.takeIf { it.isNotBlank() } ?: "No Data Found"
 	}
 
 	if (this.isNetworkError) Alerts.log(tag?: mCtx.javaClass.simpleName.toString() , "ERROR : \n${this.errorCode}")
@@ -228,7 +236,18 @@ fun Resource.Error.parse(
 		}
 	}
 
-	if (showAlert) {
+	// MC (2026-05-28): Blank Seller Hub popup fix. Suppress the dialog when the
+	// backend returned a blank/empty message AND this isn't a network error or a
+	// special (413 / UNAUTHORIZED / invalid_token) case. A benign empty state
+	// should never render a popup at all (blank or fallback). Real errors
+	// (network, known codes, or any non-blank backend message) still show.
+	val isSpecialCase = this.isNetworkError ||
+		this.errorCode?.toIntOrNull() == 413 ||
+		this.errorResponse?.errorType == "UNAUTHORIZED" ||
+		this.errorResponse?.errorType == "invalid_token" ||
+		this.errorResponse?.message == "Token not found"
+	val shouldShow = showAlert && (hasRealMessage || isSpecialCase)
+	if (shouldShow) {
 		AppBottomSheet(
 			mCtx = mCtx ,
 			image = draw.ic_error ,
