@@ -273,6 +273,21 @@ class ProductDetailsFragment : BaseFragment<ProductViewModel, FragmentProductDet
 
                     bind.buyLayout.isVisible = mData?.userId.toString() != userId
 
+                    // Basecamp #9954326658 (2026-06-02, PWA parity db19011f + iOS):
+                    // "Buy Now" must NEVER appear on a live-auction product. Auction
+                    // items are sold by bidding / pre-bid, never at a fixed buy-it-now
+                    // price. Show Buy Now only for non-auction (buy-it-now) products.
+                    //
+                    // NOTE: buy_now defaults to visibility="gone" in the layout and was
+                    // never explicitly enabled here, so historically Buy Now did not
+                    // render on this generic product-detail screen at all. We now enable
+                    // it for buy-it-now products (which have a working goToBuyNowFragment
+                    // handler) and keep it hidden for auction products. pre_bid is left
+                    // as-is (its show-context flow lives in UpcomingShowDetailsActivity);
+                    // this change is scoped to the reported Buy-Now-on-auction bug only.
+                    val isAuctionProduct = mData?.auction == true
+                    bind.buyNow.isVisible = !isAuctionProduct
+
                     productSaved = mData?.productSaveStatus ?: false
 
                     bind.save.icon = ContextCompat.getDrawable(
