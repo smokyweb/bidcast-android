@@ -32,6 +32,7 @@ import io.bidswipe.app.network.response.GetProductDetailsResponse
 import io.bidswipe.app.network.response.GetProductsByStatusResponse
 import io.bidswipe.app.network.response.GetProductsResponse
 import io.bidswipe.app.network.response.GetPromotePlansResponse
+import io.bidswipe.app.network.response.GetShowDetailsResponse
 import io.bidswipe.app.network.response.GetShippingProfilesResponse
 import io.bidswipe.app.network.response.GetSubCategoriesResponse
 import io.bidswipe.app.network.response.GetSurpriseProductsResponse
@@ -763,6 +764,22 @@ class DashViewModel @Inject constructor(
         }
         _getUserProductsResponse.value =
             repo.getProducts(userId, status, format, page, search, categoryIds, conditions, minPrice, maxPrice, marketPlace, type, saleType, sortBy)
+    }
+
+    // Basecamp #9954322xxx (seller live-show product panel parity): the live-show
+    // product panel must be scoped to the CURRENT show, not the seller's whole
+    // catalog. get-show-details-by-id returns the show's product list (via
+    // product_ids); the All/Sold/Offers tabs filter that list client-side.
+    private var _getShowDetailsResponse = MutableLiveData<Resource<GetShowDetailsResponse>?>()
+    val getShowDetailsRepo: MutableLiveData<Resource<GetShowDetailsResponse>?>
+        get() = _getShowDetailsResponse
+
+    fun getShowDetails(showId: String?) = viewModelScope.launch {
+        if (!networkMonitor.hasInternet()) {
+            _getShowDetailsResponse.value = NO_INTERNET_ERROR
+            return@launch
+        }
+        _getShowDetailsResponse.value = repo.getShowDetails(showId.orEmpty())
     }
 
 

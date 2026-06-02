@@ -100,6 +100,29 @@
                 android:layout_height="wrap_content"
                 android:text="Condition - Category" />
 
+            <!-- Basecamp #9954326658: per-row pricing-format badge (parity with
+                 PWA inventory list). Red = Live Auction, blue = Buy Now. -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/formatBadge"
+                style="@style/cardStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                app:cardBackgroundColor="@color/errorContainer"
+                app:cardCornerRadius="100dp"
+                app:cardElevation="0dp">
+
+                <TextView
+                    android:id="@+id/formatBadgeText"
+                    style="@style/TitleSmall"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/margin"
+                    android:text="Buy Now"
+                    android:textColor="@color/error" />
+
+            </com.google.android.material.card.MaterialCardView>
+
             <TextView
                 android:id="@+id/price"
                 style="@style/TitleMedium"

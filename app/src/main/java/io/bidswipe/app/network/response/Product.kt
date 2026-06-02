@@ -127,6 +127,27 @@ data class Product(
 }
 
 
+/**
+ * Pricing-format classification shared across surfaces (parity with the PWA /
+ * iOS). A product is a *Live Auction* when [Product.auction] == true, or the
+ * legacy/new format flags resolve to an auction (type == "live", sale_format
+ * == "auction", or is_auction == true). Everything else is *Buy Now*
+ * (buy-it-now). When all signals are null we fall back to the legacy [auction]
+ * boolean (null → treated as Buy Now, matching the buy-it-now default).
+ *
+ * Basecamp #9954326658 (format parity).
+ */
+fun Product.isLiveAuctionFormat(): Boolean {
+	if (auction == true) return true
+	val typeStr = (type as? String)?.lowercase()
+	if (typeStr == "live" || typeStr == "auction") return true
+	val saleFmt = saleFormat?.lowercase()
+	if (saleFmt == "auction" || saleFmt == "live") return true
+	if (isAuction == true) return true
+	// Legacy/null: fall back to the auction boolean (null → Buy Now).
+	return auction == true
+}
+
 fun Product.toLiveShowProduct() = LiveShowModel.Product(
 	category = this.category?.toLiveShowCategory(),
 	id = this.id?.toString(),

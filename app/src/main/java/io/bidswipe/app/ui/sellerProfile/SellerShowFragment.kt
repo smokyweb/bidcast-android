@@ -1,11 +1,13 @@
 package io.bidswipe.app.ui.sellerProfile
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import io.bidswipe.app.base.BaseFragment
 import io.bidswipe.app.controller.HomeAdapter
 import io.bidswipe.app.databinding.FragmentSellerShowBinding
@@ -14,6 +16,8 @@ import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.network.response.GetMyShowResponse
 import io.bidswipe.app.ui.custom.AppBottomSheet
+import io.bidswipe.app.ui.upcomingshow.UpcomingShowDetailsActivity
+import io.bidswipe.app.ui.watchStream.ViewLiveShowActivity
 import io.bidswipe.app.utils.Utils
 import io.bidswipe.app.utils.isTablet
 import io.bidswipe.app.utils.parse
@@ -35,14 +39,32 @@ class SellerShowFragment : BaseFragment<SellerViewModel, FragmentSellerShowBindi
 
     private val mClicks = object : RecyclerClicks {
         override fun itemClick(pos: Int, status: String?) {
-
-            /*startActivity(
-                Intent(mCtx , AgoraPublisherActivity::class.java).putExtra(
-                    "showId" ,
-                    showList[pos]?.id.toString()
-                )
-            )*/
-
+            val show = showList.getOrNull(pos) ?: return
+            when (status) {
+                "user" -> {
+                    startActivity(
+                        Intent(mCtx, SellerProfileActivity::class.java)
+                            .putExtra("sellerId", show.userId.toString())
+                    )
+                }
+                // Basecamp #1/#9: the show tile tap was a dead no-op. Live
+                // shows open the live screen; upcoming shows open the
+                // upcoming-show detail screen (parity with Home/Explore).
+                else -> {
+                    if (show.isLive == true) {
+                        startActivity(
+                            Intent(mCtx, ViewLiveShowActivity::class.java)
+                                .putExtra("roomId", show.roomId.toString())
+                                .putExtra("userId", show.userId.toString())
+                        )
+                    } else {
+                        startActivity(
+                            Intent(mCtx, UpcomingShowDetailsActivity::class.java)
+                                .putExtra("show_id", show.id?.toString())
+                        )
+                    }
+                }
+            }
         }
 
     }
@@ -53,6 +75,7 @@ class SellerShowFragment : BaseFragment<SellerViewModel, FragmentSellerShowBindi
             bind.noInternet.isVisible = false
             bind.loader.isVisible = true
             page = 1
+            isLoading = false
             viewModel.getMyScheduledShow(sellerId?.request(),"upcoming".request(), page.toString().request())
         } else {
             bind.recycler.isVisible = false
@@ -69,16 +92,40 @@ class SellerShowFragment : BaseFragment<SellerViewModel, FragmentSellerShowBindi
         sellerId = (requireActivity() as SellerProfileActivity).sellerId
 
         showAdapter = HomeAdapter(showList, mClicks)
-        (bind.recycler.layoutManager as GridLayoutManager).setSpanCount( if(resources.isTablet()) 3 else 2)
+        val gridLm = bind.recycler.layoutManager as GridLayoutManager
+        gridLm.setSpanCount(if (resources.isTablet()) 3 else 2)
         bind.recycler.adapter = showAdapter
+
+        // Basecamp #9: infinite scroll / load-more. Previously only page 1 was
+        // fetched, so sellers with many upcoming shows showed just the first
+        // page. Fetch the next page (same seller_id) as the user nears the end.
+        bind.recycler.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+                if (dy <= 0) return
+                val lastVisible = gridLm.findLastVisibleItemPosition()
+                if (!isLoading && lastVisible >= showList.size - 1 && showList.isNotEmpty()) {
+                    isLoading = true
+                    page++
+                    viewModel.getMyScheduledShow(
+                        sellerId?.request(),
+                        "upcoming".request(),
+                        page.toString().request()
+                    )
+                }
+            }
+        })
         bind.noInternet.onClick {
             bind.loader.isVisible = true
             bind.noInternet.isVisible = false
             page = 1
+            isLoading = false
             viewModel.getMyScheduledShow(sellerId?.request(),"upcoming".request(), page.toString().request())
         }
 
         bind.loader.isVisible = true
+        page = 1
+        isLoading = false
         viewModel.getMyScheduledShow(sellerId?.request(),"upcoming".request(), page.toString().request())
 
         viewModel.getMyScheduledShowRepo.observe(viewLifecycleOwner) {
@@ -109,6 +156,11 @@ class SellerShowFragment : BaseFragment<SellerViewModel, FragmentSellerShowBindi
                 is Resource.Error -> {
                     bind.noData.isVisible = false
                     bind.loader.isVisible = false
+
+                    // Roll back a failed load-more page so the next scroll can
+                    // retry instead of permanently skipping a page.
+                    if (page > 1) page--
+                    isLoading = false
 
                     if (it.isNetworkError) {
                         bind.noInternet.isVisible = true

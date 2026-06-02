@@ -13,6 +13,7 @@ import io.bidswipe.app.base.BaseAdapter
 import io.bidswipe.app.databinding.InventoryItemBinding
 import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.network.response.Product
+import io.bidswipe.app.network.response.isLiveAuctionFormat
 import io.bidswipe.app.utils.Const
 import io.bidswipe.app.utils.asCapital
 import io.bidswipe.app.utils.asMoney
@@ -68,6 +69,31 @@ class InventoryAdapter(
 					item.images[0] ?: "",
 					placeHolder = R.drawable.placeholder_rect
 				)
+			}
+
+			// Basecamp #9954326658: per-row pricing-format badge (PWA parity).
+			// Red "Live Auction" for auction products, blue "Buy Now" otherwise.
+			if (item != null) {
+				val isAuction = item.isLiveAuctionFormat()
+				bind.formatBadgeText.text = if (isAuction) "Live Auction" else "Buy Now"
+				if (isAuction) {
+					bind.formatBadge.setCardBackgroundColor(
+						ContextCompat.getColor(mCtx, R.color.errorContainer)
+					)
+					bind.formatBadgeText.setTextColor(
+						ContextCompat.getColor(mCtx, R.color.error)
+					)
+				} else {
+					bind.formatBadge.setCardBackgroundColor(
+						ContextCompat.getColor(mCtx, R.color.primaryContainer)
+					)
+					bind.formatBadgeText.setTextColor(
+						ContextCompat.getColor(mCtx, R.color.onPrimaryContainer)
+					)
+				}
+				bind.formatBadge.isVisible = true
+			} else {
+				bind.formatBadge.isVisible = false
 			}
 
 			bind.price.text = buildSpannedString {

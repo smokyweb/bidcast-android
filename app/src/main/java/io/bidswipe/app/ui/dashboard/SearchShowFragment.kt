@@ -26,6 +26,7 @@ import io.bidswipe.app.network.response.SearchUser
 import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.ui.sellerProfile.SellerProfileActivity
 import io.bidswipe.app.ui.product.ProductDetailsActivity
+import io.bidswipe.app.ui.upcomingshow.UpcomingShowDetailsActivity
 import io.bidswipe.app.ui.watchStream.ViewLiveShowActivity
 import io.bidswipe.app.utils.hideKeyboard
 import io.bidswipe.app.utils.isTablet
@@ -113,6 +114,14 @@ class SearchShowFragment : BaseFragment<DashViewModel, FragmentSearchShowBinding
 						startActivity(
 							Intent(mCtx, ViewLiveShowActivity::class.java).putExtra("position", pos)
 								.putParcelableArrayListExtra("roomIdsList", romIdsList as ArrayList)
+						)
+					} else {
+						// Basecamp #1: tapping an upcoming show in the legacy
+						// search grid was a dead no-op. Open the upcoming-show
+						// detail screen (parity with Home/Explore).
+						startActivity(
+							Intent(mCtx, UpcomingShowDetailsActivity::class.java)
+								.putExtra("show_id", showList[pos]?.id?.toString())
 						)
 					}
 

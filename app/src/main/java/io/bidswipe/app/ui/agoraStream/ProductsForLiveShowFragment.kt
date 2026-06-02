@@ -75,6 +75,11 @@ class ProductsForLiveShowFragment : BottomSheetDialogFragment() {
 
     private lateinit var productAdapter: FirebaseProductAdapter
     private var productList = mutableListOf<Product?>()
+    // Basecamp parity: full product list for the CURRENT show (from
+    // get-show-details-by-id). The All/Sold/Offers tabs filter this list
+    // client-side so every tab stays scoped to this show, never the seller's
+    // entire catalog.
+    private var showProducts = mutableListOf<Product?>()
     private var surpriseProductList = mutableListOf<GetSurpriseProductsResponse.Data?>()
     private lateinit var surpriseProductAdapter: SurpriseProductAdapter
     private var surprisePage = 1
@@ -101,19 +106,23 @@ class ProductsForLiveShowFragment : BottomSheetDialogFragment() {
     private var addProductLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
-                if (chipIndex == 4) {
+                if (chipIndex == surpriseChipIndex) {
                     surprisePage = 1
                     loadSurpriseSets()
                 } else {
-                    page = 1
                     loadData()
                 }
             }
         }
 
+    // Parity: a show's products all share one pricing format, so the redundant
+    // "Auction"/"Buy Now" tabs are gone. Tabs are All / Sold / Offers, plus the
+    // Surprise Sets tab (separate seller-surprise-set context).
     private var productTypesList =
-        mutableListOf("Auction", "Buy Now", "Sold", "Offers", "Surprise Sets")
+        mutableListOf("All", "Sold", "Offers", "Surprise Sets")
     var chipIndex = 0
+    // Index of the Surprise Sets chip (last one).
+    private val surpriseChipIndex get() = productTypesList.lastIndex
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val dialog = super.onCreateDialog(savedInstanceState) as BottomSheetDialog
@@ -163,13 +172,8 @@ class ProductsForLiveShowFragment : BottomSheetDialogFragment() {
             isLive = arguments?.getBoolean("live_status") ?: false
         }
 
-        if (auctionTypeId == AuctionType.BUY_NOW.id) {
-            type = "buy_now"
-            saleType = ""
-        } else {
-            saleType = "auction"
-            type = ""
-        }
+        // (Format-specific saleType/type are no longer used: the panel is scoped
+        // to the show and tabs filter client-side.)
 
         if (from == "freebie") {
             // MC cmph7xsgy00g4ms8pslgxzr1u (2026-05-22): host may select
@@ -200,48 +204,18 @@ class ProductsForLiveShowFragment : BottomSheetDialogFragment() {
                     val chipId = chipGroup.checkedChipId
                     chipIndex = chipGroup.indexOfChild(chipGroup.findViewById(chipId))
 
-                    Log.d("TAG", "onViewCreated: AUCTION $auctionTypeId--$saleType--$chipIndex")
+                    Log.d("TAG", "onViewCreated: SHOW ${viewModel.showId}--$chipIndex")
                     when (chipIndex) {
-                        0 -> {
-                            saleType = "auction"
-                            type = ""
-                            status = ""
-                            page = 1
-                            loadData()
-                        }
-
-                        1 -> {
-                            type = "buy_now"
-                            status = ""
-                            saleType = ""
-                            page = 1
-                            loadData()
-                        }
-
-                        2 -> {
-                            status = "inactive"
-                            type = ""
-                            saleType = ""
-
-                            page = 1
-                            loadData()
-                        }
-
-                        3 -> {
-                            saleType = "accept_offers"
-                            type = ""
-                            status = ""
-
-                            page = 1
-                            loadData()
-                        }
-
-                        4 -> {
+                        // All / Sold / Offers are client-side filters over the
+                        // current show's product list. Surprise Sets is its own
+                        // endpoint.
+                        0, 1, 2 -> applyShowFilter()
+                        surpriseChipIndex -> {
                             surprisePage = 1
                             loadSurpriseSets()
                         }
 
-                        else -> ""
+                        else -> applyShowFilter()
                     }
 
                 }
@@ -250,21 +224,14 @@ class ProductsForLiveShowFragment : BottomSheetDialogFragment() {
 
         bind.chipGroup.check(bind.chipGroup[0].id)
 
-        bind.recycler.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                super.onScrolled(recyclerView, dx, dy)
-                val layoutManager = bind.recycler.layoutManager as LinearLayoutManager
-                val lastItemPosition = layoutManager.findLastVisibleItemPosition()
-                if (lastItemPosition == (productList.size - 1)) {
-                    if (!isLoading) {
-                        isLoading = true
-                        page++
-                        bind.bottomLoader.isVisible = true
-                        loadData(true)
-                    }
-                }
-            }
-        })
+        // Initial fetch of the current show's product list (All tab). Tab
+        // switches then just re-filter the already-loaded list.
+        bind.loader.isVisible = true
+        loadData()
+
+        // No pagination on the product recycler: get-show-details-by-id returns
+        // the whole show product list in one call, then we filter client-side.
+        // (Surprise Sets keeps its own paginated endpoint below.)
 
         bind.surpriseRecycler.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
@@ -288,8 +255,9 @@ class ProductsForLiveShowFragment : BottomSheetDialogFragment() {
             override fun afterTextChanged(s: Editable?) {
                 val query = s?.toString()?.trim() ?: ""
                 bind.searchLayout.isEndIconVisible = query.isNotEmpty()
-                page = 1
-                loadData()
+                // Search filters the current show's product list client-side
+                // (scoped to this show, with the active All/Sold/Offers tab).
+                applyShowFilter()
             }
         })
 
@@ -509,40 +477,22 @@ class ProductsForLiveShowFragment : BottomSheetDialogFragment() {
             }
         }
 
-        viewModel.getUserProductsRepo.value = null
+        viewModel.getShowDetailsRepo.value = null
 
-        viewModel.getUserProductsRepo.observe(viewLifecycleOwner) {
+        viewModel.getShowDetailsRepo.observe(viewLifecycleOwner) {
             when (it) {
                 is Resource.Success -> {
                     bind.bottomLoader.isVisible = false
                     bind.loader.isVisible = false
                     bind.switcher.displayedChild = 0
-                    val mData = it.value.products
 
-                    if (page == 1) {
-                        productList.clear()
-                    }
+                    // Full product list for THIS show (scoped server-side via
+                    // product_ids). The All/Sold/Offers tabs + search filter it
+                    // client-side.
+                    showProducts.clear()
+                    it.value.data?.products?.let { p -> showProducts.addAll(p) }
 
-                    if (mData != null) {
-                        productList.addAll(mData)
-                        productAdapter.notifyDataSetChanged()
-                    }
-
-                    productList.forEach {
-                        if (viewModel.pinnedProducts.contains(it?.id.toString())) {
-                            it?.selected = true
-                        }
-                    }
-
-                    if (productList.isEmpty()) {
-                        bind.noDataView.isVisible = true
-                        bind.recycler.isVisible = false
-                    } else {
-                        bind.noDataView.isVisible = false
-                        bind.recycler.isVisible = true
-                    }
-
-                    isLoading = page >= (it.value.totalPage ?: 0)
+                    applyShowFilter()
                 }
 
                 is Resource.Error -> {
@@ -616,17 +566,60 @@ class ProductsForLiveShowFragment : BottomSheetDialogFragment() {
 
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     private fun loadData(loadMore: Boolean = false) {
-        bind.bottomLoader.isVisible = loadMore
-        bind.loader.isVisible = !loadMore
-        viewModel.getUserProducts(
-            page = page.toString().request(),
-            saleType = saleType.ifEmpty { null }?.request(),
-            type = type.ifEmpty { null }?.request(),
-            status = status.ifEmpty { null }?.request(),
-            search = bind.search.value().ifEmpty { null }?.request(),
-            categoryIds = viewModel.categoryId.request()
-        )
+        // Fetch the CURRENT show's product list (scoped to show_id), not the
+        // seller's whole catalog. All/Sold/Offers tabs filter this list.
+        bind.loader.isVisible = true
+        bind.bottomLoader.isVisible = false
+        val showId = viewModel.showId.takeIf { it.isNotBlank() }
+            ?: viewModel.currentShowData?.id?.toString()
+        viewModel.getShowDetails(showId)
+    }
+
+    /**
+     * Apply the active tab (All / Sold / Offers) + search query over the
+     * current show's product list, then render the filtered result.
+     *  - All    = every product in the show.
+     *  - Sold   = sold / inactive products.
+     *  - Offers = products that received bids / offers (bid_count > 0).
+     */
+    @SuppressLint("NotifyDataSetChanged")
+    private fun applyShowFilter() {
+        bind.loader.isVisible = false
+        bind.bottomLoader.isVisible = false
+        bind.switcher.displayedChild = 0
+
+        val query = bind.search.value().trim().lowercase()
+
+        val filtered = showProducts.filter { p ->
+            p ?: return@filter false
+            val matchesTab = when (chipIndex) {
+                1 -> p.status == "sold" || p.status == "inactive"
+                2 -> (p.bidCount ?: 0) > 0
+                else -> true // All
+            }
+            val matchesSearch =
+                query.isEmpty() || (p.title?.lowercase()?.contains(query) == true)
+            matchesTab && matchesSearch
+        }
+
+        productList.clear()
+        productList.addAll(filtered)
+        productList.forEach {
+            if (viewModel.pinnedProducts.contains(it?.id.toString())) {
+                it?.selected = true
+            }
+        }
+        productAdapter.notifyDataSetChanged()
+
+        if (productList.isEmpty()) {
+            bind.noDataView.isVisible = true
+            bind.recycler.isVisible = false
+        } else {
+            bind.noDataView.isVisible = false
+            bind.recycler.isVisible = true
+        }
     }
 
     private fun loadSurpriseSets(loadMore: Boolean = false) {
