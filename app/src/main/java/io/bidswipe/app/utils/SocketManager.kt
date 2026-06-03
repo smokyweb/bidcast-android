@@ -136,7 +136,25 @@ class SocketManager private constructor(
              Log.e(TAG, "Socket connection timeout")
              onError?.invoke("connect_timeout")
          }*/
-        socket?.connect()
+
+        // Basecamp #9958562821 / #9958567122 (2026-06-03): SELLER (and any screen)
+        // root cause. The socket is an app-wide singleton that App.setUpSocket()
+        // already connected at startup. When a live screen later calls connect()
+        // again, socket.io is ALREADY connected, so socket.connect() is a no-op
+        // and EVENT_CONNECT NEVER FIRES AGAIN. That meant the onConnected callback
+        // (which performs joinRoom) never ran, so the seller never joined the
+        // room and received none of the io.to(room_id) broadcasts -> auction card
+        // never appeared on the seller's own screen, and the chat stream stayed
+        // empty. Fix: if we're already connected when connect() is called, run the
+        // connect path (rejoin + onConnected) immediately instead of waiting for
+        // an EVENT_CONNECT that will never come.
+        if (socket?.connected() == true) {
+            Log.d(TAG, "connect(): socket already connected; running join path immediately")
+            rejoinDesiredRoom()
+            onConnected?.invoke()
+        } else {
+            socket?.connect()
+        }
     }
 
     /** True when the underlying socket exists and is currently connected. */
