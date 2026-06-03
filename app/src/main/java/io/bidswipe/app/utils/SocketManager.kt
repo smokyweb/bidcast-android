@@ -869,6 +869,27 @@ class SocketManager private constructor(
         }
     }
 
+    // Basecamp #9956272376 (2026-06-02): the server rejects a buyer's join with
+    // `join_room_error` (e.g. code "kicked" when the buyer was removed from this
+    // show earlier). Android had NO listener for this, so a rejected buyer's
+    // `room_create_get` never arrived and they sat forever on the black loading
+    // screen (same bug fixed on iOS). Surface the message + let the caller exit.
+    fun onJoinRoomError(listener: (msg: String, code: String?) -> Unit) {
+        socket?.off("join_room_error")
+        socket?.on("join_room_error") { args ->
+            val obj = args.firstOrNull()
+            if (obj is JSONObject) {
+                Log.d(TAG, "RECEIVED: join_room_error - $obj")
+                val code = obj.optString("code", "").takeIf { it.isNotEmpty() }
+                val msg = if (code == "kicked")
+                    "You have been removed from this show by the host."
+                else
+                    obj.optString("message", "This show can’t be opened right now.")
+                listener(msg, code)
+            }
+        }
+    }
+
     // Listener for host-side kick_user confirmation.
     fun onKickUserSuccess(listener: (targetUserId: Int) -> Unit) {
         socket?.off("kick_user_success")
