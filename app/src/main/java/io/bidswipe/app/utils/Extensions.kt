@@ -171,6 +171,24 @@ fun Fragment.intent() : Intent {
 	}
 }
 
+// Basecamp #9958788158 (2026-06-03): true when the backend rejected the request
+// because of a missing/invalid/expired auth token. The live backend returns these
+// shapes (verified via curl against backend.bidcast.betaplanets.com):
+//   bogus/expired token -> {error_type:"invalid_token", message:"Token is invalid"}
+//   no token            -> {error_type:"ERROR",        message:"Token not found"}
+//   middleware reject   -> {error_type:"UNAUTHORIZED"}
+// Used by public/browse screens (Live Now, categories, flash sales) so a stale
+// token never pops a scary "Token is invalid" dialog on what should be guest-
+// browsable content.
+fun Resource.Error.isBrowseAuthError() : Boolean {
+	val type = this.errorResponse?.errorType
+	val msg = this.errorResponse?.message
+	return type == "invalid_token" ||
+		type == "UNAUTHORIZED" ||
+		msg == "Token is invalid" ||
+		msg == "Token not found"
+}
+
 fun Resource.Error.parse(
 	mCtx : Context ,
 	tag : String ?= null ,
@@ -241,35 +259,44 @@ fun Resource.Error.parse(
 	// special (413 / UNAUTHORIZED / invalid_token) case. A benign empty state
 	// should never render a popup at all (blank or fallback). Real errors
 	// (network, known codes, or any non-blank backend message) still show.
+	// Verified live (backend.bidcast.betaplanets.com, 2026-06-03): the backend
+	// emits these shapes for missing/invalid/expired auth:
+	//   bogus/expired token -> {error_type:"invalid_token", message:"Token is invalid"}
+	//   no token            -> {error_type:"ERROR",        message:"Token not found"}
+	//   middleware reject   -> {error_type:"UNAUTHORIZED"}
 	val isAuthError = this.errorResponse?.errorType == "UNAUTHORIZED" ||
 		this.errorResponse?.errorType == "invalid_token" ||
+		this.errorResponse?.message == "Token is invalid" ||
 		this.errorResponse?.message == "Token not found"
 
-	// Basecamp #9958788158 (2026-06-03): "token is invalid" popup on first app
-	// open after install. When an auth error (UNAUTHORIZED / invalid_token /
-	// Token not found) arrives while the user has NO stored token — i.e. they
-	// are not logged in (fresh install, or a leftover/expired token that has
-	// already been cleared) — there is no session to "expire", so popping a
-	// "token is invalid" dialog is pure noise that confuses a brand-new user.
-	// In that case suppress the dialog and silently route to the auth screen
-	// instead of alarming the user. Real session-expiry (auth error WHILE a
-	// token exists) still shows the dialog + logout flow as before.
-	val notLoggedIn = try { Prefs(mCtx).token().isEmpty() } catch (e: Throwable) { false }
-	if (isAuthError && notLoggedIn) {
+	// Basecamp #9958788158 (2026-06-03, round 2): "Token is invalid" / "Token not
+	// found" popup on first app open after install. Several public/browse calls on
+	// the Live Now dashboard (get-live-show, get-category, product/flash-sales,
+	// get-profile, upsert-device-details) are fired on launch; when the stored
+	// token is missing/stale the backend 401s them and this global handler used to
+	// pop a scary "Token is invalid" dialog (with a logout prompt) on top of
+	// content that is meant to be browsable by guests. An auth error is NEVER
+	// something a user can act on from a generic alert, so we now SUPPRESS the
+	// dialog for every auth error and let the affected screen fall back to its
+	// empty/cached state. Genuine session-expiry handling (logout + re-login) is
+	// done explicitly by the screens that need it (e.g. AccountFragment /
+	// SellerProfileActivity), not via this blanket popup. We also proactively
+	// clear a stale token so subsequent authenticated actions cleanly prompt login.
+	if (isAuthError) {
 		try {
-			Prefs(mCtx).clear()
-			mCtx.startActivity(mCtx.toAuth().apply {
-				addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
-			})
+			if (Prefs(mCtx).token().isNotEmpty() &&
+				(this.errorResponse?.errorType == "invalid_token" ||
+				 this.errorResponse?.message == "Token is invalid")) {
+				Prefs(mCtx).putString(Prefs.TOKEN, "")
+			}
 		} catch (e: Throwable) {
-			Alerts.log(tag ?: mCtx.javaClass.simpleName, "silent auth-route failed: ${e.message}")
+			Alerts.log(tag ?: mCtx.javaClass.simpleName, "stale-token clear failed: ${e.message}")
 		}
 		return
 	}
 
 	val isSpecialCase = this.isNetworkError ||
-		this.errorCode?.toIntOrNull() == 413 ||
-		isAuthError
+		this.errorCode?.toIntOrNull() == 413
 	val shouldShow = showAlert && (hasRealMessage || isSpecialCase)
 	if (shouldShow) {
 		AppBottomSheet(

@@ -47,6 +47,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import io.bidswipe.app.utils.hideKeyboard
+import io.bidswipe.app.utils.isBrowseAuthError
 import io.bidswipe.app.utils.isTablet
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request
@@ -755,6 +756,15 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
                             bind.noInternet.isVisible = true
                             bind.recycler.isVisible = false
 
+                        } else if (it.isBrowseAuthError()) {
+                            // Basecamp #9958788158 (2026-06-03 round 2): get-category is a
+                            // public browse endpoint, but the backend rejects a stale/expired
+                            // token with {error_type:invalid_token, message:"Token is invalid"}.
+                            // On the Live Now dashboard (first open after install with a
+                            // leftover token) this used to pop a scary "Token is invalid"
+                            // dialog. Browsing must work for guests, so swallow the auth error
+                            // here and just show the empty state instead of alarming the user.
+                            bind.recycler.isVisible = false
                         } else {
                             it.parse(mCtx, TAG, object : AlertClicks {
                                 override fun primaryClick(dialog: AppBottomSheet) {
@@ -865,6 +875,19 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
                         bind.noInternet.isVisible = true
                         bind.recycler.isVisible = false
                         bind.noData.isVisible = false
+                    } else if (it.isBrowseAuthError()) {
+                        // Basecamp #9958788158 (2026-06-03 round 2): get-live-show returns
+                        // {error_type:invalid_token, message:"Token is invalid"} for a
+                        // stale/expired token. This is THE call that produced the "Token is
+                        // invalid" popup on the Live Now tab on first open after install
+                        // (see screenshot). Live Now must be browsable for guests, so swallow
+                        // the auth error and show the empty/no-data state instead of popping
+                        // a dialog + logout prompt.
+                        if (bind.search.text.isNullOrBlank()) {
+                            bind.noData.isVisible = true
+                        }
+                        bind.recycler.isVisible = false
+                        bind.noInternet.isVisible = false
                     } else {
                         it.parse(mCtx, TAG, object : AlertClicks {
                             override fun primaryClick(dialog: AppBottomSheet) {
