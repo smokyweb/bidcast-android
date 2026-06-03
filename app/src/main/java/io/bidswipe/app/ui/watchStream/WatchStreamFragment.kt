@@ -1521,8 +1521,14 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
                     bind.status.isVisible = false
                     bind.bidLayout.isVisible = auctionData.auctionTypeId == AuctionType.LIVE.id
                     bind.buyNowBtn.isVisible = auctionData.auctionTypeId == AuctionType.BUY_NOW.id
-                    // Basecamp #9933847997: pre-bid available during live auction
-                    bind.preBidBtn.isVisible = auctionData.auctionTypeId == AuctionType.LIVE.id
+                    // Basecamp #9959912508 (2026-06-03): this branch renders the
+                    // CURRENT, actively-bidding product. For a LIVE auction the
+                    // swipe-to-bid control (bidLayout) is already shown here, so the
+                    // separate "Pre-Bid" button is redundant and was rendering ON TOP
+                    // of it -> buyer saw TWO bid buttons during active bidding. Pre-Bid
+                    // (added in #9933847997) only makes sense before bidding is active;
+                    // once the item is live the swipe bid is the single CTA. Hide it.
+                    bind.preBidBtn.isVisible = false
                     bind.soldLayout.isVisible = false
                     bind.productLayout.isVisible = true
                     bind.productAuctionBidLayout.isVisible = true
@@ -1595,8 +1601,12 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
             bind.bidLayout.isVisible = auctionTypeId == AuctionType.LIVE.id
             bind.buyNowBtn.isVisible = auctionTypeId == AuctionType.BUY_NOW.id
-            // Basecamp #9933847997: show pre-bid button for auction-type products
-            bind.preBidBtn.isVisible = auctionTypeId == AuctionType.LIVE.id
+            // Basecamp #9959912508 (2026-06-03): current active product from room
+            // state. Same fix as the auction-started branch above -- the live
+            // swipe-to-bid control (bidLayout) is the single bid CTA for an active
+            // LIVE-auction item, so the redundant "Pre-Bid" button must NOT also
+            // show here (it was the second of the "2 buttons" Trey reported).
+            bind.preBidBtn.isVisible = false
 
             bind.productLayout.setHapticClickListener {
                 startActivity(
