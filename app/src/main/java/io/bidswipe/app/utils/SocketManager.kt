@@ -39,6 +39,34 @@ class SocketManager private constructor(
     @Volatile
     private var viewerJoinEmitted: Boolean = false
 
+    // Basecamp #9958514184 / #9958518263 / #9958527259 (2026-06-03):
+    // SHARED ROOT CAUSE for the three Android-buyer live-show realtime bugs.
+    // The buyer's socket is a long-lived app-wide singleton (App.socketManager).
+    // When the buyer opens a live show we emit join_room / join_show ONCE. But
+    // socket.io transparently reconnects (network change, transport upgrade,
+    // app backgrounding) and the server treats every reconnect as a BRAND-NEW
+    // socket id with EMPTY room membership. Nothing re-emitted join_room, so the
+    // reconnected socket was never socket.join(room_id)'d on the server. Since
+    // chat_get, auction_started, next_product_set are all broadcast via
+    // io.to(room_id).emit(...), the buyer in a reconnected/late socket received
+    // NONE of them (chat cut off, no product/bid card). join_show likewise never
+    // re-ran, so the buyer's show_user_joins row was missing and the seller's
+    // viewer list omitted the Android buyer.
+    //
+    // FIX: remember the desired room/user and re-emit join_room (+ join_show when
+    // the viewer-join was requested) on EVERY (re)connect, so room membership is
+    // restored after any reconnect. Also gate the initial emit on the connected
+    // state — if we're not connected yet, the connect listener performs the join
+    // the moment the socket comes up.
+    @Volatile
+    private var desiredRoomId: String? = null
+
+    @Volatile
+    private var desiredUserId: String? = null
+
+    @Volatile
+    private var desiredJoinShow: Boolean = false
+
     // De-duplicate incoming chat messages within a sliding window
     private val recentMessageKeys: ArrayDeque<String> = ArrayDeque()
     private val recentMessageSet: HashSet<String> = HashSet()
@@ -90,6 +118,12 @@ class SocketManager private constructor(
 
         socket?.on(Socket.EVENT_CONNECT) {
             Log.d(TAG, "Socket connected successfully")
+            // Basecamp #9958514184 / #9958518263 / #9958527259 (2026-06-03):
+            // (re)join the desired room/show on EVERY connect. This covers the
+            // very first connect AND every transparent reconnect, restoring the
+            // server-side socket.join(room_id) membership that broadcasts of
+            // chat_get / auction_started / next_product_set depend on.
+            rejoinDesiredRoom()
             onConnected?.invoke()
         }
 
@@ -105,6 +139,33 @@ class SocketManager private constructor(
         socket?.connect()
     }
 
+    /** True when the underlying socket exists and is currently connected. */
+    fun isConnected(): Boolean = socket?.connected() == true
+
+    // Basecamp #9958514184 / #9958518263 / #9958527259 (2026-06-03):
+    // Re-emit the join for whatever room the buyer is currently watching.
+    // Called on every socket (re)connect and from joinRoom when we were not
+    // yet connected. Idempotent on the server (join_room re-adds to the same
+    // room/Set; join_show is an upsert with ON DUPLICATE KEY).
+    private fun rejoinDesiredRoom() {
+        val roomId = desiredRoomId ?: return
+        val userId = desiredUserId ?: return
+        Log.d(TAG, "EMIT (rejoin on connect): join_room - RoomId: $roomId")
+        socket?.emit("join_room", JSONObject().apply {
+            put("room_id", roomId)
+            put("user_id", userId)
+        })
+        hasJoinedRoom = true
+        currentRoomId = roomId
+        if (desiredJoinShow) {
+            Log.d(TAG, "EMIT (rejoin on connect): join_show - RoomId: $roomId")
+            socket?.emit("join_show", JSONObject().apply {
+                put("room_id", roomId)
+                put("user_id", userId)
+            })
+        }
+    }
+
     fun disconnect() {
         Log.d(TAG, "Disconnecting from socket")
         try {
@@ -116,6 +177,9 @@ class SocketManager private constructor(
         currentRoomId = null
         hasJoinedRoom = false
         viewerJoinEmitted = false
+        desiredRoomId = null
+        desiredUserId = null
+        desiredJoinShow = false
     }
 
     fun createRoom(liveShowData: LiveShowModel) {
@@ -186,19 +250,34 @@ class SocketManager private constructor(
     }
 
     fun joinRoom(roomId: String, userId: String, listener: (liveShowJson: JSONObject) -> Unit) {
-        // Avoid duplicate join for the same room in the same session
-        if (hasJoinedRoom && currentRoomId == roomId) {
-            Log.d(TAG, "joinRoom skipped; already joined RoomId: $roomId")
-            return
-        }
+        // Basecamp #9958514184 / #9958518263 / #9958527259 (2026-06-03):
+        // Remember the room/user we want to be in so the connect listener can
+        // (re)join it after any reconnect. We intentionally DO NOT early-return
+        // on "already joined" anymore: a reconnect produces a new server socket
+        // with no room membership, so a repeat join_room for the same room must
+        // be allowed to re-run. The server is idempotent (re-adds to the same
+        // room Set), so duplicate join_room emits are harmless.
+        // Reset the join_show intent when switching to a DIFFERENT room (e.g.
+        // a raid). joinShow() re-sets it to true right after for buyer views.
+        if (desiredRoomId != roomId) desiredJoinShow = false
+        desiredRoomId = roomId
+        desiredUserId = userId
 
         val payload = JSONObject().apply {
             put("room_id", roomId)
             put("user_id", userId)
         }
-        Log.d(TAG, "EMIT: join_room - RoomId: $roomId")
 
-        socket?.emit("join_room", payload)
+        if (isConnected()) {
+            Log.d(TAG, "EMIT: join_room - RoomId: $roomId")
+            socket?.emit("join_room", payload)
+            hasJoinedRoom = true
+            currentRoomId = roomId
+        } else {
+            // Not connected yet — the EVENT_CONNECT handler will perform the
+            // join via rejoinDesiredRoom() the moment the socket comes up.
+            Log.d(TAG, "join_room deferred until connect - RoomId: $roomId")
+        }
         listener(payload)
     }
 
@@ -767,12 +846,26 @@ class SocketManager private constructor(
     }
 
     fun joinShow(userId: String?, roomId: String?) {
+        // Basecamp #9958514184 (2026-06-03): record that the active room also
+        // wants a join_show, so rejoinDesiredRoom() re-emits it on reconnect.
+        // Without this the buyer's show_user_joins row was lost on reconnect and
+        // the seller's viewer list omitted the Android buyer.
+        if (!roomId.isNullOrEmpty()) {
+            desiredRoomId = roomId
+            desiredJoinShow = true
+            if (!userId.isNullOrEmpty()) desiredUserId = userId
+        }
         val payload = JSONObject().apply {
             put("room_id", roomId)
             put("user_id", userId)
         }
-        Log.d(TAG, "EMIT:join_show  - userId: $userId, showId: $roomId ")
-        socket?.emit("join_show", payload)
+        if (isConnected()) {
+            Log.d(TAG, "EMIT:join_show  - userId: $userId, showId: $roomId ")
+            socket?.emit("join_show", payload)
+        } else {
+            // Deferred: rejoinDesiredRoom() on EVENT_CONNECT will emit it.
+            Log.d(TAG, "join_show deferred until connect - showId: $roomId")
+        }
     }
 
     fun sustainWatches(userId: String?, showId: String?) {
