@@ -113,7 +113,21 @@ fun EditText.setNumberInput() {
 	transformationMethod = HideReturnsTransformationMethod.getInstance()
 }
 
-fun String.asMoney() = "$" + "%.2f".format(this.toDouble())
+// Basecamp #9959361886 (2026-06-03): asMoney() previously did this.toDouble()
+// directly, which threw NumberFormatException on an empty / non-numeric / "null"
+// string and CRASHED the caller. This bit the seller "Start Show" flow hard:
+// AgoraPublisherActivity.handleBidUpdate() formats the highest bid as soon as the
+// show starts, but at that point there are no bids yet so bid_amount is "" ->
+// crash -> the live session closed and the seller was thrown back to the Seller
+// Hub. (The crash escaped the surrounding runSafe{} because it ran inside a
+// runOnUiThread{} block posted to the looper, outside the try/catch.) Many of the
+// ~70 callers also pass nullableNumber.toString() which yields "null". Parse
+// defensively and fall back to 0.00 so a missing/blank/garbage amount renders as
+// "$0.00" instead of taking down the screen.
+fun String?.asMoney(): String {
+	val value = this?.trim()?.toDoubleOrNull() ?: 0.0
+	return "$" + "%.2f".format(value)
+}
 
 
 fun String.request() = this.trim().toRequestBody("text/plain".toMediaTypeOrNull())
