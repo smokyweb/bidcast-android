@@ -543,6 +543,15 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
                         bind.unifiedResultsRecycler.isVisible = false
                     }
                 }
+                is Resource.Error -> {
+                    // Basecamp #9942607925 round 2 (2026-06-03): surface API errors so a
+                    // broken search isn't silently blank. Don't pop an alert on auth errors
+                    // (those are handled by the getLiveShow observer), but log the failure.
+                    bind.unifiedResultsRecycler.isVisible = false
+                    if (!resource.isBrowseAuthError()) {
+                        android.util.Log.w(TAG, "unifiedSearch error: ${resource.errorResponse?.message}")
+                    }
+                }
                 else -> {
                     bind.unifiedResultsRecycler.isVisible = false
                 }

@@ -322,6 +322,21 @@ class DashViewModel @Inject constructor(
         premierShop: Boolean? = null,
         shipping: String? = null,
     ) = viewModelScope.launch {
+        // Basecamp #9942607925 round 2 (2026-06-03): guard blank queries. The backend
+        // returns HTTP 422 "The search field is required." for an empty string, which
+        // propagates as Resource.Error and silently hides results. Emit an empty
+        // success instead so the UI clears without hitting the network.
+        if (searchTerm.isBlank()) {
+            _unifiedSearchResponse.value = Resource.Success(
+                io.bidswipe.app.network.response.ExploreSearchResponse(
+                    status = "success", message = null,
+                    data = io.bidswipe.app.network.response.SearchData(
+                        shows = emptyList(), products = emptyList(), users = emptyList()
+                    )
+                )
+            )
+            return@launch
+        }
         if (!networkMonitor.hasInternet()) {
             _unifiedSearchResponse.value = NO_INTERNET_ERROR
             return@launch

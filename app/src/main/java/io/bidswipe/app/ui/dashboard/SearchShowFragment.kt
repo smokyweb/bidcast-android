@@ -282,6 +282,15 @@ class SearchShowFragment : BaseFragment<DashViewModel, FragmentSearchShowBinding
 						bind.unifiedSectionLabel.isVisible = false
 					}
 				}
+				is Resource.Error -> {
+					// Basecamp #9942607925 round 2 (2026-06-03): explicit error branch so
+					// search failures are logged and not silently blank. The blank-query
+					// guard in DashViewModel.unifiedSearch() already prevents 422 from an
+					// empty query; this handles any other unexpected failures.
+					bind.unifiedResultsRecycler.isVisible = false
+					bind.unifiedSectionLabel.isVisible = false
+					android.util.Log.w("SearchShowFragment", "unifiedSearch error: ${resource.errorResponse?.message}")
+				}
 				else -> {
 					bind.unifiedResultsRecycler.isVisible = false
 					bind.unifiedSectionLabel.isVisible = false
