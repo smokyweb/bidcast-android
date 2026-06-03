@@ -308,7 +308,16 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
             bind.freebieEntryLayout.isVisible = false
         }
 
-        commentAdapter = CommentAdapter(commentList, roomID.split("_")[2], object : RecyclerClicks {
+        // Basecamp #9948945225 (2026-06-03): crash fix. roomID is expected to be
+        // "live_room_<sellerUserId>_<showId>", so segment [2] is the host's user id
+        // used by CommentAdapter for the host badge. But entry paths can hand us a
+        // malformed roomID (empty, "null", a bare showId from a deep link / share
+        // link, or a list item with a null roomId), making split("_") shorter than
+        // 3 elements -> IndexOutOfBoundsException -> instant crash on entering the
+        // watch screen. Use a defensive getOrNull(2); the real seller id is
+        // re-hydrated later from room_create_get / getSellerInfo / getShowDetails.
+        val initialHostId = roomID.split("_").getOrNull(2) ?: ""
+        commentAdapter = CommentAdapter(commentList, initialHostId, object : RecyclerClicks {
             override fun itemClick(pos: Int, status: String?) {
 
                 if (commentList[pos]?.userId == userId) return
