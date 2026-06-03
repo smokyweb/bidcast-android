@@ -1,19 +1,20 @@
-<?xml version="1.0" encoding="utf-8"?><!--
-   Sample data extraction rules file; uncomment and customize as necessary.
-   See https://developer.android.com/about/versions/12/backup-restore#xml-changes
-   for details.
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+   Basecamp #9959340828 (2026-06-03): exclude auth/session SharedPreferences from
+   cloud backup AND device-transfer. With the previous empty rules +
+   allowBackup="true", a reinstall auto-restored bid_swipe_App.xml (the auth
+   `token`), so SplashActivity saw a stale token and routed to the authenticated
+   Dashboard/Home instead of Login on first open. Excluding these prefs makes a
+   fresh install a genuine clean slate.
+   Applies to API >= 31 (dataExtractionRules).
 -->
 <data-extraction-rules>
     <cloud-backup>
-        <!-- TODO: Use <include> and <exclude> to control what is backed up.
-        <include .../>
-        <exclude .../>
-        -->
+        <exclude domain="sharedpref" path="bid_swipe_App.xml"/>
+        <exclude domain="sharedpref" path="bid_swipe_remember.xml"/>
     </cloud-backup>
-    <!--
     <device-transfer>
-        <include .../>
-        <exclude .../>
+        <exclude domain="sharedpref" path="bid_swipe_App.xml"/>
+        <exclude domain="sharedpref" path="bid_swipe_remember.xml"/>
     </device-transfer>
-    -->
 </data-extraction-rules>
