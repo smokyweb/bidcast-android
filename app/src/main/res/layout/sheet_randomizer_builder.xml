@@ -165,6 +165,43 @@
                 android:nestedScrollingEnabled="false"
                 android:layout_marginBottom="16dp" />
 
+            <!-- Buyer Raffle: single prize-product picker (hidden for all other types) -->
+            <LinearLayout
+                android:id="@+id/layoutBuyerRafflePrize"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone"
+                android:layout_marginBottom="12dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Prize Product"
+                    android:textSize="13sp"
+                    android:alpha="0.6"
+                    android:textColor="?attr/colorOnSurface"
+                    android:paddingBottom="6dp" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnPickPrizeProduct"
+                    style="@style/Widget.Material3.Button.OutlinedButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:text="Select prize product"
+                    android:textAllCaps="false" />
+
+                <TextView
+                    android:id="@+id/tvSelectedPrizeProduct"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="8dp"
+                    android:textSize="13sp"
+                    android:textColor="?attr/colorOnSurface"
+                    android:visibility="gone" />
+
+            </LinearLayout>
+
             <!-- Save button -->
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnSaveTemplate"

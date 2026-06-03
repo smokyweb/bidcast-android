@@ -116,6 +116,13 @@ class RandomizerViewModel @Inject constructor(
     /** Mutable working copy of slots for the builder UI */
     var builderSlots: MutableList<SlotDraft> = mutableListOf()
 
+    /**
+     * For buyer_raffle: the single prize product selected for the whole template.
+     * Mirrored onto every slot before saving.
+     */
+    var buyerRaffleProductId: Int? = null
+    var buyerRaffleProductTitle: String? = null
+
     fun initBuilderSlots(count: Int, existing: List<SlotDraft> = emptyList()) {
         builderSlots = MutableList(count) { i ->
             existing.getOrNull(i) ?: SlotDraft(

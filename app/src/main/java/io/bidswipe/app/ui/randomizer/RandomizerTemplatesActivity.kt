@@ -51,6 +51,53 @@ class RandomizerTemplatesActivity : BaseActivity() {
     // Which slot is currently being edited
     private var editingSlotIndex: Int = -1
 
+    // ── Buyer-raffle helpers ──────────────────────────────────────────────────
+
+    /** Returns the TYPE_VALUES entry currently shown in the builder dropdown. */
+    private fun currentTypeValue(bb: SheetRandomizerBuilderBinding): String {
+        val label = bb.actvTemplateType.text.toString()
+        val idx   = RandomizerViewModel.TYPE_LABELS.indexOf(label)
+        return if (idx >= 0) RandomizerViewModel.TYPE_VALUES[idx] else "product_raffle"
+    }
+
+    /**
+     * Mirror [productId]/[productTitle] onto every slot draft.
+     * Caller is responsible for refreshing the adapter afterward.
+     */
+    private fun mirrorBuyerRaffleProduct(productId: Int?, productTitle: String?) {
+        vm.builderSlots.forEach { slot ->
+            slot.productId    = productId
+            slot.productTitle = productTitle
+        }
+    }
+
+    /** Sync the prize-product display row in the builder sheet. */
+    private fun updatePrizeProductDisplay(bb: SheetRandomizerBuilderBinding) {
+        val title = vm.buyerRaffleProductTitle
+        if (title != null) {
+            bb.tvSelectedPrizeProduct.visibility = View.VISIBLE
+            bb.tvSelectedPrizeProduct.text       = "\u2713 $title"
+            bb.btnPickPrizeProduct.text          = "Change prize product"
+        } else {
+            bb.tvSelectedPrizeProduct.visibility = View.GONE
+            bb.btnPickPrizeProduct.text          = "Select prize product"
+        }
+    }
+
+    /**
+     * Show/hide buyer-raffle-specific UI and mirror the stored prize product
+     * to all slots when entering buyer_raffle mode.
+     */
+    private fun applyBuyerRaffleUi(bb: SheetRandomizerBuilderBinding, typeVal: String) {
+        val isBuyerRaffle = typeVal == "buyer_raffle"
+        bb.layoutBuyerRafflePrize.visibility = if (isBuyerRaffle) View.VISIBLE else View.GONE
+        if (isBuyerRaffle) {
+            mirrorBuyerRaffleProduct(vm.buyerRaffleProductId, vm.buyerRaffleProductTitle)
+            updatePrizeProductDisplay(bb)
+        }
+        slotAdapter?.setData(vm.builderSlots)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(bind.root)
@@ -158,15 +205,24 @@ class RandomizerTemplatesActivity : BaseActivity() {
         val slotCount = template?.slotCount ?: 6
         val existing = template?.slots?.map { s ->
             SlotDraft(
-                position       = s.position ?: 0,
-                color          = s.color ?: RandomizerViewModel.PALETTE_COLORS[0],
-                icon           = s.icon,
-                productId      = s.productId,
-                productTitle   = s.product?.title,
+                position         = s.position ?: 0,
+                color            = s.color ?: RandomizerViewModel.PALETTE_COLORS[0],
+                icon             = s.icon,
+                productId        = s.productId,
+                productTitle     = s.product?.title,
                 productThumbnail = s.product?.thumbnail
             )
         } ?: emptyList()
         vm.initBuilderSlots(slotCount, existing)
+
+        // Reset buyer-raffle prize state, then seed from slot[0] when editing a buyer_raffle template
+        vm.buyerRaffleProductId    = null
+        vm.buyerRaffleProductTitle = null
+        val initTypeVal = template?.type ?: "product_raffle"
+        if (initTypeVal == "buyer_raffle") {
+            vm.buyerRaffleProductId    = existing.firstOrNull()?.productId
+            vm.buyerRaffleProductTitle = existing.firstOrNull()?.productTitle
+        }
 
         val sheet = BottomSheetDialog(this)
         val bb = SheetRandomizerBuilderBinding.inflate(layoutInflater)
@@ -175,7 +231,7 @@ class RandomizerTemplatesActivity : BaseActivity() {
         builderBind  = bb
 
         // Pre-fill if editing
-        bb.tvBuilderTitle.text  = if (template == null) "Create Template" else "Edit Template"
+        bb.tvBuilderTitle.text   = if (template == null) "Create Template" else "Edit Template"
         bb.etTemplateName.setText(template?.name ?: "")
         bb.etEntryCost.setText(template?.entryCost ?: "0")
         bb.tvSlotCountValue.text = slotCount.toString()
@@ -183,13 +239,27 @@ class RandomizerTemplatesActivity : BaseActivity() {
         // Type dropdown
         val typeAdapter = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, RandomizerViewModel.TYPE_LABELS)
         bb.actvTemplateType.setAdapter(typeAdapter)
-        val currentTypeIdx = RandomizerViewModel.TYPE_VALUES.indexOf(template?.type ?: "product_raffle")
+        val currentTypeIdx = RandomizerViewModel.TYPE_VALUES.indexOf(initTypeVal)
         bb.actvTemplateType.setText(RandomizerViewModel.TYPE_LABELS[maxOf(0, currentTypeIdx)], false)
 
         // Slot grid
         slotAdapter = RandomizerSlotAdapter(vm.builderSlots) { idx -> openSlotEditor(idx) }
         bb.recyclerSlots.layoutManager = GridLayoutManager(this, 2)
         bb.recyclerSlots.adapter = slotAdapter
+
+        // Apply buyer-raffle UI for the initial type
+        applyBuyerRaffleUi(bb, initTypeVal)
+
+        // Type-change listener: toggle buyer-raffle UI
+        bb.actvTemplateType.setOnItemClickListener { _, _, position, _ ->
+            val typeVal = RandomizerViewModel.TYPE_VALUES.getOrElse(position) { "product_raffle" }
+            applyBuyerRaffleUi(bb, typeVal)
+        }
+
+        // Prize-product picker (buyer_raffle only)
+        bb.btnPickPrizeProduct.setOnClickListener {
+            openPrizeProductPicker()
+        }
 
         // Stepper ─/+
         var count = slotCount
@@ -198,6 +268,10 @@ class RandomizerTemplatesActivity : BaseActivity() {
                 count--
                 bb.tvSlotCountValue.text = count.toString()
                 vm.initBuilderSlots(count, vm.builderSlots.take(count))
+                // Re-mirror prize if in buyer_raffle mode
+                if (currentTypeValue(bb) == "buyer_raffle") {
+                    mirrorBuyerRaffleProduct(vm.buyerRaffleProductId, vm.buyerRaffleProductTitle)
+                }
                 slotAdapter?.setData(vm.builderSlots)
             }
         }
@@ -206,6 +280,10 @@ class RandomizerTemplatesActivity : BaseActivity() {
                 count++
                 bb.tvSlotCountValue.text = count.toString()
                 vm.initBuilderSlots(count, vm.builderSlots)
+                // Mirror prize onto the newly added slot
+                if (currentTypeValue(bb) == "buyer_raffle") {
+                    mirrorBuyerRaffleProduct(vm.buyerRaffleProductId, vm.buyerRaffleProductTitle)
+                }
                 slotAdapter?.setData(vm.builderSlots)
             }
         }
@@ -244,12 +322,23 @@ class RandomizerTemplatesActivity : BaseActivity() {
         sheet.setContentView(sb.root)
         slotEditorSheet = sheet
 
-        sb.tvSlotEditorTitle.text = "Configure Slot #${slotIndex + 1}"
+        // For buyer_raffle, slots represent buyers — hide per-slot product picker
+        val isBuyerRaffle = run {
+            val label = builderBind?.actvTemplateType?.text?.toString() ?: ""
+            val idx   = RandomizerViewModel.TYPE_LABELS.indexOf(label)
+            if (idx >= 0) RandomizerViewModel.TYPE_VALUES[idx] == "buyer_raffle" else false
+        }
 
-        // Product indicator
-        if (draft.productTitle != null) {
+        sb.tvSlotEditorTitle.text = if (isBuyerRaffle)
+            "Configure Buyer #${slotIndex + 1}"
+        else
+            "Configure Slot #${slotIndex + 1}"
+
+        // Product indicator (hidden for buyer_raffle — prize is set at template level)
+        sb.btnPickProduct.visibility    = if (isBuyerRaffle) View.GONE else View.VISIBLE
+        if (!isBuyerRaffle && draft.productTitle != null) {
             sb.tvSelectedProduct.isVisible = true
-            sb.tvSelectedProduct.text = "✓ ${draft.productTitle}"
+            sb.tvSelectedProduct.text = "\u2713 ${draft.productTitle}"
         }
 
         // Color adapter (4 columns)
@@ -266,7 +355,7 @@ class RandomizerTemplatesActivity : BaseActivity() {
         sb.recyclerIcons.layoutManager = GridLayoutManager(this, 6)
         sb.recyclerIcons.adapter = iconAdapter
 
-        // Product picker
+        // Product picker (per-slot, only for non-buyer_raffle types)
         sb.btnPickProduct.setOnClickListener {
             sheet.dismiss()
             openProductPicker(slotIndex)
@@ -291,6 +380,22 @@ class RandomizerTemplatesActivity : BaseActivity() {
             vm.builderSlots[slotIndex].productId    = productId
             vm.builderSlots[slotIndex].productTitle = productTitle
             slotAdapter?.notifySlotChanged(slotIndex)
+        }
+    }
+
+    /**
+     * Buyer-raffle: pick the single prize product for the whole template.
+     * The selected product is mirrored to every slot in the model.
+     */
+    private fun openPrizeProductPicker() {
+        val frag = ProductsForLiveShowFragment.newInstance(from = "randomizer_prize")
+        frag.show(supportFragmentManager, "ProductPickerForPrize")
+        frag.setOnProductSelectedListener { productId, productTitle ->
+            vm.buyerRaffleProductId    = productId
+            vm.buyerRaffleProductTitle = productTitle
+            mirrorBuyerRaffleProduct(productId, productTitle)
+            slotAdapter?.setData(vm.builderSlots)
+            builderBind?.let { bb -> updatePrizeProductDisplay(bb) }
         }
     }
 
