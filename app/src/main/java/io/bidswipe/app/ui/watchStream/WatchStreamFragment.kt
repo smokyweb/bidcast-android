@@ -1590,7 +1590,16 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
             val price = currentProduct.price ?: "0.0"
             bind.price.text = price.asMoney() + " + Shipping + Taxes"
 
-            val auctionTypeId = roomState.auctionTypeId ?: liveShowData?.auctionTypeId
+            // Basecamp #9959912508 round 2 (2026-06-03): LiveShowModel.auctionTypeId
+            // defaults to 0 (not null), so the bare Elvis operator (?:) never fires the
+            // fallback — 0 is not null. next_product_set payloads often omit auction_type_id
+            // entirely, leaving it at the default 0, which made bidLayout.isVisible evaluate
+            // to (0 == 8) = false for every buyer who joined an ongoing show via this path.
+            // Fix: treat 0 as "not provided" and fall through to liveShowData (populated from
+            // room_create_get or the REST fallback, where auction_type_id is 8 for LIVE shows).
+            val auctionTypeId = roomState.auctionTypeId
+                ?.takeIf { it != 0 }
+                ?: liveShowData?.auctionTypeId
             val activeBid = roomState.highestBid.bidAmount?.takeIf { it.isNotEmpty() }
                 ?: roomState.startingBidAmount?.toString()?.takeIf { it != "0.0" }
                 ?: price
