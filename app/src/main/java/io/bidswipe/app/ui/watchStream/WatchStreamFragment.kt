@@ -335,9 +335,27 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
         bind.recycler.adapter = commentAdapter
 
         if (socketUrl.isNotEmpty()) {
-            socketManager = App.socketManager
-            socketManager?.joinRoom(roomID, userId) {
+            // Basecamp #9958518263 / #9958527259 (2026-06-03, round 2): make the
+            // buyer join its room as robustly as the seller does. Previously the
+            // buyer just grabbed App.socketManager and fired a bare joinRoom,
+            // relying on the app-startup connection already being up. If that
+            // singleton was null (login happened after app start) or the socket
+            // was mid-(re)connect, the buyer was never actually in the room and
+            // received NO chat_get / auction_started broadcasts. Now: ensure the
+            // singleton exists + is initialized, then connect() — which (per the
+            // SocketManager fix) joins immediately if already connected, or on the
+            // next connect otherwise — and perform join_room + join_show in the
+            // onConnected callback. join_show makes the buyer appear in the
+            // seller's viewer list.
+            socketManager = App.socketManager ?: SocketManager.getInstance(requireContext()).also {
+                App.socketManager = it
             }
+            socketManager?.initialize(socketUrl, mapOf("uid" to userId))
+            socketManager?.connect(onConnected = {
+                socketManager?.joinRoom(roomID, userId) {
+                    socketManager?.joinShow(userId, roomID)
+                }
+            })
 
             // Basecamp #9943368953 (2026-05-29): load persisted chat history on join
             // via the EXISTING REST endpoint GET /api/live_chat/{room_id}

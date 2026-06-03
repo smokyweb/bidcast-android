@@ -241,11 +241,35 @@ fun Resource.Error.parse(
 	// special (413 / UNAUTHORIZED / invalid_token) case. A benign empty state
 	// should never render a popup at all (blank or fallback). Real errors
 	// (network, known codes, or any non-blank backend message) still show.
-	val isSpecialCase = this.isNetworkError ||
-		this.errorCode?.toIntOrNull() == 413 ||
-		this.errorResponse?.errorType == "UNAUTHORIZED" ||
+	val isAuthError = this.errorResponse?.errorType == "UNAUTHORIZED" ||
 		this.errorResponse?.errorType == "invalid_token" ||
 		this.errorResponse?.message == "Token not found"
+
+	// Basecamp #9958788158 (2026-06-03): "token is invalid" popup on first app
+	// open after install. When an auth error (UNAUTHORIZED / invalid_token /
+	// Token not found) arrives while the user has NO stored token — i.e. they
+	// are not logged in (fresh install, or a leftover/expired token that has
+	// already been cleared) — there is no session to "expire", so popping a
+	// "token is invalid" dialog is pure noise that confuses a brand-new user.
+	// In that case suppress the dialog and silently route to the auth screen
+	// instead of alarming the user. Real session-expiry (auth error WHILE a
+	// token exists) still shows the dialog + logout flow as before.
+	val notLoggedIn = try { Prefs(mCtx).token().isEmpty() } catch (e: Throwable) { false }
+	if (isAuthError && notLoggedIn) {
+		try {
+			Prefs(mCtx).clear()
+			mCtx.startActivity(mCtx.toAuth().apply {
+				addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+			})
+		} catch (e: Throwable) {
+			Alerts.log(tag ?: mCtx.javaClass.simpleName, "silent auth-route failed: ${e.message}")
+		}
+		return
+	}
+
+	val isSpecialCase = this.isNetworkError ||
+		this.errorCode?.toIntOrNull() == 413 ||
+		isAuthError
 	val shouldShow = showAlert && (hasRealMessage || isSpecialCase)
 	if (shouldShow) {
 		AppBottomSheet(

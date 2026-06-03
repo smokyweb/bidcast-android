@@ -12,6 +12,7 @@ import io.bidswipe.app.network.response.socket.AuctionStartedResponse
 import io.bidswipe.app.network.response.socket.NotLiveShowResponse
 import io.bidswipe.app.network.response.socket.ProductIdsDeserializer
 import io.socket.client.IO
+import io.socket.client.Manager
 import io.socket.client.Socket
 import org.json.JSONArray
 import org.json.JSONObject
@@ -102,6 +103,33 @@ class SocketManager private constructor(
                 } else null
             }
             socket = IO.socket(serverUrl, opts)
+
+            // Basecamp #9958518263 / #9958527259 (2026-06-03, round 2): the buyer's
+            // socket connects ONCE at app startup, so by the time they open a live
+            // show the Socket-level EVENT_CONNECT has already fired and been
+            // consumed. socket.io then performs its polling->websocket transport
+            // upgrade and periodic reconnects, each of which gives the SERVER a
+            // brand-new socket id with EMPTY room membership. The Socket-level
+            // EVENT_CONNECT rejoin in connect() covers most cases, but to be
+            // bulletproof we ALSO listen on the Manager's reconnect events (which
+            // fire reliably on every transport reconnect) and re-emit join_room/
+            // join_show there too. This is what makes live chat + the bidding
+            // product card keep flowing for the buyer after the first reconnect.
+            // Verified server-side: a socket that is actually in room_id receives
+            // chat_get / auction_started; the bug was purely lost membership.
+            try {
+                socket?.io()?.on(Manager.EVENT_RECONNECT) {
+                    Log.d(TAG, "Manager EVENT_RECONNECT -> rejoin desired room")
+                    rejoinDesiredRoom()
+                }
+                socket?.io()?.on(Manager.EVENT_OPEN) {
+                    Log.d(TAG, "Manager EVENT_OPEN -> rejoin desired room")
+                    rejoinDesiredRoom()
+                }
+            } catch (e: Throwable) {
+                Log.e(TAG, "Failed to attach manager reconnect listeners: ${e.message}")
+            }
+
             isInitialized = true
             Log.d(TAG, "Socket initialized successfully")
         } catch (e: URISyntaxException) {
