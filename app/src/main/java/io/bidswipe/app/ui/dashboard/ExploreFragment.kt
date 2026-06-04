@@ -116,6 +116,10 @@ class ExploreFragment : BaseFragment<DashViewModel, FragmentExploreBinding>() {
         }
     }
 
+    // Basecamp #9960348333 (round 7 rebuild): debounce handle so the FIRST
+    // keystroke does NOT immediately navigate away and interrupt typing.
+    private var searchDebounce: android.os.Handler? = null
+
     private val textWatcher = object : TextWatcher {
         override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
         override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
@@ -128,14 +132,17 @@ class ExploreFragment : BaseFragment<DashViewModel, FragmentExploreBinding>() {
 
             bind.searchLayout.isEndIconVisible = query.isNotEmpty()
 
-            // Basecamp #9960348333 (Trey 2026-06-04): the Explore search bar must
-            // behave the SAME as the Home search bar (unified shows/products/users),
-            // NOT filter the category grid. As soon as the user starts typing, hand
-            // off to the shared SearchShowFragment (the exact destination the Home
-            // search bar uses) carrying the typed query, then clear this field so we
-            // don't leave a stale query / double-search on return.
+            // Basecamp #9960348333 (round 7 rebuild): the Explore search bar behaves
+            // like Home — it hands off to the shared tabbed SearchShowFragment. But
+            // it must NOT yank away on the very first letter. Debounce so the user
+            // can finish typing; navigate only after a short pause (or on submit,
+            // wired below). The typed query is carried over and this field cleared.
+            searchDebounce?.removeCallbacksAndMessages(null)
             if (query.isNotEmpty()) {
-                navigateToUnifiedSearch(query)
+                searchDebounce = android.os.Handler(android.os.Looper.getMainLooper())
+                searchDebounce?.postDelayed({
+                    navigateToUnifiedSearch(query)
+                }, SEARCH_DEBOUNCE_MS)
             }
         }
     }
@@ -372,12 +379,23 @@ class ExploreFragment : BaseFragment<DashViewModel, FragmentExploreBinding>() {
 
         bind.search.addTextChangedListener(textWatcher)
 
+        // Basecamp #9960348333 (round 7 rebuild): submit (enter / search IME) hands
+        // off immediately with the typed query — no debounce wait.
+        bind.search.setOnEditorActionListener { v, _, _ ->
+            val q = bind.search.value().trim()
+            searchDebounce?.removeCallbacksAndMessages(null)
+            hideKeyboard(v)
+            navigateToUnifiedSearch(q.ifEmpty { null })
+            true
+        }
     }
 
     // Basecamp #9960348333: navigate to the shared unified-search screen
     // (SearchShowFragment) — the same destination the Home search bar uses —
     // optionally carrying the query the user already typed on Explore.
     private fun navigateToUnifiedSearch(query: String?) {
+        // Cancel any pending debounced navigation so we don't double-navigate.
+        searchDebounce?.removeCallbacksAndMessages(null)
         // Clear the Explore field so we don't keep a stale query or re-trigger
         // navigation when the user comes back.
         bind.search.removeTextChangedListener(textWatcher)
@@ -395,8 +413,13 @@ class ExploreFragment : BaseFragment<DashViewModel, FragmentExploreBinding>() {
 
     override fun onPause() {
         super.onPause()
+        searchDebounce?.removeCallbacksAndMessages(null)
         bind.search.removeTextChangedListener(textWatcher)
         bind.search.setText("")
+    }
+
+    private companion object {
+        const val SEARCH_DEBOUNCE_MS = 600L
     }
 
     private fun setUpChips() {

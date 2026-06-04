@@ -1,10 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Basecamp #9929090875 (Trey 2026-05-26): unified search results now rendered
-     in a real RecyclerView (unifiedResultsRecycler) below the shows grid.
-     The old unifiedSearchSummary count-only TextView is removed. -->
+<!-- Basecamp #9960348333 (round 7 rebuild, 2026-06-04): the dedicated search
+     results page is now TABBED — Shows / Products / Users — matching the PWA
+     searchTabBar (resources/views/app/search.blade.php). All three tabs are
+     driven by a single POST /api/v1/search call (same as the PWA), so the
+     counts are consistent and we no longer depend on get-live-show's `type`
+     validation (the source of several prior bounces). Default tab = Shows
+     (Larry's call: livestream-shopping app, shows are the headline). A single
+     "No results found" is shown only when ALL THREE sections are empty. -->
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ui.dashboard.SearchShowFragment">
@@ -18,15 +24,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <!--
-      Basecamp #9933301500 round 5 (2026-05-28): added Filter button to the
-      right of the search bar on the SearchShow results page, parity with
-      iOS toolbar filter icon + PWA Filters button. The button uses the
-      existing BrowseFiltersSheet (already in use on Explore + Home) so
-      tag / category / subcategory / shipping filters apply to search
-      results. ChipGroup below this is now flexible-width so Live Now /
-      Popular / Coming Soon don't visually compete with Filter.
-    -->
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/searchLayout"
         style="@style/inputBoxStyle"
@@ -36,6 +33,8 @@
         android:layout_marginEnd="4dp"
         android:layout_marginBottom="@dimen/margin"
         app:boxStrokeWidth="2dp"
+        app:endIconMode="clear_text"
+        app:endIconTint="@color/scrim"
         app:layout_constraintEnd_toStartOf="@id/filterBtn"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/header"
@@ -66,141 +65,73 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@id/searchLayout" />
 
-    <com.google.android.material.chip.ChipGroup
-        android:id="@+id/chipGroup"
+    <!-- Tabs: Shows / Products / Users (PWA searchTabBar parity).
+         Tab labels carry their result counts, set in SearchShowFragment. -->
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/searchTabBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/margin"
-        app:alignContent="space_around"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/searchLayout"
-        app:singleLine="true"
-        app:singleSelection="true" />
-
-    <LinearLayout
-        android:id="@+id/heading"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="@dimen/margin"
-        android:layout_marginBottom="@dimen/margin"
-        android:orientation="horizontal"
         android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/chipGroup">
+        app:layout_constraintTop_toBottomOf="@id/searchLayout"
+        app:tabGravity="fill"
+        app:tabIndicatorColor="@color/scrim"
+        app:tabMode="fixed"
+        app:tabSelectedTextColor="@color/scrim"
+        app:tabTextColor="@color/outlineVariant">
 
-        <TextView
-            android:id="@+id/live"
-            style="@style/TitleLarge"
+        <!-- No android:id on TabItems: they are consumed by TabLayout at inflate
+             time and removed from the view tree, so ViewBinding can't bind them
+             (that NPE'd: "Missing required view tabProducts"). Tabs are accessed
+             by index via getTabAt() in SearchShowFragment. -->
+        <com.google.android.material.tabs.TabItem
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:text="@string/live_now" />
+            android:text="Shows" />
 
-        <com.google.android.material.divider.MaterialDivider
-            android:layout_width="2dp"
-            android:layout_height="match_parent"
-            android:layout_marginHorizontal="@dimen/half_margin"
-            android:layout_marginVertical="4dp" />
-
-        <TextView
-            android:id="@+id/popular"
-            style="@style/TitleLarge"
+        <com.google.android.material.tabs.TabItem
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:text="@string/popular" />
+            android:text="Products" />
 
-        <com.google.android.material.divider.MaterialDivider
-            android:layout_width="2dp"
-            android:layout_height="match_parent"
-            android:layout_marginHorizontal="@dimen/half_margin"
-            android:layout_marginVertical="4dp" />
-
-        <TextView
-            android:id="@+id/comingSoon"
-            style="@style/TitleLarge"
+        <com.google.android.material.tabs.TabItem
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:text="@string/comming_soon" />
+            android:text="Users" />
 
-    </LinearLayout>
+    </com.google.android.material.tabs.TabLayout>
 
-    <!-- Shows grid — occupies the top half of the results area -->
+    <!-- Single results RecyclerView. Renders only the active tab's section
+         (Shows = 2-col grid, Products/Users = full-width rows) via
+         UnifiedSearchResultAdapter + its SpanSizeLookup. -->
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recycler"
+        android:id="@+id/resultsRecycler"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_margin="@dimen/half_margin"
+        android:clipToPadding="false"
         android:orientation="vertical"
         app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-        app:layout_constraintBottom_toTopOf="@id/unifiedSectionLabel"
-        app:layout_constraintTop_toBottomOf="@id/heading"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/searchTabBar"
         app:spanCount="2"
         tools:itemCount="4"
         tools:listitem="@layout/home_item" />
 
-    <!-- Basecamp #9929090875 (Trey 2026-05-26): section header for user+product results.
-         Hidden when the query is blank or unified search returns nothing.
-         FIX (deep-diag 2026-05-26): added constraintTop_toBottomOf=recycler so that
-         ConstraintLayout can anchor the label below the shows grid and form a proper
-         vertical chain. Without this top constraint the label floated to y=0, placing
-         the unified results RecyclerView behind the header (invisible). -->
-    <TextView
-        android:id="@+id/unifiedSectionLabel"
-        style="@style/TitleSemiBold"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingHorizontal="@dimen/margin"
-        android:paddingVertical="6dp"
-        android:text="Users &amp; Products"
-        android:textSize="13sp"
-        android:visibility="gone"
-        app:layout_constraintBottom_toTopOf="@id/unifiedResultsRecycler"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/recycler" />
-
-    <!-- Basecamp #9929090875: actual user + product rows from /api/v1/search.
-         FIX (deep-diag 2026-05-26): three changes needed to make rows actually visible:
-         1. height: 0dp → wrap_content. The 0dp match_constraint resolved to 0 because
-            the vertical chain was underconstrained (unifiedSectionLabel had no top).
-         2. constraintHeight_max=220dp caps the section so it doesn't push shows off
-            screen; RecyclerView scrolls internally for more items.
-         3. constraintVertical_bias=1.0 bottom-aligns the section to parent.bottom,
-            which pins the entire chain upward and resolves all positions deterministically.
-            Without bias the view floats center-between-constraints (wrong position). -->
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/unifiedResultsRecycler"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:visibility="gone"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHeight_max="220dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/unifiedSectionLabel"
-        app:layout_constraintVertical_bias="1.0"
-        tools:itemCount="3"
-        tools:listitem="@layout/search_result_item" />
-
-    <!-- Basecamp #9960348333 round 6: this screen searches shows + users + products,
-         so the empty state must read "No results found", not "No Shows Found"
-         (which is misleading when only users/products matched). Visibility is
-         driven solely by SearchShowFragment.updateEmptyState() — shown only when
-         the query is non-blank AND both shows and unified results are empty — so
-         it can no longer overlay a populated user/product list. -->
+    <!-- Single empty state — shown only when query is non-blank AND all three
+         sections (shows + products + users) are empty. -->
     <io.bidswipe.app.ui.custom.NoDataView
         android:id="@+id/noData"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/heading"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/searchTabBar"
         app:title_text="No results found" />
 
     <io.bidswipe.app.ui.custom.LoaderView

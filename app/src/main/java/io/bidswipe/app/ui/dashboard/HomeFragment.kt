@@ -5,8 +5,6 @@ import android.app.Activity
 import android.content.Intent
 import android.graphics.Typeface
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -23,8 +21,6 @@ import io.bidswipe.app.base.BaseFragment
 import io.bidswipe.app.controller.FlashSaleAdapter
 import io.bidswipe.app.controller.HomeAdapter
 import io.bidswipe.app.controller.HomeCategoryAdapter
-import io.bidswipe.app.controller.SearchResultItem
-import io.bidswipe.app.controller.UnifiedSearchResultAdapter
 import io.bidswipe.app.databinding.FragmentHomeBinding
 import io.bidswipe.app.interfaces.AlertClicks
 import io.bidswipe.app.interfaces.RecyclerClicks
@@ -32,8 +28,6 @@ import io.bidswipe.app.model.StreamModel
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.network.response.GetMyShowResponse
 import io.bidswipe.app.network.response.Product
-import io.bidswipe.app.network.response.SearchProduct
-import io.bidswipe.app.network.response.SearchUser
 import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.ui.custom.UpcomingShowSheet
 import io.bidswipe.app.ui.more.NotificationActivity
@@ -42,10 +36,6 @@ import io.bidswipe.app.ui.product.ProductSetDetailsActivity
 import io.bidswipe.app.ui.sellerProfile.SellerProfileActivity
 import io.bidswipe.app.ui.watchStream.ViewLiveShowActivity
 import io.bidswipe.app.utils.Alerts
-import androidx.lifecycle.lifecycleScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import io.bidswipe.app.utils.hideKeyboard
 import io.bidswipe.app.utils.isBrowseAuthError
 import io.bidswipe.app.utils.isTablet
@@ -67,29 +57,11 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
     private lateinit var flashSaleAdapter: FlashSaleAdapter
     private val flashSaleItems = mutableListOf<Product?>()
 
-    // Basecamp #9929090875 (Trey 2026-05-26 / fix 2026-05-27): unified search
-    // (users + products) results render in a dedicated RecyclerView on the home
-    // screen, below the shows grid. Previous 3 fix attempts wired this up in
-    // SearchShowFragment which is never navigated to from anywhere — the
-    // user-facing search bar lives here in HomeFragment.
-    private lateinit var unifiedAdapter: UnifiedSearchResultAdapter
-    private var searchDebounce: android.os.Handler? = null
-    // Basecamp #9960348333 (Trey 2026-06-04, round 6): true while a search query
-    // is active. The text watcher correctly hides flashSalesSection on each
-    // keystroke, BUT getFlashSaleProducts() resolves asynchronously and its
-    // observer re-set flashSalesSection.isVisible = items.isNotEmpty() with no
-    // regard for search state — so when the flash-sale response landed mid-search
-    // it re-showed the Flash Sales carousel ON TOP of the unified search results
-    // (the overlap in Trey's video: "⚡ Flash Sales" + Godzilla cards over the
-    // QA product rows). This flag lets the flash observer (and any other async
-    // home-content restore) refuse to un-hide home content while searching.
-    private var isSearchActive = false
-    // Basecamp #9933301500 round 5 (2026-05-28): in-memory filter state for
-    // the Home search results page. Persisted across keystrokes inside this
-    // session so a user can apply filters, type to refine, and the filters
-    // stick. Cleared when the filter sheet's Clear button runs (BrowseFilters
-    // default has no fields set).
-    private var homeSearchFilters: BrowseFilters = BrowseFilters()
+    // Basecamp #9960348333 (round 7 rebuild, 2026-06-04): Home no longer renders
+    // search results inline. The search bar NAVIGATES to the dedicated tabbed
+    // results page (SearchShowFragment) carrying the typed query. This restores
+    // the original (commit 9f5d56dd) behavior that the UI overhaul stripped, and
+    // ends the half-migrated mess where Home both navigated AND rendered inline.
     private var showList = mutableListOf<GetMyShowResponse.Data?>()
     private val categoryTiles = mutableListOf<HomeCategoryAdapter.CategoryTile>()
     private var romIdsList = mutableListOf<String>()
@@ -100,43 +72,13 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
     private var selectedCategoryTileId = "for_you"
     private var hasInitializedCategories = false
 
-    // Basecamp #9933301500 round 5 (2026-05-28): one runner for getLiveShow +
-    // unifiedSearch with the current filters baked in. Called from the search
-    // TextWatcher AND from BrowseFiltersSheet Apply callback.
-    private fun runSearchWithFilters(query: String) {
-        val catIdParts = homeSearchFilters.categoryIds.map { it.toString().request() }
-        val subCatIdParts = homeSearchFilters.subCategoryIds.map { it.toString().request() }
-        viewModel.getLiveShow(
-            selectedTabText.request(),
-            selectedCategoryRequest(),
-            search = query.request(),
-            page = page.toString().request(),
-            showFormat = homeSearchFilters.showFormat?.request(),
-            tag = homeSearchFilters.tag?.takeIf { it.isNotBlank() }?.request(),
-            premierShop = if (homeSearchFilters.premierShop) "1".request() else null,
-            shipCountry = homeSearchFilters.shipCountry?.request(),
-            shipState = homeSearchFilters.shipState?.takeIf { it.isNotBlank() }?.request(),
-            shipping = homeSearchFilters.shipping?.request(),
-            categoryIds = catIdParts.ifEmpty { null },
-            subCategoryIds = subCatIdParts.ifEmpty { null },
-        )
-        // Basecamp #9938023997 round 5 (2026-05-28): pass ALL active filters
-        // to unifiedSearch, not just category/subcategory. Previously show_format,
-        // tag, premier_shop, shipping were only passed to getLiveShow (the shows
-        // tab) but not to unifiedSearch (the multi-section results recycler).
-        searchDebounce?.removeCallbacksAndMessages(null)
-        searchDebounce = android.os.Handler(android.os.Looper.getMainLooper())
-        searchDebounce?.postDelayed({
-            viewModel.unifiedSearch(
-                query,
-                categoryIds = homeSearchFilters.categoryIds.ifEmpty { null },
-                subCategoryIds = homeSearchFilters.subCategoryIds.ifEmpty { null },
-                showFormat = homeSearchFilters.showFormat,
-                tag = homeSearchFilters.tag?.takeIf { it.isNotBlank() },
-                premierShop = if (homeSearchFilters.premierShop) true else null,
-                shipping = homeSearchFilters.shipping,
-            )
-        }, 350)
+    // Basecamp #9960348333 (round 7 rebuild): navigate to the dedicated search
+    // results page, optionally carrying the query already typed on Home.
+    private fun goToSearchResults(query: String?) {
+        val args = query?.takeIf { it.isNotBlank() }?.let {
+            androidx.core.os.bundleOf("query" to it)
+        }
+        findNavController().navigate(R.id.goToSearchShowFragment, args)
     }
 
     private val viewLiveShowLauncher = registerForActivityResult(
@@ -259,87 +201,11 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
             hideKeyboard(it)
         }
 
-        // Basecamp #9933801536 (2026-05-27): save-search bell
-        // Basecamp #9933801536 (2026-05-27): save-search bell. Posts current
-        // search text to /api/saved-searches and flips bell to filled state.
-        // Network runs on Dispatchers.IO; UI mutations marshalled back to main.
-        // Basecamp #9933301500 round 5 (2026-05-28): filter button on Home search results.
-        // Opens BrowseFiltersSheet (already used by Explore / Browse / SearchShowFragment).
-        // Apply re-runs both getLiveShow and unifiedSearch with the new filter state.
-        // Basecamp #9933301500 (2026-05-29): filter button is always visible on Home —
-        // in browse mode (no search query) it filters the live-show grid; in search mode
-        // it narrows both getLiveShow and unifiedSearch as before.
-        bind.searchFilterBtn.isVisible = true
-        bind.searchFilterBtn.setHapticClickListener {
-            BrowseFiltersSheet(initial = homeSearchFilters) { applied ->
-                homeSearchFilters = applied
-                // Flip icon tint when filters are active so user sees the badge.
-                bind.searchFilterBtn.setColorFilter(
-                    if (applied.isActive) android.graphics.Color.parseColor("#FFA500") else android.graphics.Color.BLACK
-                )
-                val q = bind.search.value()
-                page = 1
-                if (q.isNotEmpty()) {
-                    runSearchWithFilters(q)
-                } else {
-                    // Browse mode: apply filters to the live-show grid directly.
-                    val catIdParts = applied.categoryIds.map { it.toString().request() }
-                    val subCatIdParts = applied.subCategoryIds.map { it.toString().request() }
-                    bind.loader.isVisible = true
-                    viewModel.getLiveShow(
-                        selectedTabText.request(),
-                        selectedCategoryRequest(),
-                        page = "1".request(),
-                        showFormat = applied.showFormat?.request(),
-                        tag = applied.tag?.takeIf { it.isNotBlank() }?.request(),
-                        premierShop = if (applied.premierShop) "1".request() else null,
-                        shipCountry = applied.shipCountry?.request(),
-                        shipState = applied.shipState?.takeIf { it.isNotBlank() }?.request(),
-                        shipping = applied.shipping?.request(),
-                        categoryIds = catIdParts.ifEmpty { null },
-                        subCategoryIds = subCatIdParts.ifEmpty { null },
-                    )
-                }
-            }.show(childFragmentManager, "home_search_browse_filters")
-        }
-
-        bind.saveBellBtn.setHapticClickListener {
-            val q = bind.search.value().trim()
-            if (q.isEmpty()) {
-                Alerts.error(mCtx, "Type a search term before saving")
-                return@setHapticClickListener
-            }
-            viewLifecycleOwner.lifecycleScope.launch {
-                val code: Int = withContext(Dispatchers.IO) {
-                    try {
-                        val token = io.bidswipe.app.utils.Prefs(mCtx).token()
-                        val body = org.json.JSONObject().apply { put("query", q) }.toString()
-                        val url = java.net.URL("${io.bidswipe.app.utils.Const.BASE_URL}/api/saved-searches")
-                        val conn = url.openConnection() as java.net.HttpURLConnection
-                        conn.requestMethod = "POST"
-                        conn.setRequestProperty("Content-Type", "application/json")
-                        conn.setRequestProperty("Accept", "application/json")
-                        conn.setRequestProperty("Authorization", "Bearer $token")
-                        conn.doOutput = true
-                        conn.outputStream.use { it.write(body.toByteArray()) }
-                        val rc = conn.responseCode
-                        conn.disconnect()
-                        rc
-                    } catch (e: Exception) {
-                        e.printStackTrace()
-                        -1
-                    }
-                }
-                if (code == 200 || code == 201) {
-                    bind.saveBellBtn.setImageResource(io.bidswipe.app.R.drawable.ic_bell_filled)
-                    Alerts.success(mCtx, "Search saved — you'll get notified when something matches")
-                } else if (code == -1) {
-                    Alerts.error(mCtx, "Network error saving search")
-                } else {
-                    Alerts.error(mCtx, "Could not save search (code $code)")
-                }
-            }
-        }
+        // Basecamp #9960348333 (round 7 rebuild): Home is browse-only again.
+        // The save-search bell + filter button belong on the dedicated search
+        // results page now (which has its own filter), so they're hidden here.
+        bind.saveBellBtn.isVisible = false
+        bind.searchFilterBtn.isVisible = false
 
         bind.main.setHapticClickListener {
             hideKeyboard(it)
@@ -409,10 +275,9 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
                     flashSaleItems.clear()
                     flashSaleItems.addAll(products)
                     flashSaleAdapter.notifyDataSetChanged()
-                    // Basecamp #9960348333 round 6: never re-show Flash Sales while a
-                    // search is active, or it overlays the unified results. It will be
-                    // restored by the search text watcher when the query is cleared.
-                    bind.flashSalesSection.isVisible = !isSearchActive && flashSaleItems.isNotEmpty()
+                    // Basecamp #9960348333 (round 7 rebuild): Home no longer hosts
+                    // inline search, so flash sales just track their own data.
+                    bind.flashSalesSection.isVisible = flashSaleItems.isNotEmpty()
                 }
                 else -> {
                     // On error or empty: keep section hidden. Don’t surface an
@@ -441,144 +306,26 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
 
         bind.searchLayout.isEndIconVisible = false
 
-        // Basecamp #9929090875 (Trey 2026-05-26 / fix 2026-05-27): unified search
-        // adapter wiring. User tap → SellerProfileActivity. Product tap →
-        // ProductDetailsActivity. Adapter is bound here even when empty so that
-        // submitList() updates the live RecyclerView once results arrive.
-        unifiedAdapter = UnifiedSearchResultAdapter(
-            onUserClick = { user: SearchUser ->
-                startActivity(
-                    Intent(mCtx, SellerProfileActivity::class.java)
-                        .putExtra("sellerId", (user.id ?: 0).toString())
-                )
-            },
-            onProductClick = { product: SearchProduct ->
-                if (product.id != null) {
-                    startActivity(
-                        Intent(mCtx, ProductDetailsActivity::class.java)
-                            .putExtra("productId", product.id.toString())
-                    )
-                }
-            },
-            // Basecamp #9929090875 round 3 (2026-05-27): show results now
-            // live in the unified RecyclerView too, with the same card UX as
-            // Live/Upcoming. Tap routes to ViewLiveShowActivity for live ones,
-            // or the seller profile for upcoming.
-            onShowClick = { show: io.bidswipe.app.network.response.SearchShow ->
-                if (show.isLive == true) {
-                    startActivity(
-                        Intent(mCtx, io.bidswipe.app.ui.watchStream.ViewLiveShowActivity::class.java)
-                            .putExtra("showId", (show.id ?: 0).toString())
-                            .putExtra("userId", show.userId?.toString() ?: show.user?.id?.toString() ?: "")
-                    )
-                } else {
-                    startActivity(
-                        Intent(mCtx, SellerProfileActivity::class.java)
-                            .putExtra("sellerId", (show.user?.id ?: show.userId ?: 0).toString())
-                    )
-                }
-            }
-        )
-        // Basecamp #9929090875 redesign (2026-05-28): configure GridLayoutManager with
-        // spanCount=2 so Show cards render 2-per-row; attach the adapter's SpanSizeLookup
-        // so headers/products/users stay full-width.
-        val searchGridLm = androidx.recyclerview.widget.GridLayoutManager(mCtx, 2)
-        bind.unifiedResultsRecycler.layoutManager = searchGridLm
-        bind.unifiedResultsRecycler.adapter = unifiedAdapter
-        searchGridLm.spanSizeLookup = unifiedAdapter.makeSpanSizeLookup()
-
-        // Basecamp #9942607925 (2026-05-29 Trey QA): tap the search bar →
-        // navigate to SearchShowFragment (the dedicated search results page).
-        // The inline TextWatcher below is kept as a safety net but the
-        // primary UX is the full-screen search page.
+        // Basecamp #9960348333 (round 7 rebuild): the Home search bar NAVIGATES to
+        // the dedicated tabbed search results page (SearchShowFragment). Home keeps
+        // its normal content (shows grid + flash sales) and never renders search
+        // results inline; the results page owns the live search input + the
+        // Shows/Products/Users tabs.
+        //
+        // The Home field is made non-focusable so it behaves like a BUTTON: a tap
+        // can't steal focus + open the keyboard inline (which is what made the old
+        // setOnClickListener unreliable — the framework consumed the first tap for
+        // focus and the click never fired, so nothing navigated). Now every tap
+        // (field, search icon) just opens the dedicated page.
+        bind.search.isFocusable = false
+        bind.search.isFocusableInTouchMode = false
+        bind.search.isCursorVisible = false
         bind.search.setOnClickListener {
             hideKeyboard(it)
-            findNavController().navigate(R.id.goToSearchShowFragment)
+            goToSearchResults(null)
         }
         bind.searchLayout.setStartIconOnClickListener {
-            findNavController().navigate(R.id.goToSearchShowFragment)
-        }
-
-        bind.search.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
-            override fun afterTextChanged(s: Editable?) {
-                val query = s?.toString()?.trim() ?: ""
-                bind.searchLayout.isEndIconVisible = query.isNotEmpty()
-                // Basecamp #9933801536 (2026-05-28 round 2): save-search bell
-                // should only appear once the user has typed something.
-                bind.saveBellBtn.isVisible = query.isNotEmpty()
-                // Basecamp #9933301500 / #9942607925: filter button is always visible
-                // (set once above); do NOT hide it here. Bell stays search-only.
-
-                if (!s.isNullOrEmpty()) {
-                    // Basecamp #9929090875 redesign (2026-05-28): hide normal home content
-                    // while a search is active; results appear INLINE in its place.
-                    isSearchActive = true
-                    bind.heading.isVisible = false
-                    bind.swipeRefreshLayout.isVisible = false
-                    // #9933973683 return: also hide flash section during search.
-                    // The isSearchActive flag above also stops the async flash-sale
-                    // observer from re-showing it mid-search (#9960348333 round 6).
-                    bind.flashSalesSection.isVisible = false
-
-                    page = 1
-                    runSearchWithFilters(s.toString())
-                } else {
-                    // Query cleared → restore normal home content, hide search results.
-                    isSearchActive = false
-                    searchDebounce?.removeCallbacksAndMessages(null)
-                    bind.unifiedResultsRecycler.isVisible = false
-                    bind.heading.isVisible = true
-                    bind.swipeRefreshLayout.isVisible = true
-                    // Restore flash section if it has items
-                    bind.flashSalesSection.isVisible = flashSaleItems.isNotEmpty()
-                    unifiedAdapter.submitList(emptyList())
-                }
-            }
-        })
-
-        // Basecamp #9929090875 redesign (2026-05-28): observe unified search results.
-        // Shows / Products / Users are rendered in separate sections with section headers.
-        // Results replace the normal home content (heading + swipeRefreshLayout are
-        // hidden while a query is active; see search text watcher above).
-        viewModel.unifiedSearchRepo.observe(viewLifecycleOwner) { resource ->
-            when (resource) {
-                is Resource.Success -> {
-                    val data = resource.value.data
-                    val shows    = data?.shows.orEmpty()
-                    val products = data?.products.orEmpty()
-                    val users    = data?.users.orEmpty()
-
-                    if (shows.isNotEmpty() || products.isNotEmpty() || users.isNotEmpty()) {
-                        unifiedAdapter.submitResults(shows, products, users)
-                        bind.unifiedResultsRecycler.isVisible = true
-                        // Basecamp #9942607925: hide noData when unified results are present
-                        // (noData overlays unifiedResultsRecycler in ConstraintLayout z-order).
-                        bind.noData.isVisible = false
-                    } else {
-                        bind.unifiedResultsRecycler.isVisible = false
-                    }
-                }
-                is Resource.Error -> {
-                    // Basecamp #9942607925 round 2 (2026-06-03): surface API errors so a
-                    // broken search isn't silently blank. Don't pop an alert on auth errors
-                    // (those are handled by the getLiveShow observer), but log the failure.
-                    bind.unifiedResultsRecycler.isVisible = false
-                    if (!resource.isBrowseAuthError()) {
-                        android.util.Log.w(TAG, "unifiedSearch error: ${resource.errorResponse?.message}")
-                    }
-                }
-                else -> {
-                    bind.unifiedResultsRecycler.isVisible = false
-                }
-            }
-        }
-
-        bind.searchLayout.setEndIconOnClickListener {
-            bind.search.setText("")
-            bind.searchLayout.isEndIconVisible = false
-            hideKeyboard(it)
+            goToSearchResults(null)
         }
 
         bind.swipeRefreshLayout.setOnRefreshListener {

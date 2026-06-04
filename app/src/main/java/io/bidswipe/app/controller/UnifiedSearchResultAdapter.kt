@@ -177,6 +177,30 @@ class UnifiedSearchResultAdapter(
         notifyDataSetChanged()
     }
 
+    /**
+     * Basecamp #9960348333 (round 7 rebuild): render a SINGLE tab's section
+     * with no section header (the TabLayout already labels the section).
+     * Used by the tabbed SearchShowFragment — one of shows / products / users
+     * is shown at a time.
+     */
+    @SuppressLint("NotifyDataSetChanged")
+    fun submitShowsOnly(shows: List<SearchShow>) {
+        items = shows.map { SearchResultItem.ShowItem(it) }
+        notifyDataSetChanged()
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    fun submitProductsOnly(products: List<SearchProduct>) {
+        items = products.map { SearchResultItem.ProductItem(it) }
+        notifyDataSetChanged()
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    fun submitUsersOnly(users: List<SearchUser>) {
+        items = users.map { SearchResultItem.UserItem(it) }
+        notifyDataSetChanged()
+    }
+
     /** Legacy path kept so existing call-sites don't break. */
     @SuppressLint("NotifyDataSetChanged")
     fun submitList(newItems: List<SearchResultItem>) {
