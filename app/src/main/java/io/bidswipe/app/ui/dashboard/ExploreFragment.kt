@@ -127,14 +127,16 @@ class ExploreFragment : BaseFragment<DashViewModel, FragmentExploreBinding>() {
             oldText = query
 
             bind.searchLayout.isEndIconVisible = query.isNotEmpty()
-            bind.loader.isVisible = true
-            bind.recycler.isVisible = false
-            bind.noData.isVisible = false
 
-            log("Query : $selectedTabText ")
-
-            viewModel.getCategory(type = selectedTabText, search = query.ifEmpty { null }, getCount = "true")
-
+            // Basecamp #9960348333 (Trey 2026-06-04): the Explore search bar must
+            // behave the SAME as the Home search bar (unified shows/products/users),
+            // NOT filter the category grid. As soon as the user starts typing, hand
+            // off to the shared SearchShowFragment (the exact destination the Home
+            // search bar uses) carrying the typed query, then clear this field so we
+            // don't leave a stale query / double-search on return.
+            if (query.isNotEmpty()) {
+                navigateToUnifiedSearch(query)
+            }
         }
     }
 
@@ -200,6 +202,15 @@ class ExploreFragment : BaseFragment<DashViewModel, FragmentExploreBinding>() {
             bind.search.setText("")
             bind.searchLayout.isEndIconVisible = false
             hideKeyboard(it)
+        }
+
+        // Basecamp #9960348333: tapping the Explore search bar (or its search icon)
+        // opens the same unified-search screen Home uses — consistent behavior.
+        bind.search.setOnClickListener {
+            navigateToUnifiedSearch(null)
+        }
+        bind.searchLayout.setStartIconOnClickListener {
+            navigateToUnifiedSearch(null)
         }
 
         bind.swipeRefreshLayout.setOnRefreshListener {
@@ -361,6 +372,25 @@ class ExploreFragment : BaseFragment<DashViewModel, FragmentExploreBinding>() {
 
         bind.search.addTextChangedListener(textWatcher)
 
+    }
+
+    // Basecamp #9960348333: navigate to the shared unified-search screen
+    // (SearchShowFragment) — the same destination the Home search bar uses —
+    // optionally carrying the query the user already typed on Explore.
+    private fun navigateToUnifiedSearch(query: String?) {
+        // Clear the Explore field so we don't keep a stale query or re-trigger
+        // navigation when the user comes back.
+        bind.search.removeTextChangedListener(textWatcher)
+        bind.search.setText("")
+        bind.searchLayout.isEndIconVisible = false
+        oldText = ""
+        bind.search.addTextChangedListener(textWatcher)
+        hideKeyboard(bind.search)
+
+        val args = if (!query.isNullOrEmpty()) bundleOf("query" to query) else null
+        runSafe {
+            findNavController().navigate(ids.goToSearchFromExplore, args)
+        }
     }
 
     override fun onPause() {

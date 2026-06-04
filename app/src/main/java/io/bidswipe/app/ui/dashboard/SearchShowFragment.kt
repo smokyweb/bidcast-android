@@ -175,6 +175,15 @@ class SearchShowFragment : BaseFragment<DashViewModel, FragmentSearchShowBinding
 		)
 		bind.unifiedResultsRecycler.adapter = unifiedAdapter
 
+		// Basecamp #9960348333 (Trey 2026-06-04): when opened from the Explore search
+		// bar, the user may have already typed a query on Explore. Pre-fill it here
+		// (before the TextWatcher is attached so it doesn't double-fire) so the
+		// initial runCurrentSearchWithFilters() below searches for it immediately.
+		arguments?.getString("query")?.takeIf { it.isNotBlank() }?.let { q ->
+			bind.search.setText(q)
+			bind.search.setSelection(q.length)
+		}
+
 		bind.search.requestFocus()
 
 		showKeyboard(bind.search)

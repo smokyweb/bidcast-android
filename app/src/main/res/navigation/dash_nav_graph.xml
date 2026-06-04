@@ -40,6 +40,17 @@
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@anim/slide_in_left"
             app:popExitAnim="@anim/slide_out_right" />
+        <!-- Basecamp #9960348333 (Trey 2026-06-04): the Explore search bar must
+             behave the SAME as the Home search bar (unified shows/products/users
+             search), not the category-grid filter. Route to the same
+             SearchShowFragment that Home uses. -->
+        <action
+            android:id="@+id/goToSearchFromExplore"
+            app:destination="@id/searchShowFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
     </fragment>
     <fragment
         android:id="@+id/activityFragment"
