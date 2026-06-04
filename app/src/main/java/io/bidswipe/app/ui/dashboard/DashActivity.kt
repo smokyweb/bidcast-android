@@ -44,8 +44,10 @@ import io.bidswipe.app.model.StreamModel
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.ui.custom.AlertType
 import io.bidswipe.app.ui.custom.AppBottomSheet
+import io.bidswipe.app.messaging.MyFirebaseMessagingService
 import io.bidswipe.app.ui.more.MoreActivity
 import io.bidswipe.app.ui.more.NotificationActivity
+import io.bidswipe.app.ui.product.OrderStatusActivity
 import io.bidswipe.app.ui.product.ProductDetailsActivity
 import io.bidswipe.app.ui.sellerHub.SellerHubActivity
 import io.bidswipe.app.ui.sellerHub.SellerVerificationActivity
@@ -79,6 +81,16 @@ class DashActivity : BaseActivity(), NavController.OnDestinationChangedListener 
 
     private var gridList = mutableListOf<SellerToolModel>()
     private var sellList = mutableListOf<SellModel>()
+
+    /**
+     * #9960387225 — When the app is in the background or killed, FCM delivers
+     * notification+data messages via the system tray.  Tapping the tray
+     * notification starts DashActivity (the launcher) with the data extras.
+     * We store the desired Activity tab index here and apply it after the
+     * navController + bottomBar are wired up at the end of onCreate.
+     * -1 means no pending push navigation.
+     */
+    private var pendingPushActivityTab: Int = -1
 
 
 
@@ -314,6 +326,9 @@ class DashActivity : BaseActivity(), NavController.OnDestinationChangedListener 
 
         App.getCategories()
 
+        // #9960387225: Apply any deferred push tab navigation (bids/offers)
+        // that was stored in pendingPushActivityTab during checkPushExtras().
+        applyPendingPushNav()
 
     }
 
@@ -587,8 +602,128 @@ class DashActivity : BaseActivity(), NavController.OnDestinationChangedListener 
         checkIntent(intent)
     }
 
+    /**
+     * #9960387225 — Handle push notification data extras delivered to this
+     * Activity by the system (background / cold-start tap).  Mirrors the
+     * routing logic in MyFirebaseMessagingService.buildPushIntent().
+     *
+     * Activities that have their own screen (Order, LiveShow, Chat) are started
+     * immediately.  Tab-only destinations (Bids, Offers) store the tab index in
+     * [pendingPushActivityTab] so it can be applied once the navController and
+     * bottomBar are ready (see [applyPendingPushNav]).
+     */
+    private fun checkPushExtras(intent: Intent) {
+        val type = intent.getStringExtra("type") ?: return
+
+        when {
+            type == "message" -> {
+                val chatIntent = Intent(this, ChatActivity::class.java).apply {
+                    putExtra("id",    intent.getStringExtra("sender_id")    ?: "")
+                    putExtra("name",  intent.getStringExtra("sender_name")  ?: "")
+                    putExtra("image", intent.getStringExtra("sender_imagee") ?: "")
+                }
+                startActivity(chatIntent)
+            }
+
+            type == "Live Room Started" -> {
+                val roomId = intent.getStringExtra("room_id") ?: ""
+                startActivity(
+                    Intent(this, ViewLiveShowActivity::class.java).apply {
+                        putExtra("roomId", roomId)
+                        putParcelableArrayListExtra(
+                            "streamList",
+                            ArrayList(listOf(StreamModel(roomId, "", thumbnail = "")))
+                        )
+                    }
+                )
+            }
+
+            type == "purchase" || type == "sold"
+                || type == "cancellation_requested"
+                || type == "cancellation_approved"
+                || type == "cancellation_rejected"
+                || type == "Order Status Updated" -> {
+                val orderId = intent.getStringExtra("order_id") ?: ""
+                startActivity(
+                    Intent(this, OrderStatusActivity::class.java).apply {
+                        putExtra("orderId", orderId)
+                    }
+                )
+            }
+
+            type == "bid" || type == "bid_won" || type == "bid_placed" -> {
+                // Bids tab (index 1) in ActivityFragment.
+                // Apply after navController is ready — see applyPendingPushNav().
+                pendingPushActivityTab = 1
+            }
+
+            type.startsWith("offer_") || type == "offer" -> {
+                // Offers tab (index 2) in ActivityFragment.
+                pendingPushActivityTab = 2
+            }
+
+            type == "cohost_invite" -> {
+                startActivity(
+                    Intent(this, io.bidswipe.app.ui.cohost.CoHostJoinActivity::class.java).apply {
+                        putExtra("schedule_show_id", intent.getStringExtra("schedule_show_id") ?: "")
+                        putExtra("cohost_invite_id", intent.getStringExtra("cohost_invite_id") ?: "")
+                        putExtra("show_title",        intent.getStringExtra("show_title")       ?: "")
+                    }
+                )
+            }
+
+            // inquiry_message, credited, debited, and unknown: open NotificationActivity
+            else -> startActivity(Intent(this, NotificationActivity::class.java))
+        }
+    }
+
+    /**
+     * Apply any push-driven tab navigation that was deferred from checkPushExtras()
+     * because navController / bottomBar were not yet wired.  Call this AFTER
+     * bottomBar.setupWithNavController() in onCreate().
+     */
+    private fun applyPendingPushNav() {
+        if (pendingPushActivityTab < 0) return
+        val tabIndex = pendingPushActivityTab
+        pendingPushActivityTab = -1
+        // Switch bottom nav to the Activity fragment, then set the pager tab.
+        bind.contentDash.bottomBar.post {
+            bind.contentDash.bottomBar.selectedItemId = ids.activityFragment
+            // Post again after the fragment is committed so the ActivityFragment
+            // ViewPager2 is attached before we call setCurrentItem.
+            bind.contentDash.bottomBar.post {
+                val frag = supportFragmentManager.findFragmentById(ids.nav_host_fragment)
+                val host = frag as? androidx.navigation.fragment.NavHostFragment
+                val actFrag = host?.childFragmentManager?.fragments
+                    ?.filterIsInstance<io.bidswipe.app.ui.dashboard.ActivityFragment>()
+                    ?.firstOrNull()
+                actFrag?.view?.let {
+                    val vp = it.findViewById<androidx.viewpager2.widget.ViewPager2>(
+                        io.bidswipe.app.R.id.pager
+                    )
+                    vp?.setCurrentItem(tabIndex, false)
+                }
+            }
+        }
+    }
+
     fun checkIntent(intent: Intent) {
         log("ON NEW INTENT ${intent.data}")
+
+        // ─────────────────────────────────────────────────────────────────────────
+        // #9960387225 — Background / cold-start push tap-through.
+        // When FCM delivers a notification+data message while the app is
+        // backgrounded or killed, the system tray shows the OS notification.
+        // Tapping it starts DashActivity (launcher) with the FCM data payload
+        // as flat Intent extras.  We route here just like the foreground path
+        // in MyFirebaseMessagingService.buildPushIntent().
+        // ─────────────────────────────────────────────────────────────────────────
+        if (!intent.hasExtra("google.message_id") && intent.hasExtra("type")) {
+            // Foreground path already handled via PendingIntent — skip to avoid
+            // double-routing.  google.message_id is absent for PendingIntent
+            // launches; present only in system-tray taps.
+        }
+        checkPushExtras(intent)
 
         if (intent.action == ACTION_VIEW) {
             val item = intent.data?.toString() ?: ""
