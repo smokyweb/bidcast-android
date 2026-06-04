@@ -74,6 +74,16 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
     // user-facing search bar lives here in HomeFragment.
     private lateinit var unifiedAdapter: UnifiedSearchResultAdapter
     private var searchDebounce: android.os.Handler? = null
+    // Basecamp #9960348333 (Trey 2026-06-04, round 6): true while a search query
+    // is active. The text watcher correctly hides flashSalesSection on each
+    // keystroke, BUT getFlashSaleProducts() resolves asynchronously and its
+    // observer re-set flashSalesSection.isVisible = items.isNotEmpty() with no
+    // regard for search state — so when the flash-sale response landed mid-search
+    // it re-showed the Flash Sales carousel ON TOP of the unified search results
+    // (the overlap in Trey's video: "⚡ Flash Sales" + Godzilla cards over the
+    // QA product rows). This flag lets the flash observer (and any other async
+    // home-content restore) refuse to un-hide home content while searching.
+    private var isSearchActive = false
     // Basecamp #9933301500 round 5 (2026-05-28): in-memory filter state for
     // the Home search results page. Persisted across keystrokes inside this
     // session so a user can apply filters, type to refine, and the filters
@@ -399,7 +409,10 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
                     flashSaleItems.clear()
                     flashSaleItems.addAll(products)
                     flashSaleAdapter.notifyDataSetChanged()
-                    bind.flashSalesSection.isVisible = flashSaleItems.isNotEmpty()
+                    // Basecamp #9960348333 round 6: never re-show Flash Sales while a
+                    // search is active, or it overlays the unified results. It will be
+                    // restored by the search text watcher when the query is cleared.
+                    bind.flashSalesSection.isVisible = !isSearchActive && flashSaleItems.isNotEmpty()
                 }
                 else -> {
                     // On error or empty: keep section hidden. Don’t surface an
@@ -501,15 +514,19 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
                 if (!s.isNullOrEmpty()) {
                     // Basecamp #9929090875 redesign (2026-05-28): hide normal home content
                     // while a search is active; results appear INLINE in its place.
+                    isSearchActive = true
                     bind.heading.isVisible = false
                     bind.swipeRefreshLayout.isVisible = false
-                    // #9933973683 return: also hide flash section during search
+                    // #9933973683 return: also hide flash section during search.
+                    // The isSearchActive flag above also stops the async flash-sale
+                    // observer from re-showing it mid-search (#9960348333 round 6).
                     bind.flashSalesSection.isVisible = false
 
                     page = 1
                     runSearchWithFilters(s.toString())
                 } else {
                     // Query cleared → restore normal home content, hide search results.
+                    isSearchActive = false
                     searchDebounce?.removeCallbacksAndMessages(null)
                     bind.unifiedResultsRecycler.isVisible = false
                     bind.heading.isVisible = true

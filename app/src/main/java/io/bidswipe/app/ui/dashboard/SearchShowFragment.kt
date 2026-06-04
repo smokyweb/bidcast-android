@@ -54,7 +54,40 @@ class SearchShowFragment : BaseFragment<DashViewModel, FragmentSearchShowBinding
 	// last-applied filters until they explicitly clear / change them.
 	private var browseFilters: BrowseFilters = BrowseFilters()
 
+	// Basecamp #9960348333 (Trey 2026-06-04, round 6): the dedicated Search screen
+	// fires TWO independent API calls per query — getLiveShow (shows) and
+	// unifiedSearch (users + products) — each with its own observer. Both used to
+	// toggle the shared `noData` ("No Shows Found") view independently, so they
+	// raced: unifiedSearch (users found) hid noData, then the later getLiveShow
+	// (0 shows) re-showed it ON TOP of the visible user list. That's the overlap
+	// in Trey's video ("No Shows Found" clipboard over @devtest1 / @test15).
+	//
+	// Fix: track both result sets and resolve the empty state in ONE place
+	// (updateEmptyState). noData only appears when the query is non-blank AND
+	// BOTH shows and unified results are empty. It also reads "No results found"
+	// rather than "No Shows Found" since this screen searches users+products too.
+	private var hasShows = false
+	private var hasUnifiedResults = false
+	private var showsLoaded = false
+	private var unifiedLoaded = false
+
+	private fun updateEmptyState() {
+		val query = bind.search.text?.toString()?.trim().orEmpty()
+		// Only decide once both calls have reported back for the current query,
+		// so we never flash "no results" before unifiedSearch has answered.
+		val bothBack = showsLoaded && unifiedLoaded
+		val nothing = !hasShows && !hasUnifiedResults
+		bind.noData.isVisible = query.isNotBlank() && bothBack && nothing
+	}
+
 	private fun runCurrentSearchWithFilters() {
+		// New query in flight: reset the per-query result/loaded flags so a stale
+		// observer from a previous keystroke can't flip the empty state.
+		hasShows = false
+		hasUnifiedResults = false
+		showsLoaded = false
+		unifiedLoaded = false
+		bind.noData.isVisible = false
 		val q = bind.search.text?.toString() ?: ""
 		val catIdParts = browseFilters.categoryIds.map { it.toString().request() }
 		val subCatIdParts = browseFilters.subCategoryIds.map { it.toString().request() }
@@ -84,9 +117,14 @@ class SearchShowFragment : BaseFragment<DashViewModel, FragmentSearchShowBinding
 				subCategoryIds = browseFilters.subCategoryIds.ifEmpty { null },
 			)
 		} else {
+			// Blank query: nothing to search. Treat unified as "loaded, empty" so
+			// updateEmptyState() isn't blocked waiting on a call we won't make.
 			bind.unifiedResultsRecycler.isVisible = false
 			bind.unifiedSectionLabel.isVisible = false
 			unifiedAdapter.submitList(emptyList())
+			hasUnifiedResults = false
+			unifiedLoaded = true
+			updateEmptyState()
 		}
 	}
 	override fun getModel(): Class<DashViewModel> = DashViewModel::class.java
@@ -238,14 +276,14 @@ class SearchShowFragment : BaseFragment<DashViewModel, FragmentSearchShowBinding
 						showList.add(it)
 					}
 
-					if (showList.isEmpty()) {
-						bind.noData.isVisible = true
-						bind.recycler.isVisible = false
-					} else {
-						bind.noData.isVisible = false
-						bind.recycler.isVisible = true
-					}
-
+					// Basecamp #9960348333 round 6: don't toggle the shared noData here
+					// directly (it raced unifiedSearch). Record whether shows exist and
+					// let updateEmptyState() make the combined decision. recycler
+					// visibility still follows shows-only since it only holds shows.
+					hasShows = showList.isNotEmpty()
+					showsLoaded = true
+					bind.recycler.isVisible = hasShows
+					updateEmptyState()
 
 					homeAdapter.notifyDataSetChanged()
 
@@ -253,6 +291,11 @@ class SearchShowFragment : BaseFragment<DashViewModel, FragmentSearchShowBinding
 
 				is Resource.Error -> {
 					bind.loader.isVisible = false
+					// A failed show fetch shouldn't strand the empty-state resolver.
+					hasShows = false
+					showsLoaded = true
+					bind.recycler.isVisible = false
+					updateEmptyState()
 
 					resource.parse(mCtx, TAG, object : AlertClicks {
 						override fun primaryClick(dialog: AppBottomSheet) {
@@ -284,27 +327,32 @@ class SearchShowFragment : BaseFragment<DashViewModel, FragmentSearchShowBinding
 					data?.users?.forEach { resultItems.add(SearchResultItem.UserItem(it)) }
 					data?.products?.forEach { resultItems.add(SearchResultItem.ProductItem(it)) }
 
+					hasUnifiedResults = resultItems.isNotEmpty()
+					unifiedLoaded = true
 					if (resultItems.isNotEmpty()) {
 						unifiedAdapter.submitList(resultItems)
 						bind.unifiedResultsRecycler.isVisible = true
 						bind.unifiedSectionLabel.isVisible = true
-						// FIX (deep-diag 2026-05-26): noData spans heading→parent bottom and
-						// has higher z-order than unifiedResultsRecycler in the XML, so it
-						// overlays and hides unified results when shows=empty.
-						// Hide noData whenever we have user/product results to show.
-						bind.noData.isVisible = false
 					} else {
+						unifiedAdapter.submitList(emptyList())
 						bind.unifiedResultsRecycler.isVisible = false
 						bind.unifiedSectionLabel.isVisible = false
 					}
+					// Basecamp #9960348333 round 6: single combined empty-state decision
+					// (see updateEmptyState). Never independently force noData here, or
+					// it races the shows observer and "No Shows Found" overlays results.
+					updateEmptyState()
 				}
 				is Resource.Error -> {
 					// Basecamp #9942607925 round 2 (2026-06-03): explicit error branch so
 					// search failures are logged and not silently blank. The blank-query
 					// guard in DashViewModel.unifiedSearch() already prevents 422 from an
 					// empty query; this handles any other unexpected failures.
+					hasUnifiedResults = false
+					unifiedLoaded = true
 					bind.unifiedResultsRecycler.isVisible = false
 					bind.unifiedSectionLabel.isVisible = false
+					updateEmptyState()
 					android.util.Log.w("SearchShowFragment", "unifiedSearch error: ${resource.errorResponse?.message}")
 				}
 				else -> {

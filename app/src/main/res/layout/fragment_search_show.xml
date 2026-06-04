@@ -188,6 +188,12 @@
         tools:itemCount="3"
         tools:listitem="@layout/search_result_item" />
 
+    <!-- Basecamp #9960348333 round 6: this screen searches shows + users + products,
+         so the empty state must read "No results found", not "No Shows Found"
+         (which is misleading when only users/products matched). Visibility is
+         driven solely by SearchShowFragment.updateEmptyState() — shown only when
+         the query is non-blank AND both shows and unified results are empty — so
+         it can no longer overlay a populated user/product list. -->
     <io.bidswipe.app.ui.custom.NoDataView
         android:id="@+id/noData"
         android:layout_width="match_parent"
@@ -195,7 +201,7 @@
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@id/heading"
-        app:title_text="No Shows Found" />
+        app:title_text="No results found" />
 
     <io.bidswipe.app.ui.custom.LoaderView
         android:id="@+id/loader"
