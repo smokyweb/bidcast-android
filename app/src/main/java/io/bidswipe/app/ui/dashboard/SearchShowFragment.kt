@@ -60,6 +60,13 @@ class SearchShowFragment : BaseFragment<DashViewModel, FragmentSearchShowBinding
 		val subCatIdParts = browseFilters.subCategoryIds.map { it.toString().request() }
 		bind.loader.isVisible = true
 		viewModel.getLiveShow(
+			// Basecamp #9960348333 (Trey 2026-06-03): get-live-show REQUIRES a
+			// `type` in {live,upcoming,popular} (backend validation). This call
+			// previously omitted it, so the multipart part was dropped and the
+			// backend returned 403 "The type field is required." — surfaced as an
+			// error popup on the dedicated Search screen (on load AND while typing).
+			// Pass a valid default; the real search results come from unifiedSearch.
+			type = "popular".request(),
 			search = q.request(),
 			showFormat = browseFilters.showFormat?.request(),
 			tag = browseFilters.tag?.takeIf { it.isNotBlank() }?.request(),
