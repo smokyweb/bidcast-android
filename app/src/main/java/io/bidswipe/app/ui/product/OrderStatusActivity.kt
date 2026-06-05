@@ -179,6 +179,21 @@ class OrderStatusActivity : BaseActivity() {
 
     }
 
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+
+        val nextOrderId = intent.getStringExtra("orderId") ?: ""
+        if (nextOrderId.isBlank()) return
+
+        orderId = nextOrderId
+        bind.homeBtn.isVisible = (intent.getStringExtra("from") ?: "") != "order_details"
+        statusItems.clear()
+        adapter.notifyDataSetChanged()
+        bind.loader.isVisible = true
+        viewModel.getOrderDetails(orderId.request())
+    }
+
     /** Download PDF to cache and open it in-app using FileProvider + Intent.ACTION_VIEW.
      *  #8: Receipt now opens inside the device PDF viewer rather than being pushed to
      *  the Downloads folder via DownloadManager.  Zero new library dependencies.

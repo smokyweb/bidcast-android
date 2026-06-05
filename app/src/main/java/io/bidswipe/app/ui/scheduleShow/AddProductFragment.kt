@@ -33,6 +33,7 @@ import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request
 import io.bidswipe.app.utils.setHapticClickListener
 import io.bidswipe.app.utils.toListProduct
+import io.bidswipe.app.utils.toRandomizerTemplates
 import okhttp3.MultipartBody
 import java.io.File
 
@@ -72,6 +73,18 @@ class AddProductFragment : BaseFragment<ScheduleShowViewModel, FragmentAddProduc
 			} else {
 				bind.noData.isVisible = true
 				bind.recycler.isVisible = false
+			}
+		}
+	}
+
+	private val randomizerLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+		if (result.resultCode == Activity.RESULT_OK) {
+			val data = result.data
+			val templateId = data?.getIntExtra("selectedTemplateId", 0)?.takeIf { it > 0 }
+			if (templateId != null) {
+				viewModel.selectedRandomizerTemplateId = templateId
+				viewModel.selectedRandomizerTemplateName = data.getStringExtra("selectedTemplateName")
+				updateRandomizerDisplay()
 			}
 		}
 	}
@@ -164,6 +177,14 @@ class AddProductFragment : BaseFragment<ScheduleShowViewModel, FragmentAddProduc
 					.putExtra("categoryId", viewModel.categoryId)
 					.putExtra("auction_type", viewModel.auctionId)
 					.putExtra("from", "addProduct")
+			)
+		}
+
+		updateRandomizerDisplay()
+		bind.addRandomizerLayout.setHapticClickListener {
+			randomizerLauncher.launch(
+				mCtx.toRandomizerTemplates()
+					.putExtra("from", "show_creation_picker")
 			)
 		}
 
@@ -296,5 +317,14 @@ class AddProductFragment : BaseFragment<ScheduleShowViewModel, FragmentAddProduc
 			}
 		}
 
+	}
+
+	private fun updateRandomizerDisplay() {
+		val name = viewModel.selectedRandomizerTemplateName
+		bind.randomizerSelectionText.text = if (name.isNullOrBlank()) {
+			"Add Randomizer"
+		} else {
+			"Randomizer: $name"
+		}
 	}
 }

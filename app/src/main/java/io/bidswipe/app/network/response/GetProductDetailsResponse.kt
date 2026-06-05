@@ -65,7 +65,7 @@ data class GetProductDetailsResponse(
 		val purchasedQuantity: String?,
 		@SerializedName("quantity")
 		val quantity: String?,
-		@SerializedName("reserve_for_live")
+		@SerializedName(value = "reserve_for_live", alternate = ["reserveForLive"])
 		val reserveForLive: Boolean?,
 		@SerializedName("shipping_adress")
 		val shippingAdress: ShippingAdress?,
@@ -85,6 +85,14 @@ data class GetProductDetailsResponse(
 		val title: String?,
 		@SerializedName("type")
 		val type: String?,
+		@SerializedName("sale_format")
+		val saleFormat: String?,
+		@SerializedName("is_auction")
+		val isAuction: Boolean?,
+		@SerializedName("pre_bid_allowed")
+		val preBidAllowed: Boolean?,
+		@SerializedName("pre_bid_schedule_show_id")
+		val preBidScheduleShowId: Int?,
 		@SerializedName("user")
 		val user: User?,
 		@SerializedName("product_save_status")

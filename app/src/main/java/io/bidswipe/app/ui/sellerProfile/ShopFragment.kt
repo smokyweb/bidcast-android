@@ -21,6 +21,7 @@ import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.model.LiveMoreOption
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.network.response.Product
+import io.bidswipe.app.network.response.isLiveAuctionFormat
 import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.ui.product.ProductDetailsActivity
 import io.bidswipe.app.utils.Alerts
@@ -42,11 +43,21 @@ class ShopFragment : BaseFragment<SellerViewModel, FragmentShopBinding>() {
 	private val optionList = mutableListOf<LiveMoreOption?>()
 	private var sellerId = ""
 	private var sortBy = "title_asc"
-	private var saleType = "auction"
+	private var selectedShopTab = ShopTab.AUCTION
+	private var saleType = ""
 	private var type = ""
-	private var productStatus = ""
+	private var productStatus = "active"
+	private var marketPlace = "true"
 	private var page = 1
 	private var isLoading = false
+	private var suppressSearchReload = false
+	private var suppressChipReload = false
+
+	private enum class ShopTab {
+		AUCTION,
+		BUY_NOW,
+		SOLD
+	}
 
 	private val mClick = object : RecyclerClicks {
 		override fun itemClick(pos: Int, status: String?) {
@@ -99,6 +110,7 @@ class ShopFragment : BaseFragment<SellerViewModel, FragmentShopBinding>() {
 			override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
 
 			override fun afterTextChanged(s: Editable?) {
+				if (suppressSearchReload) return
 
 				bind.loader.isVisible = true
 				page = 1
@@ -111,7 +123,7 @@ class ShopFragment : BaseFragment<SellerViewModel, FragmentShopBinding>() {
 			bind.loader.isVisible = true
 			bind.noInternet.isVisible = false
 			page = 1
-			viewModel.getUserProducts(userId = sellerId.request(), page = page.toString().request())
+			loadData()
 		}
 
 
@@ -136,7 +148,7 @@ class ShopFragment : BaseFragment<SellerViewModel, FragmentShopBinding>() {
 					}
 
 					if (mData != null) {
-						productList.addAll(mData)
+						productList.addAll(mData.filter { product -> product.matchesSelectedShopTab() })
 					}
 
 					if (productList.isEmpty()) {
@@ -198,6 +210,7 @@ class ShopFragment : BaseFragment<SellerViewModel, FragmentShopBinding>() {
 			saleType = saleType.ifEmpty { null }?.request(),
 			type = type.ifEmpty { null }?.request(),
 			status = productStatus.ifEmpty { null }?.request(),
+			marketPlace = marketPlace.ifEmpty { null }?.request(),
 			sortBy = sortBy.ifEmpty { null }?.request(),
 			page = page.toString().request(),
 			search = bind.search.value().ifEmpty { null }?.request()
@@ -205,7 +218,7 @@ class ShopFragment : BaseFragment<SellerViewModel, FragmentShopBinding>() {
 	}
 
 	private fun setUpChips() {
-		bind.search.setText("")
+		setSearchTextSilently("")
 		bind.chipGroup.removeAllViews()
 
 		listOf("Auction", "Buy Now", "Sold").forEach {
@@ -230,7 +243,12 @@ class ShopFragment : BaseFragment<SellerViewModel, FragmentShopBinding>() {
 
 				if (index == -1) return@runSafe
 
+				if (suppressChipReload) return@runSafe
+
 				saleType = ""
+				type = ""
+				productStatus = "active"
+				marketPlace = ""
 				page = 1
 
 				when (index) {
@@ -239,35 +257,58 @@ class ShopFragment : BaseFragment<SellerViewModel, FragmentShopBinding>() {
 					}*/
 
 					0 -> {
-						saleType = "auction"
-						type = ""
-						productStatus = ""
+						selectedShopTab = ShopTab.AUCTION
+						marketPlace = "true"
 					}
 
 					1 -> {
-						type = "buy_now"
-						saleType = ""
-						productStatus = ""
+						selectedShopTab = ShopTab.BUY_NOW
+						marketPlace = "false"
 					}
 
 					2 -> {
+						selectedShopTab = ShopTab.SOLD
 						productStatus = "inactive"
-						saleType = ""
-						type = ""
 					}
 
 				}
 
 				bind.loader.isVisible = true
-
-				bind.search.setText("")
+				setSearchTextSilently("")
+				loadData()
 
 			}
 		}
 
+		suppressChipReload = true
 		bind.chipGroup.check(bind.chipGroup.getChildAt(0).id)
+		suppressChipReload = false
 
 
+	}
+
+	private fun setSearchTextSilently(text: String) {
+		suppressSearchReload = true
+		bind.search.setText(text)
+		suppressSearchReload = false
+	}
+
+	private fun Product?.matchesSelectedShopTab(): Boolean {
+		val product = this ?: return false
+		return when (selectedShopTab) {
+			ShopTab.AUCTION -> !product.isSoldForShop() && product.isLiveAuctionFormat()
+			ShopTab.BUY_NOW -> !product.isSoldForShop() && !product.isLiveAuctionFormat()
+			ShopTab.SOLD -> product.isSoldForShop()
+		}
+	}
+
+	private fun Product.isSoldForShop(): Boolean {
+		val statusText = status?.lowercase().orEmpty()
+		if (statusText == "sold" || statusText == "inactive") return true
+
+		val listedQuantity = quantity?.toIntOrNull()
+		val purchased = purchasedQuantity?.toIntOrNull()
+		return listedQuantity != null && purchased != null && listedQuantity <= purchased
 	}
 
 	private fun sortOptionSheet() {
@@ -292,7 +333,7 @@ class ShopFragment : BaseFragment<SellerViewModel, FragmentShopBinding>() {
 
 					sortingOptionSheetBinding.optionRecycler.adapter?.notifyDataSetChanged()
 
-					bind.search.setText("")
+					setSearchTextSilently("")
 
 					sortBy = ""
 

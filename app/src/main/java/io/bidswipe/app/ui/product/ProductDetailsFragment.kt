@@ -83,6 +83,10 @@ class ProductDetailsFragment : BaseFragment<ProductViewModel, FragmentProductDet
         bind.recyclerView.adapter = mediaAdapter
 
         bind.buyNow.setHapticClickListener {
+            if (viewModel.product?.isLiveAuctionFormat() == true) {
+                Alerts.error(mCtx, "Live auction products cannot be purchased with Buy Now.")
+                return@setHapticClickListener
+            }
             findNavController().navigate(ids.goToBuyNowFragment)
         }
 
@@ -94,6 +98,10 @@ class ProductDetailsFragment : BaseFragment<ProductViewModel, FragmentProductDet
         bind.preBid.setHapticClickListener {
             showPreBidDialog()
         }
+
+        bind.buyLayout.isVisible = false
+        bind.buyNow.isVisible = false
+        bind.preBid.isVisible = false
 
         bind.save.setHapticClickListener {
             bind.loader.isVisible = true
@@ -271,22 +279,18 @@ class ProductDetailsFragment : BaseFragment<ProductViewModel, FragmentProductDet
                         startActivity(intent)
                     }
 
-                    bind.buyLayout.isVisible = mData?.userId.toString() != userId
+                    val isBuyer = mData != null && mData.userId.toString() != userId
+                    val isAuctionProduct = mData?.isLiveAuctionFormat() == true
 
-                    // Basecamp #9954326658 (2026-06-02, PWA parity db19011f + iOS):
-                    // "Buy Now" must NEVER appear on a live-auction product. Auction
-                    // items are sold by bidding / pre-bid, never at a fixed buy-it-now
-                    // price. Show Buy Now only for non-auction (buy-it-now) products.
-                    //
-                    // NOTE: buy_now defaults to visibility="gone" in the layout and was
-                    // never explicitly enabled here, so historically Buy Now did not
-                    // render on this generic product-detail screen at all. We now enable
-                    // it for buy-it-now products (which have a working goToBuyNowFragment
-                    // handler) and keep it hidden for auction products. pre_bid is left
-                    // as-is (its show-context flow lives in UpcomingShowDetailsActivity);
-                    // this change is scoped to the reported Buy-Now-on-auction bug only.
-                    val isAuctionProduct = mData?.auction == true
-                    bind.buyNow.isVisible = !isAuctionProduct
+                    // Basecamp #9960348333 follow-up (2026-06-05): Buy Now and
+                    // Pre-Bid are mutually exclusive on product details. Buy-it-now
+                    // products must never expose Pre-Bid, even when opened from
+                    // another user's Shop tab.
+                    if (isAuctionProduct) bind.makeOffer.isVisible = false
+                    bind.buyNow.isVisible = isBuyer && !isAuctionProduct
+                    bind.preBid.isVisible = isBuyer && isAuctionProduct && mData?.preBidAllowed != false
+                    bind.buyLayout.isVisible = isBuyer &&
+                        (bind.makeOffer.isVisible || bind.buyNow.isVisible || bind.preBid.isVisible)
 
                     productSaved = mData?.productSaveStatus ?: false
 
@@ -602,6 +606,22 @@ class ProductDetailsFragment : BaseFragment<ProductViewModel, FragmentProductDet
         flashCountdownRunnable = null
     }
 
+    private fun GetProductDetailsResponse.Data.isLiveAuctionFormat(): Boolean {
+        if (auction == true || reserveForLive == true || isAuction == true) return true
+        if (type.isLiveAuctionText()) return true
+        if (saleFormat.isLiveAuctionText()) return true
+        return false
+    }
+
+    private fun String?.isLiveAuctionText(): Boolean {
+        val normalized = this
+            ?.lowercase()
+            ?.replace("-", "_")
+            ?.replace(" ", "_")
+            .orEmpty()
+        return normalized in setOf("live", "auction", "live_auction", "reserve_for_live", "reserveforlive")
+    }
+
     // Basecamp #9933847997 (2026-05-27): pre-bid dialog.
     // Basecamp #9933847997 (2026-05-29): updated to POST /api/pre-bid
     // (was /api/product/pre-bid, incorrect per ROBIN_API_SPECS.md).
@@ -692,5 +712,3 @@ class ProductDetailsFragment : BaseFragment<ProductViewModel, FragmentProductDet
         }
     }
 }
-
-

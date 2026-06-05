@@ -92,7 +92,23 @@ class PurchasesAdapter(
 
 			bind.sellerUsername.text =if(item?.productId!=null) (item.product?.user?.name ?: "").asCapital() else (item?.productSet?.seller?.name?:"").asCapital()
 			bind.sellerUsername.setHapticClickListener {
-				mClicks.itemClick(position, "seller")
+				mClicks.itemClick(position, "profile")
+			}
+
+			val statusLower = item?.status?.lowercase().orEmpty()
+			val cancellationLower = item?.cancellationStatus?.lowercase().orEmpty()
+			val cancellable = statusLower == "pending" || statusLower == "processing"
+			val cancellationPending = cancellationLower == "requested"
+			bind.requestCancel.isVisible = cancellable && cancellationLower != "approved"
+			bind.requestCancel.text = if (cancellationPending) "Requested" else "Request Cancel"
+			bind.requestCancel.alpha = if (cancellationPending) 0.55f else 1f
+			bind.requestCancel.isClickable = true
+			if (cancellable && !cancellationPending && cancellationLower != "approved") {
+				bind.requestCancel.setHapticClickListener {
+					mClicks.itemClick(position, "request_cancel")
+				}
+			} else {
+				bind.requestCancel.setOnClickListener { }
 			}
 
 			// Status chip

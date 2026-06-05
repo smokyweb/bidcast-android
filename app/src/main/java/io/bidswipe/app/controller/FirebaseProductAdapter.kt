@@ -26,6 +26,8 @@ class FirebaseProductAdapter(
     val mList: MutableList<Product?>, val mClicks: RecyclerClicks,
 ) : BaseAdapter<Product?, ProductSelectionItemBinding>(mList) {
 
+    private fun isRandomizerPicker() = from == "randomizer_slot" || from == "randomizer_prize"
+
     override fun bindView(inflater: LayoutInflater, parent: ViewGroup) =
         ProductSelectionItemBinding.inflate(inflater, parent, false)
 
@@ -48,7 +50,7 @@ class FirebaseProductAdapter(
                     // assumed those were the only way to interact. Route any tap
                     // anywhere on the row to the “select” action when picking
                     // for a randomizer slot.
-                    "randomizer_slot" -> mClicks.itemClick(position, "select")
+                    "randomizer_slot", "randomizer_prize" -> mClicks.itemClick(position, "select")
                     else -> mClicks.itemClick(position, "select")
                 }
             }
@@ -58,14 +60,14 @@ class FirebaseProductAdapter(
                 // randomizer slot, the Start Auction button should NOT start
                 // an auction — it should select the product for the slot. Avoid
                 // confusing UI by routing the click to the select action.
-                if (from == "randomizer_slot") mClicks.itemClick(position, "select")
+                if (isRandomizerPicker()) mClicks.itemClick(position, "select")
                 else mClicks.itemClick(position, "start_auction")
             }
 
             bind.setForNext.setHapticClickListener {
                 // Same as above — redirect the Pin/Set-next button to select
                 // when in the randomizer-slot picker.
-                if (from == "randomizer_slot") mClicks.itemClick(position, "select")
+                if (isRandomizerPicker()) mClicks.itemClick(position, "select")
                 else mClicks.itemClick(position, "set_next")
             }
 
@@ -78,7 +80,7 @@ class FirebaseProductAdapter(
             // explicit “Select” footer button on the picker is the canonical
             // confirm CTA.
             bind.buttonLayout.isVisible =
-                item?.status != "inactive" && from != "freebie" && from != "randomizer_slot"
+                item?.status != "inactive" && from != "freebie" && !isRandomizerPicker()
 
             bind.quantity.text = buildSpannedString {
                 append("Status: ")
@@ -93,7 +95,7 @@ class FirebaseProductAdapter(
                 }
             }
 
-            if (from == "freebie" || from == "randomizer_slot") {
+            if (from == "freebie" || isRandomizerPicker()) {
                 // Basecamp #9929871140 (2026-05-27): mirror the freebie
                 // selection-stroke pattern for randomizer-slot picking so
                 // the user gets immediate visual feedback that their tap

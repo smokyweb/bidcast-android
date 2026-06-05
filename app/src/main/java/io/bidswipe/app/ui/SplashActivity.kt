@@ -31,11 +31,16 @@ class SplashActivity : AppCompatActivity() {
 		}
 
 		Handler(Looper.getMainLooper()).postDelayed({
-			if (Prefs(this@SplashActivity).token().isNotEmpty()) {
-				startActivity(this.toDash())
+			val nextIntent = (if (Prefs(this@SplashActivity).token().isNotEmpty()) {
+				this.toDash()
 			} else {
-				startActivity(this.toAuth())
+				this.toAuth()
+			}).apply {
+				putExtras(intent)
+				action = intent.action
+				data = intent.data
 			}
+			startActivity(nextIntent)
 			finishAfterTransition()
 		}, 1500)
 	}

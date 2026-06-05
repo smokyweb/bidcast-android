@@ -16,8 +16,8 @@ import io.bidswipe.app.model.StreamModel
 import io.bidswipe.app.ui.cohost.CoHostJoinActivity
 import io.bidswipe.app.ui.dashboard.ChatActivity
 import io.bidswipe.app.ui.dashboard.DashActivity
-import io.bidswipe.app.ui.more.NotificationActivity
 import io.bidswipe.app.ui.product.OrderStatusActivity
+import io.bidswipe.app.ui.sellerHub.SellerHubActivity
 import io.bidswipe.app.ui.watchStream.ViewLiveShowActivity
 import io.bidswipe.app.utils.Alerts
 import io.bidswipe.app.utils.Prefs
@@ -182,7 +182,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         return when {
             // ── Direct messages (peer DM chat) ───────────────────────────────
             type == "message" -> PendingIntent.getActivity(
-                ctx, 1,
+                ctx, pushRequestCode(type, data, 1),
                 Intent(ctx, ChatActivity::class.java).apply {
                     putExtra("id",    data["sender_id"]    ?: "")
                     putExtra("name",  data["sender_name"]  ?: "")
@@ -197,7 +197,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             type == "Live Room Started" -> {
                 val roomId = data["room_id"] ?: ""
                 PendingIntent.getActivity(
-                    ctx, 10,
+                    ctx, pushRequestCode(type, data, 10),
                     Intent(ctx, ViewLiveShowActivity::class.java).apply {
                         putExtra("roomId", roomId)
                         putParcelableArrayListExtra(
@@ -210,15 +210,26 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
                 )
             }
 
-            // ── Order-related: open OrderStatusActivity with orderId ──────────
-            type == "purchase" || type == "sold"
-                || type == "cancellation_requested"
+            // ── Buyer order-related: open OrderStatusActivity with orderId ───
+            type == "purchase"
                 || type == "cancellation_approved"
                 || type == "cancellation_rejected"
                 || type == "Order Status Updated" -> PendingIntent.getActivity(
-                ctx, 11,
+                ctx, pushRequestCode(type, data, 11),
                 Intent(ctx, OrderStatusActivity::class.java).apply {
                     putExtra("orderId", data["order_id"] ?: "")
+                    this.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
+                },
+                flag
+            )
+
+            // ── Seller order-related: open My Orders / seller order detail ────
+            type == "sold" || type == "cancellation_requested" -> PendingIntent.getActivity(
+                ctx, pushRequestCode(type, data, 17),
+                Intent(ctx, SellerHubActivity::class.java).apply {
+                    putExtra("slug", "order")
+                    putExtra("orderId", data["order_id"] ?: "")
+                    putExtra("from", "push")
                     this.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
                 },
                 flag
@@ -230,7 +241,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             // added to the bid_won payload, we can route to ViewLiveShowActivity.
             type == "bid" || type == "bid_won" || type == "bid_placed" ->
                 PendingIntent.getActivity(
-                    ctx, 12,
+                    ctx, pushRequestCode(type, data, 12),
                     Intent(ctx, DashActivity::class.java).apply {
                         putExtra(EXTRA_PUSH_TAB, "activity")
                         putExtra(EXTRA_ACTIVITY_TAB, 1)
@@ -242,7 +253,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             // ── Offer received / accepted / declined: Activity tab → Offers (2)
             type.startsWith("offer_") || type == "offer" ->
                 PendingIntent.getActivity(
-                    ctx, 13,
+                    ctx, pushRequestCode(type, data, 13),
                     Intent(ctx, DashActivity::class.java).apply {
                         putExtra(EXTRA_PUSH_TAB, "activity")
                         putExtra(EXTRA_ACTIVITY_TAB, 2)
@@ -256,7 +267,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             // no dedicated "accept invite" screen; routing here lets the invitee
             // enter the pairing code to join the show.
             type == "cohost_invite" -> PendingIntent.getActivity(
-                ctx, 14,
+                ctx, pushRequestCode(type, data, 14),
                 Intent(ctx, CoHostJoinActivity::class.java).apply {
                     putExtra("schedule_show_id",  data["schedule_show_id"]  ?: "")
                     putExtra("cohost_invite_id",  data["cohost_invite_id"]  ?: "")
@@ -267,23 +278,23 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             )
 
             // ── inquiry_message: no dedicated Android thread screen yet ───────
-            // FOLLOW-UP: InquiryThreadActivity does not exist on Android as of
-            // #9960387225.  Routing to NotificationActivity (inbox) for now.
-            // When an Android inquiry thread screen is built, route here to it
-            // passing data["thread_id"].
+            // Keep push taps out of the generic notification inbox; when an
+            // InquiryThreadActivity exists, route here with data["thread_id"].
             type == "inquiry_message" -> PendingIntent.getActivity(
-                ctx, 15,
-                Intent(ctx, NotificationActivity::class.java).apply {
+                ctx, pushRequestCode(type, data, 15),
+                Intent(ctx, DashActivity::class.java).apply {
                     this.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
                 },
                 flag
             )
 
-            // ── Wallet credits / debits: NotificationActivity (no wallet screen)
+            // ── Wallet credits / debits: open seller wallet ───────────────────
             type == "credited" || type == "debited" ->
                 PendingIntent.getActivity(
-                    ctx, 16,
-                    Intent(ctx, NotificationActivity::class.java).apply {
+                    ctx, pushRequestCode(type, data, 16),
+                    Intent(ctx, SellerHubActivity::class.java).apply {
+                        putExtra("slug", "wallet")
+                        putExtra("from", "push")
                         this.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
                     },
                     flag
@@ -291,13 +302,30 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
             // ── Default fallback ──────────────────────────────────────────────
             else -> PendingIntent.getActivity(
-                ctx, 0,
-                Intent(ctx, NotificationActivity::class.java).apply {
+                ctx, pushRequestCode(type, data, 0),
+                Intent(ctx, DashActivity::class.java).apply {
                     this.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
                 },
                 flag
             )
         }
+    }
+
+    private fun pushRequestCode(type: String, data: Map<String, String>, fallback: Int): Int {
+        val payloadId = listOf(
+            "order_id",
+            "offer_id",
+            "bid_id",
+            "room_id",
+            "thread_id",
+            "cohost_invite_id",
+            "schedule_show_id",
+            "sender_id",
+            "product_id"
+        ).firstNotNullOfOrNull { key -> data[key]?.takeIf { it.isNotBlank() } }
+            ?: fallback.toString()
+
+        return "$type:$payloadId".hashCode() and Int.MAX_VALUE
     }
 
     private fun restoreChatStyle(notificationId: Int): List<NotificationCompat.MessagingStyle.Message>? {

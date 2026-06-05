@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isNotEmpty
 import androidx.core.view.isVisible
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import io.bidswipe.app.base.BaseFragment
@@ -20,9 +21,13 @@ import io.bidswipe.app.network.response.GetProductsByStatusResponse
 import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.ui.product.ProductDetailsActivity
 import io.bidswipe.app.ui.sellerProfile.SellerProfileActivity
+import io.bidswipe.app.utils.Alerts
 import io.bidswipe.app.utils.Utils
 import io.bidswipe.app.utils.parse
 import io.bidswipe.app.utils.request
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 @SuppressLint("NotifyDataSetChanged")
 class PurchasesFragment : BaseFragment<DashViewModel, FragmentPurchasesBinding>() {
@@ -63,6 +68,10 @@ class PurchasesFragment : BaseFragment<DashViewModel, FragmentPurchasesBinding>(
                             sellerId.toString()
                         )
                     )
+                }
+
+                "request_cancel" -> {
+                    showRequestCancellationDialog(pos)
                 }
             }
         }
@@ -196,6 +205,113 @@ class PurchasesFragment : BaseFragment<DashViewModel, FragmentPurchasesBinding>(
 
     private fun loadData() {
         viewModel.getPurchasedProductsByStatus(type.request(), page.toString().request(), currentFilter.ifEmpty { null }?.request())
+    }
+
+    private fun showRequestCancellationDialog(pos: Int) {
+        val item = mList.getOrNull(pos) ?: run {
+            Alerts.error(mCtx, "Order not ready yet, please try again.")
+            return
+        }
+        val orderId = item?.id ?: item?.orderId?.toIntOrNull()
+        if (orderId == null || orderId <= 0) {
+            Alerts.error(mCtx, "Order not ready yet, please try again.")
+            return
+        }
+
+        val statusLower = item.status?.lowercase().orEmpty()
+        if (statusLower != "pending" && statusLower != "processing") {
+            Alerts.error(mCtx, "This order can no longer be cancelled.")
+            return
+        }
+
+        val input = android.widget.EditText(requireContext()).apply {
+            hint = "Reason for cancellation (required)"
+            inputType = android.text.InputType.TYPE_CLASS_TEXT or
+                android.text.InputType.TYPE_TEXT_FLAG_MULTI_LINE or
+                android.text.InputType.TYPE_TEXT_FLAG_CAP_SENTENCES
+            setLines(3)
+            gravity = android.view.Gravity.TOP or android.view.Gravity.START
+            filters = arrayOf(android.text.InputFilter.LengthFilter(500))
+        }
+        val pad = (16 * resources.displayMetrics.density).toInt()
+        val container = android.widget.FrameLayout(requireContext()).apply {
+            setPadding(pad, pad / 2, pad, 0)
+            addView(input)
+        }
+
+        val dialog = androidx.appcompat.app.AlertDialog.Builder(requireContext())
+            .setTitle("Request to cancel this order?")
+            .setMessage("Tell the seller why you're cancelling. They'll need to approve it.")
+            .setView(container)
+            .setNegativeButton("Keep order") { d, _ -> d.dismiss() }
+            .setPositiveButton("Request cancellation", null)
+            .create()
+
+        dialog.setOnShowListener {
+            dialog.getButton(androidx.appcompat.app.AlertDialog.BUTTON_POSITIVE)
+                .setOnClickListener {
+                    val reason = input.text?.toString()?.trim().orEmpty()
+                    if (reason.isEmpty()) {
+                        input.error = "Please enter a reason"
+                        return@setOnClickListener
+                    }
+                    dialog.dismiss()
+                    postRequestCancellation(pos, orderId, reason)
+                }
+        }
+        dialog.show()
+    }
+
+    private fun postRequestCancellation(pos: Int, orderId: Int, reason: String) {
+        bind.loader.isVisible = true
+        viewLifecycleOwner.lifecycleScope.launch {
+            val code = withContext(Dispatchers.IO) {
+                try {
+                    val token = io.bidswipe.app.utils.Prefs(mCtx).token()
+                    val body = org.json.JSONObject().apply {
+                        put("order_id", orderId)
+                        put("reason", reason)
+                    }.toString()
+                    val url = java.net.URL("${io.bidswipe.app.utils.Const.BASE_URL}/api/product/request-cancellation")
+                    val conn = url.openConnection() as java.net.HttpURLConnection
+                    conn.requestMethod = "POST"
+                    conn.setRequestProperty("Content-Type", "application/json")
+                    conn.setRequestProperty("Accept", "application/json")
+                    conn.setRequestProperty("Authorization", "Bearer $token")
+                    conn.doOutput = true
+                    conn.outputStream.use { it.write(body.toByteArray()) }
+                    val responseCode = conn.responseCode
+                    conn.disconnect()
+                    responseCode
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                    -1
+                }
+            }
+            bind.loader.isVisible = false
+            when (code) {
+                200, 201 -> {
+                    android.widget.Toast.makeText(
+                        mCtx,
+                        "Cancellation requested. The seller has been notified.",
+                        android.widget.Toast.LENGTH_LONG
+                    ).show()
+                    mList.getOrNull(pos)?.let { current ->
+                        mList[pos] = current.copy(
+                            cancellationStatus = "requested",
+                            cancellationReason = reason,
+                            cancellationRejectReason = null
+                        )
+                        purchasesAdapter.notifyItemChanged(pos)
+                    }
+                }
+                403 -> Alerts.error(mCtx, "You are not authorized to request cancellation on this order.")
+                404 -> Alerts.error(mCtx, "Order not found.")
+                409 -> Alerts.error(mCtx, "This order can no longer be cancelled.")
+                -1 -> Alerts.error(mCtx, "Network error. Please try again.")
+                else -> Alerts.error(mCtx, "Could not request cancellation (code $code).")
+            }
+        }
     }
 
     private fun setupFilterChips() {

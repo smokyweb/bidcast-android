@@ -97,6 +97,35 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/addRandomizerLayout"
+                android:layout_width="match_parent"
+                android:layout_height="84dp"
+                android:layout_marginHorizontal="@dimen/half_margin"
+                android:layout_marginTop="@dimen/half_margin"
+                android:background="@drawable/dashed_card_8_white"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingHorizontal="@dimen/margin">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:layout_width="42dp"
+                    android:layout_height="42dp"
+                    android:src="@drawable/ic_spin_wheel"
+                    android:tint="@color/outlineVariant" />
+
+                <TextView
+                    android:id="@+id/randomizerSelectionText"
+                    style="@style/TitleMedium"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/margin"
+                    android:layout_weight="1"
+                    android:text="Add Randomizer"
+                    android:textColor="@color/outlineVariant" />
+
+            </LinearLayout>
+
+            <LinearLayout
                 android:id="@+id/addNewProductLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

@@ -458,6 +458,7 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
     suspend fun unifiedSearch(
         search: String,
         page: Int? = null,
+        perPage: Int? = null,
         categoryIds: List<Int>? = null,
         subCategoryIds: List<Int>? = null,
         showFormat: String? = null,
@@ -465,7 +466,7 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
         premierShop: Boolean? = null,
         shipping: String? = null,
     ) = call { api.unifiedSearch(io.bidswipe.app.network.request.SearchRequest(
-        search, page, categoryIds, subCategoryIds, showFormat, tag, premierShop, shipping
+        search, page, perPage, categoryIds, subCategoryIds, showFormat, tag, premierShop, shipping
     )) }
 
     suspend fun saveSellerProduct(

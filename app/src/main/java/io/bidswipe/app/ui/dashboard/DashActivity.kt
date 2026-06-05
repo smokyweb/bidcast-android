@@ -600,6 +600,7 @@ class DashActivity : BaseActivity(), NavController.OnDestinationChangedListener 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         checkIntent(intent)
+        applyPendingPushNav()
     }
 
     /**
@@ -638,8 +639,7 @@ class DashActivity : BaseActivity(), NavController.OnDestinationChangedListener 
                 )
             }
 
-            type == "purchase" || type == "sold"
-                || type == "cancellation_requested"
+            type == "purchase"
                 || type == "cancellation_approved"
                 || type == "cancellation_rejected"
                 || type == "Order Status Updated" -> {
@@ -647,6 +647,17 @@ class DashActivity : BaseActivity(), NavController.OnDestinationChangedListener 
                 startActivity(
                     Intent(this, OrderStatusActivity::class.java).apply {
                         putExtra("orderId", orderId)
+                    }
+                )
+            }
+
+            type == "sold" || type == "cancellation_requested" -> {
+                val orderId = intent.getStringExtra("order_id") ?: ""
+                startActivity(
+                    Intent(this, SellerHubActivity::class.java).apply {
+                        putExtra("slug", "order")
+                        putExtra("orderId", orderId)
+                        putExtra("from", "push")
                     }
                 )
             }
@@ -672,8 +683,19 @@ class DashActivity : BaseActivity(), NavController.OnDestinationChangedListener 
                 )
             }
 
-            // inquiry_message, credited, debited, and unknown: open NotificationActivity
-            else -> startActivity(Intent(this, NotificationActivity::class.java))
+            type == "credited" || type == "debited" -> {
+                startActivity(
+                    Intent(this, SellerHubActivity::class.java).apply {
+                        putExtra("slug", "wallet")
+                        putExtra("from", "push")
+                    }
+                )
+            }
+
+            // inquiry_message and unknown types stay on the dashboard until a
+            // dedicated content screen exists. Push taps should not land in the
+            // generic notification inbox.
+            else -> Unit
         }
     }
 
@@ -718,11 +740,13 @@ class DashActivity : BaseActivity(), NavController.OnDestinationChangedListener 
         // as flat Intent extras.  We route here just like the foreground path
         // in MyFirebaseMessagingService.buildPushIntent().
         // ─────────────────────────────────────────────────────────────────────────
-        if (!intent.hasExtra("google.message_id") && intent.hasExtra("type")) {
-            // Foreground path already handled via PendingIntent — skip to avoid
-            // double-routing.  google.message_id is absent for PendingIntent
-            // launches; present only in system-tray taps.
+        if (intent.getStringExtra(MyFirebaseMessagingService.EXTRA_PUSH_TAB) == "activity") {
+            pendingPushActivityTab = intent.getIntExtra(
+                MyFirebaseMessagingService.EXTRA_ACTIVITY_TAB,
+                -1
+            )
         }
+
         checkPushExtras(intent)
 
         if (intent.action == ACTION_VIEW) {

@@ -315,6 +315,7 @@ class DashViewModel @Inject constructor(
     fun unifiedSearch(
         searchTerm: String,
         page: Int? = null,
+        perPage: Int? = null,
         categoryIds: List<Int>? = null,
         subCategoryIds: List<Int>? = null,
         showFormat: String? = null,
@@ -331,7 +332,8 @@ class DashViewModel @Inject constructor(
                 io.bidswipe.app.network.response.ExploreSearchResponse(
                     status = "success", message = null,
                     data = io.bidswipe.app.network.response.SearchData(
-                        shows = emptyList(), products = emptyList(), users = emptyList()
+                        shows = emptyList(), products = emptyList(), users = emptyList(),
+                        pagination = null
                     )
                 )
             )
@@ -342,7 +344,7 @@ class DashViewModel @Inject constructor(
             return@launch
         }
         _unifiedSearchResponse.value = repo.unifiedSearch(
-            searchTerm, page, categoryIds, subCategoryIds,
+            searchTerm, page, perPage, categoryIds, subCategoryIds,
             showFormat, tag, premierShop, shipping
         )
     }

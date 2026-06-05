@@ -1,6 +1,7 @@
 package io.bidswipe.app.ui.randomizer
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -8,6 +9,9 @@ import android.provider.OpenableColumns
 import android.view.View
 import android.widget.ArrayAdapter
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsCompat.CONSUMED
 import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
@@ -49,6 +53,9 @@ class RandomizerTemplatesActivity : BaseActivity() {
     private var slotAdapter: RandomizerSlotAdapter? = null
     private var colorAdapter: ColorSwatchAdapter? = null
     private var iconAdapter: IconPickerAdapter? = null
+    private val isShowCreationPicker: Boolean
+        get() = intent.getStringExtra("from") == "show_creation_picker" ||
+            intent.getStringExtra("from") == "live_show_picker"
 
     // Currently open builder sheet handles
     private var builderSheet: BottomSheetDialog? = null
@@ -117,6 +124,12 @@ class RandomizerTemplatesActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(bind.root)
 
+        ViewCompat.setOnApplyWindowInsetsListener(window.decorView) { _, insets ->
+            val system = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            bind.root.setPadding(0, system.top, 0, system.bottom)
+            CONSUMED
+        }
+
         vm = ViewModelProvider(this)[RandomizerViewModel::class.java]
 
         setupHeader()
@@ -126,12 +139,16 @@ class RandomizerTemplatesActivity : BaseActivity() {
         bind.fabAddTemplate.setHapticClickListener { openBuilder(null) }
 
         vm.loadTemplates()
+        if (intent.getBooleanExtra("start_new_template", false)) {
+            intent.putExtra("start_new_template", false)
+            bind.root.post { openBuilder(null) }
+        }
     }
 
     // ── Header ────────────────────────────────────────────────────────────────
 
     private fun setupHeader() {
-        bind.header.setHeaderText("Randomizer Templates")
+        bind.header.setHeaderText(if (isShowCreationPicker) "Select Randomizer" else "Randomizer Templates")
         bind.header.onBackClick { finish() }
     }
 
@@ -141,7 +158,10 @@ class RandomizerTemplatesActivity : BaseActivity() {
         templateAdapter = RandomizerTemplateAdapter(
             onEdit    = { openBuilder(it) },
             onDelete  = { confirmDelete(it) },
-            onRelease = { confirmRelease(it) }
+            onRelease = { confirmRelease(it) },
+            onSelect  = if (isShowCreationPicker) {
+                { template -> selectTemplate(template) }
+            } else null
         )
         bind.recyclerTemplates.apply {
             layoutManager = LinearLayoutManager(this@RandomizerTemplatesActivity)
@@ -171,8 +191,12 @@ class RandomizerTemplatesActivity : BaseActivity() {
             builderBind?.btnSaveTemplate?.isEnabled = true
             when (res) {
                 is Resource.Success -> {
-                    builderSheet?.dismiss()
-                    vm.loadTemplates()
+                    if (isShowCreationPicker && res.value?.data != null) {
+                        selectTemplate(res.value.data)
+                    } else {
+                        builderSheet?.dismiss()
+                        vm.loadTemplates()
+                    }
                 }
                 is Resource.Error -> Alerts.error(this, res.errorResponse?.message ?: "Failed to save template")
                 else -> Unit
@@ -183,8 +207,12 @@ class RandomizerTemplatesActivity : BaseActivity() {
             builderBind?.btnSaveTemplate?.isEnabled = true
             when (res) {
                 is Resource.Success -> {
-                    builderSheet?.dismiss()
-                    vm.loadTemplates()
+                    if (isShowCreationPicker && res.value?.data != null) {
+                        selectTemplate(res.value.data)
+                    } else {
+                        builderSheet?.dismiss()
+                        vm.loadTemplates()
+                    }
                 }
                 is Resource.Error -> Alerts.error(this, res.errorResponse?.message ?: "Failed to update template")
                 else -> Unit
@@ -228,6 +256,14 @@ class RandomizerTemplatesActivity : BaseActivity() {
                 else -> Unit
             }
         }
+    }
+
+    private fun selectTemplate(template: RandomizerTemplate) {
+        val result = Intent()
+            .putExtra("selectedTemplateId", template.id ?: 0)
+            .putExtra("selectedTemplateName", template.name)
+        setResult(Activity.RESULT_OK, result)
+        finish()
     }
 
     // ── Builder sheet ─────────────────────────────────────────────────────────

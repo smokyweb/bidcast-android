@@ -42,6 +42,7 @@ import io.bidswipe.app.network.response.Product
 import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.ui.dashboard.DashViewModel
 import io.bidswipe.app.utils.Alerts
+import io.bidswipe.app.utils.Prefs
 import io.bidswipe.app.utils.SocketManager
 import io.bidswipe.app.utils.Utils
 import io.bidswipe.app.utils.parse
@@ -92,6 +93,7 @@ class ProductsForLiveShowFragment : BottomSheetDialogFragment() {
     val viewModel: DashViewModel by activityViewModels()
 
     private var page = 1
+    private var productTotalPage = 1
     private var isLoading = false
     private var selectedPos = -1
     private var saleType = ""
@@ -102,6 +104,8 @@ class ProductsForLiveShowFragment : BottomSheetDialogFragment() {
     var from = "live_show"
     var isLive = false
     var auctionTypeId = AuctionType.LIVE.id
+
+    private fun isRandomizerPicker() = from == "randomizer_slot" || from == "randomizer_prize"
 
     private var addProductLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -175,6 +179,11 @@ class ProductsForLiveShowFragment : BottomSheetDialogFragment() {
         // (Format-specific saleType/type are no longer used: the panel is scoped
         // to the show and tabs filter client-side.)
 
+        if (isRandomizerPicker()) {
+            productTypesList = mutableListOf("All")
+            bind.chipGroupScroll.isVisible = false
+        }
+
         if (from == "freebie") {
             // MC cmph7xsgy00g4ms8pslgxzr1u (2026-05-22): host may select
             // multiple products for one freebie pool.
@@ -182,6 +191,9 @@ class ProductsForLiveShowFragment : BottomSheetDialogFragment() {
             bind.addBtn.text = "Start Freebie"
         } else if (from == "randomizer_slot") {
             bind.title.text = "Pick Product for Slot"
+            bind.addBtn.text = "Select"
+        } else if (from == "randomizer_prize") {
+            bind.title.text = "Pick Prize Product"
             bind.addBtn.text = "Select"
         }
 
@@ -203,6 +215,7 @@ class ProductsForLiveShowFragment : BottomSheetDialogFragment() {
                 runSafe {
                     val chipId = chipGroup.checkedChipId
                     chipIndex = chipGroup.indexOfChild(chipGroup.findViewById(chipId))
+                    if (isRandomizerPicker()) return@runSafe
 
                     Log.d("TAG", "onViewCreated: SHOW ${viewModel.showId}--$chipIndex")
                     when (chipIndex) {
@@ -229,9 +242,19 @@ class ProductsForLiveShowFragment : BottomSheetDialogFragment() {
         bind.loader.isVisible = true
         loadData()
 
-        // No pagination on the product recycler: get-show-details-by-id returns
-        // the whole show product list in one call, then we filter client-side.
-        // (Surprise Sets keeps its own paginated endpoint below.)
+        bind.recycler.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+                if (!isRandomizerPicker()) return
+                val layoutManager = bind.recycler.layoutManager as LinearLayoutManager
+                val lastItemPosition = layoutManager.findLastVisibleItemPosition()
+                if (lastItemPosition == (productList.size - 1) && !isLoading && page < productTotalPage) {
+                    isLoading = true
+                    page++
+                    loadData(true)
+                }
+            }
+        })
 
         bind.surpriseRecycler.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
@@ -255,6 +278,13 @@ class ProductsForLiveShowFragment : BottomSheetDialogFragment() {
             override fun afterTextChanged(s: Editable?) {
                 val query = s?.toString()?.trim() ?: ""
                 bind.searchLayout.isEndIconVisible = query.isNotEmpty()
+                if (isRandomizerPicker()) {
+                    page = 1
+                    productTotalPage = 1
+                    isLoading = false
+                    loadData()
+                    return
+                }
                 // Search filters the current show's product list client-side
                 // (scoped to this show, with the active All/Sold/Offers tab).
                 applyShowFilter()
@@ -420,8 +450,8 @@ class ProductsForLiveShowFragment : BottomSheetDialogFragment() {
                 }
                 dismiss()
 
-            } else if (from == "randomizer_slot") {
-                // Single-product selection for a randomizer slot
+            } else if (isRandomizerPicker()) {
+                // Single-product selection for a randomizer slot or prize
                 val selected = productList.filterNotNull().firstOrNull { it.selected == true }
                 if (selected == null) {
                     Alerts.error(mCtx, "Please select a product")
@@ -564,10 +594,64 @@ class ProductsForLiveShowFragment : BottomSheetDialogFragment() {
             }
         }
 
+        viewModel.getUserProductsRepo.observe(viewLifecycleOwner) {
+            if (!isRandomizerPicker()) return@observe
+            when (it) {
+                is Resource.Success -> {
+                    bind.bottomLoader.isVisible = false
+                    bind.loader.isVisible = false
+                    bind.switcher.displayedChild = 0
+                    isLoading = false
+                    productTotalPage = it.value.totalPage ?: page
+
+                    if (page == 1) {
+                        productList.clear()
+                    }
+                    it.value.products?.let { products -> productList.addAll(products) }
+                    productAdapter.notifyDataSetChanged()
+
+                    bind.noDataView.isVisible = productList.isEmpty()
+                    bind.recycler.isVisible = productList.isNotEmpty()
+                }
+
+                is Resource.Error -> {
+                    bind.bottomLoader.isVisible = false
+                    bind.loader.isVisible = false
+                    isLoading = false
+
+                    it.parse(mCtx, javaClass.simpleName, object : AlertClicks {
+                        override fun primaryClick(dialog: AppBottomSheet) {
+                            dialog.dismiss()
+                        }
+
+                        override fun secondaryClick(dialog: AppBottomSheet) {
+                            dialog.dismiss()
+                        }
+                    })
+                }
+
+                else -> {}
+            }
+        }
+
     }
 
     @SuppressLint("NotifyDataSetChanged")
     private fun loadData(loadMore: Boolean = false) {
+        if (isRandomizerPicker()) {
+            bind.switcher.displayedChild = 0
+            bind.bottomLoader.isVisible = loadMore
+            bind.loader.isVisible = !loadMore
+            val query = bind.search.value().trim()
+            val currentUserId = Prefs(mCtx).getUserData()?.id?.toString()
+            viewModel.getUserProducts(
+                userId = currentUserId?.request(),
+                page = page.toString().request(),
+                search = query.ifEmpty { null }?.request()
+            )
+            return
+        }
+
         // Fetch the CURRENT show's product list (scoped to show_id), not the
         // seller's whole catalog. All/Sold/Offers tabs filter this list.
         bind.loader.isVisible = true

@@ -1,6 +1,7 @@
 package io.bidswipe.app.ui.agoraStream
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.app.PictureInPictureParams
 import android.content.Context
 import android.content.Intent
@@ -21,6 +22,7 @@ import android.view.inputmethod.EditorInfo
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
@@ -77,6 +79,7 @@ import io.bidswipe.app.network.Resource
 import io.bidswipe.app.network.response.AuctionType
 import io.bidswipe.app.network.response.GetLiveSellerResponse
 import io.bidswipe.app.network.response.GetPromotePlansResponse
+import io.bidswipe.app.network.response.RandomizerTemplate
 import io.bidswipe.app.network.response.socket.AuctionStartedBreakSpotResponse
 import io.bidswipe.app.network.response.socket.AuctionStartedResponse
 import io.bidswipe.app.network.response.socket.GetFreebieObject
@@ -109,6 +112,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import androidx.lifecycle.lifecycleScope
 import org.json.JSONObject
 import org.wordpress.aztec.Aztec
@@ -129,7 +133,22 @@ class AgoraPublisherActivity : BaseActivity() {
 
     private val viewModel by viewModels<DashViewModel>()
 
+    private val liveRandomizerPickerLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                val data = result.data
+                val templateId = data?.getIntExtra("selectedTemplateId", 0)?.takeIf { it > 0 }
+                if (templateId != null) {
+                    attachRandomizerTemplateToLiveShow(
+                        templateId,
+                        data.getStringExtra("selectedTemplateName")
+                    )
+                }
+            }
+        }
+
     private var promotePlans = mutableListOf<GetPromotePlansResponse.Data?>()
+    private var pendingPromoteShowId: String? = null
     private var livePollOptionList = mutableListOf<PollModel.PollOption>()
     private var liveSellerList = mutableListOf<GetLiveSellerResponse.Data?>()
     private var productList = mutableListOf<LiveShowModel.Product?>()
@@ -602,6 +621,10 @@ class AgoraPublisherActivity : BaseActivity() {
                 is Resource.Success -> {
                     bind.loader.isVisible = false
                     viewModel.promoteShowRepo.value = null
+                    pendingPromoteShowId?.let { promoteShowId ->
+                        socketManager?.setPromotionData(userId, showId, promoteShowId)
+                    }
+                    pendingPromoteShowId = null
 
                     AppBottomSheet(
                         this,
@@ -629,6 +652,7 @@ class AgoraPublisherActivity : BaseActivity() {
                 is Resource.Error -> {
                     bind.loader.isVisible = false
                     viewModel.promoteShowRepo.value = null
+                    pendingPromoteShowId = null
                 }
 
                 else -> {}
@@ -1815,7 +1839,7 @@ class AgoraPublisherActivity : BaseActivity() {
 
                         4 -> {
                             moreSheet.dismiss()
-                            showRandomizerSheet()
+                            showLiveRandomizersModal()
                         }
 
                         // Basecamp #9934001770 (2026-05-27): Pair Device.
@@ -1894,6 +1918,133 @@ class AgoraPublisherActivity : BaseActivity() {
         }
 
         moreSheet.show()
+    }
+
+    private fun showLiveRandomizersModal() {
+        if (!isShowLive) {
+            Alerts.error(this, "Please start the live show first.")
+            return
+        }
+
+        val currentShowId = currentShowIdForRandomizer()
+        if (currentShowId.isBlank()) {
+            Alerts.error(this, "Could not find this show's randomizers.")
+            return
+        }
+
+        bind.loader.isVisible = true
+        lifecycleScope.launch {
+            val result = withContext(Dispatchers.IO) {
+                viewModel.repo.getShowRandomizerTemplates(currentShowId)
+            }
+            bind.loader.isVisible = false
+
+            when (result) {
+                is Resource.Success -> {
+                    showAttachedRandomizersDialog(result.value.data.orEmpty())
+                }
+
+                is Resource.Error -> {
+                    Alerts.error(
+                        this@AgoraPublisherActivity,
+                        result.errorResponse?.message ?: "Could not load randomizers."
+                    )
+                }
+            }
+        }
+    }
+
+    private fun showAttachedRandomizersDialog(templates: List<RandomizerTemplate>) {
+        val builder = androidx.appcompat.app.AlertDialog.Builder(this)
+            .setTitle("Randomizers")
+            .setPositiveButton("New Randomizer") { dialog, _ ->
+                dialog.dismiss()
+                openLiveRandomizerTemplateBuilder()
+            }
+            .setNegativeButton("Close") { dialog, _ -> dialog.dismiss() }
+
+        if (templates.isEmpty()) {
+            builder.setMessage("No randomizers have been added to this show yet.")
+        } else {
+            val labels = templates.map { template ->
+                val slotCount = template.slotCount ?: template.slots?.size ?: 0
+                "${template.name ?: "Untitled"}\n${template.typeLabel()} • $slotCount slots"
+            }.toTypedArray()
+            builder.setItems(labels) { dialog, which ->
+                dialog.dismiss()
+                showRandomizerTemplateSummary(templates[which])
+            }
+        }
+
+        builder.show()
+    }
+
+    private fun showRandomizerTemplateSummary(template: RandomizerTemplate) {
+        val slotCount = template.slotCount ?: template.slots?.size ?: 0
+        val productCount = template.slots
+            ?.count { it.productId != null || it.product != null }
+            ?: 0
+        val message = buildString {
+            append(template.typeLabel())
+            append("\n")
+            append(slotCount)
+            append(" slots")
+            if (productCount > 0) {
+                append("\n")
+                append(productCount)
+                append(" products assigned")
+            }
+        }
+
+        androidx.appcompat.app.AlertDialog.Builder(this)
+            .setTitle(template.name ?: "Randomizer")
+            .setMessage(message)
+            .setPositiveButton("Close") { dialog, _ -> dialog.dismiss() }
+            .show()
+    }
+
+    private fun openLiveRandomizerTemplateBuilder() {
+        liveRandomizerPickerLauncher.launch(
+            Intent(this, io.bidswipe.app.ui.randomizer.RandomizerTemplatesActivity::class.java)
+                .putExtra("from", "live_show_picker")
+                .putExtra("start_new_template", true)
+        )
+    }
+
+    private fun attachRandomizerTemplateToLiveShow(templateId: Int, templateName: String?) {
+        val currentShowId = currentShowIdForRandomizer()
+        if (currentShowId.isBlank()) {
+            Alerts.error(this, "Could not attach randomizer to this show.")
+            return
+        }
+
+        bind.loader.isVisible = true
+        lifecycleScope.launch {
+            val result = withContext(Dispatchers.IO) {
+                viewModel.repo.attachRandomizerTemplate(currentShowId, templateId)
+            }
+            bind.loader.isVisible = false
+
+            when (result) {
+                is Resource.Success -> {
+                    successToast("${templateName ?: "Randomizer"} added to show")
+                    showLiveRandomizersModal()
+                }
+
+                is Resource.Error -> {
+                    Alerts.error(
+                        this@AgoraPublisherActivity,
+                        result.errorResponse?.message ?: "Could not attach randomizer."
+                    )
+                }
+            }
+        }
+    }
+
+    private fun currentShowIdForRandomizer(): String {
+        return showId.takeIf { it.isNotBlank() }
+            ?: viewModel.showId.takeIf { it.isNotBlank() }
+            ?: liveShowData?.showId.orEmpty()
     }
 
     private fun endShowSheet() {
@@ -2185,17 +2336,9 @@ class AgoraPublisherActivity : BaseActivity() {
         promoteSheetBind.optionList.adapter =
             PromoteSheetAdapter(promotePlans, object : RecyclerClicks {
                 override fun itemClick(pos: Int, status: String?) {
+                    val plan = promotePlans.getOrNull(pos) ?: return
                     promoteSheet.dismiss()
-                    bind.loader.isVisible = true
-                    viewModel.promoteShow(
-                        showId.request(),
-                        promotePlans[pos]?.id.toString().request()
-                    )
-                    socketManager?.setPromotionData(
-                        userId,
-                        showId,
-                        promotePlans[pos]?.id.toString()
-                    )
+                    confirmPromotePurchase(plan)
                 }
             })
 
@@ -2204,6 +2347,101 @@ class AgoraPublisherActivity : BaseActivity() {
         }
 
         promoteSheet.show()
+    }
+
+    private fun confirmPromotePurchase(plan: GetPromotePlansResponse.Data) {
+        val defaultCard = App.profileResponse.value?.defaultCard
+        if (App.profileResponse.value?.hasCardAdded != true || defaultCard == null) {
+            AppBottomSheet(
+                this,
+                R.drawable.ic_warning,
+                "Payment Method Required",
+                "Add a payment card before purchasing a show promotion.",
+                primaryBtnText = "Okay",
+                secondaryBtnText = "Cancel",
+                canCancel = true,
+                showSecondary = false,
+                iconPadding = 16,
+                alertType = AlertType.WARNING,
+                clicks = object : AlertClicks {
+                    override fun primaryClick(dialog: AppBottomSheet) {
+                        dialog.dismiss()
+                    }
+
+                    override fun secondaryClick(dialog: AppBottomSheet) {
+                        dialog.dismiss()
+                    }
+                }
+            ).show()
+            return
+        }
+
+        val amount = plan.price.asMoney()
+        val cardDetails = buildString {
+            append("•••• •••• •••• ")
+            append(defaultCard.last4.orEmpty().ifEmpty { "----" })
+            append("\nExpires ")
+            append(defaultCard.expMonth ?: "--")
+            append("/")
+            append(defaultCard.expYear ?: "--")
+        }
+
+        val message = buildString {
+            append("Plan: ")
+            append(plan.title ?: "Show Promotion")
+            plan.subTitle?.takeIf { it.isNotBlank() }?.let {
+                append("\n")
+                append(it)
+            }
+            append("\n\nShow: ")
+            append(
+                showTitle?.takeIf { it.isNotBlank() }
+                    ?: liveShowData?.showDetail?.takeIf { it.isNotBlank() }
+                    ?: "Current Live Show"
+            )
+            append("\n\nPayment method:\n")
+            append(cardDetails)
+            append("\n\nTotal: ")
+            append(amount)
+        }
+
+        AppBottomSheet(
+            this,
+            R.drawable.ic_payment_card,
+            "Confirm Purchase",
+            message,
+            primaryBtnText = "Confirm Purchase",
+            secondaryBtnText = "Cancel",
+            canCancel = true,
+            showSecondary = true,
+            iconPadding = 16,
+            alertType = AlertType.INFO,
+            clicks = object : AlertClicks {
+                override fun primaryClick(dialog: AppBottomSheet) {
+                    dialog.dismiss()
+                    submitPromotePurchase(plan)
+                }
+
+                override fun secondaryClick(dialog: AppBottomSheet) {
+                    dialog.dismiss()
+                }
+            }
+        ).show()
+    }
+
+    private fun submitPromotePurchase(plan: GetPromotePlansResponse.Data) {
+        val promoteShowId = plan.id?.toString().orEmpty()
+        if (promoteShowId.isEmpty()) {
+            Alerts.error(this, "Could not start this promotion.")
+            return
+        }
+
+        bind.loader.isVisible = true
+        pendingPromoteShowId = promoteShowId
+        viewModel.promoteShow(
+            showId.request(),
+            promoteShowId.request()
+        )
     }
 
     fun createClipSheet() {

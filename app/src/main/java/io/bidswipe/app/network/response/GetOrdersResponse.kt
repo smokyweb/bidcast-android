@@ -229,7 +229,7 @@ data class GetOrdersResponse(
             @SerializedName("name")
             val name: String?,
             @SerializedName("price")
-            val price: Int?,
+            val price: Any?,
             @SerializedName("product_set_id")
             val productSetId: Int?,
             @SerializedName("quantity")
@@ -248,7 +248,7 @@ data class GetOrdersResponse(
             @SerializedName("name")
             val name: String?,
             @SerializedName("price")
-            val price: Int?,
+            val price: Any?,
             @SerializedName("product_set_item_id")
             val productSetItemId: Int?,
             @SerializedName("status")
@@ -280,7 +280,7 @@ data class GetOrdersResponse(
             @SerializedName("date")
             val date: String?,
             @SerializedName("discount")
-            val discount: Int?,
+            val discount: Any?,
             @SerializedName("id")
             val id: Int?,
             @SerializedName("order_id")
@@ -296,7 +296,7 @@ data class GetOrdersResponse(
             @SerializedName("seller_id")
             val sellerId: Int?,
             @SerializedName("shipping_charges")
-            val shippingCharges: Int?,
+            val shippingCharges: Any?,
             @SerializedName("show_id")
             val showId: Any?,
             @SerializedName("source_type")

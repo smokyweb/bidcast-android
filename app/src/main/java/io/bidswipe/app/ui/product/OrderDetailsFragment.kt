@@ -378,14 +378,14 @@ class OrderDetailsFragment : BaseFragment<ProductViewModel, FragmentOrderDetails
         dialog.show()
     }
 
-    private fun postRequestCancellation(orderId: Int, reason: String) {
+    private fun postRequestCancellation(orderDbId: Int, reason: String) {
         bind.loader.isVisible = true
         viewLifecycleOwner.lifecycleScope.launch {
             val code: Int = withContext(Dispatchers.IO) {
                 try {
                     val token = io.bidswipe.app.utils.Prefs(mCtx).token()
                     val body = org.json.JSONObject().apply {
-                        put("order_id", orderId)
+                        put("order_id", orderDbId)
                         put("reason", reason)
                     }.toString()
                     val url = java.net.URL("${io.bidswipe.app.utils.Const.BASE_URL}/api/product/request-cancellation")
@@ -412,7 +412,10 @@ class OrderDetailsFragment : BaseFragment<ProductViewModel, FragmentOrderDetails
                         "Cancellation requested. The seller has been notified.",
                         android.widget.Toast.LENGTH_LONG
                     ).show()
-                    viewModel.fetchOrderDetail(productId, orderId.toString(), type)
+                    currentCancellationStatus = "requested"
+                    currentCancellationRejectReason = null
+                    updateCancellationBanner()
+                    viewModel.fetchOrderDetail(productId, this@OrderDetailsFragment.orderId, type)
                 }
                 403 -> Alerts.error(mCtx, "You are not authorized to request cancellation on this order.")
                 404 -> Alerts.error(mCtx, "Order not found.")

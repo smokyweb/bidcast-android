@@ -16,6 +16,8 @@ import io.bidswipe.app.base.BaseFragment
 import io.bidswipe.app.controller.UnifiedSearchResultAdapter
 import io.bidswipe.app.databinding.FragmentSearchShowBinding
 import io.bidswipe.app.network.Resource
+import io.bidswipe.app.network.response.SearchPagination
+import io.bidswipe.app.network.response.SearchPaginationMeta
 import io.bidswipe.app.network.response.SearchProduct
 import io.bidswipe.app.network.response.SearchShow
 import io.bidswipe.app.network.response.SearchUser
@@ -66,6 +68,18 @@ class SearchShowFragment : BaseFragment<DashViewModel, FragmentSearchShowBinding
 	private var products: List<SearchProduct> = emptyList()
 	private var users: List<SearchUser> = emptyList()
 
+	private data class SearchPageState(
+		var currentPage: Int = 1,
+		var lastPage: Int = 1,
+		var total: Int = 0,
+	)
+
+	private var showsPage = SearchPageState()
+	private var productsPage = SearchPageState()
+	private var usersPage = SearchPageState()
+	private var pendingPagingTab: Int? = null
+	private var pendingPage = 1
+
 	private var searchDebounce: android.os.Handler? = null
 
 	// Tab indices (must match the TabItem order in fragment_search_show.xml).
@@ -74,6 +88,7 @@ class SearchShowFragment : BaseFragment<DashViewModel, FragmentSearchShowBinding
 		const val TAB_PRODUCTS = 1
 		const val TAB_USERS = 2
 		const val DEBOUNCE_MS = 350L
+		const val SEARCH_PER_PAGE = 20
 	}
 
 	private var activeTab = TAB_SHOWS
@@ -120,9 +135,13 @@ class SearchShowFragment : BaseFragment<DashViewModel, FragmentSearchShowBinding
 					)
 				}
 			},
+			onPageClick = { page ->
+				goToPage(page)
+			},
 		)
-		val gridLm = GridLayoutManager(mCtx, if (resources.isTablet()) 3 else 2)
-		gridLm.spanSizeLookup = resultsAdapter.makeSpanSizeLookup()
+		val spanCount = if (resources.isTablet()) 3 else 2
+		val gridLm = GridLayoutManager(mCtx, spanCount)
+		gridLm.spanSizeLookup = resultsAdapter.makeSpanSizeLookup(spanCount)
 		bind.resultsRecycler.layoutManager = gridLm
 		bind.resultsRecycler.adapter = resultsAdapter
 
@@ -139,7 +158,7 @@ class SearchShowFragment : BaseFragment<DashViewModel, FragmentSearchShowBinding
 		bind.filterBtn.setHapticClickListener {
 			BrowseFiltersSheet(initial = browseFilters) { applied ->
 				browseFilters = applied
-				runSearch()
+				runSearch(resetPages = true)
 			}.show(childFragmentManager, "browse_filters")
 		}
 
@@ -170,7 +189,7 @@ class SearchShowFragment : BaseFragment<DashViewModel, FragmentSearchShowBinding
 					return
 				}
 				searchDebounce = android.os.Handler(android.os.Looper.getMainLooper())
-				searchDebounce?.postDelayed({ runSearch() }, DEBOUNCE_MS)
+				searchDebounce?.postDelayed({ runSearch(resetPages = true) }, DEBOUNCE_MS)
 			}
 		})
 
@@ -178,19 +197,30 @@ class SearchShowFragment : BaseFragment<DashViewModel, FragmentSearchShowBinding
 
 		// Initial query (if pre-filled) → search now.
 		if (bind.search.text?.toString()?.trim().orEmpty().isNotEmpty()) {
-			runSearch()
+			runSearch(resetPages = true)
 		}
 	}
 
-	private fun runSearch() {
+	private fun runSearch(
+		page: Int = 1,
+		pagingTab: Int? = null,
+		resetPages: Boolean = false,
+	) {
 		val q = bind.search.text?.toString()?.trim().orEmpty()
 		if (q.isEmpty()) {
 			clearResults()
 			return
 		}
+		if (resetPages || pagingTab == null) {
+			resetPageState()
+		}
+		pendingPagingTab = pagingTab
+		pendingPage = page.coerceAtLeast(1)
 		bind.loader.isVisible = true
 		viewModel.unifiedSearch(
 			q,
+			page = pendingPage,
+			perPage = SEARCH_PER_PAGE,
 			categoryIds = browseFilters.categoryIds.ifEmpty { null },
 			subCategoryIds = browseFilters.subCategoryIds.ifEmpty { null },
 			showFormat = browseFilters.showFormat,
@@ -206,11 +236,23 @@ class SearchShowFragment : BaseFragment<DashViewModel, FragmentSearchShowBinding
 				is Resource.Success -> {
 					bind.loader.isVisible = false
 					val data = resource.value.data
-					shows = data?.shows.orEmpty()
-					products = data?.products.orEmpty()
-					users = data?.users.orEmpty()
+					val requestedTab = pendingPagingTab
+					val requestedPage = data?.pagination?.page ?: pendingPage
+					if (requestedTab == null) {
+						shows = data?.shows.orEmpty()
+						products = data?.products.orEmpty()
+						users = data?.users.orEmpty()
+						updateAllPageState(data?.pagination)
+					} else {
+						updatePagedTab(requestedTab, data, requestedPage)
+					}
 					updateTabCounts()
 					renderActiveTab()
+					if (requestedTab != null) {
+						bind.resultsRecycler.scrollToPosition(0)
+					}
+					pendingPagingTab = null
+					pendingPage = 1
 				}
 
 				is Resource.Error -> {
@@ -220,8 +262,11 @@ class SearchShowFragment : BaseFragment<DashViewModel, FragmentSearchShowBinding
 					shows = emptyList()
 					products = emptyList()
 					users = emptyList()
+					resetPageState()
 					updateTabCounts()
 					renderActiveTab()
+					pendingPagingTab = null
+					pendingPage = 1
 					if (!resource.isBrowseAuthError()) {
 						android.util.Log.w(
 							"SearchShowFragment",
@@ -240,22 +285,25 @@ class SearchShowFragment : BaseFragment<DashViewModel, FragmentSearchShowBinding
 		shows = emptyList()
 		products = emptyList()
 		users = emptyList()
+		resetPageState()
 		resultsAdapter.submitList(emptyList())
 		bind.searchTabBar.isVisible = false
 		bind.noData.isVisible = false
 		bind.loader.isVisible = false
+		pendingPagingTab = null
+		pendingPage = 1
 	}
 
 	private fun updateTabCounts() {
-		bind.searchTabBar.getTabAt(TAB_SHOWS)?.text = "Shows (${shows.size})"
-		bind.searchTabBar.getTabAt(TAB_PRODUCTS)?.text = "Products (${products.size})"
-		bind.searchTabBar.getTabAt(TAB_USERS)?.text = "Users (${users.size})"
+		bind.searchTabBar.getTabAt(TAB_SHOWS)?.text = "Shows (${tabTotal(TAB_SHOWS, shows.size)})"
+		bind.searchTabBar.getTabAt(TAB_PRODUCTS)?.text = "Products (${tabTotal(TAB_PRODUCTS, products.size)})"
+		bind.searchTabBar.getTabAt(TAB_USERS)?.text = "Users (${tabTotal(TAB_USERS, users.size)})"
 	}
 
 	/** Render the currently-selected tab; resolve the single empty state. */
 	private fun renderActiveTab() {
 		val query = bind.search.text?.toString()?.trim().orEmpty()
-		val allEmpty = shows.isEmpty() && products.isEmpty() && users.isEmpty()
+		val allEmpty = totalResultCount() == 0
 
 		// Tabs visible whenever there's a non-blank query AND at least one result.
 		bind.searchTabBar.isVisible = query.isNotBlank() && !allEmpty
@@ -267,10 +315,80 @@ class SearchShowFragment : BaseFragment<DashViewModel, FragmentSearchShowBinding
 		}
 
 		when (activeTab) {
-			TAB_PRODUCTS -> resultsAdapter.submitProductsOnly(products)
-			TAB_USERS -> resultsAdapter.submitUsersOnly(users)
-			else -> resultsAdapter.submitShowsOnly(shows)
+			TAB_PRODUCTS -> resultsAdapter.submitProductsOnly(products, productsPage.currentPage, productsPage.lastPage)
+			TAB_USERS -> resultsAdapter.submitUsersOnly(users, usersPage.currentPage, usersPage.lastPage)
+			else -> resultsAdapter.submitShowsOnly(shows, showsPage.currentPage, showsPage.lastPage)
 		}
 		bind.resultsRecycler.isVisible = true
 	}
+
+	private fun goToPage(page: Int) {
+		val state = pageStateFor(activeTab)
+		val target = page.coerceIn(1, state.lastPage.coerceAtLeast(1))
+		if (target == state.currentPage) return
+		runSearch(page = target, pagingTab = activeTab)
+	}
+
+	private fun updatePagedTab(
+		tab: Int,
+		data: io.bidswipe.app.network.response.SearchData?,
+		requestedPage: Int,
+	) {
+		when (tab) {
+			TAB_PRODUCTS -> {
+				products = data?.products.orEmpty()
+				updatePageState(productsPage, data?.pagination?.products, requestedPage, products.size)
+			}
+			TAB_USERS -> {
+				users = data?.users.orEmpty()
+				updatePageState(usersPage, data?.pagination?.users, requestedPage, users.size)
+			}
+			else -> {
+				shows = data?.shows.orEmpty()
+				updatePageState(showsPage, data?.pagination?.shows, requestedPage, shows.size)
+			}
+		}
+	}
+
+	private fun updateAllPageState(pagination: SearchPagination?) {
+		val page = pagination?.page ?: 1
+		updatePageState(showsPage, pagination?.shows, page, shows.size)
+		updatePageState(productsPage, pagination?.products, page, products.size)
+		updatePageState(usersPage, pagination?.users, page, users.size)
+	}
+
+	private fun updatePageState(
+		state: SearchPageState,
+		meta: SearchPaginationMeta?,
+		page: Int,
+		fallbackCount: Int,
+	) {
+		state.total = meta?.total ?: fallbackCount
+		state.lastPage = (meta?.lastPage ?: 1).coerceAtLeast(1)
+		state.currentPage = if (state.total > 0) {
+			page.coerceAtLeast(1).coerceAtMost(state.lastPage)
+		} else {
+			1
+		}
+	}
+
+	private fun resetPageState() {
+		showsPage = SearchPageState()
+		productsPage = SearchPageState()
+		usersPage = SearchPageState()
+	}
+
+	private fun pageStateFor(tab: Int): SearchPageState = when (tab) {
+		TAB_PRODUCTS -> productsPage
+		TAB_USERS -> usersPage
+		else -> showsPage
+	}
+
+	private fun tabTotal(tab: Int, fallbackCount: Int): Int {
+		val total = pageStateFor(tab).total
+		return if (total > 0) total else fallbackCount
+	}
+
+	private fun totalResultCount(): Int =
+		tabTotal(TAB_SHOWS, shows.size) + tabTotal(TAB_PRODUCTS, products.size) + tabTotal(TAB_USERS, users.size)
 }

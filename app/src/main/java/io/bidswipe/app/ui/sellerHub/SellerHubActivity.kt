@@ -1,6 +1,8 @@
 package io.bidswipe.app.ui.sellerHub
 
+import android.content.Intent
 import android.os.Bundle
+import androidx.core.os.bundleOf
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsCompat.CONSUMED
@@ -109,5 +111,24 @@ class SellerHubActivity : BaseActivity() {
 
 		navController.graph = navGraph
 
+		navigateToPushOrder(intent)
+
+	}
+
+	override fun onNewIntent(intent: Intent) {
+		super.onNewIntent(intent)
+		setIntent(intent)
+		navigateToPushOrder(intent)
+	}
+
+	private fun navigateToPushOrder(intent: Intent) {
+		val slug = intent.getStringExtra("slug").toString()
+		val pushOrderId = intent.getStringExtra("orderId")?.takeIf { it.isNotBlank() }
+		if (pushOrderId != null && slug == "order") {
+			navController.navigate(
+				R.id.sellerOrderDetailFragment,
+				bundleOf("orderId" to pushOrderId, "from" to (intent.getStringExtra("from") ?: "push"))
+			)
+		}
 	}
 }

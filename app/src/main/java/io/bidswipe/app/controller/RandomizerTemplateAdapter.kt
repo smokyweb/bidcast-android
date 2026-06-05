@@ -15,7 +15,8 @@ class RandomizerTemplateAdapter(
     private var items: MutableList<RandomizerTemplate> = mutableListOf(),
     private val onEdit: (RandomizerTemplate) -> Unit,
     private val onDelete: (RandomizerTemplate) -> Unit,
-    private val onRelease: (RandomizerTemplate) -> Unit
+    private val onRelease: (RandomizerTemplate) -> Unit,
+    private val onSelect: ((RandomizerTemplate) -> Unit)? = null
 ) : RecyclerView.Adapter<RandomizerTemplateAdapter.VH>() {
 
     inner class VH(view: View) : RecyclerView.ViewHolder(view) {
@@ -40,6 +41,10 @@ class RandomizerTemplateAdapter(
         holder.btnEdit.setOnClickListener { onEdit(item) }
         holder.btnDelete.setOnClickListener { onDelete(item) }
         holder.btnRelease.setOnClickListener { onRelease(item) }
+        holder.itemView.isClickable = onSelect != null
+        holder.itemView.setOnClickListener { onSelect?.invoke(item) }
+        holder.btnDelete.visibility = if (onSelect == null) View.VISIBLE else View.GONE
+        holder.btnRelease.visibility = if (onSelect == null) View.VISIBLE else View.GONE
     }
 
     @SuppressLint("NotifyDataSetChanged")

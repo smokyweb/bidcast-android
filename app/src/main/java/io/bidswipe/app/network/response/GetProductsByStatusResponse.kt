@@ -38,6 +38,12 @@ data class GetProductsByStatusResponse(
 		val id: Int?,
 		@SerializedName("order_id")
 		val orderId: String?,
+		@SerializedName("cancellation_status")
+		val cancellationStatus: String?,
+		@SerializedName("cancellation_reason")
+		val cancellationReason: String?,
+		@SerializedName("cancellation_reject_reason")
+		val cancellationRejectReason: String?,
 		@SerializedName("order_source")
 		val orderSource: String?,
 		@SerializedName("payment_status")

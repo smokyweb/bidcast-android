@@ -19,7 +19,21 @@ data class ExploreSearchResponse(
 data class SearchData(
     @SerializedName("shows") val shows: List<SearchShow>?,
     @SerializedName("products") val products: List<SearchProduct>?,
-    @SerializedName("users") val users: List<SearchUser>?
+    @SerializedName("users") val users: List<SearchUser>?,
+    @SerializedName("pagination") val pagination: SearchPagination?
+)
+
+data class SearchPagination(
+    @SerializedName("page") val page: Int?,
+    @SerializedName("per_page") val perPage: Int?,
+    @SerializedName("shows") val shows: SearchPaginationMeta?,
+    @SerializedName("products") val products: SearchPaginationMeta?,
+    @SerializedName("users") val users: SearchPaginationMeta?
+)
+
+data class SearchPaginationMeta(
+    @SerializedName("total") val total: Int?,
+    @SerializedName("last_page") val lastPage: Int?
 )
 
 data class SearchShow(
