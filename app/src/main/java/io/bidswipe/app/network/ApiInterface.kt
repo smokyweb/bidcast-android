@@ -105,6 +105,7 @@ import retrofit2.http.DELETE
 import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
 import retrofit2.http.GET
+import retrofit2.http.HTTP
 import retrofit2.http.Multipart
 import retrofit2.http.POST
 import retrofit2.http.PUT
@@ -1128,6 +1129,11 @@ interface ApiInterface {
 
     // ── Show / randomizer template attachment ──────────────────────────────
 
+    @GET("api/v1/shows/{id}/randomizer-templates")
+    suspend fun getShowRandomizerTemplates(
+        @Path("id") showId: String
+    ): io.bidswipe.app.network.response.ShowTemplatesResponse
+
     @PUT("api/v1/shows/{id}/randomizer-template")
     suspend fun attachRandomizerTemplate(
         @Path("id") showId: String,
@@ -1138,6 +1144,24 @@ interface ApiInterface {
     suspend fun detachRandomizerTemplate(
         @Path("id") showId: String
     ): CommonResponse
+
+    /** Detach a single template by id (body carries template_id). */
+    @HTTP(method = "DELETE", path = "api/v1/shows/{id}/randomizer-template", hasBody = true)
+    suspend fun detachOneRandomizerTemplate(
+        @Path("id") showId: String,
+        @Body body: io.bidswipe.app.network.request.DetachTemplateRequest
+    ): CommonResponse
+
+    @POST("api/v1/shows/{id}/randomizer/release-products")
+    suspend fun releaseShowRandomizerProducts(
+        @Path("id") showId: String
+    ): CommonResponse
+
+    @Multipart
+    @POST("api/v1/randomizer/slot-image")
+    suspend fun uploadRandomizerSlotImage(
+        @Part image: okhttp3.MultipartBody.Part
+    ): io.bidswipe.app.network.response.SlotImageResponse
 
     // ── Pre-bid (Basecamp #9933847997, 2026-05-29) ────────────────────────────
     // POST /api/pre-bid  — place or update a pre-bid on a product

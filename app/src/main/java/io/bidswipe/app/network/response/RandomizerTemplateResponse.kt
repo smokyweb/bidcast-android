@@ -28,7 +28,8 @@ data class RandomizerSlot(
     @SerializedName("color") val color: String?,
     @SerializedName("icon") val icon: String?,
     @SerializedName("product_id") val productId: Int?,
-    @SerializedName("product") val product: SlotProduct?
+    @SerializedName("product") val product: SlotProduct?,
+    @SerializedName("image") val image: String?
 )
 
 data class SlotProduct(
@@ -50,5 +51,21 @@ data class RandomizerTemplateListResponse(
 data class RandomizerTemplateSingleResponse(
     @SerializedName("success") val success: Boolean?,
     @SerializedName("data") val data: RandomizerTemplate?,
+    @SerializedName("message") val message: String?
+)
+
+// ─── Show-scoped templates list (GET shows/{id}/randomizer-templates) ──────────
+
+data class ShowTemplatesResponse(
+    @SerializedName("success") val success: Boolean?,
+    @SerializedName("data") val data: List<RandomizerTemplate>?
+)
+
+// ─── Slot image upload (POST randomizer/slot-image) ────────────────────────────
+
+data class SlotImageResponse(
+    @SerializedName("success") val success: Boolean?,
+    @SerializedName("url") val url: String?,
+    @SerializedName("path") val path: String?,
     @SerializedName("message") val message: String?
 )

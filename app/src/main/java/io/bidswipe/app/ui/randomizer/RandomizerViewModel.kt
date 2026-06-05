@@ -12,6 +12,9 @@ import io.bidswipe.app.network.response.CommonResponse
 import io.bidswipe.app.network.response.RandomizerTemplate
 import io.bidswipe.app.network.response.RandomizerTemplateListResponse
 import io.bidswipe.app.network.response.RandomizerTemplateSingleResponse
+import io.bidswipe.app.network.response.ShowTemplatesResponse
+import io.bidswipe.app.network.response.SlotImageResponse
+import okhttp3.MultipartBody
 import io.bidswipe.app.utils.Const.NO_INTERNET_ERROR
 import io.bidswipe.app.utils.NetworkMonitor
 import kotlinx.coroutines.launch
@@ -108,6 +111,46 @@ class RandomizerViewModel @Inject constructor(
         _attachResponse.value = repo.detachRandomizerTemplate(showId)
     }
 
+    // ── Show-scoped templates list ─────────────────────────────────────────────
+
+    private val _showTemplatesResponse = MutableLiveData<Resource<ShowTemplatesResponse>>()
+    val showTemplatesResponse: MutableLiveData<Resource<ShowTemplatesResponse>> get() = _showTemplatesResponse
+
+    fun loadShowTemplates(showId: String) = viewModelScope.launch {
+        if (!networkMonitor.hasInternet()) { _showTemplatesResponse.value = NO_INTERNET_ERROR; return@launch }
+        _showTemplatesResponse.value = repo.getShowRandomizerTemplates(showId)
+    }
+
+    // ── Show-scoped release products ──────────────────────────────────────────
+
+    private val _releaseShowResponse = MutableLiveData<Resource<CommonResponse>>()
+    val releaseShowResponse: MutableLiveData<Resource<CommonResponse>> get() = _releaseShowResponse
+
+    fun releaseShowProducts(showId: String) = viewModelScope.launch {
+        if (!networkMonitor.hasInternet()) { _releaseShowResponse.value = NO_INTERNET_ERROR; return@launch }
+        _releaseShowResponse.value = repo.releaseShowRandomizerProducts(showId)
+    }
+
+    // ── Detach single template from show ──────────────────────────────────────
+
+    private val _detachOneResponse = MutableLiveData<Resource<CommonResponse>>()
+    val detachOneResponse: MutableLiveData<Resource<CommonResponse>> get() = _detachOneResponse
+
+    fun detachOneFromShow(showId: String, templateId: Int) = viewModelScope.launch {
+        if (!networkMonitor.hasInternet()) { _detachOneResponse.value = NO_INTERNET_ERROR; return@launch }
+        _detachOneResponse.value = repo.detachOneRandomizerTemplate(showId, templateId)
+    }
+
+    // ── Slot image upload ────────────────────────────────────────────────────────────
+
+    private val _slotImageResponse = MutableLiveData<Resource<SlotImageResponse>>()
+    val slotImageResponse: MutableLiveData<Resource<SlotImageResponse>> get() = _slotImageResponse
+
+    fun uploadSlotImage(part: MultipartBody.Part) = viewModelScope.launch {
+        if (!networkMonitor.hasInternet()) { _slotImageResponse.value = NO_INTERNET_ERROR; return@launch }
+        _slotImageResponse.value = repo.uploadRandomizerSlotImage(part)
+    }
+
     // ── Builder state (held while user edits) ─────────────────────────────────
 
     /** The template being edited. null = creating new. */
@@ -138,7 +181,8 @@ class RandomizerViewModel @Inject constructor(
             position = it.position,
             color = it.color,
             icon = it.icon,
-            productId = it.productId
+            productId = it.productId,
+            image = it.imageUrl
         )
     }
 
@@ -174,5 +218,6 @@ data class SlotDraft(
     var icon: String?,
     var productId: Int? = null,
     var productTitle: String? = null,
-    var productThumbnail: String? = null
+    var productThumbnail: String? = null,
+    var imageUrl: String? = null
 )

@@ -847,6 +847,18 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
     suspend fun detachRandomizerTemplate(showId: String) =
         call { api.detachRandomizerTemplate(showId) }
 
+    suspend fun getShowRandomizerTemplates(showId: String) =
+        call { api.getShowRandomizerTemplates(showId) }
+
+    suspend fun detachOneRandomizerTemplate(showId: String, templateId: Int) =
+        call { api.detachOneRandomizerTemplate(showId, io.bidswipe.app.network.request.DetachTemplateRequest(templateId)) }
+
+    suspend fun releaseShowRandomizerProducts(showId: String) =
+        call { api.releaseShowRandomizerProducts(showId) }
+
+    suspend fun uploadRandomizerSlotImage(part: MultipartBody.Part) =
+        call { api.uploadRandomizerSlotImage(part) }
+
     // Basecamp #9933847997 (2026-05-29): pre-bid endpoints
     suspend fun placePrebid(productId: Int, amount: Double, scheduleShowId: Int?) =
         call { api.placePrebid(productId, amount, scheduleShowId) }

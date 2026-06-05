@@ -2,9 +2,12 @@ package io.bidswipe.app.ui.randomizer
 
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
+import android.provider.OpenableColumns
 import android.view.View
 import android.widget.ArrayAdapter
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
@@ -28,9 +31,13 @@ import io.bidswipe.app.ui.agoraStream.ProductsForLiveShowFragment
 import io.bidswipe.app.ui.custom.AlertType
 import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.utils.Alerts
+import io.bidswipe.app.utils.Utils
 import io.bidswipe.app.utils.bind
+import io.bidswipe.app.utils.loadUrl
 import io.bidswipe.app.utils.setHapticClickListener
 import io.bidswipe.app.utils.value
+import java.io.File
+import java.io.FileOutputStream
 
 @AndroidEntryPoint
 class RandomizerTemplatesActivity : BaseActivity() {
@@ -47,9 +54,17 @@ class RandomizerTemplatesActivity : BaseActivity() {
     private var builderSheet: BottomSheetDialog? = null
     private var builderBind: SheetRandomizerBuilderBinding? = null
     private var slotEditorSheet: BottomSheetDialog? = null
+    private var slotEditorBind: SheetSlotEditorBinding? = null
 
     // Which slot is currently being edited
     private var editingSlotIndex: Int = -1
+
+    // Image picker for custom slot image (registered at Activity level)
+    private val slotImagePickerLauncher = registerForActivityResult(
+        ActivityResultContracts.GetContent()
+    ) { uri: Uri? ->
+        uri?.let { handleSlotImagePicked(it) }
+    }
 
     // ── Buyer-raffle helpers ──────────────────────────────────────────────────
 
@@ -194,6 +209,25 @@ class RandomizerTemplatesActivity : BaseActivity() {
                 else -> Unit
             }
         }
+
+        vm.slotImageResponse.observe(this) { res ->
+            when (res) {
+                is Resource.Success -> {
+                    val url = res.value?.url
+                    if (!url.isNullOrEmpty() && editingSlotIndex >= 0 && editingSlotIndex < vm.builderSlots.size) {
+                        vm.builderSlots[editingSlotIndex].imageUrl = url
+                        slotAdapter?.notifySlotChanged(editingSlotIndex)
+                        // Update preview in slot editor sheet if still open
+                        slotEditorBind?.ivSlotImagePreview?.apply {
+                            visibility = View.VISIBLE
+                            loadUrl(this@RandomizerTemplatesActivity, url)
+                        }
+                    }
+                }
+                is Resource.Error -> Alerts.error(this, res.errorResponse?.message ?: "Failed to upload slot image")
+                else -> Unit
+            }
+        }
     }
 
     // ── Builder sheet ─────────────────────────────────────────────────────────
@@ -210,7 +244,8 @@ class RandomizerTemplatesActivity : BaseActivity() {
                 icon             = s.icon,
                 productId        = s.productId,
                 productTitle     = s.product?.title,
-                productThumbnail = s.product?.thumbnail
+                productThumbnail = s.product?.thumbnail,
+                imageUrl         = s.image
             )
         } ?: emptyList()
         vm.initBuilderSlots(slotCount, existing)
@@ -321,6 +356,7 @@ class RandomizerTemplatesActivity : BaseActivity() {
         val sb = SheetSlotEditorBinding.inflate(layoutInflater)
         sheet.setContentView(sb.root)
         slotEditorSheet = sheet
+        slotEditorBind = sb
 
         // For buyer_raffle, slots represent buyers — hide per-slot product picker
         val isBuyerRaffle = run {
@@ -361,6 +397,17 @@ class RandomizerTemplatesActivity : BaseActivity() {
             openProductPicker(slotIndex)
         }
 
+        // Image picker for custom slot image
+        val existingImageUrl = draft.imageUrl
+        if (!existingImageUrl.isNullOrEmpty()) {
+            sb.ivSlotImagePreview.visibility = View.VISIBLE
+            sb.ivSlotImagePreview.loadUrl(this, existingImageUrl)
+        }
+        sb.btnPickSlotImage.setOnClickListener {
+            editingSlotIndex = slotIndex
+            slotImagePickerLauncher.launch("image/*")
+        }
+
         // Done
         sb.btnSlotDone.setOnClickListener {
             slotAdapter?.notifySlotChanged(slotIndex)
@@ -396,6 +443,23 @@ class RandomizerTemplatesActivity : BaseActivity() {
             mirrorBuyerRaffleProduct(productId, productTitle)
             slotAdapter?.setData(vm.builderSlots)
             builderBind?.let { bb -> updatePrizeProductDisplay(bb) }
+        }
+    }
+
+    // ── Slot image upload ────────────────────────────────────────────────────
+
+    private fun handleSlotImagePicked(uri: Uri) {
+        try {
+            val name = "slot_image_${System.currentTimeMillis()}.jpg"
+            val file = File(cacheDir, name)
+            contentResolver.openInputStream(uri)?.use { input ->
+                FileOutputStream(file).use { output -> input.copyTo(output) }
+            }
+            if (!file.exists()) return
+            val part = Utils.imagePart("image", name, file)
+            vm.uploadSlotImage(part)
+        } catch (e: Exception) {
+            Alerts.error(this, "Failed to process selected image")
         }
     }
 

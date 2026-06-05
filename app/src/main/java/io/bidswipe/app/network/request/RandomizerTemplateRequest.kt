@@ -14,9 +14,14 @@ data class RandomizerSlotRequest(
     @SerializedName("position") val position: Int,
     @SerializedName("color") val color: String,
     @SerializedName("icon") val icon: String? = null,
-    @SerializedName("product_id") val productId: Int? = null
+    @SerializedName("product_id") val productId: Int? = null,
+    @SerializedName("image") val image: String? = null
 )
 
 data class AttachTemplateRequest(
+    @SerializedName("template_id") val templateId: Int
+)
+
+data class DetachTemplateRequest(
     @SerializedName("template_id") val templateId: Int
 )

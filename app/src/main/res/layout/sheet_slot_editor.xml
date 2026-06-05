@@ -88,6 +88,45 @@
         android:textColor="?attr/colorOnSurface"
         android:visibility="gone" />
 
+    <!-- Custom slot image label -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Custom Image (optional)"
+        android:textSize="13sp"
+        android:alpha="0.6"
+        android:textColor="?attr/colorOnSurface"
+        android:paddingHorizontal="16dp"
+        android:paddingTop="4dp"
+        android:paddingBottom="6dp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingHorizontal="16dp"
+        android:paddingBottom="12dp"
+        android:gravity="center_vertical">
+
+        <ImageView
+            android:id="@+id/ivSlotImagePreview"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:scaleType="centerCrop"
+            android:visibility="gone"
+            android:layout_marginEnd="12dp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnPickSlotImage"
+            style="@style/Widget.Material3.Button.OutlinedButton"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_weight="1"
+            android:text="Pick Image"
+            android:textAllCaps="false" />
+
+    </LinearLayout>
+
     <!-- Done button -->
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnSlotDone"

@@ -5,11 +5,13 @@ import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import io.bidswipe.app.R
 import io.bidswipe.app.ui.randomizer.SlotDraft
+import io.bidswipe.app.utils.loadUrl
 
 class RandomizerSlotAdapter(
     private var items: MutableList<SlotDraft>,
@@ -21,6 +23,7 @@ class RandomizerSlotAdapter(
         val tvPos: TextView = view.findViewById(R.id.tvSlotPosition)
         val tvIcon: TextView = view.findViewById(R.id.tvSlotIcon)
         val tvProduct: TextView = view.findViewById(R.id.tvSlotProduct)
+        val ivSlotImage: ImageView = view.findViewById(R.id.ivSlotImage)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH =
@@ -37,7 +40,15 @@ class RandomizerSlotAdapter(
             holder.card.setCardBackgroundColor(Color.parseColor("#339AF0"))
         }
         holder.tvPos.text = "#${slot.position + 1}"
-        holder.tvIcon.text = slot.icon ?: ""
+        if (!slot.imageUrl.isNullOrEmpty()) {
+            holder.ivSlotImage.visibility = View.VISIBLE
+            holder.tvIcon.visibility = View.INVISIBLE
+            holder.ivSlotImage.loadUrl(holder.itemView.context, slot.imageUrl!!)
+        } else {
+            holder.ivSlotImage.visibility = View.GONE
+            holder.tvIcon.visibility = View.VISIBLE
+            holder.tvIcon.text = slot.icon ?: ""
+        }
         holder.tvProduct.text = when {
             slot.productTitle != null -> slot.productTitle
             else                     -> "Tap to configure"
