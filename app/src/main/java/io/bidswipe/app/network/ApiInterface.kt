@@ -543,6 +543,14 @@ interface ApiInterface {
     ): GetOrdersResponse
 
     @Multipart
+    @POST("api/v1/get-seller-sold-orders")
+    suspend fun getSellerSoldOrders(
+        @Part("user_id") userId: RequestBody?,
+        @Part("page") page: RequestBody?,
+        @Part("search") search: RequestBody?,
+    ): GetOrdersResponse
+
+    @Multipart
     @POST("api/seller-identity/store-id-card")
     suspend fun storeSellerId(
         @Part idCard: MultipartBody.Part,

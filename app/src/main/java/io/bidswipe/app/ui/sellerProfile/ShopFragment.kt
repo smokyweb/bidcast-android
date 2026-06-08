@@ -12,6 +12,7 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import io.bidswipe.app.base.BaseFragment
+import io.bidswipe.app.controller.OrdersAdapter
 import io.bidswipe.app.controller.ShopAdapter
 import io.bidswipe.app.controller.SortingOptionAdapter
 import io.bidswipe.app.databinding.FragmentShopBinding
@@ -20,6 +21,7 @@ import io.bidswipe.app.interfaces.AlertClicks
 import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.model.LiveMoreOption
 import io.bidswipe.app.network.Resource
+import io.bidswipe.app.network.response.GetOrdersResponse
 import io.bidswipe.app.network.response.Product
 import io.bidswipe.app.network.response.isLiveAuctionFormat
 import io.bidswipe.app.ui.custom.AppBottomSheet
@@ -39,7 +41,9 @@ class ShopFragment : BaseFragment<SellerViewModel, FragmentShopBinding>() {
 		FragmentShopBinding.inflate(inflater, view, false)
 
 	private var productList = mutableListOf<Product?>()
+	private var soldOrderList = mutableListOf<GetOrdersResponse.Data?>()
 	private lateinit var shopAdapter: ShopAdapter
+	private lateinit var soldOrdersAdapter: OrdersAdapter
 	private val optionList = mutableListOf<LiveMoreOption?>()
 	private var sellerId = ""
 	private var sortBy = "title_asc"
@@ -74,6 +78,20 @@ class ShopFragment : BaseFragment<SellerViewModel, FragmentShopBinding>() {
 		}
 	}
 
+	private val soldOrderClick = object : RecyclerClicks {
+		override fun itemClick(pos: Int, status: String?) {
+			if (status == "profile") return
+
+			val productId = soldOrderList.getOrNull(pos)?.productId ?: return
+			startActivity(
+				Intent(mCtx, ProductDetailsActivity::class.java).putExtra(
+					"productId",
+					productId.toString()
+				)
+			)
+		}
+	}
+
 	@SuppressLint("NotifyDataSetChanged")
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		super.onViewCreated(view, savedInstanceState)
@@ -96,7 +114,12 @@ class ShopFragment : BaseFragment<SellerViewModel, FragmentShopBinding>() {
 				super.onScrolled(recyclerView, dx, dy)
 				val layoutManager = bind.recycler.layoutManager as LinearLayoutManager
 				val lastItemPosition = layoutManager.findLastVisibleItemPosition()
-				if (lastItemPosition == (productList.size - 1)) {
+				val lastDataPosition = if (selectedShopTab == ShopTab.SOLD) {
+					soldOrderList.size - 1
+				} else {
+					productList.size - 1
+				}
+				if (lastDataPosition >= 0 && lastItemPosition == lastDataPosition) {
 					if (!isLoading) {
 						isLoading = true
 						page++
@@ -136,6 +159,7 @@ class ShopFragment : BaseFragment<SellerViewModel, FragmentShopBinding>() {
 		}
 
 		shopAdapter = ShopAdapter(productList, mClick)
+		soldOrdersAdapter = OrdersAdapter(soldOrderList, soldOrderClick)
 		bind.recycler.adapter = shopAdapter
 		loadData()
 		viewModel.getUserProductsRepo.observe(viewLifecycleOwner) {
@@ -146,14 +170,14 @@ class ShopFragment : BaseFragment<SellerViewModel, FragmentShopBinding>() {
 					bind.bottomLoader.isVisible = false
 					bind.noData.isVisible = false
 
-						val mData = it.value.products
-						if (page == 1) {
-							productList.clear()
-						}
+					val mData = it.value.products
+					if (page == 1) {
+						productList.clear()
+					}
 
-						if (mData != null) {
-							productList.addAll(mData.filter { product -> product.shouldShowInSelectedShopTab() })
-						}
+					if (mData != null) {
+						productList.addAll(mData.filter { product -> product.shouldShowInSelectedShopTab() })
+					}
 
 					if (productList.isEmpty()) {
 						bind.noData.isVisible = true
@@ -198,6 +222,60 @@ class ShopFragment : BaseFragment<SellerViewModel, FragmentShopBinding>() {
 			}
 		}
 
+		viewModel.getSellerSoldOrdersRepo.observe(viewLifecycleOwner) {
+			when (it) {
+				is Resource.Success -> {
+					bind.loader.isVisible = false
+					bind.noInternet.isVisible = false
+					bind.bottomLoader.isVisible = false
+					bind.noData.isVisible = false
+
+					if (page == 1) {
+						soldOrderList.clear()
+					}
+
+					it.value.data?.let { orders ->
+						soldOrderList.addAll(orders)
+					}
+
+					if (soldOrderList.isEmpty()) {
+						bind.noData.isVisible = true
+						bind.recycler.isVisible = false
+					} else {
+						bind.noData.isVisible = false
+						bind.recycler.isVisible = true
+					}
+
+					isLoading = page >= (it.value.totalPage ?: 0)
+					soldOrdersAdapter.notifyDataSetChanged()
+				}
+
+				is Resource.Error -> {
+					bind.loader.isVisible = false
+					bind.bottomLoader.isVisible = false
+					bind.noData.isVisible = false
+
+					if (it.isNetworkError) {
+						bind.noInternet.isVisible = true
+						bind.recycler.isVisible = false
+						bind.noData.isVisible = false
+					} else {
+						it.parse(mCtx, TAG, object : AlertClicks {
+							override fun primaryClick(dialog: AppBottomSheet) {
+								dialog.dismiss()
+							}
+
+							override fun secondaryClick(dialog: AppBottomSheet) {
+								dialog.dismiss()
+							}
+						})
+					}
+				}
+
+				else -> {}
+			}
+		}
+
 	}
 
 	/*override fun onResume() {
@@ -211,6 +289,17 @@ class ShopFragment : BaseFragment<SellerViewModel, FragmentShopBinding>() {
 	}*/
 
 	private fun loadData() {
+		bind.recycler.adapter = if (selectedShopTab == ShopTab.SOLD) soldOrdersAdapter else shopAdapter
+
+		if (selectedShopTab == ShopTab.SOLD) {
+			viewModel.getSellerSoldOrders(
+				userId = sellerId.request(),
+				page = page.toString().request(),
+				search = bind.search.value().ifEmpty { null }?.request()
+			)
+			return
+		}
+
 		val filters = currentShopFilters()
 		viewModel.getUserProducts(
 			userId = sellerId.request(),
@@ -255,6 +344,7 @@ class ShopFragment : BaseFragment<SellerViewModel, FragmentShopBinding>() {
 				type = ""
 				page = 1
 				useLegacyShopFilters = false
+				isLoading = false
 
 				when (index) {
 					/*0 -> {
@@ -277,6 +367,8 @@ class ShopFragment : BaseFragment<SellerViewModel, FragmentShopBinding>() {
 
 				bind.loader.isVisible = true
 				setSearchTextSilently("")
+				productList.clear()
+				soldOrderList.clear()
 				loadData()
 
 			}

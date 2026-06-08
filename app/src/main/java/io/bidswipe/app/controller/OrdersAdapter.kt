@@ -107,7 +107,7 @@ class OrdersAdapter(
 
             if (item?.productId != null) {
                 bind.productCard.isVisible = true
-                bind.productImage.loadUrl(mCtx, item?.product?.images?.get(0) ?: "")
+                bind.productImage.loadUrl(mCtx, item?.product?.images?.getOrNull(0) ?: "")
             } else {
                 bind.productCard.isVisible = false
             }
