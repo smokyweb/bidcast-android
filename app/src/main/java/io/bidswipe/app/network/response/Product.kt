@@ -49,7 +49,7 @@ data class Product(
 	val productCondition: String?,
 	@SerializedName("productShow")
 	val productShow: String?,
-	@SerializedName("purchasedQuantity")
+	@SerializedName(value = "purchasedQuantity", alternate = ["purchased_quantity"])
 	val purchasedQuantity: String?,
 	@SerializedName("quantity")
 	val quantity: String?,

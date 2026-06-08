@@ -333,13 +333,18 @@ class ShopFragment : BaseFragment<SellerViewModel, FragmentShopBinding>() {
 	private fun Product?.matchesSelectedShopTab(): Boolean {
 		val product = this ?: return false
 		return when (selectedShopTab) {
-			ShopTab.AUCTION -> !product.isSoldForShop() && product.isLiveAuctionFormat()
-			ShopTab.BUY_NOW -> !product.isSoldForShop() && !product.isLiveAuctionFormat()
-			ShopTab.SOLD -> product.isSoldForShop()
+			ShopTab.AUCTION -> !product.isSoldOutForShop() && product.isLiveAuctionFormat()
+			ShopTab.BUY_NOW -> !product.isSoldOutForShop() && !product.isLiveAuctionFormat()
+			ShopTab.SOLD -> product.hasSalesForShop()
 		}
 	}
 
-	private fun Product.isSoldForShop(): Boolean {
+	private fun Product.hasSalesForShop(): Boolean {
+		if (isSoldOutForShop()) return true
+		return purchasedQuantity.asIntOrZero() > 0
+	}
+
+	private fun Product.isSoldOutForShop(): Boolean {
 		val statusText = status?.lowercase().orEmpty()
 		if (statusText == "sold" || statusText == "inactive") return true
 
@@ -347,6 +352,8 @@ class ShopFragment : BaseFragment<SellerViewModel, FragmentShopBinding>() {
 		val purchased = purchasedQuantity?.toIntOrNull()
 		return listedQuantity != null && purchased != null && listedQuantity <= purchased
 	}
+
+	private fun String?.asIntOrZero(): Int = this?.toIntOrNull() ?: 0
 
 	private fun sortOptionSheet() {
 
