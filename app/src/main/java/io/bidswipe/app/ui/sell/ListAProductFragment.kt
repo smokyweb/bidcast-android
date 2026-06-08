@@ -1341,6 +1341,7 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
         videos: List<Map<String, String?>>? = null,
         variantData: List<Map<String?, Any?>>? = null,
     ) {
+        val isAuctionFormat = bind.tabs.selectedTabPosition == 1
         viewModel.storeProduct(
             StoreProductRequest(
                 categoryId = categoryId,
@@ -1351,7 +1352,9 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
                 pricing = bind.price.value(),
                 flashSale = bind.flashSell.isChecked,
                 acceptOffers = bind.acceptOffers.isChecked,
-                reserveForLive = bind.tabs.selectedTabPosition == 1,
+                reserveForLive = isAuctionFormat,
+                auction = isAuctionFormat,
+                saleFormatType = if (isAuctionFormat) "live" else "buy_it_now",
                 shippingProfileId = profileId.ifEmpty { null },
                 status = type,
                 images = images,
@@ -1521,4 +1524,3 @@ class ListAProductFragment : BaseFragment<DashViewModel, FragmentListAProductBin
     }
 
 }
-

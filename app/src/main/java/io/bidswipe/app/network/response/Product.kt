@@ -130,9 +130,9 @@ data class Product(
 /**
  * Pricing-format classification shared across surfaces (parity with the PWA /
  * iOS). A product is a *Live Auction* when [Product.auction],
- * [Product.reserveForLive], or [Product.isAuction] is true, or when the text
- * format flags resolve to auction/live auction. Everything else is *Buy Now*
- * (buy-it-now), matching the buy-it-now default for old rows with null signals.
+ * [Product.reserveForLive], or [Product.isAuction] is true, or when a sale
+ * format text flag resolves to auction/live auction. This keeps older rows
+ * whose only format signal is `type=live` out of the Buy Now tab.
  *
  * Basecamp #9954326658 (format parity).
  */

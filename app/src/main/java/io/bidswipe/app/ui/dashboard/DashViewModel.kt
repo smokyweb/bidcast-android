@@ -54,6 +54,14 @@ import okhttp3.RequestBody
 import retrofit2.http.Query
 import javax.inject.Inject
 
+data class HomeLiveShowResult(
+    val requestId: Int,
+    val type: String,
+    val category: String?,
+    val page: Int,
+    val resource: Resource<GetMyShowResponse>,
+)
+
 @HiltViewModel
 class DashViewModel @Inject constructor(
     val repo: DashRepository,
@@ -279,6 +287,11 @@ class DashViewModel @Inject constructor(
     val getLiveShowRepo: MutableLiveData<Resource<GetMyShowResponse>>
         get() = _getLiveShowResponse
 
+    private var homeLiveShowRequestId = 0
+    private var _homeLiveShowResponse = MutableLiveData<HomeLiveShowResult>()
+    val homeLiveShowRepo: MutableLiveData<HomeLiveShowResult>
+        get() = _homeLiveShowResponse
+
     // Basecamp #9933301500 (2026-05-27): pass through 6 new filter params
     // Basecamp #9938023997: added category_ids + sub_category_ids
     fun getLiveShow(
@@ -301,6 +314,47 @@ class DashViewModel @Inject constructor(
             return@launch
         }
         _getLiveShowResponse.value = repo.getLiveShow(type, category, subCategory, search, page, showFormat, tag, premierShop, shipCountry, shipState, shipping, categoryIds, subCategoryIds)
+    }
+
+    fun getHomeLiveShow(
+        requestType: String,
+        requestCategory: String?,
+        requestPage: Int,
+        type: RequestBody? = null,
+        category: RequestBody? = null,
+        subCategory: RequestBody? = null,
+        search: RequestBody? = null,
+        page: RequestBody? = null,
+        showFormat: RequestBody? = null,
+        tag: RequestBody? = null,
+        premierShop: RequestBody? = null,
+        shipCountry: RequestBody? = null,
+        shipState: RequestBody? = null,
+        shipping: RequestBody? = null,
+        categoryIds: List<RequestBody>? = null,
+        subCategoryIds: List<RequestBody>? = null,
+    ) = viewModelScope.launch {
+        val requestId = ++homeLiveShowRequestId
+        if (!networkMonitor.hasInternet()) {
+            _homeLiveShowResponse.value = HomeLiveShowResult(
+                requestId = requestId,
+                type = requestType,
+                category = requestCategory,
+                page = requestPage,
+                resource = NO_INTERNET_ERROR,
+            )
+            return@launch
+        }
+        val resource = repo.getLiveShow(type, category, subCategory, search, page, showFormat, tag, premierShop, shipCountry, shipState, shipping, categoryIds, subCategoryIds)
+        if (requestId == homeLiveShowRequestId) {
+            _homeLiveShowResponse.value = HomeLiveShowResult(
+                requestId = requestId,
+                type = requestType,
+                category = requestCategory,
+                page = requestPage,
+                resource = resource,
+            )
+        }
     }
 
     // Basecamp #9922137198 (Trey 2026-05-20): unified search across shows + products + users

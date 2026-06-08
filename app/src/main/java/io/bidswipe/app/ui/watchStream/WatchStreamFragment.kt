@@ -441,6 +441,41 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
                 finalizeBidUpdateUI(json)
             }
 
+            socketManager?.onBidRejected { json ->
+                runSafe {
+                    if (json.optString("room_id") == roomID) {
+                        requireActivity().runOnUiThread {
+                            Alerts.error(
+                                mCtx,
+                                json.optString(
+                                    "message",
+                                    "Bid was not accepted. Please try again."
+                                )
+                            )
+                        }
+                    }
+                }
+            }
+
+            socketManager?.onAuctionOrderFailed { json ->
+                runSafe {
+                    if (
+                        json.optString("room_id") == roomID &&
+                        json.optString("user_id") == userId
+                    ) {
+                        requireActivity().runOnUiThread {
+                            Alerts.error(
+                                mCtx,
+                                json.optString(
+                                    "message",
+                                    "Order failed after winning auction. Please check your payment and shipping details."
+                                )
+                            )
+                        }
+                    }
+                }
+            }
+
             socketManager?.getBidFinalizeBreakSpot { json ->
                 finalizeBidUpdateUI(json,false)
                 runSafe {
@@ -2010,7 +2045,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
                 )
             }
 
-            Alerts.success(mCtx, "Bid placed successfully")
+            Alerts.info(mCtx, "Bid submitted")
             bind.bidSwipeLayout.close()
 
         }
@@ -2132,7 +2167,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
                     bidAmount = priceText,
                     auctionTypeId = liveShowData?.auctionTypeId
                 )
-                Alerts.success(mCtx, "Bid placed successfully")
+                Alerts.info(mCtx, "Bid submitted")
 
                 inputSheet?.dismiss()
             }
@@ -3049,6 +3084,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
                     bind.soldLayout.isVisible = true
                     bind.buyNowBtn.isVisible = false
                     bind.bidLayout.isVisible = false
+                    bind.productLayout.isVisible = false
 
                     val bidderName = winner.optString("user_name") ?: ""
                     val bidderImage = winner.optString("user_image")

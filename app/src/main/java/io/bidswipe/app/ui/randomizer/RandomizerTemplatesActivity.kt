@@ -280,7 +280,7 @@ class RandomizerTemplatesActivity : BaseActivity() {
                 icon             = s.icon,
                 productId        = s.productId,
                 productTitle     = s.product?.title,
-                productThumbnail = s.product?.thumbnail,
+                productThumbnail = s.product?.thumbnailUrl(),
                 imageUrl         = s.image
             )
         } ?: emptyList()

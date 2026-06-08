@@ -32,6 +32,7 @@ import io.bidswipe.app.network.Resource
 import io.bidswipe.app.network.response.GetProductDetailsResponse
 import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.ui.dashboard.ChatActivity
+import io.bidswipe.app.ui.sellerProfile.SellerProfileActivity
 import io.bidswipe.app.utils.Alerts
 import io.bidswipe.app.utils.Const
 import io.bidswipe.app.utils.Utils
@@ -61,6 +62,8 @@ class ProductDetailsFragment : BaseFragment<ProductViewModel, FragmentProductDet
     private var offerList = mutableListOf<OfferModel>()
     private var actionList = mutableListOf<PowerMenuItem>()
     private var images = mutableListOf<String?>()
+    private var isFromShowDetails = false
+    private var preBidScheduleShowId: Int? = null
 
     private var productSaved = false
 
@@ -71,6 +74,9 @@ class ProductDetailsFragment : BaseFragment<ProductViewModel, FragmentProductDet
         super.onViewCreated(view, savedInstanceState)
 
         productId = activity?.intent?.getStringExtra("productId") ?: ""
+        isFromShowDetails = activity?.intent?.getBooleanExtra("isFromShowDetails", false) ?: false
+        preBidScheduleShowId = activity?.intent?.getStringExtra("showId")?.toIntOrNull()
+            ?: activity?.intent?.getIntExtra("showId", 0)?.takeIf { it > 0 }
 
         bind.backImage.setHapticClickListener {
             finish()
@@ -96,6 +102,7 @@ class ProductDetailsFragment : BaseFragment<ProductViewModel, FragmentProductDet
 
         // Basecamp #9933847997 (2026-05-27): pre-bid button.
         bind.preBid.setHapticClickListener {
+            if (!isFromShowDetails) return@setHapticClickListener
             showPreBidDialog()
         }
 
@@ -121,8 +128,15 @@ class ProductDetailsFragment : BaseFragment<ProductViewModel, FragmentProductDet
                     viewModel.product = mData
 
                     bind.userName.text = mData?.user?.name?.asCapital()
+                    bind.userName.setHapticClickListener {
+                        openSellerProfile(mData)
+                    }
+                    bind.userImage.setHapticClickListener {
+                        openSellerProfile(mData)
+                    }
 
-                    viewModel.getSellerInfo(sellerId = mData?.userId.toString())
+                    val sellerId = mData?.user?.id ?: mData?.userId
+                    viewModel.getSellerInfo(sellerId = sellerId.toString())
 
 //                    if (mData?.user?.sellerVerification == true) {
 //                        bind.sellerStatus.text = "Verified Seller"
@@ -281,6 +295,11 @@ class ProductDetailsFragment : BaseFragment<ProductViewModel, FragmentProductDet
 
                     val isBuyer = mData != null && mData.userId.toString() != userId
                     val isAuctionProduct = mData?.isLiveAuctionFormat() == true
+                    preBidScheduleShowId = mData?.preBidScheduleShowId ?: preBidScheduleShowId
+                    val canPreBid = isBuyer &&
+                        isAuctionProduct &&
+                        isFromShowDetails &&
+                        mData?.preBidAllowed != false
 
                     // Basecamp #9960348333 follow-up (2026-06-05): Buy Now and
                     // Pre-Bid are mutually exclusive on product details. Buy-it-now
@@ -288,7 +307,7 @@ class ProductDetailsFragment : BaseFragment<ProductViewModel, FragmentProductDet
                     // another user's Shop tab.
                     if (isAuctionProduct) bind.makeOffer.isVisible = false
                     bind.buyNow.isVisible = isBuyer && !isAuctionProduct
-                    bind.preBid.isVisible = isBuyer && isAuctionProduct && mData?.preBidAllowed != false
+                    bind.preBid.isVisible = canPreBid
                     bind.buyLayout.isVisible = isBuyer &&
                         (bind.makeOffer.isVisible || bind.buyNow.isVisible || bind.preBid.isVisible)
 
@@ -420,6 +439,21 @@ class ProductDetailsFragment : BaseFragment<ProductViewModel, FragmentProductDet
                 else -> {}
             }
         }
+    }
+
+    private fun openSellerProfile(mData: GetProductDetailsResponse.Data?) {
+        val sellerId = mData?.user?.id ?: mData?.userId
+        if (sellerId == null || sellerId <= 0) {
+            Alerts.error(mCtx, "Cannot find seller info.")
+            return
+        }
+
+        val intent = Intent(mCtx, SellerProfileActivity::class.java).apply {
+            putExtra("sellerId", sellerId.toString())
+            putExtra("name", mData?.user?.name ?: "")
+            putExtra("image", mData?.user?.profileImage ?: "")
+        }
+        startActivity(intent)
     }
 
     fun shareProduct(mData: GetProductDetailsResponse.Data?, uri: Uri? = null) {
@@ -648,7 +682,7 @@ class ProductDetailsFragment : BaseFragment<ProductViewModel, FragmentProductDet
                     return@setPositiveButton
                 }
                 bind.loader.isVisible = true
-                viewModel.placePrebid(pid, amount)
+                viewModel.placePrebid(pid, amount, preBidScheduleShowId)
             }
             .setNeutralButton("Withdraw") { d, _ ->
                 d.dismiss()

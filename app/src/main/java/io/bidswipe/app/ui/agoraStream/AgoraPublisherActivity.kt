@@ -204,6 +204,10 @@ class AgoraPublisherActivity : BaseActivity() {
     // Basecamp #9934001770 (2026-05-29): pairing record ID received from the
     // claim response; used to revoke the pairing when the co-host leaves.
     private var coHostPairingIdFromIntent: Int? = null
+    private var isInvitedCoHost = false
+    private var isSameAccountSecondDevice = false
+    private var shouldTakeOverVideo = false
+    private var isControlOnlyDevice = false
     // UID of the remote broadcaster currently rendering in remoteVideoView.
     private var remotePublisherUid: Int = -1
     private var breakSpotAuctionData: AuctionStartedBreakSpotResponse? = null
@@ -285,6 +289,7 @@ class AgoraPublisherActivity : BaseActivity() {
         // Basecamp #9934001770: co-host mode — second device joined via
         // CoHostJoinActivity which passes co_host=true + show_id + host_user_id.
         isCoHost = intent.getBooleanExtra("co_host", false)
+        isInvitedCoHost = intent.getBooleanExtra("invited_cohost", false)
         if (isCoHost) {
             // Identify as co-host in the UI
             runSafe { bind.hostName.text = buildString { append(userName.asCapital()); append(" (Co-Host)") } }
@@ -295,6 +300,9 @@ class AgoraPublisherActivity : BaseActivity() {
             val pId = intent.getIntExtra("pairing_id", 0)
             if (pId != 0) coHostPairingIdFromIntent = pId
         }
+        isSameAccountSecondDevice = intent.getBooleanExtra("same_account_second_device", false)
+        shouldTakeOverVideo = intent.getBooleanExtra("take_over_video", false)
+        isControlOnlyDevice = intent.getBooleanExtra("control_only", false)
 
         viewModel.showId = showId
         showTime = intent.getStringExtra("time") ?: ""
@@ -347,7 +355,12 @@ class AgoraPublisherActivity : BaseActivity() {
 
         bind.loader.isVisible = true
 
-        viewModel.getAgoraToken(roomID.request())
+        if (isControlOnlyDevice) {
+            bind.loader.isVisible = false
+            enterControlOnlyMode(notifyServer = false)
+        } else {
+            viewModel.getAgoraToken(roomID.request())
+        }
 
         commentAdapter = CommentAdapter(commentList, userId, object : RecyclerClicks {
             override fun itemClick(pos: Int, status: String?) {
@@ -390,11 +403,20 @@ class AgoraPublisherActivity : BaseActivity() {
         // The co-host can see the stream, send chat, and interact but the
         // "Start Show" / "End Show" / "Edit" / show-management buttons are
         // primary-host responsibilities.
-        if (isCoHost) {
+        if (isCoHost || isSameAccountSecondDevice) {
             runSafe {
                 bind.startBtn.isVisible = false
                 // Mark isShowLive=true so bid/interaction controls become active
                 isShowLive = true
+            }
+        }
+        if (isInvitedCoHost) {
+            runSafe {
+                bind.menuLayout.isVisible = false
+                bind.showNotes.isVisible = false
+                bind.freebieLayout.isVisible = false
+                bind.runNext.isVisible = false
+                bind.poll.isVisible = false
             }
         }
 
@@ -481,12 +503,13 @@ class AgoraPublisherActivity : BaseActivity() {
             } else {
                 bind.startBtn.isVisible = !isShowLive
                 bind.product.isVisible = isAuctionStarted
-                bind.menuLayout.isVisible = true
+                bind.menuLayout.isVisible = !isInvitedCoHost
             }
             insets
         }
 
         bind.more.setHapticClickListener {
+            if (isInvitedCoHost) return@setHapticClickListener
             showMoreSheet()
         }
 
@@ -579,6 +602,7 @@ class AgoraPublisherActivity : BaseActivity() {
         }
 
         bind.runNext.setHapticClickListener {
+            if (isInvitedCoHost) return@setHapticClickListener
             if (isShowLive) {
                 socketManager?.runNextProduct(roomID)
             }
@@ -718,7 +742,7 @@ class AgoraPublisherActivity : BaseActivity() {
                             // the channel as a second BROADCASTER immediately after
                             // permissions are granted and the local camera preview
                             // starts. The host device waits for the Start button.
-                            if (isCoHost) {
+                            if (isCoHost || shouldTakeOverVideo) {
                                 App.manager.joinChannel(agoraToken, channelName)
                             }
                         } else {
@@ -1202,6 +1226,27 @@ class AgoraPublisherActivity : BaseActivity() {
 
     }
 
+    private fun enterControlOnlyMode(notifyServer: Boolean = true) {
+        isControlOnlyDevice = true
+        shouldTakeOverVideo = false
+        isShowLive = true
+
+        runSafe {
+            try {
+                App.manager.destroyEngine()
+            } catch (_: Exception) {
+            }
+            bind.publisherView.isVisible = false
+            bind.remoteVideoView.isVisible = false
+            bind.cameraSwitch.isVisible = false
+            bind.startBtn.isVisible = false
+        }
+
+        if (notifyServer) {
+            socketManager?.enterCoHostControlOnly(roomID, userId)
+        }
+    }
+
     private fun initializeSocket() {
         log("SOCKET URL $socketUrl")
         if (socketUrl.isEmpty()) return
@@ -1211,8 +1256,30 @@ class AgoraPublisherActivity : BaseActivity() {
         socketManager?.connect(onConnected = {
             socketManager?.joinRoom(roomID, userId) {
             }
+            if (isSameAccountSecondDevice) {
+                if (shouldTakeOverVideo) {
+                    socketManager?.takeOverCoHostVideo(roomID, userId)
+                } else {
+                    socketManager?.enterCoHostControlOnly(roomID, userId)
+                }
+            }
+            if (isInvitedCoHost) {
+                socketManager?.joinAsInvitedCoHost(roomID, userId, coHostPairingIdFromIntent)
+            }
         }) { err ->
             log("Socket connect error: $err")
+        }
+
+        socketManager?.onCoHostVideoHolderChanged { json ->
+            if (json.optString("room_id") != roomID) return@onCoHostVideoHolderChanged
+            val holderUserId = json.optString("video_holder_user_id")
+            val holderSocketId = json.optString("video_holder_socket_id")
+            val localSocketId = socketManager?.socketId()
+            if (holderUserId == userId && holderSocketId.isNotBlank() && holderSocketId != localSocketId) {
+                runOnUiThread {
+                    enterControlOnlyMode(notifyServer = false)
+                }
+            }
         }
 
         socketManager?.onViewerCount { args ->
@@ -1319,7 +1386,8 @@ class AgoraPublisherActivity : BaseActivity() {
             arguments = bundleOf(
                 "from" to "live_show",
                 "auction_type_id" to liveShowData?.auctionTypeId,
-                "live_status" to isShowLive
+                "live_status" to isShowLive,
+                "read_only" to isInvitedCoHost
             )
         }
         bottomSheetFragment.show(supportFragmentManager, PRODUCT_SHEET_TAG)
@@ -1778,6 +1846,7 @@ class AgoraPublisherActivity : BaseActivity() {
     }
 
     fun showMoreSheet() {
+        if (isInvitedCoHost) return
         val moreSheetBind = LiveShowMoreMenuBinding.bind(
             layoutInflater.inflate(
                 R.layout.live_show_more_menu,
@@ -1849,6 +1918,15 @@ class AgoraPublisherActivity : BaseActivity() {
                                 Alerts.error(this@AgoraPublisherActivity, "Please start the live show first.")
                             } else {
                                 showCoHostPairingDialog()
+                            }
+                        }
+
+                        6 -> {
+                            moreSheet.dismiss()
+                            if (!isShowLive) {
+                                Alerts.error(this@AgoraPublisherActivity, "Please start the live show first.")
+                            } else {
+                                showInviteCohostDialog()
                             }
                         }
 
@@ -2941,14 +3019,6 @@ class AgoraPublisherActivity : BaseActivity() {
                             }
                         }
 
-                        socketManager?.sendMessage(
-                            roomID,
-                            "We have a winner! ${bidderName}",
-                            userId,
-                            userName,
-                            userImage
-                        )
-
                         val remainingAfterSale =
                             (remainingQuantityMap[winnerProductId] ?: 0).coerceAtLeast(1) - 1
                         remainingQuantityMap[winnerProductId] = remainingAfterSale
@@ -3002,13 +3072,17 @@ class AgoraPublisherActivity : BaseActivity() {
     // record so the host's dialog reflects "no active co-host".
     private fun leaveAsCoHost() {
         val id = coHostPairingIdFromIntent
+        if (isInvitedCoHost) {
+            socketManager?.leaveInvitedCoHost(roomID, userId)
+        }
         if (id != null) {
             Thread {
                 try {
                     val token = io.bidswipe.app.utils.Prefs(this@AgoraPublisherActivity).token()
-                    val url = java.net.URL("${io.bidswipe.app.utils.Const.BASE_URL}/api/product/co-host/$id")
+                    val suffix = if (isInvitedCoHost) "$id/leave" else "$id"
+                    val url = java.net.URL("${io.bidswipe.app.utils.Const.BASE_URL}/api/product/co-host/$suffix")
                     val conn = url.openConnection() as java.net.HttpURLConnection
-                    conn.requestMethod = "DELETE"
+                    conn.requestMethod = if (isInvitedCoHost) "POST" else "DELETE"
                     conn.connectTimeout = 5_000
                     conn.readTimeout = 5_000
                     conn.setRequestProperty("Accept", "application/json")
@@ -3021,6 +3095,95 @@ class AgoraPublisherActivity : BaseActivity() {
         App.manager.destroyEngine()
         finishAfterTransition()
     }
+
+    private fun showInviteCohostDialog() {
+        bind.loader.isVisible = true
+        lifecycleScope.launch {
+            val result = cohostApiRequest(
+                "GET",
+                "${io.bidswipe.app.utils.Const.BASE_URL}/api/product/co-host/invite-candidates?schedule_show_id=$showId"
+            )
+            bind.loader.isVisible = false
+            if (result.first !in 200..299) {
+                Alerts.error(this@AgoraPublisherActivity, "Could not load cohost candidates.")
+                return@launch
+            }
+
+            val candidates = mutableListOf<Pair<Int, String>>()
+            val arr = org.json.JSONObject(result.second).optJSONArray("data")
+            if (arr != null) {
+                for (i in 0 until arr.length()) {
+                    val obj = arr.optJSONObject(i) ?: continue
+                    val id = obj.optInt("id")
+                    if (id <= 0) continue
+                    val label = obj.optString("name").ifBlank {
+                        obj.optString("username", "User #$id")
+                    }
+                    candidates.add(id to label)
+                }
+            }
+
+            if (candidates.isEmpty()) {
+                Alerts.error(this@AgoraPublisherActivity, "No cohost candidates found.")
+                return@launch
+            }
+
+            androidx.appcompat.app.AlertDialog.Builder(this@AgoraPublisherActivity)
+                .setTitle("Invite Cohost")
+                .setItems(candidates.map { it.second }.toTypedArray()) { _, which ->
+                    val candidate = candidates[which]
+                    sendCohostInvite(candidate.first, candidate.second)
+                }
+                .show()
+        }
+    }
+
+    private fun sendCohostInvite(inviteeUserId: Int, inviteeName: String) {
+        bind.loader.isVisible = true
+        lifecycleScope.launch {
+            val body = org.json.JSONObject().apply {
+                put("schedule_show_id", showId.toIntOrNull() ?: 0)
+                put("invitee_user_id", inviteeUserId)
+            }.toString()
+            val result = cohostApiRequest(
+                "POST",
+                "${io.bidswipe.app.utils.Const.BASE_URL}/api/product/co-host/invite",
+                body
+            )
+            bind.loader.isVisible = false
+            if (result.first in 200..299) {
+                successToast("Invite sent to $inviteeName.")
+            } else {
+                Alerts.error(this@AgoraPublisherActivity, "Could not send cohost invite.")
+            }
+        }
+    }
+
+    private suspend fun cohostApiRequest(method: String, urlString: String, body: String? = null): Pair<Int, String> =
+        withContext(kotlinx.coroutines.Dispatchers.IO) {
+            try {
+                val token = io.bidswipe.app.utils.Prefs(this@AgoraPublisherActivity).token()
+                val conn = (java.net.URL(urlString).openConnection() as java.net.HttpURLConnection).apply {
+                    requestMethod = method
+                    connectTimeout = 8_000
+                    readTimeout = 8_000
+                    setRequestProperty("Accept", "application/json")
+                    setRequestProperty("Authorization", "Bearer $token")
+                    if (body != null) {
+                        doOutput = true
+                        setRequestProperty("Content-Type", "application/json")
+                        outputStream.use { it.write(body.toByteArray()) }
+                    }
+                }
+                val rc = conn.responseCode
+                val stream = if (rc in 200..299) conn.inputStream else conn.errorStream
+                val text = stream?.bufferedReader()?.use { it.readText() }.orEmpty()
+                conn.disconnect()
+                Pair(rc, text)
+            } catch (e: Exception) {
+                Pair(-1, e.message ?: "error")
+            }
+        }
 
     // Basecamp #9934001770 (2026-05-27): co-host pairing dialog for the host.
     // Generates a 6-char code via POST /api/product/co-host/pair and lets the
@@ -3162,7 +3325,7 @@ class AgoraPublisherActivity : BaseActivity() {
                             val data = obj.optJSONObject("data")
                             val pairingStatus = data?.optString("status") ?: ""
                             val coHostUser = data?.optJSONObject("co_host_user")
-                            if (pairingStatus == "claimed" && coHostUser != null) {
+                            if ((pairingStatus == "active" || pairingStatus == "claimed") && coHostUser != null) {
                                 val name = coHostUser.optString("name", "Co-host")
                                 runOnUiThread {
                                     statusTv.text = "✅ $name has joined as co-host!"

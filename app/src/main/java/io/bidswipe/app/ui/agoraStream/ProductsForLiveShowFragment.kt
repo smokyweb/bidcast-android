@@ -104,6 +104,7 @@ class ProductsForLiveShowFragment : BottomSheetDialogFragment() {
     var from = "live_show"
     var isLive = false
     var auctionTypeId = AuctionType.LIVE.id
+    private var readOnly = false
 
     private fun isRandomizerPicker() = from == "randomizer_slot" || from == "randomizer_prize"
 
@@ -174,6 +175,7 @@ class ProductsForLiveShowFragment : BottomSheetDialogFragment() {
             from = arguments?.getString("from") ?: "live_show"
             auctionTypeId = arguments?.getInt("auction_type_id") ?: AuctionType.LIVE.id
             isLive = arguments?.getBoolean("live_status") ?: false
+            readOnly = arguments?.getBoolean("read_only") ?: false
         }
 
         // (Format-specific saleType/type are no longer used: the panel is scoped
@@ -182,6 +184,9 @@ class ProductsForLiveShowFragment : BottomSheetDialogFragment() {
         if (isRandomizerPicker()) {
             productTypesList = mutableListOf("All")
             bind.chipGroupScroll.isVisible = false
+        }
+        if (readOnly) {
+            bind.title.text = "Show Products"
         }
 
         if (from == "freebie") {
@@ -303,6 +308,10 @@ class ProductsForLiveShowFragment : BottomSheetDialogFragment() {
                     if (productList[pos]?.status == "sold") {
                         Alerts.error(mCtx, "This product is already sold")
                     } else if (status == "start_auction") {
+                        if (readOnly) {
+                            Alerts.error(mCtx, "Cohosts can view products but cannot control bidding.")
+                            return@itemClick
+                        }
                         if (isLive) {
                             if (auctionTypeId == AuctionType.LIVE.id) {
                                 auctionSettingsSheet(
@@ -326,12 +335,20 @@ class ProductsForLiveShowFragment : BottomSheetDialogFragment() {
                         }
 
                     } else if (status == "set_next") {
+                        if (readOnly) {
+                            Alerts.error(mCtx, "Cohosts can view products but cannot control bidding.")
+                            return@itemClick
+                        }
                         selectedPos = pos
                         socketManager?.pinProduct(
                             roomId = viewModel.currentRoomId,
                             productId = selectedProduct?.id.toString()
                         )
                     } else if (status == "freebie") {
+                        if (readOnly) {
+                            Alerts.error(mCtx, "Cohosts can view products but cannot control bidding.")
+                            return@itemClick
+                        }
                         // MC cmph7xsgy00g4ms8pslgxzr1u (2026-05-22): host
                         // can pick MULTIPLE products to give away in one
                         // freebie. Toggle the tapped row instead of

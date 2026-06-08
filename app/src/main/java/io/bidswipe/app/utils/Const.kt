@@ -113,6 +113,7 @@ object Const {
         LiveMoreOption("Randomizer", false, draw.ic_spin_wheel),
         // Basecamp #9934001770 (2026-05-27): co-host pairing.
         LiveMoreOption("Pair Device", false, draw.ic_people),
+        LiveMoreOption("Invite Cohost", false, draw.ic_people),
     )
 
     val dimensionScales = listOf("Inch", "Feet", "Centimeter", "Meter")

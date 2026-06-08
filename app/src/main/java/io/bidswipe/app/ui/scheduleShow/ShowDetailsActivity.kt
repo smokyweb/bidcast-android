@@ -10,6 +10,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsCompat.CONSUMED
 import androidx.core.view.isVisible
+import androidx.lifecycle.lifecycleScope
 import io.bidswipe.app.App
 import com.gyf.immersionbar.ktx.navigationBarHeight
 import com.gyf.immersionbar.ktx.statusBarHeight
@@ -34,6 +35,7 @@ import io.bidswipe.app.ui.product.ProductDetailsActivity
 import io.bidswipe.app.ui.sellerHub.SellerVerificationActivity
 import io.bidswipe.app.utils.Alerts
 import io.bidswipe.app.utils.Const
+import io.bidswipe.app.utils.Prefs
 import io.bidswipe.app.utils.Utils
 import io.bidswipe.app.utils.asCapital
 import io.bidswipe.app.utils.asMoney
@@ -47,6 +49,12 @@ import io.bidswipe.app.utils.setHapticClickListener
 import io.bidswipe.app.utils.setMargins
 import io.bidswipe.app.utils.toScheduleShow
 import io.bidswipe.app.utils.toSellerShow
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import org.json.JSONObject
+import java.net.HttpURLConnection
+import java.net.URL
 
 class ShowDetailsActivity : BaseActivity() {
 
@@ -225,7 +233,7 @@ class ShowDetailsActivity : BaseActivity() {
             if (App.PIPMode) {
                 errorToast("You are already in Live show")
             } else {
-                startActivity(toSellerShow(showData.time, showData))
+                openSellerShowWithCohostPrompt(showData)
             }
         }
 
@@ -289,15 +297,19 @@ class ShowDetailsActivity : BaseActivity() {
                         val productAdapter =
                             InventoryAdapter(products, false, object : RecyclerClicks {
                                 override fun itemClick(pos: Int, status: String?) {
-                                    startActivity(
-                                        Intent(
-                                            this@ShowDetailsActivity,
-                                            ProductDetailsActivity::class.java
-                                        ).putExtra(
-                                            "productId", products[pos]?.id.toString()
-                                        )
-                                    )
-                                }
+	                                    startActivity(
+	                                        Intent(
+	                                            this@ShowDetailsActivity,
+	                                            ProductDetailsActivity::class.java
+	                                        ).putExtra(
+	                                            "productId", products[pos]?.id.toString()
+	                                        ).putExtra(
+	                                            "isFromShowDetails", true
+	                                        ).putExtra(
+	                                            "showId", viewModel.showId.toString()
+	                                        )
+	                                    )
+	                                }
 
                             }, "show_details")
 
@@ -334,6 +346,68 @@ class ShowDetailsActivity : BaseActivity() {
             }
         }
 
+    }
+
+    private fun openSellerShowWithCohostPrompt(liveShow: LiveShowModel) {
+        val scheduleShowId = liveShow.showId.orEmpty()
+        val isOwnLiveShow = showData?.isLive == true &&
+            (showData?.userId?.toString() == userId || liveShow.seller?.id == userId)
+
+        fun startLive(takeOverVideo: Boolean, controlOnly: Boolean) {
+            startActivity(
+                toSellerShow(liveShow.time, liveShow).apply {
+                    putExtra("same_account_second_device", takeOverVideo || controlOnly)
+                    putExtra("take_over_video", takeOverVideo)
+                    putExtra("control_only", controlOnly)
+                    putExtra("host_user_id", userId)
+                }
+            )
+        }
+
+        if (!isOwnLiveShow || scheduleShowId.isBlank()) {
+            startLive(takeOverVideo = false, controlOnly = false)
+            return
+        }
+
+        bind.loader.isVisible = true
+        lifecycleScope.launch {
+            val shouldOffer = withContext(Dispatchers.IO) {
+                try {
+                    val token = Prefs(this@ShowDetailsActivity).token()
+                    val url = URL("${Const.BASE_URL}/api/product/co-host/show/$scheduleShowId/presence")
+                    val conn = url.openConnection() as HttpURLConnection
+                    conn.requestMethod = "GET"
+                    conn.connectTimeout = 6_000
+                    conn.readTimeout = 6_000
+                    conn.setRequestProperty("Accept", "application/json")
+                    conn.setRequestProperty("Authorization", "Bearer $token")
+                    val rc = conn.responseCode
+                    val body = (if (rc in 200..299) conn.inputStream else conn.errorStream)
+                        .bufferedReader()
+                        .use { it.readText() }
+                    conn.disconnect()
+                    if (rc in 200..299) {
+                        JSONObject(body).optJSONObject("data")?.optBoolean("should_offer_takeover", false) == true
+                    } else {
+                        false
+                    }
+                } catch (_: Exception) {
+                    false
+                }
+            }
+            bind.loader.isVisible = false
+
+            if (!shouldOffer) {
+                startLive(takeOverVideo = false, controlOnly = false)
+                return@launch
+            }
+
+            androidx.appcompat.app.AlertDialog.Builder(this@ShowDetailsActivity)
+                .setMessage("Would you like to enter and take over video?")
+                .setPositiveButton("Yes") { _, _ -> startLive(takeOverVideo = true, controlOnly = false) }
+                .setNegativeButton("No") { _, _ -> startLive(takeOverVideo = false, controlOnly = true) }
+                .show()
+        }
     }
 
     fun showPromoteSheet() {

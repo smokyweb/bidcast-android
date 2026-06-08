@@ -1,6 +1,7 @@
 package io.bidswipe.app.network.response
 
 import com.google.gson.annotations.SerializedName
+import com.google.gson.JsonElement
 
 // ─── Single template (returned in list + detail) ───────────────────────────
 
@@ -35,9 +36,18 @@ data class RandomizerSlot(
 data class SlotProduct(
     @SerializedName("id") val id: Int?,
     @SerializedName("title") val title: String?,
-    @SerializedName("thumbnail") val thumbnail: String?,
+    @SerializedName("thumbnail") val thumbnail: JsonElement?,
     @SerializedName("quantity") val quantity: Int?
-)
+) {
+    fun thumbnailUrl(): String? {
+        val value = thumbnail ?: return null
+        return when {
+            value.isJsonArray -> value.asJsonArray.firstOrNull()?.takeIf { !it.isJsonNull }?.asString
+            value.isJsonPrimitive -> value.asString
+            else -> null
+        }
+    }
+}
 
 // ─── List response ─────────────────────────────────────────────────────────
 

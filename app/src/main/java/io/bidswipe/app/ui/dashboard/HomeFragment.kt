@@ -86,11 +86,8 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
     ) { result ->
         if (result.resultCode == Activity.RESULT_OK) {
             page = 1
-            viewModel.getLiveShow(
-                selectedTabText.request(),
-                selectedCategoryRequest(),
+            requestHomeLiveShows(
                 search = bind.search.value().ifEmpty { null }?.request(),
-                page = page.toString().request()
             )
         }
     }
@@ -175,7 +172,32 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
     }
 
     private var selectedTabText = "live"
-    private fun selectedCategoryRequest() = if (selectedTabText == "live") null else selectedCategory.request()
+    private fun selectedCategoryKey(type: String = selectedTabText) = if (type == "live") null else selectedCategory
+
+    private fun isCurrentHomeLiveShowResult(result: HomeLiveShowResult): Boolean {
+        if (result.type != selectedTabText) return false
+
+        val activeCategory = selectedCategoryKey(result.type)
+        val isForYouFallback = selectedCategory == "for_you" && result.category == "all"
+        return result.category == activeCategory || isForYouFallback
+    }
+
+    private fun requestHomeLiveShows(
+        type: String = selectedTabText,
+        category: String? = selectedCategoryKey(type),
+        pageToLoad: Int = page,
+        search: okhttp3.RequestBody? = bind.search.value().ifEmpty { null }?.request(),
+    ) {
+        viewModel.getHomeLiveShow(
+            requestType = type,
+            requestCategory = category,
+            requestPage = pageToLoad,
+            type = type.request(),
+            category = category?.request(),
+            search = search,
+            page = pageToLoad.toString().request(),
+        )
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -295,11 +317,8 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
             if (lastItemPosition == showList.lastIndex && !isLoading) {
                 isLoading = true
                 page++
-                viewModel.getLiveShow(
-                    selectedTabText.request(),
-                    selectedCategoryRequest(),
+                requestHomeLiveShows(
                     search = bind.search.value().ifEmpty { null }?.request(),
-                    page = page.toString().request()
                 )
             }
         }
@@ -330,22 +349,14 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
 
         bind.swipeRefreshLayout.setOnRefreshListener {
             page = 1
-            viewModel.getLiveShow(
-                selectedTabText.request(),
-                selectedCategoryRequest(),
-                page = page.toString().request()
-            )
+            requestHomeLiveShows()
             viewModel.getCategory()
         }
 
         bind.noInternet.onClick {
             bind.loader.isVisible = false
             bind.noInternet.isVisible = false
-            viewModel.getLiveShow(
-                selectedTabText.request(),
-                selectedCategoryRequest(),
-                page = page.toString().request()
-            )
+            requestHomeLiveShows()
             viewModel.getCategory()
         }
 
@@ -417,14 +428,12 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
                 log("ON CREATED ${showData.categoryId}-- ${selectedCategory}-- ${selectedCategoryTileId}\n-- ${selectedTabText}")
                 activity?.runOnUiThread {
                     if (selectedTabText == "live") {
-                        viewModel.getLiveShow(
-                            selectedTabText.request(),
+                        requestHomeLiveShows(
                             // MC cmpaj2fex0000w5hgq64jp9k4 merge (2026-05-24): kept GitLab's
-                            // selectedCategoryRequest() helper which sends null for live tab
+                            // selectedCategoryKey() helper which sends null for live tab
                             // (avoids server-side filter on "for_you" sentinel value).
-                            selectedCategoryRequest(),
                             search = bind.search.value().ifEmpty { null }?.request(),
-                            page = 1.toString().request()
+                            pageToLoad = 1,
                         )
                     }
                 }
@@ -558,17 +567,19 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
             }
         }
 
-        viewModel.getLiveShowRepo.observe(viewLifecycleOwner) { it ->
-            when (it) {
+        viewModel.homeLiveShowRepo.observe(viewLifecycleOwner) { result ->
+            if (!isCurrentHomeLiveShowResult(result)) return@observe
+
+            when (val resource = result.resource) {
                 is Resource.Success -> {
                     bind.loader.isVisible = false
                     bind.swipeRefreshLayout.isRefreshing = false
                     bind.noInternet.isVisible = false
 
-                    val mData = it.value.data
+                    val mData = resource.value.data
 
 
-                    if (page == 1) {
+                    if (result.page == 1) {
                         romIdsList.clear()
                         showList.clear()
                         streamList.clear()
@@ -609,12 +620,8 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
                     // Narrow the fallback to ONLY the special For-You tab, where it is the
                     // expected UX. For any other specific category, respect the empty result
                     // and show the real "no shows" state instead.
-                    if (showList.isEmpty() && page == 1 && selectedCategory == "for_you") {
-                        viewModel.getLiveShow(
-                            selectedTabText.request(),
-                            "all".request(),
-                            page = "1".request()
-                        )
+                    if (showList.isEmpty() && result.page == 1 && selectedCategory == "for_you" && result.category != "all") {
+                        requestHomeLiveShows(category = "all", pageToLoad = 1)
                         return@observe
                     }
 
@@ -636,7 +643,7 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
 
                     homeAdapter.notifyDataSetChanged()
 
-                    isLoading = page >= (it.value.totalPage ?: 0)
+                    isLoading = result.page >= (resource.value.totalPage ?: 0)
 
                 }
 
@@ -644,11 +651,11 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
                     bind.swipeRefreshLayout.isRefreshing = false
                     bind.loader.isVisible = false
 
-                    if (it.isNetworkError) {
+                    if (resource.isNetworkError) {
                         bind.noInternet.isVisible = true
                         bind.recycler.isVisible = false
                         bind.noData.isVisible = false
-                    } else if (it.isBrowseAuthError()) {
+                    } else if (resource.isBrowseAuthError()) {
                         // Basecamp #9958788158 (2026-06-03 round 2): get-live-show returns
                         // {error_type:invalid_token, message:"Token is invalid"} for a
                         // stale/expired token. This is THE call that produced the "Token is
@@ -662,7 +669,7 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
                         bind.recycler.isVisible = false
                         bind.noInternet.isVisible = false
                     } else {
-                        it.parse(mCtx, TAG, object : AlertClicks {
+                        resource.parse(mCtx, TAG, object : AlertClicks {
                             override fun primaryClick(dialog: AppBottomSheet) {
                                 dialog.dismiss()
                             }
@@ -708,11 +715,7 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
             page = 1
             bind.search.setText("")
             bind.loader.isVisible = true
-            viewModel.getLiveShow(
-                selectedTabText.request(),
-                selectedCategoryRequest(),
-                page = page.toString().request()
-            )
+            requestHomeLiveShows()
         }
     }
 
@@ -742,30 +745,18 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
             bind.live -> {
                 selectedTabText = "live"
                 if (!isFirst) {
-                    viewModel.getLiveShow(
-                        "live".request(),
-                        selectedCategoryRequest(),
-                        page = page.toString().request()
-                    )
+                    requestHomeLiveShows(type = "live")
                 }
             }
 
             bind.popular -> {
                 selectedTabText = "popular"
-                viewModel.getLiveShow(
-                    "popular".request(),
-                    selectedCategoryRequest(),
-                    page = page.toString().request()
-                )
+                requestHomeLiveShows(type = "popular")
             }
 
             bind.comingSoon -> {
                 selectedTabText = "upcoming"
-                viewModel.getLiveShow(
-                    "upcoming".request(),
-                    selectedCategoryRequest(),
-                    page = page.toString().request()
-                )
+                requestHomeLiveShows(type = "upcoming")
             }
         }
     }

@@ -188,6 +188,8 @@ class SocketManager private constructor(
     /** True when the underlying socket exists and is currently connected. */
     fun isConnected(): Boolean = socket?.connected() == true
 
+    fun socketId(): String? = socket?.id()
+
     // Basecamp #9958514184 / #9958518263 / #9958527259 (2026-06-03):
     // Re-emit the join for whatever room the buyer is currently watching.
     // Called on every socket (re)connect and from joinRoom when we were not
@@ -407,6 +409,37 @@ class SocketManager private constructor(
             val obj = args.firstOrNull()
             if (obj is JSONObject) {
                 Log.d(TAG, "RECEIVED: get_highest_bid - $obj")
+                listener(obj)
+            }
+        }
+    }
+
+    fun onBidRejected(listener: (json: JSONObject) -> Unit) {
+        socket?.off("place_bid_rejected")
+        socket?.on("place_bid_rejected") { args ->
+            val obj = args.firstOrNull()
+            if (obj is JSONObject) {
+                Log.d(TAG, "RECEIVED: place_bid_rejected - $obj")
+                listener(obj)
+            }
+        }
+    }
+
+    fun onAuctionOrderFailed(listener: (json: JSONObject) -> Unit) {
+        socket?.off("auction_order_failed")
+        socket?.on("auction_order_failed") { args ->
+            val obj = args.firstOrNull()
+            if (obj is JSONObject) {
+                Log.d(TAG, "RECEIVED: auction_order_failed - $obj")
+                listener(obj)
+            }
+        }
+
+        socket?.off("auction_order_failed_break_spot")
+        socket?.on("auction_order_failed_break_spot") { args ->
+            val obj = args.firstOrNull()
+            if (obj is JSONObject) {
+                Log.d(TAG, "RECEIVED: auction_order_failed_break_spot - $obj")
                 listener(obj)
             }
         }
@@ -1176,6 +1209,88 @@ class SocketManager private constructor(
         }
     }
 
+    fun requestCoHostSecondary(roomId: String, userId: String, deviceLabel: String = "Android") {
+        val payload = JSONObject().apply {
+            put("room_id", roomId)
+            put("user_id", userId)
+            put("device_label", deviceLabel)
+        }
+        Log.d(TAG, "EMIT: cohost_request_secondary - $payload")
+        socket?.emit("cohost_request_secondary", payload)
+    }
+
+    fun enterCoHostControlOnly(roomId: String, userId: String, deviceLabel: String = "Android") {
+        val payload = JSONObject().apply {
+            put("room_id", roomId)
+            put("user_id", userId)
+            put("device_label", deviceLabel)
+        }
+        Log.d(TAG, "EMIT: cohost_enter_control_only - $payload")
+        socket?.emit("cohost_enter_control_only", payload)
+    }
+
+    fun takeOverCoHostVideo(roomId: String, userId: String, deviceLabel: String = "Android") {
+        val payload = JSONObject().apply {
+            put("room_id", roomId)
+            put("user_id", userId)
+            put("device_label", deviceLabel)
+        }
+        Log.d(TAG, "EMIT: cohost_take_over_video - $payload")
+        socket?.emit("cohost_take_over_video", payload)
+    }
+
+    fun joinAsInvitedCoHost(roomId: String, userId: String, coHostId: Int?) {
+        val payload = JSONObject().apply {
+            put("room_id", roomId)
+            put("user_id", userId)
+            if (coHostId != null && coHostId > 0) put("co_host_id", coHostId)
+        }
+        Log.d(TAG, "EMIT: cohost_join - $payload")
+        socket?.emit("cohost_join", payload)
+    }
+
+    fun leaveInvitedCoHost(roomId: String, userId: String, coHostUserId: String? = null, removedProductIds: List<Int>? = null) {
+        val payload = JSONObject().apply {
+            put("room_id", roomId)
+            put("user_id", userId)
+            if (!coHostUserId.isNullOrBlank()) put("co_host_user_id", coHostUserId)
+            if (!removedProductIds.isNullOrEmpty()) put("removed_product_ids", JSONArray(removedProductIds))
+        }
+        Log.d(TAG, "EMIT: cohost_leave - $payload")
+        socket?.emit("cohost_leave", payload)
+    }
+
+    fun onCoHostVideoHolderChanged(listener: (JSONObject) -> Unit) {
+        socket?.off("cohost_video_holder_changed")
+        socket?.on("cohost_video_holder_changed") { args ->
+            val obj = args.firstOrNull()
+            if (obj is JSONObject) {
+                Log.d(TAG, "RECEIVED: cohost_video_holder_changed - $obj")
+                listener(obj)
+            }
+        }
+    }
+
+    fun onCoHostControlMode(listener: (JSONObject) -> Unit) {
+        socket?.off("cohost_control_mode")
+        socket?.on("cohost_control_mode") { args ->
+            val obj = args.firstOrNull()
+            if (obj is JSONObject) {
+                Log.d(TAG, "RECEIVED: cohost_control_mode - $obj")
+                listener(obj)
+            }
+        }
+    }
+
+    fun onCoHostError(listener: (JSONObject) -> Unit) {
+        socket?.off("cohost_error")
+        socket?.on("cohost_error") { args ->
+            val obj = args.firstOrNull()
+            if (obj is JSONObject) {
+                Log.d(TAG, "RECEIVED: cohost_error - $obj")
+                listener(obj)
+            }
+        }
+    }
+
 }
-
-

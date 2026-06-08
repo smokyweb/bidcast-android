@@ -21,6 +21,10 @@ data class StoreProductRequest(
 	val acceptOffers : Boolean? ,
 	@SerializedName("reserve_for_live")
 	val reserveForLive : Boolean? ,
+	@SerializedName("auction")
+	val auction : Boolean? = null ,
+	@SerializedName("type")
+	val saleFormatType : String? = null ,
 	@SerializedName("shipping_profile_id")
 	val shippingProfileId : String? ,
 	@SerializedName("status")

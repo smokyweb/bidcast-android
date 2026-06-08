@@ -44,20 +44,24 @@ class ShopFragment : BaseFragment<SellerViewModel, FragmentShopBinding>() {
 	private var sellerId = ""
 	private var sortBy = "title_asc"
 	private var selectedShopTab = ShopTab.AUCTION
-	private var saleType = ""
 	private var type = ""
-	private var productStatus = "active"
-	private var marketPlace = "true"
 	private var page = 1
 	private var isLoading = false
 	private var suppressSearchReload = false
 	private var suppressChipReload = false
+	private var useLegacyShopFilters = false
 
 	private enum class ShopTab {
 		AUCTION,
 		BUY_NOW,
 		SOLD
 	}
+
+	private data class ShopFilters(
+		val saleType: String? = null,
+		val status: String? = "active",
+		val marketPlace: String? = null
+	)
 
 	private val mClick = object : RecyclerClicks {
 		override fun itemClick(pos: Int, status: String?) {
@@ -165,25 +169,27 @@ class ShopFragment : BaseFragment<SellerViewModel, FragmentShopBinding>() {
 				}
 
 				is Resource.Error -> {
-					bind.loader.isVisible = false
-					bind.bottomLoader.isVisible = false
-					bind.noData.isVisible = false
-
-					if (it.isNetworkError) {
-						bind.noInternet.isVisible = true
-						bind.recycler.isVisible = false
+					if (!retryWithLegacyShopFilters(it)) {
+						bind.loader.isVisible = false
+						bind.bottomLoader.isVisible = false
 						bind.noData.isVisible = false
-					} else {
-						it.parse(mCtx, TAG, object : AlertClicks {
-							override fun primaryClick(dialog: AppBottomSheet) {
-								dialog.dismiss()
-							}
 
-							override fun secondaryClick(dialog: AppBottomSheet) {
-								dialog.dismiss()
+						if (it.isNetworkError) {
+							bind.noInternet.isVisible = true
+							bind.recycler.isVisible = false
+							bind.noData.isVisible = false
+						} else {
+							it.parse(mCtx, TAG, object : AlertClicks {
+								override fun primaryClick(dialog: AppBottomSheet) {
+									dialog.dismiss()
+								}
 
-							}
-						})
+								override fun secondaryClick(dialog: AppBottomSheet) {
+									dialog.dismiss()
+
+								}
+							})
+						}
 					}
 				}
 
@@ -205,12 +211,13 @@ class ShopFragment : BaseFragment<SellerViewModel, FragmentShopBinding>() {
 	}*/
 
 	private fun loadData() {
+		val filters = currentShopFilters()
 		viewModel.getUserProducts(
 			userId = sellerId.request(),
-			saleType = saleType.ifEmpty { null }?.request(),
+			saleType = filters.saleType?.request(),
 			type = type.ifEmpty { null }?.request(),
-			status = productStatus.ifEmpty { null }?.request(),
-			marketPlace = marketPlace.ifEmpty { null }?.request(),
+			status = filters.status?.request(),
+			marketPlace = filters.marketPlace?.request(),
 			sortBy = sortBy.ifEmpty { null }?.request(),
 			page = page.toString().request(),
 			search = bind.search.value().ifEmpty { null }?.request()
@@ -245,11 +252,9 @@ class ShopFragment : BaseFragment<SellerViewModel, FragmentShopBinding>() {
 
 				if (suppressChipReload) return@runSafe
 
-				saleType = ""
 				type = ""
-				productStatus = "active"
-				marketPlace = ""
 				page = 1
+				useLegacyShopFilters = false
 
 				when (index) {
 					/*0 -> {
@@ -258,17 +263,14 @@ class ShopFragment : BaseFragment<SellerViewModel, FragmentShopBinding>() {
 
 					0 -> {
 						selectedShopTab = ShopTab.AUCTION
-						marketPlace = "true"
 					}
 
 					1 -> {
 						selectedShopTab = ShopTab.BUY_NOW
-						marketPlace = "false"
 					}
 
 					2 -> {
 						selectedShopTab = ShopTab.SOLD
-						productStatus = "inactive"
 					}
 
 				}
@@ -291,6 +293,41 @@ class ShopFragment : BaseFragment<SellerViewModel, FragmentShopBinding>() {
 		suppressSearchReload = true
 		bind.search.setText(text)
 		suppressSearchReload = false
+	}
+
+	private fun currentShopFilters(): ShopFilters {
+		return when (selectedShopTab) {
+			ShopTab.AUCTION -> ShopFilters(saleType = "auction")
+			ShopTab.BUY_NOW -> {
+				if (useLegacyShopFilters) {
+					ShopFilters(marketPlace = "false")
+				} else {
+					ShopFilters(saleType = "buy_now")
+				}
+			}
+			ShopTab.SOLD -> {
+				if (useLegacyShopFilters) {
+					ShopFilters(status = "inactive")
+				} else {
+					ShopFilters(saleType = "sold", status = null)
+				}
+			}
+		}
+	}
+
+	private fun retryWithLegacyShopFilters(error: Resource.Error): Boolean {
+		val canRetry = selectedShopTab != ShopTab.AUCTION && !useLegacyShopFilters
+		val isSaleTypeValidation = error.errorResponse?.message
+			?.contains("selected sale type", ignoreCase = true) == true
+
+		if (!canRetry || !isSaleTypeValidation) return false
+
+		useLegacyShopFilters = true
+		page = 1
+		bind.loader.isVisible = true
+		bind.bottomLoader.isVisible = false
+		loadData()
+		return true
 	}
 
 	private fun Product?.matchesSelectedShopTab(): Boolean {
