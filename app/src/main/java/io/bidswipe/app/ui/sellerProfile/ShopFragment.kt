@@ -96,7 +96,9 @@ class ShopFragment : BaseFragment<SellerViewModel, FragmentShopBinding>() {
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		super.onViewCreated(view, savedInstanceState)
 
-		sellerId = activity?.intent?.getStringExtra("sellerId") ?: ""
+		sellerId = (activity as? SellerProfileActivity)?.sellerId
+			?.takeIf { it.isNotBlank() }
+			?: readSellerIdExtra()
 
 		setUpChips()
 
@@ -289,6 +291,7 @@ class ShopFragment : BaseFragment<SellerViewModel, FragmentShopBinding>() {
 	}*/
 
 	private fun loadData() {
+		updateNoDataTitle()
 		bind.recycler.adapter = if (selectedShopTab == ShopTab.SOLD) soldOrdersAdapter else shopAdapter
 
 		if (selectedShopTab == ShopTab.SOLD) {
@@ -404,6 +407,23 @@ class ShopFragment : BaseFragment<SellerViewModel, FragmentShopBinding>() {
 					ShopFilters(saleType = "sold", status = null)
 				}
 			}
+		}
+	}
+
+	private fun updateNoDataTitle() {
+		bind.noData.title.text = if (selectedShopTab == ShopTab.SOLD) {
+			"No Sold Orders Found"
+		} else {
+			"No Product Found"
+		}
+	}
+
+	private fun readSellerIdExtra(): String {
+		val rawSellerId = activity?.intent?.extras?.get("sellerId")
+		return when (rawSellerId) {
+			is String -> rawSellerId
+			is Number -> rawSellerId.toString()
+			else -> rawSellerId?.toString().orEmpty()
 		}
 	}
 

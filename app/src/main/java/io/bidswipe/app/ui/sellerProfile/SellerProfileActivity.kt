@@ -167,7 +167,7 @@ class SellerProfileActivity : BaseActivity() {
             }
         }
 
-        sellerId = intent?.getStringExtra("sellerId") ?: ""
+        sellerId = readSellerIdExtra()
 
         bind.backBtnCard.setHapticClickListener {
             finish()
@@ -790,5 +790,13 @@ class SellerProfileActivity : BaseActivity() {
         sendTipSheet.show()
     }
 
+    private fun readSellerIdExtra(): String {
+        val rawSellerId = intent?.extras?.get("sellerId")
+        return when (rawSellerId) {
+            is String -> rawSellerId
+            is Number -> rawSellerId.toString()
+            else -> rawSellerId?.toString().orEmpty()
+        }
+    }
 
 }
