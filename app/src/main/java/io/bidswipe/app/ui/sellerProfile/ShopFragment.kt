@@ -146,14 +146,14 @@ class ShopFragment : BaseFragment<SellerViewModel, FragmentShopBinding>() {
 					bind.bottomLoader.isVisible = false
 					bind.noData.isVisible = false
 
-					val mData = it.value.products
-					if (page == 1) {
-						productList.clear()
-					}
+						val mData = it.value.products
+						if (page == 1) {
+							productList.clear()
+						}
 
-					if (mData != null) {
-						productList.addAll(mData.filter { product -> product.matchesSelectedShopTab() })
-					}
+						if (mData != null) {
+							productList.addAll(mData.filter { product -> product.shouldShowInSelectedShopTab() })
+						}
 
 					if (productList.isEmpty()) {
 						bind.noData.isVisible = true
@@ -337,6 +337,17 @@ class ShopFragment : BaseFragment<SellerViewModel, FragmentShopBinding>() {
 			ShopTab.BUY_NOW -> !product.isSoldOutForShop() && !product.isLiveAuctionFormat()
 			ShopTab.SOLD -> product.hasSalesForShop()
 		}
+	}
+
+	private fun Product?.shouldShowInSelectedShopTab(): Boolean {
+		if (this == null) return false
+
+		// The Sold tab already asks the API for sale_type=sold. Those results
+		// are order-backed on the server, so do not drop processing sales just
+		// because a product counter/status field came back stale or missing.
+		if (selectedShopTab == ShopTab.SOLD && !useLegacyShopFilters) return true
+
+		return matchesSelectedShopTab()
 	}
 
 	private fun Product.hasSalesForShop(): Boolean {
