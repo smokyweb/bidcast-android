@@ -27,6 +27,7 @@ import androidx.core.text.color
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.viewModelScope
 import androidx.media3.common.MediaItem
 import androidx.media3.exoplayer.ExoPlayer
@@ -3036,6 +3037,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
     )
 
     fun showWonView(username: String, userImage: String, desc: String) {
+        if (!isStreamViewActive()) return
         bind.wonView.root.isVisible = true
         bind.wonView.userName.text = username
         bind.wonView.desc.text = desc
@@ -3045,12 +3047,14 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
         bind.wonView.konfettiView.start(party)
 
         Handler(Looper.getMainLooper()).postDelayed({
+            if (!isStreamViewActive()) return@postDelayed
             val flip = ObjectAnimator.ofFloat(bind.wonView.imageCard, "rotationY", 0f, 180f)
             flip.duration = 1000
 
             flip.addListener(object : AnimatorListenerAdapter() {
                 override fun onAnimationEnd(animation: Animator) {
                     super.onAnimationEnd(animation)
+                    if (!isStreamViewActive()) return
                     val flipBack = ObjectAnimator.ofFloat(bind.wonView.imageCard, "rotationY", 0f, 180f)
                     flipBack.duration = 1000
                     flipBack.start()
@@ -3060,10 +3064,21 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
         }, 1000)
 
         Handler(Looper.getMainLooper()).postDelayed({
+            if (!isStreamViewActive()) return@postDelayed
             bind.wonView.root.isVisible = false
             bind.wonView.konfettiView.stop(party)
         }, 5000)
 
+    }
+
+    private fun isStreamViewActive(): Boolean {
+        return try {
+            isAdded &&
+                view != null &&
+                viewLifecycleOwner.lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED)
+        } catch (_: Exception) {
+            false
+        }
     }
 
     /**
@@ -3257,6 +3272,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
     fun finalizeBidUpdateUI(json: JSONObject,showWon:Boolean=true) {
         runSafe {
             requireActivity().runOnUiThread {
+                runSafe {
 
                 markClosedAuctionProducts(json)
                 val winner = json.optJSONObject("winner")
@@ -3294,6 +3310,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
                         bind.winningLayout.isVisible = false
                         bind.soldLayout.isVisible = true
                     }
+                }
                 }
             }
         }
