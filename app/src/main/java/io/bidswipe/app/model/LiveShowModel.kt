@@ -32,6 +32,7 @@ data class LiveShowModel(
 	// verification on join / bid / tip / purchase. When false / null, the new
 	// default applies (open to all viewers with a verified payment method).
 	val isVerifiedOnly: Boolean? = false,
+	val status: String? = null,
 ) : Serializable {
 	companion object {
 		fun fromJson(json: JSONObject) = LiveShowModel(
@@ -67,6 +68,7 @@ data class LiveShowModel(
 			// socket payload. Server now includes is_verified_only on live_rooms +
 			// schedule_shows row in the join_room broadcast.
 			isVerifiedOnly = json.optBoolean("is_verified_only", false),
+			status = json.optString("status", null),
 		)
 	}
 
@@ -96,13 +98,22 @@ data class LiveShowModel(
 			fun fromJson(json: JSONObject) = Product(
 				category = Category.fromJson(json.optJSONObject("category")),
 				id = json.optString("id", null),
-				image = json.optJSONArray("images").optString(0),
+				image = json.optJSONArray("images")?.optString(0) ?: json.optString("image", ""),
 				status = json.optString("status", "live"),
 				name = json.optString("title", null),
 				price = json.optString("pricing", null),
 				quantity = json.optString("quantity", null),
-				isCurrent = if (json.has("is_current")) json.optBoolean("is_current") else false
+				isCurrent = json.optFlexibleBoolean("is_current", json.optFlexibleBoolean("isCurrent"))
 			)
+
+			private fun JSONObject.optFlexibleBoolean(name: String, default: Boolean = false): Boolean {
+				return when (val value = opt(name)) {
+					is Boolean -> value
+					is Number -> value.toInt() != 0
+					is String -> value.equals("true", ignoreCase = true) || value == "1"
+					else -> default
+				}
+			}
 		}
 	}
 
@@ -203,6 +214,6 @@ data class LiveShowModel(
 		put("sudden_death", suddenDeath)
 		put("sub_category_id", subCategoryId)
 		put("auction_type_id", auctionTypeId)
+		put("status", status)
 	}
 }
-

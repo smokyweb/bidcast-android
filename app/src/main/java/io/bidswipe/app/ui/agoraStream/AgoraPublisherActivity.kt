@@ -153,6 +153,7 @@ class AgoraPublisherActivity : BaseActivity() {
     private var liveSellerList = mutableListOf<GetLiveSellerResponse.Data?>()
     private var productList = mutableListOf<LiveShowModel.Product?>()
     private var builtInProducts = mutableListOf<LiveShowModel.Product>()
+    private val closedAuctionProductIds = mutableSetOf<String>()
     private var remainingQuantityMap = mutableMapOf<String, Int>()
     private var pollOptionList = mutableListOf<PollOptionModel?>()
     private var commentList = mutableListOf<LiveChatModel?>()
@@ -1161,8 +1162,7 @@ class AgoraPublisherActivity : BaseActivity() {
             addShowData(liveShowData!!)
 
             bind.shop.strokeWidth = 4
-            bind.countBadge.isVisible = true
-            bind.countBadge.text = (liveShowData?.products?.size ?: 0).toString()
+            replaceVisibleProductList(liveShowData?.products ?: emptyList())
 
             socketManager?.sendMessage(
                 roomID,
@@ -1188,8 +1188,7 @@ class AgoraPublisherActivity : BaseActivity() {
         socketManager?.onRoomCreated { showData ->
             runSafe {
                 if (showData.roomId == roomID) {
-                    productList.clear()
-                    productList.addAll(showData.products)
+                    replaceVisibleProductList(showData.products)
                     initializeBuiltInProductQueue(showData.products)
                     showData.products.find { it?.isCurrent == true }
                     log("ROOM CREATED : $showData")
@@ -1293,6 +1292,17 @@ class AgoraPublisherActivity : BaseActivity() {
             }
         }
 
+        socketManager?.onRoomEnded { args ->
+            val endedRoomId = args.optString("room_end")
+            if (endedRoomId != roomID) return@onRoomEnded
+            runOnUiThread {
+                App.manager.destroyEngine()
+                if (!isFinishing && !isDestroyed) {
+                    finishAfterTransition()
+                }
+            }
+        }
+
         socketManager?.onMessage { msg ->
 
             log("MESSAGE : $msg")
@@ -1314,6 +1324,10 @@ class AgoraPublisherActivity : BaseActivity() {
 
         socketManager?.getBidFinalize { json ->
             updateBidFinalisseUI(json)
+        }
+
+        socketManager?.onAuctionEnded { json ->
+            handleAuctionEnded(json)
         }
 
          socketManager?.getBidFinalizeBreakSpot { json ->
@@ -1345,8 +1359,11 @@ class AgoraPublisherActivity : BaseActivity() {
                 runOnUiThread {
                     if (roomID == json.optString("room_id")) {
                         val product = LiveShowModel.fromJson(json)
-                        productList.clear()
-                        productList.addAll(product.products)
+                        val currentProduct = product.products.find { it?.isCurrent == true }
+                        replaceVisibleProductList(
+                            product.products,
+                            hideAll = currentProduct == null && product.status.isClosedAuctionStatus()
+                        )
                         val products = LiveShowModel.fromJson(json)
                         products.products.find { it?.isCurrent == true }
                     }
@@ -1397,10 +1414,91 @@ class AgoraPublisherActivity : BaseActivity() {
         builtInProducts.clear()
         remainingQuantityMap.clear()
 
-        products.orEmpty().filterNotNull().forEach { product ->
+        products.orEmpty().filterNotNull().filter { it.shouldShowInActiveStreamList() }.forEach { product ->
             val productId = product.id ?: return@forEach
             builtInProducts.add(product)
             remainingQuantityMap[productId] = product.quantity?.toIntOrNull()?.coerceAtLeast(1) ?: 1
+        }
+    }
+
+    private fun String?.isClosedAuctionStatus(): Boolean {
+        return this?.trim()?.lowercase() in setOf(
+            "sold",
+            "ended",
+            "auction_ended",
+            "complete",
+            "completed",
+            "processing",
+            "needs_processing",
+            "pending_shipping",
+            "shipped",
+            "delivered",
+            "purchased",
+            "inactive",
+            "closed"
+        )
+    }
+
+    private fun LiveShowModel.Product?.shouldShowInActiveStreamList(): Boolean {
+        val product = this ?: return false
+        val productId = product.id.orEmpty()
+        if (productId.isNotBlank() && closedAuctionProductIds.contains(productId)) return false
+        return !product.status.isClosedAuctionStatus()
+    }
+
+    private fun replaceVisibleProductList(
+        products: List<LiveShowModel.Product?>,
+        hideAll: Boolean = false
+    ) {
+        productList.clear()
+        if (!hideAll) {
+            productList.addAll(products.filter { it.shouldShowInActiveStreamList() })
+        }
+        bind.countBadge.isVisible = productList.isNotEmpty()
+        bind.countBadge.text = productList.size.toString()
+    }
+
+    private fun markClosedAuctionProducts(json: JSONObject) {
+        json.optString("product_id")
+            .takeIf { it.isNotBlank() && it != "null" }
+            ?.let { closedAuctionProductIds.add(it) }
+
+        json.optJSONObject("winner")
+            ?.optString("product_id")
+            ?.takeIf { it.isNotBlank() && it != "null" }
+            ?.let { closedAuctionProductIds.add(it) }
+
+        val products = json.optJSONArray("products") ?: return
+        for (index in 0 until products.length()) {
+            val product = products.optJSONObject(index) ?: continue
+            val productId = product.optString("id")
+            if (productId.isNotBlank() && product.optString("status").isClosedAuctionStatus()) {
+                closedAuctionProductIds.add(productId)
+            }
+        }
+    }
+
+    private fun clearCurrentAuctionUi(showRunNext: Boolean = true) {
+        isAuctionStarted = false
+        bind.bidTime.isVisible = false
+        bind.bidPrice.isVisible = false
+        bind.product.isVisible = false
+        bind.productLayout.isVisible = false
+        bind.status.isVisible = true
+        bind.runNext.isVisible = showRunNext
+    }
+
+    private fun handleAuctionEnded(json: JSONObject) {
+        runSafe {
+            if (json.optString("room_id") != roomID) return@runSafe
+            runOnUiThread {
+                markClosedAuctionProducts(json)
+                json.optJSONArray("products")?.let {
+                    val roomState = LiveShowModel.fromJson(json)
+                    replaceVisibleProductList(roomState.products)
+                }
+                clearCurrentAuctionUi(showRunNext = true)
+            }
         }
     }
 
@@ -1598,7 +1696,20 @@ class AgoraPublisherActivity : BaseActivity() {
         runOnUiThread {
             val liveProduct = auctionData?.product
             if (liveProduct != null) {
+                val liveProductId = liveProduct.id?.toString().orEmpty()
+                if (
+                    auctionData.status.isClosedAuctionStatus() ||
+                    liveProduct.status.isClosedAuctionStatus() ||
+                    (liveProductId.isNotBlank() && closedAuctionProductIds.contains(liveProductId))
+                ) {
+                    if (liveProductId.isNotBlank()) closedAuctionProductIds.add(liveProductId)
+                    clearCurrentAuctionUi(showRunNext = true)
+                    return@runOnUiThread
+                }
+
+                if (liveProductId.isNotBlank()) closedAuctionProductIds.remove(liveProductId)
                 log("updateProductUI : $liveProduct")
+                isAuctionStarted = true
                 bind.product.isVisible = true
                 bind.productLayout.isVisible = true
                 bind.itemsLeftProgress.isVisible = false
@@ -1644,8 +1755,7 @@ class AgoraPublisherActivity : BaseActivity() {
                 bind.status.isVisible = auctionData.status == "sold"
 
             } else {
-                bind.product.isVisible = false
-                bind.productLayout.isVisible = false
+                clearCurrentAuctionUi(showRunNext = false)
             }
         }
     }
@@ -1655,7 +1765,13 @@ class AgoraPublisherActivity : BaseActivity() {
         runOnUiThread {
             val liveProduct = auctionData?.surpriseSetDetails
             if (liveProduct != null) {
+                if (auctionData.status.isClosedAuctionStatus() || liveProduct.productSetItem?.status.isClosedAuctionStatus()) {
+                    clearCurrentAuctionUi(showRunNext = true)
+                    return@runOnUiThread
+                }
+
                 log("updateProductUI : $liveProduct")
+                isAuctionStarted = true
                 bind.product.isVisible = true
                 bind.productLayout.isVisible = true
                 bind.productName.text = liveProduct?.productSet?.name?.asCapital() + " #${auctionData.productSetItemUnitId}"
@@ -1694,8 +1810,7 @@ class AgoraPublisherActivity : BaseActivity() {
                 bind.bidPrice.text = price?.asMoney()
                 bind.status.isVisible = auctionData.status == "sold"
             } else {
-                bind.product.isVisible = false
-                bind.productLayout.isVisible = false
+                clearCurrentAuctionUi(showRunNext = false)
             }
         }
     }
@@ -2141,10 +2256,12 @@ class AgoraPublisherActivity : BaseActivity() {
                 alertType = AlertType.INFO,
                 clicks = object : AlertClicks {
                     override fun primaryClick(dialog: AppBottomSheet) {
-                        socketManager?.sendMessage(roomID, "end_show", userId, userName, userImage)
-                        App.manager.destroyEngine()
-                        dialog.dismiss()
-                        finishAfterTransition()
+                        requestRandomizerCleanupBeforeEnding {
+                            socketManager?.sendMessage(roomID, "end_show", userId, userName, userImage)
+                            App.manager.destroyEngine()
+                            dialog.dismiss()
+                            finishAfterTransition()
+                        }
                     }
 
                     override fun secondaryClick(dialog: AppBottomSheet) {
@@ -2170,14 +2287,82 @@ class AgoraPublisherActivity : BaseActivity() {
                 if (isFreebieLive) {
                     errorToast("Show cannot be ended until freebie is over")
                 } else {
-                    socketManager?.sendMessage(roomID, "end_show", userId, userName, userImage)
-                    App.manager.destroyEngine()
-                    sheet.dismiss()
-
-                    finishAfterTransition()
+                    requestRandomizerCleanupBeforeEnding {
+                        socketManager?.sendMessage(roomID, "end_show", userId, userName, userImage)
+                        App.manager.destroyEngine()
+                        sheet.dismiss()
+                        finishAfterTransition()
+                    }
                 }
             }
             sheet.show()
+        }
+    }
+
+    private fun requestRandomizerCleanupBeforeEnding(onContinue: () -> Unit) {
+        val currentShowId = currentShowIdForRandomizer()
+        if (currentShowId.isBlank()) {
+            onContinue()
+            return
+        }
+
+        bind.loader.isVisible = true
+        lifecycleScope.launch {
+            val result = withContext(Dispatchers.IO) {
+                viewModel.repo.getShowRandomizerTemplates(currentShowId)
+            }
+            bind.loader.isVisible = false
+
+            val templates = (result as? Resource.Success)?.value?.data.orEmpty()
+            val hasMappedProducts = templates.any { template ->
+                template.prizeProductId != null ||
+                    template.prizeProduct != null ||
+                    template.slots.orEmpty().any { it.productId != null || it.product != null }
+            }
+
+            if (!hasMappedProducts) {
+                onContinue()
+                return@launch
+            }
+
+            AppBottomSheet(
+                this@AgoraPublisherActivity,
+                R.drawable.ic_info,
+                "Randomizer Products",
+                "Would you like to remove all items from your randomizers?",
+                primaryBtnText = "Yes",
+                secondaryBtnText = "No",
+                canCancel = true,
+                showSecondary = true,
+                iconPadding = 16,
+                alertType = AlertType.INFO,
+                clicks = object : AlertClicks {
+                    override fun primaryClick(dialog: AppBottomSheet) {
+                        dialog.dismiss()
+                        releaseRandomizerProductsAndEnd(currentShowId, onContinue)
+                    }
+
+                    override fun secondaryClick(dialog: AppBottomSheet) {
+                        dialog.dismiss()
+                        onContinue()
+                    }
+                }
+            ).show()
+        }
+    }
+
+    private fun releaseRandomizerProductsAndEnd(showId: String, onContinue: () -> Unit) {
+        bind.loader.isVisible = true
+        lifecycleScope.launch {
+            val result = withContext(Dispatchers.IO) {
+                viewModel.repo.releaseShowRandomizerProducts(showId)
+            }
+            bind.loader.isVisible = false
+
+            if (result is Resource.Error) {
+                errorToast(result.errorResponse?.message ?: "Could not remove randomizer products.")
+            }
+            onContinue()
         }
     }
 
@@ -2995,7 +3180,17 @@ class AgoraPublisherActivity : BaseActivity() {
             runOnUiThread {
 
                 if (roomID == json.optString("room_id")) {
-                    val winner = json.getJSONObject("winner")
+                    markClosedAuctionProducts(json)
+                    json.optJSONArray("products")?.let {
+                        val roomState = LiveShowModel.fromJson(json)
+                        replaceVisibleProductList(roomState.products)
+                    }
+
+                    val winner = json.optJSONObject("winner")
+                    if (winner == null) {
+                        clearCurrentAuctionUi(showRunNext = true)
+                        return@runOnUiThread
+                    }
                     val winnerProductId = winner.optString("product_id")
                     val product = productList.find { it?.id == winnerProductId }
 
@@ -3031,12 +3226,14 @@ class AgoraPublisherActivity : BaseActivity() {
                         bind.status.isVisible = true
                         bind.bidPrice.isVisible = false
                         bind.runNext.isVisible = true
+                        clearCurrentAuctionUi(showRunNext = true)
 
                     } else {
                         product?.isCurrent = false
                         bind.winningLayout.isVisible = false
                         bind.status.isVisible = false
                         bind.runNext.isVisible = true
+                        clearCurrentAuctionUi(showRunNext = true)
                     }
 
                     // MC cmpaj2fex0000w5hgq64jp9k4 merge (2026-05-24): kept GitHub's

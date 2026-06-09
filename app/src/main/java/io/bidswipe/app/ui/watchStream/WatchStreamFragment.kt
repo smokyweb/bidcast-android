@@ -132,6 +132,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
     private var isFollowing = false
     private var socketManager: SocketManager? = null
     private var productList = mutableListOf<LiveShowModel.Product?>()
+    private val closedAuctionProductIds = mutableSetOf<String>()
     private var currentRemoteUid: Int? = null
     private var currentPoll: PollModel? = null
     private var pollSheet: BottomSheetDialog? = null
@@ -157,6 +158,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
     private var restFallbackFired = false
     private var surpriseSetAuctionRunning = false
     private var isAuctionStarted = false
+    private var currentAuctionClosed = true
     private var showThumbnail: String? = null
 
     private var showNotes: String? = ""
@@ -439,6 +441,10 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
             socketManager?.getBidFinalize { json ->
                 finalizeBidUpdateUI(json)
+            }
+
+            socketManager?.onAuctionEnded { json ->
+                handleAuctionEnded(json)
             }
 
             socketManager?.onBidRejected { json ->
@@ -847,8 +853,9 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
                 bind.preBidBtn.isVisible = false
                 bind.sideOptions.isVisible = false
             } else {
-                bind.productAuctionBidLayout.isVisible = isAuctionStarted
-                bind.bidLayout.isVisible = isAuctionStarted
+                val canShowBidControls = canBidOnCurrentProduct()
+                bind.productAuctionBidLayout.isVisible = canShowBidControls
+                bind.bidLayout.isVisible = canShowBidControls && liveShowData?.auctionTypeId == AuctionType.LIVE.id
                 bind.sideOptions.isVisible = true
             }
             insets
@@ -1496,16 +1503,78 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
         return this?.trim()?.lowercase() in setOf(
             "sold",
             "ended",
+            "auction_ended",
             "complete",
             "completed",
+            "processing",
+            "needs_processing",
+            "pending_shipping",
+            "shipped",
+            "delivered",
             "purchased",
             "inactive",
             "closed"
         )
     }
 
+    private fun String?.isActiveAuctionStatus(): Boolean {
+        return this?.trim()?.lowercase() in setOf(
+            "live",
+            "active",
+            "auction_started",
+            "started",
+            "running"
+        )
+    }
+
+    private fun markClosedAuctionProducts(json: JSONObject) {
+        json.optString("product_id")
+            .takeIf { it.isNotBlank() && it != "null" }
+            ?.let { closedAuctionProductIds.add(it) }
+
+        json.optJSONObject("winner")
+            ?.optString("product_id")
+            ?.takeIf { it.isNotBlank() && it != "null" }
+            ?.let { closedAuctionProductIds.add(it) }
+
+        val products = json.optJSONArray("products") ?: return
+        for (index in 0 until products.length()) {
+            val product = products.optJSONObject(index) ?: continue
+            val productId = product.optString("id")
+            if (productId.isNotBlank() && product.optString("status").isClosedAuctionStatus()) {
+                closedAuctionProductIds.add(productId)
+            }
+        }
+    }
+
+    private fun canBidOnCurrentProduct(): Boolean {
+        if (surpriseSetAuctionRunning) return isAuctionStarted && !currentAuctionClosed
+        val productId = bidProductId?.takeIf { it.isNotBlank() && it != "null" } ?: return false
+        return isAuctionStarted && !currentAuctionClosed && !closedAuctionProductIds.contains(productId)
+    }
+
+    private fun LiveShowModel.Product?.shouldShowInActiveStreamList(): Boolean {
+        val product = this ?: return false
+        val productId = product.id.orEmpty()
+        if (productId.isNotBlank() && closedAuctionProductIds.contains(productId)) return false
+        return !product.status.isClosedAuctionStatus()
+    }
+
+    private fun replaceVisibleProductList(
+        products: List<LiveShowModel.Product?>,
+        hideAll: Boolean = false
+    ) {
+        productList.clear()
+        if (!hideAll) {
+            productList.addAll(products.filter { it.shouldShowInActiveStreamList() })
+        }
+        bind.countBadge.isVisible = productList.isNotEmpty()
+        bind.countBadge.text = productList.size.toString()
+    }
+
     private fun showClosedAuctionState() {
         isAuctionStarted = false
+        currentAuctionClosed = true
         bind.bidTime.isVisible = false
         bind.bidLayout.isVisible = false
         bind.buyNowBtn.isVisible = false
@@ -1570,9 +1639,19 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
                 setBidText(highestBidAmount)
 
-                if (auctionData.status.isClosedAuctionStatus() || liveProduct.status.isClosedAuctionStatus()) {
+                val liveProductId = liveProduct.id?.toString().orEmpty()
+                val isLocallyClosed = liveProductId.isNotBlank() &&
+                    closedAuctionProductIds.contains(liveProductId) &&
+                    !auctionData.status.isActiveAuctionStatus() &&
+                    !liveProduct.status.isActiveAuctionStatus()
+
+                if (auctionData.status.isClosedAuctionStatus() || liveProduct.status.isClosedAuctionStatus() || isLocallyClosed) {
                     showClosedAuctionState()
                 } else {
+                    if (liveProductId.isNotBlank()) {
+                        closedAuctionProductIds.remove(liveProductId)
+                    }
+                    currentAuctionClosed = false
                     bind.status.isVisible = false
                     bind.bidLayout.isVisible = auctionData.auctionTypeId == AuctionType.LIVE.id
                     bind.buyNowBtn.isVisible = auctionData.auctionTypeId == AuctionType.BUY_NOW.id
@@ -1599,8 +1678,12 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
                 }
             } else {
                 isAuctionStarted = false
+                currentAuctionClosed = true
                 bind.status.isVisible = true
                 bind.bidLayout.isVisible = false
+                bind.buyNowBtn.isVisible = false
+                bind.preBidBtn.isVisible = false
+                bind.productAuctionBidLayout.isVisible = false
                 bind.productLayout.isVisible = false
             }
         }
@@ -1609,18 +1692,33 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
     private fun updateCurrentProductFromRoomState(roomState: LiveShowModel) {
         val currentProduct = roomState.products.find { it?.isCurrent == true }
-        productList.clear()
-        productList.addAll(roomState.products)
+        replaceVisibleProductList(
+            roomState.products,
+            hideAll = currentProduct == null && roomState.status.isClosedAuctionStatus()
+        )
 
         if (currentProduct != null) {
-            if (currentProduct.status.isClosedAuctionStatus()) {
+            val currentProductId = currentProduct.id.orEmpty()
+            val roomEndedWithoutActiveCurrent =
+                roomState.status.isClosedAuctionStatus() && !currentProduct.status.isActiveAuctionStatus()
+            val currentWasAlreadyClosed =
+                currentProductId.isNotBlank() &&
+                    closedAuctionProductIds.contains(currentProductId) &&
+                    !currentProduct.status.isActiveAuctionStatus()
+
+            if (currentProduct.status.isClosedAuctionStatus() || roomEndedWithoutActiveCurrent || currentWasAlreadyClosed) {
                 showClosedAuctionState()
                 return
+            }
+
+            if (currentProductId.isNotBlank()) {
+                closedAuctionProductIds.remove(currentProductId)
             }
 
             // MC cmpaj2fex0000w5hgq64jp9k4 merge (2026-05-24): kept GitLab's
             // isAuctionStarted state tracking (used by other watch-stream logic).
             isAuctionStarted = true
+            currentAuctionClosed = false
             bind.winningLayout.isVisible = false
             bind.soldLayout.isVisible = false
             bind.status.isVisible = false
@@ -1687,10 +1785,12 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
             }
         } else {
             isAuctionStarted = false
+            currentAuctionClosed = true
             bind.bidTime.isVisible = false
             bind.bidLayout.isVisible = false
             bind.buyNowBtn.isVisible = false
             bind.preBidBtn.isVisible = false
+            bind.productAuctionBidLayout.isVisible = false
             bind.productLayout.isVisible = false
             bind.status.isVisible = true
         }
@@ -1758,6 +1858,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
                 if (auctionData.status.isClosedAuctionStatus() || liveProduct.productSetItem?.status.isClosedAuctionStatus()) {
                     showClosedAuctionState()
                 } else {
+                    currentAuctionClosed = false
                     bind.status.isVisible = false
                     bind.bidLayout.isVisible = liveProduct.productSet?.type == "auction"
                     bind.buyNowBtn.isVisible = liveProduct.productSet?.type == "buy_it_now"
@@ -1778,8 +1879,12 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
                     }
                 }
             } else {
+                currentAuctionClosed = true
                 bind.status.isVisible = true
                 bind.bidLayout.isVisible = false
+                bind.buyNowBtn.isVisible = false
+                bind.preBidBtn.isVisible = false
+                bind.productAuctionBidLayout.isVisible = false
                 bind.productLayout.isVisible = false
             }
         }
@@ -1801,12 +1906,11 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
             // Mark socket data as loaded and show thumbnail if available
             isSocketDataLoaded = true
 
-            productList.clear()
-            productList.addAll(liveShowData?.products ?: emptyList())
-            bind.countBadge.isVisible = true
-            bind.countBadge.text = productList.size.toString()
-
-            liveShowData?.products?.find { it?.isCurrent == true }
+            val currentProduct = liveShowData?.products?.find { it?.isCurrent == true }
+            replaceVisibleProductList(
+                liveShowData?.products ?: emptyList(),
+                hideAll = currentProduct == null && liveShowData?.status.isClosedAuctionStatus()
+            )
 
             // Basecamp #9933877362 (2026-05-27): the seller's per-show
             // verified-buyers-only toggle overrides allowBidForAll. When the
@@ -1879,6 +1983,10 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
             })
 
             bind.buyNowBtn.setHapticClickListener {
+                if (!canBidOnCurrentProduct()) {
+                    Alerts.error(mCtx, "Bidding has ended for this item.")
+                    return@setHapticClickListener
+                }
                 if (App.profileResponse.value?.hasShippingAddress == true && App.profileResponse.value?.hasCardAdded == true) {
                     if (isAllowBidForAll) {
                         attemptBid()
@@ -1898,6 +2006,10 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
             // Allows buyer to place a pre-bid on the current auction item
             // directly from the watch stream without opening ProductDetails.
             bind.preBidBtn.setHapticClickListener {
+                if (!canBidOnCurrentProduct()) {
+                    Alerts.error(mCtx, "Bidding has ended for this item.")
+                    return@setHapticClickListener
+                }
                 val pid = bidProductId?.toIntOrNull() ?: 0
                 if (pid == 0) { Alerts.error(mCtx, "No product selected."); return@setHapticClickListener }
                 showInShowPreBidDialog(pid)
@@ -2044,6 +2156,12 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
     fun attemptBid() {
         runSafe {
+            if (!canBidOnCurrentProduct()) {
+                Alerts.error(mCtx, "Bidding has ended for this item.")
+                bind.bidSwipeLayout.close()
+                return@runSafe
+            }
+
             val bidAmount = newBidAmount(highestBidAmount?.toDouble()?.toInt() ?: 0).toString()
             if (surpriseSetAuctionRunning) {
                 socketManager?.emitBidBreakSpot(
@@ -2173,6 +2291,12 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
         inputSheet = Alerts.appBottomSheet(mCtx, true, inputSheetBind)
 
         inputSheetBind.submitBtn.setHapticClickListener {
+            if (!canBidOnCurrentProduct()) {
+                Alerts.error(mCtx, "Bidding has ended for this item.")
+                inputSheet?.dismiss()
+                return@setHapticClickListener
+            }
+
             val priceText = inputSheetBind.price.value()
             val priceVal = priceText.toDoubleOrNull() ?: 0.0
             val current = highestBidAmount?.toDoubleOrNull() ?: 0.0
@@ -2204,7 +2328,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
             requireActivity().runOnUiThread {
                 if (json.optString("room_id") == roomID) {
                     val remaining = value.toIntOrNull() ?: 0
-                    if (remaining <= 0) {
+                    if (remaining <= 0 || currentAuctionClosed) {
                         // Fallback UI state when timer ends but finalize event is delayed/missed.
                         showClosedAuctionState()
                         return@runOnUiThread
@@ -2224,6 +2348,23 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
                         }
                     }
                 }
+            }
+        }
+    }
+
+    private fun handleAuctionEnded(json: JSONObject) {
+        runSafe {
+            if (json.optString("room_id") != roomID) return@runSafe
+
+            requireActivity().runOnUiThread {
+                markClosedAuctionProducts(json)
+
+                json.optJSONArray("products")?.let {
+                    val roomState = LiveShowModel.fromJson(json)
+                    replaceVisibleProductList(roomState.products, hideAll = true)
+                }
+
+                showClosedAuctionState()
             }
         }
     }
@@ -3091,21 +3232,22 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
         runSafe {
             requireActivity().runOnUiThread {
 
-                val winner = json.getJSONObject("winner")
+                markClosedAuctionProducts(json)
+                val winner = json.optJSONObject("winner")
                 log("WINNER: $winner")
 
                 if (roomID == json.optString("room_id")) {
                     showClosedAuctionState()
 
-                    val bidderName = winner.optString("user_name") ?: ""
-                    val bidderImage = winner.optString("user_image")
+                    val bidderName = winner?.optString("user_name").orEmpty()
+                    val bidderImage = winner?.optString("user_image").orEmpty()
 
                     if (bidderName.isNotEmpty()) {
                         bind.winningLayout.isVisible = true
 
                         bind.userImage.loadUrl(mCtx, bidderImage)
 
-                        if (userId == winner.optString("user_id")) {
+                        if (userId == winner?.optString("user_id")) {
                             bind.winning.text = buildSpannedString {
                                 color(ContextCompat.getColor(mCtx, R.color.primary)) {
                                     bold { append(" you won!") }

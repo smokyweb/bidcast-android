@@ -455,6 +455,26 @@ class SocketManager private constructor(
         }
     }
 
+    fun onAuctionEnded(listener: (json: JSONObject) -> Unit) {
+        socket?.off("auction_ended")
+        socket?.on("auction_ended") { args ->
+            val obj = args.firstOrNull()
+            if (obj is JSONObject) {
+                Log.d(TAG, "RECEIVED: auction_ended - $obj")
+                listener(obj)
+            }
+        }
+
+        socket?.off("auction_ended_no_bid")
+        socket?.on("auction_ended_no_bid") { args ->
+            val obj = args.firstOrNull()
+            if (obj is JSONObject) {
+                Log.d(TAG, "RECEIVED: auction_ended_no_bid - $obj")
+                listener(obj)
+            }
+        }
+    }
+
     fun setNextProduct(
         roomId: String,
         productId: String?
