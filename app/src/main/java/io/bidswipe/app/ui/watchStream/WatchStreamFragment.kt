@@ -1585,6 +1585,15 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
         bind.status.isVisible = true
     }
 
+    private fun closeCurrentBidControls() {
+        isAuctionStarted = false
+        currentAuctionClosed = true
+        bind.bidTime.isVisible = false
+        bind.bidLayout.isVisible = false
+        bind.buyNowBtn.isVisible = false
+        bind.preBidBtn.isVisible = false
+    }
+
     private fun updateProductUI(auctionData: AuctionStartedResponse) {
 
         activity?.runOnUiThread {
@@ -2329,8 +2338,10 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
                 if (json.optString("room_id") == roomID) {
                     val remaining = value.toIntOrNull() ?: 0
                     if (remaining <= 0 || currentAuctionClosed) {
-                        // Fallback UI state when timer ends but finalize event is delayed/missed.
-                        showClosedAuctionState()
+                        // Timer zero means the item is no longer biddable. Wait for the
+                        // authoritative auction_ended / bid_finalized payload before
+                        // replacing product state so the live room itself stays open.
+                        closeCurrentBidControls()
                         return@runOnUiThread
                     }
 
@@ -2361,7 +2372,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
                 json.optJSONArray("products")?.let {
                     val roomState = LiveShowModel.fromJson(json)
-                    replaceVisibleProductList(roomState.products, hideAll = true)
+                    replaceVisibleProductList(roomState.products)
                 }
 
                 showClosedAuctionState()
