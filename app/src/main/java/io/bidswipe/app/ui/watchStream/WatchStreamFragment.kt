@@ -2368,14 +2368,19 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
             if (json.optString("room_id") != roomID) return@runSafe
 
             requireActivity().runOnUiThread {
-                markClosedAuctionProducts(json)
+                // runSafe again here: the outer runSafe can't catch exceptions
+                // thrown inside this posted lambda — an auction_ended payload
+                // parse error here crashed the whole stream screen (2026-06-09).
+                runSafe {
+                    markClosedAuctionProducts(json)
 
-                json.optJSONArray("products")?.let {
-                    val roomState = LiveShowModel.fromJson(json)
-                    replaceVisibleProductList(roomState.products)
+                    json.optJSONArray("products")?.let {
+                        val roomState = LiveShowModel.fromJson(json)
+                        replaceVisibleProductList(roomState.products)
+                    }
+
+                    showClosedAuctionState()
                 }
-
-                showClosedAuctionState()
             }
         }
     }

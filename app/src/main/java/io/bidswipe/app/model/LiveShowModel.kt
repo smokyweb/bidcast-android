@@ -95,8 +95,11 @@ data class LiveShowModel(
 		}
 
 		companion object {
+			// Auction-end payloads (bid_finalized / auction_ended /
+			// next_product_set) carry minimal products {id, status,
+			// is_current} with no category — must stay null-safe here.
 			fun fromJson(json: JSONObject) = Product(
-				category = Category.fromJson(json.optJSONObject("category")),
+				category = json.optJSONObject("category")?.let { Category.fromJson(it) },
 				id = json.optString("id", null),
 				image = json.optJSONArray("images")?.optString(0) ?: json.optString("image", ""),
 				status = json.optString("status", "live"),

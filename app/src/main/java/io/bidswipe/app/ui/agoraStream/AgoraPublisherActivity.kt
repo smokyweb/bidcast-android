@@ -1492,12 +1492,18 @@ class AgoraPublisherActivity : BaseActivity() {
         runSafe {
             if (json.optString("room_id") != roomID) return@runSafe
             runOnUiThread {
-                markClosedAuctionProducts(json)
-                json.optJSONArray("products")?.let {
-                    val roomState = LiveShowModel.fromJson(json)
-                    replaceVisibleProductList(roomState.products)
+                // runSafe again here: the outer runSafe can't catch exceptions
+                // thrown inside this posted lambda. A parse error here crashed
+                // the host activity, whose onDestroy emits endRoom — ending the
+                // whole show for every viewer (2026-06-09).
+                runSafe {
+                    markClosedAuctionProducts(json)
+                    json.optJSONArray("products")?.let {
+                        val roomState = LiveShowModel.fromJson(json)
+                        replaceVisibleProductList(roomState.products)
+                    }
+                    clearCurrentAuctionUi(showRunNext = true)
                 }
-                clearCurrentAuctionUi(showRunNext = true)
             }
         }
     }
@@ -3178,6 +3184,10 @@ class AgoraPublisherActivity : BaseActivity() {
         runSafe {
 
             runOnUiThread {
+                // runSafe again: exceptions inside this posted lambda escape the
+                // outer runSafe. bid_finalized carries minimal product rows, and
+                // a parse crash here killed the host activity (2026-06-09).
+                runSafe {
 
                 if (roomID == json.optString("room_id")) {
                     markClosedAuctionProducts(json)
@@ -3189,7 +3199,7 @@ class AgoraPublisherActivity : BaseActivity() {
                     val winner = json.optJSONObject("winner")
                     if (winner == null) {
                         clearCurrentAuctionUi(showRunNext = true)
-                        return@runOnUiThread
+                        return@runSafe
                     }
                     val winnerProductId = winner.optString("product_id")
                     val product = productList.find { it?.id == winnerProductId }
@@ -3259,6 +3269,7 @@ class AgoraPublisherActivity : BaseActivity() {
                             }
                         }, 1500)
                     }
+                }
                 }
             }
         }
