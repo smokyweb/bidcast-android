@@ -1437,15 +1437,23 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
     private fun handleBidUpdate(json: JSONObject) {
         runSafe {
             requireActivity().runOnUiThread {
-                if (json.optString("room_id") == roomID) {
-                    val highestBid = json.getJSONObject("get_highest_bid")
+                runSafe {
+                    if (json.optString("room_id") != roomID) return@runSafe
+                    val highestBid = json.optJSONObject("get_highest_bid") ?: return@runSafe
                     val bidAmount = highestBid.optString("bid_amount")
                     log("BID UPDATE: $bidAmount")
 
+                    // The server's join snapshot can carry an EMPTY highest-bid
+                    // object ({}) when nobody has bid yet (live_rooms.highest_bid
+                    // is stored as '{}' by app-created rooms). Overwriting here
+                    // wiped the bid panel seeded by auction_started — buyer saw
+                    // $0.00 / Bid:$0.00 and a blank bidProductId blocked every
+                    // bid with "Bidding has ended for this item" (Trey,
+                    // 2026-06-09). Ignore snapshots without a real bid.
+                    if (bidAmount.isBlank() || bidAmount == "null") return@runSafe
+
                     val bidderName = highestBid.optString("user_name")
                     val bidderImage = highestBid.optString("user_image")
-
-                    log("BID UPDATE: $bidAmount")
 
                     bind.winningLayout.isVisible = true
 
@@ -1459,7 +1467,9 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
                     setBidText(bidAmount)
                     highestBidAmount = bidAmount
-                    bidProductId = highestBid.optString("product_id")
+                    highestBid.optString("product_id")
+                        .takeIf { it.isNotBlank() && it != "null" }
+                        ?.let { bidProductId = it }
                 }
             }
 

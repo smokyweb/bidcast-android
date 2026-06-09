@@ -1859,9 +1859,13 @@ class AgoraPublisherActivity : BaseActivity() {
     private fun handleBidUpdate(json: JSONObject) {
         runSafe {
             runOnUiThread {
+                runSafe {
                 if (json.optString("room_id") == roomID) {
-                    val highestBid = json.getJSONObject("get_highest_bid")
+                    val highestBid = json.optJSONObject("get_highest_bid") ?: return@runSafe
                     val bidAmount = highestBid.optString("bid_amount")
+                    // Empty join snapshot ({} before any bid) must not blank the
+                    // host's winning row — see WatchStreamFragment.handleBidUpdate.
+                    if (bidAmount.isBlank() || bidAmount == "null") return@runSafe
                     val bidderName = highestBid.optString("user_name")
                     val bidderImage = highestBid.optString("user_image")
 
@@ -1883,6 +1887,7 @@ class AgoraPublisherActivity : BaseActivity() {
                     }
 
                     bind.bidPrice.text = bidAmount.asMoney()
+                }
                 }
             }
 
