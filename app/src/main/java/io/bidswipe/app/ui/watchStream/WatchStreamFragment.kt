@@ -1492,6 +1492,30 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
         }
     }
 
+    private fun String?.isClosedAuctionStatus(): Boolean {
+        return this?.trim()?.lowercase() in setOf(
+            "sold",
+            "ended",
+            "complete",
+            "completed",
+            "purchased",
+            "inactive",
+            "closed"
+        )
+    }
+
+    private fun showClosedAuctionState() {
+        isAuctionStarted = false
+        bind.bidTime.isVisible = false
+        bind.bidLayout.isVisible = false
+        bind.buyNowBtn.isVisible = false
+        bind.preBidBtn.isVisible = false
+        bind.productAuctionBidLayout.isVisible = false
+        bind.soldLayout.isVisible = true
+        bind.productLayout.isVisible = false
+        bind.status.isVisible = true
+    }
+
     private fun updateProductUI(auctionData: AuctionStartedResponse) {
 
         activity?.runOnUiThread {
@@ -1546,12 +1570,8 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
                 setBidText(highestBidAmount)
 
-                if (auctionData.status == "sold") {
-                    bind.bidLayout.isVisible = false
-                    bind.buyNowBtn.isVisible = false
-                    bind.soldLayout.isVisible = true
-                    bind.productLayout.isVisible = false
-                    bind.status.isVisible = true
+                if (auctionData.status.isClosedAuctionStatus() || liveProduct.status.isClosedAuctionStatus()) {
+                    showClosedAuctionState()
                 } else {
                     bind.status.isVisible = false
                     bind.bidLayout.isVisible = auctionData.auctionTypeId == AuctionType.LIVE.id
@@ -1593,6 +1613,11 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
         productList.addAll(roomState.products)
 
         if (currentProduct != null) {
+            if (currentProduct.status.isClosedAuctionStatus()) {
+                showClosedAuctionState()
+                return
+            }
+
             // MC cmpaj2fex0000w5hgq64jp9k4 merge (2026-05-24): kept GitLab's
             // isAuctionStarted state tracking (used by other watch-stream logic).
             isAuctionStarted = true
@@ -1730,12 +1755,8 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
                 setBidText(highestBidAmount)
 
-                if (auctionData.status == "sold") {
-                    bind.bidLayout.isVisible = false
-                    bind.buyNowBtn.isVisible = false
-                    bind.soldLayout.isVisible = true
-                    bind.productLayout.isVisible = false
-                    bind.status.isVisible = true
+                if (auctionData.status.isClosedAuctionStatus() || liveProduct.productSetItem?.status.isClosedAuctionStatus()) {
+                    showClosedAuctionState()
                 } else {
                     bind.status.isVisible = false
                     bind.bidLayout.isVisible = liveProduct.productSet?.type == "auction"
@@ -2185,13 +2206,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
                     val remaining = value.toIntOrNull() ?: 0
                     if (remaining <= 0) {
                         // Fallback UI state when timer ends but finalize event is delayed/missed.
-                        isAuctionStarted = false
-                        bind.bidTime.isVisible = false
-                        bind.bidLayout.isVisible = false
-                        bind.buyNowBtn.isVisible = false
-                        bind.soldLayout.isVisible = true
-                        bind.productLayout.isVisible = false
-                        bind.status.isVisible = true
+                        showClosedAuctionState()
                         return@runOnUiThread
                     }
 
@@ -3080,11 +3095,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
                 log("WINNER: $winner")
 
                 if (roomID == json.optString("room_id")) {
-                    bind.bidTime.isVisible = false
-                    bind.soldLayout.isVisible = true
-                    bind.buyNowBtn.isVisible = false
-                    bind.bidLayout.isVisible = false
-                    bind.productLayout.isVisible = false
+                    showClosedAuctionState()
 
                     val bidderName = winner.optString("user_name") ?: ""
                     val bidderImage = winner.optString("user_image")
