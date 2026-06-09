@@ -1294,7 +1294,7 @@ class AgoraPublisherActivity : BaseActivity() {
 
         socketManager?.onRoomEnded { args ->
             val endedRoomId = args.optString("room_end")
-            if (endedRoomId != roomID) return@onRoomEnded
+            if (endedRoomId != roomID || !args.optBoolean("show_ended", false)) return@onRoomEnded
             runOnUiThread {
                 App.manager.destroyEngine()
                 if (!isFinishing && !isDestroyed) {
