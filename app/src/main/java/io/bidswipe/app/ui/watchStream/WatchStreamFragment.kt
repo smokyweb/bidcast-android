@@ -561,8 +561,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
                 log("END GOT WATCH FRAGMENT $json")
                 runSafe {
                     requireActivity().runOnUiThread {
-                        val isExplicitShowEnd = json.optBoolean("show_ended", false)
-                        if (json.optString("room_end") == roomID && isExplicitShowEnd) {
+                        if (json.optString("room_end") == roomID) {
                             liveEndedSheet?.dismiss()
                             liveEndedSheet = AppBottomSheet(
                                 mCtx,
