@@ -10,6 +10,8 @@ data class RandomizerTemplate(
     @SerializedName("name") val name: String?,
     @SerializedName("type") val type: String?,
     @SerializedName("entry_cost") val entryCost: String?,
+    @SerializedName("prize_product_id") val prizeProductId: Int?,
+    @SerializedName("prize_product") val prizeProduct: SlotProduct?,
     @SerializedName("slot_count") val slotCount: Int?,
     @SerializedName("slots") val slots: List<RandomizerSlot>?
 ) {
