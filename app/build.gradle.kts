@@ -42,7 +42,11 @@ android {
         applicationId = "io.bidswipe.app"
         minSdk = 26
         targetSdk = 36
-        versionCode = 18
+        // CI override: Codemagic's android-release workflow passes
+        // -PversionCode=$((18 + PROJECT_BUILD_NUMBER)) so every Play upload
+        // outranks the last (Google rejects duplicate version codes).
+        // Local builds keep the hardcoded fallback.
+        versionCode = (project.findProperty("versionCode") as String?)?.toIntOrNull() ?: 18
         versionName = "1.2.3"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"

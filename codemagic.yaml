@@ -10,3 +10,45 @@ workflows:
         script: ./gradlew assembleDebug --no-daemon
     artifacts:
       - app/build/outputs/apk/debug/*.apk
+
+  # Release pipeline → Google Play internal track (2026-06-10, Larry).
+  # Signing: the shared bluestone keystore already uploaded to Codemagic
+  # (reference name `bluestone_keystore`, created 2026-05-18) becomes the
+  # Play App Signing UPLOAD key. Credentials: the play-console-publisher
+  # service account JSON stored as GOOGLE_PLAY_SERVICE_ACCOUNT_CREDENTIALS
+  # in the `google_play` variable group.
+  # ⚠️ Google requires the FIRST .aab to be uploaded manually in Play
+  # Console (Testing → Internal testing → Create release); every build
+  # after that publishes automatically.
+  android-release:
+    name: BidCast Android Release → Google Play
+    max_build_duration: 45
+    instance_type: mac_mini_m2
+    environment:
+      android_signing:
+        - bluestone_keystore
+      groups:
+        - google_play
+    scripts:
+      - name: Set up local.properties
+        script: echo "sdk.dir=$ANDROID_SDK_ROOT" > local.properties
+      - name: Set up release signing (key.properties)
+        script: |
+          cat > key.properties <<EOF
+          storeFile=$CM_KEYSTORE_PATH
+          storePassword=$CM_KEYSTORE_PASSWORD
+          keyAlias=$CM_KEY_ALIAS
+          keyPassword=$CM_KEY_PASSWORD
+          EOF
+      - name: Build signed AAB (auto-bumped versionCode)
+        # Base 18 = the last hardcoded versionCode; PROJECT_BUILD_NUMBER is
+        # Codemagic's per-app counter, so every build outranks the previous
+        # upload (Google rejects duplicate version codes).
+        script: ./gradlew bundleRelease --no-daemon -PversionCode=$((18 + PROJECT_BUILD_NUMBER))
+    artifacts:
+      - app/build/outputs/bundle/release/*.aab
+    publishing:
+      google_play:
+        credentials: $GOOGLE_PLAY_SERVICE_ACCOUNT_CREDENTIALS
+        track: internal
+        submit_as_draft: true
