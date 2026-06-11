@@ -3398,11 +3398,31 @@ class AgoraPublisherActivity : BaseActivity() {
         }
     }
 
-    // Basecamp #9968303929 (GAP d): fetch presence and cache the first active
-    // invited cohost participant so the host can remove them.
-    // JSON shape assumption: { data: { active_participants: [ { id: <show_co_hosts row id>, user_id: <string|int> }, ... ] } }
-    // The function is best-effort: errors are silently swallowed so they don't
-    // interrupt the host's live show flow.
+    // Basecamp #9968303929 (GAP d): active_participants entries are raw
+    // show_co_hosts rows: { id, schedule_show_id, host_user_id, co_host_user_id,
+    // kind ('device'|'cohost'), role, status, ... }. Only kind='cohost' rows are
+    // invited cohosts; kind='device' rows are the host's own paired devices and
+    // must never be offered for removal.
+    private fun parseInvitedCoHost(presenceBody: String): Pair<Int, String> {
+        try {
+            val data = org.json.JSONObject(presenceBody).optJSONObject("data") ?: return 0 to ""
+            val participants = data.optJSONArray("active_participants") ?: return 0 to ""
+            for (i in 0 until participants.length()) {
+                val row = participants.optJSONObject(i) ?: continue
+                if (row.optString("kind") != "cohost") continue
+                val rowId = row.optInt("id")
+                val coHostUserId = row.optLong("co_host_user_id").takeIf { it > 0 }?.toString()
+                    ?: row.optString("co_host_user_id").takeIf { it.isNotBlank() && it != "null" }
+                    ?: continue
+                if (rowId > 0) return rowId to coHostUserId
+            }
+        } catch (_: Exception) {}
+        return 0 to ""
+    }
+
+    // Best-effort cache prime; errors are silently swallowed so they don't
+    // interrupt the host's live show flow. The Remove Cohost dialog re-fetches
+    // on demand, so this cache is only a fast path.
     private fun refreshCoHostPresence() {
         if (showId.isBlank() || isCoHost) return
         lifecycleScope.launch {
@@ -3411,21 +3431,9 @@ class AgoraPublisherActivity : BaseActivity() {
                 "${io.bidswipe.app.utils.Const.BASE_URL}/api/product/co-host/show/$showId/presence"
             )
             if (result.first !in 200..299) return@launch
-            try {
-                val data = org.json.JSONObject(result.second).optJSONObject("data") ?: return@launch
-                val participants = data.optJSONArray("active_participants")
-                if (participants != null && participants.length() > 0) {
-                    val first = participants.optJSONObject(0)
-                    activeCoHostParticipantId = first?.optInt("id") ?: 0
-                    activeCoHostUserId = first?.optString("user_id")
-                        ?.takeIf { it.isNotBlank() }
-                        ?: first?.optInt("user_id")?.takeIf { it > 0 }?.toString()
-                        ?: ""
-                } else {
-                    activeCoHostParticipantId = 0
-                    activeCoHostUserId = ""
-                }
-            } catch (_: Exception) {}
+            val (rowId, coHostUserId) = parseInvitedCoHost(result.second)
+            activeCoHostParticipantId = rowId
+            activeCoHostUserId = coHostUserId
         }
     }
 
@@ -3437,12 +3445,27 @@ class AgoraPublisherActivity : BaseActivity() {
             Toast.makeText(this, "Please start the live show first.", Toast.LENGTH_SHORT).show()
             return
         }
-        if (activeCoHostParticipantId <= 0 || activeCoHostUserId.isBlank()) {
-            Toast.makeText(this, "No active cohost to remove.", Toast.LENGTH_SHORT).show()
-            return
+        // Always re-fetch presence on demand: an invite-based cohost can join at
+        // any time after the show went live, so the primed cache may be stale.
+        bind.loader.isVisible = true
+        lifecycleScope.launch {
+            val result = cohostApiRequest(
+                "GET",
+                "${io.bidswipe.app.utils.Const.BASE_URL}/api/product/co-host/show/$showId/presence"
+            )
+            bind.loader.isVisible = false
+            val (rowId, coHostUserId) = if (result.first in 200..299) parseInvitedCoHost(result.second) else 0 to ""
+            activeCoHostParticipantId = rowId
+            activeCoHostUserId = coHostUserId
+            if (rowId <= 0 || coHostUserId.isBlank()) {
+                Toast.makeText(this@AgoraPublisherActivity, "No active cohost to remove.", Toast.LENGTH_SHORT).show()
+                return@launch
+            }
+            confirmRemoveCoHost(rowId, coHostUserId)
         }
-        val coHostIdSnapshot = activeCoHostParticipantId
-        val coHostUserIdSnapshot = activeCoHostUserId
+    }
+
+    private fun confirmRemoveCoHost(coHostIdSnapshot: Int, coHostUserIdSnapshot: String) {
         androidx.appcompat.app.AlertDialog.Builder(this)
             .setTitle("Remove Cohost?")
             .setMessage("The cohost will be removed from your show and their unsold products will be cleared.")
