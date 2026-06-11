@@ -88,6 +88,18 @@ class ShowTipsFragment : BaseFragment<DashViewModel, FragmentShowTipsBinding>() 
 						findNavController().navigate(ids.goToLiveRehearsalFragment)
 					}
 
+					// Basecamp #9986427172 (Bug A): Bring In Buyers Continue must
+					// advance to the next prepare step (Go Live), not Reference Tips.
+					// Mark step 3 complete in the shared ViewModel and pop back so
+					// PrepareYourShowFragment re-observes currentStep=4 and unlocks
+					// the Go Live step.
+					"bringInBuyers" -> {
+						viewModel.currentStep = 4
+						viewModel.showList.getOrNull(3)?.status = "completed"
+						viewModel.showList.getOrNull(4)?.status = "locked"
+						findNavController().popBackStack()
+					}
+
 					// Basecamp #9986425399: "goLive" is no longer navigated from
 					// PrepareYourShowFragment — step 4 now goes to ShowDetailsActivity
 					// so the seller can start the show explicitly from the overview.

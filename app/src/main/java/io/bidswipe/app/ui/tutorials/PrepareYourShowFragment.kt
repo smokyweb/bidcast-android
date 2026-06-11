@@ -276,6 +276,10 @@ class PrepareYourShowFragment : BaseFragment<DashViewModel, FragmentPrepareYourS
 				}
 
 				is Resource.Error -> {
+					// Basecamp #9986427172 (Bug B): clear stale error so that
+					// re-entering PrepareYourShowFragment after back+reopen does
+					// not immediately re-fire this error dialog.
+					viewModel.storeScheduleShowRepo.value = null
 					bind.loader.isVisible = false
 
 					it.parse(mCtx, TAG, object : AlertClicks {
