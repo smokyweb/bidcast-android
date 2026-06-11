@@ -49,7 +49,7 @@
         app:picker_cyclic="true"
         app:picker_displayDays="false"
         app:picker_itemSpacing="6dp"
-        app:picker_mustBeOnFuture="true"
+        app:picker_mustBeOnFuture="false"
         app:picker_selectorColor="@android:color/transparent"
         app:picker_stepSizeHours="1"
         app:picker_stepSizeMinutes="5"
