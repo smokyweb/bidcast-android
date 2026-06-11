@@ -132,16 +132,23 @@
         tools:listitem="@layout/home_item" />
 
     <!-- Scrollable body: everything below the pinned header scrolls together.
-         NestedScrollView drives pagination; the inner RecyclerView expands fully. -->
-    <androidx.core.widget.NestedScrollView
-        android:id="@+id/nestedScrollView"
+         SwipeRefreshLayout must WRAP the NestedScrollView — when it sits inside
+         one it measures its child to the viewport height, which clips the grid
+         and kills page scrolling. Pull-to-refresh now works from anywhere. -->
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipeRefreshLayout"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:fillViewport="true"
         app:layout_constraintTop_toBottomOf="@id/header"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
+
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/nestedScrollView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -235,14 +242,8 @@
 
             </LinearLayout>
 
-            <!-- Shows grid: SwipeRefreshLayout wraps the RecyclerView.
-                 The RecyclerView uses nestedScrollingEnabled=false so it
-                 expands to full height and the NestedScrollView scrolls the page. -->
-            <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-                android:id="@+id/swipeRefreshLayout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
+            <!-- Shows grid: nestedScrollingEnabled=false so it expands to its
+                 full content height and the NestedScrollView scrolls the page. -->
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/main"
                     android:layout_width="match_parent"
@@ -287,11 +288,11 @@
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
-            </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
-
         </LinearLayout>
 
     </androidx.core.widget.NestedScrollView>
+
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
     <io.bidswipe.app.ui.custom.LoaderView
         android:id="@+id/loader"
