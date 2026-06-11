@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.NumberPicker
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.navigation.fragment.findNavController
@@ -219,104 +220,144 @@ class SelectShowTimeFragment : BaseFragment<ScheduleShowViewModel, FragmentSelec
 		}
 	}
 
+	// #9986412273: replaced SingleDateAndTimePicker wheel with a 3-column
+	// Hour / Minute (5-min steps, 00–55) / AM-PM NumberPicker row to match
+	// the PWA clock-style picker. Validation logic (past-time rejection for
+	// today, all times allowed for future dates) is unchanged.
 	private fun showTimePicker() {
 		// Parse the selected date
 		val selectedDate = Utils.getSimpleDate("yyyy-MM-dd").parse(viewModel.date)
 			?: Calendar.getInstance().time
 
-		val selectedDateCalendar = Calendar.getInstance().apply {
-			time = selectedDate
-		}
-
+		val selectedDateCalendar = Calendar.getInstance().apply { time = selectedDate }
 		val now = Calendar.getInstance()
+
 		val isToday = selectedDateCalendar.get(Calendar.YEAR) == now.get(Calendar.YEAR) &&
 				selectedDateCalendar.get(Calendar.DAY_OF_YEAR) == now.get(Calendar.DAY_OF_YEAR)
 
-		// Calculate minimum time (current time + 1 minute if today, or start of day if future)
-		val minTime = if (isToday) {
-			Calendar.getInstance().apply {
-				add(Calendar.MINUTE, 1)
-			}
-		} else {
-			Calendar.getInstance().apply {
-				time = selectedDate
-				set(Calendar.HOUR_OF_DAY, 0)
-				set(Calendar.MINUTE, 0)
-				set(Calendar.SECOND, 0)
-				set(Calendar.MILLISECOND, 0)
-			}
-		}
-
-		// Initialize time picker with saved time or minimum time
-		var initialHour = minTime.get(Calendar.HOUR_OF_DAY)
-		var initialMinute = minTime.get(Calendar.MINUTE)
+		// Determine initial values (24-hour); default to noon for a clean start.
+		var initialHour24 = 12
+		var initialMinute = 0   // must be a multiple of 5
 
 		if (viewModel.time.isNotEmpty()) {
-			try {
-				val savedTime = Utils.getSimpleDate("HH:mm").parse(viewModel.time)
-				if (savedTime != null) {
-					val savedCalendar = Calendar.getInstance().apply {
-						time = savedTime
-					}
+			runSafe {
+				val saved = Utils.getSimpleDate("HH:mm").parse(viewModel.time)
+				if (saved != null) {
+					val sc = Calendar.getInstance().apply { time = saved }
 					val savedDateTime = Calendar.getInstance().apply {
 						time = selectedDate
-						set(Calendar.HOUR_OF_DAY, savedCalendar.get(Calendar.HOUR_OF_DAY))
-						set(Calendar.MINUTE, savedCalendar.get(Calendar.MINUTE))
+						set(Calendar.HOUR_OF_DAY, sc.get(Calendar.HOUR_OF_DAY))
+						set(Calendar.MINUTE, sc.get(Calendar.MINUTE))
 						set(Calendar.SECOND, 0)
 						set(Calendar.MILLISECOND, 0)
 					}
-
-					// Use saved time if it's in the future, otherwise use minimum time
-					if (savedDateTime.after(minTime) || savedDateTime == minTime) {
-						initialHour = savedCalendar.get(Calendar.HOUR_OF_DAY)
-						initialMinute = savedCalendar.get(Calendar.MINUTE)
-						selectedDateCalendar.set(Calendar.HOUR_OF_DAY, initialHour)
-						selectedDateCalendar.set(Calendar.MINUTE, initialMinute)
+					if (savedDateTime.after(now)) {
+						initialHour24 = sc.get(Calendar.HOUR_OF_DAY)
+						// Snap to nearest 5-min boundary
+						initialMinute = (Math.round(sc.get(Calendar.MINUTE) / 5.0).toInt() * 5)
+							.coerceAtMost(55)
 					}
 				}
-			} catch (e: Exception) {
-				e.printStackTrace()
 			}
 		}
 
+		// Convert 24h hour to 12h + period
+		val initialPeriod = if (initialHour24 >= 12) 1 else 0   // 0=AM, 1=PM
+		val initialHour12 = when {
+			initialHour24 == 0  -> 12
+			initialHour24 > 12  -> initialHour24 - 12
+			else                -> initialHour24
+		}
+		val initialMinuteIdx = initialMinute / 5   // 0..11
+
 		val sheetBind = SelectTimeSheetBinding.bind(
-			LayoutInflater.from(mCtx).inflate(
-				R.layout.select_time_sheet,
-				null,
-				false
-			)
+			LayoutInflater.from(mCtx).inflate(R.layout.select_time_sheet, null, false)
 		)
+
+		// --- Hour picker (1–12) ---
+		sheetBind.hourPicker.minValue = 1
+		sheetBind.hourPicker.maxValue = 12
+		sheetBind.hourPicker.wrapSelectorWheel = true
+		sheetBind.hourPicker.value = initialHour12
+
+		// --- Minute picker (index 0–11 → 00,05,…,55) ---
+		val minuteLabels = Array(12) { i -> String.format(Locale.US, "%02d", i * 5) }
+		sheetBind.minutePicker.minValue = 0
+		sheetBind.minutePicker.maxValue = 11
+		sheetBind.minutePicker.displayedValues = minuteLabels
+		sheetBind.minutePicker.wrapSelectorWheel = true
+		sheetBind.minutePicker.value = initialMinuteIdx
+
+		// --- AM/PM picker ---
+		sheetBind.ampmPicker.minValue = 0
+		sheetBind.ampmPicker.maxValue = 1
+		sheetBind.ampmPicker.displayedValues = arrayOf("AM", "PM")
+		sheetBind.ampmPicker.wrapSelectorWheel = false
+		sheetBind.ampmPicker.value = initialPeriod
 
 		val sheet = Alerts.appBottomSheet(mCtx, true, sheetBind)
 
-		sheetBind.timePicker.setDefaultDate(selectedDateCalendar.time)
+		// Helper: compute the 24-hour hour from current picker state
+		fun pickedHour24(): Int {
+			val h12 = sheetBind.hourPicker.value
+			val pm  = sheetBind.ampmPicker.value == 1
+			return when {
+				pm && h12 != 12  -> h12 + 12
+				!pm && h12 == 12 -> 0
+				else             -> h12
+			}
+		}
+
+		// Update warning visibility whenever any picker changes
+		val warningUpdater = NumberPicker.OnValueChangeListener { _, _, _ ->
+			if (!isToday) {
+				sheetBind.timePastWarning.visibility = View.GONE
+				return@OnValueChangeListener
+			}
+			val h24 = pickedHour24()
+			val min = sheetBind.minutePicker.value * 5
+			val pickedDateTime = Calendar.getInstance().apply {
+				time = selectedDate
+				set(Calendar.HOUR_OF_DAY, h24)
+				set(Calendar.MINUTE, min)
+				set(Calendar.SECOND, 0)
+				set(Calendar.MILLISECOND, 0)
+			}
+			sheetBind.timePastWarning.visibility =
+				if (pickedDateTime.before(now)) View.VISIBLE else View.GONE
+		}
+
+		sheetBind.hourPicker.setOnValueChangedListener(warningUpdater)
+		sheetBind.minutePicker.setOnValueChangedListener(warningUpdater)
+		sheetBind.ampmPicker.setOnValueChangedListener(warningUpdater)
+
+		// Show warning immediately if the initial value is already in the past
+		warningUpdater.onValueChange(sheetBind.hourPicker, initialHour12, initialHour12)
 
 		sheetBind.save.setHapticClickListener {
-			val selectedTime = Utils.getSimpleDate("HH:mm").format(sheetBind.timePicker.date.time)
-			val newHour = selectedTime.split(":").first().toInt()
-			val newMinute = selectedTime.split(":").last().toInt()
+			val newHour24 = pickedHour24()
+			val newMinute = sheetBind.minutePicker.value * 5
 
-			// Create selected date-time with the chosen time
 			val selectedDateTime = Calendar.getInstance().apply {
 				time = selectedDate
-				set(Calendar.HOUR_OF_DAY, newHour)
+				set(Calendar.HOUR_OF_DAY, newHour24)
 				set(Calendar.MINUTE, newMinute)
 				set(Calendar.SECOND, 0)
 				set(Calendar.MILLISECOND, 0)
 			}
 
-			// Validate that selected time is in the future
 			if (selectedDateTime.before(now)) {
 				Alerts.error(mCtx, "Please select a future time")
-			} else {
-				// Save time in HH:mm format to ViewModel
-				val timeString = String.format(Locale.getDefault(), "%02d:%02d", newHour, newMinute)
-				viewModel.time = timeString
-
-				// Display time in hh:mm a format
-				val displayTime = Utils.getSimpleDate("hh:mm a").format(selectedDateTime.time)
-				bind.time.setText(displayTime)
+				return@setHapticClickListener
 			}
+
+			// Save in HH:mm format (same as before)
+			val timeString = String.format(Locale.getDefault(), "%02d:%02d", newHour24, newMinute)
+			viewModel.time = timeString
+
+			// Display in hh:mm a format for the text field
+			val displayTime = Utils.getSimpleDate("hh:mm a").format(selectedDateTime.time)
+			bind.time.setText(displayTime)
 
 			sheet.dismiss()
 		}

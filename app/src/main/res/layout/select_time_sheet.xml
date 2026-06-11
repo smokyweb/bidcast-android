@@ -1,4 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- #9986412273: replaced SingleDateAndTimePicker wheel with a 3-column
+     Hour / Minute (5-min steps) / AM-PM NumberPicker row to match the PWA
+     clock-style picker. The SingleDateAndTimePicker view and its
+     app:picker_* attributes are removed. -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
@@ -39,22 +43,53 @@
 
     </LinearLayout>
 
-
-    <com.github.florent37.singledateandtimepicker.SingleDateAndTimePicker
-        android:id="@+id/time_picker"
-        android:layout_width="wrap_content"
+    <!-- 3-column clock picker: Hour | Minute (5-min steps) | AM/PM -->
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:picker_curved="true"
-        app:picker_curvedMaxAngle="45"
-        app:picker_cyclic="true"
-        app:picker_displayDays="false"
-        app:picker_itemSpacing="6dp"
-        app:picker_mustBeOnFuture="false"
-        app:picker_selectorColor="@android:color/transparent"
-        app:picker_stepSizeHours="1"
-        app:picker_stepSizeMinutes="5"
-        app:picker_visibleItemCount="5" />
+        android:layout_marginTop="@dimen/margin"
+        android:gravity="center"
+        android:orientation="horizontal">
 
+        <NumberPicker
+            android:id="@+id/hour_picker"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="4dp"
+            android:text=":"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:textColor="@color/onSurfaceVariant" />
+
+        <NumberPicker
+            android:id="@+id/minute_picker"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+
+        <NumberPicker
+            android:id="@+id/ampm_picker"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+
+    </LinearLayout>
+
+    <!-- Warning shown when a past time is selected for today -->
+    <TextView
+        android:id="@+id/time_past_warning"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/half_margin"
+        android:text="@string/select_future_time"
+        android:textColor="#DC2626"
+        android:textSize="13sp"
+        android:visibility="gone" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/save"

@@ -110,6 +110,7 @@
     <string name="select_profile">Select Profile</string>
     <string name="select_the_category_the_most_accurately_describes_your_show_and_how_you_would_like_to_sell">Select the category the most accurately describes your show, and how you would like to sell.</string>
     <string name="select_time">Select Time</string>
+    <string name="select_future_time">Please select a future time.</string>
     <string name="seller_hub">Seller Hub</string>
     <string name="sell">Sell</string>
     <string name="sell_on_bidswipe">Sell On Bidswipe</string>
