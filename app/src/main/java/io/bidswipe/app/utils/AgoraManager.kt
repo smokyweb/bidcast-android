@@ -190,15 +190,31 @@ class AgoraManager(
         isInitialized = false
     }
 
+    // Basecamp #9986388919 (2026-06-11): fix blurry buyer video.
+    // Previous config published at 640x480 (480p landscape), 24 fps,
+    // with DEFAULT_MIN_BITRATE_EQUAL_TO_TARGET_BITRATE (forces the
+    // encoder to treat its own minimum as the target — effectively
+    // the lowest allowed bitrate) and MAINTAIN_BALANCED degradation
+    // (permits the SDK to drop resolution under congestion). All buyers
+    // saw a soft/blurry image regardless of network conditions.
+    //
+    // New config: 720x1280 portrait HD, 30 fps, bitrate=0 (Agora SDK
+    // default/standard for the chosen resolution — typically ~1500 kbps),
+    // MAINTAIN_QUALITY degradation so the SDK reduces frame-rate before
+    // it ever lowers resolution. Orientation stays ADAPTIVE so the layout
+    // is correct on portrait phones. Matches the iOS host config.
     private fun videoConfig() = VideoEncoderConfiguration().also {
         it.advanceOptions?.compressionPreference = VideoEncoderConfiguration.COMPRESSION_PREFERENCE.PREFER_LOW_LATENCY
         it.advanceOptions?.encodingPreference = VideoEncoderConfiguration.ENCODING_PREFERENCE.PREFER_AUTO
         it.orientationMode = VideoEncoderConfiguration.ORIENTATION_MODE.ORIENTATION_MODE_ADAPTIVE
-        it.degradationPrefer = VideoEncoderConfiguration.DEGRADATION_PREFERENCE.MAINTAIN_BALANCED
+        it.degradationPrefer = VideoEncoderConfiguration.DEGRADATION_PREFERENCE.MAINTAIN_QUALITY
         it.mirrorMode = VideoEncoderConfiguration.MIRROR_MODE_TYPE.MIRROR_MODE_AUTO
-        it.frameRate = VideoEncoderConfiguration.FRAME_RATE.FRAME_RATE_FPS_24.value
-        it.bitrate = VideoEncoderConfiguration.DEFAULT_MIN_BITRATE_EQUAL_TO_TARGET_BITRATE
-        it.dimensions = VideoEncoderConfiguration.VD_640x480
+        it.frameRate = VideoEncoderConfiguration.FRAME_RATE.FRAME_RATE_FPS_30.value
+        it.bitrate = VideoEncoderConfiguration.STANDARD_BITRATE
+        // VD_1280x720 is the 720p constant available in this SDK version.
+        // With ORIENTATION_MODE_ADAPTIVE the SDK rotates to portrait (720x1280)
+        // automatically on portrait devices (matching the iOS 1080x1920 intent).
+        it.dimensions = VideoEncoderConfiguration.VD_1280x720
     }
 
 }
