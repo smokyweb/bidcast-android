@@ -188,8 +188,8 @@ class HowToSellFragment : BaseFragment<DashViewModel, FragmentHowToSellBinding>(
     }
 
     private fun updateBackButtonState(currentPosition: Int) {
-        bind.backBtn.text = "Previous"
-        bind.backBtn.isVisible = currentPosition > 0
+        bind.backBtn.text = getString(R.string.back)
+        bind.backBtn.isVisible = true
     }
 
 }

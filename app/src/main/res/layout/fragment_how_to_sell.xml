@@ -174,7 +174,7 @@
         <com.google.android.material.button.MaterialButton
             android:id="@+id/backBtn"
             style="@style/appTonalBtn"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:layout_marginEnd="@dimen/half_margin"
@@ -184,7 +184,7 @@
         <com.google.android.material.button.MaterialButton
             android:id="@+id/nextBtn"
             style="@style/appBtn"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:layout_marginStart="@dimen/half_margin"

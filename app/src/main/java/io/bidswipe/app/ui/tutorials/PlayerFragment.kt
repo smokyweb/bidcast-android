@@ -12,6 +12,7 @@ import androidx.media3.common.MediaItem
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.navigation.fragment.findNavController
+import io.bidswipe.app.R
 import io.bidswipe.app.base.BaseFragment
 import io.bidswipe.app.databinding.FragmentPlayerBinding
 import io.bidswipe.app.interfaces.AlertClicks
@@ -135,7 +136,13 @@ class PlayerFragment : BaseFragment<DashViewModel, FragmentPlayerBinding>() {
         ).trim()
 
         bind.previousButton.visibility =
-            if (position > 0) View.VISIBLE else View.INVISIBLE
+            if (position > 0) View.VISIBLE else View.GONE
+
+        bind.nextButton.text = if (position >= lessonList.size - 1) {
+            getString(R.string._continue)
+        } else {
+            getString(R.string.next)
+        }
 
         // Player setup
         player?.apply {
